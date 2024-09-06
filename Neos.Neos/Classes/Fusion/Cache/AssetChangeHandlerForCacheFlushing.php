@@ -69,7 +69,7 @@ class AssetChangeHandlerForCacheFlushing
                     $workspaceName,
                     $nodeAggregate->nodeAggregateId,
                     $nodeAggregate->nodeTypeName,
-                    $this->determineParentNodeAggregateIds($contentRepository, $workspaceName, $nodeAggregate->nodeAggregateId, NodeAggregateIds::createEmpty()),
+                    $this->determineAncestorNodeAggregateIds($contentRepository, $workspaceName, $nodeAggregate->nodeAggregateId),
                 );
 
                 $this->contentCacheFlusher->flushNodeAggregate($flushNodeAggregateRequest, CacheFlushingStrategy::ON_SHUTDOWN);
@@ -77,22 +77,22 @@ class AssetChangeHandlerForCacheFlushing
         }
     }
 
-    private function determineParentNodeAggregateIds(ContentRepository $contentRepository, WorkspaceName $workspaceName, NodeAggregateId $childNodeAggregateId, NodeAggregateIds $collectedParentNodeAggregateIds): NodeAggregateIds
+    private function determineAncestorNodeAggregateIds(ContentRepository $contentRepository, WorkspaceName $workspaceName, NodeAggregateId $childNodeAggregateId): NodeAggregateIds
     {
-        $parentNodeAggregates = $contentRepository->getContentGraph($workspaceName)->findParentNodeAggregates($childNodeAggregateId);
-        $parentNodeAggregateIds = NodeAggregateIds::fromArray(
-            array_map(static fn (NodeAggregate $parentNodeAggregate) => $parentNodeAggregate->nodeAggregateId, iterator_to_array($parentNodeAggregates))
-        );
+        $contentGraph = $contentRepository->getContentGraph($workspaceName);
+        $stack = iterator_to_array($contentGraph->findParentNodeAggregates($childNodeAggregateId));
 
-        foreach ($parentNodeAggregateIds as $parentNodeAggregateId) {
+        $ancestorNodeAggregateIds = [];
+        while ($stack !== []) {
+            $nodeAggregate = array_shift($stack);
+
             // Prevent infinite loops
-            if (!$collectedParentNodeAggregateIds->contain($parentNodeAggregateId)) {
-                $collectedParentNodeAggregateIds = $collectedParentNodeAggregateIds->merge(NodeAggregateIds::create($parentNodeAggregateId));
-                $collectedParentNodeAggregateIds = $this->determineParentNodeAggregateIds($contentRepository, $workspaceName, $parentNodeAggregateId, $collectedParentNodeAggregateIds);
+            if (!in_array($nodeAggregate->nodeAggregateId, $ancestorNodeAggregateIds, false)) {
+                $ancestorNodeAggregateIds[] = $nodeAggregate->nodeAggregateId;
+                array_push($stack, ...iterator_to_array($contentGraph->findParentNodeAggregates($nodeAggregate->nodeAggregateId)));
             }
         }
 
-
-        return $collectedParentNodeAggregateIds;
+        return NodeAggregateIds::fromArray($ancestorNodeAggregateIds);
     }
 }

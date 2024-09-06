@@ -112,7 +112,7 @@ class ContentCacheFlusher
             $flushNodeAggregateRequest->nodeAggregateId,
         ), $tagsToFlush);
 
-        $parentNodeAggregateIds = $flushNodeAggregateRequest->parentNodeAggregateIds;
+        $parentNodeAggregateIds = $flushNodeAggregateRequest->ancestorNodeAggregateIds;
         foreach ($parentNodeAggregateIds as $parentNodeAggregateId) {
             $tagName = CacheTag::forDescendantOfNode($flushNodeAggregateRequest->contentRepositoryId, $workspaceNameToFlush, $parentNodeAggregateId);
             $tagsToFlush[$tagName->value] = sprintf(
