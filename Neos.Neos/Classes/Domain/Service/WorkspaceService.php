@@ -15,7 +15,6 @@ declare(strict_types=1);
 namespace Neos\Neos\Domain\Service;
 
 use Doctrine\DBAL\Connection;
-use Doctrine\DBAL\Exception;
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Command\CreateRootWorkspace;
@@ -243,12 +242,14 @@ final class WorkspaceService
             WHERE
                 content_repository_id = :contentRepositoryId
                 AND subject = :subject
+                AND subject_type = :subjectType
                 AND role = :ownerRole
         SQL;
         $workspaceName = $this->dbal->fetchOne($query, [
             'contentRepositoryId' => $contentRepositoryId->value,
-            'subject' => 'user:' . $userId->value,
-            'ownerRole' => 'OWNER'
+            'subject' => $userId->value,
+            'subjectType' => WorkspaceSubjectType::USER->name,
+            'ownerRole' => WorkspaceRole::OWNER->name,
         ]);
         return $workspaceName === false ? null : WorkspaceName::fromString($workspaceName);
     }
@@ -295,7 +296,7 @@ final class WorkspaceService
         $workspaceName = $workspaceNameCandidate;
         while ($contentRepository->getWorkspaceFinder()->findOneByName($workspaceName) instanceof Workspace) {
             $workspaceName = WorkspaceName::fromString(
-                $workspaceNameCandidate->value . '-' . Algorithms::generateRandomString(5)
+                $workspaceNameCandidate->value . '-' . strtolower(Algorithms::generateRandomString(5))
             );
         }
         return $workspaceName;
