@@ -158,7 +158,7 @@ class WorkspaceCommandController extends CommandController
     /**
      * Create a new workspace
      *
-     * This command creates a new workspace.
+     * This command creates a new personal workspace.
      *
      * @param string $workspace Name of the workspace, for example "christmas-campaign"
      * @param string $baseWorkspace Name of the base workspace. If none is specified, "live" is assumed.
@@ -178,13 +178,12 @@ class WorkspaceCommandController extends CommandController
     ): void {
         $contentRepositoryId = ContentRepositoryId::fromString($contentRepository);
 
-        $this->workspaceService->createWorkspace(
+        $this->workspaceService->createPersonalWorkspace(
             $contentRepositoryId,
             NeosWorkspaceTitle::fromString($title ?? $workspace),
             NeosWorkspaceDescription::fromString($description ?? ''),
             WorkspaceName::fromString($baseWorkspace),
-            \Neos\Neos\Domain\Model\UserId::fromString($owner),
-            WorkspaceClassification::PERSONAL,
+            UserId::fromString($owner),
         );
 
         $contentRepositoryInstance = $this->contentRepositoryRegistry->get($contentRepositoryId);

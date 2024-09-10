@@ -211,13 +211,12 @@ class WorkspaceController extends AbstractModuleController
         }
 
         try {
-            $this->workspaceService->createWorkspace(
+            $this->workspaceService->createSharedWorkspace(
                 $contentRepositoryId,
                 $title,
                 $description,
                 $baseWorkspace,
                 $currentUser->getId(),
-                WorkspaceClassification::SHARED,
             );
         } catch (WorkspaceAlreadyExists $exception) {
             $this->addFlashMessage(

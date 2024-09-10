@@ -25,7 +25,6 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\Annotations as Flow;
-use Neos\Flow\Utility\Algorithms;
 use Neos\Neos\Domain\Model\User;
 use Neos\Neos\Domain\Model\UserId;
 use Neos\Neos\Domain\Model\WorkspaceClassification;
@@ -155,7 +154,57 @@ final class WorkspaceService
         return $workspaceName;
     }
 
-    public function createWorkspace(
+    public function createPersonalWorkspace(
+        ContentRepositoryId $contentRepositoryId,
+        WorkspaceTitle $title,
+        WorkspaceDescription $description,
+        WorkspaceName $baseWorkspaceName,
+        UserId $ownerId,
+    ): WorkspaceName {
+        return $this->createWorkspace($contentRepositoryId, $title, $description, $baseWorkspaceName, $ownerId, WorkspaceClassification::PERSONAL);
+    }
+
+    public function createSharedWorkspace(
+        ContentRepositoryId $contentRepositoryId,
+        WorkspaceTitle $title,
+        WorkspaceDescription $description,
+        WorkspaceName $baseWorkspaceName,
+        UserId|null $ownerId = null,
+    ): WorkspaceName {
+        return $this->createWorkspace($contentRepositoryId, $title, $description, $baseWorkspaceName, $ownerId, WorkspaceClassification::SHARED);
+    }
+
+    public function createPersonalWorkspaceForUserIfMissing(ContentRepositoryId $contentRepositoryId, User $user): void
+    {
+        $existingWorkspaceName = $this->findPrimaryWorkspaceNameForUser($contentRepositoryId, $user->getId());
+        if ($existingWorkspaceName !== null) {
+            $this->requireWorkspace($contentRepositoryId, $existingWorkspaceName);
+            return;
+        }
+        $this->createPersonalWorkspace(
+            $contentRepositoryId,
+            WorkspaceTitle::fromString($user->getLabel()),
+            WorkspaceDescription::empty(),
+            WorkspaceName::forLive(),
+            $user->getId(),
+        );
+    }
+
+    public function getWorkspacePermissionsForUser(ContentRepositoryId $contentRepositoryId, WorkspaceName $workspaceName, User $user): WorkspacePermissions
+    {
+        $userRoles = $this->userService->getAllRoles($user);
+        $userIsAdmin = array_key_exists('Neos.Neos:Administrator', $userRoles);
+
+        $userWorkspaceRole = $this->getWorkspaceRoleOfUser($contentRepositoryId, $workspaceName, $user->getId(), array_keys($userRoles));
+
+        return WorkspacePermissions::create(
+            read: $userIsAdmin || $userWorkspaceRole->isAtLeast(WorkspaceRole::COLLABORATOR),
+            write: $userIsAdmin || $userWorkspaceRole->isAtLeast(WorkspaceRole::COLLABORATOR),
+            manage: $userIsAdmin || $userWorkspaceRole->isAtLeast(WorkspaceRole::MANAGER),
+        );
+    }
+
+    private function createWorkspace(
         ContentRepositoryId $contentRepositoryId,
         WorkspaceTitle $title,
         WorkspaceDescription $description,
@@ -198,37 +247,6 @@ final class WorkspaceService
         ]);
 
         return $workspaceName;
-    }
-
-    public function createPersonalWorkspaceForUserIfMissing(ContentRepositoryId $contentRepositoryId, User $user): void
-    {
-        $existingWorkspaceName = $this->findPrimaryWorkspaceNameForUser($contentRepositoryId, $user->getId());
-        if ($existingWorkspaceName !== null) {
-            $this->requireWorkspace($contentRepositoryId, $existingWorkspaceName);
-            return;
-        }
-        $this->createWorkspace(
-            $contentRepositoryId,
-            WorkspaceTitle::fromString($user->getLabel()),
-            WorkspaceDescription::empty(),
-            WorkspaceName::forLive(),
-            $user->getId(),
-            WorkspaceClassification::PERSONAL,
-        );
-    }
-
-    public function getWorkspacePermissionsForUser(ContentRepositoryId $contentRepositoryId, WorkspaceName $workspaceName, User $user): WorkspacePermissions
-    {
-        $userRoles = $this->userService->getAllRoles($user);
-        $userIsAdmin = array_key_exists('Neos.Neos:Administrator', $userRoles);
-
-        $userWorkspaceRole = $this->getWorkspaceRoleOfUser($contentRepositoryId, $workspaceName, $user->getId(), array_keys($userRoles));
-
-        return WorkspacePermissions::create(
-            read: $userIsAdmin || $userWorkspaceRole->isAtLeast(WorkspaceRole::COLLABORATOR),
-            write: $userIsAdmin || $userWorkspaceRole->isAtLeast(WorkspaceRole::COLLABORATOR),
-            manage: $userIsAdmin || $userWorkspaceRole->isAtLeast(WorkspaceRole::MANAGER),
-        );
     }
 
     private function findPrimaryWorkspaceNameForUser(ContentRepositoryId $contentRepositoryId, UserId $userId): ?WorkspaceName
@@ -294,12 +312,22 @@ final class WorkspaceService
     {
         $workspaceNameCandidate = WorkspaceName::transliterateFromString($candidate);
         $workspaceName = $workspaceNameCandidate;
-        while ($contentRepository->getWorkspaceFinder()->findOneByName($workspaceName) instanceof Workspace) {
+        $attempt = 1;
+        do {
+            if ($contentRepository->getWorkspaceFinder()->findOneByName($workspaceName) === null) {
+                return $workspaceName;
+            }
+            if ($attempt === 1) {
+                $suffix = '';
+            } else {
+                $suffix = '-' . ($attempt - 1);
+            }
             $workspaceName = WorkspaceName::fromString(
-                $workspaceNameCandidate->value . '-' . strtolower(Algorithms::generateRandomString(5))
+                substr($workspaceNameCandidate->value, 0, WorkspaceName::MAX_LENGTH - strlen($suffix)) . $suffix
             );
-        }
-        return $workspaceName;
+            $attempt++;
+        } while ($attempt <= 10);
+        throw new \RuntimeException(sprintf('Failed to find unique workspace name for "%s" after %d attempts.', $candidate, $attempt - 1), 1725975479);
     }
 
 
