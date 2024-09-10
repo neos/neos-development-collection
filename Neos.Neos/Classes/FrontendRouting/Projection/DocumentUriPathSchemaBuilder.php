@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Neos\Neos\FrontendRouting\Projection;
 
 use Doctrine\DBAL\Exception as DBALException;

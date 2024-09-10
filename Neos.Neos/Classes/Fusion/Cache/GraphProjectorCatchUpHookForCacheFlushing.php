@@ -262,7 +262,7 @@ class GraphProjectorCatchUpHookForCacheFlushing implements CatchUpHookInterface
             $workspaceName,
             $nodeAggregate->nodeAggregateId,
             $nodeAggregate->nodeTypeName,
-            $this->determineParentNodeAggregateIds($workspaceName, $nodeAggregate->nodeAggregateId, NodeAggregateIds::createEmpty())
+            $this->determineAncestorNodeAggregateIds($workspaceName, $nodeAggregate->nodeAggregateId)
         );
     }
 
@@ -277,22 +277,23 @@ class GraphProjectorCatchUpHookForCacheFlushing implements CatchUpHookInterface
         );
     }
 
-    private function determineParentNodeAggregateIds(WorkspaceName $workspaceName, NodeAggregateId $childNodeAggregateId, NodeAggregateIds $collectedParentNodeAggregateIds): NodeAggregateIds
+    private function determineAncestorNodeAggregateIds(WorkspaceName $workspaceName, NodeAggregateId $childNodeAggregateId): NodeAggregateIds
     {
-        $parentNodeAggregates = $this->contentRepository->getContentGraph($workspaceName)->findParentNodeAggregates($childNodeAggregateId);
-        $parentNodeAggregateIds = NodeAggregateIds::fromArray(
-            array_map(static fn (NodeAggregate $parentNodeAggregate) => $parentNodeAggregate->nodeAggregateId, iterator_to_array($parentNodeAggregates))
-        );
+        $contentGraph = $this->contentRepository->getContentGraph($workspaceName);
+        $stack = iterator_to_array($contentGraph->findParentNodeAggregates($childNodeAggregateId));
 
-        foreach ($parentNodeAggregateIds as $parentNodeAggregateId) {
+        $ancestorNodeAggregateIds = [];
+        while ($stack !== []) {
+            $nodeAggregate = array_shift($stack);
+
             // Prevent infinite loops
-            if (!$collectedParentNodeAggregateIds->contain($parentNodeAggregateId)) {
-                $collectedParentNodeAggregateIds = $collectedParentNodeAggregateIds->merge(NodeAggregateIds::create($parentNodeAggregateId));
-                $collectedParentNodeAggregateIds = $this->determineParentNodeAggregateIds($workspaceName, $parentNodeAggregateId, $collectedParentNodeAggregateIds);
+            if (!in_array($nodeAggregate->nodeAggregateId, $ancestorNodeAggregateIds, false)) {
+                $ancestorNodeAggregateIds[] = $nodeAggregate->nodeAggregateId;
+                array_push($stack, ...iterator_to_array($contentGraph->findParentNodeAggregates($nodeAggregate->nodeAggregateId)));
             }
         }
 
-        return $collectedParentNodeAggregateIds;
+        return NodeAggregateIds::fromArray($ancestorNodeAggregateIds);
     }
 
     public function onBeforeBatchCompleted(): void
