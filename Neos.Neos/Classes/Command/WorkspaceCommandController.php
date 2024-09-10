@@ -14,7 +14,6 @@ declare(strict_types=1);
 
 namespace Neos\Neos\Command;
 
-use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Command\CreateRootWorkspace;
 use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Command\CreateWorkspace;
 use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Exception\BaseWorkspaceDoesNotExist;
 use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Exception\WorkspaceAlreadyExists;
@@ -36,6 +35,8 @@ use Neos\Flow\Cli\Exception\StopCommandException;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Neos\Domain\Model\UserId;
 use Neos\Neos\Domain\Model\WorkspaceClassification;
+use Neos\Neos\Domain\Model\WorkspaceDescription as NeosWorkspaceDescription;
+use Neos\Neos\Domain\Model\WorkspaceTitle as NeosWorkspaceTitle;
 use Neos\Neos\Domain\Service\UserService;
 use Neos\Neos\Domain\Service\WorkspacePublishingService;
 use Neos\Neos\Domain\Service\WorkspaceService;
@@ -141,18 +142,17 @@ class WorkspaceCommandController extends CommandController
      *
      * @param string $name Name of the new root
      * @param string $contentRepository Identifier of the content repository. (Default: 'default')
+     * @param string|null $description Optional description of the workspace
      */
-    public function createRootCommand(string $name, string $contentRepository = 'default'): void
+    public function createRootCommand(string $name, string $contentRepository = 'default', string $description = null): void
     {
         $contentRepositoryId = ContentRepositoryId::fromString($contentRepository);
-        $contentRepositoryInstance = $this->contentRepositoryRegistry->get($contentRepositoryId);
-
-        $contentRepositoryInstance->handle(CreateRootWorkspace::create(
-            WorkspaceName::fromString($name),
-            WorkspaceTitle::fromString($name),
-            WorkspaceDescription::fromString($name),
-            ContentStreamId::create()
-        ));
+        $workspaceName = $this->workspaceService->createRootWorkspace(
+            $contentRepositoryId,
+            NeosWorkspaceTitle::fromString($name),
+            NeosWorkspaceDescription::fromString($description ?? $name)
+        );
+        $this->outputLine('Created root workspace "%s" in content repository "%s"', [$workspaceName->value, $contentRepositoryId->value]);
     }
 
     /**
@@ -180,8 +180,8 @@ class WorkspaceCommandController extends CommandController
 
         $this->workspaceService->createWorkspace(
             $contentRepositoryId,
-            \Neos\Neos\Domain\Model\WorkspaceTitle::fromString($title ?? $workspace),
-            \Neos\Neos\Domain\Model\WorkspaceDescription::fromString($description ?? ''),
+            NeosWorkspaceTitle::fromString($title ?? $workspace),
+            NeosWorkspaceDescription::fromString($description ?? ''),
             WorkspaceName::fromString($baseWorkspace),
             \Neos\Neos\Domain\Model\UserId::fromString($owner),
             WorkspaceClassification::PERSONAL,
