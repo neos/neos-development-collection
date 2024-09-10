@@ -149,7 +149,7 @@ final class WorkspaceService
             'workspace_name' => $workspaceName->value,
             'title' => $title->value,
             'description' => $description->value,
-            'classification' => WorkspaceClassification::ROOT,
+            'classification' => WorkspaceClassification::ROOT->name,
         ]);
 
         return $workspaceName;
