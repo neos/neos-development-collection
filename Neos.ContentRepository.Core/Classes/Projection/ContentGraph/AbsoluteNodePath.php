@@ -178,4 +178,9 @@ final readonly class AbsoluteNodePath implements \JsonSerializable
     {
         return $this->serializeToString();
     }
+
+    public function __toString(): string
+    {
+        return $this->serializeToString();
+    }
 }
