@@ -24,6 +24,7 @@ use Neos\Flow\Configuration\Exception\InvalidConfigurationException;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\ActionResponse;
 use Neos\Flow\Mvc\Exception\StopActionException;
+use Neos\Flow\Mvc\Exception\ForwardException;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Security\Exception as SecurityException;
 use Neos\Fusion\Core\Cache\RuntimeContentCache;
@@ -478,7 +479,7 @@ class Runtime
             // fast path for expression or value
             try {
                 return $this->evaluateExpressionOrValueInternal($fusionPath, $fusionConfiguration, $contextObject);
-            } catch (StopActionException | SecurityException | RuntimeException $exception) {
+            } catch (StopActionException | ForwardException | SecurityException | RuntimeException $exception) {
                 throw $exception;
             } catch (\Exception $exception) {
                 return $this->handleRenderingException($fusionPath, $exception, true);
