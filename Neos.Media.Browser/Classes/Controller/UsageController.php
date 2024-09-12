@@ -98,7 +98,7 @@ class UsageController extends ActionController
 
             $contentRepository = $this->contentRepositoryRegistry->get($usage->getContentRepositoryId());
 
-            $workspace = $contentRepository->getWorkspaceFinder()->findOneByCurrentContentStreamId($usage->getContentStreamId());
+            $workspace = $contentRepository->getWorkspaceFinder()->findOneByName($usage->getWorkspaceName());
 
             // FIXME: AssetUsageReference->workspaceName ?
             $nodeAggregate = $contentRepository->getContentGraph($workspace->workspaceName)->findNodeAggregateById(

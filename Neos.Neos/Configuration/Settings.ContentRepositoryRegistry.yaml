@@ -19,5 +19,5 @@ Neos:
             catchUpHooks:
               'Neos.Neos:FlushContentCache':
                 factoryObjectName: Neos\Neos\Fusion\Cache\GraphProjectorCatchUpHookForCacheFlushingFactory
-          'Neos.Neos:AssetUsage':
-            factoryObjectName: Neos\Neos\AssetUsage\Projection\AssetUsageProjectionFactory
+              'Neos.Neos:AssetUsage':
+                factoryObjectName: Neos\Neos\AssetUsage\CatchUpHook\AssetUsageCatchUpHookFactory
