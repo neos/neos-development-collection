@@ -13,6 +13,8 @@ use Neos\ContentRepositoryRegistry\Service\ProjectionReplayServiceFactory;
 use Neos\EventStore\Model\Event\SequenceNumber;
 use Neos\EventStore\Model\EventStore\StatusType;
 use Neos\Flow\Cli\CommandController;
+use Symfony\Component\Console\Helper\ProgressBar;
+use Symfony\Component\Console\Output\ConsoleOutput;
 use Symfony\Component\Console\Output\Output;
 
 final class CrCommandController extends CommandController
@@ -36,22 +38,10 @@ final class CrCommandController extends CommandController
      * That command will also display information what is about to be migrated.
      *
      * @param string $contentRepository Identifier of the Content Repository to set up
-     * @param bool $resetProjections Advanced. Can be used in rare cases when the projections cannot be migrated to reset everything in advance. This requires a full replay afterwards.
      */
-    public function setupCommand(string $contentRepository = 'default', bool $resetProjections = false): void
+    public function setupCommand(string $contentRepository = 'default'): void
     {
         $contentRepositoryId = ContentRepositoryId::fromString($contentRepository);
-
-        if ($resetProjections) {
-            if (!$this->output->askConfirmation(sprintf('> Advanced Mode. The flag --reset-projections will reset all projections in "%s", which leaves you with empty projections to be replayed. Are you sure to proceed? (y/n) ', $contentRepositoryId->value), false)) {
-                $this->outputLine('<comment>Abort.</comment>');
-                return;
-            }
-
-            $projectionService = $this->contentRepositoryRegistry->buildService($contentRepositoryId, $this->projectionServiceFactory);
-            $projectionService->resetAllProjections();
-            $this->outputLine('<success>All projections of Content Repository "%s" were resettet.</success>', [$contentRepositoryId->value]);
-        }
 
         $this->contentRepositoryRegistry->get($contentRepositoryId)->setUp();
         $this->outputLine('<success>Content Repository "%s" was set up</success>', [$contentRepositoryId->value]);
@@ -116,6 +106,11 @@ final class CrCommandController extends CommandController
      */
     public function projectionReplayCommand(string $projection, string $contentRepository = 'default', bool $force = false, bool $quiet = false, int $until = 0): void
     {
+        if ($quiet) {
+            $this->output->getOutput()->setVerbosity(Output::VERBOSITY_QUIET);
+        }
+        $progressBar = new ProgressBar($this->output->getOutput());
+        $progressBar->setFormat(' %current%/%max% [%bar%] %percent:3s%% %elapsed:16s%/%estimated:-16s% %memory:6s%');
         if (!$force && $quiet) {
             $this->outputLine('Cannot run in quiet mode without --force. Please acknowledge that this command will reset and replay this projection. This may take some time.');
             $this->quit(1);
@@ -129,19 +124,18 @@ final class CrCommandController extends CommandController
         $contentRepositoryId = ContentRepositoryId::fromString($contentRepository);
         $projectionService = $this->contentRepositoryRegistry->buildService($contentRepositoryId, $this->projectionServiceFactory);
 
+        $options = CatchUpOptions::create();
         if (!$quiet) {
             $this->outputLine('Replaying events for projection "%s" of Content Repository "%s" ...', [$projection, $contentRepositoryId->value]);
-            $this->output->progressStart();
+            $progressBar->start(max($until > 0 ? $until : $projectionService->highestSequenceNumber()->value, 1));
+            $options = $options->with(progressCallback: fn () => $progressBar->advance());
         }
-        $options = CatchUpOptions::create(
-            progressCallback: fn () => $this->output->progressAdvance(),
-        );
         if ($until > 0) {
             $options = $options->with(maximumSequenceNumber: SequenceNumber::fromInteger($until));
         }
         $projectionService->replayProjection($projection, $options);
         if (!$quiet) {
-            $this->output->progressFinish();
+            $progressBar->finish();
             $this->outputLine();
             $this->outputLine('<success>Done.</success>');
         }
@@ -153,9 +147,23 @@ final class CrCommandController extends CommandController
      * @param string $contentRepository Identifier of the Content Repository instance to operate on
      * @param bool $force Replay the projection without confirmation. This may take some time!
      * @param bool $quiet If set only fatal errors are rendered to the output (must be used with --force flag to avoid user input)
+     * @param int $until Until which sequence number should projections be replayed? useful for debugging
      */
-    public function projectionReplayAllCommand(string $contentRepository = 'default', bool $force = false, bool $quiet = false): void
+    public function projectionReplayAllCommand(string $contentRepository = 'default', bool $force = false, bool $quiet = false, int $until = 0): void
     {
+        if ($quiet) {
+            $this->output->getOutput()->setVerbosity(Output::VERBOSITY_QUIET);
+        }
+        $mainSection = ($this->output->getOutput() instanceof ConsoleOutput) ? $this->output->getOutput()->section() : $this->output->getOutput();
+        $mainProgressBar = new ProgressBar($mainSection);
+        $mainProgressBar->setBarCharacter('<success>█</success>');
+        $mainProgressBar->setEmptyBarCharacter('░');
+        $mainProgressBar->setProgressCharacter('<success>█</success>');
+        $mainProgressBar->setFormat('debug');
+
+        $subSection = ($this->output->getOutput() instanceof ConsoleOutput) ? $this->output->getOutput()->section() : $this->output->getOutput();
+        $progressBar = new ProgressBar($subSection);
+        $progressBar->setFormat(' %message% - %current%/%max% [%bar%] %percent:3s%% %elapsed:16s%/%estimated:-16s% %memory:6s%');
         if (!$force && $quiet) {
             $this->outputLine('Cannot run in quiet mode without --force. Please acknowledge that this command will reset and replay this projection. This may take some time.');
             $this->quit(1);
@@ -171,9 +179,28 @@ final class CrCommandController extends CommandController
         if (!$quiet) {
             $this->outputLine('Replaying events for all projections of Content Repository "%s" ...', [$contentRepositoryId->value]);
         }
-        // TODO progress bar with all events? Like projectionReplayCommand?
-        $projectionService->replayAllProjections(CatchUpOptions::create(), fn (string $projectionAlias) => $this->outputLine(sprintf(' * replaying %s projection', $projectionAlias)));
+        $options = CatchUpOptions::create();
         if (!$quiet) {
+            $options = $options->with(progressCallback: fn () => $progressBar->advance());
+        }
+        if ($until > 0) {
+            $options = $options->with(maximumSequenceNumber: SequenceNumber::fromInteger($until));
+        }
+        $highestSequenceNumber = max($until > 0 ? $until : $projectionService->highestSequenceNumber()->value, 1);
+        $mainProgressBar->start($projectionService->numberOfProjections());
+        $mainProgressCallback = null;
+        if (!$quiet) {
+            $mainProgressCallback = static function (string $projectionAlias) use ($mainProgressBar, $progressBar, $highestSequenceNumber) {
+                $mainProgressBar->advance();
+                $progressBar->setMessage($projectionAlias);
+                $progressBar->start($highestSequenceNumber);
+                $progressBar->setProgress(0);
+            };
+        }
+        $projectionService->replayAllProjections($options, $mainProgressCallback);
+        if (!$quiet) {
+            $mainProgressBar->finish();
+            $progressBar->finish();
             $this->outputLine('<success>Done.</success>');
         }
     }

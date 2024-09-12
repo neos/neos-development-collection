@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 namespace Neos\ContentRepository\NodeAccess\FlowQueryOperations;
 
 /*
@@ -67,14 +70,15 @@ class PrevOperation extends AbstractOperation
     {
         $output = [];
         $outputNodePaths = [];
+        /** @var Node $contextNode */
         foreach ($flowQuery->getContext() as $contextNode) {
             $previousNode = $this->contentRepositoryRegistry->subgraphForNode($contextNode)
                 ->findPrecedingSiblingNodes(
-                    $contextNode->nodeAggregateId,
+                    $contextNode->aggregateId,
                     FindPrecedingSiblingNodesFilter::create()
                 )->first();
-            if ($previousNode !== null && !isset($outputNodePaths[$previousNode->nodeAggregateId->value])) {
-                $outputNodePaths[$previousNode->nodeAggregateId->value] = true;
+            if ($previousNode !== null && !isset($outputNodePaths[$previousNode->aggregateId->value])) {
+                $outputNodePaths[$previousNode->aggregateId->value] = true;
                 $output[] = $previousNode;
             }
         }

@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 namespace Neos\ContentRepository\NodeAccess\FlowQueryOperations;
 
 /*
@@ -66,17 +69,17 @@ class ParentOperation extends AbstractOperation
     {
         $output = [];
         $outputNodeAggregateIds = [];
+        /** @var Node $contextNode */
         foreach ($flowQuery->getContext() as $contextNode) {
-            /* @var $contextNode Node */
             $parentNode = $this->contentRepositoryRegistry->subgraphForNode($contextNode)
-                ->findParentNode($contextNode->nodeAggregateId);
+                ->findParentNode($contextNode->aggregateId);
             if ($parentNode === null) {
                 continue;
             }
 
-            if (!isset($outputNodeAggregateIds[$parentNode->nodeAggregateId->value])) {
+            if (!isset($outputNodeAggregateIds[$parentNode->aggregateId->value])) {
                 $output[] = $parentNode;
-                $outputNodeAggregateIds[$parentNode->nodeAggregateId->value] = true;
+                $outputNodeAggregateIds[$parentNode->aggregateId->value] = true;
             }
         }
 

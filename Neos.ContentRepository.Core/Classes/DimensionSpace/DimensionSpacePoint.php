@@ -19,8 +19,6 @@ use Neos\ContentRepository\Core\Dimension;
 /**
  * A point in the dimension space with coordinates DimensionName => DimensionValue.
  * E.g.: ["language" => "es", "country" => "ar"]
- *
- * Implements CacheAwareInterface because of Fusion Runtime caching and Routing
  * @api
  */
 final class DimensionSpacePoint extends AbstractDimensionSpacePoint
@@ -88,11 +86,6 @@ final class DimensionSpacePoint extends AbstractDimensionSpacePoint
         }
 
         return self::instance($coordinates);
-    }
-
-    final public static function fromUriRepresentation(string $encoded): self
-    {
-        return self::instance(json_decode(base64_decode($encoded), true));
     }
 
     /**

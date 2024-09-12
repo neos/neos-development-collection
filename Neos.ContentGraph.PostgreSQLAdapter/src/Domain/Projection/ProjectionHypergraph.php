@@ -17,7 +17,6 @@ namespace Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Exception as DBALException;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\Query\ProjectionHypergraphQuery;
-use Neos\ContentGraph\PostgreSQLAdapter\Infrastructure\PostgresDbalClientInterface;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
@@ -32,8 +31,8 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 final class ProjectionHypergraph
 {
     public function __construct(
-        private readonly PostgresDbalClientInterface $databaseClient,
-        private readonly string $tableNamePrefix
+        private readonly Connection $dbal,
+        private readonly string $tableNamePrefix,
     ) {
     }
 
@@ -55,7 +54,7 @@ final class ProjectionHypergraph
             'relationAnchorPoint' => $relationAnchorPoint->value
         ];
 
-        $result = $this->getDatabaseConnection()->executeQuery($query, $parameters)->fetchAssociative();
+        $result = $this->dbal->executeQuery($query, $parameters)->fetchAssociative();
 
         return $result ? NodeRecord::fromDatabaseRow($result) : null;
     }
@@ -71,7 +70,7 @@ final class ProjectionHypergraph
         $query = ProjectionHypergraphQuery::create($contentStreamId, $this->tableNamePrefix);
         $query =  $query->withDimensionSpacePoint($dimensionSpacePoint)
             ->withNodeAggregateId($nodeAggregateId);
-        $result = $query->execute($this->getDatabaseConnection())->fetchAssociative();
+        $result = $query->execute($this->dbal)->fetchAssociative();
 
         return $result ? NodeRecord::fromDatabaseRow($result) : null;
     }
@@ -88,7 +87,7 @@ final class ProjectionHypergraph
         $query = $query->withOriginDimensionSpacePoint($originDimensionSpacePoint);
         $query = $query->withNodeAggregateId($nodeAggregateId);
 
-        $result = $query->execute($this->getDatabaseConnection())->fetchAssociative();
+        $result = $query->execute($this->dbal)->fetchAssociative();
 
         return $result ? NodeRecord::fromDatabaseRow($result) : null;
     }
@@ -118,7 +117,7 @@ final class ProjectionHypergraph
             'childNodeAggregateId' => $childNodeAggregateId->value
         ];
 
-        $result = $this->getDatabaseConnection()
+        $result = $this->dbal
             ->executeQuery($query, $parameters)
             ->fetchAssociative();
 
@@ -171,7 +170,7 @@ final class ProjectionHypergraph
             'childNodeAggregateId' => $childNodeAggregateId->value
         ];
 
-        $result = $this->getDatabaseConnection()
+        $result = $this->dbal
             ->executeQuery($query, $parameters)
             ->fetchAssociative();
 
@@ -189,7 +188,7 @@ final class ProjectionHypergraph
         $query = ProjectionHypergraphQuery::create($contentStreamId, $this->tableNamePrefix);
         $query = $query->withNodeAggregateId($nodeAggregateId);
 
-        $result = $query->execute($this->getDatabaseConnection())->fetchAllAssociative();
+        $result = $query->execute($this->dbal)->fetchAllAssociative();
 
         return array_map(function ($row) {
             return NodeRecord::fromDatabaseRow($row);
@@ -224,7 +223,7 @@ final class ProjectionHypergraph
         }
 
         $hierarchyHyperrelations = [];
-        foreach ($this->getDatabaseConnection()->executeQuery($query, $parameters, $types) as $row) {
+        foreach ($this->dbal->executeQuery($query, $parameters, $types)->iterateAssociative() as $row) {
             $hierarchyHyperrelations[] = HierarchyHyperrelationRecord::fromDatabaseRow($row);
         }
 
@@ -259,7 +258,7 @@ final class ProjectionHypergraph
         $types['affectedDimensionSpacePointHashes'] = Connection::PARAM_STR_ARRAY;
 
         $hierarchyHyperrelations = [];
-        foreach ($this->getDatabaseConnection()->executeQuery($query, $parameters, $types) as $row) {
+        foreach ($this->dbal->executeQuery($query, $parameters, $types)->iterateAssociative() as $row) {
             $hierarchyHyperrelations[] = HierarchyHyperrelationRecord::fromDatabaseRow($row);
         }
 
@@ -283,7 +282,7 @@ final class ProjectionHypergraph
         ];
 
         $referenceHyperrelations = [];
-        foreach ($this->getDatabaseConnection()->executeQuery($query, $parameters) as $row) {
+        foreach ($this->dbal->executeQuery($query, $parameters)->iterateAssociative() as $row) {
             $referenceHyperrelations[] = ReferenceRelationRecord::fromDatabaseRow($row);
         }
 
@@ -291,7 +290,6 @@ final class ProjectionHypergraph
     }
 
     /**
-     * @throws \Doctrine\DBAL\Driver\Exception
      * @throws DBALException
      */
     public function findHierarchyHyperrelationRecordByParentNodeAnchor(
@@ -312,13 +310,12 @@ final class ProjectionHypergraph
             'parentNodeAnchor' => $parentNodeAnchor->value
         ];
 
-        $result = $this->getDatabaseConnection()->executeQuery($query, $parameters)->fetchAssociative();
+        $result = $this->dbal->executeQuery($query, $parameters)->fetchAssociative();
 
         return $result ? HierarchyHyperrelationRecord::fromDatabaseRow($result) : null;
     }
 
     /**
-     * @throws \Doctrine\DBAL\Driver\Exception
      * @throws DBALException
      */
     public function findHierarchyHyperrelationRecordByChildNodeAnchor(
@@ -339,14 +336,13 @@ final class ProjectionHypergraph
             'childNodeAnchor' => $childNodeAnchor->value
         ];
 
-        $result = $this->getDatabaseConnection()->executeQuery($query, $parameters)->fetchAssociative();
+        $result = $this->dbal->executeQuery($query, $parameters)->fetchAssociative();
 
         return $result ? HierarchyHyperrelationRecord::fromDatabaseRow($result) : null;
     }
 
     /**
      * @return array|HierarchyHyperrelationRecord[]
-     * @throws \Doctrine\DBAL\Driver\Exception
      * @throws DBALException
      */
     public function findHierarchyHyperrelationRecordsByChildNodeAnchor(
@@ -362,7 +358,7 @@ final class ProjectionHypergraph
         ];
 
         $hierarchyRelationRecords = [];
-        $result = $this->getDatabaseConnection()->executeQuery($query, $parameters)->fetchAllAssociative();
+        $result = $this->dbal->executeQuery($query, $parameters)->fetchAllAssociative();
         foreach ($result as $row) {
             $hierarchyRelationRecords[] = HierarchyHyperrelationRecord::fromDatabaseRow($row);
         }
@@ -371,7 +367,6 @@ final class ProjectionHypergraph
     }
 
     /**
-     * @throws \Doctrine\DBAL\Driver\Exception
      * @throws DBALException
      */
     public function findChildHierarchyHyperrelationRecord(
@@ -393,7 +388,7 @@ final class ProjectionHypergraph
             'dimensionSpacePointHash' => $dimensionSpacePoint->hash
         ];
 
-        $result = $this->getDatabaseConnection()->executeQuery($query, $parameters)->fetchAssociative();
+        $result = $this->dbal->executeQuery($query, $parameters)->fetchAssociative();
 
         return $result ? HierarchyHyperrelationRecord::fromDatabaseRow($result) : null;
     }
@@ -403,7 +398,6 @@ final class ProjectionHypergraph
      * @param NodeRelationAnchorPoint $nodeRelationAnchorPoint
      * @return DimensionSpacePointSet
      * @throws DBALException
-     * @throws \Doctrine\DBAL\Driver\Exception
      */
     public function findCoverageByNodeRelationAnchorPoint(
         ContentStreamId $contentStreamId,
@@ -421,7 +415,7 @@ final class ProjectionHypergraph
         ];
 
         $dimensionSpacePoints = [];
-        foreach ($this->getDatabaseConnection()->executeQuery($query, $parameters)->fetchAllAssociative() as $row) {
+        foreach ($this->dbal->executeQuery($query, $parameters)->fetchAllAssociative() as $row) {
             $dimensionSpacePoints[] = DimensionSpacePoint::fromJsonString($row['dimensionspacepoint']);
         }
 
@@ -433,7 +427,6 @@ final class ProjectionHypergraph
      * @param NodeAggregateId $nodeAggregateId
      * @return DimensionSpacePointSet
      * @throws DBALException
-     * @throws \Doctrine\DBAL\Driver\Exception
      */
     public function findCoverageByNodeAggregateId(
         ContentStreamId $contentStreamId,
@@ -451,7 +444,7 @@ final class ProjectionHypergraph
         ];
 
         $dimensionSpacePoints = [];
-        foreach ($this->getDatabaseConnection()->executeQuery($query, $parameters)->fetchAllAssociative() as $row) {
+        foreach ($this->dbal->executeQuery($query, $parameters)->fetchAllAssociative() as $row) {
             $dimensionSpacePoints[] = DimensionSpacePoint::fromJsonString($row['dimensionspacepoint']);
         }
 
@@ -464,7 +457,6 @@ final class ProjectionHypergraph
      * @param NodeAggregateId $originNodeAggregateId
      * @return array|RestrictionHyperrelationRecord[]
      * @throws DBALException
-     * @throws \Doctrine\DBAL\Driver\Exception
      */
     public function findOutgoingRestrictionRelations(
         ContentStreamId $contentStreamId,
@@ -489,7 +481,7 @@ final class ProjectionHypergraph
 
         $restrictionRelationRecords = [];
         foreach (
-            $this->getDatabaseConnection()->executeQuery($query, $parameters, $types)
+            $this->dbal->executeQuery($query, $parameters, $types)
                 ->fetchAllAssociative() as $row
         ) {
             $restrictionRelationRecords[] = RestrictionHyperrelationRecord::fromDatabaseRow($row);
@@ -501,7 +493,6 @@ final class ProjectionHypergraph
     /**
      * @return array|RestrictionHyperrelationRecord[]
      * @throws DBALException
-     * @throws \Doctrine\DBAL\Driver\Exception
      */
     public function findIngoingRestrictionRelations(
         ContentStreamId $contentStreamId,
@@ -522,7 +513,7 @@ final class ProjectionHypergraph
         ];
 
         $restrictionRelations = [];
-        $rows = $this->getDatabaseConnection()->executeQuery($query, $parameters)->fetchAllAssociative();
+        $rows = $this->dbal->executeQuery($query, $parameters)->fetchAllAssociative();
         foreach ($rows as $row) {
             $restrictionRelations[] = RestrictionHyperrelationRecord::fromDatabaseRow($row);
         }
@@ -536,7 +527,6 @@ final class ProjectionHypergraph
      * @param NodeAggregateId $nodeAggregateId
      * @return array|NodeAggregateIds[]
      * @throws DBALException
-     * @throws \Doctrine\DBAL\Driver\Exception
      */
     public function findDescendantNodeAggregateIds(
         ContentStreamId $contentStreamId,
@@ -589,7 +579,7 @@ final class ProjectionHypergraph
             'affectedDimensionSpacePointHashes' => Connection::PARAM_STR_ARRAY
         ];
 
-        $rows = $this->getDatabaseConnection()->executeQuery($query, $parameters, $types)
+        $rows = $this->dbal->executeQuery($query, $parameters, $types)
             ->fetchAllAssociative();
         $nodeAggregateIdsByDimensionSpacePoint = [];
         foreach ($rows as $row) {
@@ -614,11 +604,6 @@ final class ProjectionHypergraph
             'anchorPoint' => $anchorPoint->value
         ];
 
-        return (int)$this->getDatabaseConnection()->executeQuery($query, $parameters)->rowCount();
-    }
-
-    protected function getDatabaseConnection(): Connection
-    {
-        return $this->databaseClient->getConnection();
+        return (int)$this->dbal->executeQuery($query, $parameters)->rowCount();
     }
 }

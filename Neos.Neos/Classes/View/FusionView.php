@@ -73,7 +73,7 @@ class FusionView extends AbstractView
         $currentNode = $this->getCurrentNode();
 
         $subgraph = $this->contentRepositoryRegistry->subgraphForNode($currentNode);
-        $currentSiteNode = $subgraph->findClosestNode($currentNode->nodeAggregateId, FindClosestNodeFilter::create(nodeTypes: NodeTypeNameFactory::NAME_SITE));
+        $currentSiteNode = $subgraph->findClosestNode($currentNode->aggregateId, FindClosestNodeFilter::create(nodeTypes: NodeTypeNameFactory::NAME_SITE));
 
         if (!$currentSiteNode) {
             throw new \RuntimeException('No site node found!', 1697053346);
@@ -81,7 +81,7 @@ class FusionView extends AbstractView
 
         $fusionRuntime = $this->getFusionRuntime($currentSiteNode);
 
-        $this->setFallbackRuleFromDimension($currentNode->subgraphIdentity->dimensionSpacePoint);
+        $this->setFallbackRuleFromDimension($currentNode->dimensionSpacePoint);
 
         return $fusionRuntime->renderEntryPathWithContext($this->fusionPath, [
             'node' => $currentNode,
@@ -166,7 +166,7 @@ class FusionView extends AbstractView
     protected function getClosestDocumentNode(Node $node): ?Node
     {
         return $this->contentRepositoryRegistry->subgraphForNode($node)
-            ->findClosestNode($node->nodeAggregateId, FindClosestNodeFilter::create(nodeTypes: NodeTypeNameFactory::NAME_DOCUMENT));
+            ->findClosestNode($node->aggregateId, FindClosestNodeFilter::create(nodeTypes: NodeTypeNameFactory::NAME_DOCUMENT));
     }
 
     /**
@@ -229,7 +229,7 @@ class FusionView extends AbstractView
      * @param string $key
      * @param mixed $value
      */
-    public function assign($key, $value): AbstractView
+    public function assign(string $key, mixed $value): self
     {
         if ($key === 'request') {
             // the request cannot be used as "normal" fusion variable and must be treated as FusionGlobal

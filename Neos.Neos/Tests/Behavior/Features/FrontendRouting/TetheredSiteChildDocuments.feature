@@ -30,12 +30,11 @@ Feature: Tests for site node child documents. These are special in that they hav
       | Key                | Value           |
       | workspaceName      | "live"          |
       | newContentStreamId | "cs-identifier" |
-    And I am in the active content stream of workspace "live" and dimension space point {}
+    And I am in workspace "live" and dimension space point {}
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key             | Value                    |
       | nodeAggregateId | "lady-eleonode-rootford" |
       | nodeTypeName    | "Neos.Neos:Sites"        |
-    And the graph projection is fully up to date
     # We explicitly create a site node with a tethered child document without uriPathSegment, so its uriPath is empty, exactly as the site node's
     And the following CreateNodeAggregateWithNode commands are executed:
       | nodeAggregateId | parentNodeAggregateId  | nodeTypeName                | initialPropertyValues | nodeName |
@@ -46,13 +45,13 @@ Feature: Tests for site node child documents. These are special in that they hav
     Neos:
       Neos:
         sites:
-          '*':
-            contentRepository: default
+          'site':
+            preset: default
+            uriPathSuffix: ''
             contentDimensions:
               resolver:
                 factoryClassName: Neos\Neos\FrontendRouting\DimensionResolution\Resolver\NoopResolverFactory
     """
-    And The documenturipath projection is up to date
 
   Scenario: Set tethered child uriPathSegment
     When I remember NodeAggregateId of node "shernode-homes"s child "notFound" as "notFoundId"
@@ -60,8 +59,6 @@ Feature: Tests for site node child documents. These are special in that they hav
       | Key             | Value                           |
       | nodeAggregateId | "$notFoundId"                   |
       | propertyValues  | {"uriPathSegment": "not-found"} |
-    And the graph projection is fully up to date
-    And The documenturipath projection is up to date
     And I am on URL "/"
     Then the matched node should be "shernode-homes" in content stream "cs-identifier" and dimension "{}"
     And the node "$notFoundId" in content stream "cs-identifier" and dimension "{}" should resolve to URL "/not-found"

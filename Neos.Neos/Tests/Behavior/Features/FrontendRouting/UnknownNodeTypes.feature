@@ -24,16 +24,16 @@ Feature: Basic routing functionality (match & resolve nodes with unknown types)
       | Key                | Value           |
       | workspaceName      | "live"          |
       | newContentStreamId | "cs-identifier" |
-    And I am in the active content stream of workspace "live" and dimension space point {}
+    And I am in workspace "live" and dimension space point {}
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key             | Value                    |
       | nodeAggregateId | "lady-eleonode-rootford" |
       | nodeTypeName    | "Neos.Neos:Sites"        |
-    And the graph projection is fully up to date
 
   Scenario:
     When the event NodeAggregateWithNodeWasCreated was published with payload:
       | Key                         | Value                         |
+      | workspaceName               | "live"                        |
       | contentStreamId             | "cs-identifier"               |
       | nodeAggregateId             | "shernode-homes"              |
       | nodeTypeName                | "Neos.Neos:Test.Routing.Page" |
@@ -41,6 +41,7 @@ Feature: Basic routing functionality (match & resolve nodes with unknown types)
       | nodeAggregateClassification | "regular"                     |
     And the event NodeAggregateWithNodeWasCreated was published with payload:
       | Key                         | Value                                                                 |
+      | workspaceName               | "live"                                                                |
       | contentStreamId             | "cs-identifier"                                                       |
       | nodeAggregateId             | "sir-david-nodenborough"                                              |
       | nodeTypeName                | "Neos.Neos:Test.Routing.Page"                                         |
@@ -49,15 +50,16 @@ Feature: Basic routing functionality (match & resolve nodes with unknown types)
       | initialPropertyValues       | {"uriPathSegment": {"type": "string", "value": "david-nodenborough"}} |
     And the event NodeAggregateWithNodeWasCreated was published with payload:
       | Key                         | Value                                                           |
+      | workspaceName               | "live"                                                          |
       | contentStreamId             | "cs-identifier"                                                 |
       | nodeAggregateId             | "unknown-nodetype"                                              |
       | nodeTypeName                | "Neos.Neos:Test.Routing.NonExisting"                            |
       | parentNodeAggregateId       | "shernode-homes"                                                |
       | nodeAggregateClassification | "regular"                                                       |
       | initialPropertyValues       | {"uriPathSegment": {"type": "string", "value": "non-existing"}} |
-    And The documenturipath projection is up to date
     Then I expect the documenturipath table to contain exactly:
-      | uripath              | nodeaggregateidpath                                            | nodeaggregateid          | parentnodeaggregateid    | precedingnodeaggregateid | succeedingnodeaggregateid | nodetypename                  |
-      | ""                   | "lady-eleonode-rootford"                                       | "lady-eleonode-rootford" | null                     | null                     | null                      | "Neos.Neos:Sites"             |
-      | ""                   | "lady-eleonode-rootford/shernode-homes"                        | "shernode-homes"         | "lady-eleonode-rootford" | null                     | null                      | "Neos.Neos:Test.Routing.Page" |
-      | "david-nodenborough" | "lady-eleonode-rootford/shernode-homes/sir-david-nodenborough" | "sir-david-nodenborough" | "shernode-homes"         | null                     | null                      | "Neos.Neos:Test.Routing.Page" |
+      | uripath              | nodeaggregateidpath                                            | nodeaggregateid          | parentnodeaggregateid    | precedingnodeaggregateid | succeedingnodeaggregateid | nodetypename                         | isPlaceholder |
+      | ""                   | "lady-eleonode-rootford"                                       | "lady-eleonode-rootford" | null                     | null                     | null                      | "Neos.Neos:Sites"                    | false         |
+      | ""                   | "lady-eleonode-rootford/shernode-homes"                        | "shernode-homes"         | "lady-eleonode-rootford" | null                     | null                      | "Neos.Neos:Test.Routing.Page"        | false         |
+      | "david-nodenborough" | "lady-eleonode-rootford/shernode-homes/sir-david-nodenborough" | "sir-david-nodenborough" | "shernode-homes"         | null                     | "unknown-nodetype"        | "Neos.Neos:Test.Routing.Page"        | false         |
+      | "non-existing"       | "lady-eleonode-rootford/shernode-homes/unknown-nodetype"       | "unknown-nodetype"       | "shernode-homes"         | "sir-david-nodenborough" | null                      | "Neos.Neos:Test.Routing.NonExisting" | true          |

@@ -16,7 +16,7 @@ namespace Neos\ContentRepository\LegacyNodeMigration\Command;
 use Doctrine\DBAL\Configuration;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\DriverManager;
-use Doctrine\DBAL\Exception as DbalException;
+use Doctrine\DBAL\Exception as DBALException;
 use Doctrine\DBAL\Exception\ConnectionException;
 use Neos\ContentRepository\Core\Projection\CatchUpOptions;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
@@ -70,7 +70,7 @@ class CrCommandController extends CommandController
             $resourcesPath = $parsedConfig['resourcesPath'] ?? self::defaultResourcesPath();
             try {
                 $connection = isset($parsedConfig['dbal']) ? DriverManager::getConnection(array_merge($this->connection->getParams(), $parsedConfig['dbal']), new Configuration()) : $this->connection;
-            } catch (DbalException $e) {
+            } catch (DBALException $e) {
                 throw new \InvalidArgumentException(sprintf('Failed to get database connection, check the --config parameter: %s', $e->getMessage()), 1659527201, $e);
             }
         } else {
@@ -152,7 +152,7 @@ class CrCommandController extends CommandController
     }
 
     /**
-     * @throws DbalException
+     * @throws DBALException
      */
     private function adjustDataBaseConnection(Connection $connection): Connection
     {
@@ -163,7 +163,9 @@ class CrCommandController extends CommandController
         $connectionParams['port'] = isset($port) ? (int)$port : null;
         $connectionParams['dbname'] = $this->output->ask(sprintf('DB name? [%s] ',$connectionParams['dbname'] ?? ''), $connectionParams['dbname'] ?? null);
         $connectionParams['user'] = $this->output->ask(sprintf('DB user? [%s] ',$connectionParams['user'] ?? ''), $connectionParams['user'] ?? null);
+        /** @phpstan-ignore-next-line */
         $connectionParams['password'] = $this->output->askHiddenResponse(sprintf('DB password? [%s]', str_repeat('*', strlen($connectionParams['password'] ?? '')))) ?? $connectionParams['password'];
+        /** @phpstan-ignore-next-line  */
         return DriverManager::getConnection($connectionParams, new Configuration());
     }
 

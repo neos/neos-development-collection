@@ -14,7 +14,7 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap;
 
-use Neos\ContentRepository\Core\CommandHandler\CommandResult;
+use Neos\ContentRepository\Core\ContentGraphFinder;
 use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentSubgraphInterface;
@@ -37,8 +37,6 @@ trait CRTestSuiteRuntimeVariables
 {
     protected ?ContentRepository $currentContentRepository = null;
 
-    protected ?ContentStreamId $currentContentStreamId = null;
-
     protected ?WorkspaceName $currentWorkspaceName = null;
 
     protected ?DimensionSpacePoint $currentDimensionSpacePoint = null;
@@ -46,8 +44,6 @@ trait CRTestSuiteRuntimeVariables
     protected ?VisibilityConstraints $currentVisibilityConstraints = null;
 
     protected ?NodeAggregateId $currentRootNodeAggregateId = null;
-
-    protected ?CommandResult $lastCommandOrEventResult = null;
 
     protected ?\Exception $lastCommandException = null;
 
@@ -90,33 +86,11 @@ trait CRTestSuiteRuntimeVariables
     }
 
     /**
-     * @Given /^I am in content stream "([^"]*)"$/
-     */
-    public function iAmInContentStream(string $contentStreamId): void
-    {
-        $this->currentContentStreamId = ContentStreamId::fromString($contentStreamId);
-    }
-
-    /**
      * @Given /^I am in workspace "([^"]*)"$/
      */
     public function iAmInWorkspace(string $workspaceName): void
     {
         $this->currentWorkspaceName = WorkspaceName::fromString($workspaceName);
-    }
-
-    /**
-     * @Given /^I am in the active content stream of workspace "([^"]*)"$/
-     * @throws \Exception
-     */
-    public function iAmInTheActiveContentStreamOfWorkspace(string $workspaceName): void
-    {
-        $workspace = $this->currentContentRepository->getWorkspaceFinder()->findOneByName(WorkspaceName::fromString($workspaceName));
-        if ($workspace === null) {
-            throw new \Exception(sprintf('Workspace "%s" does not exist, projection not yet up to date?', $workspaceName), 1548149355);
-        }
-        $this->currentWorkspaceName = WorkspaceName::fromString($workspaceName);
-        $this->currentContentStreamId = $workspace->currentContentStreamId;
     }
 
     /**
@@ -128,21 +102,12 @@ trait CRTestSuiteRuntimeVariables
     }
 
     /**
-     * @Given /^I am in content stream "([^"]*)" and dimension space point (.*)$/
-     */
-    public function iAmInContentStreamAndDimensionSpacePoint(string $contentStreamId, string $dimensionSpacePoint): void
-    {
-        $this->iAmInContentStream($contentStreamId);
-        $this->iAmInDimensionSpacePoint($dimensionSpacePoint);
-    }
-
-    /**
-     * @Given /^I am in the active content stream of workspace "([^"]*)" and dimension space point (.*)$/
+     * @Given /^I am in workspace "([^"]*)" and dimension space point (.*)$/
      * @throws \Exception
      */
-    public function iAmInTheActiveContentStreamOfWorkspaceAndDimensionSpacePoint(string $workspaceName, string $dimensionSpacePoint): void
+    public function iAmInWorkspaceAndDimensionSpacePoint(string $workspaceName, string $dimensionSpacePoint): void
     {
-        $this->iAmInTheActiveContentStreamOfWorkspace($workspaceName);
+        $this->iAmInWorkspace($workspaceName);
         $this->iAmInDimensionSpacePoint($dimensionSpacePoint);
     }
 
@@ -160,8 +125,9 @@ trait CRTestSuiteRuntimeVariables
 
     public function getCurrentSubgraph(): ContentSubgraphInterface
     {
-        return $this->currentContentRepository->getContentGraph()->getSubgraph(
-            $this->currentContentStreamId,
+        $contentGraphFinder = $this->currentContentRepository->projectionState(ContentGraphFinder::class);
+
+        return $contentGraphFinder->getByWorkspaceName($this->currentWorkspaceName)->getSubgraph(
             $this->currentDimensionSpacePoint,
             $this->currentVisibilityConstraints
         );
@@ -175,12 +141,12 @@ trait CRTestSuiteRuntimeVariables
         $this->rememberedNodeAggregateIds[$indexName] = $this->getCurrentSubgraph()->findNodeByPath(
             NodePath::fromString($childNodeName),
             NodeAggregateId::fromString($parentNodeAggregateId),
-        )->nodeAggregateId;
+        )->aggregateId;
     }
 
     protected function getCurrentNodeAggregateId(): NodeAggregateId
     {
         assert($this->currentNode instanceof Node);
-        return $this->currentNode->nodeAggregateId;
+        return $this->currentNode->aggregateId;
     }
 }

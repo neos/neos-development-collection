@@ -20,27 +20,24 @@ Feature: Tethered Nodes Reordering Structure changes
     And using identifier "default", I define a content repository
     And I am in content repository "default"
     And the command CreateRootWorkspace is executed with payload:
-      | Key                        | Value                |
-      | workspaceName              | "live"               |
-      | workspaceTitle             | "Live"               |
-      | workspaceDescription       | "The live workspace" |
-      | newContentStreamId | "cs-identifier"      |
-    And the graph projection is fully up to date
-    When I am in the active content stream of workspace "live" and dimension space point {}
+      | Key                  | Value                |
+      | workspaceName        | "live"               |
+      | workspaceTitle       | "Live"               |
+      | workspaceDescription | "The live workspace" |
+      | newContentStreamId   | "cs-identifier"      |
+    When I am in workspace "live" and dimension space point {}
     And the command CreateRootNodeAggregateWithNode is executed with payload:
-      | Key                         | Value                         |
-      | nodeAggregateId     | "lady-eleonode-rootford"      |
-      | nodeTypeName                | "Neos.ContentRepository:Root" |
-    And the graph projection is fully up to date
+      | Key             | Value                         |
+      | nodeAggregateId | "lady-eleonode-rootford"      |
+      | nodeTypeName    | "Neos.ContentRepository:Root" |
     And the command CreateNodeAggregateWithNodeAndSerializedProperties is executed with payload:
-      | Key                                        | Value                                                                                                                                      |
+      | Key                                | Value                                                                                                                                      |
       | nodeAggregateId                    | "sir-david-nodenborough"                                                                                                                   |
-      | nodeTypeName                               | "Neos.ContentRepository.Testing:Document"                                                                                                  |
-      | originDimensionSpacePoint                  | {}                                                                                                                                         |
+      | nodeTypeName                       | "Neos.ContentRepository.Testing:Document"                                                                                                  |
+      | originDimensionSpacePoint          | {}                                                                                                                                         |
       | parentNodeAggregateId              | "lady-eleonode-rootford"                                                                                                                   |
-      | nodeName                                   | "document"                                                                                                                                 |
+      | nodeName                           | "document"                                                                                                                                 |
       | tetheredDescendantNodeAggregateIds | {"tethered-node": "tethered-node-agg", "other-tethered-node": "other-tethered-node-agg", "third-tethered-node": "third-tethered-node-agg"} |
-    And the graph projection is fully up to date
 
     Then I expect no needed structure adjustments for type "Neos.ContentRepository.Testing:Document"
 
@@ -66,12 +63,12 @@ Feature: Tethered Nodes Reordering Structure changes
     'Neos.ContentRepository.Testing:Tethered': []
     """
     Then I expect the following structure adjustments for type "Neos.ContentRepository.Testing:Document":
-      | Type                          | nodeAggregateId |
-      | TETHERED_NODE_WRONGLY_ORDERED | sir-david-nodenborough  |
+      | Type                          | nodeAggregateId        |
+      | TETHERED_NODE_WRONGLY_ORDERED | sir-david-nodenborough |
     When I adjust the node structure for node type "Neos.ContentRepository.Testing:Document"
     Then I expect no needed structure adjustments for type "Neos.ContentRepository.Testing:Document"
 
-    When I am in the active content stream of workspace "live" and dimension space point {}
+    When I am in workspace "live" and dimension space point {}
     And I get the node at path "document/tethered-node"
     And I expect this node to have the following preceding siblings:
       | NodeDiscriminator                        |

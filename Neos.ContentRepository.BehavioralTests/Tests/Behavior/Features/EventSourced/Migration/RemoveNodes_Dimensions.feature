@@ -26,13 +26,11 @@ Feature: Remove Nodes
       | workspaceTitle       | "Live"               |
       | workspaceDescription | "The live workspace" |
       | newContentStreamId   | "cs-identifier"      |
-    And the graph projection is fully up to date
-    And I am in the active content stream of workspace "live"
+    And I am in workspace "live"
     And the command CreateRootNodeAggregateWithNode is executed with payload:
-      | Key                         | Value                                                                       |
-      | nodeAggregateId             | "lady-eleonode-rootford"                                                    |
-      | nodeTypeName                | "Neos.ContentRepository:Root"                                               |
-    And the graph projection is fully up to date
+      | Key             | Value                         |
+      | nodeAggregateId | "lady-eleonode-rootford"      |
+      | nodeTypeName    | "Neos.ContentRepository:Root" |
     # Node /document (in "de")
     When the command CreateNodeAggregateWithNode is executed with payload:
       | Key                       | Value                                     |
@@ -41,7 +39,6 @@ Feature: Remove Nodes
       | originDimensionSpacePoint | {"language": "de"}                        |
       | parentNodeAggregateId     | "lady-eleonode-rootford"                  |
       | initialPropertyValues     | {"text": "Original text"}                 |
-    And the graph projection is fully up to date
 
     # Node /document (in "en")
     When the command CreateNodeVariant is executed with payload:
@@ -49,11 +46,10 @@ Feature: Remove Nodes
       | nodeAggregateId | "sir-david-nodenborough" |
       | sourceOrigin    | {"language":"de"}        |
       | targetOrigin    | {"language":"en"}        |
-    And the graph projection is fully up to date
 
 
   Scenario: Remove nodes in a given dimension space point removes the node with all virtual specializations
-    When I run the following node migration for workspace "live", creating content streams "migration-cs":
+    When I run the following node migration for workspace "live", creating target workspace "migration-workspace" on contentStreamId "migration-cs", without publishing on success:
     """yaml
     migration:
       -
@@ -72,31 +68,31 @@ Feature: Remove Nodes
             type: 'RemoveNode'
     """
     # the original content stream has not been touched
-    When I am in the active content stream of workspace "live" and dimension space point {"language": "de"}
-    Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{"language": "de"}
+    When I am in workspace "live" and dimension space point {"language": "de"}
+    Then I expect a node identified by cs-identifier;sir-david-nodenborough;{"language": "de"} to exist in the content graph
 
-    When I am in the active content stream of workspace "live" and dimension space point {"language": "gsw"}
-    Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{"language": "de"}
+    When I am in workspace "live" and dimension space point {"language": "gsw"}
+    Then I expect a node identified by cs-identifier;sir-david-nodenborough;{"language": "de"} to exist in the content graph
 
-    When I am in the active content stream of workspace "live" and dimension space point {"language": "en"}
-    Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{"language": "en"}
+    When I am in workspace "live" and dimension space point {"language": "en"}
+    Then I expect a node identified by cs-identifier;sir-david-nodenborough;{"language": "en"} to exist in the content graph
 
     # the node was removed inside the new content stream, but only in de and gsw (virtual specialization)
-    When I am in content stream "migration-cs" and dimension space point {"language": "de"}
+    When I am in workspace "migration-workspace" and dimension space point {"language": "de"}
     Then I expect node aggregate identifier "sir-david-nodenborough" to lead to no node
 
-    When I am in content stream "migration-cs" and dimension space point {"language": "gsw"}
+    When I am in workspace "migration-workspace" and dimension space point {"language": "gsw"}
     Then I expect node aggregate identifier "sir-david-nodenborough" to lead to no node
 
-    When I am in content stream "migration-cs" and dimension space point {"language": "en"}
-    Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node migration-cs;sir-david-nodenborough;{"language": "en"}
+    When I am in workspace "migration-workspace" and dimension space point {"language": "en"}
+    Then I expect a node identified by migration-cs;sir-david-nodenborough;{"language": "en"} to exist in the content graph
 
     When I run integrity violation detection
     Then I expect the integrity violation detection result to contain exactly 0 errors
 
 
   Scenario: Remove nodes in a given dimension space point removes the node without shine-throughs with strategy "allSpecializations"
-    When I run the following node migration for workspace "live", creating content streams "migration-cs":
+    When I run the following node migration for workspace "live", creating target workspace "migration-workspace" on contentStreamId "migration-cs", without publishing on success:
     """yaml
     migration:
       -
@@ -118,31 +114,31 @@ Feature: Remove Nodes
     """
 
     # the original content stream has not been touched
-    When I am in the active content stream of workspace "live" and dimension space point {"language": "de"}
-    Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{"language": "de"}
+    When I am in workspace "live" and dimension space point {"language": "de"}
+    Then I expect a node identified by cs-identifier;sir-david-nodenborough;{"language": "de"} to exist in the content graph
 
-    When I am in the active content stream of workspace "live" and dimension space point {"language": "gsw"}
-    Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{"language": "de"}
+    When I am in workspace "live" and dimension space point {"language": "gsw"}
+    Then I expect a node identified by cs-identifier;sir-david-nodenborough;{"language": "de"} to exist in the content graph
 
-    When I am in the active content stream of workspace "live" and dimension space point {"language": "en"}
-    Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{"language": "en"}
+    When I am in workspace "live" and dimension space point {"language": "en"}
+    Then I expect a node identified by cs-identifier;sir-david-nodenborough;{"language": "en"} to exist in the content graph
 
     # the node was removed inside the new content stream, but only in de and gsw, since it is a specialization
-    When I am in content stream "migration-cs" and dimension space point {"language": "de"}
+    When I am in workspace "migration-workspace" and dimension space point {"language": "de"}
     Then I expect node aggregate identifier "sir-david-nodenborough" to lead to no node
 
-    When I am in content stream "migration-cs" and dimension space point {"language": "gsw"}
+    When I am in workspace "migration-workspace" and dimension space point {"language": "gsw"}
     Then I expect node aggregate identifier "sir-david-nodenborough" to lead to no node
 
-    When I am in content stream "migration-cs" and dimension space point {"language": "en"}
-    Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node migration-cs;sir-david-nodenborough;{"language": "en"}
+    When I am in workspace "migration-workspace" and dimension space point {"language": "en"}
+    Then I expect a node identified by migration-cs;sir-david-nodenborough;{"language": "en"} to exist in the content graph
 
     When I run integrity violation detection
     Then I expect the integrity violation detection result to contain exactly 0 errors
 
 
   Scenario: allVariants is not supported in RemoveNode, as this would violate the filter configuration potentially
-    When I run the following node migration for workspace "live", creating content streams "migration-cs" and exceptions are caught:
+    When I run the following node migration for workspace "live", creating target workspace "migration-workspace" on contentStreamId "migration-cs" and exceptions are caught:
     """yaml
     migration:
       -
@@ -166,7 +162,7 @@ Feature: Remove Nodes
 
 
   Scenario: Remove nodes in a virtual specialization (gsw)
-    When I run the following node migration for workspace "live", creating content streams "migration-cs":
+    When I run the following node migration for workspace "live", creating target workspace "migration-workspace" on contentStreamId "migration-cs", without publishing on success:
     """yaml
     migration:
       -
@@ -188,31 +184,31 @@ Feature: Remove Nodes
     """
 
     # the original content stream has not been touched
-    When I am in the active content stream of workspace "live" and dimension space point {"language": "de"}
-    Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{"language": "de"}
+    When I am in workspace "live" and dimension space point {"language": "de"}
+    Then I expect a node identified by cs-identifier;sir-david-nodenborough;{"language": "de"} to exist in the content graph
 
-    When I am in the active content stream of workspace "live" and dimension space point {"language": "gsw"}
-    Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{"language": "de"}
+    When I am in workspace "live" and dimension space point {"language": "gsw"}
+    Then I expect a node identified by cs-identifier;sir-david-nodenborough;{"language": "de"} to exist in the content graph
 
-    When I am in the active content stream of workspace "live" and dimension space point {"language": "en"}
-    Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{"language": "en"}
+    When I am in workspace "live" and dimension space point {"language": "en"}
+    Then I expect a node identified by cs-identifier;sir-david-nodenborough;{"language": "en"} to exist in the content graph
 
     # the node was removed inside the new content stream, but only in gsw
-    When I am in content stream "migration-cs" and dimension space point {"language": "de"}
-    Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node migration-cs;sir-david-nodenborough;{"language": "de"}
+    When I am in workspace "migration-workspace" and dimension space point {"language": "de"}
+    Then I expect a node identified by migration-cs;sir-david-nodenborough;{"language": "de"} to exist in the content graph
 
-    When I am in content stream "migration-cs" and dimension space point {"language": "gsw"}
+    When I am in workspace "migration-workspace" and dimension space point {"language": "gsw"}
     Then I expect node aggregate identifier "sir-david-nodenborough" to lead to no node
 
-    When I am in content stream "migration-cs" and dimension space point {"language": "en"}
-    Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node migration-cs;sir-david-nodenborough;{"language": "en"}
+    When I am in workspace "migration-workspace" and dimension space point {"language": "en"}
+    Then I expect a node identified by migration-cs;sir-david-nodenborough;{"language": "en"} to exist in the content graph
 
     When I run integrity violation detection
     Then I expect the integrity violation detection result to contain exactly 0 errors
 
 
   Scenario: Remove nodes in a shine-through dimension space point (gsw)
-    When I run the following node migration for workspace "live", creating content streams "migration-cs":
+    When I run the following node migration for workspace "live", creating target workspace "migration-workspace" on contentStreamId "migration-cs", without publishing on success:
     """yaml
     migration:
       -
@@ -229,31 +225,31 @@ Feature: Remove Nodes
     """
 
     # the original content stream has not been touched
-    When I am in the active content stream of workspace "live" and dimension space point {"language": "de"}
-    Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{"language": "de"}
+    When I am in workspace "live" and dimension space point {"language": "de"}
+    Then I expect a node identified by cs-identifier;sir-david-nodenborough;{"language": "de"} to exist in the content graph
 
-    When I am in the active content stream of workspace "live" and dimension space point {"language": "gsw"}
-    Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{"language": "de"}
+    When I am in workspace "live" and dimension space point {"language": "gsw"}
+    Then I expect a node identified by cs-identifier;sir-david-nodenborough;{"language": "de"} to exist in the content graph
 
-    When I am in the active content stream of workspace "live" and dimension space point {"language": "en"}
-    Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{"language": "en"}
+    When I am in workspace "live" and dimension space point {"language": "en"}
+    Then I expect a node identified by cs-identifier;sir-david-nodenborough;{"language": "en"} to exist in the content graph
 
     # the node was removed inside the new content stream, but only in gsw
-    When I am in content stream "migration-cs" and dimension space point {"language": "de"}
-    Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node migration-cs;sir-david-nodenborough;{"language": "de"}
+    When I am in workspace "migration-workspace" and dimension space point {"language": "de"}
+    Then I expect a node identified by migration-cs;sir-david-nodenborough;{"language": "de"} to exist in the content graph
 
-    When I am in content stream "migration-cs" and dimension space point {"language": "gsw"}
+    When I am in workspace "migration-workspace" and dimension space point {"language": "gsw"}
     Then I expect node aggregate identifier "sir-david-nodenborough" to lead to no node
 
-    When I am in content stream "migration-cs" and dimension space point {"language": "en"}
-    Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node migration-cs;sir-david-nodenborough;{"language": "en"}
+    When I am in workspace "migration-workspace" and dimension space point {"language": "en"}
+    Then I expect a node identified by migration-cs;sir-david-nodenborough;{"language": "en"} to exist in the content graph
 
     When I run integrity violation detection
     Then I expect the integrity violation detection result to contain exactly 0 errors
 
 
   Scenario: Remove nodes in a shine-through dimension space point (DE,gsw)
-    When I run the following node migration for workspace "live", creating content streams "migration-cs":
+    When I run the following node migration for workspace "live", creating target workspace "migration-workspace" on contentStreamId "migration-cs", without publishing on success:
     """yaml
     migration:
       -
@@ -275,30 +271,30 @@ Feature: Remove Nodes
     """
 
     # the original content stream has not been touched
-    When I am in the active content stream of workspace "live" and dimension space point {"language": "de"}
-    Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{"language": "de"}
+    When I am in workspace "live" and dimension space point {"language": "de"}
+    Then I expect a node identified by cs-identifier;sir-david-nodenborough;{"language": "de"} to exist in the content graph
 
-    When I am in the active content stream of workspace "live" and dimension space point {"language": "gsw"}
-    Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{"language": "de"}
+    When I am in workspace "live" and dimension space point {"language": "gsw"}
+    Then I expect a node identified by cs-identifier;sir-david-nodenborough;{"language": "de"} to exist in the content graph
 
-    When I am in the active content stream of workspace "live" and dimension space point {"language": "en"}
-    Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{"language": "en"}
+    When I am in workspace "live" and dimension space point {"language": "en"}
+    Then I expect a node identified by cs-identifier;sir-david-nodenborough;{"language": "en"} to exist in the content graph
 
     # the node was removed inside the new content stream, but only in gsw
-    When I am in content stream "migration-cs" and dimension space point {"language": "de"}
+    When I am in workspace "migration-workspace" and dimension space point {"language": "de"}
     Then I expect node aggregate identifier "sir-david-nodenborough" to lead to no node
 
-    When I am in content stream "migration-cs" and dimension space point {"language": "gsw"}
+    When I am in workspace "migration-workspace" and dimension space point {"language": "gsw"}
     Then I expect node aggregate identifier "sir-david-nodenborough" to lead to no node
 
-    When I am in content stream "migration-cs" and dimension space point {"language": "en"}
+    When I am in workspace "migration-workspace" and dimension space point {"language": "en"}
     Then I expect node aggregate identifier "sir-david-nodenborough" to lead to no node
 
     When I run integrity violation detection
     Then I expect the integrity violation detection result to contain exactly 0 errors
 
   Scenario: Remove nodes in a shine-through dimension space point (DE,gsw) - variant 2
-    When I run the following node migration for workspace "live", creating content streams "migration-cs":
+    When I run the following node migration for workspace "live", creating target workspace "migration-workspace" on contentStreamId "migration-cs", without publishing on success:
     """yaml
     migration:
       -
@@ -313,23 +309,23 @@ Feature: Remove Nodes
     """
 
     # the original content stream has not been touched
-    When I am in the active content stream of workspace "live" and dimension space point {"language": "de"}
-    Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{"language": "de"}
+    When I am in workspace "live" and dimension space point {"language": "de"}
+    Then I expect a node identified by cs-identifier;sir-david-nodenborough;{"language": "de"} to exist in the content graph
 
-    When I am in the active content stream of workspace "live" and dimension space point {"language": "gsw"}
-    Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{"language": "de"}
+    When I am in workspace "live" and dimension space point {"language": "gsw"}
+    Then I expect a node identified by cs-identifier;sir-david-nodenborough;{"language": "de"} to exist in the content graph
 
-    When I am in the active content stream of workspace "live" and dimension space point {"language": "en"}
-    Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{"language": "en"}
+    When I am in workspace "live" and dimension space point {"language": "en"}
+    Then I expect a node identified by cs-identifier;sir-david-nodenborough;{"language": "en"} to exist in the content graph
 
     # the node was removed inside the new content stream, but only in gsw
-    When I am in content stream "migration-cs" and dimension space point {"language": "de"}
+    When I am in workspace "migration-workspace" and dimension space point {"language": "de"}
     Then I expect node aggregate identifier "sir-david-nodenborough" to lead to no node
 
-    When I am in content stream "migration-cs" and dimension space point {"language": "gsw"}
+    When I am in workspace "migration-workspace" and dimension space point {"language": "gsw"}
     Then I expect node aggregate identifier "sir-david-nodenborough" to lead to no node
 
-    When I am in content stream "migration-cs" and dimension space point {"language": "en"}
+    When I am in workspace "migration-workspace" and dimension space point {"language": "en"}
     Then I expect node aggregate identifier "sir-david-nodenborough" to lead to no node
 
     When I run integrity violation detection

@@ -18,20 +18,22 @@ use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePointSet;
 use Neos\ContentRepository\Core\EventStore\EventInterface;
 use Neos\ContentRepository\Core\Feature\Common\EmbedsContentStreamAndNodeAggregateId;
-use Neos\ContentRepository\Core\Feature\Common\PublishableToOtherContentStreamsInterface;
+use Neos\ContentRepository\Core\Feature\Common\PublishableToWorkspaceInterface;
 use Neos\ContentRepository\Core\Feature\NodeRemoval\Command\RemoveNodeAggregate;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
+use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 
 /**
  * @api events are the persistence-API of the content repository
  */
 final readonly class NodeAggregateWasRemoved implements
     EventInterface,
-    PublishableToOtherContentStreamsInterface,
+    PublishableToWorkspaceInterface,
     EmbedsContentStreamAndNodeAggregateId
 {
     public function __construct(
+        public WorkspaceName $workspaceName,
         public ContentStreamId $contentStreamId,
         public NodeAggregateId $nodeAggregateId,
         public OriginDimensionSpacePointSet $affectedOccupiedDimensionSpacePoints,
@@ -51,10 +53,11 @@ final readonly class NodeAggregateWasRemoved implements
         return $this->nodeAggregateId;
     }
 
-    public function createCopyForContentStream(ContentStreamId $targetContentStreamId): self
+    public function withWorkspaceNameAndContentStreamId(WorkspaceName $targetWorkspaceName, ContentStreamId $contentStreamId): self
     {
         return new NodeAggregateWasRemoved(
-            $targetContentStreamId,
+            $targetWorkspaceName,
+            $contentStreamId,
             $this->nodeAggregateId,
             $this->affectedOccupiedDimensionSpacePoints,
             $this->affectedCoveredDimensionSpacePoints,
@@ -65,6 +68,7 @@ final readonly class NodeAggregateWasRemoved implements
     public static function fromArray(array $values): self
     {
         return new self(
+            WorkspaceName::fromString($values['workspaceName']),
             ContentStreamId::fromString($values['contentStreamId']),
             NodeAggregateId::fromString($values['nodeAggregateId']),
             OriginDimensionSpacePointSet::fromArray($values['affectedOccupiedDimensionSpacePoints']),

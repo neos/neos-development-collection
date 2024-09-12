@@ -32,27 +32,25 @@ trait SubtreeTagging
      */
     private function whenSubtreeWasTagged(SubtreeWasTagged $event): void
     {
-        $this->transactional(function () use ($event) {
-            $descendantNodeAggregateIdsByAffectedDimensionSpacePoint
-                = $this->getProjectionHypergraph()->findDescendantNodeAggregateIds(
-                    $event->contentStreamId,
-                    $event->affectedDimensionSpacePoints,
-                    $event->nodeAggregateId
-                );
+        $descendantNodeAggregateIdsByAffectedDimensionSpacePoint
+            = $this->getProjectionHypergraph()->findDescendantNodeAggregateIds(
+                $event->contentStreamId,
+                $event->affectedDimensionSpacePoints,
+                $event->nodeAggregateId
+            );
 
-            /** @codingStandardsIgnoreStart */
-            foreach ($descendantNodeAggregateIdsByAffectedDimensionSpacePoint as $dimensionSpacePointHash => $descendantNodeAggregateIds) {
-            /** @codingStandardsIgnoreEnd */
-                $restrictionRelation = new RestrictionHyperrelationRecord(
-                    $event->contentStreamId,
-                    $dimensionSpacePointHash,
-                    $event->nodeAggregateId,
-                    $descendantNodeAggregateIds
-                );
+        /** @codingStandardsIgnoreStart */
+        foreach ($descendantNodeAggregateIdsByAffectedDimensionSpacePoint as $dimensionSpacePointHash => $descendantNodeAggregateIds) {
+        /** @codingStandardsIgnoreEnd */
+            $restrictionRelation = new RestrictionHyperrelationRecord(
+                $event->contentStreamId,
+                $dimensionSpacePointHash,
+                $event->nodeAggregateId,
+                $descendantNodeAggregateIds
+            );
 
-                $restrictionRelation->addToDatabase($this->getDatabaseConnection(), $this->tableNamePrefix);
-            }
-        });
+            $restrictionRelation->addToDatabase($this->getDatabaseConnection(), $this->tableNamePrefix);
+        }
     }
 
     /**
@@ -60,24 +58,17 @@ trait SubtreeTagging
      */
     private function whenSubtreeWasUntagged(SubtreeWasUntagged $event): void
     {
-        $this->transactional(function () use ($event) {
-            $restrictionRelations = $this->getProjectionHypergraph()->findOutgoingRestrictionRelations(
-                $event->contentStreamId,
-                $event->affectedDimensionSpacePoints,
-                $event->nodeAggregateId,
-            );
-            foreach ($restrictionRelations as $restrictionRelation) {
-                $restrictionRelation->removeFromDatabase($this->getDatabaseConnection(), $this->tableNamePrefix);
-            }
-        });
+        $restrictionRelations = $this->getProjectionHypergraph()->findOutgoingRestrictionRelations(
+            $event->contentStreamId,
+            $event->affectedDimensionSpacePoints,
+            $event->nodeAggregateId,
+        );
+        foreach ($restrictionRelations as $restrictionRelation) {
+            $restrictionRelation->removeFromDatabase($this->getDatabaseConnection(), $this->tableNamePrefix);
+        }
     }
 
     abstract protected function getProjectionHypergraph(): ProjectionHypergraph;
-
-    /**
-     * @throws \Throwable
-     */
-    abstract protected function transactional(\Closure $operations): void;
 
     abstract protected function getDatabaseConnection(): Connection;
 }

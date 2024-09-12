@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 namespace Neos\ContentRepository\NodeAccess\FlowQueryOperations;
 
 /*
@@ -100,7 +103,7 @@ class HasOperation extends AbstractOperation
             foreach ($elements as $element) {
                 if ($element instanceof Node) {
                     $parent = $this->contentRepositoryRegistry->subgraphForNode($element)
-                        ->findParentNode($element->nodeAggregateId);
+                        ->findParentNode($element->aggregateId);
                     if (!is_null($parent)) {
                         foreach ($context as $contextElement) {
                             /** @var Node $contextElement */

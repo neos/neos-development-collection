@@ -6,12 +6,16 @@
     position: 400
   childNodes:
     column0:
+      label: 'Left Column'
       type: 'Neos.Neos:ContentCollection'
     column1:
+      label: 'Middle Left Column'
       type: 'Neos.Neos:ContentCollection'
     column2:
+      label: 'Middle Right Column'
       type: 'Neos.Neos:ContentCollection'
     column3:
+      label: 'Right Column'
       type: 'Neos.Neos:ContentCollection'
   properties:
     layout:

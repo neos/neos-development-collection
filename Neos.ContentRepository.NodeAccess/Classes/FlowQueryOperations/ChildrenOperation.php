@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 namespace Neos\ContentRepository\NodeAccess\FlowQueryOperations;
 
 /*
@@ -83,11 +86,11 @@ class ChildrenOperation extends AbstractOperation
         /** @var Node $contextNode */
         foreach ($flowQuery->getContext() as $contextNode) {
             $childNodes = $this->contentRepositoryRegistry->subgraphForNode($contextNode)
-                ->findChildNodes($contextNode->nodeAggregateId, FindChildNodesFilter::create());
+                ->findChildNodes($contextNode->aggregateId, FindChildNodesFilter::create());
             foreach ($childNodes as $childNode) {
-                if (!isset($outputNodeAggregateIds[$childNode->nodeAggregateId->value])) {
+                if (!isset($outputNodeAggregateIds[$childNode->aggregateId->value])) {
                     $output[] = $childNode;
-                    $outputNodeAggregateIds[$childNode->nodeAggregateId->value] = true;
+                    $outputNodeAggregateIds[$childNode->aggregateId->value] = true;
                 }
             }
         }
@@ -142,14 +145,14 @@ class ChildrenOperation extends AbstractOperation
                         $resolvedNode = $this->contentRepositoryRegistry->subgraphForNode($contextNode)
                             ->findNodeByPath(
                                 NodePath::fromString($nodePath),
-                                $contextNode->nodeAggregateId,
+                                $contextNode->aggregateId,
                             );
 
                         if (!is_null($resolvedNode) && !isset($filteredOutputNodeIdentifiers[
-                            $resolvedNode->nodeAggregateId->value
+                            $resolvedNode->aggregateId->value
                         ])) {
                             $filteredOutput[] = $resolvedNode;
-                            $filteredOutputNodeIdentifiers[$resolvedNode->nodeAggregateId->value] = true;
+                            $filteredOutputNodeIdentifiers[$resolvedNode->aggregateId->value] = true;
                         }
                     }
                 } elseif (count($instanceOfFilters) > 0) {
@@ -161,7 +164,7 @@ class ChildrenOperation extends AbstractOperation
                     foreach ($flowQuery->getContext() as $contextNode) {
                         $childNodes = $this->contentRepositoryRegistry->subgraphForNode($contextNode)
                             ->findChildNodes(
-                            $contextNode->nodeAggregateId,
+                            $contextNode->aggregateId,
                             FindChildNodesFilter::create(
                                 nodeTypes: NodeTypeCriteria::create(
                                     NodeTypeNames::fromStringArray($allowedNodeTypes),
@@ -172,10 +175,10 @@ class ChildrenOperation extends AbstractOperation
 
                         foreach ($childNodes as $childNode) {
                             if (!isset($filteredOutputNodeIdentifiers[
-                                $childNode->nodeAggregateId->value
+                                $childNode->aggregateId->value
                             ])) {
                                 $filteredOutput[] = $childNode;
-                                $filteredOutputNodeIdentifiers[$childNode->nodeAggregateId->value] = true;
+                                $filteredOutputNodeIdentifiers[$childNode->aggregateId->value] = true;
                             }
                         }
                     }
@@ -198,7 +201,7 @@ class ChildrenOperation extends AbstractOperation
                 /** @var Node $filteredNode */
                 foreach ($filteredOutput as $filteredNode) {
                     /** @phpstan-ignore-next-line undefined behaviour https://github.com/neos/neos-development-collection/issues/4507#issuecomment-1784123143 */
-                    if (!isset($outputNodeAggregateIds[$filteredNode->nodeAggregateId->value])) {
+                    if (!isset($outputNodeAggregateIds[$filteredNode->aggregateId->value])) {
                         $output[] = $filteredNode;
                     }
                 }

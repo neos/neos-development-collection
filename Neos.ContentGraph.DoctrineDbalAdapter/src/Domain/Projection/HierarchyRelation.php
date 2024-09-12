@@ -15,10 +15,11 @@ declare(strict_types=1);
 namespace Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection;
 
 use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\Exception as DBALException;
+use Neos\ContentGraph\DoctrineDbalAdapter\ContentGraphTableNames;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\DimensionSpacePointsRepository;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodeTags;
-use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 
 /**
@@ -31,7 +32,6 @@ final readonly class HierarchyRelation
     public function __construct(
         public NodeRelationAnchorPoint $parentNodeAnchor,
         public NodeRelationAnchorPoint $childNodeAnchor,
-        public ?NodeName $name,
         public ContentStreamId $contentStreamId,
         public DimensionSpacePoint $dimensionSpacePoint,
         public string $dimensionSpacePointHash,
@@ -40,63 +40,62 @@ final readonly class HierarchyRelation
     ) {
     }
 
-    /**
-     * @param Connection $databaseConnection
-     */
-    public function addToDatabase(Connection $databaseConnection, string $tableNamePrefix): void
+    public function addToDatabase(Connection $databaseConnection, ContentGraphTableNames $tableNames): void
     {
-        $databaseConnection->transactional(function ($databaseConnection) use (
-            $tableNamePrefix
-        ) {
-            $dimensionSpacePoints = new DimensionSpacePointsRepository($databaseConnection, $tableNamePrefix);
-            $dimensionSpacePoints->insertDimensionSpacePoint($this->dimensionSpacePoint);
+        $dimensionSpacePoints = new DimensionSpacePointsRepository($databaseConnection, $tableNames);
+        $dimensionSpacePoints->insertDimensionSpacePoint($this->dimensionSpacePoint);
+        try {
+            $subtreeTagsJson = json_encode($this->subtreeTags, JSON_THROW_ON_ERROR | JSON_FORCE_OBJECT);
+        } catch (\JsonException $e) {
+            throw new \RuntimeException(sprintf('Failed to JSON-encode Subtree Tags: %s', $e->getMessage()), 1716484752, $e);
+        }
 
-            $databaseConnection->insert($tableNamePrefix . '_hierarchyrelation', [
+        try {
+            $databaseConnection->insert($tableNames->hierarchyRelation(), [
                 'parentnodeanchor' => $this->parentNodeAnchor->value,
                 'childnodeanchor' => $this->childNodeAnchor->value,
-                'name' => $this->name?->value,
                 'contentstreamid' => $this->contentStreamId->value,
                 'dimensionspacepointhash' => $this->dimensionSpacePointHash,
                 'position' => $this->position,
-                'subtreetags' => json_encode($this->subtreeTags, JSON_THROW_ON_ERROR | JSON_FORCE_OBJECT),
+                'subtreetags' => $subtreeTagsJson,
             ]);
-        });
+        } catch (DBALException $e) {
+            throw new \RuntimeException(sprintf('Failed to add hierarchy relation to database: %s', $e->getMessage()), 1716484789, $e);
+        }
     }
 
-    /**
-     * @param Connection $databaseConnection
-     */
-    public function removeFromDatabase(Connection $databaseConnection, string $tableNamePrefix): void
+    public function removeFromDatabase(Connection $databaseConnection, ContentGraphTableNames $tableNames): void
     {
-        $databaseConnection->delete($tableNamePrefix . '_hierarchyrelation', $this->getDatabaseId());
+        try {
+            $databaseConnection->delete($tableNames->hierarchyRelation(), $this->getDatabaseId());
+        } catch (DBALException $e) {
+            throw new \RuntimeException(sprintf('Failed to remove hierarchy relation from database: %s', $e->getMessage()), 1716484823, $e);
+        }
     }
 
-    /**
-     * @param NodeRelationAnchorPoint $childAnchorPoint
-     * @param Connection $databaseConnection
-     */
     public function assignNewChildNode(
         NodeRelationAnchorPoint $childAnchorPoint,
         Connection $databaseConnection,
-        string $tableNamePrefix
+        ContentGraphTableNames $tableNames
     ): void {
-        $databaseConnection->update(
-            $tableNamePrefix . '_hierarchyrelation',
-            [
-                'childnodeanchor' => $childAnchorPoint->value
-            ],
-            $this->getDatabaseId()
-        );
+        try {
+            $databaseConnection->update(
+                $tableNames->hierarchyRelation(),
+                [
+                    'childnodeanchor' => $childAnchorPoint->value
+                ],
+                $this->getDatabaseId()
+            );
+        } catch (DBALException $e) {
+            throw new \RuntimeException(sprintf('Failed to update hierarchy relation: %s', $e->getMessage()), 1716484843, $e);
+        }
     }
 
-    /**
-     * @throws \Doctrine\DBAL\DBALException
-     */
     public function assignNewParentNode(
         NodeRelationAnchorPoint $parentAnchorPoint,
         ?int $position,
         Connection $databaseConnection,
-        string $tableNamePrefix
+        ContentGraphTableNames $tableNames
     ): void {
         $data = [
             'parentnodeanchor' => $parentAnchorPoint->value
@@ -104,22 +103,30 @@ final readonly class HierarchyRelation
         if (!is_null($position)) {
             $data['position'] = $position;
         }
-        $databaseConnection->update(
-            $tableNamePrefix . '_hierarchyrelation',
-            $data,
-            $this->getDatabaseId()
-        );
+        try {
+            $databaseConnection->update(
+                $tableNames->hierarchyRelation(),
+                $data,
+                $this->getDatabaseId()
+            );
+        } catch (DBALException $e) {
+            throw new \RuntimeException(sprintf('Failed to update hierarchy relation: %s', $e->getMessage()), 1716478609, $e);
+        }
     }
 
-    public function assignNewPosition(int $position, Connection $databaseConnection, string $tableNamePrefix): void
+    public function assignNewPosition(int $position, Connection $databaseConnection, ContentGraphTableNames $tableNames): void
     {
-        $databaseConnection->update(
-            $tableNamePrefix . '_hierarchyrelation',
-            [
-                'position' => $position
-            ],
-            $this->getDatabaseId()
-        );
+        try {
+            $databaseConnection->update(
+                $tableNames->hierarchyRelation(),
+                [
+                    'position' => $position
+                ],
+                $this->getDatabaseId()
+            );
+        } catch (DBALException $e) {
+            throw new \RuntimeException(sprintf('Failed to update hierarchy relation: %s', $e->getMessage()), 1716485014, $e);
+        }
     }
 
     /**

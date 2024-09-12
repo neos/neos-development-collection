@@ -14,10 +14,11 @@ declare(strict_types=1);
 
 namespace Neos\Neos\Command;
 
-use Neos\ContentRepository\Core\SharedModel\Exception\NodeNameIsAlreadyOccupied;
-use Neos\ContentRepository\Core\SharedModel\Exception\NodeTypeNotFoundException;
+use Neos\ContentRepository\Core\SharedModel\Exception\NodeNameIsAlreadyCovered;
+use Neos\ContentRepository\Core\SharedModel\Exception\NodeTypeNotFound;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Cli\CommandController;
+use Neos\Flow\Cli\Exception\StopCommandException;
 use Neos\Flow\Package\PackageManager;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Neos\Domain\Exception\SiteNodeNameIsAlreadyInUseByAnotherSite;
@@ -89,7 +90,7 @@ class SiteCommandController extends CommandController
 
         try {
             $this->siteService->createSite($packageKey, $name, $nodeType, $nodeName, $inactive);
-        } catch (NodeTypeNotFoundException $exception) {
+        } catch (NodeTypeNotFound $exception) {
             $this->outputLine('<error>The given node type "%s" was not found</error>', [$nodeType]);
             $this->quit(1);
         } catch (SiteNodeTypeIsInvalid $exception) {
@@ -98,7 +99,7 @@ class SiteCommandController extends CommandController
                 [$nodeType, NodeTypeNameFactory::NAME_SITE]
             );
             $this->quit(1);
-        } catch (SiteNodeNameIsAlreadyInUseByAnotherSite | NodeNameIsAlreadyOccupied $exception) {
+        } catch (SiteNodeNameIsAlreadyInUseByAnotherSite | NodeNameIsAlreadyCovered $exception) {
             $this->outputLine('<error>A site with siteNodeName "%s" already exists</error>', [$nodeName ?: $name]);
             $this->quit(1);
         }
@@ -141,55 +142,23 @@ class SiteCommandController extends CommandController
      * List available sites
      *
      * @return void
+     * @throws StopCommandException
      */
-    public function listCommand()
+    public function listCommand(): void
     {
         $sites = $this->siteRepository->findAll();
-
         if ($sites->count() === 0) {
             $this->outputLine('No sites available');
-            $this->quit(0);
+            $this->quit();
         }
 
-        $longestSiteName = 4;
-        $longestNodeName = 9;
-        $longestSiteResource = 17;
-        $availableSites = [];
-
+        $tableRows = [];
+        $tableHeaderRows = ['Name', 'Node name', 'Resource package', 'Status'];
         foreach ($sites as $site) {
-            /** @var Site $site */
-            $availableSites[] = [
-                'name' => $site->getName(),
-                'nodeName' => $site->getNodeName()->value,
-                'siteResourcesPackageKey' => $site->getSiteResourcesPackageKey(),
-                'status' => ($site->getState() === SITE::STATE_ONLINE) ? 'online' : 'offline'
-            ];
-            if (strlen($site->getName()) > $longestSiteName) {
-                $longestSiteName = strlen($site->getName());
-            }
-            if (strlen($site->getNodeName()->value) > $longestNodeName) {
-                $longestNodeName = strlen($site->getNodeName()->value);
-            }
-            if (strlen($site->getSiteResourcesPackageKey()) > $longestSiteResource) {
-                $longestSiteResource = strlen($site->getSiteResourcesPackageKey());
-            }
+            $siteStatus = ($site->getState() === SITE::STATE_ONLINE) ? 'online' : 'offline';
+            $tableRows[] = [$site->getName(), $site->getNodeName(), $site->getSiteResourcesPackageKey(), $siteStatus];
         }
-
-        $this->outputLine();
-        $this->outputLine(' ' . str_pad('Name', $longestSiteName + 15)
-            . str_pad('Node name', $longestNodeName + 15)
-            . str_pad('Resources package', $longestSiteResource + 15)
-            . 'Status ');
-        $this->outputLine(
-            str_repeat('-', $longestSiteName + $longestNodeName + $longestSiteResource + 7 + 15 + 15 + 15 + 2)
-        );
-        foreach ($availableSites as $site) {
-            $this->outputLine(' ' . str_pad($site['name'], $longestSiteName + 15)
-                . str_pad($site['nodeName'], $longestNodeName + 15)
-                . str_pad($site['siteResourcesPackageKey'], $longestSiteResource + 15)
-                . $site['status']);
-        }
-        $this->outputLine();
+        $this->output->outputTable($tableRows, $tableHeaderRows);
     }
 
     /**

@@ -1,9 +1,10 @@
 <?php
 namespace Neos\Flow\Persistence\Doctrine\Migrations;
 
-use Doctrine\Migrations\AbstractMigration;
+use Doctrine\DBAL\Platforms\AbstractMySQLPlatform;
 use Doctrine\DBAL\Platforms\MySQL57Platform;
 use Doctrine\DBAL\Schema\Schema;
+use Doctrine\Migrations\AbstractMigration;
 
 class Version20170110130217 extends AbstractMigration
 {
@@ -11,7 +12,7 @@ class Version20170110130217 extends AbstractMigration
     /**
      * @return string
      */
-    public function getDescription(): string 
+    public function getDescription(): string
     {
         return 'Adjust foreign key and index names to the renaming of TYPO3.Media to Neos.Media';
     }
@@ -20,9 +21,9 @@ class Version20170110130217 extends AbstractMigration
      * @param Schema $schema
      * @return void
      */
-    public function up(Schema $schema): void 
+    public function up(Schema $schema): void
     {
-        $this->abortIf($this->connection->getDatabasePlatform()->getName() != 'mysql', 'Migration can only be executed safely on "mysql".');
+        $this->abortIf(!($this->connection->getDatabasePlatform() instanceof AbstractMySQLPlatform), 'Migration can only be executed safely on "mysql".');
 
         // Renaming of indexes is only possible with MySQL version 5.7+
         if ($this->connection->getDatabasePlatform() instanceof MySQL57Platform) {
@@ -92,9 +93,9 @@ class Version20170110130217 extends AbstractMigration
      * @param Schema $schema
      * @return void
      */
-    public function down(Schema $schema): void 
+    public function down(Schema $schema): void
     {
-        $this->abortIf($this->connection->getDatabasePlatform()->getName() != 'mysql', 'Migration can only be executed safely on "mysql".');
+        $this->abortIf(!($this->connection->getDatabasePlatform() instanceof AbstractMySQLPlatform), 'Migration can only be executed safely on "mysql".');
 
         // Renaming of indexes is only possible with MySQL version 5.7+
         if ($this->connection->getDatabasePlatform() instanceof MySQL57Platform) {

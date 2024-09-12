@@ -15,7 +15,7 @@ Feature: Tests for the "Neos.Neos:Menu" and related Fusion prototypes
           type: string
         uriPathSegment:
           type: string
-        _hiddenInIndex:
+        hiddenInMenu:
           type: bool
     'Neos.Neos:Site':
       superTypes:
@@ -46,33 +46,33 @@ Feature: Tests for the "Neos.Neos:Menu" and related Fusion prototypes
       | Key                | Value           |
       | workspaceName      | "live"          |
       | newContentStreamId | "cs-identifier" |
-    And I am in the active content stream of workspace "live" and dimension space point {}
+    And I am in workspace "live" and dimension space point {}
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key             | Value             |
       | nodeAggregateId | "root"            |
       | nodeTypeName    | "Neos.Neos:Sites" |
-    And the graph projection is fully up to date
     And the following CreateNodeAggregateWithNode commands are executed:
-      | nodeAggregateId | parentNodeAggregateId | nodeTypeName                  | initialPropertyValues                                                  | nodeName |
-      | a               | root                  | Neos.Neos:Site                | {"title": "Node a"}                                                    | a        |
-      | a1              | a                     | Neos.Neos:Test.DocumentType1  | {"uriPathSegment": "a1", "title": "Node a1"}                           | a1       |
-      | a1a             | a1                    | Neos.Neos:Test.DocumentType2a | {"uriPathSegment": "a1a", "title": "Node a1a"}                         | a1a      |
-      | a1b             | a1                    | Neos.Neos:Test.DocumentType1  | {"uriPathSegment": "a1b", "title": "Node a1b"}                         | a1b      |
-      | a1b1            | a1b                   | Neos.Neos:Test.DocumentType1  | {"uriPathSegment": "a1b1", "title": "Node a1b1"}                       | a1b1     |
-      | a1b1a           | a1b1                  | Neos.Neos:Test.DocumentType2a | {"uriPathSegment": "a1b1a", "title": "Node a1b1a"}                     | a1b1a    |
-      | a1b1b           | a1b1                  | Neos.Neos:Test.DocumentType1  | {"uriPathSegment": "a1b1b", "title": "Node a1b1b"}                     | a1b1b    |
-      | a1b2            | a1b                   | Neos.Neos:Test.DocumentType2  | {"uriPathSegment": "a1b2", "title": "Node a1b2"}                       | a1b2     |
-      | a1b3            | a1b                   | Neos.Neos:Test.DocumentType1  | {"uriPathSegment": "a1b3", "title": "Node a1b3"}                       | a1b3     |
-      | a1c             | a1                    | Neos.Neos:Test.DocumentType1  | {"uriPathSegment": "a1c", "title": "Node a1c", "_hiddenInIndex": true} | a1c      |
-      | a1c1            | a1c                   | Neos.Neos:Test.DocumentType1  | {"uriPathSegment": "a1c1", "title": "Node a1c1"}                       | a1c1     |
+      | nodeAggregateId | parentNodeAggregateId | nodeTypeName                  | initialPropertyValues                                                | nodeName |
+      | a               | root                  | Neos.Neos:Site                | {"title": "Node a"}                                                  | a        |
+      | a1              | a                     | Neos.Neos:Test.DocumentType1  | {"uriPathSegment": "a1", "title": "Node a1"}                         | a1       |
+      | a1a             | a1                    | Neos.Neos:Test.DocumentType2a | {"uriPathSegment": "a1a", "title": "Node a1a"}                       | a1a      |
+      | a1b             | a1                    | Neos.Neos:Test.DocumentType1  | {"uriPathSegment": "a1b", "title": "Node a1b"}                       | a1b      |
+      | a1b1            | a1b                   | Neos.Neos:Test.DocumentType1  | {"uriPathSegment": "a1b1", "title": "Node a1b1"}                     | a1b1     |
+      | a1b1a           | a1b1                  | Neos.Neos:Test.DocumentType2a | {"uriPathSegment": "a1b1a", "title": "Node a1b1a"}                   | a1b1a    |
+      | a1b1b           | a1b1                  | Neos.Neos:Test.DocumentType1  | {"uriPathSegment": "a1b1b", "title": "Node a1b1b"}                   | a1b1b    |
+      | a1b2            | a1b                   | Neos.Neos:Test.DocumentType2  | {"uriPathSegment": "a1b2", "title": "Node a1b2"}                     | a1b2     |
+      | a1b3            | a1b                   | Neos.Neos:Test.DocumentType1  | {"uriPathSegment": "a1b3", "title": "Node a1b3"}                     | a1b3     |
+      | a1c             | a1                    | Neos.Neos:Test.DocumentType1  | {"uriPathSegment": "a1c", "title": "Node a1c", "hiddenInMenu": true} | a1c      |
+      | a1c1            | a1c                   | Neos.Neos:Test.DocumentType1  | {"uriPathSegment": "a1c1", "title": "Node a1c1"}                     | a1c1     |
     And A site exists for node name "a" and domain "http://localhost"
     And the sites configuration is:
     """yaml
     Neos:
       Neos:
         sites:
-          '*':
-            contentRepository: default
+          'a':
+            preset: default
+            uriPathSuffix: ''
             contentDimensions:
               resolver:
                 factoryClassName: Neos\Neos\FrontendRouting\DimensionResolution\Resolver\NoopResolverFactory
@@ -101,7 +101,7 @@ Feature: Tests for the "Neos.Neos:Menu" and related Fusion prototypes
       renderer = Neos.Fusion:Loop {
         items = ${props.items}
         itemRenderer = afx`
-          {item.node.nodeAggregateId.value}<Neos.Neos:Test.Menu.ItemStateIndicator state={item.state.value} /> ({item.menuLevel}){String.chr(10)}
+          {q(item.node).id()}<Neos.Neos:Test.Menu.ItemStateIndicator state={item.state.value} /> ({item.menuLevel}){String.chr(10)}
           <Neos.Neos:Test.Menu items={item.subItems} @if={item.subItems} />
         `
       }
@@ -352,12 +352,12 @@ Feature: Tests for the "Neos.Neos:Menu" and related Fusion prototypes
 
     """
 
-  Scenario: MenuItems (renderHiddenInIndex)
+  Scenario: MenuItems (renderHiddenInMenu)
     When I execute the following Fusion code:
     """fusion
     test = Neos.Neos:Test.Menu {
       items = Neos.Neos:MenuItems {
-        renderHiddenInIndex = true
+        renderHiddenInMenu = true
       }
     }
     """
@@ -469,13 +469,13 @@ Feature: Tests for the "Neos.Neos:Menu" and related Fusion prototypes
 
     """
 
-  Scenario: MenuItems (startingPoint a1c, renderHiddenInIndex)
+  Scenario: MenuItems (startingPoint a1c, renderHiddenInMenu)
     When I execute the following Fusion code:
     """fusion
     test = Neos.Neos:Test.Menu {
       items = Neos.Neos:MenuItems {
         startingPoint = ${q(node).find('#a1c').get(0)}
-        renderHiddenInIndex = true
+        renderHiddenInMenu = true
       }
     }
     """
@@ -500,13 +500,13 @@ Feature: Tests for the "Neos.Neos:Menu" and related Fusion prototypes
     """html
     <ul>
         <li class="active">
-            <a href="/a1" title="Neos.Neos:Test.DocumentType1">Neos.Neos:Test.DocumentType1</a>
+            <a href="/a1" title="Neos.Neos:Test.DocumentType1 (a1)">Neos.Neos:Test.DocumentType1 (a1)</a>
             <ul>
                 <li class="current">
-                    <a href="/a1/a1a" title="Neos.Neos:Test.DocumentType2a">Neos.Neos:Test.DocumentType2a</a>
+                    <a href="/a1/a1a" title="Neos.Neos:Test.DocumentType2a (a1a)">Neos.Neos:Test.DocumentType2a (a1a)</a>
                 </li>
                 <li class="normal">
-                    <a href="/a1/a1b" title="Neos.Neos:Test.DocumentType1">Neos.Neos:Test.DocumentType1</a>
+                    <a href="/a1/a1b" title="Neos.Neos:Test.DocumentType1 (a1b)">Neos.Neos:Test.DocumentType1 (a1b)</a>
                 </li>
             </ul>
         </li>
@@ -528,13 +528,13 @@ Feature: Tests for the "Neos.Neos:Menu" and related Fusion prototypes
     """html
     <ul>
       <li class="active">
-        <a href="/" title="Neos.Neos:Site">Neos.Neos:Site</a>
+        <a href="/" title="Neos.Neos:Site (a)">Neos.Neos:Site (a)</a>
       </li>
       <li class="active">
-        <a href="/a1" title="Neos.Neos:Test.DocumentType1">Neos.Neos:Test.DocumentType1</a>
+        <a href="/a1" title="Neos.Neos:Test.DocumentType1 (a1)">Neos.Neos:Test.DocumentType1 (a1)</a>
       </li>
       <li class="current">
-        <a href="/a1/a1a" title="Neos.Neos:Test.DocumentType2a">Neos.Neos:Test.DocumentType2a</a>
+        <a href="/a1/a1a" title="Neos.Neos:Test.DocumentType2a (a1a)">Neos.Neos:Test.DocumentType2a (a1a)</a>
       </li>
     </ul>
     """

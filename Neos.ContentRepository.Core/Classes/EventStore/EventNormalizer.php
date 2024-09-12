@@ -41,8 +41,10 @@ use Neos\ContentRepository\Core\Feature\WorkspacePublication\Event\WorkspaceWasP
 use Neos\ContentRepository\Core\Feature\WorkspacePublication\Event\WorkspaceWasPublished;
 use Neos\ContentRepository\Core\Feature\WorkspaceRebase\Event\WorkspaceRebaseFailed;
 use Neos\ContentRepository\Core\Feature\WorkspaceRebase\Event\WorkspaceWasRebased;
+use Neos\ContentRepository\Core\Projection\ProjectionInterface;
 use Neos\EventStore\Model\Event;
 use Neos\EventStore\Model\Event\EventData;
+use Neos\EventStore\Model\Event\EventId;
 use Neos\EventStore\Model\Event\EventType;
 
 /**
@@ -51,7 +53,7 @@ use Neos\EventStore\Model\Event\EventType;
  * For normalizing (from classes to event store), this is called from {@see ContentRepository::normalizeEvent()}.
  *
  * For denormalizing (from event store to classes), this is called in the individual projections; f.e.
- * {@see ContentGraphProjection::apply()}.
+ * {@see ProjectionInterface::apply()}.
  *
  * @api because inside projections, you get an instance of EventNormalizer to handle events.
  */
@@ -117,32 +119,6 @@ final class EventNormalizer
         }
     }
 
-    public function getEventData(EventInterface $event): EventData
-    {
-        try {
-            $eventDataAsJson = json_encode($event, JSON_THROW_ON_ERROR);
-        } catch (\JsonException $exception) {
-            throw new \InvalidArgumentException(
-                sprintf(
-                    'Failed to normalize event of type "%s": %s',
-                    get_debug_type($event),
-                    $exception->getMessage()
-                ),
-                1651838981
-            );
-        }
-        return EventData::fromString($eventDataAsJson);
-    }
-
-    public function getEventType(EventInterface $event): EventType
-    {
-        $className = get_class($event);
-
-        return $this->fullClassNameToShortEventType[$className] ?? throw new \RuntimeException(
-            'Event type ' . get_class($event) . ' not registered'
-        );
-    }
-
     /**
      * @return class-string<EventInterface>
      */
@@ -151,6 +127,23 @@ final class EventNormalizer
         return $this->shortEventTypeToFullClassName[$event->type->value] ?? throw new \InvalidArgumentException(
             sprintf('Failed to denormalize event "%s" of type "%s"', $event->id->value, $event->type->value),
             1651839705
+        );
+    }
+
+    public function normalize(EventInterface|DecoratedEvent $event): Event
+    {
+        $eventId = $event instanceof DecoratedEvent && $event->eventId !== null ? $event->eventId : EventId::create();
+        $eventMetadata = $event instanceof DecoratedEvent ? $event->eventMetadata : null;
+        $causationId = $event instanceof DecoratedEvent ? $event->causationId : null;
+        $correlationId = $event instanceof DecoratedEvent ? $event->correlationId : null;
+        $event = $event instanceof DecoratedEvent ? $event->innerEvent : $event;
+        return new Event(
+            $eventId,
+            $this->getEventType($event),
+            $this->getEventData($event),
+            $eventMetadata,
+            $causationId,
+            $correlationId,
         );
     }
 
@@ -172,9 +165,35 @@ final class EventNormalizer
         $eventInstance = $eventClassName::fromArray($eventDataAsArray);
         return match ($eventInstance::class) {
             // upcast disabled / enabled events to the corresponding SubtreeTag events
-            NodeAggregateWasDisabled::class => new SubtreeWasTagged($eventInstance->contentStreamId, $eventInstance->nodeAggregateId, $eventInstance->affectedDimensionSpacePoints, SubtreeTag::disabled()),
-            NodeAggregateWasEnabled::class => new SubtreeWasUntagged($eventInstance->contentStreamId, $eventInstance->nodeAggregateId, $eventInstance->affectedDimensionSpacePoints, SubtreeTag::disabled()),
+            NodeAggregateWasDisabled::class => new SubtreeWasTagged($eventInstance->workspaceName, $eventInstance->contentStreamId, $eventInstance->nodeAggregateId, $eventInstance->affectedDimensionSpacePoints, SubtreeTag::disabled()),
+            NodeAggregateWasEnabled::class => new SubtreeWasUntagged($eventInstance->workspaceName, $eventInstance->contentStreamId, $eventInstance->nodeAggregateId, $eventInstance->affectedDimensionSpacePoints, SubtreeTag::disabled()),
             default => $eventInstance,
         };
+    }
+
+    private function getEventData(EventInterface $event): EventData
+    {
+        try {
+            $eventDataAsJson = json_encode($event, JSON_THROW_ON_ERROR);
+        } catch (\JsonException $exception) {
+            throw new \InvalidArgumentException(
+                sprintf(
+                    'Failed to normalize event of type "%s": %s',
+                    get_debug_type($event),
+                    $exception->getMessage()
+                ),
+                1651838981
+            );
+        }
+        return EventData::fromString($eventDataAsJson);
+    }
+
+    private function getEventType(EventInterface $event): EventType
+    {
+        $className = get_class($event);
+
+        return $this->fullClassNameToShortEventType[$className] ?? throw new \RuntimeException(
+            'Event type ' . get_class($event) . ' not registered'
+        );
     }
 }

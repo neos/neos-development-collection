@@ -1,8 +1,10 @@
 <?php
 namespace Neos\Flow\Persistence\Doctrine\Migrations;
 
-use Doctrine\Migrations\AbstractMigration;
+use Doctrine\DBAL\Platforms\AbstractMySQLPlatform;
 use Doctrine\DBAL\Schema\Schema;
+use Doctrine\Migrations\AbstractMigration;
+use PDO;
 
 /**
  * A properties configuration and configurationHash for Thumbnails
@@ -13,14 +15,14 @@ class Version20150913173832 extends AbstractMigration
      * @param Schema $schema
      * @return void
      */
-    public function up(Schema $schema): void 
+    public function up(Schema $schema): void
     {
-        $this->abortIf($this->connection->getDatabasePlatform()->getName() != "mysql");
+        $this->abortIf(!($this->connection->getDatabasePlatform() instanceof AbstractMySQLPlatform));
 
         $this->addSql("ALTER TABLE typo3_media_domain_model_thumbnail ADD configuration LONGTEXT NOT NULL COMMENT '(DC2Type:json_array)', ADD configurationhash VARCHAR(32) NOT NULL");
 
         $thumbnailResult = $this->connection->executeQuery('SELECT * FROM typo3_media_domain_model_thumbnail');
-        while ($thumbnailInfo = $thumbnailResult->fetch(\PDO::FETCH_ASSOC)) {
+        while ($thumbnailInfo = $thumbnailResult->fetch(PDO::FETCH_ASSOC)) {
             $configurationArray = array_filter([
                 'maximumWidth' => $thumbnailInfo['maximumwidth'],
                 'maximumHeight' => $thumbnailInfo['maximumheight'],
@@ -43,14 +45,14 @@ class Version20150913173832 extends AbstractMigration
      * @param Schema $schema
      * @return void
      */
-    public function down(Schema $schema): void 
+    public function down(Schema $schema): void
     {
-        $this->abortIf($this->connection->getDatabasePlatform()->getName() != "mysql");
+        $this->abortIf(!($this->connection->getDatabasePlatform() instanceof AbstractMySQLPlatform));
 
         $this->addSql("ALTER TABLE typo3_media_domain_model_thumbnail ADD maximumwidth INT DEFAULT NULL, ADD maximumheight INT DEFAULT NULL, ADD ratiomode VARCHAR(255) NOT NULL COLLATE utf8mb4_unicode_ci, ADD allowupscaling TINYINT(1) DEFAULT NULL");
 
         $thumbnailResult = $this->connection->executeQuery('SELECT * FROM typo3_media_domain_model_thumbnail');
-        while ($thumbnailInfo = $thumbnailResult->fetch(\PDO::FETCH_ASSOC)) {
+        while ($thumbnailInfo = $thumbnailResult->fetch(PDO::FETCH_ASSOC)) {
             $configuration = json_decode($thumbnailInfo['configuration'], true);
             $maximumWidth = isset($configuration['maximumWidth']) ? (integer)$configuration['maximumWidth'] : null;
             $maximumWidth = $maximumWidth === 0 ? null : $maximumWidth;
@@ -59,7 +61,7 @@ class Version20150913173832 extends AbstractMigration
             $ratioMode = isset($configuration['ratioMode']) ? $configuration['ratioMode'] : null;
             $allowUpScaling = isset($configuration['allowUpScaling']) ? $configuration['allowUpScaling'] : null;
             $allowUpScaling = $allowUpScaling ? 1 : 0;
-            $types = [\PDO::PARAM_NULL];
+            $types = [PDO::PARAM_NULL];
             $this->addSql("UPDATE typo3_media_domain_model_thumbnail SET maximumwidth = ?, maximumheight = ?, ratiomode = ?, allowupscaling = ?  WHERE persistence_object_identifier = ?", [$maximumWidth, $maximumHeight, $ratioMode, $allowUpScaling, $thumbnailInfo['persistence_object_identifier']], $types);
         }
 

@@ -20,14 +20,15 @@ use Neos\ContentRepository\Core\Feature\Common\RebasableToOtherWorkspaceInterfac
 use Neos\ContentRepository\Core\Feature\WorkspacePublication\Dto\NodeIdToPublishOrDiscard;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 
 /**
- * All variants in a NodeAggregate have the same NodeName - and this can be changed here.
- * This is the case because Node Names are usually only used for tethered nodes (=autocreated in the old CR);
- * as then the Node Name is used for querying.
+ * All variants in a NodeAggregate have the same (optional) NodeName, which this can be changed here.
  *
+ * Node Names are usually only used for tethered nodes; as then the Node Name is used for querying.
+ * Tethered Nodes cannot be renamed via the command API.
+ *
+ * @deprecated the concept regarding node-names for non-tethered nodes is outdated.
  * @api commands are the write-API of the ContentRepository
  */
 final readonly class ChangeNodeAggregateName implements

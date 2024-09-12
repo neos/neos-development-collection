@@ -14,6 +14,9 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Core\Projection\ContentGraph;
 
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateIds;
+
 /**
  * An immutable, type-safe collection of Node objects
  *
@@ -121,6 +124,16 @@ final class Nodes implements \IteratorAggregate, \ArrayAccess, \Countable
         return self::fromArray($nodes);
     }
 
+    public function prepend(Node $node): self
+    {
+        return new self([$node, ...$this->nodes]);
+    }
+
+    public function append(Node $node): self
+    {
+        return new self([...$this->nodes, $node]);
+    }
+
     public function reverse(): self
     {
         return new self(array_reverse($this->nodes));
@@ -144,7 +157,7 @@ final class Nodes implements \IteratorAggregate, \ArrayAccess, \Countable
         }
         throw new \InvalidArgumentException(sprintf(
             'The node %s does not exist in this set',
-            $subject->nodeAggregateId->value
+            $subject->aggregateId->value
         ), 1542901216);
     }
 
@@ -193,5 +206,21 @@ final class Nodes implements \IteratorAggregate, \ArrayAccess, \Countable
         $referenceNodeIndex = $this->getNodeIndex($referenceNode);
 
         return new self(array_slice($this->nodes, $referenceNodeIndex + 1));
+    }
+
+    /**
+     * @param \Closure(Node $node): mixed $callback
+     * @return array<mixed>
+     */
+    public function map(\Closure $callback): array
+    {
+        return array_map($callback, $this->nodes);
+    }
+
+    public function toNodeAggregateIds(): NodeAggregateIds
+    {
+        return NodeAggregateIds::create(...$this->map(
+            fn (Node $node): NodeAggregateId => $node->aggregateId,
+        ));
     }
 }

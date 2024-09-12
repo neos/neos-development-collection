@@ -52,7 +52,7 @@ final readonly class ContentRepositoryBootstrapper
                 WorkspaceDescription::fromString('Public live workspace'),
                 ContentStreamId::create()
             )
-        )->block();
+        );
         $liveWorkspace = $this->contentRepository->getWorkspaceFinder()->findOneByName($liveWorkspaceName);
         if (!$liveWorkspace) {
             throw new \Exception('Live workspace creation failed', 1699002435);
@@ -62,29 +62,25 @@ final readonly class ContentRepositoryBootstrapper
     }
 
     /**
-     * Retrieve the root Node Aggregate ID for the specified $contentStreamId
+     * Retrieve the root Node Aggregate ID for the specified $workspace
      * If no root node of the specified $rootNodeTypeName exist, it will be created
      */
     public function getOrCreateRootNodeAggregate(
         Workspace $workspace,
         NodeTypeName $rootNodeTypeName
     ): NodeAggregateId {
-        try {
-            $contentStreamId = $workspace->currentContentStreamId;
-            return $this->contentRepository->getContentGraph()->findRootNodeAggregateByType(
-                $contentStreamId,
-                $rootNodeTypeName
-            )->nodeAggregateId;
-
-            // TODO make this case more explicit
-        } catch (\Exception $exception) {
-            $rootNodeAggregateId = NodeAggregateId::create();
-            $this->contentRepository->handle(CreateRootNodeAggregateWithNode::create(
-                $workspace->workspaceName,
-                $rootNodeAggregateId,
-                $rootNodeTypeName,
-            ))->block();
-            return $rootNodeAggregateId;
+        $rootNodeAggregate = $this->contentRepository->getContentGraph($workspace->workspaceName)->findRootNodeAggregateByType(
+            $rootNodeTypeName
+        );
+        if ($rootNodeAggregate !== null) {
+            return $rootNodeAggregate->nodeAggregateId;
         }
+        $rootNodeAggregateId = NodeAggregateId::create();
+        $this->contentRepository->handle(CreateRootNodeAggregateWithNode::create(
+            $workspace->workspaceName,
+            $rootNodeAggregateId,
+            $rootNodeTypeName,
+        ));
+        return $rootNodeAggregateId;
     }
 }

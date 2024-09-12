@@ -69,7 +69,7 @@ trait NodeCreation
             $command = $command->withTetheredDescendantNodeAggregateIds(NodeAggregateIdsByNodePaths::fromArray($commandArguments['tetheredDescendantNodeAggregateIds']));
         }
 
-        $this->lastCommandOrEventResult = $this->currentContentRepository->handle($command);
+        $this->currentContentRepository->handle($command);
         $this->currentRootNodeAggregateId = $nodeAggregateId;
     }
 
@@ -94,9 +94,6 @@ trait NodeCreation
     public function theEventRootNodeAggregateWithNodeWasCreatedWasPublishedToStreamWithPayload(TableNode $payloadTable)
     {
         $eventPayload = $this->readPayloadTable($payloadTable);
-        if (!isset($eventPayload['contentStreamId'])) {
-            $eventPayload['contentStreamId'] = $this->currentContentStreamId?->value;
-        }
         $contentStreamId = ContentStreamId::fromString($eventPayload['contentStreamId']);
         $nodeAggregateId = NodeAggregateId::fromString($eventPayload['nodeAggregateId']);
         $streamName = ContentStreamEventStreamName::fromContentStreamId($contentStreamId);
@@ -124,7 +121,7 @@ trait NodeCreation
             $nodeAggregateId,
         );
 
-        $this->lastCommandOrEventResult = $this->currentContentRepository->handle($command);
+        $this->currentContentRepository->handle($command);
         $this->currentRootNodeAggregateId = $nodeAggregateId;
     }
 
@@ -151,9 +148,6 @@ trait NodeCreation
             isset($commandArguments['succeedingSiblingNodeAggregateId'])
                 ? NodeAggregateId::fromString($commandArguments['succeedingSiblingNodeAggregateId'])
                 : null,
-            isset($commandArguments['nodeName'])
-                ? NodeName::fromString($commandArguments['nodeName'])
-                : null,
             isset($commandArguments['initialPropertyValues'])
                 ? $this->deserializeProperties($commandArguments['initialPropertyValues'])
                 : null,
@@ -161,7 +155,10 @@ trait NodeCreation
         if (isset($commandArguments['tetheredDescendantNodeAggregateIds'])) {
             $command = $command->withTetheredDescendantNodeAggregateIds(NodeAggregateIdsByNodePaths::fromArray($commandArguments['tetheredDescendantNodeAggregateIds']));
         }
-        $this->lastCommandOrEventResult = $this->currentContentRepository->handle($command);
+        if (isset($commandArguments['nodeName'])) {
+            $command = $command->withNodeName(NodeName::fromString($commandArguments['nodeName']));
+        }
+        $this->currentContentRepository->handle($command);
     }
 
     /**
@@ -201,9 +198,6 @@ trait NodeCreation
                 !empty($row['succeedingSiblingNodeAggregateId'])
                     ? NodeAggregateId::fromString($row['succeedingSiblingNodeAggregateId'])
                     : null,
-                isset($row['nodeName'])
-                    ? NodeName::fromString($row['nodeName'])
-                    : null,
                 isset($row['initialPropertyValues'])
                     ? $this->parsePropertyValuesJsonString($row['initialPropertyValues'])
                     : null,
@@ -211,8 +205,10 @@ trait NodeCreation
             if (isset($row['tetheredDescendantNodeAggregateIds'])) {
                 $command = $command->withTetheredDescendantNodeAggregateIds(NodeAggregateIdsByNodePaths::fromJsonString($row['tetheredDescendantNodeAggregateIds']));
             }
-            $this->lastCommandOrEventResult = $this->currentContentRepository->handle($command);
-            $this->theGraphProjectionIsFullyUpToDate();
+            if (isset($row['nodeName'])) {
+                $command = $command->withNodeName(NodeName::fromString($row['nodeName']));
+            }
+            $this->currentContentRepository->handle($command);
         }
     }
 
@@ -247,9 +243,6 @@ trait NodeCreation
             isset($commandArguments['succeedingSiblingNodeAggregateId'])
                 ? NodeAggregateId::fromString($commandArguments['succeedingSiblingNodeAggregateId'])
                 : null,
-            isset($commandArguments['nodeName'])
-                ? NodeName::fromString($commandArguments['nodeName'])
-                : null,
             isset($commandArguments['initialPropertyValues'])
                 ? SerializedPropertyValues::fromArray($commandArguments['initialPropertyValues'])
                 : null
@@ -257,7 +250,10 @@ trait NodeCreation
         if (isset($commandArguments['tetheredDescendantNodeAggregateIds'])) {
             $command = $command->withTetheredDescendantNodeAggregateIds(NodeAggregateIdsByNodePaths::fromArray($commandArguments['tetheredDescendantNodeAggregateIds']));
         }
-        $this->lastCommandOrEventResult = $this->currentContentRepository->handle($command);
+        if (isset($commandArguments['nodeName'])) {
+            $command = $command->withNodeName(NodeName::fromString($commandArguments['nodeName']));
+        }
+        $this->currentContentRepository->handle($command);
     }
 
     /**

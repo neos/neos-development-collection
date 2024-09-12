@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 namespace Neos\ContentRepository\NodeAccess\FlowQueryOperations;
 
 /*
@@ -62,6 +65,8 @@ use Neos\Flow\Annotations as Flow;
  */
 class FindOperation extends AbstractOperation
 {
+    use CreateNodeHashTrait;
+
     /**
      * {@inheritdoc}
      *
@@ -179,7 +184,7 @@ class FindOperation extends AbstractOperation
         $uniqueResult = [];
         $usedKeys = [];
         foreach ($result as $item) {
-            $identifier = $item->subgraphIdentity->contentStreamId->value . '@' . $item->subgraphIdentity->dimensionSpacePoint->hash . '@' . $item->nodeAggregateId->value;
+            $identifier = $this->createNodeHash($item);
             if (!isset($usedKeys[$identifier])) {
                 $uniqueResult[] = $item;
                 $usedKeys[$identifier] = $identifier;
@@ -199,8 +204,8 @@ class FindOperation extends AbstractOperation
         foreach ($contextNodes as $contextNode) {
             assert($contextNode instanceof Node);
             $subgraph = $this->contentRepositoryRegistry->subgraphForNode($contextNode);
-            $subgraphIdentifier = md5($contextNode->subgraphIdentity->contentStreamId->value
-                . '@' . $contextNode->subgraphIdentity->dimensionSpacePoint->toJson());
+            $subgraphIdentifier = md5($subgraph->getWorkspaceName()->value
+                . '@' . $subgraph->getDimensionSpacePoint()->toJson());
             if (!isset($entryPoints[(string) $subgraphIdentifier])) {
                 $entryPoints[(string) $subgraphIdentifier] = [
                     'subgraph' => $subgraph,
@@ -250,7 +255,7 @@ class FindOperation extends AbstractOperation
                 if ($nodePath instanceof AbsoluteNodePath) {
                     $nodeByPath = $subgraph->findNodeByAbsolutePath($nodePath);
                 } else {
-                    $nodeByPath = $subgraph->findNodeByPath($nodePath, $node->nodeAggregateId);
+                    $nodeByPath = $subgraph->findNodeByPath($nodePath, $node->aggregateId);
                 }
                 if (isset($nodeByPath)) {
                     $result[] = $nodeByPath;
@@ -275,7 +280,7 @@ class FindOperation extends AbstractOperation
 
             /** @var Node $node */
             foreach ($entryPoint['nodes'] as $node) {
-                foreach ($subgraph->findDescendantNodes($node->nodeAggregateId, FindDescendantNodesFilter::create(nodeTypes: $nodeTypeFilter)) as $descendant) {
+                foreach ($subgraph->findDescendantNodes($node->aggregateId, FindDescendantNodesFilter::create(nodeTypes: $nodeTypeFilter)) as $descendant) {
                     $result[] = $descendant;
                 }
             }

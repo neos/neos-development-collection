@@ -64,13 +64,11 @@ Feature: Find and count nodes using the findChildNodes and countChildNodes queri
       | workspaceTitle       | "Live"               |
       | workspaceDescription | "The live workspace" |
       | newContentStreamId   | "cs-identifier"      |
-    And the graph projection is fully up to date
-    And I am in the active content stream of workspace "live" and dimension space point {"language":"de"}
+    And I am in workspace "live" and dimension space point {"language":"de"}
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key             | Value                         |
       | nodeAggregateId | "lady-eleonode-rootford"      |
       | nodeTypeName    | "Neos.ContentRepository:Root" |
-    And the graph projection is fully up to date
     And the following CreateNodeAggregateWithNode commands are executed:
       | nodeAggregateId | nodeTypeName                               | parentNodeAggregateId  | initialPropertyValues                                                                                                                                                                                | tetheredDescendantNodeAggregateIds       |
       | home            | Neos.ContentRepository.Testing:Homepage    | lady-eleonode-rootford | {}                                                                                                                                                                                                   | {"terms": "terms", "contact": "contact"} |
@@ -78,11 +76,14 @@ Feature: Find and count nodes using the findChildNodes and countChildNodes queri
       | a1              | Neos.ContentRepository.Testing:Page        | a                      | {"text": "a1"}                                                                                                                                                                                       | {}                                       |
       | a2              | Neos.ContentRepository.Testing:Page        | a                      | {"text": "a2"}                                                                                                                                                                                       | {}                                       |
       | a2a             | Neos.ContentRepository.Testing:SpecialPage | a2                     | {"text": "a2a"}                                                                                                                                                                                      | {}                                       |
-      | a2a1            | Neos.ContentRepository.Testing:Page        | a2a                    | {"text": "a2a1", "stringProperty": "the brown fox", "booleanProperty": true, "integerProperty": 33, "floatProperty": 12.345, "dateProperty": {"__type": "DateTimeImmutable", "value": "1980-12-13"}} | {}                                       |
+      | a2a1            | Neos.ContentRepository.Testing:Page        | a2a                    | {"text": "a2a1", "stringProperty": "the brown fox likes Äpfel", "booleanProperty": true, "integerProperty": 33, "floatProperty": 12.345, "dateProperty": {"__type": "DateTimeImmutable", "value": "1980-12-13"}} | {}                                       |
       | a2a2            | Neos.ContentRepository.Testing:Page        | a2a                    | {"text": "a2a2", "stringProperty": "the red fox", "booleanProperty": false, "integerProperty": 22, "floatProperty": 12.34, "dateProperty": {"__type": "DateTimeImmutable", "value": "1980-12-14"}}   | {}                                       |
-      | a2a3            | Neos.ContentRepository.Testing:Page        | a2a                    | {"text": "a2a3", "stringProperty": "the red Bear", "integerProperty": 19, "dateProperty": {"__type": "DateTimeImmutable", "value": "1980-12-12"}}                                                    | {}                                       |
+      # Note that the node a2a3 is disabled! See below.
+      | a2a3-disabled   | Neos.ContentRepository.Testing:Page        | a2a                    | {"text": "a2a3", "stringProperty": "the red Bear", "integerProperty": 19, "dateProperty": {"__type": "DateTimeImmutable", "value": "1980-12-12"}}                                                    | {}                                       |
       | a2a4            | Neos.ContentRepository.Testing:Page        | a2a                    | {"text": "a2a4", "stringProperty": "the brown Bear", "integerProperty": 19, "dateProperty": {"__type": "DateTimeImmutable", "value": "1980-12-12"}}                                                  | {}                                       |
       | a2a5            | Neos.ContentRepository.Testing:Page        | a2a                    | {"text": "a2a5", "stringProperty": "the brown bear", "integerProperty": 19, "dateProperty": {"__type": "DateTimeImmutable", "value": "1980-12-13"}}                                                  | {}                                       |
+      # Note that the node a2a6 must not contain any properties!
+      | a2a6-empty      | Neos.ContentRepository.Testing:Page        | a2a                    | {}                                                                                                                                                                                                   | {}                                       |
       | b               | Neos.ContentRepository.Testing:Page        | home                   | {"text": "b"}                                                                                                                                                                                        | {}                                       |
       | b1              | Neos.ContentRepository.Testing:Page        | b                      | {"text": "b1"}                                                                                                                                                                                       | {}                                       |
     And the current date and time is "2023-03-16T13:00:00+01:00"
@@ -91,17 +92,19 @@ Feature: Find and count nodes using the findChildNodes and countChildNodes queri
       | nodeAggregateId | "a2a5"                  |
       | propertyValues  | {"integerProperty": 20} |
     And the command DisableNodeAggregate is executed with payload:
-      | Key                          | Value         |
-      | nodeAggregateId              | "a2a3"        |
-      | nodeVariantSelectionStrategy | "allVariants" |
-    And the graph projection is fully up to date
+      | Key                          | Value           |
+      | nodeAggregateId              | "a2a3-disabled" |
+      | nodeVariantSelectionStrategy | "allVariants"   |
 
   Scenario:
       # Child nodes without filter
     When I execute the findChildNodes query for parent node aggregate id "home" I expect the nodes "terms,contact,a,b" to be returned
     When I execute the findChildNodes query for parent node aggregate id "a" I expect the nodes "a1,a2" to be returned
     When I execute the findChildNodes query for parent node aggregate id "a1" I expect no nodes to be returned
-    When I execute the findChildNodes query for parent node aggregate id "a2a" I expect the nodes "a2a1,a2a2,a2a4,a2a5" to be returned
+    When I execute the findChildNodes query for parent node aggregate id "a2a" I expect the nodes "a2a1,a2a2,a2a4,a2a5,a2a6-empty" to be returned
+      # Child nodes with empty filter
+    When I execute the findChildNodes query for parent node aggregate id "a2a" and filter '{"searchTerm": ""}' I expect the nodes "a2a1,a2a2,a2a4,a2a5,a2a6-empty" to be returned
+    When I execute the findChildNodes query for parent node aggregate id "a2a" and filter '{"nodeTypes": ""}' I expect the nodes "a2a1,a2a2,a2a4,a2a5,a2a6-empty" to be returned
 
       # Child nodes filtered by node type
     When I execute the findChildNodes query for parent node aggregate id "home" and filter '{"nodeTypes": "Neos.ContentRepository.Testing:AbstractPage"}' I expect the nodes "terms,contact,a,b" to be returned
@@ -112,7 +115,15 @@ Feature: Find and count nodes using the findChildNodes and countChildNodes queri
 
      # Child nodes filtered by search term
     When I execute the findChildNodes query for parent node aggregate id "a2a" and filter '{"searchTerm": "brown"}' I expect the nodes "a2a1,a2a4,a2a5" to be returned
+    # The total count highlights that the search is case insensitive
     When I execute the findChildNodes query for parent node aggregate id "a2a" and filter '{"searchTerm": "bear", "pagination": {"limit": 3, "offset": 1}}' I expect the nodes "a2a5" to be returned and the total count to be 2
+    # Case insensitive multibyte search
+    When I execute the findChildNodes query for parent node aggregate id "a2a" and filter '{"searchTerm": "äpfel"}' I expect the nodes "a2a1" to be returned
+    # Search for numbers (could be considered useless)
+    When I execute the findChildNodes query for parent node aggregate id "a2a" and filter '{"searchTerm": "22"}' I expect the nodes "a2a2" to be returned
+    When I execute the findChildNodes query for parent node aggregate id "a2a" and filter '{"searchTerm": "12.34"}' I expect the nodes "a2a1,a2a2" to be returned
+    # Search for boolean (could be considered useless)
+    When I execute the findChildNodes query for parent node aggregate id "a2a" and filter '{"searchTerm": "true"}' I expect the nodes "a2a1" to be returned
 
      # Child nodes paginated
     When I execute the findChildNodes query for parent node aggregate id "home" and filter '{"pagination": {"limit": 3}}' I expect the nodes "terms,contact,a" to be returned and the total count to be 4
@@ -143,10 +154,10 @@ Feature: Find and count nodes using the findChildNodes and countChildNodes queri
     When I execute the findChildNodes query for parent node aggregate id "a2a" and filter '{"propertyValue": "stringProperty $=~ \"Bear\""}' I expect the nodes "a2a4,a2a5" to be returned
 
     #  Child nodes with custom ordering
-    When I execute the findChildNodes query for parent node aggregate id "a2a" and filter '{"ordering": [{"type": "propertyName", "field": "text", "direction": "ASCENDING"}]}' I expect the nodes "a2a1,a2a2,a2a4,a2a5" to be returned
-    When I execute the findChildNodes query for parent node aggregate id "a2a" and filter '{"ordering": [{"type": "propertyName", "field": "text", "direction": "DESCENDING"}]}' I expect the nodes "a2a5,a2a4,a2a2,a2a1" to be returned
-    When I execute the findChildNodes query for parent node aggregate id "a2a" and filter '{"ordering": [{"type": "propertyName", "field": "non_existing", "direction": "ASCENDING"}]}' I expect the nodes "a2a1,a2a2,a2a4,a2a5" to be returned
-    When I execute the findChildNodes query for parent node aggregate id "a2a" and filter '{"ordering": [{"type": "propertyName", "field": "booleanProperty", "direction": "ASCENDING"}, {"type": "propertyName", "field": "dateProperty", "direction": "ASCENDING"}]}' I expect the nodes "a2a4,a2a5,a2a2,a2a1" to be returned
-    When I execute the findChildNodes query for parent node aggregate id "a2a" and filter '{"ordering": [{"type": "timestampField", "field": "CREATED", "direction": "ASCENDING"}]}' I expect the nodes "a2a1,a2a2,a2a4,a2a5" to be returned
-    When I execute the findChildNodes query for parent node aggregate id "a2a" and filter '{"ordering": [{"type": "timestampField", "field": "LAST_MODIFIED", "direction": "DESCENDING"}]}' I expect the nodes "a2a5,a2a1,a2a2,a2a4" to be returned
+    When I execute the findChildNodes query for parent node aggregate id "a2a" and filter '{"ordering": [{"type": "propertyName", "field": "text", "direction": "ASCENDING"}]}' I expect the nodes "a2a6-empty,a2a1,a2a2,a2a4,a2a5" to be returned
+    When I execute the findChildNodes query for parent node aggregate id "a2a" and filter '{"ordering": [{"type": "propertyName", "field": "text", "direction": "DESCENDING"}]}' I expect the nodes "a2a5,a2a4,a2a2,a2a1,a2a6-empty" to be returned
+    When I execute the findChildNodes query for parent node aggregate id "a2a" and filter '{"ordering": [{"type": "propertyName", "field": "non_existing", "direction": "ASCENDING"}]}' I expect the nodes "a2a1,a2a2,a2a4,a2a5,a2a6-empty" to be returned
+    When I execute the findChildNodes query for parent node aggregate id "a2a" and filter '{"ordering": [{"type": "propertyName", "field": "booleanProperty", "direction": "ASCENDING"}, {"type": "propertyName", "field": "dateProperty", "direction": "ASCENDING"}]}' I expect the nodes "a2a6-empty,a2a4,a2a5,a2a2,a2a1" to be returned
+    When I execute the findChildNodes query for parent node aggregate id "a2a" and filter '{"ordering": [{"type": "timestampField", "field": "CREATED", "direction": "ASCENDING"}]}' I expect the nodes "a2a1,a2a2,a2a4,a2a5,a2a6-empty" to be returned
+    When I execute the findChildNodes query for parent node aggregate id "a2a" and filter '{"ordering": [{"type": "timestampField", "field": "LAST_MODIFIED", "direction": "DESCENDING"}]}' I expect the nodes "a2a5,a2a1,a2a2,a2a4,a2a6-empty" to be returned
 

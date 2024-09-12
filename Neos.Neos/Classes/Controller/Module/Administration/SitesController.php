@@ -18,8 +18,8 @@ use Neos\ContentRepository\Core\Feature\NodeRenaming\Command\ChangeNodeAggregate
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate;
 use Neos\ContentRepository\Core\Projection\Workspace\Workspace;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
-use Neos\ContentRepository\Core\SharedModel\Exception\NodeNameIsAlreadyOccupied;
-use Neos\ContentRepository\Core\SharedModel\Exception\NodeTypeNotFoundException;
+use Neos\ContentRepository\Core\SharedModel\Exception\NodeNameIsAlreadyCovered;
+use Neos\ContentRepository\Core\SharedModel\Exception\NodeTypeNotFound;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
@@ -184,12 +184,10 @@ class SitesController extends AbstractModuleController
                 );
             }
 
-            try {
-                $sitesNode = $contentRepository->getContentGraph()->findRootNodeAggregateByType(
-                    $liveWorkspace->currentContentStreamId,
-                    NodeTypeNameFactory::forSites()
-                );
-            } catch (\Exception $exception) {
+            $sitesNode = $contentRepository->getContentGraph($liveWorkspace->workspaceName)->findRootNodeAggregateByType(
+                NodeTypeNameFactory::forSites()
+            );
+            if ($sitesNode === null) {
                 throw new \InvalidArgumentException(
                     'Cannot update a site without the sites note being present.',
                     1651958452
@@ -205,16 +203,11 @@ class SitesController extends AbstractModuleController
             }
 
             foreach ($contentRepository->getWorkspaceFinder()->findAll() as $workspace) {
-                // technically, due to the name being the "identifier", there might be more than one :/
-                /** @var NodeAggregate[] $siteNodeAggregates */
-                /** @var Workspace $workspace */
-                $siteNodeAggregates = $contentRepository->getContentGraph()->findChildNodeAggregatesByName(
-                    $workspace->currentContentStreamId,
+                $siteNodeAggregate = $contentRepository->getContentGraph($workspace->workspaceName)->findChildNodeAggregateByName(
                     $sitesNode->nodeAggregateId,
                     $site->getNodeName()->toNodeName()
                 );
-
-                foreach ($siteNodeAggregates as $siteNodeAggregate) {
+                if ($siteNodeAggregate instanceof NodeAggregate) {
                     $contentRepository->handle(ChangeNodeAggregateName::create(
                         $workspace->workspaceName,
                         $siteNodeAggregate->nodeAggregateId,
@@ -239,13 +232,9 @@ class SitesController extends AbstractModuleController
     }
 
     /**
-     * Create a new site form.
-     *
-     * @param Site $site Site to create
-     * @Flow\IgnoreValidation("$site")
-     * @return void
+     * Create a new site form
      */
-    public function newSiteAction(Site $site = null)
+    public function newSiteAction(): void
     {
         // This is not 100% correct, but it is as good as we can get it to work right now
         try {
@@ -265,86 +254,10 @@ class SitesController extends AbstractModuleController
 
         $sitePackages = $this->packageManager->getFilteredPackages('available', 'neos-site');
 
-        $generatorServiceIsAvailable = $this->packageManager->isPackageAvailable('Neos.SiteKickstarter');
-        $generatorServices = [];
-
-        if ($generatorServiceIsAvailable) {
-            /** @var SiteGeneratorCollectingService $siteGeneratorCollectingService */
-            $siteGeneratorCollectingService = $this->objectManager->get(SiteGeneratorCollectingService::class);
-            /** @var SitePackageGeneratorNameService $sitePackageGeneratorNameService */
-            $sitePackageGeneratorNameService = $this->objectManager->get(SitePackageGeneratorNameService::class);
-
-            $generatorClasses = $siteGeneratorCollectingService->getAllGenerators();
-
-            foreach ($generatorClasses as $generatorClass) {
-                $name = $sitePackageGeneratorNameService->getNameOfSitePackageGenerator($generatorClass);
-                $generatorServices[$generatorClass] = $name;
-            }
-        }
-
         $this->view->assignMultiple([
             'sitePackages' => $sitePackages,
-            'documentNodeTypes' => $documentNodeTypes,
-            'site' => $site,
-            'generatorServiceIsAvailable' => $generatorServiceIsAvailable,
-            'generatorServices' => $generatorServices
+            'documentNodeTypes' => $documentNodeTypes
         ]);
-    }
-
-    /**
-     * Create a new site-package and directly import it.
-     *
-     * @param string $packageKey Package Name to create
-     * @param string $generatorClass Generator Class to generate the site package
-     * @param string $siteName Site Name to create
-     * @Flow\Validate(argumentName="$packageKey", type="\Neos\Neos\Validation\Validator\PackageKeyValidator")
-     * @return void
-     */
-    public function createSitePackageAction(string $packageKey, string $generatorClass, string $siteName): void
-    {
-        if ($this->packageManager->isPackageAvailable('Neos.SiteKickstarter') === false) {
-            $this->addFlashMessage(
-                $this->getModuleLabel('sites.missingPackage.body', ['Neos.SiteKickstarter']),
-                $this->getModuleLabel('sites.missingPackage.title'),
-                Message::SEVERITY_ERROR,
-                [],
-                1475736232
-            );
-            $this->redirect('index');
-        }
-
-        if ($this->packageManager->isPackageAvailable($packageKey)) {
-            $this->addFlashMessage(
-                $this->getModuleLabel('sites.invalidPackageKey.body', [htmlspecialchars($packageKey)]),
-                $this->getModuleLabel('sites.invalidPackageKey.title'),
-                Message::SEVERITY_ERROR,
-                [],
-                1412372021
-            );
-            $this->redirect('index');
-        }
-        // this should never happen, but if somebody posts unexpected data to the form,
-        // it should stop here and return some readable error message
-        if ($this->objectManager->has($generatorClass) === false) {
-            $this->addFlashMessage(
-                'The generator class "%s" is not present.',
-                'Missing generator class',
-                Message::SEVERITY_ERROR,
-                [$generatorClass]
-            );
-            $this->redirect('index');
-        }
-
-        /** @var SitePackageGeneratorInterface $generatorService */
-        $generatorService = $this->objectManager->get($generatorClass);
-        $generatorService->generateSitePackage($packageKey, $siteName);
-
-        $this->controllerContext->getFlashMessageContainer()->addMessage(new Message(sprintf(
-            $this->getModuleLabel('sites.sitePackagesWasCreated.body', [htmlspecialchars($packageKey)]),
-            '',
-            null
-        )));
-        $this->forward('importSite', null, null, ['packageKey' => $packageKey]);
     }
 
     /**
@@ -395,7 +308,7 @@ class SitesController extends AbstractModuleController
     {
         try {
             $site = $this->siteService->createSite($packageKey, $siteName, $nodeType);
-        } catch (NodeTypeNotFoundException $exception) {
+        } catch (NodeTypeNotFound $exception) {
             $this->addFlashMessage(
                 $this->getModuleLabel('sites.siteCreationError.givenNodeTypeNotFound.body', [$nodeType]),
                 $this->getModuleLabel('sites.siteCreationError.givenNodeTypeNotFound.title'),
@@ -416,7 +329,7 @@ class SitesController extends AbstractModuleController
                 1412372375
             );
             $this->redirect('createSiteNode');
-        } catch (SiteNodeNameIsAlreadyInUseByAnotherSite | NodeNameIsAlreadyOccupied $exception) {
+        } catch (SiteNodeNameIsAlreadyInUseByAnotherSite | NodeNameIsAlreadyCovered $exception) {
             $this->addFlashMessage(
                 $this->getModuleLabel('sites.SiteCreationError.siteWithSiteNodeNameAlreadyExists.body', [$siteName]),
                 $this->getModuleLabel('sites.SiteCreationError.siteWithSiteNodeNameAlreadyExists.title'),

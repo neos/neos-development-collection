@@ -152,8 +152,8 @@ class NodeLabelToken implements ProtectedContextAwareInterface
             $this->label = $this->node->nodeTypeName->value;
         }
 
-        if (empty($this->postfix) && $this->node->nodeName !== null && $this->node->classification->isTethered()) {
-            $this->postfix =  ' (' . $this->node->nodeName->value . ')';
+        if (empty($this->postfix) && $this->node->name !== null && $this->node->classification->isTethered()) {
+            $this->postfix =  ' (' . $this->node->name->value . ')';
         }
     }
 

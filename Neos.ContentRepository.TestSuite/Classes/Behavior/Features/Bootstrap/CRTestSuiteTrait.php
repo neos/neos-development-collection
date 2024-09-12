@@ -25,10 +25,8 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindSubtreeFilter
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\NodeType\NodeTypeCriteria;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Subtree;
 use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
-use Neos\ContentRepository\Core\Projection\Workspace\Workspace;
 use Neos\ContentRepository\Core\Service\ContentStreamPruner;
 use Neos\ContentRepository\Core\Service\ContentStreamPrunerFactory;
-use Neos\ContentRepository\Core\SharedModel\Exception\RootNodeAggregateDoesNotExist;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamState;
@@ -49,7 +47,6 @@ use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\Features\Subtre
 use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\Features\WorkspaceCreation;
 use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\Features\WorkspaceDiscarding;
 use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\Features\WorkspacePublishing;
-use Neos\ContentRepositoryRegistry\Factory\ProjectionCatchUpTrigger\CatchUpTriggerWithSynchronousOption;
 use Neos\EventStore\EventStoreInterface;
 use PHPUnit\Framework\Assert;
 
@@ -85,13 +82,6 @@ trait CRTestSuiteTrait
     use WorkspaceDiscarding;
     use WorkspacePublishing;
 
-    protected function setupCRTestSuiteTrait(): void
-    {
-        if (getenv('CATCHUPTRIGGER_ENABLE_SYNCHRONOUS_OPTION')) {
-            CatchUpTriggerWithSynchronousOption::enableSynchronicityForSpeedingUpTesting();
-        }
-    }
-
     /**
      * @BeforeScenario
      * @throws \Exception
@@ -105,7 +95,7 @@ trait CRTestSuiteTrait
         $this->currentVisibilityConstraints = VisibilityConstraints::frontend();
         $this->currentDimensionSpacePoint = null;
         $this->currentRootNodeAggregateId = null;
-        $this->currentContentStreamId = null;
+        $this->currentWorkspaceName = null;
         $this->currentNodeAggregate = null;
         $this->currentNode = null;
     }
@@ -123,7 +113,6 @@ trait CRTestSuiteTrait
                 $propertyOrMethodName = \mb_substr($line['Value'], \mb_strlen('$this->'));
                 $value = match ($propertyOrMethodName) {
                     'currentNodeAggregateId' => $this->getCurrentNodeAggregateId()->value,
-                    'contentStreamId' => $this->currentContentStreamId->value,
                     default => method_exists($this, $propertyOrMethodName) ? (string)$this->$propertyOrMethodName() : (string)$this->$propertyOrMethodName,
                 };
             } else {
@@ -140,43 +129,14 @@ trait CRTestSuiteTrait
     }
 
     /**
-     * @When /^the graph projection is fully up to date$/
+     * @Then /^I expect the content stream "([^"]*)" to not exist$/
      */
-    public function theGraphProjectionIsFullyUpToDate(): void
+    public function iExpectTheContentStreamToNotExist(string $rawContentStreamId): void
     {
-        if ($this->lastCommandOrEventResult === null) {
-            throw new \RuntimeException('lastCommandOrEventResult not filled; so I cannot block!');
-        }
-        $this->lastCommandOrEventResult->block();
-        $this->lastCommandOrEventResult = null;
-    }
-
-    /**
-     * @Then /^workspace "([^"]*)" points to another content stream than workspace "([^"]*)"$/
-     */
-    public function workspacesPointToDifferentContentStreams(string $rawWorkspaceNameA, string $rawWorkspaceNameB): void
-    {
-        $workspaceA = $this->currentContentRepository->getWorkspaceFinder()->findOneByName(WorkspaceName::fromString($rawWorkspaceNameA));
-        Assert::assertInstanceOf(Workspace::class, $workspaceA, 'Workspace "' . $rawWorkspaceNameA . '" does not exist.');
-        $workspaceB = $this->currentContentRepository->getWorkspaceFinder()->findOneByName(WorkspaceName::fromString($rawWorkspaceNameB));
-        Assert::assertInstanceOf(Workspace::class, $workspaceB, 'Workspace "' . $rawWorkspaceNameB . '" does not exist.');
-        if ($workspaceA && $workspaceB) {
-            Assert::assertNotEquals(
-                $workspaceA->currentContentStreamId->value,
-                $workspaceB->currentContentStreamId->value,
-                'Workspace "' . $rawWorkspaceNameA . '" points to the same content stream as "' . $rawWorkspaceNameB . '"'
-            );
-        }
-    }
-
-    /**
-     * @Then /^workspace "([^"]*)" does not point to content stream "([^"]*)"$/
-     */
-    public function workspaceDoesNotPointToContentStream(string $rawWorkspaceName, string $rawContentStreamId): void
-    {
-        $workspace = $this->currentContentRepository->getWorkspaceFinder()->findOneByName(WorkspaceName::fromString($rawWorkspaceName));
-
-        Assert::assertNotEquals($rawContentStreamId, $workspace->currentContentStreamId->value);
+        Assert::assertTrue(
+            $this->currentContentRepository->getContentStreamFinder()->hasContentStream(ContentStreamId::fromString($rawContentStreamId)),
+            sprintf('The content stream "%s" does exist.', $rawContentStreamId)
+        );
     }
 
     /**
@@ -195,7 +155,7 @@ trait CRTestSuiteTrait
      */
     public function iExpectTheGraphProjectionToConsistOfExactlyNodes(int $expectedNumberOfNodes): void
     {
-        $actualNumberOfNodes = $this->currentContentRepository->getContentGraph()->countNodes();
+        $actualNumberOfNodes = $this->currentContentRepository->getContentGraph($this->currentWorkspaceName)->countNodes();
         Assert::assertSame($expectedNumberOfNodes, $actualNumberOfNodes, 'Content graph consists of ' . $actualNumberOfNodes . ' nodes, expected were ' . $expectedNumberOfNodes . '.');
     }
 
@@ -228,7 +188,7 @@ trait CRTestSuiteTrait
             $actualLevel = $flattenedSubtree[$i]->level;
             Assert::assertSame($expectedLevel, $actualLevel, 'Level does not match in index ' . $i . ', expected: ' . $expectedLevel . ', actual: ' . $actualLevel);
             $expectedNodeAggregateId = NodeAggregateId::fromString($expectedRow['nodeAggregateId']);
-            $actualNodeAggregateId = $flattenedSubtree[$i]->node->nodeAggregateId;
+            $actualNodeAggregateId = $flattenedSubtree[$i]->node->aggregateId;
             Assert::assertTrue(
                 $expectedNodeAggregateId->equals($actualNodeAggregateId),
                 'NodeAggregateId does not match in index ' . $i . ', expected: "' . $expectedNodeAggregateId->value . '", actual: "' . $actualNodeAggregateId->value . '"'
@@ -261,14 +221,9 @@ trait CRTestSuiteTrait
             return $this->currentRootNodeAggregateId;
         }
 
-        try {
-            return $this->currentContentRepository->getContentGraph()->findRootNodeAggregateByType(
-                $this->currentContentStreamId,
-                NodeTypeName::fromString('Neos.Neos:Sites')
-            )->nodeAggregateId;
-        } catch (RootNodeAggregateDoesNotExist) {
-            return null;
-        }
+        return $this->currentContentRepository->getContentGraph($this->currentWorkspaceName)->findRootNodeAggregateByType(
+            NodeTypeName::fromString('Neos.Neos:Sites')
+        )->nodeAggregateId;
     }
 
     /**
@@ -288,7 +243,13 @@ trait CRTestSuiteTrait
      */
     public function theCurrentContentStreamHasState(string $expectedState): void
     {
-        $this->theContentStreamHasState($this->currentContentStreamId->value, $expectedState);
+        $this->theContentStreamHasState(
+            $this->currentContentRepository
+                ->getWorkspaceFinder()
+                ->findOneByName($this->currentWorkspaceName)
+                ->currentContentStreamId->value,
+            $expectedState
+        );
     }
 
     /**
@@ -299,7 +260,6 @@ trait CRTestSuiteTrait
         /** @var ContentStreamPruner $contentStreamPruner */
         $contentStreamPruner = $this->getContentRepositoryService(new ContentStreamPrunerFactory());
         $contentStreamPruner->prune();
-        $this->lastCommandOrEventResult = $contentStreamPruner->getLastCommandResult();
     }
 
     /**

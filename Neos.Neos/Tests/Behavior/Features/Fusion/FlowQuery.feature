@@ -15,7 +15,7 @@ Feature: Tests for the "Neos.ContentRepository" Flow Query methods.
           type: string
         uriPathSegment:
           type: string
-        _hiddenInIndex:
+        hiddenInMenu:
           type: bool
     'Neos.Neos:Site':
       superTypes:
@@ -46,33 +46,31 @@ Feature: Tests for the "Neos.ContentRepository" Flow Query methods.
       | Key                | Value           |
       | workspaceName      | "live"          |
       | newContentStreamId | "cs-identifier" |
-    And I am in workspace "live"
+    And I am in workspace "live" and dimension space point {}
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key             | Value             |
       | nodeAggregateId | "root"            |
       | nodeTypeName    | "Neos.Neos:Sites" |
-    And the graph projection is fully up to date
-    And I am in content stream "cs-identifier" and dimension space point {}
     And the following CreateNodeAggregateWithNode commands are executed:
-      | nodeAggregateId | parentNodeAggregateId | nodeTypeName                  | initialPropertyValues                                                  | nodeName |
-      | a               | root                  | Neos.Neos:Site                | {"title": "Node a"}                                                    | a        |
-      | a1              | a                     | Neos.Neos:Test.DocumentType1  | {"uriPathSegment": "a1", "title": "Node a1"}                           | a1       |
-      | a1a             | a1                    | Neos.Neos:Test.DocumentType2a | {"uriPathSegment": "a1a", "title": "Node a1a"}                         | a1a      |
-      | a1a1            | a1a                   | Neos.Neos:Test.DocumentType1  | {"uriPathSegment": "a1a1", "title": "Node a1a1"}                       | a1a1     |
-      | a1a2            | a1a                   | Neos.Neos:Test.DocumentType2  | {"uriPathSegment": "a1a2", "title": "Node a1a2"}                       | a1a2     |
-      | a1a3            | a1a                   | Neos.Neos:Test.DocumentType2a | {"uriPathSegment": "a1a3", "title": "Node a1a3"}                       | a1a3     |
-      | a1a4            | a1a                   | Neos.Neos:Test.DocumentType2a | {"uriPathSegment": "a1a4", "title": "Node a1a4"}                       | a1a4     |
-      | a1a5            | a1a                   | Neos.Neos:Test.DocumentType2a | {"uriPathSegment": "a1a5", "title": "Node a1a5"}                       | a1a5     |
-      | a1a6            | a1a                   | Neos.Neos:Test.DocumentType2  | {"uriPathSegment": "a1a6", "title": "Node a1a6"}                       | a1a6     |
-      | a1a7            | a1a                   | Neos.Neos:Test.DocumentType1  | {"uriPathSegment": "a1a7", "title": "Node a1a7"}                       | a1a7     |
-      | a1b             | a1                    | Neos.Neos:Test.DocumentType1  | {"uriPathSegment": "a1b", "title": "Node a1b"}                         | a1b      |
-      | a1b1            | a1b                   | Neos.Neos:Test.DocumentType1  | {"uriPathSegment": "a1b1", "title": "Node a1b1"}                       | a1b1     |
-      | a1b1a           | a1b1                  | Neos.Neos:Test.DocumentType2a | {"uriPathSegment": "a1b1a", "title": "Node a1b1a"}                     | a1b1a    |
-      | a1b1b           | a1b1                  | Neos.Neos:Test.DocumentType1  | {"uriPathSegment": "a1b1b", "title": "Node a1b1b"}                     | a1b1b    |
-      | a1b2            | a1b                   | Neos.Neos:Test.DocumentType2  | {"uriPathSegment": "a1b2", "title": "Node a1b2"}                       | a1b2     |
-      | a1b3            | a1b                   | Neos.Neos:Test.DocumentType1  | {"uriPathSegment": "a1b3", "title": "Node a1b3"}                       | a1b3     |
-      | a1c             | a1                    | Neos.Neos:Test.DocumentType1  | {"uriPathSegment": "a1c", "title": "Node a1c", "_hiddenInIndex": true} | a1c      |
-      | a1c1            | a1c                   | Neos.Neos:Test.DocumentType1  | {"uriPathSegment": "a1c1", "title": "Node a1c1"}                       | a1c1     |
+      | nodeAggregateId | parentNodeAggregateId | nodeTypeName                  | initialPropertyValues                                                | nodeName |
+      | a               | root                  | Neos.Neos:Site                | {"title": "Node a"}                                                  | a        |
+      | a1              | a                     | Neos.Neos:Test.DocumentType1  | {"uriPathSegment": "a1", "title": "Node a1"}                         | a1       |
+      | a1a             | a1                    | Neos.Neos:Test.DocumentType2a | {"uriPathSegment": "a1a", "title": "Node a1a"}                       | a1a      |
+      | a1a1            | a1a                   | Neos.Neos:Test.DocumentType1  | {"uriPathSegment": "a1a1", "title": "Node a1a1"}                     | a1a1     |
+      | a1a2            | a1a                   | Neos.Neos:Test.DocumentType2  | {"uriPathSegment": "a1a2", "title": "Node a1a2"}                     | a1a2     |
+      | a1a3            | a1a                   | Neos.Neos:Test.DocumentType2a | {"uriPathSegment": "a1a3", "title": "Node a1a3"}                     | a1a3     |
+      | a1a4            | a1a                   | Neos.Neos:Test.DocumentType2a | {"uriPathSegment": "a1a4", "title": "Node a1a4"}                     | a1a4     |
+      | a1a5            | a1a                   | Neos.Neos:Test.DocumentType2a | {"uriPathSegment": "a1a5", "title": "Node a1a5"}                     | a1a5     |
+      | a1a6            | a1a                   | Neos.Neos:Test.DocumentType2  | {"uriPathSegment": "a1a6", "title": "Node a1a6"}                     | a1a6     |
+      | a1a7            | a1a                   | Neos.Neos:Test.DocumentType1  | {"uriPathSegment": "a1a7", "title": "Node a1a7"}                     | a1a7     |
+      | a1b             | a1                    | Neos.Neos:Test.DocumentType1  | {"uriPathSegment": "a1b", "title": "Node a1b"}                       | a1b      |
+      | a1b1            | a1b                   | Neos.Neos:Test.DocumentType1  | {"uriPathSegment": "a1b1", "title": "Node a1b1"}                     | a1b1     |
+      | a1b1a           | a1b1                  | Neos.Neos:Test.DocumentType2a | {"uriPathSegment": "a1b1a", "title": "Node a1b1a"}                   | a1b1a    |
+      | a1b1b           | a1b1                  | Neos.Neos:Test.DocumentType1  | {"uriPathSegment": "a1b1b", "title": "Node a1b1b"}                   | a1b1b    |
+      | a1b2            | a1b                   | Neos.Neos:Test.DocumentType2  | {"uriPathSegment": "a1b2", "title": "Node a1b2"}                     | a1b2     |
+      | a1b3            | a1b                   | Neos.Neos:Test.DocumentType1  | {"uriPathSegment": "a1b3", "title": "Node a1b3"}                     | a1b3     |
+      | a1c             | a1                    | Neos.Neos:Test.DocumentType1  | {"uriPathSegment": "a1c", "title": "Node a1c", "hiddenInMenu": true} | a1c      |
+      | a1c1            | a1c                   | Neos.Neos:Test.DocumentType1  | {"uriPathSegment": "a1c1", "title": "Node a1c1"}                     | a1c1     |
     And A site exists for node name "a" and domain "http://localhost"
     And the sites configuration is:
     """yaml
@@ -97,7 +95,7 @@ Feature: Tests for the "Neos.ContentRepository" Flow Query methods.
       renderer = Neos.Fusion:Loop {
         items = ${props.nodes}
         itemName = 'node'
-        itemRenderer = ${node.nodeAggregateId.value}
+        itemRenderer = ${q(node).id()}
         @glue = ','
       }
     }
@@ -275,6 +273,7 @@ Feature: Tests for the "Neos.ContentRepository" Flow Query methods.
     matchingFilter: a1a5
     nonMatchingFilter:
     """
+
   Scenario: PrevAll
     When I execute the following Fusion code:
     """fusion
@@ -394,4 +393,49 @@ Feature: Tests for the "Neos.ContentRepository" Flow Query methods.
     """
     removeNode: a
     nothingToRemove: a1a4,a1a4,a1a4
+    """
+
+  Scenario: Node accessors (final Node access operations)
+    When the Fusion context node is "a1"
+    When I execute the following Fusion code:
+    """fusion
+    test = Neos.Fusion:DataStructure {
+      property = ${q(node).property('title')}
+      identifier = ${q(node).id()}
+      label = ${q(node).label()}
+      nodeTypeName = ${q(node).nodeTypeName()}
+      @process.render = ${Json.stringify(value, ['JSON_PRETTY_PRINT'])}
+    }
+    """
+    Then I expect the following Fusion rendering result:
+    """
+    {
+        "property": "Node a1",
+        "identifier": "a1",
+        "label": "Neos.Neos:Test.DocumentType1 (a1)",
+        "nodeTypeName": "Neos.Neos:Test.DocumentType1"
+    }
+    """
+    # if the node type config is empty, the operation should still work
+    When I change the node types in content repository "default" to:
+    """yaml
+    """
+    When I execute the following Fusion code:
+    """fusion
+    test = Neos.Fusion:DataStructure {
+      property = ${q(node).property('title')}
+      identifier = ${q(node).id()}
+      label = ${q(node).label()}
+      nodeTypeName = ${q(node).nodeTypeName()}
+      @process.render = ${Json.stringify(value, ['JSON_PRETTY_PRINT'])}
+    }
+    """
+    Then I expect the following Fusion rendering result:
+    """
+    {
+        "property": "Node a1",
+        "identifier": "a1",
+        "label": "Neos.Neos:Test.DocumentType1 (a1)",
+        "nodeTypeName": "Neos.Neos:Test.DocumentType1"
+    }
     """

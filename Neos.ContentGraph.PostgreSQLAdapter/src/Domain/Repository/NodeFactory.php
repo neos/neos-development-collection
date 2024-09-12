@@ -20,13 +20,12 @@ use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePointSet;
 use Neos\ContentRepository\Core\Feature\NodeModification\Dto\SerializedPropertyValues;
 use Neos\ContentRepository\Core\Infrastructure\Property\PropertyConverter;
-use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
-use Neos\ContentRepository\Core\Projection\ContentGraph\ContentSubgraphIdentity;
 use Neos\ContentRepository\Core\Projection\ContentGraph\CoverageByOrigin;
 use Neos\ContentRepository\Core\Projection\ContentGraph\DimensionSpacePointsBySubtreeTags;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate;
+use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregates;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Nodes;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodeTags;
 use Neos\ContentRepository\Core\Projection\ContentGraph\OriginByCoverage;
@@ -42,6 +41,7 @@ use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
 use Neos\ContentRepository\Core\SharedModel\Node\ReferenceName;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
+use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 
 /**
  * The node factory for mapping database rows to nodes and node aggregates
@@ -50,16 +50,12 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
  */
 final class NodeFactory
 {
-    private NodeTypeManager $nodeTypeManager;
-
     private PropertyConverter $propertyConverter;
 
     public function __construct(
         private readonly ContentRepositoryId $contentRepositoryId,
-        NodeTypeManager $nodeTypeManager,
         PropertyConverter $propertyConverter
     ) {
-        $this->nodeTypeManager = $nodeTypeManager;
         $this->propertyConverter = $propertyConverter;
     }
 
@@ -69,25 +65,17 @@ final class NodeFactory
     public function mapNodeRowToNode(
         array $nodeRow,
         VisibilityConstraints $visibilityConstraints,
-        ?DimensionSpacePoint $dimensionSpacePoint = null,
-        ?ContentStreamId $contentStreamId = null
+        ?DimensionSpacePoint $dimensionSpacePoint = null
     ): Node {
-        $nodeType = $this->nodeTypeManager->hasNodeType($nodeRow['nodetypename'])
-            ? $this->nodeTypeManager->getNodeType($nodeRow['nodetypename'])
-            : null;
-
         return Node::create(
-            ContentSubgraphIdentity::create(
-                $this->contentRepositoryId,
-                $contentStreamId ?: ContentStreamId::fromString($nodeRow['contentstreamid']),
-                $dimensionSpacePoint ?: DimensionSpacePoint::fromJsonString($nodeRow['dimensionspacepoint']),
-                $visibilityConstraints
-            ),
+            $this->contentRepositoryId,
+            // todo use actual workspace name
+            WorkspaceName::fromString('missing'),
+            $dimensionSpacePoint ?: DimensionSpacePoint::fromJsonString($nodeRow['dimensionspacepoint']),
             NodeAggregateId::fromString($nodeRow['nodeaggregateid']),
             OriginDimensionSpacePoint::fromJsonString($nodeRow['origindimensionspacepoint']),
             NodeAggregateClassification::from($nodeRow['classification']),
             NodeTypeName::fromString($nodeRow['nodetypename']),
-            $nodeType,
             new PropertyCollection(
                 SerializedPropertyValues::fromJsonString($nodeRow['properties']),
                 $this->propertyConverter
@@ -102,6 +90,7 @@ final class NodeFactory
                 isset($nodeRow['lastmodified']) ? self::parseDateTimeString($nodeRow['lastmodified']) : null,
                 isset($nodeRow['originallastmodified']) ? self::parseDateTimeString($nodeRow['originallastmodified']) : null,
             ),
+            $visibilityConstraints,
         );
     }
 
@@ -110,16 +99,14 @@ final class NodeFactory
      */
     public function mapNodeRowsToNodes(
         array $nodeRows,
-        VisibilityConstraints $visibilityConstraints,
-        ContentStreamId $contentStreamId = null
+        VisibilityConstraints $visibilityConstraints
     ): Nodes {
         $nodes = [];
         foreach ($nodeRows as $nodeRow) {
             $nodes[] = $this->mapNodeRowToNode(
                 $nodeRow,
                 $visibilityConstraints,
-                null,
-                $contentStreamId
+                null
             );
         }
 
@@ -131,8 +118,7 @@ final class NodeFactory
      */
     public function mapReferenceRowsToReferences(
         array $referenceRows,
-        VisibilityConstraints $visibilityConstraints,
-        ContentStreamId $contentStreamId = null
+        VisibilityConstraints $visibilityConstraints
     ): References {
         $references = [];
         foreach ($referenceRows as $referenceRow) {
@@ -140,8 +126,7 @@ final class NodeFactory
                 $this->mapNodeRowToNode(
                     $referenceRow,
                     $visibilityConstraints,
-                    null,
-                    $contentStreamId
+                    null
                 ),
                 ReferenceName::fromString($referenceRow['referencename']),
                 $referenceRow['referenceproperties']
@@ -214,8 +199,7 @@ final class NodeFactory
             $node = $this->mapNodeRowToNode(
                 $nodeRow,
                 $visibilityConstraints,
-                null,
-                $contentStreamId
+                null
             );
             $nodeAggregateId = $nodeAggregateId
                 ?: NodeAggregateId::fromString($nodeRow['nodeaggregateid']);
@@ -241,8 +225,9 @@ final class NodeFactory
             }
         }
 
-        return new NodeAggregate(
-            $contentStreamId,
+        return NodeAggregate::create(
+            $this->contentRepositoryId,
+            WorkspaceName::fromString('missing'), // todo
             $nodeAggregateId,
             $nodeAggregateClassification,
             $nodeTypeName,
@@ -260,14 +245,14 @@ final class NodeFactory
 
     /**
      * @param array<int,array<string,mixed>> $nodeRows
-     * @return iterable<int,\Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate>
      */
-    public function mapNodeRowsToNodeAggregates(array $nodeRows, VisibilityConstraints $visibilityConstraints): iterable
+    public function mapNodeRowsToNodeAggregates(array $nodeRows, VisibilityConstraints $visibilityConstraints): NodeAggregates
     {
-        $nodeAggregates = [];
         if (empty($nodeRows)) {
-            return $nodeAggregates;
+            return NodeAggregates::createEmpty();
         }
+
+        $nodeAggregates = [];
 
         $contentStreamId = null;
         /** @var NodeAggregateId[] $nodeAggregateIds */
@@ -299,8 +284,7 @@ final class NodeFactory
             $node = $this->mapNodeRowToNode(
                 $nodeRow,
                 $visibilityConstraints,
-                null,
-                $contentStreamId
+                null
             );
             $nodeAggregateIds[$key] = NodeAggregateId::fromString(
                 $nodeRow['nodeaggregateid']
@@ -338,8 +322,9 @@ final class NodeFactory
         }
 
         foreach ($nodeAggregateIds as $key => $nodeAggregateId) {
-            yield new NodeAggregate(
-                $contentStreamId,
+            $nodeAggregates[] = NodeAggregate::create(
+                $this->contentRepositoryId,
+                WorkspaceName::fromString('missing'), // todo
                 $nodeAggregateId,
                 $nodeAggregateClassifications[$key],
                 $nodeTypeNames[$key],
@@ -354,6 +339,8 @@ final class NodeFactory
                 DimensionSpacePointsBySubtreeTags::create(),
             );
         }
+
+        return NodeAggregates::fromArray($nodeAggregates);
     }
 
     private static function parseDateTimeString(string $string): \DateTimeImmutable

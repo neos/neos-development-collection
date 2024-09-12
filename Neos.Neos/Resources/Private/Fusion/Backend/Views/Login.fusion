@@ -46,7 +46,7 @@ prototype(Neos.Neos:View.Login) < prototype(Neos.Fusion:Component) {
               </figure>
 
               <h1 class="neos-login-heading">
-                {I18n.id('login.index.title').value('Login to').package('Neos.Neos').source('Main')} <strong>{site.name}</strong>
+                {I18n.id('login.index.title').value('Login to').package('Neos.Neos').source('Main')} <strong>{props.site.name}</strong>
               </h1>
 
               <div class="neos-login-body neos">

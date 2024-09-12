@@ -51,7 +51,7 @@ trait NodeVariation
             OriginDimensionSpacePoint::fromArray($commandArguments['sourceOrigin']),
             OriginDimensionSpacePoint::fromArray($commandArguments['targetOrigin']),
         );
-        $this->lastCommandOrEventResult = $this->currentContentRepository->handle($command);
+        $this->currentContentRepository->handle($command);
     }
 
     /**

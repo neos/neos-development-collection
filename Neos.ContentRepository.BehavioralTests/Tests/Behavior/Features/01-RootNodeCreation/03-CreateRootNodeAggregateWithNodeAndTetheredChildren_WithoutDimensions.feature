@@ -37,8 +37,7 @@ Feature: Create a root node aggregate with tethered children
       | workspaceTitle       | "Live"               |
       | workspaceDescription | "The live workspace" |
       | newContentStreamId   | "cs-identifier"      |
-    And the graph projection is fully up to date
-    And I am in the active content stream of workspace "live" and dimension space point {}
+    And I am in workspace "live" and dimension space point {}
     And I am user identified by "initiating-user-identifier"
 
   Scenario: Create root node with tethered children
@@ -47,7 +46,6 @@ Feature: Create a root node aggregate with tethered children
       | nodeAggregateId                    | "lady-eleonode-rootford"                                                          |
       | nodeTypeName                       | "Neos.ContentRepository.Testing:RootWithTetheredChildNodes"                       |
       | tetheredDescendantNodeAggregateIds | {"child-node": "nody-mc-nodeface", "child-node/grandchild-node": "nodimus-prime"} |
-    And the graph projection is fully up to date
 
     Then I expect exactly 4 events to be published on stream "ContentStream:cs-identifier"
     And event at index 1 is of type "RootNodeAggregateWithNodeWasCreated" with payload:
@@ -133,7 +131,7 @@ Feature: Create a root node aggregate with tethered children
       | Key  | Value                |
       | text | "my sub sub default" |
 
-    And I am in the active content stream of workspace "live" and dimension space point {}
+    And I am in workspace "live" and dimension space point {}
     And I expect node aggregate identifier "lady-eleonode-rootford" to lead to node cs-identifier;lady-eleonode-rootford;{}
     And I expect this node to have no parent node
     And I expect this node to have the following child nodes:

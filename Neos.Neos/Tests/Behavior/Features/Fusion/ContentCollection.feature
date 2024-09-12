@@ -41,12 +41,11 @@ Feature: Tests for the "Neos.Neos:ContentCollection" Fusion prototype
       | Key                | Value           |
       | workspaceName      | "live"          |
       | newContentStreamId | "cs-identifier" |
-    And I am in the active content stream of workspace "live" and dimension space point {}
+    And I am in workspace "live" and dimension space point {}
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key             | Value             |
       | nodeAggregateId | "root"            |
       | nodeTypeName    | "Neos.Neos:Sites" |
-    And the graph projection is fully up to date
     And the following CreateNodeAggregateWithNode commands are executed:
       | nodeAggregateId | parentNodeAggregateId | nodeTypeName   |
       | a               | root                  | Neos.Neos:Site |
@@ -56,8 +55,9 @@ Feature: Tests for the "Neos.Neos:ContentCollection" Fusion prototype
     Neos:
       Neos:
         sites:
-          '*':
-            contentRepository: default
+          'a':
+            preset: default
+            uriPathSuffix: ''
             contentDimensions:
               resolver:
                 factoryClassName: Neos\Neos\FrontendRouting\DimensionResolution\Resolver\NoopResolverFactory
@@ -116,7 +116,6 @@ Feature: Tests for the "Neos.Neos:ContentCollection" Fusion prototype
       | parentNodeAggregateId              | "a"                           |
       | initialPropertyValues              | {}                            |
       | tetheredDescendantNodeAggregateIds | { "main": "a1-main"}          |
-    And the graph projection is fully up to date
     When the following CreateNodeAggregateWithNode commands are executed:
       | nodeAggregateId | parentNodeAggregateId | nodeTypeName               |
       | content1        | a1-main               | Neos.Neos:Test.ContentType |
@@ -128,7 +127,7 @@ Feature: Tests for the "Neos.Neos:ContentCollection" Fusion prototype
     include: resource://Neos.Neos/Private/Fusion/Root.fusion
 
     prototype(Neos.Neos:Test.ContentType) < prototype(Neos.Fusion:Value) {
-      value = ${node.nodeAggregateId.value + ' (' + node.nodeType.name.value + ') '}
+      value = ${q(node).id() + ' (' + node.nodeTypeName.value + ') '}
     }
 
     test = Neos.Neos:ContentCollection {

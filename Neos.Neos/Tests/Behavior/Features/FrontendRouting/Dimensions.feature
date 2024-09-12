@@ -43,12 +43,11 @@ Feature: Routing functionality with multiple content dimensions
       | Key                | Value           |
       | workspaceName      | "live"          |
       | newContentStreamId | "cs-identifier" |
-    And I am in the active content stream of workspace "live" and dimension space point {"market":"DE", "language":"en"}
+    And I am in workspace "live" and dimension space point {"market":"DE", "language":"en"}
     And the command CreateRootNodeAggregateWithNode is executed with payload:
-      | Key                         | Value                                                                                                                                                                                                     |
-      | nodeAggregateId             | "lady-eleonode-rootford"                                                                                                                                                                                  |
-      | nodeTypeName                | "Neos.Neos:Sites"                                                                                                                                                                                         |
-    And the graph projection is fully up to date
+      | Key             | Value                    |
+      | nodeAggregateId | "lady-eleonode-rootford" |
+      | nodeTypeName    | "Neos.Neos:Sites"        |
     And the following CreateNodeAggregateWithNode commands are executed:
       | nodeAggregateId        | parentNodeAggregateId  | nodeTypeName                | initialPropertyValues           | nodeName |
       | sir-david-nodenborough | lady-eleonode-rootford | Neos.Neos:Test.Routing.Page | {"uriPathSegment": "ignore-me"} | node1    |
@@ -59,7 +58,6 @@ Feature: Routing functionality with multiple content dimensions
       | nodeAggregateId | "carl-destinode"                 |
       | sourceOrigin    | {"market":"DE", "language":"en"} |
       | targetOrigin    | {"market":"DE", "language":"de"} |
-    And the graph projection is fully up to date
     And the command SetNodeProperties is executed with payload:
       | Key                       | Value                            |
       | nodeAggregateId           | "carl-destinode"                 |
@@ -71,8 +69,9 @@ Feature: Routing functionality with multiple content dimensions
     Neos:
       Neos:
         sites:
-          '*':
-            contentRepository: default
+          'node1':
+            preset: default
+            uriPathSuffix: ''
             contentDimensions:
               defaultDimensionSpacePoint:
                 market: DE
@@ -93,9 +92,6 @@ Feature: Routing functionality with multiple content dimensions
                         DE: ''
     """
 
-    And the graph projection is fully up to date
-    And The documenturipath projection is up to date
-
   Scenario: Resolve homepage URL in multiple dimensions
     When I am on URL "/"
     Then the node "sir-david-nodenborough" in content stream "cs-identifier" and dimension '{"market":"DE", "language":"en"}' should resolve to URL "/"
@@ -111,8 +107,9 @@ Feature: Routing functionality with multiple content dimensions
     Neos:
       Neos:
         sites:
-          '*':
-            contentRepository: default
+          'node1':
+            preset: default
+            uriPathSuffix: ''
             contentDimensions:
               defaultDimensionSpacePoint:
                 market: DE
@@ -170,8 +167,9 @@ Feature: Routing functionality with multiple content dimensions
     Neos:
       Neos:
         sites:
-          '*':
-            contentRepository: default
+          'node1':
+            preset: default
+            uriPathSuffix: ''
             contentDimensions:
               resolver:
                 factoryClassName: Neos\Neos\FrontendRouting\DimensionResolution\Resolver\UriPathResolverFactory
@@ -185,7 +183,7 @@ Feature: Routing functionality with multiple content dimensions
                         en: ''
     """
 
-    When I run the following node migration for workspace "live", creating content streams "migration-cs":
+    When I run the following node migration for workspace "live", creating target workspace "migration-cs" on contentStreamId "migration-cs", without publishing on success:
     """yaml
     migration:
       -
@@ -204,8 +202,6 @@ Feature: Routing functionality with multiple content dimensions
     When the command PublishWorkspace is executed with payload:
       | Key           | Value          |
       | workspaceName | "migration-cs" |
-    And the graph projection is fully up to date
-    And The documenturipath projection is up to date
 
     When I am on URL "/"
     Then the node "carl-destinode" in content stream "cs-identifier" and dimension '{"market":"CH", "language":"en"}' should resolve to URL "/nody/carl"
@@ -239,8 +235,9 @@ Feature: Routing functionality with multiple content dimensions
     Neos:
       Neos:
         sites:
-          '*':
-            contentRepository: default
+          'node1':
+            preset: default
+            uriPathSuffix: ''
             contentDimensions:
               resolver:
                 factoryClassName: Neos\Neos\FrontendRouting\DimensionResolution\Resolver\UriPathResolverFactory
@@ -255,7 +252,7 @@ Feature: Routing functionality with multiple content dimensions
                         en: ''
     """
     And the node "carl-destinode" in content stream "cs-identifier" and dimension '{"market":"DE", "language":"at"}' should not resolve to an URL
-    When I run the following node migration for workspace "live", creating content streams "migration-cs":
+    When I run the following node migration for workspace "live", creating target workspace "migration-cs" on contentStreamId "migration-cs", without publishing on success:
     """yaml
     migration:
       -
@@ -274,8 +271,6 @@ Feature: Routing functionality with multiple content dimensions
     When the command PublishWorkspace is executed with payload:
       | Key           | Value          |
       | workspaceName | "migration-cs" |
-    And the graph projection is fully up to date
-    And The documenturipath projection is up to date
 
     When I am on URL "/"
     And the node "carl-destinode" in content stream "cs-identifier" and dimension '{"market":"DE", "language":"de"}' should resolve to URL "/de/nody/karl-de"
@@ -288,7 +283,6 @@ Feature: Routing functionality with multiple content dimensions
       | nodeAggregateId           | "carl-destinode"                        |
       | originDimensionSpacePoint | {"market":"DE", "language":"de"}        |
       | propertyValues            | {"uriPathSegment": "karl-aktualisiert"} |
-    And The documenturipath projection is up to date
     When I am on URL "/"
     And the node "carl-destinode" in content stream "cs-identifier" and dimension '{"market":"DE", "language":"de"}' should resolve to URL "/de/nody/karl-aktualisiert"
     # testcase for #4256
@@ -306,8 +300,9 @@ Feature: Routing functionality with multiple content dimensions
     Neos:
       Neos:
         sites:
-          '*':
-            contentRepository: default
+          'node1':
+            preset: default
+            uriPathSuffix: ''
             contentDimensions:
               resolver:
                 factoryClassName: Neos\Neos\FrontendRouting\DimensionResolution\Resolver\UriPathResolverFactory
@@ -328,28 +323,22 @@ Feature: Routing functionality with multiple content dimensions
     And the command UpdateRootNodeAggregateDimensions is executed with payload:
       | Key             | Value                    |
       | nodeAggregateId | "lady-eleonode-rootford" |
-    And the graph projection is fully up to date
     # create variant for fr and sites node
     When the command CreateNodeVariant is executed with payload:
       | Key             | Value                            |
       | nodeAggregateId | "sir-david-nodenborough"         |
       | sourceOrigin    | {"market":"DE", "language":"en"} |
       | targetOrigin    | {"market":"DE", "language":"fr"} |
-    And the graph projection is fully up to date
     When the command CreateNodeVariant is executed with payload:
       | Key             | Value                            |
       | nodeAggregateId | "nody-mc-nodeface"               |
       | sourceOrigin    | {"market":"DE", "language":"en"} |
       | targetOrigin    | {"market":"DE", "language":"fr"} |
-
-    And the graph projection is fully up to date
     And the command SetNodeProperties is executed with payload:
       | Key                       | Value                            |
       | nodeAggregateId           | "nody-mc-nodeface"               |
       | originDimensionSpacePoint | {"market":"DE", "language":"fr"} |
       | propertyValues            | {"uriPathSegment": "nody-fr"}    |
-
-    And the graph projection is fully up to date
 
     When I am on URL "/"
     Then the node "sir-david-nodenborough" in content stream "cs-identifier" and dimension '{"market":"DE", "language":"fr"}' should resolve to URL "/fr/"
@@ -367,8 +356,9 @@ Feature: Routing functionality with multiple content dimensions
     Neos:
       Neos:
         sites:
-          '*':
-            contentRepository: default
+          'node1':
+            preset: default
+            uriPathSuffix: ''
             contentDimensions:
               resolver:
                 factoryClassName: Neos\Neos\FrontendRouting\DimensionResolution\Resolver\UriPathResolverFactory
@@ -389,28 +379,23 @@ Feature: Routing functionality with multiple content dimensions
     And the command UpdateRootNodeAggregateDimensions is executed with payload:
       | Key             | Value                    |
       | nodeAggregateId | "lady-eleonode-rootford" |
-    And the graph projection is fully up to date
     # create variant for fr and sites node
     When the command CreateNodeVariant is executed with payload:
       | Key             | Value                            |
       | nodeAggregateId | "sir-david-nodenborough"         |
       | sourceOrigin    | {"market":"DE", "language":"en"} |
       | targetOrigin    | {"market":"DE", "language":"fr"} |
-    And the graph projection is fully up to date
     When the command CreateNodeVariant is executed with payload:
       | Key             | Value                            |
       | nodeAggregateId | "nody-mc-nodeface"               |
       | sourceOrigin    | {"market":"DE", "language":"en"} |
       | targetOrigin    | {"market":"DE", "language":"fr"} |
 
-    And the graph projection is fully up to date
-
     And the command SetNodeProperties is executed with payload:
       | Key                       | Value                            |
       | nodeAggregateId           | "nody-mc-nodeface"               |
       | originDimensionSpacePoint | {"market":"DE", "language":"fr"} |
       | propertyValues            | {"uriPathSegment": "nody-fr"}    |
-    And the graph projection is fully up to date
 
     When the command MoveNodeAggregate is executed with payload:
       | Key                                 | Value                            |
@@ -419,9 +404,6 @@ Feature: Routing functionality with multiple content dimensions
       | newParentNodeAggregateId            | "lady-eleonode-rootford"         |
       | newSucceedingSiblingNodeAggregateId | null                             |
       | relationDistributionStrategy        | "scatter"                        |
-    And The documenturipath projection is up to date
-
-    And the graph projection is fully up to date
 
     When I am on URL "/"
     Then the node "sir-david-nodenborough" in content stream "cs-identifier" and dimension '{"market":"DE", "language":"en"}' should resolve to URL "/"

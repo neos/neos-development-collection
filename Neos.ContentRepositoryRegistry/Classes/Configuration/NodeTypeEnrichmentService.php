@@ -63,7 +63,10 @@ class NodeTypeEnrichmentService
         }
 
         if (isset($configuration['properties'])) {
-            $this->setPropertyLabels($nodeTypeName, $configuration, $superTypeConfigResolver);
+            $this->setLabels($nodeTypeName, $configuration['properties'], $superTypeConfigResolver, 'properties');
+        }
+        if (isset($configuration['references'])) {
+            $this->setLabels($nodeTypeName, $configuration['references'], $superTypeConfigResolver, 'references');
         }
     }
 
@@ -73,18 +76,19 @@ class NodeTypeEnrichmentService
      * @param SuperTypeConfigResolver $superTypeConfigResolver
      * @return void
      */
-    protected function setPropertyLabels(string $nodeTypeName, array &$configuration, SuperTypeConfigResolver $superTypeConfigResolver)
+    protected function setLabels(string $nodeTypeName, array &$configuration, SuperTypeConfigResolver $superTypeConfigResolver, string $configurationType)
     {
         $nodeTypeLabelIdPrefix = $this->generateNodeTypeLabelIdPrefix($nodeTypeName);
-        foreach ($configuration['properties'] as $propertyName => &$propertyConfiguration) {
+        foreach ($configuration as $propertyName => &$propertyConfiguration) {
             if (!isset($propertyConfiguration['ui'])) {
                 continue;
             }
 
             if ($this->shouldFetchTranslation($propertyConfiguration['ui'])) {
-                $propertyConfiguration['ui']['label'] = $this->getPropertyLabelTranslationId(
+                $propertyConfiguration['ui']['label'] = $this->getLabelTranslationId(
                     $nodeTypeLabelIdPrefix,
-                    $propertyName
+                    $propertyName,
+                    $configurationType
                 );
             }
 
@@ -100,8 +104,8 @@ class NodeTypeEnrichmentService
             $hasEditorOptions = isset($propertyConfiguration['ui']['inspector']['editorOptions']);
 
             if ($hasEditor && $hasEditorOptions) {
-                $translationIdGenerator = function ($path) use ($nodeTypeLabelIdPrefix, $propertyName) {
-                    return $this->getPropertyConfigurationTranslationId($nodeTypeLabelIdPrefix, $propertyName, $path);
+                $translationIdGenerator = function ($path) use ($nodeTypeLabelIdPrefix, $propertyName, $configurationType) {
+                    return $this->getConfigurationTranslationId($nodeTypeLabelIdPrefix, $propertyName, $path, $configurationType);
                 };
                 $this->applyEditorLabels(
                     $nodeTypeLabelIdPrefix,
@@ -120,10 +124,11 @@ class NodeTypeEnrichmentService
                 )
             ) {
                 $propertyConfiguration['ui']['inline']['editorOptions']['placeholder']
-                    = $this->getPropertyConfigurationTranslationId(
+                    = $this->getConfigurationTranslationId(
                     $nodeTypeLabelIdPrefix,
                     $propertyName,
-                    'ui.inline.editorOptions.placeholder'
+                    'ui.inline.editorOptions.placeholder',
+                    $configurationType
                 );
             }
 
@@ -131,14 +136,19 @@ class NodeTypeEnrichmentService
                 isset($propertyConfiguration['ui']['help']['message'])
                 && $this->shouldFetchTranslation($propertyConfiguration['ui']['help'], 'message')
             ) {
-                $propertyConfiguration['ui']['help']['message'] = $this->getPropertyConfigurationTranslationId(
+                $propertyConfiguration['ui']['help']['message'] = $this->getConfigurationTranslationId(
                     $nodeTypeLabelIdPrefix,
                     $propertyName,
-                    'ui.help.message'
+                    'ui.help.message',
+                    $configurationType
                 );
+            }
+            if (isset($propertyConfiguration['properties'])) {
+                $this->setLabels($nodeTypeName, $propertyConfiguration['properties'], $superTypeConfigResolver, $propertyName . '.properties');
             }
         }
     }
+
 
     /**
      * Resolve help message thumbnail url
@@ -226,7 +236,7 @@ class NodeTypeEnrichmentService
      * @param array<string,mixed> $configuration
      * @return void
      */
-    protected function setGlobalUiElementLabels(string $nodeTypeName, array &$configuration)
+    protected function setGlobalUiElementLabels(string $nodeTypeName, array &$configuration): void
     {
         $nodeTypeLabelIdPrefix = $this->generateNodeTypeLabelIdPrefix($nodeTypeName);
         if ($this->shouldFetchTranslation($configuration['ui'])) {
@@ -318,7 +328,7 @@ class NodeTypeEnrichmentService
      * @param string $fieldName Name of the possibly existing subfield
      * @return boolean
      */
-    protected function shouldFetchTranslation(array $parentConfiguration, $fieldName = 'label')
+    protected function shouldFetchTranslation(array $parentConfiguration, string $fieldName = 'label'): bool
     {
         $fieldValue = array_key_exists($fieldName, $parentConfiguration) ? $parentConfiguration[$fieldName] : '';
 
@@ -333,7 +343,7 @@ class NodeTypeEnrichmentService
      * @param string $elementName
      * @return string
      */
-    protected function getInspectorElementTranslationId($nodeTypeSpecificPrefix, $elementType, $elementName)
+    protected function getInspectorElementTranslationId(string $nodeTypeSpecificPrefix, string $elementType, string $elementName): string
     {
         return $nodeTypeSpecificPrefix . $elementType . '.' . $elementName;
     }
@@ -345,9 +355,9 @@ class NodeTypeEnrichmentService
      * @param string $propertyName
      * @return string
      */
-    protected function getPropertyLabelTranslationId($nodeTypeSpecificPrefix, $propertyName)
+    protected function getLabelTranslationId(string $nodeTypeSpecificPrefix, string $propertyName, string $configurationType): string
     {
-        return $nodeTypeSpecificPrefix . 'properties.' . $propertyName;
+        return $nodeTypeSpecificPrefix . $configurationType . '.' . $propertyName;
     }
 
     /**
@@ -358,9 +368,9 @@ class NodeTypeEnrichmentService
      * @param string $labelPath
      * @return string
      */
-    protected function getPropertyConfigurationTranslationId($nodeTypeSpecificPrefix, $propertyName, $labelPath)
+    protected function getConfigurationTranslationId(string $nodeTypeSpecificPrefix, string $propertyName, string $labelPath, string $configurationType): string
     {
-        return $nodeTypeSpecificPrefix . 'properties.' . $propertyName . '.' . $labelPath;
+        return $nodeTypeSpecificPrefix . $configurationType . '.' . $propertyName . '.' . $labelPath;
     }
 
     /**

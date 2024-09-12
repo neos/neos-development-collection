@@ -16,6 +16,7 @@ namespace Neos\Neos\FrontendRouting;
 
 use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAddress;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\Annotations as Flow;
@@ -27,6 +28,7 @@ use Neos\Flow\Mvc\Routing\Dto\UriConstraints;
 use Neos\Flow\Mvc\Routing\DynamicRoutePartInterface;
 use Neos\Flow\Mvc\Routing\ParameterAwareRoutePartInterface;
 use Neos\Flow\Mvc\Routing\RoutingMiddleware;
+use Neos\Neos\Domain\Model\SiteNodeName;
 use Neos\Neos\Domain\Repository\SiteRepository;
 use Neos\Neos\FrontendRouting\CrossSiteLinking\CrossSiteLinkerInterface;
 use Neos\Neos\FrontendRouting\DimensionResolution\DelegatingResolver;
@@ -187,7 +189,8 @@ final class EventSourcedFrontendNodeRoutePartHandler extends AbstractRoutePart i
             throw new ResolvedSiteNotFoundException(sprintf('No site found for siteNodeName "%s"', $siteDetectionResult->siteNodeName->value));
         }
 
-        $remainingRequestPath = $this->truncateRequestPathAndReturnRemainder($requestPath, $resolvedSite->getConfiguration()->uriPathSuffix);
+        $uriPathSuffix = $this->options['uriPathSuffix'] ?? $resolvedSite->getConfiguration()->uriPathSuffix;
+        $remainingRequestPath = $this->truncateRequestPathAndReturnRemainder($requestPath, $uriPathSuffix);
 
         $dimensionResolvingResult = $this->delegatingResolver->fromRequestToDimensionSpacePoint(
             RequestToDimensionSpacePointContext::fromUriPathAndRouteParametersAndResolvedSite(
@@ -201,7 +204,7 @@ final class EventSourcedFrontendNodeRoutePartHandler extends AbstractRoutePart i
         // TODO validate dsp == complete (ContentDimensionZookeeper::getAllowedDimensionSubspace()->contains()...)
         // if incomplete -> no match + log
 
-        $contentRepository = $this->contentRepositoryRegistry->get($siteDetectionResult->contentRepositoryId);
+        $contentRepository = $this->contentRepositoryRegistry->get($resolvedSite->getConfiguration()->contentRepositoryId);
 
         try {
             $matchResult = $this->matchUriPath(
@@ -240,12 +243,13 @@ final class EventSourcedFrontendNodeRoutePartHandler extends AbstractRoutePart i
             $uriPath,
             $dimensionSpacePoint->hash
         );
-        $nodeAddress = NodeAddressFactory::create($contentRepository)->createFromContentStreamIdAndDimensionSpacePointAndNodeAggregateId(
-            $documentUriPathFinder->getLiveContentStreamId(),
+        $nodeAddress = NodeAddress::create(
+            $contentRepository->id,
+            WorkspaceName::forLive(),
             $dimensionSpacePoint,
             $nodeInfo->getNodeAggregateId(),
         );
-        return new MatchResult($nodeAddress->serializeForUri(), $nodeInfo->getRouteTags());
+        return new MatchResult($nodeAddress->toJson(), $nodeInfo->getRouteTags());
     }
 
     /**
@@ -261,15 +265,14 @@ final class EventSourcedFrontendNodeRoutePartHandler extends AbstractRoutePart i
         $currentRequestSiteDetectionResult = SiteDetectionResult::fromRouteParameters($parameters);
 
         $nodeAddress = $routeValues[$this->name];
-        // TODO: for cross-CR links: NodeAddressInContentRepository as a new value object
         if (!$nodeAddress instanceof NodeAddress) {
             return false;
         }
 
         try {
-            $resolveResult = $this->resolveNodeAddress($nodeAddress, $currentRequestSiteDetectionResult);
-        } catch (NodeNotFoundException | InvalidShortcutException $exception) {
-            // TODO log exception
+            $resolveResult = $this->resolveNodeAddress($nodeAddress, $currentRequestSiteDetectionResult->siteNodeName);
+        } catch (NodeNotFoundException | TargetSiteNotFoundException | InvalidShortcutException $exception) {
+            // TODO log exception ... yes todo
             return false;
         }
 
@@ -284,23 +287,20 @@ final class EventSourcedFrontendNodeRoutePartHandler extends AbstractRoutePart i
      *       To disallow showing a node actually disabled/hidden itself has to be ensured in matching a request path,
      *       not in building one.
      *
-     * @param NodeAddress $nodeAddress
-     * @param SiteDetectionResult $currentRequestSiteDetectionResult
-     * @return ResolveResult
      * @throws InvalidShortcutException
      * @throws NodeNotFoundException
+     * @throws TargetSiteNotFoundException
      */
     private function resolveNodeAddress(
         NodeAddress $nodeAddress,
-        SiteDetectionResult $currentRequestSiteDetectionResult
+        SiteNodeName $currentRequestSiteNodeName
     ): ResolveResult {
-        // TODO: SOMEHOW FIND OTHER CONTENT REPOSITORY HERE FOR CROSS-CR LINKS!!
         $contentRepository = $this->contentRepositoryRegistry->get(
-            $currentRequestSiteDetectionResult->contentRepositoryId
+            $nodeAddress->contentRepositoryId
         );
         $documentUriPathFinder = $contentRepository->projectionState(DocumentUriPathFinder::class);
         $nodeInfo = $documentUriPathFinder->getByIdAndDimensionSpacePointHash(
-            $nodeAddress->nodeAggregateId,
+            $nodeAddress->aggregateId,
             $nodeAddress->dimensionSpacePoint->hash
         );
 
@@ -318,7 +318,7 @@ final class EventSourcedFrontendNodeRoutePartHandler extends AbstractRoutePart i
         }
 
         $uriConstraints = UriConstraints::create();
-        if (!$targetSite->getNodeName()->equals($currentRequestSiteDetectionResult->siteNodeName)) {
+        if (!$targetSite->getNodeName()->equals($currentRequestSiteNodeName)) {
             $uriConstraints = $this->crossSiteLinker->applyCrossSiteUriConstraints(
                 $targetSite,
                 $uriConstraints

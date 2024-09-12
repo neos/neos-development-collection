@@ -33,30 +33,23 @@ trait NodeRenaming
      */
     private function whenNodeAggregateNameWasChanged(NodeAggregateNameWasChanged $event): void
     {
-        $this->transactional(function () use ($event) {
-            foreach (
-                $this->getProjectionHyperGraph()->findNodeRecordsForNodeAggregate(
-                    $event->contentStreamId,
-                    $event->nodeAggregateId
-                ) as $originNode
-            ) {
-                $this->copyOnWrite(
-                    $event->contentStreamId,
-                    $originNode,
-                    function (NodeRecord $nodeRecord) use ($event) {
-                        $nodeRecord->nodeName = $event->newNodeName;
-                    }
-                );
-            }
-        });
+        foreach (
+            $this->getProjectionHyperGraph()->findNodeRecordsForNodeAggregate(
+                $event->contentStreamId,
+                $event->nodeAggregateId
+            ) as $originNode
+        ) {
+            $this->copyOnWrite(
+                $event->contentStreamId,
+                $originNode,
+                function (NodeRecord $nodeRecord) use ($event) {
+                    $nodeRecord->nodeName = $event->newNodeName;
+                }
+            );
+        }
     }
 
     abstract protected function getProjectionHyperGraph(): ProjectionHypergraph;
-
-    /**
-     * @throws \Throwable
-     */
-    abstract protected function transactional(\Closure $operations): void;
 
     abstract protected function getDatabaseConnection(): Connection;
 }

@@ -39,8 +39,7 @@ trait NodeCopying
     public function theCommandCopyNodesRecursivelyIsExecutedCopyingTheCurrentNodeAggregateWithPayload(TableNode $payloadTable): void
     {
         $commandArguments = $this->readPayloadTable($payloadTable);
-        $subgraph = $this->currentContentRepository->getContentGraph()->getSubgraph(
-            $this->currentContentStreamId,
+        $subgraph = $this->currentContentRepository->getContentGraph($this->currentWorkspaceName)->getSubgraph(
             $this->currentDimensionSpacePoint,
             VisibilityConstraints::withoutRestrictions()
         );
@@ -50,9 +49,7 @@ trait NodeCopying
         $targetSucceedingSiblingNodeAggregateId = isset($commandArguments['targetSucceedingSiblingNodeAggregateId'])
             ? NodeAggregateId::fromString($commandArguments['targetSucceedingSiblingNodeAggregateId'])
             : null;
-        $targetNodeName = isset($commandArguments['targetNodeName'])
-            ? NodeName::fromString($commandArguments['targetNodeName'])
-            : null;
+
         $workspaceName = isset($commandArguments['workspaceName'])
             ? WorkspaceName::fromString($commandArguments['workspaceName'])
             : $this->currentWorkspaceName;
@@ -63,11 +60,13 @@ trait NodeCopying
             $this->currentNode,
             $targetDimensionSpacePoint,
             NodeAggregateId::fromString($commandArguments['targetParentNodeAggregateId']),
-            $targetSucceedingSiblingNodeAggregateId,
-            $targetNodeName
+            $targetSucceedingSiblingNodeAggregateId
         );
+        if (isset($commandArguments['targetNodeName'])) {
+            $command = $command->withTargetNodeName(NodeName::fromString($commandArguments['targetNodeName']));
+        }
         $command = $command->withNodeAggregateIdMapping(NodeAggregateIdMapping::fromArray($commandArguments['nodeAggregateIdMapping']));
 
-        $this->lastCommandOrEventResult = $this->currentContentRepository->handle($command);
+        $this->currentContentRepository->handle($command);
     }
 }

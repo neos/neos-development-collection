@@ -35,10 +35,13 @@ use Neos\ContentRepository\Core\Projection\ProjectionInterface;
 use Neos\ContentRepository\Core\Projection\ProjectionsAndCatchUpHooks;
 use Neos\ContentRepository\Core\Projection\ProjectionStateInterface;
 use Neos\ContentRepository\Core\Projection\ProjectionStatuses;
+use Neos\ContentRepository\Core\Projection\WithMarkStaleInterface;
 use Neos\ContentRepository\Core\Projection\Workspace\WorkspaceFinder;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryStatus;
+use Neos\ContentRepository\Core\SharedModel\Exception\WorkspaceDoesNotExist;
 use Neos\ContentRepository\Core\SharedModel\User\UserIdProviderInterface;
+use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\EventStore\EventStoreInterface;
 use Neos\EventStore\Model\Event\EventMetadata;
 use Neos\EventStore\Model\EventEnvelope;
@@ -63,6 +66,8 @@ final class ContentRepository
      */
     private array $projectionStateCache;
 
+    private CommandHandlingDependencies $commandHandlingDependencies;
+
 
     /**
      * @internal use the {@see ContentRepositoryFactory::getOrBuild()} to instantiate
@@ -80,14 +85,11 @@ final class ContentRepository
         private readonly UserIdProviderInterface $userIdProvider,
         private readonly ClockInterface $clock,
     ) {
+        $this->commandHandlingDependencies = new CommandHandlingDependencies($this);
     }
 
     /**
      * The only API to send commands (mutation intentions) to the system.
-     *
-     * The system is ASYNCHRONOUS by default, so that means the projection is not directly up to date. If you
-     * need to be synchronous, call {@see CommandResult::block()} on the returned CommandResult - then the system
-     * waits until the projections are up to date.
      *
      * @param CommandInterface $command
      * @return CommandResult
@@ -96,7 +98,7 @@ final class ContentRepository
     {
         // the commands only calculate which events they want to have published, but do not do the
         // publishing themselves
-        $eventsToPublish = $this->commandBus->handle($command, $this);
+        $eventsToPublish = $this->commandBus->handle($command, $this->commandHandlingDependencies);
 
         // TODO meaningful exception message
         $initiatingUserId = $this->userIdProvider->getUserId();
@@ -180,6 +182,9 @@ final class ContentRepository
             }
             $catchUpHook?->onBeforeEvent($event, $eventEnvelope);
             $projection->apply($event, $eventEnvelope);
+            if ($projection instanceof WithMarkStaleInterface) {
+                $projection->markStale();
+            }
             $catchUpHook?->onAfterEvent($event, $eventEnvelope);
         };
 
@@ -234,9 +239,12 @@ final class ContentRepository
         return $this->nodeTypeManager;
     }
 
-    public function getContentGraph(): ContentGraphInterface
+    /**
+     * @throws WorkspaceDoesNotExist if the workspace does not exist
+     */
+    public function getContentGraph(WorkspaceName $workspaceName): ContentGraphInterface
     {
-        return $this->projectionState(ContentGraphInterface::class);
+        return $this->projectionState(ContentGraphFinder::class)->getByWorkspaceName($workspaceName);
     }
 
     public function getWorkspaceFinder(): WorkspaceFinder

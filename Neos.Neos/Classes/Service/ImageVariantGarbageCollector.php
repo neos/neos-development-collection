@@ -50,6 +50,7 @@ class ImageVariantGarbageCollector
      *
      * Note: This method it triggered by the "nodePropertyChanged" signal,
      * @see \Neos\ContentRepository\Domain\Model\Node::emitNodePropertyChanged()
+     * TODO Fix with Neos9 !!! See https://github.com/neos/neos-development-collection/issues/5145
      *
      * @param Node $node the affected node
      * @param string $propertyName name of the property that has been changed/added
@@ -77,9 +78,10 @@ class ImageVariantGarbageCollector
                 // then we are safe to remove the asset here.
                 if (
                     $usageItem instanceof AssetUsageReference
+                    /** @phpstan-ignore-next-line todo needs repair see https://github.com/neos/neos-development-collection/issues/5145 */
                     && $usageItem->getContentStreamId()->equals($node->subgraphIdentity->contentStreamId)
                     && $usageItem->getOriginDimensionSpacePoint()->equals($node->originDimensionSpacePoint)
-                    && $usageItem->getNodeAggregateId()->equals($node->nodeAggregateId)
+                    && $usageItem->getNodeAggregateId()->equals($node->aggregateId)
                 ) {
                     $this->assetRepository->remove($oldValue);
                 }

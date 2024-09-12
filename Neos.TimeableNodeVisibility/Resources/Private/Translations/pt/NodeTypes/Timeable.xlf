@@ -4,11 +4,11 @@
     <body>
       <trans-unit id="properties.enableAfterDateTime" xml:space="preserve">
         <source>Show after</source>
-        <target state="needs-translation">Mostrar após</target>
+        <target state="translated">Mostrar depois de</target>
       </trans-unit>
       <trans-unit id="properties.disableAfterDateTime" xml:space="preserve">
         <source>Hide after</source>
-        <target state="translated">Esconder depois</target>
+        <target state="translated">Esconder depois de</target>
       </trans-unit>
     </body>
   </file>

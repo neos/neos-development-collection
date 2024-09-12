@@ -14,7 +14,6 @@ declare(strict_types=1);
 
 namespace Neos\Neos\Controller\Frontend;
 
-use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphWithRuntimeCaches\ContentSubgraphWithRuntimeCaches;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphWithRuntimeCaches\InMemoryCache;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentSubgraphInterface;
@@ -25,6 +24,7 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\Nodes;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Subtree;
 use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAddress;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\Controller\ActionController;
@@ -39,10 +39,8 @@ use Neos\Neos\Domain\Service\NodeTypeNameFactory;
 use Neos\Neos\Domain\Service\RenderingModeService;
 use Neos\Neos\FrontendRouting\Exception\InvalidShortcutException;
 use Neos\Neos\FrontendRouting\Exception\NodeNotFoundException;
-use Neos\Neos\FrontendRouting\NodeAddress;
-use Neos\Neos\FrontendRouting\NodeAddressFactory;
 use Neos\Neos\FrontendRouting\NodeShortcutResolver;
-use Neos\Neos\FrontendRouting\NodeUriBuilder;
+use Neos\Neos\FrontendRouting\NodeUriBuilderFactory;
 use Neos\Neos\FrontendRouting\SiteDetection\SiteDetectionResult;
 use Neos\Neos\Utility\NodeTypeWithFallbackProvider;
 use Neos\Neos\View\FusionView;
@@ -106,6 +104,9 @@ class NodeController extends ActionController
     #[Flow\InjectConfiguration(path: "frontend.shortcutRedirectHttpStatusCode", package: "Neos.Neos")]
     protected int $shortcutRedirectHttpStatusCode;
 
+    #[Flow\Inject]
+    protected NodeUriBuilderFactory $nodeUriBuilderFactory;
+
     /**
      * @param string $node
      * @throws NodeNotFoundException
@@ -130,22 +131,14 @@ class NodeController extends ActionController
         $siteDetectionResult = SiteDetectionResult::fromRequest($this->request->getHttpRequest());
         $contentRepository = $this->contentRepositoryRegistry->get($siteDetectionResult->contentRepositoryId);
 
-        $nodeAddress = NodeAddressFactory::create($contentRepository)->createFromUriString($node);
+        $nodeAddress = NodeAddress::fromJsonString($node);
 
-        $subgraph = $contentRepository->getContentGraph()->getSubgraph(
-            $nodeAddress->contentStreamId,
+        $subgraph = $contentRepository->getContentGraph($nodeAddress->workspaceName)->getSubgraph(
             $nodeAddress->dimensionSpacePoint,
             $visibilityConstraints
         );
 
-        $site = $subgraph->findClosestNode($nodeAddress->nodeAggregateId, FindClosestNodeFilter::create(nodeTypes: NodeTypeNameFactory::NAME_SITE));
-        if ($site === null) {
-            throw new NodeNotFoundException("TODO: SITE NOT FOUND; should not happen (for address " . $nodeAddress);
-        }
-
-        $this->fillCacheWithContentNodes($nodeAddress->nodeAggregateId, $subgraph);
-
-        $nodeInstance = $subgraph->findNodeById($nodeAddress->nodeAggregateId);
+        $nodeInstance = $subgraph->findNodeById($nodeAddress->aggregateId);
 
         if (is_null($nodeInstance)) {
             throw new NodeNotFoundException(
@@ -154,12 +147,19 @@ class NodeController extends ActionController
             );
         }
 
+        $site = $subgraph->findClosestNode($nodeAddress->aggregateId, FindClosestNodeFilter::create(nodeTypes: NodeTypeNameFactory::NAME_SITE));
+        if ($site === null) {
+            throw new NodeNotFoundException("TODO: SITE NOT FOUND; should not happen (for identity " . $nodeAddress->toJson());
+        }
+
+        $this->fillCacheWithContentNodes($nodeAddress->aggregateId, $subgraph);
+
         if (
             $this->getNodeType($nodeInstance)->isOfType(NodeTypeNameFactory::NAME_SHORTCUT)
             && !$renderingMode->isEdit
             && $nodeAddress->workspaceName->isLive() // shortcuts are only resolvable for the live workspace
         ) {
-            $this->handleShortcutNode($nodeAddress, $contentRepository);
+            $this->handleShortcutNode($nodeAddress);
         }
 
         $this->view->setOption('renderingModeName', $renderingMode->name);
@@ -193,34 +193,33 @@ class NodeController extends ActionController
      */
     public function showAction(string $node): void
     {
-        $siteDetectionResult = SiteDetectionResult::fromRequest($this->request->getHttpRequest());
-        $contentRepository = $this->contentRepositoryRegistry->get($siteDetectionResult->contentRepositoryId);
+        $nodeAddress = NodeAddress::fromJsonString($node);
+        unset($node);
 
-        $nodeAddress = NodeAddressFactory::create($contentRepository)->createFromUriString($node);
-        if (!$nodeAddress->isInLiveWorkspace()) {
+        if (!$nodeAddress->workspaceName->isLive()) {
             throw new NodeNotFoundException('The requested node isn\'t accessible to the current user', 1430218623);
         }
 
-        $subgraph = $contentRepository->getContentGraph()->getSubgraph(
-            $nodeAddress->contentStreamId,
+        $contentRepository = $this->contentRepositoryRegistry->get($nodeAddress->contentRepositoryId);
+        $subgraph = $contentRepository->getContentGraph($nodeAddress->workspaceName)->getSubgraph(
             $nodeAddress->dimensionSpacePoint,
             VisibilityConstraints::frontend()
         );
 
-        $nodeInstance = $subgraph->findNodeById($nodeAddress->nodeAggregateId);
+        $nodeInstance = $subgraph->findNodeById($nodeAddress->aggregateId);
         if ($nodeInstance === null) {
-            throw new NodeNotFoundException(sprintf('The cached node address for this uri could not be resolved. Possibly you have to flush the "Flow_Mvc_Routing_Route" cache. %s', $nodeAddress), 1707300738);
+            throw new NodeNotFoundException(sprintf('The cached node address for this uri could not be resolved. Possibly you have to flush the "Flow_Mvc_Routing_Route" cache. %s', $nodeAddress->toJson()), 1707300738);
         }
 
-        $site = $subgraph->findClosestNode($nodeAddress->nodeAggregateId, FindClosestNodeFilter::create(nodeTypes: NodeTypeNameFactory::NAME_SITE));
+        $site = $subgraph->findClosestNode($nodeAddress->aggregateId, FindClosestNodeFilter::create(nodeTypes: NodeTypeNameFactory::NAME_SITE));
         if ($site === null) {
-            throw new NodeNotFoundException(sprintf('The site node of %s could not be resolved.', $nodeAddress), 1707300861);
+            throw new NodeNotFoundException(sprintf('The site node of %s could not be resolved.', $nodeAddress->toJson()), 1707300861);
         }
 
-        $this->fillCacheWithContentNodes($nodeAddress->nodeAggregateId, $subgraph);
+        $this->fillCacheWithContentNodes($nodeAddress->aggregateId, $subgraph);
 
         if ($this->getNodeType($nodeInstance)->isOfType(NodeTypeNameFactory::NAME_SHORTCUT)) {
-            $this->handleShortcutNode($nodeAddress, $contentRepository);
+            $this->handleShortcutNode($nodeAddress);
         }
 
         $this->view->setOption('renderingModeName', RenderingMode::FRONTEND);
@@ -268,31 +267,31 @@ class NodeController extends ActionController
     /**
      * Handles redirects to shortcut targets of nodes in the live workspace.
      *
-     * @param NodeAddress $nodeAddress
      * @throws NodeNotFoundException
      * @throws \Neos\Flow\Mvc\Exception\StopActionException
      */
-    protected function handleShortcutNode(NodeAddress $nodeAddress, ContentRepository $contentRepository): void
+    protected function handleShortcutNode(NodeAddress $nodeAddress): void
     {
         try {
-            $resolvedTarget = $this->nodeShortcutResolver->resolveShortcutTarget($nodeAddress, $contentRepository);
+            $resolvedTarget = $this->nodeShortcutResolver->resolveShortcutTarget($nodeAddress);
         } catch (InvalidShortcutException $e) {
             throw new NodeNotFoundException(sprintf(
-                'The shortcut node target of node "%s" could not be resolved: %s',
-                $nodeAddress,
+                'The shortcut node target of node %s could not be resolved: %s',
+                $nodeAddress->toJson(),
                 $e->getMessage()
             ), 1430218730, $e);
         }
         if ($resolvedTarget instanceof NodeAddress) {
-            if ($resolvedTarget === $nodeAddress) {
+            if ($nodeAddress->equals($resolvedTarget)) {
                 return;
             }
             try {
-                $resolvedUri = NodeUriBuilder::fromRequest($this->request)->uriFor($nodeAddress);
+                $resolvedUri = $this->nodeUriBuilderFactory->forActionRequest($this->request)
+                    ->uriFor($nodeAddress);
             } catch (NoMatchingRouteException $e) {
                 throw new NodeNotFoundException(sprintf(
-                    'The shortcut node target of node "%s" could not be resolved: %s',
-                    $nodeAddress,
+                    'The shortcut node target of node %s could not be resolved: %s',
+                    $nodeAddress->toJson(),
                     $e->getMessage()
                 ), 1599670695, $e);
             }
@@ -343,10 +342,10 @@ class NodeController extends ActionController
             = $inMemoryCache->getParentNodeIdByChildNodeIdCache();
         $namedChildNodeByNodeIdentifierCache = $inMemoryCache->getNamedChildNodeByNodeIdCache();
         $allChildNodesByNodeIdentifierCache = $inMemoryCache->getAllChildNodesByNodeIdCache();
-        if ($node->nodeName !== null) {
+        if ($node->name !== null) {
             $namedChildNodeByNodeIdentifierCache->add(
-                $parentNode->nodeAggregateId,
-                $node->nodeName,
+                $parentNode->aggregateId,
+                $node->name,
                 $node
             );
         } else {
@@ -354,8 +353,8 @@ class NodeController extends ActionController
         }
 
         $parentNodeIdentifierByChildNodeIdentifierCache->add(
-            $node->nodeAggregateId,
-            $parentNode->nodeAggregateId
+            $node->aggregateId,
+            $parentNode->aggregateId
         );
 
         $allChildNodes = [];
@@ -366,7 +365,7 @@ class NodeController extends ActionController
         }
         // TODO Explain why this is safe (Content can not contain other documents)
         $allChildNodesByNodeIdentifierCache->add(
-            $node->nodeAggregateId,
+            $node->aggregateId,
             null,
             Nodes::fromArray($allChildNodes)
         );

@@ -1,7 +1,7 @@
 prototype(Neos.Neos:RawContent.NodeHeader) < prototype(Neos.Fusion:Component) {
 
-  labelParts = ${String.split(node.nodeType.label, ':')}
-  icon = ${node.nodeType.fullConfiguration.ui.icon}
+  labelParts = ${String.split(Neos.Node.getNodeType(node).label, ':')}
+  icon = ${Neos.Node.getNodeType(node).fullConfiguration.ui.icon}
   visibilityInformations = Neos.Fusion:DataStructure {
     hidden = 'hidden'
     hidden.@if.isHidden = ${node.hidden}
@@ -11,7 +11,7 @@ prototype(Neos.Neos:RawContent.NodeHeader) < prototype(Neos.Fusion:Component) {
   renderer = afx`
     <header>
       <i class={'fas fa-' + props.icon + ' ' + props.icon} @if={props.icon}></i>&nbsp;
-      {(node.tethered || q(node).is('[instanceof Neos.Neos:Document]')) ? node.label : Translation.translate(props.labelParts[2], node.nodeType.label, [], props.labelParts[1], props.labelParts[0])}
+      {(node.classification.tethered || q(node).is('[instanceof Neos.Neos:Document]')) ? q(node).label() : Translation.translate(props.labelParts[2], Neos.Node.getNodeType(node).label, [], props.labelParts[1], props.labelParts[0])}
       <span @if={props.visibilityInformations}> - {props.visibilityInformations}</span>
     </header>
   `

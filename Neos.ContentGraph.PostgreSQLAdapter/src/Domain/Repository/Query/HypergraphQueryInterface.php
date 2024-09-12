@@ -15,7 +15,7 @@ declare(strict_types=1);
 namespace Neos\ContentGraph\PostgreSQLAdapter\Domain\Repository\Query;
 
 use Doctrine\DBAL\Connection;
-use Doctrine\DBAL\Driver\ResultStatement;
+use Doctrine\DBAL\Result;
 
 /**
  * The interface to be implemented by hypergraph queries
@@ -25,7 +25,8 @@ use Doctrine\DBAL\Driver\ResultStatement;
 interface HypergraphQueryInterface
 {
     /**
-     * @return ResultStatement<string,mixed>
+     * @param Connection $databaseConnection
+     * @return Result
      */
-    public function execute(Connection $databaseConnection): ResultStatement;
+    public function execute(Connection $databaseConnection): Result;
 }

@@ -110,7 +110,7 @@ class SiteRepository extends Repository
      * To find the correct site node by its descended child node leverage `findClosestNode`:
      * ```php
      * $siteNode = $subgraph->findClosestNode(
-     *     $node->nodeAggregateId,
+     *     $node->aggregateId,
      *     FindClosestNodeFilter::create(nodeTypes: NodeTypeNameFactory::NAME_SITE)
      * );
      * ```
@@ -122,13 +122,13 @@ class SiteRepository extends Repository
     public function findSiteBySiteNode(Node $siteNode): Site
     {
         if (!$this->getNodeType($siteNode)->isOfType(NodeTypeNameFactory::NAME_SITE)) {
-            throw new \Neos\Neos\Domain\Exception(sprintf('Node %s is not a site node. Site nodes must be of type "%s".', $siteNode->nodeAggregateId->value, NodeTypeNameFactory::NAME_SITE), 1697108987);
+            throw new \Neos\Neos\Domain\Exception(sprintf('Node %s is not a site node. Site nodes must be of type "%s".', $siteNode->aggregateId->value, NodeTypeNameFactory::NAME_SITE), 1697108987);
         }
-        if ($siteNode->nodeName === null) {
-            throw new \Neos\Neos\Domain\Exception(sprintf('Site node "%s" is unnamed', $siteNode->nodeAggregateId->value), 1681286146);
+        if ($siteNode->name === null) {
+            throw new \Neos\Neos\Domain\Exception(sprintf('Site node "%s" is unnamed', $siteNode->aggregateId->value), 1681286146);
         }
-        return $this->findOneByNodeName(SiteNodeName::fromNodeName($siteNode->nodeName))
-            ?? throw new \Neos\Neos\Domain\Exception(sprintf('No site found for nodeNodeName "%s"', $siteNode->nodeName->value), 1677245517);
+        return $this->findOneByNodeName(SiteNodeName::fromNodeName($siteNode->name))
+            ?? throw new \Neos\Neos\Domain\Exception(sprintf('No site found for nodeNodeName "%s"', $siteNode->name->value), 1677245517);
     }
 
     /**

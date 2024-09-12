@@ -35,54 +35,47 @@ trait NodeReferencing
      */
     private function whenNodeReferencesWereSet(NodeReferencesWereSet $event): void
     {
-        $this->transactional(function () use ($event) {
-            foreach ($event->affectedSourceOriginDimensionSpacePoints as $originDimensionSpacePoint) {
-                $nodeRecord = $this->getProjectionHypergraph()->findNodeRecordByOrigin(
+        foreach ($event->affectedSourceOriginDimensionSpacePoints as $originDimensionSpacePoint) {
+            $nodeRecord = $this->getProjectionHypergraph()->findNodeRecordByOrigin(
+                $event->contentStreamId,
+                $originDimensionSpacePoint,
+                $event->nodeAggregateId
+            );
+
+            if ($nodeRecord) {
+                $anchorPoint = $this->copyOnWrite(
                     $event->contentStreamId,
-                    $originDimensionSpacePoint,
-                    $event->sourceNodeAggregateId
+                    $nodeRecord,
+                    function (NodeRecord $node) {
+                    }
                 );
 
-                if ($nodeRecord) {
-                    $anchorPoint = $this->copyOnWrite(
-                        $event->contentStreamId,
-                        $nodeRecord,
-                        function (NodeRecord $node) {
-                        }
+                // remove old
+                $this->getDatabaseConnection()->delete($this->tableNamePrefix . '_referencerelation', [
+                    'sourcenodeanchor' => $anchorPoint->value,
+                    'name' => $event->referenceName->value
+                ]);
+
+                // set new
+                $position = 0;
+                foreach ($event->references as $reference) {
+                    $referenceRecord = new ReferenceRelationRecord(
+                        $anchorPoint,
+                        $event->referenceName,
+                        $position,
+                        $reference->properties,
+                        $reference->targetNodeAggregateId
                     );
-
-                    // remove old
-                    $this->getDatabaseConnection()->delete($this->tableNamePrefix . '_referencerelation', [
-                        'sourcenodeanchor' => $anchorPoint->value,
-                        'name' => $event->referenceName->value
-                    ]);
-
-                    // set new
-                    $position = 0;
-                    foreach ($event->references as $reference) {
-                        $referenceRecord = new ReferenceRelationRecord(
-                            $anchorPoint,
-                            $event->referenceName,
-                            $position,
-                            $reference->properties,
-                            $reference->targetNodeAggregateId
-                        );
-                        $referenceRecord->addToDatabase($this->getDatabaseConnection(), $this->tableNamePrefix);
-                        $position++;
-                    }
-                } else {
-                    throw EventCouldNotBeAppliedToContentGraph::becauseTheSourceNodeIsMissing(get_class($event));
+                    $referenceRecord->addToDatabase($this->getDatabaseConnection(), $this->tableNamePrefix);
+                    $position++;
                 }
+            } else {
+                throw EventCouldNotBeAppliedToContentGraph::becauseTheSourceNodeIsMissing(get_class($event));
             }
-        });
+        }
     }
 
     abstract protected function getProjectionHypergraph(): ProjectionHypergraph;
-
-    /**
-     * @throws \Throwable
-     */
-    abstract protected function transactional(\Closure $operations): void;
 
     abstract protected function getDatabaseConnection(): Connection;
 }

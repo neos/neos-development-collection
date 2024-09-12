@@ -15,14 +15,15 @@ declare(strict_types=1);
 namespace Neos\Neos\FrontendRouting;
 
 use Neos\ContentRepository\Core\ContentRepository;
+use Neos\Neos\FrontendRouting\NodeAddress as LegacyNodeAddress;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAddress;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 
 /**
- * @api
+ * @deprecated will be removed before Final 9.0
  */
 class NodeAddressFactory
 {
@@ -36,39 +37,29 @@ class NodeAddressFactory
         return new self($contentRepository);
     }
 
-    public function createFromContentStreamIdAndDimensionSpacePointAndNodeAggregateId(
-        ContentStreamId $contentStreamId,
-        DimensionSpacePoint $dimensionSpacePoint,
-        NodeAggregateId $nodeAggregateId
-    ): NodeAddress {
-        $workspace = $this->contentRepository->getWorkspaceFinder()->findOneByCurrentContentStreamId(
-            $contentStreamId
-        );
-        if ($workspace === null) {
-            throw new \RuntimeException(
-                'Cannot build a NodeAddress for traversable node of aggregate ' . $nodeAggregateId->value
-                . ', because the content stream ' . $contentStreamId->value
-                . ' is not assigned to a workspace.'
-            );
-        }
-        return new NodeAddress(
-            $contentStreamId,
-            $dimensionSpacePoint,
-            $nodeAggregateId,
-            $workspace->workspaceName,
-        );
-    }
-
-    public function createFromNode(Node $node): NodeAddress
+    public function createFromNode(Node $node): LegacyNodeAddress
     {
-        return $this->createFromContentStreamIdAndDimensionSpacePointAndNodeAggregateId(
-            $node->subgraphIdentity->contentStreamId,
-            $node->subgraphIdentity->dimensionSpacePoint,
-            $node->nodeAggregateId,
+        return new LegacyNodeAddress(
+            null,
+            $node->dimensionSpacePoint,
+            $node->aggregateId,
+            $node->workspaceName,
         );
     }
 
-    public function createFromUriString(string $serializedNodeAddress): NodeAddress
+    public function createCoreNodeAddressFromLegacyUriString(string $serializedNodeAddress): NodeAddress
+    {
+        $legacy = $this->createFromUriString($serializedNodeAddress);
+
+        return NodeAddress::create(
+            $this->contentRepository->id,
+            $legacy->workspaceName,
+            $legacy->dimensionSpacePoint,
+            $legacy->nodeAggregateId
+        );
+    }
+
+    public function createFromUriString(string $serializedNodeAddress): LegacyNodeAddress
     {
         // the reverse method is {@link NodeAddress::serializeForUri} - ensure to adjust it
         // when changing the serialization here
@@ -76,20 +67,11 @@ class NodeAddressFactory
         list($workspaceNameSerialized, $dimensionSpacePointSerialized, $nodeAggregateIdSerialized)
             = explode('__', $serializedNodeAddress);
         $workspaceName = WorkspaceName::fromString($workspaceNameSerialized);
-        $dimensionSpacePoint = DimensionSpacePoint::fromUriRepresentation($dimensionSpacePointSerialized);
+        $dimensionSpacePoint = DimensionSpacePoint::fromArray(json_decode(base64_decode($dimensionSpacePointSerialized), true));
         $nodeAggregateId = NodeAggregateId::fromString($nodeAggregateIdSerialized);
 
-        $contentStreamId = $this->contentRepository->getWorkspaceFinder()->findOneByName($workspaceName)
-            ?->currentContentStreamId;
-        if (is_null($contentStreamId)) {
-            throw new \InvalidArgumentException(
-                'Could not resolve content stream identifier for node address ' . $serializedNodeAddress,
-                1645363784
-            );
-        }
-
-        return new NodeAddress(
-            $contentStreamId,
+        return new LegacyNodeAddress(
+            null,
             $dimensionSpacePoint,
             $nodeAggregateId,
             $workspaceName

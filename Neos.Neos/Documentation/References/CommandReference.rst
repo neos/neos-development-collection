@@ -19,7 +19,7 @@ commands that may be available, use::
 
   ./flow help
 
-The following reference was automatically generated from code on 2024-04-24
+The following reference was automatically generated from code on 2024-09-12
 
 
 .. _`Neos Command Reference: NEOS.FLOW`:
@@ -620,6 +620,8 @@ Options
   Whether to do a dry run or not
 ``--quiet``
   If set, only the executed migration versions will be output, one per line
+``--migration-folder``
+  Provide alternative platform folder name (as in "Mysql"), otherwise configured connection is used.
 
 
 
@@ -663,6 +665,8 @@ Options
   A file to write SQL to, instead of executing it
 ``--dry-run``
   Whether to do a dry run or not
+``--migration-folder``
+  Provide alternative platform folder name (as in "Mysql"), otherwise configured connection is used.
 
 
 
@@ -714,6 +718,8 @@ Options
   Only include tables/sequences matching the filter expression regexp
 ``--force``
   Generate migrations even if there are migrations left to execute
+``--migration-folder``
+  Provide alternative platform folder name (as in "Mysql"), otherwise configured connection is used.
 
 
 
@@ -748,6 +754,8 @@ Options
 
 ``--show-migrations``
   Output a list of all migrations and their status
+``--migration-folder``
+  Provide alternative platform folder name (as in "Mysql"), otherwise configured connection is used.
 
 
 
@@ -790,6 +798,8 @@ Options
   The migration to mark as migrated
 ``--delete``
   The migration to mark as not migrated
+``--migration-folder``
+  Provide alternative platform folder name (as in "Mysql"), otherwise configured connection is used.
 
 
 
@@ -2757,8 +2767,8 @@ Options
   A description explaining the purpose of the new workspace
 ``--owner``
   The identifier of a User to own the workspace
-``--content-repository-identifier``
-  
+``--content-repository``
+  Identifier of the content repository. (Default: 'default')
 
 
 
@@ -2777,15 +2787,15 @@ Arguments
 ^^^^^^^^^
 
 ``--name``
-  
+  Name of the new root
 
 
 
 Options
 ^^^^^^^
 
-``--content-repository-identifier``
-  
+``--content-repository``
+  Identifier of the content repository. (Default: 'default')
 
 
 
@@ -2814,8 +2824,8 @@ Options
 
 ``--force``
   Delete the workspace and all of its contents
-``--content-repository-identifier``
-  contentRepositoryIdentifier
+``--content-repository``
+  The name of the content repository. (Default: 'default')
 
 
 
@@ -2847,8 +2857,8 @@ Arguments
 Options
 ^^^^^^^
 
-``--content-repository-identifier``
-  
+``--content-repository``
+  Identifier of the content repository. (Default: 'default')
 
 
 
@@ -2868,8 +2878,8 @@ Options
 Options
 ^^^^^^^
 
-``--content-repository-identifier``
-  contentRepositoryIdentifier
+``--content-repository``
+  The name of the content repository. (Default: 'default')
 
 
 
@@ -2895,8 +2905,8 @@ Arguments
 Options
 ^^^^^^^
 
-``--content-repository-identifier``
-  
+``--content-repository``
+  Identifier of the content repository. (Default: 'default')
 
 
 
@@ -2922,8 +2932,8 @@ Arguments
 Options
 ^^^^^^^
 
-``--content-repository-identifier``
-  
+``--content-repository``
+  Identifier of the content repository. (Default: 'default')
 ``--force``
   Rebase all events that do not conflict
 
@@ -2945,10 +2955,10 @@ Options
 Options
 ^^^^^^^
 
-``--content-repository-identifier``
-  contentRepositoryIdentifier
+``--content-repository``
+  The name of the content repository. (Default: 'default')
 ``--force``
-  force
+  
 
 
 
@@ -2967,15 +2977,13 @@ Package *NEOS.SITEKICKSTARTER*
 
 **Kickstart a new site package**
 
-This command generates a new site package with basic Fusion and Sites.xml
+This command generates a new site package with basic Fusion
 
 Arguments
 ^^^^^^^^^
 
 ``--package-key``
   The packageKey for your site
-``--site-name``
-  The siteName of your site
 
 
 

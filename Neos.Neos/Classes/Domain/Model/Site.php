@@ -19,6 +19,7 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Neos\Flow\Annotations as Flow;
 use Neos\Media\Domain\Model\AssetCollection;
+use Neos\Utility\Arrays;
 
 /**
  * Domain model of a site
@@ -35,11 +36,18 @@ class Site
     public const STATE_OFFLINE = 2;
 
     /**
-     * @Flow\InjectConfiguration(path="sites")
      * @var array
      * @phpstan-var array<string,array<string,mixed>>
      */
+    #[Flow\InjectConfiguration(path: 'sites')]
     protected $sitesConfiguration = [];
+
+    /**
+     * @var array
+     * @phpstan-var array<string,mixed>
+     */
+    #[Flow\InjectConfiguration(path: 'sitePresets')]
+    protected $sitePresetsConfiguration = [];
 
     /**
      * Name of the site
@@ -265,7 +273,7 @@ class Site
      */
     public function hasActiveDomains()
     {
-        return $this->domains->exists(function ($index, Domain $domain) {
+        return $this->domains->exists(function (int $index, Domain $domain) {
             return $domain->getActive();
         });
     }
@@ -372,7 +380,25 @@ class Site
 
     public function getConfiguration(): SiteConfiguration
     {
-        // we DO NOT want recursive merge here
-        return SiteConfiguration::fromArray($this->sitesConfiguration[$this->nodeName] ?? $this->sitesConfiguration['*']);
+        if (array_key_exists($this->nodeName, $this->sitesConfiguration)) {
+            $siteSettingsPath = $this->nodeName;
+        } else {
+            if (!array_key_exists('*', $this->sitesConfiguration)) {
+                throw new \RuntimeException(sprintf('Missing configuration for "Neos.Neos.sites.%s" or fallback "Neos.Neos.sites.*"', $this->nodeName), 1714230658);
+            }
+            $siteSettingsPath = '*';
+        }
+        $siteSettings = $this->sitesConfiguration[$siteSettingsPath];
+        if (isset($siteSettings['preset'])) {
+            if (!is_string($siteSettings['preset'])) {
+                throw new \RuntimeException(sprintf('Invalid "preset" configuration for "Neos.Neos.sites.%s". Expected string, got: %s', $siteSettingsPath, get_debug_type($siteSettings['preset'])), 1699785648);
+            }
+            if (!isset($this->sitePresetsConfiguration[$siteSettings['preset']]) || !is_array($this->sitePresetsConfiguration[$siteSettings['preset']])) {
+                throw new \RuntimeException(sprintf('Site settings "Neos.Neos.sites.%s" refer to a preset "%s", but no corresponding preset is configured', $siteSettingsPath, $siteSettings['preset']), 1699785736);
+            }
+            $siteSettings = Arrays::arrayMergeRecursiveOverrule($this->sitePresetsConfiguration[$siteSettings['preset']], $siteSettings);
+            unset($siteSettings['preset']);
+        }
+        return SiteConfiguration::fromArray($siteSettings);
     }
 }

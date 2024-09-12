@@ -23,13 +23,11 @@ Feature: Remove Property
       | workspaceTitle       | "Live"               |
       | workspaceDescription | "The live workspace" |
       | newContentStreamId   | "cs-identifier"      |
-    And the graph projection is fully up to date
-    And I am in the active content stream of workspace "live"
+    And I am in workspace "live"
     And the command CreateRootNodeAggregateWithNode is executed with payload:
-      | Key                         | Value                         |
-      | nodeAggregateId             | "lady-eleonode-rootford"      |
-      | nodeTypeName                | "Neos.ContentRepository:Root" |
-    And the graph projection is fully up to date
+      | Key             | Value                         |
+      | nodeAggregateId | "lady-eleonode-rootford"      |
+      | nodeTypeName    | "Neos.ContentRepository:Root" |
     # Node /document
     When the command CreateNodeAggregateWithNode is executed with payload:
       | Key                       | Value                                     |
@@ -38,11 +36,10 @@ Feature: Remove Property
       | originDimensionSpacePoint | {}                                        |
       | parentNodeAggregateId     | "lady-eleonode-rootford"                  |
       | initialPropertyValues     | {"text": "Original text"}                 |
-    And the graph projection is fully up to date
 
 
   Scenario: Fixed newValue
-    When I run the following node migration for workspace "live", creating content streams "migration-cs":
+    When I run the following node migration for workspace "live", creating target workspace "migration-workspace" on contentStreamId "migration-cs", without publishing on success:
     """yaml
     migration:
       -
@@ -58,19 +55,19 @@ Feature: Remove Property
               property: 'text'
     """
     # the original content stream has not been touched
-    When I am in the active content stream of workspace "live" and dimension space point {}
-    Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{}
+    When I am in workspace "live" and dimension space point {}
+    Then I expect a node identified by cs-identifier;sir-david-nodenborough;{} to exist in the content graph
     And I expect this node to have the following properties:
       | Key  | Value           |
       | text | "Original text" |
 
     # the node type was changed inside the new content stream
-    When I am in content stream "migration-cs" and dimension space point {}
-    Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node migration-cs;sir-david-nodenborough;{}
+    When I am in workspace "migration-workspace" and dimension space point {}
+    Then I expect a node identified by migration-cs;sir-david-nodenborough;{} to exist in the content graph
     And I expect this node to have no properties
 
   Scenario: Ignoring transformation if property does not exist on node
-    When I run the following node migration for workspace "live", creating content streams "migration-cs":
+    When I run the following node migration for workspace "live", creating target workspace "migration-workspace" on contentStreamId "migration-cs", without publishing on success:
     """yaml
     migration:
       -
@@ -86,8 +83,8 @@ Feature: Remove Property
               property: 'notExisting'
     """
     # we did not change anything because notExisting does not exist
-    When I am in content stream "migration-cs" and dimension space point {}
-    Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node migration-cs;sir-david-nodenborough;{}
+    When I am in workspace "migration-workspace" and dimension space point {}
+    Then I expect a node identified by migration-cs;sir-david-nodenborough;{} to exist in the content graph
     And I expect this node to have the following properties:
       | Key  | Value           |
       | text | "Original text" |

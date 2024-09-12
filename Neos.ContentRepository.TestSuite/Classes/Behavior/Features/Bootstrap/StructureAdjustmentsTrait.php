@@ -16,7 +16,7 @@ namespace Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap;
 
 use Behat\Gherkin\Node\TableNode;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
-use Neos\ContentRepository\Core\SharedModel\Exception\NodeTypeNotFoundException;
+use Neos\ContentRepository\Core\SharedModel\Exception\NodeTypeNotFound;
 use Neos\ContentRepository\StructureAdjustment\Adjustment\StructureAdjustment;
 use Neos\ContentRepository\StructureAdjustment\StructureAdjustmentService;
 use Neos\ContentRepository\StructureAdjustment\StructureAdjustmentServiceFactory;
@@ -31,7 +31,7 @@ trait StructureAdjustmentsTrait
 
     /**
      * @When /^I adjust the node structure for node type "([^"]*)"$/
-     * @throws NodeTypeNotFoundException
+     * @throws NodeTypeNotFound
      */
     public function iAdjustTheNodeStructureForNodeType(string $nodeTypeName): void
     {
@@ -45,7 +45,7 @@ trait StructureAdjustmentsTrait
 
     /**
      * @Then I expect no needed structure adjustments for type :nodeTypeName
-     * @throws NodeTypeNotFoundException
+     * @throws NodeTypeNotFound
      */
     public function iExpectNoStructureAdjustmentsForType(string $nodeTypeName): void
     {
@@ -58,7 +58,7 @@ trait StructureAdjustmentsTrait
 
     /**
      * @Then /^I expect the following structure adjustments for type "([^"]*)":$/
-     * @throws NodeTypeNotFoundException
+     * @throws NodeTypeNotFound
      */
     public function iExpectTheFollowingStructureAdjustmentsForType(string $nodeTypeName, TableNode $expectedAdjustments): void
     {

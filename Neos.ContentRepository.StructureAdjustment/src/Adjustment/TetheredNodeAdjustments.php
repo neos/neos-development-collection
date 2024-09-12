@@ -4,29 +4,24 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\StructureAdjustment\Adjustment;
 
-use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\DimensionSpace;
 use Neos\ContentRepository\Core\EventStore\Events;
 use Neos\ContentRepository\Core\EventStore\EventsToPublish;
+use Neos\ContentRepository\Core\Feature\Common\InterdimensionalSibling;
+use Neos\ContentRepository\Core\Feature\Common\InterdimensionalSiblings;
 use Neos\ContentRepository\Core\Feature\Common\NodeVariationInternals;
 use Neos\ContentRepository\Core\Feature\Common\TetheredNodeInternals;
 use Neos\ContentRepository\Core\Feature\ContentStreamEventStreamName;
-use Neos\ContentRepository\Core\Feature\NodeMove\Dto\CoverageNodeMoveMapping;
-use Neos\ContentRepository\Core\Feature\NodeMove\Dto\CoverageNodeMoveMappings;
-use Neos\ContentRepository\Core\Feature\NodeMove\Dto\OriginNodeMoveMapping;
-use Neos\ContentRepository\Core\Feature\NodeMove\Dto\OriginNodeMoveMappings;
-use Neos\ContentRepository\Core\Feature\NodeMove\Dto\SucceedingSiblingNodeMoveDestination;
 use Neos\ContentRepository\Core\Feature\NodeMove\Event\NodeAggregateWasMoved;
 use Neos\ContentRepository\Core\Infrastructure\Property\PropertyConverter;
-use Neos\ContentRepository\Core\NodeType\NodeType;
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
+use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphInterface;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindChildNodesFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
-use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
-use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
+use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\EventStore\Model\EventStream\ExpectedVersion;
 
 class TetheredNodeAdjustments
@@ -36,8 +31,7 @@ class TetheredNodeAdjustments
     use TetheredNodeInternals;
 
     public function __construct(
-        private readonly ContentRepository $contentRepository,
-        private readonly ProjectedNodeIterator $projectedNodeIterator,
+        private readonly ContentGraphInterface $contentGraph,
         private readonly NodeTypeManager $nodeTypeManager,
         private readonly DimensionSpace\InterDimensionalVariationGraph $interDimensionalVariationGraph,
         private readonly PropertyConverter $propertyConverter
@@ -54,9 +48,7 @@ class TetheredNodeAdjustments
             // In case we cannot find the expected tethered nodes, this fix cannot do anything.
             return;
         }
-        $expectedTetheredNodes = $this->nodeTypeManager->getTetheredNodesConfigurationForNodeType($nodeType);
-
-        foreach ($this->projectedNodeIterator->nodeAggregatesOfType($nodeTypeName) as $nodeAggregate) {
+        foreach ($this->contentGraph->findNodeAggregatesByType($nodeTypeName) as $nodeAggregate) {
             // find missing tethered nodes
             $foundMissingOrDisallowedTetheredNodes = false;
             $originDimensionSpacePoints = $nodeType->isOfType(NodeTypeName::ROOT_NODE_TYPE_NAME)
@@ -66,39 +58,36 @@ class TetheredNodeAdjustments
                 : $nodeAggregate->occupiedDimensionSpacePoints;
 
             foreach ($originDimensionSpacePoints as $originDimensionSpacePoint) {
-                foreach ($expectedTetheredNodes as $tetheredNodeName => $expectedTetheredNodeType) {
-                    $tetheredNodeName = NodeName::fromString($tetheredNodeName);
-
-                    $subgraph = $this->contentRepository->getContentGraph()->getSubgraph(
-                        $nodeAggregate->contentStreamId,
+                foreach ($nodeType->tetheredNodeTypeDefinitions as $tetheredNodeTypeDefinition) {
+                    $tetheredNode = $this->contentGraph->getSubgraph(
                         $originDimensionSpacePoint->toDimensionSpacePoint(),
                         VisibilityConstraints::withoutRestrictions()
-                    );
-                    $tetheredNode = $subgraph->findNodeByPath(
-                        $tetheredNodeName,
-                        $nodeAggregate->nodeAggregateId,
+                    )->findNodeByPath(
+                        $tetheredNodeTypeDefinition->name,
+                        $nodeAggregate->nodeAggregateId
                     );
                     if ($tetheredNode === null) {
                         $foundMissingOrDisallowedTetheredNodes = true;
                         // $nestedNode not found
                         // - so a tethered node is missing in the OriginDimensionSpacePoint of the $node
                         yield StructureAdjustment::createForNodeIdentity(
-                            $nodeAggregate->contentStreamId,
+                            $nodeAggregate->workspaceName,
                             $originDimensionSpacePoint,
                             $nodeAggregate->nodeAggregateId,
                             StructureAdjustment::TETHERED_NODE_MISSING,
-                            'The tethered child node "' . $tetheredNodeName->value . '" is missing.',
-                            function () use ($nodeAggregate, $originDimensionSpacePoint, $tetheredNodeName, $expectedTetheredNodeType) {
+                            'The tethered child node "' . $tetheredNodeTypeDefinition->name->value . '" is missing.',
+                            function () use ($nodeAggregate, $originDimensionSpacePoint, $tetheredNodeTypeDefinition) {
                                 $events = $this->createEventsForMissingTetheredNode(
+                                    $this->contentGraph,
                                     $nodeAggregate,
                                     $originDimensionSpacePoint,
-                                    $tetheredNodeName,
-                                    null,
-                                    $expectedTetheredNodeType,
-                                    $this->contentRepository
+                                    $tetheredNodeTypeDefinition,
+                                    null
                                 );
 
-                                $streamName = ContentStreamEventStreamName::fromContentStreamId($nodeAggregate->contentStreamId);
+                                $streamName = ContentStreamEventStreamName::fromContentStreamId(
+                                    $this->contentGraph->getContentStreamId()
+                                );
                                 return new EventsToPublish(
                                     $streamName->getEventStreamName(),
                                     $events,
@@ -108,19 +97,18 @@ class TetheredNodeAdjustments
                         );
                     } else {
                         yield from $this->ensureNodeIsTethered($tetheredNode);
-                        yield from $this->ensureNodeIsOfType($tetheredNode, $expectedTetheredNodeType);
+                        yield from $this->ensureNodeIsOfType($tetheredNode, $tetheredNodeTypeDefinition->nodeTypeName);
                     }
                 }
             }
 
             // find disallowed tethered nodes
-            $tetheredNodeAggregates = $this->contentRepository->getContentGraph()->findTetheredChildNodeAggregates(
-                $nodeAggregate->contentStreamId,
+            $tetheredNodeAggregates = $this->contentGraph->findTetheredChildNodeAggregates(
                 $nodeAggregate->nodeAggregateId
             );
             foreach ($tetheredNodeAggregates as $tetheredNodeAggregate) {
                 assert($tetheredNodeAggregate->nodeName !== null); // it's tethered!
-                if (!isset($expectedTetheredNodes[$tetheredNodeAggregate->nodeName->value])) {
+                if (!$nodeType->tetheredNodeTypeDefinitions->contain($tetheredNodeAggregate->nodeName)) {
                     $foundMissingOrDisallowedTetheredNodes = true;
                     yield StructureAdjustment::createForNodeAggregate(
                         $tetheredNodeAggregate,
@@ -128,7 +116,7 @@ class TetheredNodeAdjustments
                         'The tethered child node "'
                             . $tetheredNodeAggregate->nodeName->value . '" should be removed.',
                         function () use ($tetheredNodeAggregate) {
-                            return $this->removeNodeAggregate($tetheredNodeAggregate);
+                            return $this->removeNodeAggregate($this->contentGraph, $tetheredNodeAggregate);
                         }
                     );
                 }
@@ -137,39 +125,34 @@ class TetheredNodeAdjustments
             // find wrongly ordered tethered nodes
             if ($foundMissingOrDisallowedTetheredNodes === false) {
                 foreach ($originDimensionSpacePoints as $originDimensionSpacePoint) {
-                    $subgraph = $this->contentRepository->getContentGraph()->getSubgraph(
-                        $nodeAggregate->contentStreamId,
-                        $originDimensionSpacePoint->toDimensionSpacePoint(),
-                        VisibilityConstraints::withoutRestrictions()
-                    );
-                    $childNodes = $subgraph->findChildNodes($nodeAggregate->nodeAggregateId, FindChildNodesFilter::create());
+                    $childNodes = $this->contentGraph->getSubgraph($originDimensionSpacePoint->toDimensionSpacePoint(), VisibilityConstraints::withoutRestrictions())->findChildNodes($nodeAggregate->nodeAggregateId, FindChildNodesFilter::create());
 
                     /** is indexed by node name, and the value is the tethered node itself */
                     $actualTetheredChildNodes = [];
                     foreach ($childNodes as $childNode) {
                         if ($childNode->classification->isTethered()) {
-                            assert($childNode->nodeName !== null); // it's tethered!
-                            $actualTetheredChildNodes[$childNode->nodeName->value] = $childNode;
+                            assert($childNode->name !== null); // it's tethered!
+                            $actualTetheredChildNodes[$childNode->name->value] = $childNode;
                         }
                     }
 
-                    if (array_keys($actualTetheredChildNodes) !== array_keys($expectedTetheredNodes)) {
+                    if (array_keys($actualTetheredChildNodes) !== array_keys($nodeType->tetheredNodeTypeDefinitions->toArray())) {
                         // we need to re-order: We go from the last to the first
                         yield StructureAdjustment::createForNodeIdentity(
-                            $nodeAggregate->contentStreamId,
+                            $nodeAggregate->workspaceName,
                             $originDimensionSpacePoint,
                             $nodeAggregate->nodeAggregateId,
                             StructureAdjustment::TETHERED_NODE_WRONGLY_ORDERED,
                             'Tethered nodes wrongly ordered, expected: '
-                                . implode(', ', array_keys($expectedTetheredNodes))
+                                . implode(', ', array_keys($nodeType->tetheredNodeTypeDefinitions->toArray()))
                                 . ' - actual: '
                                 . implode(', ', array_keys($actualTetheredChildNodes)),
                             fn () => $this->reorderNodes(
-                                $nodeAggregate->contentStreamId,
-                                $nodeAggregate->nodeAggregateId,
-                                $originDimensionSpacePoint,
+                                $this->contentGraph->getWorkspaceName(),
+                                $this->contentGraph->getContentStreamId(),
+                                $nodeAggregate->getCoverageByOccupant($originDimensionSpacePoint),
                                 $actualTetheredChildNodes,
-                                array_keys($expectedTetheredNodes)
+                                array_keys($nodeType->tetheredNodeTypeDefinitions->toArray())
                             )
                         );
                     }
@@ -195,13 +178,13 @@ class TetheredNodeAdjustments
     /**
      * @return \Generator<int,StructureAdjustment>
      */
-    private function ensureNodeIsOfType(Node $node, NodeType $expectedNodeType): \Generator
+    private function ensureNodeIsOfType(Node $node, NodeTypeName $expectedNodeTypeName): \Generator
     {
-        if ($node->nodeTypeName->value !== $expectedNodeType->name->value) {
+        if ($node->nodeTypeName->value !== $expectedNodeTypeName->value) {
             yield StructureAdjustment::createForNode(
                 $node,
                 StructureAdjustment::TETHERED_NODE_TYPE_WRONG,
-                'should be of type "' . $expectedNodeType->name->value . '", but was "' . $node->nodeTypeName->value . '".'
+                'should be of type "' . $expectedNodeTypeName->value . '", but was "' . $node->nodeTypeName->value . '".'
             );
         }
     }
@@ -223,9 +206,9 @@ class TetheredNodeAdjustments
      * @param array<int,string> $expectedNodeOrdering
      */
     private function reorderNodes(
+        WorkspaceName $workspaceName,
         ContentStreamId $contentStreamId,
-        NodeAggregateId $parentNodeAggregateId,
-        DimensionSpace\OriginDimensionSpacePoint $originDimensionSpacePoint,
+        DimensionSpace\DimensionSpacePointSet $coverageByOrigin,
         array $actualTetheredChildNodes,
         array $expectedNodeOrdering
     ): EventsToPublish {
@@ -235,33 +218,23 @@ class TetheredNodeAdjustments
         $succeedingSiblingNodeName = array_pop($expectedNodeOrdering);
         while ($nodeNameToMove = array_pop($expectedNodeOrdering)) {
             // let's move $nodeToMove before $succeedingNode.
-            /* @var $nodeToMove Node */
             $nodeToMove = $actualTetheredChildNodes[$nodeNameToMove];
-            /* @var $succeedingNode Node */
             $succeedingNode = $actualTetheredChildNodes[$succeedingSiblingNodeName];
 
+            $succeedingSiblingsForCoverage = [];
+            foreach ($coverageByOrigin as $coveredDimensionSpacePoint) {
+                $succeedingSiblingsForCoverage[] = new InterdimensionalSibling(
+                    $coveredDimensionSpacePoint,
+                    $succeedingNode->aggregateId
+                );
+            }
+
             $events[] = new NodeAggregateWasMoved(
+                $workspaceName,
                 $contentStreamId,
-                $nodeToMove->nodeAggregateId,
-                OriginNodeMoveMappings::fromArray([
-                    new OriginNodeMoveMapping(
-                        $nodeToMove->originDimensionSpacePoint,
-                        CoverageNodeMoveMappings::create(
-                            CoverageNodeMoveMapping::createForNewSucceedingSibling(
-                                // TODO: I am not sure the next line is 100% correct. IMHO this must be the COVERED
-                                // TODO: DimensionSpacePoint (though I am not sure whether we have that one now)
-                                $nodeToMove->originDimensionSpacePoint->toDimensionSpacePoint(),
-                                SucceedingSiblingNodeMoveDestination::create(
-                                    $succeedingNode->nodeAggregateId,
-                                    $succeedingNode->originDimensionSpacePoint,
-                                    // we only change the order, not the parent -> so we can simply use the parent here.
-                                    $parentNodeAggregateId,
-                                    $originDimensionSpacePoint
-                                )
-                            )
-                        )
-                    )
-                ]),
+                $nodeToMove->aggregateId,
+                null,
+                new InterdimensionalSiblings(...$succeedingSiblingsForCoverage),
             );
 
             // now, go one step left.

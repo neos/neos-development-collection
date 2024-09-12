@@ -23,39 +23,37 @@ Feature: On forking a content stream, node references should be copied as well.
     And I am in content repository "default"
     And I am user identified by "initiating-user-identifier"
     And the command CreateRootWorkspace is executed with payload:
-      | Key                        | Value                |
-      | workspaceName              | "live"               |
-      | workspaceTitle             | "Live"               |
-      | workspaceDescription       | "The live workspace" |
-      | newContentStreamId | "cs-identifier"      |
-    And the graph projection is fully up to date
-    And I am in the active content stream of workspace "live" and dimension space point {"language":"de"}
+      | Key                  | Value                |
+      | workspaceName        | "live"               |
+      | workspaceTitle       | "Live"               |
+      | workspaceDescription | "The live workspace" |
+      | newContentStreamId   | "cs-identifier"      |
+    And I am in workspace "live" and dimension space point {"language":"de"}
     And the command CreateRootNodeAggregateWithNode is executed with payload:
-      | Key                     | Value                         |
+      | Key             | Value                         |
       | nodeAggregateId | "lady-eleonode-rootford"      |
-      | nodeTypeName            | "Neos.ContentRepository:Root" |
-    And the graph projection is fully up to date
+      | nodeTypeName    | "Neos.ContentRepository:Root" |
     And the following CreateNodeAggregateWithNode commands are executed:
-      | nodeAggregateId | nodeTypeName                                      | parentNodeAggregateId |
-      | source-nodandaise       | Neos.ContentRepository.Testing:NodeWithReferences | lady-eleonode-rootford        |
-      | anthony-destinode       | Neos.ContentRepository.Testing:NodeWithReferences | lady-eleonode-rootford        |
+      | nodeAggregateId   | nodeTypeName                                      | parentNodeAggregateId  |
+      | source-nodandaise | Neos.ContentRepository.Testing:NodeWithReferences | lady-eleonode-rootford |
+      | anthony-destinode | Neos.ContentRepository.Testing:NodeWithReferences | lady-eleonode-rootford |
 
   Scenario: Create a reference, trigger copy-on-write of the nodes, and ensure reference still exists.
     Given the command SetNodeReferences is executed with payload:
-      | Key                           | Value                             |
+      | Key                   | Value                             |
       | sourceNodeAggregateId | "source-nodandaise"               |
-      | referenceName                 | "referenceProperty"               |
-      | references                    | [{"target": "anthony-destinode"}] |
-    And the graph projection is fully up to date
+      | referenceName         | "referenceProperty"               |
+      | references            | [{"target": "anthony-destinode"}] |
 
-    When the command ForkContentStream is executed with payload:
-      | Key                           | Value                |
-      | contentStreamId       | "user-cs-identifier" |
-      | sourceContentStreamId | "cs-identifier"      |
-    And the graph projection is fully up to date
+    # Uses ForkContentStream implicitly
+    When the command CreateWorkspace is executed with payload:
+      | Key                | Value                |
+      | baseWorkspaceName  | "live"               |
+      | workspaceName      | "user-test"          |
+      | newContentStreamId | "user-cs-identifier" |
 
     # after forking, the reference must still exist on the forked content stream (no surprises here).
-    When I am in content stream "user-cs-identifier" and dimension space point {"language": "de"}
+    When I am in workspace "user-test" and dimension space point {"language": "de"}
     Then I expect node aggregate identifier "source-nodandaise" to lead to node user-cs-identifier;source-nodandaise;{"language": "de"}
     Then I expect this node to have the following references:
       | Name              | Node                                                    | Properties |
@@ -65,7 +63,7 @@ Feature: On forking a content stream, node references should be copied as well.
       | Name              | Node                                                    | Properties |
       | referenceProperty | user-cs-identifier;source-nodandaise;{"language": "de"} | null       |
 
-    When I am in content stream "user-cs-identifier" and dimension space point {"language": "ch"}
+    When I am in workspace "user-test" and dimension space point {"language": "ch"}
     Then I expect node aggregate identifier "source-nodandaise" to lead to node user-cs-identifier;source-nodandaise;{"language": "de"}
     Then I expect this node to have the following references:
       | Name              | Node                                                    | Properties |
@@ -77,12 +75,11 @@ Feature: On forking a content stream, node references should be copied as well.
 
     # after then modifying the node's properties (thus triggering copy-on-write), the reference property
     # should still exist (this was a BUG)
-    When I am in content stream "user-cs-identifier" and dimension space point {"language": "de"}
+    When I am in workspace "user-test" and dimension space point {"language": "de"}
     And the command SetNodeProperties is executed with payload:
-      | Key                     | Value                                  |
+      | Key             | Value                                  |
       | nodeAggregateId | "source-nodandaise"                    |
-      | propertyValues          | {"text": "Modified in live workspace"} |
-    And the graph projection is fully up to date
+      | propertyValues  | {"text": "Modified in live workspace"} |
     Then I expect node aggregate identifier "source-nodandaise" to lead to node user-cs-identifier;source-nodandaise;{"language": "de"}
     And I expect this node to have the following references:
       | Name              | Node                                                    | Properties |
@@ -92,7 +89,7 @@ Feature: On forking a content stream, node references should be copied as well.
       | Name              | Node                                                    | Properties |
       | referenceProperty | user-cs-identifier;source-nodandaise;{"language": "de"} | null       |
 
-    When I am in content stream "user-cs-identifier" and dimension space point {"language": "ch"}
+    When I am in workspace "user-test" and dimension space point {"language": "ch"}
     Then I expect node aggregate identifier "source-nodandaise" to lead to node user-cs-identifier;source-nodandaise;{"language": "de"}
     And I expect this node to have the following references:
       | Name              | Node                                                    | Properties |

@@ -14,7 +14,7 @@
 				<div class="neos-control-group{f:validation.ifHasErrors(for: 'username', then: ' neos-error')}">
 					<label class="neos-control-label" for="username">{neos:backend.translate(id: 'users.new.userData.username', value: 'Username', source: 'Modules', package: 'Neos.Neos')}</label>
 					<div class="neos-controls">
-						<f:form.textfield name="username" id="username" class="neos-span12" autofocus="true" required="true" />
+						<f:form.textfield name="username" id="username" class="neos-span12" autofocus="true" required="true" additionalAttributes="{autocomplete: 'username'}" />
 						<f:render partial="Module/Shared/FieldValidationResults" arguments="{fieldname: 'username'}"/>
 					</div>
 				</div>
@@ -22,14 +22,14 @@
 				<div class="neos-control-group{f:validation.ifHasErrors(for: 'password', then: ' neos-error')}">
 					<label class="neos-control-label" for="password[0]">{neos:backend.translate(id: 'users.new.userData.password', value: 'Password', source: 'Modules', package: 'Neos.Neos')}</label>
 					<div class="neos-controls">
-						<f:form.password name="password[0]" id="password[0]" class="neos-span12" additionalAttributes="{required: true}" />
+						<f:form.password name="password[0]" id="password[0]" class="neos-span12" additionalAttributes="{required: true, autocomplete: 'new-password'}" />
 					</div>
 				</div>
 
 				<div class="neos-control-group{f:validation.ifHasErrors(for: 'password', then: ' neos-error')}">
 					<label class="neos-control-label" for="password[1]">{neos:backend.translate(id: 'users.new.userData.repeatPassword', value: 'Repeat password', source: 'Modules', package: 'Neos.Neos')}</label>
 					<div class="neos-controls">
-						<f:form.password name="password[1]" id="password[1]" class="neos-span12" additionalAttributes="{required: true}" />
+						<f:form.password name="password[1]" id="password[1]" class="neos-span12" additionalAttributes="{required: true, autocomplete: 'new-password'}" />
 						<f:render partial="Module/Shared/FieldValidationResults" arguments="{fieldname: 'password'}"/>
 					</div>
 				</div>

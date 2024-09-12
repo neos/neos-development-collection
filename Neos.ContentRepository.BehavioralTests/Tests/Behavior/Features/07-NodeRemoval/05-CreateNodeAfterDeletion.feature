@@ -30,13 +30,11 @@ Feature: Create node specialization
       | workspaceTitle       | "Live"               |
       | workspaceDescription | "The live workspace" |
       | newContentStreamId   | "cs-identifier"      |
-    And the graph projection is fully up to date
-    And I am in the active content stream of workspace "live" and dimension space point {"example":"source"}
+    And I am in workspace "live" and dimension space point {"example":"source"}
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key             | Value                         |
       | nodeAggregateId | "lady-eleonode-rootford"      |
       | nodeTypeName    | "Neos.ContentRepository:Root" |
-    And the graph projection is fully up to date
 
     And the following CreateNodeAggregateWithNode commands are executed:
       | nodeAggregateId      | nodeName          | parentNodeAggregateId  | succeedingSiblingNodeAggregateId | nodeTypeName                                | tetheredDescendantNodeAggregateIds |
@@ -52,7 +50,6 @@ Feature: Create node specialization
       | nodeAggregateId              | "younger-mc-nodeface" |
       | coveredDimensionSpacePoint   | {"example":"spec"}    |
       | nodeVariantSelectionStrategy | "allSpecializations"  |
-    And the graph projection is fully up to date
     When the following CreateNodeAggregateWithNode commands are executed:
       | nodeAggregateId        | nodeName            | parentNodeAggregateId  | succeedingSiblingNodeAggregateId | nodeTypeName                                | tetheredDescendantNodeAggregateIds                                                         |
       | nody-mc-nodeface       | document            | lady-eleonode-rootford | younger-mc-nodeface              | Neos.ContentRepository.Testing:Document     | {"tethered-node": "nodewyn-tetherton", "tethered-node/tethered-leaf": "nodimer-tetherton"} |
@@ -69,7 +66,7 @@ Feature: Create node specialization
     And I expect a node identified by cs-identifier;younger-mc-nodeface;{"example":"source"} to exist in the content graph
     And I expect a node identified by cs-identifier;youngest-mc-nodeface;{"example":"source"} to exist in the content graph
 
-    When I am in the active content stream of workspace "live"
+    When I am in workspace "live"
     Then I expect the node aggregate "lady-eleonode-rootford" to exist
     And I expect this node aggregate to occupy dimension space points [{}]
     And I expect this node aggregate to cover dimension space points [{"example":"source"},{"example":"spec"},{"example":"leafSpec"}]
@@ -133,8 +130,8 @@ Feature: Create node specialization
 
     And I expect node aggregate identifier "nody-mc-nodeface" and node path "document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"source"}
     And I expect this node to have the following child nodes:
-      | Name          | NodeDiscriminator                                    |
-      | tethered-node | cs-identifier;nodewyn-tetherton;{"example":"source"} |
+      | Name                | NodeDiscriminator                                         |
+      | tethered-node       | cs-identifier;nodewyn-tetherton;{"example":"source"}      |
       | invariable-document | cs-identifier;invariable-mc-nodeface;{"example":"source"} |
     And I expect this node to have the following preceding siblings:
       | NodeDiscriminator                                     |

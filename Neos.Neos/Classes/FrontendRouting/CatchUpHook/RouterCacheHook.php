@@ -1,12 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Neos\Neos\FrontendRouting\CatchUpHook;
 
 use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\EventStore\EventInterface;
 use Neos\ContentRepository\Core\Feature\NodeModification\Event\NodePropertiesWereSet;
-use Neos\ContentRepository\Core\Feature\NodeMove\Dto\CoverageNodeMoveMapping;
 use Neos\ContentRepository\Core\Feature\NodeMove\Event\NodeAggregateWasMoved;
 use Neos\ContentRepository\Core\Feature\NodeRemoval\Event\NodeAggregateWasRemoved;
 use Neos\ContentRepository\Core\Feature\SubtreeTagging\Event\SubtreeWasTagged;
@@ -140,21 +141,20 @@ final class RouterCacheHook implements CatchUpHookInterface
             return;
         }
 
-        foreach ($event->nodeMoveMappings as $moveMapping) {
-            /* @var \Neos\ContentRepository\Core\Feature\NodeMove\Dto\OriginNodeMoveMapping $moveMapping */
-            foreach ($moveMapping->newLocations as $newLocation) {
-                /* @var $newLocation CoverageNodeMoveMapping */
-                $node = $this->findDocumentNodeInfoByIdAndDimensionSpacePoint($event->nodeAggregateId, $newLocation->coveredDimensionSpacePoint);
-                if (!$node) {
-                    // node probably no document node, skip
-                    continue;
-                }
-
-                $this->collectTagsToFlush($node);
-
-                $descendantsOfNode = $this->getState()->getDescendantsOfNode($node);
-                array_map($this->collectTagsToFlush(...), iterator_to_array($descendantsOfNode));
+        foreach ($event->succeedingSiblingsForCoverage as $succeedingSiblingForCoverage) {
+            $node = $this->findDocumentNodeInfoByIdAndDimensionSpacePoint(
+                $event->nodeAggregateId,
+                $succeedingSiblingForCoverage->dimensionSpacePoint
+            );
+            if (!$node) {
+                // node probably no document node, skip
+                continue;
             }
+
+            $this->collectTagsToFlush($node);
+
+            $descendantsOfNode = $this->getState()->getDescendantsOfNode($node);
+            array_map($this->collectTagsToFlush(...), iterator_to_array($descendantsOfNode));
         }
     }
 

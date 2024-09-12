@@ -39,12 +39,11 @@ Feature: Linking between multiple websites
       | Key                | Value           |
       | workspaceName      | "live"          |
       | newContentStreamId | "cs-identifier" |
-    And I am in the active content stream of workspace "live" and dimension space point {}
+    And I am in workspace "live" and dimension space point {}
     And the command CreateRootNodeAggregateWithNode is executed with payload:
-      | Key                         | Value                    |
-      | nodeAggregateId             | "lady-eleonode-rootford" |
-      | nodeTypeName                | "Neos.Neos:Sites"        |
-    And the graph projection is fully up to date
+      | Key             | Value                    |
+      | nodeAggregateId | "lady-eleonode-rootford" |
+      | nodeTypeName    | "Neos.Neos:Sites"        |
 
     # lady-eleonode-rootford
     #   shernode-homes
@@ -53,7 +52,7 @@ Feature: Linking between multiple websites
     #        earl-o-documentbourgh
     #
     And the following CreateNodeAggregateWithNode commands are executed:
-      | nodeAggregateId         | parentNodeAggregateId  | nodeTypeName                                       | initialPropertyValues                    | nodeName |
+      | nodeAggregateId         | parentNodeAggregateId  | nodeTypeName                | initialPropertyValues                    | nodeName |
       | homepage1               | lady-eleonode-rootford | Neos.Neos:Test.Routing.Page | {"uriPathSegment": "ignore-me"}          | site-1   |
       | sir-david-nodenborough  | homepage1              | Neos.Neos:Test.Routing.Page | {"uriPathSegment": "david-nodenborough"} | node2    |
       | homepage2               | lady-eleonode-rootford | Neos.Neos:Test.Routing.Page | {"uriPathSegment": "ignore-me"}          | site-2   |
@@ -65,13 +64,19 @@ Feature: Linking between multiple websites
     Neos:
       Neos:
         sites:
-          '*':
-            contentRepository: default
+          'site-1':
+            preset: default
+            uriPathSuffix: ''
+            contentDimensions:
+              resolver:
+                factoryClassName: Neos\Neos\FrontendRouting\DimensionResolution\Resolver\NoopResolverFactory
+          'site-2':
+            preset: default
+            uriPathSuffix: ''
             contentDimensions:
               resolver:
                 factoryClassName: Neos\Neos\FrontendRouting\DimensionResolution\Resolver\NoopResolverFactory
     """
-    And The documenturipath projection is up to date
 
   Scenario: Resolve foreign website homepage node
     When I am on URL "http://domain1.tld/"

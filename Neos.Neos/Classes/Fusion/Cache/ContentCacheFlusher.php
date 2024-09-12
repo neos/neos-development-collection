@@ -14,170 +14,162 @@ declare(strict_types=1);
 
 namespace Neos\Neos\Fusion\Cache;
 
-use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\NodeType\NodeType;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
-use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
-use Neos\ContentRepository\Core\SharedModel\Exception\NodeTypeNotFoundException;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
+use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
+use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Fusion\Core\Cache\ContentCache;
-use Neos\Media\Domain\Model\AssetInterface;
-use Neos\Media\Domain\Model\AssetVariantInterface;
 use Psr\Log\LoggerInterface;
 
 /**
  * This service flushes Fusion content caches triggered by node changes.
  *
  * It is called when the projection changes: In this case, it is triggered by
- * {@see GraphProjectorCatchUpHookForCacheFlushing} which calls this method..
+ * {@see GraphProjectorCatchUpHookForCacheFlushing} which calls this method.
  *   This is the relevant case if publishing a workspace
  *   - where we f.e. need to flush the cache for Live.
  *
- * @Flow\Scope("singleton")
+ * The {@see AssetChangeHandlerForCacheFlushing} also calls this ContentCacheFlusher
+ * to flush the caches of all Nodes using a given asset that has changed.
+ *
  */
+#[Flow\Scope('singleton')]
 class ContentCacheFlusher
 {
     #[Flow\InjectConfiguration(path: "fusion.contentCacheDebugMode")]
     protected bool $debugMode;
 
+    /**
+     * @var array<string,string>
+     */
+    private array $tagsToFlushAfterPersistance = [];
 
     public function __construct(
-        protected ContentCache $contentCache,
-        protected LoggerInterface $systemLogger,
+        protected readonly ContentCache $contentCache,
+        protected readonly LoggerInterface $systemLogger,
+        protected readonly ContentRepositoryRegistry $contentRepositoryRegistry,
+        protected readonly PersistenceManagerInterface $persistenceManager,
     ) {
     }
 
     /**
-     * Main entry point to *directly* flush the caches of a given NodeAggregate
-     *
-     * @param ContentRepository $contentRepository
-     * @param ContentStreamId $contentStreamId
-     * @param NodeAggregateId $nodeAggregateId
+     * Main entry point to flush the caches of a given workspaceName with a given strategy.
      */
-    public function flushNodeAggregate(
-        ContentRepository $contentRepository,
-        ContentStreamId $contentStreamId,
-        NodeAggregateId $nodeAggregateId
+    public function flushWorkspace(
+        FlushWorkspaceRequest $flushWorkspaceRequest,
+        CacheFlushingStrategy $cacheFlushingStrategy
     ): void {
-        $tagsToFlush = [];
-
         $tagsToFlush[ContentCache::TAG_EVERYTHING] = 'which were tagged with "Everything".';
 
-        $this->registerChangeOnNodeIdentifier($contentRepository->id, $contentStreamId, $nodeAggregateId, $tagsToFlush);
-        $nodeAggregate = $contentRepository->getContentGraph()->findNodeAggregateById(
-            $contentStreamId,
-            $nodeAggregateId
-        );
-        if (!$nodeAggregate) {
-            // Node Aggregate was removed in the meantime, so no need to clear caches on this one anymore.
-            return;
-        }
-
-        $this->registerChangeOnNodeType(
-            $nodeAggregate->nodeTypeName,
-            $contentRepository->id,
-            $contentStreamId,
-            $nodeAggregateId,
-            $tagsToFlush,
-            $contentRepository
+        $nodeCacheIdentifier = CacheTag::forWorkspaceName($flushWorkspaceRequest->contentRepositoryId, $flushWorkspaceRequest->workspaceName);
+        $tagsToFlush[$nodeCacheIdentifier->value] = sprintf(
+            'which were tagged with "%s" because something on the workspace "%s" has changed.',
+            $nodeCacheIdentifier->value,
+            $flushWorkspaceRequest->workspaceName->value
         );
 
-        $parentNodeAggregates = [];
-        foreach (
-            $contentRepository->getContentGraph()->findParentNodeAggregates(
-                $contentStreamId,
-                $nodeAggregateId
-            ) as $parentNodeAggregate
-        ) {
-            $parentNodeAggregates[] = $parentNodeAggregate;
-        }
-        // we do not need these variables anymore here
-        unset($contentStreamId, $nodeAggregateId);
+        $this->flushTags($tagsToFlush, $cacheFlushingStrategy);
+    }
 
+    /**
+     * Main entry point to flush the caches of a given NodeAggregate with a given strategy.
+     */
+    public function flushNodeAggregate(
+        FlushNodeAggregateRequest $flushNodeAggregateRequest,
+        CacheFlushingStrategy $cacheFlushingStrategy
+    ): void {
+        $tagsToFlush[ContentCache::TAG_EVERYTHING] = 'which were tagged with "Everything".';
 
-        // NOTE: Normally, the content graph cannot contain cycles. However, during the
-        // testcase "Features/ProjectionIntegrityViolationDetection/AllNodesAreConnectedToARootNodePerSubgraph.feature"
-        // and in case of bugs, it could have actually cycles.
-        // We still want the content cache flushing to work, without hanging up in an endless loop.
-        // That's why we track the seen NodeAggregateIds to be sure we don't travers them multiple times.
-        $processedNodeAggregateIds = [];
+        $tagsToFlush = array_merge(
+            $this->collectTagsForChangeOnNodeAggregate($flushNodeAggregateRequest, false),
+            $tagsToFlush
+        );
 
-        while ($nodeAggregate = array_shift($parentNodeAggregates)) {
-            assert($nodeAggregate instanceof NodeAggregate);
-            if (isset($processedNodeAggregateIds[$nodeAggregate->nodeAggregateId->value])) {
-                // we've already processed this NodeAggregateId (i.e. flushed the caches for it);
-                // thus we can skip this one, and thus break the cycle.
-                continue;
-            }
-            $processedNodeAggregateIds[$nodeAggregate->nodeAggregateId->value] = true;
+        $this->flushTags($tagsToFlush, $cacheFlushingStrategy);
+    }
 
-            $tagName = CacheTag::forDescendantOfNode($contentRepository->id, $nodeAggregate->contentStreamId, $nodeAggregate->nodeAggregateId);
+    /**
+     * @param bool $anyWorkspace This is needed to flush nodes on asset changes, as the asset can get rendered in all workspaces, but lives
+     *                            usually only in live workspace.
+     *
+     * @return array<string,string>
+     */
+    private function collectTagsForChangeOnNodeAggregate(
+        FlushNodeAggregateRequest $flushNodeAggregateRequest,
+        bool $anyWorkspace,
+    ): array {
+        $workspaceNameToFlush = $anyWorkspace ? CacheTagWorkspaceName::ANY : $flushNodeAggregateRequest->workspaceName;
+        $tagsToFlush = $this->collectTagsForChangeOnNodeIdentifier($flushNodeAggregateRequest->contentRepositoryId, $workspaceNameToFlush, $flushNodeAggregateRequest->nodeAggregateId);
+
+        $tagsToFlush = array_merge($this->collectTagsForChangeOnNodeType(
+            $flushNodeAggregateRequest->nodeTypeName,
+            $flushNodeAggregateRequest->contentRepositoryId,
+            $workspaceNameToFlush,
+            $flushNodeAggregateRequest->nodeAggregateId,
+        ), $tagsToFlush);
+
+        $parentNodeAggregateIds = $flushNodeAggregateRequest->ancestorNodeAggregateIds;
+        foreach ($parentNodeAggregateIds as $parentNodeAggregateId) {
+            $tagName = CacheTag::forDescendantOfNode($flushNodeAggregateRequest->contentRepositoryId, $workspaceNameToFlush, $parentNodeAggregateId);
             $tagsToFlush[$tagName->value] = sprintf(
                 'which were tagged with "%s" because node "%s" has changed.',
                 $tagName->value,
-                $nodeAggregate->nodeAggregateId->value
+                $parentNodeAggregateId->value
             );
-
-            foreach (
-                $contentRepository->getContentGraph()->findParentNodeAggregates(
-                    $nodeAggregate->contentStreamId,
-                    $nodeAggregate->nodeAggregateId
-                ) as $parentNodeAggregate
-            ) {
-                $parentNodeAggregates[] = $parentNodeAggregate;
-            }
         }
-        $this->flushTags($tagsToFlush);
+
+        return $tagsToFlush;
     }
 
 
     /**
-     * Please use registerNodeChange() if possible. This method is a low-level api. If you do use this method make sure
-     * that $cacheIdentifier contains the workspacehash as well as the node identifier:
-     * $workspaceHash .'_'. $nodeIdentifier
-     * The workspacehash can be received via $this->getCachingHelper()->renderWorkspaceTagForContextNode($workpsacename)
-     *
-     * @param array<string,string> &$tagsToFlush
+     * @return array<string, string>
      */
-    private function registerChangeOnNodeIdentifier(
+    private function collectTagsForChangeOnNodeIdentifier(
         ContentRepositoryId $contentRepositoryId,
-        ContentStreamId $contentStreamId,
+        WorkspaceName|CacheTagWorkspaceName $workspaceName,
         NodeAggregateId $nodeAggregateId,
-        array &$tagsToFlush
-    ): void {
+    ): array {
+        $tagsToFlush = [];
 
-        $nodeCacheIdentifier = CacheTag::forNodeAggregate($contentRepositoryId, $contentStreamId, $nodeAggregateId);
+        $nodeCacheIdentifier = CacheTag::forNodeAggregate($contentRepositoryId, $workspaceName, $nodeAggregateId);
         $tagsToFlush[$nodeCacheIdentifier->value] = sprintf(
             'which were tagged with "%s" because that identifier has changed.',
             $nodeCacheIdentifier->value
         );
 
-        $descandantOfNodeCacheIdentifier = CacheTag::forDescendantOfNode($contentRepositoryId, $contentStreamId, $nodeAggregateId);
-        $tagsToFlush[$descandantOfNodeCacheIdentifier->value] = sprintf(
+        $dynamicNodeCacheIdentifier = CacheTag::forDynamicNodeAggregate($contentRepositoryId, $workspaceName, $nodeAggregateId);
+        $tagsToFlush[$dynamicNodeCacheIdentifier->value] = sprintf(
+            'which were tagged with "%s" because that identifier has changed.',
+            $dynamicNodeCacheIdentifier->value
+        );
+
+        $descendantOfNodeCacheIdentifier = CacheTag::forDescendantOfNode($contentRepositoryId, $workspaceName, $nodeAggregateId);
+        $tagsToFlush[$descendantOfNodeCacheIdentifier->value] = sprintf(
             'which were tagged with "%s" because node "%s" has changed.',
-            $descandantOfNodeCacheIdentifier->value,
+            $descendantOfNodeCacheIdentifier->value,
             $nodeCacheIdentifier->value
         );
+
+        return $tagsToFlush;
     }
 
     /**
-     * This is a low-level api. Please use registerNodeChange() if possible. Otherwise make sure that $nodeTypePrefix
-     * is set up correctly and contains the workspacehash wich can be received via
-     * $this->getCachingHelper()->renderWorkspaceTagForContextNode($workpsacename)
-     *
-     * @param array<string,string> &$tagsToFlush
+     * @return array<string,string> $tagsToFlush
      */
-    private function registerChangeOnNodeType(
+    private function collectTagsForChangeOnNodeType(
         NodeTypeName $nodeTypeName,
         ContentRepositoryId $contentRepositoryId,
-        ContentStreamId $contentStreamId,
-        ?NodeAggregateId $referenceNodeIdentifier,
-        array &$tagsToFlush,
-        ContentRepository $contentRepository
-    ): void {
+        WorkspaceName|CacheTagWorkspaceName $workspaceName,
+        ?NodeAggregateId $referenceNodeIdentifier
+    ): array {
+        $tagsToFlush = [];
+
+        $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryId);
         $nodeType = $contentRepository->getNodeTypeManager()->getNodeType($nodeTypeName);
         if ($nodeType) {
             $nodeTypesNamesToFlush = $this->getAllImplementedNodeTypeNames($nodeType);
@@ -187,7 +179,7 @@ class ContentCacheFlusher
         }
 
         foreach ($nodeTypesNamesToFlush as $nodeTypeNameToFlush) {
-            $nodeTypeNameCacheIdentifier = CacheTag::forNodeTypeName($contentRepositoryId, $contentStreamId, NodeTypeName::fromString($nodeTypeNameToFlush));
+            $nodeTypeNameCacheIdentifier = CacheTag::forNodeTypeName($contentRepositoryId, $workspaceName, NodeTypeName::fromString($nodeTypeNameToFlush));
             $tagsToFlush[$nodeTypeNameCacheIdentifier->value] = sprintf(
                 'which were tagged with "%s" because node "%s" has changed and was of type "%s".',
                 $nodeTypeNameCacheIdentifier->value,
@@ -195,15 +187,30 @@ class ContentCacheFlusher
                 $nodeTypeName->value
             );
         }
+
+        return $tagsToFlush;
+    }
+
+    /**
+     * Flush caches according to the given tags and strategy.
+     *
+     * @param array<string,string> $tagsToFlush
+     */
+    protected function flushTags(array $tagsToFlush, CacheFlushingStrategy $cacheFlushingStrategy): void
+    {
+        match ($cacheFlushingStrategy) {
+            CacheFlushingStrategy::IMMEDIATE => $this->flushTagsImmediately($tagsToFlush),
+            CacheFlushingStrategy::ON_SHUTDOWN => $this->collectTagsForFlushOnShutdown($tagsToFlush)
+        };
     }
 
 
     /**
-     * Flush caches according to the previously registered node changes.
+     * Flush caches according to the given tags immediately.
      *
      * @param array<string,string> $tagsToFlush
      */
-    protected function flushTags(array $tagsToFlush): void
+    protected function flushTagsImmediately(array $tagsToFlush): void
     {
         if ($this->debugMode) {
             foreach ($tagsToFlush as $tag => $logMessage) {
@@ -220,6 +227,16 @@ class ContentCacheFlusher
             $affectedEntries = $this->contentCache->flushByTags(array_keys($tagsToFlush));
             $this->systemLogger->debug(sprintf('Content cache: Removed %s entries', $affectedEntries));
         }
+    }
+
+    /**
+     * Collect tags to get flushed on shutdown.
+     *
+     * @param array<string,string> $tagsToFlush
+     */
+    protected function collectTagsForFlushOnShutdown(array $tagsToFlush): void
+    {
+        $this->tagsToFlushAfterPersistance = array_merge($tagsToFlush, $this->tagsToFlushAfterPersistance);
     }
 
     /**
@@ -240,65 +257,17 @@ class ContentCacheFlusher
         return array_unique($types);
     }
 
-
     /**
-     * Fetches possible usages of the asset and registers nodes that use the asset as changed.
-     *
-     * @throws NodeTypeNotFoundException
+     * Flush caches according to the previously registered changes.
      */
-    public function registerAssetChange(AssetInterface $asset): void
+    public function flushCollectedTags(): void
     {
-        // In Nodes only assets are referenced, never asset variants directly. When an asset
-        // variant is updated, it is passed as $asset, but since it is never "used" by any node
-        // no flushing of corresponding entries happens. Thus we instead us the original asset
-        // of the variant.
-        if ($asset instanceof AssetVariantInterface) {
-            $asset = $asset->getOriginalAsset();
-        }
+        $this->flushTagsImmediately($this->tagsToFlushAfterPersistance);
+        $this->tagsToFlushAfterPersistance = [];
+    }
 
-        // TODO: re-implement this based on the code below
-
-        /*
-        if (!$asset->isInUse()) {
-            return;
-        }
-
-        $cachingHelper = $this->getCachingHelper();
-
-        foreach ($this->assetService->getUsageReferences($asset) as $reference) {
-            if (!$reference instanceof AssetUsageInNodeProperties) {
-                continue;
-            }
-
-            $workspaceHash = $cachingHelper->renderWorkspaceTagForContextNode($reference->getWorkspaceName());
-            $this->securityContext->withoutAuthorizationChecks(function () use ($reference, &$node) {
-                $node = $this->getContextForReference($reference)->getNodeByIdentifier($reference->getNodeIdentifier());
-            });
-
-            if (!$node instanceof Node) {
-                $this->systemLogger->warning(sprintf(
-                    'Found a node reference from node with identifier %s in workspace %s to asset %s,'
-                        . ' but the node could not be fetched.',
-                    $reference->getNodeIdentifier(),
-                    $reference->getWorkspaceName(),
-                    $this->persistenceManager->getIdentifierByObject($asset)
-                ), LogEnvironment::fromMethodName(__METHOD__));
-                continue;
-            }
-
-            $this->registerNodeChange($node);
-
-            $assetIdentifier = $this->persistenceManager->getIdentifierByObject($asset);
-            // @see RuntimeContentCache.addTag
-            $tagName = 'AssetDynamicTag_' . $workspaceHash . '_' . $assetIdentifier;
-            $this->addTagToFlush(
-                $tagName,
-                sprintf(
-                    'which were tagged with "%s" because asset "%s" has changed.',
-                    $tagName,
-                    $assetIdentifier
-                )
-            );
-        }*/
+    public function shutdownObject(): void
+    {
+        $this->flushCollectedTags();
     }
 }

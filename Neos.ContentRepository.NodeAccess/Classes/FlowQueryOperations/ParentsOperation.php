@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 namespace Neos\ContentRepository\NodeAccess\FlowQueryOperations;
 
 /*
@@ -80,7 +83,7 @@ class ParentsOperation extends AbstractOperation
             $ancestorNodes = $this->contentRepositoryRegistry
                 ->subgraphForNode($contextNode)
                 ->findAncestorNodes(
-                    $contextNode->nodeAggregateId,
+                    $contextNode->aggregateId,
                     $findAncestorNodesFilter
                 );
             $parents = $parents->merge($ancestorNodes);

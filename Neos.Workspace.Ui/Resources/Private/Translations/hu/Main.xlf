@@ -1,0 +1,266 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
+  <file original="" product-name="Neos.Workspace.Ui" source-language="en" datatype="plaintext" target-language="hu">
+    <body>
+      <trans-unit id="back" xml:space="preserve">
+				<source>Back</source>
+        <target state="translated">Vissza</target>
+      </trans-unit>
+      <trans-unit id="cancel" xml:space="preserve">
+				<source>Cancel</source>
+        <target state="translated">Mégsem</target>
+      </trans-unit>
+      <trans-unit id="pathCaption" xml:space="preserve">
+        <source>Path</source>
+        <target state="translated">Elérési út</target>
+      </trans-unit>
+      <trans-unit id="relativePathCaption" xml:space="preserve">
+        <source>Relative Path</source>
+        <target state="translated">Relatív elérési út</target>
+      </trans-unit>
+      <!-- Management -->
+      <trans-unit id="workspaces.label" xml:space="preserve">
+				<source>Workspaces</source>
+        <target state="translated">Munkaterület</target>
+      </trans-unit>
+      <trans-unit id="workspaces.detailsForWorkspace" xml:space="preserve">
+				<source>Details for "{0}"</source>
+        <target state="translated">Részletek "{0}"</target>
+      </trans-unit>
+      <trans-unit id="workspaces.createNewWorkspace" xml:space="preserve">
+				<source>Create new workspace</source>
+        <target state="translated">Új munkafelület létrehozása</target>
+      </trans-unit>
+      <trans-unit id="workspaces.createWorkspace" xml:space="preserve">
+				<source>Create workspace</source>
+        <target state="translated">Új munkafelület</target>
+      </trans-unit>
+      <trans-unit id="workspaces.deleteWorkspace" xml:space="preserve">
+				<source>Delete workspace</source>
+        <target state="translated">Munkafelület törlése</target>
+      </trans-unit>
+      <trans-unit id="workspaces.editWorkspace" xml:space="preserve">
+				<source>Edit workspace</source>
+        <target state="translated">Munkafelület szerkesztése</target>
+      </trans-unit>
+      <trans-unit id="workspaces.yesDeleteWorkspace" xml:space="preserve">
+				<source>Yes, delete the workspace</source>
+        <target state="translated">Igen, törlöm a munkafelületet</target>
+      </trans-unit>
+      <trans-unit id="workspaces.editWorkspace" xml:space="preserve">
+				<source>Edit workspace "{0}"</source>
+        <target state="translated">Munkafelület szerkesztése</target>
+      </trans-unit>
+      <trans-unit id="workspaces.personalWorkspace" xml:space="preserve">
+				<source>Personal workspace</source>
+        <target state="translated">Személyes munkafelület</target>
+      </trans-unit>
+      <trans-unit id="workspaces.privateWorkspace" xml:space="preserve">
+				<source>Private workspace</source>
+        <target state="translated">Privát munkafelület</target>
+      </trans-unit>
+      <trans-unit id="workspaces.internalWorkspace" xml:space="preserve">
+				<source>Internal workspace</source>
+        <target state="translated">Belső munkafelület</target>
+      </trans-unit>
+      <trans-unit id="workspaces.readonlyWorkspace" xml:space="preserve">
+				<source>Read-only workspace</source>
+        <target state="translated">Csak olvasható munkafelület</target>
+      </trans-unit>
+      <trans-unit id="workspaces.workspace.title" xml:space="preserve">
+				<source>Title</source>
+        <target state="translated">Cím</target>
+      </trans-unit>
+      <trans-unit id="workspaces.workspace.description" xml:space="preserve">
+				<source>Description</source>
+        <target state="translated">Leírás</target>
+      </trans-unit>
+      <trans-unit id="workspaces.workspace.baseWorkspace" xml:space="preserve">
+				<source>Base workspace</source>
+        <target state="translated">Alap munkafelület</target>
+      </trans-unit>
+      <trans-unit id="workspaces.workspace.owner" xml:space="preserve">
+				<source>Owner</source>
+        <target state="translated">Tulajdonos</target>
+      </trans-unit>
+      <trans-unit id="workspaces.workspace.visibility" xml:space="preserve">
+				<source>Visibility</source>
+        <target state="translated">Láthatóság</target>
+      </trans-unit>
+      <trans-unit id="workspaces.workspace.visibility.private" xml:space="preserve">
+				<source>Private</source>
+        <target state="translated">Privát</target>
+      </trans-unit>
+      <trans-unit id="workspaces.workspace.visibility.private.help" xml:space="preserve">
+				<source>Only reviewers and administrators can access and modify this workspace</source>
+        <target state="translated">Csak moderátorok és adminisztrátoroknak van engedélye a tartalom szerkesztéséhez ezen a munkafelületen</target>
+      </trans-unit>
+      <trans-unit id="workspaces.workspace.visibility.internal" xml:space="preserve">
+				<source>Internal</source>
+        <target state="translated">Belső</target>
+      </trans-unit>
+      <trans-unit id="workspaces.workspace.visibility.internal.help" xml:space="preserve">
+				<source>Any logged in editor can see and modify this workspace.</source>
+        <target state="translated">Minden bejelentkezett szerkesztő láthatja és módosíthatja a munkafelületet.</target>
+      </trans-unit>
+      <trans-unit id="workspaces.workspace.changes" xml:space="preserve">
+				<source>Changes</source>
+        <target state="translated">Változások</target>
+      </trans-unit>
+      <trans-unit id="workspaces.openPageInWorkspace" xml:space="preserve">
+				<source>Open page in "{0}" workspace</source>
+        <target state="translated">Oldal megnyitása "{0}" a munkafelületen</target>
+      </trans-unit>
+      <trans-unit id="workspaces.help.cantDeletePersonalWorkspace" xml:space="preserve">
+				<source>This is your personal workspace which you can't delete.</source>
+        <target state="translated">Ez egy személyes munkafelület, amit nem törölhet.</target>
+      </trans-unit>
+      <trans-unit id="workspaces.help.workspaceContainsChanges" xml:space="preserve">
+				<source>The workspace contains changes. To delete, discard the changes first.</source>
+        <target state="translated">A munkafelület változásokat tartalmaz. A törléshez először vesse el a módosításokat.</target>
+      </trans-unit>
+      <trans-unit id="workspaces.help.cantRebaseWorkspaceContainsChanges" xml:space="preserve">
+				<source>Workspace can't be rebased on a different workspace because it still contains changes.</source>
+        <target state="translated">A munkafelületet nem lehet újraalapozni egy másik munkafelületen, mert változásokat tartalmaz.</target>
+      </trans-unit>
+      <trans-unit id="workspaces.help.cantDeleteWorkspaceHasDependencies" xml:space="preserve">
+				<source>The workspace cannot be deleted because other workspaces depend on it.</source>
+        <target state="translated">Ezt a munkafelületet nem lehet törölni, mert más munkafelületek erre épülnek.</target>
+      </trans-unit>
+      <trans-unit id="workspaces.help.cantDeleteNoPermission" xml:space="preserve">
+				<source>You don't have the permissions for deleting this workspace.</source>
+        <target state="translated">Nincs jogod, hogy töröld a munkafelületet.</target>
+      </trans-unit>
+      <trans-unit id="workspaces.dialog.confirmWorkspaceDeletion" xml:space="preserve">
+				<source>Do you really want to delete the workspace "{0}"?</source>
+        <target state="translated">Biztos törölni akarod a "{0}" munkafelületet?</target>
+      </trans-unit>
+      <trans-unit id="workspaces.dialog.thisWillDeleteTheWorkspace" xml:space="preserve">
+				<source>This will delete the workspace including all unpublished content. This operation cannot be undone.</source>
+        <target state="translated">Ez törölni fogja a munkafelületet az összes közzé nem tett tartalommal együtt. Ez a művelet nem vonható vissza.</target>
+      </trans-unit>
+      <trans-unit id="workspaces.description" xml:space="preserve">
+				<source>This module contains the overview of all elements within the current workspace and it enables to continue the review and publishing workflow for them.</source>
+        <target state="translated">Ez a modul tartalmazza az áttekintését az összes elemnek a jelenlegi munkafelületen és ez engedélyezi, hogy folytassa a felülvizsgálatát, munkafolyamatot.</target>
+      </trans-unit>
+      <trans-unit id="workspaces.unpublishedChanges" xml:space="preserve">
+				<source>Unpublished changes in workspace "{0}"</source>
+        <target state="translated">Közzé nem tett változások a "{0}" munkafelületen</target>
+      </trans-unit>
+      <trans-unit id="workspaces.changesCounts" xml:space="preserve">
+				<source>additions: {new}, changes: {changed}, removals: {removed}</source>
+        <target state="translated">kiegészítések: {new}, változások: {changed}, eltávolítások: {removed}</target>
+      </trans-unit>
+      <trans-unit id="workspaces.review" xml:space="preserve">
+				<source>Review</source>
+        <target state="translated">Áttekintés</target>
+      </trans-unit>
+      <trans-unit id="workspaces.discardSelectedChanges" xml:space="preserve">
+				<source>Discard selected changes</source>
+        <target state="translated">Kiválasztott változások elvetése</target>
+      </trans-unit>
+      <trans-unit id="workspaces.discardAllChanges" xml:space="preserve">
+				<source>Discard all changes</source>
+        <target state="translated">Összes változtatás elvetése</target>
+      </trans-unit>
+      <trans-unit id="workspaces.publishAllChanges" xml:space="preserve">
+				<source>Publish all changes</source>
+        <target state="translated">Minden változtatás közzététele</target>
+      </trans-unit>
+      <trans-unit id="workspaces.publishAllChangesTo" xml:space="preserve">
+				<source>Publish all changes to {0}</source>
+        <target state="translated">Minden változás közzététele {0}</target>
+      </trans-unit>
+      <trans-unit id="changedContentCaption" xml:space="preserve">
+				<source>Changed Content</source>
+        <target state="translated">Változott tartalom</target>
+      </trans-unit>
+      <trans-unit id="workspaces.legend.deleted" xml:space="preserve">
+				<source>deleted</source>
+        <target state="translated">törölt</target>
+      </trans-unit>
+      <trans-unit id="workspaces.legend.created" xml:space="preserve">
+				<source>created</source>
+        <target state="translated">létrehozott</target>
+      </trans-unit>
+      <trans-unit id="workspaces.legend.moved" xml:space="preserve">
+				<source>moved</source>
+        <target state="translated">mozgatott</target>
+      </trans-unit>
+      <trans-unit id="workspaces.legend.hidden" xml:space="preserve">
+				<source>hidden</source>
+        <target state="translated">rejtett</target>
+      </trans-unit>
+      <trans-unit id="workspaces.legend.edited" xml:space="preserve">
+				<source>edited</source>
+        <target state="translated">szerkesztett</target>
+      </trans-unit>
+      <trans-unit id="workspaces.thereAreNoUnpublishedChanges" xml:space="preserve">
+				<source>There are no unpublished changes in this workspace.</source>
+        <target state="translated">Minden közzé van téve.</target>
+      </trans-unit>
+      <trans-unit id="workspaces.discardAllChangesInWorkspaceConfirmation" xml:space="preserve">
+				<source>Do you really want to discard all changes in the "{0}" workspace?</source>
+        <target state="translated">Biztos minden változás el akar vetni a "{0}" munkafelületen?</target>
+      </trans-unit>
+      <trans-unit id="workspaces.workspaceWithThisTitleAlreadyExists">
+        <source>A workspace with this title already exists.</source>
+        <target state="translated">Ilyen című munkafelület már létezik.</target>
+      </trans-unit>
+      <trans-unit id="workspaces.workspaceHasBeenUpdated">
+        <source>The workspace "{0}" has been updated.</source>
+        <target state="translated">A munkafelület "{0}" frissítve lett.</target>
+      </trans-unit>
+      <trans-unit id="workspaces.workspaceCannotBeDeletedBecauseOfDependencies">
+        <source>Workspace "{0}" cannot be deleted because the following workspaces are based on it: {1}</source>
+        <target state="translated">A munkafelületet "{0}" nem sikerült törölni, mert a következő munkafelületek erre épülnek: {1}</target>
+      </trans-unit>
+      <trans-unit id="workspaces.notDeletedErrorWhileFetchingUnpublishedNodes">
+        <source>An error occurred while fetching unpublished nodes from workspace "{0}", nothing was deleted.</source>
+        <target state="translated">Hiba történt a kiadatlan csomópontok bevitele közben a munkafelületen "{0}", semmi nem lett törölve.</target>
+      </trans-unit>
+      <trans-unit id="workspaces.cantEditBecauseWorkspaceContainsChanges">
+        <source>Your personal workspace contains changes, please publish or discard them first.</source>
+        <target state="translated">A személyes felület módosításokat tartalmaz, tegye közzé vagy dobja őket először.</target>
+      </trans-unit>
+      <group id="workspaces.workspaceCannotBeDeletedBecauseOfUnpublishedNodes" restype="x-gettext-plurals">
+        <trans-unit id="workspaces.workspaceCannotBeDeletedBecauseOfUnpublishedNodes[0]">
+          <source>Did not delete workspace "{0}" because it currently contains {1} node.</source>
+          <target state="translated">Nem törlődött a munkafelület "{0}", mivel {1} csomópontot tartalmaz.</target>
+        </trans-unit>
+        <trans-unit id="workspaces.workspaceCannotBeDeletedBecauseOfUnpublishedNodes[1]">
+          <source>Did not delete workspace "{0}" because it currently contains {1} nodes.</source>
+          <target state="translated">Nem törlődött a munkafelület "{0}", mivel {1} csomópontokat tartalmaz.</target>
+        </trans-unit>
+      </group>
+      <trans-unit id="workspaces.workspaceHasBeenRemoved">
+        <source>The workspace "{0}" has been removed.</source>
+        <target state="translated">A munkafelület "{0}" el lett látovlítva.</target>
+      </trans-unit>
+      <trans-unit id="workspaces.selectedChangeHasBeenPublished">
+        <source>The selected change has been published.</source>
+        <target state="translated">A kiválasztott módosítással közzé lett téve.</target>
+      </trans-unit>
+      <trans-unit id="workspaces.selectedChangeHasBeenDiscarded">
+        <source>The selected change has been discarded.</source>
+        <target state="translated">A kijelölt módosítást el lett vetve.</target>
+      </trans-unit>
+      <trans-unit id="workspaces.selectedChangesHaveBeenPublished">
+        <source>The selected changes have been published.</source>
+        <target state="translated">A kiválasztott módosítások közzé lettek téve.</target>
+      </trans-unit>
+      <trans-unit id="workspaces.selectedChangesHaveBeenDiscarded">
+        <source>The selected changes have been discarded.</source>
+        <target state="translated">A kijelölt módosítások el lett vetve.</target>
+      </trans-unit>
+      <trans-unit id="workspaces.allChangesInWorkspaceHaveBeenPublished">
+        <source>All changes from workspace "{0}" have been published to {1}.</source>
+        <target state="translated">Minden változás a munkafelületről "{0}" közzé lett téve {1}.</target>
+      </trans-unit>
+      <trans-unit id="workspaces.allChangesInWorkspaceHaveBeenDiscarded">
+        <source>All changes from workspace "{0}" have been discarded.</source>
+        <target state="translated">Minden változás a munkafelületen "{0}" el lett vetve.</target>
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

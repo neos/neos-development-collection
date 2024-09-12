@@ -59,40 +59,6 @@
         </f:if>
       </fieldset>
     </f:form>
-
-    <f:form action="createSitePackage">
-      <fieldset class="neos-span3 neos-offset1">
-        <legend>{neos:backend.translate(id: 'sites.createPackage', value: 'Create a new site-package', source: 'Modules')}</legend>
-        <f:if condition="{generatorServiceIsAvailable}">
-          <f:then>
-            <div class="neos-control-group{f:validation.ifHasErrors(for: 'packageKey', then: ' neos-error')}">
-              <label class="neos-control-label" for="package-key">{neos:backend.translate(id: 'packageKey', value: 'Package key', source: 'Modules')}</label>
-              <div class="neos-controls">
-                <f:form.textfield name="packageKey" value="{packageKey}" id="package-key" class="neos-span12" placeholder="{neos:backend.translate(id: 'sites.validPackageKeyInfo', value: 'VendorName.MyPackageKey')}" />
-                <f:render partial="Module/Shared/FieldValidationResults" arguments="{fieldname: 'packageKey'}"/>
-              </div>
-            </div>
-            <div class="neos-control-group{f:validation.ifHasErrors(for: 'siteName', then: ' neos-error')}">
-              <label class="neos-control-label" for="site-name">{neos:backend.translate(id: 'sites.name', value: 'Site name', source: 'Modules')}</label>
-              <div class="neos-controls">
-                <f:form.textfield name="siteName" value="{siteName}" id="site-name" />
-                <f:render partial="Module/Shared/FieldValidationResults" arguments="{fieldname: 'siteName'}"/>
-              </div>
-            </div>
-            <div class="neos-control-group{f:validation.ifHasErrors(for: 'generatorClass', then: ' neos-error')}">
-              <label class="neos-control-label" for="node-type">{neos:backend.translate(id: 'sites.generatorClass', value: 'Select a site generator', source: 'Modules')}</label>
-              <div class="neos-controls neos-select">
-                <f:form.select name="generatorClass" options="{generatorServices}" id="generator-class" class="neos-span12" />
-              </div>
-            </div>
-            <f:form.submit value="{neos:backend.translate(id: 'sites.createPackage', value: 'Create Site-Package', source: 'Modules')}" class="neos-button neos-button-primary" />
-          </f:then>
-          <f:else>
-            <p>{neos:backend.translate(id: 'sites.noNeosKickstarterInfo', value: 'The <em>Neos Kickstarter</em> package is not installed, install it to kickstart new sites.', source: 'Modules') -> f:format.raw()}</p>
-          </f:else>
-        </f:if>
-      </fieldset>
-    </f:form>
   </div>
   <div class="neos-footer">
     <f:link.action action="index" class="neos-button">{neos:backend.translate(id: 'cancel', value: 'Cancel')}</f:link.action>

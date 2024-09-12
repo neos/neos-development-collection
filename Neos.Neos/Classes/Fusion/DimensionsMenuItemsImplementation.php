@@ -7,8 +7,12 @@ namespace Neos\Neos\Fusion;
 use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\Dimension\ContentDimensionId;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
+use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphInterface;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
+use Neos\ContentRepository\Core\SharedModel\Exception\WorkspaceDoesNotExist;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
+use Neos\Flow\Annotations as Flow;
+use Neos\Neos\Domain\NodeLabel\NodeLabelGeneratorInterface;
 
 /**
  * Fusion implementation for a dimensions menu.
@@ -27,6 +31,9 @@ use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
  */
 class DimensionsMenuItemsImplementation extends AbstractMenuItemsImplementation
 {
+    #[Flow\Inject()]
+    protected NodeLabelGeneratorInterface $nodeLabelGenerator;
+
     /**
      * @return array<mixed>
      */
@@ -44,7 +51,7 @@ class DimensionsMenuItemsImplementation extends AbstractMenuItemsImplementation
         $menuItems = [];
         $currentNode = $this->getCurrentNode();
 
-        $contentRepositoryId = $currentNode->subgraphIdentity->contentRepositoryId;
+        $contentRepositoryId = $currentNode->contentRepositoryId;
         $contentRepository = $this->contentRepositoryRegistry->get(
             $contentRepositoryId,
         );
@@ -56,30 +63,35 @@ class DimensionsMenuItemsImplementation extends AbstractMenuItemsImplementation
         assert($dimensionMenuItemsImplementationInternals instanceof DimensionsMenuItemsImplementationInternals);
 
         $interDimensionalVariationGraph = $dimensionMenuItemsImplementationInternals->interDimensionalVariationGraph;
-        $currentDimensionSpacePoint = $currentNode->subgraphIdentity->dimensionSpacePoint;
+        $currentDimensionSpacePoint = $currentNode->dimensionSpacePoint;
         $contentDimensionIdentifierToLimitTo = $this->getContentDimensionIdentifierToLimitTo();
+        try {
+            $contentGraph = $contentRepository->getContentGraph($currentNode->workspaceName);
+        } catch (WorkspaceDoesNotExist) {
+            return $menuItems;
+        }
+
         foreach ($interDimensionalVariationGraph->getDimensionSpacePoints() as $dimensionSpacePoint) {
             $variant = null;
             if ($this->isDimensionSpacePointRelevant($dimensionSpacePoint)) {
                 if ($dimensionSpacePoint->equals($currentDimensionSpacePoint)) {
                     $variant = $currentNode;
                 } else {
-                    $variant = $contentRepository->getContentGraph()
+                    $variant = $contentGraph
                         ->getSubgraph(
-                            $currentNode->subgraphIdentity->contentStreamId,
                             $dimensionSpacePoint,
-                            $currentNode->subgraphIdentity->visibilityConstraints,
+                            $currentNode->visibilityConstraints,
                         )
-                        ->findNodeById($currentNode->nodeAggregateId);
+                        ->findNodeById($currentNode->aggregateId);
                 }
 
                 if (!$variant && $this->includeGeneralizations() && $contentDimensionIdentifierToLimitTo) {
                     $variant = $this->findClosestGeneralizationMatchingDimensionValue(
                         $dimensionSpacePoint,
                         $contentDimensionIdentifierToLimitTo,
-                        $currentNode->nodeAggregateId,
+                        $currentNode->aggregateId,
                         $dimensionMenuItemsImplementationInternals,
-                        $contentRepository
+                        $contentGraph
                     );
                 }
 
@@ -107,9 +119,9 @@ class DimensionsMenuItemsImplementation extends AbstractMenuItemsImplementation
                 $order,
                 $contentDimensionIdentifierToLimitTo
             ) {
-                return (int)$order[$menuItemA->node?->subgraphIdentity->dimensionSpacePoint->getCoordinate(
+                return (int)$order[$menuItemA->node?->dimensionSpacePoint->getCoordinate(
                     $contentDimensionIdentifierToLimitTo
-                )] <=> (int)$order[$menuItemB->node?->subgraphIdentity->dimensionSpacePoint->getCoordinate(
+                )] <=> (int)$order[$menuItemB->node?->dimensionSpacePoint->getCoordinate(
                     $contentDimensionIdentifierToLimitTo
                 )];
             });
@@ -126,11 +138,11 @@ class DimensionsMenuItemsImplementation extends AbstractMenuItemsImplementation
     {
         return !$this->getContentDimensionIdentifierToLimitTo() // no limit to one dimension, so all DSPs are relevant
             // always include the current variant
-            || $dimensionSpacePoint->equals($this->currentNode->subgraphIdentity->dimensionSpacePoint)
+            || $dimensionSpacePoint->equals($this->currentNode->dimensionSpacePoint)
             // include all direct variants in the dimension we're limited to unless their values
             // in that dimension are missing in the specified list
             || $dimensionSpacePoint->isDirectVariantInDimension(
-                $this->currentNode->subgraphIdentity->dimensionSpacePoint,
+                $this->currentNode->dimensionSpacePoint,
                 $this->getContentDimensionIdentifierToLimitTo()
             )
             && (
@@ -147,7 +159,7 @@ class DimensionsMenuItemsImplementation extends AbstractMenuItemsImplementation
         ContentDimensionId $contentDimensionIdentifier,
         NodeAggregateId $nodeAggregateId,
         DimensionsMenuItemsImplementationInternals $dimensionMenuItemsImplementationInternals,
-        ContentRepository $contentRepository
+        ContentGraphInterface $contentGraph
     ): ?Node {
         $generalizations = $dimensionMenuItemsImplementationInternals->interDimensionalVariationGraph
             ->getWeightedGeneralizations($dimensionSpacePoint);
@@ -157,11 +169,10 @@ class DimensionsMenuItemsImplementation extends AbstractMenuItemsImplementation
                 $generalization->getCoordinate($contentDimensionIdentifier)
                 === $dimensionSpacePoint->getCoordinate($contentDimensionIdentifier)
             ) {
-                $variant = $contentRepository->getContentGraph()
+                $variant = $contentGraph
                     ->getSubgraph(
-                        $this->currentNode->subgraphIdentity->contentStreamId,
                         $generalization,
-                        $this->currentNode->subgraphIdentity->visibilityConstraints,
+                        $this->getCurrentNode()->visibilityConstraints,
                     )
                     ->findNodeById($nodeAggregateId);
                 if ($variant) {
@@ -209,7 +220,7 @@ class DimensionsMenuItemsImplementation extends AbstractMenuItemsImplementation
         if ($this->getContentDimensionIdentifierToLimitTo()) {
             return $metadata[$this->getContentDimensionIdentifierToLimitTo()->value]['label'] ?: '';
         } elseif ($variant) {
-            return $variant->getLabel() ?: '';
+            return $this->nodeLabelGenerator->getLabel($variant) ?: '';
         } else {
             return array_reduce($metadata, function ($carry, $item) {
                 return $carry . (empty($carry) ? '' : '-') . $item['label'];

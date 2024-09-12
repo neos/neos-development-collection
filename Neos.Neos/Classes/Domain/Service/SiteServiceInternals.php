@@ -27,7 +27,7 @@ use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate;
 use Neos\ContentRepository\Core\Service\ContentRepositoryBootstrapper;
-use Neos\ContentRepository\Core\SharedModel\Exception\NodeTypeNotFoundException;
+use Neos\ContentRepository\Core\SharedModel\Exception\NodeTypeNotFound;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeVariantSelectionStrategy;
 use Neos\Neos\Domain\Exception\SiteNodeTypeIsInvalid;
@@ -39,7 +39,7 @@ readonly class SiteServiceInternals implements ContentRepositoryServiceInterface
     public function __construct(
         private ContentRepository $contentRepository,
         private InterDimensionalVariationGraph $interDimensionalVariationGraph,
-        private NodeTypeManager $nodeTypeManager
+        private NodeTypeManager $nodeTypeManager,
     ) {
     }
 
@@ -54,21 +54,21 @@ readonly class SiteServiceInternals implements ContentRepositoryServiceInterface
                 1651921482
             );
         }
-        $contentGraph = $this->contentRepository->getContentGraph();
 
         foreach ($this->contentRepository->getWorkspaceFinder()->findAll() as $workspace) {
+            $contentGraph = $this->contentRepository->getContentGraph($workspace->workspaceName);
             $sitesNodeAggregate = $contentGraph->findRootNodeAggregateByType(
-                $workspace->currentContentStreamId,
                 NodeTypeNameFactory::forSites()
             );
-            $siteNodeAggregates = $contentGraph->findChildNodeAggregatesByName(
-                $workspace->currentContentStreamId,
+            if (!$sitesNodeAggregate) {
+                // nothing to prune, we could probably also return here directly?
+                continue;
+            }
+            $siteNodeAggregate = $contentGraph->findChildNodeAggregateByName(
                 $sitesNodeAggregate->nodeAggregateId,
                 $siteNodeName->toNodeName()
             );
-
-            foreach ($siteNodeAggregates as $siteNodeAggregate) {
-                assert($siteNodeAggregate instanceof NodeAggregate);
+            if ($siteNodeAggregate instanceof NodeAggregate) {
                 $this->contentRepository->handle(RemoveNodeAggregate::create(
                     $workspace->workspaceName,
                     $siteNodeAggregate->nodeAggregateId,
@@ -89,7 +89,7 @@ readonly class SiteServiceInternals implements ContentRepositoryServiceInterface
         );
         $siteNodeType = $this->nodeTypeManager->getNodeType($nodeTypeName);
         if (!$siteNodeType) {
-            throw new NodeTypeNotFoundException(
+            throw new NodeTypeNotFound(
                 'Cannot create a site using a non-existing node type.',
                 1412372375
             );
@@ -99,23 +99,17 @@ readonly class SiteServiceInternals implements ContentRepositoryServiceInterface
             throw SiteNodeTypeIsInvalid::becauseItIsNotOfTypeSite(NodeTypeName::fromString($nodeTypeName));
         }
 
-        $siteNodeAggregate = $this->contentRepository->getContentGraph()->findChildNodeAggregatesByName(
-            $liveWorkspace->currentContentStreamId,
-            $sitesNodeIdentifier,
-            $site->getNodeName()->toNodeName(),
-        );
-        foreach ($siteNodeAggregate as $_) {
+        $siteNodeAggregate = $this->contentRepository->getContentGraph($liveWorkspace->workspaceName)
+            ->findChildNodeAggregateByName(
+                $sitesNodeIdentifier,
+                $site->getNodeName()->toNodeName(),
+            );
+        if ($siteNodeAggregate instanceof NodeAggregate) {
             // Site node already exists
             return;
         }
 
         $rootDimensionSpacePoints = $this->interDimensionalVariationGraph->getRootGeneralizations();
-        if (empty($rootDimensionSpacePoints)) {
-            throw new \InvalidArgumentException(
-                'The dimension space is empty, please check your configuration.',
-                1651957153
-            );
-        }
         $arbitraryRootDimensionSpacePoint = array_shift($rootDimensionSpacePoints);
 
         $siteNodeAggregateId = NodeAggregateId::create();
@@ -126,11 +120,10 @@ readonly class SiteServiceInternals implements ContentRepositoryServiceInterface
             OriginDimensionSpacePoint::fromDimensionSpacePoint($arbitraryRootDimensionSpacePoint),
             $sitesNodeIdentifier,
             null,
-            $site->getNodeName()->toNodeName(),
             PropertyValuesToWrite::fromArray([
                 'title' => $site->getName()
             ])
-        ))->block();
+        )->withNodeName($site->getNodeName()->toNodeName()));
 
         // Handle remaining root dimension space points by creating peer variants
         foreach ($rootDimensionSpacePoints as $rootDimensionSpacePoint) {
@@ -139,7 +132,7 @@ readonly class SiteServiceInternals implements ContentRepositoryServiceInterface
                 $siteNodeAggregateId,
                 OriginDimensionSpacePoint::fromDimensionSpacePoint($arbitraryRootDimensionSpacePoint),
                 OriginDimensionSpacePoint::fromDimensionSpacePoint($rootDimensionSpacePoint),
-            ))->block();
+            ));
         }
     }
 }
