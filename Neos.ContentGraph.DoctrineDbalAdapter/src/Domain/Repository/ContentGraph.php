@@ -16,10 +16,8 @@ namespace Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository;
 
 use Doctrine\DBAL\ArrayParameterType;
 use Doctrine\DBAL\Connection;
-use Doctrine\DBAL\Driver\Exception as DriverException;
 use Doctrine\DBAL\Exception as DBALException;
 use Doctrine\DBAL\Query\QueryBuilder;
-use Doctrine\DBAL\Result;
 use Neos\ContentGraph\DoctrineDbalAdapter\ContentGraphTableNames;
 use Neos\ContentGraph\DoctrineDbalAdapter\NodeQueryBuilder;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
@@ -29,7 +27,6 @@ use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\NodeType\NodeTypeNames;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphInterface;
-use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphWithRuntimeCaches\ContentSubgraphWithRuntimeCaches;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentSubgraphInterface;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindRootNodeAggregatesFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate;
@@ -67,11 +64,6 @@ final class ContentGraph implements ContentGraphInterface
 {
     private readonly NodeQueryBuilder $nodeQueryBuilder;
 
-    /**
-     * @var array<string,ContentSubgraphWithRuntimeCaches>
-     */
-    private array $subgraphs = [];
-
     public function __construct(
         private readonly Connection $dbal,
         private readonly NodeFactory $nodeFactory,
@@ -98,24 +90,17 @@ final class ContentGraph implements ContentGraphInterface
         DimensionSpacePoint $dimensionSpacePoint,
         VisibilityConstraints $visibilityConstraints
     ): ContentSubgraphInterface {
-        $index = $dimensionSpacePoint->hash . '-' . $visibilityConstraints->getHash();
-        if (!isset($this->subgraphs[$index])) {
-            $this->subgraphs[$index] = new ContentSubgraphWithRuntimeCaches(
-                new ContentSubgraph(
-                    $this->contentRepositoryId,
-                    $this->workspaceName,
-                    $this->contentStreamId,
-                    $dimensionSpacePoint,
-                    $visibilityConstraints,
-                    $this->dbal,
-                    $this->nodeFactory,
-                    $this->nodeTypeManager,
-                    $this->tableNames
-                )
-            );
-        }
-
-        return $this->subgraphs[$index];
+        return new ContentSubgraph(
+            $this->contentRepositoryId,
+            $this->workspaceName,
+            $this->contentStreamId,
+            $dimensionSpacePoint,
+            $visibilityConstraints,
+            $this->dbal,
+            $this->nodeFactory,
+            $this->nodeTypeManager,
+            $this->tableNames
+        );
     }
 
     public function findRootNodeAggregateByType(
