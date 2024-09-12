@@ -12,7 +12,7 @@
 
 declare(strict_types=1);
 
-namespace Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphWithRuntimeCaches\InMemoryCache;
+namespace Neos\ContentRepositoryRegistry\SubgraphCachingInMemory\InMemoryCache;
 
 use Neos\ContentRepository\Core\Projection\ContentGraph\AbsoluteNodePath;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
@@ -27,28 +27,15 @@ final class NodePathCache
     /**
      * @var array<string,AbsoluteNodePath>
      */
-    protected array $nodePaths = [];
-
-    protected bool $isEnabled;
-
-    public function __construct(bool $isEnabled)
-    {
-        $this->isEnabled = $isEnabled;
-    }
+    private array $nodePaths = [];
 
     public function add(NodeAggregateId $nodeAggregateId, AbsoluteNodePath $nodePath): void
     {
-        if ($this->isEnabled === false) {
-            return;
-        }
         $this->nodePaths[$nodeAggregateId->value] = $nodePath;
     }
 
     public function get(NodeAggregateId $nodeAggregateId): ?AbsoluteNodePath
     {
-        if ($this->isEnabled === false) {
-            return null;
-        }
         return $this->nodePaths[$nodeAggregateId->value] ?? null;
     }
 }
