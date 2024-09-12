@@ -126,8 +126,6 @@ trait CRTestSuiteRuntimeVariables
     public function getCurrentSubgraph(): ContentSubgraphInterface
     {
         $contentGraphFinder = $this->currentContentRepository->projectionState(ContentGraphFinder::class);
-        // todo why do we use the ContentGraphFinder here and clear caches? Test pass without
-        $contentGraphFinder->forgetInstances();
 
         return $contentGraphFinder->getByWorkspaceName($this->currentWorkspaceName)->getSubgraph(
             $this->currentDimensionSpacePoint,
