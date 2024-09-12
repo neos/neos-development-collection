@@ -47,7 +47,7 @@ use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
  *
  * It is a rather pragmatic way to speed up (uncached) rendering.
  *
- * @internal implementation detail of {@see ContentRepositoryRegistry::cachedSubgraphForNode()}
+ * @internal implementation detail of {@see ContentRepositoryRegistry::subgraphForNode()}
  */
 final readonly class ContentSubgraphWithRuntimeCaches implements ContentSubgraphInterface
 {
