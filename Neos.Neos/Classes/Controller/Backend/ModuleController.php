@@ -112,16 +112,15 @@ class ModuleController extends ActionController
 
         if ($moduleResponse->hasHeader('Location')) {
             // Preserve redirects see b57d72aeeaa2e6da4d9c0a80363025fefd63d813
-            // todo just return $moduleResponse and not merge with $this->response?
-            $this->redirectToUri($moduleResponse->getHeaderLine('Location'), 0, $moduleResponse->getStatusCode());
+            return $moduleResponse;
         } elseif ($moduleRequest->getFormat() !== 'html') {
             // Allow ajax request with json or similar dd7e5c99924bf1b8618775bec08cc4f2cb1a6d2a
-            // todo just return $moduleResponse and not merge with $this->response?
+            // todo just return $moduleResponse and trust its content-type instead of inferring the requested content-type
             $mediaType = MediaTypes::getMediaTypeFromFilename('file.' . $moduleRequest->getFormat());
             if ($mediaType !== 'application/octet-stream') {
-                $this->response->setContentType($mediaType);
+                $moduleResponse = $moduleResponse->withHeader('Content-Type', $mediaType);
             }
-            return $moduleResponse->getBody();
+            return $moduleResponse;
         } else {
             /** @var ?Account $authenticatedAccount */
             $authenticatedAccount = $this->securityContext->getAccount();
