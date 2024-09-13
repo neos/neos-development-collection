@@ -123,3 +123,4 @@ Neos:
   Fusion:
     defaultContext:
       Neos.Media.Assets: 'Neos\Media\Eel\AssetsHelper'
+      Neos.Media.Image: 'Neos\Media\Eel\ImageHelper'

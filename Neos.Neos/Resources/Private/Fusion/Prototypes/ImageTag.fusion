@@ -1,0 +1,37 @@
+# ImageTag object works exactly the same way as image ViewHelper in the Neos.Media package
+prototype(Neos.Neos:ImageTag) < prototype(Neos.Fusion:Tag) {
+  asset = 'pass-the-media-asset'
+  maximumWidth = 2560
+  width = NULL
+  maximumHeight = 2560
+  height = NULL
+  allowCropping = false
+  allowUpScaling = false
+  async = false
+  quality = NULL
+  preset = NULL
+  @context.thumbnail = ${Neos.Media.Image.createThumbnail(
+    this.asset,
+    this.preset,
+    this.width,
+    this.maximumWidth,
+    this.height,
+    this.maximumHeight,
+    this.allowCropping,
+    this.allowUpScaling,
+    this.async,
+    this.quality,
+    this.format
+  )}
+
+  tagName = 'img'
+  attributes {
+    loading = 'lazy'
+    alt = ''
+    src = Neos.Fusion:ResourceUri {
+      resource = ${thumbnail.resource}
+    }
+    width = ${thumbnail.width}
+    height = ${thumbnail.height}
+  }
+}
