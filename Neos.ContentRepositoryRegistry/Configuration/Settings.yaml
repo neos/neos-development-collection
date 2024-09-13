@@ -77,3 +77,7 @@ Neos:
           'Neos.ContentRepository:ContentGraph':
             # NOTE: This introduces a soft-dependency to the neos/contentgraph-doctrinedbaladapter package, but it can be overridden when a different adapter is used
             factoryObjectName: Neos\ContentGraph\DoctrineDbalAdapter\DoctrineDbalContentGraphProjectionFactory
+
+            catchUpHooks:
+              'Neos.ContentRepositoryRegistry:FlushSubgraphCachePool':
+                factoryObjectName: Neos\ContentRepositoryRegistry\SubgraphCachingInMemory\FlushSubgraphCachePoolCatchUpHookFactory

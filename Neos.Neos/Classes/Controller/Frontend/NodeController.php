@@ -14,8 +14,6 @@ declare(strict_types=1);
 
 namespace Neos\Neos\Controller\Frontend;
 
-use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphWithRuntimeCaches\ContentSubgraphWithRuntimeCaches;
-use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphWithRuntimeCaches\InMemoryCache;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentSubgraphInterface;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindClosestNodeFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindSubtreeFilter;
@@ -23,9 +21,11 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Nodes;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Subtree;
 use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
-use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAddress;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
+use Neos\ContentRepositoryRegistry\SubgraphCachingInMemory\ContentSubgraphWithRuntimeCaches;
+use Neos\ContentRepositoryRegistry\SubgraphCachingInMemory\SubgraphCachePool;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\Controller\ActionController;
 use Neos\Flow\Mvc\Exception\NoMatchingRouteException;
@@ -51,6 +51,9 @@ class NodeController extends ActionController
 
     #[Flow\Inject]
     protected ContentRepositoryRegistry $contentRepositoryRegistry;
+
+    #[Flow\Inject]
+    protected SubgraphCachePool $subgraphCachePool;
 
     /**
      * @Flow\Inject
@@ -201,10 +204,11 @@ class NodeController extends ActionController
         }
 
         $contentRepository = $this->contentRepositoryRegistry->get($nodeAddress->contentRepositoryId);
-        $subgraph = $contentRepository->getContentGraph($nodeAddress->workspaceName)->getSubgraph(
+        $uncachedSubgraph = $contentRepository->getContentGraph($nodeAddress->workspaceName)->getSubgraph(
             $nodeAddress->dimensionSpacePoint,
             VisibilityConstraints::frontend()
         );
+        $subgraph = new ContentSubgraphWithRuntimeCaches($uncachedSubgraph, $this->subgraphCachePool);
 
         $nodeInstance = $subgraph->findNodeById($nodeAddress->aggregateId);
         if ($nodeInstance === null) {
@@ -306,12 +310,6 @@ class NodeController extends ActionController
         NodeAggregateId $nodeAggregateId,
         ContentSubgraphInterface $subgraph,
     ): void {
-        if (!$subgraph instanceof ContentSubgraphWithRuntimeCaches) {
-            // wrong subgraph implementation
-            return;
-        }
-        $inMemoryCache = $subgraph->inMemoryCache;
-
         $subtree = $subgraph->findSubtree(
             $nodeAggregateId,
             FindSubtreeFilter::create(nodeTypes: '!' . NodeTypeNameFactory::NAME_DOCUMENT, maximumLevels: 20)
@@ -326,7 +324,8 @@ class NodeController extends ActionController
             self::fillCacheInternal(
                 $childSubtree,
                 $currentDocumentNode,
-                $inMemoryCache
+                $this->subgraphCachePool,
+                $subgraph
             );
         }
     }
@@ -334,14 +333,15 @@ class NodeController extends ActionController
     private static function fillCacheInternal(
         Subtree $subtree,
         Node $parentNode,
-        InMemoryCache $inMemoryCache
+        SubgraphCachePool $subgraphCachePool,
+        ContentSubgraphInterface $subgraph,
     ): void {
         $node = $subtree->node;
 
         $parentNodeIdentifierByChildNodeIdentifierCache
-            = $inMemoryCache->getParentNodeIdByChildNodeIdCache();
-        $namedChildNodeByNodeIdentifierCache = $inMemoryCache->getNamedChildNodeByNodeIdCache();
-        $allChildNodesByNodeIdentifierCache = $inMemoryCache->getAllChildNodesByNodeIdCache();
+            = $subgraphCachePool->getParentNodeIdByChildNodeIdCache($subgraph);
+        $namedChildNodeByNodeIdentifierCache = $subgraphCachePool->getNamedChildNodeByNodeIdCache($subgraph);
+        $allChildNodesByNodeIdentifierCache = $subgraphCachePool->getAllChildNodesByNodeIdCache($subgraph);
         if ($node->name !== null) {
             $namedChildNodeByNodeIdentifierCache->add(
                 $parentNode->aggregateId,
@@ -359,7 +359,7 @@ class NodeController extends ActionController
 
         $allChildNodes = [];
         foreach ($subtree->children as $childSubtree) {
-            self::fillCacheInternal($childSubtree, $node, $inMemoryCache);
+            self::fillCacheInternal($childSubtree, $node, $subgraphCachePool, $subgraph);
             $childNode = $childSubtree->node;
             $allChildNodes[] = $childNode;
         }
