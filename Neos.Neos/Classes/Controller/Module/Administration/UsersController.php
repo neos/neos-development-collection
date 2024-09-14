@@ -83,6 +83,12 @@ class UsersController extends AbstractModuleController
     protected $authenticationProviderSettings;
 
     /**
+     * @Flow\InjectConfiguration(package="Neos.Neos", path="modules.administration.submodules.users.options")
+     * @var array
+     */
+    protected $moduleOptions;
+
+    /**
      * @return void
      * @throws NoSuchArgumentException
      */
@@ -127,6 +133,7 @@ class UsersController extends AbstractModuleController
             'searchTerm' => $searchTerm,
             'sortBy' => $sortBy,
             'sortDirection' => $sortDirection,
+            'usersPerPage' => $this->moduleOptions['usersPerPage'] ?? 10,
         ]);
     }
 
