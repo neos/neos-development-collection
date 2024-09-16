@@ -55,6 +55,10 @@ Feature: Move dimension space point
       | Identifier | Values     | Generalizations |
       | language   | mul, de_DE | de_DE->mul      |
 
+    And the command UpdateRootNodeAggregateDimensions is executed with payload:
+      | Key             | Value                    |
+      | nodeAggregateId | "lady-eleonode-rootford" |
+
     When I run the following node migration for workspace "live", creating target workspace "migration-workspace" on contentStreamId "migration-cs", without publishing on success:
     """yaml
     migration:
@@ -103,6 +107,10 @@ Feature: Move dimension space point
       | Identifier | Values     | Generalizations |
       | language   | mul, de_DE | de_DE->mul      |
 
+    And the command UpdateRootNodeAggregateDimensions is executed with payload:
+      | Key             | Value                    |
+      | nodeAggregateId | "lady-eleonode-rootford" |
+
     When I run the following node migration for workspace "live", creating target workspace "migration-workspace" on contentStreamId "migration-cs", without publishing on success:
     """yaml
     migration:
@@ -137,6 +145,10 @@ Feature: Move dimension space point
     When I change the content dimensions in content repository "default" to:
       | Identifier | Values  | Generalizations |
       | language   | mul, ch | ch->mul         |
+
+    And the command UpdateRootNodeAggregateDimensions is executed with payload:
+      | Key             | Value                    |
+      | nodeAggregateId | "lady-eleonode-rootford" |
 
     When I run the following node migration for workspace "live", creating target workspace "migration-workspace" on contentStreamId "migration-cs" and exceptions are caught:
     """yaml
