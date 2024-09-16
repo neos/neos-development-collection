@@ -1,0 +1,14 @@
+prototype(Neos.Workspace.Ui:Component.Badge) < prototype(Neos.Fusion:Component) {
+  /// string
+  label = ''
+  /// string
+  title = ''
+  /// string - one of 'added', 'changed', 'removed'
+  type = 'default'
+
+  renderer = afx`
+    <span class={['badge', 'badge--' + props.type]} title={props.title}>{props.label}</span>
+  `
+
+  @if.hasLabel = ${this.label}
+}
