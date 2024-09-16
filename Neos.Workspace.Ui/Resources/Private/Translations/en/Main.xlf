@@ -123,6 +123,15 @@
       <trans-unit id="workspaces.workspace.status" xml:space="preserve">
 				<source>Status</source>
 			</trans-unit>
+      <trans-unit id="workspaces.workspace.status.UP_TO_DATE" xml:space="preserve">
+				<source>Up to date</source>
+			</trans-unit>
+      <trans-unit id="workspaces.workspace.status.OUTDATED" xml:space="preserve">
+				<source>Outdated</source>
+			</trans-unit>
+      <trans-unit id="workspaces.workspace.status.OUTDATED_CONFLICT" xml:space="preserve">
+				<source>Outdated (has conflict)</source>
+			</trans-unit>
       <trans-unit id="workspaces.workspace.changes" xml:space="preserve">
 				<source>Changes</source>
 			</trans-unit>

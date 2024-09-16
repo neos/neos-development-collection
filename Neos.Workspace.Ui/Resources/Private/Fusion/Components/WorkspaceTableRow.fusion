@@ -93,11 +93,11 @@ prototype(Neos.Workspace.Ui:Component.WorkspaceTableRow) < prototype(Neos.Fusion
         </span>
       </td>
       <td class="workspace-description-column">
-        {props.workspaceDetails.workspace.workspaceDescription.value || '–'}
+        {props.workspaceDetails.workspace.workspaceDescription.value || '﹘'}
       </td>
-      <td>{props.workspaceDetails.workspaceOwnerHumanReadable || '–'}</td>
-      <td>–</td>
-      <td>{props.workspaceDetails.workspace.status.value || '–'}</td>
+      <td>{props.workspaceDetails.workspaceOwnerHumanReadable || '﹘'}</td>
+      <td>﹘</td>
+      <td>{private.i18n.id('workspaces.workspace.status.' + props.workspaceDetails.workspace.status.value).translate()}</td>
       <td>
         <Neos.Workspace.Ui:Component.Badge
           label={props.workspaceDetails.changesCounts.new}
@@ -114,7 +114,7 @@ prototype(Neos.Workspace.Ui:Component.WorkspaceTableRow) < prototype(Neos.Fusion
           title={private.i18n.id('workspaces.changes.removed').arguments([props.workspaceDetails.changesCounts.removed])}
           type="danger"
         />
-        <span @if={props.workspaceDetails.changesCounts.total == 0}>&ndash;</span>
+        <span @if={props.workspaceDetails.changesCounts.total == 0}>﹘</span>
       </td>
       <td class="workspace-action-column">
         <a class="neos-button"
