@@ -1,4 +1,5 @@
 - requestFilter: 'isPackage("Neos.Workspace.Ui") && isController("Workspace") && isFormat("html") && isAction("show")'
+  viewObjectName: 'Neos\FluidAdaptor\View\StandaloneView'
   options:
     layoutRootPathPattern: 'resource://Neos.Neos/Private/Layouts'
     partialRootPaths:

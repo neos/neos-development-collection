@@ -56,6 +56,7 @@ prototype(Neos.Workspace.Ui:Component.WorkspaceTableRow) < prototype(Neos.Fusion
     }
     showWorkspaceUri = Neos.Fusion:ActionUri {
       action = 'show'
+      format = 'html'
       arguments {
         workspace = ${private.workspaceName}
       }
@@ -117,14 +118,14 @@ prototype(Neos.Workspace.Ui:Component.WorkspaceTableRow) < prototype(Neos.Fusion
         <span @if={props.workspaceDetails.changesCounts.total == 0}>﹘</span>
       </td>
       <td class="workspace-action-column">
-        <a class="neos-button"
-           title={private.i18n.id(props.workspaceDetails.changesCounts.total ? 'workspaces.reviewWorkspace' : 'workspaces.reviewWorkspace.noChanges').arguments([private.workspace.workspaceTitle.value])}
-           disabled={props.workspaceDetails.changesCounts.total == 0}
-           href={private.showWorkspaceUri}
-        >
-          <Neos.Workspace.Ui:Component.Icon icon="review"/>{' '}
-          {private.i18n.id('workspaces.reviewWorkspace.label')}
-        </a>
+        <Neos.Workspace.Ui:Component.Button
+          icon="review"
+          label={private.i18n.id('workspaces.reviewWorkspace.label')}
+          title={private.i18n.id(props.workspaceDetails.changesCounts.total ? 'workspaces.reviewWorkspace' : 'workspaces.reviewWorkspace.noChanges').arguments([private.workspace.workspaceTitle.value])}
+          attributes.disabled={false && props.workspaceDetails.changesCounts.total == 0}
+          attributes.hx-get={private.showWorkspaceUri}
+          attributes.hx-target="body"
+        />
         <Neos.Workspace.Ui:Component.Button
           title={private.i18n.id('workspaces.editWorkspace').arguments([private.workspace.workspaceTitle.value])}
           icon="pencil-alt"
