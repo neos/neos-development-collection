@@ -12,7 +12,7 @@
 
 declare(strict_types=1);
 
-namespace Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphWithRuntimeCaches\InMemoryCache;
+namespace Neos\ContentRepositoryRegistry\SubgraphCachingInMemory\InMemoryCache;
 
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
@@ -33,22 +33,11 @@ final class NamedChildNodeByNodeIdCache
      */
     protected array $nodes = [];
 
-    protected bool $isEnabled;
-
-    public function __construct(bool $isEnabled)
-    {
-        $this->isEnabled = $isEnabled;
-    }
-
     public function add(
         NodeAggregateId $parentNodeAggregateId,
         ?NodeName $nodeName,
         Node $node
     ): void {
-        if ($this->isEnabled === false) {
-            return;
-        }
-
         if ($nodeName === null) {
             return;
         }
@@ -58,19 +47,11 @@ final class NamedChildNodeByNodeIdCache
 
     public function contains(NodeAggregateId $parentNodeAggregateId, NodeName $nodeName): bool
     {
-        if ($this->isEnabled === false) {
-            return false;
-        }
-
         return isset($this->nodes[$parentNodeAggregateId->value][$nodeName->value]);
     }
 
     public function get(NodeAggregateId $parentNodeAggregateId, NodeName $nodeName): ?Node
     {
-        if ($this->isEnabled === false) {
-            return null;
-        }
-
         return $this->nodes[$parentNodeAggregateId->value][$nodeName->value] ?? null;
     }
 }

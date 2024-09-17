@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepositoryRegistry;
 
-use Doctrine\DBAL\Connection;
 use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\Dimension\ContentDimensionSourceInterface;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryFactory;
@@ -28,6 +27,8 @@ use Neos\ContentRepositoryRegistry\Factory\EventStore\EventStoreFactoryInterface
 use Neos\ContentRepositoryRegistry\Factory\NodeTypeManager\NodeTypeManagerFactoryInterface;
 use Neos\ContentRepositoryRegistry\Factory\ProjectionCatchUpTrigger\ProjectionCatchUpTriggerFactoryInterface;
 use Neos\ContentRepositoryRegistry\Factory\UserIdProvider\UserIdProviderFactoryInterface;
+use Neos\ContentRepositoryRegistry\SubgraphCachingInMemory\ContentSubgraphWithRuntimeCaches;
+use Neos\ContentRepositoryRegistry\SubgraphCachingInMemory\SubgraphCachePool;
 use Neos\EventStore\EventStoreInterface;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
@@ -55,6 +56,7 @@ final class ContentRepositoryRegistry
     public function __construct(
         private readonly array $settings,
         private readonly ObjectManagerInterface $objectManager,
+        private readonly SubgraphCachePool $subgraphCachePool,
     ) {
     }
 
@@ -104,10 +106,12 @@ final class ContentRepositoryRegistry
     {
         $contentRepository = $this->get($node->contentRepositoryId);
 
-        return $contentRepository->getContentGraph($node->workspaceName)->getSubgraph(
+        $uncachedSubgraph = $contentRepository->getContentGraph($node->workspaceName)->getSubgraph(
             $node->dimensionSpacePoint,
             $node->visibilityConstraints
         );
+
+        return new ContentSubgraphWithRuntimeCaches($uncachedSubgraph, $this->subgraphCachePool);
     }
 
     /**

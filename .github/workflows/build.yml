@@ -132,6 +132,8 @@ jobs:
           git -C ../${{ env.NEOS_FOLDER }} checkout -b build
           composer config repositories.neos '{ "type": "path", "url": "../${{ env.NEOS_FOLDER }}", "options": { "symlink": false } }'
           composer require --no-update neos/neos-development-collection:"dev-build as ${{ env.NEOS_BRANCH_ALIAS }}"
+          # enable this line to require a specific flow version for testing
+          # composer require --no-update neos/flow-development-collection:"dev-your-flow-branch-name as ${{ env.NEOS_BRANCH_ALIAS }}"
 
       - name: Cache Composer packages
         id: composer-cache
@@ -282,10 +284,10 @@ jobs:
           # END OF DEBUG SCRIPT
 
       - name: Upload Postgres/Mysql DB dump
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         if: matrix.parallel-parts == 'escr-behavioral'
         with:
-          name: database-dumps
+          name: database-dumps-${{ matrix.php-versions }}-${{ matrix.dependencies }}-${{ matrix.parallel-parts }}
           path: Data/DebugDatabaseDumps
 
       - name: Fail pipeline if ES CR tests broke (after uploading artifacts)

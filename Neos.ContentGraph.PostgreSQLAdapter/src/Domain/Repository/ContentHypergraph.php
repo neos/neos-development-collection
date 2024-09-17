@@ -45,11 +45,6 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
  */
 final class ContentHypergraph implements ContentGraphInterface
 {
-    /**
-     * @var array|ContentSubhypergraph[]
-     */
-    private array $subhypergraphs;
-
     public function __construct(
         private readonly Connection $dbal,
         private readonly NodeFactory $nodeFactory,
@@ -75,22 +70,17 @@ final class ContentHypergraph implements ContentGraphInterface
         DimensionSpacePoint $dimensionSpacePoint,
         VisibilityConstraints $visibilityConstraints
     ): ContentSubgraphInterface {
-        $index = $this->contentStreamId->value . '-' . $dimensionSpacePoint->hash . '-' . $visibilityConstraints->getHash();
-        if (!isset($this->subhypergraphs[$index])) {
-            $this->subhypergraphs[$index] = new ContentSubhypergraph(
-                $this->contentRepositoryId,
-                $this->contentStreamId,
-                $this->workspaceName,
-                $dimensionSpacePoint,
-                $visibilityConstraints,
-                $this->dbal,
-                $this->nodeFactory,
-                $this->nodeTypeManager,
-                $this->tableNamePrefix
-            );
-        }
-
-        return $this->subhypergraphs[$index];
+        return new ContentSubhypergraph(
+            $this->contentRepositoryId,
+            $this->contentStreamId,
+            $this->workspaceName,
+            $dimensionSpacePoint,
+            $visibilityConstraints,
+            $this->dbal,
+            $this->nodeFactory,
+            $this->nodeTypeManager,
+            $this->tableNamePrefix
+        );
     }
 
     public function findRootNodeAggregateByType(

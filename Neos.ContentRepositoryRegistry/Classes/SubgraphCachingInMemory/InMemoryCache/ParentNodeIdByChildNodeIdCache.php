@@ -12,7 +12,7 @@
 
 declare(strict_types=1);
 
-namespace Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphWithRuntimeCaches\InMemoryCache;
+namespace Neos\ContentRepositoryRegistry\SubgraphCachingInMemory\InMemoryCache;
 
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 
@@ -35,47 +35,24 @@ final class ParentNodeIdByChildNodeIdCache
      */
     protected array $nodesWithoutParentNode = [];
 
-    protected bool $isEnabled;
-
-    public function __construct(bool $isEnabled)
-    {
-        $this->isEnabled = $isEnabled;
-    }
-
     public function add(NodeAggregateId $childNodeAggregateId, NodeAggregateId $parentNodeAggregateId): void
     {
-        if ($this->isEnabled === false) {
-            return;
-        }
-
         $this->parentNodeAggregateIds[$childNodeAggregateId->value] = $parentNodeAggregateId;
     }
 
     public function knowsAbout(NodeAggregateId $childNodeAggregateId): bool
     {
-        if ($this->isEnabled === false) {
-            return false;
-        }
-
         return isset($this->parentNodeAggregateIds[$childNodeAggregateId->value]) || isset($this->nodesWithoutParentNode[$childNodeAggregateId->value]);
     }
 
     public function rememberNonExistingParentNode(NodeAggregateId $nodeAggregateId): void
     {
-        if ($this->isEnabled === false) {
-            return;
-        }
-
         $this->nodesWithoutParentNode[$nodeAggregateId->value] = true;
     }
 
 
     public function get(NodeAggregateId $childNodeAggregateId): ?NodeAggregateId
     {
-        if ($this->isEnabled === false) {
-            return null;
-        }
-
         return $this->parentNodeAggregateIds[$childNodeAggregateId->value] ?? null;
     }
 }

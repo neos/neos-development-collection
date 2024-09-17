@@ -70,4 +70,9 @@ final class ContentStreamId implements \JsonSerializable
     {
         return $this === $other;
     }
+
+    public function __toString(): string
+    {
+        return $this->value;
+    }
 }

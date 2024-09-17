@@ -15,7 +15,6 @@ declare(strict_types=1);
 namespace Neos\Neos\Controller\Backend;
 
 use Neos\Flow\Annotations as Flow;
-use Neos\Flow\Mvc\ActionResponse;
 use Neos\Flow\Mvc\Controller\ActionController;
 use Neos\Flow\Mvc\Dispatcher;
 use Neos\Flow\Security\Account;
@@ -109,19 +108,19 @@ class ModuleController extends ActionController
 
         $moduleRequest->setArgument('__moduleConfiguration', $moduleConfiguration);
 
-        $moduleResponse = new ActionResponse();
+        $moduleResponse = $this->dispatcher->dispatch($moduleRequest);
 
-        $this->dispatcher->dispatch($moduleRequest, $moduleResponse);
-        $moduleResponse->mergeIntoParentResponse($this->response);
-
-        if ($moduleResponse->getRedirectUri() !== null) {
-            $this->redirectToUri($moduleResponse->getRedirectUri(), 0, $moduleResponse->getStatusCode());
+        if ($moduleResponse->hasHeader('Location')) {
+            // Preserve redirects see b57d72aeeaa2e6da4d9c0a80363025fefd63d813
+            return $moduleResponse;
         } elseif ($moduleRequest->getFormat() !== 'html') {
+            // Allow ajax request with json or similar dd7e5c99924bf1b8618775bec08cc4f2cb1a6d2a
+            // todo just return $moduleResponse and trust its content-type instead of inferring the requested content-type
             $mediaType = MediaTypes::getMediaTypeFromFilename('file.' . $moduleRequest->getFormat());
             if ($mediaType !== 'application/octet-stream') {
-                $this->controllerContext->getResponse()->setContentType($mediaType);
+                $moduleResponse = $moduleResponse->withHeader('Content-Type', $mediaType);
             }
-            return $moduleResponse->getContent();
+            return $moduleResponse;
         } else {
             /** @var ?Account $authenticatedAccount */
             $authenticatedAccount = $this->securityContext->getAccount();
@@ -131,7 +130,7 @@ class ModuleController extends ActionController
 
             $this->view->assignMultiple([
                 'moduleClass' => implode('-', $modules),
-                'moduleContents' => $moduleResponse->getContent(),
+                'moduleContents' => $moduleResponse->getBody()->getContents(),
                 'title' => $moduleRequest->hasArgument('title')
                     ? $moduleRequest->getArgument('title')
                     : $moduleConfiguration['label'],
