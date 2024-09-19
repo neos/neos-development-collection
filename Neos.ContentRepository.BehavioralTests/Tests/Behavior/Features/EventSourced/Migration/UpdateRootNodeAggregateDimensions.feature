@@ -57,10 +57,12 @@ Feature: Update root node aggregate dimensions
     And I expect this node aggregate to occupy dimension space points [{}]
     And I expect this node aggregate to cover dimension space points [{"language":"mul"},{"language":"de"},{"language":"en"},{"language":"ch"}]
 
-    When I am in workspace "migration-workspace"
+    When I am in workspace "migration-workspace" and dimension space point {"language": "fr"}
     Then I expect the node aggregate "lady-eleonode-rootford" to exist
     And I expect this node aggregate to occupy dimension space points [{}]
     And I expect this node aggregate to cover dimension space points [{"language":"mul"},{"language":"de"},{"language":"en"},{"language":"ch"},{"language":"fr"}]
+
+    Then I expect node aggregate identifier "lady-eleonode-rootford" to lead to node migration-cs;lady-eleonode-rootford;{}
 
     When I run integrity violation detection
     Then I expect the integrity violation detection result to contain exactly 0 errors
@@ -87,10 +89,12 @@ Feature: Update root node aggregate dimensions
     And I expect this node aggregate to occupy dimension space points [{}]
     And I expect this node aggregate to cover dimension space points [{"language":"mul"},{"language":"de"},{"language":"en"},{"language":"ch"}]
 
-    When I am in workspace "migration-workspace"
+    When I am in workspace "migration-workspace" and dimension space point {"language": "en"}
     Then I expect the node aggregate "lady-eleonode-rootford" to exist
     And I expect this node aggregate to occupy dimension space points [{}]
     And I expect this node aggregate to cover dimension space points [{"language":"mul"},{"language":"de"},{"language":"ch"}]
+
+    Then I expect node aggregate identifier "lady-eleonode-rootford" to lead to no node
 
     When I run integrity violation detection
     Then I expect the integrity violation detection result to contain exactly 0 errors
@@ -117,10 +121,12 @@ Feature: Update root node aggregate dimensions
     And I expect this node aggregate to occupy dimension space points [{}]
     And I expect this node aggregate to cover dimension space points [{"language":"mul"},{"language":"de"},{"language":"en"},{"language":"ch"}]
 
-    When I am in workspace "migration-workspace"
+    When I am in workspace "migration-workspace" and dimension space point {"language": "de_DE"}
     Then I expect the node aggregate "lady-eleonode-rootford" to exist
     And I expect this node aggregate to occupy dimension space points [{}]
     And I expect this node aggregate to cover dimension space points [{"language":"mul"},{"language":"de_DE"},{"language":"en"},{"language":"ch"}]
+
+    Then I expect node aggregate identifier "lady-eleonode-rootford" to lead to node migration-cs;lady-eleonode-rootford;{}
 
     When I run integrity violation detection
     Then I expect the integrity violation detection result to contain exactly 0 errors
@@ -139,6 +145,8 @@ Feature: Update root node aggregate dimensions
       | originDimensionSpacePoint | {"language": "fr"}                        |
       | parentNodeAggregateId     | "lady-eleonode-rootford"                  |
     Then the last command should have thrown an exception of type "NodeAggregateDoesCurrentlyNotCoverDimensionSpacePoint"
+
+    Then I expect node aggregate identifier "lady-eleonode-rootford" to lead to no node
 
     When I run integrity violation detection
     Then I expect the integrity violation detection result to contain exactly 0 errors
