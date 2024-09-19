@@ -35,6 +35,7 @@ use Neos\ContentRepository\Core\Feature\SubtreeTagging\Event\SubtreeWasTagged;
 use Neos\ContentRepository\Core\Feature\SubtreeTagging\Event\SubtreeWasUntagged;
 use Neos\ContentRepository\Core\Feature\WorkspacePublication\Event\WorkspaceWasDiscarded;
 use Neos\ContentRepository\Core\Feature\WorkspacePublication\Event\WorkspaceWasPartiallyDiscarded;
+use Neos\ContentRepository\Core\Feature\WorkspaceRebase\Event\WorkspaceWasRebased;
 use Neos\ContentRepository\Core\Projection\CatchUpHookInterface;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
@@ -130,7 +131,8 @@ class GraphProjectorCatchUpHookForCacheFlushing implements CatchUpHookInterface
             SubtreeWasTagged::class,
             SubtreeWasUntagged::class,
             WorkspaceWasDiscarded::class,
-            WorkspaceWasPartiallyDiscarded::class
+            WorkspaceWasPartiallyDiscarded::class,
+            WorkspaceWasRebased::class
         ]);
     }
 
@@ -186,6 +188,7 @@ class GraphProjectorCatchUpHookForCacheFlushing implements CatchUpHookInterface
         if (
             $eventInstance instanceof WorkspaceWasDiscarded
             || $eventInstance instanceof WorkspaceWasPartiallyDiscarded
+            || $eventInstance instanceof WorkspaceWasRebased
         ) {
             $this->scheduleCacheFlushJobForWorkspaceName($this->contentRepository, $eventInstance->workspaceName);
         } elseif (
@@ -260,7 +263,10 @@ class GraphProjectorCatchUpHookForCacheFlushing implements CatchUpHookInterface
     public function onAfterCatchUp(): void
     {
         foreach ($this->flushNodeAggregateRequestsOnAfterCatchUp as $request) {
-            $this->contentCacheFlusher->flushNodeAggregate($request, CacheFlushingStrategy::IMMEDIATE);
+            // We do not need to flush single node aggregates if we flush the whole workspace anyway.
+            if (!isset($this->flushWorkspaceRequestsOnAfterCatchUp[$request->workspaceName->value])) {
+                $this->contentCacheFlusher->flushNodeAggregate($request, CacheFlushingStrategy::IMMEDIATE);
+            }
         }
         $this->flushNodeAggregateRequestsOnAfterCatchUp = [];
 
