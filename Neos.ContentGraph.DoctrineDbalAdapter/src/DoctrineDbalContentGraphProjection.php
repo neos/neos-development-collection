@@ -44,6 +44,7 @@ use Neos\ContentRepository\Core\Feature\SubtreeTagging\Event\SubtreeWasTagged;
 use Neos\ContentRepository\Core\Feature\SubtreeTagging\Event\SubtreeWasUntagged;
 use Neos\ContentRepository\Core\Feature\WorkspacePublication\Event\WorkspaceWasDiscarded;
 use Neos\ContentRepository\Core\Feature\WorkspacePublication\Event\WorkspaceWasPartiallyDiscarded;
+use Neos\ContentRepository\Core\Feature\WorkspaceRebase\Event\WorkspaceWasRebased;
 use Neos\ContentRepository\Core\Infrastructure\DbalCheckpointStorage;
 use Neos\ContentRepository\Core\Infrastructure\DbalSchemaDiff;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
@@ -166,7 +167,8 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface
             SubtreeWasTagged::class,
             SubtreeWasUntagged::class,
             WorkspaceWasDiscarded::class,
-            WorkspaceWasPartiallyDiscarded::class
+            WorkspaceWasPartiallyDiscarded::class,
+            WorkspaceWasRebased::class
         ]);
     }
 
@@ -191,11 +193,12 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface
             RootNodeAggregateWithNodeWasCreated::class => $this->whenRootNodeAggregateWithNodeWasCreated($event, $eventEnvelope),
             SubtreeWasTagged::class => $this->whenSubtreeWasTagged($event),
             SubtreeWasUntagged::class => $this->whenSubtreeWasUntagged($event),
-            // the following two events are not actually handled, but we need to include them in {@see canHandle()} in order
+            // the following three events are not actually handled, but we need to include them in {@see canHandle()} in order
             // to trigger the catchup hooks for those (i.e. {@see GraphProjectorCatchUpHookForCacheFlushing}). This can
             // be removed with https://github.com/neos/neos-development-collection/issues/4992
-            WorkspaceWasDiscarded::class => null,
-            WorkspaceWasPartiallyDiscarded::class => null,
+            WorkspaceWasDiscarded::class,
+            WorkspaceWasPartiallyDiscarded::class,
+            WorkspaceWasRebased::class => null,
             default => throw new \InvalidArgumentException(sprintf('Unsupported event %s', get_debug_type($event))),
         };
     }
