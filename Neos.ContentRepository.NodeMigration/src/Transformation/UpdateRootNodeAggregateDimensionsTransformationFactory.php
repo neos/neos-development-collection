@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Neos\ContentRepository\NodeMigration\Transformation;
 
 use Neos\ContentRepository\Core\CommandHandler\CommandResult;
@@ -12,7 +14,7 @@ use Neos\ContentRepository\NodeMigration\MigrationException;
 class UpdateRootNodeAggregateDimensionsTransformationFactory implements TransformationFactoryInterface
 {
     /**
-     * @param array<string,array<string,string>> $settings
+     * @param array<string,string> $settings
      */
     public function build(
         array $settings,
