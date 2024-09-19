@@ -87,7 +87,8 @@ Feature: Tests for the ContentCacheFlusher and cache flushing when applied in us
     include: resource://Neos.Neos/Private/Fusion/Root.fusion
 
     prototype(Neos.Neos:Test.TextNode) < prototype(Neos.Neos:ContentComponent) {
-      renderer = ${"[" + q(node).property("text") + "]"}
+      cacheVerifier = ${null}
+      renderer = ${props.cacheVerifier + "[" + q(node).property("text") + "]"}
     }
     """
 
@@ -244,4 +245,53 @@ Feature: Tests for the ContentCacheFlusher and cache flushing when applied in us
     Then I expect the following Fusion rendering result:
     """
     <div class="neos-contentcollection">[Text Node at the start of the document][Text Node in the middle of the document has changed][Text Node at the end of the document]</div>
+    """
+
+  Scenario: ContentCache gets flushed when a workspace gets rebased
+    Given I have Fusion content cache enabled
+    And I am in workspace "user-editor" and dimension space point {}
+    And the Fusion context node is "test-document-with-contents"
+    And I execute the following Fusion code:
+    """fusion
+    test = Neos.Neos:ContentCollection {
+      prototype(Neos.Neos:Test.TextNode) {
+        cacheVerifier = "firstRender"
+      }
+      nodePath = "main"
+    }
+    """
+    Then I expect the following Fusion rendering result:
+    """
+    <div class="neos-contentcollection">firstRender[Text Node at the start of the document]firstRender[Text Node at the end of the document]</div>
+    """
+
+    When I am in workspace "live" and dimension space point {}
+    And the command CreateNodeAggregateWithNode is executed with payload:
+      | Key                              | Value                                               |
+      | nodeAggregateId                  | "text-node-middle"                                  |
+      | nodeTypeName                     | "Neos.Neos:Test.TextNode"                           |
+      | parentNodeAggregateId            | "test-document-with-contents--main"                 |
+      | initialPropertyValues            | {"text": "Text Node in the middle of the document"} |
+      | succeedingSiblingNodeAggregateId | "text-node-end"                                     |
+      | nodeName                         | "text-node-middle"                                  |
+
+    When I am in workspace "user-editor" and dimension space point {}
+    And the command RebaseWorkspace is executed with payload:
+      | Key           | Value       |
+      | workspaceName | "user-editor" |
+      | rebasedContentStreamId | "user-editor-cs-identifier-rebased" |
+    Then I expect node aggregate identifier "text-node-middle" to lead to node user-editor-cs-identifier-rebased;text-node-middle;{}
+
+    When I execute the following Fusion code:
+    """fusion
+    test = Neos.Neos:ContentCollection {
+      prototype(Neos.Neos:Test.TextNode) {
+        cacheVerifier = "secondRender"
+      }
+      nodePath = "main"
+    }
+    """
+    Then I expect the following Fusion rendering result:
+    """
+    <div class="neos-contentcollection">secondRender[Text Node at the start of the document]secondRender[Text Node in the middle of the document]secondRender[Text Node at the end of the document]</div>
     """
