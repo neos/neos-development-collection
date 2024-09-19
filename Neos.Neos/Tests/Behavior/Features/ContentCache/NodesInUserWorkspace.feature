@@ -295,3 +295,4 @@ Feature: Tests for the ContentCacheFlusher and cache flushing when applied in us
     """
     <div class="neos-contentcollection">secondRender[Text Node at the start of the document]secondRender[Text Node in the middle of the document]secondRender[Text Node at the end of the document]</div>
     """
+    
