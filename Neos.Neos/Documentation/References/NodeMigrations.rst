@@ -273,7 +273,7 @@ Creates empty root node aggregate dimensions for each allowed dimension combinat
 Options Reference:
 
 ``nodeType`` (string)
-  The node type name of the root node.
+  The node type name of the root node. For Neos this is usually "Neos.Neos:Sites"
 
 
 Filters Reference
