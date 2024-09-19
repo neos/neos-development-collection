@@ -70,12 +70,7 @@ final class WorkspaceService
             'workspaceName' => $workspaceName->value,
         ]);
         if ($metadataRow === false) {
-            return new WorkspaceMetadata(
-                $workspaceName,
-                WorkspaceTitle::fromString(ucfirst($workspaceName->value)),
-                WorkspaceDescription::fromString(''),
-                $workspaceName->isLive() ? WorkspaceClassification::ROOT : WorkspaceClassification::UNKNOWN,
-            );
+            throw new \RuntimeException(sprintf('Failed to load metadata for workspace "%s" (Content Repository "%s"). Maybe workspace metadata and roles have to be synchronized', $workspaceName->value, $contentRepositoryId->value), 1726736384);
         }
         return new WorkspaceMetadata(
             $workspaceName,
@@ -85,24 +80,51 @@ final class WorkspaceService
         );
     }
 
-    public function updateWorkspaceMetadata(ContentRepositoryId $contentRepositoryId, WorkspaceName $workspaceName, WorkspaceTitle $newWorkspaceTitle, WorkspaceDescription $newWorkspaceDescription): void
+    public function updateWorkspaceTitleAndDescription(ContentRepositoryId $contentRepositoryId, WorkspaceName $workspaceName, WorkspaceTitle $newWorkspaceTitle, WorkspaceDescription $newWorkspaceDescription): void
     {
         $this->requireWorkspace($contentRepositoryId, $workspaceName);
+        $this->dbal->update(self::TABLE_NAME_WORKSPACE_METADATA, [
+            'title' => $newWorkspaceTitle->value,
+            'description' => $newWorkspaceDescription->value,
+        ], [
+            'content_repository_id' => $contentRepositoryId->value,
+            'workspace_name' => $workspaceName->value,
+        ]);
+    }
+
+    public function synchronizeWorkspaceMetadataAndRoles(ContentRepositoryId $contentRepositoryId, WorkspaceName $workspaceName): void
+    {
+        $workspace = $this->requireWorkspace($contentRepositoryId, $workspaceName);
+        if ($workspace->baseWorkspaceName === null) {
+            $classification = WorkspaceClassification::ROOT;
+        } elseif ($workspace->workspaceOwner !== null) {
+            $classification = WorkspaceClassification::PERSONAL;
+        } else {
+            $classification = WorkspaceClassification::SHARED;
+        }
         try {
             $this->dbal->insert(self::TABLE_NAME_WORKSPACE_METADATA, [
                 'content_repository_id' => $contentRepositoryId->value,
                 'workspace_name' => $workspaceName->value,
-                'title' => $newWorkspaceTitle->value,
-                'description' => $newWorkspaceDescription->value,
+                'title' => WorkspaceTitle::fromString($workspace->workspaceTitle->value)->value,
+                'description' => WorkspaceDescription::fromString($workspace->workspaceDescription->value)->value,
+                'classification' => $classification->value,
             ]);
         } catch (UniqueConstraintViolationException $e) {
-            $this->dbal->update(self::TABLE_NAME_WORKSPACE_METADATA, [
-                'title' => $newWorkspaceTitle->value,
-                'description' => $newWorkspaceDescription->value,
-            ], [
-                'content_repository_id' => $contentRepositoryId->value,
-                'workspace_name' => $workspaceName->value,
-            ]);
+            // Metadata already exists
+        }
+        if ($workspace->workspaceOwner !== null) {
+            try {
+                $this->dbal->insert(self::TABLE_NAME_WORKSPACE_ROLE, [
+                    'content_repository_id' => $contentRepositoryId->value,
+                    'workspace_name' => $workspaceName->value,
+                    'subject_type' => WorkspaceSubjectType::USER->name,
+                    'subject' => $workspace->workspaceOwner,
+                    'role' => WorkspaceRole::OWNER->name,
+                ]);
+            } catch (UniqueConstraintViolationException $e) {
+                // Owner role assignment already exists
+            }
         }
     }
 

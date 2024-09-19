@@ -241,17 +241,17 @@ class WorkspaceController extends AbstractModuleController
 
         $workspace = $contentRepository->getWorkspaceFinder()->findOneByName($workspaceName);
         if (is_null($workspace)) {
-            // @todo add flash message
+            $this->addFlashMessage('Failed to find workspace "%s"', 'Error', Message::SEVERITY_ERROR, [$workspaceName->value]);
             $this->redirect('index');
         }
         $this->view->assign('workspace', $workspace);
         $this->view->assign('baseWorkspaceOptions', $this->prepareBaseWorkspaceOptions($contentRepository, $workspaceName));
         // TODO: $this->view->assign('disableBaseWorkspaceSelector',
         // $this->publishingService->getUnpublishedNodesCount($workspace) > 0);
-        $this->view->assign(
-            'showOwnerSelector',
-            true// TODO fix $this->userService->currentUserCanTransferOwnershipOfWorkspace($workspace)
-        );
+
+        // TODO fix $this->userService->currentUserCanTransferOwnershipOfWorkspace($workspace)
+        $this->view->assign('showOwnerSelector', false);
+
         $this->view->assign('ownerOptions', $this->prepareOwnerOptions());
     }
 
@@ -262,14 +262,12 @@ class WorkspaceController extends AbstractModuleController
      * @param WorkspaceName $workspaceName
      * @param WorkspaceTitle $title Human friendly title of the workspace, for example "Christmas Campaign"
      * @param WorkspaceDescription $description A description explaining the purpose of the new workspace
-     * @param string|null $workspaceOwner Id of the owner of the workspace
      * @return void
      */
     public function updateAction(
         WorkspaceName $workspaceName,
         WorkspaceTitle $title,
         WorkspaceDescription $description,
-        ?string $workspaceOwner
     ): void {
         $contentRepositoryId = SiteDetectionResult::fromRequest($this->request->getHttpRequest())->contentRepositoryId;
         $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryId);
@@ -287,7 +285,7 @@ class WorkspaceController extends AbstractModuleController
             );
             $this->redirect('index');
         }
-        $this->workspaceService->updateWorkspaceMetadata(
+        $this->workspaceService->updateWorkspaceTitleAndDescription(
             $contentRepositoryId,
             $workspaceName,
             $title,

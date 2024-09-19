@@ -412,4 +412,33 @@ class WorkspaceCommandController extends CommandController
         $this->outputFormatted('Status: <b>%s</b>', [$workspacesInstance->status->value]);
         $this->outputFormatted('Content Stream: <b>%s</b>', [$workspacesInstance->currentContentStreamId->value]);
     }
+
+
+    /**
+     * Synchronizes metadata and role assignments of all workspaces for the specified Content Repository
+     *
+     * @param string $contentRepository The name of the content repository. (Default: 'default')
+     * @throws StopCommandException
+     */
+    public function syncAllCommand(string $contentRepository = 'default'): void
+    {
+        $contentRepositoryId = ContentRepositoryId::fromString($contentRepository);
+        $contentRepositoryInstance = $this->contentRepositoryRegistry->get($contentRepositoryId);
+
+        $workspaces = $contentRepositoryInstance->getWorkspaceFinder()->findAll();
+
+        if (count($workspaces) === 0) {
+            $this->outputLine('No workspaces found.');
+            $this->quit();
+        }
+        foreach ($workspaces as $workspace) {
+            try {
+                $this->workspaceService->synchronizeWorkspaceMetadataAndRoles($contentRepositoryId, $workspace->workspaceName);
+                $this->outputLine('<success>Synchronized workspace "%s"</success>', [$workspace->workspaceName->value]);
+            } catch (\Exception $exception) {
+                $this->outputLine('<error>Failed to synchronize workspace "%s": %s</error>', [$workspace->workspaceName->value, $exception->getMessage()]);
+            }
+        }
+        $this->outputLine('Done.');
+    }
 }
