@@ -263,7 +263,10 @@ class GraphProjectorCatchUpHookForCacheFlushing implements CatchUpHookInterface
     public function onAfterCatchUp(): void
     {
         foreach ($this->flushNodeAggregateRequestsOnAfterCatchUp as $request) {
-            $this->contentCacheFlusher->flushNodeAggregate($request, CacheFlushingStrategy::IMMEDIATE);
+            // We do not need to flush single node aggregates if we flush the whole workspace anyway.
+            if (!$this->hasMatchingFlushWorkspaceRequest($request)) {
+                $this->contentCacheFlusher->flushNodeAggregate($request, CacheFlushingStrategy::IMMEDIATE);
+            }
         }
         $this->flushNodeAggregateRequestsOnAfterCatchUp = [];
 
@@ -271,5 +274,10 @@ class GraphProjectorCatchUpHookForCacheFlushing implements CatchUpHookInterface
             $this->contentCacheFlusher->flushWorkspace($request, CacheFlushingStrategy::IMMEDIATE);
         }
         $this->flushWorkspaceRequestsOnAfterCatchUp = [];
+    }
+
+    private function hasMatchingFlushWorkspaceRequest(FlushNodeAggregateRequest $request): bool
+    {
+        return isset($this->flushWorkspaceRequestsOnAfterCatchUp[$request->workspaceName->value]);
     }
 }
