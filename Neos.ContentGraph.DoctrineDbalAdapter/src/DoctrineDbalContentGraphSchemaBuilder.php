@@ -77,7 +77,8 @@ class DoctrineDbalContentGraphSchemaBuilder
             ->addIndex(['childnodeanchor'])
             ->addIndex(['contentstreamid'])
             ->addIndex(['parentnodeanchor'])
-            ->addIndex(['contentstreamid', 'childnodeanchor', 'dimensionspacepointhash'])
+            ->addIndex(['childnodeanchor', 'contentstreamid', 'dimensionspacepointhash', 'position'])
+            ->addIndex(['parentnodeanchor', 'contentstreamid', 'dimensionspacepointhash', 'position'])
             ->addIndex(['contentstreamid', 'dimensionspacepointhash']);
     }
 
