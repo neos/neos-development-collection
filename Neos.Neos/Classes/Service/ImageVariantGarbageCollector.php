@@ -78,7 +78,6 @@ class ImageVariantGarbageCollector
                 // then we are safe to remove the asset here.
                 if (
                     $usageItem instanceof AssetUsageReference
-                    /** @phpstan-ignore-next-line todo needs repair see https://github.com/neos/neos-development-collection/issues/5145 */
                     && $usageItem->getWorkspaceName()->equals($node->workspaceName)
                     && $usageItem->getOriginDimensionSpacePoint()->equals($node->originDimensionSpacePoint)
                     && $usageItem->getNodeAggregateId()->equals($node->aggregateId)
