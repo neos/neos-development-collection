@@ -252,7 +252,7 @@ class AssetUsageIndexingService
             try {
                 $extractedAssetIds = $this->extractAssetIds(
                     $propertyType,
-                    $propertyValues->offsetGet($propertyName instanceof PropertyName ? $propertyName->value : $propertyName),
+                    $propertyValues->offsetGet($propertyName),
                 );
             } catch (\Exception) {
                 $extractedAssetIds = [];
