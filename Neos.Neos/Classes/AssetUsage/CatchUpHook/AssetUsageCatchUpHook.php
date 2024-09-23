@@ -129,7 +129,8 @@ class AssetUsageCatchUpHook implements CatchUpHookInterface
         $node = $contentGraph->getSubgraph($dimensionSpacePoint, VisibilityConstraints::withoutRestrictions())->findNodeById($nodeAggregateId);
 
         if ($node === null) {
-            throw new \Exception("Node not found");
+            // Node not found, nothing to do here.
+            return;
         }
 
         $this->assetUsageIndexingService->updateIndex(

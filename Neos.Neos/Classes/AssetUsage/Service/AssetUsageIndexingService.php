@@ -13,6 +13,7 @@ use Neos\ContentRepository\Core\Projection\Workspace\Workspace;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
 use Neos\ContentRepository\Core\SharedModel\Exception\WorkspaceDoesNotExist;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
+use Neos\ContentRepository\Core\SharedModel\Node\PropertyName;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\Persistence\Doctrine\PersistenceManager;
@@ -242,16 +243,21 @@ class AssetUsageIndexingService
     {
         /** @var array<string, array<AssetIdAndOriginalAssetId>> $assetIds */
         $assetIds = [];
-        foreach ($propertyValues as $propertyName => $propertyValue) {
+        foreach ($propertyValues->serialized() as $propertyName => $propertyValue) {
             if (!$nodeType->hasProperty($propertyName)) {
                 continue;
             }
             $propertyType = $nodeType->getPropertyType($propertyName);
 
-            $extractedAssetIds = $this->extractAssetIds(
-                $propertyType,
-                $propertyValue,
-            );
+            try {
+                $extractedAssetIds = $this->extractAssetIds(
+                    $propertyType,
+                    $propertyValues->offsetGet($propertyName instanceof PropertyName ? $propertyName->value : $propertyName),
+                );
+            } catch (\Exception) {
+                $extractedAssetIds = [];
+                // We can't deserialize the property, so skip.
+            }
 
             $assetIds[$propertyName] = array_map(
                 fn ($assetId) => new AssetIdAndOriginalAssetId($assetId, $this->findOriginalAssetId($assetId)),
