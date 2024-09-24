@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Neos\TimeableNodeVisibility\Service;
 
 use Neos\ContentRepository\Core\ContentRepository;
@@ -14,10 +16,7 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\PropertyValue\Cri
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\PropertyValue\Criteria\PropertyValueLessThanOrEqual;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
-use Neos\ContentRepository\Core\Projection\Workspace\Workspace;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
-use Neos\ContentRepository\Core\SharedModel\Exception\RootNodeAggregateDoesNotExist;
-use Neos\ContentRepository\Core\SharedModel\Exception\WorkspaceDoesNotExist;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeVariantSelectionStrategy;
 use Neos\ContentRepository\Core\SharedModel\Node\PropertyName;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
@@ -101,7 +100,7 @@ class TimeableNodeVisibilityService
             $sitesNodeTypeName = NodeTypeName::fromString('Neos.Neos:Sites');
             $rootNode = $subgraph->findRootNodeByType($sitesNodeTypeName);
             if ($rootNode === null) {
-                throw RootNodeAggregateDoesNotExist::butWasExpectedTo($sitesNodeTypeName);
+                throw new \RuntimeException(sprintf('No sites root node found in content repository "%s"', $contentRepository->id->value), 1719047148);
             }
 
             $nodes = $subgraph->findDescendantNodes(

@@ -15,7 +15,7 @@ namespace Neos\Media\Command;
 
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Connection;
-use Doctrine\DBAL\DBALException;
+use Doctrine\DBAL\Exception as DBALException;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Neos\Flow\Annotations as Flow;
@@ -145,8 +145,7 @@ class MediaCommandController extends CommandController
             WHERE a.persistence_object_identifier IS NULL AND t.persistence_object_identifier IS NULL
         ';
         $statement = $this->dbalConnection->prepare($sql);
-        $statement->execute();
-        $resourceInfos = $statement->fetchAll();
+        $resourceInfos = $statement->execute()->fetchAllAssociative();
 
         if ($resourceInfos === []) {
             !$quiet || $this->outputLine('Found no resources which need to be imported.');
@@ -232,7 +231,7 @@ class MediaCommandController extends CommandController
         !$quiet && $this->output->progressStart($assetCount);
 
         /** @var Asset $asset */
-        foreach ($this->assetRepository->iterate($iterator) as $asset) {
+        foreach ($iterator as $asset) {
             !$quiet && $this->output->progressAdvance(1);
 
             if ($limit !== null && $unusedAssetCount === $limit) {
@@ -327,7 +326,7 @@ class MediaCommandController extends CommandController
         $iterator = $this->assetRepository->findAllIterator();
         $imageCount = $this->assetRepository->countAll();
         !$quiet && $this->output->progressStart($imageCount * count($presetThumbnailConfigurations));
-        foreach ($this->assetRepository->iterate($iterator) as $image) {
+        foreach ($iterator as $image) {
             foreach ($presetThumbnailConfigurations as $presetThumbnailConfiguration) {
                 $this->thumbnailService->getThumbnail($image, $presetThumbnailConfiguration);
                 $this->persistenceManager->persistAll();
@@ -363,10 +362,9 @@ class MediaCommandController extends CommandController
         }
 
         !$quiet && $this->output->progressStart($thumbnailCount);
-        foreach ($this->thumbnailRepository->iterate($iterator, function ($iteration) {
-            $this->persistAll($iteration);
-        }) as $thumbnail) {
+        foreach ($iterator as $iteration => $thumbnail) {
             $this->thumbnailRepository->remove($thumbnail);
+            $this->persistAll($iteration);
             !$quiet && $this->output->progressAdvance(1);
         }
         !$quiet && $this->output->progressFinish();
@@ -388,14 +386,13 @@ class MediaCommandController extends CommandController
         $thumbnailCount = $this->thumbnailRepository->countUngenerated();
         $iterator = $this->thumbnailRepository->findUngeneratedIterator();
         !$quiet && $this->output->progressStart($limit !== null && $thumbnailCount > $limit ? $limit : $thumbnailCount);
-        $iteration = 0;
-        foreach ($this->thumbnailRepository->iterate($iterator) as $thumbnail) {
+        foreach ($iterator as $iteration => $thumbnail) {
             if ($thumbnail->getResource() === null) {
                 $this->thumbnailService->refreshThumbnail($thumbnail);
                 $this->persistenceManager->persistAll();
             }
             !$quiet && $this->output->progressAdvance(1);
-            if (++$iteration === $limit) {
+            if ($iteration === $limit) {
                 break;
             }
         }

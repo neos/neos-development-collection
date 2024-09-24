@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 namespace Neos\ContentRepository\NodeAccess\FlowQueryOperations;
 
 /*
@@ -72,9 +75,10 @@ class NextUntilOperation extends AbstractOperation
         $outputNodeIdentifiers = [];
 
         foreach ($flowQuery->getContext() as $contextNode) {
+            /** @var Node $contextNode */
             $nextNodes = $this->contentRepositoryRegistry->subgraphForNode($contextNode)
                 ->findSucceedingSiblingNodes(
-                    $contextNode->nodeAggregateId,
+                    $contextNode->aggregateId,
                     FindSucceedingSiblingNodesFilter::create()
                 );
             if (isset($arguments[0]) && !empty($arguments[0])) {

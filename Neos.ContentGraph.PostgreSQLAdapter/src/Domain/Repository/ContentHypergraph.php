@@ -23,6 +23,7 @@ use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
+use Neos\ContentRepository\Core\NodeType\NodeTypeNames;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphInterface;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentSubgraphInterface;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindRootNodeAggregatesFilter;
@@ -30,7 +31,6 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregates;
 use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
-use Neos\ContentRepository\Core\SharedModel\Exception\RootNodeAggregateDoesNotExist;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
@@ -45,11 +45,6 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
  */
 final class ContentHypergraph implements ContentGraphInterface
 {
-    /**
-     * @var array|ContentSubhypergraph[]
-     */
-    private array $subhypergraphs;
-
     public function __construct(
         private readonly Connection $dbal,
         private readonly NodeFactory $nodeFactory,
@@ -75,27 +70,22 @@ final class ContentHypergraph implements ContentGraphInterface
         DimensionSpacePoint $dimensionSpacePoint,
         VisibilityConstraints $visibilityConstraints
     ): ContentSubgraphInterface {
-        $index = $this->contentStreamId->value . '-' . $dimensionSpacePoint->hash . '-' . $visibilityConstraints->getHash();
-        if (!isset($this->subhypergraphs[$index])) {
-            $this->subhypergraphs[$index] = new ContentSubhypergraph(
-                $this->contentRepositoryId,
-                $this->contentStreamId,
-                $this->workspaceName,
-                $dimensionSpacePoint,
-                $visibilityConstraints,
-                $this->dbal,
-                $this->nodeFactory,
-                $this->nodeTypeManager,
-                $this->tableNamePrefix
-            );
-        }
-
-        return $this->subhypergraphs[$index];
+        return new ContentSubhypergraph(
+            $this->contentRepositoryId,
+            $this->contentStreamId,
+            $this->workspaceName,
+            $dimensionSpacePoint,
+            $visibilityConstraints,
+            $this->dbal,
+            $this->nodeFactory,
+            $this->nodeTypeManager,
+            $this->tableNamePrefix
+        );
     }
 
     public function findRootNodeAggregateByType(
         NodeTypeName $nodeTypeName
-    ): NodeAggregate {
+    ): ?NodeAggregate {
         $rootNodeAggregates = $this->findRootNodeAggregates(
             FindRootNodeAggregatesFilter::create(nodeTypeName: $nodeTypeName)
         );
@@ -112,13 +102,7 @@ final class ContentHypergraph implements ContentGraphInterface
             ));
         }
 
-        $rootNodeAggregate = $rootNodeAggregates->first();
-
-        if ($rootNodeAggregate === null) {
-            throw RootNodeAggregateDoesNotExist::butWasExpectedTo($nodeTypeName);
-        }
-
-        return $rootNodeAggregate;
+        return $rootNodeAggregates->first();
     }
 
     public function findRootNodeAggregates(
@@ -127,13 +111,10 @@ final class ContentHypergraph implements ContentGraphInterface
         throw new \BadMethodCallException('method findRootNodeAggregates is not implemented yet.', 1645782874);
     }
 
-    /**
-     * @return \Iterator<int,NodeAggregate>
-     */
     public function findNodeAggregatesByType(
         NodeTypeName $nodeTypeName
-    ): \Iterator {
-        return new \Generator();
+    ): NodeAggregates {
+        return NodeAggregates::createEmpty();
     }
 
     public function findNodeAggregateById(
@@ -188,12 +169,9 @@ final class ContentHypergraph implements ContentGraphInterface
         );
     }
 
-    /**
-     * @return iterable<NodeAggregate>
-     */
     public function findParentNodeAggregates(
         NodeAggregateId $childNodeAggregateId
-    ): iterable {
+    ): NodeAggregates {
         $query = HypergraphParentQuery::create($this->contentStreamId, $this->tableNamePrefix);
         $query = $query->withChildNodeAggregateId($childNodeAggregateId);
 
@@ -205,12 +183,9 @@ final class ContentHypergraph implements ContentGraphInterface
         );
     }
 
-    /**
-     * @return iterable<NodeAggregate>
-     */
     public function findChildNodeAggregates(
         NodeAggregateId $parentNodeAggregateId
-    ): iterable {
+    ): NodeAggregates {
         $query = HypergraphChildQuery::create(
             $this->contentStreamId,
             $parentNodeAggregateId,
@@ -244,12 +219,9 @@ final class ContentHypergraph implements ContentGraphInterface
         );
     }
 
-    /**
-     * @return iterable<NodeAggregate>
-     */
     public function findTetheredChildNodeAggregates(
         NodeAggregateId $parentNodeAggregateId
-    ): iterable {
+    ): NodeAggregates {
         $query = HypergraphChildQuery::create(
             $this->contentStreamId,
             $parentNodeAggregateId,
@@ -298,12 +270,9 @@ final class ContentHypergraph implements ContentGraphInterface
         return $this->dbal->executeQuery($query)->fetchOne();
     }
 
-    /**
-     * @return iterable<int,NodeTypeName>
-     */
-    public function findUsedNodeTypeNames(): iterable
+    public function findUsedNodeTypeNames(): NodeTypeNames
     {
-        return [];
+        return NodeTypeNames::createEmpty();
     }
 
     public function getContentStreamId(): ContentStreamId

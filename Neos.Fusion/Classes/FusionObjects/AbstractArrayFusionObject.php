@@ -121,6 +121,9 @@ abstract class AbstractArrayFusionObject extends AbstractFusionObject implements
 
         $result = [];
         foreach ($sortedChildFusionKeys as $key) {
+            if ($this->isUnset($key)) {
+                continue;
+            }
             $propertyPath = $key;
             if ($defaultFusionPrototypeName !== null && $this->isUntyped($key)) {
                 $propertyPath .= '<' . $defaultFusionPrototypeName . '>';
@@ -186,6 +189,17 @@ abstract class AbstractArrayFusionObject extends AbstractFusionObject implements
     }
 
     /**
+     * Returns TRUE if the given fusion key has been removed via ">"
+     *
+     * @param string|int $key fusion child key path to check
+     * @return bool
+     */
+    protected function isUnset(string|int $key): bool
+    {
+        return $this->properties[$key] === ['__stopInheritanceChain' => true];
+    }
+
+    /**
      * Returns TRUE if the given fusion key has no type, meaning neither
      * having a fusion objectType, eelExpression or value
      *
@@ -198,6 +212,8 @@ abstract class AbstractArrayFusionObject extends AbstractFusionObject implements
         if (!is_array($property)) {
             return false;
         }
-        return !isset($property['__objectType']) && !isset($property['__eelExpression']) && !isset($property['__value']);
+        return !array_key_exists('__objectType', $property)
+            && !array_key_exists('__eelExpression', $property)
+            && !array_key_exists('__value', $property);
     }
 }

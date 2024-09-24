@@ -3,8 +3,8 @@
   <file original="" product-name="Neos.NodeTypes.ColumnLayouts" source-language="en" datatype="plaintext" target-language="pt-PT">
     <body>
       <trans-unit id="ui.label" xml:space="preserve">
-				<source>Four column content</source>
-        <target state="translated">Conteúdo de quatro colunas</target>
+        <source>Four column content</source>
+        <target state="translated">Conteúdo com quatro colunas</target>
       </trans-unit>
     </body>
   </file>

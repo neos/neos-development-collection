@@ -15,6 +15,7 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\Core\Feature\WorkspaceRebase\Event;
 
 use Neos\ContentRepository\Core\EventStore\EventInterface;
+use Neos\ContentRepository\Core\Feature\Common\EmbedsWorkspaceName;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 
@@ -23,7 +24,7 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
  * @deprecated this is no longer logged, instead an exception is thrown
  * @see Neos\ContentRepository\Core\Feature\WorkspaceRebase\Exception\WorkspaceRebaseFailed
  */
-final readonly class WorkspaceRebaseFailed implements EventInterface
+final readonly class WorkspaceRebaseFailed implements EventInterface, EmbedsWorkspaceName
 {
     /**
      * @param array<int,array<string,mixed>> $errors
@@ -41,6 +42,11 @@ final readonly class WorkspaceRebaseFailed implements EventInterface
         public ContentStreamId $sourceContentStreamId,
         public array $errors
     ) {
+    }
+
+    public function getWorkspaceName(): WorkspaceName
+    {
+        return $this->workspaceName;
     }
 
     public static function fromArray(array $values): self

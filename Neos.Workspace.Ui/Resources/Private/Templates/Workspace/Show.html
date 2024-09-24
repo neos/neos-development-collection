@@ -32,7 +32,7 @@
 									<f:if condition="{document.changes -> f:count()} > 1">
 										<f:then>
 											<td class="check neos-priority1">
-												<label for="check-document-{document.documentNode.nodeAggregateId.value}" class="neos-checkbox"><f:form.checkbox id="check-document-{document.documentNode.nodeAggregateId.value}" class="neos-check-document" value="{document.documentNode.nodeAggregateId.value}"/><span></span></label>
+												<label for="check-document-{document.documentNode.aggregateId.value}" class="neos-checkbox"><f:form.checkbox id="check-document-{document.documentNode.aggregateId.value}" class="neos-check-document" value="{document.documentNode.aggregateId.value}"/><span></span></label>
 											</td>
 											<td class="neos-priority1 path-caption">
 										</f:then>
@@ -56,11 +56,11 @@
 										</div>
 									</td>
 									<td class="neos-action neos-folder">
-										<i class="fold-toggle fas fa-chevron-up icon-white" data-toggle="fold-{document.documentNode.nodeAggregateId.value}"></i>
+										<i class="fold-toggle fas fa-chevron-up icon-white" data-toggle="fold-{document.documentNode.aggregateId.value}"></i>
 									</td>
 								</tr>
 								<f:for each="{document.changes}" key="relativePath" as="change">
-									<tr class="neos-change fold-{document.documentNode.nodeAggregateId.value} document-{document.documentNode.nodeAggregateId.value}" data-nodepath="{relativePath}" data-ismoved="{f:if(condition: change.isMoved, then: 'true', else: 'false')}" data-isnew="{f:if(condition: change.isNew, then: 'true', else: 'false')}">
+									<tr class="neos-change fold-{document.documentNode.aggregateId.value} document-{document.documentNode.aggregateId.value}" data-nodepath="{relativePath}" data-ismoved="{f:if(condition: change.isMoved, then: 'true', else: 'false')}" data-isnew="{f:if(condition: change.isNew, then: 'true', else: 'false')}">
 										<td class="check neos-priority1">
 											<label for="{change.serializedNodeAddress}" class="neos-checkbox"><f:form.checkbox name="nodes[]" value="{change.serializedNodeAddress}" id="{change.serializedNodeAddress}" /><span></span></label>
 										</td>

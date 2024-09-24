@@ -21,8 +21,6 @@ use Neos\Flow\Security\Authorization\PrivilegeManagerInterface;
 use Neos\Flow\Session\SessionInterface;
 use Neos\Fusion\Service\HtmlAugmenter as FusionHtmlAugmenter;
 use Neos\Neos\FrontendRouting\NodeAddressFactory;
-use Neos\Neos\Ui\Domain\Service\UserLocaleService;
-use Neos\Neos\Ui\Fusion\Helper\NodeInfoHelper;
 
 /**
  * The content element wrapping service adds the necessary markup around
@@ -50,18 +48,6 @@ class ContentElementWrappingService
      * @var SessionInterface
      */
     protected $session;
-
-    /**
-     * @Flow\Inject
-     * @var UserLocaleService
-     */
-    protected $userLocaleService;
-
-    /**
-     * @Flow\Inject
-     * @var NodeInfoHelper
-     */
-    protected $nodeInfoHelper;
 
     /**
      * @Flow\Inject
@@ -95,20 +81,7 @@ class ContentElementWrappingService
         $attributes['data-__neos-fusion-path'] = $fusionPath;
         $attributes['data-__neos-node-contextpath'] = $nodeAddress->serializeForUri();
 
-        $this->userLocaleService->switchToUILocale();
-
-        // TODO illegal dependency on ui
-        $serializedNode = json_encode($this->nodeInfoHelper->renderNodeWithPropertiesAndChildrenInformation($node));
-
-        $this->userLocaleService->switchToUILocale(true);
-
-        $wrappedContent = $this->htmlAugmenter->addAttributes($content, $attributes, 'div');
-        $nodeContextPath = $nodeAddress->serializeForUri();
-        /** @codingStandardsIgnoreStart */
-        $wrappedContent .= "<script data-neos-nodedata>(function(){(this['@Neos.Neos.Ui:Nodes'] = this['@Neos.Neos.Ui:Nodes'] || {})['{$nodeContextPath}'] = {$serializedNode}})()</script>";
-        /** @codingStandardsIgnoreEnd */
-
-        return $wrappedContent;
+        return $this->htmlAugmenter->addAttributes($content, $attributes, 'div');
     }
 
     /**

@@ -1,0 +1,65 @@
+`8.3.14 (2024-06-11) <https://github.com/neos/neos-development-collection/releases/tag/8.3.14>`_
+================================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`BUGFIX: Prevent multiple imports of the same remote asset in the frontend <https://github.com/neos/neos-development-collection/pull/5117>`_
+--------------------------------------------------------------------------------------------------------------------------------------------
+
+This is a frontend fix for `#5116 <https://github.com/neos/neos-development-collection/issues/5116>`_and prevents users from triggering multiple import processes for the same remote asset. It is not a sufficient fix to only prevent this in the frontend though, since it doesn't catch it, if two or more different users trigger the import for the same asset at the same time.
+
+Changes:
+- ``select.js``: add data attribute ``data-import-in-process`` to asset once import process has started and remove it when import is done
+- ``select.js``: check for new data attribute and only start import process if attribute does not exist
+- ``select.js``: add notification to inform user that asset is being imported
+- ``select.js``: add notification as warning for user if import is already in process
+- ``Main.xlf``: add new notification messages for english
+- ``Default.html``: add id for notification container to be able to send notifications to it via js
+- ``Configuration.js``: update ``hasConfiguration`` after configuration object was created, because otherwise it will always be false and the translations don't work
+
+``related:`` https://github.com/neos/neos-development-collection/issues/5116
+
+**Info for testing:**
+You need to bundle the Neos.Neos assets to get the text for the notification messages.
+- navigate to the Neos.Neos package
+- run ``yarn``
+- run ``yarn build``
+
+* Packages: ``Media.Browser``
+
+`BUGFIX: Flush cache also for deleted nodes <https://github.com/neos/neos-development-collection/pull/5124>`_
+-------------------------------------------------------------------------------------------------------------
+
+Removed nodes can't get found, so they regarding caches don't get flushed.
+
+The bug was introduced with `#4291 <https://github.com/neos/neos-development-collection/issues/4291>`_
+* Fixes: `#5105 <https://github.com/neos/neos-development-collection/issues/5105>`_ 
+
+* Packages: ``Neos``
+
+`BUGFIX: Fix title attribute for impersonate button in user management <https://github.com/neos/neos-development-collection/pull/5121>`_
+----------------------------------------------------------------------------------------------------------------------------------------
+
+With this change the localized text is rendered instead of always defaulting to english.
+
+Changes: 
+
+- ImpersonateButton.js change postion of const localizedTooltip inside ImpersonateButton function and change isNil(window.Typo3Neos) to isNil(window.NeosCMS)
+- RestoreButton.js it was always fallback text used change isNil(window.NeosCMS) to !isNil(window.NeosCMS) 
+
+* Fixes: `#4511 <https://github.com/neos/neos-development-collection/issues/4511>`_ 
+
+Checklist
+
+- [ ] Code follows the PSR-2 coding style
+- [ ] Tests have been created, run and adjusted as needed
+- [x] The PR is created against the `lowest maintained branch <https://www.neos.io/features/release-roadmap.html>`_
+- [x] Reviewer - PR Title is brief but complete and starts with ``FEATURE|TASK|BUGFIX``
+- [ ] Reviewer - The first section explains the change briefly for change-logs
+- [ ] Reviewer - Breaking Changes are marked with ``!!!`` and have upgrade-instructions
+
+* Packages: ``Neos``
+
+`Detailed log <https://github.com/neos/neos-development-collection/compare/8.3.13...8.3.14>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

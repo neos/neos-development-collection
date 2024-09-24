@@ -21,6 +21,7 @@ The Content Repository comes with a number of common transformations:
 - ``RenameNodeAggregate``
 - ``RenameProperty``
 - ``StripTagsOnProperty``
+- ``UpdateRootNodeAggregateDimensions``
 
 They all implement the ``Neos\ContentRepository\NodeMigration\Transformation\TransformationFactoryInterface``. Custom transformations
 can be developed against that interface as well, just use the fully qualified class name for those when specifying
@@ -262,6 +263,17 @@ Options Reference:
 ``property`` (string)
   The name of the property to work on.
 
+UpdateRootNodeAggregateDimensions
+~~~~~~~~~~~~~
+
+Updates all root node aggregate dimensions regarding the current content repository configuration.
+
+Creates empty root node aggregate dimensions for each allowed dimension combination and removes them for all non-configured ones.
+
+Options Reference:
+
+``nodeType`` (string)
+  The node type name of the root node. For Neos this is usually "Neos.Neos:Sites"
 
 
 Filters Reference

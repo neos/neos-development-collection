@@ -147,4 +147,9 @@ final readonly class NodePath implements \JsonSerializable
     {
         return $this->serializeToString();
     }
+
+    public function __toString(): string
+    {
+        return $this->serializeToString();
+    }
 }

@@ -7,7 +7,7 @@
     "type": "neos-package-collection",
     "require": {
         "neos/flow-development-collection": "9.0.x-dev",
-        "doctrine/dbal": "^2.8",
+        "doctrine/dbal": "^3.1.4",
         "doctrine/migrations": "*",
         "neos/eventstore": "^1",
         "neos/eventstore-doctrineadapter": "^1 || ^2",
@@ -32,7 +32,7 @@
         "neos/cache": "*",
         "neos/eel": "*",
         "neos/utility-unicode": "*",
-        "doctrine/orm": "^2.6",
+        "doctrine/orm": "^2.14.0",
         "ext-dom": "*",
         "ext-libxml": "*",
         "neos/twitter-bootstrap": "^3.0.6",

@@ -27,19 +27,16 @@ use Neos\ContentRepository\Core\Infrastructure\Property\Normalizer\ValueObjectFl
 use Neos\ContentRepository\Core\Infrastructure\Property\Normalizer\ValueObjectIntDenormalizer;
 use Neos\ContentRepository\Core\Infrastructure\Property\Normalizer\ValueObjectStringDenormalizer;
 use Neos\ContentRepository\Core\Infrastructure\Property\PropertyConverter;
-use Neos\ContentRepository\Core\NodeType\NodeType;
-use Neos\ContentRepository\Core\Projection\ContentGraph\ContentSubgraphIdentity;
+use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodeTags;
 use Neos\ContentRepository\Core\Projection\ContentGraph\PropertyCollection;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Timestamps;
 use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
-use Neos\ContentRepository\Core\SharedModel\Node\NodeAddress;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateClassification;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Symfony\Component\Serializer\Normalizer\BackedEnumNormalizer;
 use Symfony\Component\Serializer\Normalizer\DateTimeNormalizer;
@@ -83,11 +80,10 @@ final class NodeSubjectProvider
     }
 
     public function createMinimalNodeOfType(
-        NodeType $nodeType,
+        NodeTypeName $nodeTypeName,
         SerializedPropertyValues $propertyValues = null,
         ?NodeName $nodeName = null
     ): Node {
-        $serializedDefaultPropertyValues = SerializedPropertyValues::defaultFromNodeType($nodeType, $this->propertyConverter);
         return Node::create(
             ContentRepositoryId::fromString('default'),
             WorkspaceName::forLive(),
@@ -95,11 +91,9 @@ final class NodeSubjectProvider
             NodeAggregateId::create(),
             OriginDimensionSpacePoint::createWithoutDimensions(),
             NodeAggregateClassification::CLASSIFICATION_REGULAR,
-            $nodeType->name,
+            $nodeTypeName,
             new PropertyCollection(
-                $propertyValues
-                    ? $serializedDefaultPropertyValues->merge($propertyValues)
-                    : $serializedDefaultPropertyValues,
+                $propertyValues ?? SerializedPropertyValues::createEmpty(),
                 $this->propertyConverter
             ),
             $nodeName,
@@ -111,8 +105,6 @@ final class NodeSubjectProvider
                 new \DateTimeImmutable()
             ),
             VisibilityConstraints::withoutRestrictions(),
-            $nodeType,
-            ContentStreamId::fromString('cs-id'),
         );
     }
 }

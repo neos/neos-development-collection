@@ -58,11 +58,6 @@ final readonly class EventPersister
             $commitResult->highestCommittedSequenceNumber
         );
 
-        foreach ($pendingProjections->projections as $projection) {
-            if ($projection instanceof WithMarkStaleInterface) {
-                $projection->markStale();
-            }
-        }
         $this->projectionCatchUpTrigger->triggerCatchUp($pendingProjections->projections);
         return new CommandResult();
     }

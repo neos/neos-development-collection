@@ -14,11 +14,10 @@ declare(strict_types=1);
 
 namespace Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository;
 
+use Doctrine\DBAL\ArrayParameterType;
 use Doctrine\DBAL\Connection;
-use Doctrine\DBAL\Driver\Exception as DriverException;
-use Doctrine\DBAL\Exception as DbalException;
+use Doctrine\DBAL\Exception as DBALException;
 use Doctrine\DBAL\Query\QueryBuilder;
-use Doctrine\DBAL\Result;
 use Neos\ContentGraph\DoctrineDbalAdapter\ContentGraphTableNames;
 use Neos\ContentGraph\DoctrineDbalAdapter\NodeQueryBuilder;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
@@ -26,15 +25,14 @@ use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
+use Neos\ContentRepository\Core\NodeType\NodeTypeNames;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphInterface;
-use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphWithRuntimeCaches\ContentSubgraphWithRuntimeCaches;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentSubgraphInterface;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindRootNodeAggregatesFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregates;
 use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
-use Neos\ContentRepository\Core\SharedModel\Exception\RootNodeAggregateDoesNotExist;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateClassification;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
@@ -66,11 +64,6 @@ final class ContentGraph implements ContentGraphInterface
 {
     private readonly NodeQueryBuilder $nodeQueryBuilder;
 
-    /**
-     * @var array<string,ContentSubgraphWithRuntimeCaches>
-     */
-    private array $subgraphs = [];
-
     public function __construct(
         private readonly Connection $dbal,
         private readonly NodeFactory $nodeFactory,
@@ -97,41 +90,35 @@ final class ContentGraph implements ContentGraphInterface
         DimensionSpacePoint $dimensionSpacePoint,
         VisibilityConstraints $visibilityConstraints
     ): ContentSubgraphInterface {
-        $index = $dimensionSpacePoint->hash . '-' . $visibilityConstraints->getHash();
-        if (!isset($this->subgraphs[$index])) {
-            $this->subgraphs[$index] = new ContentSubgraphWithRuntimeCaches(
-                new ContentSubgraph(
-                    $this->contentRepositoryId,
-                    $this->workspaceName,
-                    $this->contentStreamId,
-                    $dimensionSpacePoint,
-                    $visibilityConstraints,
-                    $this->dbal,
-                    $this->nodeFactory,
-                    $this->nodeTypeManager,
-                    $this->tableNames
-                )
-            );
-        }
-
-        return $this->subgraphs[$index];
+        return new ContentSubgraph(
+            $this->contentRepositoryId,
+            $this->workspaceName,
+            $this->contentStreamId,
+            $dimensionSpacePoint,
+            $visibilityConstraints,
+            $this->dbal,
+            $this->nodeFactory,
+            $this->nodeTypeManager,
+            $this->tableNames
+        );
     }
 
-    /**
-     * @throws RootNodeAggregateDoesNotExist
-     */
     public function findRootNodeAggregateByType(
         NodeTypeName $nodeTypeName
-    ): NodeAggregate {
+    ): ?NodeAggregate {
         $rootNodeAggregates = $this->findRootNodeAggregates(
             FindRootNodeAggregatesFilter::create(nodeTypeName: $nodeTypeName)
         );
 
         if ($rootNodeAggregates->count() > 1) {
+            // todo drop this check as this is enforced by the write side? https://github.com/neos/neos-development-collection/pull/4339
             $ids = [];
             foreach ($rootNodeAggregates as $rootNodeAggregate) {
                 $ids[] = $rootNodeAggregate->nodeAggregateId->value;
             }
+
+            // We throw if multiple root node aggregates of the given $nodeTypeName were found,
+            // as this would lead to nondeterministic results. Must not happen.
             throw new \RuntimeException(sprintf(
                 'More than one root node aggregate of type "%s" found (IDs: %s).',
                 $nodeTypeName->value,
@@ -139,24 +126,19 @@ final class ContentGraph implements ContentGraphInterface
             ));
         }
 
-        $rootNodeAggregate = $rootNodeAggregates->first();
-        if ($rootNodeAggregate === null) {
-            throw RootNodeAggregateDoesNotExist::butWasExpectedTo($nodeTypeName);
-        }
-
-        return $rootNodeAggregate;
+        return $rootNodeAggregates->first();
     }
 
     public function findRootNodeAggregates(
         FindRootNodeAggregatesFilter $filter,
     ): NodeAggregates {
         $rootNodeAggregateQueryBuilder = $this->nodeQueryBuilder->buildFindRootNodeAggregatesQuery($this->contentStreamId, $filter);
-        return NodeAggregates::fromArray(iterator_to_array($this->mapQueryBuilderToNodeAggregates($rootNodeAggregateQueryBuilder)));
+        return $this->mapQueryBuilderToNodeAggregates($rootNodeAggregateQueryBuilder);
     }
 
     public function findNodeAggregatesByType(
         NodeTypeName $nodeTypeName
-    ): iterable {
+    ): NodeAggregates {
         $queryBuilder = $this->nodeQueryBuilder->buildBasicNodeAggregateQuery();
         $queryBuilder
             ->andWhere('n.nodetypename = :nodeTypeName')
@@ -181,7 +163,6 @@ final class ContentGraph implements ContentGraphInterface
         return $this->nodeFactory->mapNodeRowsToNodeAggregate(
             $this->fetchRows($queryBuilder),
             $this->workspaceName,
-            $this->contentStreamId,
             VisibilityConstraints::withoutRestrictions()
         );
     }
@@ -190,12 +171,10 @@ final class ContentGraph implements ContentGraphInterface
      * Parent node aggregates can have a greater dimension space coverage than the given child.
      * Thus, it is not enough to just resolve them from the nodes and edges connected to the given child node aggregate.
      * Instead, we resolve all parent node aggregate ids instead and fetch the complete aggregates from there.
-     *
-     * @return iterable<NodeAggregate>
      */
     public function findParentNodeAggregates(
         NodeAggregateId $childNodeAggregateId
-    ): iterable {
+    ): NodeAggregates {
         $queryBuilder = $this->nodeQueryBuilder->buildBasicNodeAggregateQuery()
             ->innerJoin('n', $this->nodeQueryBuilder->tableNames->hierarchyRelation(), 'ch', 'ch.parentnodeanchor = n.relationanchorpoint')
             ->innerJoin('ch', $this->nodeQueryBuilder->tableNames->node(), 'cn', 'cn.relationanchorpoint = ch.childnodeanchor')
@@ -209,12 +188,9 @@ final class ContentGraph implements ContentGraphInterface
         return $this->mapQueryBuilderToNodeAggregates($queryBuilder);
     }
 
-    /**
-     * @return iterable<NodeAggregate>
-     */
     public function findChildNodeAggregates(
         NodeAggregateId $parentNodeAggregateId
-    ): iterable {
+    ): NodeAggregates {
         $queryBuilder = $this->nodeQueryBuilder->buildChildNodeAggregateQuery($parentNodeAggregateId, $this->contentStreamId);
         return $this->mapQueryBuilderToNodeAggregates($queryBuilder);
     }
@@ -247,12 +223,11 @@ final class ContentGraph implements ContentGraphInterface
         return $this->nodeFactory->mapNodeRowsToNodeAggregate(
             $this->fetchRows($queryBuilder),
             $this->workspaceName,
-            $this->contentStreamId,
             VisibilityConstraints::withoutRestrictions()
         );
     }
 
-    public function findTetheredChildNodeAggregates(NodeAggregateId $parentNodeAggregateId): iterable
+    public function findTetheredChildNodeAggregates(NodeAggregateId $parentNodeAggregateId): NodeAggregates
     {
         $queryBuilder = $this->nodeQueryBuilder->buildChildNodeAggregateQuery($parentNodeAggregateId, $this->contentStreamId)
             ->andWhere('cn.classification = :tetheredClassification')
@@ -293,7 +268,7 @@ final class ContentGraph implements ContentGraphInterface
                 'dimensionSpacePointHashes' => $dimensionSpacePointsToCheck->getPointHashes(),
                 'nodeName' => $nodeName->value
             ], [
-                'dimensionSpacePointHashes' => Connection::PARAM_STR_ARRAY,
+                'dimensionSpacePointHashes' => ArrayParameterType::STRING,
             ]);
         $dimensionSpacePoints = [];
         foreach ($this->fetchRows($queryBuilder) as $hierarchyRelationData) {
@@ -309,22 +284,19 @@ final class ContentGraph implements ContentGraphInterface
             ->select('COUNT(*)')
             ->from($this->nodeQueryBuilder->tableNames->node());
         try {
-            $result = $queryBuilder->execute();
-            if (!$result instanceof Result) {
-                throw new \RuntimeException(sprintf('Failed to count nodes. Expected result to be of type %s, got: %s', Result::class, get_debug_type($result)), 1701444550);
-            }
+            $result = $queryBuilder->executeQuery();
             return (int)$result->fetchOne();
-        } catch (DriverException | DbalException $e) {
+        } catch (DBALException $e) {
             throw new \RuntimeException(sprintf('Failed to count rows in database: %s', $e->getMessage()), 1701444590, $e);
         }
     }
 
-    public function findUsedNodeTypeNames(): iterable
+    public function findUsedNodeTypeNames(): NodeTypeNames
     {
-        return array_map(
+        return NodeTypeNames::fromArray(array_map(
             static fn (array $row) => NodeTypeName::fromString($row['nodetypename']),
             $this->fetchRows($this->nodeQueryBuilder->buildFindUsedNodeTypeNamesQuery())
-        );
+        ));
     }
 
     private function createQueryBuilder(): QueryBuilder
@@ -337,21 +309,19 @@ final class ContentGraph implements ContentGraphInterface
         return $this->nodeFactory->mapNodeRowsToNodeAggregate(
             $this->fetchRows($queryBuilder),
             $this->workspaceName,
-            $this->contentStreamId,
             VisibilityConstraints::withoutRestrictions()
         );
     }
 
     /**
      * @param QueryBuilder $queryBuilder
-     * @return iterable<NodeAggregate>
+     * @return NodeAggregates
      */
-    private function mapQueryBuilderToNodeAggregates(QueryBuilder $queryBuilder): iterable
+    private function mapQueryBuilderToNodeAggregates(QueryBuilder $queryBuilder): NodeAggregates
     {
         return $this->nodeFactory->mapNodeRowsToNodeAggregates(
             $this->fetchRows($queryBuilder),
             $this->workspaceName,
-            $this->contentStreamId,
             VisibilityConstraints::withoutRestrictions()
         );
     }
@@ -362,12 +332,8 @@ final class ContentGraph implements ContentGraphInterface
     private function fetchRows(QueryBuilder $queryBuilder): array
     {
         try {
-            $result = $queryBuilder->execute();
-            if (!$result instanceof Result) {
-                throw new \RuntimeException(sprintf('Failed to execute query. Expected result to be of type %s, got: %s', Result::class, get_debug_type($result)), 1701443535);
-            }
-            return $result->fetchAllAssociative();
-        } catch (DriverException | DbalException $e) {
+            return $queryBuilder->executeQuery()->fetchAllAssociative();
+        } catch (DBALException $e) {
             throw new \RuntimeException(sprintf('Failed to fetch rows from database: %s', $e->getMessage()), 1701444358, $e);
         }
     }

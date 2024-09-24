@@ -2,8 +2,9 @@
 
 namespace Neos\Flow\Persistence\Doctrine\Migrations;
 
-use Doctrine\Migrations\AbstractMigration;
+use Doctrine\DBAL\Platforms\PostgreSQLPlatform;
 use Doctrine\DBAL\Schema\Schema;
+use Doctrine\Migrations\AbstractMigration;
 
 /**
  * Create tables for PostgreSQL
@@ -16,7 +17,7 @@ class Version20120412194614 extends AbstractMigration
      */
     public function up(Schema $schema): void
     {
-        $this->abortIf($this->connection->getDatabasePlatform()->getName() != "postgresql");
+        $this->abortIf(!($this->connection->getDatabasePlatform() instanceof PostgreSQLPlatform));
 
         $this->addSql("CREATE TABLE typo3_typo3_domain_model_domain (flow3_persistence_identifier VARCHAR(40) NOT NULL, site VARCHAR(40) DEFAULT NULL, hostpattern VARCHAR(255) NOT NULL, PRIMARY KEY(flow3_persistence_identifier))");
         $this->addSql("CREATE INDEX IDX_F227E8F6694309E4 ON typo3_typo3_domain_model_domain (site)");
@@ -36,7 +37,7 @@ class Version20120412194614 extends AbstractMigration
      */
     public function down(Schema $schema): void
     {
-        $this->abortIf($this->connection->getDatabasePlatform()->getName() != "postgresql");
+        $this->abortIf(!($this->connection->getDatabasePlatform() instanceof PostgreSQLPlatform));
 
         $this->addSql("ALTER TABLE typo3_typo3_domain_model_user DROP CONSTRAINT FK_E3F98B1321E3D446");
         $this->addSql("ALTER TABLE typo3_typo3_domain_model_domain DROP CONSTRAINT FK_F227E8F6694309E4");

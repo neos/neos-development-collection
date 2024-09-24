@@ -3,7 +3,7 @@
 TYPO3 Fluid ViewHelper Reference
 ################################
 
-This reference was automatically generated from code on 2024-06-14
+This reference was automatically generated from code on 2024-09-24
 
 
 .. _`TYPO3 Fluid ViewHelper Reference: f:alias`:
@@ -321,6 +321,56 @@ Will be nothing.
 
 
 
+.. _`TYPO3 Fluid ViewHelper Reference: f:constant`:
+
+f:constant
+----------
+
+Wrapper for PHPs :php:`constant` function.
+See https://www.php.net/manual/function.constant.php.
+
+Examples
+========
+
+Get built-in PHP constant
+-------------------------
+
+::
+
+   {f:constant(name: 'PHP_INT_MAX')}
+
+Output::
+
+   9223372036854775807
+   (Depending on CPU architecture).
+
+Get class constant
+------------------
+
+::
+
+   {f:constant(name: '\Vendor\Package\Class::CONSTANT')}
+
+Get enum value
+--------------
+
+::
+
+   {f:constant(name: '\Vendor\Package\Enum::CASE')}
+
+:Implementation: TYPO3Fluid\\Fluid\\ViewHelpers\\ConstantViewHelper
+
+
+
+
+Arguments
+*********
+
+* ``name`` (string, *optional*): String representation of a PHP constant or enum
+
+
+
+
 .. _`TYPO3 Fluid ViewHelper Reference: f:count`:
 
 f:count
@@ -475,11 +525,11 @@ Output::
 Arguments
 *********
 
-* ``typeOnly`` (boolean, *optional*): If TRUE, debugs only the type of variables
+* ``typeOnly`` (boolean, *optional*): If true, debugs only the type of variables
 
 * ``levels`` (integer, *optional*): Levels to render when rendering nested objects/arrays
 
-* ``html`` (boolean, *optional*): Render HTML. If FALSE, output is indented plaintext
+* ``html`` (boolean, *optional*): Render HTML. If false, output is indented plaintext
 
 
 
@@ -521,8 +571,8 @@ Output content if condition is not met
 
 Output::
 
-    Everything inside the "else" tag is displayed if the condition evaluates to FALSE.
-    Otherwise nothing is outputted in this example.
+    Everything inside the "else" tag is displayed if the condition evaluates to false.
+    Otherwise, nothing is outputted in this example.
 
 :Implementation: TYPO3Fluid\\Fluid\\ViewHelpers\\ElseViewHelper
 
@@ -646,7 +696,7 @@ Arguments
 
 * ``key`` (string, *optional*): Variable to assign array key to
 
-* ``reverse`` (boolean, *optional*): If TRUE, iterates in reverse
+* ``reverse`` (boolean, *optional*): If true, iterates in reverse
 
 * ``iteration`` (string, *optional*): The name of the variable to store iteration information (index, cycle, total, isFirst, isLast, isEven, isOdd)
 
@@ -826,11 +876,11 @@ Arguments
 
 * ``value`` (string, *optional*): Value to format
 
-* ``keepQuotes`` (boolean, *optional*): If TRUE quotes will not be replaced (ENT_NOQUOTES)
+* ``keepQuotes`` (boolean, *optional*): If true quotes will not be replaced (ENT_NOQUOTES)
 
 * ``encoding`` (string, *optional*): Encoding
 
-* ``doubleEncode`` (boolean, *optional*): If FALSE html entities will not be encoded
+* ``doubleEncode`` (boolean, *optional*): If false, html entities will not be encoded
 
 
 
@@ -1478,7 +1528,7 @@ Basic usage
 
 Output::
 
-    Everything inside the <f:if> tag is being displayed if the condition evaluates to TRUE.
+    Everything inside the <f:if> tag is being displayed if the condition evaluates to true.
 
 If / then / else
 ----------------
@@ -1490,13 +1540,13 @@ If / then / else
             This is being shown in case the condition matches.
         </f:then>
         <f:else>
-            This is being displayed in case the condition evaluates to FALSE.
+            This is being displayed in case the condition evaluates to false.
         </f:else>
     </f:if>
 
 Output::
 
-    Everything inside the "then" tag is displayed if the condition evaluates to TRUE.
+    Everything inside the "then" tag is displayed if the condition evaluates to true.
     Otherwise, everything inside the "else" tag is displayed.
 
 Inline notation
@@ -1508,7 +1558,7 @@ Inline notation
 
 Output::
 
-    The value of the "then" attribute is displayed if the condition evaluates to TRUE.
+    The value of the "then" attribute is displayed if the condition evaluates to true.
     Otherwise, everything the value of the "else" attribute is displayed.
 
 Combining multiple conditions
@@ -1521,17 +1571,17 @@ Combining multiple conditions
             This is being shown in case both conditions match.
         </f:then>
         <f:else if="{user.rank} > 200 && ({user.type} == 'contributor' || {user.type} == 'developer')">
-            This is being displayed in case the first block of the condition evaluates to TRUE and any condition in
-            the second condition block evaluates to TRUE.
+            This is being displayed in case the first block of the condition evaluates to true and any condition in
+            the second condition block evaluates to true.
         </f:else>
         <f:else>
-            This is being displayed when none of the above conditions evaluated to TRUE.
+            This is being displayed when none of the above conditions evaluated to true.
         </f:else>
     </f:if>
 
 Output::
 
-    Depending on which expression evaluated to TRUE, that value is displayed.
+    Depending on which expression evaluated to true, that value is displayed.
     If no expression matched, the contents inside the final "else" tag are displayed.
 
 :Implementation: TYPO3Fluid\\Fluid\\ViewHelpers\\IfViewHelper
@@ -1869,7 +1919,7 @@ Arguments
 
 * ``arguments`` (array, *optional*): Array of variables to be transferred. Use {_all} for all variables
 
-* ``optional`` (boolean, *optional*): If TRUE, considers the *section* optional. Partial never is.
+* ``optional`` (boolean, *optional*): If true, considers the *section* optional. Partial never is.
 
 * ``default`` (mixed, *optional*): Value (usually string) to be displayed if the section or partial does not exist
 

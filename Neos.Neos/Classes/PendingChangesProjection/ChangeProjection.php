@@ -15,8 +15,9 @@ declare(strict_types=1);
 namespace Neos\Neos\PendingChangesProjection;
 
 use Doctrine\DBAL\Connection;
-use Doctrine\DBAL\Schema\AbstractSchemaManager;
+use Doctrine\DBAL\Exception as DBALException;
 use Doctrine\DBAL\Schema\Column;
+use Doctrine\DBAL\Schema\SchemaException;
 use Doctrine\DBAL\Schema\Table;
 use Doctrine\DBAL\Types\Type;
 use Doctrine\DBAL\Types\Types;
@@ -71,7 +72,10 @@ class ChangeProjection implements ProjectionInterface
         );
     }
 
-
+    /**
+     * @return void
+     * @throws DBALException
+     */
     public function setUp(): void
     {
         foreach ($this->determineRequiredSqlStatements() as $statement) {
@@ -107,14 +111,13 @@ class ChangeProjection implements ProjectionInterface
 
     /**
      * @return array<string>
+     * @throws DBALException
+     * @throws SchemaException
      */
     private function determineRequiredSqlStatements(): array
     {
         $connection = $this->dbal;
-        $schemaManager = $connection->getSchemaManager();
-        if (!$schemaManager instanceof AbstractSchemaManager) {
-            throw new \RuntimeException('Failed to retrieve Schema Manager', 1625653914);
-        }
+        $schemaManager = $connection->createSchemaManager();
 
         $changeTable = new Table($this->tableNamePrefix, [
             DbalSchemaFactory::columnForContentStreamId('contentStreamId')->setNotNull(true),
@@ -240,7 +243,7 @@ class ChangeProjection implements ProjectionInterface
         foreach ($event->affectedSourceOriginDimensionSpacePoints as $dimensionSpacePoint) {
             $this->markAsChanged(
                 $event->contentStreamId,
-                $event->sourceNodeAggregateId,
+                $event->nodeAggregateId,
                 $dimensionSpacePoint
             );
         }

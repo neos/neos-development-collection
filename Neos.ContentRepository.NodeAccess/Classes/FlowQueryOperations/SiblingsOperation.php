@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 namespace Neos\ContentRepository\NodeAccess\FlowQueryOperations;
 
 /*
@@ -72,6 +75,7 @@ class SiblingsOperation extends AbstractOperation
         }
 
         foreach ($flowQuery->getContext() as $contextNode) {
+            /** @var Node $contextNode */
             $subgraph = $this->contentRepositoryRegistry->subgraphForNode($contextNode);
 
             $parentNode = $subgraph->findParentNode($contextNode->aggregateId);

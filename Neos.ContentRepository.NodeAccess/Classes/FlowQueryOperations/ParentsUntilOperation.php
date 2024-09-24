@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 namespace Neos\ContentRepository\NodeAccess\FlowQueryOperations;
 
 /*
@@ -78,9 +81,10 @@ class ParentsUntilOperation extends AbstractOperation
                 NodeTypeNames::with(NodeTypeNameFactory::forRoot())
             )
         );
+        /** @var Node $contextNode */
         foreach ($flowQuery->getContext() as $contextNode) {
             $parentNodes = $this->contentRepositoryRegistry->subgraphForNode($contextNode)
-                ->findAncestorNodes($contextNode->nodeAggregateId, $findAncestorNodesFilter);
+                ->findAncestorNodes($contextNode->aggregateId, $findAncestorNodesFilter);
             if (isset($arguments[0]) && !empty($arguments[0] && !$parentNodes->isEmpty())) {
                 $filterQuery = new FlowQuery(iterator_to_array($parentNodes));
                 $filterQuery->pushOperation('filter', [$arguments[0]]);

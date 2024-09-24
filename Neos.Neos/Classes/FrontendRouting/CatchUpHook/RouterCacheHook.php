@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Neos\Neos\FrontendRouting\CatchUpHook;
 
 use Neos\ContentRepository\Core\ContentRepository;

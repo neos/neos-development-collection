@@ -19,7 +19,6 @@ use GuzzleHttp\Psr7\Uri;
 use Neos\ContentRepository\Core\ContentGraphFinder;
 use Neos\ContentRepository\Core\Feature\SubtreeTagging\Dto\SubtreeTag;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
-use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphInterface;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentSubgraphInterface;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindBackReferencesFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindChildNodesFilter;
@@ -81,8 +80,6 @@ trait ProjectedNodeTrait
     public function iExpectANodeIdentifiedByXToExistInTheContentGraph(string $serializedNodeDiscriminator): void
     {
         $nodeDiscriminator = NodeDiscriminator::fromShorthand($serializedNodeDiscriminator);
-        $contentGraphFinder = $this->currentContentRepository->projectionState(ContentGraphFinder::class);
-        $contentGraphFinder->forgetInstances();
         $workspaceName = $this->currentContentRepository->getWorkspaceFinder()->findOneByCurrentContentStreamId(
             $nodeDiscriminator->contentStreamId
         )->workspaceName;
@@ -111,7 +108,7 @@ trait ProjectedNodeTrait
         $this->initializeCurrentNodeFromContentSubgraph(function (ContentSubgraphInterface $subgraph) use ($nodeAggregateId, $expectedDiscriminator) {
             $currentNode = $subgraph->findNodeById($nodeAggregateId);
             Assert::assertNotNull($currentNode, 'No node could be found by node aggregate id "' . $nodeAggregateId->value . '" in content subgraph "' . $this->currentDimensionSpacePoint->toJson() . '@' . $this->currentWorkspaceName->value . '"');
-            $actualDiscriminator = NodeDiscriminator::fromNode($currentNode);
+            $actualDiscriminator = NodeDiscriminator::fromNode($currentNode, $this->currentContentRepository);
             Assert::assertTrue($expectedDiscriminator->equals($actualDiscriminator), 'Node discriminators do not match. Expected was ' . json_encode($expectedDiscriminator) . ' , given was ' . json_encode($actualDiscriminator));
             return $currentNode;
         });
@@ -148,7 +145,7 @@ trait ProjectedNodeTrait
         $this->initializeCurrentNodeFromContentSubgraph(function (ContentSubgraphInterface $subgraph) use ($nodePath, $expectedDiscriminator) {
             $currentNode = $subgraph->findNodeByPath($nodePath, $this->getRootNodeAggregateId());
             Assert::assertNotNull($currentNode, 'No node could be found by node path "' . $nodePath->serializeToString() . '" in content subgraph "' . $this->currentDimensionSpacePoint->toJson() . '@' . $this->currentWorkspaceName->value . '"');
-            $actualDiscriminator = NodeDiscriminator::fromNode($currentNode);
+            $actualDiscriminator = NodeDiscriminator::fromNode($currentNode, $this->currentContentRepository);
             Assert::assertTrue($expectedDiscriminator->equals($actualDiscriminator), 'Node discriminators do not match. Expected was ' . json_encode($expectedDiscriminator) . ' , given was ' . json_encode($actualDiscriminator));
             return $currentNode;
         });
@@ -480,7 +477,7 @@ trait ProjectedNodeTrait
                 $actualReferences[$index]->name->value
             );
             $expectedReferenceDiscriminator = NodeDiscriminator::fromShorthand($row['Node']);
-            $actualReferenceDiscriminator = NodeDiscriminator::fromNode($actualReferences[$index]->node);
+            $actualReferenceDiscriminator = NodeDiscriminator::fromNode($actualReferences[$index]->node, $this->currentContentRepository);
             Assert::assertTrue(
                 $expectedReferenceDiscriminator->equals($actualReferenceDiscriminator),
                 'Reference discriminator does not match.'
@@ -554,12 +551,12 @@ trait ProjectedNodeTrait
 
             $parent = $subgraph->findParentNode($currentNode->aggregateId);
             Assert::assertInstanceOf(Node::class, $parent, 'Parent not found.');
-            $actualParentDiscriminator = NodeDiscriminator::fromNode($parent);
+            $actualParentDiscriminator = NodeDiscriminator::fromNode($parent, $this->currentContentRepository);
             Assert::assertTrue($expectedParentDiscriminator->equals($actualParentDiscriminator), 'Parent discriminator does not match. Expected was ' . json_encode($expectedParentDiscriminator) . ', given was ' . json_encode($actualParentDiscriminator));
 
-            $expectedChildDiscriminator = NodeDiscriminator::fromNode($currentNode);
+            $expectedChildDiscriminator = NodeDiscriminator::fromNode($currentNode, $this->currentContentRepository);
             $child = $subgraph->findNodeByPath($currentNode->name, $parent->aggregateId);
-            $actualChildDiscriminator = NodeDiscriminator::fromNode($child);
+            $actualChildDiscriminator = NodeDiscriminator::fromNode($child, $this->currentContentRepository);
             Assert::assertTrue($expectedChildDiscriminator->equals($actualChildDiscriminator), 'Child discriminator does not match. Expected was ' . json_encode($expectedChildDiscriminator) . ', given was ' . json_encode($actualChildDiscriminator));
         });
     }
@@ -597,7 +594,10 @@ trait ProjectedNodeTrait
                 Assert::assertTrue($expectedNodeName->equals($actualNodeName), 'ContentSubgraph::findChildNodes: Node name in index ' . $index . ' does not match. Expected: "' . $expectedNodeName->value . '" Actual: "' . $actualNodeName->value . '"');
                 if (isset($row['NodeDiscriminator'])) {
                     $expectedNodeDiscriminator = NodeDiscriminator::fromShorthand($row['NodeDiscriminator']);
-                    $actualNodeDiscriminator = NodeDiscriminator::fromNode($actualChildNodes[$index]);
+                    $actualNodeDiscriminator = NodeDiscriminator::fromNode(
+                        $actualChildNodes[$index],
+                        $this->currentContentRepository
+                    );
                     Assert::assertTrue($expectedNodeDiscriminator->equals($actualNodeDiscriminator), 'ContentSubgraph::findChildNodes: Node discriminator in index ' . $index . ' does not match. Expected: ' . json_encode($expectedNodeDiscriminator->jsonSerialize()) . ' Actual: ' . json_encode($actualNodeDiscriminator));
                 }
             }
@@ -636,7 +636,10 @@ trait ProjectedNodeTrait
             Assert::assertCount(count($expectedPrecedingSiblingsTable->getHash()), $actualSiblings, 'ContentSubgraph::findPrecedingSiblingNodes: Sibling count does not match');
             foreach ($expectedPrecedingSiblingsTable->getHash() as $index => $row) {
                 $expectedNodeDiscriminator = NodeDiscriminator::fromShorthand($row['NodeDiscriminator']);
-                $actualNodeDiscriminator = NodeDiscriminator::fromNode($actualSiblings[$index]);
+                $actualNodeDiscriminator = NodeDiscriminator::fromNode(
+                    $actualSiblings[$index],
+                    $this->currentContentRepository
+                );
                 Assert::assertTrue($expectedNodeDiscriminator->equals($actualNodeDiscriminator), 'ContentSubgraph::findPrecedingSiblingNodes: Node discriminator in index ' . $index . ' does not match. Expected: ' . json_encode($expectedNodeDiscriminator) . ' Actual: ' . json_encode($actualNodeDiscriminator));
             }
         });
@@ -673,7 +676,10 @@ trait ProjectedNodeTrait
             Assert::assertCount(count($expectedSucceedingSiblingsTable->getHash()), $actualSiblings, 'ContentSubgraph::findSucceedingSiblingNodes: Sibling count does not match');
             foreach ($expectedSucceedingSiblingsTable->getHash() as $index => $row) {
                 $expectedNodeDiscriminator = NodeDiscriminator::fromShorthand($row['NodeDiscriminator']);
-                $actualNodeDiscriminator = NodeDiscriminator::fromNode($actualSiblings[$index]);
+                $actualNodeDiscriminator = NodeDiscriminator::fromNode(
+                    $actualSiblings[$index],
+                    $this->currentContentRepository
+                );
                 Assert::assertTrue($expectedNodeDiscriminator->equals($actualNodeDiscriminator), 'ContentSubgraph::findSucceedingSiblingNodes: Node discriminator in index ' . $index . ' does not match. Expected: ' . json_encode($expectedNodeDiscriminator) . ' Actual: ' . json_encode($actualNodeDiscriminator));
             }
         });

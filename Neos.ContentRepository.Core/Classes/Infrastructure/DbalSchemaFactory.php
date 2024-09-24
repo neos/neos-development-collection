@@ -4,9 +4,12 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Core\Infrastructure;
 
+use Doctrine\DBAL\Exception;
+use Doctrine\DBAL\Platforms\AbstractPlatform;
 use Doctrine\DBAL\Schema\AbstractSchemaManager;
 use Doctrine\DBAL\Schema\Column;
 use Doctrine\DBAL\Schema\Schema;
+use Doctrine\DBAL\Schema\SchemaException;
 use Doctrine\DBAL\Schema\Table;
 use Doctrine\DBAL\Types\Type;
 use Doctrine\DBAL\Types\Types;
@@ -14,6 +17,7 @@ use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
+use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 
 /**
  * Provide doctrine DBAL column schema definitions for common types in the content repository to
@@ -23,6 +27,8 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
  */
 final class DbalSchemaFactory
 {
+    private const DEFAULT_TEXT_COLLATION = 'utf8mb4_unicode_520_ci';
+
     // This class only contains static members and should not be constructed
     private function __construct()
     {
@@ -37,8 +43,8 @@ final class DbalSchemaFactory
     {
         return (new Column($columnName, Type::getType(Types::STRING)))
             ->setLength(64)
-            ->setCustomSchemaOption('charset', 'ascii')
-            ->setCustomSchemaOption('collation', 'ascii_general_ci');
+            ->setPlatformOption('charset', 'ascii')
+            ->setPlatformOption('collation', 'ascii_general_ci');
     }
 
     /**
@@ -83,7 +89,7 @@ final class DbalSchemaFactory
     {
         return (new Column($columnName, Type::getType(Types::TEXT)))
             ->setDefault('{}')
-            ->setCustomSchemaOption('collation', 'utf8mb4_unicode_520_ci');
+            ->setPlatformOption('collation', self::DEFAULT_TEXT_COLLATION);
     }
 
     /**
@@ -111,14 +117,27 @@ final class DbalSchemaFactory
         return (new Column($columnName, Type::getType(Types::STRING)))
             ->setLength(255)
             ->setNotnull(true)
-            ->setCustomSchemaOption('charset', 'ascii')
-            ->setCustomSchemaOption('collation', 'ascii_general_ci');
+            ->setPlatformOption('charset', 'ascii')
+            ->setPlatformOption('collation', 'ascii_general_ci');
     }
 
     /**
-     * @param AbstractSchemaManager $schemaManager
+     * @see WorkspaceName
+     */
+    public static function columnForWorkspaceName(string $columnName): Column
+    {
+        return (new Column($columnName, Type::getType(Types::STRING)))
+            ->setLength(WorkspaceName::MAX_LENGTH)
+            ->setNotnull(true)
+            ->setPlatformOption('collation', self::DEFAULT_TEXT_COLLATION);
+    }
+
+    /**
+     * @param AbstractSchemaManager<AbstractPlatform> $schemaManager
      * @param Table[] $tables
      * @return Schema
+     * @throws Exception
+     * @throws SchemaException
      */
     public static function createSchemaWithTables(AbstractSchemaManager $schemaManager, array $tables): Schema
     {

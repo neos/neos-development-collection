@@ -20,7 +20,6 @@ use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAddress;
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 
 /**
@@ -38,35 +37,13 @@ class NodeAddressFactory
         return new self($contentRepository);
     }
 
-    public function createFromContentStreamIdAndDimensionSpacePointAndNodeAggregateId(
-        ContentStreamId $contentStreamId,
-        DimensionSpacePoint $dimensionSpacePoint,
-        NodeAggregateId $nodeAggregateId
-    ): LegacyNodeAddress {
-        $workspace = $this->contentRepository->getWorkspaceFinder()->findOneByCurrentContentStreamId(
-            $contentStreamId
-        );
-        if ($workspace === null) {
-            throw new \RuntimeException(
-                'Cannot build a NodeAddress for traversable node of aggregate ' . $nodeAggregateId->value
-                . ', because the content stream ' . $contentStreamId->value
-                . ' is not assigned to a workspace.'
-            );
-        }
-        return new LegacyNodeAddress(
-            $contentStreamId,
-            $dimensionSpacePoint,
-            $nodeAggregateId,
-            $workspace->workspaceName,
-        );
-    }
-
     public function createFromNode(Node $node): LegacyNodeAddress
     {
-        return $this->createFromContentStreamIdAndDimensionSpacePointAndNodeAggregateId(
-            $node->subgraphIdentity->contentStreamId,
+        return new LegacyNodeAddress(
+            null,
             $node->dimensionSpacePoint,
             $node->aggregateId,
+            $node->workspaceName,
         );
     }
 
@@ -93,17 +70,8 @@ class NodeAddressFactory
         $dimensionSpacePoint = DimensionSpacePoint::fromArray(json_decode(base64_decode($dimensionSpacePointSerialized), true));
         $nodeAggregateId = NodeAggregateId::fromString($nodeAggregateIdSerialized);
 
-        $contentStreamId = $this->contentRepository->getWorkspaceFinder()->findOneByName($workspaceName)
-            ?->currentContentStreamId;
-        if (is_null($contentStreamId)) {
-            throw new \InvalidArgumentException(
-                'Could not resolve content stream identifier for node address ' . $serializedNodeAddress,
-                1645363784
-            );
-        }
-
         return new LegacyNodeAddress(
-            $contentStreamId,
+            null,
             $dimensionSpacePoint,
             $nodeAggregateId,
             $workspaceName

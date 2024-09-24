@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Neos\ContentRepositoryRegistry\Command;
 
 /*
@@ -13,6 +15,7 @@ namespace Neos\ContentRepositoryRegistry\Command;
  */
 
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepository\NodeMigration\Command\ExecuteMigration;
 use Neos\ContentRepository\NodeMigration\Command\MigrationConfiguration;
@@ -34,7 +37,6 @@ use Neos\Utility\Exception\FilesException;
 #[Flow\Scope('singleton')]
 class NodeMigrationCommandController extends CommandController
 {
-
     public function __construct(
         private readonly MigrationFactory $migrationFactory,
         private readonly ContentRepositoryRegistry $contentRepositoryRegistry,
@@ -48,15 +50,18 @@ class NodeMigrationCommandController extends CommandController
      * Do the configured migrations in the given migration.
      *
      * @param string $version The version of the migration configuration you want to use.
-     * @param string $workspace The workspace where the migration should be applied; by default "live"
+     * @param string $sourceWorkspace The workspace where the migration should be applied; by default "live"
+     * @param bool $publishOnSuccess If true, the changes get published automatically after successful apply (default: true).
      * @param boolean $force Confirm application of this migration, only needed if the given migration contains any warnings.
      * @param string $contentRepository Identifier of the content repository. (Default: 'default')
      * @return void
      * @throws StopCommandException
      * @see neos.contentrepositoryregistry:nodemigration:execute
      */
-    public function executeCommand(string $version, string $workspace = 'live', bool $force = false, string $contentRepository = 'default'): void
+    public function executeCommand(string $version, string $sourceWorkspace = 'live', bool $publishOnSuccess = true, bool $force = false, string $contentRepository = 'default'): void
     {
+        $sourceWorkspaceName = WorkspaceName::fromString($sourceWorkspace);
+        $targetWorkspaceName = WorkspaceName::transliterateFromString(sprintf('migration-%s-%s', $version, $sourceWorkspaceName->value));
         $contentRepositoryId = ContentRepositoryId::fromString($contentRepository);
 
         try {
@@ -74,14 +79,26 @@ class NodeMigrationCommandController extends CommandController
             $nodeMigrationService->executeMigration(
                 new ExecuteMigration(
                     $migrationConfiguration,
-                    WorkspaceName::fromString($workspace)
+                    $sourceWorkspaceName,
+                    $targetWorkspaceName,
+                    $publishOnSuccess,
+                    ContentStreamId::create()
                 )
             );
+
             $this->outputLine();
             $this->outputLine('Successfully applied migration.');
+            if ($publishOnSuccess) {
+                $this->outputLine('You should rebase all outdated workspaces to ensure every workspace get the changes immediately. `./flow workspace:rebaseoutdated`');
+            } else {
+                $this->outputLine(sprintf('We created a workspace "%s" for review. Please review changes an publish them to "%s".', $targetWorkspaceName->value, $sourceWorkspaceName->value));
+                $this->outputLine('You should rebase all outdated workspaces after publishing to ensure every workspace get the changes immediately. `./flow workspace:rebaseoutdated`');
+            }
+
         } catch (MigrationException $e) {
             $this->outputLine();
-            $this->outputLine('Error: ' . $e->getMessage());
+            $this->outputLine('Error on applying node migrations:');
+            $this->outputLine($e->getMessage());
             $this->quit(1);
         }
     }

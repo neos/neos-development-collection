@@ -14,6 +14,7 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\Helpers;
 
+use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
@@ -47,10 +48,11 @@ final readonly class NodeDiscriminator implements \JsonSerializable
         );
     }
 
-    public static function fromNode(Node $node): self
+    public static function fromNode(Node $node, ContentRepository $contentRepository): self
     {
+        $contentStreamOfNode = $contentRepository->getContentGraph($node->workspaceName)->getContentStreamId();
         return new self(
-            $node->subgraphIdentity->contentStreamId,
+            $contentStreamOfNode,
             $node->aggregateId,
             $node->originDimensionSpacePoint
         );
