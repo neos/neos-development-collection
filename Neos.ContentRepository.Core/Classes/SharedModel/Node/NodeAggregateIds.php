@@ -121,7 +121,7 @@ final class NodeAggregateIds implements \IteratorAggregate, \Countable, \JsonSer
      */
     public function map(\Closure $callback): array
     {
-        return array_map($callback, $this->nodeAggregateIds);
+        return array_map($callback, array_values($this->nodeAggregateIds));
     }
 
     public function count(): int
