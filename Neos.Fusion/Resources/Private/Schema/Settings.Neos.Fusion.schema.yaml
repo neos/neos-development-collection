@@ -19,6 +19,8 @@ properties:
     type: boolean
   enableParsePartialsCache:
     type: boolean
+  deprecationTracer:
+    type: [string, boolean]
   defaultContext:
     type: dictionary
     additionalProperties:
