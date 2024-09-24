@@ -14,7 +14,7 @@ declare(strict_types=1);
 
 namespace Neos\Workspace\Ui\Controller;
 
-use Doctrine\DBAL\DBALException;
+use Doctrine\DBAL\Exception as DBALException;
 use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Command\CreateWorkspace;
 use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Exception\WorkspaceAlreadyExists;
@@ -725,7 +725,6 @@ class WorkspaceController extends AbstractModuleController
      * Computes the number of added, changed and removed nodes for the given workspace
      *
      * @return array<string,int>
-     * @throws \JsonException
      */
     protected function computeChangesCount(Workspace $selectedWorkspace, ContentRepository $contentRepository): array
     {
@@ -751,7 +750,6 @@ class WorkspaceController extends AbstractModuleController
     /**
      * Builds an array of changes for sites in the given workspace
      * @return array<string,mixed>
-     * @throws \JsonException
      */
     protected function computeSiteChanges(Workspace $selectedWorkspace, ContentRepository $contentRepository): array
     {

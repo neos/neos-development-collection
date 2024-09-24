@@ -20,7 +20,9 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 /**
  * ForkContentStream for creating a new fork of a content stream.
  *
- * @api commands are the write-API of the ContentRepository
+ * @internal implementation detail. You must not use this command directly.
+ * Direct use may lead to hard to revert senseless state in your content repository.
+ * Please use the higher level workspace commands instead.
  */
 final readonly class ForkContentStream implements CommandInterface
 {

@@ -3,32 +3,32 @@
   <file original="" product-name="Neos.NodeTypes" source-language="en" datatype="plaintext" target-language="pt-PT">
     <body>
       <trans-unit id="ui.label" xml:space="preserve">
-				<source>Page</source>
+        <source>Page</source>
         <target state="translated">Página</target>
       </trans-unit>
       <trans-unit id="groups.document" xml:space="preserve">
-				<source>Title</source>
+        <source>Title</source>
         <target state="translated">Título</target>
       </trans-unit>
       <trans-unit id="groups.layout" xml:space="preserve">
-				<source>Layout</source>
-        <target state="needs-translation">Layout</target>
+        <source>Layout</source>
+        <target state="translated">Layout</target>
       </trans-unit>
       <trans-unit id="properties.layout" xml:space="preserve">
-				<source>Layout for this page only</source>
+        <source>Layout for this page only</source>
         <target state="translated">Layout apenas para esta página</target>
       </trans-unit>
       <trans-unit id="properties.layout.selectBoxEditor.placeholder" xml:space="preserve">
-				<source>Inherit from parent</source>
-        <target state="translated">Herdar do pai</target>
+        <source>Inherit from parent</source>
+        <target state="translated">Herdar do precedente</target>
       </trans-unit>
       <trans-unit id="properties.subpageLayout" xml:space="preserve">
-				<source>Layout for subpages of this page</source>
+        <source>Layout for subpages of this page</source>
         <target state="translated">Layout para subpáginas desta página</target>
       </trans-unit>
       <trans-unit id="properties.subpageLayout.selectBoxEditor.placeholder" xml:space="preserve">
-				<source>Inherit from parent</source>
-        <target state="translated">Herdar do pai</target>
+        <source>Inherit from parent</source>
+        <target state="translated">Herdar do precedente</target>
       </trans-unit>
     </body>
   </file>

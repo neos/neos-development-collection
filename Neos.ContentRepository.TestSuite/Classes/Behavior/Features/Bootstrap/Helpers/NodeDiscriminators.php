@@ -53,14 +53,6 @@ final class NodeDiscriminators implements \IteratorAggregate, \ArrayAccess, \Jso
         ));
     }
 
-    public static function fromNodes(Nodes $nodes): self
-    {
-        return new self(...array_map(
-            fn (Node $node): NodeDiscriminator => NodeDiscriminator::fromNode($node),
-            iterator_to_array($nodes)
-        ));
-    }
-
     public function equal(self $other): bool
     {
         return $this->discriminators == $other->discriminators;

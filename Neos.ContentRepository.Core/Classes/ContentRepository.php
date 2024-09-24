@@ -35,6 +35,7 @@ use Neos\ContentRepository\Core\Projection\ProjectionInterface;
 use Neos\ContentRepository\Core\Projection\ProjectionsAndCatchUpHooks;
 use Neos\ContentRepository\Core\Projection\ProjectionStateInterface;
 use Neos\ContentRepository\Core\Projection\ProjectionStatuses;
+use Neos\ContentRepository\Core\Projection\WithMarkStaleInterface;
 use Neos\ContentRepository\Core\Projection\Workspace\WorkspaceFinder;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryStatus;
@@ -89,10 +90,6 @@ final class ContentRepository
 
     /**
      * The only API to send commands (mutation intentions) to the system.
-     *
-     * The system is ASYNCHRONOUS by default, so that means the projection is not directly up to date. If you
-     * need to be synchronous, call {@see CommandResult::block()} on the returned CommandResult - then the system
-     * waits until the projections are up to date.
      *
      * @param CommandInterface $command
      * @return CommandResult
@@ -185,6 +182,9 @@ final class ContentRepository
             }
             $catchUpHook?->onBeforeEvent($event, $eventEnvelope);
             $projection->apply($event, $eventEnvelope);
+            if ($projection instanceof WithMarkStaleInterface) {
+                $projection->markStale();
+            }
             $catchUpHook?->onAfterEvent($event, $eventEnvelope);
         };
 

@@ -79,7 +79,7 @@ class TransformationsFactory
         if ($transformationName === 'AddDimensions') {
             throw new MigrationException(
                 'The "AddDimensions" transformation from the legacy content repository has been replaced'
-                . ' by the "AddDimensionSpecialization" transformation in the event-sourced content repository.'
+                . ' by the "MoveDimensionSpacePoint" transformation in the event-sourced content repository.'
                 . ' Please adjust your node migrations.',
                 1637178179
             );
@@ -88,7 +88,7 @@ class TransformationsFactory
         if ($transformationName === 'RenameDimension') {
             throw new MigrationException(
                 'The "RenameDimension" transformation from the legacy content repository has been replaced'
-                . ' by the "MoveToDimensionSpacePoints" transformation in the event-sourced content repository.'
+                . ' by the "MoveDimensionSpacePoint" transformation in the event-sourced content repository.'
                 . ' Please adjust your node migrations.',
                 1637178184
             );
@@ -106,7 +106,7 @@ class TransformationsFactory
         if ($transformationName === 'SetDimensions') {
             throw new MigrationException(
                 'The "SetDimensions" transformation from the legacy content repository has been replaced'
-                . ' by the "AddDimensionSpecialization" and "MoveToDimensionSpacePoints" transformation'
+                . ' by the "MoveDimensionSpacePoint" transformation'
                 . ' in the event-sourced content repository. Please adjust your node migrations.',
                 1637178280
             );

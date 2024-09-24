@@ -67,7 +67,7 @@ Feature: Move dimension space point
               to: { language: 'de_DE' }
     """
     # the original content stream has not been touched
-    When I am in content stream "cs-identifier" and dimension space point {"language": "de"}
+    When I am in workspace "live" and dimension space point {"language": "de"}
     Then I expect a node identified by cs-identifier;sir-david-nodenborough;{"language": "de"} to exist in the content graph
     And I expect this node to be of type "Neos.ContentRepository.Testing:Document"
 

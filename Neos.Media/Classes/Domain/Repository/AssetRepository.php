@@ -13,7 +13,6 @@ namespace Neos\Media\Domain\Repository;
  * source code.
  */
 
-use Doctrine\ORM\Internal\Hydration\IterableResult;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\Query\ResultSetMapping;
 use Neos\Flow\Annotations as Flow;
@@ -329,40 +328,17 @@ class AssetRepository extends Repository
     }
 
     /**
-     * Iterate over an IterableResult and return a Generator
+     * Find all objects and return an iterable
      *
-     * This method is useful for batch processing huge result set as it clears the object
-     * manager and detaches the current object on each iteration.
-     *
-     * @param IterableResult $iterator
-     * @param callable $callback
-     * @return \Generator
+     * @return iterable<AssetInterface>
      */
-    public function iterate(IterableResult $iterator, callable $callback = null): ?\Generator
-    {
-        $iteration = 0;
-        foreach ($iterator as $object) {
-            $object = current($object);
-            yield $object;
-            if ($callback !== null) {
-                $callback($iteration, $object);
-            }
-            $iteration++;
-        }
-    }
-
-    /**
-     * Find all objects and return an IterableResult
-     *
-     * @return IterableResult
-     */
-    public function findAllIterator(): IterableResult
+    public function findAllIterator(): iterable
     {
         /** @var Query $query */
         $query = $this->createQuery();
         $this->addAssetVariantToQueryConstraints($query);
 
-        return $query->getQueryBuilder()->getQuery()->iterate();
+        return $query->getQueryBuilder()->getQuery()->toIterable();
     }
 
     /**

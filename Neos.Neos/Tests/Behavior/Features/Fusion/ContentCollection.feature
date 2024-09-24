@@ -127,7 +127,7 @@ Feature: Tests for the "Neos.Neos:ContentCollection" Fusion prototype
     include: resource://Neos.Neos/Private/Fusion/Root.fusion
 
     prototype(Neos.Neos:Test.ContentType) < prototype(Neos.Fusion:Value) {
-      value = ${node.nodeAggregateId.value + ' (' + node.nodeTypeName.value + ') '}
+      value = ${q(node).id() + ' (' + node.nodeTypeName.value + ') '}
     }
 
     test = Neos.Neos:ContentCollection {

@@ -3,7 +3,7 @@
 Neos ViewHelper Reference
 #########################
 
-This reference was automatically generated from code on 2024-07-03
+This reference was automatically generated from code on 2024-09-24
 
 
 .. _`Neos ViewHelper Reference: neos:backend.authenticationProviderLabel`:
@@ -734,6 +734,26 @@ neos:node.closestDocument
 ViewHelper to find the closest document node to a given node
 
 :Implementation: Neos\\Neos\\ViewHelpers\\Node\\ClosestDocumentViewHelper
+
+
+
+
+Arguments
+*********
+
+* ``node`` (Neos\ContentRepository\Core\Projection\ContentGraph\Node): Node
+
+
+
+
+.. _`Neos ViewHelper Reference: neos:node.label`:
+
+neos:node.label
+---------------
+
+Viewhelper to render a label for a given Node
+
+:Implementation: Neos\\Neos\\ViewHelpers\\Node\\LabelViewHelper
 
 
 

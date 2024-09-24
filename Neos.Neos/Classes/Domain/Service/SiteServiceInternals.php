@@ -60,6 +60,10 @@ readonly class SiteServiceInternals implements ContentRepositoryServiceInterface
             $sitesNodeAggregate = $contentGraph->findRootNodeAggregateByType(
                 NodeTypeNameFactory::forSites()
             );
+            if (!$sitesNodeAggregate) {
+                // nothing to prune, we could probably also return here directly?
+                continue;
+            }
             $siteNodeAggregate = $contentGraph->findChildNodeAggregateByName(
                 $sitesNodeAggregate->nodeAggregateId,
                 $siteNodeName->toNodeName()
@@ -116,11 +120,10 @@ readonly class SiteServiceInternals implements ContentRepositoryServiceInterface
             OriginDimensionSpacePoint::fromDimensionSpacePoint($arbitraryRootDimensionSpacePoint),
             $sitesNodeIdentifier,
             null,
-            $site->getNodeName()->toNodeName(),
             PropertyValuesToWrite::fromArray([
                 'title' => $site->getName()
             ])
-        ));
+        )->withNodeName($site->getNodeName()->toNodeName()));
 
         // Handle remaining root dimension space points by creating peer variants
         foreach ($rootDimensionSpacePoints as $rootDimensionSpacePoint) {

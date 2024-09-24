@@ -41,41 +41,6 @@ parameters:
 			path: Neos.Neos/Classes/Controller/Backend/MenuHelper.php
 
 		-
-			message: "#^The internal method \"Neos\\\\ContentRepository\\\\Core\\\\Projection\\\\ContentGraph\\\\ContentGraphWithRuntimeCaches\\\\ContentSubgraphWithRuntimeCaches\\:\\:findSubtree\" is called\\.$#"
-			count: 1
-			path: Neos.Neos/Classes/Controller/Frontend/NodeController.php
-
-		-
-			message: "#^The internal method \"Neos\\\\ContentRepository\\\\Core\\\\Projection\\\\ContentGraph\\\\ContentGraphWithRuntimeCaches\\\\InMemoryCache\\:\\:getAllChildNodesByNodeIdCache\" is called\\.$#"
-			count: 1
-			path: Neos.Neos/Classes/Controller/Frontend/NodeController.php
-
-		-
-			message: "#^The internal method \"Neos\\\\ContentRepository\\\\Core\\\\Projection\\\\ContentGraph\\\\ContentGraphWithRuntimeCaches\\\\InMemoryCache\\:\\:getNamedChildNodeByNodeIdCache\" is called\\.$#"
-			count: 1
-			path: Neos.Neos/Classes/Controller/Frontend/NodeController.php
-
-		-
-			message: "#^The internal method \"Neos\\\\ContentRepository\\\\Core\\\\Projection\\\\ContentGraph\\\\ContentGraphWithRuntimeCaches\\\\InMemoryCache\\:\\:getParentNodeIdByChildNodeIdCache\" is called\\.$#"
-			count: 1
-			path: Neos.Neos/Classes/Controller/Frontend/NodeController.php
-
-		-
-			message: "#^The internal method \"Neos\\\\ContentRepository\\\\Core\\\\Projection\\\\ContentGraph\\\\ContentGraphWithRuntimeCaches\\\\InMemoryCache\\\\AllChildNodesByNodeIdCache\\:\\:add\" is called\\.$#"
-			count: 1
-			path: Neos.Neos/Classes/Controller/Frontend/NodeController.php
-
-		-
-			message: "#^The internal method \"Neos\\\\ContentRepository\\\\Core\\\\Projection\\\\ContentGraph\\\\ContentGraphWithRuntimeCaches\\\\InMemoryCache\\\\NamedChildNodeByNodeIdCache\\:\\:add\" is called\\.$#"
-			count: 1
-			path: Neos.Neos/Classes/Controller/Frontend/NodeController.php
-
-		-
-			message: "#^The internal method \"Neos\\\\ContentRepository\\\\Core\\\\Projection\\\\ContentGraph\\\\ContentGraphWithRuntimeCaches\\\\InMemoryCache\\\\ParentNodeIdByChildNodeIdCache\\:\\:add\" is called\\.$#"
-			count: 1
-			path: Neos.Neos/Classes/Controller/Frontend/NodeController.php
-
-		-
 			message: "#^Cannot call method getName\\(\\) on Neos\\\\Neos\\\\Domain\\\\Model\\\\User\\|null\\.$#"
 			count: 2
 			path: Neos.Neos/Classes/Controller/Module/Administration/UsersController.php
@@ -164,6 +129,11 @@ parameters:
 			message: "#^Property Neos\\\\Neos\\\\Controller\\\\Module\\\\User\\\\UserSettingsController\\:\\:\\$currentUser \\(Neos\\\\Neos\\\\Domain\\\\Model\\\\User\\) does not accept Neos\\\\Neos\\\\Domain\\\\Model\\\\User\\|null\\.$#"
 			count: 1
 			path: Neos.Neos/Classes/Controller/Module/User/UserSettingsController.php
+
+		-
+			message: "#^The internal method \"Neos\\\\ContentRepository\\\\Core\\\\Projection\\\\ContentGraph\\\\Filter\\\\NodeType\\\\ExpandedNodeTypeCriteria\\:\\:matches\" is called\\.$#"
+			count: 1
+			path: Neos.Neos/Classes/Controller/Service/NodesController.php
 
 		-
 			message: "#^The internal method \"Neos\\\\ContentRepository\\\\Core\\\\DimensionSpace\\\\WeightedDimensionSpacePoint\\:\\:getIdentityHash\" is called\\.$#"

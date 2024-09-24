@@ -1,8 +1,9 @@
 <?php
 namespace Neos\Flow\Persistence\Doctrine\Migrations;
 
-use Doctrine\Migrations\AbstractMigration;
+use Doctrine\DBAL\Platforms\AbstractMySQLPlatform;
 use Doctrine\DBAL\Schema\Schema;
+use Doctrine\Migrations\AbstractMigration;
 
 /**
  * Adjustments for the rewritten Flow resource management and the new domain model structure
@@ -13,9 +14,9 @@ class Version20141118172322 extends AbstractMigration
      * @param Schema $schema
      * @return void
      */
-    public function up(Schema $schema): void 
+    public function up(Schema $schema): void
     {
-        $this->abortIf($this->connection->getDatabasePlatform()->getName() != "mysql");
+        $this->abortIf(!($this->connection->getDatabasePlatform() instanceof AbstractMySQLPlatform));
 
         $this->addSql("CREATE TABLE typo3_media_domain_model_adjustment_abstractimageadjustment (persistence_object_identifier VARCHAR(40) NOT NULL, imagevariant VARCHAR(40) DEFAULT NULL, dtype VARCHAR(255) NOT NULL, x INT DEFAULT NULL, y INT DEFAULT NULL, width INT DEFAULT NULL, height INT DEFAULT NULL, maximumwidth INT DEFAULT NULL, maximumheight INT DEFAULT NULL, minimumwidth INT DEFAULT NULL, minimumheight INT DEFAULT NULL, ratiomode VARCHAR(255) DEFAULT NULL, INDEX IDX_84416FDCA76D06E6 (imagevariant), PRIMARY KEY(persistence_object_identifier)) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci ENGINE = InnoDB");
         $this->addSql("CREATE TABLE typo3_media_domain_model_imagevariant (persistence_object_identifier VARCHAR(40) NOT NULL, originalasset VARCHAR(40) NOT NULL, name VARCHAR(255) NOT NULL, width INT NOT NULL, height INT NOT NULL, INDEX IDX_758EDEBD55FF4171 (originalasset), PRIMARY KEY(persistence_object_identifier)) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci ENGINE = InnoDB");
@@ -33,9 +34,9 @@ class Version20141118172322 extends AbstractMigration
      * @param Schema $schema
      * @return void
      */
-    public function down(Schema $schema): void 
+    public function down(Schema $schema): void
     {
-        $this->abortIf($this->connection->getDatabasePlatform()->getName() != "mysql");
+        $this->abortIf(!($this->connection->getDatabasePlatform() instanceof AbstractMySQLPlatform));
 
         $this->addSql("ALTER TABLE typo3_media_domain_model_adjustment_abstractimageadjustment DROP FOREIGN KEY FK_84416FDCA76D06E6");
         $this->addSql("DROP TABLE typo3_media_domain_model_adjustment_abstractimageadjustment");

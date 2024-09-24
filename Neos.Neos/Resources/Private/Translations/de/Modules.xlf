@@ -965,6 +965,10 @@ Klicken Sie auf einen der Knoten um nur die Fallbacks und Varianten für diesen 
         <source>Sort by last login</source>
         <target state="translated">Sortieren nach letztem Login</target>
       </trans-unit>
+      <trans-unit id="branding.link.title" xml:space="preserve">
+        <source>Go back to your starting module</source>
+        <target state="needs-translation">Gehen Sie zurück zu Ihrem Startmodul</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

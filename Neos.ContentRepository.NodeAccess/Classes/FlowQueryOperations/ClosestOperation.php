@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 namespace Neos\ContentRepository\NodeAccess\FlowQueryOperations;
 
 /*
@@ -64,6 +67,7 @@ class ClosestOperation extends AbstractOperation
         }
 
         $output = [];
+        /** @var Node $contextNode */
         foreach ($flowQuery->getContext() as $contextNode) {
             $contextNodeQuery = new FlowQuery([$contextNode]);
             $contextNodeQuery->pushOperation('first', []);

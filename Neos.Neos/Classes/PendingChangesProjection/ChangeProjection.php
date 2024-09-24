@@ -15,9 +15,10 @@ declare(strict_types=1);
 namespace Neos\Neos\PendingChangesProjection;
 
 use Doctrine\DBAL\Connection;
-use Doctrine\DBAL\DBALException;
+use Doctrine\DBAL\Exception as DBALException;
 use Doctrine\DBAL\Schema\AbstractSchemaManager;
 use Doctrine\DBAL\Schema\Column;
+use Doctrine\DBAL\Schema\SchemaException;
 use Doctrine\DBAL\Schema\Table;
 use Doctrine\DBAL\Types\Type;
 use Doctrine\DBAL\Types\Types;
@@ -54,8 +55,6 @@ use Neos\EventStore\Model\EventEnvelope;
  */
 class ChangeProjection implements ProjectionInterface
 {
-    private const DEFAULT_TEXT_COLLATION = 'utf8mb4_unicode_520_ci';
-
     /**
      * @var ChangeFinder|null Cache for the ChangeFinder returned by {@see getState()},
      * so that always the same instance is returned
@@ -79,7 +78,10 @@ class ChangeProjection implements ProjectionInterface
         );
     }
 
-
+    /**
+     * @return void
+     * @throws DBALException
+     */
     public function setUp(): void
     {
         foreach ($this->determineRequiredSqlStatements() as $statement) {
@@ -115,14 +117,13 @@ class ChangeProjection implements ProjectionInterface
 
     /**
      * @return array<string>
+     * @throws DBALException
+     * @throws SchemaException
      */
     private function determineRequiredSqlStatements(): array
     {
         $connection = $this->dbal;
-        $schemaManager = $connection->getSchemaManager();
-        if (!$schemaManager instanceof AbstractSchemaManager) {
-            throw new \RuntimeException('Failed to retrieve Schema Manager', 1625653914);
-        }
+        $schemaManager = $connection->createSchemaManager();
 
         $changeTable = new Table($this->tableNamePrefix, [
             DbalSchemaFactory::columnForContentStreamId('contentStreamId')->setNotNull(true),
@@ -144,8 +145,8 @@ class ChangeProjection implements ProjectionInterface
         ]);
 
         $liveContentStreamsTable = new Table($this->tableNamePrefix . '_livecontentstreams', [
-            DbalSchemaFactory::ColumnForContentStreamId('contentstreamid')->setNotNull(true),
-            (new Column('workspacename', Type::getType(Types::STRING)))->setLength(255)->setDefault('')->setNotnull(true)->setCustomSchemaOption('collation', self::DEFAULT_TEXT_COLLATION)
+            DbalSchemaFactory::columnForContentStreamId('contentstreamid')->setNotNull(true),
+            DbalSchemaFactory::columnForWorkspaceName('workspacename')->setDefault('')
         ]);
         $liveContentStreamsTable->setPrimaryKey(['contentstreamid']);
 
@@ -263,7 +264,7 @@ class ChangeProjection implements ProjectionInterface
         foreach ($event->affectedSourceOriginDimensionSpacePoints as $dimensionSpacePoint) {
             $this->markAsChanged(
                 $event->contentStreamId,
-                $event->sourceNodeAggregateId,
+                $event->nodeAggregateId,
                 $dimensionSpacePoint
             );
         }
