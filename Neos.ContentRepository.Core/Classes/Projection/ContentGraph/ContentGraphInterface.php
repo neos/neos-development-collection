@@ -23,6 +23,7 @@ use Neos\ContentRepository\Core\Projection\ProjectionStateInterface;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeAggregatesTypeIsAmbiguous;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateIds;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
@@ -107,6 +108,13 @@ interface ContentGraphInterface extends ProjectionStateInterface
     public function findParentNodeAggregates(
         NodeAggregateId $childNodeAggregateId
     ): NodeAggregates;
+
+    /**
+     * @internal
+     */
+    public function findAncestorNodeAggregateIds(
+        NodeAggregateId $entryNodeAggregateId
+    ): NodeAggregateIds;
 
     /**
      * @internal only for consumption inside the Command Handler

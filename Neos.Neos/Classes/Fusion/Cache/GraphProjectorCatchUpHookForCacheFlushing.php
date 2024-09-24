@@ -167,7 +167,8 @@ class GraphProjectorCatchUpHookForCacheFlushing implements CatchUpHookInterface
                 $this->scheduleCacheFlushJobForNodeAggregate(
                     $this->contentRepository,
                     $eventInstance->workspaceName,
-                    $nodeAggregate
+                    $nodeAggregate,
+                    $contentGraph->findAncestorNodeAggregateIds($eventInstance->getNodeAggregateId()),
                 );
             }
         }
@@ -197,7 +198,8 @@ class GraphProjectorCatchUpHookForCacheFlushing implements CatchUpHookInterface
             && $eventInstance instanceof EmbedsContentStreamId
             && $eventInstance instanceof EmbedsWorkspaceName
         ) {
-            $nodeAggregate = $this->contentRepository->getContentGraph($eventInstance->getWorkspaceName())->findNodeAggregateById(
+            $contentGraph = $this->contentRepository->getContentGraph($eventInstance->getWorkspaceName());
+            $nodeAggregate = $contentGraph->findNodeAggregateById(
                 $eventInstance->getNodeAggregateId()
             );
 
@@ -205,7 +207,8 @@ class GraphProjectorCatchUpHookForCacheFlushing implements CatchUpHookInterface
                 $this->scheduleCacheFlushJobForNodeAggregate(
                     $this->contentRepository,
                     $eventInstance->getWorkspaceName(),
-                    $nodeAggregate
+                    $nodeAggregate,
+                    $contentGraph->findAncestorNodeAggregateIds($eventInstance->getNodeAggregateId())
                 );
             }
         }
@@ -214,7 +217,8 @@ class GraphProjectorCatchUpHookForCacheFlushing implements CatchUpHookInterface
     private function scheduleCacheFlushJobForNodeAggregate(
         ContentRepository $contentRepository,
         WorkspaceName $workspaceName,
-        NodeAggregate $nodeAggregate
+        NodeAggregate $nodeAggregate,
+        NodeAggregateIds $ancestorNodeAggregateIds
     ): void {
         // we store this in an associative array deduplicate.
         $this->flushNodeAggregateRequestsOnAfterCatchUp[$workspaceName->value . '__' . $nodeAggregate->nodeAggregateId->value] = FlushNodeAggregateRequest::create(
@@ -222,7 +226,7 @@ class GraphProjectorCatchUpHookForCacheFlushing implements CatchUpHookInterface
             $workspaceName,
             $nodeAggregate->nodeAggregateId,
             $nodeAggregate->nodeTypeName,
-            $this->determineAncestorNodeAggregateIds($workspaceName, $nodeAggregate->nodeAggregateId)
+            $ancestorNodeAggregateIds
         );
     }
 
@@ -235,25 +239,6 @@ class GraphProjectorCatchUpHookForCacheFlushing implements CatchUpHookInterface
             $contentRepository->id,
             $workspaceName,
         );
-    }
-
-    private function determineAncestorNodeAggregateIds(WorkspaceName $workspaceName, NodeAggregateId $childNodeAggregateId): NodeAggregateIds
-    {
-        $contentGraph = $this->contentRepository->getContentGraph($workspaceName);
-        $stack = iterator_to_array($contentGraph->findParentNodeAggregates($childNodeAggregateId));
-
-        $ancestorNodeAggregateIds = [];
-        while ($stack !== []) {
-            $nodeAggregate = array_shift($stack);
-
-            // Prevent infinite loops
-            if (!in_array($nodeAggregate->nodeAggregateId, $ancestorNodeAggregateIds, false)) {
-                $ancestorNodeAggregateIds[] = $nodeAggregate->nodeAggregateId;
-                array_push($stack, ...iterator_to_array($contentGraph->findParentNodeAggregates($nodeAggregate->nodeAggregateId)));
-            }
-        }
-
-        return NodeAggregateIds::fromArray($ancestorNodeAggregateIds);
     }
 
     public function onBeforeBatchCompleted(): void
