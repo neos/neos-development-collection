@@ -196,17 +196,8 @@ final class ContentGraph implements ContentGraphInterface
         $ancestorNodeAggregateIds = [];
         while ($stack !== []) {
             $nodeAggregate = array_shift($stack);
-
-            // Prevent infinite loops
-            // NOTE: Normally, the content graph cannot contain cycles. However, during the
-            // testcase "Features/ProjectionIntegrityViolationDetection/AllNodesAreConnectedToARootNodePerSubgraph.feature"
-            // and in case of bugs, it could have actually cycles.
-            // The content cache catchup hook leverage this method and would otherwise be hanging up in an endless loop.
-            // That's why we track the seen NodeAggregateIds to be sure we don't travers them multiple times.
-            if (!in_array($nodeAggregate->nodeAggregateId, $ancestorNodeAggregateIds, false)) {
-                $ancestorNodeAggregateIds[] = $nodeAggregate->nodeAggregateId;
-                array_push($stack, ...iterator_to_array($this->findParentNodeAggregates($nodeAggregate->nodeAggregateId)));
-            }
+            $ancestorNodeAggregateIds[] = $nodeAggregate->nodeAggregateId;
+            array_push($stack, ...iterator_to_array($this->findParentNodeAggregates($nodeAggregate->nodeAggregateId)));
         }
         return NodeAggregateIds::fromArray($ancestorNodeAggregateIds);
     }

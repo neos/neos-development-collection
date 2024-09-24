@@ -52,7 +52,8 @@ Feature: Run projection integrity violation detection regarding root connection
       | parentNodeAggregateId       | "sir-david-nodenborough"                  |
       | nodeName                    | "child-document"                          |
       | nodeAggregateClassification | "regular"                                 |
-    And the event NodeAggregateWasMoved was published with payload:
+    # we must apply the event directly as the state is so corrupt that catchup hooks might fail like the content cache flusher
+    And the event NodeAggregateWasMoved is hacky directly applied with payload:
       | Key                           | Value                                                                                                                                  |
       | workspaceName                 | "live"                                                                                                                                 |
       | contentStreamId               | "cs-identifier"                                                                                                                        |
