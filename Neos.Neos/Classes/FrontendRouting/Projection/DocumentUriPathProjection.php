@@ -6,7 +6,6 @@ namespace Neos\Neos\FrontendRouting\Projection;
 
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Exception as DBALException;
-use Doctrine\DBAL\Schema\AbstractSchemaManager;
 use Doctrine\DBAL\Types\Types;
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
 use Neos\ContentRepository\Core\EventStore\EventInterface;
@@ -108,7 +107,12 @@ final class DocumentUriPathProjection implements ProjectionInterface, WithMarkSt
     {
         $schemaManager = $this->dbal->createSchemaManager();
         $schema = (new DocumentUriPathSchemaBuilder($this->tableNamePrefix))->buildSchema($schemaManager);
-        return DbalSchemaDiff::determineRequiredSqlStatements($this->dbal, $schema);
+        $statements = DbalSchemaDiff::determineRequiredSqlStatements($this->dbal, $schema);
+        // MIGRATIONS
+        if ($this->dbal->getSchemaManager()->tablesExist([$this->tableNamePrefix . '_livecontentstreams'])) {
+            $statements[] = sprintf('DROP table %s_livecontentstreams;', $this->tableNamePrefix);
+        }
+        return $statements;
     }
 
 
