@@ -116,4 +116,14 @@ final class NodeAggregateIds implements \IteratorAggregate, \JsonSerializable
     {
         yield from $this->nodeAggregateIds;
     }
+
+    /**
+     * @template T
+     * @param \Closure(NodeAggregateId $nodeAggregateId): T $callback
+     * @return list<T>
+     */
+    public function map(\Closure $callback): array
+    {
+        return array_map($callback, $this->nodeAggregateIds);
+    }
 }

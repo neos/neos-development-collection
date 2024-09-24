@@ -209,8 +209,9 @@ final class Nodes implements \IteratorAggregate, \ArrayAccess, \Countable
     }
 
     /**
-     * @param \Closure(Node $node): mixed $callback
-     * @return array<mixed>
+     * @template T
+     * @param \Closure(Node $node): T $callback
+     * @return list<T>
      */
     public function map(\Closure $callback): array
     {
