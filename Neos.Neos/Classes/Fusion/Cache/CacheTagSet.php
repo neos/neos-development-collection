@@ -37,44 +37,38 @@ final class CacheTagSet
     public static function forDescendantOfNodesFromNodes(
         Nodes $nodes
     ): self {
-        return new self(...array_map(
-            CacheTag::forDescendantOfNodeFromNode(...),
-            iterator_to_array($nodes),
-        ));
+        return new self(...$nodes->map(CacheTag::forDescendantOfNodeFromNode(...)));
     }
 
     public static function forDescendantOfNodesFromNodesWithoutWorkspace(
         Nodes $nodes,
     ): self {
-        return new self(...array_map(
+        return new self(...$nodes->map(
             static fn (Node $node) => CacheTag::forDescendantOfNode(
                 $node->contentRepositoryId,
                 CacheTagWorkspaceName::ANY,
                 $node->aggregateId,
-            ),
-            iterator_to_array($nodes)
+            )
         ));
     }
 
     public static function forNodeAggregatesFromNodes(
         Nodes $nodes
     ): self {
-        return new self(...array_map(
-            CacheTag::forNodeAggregateFromNode(...),
-            iterator_to_array($nodes)
+        return new self(...$nodes->map(
+            CacheTag::forNodeAggregateFromNode(...)
         ));
     }
 
     public static function forNodeAggregatesFromNodesWithoutWorkspace(
         Nodes $nodes
     ): self {
-        return new self(...array_map(
+        return new self(...$nodes->map(
             static fn (Node $node) => CacheTag::forNodeAggregate(
                 $node->contentRepositoryId,
                 CacheTagWorkspaceName::ANY,
                 $node->aggregateId
-            ),
-            iterator_to_array($nodes),
+            )
         ));
     }
 
@@ -83,24 +77,22 @@ final class CacheTagSet
         WorkspaceName|CacheTagWorkspaceName $workspaceName,
         NodeTypeNames $nodeTypeNames
     ): self {
-        return new self(...array_map(
+        return new self(...$nodeTypeNames->map(
             static fn (NodeTypeName $nodeTypeName): CacheTag => CacheTag::forNodeTypeName(
                 $contentRepositoryId,
                 $workspaceName,
                 $nodeTypeName
-            ),
-            iterator_to_array($nodeTypeNames)
+            )
         ));
     }
 
     public static function forWorkspaceNameFromNodes(Nodes $nodes): self
     {
-        return new self(...array_map(
+        return new self(...$nodes->map(
             static fn (Node $node): CacheTag => CacheTag::forWorkspaceName(
                 $node->contentRepositoryId,
                 $node->workspaceName,
-            ),
-            iterator_to_array($nodes)
+            )
         ));
     }
 
