@@ -1,4 +1,5 @@
 Neos:
   Fusion:
+    deprecationTracer: "LOG"
     rendering:
       exceptionHandler: Neos\Fusion\Core\ExceptionHandlers\HtmlMessageHandler
