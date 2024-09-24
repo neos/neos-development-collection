@@ -117,12 +117,7 @@ final class CacheTagSet
      */
     public function toStringArray(): array
     {
-        return array_unique(
-            array_map(
-                static fn (CacheTag $tag): string => $tag->value,
-                array_values($this->tags)
-            )
-        );
+        return array_keys($this->tags);
     }
 
     public function union(self $other): self
