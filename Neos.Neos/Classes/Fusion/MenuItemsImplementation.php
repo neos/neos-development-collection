@@ -311,7 +311,7 @@ class MenuItemsImplementation extends AbstractMenuItemsImplementation
         );
 
         $this->currentNodeRootlineAggregateIds = NodeAggregateIds::create($this->currentNode->aggregateId)
-            ->merge(NodeAggregateIds::fromNodes($currentNodeAncestors));
+            ->merge($currentNodeAncestors->toNodeAggregateIds());
 
         return $this->currentNodeRootlineAggregateIds;
     }
