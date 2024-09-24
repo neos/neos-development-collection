@@ -14,7 +14,6 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Core\SharedModel\Node;
 
-use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Nodes;
 
 /**
@@ -23,7 +22,7 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\Nodes;
  * @implements \IteratorAggregate<string,NodeAggregateId>
  * @api
  */
-final class NodeAggregateIds implements \IteratorAggregate, \JsonSerializable
+final class NodeAggregateIds implements \IteratorAggregate, \Countable, \JsonSerializable
 {
     /**
      * @var array<string,NodeAggregateId>
@@ -123,5 +122,10 @@ final class NodeAggregateIds implements \IteratorAggregate, \JsonSerializable
     public function map(\Closure $callback): array
     {
         return array_map($callback, $this->nodeAggregateIds);
+    }
+
+    public function count(): int
+    {
+        return count($this->nodeAggregateIds);
     }
 }
