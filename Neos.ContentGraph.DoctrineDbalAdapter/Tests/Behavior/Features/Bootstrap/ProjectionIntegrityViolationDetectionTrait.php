@@ -19,24 +19,17 @@ use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Exception as DBALException;
 use Doctrine\DBAL\Exception\InvalidArgumentException;
 use Neos\ContentGraph\DoctrineDbalAdapter\ContentGraphTableNames;
-use Neos\ContentGraph\DoctrineDbalAdapter\DoctrineDbalContentGraphProjection;
 use Neos\ContentGraph\DoctrineDbalAdapter\DoctrineDbalProjectionIntegrityViolationDetectionRunnerFactory;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\NodeFactory;
 use Neos\ContentGraph\DoctrineDbalAdapter\Tests\Behavior\Features\Bootstrap\Helpers\TestingNodeAggregateId;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
-use Neos\ContentRepository\Core\EventStore\EventNormalizer;
-use Neos\ContentRepository\Core\EventStore\EventPersister;
-use Neos\ContentRepository\Core\Feature\ContentStreamEventStreamName;
 use Neos\ContentRepository\Core\Feature\SubtreeTagging\Dto\SubtreeTag;
-use Neos\ContentRepository\Core\Projection\Projections;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\CRTestSuiteRuntimeVariables;
 use Neos\Error\Messages\Error;
 use Neos\Error\Messages\Result;
-use Neos\EventStore\Model\Event;
-use Neos\EventStore\Model\EventEnvelope;
 use PHPUnit\Framework\Assert;
 
 /**
@@ -106,6 +99,31 @@ trait ProjectionIntegrityViolationDetectionTrait
         $record = $this->transformDatasetToHierarchyRelationRecord($dataset);
         $this->dbal->insert(
             $this->tableNames()->hierarchyRelation(),
+            $record
+        );
+    }
+
+    /**
+     * @When /^I change the following hierarchy relation's parent:$/
+     * @throws DBALException
+     */
+    public function iChangeTheFollowingHierarchyRelationsParent(TableNode $payloadTable): void
+    {
+        $dataset = $this->transformPayloadTableToDataset($payloadTable);
+        $record = $this->transformDatasetToHierarchyRelationRecord($dataset);
+        unset($record['position']);
+
+        $newParentHierarchyRelation = $this->findHierarchyRelationByIds(
+            ContentStreamId::fromString($dataset['contentStreamId']),
+            DimensionSpacePoint::fromArray($dataset['dimensionSpacePoint']),
+            NodeAggregateId::fromString($dataset['newParentNodeAggregateId'])
+        );
+
+        $this->dbal->update(
+            $this->tableNames()->hierarchyRelation(),
+            [
+                'parentnodeanchor' => $newParentHierarchyRelation['childnodeanchor']
+            ],
             $record
         );
     }
@@ -350,46 +368,5 @@ trait ProjectionIntegrityViolationDetectionTrait
             $expectedErrorCode,
             $error->getCode()
         );
-    }
-
-    /**
-     * @Given /^the event NodeAggregateWasMoved is hacky directly applied with payload:$/
-     * @param TableNode $payloadTable
-     * @throws \Exception
-     */
-    public function applyNodeAggregateWasMoved(TableNode $payloadTable)
-    {
-        $eventPayload = $this->readPayloadTable($payloadTable);
-        $contentStreamId = ContentStreamId::fromString($eventPayload['contentStreamId']);
-        $streamName = ContentStreamEventStreamName::fromContentStreamId($contentStreamId);
-        $eventType = 'NodeAggregateWasMoved';
-
-        $artificiallyConstructedEvent = new Event(
-            Event\EventId::create(),
-            Event\EventType::fromString($eventType),
-            Event\EventData::fromString(json_encode($eventPayload)),
-            Event\EventMetadata::fromArray([])
-        );
-        /** @var EventPersister $eventPersister */
-        $eventPersister = (new \ReflectionClass($this->currentContentRepository))->getProperty('eventPersister')
-            ->getValue($this->currentContentRepository);
-        /** @var EventNormalizer $eventNormalizer */
-        $eventNormalizer = (new \ReflectionClass($eventPersister))->getProperty('eventNormalizer')
-            ->getValue($eventPersister);
-        /** @var Projections $projections */
-        $projections = (new \ReflectionClass($eventPersister))->getProperty('projections')
-            ->getValue($eventPersister);
-
-        $event = $eventNormalizer->denormalize($artificiallyConstructedEvent);
-
-        $envelope = new EventEnvelope(
-            $artificiallyConstructedEvent,
-            $streamName->getEventStreamName(),
-            Event\Version::first(),
-            Event\SequenceNumber::none(),
-            new \DateTimeImmutable()
-        );
-
-        $projections->get(DoctrineDbalContentGraphProjection::class)->apply($event, $envelope);
     }
 }

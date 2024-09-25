@@ -52,16 +52,27 @@ Feature: Run projection integrity violation detection regarding root connection
       | parentNodeAggregateId       | "sir-david-nodenborough"                  |
       | nodeName                    | "child-document"                          |
       | nodeAggregateClassification | "regular"                                 |
-    # we must apply the event directly as the state is so corrupt that catchup hooks might fail like the content cache flusher
-    And the event NodeAggregateWasMoved is hacky directly applied with payload:
-      | Key                           | Value                                                                                                                                  |
-      | workspaceName                 | "live"                                                                                                                                 |
-      | contentStreamId               | "cs-identifier"                                                                                                                        |
-      | nodeAggregateId               | "sir-david-nodenborough"                                                                                                               |
-      | newParentNodeAggregateId      | "nody-mc-nodeface"                                                                                                                     |
-      | succeedingSiblingsForCoverage | [{"dimensionSpacePoint":{"language":"de"},"nodeAggregateId": null},{"dimensionSpacePoint":{"language":"gsw"},"nodeAggregateId": null}] |
+
+    When I change the following hierarchy relation's parent:
+      | Key                        | Value                                      |
+      | contentStreamId            | "cs-identifier"                            |
+      | dimensionSpacePoint        | {"language":"de"}                          |
+      | parentNodeAggregateId      | "lady-eleonode-rootford"                   |
+      | childNodeAggregateId       | "sir-david-nodenborough"                   |
+      | newParentNodeAggregateId   | "nody-mc-nodeface"                         |
     And I run integrity violation detection
-    # one error per subgraph
+    Then I expect the integrity violation detection result to contain exactly 1 errors
+    And I expect integrity violation detection result error number 1 to have code 1597754245
+
+    # Another error. One error per subgraph
+    When I change the following hierarchy relation's parent:
+      | Key                        | Value                                       |
+      | contentStreamId            | "cs-identifier"                             |
+      | dimensionSpacePoint        | {"language":"gsw"}                          |
+      | parentNodeAggregateId      | "lady-eleonode-rootford"                    |
+      | childNodeAggregateId       | "sir-david-nodenborough"                    |
+      | newParentNodeAggregateId   | "nody-mc-nodeface"                          |
+    And I run integrity violation detection
     Then I expect the integrity violation detection result to contain exactly 2 errors
     And I expect integrity violation detection result error number 1 to have code 1597754245
     And I expect integrity violation detection result error number 2 to have code 1597754245
