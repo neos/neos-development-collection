@@ -114,6 +114,6 @@ Feature: Find and count nodes using the findAncestorNodes, countAncestorNodes an
     # a2b is disabled
     When I execute the findAncestorNodeAggregateIds query for entry node aggregate id "a2b1" I expect the nodes "a2b,a2,a,home,lady-eleonode-rootford" to be returned
     # a2a2c lives in dimension space ch beneath b
-    When I execute the findAncestorNodeAggregateIds query for entry node aggregate id "a2a2c" I expect the nodes "a2a2,b,a2a,home,a2,lady-eleonode-rootford,a" to be returned
+    When I execute the findAncestorNodeAggregateIds query for entry node aggregate id "a2a2c" I expect the nodes "a2a2,a2a,a2,b,a,home,lady-eleonode-rootford" to be returned
 
     When I execute the findAncestorNodeAggregateIds query for entry node aggregate id "a2a2b" I expect the nodes "a2a2,a2a,a2,a,home,lady-eleonode-rootford" to be returned

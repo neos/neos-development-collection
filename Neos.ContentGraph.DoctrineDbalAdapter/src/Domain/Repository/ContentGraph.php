@@ -191,15 +191,39 @@ final class ContentGraph implements ContentGraphInterface
 
     public function findAncestorNodeAggregateIds(NodeAggregateId $entryNodeAggregateId): NodeAggregateIds
     {
-        $stack = iterator_to_array($this->findParentNodeAggregates($entryNodeAggregateId));
+        $queryBuilderInitial = $this->createQueryBuilder()
+            ->select('n.nodeAggregateId, ph.parentnodeanchor')
+            ->from($this->nodeQueryBuilder->tableNames->node(), 'n')
+            // we need to join with the hierarchy relation, because we need the node name.
+            ->innerJoin('n', $this->nodeQueryBuilder->tableNames->hierarchyRelation(), 'ch', 'ch.parentnodeanchor = n.relationanchorpoint')
+            ->innerJoin('ch', $this->nodeQueryBuilder->tableNames->node(), 'c', 'c.relationanchorpoint = ch.childnodeanchor')
+            ->innerJoin('n', $this->nodeQueryBuilder->tableNames->hierarchyRelation(), 'ph', 'n.relationanchorpoint = ph.childnodeanchor')
+            ->where('ch.contentstreamid = :contentStreamId')
+            ->andWhere('ph.contentstreamid = :contentStreamId')
+            ->andWhere('c.nodeaggregateid = :entryNodeAggregateId');
 
-        $ancestorNodeAggregateIds = [];
-        while ($stack !== []) {
-            $nodeAggregate = array_shift($stack);
-            $ancestorNodeAggregateIds[] = $nodeAggregate->nodeAggregateId;
-            array_push($stack, ...iterator_to_array($this->findParentNodeAggregates($nodeAggregate->nodeAggregateId)));
-        }
-        return NodeAggregateIds::fromArray($ancestorNodeAggregateIds);
+        $queryBuilderRecursive = $this->createQueryBuilder()
+            ->select('pn.nodeAggregateId, h.parentnodeanchor')
+            ->from('ancestry', 'cn')
+            ->innerJoin('cn', $this->nodeQueryBuilder->tableNames->node(), 'pn', 'pn.relationanchorpoint = cn.parentnodeanchor')
+            ->innerJoin('pn', $this->nodeQueryBuilder->tableNames->hierarchyRelation(), 'h', 'h.childnodeanchor = pn.relationanchorpoint')
+            ->where('h.contentstreamid = :contentStreamId');
+
+        $queryBuilderCte = $this->createQueryBuilder()
+            ->select('pn.nodeAggregateId')
+            ->orderBy('pn.parentnodeanchor', 'DESC')
+            ->from('ancestry', 'pn')
+            ->setParameter('contentStreamId', $this->contentStreamId->value)
+            ->setParameter('entryNodeAggregateId', $entryNodeAggregateId->value);
+
+        $nodeAggregateIdRows = $this->fetchCteResults(
+            $queryBuilderInitial,
+            $queryBuilderRecursive,
+            $queryBuilderCte,
+            'ancestry'
+        );
+
+        return NodeAggregateIds::fromArray(array_map(fn(array $row) => NodeAggregateId::fromString($row['nodeAggregateId']), $nodeAggregateIdRows));
     }
 
     public function findChildNodeAggregates(
@@ -349,6 +373,28 @@ final class ContentGraph implements ContentGraphInterface
             return $queryBuilder->executeQuery()->fetchAllAssociative();
         } catch (DBALException $e) {
             throw new \RuntimeException(sprintf('Failed to fetch rows from database: %s', $e->getMessage()), 1701444358, $e);
+        }
+    }
+
+    /**
+     * @return array<int, array<string, mixed>>
+     */
+    private function fetchCteResults(QueryBuilder $queryBuilderInitial, QueryBuilder $queryBuilderRecursive, QueryBuilder $queryBuilderCte, string $cteTableName = 'cte'): array
+    {
+        $query = <<<SQL
+            WITH RECURSIVE {$cteTableName} AS (
+                {$queryBuilderInitial->getSQL()}
+                UNION
+                {$queryBuilderRecursive->getSQL()}
+            )
+            {$queryBuilderCte->getSQL()}
+        SQL;
+        $parameters = array_merge($queryBuilderInitial->getParameters(), $queryBuilderRecursive->getParameters(), $queryBuilderCte->getParameters());
+        $parameterTypes = array_merge($queryBuilderInitial->getParameterTypes(), $queryBuilderRecursive->getParameterTypes(), $queryBuilderCte->getParameterTypes());
+        try {
+            return $this->dbal->fetchAllAssociative($query, $parameters, $parameterTypes);
+        } catch (DBALException $e) {
+            throw new \RuntimeException(sprintf('Failed to fetch CTE result: %s', $e->getMessage()), 1678358108, $e);
         }
     }
 
