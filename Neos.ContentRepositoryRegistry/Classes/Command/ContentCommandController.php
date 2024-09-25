@@ -15,10 +15,8 @@ namespace Neos\ContentRepositoryRegistry\Command;
 use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
-use Neos\ContentRepository\Core\Feature\DimensionSpaceAdjustment\Command\MoveDimensionSpacePoint;
 use Neos\ContentRepository\Core\Feature\NodeVariation\Command\CreateNodeVariant;
 use Neos\ContentRepository\Core\Feature\NodeVariation\Exception\DimensionSpacePointIsAlreadyOccupied;
-use Neos\ContentRepository\Core\Feature\RootNodeCreation\Command\UpdateRootNodeAggregateDimensions;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentSubgraphInterface;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindChildNodesFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindRootNodeAggregatesFilter;
@@ -36,89 +34,6 @@ final class ContentCommandController extends CommandController
         private readonly ContentRepositoryRegistry $contentRepositoryRegistry
     ) {
         parent::__construct();
-    }
-
-    /**
-     * Refreshes the root node dimensions in the specified content repository for the specified workspace.
-     *
-     * In the content repository, the root node has to cover all existing dimension space points.
-     * With this command, the root node can be updated such that it represents all configured dimensions
-     *
-     * @param string $contentRepository The content repository identifier. (Default: 'default')
-     * @param string $workspace The workspace name. (Default: 'live')
-     */
-    public function refreshRootNodeDimensionsCommand(string $contentRepository = 'default', string $workspace = WorkspaceName::WORKSPACE_NAME_LIVE): void
-    {
-        $contentRepositoryId = ContentRepositoryId::fromString($contentRepository);
-
-        $contentRepositoryInstance = $this->contentRepositoryRegistry->get($contentRepositoryId);
-        $workspaceInstance = $contentRepositoryInstance->getWorkspaceFinder()->findOneByName(WorkspaceName::fromString($workspace));
-        if ($workspaceInstance === null) {
-            $this->outputLine('<error>Workspace "%s" does not exist</error>', [$workspace]);
-            $this->quit(1);
-        }
-        $this->outputLine('Refreshing root node dimensions in workspace <b>%s</b> (content repository <b>%s</b>)', [$workspaceInstance->workspaceName->value, $contentRepositoryId->value]);
-        $this->outputLine('Resolved content stream <b>%s</b>', [$workspaceInstance->currentContentStreamId->value]);
-
-        $rootNodeAggregates = $contentRepositoryInstance->getContentGraph($workspaceInstance->workspaceName)->findRootNodeAggregates(
-            FindRootNodeAggregatesFilter::create()
-        );
-
-        foreach ($rootNodeAggregates as $rootNodeAggregate) {
-            $this->outputLine('Refreshing dimensions for root node aggregate %s (of type %s)', [
-                $rootNodeAggregate->nodeAggregateId->value,
-                $rootNodeAggregate->nodeTypeName->value
-            ]);
-            $contentRepositoryInstance->handle(
-                UpdateRootNodeAggregateDimensions::create(
-                    $workspaceInstance->workspaceName,
-                    $rootNodeAggregate->nodeAggregateId
-                )
-            );
-        }
-        $this->outputLine('<success>Done!</success>');
-    }
-
-    /**
-     * Moves a dimension space point from the source to the target in the specified workspace and content repository.
-     *
-     * With this command all nodes for a given content dimension can be moved to a different dimension. This can be necessary
-     * if a dimension configuration has been added or renamed.
-     *
-     * *Note:* source and target dimensions have to be specified as JSON, for example:
-     * ```
-     * ./flow content:movedimensionspacepoint '{"language": "de"}' '{"language": "en"}'
-     * ```
-     *
-     * @param string $source The JSON representation of the source dimension space point. (Example: '{"language": "de"}')
-     * @param string $target The JSON representation of the target dimension space point. (Example: '{"language": "en"}')
-     * @param string $contentRepository The content repository identifier. (Default: 'default')
-     * @param string $workspace The workspace name. (Default: 'live')
-     */
-    public function moveDimensionSpacePointCommand(string $source, string $target, string $contentRepository = 'default', string $workspace = WorkspaceName::WORKSPACE_NAME_LIVE): void
-    {
-        $contentRepositoryId = ContentRepositoryId::fromString($contentRepository);
-        $sourceDimensionSpacePoint = DimensionSpacePoint::fromJsonString($source);
-        $targetDimensionSpacePoint = DimensionSpacePoint::fromJsonString($target);
-
-        $contentRepositoryInstance = $this->contentRepositoryRegistry->get($contentRepositoryId);
-        $workspaceInstance = $contentRepositoryInstance->getWorkspaceFinder()->findOneByName(WorkspaceName::fromString($workspace));
-        if ($workspaceInstance === null) {
-            $this->outputLine('<error>Workspace "%s" does not exist</error>', [$workspace]);
-            $this->quit(1);
-        }
-
-        $this->outputLine('Moving <b>%s</b> to <b>%s</b> in workspace <b>%s</b> (content repository <b>%s</b>)', [$sourceDimensionSpacePoint->toJson(), $targetDimensionSpacePoint->toJson(), $workspaceInstance->workspaceName->value, $contentRepositoryId->value]);
-        $this->outputLine('Resolved content stream <b>%s</b>', [$workspaceInstance->currentContentStreamId->value]);
-
-        $contentRepositoryInstance->handle(
-            MoveDimensionSpacePoint::create(
-                $workspaceInstance->workspaceName,
-                $sourceDimensionSpacePoint,
-                $targetDimensionSpacePoint
-            )
-        );
-        $this->outputLine('<success>Done!</success>');
     }
 
     /**
