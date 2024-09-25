@@ -16,7 +16,6 @@ namespace Neos\ContentRepository\Core;
 
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphInterface;
 use Neos\ContentRepository\Core\Projection\ProjectionStateInterface;
-use Neos\ContentRepository\Core\SharedModel\Exception\ContentStreamDoesNotExistYet;
 use Neos\ContentRepository\Core\SharedModel\Exception\WorkspaceDoesNotExist;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
@@ -31,11 +30,6 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
  */
 final class ContentGraphFinder implements ProjectionStateInterface
 {
-    /**
-     * @var array<string, ContentGraphInterface>
-     */
-    private array $contentGraphInstances = [];
-
     public function __construct(
         private readonly ContentGraphFactoryInterface $contentGraphFactory
     ) {
@@ -50,22 +44,7 @@ final class ContentGraphFinder implements ProjectionStateInterface
      */
     public function getByWorkspaceName(WorkspaceName $workspaceName): ContentGraphInterface
     {
-        if (isset($this->contentGraphInstances[$workspaceName->value])) {
-            return $this->contentGraphInstances[$workspaceName->value];
-        }
-
-        $this->contentGraphInstances[$workspaceName->value] = $this->contentGraphFactory->buildForWorkspace($workspaceName);
-        return $this->contentGraphInstances[$workspaceName->value];
-    }
-
-   /**
-     * To release all held instances, in case a workspace/content stream relation needs to be reset
-     *
-     * @internal Should only be needed after write operations (which should take care on their own)
-     */
-    public function forgetInstances(): void
-    {
-        $this->contentGraphInstances = [];
+        return $this->contentGraphFactory->buildForWorkspace($workspaceName);
     }
 
     /**

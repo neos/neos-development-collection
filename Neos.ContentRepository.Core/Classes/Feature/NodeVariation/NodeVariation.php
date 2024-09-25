@@ -59,7 +59,7 @@ trait NodeVariation
         );
         // we do this check first, because it gives a more meaningful error message on what you need to do.
         // we cannot use sentences with "." because the UI will only print the 1st sentence :/
-        $this->requireNodeAggregateToNotBeRoot($nodeAggregate, 'and Root Node Aggregates cannot be varied; If this error happens, you most likely need to run ./flow content:refreshRootNodeDimensions to update the root node dimensions.');
+        $this->requireNodeAggregateToNotBeRoot($nodeAggregate, 'and Root Node Aggregates cannot be varied; If this error happens, you most likely need to run a node migration "UpdateRootNodeAggregateDimensions" to update the root node dimensions.');
         $this->requireDimensionSpacePointToExist($command->sourceOrigin->toDimensionSpacePoint());
         $this->requireDimensionSpacePointToExist($command->targetOrigin->toDimensionSpacePoint());
         $this->requireNodeAggregateToBeUntethered($nodeAggregate);

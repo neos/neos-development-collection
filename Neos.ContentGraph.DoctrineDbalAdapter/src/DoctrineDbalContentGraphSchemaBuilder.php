@@ -70,14 +70,15 @@ class DoctrineDbalContentGraphSchemaBuilder
             DbalSchemaFactory::columnForDimensionSpacePointHash('dimensionspacepointhash')->setNotnull(true),
             DbalSchemaFactory::columnForNodeAnchorPoint('parentnodeanchor'),
             DbalSchemaFactory::columnForNodeAnchorPoint('childnodeanchor'),
-            (new Column('subtreetags', self::type(Types::JSON)))->setDefault('{}'),
+            (new Column('subtreetags', self::type(Types::JSON))),
         ]);
 
         return $table
             ->addIndex(['childnodeanchor'])
             ->addIndex(['contentstreamid'])
             ->addIndex(['parentnodeanchor'])
-            ->addIndex(['contentstreamid', 'childnodeanchor', 'dimensionspacepointhash'])
+            ->addIndex(['childnodeanchor', 'contentstreamid', 'dimensionspacepointhash', 'position'])
+            ->addIndex(['parentnodeanchor', 'contentstreamid', 'dimensionspacepointhash', 'position'])
             ->addIndex(['contentstreamid', 'dimensionspacepointhash']);
     }
 

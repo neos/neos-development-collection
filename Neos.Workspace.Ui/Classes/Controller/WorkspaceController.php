@@ -685,7 +685,6 @@ class WorkspaceController extends AbstractModuleController
     /**
      * Builds an array of changes for sites in the given workspace
      * @return array<string,mixed>
-     * @throws \JsonException
      */
     protected function computeSiteChanges(Workspace $selectedWorkspace, ContentRepository $contentRepository): array
     {
