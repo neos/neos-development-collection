@@ -294,6 +294,18 @@ trait NodeTraversalTrait
     }
 
     /**
+     * @When /^I execute the findAncestorNodeAggregateIds query for entry node aggregate id "(?<entryNodeIdSerialized>[^"]*)" I expect (?:the nodes "(?<expectedNodeIdsSerialized>[^"]*)"|no nodes) to be returned$/
+     */
+    public function iExecuteTheFindAncestorNodeAggregateIdsQueryIExpectTheFollowingNodes(string $entryNodeIdSerialized, string $expectedNodeIdsSerialized = ''): void
+    {
+        $entryNodeAggregateId = NodeAggregateId::fromString($entryNodeIdSerialized);
+        $expectedNodeIds = array_filter(explode(',', $expectedNodeIdsSerialized));
+        $contentGraph = $this->currentContentRepository->getContentGraph($this->currentWorkspaceName);
+        $actualNodeIds = $contentGraph->findAncestorNodeAggregateIds($entryNodeAggregateId)->toStringArray();
+        Assert::assertSame($expectedNodeIds, $actualNodeIds, 'findAncestorNodeAggregateIds returned an unexpected result');
+    }
+
+    /**
      * @When /^I execute the findClosestNode query for entry node aggregate id "(?<entryNodeIdSerialized>[^"]*)"(?: and filter '(?<filterSerialized>[^']*)')? I expect (?:the node "(?<expectedNodeId>[^"]*)"|no node) to be returned?$/
      */
     public function iExecuteTheFindClosestNodeQueryIExpectTheFollowingNodes(string $entryNodeIdSerialized, string $filterSerialized = '', string $expectedNodeId = null): void
