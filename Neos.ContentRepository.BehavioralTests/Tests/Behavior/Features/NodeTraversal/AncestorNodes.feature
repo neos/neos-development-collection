@@ -66,6 +66,7 @@ Feature: Find and count nodes using the findAncestorNodes, countAncestorNodes an
       | a2a2            | a2a2     | Neos.ContentRepository.Testing:Page        | a2a                    | {}                    | {}                                       |
       | a2a2a           | a2a2a    | Neos.ContentRepository.Testing:Page        | a2a2                   | {}                    | {}                                       |
       | a2a2b           | a2a2b    | Neos.ContentRepository.Testing:Page        | a2a2                   | {}                    | {}                                       |
+      | a2a2c           | a2a2c    | Neos.ContentRepository.Testing:Page        | a2a2                   | {}                    | {}                                       |
       | a2b             | a2b      | Neos.ContentRepository.Testing:Page        | a2                     | {}                    | {}                                       |
       | a2b1            | a2b1     | Neos.ContentRepository.Testing:Page        | a2b                    | {}                    | {}                                       |
       | b               | b        | Neos.ContentRepository.Testing:Page        | home                   | {}                    | {}                                       |
@@ -77,7 +78,13 @@ Feature: Find and count nodes using the findAncestorNodes, countAncestorNodes an
       | Key                          | Value         |
       | nodeAggregateId              | "a2b"         |
       | nodeVariantSelectionStrategy | "allVariants" |
-
+    And the command MoveNodeAggregate is executed with payload:
+      | Key                          | Value                   |
+      | workspaceName                | "live"                  |
+      | dimensionSpacePoint          | {"language": "ch"}      |
+      | relationDistributionStrategy | "scatter"               |
+      | nodeAggregateId              | "a2a2c"                 |
+      | newParentNodeAggregateId     | "b"                     |
   Scenario:
     Subgraph queries
     # findAncestorNodes queries without results
@@ -91,6 +98,11 @@ Feature: Find and count nodes using the findAncestorNodes, countAncestorNodes an
     When I execute the findAncestorNodes query for entry node aggregate id "a2a2b" I expect the nodes "a2a2,a2a,a2,a,home,lady-eleonode-rootford" to be returned and the total count to be 6
     When I execute the findAncestorNodes query for entry node aggregate id "a2a2b" and filter '{"nodeTypes": "Neos.ContentRepository.Testing:Page"}' I expect the nodes "a2a2,a2,a" to be returned and the total count to be 3
 
+    # a2a2c lives in dimension space ch beneath b
+    When I execute the findAncestorNodes query for entry node aggregate id "a2a2c" I expect the nodes "a2a2,a2a,a2,a,home,lady-eleonode-rootford" to be returned
+    And I am in dimension space point {"language":"ch"}
+    When I execute the findAncestorNodes query for entry node aggregate id "a2a2c" I expect the nodes "b,home,lady-eleonode-rootford" to be returned
+
   Scenario:
     Contentgraph queries
     # findAncestorNodes queries without results
@@ -101,6 +113,7 @@ Feature: Find and count nodes using the findAncestorNodes, countAncestorNodes an
     When I execute the findAncestorNodeAggregateIds query for entry node aggregate id "a2a2a" I expect the nodes "a2a2,a2a,a2,a,home,lady-eleonode-rootford" to be returned
     # a2b is disabled
     When I execute the findAncestorNodeAggregateIds query for entry node aggregate id "a2b1" I expect the nodes "a2b,a2,a,home,lady-eleonode-rootford" to be returned
+    # a2a2c lives in dimension space ch beneath b
+    When I execute the findAncestorNodeAggregateIds query for entry node aggregate id "a2a2c" I expect the nodes "a2a2,b,a2a,home,a2,lady-eleonode-rootford,a" to be returned
 
-    # findAncestorNodes queries with results
     When I execute the findAncestorNodeAggregateIds query for entry node aggregate id "a2a2b" I expect the nodes "a2a2,a2a,a2,a,home,lady-eleonode-rootford" to be returned
