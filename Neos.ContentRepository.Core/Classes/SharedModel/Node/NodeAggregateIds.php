@@ -14,6 +14,7 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Core\SharedModel\Node;
 
+use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Nodes;
 
 /**
@@ -37,7 +38,7 @@ final class NodeAggregateIds implements \IteratorAggregate, \Countable, \JsonSer
 
     public static function createEmpty(): self
     {
-        return new self(...[]);
+        return new self();
     }
 
     public static function create(NodeAggregateId ...$nodeAggregateIds): self
@@ -69,7 +70,9 @@ final class NodeAggregateIds implements \IteratorAggregate, \Countable, \JsonSer
 
     public static function fromNodes(Nodes $nodes): self
     {
-        return $nodes->toNodeAggregateIds();
+        return self::fromArray($nodes->map(
+            fn (Node $node): NodeAggregateId => $node->aggregateId,
+        ));
     }
 
     public function merge(self $other): self

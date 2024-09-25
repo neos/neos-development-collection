@@ -220,8 +220,6 @@ final class Nodes implements \IteratorAggregate, \ArrayAccess, \Countable
 
     public function toNodeAggregateIds(): NodeAggregateIds
     {
-        return NodeAggregateIds::create(...$this->map(
-            fn (Node $node): NodeAggregateId => $node->aggregateId,
-        ));
+        return NodeAggregateIds::fromNodes($this);
     }
 }
