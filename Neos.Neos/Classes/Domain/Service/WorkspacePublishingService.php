@@ -41,6 +41,7 @@ use Neos\Neos\Domain\Model\DiscardingResult;
 use Neos\Neos\Domain\Model\PublishingResult;
 use Neos\Neos\PendingChangesProjection\Change;
 use Neos\Neos\PendingChangesProjection\ChangeFinder;
+use Neos\Neos\PendingChangesProjection\Changes;
 
 /**
  * Central authority for publishing/discarding workspace changes from Neos
@@ -55,13 +56,24 @@ final class WorkspacePublishingService
     ) {
     }
 
-    /** @internal experimental api, until actually used by the Neos.Ui */
+
+    /**
+     * @internal experimental api, until actually used by the Neos.Ui
+     */
+    public function pendingWorkspaceChanges(ContentRepositoryId $contentRepositoryId, WorkspaceName $workspaceName): Changes
+    {
+        $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryId);
+        return $this->pendingWorkspaceChangesInternal($contentRepository, $workspaceName);
+    }
+
+    /**
+     * @internal experimental api, until actually used by the Neos.Ui
+     */
     public function countPendingWorkspaceChanges(ContentRepositoryId $contentRepositoryId, WorkspaceName $workspaceName): int
     {
         $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryId);
-        return count($this->pendingWorkspaceChanges($contentRepository, $workspaceName));
+        return $this->countPendingWorkspaceChangesInternal($contentRepository, $workspaceName);
     }
-
 
     /**
      * @throws WorkspaceDoesNotExist | WorkspaceRebaseFailed
@@ -79,9 +91,9 @@ final class WorkspacePublishingService
         if ($crWorkspace->baseWorkspaceName === null) {
             throw new \InvalidArgumentException(sprintf('Failed to publish workspace "%s" because it has no base workspace', $workspaceName->value), 1717517124);
         }
-        $numberOfPendingChanges = $this->pendingWorkspaceChanges($contentRepository, $workspaceName);
+        $numberOfPendingChanges = $this->countPendingWorkspaceChangesInternal($contentRepository, $workspaceName);
         $this->contentRepositoryRegistry->get($contentRepositoryId)->handle(PublishWorkspace::create($workspaceName));
-        return new PublishingResult(count($numberOfPendingChanges), $crWorkspace->baseWorkspaceName);
+        return new PublishingResult($numberOfPendingChanges, $crWorkspace->baseWorkspaceName);
     }
 
     public function publishChangesInSite(ContentRepositoryId $contentRepositoryId, WorkspaceName $workspaceName, NodeAggregateId $siteId): PublishingResult
@@ -149,13 +161,11 @@ final class WorkspacePublishingService
         $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryId);
         $this->requireContentRepositoryWorkspace($contentRepository, $workspaceName);
 
-        $changesToBeDiscarded = $this->pendingWorkspaceChanges($contentRepository, $workspaceName);
+        $numberOfChangesToBeDiscarded = $this->countPendingWorkspaceChangesInternal($contentRepository, $workspaceName);
 
         $contentRepository->handle(DiscardWorkspace::create($workspaceName));
 
-        return new DiscardingResult(
-            count($changesToBeDiscarded)
-        );
+        return new DiscardingResult($numberOfChangesToBeDiscarded);
     }
 
     public function discardChangesInSite(ContentRepositoryId $contentRepositoryId, WorkspaceName $workspaceName, NodeAggregateId $siteId): DiscardingResult
@@ -314,7 +324,7 @@ final class WorkspacePublishingService
         NodeTypeName $ancestorNodeTypeName
     ): NodeIdsToPublishOrDiscard {
         $nodeIdsToPublishOrDiscard = [];
-        foreach ($this->pendingWorkspaceChanges($contentRepository, $workspaceName) as $change) {
+        foreach ($this->pendingWorkspaceChangesInternal($contentRepository, $workspaceName) as $change) {
             if (
                 !$this->isChangePublishableWithinAncestorScope(
                     $contentRepository,
@@ -336,16 +346,18 @@ final class WorkspacePublishingService
         return NodeIdsToPublishOrDiscard::create(...$nodeIdsToPublishOrDiscard);
     }
 
-    /**
-     * @return array<Change>
-     */
-    private function pendingWorkspaceChanges(ContentRepository $contentRepository, WorkspaceName $workspaceName): array
+    private function pendingWorkspaceChangesInternal(ContentRepository $contentRepository, WorkspaceName $workspaceName): Changes
     {
         $crWorkspace = $this->requireContentRepositoryWorkspace($contentRepository, $workspaceName);
-        /** @var ChangeFinder $changeFinder */
-        $changeFinder = $contentRepository->projectionState(ChangeFinder::class);
-        return $changeFinder->findByContentStreamId($crWorkspace->currentContentStreamId);
+        return $contentRepository->projectionState(ChangeFinder::class)->findByContentStreamId($crWorkspace->currentContentStreamId);
     }
+
+    private function countPendingWorkspaceChangesInternal(ContentRepository $contentRepository, WorkspaceName $workspaceName): int
+    {
+        $crWorkspace = $this->requireContentRepositoryWorkspace($contentRepository, $workspaceName);
+        return $contentRepository->projectionState(ChangeFinder::class)->countByContentStreamId($crWorkspace->currentContentStreamId);
+    }
+
 
     private function isChangePublishableWithinAncestorScope(
         ContentRepository $contentRepository,
