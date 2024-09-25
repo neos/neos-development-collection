@@ -16,7 +16,6 @@ namespace Neos\Neos\Domain\Service;
 
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Exception as DbalException;
-use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Command\CreateRootWorkspace;
 use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Command\CreateWorkspace;
@@ -38,8 +37,6 @@ use Neos\Neos\Domain\Model\WorkspacePermissions;
 use Neos\Neos\Domain\Model\WorkspaceRole;
 use Neos\Neos\Domain\Model\WorkspaceSubjectType;
 use Neos\Neos\Domain\Model\WorkspaceTitle;
-
-use function sprintf;
 
 /**
  * @api
@@ -104,10 +101,7 @@ final class WorkspaceService
         }
 
         if ($workspace->workspaceOwner !== null) {
-            $existingUserRole = $this->loadWorkspaceRoleOfUser($contentRepositoryId, $workspaceName, UserId::fromString($workspace->workspaceOwner), []);
-            if ($existingUserRole === WorkspaceRole::NONE) {
-                $this->addWorkspaceRole($contentRepositoryId, $workspaceName, WorkspaceSubjectType::USER, $workspace->workspaceOwner, WorkspaceRole::OWNER);
-            }
+            $this->addWorkspaceRole($contentRepositoryId, $workspaceName, WorkspaceSubjectType::USER, $workspace->workspaceOwner, WorkspaceRole::OWNER);
         }
     }
 
@@ -184,19 +178,18 @@ final class WorkspaceService
      */
     public function getWorkspacePermissionsForUser(ContentRepositoryId $contentRepositoryId, WorkspaceName $workspaceName, User $user): WorkspacePermissions
     {
-        try {
-            $userRoles = $this->userService->getAllRoles($user);
-        } catch (NoSuchRoleException $e) {
-            throw new \RuntimeException(sprintf('Failed to determine roles for user "%s", check your package dependencies: %s', $user->getId()->value, $e->getMessage()), 1727084881, $e);
+        if ($this->userService->currentUserIsAdministrator()) {
+            return WorkspacePermissions::create(
+                read: true,
+                write: true,
+                manage: true,
+            );
         }
-        $userIsAdmin = array_key_exists('Neos.Neos:Administrator', $userRoles);
-
-        $userWorkspaceRole = $this->loadWorkspaceRoleOfUser($contentRepositoryId, $workspaceName, $user->getId(), array_keys($userRoles));
-
+        $userWorkspaceRole = $this->loadWorkspaceRoleOfUser($contentRepositoryId, $workspaceName, $user);
         return WorkspacePermissions::create(
-            read: $userIsAdmin || $userWorkspaceRole->isAtLeast(WorkspaceRole::COLLABORATOR),
-            write: $userIsAdmin || $userWorkspaceRole->isAtLeast(WorkspaceRole::COLLABORATOR),
-            manage: $userIsAdmin || $userWorkspaceRole->isAtLeast(WorkspaceRole::MANAGER),
+            read: $userWorkspaceRole->isAtLeast(WorkspaceRole::COLLABORATOR),
+            write: $userWorkspaceRole->isAtLeast(WorkspaceRole::COLLABORATOR),
+            manage: $userWorkspaceRole->isAtLeast(WorkspaceRole::MANAGER),
         );
     }
 
@@ -334,8 +327,13 @@ final class WorkspaceService
     /**
      * @param array<string> $userRoles
      */
-    private function loadWorkspaceRoleOfUser(ContentRepositoryId $contentRepositoryId, WorkspaceName $workspaceName, UserId $userId, array $userRoles): WorkspaceRole
+    private function loadWorkspaceRoleOfUser(ContentRepositoryId $contentRepositoryId, WorkspaceName $workspaceName, User $user): WorkspaceRole
     {
+        try {
+            $userRoles = array_keys($this->userService->getAllRoles($user));
+        } catch (NoSuchRoleException $e) {
+            throw new \RuntimeException(sprintf('Failed to determine roles for user "%s", check your package dependencies: %s', $user->getId()->value, $e->getMessage()), 1727084881, $e);
+        }
         $table = self::TABLE_NAME_WORKSPACE_ROLE;
         $query = <<<SQL
             SELECT
@@ -345,7 +343,11 @@ final class WorkspaceService
             WHERE
                 content_repository_id = :contentRepositoryId
                 AND workspace_name = :workspaceName
-                AND subject IN (:subjects)
+                AND (
+                    (subject_type = :userSubjectType AND subject = :userId)
+                    OR
+                    (subject_type = :groupSubjectType AND subject IN (:groupSubjects))
+                )
             ORDER BY
                 CASE
                     WHEN role='OWNER' THEN 1
@@ -357,9 +359,12 @@ final class WorkspaceService
         $role = $this->dbal->fetchOne($query, [
             'contentRepositoryId' => $contentRepositoryId->value,
             'workspaceName' => $workspaceName->value,
-            'subjects' => ['user:' . $userId->value, ...array_map(static fn (string $role) => 'group:' . $role, $userRoles)],
+            'userSubjectType' => WorkspaceSubjectType::USER->name,
+            'userId' => $user->getId()->value,
+            'groupSubjectType' => WorkspaceSubjectType::GROUP->name,
+            'groupSubjects' => $userRoles,
         ], [
-            'subjects' => Connection::PARAM_STR_ARRAY,
+            'groupSubjects' => Connection::PARAM_STR_ARRAY,
         ]);
         if ($role === false) {
             return WorkspaceRole::NONE;

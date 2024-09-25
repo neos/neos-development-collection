@@ -9,15 +9,25 @@ namespace Neos\Neos\Domain\Model;
  *
  * @api
  */
-enum WorkspaceRole : int
+enum WorkspaceRole : string
 {
-    case NONE = 0;
-    case COLLABORATOR = 1;
-    case MANAGER = 2;
-    case OWNER = 3;
+    case NONE = 'NONE';
+    case COLLABORATOR = 'COLLABORATOR';
+    case MANAGER = 'MANAGER';
+    case OWNER = 'OWNER';
 
     public function isAtLeast(self $role): bool
     {
-        return $this->value >= $role->value;
+        return $this->specifity() >= $role->specifity();
+    }
+
+    private function specifity(): int
+    {
+        return match ($this) {
+            self::NONE => 0,
+            self::COLLABORATOR => 1,
+            self::MANAGER => 2,
+            self::OWNER => 3,
+        };
     }
 }
