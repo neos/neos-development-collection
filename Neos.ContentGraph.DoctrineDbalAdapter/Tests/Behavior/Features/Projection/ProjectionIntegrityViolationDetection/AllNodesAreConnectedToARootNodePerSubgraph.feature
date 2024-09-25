@@ -10,6 +10,9 @@ Feature: Run projection integrity violation detection regarding root connection
       | language   | de, gsw | gsw->de         |
     And using the following node types:
     """yaml
+    'Neos.ContentRepository.Testing:Root':
+      superTypes:
+        'Neos.ContentRepository:Root': true
     'Neos.ContentRepository.Testing:Document': []
     """
     And using identifier "default", I define a content repository
@@ -22,18 +25,16 @@ Feature: Run projection integrity violation detection regarding root connection
       | newContentStreamId   | "cs-identifier"      |
 
   Scenario: Create a cycle
-    When the event RootNodeAggregateWithNodeWasCreated was published with payload:
+    When the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key                         | Value                                     |
       | workspaceName               | "live"                                    |
-      | contentStreamId             | "cs-identifier"                           |
       | nodeAggregateId             | "lady-eleonode-rootford"                  |
-      | nodeTypeName                | "Neos.ContentRepository.Testing:Document" |
+      | nodeTypeName                | "Neos.ContentRepository.Testing:Root"     |
       | coveredDimensionSpacePoints | [{"language":"de"},{"language":"gsw"}]    |
       | nodeAggregateClassification | "root"                                    |
-    When the event NodeAggregateWithNodeWasCreated was published with payload:
+    When the command CreateNodeAggregateWithNode is executed with payload:
       | Key                         | Value                                     |
       | workspaceName               | "live"                                    |
-      | contentStreamId             | "cs-identifier"                           |
       | nodeAggregateId             | "sir-david-nodenborough"                  |
       | nodeTypeName                | "Neos.ContentRepository.Testing:Document" |
       | originDimensionSpacePoint   | {"language":"de"}                         |
@@ -41,10 +42,9 @@ Feature: Run projection integrity violation detection regarding root connection
       | parentNodeAggregateId       | "lady-eleonode-rootford"                  |
       | nodeName                    | "document"                                |
       | nodeAggregateClassification | "regular"                                 |
-    And the event NodeAggregateWithNodeWasCreated was published with payload:
+    When the command CreateNodeAggregateWithNode is executed with payload:
       | Key                         | Value                                     |
       | workspaceName               | "live"                                    |
-      | contentStreamId             | "cs-identifier"                           |
       | nodeAggregateId             | "nody-mc-nodeface"                        |
       | nodeTypeName                | "Neos.ContentRepository.Testing:Document" |
       | originDimensionSpacePoint   | {"language":"de"}                         |
