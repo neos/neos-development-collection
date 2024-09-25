@@ -324,9 +324,6 @@ final class WorkspaceService
         return $workspaceName === false ? null : WorkspaceName::fromString($workspaceName);
     }
 
-    /**
-     * @param array<string> $userRoles
-     */
     private function loadWorkspaceRoleOfUser(ContentRepositoryId $contentRepositoryId, WorkspaceName $workspaceName, User $user): WorkspaceRole
     {
         try {

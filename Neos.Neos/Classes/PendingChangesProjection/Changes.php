@@ -48,6 +48,9 @@ final readonly class Changes implements \IteratorAggregate, \Countable
     ) {
     }
 
+    /**
+     * @param list<Change> $changes
+     */
     public static function fromArray(array $changes): self
     {
         foreach ($changes as $change) {
