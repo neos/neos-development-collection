@@ -15,10 +15,10 @@ declare(strict_types=1);
 namespace Neos\Neos\Service;
 
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAddress;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\Annotations as Flow;
 use Neos\Fusion\Service\HtmlAugmenter as FusionHtmlAugmenter;
-use Neos\Neos\FrontendRouting\NodeAddressFactory;
 
 /**
  * The content element wrapping service adds the necessary markup around
@@ -62,10 +62,10 @@ class ContentElementWrappingService
         //}
 
 
-        $nodeAddress = NodeAddressFactory::create($contentRepository)->createFromNode($node);
+        $nodeAddress = NodeAddress::fromNode($node);
         $attributes = $additionalAttributes;
         $attributes['data-__neos-fusion-path'] = $fusionPath;
-        $attributes['data-__neos-node-contextpath'] = $nodeAddress->serializeForUri();
+        $attributes['data-__neos-node-contextpath'] = $nodeAddress->toJson();
 
         // Define all attribute names as exclusive via the `exclusiveAttributes` parameter, to prevent the data of
         // two different nodes to be concatenated into the attributes of a single html node.
