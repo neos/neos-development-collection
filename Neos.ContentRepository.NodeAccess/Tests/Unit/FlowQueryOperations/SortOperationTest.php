@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Neos\Neos\Tests\Unit\FlowQueryOperations;
+namespace Neos\ContentRepository\NodeAccess\Tests\Unit\FlowQueryOperations;
 
 use Neos\ContentRepository\NodeAccess\FlowQueryOperations\SortOperation;
 use Neos\Eel\FlowQuery\FlowQueryException;

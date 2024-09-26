@@ -46,7 +46,7 @@ class SortOperation extends AbstractOperation
     }
 
     /**
-     * First argument is the node property to sort by. To sort by time _creationDateTime, _lastModificationDateTime or _lastPublicationDateTime can be used.
+     * First argument is the node property to sort by.
      * Second argument is the sort direction (ASC or DESC).
      * Third optional argument are the sort options (see https://www.php.net/manual/en/function.sort):
      *  - 'SORT_REGULAR'
@@ -111,12 +111,7 @@ class SortOperation extends AbstractOperation
 
         // Determine the property value to sort by
         foreach ($nodes as $node) {
-            $propertyValue = match($sortProperty) {
-                '_creationDateTime' => $node->timestamps->created->getTimestamp(),
-                '_lastModificationDateTime' => $node->timestamps->lastModified?->getTimestamp(),
-                '_lastPublicationDateTime' => $node->timestamps->originalLastModified?->getTimestamp(),
-                default => $node->getProperty($sortProperty)
-            };
+            $propertyValue = $node->getProperty($sortProperty);
 
             $sortSequence[$node->aggregateId->value] = $propertyValue;
             $nodesByIdentifier[$node->aggregateId->value] = $node;

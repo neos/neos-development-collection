@@ -409,7 +409,7 @@ Feature: Tests for the "Neos.ContentRepository" Flow Query methods.
       sortByTitleAsc = ${q([a1a3, a1a4, a1a1, a1a2]).sort("title", "ASC").get()}
       sortByUriDesc = ${q([a1a3, a1a4, a1a1, a1a2]).sort("uriPathSegment", "DESC").get()}
       # todo find out how to test time related logic
-      sortByDateAsc = ${q([a1a1]).sort("_creationDateTime", "ASC").get()}
+      sortByDateAsc = ${q([a1a1]).sortByTimestamp("created", "ASC").get()}
       @process.render = Neos.Neos:Test.RenderNodesDataStructure
     }
     """
