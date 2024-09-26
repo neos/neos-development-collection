@@ -123,6 +123,7 @@ class SearchTermMatcherTest extends TestCase
         yield 'array with unmatched string' => ['hello', self::value(['hi'])];
         yield 'array key is not considered matching' => ['key', self::value(['key' => 'foo'])];
         yield 'nested array key is not considered matching' => ['key', self::value([['key' => 'foo']])];
+        yield 'array with null value' => ['foo', self::value([null])];
     }
 
     /**
