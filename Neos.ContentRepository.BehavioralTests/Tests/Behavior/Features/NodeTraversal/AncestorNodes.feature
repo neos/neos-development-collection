@@ -110,10 +110,10 @@ Feature: Find and count nodes using the findAncestorNodes, countAncestorNodes an
 
     # findAncestorNodes queries with results
     # a2a2a is disabled
-    When I execute the findAncestorNodeAggregateIds query for entry node aggregate id "a2a2a" I expect the nodes "a2a2,a2a,a2,a,home,lady-eleonode-rootford" to be returned
+    When I execute the findAncestorNodeAggregateIds query for entry node aggregate id "a2a2a" I expect the nodes "a2a2,a2a,a2,a,home,lady-eleonode-rootford" to be returned in any order
     # a2b is disabled
-    When I execute the findAncestorNodeAggregateIds query for entry node aggregate id "a2b1" I expect the nodes "a2b,a2,a,home,lady-eleonode-rootford" to be returned
+    When I execute the findAncestorNodeAggregateIds query for entry node aggregate id "a2b1" I expect the nodes "a2b,a2,a,home,lady-eleonode-rootford" to be returned in any order
     # a2a2c lives in dimension space ch beneath b
-    When I execute the findAncestorNodeAggregateIds query for entry node aggregate id "a2a2c" I expect the nodes "a2a2,a2a,a2,b,a,home,lady-eleonode-rootford" to be returned
+    When I execute the findAncestorNodeAggregateIds query for entry node aggregate id "a2a2c" I expect the nodes "a2a2,a2a,a2,b,a,home,lady-eleonode-rootford" to be returned in any order
 
-    When I execute the findAncestorNodeAggregateIds query for entry node aggregate id "a2a2b" I expect the nodes "a2a2,a2a,a2,a,home,lady-eleonode-rootford" to be returned
+    When I execute the findAncestorNodeAggregateIds query for entry node aggregate id "a2a2b" I expect the nodes "a2a2,a2a,a2,a,home,lady-eleonode-rootford" to be returned in any order

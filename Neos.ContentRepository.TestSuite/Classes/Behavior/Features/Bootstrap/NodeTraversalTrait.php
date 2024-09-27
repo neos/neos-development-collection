@@ -294,7 +294,7 @@ trait NodeTraversalTrait
     }
 
     /**
-     * @When /^I execute the findAncestorNodeAggregateIds query for entry node aggregate id "(?<entryNodeIdSerialized>[^"]*)" I expect (?:the nodes "(?<expectedNodeIdsSerialized>[^"]*)"|no nodes) to be returned$/
+     * @When /^I execute the findAncestorNodeAggregateIds query for entry node aggregate id "(?<entryNodeIdSerialized>[^"]*)" I expect (?:the nodes "(?<expectedNodeIdsSerialized>[^"]*)" to be returned in any order|no nodes to be returned)$/
      */
     public function iExecuteTheFindAncestorNodeAggregateIdsQueryIExpectTheFollowingNodes(string $entryNodeIdSerialized, string $expectedNodeIdsSerialized = ''): void
     {
@@ -302,7 +302,7 @@ trait NodeTraversalTrait
         $expectedNodeIds = array_filter(explode(',', $expectedNodeIdsSerialized));
         $contentGraph = $this->currentContentRepository->getContentGraph($this->currentWorkspaceName);
         $actualNodeIds = $contentGraph->findAncestorNodeAggregateIds($entryNodeAggregateId)->toStringArray();
-        Assert::assertSame($expectedNodeIds, $actualNodeIds, 'findAncestorNodeAggregateIds returned an unexpected result');
+        Assert::assertEqualsCanonicalizing($expectedNodeIds, $actualNodeIds, 'findAncestorNodeAggregateIds returned an unexpected result');
     }
 
     /**

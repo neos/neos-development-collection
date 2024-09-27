@@ -110,7 +110,7 @@ interface ContentGraphInterface extends ProjectionStateInterface
     ): NodeAggregates;
 
     /**
-     * @internal
+     * @internal the returned order of node aggregate ids is undefined and not to be relied upon
      */
     public function findAncestorNodeAggregateIds(
         NodeAggregateId $entryNodeAggregateId
