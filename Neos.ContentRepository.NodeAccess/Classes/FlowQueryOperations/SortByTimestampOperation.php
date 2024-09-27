@@ -20,7 +20,7 @@ use Neos\Eel\FlowQuery\FlowQueryException;
 use Neos\Eel\FlowQuery\Operations\AbstractOperation;
 
 /**
- * "sortByTimeStamp" operation working on ContentRepository nodes.
+ * "sortByTimestamp" operation working on ContentRepository nodes.
  * Sorts nodes by specified timestamp.
  */
 class SortByTimestampOperation extends AbstractOperation
