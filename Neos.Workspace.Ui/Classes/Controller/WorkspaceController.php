@@ -413,14 +413,11 @@ class WorkspaceController extends AbstractModuleController
         // todo legacy uri node address notation used. Should be refactored to use json encoded NodeAddress
         $targetNodeAddress = NodeAddressFactory::create($contentRepository)->createCoreNodeAddressFromLegacyUriString($targetNode);
 
-        /** @var ?Account $currentAccount */
-        $currentAccount = $this->securityContext->getAccount();
-        if ($currentAccount === null) {
+        $user = $this->userService->getCurrentUser();
+        if ($user === null) {
             throw new \RuntimeException('No account is authenticated', 1710068880);
         }
-        $personalWorkspaceName = WorkspaceNameBuilder::fromAccountIdentifier($currentAccount->getAccountIdentifier());
-        /** @var Workspace $personalWorkspace */
-        $personalWorkspace = $contentRepository->getWorkspaceFinder()->findOneByName($personalWorkspaceName);
+        $personalWorkspace = $this->workspaceService->getPersonalWorkspaceForUser($contentRepositoryId, $user->getId());
 
         /** @todo do something else
          * if ($personalWorkspace !== $targetWorkspace) {

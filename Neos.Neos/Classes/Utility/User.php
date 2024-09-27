@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace Neos\Neos\Utility;
 
+use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\Neos\Domain\Service\WorkspaceNameBuilder;
+use Neos\Neos\Domain\Service\WorkspaceService;
 
 /**
  * Utility functions for dealing with users in the Content Repository.
@@ -16,13 +18,20 @@ class User
     /**
      * Constructs a personal workspace name for the user with the given username.
      *
-     * @deprecated with Neos 9.0 please use {@see WorkspaceNameBuilder::fromAccountIdentifier} instead.
+     * @deprecated with Neos 9.0 please use {@see WorkspaceService::createPersonalWorkspaceForUserIfMissing()} instead.
      * @param string $username
      * @return string
      */
     public static function getPersonalWorkspaceNameForUsername($username): string
     {
-        return WorkspaceNameBuilder::fromAccountIdentifier($username)->value;
+        $name = preg_replace('/[^A-Za-z0-9\-]/', '-', 'user-' . $username);
+        if (is_null($name)) {
+            throw new \InvalidArgumentException(
+                'Cannot convert account identifier ' . $username . ' to workspace name.',
+                1645656253
+            );
+        }
+        return WorkspaceName::transliterateFromString($name)->value;
     }
 
     /**

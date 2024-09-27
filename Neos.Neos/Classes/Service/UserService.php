@@ -15,9 +15,7 @@ declare(strict_types=1);
 namespace Neos\Neos\Service;
 
 use Neos\Flow\Annotations as Flow;
-use Neos\Flow\Security\Account;
 use Neos\Neos\Domain\Model\User;
-use Neos\Neos\Utility\User as UserUtility;
 
 /**
  * The user service provides general context information about the currently
@@ -59,33 +57,6 @@ class UserService
     public function getBackendUser()
     {
         return $this->userDomainService->getCurrentUser();
-    }
-
-    /**
-     * Returns the name of the currently logged in user's personal workspace
-     * (even if that might not exist at that time).
-     * If no user is logged in this method returns null.
-     *
-     * @api
-     */
-    public function getPersonalWorkspaceName(): ?string
-    {
-        $currentUser = $this->userDomainService->getCurrentUser();
-
-        if (!$currentUser instanceof User) {
-            return null;
-        }
-        /** @var ?Account $currentAccount */
-        $currentAccount = $this->securityContext->getAccount();
-        if ($currentAccount === null) {
-            return null;
-        }
-
-        $username = $this->userDomainService->getUsername(
-            $currentUser,
-            $currentAccount->getAuthenticationProviderName()
-        );
-        return ($username === null ? null : UserUtility::getPersonalWorkspaceNameForUsername($username));
     }
 
     /**
