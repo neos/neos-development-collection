@@ -440,6 +440,21 @@ final class DocumentUriPathProjection implements ProjectionInterface, WithMarkSt
                 ->withOriginDimensionSpacePoint($targetOrigin)
                 ->withoutSiblings();
 
+            // check the parent in the "target" dimensionSpacePoint for the "URI prefix",
+            // may be different, see neos/neos-development-collection#5090
+            $parentNode = $this->tryGetNode(fn () => $this->getState()->getByIdAndDimensionSpacePointHash(
+                $sourceNode->getParentNodeAggregateId(),
+                $interdimensionalSibling->dimensionSpacePoint->hash
+            ));
+            if ($parentNode !== null) {
+                $uriPathSegment = basename($sourceNode->getUriPath());
+                $uriPath = $parentNode->getUriPath() === ''
+                    ? $uriPathSegment
+                    : $parentNode->getUriPath() . '/' . $uriPathSegment;
+
+                $targetNode = $targetNode->withUriPath($uriPath);
+            }
+
             $this->insertNode($targetNode->toArray());
             $this->connectNodeWithSiblings($targetNode, $targetNode->getParentNodeAggregateId(), $interdimensionalSibling->nodeAggregateId);
         }

@@ -71,6 +71,14 @@ final class DocumentNodeInfo
         return new self($source);
     }
 
+    public function withUriPath(string $uriPath): self
+    {
+        $source = $this->source;
+        $source['uripath'] = $uriPath;
+
+        return new self($source);
+    }
+
     public function withoutSiblings(): self
     {
         $source = $this->source;
