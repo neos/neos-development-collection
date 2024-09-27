@@ -371,8 +371,6 @@ class UserService
             $this->accountRepository->remove($account);
         }
 
-        $this->removeOwnerFromUsersWorkspaces($user);
-
         $this->partyRepository->remove($user);
         $this->emitUserDeleted($user);
     }
@@ -790,29 +788,6 @@ class UserService
                 );
             }
         }
-    }
-
-    /**
-     * Removes all personal workspaces of the given user's account if these workspaces exist. Also removes
-     * all possibly existing content of these workspaces.
-     *
-     * @param string $accountIdentifier Identifier of the user's account
-     * @return void
-     */
-    protected function deletePersonalWorkspace($accountIdentifier)
-    {
-        // TODO
-    }
-
-    /**
-     * Removes ownership of all workspaces currently owned by the given user
-     *
-     * @param User $user The user currently owning workspaces
-     * @return void
-     */
-    protected function removeOwnerFromUsersWorkspaces(User $user)
-    {
-        // TODO
     }
 
     /**
