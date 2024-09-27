@@ -26,4 +26,14 @@ final readonly class WorkspacePermissions
     ): self {
         return new self($read, $write, $manage);
     }
+
+    public static function all(): self
+    {
+        return new self(true, true, true);
+    }
+
+    public static function none(): self
+    {
+        return new self(false, false, false);
+    }
 }

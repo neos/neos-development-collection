@@ -14,6 +14,7 @@ declare(strict_types=1);
 
 namespace Neos\Neos\Domain\Service;
 
+use Doctrine\DBAL\ArrayParameterType;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Exception as DbalException;
 use Neos\ContentRepository\Core\ContentRepository;
@@ -80,32 +81,6 @@ final class WorkspaceService
     }
 
     /**
-     * Add missing metadata and owner role assignments for the specified workspace
-     *
-     * Note: This is mainly needed in order to migrate existing installations or fix the state if it was corrupted
-     */
-    public function synchronizeWorkspaceMetadataAndRoles(ContentRepositoryId $contentRepositoryId, WorkspaceName $workspaceName): void
-    {
-        $workspace = $this->requireWorkspace($contentRepositoryId, $workspaceName);
-        if ($workspace->baseWorkspaceName === null) {
-            $classification = WorkspaceClassification::ROOT;
-        } elseif ($workspace->workspaceOwner !== null && str_starts_with($workspaceName->value, 'user-')) {
-            $classification = WorkspaceClassification::PERSONAL;
-        } else {
-            $classification = WorkspaceClassification::SHARED;
-        }
-
-        $metadata = $this->loadWorkspaceMetadata($contentRepositoryId, $workspaceName);
-        if ($metadata === null) {
-            $this->addWorkspaceMetadata($contentRepositoryId, $workspaceName, WorkspaceTitle::fromString($workspace->workspaceTitle->value), WorkspaceDescription::fromString($workspace->workspaceDescription->value), $classification);
-        }
-
-        if ($workspace->workspaceOwner !== null) {
-            $this->addWorkspaceRole($contentRepositoryId, $workspaceName, WorkspaceSubjectType::USER, $workspace->workspaceOwner, WorkspaceRole::OWNER);
-        }
-    }
-
-    /**
      * Retrieve the currently active personal workspace for the specified $userId
      *
      * NOTE: Currently there can only ever be a single personal workspace per user. But this API already prepares support for multiple personal workspaces per user
@@ -134,7 +109,7 @@ final class WorkspaceService
                 ContentStreamId::create()
             )
         );
-        $this->addWorkspaceMetadata($contentRepositoryId, $workspaceName, $title, $description, WorkspaceClassification::ROOT);
+        $this->addWorkspaceMetadata($contentRepositoryId, $workspaceName, $title, $description, WorkspaceClassification::ROOT, null);
         return $workspaceName;
     }
 
@@ -174,22 +149,27 @@ final class WorkspaceService
     }
 
     /**
-     *
+     * Determines the permission the given user has for the specified workspace {@see WorkspacePermissions}
      */
     public function getWorkspacePermissionsForUser(ContentRepositoryId $contentRepositoryId, WorkspaceName $workspaceName, User $user): WorkspacePermissions
     {
-        if ($this->userService->currentUserIsAdministrator()) {
-            return WorkspacePermissions::create(
-                read: true,
-                write: true,
-                manage: true,
-            );
+        $userIsAdministrator = $this->userService->currentUserIsAdministrator();
+        $workspaceMetadata = $this->loadWorkspaceMetadata($contentRepositoryId, $workspaceName);
+        if ($workspaceMetadata === null) {
+            return WorkspacePermissions::create(false, false, $userIsAdministrator);
         }
+        if ($workspaceMetadata->ownerUserId !== null && $workspaceMetadata->ownerUserId->equals($user->getId())) {
+            return WorkspacePermissions::all();
+        }
+
         $userWorkspaceRole = $this->loadWorkspaceRoleOfUser($contentRepositoryId, $workspaceName, $user);
+        if ($userWorkspaceRole === null) {
+            return WorkspacePermissions::create(false, false, $userIsAdministrator);
+        }
         return WorkspacePermissions::create(
             read: $userWorkspaceRole->isAtLeast(WorkspaceRole::COLLABORATOR),
             write: $userWorkspaceRole->isAtLeast(WorkspaceRole::COLLABORATOR),
-            manage: $userWorkspaceRole->isAtLeast(WorkspaceRole::MANAGER),
+            manage: $userIsAdministrator || $userWorkspaceRole->isAtLeast(WorkspaceRole::MANAGER),
         );
     }
 
@@ -221,11 +201,13 @@ final class WorkspaceService
         assert(is_string($metadataRow['title']));
         assert(is_string($metadataRow['description']));
         assert(is_string($metadataRow['classification']));
+        assert(is_null($metadataRow['owner_user_id']) || is_string($metadataRow['owner_user_id']));
         return new WorkspaceMetadata(
             $workspaceName,
             WorkspaceTitle::fromString($metadataRow['title']),
             WorkspaceDescription::fromString($metadataRow['description']),
-            WorkspaceClassification::from($metadataRow['classification'])
+            WorkspaceClassification::from($metadataRow['classification']),
+            $metadataRow['owner_user_id'] !== null ? UserId::fromString($metadataRow['owner_user_id']) : null,
         );
     }
 
@@ -257,29 +239,11 @@ final class WorkspaceService
                 ContentStreamId::create()
             )
         );
-        if ($ownerId !== null) {
-            $this->addWorkspaceRole($contentRepositoryId, $workspaceName, WorkspaceSubjectType::USER, $ownerId->value, WorkspaceRole::OWNER);
-        }
-        $this->addWorkspaceMetadata($contentRepositoryId, $workspaceName, $title, $description, $classification);
+        $this->addWorkspaceMetadata($contentRepositoryId, $workspaceName, $title, $description, $classification, $ownerId);
         return $workspaceName;
     }
 
-    private function addWorkspaceRole(ContentRepositoryId $contentRepositoryId, WorkspaceName $workspaceName, WorkspaceSubjectType $subjectType, string $subject, WorkspaceRole $role): void
-    {
-        try {
-            $this->dbal->insert(self::TABLE_NAME_WORKSPACE_ROLE, [
-                'content_repository_id' => $contentRepositoryId->value,
-                'workspace_name' => $workspaceName->value,
-                'subject_type' => $subjectType->name,
-                'subject' => $subject,
-                'role' => $role->name,
-            ]);
-        } catch (DbalException $e) {
-            throw new \RuntimeException(sprintf('Failed to add role for subject "%s" in workspace "%s" (Content Repository "%s"): %s', $workspaceName->value, $subject, $contentRepositoryId->value, $e->getMessage()), 1727083752, $e);
-        }
-    }
-
-    private function addWorkspaceMetadata(ContentRepositoryId $contentRepositoryId, WorkspaceName $workspaceName, WorkspaceTitle $title, WorkspaceDescription $description, WorkspaceClassification $classification): void
+    private function addWorkspaceMetadata(ContentRepositoryId $contentRepositoryId, WorkspaceName $workspaceName, WorkspaceTitle $title, WorkspaceDescription $description, WorkspaceClassification $classification, UserId|null $ownerUserId): void
     {
         try {
             $this->dbal->insert(self::TABLE_NAME_WORKSPACE_METADATA, [
@@ -288,6 +252,7 @@ final class WorkspaceService
                 'title' => $title->value,
                 'description' => $description->value,
                 'classification' => $classification->name,
+                'owner_user_id' => $ownerUserId?->value,
             ]);
         } catch (DbalException $e) {
             throw new \RuntimeException(sprintf('Failed to add metadata for workspace "%s" (Content Repository "%s"): %s', $workspaceName->value, $contentRepositoryId->value, $e->getMessage()), 1727084068, $e);
@@ -296,47 +261,38 @@ final class WorkspaceService
 
     private function findPrimaryWorkspaceNameForUser(ContentRepositoryId $contentRepositoryId, UserId $userId): ?WorkspaceName
     {
-        $tableRole = self::TABLE_NAME_WORKSPACE_ROLE;
         $tableMetadata = self::TABLE_NAME_WORKSPACE_METADATA;
         $query = <<<SQL
             SELECT
-                r.workspace_name
+                workspace_name
             FROM
-                {$tableRole} r
-                JOIN {$tableMetadata} m ON (
-                    m.content_repository_id = r.content_repository_id
-                    AND m.workspace_name = r.workspace_name
-                    AND m.classification = :classification
-                )
+                {$tableMetadata}
             WHERE
-                r.content_repository_id = :contentRepositoryId
-                AND subject = :subject
-                AND subject_type = :subjectType
-                AND role = :ownerRole
+                content_repository_id = :contentRepositoryId
+                AND classification = :personalWorkspaceClassification
+                AND owner_user_id = :userId
         SQL;
         $workspaceName = $this->dbal->fetchOne($query, [
             'contentRepositoryId' => $contentRepositoryId->value,
-            'subject' => $userId->value,
-            'subjectType' => WorkspaceSubjectType::USER->name,
-            'ownerRole' => WorkspaceRole::OWNER->name,
-            'classification' => WorkspaceClassification::PERSONAL->name,
+            'personalWorkspaceClassification' => WorkspaceClassification::PERSONAL->name,
+            'userId' => $userId->value,
         ]);
         return $workspaceName === false ? null : WorkspaceName::fromString($workspaceName);
     }
 
-    private function loadWorkspaceRoleOfUser(ContentRepositoryId $contentRepositoryId, WorkspaceName $workspaceName, User $user): WorkspaceRole
+    private function loadWorkspaceRoleOfUser(ContentRepositoryId $contentRepositoryId, WorkspaceName $workspaceName, User $user): ?WorkspaceRole
     {
         try {
             $userRoles = array_keys($this->userService->getAllRoles($user));
         } catch (NoSuchRoleException $e) {
             throw new \RuntimeException(sprintf('Failed to determine roles for user "%s", check your package dependencies: %s', $user->getId()->value, $e->getMessage()), 1727084881, $e);
         }
-        $table = self::TABLE_NAME_WORKSPACE_ROLE;
+        $tableRole = self::TABLE_NAME_WORKSPACE_ROLE;
         $query = <<<SQL
             SELECT
                 role
             FROM
-                {$table}
+                {$tableRole}
             WHERE
                 content_repository_id = :contentRepositoryId
                 AND workspace_name = :workspaceName
@@ -347,9 +303,8 @@ final class WorkspaceService
                 )
             ORDER BY
                 CASE
-                    WHEN role='OWNER' THEN 1
-                    WHEN role='MANAGER' THEN 2
-                    WHEN role='COLLABORATOR' THEN 3
+                    WHEN role='MANAGER' THEN 1
+                    WHEN role='COLLABORATOR' THEN 2
                 END
             LIMIT 1
         SQL;
@@ -361,10 +316,10 @@ final class WorkspaceService
             'groupSubjectType' => WorkspaceSubjectType::GROUP->name,
             'groupSubjects' => $userRoles,
         ], [
-            'groupSubjects' => Connection::PARAM_STR_ARRAY,
+            'groupSubjects' => ArrayParameterType::STRING,
         ]);
         if ($role === false) {
-            return WorkspaceRole::NONE;
+            return null;
         }
         return WorkspaceRole::from($role);
     }

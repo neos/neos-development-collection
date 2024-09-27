@@ -6,15 +6,14 @@ namespace Neos\Neos\Domain\Model;
 
 /**
  * Role, a user can have in one workspace
+ * Note: "Owner" is not a role, owners implicitly always have all permissions
  *
  * @api
  */
 enum WorkspaceRole : string
 {
-    case NONE = 'NONE';
     case COLLABORATOR = 'COLLABORATOR';
     case MANAGER = 'MANAGER';
-    case OWNER = 'OWNER';
 
     public function isAtLeast(self $role): bool
     {
@@ -24,10 +23,8 @@ enum WorkspaceRole : string
     private function specifity(): int
     {
         return match ($this) {
-            self::NONE => 0,
             self::COLLABORATOR => 1,
             self::MANAGER => 2,
-            self::OWNER => 3,
         };
     }
 }

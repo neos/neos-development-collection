@@ -7,8 +7,8 @@ namespace Neos\Neos\Domain\Model;
 /**
  * @api
  */
-enum WorkspaceSubjectType
+enum WorkspaceSubjectType : string
 {
-    case USER;
-    case GROUP;
+    case USER = 'USER';
+    case GROUP = 'GROUP';
 }

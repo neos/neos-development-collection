@@ -18,6 +18,7 @@ final readonly class WorkspaceMetadata
         public WorkspaceTitle $title,
         public WorkspaceDescription $description,
         public WorkspaceClassification $classification,
+        public UserId|null $ownerUserId,
     ) {
     }
 
@@ -32,7 +33,8 @@ final readonly class WorkspaceMetadata
             $this->workspaceName,
             $title ?? $this->title,
             $description ?? $this->description,
-            $this->classification
+            $this->classification,
+            $this->ownerUserId,
         );
     }
 }
