@@ -4,14 +4,14 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\NodeAccess\Tests\Unit\FlowQueryOperations;
 
-use Neos\ContentRepository\NodeAccess\FlowQueryOperations\SortByTimeStampOperation;
+use Neos\ContentRepository\NodeAccess\FlowQueryOperations\SortByTimestampOperation;
 use Neos\Eel\FlowQuery\FlowQueryException;
 use PHPUnit\Framework\TestCase;
 
 /**
  * SortOperation test
  */
-class SortByTimeStampOperationTest extends TestCase
+class SortByTimestampOperationTest extends TestCase
 {
     /**
      * @test+
@@ -20,7 +20,7 @@ class SortByTimeStampOperationTest extends TestCase
     {
         $this->expectException(FlowQueryException::class);
         $flowQuery = new \Neos\Eel\FlowQuery\FlowQuery([]);
-        $operation = new SortByTimeStampOperation();
+        $operation = new SortByTimestampOperation();
         $operation->evaluate($flowQuery, []);
     }
 
@@ -31,7 +31,7 @@ class SortByTimeStampOperationTest extends TestCase
     {
         $this->expectException(FlowQueryException::class);
         $flowQuery = new \Neos\Eel\FlowQuery\FlowQuery([]);
-        $operation = new SortByTimeStampOperation();
+        $operation = new SortByTimestampOperation();
         $operation->evaluate($flowQuery, ['erstellt']);
     }
 
@@ -42,7 +42,7 @@ class SortByTimeStampOperationTest extends TestCase
     {
         $this->expectException(FlowQueryException::class);
         $flowQuery = new \Neos\Eel\FlowQuery\FlowQuery([]);
-        $operation = new SortByTimeStampOperation();
+        $operation = new SortByTimestampOperation();
         $operation->evaluate($flowQuery, ['created', 'FOO']);
     }
 }

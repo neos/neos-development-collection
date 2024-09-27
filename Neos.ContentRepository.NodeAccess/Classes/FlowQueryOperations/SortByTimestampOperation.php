@@ -23,7 +23,7 @@ use Neos\Eel\FlowQuery\Operations\AbstractOperation;
  * "sortByTimeStamp" operation working on ContentRepository nodes.
  * Sorts nodes by specified timestamp.
  */
-class SortByTimeStampOperation extends AbstractOperation
+class SortByTimestampOperation extends AbstractOperation
 {
     /**
      * {@inheritdoc}
