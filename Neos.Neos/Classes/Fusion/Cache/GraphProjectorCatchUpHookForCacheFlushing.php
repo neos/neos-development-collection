@@ -37,6 +37,7 @@ use Neos\ContentRepository\Core\Feature\WorkspacePublication\Event\WorkspaceWasP
 use Neos\ContentRepository\Core\Feature\WorkspaceRebase\Event\WorkspaceWasRebased;
 use Neos\ContentRepository\Core\Projection\CatchUpHookInterface;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate;
+use Neos\ContentRepository\Core\SharedModel\Exception\WorkspaceDoesNotExist;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateIds;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\EventStore\Model\EventEnvelope;
@@ -157,7 +158,11 @@ class GraphProjectorCatchUpHookForCacheFlushing implements CatchUpHookInterface
             // cleared, leading to presumably duplicate nodes in the UI.
             || $eventInstance instanceof NodeAggregateWasMoved
         ) {
-            $contentGraph = $this->contentRepository->getContentGraph($eventInstance->workspaceName);
+            try {
+                $contentGraph = $this->contentRepository->getContentGraph($eventInstance->workspaceName);
+            } catch (WorkspaceDoesNotExist) {
+                return;
+            }
             $nodeAggregate = $contentGraph->findNodeAggregateById(
                 $eventInstance->getNodeAggregateId()
             );
@@ -194,7 +199,11 @@ class GraphProjectorCatchUpHookForCacheFlushing implements CatchUpHookInterface
             && $eventInstance instanceof EmbedsNodeAggregateId
             && $eventInstance instanceof EmbedsWorkspaceName
         ) {
-            $contentGraph = $this->contentRepository->getContentGraph($eventInstance->getWorkspaceName());
+            try {
+                $contentGraph = $this->contentRepository->getContentGraph($eventInstance->getWorkspaceName());
+            } catch (WorkspaceDoesNotExist) {
+                return;
+            }
             $nodeAggregate = $contentGraph->findNodeAggregateById(
                 $eventInstance->getNodeAggregateId()
             );
