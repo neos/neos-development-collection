@@ -52,6 +52,7 @@ readonly class AssetUsageIndexingProcessor
             );
             if ($rootNodeAggregate === null) {
                 $this->dispatchMessage($callback, sprintf('    ERROR: %s', "Root node aggregate was not found."));
+                continue;
             }
             $rootNodeAggregateId = $rootNodeAggregate->nodeAggregateId;
 
