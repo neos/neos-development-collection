@@ -43,17 +43,17 @@ readonly class AssetUsageIndexingProcessor
             $workspace = array_shift($workspaces);
 
             $contentGraph = $contentRepository->getContentGraph($workspace->workspaceName);
+            $this->dispatchMessage($callback, sprintf('  Workspace: %s', $contentGraph->getWorkspaceName()->value));
+
             $dimensionSpacePoints = $variationGraph->getDimensionSpacePoints();
 
             $rootNodeAggregate = $contentGraph->findRootNodeAggregateByType(
                 $nodeTypeName
             );
             if ($rootNodeAggregate === null) {
-                throw new NodeAggregateCurrentlyDoesNotExist("RootNode aggregate not found");
+                $this->dispatchMessage($callback, sprintf('    ERROR: %s', "Root node aggregate was not found."));
             }
             $rootNodeAggregateId = $rootNodeAggregate->nodeAggregateId;
-
-            $this->dispatchMessage($callback, sprintf('  Workspace: %s', $contentGraph->getWorkspaceName()->value));
 
             foreach ($dimensionSpacePoints as $dimensionSpacePoint) {
                 $this->dispatchMessage($callback, sprintf('    DimensionSpacePoint: %s', $dimensionSpacePoint->toJson()));
@@ -68,7 +68,6 @@ readonly class AssetUsageIndexingProcessor
                         continue;
                     }
                     $this->assetUsageIndexingService->updateIndex($contentRepository->id, $childNode);
-
                     array_push($childNodes, ...iterator_to_array($subgraph->findChildNodes($childNode->aggregateId, FindChildNodesFilter::create())));
                 }
             }
