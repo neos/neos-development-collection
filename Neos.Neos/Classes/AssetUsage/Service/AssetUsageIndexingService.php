@@ -13,7 +13,6 @@ use Neos\ContentRepository\Core\Projection\Workspace\Workspace;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
 use Neos\ContentRepository\Core\SharedModel\Exception\WorkspaceDoesNotExist;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
-use Neos\ContentRepository\Core\SharedModel\Node\PropertyName;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\Persistence\Doctrine\PersistenceManager;
@@ -26,6 +25,15 @@ use Neos\Neos\AssetUsage\Dto\AssetIdAndOriginalAssetId;
 use Neos\Neos\AssetUsage\Dto\AssetIdsByProperty;
 use Neos\Utility\TypeHandling;
 
+/**
+ * The package stores the usage of an asset per node and property in a dimension space point. It only stores the usage
+ * in the highest/base workspace (usually "live") as long as there are no changes in the same property in a
+ * lower/dependent workspace (e.g. user workspace). This allows to get easily an answer to the following questions:
+ *
+ * 1. Which nodes do I need to edit, to remove all usages for a safe asset removal (Neos Asset Usage/Media Browser)
+ * 2. Which cache entries do I need to flush on a change to an asset (this requires an additional traversal over all
+ *    dependent workspaces).
+ */
 class AssetUsageIndexingService
 {
     /** @var array <string, string> */
@@ -55,9 +63,13 @@ class AssetUsageIndexingService
             return;
         }
 
+        // 1. Get all asset usages of given node.
         $assetIdsByPropertyOfNode = $this->getAssetIdsByProperty($nodeType, $node->properties);
+
+        // 2. Get all existing asset usages of ancestor workspaces.
         $assetUsagesInAncestorWorkspaces = $this->assetUsageRepository->findUsageForNodeInWorkspaces($contentRepositoryId, $node, $workspaceBases);
 
+        // 3a. Filter only asset usages of given node, which are NOT already in place in ancestor workspaces. This way we get new asset usages in this particular workspace.
         $propertiesAndAssetIdsNotExistingInAncestors = [];
         foreach ($assetIdsByPropertyOfNode as $propertyName => $assetIdAndOriginalAssetIds) {
             foreach ($assetIdAndOriginalAssetIds as $assetIdAndOriginalAssetId) {
@@ -66,6 +78,7 @@ class AssetUsageIndexingService
                         $assetUsage->assetId === $assetIdAndOriginalAssetId->assetId
                         && $assetUsage->propertyName === $propertyName
                     ) {
+                        // Found the asset usage in at least one ancestor workspace
                         continue 2;
                     }
                 }
@@ -74,10 +87,11 @@ class AssetUsageIndexingService
         }
         $assetIdsByPropertyNotExistingInAncestors = new AssetIdsByProperty($propertiesAndAssetIdsNotExistingInAncestors);
 
+        // 3b. Filter all asset usages, which are existing in ancestor workspaces, but not in current workspace anymore (e.g. asset removed from property).
         $removedPropertiesAndAssetIds = [];
         foreach ($assetUsagesInAncestorWorkspaces as $assetUsage) {
             $assetUsageFound = false;
-            $assetIds = [];
+            $removedAssetIds = [];
             foreach ($assetIdsByPropertyOfNode as $property => $assetIdAndOriginalAssetIds) {
                 if ($assetUsage->propertyName === $property) {
                     foreach ($assetIdAndOriginalAssetIds as $assetIdAndOriginalAssetId) {
@@ -88,26 +102,29 @@ class AssetUsageIndexingService
                             continue 2;
                         }
                     }
-                    $assetIds[] = $assetUsage->assetId;
+                    // No matching asset usage for the property found in the given node, but are existing in the ancestor workspaces.
+                    $removedAssetIds[] = $assetUsage->assetId;
                 }
             }
+            // No asset usage for the property found in the given node, but are existing in the ancestor workspaces.
             if (!$assetUsageFound) {
-                $assetIds[] = $assetUsage->assetId;
+                $removedAssetIds[] = $assetUsage->assetId;
             }
             $removedPropertiesAndAssetIds[$assetUsage->propertyName] = array_map(
                 fn ($removedAssetIds) => new AssetIdAndOriginalAssetId($removedAssetIds, $this->findOriginalAssetId($removedAssetIds)),
-                $assetIds
+                $removedAssetIds
             );
         }
         $removedAssetIdsByProperty = new AssetIdsByProperty($removedPropertiesAndAssetIds);
 
-
-        // TODO: TEST something is changed in child workspace ... and afterwards changed in a workspace between
-
+        // 4. Actual execution to the index
+        // 4a. Handle new asset usages
         foreach ($assetIdsByPropertyNotExistingInAncestors as $propertyName => $assetIdAndOriginalAssetIds) {
             /** @var AssetIdAndOriginalAssetId $assetIdAndOriginalAssetId */
             foreach ($assetIdAndOriginalAssetIds as $assetIdAndOriginalAssetId) {
+                // Add usage to current workspace.
                 $this->assetUsageRepository->addUsagesForNodeWithAssetOnProperty($contentRepositoryId, $node, $propertyName, $assetIdAndOriginalAssetId->assetId, $assetIdAndOriginalAssetId->originalAssetId);
+                // Cleanup: Remove asset usage on all dependent workspaces.
                 $this->assetUsageRepository->removeAssetUsagesForNodeAggregateIdAndDimensionSpacePointWithAssetOnPropertyInWorkspaces(
                     $contentRepositoryId,
                     $node->aggregateId,
@@ -116,8 +133,10 @@ class AssetUsageIndexingService
                     $assetIdAndOriginalAssetId->assetId,
                     $workspaceDependents
                 );
+                // => During publish the asset usage moves from dependent workspace to base workspace.
             }
         }
+        // 4b. Handle removed asset usages
         foreach ($removedAssetIdsByProperty as $propertyName => $assetIdAndOriginalAssetIds) {
             /** @var AssetIdAndOriginalAssetId $assetIdAndOriginalAssetId */
             foreach ($assetIdAndOriginalAssetIds as $assetIdAndOriginalAssetId) {

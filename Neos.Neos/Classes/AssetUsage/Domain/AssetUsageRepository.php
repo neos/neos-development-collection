@@ -237,21 +237,8 @@ final class AssetUsageRepository
         ]);
     }
 
-    public function remove(AssetUsage $usage): void
-    {
-        $this->dbal->delete(self::TABLE, [
-            'contentrepositoryid' => $usage->contentRepositoryId->value,
-            'assetid' => $usage->assetId,
-            'workspacename' => $usage->workspaceName->value,
-            'nodeaggregateid' => $usage->nodeAggregateId->value,
-            'origindimensionspacepointhash' => $usage->originDimensionSpacePoint->hash,
-            'propertyname' => $usage->propertyName,
-        ]);
-    }
-
     public function removeAsset(ContentRepositoryId $contentRepositoryId, string $assetId): void
     {
-        // TODO: What about OriginalAssetId?
         $this->dbal->delete(self::TABLE, [
             'contentrepositoryid' => $contentRepositoryId->value,
             'assetId' => $assetId,

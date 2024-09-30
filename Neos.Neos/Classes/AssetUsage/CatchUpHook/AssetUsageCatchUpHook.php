@@ -8,7 +8,6 @@ use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Core\EventStore\EventInterface;
-use Neos\ContentRepository\Core\Feature\Common\EmbedsContentStreamAndNodeAggregateId;
 use Neos\ContentRepository\Core\Feature\Common\EmbedsContentStreamId;
 use Neos\ContentRepository\Core\Feature\Common\EmbedsWorkspaceName;
 use Neos\ContentRepository\Core\Feature\DimensionSpaceAdjustment\Event\DimensionSpacePointWasMoved;
@@ -35,28 +34,11 @@ use Neos\Neos\AssetUsage\Service\AssetUsageIndexingService;
  */
 class AssetUsageCatchUpHook implements CatchUpHookInterface
 {
-    private static bool $enabled = true;
-
 
     public function __construct(
         private readonly ContentRepository $contentRepository,
         private readonly AssetUsageIndexingService $assetUsageIndexingService
     ) {
-    }
-
-    public function canHandle(EventInterface $event): bool
-    {
-        return in_array($event::class, [
-            DimensionSpacePointWasMoved::class,
-            NodeAggregateWasRemoved::class,
-            NodeAggregateWithNodeWasCreated::class,
-            NodeGeneralizationVariantWasCreated::class,
-            NodeSpecializationVariantWasCreated::class,
-            NodePeerVariantWasCreated::class,
-            NodePropertiesWereSet::class,
-            WorkspaceWasDiscarded::class,
-            WorkspaceWasPartiallyDiscarded::class
-        ]);
     }
 
     public function onBeforeCatchUp(): void
@@ -65,15 +47,10 @@ class AssetUsageCatchUpHook implements CatchUpHookInterface
 
     public function onBeforeEvent(EventInterface $eventInstance, EventEnvelope $eventEnvelope): void
     {
-        if (!self::$enabled) {
-            // performance optimization: on full replay, we assume all caches to be flushed anyways
-            // - so we do not need to do it individually here.
-            return;
-        }
-
         if (
             $eventInstance instanceof EmbedsWorkspaceName
             && $eventInstance instanceof EmbedsContentStreamId
+            // Safeguard for temporary content streams beeing created during partial publish -> We want to skip these events, because their workspace doesn't match current contentstream.
             && !$this->contentRepository->getWorkspaceFinder()->findOneByCurrentContentStreamId($eventInstance->getContentStreamId())?->workspaceName->equals($eventInstance->getWorkspaceName())
         ) {
             return;
@@ -88,15 +65,10 @@ class AssetUsageCatchUpHook implements CatchUpHookInterface
 
     public function onAfterEvent(EventInterface $eventInstance, EventEnvelope $eventEnvelope): void
     {
-        if (!self::$enabled) {
-            // performance optimization: on full replay, we assume all caches to be flushed anyways
-            // - so we do not need to do it individually here.
-            return;
-        }
-
         if (
             $eventInstance instanceof EmbedsWorkspaceName
             && $eventInstance instanceof EmbedsContentStreamId
+            // Safeguard for temporary content streams beeing created during partial publish -> We want to skip these events, because their workspace doesn't match current contentstream.
             && !$this->contentRepository->getWorkspaceFinder()->findOneByCurrentContentStreamId($eventInstance->getContentStreamId())?->workspaceName->equals($eventInstance->getWorkspaceName())
         ) {
             return;
