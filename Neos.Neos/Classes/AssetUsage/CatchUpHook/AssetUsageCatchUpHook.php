@@ -34,7 +34,6 @@ use Neos\Neos\AssetUsage\Service\AssetUsageIndexingService;
  */
 class AssetUsageCatchUpHook implements CatchUpHookInterface
 {
-
     public function __construct(
         private readonly ContentRepository $contentRepository,
         private readonly AssetUsageIndexingService $assetUsageIndexingService
