@@ -50,7 +50,7 @@ class AssetUsageCatchUpHook implements CatchUpHookInterface
         if (
             $eventInstance instanceof EmbedsWorkspaceName
             && $eventInstance instanceof EmbedsContentStreamId
-            // Safeguard for temporary content streams beeing created during partial publish -> We want to skip these events, because their workspace doesn't match current contentstream.
+            // Safeguard for temporary content streams created during partial publish -> We want to skip these events, because their workspace doesn't match current contentstream.
             && !$this->contentRepository->getWorkspaceFinder()->findOneByCurrentContentStreamId($eventInstance->getContentStreamId())?->workspaceName->equals($eventInstance->getWorkspaceName())
         ) {
             return;
@@ -68,7 +68,7 @@ class AssetUsageCatchUpHook implements CatchUpHookInterface
         if (
             $eventInstance instanceof EmbedsWorkspaceName
             && $eventInstance instanceof EmbedsContentStreamId
-            // Safeguard for temporary content streams beeing created during partial publish -> We want to skip these events, because their workspace doesn't match current contentstream.
+            // Safeguard for temporary content streams created during partial publish -> We want to skip these events, because their workspace doesn't match current contentstream.
             && !$this->contentRepository->getWorkspaceFinder()->findOneByCurrentContentStreamId($eventInstance->getContentStreamId())?->workspaceName->equals($eventInstance->getWorkspaceName())
         ) {
             return;
