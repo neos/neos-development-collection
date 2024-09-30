@@ -192,14 +192,11 @@ final class ContentGraph implements ContentGraphInterface
     public function findAncestorNodeAggregateIds(NodeAggregateId $entryNodeAggregateId): NodeAggregateIds
     {
         $queryBuilderInitial = $this->createQueryBuilder()
-            ->select('n.nodeAggregateId, ph.parentnodeanchor')
+            ->select('n.nodeAggregateId, ch.parentnodeanchor')
             ->from($this->nodeQueryBuilder->tableNames->node(), 'n')
-            // we need to join with the hierarchy relation, because we need the node name.
             ->innerJoin('n', $this->nodeQueryBuilder->tableNames->hierarchyRelation(), 'ch', 'ch.parentnodeanchor = n.relationanchorpoint')
             ->innerJoin('ch', $this->nodeQueryBuilder->tableNames->node(), 'c', 'c.relationanchorpoint = ch.childnodeanchor')
-            ->innerJoin('n', $this->nodeQueryBuilder->tableNames->hierarchyRelation(), 'ph', 'n.relationanchorpoint = ph.childnodeanchor')
             ->where('ch.contentstreamid = :contentStreamId')
-            ->andWhere('ph.contentstreamid = :contentStreamId')
             ->andWhere('c.nodeaggregateid = :entryNodeAggregateId');
 
         $queryBuilderRecursive = $this->createQueryBuilder()
