@@ -135,7 +135,7 @@ trait GenericCommandExecutionAndEventPublication
         /** @var EventPersister $eventPersister */
         $eventPersister = (new \ReflectionClass($this->currentContentRepository))->getProperty('eventPersister')
             ->getValue($this->currentContentRepository);
-        /** @var EventNormalizer $eventPersister */
+        /** @var EventNormalizer $eventNormalizer */
         $eventNormalizer = (new \ReflectionClass($eventPersister))->getProperty('eventNormalizer')
             ->getValue($eventPersister);
         $event = $eventNormalizer->denormalize($artificiallyConstructedEvent);

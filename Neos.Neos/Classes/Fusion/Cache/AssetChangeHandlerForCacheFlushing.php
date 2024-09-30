@@ -60,7 +60,8 @@ class AssetChangeHandlerForCacheFlushing
                 }
                 //
 
-                $nodeAggregate = $contentRepository->getContentGraph($workspaceName)->findNodeAggregateById($usage->nodeAggregateId);
+                $contentGraph = $contentRepository->getContentGraph($workspaceName);
+                $nodeAggregate = $contentGraph->findNodeAggregateById($usage->nodeAggregateId);
                 if ($nodeAggregate === null) {
                     continue;
                 }
@@ -69,30 +70,11 @@ class AssetChangeHandlerForCacheFlushing
                     $workspaceName,
                     $nodeAggregate->nodeAggregateId,
                     $nodeAggregate->nodeTypeName,
-                    $this->determineAncestorNodeAggregateIds($contentRepository, $workspaceName, $nodeAggregate->nodeAggregateId),
+                    $contentGraph->findAncestorNodeAggregateIds($nodeAggregate->nodeAggregateId),
                 );
 
                 $this->contentCacheFlusher->flushNodeAggregate($flushNodeAggregateRequest, CacheFlushingStrategy::ON_SHUTDOWN);
             }
         }
-    }
-
-    private function determineAncestorNodeAggregateIds(ContentRepository $contentRepository, WorkspaceName $workspaceName, NodeAggregateId $childNodeAggregateId): NodeAggregateIds
-    {
-        $contentGraph = $contentRepository->getContentGraph($workspaceName);
-        $stack = iterator_to_array($contentGraph->findParentNodeAggregates($childNodeAggregateId));
-
-        $ancestorNodeAggregateIds = [];
-        while ($stack !== []) {
-            $nodeAggregate = array_shift($stack);
-
-            // Prevent infinite loops
-            if (!in_array($nodeAggregate->nodeAggregateId, $ancestorNodeAggregateIds, false)) {
-                $ancestorNodeAggregateIds[] = $nodeAggregate->nodeAggregateId;
-                array_push($stack, ...iterator_to_array($contentGraph->findParentNodeAggregates($nodeAggregate->nodeAggregateId)));
-            }
-        }
-
-        return NodeAggregateIds::fromArray($ancestorNodeAggregateIds);
     }
 }

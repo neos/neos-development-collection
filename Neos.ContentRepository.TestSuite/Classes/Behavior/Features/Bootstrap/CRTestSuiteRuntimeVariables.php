@@ -125,9 +125,7 @@ trait CRTestSuiteRuntimeVariables
 
     public function getCurrentSubgraph(): ContentSubgraphInterface
     {
-        $contentGraphFinder = $this->currentContentRepository->projectionState(ContentGraphFinder::class);
-
-        return $contentGraphFinder->getByWorkspaceName($this->currentWorkspaceName)->getSubgraph(
+        return $this->currentContentRepository->getContentGraph($this->currentWorkspaceName)->getSubgraph(
             $this->currentDimensionSpacePoint,
             $this->currentVisibilityConstraints
         );
