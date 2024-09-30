@@ -6,6 +6,7 @@ namespace Neos\ContentRepositoryRegistry\Command;
 
 use Doctrine\DBAL\Connection;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
+use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\ContentRepositoryRegistry\Service\EventMigrationServiceFactory;
 use Neos\Flow\Cli\CommandController;
@@ -42,51 +43,63 @@ class MigrateEventsCommandController extends CommandController
             $this->outputLine('No workspaces found.');
             $this->quit();
         }
-        foreach ($workspaces as $workspace) {
+
+        $workspaceTableName = "cr_{$contentRepositoryId->value}_p_workspace";
+
+        $workspaceRows = $this->dbal->fetchAllAssociative(<<<SQL
+            SELECT * FROM $workspaceTableName
+        SQL);
+        foreach ($workspaceRows as $workspaceRow) {
+            $workspaceName = WorkspaceName::fromString($workspaceRow['workspacename']);
+            $baseWorkspaceName = isset($workspaceRow['baseworkspacename']) ? WorkspaceName::fromString($workspaceRow['baseworkspacename']) : null;
+            $workspaceOwner = $workspaceRow['workspaceowner'] ?? null;
+            $isPersonalWorkspace = str_starts_with($workspaceName->value, 'user-');
+            $isPrivateWorkspace = $workspaceOwner !== null && !$isPersonalWorkspace;
+            $isInternalWorkspace = $baseWorkspaceName !== null && $workspaceOwner === null;
             try {
-                $this->workspaceService->getWorkspaceMetadata($contentRepositoryId, $workspace->workspaceName);
+                $this->workspaceService->getWorkspaceMetadata($contentRepositoryId, $workspaceName);
             } catch (\Exception $e) {
-                if ($workspace->baseWorkspaceName === null) {
+                if ($baseWorkspaceName === null) {
                     $classification = WorkspaceClassification::ROOT;
-                } elseif ($workspace->isPersonalWorkspace()) {
+                } elseif ($isPersonalWorkspace) {
                     $classification = WorkspaceClassification::PERSONAL;
                 } else {
                     $classification = WorkspaceClassification::SHARED;
                 }
                 $this->dbal->insert('neos_neos_workspace_metadata', [
                     'content_repository_id' => $contentRepositoryId->value,
-                    'workspace_name' => $workspace->workspaceName->value,
-                    'title' => $workspace->workspaceTitle->value,
-                    'description' => $workspace->workspaceDescription->value,
+                    'workspace_name' => $workspaceName->value,
+                    'title' => $workspaceRow['workspacetitle'] ?? '',
+                    'description' => $workspaceRow['workspacedescription'] ?? '',
                     'classification' => $classification->value,
-                    'owner_user_id' => $workspace->isPersonalWorkspace() ? $workspace->workspaceOwner : null,
+                    'owner_user_id' => $isPersonalWorkspace ? $workspaceOwner : null,
                 ]);
-                if ($workspace->workspaceName->isLive()) {
+                if ($workspaceName->isLive()) {
                     $this->dbal->insert('neos_neos_workspace_role', [
                         'content_repository_id' => $contentRepositoryId->value,
-                        'workspace_name' => $workspace->workspaceName->value,
+                        'workspace_name' => $workspaceName->value,
                         'subject_type' => WorkspaceSubjectType::GROUP->value,
                         'subject' => 'Neos.Neos:LivePublisher',
                         'role' => WorkspaceRole::COLLABORATOR->value,
                     ]);
-                } elseif ($workspace->isInternalWorkspace()) {
+                } elseif ($isInternalWorkspace) {
                     $this->dbal->insert('neos_neos_workspace_role', [
                         'content_repository_id' => $contentRepositoryId->value,
-                        'workspace_name' => $workspace->workspaceName->value,
+                        'workspace_name' => $workspaceName->value,
                         'subject_type' => WorkspaceSubjectType::GROUP->value,
                         'subject' => 'Neos.Neos:AbstractEditor',
                         'role' => WorkspaceRole::COLLABORATOR->value,
                     ]);
-                } elseif ($workspace->isPrivateWorkspace()) {
+                } elseif ($isPrivateWorkspace) {
                     $this->dbal->insert('neos_neos_workspace_role', [
                         'content_repository_id' => $contentRepositoryId->value,
-                        'workspace_name' => $workspace->workspaceName->value,
+                        'workspace_name' => $workspaceName->value,
                         'subject_type' => WorkspaceSubjectType::USER->value,
-                        'subject' => $workspace->workspaceOwner,
+                        'subject' => $workspaceOwner,
                         'role' => WorkspaceRole::COLLABORATOR->value,
                     ]);
                 }
-                $this->outputLine('Added metadata for workspace "%s"', [$workspace->workspaceName->value]);
+                $this->outputLine('Added metadata for workspace "%s"', [$workspaceName->value]);
             }
         }
         $this->outputLine('Done.');
