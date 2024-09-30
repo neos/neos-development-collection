@@ -28,6 +28,10 @@ use Neos\EventStore\EventStoreInterface;
 use Neos\EventStore\Model\Event\SequenceNumber;
 use Neos\EventStore\Model\EventEnvelope;
 use Neos\EventStore\Model\EventStream\VirtualStreamName;
+use Neos\Neos\Domain\Model\WorkspaceClassification;
+use Neos\Neos\Domain\Model\WorkspaceRole;
+use Neos\Neos\Domain\Model\WorkspaceSubjectType;
+use Neos\Neos\Domain\Service\WorkspaceService;
 
 /**
  * Content Repository service to perform migrations of events.
@@ -46,6 +50,7 @@ final class EventMigrationService implements ContentRepositoryServiceInterface
         private readonly ContentRepositoryId $contentRepositoryId,
         private readonly EventStoreInterface $eventStore,
         private readonly Connection $connection,
+        private readonly WorkspaceService $workspaceService,
     ) {
     }
 
@@ -467,6 +472,171 @@ final class EventMigrationService implements ContentRepositoryServiceInterface
         $outputFn(sprintf('Migration applied to %s events and changed the sourceWorkspaceName.', $sourceWorkspaceAffectedRows));
         $outputFn(sprintf('Migration applied to %s events and changed the targetWorkspaceName.', $targetWorkspaceAffectedRows));
         $outputFn(sprintf('You need to replay your projection for workspaces. Please run: ./flow cr:projectionreplay --projection=workspace'));
+    }
+
+    /**
+     * Migrates initial metadata & roles from the CR core workspaces to the corresponding Neos database tables
+     *
+     * Needed to extract these information to Neos.Neos: https://github.com/neos/neos-development-collection/issues/4726
+     *
+     * Included in September 2024 - before final Neos 9.0 release
+     *
+     * @param \Closure $outputFn
+     * @return void
+     */
+    public function migrateWorkspaceMetadataToWorkspaceService(\Closure $outputFn): void
+    {
+        $numberOfHandledWorkspaceEvents = 0;
+
+        $workspaces = [];
+        // building up the state. Mimic how the legacy WorkspaceProjection handles the events and builds up the state.
+        foreach ($this->eventStore->load(VirtualStreamName::all()) as $eventEnvelope) {
+            $eventType = $eventEnvelope->event->type->value;
+
+            switch ($eventType) {
+                case 'RootWorkspaceWasCreated':
+                    $eventData = self::decodeEventPayload($eventEnvelope);
+                    if (!isset($eventData['workspaceTitle'])) {
+                        // without the field its not a legacy workspace creation event
+                        continue 2;
+                    }
+                    $workspaces[$eventData['workspaceName']] = [
+                        'workspaceName' => $eventData['workspaceName'],
+                        'workspaceTitle' => $eventData['workspaceTitle'],
+                        'workspaceDescription' => $eventData['workspaceDescription'],
+                        'baseWorkspaceName' => null,
+                        'workspaceOwner' => null
+                    ];
+                    break;
+                case 'WorkspaceWasCreated':
+                    $eventData = self::decodeEventPayload($eventEnvelope);
+                    if (!isset($eventData['workspaceTitle'])) {
+                        // without the field its not a legacy workspace creation event
+                        continue 2;
+                    }
+                    $workspaces[$eventData['workspaceName']] = [
+                        'workspaceName' => $eventData['workspaceName'],
+                        'baseWorkspaceName' => $eventData['baseWorkspaceName'],
+                        'workspaceTitle' => $eventData['workspaceTitle'],
+                        'workspaceDescription' => $eventData['workspaceDescription'],
+                        'workspaceOwner' => $eventData['workspaceOwner'] ?? null
+                    ];
+                    break;
+                case 'WorkspaceBaseWorkspaceWasChanged':
+                    $eventData = self::decodeEventPayload($eventEnvelope);
+                    if (!isset($workspaces[$eventData['workspaceName']])) {
+                        continue 2;
+                    }
+                    $workspaces[$eventData['workspaceName']] = [
+                        'baseWorkspaceName' => $eventData['baseWorkspaceName'],
+                        ...$workspaces[$eventData['workspaceName']]
+                    ];
+                    break;
+                case 'WorkspaceOwnerWasChanged':
+                    $eventData = self::decodeEventPayload($eventEnvelope);
+                    if (!isset($workspaces[$eventData['workspaceName']])) {
+                        continue 2;
+                    }
+                    $workspaces[$eventData['workspaceName']] = [
+                        'workspaceOwner' => $eventData['newWorkspaceOwner'],
+                        ...$workspaces[$eventData['workspaceName']]
+                    ];
+                    break;
+                case 'WorkspaceWasRenamed':
+                    $eventData = self::decodeEventPayload($eventEnvelope);
+                    if (!isset($workspaces[$eventData['workspaceName']])) {
+                        continue 2;
+                    }
+                    $workspaces[$eventData['workspaceName']] = [
+                        'workspaceTitle' => $eventData['workspaceTitle'],
+                        'workspaceDescription' => $eventData['workspaceDescription'],
+                        ...$workspaces[$eventData['workspaceName']]
+                    ];
+                    break;
+                case 'WorkspaceWasRemoved':
+                    $eventData = self::decodeEventPayload($eventEnvelope);
+                    if (!isset($workspaces[$eventData['workspaceName']])) {
+                        continue 2;
+                    }
+                    unset($workspaces[$eventData['workspaceName']]);
+                    break;
+                default:
+                    continue 2;
+            }
+            $numberOfHandledWorkspaceEvents++;
+        }
+        if (count($workspaces) === 0) {
+            $outputFn('Migration was not necessary.');
+            return;
+        }
+
+        $outputFn(sprintf('Found %d legacy workspace events resulting in %d workspaces.', $numberOfHandledWorkspaceEvents, count($workspaces)));
+
+        // adding metadata
+        $addedWorkspaceMetadata = 0;
+        foreach ($workspaces as $workspaceRow) {
+            $workspaceName = WorkspaceName::fromString($workspaceRow['workspaceName']);
+            $baseWorkspaceName = isset($workspaceRow['baseWorkspaceName']) ? WorkspaceName::fromString($workspaceRow['baseWorkspaceName']) : null;
+            $workspaceOwner = $workspaceRow['workspaceOwner'] ?? null;
+            $isPersonalWorkspace = str_starts_with($workspaceName->value, 'user-');
+            $isPrivateWorkspace = $workspaceOwner !== null && !$isPersonalWorkspace;
+            $isInternalWorkspace = $baseWorkspaceName !== null && $workspaceOwner === null;
+            try {
+                $this->workspaceService->getWorkspaceMetadata($this->contentRepositoryId, $workspaceName);
+                $outputFn(sprintf('Metadata for "%s" exists already.', $workspaceName->value));
+                continue;
+            } catch (\Exception $e) {
+                // metadata does not exist yet
+            }
+            if ($baseWorkspaceName === null) {
+                $classification = WorkspaceClassification::ROOT;
+            } elseif ($isPersonalWorkspace) {
+                $classification = WorkspaceClassification::PERSONAL;
+            } else {
+                $classification = WorkspaceClassification::SHARED;
+            }
+            $this->connection->insert('neos_neos_workspace_metadata', [
+                'content_repository_id' => $this->contentRepositoryId->value,
+                'workspace_name' => $workspaceName->value,
+                'title' => $workspaceRow['workspaceTitle'],
+                'description' => $workspaceRow['workspaceDescription'],
+                'classification' => $classification->value,
+                'owner_user_id' => $isPersonalWorkspace ? $workspaceOwner : null,
+            ]);
+            if ($workspaceName->isLive()) {
+                $this->connection->insert('neos_neos_workspace_role', [
+                    'content_repository_id' => $this->contentRepositoryId->value,
+                    'workspace_name' => $workspaceName->value,
+                    'subject_type' => WorkspaceSubjectType::GROUP->value,
+                    'subject' => 'Neos.Neos:LivePublisher',
+                    'role' => WorkspaceRole::COLLABORATOR->value,
+                ]);
+            } elseif ($isInternalWorkspace) {
+                $this->connection->insert('neos_neos_workspace_role', [
+                    'content_repository_id' => $this->contentRepositoryId->value,
+                    'workspace_name' => $workspaceName->value,
+                    'subject_type' => WorkspaceSubjectType::GROUP->value,
+                    'subject' => 'Neos.Neos:AbstractEditor',
+                    'role' => WorkspaceRole::COLLABORATOR->value,
+                ]);
+            } elseif ($isPrivateWorkspace) {
+                $this->connection->insert('neos_neos_workspace_role', [
+                    'content_repository_id' => $this->contentRepositoryId->value,
+                    'workspace_name' => $workspaceName->value,
+                    'subject_type' => WorkspaceSubjectType::USER->value,
+                    'subject' => $workspaceOwner,
+                    'role' => WorkspaceRole::COLLABORATOR->value,
+                ]);
+            }
+            $outputFn(sprintf('Added metadata for "%s".', $workspaceName->value));
+            $addedWorkspaceMetadata++;
+        }
+        if ($addedWorkspaceMetadata === 0) {
+            $outputFn('Migration was not necessary.');
+            return;
+        }
+
+        $outputFn(sprintf('Added metadata for %d workspaces.', $addedWorkspaceMetadata));
     }
 
     /** ------------------------ */

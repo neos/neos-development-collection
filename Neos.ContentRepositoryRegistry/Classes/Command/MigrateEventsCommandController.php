@@ -4,24 +4,16 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepositoryRegistry\Command;
 
-use Doctrine\DBAL\Connection;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
-use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\ContentRepositoryRegistry\Service\EventMigrationServiceFactory;
 use Neos\Flow\Cli\CommandController;
-use Neos\Neos\Domain\Model\WorkspaceClassification;
-use Neos\Neos\Domain\Model\WorkspaceRole;
-use Neos\Neos\Domain\Model\WorkspaceSubjectType;
-use Neos\Neos\Domain\Service\WorkspaceService;
 
 class MigrateEventsCommandController extends CommandController
 {
     public function __construct(
         private readonly ContentRepositoryRegistry $contentRepositoryRegistry,
-        private readonly EventMigrationServiceFactory $eventMigrationServiceFactory,
-        private readonly WorkspaceService $workspaceService,
-        private readonly Connection $dbal,
+        private readonly EventMigrationServiceFactory $eventMigrationServiceFactory
     ) {
         parent::__construct();
     }
@@ -29,80 +21,17 @@ class MigrateEventsCommandController extends CommandController
     /**
      * Migrates initial metadata & roles from the CR core workspaces to the corresponding Neos database tables
      *
-     * @see https://github.com/neos/neos-development-collection/pull/5146
+     * Needed to extract these information to Neos.Neos: https://github.com/neos/neos-development-collection/issues/4726
      *
+     * Included in September 2024 - before final Neos 9.0 release
+     *
+     * @param string $contentRepository Identifier of the Content Repository to migrate
      */
-    public function workspacesCommand(string $contentRepository = 'default'): void
+    public function migrateWorkspaceMetadataToWorkspaceServiceCommand(string $contentRepository = 'default'): void
     {
         $contentRepositoryId = ContentRepositoryId::fromString($contentRepository);
-        $contentRepositoryInstance = $this->contentRepositoryRegistry->get($contentRepositoryId);
-
-        $workspaces = $contentRepositoryInstance->getWorkspaceFinder()->findAll();
-
-        if (count($workspaces) === 0) {
-            $this->outputLine('No workspaces found.');
-            $this->quit();
-        }
-
-        $workspaceTableName = "cr_{$contentRepositoryId->value}_p_workspace";
-
-        $workspaceRows = $this->dbal->fetchAllAssociative(<<<SQL
-            SELECT * FROM $workspaceTableName
-        SQL);
-        foreach ($workspaceRows as $workspaceRow) {
-            $workspaceName = WorkspaceName::fromString($workspaceRow['workspacename']);
-            $baseWorkspaceName = isset($workspaceRow['baseworkspacename']) ? WorkspaceName::fromString($workspaceRow['baseworkspacename']) : null;
-            $workspaceOwner = $workspaceRow['workspaceowner'] ?? null;
-            $isPersonalWorkspace = str_starts_with($workspaceName->value, 'user-');
-            $isPrivateWorkspace = $workspaceOwner !== null && !$isPersonalWorkspace;
-            $isInternalWorkspace = $baseWorkspaceName !== null && $workspaceOwner === null;
-            try {
-                $this->workspaceService->getWorkspaceMetadata($contentRepositoryId, $workspaceName);
-            } catch (\Exception $e) {
-                if ($baseWorkspaceName === null) {
-                    $classification = WorkspaceClassification::ROOT;
-                } elseif ($isPersonalWorkspace) {
-                    $classification = WorkspaceClassification::PERSONAL;
-                } else {
-                    $classification = WorkspaceClassification::SHARED;
-                }
-                $this->dbal->insert('neos_neos_workspace_metadata', [
-                    'content_repository_id' => $contentRepositoryId->value,
-                    'workspace_name' => $workspaceName->value,
-                    'title' => $workspaceRow['workspacetitle'] ?? '',
-                    'description' => $workspaceRow['workspacedescription'] ?? '',
-                    'classification' => $classification->value,
-                    'owner_user_id' => $isPersonalWorkspace ? $workspaceOwner : null,
-                ]);
-                if ($workspaceName->isLive()) {
-                    $this->dbal->insert('neos_neos_workspace_role', [
-                        'content_repository_id' => $contentRepositoryId->value,
-                        'workspace_name' => $workspaceName->value,
-                        'subject_type' => WorkspaceSubjectType::GROUP->value,
-                        'subject' => 'Neos.Neos:LivePublisher',
-                        'role' => WorkspaceRole::COLLABORATOR->value,
-                    ]);
-                } elseif ($isInternalWorkspace) {
-                    $this->dbal->insert('neos_neos_workspace_role', [
-                        'content_repository_id' => $contentRepositoryId->value,
-                        'workspace_name' => $workspaceName->value,
-                        'subject_type' => WorkspaceSubjectType::GROUP->value,
-                        'subject' => 'Neos.Neos:AbstractEditor',
-                        'role' => WorkspaceRole::COLLABORATOR->value,
-                    ]);
-                } elseif ($isPrivateWorkspace) {
-                    $this->dbal->insert('neos_neos_workspace_role', [
-                        'content_repository_id' => $contentRepositoryId->value,
-                        'workspace_name' => $workspaceName->value,
-                        'subject_type' => WorkspaceSubjectType::USER->value,
-                        'subject' => $workspaceOwner,
-                        'role' => WorkspaceRole::COLLABORATOR->value,
-                    ]);
-                }
-                $this->outputLine('Added metadata for workspace "%s"', [$workspaceName->value]);
-            }
-        }
-        $this->outputLine('Done.');
+        $eventMigrationService = $this->contentRepositoryRegistry->buildService($contentRepositoryId, $this->eventMigrationServiceFactory);
+        $eventMigrationService->migrateWorkspaceMetadataToWorkspaceService($this->outputLine(...));
     }
 
     /**

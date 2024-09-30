@@ -10,6 +10,7 @@ use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceInterface;
 use Neos\ContentRepositoryRegistry\Command\MigrateEventsCommandController;
 use Neos\EventStore\DoctrineAdapter\DoctrineEventStore;
 use Neos\Flow\Annotations as Flow;
+use Neos\Neos\Domain\Service\WorkspaceService;
 
 /**
  * Factory for the {@see EventMigrationService}
@@ -22,6 +23,7 @@ final class EventMigrationServiceFactory implements ContentRepositoryServiceFact
 {
     public function __construct(
         private readonly Connection $connection,
+        private readonly WorkspaceService $workspaceService
     ) {
     }
 
@@ -34,7 +36,8 @@ final class EventMigrationServiceFactory implements ContentRepositoryServiceFact
         return new EventMigrationService(
             $serviceFactoryDependencies->contentRepositoryId,
             $serviceFactoryDependencies->eventStore,
-            $this->connection
+            $this->connection,
+            $this->workspaceService,
         );
     }
 }
