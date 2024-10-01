@@ -95,7 +95,6 @@ class WorkspaceCommandController extends CommandController
     public function discardCommand(string $workspace, string $contentRepository = 'default'): void
     {
         try {
-            // @todo: bypass access control
             $this->workspacePublishingService->discardAllWorkspaceChanges(
                 ContentRepositoryId::fromString($contentRepository),
                 WorkspaceName::fromString($workspace)
@@ -120,7 +119,6 @@ class WorkspaceCommandController extends CommandController
     public function rebaseCommand(string $workspace, string $contentRepository = 'default', bool $force = false): void
     {
         try {
-            // @todo: bypass access control
             $this->workspacePublishingService->rebaseWorkspace(
                 ContentRepositoryId::fromString($contentRepository),
                 WorkspaceName::fromString($workspace),
@@ -307,7 +305,6 @@ class WorkspaceCommandController extends CommandController
                 );
                 $this->quit(5);
             }
-            // @todo bypass access control?
             $this->workspacePublishingService->discardAllWorkspaceChanges($contentRepositoryId, $workspaceName);
         }
 
