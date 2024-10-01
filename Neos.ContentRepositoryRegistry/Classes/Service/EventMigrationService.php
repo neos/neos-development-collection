@@ -496,6 +496,7 @@ final class EventMigrationService implements ContentRepositoryServiceInterface
         // building up the state. Mimic how the legacy WorkspaceProjection handles the events and builds up the state.
         foreach ($this->eventStore->load(VirtualStreamName::all(), EventStreamFilter::create(eventTypes: $eventTypes)) as $eventEnvelope) {
             $eventType = $eventEnvelope->event->type->value;
+            $numberOfHandledWorkspaceEvents++;
 
             switch ($eventType) {
                 case 'RootWorkspaceWasCreated':
@@ -565,9 +566,8 @@ final class EventMigrationService implements ContentRepositoryServiceInterface
                     unset($workspaces[$eventData['workspaceName']]);
                     break;
                 default:
-                    continue 2;
+                    throw new \Exception('Unhandled event type: ' . $eventType);
             }
-            $numberOfHandledWorkspaceEvents++;
         }
         if (count($workspaces) === 0) {
             $outputFn('Migration was not necessary.');

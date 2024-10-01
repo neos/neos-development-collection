@@ -11,7 +11,7 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
  * Change workspace owner of a workspace, identified by $workspaceName.
  * Setting $newWorkspaceOwner to null, removes the current workspace owner.
  *
- * @api commands are the write-API of the ContentRepository
+ * @deprecated with 9.0.0-beta14 owners/collaborators should be assigned to workspaces outside the Content Repository core
  */
 final readonly class ChangeWorkspaceOwner implements CommandInterface
 {

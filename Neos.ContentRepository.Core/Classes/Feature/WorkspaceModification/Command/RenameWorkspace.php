@@ -12,7 +12,7 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceTitle;
 /**
  * Change the title or description of a workspace
  *
- * @api commands are the write-API of the ContentRepository
+ * @deprecated with 9.0.0-beta14 metadata should be assigned to workspaces outside the Content Repository core
  */
 final readonly class RenameWorkspace implements CommandInterface
 {

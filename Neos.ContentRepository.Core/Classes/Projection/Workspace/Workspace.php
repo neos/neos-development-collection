@@ -28,6 +28,7 @@ final readonly class Workspace
 {
     /**
      * This prefix determines if a given workspace (name) is a user workspace.
+     * @deprecated with 9.0.0-beta14 metadata should be assigned to workspaces outside the Content Repository core
      */
     public const PERSONAL_WORKSPACE_PREFIX = 'user-';
 
@@ -42,12 +43,12 @@ final readonly class Workspace
     public ?WorkspaceName $baseWorkspaceName;
 
     /**
-     * @deprecated with 9.0.0-beta12 metadata should be assigned to workspaces outside the Content Repository core
+     * @deprecated with 9.0.0-beta14 metadata should be assigned to workspaces outside the Content Repository core
      */
     public WorkspaceTitle $workspaceTitle;
 
     /**
-     * @deprecated with 9.0.0-beta12metadata should be assigned to workspaces outside the Content Repository core
+     * @deprecated with 9.0.0-beta14 metadata should be assigned to workspaces outside the Content Repository core
      */
     public WorkspaceDescription $workspaceDescription;
 
@@ -62,7 +63,7 @@ final readonly class Workspace
     public WorkspaceStatus $status;
 
     /**
-     * @deprecated with 9.0.0-beta12 owners/collaborators should be assigned to workspaces outside the Content Repository core
+     * @deprecated with 9.0.0-beta14 owners/collaborators should be assigned to workspaces outside the Content Repository core
      */
     public string|null $workspaceOwner;
 
@@ -89,7 +90,7 @@ final readonly class Workspace
 
     /**
      * Checks if this workspace is a user's personal workspace
-     * @deprecated with 9.0.0-beta12 owners/collaborators should be assigned to workspaces outside the Content Repository core
+     * @deprecated with 9.0.0-beta14 owners/collaborators should be assigned to workspaces outside the Content Repository core
      */
     public function isPersonalWorkspace(): bool
     {
@@ -100,7 +101,7 @@ final readonly class Workspace
      * Checks if this workspace is shared only across users with access to internal workspaces, for example "reviewers"
      *
      * @return bool
-     * @deprecated with 9.0.0-beta12 owners/collaborators should be assigned to workspaces outside the Content Repository core
+     * @deprecated with 9.0.0-beta14 owners/collaborators should be assigned to workspaces outside the Content Repository core
      */
     public function isPrivateWorkspace(): bool
     {
@@ -111,7 +112,7 @@ final readonly class Workspace
      * Checks if this workspace is shared across all editors
      *
      * @return boolean
-     * @deprecated with 9.0.0-beta12 owners/collaborators should be assigned to workspaces outside the Content Repository core
+     * @deprecated with 9.0.0-beta14 owners/collaborators should be assigned to workspaces outside the Content Repository core
      */
     public function isInternalWorkspace(): bool
     {
@@ -122,6 +123,7 @@ final readonly class Workspace
      * Checks if this workspace is public to everyone, even without authentication
      *
      * @return boolean
+     * @deprecated with 9.0.0-beta14 owners/collaborators should be assigned to workspaces outside the Content Repository core
      */
     public function isPublicWorkspace(): bool
     {
