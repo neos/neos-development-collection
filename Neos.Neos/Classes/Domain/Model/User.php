@@ -37,6 +37,7 @@ class User extends Person implements UserInterface
     protected $preferences;
 
     /**
+     * This property will be introduced and initialised via Flows persistence magic aspect.
      * @var string
      */
     protected $Persistence_Object_Identifier;
