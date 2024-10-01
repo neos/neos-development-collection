@@ -558,8 +558,7 @@ final class ContentSubgraph implements ContentSubgraphInterface
         //    the recursive part, to determine its ancestors.
         $queryBuilderInitial = $this->createQueryBuilder()
             ->select('ph.subtreetags, ph.parentnodeanchor')
-            ->from($this->nodeQueryBuilder->tableNames->node(), 'n')
-            ->innerJoin('n', $this->nodeQueryBuilder->tableNames->hierarchyRelation(), 'ph', 'n.relationanchorpoint = ph.parentnodeanchor')
+            ->from($this->nodeQueryBuilder->tableNames->hierarchyRelation(), 'ph')
             ->innerJoin('ph', $this->nodeQueryBuilder->tableNames->node(), 'c', 'c.relationanchorpoint = ph.childnodeanchor')
             ->andWhere('ph.contentstreamid = :contentStreamId')
             ->andWhere('ph.dimensionspacepointhash = :dimensionSpacePointHash')
