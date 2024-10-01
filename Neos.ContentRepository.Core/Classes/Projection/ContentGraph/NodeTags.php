@@ -97,8 +97,9 @@ final readonly class NodeTags implements \IteratorAggregate, \Countable, \JsonSe
     }
 
     /**
-     * @param \Closure(SubtreeTag $tag, bool $inherited): mixed $callback
-     * @return array<mixed>
+     * @template T
+     * @param \Closure(SubtreeTag $tag, bool $inherited): T $callback
+     * @return list<T>
      */
     public function map(\Closure $callback): array
     {
