@@ -34,7 +34,6 @@ use Neos\EventStore\Model\EventStream\VirtualStreamName;
 use Neos\Neos\Domain\Model\WorkspaceClassification;
 use Neos\Neos\Domain\Model\WorkspaceRole;
 use Neos\Neos\Domain\Model\WorkspaceSubjectType;
-use Neos\Neos\Domain\Service\WorkspaceService;
 
 /**
  * Content Repository service to perform migrations of events.
@@ -52,8 +51,7 @@ final class EventMigrationService implements ContentRepositoryServiceInterface
     public function __construct(
         private readonly ContentRepositoryId $contentRepositoryId,
         private readonly EventStoreInterface $eventStore,
-        private readonly Connection $connection,
-        private readonly WorkspaceService $workspaceService,
+        private readonly Connection $connection
     ) {
     }
 
@@ -585,12 +583,19 @@ final class EventMigrationService implements ContentRepositoryServiceInterface
             $isPersonalWorkspace = str_starts_with($workspaceName->value, 'user-');
             $isPrivateWorkspace = $workspaceOwner !== null && !$isPersonalWorkspace;
             $isInternalWorkspace = $baseWorkspaceName !== null && $workspaceOwner === null;
-            try {
-                $this->workspaceService->getWorkspaceMetadata($this->contentRepositoryId, $workspaceName);
+
+            $query = <<<SQL
+            SELECT COUNT(1) FROM neos_neos_workspace_metadata WHERE
+                content_repository_id = :contentRepositoryId
+                AND workspace_name = :workspaceName
+            SQL;
+            $metadataExists = $this->connection->fetchOne($query, [
+                'contentRepositoryId' => $this->contentRepositoryId->value,
+                'workspaceName' => $workspaceName->value,
+            ]);
+            if ($metadataExists !== 0) {
                 $outputFn(sprintf('Metadata for "%s" exists already.', $workspaceName->value));
                 continue;
-            } catch (\Exception $e) {
-                // metadata does not exist yet
             }
             if ($baseWorkspaceName === null) {
                 $classification = WorkspaceClassification::ROOT;
