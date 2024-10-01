@@ -25,8 +25,11 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepositoryRegistry\Command\MigrateEventsCommandController;
 use Neos\ContentRepositoryRegistry\Factory\EventStore\DoctrineEventStoreFactory;
 use Neos\EventStore\EventStoreInterface;
+use Neos\EventStore\Model\Event\EventType;
+use Neos\EventStore\Model\Event\EventTypes;
 use Neos\EventStore\Model\Event\SequenceNumber;
 use Neos\EventStore\Model\EventEnvelope;
+use Neos\EventStore\Model\EventStream\EventStreamFilter;
 use Neos\EventStore\Model\EventStream\VirtualStreamName;
 use Neos\Neos\Domain\Model\WorkspaceClassification;
 use Neos\Neos\Domain\Model\WorkspaceRole;
@@ -489,15 +492,16 @@ final class EventMigrationService implements ContentRepositoryServiceInterface
         $numberOfHandledWorkspaceEvents = 0;
 
         $workspaces = [];
+        $eventTypes = EventTypes::create(...array_map(EventType::fromString(...), ['RootWorkspaceWasCreated', 'WorkspaceWasCreated', 'WorkspaceBaseWorkspaceWasChanged', 'WorkspaceOwnerWasChanged', 'WorkspaceWasRenamed', 'WorkspaceWasRemoved']));
         // building up the state. Mimic how the legacy WorkspaceProjection handles the events and builds up the state.
-        foreach ($this->eventStore->load(VirtualStreamName::all()) as $eventEnvelope) {
+        foreach ($this->eventStore->load(VirtualStreamName::all(), EventStreamFilter::create(eventTypes: $eventTypes)) as $eventEnvelope) {
             $eventType = $eventEnvelope->event->type->value;
 
             switch ($eventType) {
                 case 'RootWorkspaceWasCreated':
                     $eventData = self::decodeEventPayload($eventEnvelope);
                     if (!isset($eventData['workspaceTitle'])) {
-                        // without the field its not a legacy workspace creation event
+                        // without the field it's not a legacy workspace creation event
                         continue 2;
                     }
                     $workspaces[$eventData['workspaceName']] = [
@@ -511,7 +515,7 @@ final class EventMigrationService implements ContentRepositoryServiceInterface
                 case 'WorkspaceWasCreated':
                     $eventData = self::decodeEventPayload($eventEnvelope);
                     if (!isset($eventData['workspaceTitle'])) {
-                        // without the field its not a legacy workspace creation event
+                        // without the field it's not a legacy workspace creation event
                         continue 2;
                     }
                     $workspaces[$eventData['workspaceName']] = [
