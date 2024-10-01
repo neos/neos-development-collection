@@ -193,7 +193,12 @@ final class WorkspaceService
                 'workspaceName' => $workspaceName->value,
             ]);
         } catch (DbalException $e) {
-            throw new \RuntimeException(sprintf('Failed to load metadata for workspace "%s" (Content Repository "%s"): %s. Maybe workspace metadata and roles have to be synchronized', $workspaceName->value, $contentRepositoryId->value, $e->getMessage()), 1726736383, $e);
+            throw new \RuntimeException(sprintf(
+                'Failed to fetch metadata for workspace "%s" (Content Repository "%s), please ensure the database schema is up to date. %s',
+                $workspaceName->value,
+                $contentRepositoryId->value,
+                $e->getMessage()
+            ), 1727782164, $e);
         }
         if (!is_array($metadataRow)) {
             return null;
@@ -346,7 +351,6 @@ final class WorkspaceService
         throw new \RuntimeException(sprintf('Failed to find unique workspace name for "%s" after %d attempts.', $candidate, $attempt - 1), 1725975479);
     }
 
-
     private function requireWorkspace(ContentRepositoryId $contentRepositoryId, WorkspaceName $workspaceName): Workspace
     {
         $workspace = $this->contentRepositoryRegistry
@@ -354,7 +358,7 @@ final class WorkspaceService
             ->getWorkspaceFinder()
             ->findOneByName($workspaceName);
         if ($workspace === null) {
-            throw new \InvalidArgumentException(sprintf('Failed to find workspace with name "%s"', $workspaceName->value), 1718379722);
+            throw new \RuntimeException(sprintf('Failed to find workspace with name "%s" for content repository "%s"', $workspaceName->value, $contentRepositoryId->value), 1718379722);
         }
         return $workspace;
     }
