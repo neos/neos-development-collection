@@ -16,6 +16,7 @@ namespace Neos\ContentRepository\Core;
 
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphInterface;
 use Neos\ContentRepository\Core\Projection\ProjectionStateInterface;
+use Neos\ContentRepository\Core\Projection\WithMarkStaleInterface;
 use Neos\ContentRepository\Core\SharedModel\Exception\WorkspaceDoesNotExist;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStream;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
@@ -57,11 +58,10 @@ final class ContentRepositoryReadModel implements ProjectionStateInterface
     /**
      * To release all held instances, in case a workspace/content stream relation needs to be reset
      *
-     * @internal Should only be needed after write operations (which should take care on their own)
+     * @internal Must be invoked by the projection {@see WithMarkStaleInterface::markStale()} to ensure a flush after write operations
      */
     public function forgetInstances(): void
     {
-        // todo do we need to reintroduce the cache??? https://github.com/neos/neos-development-collection/pull/5246
         $this->contentGraphInstancesByWorkspaceName = [];
         $this->workspaceInstancesByName = [];
         $this->contentStreamInstancesById = [];
