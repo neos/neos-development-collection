@@ -15,17 +15,11 @@ declare(strict_types=1);
 namespace Neos\Neos\Domain\Model;
 
 /**
- * Interface for a user of the content repository. Users can be owners of workspaces.
- *
- * @api
+ * @deprecated with 9.0.0-beta14 please use {@see \Neos\Neos\Domain\Model\User} instead.
+ * The interface was only needed for the old cr: https://github.com/neos/neos-development-collection/pull/165#issuecomment-157645872
  */
 interface UserInterface
 {
-    /**
-     * Returns the globally unique identifier for this user
-     */
-    public function getId(): UserId;
-
     /**
      * Returns a label which can be used as a human-friendly identifier for this user, for example his or her first
      * and last name.
