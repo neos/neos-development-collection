@@ -101,6 +101,7 @@ final readonly class ContentRepositoryReadModelAdapter implements ContentReposit
                 {$this->tableNames->contentStream()}
             WHERE
                 id = :contentStreamId
+                AND removed = FALSE
             LIMIT 1
         SQL;
         try {
@@ -123,6 +124,8 @@ final readonly class ContentRepositoryReadModelAdapter implements ContentReposit
                 id, sourceContentStreamId, status, version
             FROM
                 {$this->tableNames->contentStream()}
+            WHERE
+                removed = FALSE
         SQL;
         try {
             $rows = $this->dbal->fetchAllAssociative($contentStreamsStatement);

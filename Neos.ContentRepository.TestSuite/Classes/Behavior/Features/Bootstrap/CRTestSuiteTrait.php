@@ -134,22 +134,8 @@ trait CRTestSuiteTrait
      */
     public function iExpectTheContentStreamToNotExist(string $rawContentStreamId): void
     {
-        // todo use, but also it should be assertFAlse?!!! And what about theContentStreamDoesNotExist??
-        // $this->contentRepository->getContentStreams()
-        //     ->find(fn (ContentStream $contentStream) => $contentStream->id->equals(ContentStreamId::fromString($rawContentStreamId))),
-        Assert::assertTrue(
-            $this->currentContentRepository->getContentStreamFinder()->hasContentStream(ContentStreamId::fromString($rawContentStreamId)),
-            sprintf('The content stream "%s" does exist.', $rawContentStreamId)
-        );
-    }
-
-    /**
-     * @Then the content stream :contentStreamId does not exist
-     */
-    public function theContentStreamDoesNotExist(string $contentStreamId): void
-    {
-        $contentStream = $this->currentContentRepository->findContentStreamById(ContentStreamId::fromString($contentStreamId));
-        Assert::assertNull($contentStream, sprintf('Content stream "%s" was not expected to exist, but it does', $contentStreamId));
+        $contentStream = $this->currentContentRepository->findContentStreamById(ContentStreamId::fromString($rawContentStreamId));
+        Assert::assertNull($contentStream, sprintf('Content stream "%s" was not expected to exist, but it does', $rawContentStreamId));
     }
 
     /**

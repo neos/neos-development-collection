@@ -21,7 +21,7 @@ Feature: If content streams are not in use anymore by the workspace, they can be
 
   Scenario: content streams are marked as IN_USE_BY_WORKSPACE properly after creation
     Then the content stream "cs-identifier" has status "IN_USE_BY_WORKSPACE"
-    Then the content stream "non-existing" does not exist
+    Then I expect the content stream "non-existing" to not exist
 
   Scenario: on creating a nested workspace, the new content stream is marked as IN_USE_BY_WORKSPACE.
     When the command CreateWorkspace is executed with payload:
