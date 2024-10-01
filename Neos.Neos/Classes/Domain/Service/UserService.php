@@ -14,8 +14,6 @@ declare(strict_types=1);
 
 namespace Neos\Neos\Domain\Service;
 
-use Neos\ContentRepository\Core\SharedModel\Workspace\Workspace;
-use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Persistence\Exception\IllegalObjectTypeException;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
@@ -831,13 +829,5 @@ class UserService
     {
         $user = $this->partyService->getAssignedPartyOfAccount($account);
         return ($user instanceof User) ? $user : null;
-    }
-
-    /**
-     * Checks if this workspace is a user's personal workspace
-     */
-    private static function isPersonalWorkspace(WorkspaceName $workspaceName): bool
-    {
-        return str_starts_with($workspaceName->value, 'user-');
     }
 }

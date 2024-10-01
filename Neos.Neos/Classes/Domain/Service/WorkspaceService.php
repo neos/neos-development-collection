@@ -20,12 +20,10 @@ use Doctrine\DBAL\Exception as DbalException;
 use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Command\CreateRootWorkspace;
 use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Command\CreateWorkspace;
-use Neos\ContentRepository\Core\Projection\Workspace\Workspace;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
-use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceDescription as DeprecatedWorkspaceDescription;
+use Neos\ContentRepository\Core\SharedModel\Workspace\Workspace;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
-use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceTitle as DeprecatedWorkspaceTitle;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Security\Exception\NoSuchRoleException;
@@ -104,8 +102,6 @@ final class WorkspaceService
         $contentRepository->handle(
             CreateRootWorkspace::create(
                 $workspaceName,
-                DeprecatedWorkspaceTitle::fromString($title->value),
-                DeprecatedWorkspaceDescription::fromString($description->value),
                 ContentStreamId::create()
             )
         );
@@ -239,8 +235,6 @@ final class WorkspaceService
             CreateWorkspace::create(
                 $workspaceName,
                 $baseWorkspaceName,
-                DeprecatedWorkspaceTitle::fromString($title->value),
-                DeprecatedWorkspaceDescription::fromString($description->value),
                 ContentStreamId::create()
             )
         );
@@ -335,7 +329,7 @@ final class WorkspaceService
         $workspaceName = $workspaceNameCandidate;
         $attempt = 1;
         do {
-            if ($contentRepository->getWorkspaceFinder()->findOneByName($workspaceName) === null) {
+            if ($contentRepository->findWorkspaceByName($workspaceName) === null) {
                 return $workspaceName;
             }
             if ($attempt === 1) {
@@ -355,8 +349,7 @@ final class WorkspaceService
     {
         $workspace = $this->contentRepositoryRegistry
             ->get($contentRepositoryId)
-            ->getWorkspaceFinder()
-            ->findOneByName($workspaceName);
+            ->findWorkspaceByName($workspaceName);
         if ($workspace === null) {
             throw new \RuntimeException(sprintf('Failed to find workspace with name "%s" for content repository "%s"', $workspaceName->value, $contentRepositoryId->value), 1718379722);
         }

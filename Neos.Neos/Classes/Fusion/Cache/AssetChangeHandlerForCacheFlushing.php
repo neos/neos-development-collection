@@ -9,6 +9,7 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateIds;
+use Neos\ContentRepository\Core\SharedModel\Workspace\Workspace;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
@@ -51,7 +52,9 @@ class AssetChangeHandlerForCacheFlushing
                 // TODO: Remove when WorkspaceName is part of the AssetUsageProjection
                 $workspaceName = $workspaceNamesByContentStreamId[$contentRepositoryId][$usage->contentStreamId->value] ?? null;
                 if ($workspaceName === null) {
-                    $workspace = $contentRepository->getWorkspaceFinder()->findOneByCurrentContentStreamId($usage->contentStreamId);
+                    $workspace = $contentRepository->getWorkspaces()->find(
+                        fn (Workspace $potentialWorkspace) => $potentialWorkspace->currentContentStreamId->equals($usage->contentStreamId)
+                    );
                     if ($workspace === null) {
                         continue;
                     }

@@ -26,7 +26,7 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindAncestorNodes
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Nodes;
 use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
-use Neos\ContentRepository\Core\Projection\Workspace\Workspace;
+use Neos\ContentRepository\Core\SharedModel\Workspace\Workspace;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAddress;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
@@ -134,12 +134,16 @@ class WorkspaceController extends AbstractModuleController
         $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryId);
 
         $items = [];
-        foreach ($contentRepository->getWorkspaceFinder()->findAll() as $workspace) {
+        $allWorkspaces = $contentRepository->getWorkspaces();
+        foreach ($allWorkspaces as $workspace) {
             $workspaceMetadata = $this->workspaceService->getWorkspaceMetadata($contentRepositoryId, $workspace->workspaceName);
             $permissions = $this->workspaceService->getWorkspacePermissionsForUser($contentRepositoryId, $workspace->workspaceName, $currentUser);
             if (!$permissions->read) {
                 continue;
             }
+            $hasDependantWorkspaces = (bool)$allWorkspaces->find(
+                static fn (Workspace $potentiallyDependentWorkspace) => $potentiallyDependentWorkspace->baseWorkspaceName?->equals($workspace->workspaceName) ?? false
+            );
             $items[] = new WorkspaceListItem(
                 name: $workspace->workspaceName->value,
                 classification: $workspaceMetadata->classification->name,
@@ -147,7 +151,7 @@ class WorkspaceController extends AbstractModuleController
                 description: $workspaceMetadata->description->value,
                 baseWorkspaceName: $workspace->baseWorkspaceName?->value,
                 pendingChanges: $this->computePendingChanges($workspace, $contentRepository),
-                hasDependantWorkspaces: count($contentRepository->getWorkspaceFinder()->findByBaseWorkspace($workspace->workspaceName)) > 0,
+                hasDependantWorkspaces: $hasDependantWorkspaces,
                 permissions: $permissions,
             );
         }
@@ -172,7 +176,7 @@ class WorkspaceController extends AbstractModuleController
         $baseWorkspaceMetadata = null;
         $baseWorkspacePermissions = null;
         if ($workspaceObj->baseWorkspaceName !== null) {
-            $baseWorkspace = $contentRepository->getWorkspaceFinder()->findOneByName($workspaceObj->baseWorkspaceName);
+            $baseWorkspace = $contentRepository->findWorkspaceByName($workspaceObj->baseWorkspaceName);
             assert($baseWorkspace !== null);
             $baseWorkspaceMetadata = $this->workspaceService->getWorkspaceMetadata($contentRepositoryId, $baseWorkspace->workspaceName);
             $baseWorkspacePermissions = $this->workspaceService->getWorkspacePermissionsForUser($contentRepositoryId, $baseWorkspace->workspaceName, $currentUser);
@@ -1038,7 +1042,7 @@ class WorkspaceController extends AbstractModuleController
             if (!$permissions->manage) {
                 continue;
             }
-            $baseWorkspaceOptions[$workspace->workspaceName->value] = $workspace->workspaceTitle->value;
+            $baseWorkspaceOptions[$workspace->workspaceName->value] = $workspaceMetadata->title->value;
         }
 
         return $baseWorkspaceOptions;

@@ -260,7 +260,7 @@ class WorkspaceCommandController extends CommandController
             $this->quit(2);
         }
 
-        $dependentWorkspaces = $contentRepository->getWorkspaces()->filter(
+        $dependentWorkspaces = $contentRepositoryInstance->getWorkspaces()->filter(
             static fn (Workspace $potentiallyDependentWorkspace) => $potentiallyDependentWorkspace->baseWorkspaceName?->equals($workspaceName) ?? false
         );
         if (!$dependentWorkspaces->isEmpty()) {
@@ -390,7 +390,7 @@ class WorkspaceCommandController extends CommandController
         $contentRepositoryInstance = $this->contentRepositoryRegistry->get($contentRepositoryId);
 
         $workspaceName = WorkspaceName::fromString($workspace);
-        $workspacesInstance = $contentRepositoryInstance->getWorkspaceFinder()->findOneByName($workspaceName);
+        $workspacesInstance = $contentRepositoryInstance->findWorkspaceByName($workspaceName);
 
         if ($workspacesInstance === null) {
             $this->outputLine('Workspace "%s" not found.', [$workspaceName->value]);

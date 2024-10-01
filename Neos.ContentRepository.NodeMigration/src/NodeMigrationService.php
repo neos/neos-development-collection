@@ -67,7 +67,7 @@ readonly class NodeMigrationService implements ContentRepositoryServiceInterface
         }
 
         $targetWorkspaceWasCreated = false;
-        if ($targetWorkspace = $this->contentRepository->getWorkspaceFinder()->findOneByName($command->targetWorkspaceName)) {
+        if ($targetWorkspace = $this->contentRepository->findWorkspaceByName($command->targetWorkspaceName)) {
             if (!$this->workspaceIsEmpty($targetWorkspace)) {
                 throw new MigrationException(sprintf('Target workspace "%s" already exists an is not empty. Please clear the workspace before.', $targetWorkspace->workspaceName->value));
             }
@@ -80,7 +80,7 @@ readonly class NodeMigrationService implements ContentRepositoryServiceInterface
                     $command->contentStreamId,
                 )
             );
-            $targetWorkspace = $this->contentRepository->getWorkspaceFinder()->findOneByName($command->targetWorkspaceName);
+            $targetWorkspace = $this->contentRepository->findWorkspaceByName($command->targetWorkspaceName);
             $targetWorkspaceWasCreated = true;
         }
 

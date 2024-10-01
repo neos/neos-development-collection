@@ -63,13 +63,6 @@ final class DbalSchemaFactory
             ->setLength(36);
     }
 
-    public static function columnForWorkspaceName(string $columnName): Column
-    {
-        return (new Column($columnName, Type::getType(Types::STRING)))
-            ->setLength(WorkspaceName::MAX_LENGTH)
-            ->setCustomSchemaOption('collation', 'utf8mb4_unicode_520_ci');
-    }
-
     /**
      * An anchorpoint can be used in a given projection to link two nodes, it is a purely internal identifier and should
      * be as performant as possible in queries, the current code uses UUIDs,
