@@ -564,7 +564,7 @@ final class ContentSubgraph implements ContentSubgraphInterface
         //    The parent node anchor points to the first parent node of the given node aggregate. This is also used for
         //    the recursive part, to determine its ancestors.
         $queryBuilderInitial = $this->createQueryBuilder()
-            ->select('ph.subtreetags, ph.parentnodeanchor')
+            ->select('ph.subtreetags, ph.parentnodeanchor, ph.childnodeanchor')
             ->from($this->nodeQueryBuilder->tableNames->hierarchyRelation(), 'ph')
             ->innerJoin('ph', $this->nodeQueryBuilder->tableNames->node(), 'c', 'c.relationanchorpoint = ph.childnodeanchor')
             ->andWhere('ph.contentstreamid = :contentStreamId')
@@ -575,7 +575,7 @@ final class ContentSubgraph implements ContentSubgraphInterface
         // 2) Fetch the parent hierarchy recursive, starting with the anchor point of the resulting parent as child anchor
         //    point for the next iteration.
         $queryBuilderRecursive = $this->createQueryBuilder()
-            ->select('h.subtreetags, h.parentnodeanchor')
+            ->select('h.subtreetags, h.parentnodeanchor, h.childnodeanchor')
             ->from('ancestry', 'cn')
             ->innerJoin('cn', $this->nodeQueryBuilder->tableNames->hierarchyRelation(), 'h', 'h.childnodeanchor = cn.parentnodeanchor')
             ->where('h.contentstreamid = :contentStreamId')
@@ -584,7 +584,7 @@ final class ContentSubgraph implements ContentSubgraphInterface
 
         $queryBuilderCte = $this->nodeQueryBuilder->buildBasicNodesCteQuery($entryNodeAggregateId, $this->contentStreamId, $this->dimensionSpacePoint, 'ancestry', 'a');
         // 3) Finally we join the node table to all collected parent node anchor
-        $queryBuilderCte->innerJoin('a', $this->nodeQueryBuilder->tableNames->node(), 'pn', 'pn.relationanchorpoint = a.parentnodeanchor');
+        $queryBuilderCte->innerJoin('a', $this->nodeQueryBuilder->tableNames->node(), 'pn', 'pn.relationanchorpoint = a.childnodeanchor AND pn.nodeaggregateid <> :entryNodeAggregateId');
 
         if ($filter->nodeTypes !== null) {
             $this->nodeQueryBuilder->addNodeTypeCriteria($queryBuilderCte, ExpandedNodeTypeCriteria::create($filter->nodeTypes, $this->nodeTypeManager), 'pn');
