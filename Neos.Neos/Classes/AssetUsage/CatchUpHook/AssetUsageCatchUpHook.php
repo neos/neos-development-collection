@@ -24,6 +24,7 @@ use Neos\ContentRepository\Core\Projection\CatchUpHookInterface;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindDescendantNodesFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
+use Neos\ContentRepository\Core\SharedModel\Exception\WorkspaceDoesNotExist;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\EventStore\Model\EventEnvelope;
@@ -46,13 +47,16 @@ class AssetUsageCatchUpHook implements CatchUpHookInterface
 
     public function onBeforeEvent(EventInterface $eventInstance, EventEnvelope $eventEnvelope): void
     {
-        if (
-            $eventInstance instanceof EmbedsWorkspaceName
-            && $eventInstance instanceof EmbedsContentStreamId
-            // Safeguard for temporary content streams created during partial publish -> We want to skip these events, because their workspace doesn't match current contentstream.
-            && !$this->contentRepository->getWorkspaceFinder()->findOneByCurrentContentStreamId($eventInstance->getContentStreamId())?->workspaceName->equals($eventInstance->getWorkspaceName())
-        ) {
-            return;
+        if ($eventInstance instanceof EmbedsWorkspaceName && $eventInstance instanceof EmbedsContentStreamId) {
+            // Safeguard for temporary content streams created during partial publish -> We want to skip these events, because their workspace doesn't match current content stream.
+            try {
+                $contentGraph = $this->contentRepository->getContentGraph($eventInstance->getWorkspaceName());
+            } catch (WorkspaceDoesNotExist) {
+                return;
+            }
+            if (!$contentGraph->getContentStreamId()->equals($eventInstance->getContentStreamId())) {
+                return;
+            }
         }
 
         match ($eventInstance::class) {
@@ -64,13 +68,16 @@ class AssetUsageCatchUpHook implements CatchUpHookInterface
 
     public function onAfterEvent(EventInterface $eventInstance, EventEnvelope $eventEnvelope): void
     {
-        if (
-            $eventInstance instanceof EmbedsWorkspaceName
-            && $eventInstance instanceof EmbedsContentStreamId
-            // Safeguard for temporary content streams created during partial publish -> We want to skip these events, because their workspace doesn't match current contentstream.
-            && !$this->contentRepository->getWorkspaceFinder()->findOneByCurrentContentStreamId($eventInstance->getContentStreamId())?->workspaceName->equals($eventInstance->getWorkspaceName())
-        ) {
-            return;
+        if ($eventInstance instanceof EmbedsWorkspaceName && $eventInstance instanceof EmbedsContentStreamId) {
+            // Safeguard for temporary content streams created during partial publish -> We want to skip these events, because their workspace doesn't match current content stream.
+            try {
+                $contentGraph = $this->contentRepository->getContentGraph($eventInstance->getWorkspaceName());
+            } catch (WorkspaceDoesNotExist) {
+                return;
+            }
+            if (!$contentGraph->getContentStreamId()->equals($eventInstance->getContentStreamId())) {
+                return;
+            }
         }
 
         match ($eventInstance::class) {
@@ -113,7 +120,6 @@ class AssetUsageCatchUpHook implements CatchUpHookInterface
     private function removeNodes(WorkspaceName $workspaceName, NodeAggregateId $nodeAggregateId, DimensionSpacePointSet $dimensionSpacePoints): void
     {
         $contentGraph = $this->contentRepository->getContentGraph($workspaceName);
-
 
         foreach ($dimensionSpacePoints as $dimensionSpacePoint) {
             $subgraph = $contentGraph->getSubgraph($dimensionSpacePoint, VisibilityConstraints::withoutRestrictions());
