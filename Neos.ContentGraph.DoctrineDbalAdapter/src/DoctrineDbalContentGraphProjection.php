@@ -22,6 +22,7 @@ use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
 use Neos\ContentRepository\Core\EventStore\EventInterface;
+use Neos\ContentRepository\Core\Feature\Common\EmbedsContentStreamId;
 use Neos\ContentRepository\Core\Feature\Common\InterdimensionalSiblings;
 use Neos\ContentRepository\Core\Feature\ContentStreamClosing\Event\ContentStreamWasClosed;
 use Neos\ContentRepository\Core\Feature\ContentStreamClosing\Event\ContentStreamWasReopened;
@@ -221,8 +222,7 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
             WorkspaceWasPublished::class,
             WorkspaceWasRebased::class,
             WorkspaceWasRemoved::class,
-        ]);
-        // todo handle all EmbedsContentStreamId??
+        ]) || $event instanceof EmbedsContentStreamId;
     }
 
     public function apply(EventInterface $event, EventEnvelope $eventEnvelope): void
@@ -261,8 +261,8 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
             WorkspaceWasRemoved::class => $this->whenWorkspaceWasRemoved($event),
             default => throw new \InvalidArgumentException(sprintf('Unsupported event %s', get_debug_type($event))),
         };
-        if (ContentStreamEventStreamName::isContentStreamStreamName($eventEnvelope->streamName)) {
-            $this->updateContentStreamVersion(ContentStreamEventStreamName::extractContentStreamIdFromStreamName($eventEnvelope->streamName), $eventEnvelope->version);
+        if ($event instanceof EmbedsContentStreamId && ContentStreamEventStreamName::isContentStreamStreamName($eventEnvelope->streamName)) {
+            $this->updateContentStreamVersion($event->getContentStreamId(), $eventEnvelope->version);
         }
     }
 
