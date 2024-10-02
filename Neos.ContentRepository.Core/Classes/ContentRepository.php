@@ -146,17 +146,16 @@ final class ContentRepository
      */
     public function projectionState(string $projectionStateClassName): ProjectionStateInterface
     {
+        if (!isset($this->projectionStateCache)) {
+            foreach ($this->projectionsAndCatchUpHooks->additionalProjections as $projection) {
+                $projectionState = $projection->getState();
+                $this->projectionStateCache[$projectionState::class] = $projectionState;
+            }
+        }
         if (isset($this->projectionStateCache[$projectionStateClassName])) {
             /** @var T $projectionState */
             $projectionState = $this->projectionStateCache[$projectionStateClassName];
             return $projectionState;
-        }
-        foreach ($this->projectionsAndCatchUpHooks->additionalProjections as $projection) {
-            $projectionState = $projection->getState();
-            if ($projectionState instanceof $projectionStateClassName) {
-                $this->projectionStateCache[$projectionStateClassName] = $projectionState;
-                return $projectionState;
-            }
         }
         throw new \InvalidArgumentException(sprintf('A projection state of type "%s" is not registered in this content repository instance.', $projectionStateClassName), 1662033650);
     }
