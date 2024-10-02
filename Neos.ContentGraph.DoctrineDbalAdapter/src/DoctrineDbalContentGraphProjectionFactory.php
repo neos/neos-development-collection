@@ -8,7 +8,6 @@ use Doctrine\DBAL\Connection;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\DimensionSpacePointsRepository;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\NodeFactory;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\ProjectionContentGraph;
-use Neos\ContentRepository\Core\ContentRepositoryReadModel;
 use Neos\ContentRepository\Core\Factory\ProjectionFactoryDependencies;
 use Neos\ContentRepository\Core\Projection\ProjectionFactoryInterface;
 
@@ -42,7 +41,7 @@ final class DoctrineDbalContentGraphProjectionFactory implements ProjectionFacto
             $dimensionSpacePointsRepository
         );
 
-        $contentRepositoryReadModelAdapter = new ContentRepositoryReadModelAdapter(
+        $contentRepositoryReadModel = new ContentRepositoryReadModelAdapter(
             $this->dbal,
             $nodeFactory,
             $projectionFactoryDependencies->contentRepositoryId,
@@ -58,7 +57,7 @@ final class DoctrineDbalContentGraphProjectionFactory implements ProjectionFacto
             ),
             $tableNames,
             $dimensionSpacePointsRepository,
-            new ContentRepositoryReadModel($contentRepositoryReadModelAdapter)
+            $contentRepositoryReadModel
         );
     }
 }

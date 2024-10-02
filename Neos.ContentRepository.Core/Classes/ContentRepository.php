@@ -30,6 +30,7 @@ use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Core\Projection\CatchUp;
 use Neos\ContentRepository\Core\Projection\CatchUpOptions;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphInterface;
+use Neos\ContentRepository\Core\Projection\ContentRepositoryReadModelProjection;
 use Neos\ContentRepository\Core\Projection\ProjectionInterface;
 use Neos\ContentRepository\Core\Projection\ProjectionsAndCatchUpHooks;
 use Neos\ContentRepository\Core\Projection\ProjectionStateInterface;
@@ -69,8 +70,9 @@ final class ContentRepository
      */
     private array $projectionStateCache;
 
-    private CommandHandlingDependencies $commandHandlingDependencies;
+    private ContentRepositoryReadModel $adapter;
 
+    private CommandHandlingDependencies $commandHandlingDependencies;
 
     /**
      * @internal use the {@see ContentRepositoryFactory::getOrBuild()} to instantiate
@@ -88,7 +90,8 @@ final class ContentRepository
         private readonly UserIdProviderInterface $userIdProvider,
         private readonly ClockInterface $clock,
     ) {
-        $this->commandHandlingDependencies = new CommandHandlingDependencies($this);
+        $this->adapter = $this->projectionsAndCatchUpHooks->readModelProjection->getState();
+        $this->commandHandlingDependencies = new CommandHandlingDependencies($this, $this->adapter);
     }
 
     /**
@@ -148,7 +151,7 @@ final class ContentRepository
             $projectionState = $this->projectionStateCache[$projectionStateClassName];
             return $projectionState;
         }
-        foreach ($this->projectionsAndCatchUpHooks->projections as $projection) {
+        foreach ($this->projectionsAndCatchUpHooks->additionalProjections as $projection) {
             $projectionState = $projection->getState();
             if ($projectionState instanceof $projectionStateClassName) {
                 $this->projectionStateCache[$projectionStateClassName] = $projectionState;
@@ -163,7 +166,7 @@ final class ContentRepository
      */
     public function catchUpProjection(string $projectionClassName, CatchUpOptions $options): void
     {
-        $projection = $this->projectionsAndCatchUpHooks->projections->get($projectionClassName);
+        $projection = $this->projectionsAndCatchUpHooks->getProjection($projectionClassName);
 
         $catchUpHookFactory = $this->projectionsAndCatchUpHooks->getCatchUpHookFactoryForProjection($projection);
         $catchUpHook = $catchUpHookFactory?->build($this);
@@ -204,15 +207,18 @@ final class ContentRepository
     public function setUp(): void
     {
         $this->eventStore->setup();
-        foreach ($this->projectionsAndCatchUpHooks->projections as $projection) {
+        $this->projectionsAndCatchUpHooks->readModelProjection->setUp();
+        foreach ($this->projectionsAndCatchUpHooks->additionalProjections as $projection) {
             $projection->setUp();
         }
     }
 
     public function status(): ContentRepositoryStatus
     {
-        $projectionStatuses = ProjectionStatuses::create();
-        foreach ($this->projectionsAndCatchUpHooks->projections as $projectionClassName => $projection) {
+        $projectionStatuses = ProjectionStatuses::create([
+            ContentRepositoryReadModelProjection::class => $this->projectionsAndCatchUpHooks->readModelProjection->status()
+        ]);
+        foreach ($this->projectionsAndCatchUpHooks->additionalProjections as $projectionClassName => $projection) {
             $projectionStatuses = $projectionStatuses->with($projectionClassName, $projection->status());
         }
         return new ContentRepositoryStatus(
@@ -223,7 +229,8 @@ final class ContentRepository
 
     public function resetProjectionStates(): void
     {
-        foreach ($this->projectionsAndCatchUpHooks->projections as $projection) {
+        $this->projectionsAndCatchUpHooks->readModelProjection->reset();
+        foreach ($this->projectionsAndCatchUpHooks->additionalProjections as $projection) {
             $projection->reset();
         }
     }
@@ -233,7 +240,7 @@ final class ContentRepository
      */
     public function resetProjectionState(string $projectionClassName): void
     {
-        $projection = $this->projectionsAndCatchUpHooks->projections->get($projectionClassName);
+        $projection = $this->projectionsAndCatchUpHooks->getProjection($projectionClassName);
         $projection->reset();
     }
 
@@ -242,7 +249,11 @@ final class ContentRepository
      */
     public function getContentGraph(WorkspaceName $workspaceName): ContentGraphInterface
     {
-        return $this->getContentRepositoryReadModel()->getContentGraphByWorkspaceName($workspaceName);
+        $workspace = $this->adapter->findWorkspaceByName($workspaceName);
+        if ($workspace === null) {
+            throw WorkspaceDoesNotExist::butWasSupposedTo($workspaceName);
+        }
+        return $this->adapter->buildContentGraph($workspaceName, $workspace->currentContentStreamId);
     }
 
     /**
@@ -250,7 +261,7 @@ final class ContentRepository
      */
     public function findWorkspaceByName(WorkspaceName $workspaceName): ?Workspace
     {
-        return $this->getContentRepositoryReadModel()->findWorkspaceByName($workspaceName);
+        return $this->adapter->findWorkspaceByName($workspaceName);
     }
 
     /**
@@ -259,17 +270,17 @@ final class ContentRepository
      */
     public function findWorkspaces(): Workspaces
     {
-        return $this->getContentRepositoryReadModel()->findWorkspaces();
+        return $this->adapter->findWorkspaces();
     }
 
     public function findContentStreamById(ContentStreamId $contentStreamId): ?ContentStream
     {
-        return $this->getContentRepositoryReadModel()->findContentStreamById($contentStreamId);
+        return $this->adapter->findContentStreamById($contentStreamId);
     }
 
     public function findContentStreams(): ContentStreams
     {
-        return $this->getContentRepositoryReadModel()->findContentStreams();
+        return $this->adapter->findContentStreams();
     }
 
     public function getNodeTypeManager(): NodeTypeManager
@@ -285,10 +296,5 @@ final class ContentRepository
     public function getContentDimensionSource(): ContentDimensionSourceInterface
     {
         return $this->contentDimensionSource;
-    }
-
-    private function getContentRepositoryReadModel(): ContentRepositoryReadModel
-    {
-        return $this->projectionState(ContentRepositoryReadModel::class);
     }
 }

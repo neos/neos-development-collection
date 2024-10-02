@@ -44,18 +44,17 @@ use Neos\ContentRepository\Core\Feature\SubtreeTagging\Event\SubtreeWasUntagged;
 use Neos\ContentRepository\Core\Infrastructure\DbalCheckpointStorage;
 use Neos\ContentRepository\Core\Infrastructure\DbalSchemaDiff;
 use Neos\ContentRepository\Core\Projection\CheckpointStorageStatusType;
-use Neos\ContentRepository\Core\Projection\ProjectionInterface;
 use Neos\ContentRepository\Core\Projection\ProjectionStatus;
+use Neos\ContentRepository\Core\Projection\ContentRepositoryReadModelProjection;
 use Neos\EventStore\Model\Event\SequenceNumber;
 use Neos\EventStore\Model\EventEnvelope;
 
 /**
  * The alternate reality-aware hypergraph projector for the PostgreSQL backend via Doctrine DBAL
  *
- * @implements ProjectionInterface<ContentRepositoryReadModel>
  * @internal the parent Content Graph is public
  */
-final class HypergraphProjection implements ProjectionInterface
+final class HypergraphProjection implements ContentRepositoryReadModelProjection
 {
     use ContentStreamForking;
     use NodeCreation;

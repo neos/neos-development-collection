@@ -65,8 +65,8 @@ use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\Projection\CheckpointStorageStatusType;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodeTags;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Timestamps;
-use Neos\ContentRepository\Core\Projection\ProjectionInterface;
 use Neos\ContentRepository\Core\Projection\ProjectionStatus;
+use Neos\ContentRepository\Core\Projection\ContentRepositoryReadModelProjection;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateClassification;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
@@ -76,10 +76,9 @@ use Neos\EventStore\Model\Event\SequenceNumber;
 use Neos\EventStore\Model\EventEnvelope;
 
 /**
- * @implements ProjectionInterface<ContentRepositoryReadModel>
  * @internal but the graph projection is api
  */
-final class DoctrineDbalContentGraphProjection implements ProjectionInterface
+final class DoctrineDbalContentGraphProjection implements ContentRepositoryReadModelProjection
 {
     use ContentStream;
     use NodeMove;

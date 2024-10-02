@@ -244,7 +244,7 @@ final class ContentRepositoryRegistry
             if ($projectionOptions === null) {
                 continue;
             }
-            $projectionFactory = $this->objectManager->get($projectionOptions['factoryObjectName']);
+            $projectionFactory = isset($projectionOptions['factoryObjectName']) ? $this->objectManager->get($projectionOptions['factoryObjectName']) : null;
             if (!$projectionFactory instanceof ProjectionFactoryInterface) {
                 throw InvalidConfigurationException::fromMessage('Projection factory object name for projection "%s" (content repository "%s") is not an instance of %s but %s.', $projectionName, $contentRepositoryId->value, ProjectionFactoryInterface::class, get_debug_type($projectionFactory));
             }

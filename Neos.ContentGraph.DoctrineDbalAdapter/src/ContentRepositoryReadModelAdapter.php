@@ -18,7 +18,7 @@ use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Exception;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\ContentGraph;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\NodeFactory;
-use Neos\ContentRepository\Core\ContentRepositoryReadModelAdapterInterface;
+use Neos\ContentRepository\Core\ContentRepositoryReadModel;
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStream;
@@ -32,10 +32,9 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceStatus;
 use Neos\EventStore\Model\Event\Version;
 
 /**
- * @internal only used inside the
- * @see ContentRepositoryReadModel
+ * @internal
  */
-final readonly class ContentRepositoryReadModelAdapter implements ContentRepositoryReadModelAdapterInterface
+final readonly class ContentRepositoryReadModelAdapter implements ContentRepositoryReadModel
 {
     public function __construct(
         private Connection $dbal,

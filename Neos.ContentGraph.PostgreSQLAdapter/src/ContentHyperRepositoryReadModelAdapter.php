@@ -8,7 +8,6 @@ use Doctrine\DBAL\Connection;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Repository\ContentHypergraph;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Repository\NodeFactory;
 use Neos\ContentRepository\Core\ContentRepositoryReadModel;
-use Neos\ContentRepository\Core\ContentRepositoryReadModelAdapterInterface;
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphInterface;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
@@ -20,10 +19,9 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepository\Core\SharedModel\Workspace\Workspaces;
 
 /**
- * @internal only used within
- * @see ContentRepositoryReadModel
+ * @internal
  */
-final readonly class ContentHyperRepositoryReadModelAdapter implements ContentRepositoryReadModelAdapterInterface
+final readonly class ContentHyperRepositoryReadModelAdapter implements ContentRepositoryReadModel
 {
     public function __construct(
         private Connection $dbal,
