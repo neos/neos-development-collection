@@ -98,7 +98,7 @@ Feature: Workspace discarding - basic functionality
       | Key  | Value                        |
       | text | "Modified in live workspace" |
 
-  Scenario: Conflicting changes lead to OUTDATED which can be recovered from via discard
+  Scenario: Conflicting changes lead to exception on rebase which can be recovered from via discard
 
     When the command CreateWorkspace is executed with payload:
       | Key                | Value              |
@@ -110,6 +110,8 @@ Feature: Workspace discarding - basic functionality
       | workspaceName      | "user-ws-two"      |
       | baseWorkspaceName  | "live"             |
       | newContentStreamId | "user-cs-two"      |
+
+    Then workspaces live,user-ws-one,user-ws-two have status UP_TO_DATE
 
     When the command RemoveNodeAggregate is executed with payload:
       | Key                          | Value              |
@@ -129,14 +131,14 @@ Feature: Workspace discarding - basic functionality
       | Key           | Value         |
       | workspaceName | "user-ws-one" |
 
+    Then workspaces live,user-ws-one have status UP_TO_DATE
     Then workspace user-ws-two has status OUTDATED
 
     When the command RebaseWorkspace is executed with payload and exceptions are caught:
       | Key                    | Value                 |
       | workspaceName          | "user-ws-two"         |
       | rebasedContentStreamId | "user-cs-two-rebased" |
-
-    Then workspace user-ws-two has status OUTDATED
+    Then the last command should have thrown an exception of type "WorkspaceRebaseFailed"
 
     When the command DiscardWorkspace is executed with payload:
       | Key                | Value                   |
@@ -145,3 +147,9 @@ Feature: Workspace discarding - basic functionality
 
     Then workspace user-ws-two has status OUTDATED
 
+    When the command RebaseWorkspace is executed with payload:
+      | Key                    | Value                       |
+      | workspaceName          | "user-ws-two"               |
+      | rebasedContentStreamId | "user-cs-two-rebased-final" |
+
+    Then workspaces live,user-ws-one,user-ws-two have status UP_TO_DATE
