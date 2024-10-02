@@ -6,7 +6,6 @@ namespace Neos\ContentRepository\Core\Feature\WorkspaceModification\Event;
 
 use Neos\ContentRepository\Core\EventStore\EventInterface;
 use Neos\ContentRepository\Core\Feature\Common\EmbedsWorkspaceName;
-use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceDescription;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 
 /**
