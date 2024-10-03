@@ -140,16 +140,11 @@ Feature: Workspace discarding - basic functionality
       | rebasedContentStreamId | "user-cs-two-rebased" |
     Then the last command should have thrown an exception of type "WorkspaceRebaseFailed"
 
+    Then workspace user-ws-two has status OUTDATED
+
     When the command DiscardWorkspace is executed with payload:
       | Key                | Value                   |
       | workspaceName      | "user-ws-two"           |
       | newContentStreamId | "user-cs-two-discarded" |
-
-    Then workspace user-ws-two has status OUTDATED
-
-    When the command RebaseWorkspace is executed with payload:
-      | Key                    | Value                       |
-      | workspaceName          | "user-ws-two"               |
-      | rebasedContentStreamId | "user-cs-two-rebased-final" |
 
     Then workspaces live,user-ws-one,user-ws-two have status UP_TO_DATE

@@ -129,7 +129,8 @@ class DoctrineDbalContentGraphSchemaBuilder
             DbalSchemaFactory::columnForContentStreamId('sourceContentStreamId')->setNotnull(false),
             // Should become a DB ENUM (unclear how to configure with DBAL) or int (latter needs adaption to code)
             (new Column('status', Type::getType(Types::BINARY)))->setLength(20)->setNotnull(true),
-            (new Column('removed', Type::getType(Types::BOOLEAN)))->setDefault(false)->setNotnull(false)
+            (new Column('removed', Type::getType(Types::BOOLEAN)))->setDefault(false)->setNotnull(false),
+            (new Column('sourceVersion', Type::getType(Types::INTEGER)))->setNotnull(false),
         ]);
     }
 

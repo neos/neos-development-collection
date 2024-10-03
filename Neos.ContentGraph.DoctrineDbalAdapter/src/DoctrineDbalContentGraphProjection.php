@@ -306,7 +306,7 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface
         // NOTE: as reference edges are attached to Relation Anchor Points (and they are lazily copy-on-written),
         // we do not need to copy reference edges here (but we need to do it during copy on write).
 
-        $this->createContentStream($event->newContentStreamId, ContentStreamStatus::FORKED, $event->sourceContentStreamId);
+        $this->createContentStream($event->newContentStreamId, ContentStreamStatus::FORKED, $event->sourceContentStreamId, $event->versionOfSourceContentStream);
     }
 
     private function whenContentStreamWasRemoved(ContentStreamWasRemoved $event): void

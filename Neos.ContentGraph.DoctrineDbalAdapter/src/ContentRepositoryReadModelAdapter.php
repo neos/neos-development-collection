@@ -55,11 +55,13 @@ final readonly class ContentRepositoryReadModelAdapter implements ContentReposit
     {
         $workspaceByNameStatement = <<<SQL
             SELECT
-                name, baseWorkspaceName, currentContentStreamId, status
+                ws.name, ws.baseWorkspaceName, ws.currentContentStreamId, cs.sourceVersion as lastSourceVersion, scs.version as sourceVersion
             FROM
-                {$this->tableNames->workspace()}
+                {$this->tableNames->workspace()} ws
+                JOIN {$this->tableNames->contentStream()} cs ON cs.id = ws.currentcontentstreamid
+                LEFT JOIN {$this->tableNames->contentStream()} scs ON cs.sourceContentStreamId = scs.id
             WHERE
-                name = :workspaceName
+                ws.name = :workspaceName
             LIMIT 1
         SQL;
         try {
@@ -79,9 +81,11 @@ final readonly class ContentRepositoryReadModelAdapter implements ContentReposit
     {
         $workspacesStatement = <<<SQL
             SELECT
-                name, baseWorkspaceName, currentContentStreamId, status
+                ws.name, ws.baseWorkspaceName, ws.currentContentStreamId, cs.sourceVersion as lastSourceVersion, scs.version as sourceVersion
             FROM
-                {$this->tableNames->workspace()}
+                {$this->tableNames->workspace()} ws
+                JOIN {$this->tableNames->contentStream()} cs ON cs.id = ws.currentcontentstreamid
+                LEFT JOIN {$this->tableNames->contentStream()} scs ON cs.sourceContentStreamId = scs.id
         SQL;
         try {
             $rows = $this->dbal->fetchAllAssociative($workspacesStatement);
@@ -136,11 +140,18 @@ final readonly class ContentRepositoryReadModelAdapter implements ContentReposit
      */
     private static function workspaceFromDatabaseRow(array $row): Workspace
     {
+        if ($row['sourceVersion'] === null) {
+            $status = WorkspaceStatus::UP_TO_DATE;
+        } elseif ($row['sourceVersion'] > $row['lastSourceVersion']) {
+            $status = WorkspaceStatus::OUTDATED;
+        } else {
+            $status = WorkspaceStatus::UP_TO_DATE;
+        }
         return new Workspace(
             WorkspaceName::fromString($row['name']),
             isset($row['baseWorkspaceName']) ? WorkspaceName::fromString($row['baseWorkspaceName']) : null,
             ContentStreamId::fromString($row['currentContentStreamId']),
-            WorkspaceStatus::from($row['status']),
+            $status,
         );
     }
 
