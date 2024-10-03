@@ -733,7 +733,6 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface
 
     private function whenWorkspaceRebaseFailed(WorkspaceRebaseFailed $event): void
     {
-        $this->markWorkspaceAsOutdatedConflict($event->workspaceName);
         $this->updateContentStreamStatus($event->candidateContentStreamId, ContentStreamStatus::REBASE_ERROR);
     }
 
@@ -748,8 +747,6 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface
     private function whenWorkspaceWasDiscarded(WorkspaceWasDiscarded $event): void
     {
         $this->updateWorkspaceContentStreamId($event->workspaceName, $event->newContentStreamId);
-        $this->markWorkspaceAsOutdated($event->workspaceName);
-        $this->markDependentWorkspacesAsOutdated($event->workspaceName);
 
         // the new content stream is in use now
         $this->updateContentStreamStatus($event->newContentStreamId, ContentStreamStatus::IN_USE_BY_WORKSPACE);
@@ -760,7 +757,6 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface
     private function whenWorkspaceWasPartiallyDiscarded(WorkspaceWasPartiallyDiscarded $event): void
     {
         $this->updateWorkspaceContentStreamId($event->workspaceName, $event->newContentStreamId);
-        $this->markDependentWorkspacesAsOutdated($event->workspaceName);
 
         // the new content stream is in use now
         $this->updateContentStreamStatus($event->newContentStreamId, ContentStreamStatus::IN_USE_BY_WORKSPACE);
@@ -773,12 +769,6 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface
     {
         // TODO: How do we test this method? – It's hard to design a BDD testcase that fails if this method is commented out...
         $this->updateWorkspaceContentStreamId($event->sourceWorkspaceName, $event->newSourceContentStreamId);
-        $this->markDependentWorkspacesAsOutdated($event->targetWorkspaceName);
-
-        // NASTY: we need to set the source workspace name as non-outdated; as it has been made up-to-date again.
-        $this->markWorkspaceAsUpToDate($event->sourceWorkspaceName);
-
-        $this->markDependentWorkspacesAsOutdated($event->sourceWorkspaceName);
 
         // the new content stream is in use now
         $this->updateContentStreamStatus($event->newSourceContentStreamId, ContentStreamStatus::IN_USE_BY_WORKSPACE);
@@ -791,12 +781,6 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface
     {
         // TODO: How do we test this method? – It's hard to design a BDD testcase that fails if this method is commented out...
         $this->updateWorkspaceContentStreamId($event->sourceWorkspaceName, $event->newSourceContentStreamId);
-        $this->markDependentWorkspacesAsOutdated($event->targetWorkspaceName);
-
-        // NASTY: we need to set the source workspace name as non-outdated; as it has been made up-to-date again.
-        $this->markWorkspaceAsUpToDate($event->sourceWorkspaceName);
-
-        $this->markDependentWorkspacesAsOutdated($event->sourceWorkspaceName);
 
         // the new content stream is in use now
         $this->updateContentStreamStatus($event->newSourceContentStreamId, ContentStreamStatus::IN_USE_BY_WORKSPACE);
@@ -808,10 +792,6 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface
     private function whenWorkspaceWasRebased(WorkspaceWasRebased $event): void
     {
         $this->updateWorkspaceContentStreamId($event->workspaceName, $event->newContentStreamId);
-        $this->markDependentWorkspacesAsOutdated($event->workspaceName);
-
-        // When the rebase is successful, we can set the status of the workspace back to UP_TO_DATE.
-        $this->markWorkspaceAsUpToDate($event->workspaceName);
 
         // the new content stream is in use now
         $this->updateContentStreamStatus($event->newContentStreamId, ContentStreamStatus::IN_USE_BY_WORKSPACE);

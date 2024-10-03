@@ -115,7 +115,6 @@ class DoctrineDbalContentGraphSchemaBuilder
             DbalSchemaFactory::columnForWorkspaceName('name')->setNotnull(true),
             DbalSchemaFactory::columnForWorkspaceName('baseWorkspaceName')->setNotnull(false),
             DbalSchemaFactory::columnForContentStreamId('currentContentStreamId')->setNotNull(true),
-            (new Column('status', self::type(Types::BINARY)))->setLength(20)->setNotnull(false),
         ]);
 
         return $workspaceTable->setPrimaryKey(['name']);
