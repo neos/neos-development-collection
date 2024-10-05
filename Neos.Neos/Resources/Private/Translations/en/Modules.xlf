@@ -470,7 +470,15 @@
 			<trans-unit id="users.electronicAddress.usage.type.Work" xml:space="preserve">
 				<source>Work</source>
 			</trans-unit>
-
+      <trans-unit id="users.sortBy.fullName" xml:space="preserve">
+				<source>Sort by first and last name</source>
+      </trans-unit>
+      <trans-unit id="users.sortBy.accountsAndRoles" xml:space="preserve">
+				<source>Sort by user accounts and roles</source>
+      </trans-unit>
+      <trans-unit id="users.sortBy.lastLogin" xml:space="preserve">
+				<source>Sort by last login</source>
+      </trans-unit>
 			<trans-unit id="packages.label" xml:space="preserve">
 				<source>Package Management</source>
 			</trans-unit>
