@@ -175,7 +175,7 @@ final class ContentGraph implements ContentGraphInterface
     public function findParentNodeAggregates(
         NodeAggregateId $childNodeAggregateId
     ): NodeAggregates {
-        $queryBuilder = $this->nodeQueryBuilder->buildParentNodeAggregateQuery()
+        $queryBuilder = $this->nodeQueryBuilder->buildBasicParentNodeAggregateQuery()
             ->innerJoin('h', $this->nodeQueryBuilder->tableNames->node(), 'cn', 'cn.relationanchorpoint = h.childnodeanchor')
             ->andWhere('h.contentstreamid = :contentStreamId')
             ->andWhere('cn.nodeaggregateid = :nodeAggregateId')

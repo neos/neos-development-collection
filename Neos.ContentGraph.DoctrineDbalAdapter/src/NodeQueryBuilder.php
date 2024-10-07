@@ -68,7 +68,7 @@ final readonly class NodeQueryBuilder
             ]);
     }
 
-    public function buildParentNodeAggregateQuery(): QueryBuilder
+    public function buildBasicParentNodeAggregateQuery(): QueryBuilder
     {
         return $this->createQueryBuilder()
             ->select('n.*, h.contentstreamid, h.subtreetags, dsp.dimensionspacepoint AS covereddimensionspacepoint')
