@@ -206,13 +206,8 @@ final class ContentGraph implements ContentGraphInterface
             ->andWhere('cn.nodeaggregateid = :childNodeAggregateId')
             ->andWhere('cn.origindimensionspacepointhash = :childOriginDimensionSpacePointHash');
 
-        $queryBuilder = $this->createQueryBuilder()
-            ->select('n.*, h.contentstreamid, h.subtreetags, dsp.dimensionspacepoint AS covereddimensionspacepoint')
-            ->from($this->nodeQueryBuilder->tableNames->node(), 'n')
-            ->innerJoin('n', $this->nodeQueryBuilder->tableNames->hierarchyRelation(), 'h', 'h.childnodeanchor = n.relationanchorpoint')
-            ->innerJoin('h', $this->nodeQueryBuilder->tableNames->dimensionSpacePoints(), 'dsp', 'dsp.hash = h.dimensionspacepointhash')
-            ->where('n.nodeaggregateid = (' . $subQueryBuilder->getSQL() . ')')
-            ->andWhere('h.contentstreamid = :contentStreamId')
+        $queryBuilder = $this->nodeQueryBuilder->buildBasicNodeAggregateQuery()
+            ->andWhere('n.nodeaggregateid = (' . $subQueryBuilder->getSQL() . ')')
             ->setParameters([
                 'contentStreamId' => $this->contentStreamId->value,
                 'childNodeAggregateId' => $childNodeAggregateId->value,
