@@ -19,9 +19,9 @@ trait ContentStream
     {
         $this->dbal->insert($this->tableNames->contentStream(), [
             'id' => $contentStreamId->value,
-            'sourceContentStreamId' => $sourceContentStreamId?->value,
             'version' => 0,
-            'sourceVersion' => $sourceVersion?->value,
+            'sourceContentStreamId' => $sourceContentStreamId?->value,
+            'sourceContentStreamVersion' => $sourceVersion?->value,
             'status' => $status->value,
         ]);
     }
