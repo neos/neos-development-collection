@@ -17,8 +17,6 @@ namespace Neos\Neos\Service;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\Annotations as Flow;
-use Neos\Flow\Security\Authorization\PrivilegeManagerInterface;
-use Neos\Flow\Session\SessionInterface;
 use Neos\Fusion\Service\HtmlAugmenter as FusionHtmlAugmenter;
 use Neos\Neos\FrontendRouting\NodeAddressFactory;
 
@@ -33,21 +31,9 @@ class ContentElementWrappingService
 {
     /**
      * @Flow\Inject
-     * @var PrivilegeManagerInterface
-     */
-    protected $privilegeManager;
-
-    /**
-     * @Flow\Inject
      * @var FusionHtmlAugmenter
      */
     protected $htmlAugmenter;
-
-    /**
-     * @Flow\Inject
-     * @var SessionInterface
-     */
-    protected $session;
 
     /**
      * @Flow\Inject
@@ -90,26 +76,5 @@ class ContentElementWrappingService
             'div',
             array_keys($attributes)
         );
-    }
-
-    /**
-     * Add required CSS classes to the attributes.
-     *
-     * @param array<string,mixed> $attributes
-     * @param array<string,mixed> $initialClasses
-     * @return array<string,mixed>
-     */
-    protected function addCssClasses(array $attributes, Node $node, array $initialClasses = []): array
-    {
-        $classNames = $initialClasses;
-        if (!$node->dimensionSpacePoint->equals($node->originDimensionSpacePoint)) {
-            $classNames[] = 'neos-contentelement-shine-through';
-        }
-
-        if ($classNames !== []) {
-            $attributes['class'] = implode(' ', $classNames);
-        }
-
-        return $attributes;
     }
 }
