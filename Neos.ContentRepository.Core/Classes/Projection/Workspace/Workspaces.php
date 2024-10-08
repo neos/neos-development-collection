@@ -100,8 +100,34 @@ final class Workspaces implements \IteratorAggregate, \Countable
         yield from array_values($this->workspaces);
     }
 
+    /**
+     * @param \Closure(Workspace): bool $callback
+     */
+    public function filter(\Closure $callback): self
+    {
+        return new self(array_filter($this->workspaces, $callback));
+    }
+
+    /**
+     * @param \Closure(Workspace): bool $callback
+     */
+    public function find(\Closure $callback): ?Workspace
+    {
+        foreach ($this->workspaces as $workspace) {
+            if ($callback($workspace)) {
+                return $workspace;
+            }
+        }
+        return null;
+    }
+
     public function count(): int
     {
         return count($this->workspaces);
+    }
+
+    public function isEmpty(): bool
+    {
+        return $this->workspaces === [];
     }
 }

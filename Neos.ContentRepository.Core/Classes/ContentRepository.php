@@ -36,7 +36,9 @@ use Neos\ContentRepository\Core\Projection\ProjectionsAndCatchUpHooks;
 use Neos\ContentRepository\Core\Projection\ProjectionStateInterface;
 use Neos\ContentRepository\Core\Projection\ProjectionStatuses;
 use Neos\ContentRepository\Core\Projection\WithMarkStaleInterface;
+use Neos\ContentRepository\Core\Projection\Workspace\Workspace;
 use Neos\ContentRepository\Core\Projection\Workspace\WorkspaceFinder;
+use Neos\ContentRepository\Core\Projection\Workspace\Workspaces;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryStatus;
 use Neos\ContentRepository\Core\SharedModel\Exception\WorkspaceDoesNotExist;
@@ -234,11 +236,6 @@ final class ContentRepository
         $projection->reset();
     }
 
-    public function getNodeTypeManager(): NodeTypeManager
-    {
-        return $this->nodeTypeManager;
-    }
-
     /**
      * @throws WorkspaceDoesNotExist if the workspace does not exist
      */
@@ -247,6 +244,19 @@ final class ContentRepository
         return $this->projectionState(ContentGraphFinder::class)->getByWorkspaceName($workspaceName);
     }
 
+    public function findWorkspaceByName(WorkspaceName $workspaceName): ?Workspace
+    {
+        return $this->getWorkspaceFinder()->findOneByName($workspaceName);
+    }
+
+    public function getWorkspaces(): Workspaces
+    {
+        return $this->getWorkspaceFinder()->findAll();
+    }
+
+    /**
+     * @deprecated with 9.0.0-beta14 please use {@see ContentRepository::getWorkspaces()} and {@see ContentRepository::findWorkspaceByName()} instead.
+     */
     public function getWorkspaceFinder(): WorkspaceFinder
     {
         return $this->projectionState(WorkspaceFinder::class);
@@ -255,6 +265,11 @@ final class ContentRepository
     public function getContentStreamFinder(): ContentStreamFinder
     {
         return $this->projectionState(ContentStreamFinder::class);
+    }
+
+    public function getNodeTypeManager(): NodeTypeManager
+    {
+        return $this->nodeTypeManager;
     }
 
     public function getVariationGraph(): InterDimensionalVariationGraph
