@@ -30,6 +30,7 @@ use Neos\Utility\ObjectAccess;
  * Used to access properties of a ContentRepository Node. If the property mame is
  * prefixed with _, internal node properties like start time, end time,
  * hidden are accessed.
+ * @deprecated please use ${node.properties.title} or ${node.properties[propertyName]} instead. For resolving references leverage ${q(node).referenceNodes("someReferenceName")} instead.
  */
 class PropertyOperation extends AbstractOperation
 {

@@ -23,6 +23,7 @@ use Neos\Neos\Domain\NodeLabel\NodeLabelGeneratorInterface;
 
 /**
  * Used to access the Node's label of a ContentRepository Node.
+ * @deprecated please use ${Neos.Node.getLabel(node)} instead
  */
 class LabelOperation extends AbstractOperation
 {
