@@ -8,6 +8,8 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\Flow\Annotations as Flow;
 
 /**
+ * Neos-specific metadata of a workspace
+ *
  * @api
  */
 #[Flow\Proxy(false)]

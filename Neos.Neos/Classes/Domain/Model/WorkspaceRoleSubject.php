@@ -7,7 +7,7 @@ namespace Neos\Neos\Domain\Model;
 use Neos\Flow\Annotations as Flow;
 
 /**
- * The identifier of a workspace role subject that identifiers a group of users or a single user
+ * The identifier of a workspace role subject that identifiers a group of users or a single user {@see WorkspaceRoleSubjectType}
  *
  * @api
  */
