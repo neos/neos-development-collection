@@ -51,6 +51,9 @@ use Neos\Neos\Domain\Model\SiteNodeName;
 use Neos\Neos\Domain\Model\User;
 use Neos\Neos\Domain\Model\WorkspaceClassification;
 use Neos\Neos\Domain\Model\WorkspaceDescription;
+use Neos\Neos\Domain\Model\WorkspaceRole;
+use Neos\Neos\Domain\Model\WorkspaceRoleSubject;
+use Neos\Neos\Domain\Model\WorkspaceRoleSubjectType;
 use Neos\Neos\Domain\Model\WorkspaceTitle;
 use Neos\Neos\Domain\Repository\SiteRepository;
 use Neos\Neos\Domain\Service\NodeTypeNameFactory;
@@ -221,6 +224,20 @@ class WorkspaceController extends AbstractModuleController
             );
             $this->redirect('new');
         }
+        $this->workspaceService->addWorkspaceRole(
+            $contentRepositoryId,
+            $workspaceName,
+            WorkspaceRoleSubjectType::USER,
+            WorkspaceRoleSubject::fromString($currentUser->getId()->value),
+            WorkspaceRole::MANAGER,
+        );
+        $this->workspaceService->addWorkspaceRole(
+            $contentRepositoryId,
+            $workspaceName,
+            WorkspaceRoleSubjectType::GROUP,
+            WorkspaceRoleSubject::fromString('Neos.Neos:AbstractEditor'),
+            WorkspaceRole::COLLABORATOR,
+        );
         $this->addFlashMessage($this->getModuleLabel('workspaces.workspaceHasBeenCreated', [$title->value]));
         $this->redirect('index');
     }
