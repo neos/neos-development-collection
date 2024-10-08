@@ -39,4 +39,11 @@ interface ContentRepositoryReadModel extends ProjectionStateInterface
     public function findContentStreamById(ContentStreamId $contentStreamId): ?ContentStream;
 
     public function findContentStreams(): ContentStreams;
+
+    /**
+     * Provides the total number of projected nodes regardless of workspace or content stream.
+     *
+     * @internal only for consumption in testcases
+     */
+    public function countNodes(): int;
 }

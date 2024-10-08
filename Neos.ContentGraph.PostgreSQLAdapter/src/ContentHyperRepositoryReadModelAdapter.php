@@ -60,4 +60,10 @@ final readonly class ContentHyperRepositoryReadModelAdapter implements ContentRe
         // TODO: Implement getContentStreams() method.
         return ContentStreams::createEmpty();
     }
+
+    public function countNodes(): int
+    {
+        // TODO: Implement countNodes method.
+        return 0;
+    }
 }

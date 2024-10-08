@@ -130,6 +130,21 @@ final readonly class ContentRepositoryReadModelAdapter implements ContentReposit
         return ContentStreams::fromArray(array_map(self::contentStreamFromDatabaseRow(...), $rows));
     }
 
+    public function countNodes(): int
+    {
+        $countNodesStatement = <<<SQL
+            SELECT
+                COUNT(*)
+            FROM
+                {$this->tableNames->node()}
+        SQL;
+        try {
+            return (int)$this->dbal->fetchOne($countNodesStatement);
+        } catch (Exception $e) {
+            throw new \RuntimeException(sprintf('Failed to count rows in database: %s', $e->getMessage()), 1701444590, $e);
+        }
+    }
+
     /**
      * @param array<string, mixed> $row
      */
