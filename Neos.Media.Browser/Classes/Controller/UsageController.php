@@ -100,15 +100,10 @@ class UsageController extends ActionController
 
             $workspace = $contentRepository->getWorkspaceFinder()->findOneByName($usage->getWorkspaceName());
 
-            // FIXME: AssetUsageReference->workspaceName ?
             $nodeAggregate = $contentRepository->getContentGraph($workspace->workspaceName)->findNodeAggregateById(
                 $usage->getNodeAggregateId()
             );
-            try {
-                $nodeType = $contentRepository->getNodeTypeManager()->getNodeType($nodeAggregate->nodeTypeName);
-            } catch (NodeTypeNotFound $e) {
-                $nodeType = null;
-            }
+            $nodeType = $contentRepository->getNodeTypeManager()->getNodeType($nodeAggregate->nodeTypeName);
 
             $accessible = $this->domainUserService->currentUserCanReadWorkspace($workspace);
 
