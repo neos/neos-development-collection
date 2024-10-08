@@ -12,8 +12,8 @@ namespace Neos\Neos\Domain\Model;
  */
 enum WorkspaceRole : string
 {
-    case COLLABORATOR = 'COLLABORATOR';
-    case MANAGER = 'MANAGER';
+    case COLLABORATOR = 'COLLABORATOR'; // Can read from and write to the workspace
+    case MANAGER = 'MANAGER'; // Can read from and write to the workspace and manage it (i.e. change metadata & role assignments)
 
     public function isAtLeast(self $role): bool
     {

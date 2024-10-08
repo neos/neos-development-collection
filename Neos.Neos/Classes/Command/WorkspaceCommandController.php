@@ -130,7 +130,9 @@ class WorkspaceCommandController extends CommandController
     }
 
     /**
-     * Create a new root workspace for a content repository.
+     * Create a new root workspace for a content repository
+     *
+     * NOTE: By default, only administrators can access workspaces without role assignments. Use <i>workspace:assignrole</i> to add workspace permissions
      *
      * @param string $name Name of the new root
      * @param string $contentRepository Identifier of the content repository. (Default: 'default')
@@ -162,7 +164,8 @@ class WorkspaceCommandController extends CommandController
      * @param string $contentRepository Identifier of the content repository. (Default: 'default')
      * @throws StopCommandException
      */
-    public function createPersonalCommand(string $workspace, string $owner, string $baseWorkspace = 'live', string $title = null, string $description = null, string $contentRepository = 'default'): void {
+    public function createPersonalCommand(string $workspace, string $owner, string $baseWorkspace = 'live', string $title = null, string $description = null, string $contentRepository = 'default'): void
+    {
         $contentRepositoryId = ContentRepositoryId::fromString($contentRepository);
         $workspaceOwner = $this->userService->getUser($owner);
         if ($workspaceOwner === null) {
@@ -184,6 +187,8 @@ class WorkspaceCommandController extends CommandController
     /**
      * Create a new shared workspace
      *
+     * NOTE: By default, only administrators can access workspaces without role assignments. Use <i>workspace:assignrole</i> to add workspace permissions
+     *
      * @param string $workspace Name of the workspace, for example "christmas-campaign"
      * @param string $baseWorkspace Name of the base workspace. If none is specified, "live" is assumed.
      * @param string|null $title Human friendly title of the workspace, for example "Christmas Campaign"
@@ -204,6 +209,136 @@ class WorkspaceCommandController extends CommandController
         );
         $this->outputLine('<success>Created shared workspace "%s"</success>', [$workspaceName->value]);
     }
+
+    /**
+     * Set/change the title of a workspace
+     *
+     * @param string $workspace Name of the workspace, for example "some-workspace"
+     * @param string $newTitle Human friendly title of the workspace, for example "Some workspace"
+     * @param string $contentRepository Identifier of the content repository. (Default: 'default')
+     * @throws StopCommandException
+     */
+    public function setTitleCommand(string $workspace, string $newTitle, string $contentRepository = 'default'): void
+    {
+        $contentRepositoryId = ContentRepositoryId::fromString($contentRepository);
+        $workspaceName = WorkspaceName::fromString($workspace);
+        $this->workspaceService->setWorkspaceTitle(
+            $contentRepositoryId,
+            $workspaceName,
+            WorkspaceTitle::fromString($newTitle),
+        );
+        $this->outputLine('<success>Set title of workspace "%s" to "%s"</success>', [$workspaceName->value, $newTitle]);
+    }
+
+    /**
+     * Set/change the description of a workspace
+     *
+     * @param string $workspace Name of the workspace, for example "some-workspace"
+     * @param string $newDescription Human friendly description of the workspace
+     * @param string $contentRepository Identifier of the content repository. (Default: 'default')
+     * @throws StopCommandException
+     */
+    public function setDescriptionCommand(string $workspace, string $newDescription, string $contentRepository = 'default'): void
+    {
+        $contentRepositoryId = ContentRepositoryId::fromString($contentRepository);
+        $workspaceName = WorkspaceName::fromString($workspace);
+        $this->workspaceService->setWorkspaceDescription(
+            $contentRepositoryId,
+            $workspaceName,
+            WorkspaceDescription::fromString($newDescription),
+        );
+        $this->outputLine('<success>Set description of workspace "%s"</success>', [$workspaceName->value]);
+    }
+
+    /**
+     * Assign a workspace role to the given user/user group
+     *
+     * Without explicit workspace roles, only administrators can change the corresponding workspace.
+     * With this command, a user or group (represented by a Flow role identifier) can be granted one of the two roles:
+     * - collaborator: Can read from and write to the workspace
+     * - manager: Can read from and write to the workspace and manage it (i.e. change metadata & role assignments)
+     *
+     * Examples:
+     *
+     * To grant editors read and write access to a (shared) workspace: <i>./flow workspace:assignrole some-workspace "Neos.Neos:AbstractEditor" collaborator</i>
+     *
+     * To grant a specific user read, write and manage access to a workspace: <i>./flow workspace:assignrole some-workspace admin manager --type user</i>
+     *
+     * {@see WorkspaceRole}
+     *
+     * @param string $workspace Name of the workspace, for example "some-workspace"
+     * @param string $subject The user/group that should be assigned. By default, this is expected to be a Flow role identifier (e.g. 'Neos.Neos:AbstractEditor') – if $type is 'user', this is the username (aka account identifier) of a Neos user
+     * @param string $role Role to assign, either 'collaborator' or 'manager' – a collaborator can read and write from/to the workspace. A manager can _on top_ change the workspace metadata & roles itself
+     * @param string $contentRepository Identifier of the content repository. (Default: 'default')
+     * @param string $type Type of role, either 'group' (default) or 'user' – if 'group', $subject is expected to be a Flow role identifier, otherwise the username (aka account identifier) of a Neos user
+     * @throws StopCommandException
+     */
+    public function assignRoleCommand(string $workspace, string $subject, string $role, string $contentRepository = 'default', string $type = 'group'): void
+    {
+        $contentRepositoryId = ContentRepositoryId::fromString($contentRepository);
+        $workspaceName = WorkspaceName::fromString($workspace);
+
+        $subjectType = match ($type) {
+            'group' => WorkspaceRoleSubjectType::GROUP,
+            'user' => WorkspaceRoleSubjectType::USER,
+            default => throw new \InvalidArgumentException(sprintf('type must be "group" or "user", given "%s"', $type), 1728398802),
+        };
+        $workspaceRole = match ($role) {
+            'collaborator' => WorkspaceRole::COLLABORATOR,
+            'manager' => WorkspaceRole::MANAGER,
+            default => throw new \InvalidArgumentException(sprintf('role must be "collaborator" or "manager", given "%s"', $role), 1728398880),
+        };
+        if ($subjectType === WorkspaceRoleSubjectType::USER) {
+            $neosUser = $this->userService->getUser($subject);
+            if ($neosUser === null) {
+                $this->outputLine('<error>The user "%s" specified as subject does not exist</error>', [$subject]);
+                $this->quit(1);
+            }
+            $roleSubject = WorkspaceRoleSubject::fromString($neosUser->getId()->value);
+        } else {
+            $roleSubject = WorkspaceRoleSubject::fromString($subject);
+        }
+        $this->workspaceService->assignWorkspaceRole(
+            $contentRepositoryId,
+            $workspaceName,
+            $subjectType,
+            $roleSubject,
+            $workspaceRole,
+        );
+        $this->outputLine('<success>Assigned role "%s" to subject "%s" for workspace "%s"</success>', [$workspaceRole->value, $roleSubject->value, $workspaceName->value]);
+    }
+
+    /**
+     * Unassign a workspace role from the given user/user group
+     *
+     * @see assignRoleCommand()
+     *
+     * @param string $workspace Name of the workspace, for example "some-workspace"
+     * @param string $subject The user/group that should be unassigned. By default, this is expected to be a Flow role identifier (e.g. 'Neos.Neos:AbstractEditor') – if $type is 'user', this is the username (aka account identifier) of a Neos user
+     * @param string $contentRepository Identifier of the content repository. (Default: 'default')
+     * @param string $type Type of role, either 'group' (default) or 'user' – if 'group', $subject is expected to be a Flow role identifier, otherwise the username (aka account identifier) of a Neos user
+     * @throws StopCommandException
+     */
+    public function unassignRoleCommand(string $workspace, string $subject, string $contentRepository = 'default', string $type = 'group'): void
+    {
+        $contentRepositoryId = ContentRepositoryId::fromString($contentRepository);
+        $workspaceName = WorkspaceName::fromString($workspace);
+
+        $subjectType = match ($type) {
+            'group' => WorkspaceRoleSubjectType::GROUP,
+            'user' => WorkspaceRoleSubjectType::USER,
+            default => throw new \InvalidArgumentException(sprintf('type must be "group" or "user", given "%s"', $type), 1728398802),
+        };
+        $roleSubject = WorkspaceRoleSubject::fromString($subject);
+        $this->workspaceService->unassignWorkspaceRole(
+            $contentRepositoryId,
+            $workspaceName,
+            $subjectType,
+            $roleSubject,
+        );
+        $this->outputLine('<success>Removed role assignment from subject "%s" for workspace "%s"</success>', [$roleSubject->value, $workspaceName->value]);
+    }
+
 
     /**
      * Deletes a workspace

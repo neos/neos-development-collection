@@ -41,6 +41,8 @@ use Neos\Neos\Domain\Model\WorkspaceRoleSubjectType;
 use Neos\Neos\Domain\Model\WorkspaceTitle;
 
 /**
+ * Central authority to interact with Content Repository Workspaces within Neos
+ *
  * @api
  */
 #[Flow\Scope('singleton')]
@@ -58,6 +60,8 @@ final class WorkspaceService
 
     /**
      * Load metadata for the specified workspace
+     *
+     * Note: If no metadata exists for the specified workspace, an instance with classification {@see WorkspaceClassification::UNKNOWN} is returned!
      */
     public function getWorkspaceMetadata(ContentRepositoryId $contentRepositoryId, WorkspaceName $workspaceName): WorkspaceMetadata
     {
@@ -73,13 +77,23 @@ final class WorkspaceService
     }
 
     /**
-     * Change title and/or description metadata for the specified workspace
+     * Update/set title metadata for the specified workspace
      */
-    public function updateWorkspaceTitleAndDescription(ContentRepositoryId $contentRepositoryId, WorkspaceName $workspaceName, WorkspaceTitle $newWorkspaceTitle, WorkspaceDescription $newWorkspaceDescription): void
+    public function setWorkspaceTitle(ContentRepositoryId $contentRepositoryId, WorkspaceName $workspaceName, WorkspaceTitle $newWorkspaceTitle): void
     {
         $this->requireWorkspace($contentRepositoryId, $workspaceName);
         $this->updateWorkspaceMetadata($contentRepositoryId, $workspaceName, [
             'title' => $newWorkspaceTitle->value,
+        ]);
+    }
+
+    /**
+     * Update/set description metadata for the specified workspace
+     */
+    public function setWorkspaceDescription(ContentRepositoryId $contentRepositoryId, WorkspaceName $workspaceName, WorkspaceDescription $newWorkspaceDescription): void
+    {
+        $this->requireWorkspace($contentRepositoryId, $workspaceName);
+        $this->updateWorkspaceMetadata($contentRepositoryId, $workspaceName, [
             'description' => $newWorkspaceDescription->value,
         ]);
     }
@@ -152,6 +166,48 @@ final class WorkspaceService
             WorkspaceName::forLive(),
             $user->getId(),
         );
+    }
+
+    /**
+     * Assign a workspace role to the given user/user group
+     *
+     * Without explicit workspace roles, only administrators can change the corresponding workspace.
+     * With this method, the subject (i.e. a Neos user or group represented by a Flow role identifier) can be granted a {@see WorkspaceRole} for the specified workspace
+     */
+    public function assignWorkspaceRole(ContentRepositoryId $contentRepositoryId, WorkspaceName $workspaceName, WorkspaceRoleSubjectType $subjectType, WorkspaceRoleSubject $subject, WorkspaceRole $role): void
+    {
+        $this->requireWorkspace($contentRepositoryId, $workspaceName);
+        try {
+            $this->dbal->insert(self::TABLE_NAME_WORKSPACE_ROLE, [
+                'content_repository_id' => $contentRepositoryId->value,
+                'workspace_name' => $workspaceName->value,
+                'subject_type' => $subjectType->value,
+                'subject' => $subject->value,
+                'role' => $role->value,
+            ]);
+        } catch (DbalException $e) {
+            throw new \RuntimeException(sprintf('Failed to assign role for workspace "%s" to subject "%s" (Content Repository "%s"): %s', $workspaceName->value, $subject->value, $contentRepositoryId->value, $e->getMessage()), 1728396138, $e);
+        }
+    }
+
+    /**
+     * Remove a workspace role assignment for the given subject
+     *
+     * @see self::assignWorkspaceRole()
+     */
+    public function unassignWorkspaceRole(ContentRepositoryId $contentRepositoryId, WorkspaceName $workspaceName, WorkspaceRoleSubjectType $subjectType, WorkspaceRoleSubject $subject): void
+    {
+        $this->requireWorkspace($contentRepositoryId, $workspaceName);
+        try {
+            $this->dbal->delete(self::TABLE_NAME_WORKSPACE_ROLE, [
+                'content_repository_id' => $contentRepositoryId->value,
+                'workspace_name' => $workspaceName->value,
+                'subject_type' => $subjectType->value,
+                'subject' => $subject->value,
+            ]);
+        } catch (DbalException $e) {
+            throw new \RuntimeException(sprintf('Failed to unassign role for subject "%s" from workspace "%s" (Content Repository "%s"): %s', $subject->value, $workspaceName->value, $contentRepositoryId->value, $e->getMessage()), 1728396169, $e);
+        }
     }
 
     /**
@@ -247,10 +303,20 @@ final class WorkspaceService
     private function updateWorkspaceMetadata(ContentRepositoryId $contentRepositoryId, WorkspaceName $workspaceName, array $data): void
     {
         try {
-            $this->dbal->update(self::TABLE_NAME_WORKSPACE_METADATA, $data, [
+            $affectedRows = $this->dbal->update(self::TABLE_NAME_WORKSPACE_METADATA, $data, [
                 'content_repository_id' => $contentRepositoryId->value,
                 'workspace_name' => $workspaceName->value,
             ]);
+            if ($affectedRows === 0) {
+                $this->dbal->insert(self::TABLE_NAME_WORKSPACE_METADATA, [
+                    'content_repository_id' => $contentRepositoryId->value,
+                    'workspace_name' => $workspaceName->value,
+                    'description' => '',
+                    'title' => '',
+                    'classification' => WorkspaceClassification::UNKNOWN->value,
+                    ...$data,
+                ]);
+            }
         } catch (DbalException $e) {
             throw new \RuntimeException(sprintf('Failed to update metadata for workspace "%s" (Content Repository "%s"): %s', $workspaceName->value, $contentRepositoryId->value, $e->getMessage()), 1726821159, $e);
         }
@@ -306,21 +372,6 @@ final class WorkspaceService
             'userId' => $userId->value,
         ]);
         return $workspaceName === false ? null : WorkspaceName::fromString($workspaceName);
-    }
-
-    public function addWorkspaceRole(ContentRepositoryId $contentRepositoryId, WorkspaceName $workspaceName, WorkspaceRoleSubjectType $subjectType, WorkspaceRoleSubject $subject, WorkspaceRole $role): void
-    {
-        try {
-            $this->dbal->insert(self::TABLE_NAME_WORKSPACE_ROLE, [
-                'content_repository_id' => $contentRepositoryId->value,
-                'workspace_name' => $workspaceName->value,
-                'subject_type' => $subjectType->value,
-                'subject' => $subject->value,
-                'role' => $role->value,
-            ]);
-        } catch (DbalException $e) {
-            throw new \RuntimeException(sprintf('Failed to add metadata for workspace "%s" (Content Repository "%s"): %s', $workspaceName->value, $contentRepositoryId->value, $e->getMessage()), 1727084068, $e);
-        }
     }
 
     private function loadWorkspaceRoleOfUser(ContentRepositoryId $contentRepositoryId, WorkspaceName $workspaceName, User $user): ?WorkspaceRole

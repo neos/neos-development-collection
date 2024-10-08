@@ -224,14 +224,14 @@ class WorkspaceController extends AbstractModuleController
             );
             $this->redirect('new');
         }
-        $this->workspaceService->addWorkspaceRole(
+        $this->workspaceService->assignWorkspaceRole(
             $contentRepositoryId,
             $workspaceName,
             WorkspaceRoleSubjectType::USER,
             WorkspaceRoleSubject::fromString($currentUser->getId()->value),
             WorkspaceRole::MANAGER,
         );
-        $this->workspaceService->addWorkspaceRole(
+        $this->workspaceService->assignWorkspaceRole(
             $contentRepositoryId,
             $workspaceName,
             WorkspaceRoleSubjectType::GROUP,
@@ -297,10 +297,14 @@ class WorkspaceController extends AbstractModuleController
             );
             $this->redirect('index');
         }
-        $this->workspaceService->updateWorkspaceTitleAndDescription(
+        $this->workspaceService->setWorkspaceTitle(
             $contentRepositoryId,
             $workspaceName,
             $title,
+        );
+        $this->workspaceService->setWorkspaceDescription(
+            $contentRepositoryId,
+            $workspaceName,
             $description,
         );
         $this->addFlashMessage($this->translator->translateById(
