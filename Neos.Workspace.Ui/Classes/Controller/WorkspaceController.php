@@ -17,9 +17,7 @@ namespace Neos\Workspace\Ui\Controller;
 use Doctrine\DBAL\Exception as DBALException;
 use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Exception\WorkspaceAlreadyExists;
-use Neos\ContentRepository\Core\Feature\WorkspaceModification\Command\ChangeWorkspaceOwner;
 use Neos\ContentRepository\Core\Feature\WorkspaceModification\Command\DeleteWorkspace;
-use Neos\ContentRepository\Core\Feature\WorkspaceModification\Command\RenameWorkspace;
 use Neos\ContentRepository\Core\Feature\WorkspacePublication\Command\DiscardIndividualNodesFromWorkspace;
 use Neos\ContentRepository\Core\Feature\WorkspacePublication\Command\PublishIndividualNodesFromWorkspace;
 use Neos\ContentRepository\Core\Feature\WorkspacePublication\Dto\NodeIdsToPublishOrDiscard;
@@ -41,11 +39,9 @@ use Neos\Error\Messages\Message;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\I18n\Exception\IndexOutOfBoundsException;
 use Neos\Flow\I18n\Exception\InvalidFormatPlaceholderException;
-use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\Exception\StopActionException;
 use Neos\Flow\Package\PackageManager;
 use Neos\Flow\Property\PropertyMapper;
-use Neos\Flow\Security\Account;
 use Neos\Flow\Security\Context;
 use Neos\Media\Domain\Model\AssetInterface;
 use Neos\Media\Domain\Model\ImageInterface;
@@ -208,14 +204,14 @@ class WorkspaceController extends AbstractModuleController
         if ($currentUser === null) {
             throw new \RuntimeException('No user authenticated', 1718303756);
         }
-
+        $workspaceName = $this->workspaceService->getUniqueWorkspaceName($contentRepositoryId, $title->value);
         try {
             $this->workspaceService->createSharedWorkspace(
                 $contentRepositoryId,
+                $workspaceName,
                 $title,
                 $description,
                 $baseWorkspace,
-                $currentUser->getId(),
             );
         } catch (WorkspaceAlreadyExists $exception) {
             $this->addFlashMessage(

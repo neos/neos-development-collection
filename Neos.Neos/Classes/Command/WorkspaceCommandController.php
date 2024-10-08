@@ -14,8 +14,7 @@ declare(strict_types=1);
 
 namespace Neos\Neos\Command;
 
-use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Command\CreateWorkspace;
-use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Exception\BaseWorkspaceDoesNotExist;
+use Doctrine\DBAL\Exception as DbalException;
 use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Exception\WorkspaceAlreadyExists;
 use Neos\ContentRepository\Core\Feature\WorkspaceModification\Command\DeleteWorkspace;
 use Neos\ContentRepository\Core\Feature\WorkspaceRebase\Dto\RebaseErrorHandlingStrategy;
@@ -24,19 +23,17 @@ use Neos\ContentRepository\Core\Projection\Workspace\Workspace;
 use Neos\ContentRepository\Core\Service\WorkspaceMaintenanceServiceFactory;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
 use Neos\ContentRepository\Core\SharedModel\Exception\WorkspaceDoesNotExist;
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
-use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceDescription;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
-use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceTitle;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Cli\CommandController;
 use Neos\Flow\Cli\Exception\StopCommandException;
-use Neos\Flow\Persistence\PersistenceManagerInterface;
-use Neos\Neos\Domain\Model\UserId;
 use Neos\Neos\Domain\Model\WorkspaceClassification;
-use Neos\Neos\Domain\Model\WorkspaceDescription as NeosWorkspaceDescription;
-use Neos\Neos\Domain\Model\WorkspaceTitle as NeosWorkspaceTitle;
+use Neos\Neos\Domain\Model\WorkspaceDescription;
+use Neos\Neos\Domain\Model\WorkspaceRole;
+use Neos\Neos\Domain\Model\WorkspaceRoleSubject;
+use Neos\Neos\Domain\Model\WorkspaceRoleSubjectType;
+use Neos\Neos\Domain\Model\WorkspaceTitle;
 use Neos\Neos\Domain\Service\UserService;
 use Neos\Neos\Domain\Service\WorkspacePublishingService;
 use Neos\Neos\Domain\Service\WorkspaceService;
@@ -49,9 +46,6 @@ class WorkspaceCommandController extends CommandController
 {
     #[Flow\Inject]
     protected UserService $userService;
-
-    #[Flow\Inject]
-    protected PersistenceManagerInterface $persistenceManager;
 
     #[Flow\Inject]
     protected ContentRepositoryRegistry $contentRepositoryRegistry;
@@ -78,7 +72,7 @@ class WorkspaceCommandController extends CommandController
         );
 
         $this->outputLine(
-            'Published all nodes in workspace %s to its base workspace',
+            '<success>Published all nodes in workspace "%s" to its base workspace</success>',
             [$workspace]
         );
     }
@@ -99,11 +93,11 @@ class WorkspaceCommandController extends CommandController
                 ContentRepositoryId::fromString($contentRepository),
                 WorkspaceName::fromString($workspace)
             );
-        } catch (WorkspaceDoesNotExist $exception) {
-            $this->outputLine('Workspace "%s" does not exist', [$workspace]);
+        } catch (WorkspaceDoesNotExist) {
+            $this->outputLine('<error>Workspace "%s" does not exist</error>', [$workspace]);
             $this->quit(1);
         }
-        $this->outputLine('Discarded all nodes in workspace %s', [$workspace]);
+        $this->outputLine('<success>Discarded all nodes in workspace "%s"</success>', [$workspace]);
     }
 
     /**
@@ -125,14 +119,14 @@ class WorkspaceCommandController extends CommandController
                 $force ? RebaseErrorHandlingStrategy::STRATEGY_FORCE : RebaseErrorHandlingStrategy::STRATEGY_FAIL,
             );
         } catch (WorkspaceDoesNotExist $exception) {
-            $this->outputLine('Workspace "%s" does not exist', [$workspace]);
+            $this->outputLine('<error>Workspace "%s" does not exist</error>', [$workspace]);
             $this->quit(1);
         } catch (WorkspaceRebaseFailed $exception) {
-            $this->outputLine('Rebasing of workspace %s is not possible due to conflicts. You can try the --force option.', [$workspace]);
+            $this->outputLine('<error>Rebasing of workspace "%s" is not possible due to conflicts. You can try the <em>--force</em> option.</error>', [$workspace]);
             $this->quit(1);
         }
 
-        $this->outputLine('Rebased workspace %s', [$workspace]);
+        $this->outputLine('<success>Rebased workspace "%s"</success>', [$workspace]);
     }
 
     /**
@@ -140,91 +134,75 @@ class WorkspaceCommandController extends CommandController
      *
      * @param string $name Name of the new root
      * @param string $contentRepository Identifier of the content repository. (Default: 'default')
+     * @param string|null $title Optional title of the workspace
      * @param string|null $description Optional description of the workspace
+     * @throws WorkspaceAlreadyExists
      */
-    public function createRootCommand(string $name, string $contentRepository = 'default', string $description = null): void
+    public function createRootCommand(string $name, string $contentRepository = 'default', string $title = null, string $description = null): void
     {
+        $workspaceName = WorkspaceName::fromString($name);
         $contentRepositoryId = ContentRepositoryId::fromString($contentRepository);
-        $workspaceName = $this->workspaceService->createRootWorkspace(
+        $this->workspaceService->createRootWorkspace(
             $contentRepositoryId,
-            NeosWorkspaceTitle::fromString($name),
-            NeosWorkspaceDescription::fromString($description ?? $name)
+            $workspaceName,
+            WorkspaceTitle::fromString($title ?? $name),
+            WorkspaceDescription::fromString($description ?? '')
         );
-        $this->outputLine('Created root workspace "%s" in content repository "%s"', [$workspaceName->value, $contentRepositoryId->value]);
+        $this->outputLine('<success>Created root workspace "%s" in content repository "%s"</success>', [$workspaceName->value, $contentRepositoryId->value]);
     }
 
     /**
-     * Create a new workspace
+     * Create a new personal workspace for the specified user
      *
-     * This command creates a new personal workspace.
+     * @param string $workspace Name of the workspace, for example "christmas-campaign"
+     * @param string $owner The username (aka account identifier) of a User to own the workspace
+     * @param string $baseWorkspace Name of the base workspace. If none is specified, "live" is assumed.
+     * @param string|null $title Human friendly title of the workspace, for example "Christmas Campaign"
+     * @param string|null $description A description explaining the purpose of the new workspace
+     * @param string $contentRepository Identifier of the content repository. (Default: 'default')
+     * @throws StopCommandException
+     */
+    public function createPersonalCommand(string $workspace, string $owner, string $baseWorkspace = 'live', string $title = null, string $description = null, string $contentRepository = 'default'): void {
+        $contentRepositoryId = ContentRepositoryId::fromString($contentRepository);
+        $workspaceOwner = $this->userService->getUser($owner);
+        if ($workspaceOwner === null) {
+            $this->outputLine('<error>The user "%s" specified as owner does not exist</error>', [$owner]);
+            $this->quit(1);
+        }
+        $workspaceName = WorkspaceName::fromString($workspace);
+        $this->workspaceService->createPersonalWorkspace(
+            $contentRepositoryId,
+            $workspaceName,
+            WorkspaceTitle::fromString($title ?? $workspaceName->value),
+            WorkspaceDescription::fromString($description ?? ''),
+            WorkspaceName::fromString($baseWorkspace),
+            $workspaceOwner->getId(),
+        );
+        $this->outputLine('<success>Created personal workspace "%s" for user "%s"</success>', [$workspaceName->value, (string)$workspaceOwner->getName()]);
+    }
+
+    /**
+     * Create a new shared workspace
      *
      * @param string $workspace Name of the workspace, for example "christmas-campaign"
      * @param string $baseWorkspace Name of the base workspace. If none is specified, "live" is assumed.
      * @param string|null $title Human friendly title of the workspace, for example "Christmas Campaign"
      * @param string|null $description A description explaining the purpose of the new workspace
-     * @param string $owner The identifier of a User to own the workspace
      * @param string $contentRepository Identifier of the content repository. (Default: 'default')
      * @throws StopCommandException
      */
-    public function createCommand(
-        string $workspace,
-        string $baseWorkspace = 'live',
-        string $title = null,
-        string $description = null,
-        string $owner = '',
-        string $contentRepository = 'default'
-    ): void {
+    public function createSharedCommand(string $workspace, string $baseWorkspace = 'live', string $title = null, string $description = null, string $contentRepository = 'default'): void
+    {
         $contentRepositoryId = ContentRepositoryId::fromString($contentRepository);
-
-        $this->workspaceService->createPersonalWorkspace(
+        $workspaceName = WorkspaceName::fromString($workspace);
+        $this->workspaceService->createSharedWorkspace(
             $contentRepositoryId,
-            NeosWorkspaceTitle::fromString($title ?? $workspace),
-            NeosWorkspaceDescription::fromString($description ?? ''),
+            $workspaceName,
+            WorkspaceTitle::fromString($title ?? $workspaceName->value),
+            WorkspaceDescription::fromString($description ?? ''),
             WorkspaceName::fromString($baseWorkspace),
-            UserId::fromString($owner),
         );
-
-        $contentRepositoryInstance = $this->contentRepositoryRegistry->get($contentRepositoryId);
-
-        if ($owner === '') {
-            $workspaceOwnerUserId = null;
-        } else {
-            $workspaceOwnerUserId = UserId::fromString($owner);
-            $workspaceOwner = $this->userService->findUserById($workspaceOwnerUserId);
-            if ($workspaceOwner === null) {
-                $this->outputLine('The user "%s" specified as owner does not exist', [$owner]);
-                $this->quit(3);
-            }
-        }
-
-        try {
-            $contentRepositoryInstance->handle(CreateWorkspace::create(
-                WorkspaceName::fromString($workspace),
-                WorkspaceName::fromString($baseWorkspace),
-                WorkspaceTitle::fromString($title ?: $workspace),
-                WorkspaceDescription::fromString($description ?: $workspace),
-                ContentStreamId::create(),
-                $workspaceOwnerUserId !== null ? \Neos\ContentRepository\Core\SharedModel\User\UserId::fromString($workspaceOwnerUserId->value) : null,
-            ));
-        } catch (WorkspaceAlreadyExists $workspaceAlreadyExists) {
-            $this->outputLine('Workspace "%s" already exists', [$workspace]);
-            $this->quit(1);
-        } catch (BaseWorkspaceDoesNotExist $baseWorkspaceDoesNotExist) {
-            $this->outputLine('The base workspace "%s" does not exist', [$baseWorkspace]);
-            $this->quit(2);
-        }
-
-        if ($workspaceOwnerUserId !== null) {
-            $this->outputLine(
-                'Created a new workspace "%s", based on workspace "%s", owned by "%s".',
-                [$workspace, $baseWorkspace, $owner]
-            );
-        } else {
-            $this->outputLine(
-                'Created a new workspace "%s", based on workspace "%s".',
-                [$workspace, $baseWorkspace]
-            );
-        }
+        $this->outputLine('<success>Created shared workspace "%s"</success>', [$workspaceName->value]);
     }
 
     /**
@@ -236,7 +214,7 @@ class WorkspaceCommandController extends CommandController
      * @param string $workspace Name of the workspace, for example "christmas-campaign"
      * @param boolean $force Delete the workspace and all of its contents
      * @param string $contentRepository The name of the content repository. (Default: 'default')
-     * @see neos.neos:workspace:discard
+     * @throws StopCommandException
      */
     public function deleteCommand(string $workspace, bool $force = false, string $contentRepository = 'default'): void
     {
@@ -257,20 +235,18 @@ class WorkspaceCommandController extends CommandController
         $workspaceMetadata = $this->workspaceService->getWorkspaceMetadata($contentRepositoryId, $workspaceName);
 
         if ($workspaceMetadata->classification === WorkspaceClassification::PERSONAL) {
-            $this->outputLine(
-                'Did not delete workspace "%s" because it is a personal workspace.'
-                    . ' Personal workspaces cannot be deleted manually.',
-                [$workspaceName->value]
-            );
+            $this->outputLine('<error>Did not delete workspace "%s" because it is a personal workspace. Personal workspaces cannot be deleted manually.</error>', [$workspaceName->value]);
             $this->quit(2);
         }
 
-        $dependentWorkspaces = $contentRepositoryInstance->getWorkspaceFinder()->findByBaseWorkspace($workspaceName);
+        try {
+            $dependentWorkspaces = $contentRepositoryInstance->getWorkspaceFinder()->findByBaseWorkspace($workspaceName);
+        } catch (DbalException $e) {
+            $this->outputLine('<error>Failed to determine dependant workspaces: %s</error>', [$e->getMessage()]);
+            $this->quit(1);
+        }
         if (count($dependentWorkspaces) > 0) {
-            $this->outputLine(
-                'Workspace "%s" cannot be deleted because the following workspaces are based on it:',
-                [$workspaceName->value]
-            );
+            $this->outputLine('<error>Workspace "%s" cannot be deleted because the following workspaces are based on it:</error>', [$workspaceName->value]);
 
             $this->outputLine();
             $tableRows = [];

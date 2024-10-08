@@ -39,25 +39,27 @@ trait WorkspaceServiceTrait
     abstract private function getObject(string $className): object;
 
     /**
-     * @When the root workspace :workspaceTitle is created
+     * @When the root workspace :workspaceName is created
      */
-    public function theRootWorkspaceIsCreated(string $workspaceTitle): void
+    public function theRootWorkspaceIsCreated(string $workspaceName): void
     {
         $this->getObject(WorkspaceService::class)->createRootWorkspace(
             $this->currentContentRepository->id,
-            WorkspaceTitle::fromString($workspaceTitle),
+            WorkspaceName::fromString($workspaceName),
+            WorkspaceTitle::fromString($workspaceName),
             WorkspaceDescription::fromString(''),
         );
     }
 
     /**
-     * @When the personal workspace :workspaceTitle is created with the target workspace :targetWorkspace
+     * @When the personal workspace :workspaceName is created with the target workspace :targetWorkspace
      */
-    public function thePersonalWorkspaceIsCreatedWithTheTargetWorkspace(string $workspaceTitle, string $targetWorkspace): void
+    public function thePersonalWorkspaceIsCreatedWithTheTargetWorkspace(string $workspaceName, string $targetWorkspace): void
     {
         $this->getObject(WorkspaceService::class)->createPersonalWorkspace(
             $this->currentContentRepository->id,
-            WorkspaceTitle::fromString($workspaceTitle),
+            WorkspaceName::fromString($workspaceName),
+            WorkspaceTitle::fromString($workspaceName),
             WorkspaceDescription::fromString(''),
             WorkspaceName::fromString($targetWorkspace),
             UserId::fromString(FakeUserIdProvider::$userId?->value ?? ''),
@@ -65,16 +67,16 @@ trait WorkspaceServiceTrait
     }
 
     /**
-     * @When the shared workspace :workspaceTitle is created with the target workspace :targetWorkspace
+     * @When the shared workspace :workspaceName is created with the target workspace :targetWorkspace
      */
-    public function theSharedWorkspaceIsCreatedWithTheTargetWorkspace(string $workspaceTitle, string $targetWorkspace): void
+    public function theSharedWorkspaceIsCreatedWithTheTargetWorkspace(string $workspaceName, string $targetWorkspace): void
     {
         $this->getObject(WorkspaceService::class)->createSharedWorkspace(
             $this->currentContentRepository->id,
-            WorkspaceTitle::fromString($workspaceTitle),
+            WorkspaceName::fromString($workspaceName),
+            WorkspaceTitle::fromString($workspaceName),
             WorkspaceDescription::fromString(''),
             WorkspaceName::fromString($targetWorkspace),
-            null
         );
     }
 

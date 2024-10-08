@@ -17,9 +17,9 @@ namespace Neos\Neos\Domain\Service;
 use Doctrine\DBAL\ArrayParameterType;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Exception as DbalException;
-use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Command\CreateRootWorkspace;
 use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Command\CreateWorkspace;
+use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Exception\WorkspaceAlreadyExists;
 use Neos\ContentRepository\Core\Projection\Workspace\Workspace;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
@@ -36,7 +36,8 @@ use Neos\Neos\Domain\Model\WorkspaceDescription;
 use Neos\Neos\Domain\Model\WorkspaceMetadata;
 use Neos\Neos\Domain\Model\WorkspacePermissions;
 use Neos\Neos\Domain\Model\WorkspaceRole;
-use Neos\Neos\Domain\Model\WorkspaceSubjectType;
+use Neos\Neos\Domain\Model\WorkspaceRoleSubject;
+use Neos\Neos\Domain\Model\WorkspaceRoleSubjectType;
 use Neos\Neos\Domain\Model\WorkspaceTitle;
 
 /**
@@ -60,12 +61,15 @@ final class WorkspaceService
      */
     public function getWorkspaceMetadata(ContentRepositoryId $contentRepositoryId, WorkspaceName $workspaceName): WorkspaceMetadata
     {
-        $this->requireWorkspace($contentRepositoryId, $workspaceName);
+        $crWorkspace = $this->requireWorkspace($contentRepositoryId, $workspaceName);
         $metadata = $this->loadWorkspaceMetadata($contentRepositoryId, $workspaceName);
-        if ($metadata === null) {
-            throw new \RuntimeException(sprintf('Failed to load metadata for workspace "%s" (Content Repository "%s"). Maybe workspace metadata and roles have to be synchronized', $workspaceName->value, $contentRepositoryId->value), 1726736384);
-        }
-        return $metadata;
+        return $metadata ?? new WorkspaceMetadata(
+            $workspaceName,
+            WorkspaceTitle::fromString($workspaceName->value),
+            WorkspaceDescription::fromString(''),
+            $crWorkspace->baseWorkspaceName !== null ? WorkspaceClassification::ROOT : WorkspaceClassification::UNKNOWN,
+            null,
+        );
     }
 
     /**
@@ -96,11 +100,12 @@ final class WorkspaceService
 
     /**
      * Create a new root (aka base) workspace with the specified metadata
+     *
+     * @throws WorkspaceAlreadyExists
      */
-    public function createRootWorkspace(ContentRepositoryId $contentRepositoryId, WorkspaceTitle $title, WorkspaceDescription $description): WorkspaceName
+    public function createRootWorkspace(ContentRepositoryId $contentRepositoryId, WorkspaceName $workspaceName, WorkspaceTitle $title, WorkspaceDescription $description): void
     {
         $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryId);
-        $workspaceName = self::getUniqueWorkspaceName($contentRepository, $title->value);
         $contentRepository->handle(
             CreateRootWorkspace::create(
                 $workspaceName,
@@ -110,23 +115,22 @@ final class WorkspaceService
             )
         );
         $this->addWorkspaceMetadata($contentRepositoryId, $workspaceName, $title, $description, WorkspaceClassification::ROOT, null);
-        return $workspaceName;
     }
 
     /**
      * Create a new, personal, workspace for the specified user
      */
-    public function createPersonalWorkspace(ContentRepositoryId $contentRepositoryId, WorkspaceTitle $title, WorkspaceDescription $description, WorkspaceName $baseWorkspaceName, UserId $ownerId): WorkspaceName
+    public function createPersonalWorkspace(ContentRepositoryId $contentRepositoryId, WorkspaceName $workspaceName, WorkspaceTitle $title, WorkspaceDescription $description, WorkspaceName $baseWorkspaceName, UserId $ownerId): void
     {
-        return $this->createWorkspace($contentRepositoryId, $title, $description, $baseWorkspaceName, $ownerId, WorkspaceClassification::PERSONAL);
+        $this->createWorkspace($contentRepositoryId, $workspaceName, $title, $description, $baseWorkspaceName, $ownerId, WorkspaceClassification::PERSONAL);
     }
 
     /**
      * Create a new, potentially shared, workspace
      */
-    public function createSharedWorkspace(ContentRepositoryId $contentRepositoryId, WorkspaceTitle $title, WorkspaceDescription $description, WorkspaceName $baseWorkspaceName, UserId|null $ownerId = null): WorkspaceName
+    public function createSharedWorkspace(ContentRepositoryId $contentRepositoryId, WorkspaceName $workspaceName, WorkspaceTitle $title, WorkspaceDescription $description, WorkspaceName $baseWorkspaceName): void
     {
-        return $this->createWorkspace($contentRepositoryId, $title, $description, $baseWorkspaceName, $ownerId, WorkspaceClassification::SHARED);
+        $this->createWorkspace($contentRepositoryId, $workspaceName, $title, $description, $baseWorkspaceName, null, WorkspaceClassification::SHARED);
     }
 
     /**
@@ -139,8 +143,10 @@ final class WorkspaceService
             $this->requireWorkspace($contentRepositoryId, $existingWorkspaceName);
             return;
         }
+        $workspaceName = $this->getUniqueWorkspaceName($contentRepositoryId, $user->getLabel());
         $this->createPersonalWorkspace(
             $contentRepositoryId,
+            $workspaceName,
             WorkspaceTitle::fromString($user->getLabel()),
             WorkspaceDescription::empty(),
             WorkspaceName::forLive(),
@@ -173,6 +179,29 @@ final class WorkspaceService
         );
     }
 
+    public function getUniqueWorkspaceName(ContentRepositoryId $contentRepositoryId, string $candidate): WorkspaceName
+    {
+        $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryId);
+        $workspaceNameCandidate = WorkspaceName::transliterateFromString($candidate);
+        $workspaceName = $workspaceNameCandidate;
+        $attempt = 1;
+        do {
+            if ($contentRepository->getWorkspaceFinder()->findOneByName($workspaceName) === null) {
+                return $workspaceName;
+            }
+            if ($attempt === 1) {
+                $suffix = '';
+            } else {
+                $suffix = '-' . ($attempt - 1);
+            }
+            $workspaceName = WorkspaceName::fromString(
+                substr($workspaceNameCandidate->value, 0, WorkspaceName::MAX_LENGTH - strlen($suffix)) . $suffix
+            );
+            $attempt++;
+        } while ($attempt <= 10);
+        throw new \RuntimeException(sprintf('Failed to find unique workspace name for "%s" after %d attempts.', $candidate, $attempt - 1), 1725975479);
+    }
+
     // ------------------
 
     private function loadWorkspaceMetadata(ContentRepositoryId $contentRepositoryId, WorkspaceName $workspaceName): ?WorkspaceMetadata
@@ -203,10 +232,6 @@ final class WorkspaceService
         if (!is_array($metadataRow)) {
             return null;
         }
-        assert(is_string($metadataRow['title']));
-        assert(is_string($metadataRow['description']));
-        assert(is_string($metadataRow['classification']));
-        assert(is_null($metadataRow['owner_user_id']) || is_string($metadataRow['owner_user_id']));
         return new WorkspaceMetadata(
             $workspaceName,
             WorkspaceTitle::fromString($metadataRow['title']),
@@ -231,10 +256,9 @@ final class WorkspaceService
         }
     }
 
-    private function createWorkspace(ContentRepositoryId $contentRepositoryId, WorkspaceTitle $title, WorkspaceDescription $description, WorkspaceName $baseWorkspaceName, UserId|null $ownerId, WorkspaceClassification $classification): WorkspaceName
+    private function createWorkspace(ContentRepositoryId $contentRepositoryId, WorkspaceName $workspaceName, WorkspaceTitle $title, WorkspaceDescription $description, WorkspaceName $baseWorkspaceName, UserId|null $ownerId, WorkspaceClassification $classification): void
     {
         $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryId);
-        $workspaceName = self::getUniqueWorkspaceName($contentRepository, $title->value);
         $contentRepository->handle(
             CreateWorkspace::create(
                 $workspaceName,
@@ -245,7 +269,6 @@ final class WorkspaceService
             )
         );
         $this->addWorkspaceMetadata($contentRepositoryId, $workspaceName, $title, $description, $classification, $ownerId);
-        return $workspaceName;
     }
 
     private function addWorkspaceMetadata(ContentRepositoryId $contentRepositoryId, WorkspaceName $workspaceName, WorkspaceTitle $title, WorkspaceDescription $description, WorkspaceClassification $classification, UserId|null $ownerUserId): void
@@ -256,7 +279,7 @@ final class WorkspaceService
                 'workspace_name' => $workspaceName->value,
                 'title' => $title->value,
                 'description' => $description->value,
-                'classification' => $classification->name,
+                'classification' => $classification->value,
                 'owner_user_id' => $ownerUserId?->value,
             ]);
         } catch (DbalException $e) {
@@ -279,10 +302,25 @@ final class WorkspaceService
         SQL;
         $workspaceName = $this->dbal->fetchOne($query, [
             'contentRepositoryId' => $contentRepositoryId->value,
-            'personalWorkspaceClassification' => WorkspaceClassification::PERSONAL->name,
+            'personalWorkspaceClassification' => WorkspaceClassification::PERSONAL->value,
             'userId' => $userId->value,
         ]);
         return $workspaceName === false ? null : WorkspaceName::fromString($workspaceName);
+    }
+
+    public function addWorkspaceRole(ContentRepositoryId $contentRepositoryId, WorkspaceName $workspaceName, WorkspaceRoleSubjectType $subjectType, WorkspaceRoleSubject $subject, WorkspaceRole $role): void
+    {
+        try {
+            $this->dbal->insert(self::TABLE_NAME_WORKSPACE_ROLE, [
+                'content_repository_id' => $contentRepositoryId->value,
+                'workspace_name' => $workspaceName->value,
+                'subject_type' => $subjectType->value,
+                'subject' => $subject->value,
+                'role' => $role->value,
+            ]);
+        } catch (DbalException $e) {
+            throw new \RuntimeException(sprintf('Failed to add metadata for workspace "%s" (Content Repository "%s"): %s', $workspaceName->value, $contentRepositoryId->value, $e->getMessage()), 1727084068, $e);
+        }
     }
 
     private function loadWorkspaceRoleOfUser(ContentRepositoryId $contentRepositoryId, WorkspaceName $workspaceName, User $user): ?WorkspaceRole
@@ -307,6 +345,7 @@ final class WorkspaceService
                     (subject_type = :groupSubjectType AND subject IN (:groupSubjects))
                 )
             ORDER BY
+                /* We only want to return the most specific role so we order them and return the first row */
                 CASE
                     WHEN role='MANAGER' THEN 1
                     WHEN role='COLLABORATOR' THEN 2
@@ -316,9 +355,9 @@ final class WorkspaceService
         $role = $this->dbal->fetchOne($query, [
             'contentRepositoryId' => $contentRepositoryId->value,
             'workspaceName' => $workspaceName->value,
-            'userSubjectType' => WorkspaceSubjectType::USER->name,
+            'userSubjectType' => WorkspaceRoleSubjectType::USER->value,
             'userId' => $user->getId()->value,
-            'groupSubjectType' => WorkspaceSubjectType::GROUP->name,
+            'groupSubjectType' => WorkspaceRoleSubjectType::GROUP->value,
             'groupSubjects' => $userRoles,
         ], [
             'groupSubjects' => ArrayParameterType::STRING,
@@ -327,28 +366,6 @@ final class WorkspaceService
             return null;
         }
         return WorkspaceRole::from($role);
-    }
-
-    private static function getUniqueWorkspaceName(ContentRepository $contentRepository, string $candidate): WorkspaceName
-    {
-        $workspaceNameCandidate = WorkspaceName::transliterateFromString($candidate);
-        $workspaceName = $workspaceNameCandidate;
-        $attempt = 1;
-        do {
-            if ($contentRepository->getWorkspaceFinder()->findOneByName($workspaceName) === null) {
-                return $workspaceName;
-            }
-            if ($attempt === 1) {
-                $suffix = '';
-            } else {
-                $suffix = '-' . ($attempt - 1);
-            }
-            $workspaceName = WorkspaceName::fromString(
-                substr($workspaceNameCandidate->value, 0, WorkspaceName::MAX_LENGTH - strlen($suffix)) . $suffix
-            );
-            $attempt++;
-        } while ($attempt <= 10);
-        throw new \RuntimeException(sprintf('Failed to find unique workspace name for "%s" after %d attempts.', $candidate, $attempt - 1), 1725975479);
     }
 
     private function requireWorkspace(ContentRepositoryId $contentRepositoryId, WorkspaceName $workspaceName): Workspace
