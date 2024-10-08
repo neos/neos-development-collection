@@ -402,7 +402,7 @@ Feature: Tests for the "Neos.ContentRepository" Flow Query methods.
     test = Neos.Fusion:DataStructure {
       property = ${q(node).property('title')}
       identifier = ${q(node).id()}
-      label = ${q(node).label()}
+      label = ${Neos.Node.getLabel(node)}
       nodeTypeName = ${q(node).nodeTypeName()}
       @process.render = ${Json.stringify(value, ['JSON_PRETTY_PRINT'])}
     }
@@ -425,7 +425,7 @@ Feature: Tests for the "Neos.ContentRepository" Flow Query methods.
     test = Neos.Fusion:DataStructure {
       property = ${q(node).property('title')}
       identifier = ${q(node).id()}
-      label = ${q(node).label()}
+      label = ${Neos.Node.getLabel(node)}
       nodeTypeName = ${q(node).nodeTypeName()}
       @process.render = ${Json.stringify(value, ['JSON_PRETTY_PRINT'])}
     }
