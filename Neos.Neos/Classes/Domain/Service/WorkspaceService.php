@@ -68,7 +68,6 @@ final class WorkspaceService
         $workspace = $this->requireWorkspace($contentRepositoryId, $workspaceName);
         $metadata = $this->loadWorkspaceMetadata($contentRepositoryId, $workspaceName);
         return $metadata ?? new WorkspaceMetadata(
-            $workspaceName,
             WorkspaceTitle::fromString($workspaceName->value),
             WorkspaceDescription::fromString(''),
             $workspace->baseWorkspaceName === null ? WorkspaceClassification::ROOT : WorkspaceClassification::UNKNOWN,
@@ -287,7 +286,6 @@ final class WorkspaceService
             return null;
         }
         return new WorkspaceMetadata(
-            $workspaceName,
             WorkspaceTitle::fromString($metadataRow['title']),
             WorkspaceDescription::fromString($metadataRow['description']),
             WorkspaceClassification::from($metadataRow['classification']),

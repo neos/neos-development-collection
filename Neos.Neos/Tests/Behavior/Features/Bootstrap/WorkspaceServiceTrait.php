@@ -145,7 +145,6 @@ trait WorkspaceServiceTrait
     {
         $workspaceMetadata = $this->getObject(WorkspaceService::class)->getWorkspaceMetadata($this->currentContentRepository->id, WorkspaceName::fromString($workspaceName));
         Assert::assertSame($expectedMetadata->getHash()[0], [
-            'Workspace name' => $workspaceMetadata->workspaceName->value,
             'Title' => $workspaceMetadata->title->value,
             'Description' => $workspaceMetadata->description->value,
             'Classification' => $workspaceMetadata->classification->value,
