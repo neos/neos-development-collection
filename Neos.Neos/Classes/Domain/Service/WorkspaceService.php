@@ -65,13 +65,13 @@ final class WorkspaceService
      */
     public function getWorkspaceMetadata(ContentRepositoryId $contentRepositoryId, WorkspaceName $workspaceName): WorkspaceMetadata
     {
-        $crWorkspace = $this->requireWorkspace($contentRepositoryId, $workspaceName);
+        $workspace = $this->requireWorkspace($contentRepositoryId, $workspaceName);
         $metadata = $this->loadWorkspaceMetadata($contentRepositoryId, $workspaceName);
         return $metadata ?? new WorkspaceMetadata(
             $workspaceName,
             WorkspaceTitle::fromString($workspaceName->value),
             WorkspaceDescription::fromString(''),
-            $crWorkspace->baseWorkspaceName !== null ? WorkspaceClassification::ROOT : WorkspaceClassification::UNKNOWN,
+            $workspace->baseWorkspaceName === null ? WorkspaceClassification::ROOT : WorkspaceClassification::UNKNOWN,
             null,
         );
     }
@@ -81,7 +81,6 @@ final class WorkspaceService
      */
     public function setWorkspaceTitle(ContentRepositoryId $contentRepositoryId, WorkspaceName $workspaceName, WorkspaceTitle $newWorkspaceTitle): void
     {
-        $this->requireWorkspace($contentRepositoryId, $workspaceName);
         $this->updateWorkspaceMetadata($contentRepositoryId, $workspaceName, [
             'title' => $newWorkspaceTitle->value,
         ]);
@@ -92,7 +91,6 @@ final class WorkspaceService
      */
     public function setWorkspaceDescription(ContentRepositoryId $contentRepositoryId, WorkspaceName $workspaceName, WorkspaceDescription $newWorkspaceDescription): void
     {
-        $this->requireWorkspace($contentRepositoryId, $workspaceName);
         $this->updateWorkspaceMetadata($contentRepositoryId, $workspaceName, [
             'description' => $newWorkspaceDescription->value,
         ]);
@@ -302,6 +300,7 @@ final class WorkspaceService
      */
     private function updateWorkspaceMetadata(ContentRepositoryId $contentRepositoryId, WorkspaceName $workspaceName, array $data): void
     {
+        $workspace = $this->requireWorkspace($contentRepositoryId, $workspaceName);
         try {
             $affectedRows = $this->dbal->update(self::TABLE_NAME_WORKSPACE_METADATA, $data, [
                 'content_repository_id' => $contentRepositoryId->value,
@@ -312,8 +311,8 @@ final class WorkspaceService
                     'content_repository_id' => $contentRepositoryId->value,
                     'workspace_name' => $workspaceName->value,
                     'description' => '',
-                    'title' => '',
-                    'classification' => WorkspaceClassification::UNKNOWN->value,
+                    'title' => $workspaceName->value,
+                    'classification' => $workspace->baseWorkspaceName === null ? WorkspaceClassification::ROOT->value : WorkspaceClassification::UNKNOWN->value,
                     ...$data,
                 ]);
             }

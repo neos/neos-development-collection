@@ -1,8 +1,9 @@
 <?php
+
 declare(strict_types=1);
 
 /*
- * This file is part of the Neos.ContentRepository package.
+ * This file is part of the Neos.Neos package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -13,13 +14,17 @@ declare(strict_types=1);
 
 use Behat\Gherkin\Node\TableNode;
 use Neos\ContentRepository\BehavioralTests\TestSuite\Behavior\CRBehavioralTestsSubjectProvider;
+use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Command\CreateRootWorkspace;
+use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Command\CreateWorkspace;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
+use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceDescription as DeprecatedWorkspaceDescription;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
-use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\Helpers\FakeUserIdProvider;
+use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceTitle as DeprecatedWorkspaceTitle;
 use Neos\Neos\Domain\Model\UserId;
 use Neos\Neos\Domain\Model\WorkspaceDescription;
 use Neos\Neos\Domain\Model\WorkspaceTitle;
 use Neos\Neos\Domain\Service\WorkspaceService;
-use Webmozart\Assert\Assert;
+use PHPUnit\Framework\Assert;
 
 /**
  * Behat steps related to the {@see WorkspaceService}
@@ -29,6 +34,7 @@ use Webmozart\Assert\Assert;
 trait WorkspaceServiceTrait
 {
     use CRBehavioralTestsSubjectProvider;
+    use ExceptionsTrait;
 
     /**
      * @template T of object
@@ -40,30 +46,31 @@ trait WorkspaceServiceTrait
 
     /**
      * @When the root workspace :workspaceName is created
+     * @When the root workspace :workspaceName with title :title and description :description is created
      */
-    public function theRootWorkspaceIsCreated(string $workspaceName): void
+    public function theRootWorkspaceIsCreated(string $workspaceName, string $title = null, string $description = null): void
     {
-        $this->getObject(WorkspaceService::class)->createRootWorkspace(
+        $this->tryCatchingExceptions(fn () => $this->getObject(WorkspaceService::class)->createRootWorkspace(
             $this->currentContentRepository->id,
             WorkspaceName::fromString($workspaceName),
-            WorkspaceTitle::fromString($workspaceName),
-            WorkspaceDescription::fromString(''),
-        );
+            WorkspaceTitle::fromString($title ?? $workspaceName),
+            WorkspaceDescription::fromString($description ?? ''),
+        ));
     }
 
     /**
-     * @When the personal workspace :workspaceName is created with the target workspace :targetWorkspace
+     * @When the personal workspace :workspaceName is created with the target workspace :targetWorkspace for user :ownerUserId
      */
-    public function thePersonalWorkspaceIsCreatedWithTheTargetWorkspace(string $workspaceName, string $targetWorkspace): void
+    public function thePersonalWorkspaceIsCreatedWithTheTargetWorkspace(string $workspaceName, string $targetWorkspace, string $ownerUserId): void
     {
-        $this->getObject(WorkspaceService::class)->createPersonalWorkspace(
+        $this->tryCatchingExceptions(fn () => $this->getObject(WorkspaceService::class)->createPersonalWorkspace(
             $this->currentContentRepository->id,
             WorkspaceName::fromString($workspaceName),
             WorkspaceTitle::fromString($workspaceName),
             WorkspaceDescription::fromString(''),
             WorkspaceName::fromString($targetWorkspace),
-            UserId::fromString(FakeUserIdProvider::$userId?->value ?? ''),
-        );
+            UserId::fromString($ownerUserId),
+        ));
     }
 
     /**
@@ -71,33 +78,78 @@ trait WorkspaceServiceTrait
      */
     public function theSharedWorkspaceIsCreatedWithTheTargetWorkspace(string $workspaceName, string $targetWorkspace): void
     {
-        $this->getObject(WorkspaceService::class)->createSharedWorkspace(
+        $this->tryCatchingExceptions(fn () => $this->getObject(WorkspaceService::class)->createSharedWorkspace(
             $this->currentContentRepository->id,
             WorkspaceName::fromString($workspaceName),
             WorkspaceTitle::fromString($workspaceName),
             WorkspaceDescription::fromString(''),
             WorkspaceName::fromString($targetWorkspace),
-        );
+        ));
     }
 
     /**
-     * @Then the following workspaces should exist:
+     * @When a root workspace :workspaceName exists without metadata
      */
-    public function theFollowingWorkspacesShouldExist(TableNode $expectedWorkspacesTable): void
+    public function aRootWorkspaceExistsWithoutMetadata(string $workspaceName): void
     {
-        $expectedWorkspaces = $expectedWorkspacesTable->getHash();
-        $actualWorkspaces = [];
-        $workspaceFinder = $this->currentContentRepository->getWorkspaceFinder();
-        $workspaceService = $this->getObject(WorkspaceService::class);
-        foreach ($workspaceFinder->findAll() as $workspace) {
-            $workspaceMetadata = $workspaceService->getWorkspaceMetadata($this->currentContentRepository->id, $workspace->workspaceName);
-            $actualWorkspaces[] = [
-                'Name' => $workspace->workspaceName->value,
-                'Base workspace' => $workspace->baseWorkspaceName?->value ?? '',
-                'Title' => $workspaceMetadata->title->value,
-                'Classification' => $workspaceMetadata->classification->value,
-            ];
-        }
-        Assert::same($expectedWorkspaces, $actualWorkspaces);
+        $this->currentContentRepository->handle(CreateRootWorkspace::create(
+            WorkspaceName::fromString($workspaceName),
+            DeprecatedWorkspaceTitle::fromString($workspaceName),
+            DeprecatedWorkspaceDescription::fromString(''),
+            ContentStreamId::create(),
+        ));
+    }
+
+    /**
+     * @When a workspace :arg1 with base workspace :arg2 exists without metadata
+     */
+    public function aWorkspaceWithBaseWorkspaceExistsWithoutMetadata(string $workspaceName, string $baseWorkspaceName): void
+    {
+        $this->currentContentRepository->handle(CreateWorkspace::create(
+            WorkspaceName::fromString($workspaceName),
+            WorkspaceName::fromString($baseWorkspaceName),
+            DeprecatedWorkspaceTitle::fromString($workspaceName),
+            DeprecatedWorkspaceDescription::fromString(''),
+            ContentStreamId::create(),
+        ));
+    }
+
+    /**
+     * @When the title of workspace :workspaceName is set to :newTitle
+     */
+    public function theTitleOfWorkspaceIsSetTo(string $workspaceName, string $newTitle): void
+    {
+        $this->tryCatchingExceptions(fn () => $this->getObject(WorkspaceService::class)->setWorkspaceTitle(
+            $this->currentContentRepository->id,
+            WorkspaceName::fromString($workspaceName),
+            WorkspaceTitle::fromString($newTitle),
+        ));
+    }
+
+    /**
+     * @When the description of workspace :workspaceName is set to :newDescription
+     */
+    public function theDescriptionOfWorkspaceIsSetTo(string $workspaceName, string $newDescription): void
+    {
+        $this->tryCatchingExceptions(fn () => $this->getObject(WorkspaceService::class)->setWorkspaceDescription(
+            $this->currentContentRepository->id,
+            WorkspaceName::fromString($workspaceName),
+            WorkspaceDescription::fromString($newDescription),
+        ));
+    }
+
+    /**
+     * @Then the workspace :workspaceName should have the following metadata:
+     */
+    public function theWorkspaceShouldHaveTheFollowingMetadata($workspaceName, TableNode $expectedMetadata): void
+    {
+        $workspaceMetadata = $this->getObject(WorkspaceService::class)->getWorkspaceMetadata($this->currentContentRepository->id, WorkspaceName::fromString($workspaceName));
+        Assert::assertSame($expectedMetadata->getHash()[0], [
+            'Workspace name' => $workspaceMetadata->workspaceName->value,
+            'Title' => $workspaceMetadata->title->value,
+            'Description' => $workspaceMetadata->description->value,
+            'Classification' => $workspaceMetadata->classification->value,
+            'Owner user id' => $workspaceMetadata->ownerUserId?->value ?? '',
+        ]);
     }
 }
