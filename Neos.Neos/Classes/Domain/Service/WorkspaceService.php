@@ -61,7 +61,9 @@ final class WorkspaceService
     /**
      * Load metadata for the specified workspace
      *
-     * Note: If no metadata exists for the specified workspace, an instance with classification {@see WorkspaceClassification::UNKNOWN} is returned!
+     * Note: If no metadata exists for the specified workspace, metadata with title based on the name and classification
+     * according to the content repository workspace is returned. Root workspaces are of classification ROOT whereas simple ones will yield UNKNOWN.
+     * {@see WorkspaceClassification::UNKNOWN}
      */
     public function getWorkspaceMetadata(ContentRepositoryId $contentRepositoryId, WorkspaceName $workspaceName): WorkspaceMetadata
     {
