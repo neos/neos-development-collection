@@ -15,6 +15,7 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\NodeAccess\FlowQueryOperations;
 
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Timestamps;
 use Neos\Eel\FlowQuery\FlowQuery;
 use Neos\Eel\FlowQuery\FlowQueryException;
 use Neos\Eel\FlowQuery\Operations\AbstractOperation;
@@ -46,12 +47,13 @@ class SortByTimestampOperation extends AbstractOperation
     }
 
     /**
-     * First argument is the timestamp to sort by like created, lastModified, originalLastModified.
+     * First argument is the timestamp to sort by like created, lastModified, originalCreated and originalLastModified
      * Second argument is the sort direction (ASC or DESC).
      *
      *      sortByTimestamp("created", "ASC")
      *      sortByTimestamp("lastModified", "DESC")
      *
+     * @see Timestamps for further documentation
      *
      * @param FlowQuery $flowQuery the FlowQuery object
      * @param array<int,mixed> $arguments the arguments for this operation.
@@ -72,6 +74,7 @@ class SortByTimestampOperation extends AbstractOperation
             $timeStamp = match($arguments[0] ?? null) {
                 'created' => $node->timestamps->created->getTimestamp(),
                 'lastModified' => $node->timestamps->lastModified?->getTimestamp(),
+                'originalCreated' => $node->timestamps->originalCreated->getTimestamp(),
                 'originalLastModified' => $node->timestamps->originalLastModified?->getTimestamp(),
                 default => throw new FlowQueryException('Please provide a timestamp (created, lastModified, originalLastModified) to sort by.', 1727367726)
             };
