@@ -31,6 +31,7 @@ use Neos\Flow\Cli\Exception\StopCommandException;
 use Neos\Neos\Domain\Model\WorkspaceClassification;
 use Neos\Neos\Domain\Model\WorkspaceDescription;
 use Neos\Neos\Domain\Model\WorkspaceRole;
+use Neos\Neos\Domain\Model\WorkspaceRoleAssignment;
 use Neos\Neos\Domain\Model\WorkspaceRoleSubject;
 use Neos\Neos\Domain\Model\WorkspaceRoleSubjectType;
 use Neos\Neos\Domain\Model\WorkspaceTitle;
@@ -519,5 +520,22 @@ class WorkspaceCommandController extends CommandController
         $this->outputFormatted('Description: <b>%s</b>', [$workspaceMetadata->description->value]);
         $this->outputFormatted('Status: <b>%s</b>', [$workspacesInstance->status->value]);
         $this->outputFormatted('Content Stream: <b>%s</b>', [$workspacesInstance->currentContentStreamId->value]);
+
+        $workspaceRoleAssignments = $this->workspaceService->getWorkspaceRoleAssignments($contentRepositoryId, $workspaceName);
+        $this->outputLine();
+        $this->outputLine('<b>Role assignments:</b>');
+        if ($workspaceRoleAssignments->isEmpty()) {
+            $this->outputLine('There are no role assignments for workspace "%s". Use the <i>workspace:assignrole</i> command to assign roles', [$workspaceName->value]);
+            return;
+        }
+        $this->output->outputTable(array_map(static fn (WorkspaceRoleAssignment $assignment) => [
+            $assignment->subjectType->value,
+            $assignment->subject->value,
+            $assignment->role->value,
+        ], iterator_to_array($workspaceRoleAssignments)), [
+            'Subject type',
+            'Subject',
+            'Role',
+        ]);
     }
 }

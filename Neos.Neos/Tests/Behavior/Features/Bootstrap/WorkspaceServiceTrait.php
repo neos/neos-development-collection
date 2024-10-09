@@ -22,6 +22,10 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceTitle as DeprecatedWorkspaceTitle;
 use Neos\Neos\Domain\Model\UserId;
 use Neos\Neos\Domain\Model\WorkspaceDescription;
+use Neos\Neos\Domain\Model\WorkspaceRole;
+use Neos\Neos\Domain\Model\WorkspaceRoleAssignment;
+use Neos\Neos\Domain\Model\WorkspaceRoleSubject;
+use Neos\Neos\Domain\Model\WorkspaceRoleSubjectType;
 use Neos\Neos\Domain\Model\WorkspaceTitle;
 use Neos\Neos\Domain\Service\WorkspaceService;
 use PHPUnit\Framework\Assert;
@@ -150,5 +154,48 @@ trait WorkspaceServiceTrait
             'Classification' => $workspaceMetadata->classification->value,
             'Owner user id' => $workspaceMetadata->ownerUserId?->value ?? '',
         ]);
+    }
+
+    /**
+     * @When the role :role is assigned to workspace :workspaceName for group :groupName
+     * @When the role :role is assigned to workspace :workspaceName for user :username
+     */
+    public function theRoleIsAssignedToWorkspaceForGroupOrUser(string $role, string $workspaceName, string $groupName = null, string $username = null): void
+    {
+        $this->tryCatchingExceptions(fn () => $this->getObject(WorkspaceService::class)->assignWorkspaceRole(
+            $this->currentContentRepository->id,
+            WorkspaceName::fromString($workspaceName),
+            $groupName !== null ? WorkspaceRoleSubjectType::GROUP : WorkspaceRoleSubjectType::USER,
+            WorkspaceRoleSubject::fromString($groupName ?? $username),
+            WorkspaceRole::from($role)
+        ));
+    }
+
+    /**
+     * @When the role for group :groupName is unassigned from workspace :workspaceName
+     * @When the role for user :username is unassigned from workspace :workspaceName
+     */
+    public function theRoleIsUnassignedFromWorkspace(string $workspaceName, string $groupName = null, string $username = null): void
+    {
+        $this->tryCatchingExceptions(fn () => $this->getObject(WorkspaceService::class)->unassignWorkspaceRole(
+            $this->currentContentRepository->id,
+            WorkspaceName::fromString($workspaceName),
+            $groupName !== null ? WorkspaceRoleSubjectType::GROUP : WorkspaceRoleSubjectType::USER,
+            WorkspaceRoleSubject::fromString($groupName ?? $username),
+        ));
+    }
+
+    /**
+     * @Then the workspace :workspaceName should have the following role assignments:
+     */
+    public function theWorkspaceShouldHaveTheFollowingRoleAssignments($workspaceName, TableNode $expectedAssignments): void
+    {
+        $workspaceAssignments = $this->getObject(WorkspaceService::class)->getWorkspaceRoleAssignments($this->currentContentRepository->id, WorkspaceName::fromString($workspaceName));
+        $actualAssignments = array_map(static fn (WorkspaceRoleAssignment $assignment) => [
+            'Subject type' => $assignment->subjectType->value,
+            'Subject' => $assignment->subject->value,
+            'Role' => $assignment->role->value,
+        ], iterator_to_array($workspaceAssignments));
+        Assert::assertSame($expectedAssignments->getHash(), $actualAssignments);
     }
 }

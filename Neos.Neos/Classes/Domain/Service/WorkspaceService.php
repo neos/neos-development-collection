@@ -17,6 +17,7 @@ namespace Neos\Neos\Domain\Service;
 use Doctrine\DBAL\ArrayParameterType;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Exception as DbalException;
+use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Command\CreateRootWorkspace;
 use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Command\CreateWorkspace;
 use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Exception\WorkspaceAlreadyExists;
@@ -36,6 +37,8 @@ use Neos\Neos\Domain\Model\WorkspaceDescription;
 use Neos\Neos\Domain\Model\WorkspaceMetadata;
 use Neos\Neos\Domain\Model\WorkspacePermissions;
 use Neos\Neos\Domain\Model\WorkspaceRole;
+use Neos\Neos\Domain\Model\WorkspaceRoleAssignment;
+use Neos\Neos\Domain\Model\WorkspaceRoleAssignments;
 use Neos\Neos\Domain\Model\WorkspaceRoleSubject;
 use Neos\Neos\Domain\Model\WorkspaceRoleSubjectType;
 use Neos\Neos\Domain\Model\WorkspaceTitle;
@@ -184,6 +187,8 @@ final class WorkspaceService
                 'subject' => $subject->value,
                 'role' => $role->value,
             ]);
+        } catch (UniqueConstraintViolationException $e) {
+            throw new \RuntimeException(sprintf('Failed to assign role for workspace "%s" to subject "%s" (Content Repository "%s"): There is already a role assigned for that user/group, please unassign that first', $workspaceName->value, $subject->value, $contentRepositoryId->value), 1728476154, $e);
         } catch (DbalException $e) {
             throw new \RuntimeException(sprintf('Failed to assign role for workspace "%s" to subject "%s" (Content Repository "%s"): %s', $workspaceName->value, $subject->value, $contentRepositoryId->value, $e->getMessage()), 1728396138, $e);
         }
@@ -198,7 +203,7 @@ final class WorkspaceService
     {
         $this->requireWorkspace($contentRepositoryId, $workspaceName);
         try {
-            $this->dbal->delete(self::TABLE_NAME_WORKSPACE_ROLE, [
+            $affectedRows = $this->dbal->delete(self::TABLE_NAME_WORKSPACE_ROLE, [
                 'content_repository_id' => $contentRepositoryId->value,
                 'workspace_name' => $workspaceName->value,
                 'subject_type' => $subjectType->value,
@@ -207,6 +212,43 @@ final class WorkspaceService
         } catch (DbalException $e) {
             throw new \RuntimeException(sprintf('Failed to unassign role for subject "%s" from workspace "%s" (Content Repository "%s"): %s', $subject->value, $workspaceName->value, $contentRepositoryId->value, $e->getMessage()), 1728396169, $e);
         }
+        if ($affectedRows === 0) {
+            throw new \RuntimeException(sprintf('Failed to unassign role for subject "%s" from workspace "%s" (Content Repository "%s"): No role assignment exists for this user/group', $subject->value, $workspaceName->value, $contentRepositoryId->value), 1728477071);
+        }
+    }
+
+    /**
+     * Get all role assignments for the specified workspace
+     *
+     * NOTE: This should never be used to evaluate permissions, instead {@see self::getWorkspacePermissionsForUser()} should be used!
+     */
+    public function getWorkspaceRoleAssignments(ContentRepositoryId $contentRepositoryId, WorkspaceName $workspaceName): WorkspaceRoleAssignments
+    {
+        $table = self::TABLE_NAME_WORKSPACE_ROLE;
+        $query = <<<SQL
+            SELECT
+                *
+            FROM
+                {$table}
+            WHERE
+                content_repository_id = :contentRepositoryId
+                AND workspace_name = :workspaceName
+        SQL;
+        try {
+            $rows = $this->dbal->fetchAllAssociative($query, [
+                'contentRepositoryId' => $contentRepositoryId->value,
+                'workspaceName' => $workspaceName->value,
+            ]);
+        } catch (DbalException $e) {
+            throw new \RuntimeException(sprintf('Failed to fetch workspace role assignments for workspace "%s" (Content Repository "%s"): %s', $workspaceName->value, $contentRepositoryId->value, $e->getMessage()), 1728474440, $e);
+        }
+        return WorkspaceRoleAssignments::fromArray(
+            array_map(static fn (array $row) => new WorkspaceRoleAssignment(
+                WorkspaceRoleSubjectType::from($row['subject_type']),
+                WorkspaceRoleSubject::fromString($row['subject']),
+                WorkspaceRole::from($row['role']),
+            ), $rows)
+        );
     }
 
     /**
@@ -234,6 +276,11 @@ final class WorkspaceService
         );
     }
 
+    /**
+     * Builds a workspace name that is unique within the specified content repository.
+     * If $candidate already refers to a workspace name that is not used yet, it will be used (with transliteration to enforce a valid format)
+     * Otherwise a counter "-n" suffix is appended and increased until a unique name is found, or the maximum number of attempts has been reached (in which case an exception is thrown)
+     */
     public function getUniqueWorkspaceName(ContentRepositoryId $contentRepositoryId, string $candidate): WorkspaceName
     {
         $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryId);

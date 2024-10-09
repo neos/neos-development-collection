@@ -87,3 +87,55 @@ Feature: Neos WorkspaceService related features
     Then the workspace "some-workspace" should have the following metadata:
       | Title          | Description | Classification | Owner user id |
       | some-workspace |             | UNKNOWN        |               |
+
+  Scenario: Assign role to non-existing workspace
+    When the role COLLABORATOR is assigned to workspace "some-workspace" for group "Neos.Neos:AbstractEditor"
+    Then an exception 'Failed to find workspace with name "some-workspace" for content repository "default"' should be thrown
+
+  Scenario: Assign group role to root workspace
+    Given the root workspace "some-root-workspace" is created
+    When the role COLLABORATOR is assigned to workspace "some-root-workspace" for group "Neos.Neos:AbstractEditor"
+    Then the workspace "some-root-workspace" should have the following role assignments:
+      | Subject type | Subject                  | Role         |
+      | GROUP        | Neos.Neos:AbstractEditor | COLLABORATOR |
+
+  Scenario: Assign a role to the same group twice
+    Given the root workspace "some-root-workspace" is created
+    When the role COLLABORATOR is assigned to workspace "some-root-workspace" for group "Neos.Neos:AbstractEditor"
+    And the role MANAGER is assigned to workspace "some-root-workspace" for group "Neos.Neos:AbstractEditor"
+    Then an exception 'Failed to assign role for workspace "some-root-workspace" to subject "Neos.Neos:AbstractEditor" (Content Repository "default"): There is already a role assigned for that user/group, please unassign that first' should be thrown
+
+  Scenario: Assign user role to root workspace
+    Given the root workspace "some-root-workspace" is created
+    When the role MANAGER is assigned to workspace "some-root-workspace" for user "some-user-id"
+    Then the workspace "some-root-workspace" should have the following role assignments:
+      | Subject type | Subject      | Role    |
+      | USER         | some-user-id | MANAGER |
+
+  Scenario: Assign a role to the same user twice
+    Given the root workspace "some-root-workspace" is created
+    When the role COLLABORATOR is assigned to workspace "some-root-workspace" for user "some-user-id"
+    And the role MANAGER is assigned to workspace "some-root-workspace" for user "some-user-id"
+    Then an exception 'Failed to assign role for workspace "some-root-workspace" to subject "some-user-id" (Content Repository "default"): There is already a role assigned for that user/group, please unassign that first' should be thrown
+
+  Scenario: Unassign role from non-existing workspace
+    When the role for group "Neos.Neos:AbstractEditor" is unassigned from workspace "some-workspace"
+    Then an exception 'Failed to find workspace with name "some-workspace" for content repository "default"' should be thrown
+
+  Scenario: Unassign role from workspace that has not been assigned before
+    Given the root workspace "some-root-workspace" is created
+    When the role for group "Neos.Neos:AbstractEditor" is unassigned from workspace "some-root-workspace"
+    Then an exception 'Failed to unassign role for subject "Neos.Neos:AbstractEditor" from workspace "some-root-workspace" (Content Repository "default"): No role assignment exists for this user/group' should be thrown
+
+  Scenario: Assign two roles, then unassign one
+    Given the root workspace "some-root-workspace" is created
+    And the role MANAGER is assigned to workspace "some-root-workspace" for user "some-user-id"
+    And the role COLLABORATOR is assigned to workspace "some-root-workspace" for group "Neos.Neos:AbstractEditor"
+    Then the workspace "some-root-workspace" should have the following role assignments:
+      | Subject type | Subject                  | Role         |
+      | GROUP        | Neos.Neos:AbstractEditor | COLLABORATOR |
+      | USER         | some-user-id             | MANAGER      |
+    When the role for group "Neos.Neos:AbstractEditor" is unassigned from workspace "some-root-workspace"
+    Then the workspace "some-root-workspace" should have the following role assignments:
+      | Subject type | Subject      | Role    |
+      | USER         | some-user-id | MANAGER |
