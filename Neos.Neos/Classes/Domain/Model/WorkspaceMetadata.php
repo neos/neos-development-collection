@@ -23,20 +23,4 @@ final readonly class WorkspaceMetadata
         public UserId|null $ownerUserId,
     ) {
     }
-
-    /**
-     * Note: To be used with named arguments!
-     */
-    public function with(
-        WorkspaceTitle $title = null,
-        WorkspaceDescription $description = null,
-    ): self {
-        return new self(
-            $this->workspaceName,
-            $title ?? $this->title,
-            $description ?? $this->description,
-            $this->classification,
-            $this->ownerUserId,
-        );
-    }
 }
