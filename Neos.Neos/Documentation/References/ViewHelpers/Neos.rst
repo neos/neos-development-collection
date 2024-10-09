@@ -26,27 +26,6 @@ Arguments
 
 
 
-.. _`Neos ViewHelper Reference: neos:backend.changeStats`:
-
-neos:backend.changeStats
-------------------------
-
-Displays a text-based "bar graph" giving an indication of the amount and type of
-changes done to something. Created for use in workspace management.
-
-:Implementation: Neos\\Neos\\ViewHelpers\\Backend\\ChangeStatsViewHelper
-
-
-
-
-Arguments
-*********
-
-* ``changeCounts`` (array): Expected keys: new, changed, removed
-
-
-
-
 .. _`Neos ViewHelper Reference: neos:backend.colorOfString`:
 
 neos:backend.colorOfString
