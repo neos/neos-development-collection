@@ -17,10 +17,10 @@ enum WorkspaceRole : string
 
     public function isAtLeast(self $role): bool
     {
-        return $this->specifity() >= $role->specifity();
+        return $this->specificity() >= $role->specificity();
     }
 
-    private function specifity(): int
+    private function specificity(): int
     {
         return match ($this) {
             self::COLLABORATOR => 1,
