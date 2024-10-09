@@ -774,7 +774,7 @@ class NodeData extends AbstractNodeData
             $propertyNames[] = 'removed';
         }
         foreach ($propertyNames as $propertyName) {
-            ObjectAccess::setProperty($this, $propertyName, ObjectAccess::getProperty($sourceNode, $propertyName));
+            ObjectAccess::setProperty($this, $propertyName, ObjectAccess::getProperty($sourceNode, $propertyName), true);
         }
 
         $contentObject = $sourceNode->getContentObject();
