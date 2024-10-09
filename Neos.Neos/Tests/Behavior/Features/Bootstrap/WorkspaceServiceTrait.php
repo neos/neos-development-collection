@@ -165,9 +165,11 @@ trait WorkspaceServiceTrait
         $this->tryCatchingExceptions(fn () => $this->getObject(WorkspaceService::class)->assignWorkspaceRole(
             $this->currentContentRepository->id,
             WorkspaceName::fromString($workspaceName),
-            $groupName !== null ? WorkspaceRoleSubjectType::GROUP : WorkspaceRoleSubjectType::USER,
-            WorkspaceRoleSubject::fromString($groupName ?? $username),
-            WorkspaceRole::from($role)
+            WorkspaceRoleAssignment::create(
+                $groupName !== null ? WorkspaceRoleSubjectType::GROUP : WorkspaceRoleSubjectType::USER,
+                WorkspaceRoleSubject::fromString($groupName ?? $username),
+                WorkspaceRole::from($role)
+            )
         ));
     }
 

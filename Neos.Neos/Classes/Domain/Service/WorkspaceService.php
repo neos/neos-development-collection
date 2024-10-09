@@ -151,6 +151,7 @@ final class WorkspaceService
 
     /**
      * Create a new, personal, workspace for the specified user if none exists yet
+     * @internal experimental api, until actually used by the Neos.Ui
      */
     public function createPersonalWorkspaceForUserIfMissing(ContentRepositoryId $contentRepositoryId, User $user): void
     {
@@ -176,21 +177,21 @@ final class WorkspaceService
      * Without explicit workspace roles, only administrators can change the corresponding workspace.
      * With this method, the subject (i.e. a Neos user or group represented by a Flow role identifier) can be granted a {@see WorkspaceRole} for the specified workspace
      */
-    public function assignWorkspaceRole(ContentRepositoryId $contentRepositoryId, WorkspaceName $workspaceName, WorkspaceRoleSubjectType $subjectType, WorkspaceRoleSubject $subject, WorkspaceRole $role): void
+    public function assignWorkspaceRole(ContentRepositoryId $contentRepositoryId, WorkspaceName $workspaceName, WorkspaceRoleAssignment $assignment): void
     {
         $this->requireWorkspace($contentRepositoryId, $workspaceName);
         try {
             $this->dbal->insert(self::TABLE_NAME_WORKSPACE_ROLE, [
                 'content_repository_id' => $contentRepositoryId->value,
                 'workspace_name' => $workspaceName->value,
-                'subject_type' => $subjectType->value,
-                'subject' => $subject->value,
-                'role' => $role->value,
+                'subject_type' => $assignment->subjectType->value,
+                'subject' => $assignment->subject->value,
+                'role' => $assignment->role->value,
             ]);
         } catch (UniqueConstraintViolationException $e) {
-            throw new \RuntimeException(sprintf('Failed to assign role for workspace "%s" to subject "%s" (Content Repository "%s"): There is already a role assigned for that user/group, please unassign that first', $workspaceName->value, $subject->value, $contentRepositoryId->value), 1728476154, $e);
+            throw new \RuntimeException(sprintf('Failed to assign role for workspace "%s" to subject "%s" (Content Repository "%s"): There is already a role assigned for that user/group, please unassign that first', $workspaceName->value, $assignment->subject->value, $contentRepositoryId->value), 1728476154, $e);
         } catch (DbalException $e) {
-            throw new \RuntimeException(sprintf('Failed to assign role for workspace "%s" to subject "%s" (Content Repository "%s"): %s', $workspaceName->value, $subject->value, $contentRepositoryId->value, $e->getMessage()), 1728396138, $e);
+            throw new \RuntimeException(sprintf('Failed to assign role for workspace "%s" to subject "%s" (Content Repository "%s"): %s', $workspaceName->value, $assignment->subject->value, $contentRepositoryId->value, $e->getMessage()), 1728396138, $e);
         }
     }
 
@@ -243,7 +244,7 @@ final class WorkspaceService
             throw new \RuntimeException(sprintf('Failed to fetch workspace role assignments for workspace "%s" (Content Repository "%s"): %s', $workspaceName->value, $contentRepositoryId->value, $e->getMessage()), 1728474440, $e);
         }
         return WorkspaceRoleAssignments::fromArray(
-            array_map(static fn (array $row) => new WorkspaceRoleAssignment(
+            array_map(static fn (array $row) => WorkspaceRoleAssignment::create(
                 WorkspaceRoleSubjectType::from($row['subject_type']),
                 WorkspaceRoleSubject::fromString($row['subject']),
                 WorkspaceRole::from($row['role']),

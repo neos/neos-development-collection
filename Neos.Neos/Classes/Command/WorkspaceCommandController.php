@@ -302,9 +302,11 @@ class WorkspaceCommandController extends CommandController
         $this->workspaceService->assignWorkspaceRole(
             $contentRepositoryId,
             $workspaceName,
-            $subjectType,
-            $roleSubject,
-            $workspaceRole,
+            WorkspaceRoleAssignment::create(
+                $subjectType,
+                $roleSubject,
+                $workspaceRole
+            )
         );
         $this->outputLine('<success>Assigned role "%s" to subject "%s" for workspace "%s"</success>', [$workspaceRole->value, $roleSubject->value, $workspaceName->value]);
     }
