@@ -21,5 +21,8 @@ final readonly class WorkspaceMetadata
         public WorkspaceClassification $classification,
         public UserId|null $ownerUserId,
     ) {
+        if ($this->classification === WorkspaceClassification::PERSONAL && $this->ownerUserId === null) {
+            throw new \InvalidArgumentException('The owner-user-id must be set if the workspace is personal.', 1728476633);
+        }
     }
 }
