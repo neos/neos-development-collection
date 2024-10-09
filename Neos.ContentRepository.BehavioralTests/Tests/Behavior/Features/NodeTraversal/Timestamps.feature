@@ -73,7 +73,6 @@ Feature: Behavior of Node timestamp properties "created", "originalCreated", "la
       | workspaceName      | "user-test" |
       | baseWorkspaceName  | "review"    |
       | newContentStreamId | "cs-user"   |
-      | workspaceOwner     | "some-user" |
     And I am in workspace "user-test" and dimension space point {"language":"de"}
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key             | Value                         |
