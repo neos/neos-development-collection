@@ -19,7 +19,7 @@ commands that may be available, use::
 
   ./flow help
 
-The following reference was automatically generated from code on 2024-09-26
+The following reference was automatically generated from code on 2024-10-09
 
 
 .. _`Neos Command Reference: NEOS.FLOW`:
@@ -2739,14 +2739,124 @@ Options
 
 
 
-.. _`Neos Command Reference: NEOS.NEOS neos.neos:workspace:create`:
+.. _`Neos Command Reference: NEOS.NEOS neos.neos:workspace:assignrole`:
 
-``neos.neos:workspace:create``
-******************************
+``neos.neos:workspace:assignrole``
+**********************************
 
-**Create a new workspace**
+**Assign a workspace role to the given user/user group**
 
-This command creates a new workspace.
+Without explicit workspace roles, only administrators can change the corresponding workspace.
+With this command, a user or group (represented by a Flow role identifier) can be granted one of the two roles:
+- collaborator: Can read from and write to the workspace
+- manager: Can read from and write to the workspace and manage it (i.e. change metadata & role assignments)
+
+Examples:
+
+To grant editors read and write access to a (shared) workspace: *./flow workspace:assignrole some-workspace "Neos.Neos:AbstractEditor" collaborator*
+
+To grant a specific user read, write and manage access to a workspace: *./flow workspace:assignrole some-workspace admin manager --type user*
+
+{@see WorkspaceRole}
+
+Arguments
+^^^^^^^^^
+
+``--workspace``
+  Name of the workspace, for example "some-workspace
+``--subject``
+  The user/group that should be assigned. By default, this is expected to be a Flow role identifier (e.g. 'Neos.Neos:AbstractEditor') – if $type is 'user', this is the username (aka account identifier) of a Neos user
+``--role``
+  Role to assign, either 'collaborator' or 'manager' – a collaborator can read and write from/to the workspace. A manager can _on top_ change the workspace metadata & roles itself
+
+
+
+Options
+^^^^^^^
+
+``--content-repository``
+  Identifier of the content repository. (Default: 'default')
+``--type``
+  Type of role, either 'group' (default) or 'user' – if 'group', $subject is expected to be a Flow role identifier, otherwise the username (aka account identifier) of a Neos user
+
+
+
+
+
+.. _`Neos Command Reference: NEOS.NEOS neos.neos:workspace:createpersonal`:
+
+``neos.neos:workspace:createpersonal``
+**************************************
+
+**Create a new personal workspace for the specified user**
+
+
+
+Arguments
+^^^^^^^^^
+
+``--workspace``
+  Name of the workspace, for example "christmas-campaign
+``--owner``
+  The username (aka account identifier) of a User to own the workspace
+
+
+
+Options
+^^^^^^^
+
+``--base-workspace``
+  Name of the base workspace. If none is specified, "live" is assumed.
+``--title``
+  Human friendly title of the workspace, for example "Christmas Campaign
+``--description``
+  A description explaining the purpose of the new workspace
+``--content-repository``
+  Identifier of the content repository. (Default: 'default')
+
+
+
+
+
+.. _`Neos Command Reference: NEOS.NEOS neos.neos:workspace:createroot`:
+
+``neos.neos:workspace:createroot``
+**********************************
+
+**Create a new root workspace for a content repository**
+
+NOTE: By default, only administrators can access workspaces without role assignments. Use *workspace:assignrole* to add workspace permissions
+
+Arguments
+^^^^^^^^^
+
+``--name``
+  Name of the new root
+
+
+
+Options
+^^^^^^^
+
+``--content-repository``
+  Identifier of the content repository. (Default: 'default')
+``--title``
+  Optional title of the workspace
+``--description``
+  Optional description of the workspace
+
+
+
+
+
+.. _`Neos Command Reference: NEOS.NEOS neos.neos:workspace:createshared`:
+
+``neos.neos:workspace:createshared``
+************************************
+
+**Create a new shared workspace**
+
+NOTE: By default, only administrators can access workspaces without role assignments. Use *workspace:assignrole* to add workspace permissions
 
 Arguments
 ^^^^^^^^^
@@ -2765,35 +2875,6 @@ Options
   Human friendly title of the workspace, for example "Christmas Campaign
 ``--description``
   A description explaining the purpose of the new workspace
-``--owner``
-  The identifier of a User to own the workspace
-``--content-repository``
-  Identifier of the content repository. (Default: 'default')
-
-
-
-
-
-.. _`Neos Command Reference: NEOS.NEOS neos.neos:workspace:createroot`:
-
-``neos.neos:workspace:createroot``
-**********************************
-
-**Create a new root workspace for a content repository.**
-
-
-
-Arguments
-^^^^^^^^^
-
-``--name``
-  Name of the new root
-
-
-
-Options
-^^^^^^^
-
 ``--content-repository``
   Identifier of the content repository. (Default: 'default')
 
@@ -2828,12 +2909,6 @@ Options
   The name of the content repository. (Default: 'default')
 
 
-
-Related commands
-^^^^^^^^^^^^^^^^
-
-``neos.neos:workspace:discard``
-  Discard changes in workspace
 
 
 
@@ -2959,6 +3034,122 @@ Options
   The name of the content repository. (Default: 'default')
 ``--force``
   
+
+
+
+
+
+.. _`Neos Command Reference: NEOS.NEOS neos.neos:workspace:setdescription`:
+
+``neos.neos:workspace:setdescription``
+**************************************
+
+**Set/change the description of a workspace**
+
+
+
+Arguments
+^^^^^^^^^
+
+``--workspace``
+  Name of the workspace, for example "some-workspace
+``--new-description``
+  Human friendly description of the workspace
+
+
+
+Options
+^^^^^^^
+
+``--content-repository``
+  Identifier of the content repository. (Default: 'default')
+
+
+
+
+
+.. _`Neos Command Reference: NEOS.NEOS neos.neos:workspace:settitle`:
+
+``neos.neos:workspace:settitle``
+********************************
+
+**Set/change the title of a workspace**
+
+
+
+Arguments
+^^^^^^^^^
+
+``--workspace``
+  Name of the workspace, for example "some-workspace
+``--new-title``
+  Human friendly title of the workspace, for example "Some workspace
+
+
+
+Options
+^^^^^^^
+
+``--content-repository``
+  Identifier of the content repository. (Default: 'default')
+
+
+
+
+
+.. _`Neos Command Reference: NEOS.NEOS neos.neos:workspace:show`:
+
+``neos.neos:workspace:show``
+****************************
+
+**Display details for the specified workspace**
+
+
+
+Arguments
+^^^^^^^^^
+
+``--workspace``
+  Name of the workspace to show
+
+
+
+Options
+^^^^^^^
+
+``--content-repository``
+  The name of the content repository. (Default: 'default')
+
+
+
+
+
+.. _`Neos Command Reference: NEOS.NEOS neos.neos:workspace:unassignrole`:
+
+``neos.neos:workspace:unassignrole``
+************************************
+
+**Unassign a workspace role from the given user/user group**
+
+
+
+Arguments
+^^^^^^^^^
+
+``--workspace``
+  Name of the workspace, for example "some-workspace
+``--subject``
+  The user/group that should be unassigned. By default, this is expected to be a Flow role identifier (e.g. 'Neos.Neos:AbstractEditor') – if $type is 'user', this is the username (aka account identifier) of a Neos user
+
+
+
+Options
+^^^^^^^
+
+``--content-repository``
+  Identifier of the content repository. (Default: 'default')
+``--type``
+  Type of role, either 'group' (default) or 'user' – if 'group', $subject is expected to be a Flow role identifier, otherwise the username (aka account identifier) of a Neos user
 
 
 

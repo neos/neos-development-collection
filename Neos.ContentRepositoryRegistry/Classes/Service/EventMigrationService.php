@@ -33,7 +33,7 @@ use Neos\EventStore\Model\EventStream\EventStreamFilter;
 use Neos\EventStore\Model\EventStream\VirtualStreamName;
 use Neos\Neos\Domain\Model\WorkspaceClassification;
 use Neos\Neos\Domain\Model\WorkspaceRole;
-use Neos\Neos\Domain\Model\WorkspaceSubjectType;
+use Neos\Neos\Domain\Model\WorkspaceRoleSubjectType;
 
 /**
  * Content Repository service to perform migrations of events.
@@ -616,7 +616,7 @@ final class EventMigrationService implements ContentRepositoryServiceInterface
                 $this->connection->insert('neos_neos_workspace_role', [
                     'content_repository_id' => $this->contentRepositoryId->value,
                     'workspace_name' => $workspaceName->value,
-                    'subject_type' => WorkspaceSubjectType::GROUP->value,
+                    'subject_type' => WorkspaceRoleSubjectType::GROUP->value,
                     'subject' => 'Neos.Neos:LivePublisher',
                     'role' => WorkspaceRole::COLLABORATOR->value,
                 ]);
@@ -624,7 +624,7 @@ final class EventMigrationService implements ContentRepositoryServiceInterface
                 $this->connection->insert('neos_neos_workspace_role', [
                     'content_repository_id' => $this->contentRepositoryId->value,
                     'workspace_name' => $workspaceName->value,
-                    'subject_type' => WorkspaceSubjectType::GROUP->value,
+                    'subject_type' => WorkspaceRoleSubjectType::GROUP->value,
                     'subject' => 'Neos.Neos:AbstractEditor',
                     'role' => WorkspaceRole::COLLABORATOR->value,
                 ]);
@@ -632,7 +632,7 @@ final class EventMigrationService implements ContentRepositoryServiceInterface
                 $this->connection->insert('neos_neos_workspace_role', [
                     'content_repository_id' => $this->contentRepositoryId->value,
                     'workspace_name' => $workspaceName->value,
-                    'subject_type' => WorkspaceSubjectType::USER->value,
+                    'subject_type' => WorkspaceRoleSubjectType::USER->value,
                     'subject' => $workspaceOwner,
                     'role' => WorkspaceRole::COLLABORATOR->value,
                 ]);

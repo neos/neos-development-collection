@@ -5,12 +5,13 @@ namespace Neos\ContentRepository\Export;
 
 use League\Flysystem\Filesystem;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceInterface;
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
+use Neos\ContentRepository\Core\Projection\Workspace\WorkspaceFinder;
+use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
 use Neos\ContentRepository\Export\Processors\AssetExportProcessor;
 use Neos\ContentRepository\Export\Processors\EventExportProcessor;
 use Neos\EventStore\EventStoreInterface;
 use Neos\Media\Domain\Repository\AssetRepository;
-use Neos\Neos\AssetUsage\Projection\AssetUsageFinder;
+use Neos\Neos\AssetUsage\AssetUsageService;
 
 /**
  * @internal
@@ -19,10 +20,11 @@ class ExportService implements ContentRepositoryServiceInterface
 {
 
     public function __construct(
+        private readonly ContentRepositoryId $contentRepositoryId,
         private readonly Filesystem $filesystem,
-        private readonly ContentStreamId $targetContentStreamId,
+        private readonly WorkspaceFinder $workspaceFinder,
         private readonly AssetRepository $assetRepository,
-        private readonly AssetUsageFinder $assetUsageFinder,
+        private readonly AssetUsageService $assetUsageService,
         private readonly EventStoreInterface $eventStore,
     ) {
     }
@@ -33,14 +35,15 @@ class ExportService implements ContentRepositoryServiceInterface
         $processors = [
             'Exporting events' => new EventExportProcessor(
                 $this->filesystem,
-                $this->targetContentStreamId,
+                $this->workspaceFinder,
                 $this->eventStore
             ),
             'Exporting assets' => new AssetExportProcessor(
+                $this->contentRepositoryId,
                 $this->filesystem,
                 $this->assetRepository,
-                $this->targetContentStreamId,
-                $this->assetUsageFinder
+                $this->workspaceFinder,
+                $this->assetUsageService
             )
         ];
 

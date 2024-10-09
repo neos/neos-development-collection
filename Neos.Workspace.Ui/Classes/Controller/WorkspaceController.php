@@ -39,11 +39,9 @@ use Neos\Error\Messages\Message;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\I18n\Exception\IndexOutOfBoundsException;
 use Neos\Flow\I18n\Exception\InvalidFormatPlaceholderException;
-use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\Exception\StopActionException;
 use Neos\Flow\Package\PackageManager;
 use Neos\Flow\Property\PropertyMapper;
-use Neos\Flow\Security\Account;
 use Neos\Flow\Security\Context;
 use Neos\Media\Domain\Model\AssetInterface;
 use Neos\Media\Domain\Model\ImageInterface;
@@ -53,6 +51,8 @@ use Neos\Neos\Domain\Model\SiteNodeName;
 use Neos\Neos\Domain\Model\User;
 use Neos\Neos\Domain\Model\WorkspaceClassification;
 use Neos\Neos\Domain\Model\WorkspaceDescription;
+use Neos\Neos\Domain\Model\WorkspaceRole;
+use Neos\Neos\Domain\Model\WorkspaceRoleAssignment;
 use Neos\Neos\Domain\Model\WorkspaceTitle;
 use Neos\Neos\Domain\Repository\SiteRepository;
 use Neos\Neos\Domain\Service\NodeTypeNameFactory;
@@ -210,14 +210,14 @@ class WorkspaceController extends AbstractModuleController
         if ($currentUser === null) {
             throw new \RuntimeException('No user authenticated', 1718303756);
         }
-
+        $workspaceName = $this->workspaceService->getUniqueWorkspaceName($contentRepositoryId, $title->value);
         try {
             $this->workspaceService->createSharedWorkspace(
                 $contentRepositoryId,
+                $workspaceName,
                 $title,
                 $description,
                 $baseWorkspace,
-                $currentUser->getId(),
             );
         } catch (WorkspaceAlreadyExists $exception) {
             $this->addFlashMessage(
@@ -227,6 +227,22 @@ class WorkspaceController extends AbstractModuleController
             );
             $this->redirect('new');
         }
+        $this->workspaceService->assignWorkspaceRole(
+            $contentRepositoryId,
+            $workspaceName,
+            WorkspaceRoleAssignment::createForUser(
+                $currentUser->getId(),
+                WorkspaceRole::MANAGER,
+            )
+        );
+        $this->workspaceService->assignWorkspaceRole(
+            $contentRepositoryId,
+            $workspaceName,
+            WorkspaceRoleAssignment::createForGroup(
+                'Neos.Neos:AbstractEditor',
+                WorkspaceRole::COLLABORATOR,
+            )
+        );
         $this->addFlashMessage($this->getModuleLabel('workspaces.workspaceHasBeenCreated', [$title->value]));
         $this->redirect('index');
     }
@@ -286,10 +302,14 @@ class WorkspaceController extends AbstractModuleController
             );
             $this->redirect('index');
         }
-        $this->workspaceService->updateWorkspaceTitleAndDescription(
+        $this->workspaceService->setWorkspaceTitle(
             $contentRepositoryId,
             $workspaceName,
             $title,
+        );
+        $this->workspaceService->setWorkspaceDescription(
+            $contentRepositoryId,
+            $workspaceName,
             $description,
         );
         $this->addFlashMessage($this->translator->translateById(

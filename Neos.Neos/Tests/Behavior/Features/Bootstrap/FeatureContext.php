@@ -42,6 +42,7 @@ class FeatureContext implements BehatContext
     use FusionTrait;
 
     use ContentCacheTrait;
+    use AssetUsageTrait;
     use AssetTrait;
 
     use WorkspaceServiceTrait;

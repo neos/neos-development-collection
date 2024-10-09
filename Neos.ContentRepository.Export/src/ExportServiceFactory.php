@@ -9,7 +9,7 @@ use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceFactoryInterface
 use Neos\ContentRepository\Core\SharedModel\Workspace\Workspace;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\Media\Domain\Repository\AssetRepository;
-use Neos\Neos\AssetUsage\Projection\AssetUsageFinder;
+use Neos\Neos\AssetUsage\AssetUsageService;
 
 /**
  * @internal
@@ -22,17 +22,18 @@ class ExportServiceFactory implements ContentRepositoryServiceFactoryInterface
         private readonly Filesystem $filesystem,
         private readonly ContentStreamId $targetContentStreamId,
         private readonly AssetRepository $assetRepository,
-        private readonly AssetUsageFinder $assetUsageFinder,
+        private readonly AssetUsageService $assetUsageService,
     ) {
     }
 
     public function build(ContentRepositoryServiceFactoryDependencies $serviceFactoryDependencies): ExportService
     {
         return new ExportService(
+            $serviceFactoryDependencies->contentRepositoryId,
             $this->filesystem,
             $this->targetContentStreamId,
             $this->assetRepository,
-            $this->assetUsageFinder,
+            $this->assetUsageService,
             $serviceFactoryDependencies->eventStore,
         );
     }

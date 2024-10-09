@@ -3,7 +3,9 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\Export\Processors;
 
 use League\Flysystem\Filesystem;
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
+use Neos\ContentRepository\Core\Projection\Workspace\WorkspaceFinder;
+use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
+use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepository\Export\Asset\ValueObject\SerializedAsset;
 use Neos\ContentRepository\Export\Asset\ValueObject\SerializedImageVariant;
 use Neos\ContentRepository\Export\ProcessorInterface;
@@ -14,8 +16,8 @@ use Neos\Media\Domain\Model\Asset;
 use Neos\Media\Domain\Model\AssetVariantInterface;
 use Neos\Media\Domain\Model\ImageVariant;
 use Neos\Media\Domain\Repository\AssetRepository;
+use Neos\Neos\AssetUsage\AssetUsageService;
 use Neos\Neos\AssetUsage\Dto\AssetUsageFilter;
-use Neos\Neos\AssetUsage\Projection\AssetUsageFinder;
 
 /**
  * Processor that exports all assets and resources used in the Neos live workspace to the file system
@@ -28,10 +30,11 @@ final class AssetExportProcessor implements ProcessorInterface
     private array $callbacks = [];
 
     public function __construct(
+        private readonly ContentRepositoryId $contentRepositoryId,
         private readonly Filesystem $files,
         private readonly AssetRepository $assetRepository,
-        private readonly ContentStreamId $targetContentStreamId,
-        private readonly AssetUsageFinder $assetUsageFinder,
+        private readonly WorkspaceFinder $workspaceFinder,
+        private readonly AssetUsageService $assetUsageService,
     ) {}
 
     public function onMessage(\Closure $callback): void
@@ -42,13 +45,17 @@ final class AssetExportProcessor implements ProcessorInterface
 
     public function run(): ProcessorResult
     {
-        $assetFilter = AssetUsageFilter::create()->withContentStream($this->targetContentStreamId)->groupByAsset();
+        $liveWorkspace = $this->workspaceFinder->findOneByName(WorkspaceName::forLive());
+        if ($liveWorkspace === null) {
+            return ProcessorResult::error('Failed to find live workspace');
+        }
+        $assetFilter = AssetUsageFilter::create()->withWorkspaceName($liveWorkspace->workspaceName)->groupByAsset();
 
         $numberOfExportedAssets = 0;
         $numberOfExportedImageVariants = 0;
         $numberOfErrors = 0;
 
-        foreach ($this->assetUsageFinder->findByFilter($assetFilter) as $assetUsage) {
+        foreach ($this->assetUsageService->findByFilter($this->contentRepositoryId, $assetFilter) as $assetUsage) {
             /** @var Asset|null $asset */
             $asset = $this->assetRepository->findByIdentifier($assetUsage->assetId);
             if ($asset === null) {

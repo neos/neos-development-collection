@@ -14,9 +14,6 @@ namespace Neos\Media\Browser\Controller;
 
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindClosestNodeFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
-use Neos\ContentRepository\Core\SharedModel\Workspace\Workspace;
-use Neos\ContentRepository\Core\SharedModel\Exception\NodeTypeNotFound;
-use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\Controller\ActionController;
@@ -107,19 +104,12 @@ class UsageController extends ActionController
 
             $contentRepository = $this->contentRepositoryRegistry->get($usage->getContentRepositoryId());
 
-            $workspace = $contentRepository->getWorkspaces()->find(
-                fn (Workspace $potentialWorkspace) => $potentialWorkspace->currentContentStreamId->equals($usage->getContentStreamId())
-            );
+            $workspace = $contentRepository->getWorkspaceFinder()->findOneByName($usage->getWorkspaceName());
 
-            // FIXME: AssetUsageReference->workspaceName ?
             $nodeAggregate = $contentRepository->getContentGraph($workspace->workspaceName)->findNodeAggregateById(
                 $usage->getNodeAggregateId()
             );
-            try {
-                $nodeType = $contentRepository->getNodeTypeManager()->getNodeType($nodeAggregate->nodeTypeName);
-            } catch (NodeTypeNotFound $e) {
-                $nodeType = null;
-            }
+            $nodeType = $contentRepository->getNodeTypeManager()->getNodeType($nodeAggregate->nodeTypeName);
 
             $accessible = $this->domainUserService->currentUserCanReadWorkspace($workspace);
 
