@@ -12,7 +12,7 @@
 
 declare(strict_types=1);
 
-namespace Neos\Neos\Domain\Workspace;
+namespace Neos\Neos\Domain\Model;
 
 use Neos\Flow\Annotations as Flow;
 

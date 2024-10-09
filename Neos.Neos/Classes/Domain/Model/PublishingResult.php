@@ -12,8 +12,9 @@
 
 declare(strict_types=1);
 
-namespace Neos\Neos\Domain\Workspace;
+namespace Neos\Neos\Domain\Model;
 
+use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\Flow\Annotations as Flow;
 
 /**
@@ -26,6 +27,7 @@ final readonly class PublishingResult
 {
     public function __construct(
         public int $numberOfPublishedChanges,
+        public WorkspaceName $targetWorkspaceName,
     ) {
     }
 }

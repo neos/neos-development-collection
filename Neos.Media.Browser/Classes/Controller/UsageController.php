@@ -22,6 +22,7 @@ use Neos\Media\Domain\Model\AssetInterface;
 use Neos\Media\Domain\Service\AssetService;
 use Neos\Neos\Domain\Repository\SiteRepository;
 use Neos\Neos\Domain\Service\NodeTypeNameFactory;
+use Neos\Neos\Domain\Service\WorkspaceService;
 use Neos\Neos\FrontendRouting\SiteDetection\SiteDetectionResult;
 use Neos\Neos\Service\UserService;
 use Neos\Neos\Domain\Service\UserService as DomainUserService;
@@ -61,6 +62,12 @@ class UsageController extends ActionController
 
     /**
      * @Flow\Inject
+     * @var WorkspaceService
+     */
+    protected $workspaceService;
+
+    /**
+     * @Flow\Inject
      * @var DomainUserService
      */
     protected $domainUserService;
@@ -75,8 +82,9 @@ class UsageController extends ActionController
     {
         $currentContentRepositoryId = SiteDetectionResult::fromRequest($this->request->getHttpRequest())->contentRepositoryId;
         $currentContentRepository = $this->contentRepositoryRegistry->get($currentContentRepositoryId);
-        $userWorkspaceName = WorkspaceName::fromString($this->userService->getPersonalWorkspaceName());
-        $userWorkspace = $currentContentRepository->getWorkspaceFinder()->findOneByName($userWorkspaceName);
+        $userId = $this->userService->getBackendUser()?->getId();
+        assert($userId !== null);
+        $userWorkspace = $this->workspaceService->getPersonalWorkspaceForUser($currentContentRepositoryId, $userId);
 
         $usageReferences = $this->assetService->getUsageReferences($asset);
         $relatedNodes = [];

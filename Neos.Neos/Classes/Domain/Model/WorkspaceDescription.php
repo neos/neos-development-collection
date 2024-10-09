@@ -1,25 +1,17 @@
 <?php
 
-/*
- * This file is part of the Neos.Neos package.
- *
- * (c) Contributors of the Neos Project - www.neos.io
- *
- * This package is Open Source Software. For the full copyright and license
- * information, please view the LICENSE file which was distributed with this
- * source code.
- */
-
 declare(strict_types=1);
 
-namespace Neos\ContentRepository\Core\SharedModel\Workspace;
+namespace Neos\Neos\Domain\Model;
+
+use Neos\Flow\Annotations as Flow;
 
 /**
  * Description for a workspace
  *
- * @deprecated with 9.0.0-beta14 metadata should be assigned to workspaces outside the Content Repository core
- * @internal
+ * @api
  */
+#[Flow\Proxy(false)]
 final readonly class WorkspaceDescription implements \JsonSerializable
 {
     public function __construct(
@@ -35,6 +27,11 @@ final readonly class WorkspaceDescription implements \JsonSerializable
         return new self($value);
     }
 
+    public static function empty(): self
+    {
+        return new self('');
+    }
+
     public function jsonSerialize(): string
     {
         return $this->value;
@@ -43,10 +40,5 @@ final readonly class WorkspaceDescription implements \JsonSerializable
     public function equals(self $other): bool
     {
         return $this->value === $other->value;
-    }
-
-    public function __toString(): string
-    {
-        return $this->value;
     }
 }
