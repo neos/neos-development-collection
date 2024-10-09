@@ -256,7 +256,12 @@ final class WorkspaceService
      */
     public function getWorkspacePermissionsForUser(ContentRepositoryId $contentRepositoryId, WorkspaceName $workspaceName, User $user): WorkspacePermissions
     {
-        $userIsAdministrator = $this->userService->currentUserIsAdministrator();
+        try {
+            $userRoles = array_keys($this->userService->getAllRoles($user));
+        } catch (NoSuchRoleException $e) {
+            throw new \RuntimeException(sprintf('Failed to determine roles for user "%s", check your package dependencies: %s', $user->getId()->value, $e->getMessage()), 1727084881, $e);
+        }
+        $userIsAdministrator = in_array('Neos.Neos:Administrator', $userRoles, true);
         $workspaceMetadata = $this->loadWorkspaceMetadata($contentRepositoryId, $workspaceName);
         if ($workspaceMetadata === null) {
             return WorkspacePermissions::create(false, false, $userIsAdministrator);
@@ -265,7 +270,7 @@ final class WorkspaceService
             return WorkspacePermissions::all();
         }
 
-        $userWorkspaceRole = $this->loadWorkspaceRoleOfUser($contentRepositoryId, $workspaceName, $user);
+        $userWorkspaceRole = $this->loadWorkspaceRoleOfUser($contentRepositoryId, $workspaceName, $user->getId(), $userRoles);
         if ($userWorkspaceRole === null) {
             return WorkspacePermissions::create(false, false, $userIsAdministrator);
         }
@@ -420,13 +425,11 @@ final class WorkspaceService
         return $workspaceName === false ? null : WorkspaceName::fromString($workspaceName);
     }
 
-    private function loadWorkspaceRoleOfUser(ContentRepositoryId $contentRepositoryId, WorkspaceName $workspaceName, User $user): ?WorkspaceRole
+    /**
+     * @param array<string> $userRoles
+     */
+    private function loadWorkspaceRoleOfUser(ContentRepositoryId $contentRepositoryId, WorkspaceName $workspaceName, UserId $userId, array $userRoles): ?WorkspaceRole
     {
-        try {
-            $userRoles = array_keys($this->userService->getAllRoles($user));
-        } catch (NoSuchRoleException $e) {
-            throw new \RuntimeException(sprintf('Failed to determine roles for user "%s", check your package dependencies: %s', $user->getId()->value, $e->getMessage()), 1727084881, $e);
-        }
         $tableRole = self::TABLE_NAME_WORKSPACE_ROLE;
         $query = <<<SQL
             SELECT
@@ -453,7 +456,7 @@ final class WorkspaceService
             'contentRepositoryId' => $contentRepositoryId->value,
             'workspaceName' => $workspaceName->value,
             'userSubjectType' => WorkspaceRoleSubjectType::USER->value,
-            'userId' => $user->getId()->value,
+            'userId' => $userId->value,
             'groupSubjectType' => WorkspaceRoleSubjectType::GROUP->value,
             'groupSubjects' => $userRoles,
         ], [

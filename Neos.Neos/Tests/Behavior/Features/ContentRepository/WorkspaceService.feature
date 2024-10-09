@@ -9,7 +9,6 @@ Feature: Neos WorkspaceService related features
     """
     And using identifier "default", I define a content repository
     And I am in content repository "default"
-    And I am user identified by "editor"
 
   Scenario: Create single root workspace without specifying title and description
     When the root workspace "some-root-workspace" is created
