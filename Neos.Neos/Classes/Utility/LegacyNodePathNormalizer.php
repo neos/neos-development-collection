@@ -41,8 +41,13 @@ final class LegacyNodePathNormalizer
         string $path,
         Node $baseNode
     ): ?AbsoluteNodePath {
-        if (str_contains($path, '../') || str_contains($path, './')) {
+        if (str_contains($path, '..') || str_starts_with($path, './') || str_contains($path, '/.')) {
             throw new \InvalidArgumentException(sprintf('NodePath traversal via /../ is not allowed. Got: "%s"', $path), 1707732065);
+        }
+
+        if (AbsoluteNodePath::patternIsMatchedByString($path)) {
+            // not a legacy absolute node path
+            return null;
         }
 
         $isSiteRelative = str_starts_with($path, '~');
@@ -78,10 +83,21 @@ final class LegacyNodePathNormalizer
                     $siteNode->aggregateId->value,
                 ), 1719947246);
             }
+
+            if ($path === '~') {
+                $pathSegments = [];
+            } elseif (str_starts_with($path, '~/')) {
+                $pathSegments = explode('/', substr($path, 2));
+            } else {
+                throw new \RuntimeException(sprintf(
+                    'Malformed site relative path "%s"',
+                    $path,
+                ), 1728571610);
+            }
             return AbsoluteNodePath::fromRootNodeTypeNameAndRelativePath(
                 NodeTypeNameFactory::forSites(),
                 NodePath::fromPathSegments(
-                    [$siteNode->name->value, ...explode('/', substr($path, 1))]
+                    [$siteNode->name->value, ...$pathSegments]
                 )
             );
         }
