@@ -202,7 +202,7 @@ class SitesController extends AbstractModuleController
                 );
             }
 
-            foreach ($contentRepository->getWorkspaces() as $workspace) {
+            foreach ($contentRepository->findWorkspaces() as $workspace) {
                 $siteNodeAggregate = $contentRepository->getContentGraph($workspace->workspaceName)->findChildNodeAggregateByName(
                     $sitesNode->nodeAggregateId,
                     $site->getNodeName()->toNodeName()

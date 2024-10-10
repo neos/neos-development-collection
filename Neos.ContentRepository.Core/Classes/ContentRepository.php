@@ -247,7 +247,7 @@ final class ContentRepository
         return $this->getContentRepositoryReadModel()->findWorkspaceByName($workspaceName);
     }
 
-    public function getWorkspaces(): Workspaces
+    public function findWorkspaces(): Workspaces
     {
         return $this->getContentRepositoryReadModel()->findWorkspaces();
     }

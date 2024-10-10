@@ -134,7 +134,7 @@ class WorkspaceController extends AbstractModuleController
         $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryId);
 
         $items = [];
-        $allWorkspaces = $contentRepository->getWorkspaces();
+        $allWorkspaces = $contentRepository->findWorkspaces();
         foreach ($allWorkspaces as $workspace) {
             $workspaceMetadata = $this->workspaceService->getWorkspaceMetadata($contentRepositoryId, $workspace->workspaceName);
             $permissions = $this->workspaceService->getWorkspacePermissionsForUser($contentRepositoryId, $workspace->workspaceName, $currentUser);
@@ -350,7 +350,7 @@ class WorkspaceController extends AbstractModuleController
             $this->redirect('index');
         }
 
-        $dependentWorkspaces = $contentRepository->getWorkspaces()->getDependantWorkspaces($workspaceName);
+        $dependentWorkspaces = $contentRepository->findWorkspaces()->getDependantWorkspaces($workspaceName);
         if (!$dependentWorkspaces->isEmpty()) {
             $dependentWorkspaceTitles = [];
             /** @var Workspace $dependentWorkspace */
@@ -852,7 +852,7 @@ class WorkspaceController extends AbstractModuleController
         ContentStreamId $contentStreamIdOfOriginalNode,
         ContentRepository $contentRepository,
     ): array {
-        $currentWorkspace = $contentRepository->getWorkspaces()->find(
+        $currentWorkspace = $contentRepository->findWorkspaces()->find(
             fn (Workspace $potentialWorkspace) => $potentialWorkspace->currentContentStreamId->equals($contentStreamIdOfOriginalNode)
         );
         $originalNode = null;
@@ -1036,7 +1036,7 @@ class WorkspaceController extends AbstractModuleController
     ): array {
         $user = $this->userService->getCurrentUser();
         $baseWorkspaceOptions = [];
-        $workspaces = $contentRepository->getWorkspaces();
+        $workspaces = $contentRepository->findWorkspaces();
         foreach ($workspaces as $workspace) {
             if ($excludedWorkspace !== null) {
                 if ($workspace->workspaceName->equals($excludedWorkspace)) {

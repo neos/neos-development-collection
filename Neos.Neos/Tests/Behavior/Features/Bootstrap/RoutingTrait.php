@@ -186,7 +186,7 @@ trait RoutingTrait
         Assert::assertTrue($matchedNodeAddress->workspaceName->isLive());
         Assert::assertSame($nodeAggregateId, $matchedNodeAddress->aggregateId->value);
         // todo useless check?
-        $workspace = $this->currentContentRepository->getWorkspaces()->find(
+        $workspace = $this->currentContentRepository->findWorkspaces()->find(
             fn (Workspace $potentialWorkspace) => $potentialWorkspace->currentContentStreamId->equals(ContentStreamId::fromString($contentStreamId))
         );
         Assert::assertSame($contentStreamId, $workspace?->currentContentStreamId->value);
@@ -221,7 +221,7 @@ trait RoutingTrait
         Assert::assertEquals(NodeAggregateId::fromString($nodeAggregateId), $matchedNodeAddress->aggregateId, 'Expected nodeAggregateId doesn\'t match.');
 
         // todo use workspace name instead here:
-        $workspace = $this->currentContentRepository->getWorkspaces()->find(
+        $workspace = $this->currentContentRepository->findWorkspaces()->find(
             fn (Workspace $potentialWorkspace) => $potentialWorkspace->currentContentStreamId->equals(ContentStreamId::fromString($contentStreamId))
         );
         Assert::assertEquals($workspace->workspaceName, $matchedNodeAddress->workspaceName, 'Expected workspace doesn\'t match.');
@@ -309,7 +309,7 @@ trait RoutingTrait
         if ($this->requestUrl === null) {
             $this->iAmOnUrl('/');
         }
-        $workspace = $this->currentContentRepository->getWorkspaces()->find(
+        $workspace = $this->currentContentRepository->findWorkspaces()->find(
             fn (Workspace $potentialWorkspace) => $potentialWorkspace->currentContentStreamId->equals(ContentStreamId::fromString($contentStreamId))
         );
 

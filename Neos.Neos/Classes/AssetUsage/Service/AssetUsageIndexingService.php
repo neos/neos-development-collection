@@ -246,7 +246,7 @@ class AssetUsageIndexingService
             while ($stack !== []) {
                 /** @var Workspace $workspace */
                 $workspace = array_shift($stack);
-                $descendants = $contentRepository->getWorkspaces()->getDependantWorkspaces($workspace->workspaceName);
+                $descendants = $contentRepository->findWorkspaces()->getDependantWorkspaces($workspace->workspaceName);
                 foreach ($descendants as $descendant) {
                     $collectedWorkspaceNames[] = $descendant->workspaceName;
                     $stack[] = $descendant;

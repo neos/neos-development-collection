@@ -81,7 +81,7 @@ trait ProjectedNodeTrait
     public function iExpectANodeIdentifiedByXToExistInTheContentGraph(string $serializedNodeDiscriminator): void
     {
         $nodeDiscriminator = NodeDiscriminator::fromShorthand($serializedNodeDiscriminator);
-        $matchingWorkspace = $this->currentContentRepository->getWorkspaces()->find(
+        $matchingWorkspace = $this->currentContentRepository->findWorkspaces()->find(
             static fn (Workspace $workspace) => $workspace->currentContentStreamId->equals($nodeDiscriminator->contentStreamId)
         );
         if ($matchingWorkspace === null) {

@@ -376,7 +376,7 @@ class WorkspaceCommandController extends CommandController
             $this->quit(2);
         }
 
-        $dependentWorkspaces = $contentRepositoryInstance->getWorkspaces()->getDependantWorkspaces($workspaceName);
+        $dependentWorkspaces = $contentRepositoryInstance->findWorkspaces()->getDependantWorkspaces($workspaceName);
         if (!$dependentWorkspaces->isEmpty()) {
             $this->outputLine('<error>Workspace "%s" cannot be deleted because the following workspaces are based on it:</error>', [$workspaceName->value]);
 
@@ -460,7 +460,7 @@ class WorkspaceCommandController extends CommandController
     {
         $contentRepositoryId = ContentRepositoryId::fromString($contentRepository);
 
-        $workspaces = $this->contentRepositoryRegistry->get($contentRepositoryId)->getWorkspaces();
+        $workspaces = $this->contentRepositoryRegistry->get($contentRepositoryId)->findWorkspaces();
 
         if ($workspaces->isEmpty()) {
             $this->outputLine('No workspaces found.');

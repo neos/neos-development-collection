@@ -110,7 +110,7 @@ class AssetChangeHandlerForCacheFlushing
                     $workspace = array_shift($stack);
                     $workspaceNames[] = $workspace->workspaceName;
 
-                    $stack = array_merge($stack, iterator_to_array($contentRepository->getWorkspaces()->getDependantWorkspaces($workspace->workspaceName)));
+                    $stack = array_merge($stack, iterator_to_array($contentRepository->findWorkspaces()->getDependantWorkspaces($workspace->workspaceName)));
                 }
             }
             $this->workspaceRuntimeCache[$contentRepository->id->value][$workspaceName->value] = $workspaceNames;

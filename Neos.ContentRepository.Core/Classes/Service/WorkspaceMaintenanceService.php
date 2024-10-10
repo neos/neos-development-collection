@@ -30,7 +30,7 @@ class WorkspaceMaintenanceService implements ContentRepositoryServiceInterface
      */
     public function rebaseOutdatedWorkspaces(?RebaseErrorHandlingStrategy $strategy = null): Workspaces
     {
-        $outdatedWorkspaces = $this->contentRepository->getWorkspaces()->filter(
+        $outdatedWorkspaces = $this->contentRepository->findWorkspaces()->filter(
             fn (Workspace $workspace) => $workspace->status === WorkspaceStatus::OUTDATED
         );
         /** @var Workspace $workspace */
@@ -52,7 +52,7 @@ class WorkspaceMaintenanceService implements ContentRepositoryServiceInterface
 
     public function pruneAll(): void
     {
-        foreach ($this->contentRepository->getWorkspaces() as $workspace) {
+        foreach ($this->contentRepository->findWorkspaces() as $workspace) {
             $streamName = WorkspaceEventStreamName::fromWorkspaceName($workspace->workspaceName)->getEventStreamName();
             $this->eventStore->deleteStream($streamName);
         }

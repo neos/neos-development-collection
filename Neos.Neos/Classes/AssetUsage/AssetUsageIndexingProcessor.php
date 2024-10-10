@@ -27,7 +27,7 @@ readonly class AssetUsageIndexingProcessor
     {
         $variationGraph = $contentRepository->getVariationGraph();
 
-        $allWorkspaces = $contentRepository->getWorkspaces();
+        $allWorkspaces = $contentRepository->findWorkspaces();
         $liveWorkspace = $contentRepository->findWorkspaceByName(WorkspaceName::forLive());
         if ($liveWorkspace === null) {
             throw WorkspaceDoesNotExist::butWasSupposedTo(WorkspaceName::forLive());
