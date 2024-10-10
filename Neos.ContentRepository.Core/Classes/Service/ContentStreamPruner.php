@@ -51,7 +51,7 @@ class ContentStreamPruner implements ContentRepositoryServiceInterface
             $status[] = ContentStreamStatus::CREATED;
             $status[] = ContentStreamStatus::FORKED;
         }
-        $unusedContentStreams = $this->contentRepository->getContentStreams()->filter(
+        $unusedContentStreams = $this->contentRepository->findContentStreams()->filter(
             static fn (ContentStream $contentStream) => in_array($contentStream->status, $status, true),
         );
         $unusedContentStreamIds = [];
@@ -89,7 +89,7 @@ class ContentStreamPruner implements ContentRepositoryServiceInterface
 
     public function pruneAll(): void
     {
-        foreach ($this->contentRepository->getContentStreams() as $contentStream) {
+        foreach ($this->contentRepository->findContentStreams() as $contentStream) {
             $streamName = ContentStreamEventStreamName::fromContentStreamId($contentStream->id)->getEventStreamName();
             $this->eventStore->deleteStream($streamName);
         }

@@ -259,7 +259,7 @@ final class ContentRepository
         return $this->getContentRepositoryReadModel()->findContentStreamById($contentStreamId);
     }
 
-    public function getContentStreams(): ContentStreams
+    public function findContentStreams(): ContentStreams
     {
         return $this->getContentRepositoryReadModel()->findContentStreams();
     }

@@ -56,8 +56,8 @@ final readonly class Workspace
         $this->status = $status;
     }
 
-    public function isBaseWorkspace(): bool
+    public function isRootWorkspace(): bool
     {
-        return $this->baseWorkspaceName === null;
+        return $this->baseWorkspaceName !== null;
     }
 }
