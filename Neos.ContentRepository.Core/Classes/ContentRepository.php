@@ -237,16 +237,18 @@ final class ContentRepository
         $projection->reset();
     }
 
-    public function getNodeTypeManager(): NodeTypeManager
-    {
-        return $this->nodeTypeManager;
-    }
-
+    /**
+     * Returns the workspace with the given name, or NULL if it does not exist in this content repository
+     */
     public function findWorkspaceByName(WorkspaceName $workspaceName): ?Workspace
     {
         return $this->getContentRepositoryReadModel()->findWorkspaceByName($workspaceName);
     }
 
+    /**
+     * Returns all workspaces of this content repository. To limit the set, {@see Workspaces::find()} and {@see Workspaces::filter()} can be used
+     * as well as {@see Workspaces::getBaseWorkspaces()} and {@see Workspaces::getDependantWorkspaces()}.
+     */
     public function findWorkspaces(): Workspaces
     {
         return $this->getContentRepositoryReadModel()->findWorkspaces();
@@ -268,6 +270,11 @@ final class ContentRepository
     public function getContentGraph(WorkspaceName $workspaceName): ContentGraphInterface
     {
         return $this->getContentRepositoryReadModel()->getContentGraphByWorkspaceName($workspaceName);
+    }
+
+    public function getNodeTypeManager(): NodeTypeManager
+    {
+        return $this->nodeTypeManager;
     }
 
     public function getVariationGraph(): InterDimensionalVariationGraph
