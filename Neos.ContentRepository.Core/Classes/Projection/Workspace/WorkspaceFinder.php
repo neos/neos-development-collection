@@ -25,7 +25,7 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceTitle;
 /**
  * The legacy Workspace Finder
  *
- * @deprecated with 9.0.0-beta14 please use {@see ContentRepository::getWorkspaces()} and {@see ContentRepository::findWorkspaceByName()} instead.
+ * @deprecated with 9.0.0-beta14 please use {@see ContentRepository::findWorkspaces()} and {@see ContentRepository::findWorkspaceByName()} instead.
  * @api
  */
 final class WorkspaceFinder implements ProjectionStateInterface
@@ -68,7 +68,7 @@ final class WorkspaceFinder implements ProjectionStateInterface
 
     /**
      * @deprecated with 9.0.0-beta14 discouraged. You should just operate on workspace names instead.
-     * To still archive the functionality please use {@see ContentRepository::getWorkspaces()} instead and filter the result:
+     * To still archive the functionality please use {@see ContentRepository::findWorkspaces()} instead and filter the result:
      *
      *     $this->contentRepository->getWorkspaces()->find(
      *         fn (Workspace $workspace) => $workspace->currentContentStreamId->equals($contentStreamId)
@@ -103,9 +103,9 @@ final class WorkspaceFinder implements ProjectionStateInterface
     }
 
     /**
-     * @deprecated with 9.0.0-beta14 please use {@see ContentRepository::getWorkspaces()} and {@see Workspaces::getDependantWorkspaces()} instead.
      * @return array<string,Workspace>
      * @throws DBALException
+     * @deprecated with 9.0.0-beta14 please use {@see ContentRepository::findWorkspaces()} and {@see Workspaces::getDependantWorkspaces()} instead.
      */
     public function findByBaseWorkspace(WorkspaceName $baseWorkspace): array
     {
@@ -153,7 +153,7 @@ final class WorkspaceFinder implements ProjectionStateInterface
     }
 
     /**
-     * @deprecated with 9.0.0-beta14 please use {@see ContentRepository::getWorkspaces()} instead
+     * @deprecated with 9.0.0-beta14 please use {@see ContentRepository::findWorkspaces()} instead
      */
     public function findAll(): Workspaces
     {
@@ -174,7 +174,7 @@ final class WorkspaceFinder implements ProjectionStateInterface
     }
 
     /**
-     * @deprecated with 9.0.0-beta14 please use {@see ContentRepository::getWorkspaces()} instead and filter the result:
+     * @deprecated with 9.0.0-beta14 please use {@see ContentRepository::findWorkspaces()} instead and filter the result:
      *
      *     $this->contentRepository->getWorkspaces()->filter(
      *         fn (Workspace $workspace) => $workspace->status === WorkspaceStatus::OUTDATED

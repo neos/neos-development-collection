@@ -249,13 +249,13 @@ final class ContentRepository
         return $this->getWorkspaceFinder()->findOneByName($workspaceName);
     }
 
-    public function getWorkspaces(): Workspaces
+    public function findWorkspaces(): Workspaces
     {
         return $this->getWorkspaceFinder()->findAll();
     }
 
     /**
-     * @deprecated with 9.0.0-beta14 please use {@see ContentRepository::getWorkspaces()} and {@see ContentRepository::findWorkspaceByName()} instead.
+     * @deprecated with 9.0.0-beta14 please use {@see ContentRepository::findWorkspaces()} and {@see ContentRepository::findWorkspaceByName()} instead.
      */
     public function getWorkspaceFinder(): WorkspaceFinder
     {
