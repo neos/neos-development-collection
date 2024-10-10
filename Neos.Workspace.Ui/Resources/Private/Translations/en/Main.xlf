@@ -159,6 +159,9 @@
       <trans-unit id="workspaces.workspaceWithThisTitleAlreadyExists">
         <source>A workspace with this title already exists.</source>
       </trans-unit>
+      <trans-unit id="workspaces.workspaceHasBeenCreated">
+        <source>The workspace "{0}" has been created.</source>
+      </trans-unit>
       <trans-unit id="workspaces.workspaceHasBeenUpdated">
         <source>The workspace "{0}" has been updated.</source>
       </trans-unit>

@@ -14,8 +14,6 @@ namespace Neos\Media\Browser\Controller;
 
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindClosestNodeFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
-use Neos\ContentRepository\Core\SharedModel\Exception\NodeTypeNotFound;
-use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\Controller\ActionController;
@@ -23,6 +21,7 @@ use Neos\Media\Domain\Model\AssetInterface;
 use Neos\Media\Domain\Service\AssetService;
 use Neos\Neos\Domain\Repository\SiteRepository;
 use Neos\Neos\Domain\Service\NodeTypeNameFactory;
+use Neos\Neos\Domain\Service\WorkspaceService;
 use Neos\Neos\FrontendRouting\SiteDetection\SiteDetectionResult;
 use Neos\Neos\Service\UserService;
 use Neos\Neos\Domain\Service\UserService as DomainUserService;
@@ -62,6 +61,12 @@ class UsageController extends ActionController
 
     /**
      * @Flow\Inject
+     * @var WorkspaceService
+     */
+    protected $workspaceService;
+
+    /**
+     * @Flow\Inject
      * @var DomainUserService
      */
     protected $domainUserService;
@@ -76,8 +81,9 @@ class UsageController extends ActionController
     {
         $currentContentRepositoryId = SiteDetectionResult::fromRequest($this->request->getHttpRequest())->contentRepositoryId;
         $currentContentRepository = $this->contentRepositoryRegistry->get($currentContentRepositoryId);
-        $userWorkspaceName = WorkspaceName::fromString($this->userService->getPersonalWorkspaceName());
-        $userWorkspace = $currentContentRepository->getWorkspaceFinder()->findOneByName($userWorkspaceName);
+        $userId = $this->userService->getBackendUser()?->getId();
+        assert($userId !== null);
+        $userWorkspace = $this->workspaceService->getPersonalWorkspaceForUser($currentContentRepositoryId, $userId);
 
         $usageReferences = $this->assetService->getUsageReferences($asset);
         $relatedNodes = [];
@@ -98,17 +104,12 @@ class UsageController extends ActionController
 
             $contentRepository = $this->contentRepositoryRegistry->get($usage->getContentRepositoryId());
 
-            $workspace = $contentRepository->getWorkspaceFinder()->findOneByCurrentContentStreamId($usage->getContentStreamId());
+            $workspace = $contentRepository->getWorkspaceFinder()->findOneByName($usage->getWorkspaceName());
 
-            // FIXME: AssetUsageReference->workspaceName ?
             $nodeAggregate = $contentRepository->getContentGraph($workspace->workspaceName)->findNodeAggregateById(
                 $usage->getNodeAggregateId()
             );
-            try {
-                $nodeType = $contentRepository->getNodeTypeManager()->getNodeType($nodeAggregate->nodeTypeName);
-            } catch (NodeTypeNotFound $e) {
-                $nodeType = null;
-            }
+            $nodeType = $contentRepository->getNodeTypeManager()->getNodeType($nodeAggregate->nodeTypeName);
 
             $accessible = $this->domainUserService->currentUserCanReadWorkspace($workspace);
 

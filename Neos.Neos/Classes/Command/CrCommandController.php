@@ -21,7 +21,7 @@ use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Flow\ResourceManagement\ResourceManager;
 use Neos\Flow\ResourceManagement\ResourceRepository;
 use Neos\Media\Domain\Repository\AssetRepository;
-use Neos\Neos\AssetUsage\Projection\AssetUsageFinder;
+use Neos\Neos\AssetUsage\AssetUsageService;
 use Neos\Utility\Files;
 
 class CrCommandController extends CommandController
@@ -39,6 +39,7 @@ class CrCommandController extends CommandController
         private readonly PersistenceManagerInterface $persistenceManager,
         private readonly ContentRepositoryRegistry $contentRepositoryRegistry,
         private readonly ProjectionReplayServiceFactory $projectionReplayServiceFactory,
+        private readonly AssetUsageService $assetUsageService,
     ) {
         parent::__construct();
     }
@@ -65,7 +66,7 @@ class CrCommandController extends CommandController
                 $filesystem,
                 $contentRepository->getWorkspaceFinder(),
                 $this->assetRepository,
-                $contentRepository->projectionState(AssetUsageFinder::class),
+                $this->assetUsageService,
             )
         );
         assert($exportService instanceof ExportService);

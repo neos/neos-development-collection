@@ -56,18 +56,26 @@ final readonly class NodeQueryBuilder
         return $this->createQueryBuilder()
             ->select('cn.*, ch.contentstreamid, ch.subtreetags, cdsp.dimensionspacepoint AS covereddimensionspacepoint')
             ->from($this->tableNames->node(), 'pn')
-            ->innerJoin('pn', $this->tableNames->hierarchyRelation(), 'ph', 'ph.childnodeanchor = pn.relationanchorpoint')
             ->innerJoin('pn', $this->tableNames->hierarchyRelation(), 'ch', 'ch.parentnodeanchor = pn.relationanchorpoint')
             ->innerJoin('ch', $this->tableNames->dimensionSpacePoints(), 'cdsp', 'cdsp.hash = ch.dimensionspacepointhash')
             ->innerJoin('ch', $this->tableNames->node(), 'cn', 'cn.relationanchorpoint = ch.childnodeanchor')
             ->where('pn.nodeaggregateid = :parentNodeAggregateId')
-            ->andWhere('ph.contentstreamid = :contentStreamId')
             ->andWhere('ch.contentstreamid = :contentStreamId')
             ->orderBy('ch.position')
             ->setParameters([
                 'parentNodeAggregateId' => $parentNodeAggregateId->value,
                 'contentStreamId' => $contentStreamId->value,
             ]);
+    }
+
+    public function buildParentNodeAggregateQuery(): QueryBuilder
+    {
+        return $this->createQueryBuilder()
+            ->select('n.*, h.contentstreamid, h.subtreetags, dsp.dimensionspacepoint AS covereddimensionspacepoint')
+            ->from($this->tableNames->node(), 'n')
+            ->innerJoin('n', $this->tableNames->hierarchyRelation(), 'h', 'h.parentnodeanchor = n.relationanchorpoint')
+            ->innerJoin('h', $this->tableNames->dimensionSpacePoints(), 'dsp', 'dsp.hash = h.dimensionspacepointhash')
+            ->where('h.contentstreamid = :contentStreamId');
     }
 
     public function buildFindRootNodeAggregatesQuery(ContentStreamId $contentStreamId, FindRootNodeAggregatesFilter $filter): QueryBuilder

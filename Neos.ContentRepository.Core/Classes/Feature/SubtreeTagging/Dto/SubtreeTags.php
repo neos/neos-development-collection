@@ -89,8 +89,9 @@ final readonly class SubtreeTags implements \IteratorAggregate, \Countable, \Jso
     }
 
     /**
-     * @param \Closure(SubtreeTag): mixed $callback
-     * @return array<mixed>
+     * @template T
+     * @param \Closure(SubtreeTag $tag): T $callback
+     * @return list<T>
      */
     public function map(\Closure $callback): array
     {

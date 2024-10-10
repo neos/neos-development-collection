@@ -9,7 +9,7 @@ use Neos\ContentRepository\Core\SharedModel\User\UserIdProviderInterface;
 
 final class FakeUserIdProvider implements UserIdProviderInterface
 {
-    private static ?UserId $userId = null;
+    public static ?UserId $userId = null;
 
     public static function setUserId(UserId $userId): void
     {

@@ -17,7 +17,8 @@ namespace Neos\ContentRepository\Core\SharedModel\Workspace;
 /**
  * Human-Readable title of a workspace
  *
- * @api
+ * @deprecated with 9.0.0-beta14 metadata should be assigned to workspaces outside the Content Repository core
+ * @internal
  */
 final readonly class WorkspaceTitle implements \JsonSerializable
 {

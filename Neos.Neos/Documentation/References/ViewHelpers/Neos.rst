@@ -3,7 +3,7 @@
 Neos ViewHelper Reference
 #########################
 
-This reference was automatically generated from code on 2024-09-24
+This reference was automatically generated from code on 2024-10-09
 
 
 .. _`Neos ViewHelper Reference: neos:backend.authenticationProviderLabel`:
@@ -22,27 +22,6 @@ Arguments
 *********
 
 * ``identifier`` (string): The identifier to render the label for
-
-
-
-
-.. _`Neos ViewHelper Reference: neos:backend.changeStats`:
-
-neos:backend.changeStats
-------------------------
-
-Displays a text-based "bar graph" giving an indication of the amount and type of
-changes done to something. Created for use in workspace management.
-
-:Implementation: Neos\\Neos\\ViewHelpers\\Backend\\ChangeStatsViewHelper
-
-
-
-
-Arguments
-*********
-
-* ``changeCounts`` (array): Expected keys: new, changed, removed
 
 
 

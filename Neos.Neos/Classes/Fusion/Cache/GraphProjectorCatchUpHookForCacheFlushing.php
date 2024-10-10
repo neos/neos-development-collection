@@ -38,6 +38,7 @@ use Neos\ContentRepository\Core\Feature\WorkspacePublication\Event\WorkspaceWasP
 use Neos\ContentRepository\Core\Feature\WorkspaceRebase\Event\WorkspaceWasRebased;
 use Neos\ContentRepository\Core\Projection\CatchUpHookInterface;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate;
+use Neos\ContentRepository\Core\SharedModel\Exception\WorkspaceDoesNotExist;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateIds;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
@@ -159,7 +160,12 @@ class GraphProjectorCatchUpHookForCacheFlushing implements CatchUpHookInterface
             // cleared, leading to presumably duplicate nodes in the UI.
             || $eventInstance instanceof NodeAggregateWasMoved
         ) {
-            $contentGraph = $this->contentRepository->getContentGraph($eventInstance->workspaceName);
+            try {
+                $contentGraph = $this->contentRepository->getContentGraph($eventInstance->workspaceName);
+            } catch (WorkspaceDoesNotExist) {
+                return;
+            }
+
             $nodeAggregate = $contentGraph->findNodeAggregateById(
                 $eventInstance->getNodeAggregateId()
             );
@@ -197,9 +203,13 @@ class GraphProjectorCatchUpHookForCacheFlushing implements CatchUpHookInterface
             && $eventInstance instanceof EmbedsContentStreamId
             && $eventInstance instanceof EmbedsWorkspaceName
         ) {
-            $nodeAggregate = $this->contentRepository->getContentGraph($eventInstance->getWorkspaceName())->findNodeAggregateById(
-                $eventInstance->getNodeAggregateId()
-            );
+            try {
+                $nodeAggregate = $this->contentRepository->getContentGraph($eventInstance->getWorkspaceName())->findNodeAggregateById(
+                    $eventInstance->getNodeAggregateId()
+                );
+            } catch (WorkspaceDoesNotExist) {
+                return;
+            }
 
             if ($nodeAggregate) {
                 $this->scheduleCacheFlushJobForNodeAggregate(

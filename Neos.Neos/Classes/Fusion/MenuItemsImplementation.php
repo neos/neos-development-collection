@@ -196,7 +196,7 @@ class MenuItemsImplementation extends AbstractMenuItemsImplementation
                 $maximumLevels = min($maximumLevels, $maxLevelsBasedOnLastLevel);
             } elseif ($lastLevels < 0) {
                 $currentNodeAncestorAggregateIds = $this->getCurrentNodeRootlineAggregateIds();
-                $depthOfCurrentDocument = count(iterator_to_array($currentNodeAncestorAggregateIds)) - 1;
+                $depthOfCurrentDocument = count($currentNodeAncestorAggregateIds) - 1;
                 $maxLevelsBasedOnLastLevel = max($depthOfCurrentDocument + $lastLevels - $depthOfEntryParentNodeAggregateId + 1, 0);
                 $maximumLevels = min($maximumLevels, $maxLevelsBasedOnLastLevel);
             }
@@ -311,7 +311,7 @@ class MenuItemsImplementation extends AbstractMenuItemsImplementation
         );
 
         $this->currentNodeRootlineAggregateIds = NodeAggregateIds::create($this->currentNode->aggregateId)
-            ->merge(NodeAggregateIds::fromNodes($currentNodeAncestors));
+            ->merge($currentNodeAncestors->toNodeAggregateIds());
 
         return $this->currentNodeRootlineAggregateIds;
     }

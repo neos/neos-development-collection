@@ -17,7 +17,8 @@ namespace Neos\ContentRepository\Core\SharedModel\Workspace;
 /**
  * Description for a workspace
  *
- * @api
+ * @deprecated with 9.0.0-beta14 metadata should be assigned to workspaces outside the Content Repository core
+ * @internal
  */
 final readonly class WorkspaceDescription implements \JsonSerializable
 {

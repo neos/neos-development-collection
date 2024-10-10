@@ -23,7 +23,7 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\Nodes;
  * @implements \IteratorAggregate<string,NodeAggregateId>
  * @api
  */
-final class NodeAggregateIds implements \IteratorAggregate, \JsonSerializable
+final class NodeAggregateIds implements \IteratorAggregate, \Countable, \JsonSerializable
 {
     /**
      * @var array<string,NodeAggregateId>
@@ -38,7 +38,7 @@ final class NodeAggregateIds implements \IteratorAggregate, \JsonSerializable
 
     public static function createEmpty(): self
     {
-        return new self(...[]);
+        return new self();
     }
 
     public static function create(NodeAggregateId ...$nodeAggregateIds): self
@@ -70,9 +70,9 @@ final class NodeAggregateIds implements \IteratorAggregate, \JsonSerializable
 
     public static function fromNodes(Nodes $nodes): self
     {
-        return self::fromArray(
-            array_map(fn(Node $node) => $node->aggregateId, iterator_to_array($nodes))
-        );
+        return self::fromArray($nodes->map(
+            fn (Node $node): NodeAggregateId => $node->aggregateId,
+        ));
     }
 
     public function merge(self $other): self
@@ -115,5 +115,20 @@ final class NodeAggregateIds implements \IteratorAggregate, \JsonSerializable
     public function getIterator(): \Traversable
     {
         yield from $this->nodeAggregateIds;
+    }
+
+    /**
+     * @template T
+     * @param \Closure(NodeAggregateId $nodeAggregateId): T $callback
+     * @return list<T>
+     */
+    public function map(\Closure $callback): array
+    {
+        return array_map($callback, array_values($this->nodeAggregateIds));
+    }
+
+    public function count(): int
+    {
+        return count($this->nodeAggregateIds);
     }
 }
