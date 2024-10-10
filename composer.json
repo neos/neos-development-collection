@@ -38,7 +38,9 @@
         "lint:phpstan": "../../bin/phpstan analyse",
         "lint": [
             "@lint:phpstan"
-        ]
+        ],
+        "test:behat-cli": "../../bin/behat -f progress --strict --no-interaction",
+        "build:composer-json": "php ../../Build/BuildEssentials/ComposerManifestMerger.php"
     },
     "replace": {
         "typo3/typo3cr": "self.version",
