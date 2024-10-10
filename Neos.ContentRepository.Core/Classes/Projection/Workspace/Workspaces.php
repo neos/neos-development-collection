@@ -93,6 +93,16 @@ final class Workspaces implements \IteratorAggregate, \Countable
     }
 
     /**
+     * Get all dependent workspaces (if they are included in this result set).
+     */
+    public function getDependantWorkspaces(WorkspaceName $workspaceName): Workspaces
+    {
+        return $this->filter(
+            static fn (Workspace $potentiallyDependentWorkspace) => $potentiallyDependentWorkspace->baseWorkspaceName?->equals($workspaceName) ?? false
+        );
+    }
+
+    /**
      * @return \Traversable<int,Workspace>
      */
     public function getIterator(): \Traversable
@@ -119,6 +129,16 @@ final class Workspaces implements \IteratorAggregate, \Countable
             }
         }
         return null;
+    }
+
+    /**
+     * @template T
+     * @param \Closure(Workspace): T $callback
+     * @return list<T>
+     */
+    public function map(\Closure $callback): array
+    {
+        return array_map($callback, array_values($this->workspaces));
     }
 
     public function count(): int

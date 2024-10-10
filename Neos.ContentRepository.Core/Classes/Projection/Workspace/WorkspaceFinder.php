@@ -26,7 +26,7 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceTitle;
  * The legacy Workspace Finder
  *
  * @deprecated with 9.0.0-beta14 please use {@see ContentRepository::getWorkspaces()} and {@see ContentRepository::findWorkspaceByName()} instead.
- * @internal
+ * @api
  */
 final class WorkspaceFinder implements ProjectionStateInterface
 {
@@ -103,7 +103,7 @@ final class WorkspaceFinder implements ProjectionStateInterface
     }
 
     /**
-     * @deprecated with 9.0.0-beta14 please use {@see ContentRepository::getWorkspaces()} and {@see Workspaces::getBaseWorkspaces()} instead.
+     * @deprecated with 9.0.0-beta14 please use {@see ContentRepository::getWorkspaces()} and {@see Workspaces::getDependantWorkspaces()} instead.
      * @return array<string,Workspace>
      * @throws DBALException
      */
@@ -131,6 +131,7 @@ final class WorkspaceFinder implements ProjectionStateInterface
 
     /**
      * @deprecated with 9.0.0-beta14 owners/collaborators should be assigned to workspaces outside the Content Repository core
+     * For Neos.Neos please use {@see \Neos\Neos\Domain\Service\WorkspaceService::getPersonalWorkspaceForUser()}
      */
     public function findOneByWorkspaceOwner(string $owner): ?Workspace
     {
