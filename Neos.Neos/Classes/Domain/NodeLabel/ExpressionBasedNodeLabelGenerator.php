@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Neos\Neos\Domain\NodeLabel;
 
 /*
@@ -39,7 +41,7 @@ class ExpressionBasedNodeLabelGenerator implements NodeLabelGeneratorInterface
      * @var string
      */
     protected $expression = <<<'EEL'
-    ${(node.nodeType.label ? node.nodeType.label : node.nodeTypeName.value) + (node.nodeName ? ' (' + node.nodeName.value + ')' : '')}
+    ${(Neos.Node.getNodeType(node).label || node.nodeTypeName.value) + (node.nodeName ? ' (' + node.nodeName.value + ')' : '')}
     EEL;
 
     /**
@@ -64,7 +66,6 @@ class ExpressionBasedNodeLabelGenerator implements NodeLabelGeneratorInterface
         if (Utility::parseEelExpression($this->getExpression()) === null) {
             return $this->getExpression();
         }
-        $value = Utility::evaluateEelExpression($this->getExpression(), $this->eelEvaluator, ['node' => $node], $this->defaultContextConfiguration);
-        return (string)$value;
+        return (string)Utility::evaluateEelExpression($this->getExpression(), $this->eelEvaluator, ['node' => $node], $this->defaultContextConfiguration);
     }
 }

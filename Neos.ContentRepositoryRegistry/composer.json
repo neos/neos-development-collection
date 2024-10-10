@@ -16,6 +16,7 @@
         "neos/flow": "~9.0.0",
         "neos/contentrepository-core": "self.version",
         "neos/contentrepositoryregistry-storageclient": "self.version",
+        "neos/contentrepository-structureadjustment": "self.version",
         "symfony/property-access": "^5.4|^6.0",
         "psr/clock": "^1"
     },

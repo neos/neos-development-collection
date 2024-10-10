@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\LegacyNodeMigration;
 
-use Doctrine\DBAL\Platforms\PostgreSQL100Platform;
+use Doctrine\DBAL\Platforms\PostgreSQLPlatform;
 use Doctrine\DBAL\Types\ConversionException;
 use League\Flysystem\Filesystem;
 use League\Flysystem\FilesystemException;
@@ -53,7 +53,6 @@ use Neos\ContentRepository\LegacyNodeMigration\Helpers\VisitedNodeAggregates;
 use Neos\Flow\Persistence\Doctrine\DataTypes\JsonArrayType;
 use Neos\Flow\Property\PropertyMapper;
 use Neos\Neos\Domain\Service\NodeTypeNameFactory;
-use Ramsey\Uuid\Uuid;
 use Webmozart\Assert\Assert;
 
 final class NodeDataToEventsProcessor implements ProcessorInterface
@@ -170,10 +169,15 @@ final class NodeDataToEventsProcessor implements ProcessorInterface
     private function exportEvent(EventInterface $event): void
     {
         $normalizedEvent = $this->eventNormalizer->normalize($event);
+        try {
+            $exportedEventPayload = json_decode($normalizedEvent->data->value, true, 512, JSON_THROW_ON_ERROR);
+        } catch (\JsonException $e) {
+            throw new \RuntimeException(sprintf('Failed to JSON-decode "%s": %s', $normalizedEvent->data->value, $e->getMessage()), 1723032243, $e);
+        }
         $exportedEvent = new ExportedEvent(
             $normalizedEvent->id->value,
             $normalizedEvent->type->value,
-            json_decode($normalizedEvent->data->value, true),
+            $exportedEventPayload,
             [],
         );
         assert($this->eventFileResource !== null);
@@ -245,7 +249,6 @@ final class NodeDataToEventsProcessor implements ProcessorInterface
      * @param NodeAggregateId $nodeAggregateId
      * @param array<string, mixed> $nodeDataRow
      * @return NodeName[]|void
-     * @throws \JsonException
      */
     public function processNodeDataWithoutFallbackToEmptyDimension(NodeAggregateId $nodeAggregateId, OriginDimensionSpacePoint $originDimensionSpacePoint, array $nodeDataRow)
     {
@@ -339,7 +342,7 @@ final class NodeDataToEventsProcessor implements ProcessorInterface
 
         // Note: We use a PostgreSQL platform because the implementation is forward-compatible, @see JsonArrayType::convertToPHPValue()
         try {
-            $decodedProperties = (new JsonArrayType())->convertToPHPValue($nodeDataRow['properties'], new PostgreSQL100Platform());
+            $decodedProperties = (new JsonArrayType())->convertToPHPValue($nodeDataRow['properties'], new PostgreSQLPlatform());
         } catch (ConversionException $exception) {
             throw new MigrationException(sprintf('Failed to decode properties %s of node "%s" (type: "%s"): %s', json_encode($nodeDataRow['properties']), $nodeDataRow['identifier'], $nodeType->name->value, $exception->getMessage()), 1695391558, $exception);
         }

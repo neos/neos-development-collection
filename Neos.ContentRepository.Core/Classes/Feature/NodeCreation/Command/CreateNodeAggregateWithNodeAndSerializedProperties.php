@@ -24,7 +24,6 @@ use Neos\ContentRepository\Core\Feature\WorkspacePublication\Dto\NodeIdToPublish
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 
 /**
@@ -70,12 +69,11 @@ final readonly class CreateNodeAggregateWithNodeAndSerializedProperties implemen
      * @param OriginDimensionSpacePoint $originDimensionSpacePoint Origin of the new node in the dimension space. Will also be used to calculate a set of dimension points where the new node will cover from the configured specializations.
      * @param NodeAggregateId $parentNodeAggregateId The id of the node aggregate underneath which the new node is added
      * @param NodeAggregateId|null $succeedingSiblingNodeAggregateId Node aggregate id of the node's succeeding sibling (optional). If not given, the node will be added as the parent's first child
-     * @param NodeName|null $nodeName The node's optional name. Set if there is a meaningful relation to its parent that should be named.
      * @param SerializedPropertyValues|null $initialPropertyValues The node's initial property values (serialized). Will be merged over the node type's default property values
      */
-    public static function create(WorkspaceName $workspaceName, NodeAggregateId $nodeAggregateId, NodeTypeName $nodeTypeName, OriginDimensionSpacePoint $originDimensionSpacePoint, NodeAggregateId $parentNodeAggregateId, NodeAggregateId $succeedingSiblingNodeAggregateId = null, NodeName $nodeName = null, SerializedPropertyValues $initialPropertyValues = null): self
+    public static function create(WorkspaceName $workspaceName, NodeAggregateId $nodeAggregateId, NodeTypeName $nodeTypeName, OriginDimensionSpacePoint $originDimensionSpacePoint, NodeAggregateId $parentNodeAggregateId, NodeAggregateId $succeedingSiblingNodeAggregateId = null, SerializedPropertyValues $initialPropertyValues = null): self
     {
-        return new self($workspaceName, $nodeAggregateId, $nodeTypeName, $originDimensionSpacePoint, $parentNodeAggregateId, $initialPropertyValues ?? SerializedPropertyValues::createEmpty(), $succeedingSiblingNodeAggregateId, $nodeName, NodeAggregateIdsByNodePaths::createEmpty());
+        return new self($workspaceName, $nodeAggregateId, $nodeTypeName, $originDimensionSpacePoint, $parentNodeAggregateId, $initialPropertyValues ?? SerializedPropertyValues::createEmpty(), $succeedingSiblingNodeAggregateId, null, NodeAggregateIdsByNodePaths::createEmpty());
     }
 
     /**
@@ -105,11 +103,10 @@ final readonly class CreateNodeAggregateWithNodeAndSerializedProperties implemen
     }
 
     /**
-     * Create a new CreateNodeAggregateWithNode command with all original values,
-     * except the tetheredDescendantNodeAggregateIds (where the passed in arguments are used).
+     * We precalculate all $tetheredDescendantNodeAggregateIds via {@see NodeAggregateIdsByNodePaths::completeForNodeOfType}
+     * so that when rebasing the command, it stays fully deterministic.
      *
-     * Is needed to make this command fully deterministic before storing it at the events
-     * - we need this
+     * See also the documentation of the higher level API {@see CreateNodeAggregateWithNode::withTetheredDescendantNodeAggregateIds}
      */
     public function withTetheredDescendantNodeAggregateIds(
         NodeAggregateIdsByNodePaths $tetheredDescendantNodeAggregateIds
@@ -124,6 +121,27 @@ final readonly class CreateNodeAggregateWithNodeAndSerializedProperties implemen
             $this->succeedingSiblingNodeAggregateId,
             $this->nodeName,
             $tetheredDescendantNodeAggregateIds
+        );
+    }
+
+    /**
+     * The node's optional name.
+     * Set if there is a meaningful relation to its parent that should be named.
+     *
+     * @deprecated the concept regarding node-names for non-tethered nodes is outdated.
+     */
+    public function withNodeName(NodeName $nodeName): self
+    {
+        return new self(
+            $this->workspaceName,
+            $this->nodeAggregateId,
+            $this->nodeTypeName,
+            $this->originDimensionSpacePoint,
+            $this->parentNodeAggregateId,
+            $this->initialPropertyValues,
+            $this->succeedingSiblingNodeAggregateId,
+            $nodeName,
+            $this->tetheredDescendantNodeAggregateIds,
         );
     }
 

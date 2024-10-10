@@ -53,6 +53,10 @@ Feature: If content streams are not in use anymore by the workspace, they can be
       | workspaceName      | "user-test"          |
       | baseWorkspaceName  | "live"               |
       | newContentStreamId | "user-cs-identifier" |
+    When I am in workspace "user-test" and dimension space point {}
+    # Ensure that we are in content user-cs-identifier
+    Then I expect node aggregate identifier "root-node" to lead to node user-cs-identifier;root-node;{}
+
     When the command RebaseWorkspace is executed with payload:
       | Key                    | Value                        |
       | workspaceName          | "user-test"                  |
@@ -60,9 +64,7 @@ Feature: If content streams are not in use anymore by the workspace, they can be
     # now, we have one unused content stream (the old content stream of the user-test workspace)
 
     When I prune unused content streams
-
-    When I am in content stream "user-cs-identifier" and dimension space point {}
-    Then I expect node aggregate identifier "root-node" to lead to no node
+    Then I expect the content stream "user-cs-identifier" to not exist
 
     When I am in workspace "user-test" and dimension space point {}
     Then I expect node aggregate identifier "root-node" to lead to node user-cs-identifier-rebased;root-node;{}

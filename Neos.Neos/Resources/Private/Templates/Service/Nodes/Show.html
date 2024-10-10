@@ -1,23 +1,23 @@
 {namespace neos=Neos\Neos\ViewHelpers}
 <html>
     <head>
-        <title>{neos:backend.translate(id: 'node', value: 'Node')}: {node.label}</title>
+        <title>{neos:backend.translate(id: 'node', value: 'Node')}: {neos:node.label(node: node)}</title>
         <meta charset="UTF-8"/>
     </head>
     <body>
         <div>
-            <h1>{neos:backend.translate(id: 'node', value: 'Node')}: {node.label}</h1>
+            <h1>{neos:backend.translate(id: 'node', value: 'Node')}: {neos:node.label(node: node)}</h1>
             <div class="node">
-                <label class="node-label">{node.label}</label>
+                <label class="node-label">{neos:node.label(node: node)}</label>
                 <table class="node-properties">
                     <caption>{neos:backend.translate(id: 'service.nodes.nodeProperties', value: 'Node Properties')}</caption>
                     <tr>
                         <th>_identifier</th>
-                        <td class="node-identifier">{node.nodeAggregateId.value}</td>
+                        <td class="node-identifier">{node.aggregateId.value}</td>
                     </tr>
                     <tr>
                         <th>_path</th>
-                        <td class="node-path">{node.path}</td>
+                        <td class="node-path">{node.name.value}</td>
                     </tr>
                     <tr>
                         <th>nodeContextPath</th>
@@ -48,7 +48,7 @@
                         </f:else>
                     </f:if>
                 </f:alias>
-                <f:link.action rel="node-show" controller="Service\Nodes" action="show" arguments="{identifier: node.nodeAggregateId.value}" format="html">{neos:backend.translate(id: 'service.nodes.show', value: 'Show')}</f:link.action>
+                <f:link.action rel="node-show" controller="Service\Nodes" action="show" arguments="{identifier: node.aggregateId.value}" format="html">{neos:backend.translate(id: 'service.nodes.show', value: 'Show')}</f:link.action>
             </div>
         </div>
     </body>

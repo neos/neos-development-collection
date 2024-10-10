@@ -17,7 +17,8 @@ namespace Neos\ContentRepository\Core\SharedModel\Workspace;
 /**
  * Description for a workspace
  *
- * @api
+ * @deprecated with 9.0.0-beta14 metadata should be assigned to workspaces outside the Content Repository core
+ * @internal
  */
 final readonly class WorkspaceDescription implements \JsonSerializable
 {
@@ -42,5 +43,10 @@ final readonly class WorkspaceDescription implements \JsonSerializable
     public function equals(self $other): bool
     {
         return $this->value === $other->value;
+    }
+
+    public function __toString(): string
+    {
+        return $this->value;
     }
 }

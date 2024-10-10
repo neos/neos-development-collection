@@ -37,12 +37,23 @@ class User extends Person implements UserInterface
     protected $preferences;
 
     /**
+     * This property will be introduced and initialised via Flows persistence magic aspect.
+     * @var string
+     */
+    protected $Persistence_Object_Identifier;
+
+    /**
      * Constructs this User object
      */
     public function __construct()
     {
         parent::__construct();
         $this->preferences = new UserPreferences();
+    }
+
+    public function getId(): UserId
+    {
+        return UserId::fromString($this->Persistence_Object_Identifier);
     }
 
     /**

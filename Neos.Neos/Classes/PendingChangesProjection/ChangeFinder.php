@@ -34,38 +34,30 @@ final class ChangeFinder implements ProjectionStateInterface
     ) {
     }
 
-    /**
-     * @param ContentStreamId $contentStreamId
-     * @return array|Change[]
-     */
-    public function findByContentStreamId(ContentStreamId $contentStreamId): array
+    public function findByContentStreamId(ContentStreamId $contentStreamId): Changes
     {
         $changeRows = $this->dbal->executeQuery(
-            '
-                SELECT * FROM ' . $this->tableName . '
+            <<<SQL
+                SELECT * FROM {$this->tableName}
                 WHERE contentStreamId = :contentStreamId
-            ',
+            SQL,
             [
-                ':contentStreamId' => $contentStreamId->value
+                'contentStreamId' => $contentStreamId->value
             ]
-        )->fetchAll();
-        $changes = [];
-        foreach ($changeRows as $changeRow) {
-            $changes[] = Change::fromDatabaseRow($changeRow);
-        }
-        return $changes;
+        )->fetchAllAssociative();
+        return Changes::fromArray(array_map(Change::fromDatabaseRow(...), $changeRows));
     }
 
     public function countByContentStreamId(ContentStreamId $contentStreamId): int
     {
-        return (int)$this->dbal->executeQuery(
-            '
-                SELECT * FROM ' . $this->tableName . '
+        return (int)$this->dbal->fetchOne(
+            <<<SQL
+                SELECT COUNT(*) FROM {$this->tableName}
                 WHERE contentStreamId = :contentStreamId
-            ',
+            SQL,
             [
-                ':contentStreamId' => $contentStreamId->value
+                'contentStreamId' => $contentStreamId->value
             ]
-        )->rowCount();
+        );
     }
 }

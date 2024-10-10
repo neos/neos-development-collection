@@ -23,8 +23,12 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\AbsoluteNodePath;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentSubgraphInterface;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindChildNodesFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindDescendantNodesFilter;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\NodeType\ExpandedNodeTypeCriteria;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\NodeType\NodeTypeCriteria;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\SearchTerm\SearchTerm;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\SearchTerm\SearchTermMatcher;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Nodes;
 use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
@@ -110,6 +114,11 @@ class NodesController extends ActionController
         string $contextNode = null,
         array|string $nodeIdentifiers = []
     ): void {
+        $searchTerm = SearchTerm::fulltext($searchTerm);
+        $nodeTypeCriteria = NodeTypeCriteria::create(
+            NodeTypeNames::fromStringArray($nodeTypes),
+            NodeTypeNames::createEmpty()
+        );
         $nodeIds = $nodeIds ?: $nodeIdentifiers;
         $nodeIds = is_array($nodeIds) ? $nodeIds : [$nodeIds];
         $contentRepositoryId = SiteDetectionResult::fromRequest($this->request->getHttpRequest())
@@ -140,6 +149,7 @@ class NodesController extends ActionController
             );
         }
 
+        $nodes = [];
         if ($nodeIds === [] && (!is_null($nodeAddress) || !is_null($nodePath))) {
             if (!is_null($nodeAddress)) {
                 $entryNode = $subgraph->findNodeById($nodeAddress->aggregateId);
@@ -148,22 +158,28 @@ class NodesController extends ActionController
                 $entryNode = $subgraph->findNodeByAbsolutePath($nodePath);
             }
 
-            $nodes = !is_null($entryNode) ? $subgraph->findDescendantNodes(
-                $entryNode->aggregateId,
-                FindDescendantNodesFilter::create(
-                    nodeTypes: NodeTypeCriteria::create(
-                        NodeTypeNames::fromStringArray($nodeTypes),
-                        NodeTypeNames::createEmpty()
-                    ),
-                    searchTerm: $searchTerm,
-                )
-            ) : [];
+            if (!is_null($entryNode)) {
+                $nodes = $subgraph->findDescendantNodes(
+                    $entryNode->aggregateId,
+                    FindDescendantNodesFilter::create(
+                        nodeTypes: $nodeTypeCriteria,
+                        searchTerm: $searchTerm,
+                    )
+                );
+                if (
+                    SearchTermMatcher::matchesNode($entryNode, $searchTerm)
+                    && ExpandedNodeTypeCriteria::create($nodeTypeCriteria, $contentRepository->getNodeTypeManager())
+                        ->matches($entryNode->nodeTypeName)
+                ) {
+                    // include the starting node if it matches
+                    $nodes = $nodes->prepend($entryNode);
+                }
+            }
         } else {
-            if (!empty($searchTerm)) {
+            if ($searchTerm->term !== '') {
                 throw new \RuntimeException('Combination of $nodeIdentifiers and $searchTerm not supported');
             }
 
-            $nodes = [];
             foreach ($nodeIds as $nodeAggregateId) {
                 $node = $subgraph->findNodeById(
                     NodeAggregateId::fromString($nodeAggregateId)

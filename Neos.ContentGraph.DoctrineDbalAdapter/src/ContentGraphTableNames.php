@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Neos\ContentGraph\DoctrineDbalAdapter;
 
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;

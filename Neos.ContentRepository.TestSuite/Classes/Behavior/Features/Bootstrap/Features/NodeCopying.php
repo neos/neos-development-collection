@@ -49,9 +49,7 @@ trait NodeCopying
         $targetSucceedingSiblingNodeAggregateId = isset($commandArguments['targetSucceedingSiblingNodeAggregateId'])
             ? NodeAggregateId::fromString($commandArguments['targetSucceedingSiblingNodeAggregateId'])
             : null;
-        $targetNodeName = isset($commandArguments['targetNodeName'])
-            ? NodeName::fromString($commandArguments['targetNodeName'])
-            : null;
+
         $workspaceName = isset($commandArguments['workspaceName'])
             ? WorkspaceName::fromString($commandArguments['workspaceName'])
             : $this->currentWorkspaceName;
@@ -62,9 +60,11 @@ trait NodeCopying
             $this->currentNode,
             $targetDimensionSpacePoint,
             NodeAggregateId::fromString($commandArguments['targetParentNodeAggregateId']),
-            $targetSucceedingSiblingNodeAggregateId,
-            $targetNodeName
+            $targetSucceedingSiblingNodeAggregateId
         );
+        if (isset($commandArguments['targetNodeName'])) {
+            $command = $command->withTargetNodeName(NodeName::fromString($commandArguments['targetNodeName']));
+        }
         $command = $command->withNodeAggregateIdMapping(NodeAggregateIdMapping::fromArray($commandArguments['nodeAggregateIdMapping']));
 
         $this->currentContentRepository->handle($command);

@@ -1,8 +1,9 @@
 <?php
 namespace Neos\Flow\Persistence\Doctrine\Migrations;
 
-use Doctrine\Migrations\AbstractMigration;
+use Doctrine\DBAL\Platforms\PostgreSQLPlatform;
 use Doctrine\DBAL\Schema\Schema;
+use Doctrine\Migrations\AbstractMigration;
 use Neos\Flow\Persistence\Doctrine\Service;
 
 /**
@@ -14,9 +15,9 @@ class Version20121002120357 extends AbstractMigration
      * @param Schema $schema
      * @return void
      */
-    public function up(Schema $schema): void 
+    public function up(Schema $schema): void
     {
-        $this->abortIf($this->connection->getDatabasePlatform()->getName() != "postgresql");
+        $this->abortIf(!($this->connection->getDatabasePlatform() instanceof PostgreSQLPlatform));
 
             // collect foreign keys pointing to "our" tables
         $foreignKeyHandlingSql = Service::getForeignKeyHandlingSql($schema, $this->platform, array('typo3_media_domain_model_image'), 'flow3_persistence_identifier', 'persistence_object_identifier');
@@ -39,9 +40,9 @@ class Version20121002120357 extends AbstractMigration
      * @param Schema $schema
      * @return void
      */
-    public function down(Schema $schema): void 
+    public function down(Schema $schema): void
     {
-        $this->abortIf($this->connection->getDatabasePlatform()->getName() != "postgresql");
+        $this->abortIf(!($this->connection->getDatabasePlatform() instanceof PostgreSQLPlatform));
 
             // collect foreign keys pointing to "our" tables
         $foreignKeyHandlingSql = Service::getForeignKeyHandlingSql($schema, $this->platform, array('typo3_media_domain_model_image'), 'persistence_object_identifier', 'flow3_persistence_identifier');

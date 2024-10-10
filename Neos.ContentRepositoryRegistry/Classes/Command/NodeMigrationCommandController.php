@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Neos\ContentRepositoryRegistry\Command;
 
 /*
@@ -59,7 +61,7 @@ class NodeMigrationCommandController extends CommandController
     public function executeCommand(string $version, string $sourceWorkspace = 'live', bool $publishOnSuccess = true, bool $force = false, string $contentRepository = 'default'): void
     {
         $sourceWorkspaceName = WorkspaceName::fromString($sourceWorkspace);
-        $targetWorkspaceName = WorkspaceName::fromString(sprintf('migration-%s-%s', $sourceWorkspaceName->value, $version));
+        $targetWorkspaceName = WorkspaceName::transliterateFromString(sprintf('migration-%s-%s', $version, $sourceWorkspaceName->value));
         $contentRepositoryId = ContentRepositoryId::fromString($contentRepository);
 
         try {

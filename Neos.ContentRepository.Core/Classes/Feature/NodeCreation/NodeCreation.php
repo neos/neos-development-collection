@@ -83,7 +83,6 @@ trait NodeCreation
             $command->originDimensionSpacePoint,
             $command->parentNodeAggregateId,
             $command->succeedingSiblingNodeAggregateId,
-            $command->nodeName,
             $this->getPropertyConverter()->serializePropertyValues(
                 $command->initialPropertyValues->withoutUnsets(),
                 $this->requireNodeType($command->nodeTypeName)
@@ -91,6 +90,9 @@ trait NodeCreation
         );
         if (!$command->tetheredDescendantNodeAggregateIds->isEmpty()) {
             $lowLevelCommand = $lowLevelCommand->withTetheredDescendantNodeAggregateIds($command->tetheredDescendantNodeAggregateIds);
+        }
+        if ($command->nodeName) {
+            $lowLevelCommand = $lowLevelCommand->withNodeName($command->nodeName);
         }
 
         return $this->handleCreateNodeAggregateWithNodeAndSerializedProperties($lowLevelCommand, $commandHandlingDependencies);
@@ -113,7 +115,7 @@ trait NodeCreation
             if (!$propertyType->isMatchedBy($propertyValue)) {
                 throw PropertyCannotBeSet::becauseTheValueDoesNotMatchTheConfiguredType(
                     PropertyName::fromString($propertyName),
-                    get_debug_type($propertyValues),
+                    get_debug_type($propertyValue),
                     $propertyType->value
                 );
             }

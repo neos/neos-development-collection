@@ -3,20 +3,20 @@
   <file original="" product-name="Neos.NodeTypes.AssetList" source-language="en" datatype="plaintext" target-language="pt-PT">
     <body>
       <trans-unit id="ui.label" xml:space="preserve">
-				<source>Asset list</source>
-        <target state="translated">Lista de ativos</target>
+        <source>Asset list</source>
+        <target state="translated">Lista de recursos</target>
       </trans-unit>
       <trans-unit id="groups.resources" xml:space="preserve">
-				<source>Resources</source>
+        <source>Resources</source>
         <target state="translated">Recursos</target>
       </trans-unit>
       <trans-unit id="properties.assets" xml:space="preserve">
-				<source>Assets</source>
-        <target state="translated">Ativos</target>
+        <source>Assets</source>
+        <target state="translated">Recursos</target>
       </trans-unit>
       <trans-unit id="content.emptyAssetList" xml:space="preserve">
-				<source>Empty asset list</source>
-        <target state="translated">Lista de ativos vazia</target>
+        <source>Empty asset list</source>
+        <target state="translated">Lista de recursos vazia</target>
       </trans-unit>
     </body>
   </file>

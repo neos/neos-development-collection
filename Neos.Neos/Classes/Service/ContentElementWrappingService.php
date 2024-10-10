@@ -17,12 +17,8 @@ namespace Neos\Neos\Service;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\Annotations as Flow;
-use Neos\Flow\Security\Authorization\PrivilegeManagerInterface;
-use Neos\Flow\Session\SessionInterface;
 use Neos\Fusion\Service\HtmlAugmenter as FusionHtmlAugmenter;
 use Neos\Neos\FrontendRouting\NodeAddressFactory;
-use Neos\Neos\Ui\Domain\Service\UserLocaleService;
-use Neos\Neos\Ui\Fusion\Helper\NodeInfoHelper;
 
 /**
  * The content element wrapping service adds the necessary markup around
@@ -35,33 +31,9 @@ class ContentElementWrappingService
 {
     /**
      * @Flow\Inject
-     * @var PrivilegeManagerInterface
-     */
-    protected $privilegeManager;
-
-    /**
-     * @Flow\Inject
      * @var FusionHtmlAugmenter
      */
     protected $htmlAugmenter;
-
-    /**
-     * @Flow\Inject
-     * @var SessionInterface
-     */
-    protected $session;
-
-    /**
-     * @Flow\Inject
-     * @var UserLocaleService
-     */
-    protected $userLocaleService;
-
-    /**
-     * @Flow\Inject
-     * @var NodeInfoHelper
-     */
-    protected $nodeInfoHelper;
 
     /**
      * @Flow\Inject
@@ -95,40 +67,14 @@ class ContentElementWrappingService
         $attributes['data-__neos-fusion-path'] = $fusionPath;
         $attributes['data-__neos-node-contextpath'] = $nodeAddress->serializeForUri();
 
-        $this->userLocaleService->switchToUILocale();
-
-        // TODO illegal dependency on ui
-        $serializedNode = json_encode($this->nodeInfoHelper->renderNodeWithPropertiesAndChildrenInformation($node));
-
-        $this->userLocaleService->switchToUILocale(true);
-
-        $wrappedContent = $this->htmlAugmenter->addAttributes($content, $attributes, 'div');
-        $nodeContextPath = $nodeAddress->serializeForUri();
-        /** @codingStandardsIgnoreStart */
-        $wrappedContent .= "<script data-neos-nodedata>(function(){(this['@Neos.Neos.Ui:Nodes'] = this['@Neos.Neos.Ui:Nodes'] || {})['{$nodeContextPath}'] = {$serializedNode}})()</script>";
-        /** @codingStandardsIgnoreEnd */
-
-        return $wrappedContent;
-    }
-
-    /**
-     * Add required CSS classes to the attributes.
-     *
-     * @param array<string,mixed> $attributes
-     * @param array<string,mixed> $initialClasses
-     * @return array<string,mixed>
-     */
-    protected function addCssClasses(array $attributes, Node $node, array $initialClasses = []): array
-    {
-        $classNames = $initialClasses;
-        if (!$node->dimensionSpacePoint->equals($node->originDimensionSpacePoint)) {
-            $classNames[] = 'neos-contentelement-shine-through';
-        }
-
-        if ($classNames !== []) {
-            $attributes['class'] = implode(' ', $classNames);
-        }
-
-        return $attributes;
+        // Define all attribute names as exclusive via the `exclusiveAttributes` parameter, to prevent the data of
+        // two different nodes to be concatenated into the attributes of a single html node.
+        // This way an outer div is added, if the wrapped content already has node related data-attributes set.
+        return $this->htmlAugmenter->addAttributes(
+            $content,
+            $attributes,
+            'div',
+            array_keys($attributes)
+        );
     }
 }

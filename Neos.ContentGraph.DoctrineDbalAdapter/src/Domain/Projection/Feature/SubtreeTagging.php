@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\Feature;
 
-use Doctrine\DBAL\Connection;
-use Doctrine\DBAL\Exception as DbalException;
+use Doctrine\DBAL\ArrayParameterType;
+use Doctrine\DBAL\Exception as DBALException;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\NodeRelationAnchorPoint;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\NodeFactory;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
@@ -43,6 +43,8 @@ trait SubtreeTagging
                 FROM
                   cte
                   JOIN {$this->tableNames->hierarchyRelation()} dh ON dh.parentnodeanchor = cte.id
+                    AND dh.contentstreamid = :contentStreamId
+                    AND dh.dimensionspacepointhash in (:dimensionSpacePointHashes)
                 WHERE
                   NOT JSON_CONTAINS_PATH(dh.subtreetags, 'one', :tagPath)
               )
@@ -58,9 +60,9 @@ trait SubtreeTagging
                 'dimensionSpacePointHashes' => $affectedDimensionSpacePoints->getPointHashes(),
                 'tagPath' => '$.' . $tag->value,
             ], [
-                'dimensionSpacePointHashes' => Connection::PARAM_STR_ARRAY,
+                'dimensionSpacePointHashes' => ArrayParameterType::STRING,
             ]);
-        } catch (DbalException $e) {
+        } catch (DBALException $e) {
             throw new \RuntimeException(sprintf('Failed to add subtree tag %s for content stream %s, node aggregate id %s and dimension space points %s: %s', $tag->value, $contentStreamId->value, $nodeAggregateId->value, $affectedDimensionSpacePoints->toJson(), $e->getMessage()), 1716479749, $e);
         }
 
@@ -80,9 +82,9 @@ trait SubtreeTagging
                 'dimensionSpacePointHashes' => $affectedDimensionSpacePoints->getPointHashes(),
                 'tagPath' => '$.' . $tag->value,
             ], [
-                'dimensionSpacePointHashes' => Connection::PARAM_STR_ARRAY,
+                'dimensionSpacePointHashes' => ArrayParameterType::STRING,
             ]);
-        } catch (DbalException $e) {
+        } catch (DBALException $e) {
             throw new \RuntimeException(sprintf('Failed to add subtree tag %s for content stream %s, node aggregate id %s and dimension space points %s: %s', $tag->value, $contentStreamId->value, $nodeAggregateId->value, $affectedDimensionSpacePoints->toJson(), $e->getMessage()), 1716479840, $e);
         }
     }
@@ -119,7 +121,9 @@ trait SubtreeTagging
                   dh.childnodeanchor
                 FROM
                   cte
-                  JOIN {$this->tableNames->hierarchyRelation()} dh ON dh.parentnodeanchor = cte.id
+                  JOIN {$this->tableNames->hierarchyRelation()} dh ON dh.parentnodeanchor = cte.id 
+                    AND dh.contentstreamid = :contentStreamId
+                    AND dh.dimensionspacepointhash in (:dimensionSpacePointHashes)
                 WHERE
                   JSON_EXTRACT(dh.subtreetags, :tagPath) != TRUE
               )
@@ -135,9 +139,9 @@ trait SubtreeTagging
                 'dimensionSpacePointHashes' => $affectedDimensionSpacePoints->getPointHashes(),
                 'tagPath' => '$.' . $tag->value,
             ], [
-                'dimensionSpacePointHashes' => Connection::PARAM_STR_ARRAY,
+                'dimensionSpacePointHashes' => ArrayParameterType::STRING,
             ]);
-        } catch (DbalException $e) {
+        } catch (DBALException $e) {
             throw new \RuntimeException(sprintf('Failed to remove subtree tag %s for content stream %s, node aggregate id %s and dimension space points %s: %s', $tag->value, $contentStreamId->value, $nodeAggregateId->value, $affectedDimensionSpacePoints->toJson(), $e->getMessage()), 1716482293, $e);
         }
     }
@@ -197,7 +201,7 @@ trait SubtreeTagging
                 'newParentNodeAggregateId' => $newParentNodeAggregateId->value,
                 'dimensionSpacePointHash' => $coveredDimensionSpacePoint->hash,
             ]);
-        } catch (DbalException $e) {
+        } catch (DBALException $e) {
             throw new \RuntimeException(sprintf('Failed to move subtree tags for content stream %s, new parent node aggregate id %s and dimension space point %s: %s', $contentStreamId->value, $newParentNodeAggregateId->value, $coveredDimensionSpacePoint->toJson(), $e->getMessage()), 1716482574, $e);
         }
     }
@@ -219,7 +223,7 @@ trait SubtreeTagging
                 'contentStreamId' => $contentStreamId->value,
                 'dimensionSpacePointHash' => $dimensionSpacePoint->hash,
             ]);
-        } catch (DbalException $e) {
+        } catch (DBALException $e) {
             throw new \RuntimeException(sprintf('Failed to fetch subtree tags for hierarchy parent anchor point "%s" in content subgraph "%s@%s": %s', $parentNodeAnchorPoint->value, $dimensionSpacePoint->toJson(), $contentStreamId->value, $e->getMessage()), 1716478760, $e);
         }
         if (!is_string($subtreeTagsJson)) {

@@ -2,8 +2,9 @@
 
 namespace Neos\Flow\Persistence\Doctrine\Migrations;
 
-use Doctrine\Migrations\AbstractMigration;
+use Doctrine\DBAL\Platforms\PostgreSQLPlatform;
 use Doctrine\DBAL\Schema\Schema;
+use Doctrine\Migrations\AbstractMigration;
 
 class Version20170110133114 extends AbstractMigration
 {
@@ -21,7 +22,7 @@ class Version20170110133114 extends AbstractMigration
      */
     public function up(Schema $schema): void
     {
-        $this->abortIf($this->connection->getDatabasePlatform()->getName() != 'postgresql', 'Migration can only be executed safely on "postgresql".');
+        $this->abortIf(!($this->connection->getDatabasePlatform() instanceof PostgreSQLPlatform), 'Migration can only be executed safely on "postgresql".');
 
         $this->addSql('ALTER INDEX idx_8e49a537694309e4 RENAME TO IDX_51265BE9694309E4');
         $this->addSql('ALTER INDEX flow_identity_typo3_neos_domain_model_domain RENAME TO flow_identity_neos_neos_domain_model_domain');
@@ -38,7 +39,7 @@ class Version20170110133114 extends AbstractMigration
      */
     public function down(Schema $schema): void
     {
-        $this->abortIf($this->connection->getDatabasePlatform()->getName() != 'postgresql', 'Migration can only be executed safely on "postgresql".');
+        $this->abortIf(!($this->connection->getDatabasePlatform() instanceof PostgreSQLPlatform), 'Migration can only be executed safely on "postgresql".');
 
         $this->addSql('ALTER INDEX uniq_ed60f5e3e931a6f5 RENAME TO uniq_fc846daae931a6f5');
         $this->addSql('ALTER INDEX idx_51265be9694309e4 RENAME TO idx_8e49a537694309e4');

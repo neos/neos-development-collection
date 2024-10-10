@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Neos\ContentRepositoryRegistry\Command;
@@ -8,13 +9,29 @@ use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\ContentRepositoryRegistry\Service\EventMigrationServiceFactory;
 use Neos\Flow\Cli\CommandController;
 
-final class MigrateEventsCommandController extends CommandController
+class MigrateEventsCommandController extends CommandController
 {
     public function __construct(
         private readonly ContentRepositoryRegistry $contentRepositoryRegistry,
-        private readonly EventMigrationServiceFactory $eventMigrationServiceFactory,
+        private readonly EventMigrationServiceFactory $eventMigrationServiceFactory
     ) {
         parent::__construct();
+    }
+
+    /**
+     * Migrates initial metadata & roles from the CR core workspaces to the corresponding Neos database tables
+     *
+     * Needed to extract these information to Neos.Neos: https://github.com/neos/neos-development-collection/issues/4726
+     *
+     * Included in September 2024 - before final Neos 9.0 release
+     *
+     * @param string $contentRepository Identifier of the Content Repository to migrate
+     */
+    public function migrateWorkspaceMetadataToWorkspaceServiceCommand(string $contentRepository = 'default'): void
+    {
+        $contentRepositoryId = ContentRepositoryId::fromString($contentRepository);
+        $eventMigrationService = $this->contentRepositoryRegistry->buildService($contentRepositoryId, $this->eventMigrationServiceFactory);
+        $eventMigrationService->migrateWorkspaceMetadataToWorkspaceService($this->outputLine(...));
     }
 
     /**
@@ -63,5 +80,21 @@ final class MigrateEventsCommandController extends CommandController
         $contentRepositoryId = ContentRepositoryId::fromString($contentRepository);
         $eventMigrationService = $this->contentRepositoryRegistry->buildService($contentRepositoryId, $this->eventMigrationServiceFactory);
         $eventMigrationService->migratePayloadToWorkspaceName($this->outputLine(...));
+    }
+
+    /**
+     * Rewrites all workspaceNames, that are not matching new constraints.
+     *
+     * Needed for feature "Stabilize WorkspaceName value object": https://github.com/neos/neos-development-collection/pull/5193
+     *
+     * Included in August 2024 - before final Neos 9.0 release
+ *
+     * @param string $contentRepository Identifier of the Content Repository to migrate
+     */
+    public function migratePayloadToValidWorkspaceNamesCommand(string $contentRepository = 'default'): void
+    {
+        $contentRepositoryId = ContentRepositoryId::fromString($contentRepository);
+        $eventMigrationService = $this->contentRepositoryRegistry->buildService($contentRepositoryId, $this->eventMigrationServiceFactory);
+        $eventMigrationService->migratePayloadToValidWorkspaceNames($this->outputLine(...));
     }
 }

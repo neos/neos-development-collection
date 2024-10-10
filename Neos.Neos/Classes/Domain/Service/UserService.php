@@ -15,7 +15,6 @@ declare(strict_types=1);
 namespace Neos\Neos\Domain\Service;
 
 use Neos\ContentRepository\Core\Projection\Workspace\Workspace;
-use Neos\ContentRepository\Core\SharedModel\User\UserId;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Persistence\Exception\IllegalObjectTypeException;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
@@ -40,6 +39,7 @@ use Neos\Flow\Session\SessionManager;
 use Neos\Flow\Utility\Now;
 use Neos\Neos\Domain\Exception;
 use Neos\Neos\Domain\Model\User;
+use Neos\Neos\Domain\Model\UserId;
 use Neos\Neos\Domain\Repository\UserRepository;
 use Neos\Party\Domain\Model\AbstractParty;
 use Neos\Party\Domain\Model\PersonName;
@@ -247,39 +247,21 @@ class UserService
             return null;
         }
 
-        $tokens = $this->securityContext->getAuthenticationTokens();
-        $user = array_reduce($tokens, function ($foundUser, TokenInterface $token) {
-            if ($foundUser !== null) {
-                return $foundUser;
-            }
-
-            /** @var ?Account $account */
+        foreach ($this->securityContext->getAuthenticationTokens() as $token) {
+            /** @var Account|null $account */
             $account = $token->getAccount();
             if ($account === null) {
-                return $foundUser;
+                continue;
             }
-
             $user = $this->getNeosUserForAccount($account);
-            if ($user === null) {
-                return $foundUser;
+            if ($user !== null) {
+                return $user;
             }
-
-            return $user;
-        }, null);
-
-        return $user;
+        }
+        return null;
     }
 
-    public function getCurrentUserIdentifier(): ?UserId
-    {
-        $currentUser = $this->getCurrentUser();
-
-        return $currentUser
-            ? UserId::fromString($this->persistenceManager->getIdentifierByObject($currentUser))
-            : null;
-    }
-
-    public function findByUserIdentifier(UserId $userId): ?User
+    public function findUserById(UserId $userId): ?User
     {
         /** @var ?User $user */
         $user = $this->partyRepository->findByIdentifier($userId->value);
@@ -388,8 +370,6 @@ class UserService
         foreach ($user->getAccounts() as $account) {
             $this->accountRepository->remove($account);
         }
-
-        $this->removeOwnerFromUsersWorkspaces($user);
 
         $this->partyRepository->remove($user);
         $this->emitUserDeleted($user);
@@ -678,104 +658,6 @@ class UserService
     }
 
     /**
-     * Checks if the current user may publish to the given workspace according to one the roles of the user's accounts
-     *
-     * In future versions, this logic may be implemented in Neos in a more generic way (for example, by means of an
-     * ACL object), but for now, this method exists in order to at least centralize and encapsulate the required logic.
-     */
-    public function currentUserCanPublishToWorkspace(Workspace $workspace): bool
-    {
-        if ($workspace->isPublicWorkspace()) {
-            return $this->securityContext->hasRole('Neos.Neos:LivePublisher');
-        }
-
-        $currentUser = $this->getCurrentUser();
-        $ownerIdentifier = $currentUser
-            ? $this->persistenceManager->getIdentifierByObject($currentUser)
-            : null;
-
-        if ($workspace->workspaceOwner === null || $workspace->workspaceOwner === $ownerIdentifier) {
-            return true;
-        }
-
-        return false;
-    }
-
-    /**
-     * Checks if the current user may read the given workspace according to one the roles of the user's accounts
-     *
-     * In future versions, this logic may be implemented in Neos in a more generic way (for example, by means of an
-     * ACL object), but for now, this method exists in order to at least centralize and encapsulate the required logic.
-     */
-    public function currentUserCanReadWorkspace(Workspace $workspace): bool
-    {
-        if ($workspace->isPublicWorkspace()) {
-            return true;
-        }
-
-        $currentUser = $this->getCurrentUser();
-
-        return $currentUser && $workspace->workspaceOwner
-            === $this->persistenceManager->getIdentifierByObject($currentUser);
-    }
-
-    /**
-     * Checks if the current user may manage the given workspace according to one the roles of the user's accounts
-     *
-     * In future versions, this logic may be implemented in Neos in a more generic way (for example, by means of an
-     * ACL object), but for now, this method exists in order to at least centralize and encapsulate the required logic.
-     */
-    public function currentUserCanManageWorkspace(Workspace $workspace): bool
-    {
-        if ($workspace->isPersonalWorkspace()) {
-            return false;
-        }
-
-        if ($workspace->isInternalWorkspace()) {
-            return $this->privilegeManager->isPrivilegeTargetGranted(
-                'Neos.Neos:Backend.Module.Management.Workspaces.ManageInternalWorkspaces'
-            );
-        }
-
-
-        $currentUser = $this->getCurrentUser();
-        if ($workspace->isPrivateWorkspace() && $currentUser !== null && $workspace->workspaceOwner === $this->persistenceManager->getIdentifierByObject($currentUser)) {
-            return $this->privilegeManager->isPrivilegeTargetGranted(
-                'Neos.Neos:Backend.Module.Management.Workspaces.ManageOwnWorkspaces'
-            );
-        }
-
-        if ($workspace->isPrivateWorkspace() &&  $currentUser !== null && $workspace->workspaceOwner !== $this->persistenceManager->getIdentifierByObject($currentUser)) {
-            return $this->privilegeManager->isPrivilegeTargetGranted(
-                'Neos.Neos:Backend.Module.Management.Workspaces.ManageAllPrivateWorkspaces'
-            );
-        }
-
-        return false;
-    }
-
-
-    /**
-     * Checks if the current user may transfer ownership of the given workspace
-     *
-     * In future versions, this logic may be implemented in Neos in a more generic way (for example, by means of an
-     * ACL object), but for now, this method exists in order to at least centralize and encapsulate the required logic.
-     */
-    public function currentUserCanTransferOwnershipOfWorkspace(Workspace $workspace): bool
-    {
-        if ($workspace->isPersonalWorkspace()) {
-            return false;
-        }
-
-        // The privilege to manage shared workspaces is needed, because regular editors should not change ownerships
-        // of their internal workspaces, even if it was technically possible, because they wouldn't be able to change
-        // ownership back to themselves.
-        return $this->privilegeManager->isPrivilegeTargetGranted(
-            'Neos.Neos:Backend.Module.Management.Workspaces.ManageInternalWorkspaces'
-        );
-    }
-
-    /**
      * @return bool
      * @throws NoSuchRoleException
      * @throws \Neos\Flow\Security\Exception
@@ -906,29 +788,6 @@ class UserService
                 );
             }
         }
-    }
-
-    /**
-     * Removes all personal workspaces of the given user's account if these workspaces exist. Also removes
-     * all possibly existing content of these workspaces.
-     *
-     * @param string $accountIdentifier Identifier of the user's account
-     * @return void
-     */
-    protected function deletePersonalWorkspace($accountIdentifier)
-    {
-        // TODO
-    }
-
-    /**
-     * Removes ownership of all workspaces currently owned by the given user
-     *
-     * @param User $user The user currently owning workspaces
-     * @return void
-     */
-    protected function removeOwnerFromUsersWorkspaces(User $user)
-    {
-        // TODO
     }
 
     /**

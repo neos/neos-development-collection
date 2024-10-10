@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 namespace Neos\ContentRepositoryRegistry\Command;
 
 use Neos\ContentRepository\Core\Service\ContentStreamPrunerFactory;

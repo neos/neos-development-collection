@@ -1,8 +1,9 @@
 <?php
 namespace Neos\Flow\Persistence\Doctrine\Migrations;
 
-use Doctrine\Migrations\AbstractMigration;
+use Doctrine\DBAL\Platforms\PostgreSQLPlatform;
 use Doctrine\DBAL\Schema\Schema;
+use Doctrine\Migrations\AbstractMigration;
 
 /**
  * Migration that renames occurrences of "FLOW3" legacies inside the imageVariants property
@@ -14,9 +15,9 @@ class Version20121011140946 extends AbstractMigration
      * @param Schema $schema
      * @return void
      */
-    public function up(Schema $schema): void 
+    public function up(Schema $schema): void
     {
-        $this->abortIf($this->connection->getDatabasePlatform()->getName() != "postgresql");
+        $this->abortIf(!($this->connection->getDatabasePlatform() instanceof PostgreSQLPlatform));
 
         $this->addSql("UPDATE typo3_media_domain_model_image SET imagevariants = REPLACE(imagevariants, 's:31:\"\\000*\\000FLOW3_Persistence_Identifier\";', 's:32:\"\\000*\\000Persistence_Object_Identifier\";') WHERE imagevariants LIKE '%s:31:\"\\000*\\000FLOW3_Persistence_Identifier\";%'");
         $this->addSql("UPDATE typo3_media_domain_model_image SET imagevariants = REPLACE(imagevariants, 's:33:\"FLOW3_Persistence_RelatedEntities\";', 's:32:\"Flow_Persistence_RelatedEntities\";') WHERE imagevariants LIKE '%s:33:\"FLOW3_Persistence_RelatedEntities\";%'");
@@ -27,9 +28,9 @@ class Version20121011140946 extends AbstractMigration
      * @param Schema $schema
      * @return void
      */
-    public function down(Schema $schema): void 
+    public function down(Schema $schema): void
     {
-        $this->abortIf($this->connection->getDatabasePlatform()->getName() != "postgresql");
+        $this->abortIf(!($this->connection->getDatabasePlatform() instanceof PostgreSQLPlatform));
 
         $this->addSql("UPDATE typo3_media_domain_model_image SET imagevariants = REPLACE(imagevariants, 's:28:\"TYPO3\\\\Flow\\\\Resource\\\\Resource\";', 's:29:\"TYPO3\\\\FLOW3\\\\Resource\\\\Resource\";') WHERE imagevariants LIKE '%s:28:\"TYPO3\\\\\\\\Flow\\\\\\\\Resource\\\\\\\\Resource\";%'");
         $this->addSql("UPDATE typo3_media_domain_model_image SET imagevariants = REPLACE(imagevariants, 's:32:\"Flow_Persistence_RelatedEntities\";', 's:33:\"FLOW3_Persistence_RelatedEntities\";') WHERE imagevariants LIKE '%s:32:\"Flow_Persistence_RelatedEntities\";%'");

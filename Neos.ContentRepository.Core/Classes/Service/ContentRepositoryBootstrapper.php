@@ -62,27 +62,25 @@ final readonly class ContentRepositoryBootstrapper
     }
 
     /**
-     * Retrieve the root Node Aggregate ID for the specified $contentStreamId
+     * Retrieve the root Node Aggregate ID for the specified $workspace
      * If no root node of the specified $rootNodeTypeName exist, it will be created
      */
     public function getOrCreateRootNodeAggregate(
         Workspace $workspace,
         NodeTypeName $rootNodeTypeName
     ): NodeAggregateId {
-        try {
-            return $this->contentRepository->getContentGraph($workspace->workspaceName)->findRootNodeAggregateByType(
-                $rootNodeTypeName
-            )->nodeAggregateId;
-
-            // TODO make this case more explicit
-        } catch (\Exception $exception) {
-            $rootNodeAggregateId = NodeAggregateId::create();
-            $this->contentRepository->handle(CreateRootNodeAggregateWithNode::create(
-                $workspace->workspaceName,
-                $rootNodeAggregateId,
-                $rootNodeTypeName,
-            ));
-            return $rootNodeAggregateId;
+        $rootNodeAggregate = $this->contentRepository->getContentGraph($workspace->workspaceName)->findRootNodeAggregateByType(
+            $rootNodeTypeName
+        );
+        if ($rootNodeAggregate !== null) {
+            return $rootNodeAggregate->nodeAggregateId;
         }
+        $rootNodeAggregateId = NodeAggregateId::create();
+        $this->contentRepository->handle(CreateRootNodeAggregateWithNode::create(
+            $workspace->workspaceName,
+            $rootNodeAggregateId,
+            $rootNodeTypeName,
+        ));
+        return $rootNodeAggregateId;
     }
 }

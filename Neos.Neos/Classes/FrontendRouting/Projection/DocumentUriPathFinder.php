@@ -5,10 +5,9 @@ declare(strict_types=1);
 namespace Neos\Neos\FrontendRouting\Projection;
 
 use Doctrine\DBAL\Connection;
-use Doctrine\DBAL\DBALException;
+use Doctrine\DBAL\Exception as DBALException;
 use Neos\ContentRepository\Core\Projection\ProjectionStateInterface;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\Flow\Annotations as Flow;
 use Neos\Neos\Domain\Model\SiteNodeName;
 use Neos\Neos\FrontendRouting\Exception\NodeNotFoundException;
@@ -18,7 +17,6 @@ use Neos\Neos\FrontendRouting\Exception\NodeNotFoundException;
  */
 final class DocumentUriPathFinder implements ProjectionStateInterface
 {
-    private ?ContentStreamId $liveContentStreamIdRuntimeCache = null;
     private bool $cacheEnabled = true;
 
     /**
@@ -52,7 +50,8 @@ final class DocumentUriPathFinder implements ProjectionStateInterface
             'dimensionSpacePointHash = :dimensionSpacePointHash
                 AND siteNodeName = :siteNodeName
                 AND uriPath = :uriPath
-                AND disabled = 0',
+                AND disabled = 0
+                AND isPlaceholder = 0',
             [
                 'dimensionSpacePointHash' => $dimensionSpacePointHash,
                 'siteNodeName' => $siteNodeName->value,
@@ -218,36 +217,6 @@ final class DocumentUriPathFinder implements ProjectionStateInterface
     }
 
     /**
-     * @api
-     */
-    public function getLiveContentStreamId(): ContentStreamId
-    {
-        if ($this->liveContentStreamIdRuntimeCache === null) {
-            try {
-                $contentStreamId = $this->dbal->fetchColumn(
-                    'SELECT contentStreamId FROM '
-                        . $this->tableNamePrefix . '_livecontentstreams LIMIT 1'
-                );
-            } catch (DBALException $e) {
-                throw new \RuntimeException(sprintf(
-                    'Failed to fetch contentStreamId for live workspace: %s',
-                    $e->getMessage()
-                ), 1599666764, $e);
-            }
-            if (!is_string($contentStreamId)) {
-                throw new \RuntimeException(
-                    'Failed to fetch contentStreamId for live workspace,'
-                        . ' probably you have to replay the "documenturipath" projection',
-                    1599667894
-                );
-            }
-            $this->liveContentStreamIdRuntimeCache
-                = ContentStreamId::fromString($contentStreamId);
-        }
-        return $this->liveContentStreamIdRuntimeCache;
-    }
-
-    /**
      * @param array<string,mixed> $parameters
      * @throws NodeNotFoundException
      */
@@ -343,10 +312,5 @@ final class DocumentUriPathFinder implements ProjectionStateInterface
                 'childNodeAggregateIdPathPrefix' => $node->getNodeAggregateIdPath() . '/%',
             ]
         );
-    }
-
-    public function isLiveContentStream(ContentStreamId $contentStreamId): bool
-    {
-        return $contentStreamId->equals($this->getLiveContentStreamId());
     }
 }

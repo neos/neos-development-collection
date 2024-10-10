@@ -25,8 +25,6 @@ Feature: On forking a content stream, node references should be copied as well.
     And the command CreateRootWorkspace is executed with payload:
       | Key                  | Value                |
       | workspaceName        | "live"               |
-      | workspaceTitle       | "Live"               |
-      | workspaceDescription | "The live workspace" |
       | newContentStreamId   | "cs-identifier"      |
     And I am in workspace "live" and dimension space point {"language":"de"}
     And the command CreateRootNodeAggregateWithNode is executed with payload:
@@ -45,13 +43,15 @@ Feature: On forking a content stream, node references should be copied as well.
       | referenceName         | "referenceProperty"               |
       | references            | [{"target": "anthony-destinode"}] |
 
-    When the command ForkContentStream is executed with payload:
-      | Key                   | Value                |
-      | contentStreamId       | "user-cs-identifier" |
-      | sourceContentStreamId | "cs-identifier"      |
+    # Uses ForkContentStream implicitly
+    When the command CreateWorkspace is executed with payload:
+      | Key                | Value                |
+      | baseWorkspaceName  | "live"               |
+      | workspaceName      | "user-test"          |
+      | newContentStreamId | "user-cs-identifier" |
 
     # after forking, the reference must still exist on the forked content stream (no surprises here).
-    When I am in content stream "user-cs-identifier" and dimension space point {"language": "de"}
+    When I am in workspace "user-test" and dimension space point {"language": "de"}
     Then I expect node aggregate identifier "source-nodandaise" to lead to node user-cs-identifier;source-nodandaise;{"language": "de"}
     Then I expect this node to have the following references:
       | Name              | Node                                                    | Properties |
@@ -61,7 +61,7 @@ Feature: On forking a content stream, node references should be copied as well.
       | Name              | Node                                                    | Properties |
       | referenceProperty | user-cs-identifier;source-nodandaise;{"language": "de"} | null       |
 
-    When I am in content stream "user-cs-identifier" and dimension space point {"language": "ch"}
+    When I am in workspace "user-test" and dimension space point {"language": "ch"}
     Then I expect node aggregate identifier "source-nodandaise" to lead to node user-cs-identifier;source-nodandaise;{"language": "de"}
     Then I expect this node to have the following references:
       | Name              | Node                                                    | Properties |
@@ -73,7 +73,7 @@ Feature: On forking a content stream, node references should be copied as well.
 
     # after then modifying the node's properties (thus triggering copy-on-write), the reference property
     # should still exist (this was a BUG)
-    When I am in content stream "user-cs-identifier" and dimension space point {"language": "de"}
+    When I am in workspace "user-test" and dimension space point {"language": "de"}
     And the command SetNodeProperties is executed with payload:
       | Key             | Value                                  |
       | nodeAggregateId | "source-nodandaise"                    |
@@ -87,7 +87,7 @@ Feature: On forking a content stream, node references should be copied as well.
       | Name              | Node                                                    | Properties |
       | referenceProperty | user-cs-identifier;source-nodandaise;{"language": "de"} | null       |
 
-    When I am in content stream "user-cs-identifier" and dimension space point {"language": "ch"}
+    When I am in workspace "user-test" and dimension space point {"language": "ch"}
     Then I expect node aggregate identifier "source-nodandaise" to lead to node user-cs-identifier;source-nodandaise;{"language": "de"}
     And I expect this node to have the following references:
       | Name              | Node                                                    | Properties |

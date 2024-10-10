@@ -124,6 +124,16 @@ final class Nodes implements \IteratorAggregate, \ArrayAccess, \Countable
         return self::fromArray($nodes);
     }
 
+    public function prepend(Node $node): self
+    {
+        return new self([$node, ...$this->nodes]);
+    }
+
+    public function append(Node $node): self
+    {
+        return new self([...$this->nodes, $node]);
+    }
+
     public function reverse(): self
     {
         return new self(array_reverse($this->nodes));
@@ -199,8 +209,9 @@ final class Nodes implements \IteratorAggregate, \ArrayAccess, \Countable
     }
 
     /**
-     * @param \Closure(Node $node): mixed $callback
-     * @return array<mixed>
+     * @template T
+     * @param \Closure(Node $node): T $callback
+     * @return list<T>
      */
     public function map(\Closure $callback): array
     {
@@ -209,8 +220,6 @@ final class Nodes implements \IteratorAggregate, \ArrayAccess, \Countable
 
     public function toNodeAggregateIds(): NodeAggregateIds
     {
-        return NodeAggregateIds::create(...$this->map(
-            fn (Node $node): NodeAggregateId => $node->aggregateId,
-        ));
+        return NodeAggregateIds::fromNodes($this);
     }
 }

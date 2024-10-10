@@ -35,7 +35,6 @@ Feature: Tests for the "Neos.Neos:ConvertUris" Fusion prototype
       | Key             | Value             |
       | nodeAggregateId | "root"            |
       | nodeTypeName    | "Neos.Neos:Sites" |
-    And I am in content stream "cs-identifier" and dimension space point {}
     And the following CreateNodeAggregateWithNode commands are executed:
       | nodeAggregateId | parentNodeAggregateId | nodeTypeName                | initialPropertyValues                        | nodeName |
       | a               | root                  | Neos.Neos:Site              | {"title": "Node a"}                          | a        |
