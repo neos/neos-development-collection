@@ -244,11 +244,18 @@ final class ContentRepository
         return $this->projectionState(ContentGraphFinder::class)->getByWorkspaceName($workspaceName);
     }
 
+    /**
+     * Returns the workspace with the given name, or NULL if it does not exist in this content repository
+     */
     public function findWorkspaceByName(WorkspaceName $workspaceName): ?Workspace
     {
         return $this->getWorkspaceFinder()->findOneByName($workspaceName);
     }
 
+    /**
+     * Returns all workspaces of this content repository. To limit the set, {@see Workspaces::find()} and {@see Workspaces::filter()} can be used
+     * as well as {@see Workspaces::getBaseWorkspaces()} and {@see Workspaces::getDependantWorkspaces()}.
+     */
     public function findWorkspaces(): Workspaces
     {
         return $this->getWorkspaceFinder()->findAll();
