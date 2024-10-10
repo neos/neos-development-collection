@@ -17,9 +17,7 @@ use Neos\ContentRepository\BehavioralTests\TestSuite\Behavior\CRBehavioralTestsS
 use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Command\CreateRootWorkspace;
 use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Command\CreateWorkspace;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
-use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceDescription as DeprecatedWorkspaceDescription;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
-use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceTitle as DeprecatedWorkspaceTitle;
 use Neos\Neos\Domain\Model\UserId;
 use Neos\Neos\Domain\Model\WorkspaceDescription;
 use Neos\Neos\Domain\Model\WorkspaceRole;
@@ -98,8 +96,6 @@ trait WorkspaceServiceTrait
     {
         $this->currentContentRepository->handle(CreateRootWorkspace::create(
             WorkspaceName::fromString($workspaceName),
-            DeprecatedWorkspaceTitle::fromString($workspaceName),
-            DeprecatedWorkspaceDescription::fromString(''),
             ContentStreamId::create(),
         ));
     }
@@ -112,8 +108,6 @@ trait WorkspaceServiceTrait
         $this->currentContentRepository->handle(CreateWorkspace::create(
             WorkspaceName::fromString($workspaceName),
             WorkspaceName::fromString($baseWorkspaceName),
-            DeprecatedWorkspaceTitle::fromString($workspaceName),
-            DeprecatedWorkspaceDescription::fromString(''),
             ContentStreamId::create(),
         ));
     }

@@ -6,7 +6,7 @@ use League\Flysystem\Filesystem;
 use League\Flysystem\FilesystemException;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceInterface;
 use Neos\ContentRepository\Core\Feature\ContentStreamEventStreamName;
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
+use Neos\ContentRepository\Core\SharedModel\Workspace\Workspace;
 use Neos\ContentRepository\Export\Event\ValueObject\ExportedEvent;
 use Neos\ContentRepository\Export\ProcessorInterface;
 use Neos\ContentRepository\Export\ProcessorResult;
@@ -23,7 +23,7 @@ final class EventExportProcessor implements ProcessorInterface, ContentRepositor
 
     public function __construct(
         private readonly Filesystem $files,
-        private readonly ContentStreamId $targetContentStreamId,
+        private readonly Workspace $targetWorkspace,
         private readonly EventStoreInterface $eventStore,
     ) {
     }
@@ -35,7 +35,7 @@ final class EventExportProcessor implements ProcessorInterface, ContentRepositor
 
     public function run(): ProcessorResult
     {
-        $streamName = ContentStreamEventStreamName::fromContentStreamId($this->targetContentStreamId)->getEventStreamName();
+        $streamName = ContentStreamEventStreamName::fromContentStreamId($this->targetWorkspace->currentContentStreamId)->getEventStreamName();
         $eventStream = $this->eventStore->load($streamName);
 
         $eventFileResource = fopen('php://temp/maxmemory:5242880', 'rb+');

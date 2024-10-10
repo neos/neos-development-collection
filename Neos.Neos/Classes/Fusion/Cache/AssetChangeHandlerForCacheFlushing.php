@@ -9,7 +9,9 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateIds;
+use Neos\ContentRepository\Core\SharedModel\Workspace\Workspace;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
+use Neos\ContentRepository\Core\SharedModel\Workspace\Workspaces;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Media\Domain\Model\AssetInterface;
@@ -19,7 +21,7 @@ use Neos\Neos\AssetUsage\GlobalAssetUsageService;
 
 class AssetChangeHandlerForCacheFlushing
 {
-    /** @var array <string, array<string, WorkspaceName[]>> */
+    /** @var array<string, array<string, WorkspaceName[]>> */
     private array $workspaceRuntimeCache = [];
 
     public function __construct(
@@ -100,7 +102,7 @@ class AssetChangeHandlerForCacheFlushing
     {
         if (!isset($this->workspaceRuntimeCache[$contentRepository->id->value][$workspaceName->value])) {
             $workspaceNames = [];
-            $workspace = $contentRepository->getWorkspaceFinder()->findOneByName($workspaceName);
+            $workspace = $contentRepository->findWorkspaceByName($workspaceName);
             if ($workspace !== null) {
                 $stack[] = $workspace;
 
@@ -108,7 +110,7 @@ class AssetChangeHandlerForCacheFlushing
                     $workspace = array_shift($stack);
                     $workspaceNames[] = $workspace->workspaceName;
 
-                    $stack = array_merge($stack, array_values($contentRepository->getWorkspaceFinder()->findByBaseWorkspace($workspace->workspaceName)));
+                    $stack = array_merge($stack, iterator_to_array($contentRepository->getWorkspaces()->getDependantWorkspaces($workspace->workspaceName)));
                 }
             }
             $this->workspaceRuntimeCache[$contentRepository->id->value][$workspaceName->value] = $workspaceNames;

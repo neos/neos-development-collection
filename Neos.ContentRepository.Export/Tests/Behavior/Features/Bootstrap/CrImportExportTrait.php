@@ -65,7 +65,7 @@ trait CrImportExportTrait
                 public function build(ContentRepositoryServiceFactoryDependencies $serviceFactoryDependencies): EventExportProcessor {
                     return new EventExportProcessor(
                         $this->filesystem,
-                        $serviceFactoryDependencies->contentRepository->findWorkspaceByName(WorkspaceName::forLive())->currentContentStreamId,
+                        $serviceFactoryDependencies->contentRepository->findWorkspaceByName(WorkspaceName::forLive()),
                         $serviceFactoryDependencies->eventStore
                     );
                 }

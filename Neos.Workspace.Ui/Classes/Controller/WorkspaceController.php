@@ -141,9 +141,6 @@ class WorkspaceController extends AbstractModuleController
             if (!$permissions->read) {
                 continue;
             }
-            $hasDependantWorkspaces = (bool)$allWorkspaces->find(
-                static fn (Workspace $potentiallyDependentWorkspace) => $potentiallyDependentWorkspace->baseWorkspaceName?->equals($workspace->workspaceName) ?? false
-            );
             $items[] = new WorkspaceListItem(
                 name: $workspace->workspaceName->value,
                 classification: $workspaceMetadata->classification->name,
@@ -151,7 +148,7 @@ class WorkspaceController extends AbstractModuleController
                 description: $workspaceMetadata->description->value,
                 baseWorkspaceName: $workspace->baseWorkspaceName?->value,
                 pendingChanges: $this->computePendingChanges($workspace, $contentRepository),
-                hasDependantWorkspaces: $hasDependantWorkspaces,
+                hasDependantWorkspaces: !$allWorkspaces->getDependantWorkspaces($workspace->workspaceName)->isEmpty(),
                 permissions: $permissions,
             );
         }
@@ -353,9 +350,7 @@ class WorkspaceController extends AbstractModuleController
             $this->redirect('index');
         }
 
-        $dependentWorkspaces = $contentRepository->getWorkspaces()->filter(
-            static fn (Workspace $potentiallyDependentWorkspace) => $potentiallyDependentWorkspace->baseWorkspaceName?->equals($workspaceName) ?? false
-        );
+        $dependentWorkspaces = $contentRepository->getWorkspaces()->getDependantWorkspaces($workspaceName);
         if (!$dependentWorkspaces->isEmpty()) {
             $dependentWorkspaceTitles = [];
             /** @var Workspace $dependentWorkspace */

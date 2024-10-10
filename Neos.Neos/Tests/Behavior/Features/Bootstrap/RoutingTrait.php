@@ -21,6 +21,7 @@ use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAddress;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
+use Neos\ContentRepository\Core\SharedModel\Workspace\Workspace;
 use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\CRTestSuiteRuntimeVariables;
 use Neos\Flow\Configuration\ConfigurationManager;
 use Neos\Flow\Http\ServerRequestAttributes;
@@ -185,7 +186,9 @@ trait RoutingTrait
         Assert::assertTrue($matchedNodeAddress->workspaceName->isLive());
         Assert::assertSame($nodeAggregateId, $matchedNodeAddress->aggregateId->value);
         // todo useless check?
-        $workspace = $this->currentContentRepository->getWorkspaceFinder()->findOneByCurrentContentStreamId(ContentStreamId::fromString($contentStreamId));
+        $workspace = $this->currentContentRepository->getWorkspaces()->find(
+            fn (Workspace $potentialWorkspace) => $potentialWorkspace->currentContentStreamId->equals(ContentStreamId::fromString($contentStreamId))
+        );
         Assert::assertSame($contentStreamId, $workspace?->currentContentStreamId->value);
         Assert::assertSame(
             DimensionSpacePoint::fromJsonString($dimensionSpacePoint),
@@ -218,7 +221,9 @@ trait RoutingTrait
         Assert::assertEquals(NodeAggregateId::fromString($nodeAggregateId), $matchedNodeAddress->aggregateId, 'Expected nodeAggregateId doesn\'t match.');
 
         // todo use workspace name instead here:
-        $workspace = $this->currentContentRepository->getWorkspaceFinder()->findOneByCurrentContentStreamId(ContentStreamId::fromString($contentStreamId));
+        $workspace = $this->currentContentRepository->getWorkspaces()->find(
+            fn (Workspace $potentialWorkspace) => $potentialWorkspace->currentContentStreamId->equals(ContentStreamId::fromString($contentStreamId))
+        );
         Assert::assertEquals($workspace->workspaceName, $matchedNodeAddress->workspaceName, 'Expected workspace doesn\'t match.');
         Assert::assertTrue($matchedNodeAddress->dimensionSpacePoint->equals(DimensionSpacePoint::fromJsonString($dimensionSpacePoint)), 'Expected dimensionSpacePoint doesn\'t match.');
     }
@@ -304,7 +309,9 @@ trait RoutingTrait
         if ($this->requestUrl === null) {
             $this->iAmOnUrl('/');
         }
-        $workspace = $this->currentContentRepository->getWorkspaceFinder()->findOneByCurrentContentStreamId(ContentStreamId::fromString($contentStreamId));
+        $workspace = $this->currentContentRepository->getWorkspaces()->find(
+            fn (Workspace $potentialWorkspace) => $potentialWorkspace->currentContentStreamId->equals(ContentStreamId::fromString($contentStreamId))
+        );
 
         $nodeAddress = NodeAddress::create(
             $this->currentContentRepository->id,
