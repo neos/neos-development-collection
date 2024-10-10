@@ -129,4 +129,9 @@ final readonly class Workspace
     {
         return $this->baseWorkspaceName === null && $this->workspaceOwner === null;
     }
+
+    public function isRootWorkspace(): bool
+    {
+        return $this->baseWorkspaceName !== null;
+    }
 }
