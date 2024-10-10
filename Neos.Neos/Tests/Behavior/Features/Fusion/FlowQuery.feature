@@ -51,6 +51,7 @@ Feature: Tests for the "Neos.ContentRepository" Flow Query methods.
       | Key             | Value             |
       | nodeAggregateId | "root"            |
       | nodeTypeName    | "Neos.Neos:Sites" |
+    Given the current date and time is "2024-09-22T12:00:00+01:00"
     And the following CreateNodeAggregateWithNode commands are executed:
       | nodeAggregateId | parentNodeAggregateId | nodeTypeName                  | initialPropertyValues                                                | nodeName |
       | a               | root                  | Neos.Neos:Site                | {"title": "Node a"}                                                  | a        |
@@ -71,6 +72,11 @@ Feature: Tests for the "Neos.ContentRepository" Flow Query methods.
       | a1b3            | a1b                   | Neos.Neos:Test.DocumentType1  | {"uriPathSegment": "a1b3", "title": "Node a1b3"}                     | a1b3     |
       | a1c             | a1                    | Neos.Neos:Test.DocumentType1  | {"uriPathSegment": "a1c", "title": "Node a1c", "hiddenInMenu": true} | a1c      |
       | a1c1            | a1c                   | Neos.Neos:Test.DocumentType1  | {"uriPathSegment": "a1c1", "title": "Node a1c1"}                     | a1c1     |
+    Given the current date and time is "2024-09-22T18:00:00+01:00"
+    And the following CreateNodeAggregateWithNode commands are executed:
+      | nodeAggregateId | parentNodeAggregateId | nodeTypeName                  | initialPropertyValues                                                | nodeName |
+      | a2              | a                     | Neos.Neos:Test.DocumentType1  | {"uriPathSegment": "a2", "title": "Node a2"}                         | a2       |
+
     And A site exists for node name "a" and domain "http://localhost"
     And the sites configuration is:
     """yaml
@@ -400,6 +406,7 @@ Feature: Tests for the "Neos.ContentRepository" Flow Query methods.
     """fusion
     test = Neos.Fusion:DataStructure {
       @context {
+        a2 = ${q(site).find('#a2').get(0)}
         a1a1 = ${q(site).find('#a1a1').get(0)}
         a1a2 = ${q(site).find('#a1a2').get(0)}
         a1a3 = ${q(site).find('#a1a3').get(0)}
@@ -408,8 +415,8 @@ Feature: Tests for the "Neos.ContentRepository" Flow Query methods.
       unsorted = ${q([a1a3, a1a4, a1a1, a1a2]).get()}
       sortByTitleAsc = ${q([a1a3, a1a4, a1a1, a1a2]).sort("title", "ASC").get()}
       sortByUriDesc = ${q([a1a3, a1a4, a1a1, a1a2]).sort("uriPathSegment", "DESC").get()}
-      # todo find out how to test time related logic
-      sortByDateAsc = ${q([a1a1]).sortByTimestamp("created", "ASC").get()}
+      # a2 is "older"
+      sortByDateAsc = ${q([a2, a1a1]).sortByTimestamp("created", "ASC").get()}
       @process.render = Neos.Neos:Test.RenderNodesDataStructure
     }
     """
@@ -418,7 +425,7 @@ Feature: Tests for the "Neos.ContentRepository" Flow Query methods.
     unsorted: a1a3,a1a4,a1a1,a1a2
     sortByTitleAsc: a1a1,a1a2,a1a3,a1a4
     sortByUriDesc: a1a4,a1a3,a1a2,a1a1
-    sortByDateAsc: a1a1
+    sortByDateAsc: a1a1,a2
     """
 
   Scenario: Node accessors (final Node access operations)
