@@ -24,12 +24,9 @@ use Neos\Eel\FlowQuery\FlowQueryException;
 use Neos\Eel\FlowQuery\Operations\AbstractOperation;
 use Neos\Flow\Annotations as Flow;
 use Neos\Neos\Utility\NodeTypeWithFallbackProvider;
-use Neos\Utility\ObjectAccess;
 
 /**
- * Used to access properties of a ContentRepository Node. If the property mame is
- * prefixed with _, internal node properties like start time, end time,
- * hidden are accessed.
+ * Used to access properties of a ContentRepository Node.
  */
 class PropertyOperation extends AbstractOperation
 {
@@ -84,7 +81,7 @@ class PropertyOperation extends AbstractOperation
     public function evaluate(FlowQuery $flowQuery, array $arguments): mixed
     {
         if (empty($arguments[0])) {
-            throw new FlowQueryException('property() does not support returning all attributes yet', 1332492263);
+            throw new FlowQueryException(static::$shortName . '() does not allow returning all properties.', 1332492263);
         }
         /** @var array<int,mixed> $context */
         $context = $flowQuery->getContext();
@@ -96,22 +93,8 @@ class PropertyOperation extends AbstractOperation
 
         /* @var $element Node */
         $element = $context[0];
-        if ($propertyName === '_path') {
-            $subgraph = $this->contentRepositoryRegistry->subgraphForNode($element);
-            $ancestors = $subgraph->findAncestorNodes(
-                $element->aggregateId,
-                FindAncestorNodesFilter::create()
-            )->reverse();
-
-            return AbsoluteNodePath::fromLeafNodeAndAncestors($element, $ancestors)->serializeToString();
-        }
-        if ($propertyName === '_identifier') {
-            // TODO: deprecated (Neos <9 case)
-            return $element->aggregateId->value;
-        }
-
-        if ($propertyName[0] === '_') {
-            return ObjectAccess::getPropertyPath($element, substr($propertyName, 1));
+        if ($element->hasProperty($propertyName)) {
+            return $element->getProperty($propertyName);
         }
 
         $contentRepository = $this->contentRepositoryRegistry->get($element->contentRepositoryId);
@@ -136,6 +119,6 @@ class PropertyOperation extends AbstractOperation
             return $references;
         }
 
-        return $element->getProperty($propertyName);
+        return null;
     }
 }
