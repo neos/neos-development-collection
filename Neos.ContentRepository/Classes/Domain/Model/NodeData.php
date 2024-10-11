@@ -768,7 +768,6 @@ class NodeData extends AbstractNodeData
         ];
         if (!$isCopy) {
             $propertyNames[] = 'creationDateTime';
-            $propertyNames[] = 'lastModificationDateTime';
         }
         if ($sourceNode instanceof NodeData) {
             $propertyNames[] = 'index';
@@ -776,7 +775,7 @@ class NodeData extends AbstractNodeData
         }
 
         // We need to force direct access for the following properties, as they don't have a setter in AbstractNodeData
-        $propertyNamesToForceDirectAccess = ['creationDateTime', 'lastModificationDateTime'];
+        $propertyNamesToForceDirectAccess = ['creationDateTime'];
         foreach ($propertyNames as $propertyName) {
             ObjectAccess::setProperty(
                 $this,
