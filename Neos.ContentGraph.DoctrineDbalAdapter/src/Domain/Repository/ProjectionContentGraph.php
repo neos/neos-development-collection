@@ -207,7 +207,7 @@ class ProjectionContentGraph
         ContentStreamId $contentStreamId,
         DimensionSpacePoint $dimensionSpacePoint
     ): int {
-        if (!$parentAnchorPoint && !$childAnchorPoint) {
+        if (!$parentAnchorPoint && !$childAnchorPoint && !$succeedingSiblingAnchorPoint) {
             throw new \InvalidArgumentException(
                 'You must specify either parent or child node anchor to determine a hierarchy relation position',
                 1519847447
