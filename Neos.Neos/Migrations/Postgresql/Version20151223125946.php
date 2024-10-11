@@ -5,7 +5,6 @@ namespace Neos\Flow\Persistence\Doctrine\Migrations;
 use Doctrine\DBAL\Platforms\PostgreSQLPlatform;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\Migrations\AbstractMigration;
-use Neos\Neos\Utility\User as UserUtility;
 use PDO;
 
 /**
@@ -34,7 +33,7 @@ class Version20151223125946 extends AbstractMigration
             $neosAccountQuery
                 = $this->connection->executeQuery('SELECT t0.party_abstractparty, t1.accountidentifier FROM typo3_party_domain_model_abstractparty_accounts_join t0 JOIN typo3_flow_security_account t1 ON t0.flow_security_account = t1.persistence_object_identifier WHERE t1.authenticationprovidername = \'Typo3BackendProvider\'');
             while ($account = $neosAccountQuery->fetch(PDO::FETCH_ASSOC)) {
-                $normalizedUsername = UserUtility::slugifyUsername($account['accountidentifier']);
+                $normalizedUsername = preg_replace('/[^a-z0-9]/i', '', $account['accountidentifier']) ?: '';
 
                 foreach ($workspacesWithoutOwner as $workspaceWithoutOwner) {
                     if ($workspaceWithoutOwner['name'] === 'user-' . $normalizedUsername) {

@@ -15,6 +15,7 @@ declare(strict_types=1);
 namespace Neos\Neos\PendingChangesProjection;
 
 use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\Exception as DbalException;
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
 use Neos\ContentRepository\Core\Feature\NodeRemoval\Command\RemoveNodeAggregate;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
@@ -22,71 +23,26 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\Flow\Annotations as Flow;
 
 /**
- * Change Read Model
+ * Read model for pending changes
  *
- * !!! Still a bit unstable - might change in the future.
+ * @internal !!! Still a bit unstable - might change in the future.
  * @Flow\Proxy(false)
  */
-class Change
+final class Change
 {
     /**
-     * @var ContentStreamId
+     * @param NodeAggregateId|null $removalAttachmentPoint {@see RemoveNodeAggregate::$removalAttachmentPoint} for docs
      */
-    public $contentStreamId;
-
-    /**
-     * @var NodeAggregateId
-     */
-    public $nodeAggregateId;
-
-    /**
-     * @var OriginDimensionSpacePoint
-     */
-    public $originDimensionSpacePoint;
-
-    /**
-     * @var bool
-     */
-    public $created;
-
-    /**
-     * @var bool
-     */
-    public $changed;
-
-    /**
-     * @var bool
-     */
-    public $moved;
-
-    /**
-     * @var bool
-     */
-    public $deleted;
-
-    /**
-     * {@see RemoveNodeAggregate::$removalAttachmentPoint} for docs
-     */
-    public ?NodeAggregateId $removalAttachmentPoint;
-
     public function __construct(
-        ContentStreamId $contentStreamId,
-        NodeAggregateId $nodeAggregateId,
-        OriginDimensionSpacePoint $originDimensionSpacePoint,
-        bool $created,
-        bool $changed,
-        bool $moved,
-        bool $deleted,
-        ?NodeAggregateId $removalAttachmentPoint = null
+        public ContentStreamId $contentStreamId,
+        public NodeAggregateId $nodeAggregateId,
+        public OriginDimensionSpacePoint $originDimensionSpacePoint,
+        public bool $created,
+        public bool $changed,
+        public bool $moved,
+        public bool $deleted,
+        public ?NodeAggregateId $removalAttachmentPoint = null
     ) {
-        $this->contentStreamId = $contentStreamId;
-        $this->nodeAggregateId = $nodeAggregateId;
-        $this->originDimensionSpacePoint = $originDimensionSpacePoint;
-        $this->created = $created;
-        $this->changed = $changed;
-        $this->moved = $moved;
-        $this->deleted = $deleted;
-        $this->removalAttachmentPoint = $removalAttachmentPoint;
     }
 
 
@@ -95,37 +51,45 @@ class Change
      */
     public function addToDatabase(Connection $databaseConnection, string $tableName): void
     {
-        $databaseConnection->insert($tableName, [
-            'contentStreamId' => $this->contentStreamId->value,
-            'nodeAggregateId' => $this->nodeAggregateId->value,
-            'originDimensionSpacePoint' => $this->originDimensionSpacePoint->toJson(),
-            'originDimensionSpacePointHash' => $this->originDimensionSpacePoint->hash,
-            'created' => (int)$this->created,
-            'changed' => (int)$this->changed,
-            'moved' => (int)$this->moved,
-            'deleted' => (int)$this->deleted,
-            'removalAttachmentPoint' => $this->removalAttachmentPoint?->value
-        ]);
-    }
-
-    public function updateToDatabase(Connection $databaseConnection, string $tableName): void
-    {
-        $databaseConnection->update(
-            $tableName,
-            [
+        try {
+            $databaseConnection->insert($tableName, [
+                'contentStreamId' => $this->contentStreamId->value,
+                'nodeAggregateId' => $this->nodeAggregateId->value,
+                'originDimensionSpacePoint' => $this->originDimensionSpacePoint->toJson(),
+                'originDimensionSpacePointHash' => $this->originDimensionSpacePoint->hash,
                 'created' => (int)$this->created,
                 'changed' => (int)$this->changed,
                 'moved' => (int)$this->moved,
                 'deleted' => (int)$this->deleted,
                 'removalAttachmentPoint' => $this->removalAttachmentPoint?->value
-            ],
-            [
-                'contentStreamId' => $this->contentStreamId->value,
-                'nodeAggregateId' => $this->nodeAggregateId->value,
-                'originDimensionSpacePoint' => $this->originDimensionSpacePoint->toJson(),
-                'originDimensionSpacePointHash' => $this->originDimensionSpacePoint->hash,
-            ]
-        );
+            ]);
+        } catch (DbalException $e) {
+            throw new \RuntimeException(sprintf('Failed to insert Change to database: %s', $e->getMessage()), 1727272723, $e);
+        }
+    }
+
+    public function updateToDatabase(Connection $databaseConnection, string $tableName): void
+    {
+        try {
+            $databaseConnection->update(
+                $tableName,
+                [
+                    'created' => (int)$this->created,
+                    'changed' => (int)$this->changed,
+                    'moved' => (int)$this->moved,
+                    'deleted' => (int)$this->deleted,
+                    'removalAttachmentPoint' => $this->removalAttachmentPoint?->value
+                ],
+                [
+                    'contentStreamId' => $this->contentStreamId->value,
+                    'nodeAggregateId' => $this->nodeAggregateId->value,
+                    'originDimensionSpacePoint' => $this->originDimensionSpacePoint->toJson(),
+                    'originDimensionSpacePointHash' => $this->originDimensionSpacePoint->hash,
+                ]
+            );
+        } catch (DbalException $e) {
+            throw new \RuntimeException(sprintf('Failed to update Change in database: %s', $e->getMessage()), 1727272761, $e);
+        }
     }
 
     /**

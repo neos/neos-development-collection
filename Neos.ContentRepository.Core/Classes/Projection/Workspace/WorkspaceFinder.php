@@ -23,8 +23,9 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceTitle;
 
 /**
- * Workspace Finder
+ * The legacy Workspace Finder
  *
+ * @deprecated with 9.0.0-beta14 please use {@see ContentRepository::findWorkspaces()} and {@see ContentRepository::findWorkspaceByName()} instead.
  * @api
  */
 final class WorkspaceFinder implements ProjectionStateInterface
@@ -36,7 +37,9 @@ final class WorkspaceFinder implements ProjectionStateInterface
     ) {
     }
 
-
+    /**
+     * @deprecated with 9.0.0-beta14 please use {@see ContentRepository::findWorkspaceByName()} instead
+     */
     public function findOneByName(WorkspaceName $name): ?Workspace
     {
         $workspace = $this->workspaceRuntimeCache->getWorkspaceByName($name);
@@ -63,6 +66,15 @@ final class WorkspaceFinder implements ProjectionStateInterface
         return $workspace;
     }
 
+    /**
+     * @deprecated with 9.0.0-beta14 discouraged. You should just operate on workspace names instead.
+     * To still archive the functionality please use {@see ContentRepository::findWorkspaces()} instead and filter the result:
+     *
+     *     $this->contentRepository->getWorkspaces()->find(
+     *         fn (Workspace $workspace) => $workspace->currentContentStreamId->equals($contentStreamId)
+     *     )
+     *
+     */
     public function findOneByCurrentContentStreamId(
         ContentStreamId $contentStreamId
     ): ?Workspace {
@@ -93,6 +105,7 @@ final class WorkspaceFinder implements ProjectionStateInterface
     /**
      * @return array<string,Workspace>
      * @throws DBALException
+     * @deprecated with 9.0.0-beta14 please use {@see ContentRepository::findWorkspaces()} and {@see Workspaces::getDependantWorkspaces()} instead.
      */
     public function findByBaseWorkspace(WorkspaceName $baseWorkspace): array
     {
@@ -116,6 +129,10 @@ final class WorkspaceFinder implements ProjectionStateInterface
         return $result;
     }
 
+    /**
+     * @deprecated with 9.0.0-beta14 owners/collaborators should be assigned to workspaces outside the Content Repository core
+     * For Neos.Neos please use {@see \Neos\Neos\Domain\Service\WorkspaceService::getPersonalWorkspaceForUser()}
+     */
     public function findOneByWorkspaceOwner(string $owner): ?Workspace
     {
         $workspaceRow = $this->dbal->executeQuery(
@@ -135,6 +152,9 @@ final class WorkspaceFinder implements ProjectionStateInterface
         return $this->createWorkspaceFromDatabaseRow($workspaceRow);
     }
 
+    /**
+     * @deprecated with 9.0.0-beta14 please use {@see ContentRepository::findWorkspaces()} instead
+     */
     public function findAll(): Workspaces
     {
         $result = [];
@@ -154,6 +174,12 @@ final class WorkspaceFinder implements ProjectionStateInterface
     }
 
     /**
+     * @deprecated with 9.0.0-beta14 please use {@see ContentRepository::findWorkspaces()} instead and filter the result:
+     *
+     *     $this->contentRepository->getWorkspaces()->filter(
+     *         fn (Workspace $workspace) => $workspace->status === WorkspaceStatus::OUTDATED
+     *     )
+     *
      * @return array<string,Workspace>
      * @throws \Doctrine\DBAL\Driver\Exception
      * @throws DBALException

@@ -68,7 +68,7 @@ trait WorkspaceCreation
         $command = CreateRootWorkspace::create(
             WorkspaceName::fromString($commandArguments['workspaceName']),
             new WorkspaceTitle($commandArguments['workspaceTitle'] ?? ucfirst($commandArguments['workspaceName'])),
-            new WorkspaceDescription($commandArguments['workspaceDescription'] ?? 'The workspace "' . $commandArguments['workspaceName'] . '"'),
+            new WorkspaceDescription($commandArguments['workspaceDescription'] ?? ('The workspace "' . $commandArguments['workspaceName'] . '"')),
             ContentStreamId::fromString($commandArguments['newContentStreamId'])
         );
 
