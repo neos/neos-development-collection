@@ -62,14 +62,10 @@ class NodeHelper implements ProtectedContextAwareInterface
                     $contentCollectionType
                 ), 1409300545);
             }
-            $nodePath = AbsoluteNodePath::patternIsMatchedByString($nodePath)
-                ? AbsoluteNodePath::fromString($nodePath)
-                : NodePath::fromString($nodePath);
+            $nodePath = NodePath::fromString($nodePath);
             $subgraph = $this->contentRepositoryRegistry->subgraphForNode($node);
 
-            $subNode = $nodePath instanceof AbsoluteNodePath
-                ? $subgraph->findNodeByAbsolutePath($nodePath)
-                : $subgraph->findNodeByPath($nodePath, $node->aggregateId);
+            $subNode = $subgraph->findNodeByPath($nodePath, $node->aggregateId);
 
             if ($subNode !== null && $this->isOfType($subNode, $contentCollectionType)) {
                 return $subNode;
