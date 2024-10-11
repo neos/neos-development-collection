@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Neos\ContentRepositoryRegistry\Service;
 
 use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceInterface;
 use Neos\ContentRepository\Core\Feature\Common\RebasableToOtherWorkspaceInterface;
 use Neos\ContentRepository\Core\Feature\NodeCreation\Command\CreateNodeAggregateWithNodeAndSerializedProperties;
@@ -498,31 +499,14 @@ final class EventMigrationService implements ContentRepositoryServiceInterface
 
             switch ($eventType) {
                 case 'RootWorkspaceWasCreated':
-                    $eventData = self::decodeEventPayload($eventEnvelope);
-                    if (!isset($eventData['workspaceTitle'])) {
-                        // without the field it's not a legacy workspace creation event
-                        continue 2;
-                    }
-                    $workspaces[$eventData['workspaceName']] = [
-                        'workspaceName' => $eventData['workspaceName'],
-                        'workspaceTitle' => $eventData['workspaceTitle'],
-                        'workspaceDescription' => $eventData['workspaceDescription'],
-                        'baseWorkspaceName' => null,
-                        'workspaceOwner' => null
-                    ];
-                    break;
                 case 'WorkspaceWasCreated':
                     $eventData = self::decodeEventPayload($eventEnvelope);
-                    if (!isset($eventData['workspaceTitle'])) {
-                        // without the field it's not a legacy workspace creation event
-                        continue 2;
-                    }
                     $workspaces[$eventData['workspaceName']] = [
                         'workspaceName' => $eventData['workspaceName'],
-                        'baseWorkspaceName' => $eventData['baseWorkspaceName'],
-                        'workspaceTitle' => $eventData['workspaceTitle'],
-                        'workspaceDescription' => $eventData['workspaceDescription'],
-                        'workspaceOwner' => $eventData['workspaceOwner'] ?? null
+                        'workspaceTitle' => !empty($eventData['workspaceTitle']) ? $eventData['workspaceTitle'] : $eventData['workspaceName'],
+                        'workspaceDescription' => $eventData['workspaceDescription'] ?? '',
+                        'baseWorkspaceName' => $eventData['baseWorkspaceName'] ?? null,
+                        'workspaceOwner' => $eventData['workspaceOwner'] ?? null,
                     ];
                     break;
                 case 'WorkspaceBaseWorkspaceWasChanged':
@@ -574,29 +558,17 @@ final class EventMigrationService implements ContentRepositoryServiceInterface
 
         $outputFn(sprintf('Found %d legacy workspace events resulting in %d workspaces.', $numberOfHandledWorkspaceEvents, count($workspaces)));
 
-        // adding metadata
+        // adding metadata & role assignments
         $addedWorkspaceMetadata = 0;
         foreach ($workspaces as $workspaceRow) {
             $workspaceName = WorkspaceName::fromString($workspaceRow['workspaceName']);
+            $outputFn(sprintf('Workspace "%s"', $workspaceName->value));
             $baseWorkspaceName = isset($workspaceRow['baseWorkspaceName']) ? WorkspaceName::fromString($workspaceRow['baseWorkspaceName']) : null;
             $workspaceOwner = $workspaceRow['workspaceOwner'] ?? null;
             $isPersonalWorkspace = str_starts_with($workspaceName->value, 'user-');
             $isPrivateWorkspace = $workspaceOwner !== null && !$isPersonalWorkspace;
             $isInternalWorkspace = $baseWorkspaceName !== null && $workspaceOwner === null;
 
-            $query = <<<SQL
-            SELECT COUNT(1) FROM neos_neos_workspace_metadata WHERE
-                content_repository_id = :contentRepositoryId
-                AND workspace_name = :workspaceName
-            SQL;
-            $metadataExists = $this->connection->fetchOne($query, [
-                'contentRepositoryId' => $this->contentRepositoryId->value,
-                'workspaceName' => $workspaceName->value,
-            ]);
-            if ($metadataExists !== 0) {
-                $outputFn(sprintf('Metadata for "%s" exists already.', $workspaceName->value));
-                continue;
-            }
             if ($baseWorkspaceName === null) {
                 $classification = WorkspaceClassification::ROOT;
             } elseif ($isPersonalWorkspace) {
@@ -604,48 +576,54 @@ final class EventMigrationService implements ContentRepositoryServiceInterface
             } else {
                 $classification = WorkspaceClassification::SHARED;
             }
-            $this->connection->insert('neos_neos_workspace_metadata', [
-                'content_repository_id' => $this->contentRepositoryId->value,
-                'workspace_name' => $workspaceName->value,
-                'title' => $workspaceRow['workspaceTitle'],
-                'description' => $workspaceRow['workspaceDescription'],
-                'classification' => $classification->value,
-                'owner_user_id' => $isPersonalWorkspace ? $workspaceOwner : null,
-            ]);
-            if ($workspaceName->isLive()) {
-                $this->connection->insert('neos_neos_workspace_role', [
+            try {
+                $this->connection->insert('neos_neos_workspace_metadata', [
                     'content_repository_id' => $this->contentRepositoryId->value,
                     'workspace_name' => $workspaceName->value,
+                    'title' => $workspaceRow['workspaceTitle'],
+                    'description' => $workspaceRow['workspaceDescription'],
+                    'classification' => $classification->value,
+                    'owner_user_id' => $isPersonalWorkspace ? $workspaceOwner : null,
+                ]);
+                $outputFn('  Added metadata');
+            } catch (UniqueConstraintViolationException) {
+                $outputFn('  Metadata already exists');
+            }
+            $roleAssignment = [];
+            if ($workspaceName->isLive()) {
+                $roleAssignment = [
                     'subject_type' => WorkspaceRoleSubjectType::GROUP->value,
                     'subject' => 'Neos.Neos:LivePublisher',
                     'role' => WorkspaceRole::COLLABORATOR->value,
-                ]);
+                ];
             } elseif ($isInternalWorkspace) {
-                $this->connection->insert('neos_neos_workspace_role', [
-                    'content_repository_id' => $this->contentRepositoryId->value,
-                    'workspace_name' => $workspaceName->value,
+                $roleAssignment = [
                     'subject_type' => WorkspaceRoleSubjectType::GROUP->value,
                     'subject' => 'Neos.Neos:AbstractEditor',
                     'role' => WorkspaceRole::COLLABORATOR->value,
-                ]);
+                ];
             } elseif ($isPrivateWorkspace) {
-                $this->connection->insert('neos_neos_workspace_role', [
-                    'content_repository_id' => $this->contentRepositoryId->value,
-                    'workspace_name' => $workspaceName->value,
+                $roleAssignment = [
                     'subject_type' => WorkspaceRoleSubjectType::USER->value,
                     'subject' => $workspaceOwner,
                     'role' => WorkspaceRole::COLLABORATOR->value,
-                ]);
+                ];
             }
-            $outputFn(sprintf('Added metadata for "%s".', $workspaceName->value));
+            if ($roleAssignment !== []) {
+                try {
+                    $this->connection->insert('neos_neos_workspace_role', [
+                        'content_repository_id' => $this->contentRepositoryId->value,
+                        'workspace_name' => $workspaceName->value,
+                        ...$roleAssignment,
+                    ]);
+                    $outputFn('  Role assignment added');
+                } catch (UniqueConstraintViolationException) {
+                    $outputFn('  Role assignment already exists');
+                }
+            }
             $addedWorkspaceMetadata++;
         }
-        if ($addedWorkspaceMetadata === 0) {
-            $outputFn('Migration was not necessary.');
-            return;
-        }
-
-        $outputFn(sprintf('Added metadata for %d workspaces.', $addedWorkspaceMetadata));
+        $outputFn(sprintf('Added metadata & role assignments for %d workspaces.', $addedWorkspaceMetadata));
     }
 
     /** ------------------------ */

@@ -65,13 +65,19 @@ class SiteService
     protected $assetCollectionRepository;
 
     /**
+     * @Flow\Inject
+     * @var WorkspaceService
+     */
+    protected $workspaceService;
+
+    /**
      * Remove given site all nodes for that site and all domains associated.
      */
     public function pruneSite(Site $site): void
     {
         $siteServiceInternals = $this->contentRepositoryRegistry->buildService(
             $site->getConfiguration()->contentRepositoryId,
-            new SiteServiceInternalsFactory()
+            new SiteServiceInternalsFactory($this->workspaceService)
         );
 
         try {
@@ -176,7 +182,7 @@ class SiteService
 
         $siteServiceInternals = $this->contentRepositoryRegistry->buildService(
             $site->getConfiguration()->contentRepositoryId,
-            new SiteServiceInternalsFactory()
+            new SiteServiceInternalsFactory($this->workspaceService)
         );
         $siteServiceInternals->createSiteNodeIfNotExists($site, $nodeTypeName);
 
