@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\ContentRepository\Domain\Model;
 
 /*
@@ -475,9 +476,9 @@ class NodeData extends AbstractNodeData
      * @param string $identifier The identifier of the node, unique within the workspace, optional(!)
      * @param Workspace $workspace
      * @param array $dimensions An array of dimension name to dimension values
-     * @throws NodeExistsException if a node with this path already exists.
-     * @throws \InvalidArgumentException if the node name is not accepted.
      * @return NodeData
+     * @throws \InvalidArgumentException if the node name is not accepted.
+     * @throws NodeExistsException if a node with this path already exists.
      */
     public function createSingleNodeData($name, NodeType $nodeType = null, $identifier = null, Workspace $workspace = null, array $dimensions = null)
     {
@@ -767,14 +768,21 @@ class NodeData extends AbstractNodeData
         ];
         if (!$isCopy) {
             $propertyNames[] = 'creationDateTime';
-            $propertyNames[] = 'lastModificationDateTime';
         }
         if ($sourceNode instanceof NodeData) {
             $propertyNames[] = 'index';
             $propertyNames[] = 'removed';
         }
+
+        // We need to force direct access for the following properties, as they don't have a setter in AbstractNodeData
+        $propertyNamesToForceDirectAccess = ['creationDateTime'];
         foreach ($propertyNames as $propertyName) {
-            ObjectAccess::setProperty($this, $propertyName, ObjectAccess::getProperty($sourceNode, $propertyName));
+            ObjectAccess::setProperty(
+                $this,
+                $propertyName,
+                ObjectAccess::getProperty($sourceNode, $propertyName),
+                in_array($propertyName, $propertyNamesToForceDirectAccess)
+            );
         }
 
         $contentObject = $sourceNode->getContentObject();

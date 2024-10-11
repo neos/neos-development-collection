@@ -670,6 +670,24 @@ class NodeDataTest extends UnitTestCase
     /**
      * @test
      */
+    public function similarizeCopiesCreationAndLastModificationDateTimes()
+    {
+        $creationDateTime = \DateTime::createFromFormat('Y-m-d', '2000-01-01 12:00:00');
+
+        /** @var $sourceNode NodeData */
+        $sourceNode = $this->getAccessibleMock(NodeData::class, ['addOrUpdate'], ['/foo/bar', $this->mockWorkspace]);
+        $this->inject($sourceNode, 'nodeTypeManager', $this->mockNodeTypeManager);
+        $sourceNode->_set('nodeDataRepository', $this->createMock(RepositoryInterface::class));
+        $sourceNode->_set('creationDateTime', $creationDateTime);
+
+        $this->nodeData->similarize($sourceNode);
+
+        self::assertSame($creationDateTime, $this->nodeData->getCreationDateTime());
+    }
+
+    /**
+     * @test
+     */
     public function matchesWorkspaceAndDimensionsWithDifferentWorkspaceReturnsFalse()
     {
         $this->mockWorkspace->expects(self::any())->method('getName')->will(self::returnValue('live'));
