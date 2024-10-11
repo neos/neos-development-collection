@@ -12,7 +12,7 @@
 
 declare(strict_types=1);
 
-namespace Neos\Neos\Eel\FlowQueryOperations;
+namespace Neos\ContentRepository\NodeAccess\FlowQueryOperations;
 
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\Eel\FlowQuery\FlowQuery;
@@ -46,9 +46,7 @@ class SortOperation extends AbstractOperation
     }
 
     /**
-     * {@inheritdoc}
-     *
-     * First argument is the node property to sort by. Works with internal arguments (_xyz) as well.
+     * First argument is the node property to sort by.
      * Second argument is the sort direction (ASC or DESC).
      * Third optional argument are the sort options (see https://www.php.net/manual/en/function.sort):
      *  - 'SORT_REGULAR'
@@ -113,15 +111,7 @@ class SortOperation extends AbstractOperation
 
         // Determine the property value to sort by
         foreach ($nodes as $node) {
-            if ($sortProperty[0] === '_') {
-                $propertyValue = \Neos\Utility\ObjectAccess::getPropertyPath($node, substr($sortProperty, 1));
-            } else {
-                $propertyValue = $node->getProperty($sortProperty);
-            }
-
-            if ($propertyValue instanceof \DateTime) {
-                $propertyValue = $propertyValue->getTimestamp();
-            }
+            $propertyValue = $node->getProperty($sortProperty);
 
             $sortSequence[$node->aggregateId->value] = $propertyValue;
             $nodesByIdentifier[$node->aggregateId->value] = $node;

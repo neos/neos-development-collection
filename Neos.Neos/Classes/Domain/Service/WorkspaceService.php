@@ -134,6 +134,22 @@ final class WorkspaceService
     }
 
     /**
+     * Create the "live" root workspace with the default role assignment (users with the role "Neos.Neos:LivePublisher" are collaborators)
+     */
+    public function createLiveWorkspaceIfMissing(ContentRepositoryId $contentRepositoryId): void
+    {
+        $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryId);
+        $workspaceName = WorkspaceName::forLive();
+        $liveWorkspace = $contentRepository->findWorkspaceByName($workspaceName);
+        if ($liveWorkspace !== null) {
+            // live workspace already exists
+            return;
+        }
+        $this->createRootWorkspace($contentRepositoryId, $workspaceName, WorkspaceTitle::fromString('Public live workspace'), WorkspaceDescription::empty());
+        $this->assignWorkspaceRole($contentRepositoryId, $workspaceName, WorkspaceRoleAssignment::createForGroup('Neos.Neos:LivePublisher', WorkspaceRole::COLLABORATOR));
+    }
+
+    /**
      * Create a new, personal, workspace for the specified user
      */
     public function createPersonalWorkspace(ContentRepositoryId $contentRepositoryId, WorkspaceName $workspaceName, WorkspaceTitle $title, WorkspaceDescription $description, WorkspaceName $baseWorkspaceName, UserId $ownerId): void

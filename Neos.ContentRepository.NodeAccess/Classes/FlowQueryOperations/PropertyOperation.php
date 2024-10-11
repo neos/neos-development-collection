@@ -14,8 +14,6 @@ namespace Neos\ContentRepository\NodeAccess\FlowQueryOperations;
  * source code.
  */
 
-use Neos\ContentRepository\Core\Projection\ContentGraph\AbsoluteNodePath;
-use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindAncestorNodesFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindReferencesFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
@@ -23,12 +21,9 @@ use Neos\Eel\FlowQuery\FlowQuery;
 use Neos\Eel\FlowQuery\FlowQueryException;
 use Neos\Eel\FlowQuery\Operations\AbstractOperation;
 use Neos\Flow\Annotations as Flow;
-use Neos\Utility\ObjectAccess;
 
 /**
- * Used to access properties of a ContentRepository Node. If the property mame is
- * prefixed with _, internal node properties like start time, end time,
- * hidden are accessed.
+ * Used to access properties of a ContentRepository Node.
  * @deprecated with Neos 9.0 for simple case like ${q(node).property(propertyName)} please use ${node.properties.title} or ${node.properties[propertyName]} instead.
  * For resolving references leverage ${q(node).referenceNodes("someReferenceName")} instead.
  */
@@ -85,7 +80,7 @@ class PropertyOperation extends AbstractOperation
     public function evaluate(FlowQuery $flowQuery, array $arguments): mixed
     {
         if (empty($arguments[0])) {
-            throw new FlowQueryException('property() does not support returning all attributes yet', 1332492263);
+            throw new FlowQueryException(static::$shortName . '() does not allow returning all properties.', 1332492263);
         }
         /** @var array<int,mixed> $context */
         $context = $flowQuery->getContext();
@@ -97,22 +92,8 @@ class PropertyOperation extends AbstractOperation
 
         /* @var $element Node */
         $element = $context[0];
-        if ($propertyName === '_path') {
-            $subgraph = $this->contentRepositoryRegistry->subgraphForNode($element);
-            $ancestors = $subgraph->findAncestorNodes(
-                $element->aggregateId,
-                FindAncestorNodesFilter::create()
-            )->reverse();
-
-            return AbsoluteNodePath::fromLeafNodeAndAncestors($element, $ancestors)->serializeToString();
-        }
-        if ($propertyName === '_identifier') {
-            // TODO: deprecated (Neos <9 case)
-            return $element->aggregateId->value;
-        }
-
-        if ($propertyName[0] === '_') {
-            return ObjectAccess::getPropertyPath($element, substr($propertyName, 1));
+        if ($element->hasProperty($propertyName)) {
+            return $element->getProperty($propertyName);
         }
 
         $contentRepository = $this->contentRepositoryRegistry->get($element->contentRepositoryId);
@@ -137,6 +118,6 @@ class PropertyOperation extends AbstractOperation
             return $references;
         }
 
-        return $element->getProperty($propertyName);
+        return null;
     }
 }
