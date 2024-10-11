@@ -120,7 +120,7 @@ class NodeController extends ActionController
      * @return void
      * @throws NoSuchArgumentException
      */
-    protected function initializePreviewAction(): void
+    protected function initializeEditAction(): void
     {
         if ($this->arguments->hasArgument('node') && $this->privilegeManager->isPrivilegeTargetGranted('Neos.Neos:Backend.GeneralAccess')) {
             $this->arguments->getArgument('node')->getPropertyMappingConfiguration()->setTypeConverterOption(NodeConverter::class, NodeConverter::INVISIBLE_CONTENT_SHOWN, true);
@@ -128,7 +128,7 @@ class NodeController extends ActionController
     }
 
     /**
-     * Previews a node that is not live (i.e. for the Backend Preview & Edit Mode)
+     * Previews a node that is not live (i.e. for the Backend Preview Mode)
      *
      * @param NodeInterface $node
      * @return void View output for the specified node
@@ -160,6 +160,43 @@ class NodeController extends ActionController
             }
         }
     }
+
+    /**
+     * Renders a node in backend
+     *
+     * @param NodeInterface|null $node
+     * @throws NeosException
+     * @throws NodeNotFoundException
+     * @throws SessionNotStartedException
+     * @throws UnresolvableShortcutException
+     */
+    public function editAction(NodeInterface $node = null)
+    {
+        if ($node === null) {
+            throw new NodeNotFoundException('The requested node does not exist or isn\'t accessible to the current user', 1430218623);
+        }
+
+        $inBackend = $node->getContext()->isInBackend();
+
+        if ($node->getNodeType()->isOfType('Neos.Neos:Shortcut') && !$inBackend) {
+            $this->handleShortcutNode($node);
+        }
+
+        $this->view->assign('value', $node);
+
+        if ($inBackend) {
+            $this->overrideViewVariablesFromInternalArguments();
+            $this->response->setHttpHeader('Cache-Control', 'no-cache');
+            if (!$this->view->canRenderWithNodeAndPath()) {
+                $this->view->setFusionPath('rawContent');
+            }
+
+            if ($this->session->isStarted()) {
+                $this->session->putData('lastVisitedNode', $node->getContextPath());
+            }
+        }
+    }
+
 
     /**
      * Checks if the optionally given node context path, affected node context path and Fusion path are set
