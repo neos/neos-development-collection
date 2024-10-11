@@ -355,27 +355,34 @@ final class ContentSubgraph implements ContentSubgraphInterface
 
     public function findClosestNode(NodeAggregateId $entryNodeAggregateId, FindClosestNodeFilter $filter): ?Node
     {
+        // 1) Fetch the hierarchy relation of the initial node aggregate, where this node is stored as child node.
+        //    The parent node anchor points to the first parent node of the given node aggregate. This is also used for
+        //    the recursive part, to determine its ancestors.
         $queryBuilderInitial = $this->createQueryBuilder()
-            ->select('n.*, ph.subtreetags, ph.parentnodeanchor')
-            ->from($this->nodeQueryBuilder->tableNames->node(), 'n')
-            // we need to join with the hierarchy relation, because we need the node name.
-            ->innerJoin('n', $this->nodeQueryBuilder->tableNames->hierarchyRelation(), 'ph', 'n.relationanchorpoint = ph.childnodeanchor')
+            ->select('ph.subtreetags, ph.childnodeanchor, ph.parentnodeanchor')
+            ->from($this->nodeQueryBuilder->tableNames->hierarchyRelation(), 'ph')
+            ->innerJoin('ph', $this->nodeQueryBuilder->tableNames->node(), 'n', 'n.relationanchorpoint = ph.childnodeanchor')
             ->andWhere('ph.contentstreamid = :contentStreamId')
             ->andWhere('ph.dimensionspacepointhash = :dimensionSpacePointHash')
             ->andWhere('n.nodeaggregateid = :entryNodeAggregateId');
         $this->addSubtreeTagConstraints($queryBuilderInitial, 'ph');
 
+        // 2) Fetch the parent hierarchy recursive, starting with the anchor point of the resulting parent as child
+        //    anchor point for the next iteration.
         $queryBuilderRecursive = $this->createQueryBuilder()
-            ->select('pn.*, h.subtreetags, h.parentnodeanchor')
+            ->select('h.subtreetags, h.childnodeanchor, h.parentnodeanchor')
             ->from('ancestry', 'cn')
-            ->innerJoin('cn', $this->nodeQueryBuilder->tableNames->node(), 'pn', 'pn.relationanchorpoint = cn.parentnodeanchor')
-            ->innerJoin('pn', $this->nodeQueryBuilder->tableNames->hierarchyRelation(), 'h', 'h.childnodeanchor = pn.relationanchorpoint')
+            ->innerJoin('cn', $this->nodeQueryBuilder->tableNames->hierarchyRelation(), 'h', 'h.childnodeanchor = cn.parentnodeanchor')
             ->where('h.contentstreamid = :contentStreamId')
             ->andWhere('h.dimensionspacepointhash = :dimensionSpacePointHash');
         $this->addSubtreeTagConstraints($queryBuilderRecursive);
 
-        $queryBuilderCte = $this->nodeQueryBuilder->buildBasicNodesCteQuery($entryNodeAggregateId, $this->contentStreamId, $this->dimensionSpacePoint);
+        $queryBuilderCte = $this->nodeQueryBuilder->buildBasicNodesCteQuery($entryNodeAggregateId, $this->contentStreamId, $this->dimensionSpacePoint, 'ancestry', 'a');
+
+        // 3) Finally we join the node table to all collected child node anchor as we also need the starting node included for finding the "closest" node.
+        $queryBuilderCte->innerJoin('a', $this->nodeQueryBuilder->tableNames->node(), 'pn', 'pn.relationanchorpoint = a.childnodeanchor');
         $this->nodeQueryBuilder->addNodeTypeCriteria($queryBuilderCte, ExpandedNodeTypeCriteria::create($filter->nodeTypes, $this->nodeTypeManager), 'pn');
+
         $nodeRows = $this->fetchCteResults(
             $queryBuilderInitial,
             $queryBuilderRecursive,
@@ -553,31 +560,32 @@ final class ContentSubgraph implements ContentSubgraphInterface
      */
     private function buildAncestorNodesQueries(NodeAggregateId $entryNodeAggregateId, FindAncestorNodesFilter|CountAncestorNodesFilter|FindClosestNodeFilter $filter): array
     {
+        // 1) Fetch the hierarchy relation of the initial node aggregate, where this node is stored as child node.
+        //    The parent node anchor points to the first parent node of the given node aggregate. This is also used for
+        //    the recursive part, to determine its ancestors.
         $queryBuilderInitial = $this->createQueryBuilder()
-            ->select('n.*, ph.subtreetags, ph.parentnodeanchor')
-            ->from($this->nodeQueryBuilder->tableNames->node(), 'n')
-            // we need to join with the hierarchy relation, because we need the node name.
-            ->innerJoin('n', $this->nodeQueryBuilder->tableNames->hierarchyRelation(), 'ch', 'ch.parentnodeanchor = n.relationanchorpoint')
-            ->innerJoin('ch', $this->nodeQueryBuilder->tableNames->node(), 'c', 'c.relationanchorpoint = ch.childnodeanchor')
-            ->innerJoin('n', $this->nodeQueryBuilder->tableNames->hierarchyRelation(), 'ph', 'n.relationanchorpoint = ph.childnodeanchor')
-            ->where('ch.contentstreamid = :contentStreamId')
-            ->andWhere('ch.dimensionspacepointhash = :dimensionSpacePointHash')
+            ->select('ph.subtreetags, ph.parentnodeanchor, ph.childnodeanchor')
+            ->from($this->nodeQueryBuilder->tableNames->hierarchyRelation(), 'ph')
+            ->innerJoin('ph', $this->nodeQueryBuilder->tableNames->node(), 'c', 'c.relationanchorpoint = ph.childnodeanchor')
             ->andWhere('ph.contentstreamid = :contentStreamId')
             ->andWhere('ph.dimensionspacepointhash = :dimensionSpacePointHash')
             ->andWhere('c.nodeaggregateid = :entryNodeAggregateId');
         $this->addSubtreeTagConstraints($queryBuilderInitial, 'ph');
-        $this->addSubtreeTagConstraints($queryBuilderInitial, 'ch');
 
+        // 2) Fetch the parent hierarchy recursive, starting with the anchor point of the resulting parent as child anchor
+        //    point for the next iteration.
         $queryBuilderRecursive = $this->createQueryBuilder()
-            ->select('pn.*, h.subtreetags, h.parentnodeanchor')
+            ->select('h.subtreetags, h.parentnodeanchor, h.childnodeanchor')
             ->from('ancestry', 'cn')
-            ->innerJoin('cn', $this->nodeQueryBuilder->tableNames->node(), 'pn', 'pn.relationanchorpoint = cn.parentnodeanchor')
-            ->innerJoin('pn', $this->nodeQueryBuilder->tableNames->hierarchyRelation(), 'h', 'h.childnodeanchor = pn.relationanchorpoint')
+            ->innerJoin('cn', $this->nodeQueryBuilder->tableNames->hierarchyRelation(), 'h', 'h.childnodeanchor = cn.parentnodeanchor')
             ->where('h.contentstreamid = :contentStreamId')
             ->andWhere('h.dimensionspacepointhash = :dimensionSpacePointHash');
         $this->addSubtreeTagConstraints($queryBuilderRecursive);
 
-        $queryBuilderCte = $this->nodeQueryBuilder->buildBasicNodesCteQuery($entryNodeAggregateId, $this->contentStreamId, $this->dimensionSpacePoint);
+        $queryBuilderCte = $this->nodeQueryBuilder->buildBasicNodesCteQuery($entryNodeAggregateId, $this->contentStreamId, $this->dimensionSpacePoint, 'ancestry', 'a');
+        // 3) Finally we join the node table to all collected parent node anchor
+        $queryBuilderCte->innerJoin('a', $this->nodeQueryBuilder->tableNames->node(), 'pn', 'pn.relationanchorpoint = a.childnodeanchor AND pn.nodeaggregateid <> :entryNodeAggregateId');
+
         if ($filter->nodeTypes !== null) {
             $this->nodeQueryBuilder->addNodeTypeCriteria($queryBuilderCte, ExpandedNodeTypeCriteria::create($filter->nodeTypes, $this->nodeTypeManager), 'pn');
         }
