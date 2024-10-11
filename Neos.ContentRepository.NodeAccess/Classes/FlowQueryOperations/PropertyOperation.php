@@ -23,14 +23,14 @@ use Neos\Eel\FlowQuery\FlowQuery;
 use Neos\Eel\FlowQuery\FlowQueryException;
 use Neos\Eel\FlowQuery\Operations\AbstractOperation;
 use Neos\Flow\Annotations as Flow;
-use Neos\Neos\Utility\NodeTypeWithFallbackProvider;
 use Neos\Utility\ObjectAccess;
 
 /**
  * Used to access properties of a ContentRepository Node. If the property mame is
  * prefixed with _, internal node properties like start time, end time,
  * hidden are accessed.
- * @deprecated please use ${node.properties.title} or ${node.properties[propertyName]} instead. For resolving references leverage ${q(node).referenceNodes("someReferenceName")} instead.
+ * @deprecated with Neos 9.0 for simple case like ${q(node).property(propertyName)} please use ${node.properties.title} or ${node.properties[propertyName]} instead.
+ * For resolving references leverage ${q(node).referenceNodes("someReferenceName")} instead.
  */
 class PropertyOperation extends AbstractOperation
 {
