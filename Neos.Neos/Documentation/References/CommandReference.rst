@@ -222,6 +222,57 @@ Options
 
 
 
+.. _`Neos Command Reference: NEOS.CONTENTREPOSITORY.MIGRATION neos.contentrepository.migration:node:migrate`:
+
+``neos.contentrepository.migration:node:migrate``
+*************************
+
+**Execute node migrations**
+
+This command executes pending migrations via the ``Version`` key for content repository nodes. It applies the necessary changes to bring the nodes up-to-date with the current codebase, based on the migration history and the content structure. It ensures that the nodes are correctly migrated to the latest version.
+
+Arguments
+^^^^^^^^^
+``--version``
+The version of the migration configuration you want to use.
+
+Options
+^^^^^^^
+
+``--confirmation``
+Confirm application of this migration, only needed if the given migration contains any warnings.
+
+``--direction``
+The direction to work in, ``MigrationStatus::DIRECTION_UP`` or ``MigrationStatus::DIRECTION_DOWN``
+But by default, the up option is applied.
+
+Example
+^^^^^^^
+
+.. code-block:: bash
+  ./flow node:migrate 20230228123136
+
+.. _`Neos Command Reference: NEOS.CONTENTREPOSITORY.MIGRATION neos.contentrepository.migration:node:migrationstatus`:
+
+``neos.contentrepository.migration:node:migrationstatus``
+*************************
+
+**List of available, and applied migrations**
+
+This command gives you a list of all available node migrations, and shows also which node migrations have been executed already.
+
+Example
+^^^^^^^
+.. code-block:: bash
+  ./flow node:migrationstatus
+
++----------------+---------------------+------------------------+--------------------------------------------------------------+
+| Version        | Date                | Package                | Comments                                                     |
++================+=====================+========================+==============================================================+
+| 20230228123136 | 10-02-2023 12:31:36 | Neos.Demo              | Renames property A to property B in my NodeType             |
+| 20230228143841 | 28-02-2023 14:38:41 | Neos.Demo              | Renames my NodeType Foo to my new NodeType Bar               |
++----------------+---------------------+------------------------+--------------------------------------------------------------+
+
 .. _`Neos Command Reference: NEOS.FLOW`:
 
 Package *NEOS.FLOW*
