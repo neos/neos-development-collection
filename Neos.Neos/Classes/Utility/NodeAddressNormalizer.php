@@ -8,7 +8,6 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\AbsoluteNodePath;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodePath;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAddress;
-use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\Annotations as Flow;
 
@@ -22,9 +21,10 @@ final class NodeAddressNormalizer
      *
      * Following string syntax is allowed, as well as passing a NodePath or AbsoluteNodePath value object:
      *
-     *  - node://my-node-identifier
      *  - /<Neos.Neos:Sites>/my-site/main
      *  - some/relative/path
+     *
+     * The node protocol node://my-node-identifier is not handled here.
      *
      * The following legacy syntax is not implemented and handled here:
      *
@@ -40,12 +40,6 @@ final class NodeAddressNormalizer
     {
         if ($path === '') {
             throw new \RuntimeException('Empty strings can not be resolved to nodes.', 1719999872);
-        }
-
-        if (is_string($path) && str_starts_with($path, 'node://')) {
-            return NodeAddress::fromNode($baseNode)->withAggregateId(
-                NodeAggregateId::fromString(substr($path, strlen('node://')))
-            );
         }
 
         $subgraph = $this->contentRepositoryRegistry->subgraphForNode($baseNode);

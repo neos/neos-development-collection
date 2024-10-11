@@ -114,16 +114,12 @@ Feature: Tests for the "Neos.Neos:NodeUri" Fusion prototype
       relativePath = Neos.Neos:NodeUri {
         node = 'a1'
       }
-      nodeIdentifier = Neos.Neos:NodeUri {
-        node = 'node://a1'
-      }
     }
     """
     Then I expect the following Fusion rendering result:
     """
     sitesRootPath: /a1
     relativePath: /a1
-    nodeIdentifier: /a1
     """
 
   Scenario: Node as legacy string node path syntax

@@ -16,6 +16,7 @@ namespace Neos\Neos\ViewHelpers\Link;
 
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAddress;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Log\ThrowableStorageInterface;
@@ -256,11 +257,17 @@ class NodeViewHelper extends AbstractTagBasedViewHelper
                 ), 1719953186);
             }
 
-            $possibleAbsoluteNodePath = $this->legacyNodePathNormalizer->tryResolveLegacyPathSyntaxToAbsoluteNodePath($node, $baseNode);
-            $nodeAddress = $this->nodeAddressNormalizer->resolveNodeAddressFromPath(
-                $possibleAbsoluteNodePath ?? $node,
-                $baseNode
-            );
+            if (str_starts_with($node, 'node://')) {
+                $nodeAddress = NodeAddress::fromNode($baseNode)->withAggregateId(
+                    NodeAggregateId::fromString(substr($node, strlen('node://')))
+                );
+            } else {
+                $possibleAbsoluteNodePath = $this->legacyNodePathNormalizer->tryResolveLegacyPathSyntaxToAbsoluteNodePath($node, $baseNode);
+                $nodeAddress = $this->nodeAddressNormalizer->resolveNodeAddressFromPath(
+                    $possibleAbsoluteNodePath ?? $node,
+                    $baseNode
+                );
+            }
 
             $subgraph = $this->contentRepositoryRegistry->subgraphForNode($baseNode);
             $resolvedNode = $subgraph->findNodeById($nodeAddress->aggregateId);

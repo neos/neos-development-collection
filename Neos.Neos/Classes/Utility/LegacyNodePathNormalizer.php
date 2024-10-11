@@ -31,7 +31,6 @@ final class LegacyNodePathNormalizer
      *
      * The following syntax is not implemented and handled here:
      *
-     *  - node://my-node-identifier
      *  - /<Neos.Neos:Sites>/my-site/main
      *  - some/relative/path
      *
