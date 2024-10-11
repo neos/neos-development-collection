@@ -237,13 +237,14 @@ class Node implements NodeInterface, CacheAwareInterface, TraversableNodeInterfa
     protected function setPathInternal(string $destinationPath, bool $recursiveCall): array
     {
         $originalPath = $this->nodeData->getPath();
-
-        /** @var Node $childNode */
-        foreach ($this->getChildNodes() as $childNode) {
-            $childNode->setPath(NodePaths::addNodePathSegment($destinationPath, $childNode->getName()), false);
-        }
+        $childNodes = $this->getChildNodes();
 
         $this->moveNodeToDestinationPath($this, $destinationPath);
+
+        /** @var Node $childNode */
+        foreach ($childNodes as $childNode) {
+            $childNode->setPath(NodePaths::addNodePathSegment($destinationPath, $childNode->getName()), false);
+        }
 
         return [
             [$this, $originalPath, $this->getNodeData()->getPath(), $recursiveCall]
