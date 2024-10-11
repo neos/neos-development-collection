@@ -65,7 +65,7 @@ class SiteService
     protected $assetCollectionRepository;
 
     /**
-     * @Flow\Inject
+     * @Flow\Inject(lazy=false)
      * @var WorkspaceService
      */
     protected $workspaceService;
