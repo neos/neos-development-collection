@@ -29,17 +29,12 @@ use Neos\Flow\Annotations as Flow;
 use Neos\Neos\Domain\Exception;
 use Neos\Neos\Domain\Service\NodeTypeNameFactory;
 use Neos\Neos\Presentation\VisualNodePath;
-use Neos\Neos\Utility\NodeTypeWithFallbackProvider;
 
 /**
  * Eel helper for ContentRepository Nodes
  */
 class NodeHelper implements ProtectedContextAwareInterface
 {
-    use NodeTypeWithFallbackProvider {
-        getNodeType as getNodeTypeInternal;
-    }
-
     #[Flow\Inject]
     protected ContentRepositoryRegistry $contentRepositoryRegistry;
 
@@ -139,12 +134,16 @@ class NodeHelper implements ProtectedContextAwareInterface
      */
     public function isOfType(Node $node, string $nodeType): bool
     {
-        return $this->getNodeTypeInternal($node)->isOfType($nodeType);
+        $contentRepository = $this->contentRepositoryRegistry->get($node->contentRepositoryId);
+        return (bool)$contentRepository->getNodeTypeManager()
+            ->getNodeType($node->nodeTypeName)?->isOfType($nodeType);
     }
 
-    public function getNodeType(Node $node): NodeType
+    public function getNodeType(Node $node): ?NodeType
     {
-        return $this->getNodeTypeInternal($node);
+        $contentRepository = $this->contentRepositoryRegistry->get($node->contentRepositoryId);
+        return $contentRepository->getNodeTypeManager()
+            ->getNodeType($node->nodeTypeName);
     }
 
     public function isNodeTypeExistent(Node $node): bool
