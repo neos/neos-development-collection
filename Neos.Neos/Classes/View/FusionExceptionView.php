@@ -106,11 +106,11 @@ class FusionExceptionView extends AbstractView
             return $this->renderErrorWelcomeScreen();
         }
 
-        $fusionExceptionViewInternals = $this->contentRepositoryRegistry->buildService(
-            $siteDetectionResult->contentRepositoryId,
-            new FusionExceptionViewInternalsFactory()
-        );
-        $dimensionSpacePoint = $fusionExceptionViewInternals->getArbitraryDimensionSpacePoint();
+        $interDimensionalVariationGraph = $this->contentRepositoryRegistry->get($siteDetectionResult->contentRepositoryId)
+            ->getVariationGraph();
+
+        $rootDimensionSpacePoints = $interDimensionalVariationGraph->getRootGeneralizations();
+        $arbitraryRootDimensionSpacePoint = array_shift($rootDimensionSpacePoints);
 
         $site = $this->siteRepository->findOneByNodeName($siteDetectionResult->siteNodeName);
 
@@ -122,7 +122,7 @@ class FusionExceptionView extends AbstractView
             $currentSiteNode = $this->siteNodeUtility->findSiteNodeBySite(
                 $site,
                 WorkspaceName::forLive(),
-                $dimensionSpacePoint,
+                $arbitraryRootDimensionSpacePoint,
                 VisibilityConstraints::frontend()
             );
         } catch (WorkspaceDoesNotExist | \RuntimeException) {
@@ -141,7 +141,7 @@ class FusionExceptionView extends AbstractView
 
         $fusionRuntime = $this->getFusionRuntime($currentSiteNode, $request);
 
-        $this->setFallbackRuleFromDimension($dimensionSpacePoint);
+        $this->setFallbackRuleFromDimension($arbitraryRootDimensionSpacePoint);
 
         return $fusionRuntime->renderEntryPathWithContext('error', array_merge(
             $this->variables,
