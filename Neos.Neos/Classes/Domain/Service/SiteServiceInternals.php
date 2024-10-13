@@ -18,7 +18,6 @@ use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\DimensionSpace\InterDimensionalVariationGraph;
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
-use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceInterface;
 use Neos\ContentRepository\Core\Feature\NodeCreation\Command\CreateNodeAggregateWithNode;
 use Neos\ContentRepository\Core\Feature\NodeModification\Dto\PropertyValuesToWrite;
 use Neos\ContentRepository\Core\Feature\NodeRemoval\Command\RemoveNodeAggregate;
@@ -35,14 +34,21 @@ use Neos\Neos\Domain\Exception\SiteNodeTypeIsInvalid;
 use Neos\Neos\Domain\Model\Site;
 use Neos\Neos\Domain\Model\SiteNodeName;
 
-readonly class SiteServiceInternals implements ContentRepositoryServiceInterface
+/**
+ * @internal FIXME refactor and incorporate into SiteService
+ */
+readonly class SiteServiceInternals
 {
+    private NodeTypeManager $nodeTypeManager;
+
+    private InterDimensionalVariationGraph $interDimensionalVariationGraph;
+
     public function __construct(
         private ContentRepository $contentRepository,
-        private InterDimensionalVariationGraph $interDimensionalVariationGraph,
-        private NodeTypeManager $nodeTypeManager,
         private WorkspaceService $workspaceService,
     ) {
+        $this->nodeTypeManager = $this->contentRepository->getNodeTypeManager();
+        $this->interDimensionalVariationGraph = $this->contentRepository->getVariationGraph();
     }
 
     public function removeSiteNode(SiteNodeName $siteNodeName): void
