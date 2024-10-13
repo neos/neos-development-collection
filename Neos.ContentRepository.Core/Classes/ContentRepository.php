@@ -200,6 +200,15 @@ final class ContentRepository
         $catchUpHook?->onAfterCatchUp();
     }
 
+    public function catchupProjections(): void
+    {
+        foreach ($this->projectionsAndCatchUpHooks->projections as $projection) {
+            // FIXME optimise by only loading required events once and not per projection
+            // see https://github.com/neos/neos-development-collection/pull/4988/
+            $this->catchUpProjection($projection::class, CatchUpOptions::create());
+        }
+    }
+
     public function setUp(): void
     {
         $this->eventStore->setup();
