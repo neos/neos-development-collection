@@ -135,7 +135,6 @@ final class ContentRepositoryFactory
                 new ContentStreamCommandHandler(
                 ),
                 new WorkspaceCommandHandler(
-                    $this->buildEventPersister(),
                     $this->projectionFactoryDependencies->eventStore,
                     $this->projectionFactoryDependencies->eventNormalizer,
                 ),
@@ -165,7 +164,6 @@ final class ContentRepositoryFactory
             $this->eventPersister = new EventPersister(
                 $this->projectionFactoryDependencies->eventStore,
                 $this->projectionFactoryDependencies->eventNormalizer,
-                $this->projectionsAndCatchUpHooks->projections,
             );
         }
         return $this->eventPersister;

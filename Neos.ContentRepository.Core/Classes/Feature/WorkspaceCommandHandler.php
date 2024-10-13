@@ -87,7 +87,6 @@ use Neos\EventStore\Model\EventStream\ExpectedVersion;
 final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
 {
     public function __construct(
-        private EventPersister $eventPersister,
         private EventStoreInterface $eventStore,
         private EventNormalizer $eventNormalizer,
     ) {
@@ -240,7 +239,7 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
         $baseWorkspace = $this->requireBaseWorkspace($workspace, $commandHandlingDependencies->getWorkspaceFinder());
 
         $this->publishContentStream(
-            $contentRepository,
+            $commandHandlingDependencies,
             $workspace->currentContentStreamId,
             $baseWorkspace->workspaceName,
             $baseWorkspace->currentContentStreamId
@@ -277,11 +276,11 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
      * @throws \Exception
      */
     private function publishContentStream(
-        ContentRepository $contentRepository,
+        CommandHandlingDependencies $commandHandlingDependencies,
         ContentStreamId $contentStreamId,
         WorkspaceName $baseWorkspaceName,
         ContentStreamId $baseContentStreamId,
-    ): ?CommandResult {
+    ): void {
         $baseWorkspaceContentStreamName = ContentStreamEventStreamName::fromContentStreamId(
             $baseContentStreamId
         );
@@ -326,11 +325,10 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
         }
 
         if (count($events) === 0) {
-            return null;
+            return;
         }
         try {
-            return $this->eventPersister->publishEvents(
-                $contentRepository,
+            $commandHandlingDependencies->publishEvents(
                 new EventsToPublish(
                     $baseWorkspaceContentStreamName->getEventStreamName(),
                     Events::fromArray($events),
@@ -543,7 +541,7 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
 
             // 5) take EVENTS(MATCHING) and apply them to base WS.
             $this->publishContentStream(
-                $contentRepository,
+                $commandHandlingDependencies,
                 $command->contentStreamIdForMatchingPart,
                 $baseWorkspace->workspaceName,
                 $baseWorkspace->currentContentStreamId

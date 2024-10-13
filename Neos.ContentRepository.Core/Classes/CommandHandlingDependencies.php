@@ -16,6 +16,8 @@ namespace Neos\ContentRepository\Core;
 
 use Neos\ContentRepository\Core\CommandHandler\CommandInterface;
 use Neos\ContentRepository\Core\CommandHandler\CommandResult;
+use Neos\ContentRepository\Core\EventStore\EventPersister;
+use Neos\ContentRepository\Core\EventStore\EventsToPublish;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphInterface;
 use Neos\ContentRepository\Core\Projection\ContentStream\ContentStreamFinder;
 use Neos\ContentRepository\Core\Projection\Workspace\WorkspaceFinder;
@@ -37,13 +39,20 @@ final class CommandHandlingDependencies
      */
     private array $overridenContentGraphInstances = [];
 
-    public function __construct(private readonly ContentRepository $contentRepository)
-    {
+    public function __construct(
+        private readonly ContentRepository $contentRepository,
+        private readonly EventPersister $eventPersister
+    ) {
     }
 
     public function handle(CommandInterface $command): CommandResult
     {
         return $this->contentRepository->handle($command);
+    }
+
+    public function publishEvents(EventsToPublish $eventsToPublish): void
+    {
+        $this->eventPersister->publishEvents($this->contentRepository, $eventsToPublish);
     }
 
     public function getWorkspaceFinder(): WorkspaceFinder

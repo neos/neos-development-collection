@@ -38,7 +38,7 @@ class StructureAdjustmentService implements ContentRepositoryServiceInterface
     private readonly ContentGraphInterface $liveContentGraph;
 
     public function __construct(
-        ContentRepository $contentRepository,
+        private readonly ContentRepository $contentRepository,
         private readonly EventPersister $eventPersister,
         NodeTypeManager $nodeTypeManager,
         InterDimensionalVariationGraph $interDimensionalVariationGraph,

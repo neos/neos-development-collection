@@ -22,7 +22,6 @@ final readonly class EventPersister
     public function __construct(
         private EventStoreInterface $eventStore,
         private EventNormalizer $eventNormalizer,
-        private Projections $projections,
     ) {
     }
 
