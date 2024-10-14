@@ -101,6 +101,18 @@ class NodeHelper implements ProtectedContextAwareInterface
     }
 
     /**
+     * Generate a label for a node with a chaining mechanism. To be used in NodeType definition:
+     *
+     *     'Vendor.Site:MyContent':
+     *       label: "${Neos.Node.labelForNode(node).prefix('foo')}"
+     *
+     */
+    public function labelForNode(Node $node): NodeLabelToken
+    {
+        return new NodeLabelToken($node);
+    }
+
+    /**
      * Renders the actual node label based on the NodeType definition in Fusion.
      */
     public function label(Node $node): string
