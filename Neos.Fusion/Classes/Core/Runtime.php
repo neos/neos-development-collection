@@ -696,7 +696,13 @@ class Runtime
             $this->eelEvaluator->_activateDependency();
         }
 
-        return EelUtility::evaluateEelExpression($expression, $this->eelEvaluator, $contextVariables);
+        $tracer = match ($this->settings['deprecationTracer'] ?? null) {
+            'LOG' => new EelNeosDeprecationTracer($expression, false),
+            'EXCEPTION' => new EelNeosDeprecationTracer($expression, true),
+            default => null
+        };
+
+        return EelUtility::evaluateEelExpression($expression, $this->eelEvaluator, $contextVariables, [], $tracer);
     }
 
     /**
