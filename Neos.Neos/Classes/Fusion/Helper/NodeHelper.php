@@ -158,11 +158,17 @@ class NodeHelper implements ProtectedContextAwareInterface
             return $node;
         } else {
             if ($nodePath === null || $nodePath === '') {
+                $nodePathOfNode = VisualNodePath::buildFromAncestors(
+                    $node,
+                    $this->contentRepositoryRegistry->get($node->contentRepositoryId),
+                    $this->nodeLabelGenerator
+                );
                 throw new Exception(sprintf(
-                    'No content collection of type %s could be found in the current node and no node path was provided.'
+                    'No content collection of type %s could be found in the current node (%s) and no node path was provided.'
                     . ' You might want to configure the nodePath property'
                     . ' with a relative path to the content collection.',
-                    $contentCollectionType
+                    $contentCollectionType,
+                    $nodePathOfNode->value
                 ), 1409300545);
             }
             $nodePath = NodePath::fromString($nodePath);
@@ -173,13 +179,10 @@ class NodeHelper implements ProtectedContextAwareInterface
             if ($subNode !== null && $this->isOfType($subNode, $contentCollectionType)) {
                 return $subNode;
             } else {
-                $nodePathOfNode = VisualNodePath::fromAncestors(
+                $nodePathOfNode = VisualNodePath::buildFromAncestors(
                     $node,
-                    $this->contentRepositoryRegistry->subgraphForNode($node)
-                        ->findAncestorNodes(
-                            $node->aggregateId,
-                            FindAncestorNodesFilter::create()
-                        )
+                    $this->contentRepositoryRegistry->get($node->contentRepositoryId),
+                    $this->nodeLabelGenerator
                 );
                 throw new Exception(sprintf(
                     'No content collection of type %s could be found in the current node (%s) or at the path "%s".'
