@@ -94,7 +94,6 @@ readonly class NodeMigrationService implements ContentRepositoryServiceInterface
         }
 
         foreach ($command->migrationConfiguration->getMigration() as $migrationDescription) {
-            /** @var array $migrationDescription */
             $this->executeSubMigration(
                 $migrationDescription,
                 $sourceWorkspace,

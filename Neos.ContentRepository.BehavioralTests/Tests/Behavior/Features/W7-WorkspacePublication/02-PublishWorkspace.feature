@@ -37,8 +37,6 @@ Feature: Workspace based content publishing
       | nodeAggregateId           | "nody-mc-nodeface"   |
       | originDimensionSpacePoint | {}                   |
       | propertyValues            | {"text": "Original"} |
-    # we need to ensure that the projections are up to date now; otherwise a content stream is forked with an out-
-    # of-date base version. This means the content stream can never be merged back, but must always be rebased.
     And the command CreateWorkspace is executed with payload:
       | Key                | Value                |
       | workspaceName      | "user-test"          |

@@ -793,8 +793,6 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
             )
         );
 
-        // It is safe to only return the last command result,
-        // as the commands which were rebased are already executed "synchronously"
         return new EventsToPublish(
             $streamName,
             $events,
