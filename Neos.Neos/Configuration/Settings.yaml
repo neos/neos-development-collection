@@ -422,7 +422,7 @@ Neos:
           Json: Neos\Eel\Helper\JsonHelper
           I18n: Neos\Flow\I18n\EelHelper\TranslationHelper
           q: Neos\Eel\FlowQuery\FlowQuery::q
-          Neos.Node: Neos\Neos\Fusion\Helper\NodeHelper
+          Neos.Node: Neos\Neos\Fusion\Helper\NodeLabelHelper
 
   Flow:
     aop:
