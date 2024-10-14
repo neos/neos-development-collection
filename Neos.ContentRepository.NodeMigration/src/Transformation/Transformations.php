@@ -90,7 +90,7 @@ final class Transformations
         return $nonEmptyTransformationTypes > 1;
     }
 
-    public function executeGlobalAndBlock(
+    public function executeGlobal(
         WorkspaceName $workspaceNameForWriting,
     ): void {
         foreach ($this->globalTransformations as $globalTransformation) {
@@ -98,7 +98,7 @@ final class Transformations
         }
     }
 
-    public function executeNodeAggregateBasedAndBlock(
+    public function executeNodeAggregateBased(
         NodeAggregate $nodeAggregate,
         WorkspaceName $workspaceNameForWriting,
         ContentStreamId $contentStreamForWriting
@@ -108,7 +108,7 @@ final class Transformations
         }
     }
 
-    public function executeNodeBasedAndBlock(
+    public function executeNodeBased(
         Node $node,
         DimensionSpacePointSet $coveredDimensionSpacePoints,
         WorkspaceName $workspaceNameForWriting,
