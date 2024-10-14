@@ -290,8 +290,7 @@ class LinkingService
         $mainRequest = $controllerContext->getRequest()->getMainRequest();
         $uriBuilder = clone $controllerContext->getUriBuilder();
         $uriBuilder->setRequest($mainRequest);
-        // todo why do we evaluate the hidden state here? We dont do it in the new uri builder.
-        $createLiveUri = $workspace && $workspace->isPublicWorkspace() && $resolvedNode->tags->contain(SubtreeTag::disabled());
+        $createLiveUri = $workspace && $workspace->isPublicWorkspace() && !$resolvedNode->tags->contain(SubtreeTag::disabled());
 
         if ($addQueryString === true) {
             // legacy feature see https://github.com/neos/neos-development-collection/issues/5076
