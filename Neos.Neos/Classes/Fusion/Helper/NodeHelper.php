@@ -29,12 +29,17 @@ use Neos\Flow\Annotations as Flow;
 use Neos\Neos\Domain\Exception;
 use Neos\Neos\Domain\Service\NodeTypeNameFactory;
 use Neos\Neos\Presentation\VisualNodePath;
+use Neos\Neos\Utility\NodeTypeWithFallbackProvider;
 
 /**
  * Eel helper for ContentRepository Nodes
  */
 class NodeHelper implements ProtectedContextAwareInterface
 {
+    use NodeTypeWithFallbackProvider {
+        getNodeType as legacyGetNodeTypeWithFallback;
+    }
+
     #[Flow\Inject]
     protected ContentRepositoryRegistry $contentRepositoryRegistry;
 
@@ -129,6 +134,21 @@ class NodeHelper implements ProtectedContextAwareInterface
     }
 
     /**
+     * Retrieving the NodeType of the given Node.
+     *
+     * If the NodeType schema changed and the NodeType does not exist anymore, NULL is returned.
+     *
+     * @param Node $node
+     * @return NodeType|null
+     */
+    public function nodeType(Node $node): ?NodeType
+    {
+        $contentRepository = $this->contentRepositoryRegistry->get($node->contentRepositoryId);
+        return $contentRepository->getNodeTypeManager()
+            ->getNodeType($node->nodeTypeName);
+    }
+
+    /**
      * If this node type or any of the direct or indirect super types
      * has the given name.
      */
@@ -139,32 +159,42 @@ class NodeHelper implements ProtectedContextAwareInterface
             ->getNodeType($node->nodeTypeName)?->isOfType($nodeType);
     }
 
-    public function getNodeType(Node $node): ?NodeType
+    public function isDisabled(Node $node): bool
     {
-        $contentRepository = $this->contentRepositoryRegistry->get($node->contentRepositoryId);
-        return $contentRepository->getNodeTypeManager()
-            ->getNodeType($node->nodeTypeName);
+        return $node->tags->contain(SubtreeTag::disabled());
     }
 
+    /**
+     * @internal should not be required to be used for integration
+     */
     public function isNodeTypeExistent(Node $node): bool
     {
         $contentRepository = $this->contentRepositoryRegistry->get($node->contentRepositoryId);
         return $contentRepository->getNodeTypeManager()->hasNodeType($node->nodeTypeName);
     }
 
+    /**
+     * @deprecated with 9.0.0-beta14 please use Neos.Node.nodeType() instead and dont rely on the fallback behaviour
+     */
+    public function getNodeType(Node $node): NodeType
+    {
+        return $this->legacyGetNodeTypeWithFallback($node);
+    }
+
+    /**
+     * @internal experimental API without documentation and clear use-case
+     */
     public function serializedNodeAddress(Node $node): string
     {
         return NodeAddress::fromNode($node)->toJson();
     }
 
+    /**
+     * @internal experimental API without documentation and clear use-case
+     */
     public function subgraphForNode(Node $node): ContentSubgraphInterface
     {
         return $this->contentRepositoryRegistry->subgraphForNode($node);
-    }
-
-    public function isDisabled(Node $node): bool
-    {
-        return $node->tags->contain(SubtreeTag::disabled());
     }
 
     /**
