@@ -13,7 +13,8 @@ use Neos\Flow\Annotations as Flow;
 use Neos\Neos\Domain\Service\NodeTypeNameFactory;
 
 /**
- * @deprecated please use the new {@see AbsoluteNodePath} syntax instead.
+ * @deprecated the syntax is deprecated and not part of the content repository core
+ * @internal implementation detail of Neos.Neos:NodeUri
  */
 final class LegacyNodePathNormalizer
 {
