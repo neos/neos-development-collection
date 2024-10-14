@@ -1046,8 +1046,6 @@ Example: ``/sites/acmecom/home/about/us``
 The given path is treated as a path relative to the current node.
 Examples: given that the current node is ``/sites/acmecom/products/``,
 ``stapler`` results in ``/sites/acmecom/products/stapler``,
-``../about`` results in ``/sites/acmecom/about/``,
-``./neos/info`` results in ``/sites/acmecom/products/neos/info``.
 
 *``node`` starts with a tilde character (``~``):*
 The given path is treated as a path relative to the current site node.
@@ -1076,8 +1074,6 @@ Arguments
 * ``baseNodeName`` (string, *optional*): The name of the base node inside the Fusion context to use for the ContentContext or resolving relative paths
 
 * ``nodeVariableName`` (string, *optional*): The variable the node will be assigned to for the rendered child content
-
-* ``resolveShortcuts`` (boolean, *optional*): INTERNAL Parameter - if false, shortcuts are not redirected to their target. Only needed on rare backend occasions when we want to link to the shortcut itself
 
 
 
