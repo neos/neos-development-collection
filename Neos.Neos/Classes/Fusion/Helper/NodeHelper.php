@@ -53,13 +53,13 @@ class NodeHelper implements ProtectedContextAwareInterface
      *
      * @throws Exception
      */
-    public function nearestContentCollection(Node $node, string $nodePath): Node
+    public function nearestContentCollection(Node $node, ?string $nodePath): Node
     {
         $contentCollectionType = NodeTypeNameFactory::NAME_CONTENT_COLLECTION;
         if ($this->isOfType($node, $contentCollectionType)) {
             return $node;
         } else {
-            if ($nodePath === '') {
+            if ($nodePath === null || $nodePath === '') {
                 throw new Exception(sprintf(
                     'No content collection of type %s could be found in the current node and no node path was provided.'
                     . ' You might want to configure the nodePath property'
