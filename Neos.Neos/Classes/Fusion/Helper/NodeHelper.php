@@ -27,6 +27,7 @@ use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Eel\ProtectedContextAwareInterface;
 use Neos\Flow\Annotations as Flow;
 use Neos\Neos\Domain\Exception;
+use Neos\Neos\Domain\NodeLabel\NodeLabelGeneratorInterface;
 use Neos\Neos\Domain\Service\NodeTypeNameFactory;
 use Neos\Neos\Presentation\VisualNodePath;
 use Neos\Neos\Utility\NodeTypeWithFallbackProvider;
@@ -42,6 +43,9 @@ class NodeHelper implements ProtectedContextAwareInterface
 
     #[Flow\Inject]
     protected ContentRepositoryRegistry $contentRepositoryRegistry;
+
+    #[Flow\Inject]
+    protected NodeLabelGeneratorInterface $nodeLabelGenerator;
 
     /**
      * Check if the given node is already a collection, find collection by nodePath otherwise, throw exception
@@ -93,15 +97,11 @@ class NodeHelper implements ProtectedContextAwareInterface
     }
 
     /**
-     * Generate a label for a node with a chaining mechanism. To be used in NodeType definition:
-     *
-     *     'Vendor.Site:MyContent':
-     *       label: "${Neos.Node.labelForNode(node).prefix('foo')}"
-     *
+     * Renders the actual node label based on the NodeType definition in Fusion.
      */
-    public function labelForNode(Node $node): NodeLabelToken
+    public function label(Node $node): string
     {
-        return new NodeLabelToken($node);
+        return $this->nodeLabelGenerator->getLabel($node);
     }
 
     /**
@@ -191,6 +191,19 @@ class NodeHelper implements ProtectedContextAwareInterface
     public function subgraphForNode(Node $node): ContentSubgraphInterface
     {
         return $this->contentRepositoryRegistry->subgraphForNode($node);
+    }
+
+    /**
+     * Return a builder to generate a label for a node with a chaining mechanism. To be used in NodeType definition:
+     *
+     *     'Vendor.Site:MyContent':
+     *       label: "${Neos.Node.labelForNode(node).prefix('foo')}"
+     *
+     * FIXME the method name is slightly ambiguous and not to confused with Neos.Node.label which renders the configured label from yaml
+     */
+    public function labelForNode(Node $node): NodeLabelToken
+    {
+        return new NodeLabelToken($node);
     }
 
     /**

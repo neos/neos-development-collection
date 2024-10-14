@@ -428,15 +428,14 @@ Feature: Tests for the "Neos.ContentRepository" Flow Query methods.
     sortByDateAsc: a1a1,a2
     """
 
-  Scenario: Node accessors (final Node access operations)
+  Scenario: Node field accessors
     When the Fusion context node is "a1"
     When I execute the following Fusion code:
     """fusion
     test = Neos.Fusion:DataStructure {
-      property = ${q(node).property('title')}
-      identifier = ${q(node).id()}
-      label = ${q(node).label()}
-      nodeTypeName = ${q(node).nodeTypeName()}
+      property = ${node.properties.title}
+      identifier = ${node.aggregateId}
+      nodeTypeName = ${node.nodeTypeName}
       @process.render = ${Json.stringify(value, ['JSON_PRETTY_PRINT'])}
     }
     """
@@ -445,29 +444,42 @@ Feature: Tests for the "Neos.ContentRepository" Flow Query methods.
     {
         "property": "Node a1",
         "identifier": "a1",
+        "nodeTypeName": "Neos.Neos:Test.DocumentType1"
+    }
+    """
+
+  Scenario: Node label rendering
+    When the Fusion context node is "a1"
+    When I execute the following Fusion code:
+    """fusion
+    test = Neos.Fusion:DataStructure {
+      label = ${Neos.Node.label(node)}
+      nodeTypeName = ${node.nodeTypeName}
+      @process.render = ${Json.stringify(value, ['JSON_PRETTY_PRINT'])}
+    }
+    """
+    Then I expect the following Fusion rendering result:
+    """
+    {
         "label": "Neos.Neos:Test.DocumentType1 (a1)",
         "nodeTypeName": "Neos.Neos:Test.DocumentType1"
     }
     """
-    # if the node type config is empty, the operation should still work
+    # if the node type config is empty, the label rendering should still work
     When I change the node types in content repository "default" to:
     """yaml
     """
     When I execute the following Fusion code:
     """fusion
     test = Neos.Fusion:DataStructure {
-      property = ${q(node).property('title')}
-      identifier = ${q(node).id()}
-      label = ${q(node).label()}
-      nodeTypeName = ${q(node).nodeTypeName()}
+      label = ${Neos.Node.label(node)}
+      nodeTypeName = ${node.nodeTypeName}
       @process.render = ${Json.stringify(value, ['JSON_PRETTY_PRINT'])}
     }
     """
     Then I expect the following Fusion rendering result:
     """
     {
-        "property": "Node a1",
-        "identifier": "a1",
         "label": "Neos.Neos:Test.DocumentType1 (a1)",
         "nodeTypeName": "Neos.Neos:Test.DocumentType1"
     }

@@ -12,7 +12,7 @@ prototype(Neos.NodeTypes:Headline) < prototype(Neos.Neos:ContentComponent) {
   #   attributes.class.@process.nodeType >
   # }
   # in your site's Fusion if you don't need that behavior.
-  attributes.class.@process.nodeType = ${Array.push(value, String.toLowerCase(String.pregReplace(node.nodeTypeName.value, '/[[:^alnum:]]/', '-')))}
+  attributes.class.@process.nodeType = ${Array.push(value, String.toLowerCase(String.pregReplace(node.nodeTypeName, '/[[:^alnum:]]/', '-')))}
 
   renderer = afx`
     <div {...props.attributes}>
