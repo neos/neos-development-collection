@@ -6,7 +6,6 @@ namespace Neos\ContentRepository\Core\EventStore;
 
 use Neos\ContentRepository\Core\CommandHandler\CommandResult;
 use Neos\ContentRepository\Core\ContentRepository;
-use Neos\ContentRepository\Core\Projection\Projections;
 use Neos\EventStore\EventStoreInterface;
 use Neos\EventStore\Exception\ConcurrencyException;
 use Neos\EventStore\Model\Events;
