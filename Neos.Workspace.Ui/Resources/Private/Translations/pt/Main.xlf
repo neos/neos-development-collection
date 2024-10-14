@@ -273,6 +273,10 @@
         <source>Do you really want to discard the selected changes in the "{0}" workspace?</source>
         <target state="translated">Deseja descartar as alterações selecionadas na área de trabalho "{0}"?</target>
       </trans-unit>
+      <trans-unit id="workspaces.workspaceHasBeenCreated" xml:space="preserve">
+        <source>The workspace "{0}" has been created.</source>
+        <target state="translated">A área de trabalho "{0}" foi criada.</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>
