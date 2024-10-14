@@ -453,7 +453,7 @@ Feature: Tests for the "Neos.ContentRepository" Flow Query methods.
     When I execute the following Fusion code:
     """fusion
     test = Neos.Fusion:DataStructure {
-      label = ${Neos.Node.getLabel(node)}
+      label = ${Neos.Node.label(node)}
       nodeTypeName = ${node.nodeTypeName}
       @process.render = ${Json.stringify(value, ['JSON_PRETTY_PRINT'])}
     }
@@ -472,7 +472,7 @@ Feature: Tests for the "Neos.ContentRepository" Flow Query methods.
     When I execute the following Fusion code:
     """fusion
     test = Neos.Fusion:DataStructure {
-      label = ${Neos.Node.getLabel(node)}
+      label = ${Neos.Node.label(node)}
       nodeTypeName = ${node.nodeTypeName}
       @process.render = ${Json.stringify(value, ['JSON_PRETTY_PRINT'])}
     }

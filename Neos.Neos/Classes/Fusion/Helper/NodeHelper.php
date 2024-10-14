@@ -103,7 +103,7 @@ class NodeHelper implements ProtectedContextAwareInterface
     /**
      * Renders the actual node label based on the NodeType definition in Fusion.
      */
-    public function getLabel(Node $node): string
+    public function label(Node $node): string
     {
         return $this->nodeLabelGenerator->getLabel($node);
     }
