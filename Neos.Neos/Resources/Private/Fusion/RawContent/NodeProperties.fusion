@@ -1,6 +1,6 @@
 prototype(Neos.Neos:RawContent.NodeProperties) < prototype(Neos.Fusion:Component) {
   @private {
-    items = ${Neos.Node.getNodeType(node).properties}
+    items = ${Neos.Node.nodeType(node).properties}
     items.@process.sort = ${Neos.Array.sortByPropertyPath(value, 'ui.inspector.position')}
   }
 
