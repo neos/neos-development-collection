@@ -696,7 +696,7 @@ class Runtime
             $this->eelEvaluator->_activateDependency();
         }
 
-        $tracer = match($this->settings['deprecationTracer'] ?? null) {
+        $tracer = match ($this->settings['deprecationTracer'] ?? null) {
             'LOG' => new EelNeosDeprecationTracer($expression, false),
             'EXCEPTION' => new EelNeosDeprecationTracer($expression, true),
             default => null
