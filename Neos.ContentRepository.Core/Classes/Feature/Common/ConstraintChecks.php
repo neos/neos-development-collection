@@ -32,6 +32,7 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindChildNodesFil
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindPrecedingSiblingNodesFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindSucceedingSiblingNodesFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Reference;
 use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
 use Neos\ContentRepository\Core\SharedModel\Exception\ContentStreamDoesNotExistYet;
 use Neos\ContentRepository\Core\SharedModel\Exception\ContentStreamIsClosed;
@@ -243,21 +244,23 @@ trait ConstraintChecks
         }
     }
 
-    protected function requireNodeTypeToAllowNumberOfReferencesInReference(SerializedNodeReferences $nodeReferences, ReferenceName $referenceName, NodeTypeName $nodeTypeName): void
+    protected function requireNodeTypeToAllowNumberOfReferencesInReference(SerializedNodeReferences $nodeReferences, NodeTypeName $nodeTypeName): void
     {
         $nodeType = $this->requireNodeType($nodeTypeName);
 
-        $maxItems = $nodeType->getReferences()[$referenceName->value]['constraints']['maxItems'] ?? null;
-        if ($maxItems === null) {
-            return;
-        }
+        foreach ($nodeReferences->references as $referenceName => $references) {
+            $maxItems = $nodeType->getReferences()[$referenceName]['constraints']['maxItems'] ?? null;
+            if ($maxItems === null) {
+                continue;
+            }
 
-        if ($maxItems < count($nodeReferences)) {
-            throw ReferenceCannotBeSet::becauseTheItemsCountConstraintsAreNotMatched(
-                $referenceName,
-                $nodeTypeName,
-                count($nodeReferences)
-            );
+            if ($maxItems < count($references)) {
+                throw ReferenceCannotBeSet::becauseTheItemsCountConstraintsAreNotMatched(
+                    ReferenceName::fromString($referenceName),
+                    $nodeTypeName,
+                    count($references)
+                );
+            }
         }
     }
 

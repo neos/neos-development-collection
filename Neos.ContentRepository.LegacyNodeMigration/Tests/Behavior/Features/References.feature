@@ -42,8 +42,8 @@ Feature: Migrations that contain nodes with "reference" or "references propertie
       | NodeAggregateWithNodeWasCreated     | {"nodeAggregateId": "a"}                                                                                                                                                                                              |
       | NodeAggregateWithNodeWasCreated     | {"nodeAggregateId": "b"}                                                                                                                                                                                              |
       | NodeAggregateWithNodeWasCreated     | {"nodeAggregateId": "c"}                                                                                                                                                                                              |
-      | NodeReferencesWereSet               | {"nodeAggregateId":"a","affectedSourceOriginDimensionSpacePoints":[[]],"referenceName":"ref","references":{"b":{"targetNodeAggregateId":"b","properties":null}}}                                                      |
-      | NodeReferencesWereSet               | {"nodeAggregateId":"c","affectedSourceOriginDimensionSpacePoints":[[]],"referenceName":"refs","references":{"a":{"targetNodeAggregateId":"a","properties":null},"b":{"targetNodeAggregateId":"b","properties":null}}} |
+      | NodeReferencesWereSet               | {"nodeAggregateId":"a","affectedSourceOriginDimensionSpacePoints":[[]],"references":{"ref": [{"target":"b","properties":null}]}}                                                      |
+      | NodeReferencesWereSet               | {"nodeAggregateId":"c","affectedSourceOriginDimensionSpacePoints":[[]],"references":{"refs":[{"target":"a","properties":null},{"target":"b","properties":null}]}} |
 
 
   Scenario: Node with references in one dimension
@@ -67,9 +67,9 @@ Feature: Migrations that contain nodes with "reference" or "references propertie
       | NodeAggregateWithNodeWasCreated     | {"nodeAggregateId": "a"}                                                                                                                                                                                                              |
       | NodeAggregateWithNodeWasCreated     | {"nodeAggregateId": "b"}                                                                                                                                                                                                              |
       | NodeAggregateWithNodeWasCreated     | {"nodeAggregateId": "c"}                                                                                                                                                                                                              |
-      | NodeReferencesWereSet               | {"nodeAggregateId":"a","affectedSourceOriginDimensionSpacePoints":[{"language": "en"}],"referenceName":"ref","references":{"b":{"targetNodeAggregateId":"b","properties":null}}}                                                      |
-      | NodeReferencesWereSet               | {"nodeAggregateId":"b","affectedSourceOriginDimensionSpacePoints":[{"language": "de"}],"referenceName":"ref","references":{"a":{"targetNodeAggregateId":"a","properties":null}}}                                                      |
-      | NodeReferencesWereSet               | {"nodeAggregateId":"c","affectedSourceOriginDimensionSpacePoints":[{"language": "ch"}],"referenceName":"refs","references":{"a":{"targetNodeAggregateId":"a","properties":null},"b":{"targetNodeAggregateId":"b","properties":null}}} |
+      | NodeReferencesWereSet               | {"nodeAggregateId":"a","affectedSourceOriginDimensionSpacePoints":[{"language": "en"}],"references":{"ref": [{"target":"b","properties":null}]}}                                                      |
+      | NodeReferencesWereSet               | {"nodeAggregateId":"b","affectedSourceOriginDimensionSpacePoints":[{"language": "de"}],"references":{"ref": [{"target":"a","properties":null}]}}                                                      |
+      | NodeReferencesWereSet               | {"nodeAggregateId":"c","affectedSourceOriginDimensionSpacePoints":[{"language": "ch"}],"references":{"refs":[{"target":"a","properties":null},{"target":"b","properties":null}]}} |
 
   Scenario: Nodes with properties that are not part of the node type schema (see https://github.com/neos/neos-development-collection/issues/4804)
     When I have the following node data rows:

@@ -21,8 +21,6 @@ use Neos\ContentRepository\Core\Feature\Common\RebasableToOtherWorkspaceInterfac
 use Neos\ContentRepository\Core\Feature\NodeReferencing\Dto\SerializedNodeReferences;
 use Neos\ContentRepository\Core\Feature\WorkspacePublication\Dto\NodeIdToPublishOrDiscard;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
-use Neos\ContentRepository\Core\SharedModel\Node\ReferenceName;
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 
 /**
@@ -42,14 +40,12 @@ final readonly class SetSerializedNodeReferences implements
      * @param WorkspaceName $workspaceName The workspace in which the create operation is to be performed
      * @param NodeAggregateId $sourceNodeAggregateId The identifier of the node aggregate to set references
      * @param OriginDimensionSpacePoint $sourceOriginDimensionSpacePoint The dimension space for which the references should be set
-     * @param ReferenceName $referenceName Name of the reference to set
      * @param SerializedNodeReferences $references Serialized reference(s) to set
      */
     private function __construct(
         public WorkspaceName $workspaceName,
         public NodeAggregateId $sourceNodeAggregateId,
         public OriginDimensionSpacePoint $sourceOriginDimensionSpacePoint,
-        public ReferenceName $referenceName,
         public SerializedNodeReferences $references,
     ) {
     }
@@ -58,12 +54,11 @@ final readonly class SetSerializedNodeReferences implements
      * @param WorkspaceName $workspaceName The workspace in which the create operation is to be performed
      * @param NodeAggregateId $sourceNodeAggregateId The identifier of the node aggregate to set references
      * @param OriginDimensionSpacePoint $sourceOriginDimensionSpacePoint The dimension space for which the references should be set
-     * @param ReferenceName $referenceName Name of the reference to set
      * @param SerializedNodeReferences $references Serialized reference(s) to set
      */
-    public static function create(WorkspaceName $workspaceName, NodeAggregateId $sourceNodeAggregateId, OriginDimensionSpacePoint $sourceOriginDimensionSpacePoint, ReferenceName $referenceName, SerializedNodeReferences $references): self
+    public static function create(WorkspaceName $workspaceName, NodeAggregateId $sourceNodeAggregateId, OriginDimensionSpacePoint $sourceOriginDimensionSpacePoint, SerializedNodeReferences $references): self
     {
-        return new self($workspaceName, $sourceNodeAggregateId, $sourceOriginDimensionSpacePoint, $referenceName, $references);
+        return new self($workspaceName, $sourceNodeAggregateId, $sourceOriginDimensionSpacePoint, $references);
     }
 
     /**
@@ -75,7 +70,6 @@ final readonly class SetSerializedNodeReferences implements
             WorkspaceName::fromString($array['workspaceName']),
             NodeAggregateId::fromString($array['sourceNodeAggregateId']),
             OriginDimensionSpacePoint::fromArray($array['sourceOriginDimensionSpacePoint']),
-            ReferenceName::fromString($array['referenceName']),
             SerializedNodeReferences::fromArray($array['references']),
         );
     }
@@ -103,7 +97,6 @@ final readonly class SetSerializedNodeReferences implements
             $targetWorkspaceName,
             $this->sourceNodeAggregateId,
             $this->sourceOriginDimensionSpacePoint,
-            $this->referenceName,
             $this->references,
         );
     }

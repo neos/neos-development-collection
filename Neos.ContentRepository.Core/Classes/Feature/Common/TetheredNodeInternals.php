@@ -18,6 +18,7 @@ use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
 use Neos\ContentRepository\Core\EventStore\Events;
 use Neos\ContentRepository\Core\Feature\NodeCreation\Event\NodeAggregateWithNodeWasCreated;
 use Neos\ContentRepository\Core\Feature\NodeModification\Dto\SerializedPropertyValues;
+use Neos\ContentRepository\Core\Feature\NodeReferencing\Dto\SerializedNodeReferences;
 use Neos\ContentRepository\Core\Feature\NodeVariation\Event\NodePeerVariantWasCreated;
 use Neos\ContentRepository\Core\Infrastructure\Property\PropertyConverter;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
@@ -104,6 +105,7 @@ trait TetheredNodeInternals
                             $tetheredNodeTypeDefinition->name,
                             $defaultProperties,
                             NodeAggregateClassification::CLASSIFICATION_TETHERED,
+                            SerializedNodeReferences::createEmpty()
                         );
                         $creationOriginDimensionSpacePoint = $rootGeneralizationOrigin;
                     }
@@ -124,6 +126,7 @@ trait TetheredNodeInternals
                     $tetheredNodeTypeDefinition->name,
                     $defaultProperties,
                     NodeAggregateClassification::CLASSIFICATION_TETHERED,
+                    SerializedNodeReferences::createEmpty(),
                 )
             );
         }

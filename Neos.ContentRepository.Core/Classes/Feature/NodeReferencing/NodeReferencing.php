@@ -19,11 +19,12 @@ use Neos\ContentRepository\Core\EventStore\Events;
 use Neos\ContentRepository\Core\EventStore\EventsToPublish;
 use Neos\ContentRepository\Core\Feature\Common\ConstraintChecks;
 use Neos\ContentRepository\Core\Feature\Common\NodeAggregateEventPublisher;
+use Neos\ContentRepository\Core\Feature\Common\NodeReferencingInternals;
 use Neos\ContentRepository\Core\Feature\ContentStreamEventStreamName;
 use Neos\ContentRepository\Core\Feature\NodeModification\Dto\PropertyScope;
 use Neos\ContentRepository\Core\Feature\NodeReferencing\Command\SetNodeReferences;
 use Neos\ContentRepository\Core\Feature\NodeReferencing\Command\SetSerializedNodeReferences;
-use Neos\ContentRepository\Core\Feature\NodeReferencing\Dto\NodeReferenceToWrite;
+use Neos\ContentRepository\Core\Feature\NodeReferencing\Dto\NodeReferenceNameToEmpty;
 use Neos\ContentRepository\Core\Feature\NodeReferencing\Dto\SerializedNodeReference;
 use Neos\ContentRepository\Core\Feature\NodeReferencing\Event\NodeReferencesWereSet;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphInterface;
@@ -37,6 +38,7 @@ use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 trait NodeReferencing
 {
     use ConstraintChecks;
+    use NodeReferencingInternals;
 
     abstract protected function requireProjectedNodeAggregate(
         ContentGraphInterface $contentGraph,
@@ -59,9 +61,12 @@ trait NodeReferencing
         $nodeTypeName = $sourceNodeAggregate->nodeTypeName;
 
         foreach ($command->references as $reference) {
+            if ($reference instanceof NodeReferenceNameToEmpty) {
+                continue;
+            }
             if ($reference->properties) {
                 $this->validateReferenceProperties(
-                    $command->referenceName,
+                    $reference->referenceName,
                     $reference->properties,
                     $nodeTypeName
                 );
@@ -72,20 +77,7 @@ trait NodeReferencing
             $command->workspaceName,
             $command->sourceNodeAggregateId,
             $command->sourceOriginDimensionSpacePoint,
-            $command->referenceName,
-            Dto\SerializedNodeReferences::fromReferences(array_map(
-                fn (NodeReferenceToWrite $reference): SerializedNodeReference => new SerializedNodeReference(
-                    $reference->targetNodeAggregateId,
-                    $reference->properties
-                        ? $this->getPropertyConverter()->serializeReferencePropertyValues(
-                            $reference->properties,
-                            $this->requireNodeType($nodeTypeName),
-                            $command->referenceName
-                        )
-                        : null
-                ),
-                $command->references->references
-            )),
+            $this->mapNodeReferencesToSerializedNodeReferences($command->references, $nodeTypeName),
         );
 
         return $this->handleSetSerializedNodeReferences($lowLevelCommand, $commandHandlingDependencies);
@@ -112,52 +104,58 @@ trait NodeReferencing
             $sourceNodeAggregate,
             $command->sourceOriginDimensionSpacePoint
         );
-        $this->requireNodeTypeToDeclareReference($sourceNodeAggregate->nodeTypeName, $command->referenceName);
+
+        $sourceNodeType = $this->requireNodeType($sourceNodeAggregate->nodeTypeName);
+        $events = [];
 
         $this->requireNodeTypeToAllowNumberOfReferencesInReference(
             $command->references,
-            $command->referenceName,
             $sourceNodeAggregate->nodeTypeName
         );
 
-        foreach ($command->references as $reference) {
-            assert($reference instanceof SerializedNodeReference);
-            $destinationNodeAggregate = $this->requireProjectedNodeAggregate(
-                $contentGraph,
-                $reference->targetNodeAggregateId
-            );
-            $this->requireNodeAggregateToNotBeRoot($destinationNodeAggregate);
-            $this->requireNodeAggregateToCoverDimensionSpacePoint(
-                $destinationNodeAggregate,
-                $command->sourceOriginDimensionSpacePoint->toDimensionSpacePoint()
-            );
-            $this->requireNodeTypeToAllowNodesOfTypeInReference(
-                $sourceNodeAggregate->nodeTypeName,
-                $command->referenceName,
-                $destinationNodeAggregate->nodeTypeName
-            );
-        }
+        foreach ($command->references->getReferenceNames() as $referenceName) {
+            $this->requireNodeTypeToDeclareReference($sourceNodeAggregate->nodeTypeName, $referenceName);
+            $scopeDeclaration = $sourceNodeType->getReferences()[$referenceName->value]['scope'] ?? '';
+            $scope = PropertyScope::tryFrom($scopeDeclaration) ?: PropertyScope::SCOPE_NODE;
+            // TODO: Optimize affected sets into one event
+            $affectedReferences = $command->references->getForReferenceName($referenceName);
 
-        $sourceNodeType = $this->requireNodeType($sourceNodeAggregate->nodeTypeName);
-        $scopeDeclaration = $sourceNodeType->getReferences()[$command->referenceName->value]['scope'] ?? '';
-        $scope = PropertyScope::tryFrom($scopeDeclaration) ?: PropertyScope::SCOPE_NODE;
+            foreach ($affectedReferences as $reference) {
+                if ($reference instanceof NodeReferenceNameToEmpty) {
+                    continue;
+                }
+                $destinationNodeAggregate = $this->requireProjectedNodeAggregate(
+                    $contentGraph,
+                    $reference->targetNodeAggregateId
+                );
+                $this->requireNodeAggregateToNotBeRoot($destinationNodeAggregate);
+                $this->requireNodeAggregateToCoverDimensionSpacePoint(
+                    $destinationNodeAggregate,
+                    $command->sourceOriginDimensionSpacePoint->toDimensionSpacePoint()
+                );
+                $this->requireNodeTypeToAllowNodesOfTypeInReference(
+                    $sourceNodeAggregate->nodeTypeName,
+                    $reference->referenceName,
+                    $destinationNodeAggregate->nodeTypeName
+                );
+            }
 
-        $affectedOrigins = $scope->resolveAffectedOrigins(
-            $command->sourceOriginDimensionSpacePoint,
-            $sourceNodeAggregate,
-            $this->interDimensionalVariationGraph
-        );
+            $affectedOrigins = $scope->resolveAffectedOrigins(
+                $command->sourceOriginDimensionSpacePoint,
+                $sourceNodeAggregate,
+                $this->interDimensionalVariationGraph
+            );
 
-        $events = Events::with(
-            new NodeReferencesWereSet(
+            $events[] = new NodeReferencesWereSet(
                 $contentGraph->getWorkspaceName(),
                 $contentGraph->getContentStreamId(),
                 $command->sourceNodeAggregateId,
                 $affectedOrigins,
-                $command->referenceName,
-                $command->references,
-            )
-        );
+                $affectedReferences,
+            );
+        }
+
+        $events = Events::fromArray($events);
 
         return new EventsToPublish(
             ContentStreamEventStreamName::fromContentStreamId($contentGraph->getContentStreamId())
