@@ -11,7 +11,10 @@ use Neos\ContentRepository\Core\SharedModel\Node\NodeAddress;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\Annotations as Flow;
 
-final class NodeAddressNormalizer
+/**
+ * @internal implementation detail of Neos.Neos:NodeUri
+ */
+final class NodePathResolver
 {
     #[Flow\Inject]
     protected ContentRepositoryRegistry $contentRepositoryRegistry;
@@ -36,7 +39,7 @@ final class NodeAddressNormalizer
      *
      * For handling partially legacy paths please preprocess the path using {@see LegacyNodePathNormalizer::tryResolveLegacyPathSyntaxToAbsoluteNodePath()}
      */
-    public function resolveNodeAddressFromPath(AbsoluteNodePath|NodePath|string $path, Node $baseNode): NodeAddress
+    public function resolveNodeAddressByPath(AbsoluteNodePath|NodePath|string $path, Node $baseNode): NodeAddress
     {
         if ($path === '') {
             throw new \RuntimeException('Empty strings can not be resolved to nodes.', 1719999872);

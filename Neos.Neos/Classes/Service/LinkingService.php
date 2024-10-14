@@ -32,7 +32,7 @@ use Neos\Neos\Exception as NeosException;
 use Neos\Neos\FrontendRouting\NodeUriBuilder;
 use Neos\Neos\Fusion\Helper\LinkHelper;
 use Neos\Neos\Utility\LegacyNodePathNormalizer;
-use Neos\Neos\Utility\NodeAddressNormalizer;
+use Neos\Neos\Utility\NodePathResolver;
 use Neos\Utility\Arrays;
 use Psr\Http\Message\UriInterface;
 use Psr\Log\LoggerInterface;
@@ -60,7 +60,7 @@ use Psr\Log\LoggerInterface;
  * ``~/about/us`` results in ``/sites/acmecom/about/us``,
  * ``~`` results in ``/sites/acmecom``.
  *
- * @deprecated with Neos 9. Please use the new {@see NodeUriBuilder} instead and for resolving a relative node path {@see NodeAddressNormalizer::resolveNodeAddressFromPath()} or utilize the {@see LinkHelper} from Fusion
+ * @deprecated with Neos 9. Please use the new {@see NodeUriBuilder} instead and for resolving a relative node path {@see NodePathResolver::resolveNodeAddressByPath()} or utilize the {@see LinkHelper} from Fusion
  * @Flow\Scope("singleton")
  */
 class LinkingService
@@ -87,9 +87,9 @@ class LinkingService
 
     /**
      * @Flow\Inject
-     * @var NodeAddressNormalizer
+     * @var NodePathResolver
      */
-    protected $nodeAddressNormalizer;
+    protected $nodePathResolver;
 
     /**
      * @Flow\Inject
@@ -250,7 +250,7 @@ class LinkingService
             }
 
             $possibleAbsoluteNodePath = $this->legacyNodePathNormalizer->tryResolveLegacyPathSyntaxToAbsoluteNodePath($node, $baseNode);
-            $nodeAddress = $this->nodeAddressNormalizer->resolveNodeAddressFromPath(
+            $nodeAddress = $this->nodePathResolver->resolveNodeAddressByPath(
                 $possibleAbsoluteNodePath ?? $node,
                 $baseNode
             );

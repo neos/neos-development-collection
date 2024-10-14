@@ -28,7 +28,7 @@ use Neos\Neos\Domain\NodeLabel\NodeLabelGeneratorInterface;
 use Neos\Neos\FrontendRouting\NodeUriBuilderFactory;
 use Neos\Neos\FrontendRouting\Options;
 use Neos\Neos\Utility\LegacyNodePathNormalizer;
-use Neos\Neos\Utility\NodeAddressNormalizer;
+use Neos\Neos\Utility\NodePathResolver;
 use Neos\Neos\Utility\NodeTypeWithFallbackProvider;
 
 /**
@@ -143,9 +143,9 @@ class NodeViewHelper extends AbstractTagBasedViewHelper
 
     /**
      * @Flow\Inject
-     * @var NodeAddressNormalizer
+     * @var NodePathResolver
      */
-    protected $nodeAddressNormalizer;
+    protected $nodePathResolver;
 
     /**
      * @Flow\Inject
@@ -263,7 +263,7 @@ class NodeViewHelper extends AbstractTagBasedViewHelper
                 );
             } else {
                 $possibleAbsoluteNodePath = $this->legacyNodePathNormalizer->tryResolveLegacyPathSyntaxToAbsoluteNodePath($node, $baseNode);
-                $nodeAddress = $this->nodeAddressNormalizer->resolveNodeAddressFromPath(
+                $nodeAddress = $this->nodePathResolver->resolveNodeAddressByPath(
                     $possibleAbsoluteNodePath ?? $node,
                     $baseNode
                 );

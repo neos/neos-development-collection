@@ -27,7 +27,7 @@ use Neos\Fusion\ViewHelpers\FusionContextTrait;
 use Neos\Neos\FrontendRouting\NodeUriBuilderFactory;
 use Neos\Neos\FrontendRouting\Options;
 use Neos\Neos\Utility\LegacyNodePathNormalizer;
-use Neos\Neos\Utility\NodeAddressNormalizer;
+use Neos\Neos\Utility\NodePathResolver;
 
 /**
  * A view helper for creating URIs pointing to nodes.
@@ -119,9 +119,9 @@ class NodeViewHelper extends AbstractViewHelper
 
     /**
      * @Flow\Inject
-     * @var NodeAddressNormalizer
+     * @var NodePathResolver
      */
-    protected $nodeAddressNormalizer;
+    protected $nodePathResolver;
 
     /**
      * @Flow\Inject
@@ -207,7 +207,7 @@ class NodeViewHelper extends AbstractViewHelper
                 );
             } else {
                 $possibleAbsoluteNodePath = $this->legacyNodePathNormalizer->tryResolveLegacyPathSyntaxToAbsoluteNodePath($node, $baseNode);
-                $nodeAddress = $this->nodeAddressNormalizer->resolveNodeAddressFromPath(
+                $nodeAddress = $this->nodePathResolver->resolveNodeAddressByPath(
                     $possibleAbsoluteNodePath ?? $node,
                     $baseNode
                 );

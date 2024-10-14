@@ -26,7 +26,7 @@ use Neos\Fusion\FusionObjects\AbstractFusionObject;
 use Neos\Neos\FrontendRouting\NodeUriBuilderFactory;
 use Neos\Neos\FrontendRouting\Options;
 use Neos\Neos\Utility\LegacyNodePathNormalizer;
-use Neos\Neos\Utility\NodeAddressNormalizer;
+use Neos\Neos\Utility\NodePathResolver;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -72,7 +72,7 @@ class NodeUriImplementation extends AbstractFusionObject
 
     /**
      * @Flow\Inject
-     * @var NodeAddressNormalizer
+     * @var NodePathResolver
      */
     protected $nodeAddressNormalizer;
 
@@ -152,7 +152,7 @@ class NodeUriImplementation extends AbstractFusionObject
             }
 
             $possibleAbsoluteNodePath = $this->legacyNodePathNormalizer->tryResolveLegacyPathSyntaxToAbsoluteNodePath($node, $baseNode);
-            $nodeAddress = $this->nodeAddressNormalizer->resolveNodeAddressFromPath(
+            $nodeAddress = $this->nodeAddressNormalizer->resolveNodeAddressByPath(
                 $possibleAbsoluteNodePath ?? $node,
                 $baseNode
             );
