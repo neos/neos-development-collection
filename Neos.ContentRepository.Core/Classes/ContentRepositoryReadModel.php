@@ -16,7 +16,6 @@ namespace Neos\ContentRepository\Core;
 
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphInterface;
 use Neos\ContentRepository\Core\Projection\ProjectionStateInterface;
-use Neos\ContentRepository\Core\Projection\WithMarkStaleInterface;
 use Neos\ContentRepository\Core\SharedModel\Exception\WorkspaceDoesNotExist;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStream;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
@@ -35,48 +34,14 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\Workspaces;
  */
 final class ContentRepositoryReadModel implements ProjectionStateInterface
 {
-    /**
-     * @var array<string, ContentGraphInterface> Runtime cache for {@see ContentGraphInterface} instances, indexed by their workspace name
-     */
-    private array $contentGraphInstancesByWorkspaceName = [];
-
-    /**
-     * @var array<string, Workspace> Runtime cache for {@see Workspace} instances, indexed by their name
-     */
-    private array $workspaceInstancesByName = [];
-
-    /**
-     * @var array<string, ContentStream> Runtime cache for {@see ContentStream} instances, indexed by their name
-     */
-    private array $contentStreamInstancesById = [];
-
     public function __construct(
         private readonly ContentRepositoryReadModelAdapterInterface $adapter
     ) {
     }
 
-    /**
-     * To release all held instances, in case a workspace/content stream relation needs to be reset
-     *
-     * @internal Must be invoked by the projection {@see WithMarkStaleInterface::markStale()} to ensure a flush after write operations
-     */
-    public function forgetInstances(): void
-    {
-        $this->contentGraphInstancesByWorkspaceName = [];
-        $this->workspaceInstancesByName = [];
-        $this->contentStreamInstancesById = [];
-    }
-
     public function findWorkspaceByName(WorkspaceName $workspaceName): ?Workspace
     {
-        if (!array_key_exists($workspaceName->value, $this->workspaceInstancesByName)) {
-            $workspace = $this->adapter->findWorkspaceByName($workspaceName);
-            if ($workspace === null) {
-                return null;
-            }
-            $this->workspaceInstancesByName[$workspaceName->value] = $workspace;
-        }
-        return $this->workspaceInstancesByName[$workspaceName->value];
+        return $this->adapter->findWorkspaceByName($workspaceName);
     }
 
     public function findWorkspaces(): Workspaces
@@ -86,14 +51,7 @@ final class ContentRepositoryReadModel implements ProjectionStateInterface
 
     public function findContentStreamById(ContentStreamId $contentStreamId): ?ContentStream
     {
-        if (!array_key_exists($contentStreamId->value, $this->contentStreamInstancesById)) {
-            $contentStream = $this->adapter->findContentStreamById($contentStreamId);
-            if ($contentStream === null) {
-                return null;
-            }
-            $this->contentStreamInstancesById[$contentStreamId->value] = $contentStream;
-        }
-        return $this->contentStreamInstancesById[$contentStreamId->value];
+        return $this->adapter->findContentStreamById($contentStreamId);
     }
 
     public function findContentStreams(): ContentStreams
@@ -119,14 +77,11 @@ final class ContentRepositoryReadModel implements ProjectionStateInterface
      */
     public function getContentGraphByWorkspaceName(WorkspaceName $workspaceName): ContentGraphInterface
     {
-        if (!array_key_exists($workspaceName->value, $this->contentGraphInstancesByWorkspaceName)) {
-            $workspace = $this->findWorkspaceByName($workspaceName);
-            if ($workspace === null) {
-                throw WorkspaceDoesNotExist::butWasSupposedTo($workspaceName);
-            }
-            $this->contentGraphInstancesByWorkspaceName[$workspaceName->value] = $this->adapter->buildContentGraph($workspace->workspaceName, $workspace->currentContentStreamId);
+        $workspace = $this->findWorkspaceByName($workspaceName);
+        if ($workspace === null) {
+            throw WorkspaceDoesNotExist::butWasSupposedTo($workspaceName);
         }
-        return $this->contentGraphInstancesByWorkspaceName[$workspaceName->value];
+        return $this->adapter->buildContentGraph($workspace->workspaceName, $workspace->currentContentStreamId);
     }
 
     /**
