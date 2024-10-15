@@ -41,7 +41,7 @@ trait Workspace
                 'baseWorkspaceName' => $baseWorkspaceName->value,
                 'currentContentStreamId' => $newContentStreamId->value,
             ],
-            ['workspaceName' => $workspaceName->value]
+            ['name' => $workspaceName->value]
         );
     }
 
