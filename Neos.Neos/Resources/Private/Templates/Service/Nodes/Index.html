@@ -14,7 +14,7 @@
                         <f:alias map="{documentNode: '{neos:node.closestDocument(node: node)}'}">
                             <f:if condition="{documentNode}">
                                 <f:then>
-                                    <a href="{neos:uri.node(node: documentNode, absolute: true, resolveShortcuts:false)}" class="node-frontend-uri">
+                                    <a href="{neos:uri.node(node: documentNode, absolute: true)}" class="node-frontend-uri">
                                         <f:render section="breadcrumb" arguments="{node: documentNode}" />
                                     </a>
                                 </f:then>

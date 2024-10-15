@@ -22,12 +22,18 @@ use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceFactoryInterface
  */
 class SiteServiceInternalsFactory implements ContentRepositoryServiceFactoryInterface
 {
+    public function __construct(
+        private readonly WorkspaceService $workspaceService,
+    ) {
+    }
+
     public function build(ContentRepositoryServiceFactoryDependencies $serviceFactoryDependencies): SiteServiceInternals
     {
         return new SiteServiceInternals(
             $serviceFactoryDependencies->contentRepository,
             $serviceFactoryDependencies->interDimensionalVariationGraph,
             $serviceFactoryDependencies->nodeTypeManager,
+            $this->workspaceService,
         );
     }
 }

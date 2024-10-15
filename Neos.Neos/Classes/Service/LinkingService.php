@@ -17,10 +17,7 @@ namespace Neos\Neos\Service;
 use GuzzleHttp\Psr7\Uri;
 use Neos\ContentRepository\Core\Feature\SubtreeTagging\Dto\SubtreeTag;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
-use Neos\ContentRepository\Core\Projection\ContentGraph\NodePath;
-use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAddress;
-use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Http\BaseUriProvider;
@@ -28,15 +25,14 @@ use Neos\Flow\Http\Exception as HttpException;
 use Neos\Flow\Http\Helper\UriHelper;
 use Neos\Flow\Log\Utility\LogEnvironment;
 use Neos\Flow\Mvc\Controller\ControllerContext;
-use Neos\Flow\Property\PropertyMapper;
-use Neos\Flow\ResourceManagement\ResourceManager;
-use Neos\Media\Domain\Model\Asset;
 use Neos\Media\Domain\Model\AssetInterface;
-use Neos\Media\Domain\Repository\AssetRepository;
 use Neos\Neos\Domain\Model\Site;
 use Neos\Neos\Domain\Repository\SiteRepository;
 use Neos\Neos\Exception as NeosException;
-use Neos\Neos\FrontendRouting\SiteDetection\SiteDetectionResult;
+use Neos\Neos\FrontendRouting\NodeUriBuilder;
+use Neos\Neos\Fusion\Helper\LinkHelper;
+use Neos\Neos\Utility\LegacyNodePathNormalizer;
+use Neos\Neos\Utility\NodePathResolver;
 use Neos\Utility\Arrays;
 use Psr\Http\Message\UriInterface;
 use Psr\Log\LoggerInterface;
@@ -57,8 +53,6 @@ use Psr\Log\LoggerInterface;
  * The given path is treated as a path relative to the current node.
  * Examples: given that the current node is ``/sites/acmecom/products/``,
  * ``stapler`` results in ``/sites/acmecom/products/stapler``,
- * ``../about`` results in ``/sites/acmecom/about/``,
- * ``./neos/info`` results in ``/sites/acmecom/products/neos/info``.
  *
  * *``node`` starts with a tilde character (``~``):*
  * The given path is treated as a path relative to the current site node.
@@ -66,36 +60,11 @@ use Psr\Log\LoggerInterface;
  * ``~/about/us`` results in ``/sites/acmecom/about/us``,
  * ``~`` results in ``/sites/acmecom``.
  *
+ * @deprecated with Neos 9. Please use the new {@see NodeUriBuilder} instead and for resolving a relative node path {@see NodePathResolver::resolveNodeAddressByPath()} or utilize the {@see LinkHelper} from Fusion
  * @Flow\Scope("singleton")
  */
 class LinkingService
 {
-    /**
-     * Pattern to match supported URIs.
-     *
-     * @var string
-     */
-    public const PATTERN_SUPPORTED_URIS
-        = '/(node|asset):\/\/([a-z0-9\-]+|([a-f0-9]){8}-([a-f0-9]){4}-([a-f0-9]){4}-([a-f0-9]){4}-([a-f0-9]){12})/';
-
-    /**
-     * @Flow\Inject
-     * @var AssetRepository
-     */
-    protected $assetRepository;
-
-    /**
-     * @Flow\Inject
-     * @var ResourceManager
-     */
-    protected $resourceManager;
-
-    /**
-     * @Flow\Inject
-     * @var PropertyMapper
-     */
-    protected $propertyMapper;
-
     protected ?Node $lastLinkedNode;
 
     /**
@@ -116,37 +85,45 @@ class LinkingService
      */
     protected $baseUriProvider;
 
+    /**
+     * @Flow\Inject
+     * @var NodePathResolver
+     */
+    protected $nodePathResolver;
+
+    /**
+     * @Flow\Inject
+     * @var LegacyNodePathNormalizer
+     */
+    protected $legacyNodePathNormalizer;
+
+    /**
+     * @Flow\Inject
+     * @var LinkHelper
+     */
+    protected $newLinkHelper;
+
     #[Flow\Inject]
     protected ContentRepositoryRegistry $contentRepositoryRegistry;
 
     /**
      * @param string|UriInterface $uri
      * @return boolean
+     * @deprecated with Neos 9
      */
     public function hasSupportedScheme($uri): bool
     {
-        if ($uri instanceof UriInterface) {
-            $uri = (string)$uri;
-        }
-
-        return $uri !== null && preg_match(self::PATTERN_SUPPORTED_URIS, $uri) === 1;
+        return $this->newLinkHelper->hasSupportedScheme($uri);
     }
 
     /**
      * @param string|UriInterface $uri
      * @return string
+     * @deprecated with Neos 9
      */
     public function getScheme($uri): string
     {
-        if ($uri instanceof UriInterface) {
-            return $uri->getScheme();
-        }
-
-        if ($uri !== null && preg_match(self::PATTERN_SUPPORTED_URIS, $uri, $matches) === 1) {
-            return $matches[1];
-        }
-
-        return '';
+        return $this->newLinkHelper->getScheme($uri) ?? '';
     }
 
     /**
@@ -161,6 +138,7 @@ class LinkingService
      * @throws \Neos\Flow\Mvc\Routing\Exception\MissingActionNameException
      * @throws \Neos\Flow\Property\Exception
      * @throws \Neos\Flow\Security\Exception
+     * @deprecated with Neos 9
      */
     public function resolveNodeUri(
         string $uri,
@@ -168,17 +146,21 @@ class LinkingService
         ControllerContext $controllerContext,
         bool $absolute = false
     ): ?string {
-        $targetObject = $this->convertUriToObject($uri, $contextNode);
-        if ($targetObject === null) {
+        try {
+            if ($this->newLinkHelper->getScheme($uri) !== 'node') {
+                throw new \RuntimeException(sprintf(
+                    'Invalid node uri "%s" provided. It must start with node://',
+                    $uri
+                ), 1720004437);
+            }
+            return $this->createNodeUri($controllerContext, $uri, $contextNode, null, $absolute);
+        } catch (\RuntimeException $e) {
             $this->systemLogger->info(
-                sprintf('Could not resolve "%s" to an existing node; The node was probably deleted.', $uri),
+                sprintf('Could not resolve "%s" to an existing node; %s', $uri, $e->getMessage()),
                 LogEnvironment::fromMethodName(__METHOD__)
             );
-
             return null;
         }
-
-        return $this->createNodeUri($controllerContext, $targetObject, null, null, $absolute);
     }
 
     /**
@@ -186,24 +168,19 @@ class LinkingService
      *
      * @param string $uri
      * @return string|null If the URI cannot be resolved, null is returned
+     * @deprecated with Neos 9
      */
     public function resolveAssetUri(string $uri): ?string
     {
-        $targetObject = $this->convertUriToObject($uri);
-        if (!$targetObject instanceof Asset) {
+        try {
+            return $this->newLinkHelper->resolveAssetUri($uri);
+        } catch (\RuntimeException $e) {
             $this->systemLogger->info(
-                sprintf('Could not resolve "%s" to an existing asset; The asset was probably deleted.', $uri),
+                sprintf('Could not resolve "%s" to an existing asset; %s', $uri, $e->getMessage()),
                 LogEnvironment::fromMethodName(__METHOD__)
             );
-
             return null;
         }
-
-        $assetUri = $this->resourceManager->getPublicPersistentResourceUri($targetObject->getResource());
-
-        return is_string($assetUri)
-            ? $assetUri
-            : null;
     }
 
     /**
@@ -212,45 +189,20 @@ class LinkingService
      * @param string|UriInterface $uri
      * @param Node $contextNode
      * @return Node|AssetInterface|NULL
+     * @deprecated with Neos 9
      */
     public function convertUriToObject($uri, Node $contextNode = null)
     {
-        if ($uri instanceof UriInterface) {
-            $uri = (string)$uri;
-        }
-
-        if (preg_match(self::PATTERN_SUPPORTED_URIS, $uri, $matches) === 1) {
-            switch ($matches[1]) {
-                case 'node':
-                    if (!$contextNode instanceof Node) {
-                        throw new \RuntimeException(
-                            'node:// URI conversion requires a context node to be passed',
-                            1409734235
-                        );
-                    }
-                    return $this->contentRepositoryRegistry->subgraphForNode($contextNode)
-                        ->findNodeById(
-                            NodeAggregateId::fromString($matches[2])
-                        );
-                case 'asset':
-                    /** @var ?AssetInterface $asset */
-                    $asset = $this->assetRepository->findByIdentifier($matches[2]);
-
-                    return $asset;
-                default:
-            }
-        }
-
-        return null;
+        return $this->newLinkHelper->convertUriToObject($uri, $contextNode);
     }
 
     /**
      * Renders the URI to a given node instance or -path.
      *
      * @param ControllerContext $controllerContext
-     * @param mixed $node A node object or a string node path,
+     * @param Node|string|null $node A node object or a string node path,
      *                    if a relative path is provided the baseNode argument is required
-     * @param Node $baseNode
+     * @param Node|null $baseNode
      * @param string $format Format to use for the URL, for example "html" or "json"
      * @param boolean $absolute If set, an absolute URI is rendered
      * @param array<string,mixed> $arguments Additional arguments to be passed to the UriBuilder
@@ -268,6 +220,7 @@ class LinkingService
      * @throws \Neos\Flow\Security\Exception
      * @throws HttpException
      * @throws \Neos\Flow\Persistence\Exception\IllegalObjectTypeException
+     * @deprecated with Neos 9
      */
     public function createNodeUri(
         ControllerContext $controllerContext,
@@ -289,72 +242,55 @@ class LinkingService
                 __METHOD__
             ));
         }
-        if (!($node instanceof Node || is_string($node) || $baseNode instanceof Node)) {
-            throw new \InvalidArgumentException(
-                'Expected an instance of Node or a string for the node argument,'
-                    . ' or alternatively a baseNode argument.',
-                1373101025
-            );
-        }
 
+        $resolvedNode = null;
         if (is_string($node)) {
-            $nodeString = $node;
-            if ($nodeString === '') {
-                throw new NeosException(sprintf('Empty strings can not be resolved to nodes.'), 1415709942);
+            if (!$baseNode instanceof Node) {
+                throw new \RuntimeException('If "node" is passed as string a base node in must be given', 1719999788);
             }
-            try {
-                // if we get a node string, we need to assume it links to the current site
-                $contentRepositoryId = SiteDetectionResult::fromRequest(
-                    $controllerContext->getRequest()->getHttpRequest()
-                )->contentRepositoryId;
-                $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryId);
-                $nodeAddress = NodeAddress::fromJsonString($nodeString);
-                $workspace = $contentRepository->getWorkspaceFinder()->findOneByName($nodeAddress->workspaceName);
-                $subgraph = $contentRepository->getContentGraph($nodeAddress->workspaceName)->getSubgraph(
-                    $nodeAddress->dimensionSpacePoint,
-                    $workspace && !$workspace->isPublicWorkspace()
-                        ? VisibilityConstraints::withoutRestrictions()
-                        : VisibilityConstraints::frontend()
-                );
-                $node = $subgraph->findNodeById($nodeAddress->aggregateId);
-            } catch (\Throwable $exception) {
-                if ($baseNode === null) {
-                    throw new NeosException(
-                        'The baseNode argument is required for linking to nodes with a relative path.',
-                        1407879905
-                    );
-                }
-                $node = $this->contentRepositoryRegistry->subgraphForNode($baseNode)
-                    ->findNodeByPath(NodePath::fromString($nodeString), $baseNode->aggregateId);
+
+            $possibleAbsoluteNodePath = $this->legacyNodePathNormalizer->tryResolveLegacyPathSyntaxToAbsoluteNodePath($node, $baseNode);
+            $nodeAddress = $this->nodePathResolver->resolveNodeAddressByPath(
+                $possibleAbsoluteNodePath ?? $node,
+                $baseNode
+            );
+
+            $subgraph = $this->contentRepositoryRegistry->subgraphForNode($baseNode);
+            $resolvedNode = $subgraph->findNodeById($nodeAddress->aggregateId);
+            if ($resolvedNode === null) {
+                throw new \RuntimeException(sprintf(
+                    'Failed to resolve node "%s" (path %s) in workspace "%s" and dimension %s',
+                    $nodeAddress->aggregateId->value,
+                    $node,
+                    $subgraph->getWorkspaceName()->value,
+                    $subgraph->getDimensionSpacePoint()->toJson()
+                ), 1720000002);
             }
-            if (!$node instanceof Node) {
-                throw new NeosException(sprintf(
-                    'The string "%s" could not be resolved to an existing node.',
-                    $nodeString
-                ), 1415709674);
+        } elseif ($node instanceof Node) {
+            $nodeAddress = NodeAddress::fromNode($node);
+            $resolvedNode = $node;
+        } elseif ($node === null) {
+            if (!$baseNode instanceof Node) {
+                throw new \RuntimeException('If "node" is is NULL a base node in must be given', 1719999803);
             }
-        } elseif (!$node instanceof Node) {
-            $node = $baseNode;
+            $nodeAddress = NodeAddress::fromNode($baseNode);
+            $resolvedNode = $baseNode;
+        } else {
+            throw new \RuntimeException(sprintf(
+                'The "node" argument can only be a string or an instance of `Node`. Given: %s',
+                get_debug_type($node)
+            ), 1601372376);
         }
 
-        if (!$node instanceof Node) {
-            throw new NeosException(sprintf(
-                'Node must be an instance of Node or string, given "%s".',
-                gettype($node)
-            ), 1414772029);
-        }
-        $this->lastLinkedNode = $node;
+        $this->lastLinkedNode = $resolvedNode;
 
-        $contentRepository = $this->contentRepositoryRegistry->get(
-            $node->contentRepositoryId
-        );
-        $workspace = $contentRepository->getWorkspaceFinder()->findOneByName(
-            $node->workspaceName
-        );
+        $contentRepository = $this->contentRepositoryRegistry->get($nodeAddress->contentRepositoryId);
+        $workspace = $contentRepository->getWorkspaceFinder()->findOneByName($nodeAddress->workspaceName);
+
         $mainRequest = $controllerContext->getRequest()->getMainRequest();
         $uriBuilder = clone $controllerContext->getUriBuilder();
         $uriBuilder->setRequest($mainRequest);
-        $createLiveUri = $workspace && $workspace->isPublicWorkspace() && $node->tags->contain(SubtreeTag::disabled());
+        $createLiveUri = $workspace && $workspace->isPublicWorkspace() && !$resolvedNode->tags->contain(SubtreeTag::disabled());
 
         if ($addQueryString === true) {
             // legacy feature see https://github.com/neos/neos-development-collection/issues/5076
@@ -377,7 +313,7 @@ class LinkingService
                 ->uriFor('preview', [], 'Frontend\Node', 'Neos.Neos');
             return (string)UriHelper::uriWithAdditionalQueryParameters(
                 new Uri($previewActionUri),
-                ['node' => NodeAddress::fromNode($node)->toJson()]
+                ['node' => $nodeAddress->toJson()]
             );
         }
 
@@ -387,7 +323,7 @@ class LinkingService
             ->setArguments($arguments)
             ->setFormat($format ?: $mainRequest->getFormat())
             ->setCreateAbsoluteUri($absolute)
-            ->uriFor('show', ['node' => NodeAddress::fromNode($node)], 'Frontend\Node', 'Neos.Neos');
+            ->uriFor('show', ['node' => $nodeAddress], 'Frontend\Node', 'Neos.Neos');
     }
 
     /**
@@ -396,6 +332,7 @@ class LinkingService
      * @return string
      * @throws NeosException
      * @throws HttpException
+     * @deprecated with Neos 9 - todo find alternative
      */
     public function createSiteUri(ControllerContext $controllerContext, Site $site): string
     {
@@ -426,6 +363,7 @@ class LinkingService
      * May return NULL in case no link has been generated or an error occurred on the last linking run.
      *
      * @return Node
+     * @deprecated with Neos 9
      */
     public function getLastLinkedNode(): ?Node
     {

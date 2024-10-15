@@ -21,6 +21,7 @@ use Neos\Eel\FlowQuery\Operations\AbstractOperation;
 
 /**
  * Used to access the Node's identifier of a ContentRepository Node.
+ * @deprecated with 9.0.0-beta14 please use ${node.aggregateId} instead
  */
 class IdOperation extends AbstractOperation
 {
