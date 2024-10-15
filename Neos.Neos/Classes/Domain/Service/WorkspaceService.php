@@ -279,7 +279,7 @@ final class WorkspaceService
             throw new \RuntimeException(sprintf('Failed to determine roles for user "%s", check your package dependencies: %s', $user->getId()->value, $e->getMessage()), 1727084881, $e);
         }
         $workspaceMetadata = $this->loadWorkspaceMetadata($contentRepositoryId, $workspaceName);
-        if ($workspaceMetadata?->ownerUserId !== null && $workspaceMetadata?->ownerUserId->equals($user->getId())) {
+        if ($workspaceMetadata !== null && $workspaceMetadata->ownerUserId !== null && $workspaceMetadata->ownerUserId->equals($user->getId())) {
             return WorkspacePermissions::all();
         }
         $userWorkspaceRole = $this->loadWorkspaceRoleOfUser($contentRepositoryId, $workspaceName, $user->getId(), $userRoles);
