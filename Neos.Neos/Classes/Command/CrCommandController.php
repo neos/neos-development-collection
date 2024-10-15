@@ -22,6 +22,9 @@ use Neos\Flow\ResourceManagement\ResourceManager;
 use Neos\Flow\ResourceManagement\ResourceRepository;
 use Neos\Media\Domain\Repository\AssetRepository;
 use Neos\Neos\AssetUsage\AssetUsageService;
+use Neos\Neos\Domain\Model\WorkspaceRole;
+use Neos\Neos\Domain\Model\WorkspaceRoleAssignment;
+use Neos\Neos\Domain\Service\WorkspaceService;
 use Neos\Utility\Files;
 
 class CrCommandController extends CommandController
@@ -34,6 +37,7 @@ class CrCommandController extends CommandController
         private readonly ContentRepositoryRegistry $contentRepositoryRegistry,
         private readonly ProjectionReplayServiceFactory $projectionReplayServiceFactory,
         private readonly AssetUsageService $assetUsageService,
+        private readonly WorkspaceService $workspaceService,
     ) {
         parent::__construct();
     }
@@ -112,6 +116,9 @@ class CrCommandController extends CommandController
 
         $projectionService = $this->contentRepositoryRegistry->buildService($contentRepositoryId, $this->projectionReplayServiceFactory);
         $projectionService->replayAllProjections(CatchUpOptions::create());
+
+        $this->outputLine('Assigning live workspace role');
+        $this->workspaceService->assignWorkspaceRole($contentRepositoryId, WorkspaceName::forLive(), WorkspaceRoleAssignment::createForGroup('Neos.Neos:LivePublisher', WorkspaceRole::COLLABORATOR));
 
         $this->outputLine('<success>Done</success>');
     }

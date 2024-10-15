@@ -14,6 +14,7 @@ declare(strict_types=1);
 
 namespace Neos\Neos\Fusion\Helper;
 
+use Neos\ContentRepository\Core\Feature\SubtreeTagging\Dto\SubtreeTag;
 use Neos\ContentRepository\Core\NodeType\NodeType;
 use Neos\ContentRepository\Core\Projection\ContentGraph\AbsoluteNodePath;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentSubgraphInterface;
@@ -26,6 +27,7 @@ use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Eel\ProtectedContextAwareInterface;
 use Neos\Flow\Annotations as Flow;
 use Neos\Neos\Domain\Exception;
+use Neos\Neos\Domain\NodeLabel\NodeLabelGeneratorInterface;
 use Neos\Neos\Domain\Service\NodeTypeNameFactory;
 use Neos\Neos\Presentation\VisualNodePath;
 use Neos\Neos\Utility\NodeTypeWithFallbackProvider;
@@ -36,11 +38,14 @@ use Neos\Neos\Utility\NodeTypeWithFallbackProvider;
 class NodeHelper implements ProtectedContextAwareInterface
 {
     use NodeTypeWithFallbackProvider {
-        getNodeType as getNodeTypeInternal;
+        getNodeType as legacyGetNodeTypeWithFallback;
     }
 
     #[Flow\Inject]
     protected ContentRepositoryRegistry $contentRepositoryRegistry;
+
+    #[Flow\Inject]
+    protected NodeLabelGeneratorInterface $nodeLabelGenerator;
 
     /**
      * Check if the given node is already a collection, find collection by nodePath otherwise, throw exception
@@ -62,14 +67,10 @@ class NodeHelper implements ProtectedContextAwareInterface
                     $contentCollectionType
                 ), 1409300545);
             }
-            $nodePath = AbsoluteNodePath::patternIsMatchedByString($nodePath)
-                ? AbsoluteNodePath::fromString($nodePath)
-                : NodePath::fromString($nodePath);
+            $nodePath = NodePath::fromString($nodePath);
             $subgraph = $this->contentRepositoryRegistry->subgraphForNode($node);
 
-            $subNode = $nodePath instanceof AbsoluteNodePath
-                ? $subgraph->findNodeByAbsolutePath($nodePath)
-                : $subgraph->findNodeByPath($nodePath, $node->aggregateId);
+            $subNode = $subgraph->findNodeByPath($nodePath, $node->aggregateId);
 
             if ($subNode !== null && $this->isOfType($subNode, $contentCollectionType)) {
                 return $subNode;
@@ -96,15 +97,11 @@ class NodeHelper implements ProtectedContextAwareInterface
     }
 
     /**
-     * Generate a label for a node with a chaining mechanism. To be used in NodeType definition:
-     *
-     *     'Vendor.Site:MyContent':
-     *       label: "${Neos.Node.labelForNode(node).prefix('foo')}"
-     *
+     * Renders the actual node label based on the NodeType definition in Fusion.
      */
-    public function labelForNode(Node $node): NodeLabelToken
+    public function label(Node $node): string
     {
-        return new NodeLabelToken($node);
+        return $this->nodeLabelGenerator->getLabel($node);
     }
 
     /**
@@ -133,33 +130,80 @@ class NodeHelper implements ProtectedContextAwareInterface
     }
 
     /**
+     * Retrieving the NodeType of the given Node.
+     *
+     * If the NodeType schema changed and the NodeType does not exist anymore, NULL is returned.
+     *
+     * @param Node $node
+     * @return NodeType|null
+     */
+    public function nodeType(Node $node): ?NodeType
+    {
+        $contentRepository = $this->contentRepositoryRegistry->get($node->contentRepositoryId);
+        return $contentRepository->getNodeTypeManager()
+            ->getNodeType($node->nodeTypeName);
+    }
+
+    /**
      * If this node type or any of the direct or indirect super types
      * has the given name.
      */
     public function isOfType(Node $node, string $nodeType): bool
     {
-        return $this->getNodeTypeInternal($node)->isOfType($nodeType);
+        $contentRepository = $this->contentRepositoryRegistry->get($node->contentRepositoryId);
+        return (bool)$contentRepository->getNodeTypeManager()
+            ->getNodeType($node->nodeTypeName)?->isOfType($nodeType);
     }
 
-    public function getNodeType(Node $node): NodeType
+    public function isDisabled(Node $node): bool
     {
-        return $this->getNodeTypeInternal($node);
+        return $node->tags->contain(SubtreeTag::disabled());
     }
 
+    /**
+     * @internal should not be required to be used for integration
+     */
     public function isNodeTypeExistent(Node $node): bool
     {
         $contentRepository = $this->contentRepositoryRegistry->get($node->contentRepositoryId);
         return $contentRepository->getNodeTypeManager()->hasNodeType($node->nodeTypeName);
     }
 
+    /**
+     * @deprecated with 9.0.0-beta14 please use Neos.Node.nodeType() instead and dont rely on the fallback behaviour
+     */
+    public function getNodeType(Node $node): NodeType
+    {
+        return $this->legacyGetNodeTypeWithFallback($node);
+    }
+
+    /**
+     * @internal experimental API without documentation and clear use-case
+     */
     public function serializedNodeAddress(Node $node): string
     {
         return NodeAddress::fromNode($node)->toJson();
     }
 
+    /**
+     * @internal experimental API without documentation and clear use-case
+     */
     public function subgraphForNode(Node $node): ContentSubgraphInterface
     {
         return $this->contentRepositoryRegistry->subgraphForNode($node);
+    }
+
+    /**
+     * Return a builder to generate a label for a node with a chaining mechanism. To be used in NodeType definition:
+     *
+     *     'Vendor.Site:MyContent':
+     *       label: "${Neos.Node.labelForNode(node).prefix('foo')}"
+     *
+     * FIXME the method name is slightly ambiguous and not to confused with Neos.Node.label which renders the configured label from yaml
+     */
+    public function labelForNode(Node $node): NodeLabelToken
+    {
+        return new NodeLabelToken($node);
     }
 
     /**
