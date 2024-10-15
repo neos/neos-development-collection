@@ -35,10 +35,11 @@ use Neos\ContentRepository\Core\Projection\ProjectionsAndCatchUpHooks;
 use Neos\ContentRepository\Core\Projection\ProjectionStateInterface;
 use Neos\ContentRepository\Core\Projection\ProjectionStatuses;
 use Neos\ContentRepository\Core\Projection\WithMarkStaleInterface;
+use Neos\ContentRepository\Core\SharedModel\Auth\WorkspacePrivilegeType;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryStatus;
 use Neos\ContentRepository\Core\SharedModel\Exception\WorkspaceDoesNotExist;
-use Neos\ContentRepository\Core\SharedModel\User\UserIdProviderInterface;
+use Neos\ContentRepository\Core\SharedModel\Auth\AuthProviderInterface;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStream;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreams;
@@ -85,10 +86,10 @@ final class ContentRepository
         private readonly NodeTypeManager $nodeTypeManager,
         private readonly InterDimensionalVariationGraph $variationGraph,
         private readonly ContentDimensionSourceInterface $contentDimensionSource,
-        private readonly UserIdProviderInterface $userIdProvider,
+        private readonly AuthProviderInterface $authProvider,
         private readonly ClockInterface $clock,
     ) {
-        $this->commandHandlingDependencies = new CommandHandlingDependencies($this);
+        $this->commandHandlingDependencies = new CommandHandlingDependencies($this, $this->getContentRepositoryReadModel());
     }
 
     /**
@@ -99,12 +100,16 @@ final class ContentRepository
      */
     public function handle(CommandInterface $command): CommandResult
     {
+        $privilege = $this->authProvider->getCommandPrivilege($command);
+        if (!$privilege->granted) {
+            throw new \RuntimeException(sprintf('Command "%s" was denied: %s', $command::class, $privilege->message), 1729086686);
+        }
         // the commands only calculate which events they want to have published, but do not do the
         // publishing themselves
         $eventsToPublish = $this->commandBus->handle($command, $this->commandHandlingDependencies);
 
         // TODO meaningful exception message
-        $initiatingUserId = $this->userIdProvider->getUserId();
+        $initiatingUserId = $this->authProvider->getUserId();
         $initiatingTimestamp = $this->clock->now()->format(\DateTimeInterface::ATOM);
 
         // Add "initiatingUserId" and "initiatingTimestamp" metadata to all events.
@@ -269,6 +274,12 @@ final class ContentRepository
      */
     public function getContentGraph(WorkspaceName $workspaceName): ContentGraphInterface
     {
+        $privilege = $this->authProvider->getWorkspacePrivilege($workspaceName, WorkspacePrivilegeType::READ_NODES);
+        if (!$privilege->granted) {
+            throw new \RuntimeException(sprintf('Read access denied for workspace "%s": %s', $workspaceName->value, $privilege->message ?? ''), 1729014760);
+            // TODO more specific exception
+            //throw WorkspaceDoesNotExist::butWasSupposedTo($workspaceName);
+        }
         return $this->getContentRepositoryReadModel()->getContentGraphByWorkspaceName($workspaceName);
     }
 

@@ -27,6 +27,7 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\Workspace;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Security\Context as SecurityContext;
 use Neos\Flow\Security\Exception\NoSuchRoleException;
 use Neos\Neos\Domain\Model\User;
 use Neos\Neos\Domain\Model\UserId;
@@ -44,6 +45,8 @@ use Neos\Neos\Domain\Model\WorkspaceTitle;
 /**
  * Central authority to interact with Content Repository Workspaces within Neos
  *
+ * TODO evaluate permissions for workspace changes
+ *
  * @api
  */
 #[Flow\Scope('singleton')]
@@ -56,6 +59,7 @@ final class WorkspaceService
         private readonly ContentRepositoryRegistry $contentRepositoryRegistry,
         private readonly UserService $userService,
         private readonly Connection $dbal,
+        private readonly SecurityContext $securityContext,
     ) {
     }
 
@@ -83,6 +87,7 @@ final class WorkspaceService
      */
     public function setWorkspaceTitle(ContentRepositoryId $contentRepositoryId, WorkspaceName $workspaceName, WorkspaceTitle $newWorkspaceTitle): void
     {
+        // TODO check workspace permissions -> $this->getWorkspacePermissionsForUser($contentRepositoryId, $workspaceName, $this->userService->getCurrentUser());
         $this->updateWorkspaceMetadata($contentRepositoryId, $workspaceName, [
             'title' => $newWorkspaceTitle->value,
         ]);
@@ -173,14 +178,14 @@ final class WorkspaceService
             return;
         }
         $workspaceName = $this->getUniqueWorkspaceName($contentRepositoryId, $user->getLabel());
-        $this->createPersonalWorkspace(
+        $this->securityContext->withoutAuthorizationChecks(fn () => $this->createPersonalWorkspace(
             $contentRepositoryId,
             $workspaceName,
             WorkspaceTitle::fromString($user->getLabel()),
             WorkspaceDescription::empty(),
             WorkspaceName::forLive(),
             $user->getId(),
-        );
+        ));
     }
 
     /**

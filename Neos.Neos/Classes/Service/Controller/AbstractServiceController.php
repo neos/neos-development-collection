@@ -15,7 +15,6 @@ declare(strict_types=1);
 namespace Neos\Neos\Service\Controller;
 
 use GuzzleHttp\Psr7\Response;
-use Neos\ContentRepository\Core\SharedModel\User\UserId;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Exception as FlowException;
 use Neos\Flow\Log\ThrowableStorageInterface;
@@ -156,14 +155,5 @@ abstract class AbstractServiceController extends ActionController
             }
         }
         return $exceptionData;
-    }
-
-    protected function getCurrentUserIdentifier(): ?UserId
-    {
-        $user = $this->domainUserService->getCurrentUser();
-
-        return $user
-            ? UserId::fromString($this->persistenceManager->getIdentifierByObject($user))
-            : null;
     }
 }

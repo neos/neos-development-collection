@@ -24,11 +24,11 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\NodePath;
 use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
-use Neos\ContentRepository\Core\SharedModel\User\UserId;
+use Neos\ContentRepository\Core\SharedModel\Auth\UserId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\Helpers\FakeClock;
-use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\Helpers\FakeUserIdProvider;
+use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\Helpers\FakeAuthProvider;
 
 /**
  * The node creation trait for behavioral tests
@@ -74,7 +74,7 @@ trait CRTestSuiteRuntimeVariables
      */
     public function iAmUserIdentifiedBy(string $userId): void
     {
-        FakeUserIdProvider::setUserId(UserId::fromString($userId));
+        FakeAuthProvider::setUserId(UserId::fromString($userId));
     }
 
     /**

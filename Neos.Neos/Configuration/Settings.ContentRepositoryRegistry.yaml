@@ -3,8 +3,8 @@ Neos:
     presets:
       'default':
 
-        userIdProvider:
-          factoryObjectName: Neos\Neos\UserIdProvider\UserIdProviderFactory
+        authProvider:
+          factoryObjectName: Neos\Neos\ContentRepositoryAuthProvider\ContentRepositoryAuthProviderFactory
 
         projections:
           'Neos.Neos:DocumentUriPathProjection':

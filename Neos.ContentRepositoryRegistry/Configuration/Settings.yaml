@@ -34,8 +34,8 @@ Neos:
         projectionCatchUpTrigger:
           factoryObjectName: Neos\ContentRepositoryRegistry\Factory\ProjectionCatchUpTrigger\SubprocessProjectionCatchUpTriggerFactory
 
-        userIdProvider:
-          factoryObjectName: Neos\ContentRepositoryRegistry\Factory\UserIdProvider\StaticUserIdProviderFactory
+        authProvider:
+          factoryObjectName: Neos\ContentRepositoryRegistry\Factory\AuthProvider\StaticAuthProviderFactory
 
         clock:
           factoryObjectName: Neos\ContentRepositoryRegistry\Factory\Clock\SystemClockFactory
