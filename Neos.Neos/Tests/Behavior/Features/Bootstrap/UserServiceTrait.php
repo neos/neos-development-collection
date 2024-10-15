@@ -14,15 +14,11 @@ declare(strict_types=1);
 
 use Behat\Gherkin\Node\TableNode;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
-use Neos\Flow\Security\Account;
 use Neos\Flow\Security\AccountFactory;
-use Neos\Flow\Security\AccountRepository;
-use Neos\Flow\Security\Policy\PolicyService;
+use Neos\Flow\Security\Cryptography\HashService;
 use Neos\Neos\Domain\Model\User;
 use Neos\Neos\Domain\Service\UserService;
 use Neos\Party\Domain\Model\PersonName;
-use Neos\Party\Domain\Repository\PartyRepository;
-use Neos\Party\Domain\Service\PartyService;
 use Neos\Utility\ObjectAccess;
 
 /**
@@ -73,9 +69,6 @@ trait UserServiceTrait
         }
     }
 
-    /**
-     * NOTE: We don't use {@see UserService::addUser()} here because that uses the {@see AccountFactory} internally which creates a strong password – which is really slow...
-     */
     private function createUser(string $username, string $firstName = null, string $lastName = null, array $roleIdentifiers = null, string $id = null): void
     {
         $userService = $this->getObject(UserService::class);
@@ -83,17 +76,25 @@ trait UserServiceTrait
         if ($id !== null) {
             ObjectAccess::setProperty($user, 'Persistence_Object_Identifier', $id, true);
         }
+
+        $accountFactory = $this->getObject(AccountFactory::class);
+
+        // NOTE: We replace the original {@see HashService} by a "mock" for performance reasons (the default hashing strategy usually takes a while to create passwords)
+
+        /** @var HashService $originalHashService */
+        $originalHashService = ObjectAccess::getProperty($accountFactory, 'hashService', true);
+        $hashServiceMock = new class extends HashService {
+            public function hashPassword($password, $strategyIdentifier = 'default'): string
+            {
+                return 'hashed-password';
+            }
+        };
+        ObjectAccess::setProperty($accountFactory, 'hashService', $hashServiceMock, true);
+
         $name = new PersonName('', $firstName ?? 'John', '', $lastName ?? 'Doe', '', $username);
         $user->setName($name);
-        $account = new Account();
-        $account->setAccountIdentifier($username);
-        $account->setAuthenticationProviderName($userService->getDefaultAuthenticationProviderName());
-
-        $policyService = $this->getObject(PolicyService::class);
-        $account->setRoles(array_map($policyService->getRole(...), $roleIdentifiers ?? ['Neos.Neos:Editor']));
-        $this->getObject(PartyService::class)->assignAccountToParty($account, $user);
-        $this->getObject(PartyRepository::class)->add($user);
-        $this->getObject(AccountRepository::class)->add($account);
+        $userService->addUser($username, 'password', $user, $roleIdentifiers);
         $this->getObject(PersistenceManagerInterface::class)->persistAll();
+        ObjectAccess::setProperty($accountFactory, 'hashService', $originalHashService, true);
     }
 }
