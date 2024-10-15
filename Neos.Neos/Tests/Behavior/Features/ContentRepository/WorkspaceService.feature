@@ -209,3 +209,10 @@ Feature: Neos WorkspaceService related features
     When the role COLLABORATOR is assigned to workspace "some-root-workspace" for group "Neos.Neos:Editor"
     When the role MANAGER is assigned to workspace "some-root-workspace" for user "editor"
     And the Neos user "editor" should have the permissions "read,write,manage" for workspace "some-root-workspace"
+
+  Scenario: Permissions for workspace without metadata
+    Given a root workspace "some-root-workspace" exists without metadata
+    When the role COLLABORATOR is assigned to workspace "some-root-workspace" for user "janedoe"
+    Then the Neos user "jane.doe" should have the permissions "read,write,manage" for workspace "some-root-workspace"
+    And the Neos user "john.doe" should have no permissions for workspace "some-root-workspace"
+    And the Neos user "editor" should have no permissions for workspace "some-root-workspace"

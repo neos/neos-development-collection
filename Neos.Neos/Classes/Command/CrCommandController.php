@@ -25,6 +25,7 @@ use Neos\Media\Domain\Repository\AssetRepository;
 use Neos\Neos\AssetUsage\AssetUsageService;
 use Neos\Neos\Domain\Model\WorkspaceRole;
 use Neos\Neos\Domain\Model\WorkspaceRoleAssignment;
+use Neos\Neos\Domain\Model\WorkspaceTitle;
 use Neos\Neos\Domain\Service\WorkspaceService;
 use Neos\Utility\Files;
 
@@ -120,6 +121,8 @@ class CrCommandController extends CommandController
         $projectionService->replayAllProjections(CatchUpOptions::create());
 
         $this->outputLine('Assigning live workspace role');
+        // set the live-workspace title to (implicitly) create the metadata record for this workspace
+        $this->workspaceService->setWorkspaceTitle($contentRepositoryId, WorkspaceName::forLive(), WorkspaceTitle::fromString('Live workspace'));
         $this->workspaceService->assignWorkspaceRole($contentRepositoryId, WorkspaceName::forLive(), WorkspaceRoleAssignment::createForGroup('Neos.Neos:LivePublisher', WorkspaceRole::COLLABORATOR));
 
         $this->outputLine('<success>Done</success>');
