@@ -113,7 +113,6 @@ final class ContentRepositoryFactory
      * instance. If you want to extend the CR core and need to hook deeply into CR internals, this is what the
      * {@see ContentRepositoryServiceInterface} is for.
      *
-     * @internal this is a low level extension mechanism and not part of the public API.
      * @template T of ContentRepositoryServiceInterface
      * @param ContentRepositoryServiceFactoryInterface<T> $serviceFactory
      * @return T

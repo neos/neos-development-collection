@@ -115,7 +115,10 @@ final class ContentRepositoryRegistry
     }
 
     /**
-     * @internal this is a low level extension mechanism and not part of the public API.
+     * Access content repository services.
+     *
+     * The services are a low level extension mechanism and only few are part of the public API.
+     *
      * @param ContentRepositoryId $contentRepositoryId
      * @param ContentRepositoryServiceFactoryInterface<T> $contentRepositoryServiceFactory
      * @return T
