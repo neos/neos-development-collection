@@ -30,17 +30,12 @@ use Neos\Neos\Domain\Exception;
 use Neos\Neos\Domain\NodeLabel\NodeLabelGeneratorInterface;
 use Neos\Neos\Domain\Service\NodeTypeNameFactory;
 use Neos\Neos\Presentation\VisualNodePath;
-use Neos\Neos\Utility\NodeTypeWithFallbackProvider;
 
 /**
  * Eel helper for ContentRepository Nodes
  */
 class NodeHelper implements ProtectedContextAwareInterface
 {
-    use NodeTypeWithFallbackProvider {
-        getNodeType as legacyGetNodeTypeWithFallback;
-    }
-
     #[Flow\Inject]
     protected ContentRepositoryRegistry $contentRepositoryRegistry;
 
@@ -167,14 +162,6 @@ class NodeHelper implements ProtectedContextAwareInterface
     {
         $contentRepository = $this->contentRepositoryRegistry->get($node->contentRepositoryId);
         return $contentRepository->getNodeTypeManager()->hasNodeType($node->nodeTypeName);
-    }
-
-    /**
-     * @deprecated with 9.0.0-beta14 please use Neos.Node.nodeType() instead and dont rely on the fallback behaviour
-     */
-    public function getNodeType(Node $node): NodeType
-    {
-        return $this->legacyGetNodeTypeWithFallback($node);
     }
 
     /**
