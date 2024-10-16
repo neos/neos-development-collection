@@ -17,6 +17,7 @@ use Neos\Flow\Security\Context as SecurityContext;
 use Neos\ContentRepository\Domain\Model\NodeInterface;
 use Neos\ContentRepository\Domain\Service\ContentDimensionPresetSourceInterface;
 use Neos\ContentRepository\Domain\Service\ContextFactory;
+use Neos\Eel\FlowQuery\FlowQuery;
 
 /**
  * An Eel context matching expression for the node privileges
@@ -102,6 +103,32 @@ class NodePrivilegeContext
             return $nodePath;
         }
         return substr($this->node->getPath() . '/', 0, strlen($nodePath)) === $nodePath;
+    }
+
+    /**
+     *
+     * @param string|array $nodeTypes A single or an array of fully qualified NodeType name(s), e.g. "Neos.Neos:Document"
+     * @return boolean true if the given node matches otherwise false
+     */
+    public function isDescendantOfNodetype($nodeTypes)
+    {
+        if ($this->node === null) {
+            return true;
+        }
+        if (!is_array($nodeTypes)) {
+            $nodeTypes = [$nodeTypes];
+        }
+
+        foreach ($nodeTypes as $nodeType) {
+            $fq = new FlowQuery([$this->node]);
+
+            $counted = $fq->closest('[instanceof ' . $nodeType . ']')->count();
+
+            if ($counted > 0) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
