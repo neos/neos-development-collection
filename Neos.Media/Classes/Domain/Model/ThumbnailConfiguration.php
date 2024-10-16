@@ -123,7 +123,7 @@ class ThumbnailConfiguration
     }
 
     /**
-     * @return boolean
+     * @return string
      */
     public function getRatioMode()
     {
