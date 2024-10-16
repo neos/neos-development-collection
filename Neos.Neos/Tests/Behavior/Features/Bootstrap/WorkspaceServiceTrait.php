@@ -25,6 +25,7 @@ use Neos\Neos\Domain\Model\WorkspaceRoleAssignment;
 use Neos\Neos\Domain\Model\WorkspaceRoleSubject;
 use Neos\Neos\Domain\Model\WorkspaceRoleSubjectType;
 use Neos\Neos\Domain\Model\WorkspaceTitle;
+use Neos\Neos\Domain\Service\UserService;
 use Neos\Neos\Domain\Service\WorkspaceService;
 use PHPUnit\Framework\Assert;
 
@@ -76,6 +77,18 @@ trait WorkspaceServiceTrait
     }
 
     /**
+     * @Given a personal workspace for user :username is created
+     */
+    public function aPersonalWorkspaceForUserIsCreated(string $username): void
+    {
+        $user = $this->getObject(UserService::class)->getUser($username);
+        $this->tryCatchingExceptions(fn () => $this->getObject(WorkspaceService::class)->createPersonalWorkspaceForUserIfMissing(
+            $this->currentContentRepository->id,
+            $user,
+        ));
+    }
+
+    /**
      * @When the shared workspace :workspaceName is created with the target workspace :targetWorkspace
      */
     public function theSharedWorkspaceIsCreatedWithTheTargetWorkspace(string $workspaceName, string $targetWorkspace): void
@@ -101,7 +114,7 @@ trait WorkspaceServiceTrait
     }
 
     /**
-     * @When a workspace :arg1 with base workspace :arg2 exists without metadata
+     * @When a workspace :workspaceName with base workspace :baseWorkspaceName exists without metadata
      */
     public function aWorkspaceWithBaseWorkspaceExistsWithoutMetadata(string $workspaceName, string $baseWorkspaceName): void
     {
@@ -193,5 +206,35 @@ trait WorkspaceServiceTrait
             'Role' => $assignment->role->value,
         ], iterator_to_array($workspaceAssignments));
         Assert::assertSame($expectedAssignments->getHash(), $actualAssignments);
+    }
+
+    /**
+     * @Then the Neos user :username should have the permissions :expectedPermissions for workspace :workspaceName
+     */
+    public function theNeosUserShouldHaveThePermissionsForWorkspace(string $username, string $expectedPermissions, string $workspaceName): void
+    {
+        $user = $this->getObject(UserService::class)->getUser($username);
+        $permissions = $this->getObject(WorkspaceService::class)->getWorkspacePermissionsForUser(
+            $this->currentContentRepository->id,
+            WorkspaceName::fromString($workspaceName),
+            $user,
+        );
+        Assert::assertSame($expectedPermissions, implode(',', array_keys(array_filter((array)$permissions))));
+    }
+
+    /**
+     * @Then the Neos user :username should have no permissions for workspace :workspaceName
+     */
+    public function theNeosUserShouldHaveNoPermissionsForWorkspace(string $username, string $workspaceName): void
+    {
+        $user = $this->getObject(UserService::class)->getUser($username);
+        $permissions = $this->getObject(WorkspaceService::class)->getWorkspacePermissionsForUser(
+            $this->currentContentRepository->id,
+            WorkspaceName::fromString($workspaceName),
+            $user,
+        );
+        Assert::assertFalse($permissions->read);
+        Assert::assertFalse($permissions->write);
+        Assert::assertFalse($permissions->manage);
     }
 }

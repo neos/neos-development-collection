@@ -59,8 +59,6 @@ use Neos\Neos\Domain\Service\NodeTypeNameFactory;
 use Neos\Neos\Domain\Service\UserService;
 use Neos\Neos\Domain\Service\WorkspacePublishingService;
 use Neos\Neos\Domain\Service\WorkspaceService;
-use Neos\Neos\FrontendRouting\NodeAddress as LegacyNodeAddress;
-use Neos\Neos\FrontendRouting\NodeAddressFactory;
 use Neos\Neos\FrontendRouting\NodeUriBuilderFactory;
 use Neos\Neos\FrontendRouting\SiteDetection\SiteDetectionResult;
 use Neos\Neos\PendingChangesProjection\ChangeFinder;
@@ -426,17 +424,13 @@ class WorkspaceController extends AbstractModuleController
      */
     public function rebaseAndRedirectAction(string $targetNode, Workspace $targetWorkspace): void
     {
-        $contentRepositoryId = SiteDetectionResult::fromRequest($this->request->getHttpRequest())
-            ->contentRepositoryId;
-        $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryId);
-        // todo legacy uri node address notation used. Should be refactored to use json encoded NodeAddress
-        $targetNodeAddress = NodeAddressFactory::create($contentRepository)->createCoreNodeAddressFromLegacyUriString($targetNode);
+        $targetNodeAddress = NodeAddress::fromJsonString($targetNode);
 
         $user = $this->userService->getCurrentUser();
         if ($user === null) {
             throw new \RuntimeException('No account is authenticated', 1710068880);
         }
-        $personalWorkspace = $this->workspaceService->getPersonalWorkspaceForUser($contentRepositoryId, $user->getId());
+        $personalWorkspace = $this->workspaceService->getPersonalWorkspaceForUser($targetNodeAddress->contentRepositoryId, $user->getId());
 
         /** @todo do something else
          * if ($personalWorkspace !== $targetWorkspace) {
@@ -465,13 +459,6 @@ class WorkspaceController extends AbstractModuleController
         );
 
         if ($this->packageManager->isPackageAvailable('Neos.Neos.Ui')) {
-            // todo remove me legacy
-            $legacyTargetNodeAddressInPersonalWorkspace = new LegacyNodeAddress(
-                null,
-                $targetNodeAddressInPersonalWorkspace->dimensionSpacePoint,
-                $targetNodeAddressInPersonalWorkspace->aggregateId,
-                $targetNodeAddressInPersonalWorkspace->workspaceName
-            );
             $mainRequest = $this->controllerContext->getRequest()->getMainRequest();
             $this->uriBuilder->setRequest($mainRequest);
 
@@ -479,7 +466,7 @@ class WorkspaceController extends AbstractModuleController
                 'index',
                 'Backend',
                 'Neos.Neos.Ui',
-                ['node' => $legacyTargetNodeAddressInPersonalWorkspace]
+                ['node' => $targetNodeAddressInPersonalWorkspace->toJson()]
             );
         }
 
@@ -497,12 +484,9 @@ class WorkspaceController extends AbstractModuleController
      */
     public function publishNodeAction(string $nodeAddress, WorkspaceName $selectedWorkspace): void
     {
-        $contentRepositoryId = SiteDetectionResult::fromRequest($this->request->getHttpRequest())
-            ->contentRepositoryId;
-        $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryId);
-        $nodeAddressFactory = NodeAddressFactory::create($contentRepository);
-        // todo legacy uri node address notation used. Should be refactored to use json encoded NodeAddress
-        $nodeAddress = $nodeAddressFactory->createCoreNodeAddressFromLegacyUriString($nodeAddress);
+        $nodeAddress = NodeAddress::fromJsonString($nodeAddress);
+
+        $contentRepository = $this->contentRepositoryRegistry->get($nodeAddress->contentRepositoryId);
 
         $command = PublishIndividualNodesFromWorkspace::create(
             $selectedWorkspace,
@@ -513,8 +497,7 @@ class WorkspaceController extends AbstractModuleController
                 )
             ),
         );
-        $contentRepository->handle($command)
-            ;
+        $contentRepository->handle($command);
 
         $this->addFlashMessage($this->translator->translateById(
             'workspaces.selectedChangeHasBeenPublished',
@@ -535,12 +518,9 @@ class WorkspaceController extends AbstractModuleController
      */
     public function discardNodeAction(string $nodeAddress, WorkspaceName $selectedWorkspace): void
     {
-        $contentRepositoryId = SiteDetectionResult::fromRequest($this->request->getHttpRequest())
-            ->contentRepositoryId;
-        $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryId);
-        $nodeAddressFactory = NodeAddressFactory::create($contentRepository);
-        // todo legacy uri node address notation used. Should be refactored to use json encoded NodeAddress
-        $nodeAddress = $nodeAddressFactory->createCoreNodeAddressFromLegacyUriString($nodeAddress);
+        $nodeAddress = NodeAddress::fromJsonString($nodeAddress);
+
+        $contentRepository = $this->contentRepositoryRegistry->get($nodeAddress->contentRepositoryId);
 
         $command = DiscardIndividualNodesFromWorkspace::create(
             $selectedWorkspace,
@@ -551,8 +531,7 @@ class WorkspaceController extends AbstractModuleController
                 )
             ),
         );
-        $contentRepository->handle($command)
-            ;
+        $contentRepository->handle($command);
 
         $this->addFlashMessage($this->translator->translateById(
             'workspaces.selectedChangeHasBeenDiscarded',
@@ -577,12 +556,10 @@ class WorkspaceController extends AbstractModuleController
         $contentRepositoryId = SiteDetectionResult::fromRequest($this->request->getHttpRequest())
             ->contentRepositoryId;
         $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryId);
-        $nodeAddressFactory = NodeAddressFactory::create($contentRepository);
 
         $nodesToPublishOrDiscard = [];
         foreach ($nodes as $node) {
-            // todo legacy uri node address notation used. Should be refactored to use json encoded NodeAddress
-            $nodeAddress = $nodeAddressFactory->createCoreNodeAddressFromLegacyUriString($node);
+            $nodeAddress = NodeAddress::fromJsonString($node);
             $nodesToPublishOrDiscard[] = new NodeIdToPublishOrDiscard(
                 $nodeAddress->aggregateId,
                 $nodeAddress->dimensionSpacePoint
@@ -784,19 +761,19 @@ class WorkspaceController extends AbstractModuleController
                         $siteChanges[$siteNodeName]['documents'][$documentPath]['isMoved'] = $change->moved;
                     }
 
-                    // As for changes of type `delete` we are using nodes from the live content stream
-                    // we can't create `serializedNodeAddress` from the node.
+                    // As for changes of type `delete` we are using nodes from the live workspace
+                    // we can't create a serialized nodeAddress from the node.
                     // Instead, we use the original stored values.
-                    $nodeAddress = new LegacyNodeAddress(
-                        null,
+                    $nodeAddress = NodeAddress::create(
+                        $contentRepository->id,
+                        $selectedWorkspace->workspaceName,
                         $change->originDimensionSpacePoint->toDimensionSpacePoint(),
-                        $change->nodeAggregateId,
-                        $selectedWorkspace->workspaceName
+                        $change->nodeAggregateId
                     );
 
                     $change = [
                         'node' => $node,
-                        'serializedNodeAddress' => $nodeAddress->serializeForUri(),
+                        'serializedNodeAddress' => $nodeAddress->toJson(),
                         'isRemoved' => $change->deleted,
                         'isNew' => $change->created,
                         'isMoved' => $change->moved,
