@@ -7,6 +7,7 @@ namespace Neos\Neos\Command;
 use League\Flysystem\Filesystem;
 use League\Flysystem\Local\LocalFilesystemAdapter;
 use Neos\ContentRepository\Core\Projection\CatchUpOptions;
+use Neos\ContentRepository\Core\Service\ProjectionServiceFactory;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
@@ -15,7 +16,6 @@ use Neos\ContentRepository\Export\ExportServiceFactory;
 use Neos\ContentRepository\Export\ImportService;
 use Neos\ContentRepository\Export\ImportServiceFactory;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
-use Neos\ContentRepositoryRegistry\Service\ProjectionReplayServiceFactory;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Cli\CommandController;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
@@ -43,7 +43,7 @@ class CrCommandController extends CommandController
         private readonly ResourceManager $resourceManager,
         private readonly PersistenceManagerInterface $persistenceManager,
         private readonly ContentRepositoryRegistry $contentRepositoryRegistry,
-        private readonly ProjectionReplayServiceFactory $projectionReplayServiceFactory,
+        private readonly ProjectionServiceFactory $projectionServiceFactory,
         private readonly AssetUsageService $assetUsageService,
         private readonly WorkspaceService $workspaceService,
     ) {
@@ -117,7 +117,7 @@ class CrCommandController extends CommandController
 
         $this->outputLine('Replaying projections');
 
-        $projectionService = $this->contentRepositoryRegistry->buildService($contentRepositoryId, $this->projectionReplayServiceFactory);
+        $projectionService = $this->contentRepositoryRegistry->buildService($contentRepositoryId, $this->projectionServiceFactory);
         $projectionService->replayAllProjections(CatchUpOptions::create());
 
         $this->outputLine('Assigning live workspace role');

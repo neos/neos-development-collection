@@ -38,7 +38,7 @@ class StructureAdjustmentService implements ContentRepositoryServiceInterface
     private readonly ContentGraphInterface $liveContentGraph;
 
     public function __construct(
-        ContentRepository $contentRepository,
+        private readonly ContentRepository $contentRepository,
         private readonly EventPersister $eventPersister,
         NodeTypeManager $nodeTypeManager,
         InterDimensionalVariationGraph $interDimensionalVariationGraph,
@@ -102,7 +102,7 @@ class StructureAdjustmentService implements ContentRepositoryServiceInterface
             $remediation = $adjustment->remediation;
             $eventsToPublish = $remediation();
             assert($eventsToPublish instanceof EventsToPublish);
-            $this->eventPersister->publishEvents($eventsToPublish);
+            $this->eventPersister->publishEvents($this->contentRepository, $eventsToPublish);
         }
     }
 }
