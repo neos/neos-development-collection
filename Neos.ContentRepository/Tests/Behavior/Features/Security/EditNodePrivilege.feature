@@ -13,6 +13,9 @@ Feature: Privilege to restrict editing of nodes
           'Neos.ContentRepository:EditEventNodes':
             matcher: 'isDescendantNodeOf("11d3aded-fb1a-70e7-1412-0b465b11fcd8")'
 
+          'Neos.ContentRepository:EditCollectionType':
+            matcher: 'isDescendantOfNodetype("Neos.ContentRepository.Testing:ContentCollection")'
+
       roles:
         'Neos.Flow:Everybody':
           privileges: []
@@ -31,6 +34,9 @@ Feature: Privilege to restrict editing of nodes
             -
               privilegeTarget: 'Neos.ContentRepository:EditEventNodes'
               permission: GRANT
+            -
+              privilegeTarget: 'Neos.ContentRepository:EditCollectionType'
+              permission: GRANT
       """
 
     And I have the following nodes:
@@ -40,6 +46,26 @@ Feature: Privilege to restrict editing of nodes
       | 68ca0dcd-2afb-ef0e-1106-a5301e65b8a0 | /sites/content-repository/company      | Neos.ContentRepository.Testing:Document | {"title": "Company"}                                   | live      |
       | 52540602-b417-11e3-9358-14109fd7a2dd | /sites/content-repository/service      | Neos.ContentRepository.Testing:Document | {"title": "Service"}                                   | live      |
       | 11d3aded-fb1a-70e7-1412-0b465b11fcd8 | /sites/content-repository/events       | Neos.ContentRepository.Testing:Document | {"title": "Events", "description": "Some cool event"}  | live      |
+      | d09c4e76-79c6-45d9-a12a-c1a06450329c | /sites/content-repository/service/collection           | Neos.ContentRepository.Testing:ContentCollection | {}                            | live      |
+      | 4f7230ba-36b2-4dc3-96fa-b4159371cd3b | /sites/content-repository/service/collection/text      | Neos.ContentRepository.Testing:Text              | {"text": "Cool text"}         | live      |
+      
+  @Isolated @fixtures
+  Scenario: Anonymous users are not granted to edit childnodes on ContenCollection nodetypes
+    Given I am not authenticated
+    And I get a node by path "/sites/content-repository/service/collection/text" with the following context:
+      | Workspace  |
+      | user-admin |
+    Then I should not be granted to set the "text" property to "Even cooler text"
+    And I should get false when asking the node authorization service if editing this node is granted
+
+  @Isolated @fixtures
+  Scenario: Administrators are granted to edit childnodes on ContenCollection nodetypes
+    Given I am authenticated with role "Neos.ContentRepository:Administrator"
+    And I get a node by path "/sites/content-repository/service/collection/text" with the following context:
+      | Workspace  |
+      | user-admin |
+    Then I should be granted to set the "text" property to "Even cooler text"
+    And I should get true when asking the node authorization service if editing this node is granted
 
   @Isolated @fixtures
   Scenario: Anonymous users are granted to set properties on company node
