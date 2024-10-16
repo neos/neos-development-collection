@@ -32,6 +32,7 @@ use Neos\ContentRepository\Core\Feature\NodeModification\Dto\SerializedPropertyV
 use Neos\ContentRepository\Core\Feature\RootNodeCreation\Event\RootNodeAggregateWithNodeWasCreated;
 use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Command\CreateRootWorkspace;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
+use Neos\ContentRepository\Core\Projection\Projections;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateClassification;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
@@ -53,7 +54,8 @@ class PerformanceMeasurementService implements ContentRepositoryServiceInterface
         private readonly EventPersister $eventPersister,
         private readonly ContentRepository $contentRepository,
         private readonly Connection $connection,
-        private readonly ContentRepositoryId $contentRepositoryId
+        private readonly ContentRepositoryId $contentRepositoryId,
+        private readonly Projections $projections,
     ) {
         $this->contentStreamId = contentStreamId::fromString('cs-identifier');
         $this->workspaceName = WorkspaceName::fromString('some-workspace');
@@ -74,7 +76,7 @@ class PerformanceMeasurementService implements ContentRepositoryServiceInterface
     {
         $eventTableName = DoctrineEventStoreFactory::databaseTableName($this->contentRepositoryId);
         $this->connection->executeStatement('TRUNCATE ' . $this->connection->quoteIdentifier($eventTableName));
-        $this->contentRepository->resetProjectionStates();
+        $this->projections->resetAll();
     }
 
     public function createNodesForPerformanceTest(int $nodesPerLevel, int $levels): void
