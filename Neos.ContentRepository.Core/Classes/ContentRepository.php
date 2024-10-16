@@ -238,6 +238,14 @@ final class ContentRepository
     }
 
     /**
+     * @throws WorkspaceDoesNotExist if the workspace does not exist
+     */
+    public function getContentGraph(WorkspaceName $workspaceName): ContentGraphInterface
+    {
+        return $this->getContentRepositoryReadModel()->getContentGraphByWorkspaceName($workspaceName);
+    }
+
+    /**
      * Returns the workspace with the given name, or NULL if it does not exist in this content repository
      */
     public function findWorkspaceByName(WorkspaceName $workspaceName): ?Workspace
@@ -262,14 +270,6 @@ final class ContentRepository
     public function findContentStreams(): ContentStreams
     {
         return $this->getContentRepositoryReadModel()->findContentStreams();
-    }
-
-    /**
-     * @throws WorkspaceDoesNotExist if the workspace does not exist
-     */
-    public function getContentGraph(WorkspaceName $workspaceName): ContentGraphInterface
-    {
-        return $this->getContentRepositoryReadModel()->getContentGraphByWorkspaceName($workspaceName);
     }
 
     public function getNodeTypeManager(): NodeTypeManager
