@@ -73,7 +73,7 @@ final class WorkspaceService
         return $metadata ?? new WorkspaceMetadata(
             WorkspaceTitle::fromString($workspaceName->value),
             WorkspaceDescription::fromString(''),
-            $workspace->baseWorkspaceName === null ? WorkspaceClassification::ROOT : WorkspaceClassification::UNKNOWN,
+            $workspace->isRootWorkspace() ? WorkspaceClassification::ROOT : WorkspaceClassification::UNKNOWN,
             null,
         );
     }
@@ -377,7 +377,7 @@ final class WorkspaceService
                     'workspace_name' => $workspaceName->value,
                     'description' => '',
                     'title' => $workspaceName->value,
-                    'classification' => $workspace->baseWorkspaceName === null ? WorkspaceClassification::ROOT->value : WorkspaceClassification::UNKNOWN->value,
+                    'classification' => $workspace->isRootWorkspace() ? WorkspaceClassification::ROOT->value : WorkspaceClassification::UNKNOWN->value,
                     ...$data,
                 ]);
             }

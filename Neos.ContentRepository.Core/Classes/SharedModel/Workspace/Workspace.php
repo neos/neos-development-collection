@@ -56,6 +56,9 @@ final readonly class Workspace
         $this->status = $status;
     }
 
+    /**
+     * @phpstan-assert-if-false WorkspaceName $this->baseWorkspaceName
+     */
     public function isRootWorkspace(): bool
     {
         return $this->baseWorkspaceName !== null;
