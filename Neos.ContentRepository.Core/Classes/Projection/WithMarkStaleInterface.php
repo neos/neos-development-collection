@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Core\Projection;
 
+use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\EventStore\EventPersister;
 
 /**
@@ -17,7 +18,7 @@ use Neos\ContentRepository\Core\EventStore\EventPersister;
 interface WithMarkStaleInterface
 {
     /**
-     * Triggered directly before {@see ProjectionCatchUpTriggerInterface::triggerCatchUp()} is called;
+     * Triggered directly before {@see ContentRepository::catchUpProjections()} is called;
      * by the {@see EventPersister::publishEvents()} method.
      *
      * Can be f.e. used to disable caches inside the Projection State.

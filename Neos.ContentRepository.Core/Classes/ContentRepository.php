@@ -87,7 +87,7 @@ final class ContentRepository
         private readonly UserIdProviderInterface $userIdProvider,
         private readonly ClockInterface $clock,
     ) {
-        $this->commandHandlingDependencies = new CommandHandlingDependencies($this);
+        $this->commandHandlingDependencies = new CommandHandlingDependencies($this, $eventPersister);
     }
 
     /**
@@ -131,7 +131,7 @@ final class ContentRepository
             $eventsToPublish->expectedVersion,
         );
 
-        return $this->eventPersister->publishEvents($eventsToPublish);
+        return $this->eventPersister->publishEvents($this, $eventsToPublish);
     }
 
 
@@ -198,6 +198,15 @@ final class ContentRepository
         }
         $catchUp->run($eventStream);
         $catchUpHook?->onAfterCatchUp();
+    }
+
+    public function catchupProjections(): void
+    {
+        foreach ($this->projectionsAndCatchUpHooks->projections as $projection) {
+            // FIXME optimise by only loading required events once and not per projection
+            // see https://github.com/neos/neos-development-collection/pull/4988/
+            $this->catchUpProjection($projection::class, CatchUpOptions::create());
+        }
     }
 
     public function setUp(): void
