@@ -570,8 +570,7 @@ class WorkspaceController extends AbstractModuleController
                     $selectedWorkspaceName,
                     NodeIdsToPublishOrDiscard::create(...$nodesToPublishOrDiscard),
                 );
-                $contentRepository->handle($command)
-                    ;
+                $contentRepository->handle($command);
                 $this->addFlashMessage($this->translator->translateById(
                     'workspaces.selectedChangesHaveBeenPublished',
                     [],
@@ -586,8 +585,7 @@ class WorkspaceController extends AbstractModuleController
                     $selectedWorkspaceName,
                     NodeIdsToPublishOrDiscard::create(...$nodesToPublishOrDiscard),
                 );
-                $contentRepository->handle($command)
-                    ;
+                $contentRepository->handle($command);
                 $this->addFlashMessage($this->translator->translateById(
                     'workspaces.selectedChangesHaveBeenDiscarded',
                     [],

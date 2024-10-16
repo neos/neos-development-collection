@@ -14,7 +14,6 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\NodeMigration\Transformation;
 
-use Neos\ContentRepository\Core\CommandHandler\CommandResult;
 use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\Feature\DimensionSpaceAdjustment\Command\AddDimensionShineThrough;
@@ -50,8 +49,8 @@ class AddDimensionShineThroughTransformationFactory implements TransformationFac
 
             public function execute(
                 WorkspaceName $workspaceNameForWriting,
-            ): CommandResult {
-                return $this->contentRepository->handle(
+            ): void {
+                $this->contentRepository->handle(
                     AddDimensionShineThrough::create(
                         $workspaceNameForWriting,
                         $this->from,

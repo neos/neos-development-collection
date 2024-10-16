@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Core\Service;
 
-use Neos\ContentRepository\Core\CommandHandler\CommandResult;
 use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceInterface;
 use Neos\ContentRepository\Core\Feature\ContentStreamEventStreamName;
@@ -20,8 +19,6 @@ use Neos\EventStore\EventStoreInterface;
  */
 class ContentStreamPruner implements ContentRepositoryServiceInterface
 {
-    private ?CommandResult $lastCommandResult;
-
     public function __construct(
         private readonly ContentRepository $contentRepository,
         private readonly EventStoreInterface $eventStore,
@@ -51,7 +48,7 @@ class ContentStreamPruner implements ContentRepositoryServiceInterface
         );
 
         foreach ($unusedContentStreams as $contentStream) {
-            $this->lastCommandResult = $this->contentRepository->handle(
+            $this->contentRepository->handle(
                 RemoveContentStream::create($contentStream)
             );
         }
@@ -92,10 +89,5 @@ class ContentStreamPruner implements ContentRepositoryServiceInterface
             $streamName = ContentStreamEventStreamName::fromContentStreamId($contentStreamId)->getEventStreamName();
             $this->eventStore->deleteStream($streamName);
         }
-    }
-
-    public function getLastCommandResult(): ?CommandResult
-    {
-        return $this->lastCommandResult;
     }
 }

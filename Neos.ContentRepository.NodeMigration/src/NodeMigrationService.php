@@ -94,8 +94,7 @@ readonly class NodeMigrationService implements ContentRepositoryServiceInterface
         }
 
         foreach ($command->migrationConfiguration->getMigration() as $migrationDescription) {
-            /** array $migrationDescription */
-            $this->executeSubMigrationAndBlock(
+            $this->executeSubMigration(
                 $migrationDescription,
                 $sourceWorkspace,
                 $targetWorkspace
@@ -121,7 +120,7 @@ readonly class NodeMigrationService implements ContentRepositoryServiceInterface
      * @param array<string,mixed> $migrationDescription
      * @throws MigrationException
      */
-    protected function executeSubMigrationAndBlock(
+    protected function executeSubMigration(
         array $migrationDescription,
         Workspace $workspaceForReading,
         Workspace $workspaceForWriting,
@@ -153,7 +152,7 @@ readonly class NodeMigrationService implements ContentRepositoryServiceInterface
         }
 
         if ($transformations->containsGlobal()) {
-            $transformations->executeGlobalAndBlock($workspaceForWriting->workspaceName);
+            $transformations->executeGlobal($workspaceForWriting->workspaceName);
         } elseif ($transformations->containsNodeAggregateBased()) {
             $contentGraph = $this->contentRepository->getContentGraph($workspaceForReading->workspaceName);
             foreach ($contentGraph->findUsedNodeTypeNames() as $nodeTypeName) {
@@ -163,7 +162,7 @@ readonly class NodeMigrationService implements ContentRepositoryServiceInterface
                     ) as $nodeAggregate
                 ) {
                     if ($filters->matchesNodeAggregate($nodeAggregate)) {
-                        $transformations->executeNodeAggregateBasedAndBlock($nodeAggregate, $workspaceForWriting->workspaceName, $workspaceForWriting->currentContentStreamId);
+                        $transformations->executeNodeAggregateBased($nodeAggregate, $workspaceForWriting->workspaceName, $workspaceForWriting->currentContentStreamId);
                     }
                 }
             }
@@ -189,7 +188,7 @@ readonly class NodeMigrationService implements ContentRepositoryServiceInterface
                             );
 
                             if ($filters->matchesNode($node)) {
-                                $transformations->executeNodeBasedAndBlock(
+                                $transformations->executeNodeBased(
                                     $node,
                                     $coveredDimensionSpacePoints,
                                     $workspaceForWriting->workspaceName,
