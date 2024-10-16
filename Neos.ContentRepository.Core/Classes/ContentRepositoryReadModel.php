@@ -60,15 +60,6 @@ final class ContentRepositoryReadModel implements ProjectionStateInterface
     }
 
     /**
-     * @return iterable<ContentStreamId>
-     * @internal This is currently only used by the {@see ContentStreamPruner} and might be removed in the future!
-     */
-    public function findUnusedAndRemovedContentStreamIds(): iterable
-    {
-        return $this->adapter->findUnusedAndRemovedContentStreamIds();
-    }
-
-    /**
      * The default way to get a content graph to operate on.
      * The currently assigned ContentStreamId for the given Workspace is resolved internally.
      *

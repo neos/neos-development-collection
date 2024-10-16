@@ -62,10 +62,4 @@ final readonly class ContentHyperRepositoryReadModelAdapter implements ContentRe
         // TODO: Implement getContentStreams() method.
         return ContentStreams::createEmpty();
     }
-
-    public function findUnusedAndRemovedContentStreamIds(): iterable
-    {
-        // TODO: Implement getUnusedAndRemovedContentStreamIds() method.
-        return [];
-    }
 }

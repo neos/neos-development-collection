@@ -21,7 +21,6 @@ namespace Neos\ContentRepository\Core\SharedModel\Workspace;
  *
  * @api
  */
-
 final class ContentStreams implements \IteratorAggregate, \Countable
 {
     /**

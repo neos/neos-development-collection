@@ -63,7 +63,7 @@ class ContentStreamCommandController extends CommandController
         $unusedContentStreams = $contentStreamPruner->pruneRemovedFromEventStream();
         $unusedContentStreamsPresent = false;
         foreach ($unusedContentStreams as $contentStreamId) {
-            $this->outputFormatted('Removed events for %s', [$contentStreamId->value]);
+            $this->outputFormatted('Removed events for %s', [$contentStreamId->id->value]);
             $unusedContentStreamsPresent = true;
         }
         if (!$unusedContentStreamsPresent) {
