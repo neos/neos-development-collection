@@ -7,7 +7,7 @@ namespace Neos\ContentRepository\Core\Projection;
 /**
  * An immutable set of Content Repository projections ({@see ProjectionInterface}
  *
- * @implements \IteratorAggregate<ProjectionInterface>
+ * @implements \IteratorAggregate<ProjectionInterface<ProjectionStateInterface>>
  * @internal
  */
 final class Projections implements \IteratorAggregate, \Countable
