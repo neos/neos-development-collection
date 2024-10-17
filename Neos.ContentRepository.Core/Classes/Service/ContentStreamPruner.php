@@ -50,6 +50,7 @@ class ContentStreamPruner implements ContentRepositoryServiceInterface
         if ($removeTemporary) {
             $status[] = ContentStreamStatus::CREATED;
             $status[] = ContentStreamStatus::FORKED;
+            $status[] = ContentStreamStatus::CLOSED;
         }
         $unusedContentStreams = $this->contentRepository->findContentStreams()->filter(
             static fn (ContentStream $contentStream) => in_array($contentStream->status, $status, true),
