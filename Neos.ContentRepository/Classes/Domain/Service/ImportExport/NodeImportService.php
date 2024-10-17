@@ -321,7 +321,7 @@ class NodeImportService
             case 'lastModificationDateTime':
             case 'lastPublicationDateTime':
                 $stringValue = trim($xmlReader->readString());
-                $dateValue = $this->propertyMapper->convert($stringValue, 'DateTime', $this->propertyMappingConfiguration);
+                $dateValue = $this->propertyMapper->convert($stringValue, 'DateTimeImmutable', $this->propertyMappingConfiguration);
                 $this->nodeDataStack[count($this->nodeDataStack) - 1][$elementName] = $dateValue;
                 break;
             default:
