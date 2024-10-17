@@ -118,6 +118,8 @@ class DoctrineDbalContentGraphSchemaBuilder
             (new Column('status', self::type(Types::BINARY)))->setLength(20)->setNotnull(false),
         ]);
 
+        $workspaceTable->addUniqueIndex(['currentContentStreamId']);
+
         return $workspaceTable->setPrimaryKey(['name']);
     }
 
