@@ -29,6 +29,7 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\Helpers\FakeClock;
 use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\Helpers\FakeUserIdProvider;
+use PHPUnit\Framework\Assert;
 
 /**
  * The node creation trait for behavioral tests
@@ -142,6 +143,19 @@ trait CRTestSuiteRuntimeVariables
             NodePath::fromString($childNodeName),
             NodeAggregateId::fromString($parentNodeAggregateId),
         )->aggregateId;
+    }
+
+    /**
+     * @Then /^I expect the status of the workspace "([^"]*)" to be "([^"]*)"$/
+     */
+    public function iExpectTheStatusOfTheWorkspaceToBe(string $workspaceName, string $workspaceStatus): void
+    {
+        $workspace = $this->currentContentRepository->getWorkspaceFinder()->findOneByName(WorkspaceName::fromString($workspaceName));
+
+        if ($workspace === null) {
+            throw new \Exception(sprintf('Workspace "%s" does not exist, projection not yet up to date?', $workspaceName), 1548149355);
+        }
+        Assert::assertSame($workspace->status->value, $workspaceStatus);
     }
 
     protected function getCurrentNodeAggregateId(): NodeAggregateId
