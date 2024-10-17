@@ -123,7 +123,7 @@ class DoctrineDbalContentGraphSchemaBuilder
 
     private function createContentStreamTable(): Table
     {
-        return self::createTable($this->tableNames->contentStream(), [
+        $contentStreamTable = self::createTable($this->tableNames->contentStream(), [
             DbalSchemaFactory::columnForContentStreamId('id')->setNotnull(true),
             (new Column('version', Type::getType(Types::INTEGER)))->setNotnull(true),
             DbalSchemaFactory::columnForContentStreamId('sourceContentStreamId')->setNotnull(false),
@@ -131,6 +131,8 @@ class DoctrineDbalContentGraphSchemaBuilder
             (new Column('status', Type::getType(Types::BINARY)))->setLength(20)->setNotnull(true),
             (new Column('removed', Type::getType(Types::BOOLEAN)))->setDefault(false)->setNotnull(false)
         ]);
+
+        return $contentStreamTable->setPrimaryKey(['id']);
     }
 
     /**
