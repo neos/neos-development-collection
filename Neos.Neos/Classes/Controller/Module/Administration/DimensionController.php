@@ -18,6 +18,8 @@ use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\Annotations as Flow;
 use Neos\Neos\Controller\Module\AbstractModuleController;
 use Neos\Neos\FrontendRouting\SiteDetection\SiteDetectionResult;
+use Neos\Neos\Presentation\Dimensions\VisualInterDimensionalVariationGraph;
+use Neos\Neos\Presentation\Dimensions\VisualIntraDimensionalVariationGraph;
 
 /**
  * The Neos Dimension module controller
@@ -31,11 +33,26 @@ class DimensionController extends AbstractModuleController
     {
         $contentRepositoryId = SiteDetectionResult::fromRequest($this->request->getHttpRequest())
             ->contentRepositoryId;
-        $dimensionControllerInternals = $this->contentRepositoryRegistry->buildService(
-            $contentRepositoryId,
-            new DimensionControllerInternalsFactory()
-        );
-        $graph = $dimensionControllerInternals->loadGraph($type, $dimensionSpacePointHash);
+        $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryId);
+
+        $dimensionSpacePoint = $dimensionSpacePointHash
+            ? $contentRepository->getVariationGraph()->getDimensionSpacePoints()[$dimensionSpacePointHash]
+            : null;
+        $graph = match ($type) {
+            'intraDimension' => VisualIntraDimensionalVariationGraph::fromContentDimensionSource(
+                $contentRepository->getContentDimensionSource()
+            ),
+            'interDimension' => $dimensionSpacePoint
+                ? VisualInterDimensionalVariationGraph::forInterDimensionalVariationSubgraph(
+                    $contentRepository->getVariationGraph(),
+                    $dimensionSpacePoint
+                )
+                : VisualInterDimensionalVariationGraph::forInterDimensionalVariationGraph(
+                    $contentRepository->getVariationGraph(),
+                    $contentRepository->getContentDimensionSource()
+                ),
+            default => null,
+        };
 
         $this->view->assignMultiple([
             'availableGraphTypes' => ['intraDimension', 'interDimension'],
