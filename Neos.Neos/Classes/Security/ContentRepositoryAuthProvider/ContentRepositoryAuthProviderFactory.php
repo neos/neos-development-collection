@@ -2,9 +2,8 @@
 
 declare(strict_types=1);
 
-namespace Neos\Neos\ContentRepositoryAuthProvider;
+namespace Neos\Neos\Security\ContentRepositoryAuthProvider;
 
-use Neos\ContentRepository\Core\SharedModel\Auth\AuthProviderInterface;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
 use Neos\ContentRepositoryRegistry\Factory\AuthProvider\AuthProviderFactoryInterface;
 use Neos\Flow\Annotations as Flow;

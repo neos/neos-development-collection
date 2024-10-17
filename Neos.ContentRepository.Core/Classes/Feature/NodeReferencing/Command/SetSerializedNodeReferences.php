@@ -107,4 +107,9 @@ final readonly class SetSerializedNodeReferences implements
             $this->references,
         );
     }
+
+    public function getWorkspaceName(): WorkspaceName
+    {
+        return $this->workspaceName;
+    }
 }

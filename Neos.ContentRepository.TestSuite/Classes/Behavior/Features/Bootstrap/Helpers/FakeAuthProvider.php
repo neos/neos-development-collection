@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\Helpers;
 
 use Neos\ContentRepository\Core\CommandHandler\CommandInterface;
+use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
 use Neos\ContentRepository\Core\SharedModel\Auth\Privilege;
 use Neos\ContentRepository\Core\SharedModel\Auth\UserId;
 use Neos\ContentRepository\Core\SharedModel\Auth\AuthProviderInterface;
@@ -23,6 +24,11 @@ final class FakeAuthProvider implements AuthProviderInterface
     public function getUserId(): UserId
     {
         return self::$userId ?? UserId::forSystemUser();
+    }
+
+    public function getVisibilityConstraints(WorkspaceName $workspaceName): VisibilityConstraints
+    {
+        return VisibilityConstraints::withoutRestrictions();
     }
 
     public function getWorkspacePrivilege(WorkspaceName $workspaceName, WorkspacePrivilegeType $privilegeType): Privilege

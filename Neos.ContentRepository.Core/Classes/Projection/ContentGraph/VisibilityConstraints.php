@@ -29,7 +29,7 @@ final readonly class VisibilityConstraints implements \JsonSerializable
     /**
      * @param SubtreeTags $tagConstraints A set of {@see SubtreeTag} instances that will be _excluded_ from the results of any content graph query
      */
-    private function __construct(
+    public function __construct(
         public SubtreeTags $tagConstraints,
     ) {
     }
@@ -48,7 +48,7 @@ final readonly class VisibilityConstraints implements \JsonSerializable
         return new self(SubtreeTags::createEmpty());
     }
 
-    public static function frontend(): VisibilityConstraints
+    public static function default(): VisibilityConstraints
     {
         return new self(SubtreeTags::fromStrings('disabled'));
     }

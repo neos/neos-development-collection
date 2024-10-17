@@ -4,7 +4,7 @@ Neos:
       'default':
 
         authProvider:
-          factoryObjectName: Neos\Neos\ContentRepositoryAuthProvider\ContentRepositoryAuthProviderFactory
+          factoryObjectName: Neos\Neos\Security\ContentRepositoryAuthProvider\ContentRepositoryAuthProviderFactory
 
         projections:
           'Neos.Neos:DocumentUriPathProjection':

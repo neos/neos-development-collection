@@ -118,7 +118,7 @@ trait CRTestSuiteRuntimeVariables
     {
         $this->currentVisibilityConstraints = match ($restrictionType) {
             'withoutRestrictions' => VisibilityConstraints::withoutRestrictions(),
-            'frontend' => VisibilityConstraints::frontend(),
+            'frontend' => VisibilityConstraints::default(),
             default => throw new \InvalidArgumentException('Visibility constraint "' . $restrictionType . '" not supported.'),
         };
     }

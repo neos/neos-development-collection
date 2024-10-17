@@ -80,6 +80,11 @@ final readonly class MoveDimensionSpacePoint implements
         );
     }
 
+    public function getWorkspaceName(): WorkspaceName
+    {
+        return $this->workspaceName;
+    }
+
     /**
      * @return array<string,\JsonSerializable>
      */

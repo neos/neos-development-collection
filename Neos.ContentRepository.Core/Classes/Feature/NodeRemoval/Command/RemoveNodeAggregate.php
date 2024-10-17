@@ -119,4 +119,9 @@ final readonly class RemoveNodeAggregate implements
             $this->removalAttachmentPoint,
         );
     }
+
+    public function getWorkspaceName(): WorkspaceName
+    {
+        return $this->workspaceName;
+    }
 }

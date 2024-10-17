@@ -93,7 +93,7 @@ trait CRTestSuiteTrait
             $this->contentRepositories = [];
         }
         $this->currentContentRepository = null;
-        $this->currentVisibilityConstraints = VisibilityConstraints::frontend();
+        $this->currentVisibilityConstraints = VisibilityConstraints::default();
         $this->currentDimensionSpacePoint = null;
         $this->currentRootNodeAggregateId = null;
         $this->currentWorkspaceName = null;

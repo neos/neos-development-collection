@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\Core\SharedModel\Auth;
 
 use Neos\ContentRepository\Core\CommandHandler\CommandInterface;
+use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 
 /**
@@ -22,6 +23,11 @@ final class StaticAuthProvider implements AuthProviderInterface
     public function getUserId(): UserId
     {
         return $this->userId;
+    }
+
+    public function getVisibilityConstraints(WorkspaceName $workspaceName): VisibilityConstraints
+    {
+        return VisibilityConstraints::default();
     }
 
     public function getWorkspacePrivilege(WorkspaceName $workspaceName, WorkspacePrivilegeType $privilegeType): Privilege
