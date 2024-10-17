@@ -24,7 +24,7 @@ use Neos\EventStore\Model\Event\StreamName;
  */
 final readonly class ContentStreamEventStreamName
 {
-    private const EVENT_STREAM_NAME_PREFIX = 'ContentStream:';
+    public const EVENT_STREAM_NAME_PREFIX = 'ContentStream:';
 
     private function __construct(
         public string $value

@@ -95,7 +95,7 @@ final readonly class ContentRepositoryReadModelAdapter implements ContentReposit
     {
         $contentStreamByIdStatement = <<<SQL
             SELECT
-                id, sourceContentStreamId, status, version, removed
+                id, sourceContentStreamId, status, version
             FROM
                 {$this->tableNames->contentStream()}
             WHERE
@@ -119,7 +119,7 @@ final readonly class ContentRepositoryReadModelAdapter implements ContentReposit
     {
         $contentStreamsStatement = <<<SQL
             SELECT
-                id, sourceContentStreamId, status, version, removed
+                id, sourceContentStreamId, status, version
             FROM
                 {$this->tableNames->contentStream()}
         SQL;
@@ -153,8 +153,7 @@ final readonly class ContentRepositoryReadModelAdapter implements ContentReposit
             ContentStreamId::fromString($row['id']),
             isset($row['sourceContentStreamId']) ? ContentStreamId::fromString($row['sourceContentStreamId']) : null,
             ContentStreamStatus::from($row['status']),
-            Version::fromInteger((int)$row['version']),
-            (bool)$row['removed']
+            Version::fromInteger((int)$row['version'])
         );
     }
 }

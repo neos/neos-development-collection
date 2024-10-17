@@ -79,7 +79,6 @@ final readonly class ContentStream
         public ?ContentStreamId $sourceContentStreamId,
         public ContentStreamStatus $status,
         public Version $version,
-        public bool $removed
     ) {
     }
 }

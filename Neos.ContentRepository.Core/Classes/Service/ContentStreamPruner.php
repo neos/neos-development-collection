@@ -10,9 +10,10 @@ use Neos\ContentRepository\Core\Feature\ContentStreamEventStreamName;
 use Neos\ContentRepository\Core\Feature\ContentStreamRemoval\Command\RemoveContentStream;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStream;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreams;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamStatus;
 use Neos\EventStore\EventStoreInterface;
+use Neos\EventStore\Model\Event\StreamName;
+use Neos\EventStore\Model\EventStream\VirtualStreamName;
 
 /**
  * For implementation details of the content stream states and removed state, see {@see ContentStream}.
@@ -73,15 +74,13 @@ class ContentStreamPruner implements ContentRepositoryServiceInterface
      *
      *   - Otherwise, we cannot replay the other content streams correctly (if the base content streams are missing).
      *
-     * @return ContentStreams the removed content streams
+     * @return list<StreamName> the removed content streams
      */
-    public function pruneRemovedFromEventStream(): ContentStreams
+    public function pruneRemovedFromEventStream(): array
     {
-        $removedContentStreams = $this->findUnusedAndRemovedContentStreams();
-        foreach ($removedContentStreams as $removedContentStream) {
-            $streamName = ContentStreamEventStreamName::fromContentStreamId($removedContentStream->id)
-                ->getEventStreamName();
-            $this->eventStore->deleteStream($streamName);
+        $removedContentStreams = $this->findUnusedAndRemovedContentStreamIds();
+        foreach ($removedContentStreams as $removedContentStreamName) {
+            $this->eventStore->deleteStream($removedContentStreamName);
         }
         return $removedContentStreams;
     }
@@ -94,7 +93,10 @@ class ContentStreamPruner implements ContentRepositoryServiceInterface
         }
     }
 
-    private function findUnusedAndRemovedContentStreams(): ContentStreams
+    /**
+     * @return list<StreamName>
+     */
+    private function findUnusedAndRemovedContentStreamIds(): array
     {
         $allContentStreams = $this->contentRepository->findContentStreams();
 
@@ -105,7 +107,7 @@ class ContentStreamPruner implements ContentRepositoryServiceInterface
 
         // Step 1: Find all content streams currently in direct use by a workspace
         foreach ($allContentStreams as $stream) {
-            if ($stream->status === ContentStreamStatus::IN_USE_BY_WORKSPACE && !$stream->removed) {
+            if ($stream->status === ContentStreamStatus::IN_USE_BY_WORKSPACE) {
                 $contentStreamIdsStack[] = $stream->id;
             }
         }
@@ -129,13 +131,29 @@ class ContentStreamPruner implements ContentRepositoryServiceInterface
         }
 
         // Step 3: Check for removed content streams which we do not need anymore transitively
+        $allContentStreamEventStreamNames = $this->findAllContentStreamEventNames();
+
         $removedContentStreams = [];
-        foreach ($allContentStreams as $contentStream) {
-            if ($contentStream->removed && !array_key_exists($contentStream->id->value, $transitiveUsedStreams)) {
-                $removedContentStreams[] = $contentStream;
+        foreach ($allContentStreamEventStreamNames as $streamName) {
+            $removedContentStream = substr($streamName->value, strlen(ContentStreamEventStreamName::EVENT_STREAM_NAME_PREFIX));
+            if (!array_key_exists($removedContentStream, $transitiveUsedStreams)) {
+                $removedContentStreams[] = $streamName;
             }
         }
 
-        return ContentStreams::fromArray($removedContentStreams);
+        return $removedContentStreams;
+    }
+
+    /**
+     * @return list<StreamName>
+     */
+    private function findAllContentStreamEventNames(): array
+    {
+        $events = $this->eventStore->load(VirtualStreamName::forCategory(ContentStreamEventStreamName::EVENT_STREAM_NAME_PREFIX));
+        $allContentStreamEventStreamNames = [];
+        foreach ($events as $eventEnvelope) {
+            $allContentStreamEventStreamNames[$eventEnvelope->streamName->value] = true;
+        }
+        return array_map(StreamName::fromString(...), array_keys($allContentStreamEventStreamNames));
     }
 }
