@@ -21,7 +21,6 @@ use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\NodeFactory;
 use Neos\ContentRepository\Core\ContentRepositoryReadModelAdapterInterface;
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
-use Neos\ContentRepository\Core\SharedModel\Exception\WorkspaceDoesNotExist;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStream;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreams;
@@ -96,12 +95,11 @@ final readonly class ContentRepositoryReadModelAdapter implements ContentReposit
     {
         $contentStreamByIdStatement = <<<SQL
             SELECT
-                id, sourceContentStreamId, status, version
+                id, sourceContentStreamId, status, version, removed
             FROM
                 {$this->tableNames->contentStream()}
             WHERE
                 id = :contentStreamId
-                AND removed = FALSE
             LIMIT 1
         SQL;
         try {
@@ -121,11 +119,9 @@ final readonly class ContentRepositoryReadModelAdapter implements ContentReposit
     {
         $contentStreamsStatement = <<<SQL
             SELECT
-                id, sourceContentStreamId, status, version
+                id, sourceContentStreamId, status, version, removed
             FROM
                 {$this->tableNames->contentStream()}
-            WHERE
-                removed = FALSE
         SQL;
         try {
             $rows = $this->dbal->fetchAllAssociative($contentStreamsStatement);
@@ -133,52 +129,6 @@ final readonly class ContentRepositoryReadModelAdapter implements ContentReposit
             throw new \RuntimeException(sprintf('Failed to load content streams from database: %s', $e->getMessage()), 1716903042, $e);
         }
         return ContentStreams::fromArray(array_map(self::contentStreamFromDatabaseRow(...), $rows));
-    }
-
-    public function findUnusedAndRemovedContentStreamIds(): iterable
-    {
-        $removedContentStreamIdsStatement = <<<SQL
-            WITH RECURSIVE transitiveUsedContentStreams (id) AS (
-                -- initial case: find all content streams currently in direct use by a workspace
-                SELECT
-                    id
-                FROM
-                    {$this->tableNames->contentStream()}
-                WHERE
-                    status = :inUseStatus
-                    AND removed = false
-                UNION
-                    -- now, when a content stream is in use by a workspace, its source content stream is
-                    -- also "transitively" in use.
-                SELECT
-                    sourceContentStreamId
-                FROM
-                    {$this->tableNames->contentStream()}
-                    JOIN transitiveUsedContentStreams ON {$this->tableNames->contentStream()}.id = transitiveUsedContentStreams.id
-                WHERE
-                    {$this->tableNames->contentStream()}.sourceContentStreamId IS NOT NULL
-            )
-            -- now, we check for removed content streams which we do not need anymore transitively
-            SELECT
-                id
-            FROM
-                {$this->tableNames->contentStream()} AS cs
-            WHERE
-                removed = true
-                AND NOT EXISTS (
-                    SELECT 1
-                    FROM transitiveUsedContentStreams
-                    WHERE cs.id = transitiveUsedContentStreams.id
-                )
-        SQL;
-        try {
-            $contentStreamIds = $this->dbal->fetchFirstColumn($removedContentStreamIdsStatement, [
-                'inUseStatus' => ContentStreamStatus::IN_USE_BY_WORKSPACE->value
-            ]);
-        } catch (Exception $e) {
-            throw new \RuntimeException(sprintf('Failed to load unused and removed content stream ids from database: %s', $e->getMessage()), 1716914615, $e);
-        }
-        return array_map(ContentStreamId::fromString(...), $contentStreamIds);
     }
 
     /**
@@ -204,6 +154,7 @@ final readonly class ContentRepositoryReadModelAdapter implements ContentReposit
             isset($row['sourceContentStreamId']) ? ContentStreamId::fromString($row['sourceContentStreamId']) : null,
             ContentStreamStatus::from($row['status']),
             Version::fromInteger((int)$row['version']),
+            (bool)$row['removed']
         );
     }
 }

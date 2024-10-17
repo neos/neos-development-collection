@@ -77,7 +77,7 @@ final class WorkspaceService
         return $metadata ?? new WorkspaceMetadata(
             WorkspaceTitle::fromString($workspaceName->value),
             WorkspaceDescription::fromString(''),
-            $workspace->baseWorkspaceName === null ? WorkspaceClassification::ROOT : WorkspaceClassification::UNKNOWN,
+            $workspace->isRootWorkspace() ? WorkspaceClassification::ROOT : WorkspaceClassification::UNKNOWN,
             null,
         );
     }
@@ -279,16 +279,12 @@ final class WorkspaceService
         } catch (NoSuchRoleException $e) {
             throw new \RuntimeException(sprintf('Failed to determine roles for user "%s", check your package dependencies: %s', $user->getId()->value, $e->getMessage()), 1727084881, $e);
         }
-        $userIsAdministrator = in_array('Neos.Neos:Administrator', $userRoles, true);
         $workspaceMetadata = $this->loadWorkspaceMetadata($contentRepositoryId, $workspaceName);
-        if ($workspaceMetadata === null) {
-            return WorkspacePermissions::create(false, false, $userIsAdministrator);
-        }
-        if ($workspaceMetadata->ownerUserId !== null && $workspaceMetadata->ownerUserId->equals($user->getId())) {
+        if ($workspaceMetadata !== null && $workspaceMetadata->ownerUserId !== null && $workspaceMetadata->ownerUserId->equals($user->getId())) {
             return WorkspacePermissions::all();
         }
-
         $userWorkspaceRole = $this->loadWorkspaceRoleOfUser($contentRepositoryId, $workspaceName, $user->getId(), $userRoles);
+        $userIsAdministrator = in_array('Neos.Neos:Administrator', $userRoles, true);
         if ($userWorkspaceRole === null) {
             return WorkspacePermissions::create(false, false, $userIsAdministrator);
         }
@@ -382,7 +378,7 @@ final class WorkspaceService
                     'workspace_name' => $workspaceName->value,
                     'description' => '',
                     'title' => $workspaceName->value,
-                    'classification' => $workspace->baseWorkspaceName === null ? WorkspaceClassification::ROOT->value : WorkspaceClassification::UNKNOWN->value,
+                    'classification' => $workspace->isRootWorkspace() ? WorkspaceClassification::ROOT->value : WorkspaceClassification::UNKNOWN->value,
                     ...$data,
                 ]);
             }

@@ -37,11 +37,11 @@ use Neos\ContentRepository\Core\Projection\ProjectionsAndCatchUpHooks;
 use Neos\ContentRepository\Core\Projection\ProjectionStateInterface;
 use Neos\ContentRepository\Core\Projection\ProjectionStatuses;
 use Neos\ContentRepository\Core\Projection\WithMarkStaleInterface;
+use Neos\ContentRepository\Core\SharedModel\Auth\AuthProviderInterface;
 use Neos\ContentRepository\Core\SharedModel\Auth\WorkspacePrivilegeType;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryStatus;
 use Neos\ContentRepository\Core\SharedModel\Exception\WorkspaceDoesNotExist;
-use Neos\ContentRepository\Core\SharedModel\Auth\AuthProviderInterface;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStream;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreams;
@@ -245,6 +245,29 @@ final class ContentRepository
     }
 
     /**
+     * @throws WorkspaceDoesNotExist if the workspace does not exist
+     */
+    public function getContentGraph(WorkspaceName $workspaceName): ContentGraphInterface
+    {
+        $privilege = $this->authProvider->getWorkspacePrivilege($workspaceName, WorkspacePrivilegeType::READ_NODES);
+        if (!$privilege->granted) {
+            // TODO more specific exception
+            throw new \RuntimeException(sprintf('Read access denied for workspace "%s": %s', $workspaceName->value, $privilege->message ?? ''), 1729014760);
+        }
+        return $this->getContentRepositoryReadModel()->getContentGraphByWorkspaceName($workspaceName);
+    }
+
+    /**
+     * @throws WorkspaceDoesNotExist if the workspace does not exist
+     */
+    public function getContentSubgraph(WorkspaceName $workspaceName, DimensionSpacePoint $dimensionSpacePoint): ContentSubgraphInterface
+    {
+        $contentGraph = $this->getContentGraph($workspaceName);
+        $visibilityConstraints = $this->authProvider->getVisibilityConstraints($workspaceName);
+        return $contentGraph->getSubgraph($dimensionSpacePoint, $visibilityConstraints);
+    }
+
+    /**
      * Returns the workspace with the given name, or NULL if it does not exist in this content repository
      */
     public function findWorkspaceByName(WorkspaceName $workspaceName): ?Workspace
@@ -269,27 +292,6 @@ final class ContentRepository
     public function findContentStreams(): ContentStreams
     {
         return $this->getContentRepositoryReadModel()->findContentStreams();
-    }
-
-    /**
-     * @throws WorkspaceDoesNotExist if the workspace does not exist
-     */
-    public function getContentGraph(WorkspaceName $workspaceName): ContentGraphInterface
-    {
-        $privilege = $this->authProvider->getWorkspacePrivilege($workspaceName, WorkspacePrivilegeType::READ_NODES);
-        if (!$privilege->granted) {
-            throw new \RuntimeException(sprintf('Read access denied for workspace "%s": %s', $workspaceName->value, $privilege->message ?? ''), 1729014760);
-            // TODO more specific exception
-            //throw WorkspaceDoesNotExist::butWasSupposedTo($workspaceName);
-        }
-        return $this->getContentRepositoryReadModel()->getContentGraphByWorkspaceName($workspaceName);
-    }
-
-    public function getContentSubgraph(WorkspaceName $workspaceName, DimensionSpacePoint $dimensionSpacePoint): ContentSubgraphInterface
-    {
-        $contentGraph = $this->getContentGraph($workspaceName);
-        $visibilityConstraints = $this->authProvider->getVisibilityConstraints($workspaceName);
-        return $contentGraph->getSubgraph($dimensionSpacePoint, $visibilityConstraints);
     }
 
     public function getNodeTypeManager(): NodeTypeManager

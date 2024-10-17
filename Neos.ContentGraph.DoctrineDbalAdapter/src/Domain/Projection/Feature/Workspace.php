@@ -75,7 +75,7 @@ trait Workspace
             UPDATE ' . $this->tableNames->workspace() . '
             SET status = :outdated
             WHERE
-                baseworkspacename = :baseWorkspaceName
+                baseWorkspaceName = :baseWorkspaceName
         ', [
             'outdated' => WorkspaceStatus::OUTDATED->value,
             'baseWorkspaceName' => $baseWorkspaceName->value

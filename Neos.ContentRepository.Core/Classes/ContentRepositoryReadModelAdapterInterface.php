@@ -39,10 +39,4 @@ interface ContentRepositoryReadModelAdapterInterface
     public function findContentStreamById(ContentStreamId $contentStreamId): ?ContentStream;
 
     public function findContentStreams(): ContentStreams;
-
-    /**
-     * @return iterable<ContentStreamId>
-     * @internal This is currently only used by the {@see ContentStreamPruner} and might be removed in the future!
-     */
-    public function findUnusedAndRemovedContentStreamIds(): iterable;
 }

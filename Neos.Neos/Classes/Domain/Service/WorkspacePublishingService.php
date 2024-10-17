@@ -88,7 +88,7 @@ final class WorkspacePublishingService
     {
         $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryId);
         $crWorkspace = $this->requireContentRepositoryWorkspace($contentRepository, $workspaceName);
-        if ($crWorkspace->baseWorkspaceName === null) {
+        if ($crWorkspace->isRootWorkspace()) {
             throw new \InvalidArgumentException(sprintf('Failed to publish workspace "%s" because it has no base workspace', $workspaceName->value), 1717517124);
         }
         $numberOfPendingChanges = $this->countPendingWorkspaceChangesInternal($contentRepository, $workspaceName);
@@ -100,7 +100,7 @@ final class WorkspacePublishingService
     {
         $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryId);
         $crWorkspace = $this->requireContentRepositoryWorkspace($contentRepository, $workspaceName);
-        if ($crWorkspace->baseWorkspaceName === null) {
+        if ($crWorkspace->isRootWorkspace()) {
             throw new \InvalidArgumentException(sprintf('Failed to publish workspace "%s" because it has no base workspace', $workspaceName->value), 1717517240);
         }
         $ancestorNodeTypeName = NodeTypeNameFactory::forSite();
@@ -130,7 +130,7 @@ final class WorkspacePublishingService
     {
         $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryId);
         $crWorkspace = $this->requireContentRepositoryWorkspace($contentRepository, $workspaceName);
-        if ($crWorkspace->baseWorkspaceName === null) {
+        if ($crWorkspace->isRootWorkspace()) {
             throw new \InvalidArgumentException(sprintf('Failed to publish workspace "%s" because it has no base workspace', $workspaceName->value), 1717517467);
         }
         $ancestorNodeTypeName = NodeTypeNameFactory::forDocument();

@@ -15,40 +15,6 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\Core\SharedModel\Workspace;
 
 /**
- * The different states a content stream can be in
- *
- *
- *            │                       │
- *            │(for root              │during
- *            │ content               │rebase
- *            ▼ stream)               ▼
- *      ┌──────────┐            ┌──────────┐             Temporary
- *      │ CREATED  │            │  FORKED  │────┐          states
- *      └──────────┘            └──────────┘    for
- *            │                       │      temporary
- *            ├───────────────────────┤       content
- *            ▼                       ▼       streams
- *  ┌───────────────────┐     ┌──────────────┐  │
- *  │IN_USE_BY_WORKSPACE│     │ REBASE_ERROR │  │
- *  └───────────────────┘     └──────────────┘  │        Persistent
- *            │                       │         │          States
- *            ▼                       │         │
- *  ┌───────────────────┐             │         │
- *  │ NO_LONGER_IN_USE  │             │         │
- *  └───────────────────┘             │         │
- *            │                       │         │
- *            └──────────┬────────────┘         │
- *                       ▼                      │
- *  ┌────────────────────────────────────────┐  │
- *  │               removed=1                │  │
- *  │ => removed from all other projections  │◀─┘
- *  └────────────────────────────────────────┘           Cleanup
- *                       │
- *                       ▼
- *  ┌────────────────────────────────────────┐
- *  │  completely deleted from event stream  │
- *  └────────────────────────────────────────┘
- *
  * @api
  */
 enum ContentStreamStatus: string implements \JsonSerializable
@@ -76,6 +42,8 @@ enum ContentStreamStatus: string implements \JsonSerializable
     /**
      * a workspace was tried to be rebased, and during the rebase an error occured. This is the content stream
      * which contains the errored state - so that we can recover content from it (probably manually)
+     *
+     * @deprecated legacy status, FIXME clean up! https://github.com/neos/neos-development-collection/issues/5101
      */
     case REBASE_ERROR = 'REBASE_ERROR';
 

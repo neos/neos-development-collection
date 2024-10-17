@@ -26,9 +26,7 @@ use Neos\Neos\Domain\Service\NodeTypeNameFactory;
 use Neos\Neos\Domain\Service\WorkspaceService;
 use Neos\Neos\FrontendRouting\SiteDetection\SiteDetectionResult;
 use Neos\Neos\Service\UserService;
-use Neos\Neos\Domain\Service\UserService as DomainUserService;
 use Neos\Neos\AssetUsage\Dto\AssetUsageReference;
-use Neos\Neos\Domain\Model\Site;
 
 /**
  * Controller for asset usage handling

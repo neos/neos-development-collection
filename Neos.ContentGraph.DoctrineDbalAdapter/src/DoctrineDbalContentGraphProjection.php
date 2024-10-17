@@ -117,7 +117,8 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface
             $this->dbal->getSchemaManager()->tablesExist([$legacyWorkspaceTableName])
             && !$this->dbal->getSchemaManager()->tablesExist([$this->tableNames->workspace()])
         ) {
-            $statements[] = 'INSERT INTO ' . $this->tableNames->workspace() . ' (name, baseWorkspaceName, currentContentStreamId, status) SELECT workspaceName AS name, baseWorkspaceName, currentContentStreamId, status FROM ' . $legacyWorkspaceTableName;
+            // we ignore the legacy fields workspacetitle, workspacedescription and workspaceowner
+            $statements[] = 'INSERT INTO ' . $this->tableNames->workspace() . ' (name, baseWorkspaceName, currentContentStreamId, status) SELECT workspacename AS name, baseworkspacename, currentcontentstreamid, status FROM ' . $legacyWorkspaceTableName;
         }
         $legacyContentStreamTableName = str_replace('_p_graph_contentstream', '_p_contentstream', $this->tableNames->contentStream());
         if (
@@ -252,7 +253,7 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface
             WorkspaceWasPublished::class => $this->whenWorkspaceWasPublished($event),
             WorkspaceWasRebased::class => $this->whenWorkspaceWasRebased($event),
             WorkspaceWasRemoved::class => $this->whenWorkspaceWasRemoved($event),
-            default => throw new \InvalidArgumentException(sprintf('Unsupported event %s', get_debug_type($event))),
+            default => $event instanceof EmbedsContentStreamId || throw new \InvalidArgumentException(sprintf('Unsupported event %s', get_debug_type($event))),
         };
         if ($event instanceof EmbedsContentStreamId && ContentStreamEventStreamName::isContentStreamStreamName($eventEnvelope->streamName)) {
             $this->updateContentStreamVersion($event->getContentStreamId(), $eventEnvelope->version);

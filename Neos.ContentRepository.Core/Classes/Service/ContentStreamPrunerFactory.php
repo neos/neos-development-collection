@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Core\Service;
 
-use Neos\ContentRepository\Core\ContentRepositoryReadModel;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceFactoryDependencies;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceFactoryInterface;
 
@@ -16,11 +15,9 @@ class ContentStreamPrunerFactory implements ContentRepositoryServiceFactoryInter
 {
     public function build(ContentRepositoryServiceFactoryDependencies $serviceFactoryDependencies): ContentStreamPruner
     {
-        $contentRepositoryReadModel = $serviceFactoryDependencies->contentRepository->projectionState(ContentRepositoryReadModel::class);
         return new ContentStreamPruner(
             $serviceFactoryDependencies->contentRepository,
             $serviceFactoryDependencies->eventStore,
-            $contentRepositoryReadModel,
         );
     }
 }
