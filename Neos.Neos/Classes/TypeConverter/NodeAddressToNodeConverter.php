@@ -15,7 +15,6 @@ namespace Neos\Neos\TypeConverter;
  */
 
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
-use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAddress;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\Annotations as Flow;
@@ -59,13 +58,7 @@ class NodeAddressToNodeConverter extends AbstractTypeConverter
     ) {
         $nodeAddress = NodeAddress::fromJsonString($source);
         $contentRepository = $this->contentRepositoryRegistry->get($nodeAddress->contentRepositoryId);
-        $subgraph = $contentRepository->getContentGraph($nodeAddress->workspaceName)
-            ->getSubgraph(
-                $nodeAddress->dimensionSpacePoint,
-                $nodeAddress->workspaceName->isLive()
-                    ? VisibilityConstraints::frontend()
-                    : VisibilityConstraints::withoutRestrictions()
-            );
+        $subgraph = $contentRepository->getContentSubgraph($nodeAddress->workspaceName, $nodeAddress->dimensionSpacePoint);
 
         return $subgraph->findNodeById($nodeAddress->aggregateId);
     }

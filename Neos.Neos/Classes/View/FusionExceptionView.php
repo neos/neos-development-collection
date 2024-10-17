@@ -123,7 +123,7 @@ class FusionExceptionView extends AbstractView
                 $site,
                 WorkspaceName::forLive(),
                 $dimensionSpacePoint,
-                VisibilityConstraints::frontend()
+                VisibilityConstraints::default()
             );
         } catch (WorkspaceDoesNotExist | \RuntimeException) {
             return $this->renderErrorWelcomeScreen();
