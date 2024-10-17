@@ -37,16 +37,16 @@ class ContentStreamPruner implements ContentRepositoryServiceInterface
      *       To remove the deleted Content Streams,
      *       call {@see ContentStreamPruner::pruneRemovedFromEventStream()} afterwards.
      *
-     * By default, only content streams in STATE_NO_LONGER_IN_USE and STATE_REBASE_ERROR will be removed.
+     * By default, only content streams that are NO_LONGER_IN_USE will be removed.
      * If you also call with $removeTemporary=true, will delete ALL content streams which are currently not assigned
-     * to a workspace (f.e. dangling ones in FORKED or CREATED.).
+     * to a workspace (f.e. dangling ones in FORKED, CLOSED or CREATED.).
      *
      * @param bool $removeTemporary if TRUE, will delete ALL content streams not bound to a workspace
      * @return iterable<int,ContentStreamId> the identifiers of the removed content streams
      */
     public function prune(bool $removeTemporary = false): iterable
     {
-        $status = [ContentStreamStatus::NO_LONGER_IN_USE, ContentStreamStatus::REBASE_ERROR];
+        $status = [ContentStreamStatus::NO_LONGER_IN_USE];
         if ($removeTemporary) {
             $status[] = ContentStreamStatus::CREATED;
             $status[] = ContentStreamStatus::FORKED;

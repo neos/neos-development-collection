@@ -40,14 +40,6 @@ enum ContentStreamStatus: string implements \JsonSerializable
     case IN_USE_BY_WORKSPACE = 'IN_USE_BY_WORKSPACE';
 
     /**
-     * a workspace was tried to be rebased, and during the rebase an error occured. This is the content stream
-     * which contains the errored state - so that we can recover content from it (probably manually)
-     *
-     * @deprecated legacy status, FIXME clean up! https://github.com/neos/neos-development-collection/issues/5101
-     */
-    case REBASE_ERROR = 'REBASE_ERROR';
-
-    /**
      * the content stream was closed and must no longer accept new events
      */
     case CLOSED = 'CLOSED';

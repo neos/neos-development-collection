@@ -125,7 +125,10 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface
             $this->dbal->getSchemaManager()->tablesExist([$legacyContentStreamTableName])
             && !$this->dbal->getSchemaManager()->tablesExist([$this->tableNames->contentStream()])
         ) {
-            $statements[] = 'INSERT INTO ' . $this->tableNames->contentStream() . ' (id, version, sourceContentStreamId, status, removed) SELECT contentStreamId AS id, version, sourceContentStreamId, state AS status, removed FROM ' . $legacyContentStreamTableName;
+            // special migration regarding content stream table:
+            // 1.) don't copy removed content streams as they would not be flagged but actually removed
+            // 2.) transform legacy `REBASE_ERROR` content streams into `NO_LONGER_IN_USE`, as they should be removed and wouldn't exist today as well. (We cannot reopen the content stream that was attempted to be rebased like we would today in the migration here, for that a replay must be executed see whenWorkspaceRebaseFailed)
+            $statements[] = 'INSERT INTO ' . $this->tableNames->contentStream() . ' (id, version, sourceContentStreamId, status) SELECT contentStreamId AS id, version, sourceContentStreamId, REPLACE(state, \'REBASE_ERROR\', \'NO_LONGER_IN_USE\') AS status FROM ' . $legacyContentStreamTableName . ' WHERE NOT removed = 1';
         }
         // /MIGRATION
 
@@ -733,8 +736,15 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface
 
     private function whenWorkspaceRebaseFailed(WorkspaceRebaseFailed $event): void
     {
+        // legacy handling:
+        // before https://github.com/neos/neos-development-collection/pull/4965 this event was emitted and set the content stream status to `REBASE_ERROR`
+        // instead of setting the error state on replay for old events we make it behave like if the rebase had failed today:
+        // 4.E) In case of a [rebase error}, reopen the old content stream and remove the newly created
+        // The ContentStreamWasReopened event would be emitted with `IN_USE_BY_WORKSPACE` (because that _must_ be the previous state as a workspace was rebased)
+        $this->whenContentStreamWasReopened(new ContentStreamWasReopened($event->sourceContentStreamId, ContentStreamStatus::IN_USE_BY_WORKSPACE));
+        $this->whenContentStreamWasRemoved(new ContentStreamWasRemoved($event->candidateContentStreamId));
+
         $this->markWorkspaceAsOutdatedConflict($event->workspaceName);
-        $this->updateContentStreamStatus($event->candidateContentStreamId, ContentStreamStatus::REBASE_ERROR);
     }
 
     private function whenWorkspaceWasCreated(WorkspaceWasCreated $event): void
