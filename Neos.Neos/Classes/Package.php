@@ -21,7 +21,6 @@ use Neos\Flow\Mvc\Routing\RouterCachingService;
 use Neos\Flow\Package\Package as BasePackage;
 use Neos\Flow\Persistence\Doctrine\PersistenceManager;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
-use Neos\Flow\Security\Authentication\AuthenticationProviderManager;
 use Neos\Fusion\Core\Cache\ContentCache;
 use Neos\Media\Domain\Model\AssetInterface;
 use Neos\Media\Domain\Service\AssetService;
@@ -31,7 +30,6 @@ use Neos\Neos\Domain\Model\Site;
 use Neos\Neos\Domain\Service\SiteService;
 use Neos\Neos\Fusion\Cache\AssetChangeHandlerForCacheFlushing;
 use Neos\Neos\Routing\Cache\RouteCacheFlusher;
-use Neos\Neos\Service\EditorContentStreamZookeeper;
 
 /**
  * The Neos Package
@@ -130,13 +128,6 @@ class Package extends BasePackage
             'sitePruned',
             RouterCachingService::class,
             'flushCaches'
-        );
-
-        $dispatcher->connect(
-            AuthenticationProviderManager::class,
-            'authenticatedToken',
-            EditorContentStreamZookeeper::class,
-            'relayEditorAuthentication'
         );
 
         $dispatcher->connect(AssetService::class, 'assetRemoved', function (AssetInterface $asset) use ($bootstrap) {
