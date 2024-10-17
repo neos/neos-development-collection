@@ -117,7 +117,8 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface
             $this->dbal->getSchemaManager()->tablesExist([$legacyWorkspaceTableName])
             && !$this->dbal->getSchemaManager()->tablesExist([$this->tableNames->workspace()])
         ) {
-            $statements[] = 'INSERT INTO ' . $this->tableNames->workspace() . ' (name, baseWorkspaceName, currentContentStreamId, status) SELECT workspaceName AS name, baseWorkspaceName, currentContentStreamId, status FROM ' . $legacyWorkspaceTableName;
+            // we ignore the legacy fields workspacetitle, workspacedescription and workspaceowner
+            $statements[] = 'INSERT INTO ' . $this->tableNames->workspace() . ' (name, baseWorkspaceName, currentContentStreamId, status) SELECT workspacename AS name, baseworkspacename, currentcontentstreamid, status FROM ' . $legacyWorkspaceTableName;
         }
         $legacyContentStreamTableName = str_replace('_p_graph_contentstream', '_p_contentstream', $this->tableNames->contentStream());
         if (
