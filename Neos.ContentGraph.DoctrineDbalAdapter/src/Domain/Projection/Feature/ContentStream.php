@@ -15,12 +15,13 @@ use Neos\EventStore\Model\Event\Version;
  */
 trait ContentStream
 {
-    private function createContentStream(ContentStreamId $contentStreamId, ContentStreamStatus $status, ?ContentStreamId $sourceContentStreamId = null): void
+    private function createContentStream(ContentStreamId $contentStreamId, ContentStreamStatus $status, ?ContentStreamId $sourceContentStreamId = null, ?Version $sourceVersion = null): void
     {
         $this->dbal->insert($this->tableNames->contentStream(), [
             'id' => $contentStreamId->value,
-            'sourceContentStreamId' => $sourceContentStreamId?->value,
             'version' => 0,
+            'sourceContentStreamId' => $sourceContentStreamId?->value,
+            'sourceContentStreamVersion' => $sourceVersion?->value,
             'status' => $status->value,
         ]);
     }

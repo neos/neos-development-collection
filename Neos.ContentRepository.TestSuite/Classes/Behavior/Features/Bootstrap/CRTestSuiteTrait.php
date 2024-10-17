@@ -140,13 +140,18 @@ trait CRTestSuiteTrait
     }
 
     /**
-     * @Then /^workspace ([^"]*) has status ([^"]*)$/
+     * @Then /^workspace(?:s)? ([^"]*) ha(?:s|ve) status ([^"]*)$/
      */
-    public function workspaceHasStatus(string $rawWorkspaceName, string $status): void
+    public function workspaceStatusMatchesExpected(string $rawWorkspaceNames, string $status): void
     {
-        $workspace = $this->currentContentRepository->findWorkspaceByName(WorkspaceName::fromString($rawWorkspaceName));
+        $rawWorkspaceNames = explode(',', $rawWorkspaceNames);
+        Assert::assertNotEmpty($rawWorkspaceNames);
 
-        Assert::assertSame($status, $workspace?->status->value);
+        foreach ($rawWorkspaceNames as $rawWorkspaceName) {
+            $workspace = $this->currentContentRepository->findWorkspaceByName(WorkspaceName::fromString($rawWorkspaceName));
+            Assert::assertNotNull($workspace, "Workspace $rawWorkspaceName does not exist.");
+            Assert::assertEquals($status, $workspace->status->value, "Workspace $rawWorkspaceName has unexpected status.");
+        }
     }
 
     /**

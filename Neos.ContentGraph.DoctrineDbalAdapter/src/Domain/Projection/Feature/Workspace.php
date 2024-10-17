@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\Feature;
 
-use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceStatus;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 
@@ -20,8 +19,7 @@ trait Workspace
         $this->dbal->insert($this->tableNames->workspace(), [
             'name' => $workspaceName->value,
             'baseWorkspaceName' => $baseWorkspaceName?->value,
-            'currentContentStreamId' => $contentStreamId->value,
-            'status' => WorkspaceStatus::UP_TO_DATE->value
+            'currentContentStreamId' => $contentStreamId->value
         ]);
     }
 
@@ -53,60 +51,6 @@ trait Workspace
             'currentContentStreamId' => $contentStreamId->value,
         ], [
             'name' => $workspaceName->value
-        ]);
-    }
-
-    private function markWorkspaceAsUpToDate(WorkspaceName $workspaceName): void
-    {
-        $this->dbal->executeStatement('
-            UPDATE ' . $this->tableNames->workspace() . '
-            SET status = :upToDate
-            WHERE
-                name = :workspaceName
-        ', [
-            'upToDate' => WorkspaceStatus::UP_TO_DATE->value,
-            'workspaceName' => $workspaceName->value
-        ]);
-    }
-
-    private function markDependentWorkspacesAsOutdated(WorkspaceName $baseWorkspaceName): void
-    {
-        $this->dbal->executeStatement('
-            UPDATE ' . $this->tableNames->workspace() . '
-            SET status = :outdated
-            WHERE
-                baseWorkspaceName = :baseWorkspaceName
-        ', [
-            'outdated' => WorkspaceStatus::OUTDATED->value,
-            'baseWorkspaceName' => $baseWorkspaceName->value
-        ]);
-    }
-
-    private function markWorkspaceAsOutdated(WorkspaceName $workspaceName): void
-    {
-        $this->dbal->executeStatement('
-            UPDATE ' . $this->tableNames->workspace() . '
-            SET
-                status = :outdated
-            WHERE
-                name = :workspaceName
-        ', [
-            'outdated' => WorkspaceStatus::OUTDATED->value,
-            'workspaceName' => $workspaceName->value
-        ]);
-    }
-
-    private function markWorkspaceAsOutdatedConflict(WorkspaceName $workspaceName): void
-    {
-        $this->dbal->executeStatement('
-            UPDATE ' . $this->tableNames->workspace() . '
-            SET
-                status = :outdatedConflict
-            WHERE
-                name = :workspaceName
-        ', [
-            'outdatedConflict' => WorkspaceStatus::OUTDATED_CONFLICT->value,
-            'workspaceName' => $workspaceName->value
         ]);
     }
 }

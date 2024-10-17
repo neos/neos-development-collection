@@ -30,6 +30,8 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepository\Core\SharedModel\Workspace\Workspaces;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceStatus;
 use Neos\EventStore\Model\Event\Version;
+use Neos\EventStore\Model\EventStream\ExpectedVersion;
+use Neos\EventStore\Model\EventStream\MaybeVersion;
 
 /**
  * @internal only used inside the
@@ -55,11 +57,13 @@ final readonly class ContentRepositoryReadModelAdapter implements ContentReposit
     {
         $workspaceByNameStatement = <<<SQL
             SELECT
-                name, baseWorkspaceName, currentContentStreamId, status
+                ws.name, ws.baseWorkspaceName, ws.currentContentStreamId, cs.sourceContentStreamVersion as expectedSourceVersion, scs.version as sourceVersion
             FROM
-                {$this->tableNames->workspace()}
+                {$this->tableNames->workspace()} ws
+                JOIN {$this->tableNames->contentStream()} cs ON cs.id = ws.currentcontentstreamid
+                LEFT JOIN {$this->tableNames->contentStream()} scs ON scs.id = cs.sourceContentStreamId
             WHERE
-                name = :workspaceName
+                ws.name = :workspaceName
             LIMIT 1
         SQL;
         try {
@@ -79,9 +83,11 @@ final readonly class ContentRepositoryReadModelAdapter implements ContentReposit
     {
         $workspacesStatement = <<<SQL
             SELECT
-                name, baseWorkspaceName, currentContentStreamId, status
+                ws.name, ws.baseWorkspaceName, ws.currentContentStreamId, cs.sourceContentStreamVersion as expectedSourceVersion, scs.version as sourceVersion
             FROM
-                {$this->tableNames->workspace()}
+                {$this->tableNames->workspace()} ws
+                JOIN {$this->tableNames->contentStream()} cs ON cs.id = ws.currentcontentstreamid
+                LEFT JOIN {$this->tableNames->contentStream()} scs ON scs.id = cs.sourceContentStreamId
         SQL;
         try {
             $rows = $this->dbal->fetchAllAssociative($workspacesStatement);
@@ -136,11 +142,23 @@ final readonly class ContentRepositoryReadModelAdapter implements ContentReposit
      */
     private static function workspaceFromDatabaseRow(array $row): Workspace
     {
+        $baseWorkspaceName = $row['baseWorkspaceName'] !== null ? WorkspaceName::fromString($row['baseWorkspaceName']) : null;
+
+        $status = WorkspaceStatus::UP_TO_DATE;
+        if ($baseWorkspaceName !== null) {
+            // root workspaces can never be out of date and dont have a source content stream
+            $sourceVersion = MaybeVersion::fromVersionOrNull(Version::fromInteger($row['sourceVersion']));
+            $expectedSourceVersion = ExpectedVersion::fromVersion(Version::fromInteger($row['expectedSourceVersion']));
+
+            if (!$expectedSourceVersion->isSatisfiedBy($sourceVersion)) {
+                $status = WorkspaceStatus::OUTDATED;
+            }
+        }
         return new Workspace(
             WorkspaceName::fromString($row['name']),
-            isset($row['baseWorkspaceName']) ? WorkspaceName::fromString($row['baseWorkspaceName']) : null,
+            $baseWorkspaceName,
             ContentStreamId::fromString($row['currentContentStreamId']),
-            WorkspaceStatus::from($row['status']),
+            $status,
         );
     }
 
