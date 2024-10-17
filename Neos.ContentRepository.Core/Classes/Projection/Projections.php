@@ -79,6 +79,15 @@ final class Projections implements \IteratorAggregate, \Countable
     }
 
     /**
+     * @param ProjectionInterface<ProjectionStateInterface> $projection
+     * @return self
+     */
+    public function with(ProjectionInterface $projection): self
+    {
+        return self::fromArray([...$this->projections, $projection]);
+    }
+
+    /**
      * @return list<class-string<ProjectionInterface<ProjectionStateInterface>>>
      */
     public function getClassNames(): array

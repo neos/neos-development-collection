@@ -277,19 +277,6 @@ final class ContentGraph implements ContentGraphInterface
         return new DimensionSpacePointSet($dimensionSpacePoints);
     }
 
-    public function countNodes(): int
-    {
-        $queryBuilder = $this->createQueryBuilder()
-            ->select('COUNT(*)')
-            ->from($this->nodeQueryBuilder->tableNames->node());
-        try {
-            $result = $queryBuilder->executeQuery();
-            return (int)$result->fetchOne();
-        } catch (DBALException $e) {
-            throw new \RuntimeException(sprintf('Failed to count rows in database: %s', $e->getMessage()), 1701444590, $e);
-        }
-    }
-
     public function findUsedNodeTypeNames(): NodeTypeNames
     {
         return NodeTypeNames::fromArray(array_map(

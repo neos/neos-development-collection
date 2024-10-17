@@ -11,6 +11,7 @@ use Neos\ContentRepository\Core\Projection\ProjectionInterface;
 use Neos\ContentRepository\Core\Projection\Projections;
 use Neos\ContentRepository\Core\Projection\ProjectionsAndCatchUpHooks;
 use Neos\ContentRepository\Core\Projection\ProjectionStateInterface;
+use Neos\ContentRepository\Core\Projection\ContentRepositoryReadModelProjection;
 
 /**
  * @api for custom framework integrations, not for users of the CR
@@ -53,6 +54,7 @@ final class ProjectionsAndCatchUpHooksFactory
      */
     public function build(ProjectionFactoryDependencies $projectionFactoryDependencies): ProjectionsAndCatchUpHooks
     {
+        $contentRepositoryReadModelProjection = null;
         $projectionsArray = [];
         $catchUpHookFactoriesByProjectionClassName = [];
         foreach ($this->factories as $factoryDefinition) {
@@ -71,9 +73,17 @@ final class ProjectionsAndCatchUpHooksFactory
                 $options,
             );
             $catchUpHookFactoriesByProjectionClassName[$projection::class] = $catchUpHookFactories;
-            $projectionsArray[] = $projection;
+            if ($projection instanceof ContentRepositoryReadModelProjection) {
+                $contentRepositoryReadModelProjection = $projection;
+            } else {
+                $projectionsArray[] = $projection;
+            }
         }
 
-        return new ProjectionsAndCatchUpHooks(Projections::fromArray($projectionsArray), $catchUpHookFactoriesByProjectionClassName);
+        if ($contentRepositoryReadModelProjection === null) {
+            throw new \RuntimeException('A content repository requires the ContentRepositoryReadModelProjection to be registered.');
+        }
+
+        return new ProjectionsAndCatchUpHooks($contentRepositoryReadModelProjection, Projections::fromArray($projectionsArray), $catchUpHookFactoriesByProjectionClassName);
     }
 }

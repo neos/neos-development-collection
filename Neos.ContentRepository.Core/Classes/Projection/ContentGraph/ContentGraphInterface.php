@@ -142,13 +142,6 @@ interface ContentGraphInterface extends ProjectionStateInterface
         DimensionSpacePointSet $dimensionSpacePointsToCheck
     ): DimensionSpacePointSet;
 
-    /**
-     * Provides the total number of projected nodes regardless of workspace or content stream.
-     *
-     * @internal only for consumption in testcases
-     */
-    public function countNodes(): int;
-
     /** @internal The content stream id where the workspace name points to for this instance */
     public function getContentStreamId(): ContentStreamId;
 }

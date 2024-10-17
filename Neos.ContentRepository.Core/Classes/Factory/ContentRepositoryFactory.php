@@ -125,7 +125,7 @@ final class ContentRepositoryFactory
             $this->projectionFactoryDependencies,
             $this->getOrBuild(),
             $this->buildEventPersister(),
-            $this->projectionsAndCatchUpHooks->projections,
+            $this->projectionsAndCatchUpHooks,
         );
         return $serviceFactory->build($serviceFactoryDependencies);
     }
@@ -168,7 +168,7 @@ final class ContentRepositoryFactory
                 $this->projectionFactoryDependencies->eventStore,
                 $this->projectionCatchUpTrigger,
                 $this->projectionFactoryDependencies->eventNormalizer,
-                $this->projectionsAndCatchUpHooks->projections,
+                $this->projectionsAndCatchUpHooks->getAllProjections(),
             );
         }
         return $this->eventPersister;

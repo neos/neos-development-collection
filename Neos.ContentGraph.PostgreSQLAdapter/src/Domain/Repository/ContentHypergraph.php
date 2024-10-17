@@ -259,17 +259,6 @@ final class ContentHypergraph implements ContentGraphInterface
         return new DimensionSpacePointSet($occupiedDimensionSpacePoints);
     }
 
-    /**
-     * @throws \Doctrine\DBAL\Driver\Exception
-     * @throws \Doctrine\DBAL\Exception
-     */
-    public function countNodes(): int
-    {
-        $query = 'SELECT COUNT(*) FROM ' . $this->tableNamePrefix . '_node';
-
-        return $this->dbal->executeQuery($query)->fetchOne();
-    }
-
     public function findUsedNodeTypeNames(): NodeTypeNames
     {
         return NodeTypeNames::createEmpty();
