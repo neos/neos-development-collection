@@ -48,55 +48,6 @@ class NodeHelper implements ProtectedContextAwareInterface
     protected NodeLabelGeneratorInterface $nodeLabelGenerator;
 
     /**
-     * Check if the given node is already a collection, find collection by nodePath otherwise, throw exception
-     * if no content collection could be found
-     *
-     * @throws Exception
-     */
-    public function nearestContentCollection(Node $node, string $nodePath): Node
-    {
-        $contentCollectionType = NodeTypeNameFactory::NAME_CONTENT_COLLECTION;
-        if ($this->isOfType($node, $contentCollectionType)) {
-            return $node;
-        } else {
-            if ($nodePath === '') {
-                throw new Exception(sprintf(
-                    'No content collection of type %s could be found in the current node and no node path was provided.'
-                    . ' You might want to configure the nodePath property'
-                    . ' with a relative path to the content collection.',
-                    $contentCollectionType
-                ), 1409300545);
-            }
-            $nodePath = NodePath::fromString($nodePath);
-            $subgraph = $this->contentRepositoryRegistry->subgraphForNode($node);
-
-            $subNode = $subgraph->findNodeByPath($nodePath, $node->aggregateId);
-
-            if ($subNode !== null && $this->isOfType($subNode, $contentCollectionType)) {
-                return $subNode;
-            } else {
-                $nodePathOfNode = VisualNodePath::fromAncestors(
-                    $node,
-                    $this->contentRepositoryRegistry->subgraphForNode($node)
-                        ->findAncestorNodes(
-                            $node->aggregateId,
-                            FindAncestorNodesFilter::create()
-                        )
-                );
-                throw new Exception(sprintf(
-                    'No content collection of type %s could be found in the current node (%s) or at the path "%s".'
-                    . ' You might want to adjust your node type configuration and create the missing child node'
-                    . ' through the "flow structureadjustments:fix --node-type %s" command.',
-                    $contentCollectionType,
-                    $nodePathOfNode->value,
-                    $nodePath->serializeToString(),
-                    $node->nodeTypeName->value
-                ), 1389352984);
-            }
-        }
-    }
-
-    /**
      * Renders the actual node label based on the NodeType definition in Fusion.
      */
     public function label(Node $node): string
@@ -191,6 +142,59 @@ class NodeHelper implements ProtectedContextAwareInterface
     public function subgraphForNode(Node $node): ContentSubgraphInterface
     {
         return $this->contentRepositoryRegistry->subgraphForNode($node);
+    }
+
+    /**
+     * Check if the given node is already a collection, find collection by nodePath otherwise, throw exception
+     * if no content collection could be found
+     *
+     * @throws Exception
+     * @internal implementation detail of Neos.Neos:ContentCollection
+     */
+    public function nearestContentCollection(Node $node, ?string $nodePath): Node
+    {
+        $contentCollectionType = NodeTypeNameFactory::NAME_CONTENT_COLLECTION;
+        if ($this->isOfType($node, $contentCollectionType)) {
+            return $node;
+        } else {
+            if ($nodePath === null || $nodePath === '') {
+                $nodePathOfNode = VisualNodePath::buildFromAncestors(
+                    $node,
+                    $this->contentRepositoryRegistry->get($node->contentRepositoryId),
+                    $this->nodeLabelGenerator
+                );
+                throw new Exception(sprintf(
+                    'No content collection of type %s could be found in the current node (%s) and no node path was provided.'
+                    . ' You might want to configure the nodePath property'
+                    . ' with a relative path to the content collection.',
+                    $contentCollectionType,
+                    $nodePathOfNode->value
+                ), 1409300545);
+            }
+            $nodePath = NodePath::fromString($nodePath);
+            $subgraph = $this->contentRepositoryRegistry->subgraphForNode($node);
+
+            $subNode = $subgraph->findNodeByPath($nodePath, $node->aggregateId);
+
+            if ($subNode !== null && $this->isOfType($subNode, $contentCollectionType)) {
+                return $subNode;
+            } else {
+                $nodePathOfNode = VisualNodePath::buildFromAncestors(
+                    $node,
+                    $this->contentRepositoryRegistry->get($node->contentRepositoryId),
+                    $this->nodeLabelGenerator
+                );
+                throw new Exception(sprintf(
+                    'No content collection of type %s could be found in the current node (%s) or at the path "%s".'
+                    . ' You might want to adjust your node type configuration and create the missing child node'
+                    . ' through the "flow structureadjustments:fix --node-type %s" command.',
+                    $contentCollectionType,
+                    $nodePathOfNode->value,
+                    $nodePath->serializeToString(),
+                    $node->nodeTypeName->value
+                ), 1389352984);
+            }
+        }
     }
 
     /**
