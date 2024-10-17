@@ -14,15 +14,14 @@ declare(strict_types=1);
 
 namespace Neos\Neos\Command;
 
-use Doctrine\DBAL\Exception as DbalException;
 use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Exception\WorkspaceAlreadyExists;
 use Neos\ContentRepository\Core\Feature\WorkspaceModification\Command\DeleteWorkspace;
 use Neos\ContentRepository\Core\Feature\WorkspaceRebase\Dto\RebaseErrorHandlingStrategy;
 use Neos\ContentRepository\Core\Feature\WorkspaceRebase\Exception\WorkspaceRebaseFailed;
-use Neos\ContentRepository\Core\Projection\Workspace\Workspace;
 use Neos\ContentRepository\Core\Service\WorkspaceMaintenanceServiceFactory;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
 use Neos\ContentRepository\Core\SharedModel\Exception\WorkspaceDoesNotExist;
+use Neos\ContentRepository\Core\SharedModel\Workspace\Workspace;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\Annotations as Flow;
@@ -365,7 +364,7 @@ class WorkspaceCommandController extends CommandController
             $this->quit(2);
         }
 
-        $crWorkspace = $contentRepositoryInstance->getWorkspaceFinder()->findOneByName($workspaceName);
+        $crWorkspace = $contentRepositoryInstance->findWorkspaceByName($workspaceName);
         if ($crWorkspace === null) {
             $this->outputLine('Workspace "%s" does not exist', [$workspaceName->value]);
             $this->quit(1);
@@ -377,13 +376,8 @@ class WorkspaceCommandController extends CommandController
             $this->quit(2);
         }
 
-        try {
-            $dependentWorkspaces = $contentRepositoryInstance->getWorkspaceFinder()->findByBaseWorkspace($workspaceName);
-        } catch (DbalException $e) {
-            $this->outputLine('<error>Failed to determine dependant workspaces: %s</error>', [$e->getMessage()]);
-            $this->quit(1);
-        }
-        if (count($dependentWorkspaces) > 0) {
+        $dependentWorkspaces = $contentRepositoryInstance->findWorkspaces()->getDependantWorkspaces($workspaceName);
+        if (!$dependentWorkspaces->isEmpty()) {
             $this->outputLine('<error>Workspace "%s" cannot be deleted because the following workspaces are based on it:</error>', [$workspaceName->value]);
 
             $this->outputLine();
@@ -447,12 +441,12 @@ class WorkspaceCommandController extends CommandController
             $force ? RebaseErrorHandlingStrategy::STRATEGY_FORCE : RebaseErrorHandlingStrategy::STRATEGY_FAIL
         );
 
-        if (!count($outdatedWorkspaces)) {
+        if ($outdatedWorkspaces->isEmpty()) {
             $this->outputLine('There are no outdated workspaces.');
-        } else {
-            foreach ($outdatedWorkspaces as $outdatedWorkspace) {
-                $this->outputFormatted('Rebased workspace %s', [$outdatedWorkspace->workspaceName->value]);
-            }
+            return;
+        }
+        foreach ($outdatedWorkspaces as $outdatedWorkspace) {
+            $this->outputFormatted('Rebased workspace <b>%s</b>', [$outdatedWorkspace->workspaceName->value]);
         }
     }
 
@@ -465,11 +459,10 @@ class WorkspaceCommandController extends CommandController
     public function listCommand(string $contentRepository = 'default'): void
     {
         $contentRepositoryId = ContentRepositoryId::fromString($contentRepository);
-        $contentRepositoryInstance = $this->contentRepositoryRegistry->get($contentRepositoryId);
 
-        $workspaces = $contentRepositoryInstance->getWorkspaceFinder()->findAll();
+        $workspaces = $this->contentRepositoryRegistry->get($contentRepositoryId)->findWorkspaces();
 
-        if (count($workspaces) === 0) {
+        if ($workspaces->isEmpty()) {
             $this->outputLine('No workspaces found.');
             $this->quit(0);
         }
@@ -507,7 +500,7 @@ class WorkspaceCommandController extends CommandController
         $contentRepositoryInstance = $this->contentRepositoryRegistry->get($contentRepositoryId);
 
         $workspaceName = WorkspaceName::fromString($workspace);
-        $workspacesInstance = $contentRepositoryInstance->getWorkspaceFinder()->findOneByName($workspaceName);
+        $workspacesInstance = $contentRepositoryInstance->findWorkspaceByName($workspaceName);
 
         if ($workspacesInstance === null) {
             $this->outputLine('Workspace "%s" not found.', [$workspaceName->value]);

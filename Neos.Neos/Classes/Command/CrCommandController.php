@@ -16,7 +16,6 @@ use Neos\ContentRepository\Export\ImportService;
 use Neos\ContentRepository\Export\ImportServiceFactory;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\ContentRepositoryRegistry\Service\ProjectionReplayServiceFactory;
-use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Cli\CommandController;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Flow\ResourceManagement\ResourceManager;
@@ -31,12 +30,6 @@ use Neos\Utility\Files;
 
 class CrCommandController extends CommandController
 {
-    /**
-     * @var array<string|int,mixed>
-     */
-    #[Flow\InjectConfiguration(package: 'Neos.Flow')]
-    protected array $flowSettings;
-
     public function __construct(
         private readonly AssetRepository $assetRepository,
         private readonly ResourceRepository $resourceRepository,
@@ -61,16 +54,21 @@ class CrCommandController extends CommandController
     public function exportCommand(string $path, string $contentRepository = 'default', bool $verbose = false): void
     {
         $contentRepositoryId = ContentRepositoryId::fromString($contentRepository);
-        $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryId);
+        $contentRepositoryInstance = $this->contentRepositoryRegistry->get($contentRepositoryId);
 
         Files::createDirectoryRecursively($path);
         $filesystem = new Filesystem(new LocalFilesystemAdapter($path));
+
+        $liveWorkspace = $contentRepositoryInstance->findWorkspaceByName(WorkspaceName::forLive());
+        if ($liveWorkspace === null) {
+            throw new \RuntimeException('Failed to find live workspace', 1716652280);
+        }
 
         $exportService = $this->contentRepositoryRegistry->buildService(
             $contentRepositoryId,
             new ExportServiceFactory(
                 $filesystem,
-                $contentRepository->getWorkspaceFinder(),
+                $liveWorkspace,
                 $this->assetRepository,
                 $this->assetUsageService,
             )

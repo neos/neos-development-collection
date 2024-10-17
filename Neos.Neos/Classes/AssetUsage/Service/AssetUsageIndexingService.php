@@ -9,10 +9,10 @@ use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\NodeType\NodeType;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Core\Projection\ContentGraph\PropertyCollection;
-use Neos\ContentRepository\Core\Projection\Workspace\Workspace;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
 use Neos\ContentRepository\Core\SharedModel\Exception\WorkspaceDoesNotExist;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
+use Neos\ContentRepository\Core\SharedModel\Workspace\Workspace;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\Persistence\Doctrine\PersistenceManager;
@@ -201,8 +201,8 @@ class AssetUsageIndexingService
     private function getWorkspaceBasesAndWorkspace(ContentRepositoryId $contentRepositoryId, WorkspaceName $workspaceName): array
     {
         if (!isset($this->workspaceBases[$contentRepositoryId->value][$workspaceName->value])) {
-            $workspaceFinder = $this->contentRepositoryRegistry->get($contentRepositoryId)->getWorkspaceFinder();
-            $workspace = $workspaceFinder->findOneByName($workspaceName);
+            $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryId);
+            $workspace = $contentRepository->findWorkspaceByName($workspaceName);
             if ($workspace === null) {
                 throw WorkspaceDoesNotExist::butWasSupposedTo($workspaceName);
             }
@@ -214,7 +214,7 @@ class AssetUsageIndexingService
             while ($stack !== []) {
                 $workspace = array_shift($stack);
                 if ($workspace->baseWorkspaceName) {
-                    $ancestor = $workspaceFinder->findOneByName($workspace->baseWorkspaceName);
+                    $ancestor = $contentRepository->findWorkspaceByName($workspace->baseWorkspaceName);
                     if ($ancestor === null) {
                         throw WorkspaceDoesNotExist::butWasSupposedTo($workspace->baseWorkspaceName);
                     }
@@ -235,8 +235,8 @@ class AssetUsageIndexingService
     private function getWorkspaceDependents(ContentRepositoryId $contentRepositoryId, WorkspaceName $workspaceName): array
     {
         if (!isset($this->workspaceDependents[$contentRepositoryId->value][$workspaceName->value])) {
-            $workspaceFinder = $this->contentRepositoryRegistry->get($contentRepositoryId)->getWorkspaceFinder();
-            $workspace = $workspaceFinder->findOneByName($workspaceName);
+            $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryId);
+            $workspace = $contentRepository->findWorkspaceByName($workspaceName);
             if ($workspace === null) {
                 throw WorkspaceDoesNotExist::butWasSupposedTo($workspaceName);
             }
@@ -246,7 +246,7 @@ class AssetUsageIndexingService
             while ($stack !== []) {
                 /** @var Workspace $workspace */
                 $workspace = array_shift($stack);
-                $descendants = $workspaceFinder->findByBaseWorkspace($workspace->workspaceName);
+                $descendants = $contentRepository->findWorkspaces()->getDependantWorkspaces($workspace->workspaceName);
                 foreach ($descendants as $descendant) {
                     $collectedWorkspaceNames[] = $descendant->workspaceName;
                     $stack[] = $descendant;

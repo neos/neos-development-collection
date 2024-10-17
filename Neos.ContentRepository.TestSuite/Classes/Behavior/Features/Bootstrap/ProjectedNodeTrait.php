@@ -16,7 +16,7 @@ namespace Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap;
 
 use Behat\Gherkin\Node\TableNode;
 use GuzzleHttp\Psr7\Uri;
-use Neos\ContentRepository\Core\ContentGraphFinder;
+use Neos\ContentRepository\Core\ContentRepositoryReadModel;
 use Neos\ContentRepository\Core\Feature\SubtreeTagging\Dto\SubtreeTag;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentSubgraphInterface;
@@ -32,6 +32,7 @@ use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateClassification;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
 use Neos\ContentRepository\Core\SharedModel\Node\PropertyName;
+use Neos\ContentRepository\Core\SharedModel\Workspace\Workspace;
 use Neos\ContentRepository\Core\Tests\Behavior\Fixtures\DayOfWeek;
 use Neos\ContentRepository\Core\Tests\Behavior\Fixtures\PostalAddress;
 use Neos\ContentRepository\Core\Tests\Behavior\Fixtures\PriceSpecification;
@@ -80,11 +81,14 @@ trait ProjectedNodeTrait
     public function iExpectANodeIdentifiedByXToExistInTheContentGraph(string $serializedNodeDiscriminator): void
     {
         $nodeDiscriminator = NodeDiscriminator::fromShorthand($serializedNodeDiscriminator);
-        $workspaceName = $this->currentContentRepository->getWorkspaceFinder()->findOneByCurrentContentStreamId(
-            $nodeDiscriminator->contentStreamId
-        )->workspaceName;
-        $contentGraph = $this->currentContentRepository->getContentGraph($workspaceName);
-        $currentNodeAggregate = $contentGraph->findNodeAggregateById(
+        $matchingWorkspace = $this->currentContentRepository->findWorkspaces()->find(
+            static fn (Workspace $workspace) => $workspace->currentContentStreamId->equals($nodeDiscriminator->contentStreamId)
+        );
+        if ($matchingWorkspace === null) {
+            Assert::fail(sprintf('Failed to find workspace for content stream id "%s"', $nodeDiscriminator->contentStreamId->value));
+        }
+        $workspaceName = $matchingWorkspace->workspaceName;
+        $currentNodeAggregate = $this->currentContentRepository->getContentGraph($workspaceName)->findNodeAggregateById(
             $nodeDiscriminator->nodeAggregateId
         );
         Assert::assertTrue(
