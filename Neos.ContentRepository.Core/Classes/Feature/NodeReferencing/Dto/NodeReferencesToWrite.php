@@ -84,9 +84,6 @@ final readonly class NodeReferencesToWrite implements \IteratorAggregate, \Count
         }
     }
 
-    /**
-     * @return \Traversable<NodeReferenceToWrite>
-     */
     public function getIterator(): \Traversable
     {
         yield from $this->references;

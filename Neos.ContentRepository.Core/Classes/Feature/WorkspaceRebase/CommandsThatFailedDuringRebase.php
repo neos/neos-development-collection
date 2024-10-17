@@ -44,9 +44,6 @@ final readonly class CommandsThatFailedDuringRebase implements \IteratorAggregat
         return $this->items === [];
     }
 
-    /**
-     * @return \Traversable<int,CommandThatFailedDuringRebase>
-     */
     public function getIterator(): \Traversable
     {
         yield from $this->items;

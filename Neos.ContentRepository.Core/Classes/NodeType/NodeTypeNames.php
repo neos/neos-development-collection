@@ -71,9 +71,6 @@ final class NodeTypeNames implements \IteratorAggregate
         return new self(...$nodeTypeNames);
     }
 
-    /**
-     * @return \Traversable<NodeTypeName>
-     */
     public function getIterator(): \Traversable
     {
         yield from $this->nodeTypeNames;

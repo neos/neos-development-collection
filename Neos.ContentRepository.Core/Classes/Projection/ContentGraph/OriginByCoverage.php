@@ -76,9 +76,6 @@ final class OriginByCoverage implements \IteratorAggregate, \JsonSerializable
         return $this->origins[$coveredDimensionSpacePoint->hash] ?? null;
     }
 
-    /**
-     * @return \Traversable<string,OriginDimensionSpacePoint>
-     */
     public function getIterator(): \Traversable
     {
         yield from $this->origins;

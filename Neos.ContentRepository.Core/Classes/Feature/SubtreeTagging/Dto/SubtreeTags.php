@@ -108,7 +108,7 @@ final readonly class SubtreeTags implements \IteratorAggregate, \Countable, \Jso
 
     public function getIterator(): \Traversable
     {
-        return new \ArrayIterator(array_values($this->tags));
+        yield from array_values($this->tags);
     }
 
     /**
