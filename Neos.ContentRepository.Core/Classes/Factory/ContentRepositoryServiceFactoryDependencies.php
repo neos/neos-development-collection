@@ -29,7 +29,7 @@ use Neos\EventStore\EventStoreInterface;
 /**
  * Implementation detail of {@see ContentRepositoryServiceFactoryInterface}
  *
- * @api because you get it as argument inside {@see ContentRepositoryServiceFactoryInterface}
+ * @internal as dependency collection inside {@see ContentRepositoryServiceFactoryInterface}
  */
 final readonly class ContentRepositoryServiceFactoryDependencies
 {
