@@ -237,14 +237,6 @@ final class WorkspacePublishingService
         WorkspaceName $workspaceName,
         NodeIdsToPublishOrDiscard $nodeIdsToDiscard
     ): void {
-        /**
-         * TODO: only rebase if necessary!
-         * Also, isn't this already included in @see WorkspaceCommandHandler::handleDiscardIndividualNodesFromWorkspace ?
-         */
-        $contentRepository->handle(
-            RebaseWorkspace::create($workspaceName)
-        );
-
         $contentRepository->handle(
             DiscardIndividualNodesFromWorkspace::create(
                 $workspaceName,
@@ -258,14 +250,6 @@ final class WorkspacePublishingService
         WorkspaceName $workspaceName,
         NodeIdsToPublishOrDiscard $nodeIdsToPublish
     ): void {
-        /**
-         * TODO: only rebase if necessary!
-         * Also, isn't this already included in @see WorkspaceCommandHandler::handlePublishIndividualNodesFromWorkspace ?
-         */
-        $contentRepository->handle(
-            RebaseWorkspace::create($workspaceName)
-        );
-
         $contentRepository->handle(
             PublishIndividualNodesFromWorkspace::create(
                 $workspaceName,
