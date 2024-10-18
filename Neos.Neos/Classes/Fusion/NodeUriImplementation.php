@@ -11,12 +11,14 @@ namespace Neos\Neos\Fusion;
  * source code.
  */
 
+use GuzzleHttp\Psr7\Uri;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Log\ThrowableStorageInterface;
 use Neos\Flow\Log\Utility\LogEnvironment;
 use Neos\Neos\Service\LinkingService;
 use Neos\Fusion\FusionObjects\AbstractFusionObject;
 use Neos\Neos\Exception as NeosException;
+use Neos\Utility\Arrays;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -90,6 +92,7 @@ class NodeUriImplementation extends AbstractFusionObject
      * Additional query parameters that won't be prefixed like $arguments (overrule $arguments)
      *
      * @return array
+     * @deprecated To be removed with Neos 9
      */
     public function getAdditionalParams()
     {
@@ -97,9 +100,20 @@ class NodeUriImplementation extends AbstractFusionObject
     }
 
     /**
+     * Additional query parameters that won't be prefixed like $arguments (overrule $arguments)
+     *
+     * @return array|null
+     */
+    public function getQueryParameters(): ?array
+    {
+        return $this->fusionValue('queryParameters');
+    }
+
+    /**
      * Arguments to be removed from the URI. Only active if addQueryString = true
      *
      * @return array
+     * @deprecated To be removed with Neos 9
      */
     public function getArgumentsToBeExcludedFromQueryString()
     {
@@ -110,6 +124,7 @@ class NodeUriImplementation extends AbstractFusionObject
      * If true, the current query parameters will be kept in the URI
      *
      * @return boolean
+     * @deprecated To be removed with Neos 9
      */
     public function getAddQueryString()
     {
@@ -154,7 +169,7 @@ class NodeUriImplementation extends AbstractFusionObject
         }
 
         try {
-            return $this->linkingService->createNodeUri(
+            $uriString = $this->linkingService->createNodeUri(
                 $this->runtime->getControllerContext(),
                 $this->getNode(),
                 $baseNode,
@@ -165,6 +180,14 @@ class NodeUriImplementation extends AbstractFusionObject
                 $this->getAddQueryString(),
                 $this->getArgumentsToBeExcludedFromQueryString()
             );
+            $queryParameters = $this->getQueryParameters();
+            if (empty($queryParameters)) {
+                return $uriString;
+            }
+            $uri = new Uri($uriString);
+            parse_str($uri->getQuery(), $queryParametersFromRouting);
+            $mergedQueryParameters = Arrays::arrayMergeRecursiveOverrule($queryParametersFromRouting, $queryParameters);
+            return (string)$uri->withQuery(http_build_query($mergedQueryParameters, '', '&'));
         } catch (NeosException $exception) {
             // TODO: Revisit if we actually need to store a stack trace.
             $logMessage = $this->throwableStorage->logThrowable($exception);
