@@ -22,7 +22,7 @@ use Neos\ContentRepository\Core\EventStore\EventNormalizer;
 use Neos\ContentRepository\Core\EventStore\EventPersister;
 use Neos\ContentRepository\Core\Infrastructure\Property\PropertyConverter;
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
-use Neos\ContentRepository\Core\Projection\Projections;
+use Neos\ContentRepository\Core\Projection\ProjectionsAndCatchUpHooks;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
 use Neos\EventStore\EventStoreInterface;
 
@@ -46,7 +46,7 @@ final readonly class ContentRepositoryServiceFactoryDependencies
         public ContentRepository $contentRepository,
         // we don't need CommandBus, because this is included in ContentRepository->handle()
         public EventPersister $eventPersister,
-        public Projections $projections,
+        public ProjectionsAndCatchUpHooks $projectionsAndCatchUpHooks,
     ) {
     }
 
@@ -57,7 +57,7 @@ final readonly class ContentRepositoryServiceFactoryDependencies
         ProjectionFactoryDependencies $projectionFactoryDependencies,
         ContentRepository $contentRepository,
         EventPersister $eventPersister,
-        Projections $projections,
+        ProjectionsAndCatchUpHooks $projectionsAndCatchUpHooks,
     ): self {
         return new self(
             $projectionFactoryDependencies->contentRepositoryId,
@@ -70,7 +70,7 @@ final readonly class ContentRepositoryServiceFactoryDependencies
             $projectionFactoryDependencies->propertyConverter,
             $contentRepository,
             $eventPersister,
-            $projections,
+            $projectionsAndCatchUpHooks,
         );
     }
 }
