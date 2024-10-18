@@ -59,9 +59,17 @@ final class ContentRepositoryAuthProvider implements AuthProviderInterface
             throw new \RuntimeException(sprintf('Failed to determine SubtreeTag privileges: %s', $e->getMessage()), 1729180655, $e);
         }
         foreach ($subtreeTagPrivileges as $privilege) {
-            if (!$privilege->isGranted()) {
-                $restrictedSubtreeTags[] = SubtreeTag::fromString($privilege->getParsedMatcher());
+            if ($privilege->isGranted()) {
+                continue;
             }
+            $subtreeTag = $privilege->getParsedMatcher();
+            if (str_contains($subtreeTag, ':')) {
+                [$contentRepositoryId, $subtreeTag] = explode(':', $subtreeTag);
+                if ($this->contentRepositoryId->value !== $contentRepositoryId) {
+                    continue;
+                }
+            }
+            $restrictedSubtreeTags[] = SubtreeTag::fromString($subtreeTag);
         }
         return new VisibilityConstraints(
             SubtreeTags::fromArray($restrictedSubtreeTags)
