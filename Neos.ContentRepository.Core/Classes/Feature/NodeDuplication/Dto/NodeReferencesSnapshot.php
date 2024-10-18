@@ -83,9 +83,6 @@ final class NodeReferencesSnapshot implements \IteratorAggregate, \Countable, \J
         return new self($values);
     }
 
-    /**
-     * @return \Traversable<string,NodeReferenceSnapshot>
-     */
     public function getIterator(): \Traversable
     {
         yield from $this->references;

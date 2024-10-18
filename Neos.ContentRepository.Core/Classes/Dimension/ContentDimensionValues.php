@@ -59,9 +59,6 @@ final readonly class ContentDimensionValues implements \IteratorAggregate
         $this->maximumDepth = $maximumDepth;
     }
 
-    /**
-     * @return \Traversable<string,ContentDimensionValue>
-     */
     public function getIterator(): \Traversable
     {
         yield from $this->values;

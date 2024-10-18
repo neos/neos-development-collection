@@ -51,9 +51,6 @@ final readonly class NodeIdsToPublishOrDiscard implements \IteratorAggregate, \C
         return new self(array_merge($this->nodeIds, $other->nodeIds));
     }
 
-    /**
-     * @return \Traversable<NodeIdToPublishOrDiscard>
-     */
     public function getIterator(): \Traversable
     {
         yield from $this->nodeIds;

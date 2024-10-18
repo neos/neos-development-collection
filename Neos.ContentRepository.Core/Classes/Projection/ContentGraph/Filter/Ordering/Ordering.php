@@ -57,9 +57,6 @@ final class Ordering implements \IteratorAggregate, \JsonSerializable
         return new self(...[...$this->fields, OrderingField::byTimestampField($timestampField, $direction)]);
     }
 
-    /**
-     * @return \Traversable<OrderingField>
-     */
     public function getIterator(): \Traversable
     {
         yield from $this->fields;
