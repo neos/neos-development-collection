@@ -58,7 +58,7 @@ final class DoctrineDbalContentGraphProjectionFactory implements ProjectionFacto
             ),
             $tableNames,
             $dimensionSpacePointsRepository,
-            new ContentRepositoryReadModel($contentRepositoryReadModelAdapter)
+            new ContentRepositoryReadModel($contentRepositoryReadModelAdapter),
         );
     }
 }

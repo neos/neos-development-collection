@@ -20,6 +20,7 @@ use Neos\ContentRepository\Core\DimensionSpace\InterDimensionalVariationGraph;
 use Neos\ContentRepository\Core\EventStore\EventNormalizer;
 use Neos\ContentRepository\Core\Infrastructure\Property\PropertyConverter;
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
+use Neos\ContentRepository\Core\SharedModel\Auth\AuthProviderInterface;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
 use Neos\EventStore\EventStoreInterface;
 
@@ -37,6 +38,7 @@ final readonly class ProjectionFactoryDependencies
         public ContentDimensionZookeeper $contentDimensionZookeeper,
         public InterDimensionalVariationGraph $interDimensionalVariationGraph,
         public PropertyConverter $propertyConverter,
+        public AuthProviderInterface $authProvider,
     ) {
     }
 }

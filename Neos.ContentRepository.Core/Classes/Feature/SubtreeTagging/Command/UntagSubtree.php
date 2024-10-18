@@ -90,6 +90,11 @@ final readonly class UntagSubtree implements
         );
     }
 
+    public function getWorkspaceName(): WorkspaceName
+    {
+        return $this->workspaceName;
+    }
+
     public function matchesNodeId(NodeIdToPublishOrDiscard $nodeIdToPublish): bool
     {
         return $this->nodeAggregateId->equals($nodeIdToPublish->nodeAggregateId)
