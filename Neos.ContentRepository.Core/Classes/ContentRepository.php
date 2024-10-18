@@ -249,7 +249,7 @@ final class ContentRepository
      */
     public function getContentGraph(WorkspaceName $workspaceName): ContentGraphInterface
     {
-        $privilege = $this->authProvider->getWorkspacePrivilege($workspaceName, WorkspacePrivilegeType::READ_NODES);
+        $privilege = $this->authProvider->getReadNodesFromWorkspacePrivilege($workspaceName);
         if (!$privilege->granted) {
             // TODO more specific exception
             throw new \RuntimeException(sprintf('Read access denied for workspace "%s": %s', $workspaceName->value, $privilege->message ?? ''), 1729014760);

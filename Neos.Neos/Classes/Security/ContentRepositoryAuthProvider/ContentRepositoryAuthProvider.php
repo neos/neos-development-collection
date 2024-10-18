@@ -68,7 +68,7 @@ final class ContentRepositoryAuthProvider implements AuthProviderInterface
         );
     }
 
-    public function getWorkspacePrivilege(WorkspaceName $workspaceName, WorkspacePrivilegeType $privilegeType): Privilege
+    public function getReadNodesFromWorkspacePrivilege(WorkspaceName $workspaceName): Privilege
     {
         if ($this->securityContext->areAuthorizationChecksDisabled()) {
             return Privilege::granted();
@@ -78,9 +78,7 @@ final class ContentRepositoryAuthProvider implements AuthProviderInterface
             return Privilege::denied('No user is authenticated');
         }
         $workspacePermissions = $this->workspaceService->getWorkspacePermissionsForUser($this->contentRepositoryId, $workspaceName, $user);
-        return match ($privilegeType) {
-            WorkspacePrivilegeType::READ_NODES => $workspacePermissions->read ? Privilege::granted() : Privilege::denied(sprintf('User "%s" (id: %s) has no read permission for workspace "%s"', $user->getLabel(), $user->getId()->value, $workspaceName->value)),
-        };
+        return $workspacePermissions->read ? Privilege::granted() : Privilege::denied(sprintf('User "%s" (id: %s) has no read permission for workspace "%s"', $user->getLabel(), $user->getId()->value, $workspaceName->value));
     }
 
     public function getCommandPrivilege(CommandInterface $command): Privilege
@@ -104,6 +102,9 @@ final class ContentRepositoryAuthProvider implements AuthProviderInterface
             }
             return Privilege::granted();
         }
+        // Note: We check against the {@see RebasableToOtherWorkspaceInterface} because that is implemented by all
+        // commands that interact with nodes on a content stream. With that it's likely that we don't have to adjust the
+        // code if we were to add new commands in the future
         if (!$command instanceof RebasableToOtherWorkspaceInterface) {
             return Privilege::granted();
         }

@@ -31,7 +31,7 @@ final class FakeAuthProvider implements AuthProviderInterface
         return VisibilityConstraints::withoutRestrictions();
     }
 
-    public function getWorkspacePrivilege(WorkspaceName $workspaceName, WorkspacePrivilegeType $privilegeType): Privilege
+    public function getReadNodesFromWorkspacePrivilege(WorkspaceName $workspaceName): Privilege
     {
         return Privilege::granted();
     }

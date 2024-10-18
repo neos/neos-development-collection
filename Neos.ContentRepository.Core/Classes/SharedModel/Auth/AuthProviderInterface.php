@@ -15,7 +15,7 @@ interface AuthProviderInterface
 {
     public function getUserId(): UserId;
 
-    public function getWorkspacePrivilege(WorkspaceName $workspaceName, WorkspacePrivilegeType $privilegeType): Privilege;
+    public function getReadNodesFromWorkspacePrivilege(WorkspaceName $workspaceName): Privilege;
 
     public function getVisibilityConstraints(WorkspaceName $workspaceName): VisibilityConstraints;
 
