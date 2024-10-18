@@ -75,7 +75,7 @@ final class ContentRepositoryAuthProvider implements AuthProviderInterface
         }
         $user = $this->userService->getCurrentUser();
         if ($user === null) {
-            return Privilege::denied('No user is authenticated');
+            return $workspaceName->isLive() ? Privilege::granted() : Privilege::denied('No user is authenticated');
         }
         $workspacePermissions = $this->workspaceService->getWorkspacePermissionsForUser($this->contentRepositoryId, $workspaceName, $user);
         return $workspacePermissions->read ? Privilege::granted() : Privilege::denied(sprintf('User "%s" (id: %s) has no read permission for workspace "%s"', $user->getLabel(), $user->getId()->value, $workspaceName->value));
