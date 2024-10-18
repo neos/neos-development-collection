@@ -13,7 +13,7 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
  */
 interface AuthProviderInterface
 {
-    public function getUserId(): UserId;
+    public function getAuthenticatedUserId(): ?UserId;
 
     public function getReadNodesFromWorkspacePrivilege(WorkspaceName $workspaceName): Privilege;
 

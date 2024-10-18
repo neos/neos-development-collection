@@ -21,9 +21,9 @@ final class FakeAuthProvider implements AuthProviderInterface
         self::$userId = $userId;
     }
 
-    public function getUserId(): UserId
+    public function getAuthenticatedUserId(): ?UserId
     {
-        return self::$userId ?? UserId::forSystemUser();
+        return self::$userId ?? null;
     }
 
     public function getVisibilityConstraints(WorkspaceName $workspaceName): VisibilityConstraints

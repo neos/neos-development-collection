@@ -20,7 +20,7 @@ final class StaticAuthProvider implements AuthProviderInterface
     ) {
     }
 
-    public function getUserId(): UserId
+    public function getAuthenticatedUserId(): UserId
     {
         return $this->userId;
     }

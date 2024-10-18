@@ -37,11 +37,11 @@ final class ContentRepositoryAuthProvider implements AuthProviderInterface
     ) {
     }
 
-    public function getUserId(): UserId
+    public function getAuthenticatedUserId(): ?UserId
     {
         $user = $this->userService->getCurrentUser();
         if ($user === null) {
-            return UserId::forSystemUser();
+            return null;
         }
         return UserId::fromString($user->getId()->value);
     }

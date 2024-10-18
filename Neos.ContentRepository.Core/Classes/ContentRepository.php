@@ -38,7 +38,7 @@ use Neos\ContentRepository\Core\Projection\ProjectionStateInterface;
 use Neos\ContentRepository\Core\Projection\ProjectionStatuses;
 use Neos\ContentRepository\Core\Projection\WithMarkStaleInterface;
 use Neos\ContentRepository\Core\SharedModel\Auth\AuthProviderInterface;
-use Neos\ContentRepository\Core\SharedModel\Auth\WorkspacePrivilegeType;
+use Neos\ContentRepository\Core\SharedModel\Auth\UserId;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryStatus;
 use Neos\ContentRepository\Core\SharedModel\Exception\WorkspaceDoesNotExist;
@@ -111,7 +111,7 @@ final class ContentRepository
         $eventsToPublish = $this->commandBus->handle($command, $this->commandHandlingDependencies);
 
         // TODO meaningful exception message
-        $initiatingUserId = $this->authProvider->getUserId();
+        $initiatingUserId = $this->authProvider->getAuthenticatedUserId() ?? UserId::forSystemUser();
         $initiatingTimestamp = $this->clock->now()->format(\DateTimeInterface::ATOM);
 
         // Add "initiatingUserId" and "initiatingTimestamp" metadata to all events.
