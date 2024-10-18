@@ -101,7 +101,7 @@ Feature: Tests for the "Neos.ContentRepository" Flow Query methods.
       renderer = Neos.Fusion:Loop {
         items = ${props.nodes}
         itemName = 'node'
-        itemRenderer = ${q(node).id()}
+        itemRenderer = ${node.aggregateId}
         @glue = ','
       }
     }
