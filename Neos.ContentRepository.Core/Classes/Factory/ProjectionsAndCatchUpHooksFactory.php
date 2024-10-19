@@ -11,7 +11,7 @@ use Neos\ContentRepository\Core\Projection\ProjectionInterface;
 use Neos\ContentRepository\Core\Projection\Projections;
 use Neos\ContentRepository\Core\Projection\ProjectionsAndCatchUpHooks;
 use Neos\ContentRepository\Core\Projection\ProjectionStateInterface;
-use Neos\ContentRepository\Core\Projection\ContentRepositoryReadModelProjection;
+use Neos\ContentRepository\Core\Projection\ContentRepositoryProjectionInterface;
 
 /**
  * @api for custom framework integrations, not for users of the CR
@@ -54,7 +54,7 @@ final class ProjectionsAndCatchUpHooksFactory
      */
     public function build(ProjectionFactoryDependencies $projectionFactoryDependencies): ProjectionsAndCatchUpHooks
     {
-        $contentRepositoryReadModelProjection = null;
+        $contentRepositoryProjection = null;
         $projectionsArray = [];
         $catchUpHookFactoriesByProjectionClassName = [];
         foreach ($this->factories as $factoryDefinition) {
@@ -73,17 +73,17 @@ final class ProjectionsAndCatchUpHooksFactory
                 $options,
             );
             $catchUpHookFactoriesByProjectionClassName[$projection::class] = $catchUpHookFactories;
-            if ($projection instanceof ContentRepositoryReadModelProjection) {
-                $contentRepositoryReadModelProjection = $projection;
+            if ($projection instanceof ContentRepositoryProjectionInterface) {
+                $contentRepositoryProjection = $projection;
             } else {
                 $projectionsArray[] = $projection;
             }
         }
 
-        if ($contentRepositoryReadModelProjection === null) {
+        if ($contentRepositoryProjection === null) {
             throw new \RuntimeException('A content repository requires the ContentRepositoryReadModelProjection to be registered.');
         }
 
-        return new ProjectionsAndCatchUpHooks($contentRepositoryReadModelProjection, Projections::fromArray($projectionsArray), $catchUpHookFactoriesByProjectionClassName);
+        return new ProjectionsAndCatchUpHooks($contentRepositoryProjection, Projections::fromArray($projectionsArray), $catchUpHookFactoriesByProjectionClassName);
     }
 }

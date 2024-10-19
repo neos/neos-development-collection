@@ -16,7 +16,7 @@ namespace Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap;
 
 use Behat\Behat\Hook\Scope\BeforeScenarioScope;
 use Behat\Gherkin\Node\TableNode;
-use Neos\ContentRepository\Core\ContentRepositoryReadModel;
+use Neos\ContentRepository\Core\ContentRepositoryReadModelInterface;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceFactoryDependencies;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceFactoryInterface;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceInterface;
@@ -159,10 +159,10 @@ trait CRTestSuiteTrait
     {
         // HACK to access
         $contentRepositoryReadModelAccess = new class implements ContentRepositoryServiceFactoryInterface {
-            public ContentRepositoryReadModel|null $instance;
+            public ContentRepositoryReadModelInterface|null $instance;
             public function build(ContentRepositoryServiceFactoryDependencies $serviceFactoryDependencies): ContentRepositoryServiceInterface
             {
-                $this->instance = $serviceFactoryDependencies->projectionsAndCatchUpHooks->readModelProjection->getState();
+                $this->instance = $serviceFactoryDependencies->projectionsAndCatchUpHooks->contentRepositoryProjection->getState();
                 return new class implements ContentRepositoryServiceInterface
                 {
                 };

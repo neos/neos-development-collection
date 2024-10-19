@@ -30,7 +30,7 @@ use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Core\Projection\CatchUp;
 use Neos\ContentRepository\Core\Projection\CatchUpOptions;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphInterface;
-use Neos\ContentRepository\Core\Projection\ContentRepositoryReadModelProjection;
+use Neos\ContentRepository\Core\Projection\ContentRepositoryProjectionInterface;
 use Neos\ContentRepository\Core\Projection\ProjectionInterface;
 use Neos\ContentRepository\Core\Projection\ProjectionsAndCatchUpHooks;
 use Neos\ContentRepository\Core\Projection\ProjectionStateInterface;
@@ -70,8 +70,6 @@ final class ContentRepository
      */
     private array $projectionStateCache;
 
-    private ContentRepositoryReadModel $adapter;
-
     private CommandHandlingDependencies $commandHandlingDependencies;
 
     /**
@@ -89,9 +87,9 @@ final class ContentRepository
         private readonly ContentDimensionSourceInterface $contentDimensionSource,
         private readonly UserIdProviderInterface $userIdProvider,
         private readonly ClockInterface $clock,
+        private readonly ContentRepositoryReadModelInterface $contentRepositoryReadModel
     ) {
-        $this->adapter = $this->projectionsAndCatchUpHooks->readModelProjection->getState();
-        $this->commandHandlingDependencies = new CommandHandlingDependencies($this, $this->adapter);
+        $this->commandHandlingDependencies = new CommandHandlingDependencies($this, $this->contentRepositoryReadModel);
     }
 
     /**
@@ -206,7 +204,7 @@ final class ContentRepository
     public function setUp(): void
     {
         $this->eventStore->setup();
-        $this->projectionsAndCatchUpHooks->readModelProjection->setUp();
+        $this->projectionsAndCatchUpHooks->contentRepositoryProjection->setUp();
         foreach ($this->projectionsAndCatchUpHooks->additionalProjections as $projection) {
             $projection->setUp();
         }
@@ -215,7 +213,7 @@ final class ContentRepository
     public function status(): ContentRepositoryStatus
     {
         $projectionStatuses = ProjectionStatuses::create([
-            ContentRepositoryReadModelProjection::class => $this->projectionsAndCatchUpHooks->readModelProjection->status()
+            ContentRepositoryProjectionInterface::class => $this->projectionsAndCatchUpHooks->contentRepositoryProjection->status()
         ]);
         foreach ($this->projectionsAndCatchUpHooks->additionalProjections as $projectionClassName => $projection) {
             $projectionStatuses = $projectionStatuses->with($projectionClassName, $projection->status());
@@ -228,7 +226,7 @@ final class ContentRepository
 
     public function resetProjectionStates(): void
     {
-        $this->projectionsAndCatchUpHooks->readModelProjection->reset();
+        $this->projectionsAndCatchUpHooks->contentRepositoryProjection->reset();
         foreach ($this->projectionsAndCatchUpHooks->additionalProjections as $projection) {
             $projection->reset();
         }
@@ -248,11 +246,11 @@ final class ContentRepository
      */
     public function getContentGraph(WorkspaceName $workspaceName): ContentGraphInterface
     {
-        $workspace = $this->adapter->findWorkspaceByName($workspaceName);
+        $workspace = $this->contentRepositoryReadModel->findWorkspaceByName($workspaceName);
         if ($workspace === null) {
             throw WorkspaceDoesNotExist::butWasSupposedTo($workspaceName);
         }
-        return $this->adapter->buildContentGraph($workspaceName, $workspace->currentContentStreamId);
+        return $this->contentRepositoryReadModel->buildContentGraph($workspaceName, $workspace->currentContentStreamId);
     }
 
     /**
@@ -260,7 +258,7 @@ final class ContentRepository
      */
     public function findWorkspaceByName(WorkspaceName $workspaceName): ?Workspace
     {
-        return $this->adapter->findWorkspaceByName($workspaceName);
+        return $this->contentRepositoryReadModel->findWorkspaceByName($workspaceName);
     }
 
     /**
@@ -269,17 +267,17 @@ final class ContentRepository
      */
     public function findWorkspaces(): Workspaces
     {
-        return $this->adapter->findWorkspaces();
+        return $this->contentRepositoryReadModel->findWorkspaces();
     }
 
     public function findContentStreamById(ContentStreamId $contentStreamId): ?ContentStream
     {
-        return $this->adapter->findContentStreamById($contentStreamId);
+        return $this->contentRepositoryReadModel->findContentStreamById($contentStreamId);
     }
 
     public function findContentStreams(): ContentStreams
     {
-        return $this->adapter->findContentStreams();
+        return $this->contentRepositoryReadModel->findContentStreams();
     }
 
     public function getNodeTypeManager(): NodeTypeManager

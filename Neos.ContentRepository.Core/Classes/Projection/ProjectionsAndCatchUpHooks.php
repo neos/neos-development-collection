@@ -13,7 +13,7 @@ final readonly class ProjectionsAndCatchUpHooks
      * @param array<class-string<ProjectionInterface<ProjectionStateInterface>>, CatchUpHookFactories> $catchUpHookFactoriesByProjectionClassName
      */
     public function __construct(
-        public ContentRepositoryReadModelProjection $readModelProjection,
+        public ContentRepositoryProjectionInterface $contentRepositoryProjection,
         public Projections $additionalProjections,
         private array $catchUpHookFactoriesByProjectionClassName,
     ) {
@@ -34,14 +34,14 @@ final readonly class ProjectionsAndCatchUpHooks
      */
     public function getProjection(string $projectionClassName): ProjectionInterface
     {
-        if ($this->readModelProjection instanceof $projectionClassName) {
-            return $this->readModelProjection;
+        if ($this->contentRepositoryProjection instanceof $projectionClassName) {
+            return $this->contentRepositoryProjection;
         }
         return $this->additionalProjections->get($projectionClassName);
     }
 
     public function getAllProjections(): Projections
     {
-        return $this->additionalProjections->with($this->readModelProjection);
+        return $this->additionalProjections->with($this->contentRepositoryProjection);
     }
 }

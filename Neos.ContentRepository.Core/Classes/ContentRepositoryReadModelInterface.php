@@ -24,11 +24,9 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepository\Core\SharedModel\Workspace\Workspaces;
 
 /**
- * Create implementations of ContentGraphs bound to a specific Workspace and/or ContentStream
- *
- * @internal This is just an implementation detail to be implemented by the specific adapters
+ * @api for creating a custom content repository graph and workspace implementation, **not for users of the CR**
  */
-interface ContentRepositoryReadModel extends ProjectionStateInterface
+interface ContentRepositoryReadModelInterface extends ProjectionStateInterface
 {
     public function buildContentGraph(WorkspaceName $workspaceName, ContentStreamId $contentStreamId): ContentGraphInterface;
 
