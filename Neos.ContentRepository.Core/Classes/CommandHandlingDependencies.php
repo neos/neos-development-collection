@@ -14,16 +14,29 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Core;
 
+use Neos\ContentGraph\DoctrineDbalAdapter\DoctrineDbalContentGraphProjection;
+use Neos\ContentRepository\Core\CommandHandler\CommandBus;
 use Neos\ContentRepository\Core\CommandHandler\CommandInterface;
 use Neos\ContentRepository\Core\CommandHandler\CommandResult;
+use Neos\ContentRepository\Core\EventStore\EventNormalizer;
 use Neos\ContentRepository\Core\EventStore\EventPersister;
 use Neos\ContentRepository\Core\EventStore\EventsToPublish;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphInterface;
+use Neos\ContentRepository\Core\Projection\ContentStream\ContentStreamFinder;
+use Neos\ContentRepository\Core\Projection\ProjectionInterface;
+use Neos\ContentRepository\Core\Projection\Workspace\WorkspaceFinder;
 use Neos\ContentRepository\Core\SharedModel\Workspace\Workspace;
 use Neos\ContentRepository\Core\SharedModel\Exception\WorkspaceDoesNotExist;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamStatus;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
+use Neos\EventStore\EventStoreInterface;
+use Neos\EventStore\Helper\InMemoryEventStore;
+use Neos\EventStore\Model\Event\SequenceNumber;
+use Neos\EventStore\Model\EventEnvelope;
+use Neos\EventStore\Model\Events;
+use Neos\EventStore\Model\EventStream\ExpectedVersion;
+use Neos\EventStore\Model\EventStream\VirtualStreamName;
 use Neos\EventStore\Model\Event\Version;
 
 /**
@@ -42,13 +55,59 @@ final class CommandHandlingDependencies
 
     public function __construct(
         private readonly ContentRepository $contentRepository,
-        private readonly EventPersister $eventPersister
+        private readonly EventPersister $eventPersister,
+        private readonly CommandBus $commandBus,
+        private readonly EventNormalizer $eventNormalizer,
+        private readonly DoctrineDbalContentGraphProjection $contentRepositoryProjection
     ) {
     }
+
 
     public function handle(CommandInterface $command): CommandResult
     {
         return $this->contentRepository->handle($command);
+    }
+
+    public function handleInMemory(CommandInterface $command, InMemoryEventStore $inMemoryEventStore): CommandResult
+    {
+        $eventsToPublish = $this->commandBus->handle($command, $this);
+
+        if ($eventsToPublish->events->isEmpty()) {
+            return new CommandResult();
+        }
+
+        // the following logic could also be done in an AppEventStore::commit method (being called
+        // directly from the individual Command Handlers).
+        $normalizedEvents = Events::fromArray(
+            $eventsToPublish->events->map($this->eventNormalizer->normalize(...))
+        );
+
+
+
+
+        $commitResult = $inMemoryEventStore->commit(
+            $eventsToPublish->streamName,
+            $normalizedEvents,
+            $eventsToPublish->expectedVersion,
+        );
+
+
+        $streamName = VirtualStreamName::all();
+        $eventStream = $inMemoryEventStore->load($streamName)->withMinimumSequenceNumber(
+            // todo fix globally use internal sq
+            SequenceNumber::fromInteger($commitResult->highestCommittedSequenceNumber->value - $eventsToPublish->events->count())
+        );
+
+        foreach ($eventStream as $eventEnvelope) {
+            $event = $this->eventNormalizer->denormalize($eventEnvelope->event);
+            if (!$this->contentRepositoryProjection->canHandle($event)) {
+                continue;
+            }
+            $this->contentRepositoryProjection->apply($event, $eventEnvelope);
+        }
+
+
+        return new CommandResult();
     }
 
     public function publishEvents(EventsToPublish $eventsToPublish): void

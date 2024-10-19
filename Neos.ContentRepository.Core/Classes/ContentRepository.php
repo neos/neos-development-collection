@@ -14,6 +14,7 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Core;
 
+use Neos\ContentGraph\DoctrineDbalAdapter\DoctrineDbalContentGraphProjection;
 use Neos\ContentRepository\Core\CommandHandler\CommandBus;
 use Neos\ContentRepository\Core\CommandHandler\CommandInterface;
 use Neos\ContentRepository\Core\CommandHandler\CommandResult;
@@ -88,7 +89,7 @@ final class ContentRepository
         private readonly UserIdProviderInterface $userIdProvider,
         private readonly ClockInterface $clock,
     ) {
-        $this->commandHandlingDependencies = new CommandHandlingDependencies($this, $eventPersister);
+        $this->commandHandlingDependencies = new CommandHandlingDependencies($this, $eventPersister, $this->commandBus, $this->eventNormalizer, $this->projectionsAndCatchUpHooks->projections->get(DoctrineDbalContentGraphProjection::class));
     }
 
     /**

@@ -21,6 +21,7 @@ use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Command\CreateRootWork
 use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Command\CreateWorkspace;
 use Neos\ContentRepository\Core\Feature\WorkspaceRebase\Command\RebaseWorkspace;
 use Neos\ContentRepository\Core\Feature\WorkspaceRebase\Dto\RebaseErrorHandlingStrategy;
+use Neos\ContentRepository\Core\Feature\WorkspaceRebase\Exception\WorkspaceRebaseFailed;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\CRTestSuiteRuntimeVariables;
@@ -119,7 +120,12 @@ trait WorkspaceCreation
             $command = $command->withErrorHandlingStrategy(RebaseErrorHandlingStrategy::from($commandArguments['rebaseErrorHandlingStrategy']));
         }
 
-        $this->currentContentRepository->handle($command);
+        try {
+            $this->currentContentRepository->handle($command);
+        } catch (WorkspaceRebaseFailed $e) {
+            \Neos\Flow\var_dump($e->commandsThatFailedDuringRebase);
+            throw $e;
+        }
     }
 
     /**
