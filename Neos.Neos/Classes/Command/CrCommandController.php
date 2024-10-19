@@ -122,6 +122,7 @@ class CrCommandController extends CommandController
         // set the live-workspace title to (implicitly) create the metadata record for this workspace
         $this->workspaceService->setWorkspaceTitle($contentRepositoryId, WorkspaceName::forLive(), WorkspaceTitle::fromString('Live workspace'));
         $this->workspaceService->assignWorkspaceRole($contentRepositoryId, WorkspaceName::forLive(), WorkspaceRoleAssignment::createForGroup('Neos.Neos:LivePublisher', WorkspaceRole::COLLABORATOR));
+        $this->workspaceService->assignWorkspaceRole($contentRepositoryId, WorkspaceName::forLive(), WorkspaceRoleAssignment::createForGroup('Neos.Neos:Everybody', WorkspaceRole::VIEWER));
 
         $this->outputLine('<success>Done</success>');
     }

@@ -14,12 +14,14 @@ declare(strict_types=1);
 
 namespace Neos\Neos\Controller\Frontend;
 
+use Neos\ContentRepository\Core\Feature\SubtreeTagging\Dto\SubtreeTag;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentSubgraphInterface;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindClosestNodeFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindSubtreeFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Nodes;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Subtree;
+use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAddress;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
@@ -195,6 +197,8 @@ class NodeController extends ActionController
 
         $contentRepository = $this->contentRepositoryRegistry->get($nodeAddress->contentRepositoryId);
         $uncachedSubgraph = $contentRepository->getContentSubgraph($nodeAddress->workspaceName, $nodeAddress->dimensionSpacePoint);
+        // todo document
+        $uncachedSubgraph = $uncachedSubgraph->withVisibilityConstraints($uncachedSubgraph->getVisibilityConstraints()->withAddedSubtreeTag(SubtreeTag::disabled()));
         $subgraph = new ContentSubgraphWithRuntimeCaches($uncachedSubgraph, $this->subgraphCachePool);
 
         $nodeInstance = $subgraph->findNodeById($nodeAddress->aggregateId);

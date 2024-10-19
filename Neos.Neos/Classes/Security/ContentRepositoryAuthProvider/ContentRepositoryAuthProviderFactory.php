@@ -8,9 +8,8 @@ use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryI
 use Neos\ContentRepositoryRegistry\Factory\AuthProvider\AuthProviderFactoryInterface;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Security\Context as SecurityContext;
-use Neos\Flow\Security\Policy\PolicyService;
 use Neos\Neos\Domain\Service\UserService;
-use Neos\Neos\Domain\Service\WorkspaceService;
+use Neos\Neos\Security\Authorization\ContentRepositoryAuthorizationService;
 
 /**
  * Implementation of the {@see AuthProviderFactoryInterface} in order to provide authentication and authorization for Content Repositories
@@ -22,9 +21,8 @@ final readonly class ContentRepositoryAuthProviderFactory implements AuthProvide
 {
     public function __construct(
         private UserService $userService,
-        private WorkspaceService $workspaceService,
+        private ContentRepositoryAuthorizationService $contentRepositoryAuthorizationService,
         private SecurityContext $securityContext,
-        private PolicyService $policyService,
     ) {
     }
 
@@ -33,6 +31,6 @@ final readonly class ContentRepositoryAuthProviderFactory implements AuthProvide
      */
     public function build(ContentRepositoryId $contentRepositoryId, array $options): ContentRepositoryAuthProvider
     {
-        return new ContentRepositoryAuthProvider($contentRepositoryId, $this->userService, $this->workspaceService, $this->securityContext, $this->policyService);
+        return new ContentRepositoryAuthProvider($contentRepositoryId, $this->userService, $this->contentRepositoryAuthorizationService, $this->securityContext);
     }
 }

@@ -28,19 +28,19 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Security\Context as SecurityContext;
-use Neos\Flow\Security\Exception\NoSuchRoleException;
 use Neos\Neos\Domain\Model\User;
 use Neos\Neos\Domain\Model\UserId;
 use Neos\Neos\Domain\Model\WorkspaceClassification;
 use Neos\Neos\Domain\Model\WorkspaceDescription;
 use Neos\Neos\Domain\Model\WorkspaceMetadata;
-use Neos\Neos\Domain\Model\WorkspacePermissions;
 use Neos\Neos\Domain\Model\WorkspaceRole;
 use Neos\Neos\Domain\Model\WorkspaceRoleAssignment;
 use Neos\Neos\Domain\Model\WorkspaceRoleAssignments;
 use Neos\Neos\Domain\Model\WorkspaceRoleSubject;
+use Neos\Neos\Domain\Model\WorkspaceRoleSubjects;
 use Neos\Neos\Domain\Model\WorkspaceRoleSubjectType;
 use Neos\Neos\Domain\Model\WorkspaceTitle;
+use Neos\Neos\Security\Authorization\ContentRepositoryAuthorizationService;
 
 /**
  * Central authority to interact with Content Repository Workspaces within Neos
@@ -57,7 +57,6 @@ final class WorkspaceService
 
     public function __construct(
         private readonly ContentRepositoryRegistry $contentRepositoryRegistry,
-        private readonly UserService $userService,
         private readonly Connection $dbal,
         private readonly SecurityContext $securityContext,
     ) {
@@ -87,7 +86,7 @@ final class WorkspaceService
      */
     public function setWorkspaceTitle(ContentRepositoryId $contentRepositoryId, WorkspaceName $workspaceName, WorkspaceTitle $newWorkspaceTitle): void
     {
-        // TODO check workspace permissions -> $this->getWorkspacePermissionsForUser($contentRepositoryId, $workspaceName, $this->userService->getCurrentUser());
+        // TODO check workspace permissions
         $this->updateWorkspaceMetadata($contentRepositoryId, $workspaceName, [
             'title' => $newWorkspaceTitle->value,
         ]);
@@ -98,6 +97,7 @@ final class WorkspaceService
      */
     public function setWorkspaceDescription(ContentRepositoryId $contentRepositoryId, WorkspaceName $workspaceName, WorkspaceDescription $newWorkspaceDescription): void
     {
+        // TODO check workspace permissions
         $this->updateWorkspaceMetadata($contentRepositoryId, $workspaceName, [
             'description' => $newWorkspaceDescription->value,
         ]);
@@ -201,7 +201,7 @@ final class WorkspaceService
             $this->dbal->insert(self::TABLE_NAME_WORKSPACE_ROLE, [
                 'content_repository_id' => $contentRepositoryId->value,
                 'workspace_name' => $workspaceName->value,
-                'subject_type' => $assignment->subjectType->value,
+                'subject_type' => $assignment->subject->type->value,
                 'subject' => $assignment->subject->value,
                 'role' => $assignment->role->value,
             ]);
@@ -217,14 +217,14 @@ final class WorkspaceService
      *
      * @see self::assignWorkspaceRole()
      */
-    public function unassignWorkspaceRole(ContentRepositoryId $contentRepositoryId, WorkspaceName $workspaceName, WorkspaceRoleSubjectType $subjectType, WorkspaceRoleSubject $subject): void
+    public function unassignWorkspaceRole(ContentRepositoryId $contentRepositoryId, WorkspaceName $workspaceName, WorkspaceRoleSubject $subject): void
     {
         $this->requireWorkspace($contentRepositoryId, $workspaceName);
         try {
             $affectedRows = $this->dbal->delete(self::TABLE_NAME_WORKSPACE_ROLE, [
                 'content_repository_id' => $contentRepositoryId->value,
                 'workspace_name' => $workspaceName->value,
-                'subject_type' => $subjectType->value,
+                'subject_type' => $subject->type->value,
                 'subject' => $subject->value,
             ]);
         } catch (DbalException $e) {
@@ -238,7 +238,7 @@ final class WorkspaceService
     /**
      * Get all role assignments for the specified workspace
      *
-     * NOTE: This should never be used to evaluate permissions, instead {@see self::getWorkspacePermissionsForUser()} should be used!
+     * NOTE: This should never be used to evaluate permissions, instead {@see ContentRepositoryAuthorizationService::getWorkspacePermissionsForUser()} should be used!
      */
     public function getWorkspaceRoleAssignments(ContentRepositoryId $contentRepositoryId, WorkspaceName $workspaceName): WorkspaceRoleAssignments
     {
@@ -262,37 +262,73 @@ final class WorkspaceService
         }
         return WorkspaceRoleAssignments::fromArray(
             array_map(static fn (array $row) => WorkspaceRoleAssignment::create(
-                WorkspaceRoleSubjectType::from($row['subject_type']),
-                WorkspaceRoleSubject::fromString($row['subject']),
+                WorkspaceRoleSubject::create(
+                    WorkspaceRoleSubjectType::from($row['subject_type']),
+                    $row['subject'],
+                ),
                 WorkspaceRole::from($row['role']),
             ), $rows)
         );
     }
 
     /**
-     * Determines the permission the given user has for the specified workspace {@see WorkspacePermissions}
+     * Get the role with the most privileges for the specified {@see WorkspaceRoleSubjects} on workspace $workspaceName
+     *
+     * NOTE: This should never be used to evaluate permissions, instead {@see ContentRepositoryAuthorizationService::getWorkspacePermissionsForUser()} should be used!
      */
-    public function getWorkspacePermissionsForUser(ContentRepositoryId $contentRepositoryId, WorkspaceName $workspaceName, User $user): WorkspacePermissions
+    public function getMostPrivilegedWorkspaceRoleForSubjects(ContentRepositoryId $contentRepositoryId, WorkspaceName $workspaceName, WorkspaceRoleSubjects $subjects): ?WorkspaceRole
     {
+        $tableRole = self::TABLE_NAME_WORKSPACE_ROLE;
+        $query = <<<SQL
+            SELECT
+                role
+            FROM
+                {$tableRole}
+            WHERE
+                content_repository_id = :contentRepositoryId
+                AND workspace_name = :workspaceName
+                AND (
+                    (subject_type = :userSubjectType AND subject IN (:userSubjectValues))
+                    OR
+                    (subject_type = :groupSubjectType AND subject IN (:groupSubjectValues))
+                )
+            ORDER BY
+                /* We only want to return the most specific role so we order them and return the first row */
+                CASE
+                    WHEN role='MANAGER' THEN 1
+                    WHEN role='COLLABORATOR' THEN 2
+                    WHEN role='VIEWER' THEN 3
+                END
+            LIMIT 1
+        SQL;
+        $userSubjectValues = [];
+        $groupSubjectValues = [];
+        foreach ($subjects as $subject) {
+            if ($subject->type ===  WorkspaceRoleSubjectType::GROUP) {
+                $groupSubjectValues[] = $subject->value;
+            } else {
+                $userSubjectValues[] = $subject->value;
+            }
+        }
         try {
-            $userRoles = array_keys($this->userService->getAllRoles($user));
-        } catch (NoSuchRoleException $e) {
-            throw new \RuntimeException(sprintf('Failed to determine roles for user "%s", check your package dependencies: %s', $user->getId()->value, $e->getMessage()), 1727084881, $e);
+            $role = $this->dbal->fetchOne($query, [
+                'contentRepositoryId' => $contentRepositoryId->value,
+                'workspaceName' => $workspaceName->value,
+                'userSubjectType' => WorkspaceRoleSubjectType::USER->value,
+                'userSubjectValues' => $userSubjectValues,
+                'groupSubjectType' => WorkspaceRoleSubjectType::GROUP->value,
+                'groupSubjectValues' => $groupSubjectValues,
+            ], [
+                'userSubjectValues' => ArrayParameterType::STRING,
+                'groupSubjectValues' => ArrayParameterType::STRING,
+            ]);
+        } catch (DbalException $e) {
+            throw new \RuntimeException(sprintf('Failed to load role for workspace "%s" (content repository "%s"): %e', $workspaceName->value, $contentRepositoryId->value, $e->getMessage()), 1729325871, $e);
         }
-        $workspaceMetadata = $this->loadWorkspaceMetadata($contentRepositoryId, $workspaceName);
-        if ($workspaceMetadata !== null && $workspaceMetadata->ownerUserId !== null && $workspaceMetadata->ownerUserId->equals($user->getId())) {
-            return WorkspacePermissions::all();
+        if ($role === false) {
+            return null;
         }
-        $userWorkspaceRole = $this->loadWorkspaceRoleOfUser($contentRepositoryId, $workspaceName, $user->getId(), $userRoles);
-        $userIsAdministrator = in_array('Neos.Neos:Administrator', $userRoles, true);
-        if ($userWorkspaceRole === null) {
-            return WorkspacePermissions::create(false, false, $userIsAdministrator);
-        }
-        return WorkspacePermissions::create(
-            read: $userWorkspaceRole->isAtLeast(WorkspaceRole::COLLABORATOR),
-            write: $userWorkspaceRole->isAtLeast(WorkspaceRole::COLLABORATOR),
-            manage: $userIsAdministrator || $userWorkspaceRole->isAtLeast(WorkspaceRole::MANAGER),
-        );
+        return WorkspaceRole::from($role);
     }
 
     /**
@@ -435,49 +471,6 @@ final class WorkspaceService
             'userId' => $userId->value,
         ]);
         return $workspaceName === false ? null : WorkspaceName::fromString($workspaceName);
-    }
-
-    /**
-     * @param array<string> $userRoles
-     */
-    private function loadWorkspaceRoleOfUser(ContentRepositoryId $contentRepositoryId, WorkspaceName $workspaceName, UserId $userId, array $userRoles): ?WorkspaceRole
-    {
-        $tableRole = self::TABLE_NAME_WORKSPACE_ROLE;
-        $query = <<<SQL
-            SELECT
-                role
-            FROM
-                {$tableRole}
-            WHERE
-                content_repository_id = :contentRepositoryId
-                AND workspace_name = :workspaceName
-                AND (
-                    (subject_type = :userSubjectType AND subject = :userId)
-                    OR
-                    (subject_type = :groupSubjectType AND subject IN (:groupSubjects))
-                )
-            ORDER BY
-                /* We only want to return the most specific role so we order them and return the first row */
-                CASE
-                    WHEN role='MANAGER' THEN 1
-                    WHEN role='COLLABORATOR' THEN 2
-                END
-            LIMIT 1
-        SQL;
-        $role = $this->dbal->fetchOne($query, [
-            'contentRepositoryId' => $contentRepositoryId->value,
-            'workspaceName' => $workspaceName->value,
-            'userSubjectType' => WorkspaceRoleSubjectType::USER->value,
-            'userId' => $userId->value,
-            'groupSubjectType' => WorkspaceRoleSubjectType::GROUP->value,
-            'groupSubjects' => $userRoles,
-        ], [
-            'groupSubjects' => ArrayParameterType::STRING,
-        ]);
-        if ($role === false) {
-            return null;
-        }
-        return WorkspaceRole::from($role);
     }
 
     private function requireWorkspace(ContentRepositoryId $contentRepositoryId, WorkspaceName $workspaceName): Workspace

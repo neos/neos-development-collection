@@ -25,6 +25,7 @@ use Neos\Neos\Domain\Repository\SiteRepository;
 use Neos\Neos\Domain\Service\NodeTypeNameFactory;
 use Neos\Neos\Domain\Service\WorkspaceService;
 use Neos\Neos\FrontendRouting\SiteDetection\SiteDetectionResult;
+use Neos\Neos\Security\Authorization\ContentRepositoryAuthorizationService;
 use Neos\Neos\Service\UserService;
 use Neos\Neos\AssetUsage\Dto\AssetUsageReference;
 
@@ -66,6 +67,12 @@ class UsageController extends ActionController
     protected $workspaceService;
 
     /**
+     * @Flow\Inject
+     * @var ContentRepositoryAuthorizationService
+     */
+    protected $contentRepositoryAuthorizationService;
+
+    /**
      * Get Related Nodes for an asset
      *
      * @param AssetInterface $asset
@@ -103,7 +110,7 @@ class UsageController extends ActionController
             );
             $nodeType = $nodeAggregate ? $contentRepository->getNodeTypeManager()->getNodeType($nodeAggregate->nodeTypeName) : null;
 
-            $workspacePermissions = $this->workspaceService->getWorkspacePermissionsForUser(
+            $workspacePermissions = $this->contentRepositoryAuthorizationService->getWorkspacePermissionsForUser(
                 $currentContentRepositoryId,
                 $usage->getWorkspaceName(),
                 $currentUser

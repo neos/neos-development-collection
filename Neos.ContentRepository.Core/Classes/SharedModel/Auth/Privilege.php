@@ -22,17 +22,17 @@ final readonly class Privilege
 {
     private function __construct(
         public bool $granted,
-        public ?string $message,
+        public string $reason,
     ) {
     }
 
-    public static function granted(): self
+    public static function granted(string $reason): self
     {
-        return new self(true, null);
+        return new self(true, $reason);
     }
 
-    public static function denied(string $message): self
+    public static function denied(string $reason): self
     {
-        return new self(false, $message);
+        return new self(false, $reason);
     }
 }

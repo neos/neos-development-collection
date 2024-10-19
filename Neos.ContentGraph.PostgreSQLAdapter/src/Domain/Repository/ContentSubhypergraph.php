@@ -106,6 +106,21 @@ final readonly class ContentSubhypergraph implements ContentSubgraphInterface
         return $this->visibilityConstraints;
     }
 
+    public function withVisibilityConstraints(VisibilityConstraints $newVisibilityConstraints): self
+    {
+        return new self(
+            $this->contentRepositoryId,
+            $this->contentStreamId,
+            $this->workspaceName,
+            $this->dimensionSpacePoint,
+            $newVisibilityConstraints,
+            $this->dbal,
+            $this->nodeFactory,
+            $this->nodeTypeManager,
+            $this->tableNamePrefix,
+        );
+    }
+
     public function findNodeById(NodeAggregateId $nodeAggregateId): ?Node
     {
         $query = HypergraphQuery::create($this->contentStreamId, $this->tableNamePrefix);

@@ -104,7 +104,7 @@ final class ContentRepository
     {
         $privilege = $this->authProvider->getCommandPrivilege($command);
         if (!$privilege->granted) {
-            throw new \RuntimeException(sprintf('Command "%s" was denied: %s', $command::class, $privilege->message), 1729086686);
+            throw new \RuntimeException(sprintf('Command "%s" was denied: %s', $command::class, $privilege->reason), 1729086686);
         }
         // the commands only calculate which events they want to have published, but do not do the
         // publishing themselves
@@ -252,7 +252,7 @@ final class ContentRepository
         $privilege = $this->authProvider->getReadNodesFromWorkspacePrivilege($workspaceName);
         if (!$privilege->granted) {
             // TODO more specific exception
-            throw new \RuntimeException(sprintf('Read access denied for workspace "%s": %s', $workspaceName->value, $privilege->message ?? ''), 1729014760);
+            throw new \RuntimeException(sprintf('Read access denied for workspace "%s": %s', $workspaceName->value, $privilege->reason ?? ''), 1729014760);
         }
         return $this->getContentRepositoryReadModel()->getContentGraphByWorkspaceName($workspaceName);
     }

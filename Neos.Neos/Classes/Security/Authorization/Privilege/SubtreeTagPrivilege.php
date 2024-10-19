@@ -14,6 +14,8 @@ declare(strict_types=1);
 
 namespace Neos\Neos\Security\Authorization\Privilege;
 
+use Neos\ContentRepository\Core\Feature\SubtreeTagging\Dto\SubtreeTag;
+use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
 use Neos\Flow\Security\Authorization\Privilege\AbstractPrivilege;
 use Neos\Flow\Security\Authorization\Privilege\PrivilegeSubjectInterface;
 use Neos\Flow\Security\Exception\InvalidPrivilegeTypeException;
@@ -23,6 +25,22 @@ use Neos\Flow\Security\Exception\InvalidPrivilegeTypeException;
  */
 class SubtreeTagPrivilege extends AbstractPrivilege
 {
+    private SubtreeTag|null $subtreeTagRuntimeCache = null;
+    private ContentRepositoryId|null $contentRepositoryIdRuntimeCache = null;
+
+    private function initialize(): void
+    {
+        if ($this->subtreeTagRuntimeCache !== null) {
+            return;
+        }
+        $subtreeTag = $this->getParsedMatcher();
+        if (str_contains($subtreeTag, ':')) {
+            [$contentRepositoryId, $subtreeTag] = explode(':', $subtreeTag);
+            $this->contentRepositoryIdRuntimeCache = ContentRepositoryId::fromString($contentRepositoryId);
+        }
+        $this->subtreeTagRuntimeCache = SubtreeTag::fromString($subtreeTag);
+    }
+
     /**
      * Returns true, if this privilege covers the given subject
      *
@@ -35,6 +53,23 @@ class SubtreeTagPrivilege extends AbstractPrivilege
         if (!$subject instanceof SubtreeTagPrivilegeSubject) {
             throw new InvalidPrivilegeTypeException(sprintf('Privileges of type "%s" only support subjects of type "%s" but we got a subject of type: "%s".', self::class, SubtreeTagPrivilegeSubject::class, get_class($subject)), 1729173985);
         }
-        return false;
+        $contentRepositoryId = $this->getContentRepositoryId();
+        if ($contentRepositoryId !== null && $subject->contentRepositoryId !== null && !$contentRepositoryId->equals($subject->contentRepositoryId)) {
+            return false;
+        }
+        return $subject->subTreeTag->equals($this->getSubtreeTag());
+    }
+
+    public function getSubtreeTag(): SubtreeTag
+    {
+        $this->initialize();
+        assert($this->subtreeTagRuntimeCache !== null);
+        return $this->subtreeTagRuntimeCache;
+    }
+
+    public function getContentRepositoryId(): ?ContentRepositoryId
+    {
+        $this->initialize();
+        return $this->contentRepositoryIdRuntimeCache;
     }
 }

@@ -14,6 +14,8 @@ declare(strict_types=1);
 
 namespace Neos\Neos\Security\Authorization\Privilege;
 
+use Neos\ContentRepository\Core\Feature\SubtreeTagging\Dto\SubtreeTag;
+use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
 use Neos\Flow\Security\Authorization\Privilege\PrivilegeSubjectInterface;
 
 /**
@@ -22,8 +24,8 @@ use Neos\Flow\Security\Authorization\Privilege\PrivilegeSubjectInterface;
 final readonly class SubtreeTagPrivilegeSubject implements PrivilegeSubjectInterface
 {
     public function __construct(
-        public string $subTreeTag,
-        public string|null $contentRepository = null,
+        public SubtreeTag $subTreeTag,
+        public ContentRepositoryId|null $contentRepositoryId = null,
     ) {
     }
 }

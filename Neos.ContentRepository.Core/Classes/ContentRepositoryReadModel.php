@@ -16,9 +16,6 @@ namespace Neos\ContentRepository\Core;
 
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphInterface;
 use Neos\ContentRepository\Core\Projection\ProjectionStateInterface;
-use Neos\ContentRepository\Core\Projection\WithMarkStaleInterface;
-use Neos\ContentRepository\Core\SharedModel\Auth\AuthProviderInterface;
-use Neos\ContentRepository\Core\SharedModel\Auth\WorkspacePrivilegeType;
 use Neos\ContentRepository\Core\SharedModel\Exception\WorkspaceDoesNotExist;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStream;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;

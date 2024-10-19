@@ -12,28 +12,47 @@ use Neos\Flow\Annotations as Flow;
  * @api
  */
 #[Flow\Proxy(false)]
-final readonly class WorkspaceRoleSubject implements \JsonSerializable
+final readonly class WorkspaceRoleSubject
 {
-    public function __construct(
-        public string $value
+    private function __construct(
+        public WorkspaceRoleSubjectType $type,
+        public string $value,
     ) {
         if (preg_match('/^[\p{L}\p{P}\d .]{1,200}$/u', $this->value) !== 1) {
             throw new \InvalidArgumentException(sprintf('"%s" is not a valid workspace role subject.', $value), 1728384932);
         }
     }
 
-    public static function fromString(string $value): self
+    public static function createForUser(UserId $userId): self
     {
-        return new self($value);
+        return new self(
+            WorkspaceRoleSubjectType::USER,
+            $userId->value,
+        );
     }
 
-    public function jsonSerialize(): string
+    public static function createForGroup(string $flowRoleIdentifier): self
     {
-        return $this->value;
+        return new self(
+            WorkspaceRoleSubjectType::GROUP,
+            $flowRoleIdentifier,
+        );
+    }
+
+    public static function create(
+        WorkspaceRoleSubjectType $type,
+        string $value,
+    ): self {
+        return new self($type, $value);
     }
 
     public function equals(self $other): bool
     {
-        return $this->value === $other->value;
+        return $this->type === $other->type && $this->value === $other->value;
+    }
+
+    public function __toString(): string
+    {
+        return "{$this->type->value}: {$this->value}";
     }
 }

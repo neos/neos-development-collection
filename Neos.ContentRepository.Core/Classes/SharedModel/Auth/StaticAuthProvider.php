@@ -32,11 +32,11 @@ final class StaticAuthProvider implements AuthProviderInterface
 
     public function getReadNodesFromWorkspacePrivilege(WorkspaceName $workspaceName): Privilege
     {
-        return Privilege::granted();
+        return Privilege::granted(self::class . ' always grants privileges');
     }
 
     public function getCommandPrivilege(CommandInterface $command): Privilege
     {
-        return Privilege::granted();
+        return Privilege::granted(self::class . ' always grants privileges');
     }
 }

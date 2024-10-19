@@ -62,6 +62,7 @@ use Neos\Neos\Domain\Service\WorkspaceService;
 use Neos\Neos\FrontendRouting\NodeUriBuilderFactory;
 use Neos\Neos\FrontendRouting\SiteDetection\SiteDetectionResult;
 use Neos\Neos\PendingChangesProjection\ChangeFinder;
+use Neos\Neos\Security\Authorization\ContentRepositoryAuthorizationService;
 use Neos\Neos\Utility\NodeTypeWithFallbackProvider;
 use Neos\Workspace\Ui\ViewModel\PendingChanges;
 use Neos\Workspace\Ui\ViewModel\WorkspaceListItem;
@@ -103,6 +104,9 @@ class WorkspaceController extends AbstractModuleController
     #[Flow\Inject]
     protected WorkspaceService $workspaceService;
 
+    #[Flow\Inject]
+    protected ContentRepositoryAuthorizationService $contentRepositoryAuthorizationService;
+
     /**
      * Display a list of unpublished content
      */
@@ -135,7 +139,7 @@ class WorkspaceController extends AbstractModuleController
         $allWorkspaces = $contentRepository->findWorkspaces();
         foreach ($allWorkspaces as $workspace) {
             $workspaceMetadata = $this->workspaceService->getWorkspaceMetadata($contentRepositoryId, $workspace->workspaceName);
-            $permissions = $this->workspaceService->getWorkspacePermissionsForUser($contentRepositoryId, $workspace->workspaceName, $currentUser);
+            $permissions = $this->contentRepositoryAuthorizationService->getWorkspacePermissionsForUser($contentRepositoryId, $workspace->workspaceName, $currentUser);
             if (!$permissions->read) {
                 continue;
             }
@@ -174,7 +178,7 @@ class WorkspaceController extends AbstractModuleController
             $baseWorkspace = $contentRepository->findWorkspaceByName($workspaceObj->baseWorkspaceName);
             assert($baseWorkspace !== null);
             $baseWorkspaceMetadata = $this->workspaceService->getWorkspaceMetadata($contentRepositoryId, $baseWorkspace->workspaceName);
-            $baseWorkspacePermissions = $this->workspaceService->getWorkspacePermissionsForUser($contentRepositoryId, $baseWorkspace->workspaceName, $currentUser);
+            $baseWorkspacePermissions = $this->contentRepositoryAuthorizationService->getWorkspacePermissionsForUser($contentRepositoryId, $baseWorkspace->workspaceName, $currentUser);
         }
         $this->view->assignMultiple([
             'selectedWorkspace' => $workspaceObj,
@@ -1030,7 +1034,7 @@ class WorkspaceController extends AbstractModuleController
             if ($user === null) {
                 continue;
             }
-            $permissions = $this->workspaceService->getWorkspacePermissionsForUser($contentRepository->id, $workspace->workspaceName, $user);
+            $permissions = $this->contentRepositoryAuthorizationService->getWorkspacePermissionsForUser($contentRepository->id, $workspace->workspaceName, $user);
             if (!$permissions->manage) {
                 continue;
             }

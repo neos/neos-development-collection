@@ -53,6 +53,11 @@ final readonly class VisibilityConstraints implements \JsonSerializable
         return new self(SubtreeTags::fromStrings('disabled'));
     }
 
+    public function withAddedSubtreeTag(SubtreeTag $subtreeTag): self
+    {
+        return new self($this->tagConstraints->merge(SubtreeTags::fromArray([$subtreeTag])));
+    }
+
     /**
      * @return array<string, mixed>
      */
