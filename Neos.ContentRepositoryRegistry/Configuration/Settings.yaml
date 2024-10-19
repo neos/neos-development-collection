@@ -68,12 +68,18 @@ Neos:
           ProxyAwareObjectNormalizer:
             className: Neos\ContentRepositoryRegistry\Infrastructure\Property\Normalizer\ProxyAwareObjectNormalizer
 
-        projections:
-          # TODO make first level special option and rename
-          'Neos.ContentRepository:ContentGraph':
-            # NOTE: This introduces a soft-dependency to the neos/contentgraph-doctrinedbaladapter package, but it can be overridden when a different adapter is used
-            factoryObjectName: Neos\ContentGraph\DoctrineDbalAdapter\DoctrineDbalContentGraphProjectionFactory
+        contentRepositoryProjection:
+          # NOTE: This introduces a soft-dependency to the neos/contentgraph-doctrinedbaladapter package, but it can be overridden when a different adapter is used
+          factoryObjectName: Neos\ContentGraph\DoctrineDbalAdapter\DoctrineDbalContentGraphProjectionFactory
 
-            catchUpHooks:
-              'Neos.ContentRepositoryRegistry:FlushSubgraphCachePool':
-                factoryObjectName: Neos\ContentRepositoryRegistry\SubgraphCachingInMemory\FlushSubgraphCachePoolCatchUpHookFactory
+          catchUpHooks:
+            'Neos.ContentRepositoryRegistry:FlushSubgraphCachePool':
+              factoryObjectName: Neos\ContentRepositoryRegistry\SubgraphCachingInMemory\FlushSubgraphCachePoolCatchUpHookFactory
+
+        # additional projections:
+        #
+        # projections:
+        #   'My.Package:SomeProjection': # just a name
+        #     factoryObjectName: My\Package\Projection\SomeProjectionFactory
+        #     options: {}
+        #     catchUpHooks: {}

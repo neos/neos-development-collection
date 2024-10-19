@@ -8,14 +8,13 @@ use Doctrine\DBAL\Connection;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\HypergraphProjection;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Repository\NodeFactory;
 use Neos\ContentRepository\Core\Factory\ProjectionFactoryDependencies;
-use Neos\ContentRepository\Core\Projection\ProjectionFactoryInterface;
+use Neos\ContentRepository\Core\Projection\ContentRepositoryProjectionFactoryInterface;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
 
 /**
- * @implements ProjectionFactoryInterface<HypergraphProjection>
  * @api
  */
-final class HypergraphProjectionFactory implements ProjectionFactoryInterface
+final class HypergraphProjectionFactory implements ContentRepositoryProjectionFactoryInterface
 {
     public function __construct(
         private readonly Connection $dbal,

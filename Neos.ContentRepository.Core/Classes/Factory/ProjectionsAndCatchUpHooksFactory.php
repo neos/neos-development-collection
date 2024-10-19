@@ -81,7 +81,7 @@ final class ProjectionsAndCatchUpHooksFactory
         }
 
         if ($contentRepositoryProjection === null) {
-            throw new \RuntimeException('A content repository requires the ContentRepositoryReadModelProjection to be registered.');
+            throw new \RuntimeException(sprintf('Content repository requires the %s to be registered.', ContentRepositoryProjectionInterface::class));
         }
 
         return new ProjectionsAndCatchUpHooks($contentRepositoryProjection, Projections::fromArray($projectionsArray), $catchUpHookFactoriesByProjectionClassName);

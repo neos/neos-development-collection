@@ -5,8 +5,7 @@ Neos:
   #ContentRepositoryRegistry:
   #  presets:
   #    'default':
-  #      projections:
-  #        'Neos.ContentRepository:ContentGraph':
+  #        contentRepositoryProjection:
   #          catchUpHooks:
   #            'Neos.ContentRepository.BehavioralTests:RaceConditionTracker':
   #              factoryObjectName: Neos\ContentRepository\BehavioralTests\ProjectionRaceConditionTester\RaceTrackerCatchUpHookFactory
