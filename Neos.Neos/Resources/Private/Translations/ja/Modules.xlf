@@ -25,7 +25,7 @@
       </trans-unit>
       <trans-unit id="workspaces.detailsForWorkspace" xml:space="preserve">
         <source>Details for "{0}"</source>
-        <target state="needs-translation">Details for "{0}"</target>
+        <target state="translated">「{0}」の詳細</target>
       </trans-unit>
       <trans-unit id="workspaces.createNewWorkspace" xml:space="preserve">
         <source>Create new workspace</source>
