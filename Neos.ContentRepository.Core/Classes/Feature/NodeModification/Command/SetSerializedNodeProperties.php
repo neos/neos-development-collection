@@ -23,6 +23,7 @@ use Neos\ContentRepository\Core\Feature\WorkspacePublication\Dto\NodeIdToPublish
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Node\PropertyNames;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
+use Neos\ContentRepository\Core\SharedModel\Workspace\VirtualWorkspaceName;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 
 /**
@@ -39,14 +40,14 @@ final readonly class SetSerializedNodeProperties implements
     RebasableToOtherWorkspaceInterface
 {
     /**
-     * @param WorkspaceName $workspaceName The workspace in which the set properties operation is to be performed
+     * @param WorkspaceName|VirtualWorkspaceName $workspaceName The workspace in which the set properties operation is to be performed
      * @param NodeAggregateId $nodeAggregateId The id of the node aggregate to set the properties for
      * @param OriginDimensionSpacePoint $originDimensionSpacePoint The dimension space point the properties should be changed in
      * @param SerializedPropertyValues $propertyValues Names and (serialized) values of properties to set
      * @param PropertyNames $propertiesToUnset Names of properties to unset
      */
     private function __construct(
-        public WorkspaceName $workspaceName,
+        public WorkspaceName|VirtualWorkspaceName $workspaceName,
         public NodeAggregateId $nodeAggregateId,
         public OriginDimensionSpacePoint $originDimensionSpacePoint,
         public SerializedPropertyValues $propertyValues,
@@ -55,14 +56,14 @@ final readonly class SetSerializedNodeProperties implements
     }
 
     /**
-     * @param WorkspaceName $workspaceName The workspace in which the set properties operation is to be performed
+     * @param WorkspaceName|VirtualWorkspaceName $workspaceName The workspace in which the set properties operation is to be performed
      * @param NodeAggregateId $nodeAggregateId The id of the node aggregate to set the properties for
      * @param OriginDimensionSpacePoint $originDimensionSpacePoint The dimension space point the properties should be changed in
      * @param SerializedPropertyValues $propertyValues Names and (serialized) values of properties to set
      * @param PropertyNames $propertiesToUnset Names of properties to unset
      */
     public static function create(
-        WorkspaceName $workspaceName,
+        WorkspaceName|VirtualWorkspaceName $workspaceName,
         NodeAggregateId $nodeAggregateId,
         OriginDimensionSpacePoint $originDimensionSpacePoint,
         SerializedPropertyValues $propertyValues,
@@ -109,7 +110,7 @@ final readonly class SetSerializedNodeProperties implements
     }
 
     public function createCopyForWorkspace(
-        WorkspaceName $targetWorkspaceName,
+        WorkspaceName|VirtualWorkspaceName $targetWorkspaceName,
     ): self {
         return new self(
             $targetWorkspaceName,

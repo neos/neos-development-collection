@@ -17,6 +17,7 @@ namespace Neos\ContentRepository\Core\Feature\DimensionSpaceAdjustment\Command;
 use Neos\ContentRepository\Core\CommandHandler\CommandInterface;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\Feature\Common\RebasableToOtherWorkspaceInterface;
+use Neos\ContentRepository\Core\SharedModel\Workspace\VirtualWorkspaceName;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 
 /**
@@ -34,24 +35,24 @@ final readonly class MoveDimensionSpacePoint implements
     RebasableToOtherWorkspaceInterface
 {
     /**
-     * @param WorkspaceName $workspaceName The name of the workspace to perform the operation in.
+     * @param WorkspaceName|VirtualWorkspaceName $workspaceName The name of the workspace to perform the operation in.
      * @param DimensionSpacePoint $source source dimension space point
      * @param DimensionSpacePoint $target target dimension space point
      */
     private function __construct(
-        public WorkspaceName $workspaceName,
+        public WorkspaceName|VirtualWorkspaceName $workspaceName,
         public DimensionSpacePoint $source,
         public DimensionSpacePoint $target,
     ) {
     }
 
     /**
-     * @param WorkspaceName $workspaceName The name of the workspace to perform the operation in
+     * @param WorkspaceName|VirtualWorkspaceName $workspaceName The name of the workspace to perform the operation in
      * @param DimensionSpacePoint $source source dimension space point
      * @param DimensionSpacePoint $target target dimension space point
      */
     public static function create(
-        WorkspaceName $workspaceName,
+        WorkspaceName|VirtualWorkspaceName $workspaceName,
         DimensionSpacePoint $source,
         DimensionSpacePoint $target
     ): self {
@@ -71,7 +72,7 @@ final readonly class MoveDimensionSpacePoint implements
     }
 
     public function createCopyForWorkspace(
-        WorkspaceName $targetWorkspaceName,
+        WorkspaceName|VirtualWorkspaceName $targetWorkspaceName,
     ): self {
         return new self(
             $targetWorkspaceName,

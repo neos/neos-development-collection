@@ -40,6 +40,7 @@ use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryS
 use Neos\ContentRepository\Core\SharedModel\Exception\WorkspaceDoesNotExist;
 use Neos\ContentRepository\Core\SharedModel\User\UserIdProviderInterface;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStream;
+use Neos\ContentRepository\Core\SharedModel\Workspace\VirtualWorkspaceName;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreams;
 use Neos\ContentRepository\Core\SharedModel\Workspace\Workspace;
@@ -240,8 +241,11 @@ final class ContentRepository
     /**
      * @throws WorkspaceDoesNotExist if the workspace does not exist
      */
-    public function getContentGraph(WorkspaceName $workspaceName): ContentGraphInterface
+    public function getContentGraph(WorkspaceName|VirtualWorkspaceName $workspaceName): ContentGraphInterface
     {
+        if ($workspaceName instanceof VirtualWorkspaceName) {
+            return $this->getContentRepositoryReadModel()->getContentGraphByWorkspaceNameAndContentStreamId($workspaceName, $workspaceName->contentStreamId);
+        }
         return $this->getContentRepositoryReadModel()->getContentGraphByWorkspaceName($workspaceName);
     }
 

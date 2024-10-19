@@ -25,6 +25,7 @@ use Neos\ContentRepository\Core\SharedModel\Exception\NodeAggregatesTypeIsAmbigu
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
+use Neos\ContentRepository\Core\SharedModel\Workspace\VirtualWorkspaceName;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 
 /**
@@ -47,7 +48,7 @@ interface ContentGraphInterface extends ProjectionStateInterface
      * The workspace this content graph is operating on
      * @api
      */
-    public function getWorkspaceName(): WorkspaceName;
+    public function getWorkspaceName(): WorkspaceName|VirtualWorkspaceName;
 
     /**
      * @api main API method of ContentGraph

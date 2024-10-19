@@ -26,6 +26,7 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
 use Neos\ContentRepository\Core\SharedModel\Exception\WorkspaceDoesNotExist;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
+use Neos\ContentRepository\Core\SharedModel\Workspace\VirtualWorkspaceName;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\EventStore\Model\EventEnvelope;
 use Neos\Neos\AssetUsage\Service\AssetUsageIndexingService;
@@ -47,6 +48,9 @@ class AssetUsageCatchUpHook implements CatchUpHookInterface
 
     public function onBeforeEvent(EventInterface $eventInstance, EventEnvelope $eventEnvelope): void
     {
+        if ($eventInstance instanceof EmbedsWorkspaceName && $eventInstance->workspaceName instanceof VirtualWorkspaceName) {
+            return;
+        }
         if ($eventInstance instanceof EmbedsWorkspaceName && $eventInstance instanceof EmbedsContentStreamId) {
             // Safeguard for temporary content streams created during partial publish -> We want to skip these events, because their workspace doesn't match current content stream.
             try {
@@ -68,6 +72,9 @@ class AssetUsageCatchUpHook implements CatchUpHookInterface
 
     public function onAfterEvent(EventInterface $eventInstance, EventEnvelope $eventEnvelope): void
     {
+        if ($eventInstance instanceof EmbedsWorkspaceName && $eventInstance->workspaceName instanceof VirtualWorkspaceName) {
+            return;
+        }
         if ($eventInstance instanceof EmbedsWorkspaceName && $eventInstance instanceof EmbedsContentStreamId) {
             // Safeguard for temporary content streams created during partial publish -> We want to skip these events, because their workspace doesn't match current content stream.
             try {

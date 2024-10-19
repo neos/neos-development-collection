@@ -20,6 +20,7 @@ use Neos\ContentRepository\Core\Feature\Common\RebasableToOtherWorkspaceInterfac
 use Neos\ContentRepository\Core\Feature\WorkspacePublication\Dto\NodeIdToPublishOrDiscard;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
+use Neos\ContentRepository\Core\SharedModel\Workspace\VirtualWorkspaceName;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 
 /**
@@ -38,23 +39,23 @@ final readonly class ChangeNodeAggregateName implements
     RebasableToOtherWorkspaceInterface
 {
     /**
-     * @param WorkspaceName $workspaceName The workspace in which the operation is to be performed
+     * @param WorkspaceName|VirtualWorkspaceName $workspaceName The workspace in which the operation is to be performed
      * @param NodeAggregateId $nodeAggregateId The identifier of the node aggregate to rename
      * @param NodeName $newNodeName The new name of the node aggregate
      */
     private function __construct(
-        public WorkspaceName $workspaceName,
+        public WorkspaceName|VirtualWorkspaceName $workspaceName,
         public NodeAggregateId $nodeAggregateId,
         public NodeName $newNodeName,
     ) {
     }
 
     /**
-     * @param WorkspaceName $workspaceName The workspace in which the operation is to be performed
+     * @param WorkspaceName|VirtualWorkspaceName $workspaceName The workspace in which the operation is to be performed
      * @param NodeAggregateId $nodeAggregateId The identifier of the node aggregate to rename
      * @param NodeName $newNodeName The new name of the node aggregate
      */
-    public static function create(WorkspaceName $workspaceName, NodeAggregateId $nodeAggregateId, NodeName $newNodeName): self
+    public static function create(WorkspaceName|VirtualWorkspaceName $workspaceName, NodeAggregateId $nodeAggregateId, NodeName $newNodeName): self
     {
         return new self($workspaceName, $nodeAggregateId, $newNodeName);
     }
@@ -65,7 +66,7 @@ final readonly class ChangeNodeAggregateName implements
     public static function fromArray(array $array): self
     {
         return new self(
-            WorkspaceName::fromString($array['workspaceName']),
+            VirtualWorkspaceName::isVirtual($array['workspaceName']) ? VirtualWorkspaceName::fromString($array['workspaceName']) : WorkspaceName::fromString($array['workspaceName']),
             NodeAggregateId::fromString($array['nodeAggregateId']),
             NodeName::fromString($array['newNodeName']),
         );
@@ -85,7 +86,7 @@ final readonly class ChangeNodeAggregateName implements
     }
 
     public function createCopyForWorkspace(
-        WorkspaceName $targetWorkspaceName,
+        WorkspaceName|VirtualWorkspaceName $targetWorkspaceName,
     ): self {
         return new self(
             $targetWorkspaceName,

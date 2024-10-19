@@ -7,6 +7,7 @@ namespace Neos\ContentRepository\Core\SharedModel\Node;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
+use Neos\ContentRepository\Core\SharedModel\Workspace\VirtualWorkspaceName;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 
 /**
@@ -51,6 +52,10 @@ final readonly class NodeAddress implements \JsonSerializable
 
     public static function fromNode(Node $node): self
     {
+        if ($node->workspaceName instanceof VirtualWorkspaceName) {
+            throw new \InvalidArgumentException('Can only create NodeAdress from node in existing workspace', 1729361386);
+        }
+
         return new self(
             $node->contentRepositoryId,
             $node->workspaceName,

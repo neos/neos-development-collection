@@ -27,6 +27,7 @@ use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateClassification;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
+use Neos\ContentRepository\Core\SharedModel\Workspace\VirtualWorkspaceName;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 
 /**
@@ -55,7 +56,7 @@ final readonly class NodeAggregate
 {
     /**
      * @param ContentRepositoryId $contentRepositoryId The content-repository this node aggregate belongs to
-     * @param WorkspaceName $workspaceName The workspace of this node aggregate
+     * @param WorkspaceName|VirtualWorkspaceName $workspaceName The workspace of this node aggregate
      * @param NodeAggregateId $nodeAggregateId ID of this node aggregate
      * @param NodeAggregateClassification $classification whether this node aggregate represents a root, regular or tethered node
      * @param NodeTypeName $nodeTypeName name of the node type of this node aggregate
@@ -70,7 +71,7 @@ final readonly class NodeAggregate
      */
     private function __construct(
         public ContentRepositoryId $contentRepositoryId,
-        public WorkspaceName $workspaceName,
+        public WorkspaceName|VirtualWorkspaceName $workspaceName,
         public NodeAggregateId $nodeAggregateId,
         public NodeAggregateClassification $classification,
         public NodeTypeName $nodeTypeName,
@@ -92,7 +93,7 @@ final readonly class NodeAggregate
      */
     public static function create(
         ContentRepositoryId $contentRepositoryId,
-        WorkspaceName $workspaceName,
+        WorkspaceName|VirtualWorkspaceName $workspaceName,
         NodeAggregateId $nodeAggregateId,
         NodeAggregateClassification $classification,
         NodeTypeName $nodeTypeName,

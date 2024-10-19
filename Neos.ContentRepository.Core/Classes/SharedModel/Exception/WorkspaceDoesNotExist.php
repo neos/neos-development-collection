@@ -23,6 +23,7 @@ final class WorkspaceDoesNotExist extends \DomainException
 {
     public static function butWasSupposedTo(WorkspaceName $name): self
     {
+        debug_print_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 10);
         return new self(sprintf(
             'The source workspace %s does not exist',
             $name->value

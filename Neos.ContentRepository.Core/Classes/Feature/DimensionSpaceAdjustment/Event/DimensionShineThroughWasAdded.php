@@ -20,6 +20,7 @@ use Neos\ContentRepository\Core\Feature\Common\EmbedsContentStreamId;
 use Neos\ContentRepository\Core\Feature\Common\EmbedsWorkspaceName;
 use Neos\ContentRepository\Core\Feature\Common\PublishableToWorkspaceInterface;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
+use Neos\ContentRepository\Core\SharedModel\Workspace\VirtualWorkspaceName;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 
 /**
@@ -38,7 +39,7 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 final readonly class DimensionShineThroughWasAdded implements EventInterface, PublishableToWorkspaceInterface, EmbedsContentStreamId, EmbedsWorkspaceName
 {
     public function __construct(
-        public WorkspaceName $workspaceName,
+        public WorkspaceName|VirtualWorkspaceName $workspaceName,
         public ContentStreamId $contentStreamId,
         public DimensionSpacePoint $source,
         public DimensionSpacePoint $target
@@ -50,12 +51,12 @@ final readonly class DimensionShineThroughWasAdded implements EventInterface, Pu
         return $this->contentStreamId;
     }
 
-    public function getWorkspaceName(): WorkspaceName
+    public function getWorkspaceName(): WorkspaceName|VirtualWorkspaceName
     {
         return $this->workspaceName;
     }
 
-    public function withWorkspaceNameAndContentStreamId(WorkspaceName $targetWorkspaceName, ContentStreamId $contentStreamId): self
+    public function withWorkspaceNameAndContentStreamId(WorkspaceName|VirtualWorkspaceName $targetWorkspaceName, ContentStreamId $contentStreamId): self
     {
         return new self(
             $targetWorkspaceName,
@@ -68,7 +69,7 @@ final readonly class DimensionShineThroughWasAdded implements EventInterface, Pu
     public static function fromArray(array $values): self
     {
         return new self(
-            WorkspaceName::fromString($values['workspaceName']),
+            VirtualWorkspaceName::isVirtual($values['workspaceName']) ? VirtualWorkspaceName::fromString($values['workspaceName']) : WorkspaceName::fromString($values['workspaceName']),
             ContentStreamId::fromString($values['contentStreamId']),
             DimensionSpacePoint::fromArray($values['source']),
             DimensionSpacePoint::fromArray($values['target'])

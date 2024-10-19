@@ -23,6 +23,7 @@ use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateClassification;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
 use Neos\ContentRepository\Core\SharedModel\Node\PropertyName;
+use Neos\ContentRepository\Core\SharedModel\Workspace\VirtualWorkspaceName;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 
 /**
@@ -69,7 +70,7 @@ final readonly class Node
 {
     /**
      * @param ContentRepositoryId $contentRepositoryId The content-repository this Node belongs to
-     * @param WorkspaceName $workspaceName The workspace of this Node
+     * @param WorkspaceName|VirtualWorkspaceName $workspaceName The workspace of this Node
      * @param DimensionSpacePoint $dimensionSpacePoint DimensionSpacePoint a node has been accessed in
      * @param NodeAggregateId $aggregateId NodeAggregateId (identifier) of this node. This is part of the node's "Read Model" identity, which is defined in {@see NodeAddress}
      * @param OriginDimensionSpacePoint $originDimensionSpacePoint The DimensionSpacePoint the node originates in. Usually needed to address a Node in a NodeAggregate in order to update it.
@@ -83,7 +84,7 @@ final readonly class Node
      */
     private function __construct(
         public ContentRepositoryId $contentRepositoryId,
-        public WorkspaceName $workspaceName,
+        public WorkspaceName|VirtualWorkspaceName $workspaceName,
         public DimensionSpacePoint $dimensionSpacePoint,
         public NodeAggregateId $aggregateId,
         public OriginDimensionSpacePoint $originDimensionSpacePoint,
@@ -103,7 +104,7 @@ final readonly class Node
     /**
      * @internal The signature of this method can change in the future!
      */
-    public static function create(ContentRepositoryId $contentRepositoryId, WorkspaceName $workspaceName, DimensionSpacePoint $dimensionSpacePoint, NodeAggregateId $aggregateId, OriginDimensionSpacePoint $originDimensionSpacePoint, NodeAggregateClassification $classification, NodeTypeName $nodeTypeName, PropertyCollection $properties, ?NodeName $name, NodeTags $tags, Timestamps $timestamps, VisibilityConstraints $visibilityConstraints): self
+    public static function create(ContentRepositoryId $contentRepositoryId, WorkspaceName|VirtualWorkspaceName $workspaceName, DimensionSpacePoint $dimensionSpacePoint, NodeAggregateId $aggregateId, OriginDimensionSpacePoint $originDimensionSpacePoint, NodeAggregateClassification $classification, NodeTypeName $nodeTypeName, PropertyCollection $properties, ?NodeName $name, NodeTags $tags, Timestamps $timestamps, VisibilityConstraints $visibilityConstraints): self
     {
         return new self($contentRepositoryId, $workspaceName, $dimensionSpacePoint, $aggregateId, $originDimensionSpacePoint, $classification, $nodeTypeName, $properties, $name, $tags, $timestamps, $visibilityConstraints);
     }

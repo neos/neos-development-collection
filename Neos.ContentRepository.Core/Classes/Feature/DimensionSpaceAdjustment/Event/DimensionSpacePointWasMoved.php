@@ -20,6 +20,7 @@ use Neos\ContentRepository\Core\Feature\Common\EmbedsContentStreamId;
 use Neos\ContentRepository\Core\Feature\Common\EmbedsWorkspaceName;
 use Neos\ContentRepository\Core\Feature\Common\PublishableToWorkspaceInterface;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
+use Neos\ContentRepository\Core\SharedModel\Workspace\VirtualWorkspaceName;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 
 /**
@@ -34,7 +35,7 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 final readonly class DimensionSpacePointWasMoved implements EventInterface, PublishableToWorkspaceInterface, EmbedsContentStreamId, EmbedsWorkspaceName
 {
     public function __construct(
-        public WorkspaceName $workspaceName,
+        public WorkspaceName|VirtualWorkspaceName $workspaceName,
         public ContentStreamId $contentStreamId,
         public DimensionSpacePoint $source,
         public DimensionSpacePoint $target
@@ -46,7 +47,7 @@ final readonly class DimensionSpacePointWasMoved implements EventInterface, Publ
         return $this->contentStreamId;
     }
 
-    public function getWorkspaceName(): WorkspaceName
+    public function getWorkspaceName(): WorkspaceName|VirtualWorkspaceName
     {
         return $this->workspaceName;
     }
@@ -64,7 +65,7 @@ final readonly class DimensionSpacePointWasMoved implements EventInterface, Publ
     public static function fromArray(array $values): self
     {
         return new self(
-            WorkspaceName::fromString($values['workspaceName']),
+            VirtualWorkspaceName::isVirtual($values['workspaceName']) ? VirtualWorkspaceName::fromString($values['workspaceName']) : WorkspaceName::fromString($values['workspaceName']),
             ContentStreamId::fromString($values['contentStreamId']),
             DimensionSpacePoint::fromArray($values['source']),
             DimensionSpacePoint::fromArray($values['target'])

@@ -20,6 +20,7 @@ use Neos\ContentRepository\Core\SharedModel\Exception\WorkspaceDoesNotExist;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStream;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreams;
+use Neos\ContentRepository\Core\SharedModel\Workspace\VirtualWorkspaceName;
 use Neos\ContentRepository\Core\SharedModel\Workspace\Workspace;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepository\Core\SharedModel\Workspace\Workspaces;
@@ -66,7 +67,7 @@ final class ContentRepositoryReadModel implements ProjectionStateInterface
      * @throws WorkspaceDoesNotExist if the provided workspace does not resolve to an existing content stream
      * @see ContentRepository::getContentGraph()
      */
-    public function getContentGraphByWorkspaceName(WorkspaceName $workspaceName): ContentGraphInterface
+    public function getContentGraphByWorkspaceName(WorkspaceName|VirtualWorkspaceName $workspaceName): ContentGraphInterface
     {
         $workspace = $this->findWorkspaceByName($workspaceName);
         if ($workspace === null) {
@@ -78,11 +79,11 @@ final class ContentRepositoryReadModel implements ProjectionStateInterface
     /**
      * For testing we allow getting an instance set by both parameters, effectively overriding the relationship at will
      *
-     * @param WorkspaceName $workspaceName
+     * @param WorkspaceName|VirtualWorkspaceName $workspaceName
      * @param ContentStreamId $contentStreamId
      * @internal Only for testing
      */
-    public function getContentGraphByWorkspaceNameAndContentStreamId(WorkspaceName $workspaceName, ContentStreamId $contentStreamId): ContentGraphInterface
+    public function getContentGraphByWorkspaceNameAndContentStreamId(WorkspaceName|VirtualWorkspaceName $workspaceName, ContentStreamId $contentStreamId): ContentGraphInterface
     {
         return $this->adapter->buildContentGraph($workspaceName, $contentStreamId);
     }

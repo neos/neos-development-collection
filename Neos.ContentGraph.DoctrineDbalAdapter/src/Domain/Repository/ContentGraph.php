@@ -37,6 +37,7 @@ use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateClassification;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
+use Neos\ContentRepository\Core\SharedModel\Workspace\VirtualWorkspaceName;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 
 /**
@@ -70,7 +71,7 @@ final class ContentGraph implements ContentGraphInterface
         private readonly ContentRepositoryId $contentRepositoryId,
         private readonly NodeTypeManager $nodeTypeManager,
         private readonly ContentGraphTableNames $tableNames,
-        public readonly WorkspaceName $workspaceName,
+        public readonly WorkspaceName|VirtualWorkspaceName $workspaceName,
         public readonly ContentStreamId $contentStreamId
     ) {
         $this->nodeQueryBuilder = new NodeQueryBuilder($this->dbal, $this->tableNames);
@@ -81,7 +82,7 @@ final class ContentGraph implements ContentGraphInterface
         return $this->contentRepositoryId;
     }
 
-    public function getWorkspaceName(): WorkspaceName
+    public function getWorkspaceName(): WorkspaceName|VirtualWorkspaceName
     {
         return $this->workspaceName;
     }

@@ -23,6 +23,7 @@ use Neos\ContentRepository\Core\Feature\WorkspacePublication\Dto\NodeIdToPublish
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeVariantSelectionStrategy;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
+use Neos\ContentRepository\Core\SharedModel\Workspace\VirtualWorkspaceName;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 
 /**
@@ -78,7 +79,7 @@ final readonly class TagSubtree implements
         );
     }
 
-    public function createCopyForWorkspace(WorkspaceName $targetWorkspaceName): self
+    public function createCopyForWorkspace(WorkspaceName|VirtualWorkspaceName $targetWorkspaceName): self
     {
         return new self(
             $targetWorkspaceName,

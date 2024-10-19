@@ -41,6 +41,7 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate;
 use Neos\ContentRepository\Core\SharedModel\Exception\WorkspaceDoesNotExist;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateIds;
+use Neos\ContentRepository\Core\SharedModel\Workspace\VirtualWorkspaceName;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\EventStore\Model\EventEnvelope;
 
@@ -169,7 +170,7 @@ class GraphProjectorCatchUpHookForCacheFlushing implements CatchUpHookInterface
             $nodeAggregate = $contentGraph->findNodeAggregateById(
                 $eventInstance->getNodeAggregateId()
             );
-            if ($nodeAggregate) {
+            if ($nodeAggregate && !($eventInstance->workspaceName instanceof VirtualWorkspaceName)) {
                 $this->scheduleCacheFlushJobForNodeAggregate(
                     $this->contentRepository,
                     $eventInstance->workspaceName,
@@ -211,7 +212,7 @@ class GraphProjectorCatchUpHookForCacheFlushing implements CatchUpHookInterface
                 return;
             }
 
-            if ($nodeAggregate) {
+            if ($nodeAggregate && !($eventInstance->getWorkspaceName() instanceof VirtualWorkspaceName)) {
                 $this->scheduleCacheFlushJobForNodeAggregate(
                     $this->contentRepository,
                     $eventInstance->getWorkspaceName(),
@@ -223,7 +224,7 @@ class GraphProjectorCatchUpHookForCacheFlushing implements CatchUpHookInterface
 
     private function scheduleCacheFlushJobForNodeAggregate(
         ContentRepository $contentRepository,
-        WorkspaceName $workspaceName,
+        WorkspaceName|VirtualWorkspaceName $workspaceName,
         NodeAggregate $nodeAggregate
     ): void {
         // we store this in an associative array deduplicate.

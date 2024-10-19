@@ -21,6 +21,7 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\Workspace;
 use Neos\ContentRepository\Core\SharedModel\Exception\WorkspaceDoesNotExist;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamStatus;
+use Neos\ContentRepository\Core\SharedModel\Workspace\VirtualWorkspaceName;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\EventStore\Model\Event\Version;
 
@@ -78,8 +79,12 @@ final class CommandHandlingDependencies
     /**
      * @throws WorkspaceDoesNotExist if the workspace does not exist
      */
-    public function getContentGraph(WorkspaceName $workspaceName): ContentGraphInterface
+    public function getContentGraph(WorkspaceName|VirtualWorkspaceName $workspaceName): ContentGraphInterface
     {
+        if ($workspaceName instanceof VirtualWorkspaceName) {
+            return $this->contentRepository->projectionState(ContentRepositoryReadModel::class)->getContentGraphByWorkspaceNameAndContentStreamId($workspaceName, $workspaceName->contentStreamId);
+        }
+
         if (isset($this->overriddenContentGraphInstances[$workspaceName->value])) {
             return $this->overriddenContentGraphInstances[$workspaceName->value];
         }

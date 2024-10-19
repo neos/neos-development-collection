@@ -22,6 +22,7 @@ use Neos\ContentRepository\Core\Feature\NodeMove\Dto\RelationDistributionStrateg
 use Neos\ContentRepository\Core\Feature\WorkspacePublication\Dto\NodeIdToPublishOrDiscard;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
+use Neos\ContentRepository\Core\SharedModel\Workspace\VirtualWorkspaceName;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 
 /**
@@ -49,7 +50,7 @@ final readonly class MoveNodeAggregate implements
     RebasableToOtherWorkspaceInterface
 {
     /**
-     * @param WorkspaceName $workspaceName The workspace in which the move operation is to be performed
+     * @param WorkspaceName|VirtualWorkspaceName $workspaceName The workspace in which the move operation is to be performed
      * @param DimensionSpacePoint $dimensionSpacePoint This is one of the *covered* dimension space points of the node aggregate and not necessarily one of the occupied ones. This allows us to move virtual specializations only when using the scatter strategy
      * @param NodeAggregateId $nodeAggregateId The id of the node aggregate to move
      * @param RelationDistributionStrategy $relationDistributionStrategy The relation distribution strategy to be used ({@see RelationDistributionStrategy})
@@ -58,7 +59,7 @@ final readonly class MoveNodeAggregate implements
      * @param NodeAggregateId|null $newSucceedingSiblingNodeAggregateId The id of the new succeeding sibling node aggregate. If given, it is attempted to insert the moved nodes right before nodes of this aggregate. In dimension space points this aggregate does not cover, the preceding sibling is tried to be used instead
      */
     private function __construct(
-        public WorkspaceName $workspaceName,
+        public WorkspaceName|VirtualWorkspaceName $workspaceName,
         public DimensionSpacePoint $dimensionSpacePoint,
         public NodeAggregateId $nodeAggregateId,
         public RelationDistributionStrategy $relationDistributionStrategy,
@@ -69,7 +70,7 @@ final readonly class MoveNodeAggregate implements
     }
 
     /**
-     * @param WorkspaceName $workspaceName The workspace in which the move operation is to be performed
+     * @param WorkspaceName|VirtualWorkspaceName $workspaceName The workspace in which the move operation is to be performed
      * @param DimensionSpacePoint $dimensionSpacePoint This is one of the *covered* dimension space points of the node aggregate and not necessarily one of the occupied ones. This allows us to move virtual specializations only when using the scatter strategy
      * @param NodeAggregateId $nodeAggregateId The id of the node aggregate to move
      * @param RelationDistributionStrategy $relationDistributionStrategy The relation distribution strategy to be used ({@see RelationDistributionStrategy})
@@ -77,7 +78,7 @@ final readonly class MoveNodeAggregate implements
      * @param NodeAggregateId|null $newPrecedingSiblingNodeAggregateId The id of the new preceding sibling node aggregate. If given and no successor found, it is attempted to insert the moved nodes right after nodes of this aggregate. In dimension space points this aggregate does not cover, other siblings, in order of proximity, are tried to be used instead
      * @param NodeAggregateId|null $newSucceedingSiblingNodeAggregateId The id of the new succeeding sibling node aggregate. If given, it is attempted to insert the moved nodes right before nodes of this aggregate. In dimension space points this aggregate does not cover, the preceding sibling is tried to be used instead
      */
-    public static function create(WorkspaceName $workspaceName, DimensionSpacePoint $dimensionSpacePoint, NodeAggregateId $nodeAggregateId, RelationDistributionStrategy $relationDistributionStrategy, ?NodeAggregateId $newParentNodeAggregateId = null, ?NodeAggregateId $newPrecedingSiblingNodeAggregateId = null, ?NodeAggregateId $newSucceedingSiblingNodeAggregateId = null): self
+    public static function create(WorkspaceName|VirtualWorkspaceName $workspaceName, DimensionSpacePoint $dimensionSpacePoint, NodeAggregateId $nodeAggregateId, RelationDistributionStrategy $relationDistributionStrategy, ?NodeAggregateId $newParentNodeAggregateId = null, ?NodeAggregateId $newPrecedingSiblingNodeAggregateId = null, ?NodeAggregateId $newSucceedingSiblingNodeAggregateId = null): self
     {
         return new self($workspaceName, $dimensionSpacePoint, $nodeAggregateId, $relationDistributionStrategy, $newParentNodeAggregateId, $newPrecedingSiblingNodeAggregateId, $newSucceedingSiblingNodeAggregateId);
     }
@@ -119,7 +120,7 @@ final readonly class MoveNodeAggregate implements
     }
 
     public function createCopyForWorkspace(
-        WorkspaceName $targetWorkspaceName,
+        WorkspaceName|VirtualWorkspaceName $targetWorkspaceName,
     ): self {
         return new self(
             $targetWorkspaceName,

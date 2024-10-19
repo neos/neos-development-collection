@@ -26,6 +26,7 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
+use Neos\ContentRepository\Core\SharedModel\Workspace\VirtualWorkspaceName;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 
 /**
@@ -44,7 +45,7 @@ final readonly class CopyNodesRecursively implements
     RebasableToOtherWorkspaceInterface
 {
     /**
-     * @param WorkspaceName $workspaceName The name of the workspace this command is to be handled in
+     * @param WorkspaceName|VirtualWorkspaceName $workspaceName The name of the workspace this command is to be handled in
      * @param NodeSubtreeSnapshot $nodeTreeToInsert The snapshot of nodes to copy {@see CopyNodesRecursively::createFromSubgraphAndStartNode()}
      * @param OriginDimensionSpacePoint $targetDimensionSpacePoint the dimension space point which is the target of the copy
      * @param NodeAggregateId $targetParentNodeAggregateId Node aggregate id of the target node's parent. If not given, the node will be added as the parent's first child
@@ -53,7 +54,7 @@ final readonly class CopyNodesRecursively implements
      * @param NodeAggregateIdMapping $nodeAggregateIdMapping An assignment of "old" to "new" NodeAggregateIds ({@see NodeAggregateIdMapping})
      */
     private function __construct(
-        public WorkspaceName $workspaceName,
+        public WorkspaceName|VirtualWorkspaceName $workspaceName,
         public NodeSubtreeSnapshot $nodeTreeToInsert,
         public OriginDimensionSpacePoint $targetDimensionSpacePoint,
         public NodeAggregateId $targetParentNodeAggregateId,
@@ -64,14 +65,14 @@ final readonly class CopyNodesRecursively implements
     }
 
     /**
-     * @param WorkspaceName $workspaceName The name of the workspace this command is to be handled in
+     * @param WorkspaceName|VirtualWorkspaceName $workspaceName The name of the workspace this command is to be handled in
      * @param NodeSubtreeSnapshot $nodeTreeToInsert The snapshot of nodes to copy {@see CopyNodesRecursively::createFromSubgraphAndStartNode()}
      * @param OriginDimensionSpacePoint $targetDimensionSpacePoint the dimension space point which is the target of the copy
      * @param NodeAggregateId $targetParentNodeAggregateId Node aggregate id of the target node's parent. If not given, the node will be added as the parent's first child
      * @param NodeAggregateId|null $targetSucceedingSiblingNodeAggregateId Node aggregate id of the target node's succeeding sibling (optional)
      * @param NodeAggregateIdMapping $nodeAggregateIdMapping An assignment of "old" to "new" NodeAggregateIds ({@see NodeAggregateIdMapping})
      */
-    public static function create(WorkspaceName $workspaceName, NodeSubtreeSnapshot $nodeTreeToInsert, OriginDimensionSpacePoint $targetDimensionSpacePoint, NodeAggregateId $targetParentNodeAggregateId, ?NodeAggregateId $targetSucceedingSiblingNodeAggregateId, NodeAggregateIdMapping $nodeAggregateIdMapping): self
+    public static function create(WorkspaceName|VirtualWorkspaceName $workspaceName, NodeSubtreeSnapshot $nodeTreeToInsert, OriginDimensionSpacePoint $targetDimensionSpacePoint, NodeAggregateId $targetParentNodeAggregateId, ?NodeAggregateId $targetSucceedingSiblingNodeAggregateId, NodeAggregateIdMapping $nodeAggregateIdMapping): self
     {
         return new self($workspaceName, $nodeTreeToInsert, $targetDimensionSpacePoint, $targetParentNodeAggregateId, $targetSucceedingSiblingNodeAggregateId, null, $nodeAggregateIdMapping);
     }
@@ -81,7 +82,7 @@ final readonly class CopyNodesRecursively implements
      */
     public static function createFromSubgraphAndStartNode(
         ContentSubgraphInterface $subgraph,
-        WorkspaceName $workspaceName,
+        WorkspaceName|VirtualWorkspaceName $workspaceName,
         Node $startNode,
         OriginDimensionSpacePoint $dimensionSpacePoint,
         NodeAggregateId $targetParentNodeAggregateId,
@@ -171,7 +172,7 @@ final readonly class CopyNodesRecursively implements
     }
 
     public function createCopyForWorkspace(
-        WorkspaceName $targetWorkspaceName,
+        WorkspaceName|VirtualWorkspaceName $targetWorkspaceName,
     ): self {
         return new self(
             $targetWorkspaceName,
