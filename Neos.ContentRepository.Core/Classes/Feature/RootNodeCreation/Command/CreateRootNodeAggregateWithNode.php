@@ -20,6 +20,7 @@ use Neos\ContentRepository\Core\Feature\NodeCreation\Dto\NodeAggregateIdsByNodeP
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
+use Neos\ContentRepository\Core\SharedModel\Workspace\VirtualWorkspaceName;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 
 /**
@@ -36,13 +37,13 @@ final readonly class CreateRootNodeAggregateWithNode implements
     RebasableToOtherWorkspaceInterface
 {
     /**
-     * @param WorkspaceName $workspaceName The workspace in which the root node should be created in
+     * @param WorkspaceName|VirtualWorkspaceName $workspaceName The workspace in which the root node should be created in
      * @param NodeAggregateId $nodeAggregateId The id of the root node aggregate to create
      * @param NodeTypeName $nodeTypeName Name of type of the new node to create
      * @param NodeAggregateIdsByNodePaths $tetheredDescendantNodeAggregateIds Predefined aggregate ids of tethered child nodes per path. For any tethered node that has no matching entry in this set, the node aggregate id is generated randomly. Since tethered nodes may have tethered child nodes themselves, this works for multiple levels ({@see self::withTetheredDescendantNodeAggregateIds()})
      */
     private function __construct(
-        public WorkspaceName $workspaceName,
+        public WorkspaceName|VirtualWorkspaceName $workspaceName,
         public NodeAggregateId $nodeAggregateId,
         public NodeTypeName $nodeTypeName,
         public NodeAggregateIdsByNodePaths $tetheredDescendantNodeAggregateIds,
@@ -50,11 +51,11 @@ final readonly class CreateRootNodeAggregateWithNode implements
     }
 
     /**
-     * @param WorkspaceName $workspaceName The workspace in which the root node should be created in
+     * @param WorkspaceName|VirtualWorkspaceName $workspaceName The workspace in which the root node should be created in
      * @param NodeAggregateId $nodeAggregateId The id of the root node aggregate to create
      * @param NodeTypeName $nodeTypeName Name of type of the new node to create
      */
-    public static function create(WorkspaceName $workspaceName, NodeAggregateId $nodeAggregateId, NodeTypeName $nodeTypeName): self
+    public static function create(WorkspaceName|VirtualWorkspaceName $workspaceName, NodeAggregateId $nodeAggregateId, NodeTypeName $nodeTypeName): self
     {
         return new self(
             $workspaceName,
@@ -126,7 +127,7 @@ final readonly class CreateRootNodeAggregateWithNode implements
     }
 
     public function createCopyForWorkspace(
-        WorkspaceName $targetWorkspaceName,
+        WorkspaceName|VirtualWorkspaceName $targetWorkspaceName,
     ): self {
         return new self(
             $targetWorkspaceName,

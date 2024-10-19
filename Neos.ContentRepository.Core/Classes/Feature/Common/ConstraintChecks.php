@@ -61,6 +61,7 @@ use Neos\ContentRepository\Core\SharedModel\Node\PropertyName;
 use Neos\ContentRepository\Core\SharedModel\Node\ReferenceName;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamStatus;
+use Neos\ContentRepository\Core\SharedModel\Workspace\VirtualWorkspaceName;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\EventStore\Model\EventStream\ExpectedVersion;
 
@@ -77,9 +78,12 @@ trait ConstraintChecks
      * @throws ContentStreamDoesNotExistYet
      */
     protected function requireContentStream(
-        WorkspaceName $workspaceName,
+        WorkspaceName|VirtualWorkspaceName $workspaceName,
         CommandHandlingDependencies $commandHandlingDependencies
     ): ContentStreamId {
+        if ($workspaceName instanceof VirtualWorkspaceName && $commandHandlingDependencies->contentStreamExists($workspaceName->contentStreamId)) {
+            return $workspaceName->contentStreamId;
+        }
         $contentStreamId = $commandHandlingDependencies->getContentGraph($workspaceName)->getContentStreamId();
         if (!$commandHandlingDependencies->contentStreamExists($contentStreamId)) {
             throw new ContentStreamDoesNotExistYet(

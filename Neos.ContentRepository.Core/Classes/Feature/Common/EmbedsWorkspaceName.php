@@ -14,6 +14,7 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Core\Feature\Common;
 
+use Neos\ContentRepository\Core\SharedModel\Workspace\VirtualWorkspaceName;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 
 /**
@@ -25,5 +26,5 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
  */
 interface EmbedsWorkspaceName
 {
-    public function getWorkspaceName(): WorkspaceName;
+    public function getWorkspaceName(): WorkspaceName|VirtualWorkspaceName;
 }

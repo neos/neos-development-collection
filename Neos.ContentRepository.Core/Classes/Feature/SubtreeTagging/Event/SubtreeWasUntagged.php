@@ -23,6 +23,7 @@ use Neos\ContentRepository\Core\Feature\Common\PublishableToWorkspaceInterface;
 use Neos\ContentRepository\Core\Feature\SubtreeTagging\Dto\SubtreeTag;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
+use Neos\ContentRepository\Core\SharedModel\Workspace\VirtualWorkspaceName;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 
 /**
@@ -45,7 +46,7 @@ final readonly class SubtreeWasUntagged implements
      * @param SubtreeTag $tag The tag that was removed
      */
     public function __construct(
-        public WorkspaceName $workspaceName,
+        public WorkspaceName|VirtualWorkspaceName $workspaceName,
         public ContentStreamId $contentStreamId,
         public NodeAggregateId $nodeAggregateId,
         public DimensionSpacePointSet $affectedDimensionSpacePoints,
@@ -63,7 +64,7 @@ final readonly class SubtreeWasUntagged implements
         return $this->nodeAggregateId;
     }
 
-    public function getWorkspaceName(): WorkspaceName
+    public function getWorkspaceName(): WorkspaceName|VirtualWorkspaceName
     {
         return $this->workspaceName;
     }
@@ -82,7 +83,7 @@ final readonly class SubtreeWasUntagged implements
     public static function fromArray(array $values): EventInterface
     {
         return new self(
-            WorkspaceName::fromString($values['workspaceName']),
+            VirtualWorkspaceName::isVirtual($values['workspaceName']) ? VirtualWorkspaceName::fromString($values['workspaceName']) : WorkspaceName::fromString($values['workspaceName']),
             ContentStreamId::fromString($values['contentStreamId']),
             NodeAggregateId::fromString($values['nodeAggregateId']),
             DimensionSpacePointSet::fromArray($values['affectedDimensionSpacePoints']),

@@ -41,6 +41,7 @@ use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
 use Neos\ContentRepository\Core\SharedModel\Node\ReferenceName;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
+use Neos\ContentRepository\Core\SharedModel\Workspace\VirtualWorkspaceName;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Traversable;
 
@@ -63,7 +64,7 @@ final class NodeFactory
      */
     public function mapNodeRowToNode(
         array $nodeRow,
-        WorkspaceName $workspaceName,
+        WorkspaceName|VirtualWorkspaceName $workspaceName,
         DimensionSpacePoint $dimensionSpacePoint,
         VisibilityConstraints $visibilityConstraints
     ): Node {
@@ -93,7 +94,7 @@ final class NodeFactory
      */
     public function mapNodeRowsToNodes(
         array $nodeRows,
-        WorkspaceName $workspaceName,
+        WorkspaceName|VirtualWorkspaceName $workspaceName,
         DimensionSpacePoint $dimensionSpacePoint,
         VisibilityConstraints $visibilityConstraints
     ): Nodes {
@@ -120,7 +121,7 @@ final class NodeFactory
      */
     public function mapReferenceRowsToReferences(
         array $nodeRows,
-        WorkspaceName $workspaceName,
+        WorkspaceName|VirtualWorkspaceName $workspaceName,
         DimensionSpacePoint $dimensionSpacePoint,
         VisibilityConstraints $visibilityConstraints
     ): References {
@@ -150,7 +151,7 @@ final class NodeFactory
      */
     public function mapNodeRowsToNodeAggregate(
         array $nodeRows,
-        WorkspaceName $workspaceName,
+        WorkspaceName|VirtualWorkspaceName $workspaceName,
         VisibilityConstraints $visibilityConstraints
     ): ?NodeAggregate {
         if (empty($nodeRows)) {
@@ -231,7 +232,7 @@ final class NodeFactory
      */
     public function mapNodeRowsToNodeAggregates(
         array $nodeRows,
-        WorkspaceName $workspaceName,
+        WorkspaceName|VirtualWorkspaceName $workspaceName,
         VisibilityConstraints $visibilityConstraints
     ): NodeAggregates {
         if (empty($nodeRows)) {

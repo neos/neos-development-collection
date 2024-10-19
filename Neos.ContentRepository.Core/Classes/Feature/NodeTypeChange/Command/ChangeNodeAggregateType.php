@@ -22,7 +22,7 @@ use Neos\ContentRepository\Core\Feature\NodeTypeChange\Dto\NodeAggregateTypeChan
 use Neos\ContentRepository\Core\Feature\WorkspacePublication\Dto\NodeIdToPublishOrDiscard;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
+use Neos\ContentRepository\Core\SharedModel\Workspace\VirtualWorkspaceName;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 
 /**
@@ -35,14 +35,14 @@ final readonly class ChangeNodeAggregateType implements
     RebasableToOtherWorkspaceInterface
 {
     /**
-     * @param WorkspaceName $workspaceName The workspace in which the operation is to be performed
+     * @param WorkspaceName|VirtualWorkspaceName $workspaceName The workspace in which the operation is to be performed
      * @param NodeAggregateId $nodeAggregateId The unique identifier of the node aggregate to change
      * @param NodeTypeName $newNodeTypeName Name of the new node type
      * @param NodeAggregateTypeChangeChildConstraintConflictResolutionStrategy $strategy Strategy for conflicts on affected child nodes ({@see NodeAggregateTypeChangeChildConstraintConflictResolutionStrategy})
      * @param NodeAggregateIdsByNodePaths $tetheredDescendantNodeAggregateIds Predefined aggregate ids of any tethered child nodes for the new node type per path. For any tethered node that has no matching entry in this set, the node aggregate id is generated randomly. Since tethered nodes may have tethered child nodes themselves, this works for multiple levels ({@see self::withTetheredDescendantNodeAggregateIds()})
      */
     private function __construct(
-        public WorkspaceName $workspaceName,
+        public WorkspaceName|VirtualWorkspaceName $workspaceName,
         public NodeAggregateId $nodeAggregateId,
         public NodeTypeName $newNodeTypeName,
         public NodeAggregateTypeChangeChildConstraintConflictResolutionStrategy $strategy,
@@ -51,12 +51,12 @@ final readonly class ChangeNodeAggregateType implements
     }
 
     /**
-     * @param WorkspaceName $workspaceName The workspace in which the operation is to be performed
+     * @param WorkspaceName|VirtualWorkspaceName $workspaceName The workspace in which the operation is to be performed
      * @param NodeAggregateId $nodeAggregateId The unique identifier of the node aggregate to change
      * @param NodeTypeName $newNodeTypeName Name of the new node type
      * @param NodeAggregateTypeChangeChildConstraintConflictResolutionStrategy $strategy Strategy for conflicts on affected child nodes ({@see NodeAggregateTypeChangeChildConstraintConflictResolutionStrategy})
      */
-    public static function create(WorkspaceName $workspaceName, NodeAggregateId $nodeAggregateId, NodeTypeName $newNodeTypeName, NodeAggregateTypeChangeChildConstraintConflictResolutionStrategy $strategy): self
+    public static function create(WorkspaceName|VirtualWorkspaceName $workspaceName, NodeAggregateId $nodeAggregateId, NodeTypeName $newNodeTypeName, NodeAggregateTypeChangeChildConstraintConflictResolutionStrategy $strategy): self
     {
         return new self($workspaceName, $nodeAggregateId, $newNodeTypeName, $strategy, NodeAggregateIdsByNodePaths::createEmpty());
     }
@@ -67,7 +67,7 @@ final readonly class ChangeNodeAggregateType implements
     public static function fromArray(array $array): self
     {
         return new self(
-            WorkspaceName::fromString($array['workspaceName']),
+            VirtualWorkspaceName::isVirtual($array['workspaceName']) ? VirtualWorkspaceName::fromString($array['workspaceName']) : WorkspaceName::fromString($array['workspaceName']),
             NodeAggregateId::fromString($array['nodeAggregateId']),
             NodeTypeName::fromString($array['newNodeTypeName']),
             NodeAggregateTypeChangeChildConstraintConflictResolutionStrategy::from($array['strategy']),
@@ -108,7 +108,7 @@ final readonly class ChangeNodeAggregateType implements
     }
 
     public function createCopyForWorkspace(
-        WorkspaceName $targetWorkspaceName,
+        WorkspaceName|VirtualWorkspaceName $targetWorkspaceName,
     ): self {
         return new self(
             $targetWorkspaceName,

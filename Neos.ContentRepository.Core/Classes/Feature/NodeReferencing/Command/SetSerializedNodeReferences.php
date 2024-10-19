@@ -23,6 +23,7 @@ use Neos\ContentRepository\Core\Feature\WorkspacePublication\Dto\NodeIdToPublish
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Node\ReferenceName;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
+use Neos\ContentRepository\Core\SharedModel\Workspace\VirtualWorkspaceName;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 
 /**
@@ -39,14 +40,14 @@ final readonly class SetSerializedNodeReferences implements
     RebasableToOtherWorkspaceInterface
 {
     /**
-     * @param WorkspaceName $workspaceName The workspace in which the create operation is to be performed
+     * @param WorkspaceName|VirtualWorkspaceName $workspaceName The workspace in which the create operation is to be performed
      * @param NodeAggregateId $sourceNodeAggregateId The identifier of the node aggregate to set references
      * @param OriginDimensionSpacePoint $sourceOriginDimensionSpacePoint The dimension space for which the references should be set
      * @param ReferenceName $referenceName Name of the reference to set
      * @param SerializedNodeReferences $references Serialized reference(s) to set
      */
     private function __construct(
-        public WorkspaceName $workspaceName,
+        public WorkspaceName|VirtualWorkspaceName $workspaceName,
         public NodeAggregateId $sourceNodeAggregateId,
         public OriginDimensionSpacePoint $sourceOriginDimensionSpacePoint,
         public ReferenceName $referenceName,
@@ -55,13 +56,13 @@ final readonly class SetSerializedNodeReferences implements
     }
 
     /**
-     * @param WorkspaceName $workspaceName The workspace in which the create operation is to be performed
+     * @param WorkspaceName|VirtualWorkspaceName $workspaceName The workspace in which the create operation is to be performed
      * @param NodeAggregateId $sourceNodeAggregateId The identifier of the node aggregate to set references
      * @param OriginDimensionSpacePoint $sourceOriginDimensionSpacePoint The dimension space for which the references should be set
      * @param ReferenceName $referenceName Name of the reference to set
      * @param SerializedNodeReferences $references Serialized reference(s) to set
      */
-    public static function create(WorkspaceName $workspaceName, NodeAggregateId $sourceNodeAggregateId, OriginDimensionSpacePoint $sourceOriginDimensionSpacePoint, ReferenceName $referenceName, SerializedNodeReferences $references): self
+    public static function create(WorkspaceName|VirtualWorkspaceName $workspaceName, NodeAggregateId $sourceNodeAggregateId, OriginDimensionSpacePoint $sourceOriginDimensionSpacePoint, ReferenceName $referenceName, SerializedNodeReferences $references): self
     {
         return new self($workspaceName, $sourceNodeAggregateId, $sourceOriginDimensionSpacePoint, $referenceName, $references);
     }
@@ -97,7 +98,7 @@ final readonly class SetSerializedNodeReferences implements
     }
 
     public function createCopyForWorkspace(
-        WorkspaceName $targetWorkspaceName,
+        WorkspaceName|VirtualWorkspaceName $targetWorkspaceName,
     ): self {
         return new self(
             $targetWorkspaceName,

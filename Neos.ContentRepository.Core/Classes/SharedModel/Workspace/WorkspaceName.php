@@ -15,6 +15,9 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\Core\SharedModel\Workspace;
 
 use Behat\Transliterator\Transliterator;
+use http\Exception\RuntimeException;
+use Ramsey\Uuid\Uuid;
+use Ramsey\Uuid\UuidFactory;
 
 /**
  * Name of a workspace.
@@ -38,6 +41,9 @@ final class WorkspaceName implements \JsonSerializable
     private function __construct(
         public readonly string $value
     ) {
+        if (VirtualWorkspaceName::isVirtual($value)) {
+            throw new \InvalidArgumentException(sprintf('Invalid workspace name "%s" given. This is a virtual workspace name', $value), 1729289746);
+        }
         if (!self::hasValidFormat($value)) {
             throw new \InvalidArgumentException(sprintf('Invalid workspace name "%s" given. A workspace name has to consist of at most %d lower case characters', $value, self::MAX_LENGTH), 1505826610);
         }

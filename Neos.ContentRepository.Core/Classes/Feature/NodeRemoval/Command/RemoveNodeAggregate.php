@@ -21,6 +21,7 @@ use Neos\ContentRepository\Core\Feature\Common\RebasableToOtherWorkspaceInterfac
 use Neos\ContentRepository\Core\Feature\WorkspacePublication\Dto\NodeIdToPublishOrDiscard;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeVariantSelectionStrategy;
+use Neos\ContentRepository\Core\SharedModel\Workspace\VirtualWorkspaceName;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 
 /**
@@ -33,14 +34,14 @@ final readonly class RemoveNodeAggregate implements
     RebasableToOtherWorkspaceInterface
 {
     /**
-     * @param WorkspaceName $workspaceName The workspace in which the remove operation is to be performed
+     * @param WorkspaceName|VirtualWorkspaceName $workspaceName The workspace in which the remove operation is to be performed
      * @param NodeAggregateId $nodeAggregateId The identifier of the node aggregate to remove
      * @param DimensionSpacePoint $coveredDimensionSpacePoint One of the dimension space points covered by the node aggregate in which the user intends to remove it
      * @param NodeVariantSelectionStrategy $nodeVariantSelectionStrategy The strategy the user chose to determine which specialization variants will also be removed
      * @param NodeAggregateId|null $removalAttachmentPoint Internal. It stores the document node id of the removed node, as that is what the UI needs later on for the change display. {@see self::withRemovalAttachmentPoint()}
      */
     private function __construct(
-        public WorkspaceName $workspaceName,
+        public WorkspaceName|VirtualWorkspaceName $workspaceName,
         public NodeAggregateId $nodeAggregateId,
         public DimensionSpacePoint $coveredDimensionSpacePoint,
         public NodeVariantSelectionStrategy $nodeVariantSelectionStrategy,
@@ -49,12 +50,12 @@ final readonly class RemoveNodeAggregate implements
     }
 
     /**
-     * @param WorkspaceName $workspaceName The workspace in which the remove operation is to be performed
+     * @param WorkspaceName|VirtualWorkspaceName $workspaceName The workspace in which the remove operation is to be performed
      * @param NodeAggregateId $nodeAggregateId The identifier of the node aggregate to remove
      * @param DimensionSpacePoint $coveredDimensionSpacePoint One of the dimension space points covered by the node aggregate in which the user intends to remove it
      * @param NodeVariantSelectionStrategy $nodeVariantSelectionStrategy The strategy the user chose to determine which specialization variants will also be removed
      */
-    public static function create(WorkspaceName $workspaceName, NodeAggregateId $nodeAggregateId, DimensionSpacePoint $coveredDimensionSpacePoint, NodeVariantSelectionStrategy $nodeVariantSelectionStrategy): self
+    public static function create(WorkspaceName|VirtualWorkspaceName $workspaceName, NodeAggregateId $nodeAggregateId, DimensionSpacePoint $coveredDimensionSpacePoint, NodeVariantSelectionStrategy $nodeVariantSelectionStrategy): self
     {
         return new self($workspaceName, $nodeAggregateId, $coveredDimensionSpacePoint, $nodeVariantSelectionStrategy, null);
     }
@@ -109,7 +110,7 @@ final readonly class RemoveNodeAggregate implements
     }
 
     public function createCopyForWorkspace(
-        WorkspaceName $targetWorkspaceName,
+        WorkspaceName|VirtualWorkspaceName $targetWorkspaceName,
     ): self {
         return new self(
             $targetWorkspaceName,

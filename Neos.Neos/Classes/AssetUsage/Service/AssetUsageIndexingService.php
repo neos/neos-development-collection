@@ -13,6 +13,7 @@ use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryI
 use Neos\ContentRepository\Core\SharedModel\Exception\WorkspaceDoesNotExist;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\Workspace;
+use Neos\ContentRepository\Core\SharedModel\Workspace\VirtualWorkspaceName;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\Persistence\Doctrine\PersistenceManager;
@@ -55,6 +56,10 @@ class AssetUsageIndexingService
 
     public function updateIndex(ContentRepositoryId $contentRepositoryId, Node $node): void
     {
+        if ($node->workspaceName instanceof VirtualWorkspaceName) {
+            return;
+        }
+
         $workspaceBases = $this->getWorkspaceBasesAndWorkspace($contentRepositoryId, $node->workspaceName);
         $workspaceDependents = $this->getWorkspaceDependents($contentRepositoryId, $node->workspaceName);
         $nodeType = $this->contentRepositoryRegistry->get($contentRepositoryId)->getNodeTypeManager()->getNodeType($node->nodeTypeName);

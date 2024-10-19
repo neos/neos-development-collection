@@ -24,6 +24,7 @@ use Neos\ContentRepository\Core\Feature\Common\PublishableToWorkspaceInterface;
 use Neos\ContentRepository\Core\Feature\SubtreeTagging\Event\SubtreeWasUntagged;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
+use Neos\ContentRepository\Core\SharedModel\Workspace\VirtualWorkspaceName;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 
 /**
@@ -40,7 +41,7 @@ final readonly class NodeAggregateWasEnabled implements
     EmbedsWorkspaceName
 {
     public function __construct(
-        public WorkspaceName $workspaceName,
+        public WorkspaceName|VirtualWorkspaceName $workspaceName,
         public ContentStreamId $contentStreamId,
         public NodeAggregateId $nodeAggregateId,
         public DimensionSpacePointSet $affectedDimensionSpacePoints,
@@ -57,12 +58,12 @@ final readonly class NodeAggregateWasEnabled implements
         return $this->nodeAggregateId;
     }
 
-    public function getWorkspaceName(): WorkspaceName
+    public function getWorkspaceName(): WorkspaceName|VirtualWorkspaceName
     {
         return $this->workspaceName;
     }
 
-    public function withWorkspaceNameAndContentStreamId(WorkspaceName $targetWorkspaceName, ContentStreamId $contentStreamId): self
+    public function withWorkspaceNameAndContentStreamId(WorkspaceName|VirtualWorkspaceName $targetWorkspaceName, ContentStreamId $contentStreamId): self
     {
         return new self(
             $targetWorkspaceName,
@@ -75,7 +76,7 @@ final readonly class NodeAggregateWasEnabled implements
     public static function fromArray(array $values): EventInterface
     {
         return new self(
-            WorkspaceName::fromString($values['workspaceName']),
+            VirtualWorkspaceName::isVirtual($values['workspaceName']) ? VirtualWorkspaceName::fromString($values['workspaceName']) : WorkspaceName::fromString($values['workspaceName']),
             ContentStreamId::fromString($values['contentStreamId']),
             NodeAggregateId::fromString($values['nodeAggregateId']),
             DimensionSpacePointSet::fromArray($values['affectedDimensionSpacePoints']),

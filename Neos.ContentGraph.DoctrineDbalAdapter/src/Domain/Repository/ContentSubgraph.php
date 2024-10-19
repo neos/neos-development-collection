@@ -56,6 +56,7 @@ use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
 use Neos\ContentRepository\Core\SharedModel\Node\PropertyName;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
+use Neos\ContentRepository\Core\SharedModel\Workspace\VirtualWorkspaceName;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 
 /**
@@ -90,7 +91,7 @@ final class ContentSubgraph implements ContentSubgraphInterface
 
     public function __construct(
         private readonly ContentRepositoryId $contentRepositoryId,
-        private readonly WorkspaceName $workspaceName,
+        private readonly WorkspaceName|VirtualWorkspaceName $workspaceName,
         private readonly ContentStreamId $contentStreamId,
         private readonly DimensionSpacePoint $dimensionSpacePoint,
         private readonly VisibilityConstraints $visibilityConstraints,
@@ -107,7 +108,7 @@ final class ContentSubgraph implements ContentSubgraphInterface
         return $this->contentRepositoryId;
     }
 
-    public function getWorkspaceName(): WorkspaceName
+    public function getWorkspaceName(): WorkspaceName|VirtualWorkspaceName
     {
         return $this->workspaceName;
     }

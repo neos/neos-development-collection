@@ -18,6 +18,7 @@ use Neos\ContentRepository\Core\CommandHandler\CommandInterface;
 use Neos\ContentRepository\Core\Feature\Common\RebasableToOtherWorkspaceInterface;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
+use Neos\ContentRepository\Core\SharedModel\Workspace\VirtualWorkspaceName;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 
 /**
@@ -71,7 +72,7 @@ final readonly class UpdateRootNodeAggregateDimensions implements
     }
 
     public function createCopyForWorkspace(
-        WorkspaceName $targetWorkspaceName,
+        WorkspaceName|VirtualWorkspaceName $targetWorkspaceName,
     ): self {
         return new self(
             $targetWorkspaceName,

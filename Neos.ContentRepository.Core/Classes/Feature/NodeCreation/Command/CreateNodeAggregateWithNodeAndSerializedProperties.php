@@ -24,6 +24,7 @@ use Neos\ContentRepository\Core\Feature\WorkspacePublication\Dto\NodeIdToPublish
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
+use Neos\ContentRepository\Core\SharedModel\Workspace\VirtualWorkspaceName;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 
 /**
@@ -39,7 +40,7 @@ final readonly class CreateNodeAggregateWithNodeAndSerializedProperties implemen
     RebasableToOtherWorkspaceInterface
 {
     /**
-     * @param WorkspaceName $workspaceName The workspace in which the create operation is to be performed
+     * @param WorkspaceName|VirtualWorkspaceName $workspaceName The workspace in which the create operation is to be performed
      * @param NodeAggregateId $nodeAggregateId The unique identifier of the node aggregate to create
      * @param NodeTypeName $nodeTypeName Name of the node type of the new node
      * @param OriginDimensionSpacePoint $originDimensionSpacePoint Origin of the new node in the dimension space. Will also be used to calculate a set of dimension points where the new node will cover from the configured specializations.
@@ -50,7 +51,7 @@ final readonly class CreateNodeAggregateWithNodeAndSerializedProperties implemen
      * @param NodeAggregateIdsByNodePaths $tetheredDescendantNodeAggregateIds Predefined aggregate ids of tethered child nodes per path. For any tethered node that has no matching entry in this set, the node aggregate id is generated randomly. Since tethered nodes may have tethered child nodes themselves, this works for multiple levels ({@see self::withTetheredDescendantNodeAggregateIds()})
      */
     private function __construct(
-        public WorkspaceName $workspaceName,
+        public WorkspaceName|VirtualWorkspaceName $workspaceName,
         public NodeAggregateId $nodeAggregateId,
         public NodeTypeName $nodeTypeName,
         public OriginDimensionSpacePoint $originDimensionSpacePoint,
@@ -63,7 +64,7 @@ final readonly class CreateNodeAggregateWithNodeAndSerializedProperties implemen
     }
 
     /**
-     * @param WorkspaceName $workspaceName The workspace in which the create operation is to be performed
+     * @param WorkspaceName|VirtualWorkspaceName $workspaceName The workspace in which the create operation is to be performed
      * @param NodeAggregateId $nodeAggregateId The unique identifier of the node aggregate to create
      * @param NodeTypeName $nodeTypeName Name of the node type of the new node
      * @param OriginDimensionSpacePoint $originDimensionSpacePoint Origin of the new node in the dimension space. Will also be used to calculate a set of dimension points where the new node will cover from the configured specializations.
@@ -71,7 +72,7 @@ final readonly class CreateNodeAggregateWithNodeAndSerializedProperties implemen
      * @param NodeAggregateId|null $succeedingSiblingNodeAggregateId Node aggregate id of the node's succeeding sibling (optional). If not given, the node will be added as the parent's first child
      * @param SerializedPropertyValues|null $initialPropertyValues The node's initial property values (serialized). Will be merged over the node type's default property values
      */
-    public static function create(WorkspaceName $workspaceName, NodeAggregateId $nodeAggregateId, NodeTypeName $nodeTypeName, OriginDimensionSpacePoint $originDimensionSpacePoint, NodeAggregateId $parentNodeAggregateId, NodeAggregateId $succeedingSiblingNodeAggregateId = null, SerializedPropertyValues $initialPropertyValues = null): self
+    public static function create(WorkspaceName|VirtualWorkspaceName $workspaceName, NodeAggregateId $nodeAggregateId, NodeTypeName $nodeTypeName, OriginDimensionSpacePoint $originDimensionSpacePoint, NodeAggregateId $parentNodeAggregateId, NodeAggregateId $succeedingSiblingNodeAggregateId = null, SerializedPropertyValues $initialPropertyValues = null): self
     {
         return new self($workspaceName, $nodeAggregateId, $nodeTypeName, $originDimensionSpacePoint, $parentNodeAggregateId, $initialPropertyValues ?? SerializedPropertyValues::createEmpty(), $succeedingSiblingNodeAggregateId, null, NodeAggregateIdsByNodePaths::createEmpty());
     }
@@ -162,7 +163,7 @@ final readonly class CreateNodeAggregateWithNodeAndSerializedProperties implemen
     }
 
     public function createCopyForWorkspace(
-        WorkspaceName $targetWorkspaceName,
+        WorkspaceName|VirtualWorkspaceName $targetWorkspaceName,
     ): self {
         return new self(
             $targetWorkspaceName,

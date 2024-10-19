@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\StructureAdjustment\Adjustment;
 
+use http\Exception\InvalidArgumentException;
 use Neos\ContentRepository\Core\DimensionSpace;
 use Neos\ContentRepository\Core\EventStore\Events;
 use Neos\ContentRepository\Core\EventStore\EventsToPublish;
@@ -21,6 +22,7 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindChildNodesFil
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
+use Neos\ContentRepository\Core\SharedModel\Workspace\VirtualWorkspaceName;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\EventStore\Model\EventStream\ExpectedVersion;
 
@@ -36,6 +38,9 @@ class TetheredNodeAdjustments
         private readonly DimensionSpace\InterDimensionalVariationGraph $interDimensionalVariationGraph,
         private readonly PropertyConverter $propertyConverter
     ) {
+        if ($this->contentGraph->getWorkspaceName() instanceof VirtualWorkspaceName) {
+            throw new InvalidArgumentException('Adjustment needs to be applied to an existing workspace.', 1729361212);
+        }
     }
 
     /**

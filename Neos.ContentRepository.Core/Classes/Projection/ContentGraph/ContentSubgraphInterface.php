@@ -20,6 +20,7 @@ use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
+use Neos\ContentRepository\Core\SharedModel\Workspace\VirtualWorkspaceName;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 
 /**
@@ -51,7 +52,7 @@ interface ContentSubgraphInterface
 {
     public function getContentRepositoryId(): ContentRepositoryId;
 
-    public function getWorkspaceName(): WorkspaceName;
+    public function getWorkspaceName(): WorkspaceName|VirtualWorkspaceName;
 
     public function getDimensionSpacePoint(): DimensionSpacePoint;
 

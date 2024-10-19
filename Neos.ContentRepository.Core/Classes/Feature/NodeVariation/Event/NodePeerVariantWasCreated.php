@@ -24,6 +24,7 @@ use Neos\ContentRepository\Core\Feature\Common\InterdimensionalSiblings;
 use Neos\ContentRepository\Core\Feature\Common\PublishableToWorkspaceInterface;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
+use Neos\ContentRepository\Core\SharedModel\Workspace\VirtualWorkspaceName;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 
 /**
@@ -37,7 +38,7 @@ final readonly class NodePeerVariantWasCreated implements
     EmbedsWorkspaceName
 {
     public function __construct(
-        public WorkspaceName $workspaceName,
+        public WorkspaceName|VirtualWorkspaceName $workspaceName,
         public ContentStreamId $contentStreamId,
         public NodeAggregateId $nodeAggregateId,
         public OriginDimensionSpacePoint $sourceOrigin,
@@ -56,7 +57,7 @@ final readonly class NodePeerVariantWasCreated implements
         return $this->nodeAggregateId;
     }
 
-    public function getWorkspaceName(): WorkspaceName
+    public function getWorkspaceName(): WorkspaceName|VirtualWorkspaceName
     {
         return $this->workspaceName;
     }
@@ -76,7 +77,7 @@ final readonly class NodePeerVariantWasCreated implements
     public static function fromArray(array $values): self
     {
         return new self(
-            WorkspaceName::fromString($values['workspaceName']),
+            VirtualWorkspaceName::isVirtual($values['workspaceName']) ? VirtualWorkspaceName::fromString($values['workspaceName']) : WorkspaceName::fromString($values['workspaceName']),
             ContentStreamId::fromString($values['contentStreamId']),
             NodeAggregateId::fromString($values['nodeAggregateId']),
             OriginDimensionSpacePoint::fromArray($values['sourceOrigin']),
