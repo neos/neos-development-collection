@@ -145,7 +145,10 @@ final class ContentRepository
     public function projectionState(string $projectionStateClassName): ProjectionStateInterface
     {
         if (!isset($this->projectionStateCache)) {
-            foreach ($this->projectionsAndCatchUpHooks->additionalProjections as $projection) {
+            foreach ($this->projectionsAndCatchUpHooks->projections as $projection) {
+                if ($projection instanceof ContentRepositoryProjectionInterface) {
+                    continue;
+                }
                 $projectionState = $projection->getState();
                 $this->projectionStateCache[$projectionState::class] = $projectionState;
             }
@@ -155,6 +158,10 @@ final class ContentRepository
             $projectionState = $this->projectionStateCache[$projectionStateClassName];
             return $projectionState;
         }
+        if (in_array(ContentRepositoryReadModelInterface::class, class_implements($projectionStateClassName), true)) {
+            throw new \InvalidArgumentException(sprintf('Accessing the internal content repository projection state via %s(%s) is not allowed. Please use the API on the content repository instead.', __FUNCTION__, $projectionStateClassName), 1729338679);
+        }
+
         throw new \InvalidArgumentException(sprintf('A projection state of type "%s" is not registered in this content repository instance.', $projectionStateClassName), 1662033650);
     }
 
@@ -163,7 +170,7 @@ final class ContentRepository
      */
     public function catchUpProjection(string $projectionClassName, CatchUpOptions $options): void
     {
-        $projection = $this->projectionsAndCatchUpHooks->getProjection($projectionClassName);
+        $projection = $this->projectionsAndCatchUpHooks->projections->get($projectionClassName);
 
         $catchUpHookFactory = $this->projectionsAndCatchUpHooks->getCatchUpHookFactoryForProjection($projection);
         $catchUpHook = $catchUpHookFactory?->build($this);
@@ -204,18 +211,15 @@ final class ContentRepository
     public function setUp(): void
     {
         $this->eventStore->setup();
-        $this->projectionsAndCatchUpHooks->contentRepositoryProjection->setUp();
-        foreach ($this->projectionsAndCatchUpHooks->additionalProjections as $projection) {
+        foreach ($this->projectionsAndCatchUpHooks->projections as $projection) {
             $projection->setUp();
         }
     }
 
     public function status(): ContentRepositoryStatus
     {
-        $projectionStatuses = ProjectionStatuses::create([
-            ContentRepositoryProjectionInterface::class => $this->projectionsAndCatchUpHooks->contentRepositoryProjection->status()
-        ]);
-        foreach ($this->projectionsAndCatchUpHooks->additionalProjections as $projectionClassName => $projection) {
+        $projectionStatuses = ProjectionStatuses::create();
+        foreach ($this->projectionsAndCatchUpHooks->projections as $projectionClassName => $projection) {
             $projectionStatuses = $projectionStatuses->with($projectionClassName, $projection->status());
         }
         return new ContentRepositoryStatus(
@@ -226,8 +230,7 @@ final class ContentRepository
 
     public function resetProjectionStates(): void
     {
-        $this->projectionsAndCatchUpHooks->contentRepositoryProjection->reset();
-        foreach ($this->projectionsAndCatchUpHooks->additionalProjections as $projection) {
+        foreach ($this->projectionsAndCatchUpHooks->projections as $projection) {
             $projection->reset();
         }
     }
@@ -237,7 +240,7 @@ final class ContentRepository
      */
     public function resetProjectionState(string $projectionClassName): void
     {
-        $projection = $this->projectionsAndCatchUpHooks->getProjection($projectionClassName);
+        $projection = $this->projectionsAndCatchUpHooks->projections->get($projectionClassName);
         $projection->reset();
     }
 

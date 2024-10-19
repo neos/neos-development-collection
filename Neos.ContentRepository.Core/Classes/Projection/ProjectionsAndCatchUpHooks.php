@@ -9,14 +9,17 @@ namespace Neos\ContentRepository\Core\Projection;
  */
 final readonly class ProjectionsAndCatchUpHooks
 {
+    public Projections $projections;
+
     /**
      * @param array<class-string<ProjectionInterface<ProjectionStateInterface>>, CatchUpHookFactories> $catchUpHookFactoriesByProjectionClassName
      */
     public function __construct(
         public ContentRepositoryProjectionInterface $contentRepositoryProjection,
-        public Projections $additionalProjections,
+        Projections $additionalProjections,
         private array $catchUpHookFactoriesByProjectionClassName,
     ) {
+        $this->projections = $additionalProjections->with($this->contentRepositoryProjection);
     }
 
     /**
@@ -25,23 +28,5 @@ final readonly class ProjectionsAndCatchUpHooks
     public function getCatchUpHookFactoryForProjection(ProjectionInterface $projection): ?CatchUpHookFactoryInterface
     {
         return $this->catchUpHookFactoriesByProjectionClassName[$projection::class] ?? null;
-    }
-
-    /**
-     * @template T of ProjectionInterface
-     * @param class-string<T> $projectionClassName
-     * @return T
-     */
-    public function getProjection(string $projectionClassName): ProjectionInterface
-    {
-        if ($this->contentRepositoryProjection instanceof $projectionClassName) {
-            return $this->contentRepositoryProjection;
-        }
-        return $this->additionalProjections->get($projectionClassName);
-    }
-
-    public function getAllProjections(): Projections
-    {
-        return $this->additionalProjections->with($this->contentRepositoryProjection);
     }
 }

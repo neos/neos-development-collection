@@ -169,7 +169,7 @@ final class ContentRepositoryFactory
                 $this->projectionFactoryDependencies->eventStore,
                 $this->projectionCatchUpTrigger,
                 $this->projectionFactoryDependencies->eventNormalizer,
-                $this->projectionsAndCatchUpHooks->getAllProjections(),
+                $this->projectionsAndCatchUpHooks->projections,
             );
         }
         return $this->eventPersister;

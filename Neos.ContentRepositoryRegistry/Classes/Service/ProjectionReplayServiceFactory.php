@@ -22,7 +22,7 @@ final class ProjectionReplayServiceFactory implements ContentRepositoryServiceFa
     public function build(ContentRepositoryServiceFactoryDependencies $serviceFactoryDependencies): ContentRepositoryServiceInterface
     {
         return new ProjectionReplayService(
-            $serviceFactoryDependencies->projectionsAndCatchUpHooks->getAllProjections(),
+            $serviceFactoryDependencies->projectionsAndCatchUpHooks->projections,
             $serviceFactoryDependencies->contentRepository,
             $serviceFactoryDependencies->eventStore,
         );
