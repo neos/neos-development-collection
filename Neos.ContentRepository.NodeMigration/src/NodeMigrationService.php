@@ -7,14 +7,11 @@ namespace Neos\ContentRepository\NodeMigration;
 use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceInterface;
 use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Command\CreateWorkspace;
-use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate;
-use Neos\ContentRepository\Core\Projection\Workspace\Workspace;
-use Neos\ContentRepository\Core\SharedModel\Exception\WorkspaceDoesNotExist;
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
-use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceDescription;
-use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceTitle;
-use Neos\ContentRepository\Core\Feature\WorkspacePublication\Command\PublishWorkspace;
 use Neos\ContentRepository\Core\Feature\WorkspaceModification\Command\DeleteWorkspace;
+use Neos\ContentRepository\Core\Feature\WorkspacePublication\Command\PublishWorkspace;
+use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate;
+use Neos\ContentRepository\Core\SharedModel\Exception\WorkspaceDoesNotExist;
+use Neos\ContentRepository\Core\SharedModel\Workspace\Workspace;
 use Neos\ContentRepository\NodeMigration\Command\ExecuteMigration;
 use Neos\ContentRepository\NodeMigration\Filter\FiltersFactory;
 use Neos\ContentRepository\NodeMigration\Filter\InvalidMigrationFilterSpecified;
@@ -61,7 +58,7 @@ readonly class NodeMigrationService implements ContentRepositoryServiceInterface
 
     public function executeMigration(ExecuteMigration $command): void
     {
-        $sourceWorkspace = $this->contentRepository->getWorkspaceFinder()->findOneByName($command->sourceWorkspaceName);
+        $sourceWorkspace = $this->contentRepository->findWorkspaceByName($command->sourceWorkspaceName);
         if ($sourceWorkspace === null) {
             throw new WorkspaceDoesNotExist(sprintf(
                 'The workspace %s does not exist',
@@ -70,7 +67,7 @@ readonly class NodeMigrationService implements ContentRepositoryServiceInterface
         }
 
         $targetWorkspaceWasCreated = false;
-        if ($targetWorkspace = $this->contentRepository->getWorkspaceFinder()->findOneByName($command->targetWorkspaceName)) {
+        if ($targetWorkspace = $this->contentRepository->findWorkspaceByName($command->targetWorkspaceName)) {
             if (!$this->workspaceIsEmpty($targetWorkspace)) {
                 throw new MigrationException(sprintf('Target workspace "%s" already exists an is not empty. Please clear the workspace before.', $targetWorkspace->workspaceName->value));
             }
@@ -80,12 +77,10 @@ readonly class NodeMigrationService implements ContentRepositoryServiceInterface
                 CreateWorkspace::create(
                     $command->targetWorkspaceName,
                     $sourceWorkspace->workspaceName,
-                    WorkspaceTitle::fromString($command->targetWorkspaceName->value),
-                    WorkspaceDescription::fromString(''),
                     $command->contentStreamId,
                 )
             );
-            $targetWorkspace = $this->contentRepository->getWorkspaceFinder()->findOneByName($command->targetWorkspaceName);
+            $targetWorkspace = $this->contentRepository->findWorkspaceByName($command->targetWorkspaceName);
             $targetWorkspaceWasCreated = true;
         }
 

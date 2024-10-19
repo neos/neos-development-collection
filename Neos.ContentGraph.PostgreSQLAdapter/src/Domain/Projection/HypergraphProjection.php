@@ -26,7 +26,7 @@ use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\Feature\NodeTypeChange
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\Feature\NodeVariation;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\Feature\SubtreeTagging;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\SchemaBuilder\HypergraphSchemaBuilder;
-use Neos\ContentRepository\Core\ContentGraphFinder;
+use Neos\ContentRepository\Core\ContentRepositoryReadModel;
 use Neos\ContentRepository\Core\EventStore\EventInterface;
 use Neos\ContentRepository\Core\Feature\ContentStreamForking\Event\ContentStreamWasForked;
 use Neos\ContentRepository\Core\Feature\NodeCreation\Event\NodeAggregateWithNodeWasCreated;
@@ -52,7 +52,7 @@ use Neos\EventStore\Model\EventEnvelope;
 /**
  * The alternate reality-aware hypergraph projector for the PostgreSQL backend via Doctrine DBAL
  *
- * @implements ProjectionInterface<ContentGraphFinder>
+ * @implements ProjectionInterface<ContentRepositoryReadModel>
  * @internal the parent Content Graph is public
  */
 final class HypergraphProjection implements ProjectionInterface
@@ -73,7 +73,7 @@ final class HypergraphProjection implements ProjectionInterface
     public function __construct(
         private readonly Connection $dbal,
         private readonly string $tableNamePrefix,
-        private readonly ContentGraphFinder $contentGraphFinder
+        private readonly ContentRepositoryReadModel $contentRepositoryReadModel
     ) {
         $this->projectionHypergraph = new ProjectionHypergraph($this->dbal, $this->tableNamePrefix);
         $this->checkpointStorage = new DbalCheckpointStorage(
@@ -219,9 +219,9 @@ final class HypergraphProjection implements ProjectionInterface
         return $this->checkpointStorage;
     }
 
-    public function getState(): ContentGraphFinder
+    public function getState(): ContentRepositoryReadModel
     {
-        return $this->contentGraphFinder;
+        return $this->contentRepositoryReadModel;
     }
 
     protected function getProjectionHypergraph(): ProjectionHypergraph

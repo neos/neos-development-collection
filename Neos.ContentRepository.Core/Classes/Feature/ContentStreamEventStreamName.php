@@ -24,7 +24,7 @@ use Neos\EventStore\Model\Event\StreamName;
  */
 final readonly class ContentStreamEventStreamName
 {
-    public const EVENT_STREAM_NAME_PREFIX = 'ContentStream:';
+    private const EVENT_STREAM_NAME_PREFIX = 'ContentStream:';
 
     private function __construct(
         public string $value
@@ -34,6 +34,11 @@ final readonly class ContentStreamEventStreamName
     public static function fromContentStreamId(ContentStreamId $contentStreamId): self
     {
         return new self(self::EVENT_STREAM_NAME_PREFIX . $contentStreamId->value);
+    }
+
+    public static function isContentStreamStreamName(StreamName $streamName): bool
+    {
+        return str_starts_with($streamName->value, self::EVENT_STREAM_NAME_PREFIX);
     }
 
     public function getEventStreamName(): StreamName

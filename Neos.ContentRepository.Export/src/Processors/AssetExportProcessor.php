@@ -3,9 +3,8 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\Export\Processors;
 
 use League\Flysystem\Filesystem;
-use Neos\ContentRepository\Core\Projection\Workspace\WorkspaceFinder;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
-use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
+use Neos\ContentRepository\Core\SharedModel\Workspace\Workspace;
 use Neos\ContentRepository\Export\Asset\ValueObject\SerializedAsset;
 use Neos\ContentRepository\Export\Asset\ValueObject\SerializedImageVariant;
 use Neos\ContentRepository\Export\ProcessorInterface;
@@ -33,7 +32,7 @@ final class AssetExportProcessor implements ProcessorInterface
         private readonly ContentRepositoryId $contentRepositoryId,
         private readonly Filesystem $files,
         private readonly AssetRepository $assetRepository,
-        private readonly WorkspaceFinder $workspaceFinder,
+        private readonly Workspace $targetWorkspace,
         private readonly AssetUsageService $assetUsageService,
     ) {}
 
@@ -45,11 +44,7 @@ final class AssetExportProcessor implements ProcessorInterface
 
     public function run(): ProcessorResult
     {
-        $liveWorkspace = $this->workspaceFinder->findOneByName(WorkspaceName::forLive());
-        if ($liveWorkspace === null) {
-            return ProcessorResult::error('Failed to find live workspace');
-        }
-        $assetFilter = AssetUsageFilter::create()->withWorkspaceName($liveWorkspace->workspaceName)->groupByAsset();
+        $assetFilter = AssetUsageFilter::create()->withWorkspaceName($this->targetWorkspace->workspaceName)->groupByAsset();
 
         $numberOfExportedAssets = 0;
         $numberOfExportedImageVariants = 0;

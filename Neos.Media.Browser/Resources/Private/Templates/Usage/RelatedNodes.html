@@ -140,7 +140,7 @@
                                     </f:if>
                                 </f:else>
                             </f:if>
-                            <span title="{nodeInformation.workspace.workspaceName.value}" data-neos-toggle="tooltip">{nodeInformation.workspace.workspaceTitle.value -> f:format.crop(maxCharacters: 25, append: '…')}</span>
+                            <span title="{nodeInformation.workspace.name.value}" data-neos-toggle="tooltip">{nodeInformation.workspace.name.value -> f:format.crop(maxCharacters: 25, append: '…')}</span>
                         </td>
                         <td class="neos-aRight">
                             <f:if condition="{nodeInformation.node.timestamps.lastModified}">

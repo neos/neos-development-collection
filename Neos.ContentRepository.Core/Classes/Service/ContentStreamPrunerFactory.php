@@ -17,7 +17,7 @@ class ContentStreamPrunerFactory implements ContentRepositoryServiceFactoryInter
     {
         return new ContentStreamPruner(
             $serviceFactoryDependencies->contentRepository,
-            $serviceFactoryDependencies->eventStore
+            $serviceFactoryDependencies->eventStore,
         );
     }
 }

@@ -17,7 +17,7 @@ namespace Neos\ContentRepository\Core\Feature\ContentStreamClosing\Event;
 use Neos\ContentRepository\Core\EventStore\EventInterface;
 use Neos\ContentRepository\Core\Feature\Common\EmbedsContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamState;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamStatus;
 
 /**
  * @api events are the persistence-API of the content repository
@@ -26,7 +26,7 @@ final readonly class ContentStreamWasReopened implements EventInterface, EmbedsC
 {
     public function __construct(
         public ContentStreamId $contentStreamId,
-        public ContentStreamState $previousState,
+        public ContentStreamStatus $previousState,
     ) {
     }
 
@@ -39,7 +39,7 @@ final readonly class ContentStreamWasReopened implements EventInterface, EmbedsC
     {
         return new self(
             ContentStreamId::fromString($values['contentStreamId']),
-            ContentStreamState::from($values['previousState']),
+            ContentStreamStatus::from($values['previousState']),
         );
     }
 

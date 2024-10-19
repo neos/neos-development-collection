@@ -5,9 +5,7 @@ namespace Neos\ContentRepository\Export\Processors;
 
 use League\Flysystem\Filesystem;
 use Neos\ContentRepository\Core\EventStore\DecoratedEvent;
-use Neos\ContentRepository\Core\EventStore\EventInterface;
 use Neos\ContentRepository\Core\EventStore\EventNormalizer;
-use Neos\ContentRepository\Core\EventStore\EventPersister;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceInterface;
 use Neos\ContentRepository\Core\Feature\ContentStreamCreation\Event\ContentStreamWasCreated;
 use Neos\ContentRepository\Core\Feature\ContentStreamEventStreamName;
@@ -16,9 +14,7 @@ use Neos\ContentRepository\Core\Feature\ContentStreamRemoval\Event\ContentStream
 use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Event\RootWorkspaceWasCreated;
 use Neos\ContentRepository\Core\Feature\WorkspaceEventStreamName;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
-use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceDescription;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
-use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceTitle;
 use Neos\ContentRepository\Export\Event\ValueObject\ExportedEvent;
 use Neos\ContentRepository\Export\ProcessorInterface;
 use Neos\ContentRepository\Export\ProcessorResult;
@@ -138,8 +134,6 @@ final class EventStoreImportProcessor implements ProcessorInterface, ContentRepo
             $this->eventNormalizer->normalize(
                 new RootWorkspaceWasCreated(
                     $workspaceName,
-                    WorkspaceTitle::fromString('live workspace'),
-                    WorkspaceDescription::fromString('live workspace'),
                     $this->contentStreamId
                 )
             )

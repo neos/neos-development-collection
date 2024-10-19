@@ -30,20 +30,21 @@ use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Core\Projection\CatchUp;
 use Neos\ContentRepository\Core\Projection\CatchUpOptions;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphInterface;
-use Neos\ContentRepository\Core\Projection\ContentStream\ContentStreamFinder;
 use Neos\ContentRepository\Core\Projection\ProjectionInterface;
 use Neos\ContentRepository\Core\Projection\ProjectionsAndCatchUpHooks;
 use Neos\ContentRepository\Core\Projection\ProjectionStateInterface;
 use Neos\ContentRepository\Core\Projection\ProjectionStatuses;
 use Neos\ContentRepository\Core\Projection\WithMarkStaleInterface;
-use Neos\ContentRepository\Core\Projection\Workspace\Workspace;
-use Neos\ContentRepository\Core\Projection\Workspace\WorkspaceFinder;
-use Neos\ContentRepository\Core\Projection\Workspace\Workspaces;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryStatus;
 use Neos\ContentRepository\Core\SharedModel\Exception\WorkspaceDoesNotExist;
 use Neos\ContentRepository\Core\SharedModel\User\UserIdProviderInterface;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStream;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreams;
+use Neos\ContentRepository\Core\SharedModel\Workspace\Workspace;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
+use Neos\ContentRepository\Core\SharedModel\Workspace\Workspaces;
 use Neos\EventStore\EventStoreInterface;
 use Neos\EventStore\Model\Event\EventMetadata;
 use Neos\EventStore\Model\EventEnvelope;
@@ -250,7 +251,7 @@ final class ContentRepository
      */
     public function getContentGraph(WorkspaceName $workspaceName): ContentGraphInterface
     {
-        return $this->projectionState(ContentGraphFinder::class)->getByWorkspaceName($workspaceName);
+        return $this->getContentRepositoryReadModel()->getContentGraphByWorkspaceName($workspaceName);
     }
 
     /**
@@ -258,7 +259,7 @@ final class ContentRepository
      */
     public function findWorkspaceByName(WorkspaceName $workspaceName): ?Workspace
     {
-        return $this->getWorkspaceFinder()->findOneByName($workspaceName);
+        return $this->getContentRepositoryReadModel()->findWorkspaceByName($workspaceName);
     }
 
     /**
@@ -267,20 +268,17 @@ final class ContentRepository
      */
     public function findWorkspaces(): Workspaces
     {
-        return $this->getWorkspaceFinder()->findAll();
+        return $this->getContentRepositoryReadModel()->findWorkspaces();
     }
 
-    /**
-     * @deprecated with 9.0.0-beta14 please use {@see ContentRepository::findWorkspaces()} and {@see ContentRepository::findWorkspaceByName()} instead.
-     */
-    public function getWorkspaceFinder(): WorkspaceFinder
+    public function findContentStreamById(ContentStreamId $contentStreamId): ?ContentStream
     {
-        return $this->projectionState(WorkspaceFinder::class);
+        return $this->getContentRepositoryReadModel()->findContentStreamById($contentStreamId);
     }
 
-    public function getContentStreamFinder(): ContentStreamFinder
+    public function findContentStreams(): ContentStreams
     {
-        return $this->projectionState(ContentStreamFinder::class);
+        return $this->getContentRepositoryReadModel()->findContentStreams();
     }
 
     public function getNodeTypeManager(): NodeTypeManager
@@ -296,5 +294,10 @@ final class ContentRepository
     public function getContentDimensionSource(): ContentDimensionSourceInterface
     {
         return $this->contentDimensionSource;
+    }
+
+    private function getContentRepositoryReadModel(): ContentRepositoryReadModel
+    {
+        return $this->projectionState(ContentRepositoryReadModel::class);
     }
 }

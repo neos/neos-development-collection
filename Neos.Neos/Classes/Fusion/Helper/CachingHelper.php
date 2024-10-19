@@ -17,7 +17,7 @@ namespace Neos\Neos\Fusion\Helper;
 use Neos\ContentRepository\Core\NodeType\NodeTypeNames;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Nodes;
-use Neos\ContentRepository\Core\Projection\Workspace\Workspace;
+use Neos\ContentRepository\Core\SharedModel\Workspace\Workspace;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Eel\ProtectedContextAwareInterface;
@@ -176,7 +176,7 @@ class CachingHelper implements ProtectedContextAwareInterface
             $node->contentRepositoryId
         );
 
-        $currentWorkspace = $contentRepository->getWorkspaceFinder()->findOneByName(
+        $currentWorkspace = $contentRepository->findWorkspaceByName(
             $node->workspaceName
         );
         $workspaceChain = [];
@@ -184,7 +184,7 @@ class CachingHelper implements ProtectedContextAwareInterface
         while ($currentWorkspace !== null) {
             $workspaceChain[$currentWorkspace->workspaceName->value] = $currentWorkspace;
             $currentWorkspace = $currentWorkspace->baseWorkspaceName
-                ? $contentRepository->getWorkspaceFinder()->findOneByName($currentWorkspace->baseWorkspaceName)
+                ? $contentRepository->findWorkspaceByName($currentWorkspace->baseWorkspaceName)
                 : null;
         }
 

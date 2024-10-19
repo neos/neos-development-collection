@@ -300,7 +300,7 @@ class ChangeProjection implements ProjectionInterface
             return;
         }
 
-        $this->dbal->executeUpdate(
+        $this->dbal->executeStatement(
             'DELETE FROM ' . $this->tableNamePrefix . '
                 WHERE
                     contentStreamId = :contentStreamId
@@ -319,7 +319,7 @@ class ChangeProjection implements ProjectionInterface
         );
 
         foreach ($event->affectedOccupiedDimensionSpacePoints as $occupiedDimensionSpacePoint) {
-            $this->dbal->executeUpdate(
+            $this->dbal->executeStatement(
                 'INSERT INTO ' . $this->tableNamePrefix . '
                         (contentStreamId, nodeAggregateId, originDimensionSpacePoint,
                          originDimensionSpacePointHash, created, deleted, changed, moved, removalAttachmentPoint)
