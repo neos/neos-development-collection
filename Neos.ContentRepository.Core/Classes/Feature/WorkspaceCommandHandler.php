@@ -69,9 +69,7 @@ use Neos\ContentRepository\Core\SharedModel\Exception\ContentStreamDoesNotExistY
 use Neos\ContentRepository\Core\SharedModel\Exception\WorkspaceDoesNotExist;
 use Neos\ContentRepository\Core\SharedModel\Exception\WorkspaceHasNoBaseWorkspaceName;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
-use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceDescription;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
-use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceTitle;
 use Neos\EventStore\EventStoreInterface;
 use Neos\EventStore\Exception\ConcurrencyException;
 use Neos\EventStore\Model\Event\EventType;
@@ -473,14 +471,11 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
         /** @var array<int,RebasableToOtherWorkspaceInterface&CommandInterface> $remainingCommands */
 
         // 3) fork a temporary workspace, based on the base WS, and apply MATCHING
-        $matchingWorkspaceName = WorkspaceName::transliterateFromString('tmp' . str_replace('-', '', $command->contentStreamIdForMatchingPart->value));
+        $matchingWorkspaceName = WorkspaceName::virtualFromContentStreamId($command->contentStreamIdForMatchingPart);
         $commandHandlingDependencies->handle(
-            CreateWorkspace::create(
-                $matchingWorkspaceName,
-                $baseWorkspace->workspaceName,
-                WorkspaceTitle::fromString('tmp'),
-                WorkspaceDescription::fromString(''),
-                $command->contentStreamIdForMatchingPart
+            ForkContentStream::create(
+                $command->contentStreamIdForMatchingPart,
+                $baseWorkspace->currentContentStreamId
             )
         );
 
@@ -497,30 +492,36 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
                 $commandHandlingDependencies->handle($matchingCommand->createCopyForWorkspace($matchingWorkspaceName));
             }
 
-            // 5) take EVENTS(MATCHING) and apply them to base WS.
+            // 5) publish EVENTS(MATCHING) and apply them to base WS.
             $this->publishContentStream(
                 $command->contentStreamIdForMatchingPart,
                 $baseWorkspace->workspaceName,
                 $baseWorkspace->currentContentStreamId
             );
 
-            // 6) fork a new content stream, based on the base WS, and apply REST
+            // 6) fork a new content stream, based on the base WS and make this the new workspace state
             $commandHandlingDependencies->handle(
-                ForkContentStream::create(
-                    $command->contentStreamIdForRemainingPart,
-                    $baseWorkspace->currentContentStreamId
-                )
+                DiscardWorkspace::create($command->workspaceName)
+                    ->withNewContentStreamId($command->contentStreamIdForRemainingPart)
             );
 
-            // 7) apply REMAINING commands to the workspace's new content stream
-            $commandHandlingDependencies->overrideContentStreamId(
+            // 7) fork a new (temporary) content stream, based on the clean WS above, and apply REST
+            $virtualWorkspaceContentStreamId = ContentStreamId::create();
+            $virtualWorkspaceForRemaining = WorkspaceName::virtualFromContentStreamId($virtualWorkspaceContentStreamId);
+            $commandHandlingDependencies->handle(
+                ForkContentStream::create($virtualWorkspaceContentStreamId, $command->contentStreamIdForRemainingPart)
+            );
+
+            // 8) apply REMAINING commands to the workspace's new content stream
+            foreach ($remainingCommands as $remainingCommand) {
+                $commandHandlingDependencies->handle($remainingCommand->createCopyForWorkspace($virtualWorkspaceForRemaining));
+            }
+
+            // 9) publish virtual workspace into clean REMAINING workspace
+            $this->publishContentStream(
+                $virtualWorkspaceContentStreamId,
                 $command->workspaceName,
-                $command->contentStreamIdForRemainingPart,
-                function () use ($commandHandlingDependencies, $remainingCommands) {
-                    foreach ($remainingCommands as $remainingCommand) {
-                        $commandHandlingDependencies->handle($remainingCommand);
-                    }
-                }
+                $command->contentStreamIdForRemainingPart
             );
         } catch (\Exception $exception) {
             // 4.E) In case of an exception, reopen the old content stream and remove the newly created
@@ -530,7 +531,6 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
                     $oldWorkspaceContentStreamIdState,
                 )
             );
-
             $commandHandlingDependencies->handle(RemoveContentStream::create(
                 $command->contentStreamIdForMatchingPart
             ));
@@ -548,11 +548,14 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
 
         // 8) to avoid dangling content streams, we need to remove our temporary workspace (whose events
         // have already been published) as well as the old content stream
-        $commandHandlingDependencies->handle(DeleteWorkspace::create(
-            $matchingWorkspaceName
+        $commandHandlingDependencies->handle(RemoveContentStream::create(
+            $command->contentStreamIdForMatchingPart
         ));
         $commandHandlingDependencies->handle(RemoveContentStream::create(
             $oldWorkspaceContentStreamId
+        ));
+        $commandHandlingDependencies->handle(RemoveContentStream::create(
+            $virtualWorkspaceContentStreamId
         ));
 
         $streamName = WorkspaceEventStreamName::fromWorkspaceName($command->workspaceName)->getEventStreamName();
@@ -560,13 +563,6 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
         return new EventsToPublish(
             $streamName,
             Events::fromArray([
-                new WorkspaceWasPartiallyPublished(
-                    $command->workspaceName,
-                    $baseWorkspace->workspaceName,
-                    $command->contentStreamIdForRemainingPart,
-                    $oldWorkspaceContentStreamId,
-                    $command->nodesToPublish
-                )
             ]),
             ExpectedVersion::ANY()
         );
@@ -852,6 +848,10 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
      */
     private function requireWorkspace(WorkspaceName $workspaceName, CommandHandlingDependencies $commandHandlingDependencies): Workspace
     {
+        if ($workspaceName->isVirtual()) {
+            throw new \RuntimeException("Required workspace's name cannot be virtual", 1729379383);
+        }
+
         $workspace = $commandHandlingDependencies->findWorkspaceByName($workspaceName);
         if (is_null($workspace)) {
             throw WorkspaceDoesNotExist::butWasSupposedTo($workspaceName);

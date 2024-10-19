@@ -68,6 +68,10 @@ final class ContentRepositoryReadModel implements ProjectionStateInterface
      */
     public function getContentGraphByWorkspaceName(WorkspaceName $workspaceName): ContentGraphInterface
     {
+        if ($workspaceName->isVirtual() && $workspaceName->virtualContentStreamId()) {
+            return $this->adapter->buildContentGraph($workspaceName, $workspaceName->virtualContentStreamId());
+        }
+
         $workspace = $this->findWorkspaceByName($workspaceName);
         if ($workspace === null) {
             throw WorkspaceDoesNotExist::butWasSupposedTo($workspaceName);
