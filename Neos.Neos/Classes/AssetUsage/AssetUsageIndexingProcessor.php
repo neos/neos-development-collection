@@ -9,7 +9,6 @@ use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindChildNodesFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
-use Neos\ContentRepository\Core\SharedModel\Exception\NodeAggregateCurrentlyDoesNotExist;
 use Neos\ContentRepository\Core\SharedModel\Exception\WorkspaceDoesNotExist;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\Neos\AssetUsage\Service\AssetUsageIndexingService;
@@ -28,8 +27,8 @@ readonly class AssetUsageIndexingProcessor
     {
         $variationGraph = $contentRepository->getVariationGraph();
 
-        $workspaceFinder = $contentRepository->getWorkspaceFinder();
-        $liveWorkspace = $workspaceFinder->findOneByName(WorkspaceName::forLive());
+        $allWorkspaces = $contentRepository->findWorkspaces();
+        $liveWorkspace = $contentRepository->findWorkspaceByName(WorkspaceName::forLive());
         if ($liveWorkspace === null) {
             throw WorkspaceDoesNotExist::butWasSupposedTo(WorkspaceName::forLive());
         }
@@ -73,7 +72,7 @@ readonly class AssetUsageIndexingProcessor
                 }
             }
 
-            array_push($workspaces, ...array_values($workspaceFinder->findByBaseWorkspace($workspace->workspaceName)));
+            array_push($workspaces, ...iterator_to_array($allWorkspaces->getDependantWorkspaces($workspace->workspaceName)));
         }
     }
 

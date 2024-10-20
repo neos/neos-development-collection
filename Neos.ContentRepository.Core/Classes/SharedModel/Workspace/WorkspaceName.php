@@ -18,6 +18,7 @@ use Behat\Transliterator\Transliterator;
 
 /**
  * Name of a workspace.
+ * The name uniquely identifies a workspace in its Content Repository instance
  *
  * @api
  */

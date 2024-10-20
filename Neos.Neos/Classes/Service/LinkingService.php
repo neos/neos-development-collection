@@ -285,12 +285,12 @@ class LinkingService
         $this->lastLinkedNode = $resolvedNode;
 
         $contentRepository = $this->contentRepositoryRegistry->get($nodeAddress->contentRepositoryId);
-        $workspace = $contentRepository->getWorkspaceFinder()->findOneByName($nodeAddress->workspaceName);
+        $workspace = $contentRepository->findWorkspaceByName($nodeAddress->workspaceName);
 
         $mainRequest = $controllerContext->getRequest()->getMainRequest();
         $uriBuilder = clone $controllerContext->getUriBuilder();
         $uriBuilder->setRequest($mainRequest);
-        $createLiveUri = $workspace && $workspace->isPublicWorkspace() && !$resolvedNode->tags->contain(SubtreeTag::disabled());
+        $createLiveUri = $workspace && $nodeAddress->workspaceName->isLive() && !$resolvedNode->tags->contain(SubtreeTag::disabled());
 
         if ($addQueryString === true) {
             // legacy feature see https://github.com/neos/neos-development-collection/issues/5076

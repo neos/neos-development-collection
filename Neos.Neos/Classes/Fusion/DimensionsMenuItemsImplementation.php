@@ -6,7 +6,9 @@ namespace Neos\Neos\Fusion;
 
 use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\Dimension\ContentDimensionId;
+use Neos\ContentRepository\Core\Dimension\ContentDimensionSourceInterface;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
+use Neos\ContentRepository\Core\DimensionSpace\InterDimensionalVariationGraph;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphInterface;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Core\SharedModel\Exception\WorkspaceDoesNotExist;
@@ -56,13 +58,7 @@ class DimensionsMenuItemsImplementation extends AbstractMenuItemsImplementation
             $contentRepositoryId,
         );
 
-        $dimensionMenuItemsImplementationInternals = $this->contentRepositoryRegistry->buildService(
-            $contentRepositoryId,
-            new DimensionsMenuItemsImplementationInternalsFactory()
-        );
-        assert($dimensionMenuItemsImplementationInternals instanceof DimensionsMenuItemsImplementationInternals);
-
-        $interDimensionalVariationGraph = $dimensionMenuItemsImplementationInternals->interDimensionalVariationGraph;
+        $interDimensionalVariationGraph = $contentRepository->getVariationGraph();
         $currentDimensionSpacePoint = $currentNode->dimensionSpacePoint;
         $contentDimensionIdentifierToLimitTo = $this->getContentDimensionIdentifierToLimitTo();
         try {
@@ -90,12 +86,12 @@ class DimensionsMenuItemsImplementation extends AbstractMenuItemsImplementation
                         $dimensionSpacePoint,
                         $contentDimensionIdentifierToLimitTo,
                         $currentNode->aggregateId,
-                        $dimensionMenuItemsImplementationInternals,
+                        $interDimensionalVariationGraph,
                         $contentGraph
                     );
                 }
 
-                $metadata = $this->determineMetadata($dimensionSpacePoint, $dimensionMenuItemsImplementationInternals);
+                $metadata = $this->determineMetadata($dimensionSpacePoint, $contentRepository->getContentDimensionSource());
 
                 if ($variant === null || !$this->isNodeHidden($variant)) {
                     $menuItems[] = new DimensionMenuItem(
@@ -158,10 +154,10 @@ class DimensionsMenuItemsImplementation extends AbstractMenuItemsImplementation
         DimensionSpacePoint $dimensionSpacePoint,
         ContentDimensionId $contentDimensionIdentifier,
         NodeAggregateId $nodeAggregateId,
-        DimensionsMenuItemsImplementationInternals $dimensionMenuItemsImplementationInternals,
+        InterDimensionalVariationGraph $interDimensionalVariationGraph,
         ContentGraphInterface $contentGraph
     ): ?Node {
-        $generalizations = $dimensionMenuItemsImplementationInternals->interDimensionalVariationGraph
+        $generalizations = $interDimensionalVariationGraph
             ->getWeightedGeneralizations($dimensionSpacePoint);
         ksort($generalizations);
         foreach ($generalizations as $generalization) {
@@ -189,17 +185,17 @@ class DimensionsMenuItemsImplementation extends AbstractMenuItemsImplementation
      */
     protected function determineMetadata(
         DimensionSpacePoint $dimensionSpacePoint,
-        DimensionsMenuItemsImplementationInternals $dimensionMenuItemsImplementationInternals
+        ContentDimensionSourceInterface $contentDimensionSource
     ): array {
         $metadata = $dimensionSpacePoint->coordinates;
         array_walk(
             $metadata,
-            function (&$dimensionValue, $rawDimensionIdentifier) use ($dimensionMenuItemsImplementationInternals) {
+            function (&$dimensionValue, $rawDimensionIdentifier) use ($contentDimensionSource) {
                 $dimensionIdentifier = new ContentDimensionId($rawDimensionIdentifier);
                 $dimensionValue = [
                 'value' => $dimensionValue,
-                'label' => $dimensionMenuItemsImplementationInternals
-                    ->contentDimensionSource->getDimension($dimensionIdentifier)
+                'label' => $contentDimensionSource
+                    ->getDimension($dimensionIdentifier)
                     ?->getValue($dimensionValue)?->getConfigurationValue('label') ?: $dimensionIdentifier,
                 'isPinnedDimension' => (
                     !$this->getContentDimensionIdentifierToLimitTo()

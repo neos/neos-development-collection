@@ -16,7 +16,7 @@ namespace Neos\Neos\Controller\Module\Administration;
 
 use Neos\ContentRepository\Core\Feature\NodeRenaming\Command\ChangeNodeAggregateName;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate;
-use Neos\ContentRepository\Core\Projection\Workspace\Workspace;
+use Neos\ContentRepository\Core\SharedModel\Workspace\Workspace;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeNameIsAlreadyCovered;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeTypeNotFound;
@@ -176,7 +176,7 @@ class SitesController extends AbstractModuleController
         if ($site->getNodeName()->value !== $newSiteNodeName) {
             $contentRepository = $this->contentRepositoryRegistry->get($site->getConfiguration()->contentRepositoryId);
 
-            $liveWorkspace = $contentRepository->getWorkspaceFinder()->findOneByName(WorkspaceName::forLive());
+            $liveWorkspace = $contentRepository->findWorkspaceByName(WorkspaceName::forLive());
             if (!$liveWorkspace instanceof Workspace) {
                 throw new \InvalidArgumentException(
                     'Cannot update a site without the live workspace being present.',
@@ -202,7 +202,7 @@ class SitesController extends AbstractModuleController
                 );
             }
 
-            foreach ($contentRepository->getWorkspaceFinder()->findAll() as $workspace) {
+            foreach ($contentRepository->findWorkspaces() as $workspace) {
                 $siteNodeAggregate = $contentRepository->getContentGraph($workspace->workspaceName)->findChildNodeAggregateByName(
                     $sitesNode->nodeAggregateId,
                     $site->getNodeName()->toNodeName()

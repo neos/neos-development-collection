@@ -46,6 +46,7 @@ class FeatureContext implements BehatContext
     use AssetTrait;
 
     use WorkspaceServiceTrait;
+    use UserServiceTrait;
 
     protected Environment $environment;
 

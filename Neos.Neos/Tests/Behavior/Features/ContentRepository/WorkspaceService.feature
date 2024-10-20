@@ -9,6 +9,11 @@ Feature: Neos WorkspaceService related features
     """
     And using identifier "default", I define a content repository
     And I am in content repository "default"
+    And the following Neos users exist:
+      | Id      | Username | First name | Last name | Roles                                            |
+      | janedoe | jane.doe | Jane       | Doe       | Neos.Neos:Administrator                          |
+      | johndoe | john.doe | John       | Doe       | Neos.Neos:RestrictedEditor,Neos.Neos:UserManager |
+      | editor  | editor   | Edward     | Editor    | Neos.Neos:Editor                                 |
 
   Scenario: Create single root workspace without specifying title and description
     When the root workspace "some-root-workspace" is created
@@ -138,3 +143,76 @@ Feature: Neos WorkspaceService related features
     Then the workspace "some-root-workspace" should have the following role assignments:
       | Subject type | Subject      | Role    |
       | USER         | some-user-id | MANAGER |
+
+  Scenario: Workspace permissions for personal workspace for admin user
+    Given the root workspace "live" is created
+    When a personal workspace for user "jane.doe" is created
+    Then the workspace "jane-doe" should have the following metadata:
+      | Title    | Description | Classification | Owner user id |
+      | Jane Doe |             | PERSONAL       | janedoe       |
+    And the Neos user "jane.doe" should have the permissions "read,write,manage" for workspace "jane-doe"
+    And the Neos user "john.doe" should have no permissions for workspace "jane-doe"
+    And the Neos user "editor" should have no permissions for workspace "jane-doe"
+
+  Scenario: Workspace permissions for personal workspace for editor user
+    Given the root workspace "live" is created
+    When a personal workspace for user "editor" is created
+    Then the workspace "edward-editor" should have the following metadata:
+      | Title         | Description | Classification | Owner user id |
+      | Edward Editor |             | PERSONAL       | editor        |
+    And the Neos user "jane.doe" should have the permissions "manage" for workspace "edward-editor"
+    And the Neos user "john.doe" should have no permissions for workspace "edward-editor"
+    And the Neos user "editor" should have the permissions "read,write,manage" for workspace "edward-editor"
+
+  Scenario: Default workspace permissions
+    When the root workspace "some-root-workspace" is created
+    Then the Neos user "jane.doe" should have the permissions "manage" for workspace "some-root-workspace"
+    And the Neos user "john.doe" should have no permissions for workspace "some-root-workspace"
+    And the Neos user "editor" should have no permissions for workspace "some-root-workspace"
+
+  Scenario: Workspace permissions for collaborator by group
+    When the root workspace "some-root-workspace" is created
+    When the role COLLABORATOR is assigned to workspace "some-root-workspace" for group "Neos.Neos:AbstractEditor"
+    Then the Neos user "jane.doe" should have the permissions "read,write,manage" for workspace "some-root-workspace"
+    And the Neos user "john.doe" should have the permissions "read,write" for workspace "some-root-workspace"
+    And the Neos user "editor" should have the permissions "read,write" for workspace "some-root-workspace"
+
+  Scenario: Workspace permissions for manager by group
+    When the root workspace "some-root-workspace" is created
+    When the role MANAGER is assigned to workspace "some-root-workspace" for group "Neos.Neos:AbstractEditor"
+    Then the Neos user "jane.doe" should have the permissions "read,write,manage" for workspace "some-root-workspace"
+    And the Neos user "john.doe" should have the permissions "read,write,manage" for workspace "some-root-workspace"
+    And the Neos user "editor" should have the permissions "read,write,manage" for workspace "some-root-workspace"
+
+  Scenario: Workspace permissions for collaborator by user
+    When the root workspace "some-root-workspace" is created
+    When the role COLLABORATOR is assigned to workspace "some-root-workspace" for user "johndoe"
+    Then the Neos user "jane.doe" should have the permissions "manage" for workspace "some-root-workspace"
+    And the Neos user "john.doe" should have the permissions "read,write" for workspace "some-root-workspace"
+    And the Neos user "editor" should have no permissions for workspace "some-root-workspace"
+
+  Scenario: Workspace permissions for manager by user
+    When the root workspace "some-root-workspace" is created
+    When the role MANAGER is assigned to workspace "some-root-workspace" for user "johndoe"
+    Then the Neos user "jane.doe" should have the permissions "manage" for workspace "some-root-workspace"
+    And the Neos user "john.doe" should have the permissions "read,write,manage" for workspace "some-root-workspace"
+    And the Neos user "editor" should have no permissions for workspace "some-root-workspace"
+
+  Scenario: Overlapping workspace permissions 1
+    When the root workspace "some-root-workspace" is created
+    When the role MANAGER is assigned to workspace "some-root-workspace" for group "Neos.Neos:Editor"
+    When the role COLLABORATOR is assigned to workspace "some-root-workspace" for user "editor"
+    And the Neos user "editor" should have the permissions "read,write,manage" for workspace "some-root-workspace"
+
+  Scenario: Overlapping workspace permissions 2
+    When the root workspace "some-root-workspace" is created
+    When the role COLLABORATOR is assigned to workspace "some-root-workspace" for group "Neos.Neos:Editor"
+    When the role MANAGER is assigned to workspace "some-root-workspace" for user "editor"
+    And the Neos user "editor" should have the permissions "read,write,manage" for workspace "some-root-workspace"
+
+  Scenario: Permissions for workspace without metadata
+    Given a root workspace "some-root-workspace" exists without metadata
+    When the role COLLABORATOR is assigned to workspace "some-root-workspace" for user "janedoe"
+    Then the Neos user "jane.doe" should have the permissions "read,write,manage" for workspace "some-root-workspace"
+    And the Neos user "john.doe" should have no permissions for workspace "some-root-workspace"
+    And the Neos user "editor" should have no permissions for workspace "some-root-workspace"

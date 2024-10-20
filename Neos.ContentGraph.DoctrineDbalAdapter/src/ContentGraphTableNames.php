@@ -42,6 +42,16 @@ final readonly class ContentGraphTableNames
         return $this->tableNamePrefix . '_referencerelation';
     }
 
+    public function workspace(): string
+    {
+        return $this->tableNamePrefix . '_workspace';
+    }
+
+    public function contentStream(): string
+    {
+        return $this->tableNamePrefix . '_contentstream';
+    }
+
     public function checkpoint(): string
     {
         return $this->tableNamePrefix . '_checkpoint';

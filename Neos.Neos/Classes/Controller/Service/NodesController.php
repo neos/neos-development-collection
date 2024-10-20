@@ -28,8 +28,8 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\NodeType\NodeType
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\SearchTerm\SearchTerm;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\SearchTerm\SearchTermMatcher;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate;
-use Neos\ContentRepository\Core\Projection\ContentGraph\Nodes;
 use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAddress;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
@@ -39,7 +39,6 @@ use Neos\Flow\Property\PropertyMapper;
 use Neos\FluidAdaptor\View\TemplateView;
 use Neos\Neos\Controller\BackendUserTranslationTrait;
 use Neos\Neos\Domain\Service\NodeTypeNameFactory;
-use Neos\Neos\FrontendRouting\NodeAddressFactory;
 use Neos\Neos\FrontendRouting\SiteDetection\SiteDetectionResult;
 use Neos\Neos\Ui\Domain\Service\NodePropertyConverterService;
 use Neos\Neos\View\Service\NodeJsonView;
@@ -130,9 +129,8 @@ class NodesController extends ActionController
             : null;
         $nodeAddress = null;
         if (!$nodePath) {
-            // todo legacy uri node address notation used. Should be refactored to use json encoded NodeAddress
             $nodeAddress = $contextNode
-                ? NodeAddressFactory::create($contentRepository)->createCoreNodeAddressFromLegacyUriString($contextNode)
+                ? NodeAddress::fromJsonString($contextNode)
                 : null;
         }
 
@@ -238,7 +236,7 @@ class NodesController extends ActionController
             }
         });
 
-        $nodeAddress = NodeAddressFactory::create($contentRepository)->createFromNode($node)->serializeForUri();
+        $nodeAddress = NodeAddress::fromNode($node)->toJson();
 
         $this->view->assignMultiple([
             'node' => $node,

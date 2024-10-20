@@ -8,12 +8,14 @@ use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceInterface;
 use Neos\ContentRepository\Core\Feature\ContentStreamEventStreamName;
 use Neos\ContentRepository\Core\Feature\ContentStreamRemoval\Command\RemoveContentStream;
-use Neos\ContentRepository\Core\Projection\ContentStream\ContentStreamFinder;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStream;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreams;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamStatus;
 use Neos\EventStore\EventStoreInterface;
 
 /**
- * For internal implementation details, see {@see ContentStreamFinder}.
+ * For implementation details of the content stream states and removed state, see {@see ContentStream}.
  *
  * @api
  */
@@ -43,17 +45,23 @@ class ContentStreamPruner implements ContentRepositoryServiceInterface
      */
     public function prune(bool $removeTemporary = false): iterable
     {
-        $unusedContentStreams = $this->contentRepository->getContentStreamFinder()->findUnusedContentStreams(
-            $removeTemporary
+        $status = [ContentStreamStatus::NO_LONGER_IN_USE, ContentStreamStatus::REBASE_ERROR];
+        if ($removeTemporary) {
+            $status[] = ContentStreamStatus::CREATED;
+            $status[] = ContentStreamStatus::FORKED;
+        }
+        $unusedContentStreams = $this->contentRepository->findContentStreams()->filter(
+            static fn (ContentStream $contentStream) => in_array($contentStream->status, $status, true),
         );
-
+        $unusedContentStreamIds = [];
         foreach ($unusedContentStreams as $contentStream) {
             $this->contentRepository->handle(
-                RemoveContentStream::create($contentStream)
+                RemoveContentStream::create($contentStream->id)
             );
+            $unusedContentStreamIds[] = $contentStream->id;
         }
 
-        return $unusedContentStreams;
+        return $unusedContentStreamIds;
     }
 
     /**
@@ -65,29 +73,69 @@ class ContentStreamPruner implements ContentRepositoryServiceInterface
      *
      *   - Otherwise, we cannot replay the other content streams correctly (if the base content streams are missing).
      *
-     * @return iterable<int,ContentStreamId> the identifiers of the removed content streams
+     * @return ContentStreams the removed content streams
      */
-    public function pruneRemovedFromEventStream(): iterable
+    public function pruneRemovedFromEventStream(): ContentStreams
     {
-        $removedContentStreams = $this->contentRepository->getContentStreamFinder()
-            ->findUnusedAndRemovedContentStreams();
-
+        $removedContentStreams = $this->findUnusedAndRemovedContentStreams();
         foreach ($removedContentStreams as $removedContentStream) {
-            $streamName = ContentStreamEventStreamName::fromContentStreamId($removedContentStream)
+            $streamName = ContentStreamEventStreamName::fromContentStreamId($removedContentStream->id)
                 ->getEventStreamName();
             $this->eventStore->deleteStream($streamName);
         }
-
         return $removedContentStreams;
     }
 
     public function pruneAll(): void
     {
-        $contentStreamIds = $this->contentRepository->getContentStreamFinder()->findAllIds();
-
-        foreach ($contentStreamIds as $contentStreamId) {
-            $streamName = ContentStreamEventStreamName::fromContentStreamId($contentStreamId)->getEventStreamName();
+        foreach ($this->contentRepository->findContentStreams() as $contentStream) {
+            $streamName = ContentStreamEventStreamName::fromContentStreamId($contentStream->id)->getEventStreamName();
             $this->eventStore->deleteStream($streamName);
         }
+    }
+
+    private function findUnusedAndRemovedContentStreams(): ContentStreams
+    {
+        $allContentStreams = $this->contentRepository->findContentStreams();
+
+        /** @var array<string,bool> $transitiveUsedStreams */
+        $transitiveUsedStreams = [];
+        /** @var list<ContentStreamId> $contentStreamIdsStack */
+        $contentStreamIdsStack = [];
+
+        // Step 1: Find all content streams currently in direct use by a workspace
+        foreach ($allContentStreams as $stream) {
+            if ($stream->status === ContentStreamStatus::IN_USE_BY_WORKSPACE && !$stream->removed) {
+                $contentStreamIdsStack[] = $stream->id;
+            }
+        }
+
+        // Step 2: When a content stream is in use by a workspace, its source content stream is also "transitively" in use.
+        while ($contentStreamIdsStack !== []) {
+            $currentStreamId = array_pop($contentStreamIdsStack);
+            if (!array_key_exists($currentStreamId->value, $transitiveUsedStreams)) {
+                $transitiveUsedStreams[$currentStreamId->value] = true;
+
+                // Find source content streams for the current stream
+                foreach ($allContentStreams as $stream) {
+                    if ($stream->id === $currentStreamId && $stream->sourceContentStreamId !== null) {
+                        $sourceStreamId = $stream->sourceContentStreamId;
+                        if (!array_key_exists($sourceStreamId->value, $transitiveUsedStreams)) {
+                            $contentStreamIdsStack[] = $sourceStreamId;
+                        }
+                    }
+                }
+            }
+        }
+
+        // Step 3: Check for removed content streams which we do not need anymore transitively
+        $removedContentStreams = [];
+        foreach ($allContentStreams as $contentStream) {
+            if ($contentStream->removed && !array_key_exists($contentStream->id->value, $transitiveUsedStreams)) {
+                $removedContentStreams[] = $contentStream;
+            }
+        }
+
+        return ContentStreams::fromArray($removedContentStreams);
     }
 }

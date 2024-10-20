@@ -21,12 +21,10 @@ use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Command\CreateRootWorkspace;
 use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Command\CreateWorkspace;
 use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Exception\WorkspaceAlreadyExists;
-use Neos\ContentRepository\Core\Projection\Workspace\Workspace;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
-use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceDescription as DeprecatedWorkspaceDescription;
+use Neos\ContentRepository\Core\SharedModel\Workspace\Workspace;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
-use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceTitle as DeprecatedWorkspaceTitle;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Security\Exception\NoSuchRoleException;
@@ -75,7 +73,7 @@ final class WorkspaceService
         return $metadata ?? new WorkspaceMetadata(
             WorkspaceTitle::fromString($workspaceName->value),
             WorkspaceDescription::fromString(''),
-            $workspace->baseWorkspaceName === null ? WorkspaceClassification::ROOT : WorkspaceClassification::UNKNOWN,
+            $workspace->isRootWorkspace() ? WorkspaceClassification::ROOT : WorkspaceClassification::UNKNOWN,
             null,
         );
     }
@@ -125,8 +123,6 @@ final class WorkspaceService
         $contentRepository->handle(
             CreateRootWorkspace::create(
                 $workspaceName,
-                DeprecatedWorkspaceTitle::fromString($title->value),
-                DeprecatedWorkspaceDescription::fromString($description->value),
                 ContentStreamId::create()
             )
         );
@@ -278,16 +274,12 @@ final class WorkspaceService
         } catch (NoSuchRoleException $e) {
             throw new \RuntimeException(sprintf('Failed to determine roles for user "%s", check your package dependencies: %s', $user->getId()->value, $e->getMessage()), 1727084881, $e);
         }
-        $userIsAdministrator = in_array('Neos.Neos:Administrator', $userRoles, true);
         $workspaceMetadata = $this->loadWorkspaceMetadata($contentRepositoryId, $workspaceName);
-        if ($workspaceMetadata === null) {
-            return WorkspacePermissions::create(false, false, $userIsAdministrator);
-        }
-        if ($workspaceMetadata->ownerUserId !== null && $workspaceMetadata->ownerUserId->equals($user->getId())) {
+        if ($workspaceMetadata !== null && $workspaceMetadata->ownerUserId !== null && $workspaceMetadata->ownerUserId->equals($user->getId())) {
             return WorkspacePermissions::all();
         }
-
         $userWorkspaceRole = $this->loadWorkspaceRoleOfUser($contentRepositoryId, $workspaceName, $user->getId(), $userRoles);
+        $userIsAdministrator = in_array('Neos.Neos:Administrator', $userRoles, true);
         if ($userWorkspaceRole === null) {
             return WorkspacePermissions::create(false, false, $userIsAdministrator);
         }
@@ -310,7 +302,7 @@ final class WorkspaceService
         $workspaceName = $workspaceNameCandidate;
         $attempt = 1;
         do {
-            if ($contentRepository->getWorkspaceFinder()->findOneByName($workspaceName) === null) {
+            if ($contentRepository->findWorkspaceByName($workspaceName) === null) {
                 return $workspaceName;
             }
             if ($attempt === 1) {
@@ -381,7 +373,7 @@ final class WorkspaceService
                     'workspace_name' => $workspaceName->value,
                     'description' => '',
                     'title' => $workspaceName->value,
-                    'classification' => $workspace->baseWorkspaceName === null ? WorkspaceClassification::ROOT->value : WorkspaceClassification::UNKNOWN->value,
+                    'classification' => $workspace->isRootWorkspace() ? WorkspaceClassification::ROOT->value : WorkspaceClassification::UNKNOWN->value,
                     ...$data,
                 ]);
             }
@@ -397,8 +389,6 @@ final class WorkspaceService
             CreateWorkspace::create(
                 $workspaceName,
                 $baseWorkspaceName,
-                DeprecatedWorkspaceTitle::fromString($title->value),
-                DeprecatedWorkspaceDescription::fromString($description->value),
                 ContentStreamId::create()
             )
         );
@@ -489,8 +479,7 @@ final class WorkspaceService
     {
         $workspace = $this->contentRepositoryRegistry
             ->get($contentRepositoryId)
-            ->getWorkspaceFinder()
-            ->findOneByName($workspaceName);
+            ->findWorkspaceByName($workspaceName);
         if ($workspace === null) {
             throw new \RuntimeException(sprintf('Failed to find workspace with name "%s" for content repository "%s"', $workspaceName->value, $contentRepositoryId->value), 1718379722);
         }

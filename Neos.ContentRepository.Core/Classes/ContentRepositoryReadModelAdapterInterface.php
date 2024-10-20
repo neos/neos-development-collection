@@ -16,20 +16,27 @@ namespace Neos\ContentRepository\Core;
 
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphInterface;
 use Neos\ContentRepository\Core\SharedModel\Exception\WorkspaceDoesNotExist;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStream;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreams;
+use Neos\ContentRepository\Core\SharedModel\Workspace\Workspace;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
+use Neos\ContentRepository\Core\SharedModel\Workspace\Workspaces;
 
 /**
  * Create implementations of ContentGraphs bound to a specific Workspace and/or ContentStream
  *
  * @internal This is just an implementation detail to delegate creating the specific implementations of a ContentGraph.
  */
-interface ContentGraphFactoryInterface
+interface ContentRepositoryReadModelAdapterInterface
 {
-    /**
-     * @throws WorkspaceDoesNotExist if the workspace does not exist
-     */
-    public function buildForWorkspace(WorkspaceName $workspaceName): ContentGraphInterface;
+    public function buildContentGraph(WorkspaceName $workspaceName, ContentStreamId $contentStreamId): ContentGraphInterface;
 
-    public function buildForWorkspaceAndContentStream(WorkspaceName $workspaceName, ContentStreamId $contentStreamId): ContentGraphInterface;
+    public function findWorkspaceByName(WorkspaceName $workspaceName): ?Workspace;
+
+    public function findWorkspaces(): Workspaces;
+
+    public function findContentStreamById(ContentStreamId $contentStreamId): ?ContentStream;
+
+    public function findContentStreams(): ContentStreams;
 }

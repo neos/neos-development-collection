@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Neos\ContentRepository\Core\Projection\Workspace;
+namespace Neos\ContentRepository\Core\SharedModel\Workspace;
 
 /**
  * @api
