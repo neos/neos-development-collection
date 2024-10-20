@@ -15,7 +15,6 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\Core;
 
 use Neos\ContentRepository\Core\CommandHandler\CommandInterface;
-use Neos\ContentRepository\Core\CommandHandler\CommandResult;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphInterface;
 use Neos\ContentRepository\Core\SharedModel\Workspace\Workspace;
 use Neos\ContentRepository\Core\SharedModel\Exception\WorkspaceDoesNotExist;
@@ -42,9 +41,9 @@ final class CommandHandlingDependencies
     {
     }
 
-    public function handle(CommandInterface $command): CommandResult
+    public function handle(CommandInterface $command): void
     {
-        return $this->contentRepository->handle($command);
+        $this->contentRepository->handle($command);
     }
 
     public function getContentStreamVersion(ContentStreamId $contentStreamId): Version
