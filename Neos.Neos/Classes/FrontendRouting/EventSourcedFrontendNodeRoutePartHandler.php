@@ -265,6 +265,15 @@ final class EventSourcedFrontendNodeRoutePartHandler extends AbstractRoutePart i
         $currentRequestSiteDetectionResult = SiteDetectionResult::fromRouteParameters($parameters);
 
         $nodeAddress = $routeValues[$this->name];
+
+        if (is_string($nodeAddress)) {
+            try {
+                $nodeAddress = NodeAddress::fromJsonString($nodeAddress);
+            } catch (\InvalidArgumentException) {
+                return false;
+            }
+        }
+
         if (!$nodeAddress instanceof NodeAddress) {
             return false;
         }
