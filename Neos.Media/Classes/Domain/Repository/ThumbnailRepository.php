@@ -152,7 +152,7 @@ class ThumbnailRepository extends Repository
         $assetIdentifier = $this->persistenceManager->getIdentifierByObject($thumbnail->getOriginalAsset());
         $thumbnailResource = $thumbnail->getResource();
 
-        $sql = 'INSERT INTO neos_media_domain_model_thumbnail (persistence_object_identifier, originalasset, resource, width, height, configuration, configurationhash, staticresource, quality) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)';
+        $sql = 'INSERT INTO neos_media_domain_model_thumbnail (persistence_object_identifier, originalasset, resource, width, height, configuration, configurationhash, staticresource, quality, focalpointx, focalpointy) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
         $params = [
             $thumbnailIdentifier,
             $assetIdentifier,
@@ -163,6 +163,8 @@ class ThumbnailRepository extends Repository
             $configuration->getHash(),
             $thumbnail->getStaticResource(),
             $thumbnail->getQuality(),
+            $thumbnail->getFocalPointX(),
+            $thumbnail->getFocalPointY(),
         ];
 
         $connection = $this->entityManager->getConnection();
