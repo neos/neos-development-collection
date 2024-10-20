@@ -81,13 +81,11 @@ trait DispatcherTrait
         $controllerInstance = new ('\\' . $fullyQualifiedClassName)();
 
         if ($controllerInstance instanceof \Neos\Flow\Mvc\Controller\ActionController) {
-            // inject all the necessary properties of an action controller, as extended classes dont call $this->Flow_Proxy_injectProperties();
-            \Neos\Utility\ObjectAccess::setProperty($controllerInstance, 'validatorResolver', $this->getObject(\Neos\Flow\Validation\ValidatorResolver::class), true);
-            \Neos\Utility\ObjectAccess::setProperty($controllerInstance, 'mvcPropertyMappingConfigurationService', $this->getObject(\Neos\Flow\Mvc\Controller\MvcPropertyMappingConfigurationService::class), true);
-            \Neos\Utility\ObjectAccess::setProperty($controllerInstance, 'viewConfigurationManager', $this->getObject(\Neos\Flow\Mvc\ViewConfigurationManager::class), true);
-            \Neos\Utility\ObjectAccess::setProperty($controllerInstance, 'objectManager', $this->getObject(\Neos\Flow\ObjectManagement\ObjectManager::class), true);
+            // run flow property injection code of parent class ActionController not ActionController_Original manually as the extended classes is not proxied and doesnt call $this->Flow_Proxy_injectProperties();
+            $ref = new \ReflectionClass(get_parent_class($controllerInstance));
+            $method = $ref->getMethod('Flow_Proxy_injectProperties');
+            $method->invoke($controllerInstance);
         }
-
 
         $objectManager = $this->getObject(\Neos\Flow\ObjectManagement\ObjectManager::class);
         $objects = \Neos\Utility\ObjectAccess::getProperty($objectManager, 'objects', true);
