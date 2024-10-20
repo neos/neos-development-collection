@@ -51,6 +51,7 @@ Feature: Tests for sub-request on the frontend node controller in case of the "N
       | nodeAggregateId | parentNodeAggregateId | nodeTypeName                | initialPropertyValues                        | nodeName |
       | a               | root                  | Neos.Neos:Site              | {"title": "Node a"}                          | a        |
       | a1              | a                     | Neos.Neos:Test.DocumentType | {"uriPathSegment": "a1", "title": "Node a1"} | a1       |
+      | a2              | a                     | Neos.Neos:Test.DocumentType | {"uriPathSegment": "a2", "title": "Node a3"} | a3       |
       | a1a             | a1                    | Neos.Neos:Content.MyPlugin  | {"myPluginProp": "hello from the node"}      | a1a      |
     And A site exists for node name "a" and domain "http://localhost"
     And the sites configuration is:
@@ -229,10 +230,28 @@ Feature: Tests for sub-request on the frontend node controller in case of the "N
     body contents
     """
 
-  Scenario: Default output
+  Scenario: Nested Fusion view in Plugin
     When I have the following Fusion file "vfs://fusion/Root.fusion":
-    """
-    Vendor.Site.MyPluginWithFusionController.render = 'hello from the plugins fusion view'
+    """fusion
+    Vendor.Site.MyPluginWithFusionController {
+        render = 'hello from the plugins fusion view'
+
+        buildUris = Neos.Fusion:DataStructure {
+            relativeUri = Neos.Fusion:ActionUri {
+              action = 'render'
+            }
+            nodeUri = Neos.Neos:NodeUri {
+              node = ${q(node).find('#a2').get(0)}
+            }
+            uriOutsidePlugin = Neos.Fusion:ActionUri {
+              request = ${request.mainRequest}
+              package = 'Neos.Neos'
+              controller = 'Frontend\\Node'
+              action = 'preview'
+            }
+            @process.output = ${Array.join(Array.map(value, (v, k) => '  ' + k + ': ' + (v || '-')), String.chr(10))}
+        }
+    }
     """
 
     When I declare the following controller 'Vendor\Site\Controller\MyPluginWithFusionController':
@@ -250,11 +269,20 @@ Feature: Tests for sub-request on the frontend node controller in case of the "N
 
         public function initializeView(ViewInterface $view)
         {
-            $view->setOption('fusionPathPatterns', ['vfs://fusion/Root.fusion']);
+            $view->setOption('fusionPathPatterns', [
+              'resource://Neos.Fusion/Private/Fusion/Root.fusion',
+              'resource://Neos.Neos/Private/Fusion/Root.fusion',
+              'vfs://fusion/Root.fusion'
+            ]);
         }
 
         public function renderAction()
         {
+        }
+
+        public function buildUrisAction()
+        {
+            $this->view->assign('node', $this->request->getInternalArgument('__node'));
         }
 
         public static function getPublicActionMethods($objectManager)
@@ -272,18 +300,19 @@ Feature: Tests for sub-request on the frontend node controller in case of the "N
       renderer = afx`
         title: {node.properties.title}{String.chr(10)}
         body:{String.chr(10)}
-        <Neos.Neos:ContentCase @context.node={q(node).children().get(0)} />
+        <Neos.Neos:ContentCase @context.node={q(node).children().get(0)} />{String.chr(10)}
+        end.
       `
     }
 
     prototype(Neos.Neos:Content.MyPlugin) < prototype(Neos.Neos:Plugin) {
       package = 'Vendor.Site'
       controller = 'MyPluginWithFusion'
-      action = 'render'
+      action = ${request.arguments.pluginAction}
     }
     """
 
-    When I dispatch the following request "/a1"
+    When I dispatch the following request "/a1?pluginAction=render"
     Then I expect the following response:
     """
     HTTP/1.1 200 OK
@@ -293,4 +322,21 @@ Feature: Tests for sub-request on the frontend node controller in case of the "N
     title: Node a1
     body:
     hello from the plugins fusion view
+    end.
+    """
+
+    When I dispatch the following request "/a1?pluginAction=buildUris"
+    # for node uris the node uri builder must use the main request
+    Then I expect the following response:
+    """
+    HTTP/1.1 200 OK
+    Content-Type: text/html
+    X-Flow-Powered: Flow/dev Neos/dev
+
+    title: Node a1
+    body:
+      relativeUri: /a1?pluginAction=render&--neos_neos-content_myplugin%5B%40package%5D=vendor.site&--neos_neos-content_myplugin%5B%40controller%5D=mypluginwithfusion&--neos_neos-content_myplugin%5B%40action%5D=render&--neos_neos-content_myplugin%5B%40format%5D=html
+      nodeUri: /a2
+      uriOutsidePlugin: /neos/preview
+    end.
     """
