@@ -83,7 +83,7 @@ Feature: Tests for sub-request on the frontend node controller in case of the "N
         {
             $myPluginProp = $this->request->getInternalArgument('__myPluginProp');
 
-            $uri = $this->uriBuilder->uriFor('show', ['item' => 'hello to other'], 'MyPlugin', 'Vendor.Site');
+            $uri = $this->uriBuilder->uriFor('show', ['item' => 'hello to other']);
 
             return "list\nmyPluginProp: $myPluginProp\nuri to show: $uri";
         }
@@ -91,8 +91,29 @@ Feature: Tests for sub-request on the frontend node controller in case of the "N
         public function showAction() // string $propToOtherAction doesnt work because the object is not proxied
         {
             $myPluginProp = $this->request->getInternalArgument('__myPluginProp');
-            $propToOtherAction = $this->request->getArgument('item');
-            return "details\nmyPluginProp: $myPluginProp\nargument: $propToOtherAction";
+            $item = $this->request->getArgument('item');
+            return "details\nmyPluginProp: $myPluginProp\nargument: $item";
+        }
+
+        public function forwardAction()
+        {
+            $this->forward('show', arguments: ['item' => $this->request->getArgument('forward-item')]);
+        }
+
+        public function throwAction()
+        {
+            $this->throwStatus(500);
+        }
+
+        public function redirectAction()
+        {
+            $this->redirect('show', arguments: ['item' => $this->request->getArgument('redirect-item')]);
+        }
+
+        public function customHeaderAction()
+        {
+            $this->response->setHttpHeader('X-Custom-Plugin-Header', 'MHS');
+            return 'body contents';
         }
 
         public static function getPublicActionMethods($objectManager)
@@ -108,7 +129,8 @@ Feature: Tests for sub-request on the frontend node controller in case of the "N
 
       renderer = afx`
         title: {node.properties.title}{String.chr(10)}
-        children: <Neos.Neos:ContentCase @context.node={q(node).children().get(0)} />
+        body:{String.chr(10)}
+        <Neos.Neos:ContentCase @context.node={q(node).children().get(0)} />
       `
     }
 
@@ -129,7 +151,8 @@ Feature: Tests for sub-request on the frontend node controller in case of the "N
     X-Flow-Powered: Flow/dev Neos/dev
 
     title: Node a1
-    children: list
+    body:
+    list
     myPluginProp: hello from the node
     uri to show: /a1?--neos_neos-content_myplugin%5B%40package%5D=vendor.site&--neos_neos-content_myplugin%5B%40controller%5D=myplugin&--neos_neos-content_myplugin%5B%40action%5D=show&--neos_neos-content_myplugin%5B%40format%5D=html&--neos_neos-content_myplugin%5Bitem%5D=hello+to+other
     """
@@ -142,7 +165,65 @@ Feature: Tests for sub-request on the frontend node controller in case of the "N
     X-Flow-Powered: Flow/dev Neos/dev
 
     title: Node a1
-    children: details
+    body:
+    details
     myPluginProp: hello from the node
     argument: hello to other
+    """
+
+    # forward() to items action will return the content of the other action
+    When I dispatch the following request "/a1?--neos_neos-content_myplugin%5B%40package%5D=vendor.site&--neos_neos-content_myplugin%5B%40controller%5D=myplugin&--neos_neos-content_myplugin%5B%40action%5D=forward&--neos_neos-content_myplugin%5B%40format%5D=html&--neos_neos-content_myplugin%5Bforward-item%5D=hello+to+other"
+    Then I expect the following response:
+    """
+    HTTP/1.1 200 OK
+    Content-Type: text/html
+    X-Flow-Powered: Flow/dev Neos/dev
+
+    title: Node a1
+    body:
+    details
+    myPluginProp: hello from the node
+    argument: hello to other
+    """
+
+    # throwStatus() 500 status will be upmerged and plugin will show text: 500 Internal Server Error
+    When I dispatch the following request "/a1?--neos_neos-content_myplugin%5B%40package%5D=vendor.site&--neos_neos-content_myplugin%5B%40controller%5D=myplugin&--neos_neos-content_myplugin%5B%40action%5D=throw&--neos_neos-content_myplugin%5B%40format%5D=html&--neos_neos-content_myplugin%5Bitem%5D=hello+to+other"
+    Then I expect the following response:
+    """
+    HTTP/1.1 500 Internal Server Error
+    Content-Type: text/html
+    X-Flow-Powered: Flow/dev Neos/dev
+
+    title: Node a1
+    body:
+    500 Internal Server Error
+    """
+
+    # redirect() in plugin to other action
+    When I dispatch the following request "/a1?--neos_neos-content_myplugin%5B%40package%5D=vendor.site&--neos_neos-content_myplugin%5B%40controller%5D=myplugin&--neos_neos-content_myplugin%5B%40action%5D=redirect&--neos_neos-content_myplugin%5B%40format%5D=html&--neos_neos-content_myplugin%5Bredirect-item%5D=hello+to+other"
+    # FIXME the body should be empty!
+    Then I expect the following response:
+    """
+    HTTP/1.1 303 See Other
+    Location: http://localhost/a1?--neos_neos-content_myplugin%5B%40package%5D=vendor.site&--neos_neos-content_myplugin%5B%40controller%5D=myplugin&--neos_neos-content_myplugin%5B%40action%5D=show&--neos_neos-content_myplugin%5B%40format%5D=html&--neos_neos-content_myplugin%5Bitem%5D=hello+to+other
+    Content-Type: text/html
+    X-Flow-Powered: Flow/dev Neos/dev
+
+    title: Node a1
+    body:
+
+    """
+
+    # support custom headers and upmerge those
+    When I dispatch the following request "/a1?--neos_neos-content_myplugin%5B%40package%5D=vendor.site&--neos_neos-content_myplugin%5B%40controller%5D=myplugin&--neos_neos-content_myplugin%5B%40action%5D=customHeader&--neos_neos-content_myplugin%5B%40format%5D=html"
+    Then I expect the following response:
+    """
+    HTTP/1.1 200 OK
+    X-Custom-Plugin-Header: MHS
+    Content-Type: text/html
+    X-Flow-Powered: Flow/dev Neos/dev
+
+    title: Node a1
+    body:
+    body contents
     """
