@@ -88,7 +88,7 @@ Feature: Tests for sub-request on the frontend node controller in case of the "N
             return "list\nmyPluginProp: $myPluginProp\nuri to show: $uri";
         }
 
-        public function showAction() // string $propToOtherAction doesnt work because the object is not proxied
+        public function showAction() // string $item doesnt work because the object is not proxied
         {
             $myPluginProp = $this->request->getInternalArgument('__myPluginProp');
             $item = $this->request->getArgument('item');
@@ -118,6 +118,7 @@ Feature: Tests for sub-request on the frontend node controller in case of the "N
 
         public static function getPublicActionMethods($objectManager)
         {
+            // hack, as this class is not proxied reflection doesnt work and doesnt return the desired public action methods
             return array_fill_keys(get_class_methods(get_called_class()), true);
         }
     }
@@ -226,4 +227,70 @@ Feature: Tests for sub-request on the frontend node controller in case of the "N
     title: Node a1
     body:
     body contents
+    """
+
+  Scenario: Default output
+    When I have the following Fusion file "vfs://fusion/Root.fusion":
+    """
+    Vendor.Site.MyPluginWithFusionController.render = 'hello from the plugins fusion view'
+    """
+
+    When I declare the following controller 'Vendor\Site\Controller\MyPluginWithFusionController':
+    """php
+    // <?php
+    namespace Vendor\Site\Controller;
+
+    use Neos\Flow\Mvc\View\ViewInterface;
+    use Neos\Flow\Mvc\Controller\ActionController;
+    use Neos\Fusion\View\FusionView;
+
+    class MyPluginWithFusionController extends ActionController
+    {
+        protected $defaultViewObjectName = FusionView::class;
+
+        public function initializeView(ViewInterface $view)
+        {
+            $view->setOption('fusionPathPatterns', ['vfs://fusion/Root.fusion']);
+        }
+
+        public function renderAction()
+        {
+        }
+
+        public static function getPublicActionMethods($objectManager)
+        {
+            // hack, as this class is not proxied reflection doesnt work and doesnt return the desired public action methods
+            return array_fill_keys(get_class_methods(get_called_class()), true);
+        }
+    }
+    """
+
+    When the sites Fusion code is:
+    """fusion
+    prototype(Neos.Neos:Test.DocumentType) < prototype(Neos.Fusion:Component) {
+
+      renderer = afx`
+        title: {node.properties.title}{String.chr(10)}
+        body:{String.chr(10)}
+        <Neos.Neos:ContentCase @context.node={q(node).children().get(0)} />
+      `
+    }
+
+    prototype(Neos.Neos:Content.MyPlugin) < prototype(Neos.Neos:Plugin) {
+      package = 'Vendor.Site'
+      controller = 'MyPluginWithFusion'
+      action = 'render'
+    }
+    """
+
+    When I dispatch the following request "/a1"
+    Then I expect the following response:
+    """
+    HTTP/1.1 200 OK
+    Content-Type: text/html
+    X-Flow-Powered: Flow/dev Neos/dev
+
+    title: Node a1
+    body:
+    hello from the plugins fusion view
     """
