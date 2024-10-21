@@ -28,7 +28,12 @@ final class WorkspaceName implements \JsonSerializable
 
     private const PATTERN = '/^[a-z0-9][a-z0-9\-]{0,' . (self::MAX_LENGTH - 1) . '}$/';
 
+    private const VIRTUAL_PREFIX = 'vrt-';
+
     public const WORKSPACE_NAME_LIVE = 'live';
+
+    /** This is only used for virtual workspaces */
+    protected ContentStreamId $contentStreamId;
 
     /**
      * @var array<string,self>
@@ -94,6 +99,29 @@ final class WorkspaceName implements \JsonSerializable
         }
 
         return self::fromString($name);
+    }
+
+    /**
+     * @internal
+     */
+    public static function virtualFromContentStreamId(ContentStreamId $contentStreamId): self
+    {
+        $instance = self::instance(self::VIRTUAL_PREFIX . md5($contentStreamId->value));
+        $instance->contentStreamId = $contentStreamId;
+        return $instance;
+    }
+
+    public function isVirtual(): bool
+    {
+        return str_starts_with($this->value, self::VIRTUAL_PREFIX);
+    }
+
+    /**
+     * @internal
+     */
+    public function virtualContentStreamId(): ?ContentStreamId
+    {
+        return $this->contentStreamId ?? null;
     }
 
     public function isLive(): bool
