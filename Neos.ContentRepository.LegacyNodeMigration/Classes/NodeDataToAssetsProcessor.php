@@ -1,5 +1,5 @@
 <?php
-/** @noinspection DuplicatedCode */
+
 declare(strict_types=1);
 
 namespace Neos\ContentRepository\LegacyNodeMigration;
@@ -7,8 +7,8 @@ namespace Neos\ContentRepository\LegacyNodeMigration;
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Export\Asset\AssetExporter;
+use Neos\ContentRepository\Export\ProcessingContext;
 use Neos\ContentRepository\Export\ProcessorInterface;
-use Neos\ContentRepository\Export\ProcessorResult;
 use Neos\ContentRepository\Export\Severity;
 use Neos\Media\Domain\Model\ResourceBasedInterface;
 use Neos\Utility\Exception\InvalidTypeException;
@@ -20,10 +20,6 @@ final class NodeDataToAssetsProcessor implements ProcessorInterface
      * @var array<string, true>
      */
     private array $processedAssetIds = [];
-    /**
-     * @var array<\Closure>
-     */
-    private array $callbacks = [];
 
     /**
      * @param iterable<int, array<string, mixed>> $nodeDataRows
@@ -32,16 +28,11 @@ final class NodeDataToAssetsProcessor implements ProcessorInterface
         private readonly NodeTypeManager $nodeTypeManager,
         private readonly AssetExporter $assetExporter,
         private readonly iterable $nodeDataRows,
-    ) {}
-
-    public function onMessage(\Closure $callback): void
-    {
-        $this->callbacks[] = $callback;
+    ) {
     }
 
-    public function run(): ProcessorResult
+    public function run(ProcessingContext $context): void
     {
-        $numberOfErrors = 0;
         foreach ($this->nodeDataRows as $nodeDataRow) {
             if ($nodeDataRow['path'] === '/sites') {
                 // the sites node has no properties and is unstructured
@@ -50,21 +41,20 @@ final class NodeDataToAssetsProcessor implements ProcessorInterface
             $nodeTypeName = NodeTypeName::fromString($nodeDataRow['nodetype']);
             $nodeType = $this->nodeTypeManager->getNodeType($nodeTypeName);
             if (!$nodeType) {
-                $this->dispatch(Severity::ERROR, 'The node type "%s" is not available. Node: "%s"', $nodeTypeName->value, $nodeDataRow['identifier']);
+                $context->dispatch(Severity::ERROR, "The node type \"{$nodeTypeName->value}\" is not available. Node: \"{$nodeDataRow['identifier']}\"");
                 continue;
             }
             try {
                 $properties = json_decode($nodeDataRow['properties'], true, 512, JSON_THROW_ON_ERROR);
             } catch (\JsonException $exception) {
-                $numberOfErrors ++;
-                $this->dispatch(Severity::ERROR, 'Failed to JSON-decode properties %s of node "%s" (type: "%s"): %s', $nodeDataRow['properties'], $nodeDataRow['identifier'], $nodeTypeName->value, $exception->getMessage());
+                $context->dispatch(Severity::ERROR, "Failed to JSON-decode properties {$nodeDataRow['properties']} of node \"{$nodeDataRow['identifier']}\" (type: \"{$nodeTypeName->value}\"): {$exception->getMessage()}");
                 continue;
             }
             foreach ($properties as $propertyName => $propertyValue) {
                 try {
                     $propertyType = $nodeType->getPropertyType($propertyName);
-                } catch (\InvalidArgumentException $exception) {
-                    $this->dispatch(Severity::WARNING, 'Skipped node data processing for the property "%s". The property name is not part of the NodeType schema for the NodeType "%s". (Node: %s)', $propertyName, $nodeType->name->value, $nodeDataRow['identifier']);
+                } catch (\InvalidArgumentException $e) {
+                    $context->dispatch(Severity::WARNING, "Skipped node data processing for the property \"{$propertyName}\". The property name is not part of the NodeType schema for the NodeType \"{$nodeType->name->value}\". (Node: {$nodeDataRow['identifier']})");
                     continue;
                 }
                 foreach ($this->extractAssetIdentifiers($propertyType, $propertyValue) as $assetId) {
@@ -75,15 +65,11 @@ final class NodeDataToAssetsProcessor implements ProcessorInterface
                     try {
                         $this->assetExporter->exportAsset($assetId);
                     } catch (\Exception $exception) {
-                        $numberOfErrors ++;
-                        $this->dispatch(Severity::ERROR, 'Failed to extract assets of property "%s" of node "%s" (type: "%s"): %s', $propertyName, $nodeDataRow['identifier'], $nodeTypeName->value, $exception->getMessage());
+                        $context->dispatch(Severity::ERROR, "Failed to extract assets of property \"{$propertyName}\" of node \"{$nodeDataRow['identifier']}\" (type: \"{$nodeTypeName->value}\"): {$exception->getMessage()}");
                     }
                 }
             }
         }
-        $numberOfExportedAssets = count($this->processedAssetIds);
-        $this->processedAssetIds = [];
-        return ProcessorResult::success(sprintf('Exported %d asset%s. Errors: %d', $numberOfExportedAssets, $numberOfExportedAssets === 1 ? '' : 's', $numberOfErrors));
     }
 
     /** ----------------------------- */
@@ -110,8 +96,7 @@ final class NodeDataToAssetsProcessor implements ProcessorInterface
         if ($parsedType['elementType'] === null) {
             return [];
         }
-        if (!is_subclass_of($parsedType['elementType'], ResourceBasedInterface::class, true)
-            && !is_subclass_of($parsedType['elementType'], \Stringable::class, true)) {
+        if (!is_subclass_of($parsedType['elementType'], ResourceBasedInterface::class) && !is_subclass_of($parsedType['elementType'], \Stringable::class)) {
             return [];
         }
         /** @var array<array<string>> $assetIdentifiers */
@@ -122,13 +107,4 @@ final class NodeDataToAssetsProcessor implements ProcessorInterface
         }
         return array_merge(...$assetIdentifiers);
     }
-
-    private function dispatch(Severity $severity, string $message, mixed ...$args): void
-    {
-        $renderedMessage = sprintf($message, ...$args);
-        foreach ($this->callbacks as $callback) {
-            $callback($severity, $renderedMessage);
-        }
-    }
-
 }

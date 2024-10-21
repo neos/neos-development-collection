@@ -12,7 +12,6 @@ use Neos\ContentRepository\BehavioralTests\TestSuite\Behavior\CRBehavioralTestsS
 use Neos\ContentRepository\BehavioralTests\TestSuite\Behavior\GherkinPyStringNodeBasedNodeTypeManagerFactory;
 use Neos\ContentRepository\BehavioralTests\TestSuite\Behavior\GherkinTableNodeBasedContentDimensionSourceFactory;
 use Neos\ContentRepository\Core\ContentRepository;
-use Neos\ContentRepository\Core\ContentRepositoryReadModel;
 use Neos\ContentRepository\Core\EventStore\EventNormalizer;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceFactoryDependencies;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceFactoryInterface;
@@ -21,7 +20,6 @@ use Neos\ContentRepository\Core\Infrastructure\Property\PropertyConverter;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
-use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepository\Export\Asset\AssetExporter;
 use Neos\ContentRepository\Export\Asset\AssetLoaderInterface;
 use Neos\ContentRepository\Export\Asset\ResourceLoaderInterface;
@@ -29,7 +27,7 @@ use Neos\ContentRepository\Export\Asset\ValueObject\SerializedAsset;
 use Neos\ContentRepository\Export\Asset\ValueObject\SerializedImageVariant;
 use Neos\ContentRepository\Export\Asset\ValueObject\SerializedResource;
 use Neos\ContentRepository\Export\Event\ValueObject\ExportedEvents;
-use Neos\ContentRepository\Export\ProcessorResult;
+use Neos\ContentRepository\Export\ProcessingContext;
 use Neos\ContentRepository\Export\Severity;
 use Neos\ContentRepository\LegacyNodeMigration\NodeDataToAssetsProcessor;
 use Neos\ContentRepository\LegacyNodeMigration\NodeDataToEventsProcessor;
@@ -59,7 +57,7 @@ class FeatureContext implements Context
     private InMemoryFilesystemAdapter $mockFilesystemAdapter;
     private Filesystem $mockFilesystem;
 
-    private ProcessorResult|null $lastMigrationResult = null;
+    private \Throwable|null $lastMigrationException = null;
 
     /**
      * @var array<string>
@@ -89,8 +87,8 @@ class FeatureContext implements Context
      */
     public function failIfLastMigrationHasErrors(): void
     {
-        if ($this->lastMigrationResult !== null && $this->lastMigrationResult->severity === Severity::ERROR) {
-            throw new \RuntimeException(sprintf('The last migration run led to an error: %s', $this->lastMigrationResult->message));
+        if ($this->lastMigrationException !== null) {
+            throw new \RuntimeException(sprintf('The last migration run led to an exception: %s', $this->lastMigrationException->getMessage()));
         }
         if ($this->loggedErrors !== []) {
             throw new \RuntimeException(sprintf('The last migration run logged %d error%s', count($this->loggedErrors), count($this->loggedErrors) === 1 ? '' : 's'));
@@ -146,20 +144,23 @@ class FeatureContext implements Context
             $propertyConverterAccess->propertyConverter,
             $this->currentContentRepository->getVariationGraph(),
             $this->getObject(EventNormalizer::class),
-            $this->mockFilesystem,
             $this->nodeDataRows
         );
         if ($contentStream !== null) {
             $migration->setContentStreamId(ContentStreamId::fromString($contentStream));
         }
-        $migration->onMessage(function (Severity $severity, string $message) {
+        $processingContext = new ProcessingContext($this->mockFilesystem, function (Severity $severity, string $message) {
             if ($severity === Severity::ERROR) {
                 $this->loggedErrors[] = $message;
             } elseif ($severity === Severity::WARNING) {
                 $this->loggedWarnings[] = $message;
             }
         });
-        $this->lastMigrationResult = $migration->run();
+        try {
+            $migration->run($processingContext);
+        } catch (\Throwable $e) {
+            $this->lastMigrationException = $e;
+        }
     }
 
     /**
@@ -223,12 +224,11 @@ class FeatureContext implements Context
      */
     public function iExpectAMigrationErrorWithTheMessage(PyStringNode $expectedMessage = null): void
     {
-        Assert::assertNotNull($this->lastMigrationResult, 'Expected the previous migration to contain errors, but no migration has been executed');
-        Assert::assertSame(Severity::ERROR, $this->lastMigrationResult->severity, sprintf('Expected the previous migration to contain errors, but it ended with severity "%s"', $this->lastMigrationResult->severity->name));
+        Assert::assertNotNull($this->lastMigrationException, 'Expected the previous migration to lead to an exception, but no exception was thrown');
         if ($expectedMessage !== null) {
-            Assert::assertSame($expectedMessage->getRaw(), $this->lastMigrationResult->message);
+            Assert::assertSame($expectedMessage->getRaw(), $this->lastMigrationException->getMessage());
         }
-        $this->lastMigrationResult = null;
+        $this->lastMigrationException = null;
     }
 
     /**
@@ -293,8 +293,8 @@ class FeatureContext implements Context
     public function iRunTheAssetMigration(): void
     {
         $nodeTypeManager = $this->currentContentRepository->getNodeTypeManager();
-        $mockResourceLoader = new class ($this->mockResources) implements ResourceLoaderInterface {
-
+        $mockResourceLoader = new class ($this->mockResources) implements ResourceLoaderInterface
+        {
             /**
              * @param array<PersistentResource> $mockResources
              */
@@ -329,14 +329,18 @@ class FeatureContext implements Context
         $this->mockFilesystemAdapter->deleteEverything();
         $assetExporter = new AssetExporter($this->mockFilesystem, $mockAssetLoader, $mockResourceLoader);
         $migration = new NodeDataToAssetsProcessor($nodeTypeManager, $assetExporter, $this->nodeDataRows);
-        $migration->onMessage(function (Severity $severity, string $message) {
+        $processingContext = new ProcessingContext($this->mockFilesystem, function (Severity $severity, string $message) {
             if ($severity === Severity::ERROR) {
                 $this->loggedErrors[] = $message;
             } elseif ($severity === Severity::WARNING) {
                 $this->loggedWarnings[] = $message;
             }
         });
-        $this->lastMigrationResult = $migration->run();
+        try {
+            $migration->run($processingContext);
+        } catch (\Throwable $e) {
+            $this->lastMigrationException = $e;
+        }
     }
 
     /**
