@@ -1,0 +1,9 @@
+prototype(Neos.Workspace.Ui:Component.Footer) < prototype(Neos.Fusion:Component) {
+  children = ''
+
+  renderer = afx`
+    <div class="neos-footer">
+      {props.content}
+    </div>
+  `
+}

@@ -1,0 +1,47 @@
+##
+# Renders a list of workspaces
+#
+prototype(Neos.Workspace.Ui:Component.WorkspaceTable) < prototype(Neos.Fusion:Component) {
+  /// string
+  userWorkspaceName = null
+  /// \Neos\Workspace\Ui\ViewModel\WorkspaceListItems
+  workspaceListItems = ${{}}
+
+  @private {
+    i18n = ${I18n.id('').source('Main').package('Neos.Workspace.Ui')}
+  }
+
+  renderer = afx`
+    <table id="workspaceTable" class="workspace-table" hx-swap-oob="true">
+      <thead>
+      <tr>
+        <th></th>
+        <th>
+          <button type="button" class="icon-button">
+            {private.i18n.id('workspaces.workspace.title').translate()}
+            <Neos.Workspace.Ui:Component.Icon icon="sort-alpha-down"/>
+          </button>
+        </th>
+        <th>{private.i18n.id('workspaces.workspace.description')}</th>
+        <th>{private.i18n.id('workspaces.workspace.owner')}</th>
+        <th>
+          <button type="button" class="icon-button">
+            {private.i18n.id('workspaces.workspace.lastModified')}
+            <Neos.Workspace.Ui:Component.Icon icon="sort"/>
+          </button>
+        </th>
+        <th>{private.i18n.id('workspaces.workspace.status')}</th>
+        <th>{private.i18n.id('workspaces.workspace.changes')}</th>
+        <th>{private.i18n.id('workspaces.workspace.actions')}</th>
+      </tr>
+      </thead>
+      <tbody>
+        <Neos.Workspace.Ui:Component.WorkspaceTreeNode
+          userWorkspaceName={props.userWorkspaceName}
+          workspaceName="live"
+          workspaceListItems={props.workspaceListItems}
+        />
+      </tbody>
+    </table>
+  `
+}

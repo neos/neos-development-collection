@@ -1,0 +1,9 @@
+prototype(Neos.Workspace.Ui:Component.Indicator) < prototype(Neos.Fusion:Component) {
+    renderer = afx`
+        <div id="indicator" class="htmx-indicator loadingIndicator__container">
+            <div class="loadingIndicator">
+                <div class="loadingIndicator__bar"></div>
+            </div>
+        </div>
+    `
+}

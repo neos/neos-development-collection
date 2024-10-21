@@ -29,6 +29,7 @@ final readonly class PendingChanges
         $this->total = $this->new + $this->changed + $this->removed;
     }
 
+    // todo check if necessary
     public function getNewCountRatio(): float
     {
         return $this->new / $this->total * 100;
