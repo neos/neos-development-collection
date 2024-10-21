@@ -18,7 +18,6 @@ use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePointSet;
 use Neos\ContentRepository\Core\Feature\NodeReferencing\Dto\SerializedNodeReferences;
 use Neos\ContentRepository\Core\Feature\NodeReferencing\Event\NodeReferencesWereSet;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
-use Neos\ContentRepository\Core\SharedModel\Node\ReferenceName;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use PHPUnit\Framework\TestCase;
@@ -69,8 +68,7 @@ class NodeReferencesWereSetTest extends TestCase
                         'language' => 'en_US',
                     ],
                 ]),
-                ReferenceName::fromString('blogs'),
-                SerializedNodeReferences::fromArray([])
+                SerializedNodeReferences::createEmpty()
             )
         ];
     }

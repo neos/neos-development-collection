@@ -36,7 +36,9 @@ use Neos\ContentRepository\Core\Feature\NodeCreation\Event\NodeAggregateWithNode
 use Neos\ContentRepository\Core\Feature\NodeModification\Dto\SerializedPropertyValues;
 use Neos\ContentRepository\Core\Feature\NodeModification\Event\NodePropertiesWereSet;
 use Neos\ContentRepository\Core\Feature\NodeMove\Event\NodeAggregateWasMoved;
+use Neos\ContentRepository\Core\Feature\NodeReferencing\Dto\NodeReferenceNameToEmpty;
 use Neos\ContentRepository\Core\Feature\NodeReferencing\Dto\SerializedNodeReference;
+use Neos\ContentRepository\Core\Feature\NodeReferencing\Dto\SerializedNodeReferences;
 use Neos\ContentRepository\Core\Feature\NodeReferencing\Event\NodeReferencesWereSet;
 use Neos\ContentRepository\Core\Feature\NodeRemoval\Event\NodeAggregateWasRemoved;
 use Neos\ContentRepository\Core\Feature\NodeRenaming\Event\NodeAggregateNameWasChanged;
@@ -161,6 +163,7 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface
         if ($requiredSqlStatements !== []) {
             return ProjectionStatus::setupRequired(sprintf('The following SQL statement%s required: %s', count($requiredSqlStatements) !== 1 ? 's are' : ' is', implode(chr(10), $requiredSqlStatements)));
         }
+
         return ProjectionStatus::ok();
     }
 
@@ -514,6 +517,7 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface
             $event->originDimensionSpacePoint,
             $event->succeedingSiblingsForCoverage,
             $event->initialPropertyValues,
+            $event->nodeReferences,
             $event->nodeAggregateClassification,
             $event->nodeName,
             $eventEnvelope,
@@ -600,40 +604,52 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface
                 );
 
             // remove old
-            try {
-                $this->dbal->delete($this->tableNames->referenceRelation(), [
-                    'nodeanchorpoint' => $nodeAnchorPoint?->value,
-                    'name' => $event->referenceName->value
-                ]);
-            } catch (DBALException $e) {
-                throw new \RuntimeException(sprintf('Failed to remove reference relation: %s', $e->getMessage()), 1716486309, $e);
+            foreach ($event->references->getReferenceNames() as $referenceName) {
+                try {
+                    $this->dbal->delete($this->tableNames->referenceRelation(), [
+                        'nodeanchorpoint' => $nodeAnchorPoint?->value,
+                        'name' => $referenceName->value
+                    ]);
+                } catch (DbalException $e) {
+                    throw new \RuntimeException(sprintf('Failed to remove reference relation: %s', $e->getMessage()), 1716486309, $e);
+                }
             }
 
             // set new
-            $position = 0;
-            /** @var SerializedNodeReference $reference */
-            foreach ($event->references as $reference) {
-                $referencePropertiesJson = null;
-                if ($reference->properties !== null) {
-                    try {
-                        $referencePropertiesJson = \json_encode($reference->properties, JSON_THROW_ON_ERROR | JSON_FORCE_OBJECT);
-                    } catch (\JsonException $e) {
-                        throw new \RuntimeException(sprintf('Failed to JSON-encode reference properties: %s', $e->getMessage()), 1716486271, $e);
-                    }
-                }
-                try {
-                    $this->dbal->insert($this->tableNames->referenceRelation(), [
-                        'name' => $event->referenceName->value,
-                        'position' => $position,
-                        'nodeanchorpoint' => $nodeAnchorPoint?->value,
-                        'destinationnodeaggregateid' => $reference->targetNodeAggregateId->value,
-                        'properties' => $referencePropertiesJson,
-                    ]);
-                } catch (DBALException $e) {
-                    throw new \RuntimeException(sprintf('Failed to insert reference relation: %s', $e->getMessage()), 1716486309, $e);
-                }
-                $position++;
+            $nodeAnchorPoint && $this->writeReferencesForTargetAnchorPoint($event->references, $nodeAnchorPoint);
+        }
+    }
+
+    private function writeReferencesForTargetAnchorPoint(SerializedNodeReferences $nodeReferences, NodeRelationAnchorPoint $nodeAnchorPoint): void
+    {
+        $position = 0;
+        /** @var NodeReferenceNameToEmpty|SerializedNodeReference $reference */
+        foreach ($nodeReferences as $reference) {
+            if ($reference instanceof NodeReferenceNameToEmpty) {
+                // Reference empty happens separately
+                continue;
             }
+
+            $referencePropertiesJson = null;
+            if ($reference->properties !== null && $reference->properties->count() > 0) {
+                try {
+                    $referencePropertiesJson = \json_encode($reference->properties, JSON_THROW_ON_ERROR | JSON_FORCE_OBJECT);
+                } catch (\JsonException $e) {
+                    throw new \RuntimeException(sprintf('Failed to JSON-encode reference properties: %s', $e->getMessage()), 1716486271, $e);
+                }
+            }
+            try {
+                $this->dbal->insert($this->tableNames->referenceRelation(), [
+                    'name' => $reference->referenceName->value,
+                    'position' => $position,
+                    'nodeanchorpoint' => $nodeAnchorPoint->value,
+                    'destinationnodeaggregateid' => $reference->targetNodeAggregateId->value,
+                    'properties' => $referencePropertiesJson,
+                ]);
+            } catch (DbalException $e) {
+                throw new \RuntimeException(sprintf('Failed to insert reference relation: %s', $e->getMessage()), 1716486309, $e);
+            }
+            $position++;
         }
     }
 
@@ -964,6 +980,7 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface
         OriginDimensionSpacePoint $originDimensionSpacePoint,
         InterdimensionalSiblings $coverageSucceedingSiblings,
         SerializedPropertyValues $propertyDefaultValuesAndTypes,
+        SerializedNodeReferences $references,
         NodeAggregateClassification $nodeAggregateClassification,
         ?NodeName $nodeName,
         EventEnvelope $eventEnvelope,
@@ -1019,6 +1036,8 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface
                 }
             }
         }
+
+        $this->writeReferencesForTargetAnchorPoint($references, $node->relationAnchorPoint);
     }
 
     private function connectHierarchy(

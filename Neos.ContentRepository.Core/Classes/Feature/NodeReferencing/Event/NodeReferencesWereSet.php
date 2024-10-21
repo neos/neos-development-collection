@@ -12,7 +12,6 @@ use Neos\ContentRepository\Core\Feature\Common\EmbedsWorkspaceName;
 use Neos\ContentRepository\Core\Feature\Common\PublishableToWorkspaceInterface;
 use Neos\ContentRepository\Core\Feature\NodeReferencing\Dto\SerializedNodeReferences;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
-use Neos\ContentRepository\Core\SharedModel\Node\ReferenceName;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 
@@ -41,7 +40,6 @@ final readonly class NodeReferencesWereSet implements
          * declared for the given reference in the node aggregate's type
          */
         public OriginDimensionSpacePointSet $affectedSourceOriginDimensionSpacePoints,
-        public ReferenceName $referenceName,
         public SerializedNodeReferences $references,
     ) {
     }
@@ -68,7 +66,6 @@ final readonly class NodeReferencesWereSet implements
             $contentStreamId,
             $this->nodeAggregateId,
             $this->affectedSourceOriginDimensionSpacePoints,
-            $this->referenceName,
             $this->references,
         );
     }
@@ -82,7 +79,6 @@ final readonly class NodeReferencesWereSet implements
                 ? NodeAggregateId::fromString($values['sourceNodeAggregateId'])
                 : NodeAggregateId::fromString($values['nodeAggregateId']),
             OriginDimensionSpacePointSet::fromArray($values['affectedSourceOriginDimensionSpacePoints']),
-            ReferenceName::fromString($values['referenceName']),
             SerializedNodeReferences::fromArray($values['references']),
         );
     }

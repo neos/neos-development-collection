@@ -19,6 +19,7 @@ use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\EventCouldNotBeApplied
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\NodeRecord;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\ProjectionHypergraph;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\ReferenceRelationRecord;
+use Neos\ContentRepository\Core\Feature\NodeReferencing\Dto\NodeReferenceNameToEmpty;
 use Neos\ContentRepository\Core\Feature\NodeReferencing\Event\NodeReferencesWereSet;
 
 /**
@@ -50,21 +51,24 @@ trait NodeReferencing
                     }
                 );
 
-                // remove old
-                $this->getDatabaseConnection()->delete($this->tableNamePrefix . '_referencerelation', [
-                    'sourcenodeanchor' => $anchorPoint->value,
-                    'name' => $event->referenceName->value
-                ]);
-
-                // set new
                 $position = 0;
-                foreach ($event->references as $reference) {
+                foreach ($event->references as $referenceRecord) {
+                    $this->getDatabaseConnection()->delete($this->tableNamePrefix . '_referencerelation', [
+                        'sourcenodeanchor' => $anchorPoint->value,
+                        'name' => $referenceRecord->referenceName->value
+                    ]);
+
+                    if ($referenceRecord instanceof NodeReferenceNameToEmpty) {
+                        continue;
+                    }
+
+                    // set new
                     $referenceRecord = new ReferenceRelationRecord(
                         $anchorPoint,
-                        $event->referenceName,
+                        $referenceRecord->referenceName,
                         $position,
-                        $reference->properties,
-                        $reference->targetNodeAggregateId
+                        $referenceRecord->properties,
+                        $referenceRecord->targetNodeAggregateId
                     );
                     $referenceRecord->addToDatabase($this->getDatabaseConnection(), $this->tableNamePrefix);
                     $position++;
