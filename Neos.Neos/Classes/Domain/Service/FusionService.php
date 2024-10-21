@@ -44,6 +44,16 @@ class FusionService
      */
     protected $fusionConfigurationCache;
 
+    private ?FusionSourceCodeCollection $additionalFusionSourceCode = null;
+
+    /**
+     * @deprecated fixme!!!
+     */
+    public function unsafeSetAdditionalFusionSourceCodeToThisSingleton(string $additionalFusionSourceCode)
+    {
+        $this->additionalFusionSourceCode = FusionSourceCodeCollection::fromString($additionalFusionSourceCode);
+    }
+
     public function createFusionConfigurationFromSite(Site $site): FusionConfiguration
     {
         return $this->fusionConfigurationCache->cacheFusionConfigurationBySite($site, function () use ($site) {
@@ -56,6 +66,8 @@ class FusionService
                     )
                     ->union(
                         FusionSourceCodeCollection::tryFromPackageRootFusion($siteResourcesPackageKey)
+                    )->union(
+                        $this->additionalFusionSourceCode ?? FusionSourceCodeCollection::empty()
                     )
             );
         });
