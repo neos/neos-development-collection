@@ -46,7 +46,7 @@
 							</td>
               <td>
                 <f:for each="{user.accounts}" as="account">
-                  <f:format.date format="Y-m-d H:i:s">{account.lastSuccessfulAuthenticationDate}</f:format.date>
+                  <f:format.date localeFormatType="dateTime" localeFormatLength="medium" forceLocale="{neos:backend.interfaceLanguage()}">{account.lastSuccessfulAuthenticationDate}</f:format.date>
                 </f:for>
               </td>
 							<td class="neos-action">

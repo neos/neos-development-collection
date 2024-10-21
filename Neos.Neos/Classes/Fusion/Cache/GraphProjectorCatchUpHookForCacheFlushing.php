@@ -16,7 +16,9 @@ namespace Neos\Neos\Fusion\Cache;
 
 use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\EventStore\EventInterface;
-use Neos\ContentRepository\Core\Feature\Common\EmbedsContentStreamAndNodeAggregateId;
+use Neos\ContentRepository\Core\Feature\Common\EmbedsContentStreamId;
+use Neos\ContentRepository\Core\Feature\Common\EmbedsNodeAggregateId;
+use Neos\ContentRepository\Core\Feature\Common\EmbedsWorkspaceName;
 use Neos\ContentRepository\Core\Feature\NodeCreation\Event\NodeAggregateWithNodeWasCreated;
 use Neos\ContentRepository\Core\Feature\NodeModification\Event\NodePropertiesWereSet;
 use Neos\ContentRepository\Core\Feature\NodeMove\Event\NodeAggregateWasMoved;
@@ -33,8 +35,10 @@ use Neos\ContentRepository\Core\Feature\SubtreeTagging\Event\SubtreeWasTagged;
 use Neos\ContentRepository\Core\Feature\SubtreeTagging\Event\SubtreeWasUntagged;
 use Neos\ContentRepository\Core\Feature\WorkspacePublication\Event\WorkspaceWasDiscarded;
 use Neos\ContentRepository\Core\Feature\WorkspacePublication\Event\WorkspaceWasPartiallyDiscarded;
+use Neos\ContentRepository\Core\Feature\WorkspaceRebase\Event\WorkspaceWasRebased;
 use Neos\ContentRepository\Core\Projection\CatchUpHookInterface;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate;
+use Neos\ContentRepository\Core\SharedModel\Exception\WorkspaceDoesNotExist;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateIds;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
@@ -50,67 +54,31 @@ use Neos\EventStore\Model\EventEnvelope;
  * as otherwise this subprocess won't be called.
  *
  *
- * The following scenario explains how to think about cache flushing.
- *
- *       EventStore::commit                         block() finished
- *               ║                                        │
- *          ─────╬──────────────────────────!1!───────────┼─!2!────────▶
- *              SYNC POINT                               ▲│
- *                ╲                                     ╱
- *                 ╲                                   ╱
- *                  ╲                                 ╱
- *                   ╲                               ╱
- *     ─ ─ ─ ─ ─ ─ ─ ─╲─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─╱─ ─ ─ ─ ─ ─ ─ ─ ─ ─ async boundary
- *                     ╲                         SYNC POINT
- *                       ╲                      ║ ╱
- *     Projection::catchUp▼ │    │        │     ║╱              │
- *          ────────────────┼────┼────────┼─────╳───────────────┼──────▶
- *                          │    │        │     ║               │
- *            update Projection  │        │     ║               │
- *           state (old -> new)  │        │     TX commit       │
- *                               │        │  (end of batch)     │
- *                       update sequence  │                     │
- *                           number       │                     │
- *                                        │                     │
- *                                                           onAfterCatchUp
- *                                    onBefore                 (B)
- *                                 BatchCompleted
- *                                       (A)
- *
- * There are two natural places where the Fusion cache can be flushed:
- * - A: onBeforeBatchCompleted (before ending the transaction in the projection)
- * - B: onAfterCatchUp (after ending the transaction).
- *
- * We need to ensure that the system is eventually consistent, so the following invariants must hold:
- * - After a change in the projection, some time later, the cache must have been flushed
- * - at a re-rendering after the cache flush, the new content must be shown
- * - when block() returns, ANY re-render (even if happening immediately) must return the new content.
- * - (Eventual Consistency): Processes can be blocked arbitrarily long at any point in time indefinitely.
- *
- * The scenarios which are NOT allowed to happen are:
- * - INVARIANT_1: after a change, the old content is still visible when all processes have ended.
- * - INVARIANT_2: after a change, when rendering happens directly after block(), the old content
- *   is shown (e.g. because cache is not yet flushed).
- *
- * CASE A (cache flushed at onBeforeBatchCompleted only):
- * - Let's assume the cache is flushed really quickly.
- * - and AFTER the cache is flushed but BEFORE the transaction is committed,
- * - another request hits the system - marked above with !1!
- *
- * THEN: the request will still load the old data, render the page based on the old data, and add
- * the old data to the cache. The cache will not be flushed again because it has already been flushed.
- *
- * => INVARIANT_1 violated.
- * => this case needs a cache flush at onAfterCatchUp; to ensure the system converges.
- *
- * CASE B (cache flushed on onAfterCatchUp only):
- * - Let's assume the blocking has finished, and caches have not been flushed yet.
- * - Then, during re-rendering, the old content is shown because the cache is still full
- *
- * => INVARIANT_2 violated.
- * => this case needs a cache flush at onBeforeBatchCompleted.
- *
- * SUMMARY: we need to flush the cache at BOTH places.
+ *                                                  projection update
+ *                                                   call finished
+ *     EventStore::commit
+ *              ║                                        │
+ *         ─────╬──────────────────────────!1!───────────┼────────!2!─▶
+ *              ║                                       ▲│
+ *               │                                      │
+ *               │                                      │                NO async boundary anymore!
+ *               │                                      │                 => we can GUARANTEE that
+ *               │                                      │                  onAfterCatchUp has run
+ *               │                                      │   SYNC         before control is returned
+ *               │                                      │  POINT               to the caller.
+ *               │                             ║        │
+ *  Projection::catchUp    │    │              ║       ││
+ *         ────────────────┼────┼──────────────╬───────┼──────────────▶
+ *                         │    │              ║       │
+ *           update Projection  │              ║       │
+ *          state (old -> new)  │              ║       │
+ *                              │           TX commit  │
+ *                      update sequence  (end of batch)│
+ *                          number                     │
+ *                                                     │
+ *                                               onAfterCatchUp
+ *                                                => e.g. flush
+ *                                                Fusion cache
  *
  * @internal
  */
@@ -121,16 +89,7 @@ class GraphProjectorCatchUpHookForCacheFlushing implements CatchUpHookInterface
     /**
      * @var array<string,FlushNodeAggregateRequest>
      */
-    private array $flushNodeAggregateRequestsOnBeforeBatchCompleted = [];
-    /**
-     * @var array<string,FlushNodeAggregateRequest>
-     */
     private array $flushNodeAggregateRequestsOnAfterCatchUp = [];
-
-    /**
-     * @var array<string,FlushWorkspaceRequest>
-     */
-    private array $flushWorkspaceRequestsOnBeforeBatchCompleted = [];
 
     /**
      * @var array<string,FlushWorkspaceRequest>
@@ -173,7 +132,8 @@ class GraphProjectorCatchUpHookForCacheFlushing implements CatchUpHookInterface
             SubtreeWasTagged::class,
             SubtreeWasUntagged::class,
             WorkspaceWasDiscarded::class,
-            WorkspaceWasPartiallyDiscarded::class
+            WorkspaceWasPartiallyDiscarded::class,
+            WorkspaceWasRebased::class
         ]);
     }
 
@@ -200,7 +160,12 @@ class GraphProjectorCatchUpHookForCacheFlushing implements CatchUpHookInterface
             // cleared, leading to presumably duplicate nodes in the UI.
             || $eventInstance instanceof NodeAggregateWasMoved
         ) {
-            $contentGraph = $this->contentRepository->getContentGraph($eventInstance->workspaceName);
+            try {
+                $contentGraph = $this->contentRepository->getContentGraph($eventInstance->workspaceName);
+            } catch (WorkspaceDoesNotExist) {
+                return;
+            }
+
             $nodeAggregate = $contentGraph->findNodeAggregateById(
                 $eventInstance->getNodeAggregateId()
             );
@@ -229,22 +194,27 @@ class GraphProjectorCatchUpHookForCacheFlushing implements CatchUpHookInterface
         if (
             $eventInstance instanceof WorkspaceWasDiscarded
             || $eventInstance instanceof WorkspaceWasPartiallyDiscarded
+            || $eventInstance instanceof WorkspaceWasRebased
         ) {
             $this->scheduleCacheFlushJobForWorkspaceName($this->contentRepository, $eventInstance->workspaceName);
         } elseif (
             !($eventInstance instanceof NodeAggregateWasRemoved)
-            && $eventInstance instanceof EmbedsContentStreamAndNodeAggregateId
-            // TODO: We need some interface to ensure workspaceName is present
-            && property_exists($eventInstance, 'workspaceName')
+            && $eventInstance instanceof EmbedsNodeAggregateId
+            && $eventInstance instanceof EmbedsContentStreamId
+            && $eventInstance instanceof EmbedsWorkspaceName
         ) {
-            $nodeAggregate = $this->contentRepository->getContentGraph($eventInstance->workspaceName)->findNodeAggregateById(
-                $eventInstance->getNodeAggregateId()
-            );
+            try {
+                $nodeAggregate = $this->contentRepository->getContentGraph($eventInstance->getWorkspaceName())->findNodeAggregateById(
+                    $eventInstance->getNodeAggregateId()
+                );
+            } catch (WorkspaceDoesNotExist) {
+                return;
+            }
 
             if ($nodeAggregate) {
                 $this->scheduleCacheFlushJobForNodeAggregate(
                     $this->contentRepository,
-                    $eventInstance->workspaceName,
+                    $eventInstance->getWorkspaceName(),
                     $nodeAggregate
                 );
             }
@@ -257,12 +227,12 @@ class GraphProjectorCatchUpHookForCacheFlushing implements CatchUpHookInterface
         NodeAggregate $nodeAggregate
     ): void {
         // we store this in an associative array deduplicate.
-        $this->flushNodeAggregateRequestsOnBeforeBatchCompleted[$workspaceName->value . '__' . $nodeAggregate->nodeAggregateId->value] = FlushNodeAggregateRequest::create(
+        $this->flushNodeAggregateRequestsOnAfterCatchUp[$workspaceName->value . '__' . $nodeAggregate->nodeAggregateId->value] = FlushNodeAggregateRequest::create(
             $contentRepository->id,
             $workspaceName,
             $nodeAggregate->nodeAggregateId,
             $nodeAggregate->nodeTypeName,
-            $this->determineParentNodeAggregateIds($workspaceName, $nodeAggregate->nodeAggregateId, NodeAggregateIds::createEmpty())
+            $this->determineAncestorNodeAggregateIds($workspaceName, $nodeAggregate->nodeAggregateId)
         );
     }
 
@@ -271,49 +241,42 @@ class GraphProjectorCatchUpHookForCacheFlushing implements CatchUpHookInterface
         WorkspaceName $workspaceName
     ): void {
         // we store this in an associative array deduplicate.
-        $this->flushWorkspaceRequestsOnBeforeBatchCompleted[$workspaceName->value] = FlushWorkspaceRequest::create(
+        $this->flushWorkspaceRequestsOnAfterCatchUp[$workspaceName->value] = FlushWorkspaceRequest::create(
             $contentRepository->id,
             $workspaceName,
         );
     }
 
-    private function determineParentNodeAggregateIds(WorkspaceName $workspaceName, NodeAggregateId $childNodeAggregateId, NodeAggregateIds $collectedParentNodeAggregateIds): NodeAggregateIds
+    private function determineAncestorNodeAggregateIds(WorkspaceName $workspaceName, NodeAggregateId $childNodeAggregateId): NodeAggregateIds
     {
-        $parentNodeAggregates = $this->contentRepository->getContentGraph($workspaceName)->findParentNodeAggregates($childNodeAggregateId);
-        $parentNodeAggregateIds = NodeAggregateIds::fromArray(
-            array_map(static fn (NodeAggregate $parentNodeAggregate) => $parentNodeAggregate->nodeAggregateId, iterator_to_array($parentNodeAggregates))
-        );
+        $contentGraph = $this->contentRepository->getContentGraph($workspaceName);
+        $stack = iterator_to_array($contentGraph->findParentNodeAggregates($childNodeAggregateId));
 
-        foreach ($parentNodeAggregateIds as $parentNodeAggregateId) {
+        $ancestorNodeAggregateIds = [];
+        while ($stack !== []) {
+            $nodeAggregate = array_shift($stack);
+
             // Prevent infinite loops
-            if (!$collectedParentNodeAggregateIds->contain($parentNodeAggregateId)) {
-                $collectedParentNodeAggregateIds = $collectedParentNodeAggregateIds->merge(NodeAggregateIds::create($parentNodeAggregateId));
-                $collectedParentNodeAggregateIds = $this->determineParentNodeAggregateIds($workspaceName, $parentNodeAggregateId, $collectedParentNodeAggregateIds);
+            if (!in_array($nodeAggregate->nodeAggregateId, $ancestorNodeAggregateIds, false)) {
+                $ancestorNodeAggregateIds[] = $nodeAggregate->nodeAggregateId;
+                array_push($stack, ...iterator_to_array($contentGraph->findParentNodeAggregates($nodeAggregate->nodeAggregateId)));
             }
         }
 
-        return $collectedParentNodeAggregateIds;
+        return NodeAggregateIds::fromArray($ancestorNodeAggregateIds);
     }
 
     public function onBeforeBatchCompleted(): void
     {
-        foreach ($this->flushNodeAggregateRequestsOnBeforeBatchCompleted as $index => $request) {
-            $this->contentCacheFlusher->flushNodeAggregate($request, CacheFlushingStrategy::IMMEDIATE);
-            $this->flushNodeAggregateRequestsOnAfterCatchUp[$index] = $request;
-        }
-        $this->flushNodeAggregateRequestsOnBeforeBatchCompleted = [];
-
-        foreach ($this->flushWorkspaceRequestsOnBeforeBatchCompleted as $index => $request) {
-            $this->contentCacheFlusher->flushWorkspace($request, CacheFlushingStrategy::IMMEDIATE);
-            $this->flushWorkspaceRequestsOnAfterCatchUp[$index] = $request;
-        }
-        $this->flushWorkspaceRequestsOnBeforeBatchCompleted = [];
     }
 
     public function onAfterCatchUp(): void
     {
         foreach ($this->flushNodeAggregateRequestsOnAfterCatchUp as $request) {
-            $this->contentCacheFlusher->flushNodeAggregate($request, CacheFlushingStrategy::IMMEDIATE);
+            // We do not need to flush single node aggregates if we flush the whole workspace anyway.
+            if (!isset($this->flushWorkspaceRequestsOnAfterCatchUp[$request->workspaceName->value])) {
+                $this->contentCacheFlusher->flushNodeAggregate($request, CacheFlushingStrategy::IMMEDIATE);
+            }
         }
         $this->flushNodeAggregateRequestsOnAfterCatchUp = [];
 

@@ -6,8 +6,10 @@
     position: 200
   childNodes:
     column0:
+      label: 'Left Column'
       type: 'Neos.Neos:ContentCollection'
     column1:
+      label: 'Right Column'
       type: 'Neos.Neos:ContentCollection'
   properties:
     layout:

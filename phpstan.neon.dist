@@ -23,8 +23,12 @@ parameters:
         - Neos.NodeTypes.Form/Classes
         # todo lint whole fusion package
         - Neos.Fusion/Classes/Core
+        # todo lint whole media browser package, now we only lint the parts that interact with the CR
+        - Neos.Media.Browser/Classes/Controller/UsageController.php
     bootstrapFiles:
          - ../Framework/bootstrap-phpstan.php
 rules:
     - Neos\ContentRepository\BehavioralTests\PhpstanRules\ApiOrInternalAnnotationRule
     - Neos\ContentRepository\BehavioralTests\PhpstanRules\InternalMethodsNotAllowedOutsideContentRepositoryRule
+    - Neos\ContentRepository\BehavioralTests\PhpstanRules\DeclareStrictTypesRule
+    - Neos\ContentRepository\BehavioralTests\PhpstanRules\NoStringCastingRule

@@ -18,6 +18,7 @@ use Behat\Transliterator\Transliterator;
 
 /**
  * Name of a workspace.
+ * The name uniquely identifies a workspace in its Content Repository instance
  *
  * @api
  */
@@ -113,5 +114,10 @@ final class WorkspaceName implements \JsonSerializable
     private static function hasValidFormat(string $value): bool
     {
         return preg_match(self::PATTERN, $value) === 1;
+    }
+
+    public function __toString(): string
+    {
+        return $this->value;
     }
 }

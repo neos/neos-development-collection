@@ -9,7 +9,9 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateIds;
+use Neos\ContentRepository\Core\SharedModel\Workspace\Workspace;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
+use Neos\ContentRepository\Core\SharedModel\Workspace\Workspaces;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Media\Domain\Model\AssetInterface;
@@ -19,6 +21,9 @@ use Neos\Neos\AssetUsage\GlobalAssetUsageService;
 
 class AssetChangeHandlerForCacheFlushing
 {
+    /** @var array<string, array<string, WorkspaceName[]>> */
+    private array $workspaceRuntimeCache = [];
+
     public function __construct(
         protected readonly GlobalAssetUsageService $globalAssetUsageService,
         protected readonly ContentRepositoryRegistry $contentRepositoryRegistry,
@@ -42,57 +47,75 @@ class AssetChangeHandlerForCacheFlushing
 
         $filter = AssetUsageFilter::create()
             ->withAsset($this->persistenceManager->getIdentifierByObject($asset))
+            ->groupByWorkspaceName()
+            ->groupByNodeAggregate()
             ->includeVariantsOfAsset();
 
-        $workspaceNamesByContentStreamId = [];
         foreach ($this->globalAssetUsageService->findByFilter($filter) as $contentRepositoryId => $usages) {
             $contentRepository = $this->contentRepositoryRegistry->get(ContentRepositoryId::fromString($contentRepositoryId));
+
             foreach ($usages as $usage) {
-                // TODO: Remove when WorkspaceName is part of the AssetUsageProjection
-                $workspaceName = $workspaceNamesByContentStreamId[$contentRepositoryId][$usage->contentStreamId->value] ?? null;
-                if ($workspaceName === null) {
-                    $workspace = $contentRepository->getWorkspaceFinder()->findOneByCurrentContentStreamId($usage->contentStreamId);
-                    if ($workspace === null) {
+                $workspaceNames = $this->getWorkspaceNameAndChildWorkspaceNames($contentRepository, $usage->workspaceName);
+
+                foreach ($workspaceNames as $workspaceName) {
+                    $nodeAggregate = $contentRepository->getContentGraph($workspaceName)->findNodeAggregateById($usage->nodeAggregateId);
+                    if ($nodeAggregate === null) {
                         continue;
                     }
-                    $workspaceName = $workspace->workspaceName;
-                    $workspaceNamesByContentStreamId[$contentRepositoryId][$usage->contentStreamId->value] = $workspaceName;
-                }
-                //
+                    $flushNodeAggregateRequest = FlushNodeAggregateRequest::create(
+                        $contentRepository->id,
+                        $workspaceName,
+                        $nodeAggregate->nodeAggregateId,
+                        $nodeAggregate->nodeTypeName,
+                        $this->determineAncestorNodeAggregateIds($contentRepository, $workspaceName, $nodeAggregate->nodeAggregateId),
+                    );
 
-                $nodeAggregate = $contentRepository->getContentGraph($workspaceName)->findNodeAggregateById($usage->nodeAggregateId);
-                if ($nodeAggregate === null) {
-                    continue;
+                    $this->contentCacheFlusher->flushNodeAggregate($flushNodeAggregateRequest, CacheFlushingStrategy::ON_SHUTDOWN);
                 }
-                $flushNodeAggregateRequest = FlushNodeAggregateRequest::create(
-                    $contentRepository->id,
-                    $workspaceName,
-                    $nodeAggregate->nodeAggregateId,
-                    $nodeAggregate->nodeTypeName,
-                    $this->determineParentNodeAggregateIds($contentRepository, $workspaceName, $nodeAggregate->nodeAggregateId, NodeAggregateIds::createEmpty()),
-                );
-
-                $this->contentCacheFlusher->flushNodeAggregate($flushNodeAggregateRequest, CacheFlushingStrategy::ON_SHUTDOWN);
             }
         }
     }
 
-    private function determineParentNodeAggregateIds(ContentRepository $contentRepository, WorkspaceName $workspaceName, NodeAggregateId $childNodeAggregateId, NodeAggregateIds $collectedParentNodeAggregateIds): NodeAggregateIds
+    private function determineAncestorNodeAggregateIds(ContentRepository $contentRepository, WorkspaceName $workspaceName, NodeAggregateId $childNodeAggregateId): NodeAggregateIds
     {
-        $parentNodeAggregates = $contentRepository->getContentGraph($workspaceName)->findParentNodeAggregates($childNodeAggregateId);
-        $parentNodeAggregateIds = NodeAggregateIds::fromArray(
-            array_map(static fn (NodeAggregate $parentNodeAggregate) => $parentNodeAggregate->nodeAggregateId, iterator_to_array($parentNodeAggregates))
-        );
+        $contentGraph = $contentRepository->getContentGraph($workspaceName);
+        $stack = iterator_to_array($contentGraph->findParentNodeAggregates($childNodeAggregateId));
 
-        foreach ($parentNodeAggregateIds as $parentNodeAggregateId) {
+        $ancestorNodeAggregateIds = [];
+        while ($stack !== []) {
+            $nodeAggregate = array_shift($stack);
+
             // Prevent infinite loops
-            if (!$collectedParentNodeAggregateIds->contain($parentNodeAggregateId)) {
-                $collectedParentNodeAggregateIds = $collectedParentNodeAggregateIds->merge(NodeAggregateIds::create($parentNodeAggregateId));
-                $collectedParentNodeAggregateIds = $this->determineParentNodeAggregateIds($contentRepository, $workspaceName, $parentNodeAggregateId, $collectedParentNodeAggregateIds);
+            if (!in_array($nodeAggregate->nodeAggregateId, $ancestorNodeAggregateIds, false)) {
+                $ancestorNodeAggregateIds[] = $nodeAggregate->nodeAggregateId;
+                array_push($stack, ...iterator_to_array($contentGraph->findParentNodeAggregates($nodeAggregate->nodeAggregateId)));
             }
         }
 
+        return NodeAggregateIds::fromArray($ancestorNodeAggregateIds);
+    }
 
-        return $collectedParentNodeAggregateIds;
+    /**
+     * @return WorkspaceName[]
+     */
+    private function getWorkspaceNameAndChildWorkspaceNames(ContentRepository $contentRepository, WorkspaceName $workspaceName): array
+    {
+        if (!isset($this->workspaceRuntimeCache[$contentRepository->id->value][$workspaceName->value])) {
+            $workspaceNames = [];
+            $workspace = $contentRepository->findWorkspaceByName($workspaceName);
+            if ($workspace !== null) {
+                $stack[] = $workspace;
+
+                while ($stack !== []) {
+                    $workspace = array_shift($stack);
+                    $workspaceNames[] = $workspace->workspaceName;
+
+                    $stack = array_merge($stack, iterator_to_array($contentRepository->findWorkspaces()->getDependantWorkspaces($workspace->workspaceName)));
+                }
+            }
+            $this->workspaceRuntimeCache[$contentRepository->id->value][$workspaceName->value] = $workspaceNames;
+        }
+
+        return $this->workspaceRuntimeCache[$contentRepository->id->value][$workspaceName->value];
     }
 }

@@ -1,6 +1,6 @@
 import { getCollectionValueByPath, isNil } from "../Helper";
 
-const hasConfiguration = !isNil(window.NeosCMS?.Configuration);
+let hasConfiguration = !isNil(window.NeosCMS?.Configuration);
 
 const init = () => {
   if (isNil(window.NeosCMS)) {
@@ -9,6 +9,7 @@ const init = () => {
 
   if (isNil(window.NeosCMS.Configuration)) {
     window.NeosCMS.Configuration = {};
+		hasConfiguration = true;
   }
 
   // append xliff uri

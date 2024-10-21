@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 namespace Neos\ContentRepository\NodeAccess\FlowQueryOperations;
 
 /*
@@ -18,6 +21,7 @@ use Neos\Eel\FlowQuery\Operations\AbstractOperation;
 
 /**
  * Used to access the NodeTypeName of a ContentRepository Node.
+ * @deprecated with 9.0.0-beta14 please use ${node.nodeTypeName} instead
  */
 class NodeTypeNameOperation extends AbstractOperation
 {

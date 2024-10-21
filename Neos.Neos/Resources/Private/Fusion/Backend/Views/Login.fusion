@@ -26,7 +26,7 @@ prototype(Neos.Neos:View.Login) < prototype(Neos.Fusion:Component) {
   }
 
   renderer = afx`
-    <Neos.Neos:Core.BackendPage title={I18n.translate('login.index.title', 'Login to') + ' ' + props.site.name.value} additionalResources.styles={private.additionalStyles}>
+    <Neos.Neos:Core.BackendPage title={I18n.translate('login.index.title', 'Login to') + ' ' + props.site.name} additionalResources.styles={private.additionalStyles}>
       <Neos.Fusion:Fragment @path='additionalResources.inlineStyles'>
         <style type="text/css" @if.set={private.backgroundImageSource && !private.backgroundImageSourceIsWebp}>
           {'body.neos--bg,.neos-login-box:before{background-image:url(' + private.backgroundImageSource + ')}'}
@@ -46,7 +46,7 @@ prototype(Neos.Neos:View.Login) < prototype(Neos.Fusion:Component) {
               </figure>
 
               <h1 class="neos-login-heading">
-                {I18n.id('login.index.title').value('Login to').package('Neos.Neos').source('Main')} <strong>{props.site.name.value}</strong>
+                {I18n.id('login.index.title').value('Login to').package('Neos.Neos').source('Main')} <strong>{props.site.name}</strong>
               </h1>
 
               <div class="neos-login-body neos">

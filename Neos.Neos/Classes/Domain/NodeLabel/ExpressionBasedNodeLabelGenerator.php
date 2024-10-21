@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Neos\Neos\Domain\NodeLabel;
 
 /*
@@ -39,7 +41,7 @@ class ExpressionBasedNodeLabelGenerator implements NodeLabelGeneratorInterface
      * @var string
      */
     protected $expression = <<<'EEL'
-    ${(Neos.Node.getNodeType(node).label || node.nodeTypeName.value) + (node.nodeName ? ' (' + node.nodeName.value + ')' : '')}
+    ${(Neos.Node.nodeType(node).label || node.nodeTypeName) + (node.nodeName ? ' (' + node.nodeName + ')' : '')}
     EEL;
 
     /**

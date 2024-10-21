@@ -17,7 +17,7 @@ final readonly class FlushNodeAggregateRequest
         public WorkspaceName $workspaceName,
         public NodeAggregateId $nodeAggregateId,
         public NodeTypeName $nodeTypeName,
-        public NodeAggregateIds $parentNodeAggregateIds,
+        public NodeAggregateIds $ancestorNodeAggregateIds,
     ) {
     }
 
@@ -26,14 +26,14 @@ final readonly class FlushNodeAggregateRequest
         WorkspaceName $workspaceName,
         NodeAggregateId $nodeAggregateId,
         NodeTypeName $nodeTypeName,
-        NodeAggregateIds $parentNodeAggregateIds
+        NodeAggregateIds $ancestorNodeAggregateIds
     ): self {
         return new self(
             $contentRepositoryId,
             $workspaceName,
             $nodeAggregateId,
             $nodeTypeName,
-            $parentNodeAggregateIds
+            $ancestorNodeAggregateIds
         );
     }
 }

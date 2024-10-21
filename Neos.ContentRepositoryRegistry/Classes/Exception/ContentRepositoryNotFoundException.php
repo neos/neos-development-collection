@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 namespace Neos\ContentRepositoryRegistry\Exception;
 
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;

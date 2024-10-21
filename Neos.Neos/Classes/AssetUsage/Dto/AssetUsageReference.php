@@ -7,7 +7,7 @@ namespace Neos\Neos\AssetUsage\Dto;
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
+use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\Flow\Annotations as Flow;
 use Neos\Media\Domain\Model\AssetInterface;
 use Neos\Media\Domain\Model\Dto\UsageReference;
@@ -21,7 +21,7 @@ final class AssetUsageReference extends UsageReference
     public function __construct(
         AssetInterface $asset,
         private readonly ContentRepositoryId $contentRepositoryId,
-        private readonly ContentStreamId $contentStreamId,
+        private readonly WorkspaceName $workspaceName,
         private readonly OriginDimensionSpacePoint $originDimensionSpacePointHash,
         private readonly NodeAggregateId $nodeAggregateId,
     ) {
@@ -33,9 +33,9 @@ final class AssetUsageReference extends UsageReference
         return $this->contentRepositoryId;
     }
 
-    public function getContentStreamId(): ContentStreamId
+    public function getWorkspaceName(): WorkspaceName
     {
-        return $this->contentStreamId;
+        return $this->workspaceName;
     }
 
     public function getOriginDimensionSpacePoint(): OriginDimensionSpacePoint

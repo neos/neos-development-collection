@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Neos\Neos\AssetUsage\Dto;
 
 use Neos\Flow\Annotations as Flow;
+use Neos\Neos\AssetUsage\Domain\AssetUsage;
 
 /**
  * @implements \IteratorAggregate<AssetUsage>

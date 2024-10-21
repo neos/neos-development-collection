@@ -33,8 +33,6 @@ Feature: Move node to a new parent / within the current parent before a sibling 
     And the command CreateRootWorkspace is executed with payload:
       | Key                  | Value                |
       | workspaceName        | "live"               |
-      | workspaceTitle       | "Live"               |
-      | workspaceDescription | "The live workspace" |
       | newContentStreamId   | "cs-identifier"      |
     And I am in workspace "live" and dimension space point {"example": "source"}
     And the command CreateRootNodeAggregateWithNode is executed with payload:
