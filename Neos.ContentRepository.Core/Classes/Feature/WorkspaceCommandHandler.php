@@ -208,7 +208,7 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
             ContentStreamEventStreamName::fromContentStreamId($workspace->currentContentStreamId)->getEventStreamName()
         );
 
-        $this->publishContentStream(
+        $this->publishEvents(
             $commandHandlingDependencies,
             $workspace->currentContentStreamId,
             $baseWorkspace->workspaceName,
@@ -294,7 +294,63 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
      * @throws BaseWorkspaceHasBeenModifiedInTheMeantime
      * @throws \Exception
      */
-    private function publishContentStream(
+    private function publishStreamOnWorkspaceContentStream(
+        CommandHandlingDependencies $commandHandlingDependencies,
+        WorkspaceName $baseWorkspaceName,
+        ContentStreamId $baseContentStreamId,
+        EventStreamInterface $workspaceContentStream,
+        ExpectedVersion $expectedVersion
+    ): void {
+        $baseWorkspaceContentStreamName = ContentStreamEventStreamName::fromContentStreamId(
+            $baseContentStreamId
+        );
+
+        // TODO: please check the code below in-depth. it does:
+        // - copy all events from the "user" content stream which implement @see{}"PublishableToOtherContentStreamsInterface"
+        // - extract the initial ContentStreamWasForked event,
+        //   to read the version of the source content stream when the fork occurred
+        // - ensure that no other changes have been done in the meantime in the base content stream
+
+        $events = [];
+        foreach ($workspaceContentStream as $eventEnvelope) {
+            $event = $this->eventNormalizer->denormalize($eventEnvelope->event);
+
+            if ($event instanceof PublishableToWorkspaceInterface) {
+                /** @var EventInterface $copiedEvent */
+                $copiedEvent = $event->withWorkspaceNameAndContentStreamId($baseWorkspaceName, $baseContentStreamId);
+                // We need to add the event metadata here for rebasing in nested workspace situations
+                // (and for exporting)
+                $events[] = DecoratedEvent::create($copiedEvent, metadata: $eventEnvelope->event->metadata, causationId: $eventEnvelope->event->causationId, correlationId: $eventEnvelope->event->correlationId);
+            }
+        }
+
+
+        if (count($events) === 0) {
+            return;
+        }
+        try {
+            $commandHandlingDependencies->publishEvents(
+                new EventsToPublish(
+                    $baseWorkspaceContentStreamName->getEventStreamName(),
+                    Events::fromArray($events),
+                    $expectedVersion
+                )
+            );
+        } catch (ConcurrencyException $e) {
+            throw new BaseWorkspaceHasBeenModifiedInTheMeantime(sprintf(
+                'The base workspace has been modified in the meantime; please rebase.'
+                . ' Expected version %d of source content stream %s: TODO',
+                $baseContentStreamId->value,
+                $e->getMessage()
+            ));
+        }
+    }
+
+    /**
+     * @throws BaseWorkspaceHasBeenModifiedInTheMeantime
+     * @throws \Exception
+     */
+    private function publishEvents(
         CommandHandlingDependencies $commandHandlingDependencies,
         ContentStreamId $contentStreamId,
         WorkspaceName $baseWorkspaceName,
@@ -387,7 +443,7 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
         $temporaryRebasedContentStreamId = ContentStreamId::create();
 
         $inMemoryEventStore = new InMemoryEventStore();
-        $commandHandlingDependencies->handleInMemory(
+        $commandHandlingDependencies->handleInMemoryAndUpdateGraphProjection(
             ForkContentStream::create(
                 $temporaryRebasedContentStreamId,
                 $baseWorkspace->currentContentStreamId,
@@ -412,7 +468,7 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
 
                     // We no longer need to adjust commands as the workspace stays the same
                     try {
-                        $commandHandlingDependencies->handleInMemory($originalCommand, $inMemoryEventStore);
+                        $commandHandlingDependencies->handleInMemoryAndUpdateGraphProjection($originalCommand, $inMemoryEventStore);
                         // if we came this far, we know the command was applied successfully.
                     } catch (\Exception $e) {
                         $commandsThatFailed = $commandsThatFailed->add(
@@ -528,6 +584,7 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
         }
         $oldWorkspaceContentStreamIdState = $commandHandlingDependencies->getContentStreamStatus($oldWorkspaceContentStreamId);
         $baseWorkspace = $this->requireBaseWorkspace($workspace, $commandHandlingDependencies);
+        $baseContentStreamVersion = $commandHandlingDependencies->getContentStreamVersion($baseWorkspace->currentContentStreamId);
 
         // 1) close old content stream
         $commandHandlingDependencies->handle(
@@ -546,22 +603,22 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
         $inMemoryEventStore = new InMemoryEventStore();
 
         // 3) fork a new contentStream, based on the base WS, and apply MATCHING
-        $commandHandlingDependencies->handleInMemory(
-            ForkContentStream::create(
-                $command->contentStreamIdForMatchingPart,
-                $baseWorkspace->currentContentStreamId,
-            ),
-            $inMemoryEventStore
-        );
-
+        // $commandHandlingDependencies->handleInMemory(
+        //     ForkContentStream::create(
+        //         $command->contentStreamIdForMatchingPart,
+        //         $baseWorkspace->currentContentStreamId,
+        //     ),
+        //     $inMemoryEventStore
+        // );
 
 
         try {
             // 4) using the new content stream, apply the matching commands
-            $commandHandlingDependencies->overrideContentStreamId(
-                $baseWorkspace->workspaceName,
-                $command->contentStreamIdForMatchingPart,
-                function () use ($matchingCommands, $commandHandlingDependencies, $baseWorkspace, $inMemoryEventStore): void {
+            // $commandHandlingDependencies->overrideContentStreamId(
+                // $baseWorkspace->workspaceName,
+                // $command->contentStreamIdForMatchingPart,
+            $commandHandlingDependencies->inSimulation(
+                function () use ($matchingCommands, $commandHandlingDependencies, $baseWorkspace): void {
                     foreach ($matchingCommands as $matchingCommand) {
                         if (!($matchingCommand instanceof RebasableToOtherWorkspaceInterface)) {
                             throw new \RuntimeException(
@@ -570,21 +627,25 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
                             );
                         }
 
-                        $commandHandlingDependencies->handleInMemory($matchingCommand->createCopyForWorkspace(
+                        $commandHandlingDependencies->handle($matchingCommand->createCopyForWorkspace(
                             $baseWorkspace->workspaceName,
-                        ), $inMemoryEventStore);
+                        ));
                     }
-                }
+                },
+                $inMemoryEventStore
             );
+
+            // \var_dump(iterator_to_array($inMemoryEventStore->load(VirtualStreamName::all())));
+            // die();
 
 
             // 5) take EVENTS(MATCHING) and apply them to base WS.
-            $this->publishContentStream(
+            $this->publishStreamOnWorkspaceContentStream(
                 $commandHandlingDependencies,
-                $command->contentStreamIdForMatchingPart,
                 $baseWorkspace->workspaceName,
                 $baseWorkspace->currentContentStreamId,
-                $inMemoryEventStore->load(VirtualStreamName::all())
+                $inMemoryEventStore->load(VirtualStreamName::all()),
+                ExpectedVersion::fromVersion($baseContentStreamVersion)
             );
 
             // 6) fork a new content stream, based on the base WS, and apply REST
@@ -594,7 +655,6 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
                     $baseWorkspace->currentContentStreamId
                 )
             );
-
 
             // 7) apply REMAINING commands to the workspace's new content stream
             $commandHandlingDependencies->overrideContentStreamId(
@@ -615,9 +675,9 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
                 )
             );
 
-            $commandHandlingDependencies->handleInMemory(RemoveContentStream::create(
-                $command->contentStreamIdForMatchingPart
-            ), $inMemoryEventStore);
+            // $commandHandlingDependencies->handleInMemory(RemoveContentStream::create(
+            //     $command->contentStreamIdForMatchingPart
+            // ), $inMemoryEventStore);
 
             try {
                 $commandHandlingDependencies->handle(RemoveContentStream::create(
@@ -632,9 +692,9 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
 
         // 8) to avoid dangling content streams, we need to remove our temporary content stream (whose events
         // have already been published) as well as the old one
-        $commandHandlingDependencies->handleInMemory(RemoveContentStream::create(
-            $command->contentStreamIdForMatchingPart
-        ), $inMemoryEventStore);
+        // $commandHandlingDependencies->handleInMemory(RemoveContentStream::create(
+        //     $command->contentStreamIdForMatchingPart
+        // ), $inMemoryEventStore);
         $commandHandlingDependencies->handle(RemoveContentStream::create(
             $oldWorkspaceContentStreamId
         ));

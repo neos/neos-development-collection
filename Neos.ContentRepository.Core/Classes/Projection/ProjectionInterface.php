@@ -47,4 +47,6 @@ interface ProjectionInterface
     public function getState(): ProjectionStateInterface;
 
     public function reset(): void;
+
+    // public function temporaryChanges(\Closure $fn): void;
 }

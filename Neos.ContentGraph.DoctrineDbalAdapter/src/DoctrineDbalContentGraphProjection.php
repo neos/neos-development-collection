@@ -260,6 +260,19 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface
         }
     }
 
+    public function inSimulation(\Closure $fn): void
+    {
+        if ($this->dbal->isTransactionActive()) {
+            throw new \RuntimeException();
+        }
+        $this->dbal->beginTransaction();
+        try {
+            $fn();
+        } finally {
+            $this->dbal->rollBack();
+        }
+    }
+
     private function whenContentStreamWasClosed(ContentStreamWasClosed $event): void
     {
         $this->updateContentStreamStatus($event->contentStreamId, ContentStreamStatus::CLOSED);

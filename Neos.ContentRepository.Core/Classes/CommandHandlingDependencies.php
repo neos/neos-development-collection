@@ -53,11 +53,14 @@ final class CommandHandlingDependencies
      */
     private array $overriddenContentGraphInstances = [];
 
+    private InMemoryEventStore|null $inMemoryStoreForSimulation = null;
+
     public function __construct(
         private readonly ContentRepository $contentRepository,
         private readonly EventPersister $eventPersister,
         private readonly CommandBus $commandBus,
         private readonly EventNormalizer $eventNormalizer,
+        // todo use GraphProjectionInterface!!!
         private readonly DoctrineDbalContentGraphProjection $contentRepositoryProjection
     ) {
     }
@@ -65,10 +68,28 @@ final class CommandHandlingDependencies
 
     public function handle(CommandInterface $command): CommandResult
     {
-        return $this->contentRepository->handle($command);
+        if ($this->inMemoryStoreForSimulation !== null) {
+            $this->hanldeInSimulation($command, $this->inMemoryStoreForSimulation);
+        } else {
+            $this->contentRepository->handle($command);
+        }
+        return new CommandResult();
     }
 
-    public function handleInMemory(CommandInterface $command, InMemoryEventStore $inMemoryEventStore): CommandResult
+    public function inSimulation(\Closure $fn, InMemoryEventStore $inMemoryEventStore): void
+    {
+        if ($this->inMemoryStoreForSimulation) {
+            throw new \RuntimeException();
+        }
+        $this->inMemoryStoreForSimulation = $inMemoryEventStore;
+        try {
+            $this->contentRepositoryProjection->inSimulation($fn);
+        } finally {
+            $this->inMemoryStoreForSimulation = null;
+        }
+    }
+
+    private function hanldeInSimulation(CommandInterface $command, InMemoryEventStore $inMemoryEventStore): CommandResult
     {
         $eventsToPublish = $this->commandBus->handle($command, $this);
 
@@ -88,7 +109,10 @@ final class CommandHandlingDependencies
         $commitResult = $inMemoryEventStore->commit(
             $eventsToPublish->streamName,
             $normalizedEvents,
-            $eventsToPublish->expectedVersion,
+            ExpectedVersion::ANY() // The version of the stream in the IN MEMORY event store does not matter to us,
+        // because this is only used in memory during the partial publish or rebase operation; so it cannot be written to
+            // concurrently.
+            // HINT: We cannot use $eventsToPublish->expectedVersion, because this is based on the PERSISTENT event stream (having different numbers)
         );
 
 
