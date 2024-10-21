@@ -39,7 +39,7 @@ final class CommandHandlingDependencies
 
     public function __construct(
         private readonly ContentRepository $contentRepository,
-        private readonly ContentRepositoryReadModelInterface $contentRepositoryReadModel
+        private readonly ContentGraphReadModelInterface $contentGraphReadModel
     ) {
     }
 
@@ -50,7 +50,7 @@ final class CommandHandlingDependencies
 
     public function getContentStreamVersion(ContentStreamId $contentStreamId): Version
     {
-        $contentStream = $this->contentRepositoryReadModel->findContentStreamById($contentStreamId);
+        $contentStream = $this->contentGraphReadModel->findContentStreamById($contentStreamId);
         if ($contentStream === null) {
             throw new \InvalidArgumentException(sprintf('Failed to find content stream with id "%s"', $contentStreamId->value), 1716902051);
         }
@@ -59,12 +59,12 @@ final class CommandHandlingDependencies
 
     public function contentStreamExists(ContentStreamId $contentStreamId): bool
     {
-        return $this->contentRepositoryReadModel->findContentStreamById($contentStreamId) !== null;
+        return $this->contentGraphReadModel->findContentStreamById($contentStreamId) !== null;
     }
 
     public function getContentStreamStatus(ContentStreamId $contentStreamId): ContentStreamStatus
     {
-        $contentStream = $this->contentRepositoryReadModel->findContentStreamById($contentStreamId);
+        $contentStream = $this->contentGraphReadModel->findContentStreamById($contentStreamId);
         if ($contentStream === null) {
             throw new \InvalidArgumentException(sprintf('Failed to find content stream with id "%s"', $contentStreamId->value), 1716902219);
         }
@@ -73,7 +73,7 @@ final class CommandHandlingDependencies
 
     public function findWorkspaceByName(WorkspaceName $workspaceName): ?Workspace
     {
-        return $this->contentRepositoryReadModel->findWorkspaceByName($workspaceName);
+        return $this->contentGraphReadModel->findWorkspaceByName($workspaceName);
     }
 
     /**
@@ -84,11 +84,11 @@ final class CommandHandlingDependencies
         if (isset($this->overriddenContentGraphInstances[$workspaceName->value])) {
             return $this->overriddenContentGraphInstances[$workspaceName->value];
         }
-        $workspace = $this->contentRepositoryReadModel->findWorkspaceByName($workspaceName);
+        $workspace = $this->contentGraphReadModel->findWorkspaceByName($workspaceName);
         if ($workspace === null) {
             throw WorkspaceDoesNotExist::butWasSupposedTo($workspaceName);
         }
-        return $this->contentRepositoryReadModel->buildContentGraph($workspace->workspaceName, $workspace->currentContentStreamId);
+        return $this->contentGraphReadModel->buildContentGraph($workspace->workspaceName, $workspace->currentContentStreamId);
     }
 
     /**
@@ -106,7 +106,7 @@ final class CommandHandlingDependencies
             throw new \RuntimeException('Contentstream override for this workspace already in effect, nesting not allowed.', 1715170938);
         }
 
-        $contentGraph = $this->contentRepositoryReadModel->buildContentGraph($workspaceName, $contentStreamId);
+        $contentGraph = $this->contentGraphReadModel->buildContentGraph($workspaceName, $contentStreamId);
         $this->overriddenContentGraphInstances[$workspaceName->value] = $contentGraph;
 
         try {

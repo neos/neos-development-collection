@@ -17,7 +17,7 @@ use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\NodeRecord;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\NodeRelationAnchorPoint;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\DimensionSpacePointsRepository;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\ProjectionContentGraph;
-use Neos\ContentRepository\Core\ContentRepositoryReadModelInterface;
+use Neos\ContentRepository\Core\ContentGraphReadModelInterface;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
@@ -97,7 +97,7 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
         private readonly ProjectionContentGraph $projectionContentGraph,
         private readonly ContentGraphTableNames $tableNames,
         private readonly DimensionSpacePointsRepository $dimensionSpacePointsRepository,
-        private readonly ContentRepositoryReadModelInterface $contentRepositoryReadModel
+        private readonly ContentGraphReadModelInterface $contentGraphReadModel
     ) {
         $this->checkpointStorage = new DbalCheckpointStorage(
             $this->dbal,
@@ -176,9 +176,9 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
         return $this->checkpointStorage;
     }
 
-    public function getState(): ContentRepositoryReadModelInterface
+    public function getState(): ContentGraphReadModelInterface
     {
-        return $this->contentRepositoryReadModel;
+        return $this->contentGraphReadModel;
     }
 
     public function canHandle(EventInterface $event): bool

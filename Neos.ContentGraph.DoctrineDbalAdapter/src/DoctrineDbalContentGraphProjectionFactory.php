@@ -39,7 +39,7 @@ final class DoctrineDbalContentGraphProjectionFactory implements ContentReposito
             $dimensionSpacePointsRepository
         );
 
-        $contentRepositoryReadModel = new ContentRepositoryReadModelAdapter(
+        $contentGraphReadModel = new ContentGraphReadModelAdapter(
             $this->dbal,
             $nodeFactory,
             $projectionFactoryDependencies->contentRepositoryId,
@@ -55,7 +55,7 @@ final class DoctrineDbalContentGraphProjectionFactory implements ContentReposito
             ),
             $tableNames,
             $dimensionSpacePointsRepository,
-            $contentRepositoryReadModel
+            $contentGraphReadModel
         );
     }
 }

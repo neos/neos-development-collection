@@ -16,7 +16,7 @@ namespace Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap;
 
 use Behat\Behat\Hook\Scope\BeforeScenarioScope;
 use Behat\Gherkin\Node\TableNode;
-use Neos\ContentRepository\Core\ContentRepositoryReadModelInterface;
+use Neos\ContentRepository\Core\ContentGraphReadModelInterface;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceFactoryDependencies;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceFactoryInterface;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceInterface;
@@ -158,8 +158,8 @@ trait CRTestSuiteTrait
     public function iExpectTheGraphProjectionToConsistOfExactlyNodes(int $expectedNumberOfNodes): void
     {
         // HACK to access
-        $contentRepositoryReadModelAccess = new class implements ContentRepositoryServiceFactoryInterface {
-            public ContentRepositoryReadModelInterface|null $instance;
+        $contentGraphReadModelAccess = new class implements ContentRepositoryServiceFactoryInterface {
+            public ContentGraphReadModelInterface|null $instance;
             public function build(ContentRepositoryServiceFactoryDependencies $serviceFactoryDependencies): ContentRepositoryServiceInterface
             {
                 $this->instance = $serviceFactoryDependencies->projectionsAndCatchUpHooks->contentGraphProjection->getState();
@@ -168,9 +168,9 @@ trait CRTestSuiteTrait
                 };
             }
         };
-        $this->getContentRepositoryService($contentRepositoryReadModelAccess);
+        $this->getContentRepositoryService($contentGraphReadModelAccess);
 
-        $actualNumberOfNodes = $contentRepositoryReadModelAccess->instance->countNodes();
+        $actualNumberOfNodes = $contentGraphReadModelAccess->instance->countNodes();
         Assert::assertSame($expectedNumberOfNodes, $actualNumberOfNodes, 'Content graph consists of ' . $actualNumberOfNodes . ' nodes, expected were ' . $expectedNumberOfNodes . '.');
     }
 

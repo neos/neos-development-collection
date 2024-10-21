@@ -43,7 +43,7 @@ final class HypergraphProjectionFactory implements ContentRepositoryProjectionFa
         return new HypergraphProjection(
             $this->dbal,
             $tableNamePrefix,
-            new ContentHyperRepositoryReadModelAdapter($this->dbal, $nodeFactory, $projectionFactoryDependencies->contentRepositoryId, $projectionFactoryDependencies->nodeTypeManager, $tableNamePrefix)
+            new ContentHyperGraphReadModelAdapter($this->dbal, $nodeFactory, $projectionFactoryDependencies->contentRepositoryId, $projectionFactoryDependencies->nodeTypeManager, $tableNamePrefix)
         );
     }
 }

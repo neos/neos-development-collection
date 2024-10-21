@@ -26,7 +26,7 @@ use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\Feature\NodeTypeChange
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\Feature\NodeVariation;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\Feature\SubtreeTagging;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\SchemaBuilder\HypergraphSchemaBuilder;
-use Neos\ContentRepository\Core\ContentRepositoryReadModelInterface;
+use Neos\ContentRepository\Core\ContentGraphReadModelInterface;
 use Neos\ContentRepository\Core\EventStore\EventInterface;
 use Neos\ContentRepository\Core\Feature\ContentStreamForking\Event\ContentStreamWasForked;
 use Neos\ContentRepository\Core\Feature\NodeCreation\Event\NodeAggregateWithNodeWasCreated;
@@ -72,7 +72,7 @@ final class HypergraphProjection implements ContentGraphProjectionInterface
     public function __construct(
         private readonly Connection $dbal,
         private readonly string $tableNamePrefix,
-        private readonly ContentRepositoryReadModelInterface $contentRepositoryReadModel
+        private readonly ContentGraphReadModelInterface $contentGraphReadModel
     ) {
         $this->projectionHypergraph = new ProjectionHypergraph($this->dbal, $this->tableNamePrefix);
         $this->checkpointStorage = new DbalCheckpointStorage(
@@ -218,9 +218,9 @@ final class HypergraphProjection implements ContentGraphProjectionInterface
         return $this->checkpointStorage;
     }
 
-    public function getState(): ContentRepositoryReadModelInterface
+    public function getState(): ContentGraphReadModelInterface
     {
-        return $this->contentRepositoryReadModel;
+        return $this->contentGraphReadModel;
     }
 
     protected function getProjectionHypergraph(): ProjectionHypergraph

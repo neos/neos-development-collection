@@ -86,9 +86,9 @@ final class ContentRepository
         private readonly ContentDimensionSourceInterface $contentDimensionSource,
         private readonly UserIdProviderInterface $userIdProvider,
         private readonly ClockInterface $clock,
-        private readonly ContentRepositoryReadModelInterface $contentRepositoryReadModel
+        private readonly ContentGraphReadModelInterface $contentGraphReadModel
     ) {
-        $this->commandHandlingDependencies = new CommandHandlingDependencies($this, $this->contentRepositoryReadModel);
+        $this->commandHandlingDependencies = new CommandHandlingDependencies($this, $this->contentGraphReadModel);
     }
 
     /**
@@ -156,7 +156,7 @@ final class ContentRepository
             $projectionState = $this->projectionStateCache[$projectionStateClassName];
             return $projectionState;
         }
-        if (in_array(ContentRepositoryReadModelInterface::class, class_implements($projectionStateClassName), true)) {
+        if (in_array(ContentGraphReadModelInterface::class, class_implements($projectionStateClassName), true)) {
             throw new \InvalidArgumentException(sprintf('Accessing the internal content repository projection state via %s(%s) is not allowed. Please use the API on the content repository instead.', __FUNCTION__, $projectionStateClassName), 1729338679);
         }
 
@@ -247,11 +247,11 @@ final class ContentRepository
      */
     public function getContentGraph(WorkspaceName $workspaceName): ContentGraphInterface
     {
-        $workspace = $this->contentRepositoryReadModel->findWorkspaceByName($workspaceName);
+        $workspace = $this->contentGraphReadModel->findWorkspaceByName($workspaceName);
         if ($workspace === null) {
             throw WorkspaceDoesNotExist::butWasSupposedTo($workspaceName);
         }
-        return $this->contentRepositoryReadModel->buildContentGraph($workspaceName, $workspace->currentContentStreamId);
+        return $this->contentGraphReadModel->buildContentGraph($workspaceName, $workspace->currentContentStreamId);
     }
 
     /**
@@ -259,7 +259,7 @@ final class ContentRepository
      */
     public function findWorkspaceByName(WorkspaceName $workspaceName): ?Workspace
     {
-        return $this->contentRepositoryReadModel->findWorkspaceByName($workspaceName);
+        return $this->contentGraphReadModel->findWorkspaceByName($workspaceName);
     }
 
     /**
@@ -268,17 +268,17 @@ final class ContentRepository
      */
     public function findWorkspaces(): Workspaces
     {
-        return $this->contentRepositoryReadModel->findWorkspaces();
+        return $this->contentGraphReadModel->findWorkspaces();
     }
 
     public function findContentStreamById(ContentStreamId $contentStreamId): ?ContentStream
     {
-        return $this->contentRepositoryReadModel->findContentStreamById($contentStreamId);
+        return $this->contentGraphReadModel->findContentStreamById($contentStreamId);
     }
 
     public function findContentStreams(): ContentStreams
     {
-        return $this->contentRepositoryReadModel->findContentStreams();
+        return $this->contentGraphReadModel->findContentStreams();
     }
 
     public function getNodeTypeManager(): NodeTypeManager
