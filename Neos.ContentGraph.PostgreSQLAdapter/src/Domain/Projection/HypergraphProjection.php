@@ -26,7 +26,7 @@ use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\Feature\NodeTypeChange
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\Feature\NodeVariation;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\Feature\SubtreeTagging;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\SchemaBuilder\HypergraphSchemaBuilder;
-use Neos\ContentRepository\Core\ContentRepositoryReadModel;
+use Neos\ContentRepository\Core\ContentRepositoryReadModelInterface;
 use Neos\ContentRepository\Core\EventStore\EventInterface;
 use Neos\ContentRepository\Core\Feature\ContentStreamForking\Event\ContentStreamWasForked;
 use Neos\ContentRepository\Core\Feature\NodeCreation\Event\NodeAggregateWithNodeWasCreated;
@@ -44,18 +44,17 @@ use Neos\ContentRepository\Core\Feature\SubtreeTagging\Event\SubtreeWasUntagged;
 use Neos\ContentRepository\Core\Infrastructure\DbalCheckpointStorage;
 use Neos\ContentRepository\Core\Infrastructure\DbalSchemaDiff;
 use Neos\ContentRepository\Core\Projection\CheckpointStorageStatusType;
-use Neos\ContentRepository\Core\Projection\ProjectionInterface;
 use Neos\ContentRepository\Core\Projection\ProjectionStatus;
+use Neos\ContentRepository\Core\Projection\ContentRepositoryProjectionInterface;
 use Neos\EventStore\Model\Event\SequenceNumber;
 use Neos\EventStore\Model\EventEnvelope;
 
 /**
  * The alternate reality-aware hypergraph projector for the PostgreSQL backend via Doctrine DBAL
  *
- * @implements ProjectionInterface<ContentRepositoryReadModel>
  * @internal the parent Content Graph is public
  */
-final class HypergraphProjection implements ProjectionInterface
+final class HypergraphProjection implements ContentRepositoryProjectionInterface
 {
     use ContentStreamForking;
     use NodeCreation;
@@ -73,7 +72,7 @@ final class HypergraphProjection implements ProjectionInterface
     public function __construct(
         private readonly Connection $dbal,
         private readonly string $tableNamePrefix,
-        private readonly ContentRepositoryReadModel $contentRepositoryReadModel
+        private readonly ContentRepositoryReadModelInterface $contentRepositoryReadModel
     ) {
         $this->projectionHypergraph = new ProjectionHypergraph($this->dbal, $this->tableNamePrefix);
         $this->checkpointStorage = new DbalCheckpointStorage(
@@ -219,7 +218,7 @@ final class HypergraphProjection implements ProjectionInterface
         return $this->checkpointStorage;
     }
 
-    public function getState(): ContentRepositoryReadModel
+    public function getState(): ContentRepositoryReadModelInterface
     {
         return $this->contentRepositoryReadModel;
     }

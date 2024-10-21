@@ -17,7 +17,7 @@ use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\NodeRecord;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\NodeRelationAnchorPoint;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\DimensionSpacePointsRepository;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\ProjectionContentGraph;
-use Neos\ContentRepository\Core\ContentRepositoryReadModel;
+use Neos\ContentRepository\Core\ContentRepositoryReadModelInterface;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
@@ -65,8 +65,8 @@ use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\Projection\CheckpointStorageStatusType;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodeTags;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Timestamps;
-use Neos\ContentRepository\Core\Projection\ProjectionInterface;
 use Neos\ContentRepository\Core\Projection\ProjectionStatus;
+use Neos\ContentRepository\Core\Projection\ContentRepositoryProjectionInterface;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateClassification;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
@@ -76,10 +76,9 @@ use Neos\EventStore\Model\Event\SequenceNumber;
 use Neos\EventStore\Model\EventEnvelope;
 
 /**
- * @implements ProjectionInterface<ContentRepositoryReadModel>
  * @internal but the graph projection is api
  */
-final class DoctrineDbalContentGraphProjection implements ProjectionInterface
+final class DoctrineDbalContentGraphProjection implements ContentRepositoryProjectionInterface
 {
     use ContentStream;
     use NodeMove;
@@ -98,7 +97,7 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface
         private readonly ProjectionContentGraph $projectionContentGraph,
         private readonly ContentGraphTableNames $tableNames,
         private readonly DimensionSpacePointsRepository $dimensionSpacePointsRepository,
-        private readonly ContentRepositoryReadModel $contentRepositoryReadModel
+        private readonly ContentRepositoryReadModelInterface $contentRepositoryReadModel
     ) {
         $this->checkpointStorage = new DbalCheckpointStorage(
             $this->dbal,
@@ -177,7 +176,7 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface
         return $this->checkpointStorage;
     }
 
-    public function getState(): ContentRepositoryReadModel
+    public function getState(): ContentRepositoryReadModelInterface
     {
         return $this->contentRepositoryReadModel;
     }

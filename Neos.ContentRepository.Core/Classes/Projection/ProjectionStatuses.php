@@ -18,9 +18,12 @@ final readonly class ProjectionStatuses implements \IteratorAggregate
     ) {
     }
 
-    public static function create(): self
+    /**
+     * @param array<class-string<ProjectionInterface<ProjectionStateInterface>>, ProjectionStatus> $statuses
+     */
+    public static function create(array $statuses = []): self
     {
-        return new self([]);
+        return new self($statuses);
     }
 
     /**

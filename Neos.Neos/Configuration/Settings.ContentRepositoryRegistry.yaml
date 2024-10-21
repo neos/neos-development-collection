@@ -6,6 +6,13 @@ Neos:
         userIdProvider:
           factoryObjectName: Neos\Neos\UserIdProvider\UserIdProviderFactory
 
+        contentRepositoryProjection:
+          catchUpHooks:
+            'Neos.Neos:FlushContentCache':
+              factoryObjectName: Neos\Neos\Fusion\Cache\GraphProjectorCatchUpHookForCacheFlushingFactory
+            'Neos.Neos:AssetUsage':
+              factoryObjectName: Neos\Neos\AssetUsage\CatchUpHook\AssetUsageCatchUpHookFactory
+
         projections:
           'Neos.Neos:DocumentUriPathProjection':
             factoryObjectName: Neos\Neos\FrontendRouting\Projection\DocumentUriPathProjectionFactory
@@ -15,9 +22,3 @@ Neos:
 
           'Neos.Neos:PendingChangesProjection':
             factoryObjectName: Neos\Neos\PendingChangesProjection\ChangeProjectionFactory
-          'Neos.ContentRepository:ContentGraph':
-            catchUpHooks:
-              'Neos.Neos:FlushContentCache':
-                factoryObjectName: Neos\Neos\Fusion\Cache\GraphProjectorCatchUpHookForCacheFlushingFactory
-              'Neos.Neos:AssetUsage':
-                factoryObjectName: Neos\Neos\AssetUsage\CatchUpHook\AssetUsageCatchUpHookFactory
