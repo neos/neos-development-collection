@@ -12,9 +12,8 @@
 
 declare(strict_types=1);
 
-namespace Neos\ContentRepository\Core;
+namespace Neos\ContentRepository\Core\Projection\ContentGraph;
 
-use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphInterface;
 use Neos\ContentRepository\Core\Projection\ProjectionStateInterface;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStream;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
@@ -24,7 +23,7 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepository\Core\SharedModel\Workspace\Workspaces;
 
 /**
- * @api for creating a custom content repository graph and workspace implementation, **not for users of the CR**
+ * @api for creating a custom content repository graph projection implementation, **not for users of the CR**
  */
 interface ContentGraphReadModelInterface extends ProjectionStateInterface
 {

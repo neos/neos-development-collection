@@ -9,7 +9,7 @@ use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\DimensionSpacePoints
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\NodeFactory;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\ProjectionContentGraph;
 use Neos\ContentRepository\Core\Factory\ProjectionFactoryDependencies;
-use Neos\ContentRepository\Core\Projection\ContentRepositoryProjectionFactoryInterface;
+use Neos\ContentRepository\Core\Projection\ContentGraph\ContentRepositoryProjectionFactoryInterface;
 
 /**
  * Use this class as ProjectionFactory in your configuration to construct a content graph

@@ -2,13 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Neos\ContentRepository\Core\Projection;
+namespace Neos\ContentRepository\Core\Projection\ContentGraph;
 
 use Neos\ContentRepository\Core\Factory\ProjectionFactoryDependencies;
+use Neos\ContentRepository\Core\Projection\ProjectionFactoryInterface;
 
 /**
- * @api
  * @extends ProjectionFactoryInterface<ContentGraphProjectionInterface>
+ * @api for creating a custom content repository graph projection implementation, **not for users of the CR**
  */
 interface ContentRepositoryProjectionFactoryInterface extends ProjectionFactoryInterface
 {
