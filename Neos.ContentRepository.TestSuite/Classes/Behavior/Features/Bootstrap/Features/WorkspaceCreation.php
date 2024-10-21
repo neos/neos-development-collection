@@ -123,7 +123,7 @@ trait WorkspaceCreation
         try {
             $this->currentContentRepository->handle($command);
         } catch (WorkspaceRebaseFailed $e) {
-            \Neos\Flow\var_dump($e->commandsThatFailedDuringRebase);
+            // todo improve error
             throw $e;
         }
     }
