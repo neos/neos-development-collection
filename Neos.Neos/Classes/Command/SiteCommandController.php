@@ -14,11 +14,16 @@ declare(strict_types=1);
 
 namespace Neos\Neos\Command;
 
+use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeNameIsAlreadyCovered;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeTypeNotFound;
+use Neos\ContentRepository\Export\ProcessorEventInterface;
+use Neos\ContentRepository\Export\Severity;
+use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Cli\CommandController;
 use Neos\Flow\Cli\Exception\StopCommandException;
+use Neos\Flow\ObjectManagement\DependencyInjection\DependencyProxy;
 use Neos\Flow\Package\PackageManager;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Neos\Domain\Exception\SiteNodeNameIsAlreadyInUseByAnotherSite;
@@ -26,6 +31,8 @@ use Neos\Neos\Domain\Exception\SiteNodeTypeIsInvalid;
 use Neos\Neos\Domain\Model\Site;
 use Neos\Neos\Domain\Repository\SiteRepository;
 use Neos\Neos\Domain\Service\NodeTypeNameFactory;
+use Neos\Neos\Domain\Service\SiteImportService;
+use Neos\Neos\Domain\Service\SiteImportServiceFactory;
 use Neos\Neos\Domain\Service\SiteService;
 
 /**
@@ -55,9 +62,21 @@ class SiteCommandController extends CommandController
 
     /**
      * @Flow\Inject
+     * @var ContentRepositoryRegistry
+     */
+    protected $contentRepositoryRegistry;
+
+    /**
+     * @Flow\Inject
      * @var PersistenceManagerInterface
      */
     protected $persistenceManager;
+
+    /**
+     * @Flow\Inject(lazy=false)
+     * @var SiteImportServiceFactory
+     */
+    protected $siteImportServiceFactory;
 
     /**
      * Create a new site
@@ -108,6 +127,28 @@ class SiteCommandController extends CommandController
             'Successfully created site "%s" with siteNode "%s", type "%s", packageKey "%s" and state "%s"',
             [$name, $nodeName ?: $name, $nodeType, $packageKey, $inactive ? 'offline' : 'online']
         );
+    }
+
+    public function importCommand(string $packageKey, string $contentRepository = 'default', bool $verbose = false): void
+    {
+        $contentRepositoryId = ContentRepositoryId::fromString($contentRepository);
+        $importService = $this->contentRepositoryRegistry->buildService($contentRepositoryId, $this->siteImportServiceFactory);
+        assert($importService instanceof SiteImportService);
+
+        $onProcessor = function (string $processorLabel) {
+            $this->outputLine('<info>%s...</info>', [$processorLabel]);
+        };
+        $onMessage = function (Severity $severity, string $message) use ($verbose) {
+            if (!$verbose && $severity === Severity::NOTICE) {
+                return;
+            }
+            $this->outputLine(match ($severity) {
+                Severity::NOTICE => $message,
+                Severity::WARNING => sprintf('<error>Warning: %s</error>', $message),
+                Severity::ERROR => sprintf('<error>Error: %s</error>', $message),
+            });
+        };
+        $importService->importFromPackage($packageKey, $onProcessor, $onMessage);
     }
 
     /**

@@ -1,14 +1,15 @@
 <?php
+
 declare(strict_types=1);
+
 namespace Neos\ContentRepository\Export\Processors;
 
-use League\Flysystem\Filesystem;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\Workspace;
 use Neos\ContentRepository\Export\Asset\ValueObject\SerializedAsset;
 use Neos\ContentRepository\Export\Asset\ValueObject\SerializedImageVariant;
+use Neos\ContentRepository\Export\ProcessingContext;
 use Neos\ContentRepository\Export\ProcessorInterface;
-use Neos\ContentRepository\Export\ProcessorResult;
 use Neos\ContentRepository\Export\Severity;
 use Neos\Flow\ResourceManagement\PersistentResource;
 use Neos\Media\Domain\Model\Asset;
@@ -25,37 +26,23 @@ use Neos\Neos\AssetUsage\Dto\AssetUsageFilter;
  */
 final class AssetExportProcessor implements ProcessorInterface
 {
-    /** @var array<int, \Closure> */
-    private array $callbacks = [];
-
     public function __construct(
         private readonly ContentRepositoryId $contentRepositoryId,
-        private readonly Filesystem $files,
         private readonly AssetRepository $assetRepository,
         private readonly Workspace $targetWorkspace,
         private readonly AssetUsageService $assetUsageService,
-    ) {}
-
-    public function onMessage(\Closure $callback): void
-    {
-        $this->callbacks[] = $callback;
+    ) {
     }
 
-
-    public function run(): ProcessorResult
+    public function run(ProcessingContext $context): void
     {
         $assetFilter = AssetUsageFilter::create()->withWorkspaceName($this->targetWorkspace->workspaceName)->groupByAsset();
-
-        $numberOfExportedAssets = 0;
-        $numberOfExportedImageVariants = 0;
-        $numberOfErrors = 0;
 
         foreach ($this->assetUsageService->findByFilter($this->contentRepositoryId, $assetFilter) as $assetUsage) {
             /** @var Asset|null $asset */
             $asset = $this->assetRepository->findByIdentifier($assetUsage->assetId);
             if ($asset === null) {
-                $numberOfErrors ++;
-                $this->dispatch(Severity::ERROR, 'Skipping asset "%s" because it does not exist in the database', $assetUsage->assetId);
+                $context->dispatch(Severity::ERROR, "Skipping asset \"{$assetUsage->assetId}\" because it does not exist in the database");
                 continue;
             }
 
@@ -63,64 +50,47 @@ final class AssetExportProcessor implements ProcessorInterface
                 /** @var Asset $originalAsset */
                 $originalAsset = $asset->getOriginalAsset();
                 try {
-                    $this->exportAsset($originalAsset);
-                    $numberOfExportedAssets ++;
+                    $this->exportAsset($context, $originalAsset);
                 } catch (\Throwable $e) {
-                    $numberOfErrors ++;
-                    $this->dispatch(Severity::ERROR, 'Failed to export original asset "%s" (for variant "%s"): %s', $originalAsset->getIdentifier(), $asset->getIdentifier(), $e->getMessage());
+                    $context->dispatch(Severity::ERROR, "Failed to export original asset \"{$originalAsset->getIdentifier()}\" (for variant \"{$asset->getIdentifier()}\"): {$e->getMessage()}");
                 }
             }
             try {
-                $this->exportAsset($asset);
-                if ($asset instanceof AssetVariantInterface) {
-                    $numberOfExportedImageVariants ++;
-                } else {
-                    $numberOfExportedAssets ++;
-                }
+                $this->exportAsset($context, $asset);
             } catch (\Throwable $e) {
-                $numberOfErrors ++;
-                $this->dispatch(Severity::ERROR, 'Failed to export asset "%s": %s', $asset->getIdentifier(), $e->getMessage());
+                $context->dispatch(Severity::ERROR, "Failed to export asset \"{$asset->getIdentifier()}\": {$e->getMessage()}");
             }
         }
-        return ProcessorResult::success(sprintf('Exported %d Asset%s and %d Image Variant%s. Errors: %d', $numberOfExportedAssets, $numberOfExportedAssets === 1 ? '' : 's', $numberOfExportedImageVariants, $numberOfExportedImageVariants === 1 ? '' : 's', $numberOfErrors));
     }
 
     /** --------------------------------------- */
 
-    private function exportAsset(Asset $asset): void
+    private function exportAsset(ProcessingContext $context, Asset $asset): void
     {
         $fileLocation = $asset instanceof ImageVariant ? "ImageVariants/{$asset->getIdentifier()}.json" : "Assets/{$asset->getIdentifier()}.json";
-        if ($this->files->has($fileLocation)) {
+        if ($context->files->has($fileLocation)) {
             return;
         }
         if ($asset instanceof ImageVariant) {
-            $this->files->write($fileLocation, SerializedImageVariant::fromImageVariant($asset)->toJson());
+            $context->files->write($fileLocation, SerializedImageVariant::fromImageVariant($asset)->toJson());
             return;
         }
         /** @var PersistentResource|null $resource */
         $resource = $asset->getResource();
         if ($resource === null) {
-            $this->dispatch(Severity::ERROR, 'Skipping asset "%s" because the corresponding PersistentResource does not exist in the database', $asset->getIdentifier());
+            $context->dispatch(Severity::ERROR, "Skipping asset \"{$asset->getIdentifier()}\" because the corresponding PersistentResource does not exist in the database");
             return;
         }
-        $this->files->write($fileLocation, SerializedAsset::fromAsset($asset)->toJson());
-        $this->exportResource($resource);
+        $context->files->write($fileLocation, SerializedAsset::fromAsset($asset)->toJson());
+        $this->exportResource($context, $resource);
     }
 
-    private function exportResource(PersistentResource $resource): void
+    private function exportResource(ProcessingContext $context, PersistentResource $resource): void
     {
         $fileLocation = "Resources/{$resource->getSha1()}";
-        if ($this->files->has($fileLocation)) {
+        if ($context->files->has($fileLocation)) {
             return;
         }
-        $this->files->writeStream($fileLocation, $resource->getStream());
-    }
-
-    private function dispatch(Severity $severity, string $message, mixed ...$args): void
-    {
-        $renderedMessage = sprintf($message, ...$args);
-        foreach ($this->callbacks as $callback) {
-            $callback($severity, $renderedMessage);
-        }
+        $context->files->writeStream($fileLocation, $resource->getStream());
     }
 }

@@ -1,5 +1,7 @@
 <?php
+
 declare(strict_types=1);
+
 namespace Neos\ContentRepository\Export\Asset;
 
 use League\Flysystem\Filesystem;
@@ -14,7 +16,8 @@ final class AssetExporter
         private readonly Filesystem $files,
         private readonly AssetLoaderInterface $assetLoader,
         private readonly ResourceLoaderInterface $resourceLoader,
-    ) {}
+    ) {
+    }
 
     public function exportAsset(string $assetId): void
     {

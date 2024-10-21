@@ -167,7 +167,7 @@ class SiteService
         ?string $nodeName = null,
         bool $inactive = false
     ): Site {
-        $siteNodeName = NodeName::fromString($nodeName ?: $siteName);
+        $siteNodeName = NodeName::transliterateFromString($nodeName ?: $siteName);
 
         if ($this->siteRepository->findOneByNodeName($siteNodeName->value)) {
             throw SiteNodeNameIsAlreadyInUseByAnotherSite::butWasAttemptedToBeClaimed($siteNodeName);
