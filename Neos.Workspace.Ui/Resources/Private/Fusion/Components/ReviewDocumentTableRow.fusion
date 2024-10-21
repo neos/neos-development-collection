@@ -1,0 +1,73 @@
+##
+# Renders a document for review
+#
+prototype(Neos.Workspace.Ui:Component.ReviewDocumentTableRow) < prototype(Neos.Fusion:Component) {
+
+  document = null
+  documentPath = ''
+  selectedWorkspaceName = ${selectedWorkspaceName}
+  selectedWorkspaceLabel = ${selectedWorkspaceLabel}
+
+  @private {
+    i18n = ${I18n.id('').source('Main').package('Neos.Workspace.Ui')}
+
+    openNodeInWorkspaceAction = Neos.Fusion:ActionUri {
+      action = 'rebaseAndRedirect'
+      arguments {
+        targetWorkspaceName = ${selectedWorkspaceName}
+        targetNode = ${document.documentNodeAddress}
+
+      }
+    }
+    openNodeInPreviewAction = Neos.Fusion:ActionUri {
+      request=${request.mainRequest}
+      package='Neos.Neos'
+      controller='Frontend\\\Node'
+      action = 'preview'
+      // todo fixme
+      @process.addQuery = ${value + '?node=' + document.documentNodeAddress}
+    }
+
+  }
+
+  renderer = afx`
+    <tr class="neos-document" data-nodepath={documentPath} data-ismoved={document.isMoved} data-isnew={document.isNew}>
+      <td class="neos-priority1">
+        <label @if.hasChanges={document.changesCount > 1}
+               for="check-document-{document.documentNode.aggregateId.value}" class="neos-checkbox">
+          <!-- TODO: make checkboxes work -->
+          <input type="checkbox" id="check-all" /><span></span>
+        </label>
+      </td>
+      <td class="neos-priority1 path-caption">
+        <div class="neos-row-fluid">
+          <div class="neos-span10">
+            <Neos.Fusion:Loop items={document.documentBreadCrumb} itemName="crumb">
+              <Neos.Workspace.Ui:Component.Icon icon="fas fa-chevron-right" /><span> {crumb} </span>
+            </Neos.Fusion:Loop>
+          </div>
+
+          <div class="neos-span2 neos-pull-right">
+            <a href={private.openNodeInWorkspaceAction}
+               target="_blank"
+               title={private.i18n.id('edit')}
+               class="neos-button neos-button-primary neos-pull-right"
+               @if.notRemoved={!document.isDeleted}>
+              <Neos.Workspace.Ui:Component.Icon icon="fas fa-pencil-alt" />
+            </a>
+            <a href={private.openNodeInPreviewAction}
+               target="_blank"
+               title={private.i18n.id('workspaces.openPageInWorkspace').arguments([selectedWorkspaceLabel])}
+               class="neos-button neos-button-primary neos-pull-right">
+              <Neos.Workspace.Ui:Component.Icon icon="fas fa-external-link-alt" />
+            </a>
+
+          </div>
+        </div>
+      </td>
+      <td class="neos-action neos-folder">
+        <i class="fold-toggle fas fa-chevron-up icon-white" data-toggle="fold-{document.documentNode.aggregateId.value}"></i>
+      </td>
+    </tr>
+  `
+}

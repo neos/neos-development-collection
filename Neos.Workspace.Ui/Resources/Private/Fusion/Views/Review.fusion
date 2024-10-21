@@ -1,0 +1,47 @@
+Neos.Workspace.Ui.WorkspaceController.review = Neos.Fusion:Component {
+  ///todo  Neos\ContentRepository\Core\Projection\Workspace\Workspace
+  selectedWorkspaceName = ${selectedWorkspaceName}
+
+  selectedWorkspaceLabel = ${selectedWorkspaceLabel}
+
+  baseWorkspaceName = ${baseWorkspaceName}
+
+  baseWorkspaceLabel = ${baseWorkspaceLabel}
+
+  canPublishToBaseWorkspace = ${canPublishToBaseWorkspace}
+
+  siteChanges = ${siteChanges}
+
+  contentDimensions = ${contentDimensions}
+  /// array
+  flashMessages = ${flashMessages}
+
+  i18n = ${I18n.id('').source('Main').package('Neos.Workspace.Ui')}
+
+  renderer = Neos.Fusion:Match {
+    @subject = ${request.format}
+    @default = afx`
+      <section
+        hx-indicator="#indicator"
+        hx-boost="true"
+      >
+        <Neos.Workspace.Ui:Component.HTMXConfig/>
+        <Neos.Workspace.Ui:Component.FlashMessages flashMessages={props.flashMessages}/>
+        <Neos.Workspace.Ui:Component.Indicator/>
+        <main class="neos-content neos-container-fluid">
+          <div class="neos-row-fluid">
+            <legend>
+              {props.i18n.id('workspaces.unpublishedChanges').arguments([selectedWorkspaceLabel]).translate()}
+            </legend>
+            <Neos.Workspace.Ui:Component.ReviewTable
+              siteChanges={props.siteChanges} selectedWorkspaceName={selectedWorkspaceName} selectedWorkspaceLabel={selectedWorkspaceLabel} />
+          </div>
+        </main>
+      </section>
+    `
+    htmx = afx`
+      <Neos.Workspace.Ui:Component.FlashMessages flashMessages={props.flashMessages}/>
+
+    `
+  }
+}

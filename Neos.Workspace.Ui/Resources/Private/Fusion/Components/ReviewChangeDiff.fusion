@@ -1,0 +1,125 @@
+##
+# Renders a document for review
+#
+prototype(Neos.Workspace.Ui:Component.ReviewChangeDiff) < prototype(Neos.Fusion:Component) {
+
+  relativePath = ''
+  change = ''
+  document = ''
+  canPublishToBaseWorkspace = ${canPublishToBaseWorkspace}
+  selectedWorkspaceName = ${selectedWorkspaceName}
+
+  @private {
+    i18n = ${I18n.id('').source('Main').package('Neos.Workspace.Ui')}
+    discardChangeAction = Neos.Fusion:ActionUri {
+      action = 'discardNode'
+      arguments {
+        nodeAddress = ${change.serializedNodeAddress}
+        selectedWorkspace = ${selectedWorkspaceName}
+
+      }
+    }
+
+  }
+
+  renderer = afx`
+    <div class="neos-content-diff">
+      <table class="neos-content-diff">
+        <tr>
+          <th>
+              <i
+                @if.hasIcon={change.configuration.ui.icon}
+                class={change.configuration.ui.icon}
+                title={change.node.nodeType.label}
+                data-neos-toggle="tooltip"></i>
+            {change.node.label}
+          </th>
+          <!--
+          <f:if condition="{contentDimensions}">
+            <th>
+              <f:render partial="Module/Shared/NodeContentDimensionsInformation.html" arguments="{contentDimensions: contentDimensions, node: change.node}" />
+            </th>
+          </f:if> -->
+          <th>
+            <!-- TODO: Make lastModificationDateWork-->
+            <span title={I18n.id('lastModification').source('Main').package('Neos.Neos')+ " : " + Date.format(change.node.lastModificationDateTime, 'Y-m-d H:i')} data-neos-toggle="tooltip"><i class="fas fa-time"></i> {change.node.lastModificationDateTime}</span>
+          </th>
+        </tr>
+        <Neos.Fusion:Loop items={change.contentChanges} itemKey="propertyName" itemName="contentChanges">
+          <tr>
+            <th colspan="3">{private.i18n.id('lastModification')}</th>
+          </tr>
+          <tr>
+            <td colspan="3">
+              <table @if.isText={contentChanges.type == 'text'}>
+                <Neos.Fusion:Loop items={contentChanges.diff} itemKey="index" itemName="blocks">
+                  <Neos.Fusion:Loop items={contentChanges.diff} itemKey="index" itemName="blocks">
+                    <Neos.Fusion:Loop items={blocks} itemName="block">
+                      <tr>
+                      <td>
+                        <Neos.Fusion:Loop items={block.base.lines} itemName="line">
+                          {line}
+                        </Neos.Fusion:Loop>
+                      </td>
+                      <td>
+                        <Neos.Fusion:Loop items={block.changed.lines} itemName="line">
+                          {line}
+                        </Neos.Fusion:Loop>
+                      </td>
+                    </tr>
+                    </Neos.Fusion:Loop>
+                  </Neos.Fusion:Loop>
+                </Neos.Fusion:Loop>
+              </table>
+              <!--<f:if condition="{contentChanges.type} === 'image'">
+                <table>
+                  <tr>
+                    <td>
+                      <f:if condition="{contentChanges.original}">
+                        <m:image image="{contentChanges.original}" allowCropping="false" maximumWidth="500" maximumHeight="500" alt=""/>
+                      </f:if>
+                    </td>
+                    <td>
+                      <f:if condition="{contentChanges.changed}">
+                        <m:image image="{contentChanges.changed}" allowCropping="false" maximumWidth="500" maximumHeight="500" alt=""/>
+                      </f:if>
+                    </td>
+                  </tr>
+                </table>
+              </f:if>
+              <f:if condition="{contentChanges.type} === 'asset'">
+                <table>
+                  <tr>
+                    <td>
+                      <f:if condition="{contentChanges.original.resource}">
+                        <del><a href="{f:uri.resource(resource: contentChanges.original.resource)}">{contentChanges.original.resource.filename}</a></del>
+                      </f:if>
+                    </td>
+                    <td>
+                      <f:if condition="{contentChanges.changed.resource}">
+                        <ins><a href="{f:uri.resource(resource: contentChanges.changed.resource)}">{contentChanges.changed.resource.filename}</a></ins>
+                      </f:if>
+                    </td>
+                  </tr>
+                </table>
+              </f:if>
+              <f:if condition="{contentChanges.type} === 'datetime'">
+                <table>
+                  <tr>
+                    <td>
+                      <f:format.date format="d.m.Y H:i:s" date="{contentChanges.original}" />
+                    </td>
+                    <td>
+                      <f:format.date format="d.m.Y H:i:s" date="{contentChanges.changed}" />
+                    </td>
+                  </tr>
+                </table>
+              </f:if> -->
+            </td>
+          </tr>
+        </Neos.Fusion:Loop>
+
+      </table>
+    </div>
+  `
+}

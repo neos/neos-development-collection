@@ -56,8 +56,7 @@ prototype(Neos.Workspace.Ui:Component.WorkspaceTableRow) < prototype(Neos.Fusion
       with-acl = 'user-plus'
     }
     showWorkspaceUri = Neos.Fusion:ActionUri {
-      action = 'show'
-      format = 'html'
+      action = 'review'
       arguments {
         workspace = ${props.workspaceListItem.name}
       }

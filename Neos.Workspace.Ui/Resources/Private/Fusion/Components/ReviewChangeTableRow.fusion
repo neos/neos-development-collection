@@ -1,0 +1,61 @@
+##
+# Renders a document for review
+#
+prototype(Neos.Workspace.Ui:Component.ReviewChangeTableRow) < prototype(Neos.Fusion:Component) {
+
+  relativePath = ''
+  change = ${change}
+  document = ${document}
+  canPublishToBaseWorkspace = ${canPublishToBaseWorkspace}
+  selectedWorkspaceName = ${selectedWorkspaceName}
+
+  @private {
+    i18n = ${I18n.id('').source('Main').package('Neos.Workspace.Ui')}
+    discardChangeAction = Neos.Fusion:ActionUri {
+      action = 'discardNode'
+      arguments {
+        nodeAddress = ${change.serializedNodeAddress}
+        selectedWorkspace = ${selectedWorkspaceName}
+
+      }
+    }
+
+  }
+
+  renderer = afx`
+    <tr class={"neos-change fold-" + document.documentNode.aggregateId.value + "document-" + document.documentNode.aggregateId.value} data-nodepath={relativePath} data-ismoved={change.isMoved} data-isnew={change.isNew}>
+      <td class="check neos-priority1">
+        <label for="{change.serializedNodeAddress}" class="neos-checkbox">
+          <input type="checkbox" id="check-all" />
+          <span></span>
+        </label>
+      </td>
+      <td id="change-{change.serializedNodeAddress}" data-neos-toggle="tooltip" data-placement="left" data-container="body">
+        <Neos.Workspace.Ui:Component.ReviewChangeDiff
+          change={change}
+          relativePath={relativePath}
+          document={document}/>
+      </td>
+      <td class="neos-action">
+        <!-- TODO: Only show buttons if allowed to edit -->
+        <div @if.canPublishToNode={props.canPublishToBaseWorkspace && document.isNew}
+             class="neos-button neos-disabled neos-button-primary neos-pull-right"
+             title={private.i18n.id('cantPublishSingleNodeInNewPage')}>
+          <i class="fas fa-check icon-white"></i>
+        </div>
+
+        <button  @if.canPublishToNode={props.canPublishToBaseWorkspace}
+                 form="postHelper" formaction="{f:uri.action(action: 'publishNode', arguments: {nodeAddress: change.serializedNodeAddress, selectedWorkspace: selectedWorkspace.workspaceName.value})}" type="submit" class="neos-button neos-button-primary neos-pull-right" title={private.i18n.id('publish')} data-neos-toggle="tooltip">
+          <i class="fas fa-check icon-white"></i>
+        </button>
+
+        <Neos.Workspace.Ui:Component.Button
+          title={private.i18n.id('discard')}
+          icon="fas fa-trash-alt icon-white"
+          attributes.hx-get={private.discardChangeAction}
+          attributes.hx-swap='innerHTML'
+        />
+      </td>
+    </tr>
+  `
+}

@@ -56,6 +56,7 @@ use Neos\Neos\Domain\Model\WorkspaceDescription;
 use Neos\Neos\Domain\Model\WorkspaceRole;
 use Neos\Neos\Domain\Model\WorkspaceRoleAssignment;
 use Neos\Neos\Domain\Model\WorkspaceTitle;
+use Neos\Neos\Domain\NodeLabel\NodeLabelGeneratorInterface;
 use Neos\Neos\Domain\Repository\SiteRepository;
 use Neos\Neos\Domain\Service\NodeTypeNameFactory;
 use Neos\Neos\Domain\Service\UserService;
@@ -107,7 +108,12 @@ class WorkspaceController extends AbstractModuleController
     protected WorkspaceService $workspaceService;
 
     #[Flow\Inject]
+    protected NodeLabelGeneratorInterface $nodeLabelGenerator;
+
+    #[Flow\Inject]
     protected Translator $translator;
+
+
 
     /**
      * Display a list of unpublished content
@@ -146,7 +152,7 @@ class WorkspaceController extends AbstractModuleController
         ]);
     }
 
-    public function showAction(WorkspaceName $workspace): void
+    public function reviewAction(WorkspaceName $workspace): void
     {
         $currentUser = $this->userService->getCurrentUser();
         if ($currentUser === null) {
@@ -170,7 +176,7 @@ class WorkspaceController extends AbstractModuleController
             $baseWorkspacePermissions = $this->workspaceService->getWorkspacePermissionsForUser($contentRepositoryId, $baseWorkspace->workspaceName, $currentUser);
         }
         $this->view->assignMultiple([
-            'selectedWorkspace' => $workspaceObj,
+            'selectedWorkspaceName' => $workspaceObj->workspaceName->value,
             'selectedWorkspaceLabel' => $workspaceMetadata->title->value,
             'baseWorkspaceName' => $workspaceObj->baseWorkspaceName,
             'baseWorkspaceLabel' => $baseWorkspaceMetadata?->title->value,
@@ -429,11 +435,15 @@ class WorkspaceController extends AbstractModuleController
      * Rebase the current users personal workspace onto the given $targetWorkspace and then
      * redirects to the $targetNode in the content module.
      */
-    public function rebaseAndRedirectAction(string $targetNode, Workspace $targetWorkspace): void
+    public function rebaseAndRedirectAction(string $targetNode, WorkspaceName $targetWorkspaceName): void
     {
         $targetNodeAddress = NodeAddress::fromJsonString(
             $targetNode
         );
+        $contentRepositoryId = SiteDetectionResult::fromRequest($this->request->getHttpRequest())->contentRepositoryId;
+        $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryId);
+
+        $targetWorkspace = $contentRepository->findWorkspaceByName($targetWorkspaceName);
 
         $user = $this->userService->getCurrentUser();
         if ($user === null) {
@@ -504,7 +514,7 @@ class WorkspaceController extends AbstractModuleController
         $contentRepository->handle($command);
 
         $this->addFlashMessage($this->getModuleLabel('workspaces.selectedChangeHasBeenPublished'));
-        $this->redirect('show', null, null, ['workspace' => $selectedWorkspace->value]);
+        $this->redirect('review', null, null, ['workspace' => $selectedWorkspace->value]);
     }
 
     /**
@@ -516,7 +526,6 @@ class WorkspaceController extends AbstractModuleController
     public function discardNodeAction(string $nodeAddress, WorkspaceName $selectedWorkspace): void
     {
         $nodeAddress = NodeAddress::fromJsonString($nodeAddress);
-
         $contentRepository = $this->contentRepositoryRegistry->get($nodeAddress->contentRepositoryId);
 
         $command = DiscardIndividualNodesFromWorkspace::create(
@@ -531,7 +540,6 @@ class WorkspaceController extends AbstractModuleController
         $contentRepository->handle($command);
 
         $this->addFlashMessage($this->getModuleLabel('workspaces.selectedChangeHasBeenDiscarded'));
-        $this->redirect('show', null, null, ['workspace' => $selectedWorkspace->value]);
     }
 
     /**
@@ -579,7 +587,7 @@ class WorkspaceController extends AbstractModuleController
                 throw new \RuntimeException('Invalid action "' . htmlspecialchars($action) . '" given.', 1346167441);
         }
 
-        $this->redirect('show', null, null, ['workspace' => $selectedWorkspaceName->value]);
+        $this->redirect('review', null, null, ['workspace' => $selectedWorkspaceName->value]);
     }
 
     /**
@@ -688,6 +696,7 @@ class WorkspaceController extends AbstractModuleController
 
                 $nodePathSegments = [];
                 $documentPathSegments = [];
+                $documentPathSegmentsNames = [];
                 foreach ($ancestors as $ancestor) {
                     $pathSegment = $ancestor->name ?: NodeName::fromString($ancestor->aggregateId->value);
                     // Don't include `sites` path as they are not needed
@@ -697,6 +706,7 @@ class WorkspaceController extends AbstractModuleController
                     }
                     if ($this->getNodeType($ancestor)->isOfType(NodeTypeNameFactory::NAME_DOCUMENT)) {
                         $documentPathSegments[] = $pathSegment;
+                        $documentPathSegmentsNames[] = $this->nodeLabelGenerator->getLabel($ancestor);
                         if (is_null($documentNode)) {
                             $documentNode = $ancestor;
                         }
@@ -732,16 +742,27 @@ class WorkspaceController extends AbstractModuleController
                             )
                         )
                     );
+
                     if (!isset($siteChanges[$siteNodeName]['siteNode'])) {
                         $siteChanges[$siteNodeName]['siteNode']
                             = $this->siteRepository->findOneByNodeName(SiteNodeName::fromString($siteNodeName));
                     }
-
+                    $documentNodeAddress = NodeAddress::create(
+                        $contentRepository->id,
+                        $selectedWorkspace->workspaceName,
+                        $documentNode->originDimensionSpacePoint->toDimensionSpacePoint(),
+                        $documentNode->aggregateId
+                    );
                     $siteChanges[$siteNodeName]['documents'][$documentPath]['documentNode'] = $documentNode;
+                    $siteChanges[$siteNodeName]['documents'][$documentPath]['documentBreadCrumb'] = array_reverse($documentPathSegmentsNames);
+
+                    $siteChanges[$siteNodeName]['documents'][$documentPath]['documentNodeAddress'] = $documentNodeAddress->toJson();
+
                     // We need to set `isNew` and `isMoved` on document level to make our JS behave as before.
                     if ($documentNode->equals($node)) {
                         $siteChanges[$siteNodeName]['documents'][$documentPath]['isNew'] = $change->created;
                         $siteChanges[$siteNodeName]['documents'][$documentPath]['isMoved'] = $change->moved;
+                        $siteChanges[$siteNodeName]['documents'][$documentPath]['isDeleted'] = $change->deleted;
                     }
 
                     // As for changes of type `delete` we are using nodes from the live workspace
@@ -753,6 +774,8 @@ class WorkspaceController extends AbstractModuleController
                         $change->originDimensionSpacePoint->toDimensionSpacePoint(),
                         $change->nodeAggregateId
                     );
+
+
 
                     $change = [
                         'node' => $node,
@@ -772,6 +795,7 @@ class WorkspaceController extends AbstractModuleController
                     }
                     $siteChanges[$siteNodeName]['documents'][$documentPath]['changes'][$relativePath] = $change;
                 }
+                $siteChanges[$siteNodeName]['documents'][$documentPath]['changesCount'] = count($siteChanges[$siteNodeName]['documents'][$documentPath]['changes']);
             }
         }
 

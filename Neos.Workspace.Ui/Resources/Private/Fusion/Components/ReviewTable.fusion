@@ -1,0 +1,47 @@
+##
+# Shows a list of changes in a workspace
+#
+prototype(Neos.Workspace.Ui:Component.ReviewTable) < prototype(Neos.Fusion:Component) {
+
+  siteChanges = null
+  canPublishToBaseWorkspace = true
+  selectedWorkspaceName = null
+  selectedWorkspaceLabel = ''
+
+  @private {
+    i18n = ${I18n.id('').source('Main').package('Neos.Workspace.Ui')}
+
+  }
+
+  renderer = afx`
+    <table id="workspaceTable" class="neos-table">
+        <thead>
+        <tr>
+          <th class="check neos-priority1" style="width: 30px">
+            <label for="check-all" class="neos-checkbox">
+              <input type="checkbox" id="check-all" /><span></span>
+            </label>
+          </th>
+          <th>{private.i18n.id('workspaces.selectAllCurrentChanges')}</th>
+          <th class="neos-action"></th>
+        </tr>
+        </thead>
+        <tbody>
+        <Neos.Fusion:Loop items={props.siteChanges} itemName="site">
+          <Neos.Fusion:Loop items={site.documents} itemKey="documentPath" itemName="document">
+            <Neos.Workspace.Ui:Component.ReviewDocumentTableRow
+              document={document}
+              documentPath={documentPath}/>
+            <Neos.Fusion:Loop items={document.changes} itemKey="relativePath" itemName="change">
+              <Neos.Workspace.Ui:Component.ReviewChangeTableRow
+                change={change}
+                relativePath={relativePath}
+                document={document}/>
+            </Neos.Fusion:Loop>
+          </Neos.Fusion:Loop>
+        </Neos.Fusion:Loop>
+
+        </tbody>
+    </table>
+  `
+}
