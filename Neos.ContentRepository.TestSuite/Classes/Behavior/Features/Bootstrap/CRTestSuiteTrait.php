@@ -162,7 +162,7 @@ trait CRTestSuiteTrait
             public ContentRepositoryReadModelInterface|null $instance;
             public function build(ContentRepositoryServiceFactoryDependencies $serviceFactoryDependencies): ContentRepositoryServiceInterface
             {
-                $this->instance = $serviceFactoryDependencies->projectionsAndCatchUpHooks->contentRepositoryProjection->getState();
+                $this->instance = $serviceFactoryDependencies->projectionsAndCatchUpHooks->contentGraphProjection->getState();
                 return new class implements ContentRepositoryServiceInterface
                 {
                 };

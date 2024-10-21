@@ -8,7 +8,7 @@ use Neos\ContentRepository\Core\Factory\ProjectionFactoryDependencies;
 
 /**
  * @api
- * @extends ProjectionFactoryInterface<ContentRepositoryProjectionInterface>
+ * @extends ProjectionFactoryInterface<ContentGraphProjectionInterface>
  */
 interface ContentRepositoryProjectionFactoryInterface extends ProjectionFactoryInterface
 {
@@ -18,5 +18,5 @@ interface ContentRepositoryProjectionFactoryInterface extends ProjectionFactoryI
     public function build(
         ProjectionFactoryDependencies $projectionFactoryDependencies,
         array $options,
-    ): ContentRepositoryProjectionInterface;
+    ): ContentGraphProjectionInterface;
 }

@@ -10,7 +10,7 @@ use Neos\ContentRepository\Core\ContentRepositoryReadModelInterface;
  * @extends ProjectionInterface<ContentRepositoryReadModelInterface>
  * @api for creating a custom content repository graph and workspace implementation, **not for users of the CR**
  */
-interface ContentRepositoryProjectionInterface extends ProjectionInterface
+interface ContentGraphProjectionInterface extends ProjectionInterface
 {
     public function getState(): ContentRepositoryReadModelInterface;
 }

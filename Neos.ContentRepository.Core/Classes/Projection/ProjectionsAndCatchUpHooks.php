@@ -15,11 +15,11 @@ final readonly class ProjectionsAndCatchUpHooks
      * @param array<class-string<ProjectionInterface<ProjectionStateInterface>>, CatchUpHookFactories> $catchUpHookFactoriesByProjectionClassName
      */
     public function __construct(
-        public ContentRepositoryProjectionInterface $contentRepositoryProjection,
+        public ContentGraphProjectionInterface $contentGraphProjection,
         Projections $additionalProjections,
         private array $catchUpHookFactoriesByProjectionClassName,
     ) {
-        $this->projections = $additionalProjections->with($this->contentRepositoryProjection);
+        $this->projections = $additionalProjections->with($this->contentGraphProjection);
     }
 
     /**

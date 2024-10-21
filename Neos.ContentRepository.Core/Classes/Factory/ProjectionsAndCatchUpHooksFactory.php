@@ -11,7 +11,7 @@ use Neos\ContentRepository\Core\Projection\ProjectionInterface;
 use Neos\ContentRepository\Core\Projection\Projections;
 use Neos\ContentRepository\Core\Projection\ProjectionsAndCatchUpHooks;
 use Neos\ContentRepository\Core\Projection\ProjectionStateInterface;
-use Neos\ContentRepository\Core\Projection\ContentRepositoryProjectionInterface;
+use Neos\ContentRepository\Core\Projection\ContentGraphProjectionInterface;
 
 /**
  * @api for custom framework integrations, not for users of the CR
@@ -54,7 +54,7 @@ final class ProjectionsAndCatchUpHooksFactory
      */
     public function build(ProjectionFactoryDependencies $projectionFactoryDependencies): ProjectionsAndCatchUpHooks
     {
-        $contentRepositoryProjection = null;
+        $contentGraphProjection = null;
         $projectionsArray = [];
         $catchUpHookFactoriesByProjectionClassName = [];
         foreach ($this->factories as $factoryDefinition) {
@@ -73,17 +73,17 @@ final class ProjectionsAndCatchUpHooksFactory
                 $options,
             );
             $catchUpHookFactoriesByProjectionClassName[$projection::class] = $catchUpHookFactories;
-            if ($projection instanceof ContentRepositoryProjectionInterface) {
-                $contentRepositoryProjection = $projection;
+            if ($projection instanceof ContentGraphProjectionInterface) {
+                $contentGraphProjection = $projection;
             } else {
                 $projectionsArray[] = $projection;
             }
         }
 
-        if ($contentRepositoryProjection === null) {
-            throw new \RuntimeException(sprintf('Content repository requires the %s to be registered.', ContentRepositoryProjectionInterface::class));
+        if ($contentGraphProjection === null) {
+            throw new \RuntimeException(sprintf('Content repository requires the %s to be registered.', ContentGraphProjectionInterface::class));
         }
 
-        return new ProjectionsAndCatchUpHooks($contentRepositoryProjection, Projections::fromArray($projectionsArray), $catchUpHookFactoriesByProjectionClassName);
+        return new ProjectionsAndCatchUpHooks($contentGraphProjection, Projections::fromArray($projectionsArray), $catchUpHookFactoriesByProjectionClassName);
     }
 }

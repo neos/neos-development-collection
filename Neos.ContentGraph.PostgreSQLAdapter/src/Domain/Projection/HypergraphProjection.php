@@ -45,7 +45,7 @@ use Neos\ContentRepository\Core\Infrastructure\DbalCheckpointStorage;
 use Neos\ContentRepository\Core\Infrastructure\DbalSchemaDiff;
 use Neos\ContentRepository\Core\Projection\CheckpointStorageStatusType;
 use Neos\ContentRepository\Core\Projection\ProjectionStatus;
-use Neos\ContentRepository\Core\Projection\ContentRepositoryProjectionInterface;
+use Neos\ContentRepository\Core\Projection\ContentGraphProjectionInterface;
 use Neos\EventStore\Model\Event\SequenceNumber;
 use Neos\EventStore\Model\EventEnvelope;
 
@@ -54,7 +54,7 @@ use Neos\EventStore\Model\EventEnvelope;
  *
  * @internal the parent Content Graph is public
  */
-final class HypergraphProjection implements ContentRepositoryProjectionInterface
+final class HypergraphProjection implements ContentGraphProjectionInterface
 {
     use ContentStreamForking;
     use NodeCreation;

@@ -101,7 +101,7 @@ final class ContentRepositoryFactory
                 $this->projectionFactoryDependencies->contentDimensionSource,
                 $this->userIdProvider,
                 $this->clock,
-                $this->projectionsAndCatchUpHooks->contentRepositoryProjection->getState()
+                $this->projectionsAndCatchUpHooks->contentGraphProjection->getState()
             );
         }
         return $this->contentRepository;

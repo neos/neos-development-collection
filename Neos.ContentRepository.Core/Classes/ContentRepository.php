@@ -29,7 +29,7 @@ use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Core\Projection\CatchUp;
 use Neos\ContentRepository\Core\Projection\CatchUpOptions;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphInterface;
-use Neos\ContentRepository\Core\Projection\ContentRepositoryProjectionInterface;
+use Neos\ContentRepository\Core\Projection\ContentGraphProjectionInterface;
 use Neos\ContentRepository\Core\Projection\ProjectionInterface;
 use Neos\ContentRepository\Core\Projection\ProjectionsAndCatchUpHooks;
 use Neos\ContentRepository\Core\Projection\ProjectionStateInterface;
@@ -144,7 +144,7 @@ final class ContentRepository
     {
         if (!isset($this->projectionStateCache)) {
             foreach ($this->projectionsAndCatchUpHooks->projections as $projection) {
-                if ($projection instanceof ContentRepositoryProjectionInterface) {
+                if ($projection instanceof ContentGraphProjectionInterface) {
                     continue;
                 }
                 $projectionState = $projection->getState();
