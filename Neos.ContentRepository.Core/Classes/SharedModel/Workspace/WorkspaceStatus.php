@@ -47,18 +47,6 @@ enum WorkspaceStatus: string implements \JsonSerializable
      */
     case OUTDATED = 'OUTDATED';
 
-    /**
-     * CONFLICT Example:
-     *
-     * CONFLICT is a special case of OUTDATED, but then an error happens during the rebasing.
-     *
-     * Workspace Review <----------------------------------- Workspace User-Foo
-     *      |                                                .             |
-     *      Content Stream A2 (current)  <-- Content Stream B2 (rebasing)  |
-     *                                                        Content Stream B1
-     */
-    case OUTDATED_CONFLICT = 'OUTDATED_CONFLICT';
-
     public function equals(self $other): bool
     {
         return $this->value === $other->value;
