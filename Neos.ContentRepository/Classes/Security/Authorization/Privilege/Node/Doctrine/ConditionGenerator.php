@@ -18,6 +18,7 @@ use Neos\Flow\Security\Context;
 use Neos\Flow\Security\Authorization\Privilege\Entity\Doctrine\ConditionGenerator as EntityConditionGenerator;
 use Neos\Flow\Security\Authorization\Privilege\Entity\Doctrine\DisjunctionGenerator;
 use Neos\Flow\Security\Authorization\Privilege\Entity\Doctrine\PropertyConditionGenerator;
+use Neos\Flow\Security\Authorization\Privilege\Entity\Doctrine\DecendantOfNodetypeConditionGenerator;
 use Neos\Flow\Security\Exception\InvalidPrivilegeException;
 use Neos\ContentRepository\Domain\Model\NodeData;
 use Neos\ContentRepository\Domain\Model\NodeInterface;
@@ -84,6 +85,17 @@ class ConditionGenerator extends EntityConditionGenerator
         }
 
         return new DisjunctionGenerator([$propertyConditionGenerator1->like($nodePath . '/%'), $propertyConditionGenerator2->equals($nodePath)]);
+    }
+
+    /**
+     * @param array $nodeTypes
+     * @return PropertyConditionGenerator
+     */
+    public function isDescendantOfNodetype($nodeTypes)
+    {
+        $propertyConditionGenerator1 = new DecendantOfNodetypeConditionGenerator($nodeTypes);
+       
+        return $propertyConditionGenerator1;
     }
 
     /**
