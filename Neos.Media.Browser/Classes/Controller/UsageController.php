@@ -20,6 +20,8 @@ use Neos\ContentRepository\Exception\NodeTypeNotFoundException;
 use Neos\Eel\FlowQuery\FlowQuery;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\Controller\ActionController;
+use Neos\Flow\Security\Authorization\PrivilegeManagerInterface;
+use Neos\Flow\Security\Context;
 use Neos\Media\Domain\Model\AssetInterface;
 use Neos\Media\Domain\Service\AssetService;
 use Neos\Neos\Controller\CreateContentContextTrait;
@@ -81,6 +83,18 @@ class UsageController extends ActionController
     protected $domainUserService;
 
     /**
+     * @Flow\Inject
+     * @var Context
+     */
+    protected $securityContext;
+
+    /**
+     * @Flow\Inject
+     * @var PrivilegeManagerInterface
+     */
+    protected $privilegeManager;
+
+    /**
      * Get Related Nodes for an asset
      *
      * @param AssetInterface $asset
@@ -116,6 +130,7 @@ class UsageController extends ActionController
             $workspace = $this->workspaceRepository->findByIdentifier($usage->getWorkspaceName());
             $accessible = $this->domainUserService->currentUserCanReadWorkspace($workspace);
 
+            $inaccessibleRelation['label'] = $this->getLabelForInaccessibleWorkspace($workspace);
             $inaccessibleRelation['nodeIdentifier'] = $usage->getNodeIdentifier();
             $inaccessibleRelation['workspaceName'] = $usage->getWorkspaceName();
             $inaccessibleRelation['workspace'] = $workspace;
@@ -165,7 +180,7 @@ class UsageController extends ActionController
             'inaccessibleRelations' => $inaccessibleRelations,
             'relatedNodes' => $relatedNodes,
             'contentDimensions' => $this->contentDimensionPresetSource->getAllPresets(),
-            'userWorkspace' => $userWorkspace
+            'userWorkspace' => $userWorkspace,
         ]);
     }
 
@@ -175,13 +190,28 @@ class UsageController extends ActionController
      */
     private function getNodeFrom(AssetUsageInNodeProperties $assetUsage)
     {
-        $context = $this->_contextFactory->create(
-            [
+        $context = $this->_contextFactory->create([
             'workspaceName' => $assetUsage->getWorkspaceName(),
             'dimensions' => $assetUsage->getDimensionValues(),
             'invisibleContentShown' => true,
-            'removedContentShown' => true]
-        );
+            'removedContentShown' => true
+        ]);
         return $context->getNodeByIdentifier($assetUsage->getNodeIdentifier());
+    }
+
+    private function getLabelForInaccessibleWorkspace(Workspace $workspace): string
+    {
+        $currentAccount = $this->securityContext->getAccount();
+
+        if ($currentAccount != null && $this->privilegeManager->isPrivilegeTargetGranted('Neos.Media.Browser:WorkspaceName')) {
+            if ($workspace->isPrivateWorkspace()) {
+                $owner = $workspace->getOwner();
+                return '(' . $owner->getLabel() . ')';
+            } else {
+                return '(' . $workspace->getTitle() . ')';
+            }
+        }
+
+        return '';
     }
 }
