@@ -39,11 +39,6 @@ use Neos\ContentRepository\Core\SharedModel\Exception\NodeConstraintException;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeTypeNotFound;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
-use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
-
-/** @codingStandardsIgnoreStart */
-/** @codingStandardsIgnoreEnd  */
 
 /**
  * @internal implementation detail of Command Handlers
@@ -110,6 +105,7 @@ trait NodeTypeChange
          * Constraint checks
          **************/
         // existence of content stream, node type and node aggregate
+        $this->requireContentStream($command->workspaceName, $commandHandlingDependencies);
         $contentGraph = $commandHandlingDependencies->getContentGraph($command->workspaceName);
         $expectedVersion = $this->getExpectedVersionOfContentStream($contentGraph->getContentStreamId(), $commandHandlingDependencies);
         $newNodeType = $this->requireNodeType($command->newNodeTypeName);
@@ -121,6 +117,7 @@ trait NodeTypeChange
 
         // node type detail checks
         $this->requireNodeTypeToNotBeOfTypeRoot($newNodeType);
+        $this->requireNodeTypeToNotBeAbstract($newNodeType);
         $this->requireTetheredDescendantNodeTypesToExist($newNodeType);
         $this->requireTetheredDescendantNodeTypesToNotBeOfTypeRoot($newNodeType);
 
@@ -261,6 +258,18 @@ trait NodeTypeChange
                     $childNodeAggregate->nodeName,
                     $this->requireNodeType($grandchildNodeAggregate->nodeTypeName)
                 );
+            }
+
+            foreach ($newNodeType->tetheredNodeTypeDefinitions as $tetheredNodeTypeDefinition) {
+                foreach ($childNodeAggregates as $childNodeAggregate) {
+                    if ($childNodeAggregate->nodeName?->equals($tetheredNodeTypeDefinition->name)) {
+                        $this->requireConstraintsImposedByHappyPathStrategyAreMet(
+                            $contentGraph,
+                            $childNodeAggregate,
+                            $this->requireNodeType($tetheredNodeTypeDefinition->nodeTypeName)
+                        );
+                    }
+                }
             }
         }
     }

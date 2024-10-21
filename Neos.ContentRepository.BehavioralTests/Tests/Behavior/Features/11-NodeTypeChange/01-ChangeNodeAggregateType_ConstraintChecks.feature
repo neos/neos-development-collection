@@ -11,9 +11,11 @@ Feature: Change node aggregate type - basic error cases
     """yaml
     'Neos.ContentRepository.Testing:AnotherRoot':
       superTypes:
-        'Neos.ContentRepository.Testing:Root': true
+        'Neos.ContentRepository:Root': true
     'Neos.ContentRepository.Testing:Tethered': []
     'Neos.ContentRepository.Testing:Simple': []
+    'Neos.ContentRepository.Testing:AbstractNode':
+      abstract: true
     'Neos.ContentRepository.Testing:ParentNodeType':
       childNodes:
         tethered:
@@ -48,9 +50,9 @@ Feature: Change node aggregate type - basic error cases
     And using identifier "default", I define a content repository
     And I am in content repository "default"
     And the command CreateRootWorkspace is executed with payload:
-      | Key                  | Value                |
-      | workspaceName        | "live"               |
-      | newContentStreamId   | "cs-identifier"      |
+      | Key                | Value           |
+      | workspaceName      | "live"          |
+      | newContentStreamId | "cs-identifier" |
     And I am in workspace "live" and dimension space point {"language":"de"}
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key             | Value                         |
@@ -59,8 +61,8 @@ Feature: Change node aggregate type - basic error cases
     And the following CreateNodeAggregateWithNode commands are executed:
       | nodeAggregateId        | nodeName | parentNodeAggregateId  | nodeTypeName                                  | tetheredDescendantNodeAggregateIds |
       | sir-david-nodenborough | parent   | lady-eleonode-rootford | Neos.ContentRepository.Testing:ParentNodeType | {"tethered": "nodewyn-tetherton"}  |
-      | nody-mc-nodeface       |          | sir-david-nodenborough | Neos.ContentRepository.Testing:Simple         |                                    |
-      | nodimus-prime          |          | nodewyn-tetherton      | Neos.ContentRepository.Testing:Simple         |                                    |
+      | nody-mc-nodeface       | null         | sir-david-nodenborough | Neos.ContentRepository.Testing:Simple         |  {}                                  |
+      | nodimus-prime          | null         | nodewyn-tetherton      | Neos.ContentRepository.Testing:Simple         |    {}                                |
 
   Scenario: Try to change the node aggregate type in a workspace that currently does not exist
     When the command ChangeNodeAggregateType is executed with payload and exceptions are caught:
@@ -70,6 +72,18 @@ Feature: Change node aggregate type - basic error cases
       | newNodeTypeName | "Neos.ContentRepository.Testing:ChildOfNodeTypeA" |
       | strategy        | "happypath"                                       |
     Then the last command should have thrown an exception of type "WorkspaceDoesNotExist"
+
+  Scenario: Try to change the node aggregate type in a workspace whose content stream is closed
+    When the command CloseContentStream is executed with payload:
+      | Key             | Value           |
+      | contentStreamId | "cs-identifier" |
+    And the command ChangeNodeAggregateType is executed with payload and exceptions are caught:
+      | Key             | Value                                             |
+      | workspaceName   | "live"                                            |
+      | nodeAggregateId | "sir-david-nodenborough"                          |
+      | newNodeTypeName | "Neos.ContentRepository.Testing:ChildOfNodeTypeA" |
+      | strategy        | "happypath"                                       |
+    Then the last command should have thrown an exception of type "ContentStreamIsClosed"
 
   Scenario: Try to change the type on a non-existing node aggregate
     When the command ChangeNodeAggregateType is executed with payload and exceptions are caught:
@@ -85,7 +99,7 @@ Feature: Change node aggregate type - basic error cases
       | nodeAggregateId | "lady-eleonode-rootford"                     |
       | newNodeTypeName | "Neos.ContentRepository.Testing:AnotherRoot" |
       | strategy        | "happypath"                                  |
-    Then the last command should have thrown an exception of type "NodeAggregateIsRoot"
+    Then the last command should have thrown an exception of type "NodeTypeIsOfTypeRoot"
 
   Scenario: Try to change the type of a tethered node aggregate:
     When the command ChangeNodeAggregateType is executed with payload and exceptions are caught:
@@ -103,6 +117,14 @@ Feature: Change node aggregate type - basic error cases
       | strategy        | "happypath"                                |
     Then the last command should have thrown an exception of type "NodeTypeNotFound"
 
+  Scenario: Try to change a node aggregate to an abstract type
+    When the command ChangeNodeAggregateType is executed with payload and exceptions are caught:
+      | Key             | Value                                         |
+      | nodeAggregateId | "sir-david-nodenborough"                      |
+      | newNodeTypeName | "Neos.ContentRepository.Testing:AbstractNode" |
+      | strategy        | "happypath"                                   |
+    Then the last command should have thrown an exception of type "NodeTypeIsAbstract"
+
   Scenario: Try to change to a node type disallowed by the parent node
     When the command ChangeNodeAggregateType is executed with payload and exceptions are caught:
       | Key             | Value                                      |
@@ -111,9 +133,39 @@ Feature: Change node aggregate type - basic error cases
       | strategy        | "happypath"                                |
     Then the last command should have thrown an exception of type "NodeConstraintException"
 
-  Scenario: Try to change to a node type that is not allowed by the grand parent aggregate inside an tethered parent aggregate
+  Scenario: Try to change to a node type disallowed by the parent node in a variant
+    When the command MoveNodeAggregate is executed with payload:
+      | Key                                 | Value                    |
+      | nodeAggregateId                     | "nody-mc-nodeface"       |
+      | dimensionSpacePoint                 | {"language": "gsw"}      |
+      | newParentNodeAggregateId            | "lady-eleonode-rootford" |
+      | newSucceedingSiblingNodeAggregateId | null                     |
+      | relationDistributionStrategy        | "scatter"                |
+    And the command ChangeNodeAggregateType is executed with payload and exceptions are caught:
+      | Key             | Value                                      |
+      | nodeAggregateId | "nody-mc-nodeface"                         |
+      | newNodeTypeName | "Neos.ContentRepository.Testing:NodeTypeB" |
+      | strategy        | "happypath"                                |
+    Then the last command should have thrown an exception of type "NodeConstraintException"
+
+  Scenario: Try to change to a node type that is not allowed by the grand parent aggregate inside a tethered parent aggregate
 
     When the command ChangeNodeAggregateType is executed with payload and exceptions are caught:
+      | Key             | Value                                      |
+      | nodeAggregateId | "nodimus-prime"                            |
+      | newNodeTypeName | "Neos.ContentRepository.Testing:NodeTypeB" |
+      | strategy        | "happypath"                                |
+    Then the last command should have thrown an exception of type "NodeConstraintException"
+
+  Scenario: Try to change to a node type that is not allowed by the grand parent aggregate inside a tethered parent aggregate in a variant
+    When the command MoveNodeAggregate is executed with payload:
+      | Key                                 | Value                    |
+      | nodeAggregateId                     | "nodimus-prime"          |
+      | dimensionSpacePoint                 | {"language": "gsw"}      |
+      | newParentNodeAggregateId            | "lady-eleonode-rootford" |
+      | newSucceedingSiblingNodeAggregateId | null                     |
+      | relationDistributionStrategy        | "scatter"                |
+    And the command ChangeNodeAggregateType is executed with payload and exceptions are caught:
       | Key             | Value                                      |
       | nodeAggregateId | "nodimus-prime"                            |
       | newNodeTypeName | "Neos.ContentRepository.Testing:NodeTypeB" |

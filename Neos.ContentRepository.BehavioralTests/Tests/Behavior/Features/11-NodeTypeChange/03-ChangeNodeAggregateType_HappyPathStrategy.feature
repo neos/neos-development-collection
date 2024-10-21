@@ -3,26 +3,34 @@ Feature: Change node aggregate type - behavior of HAPPYPATH strategy
 
   As a user of the CR I want to change the type of a node aggregate.
 
-  # @todo change type to a type with a tethered child with the same name as one of the original one's but of different type
   Background:
     Given using the following content dimensions:
       | Identifier | Values  | Generalizations |
       | language   | de, gsw | gsw->de         |
     And using the following node types:
     """yaml
-    'Neos.ContentRepository.Testing:AutoCreated': []
+    'Neos.ContentRepository.Testing:Tethered': []
+    'Neos.ContentRepository.Testing:NodeTypeCCollection':
+      childNodes:
+        tethered:
+          type: 'Neos.ContentRepository.Testing:Tethered'
+      constraints:
+        nodeTypes:
+          '*': TRUE
+          'Neos.ContentRepository.Testing:NodeTypeA': FALSE
+          'Neos.ContentRepository.Testing:NodeTypeB': FALSE
     'Neos.ContentRepository.Testing:ParentNodeType':
       childNodes:
-        autocreated:
-          type: 'Neos.ContentRepository.Testing:AutoCreated'
+        tethered:
+          type: 'Neos.ContentRepository.Testing:Tethered'
           constraints:
             nodeTypes:
               '*': TRUE
               'Neos.ContentRepository.Testing:NodeTypeB': FALSE
     'Neos.ContentRepository.Testing:ParentNodeTypeB':
       childNodes:
-        autocreated:
-          type: 'Neos.ContentRepository.Testing:AutoCreated'
+        tethered:
+          type: 'Neos.ContentRepository.Testing:Tethered'
           constraints:
             nodeTypes:
               '*': TRUE
@@ -31,54 +39,84 @@ Feature: Change node aggregate type - behavior of HAPPYPATH strategy
         nodeTypes:
           '*': TRUE
           'Neos.ContentRepository.Testing:NodeTypeA': FALSE
-    'Neos.ContentRepository.Testing:ChildOfNodeTypeA': []
-    'Neos.ContentRepository.Testing:ChildOfNodeTypeB': []
+    'Neos.ContentRepository.Testing:ParentNodeTypeC':
+      childNodes:
+        tethered:
+          type: 'Neos.ContentRepository.Testing:NodeTypeCCollection'
+      constraints:
+        nodeTypes:
+          '*': TRUE
+          'Neos.ContentRepository.Testing:NodeTypeA': FALSE
+    'Neos.ContentRepository.Testing:GrandParentNodeTypeA':
+      childNodes:
+        tethered:
+          type: 'Neos.ContentRepository.Testing:ParentNodeType'
+    'Neos.ContentRepository.Testing:GrandParentNodeTypeB':
+      childNodes:
+        tethered:
+          type: 'Neos.ContentRepository.Testing:ParentNodeTypeB'
+    'Neos.ContentRepository.Testing:GrandParentNodeTypeC':
+      childNodes:
+        tethered:
+          type: 'Neos.ContentRepository.Testing:ParentNodeTypeC'
+    'Neos.ContentRepository.Testing:ChildOfNodeTypeA':
+      properties:
+        defaultTextA:
+          type: string
+          defaultValue: 'defaultTextA'
+        commonDefaultText:
+          type: string
+          defaultValue: 'commonDefaultTextA'
+    'Neos.ContentRepository.Testing:ChildOfNodeTypeB':
+      properties:
+        defaultTextB:
+          type: string
+          defaultValue: 'defaultTextB'
+        commonDefaultText:
+          type: string
+          defaultValue: 'commonDefaultTextB'
     'Neos.ContentRepository.Testing:NodeTypeA':
       childNodes:
         child-of-type-a:
           type: 'Neos.ContentRepository.Testing:ChildOfNodeTypeA'
       properties:
-        text:
+        defaultTextA:
           type: string
-          defaultValue: 'text'
+          defaultValue: 'defaultTextA'
+        commonDefaultText:
+          type: string
+          defaultValue: 'commonDefaultTextA'
     'Neos.ContentRepository.Testing:NodeTypeB':
       childNodes:
         child-of-type-b:
           type: 'Neos.ContentRepository.Testing:ChildOfNodeTypeB'
       properties:
-        otherText:
+        defaultTextB:
           type: string
-          defaultValue: 'otherText'
+          defaultValue: 'defaultTextB'
+        commonDefaultText:
+          type: string
+          defaultValue: 'commonDefaultTextB'
     """
     And using identifier "default", I define a content repository
     And I am in content repository "default"
     And the command CreateRootWorkspace is executed with payload:
-      | Key                  | Value                |
-      | workspaceName        | "live"               |
-      | newContentStreamId   | "cs-identifier"      |
+      | Key                | Value           |
+      | workspaceName      | "live"          |
+      | newContentStreamId | "cs-identifier" |
     And I am in workspace "live" and dimension space point {"language":"de"}
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key             | Value                         |
       | nodeAggregateId | "lady-eleonode-rootford"      |
       | nodeTypeName    | "Neos.ContentRepository:Root" |
-
-    When the command CreateNodeAggregateWithNodeAndSerializedProperties is executed with payload:
-      | Key                       | Value                                           |
-      | nodeAggregateId           | "sir-david-nodenborough"                        |
-      | nodeTypeName              | "Neos.ContentRepository.Testing:ParentNodeType" |
-      | originDimensionSpacePoint | {"language":"de"}                               |
-      | parentNodeAggregateId     | "lady-eleonode-rootford"                        |
-      | nodeName                  | "parent"                                        |
-      | initialPropertyValues     | {}                                              |
-
+    And the following CreateNodeAggregateWithNode commands are executed:
+      | nodeAggregateId        | originDimensionSpacePoint | parentNodeAggregateId  | nodeName | nodeTypeName                                  |
+      | sir-david-nodenborough | {"language":"de"}         | lady-eleonode-rootford | parent   | Neos.ContentRepository.Testing:ParentNodeType |
 
   Scenario: Try to change to a node type that disallows already present children with the HAPPYPATH conflict resolution strategy
-    When the command CreateNodeAggregateWithNodeAndSerializedProperties is executed with payload:
-      | Key                       | Value                                      |
-      | nodeAggregateId           | "nody-mc-nodeface"                         |
-      | nodeTypeName              | "Neos.ContentRepository.Testing:NodeTypeA" |
-      | originDimensionSpacePoint | {"language":"de"}                          |
-      | parentNodeAggregateId     | "sir-david-nodenborough"                   |
+    When the following CreateNodeAggregateWithNode commands are executed:
+      | nodeAggregateId  | originDimensionSpacePoint | parentNodeAggregateId  | nodeName | nodeTypeName                             |
+      | nody-mc-nodeface | {"language":"de"}         | sir-david-nodenborough | null     | Neos.ContentRepository.Testing:NodeTypeA |
 
     When the command ChangeNodeAggregateType is executed with payload and exceptions are caught:
       | Key             | Value                                            |
@@ -88,22 +126,10 @@ Feature: Change node aggregate type - behavior of HAPPYPATH strategy
     Then the last command should have thrown an exception of type "NodeConstraintException"
 
   Scenario: Try to change to a node type that disallows already present grandchildren with the HAPPYPATH conflict resolution strategy
-    When the command CreateNodeAggregateWithNodeAndSerializedProperties is executed with payload:
-      | Key                                | Value                                           |
-      | nodeAggregateId                    | "parent2-na"                                    |
-      | nodeTypeName                       | "Neos.ContentRepository.Testing:ParentNodeType" |
-      | originDimensionSpacePoint          | {"language":"de"}                               |
-      | parentNodeAggregateId              | "lady-eleonode-rootford"                        |
-      | nodeName                           | "parent2"                                       |
-      | tetheredDescendantNodeAggregateIds | {"autocreated": "autocreated-child"}            |
-
-    When the command CreateNodeAggregateWithNodeAndSerializedProperties is executed with payload:
-      | Key                       | Value                                      |
-      | nodeAggregateId           | "nody-mc-nodeface"                         |
-      | nodeTypeName              | "Neos.ContentRepository.Testing:NodeTypeA" |
-      | originDimensionSpacePoint | {"language":"de"}                          |
-      | parentNodeAggregateId     | "autocreated-child"                        |
-      | initialPropertyValues     | {}                                         |
+    When the following CreateNodeAggregateWithNode commands are executed:
+      | nodeAggregateId  | originDimensionSpacePoint | parentNodeAggregateId  | nodeName | nodeTypeName                                  | initialPropertyValues | tetheredDescendantNodeAggregateIds |
+      | parent2-na       | {"language":"de"}         | lady-eleonode-rootford | parent2  | Neos.ContentRepository.Testing:ParentNodeType | {}                    | {"tethered": "nodewyn-tetherton"}  |
+      | nody-mc-nodeface | {"language":"de"}         | nodewyn-tetherton      | null     | Neos.ContentRepository.Testing:NodeTypeA      | {}                    | {}                                 |
 
     When the command ChangeNodeAggregateType is executed with payload and exceptions are caught:
       | Key             | Value                                            |
@@ -112,43 +138,175 @@ Feature: Change node aggregate type - behavior of HAPPYPATH strategy
       | strategy        | "happypath"                                      |
     Then the last command should have thrown an exception of type "NodeConstraintException"
 
-  Scenario: Change node type successfully
-    When the command CreateNodeAggregateWithNodeAndSerializedProperties is executed with payload:
-      | Key                                | Value                                      |
-      | nodeAggregateId                    | "nodea-identifier-de"                      |
-      | nodeTypeName                       | "Neos.ContentRepository.Testing:NodeTypeA" |
-      | originDimensionSpacePoint          | {"language":"de"}                          |
-      | parentNodeAggregateId              | "lady-eleonode-rootford"                   |
-      | initialPropertyValues              | {}                                         |
-      | tetheredDescendantNodeAggregateIds | { "child-of-type-a": "child-of-type-a-id"} |
+  Scenario: Try to change to a node type with a differently typed tethered child that disallows already present (grand)children with the HAPPYPATH conflict resolution strategy
+    When the following CreateNodeAggregateWithNode commands are executed:
+      | nodeAggregateId  | originDimensionSpacePoint | parentNodeAggregateId  | nodeName | nodeTypeName                                  | initialPropertyValues | tetheredDescendantNodeAggregateIds |
+      | nody-mc-nodeface | {"language":"de"}         | lady-eleonode-rootford | parent2  | Neos.ContentRepository.Testing:ParentNodeType | {}                    | {"tethered": "nodewyn-tetherton"}  |
+      | nodimus-prime    | {"language":"de"}         | nodewyn-tetherton      | null     | Neos.ContentRepository.Testing:NodeTypeA      | {}                    | {}                                 |
+
+    When the command ChangeNodeAggregateType is executed with payload and exceptions are caught:
+      | Key             | Value                                            |
+      | nodeAggregateId | "nody-mc-nodeface"                               |
+      | newNodeTypeName | "Neos.ContentRepository.Testing:ParentNodeTypeC" |
+      | strategy        | "happypath"                                      |
+    Then the last command should have thrown an exception of type "NodeConstraintException"
+
+  Scenario: Try to change to a node type whose tethered child that is also type-changed disallows already present children with the HAPPYPATH conflict resolution strategy (recursive case)
+    When the following CreateNodeAggregateWithNode commands are executed:
+      | nodeAggregateId  | originDimensionSpacePoint | parentNodeAggregateId  | nodeTypeName                                        | tetheredDescendantNodeAggregateIds                                          |
+      | nody-mc-nodeface | {"language":"de"}         | lady-eleonode-rootford | Neos.ContentRepository.Testing:GrandParentNodeTypeA | {"tethered": "nodewyn-tetherton", "tethered/tethered": "nodimer-tetherton"} |
+      | nodingers-cat    | {"language": "de"}        | nodewyn-tetherton      | Neos.ContentRepository.Testing:NodeTypeA            | {}                                                                          |
+
+    When the command ChangeNodeAggregateType is executed with payload and exceptions are caught:
+      | Key             | Value                                                 |
+      | nodeAggregateId | "nody-mc-nodeface"                                    |
+      | newNodeTypeName | "Neos.ContentRepository.Testing:GrandParentNodeTypeB" |
+      | strategy        | "happypath"                                           |
+    Then the last command should have thrown an exception of type "NodeConstraintException"
+
+  Scenario: Try to change to a node type whose tethered child that is also type-changed disallows already present (grand)children with the HAPPYPATH conflict resolution strategy (recursive case)
+    When the following CreateNodeAggregateWithNode commands are executed:
+      | nodeAggregateId  | originDimensionSpacePoint | parentNodeAggregateId  | nodeTypeName                                        | tetheredDescendantNodeAggregateIds                                          |
+      | nody-mc-nodeface | {"language":"de"}         | lady-eleonode-rootford | Neos.ContentRepository.Testing:GrandParentNodeTypeA | {"tethered": "nodewyn-tetherton", "tethered/tethered": "nodimer-tetherton"} |
+      | nodingers-cat    | {"language": "de"}        | nodimer-tetherton      | Neos.ContentRepository.Testing:NodeTypeA            | {}                                                                          |
+
+    When the command ChangeNodeAggregateType is executed with payload and exceptions are caught:
+      | Key             | Value                                                 |
+      | nodeAggregateId | "nody-mc-nodeface"                                    |
+      | newNodeTypeName | "Neos.ContentRepository.Testing:GrandParentNodeTypeB" |
+      | strategy        | "happypath"                                           |
+    Then the last command should have thrown an exception of type "NodeConstraintException"
+
+  Scenario: Try to change to a node type whose tethered child that is also type-changed has a differently typed tethered child that disallows already present grandchildren with the HAPPYPATH conflict resolution strategy (recursive case)
+    When the following CreateNodeAggregateWithNode commands are executed:
+      | nodeAggregateId  | originDimensionSpacePoint | parentNodeAggregateId  | nodeTypeName                                        | tetheredDescendantNodeAggregateIds                                          |
+      | nody-mc-nodeface | {"language":"de"}         | lady-eleonode-rootford | Neos.ContentRepository.Testing:GrandParentNodeTypeB | {"tethered": "nodewyn-tetherton", "tethered/tethered": "nodimer-tetherton"} |
+      | nodingers-cat    | {"language": "de"}        | nodimer-tetherton      | Neos.ContentRepository.Testing:NodeTypeB            | {}                                                                          |
+
+    When the command ChangeNodeAggregateType is executed with payload and exceptions are caught:
+      | Key             | Value                                                 |
+      | nodeAggregateId | "nody-mc-nodeface"                                    |
+      | newNodeTypeName | "Neos.ContentRepository.Testing:GrandParentNodeTypeC" |
+      | strategy        | "happypath"                                           |
+    Then the last command should have thrown an exception of type "NodeConstraintException"
+
+
+  Scenario: Change node type with tethered children
+    When the following CreateNodeAggregateWithNode commands are executed:
+      | nodeAggregateId  | originDimensionSpacePoint | parentNodeAggregateId  | nodeTypeName                             | initialPropertyValues | tetheredDescendantNodeAggregateIds        |
+      | nody-mc-nodeface | {"language":"de"}         | lady-eleonode-rootford | Neos.ContentRepository.Testing:NodeTypeA | {}                    | { "child-of-type-a": "nodewyn-tetherton"} |
 
     When the command CreateNodeVariant is executed with payload:
-      | Key             | Value                 |
-      | nodeAggregateId | "nodea-identifier-de" |
-      | sourceOrigin    | {"language":"de"}     |
-      | targetOrigin    | {"language":"gsw"}    |
+      | Key             | Value              |
+      | nodeAggregateId | "nody-mc-nodeface" |
+      | sourceOrigin    | {"language":"de"}  |
+      | targetOrigin    | {"language":"gsw"} |
 
     When the command ChangeNodeAggregateType is executed with payload:
       | Key                                | Value                                      |
-      | nodeAggregateId                    | "nodea-identifier-de"                      |
+      | nodeAggregateId                    | "nody-mc-nodeface"                         |
       | newNodeTypeName                    | "Neos.ContentRepository.Testing:NodeTypeB" |
       | strategy                           | "happypath"                                |
-      | tetheredDescendantNodeAggregateIds | { "child-of-type-b": "child-of-type-b-id"} |
+      | tetheredDescendantNodeAggregateIds | { "child-of-type-b": "nodimer-tetherton"}  |
 
     # the type has changed
     When I am in workspace "live" and dimension space point {"language":"de"}
-    Then I expect node aggregate identifier "nodea-identifier-de" to lead to node cs-identifier;nodea-identifier-de;{"language":"de"}
+    Then I expect node aggregate identifier "nody-mc-nodeface" to lead to node cs-identifier;nody-mc-nodeface;{"language":"de"}
     And I expect this node to be of type "Neos.ContentRepository.Testing:NodeTypeB"
+    And I expect this node to have the following properties:
+      | Key  | Value                |
+      # Not modified because it was already present
+      | commonDefaultText | "commonDefaultTextA" |
+      | defaultTextB      | "defaultTextB"       |
+      # defaultTextA missing because it does not exist in NodeTypeB
+
+    And I expect this node to have the following child nodes:
+      | Name            | NodeDiscriminator                                 |
+      # the tethered child of the old node type has not been removed with this strategy.
+      | child-of-type-a | cs-identifier;nodewyn-tetherton;{"language":"de"} |
+      | child-of-type-b | cs-identifier;nodimer-tetherton;{"language":"de"} |
+
+    And I expect node aggregate identifier "nodewyn-tetherton" to lead to node cs-identifier;nodewyn-tetherton;{"language":"de"}
+    And I expect this node to have the following properties:
+      | Key  | Value                |
+      | commonDefaultText | "commonDefaultTextA" |
+      | defaultTextB      | "defaultTextA"       |
+
+    And I expect node aggregate identifier "nodimer-tetherton" to lead to node cs-identifier;nodewyn-tetherton;{"language":"de"}
+    And I expect this node to have the following properties:
+      | Key  | Value                |
+      | commonDefaultText | "commonDefaultTextB" |
+      | defaultTextB      | "defaultTextB"       |
 
     When I am in workspace "live" and dimension space point {"language":"gsw"}
-    Then I expect node aggregate identifier "nodea-identifier-de" to lead to node cs-identifier;nodea-identifier-de;{"language":"gsw"}
+    Then I expect node aggregate identifier "nody-mc-nodeface" to lead to node cs-identifier;nody-mc-nodeface;{"language":"gsw"}
     And I expect this node to be of type "Neos.ContentRepository.Testing:NodeTypeB"
 
-    # the old "childOfTypeA" has not been removed with this strategy.
     And I expect this node to have the following child nodes:
-      | Name            | NodeDiscriminator                                   |
-      | child-of-type-a | cs-identifier;child-of-type-a-id;{"language":"gsw"} |
-      | child-of-type-b | cs-identifier;child-of-type-b-id;{"language":"gsw"} |
+      | Name            | NodeDiscriminator                                  |
+      # the tethered child of the old node type has not been removed with this strategy.
+      | child-of-type-a | cs-identifier;nodewyn-tetherton;{"language":"gsw"} |
+      | child-of-type-b | cs-identifier;nodimer-tetherton;{"language":"gsw"} |
 
+    And I expect node aggregate identifier "nodewyn-tetherton" to lead to node cs-identifier;nodewyn-tetherton;{"language":"gsw"}
+    And I expect this node to have the following properties:
+      | Key  | Value                |
+      | commonDefaultText | "commonDefaultTextA" |
+      | defaultTextB      | "defaultTextA"       |
+
+    And I expect node aggregate identifier "nodimer-tetherton" to lead to node cs-identifier;nodewyn-tetherton;{"language":"gsw"}
+    And I expect this node to have the following properties:
+      | Key  | Value                |
+      | commonDefaultText | "commonDefaultTextB" |
+      | defaultTextB      | "defaultTextB"       |
+
+  Scenario: Change node type, recursively also changing the types of tethered descendants
+    When the following CreateNodeAggregateWithNode commands are executed:
+      | nodeAggregateId  | originDimensionSpacePoint | parentNodeAggregateId  | nodeTypeName                                  | initialPropertyValues | tetheredDescendantNodeAggregateIds |
+      | nody-mc-nodeface | {"language":"de"}         | lady-eleonode-rootford | Neos.ContentRepository.Testing:ParentNodeType | {}                    | {"tethered": "nodewyn-tetherton", "tethered/tethered": "nodimer-tetherton"}  |
+
+    When the command CreateNodeVariant is executed with payload:
+      | Key             | Value              |
+      | nodeAggregateId | "nody-mc-nodeface" |
+      | sourceOrigin    | {"language":"de"}  |
+      | targetOrigin    | {"language":"gsw"} |
+
+    When the command ChangeNodeAggregateType is executed with payload:
+      | Key             | Value                                      |
+      | nodeAggregateId | "nody-mc-nodeface"                         |
+      | newNodeTypeName | "Neos.ContentRepository.Testing:ParentNodeTypeC" |
+      | strategy        | "happypath"                                |
+
+    When I am in workspace "live" and dimension space point {"language":"de"}
+    Then I expect node aggregate identifier "nody-mc-nodeface" to lead to node cs-identifier;nody-mc-nodeface;{"language":"de"}
+    And I expect this node to be of type "Neos.ContentRepository.Testing:GrandParentNodeTypeC"
+    And I expect this node to have the following child nodes:
+      | Name     | NodeDiscriminator                                 |
+      | tethered | cs-identifier;nodewyn-tetherton;{"language":"de"} |
+
+    And I expect node aggregate identifier "nodewyn-tetherton" to lead to node cs-identifier;nodewyn-tetherton;{"language":"de"}
+    And I expect this node to be of type "Neos.ContentRepository.Testing:ParentNodeTypeC"
+    And I expect this node to have the following child nodes:
+      | Name     | NodeDiscriminator                                 |
+      | tethered | cs-identifier;nodimer-tetherton;{"language":"de"} |
+
+    And I expect node aggregate identifier "nodimer-tetherton" to lead to node cs-identifier;nodimer-tetherton;{"language":"de"}
+    And I expect this node to be of type "Neos.ContentRepository.Testing:NodeTypeCCollection"
+
+    When I am in workspace "live" and dimension space point {"language":"gsw"}
+    Then I expect node aggregate identifier "nody-mc-nodeface" to lead to node cs-identifier;nody-mc-nodeface;{"language":"gsw"}
+    And I expect this node to be of type "Neos.ContentRepository.Testing:GrandParentNodeTypeC"
+    And I expect this node to have the following child nodes:
+      | Name     | NodeDiscriminator                                 |
+      | tethered | cs-identifier;nodewyn-tetherton;{"language":"gsw"} |
+
+    And I expect node aggregate identifier "nodewyn-tetherton" to lead to node cs-identifier;nodewyn-tetherton;{"language":"gsw"}
+    And I expect this node to be of type "Neos.ContentRepository.Testing:ParentNodeTypeC"
+    And I expect this node to have the following child nodes:
+      | Name     | NodeDiscriminator                                 |
+      | tethered | cs-identifier;nodimer-tetherton;{"language":"gsw"} |
+
+    And I expect node aggregate identifier "nodimer-tetherton" to lead to node cs-identifier;nodimer-tetherton;{"language":"gsw"}
+    And I expect this node to be of type "Neos.ContentRepository.Testing:NodeTypeCCollection"
 #      #missing default property values of target type must be set
 #      #extra properties of source target type must be removed (TBD)
