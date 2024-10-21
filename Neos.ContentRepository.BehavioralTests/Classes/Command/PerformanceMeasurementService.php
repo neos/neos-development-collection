@@ -36,9 +36,7 @@ use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryI
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateClassification;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
-use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceDescription;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
-use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceTitle;
 use Neos\ContentRepositoryRegistry\Factory\EventStore\DoctrineEventStoreFactory;
 use Neos\EventStore\Model\EventStream\ExpectedVersion;
 
@@ -81,8 +79,6 @@ class PerformanceMeasurementService implements ContentRepositoryServiceInterface
     {
         $this->contentRepository->handle(CreateRootWorkspace::create(
             WorkspaceName::forLive(),
-            WorkspaceTitle::fromString('live'),
-            WorkspaceDescription::fromString(''),
             $this->contentStreamId
         ));
 

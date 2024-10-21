@@ -44,7 +44,6 @@ Feature: Workspace based content publishing
       | workspaceName      | "user-test"          |
       | baseWorkspaceName  | "live"               |
       | newContentStreamId | "user-cs-identifier" |
-      | workspaceOwner     | "owner-identifier"   |
 
   Scenario: Basic events are emitted
     # LIVE workspace
@@ -58,8 +57,6 @@ Feature: Workspace based content publishing
     And event at index 0 is of type "RootWorkspaceWasCreated" with payload:
       | Key                  | Expected                 |
       | workspaceName        | "live"                   |
-      | workspaceTitle       | "Live"                   |
-      | workspaceDescription | "The workspace \"live\"" |
       | newContentStreamId   | "cs-identifier"          |
 
     # USER workspace
@@ -74,10 +71,7 @@ Feature: Workspace based content publishing
       | Key                  | Expected                      |
       | workspaceName        | "user-test"                   |
       | baseWorkspaceName    | "live"                        |
-      | workspaceTitle       | "User-test"                   |
-      | workspaceDescription | "The workspace \"user-test\"" |
       | newContentStreamId   | "user-cs-identifier"          |
-      | workspaceOwner       | "owner-identifier"            |
 
   Scenario: modify the property in the nested workspace and publish afterwards works
     When the command SetNodeProperties is executed with payload:

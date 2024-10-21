@@ -19,7 +19,6 @@ use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Eel\FlowQuery\FlowQuery;
 use Neos\Flow\Annotations as Flow;
 use Neos\Neos\Utility\NodeTypeWithFallbackProvider;
-use Neos\Utility\ObjectAccess;
 
 /**
  * This filter implementation contains specific behavior for use on ContentRepository
@@ -122,14 +121,7 @@ class FilterOperation extends \Neos\Eel\FlowQuery\Operations\Object\FilterOperat
      */
     protected function getPropertyPath($element, $propertyPath)
     {
-        if ($propertyPath === '_identifier') {
-            // TODO: deprecated (Neos <9 case)
-            return $element->aggregateId->value;
-        } elseif ($propertyPath[0] === '_') {
-            return ObjectAccess::getPropertyPath($element, substr($propertyPath, 1));
-        } else {
-            return $element->getProperty($propertyPath);
-        }
+        return $element->getProperty($propertyPath);
     }
 
     /**

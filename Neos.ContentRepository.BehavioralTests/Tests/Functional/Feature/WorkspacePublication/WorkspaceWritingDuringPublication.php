@@ -37,9 +37,7 @@ use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryI
 use Neos\ContentRepository\Core\SharedModel\Exception\ContentStreamIsClosed;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
-use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceDescription;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
-use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceTitle;
 use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\CRTestSuiteTrait;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\EventStore\Exception\ConcurrencyException;
@@ -106,8 +104,6 @@ class WorkspaceWritingDuringPublication extends FunctionalTestCase
         $origin = OriginDimensionSpacePoint::createWithoutDimensions();
         $contentRepository->handle(CreateRootWorkspace::create(
             WorkspaceName::forLive(),
-            new WorkspaceTitle('Live'),
-            new WorkspaceDescription('The live workspace'),
             ContentStreamId::fromString('live-cs-id')
         ));
         $contentRepository->handle(CreateRootNodeAggregateWithNode::create(
@@ -128,8 +124,6 @@ class WorkspaceWritingDuringPublication extends FunctionalTestCase
         $contentRepository->handle(CreateWorkspace::create(
             WorkspaceName::fromString('user-test'),
             WorkspaceName::forLive(),
-            new WorkspaceTitle('User'),
-            new WorkspaceDescription('The user workspace'),
             ContentStreamId::fromString('user-cs-id')
         ));
         for ($i = 0; $i <= 1000; $i++) {

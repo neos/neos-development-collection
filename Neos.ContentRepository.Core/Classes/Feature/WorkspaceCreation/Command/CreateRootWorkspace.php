@@ -16,9 +16,7 @@ namespace Neos\ContentRepository\Core\Feature\WorkspaceCreation\Command;
 
 use Neos\ContentRepository\Core\CommandHandler\CommandInterface;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
-use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceDescription;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
-use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceTitle;
 
 /**
  * Command to create a root workspace.
@@ -31,26 +29,20 @@ final readonly class CreateRootWorkspace implements CommandInterface
 {
     /**
      * @param WorkspaceName $workspaceName Unique name of the workspace to create
-     * @param WorkspaceTitle $workspaceTitle Human-readable title of the workspace to create (can be changed)
-     * @param WorkspaceDescription $workspaceDescription Description of the workspace to create (can be changed)
      * @param ContentStreamId $newContentStreamId The id of the content stream the new workspace is assigned to initially
      */
     private function __construct(
         public WorkspaceName $workspaceName,
-        public WorkspaceTitle $workspaceTitle,
-        public WorkspaceDescription $workspaceDescription,
         public ContentStreamId $newContentStreamId
     ) {
     }
 
     /**
      * @param WorkspaceName $workspaceName Name of the workspace to create
-     * @param WorkspaceTitle $workspaceTitle Human-readable title of the workspace to create (can be changed)
-     * @param WorkspaceDescription $workspaceDescription Description of the workspace to create (can be changed)
      * @param ContentStreamId $newContentStreamId The id of the content stream the new workspace is assigned to initially
      */
-    public static function create(WorkspaceName $workspaceName, WorkspaceTitle $workspaceTitle, WorkspaceDescription $workspaceDescription, ContentStreamId $newContentStreamId): self
+    public static function create(WorkspaceName $workspaceName, ContentStreamId $newContentStreamId): self
     {
-        return new self($workspaceName, $workspaceTitle, $workspaceDescription, $newContentStreamId);
+        return new self($workspaceName, $newContentStreamId);
     }
 }

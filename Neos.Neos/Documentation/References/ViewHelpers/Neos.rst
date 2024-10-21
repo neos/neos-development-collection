@@ -3,7 +3,7 @@
 Neos ViewHelper Reference
 #########################
 
-This reference was automatically generated from code on 2024-09-13
+This reference was automatically generated from code on 2024-10-19
 
 
 .. _`Neos ViewHelper Reference: neos:backend.authenticationProviderLabel`:
@@ -22,27 +22,6 @@ Arguments
 *********
 
 * ``identifier`` (string): The identifier to render the label for
-
-
-
-
-.. _`Neos ViewHelper Reference: neos:backend.changeStats`:
-
-neos:backend.changeStats
-------------------------
-
-Displays a text-based "bar graph" giving an indication of the amount and type of
-changes done to something. Created for use in workspace management.
-
-:Implementation: Neos\\Neos\\ViewHelpers\\Backend\\ChangeStatsViewHelper
-
-
-
-
-Arguments
-*********
-
-* ``changeCounts`` (array): Expected keys: new, changed, removed
 
 
 
@@ -1067,8 +1046,6 @@ Example: ``/sites/acmecom/home/about/us``
 The given path is treated as a path relative to the current node.
 Examples: given that the current node is ``/sites/acmecom/products/``,
 ``stapler`` results in ``/sites/acmecom/products/stapler``,
-``../about`` results in ``/sites/acmecom/about/``,
-``./neos/info`` results in ``/sites/acmecom/products/neos/info``.
 
 *``node`` starts with a tilde character (``~``):*
 The given path is treated as a path relative to the current site node.
@@ -1097,8 +1074,6 @@ Arguments
 * ``baseNodeName`` (string, *optional*): The name of the base node inside the Fusion context to use for the ContentContext or resolving relative paths
 
 * ``nodeVariableName`` (string, *optional*): The variable the node will be assigned to for the rendered child content
-
-* ``resolveShortcuts`` (boolean, *optional*): INTERNAL Parameter - if false, shortcuts are not redirected to their target. Only needed on rare backend occasions when we want to link to the shortcut itself
 
 
 

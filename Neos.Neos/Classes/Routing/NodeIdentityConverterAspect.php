@@ -16,7 +16,6 @@ namespace Neos\Neos\Routing;
 
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAddress;
-use Neos\Neos\FrontendRouting\NodeAddress as LegacyNodeAddress;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Aop\JoinPointInterface;
 
@@ -47,8 +46,6 @@ class NodeIdentityConverterAspect
             return ['__contextNodePath' => NodeAddress::fromNode($objectArgument)->toJson()];
         } elseif ($objectArgument instanceof NodeAddress) {
             return ['__contextNodePath' => $objectArgument->toJson()];
-        } elseif ($objectArgument instanceof LegacyNodeAddress) {
-            return ['__contextNodePath' => $objectArgument->serializeForUri()];
         }
 
         return $joinPoint->getAdviceChain()->proceed($joinPoint);

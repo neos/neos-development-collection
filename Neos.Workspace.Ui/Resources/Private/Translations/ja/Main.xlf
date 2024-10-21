@@ -3,11 +3,11 @@
   <file original="" product-name="Neos.Workspace.Ui" source-language="en" datatype="plaintext" target-language="ja">
     <body>
       <trans-unit id="back" xml:space="preserve">
-				<source>Back</source>
+        <source>Back</source>
         <target state="needs-translation">Back</target>
       </trans-unit>
       <trans-unit id="cancel" xml:space="preserve">
-				<source>Cancel</source>
+        <source>Cancel</source>
         <target state="translated">キャンセル</target>
       </trans-unit>
       <trans-unit id="pathCaption" xml:space="preserve">
@@ -20,187 +20,187 @@
       </trans-unit>
       <!-- Management -->
       <trans-unit id="workspaces.label" xml:space="preserve">
-				<source>Workspaces</source>
+        <source>Workspaces</source>
         <target state="translated">ワークスペース</target>
       </trans-unit>
       <trans-unit id="workspaces.detailsForWorkspace" xml:space="preserve">
-				<source>Details for "{0}"</source>
-        <target state="needs-translation">Details for "{0}"</target>
+        <source>Details for "{0}"</source>
+        <target state="translated">「{0}」の詳細</target>
       </trans-unit>
       <trans-unit id="workspaces.createNewWorkspace" xml:space="preserve">
-				<source>Create new workspace</source>
+        <source>Create new workspace</source>
         <target state="translated">新しいワークスペース</target>
       </trans-unit>
       <trans-unit id="workspaces.createWorkspace" xml:space="preserve">
-				<source>Create workspace</source>
+        <source>Create workspace</source>
         <target state="translated">作成ワークスペース</target>
       </trans-unit>
       <trans-unit id="workspaces.deleteWorkspace" xml:space="preserve">
-				<source>Delete workspace</source>
+        <source>Delete workspace</source>
         <target state="translated">ワークスペース削除</target>
       </trans-unit>
       <trans-unit id="workspaces.editWorkspace" xml:space="preserve">
-				<source>Edit workspace</source>
+        <source>Edit workspace</source>
         <target state="translated">編集ワークスペース</target>
       </trans-unit>
       <trans-unit id="workspaces.yesDeleteWorkspace" xml:space="preserve">
-				<source>Yes, delete the workspace</source>
+        <source>Yes, delete the workspace</source>
         <target state="translated">はい、削除のワークスペース</target>
       </trans-unit>
       <trans-unit id="workspaces.editWorkspace" xml:space="preserve">
-				<source>Edit workspace "{0}"</source>
+        <source>Edit workspace "{0}"</source>
         <target state="translated">編集ワークスペース</target>
       </trans-unit>
       <trans-unit id="workspaces.personalWorkspace" xml:space="preserve">
-				<source>Personal workspace</source>
+        <source>Personal workspace</source>
         <target state="translated">個人ワークスペース</target>
       </trans-unit>
       <trans-unit id="workspaces.privateWorkspace" xml:space="preserve">
-				<source>Private workspace</source>
+        <source>Private workspace</source>
         <target state="translated">民間のワークスペース</target>
       </trans-unit>
       <trans-unit id="workspaces.internalWorkspace" xml:space="preserve">
-				<source>Internal workspace</source>
+        <source>Internal workspace</source>
         <target state="translated">内部のワークスペース</target>
       </trans-unit>
       <trans-unit id="workspaces.readonlyWorkspace" xml:space="preserve">
-				<source>Read-only workspace</source>
+        <source>Read-only workspace</source>
         <target state="translated">読み取り専用ワークスペース</target>
       </trans-unit>
       <trans-unit id="workspaces.workspace.title" xml:space="preserve">
-				<source>Title</source>
+        <source>Title</source>
         <target state="translated">タイトル</target>
       </trans-unit>
       <trans-unit id="workspaces.workspace.description" xml:space="preserve">
-				<source>Description</source>
+        <source>Description</source>
         <target state="translated">概要</target>
       </trans-unit>
       <trans-unit id="workspaces.workspace.baseWorkspace" xml:space="preserve">
-				<source>Base workspace</source>
+        <source>Base workspace</source>
         <target state="translated">ベースとなるワークスペース</target>
       </trans-unit>
       <trans-unit id="workspaces.workspace.owner" xml:space="preserve">
-				<source>Owner</source>
+        <source>Owner</source>
         <target state="translated">オーナー</target>
       </trans-unit>
       <trans-unit id="workspaces.workspace.visibility" xml:space="preserve">
-				<source>Visibility</source>
+        <source>Visibility</source>
         <target state="translated">可視性</target>
       </trans-unit>
       <trans-unit id="workspaces.workspace.visibility.private" xml:space="preserve">
-				<source>Private</source>
+        <source>Private</source>
         <target state="translated">民間</target>
       </trans-unit>
       <trans-unit id="workspaces.workspace.visibility.private.help" xml:space="preserve">
-				<source>Only reviewers and administrators can access and modify this workspace</source>
+        <source>Only reviewers and administrators can access and modify this workspace</source>
         <target state="translated">のみ応募には管理者アクセスし、修正するこのワークスペース</target>
       </trans-unit>
       <trans-unit id="workspaces.workspace.visibility.internal" xml:space="preserve">
-				<source>Internal</source>
+        <source>Internal</source>
         <target state="translated">内部</target>
       </trans-unit>
       <trans-unit id="workspaces.workspace.visibility.internal.help" xml:space="preserve">
-				<source>Any logged in editor can see and modify this workspace.</source>
+        <source>Any logged in editor can see and modify this workspace.</source>
         <target state="translated">他のログインエディタで見をいつでも変更することが含まれます。</target>
       </trans-unit>
       <trans-unit id="workspaces.workspace.changes" xml:space="preserve">
-				<source>Changes</source>
+        <source>Changes</source>
         <target state="translated">変化</target>
       </trans-unit>
       <trans-unit id="workspaces.openPageInWorkspace" xml:space="preserve">
-				<source>Open page in "{0}" workspace</source>
+        <source>Open page in "{0}" workspace</source>
         <target state="needs-translation">Open page in "{0}" workspace</target>
       </trans-unit>
       <trans-unit id="workspaces.help.cantDeletePersonalWorkspace" xml:space="preserve">
-				<source>This is your personal workspace which you can't delete.</source>
+        <source>This is your personal workspace which you can't delete.</source>
         <target state="translated">これはお客様の個人ワークスペースを削除できませんです。</target>
       </trans-unit>
       <trans-unit id="workspaces.help.workspaceContainsChanges" xml:space="preserve">
-				<source>The workspace contains changes. To delete, discard the changes first.</source>
+        <source>The workspace contains changes. To delete, discard the changes first.</source>
         <target state="translated">ワークスペースに含まれ変わります。 削除、破棄に変更します。</target>
       </trans-unit>
       <trans-unit id="workspaces.help.cantRebaseWorkspaceContainsChanges" xml:space="preserve">
-				<source>Workspace can't be rebased on a different workspace because it still contains changes.</source>
+        <source>Workspace can't be rebased on a different workspace because it still contains changes.</source>
         <target state="needs-translation">Workspace can't be rebased on a different workspace because it still contains changes.</target>
       </trans-unit>
       <trans-unit id="workspaces.help.cantDeleteWorkspaceHasDependencies" xml:space="preserve">
-				<source>The workspace cannot be deleted because other workspaces depend on it.</source>
+        <source>The workspace cannot be deleted because other workspaces depend on it.</source>
         <target state="translated">ワークスペースの削除はできませんのでそのワークスペースに依存します。</target>
       </trans-unit>
       <trans-unit id="workspaces.help.cantDeleteNoPermission" xml:space="preserve">
-				<source>You don't have the permissions for deleting this workspace.</source>
+        <source>You don't have the permissions for deleting this workspace.</source>
         <target state="translated">んのアクセス権を削除するこのスペースが活用できます。</target>
       </trans-unit>
       <trans-unit id="workspaces.dialog.confirmWorkspaceDeletion" xml:space="preserve">
-				<source>Do you really want to delete the workspace "{0}"?</source>
+        <source>Do you really want to delete the workspace "{0}"?</source>
         <target state="needs-translation">Do you really want to delete the workspace "{0}"?</target>
       </trans-unit>
       <trans-unit id="workspaces.dialog.thisWillDeleteTheWorkspace" xml:space="preserve">
-				<source>This will delete the workspace including all unpublished content. This operation cannot be undone.</source>
+        <source>This will delete the workspace including all unpublished content. This operation cannot be undone.</source>
         <target state="translated">この削除は、ワークスペースを含む全ての未発表の内容です。 この操作はできません下記のいずれかから選択します。</target>
       </trans-unit>
       <trans-unit id="workspaces.description" xml:space="preserve">
-				<source>This module contains the overview of all elements within the current workspace and it enables to continue the review and publishing workflow for them.</source>
+        <source>This module contains the overview of all elements within the current workspace and it enables to continue the review and publishing workflow for them.</source>
         <target state="translated">このモジュールの概要のすべての要素内で現在のワークスペースとすることができ続きの見直し、ワークフロー出版しています。</target>
       </trans-unit>
       <trans-unit id="workspaces.unpublishedChanges" xml:space="preserve">
-				<source>Unpublished changes in workspace "{0}"</source>
+        <source>Unpublished changes in workspace "{0}"</source>
         <target state="needs-translation">Unpublished changes in workspace "{0}"</target>
       </trans-unit>
       <trans-unit id="workspaces.changesCounts" xml:space="preserve">
-				<source>additions: {new}, changes: {changed}, removals: {removed}</source>
+        <source>additions: {new}, changes: {changed}, removals: {removed}</source>
         <target state="needs-translation">additions: {new}, changes: {changed}, removals: {removed}</target>
       </trans-unit>
       <trans-unit id="workspaces.review" xml:space="preserve">
-				<source>Review</source>
+        <source>Review</source>
         <target state="translated">見直し</target>
       </trans-unit>
       <trans-unit id="workspaces.discardSelectedChanges" xml:space="preserve">
-				<source>Discard selected changes</source>
+        <source>Discard selected changes</source>
         <target state="translated">捨選択の変更</target>
       </trans-unit>
       <trans-unit id="workspaces.discardAllChanges" xml:space="preserve">
-				<source>Discard all changes</source>
+        <source>Discard all changes</source>
         <target state="translated">すべての変更を破棄する</target>
       </trans-unit>
       <trans-unit id="workspaces.publishAllChanges" xml:space="preserve">
-				<source>Publish all changes</source>
+        <source>Publish all changes</source>
         <target state="translated">すべての変更を公開する</target>
       </trans-unit>
       <trans-unit id="workspaces.publishAllChangesTo" xml:space="preserve">
-				<source>Publish all changes to {0}</source>
+        <source>Publish all changes to {0}</source>
         <target state="needs-translation">Publish all changes to {0}</target>
       </trans-unit>
       <trans-unit id="changedContentCaption" xml:space="preserve">
-				<source>Changed Content</source>
+        <source>Changed Content</source>
         <target state="translated">変更内容</target>
       </trans-unit>
       <trans-unit id="workspaces.legend.deleted" xml:space="preserve">
-				<source>deleted</source>
+        <source>deleted</source>
         <target state="translated">削除</target>
       </trans-unit>
       <trans-unit id="workspaces.legend.created" xml:space="preserve">
-				<source>created</source>
+        <source>created</source>
         <target state="translated">作成した</target>
       </trans-unit>
       <trans-unit id="workspaces.legend.moved" xml:space="preserve">
-				<source>moved</source>
+        <source>moved</source>
         <target state="translated">移転</target>
       </trans-unit>
       <trans-unit id="workspaces.legend.hidden" xml:space="preserve">
-				<source>hidden</source>
+        <source>hidden</source>
         <target state="translated">隠れた</target>
       </trans-unit>
       <trans-unit id="workspaces.legend.edited" xml:space="preserve">
-				<source>edited</source>
+        <source>edited</source>
         <target state="translated">編集</target>
       </trans-unit>
       <trans-unit id="workspaces.thereAreNoUnpublishedChanges" xml:space="preserve">
-				<source>There are no unpublished changes in this workspace.</source>
+        <source>There are no unpublished changes in this workspace.</source>
         <target state="translated">ありません未発表の変更にこのワークスペースです。</target>
       </trans-unit>
       <trans-unit id="workspaces.discardAllChangesInWorkspaceConfirmation" xml:space="preserve">
-				<source>Do you really want to discard all changes in the "{0}" workspace?</source>
+        <source>Do you really want to discard all changes in the "{0}" workspace?</source>
         <target state="needs-translation">Do you really want to discard all changes in the "{0}" workspace?</target>
       </trans-unit>
       <trans-unit id="workspaces.workspaceWithThisTitleAlreadyExists">

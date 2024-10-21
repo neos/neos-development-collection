@@ -42,7 +42,11 @@ class FeatureContext implements BehatContext
     use FusionTrait;
 
     use ContentCacheTrait;
+    use AssetUsageTrait;
     use AssetTrait;
+
+    use WorkspaceServiceTrait;
+    use UserServiceTrait;
 
     protected Environment $environment;
 
@@ -55,7 +59,6 @@ class FeatureContext implements BehatContext
         $this->environment = $this->getObject(Environment::class);
         $this->contentRepositoryRegistry = $this->getObject(ContentRepositoryRegistry::class);
         $this->persistenceManager = $this->getObject(PersistenceManagerInterface::class);
-
     }
 
     /*

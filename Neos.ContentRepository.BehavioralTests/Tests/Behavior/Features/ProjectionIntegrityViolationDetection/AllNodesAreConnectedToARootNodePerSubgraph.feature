@@ -17,8 +17,6 @@ Feature: Run projection integrity violation detection regarding root connection
     And the command CreateRootWorkspace is executed with payload:
       | Key                  | Value                |
       | workspaceName        | "live"               |
-      | workspaceTitle       | "Live"               |
-      | workspaceDescription | "The live workspace" |
       | newContentStreamId   | "cs-identifier"      |
 
   Scenario: Create a cycle

@@ -11,7 +11,7 @@ prototype(Neos.NodeTypes.ColumnLayouts:MultiColumn) < prototype(Neos.Neos:Conten
   #   attributes.class.@process.nodeType >
   # }
   # in your site's Fusion if you don't need that behavior.
-  attributes.class.@process.nodeType = ${Array.push(value, String.toLowerCase(String.pregReplace(node.nodeTypeName.value, '/[[:^alnum:]]/', '-')))}
+  attributes.class.@process.nodeType = ${Array.push(value, String.toLowerCase(String.pregReplace(node.nodeTypeName, '/[[:^alnum:]]/', '-')))}
 
   columns = Neos.Fusion:Loop {
     @context.columnLayout = ${q(node).property('layout')}

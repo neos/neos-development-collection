@@ -72,7 +72,7 @@ final class RouterCacheHook implements CatchUpHookInterface
 
     private function onBeforeSubtreeWasTagged(SubtreeWasTagged $event): void
     {
-        if (!$this->getState()->isLiveContentStream($event->contentStreamId)) {
+        if (!$event->workspaceName->isLive()) {
             return;
         }
 
@@ -92,7 +92,7 @@ final class RouterCacheHook implements CatchUpHookInterface
 
     private function onBeforeNodeAggregateWasRemoved(NodeAggregateWasRemoved $event): void
     {
-        if (!$this->getState()->isLiveContentStream($event->contentStreamId)) {
+        if (!$event->workspaceName->isLive()) {
             return;
         }
 
@@ -112,7 +112,7 @@ final class RouterCacheHook implements CatchUpHookInterface
 
     private function onBeforeNodePropertiesWereSet(NodePropertiesWereSet $event): void
     {
-        if (!$this->getState()->isLiveContentStream($event->contentStreamId)) {
+        if (!$event->workspaceName->isLive()) {
             return;
         }
 
@@ -137,7 +137,7 @@ final class RouterCacheHook implements CatchUpHookInterface
 
     private function onBeforeNodeAggregateWasMoved(NodeAggregateWasMoved $event): void
     {
-        if (!$this->getState()->isLiveContentStream($event->contentStreamId)) {
+        if (!$event->workspaceName->isLive()) {
             return;
         }
 

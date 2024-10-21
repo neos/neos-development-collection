@@ -31,7 +31,7 @@ use Neos\Flow\Annotations as Flow;
  *
  * If a referenceName is given as argument only the references for this name are returned
  *
- *     ${q(node).referenceNodes("someReferenceName").}
+ *     ${q(node).referenceNodes("someReferenceName").property("title")}
  *
  * @see BackReferenceNodesOperation
  * @api To be used in Fusion, for PHP code {@see ContentSubgraphInterface::findReferences()} should be used instead
