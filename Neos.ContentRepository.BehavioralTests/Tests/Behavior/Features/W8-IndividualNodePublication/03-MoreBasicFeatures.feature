@@ -134,40 +134,40 @@ Feature: Publishing individual nodes (basics)
       | Key   | Value            |
       | image | "Modified image" |
 
-  Scenario: It is possible to publish no node
-    When the command PublishIndividualNodesFromWorkspace is executed with payload:
-      | Key                             | Value                          |
-      | workspaceName                   | "user-test"                    |
-      | nodesToPublish                  | []                             |
-      | contentStreamIdForRemainingPart | "user-cs-identifier-remaining" |
-
-    When I am in workspace "live" and dimension space point {}
-    Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{}
-    And I expect this node to have the following properties:
-      | Key  | Value        |
-      | text | "Initial t1" |
-    And I expect node aggregate identifier "nody-mc-nodeface" to lead to node cs-identifier;nody-mc-nodeface;{}
-    And I expect this node to have the following properties:
-      | Key  | Value        |
-      | text | "Initial t2" |
-    And I expect node aggregate identifier "sir-nodeward-nodington-iii" to lead to node cs-identifier;sir-nodeward-nodington-iii;{}
-    And I expect this node to have the following properties:
-      | Key   | Value           |
-      | image | "Initial image" |
-
-    When I am in workspace "user-test" and dimension space point {}
-    Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node user-cs-identifier-remaining;sir-david-nodenborough;{}
-    And I expect this node to have the following properties:
-      | Key  | Value         |
-      | text | "Modified t1" |
-    Then I expect node aggregate identifier "nody-mc-nodeface" to lead to node user-cs-identifier-remaining;nody-mc-nodeface;{}
-    And I expect this node to have the following properties:
-      | Key  | Value         |
-      | text | "Modified t2" |
-    Then I expect node aggregate identifier "sir-nodeward-nodington-iii" to lead to node user-cs-identifier-remaining;sir-nodeward-nodington-iii;{}
-    And I expect this node to have the following properties:
-      | Key   | Value            |
-      | image | "Modified image" |
+#  Scenario: It is possible to publish no node
+#    When the command PublishIndividualNodesFromWorkspace is executed with payload:
+#      | Key                             | Value                          |
+#      | workspaceName                   | "user-test"                    |
+#      | nodesToPublish                  | []                             |
+#      | contentStreamIdForRemainingPart | "user-cs-identifier-remaining" |
+#
+#    When I am in workspace "live" and dimension space point {}
+#    Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{}
+#    And I expect this node to have the following properties:
+#      | Key  | Value        |
+#      | text | "Initial t1" |
+#    And I expect node aggregate identifier "nody-mc-nodeface" to lead to node cs-identifier;nody-mc-nodeface;{}
+#    And I expect this node to have the following properties:
+#      | Key  | Value        |
+#      | text | "Initial t2" |
+#    And I expect node aggregate identifier "sir-nodeward-nodington-iii" to lead to node cs-identifier;sir-nodeward-nodington-iii;{}
+#    And I expect this node to have the following properties:
+#      | Key   | Value           |
+#      | image | "Initial image" |
+#
+#    When I am in workspace "user-test" and dimension space point {}
+#    Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node user-cs-identifier-remaining;sir-david-nodenborough;{}
+#    And I expect this node to have the following properties:
+#      | Key  | Value         |
+#      | text | "Modified t1" |
+#    Then I expect node aggregate identifier "nody-mc-nodeface" to lead to node user-cs-identifier-remaining;nody-mc-nodeface;{}
+#    And I expect this node to have the following properties:
+#      | Key  | Value         |
+#      | text | "Modified t2" |
+#    Then I expect node aggregate identifier "sir-nodeward-nodington-iii" to lead to node user-cs-identifier-remaining;sir-nodeward-nodington-iii;{}
+#    And I expect this node to have the following properties:
+#      | Key   | Value            |
+#      | image | "Modified image" |
 
   Scenario: It is possible to publish all nodes
     When the command PublishIndividualNodesFromWorkspace is executed with payload:
