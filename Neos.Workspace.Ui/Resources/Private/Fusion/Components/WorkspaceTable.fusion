@@ -2,8 +2,8 @@
 # Renders a list of workspaces
 #
 prototype(Neos.Workspace.Ui:Component.WorkspaceTable) < prototype(Neos.Fusion:Component) {
-  /// Neos\ContentRepository\Core\Projection\Workspace\Workspace
-  userWorkspace = null
+  /// string
+  userWorkspaceName = null
   /// \Neos\Workspace\Ui\ViewModel\WorkspaceListItems
   workspaceListItems = ${{}}
 
@@ -37,7 +37,7 @@ prototype(Neos.Workspace.Ui:Component.WorkspaceTable) < prototype(Neos.Fusion:Co
       </thead>
       <tbody>
         <Neos.Workspace.Ui:Component.WorkspaceTreeNode
-          userWorkspace={props.userWorkspace}
+          userWorkspaceName={props.userWorkspaceName}
           workspaceName="live"
           workspaceListItems={props.workspaceListItems}
         />

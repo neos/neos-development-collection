@@ -2,8 +2,8 @@
 # Renders a single workspace list item
 #
 prototype(Neos.Workspace.Ui:Component.WorkspaceTableRow) < prototype(Neos.Fusion:Component) {
-  /// Neos\ContentRepository\Core\Projection\Workspace\Workspace
-  userWorkspace = ''
+  /// string
+  userWorkspaceName = null
   /// Neos\Workspace\Ui\ViewModel\WorkspaceListItem
   workspaceListItem = ${[]}
   /// boolean todo unused!!!
@@ -19,7 +19,7 @@ prototype(Neos.Workspace.Ui:Component.WorkspaceTableRow) < prototype(Neos.Fusion
     // todo move state calculation to php
     workspaceStatus = Neos.Fusion:Case {
       personal-workspace {
-        condition = ${private.workspaceName == props.userWorkspace.workspaceName.value}
+        condition = ${private.workspaceName == props.userWorkspaceName}
         renderer = 'personal-workspace'
       }
       stale {
@@ -90,7 +90,7 @@ prototype(Neos.Workspace.Ui:Component.WorkspaceTableRow) < prototype(Neos.Fusion
       <td class="workspace-label-column" style={'--indent-level:' + props.level }>
         <Neos.Workspace.Ui:Component.Icon icon="level-up-alt" @if={props.level > 1}/>
         {props.workspaceListItem.title}
-        <span class="workspace__info-text" @if={private.workspaceName == props.userWorkspace.workspaceName.value}>
+        <span class="workspace__info-text" @if={private.workspaceName == props.userWorkspaceName}>
           ({private.i18n.id('workspaces.workspace.userWorkspace')})
         </span>
       </td>

@@ -2,14 +2,14 @@
 # Update response after a workspace has been edited via the edit modal
 #
 Neos.Workspace.Ui.WorkspaceController.update = Neos.Fusion:Component {
-  /// Neos\ContentRepository\Core\Projection\Workspace\Workspace
-  userWorkspace = ${userWorkspace}
+  /// string
+  userWorkspaceName = ${userWorkspaceName}
   /// Neos\Workspace\Ui\ViewModel\WorkspaceListItems
   workspaceListItems = ${workspaceListItems}
 
   renderer = afx`
     <Neos.Workspace.Ui:Component.WorkspaceTable
-      userWorkspace={props.userWorkspace}
+      userWorkspaceName={props.userWorkspaceName}
       workspaceListItems={props.workspaceListItems}
     />
   `

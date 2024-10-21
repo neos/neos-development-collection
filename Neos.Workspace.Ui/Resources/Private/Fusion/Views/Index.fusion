@@ -1,6 +1,6 @@
 Neos.Workspace.Ui.WorkspaceController.index = Neos.Fusion:Component {
-  /// Neos\ContentRepository\Core\Projection\Workspace\Workspace
-  userWorkspace = ${userWorkspace}
+  /// string
+  userWorkspaceName = ${userWorkspaceName}
   /// Neos\Workspace\Ui\ViewModel\WorkspaceListItems
   workspaceListItems = ${workspaceListItems}
   /// array
@@ -28,7 +28,7 @@ Neos.Workspace.Ui.WorkspaceController.index = Neos.Fusion:Component {
         <main class="neos-content neos-container-fluid">
           <div class="neos-row-fluid">
             <Neos.Workspace.Ui:Component.WorkspaceTable
-              userWorkspace={props.userWorkspace}
+              userWorkspaceName={props.userWorkspaceName}
               workspaceListItems={props.workspaceListItems}
             />
           </div>
@@ -56,7 +56,7 @@ Neos.Workspace.Ui.WorkspaceController.index = Neos.Fusion:Component {
     htmx = afx`
       <Neos.Workspace.Ui:Component.FlashMessages flashMessages={props.flashMessages}/>
       <Neos.Workspace.Ui:Component.WorkspaceTable
-        userWorkspace={props.userWorkspace}
+        userWorkspaceName={props.userWorkspaceName}
         workspaceListItems={props.workspaceListItems}
       />
     `

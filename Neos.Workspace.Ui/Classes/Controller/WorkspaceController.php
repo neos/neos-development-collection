@@ -140,7 +140,7 @@ class WorkspaceController extends AbstractModuleController
         $workspaceListItems = $this->getWorkspaceListItems($userWorkspace, $contentRepository);
 
         $this->view->assignMultiple([
-            'userWorkspace' => $userWorkspace,
+            'userWorkspaceName' => $userWorkspace->workspaceName->value,
             'workspaceListItems' => $workspaceListItems,
             'flashMessages' => $this->controllerContext->getFlashMessageContainer()->getMessagesAndFlush(),
         ]);
@@ -327,7 +327,7 @@ class WorkspaceController extends AbstractModuleController
         $workspaceListItems = $this->getWorkspaceListItems($userWorkspace, $contentRepository);
 
         $this->view->assignMultiple([
-            'userWorkspace' => $userWorkspace,
+            'userWorkspaceName' => $userWorkspace->workspaceName->value,
             'workspaceListItems' => $workspaceListItems,
         ]);
     }

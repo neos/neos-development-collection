@@ -2,8 +2,8 @@
 # Renders a single workspace list item and its subworkspaces
 #
 prototype(Neos.Workspace.Ui:Component.WorkspaceTreeNode) < prototype(Neos.Fusion:Component) {
-  /// Neos\ContentRepository\Core\Projection\Workspace\Workspace
-  userWorkspace = null
+  /// string
+  userWorkspaceName = null
   /// Neos\Workspace\Ui\ViewModel\WorkspaceListItem
   workspaceListItem = null
   /// Neos\Workspace\Ui\ViewModel\WorkspaceListItems
@@ -18,14 +18,14 @@ prototype(Neos.Workspace.Ui:Component.WorkspaceTreeNode) < prototype(Neos.Fusion
 
   renderer = afx`
     <Neos.Workspace.Ui:Component.WorkspaceTableRow
-      userWorkspace={props.userWorkspace}
+      userWorkspaceName={props.userWorkspaceName}
       workspaceListItem={props.workspaceListItem}
       level={props.level}
       @if={props.workspaceName != 'live'}
     />
     <Neos.Fusion:Loop items={private.baseWorkspaceListItems} itemName="workspaceListItem">
       <Neos.Workspace.Ui:Component.WorkspaceTreeNode
-        userWorkspace={props.userWorkspace}
+        userWorkspaceName={props.userWorkspaceName}
         workspaceListItem={workspaceListItem}
         workspaceListItems={props.workspaceListItems}
         level={props.level + 1}
