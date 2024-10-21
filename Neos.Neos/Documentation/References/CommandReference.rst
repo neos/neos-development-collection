@@ -19,7 +19,7 @@ commands that may be available, use::
 
   ./flow help
 
-The following reference was automatically generated from code on 2024-10-20
+The following reference was automatically generated from code on 2024-10-21
 
 
 .. _`Neos Command Reference: NEOS.FLOW`:
@@ -2207,6 +2207,29 @@ Options
   The content repository identifier
 ``--verbose``
   If set, all notices will be rendered
+
+
+
+
+
+.. _`Neos Command Reference: NEOS.NEOS neos.neos:cr:prune`:
+
+``neos.neos:cr:prune``
+**********************
+
+**This will completely prune the data of the specified content repository.**
+
+
+
+
+
+Options
+^^^^^^^
+
+``--content-repository``
+  Name of the content repository where the data should be pruned from.
+``--force``
+  Prune the cr without confirmation. This cannot be reverted!
 
 
 
