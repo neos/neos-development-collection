@@ -28,6 +28,8 @@ use Neos\Flow\Session\Exception\SessionNotStartedException;
 use Neos\Flow\Session\SessionInterface;
 use Neos\Flow\Utility\Algorithms;
 use Neos\Neos\Domain\Model\Site;
+use Neos\Neos\Domain\Service\UserService;
+use Neos\Neos\Domain\Service\WorkspaceService;
 use Neos\Neos\Service\BackendRedirectionService;
 use Neos\Neos\Service\LinkingService;
 use Neos\Neos\Service\XliffService;
@@ -70,6 +72,18 @@ class BackendController extends ActionController
     protected $currentSession;
 
     /**
+     * @Flow\Inject
+     * @var WorkspaceService
+     */
+    protected $workspaceService;
+
+    /**
+     * @Flow\Inject
+     * @var UserService
+     */
+    protected $userService;
+
+    /**
      * Default action of the backend controller.
      *
      * @return void
@@ -102,6 +116,15 @@ class BackendController extends ActionController
      */
     public function switchSiteAction($site): void
     {
+        // ensure the target site has a user workspace
+        $user = $this->userService->getCurrentUser();
+        if ($user) {
+            $this->workspaceService->createPersonalWorkspaceForUserIfMissing(
+                $site->getConfiguration()->contentRepositoryId,
+                $user
+            );
+        }
+
         $token = Algorithms::generateRandomToken(32);
         $this->loginTokenCache->set($token, $this->currentSession->getId());
         $siteUri = $this->linkingService->createSiteUri($this->controllerContext, $site);

@@ -18,6 +18,7 @@ use Neos\ContentRepository\Export\ImportService;
 use Neos\ContentRepository\Export\ImportServiceFactory;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\ContentRepositoryRegistry\Service\ProjectionReplayServiceFactory;
+use Neos\Flow\Cache\CacheManager;
 use Neos\Flow\Cli\CommandController;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Flow\ResourceManagement\ResourceManager;
@@ -42,6 +43,7 @@ class CrCommandController extends CommandController
         private readonly AssetUsageService $assetUsageService,
         private readonly WorkspaceService $workspaceService,
         private readonly ProjectionReplayServiceFactory $projectionServiceFactory,
+        private readonly CacheManager $cacheManager,
     ) {
         parent::__construct();
     }
@@ -170,6 +172,10 @@ class CrCommandController extends CommandController
 
         // reset the projections state
         $projectionService->resetAllProjections();
+
+        // reset sessions to enforce a new login and personal workspaces are created
+        $this->cacheManager->getCache('Flow_Session_Storage')->flush();
+        $this->cacheManager->getCache('Flow_Session_MetaData')->flush();
 
         $this->outputLine('<success>Done.</success>');
     }
