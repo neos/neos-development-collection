@@ -382,6 +382,28 @@ final class WorkspaceService
         }
     }
 
+    public function pruneWorkspaceMetadata(ContentRepositoryId $contentRepositoryId): void
+    {
+        try {
+            $this->dbal->delete(self::TABLE_NAME_WORKSPACE_METADATA, [
+                'content_repository_id' => $contentRepositoryId->value,
+            ]);
+        } catch (DbalException $e) {
+            throw new \RuntimeException(sprintf('Failed to prune workspace metadata Content Repository "%s": %s', $contentRepositoryId->value, $e->getMessage()), 1729512100, $e);
+        }
+    }
+
+    public function pruneRoleAsssignments(ContentRepositoryId $contentRepositoryId): void
+    {
+        try {
+            $this->dbal->delete(self::TABLE_NAME_WORKSPACE_ROLE, [
+                'content_repository_id' => $contentRepositoryId->value,
+            ]);
+        } catch (DbalException $e) {
+            throw new \RuntimeException(sprintf('Failed to prune workspace roles for Content Repository "%s": %s', $contentRepositoryId->value, $e->getMessage()), 1729512142, $e);
+        }
+    }
+
     private function createWorkspace(ContentRepositoryId $contentRepositoryId, WorkspaceName $workspaceName, WorkspaceTitle $title, WorkspaceDescription $description, WorkspaceName $baseWorkspaceName, UserId|null $ownerId, WorkspaceClassification $classification): void
     {
         $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryId);
