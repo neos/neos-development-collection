@@ -74,6 +74,7 @@ use Neos\EventStore\EventStoreInterface;
 use Neos\EventStore\Exception\ConcurrencyException;
 use Neos\EventStore\Helper\InMemoryEventStore;
 use Neos\EventStore\Model\Event\EventType;
+use Neos\EventStore\Model\Event\SequenceNumber;
 use Neos\EventStore\Model\Event\Version;
 use Neos\EventStore\Model\EventEnvelope;
 use Neos\EventStore\Model\EventStream\EventStreamInterface;
@@ -439,17 +440,7 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
             CloseContentStream::create($oldWorkspaceContentStreamId)
         );
 
-        // 1) fork a new content stream
-        $temporaryRebasedContentStreamId = ContentStreamId::create();
-
         $inMemoryEventStore = new InMemoryEventStore();
-        $commandHandlingDependencies->handleInMemoryAndUpdateGraphProjection(
-            ForkContentStream::create(
-                $temporaryRebasedContentStreamId,
-                $baseWorkspace->currentContentStreamId,
-            ),
-            $inMemoryEventStore
-        );
 
         $workspaceStreamName = WorkspaceEventStreamName::fromWorkspaceName($command->workspaceName)->getEventStreamName();
         $workspaceContentStreamName = ContentStreamEventStreamName::fromContentStreamId(
@@ -458,17 +449,23 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
 
         // 2) extract the commands from the to-be-rebased content stream; and applies them on the new content stream
         $originalCommands = $this->extractCommandsFromContentStreamMetadata($workspaceContentStreamName);
-        $commandsThatFailed = new CommandsThatFailedDuringRebase();
-        $commandHandlingDependencies->overrideContentStreamId(
-            $command->workspaceName,
-            $temporaryRebasedContentStreamId,
-            function () use ($originalCommands, $commandHandlingDependencies, &$commandsThatFailed, $inMemoryEventStore): void {
+        $commandsThatFailed = $commandHandlingDependencies->inSimulation(
+            function () use ($originalCommands, $commandHandlingDependencies, $baseWorkspace, $inMemoryEventStore): CommandsThatFailedDuringRebase {
+                $commandsThatFailed = new CommandsThatFailedDuringRebase();
                 foreach ($originalCommands as $sequenceNumber => $originalCommand) {
-
+                    if (!($originalCommand instanceof RebasableToOtherWorkspaceInterface)) { // todo remove that
+                        throw new \RuntimeException(
+                            'ERROR: The command ' . get_class($originalCommand)
+                            . ' does not implement ' . RebasableToOtherWorkspaceInterface::class . '; but it should!'
+                        );
+                    }
 
                     // We no longer need to adjust commands as the workspace stays the same
                     try {
-                        $commandHandlingDependencies->handleInMemoryAndUpdateGraphProjection($originalCommand, $inMemoryEventStore);
+                        // TODO so the constraint checks work we need to use the base workspace here
+                        $commandHandlingDependencies->handle($originalCommand->createCopyForWorkspace(
+                            $baseWorkspace->workspaceName
+                        ));
                         // if we came this far, we know the command was applied successfully.
                     } catch (\Exception $e) {
                         $commandsThatFailed = $commandsThatFailed->add(
@@ -480,12 +477,12 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
                         );
                     }
                 }
-            }
+
+                return $commandsThatFailed;
+            },
+            $inMemoryEventStore
         );
 
-        // $commandHandlingDependencies->handleInMemory(RemoveContentStream::create(
-        //     $temporaryRebasedContentStreamId
-        // ), $inMemoryEventStore);
 
         // 3) if we got so far without an exception (or if we don't care), we can switch the workspace's active content stream.
         if ($command->rebaseErrorHandlingStrategy === RebaseErrorHandlingStrategy::STRATEGY_FORCE || $commandsThatFailed->isEmpty()) {
@@ -495,11 +492,12 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
                 $baseWorkspace->currentContentStreamId,
             ));
 
-            $this->publishContentStreamRebase(
+            $this->publishStreamOnWorkspaceContentStream(
                 $commandHandlingDependencies,
                 $workspace->workspaceName,
                 $command->rebasedContentStreamId,
-                $inMemoryEventStore->load(VirtualStreamName::all())
+                $inMemoryEventStore->load(VirtualStreamName::all()),
+                ExpectedVersion::ANY()
             );
 
             $events = Events::with(
@@ -611,8 +609,6 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
         //     $inMemoryEventStore
         // );
 
-        $highestVersionForMatching = null;
-
 
 
         if (empty($matchingCommands)) {
@@ -628,8 +624,9 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
 
         try {
             // 4) using the new content stream, apply the matching commands
-            $commandHandlingDependencies->inSimulation(
-                function () use ($matchingCommands, $remainingCommands, $commandHandlingDependencies, $baseWorkspace, &$highestVersionForMatching, $inMemoryEventStore): void {
+            $highestVersionForMatching = $commandHandlingDependencies->inSimulation(
+                function () use ($matchingCommands, $remainingCommands, $commandHandlingDependencies, $baseWorkspace, $inMemoryEventStore): ?SequenceNumber {
+
                     foreach ($matchingCommands as $matchingCommand) {
                         if (!($matchingCommand instanceof RebasableToOtherWorkspaceInterface)) { // todo remove that
                             throw new \RuntimeException(
@@ -643,7 +640,7 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
                         ));
                     }
 
-                    // $matchingEventStream = $inMemoryEventStore->load(VirtualStreamName::all());
+                    $highestVersionForMatching = null;
                     foreach ($inMemoryEventStore->load(VirtualStreamName::all())->backwards()->limit(1) as $eventEnvelope) {
                         $highestVersionForMatching = $eventEnvelope->sequenceNumber;
                         break;
@@ -662,6 +659,8 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
                             $baseWorkspace->workspaceName,
                         ));
                     }
+
+                    return $highestVersionForMatching;
 
                 },
                 $inMemoryEventStore

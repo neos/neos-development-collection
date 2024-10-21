@@ -22,18 +22,13 @@ use Neos\ContentRepository\Core\EventStore\EventNormalizer;
 use Neos\ContentRepository\Core\EventStore\EventPersister;
 use Neos\ContentRepository\Core\EventStore\EventsToPublish;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphInterface;
-use Neos\ContentRepository\Core\Projection\ContentStream\ContentStreamFinder;
-use Neos\ContentRepository\Core\Projection\ProjectionInterface;
-use Neos\ContentRepository\Core\Projection\Workspace\WorkspaceFinder;
 use Neos\ContentRepository\Core\SharedModel\Workspace\Workspace;
 use Neos\ContentRepository\Core\SharedModel\Exception\WorkspaceDoesNotExist;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamStatus;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
-use Neos\EventStore\EventStoreInterface;
 use Neos\EventStore\Helper\InMemoryEventStore;
 use Neos\EventStore\Model\Event\SequenceNumber;
-use Neos\EventStore\Model\EventEnvelope;
 use Neos\EventStore\Model\Events;
 use Neos\EventStore\Model\EventStream\ExpectedVersion;
 use Neos\EventStore\Model\EventStream\VirtualStreamName;
@@ -76,14 +71,19 @@ final class CommandHandlingDependencies
         return new CommandResult();
     }
 
-    public function inSimulation(\Closure $fn, InMemoryEventStore $inMemoryEventStore): void
+    /**
+     * @template T
+     * @param \Closure(): T $fn
+     * @return T
+     */
+    public function inSimulation(\Closure $fn, InMemoryEventStore $inMemoryEventStore): mixed
     {
         if ($this->inMemoryStoreForSimulation) {
             throw new \RuntimeException();
         }
         $this->inMemoryStoreForSimulation = $inMemoryEventStore;
         try {
-            $this->contentRepositoryProjection->inSimulation($fn);
+            return $this->contentRepositoryProjection->inSimulation($fn);
         } finally {
             $this->inMemoryStoreForSimulation = null;
         }
@@ -103,9 +103,6 @@ final class CommandHandlingDependencies
             $eventsToPublish->events->map($this->eventNormalizer->normalize(...))
         );
 
-
-
-
         $commitResult = $inMemoryEventStore->commit(
             $eventsToPublish->streamName,
             $normalizedEvents,
@@ -116,20 +113,21 @@ final class CommandHandlingDependencies
         );
 
 
-        $streamName = VirtualStreamName::all();
-        $eventStream = $inMemoryEventStore->load($streamName)->withMinimumSequenceNumber(
-            // todo fix globally use internal sq
-            SequenceNumber::fromInteger($commitResult->highestCommittedSequenceNumber->value - $eventsToPublish->events->count())
+        $eventStream = $inMemoryEventStore->load(VirtualStreamName::all())->withMinimumSequenceNumber(
+            // fetch all events that were now committed. Plus one because the first sequence number is one too otherwise we get one event to many.
+            // (all elephants shall be placed shamefully placed on my head)
+            SequenceNumber::fromInteger($commitResult->highestCommittedSequenceNumber->value - $eventsToPublish->events->count() + 1)
         );
 
         foreach ($eventStream as $eventEnvelope) {
             $event = $this->eventNormalizer->denormalize($eventEnvelope->event);
+
             if (!$this->contentRepositoryProjection->canHandle($event)) {
                 continue;
             }
+
             $this->contentRepositoryProjection->apply($event, $eventEnvelope);
         }
-
 
         return new CommandResult();
     }
