@@ -87,7 +87,7 @@ final class ContentRepository
         private readonly UserIdProviderInterface $userIdProvider,
         private readonly ClockInterface $clock,
     ) {
-        $this->commandHandlingDependencies = new CommandHandlingDependencies($this, $eventPersister);
+        $this->commandHandlingDependencies = new CommandHandlingDependencies($this);
     }
 
     /**

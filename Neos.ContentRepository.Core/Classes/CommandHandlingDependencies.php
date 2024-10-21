@@ -15,8 +15,6 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\Core;
 
 use Neos\ContentRepository\Core\CommandHandler\CommandInterface;
-use Neos\ContentRepository\Core\EventStore\EventPersister;
-use Neos\ContentRepository\Core\EventStore\EventsToPublish;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphInterface;
 use Neos\ContentRepository\Core\SharedModel\Workspace\Workspace;
 use Neos\ContentRepository\Core\SharedModel\Exception\WorkspaceDoesNotExist;
@@ -40,19 +38,13 @@ final class CommandHandlingDependencies
     private array $overriddenContentGraphInstances = [];
 
     public function __construct(
-        private readonly ContentRepository $contentRepository,
-        private readonly EventPersister $eventPersister
+        private readonly ContentRepository $contentRepository
     ) {
     }
 
     public function handle(CommandInterface $command): void
     {
         $this->contentRepository->handle($command);
-    }
-
-    public function publishEvents(EventsToPublish $eventsToPublish): void
-    {
-        $this->eventPersister->publishEvents($this->contentRepository, $eventsToPublish);
     }
 
     public function getContentStreamVersion(ContentStreamId $contentStreamId): Version
@@ -118,5 +110,13 @@ final class CommandHandlingDependencies
         } finally {
             unset($this->overriddenContentGraphInstances[$workspaceName->value]);
         }
+    }
+
+    /**
+     * Fixme only required to build the possible catchup hooks
+     */
+    public function getContentRepository(): ContentRepository
+    {
+        return $this->contentRepository;
     }
 }

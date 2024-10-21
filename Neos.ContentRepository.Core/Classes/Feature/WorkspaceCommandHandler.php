@@ -81,6 +81,7 @@ use Neos\EventStore\Model\EventStream\ExpectedVersion;
 final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
 {
     public function __construct(
+        private EventPersister $eventPersister,
         private EventStoreInterface $eventStore,
         private EventNormalizer $eventNormalizer,
     ) {
@@ -289,7 +290,8 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
             return;
         }
         try {
-            $commandHandlingDependencies->publishEvents(
+            $this->eventPersister->publishEvents(
+                $commandHandlingDependencies->getContentRepository(),
                 new EventsToPublish(
                     $baseWorkspaceContentStreamName->getEventStreamName(),
                     Events::fromArray($events),
