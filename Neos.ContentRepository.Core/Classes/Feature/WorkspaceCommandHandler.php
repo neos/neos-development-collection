@@ -783,19 +783,12 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
         $commandsToKeep = [];
         $this->separateMatchingAndRemainingCommands($command, $workspace, $commandsToDiscard, $commandsToKeep);
 
-        // 3) fork a new contentStream, based on the base WS, and apply the commands to keep
-        $commandHandlingDependencies->handle(
-            ForkContentStream::create(
-                $command->newContentStreamId,
-                $baseWorkspace->currentContentStreamId,
-            )
-        );
+
+        $inMemoryEventStore = new InMemoryEventStore();
 
         // 4) using the new content stream, apply the commands to keep
         try {
-            $commandHandlingDependencies->overrideContentStreamId(
-                $baseWorkspace->workspaceName,
-                $command->newContentStreamId,
+            $commandHandlingDependencies->inSimulation(
                 function () use ($commandsToKeep, $commandHandlingDependencies, $baseWorkspace): void {
                     foreach ($commandsToKeep as $matchingCommand) {
                         if (!($matchingCommand instanceof RebasableToOtherWorkspaceInterface)) {
@@ -809,7 +802,8 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
                             $baseWorkspace->workspaceName,
                         ));
                     }
-                }
+                },
+                $inMemoryEventStore
             );
         } catch (\Exception $exception) {
             // 4.E) In case of an exception, reopen the old content stream and remove the newly created
@@ -819,18 +813,26 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
                     $oldWorkspaceContentStreamIdState,
                 )
             );
-
-            $commandHandlingDependencies->handle(RemoveContentStream::create(
-                $command->newContentStreamId
-            ));
-
             throw $exception;
         }
 
         // 5) If everything worked, to avoid dangling content streams, we need to remove the old content stream
-        $commandHandlingDependencies->handle(RemoveContentStream::create(
-            $oldWorkspaceContentStreamId
-        ));
+
+        // 3) fork a new contentStream, based on the base WS, and apply the commands to keep
+        $commandHandlingDependencies->handle(
+            ForkContentStream::create(
+                $command->newContentStreamId,
+                $baseWorkspace->currentContentStreamId,
+            )
+        );
+
+        $this->publishStreamOnWorkspaceContentStream(
+            $commandHandlingDependencies,
+            $command->workspaceName,
+            $command->newContentStreamId,
+            $inMemoryEventStore->load(VirtualStreamName::all()),
+            ExpectedVersion::fromVersion(Version::first())
+        );
 
         $streamName = WorkspaceEventStreamName::fromWorkspaceName($command->workspaceName)->getEventStreamName();
 
