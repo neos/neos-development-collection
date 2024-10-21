@@ -75,9 +75,9 @@ class SiteService
      */
     public function pruneSite(Site $site): void
     {
-        $siteServiceInternals = $this->contentRepositoryRegistry->buildService(
-            $site->getConfiguration()->contentRepositoryId,
-            new SiteServiceInternalsFactory($this->workspaceService)
+        $siteServiceInternals = new SiteServiceInternals(
+            $this->contentRepositoryRegistry->get($site->getConfiguration()->contentRepositoryId),
+            $this->workspaceService
         );
 
         try {
@@ -180,9 +180,9 @@ class SiteService
         $site->setName($siteName);
         $this->siteRepository->add($site);
 
-        $siteServiceInternals = $this->contentRepositoryRegistry->buildService(
-            $site->getConfiguration()->contentRepositoryId,
-            new SiteServiceInternalsFactory($this->workspaceService)
+        $siteServiceInternals = new SiteServiceInternals(
+            $this->contentRepositoryRegistry->get($site->getConfiguration()->contentRepositoryId),
+            $this->workspaceService
         );
         $siteServiceInternals->createSiteNodeIfNotExists($site, $nodeTypeName);
 

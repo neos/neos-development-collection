@@ -16,7 +16,6 @@ namespace Neos\ContentRepository\Core\Feature;
 
 use Neos\ContentRepository\Core\CommandHandler\CommandHandlerInterface;
 use Neos\ContentRepository\Core\CommandHandler\CommandInterface;
-use Neos\ContentRepository\Core\CommandHandler\CommandResult;
 use Neos\ContentRepository\Core\CommandHandlingDependencies;
 use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\EventStore\DecoratedEvent;
@@ -241,7 +240,7 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
         ContentStreamId $contentStreamId,
         WorkspaceName $baseWorkspaceName,
         ContentStreamId $baseContentStreamId,
-    ): ?CommandResult {
+    ): void {
         $baseWorkspaceContentStreamName = ContentStreamEventStreamName::fromContentStreamId(
             $baseContentStreamId
         );
@@ -286,10 +285,10 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
         }
 
         if (count($events) === 0) {
-            return null;
+            return;
         }
         try {
-            return $this->eventPersister->publishEvents(
+            $this->eventPersister->publishEvents(
                 new EventsToPublish(
                     $baseWorkspaceContentStreamName->getEventStreamName(),
                     Events::fromArray($events),
@@ -755,8 +754,6 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
             )
         );
 
-        // It is safe to only return the last command result,
-        // as the commands which were rebased are already executed "synchronously"
         return new EventsToPublish(
             $streamName,
             $events,
