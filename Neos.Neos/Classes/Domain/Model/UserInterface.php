@@ -15,9 +15,8 @@ declare(strict_types=1);
 namespace Neos\Neos\Domain\Model;
 
 /**
- * Interface for a user of the content repository. Users can be owners of workspaces.
- *
- * @api
+ * @deprecated with 9.0.0-beta14 please use {@see \Neos\Neos\Domain\Model\User} instead.
+ * The interface was only needed for the old cr: https://github.com/neos/neos-development-collection/pull/165#issuecomment-157645872
  */
 interface UserInterface
 {

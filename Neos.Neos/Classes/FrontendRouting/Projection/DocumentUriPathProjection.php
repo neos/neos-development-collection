@@ -6,7 +6,6 @@ namespace Neos\Neos\FrontendRouting\Projection;
 
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Exception as DBALException;
-use Doctrine\DBAL\Schema\AbstractSchemaManager;
 use Doctrine\DBAL\Types\Types;
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
 use Neos\ContentRepository\Core\EventStore\EventInterface;
@@ -25,7 +24,6 @@ use Neos\ContentRepository\Core\Feature\RootNodeCreation\Event\RootNodeAggregate
 use Neos\ContentRepository\Core\Feature\RootNodeCreation\Event\RootNodeAggregateWithNodeWasCreated;
 use Neos\ContentRepository\Core\Feature\SubtreeTagging\Event\SubtreeWasTagged;
 use Neos\ContentRepository\Core\Feature\SubtreeTagging\Event\SubtreeWasUntagged;
-use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Event\RootWorkspaceWasCreated;
 use Neos\ContentRepository\Core\Infrastructure\DbalCheckpointStorage;
 use Neos\ContentRepository\Core\Infrastructure\DbalSchemaDiff;
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
@@ -109,7 +107,12 @@ final class DocumentUriPathProjection implements ProjectionInterface, WithMarkSt
     {
         $schemaManager = $this->dbal->createSchemaManager();
         $schema = (new DocumentUriPathSchemaBuilder($this->tableNamePrefix))->buildSchema($schemaManager);
-        return DbalSchemaDiff::determineRequiredSqlStatements($this->dbal, $schema);
+        $statements = DbalSchemaDiff::determineRequiredSqlStatements($this->dbal, $schema);
+        // MIGRATIONS
+        if ($this->dbal->getSchemaManager()->tablesExist([$this->tableNamePrefix . '_livecontentstreams'])) {
+            $statements[] = sprintf('DROP table %s_livecontentstreams;', $this->tableNamePrefix);
+        }
+        return $statements;
     }
 
 
@@ -125,7 +128,6 @@ final class DocumentUriPathProjection implements ProjectionInterface, WithMarkSt
     {
         try {
             $this->dbal->exec('TRUNCATE ' . $this->tableNamePrefix . '_uri');
-            $this->dbal->exec('TRUNCATE ' . $this->tableNamePrefix . '_livecontentstreams');
         } catch (DBALException $e) {
             throw new \RuntimeException(sprintf('Failed to truncate tables: %s', $e->getMessage()), 1599655382, $e);
         }
@@ -135,7 +137,6 @@ final class DocumentUriPathProjection implements ProjectionInterface, WithMarkSt
     public function canHandle(EventInterface $event): bool
     {
         return in_array($event::class, [
-            RootWorkspaceWasCreated::class,
             RootNodeAggregateWithNodeWasCreated::class,
             RootNodeAggregateDimensionsWereUpdated::class,
             NodeAggregateWithNodeWasCreated::class,
@@ -156,7 +157,6 @@ final class DocumentUriPathProjection implements ProjectionInterface, WithMarkSt
     public function apply(EventInterface $event, EventEnvelope $eventEnvelope): void
     {
         match ($event::class) {
-            RootWorkspaceWasCreated::class => $this->whenRootWorkspaceWasCreated($event),
             RootNodeAggregateWithNodeWasCreated::class => $this->whenRootNodeAggregateWithNodeWasCreated($event),
             RootNodeAggregateDimensionsWereUpdated::class => $this->whenRootNodeAggregateDimensionsWereUpdated($event),
             NodeAggregateWithNodeWasCreated::class => $this->whenNodeAggregateWithNodeWasCreated($event),
@@ -191,25 +191,9 @@ final class DocumentUriPathProjection implements ProjectionInterface, WithMarkSt
         return $this->stateAccessor;
     }
 
-    private function whenRootWorkspaceWasCreated(RootWorkspaceWasCreated $event): void
-    {
-        try {
-            $this->dbal->insert($this->tableNamePrefix . '_livecontentstreams', [
-                'contentStreamId' => $event->newContentStreamId->value,
-                'workspaceName' => $event->workspaceName->value,
-            ]);
-        } catch (DBALException $e) {
-            throw new \RuntimeException(sprintf(
-                'Failed to insert root content stream id of the root workspace "%s": %s',
-                $event->workspaceName->value,
-                $e->getMessage()
-            ), 1599646608, $e);
-        }
-    }
-
     private function whenRootNodeAggregateWithNodeWasCreated(RootNodeAggregateWithNodeWasCreated $event): void
     {
-        if (!$this->getState()->isLiveContentStream($event->contentStreamId)) {
+        if (!$event->workspaceName->isLive()) {
             return;
         }
         foreach ($event->coveredDimensionSpacePoints as $dimensionSpacePoint) {
@@ -225,7 +209,7 @@ final class DocumentUriPathProjection implements ProjectionInterface, WithMarkSt
 
     private function whenRootNodeAggregateDimensionsWereUpdated(RootNodeAggregateDimensionsWereUpdated $event): void
     {
-        if (!$this->getState()->isLiveContentStream($event->contentStreamId)) {
+        if (!$event->workspaceName->isLive()) {
             return;
         }
 
@@ -265,7 +249,7 @@ final class DocumentUriPathProjection implements ProjectionInterface, WithMarkSt
 
     private function whenNodeAggregateWithNodeWasCreated(NodeAggregateWithNodeWasCreated $event): void
     {
-        if (!$this->getState()->isLiveContentStream($event->contentStreamId)) {
+        if (!$event->workspaceName->isLive()) {
             return;
         }
         $documentTypeClassification = $this->getDocumentTypeClassification($event->nodeTypeName);
@@ -360,7 +344,7 @@ final class DocumentUriPathProjection implements ProjectionInterface, WithMarkSt
 
     private function whenNodeAggregateTypeWasChanged(NodeAggregateTypeWasChanged $event): void
     {
-        if (!$this->getState()->isLiveContentStream($event->contentStreamId)) {
+        if (!$event->workspaceName->isLive()) {
             return;
         }
         switch ($this->getDocumentTypeClassification($event->newNodeTypeName)) {
@@ -395,7 +379,7 @@ final class DocumentUriPathProjection implements ProjectionInterface, WithMarkSt
 
     private function whenNodePeerVariantWasCreated(NodePeerVariantWasCreated $event): void
     {
-        if (!$this->getState()->isLiveContentStream($event->contentStreamId)) {
+        if (!$event->workspaceName->isLive()) {
             return;
         }
         $this->copyVariants(
@@ -408,7 +392,7 @@ final class DocumentUriPathProjection implements ProjectionInterface, WithMarkSt
 
     private function whenNodeGeneralizationVariantWasCreated(NodeGeneralizationVariantWasCreated $event): void
     {
-        if (!$this->getState()->isLiveContentStream($event->contentStreamId)) {
+        if (!$event->workspaceName->isLive()) {
             return;
         }
         $this->copyVariants(
@@ -421,7 +405,7 @@ final class DocumentUriPathProjection implements ProjectionInterface, WithMarkSt
 
     private function whenNodeSpecializationVariantWasCreated(NodeSpecializationVariantWasCreated $event): void
     {
-        if (!$this->getState()->isLiveContentStream($event->contentStreamId)) {
+        if (!$event->workspaceName->isLive()) {
             return;
         }
         $this->copyVariants(
@@ -463,7 +447,7 @@ final class DocumentUriPathProjection implements ProjectionInterface, WithMarkSt
 
     private function whenSubtreeWasTagged(SubtreeWasTagged $event): void
     {
-        if ($event->tag->value !== 'disabled' || !$this->getState()->isLiveContentStream($event->contentStreamId)) {
+        if ($event->tag->value !== 'disabled' || !$event->workspaceName->isLive()) {
             return;
         }
         foreach ($event->affectedDimensionSpacePoints as $dimensionSpacePoint) {
@@ -494,7 +478,7 @@ final class DocumentUriPathProjection implements ProjectionInterface, WithMarkSt
 
     private function whenSubtreeWasUntagged(SubtreeWasUntagged $event): void
     {
-        if ($event->tag->value !== 'disabled' || !$this->getState()->isLiveContentStream($event->contentStreamId)) {
+        if ($event->tag->value !== 'disabled' || !$event->workspaceName->isLive()) {
             return;
         }
         foreach ($event->affectedDimensionSpacePoints as $dimensionSpacePoint) {
@@ -525,7 +509,7 @@ final class DocumentUriPathProjection implements ProjectionInterface, WithMarkSt
 
     private function whenNodeAggregateWasRemoved(NodeAggregateWasRemoved $event): void
     {
-        if (!$this->getState()->isLiveContentStream($event->contentStreamId)) {
+        if (!$event->workspaceName->isLive()) {
             return;
         }
         foreach ($event->affectedCoveredDimensionSpacePoints as $dimensionSpacePoint) {
@@ -555,7 +539,7 @@ final class DocumentUriPathProjection implements ProjectionInterface, WithMarkSt
 
     private function whenNodePropertiesWereSet(NodePropertiesWereSet $event, EventEnvelope $eventEnvelope): void
     {
-        if (!$this->getState()->isLiveContentStream($event->contentStreamId)) {
+        if (!$event->workspaceName->isLive()) {
             return;
         }
         $newPropertyValues = $event->propertyValues->getPlainValues();
@@ -623,7 +607,7 @@ final class DocumentUriPathProjection implements ProjectionInterface, WithMarkSt
 
     private function whenNodeAggregateWasMoved(NodeAggregateWasMoved $event): void
     {
-        if (!$this->getState()->isLiveContentStream($event->getContentStreamId())) {
+        if (!$event->workspaceName->isLive()) {
             return;
         }
 
@@ -941,7 +925,7 @@ final class DocumentUriPathProjection implements ProjectionInterface, WithMarkSt
 
     private function whenDimensionSpacePointWasMoved(DimensionSpacePointWasMoved $event): void
     {
-        if ($this->getState()->isLiveContentStream($event->contentStreamId)) {
+        if ($event->workspaceName->isLive()) {
             $this->updateNodeQuery(
                 'SET dimensionspacepointhash = :newDimensionSpacePointHash
                         WHERE dimensionspacepointhash = :originalDimensionSpacePointHash',
@@ -965,7 +949,7 @@ final class DocumentUriPathProjection implements ProjectionInterface, WithMarkSt
 
     private function whenDimensionShineThroughWasAdded(DimensionShineThroughWasAdded $event): void
     {
-        if ($this->getState()->isLiveContentStream($event->contentStreamId)) {
+        if ($event->workspaceName->isLive()) {
             try {
                 $this->dbal->executeStatement('INSERT INTO ' . $this->tableNamePrefix . '_uri (
                     nodeaggregateid,

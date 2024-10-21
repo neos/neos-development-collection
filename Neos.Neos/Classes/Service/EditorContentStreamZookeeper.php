@@ -14,22 +14,12 @@ declare(strict_types=1);
 
 namespace Neos\Neos\Service;
 
-use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Command\CreateWorkspace;
-use Neos\ContentRepository\Core\SharedModel\User\UserId;
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
-use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceDescription;
-use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
-use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceTitle;
-use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Core\Bootstrap;
 use Neos\Flow\Http\HttpRequestHandlerInterface;
-use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Flow\Security\Authentication;
 use Neos\Flow\Security\Policy\PolicyService;
-use Neos\Flow\Security\Policy\Role;
-use Neos\Neos\Domain\Model\User;
-use Neos\Neos\Domain\Service\WorkspaceNameBuilder;
+use Neos\Neos\Domain\Service\WorkspaceService;
 use Neos\Neos\FrontendRouting\SiteDetection\SiteDetectionFailedException;
 use Neos\Neos\FrontendRouting\SiteDetection\SiteDetectionResult;
 use Neos\Party\Domain\Service\PartyService;
@@ -46,15 +36,15 @@ final class EditorContentStreamZookeeper
 {
     /**
      * @Flow\Inject
-     * @var PersistenceManagerInterface
-     */
-    protected $persistenceManager;
-
-    /**
-     * @Flow\Inject
      * @var PartyService
      */
     protected $partyService;
+
+    /**
+     * @Flow\Inject
+     * @var \Neos\Neos\Domain\Service\UserService
+     */
+    protected $userService;
 
     /**
      * @Flow\Inject
@@ -70,9 +60,9 @@ final class EditorContentStreamZookeeper
 
     /**
      * @Flow\Inject
-     * @var ContentRepositoryRegistry
+     * @var WorkspaceService
      */
-    protected $contentRepositoryRegistry;
+    protected $workspaceService;
 
     /**
      * This method is called whenever a login happens (AuthenticationProviderManager::class, 'authenticatedToken'),
@@ -97,45 +87,14 @@ final class EditorContentStreamZookeeper
         } catch (SiteDetectionFailedException) {
             return;
         }
-        $contentRepository = $this->contentRepositoryRegistry->get($siteDetectionResult->contentRepositoryId);
 
-        $isEditor = false;
-        foreach ($token->getAccount()->getRoles() as $role) {
-            /** @var Role $role */
-            if (isset($role->getAllParentRoles()['Neos.Neos:AbstractEditor'])) {
-                $isEditor = true;
-                break;
-            }
-        }
-        if (!$isEditor) {
+        $authenticatedUser = $this->userService->getCurrentUser();
+        if ($authenticatedUser === null) {
             return;
         }
-        $user = $this->partyService->getAssignedPartyOfAccount($token->getAccount());
-        if (!$user instanceof User) {
+        if (!array_key_exists('Neos.Neos:AbstractEditor', $this->userService->getAllRoles($authenticatedUser))) {
             return;
         }
-        $workspaceName = WorkspaceNameBuilder::fromAccountIdentifier(
-            $token->getAccount()->getAccountIdentifier()
-        );
-        $workspace = $contentRepository->getWorkspaceFinder()->findOneByName($workspaceName);
-        if ($workspace !== null) {
-            return;
-        }
-
-        $baseWorkspace = $contentRepository->getWorkspaceFinder()->findOneByName(WorkspaceName::forLive());
-        if (!$baseWorkspace) {
-            return;
-        }
-        $editorsNewContentStreamId = ContentStreamId::create();
-        $contentRepository->handle(
-            CreateWorkspace::create(
-                $workspaceName,
-                $baseWorkspace->workspaceName,
-                new WorkspaceTitle((string) $user->getName()),
-                new WorkspaceDescription(''),
-                $editorsNewContentStreamId,
-                UserId::fromString($this->persistenceManager->getIdentifierByObject($user))
-            )
-        );
+        $this->workspaceService->createPersonalWorkspaceForUserIfMissing($siteDetectionResult->contentRepositoryId, $authenticatedUser);
     }
 }

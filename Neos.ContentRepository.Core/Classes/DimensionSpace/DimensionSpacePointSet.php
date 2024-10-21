@@ -156,11 +156,12 @@ final readonly class DimensionSpacePointSet implements
         yield from $this->points;
     }
 
-    /**
-     * @throws \JsonException
-     */
     public function toJson(): string
     {
-        return json_encode($this, JSON_THROW_ON_ERROR);
+        try {
+            return json_encode($this, JSON_THROW_ON_ERROR);
+        } catch (\JsonException $e) {
+            throw new \RuntimeException(sprintf('Failed to JSON-encode %s: %s', self::class, $e->getMessage()), 1723031979, $e);
+        }
     }
 }

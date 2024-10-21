@@ -37,14 +37,11 @@ Feature: Workspace based content publishing
       | nodeAggregateId           | "nody-mc-nodeface"   |
       | originDimensionSpacePoint | {}                   |
       | propertyValues            | {"text": "Original"} |
-    # we need to ensure that the projections are up to date now; otherwise a content stream is forked with an out-
-    # of-date base version. This means the content stream can never be merged back, but must always be rebased.
     And the command CreateWorkspace is executed with payload:
       | Key                | Value                |
       | workspaceName      | "user-test"          |
       | baseWorkspaceName  | "live"               |
       | newContentStreamId | "user-cs-identifier" |
-      | workspaceOwner     | "owner-identifier"   |
 
   Scenario: Basic events are emitted
     # LIVE workspace
@@ -58,8 +55,6 @@ Feature: Workspace based content publishing
     And event at index 0 is of type "RootWorkspaceWasCreated" with payload:
       | Key                  | Expected                 |
       | workspaceName        | "live"                   |
-      | workspaceTitle       | "Live"                   |
-      | workspaceDescription | "The workspace \"live\"" |
       | newContentStreamId   | "cs-identifier"          |
 
     # USER workspace
@@ -74,10 +69,7 @@ Feature: Workspace based content publishing
       | Key                  | Expected                      |
       | workspaceName        | "user-test"                   |
       | baseWorkspaceName    | "live"                        |
-      | workspaceTitle       | "User-test"                   |
-      | workspaceDescription | "The workspace \"user-test\"" |
       | newContentStreamId   | "user-cs-identifier"          |
-      | workspaceOwner       | "owner-identifier"            |
 
   Scenario: modify the property in the nested workspace and publish afterwards works
     When the command SetNodeProperties is executed with payload:

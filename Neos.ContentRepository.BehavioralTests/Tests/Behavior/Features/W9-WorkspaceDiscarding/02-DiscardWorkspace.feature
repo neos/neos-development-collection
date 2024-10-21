@@ -37,14 +37,12 @@ Feature: Workspace discarding - basic functionality
       | nodeAggregateId           | "nody-mc-nodeface"   |
       | originDimensionSpacePoint | {}                   |
       | propertyValues            | {"text": "Original"} |
-    # we need to ensure that the projections are up to date now; otherwise a content stream is forked with an out-
-    # of-date base version. This means the content stream can never be merged back, but must always be rebased.
+
     And the command CreateWorkspace is executed with payload:
       | Key                | Value                |
       | workspaceName      | "user-test"          |
       | baseWorkspaceName  | "live"               |
       | newContentStreamId | "user-cs-identifier" |
-      | workspaceOwner     | "owner-identifier"   |
 
   Scenario: Discarding a full workspace works
     When the command SetNodeProperties is executed with payload:
@@ -106,13 +104,11 @@ Feature: Workspace discarding - basic functionality
       | workspaceName      | "user-ws-one"      |
       | baseWorkspaceName  | "live"             |
       | newContentStreamId | "user-cs-one"      |
-      | workspaceOwner     | "owner-identifier" |
     And the command CreateWorkspace is executed with payload:
       | Key                | Value              |
       | workspaceName      | "user-ws-two"      |
       | baseWorkspaceName  | "live"             |
       | newContentStreamId | "user-cs-two"      |
-      | workspaceOwner     | "owner-identifier" |
 
     When the command RemoveNodeAggregate is executed with payload:
       | Key                          | Value              |

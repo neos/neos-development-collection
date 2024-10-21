@@ -21,12 +21,10 @@ use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\View\JsonView;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
-use Neos\Neos\FrontendRouting\NodeAddressFactory;
-use Neos\Neos\FrontendRouting\SiteDetection\SiteDetectionResult;
-use Neos\Utility\ObjectAccess;
 use Neos\Flow\Reflection\ReflectionService;
 use Neos\Neos\Exception as NeosException;
 use Neos\Neos\Service\DataSource\DataSourceInterface;
+use Neos\Utility\ObjectAccess;
 
 /**
  * Data Source Controller
@@ -81,12 +79,9 @@ class DataSourceController extends AbstractServiceController
             return null;
         }
 
-        $contentRepositoryId = SiteDetectionResult::fromRequest($this->request->getHttpRequest())
-            ->contentRepositoryId;
-        $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryId);
-        // todo legacy uri node address notation used. Should be refactored to use json encoded NodeAddress
-        $nodeAddress = NodeAddressFactory::create($contentRepository)->createCoreNodeAddressFromLegacyUriString($stringFormattedNodeAddress);
+        $nodeAddress = NodeAddress::fromJsonString($stringFormattedNodeAddress);
 
+        $contentRepository = $this->contentRepositoryRegistry->get($nodeAddress->contentRepositoryId);
         return $contentRepository->getContentGraph($nodeAddress->workspaceName)->getSubgraph(
             $nodeAddress->dimensionSpacePoint,
             VisibilityConstraints::withoutRestrictions()

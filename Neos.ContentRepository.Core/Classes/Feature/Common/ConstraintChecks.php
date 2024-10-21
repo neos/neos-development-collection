@@ -60,7 +60,7 @@ use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
 use Neos\ContentRepository\Core\SharedModel\Node\PropertyName;
 use Neos\ContentRepository\Core\SharedModel\Node\ReferenceName;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamState;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamStatus;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\EventStore\Model\EventStream\ExpectedVersion;
 
@@ -81,15 +81,14 @@ trait ConstraintChecks
         CommandHandlingDependencies $commandHandlingDependencies
     ): ContentStreamId {
         $contentStreamId = $commandHandlingDependencies->getContentGraph($workspaceName)->getContentStreamId();
-        $state = $commandHandlingDependencies->getContentStreamFinder()->findStateForContentStream($contentStreamId);
-        if ($state === null) {
+        if (!$commandHandlingDependencies->contentStreamExists($contentStreamId)) {
             throw new ContentStreamDoesNotExistYet(
                 'Content stream for "' . $workspaceName->value . '" does not exist yet.',
                 1521386692
             );
         }
-
-        if ($state === ContentStreamState::STATE_CLOSED) {
+        $state = $commandHandlingDependencies->getContentStreamStatus($contentStreamId);
+        if ($state === ContentStreamStatus::CLOSED) {
             throw new ContentStreamIsClosed(
                 'Content stream "' . $contentStreamId->value . '" is closed.',
                 1710260081
@@ -676,7 +675,7 @@ trait ConstraintChecks
     ): ExpectedVersion {
 
         return ExpectedVersion::fromVersion(
-            $commandHandlingDependencies->getContentStreamFinder()->findVersionForContentStream($contentStreamId)->unwrap()
+            $commandHandlingDependencies->getContentStreamVersion($contentStreamId)
         );
     }
 }

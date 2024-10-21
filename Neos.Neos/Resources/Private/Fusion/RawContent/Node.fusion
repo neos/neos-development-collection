@@ -1,6 +1,6 @@
 prototype(Neos.Neos:RawContent.Node) < prototype(Neos.Neos:ContentComponent) {
 
-  nodeType = ${node.nodeTypeName.value}
+  nodeType = ${node.nodeTypeName}
 
   renderer = Neos.Fusion:Case {
     custom {
