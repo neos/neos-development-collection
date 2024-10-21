@@ -78,4 +78,9 @@ final readonly class UpdateRootNodeAggregateDimensions implements
             $this->nodeAggregateId,
         );
     }
+
+    public function getWorkspaceName(): WorkspaceName
+    {
+        return $this->workspaceName;
+    }
 }

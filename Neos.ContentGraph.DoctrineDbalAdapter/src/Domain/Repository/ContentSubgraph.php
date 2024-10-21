@@ -122,6 +122,21 @@ final class ContentSubgraph implements ContentSubgraphInterface
         return $this->visibilityConstraints;
     }
 
+    public function withVisibilityConstraints(VisibilityConstraints $newVisibilityConstraints): self
+    {
+        return new self(
+            $this->contentRepositoryId,
+            $this->workspaceName,
+            $this->contentStreamId,
+            $this->dimensionSpacePoint,
+            $newVisibilityConstraints,
+            $this->dbal,
+            $this->nodeFactory,
+            $this->nodeTypeManager,
+            $this->nodeQueryBuilder->tableNames,
+        );
+    }
+
     public function findChildNodes(NodeAggregateId $parentNodeAggregateId, FindChildNodesFilter $filter): Nodes
     {
         $queryBuilder = $this->buildChildNodesQuery($parentNodeAggregateId, $filter);

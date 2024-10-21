@@ -27,6 +27,7 @@ use Neos\Neos\Domain\Model\WorkspaceRoleSubjectType;
 use Neos\Neos\Domain\Model\WorkspaceTitle;
 use Neos\Neos\Domain\Service\UserService;
 use Neos\Neos\Domain\Service\WorkspaceService;
+use Neos\Neos\Security\Authorization\ContentRepositoryAuthorizationService;
 use PHPUnit\Framework\Assert;
 
 /**
@@ -165,16 +166,15 @@ trait WorkspaceServiceTrait
 
     /**
      * @When the role :role is assigned to workspace :workspaceName for group :groupName
-     * @When the role :role is assigned to workspace :workspaceName for user :username
+     * @When the role :role is assigned to workspace :workspaceName for user :userId
      */
-    public function theRoleIsAssignedToWorkspaceForGroupOrUser(string $role, string $workspaceName, string $groupName = null, string $username = null): void
+    public function theRoleIsAssignedToWorkspaceForGroupOrUser(string $role, string $workspaceName, string $groupName = null, string $userId = null): void
     {
         $this->tryCatchingExceptions(fn () => $this->getObject(WorkspaceService::class)->assignWorkspaceRole(
             $this->currentContentRepository->id,
             WorkspaceName::fromString($workspaceName),
             WorkspaceRoleAssignment::create(
-                $groupName !== null ? WorkspaceRoleSubjectType::GROUP : WorkspaceRoleSubjectType::USER,
-                WorkspaceRoleSubject::fromString($groupName ?? $username),
+                $groupName !== null ? WorkspaceRoleSubject::createForGroup($groupName) : WorkspaceRoleSubject::createForUser(UserId::fromString($userId)),
                 WorkspaceRole::from($role)
             )
         ));
@@ -182,15 +182,14 @@ trait WorkspaceServiceTrait
 
     /**
      * @When the role for group :groupName is unassigned from workspace :workspaceName
-     * @When the role for user :username is unassigned from workspace :workspaceName
+     * @When the role for user :userId is unassigned from workspace :workspaceName
      */
-    public function theRoleIsUnassignedFromWorkspace(string $workspaceName, string $groupName = null, string $username = null): void
+    public function theRoleIsUnassignedFromWorkspace(string $workspaceName, string $groupName = null, string $userId = null): void
     {
         $this->tryCatchingExceptions(fn () => $this->getObject(WorkspaceService::class)->unassignWorkspaceRole(
             $this->currentContentRepository->id,
             WorkspaceName::fromString($workspaceName),
-            $groupName !== null ? WorkspaceRoleSubjectType::GROUP : WorkspaceRoleSubjectType::USER,
-            WorkspaceRoleSubject::fromString($groupName ?? $username),
+            $groupName !== null ? WorkspaceRoleSubject::createForGroup($groupName) : WorkspaceRoleSubject::createForUser(UserId::fromString($userId)),
         ));
     }
 
@@ -201,7 +200,7 @@ trait WorkspaceServiceTrait
     {
         $workspaceAssignments = $this->getObject(WorkspaceService::class)->getWorkspaceRoleAssignments($this->currentContentRepository->id, WorkspaceName::fromString($workspaceName));
         $actualAssignments = array_map(static fn (WorkspaceRoleAssignment $assignment) => [
-            'Subject type' => $assignment->subjectType->value,
+            'Subject type' => $assignment->subject->type->value,
             'Subject' => $assignment->subject->value,
             'Role' => $assignment->role->value,
         ], iterator_to_array($workspaceAssignments));
@@ -214,12 +213,12 @@ trait WorkspaceServiceTrait
     public function theNeosUserShouldHaveThePermissionsForWorkspace(string $username, string $expectedPermissions, string $workspaceName): void
     {
         $user = $this->getObject(UserService::class)->getUser($username);
-        $permissions = $this->getObject(WorkspaceService::class)->getWorkspacePermissionsForUser(
+        $permissions = $this->getObject(ContentRepositoryAuthorizationService::class)->getWorkspacePermissionsForUser(
             $this->currentContentRepository->id,
             WorkspaceName::fromString($workspaceName),
             $user,
         );
-        Assert::assertSame($expectedPermissions, implode(',', array_keys(array_filter((array)$permissions))));
+        Assert::assertSame($expectedPermissions, implode(',', array_keys(array_filter(get_object_vars($permissions)))));
     }
 
     /**
@@ -228,7 +227,7 @@ trait WorkspaceServiceTrait
     public function theNeosUserShouldHaveNoPermissionsForWorkspace(string $username, string $workspaceName): void
     {
         $user = $this->getObject(UserService::class)->getUser($username);
-        $permissions = $this->getObject(WorkspaceService::class)->getWorkspacePermissionsForUser(
+        $permissions = $this->getObject(ContentRepositoryAuthorizationService::class)->getWorkspacePermissionsForUser(
             $this->currentContentRepository->id,
             WorkspaceName::fromString($workspaceName),
             $user,

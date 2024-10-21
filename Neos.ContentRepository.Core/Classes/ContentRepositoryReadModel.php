@@ -35,7 +35,7 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\Workspaces;
 final class ContentRepositoryReadModel implements ProjectionStateInterface
 {
     public function __construct(
-        private readonly ContentRepositoryReadModelAdapterInterface $adapter
+        private readonly ContentRepositoryReadModelAdapterInterface $adapter,
     ) {
     }
 

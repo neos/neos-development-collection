@@ -14,6 +14,7 @@ declare(strict_types=1);
 
 namespace Neos\Neos\Controller\Frontend;
 
+use Neos\ContentRepository\Core\Feature\SubtreeTagging\Dto\SubtreeTag;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentSubgraphInterface;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindClosestNodeFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindSubtreeFilter;
@@ -125,21 +126,12 @@ class NodeController extends ActionController
     {
         // @todo add $renderingModeName as parameter and append it for successive links again as get parameter to node uris
         $renderingMode = $this->renderingModeService->findByCurrentUser();
-
-        $visibilityConstraints = VisibilityConstraints::frontend();
-        if ($this->privilegeManager->isPrivilegeTargetGranted('Neos.Neos:Backend.GeneralAccess')) {
-            $visibilityConstraints = VisibilityConstraints::withoutRestrictions();
-        }
-
         $siteDetectionResult = SiteDetectionResult::fromRequest($this->request->getHttpRequest());
         $contentRepository = $this->contentRepositoryRegistry->get($siteDetectionResult->contentRepositoryId);
 
         $nodeAddress = NodeAddress::fromJsonString($node);
 
-        $subgraph = $contentRepository->getContentGraph($nodeAddress->workspaceName)->getSubgraph(
-            $nodeAddress->dimensionSpacePoint,
-            $visibilityConstraints
-        );
+        $subgraph = $contentRepository->getContentSubgraph($nodeAddress->workspaceName, $nodeAddress->dimensionSpacePoint);
 
         $nodeInstance = $subgraph->findNodeById($nodeAddress->aggregateId);
 
@@ -204,10 +196,9 @@ class NodeController extends ActionController
         }
 
         $contentRepository = $this->contentRepositoryRegistry->get($nodeAddress->contentRepositoryId);
-        $uncachedSubgraph = $contentRepository->getContentGraph($nodeAddress->workspaceName)->getSubgraph(
-            $nodeAddress->dimensionSpacePoint,
-            VisibilityConstraints::frontend()
-        );
+        $uncachedSubgraph = $contentRepository->getContentSubgraph($nodeAddress->workspaceName, $nodeAddress->dimensionSpacePoint);
+        // todo document
+        $uncachedSubgraph = $uncachedSubgraph->withVisibilityConstraints($uncachedSubgraph->getVisibilityConstraints()->withAddedSubtreeTag(SubtreeTag::disabled()));
         $subgraph = new ContentSubgraphWithRuntimeCaches($uncachedSubgraph, $this->subgraphCachePool);
 
         $nodeInstance = $subgraph->findNodeById($nodeAddress->aggregateId);

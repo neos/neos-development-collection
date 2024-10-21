@@ -31,7 +31,7 @@ use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Core\Projection\ProjectionCatchUpTriggerInterface;
 use Neos\ContentRepository\Core\Projection\ProjectionsAndCatchUpHooks;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
-use Neos\ContentRepository\Core\SharedModel\User\UserIdProviderInterface;
+use Neos\ContentRepository\Core\SharedModel\Auth\AuthProviderInterface;
 use Neos\EventStore\EventStoreInterface;
 use Psr\Clock\ClockInterface;
 use Symfony\Component\Serializer\Serializer;
@@ -54,7 +54,7 @@ final class ContentRepositoryFactory
         Serializer $propertySerializer,
         ProjectionsAndCatchUpHooksFactory $projectionsAndCatchUpHooksFactory,
         private readonly ProjectionCatchUpTriggerInterface $projectionCatchUpTrigger,
-        private readonly UserIdProviderInterface $userIdProvider,
+        private readonly AuthProviderInterface $authProvider,
         private readonly ClockInterface $clock,
     ) {
         $contentDimensionZookeeper = new ContentDimensionZookeeper($contentDimensionSource);
@@ -70,7 +70,8 @@ final class ContentRepositoryFactory
             $contentDimensionSource,
             $contentDimensionZookeeper,
             $interDimensionalVariationGraph,
-            new PropertyConverter($propertySerializer)
+            new PropertyConverter($propertySerializer),
+            $this->authProvider,
         );
         $this->projectionsAndCatchUpHooks = $projectionsAndCatchUpHooksFactory->build($this->projectionFactoryDependencies);
     }
@@ -99,7 +100,7 @@ final class ContentRepositoryFactory
                 $this->projectionFactoryDependencies->nodeTypeManager,
                 $this->projectionFactoryDependencies->interDimensionalVariationGraph,
                 $this->projectionFactoryDependencies->contentDimensionSource,
-                $this->userIdProvider,
+                $this->authProvider,
                 $this->clock,
             );
         }

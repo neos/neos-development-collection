@@ -589,27 +589,32 @@ final class EventMigrationService implements ContentRepositoryServiceInterface
             } catch (UniqueConstraintViolationException) {
                 $outputFn('  Metadata already exists');
             }
-            $roleAssignment = [];
+            $roleAssignments = [];
             if ($workspaceName->isLive()) {
-                $roleAssignment = [
+                $roleAssignments[] = [
                     'subject_type' => WorkspaceRoleSubjectType::GROUP->value,
                     'subject' => 'Neos.Neos:LivePublisher',
                     'role' => WorkspaceRole::COLLABORATOR->value,
                 ];
+                $roleAssignments[] = [
+                    'subject_type' => WorkspaceRoleSubjectType::GROUP->value,
+                    'subject' => 'Neos.Neos:Everybody',
+                    'role' => WorkspaceRole::VIEWER->value,
+                ];
             } elseif ($isInternalWorkspace) {
-                $roleAssignment = [
+                $roleAssignments[] = [
                     'subject_type' => WorkspaceRoleSubjectType::GROUP->value,
                     'subject' => 'Neos.Neos:AbstractEditor',
                     'role' => WorkspaceRole::COLLABORATOR->value,
                 ];
             } elseif ($isPrivateWorkspace) {
-                $roleAssignment = [
+                $roleAssignments[] = [
                     'subject_type' => WorkspaceRoleSubjectType::USER->value,
                     'subject' => $workspaceOwner,
                     'role' => WorkspaceRole::COLLABORATOR->value,
                 ];
             }
-            if ($roleAssignment !== []) {
+            foreach ($roleAssignments as $roleAssignment) {
                 try {
                     $this->connection->insert('neos_neos_workspace_role', [
                         'content_repository_id' => $this->contentRepositoryId->value,

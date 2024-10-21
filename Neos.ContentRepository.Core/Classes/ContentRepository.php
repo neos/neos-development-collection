@@ -17,6 +17,7 @@ namespace Neos\ContentRepository\Core;
 use Neos\ContentRepository\Core\CommandHandler\CommandBus;
 use Neos\ContentRepository\Core\CommandHandler\CommandInterface;
 use Neos\ContentRepository\Core\Dimension\ContentDimensionSourceInterface;
+use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\DimensionSpace\InterDimensionalVariationGraph;
 use Neos\ContentRepository\Core\EventStore\DecoratedEvent;
 use Neos\ContentRepository\Core\EventStore\EventInterface;
@@ -29,15 +30,17 @@ use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Core\Projection\CatchUp;
 use Neos\ContentRepository\Core\Projection\CatchUpOptions;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphInterface;
+use Neos\ContentRepository\Core\Projection\ContentGraph\ContentSubgraphInterface;
 use Neos\ContentRepository\Core\Projection\ProjectionInterface;
 use Neos\ContentRepository\Core\Projection\ProjectionsAndCatchUpHooks;
 use Neos\ContentRepository\Core\Projection\ProjectionStateInterface;
 use Neos\ContentRepository\Core\Projection\ProjectionStatuses;
 use Neos\ContentRepository\Core\Projection\WithMarkStaleInterface;
+use Neos\ContentRepository\Core\SharedModel\Auth\AuthProviderInterface;
+use Neos\ContentRepository\Core\SharedModel\Auth\UserId;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryStatus;
 use Neos\ContentRepository\Core\SharedModel\Exception\WorkspaceDoesNotExist;
-use Neos\ContentRepository\Core\SharedModel\User\UserIdProviderInterface;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStream;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreams;
@@ -84,10 +87,10 @@ final class ContentRepository
         private readonly NodeTypeManager $nodeTypeManager,
         private readonly InterDimensionalVariationGraph $variationGraph,
         private readonly ContentDimensionSourceInterface $contentDimensionSource,
-        private readonly UserIdProviderInterface $userIdProvider,
+        private readonly AuthProviderInterface $authProvider,
         private readonly ClockInterface $clock,
     ) {
-        $this->commandHandlingDependencies = new CommandHandlingDependencies($this);
+        $this->commandHandlingDependencies = new CommandHandlingDependencies($this, $this->getContentRepositoryReadModel());
     }
 
     /**
@@ -97,12 +100,16 @@ final class ContentRepository
      */
     public function handle(CommandInterface $command): void
     {
+        $privilege = $this->authProvider->getCommandPrivilege($command);
+        if (!$privilege->granted) {
+            throw new \RuntimeException(sprintf('Command "%s" was denied: %s', $command::class, $privilege->reason), 1729086686);
+        }
         // the commands only calculate which events they want to have published, but do not do the
         // publishing themselves
         $eventsToPublish = $this->commandBus->handle($command, $this->commandHandlingDependencies);
 
         // TODO meaningful exception message
-        $initiatingUserId = $this->userIdProvider->getUserId();
+        $initiatingUserId = $this->authProvider->getAuthenticatedUserId() ?? UserId::forSystemUser();
         $initiatingTimestamp = $this->clock->now()->format(\DateTimeInterface::ATOM);
 
         // Add "initiatingUserId" and "initiatingTimestamp" metadata to all events.
@@ -240,7 +247,22 @@ final class ContentRepository
      */
     public function getContentGraph(WorkspaceName $workspaceName): ContentGraphInterface
     {
+        $privilege = $this->authProvider->getReadNodesFromWorkspacePrivilege($workspaceName);
+        if (!$privilege->granted) {
+            // TODO more specific exception
+            throw new \RuntimeException(sprintf('Read access denied for workspace "%s": %s', $workspaceName->value, $privilege->reason ?? ''), 1729014760);
+        }
         return $this->getContentRepositoryReadModel()->getContentGraphByWorkspaceName($workspaceName);
+    }
+
+    /**
+     * @throws WorkspaceDoesNotExist if the workspace does not exist
+     */
+    public function getContentSubgraph(WorkspaceName $workspaceName, DimensionSpacePoint $dimensionSpacePoint): ContentSubgraphInterface
+    {
+        $contentGraph = $this->getContentGraph($workspaceName);
+        $visibilityConstraints = $this->authProvider->getVisibilityConstraints($workspaceName);
+        return $contentGraph->getSubgraph($dimensionSpacePoint, $visibilityConstraints);
     }
 
     /**

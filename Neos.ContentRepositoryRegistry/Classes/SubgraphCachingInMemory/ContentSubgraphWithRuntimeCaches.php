@@ -77,6 +77,11 @@ final readonly class ContentSubgraphWithRuntimeCaches implements ContentSubgraph
         return $this->wrappedContentSubgraph->getVisibilityConstraints();
     }
 
+    public function withVisibilityConstraints(VisibilityConstraints $newVisibilityConstraints): self
+    {
+        return new self($this->wrappedContentSubgraph->withVisibilityConstraints($newVisibilityConstraints), $this->subgraphCachePool);
+    }
+
     public function findChildNodes(NodeAggregateId $parentNodeAggregateId, FindChildNodesFilter $filter): Nodes
     {
         if (!self::isFilterEmpty($filter)) {

@@ -15,25 +15,22 @@ use Neos\Flow\Annotations as Flow;
 final readonly class WorkspaceRoleAssignment
 {
     private function __construct(
-        public WorkspaceRoleSubjectType $subjectType,
         public WorkspaceRoleSubject $subject,
         public WorkspaceRole $role,
     ) {
     }
 
     public static function create(
-        WorkspaceRoleSubjectType $subjectType,
         WorkspaceRoleSubject $subject,
         WorkspaceRole $role,
     ): self {
-        return new self($subjectType, $subject, $role);
+        return new self($subject, $role);
     }
 
     public static function createForUser(UserId $userId, WorkspaceRole $role): self
     {
         return new self(
-            WorkspaceRoleSubjectType::USER,
-            WorkspaceRoleSubject::fromString($userId->value),
+            WorkspaceRoleSubject::createForUser($userId),
             $role
         );
     }
@@ -41,8 +38,7 @@ final readonly class WorkspaceRoleAssignment
     public static function createForGroup(string $flowRoleIdentifier, WorkspaceRole $role): self
     {
         return new self(
-            WorkspaceRoleSubjectType::GROUP,
-            WorkspaceRoleSubject::fromString($flowRoleIdentifier),
+            WorkspaceRoleSubject::createForGroup($flowRoleIdentifier),
             $role
         );
     }
