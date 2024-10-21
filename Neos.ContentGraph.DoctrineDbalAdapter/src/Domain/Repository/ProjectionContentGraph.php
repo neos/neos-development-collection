@@ -235,6 +235,13 @@ class ProjectionContentGraph
                 throw new \RuntimeException(sprintf('Failed to load succeeding sibling relations for content stream %s, anchor point %s and dimension space point %s from database: %s', $contentStreamId->value, $succeedingSiblingAnchorPoint->value, $dimensionSpacePoint->toJson(), $e->getMessage()), 1716474854, $e);
             }
 
+            if (!$succeedingSiblingRelation) {
+                throw new \Exception(
+                    sprintf('Could not fetch succeeding sibling relation for anchor point: %s with dimensionSpacePointHash : %s', $succeedingSiblingAnchorPoint->value, $dimensionSpacePoint->hash),
+                    1696405259
+                );
+            }
+
             $succeedingSiblingPosition = (int)$succeedingSiblingRelation['position'];
             $parentAnchorPoint = NodeRelationAnchorPoint::fromInteger($succeedingSiblingRelation['parentnodeanchor']);
 
