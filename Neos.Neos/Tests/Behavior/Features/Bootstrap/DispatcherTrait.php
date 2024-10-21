@@ -69,6 +69,11 @@ trait DispatcherTrait
         //         $this->original->createFusionConfigurationFromSite($site)-> ... doest work
         //     }
         // };
+
+        // doesnt work as the packages base path cannot change ... we would need to create an actual package in /Packages as rescanPackages() will be invoked
+        // vfsStream::setup('packages');
+        // $this->getObject(\Neos\Flow\Package\PackageManager::class)->createPackage('Vendor.Site', [], 'vfs://packages/');
+        // file_put_contents('resource://Vendor.Site/Private/Fusion/Root.fusion', $fusionCode->getRaw());
     }
 
     /**
