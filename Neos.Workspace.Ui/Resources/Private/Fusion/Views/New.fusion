@@ -40,6 +40,7 @@ Neos.Workspace.Ui.WorkspaceController.new = Neos.Fusion:Component {
           attributes.hx-on--after-request={'document.getElementById("' + props.popoverId + '").hidePopover()'}
         >
           <fieldset>
+            <!-- todo adjust labels to be not that nested -->
             <Neos.Fusion.Form:Neos.BackendModule.FieldContainer
               field.name="title"
               label="workspaces.workspace.title"

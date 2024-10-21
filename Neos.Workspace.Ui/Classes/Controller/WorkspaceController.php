@@ -65,9 +65,9 @@ use Neos\Neos\FrontendRouting\NodeUriBuilderFactory;
 use Neos\Neos\FrontendRouting\SiteDetection\SiteDetectionResult;
 use Neos\Neos\PendingChangesProjection\ChangeFinder;
 use Neos\Neos\Utility\NodeTypeWithFallbackProvider;
-use Neos\Workspace\Ui\Model\WorkspaceDetails;
-use Neos\Workspace\Ui\Model\WorkspaceDetailsCollection;
 use Neos\Workspace\Ui\ViewModel\PendingChanges;
+use Neos\Workspace\Ui\ViewModel\WorkspaceListItem;
+use Neos\Workspace\Ui\ViewModel\WorkspaceListItems;
 
 /**
  * The Neos Workspace module controller
@@ -137,11 +137,11 @@ class WorkspaceController extends AbstractModuleController
 
         $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryId);
         $userWorkspace = $this->getUserWorkspace($contentRepository);
-        $workspacesAndCounts = $this->getWorkspacesAndChangeCounts($userWorkspace, $contentRepository);
+        $workspaceListItems = $this->getWorkspaceListItems($userWorkspace, $contentRepository);
 
         $this->view->assignMultiple([
             'userWorkspace' => $userWorkspace,
-            'workspacesAndChangeCounts' => $workspacesAndCounts,
+            'workspaceListItems' => $workspaceListItems,
             'flashMessages' => $this->controllerContext->getFlashMessageContainer()->getMessagesAndFlush(),
         ]);
     }
@@ -324,11 +324,11 @@ class WorkspaceController extends AbstractModuleController
             ->contentRepositoryId;
         $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryId);
         $userWorkspace = $this->getUserWorkspace($contentRepository);
-        $workspacesAndCounts = $this->getWorkspacesAndChangeCounts($userWorkspace, $contentRepository);
+        $workspaceListItems = $this->getWorkspaceListItems($userWorkspace, $contentRepository);
 
         $this->view->assignMultiple([
             'userWorkspace' => $userWorkspace,
-            'workspacesAndChangeCounts' => $workspacesAndCounts,
+            'workspaceListItems' => $workspaceListItems,
         ]);
     }
 
@@ -1112,22 +1112,34 @@ class WorkspaceController extends AbstractModuleController
         return $userWorkspace;
     }
 
-    protected function getWorkspacesAndChangeCounts(
+    protected function getWorkspaceListItems(
         Workspace $userWorkspace,
         ContentRepository $contentRepository
-    ): WorkspaceDetailsCollection {
+    ): WorkspaceListItems {
         $workspaceMetadata = $this->workspaceService->getWorkspaceMetadata($contentRepository->id, $userWorkspace->workspaceName);
-
-        $workspacesAndCounts = [];
-        $workspacesAndCounts[$userWorkspace->workspaceName->value] = new WorkspaceDetails(
-            $userWorkspace,
-            $workspaceMetadata->ownerUserId ? $this->userService->findUserById(
-                UserId::fromString($workspaceMetadata->ownerUserId->value)
-            )?->getLabel() : null,
-            $this->computePendingChanges($userWorkspace, $contentRepository),
+        $workspacesPermissions = $this->workspaceService->getWorkspacePermissionsForUser(
+            $contentRepository->id,
+            $userWorkspace->workspaceName,
+            $this->userService->getCurrentUser()
         );
 
         $allWorkspaces = $contentRepository->findWorkspaces();
+
+        $workspaceListItems = [];
+        $workspaceListItems[$userWorkspace->workspaceName->value] = new WorkspaceListItem(
+            $userWorkspace->workspaceName->value,
+            $workspaceMetadata->classification->value,
+            $userWorkspace->status->value,
+            $workspaceMetadata->title->value,
+            $workspaceMetadata->description->value,
+            $userWorkspace->baseWorkspaceName?->value,
+            $this->computePendingChanges($userWorkspace, $contentRepository),
+            !$allWorkspaces->getDependantWorkspaces($userWorkspace->workspaceName)->isEmpty(),
+            $workspaceMetadata->ownerUserId ? $this->userService->findUserById(
+                UserId::fromString($workspaceMetadata->ownerUserId->value)
+            )?->getLabel() : null,
+            $workspacesPermissions,
+        );
 
         foreach ($allWorkspaces as $workspace) {
             $workspacesPermissions = $this->workspaceService->getWorkspacePermissionsForUser(
@@ -1138,17 +1150,22 @@ class WorkspaceController extends AbstractModuleController
             if (!$workspacesPermissions->manage || !$workspacesPermissions->read) { // todo check corrrect?
                 continue;
             }
-            $workspacesAndCounts[$workspace->workspaceName->value] = new WorkspaceDetails(
-                $workspace,
+
+            $workspaceListItems[$workspace->workspaceName->value] = new WorkspaceListItem(
+                $workspace->workspaceName->value,
+                $workspaceMetadata->classification->value,
+                $workspace->status->value,
+                $workspaceMetadata->title->value,
+                $workspaceMetadata->description->value,
+                $workspace->baseWorkspaceName?->value,
+                $this->computePendingChanges($workspace, $contentRepository),
+                !$allWorkspaces->getDependantWorkspaces($workspace->workspaceName)->isEmpty(),
                 $workspaceMetadata->ownerUserId ? $this->userService->findUserById(
                     UserId::fromString($workspaceMetadata->ownerUserId->value)
                 )?->getLabel() : null,
-                $this->computePendingChanges($workspace, $contentRepository),
-                $allWorkspaces->getDependantWorkspaces($workspace->workspaceName)->count(),
-                $workspacesPermissions->write,
-                $workspacesPermissions->manage // todo always true????
+                $workspacesPermissions, // todo manage always true????
             );
         }
-        return new WorkspaceDetailsCollection($workspacesAndCounts);
+        return WorkspaceListItems::fromArray($workspaceListItems);
     }
 }

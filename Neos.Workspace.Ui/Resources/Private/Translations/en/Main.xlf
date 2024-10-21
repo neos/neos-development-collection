@@ -40,7 +40,7 @@
 				<source>Delete workspace "{0}"</source>
 			</trans-unit>
       <trans-unit id="workspaces.numberOfWorkspaces" xml:space="preserve">
-				<source>{total} workspaces</source>
+				<source>{0} workspaces</source>
 			</trans-unit>
       <trans-unit id="workspaces.deleteWorkspace.disabled" xml:space="preserve">
 				<source>Workspace "{0}" has unpublished changes</source>
@@ -128,9 +128,6 @@
 			</trans-unit>
       <trans-unit id="workspaces.workspace.status.OUTDATED" xml:space="preserve">
 				<source>Outdated</source>
-			</trans-unit>
-      <trans-unit id="workspaces.workspace.status.OUTDATED_CONFLICT" xml:space="preserve">
-				<source>Outdated (has conflict)</source>
 			</trans-unit>
       <trans-unit id="workspaces.workspace.changes" xml:space="preserve">
 				<source>Changes</source>

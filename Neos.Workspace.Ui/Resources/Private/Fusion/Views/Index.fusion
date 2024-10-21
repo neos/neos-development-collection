@@ -1,8 +1,8 @@
 Neos.Workspace.Ui.WorkspaceController.index = Neos.Fusion:Component {
   /// Neos\ContentRepository\Core\Projection\Workspace\Workspace
   userWorkspace = ${userWorkspace}
-  /// Neos\Workspace\Ui\Model\WorkspaceDetailsCollection
-  workspacesAndChangeCounts = ${workspacesAndChangeCounts}
+  /// Neos\Workspace\Ui\ViewModel\WorkspaceListItems
+  workspaceListItems = ${workspaceListItems}
   /// array
   flashMessages = ${flashMessages}
 
@@ -29,7 +29,7 @@ Neos.Workspace.Ui.WorkspaceController.index = Neos.Fusion:Component {
           <div class="neos-row-fluid">
             <Neos.Workspace.Ui:Component.WorkspaceTable
               userWorkspace={props.userWorkspace}
-              workspacesAndChangeCounts={props.workspacesAndChangeCounts}
+              workspaceListItems={props.workspaceListItems}
             />
           </div>
         </main>
@@ -47,7 +47,7 @@ Neos.Workspace.Ui.WorkspaceController.index = Neos.Fusion:Component {
             {props.i18n.id('workspaces.createNewWorkspace')}
           </button>
           <Neos.Workspace.Ui:Component.WorkspaceCount
-            workspaceCount={props.workspacesAndChangeCounts.counts}
+            workspaceCount={Array.length(props.workspaceListItems)}
           />
         </Neos.Workspace.Ui:Component.Footer>
       </section>
@@ -57,7 +57,7 @@ Neos.Workspace.Ui.WorkspaceController.index = Neos.Fusion:Component {
       <Neos.Workspace.Ui:Component.FlashMessages flashMessages={props.flashMessages}/>
       <Neos.Workspace.Ui:Component.WorkspaceTable
         userWorkspace={props.userWorkspace}
-        workspacesAndChangeCounts={props.workspacesAndChangeCounts}
+        workspaceListItems={props.workspaceListItems}
       />
     `
   }

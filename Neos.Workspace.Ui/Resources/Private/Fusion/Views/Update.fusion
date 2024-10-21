@@ -4,13 +4,13 @@
 Neos.Workspace.Ui.WorkspaceController.update = Neos.Fusion:Component {
   /// Neos\ContentRepository\Core\Projection\Workspace\Workspace
   userWorkspace = ${userWorkspace}
-  /// Neos\Workspace\Ui\Model\WorkspaceDetailsCollection
-  workspacesAndChangeCounts = ${workspacesAndChangeCounts}
+  /// Neos\Workspace\Ui\ViewModel\WorkspaceListItems
+  workspaceListItems = ${workspaceListItems}
 
   renderer = afx`
     <Neos.Workspace.Ui:Component.WorkspaceTable
       userWorkspace={props.userWorkspace}
-      workspacesAndChangeCounts={props.workspacesAndChangeCounts}
+      workspaceListItems={props.workspaceListItems}
     />
   `
 }

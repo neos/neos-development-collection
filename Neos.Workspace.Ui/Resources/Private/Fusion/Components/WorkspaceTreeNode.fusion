@@ -4,30 +4,30 @@
 prototype(Neos.Workspace.Ui:Component.WorkspaceTreeNode) < prototype(Neos.Fusion:Component) {
   /// Neos\ContentRepository\Core\Projection\Workspace\Workspace
   userWorkspace = null
-  /// Neos\Workspace\Ui\Model\WorkspaceDetails
-  workspaceDetails = null
-  /// Neos\Workspace\Ui\Model\WorkspaceDetailsCollection
-  workspacesAndChangeCounts = ${{}}
+  /// Neos\Workspace\Ui\ViewModel\WorkspaceListItem
+  workspaceListItem = null
+  /// Neos\Workspace\Ui\ViewModel\WorkspaceListItems
+  workspaceListItems = ${{}}
   /// int
   level = 0
 
   @private {
-    workspaceName = ${props.workspaceDetails ? props.workspaceDetails.workspace.workspaceName.value : 'live'}
-    subWorkspacesAndChangeCounts = ${Array.filter(props.workspacesAndChangeCounts, (workspaceData) => workspaceData.workspace.baseWorkspaceName.value == private.workspaceName)}
+    workspaceName = ${props.workspaceListItem ? props.workspaceListItem.name : 'live'}
+    baseWorkspaceListItems = ${Array.filter(props.workspaceListItems, (workspaceListItem) => workspaceListItem.baseWorkspaceName == private.workspaceName)}
   }
 
   renderer = afx`
     <Neos.Workspace.Ui:Component.WorkspaceTableRow
       userWorkspace={props.userWorkspace}
-      workspaceDetails={props.workspaceDetails}
+      workspaceListItem={props.workspaceListItem}
       level={props.level}
       @if={props.workspaceName != 'live'}
     />
-    <Neos.Fusion:Loop items={private.subWorkspacesAndChangeCounts} itemName="workspaceDetails">
+    <Neos.Fusion:Loop items={private.baseWorkspaceListItems} itemName="workspaceListItem">
       <Neos.Workspace.Ui:Component.WorkspaceTreeNode
         userWorkspace={props.userWorkspace}
-        workspaceDetails={workspaceDetails}
-        workspacesAndChangeCounts={props.workspacesAndChangeCounts}
+        workspaceListItem={workspaceListItem}
+        workspaceListItems={props.workspaceListItems}
         level={props.level + 1}
       />
     </Neos.Fusion:Loop>

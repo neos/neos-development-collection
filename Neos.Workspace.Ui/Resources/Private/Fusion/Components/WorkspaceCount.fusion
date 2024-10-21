@@ -1,6 +1,5 @@
 prototype(Neos.Workspace.Ui:Component.WorkspaceCount) < prototype(Neos.Fusion:Component) {
-  /// array{ total: int }
-  workspaceCount = ${workspaceCount}
+  workspaceCount = 0
 
   @private {
     i18n = ${I18n.id('').source('Main').package('Neos.Workspace.Ui')}
@@ -8,7 +7,7 @@ prototype(Neos.Workspace.Ui:Component.WorkspaceCount) < prototype(Neos.Fusion:Co
 
   renderer = afx`
     <div class="workspace-count" hx-swap-oob="true">
-      {private.i18n.id('workspaces.numberOfWorkspaces').arguments(props.workspaceCount).translate()}
+      {private.i18n.id('workspaces.numberOfWorkspaces').arguments([props.workspaceCount]).translate()}
     </div>
   `
 }
