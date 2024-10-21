@@ -16,6 +16,8 @@ namespace Neos\Neos\Domain\Service;
 
 use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceFactoryDependencies;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceFactoryInterface;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
+use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepository\Export\Processors;
 use Neos\ContentRepository\Export\Processors\AssetRepositoryImportProcessor;
 use Neos\ContentRepository\Export\Processors\ContentRepositorySetupProcessor;
@@ -29,6 +31,7 @@ use Neos\Flow\ResourceManagement\ResourceRepository;
 use Neos\Media\Domain\Repository\AssetRepository;
 use Neos\Neos\Domain\Import\DoctrineMigrateProcessor;
 use Neos\Neos\Domain\Import\SiteCreationProcessor;
+use Neos\Neos\Domain\Import\LiveWorkspaceCreationProcessor;
 use Neos\Neos\Domain\Repository\SiteRepository;
 
 /**
@@ -45,6 +48,7 @@ final readonly class SiteImportServiceFactory implements ContentRepositoryServic
         private ResourceRepository $resourceRepository,
         private ResourceManager $resourceManager,
         private PersistenceManagerInterface $persistenceManager,
+        private WorkspaceService $workspaceService,
     ) {
     }
 
@@ -54,9 +58,10 @@ final readonly class SiteImportServiceFactory implements ContentRepositoryServic
         $processors = Processors::fromArray([
             'Run doctrine migrations' => new DoctrineMigrateProcessor($this->doctrineService),
             'Setup content repository' => new ContentRepositorySetupProcessor($serviceFactoryDependencies->contentRepository),
+            // TODO Check if target content stream is empty, otherwise => nice error "prune..."
             'Create Neos sites' => new SiteCreationProcessor($this->siteRepository),
-            // TODO create live workspace, etc
-            'Import events' => new EventStoreImportProcessor(false, $serviceFactoryDependencies->eventStore, $serviceFactoryDependencies->eventNormalizer, null),
+            'Create Live workspace' => new LiveWorkspaceCreationProcessor($serviceFactoryDependencies->contentRepository, $this->workspaceService),
+            'Import events' => new EventStoreImportProcessor(WorkspaceName::forLive(), true, $serviceFactoryDependencies->eventStore, $serviceFactoryDependencies->eventNormalizer, $serviceFactoryDependencies->contentRepository),
             'Import assets' => new AssetRepositoryImportProcessor($this->assetRepository, $this->resourceRepository, $this->resourceManager, $this->persistenceManager),
         ]);
         return new SiteImportService(

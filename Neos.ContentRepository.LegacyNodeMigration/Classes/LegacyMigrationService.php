@@ -18,12 +18,14 @@ namespace Neos\ContentRepository\LegacyNodeMigration;
 use Doctrine\DBAL\Connection;
 use League\Flysystem\Filesystem;
 use League\Flysystem\Local\LocalFilesystemAdapter;
+use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\DimensionSpace\InterDimensionalVariationGraph;
 use Neos\ContentRepository\Core\EventStore\EventNormalizer;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceInterface;
 use Neos\ContentRepository\Core\Infrastructure\Property\PropertyConverter;
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
+use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepository\Export\Asset\Adapters\DbalAssetLoader;
 use Neos\ContentRepository\Export\Asset\Adapters\FileSystemResourceLoader;
 use Neos\ContentRepository\Export\Asset\AssetExporter;
@@ -58,7 +60,7 @@ class LegacyMigrationService implements ContentRepositoryServiceInterface
         private readonly EventNormalizer $eventNormalizer,
         private readonly PropertyConverter $propertyConverter,
         private readonly EventStoreInterface $eventStore,
-        private readonly ContentStreamId $contentStreamId,
+        private readonly ContentRepository $contentRepository,
     ) {
     }
 
@@ -75,7 +77,7 @@ class LegacyMigrationService implements ContentRepositoryServiceInterface
             'Exporting assets' => new NodeDataToAssetsProcessor($this->nodeTypeManager, $assetExporter, new NodeDataLoader($this->connection)),
             'Exporting node data' => new NodeDataToEventsProcessor($this->nodeTypeManager, $this->propertyMapper, $this->propertyConverter, $this->interDimensionalVariationGraph, $this->eventNormalizer, new NodeDataLoader($this->connection)),
             'Importing assets' => new AssetRepositoryImportProcessor($this->assetRepository, $this->resourceRepository, $this->resourceManager, $this->persistenceManager),
-            'Importing events' => new EventStoreImportProcessor(true, $this->eventStore, $this->eventNormalizer, $this->contentStreamId),
+            'Importing events' => new EventStoreImportProcessor(WorkspaceName::forLive(), true, $this->eventStore, $this->eventNormalizer, $this->contentRepository),
         ]);
         $processingContext = new ProcessingContext($filesystem, function (Severity $severity, string $message) use ($verbose, $outputLineFn) {
             if ($severity !== Severity::NOTICE || $verbose) {
