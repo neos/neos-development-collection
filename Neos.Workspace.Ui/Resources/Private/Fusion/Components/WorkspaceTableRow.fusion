@@ -16,6 +16,7 @@ prototype(Neos.Workspace.Ui:Component.WorkspaceTableRow) < prototype(Neos.Fusion
     workspace = ${props.workspaceDetails.workspace}
     workspaceName = ${private.workspace.workspaceName.value}
     workspaceTableRowId = ${'workspace-row-' + private.workspaceName}
+    // todo
     workspaceStatus = Neos.Fusion:Case {
       personal-workspace {
         condition = ${private.workspaceName == props.userWorkspace.workspaceName.value}
@@ -51,7 +52,7 @@ prototype(Neos.Workspace.Ui:Component.WorkspaceTableRow) < prototype(Neos.Fusion
     workspaceStatusIcon = Neos.Fusion:Match {
       @subject = ${private.workspaceStatus}
       @default = 'user'
-      internal = 'users'
+      // TODO removed internal = 'users'
       with-acl = 'user-plus'
     }
     showWorkspaceUri = Neos.Fusion:ActionUri {

@@ -50,6 +50,7 @@ use Neos\Media\Domain\Model\ImageInterface;
 use Neos\Neos\Controller\Module\AbstractModuleController;
 use Neos\Neos\Domain\Model\SiteNodeName;
 use Neos\Neos\Domain\Model\User;
+use Neos\Neos\Domain\Model\UserId;
 use Neos\Neos\Domain\Model\WorkspaceClassification;
 use Neos\Neos\Domain\Model\WorkspaceDescription;
 use Neos\Neos\Domain\Model\WorkspaceRole;
@@ -1103,17 +1104,11 @@ class WorkspaceController extends AbstractModuleController
         }
         */
 
-        /** @var ?Account $currentAccount */
-        $currentAccount = $this->securityContext->getAccount();
-        if ($currentAccount === null) {
-            throw new \RuntimeException('No account is authenticated', 1710068839);
+        $currentUser = $this->userService->getCurrentUser();
+        if ($currentUser === null) {
+            throw new \RuntimeException('No user is authenticated', 1729505338);
         }
-        $userWorkspace = $contentRepository->getWorkspaceFinder()->findOneByName(
-            WorkspaceNameBuilder::fromAccountIdentifier($currentAccount->getAccountIdentifier())
-        );
-        if (is_null($userWorkspace)) {
-            throw new \RuntimeException('Current user has no workspace', 1645485990);
-        }
+        $userWorkspace = $this->workspaceService->getPersonalWorkspaceForUser($contentRepository->id, $currentUser->getId());
         return $userWorkspace;
     }
 
@@ -1121,32 +1116,38 @@ class WorkspaceController extends AbstractModuleController
         Workspace $userWorkspace,
         ContentRepository $contentRepository
     ): WorkspaceDetailsCollection {
+        $workspaceMetadata = $this->workspaceService->getWorkspaceMetadata($contentRepository->id, $userWorkspace->workspaceName);
+
         $workspacesAndCounts = [];
         $workspacesAndCounts[$userWorkspace->workspaceName->value] = new WorkspaceDetails(
             $userWorkspace,
-            $userWorkspace->workspaceOwner ? $this->domainUserService->findByUserIdentifier(
-                UserId::fromString($userWorkspace->workspaceOwner)
+            $workspaceMetadata->ownerUserId ? $this->userService->findUserById(
+                UserId::fromString($workspaceMetadata->ownerUserId->value)
             )?->getLabel() : null,
-            $this->computeChangesCount($userWorkspace, $contentRepository),
+            $this->computePendingChanges($userWorkspace, $contentRepository),
         );
 
-        foreach ($contentRepository->getWorkspaceFinder()->findAll() as $workspace) {
-            // FIXME: This check should be implemented through a specialized Workspace Privilege or something similar
-            if (!$workspace->isPersonalWorkspace() && ($workspace->isInternalWorkspace(
-                    ) || $this->domainUserService->currentUserCanManageWorkspace($workspace))) {
-                $workspacesAndCounts[$workspace->workspaceName->value] = new WorkspaceDetails(
-                    $workspace,
-                    $workspace->workspaceOwner ? $this->domainUserService->findByUserIdentifier(
-                        UserId::fromString($workspace->workspaceOwner)
-                    )?->getLabel() : null,
-                    $this->computeChangesCount($workspace, $contentRepository),
-                    count(
-                        $contentRepository->getWorkspaceFinder()->findByBaseWorkspace($workspace->workspaceName)
-                    ),
-                    $this->domainUserService->currentUserCanPublishToWorkspace($workspace),
-                    $this->domainUserService->currentUserCanManageWorkspace($workspace)
-                );
+        $allWorkspaces = $contentRepository->findWorkspaces();
+
+        foreach ($allWorkspaces as $workspace) {
+            $workspacesPermissions = $this->workspaceService->getWorkspacePermissionsForUser(
+                $contentRepository->id,
+                $workspace->workspaceName,
+                $this->userService->getCurrentUser()
+            );
+            if (!$workspacesPermissions->manage || !$workspacesPermissions->read) { // todo check corrrect?
+                continue;
             }
+            $workspacesAndCounts[$workspace->workspaceName->value] = new WorkspaceDetails(
+                $workspace,
+                $workspaceMetadata->ownerUserId ? $this->userService->findUserById(
+                    UserId::fromString($workspaceMetadata->ownerUserId->value)
+                )?->getLabel() : null,
+                $this->computePendingChanges($workspace, $contentRepository),
+                $allWorkspaces->getDependantWorkspaces($workspace->workspaceName)->count(),
+                $workspacesPermissions->write,
+                $workspacesPermissions->manage // todo always true????
+            );
         }
         return new WorkspaceDetailsCollection($workspacesAndCounts);
     }

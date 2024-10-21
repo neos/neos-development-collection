@@ -28,6 +28,8 @@ final readonly class WorkspaceListItem
         public ?string $baseWorkspaceName,
         public PendingChanges $pendingChanges,
         public bool $hasDependantWorkspaces,
+        // todo check if necessary, only for personal workspaces that others have permissions to
+        public ?string $ownerLabel,
         public WorkspacePermissions $permissions,
     ) {
     }

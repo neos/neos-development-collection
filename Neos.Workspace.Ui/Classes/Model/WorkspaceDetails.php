@@ -14,7 +14,9 @@ declare(strict_types=1);
 
 namespace Neos\Workspace\Ui\Model;
 
-use Neos\ContentRepository\Core\Projection\Workspace\Workspace;
+
+use Neos\ContentRepository\Core\SharedModel\Workspace\Workspace;
+use Neos\Workspace\Ui\ViewModel\PendingChanges;
 
 /**
  * Details of a workspace for the workspace list in the UI
@@ -23,8 +25,8 @@ final readonly class WorkspaceDetails
 {
     public function __construct(
         public Workspace $workspace,
-        public ?string $workspaceOwnerHumanReadable = null,
-        public ?ChangesCounts $changesCounts = null,
+        public ?string $workspaceOwnerHumanReadable = null, // todo rename
+        public ?PendingChanges $changesCounts = null, // todo rename
         public int $dependentWorkspacesCount = 0,
         public bool $canPublish = false,
         public bool $canManage = false,

@@ -77,8 +77,9 @@ Neos.Workspace.Ui.WorkspaceController.new = Neos.Fusion:Component {
             </Neos.Fusion.Form:Neos.BackendModule.FieldContainer>
           </fieldset>
           <fieldset>
+            <!-- TODO internal was removed -->
             <Neos.Fusion:Fragment
-              @if={Security.hasAccess('Neos.Workspace.Ui:Backend.Module.Management.Workspace.ManageInternalWorkspaces')}>
+              @if={false && Security.hasAccess('Neos.Workspace.Ui:Backend.Module.Management.Workspace.ManageInternalWorkspaces')}>
               <h3 class="neos-control-label">
                 {props.i18n.id('workspaces.workspace.visibility')}
               </h3>
@@ -108,10 +109,11 @@ Neos.Workspace.Ui.WorkspaceController.new = Neos.Fusion:Component {
               </Neos.Fusion.Form:Neos.BackendModule.FieldContainer>
             </Neos.Fusion:Fragment>
 
+            <!-- TODO private was removed -->
             <Neos.Fusion.Form:Hidden
               name="visibility"
               value="private"
-              @if={!Security.hasAccess('Neos.Workspace.Ui:Backend.Module.Management.Workspace.ManageInternalWorkspaces')}
+              @if={false && !Security.hasAccess('Neos.Workspace.Ui:Backend.Module.Management.Workspace.ManageInternalWorkspaces')}
             />
 
             <Neos.Fusion.Form:Button attributes.class="neos-button neos-button-primary">

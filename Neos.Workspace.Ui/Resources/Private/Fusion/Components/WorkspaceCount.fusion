@@ -1,5 +1,5 @@
 prototype(Neos.Workspace.Ui:Component.WorkspaceCount) < prototype(Neos.Fusion:Component) {
-  /// array{ total: int, privat: int, internal: int }
+  /// array{ total: int }
   workspaceCount = ${workspaceCount}
 
   @private {

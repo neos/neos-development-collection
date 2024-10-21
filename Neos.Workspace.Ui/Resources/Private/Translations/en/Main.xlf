@@ -40,7 +40,7 @@
 				<source>Delete workspace "{0}"</source>
 			</trans-unit>
       <trans-unit id="workspaces.numberOfWorkspaces" xml:space="preserve">
-				<source>{total} workspaces ({internal} internal, {private} private)</source>
+				<source>{total} workspaces</source>
 			</trans-unit>
       <trans-unit id="workspaces.deleteWorkspace.disabled" xml:space="preserve">
 				<source>Workspace "{0}" has unpublished changes</source>

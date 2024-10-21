@@ -20,7 +20,7 @@ namespace Neos\Workspace\Ui\Model;
 final readonly class WorkspaceDetailsCollection implements \IteratorAggregate, \Countable
 {
     /**
-     * @var array{total: int, internal: int, private: int}
+     * @var array{total: int}
      */
     public array $counts;
 
@@ -31,19 +31,7 @@ final readonly class WorkspaceDetailsCollection implements \IteratorAggregate, \
         public array $items = []
     ) {
         $this->counts = [
-            'total' => $this->count(),
-            'internal' => count(
-                array_filter(
-                    $this->items,
-                    static fn(WorkspaceDetails $workspaceDetails) => $workspaceDetails->workspace->isInternalWorkspace()
-                )
-            ),
-            'private' => count(
-                array_filter(
-                    $this->items,
-                    static fn(WorkspaceDetails $workspaceDetails) => $workspaceDetails->workspace->isPrivateWorkspace()
-                )
-            ),
+            'total' => $this->count()
         ];
     }
 
