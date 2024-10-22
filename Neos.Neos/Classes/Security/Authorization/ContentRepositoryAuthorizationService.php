@@ -85,22 +85,10 @@ final readonly class ContentRepositoryAuthorizationService
         );
     }
 
-    public function getVisibilityConstraintsForAnonymousUser(ContentRepositoryId $contentRepositoryId): VisibilityConstraints
-    {
-        $roles = array_map($this->policyService->getRole(...), [self::FLOW_ROLE_EVERYBODY, self::FLOW_ROLE_ANONYMOUS]);
-        return $this->visibilityConstraintsForRoles($contentRepositoryId, $roles);
-    }
-
-    public function getVisibilityConstraintsForUser(ContentRepositoryId $contentRepositoryId, User $user): VisibilityConstraints
-    {
-        $userRoles = $this->rolesForUser($user);
-        return $this->visibilityConstraintsForRoles($contentRepositoryId, $userRoles);
-    }
-
     /**
      * @param array<Role> $roles
      */
-    private function visibilityConstraintsForRoles(ContentRepositoryId $contentRepositoryId, array $roles): VisibilityConstraints
+    public function getVisibilityConstraintsForRoles(ContentRepositoryId $contentRepositoryId, array $roles): VisibilityConstraints
     {
         $restrictedSubtreeTags = [];
         /** @var SubtreeTagPrivilege $privilege */

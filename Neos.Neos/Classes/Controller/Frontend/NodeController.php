@@ -36,6 +36,7 @@ use Neos\Flow\Security\Context as SecurityContext;
 use Neos\Flow\Session\SessionInterface;
 use Neos\Flow\Utility\Now;
 use Neos\Neos\Domain\Model\RenderingMode;
+use Neos\Neos\Domain\Model\User;
 use Neos\Neos\Domain\Service\NodeTypeNameFactory;
 use Neos\Neos\Domain\Service\RenderingModeService;
 use Neos\Neos\FrontendRouting\Exception\InvalidShortcutException;
@@ -43,6 +44,7 @@ use Neos\Neos\FrontendRouting\Exception\NodeNotFoundException;
 use Neos\Neos\FrontendRouting\NodeShortcutResolver;
 use Neos\Neos\FrontendRouting\NodeUriBuilderFactory;
 use Neos\Neos\FrontendRouting\SiteDetection\SiteDetectionResult;
+use Neos\Neos\Security\Authorization\ContentRepositoryAuthorizationService;
 use Neos\Neos\Utility\NodeTypeWithFallbackProvider;
 use Neos\Neos\View\FusionView;
 
@@ -110,6 +112,9 @@ class NodeController extends ActionController
 
     #[Flow\Inject]
     protected NodeUriBuilderFactory $nodeUriBuilderFactory;
+
+    #[Flow\Inject]
+    protected ContentRepositoryAuthorizationService $contentRepositoryAuthorizationService;
 
     /**
      * @param string $node
@@ -189,19 +194,18 @@ class NodeController extends ActionController
     public function showAction(string $node): void
     {
         $nodeAddress = NodeAddress::fromJsonString($node);
-        unset($node);
 
         if (!$nodeAddress->workspaceName->isLive()) {
             throw new NodeNotFoundException('The requested node isn\'t accessible to the current user', 1430218623);
         }
 
         $contentRepository = $this->contentRepositoryRegistry->get($nodeAddress->contentRepositoryId);
-        $uncachedSubgraph = $contentRepository->getContentSubgraph($nodeAddress->workspaceName, $nodeAddress->dimensionSpacePoint);
-
         // By default, the visibility constraints only contain the SubtreeTags the authenticated user has _no_ access to
         // Neos backend users have access to the "disabled" SubtreeTag so that they can see/edit disabled nodes.
         // In this showAction (= "frontend") we have to explicitly remove those disabled nodes, even if the user was authenticated
-        $uncachedSubgraph = $uncachedSubgraph->withVisibilityConstraints($uncachedSubgraph->getVisibilityConstraints()->withAddedSubtreeTag(SubtreeTag::disabled()));
+        $visibilityConstraints = $this->contentRepositoryAuthorizationService->getVisibilityConstraintsForRoles($contentRepository->id, $this->securityContext->getRoles());
+        $visibilityConstraints = $visibilityConstraints->withAddedSubtreeTag(SubtreeTag::disabled());
+        $uncachedSubgraph = $contentRepository->getContentGraph($nodeAddress->workspaceName)->getSubgraph($nodeAddress->dimensionSpacePoint, $visibilityConstraints);
 
         $subgraph = new ContentSubgraphWithRuntimeCaches($uncachedSubgraph, $this->subgraphCachePool);
 

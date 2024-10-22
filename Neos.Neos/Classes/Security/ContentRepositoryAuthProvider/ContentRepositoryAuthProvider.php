@@ -56,11 +56,7 @@ final class ContentRepositoryAuthProvider implements AuthProviderInterface
         if ($this->securityContext->areAuthorizationChecksDisabled()) {
             return VisibilityConstraints::default();
         }
-        $user = $this->userService->getCurrentUser();
-        if ($user === null) {
-            return $this->authorizationService->getVisibilityConstraintsForAnonymousUser($this->contentRepositoryId);
-        }
-        return $this->authorizationService->getVisibilityConstraintsForUser($this->contentRepositoryId, $user);
+        return $this->authorizationService->getVisibilityConstraintsForRoles($this->contentRepositoryId, $this->securityContext->getRoles());
     }
 
     public function getReadNodesFromWorkspacePrivilege(WorkspaceName $workspaceName): Privilege

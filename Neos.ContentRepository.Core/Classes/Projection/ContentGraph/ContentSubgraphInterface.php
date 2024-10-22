@@ -57,8 +57,6 @@ interface ContentSubgraphInterface
 
     public function getVisibilityConstraints(): VisibilityConstraints;
 
-    public function withVisibilityConstraints(VisibilityConstraints $newVisibilityConstraints): self;
-
     /**
      * Find a single node by its aggregate id
      *
