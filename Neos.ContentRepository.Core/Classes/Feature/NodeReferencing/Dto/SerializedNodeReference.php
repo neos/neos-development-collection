@@ -24,10 +24,15 @@ use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
  */
 final readonly class SerializedNodeReference
 {
-    public function __construct(
+    private function __construct(
         public NodeAggregateId $targetNodeAggregateId,
-        public ?SerializedPropertyValues $properties
+        public SerializedPropertyValues $properties
     ) {
+    }
+
+    public static function fromTargetAndProperties(NodeAggregateId $targetNodeAggregateId, SerializedPropertyValues $properties): self
+    {
+        return new self($targetNodeAggregateId, $properties);
     }
 
     public static function fromTarget(NodeAggregateId $targetNodeAggregateId): self
@@ -51,11 +56,10 @@ final readonly class SerializedNodeReference
      */
     public function toArray(): array
     {
-//        ['target' => $this->targetNodeAggregateId->value]
-//        if ($this->properties !== null) {}
-        return [
-            'target' => $this->targetNodeAggregateId->value,
-            'properties' => $this->properties
-        ];
+        $result = ['target' => $this->targetNodeAggregateId->value];
+        if ($this->properties->count() > 0) {
+            $result['properties'] = $this->properties;
+        }
+        return $result;
     }
 }

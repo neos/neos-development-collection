@@ -47,7 +47,7 @@ class SerializedNodeReferencesForName
      */
     public static function fromNameAndSerializedReferences(ReferenceName $referenceName, array $references): self
     {
-        return new self($referenceName, $references);
+        return new self($referenceName, array_values($references));
     }
 
     /**
@@ -57,7 +57,7 @@ class SerializedNodeReferencesForName
     {
         return new self(
             ReferenceName::fromString($array['referenceName']),
-            array_map(static fn(array $reference) => SerializedNodeReference::fromArray($reference), $array['references'])
+            array_map(static fn(array $reference) => SerializedNodeReference::fromArray($reference), array_values($array['references']))
         );
     }
 

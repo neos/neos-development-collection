@@ -37,7 +37,7 @@ trait NodeReferencingInternals
         foreach ($references->getIterator() as $referencesByProperty) {
             $serializedReferences = [];
             foreach ($referencesByProperty->references as $reference) {
-                $serializedReferences[] = new SerializedNodeReference(
+                $serializedReferences[] = SerializedNodeReference::fromTargetAndProperties(
                     $reference->targetNodeAggregateId,
                     $this->getPropertyConverter()->serializeReferencePropertyValues(
                         $reference->properties,

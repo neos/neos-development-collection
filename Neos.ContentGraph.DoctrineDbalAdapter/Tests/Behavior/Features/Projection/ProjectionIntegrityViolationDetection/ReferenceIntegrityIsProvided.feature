@@ -51,7 +51,7 @@ Feature: Run integrity violation detection regarding reference relations
       | Key                             | Value                             |
       | sourceOriginDimensionSpacePoint | {"language":"de"}                 |
       | sourceNodeAggregateId           | "source-nodandaise"               |
-      | references                      | {"referenceProperty": [{"target": "anthony-destinode"}]} |
+      | references                      | [{"referenceName": "referenceProperty", "references": [{"target": "anthony-destinode"}]}] |
     And I detach the following reference relation from its source:
       | Key                        | Value               |
       | contentStreamId            | "cs-identifier"     |

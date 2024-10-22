@@ -88,7 +88,7 @@ final readonly class SerializedNodeReferences implements \JsonSerializable, \Ite
             if (!isset($serializedReferencesByName[$reference->name->value])) {
                 $serializedReferencesByName[$reference->name->value] = [];
             }
-            $serializedReferencesByName[$reference->name->value][] = new SerializedNodeReference($reference->node->aggregateId, $reference->properties ? $reference->properties->serialized() : SerializedPropertyValues::createEmpty());
+            $serializedReferencesByName[$reference->name->value][] = SerializedNodeReference::fromTargetAndProperties($reference->node->aggregateId, $reference->properties ? $reference->properties->serialized() : SerializedPropertyValues::createEmpty());
         }
 
         foreach ($serializedReferencesByName as $name => $referenceObjects) {
