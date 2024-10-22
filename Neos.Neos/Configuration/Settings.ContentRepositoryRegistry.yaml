@@ -6,7 +6,7 @@ Neos:
         userIdProvider:
           factoryObjectName: Neos\Neos\UserIdProvider\UserIdProviderFactory
 
-        contentRepositoryProjection:
+        contentGraphProjection:
           catchUpHooks:
             'Neos.Neos:FlushContentCache':
               factoryObjectName: Neos\Neos\Fusion\Cache\GraphProjectorCatchUpHookForCacheFlushingFactory

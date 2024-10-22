@@ -182,7 +182,7 @@ jobs:
               # We enable the race condition tracker
               presets:
                 'default':
-                  contentRepositoryProjection:
+                  contentGraphProjection:
                     catchUpHooks:
                       'Neos.ContentRepository.BehavioralTests:RaceConditionTracker':
                         factoryObjectName: Neos\ContentRepository\BehavioralTests\ProjectionRaceConditionTester\RaceTrackerCatchUpHookFactory

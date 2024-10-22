@@ -245,10 +245,10 @@ final class ContentRepositoryRegistry
     /** @param array<string, mixed> $contentRepositorySettings */
     private function buildProjectionsFactory(ContentRepositoryId $contentRepositoryId, array $contentRepositorySettings): ProjectionsAndCatchUpHooksFactory
     {
-        (is_array($contentRepositorySettings['contentRepositoryProjection'] ?? null)) || throw InvalidConfigurationException::fromMessage('Content repository "%s" does not have the contentRepositoryProjection configured, or the value is no array.', $contentRepositoryId->value);
+        (is_array($contentRepositorySettings['contentGraphProjection'] ?? null)) || throw InvalidConfigurationException::fromMessage('Content repository "%s" does not have the contentGraphProjection configured, or the value is no array.', $contentRepositoryId->value);
         (is_array($contentRepositorySettings['projections'] ?? [])) || throw InvalidConfigurationException::fromMessage('Content repository "%s" expects projections configured as array.', $contentRepositoryId->value);
         $projectionsFactory = new ProjectionsAndCatchUpHooksFactory();
-        $this->registerProjection($contentRepositorySettings['contentRepositoryProjection'], $projectionsFactory, ContentRepositoryProjectionFactoryInterface::class, 'contentRepositoryProjection', $contentRepositoryId);
+        $this->registerProjection($contentRepositorySettings['contentGraphProjection'], $projectionsFactory, ContentRepositoryProjectionFactoryInterface::class, 'contentGraphProjection', $contentRepositoryId);
         foreach ($contentRepositorySettings['projections'] as $projectionName => $projectionOptions) {
             if ($projectionOptions === null) {
                 continue;

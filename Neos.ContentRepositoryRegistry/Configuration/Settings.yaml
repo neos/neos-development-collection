@@ -68,7 +68,7 @@ Neos:
           ProxyAwareObjectNormalizer:
             className: Neos\ContentRepositoryRegistry\Infrastructure\Property\Normalizer\ProxyAwareObjectNormalizer
 
-        contentRepositoryProjection:
+        contentGraphProjection:
           # NOTE: This introduces a soft-dependency to the neos/contentgraph-doctrinedbaladapter package, but it can be overridden when a different adapter is used
           factoryObjectName: Neos\ContentGraph\DoctrineDbalAdapter\DoctrineDbalContentGraphProjectionFactory
 
