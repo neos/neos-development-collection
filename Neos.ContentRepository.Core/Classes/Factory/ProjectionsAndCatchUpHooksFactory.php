@@ -11,6 +11,7 @@ use Neos\ContentRepository\Core\Projection\ProjectionInterface;
 use Neos\ContentRepository\Core\Projection\Projections;
 use Neos\ContentRepository\Core\Projection\ProjectionsAndCatchUpHooks;
 use Neos\ContentRepository\Core\Projection\ProjectionStateInterface;
+use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphProjectionInterface;
 
 /**
  * @api for custom framework integrations, not for users of the CR
@@ -53,6 +54,7 @@ final class ProjectionsAndCatchUpHooksFactory
      */
     public function build(ProjectionFactoryDependencies $projectionFactoryDependencies): ProjectionsAndCatchUpHooks
     {
+        $contentGraphProjection = null;
         $projectionsArray = [];
         $catchUpHookFactoriesByProjectionClassName = [];
         foreach ($this->factories as $factoryDefinition) {
@@ -71,9 +73,20 @@ final class ProjectionsAndCatchUpHooksFactory
                 $options,
             );
             $catchUpHookFactoriesByProjectionClassName[$projection::class] = $catchUpHookFactories;
-            $projectionsArray[] = $projection;
+            if ($projection instanceof ContentGraphProjectionInterface) {
+                if ($contentGraphProjection !== null) {
+                    throw new \RuntimeException(sprintf('Content repository requires exactly one %s to be registered.', ContentGraphProjectionInterface::class));
+                }
+                $contentGraphProjection = $projection;
+            } else {
+                $projectionsArray[] = $projection;
+            }
         }
 
-        return new ProjectionsAndCatchUpHooks(Projections::fromArray($projectionsArray), $catchUpHookFactoriesByProjectionClassName);
+        if ($contentGraphProjection === null) {
+            throw new \RuntimeException(sprintf('Content repository requires the %s to be registered.', ContentGraphProjectionInterface::class));
+        }
+
+        return new ProjectionsAndCatchUpHooks($contentGraphProjection, Projections::fromArray($projectionsArray), $catchUpHookFactoriesByProjectionClassName);
     }
 }
