@@ -12,6 +12,21 @@
           label: i18n #'Options'
           position: 30
           icon: 'icon-sliders'
+  references:
+    selection:
+      ui:
+        reloadIfChanged: true
+        label: i18n
+        inspector:
+          group: 'options'
+    startingPoint:
+      constraints:
+        maxItems: 1
+      ui:
+        reloadIfChanged: true
+        label: i18n
+        inspector:
+          group: 'options'
   properties:
     startLevel:
       type: string
@@ -46,20 +61,6 @@
                 label: i18n
               '6':
                 label: i18n
-    selection:
-      type: 'references'
-      ui:
-        reloadIfChanged: true
-        label: i18n
-        inspector:
-          group: 'options'
-    startingPoint:
-      type: 'reference'
-      ui:
-        reloadIfChanged: true
-        label: i18n
-        inspector:
-          group: 'options'
     maximumLevels:
       type: string
       defaultValue: '1'
