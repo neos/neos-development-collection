@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\NodeMigration\Transformation;
 
-use Neos\ContentRepository\Core\CommandHandler\CommandResult;
 use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\Feature\RootNodeCreation\Command\UpdateRootNodeAggregateDimensions;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
@@ -47,7 +46,7 @@ class UpdateRootNodeAggregateDimensionsTransformationFactory implements Transfor
 
             public function execute(
                 WorkspaceName $workspaceNameForWriting,
-            ): CommandResult {
+            ): void {
 
                 $rootNodeAggregate = $this->contentRepository->getContentGraph($workspaceNameForWriting)->findRootNodeAggregateByType($this->nodeTypeName);
 
@@ -58,7 +57,7 @@ class UpdateRootNodeAggregateDimensionsTransformationFactory implements Transfor
                     );
                 }
 
-                return $this->contentRepository->handle(
+                $this->contentRepository->handle(
                     UpdateRootNodeAggregateDimensions::create(
                         $workspaceNameForWriting,
                         $rootNodeAggregate->nodeAggregateId

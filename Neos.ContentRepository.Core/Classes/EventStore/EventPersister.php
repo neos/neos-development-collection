@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Core\EventStore;
 
-use Neos\ContentRepository\Core\CommandHandler\CommandResult;
 use Neos\ContentRepository\Core\ContentRepository;
 use Neos\EventStore\EventStoreInterface;
 use Neos\EventStore\Exception\ConcurrencyException;
@@ -26,13 +25,12 @@ final readonly class EventPersister
 
     /**
      * @param EventsToPublish $eventsToPublish
-     * @return CommandResult
      * @throws ConcurrencyException in case the expectedVersion does not match
      */
-    public function publishEvents(ContentRepository $contentRepository, EventsToPublish $eventsToPublish): CommandResult
+    public function publishEvents(ContentRepository $contentRepository, EventsToPublish $eventsToPublish): void
     {
         if ($eventsToPublish->events->isEmpty()) {
-            return new CommandResult();
+            return;
         }
         // the following logic could also be done in an AppEventStore::commit method (being called
         // directly from the individual Command Handlers).
@@ -46,6 +44,5 @@ final readonly class EventPersister
         );
 
         $contentRepository->catchUpProjections();
-        return new CommandResult();
     }
 }

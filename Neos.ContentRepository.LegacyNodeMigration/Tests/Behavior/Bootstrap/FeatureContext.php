@@ -12,7 +12,6 @@ use Neos\ContentRepository\BehavioralTests\TestSuite\Behavior\CRBehavioralTestsS
 use Neos\ContentRepository\BehavioralTests\TestSuite\Behavior\GherkinPyStringNodeBasedNodeTypeManagerFactory;
 use Neos\ContentRepository\BehavioralTests\TestSuite\Behavior\GherkinTableNodeBasedContentDimensionSourceFactory;
 use Neos\ContentRepository\Core\ContentRepository;
-use Neos\ContentRepository\Core\ContentRepositoryReadModel;
 use Neos\ContentRepository\Core\EventStore\EventNormalizer;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceFactoryDependencies;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceFactoryInterface;

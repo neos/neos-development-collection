@@ -99,6 +99,7 @@ final class ContentRepositoryFactory
                 $this->projectionFactoryDependencies->contentDimensionSource,
                 $this->userIdProvider,
                 $this->clock,
+                $this->projectionsAndCatchUpHooks->contentGraphProjection->getState()
             );
         }
         return $this->contentRepository;
@@ -123,7 +124,7 @@ final class ContentRepositoryFactory
             $this->projectionFactoryDependencies,
             $this->getOrBuild(),
             $this->buildEventPersister(),
-            $this->projectionsAndCatchUpHooks->projections,
+            $this->projectionsAndCatchUpHooks,
         );
         return $serviceFactory->build($serviceFactoryDependencies);
     }
@@ -135,6 +136,7 @@ final class ContentRepositoryFactory
                 new ContentStreamCommandHandler(
                 ),
                 new WorkspaceCommandHandler(
+                    $this->buildEventPersister(),
                     $this->projectionFactoryDependencies->eventStore,
                     $this->projectionFactoryDependencies->eventNormalizer,
                 ),
