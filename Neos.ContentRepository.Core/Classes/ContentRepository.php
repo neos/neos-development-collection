@@ -217,7 +217,7 @@ final class ContentRepository
 
     public function status(): ContentRepositoryStatus
     {
-        $projectionStatuses = ProjectionStatuses::create();
+        $projectionStatuses = ProjectionStatuses::createEmpty();
         foreach ($this->projectionsAndCatchUpHooks->projections as $projectionClassName => $projection) {
             $projectionStatuses = $projectionStatuses->with($projectionClassName, $projection->status());
         }

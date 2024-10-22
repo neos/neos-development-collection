@@ -74,6 +74,9 @@ final class ProjectionsAndCatchUpHooksFactory
             );
             $catchUpHookFactoriesByProjectionClassName[$projection::class] = $catchUpHookFactories;
             if ($projection instanceof ContentGraphProjectionInterface) {
+                if ($contentGraphProjection !== null) {
+                    throw new \RuntimeException(sprintf('Content repository requires exactly one %s to be registered.', ContentGraphProjectionInterface::class));
+                }
                 $contentGraphProjection = $projection;
             } else {
                 $projectionsArray[] = $projection;

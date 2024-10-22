@@ -11,7 +11,7 @@ use Neos\ContentRepository\Core\Projection\ProjectionFactoryInterface;
  * @extends ProjectionFactoryInterface<ContentGraphProjectionInterface>
  * @api for creating a custom content repository graph projection implementation, **not for users of the CR**
  */
-interface ContentRepositoryProjectionFactoryInterface extends ProjectionFactoryInterface
+interface ContentGraphProjectionFactoryInterface extends ProjectionFactoryInterface
 {
     /**
      * @param array<string,mixed> $options

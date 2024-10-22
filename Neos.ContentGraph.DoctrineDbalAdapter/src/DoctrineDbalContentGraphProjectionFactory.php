@@ -9,14 +9,14 @@ use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\DimensionSpacePoints
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\NodeFactory;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\ProjectionContentGraph;
 use Neos\ContentRepository\Core\Factory\ProjectionFactoryDependencies;
-use Neos\ContentRepository\Core\Projection\ContentGraph\ContentRepositoryProjectionFactoryInterface;
+use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphProjectionFactoryInterface;
 
 /**
  * Use this class as ProjectionFactory in your configuration to construct a content graph
  *
  * @api
  */
-final class DoctrineDbalContentGraphProjectionFactory implements ContentRepositoryProjectionFactoryInterface
+final class DoctrineDbalContentGraphProjectionFactory implements ContentGraphProjectionFactoryInterface
 {
     public function __construct(
         private readonly Connection $dbal,
