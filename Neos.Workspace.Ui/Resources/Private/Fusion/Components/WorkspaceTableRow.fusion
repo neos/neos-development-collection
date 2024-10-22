@@ -1,0 +1,152 @@
+##
+# Renders a single workspace list item
+#
+prototype(Neos.Workspace.Ui:Component.WorkspaceTableRow) < prototype(Neos.Fusion:Component) {
+  /// string
+  userWorkspaceName = null
+  /// Neos\Workspace\Ui\ViewModel\WorkspaceListItem
+  workspaceListItem = ${[]}
+  /// boolean todo unused!!!
+  canManage = false
+  /// integer
+  level = 0
+
+  @private {
+    i18n = ${I18n.id('').source('Main').package('Neos.Workspace.Ui')}
+    workspace = ${props.workspaceListItem.workspace}
+    workspaceTableRowId = ${'workspace-row-' + props.workspaceListItem.name}
+    // todo move state calculation to php
+    workspaceStatus = Neos.Fusion:Case {
+      personal-workspace {
+        condition = ${props.workspaceListItem.name == props.userWorkspaceName}
+        renderer = 'personal-workspace'
+      }
+      stale {
+        // TODO: Calculate stale status based on last change data
+        condition = false
+        renderer = 'stale'
+      }
+      withAcl {
+        // TODO: Calculate acl status on whether the workspace is shared with selected users
+        condition = false
+        renderer = 'with-acl'
+      }
+      private {
+        condition = ${props.workspaceListItem.owner}
+        renderer = 'private'
+      }
+      default {
+        condition = true
+        renderer = 'internal'
+      }
+    }
+    workspaceStatusLabel = Neos.Fusion:Match {
+      // todo status private doesnt exist anymore
+      @subject = ${private.workspaceStatus}
+      @default = ${private.i18n.id('table.column.access.internal').value('Internal workspace')}
+      personal-workspace = ${private.i18n.id('badge.isPersonalWorkspace').value('This is your personal workspace')}
+      stale = ${private.i18n.id('badge.isStale').value('This workspace has not been used for a long time')}
+      with-acl = ${private.i18n.id('table.column.access.acl').value('This workspace is owned by ' + props.workspaceListItem.owner + ' but allows access to additional users')}
+      private = ${private.i18n.id('table.column.access.private').value('This workspace is owned by ' + props.workspaceListItem.owner)}
+    }
+    workspaceStatusIcon = Neos.Fusion:Match {
+      @subject = ${private.workspaceStatus}
+      @default = 'user'
+      // TODO removed internal = 'users'
+      with-acl = 'user-plus'
+    }
+    showWorkspaceUri = Neos.Fusion:ActionUri {
+      action = 'show'
+      format = 'html'
+      arguments {
+        workspace = ${props.workspaceListItem.name}
+      }
+    }
+    editWorkspaceUri = Neos.Fusion:ActionUri {
+      action = 'edit'
+      arguments {
+        workspaceName = ${props.workspaceListItem.name}
+      }
+    }
+    deleteWorkspaceUri = Neos.Fusion:ActionUri {
+      action = 'delete'
+      format = 'htmx'
+      arguments {
+        workspaceName = ${props.workspaceListItem.name}
+      }
+    }
+    deleteWorkspacePopoverId = 'workspace-delete-modal'
+    editWorkspacePopoverId = 'workspace-edit-modal'
+  }
+
+  renderer = afx`
+    <tr id={private.workspaceTableRowId} class={'workspace--' + private.workspaceStatus}>
+      <td class="workspace-type-column" title={private.workspaceStatusLabel}>
+        <Neos.Workspace.Ui:Component.Icon
+          icon={private.workspaceStatusIcon}
+          secondaryIcon={private.workspaceStatus == 'stale' ? 'clock' : ''}
+        />
+      </td>
+      <td class="workspace-label-column" style={'--indent-level:' + props.level }>
+        <Neos.Workspace.Ui:Component.Icon icon="level-up-alt" @if={props.level > 1}/>
+        {props.workspaceListItem.title}
+        <span class="workspace__info-text" @if={props.workspaceListItem.name == props.userWorkspaceName}>
+          ({private.i18n.id('workspaces.workspace.userWorkspace')})
+        </span>
+      </td>
+      <td class="workspace-description-column">
+        {props.workspaceListItem.description || '﹘'}
+      </td>
+      <td>{props.workspaceListItem.owner || '﹘'}</td>
+      <td>﹘</td>
+      <td>{private.i18n.id('workspaces.workspace.status.' + props.workspaceListItem.status).translate()}</td>
+      <td>
+        <Neos.Workspace.Ui:Component.Badge
+          label={props.workspaceListItem.pendingChanges.new}
+          title={private.i18n.id('workspaces.changes.new').arguments([props.workspaceListItem.pendingChanges.new])}
+          type="success"
+        />
+        <Neos.Workspace.Ui:Component.Badge
+          label={props.workspaceListItem.pendingChanges.changed}
+          title={private.i18n.id('workspaces.changes.changed').arguments([props.workspaceListItem.pendingChanges.changed])}
+          type="warning"
+        />
+        <Neos.Workspace.Ui:Component.Badge
+          label={props.workspaceListItem.pendingChanges.removed}
+          title={private.i18n.id('workspaces.changes.removed').arguments([props.workspaceListItem.pendingChanges.removed])}
+          type="danger"
+        />
+        <span @if={props.workspaceListItem.pendingChanges.total == 0}>﹘</span>
+      </td>
+      <td class="workspace-action-column">
+        <Neos.Workspace.Ui:Component.Button
+          icon="review"
+          label={private.i18n.id('workspaces.reviewWorkspace.label')}
+          title={private.i18n.id(props.workspaceListItem.pendingChanges.total ? 'workspaces.reviewWorkspace' : 'workspaces.reviewWorkspace.noChanges').arguments([props.workspaceListItem.title])}
+          attributes.disabled={false && props.workspaceListItem.pendingChanges.total == 0}
+          attributes.hx-get={private.showWorkspaceUri}
+          attributes.hx-target="body"
+        />
+        <Neos.Workspace.Ui:Component.Button
+          title={private.i18n.id('workspaces.editWorkspace').arguments([props.workspaceListItem.title])}
+          icon="pencil-alt"
+          attributes.hx-get={private.editWorkspaceUri}
+          attributes.hx-target='#popover-container'
+          attributes.hx-swap='innerHTML'
+          attributes.hx-on--after-request={'document.getElementById("' + private.editWorkspacePopoverId + '").showPopover()'}
+          @if={!props.canManage || props.workspaceListItem.pendingChanges == null}
+        />
+        <Neos.Workspace.Ui:Component.Button
+          isDanger
+          title={private.i18n.id('workspaces.deleteWorkspace').arguments([props.workspaceListItem.title])}
+          icon="trash-alt icon-white"
+          disabled={props.workspaceListItem.pendingChanges.total > 0}
+          attributes.hx-get={private.deleteWorkspaceUri}
+          attributes.hx-target='#popover-container'
+          attributes.hx-swap='innerHTML'
+          attributes.hx-on--after-request={'document.getElementById("' + private.deleteWorkspacePopoverId + '").showPopover()'}
+        />
+      </td>
+    </tr>
+  `
+}

@@ -1,0 +1,99 @@
+Neos.Workspace.Ui.WorkspaceController.new = Neos.Fusion:Component {
+  baseWorkspaceOptions = ${baseWorkspaceOptions}
+  workspace = ${workspace}
+  i18n = ${I18n.id('').source('Main').package('Neos.Workspace.Ui')}
+  popoverId = 'create-workspace-popover'
+
+  prototype(Neos.Fusion.Form:LabelRenderer) {
+    translationPackage = 'Neos.Workspace.Ui'
+    translationSource = 'Main'
+  }
+
+  prototype(Neos.Fusion.Form:Neos.BackendModule.FieldContainer) {
+    translation.label {
+      package = 'Neos.Workspace.Ui'
+      source = 'Main'
+    }
+  }
+
+  renderer = afx`
+    <div popover id={props.popoverId}>
+      <header>
+        <button
+          type="button"
+          class="neos-close neos-button"
+          popovertarget={props.popoverId}
+          popovertargetaction="close"
+        >
+          <Neos.Workspace.Ui:Component.Icon icon="times"/>
+        </button>
+        <div class="neos-header">
+          {props.i18n.id('workspaces.createNewWorkspace')}
+        </div>
+      </header>
+      <section>
+        <Neos.Fusion.Form:Form
+          form.target.action="create"
+          form.target.format="htmx"
+          attributes.hx-post={form.getTarget()}
+          attributes.hx-disabled-elt="find button"
+          attributes.hx-on--after-request={'document.getElementById("' + props.popoverId + '").hidePopover()'}
+        >
+          <fieldset>
+            <!-- todo adjust labels to be not that nested -->
+            <Neos.Fusion.Form:Neos.BackendModule.FieldContainer
+              field.name="title"
+              label="workspaces.workspace.title"
+              class="neos-control-group"
+            >
+              <Neos.Fusion.Form:Textfield
+                attributes.required
+                attributes.pattern="/^[\p{L}\p{P}\d \.]{1,200}$/u"
+                attributes.autofocus
+              />
+            </Neos.Fusion.Form:Neos.BackendModule.FieldContainer>
+
+            <Neos.Fusion.Form:Neos.BackendModule.FieldContainer
+              field.name="description"
+              label="workspaces.workspace.description"
+              class="neos-control-group"
+            >
+              <Neos.Fusion.Form:Textfield
+                attributes.pattern="/^[\p{L}\p{P}\d \.]{0,500}$/u"
+              />
+            </Neos.Fusion.Form:Neos.BackendModule.FieldContainer>
+
+            <Neos.Fusion.Form:Neos.BackendModule.FieldContainer
+              field.name="baseWorkspace"
+              field.value="live"
+              label="workspaces.workspace.baseWorkspace"
+              class="neos-control-group"
+            >
+              <Neos.Fusion.Form:Select>
+                <Neos.Fusion:Loop items={props.baseWorkspaceOptions} itemName="workspaceTitle" itemKey="workspaceName">
+                  <Neos.Fusion.Form:Select.Option
+                    option.value={workspaceName}>{workspaceTitle}</Neos.Fusion.Form:Select.Option>
+                </Neos.Fusion:Loop>
+              </Neos.Fusion.Form:Select>
+            </Neos.Fusion.Form:Neos.BackendModule.FieldContainer>
+          </fieldset>
+          <fieldset>
+            <Neos.Fusion.Form:Button attributes.class="neos-button neos-button-primary">
+              {props.i18n.id('workspaces.createWorkspace')}
+            </Neos.Fusion.Form:Button>
+          </fieldset>
+        </Neos.Fusion.Form:Form>
+      </section>
+      <footer>
+        <button
+          type="button"
+          class="neos-button"
+          popovertarget={props.popoverId}
+          popovertargetaction="close"
+        >
+          {I18n.translate('cancel', 'Cancel', [], 'Modules', 'Neos.Workspace.Ui')}
+        </button>
+      </footer>
+    </div>
+  `
+}

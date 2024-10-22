@@ -1,0 +1,240 @@
+.workspace-table {
+  --column-color: var(--grayMedium);
+  --indent-level: 0;
+
+  margin-top: 1em;
+  border-spacing: 0;
+  position: relative;
+  width: 100%;
+}
+
+.workspace-table th {
+  padding: 0.5em;
+  position: sticky;
+  top: 40px;
+  user-select: none;
+  background: var(--grayDark);
+  border-bottom: 1px solid var(--grayDark);
+  z-index: 1;
+}
+
+.workspace-table td {
+  padding: 0 0.5em;
+  border-top: 1px solid var(--grayDark);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  background-color: var(--column-color);
+  min-height: 40px;
+}
+
+.workspace-type-column {
+  padding: 0 0.5ch;
+  text-align: center;
+}
+
+.workspace-type-column > * {
+  width: 20px !important;
+}
+
+/**
+ * The arrow icon to show sub-workspace indentation
+ */
+td.workspace-description-column,
+td.workspace-label-column {
+  width: 25%;
+}
+
+td.workspace-label-column .fas {
+  transform: rotate(90deg);
+  vertical-align: middle;
+  margin-left: calc((var(--indent-level, 0) - 2) * 1.2ch);
+  margin-right: 0.5ch;
+}
+
+td.workspace-action-column {
+  background-color: var(--grayMedium);
+  width: 1%;
+  white-space: nowrap;
+}
+
+.workspace__info-text {
+  font-size: 0.8em;
+  font-style: italic;
+  margin-left: 0.5ch;
+  user-select: none;
+}
+
+.workspace-count {
+  display: inline-block;
+  color: var(--textSubtleLight);
+  font-size: var(--generalFontSize);
+  line-height: var(--unit);
+  vertical-align: middle;
+  margin-left: var(--spacing-Full);
+}
+
+.icon-button {
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0;
+  cursor: pointer;
+  outline: none;
+  color: var(--textOnGray);
+}
+
+.icon--secondary {
+  left: 0.5em;
+  top: 0.5em;
+  text-shadow: -1px -1px 0 rgba(0, 0, 0, 0.4);
+}
+
+/* Add space after icon in button if there is a label */
+button .icon:not(:last-child) {
+  margin-right: 1ch;
+}
+
+/**
+ * Badges
+ */
+.badge {
+  background-color: var(--grayLight);
+  border-radius: 15%;
+  color: var(--textOnGray);
+  padding: 0.2em 0.5em;
+  user-select: none;
+  cursor: help;
+}
+
+.badge:not(:last-child) {
+  margin-right: 1ch;
+}
+
+.badge--success {
+  background-color: var(--green);
+}
+
+.badge--warning {
+  background-color: var(--warningText);
+}
+
+.badge--danger {
+  background-color: var(--errorText);
+}
+
+/**
+ * Workspace entry states and types
+ */
+.workspace--stale {
+  --column-color: var(--grayDark);
+}
+
+.workspace--personal-workspace {
+  --column-color: var(--blueDark);
+}
+
+/**
+ * Popover styles
+ */
+[popover] {
+  /* Undo css reset */
+  margin: auto;
+
+  /* Component styles */
+  color: white;
+  background: var(--grayDark);
+  border: 1px solid var(--grayLight);
+  padding: 0;
+  border-radius: 0;
+  outline: none;
+}
+
+[popover]::backdrop {
+  backdrop-filter: blur(3px);
+}
+
+[popover] header {
+  font-size: calc(var(--generalFontSize) + 2px);
+  margin: var(--defaultMargin);
+  line-height: calc(var(--generalFontSize) + 4px);
+  box-sizing: border-box;
+}
+
+[popover] section {
+  margin: var(--defaultMargin);
+  color: var(--textSubtleLight);
+}
+
+[popover] .neos-close {
+  color: white;
+  font-size: calc(var(--generalFontSize) + 4px);
+  background: transparent;
+  width: var(--unit);
+  height: var(--unit);
+  position: absolute;
+  right: 0;
+  top: 0;
+  border-left: none;
+  text-shadow: none;
+}
+
+[popover] footer {
+  background: transparent;
+  margin: var(--defaultMargin);
+  display: flex;
+  gap: var(--spacing-Full);
+  justify-content: flex-end;
+}
+
+/**
+ * Form styles
+ */
+.neos-control-label {
+  margin-bottom: var(--spacing-Full);
+}
+
+.neos-control-group textarea,
+.neos-control-group select,
+.neos-control-group input[type="text"] {
+  width: 100%;
+  max-width: 500px;
+}
+
+/**
+ * Indicator styles
+ */
+.loadingIndicator__container {
+  left: 0;
+  top: var(--unit);
+  height: 2px;
+  position: fixed;
+  width: 100vw;
+  z-index: var(--zIndex-LoadingIndicatorContainer);
+}
+
+.loadingIndicator {
+  height: 2px;
+  position: relative;
+  width: 100%;
+}
+
+.loadingIndicator__bar {
+  height: 100%;
+  position: relative;
+  background-color: #ff8700;
+  animation: cssload-width 2s cubic-bezier(.45, 0, 1, 1) infinite;
+}
+
+@keyframes cssload-width {
+  0%,
+  100% {
+    transition-timing-function: cubic-bezier(1, 0, .65, .85);
+  }
+  0% {
+    width: 0;
+  }
+  100% {
+    width: 100%;
+  }
+}

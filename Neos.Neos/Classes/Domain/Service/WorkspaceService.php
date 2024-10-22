@@ -83,6 +83,13 @@ final class WorkspaceService
      */
     public function setWorkspaceTitle(ContentRepositoryId $contentRepositoryId, WorkspaceName $workspaceName, WorkspaceTitle $newWorkspaceTitle): void
     {
+        $workspaceMetadata = $this->loadWorkspaceMetadata($contentRepositoryId, $workspaceName);
+
+        // WHY: Do not update if the title is the same
+        if ($workspaceMetadata->title->equals($newWorkspaceTitle)) {
+            return;
+        }
+
         $this->updateWorkspaceMetadata($contentRepositoryId, $workspaceName, [
             'title' => $newWorkspaceTitle->value,
         ]);
@@ -93,6 +100,13 @@ final class WorkspaceService
      */
     public function setWorkspaceDescription(ContentRepositoryId $contentRepositoryId, WorkspaceName $workspaceName, WorkspaceDescription $newWorkspaceDescription): void
     {
+        $workspaceMetadata = $this->loadWorkspaceMetadata($contentRepositoryId, $workspaceName);
+
+        // WHY: Do not update if the description is the same
+        if ($workspaceMetadata->description->equals($newWorkspaceDescription)) {
+            return;
+        }
+
         $this->updateWorkspaceMetadata($contentRepositoryId, $workspaceName, [
             'description' => $newWorkspaceDescription->value,
         ]);

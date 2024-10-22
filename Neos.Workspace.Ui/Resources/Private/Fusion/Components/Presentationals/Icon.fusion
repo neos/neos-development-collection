@@ -1,0 +1,21 @@
+prototype(Neos.Workspace.Ui:Component.Icon) < prototype(Neos.Fusion:Component) {
+  icon = ''
+  secondaryIcon = ''
+  spin = false
+  rotate = false
+  style = ''
+
+  renderer = afx`
+    <i class={['fas', 'fa-' + props.icon]} @if={!props.secondaryIcon}></i>
+    <span class="fa-stack" @if={props.secondaryIcon}>
+      <i
+        class={['fas', 'fa-stack-2x', 'fa-' + props.icon, props.rotate && 'fa-rotate-' + props.rotate]}
+        style={props.style}
+      />
+      <i
+        class={['icon--secondary', 'fas', 'fa-stack-1x', 'fa-inverse', 'fa-' + props.secondaryIcon, props.spin && 'fa-spin', props.rotate && 'fa-rotate-' + props.rotate]}
+        style={props.style}
+      />
+    </span>
+  `
+}
