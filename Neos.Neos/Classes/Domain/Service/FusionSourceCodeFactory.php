@@ -37,6 +37,9 @@ class FusionSourceCodeFactory
     protected array $autoIncludeConfiguration = [];
 
     #[Flow\Inject]
+    protected FusionAutoIncludeHandler $fusionAutoIncludeHandler;
+
+    #[Flow\Inject]
     protected ContentRepositoryRegistry $contentRepositoryRegistry;
 
     #[Flow\Inject]
@@ -50,17 +53,10 @@ class FusionSourceCodeFactory
         $sourcecode = FusionSourceCodeCollection::empty();
         foreach (array_keys($this->packageManager->getAvailablePackages()) as $packageKey) {
             if (isset($this->autoIncludeConfiguration[$packageKey]) && $this->autoIncludeConfiguration[$packageKey] === true) {
-                $sourcecode = $sourcecode->union(
-                    FusionSourceCodeCollection::tryFromPackageRootFusion($packageKey)
-                );
+                $sourcecode = $this->fusionAutoIncludeHandler->loadFusionFromPackage($packageKey, $sourcecode);
             }
         }
         return $sourcecode;
-    }
-
-    public function createFromSite(Site $site): FusionSourceCodeCollection
-    {
-        return FusionSourceCodeCollection::tryFromPackageRootFusion($site->getSiteResourcesPackageKey());
     }
 
     /**

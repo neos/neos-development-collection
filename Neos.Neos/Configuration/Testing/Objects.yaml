@@ -1,0 +1,2 @@
+Neos\Neos\Domain\Service\FusionAutoIncludeHandler:
+  className: Neos\Neos\Testing\TestingFusionAutoIncludeHandler

@@ -44,31 +44,24 @@ class FusionService
      */
     protected $fusionConfigurationCache;
 
-    private ?FusionSourceCodeCollection $additionalFusionSourceCode = null;
-
     /**
-     * @deprecated fixme!!!
+     * @Flow\Inject
+     * @var FusionAutoIncludeHandler
      */
-    public function unsafeSetAdditionalFusionSourceCodeToThisSingleton(string $additionalFusionSourceCode)
-    {
-        $this->additionalFusionSourceCode = FusionSourceCodeCollection::fromString($additionalFusionSourceCode);
-    }
+    protected $fusionAutoIncludeHandler;
 
     public function createFusionConfigurationFromSite(Site $site): FusionConfiguration
     {
         return $this->fusionConfigurationCache->cacheFusionConfigurationBySite($site, function () use ($site) {
             $siteResourcesPackageKey = $site->getSiteResourcesPackageKey();
-
             return $this->fusionParser->parseFromSource(
-                $this->fusionSourceCodeFactory->createFromNodeTypeDefinitions($site->getConfiguration()->contentRepositoryId)
-                    ->union(
-                        $this->fusionSourceCodeFactory->createFromAutoIncludes()
-                    )
-                    ->union(
-                        FusionSourceCodeCollection::tryFromPackageRootFusion($siteResourcesPackageKey)
-                    )->union(
-                        $this->additionalFusionSourceCode ?? FusionSourceCodeCollection::empty()
-                    )
+                $this->fusionAutoIncludeHandler->loadFusionFromPackage(
+                    $siteResourcesPackageKey,
+                    $this->fusionSourceCodeFactory->createFromNodeTypeDefinitions($site->getConfiguration()->contentRepositoryId)
+                        ->union(
+                            $this->fusionSourceCodeFactory->createFromAutoIncludes()
+                        )
+                )
             );
         });
     }

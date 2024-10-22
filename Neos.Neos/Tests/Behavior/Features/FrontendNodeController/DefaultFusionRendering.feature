@@ -52,7 +52,7 @@ Feature: Test the default Fusion rendering for a request
       | a1              | a                     | Neos.Neos:Test.DocumentType | {"uriPathSegment": "a1", "title": "Node a1"} | {"main": "a-tetherton" }           |          |
       | a1a1            | a-tetherton           | Neos.Neos:Test.ContentType  | {"text": "my first text"}                    | {}                                 |          |
       | a1a2            | a-tetherton           | Neos.Neos:Test.ContentType  | {"text": "my second text"}                   | {}                                 |          |
-    And A site exists for node name "a" and domain "http://localhost"
+    And A site exists for node name "a" and domain "http://localhost" and package "Vendor.Site"
     And the sites configuration is:
     """yaml
     Neos:
@@ -67,7 +67,7 @@ Feature: Test the default Fusion rendering for a request
     """
 
   Scenario: Default output
-    And the sites Fusion code is:
+    And the Fusion code for package "Vendor.Site" is:
     """fusion
     prototype(Neos.Neos:Test.DocumentType) < prototype(Neos.Neos:Page) {
       body {

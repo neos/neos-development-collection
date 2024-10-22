@@ -44,18 +44,42 @@ trait DispatcherTrait
     public function setupDispatcherTest(): void
     {
         $this->getObject(ContentCache::class)->flush();
+        $this->getObject(\Neos\Neos\Testing\TestingFusionAutoIncludeHandler::class)->resetOverride();
         $this->response = null;
     }
 
     /**
-     * @When the sites Fusion code is:
+     * @When the Fusion code for package :package is:
      */
-    public function iHaveTheFollowingFusionCodeForTheSite(PyStringNode $fusionCode)
+    public function iHaveTheFollowingFusionCodeForTheSite(PyStringNode $fusionCode, string $package)
     {
-        $this->getObject(
-            FusionService::class
-        )->unsafeSetAdditionalFusionSourceCodeToThisSingleton(
-            $fusionCode->getRaw()
+        $this->getObject(\Neos\Neos\Testing\TestingFusionAutoIncludeHandler::class)->overrideHandler(
+            new class ($package, $fusionCode->getRaw(), $this->getObject(\Neos\Neos\Domain\Service\ResourceFusionAutoIncludeHandler::class)) implements \Neos\Neos\Domain\Service\FusionAutoIncludeHandler
+            {
+                public function __construct(
+                    private string $package,
+                    private string $fusionCode,
+                    private \Neos\Neos\Domain\Service\ResourceFusionAutoIncludeHandler $defaultHandler,
+                ) {
+                }
+
+                public function loadFusionFromPackage(
+                    string $packageKey,
+                    \Neos\Fusion\Core\FusionSourceCodeCollection $sourceCodeCollection
+                ): \Neos\Fusion\Core\FusionSourceCodeCollection {
+                    if ($packageKey === $this->package) {
+                        return $sourceCodeCollection->union(
+                            \Neos\Fusion\Core\FusionSourceCodeCollection::fromString(
+                                $this->fusionCode
+                            )
+                        );
+                    } elseif (in_array($packageKey, ['Neos.Neos', 'Neos.Fusion'])) {
+                        return $this->defaultHandler->loadFusionFromPackage($packageKey, $sourceCodeCollection);
+                    } else {
+                        return $sourceCodeCollection;
+                    }
+                }
+            }
         );
         // $fakeFusionService = new class ($original) extends \Neos\Neos\Domain\Service\FusionService
         // {
