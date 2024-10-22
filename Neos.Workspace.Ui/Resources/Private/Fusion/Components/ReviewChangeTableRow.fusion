@@ -31,7 +31,16 @@ prototype(Neos.Workspace.Ui:Component.ReviewChangeTableRow) < prototype(Neos.Fus
           <span></span>
         </label>
       </td>
-      <td id="change-{change.serializedNodeAddress}" data-neos-toggle="tooltip" data-placement="left" data-container="body">
+      <td id={"change-" + change.serializedNodeAddress} data-neos-toggle="tooltip" data-placement="left" data-container="body">
+        <Neos.Fusion:DataStructure
+          @path="attributes.class"
+          general="neos-content-change"
+          deleteddd={change.isNew}
+          deleted={change.isRemoved ? 'legend-deleted' : ''}
+          created={change.isNew ? 'legend-created' : ''}
+          moved={change.isMoved ? 'legend-moved' : ''}
+          hidden={change.hidden ? 'legend-hidden': ''}
+        />
         <Neos.Workspace.Ui:Component.ReviewChangeDiff
           change={change}
           relativePath={relativePath}
@@ -45,7 +54,7 @@ prototype(Neos.Workspace.Ui:Component.ReviewChangeTableRow) < prototype(Neos.Fus
           <i class="fas fa-check icon-white"></i>
         </div>
 
-        <button  @if.canPublishToNode={props.canPublishToBaseWorkspace}
+        <button @if.canPublishToNode={props.canPublishToBaseWorkspace}
                  form="postHelper" formaction="{f:uri.action(action: 'publishNode', arguments: {nodeAddress: change.serializedNodeAddress, selectedWorkspace: selectedWorkspace.workspaceName.value})}" type="submit" class="neos-button neos-button-primary neos-pull-right" title={private.i18n.id('publish')} data-neos-toggle="tooltip">
           <i class="fas fa-check icon-white"></i>
         </button>

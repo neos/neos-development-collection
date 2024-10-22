@@ -32,22 +32,19 @@ prototype(Neos.Workspace.Ui:Component.ReviewChangeDiff) < prototype(Neos.Fusion:
                 icon={change.icon} />
             {change.label}
           </th>
-          <th>{change.dimensions}
-          </th>
-          <!--
-          <f:if condition="{contentDimensions}">
-            <th>
-              <f:render partial="Module/Shared/NodeContentDimensionsInformation.html" arguments="{contentDimensions: contentDimensions, node: change.node}" />
-            </th>
-          </f:if> -->
           <th>
-            <span title={I18n.id('lastModification').source('Main').package('Neos.Neos')+ " : " + Date.format(change.lastModificationDateTime, 'Y-m-d H:i')} data-neos-toggle="tooltip">
+            <Neos.Fusion:Loop items={change.dimensions} itemKey="key" itemName="dimension">
+              <span class="neos-label" title={dimension} >{dimension}</span>
+            </Neos.Fusion:Loop>
+          </th>
+          <th>
+            <span @if.hasChangedDateTime={change.lastModificationDateTime} title={I18n.id('lastModification').source('Main').package('Neos.Neos')+ " : " + Date.format(change.lastModificationDateTime, 'Y-m-d H:i')} data-neos-toggle="tooltip">
               <i class="fas fa-time"></i> {Date.format(change.lastModificationDateTime, 'Y-m-d H:i')}</span>
           </th>
         </tr>
         <Neos.Fusion:Loop items={change.contentChanges} itemKey="propertyName" itemName="contentChanges">
           <tr>
-            <th colspan="3">{private.i18n.id('lastModification')}</th>
+            <th colspan="3">{contentChanges.propertyLabel}</th>
           </tr>
           <tr>
             <td colspan="3">

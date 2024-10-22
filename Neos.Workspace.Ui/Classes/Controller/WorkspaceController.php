@@ -16,6 +16,9 @@ namespace Neos\Workspace\Ui\Controller;
 
 use Doctrine\DBAL\Exception as DBALException;
 use Neos\ContentRepository\Core\ContentRepository;
+use Neos\ContentRepository\Core\Dimension\ContentDimensionId;
+use Neos\ContentRepository\Core\Feature\SubtreeTagging\Dto\SubtreeTag;
+use Neos\ContentRepository\Core\Feature\SubtreeTagging\Dto\SubtreeTags;
 use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Exception\WorkspaceAlreadyExists;
 use Neos\ContentRepository\Core\Feature\WorkspaceModification\Command\DeleteWorkspace;
 use Neos\ContentRepository\Core\Feature\WorkspacePublication\Command\DiscardIndividualNodesFromWorkspace;
@@ -791,15 +794,18 @@ class WorkspaceController extends AbstractModuleController
                         $change->nodeAggregateId
                     );
                     $nodeType = $contentRepository->getNodeTypeManager()->getNodeType($node->nodeTypeName);
-
-
+                    $dimensions = [];
+                    foreach ($node->dimensionSpacePoint->coordinates as $id => $coordinate) {
+                        $contentDimension = new ContentDimensionId($id);
+                        $dimensions[] = $contentRepository->getContentDimensionSource()->getDimension($contentDimension)->getValue($coordinate)->configuration['label'];
+                    }
                     $change = [
-                        'node' => $node,
                         'serializedNodeAddress' => $nodeAddress->toJson(),
+                        'hidden' => $node->tags->contain(SubtreeTag::disabled()),
                         'isRemoved' => $change->deleted,
                         'isNew' => $change->created,
                         'isMoved' => $change->moved,
-                        'dimensions' => $node->dimensionSpacePoint->toJson(),
+                        'dimensions' => $dimensions,
                         'lastModificationDateTime' => $node->timestamps->lastModified,
                         'label' =>  $this->nodeLabelGenerator->getLabel($node),
                         'icon' => $nodeType->getFullConfiguration()['ui']['icon'],
