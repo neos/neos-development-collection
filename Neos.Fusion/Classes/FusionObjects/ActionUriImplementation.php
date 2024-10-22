@@ -22,20 +22,6 @@ use Neos\Utility\Arrays;
 /**
  * A Fusion ActionUri object
  *
- * The following Fusion properties are evaluated:
- *  * package
- *  * subpackage
- *  * controller
- *  * action
- *  * arguments
- *  * format
- *  * section
- *  * additionalParams
- *  * addQueryString
- *  * argumentsToBeExcludedFromQueryString
- *  * absolute
- *  * request
- *
  * See respective getters for descriptions
  */
 class ActionUriImplementation extends AbstractFusionObject
@@ -89,26 +75,40 @@ class ActionUriImplementation extends AbstractFusionObject
     }
 
     /**
-     * Controller arguments that are to be handled by the router
+     * Option to set custom routing arguments
      *
-     * @return array
+     * Please do not use this functionality to append query parameters and use 'queryParameters' instead:
+     *
+     *   Neos.Fusion:ActionUri {
+     *     queryParameters = ${{'q':'search term'}}
+     *   }
+     *
+     * Appending query parameters via the use of exceeding routing arguments relies
+     * on `appendExceedingArguments` internally which is discouraged to leverage.
+     *
+     * But in case you meant to use routing arguments for advanced uri building,
+     * you can leverage this low level option.
+     *
+     * Be aware in order for the routing framework to match and resolve the arguments,
+     * your have to define a custom route in Routes.yaml
+     *
+     * @return array<string, mixed>
      */
     public function getRoutingArguments(): array
     {
-        $routingArguments = $this->fusionValue('routingArguments');
-        return is_array($routingArguments) ? $routingArguments: [];
+        return $this->fusionValue('routingArguments') ?: [];
     }
 
     /**
      * Controller arguments
      *
      * @return array|null
-     * @deprecated to be removed with Neos 9
+     * @deprecated with Neos 8.4 please use routingArguments or queryParameters instead
      */
     public function getArguments(): ?array
     {
         $arguments = $this->fusionValue('arguments');
-        return is_array($arguments) ? $arguments: [];
+        return is_array($arguments) ? $arguments : [];
     }
 
     /**
@@ -135,7 +135,7 @@ class ActionUriImplementation extends AbstractFusionObject
      * Additional query parameters that won't be prefixed like $arguments (overrule $arguments)
      *
      * @return array|null
-     * @deprecated to be removed with Neos 9
+     * @deprecated with Neos 8.4 please use routingArguments or queryParameters instead
      */
     public function getAdditionalParams(): ?array
     {
@@ -149,8 +149,7 @@ class ActionUriImplementation extends AbstractFusionObject
      */
     public function getQueryParameters(): array
     {
-        $queryParameters = $this->fusionValue('queryParameters');
-        return is_array($queryParameters) ? $queryParameters: [];
+        return $this->fusionValue('queryParameters') ?: [];
     }
 
     /**
@@ -240,7 +239,7 @@ class ActionUriImplementation extends AbstractFusionObject
             }
             $uriString = $uriBuilder->uriFor(
                 $this->getAction(),
-                $routingArguments ?: $arguments ?: [],
+                $routingArguments ?: $arguments,
                 $this->getController(),
                 $this->getPackage(),
                 $this->getSubpackage()
