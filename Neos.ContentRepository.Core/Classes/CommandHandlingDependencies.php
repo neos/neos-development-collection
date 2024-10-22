@@ -37,8 +37,9 @@ final class CommandHandlingDependencies
      */
     private array $overriddenContentGraphInstances = [];
 
-    public function __construct(private readonly ContentRepository $contentRepository)
-    {
+    public function __construct(
+        private readonly ContentRepository $contentRepository
+    ) {
     }
 
     public function handle(CommandInterface $command): void
@@ -109,5 +110,13 @@ final class CommandHandlingDependencies
         } finally {
             unset($this->overriddenContentGraphInstances[$workspaceName->value]);
         }
+    }
+
+    /**
+     * Fixme only required to build the possible catchup hooks
+     */
+    public function getContentRepository(): ContentRepository
+    {
+        return $this->contentRepository;
     }
 }
