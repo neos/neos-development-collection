@@ -160,8 +160,8 @@ class CrCommandController extends CommandController
             $this->projectionServiceFactory
         );
 
-        // remove the workspace metadata and roles for this cr
-        $this->workspaceService->pruneRoleAsssignments($contentRepositoryId);
+        // remove the workspace metadata and role assignments for this cr
+        $this->workspaceService->pruneRoleAssignments($contentRepositoryId);
         $this->workspaceService->pruneWorkspaceMetadata($contentRepositoryId);
 
         // reset the events table
