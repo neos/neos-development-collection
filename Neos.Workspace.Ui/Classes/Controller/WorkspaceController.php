@@ -15,10 +15,10 @@ declare(strict_types=1);
 namespace Neos\Workspace\Ui\Controller;
 
 use Doctrine\DBAL\Exception as DBALException;
+use GuzzleHttp\Psr7\Response;
 use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\Dimension\ContentDimensionId;
 use Neos\ContentRepository\Core\Feature\SubtreeTagging\Dto\SubtreeTag;
-use Neos\ContentRepository\Core\Feature\SubtreeTagging\Dto\SubtreeTags;
 use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Exception\WorkspaceAlreadyExists;
 use Neos\ContentRepository\Core\Feature\WorkspaceModification\Command\DeleteWorkspace;
 use Neos\ContentRepository\Core\Feature\WorkspacePublication\Command\DiscardIndividualNodesFromWorkspace;
@@ -40,6 +40,7 @@ use Neos\Diff\Diff;
 use Neos\Diff\Renderer\Html\HtmlArrayRenderer;
 use Neos\Error\Messages\Message;
 use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Exception as FlowException;
 use Neos\Flow\I18n\Exception\IndexOutOfBoundsException;
 use Neos\Flow\I18n\Exception\InvalidFormatPlaceholderException;
 use Neos\Flow\I18n\Translator;
@@ -536,15 +537,14 @@ class WorkspaceController extends AbstractModuleController
     }
 
     /**
-     * Discard a a single node
+     * Discard a single node
      *
      * @param string $nodeAddress
      * @param WorkspaceName $selectedWorkspace
      */
-    public function discardNodeAction(string $nodeAddress, WorkspaceName $selectedWorkspace): void
+    public function discardNodeAction(string $nodeAddress, WorkspaceName $selectedWorkspace): Response
     {
         $nodeAddress = NodeAddress::fromJsonString($nodeAddress);
-
         $contentRepository = $this->contentRepositoryRegistry->get($nodeAddress->contentRepositoryId);
 
         $command = DiscardIndividualNodesFromWorkspace::create(
@@ -559,6 +559,9 @@ class WorkspaceController extends AbstractModuleController
         $contentRepository->handle($command);
 
         $this->addFlashMessage($this->getModuleLabel('workspaces.selectedChangeHasBeenDiscarded'));
+
+        $this->redirect('review', null, null, ['workspace' => $selectedWorkspace->value]);
+
     }
 
     /**

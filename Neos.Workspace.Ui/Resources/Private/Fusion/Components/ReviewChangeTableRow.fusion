@@ -15,7 +15,7 @@ prototype(Neos.Workspace.Ui:Component.ReviewChangeTableRow) < prototype(Neos.Fus
       action = 'discardNode'
       format = 'json'
       arguments {
-        nodeAddress = ${change.serializedNodeAddress}
+        nodeAddress = ${props.change.serializedNodeAddress}
         selectedWorkspace = ${selectedWorkspaceName}
 
       }
@@ -64,6 +64,8 @@ prototype(Neos.Workspace.Ui:Component.ReviewChangeTableRow) < prototype(Neos.Fus
           icon="fas fa-trash-alt icon-white"
           attributes.hx-get={private.discardChangeAction}
           attributes.hx-swap='innerHTML'
+          attributes.hx-target="#workspaceReview"
+          attributes.hx-swap="innerHTML"
         />
       </td>
     </tr>

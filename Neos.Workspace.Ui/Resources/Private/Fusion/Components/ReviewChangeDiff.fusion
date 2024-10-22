@@ -11,14 +11,6 @@ prototype(Neos.Workspace.Ui:Component.ReviewChangeDiff) < prototype(Neos.Fusion:
 
   @private {
     i18n = ${I18n.id('').source('Main').package('Neos.Workspace.Ui')}
-    discardChangeAction = Neos.Fusion:ActionUri {
-      action = 'discardNode'
-      arguments {
-        nodeAddress = ${change.serializedNodeAddress}
-        selectedWorkspace = ${selectedWorkspaceName}
-
-      }
-    }
 
   }
 

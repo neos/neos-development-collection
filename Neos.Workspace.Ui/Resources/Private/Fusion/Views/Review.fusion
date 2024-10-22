@@ -24,6 +24,7 @@ Neos.Workspace.Ui.WorkspaceController.review = Neos.Fusion:Component {
       <section
         hx-indicator="#indicator"
         hx-boost="true"
+        id='workspaceReview'
       >
         <Neos.Workspace.Ui:Component.HTMXConfig/>
         <Neos.Workspace.Ui:Component.FlashMessages flashMessages={props.flashMessages}/>
@@ -34,7 +35,11 @@ Neos.Workspace.Ui.WorkspaceController.review = Neos.Fusion:Component {
               {props.i18n.id('workspaces.unpublishedChanges').arguments([selectedWorkspaceLabel]).translate()}
             </legend>
             <Neos.Workspace.Ui:Component.ReviewTable
+              @if.hasSiteChanges={props.siteChanges}
               siteChanges={props.siteChanges} selectedWorkspaceName={selectedWorkspaceName} selectedWorkspaceLabel={selectedWorkspaceLabel} />
+            <div @if.hasNoSiteChange={!props.siteChanges} class="no-unpublished-changes">
+              {props.i18n.id('workspaces.reviewWorkspace.disabled').arguments([selectedWorkspaceLabel]).translate()}
+            </div>
           </div>
         </main>
       </section>
