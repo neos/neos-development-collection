@@ -39,11 +39,11 @@ trait NodeReferencingInternals
             foreach ($referencesByProperty->references as $reference) {
                 $serializedReferences[] = new SerializedNodeReference(
                     $reference->targetNodeAggregateId,
-                    $reference->properties ? $this->getPropertyConverter()->serializeReferencePropertyValues(
+                    $this->getPropertyConverter()->serializeReferencePropertyValues(
                         $reference->properties,
                         $this->requireNodeType($nodeTypeName),
                         $referencesByProperty->referenceName
-                    ) : null
+                    )
                 );
             }
 
