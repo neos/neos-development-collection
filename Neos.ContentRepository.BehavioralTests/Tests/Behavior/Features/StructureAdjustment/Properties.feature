@@ -117,7 +117,7 @@ Feature: Properties
       | nodeAggregateId              | "sir-david-nodenborough"                                                    |
       | originDimensionSpacePoint    | {}                                                                          |
       | affectedDimensionSpacePoints | [{}]                                                                        |
-      | propertyValues               | {"myProp": {"value": "original value", "type": "My\\Non\\Existing\\Class"}} |
+      | propertyValues               | {"myProp": {"value": "original value", "type": "My\\\\Non\\\\Existing\\\\Class"}} |
       | propertiesToUnset            | {}                                                                          |
     Then I expect the following structure adjustments for type "Neos.ContentRepository.Testing:Document":
       | Type                        | nodeAggregateId        |
