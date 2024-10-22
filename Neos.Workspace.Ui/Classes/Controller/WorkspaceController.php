@@ -1116,8 +1116,8 @@ class WorkspaceController extends AbstractModuleController
         Workspace $userWorkspace,
         ContentRepository $contentRepository
     ): WorkspaceListItems {
-        $workspaceMetadata = $this->workspaceService->getWorkspaceMetadata($contentRepository->id, $userWorkspace->workspaceName);
-        $workspacesPermissions = $this->workspaceService->getWorkspacePermissionsForUser(
+        $userWorkspaceMetadata = $this->workspaceService->getWorkspaceMetadata($contentRepository->id, $userWorkspace->workspaceName);
+        $userWorkspacesPermissions = $this->workspaceService->getWorkspacePermissionsForUser(
             $contentRepository->id,
             $userWorkspace->workspaceName,
             $this->userService->getCurrentUser()
@@ -1128,17 +1128,17 @@ class WorkspaceController extends AbstractModuleController
         $workspaceListItems = [];
         $workspaceListItems[$userWorkspace->workspaceName->value] = new WorkspaceListItem(
             $userWorkspace->workspaceName->value,
-            $workspaceMetadata->classification->value,
+            $userWorkspaceMetadata->classification->value,
             $userWorkspace->status->value,
-            $workspaceMetadata->title->value,
-            $workspaceMetadata->description->value,
+            $userWorkspaceMetadata->title->value,
+            $userWorkspaceMetadata->description->value,
             $userWorkspace->baseWorkspaceName?->value,
             $this->computePendingChanges($userWorkspace, $contentRepository),
             !$allWorkspaces->getDependantWorkspaces($userWorkspace->workspaceName)->isEmpty(),
-            $workspaceMetadata->ownerUserId ? $this->userService->findUserById(
-                UserId::fromString($workspaceMetadata->ownerUserId->value)
+            $userWorkspaceMetadata->ownerUserId ? $this->userService->findUserById(
+                UserId::fromString($userWorkspaceMetadata->ownerUserId->value)
             )?->getLabel() : null,
-            $workspacesPermissions,
+            $userWorkspacesPermissions,
         );
 
         foreach ($allWorkspaces as $workspace) {
@@ -1147,9 +1147,11 @@ class WorkspaceController extends AbstractModuleController
                 $workspace->workspaceName,
                 $this->userService->getCurrentUser()
             );
-            if (!$workspacesPermissions->manage || !$workspacesPermissions->read) { // todo check corrrect?
+
+            if (!$workspacesPermissions->read) {
                 continue;
             }
+            $workspaceMetadata = $this->workspaceService->getWorkspaceMetadata($contentRepository->id, $userWorkspace->workspaceName);
 
             $workspaceListItems[$workspace->workspaceName->value] = new WorkspaceListItem(
                 $workspace->workspaceName->value,
