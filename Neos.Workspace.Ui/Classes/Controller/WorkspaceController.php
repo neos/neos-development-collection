@@ -188,6 +188,7 @@ class WorkspaceController extends AbstractModuleController
 
     public function newAction(ContentRepositoryId $contentRepositoryId): void
     {
+
         $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryId);
 
         $this->view->assign('baseWorkspaceOptions', $this->prepareBaseWorkspaceOptions($contentRepository));
@@ -774,7 +775,7 @@ class WorkspaceController extends AbstractModuleController
                         $change->originDimensionSpacePoint->toDimensionSpacePoint(),
                         $change->nodeAggregateId
                     );
-
+                    $nodeType = $contentRepository->getNodeTypeManager()->getNodeType($node->nodeTypeName);
 
 
                     $change = [
@@ -783,16 +784,16 @@ class WorkspaceController extends AbstractModuleController
                         'isRemoved' => $change->deleted,
                         'isNew' => $change->created,
                         'isMoved' => $change->moved,
+                        'dimensions' => $node->dimensionSpacePoint->toJson(),
+                        'lastModificationDateTime' => $node->timestamps->lastModified,
+                        'label' =>  $this->nodeLabelGenerator->getLabel($node),
+                        'icon' => $nodeType->getFullConfiguration()['ui']['icon'],
                         'contentChanges' => $this->renderContentChanges(
                             $node,
                             $change->contentStreamId,
                             $contentRepository
                         )
                     ];
-                    $nodeType = $this->getNodeType($node);
-                    if ($nodeType->isOfType('Neos.Neos:Node')) {
-                        $change['configuration'] = $nodeType->getFullConfiguration();
-                    }
                     $siteChanges[$siteNodeName]['documents'][$documentPath]['changes'][$relativePath] = $change;
                 }
                 $siteChanges[$siteNodeName]['documents'][$documentPath]['changesCount'] = count($siteChanges[$siteNodeName]['documents'][$documentPath]['changes']);
@@ -1173,9 +1174,7 @@ class WorkspaceController extends AbstractModuleController
                 $this->userService->getCurrentUser()
             );
 
-            if (!$workspacesPermissions->read) {
-                continue;
-            }
+
             $workspaceMetadata = $this->workspaceService->getWorkspaceMetadata($contentRepository->id, $userWorkspace->workspaceName);
 
             $workspaceListItems[$workspace->workspaceName->value] = new WorkspaceListItem(

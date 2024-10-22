@@ -238,3 +238,7 @@ button .icon:not(:last-child) {
     width: 100%;
   }
 }
+
+.neos-content-diff table {
+  width: 100%;
+}

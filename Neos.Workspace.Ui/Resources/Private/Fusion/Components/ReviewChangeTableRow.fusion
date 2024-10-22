@@ -13,6 +13,7 @@ prototype(Neos.Workspace.Ui:Component.ReviewChangeTableRow) < prototype(Neos.Fus
     i18n = ${I18n.id('').source('Main').package('Neos.Workspace.Ui')}
     discardChangeAction = Neos.Fusion:ActionUri {
       action = 'discardNode'
+      format = 'json'
       arguments {
         nodeAddress = ${change.serializedNodeAddress}
         selectedWorkspace = ${selectedWorkspaceName}
