@@ -1,19 +1,18 @@
 Neos.Workspace.Ui.WorkspaceController.edit = Neos.Fusion:Component {
+  disableBaseWorkspaceSelector = ${disableBaseWorkspaceSelector}
   /// array<Neos\ContentRepository\Core\Projection\Workspace\Workspace>
   baseWorkspaceOptions = ${baseWorkspaceOptions}
   /// boolean
-  showOwnerSelector = ${showOwnerSelector}
-  /// array<int|string,string>
-  ownerOptions = ${ownerOptions}
-  /// Neos\ContentRepository\Core\Projection\Workspace\Workspace
   workspace = ${workspace}
 
   renderer = afx`
     <Neos.Workspace.Ui:Component.Modal.Edit
-      workspace={props.workspace}
+      workspaceName={workspace.workspaceName}
+      workspaceTitle={workspace.workspaceTitle}
+      workspaceDescription={workspace.workspaceDescription}
+
+      disableBaseWorkspaceSelector={props.disableBaseWorkspaceSelector}
       baseWorkspaceOptions={props.baseWorkspaceOptions}
-      showOwnerSelector={props.showOwnerSelector}
-      ownerOptions={props.ownerOptions}
     />
   `
 }

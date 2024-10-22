@@ -66,6 +66,7 @@ use Neos\Neos\FrontendRouting\NodeUriBuilderFactory;
 use Neos\Neos\FrontendRouting\SiteDetection\SiteDetectionResult;
 use Neos\Neos\PendingChangesProjection\ChangeFinder;
 use Neos\Neos\Utility\NodeTypeWithFallbackProvider;
+use Neos\Workspace\Ui\ViewModel\EditWorkspaceDto;
 use Neos\Workspace\Ui\ViewModel\PendingChanges;
 use Neos\Workspace\Ui\ViewModel\WorkspaceListItem;
 use Neos\Workspace\Ui\ViewModel\WorkspaceListItems;
@@ -112,8 +113,6 @@ class WorkspaceController extends AbstractModuleController
 
     #[Flow\Inject]
     protected Translator $translator;
-
-
 
     /**
      * Display a list of unpublished content
@@ -188,7 +187,6 @@ class WorkspaceController extends AbstractModuleController
 
     public function newAction(ContentRepositoryId $contentRepositoryId): void
     {
-
         $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryId);
 
         $this->view->assign('baseWorkspaceOptions', $this->prepareBaseWorkspaceOptions($contentRepository));
@@ -251,6 +249,8 @@ class WorkspaceController extends AbstractModuleController
 
     /**
      * Edit a workspace
+     *
+     * Renders /Resource/Private/Fusion/Views/Edit.fusion
      */
     public function editAction(WorkspaceName $workspaceName): void
     {
@@ -269,13 +269,27 @@ class WorkspaceController extends AbstractModuleController
             $this->throwStatus(404, 'Workspace does not exist');
         }
 
-        $this->view->assign('workspace', $workspace);
+        $workspaceMetadata = $this->workspaceService->getWorkspaceMetadata($contentRepositoryId, $workspace->workspaceName);
+
+        $workspaceDto = new EditWorkspaceDto(
+            workspaceName: $workspace->workspaceName->value,
+            workspaceTitle: $workspaceMetadata->title->value,
+            workspaceDescription: $workspaceMetadata->description->value,
+            workspaceOwnerId: $workspaceMetadata->ownerUserId->value,
+        );
+
+
+        $this->view->assign('workspace', $workspaceDto);
         $this->view->assign('baseWorkspaceOptions', $this->prepareBaseWorkspaceOptions($contentRepository, $workspaceName));
-        // TODO: $this->view->assign('disableBaseWorkspaceSelector',
+        // TODO
+        $this->view->assign('disableBaseWorkspaceSelector', true);
+
         // $this->publishingService->getUnpublishedNodesCount($workspace) > 0);
 
-        // TODO fix $this->userService->currentUserCanTransferOwnershipOfWorkspace($workspace)
-        $this->view->assign('showOwnerSelector', false);
+        // TODO
+        // This has been here: $this->userService->currentUserCanTransferOwnershipOfWorkspace($workspace)
+        // We need to calc this from the new permissions model
+        $this->view->assign('showOwnerSelector', true);
 
         $this->view->assign('ownerOptions', $this->prepareOwnerOptions());
     }
@@ -527,6 +541,7 @@ class WorkspaceController extends AbstractModuleController
     public function discardNodeAction(string $nodeAddress, WorkspaceName $selectedWorkspace): void
     {
         $nodeAddress = NodeAddress::fromJsonString($nodeAddress);
+
         $contentRepository = $this->contentRepositoryRegistry->get($nodeAddress->contentRepositoryId);
 
         $command = DiscardIndividualNodesFromWorkspace::create(
@@ -1141,7 +1156,6 @@ class WorkspaceController extends AbstractModuleController
         Workspace $userWorkspace,
         ContentRepository $contentRepository
     ): WorkspaceListItems {
-
         $userWorkspaceMetadata = $this->workspaceService->getWorkspaceMetadata($contentRepository->id, $userWorkspace->workspaceName);
         $userWorkspacesPermissions = $this->workspaceService->getWorkspacePermissionsForUser(
             $contentRepository->id,
@@ -1168,14 +1182,15 @@ class WorkspaceController extends AbstractModuleController
         );
 
         foreach ($allWorkspaces as $workspace) {
+            $workspaceMetadata = $this->workspaceService->getWorkspaceMetadata($contentRepository->id, $workspace->workspaceName);
             $workspacesPermissions = $this->workspaceService->getWorkspacePermissionsForUser(
                 $contentRepository->id,
                 $workspace->workspaceName,
                 $this->userService->getCurrentUser()
             );
-
-
-            $workspaceMetadata = $this->workspaceService->getWorkspaceMetadata($contentRepository->id, $userWorkspace->workspaceName);
+            if (!$workspacesPermissions->read) { // todo check corrrect?
+                continue;
+            }
 
             $workspaceListItems[$workspace->workspaceName->value] = new WorkspaceListItem(
                 $workspace->workspaceName->value,
