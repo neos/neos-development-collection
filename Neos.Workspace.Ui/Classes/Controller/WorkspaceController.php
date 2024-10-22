@@ -542,19 +542,19 @@ class WorkspaceController extends AbstractModuleController
      * @param string $nodeAddress
      * @param WorkspaceName $selectedWorkspace
      */
-    public function discardNodeAction(string $nodeAddress, WorkspaceName $selectedWorkspace): Response
+    public function discardNodeAction(string $nodeAddress, WorkspaceName $selectedWorkspace): void
     {
         $nodeAddress = NodeAddress::fromJsonString($nodeAddress);
         $contentRepository = $this->contentRepositoryRegistry->get($nodeAddress->contentRepositoryId);
-
+        $nodeIdsToDiscard = NodeIdsToPublishOrDiscard::create(
+            new NodeIdToPublishOrDiscard(
+                $nodeAddress->aggregateId,
+                $nodeAddress->dimensionSpacePoint
+            )
+        );
         $command = DiscardIndividualNodesFromWorkspace::create(
             $selectedWorkspace,
-            NodeIdsToPublishOrDiscard::create(
-                new NodeIdToPublishOrDiscard(
-                    $nodeAddress->aggregateId,
-                    $nodeAddress->dimensionSpacePoint
-                )
-            ),
+            $nodeIdsToDiscard
         );
         $contentRepository->handle($command);
 
