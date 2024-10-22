@@ -182,4 +182,4 @@ Feature: Create node aggregate with node
       | nodeAggregateId       | "nody-mc-nodeface"                                           |
       | nodeTypeName          | "Neos.ContentRepository.Testing:NodeWithInvalidDefaultValue" |
       | parentNodeAggregateId | "lady-eleonode-rootford"                                     |
-    Then the last command should have thrown an exception of type "CallErrorException"
+    Then the last command should have thrown an exception of type "InvalidArgumentException"

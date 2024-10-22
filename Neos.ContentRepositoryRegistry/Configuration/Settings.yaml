@@ -31,9 +31,6 @@ Neos:
         contentDimensionSource:
           factoryObjectName: Neos\ContentRepositoryRegistry\Factory\ContentDimensionSource\ConfigurationBasedContentDimensionSourceFactory
 
-        projectionCatchUpTrigger:
-          factoryObjectName: Neos\ContentRepositoryRegistry\Factory\ProjectionCatchUpTrigger\SubprocessProjectionCatchUpTriggerFactory
-
         authProvider:
           factoryObjectName: Neos\ContentRepositoryRegistry\Factory\AuthProvider\StaticAuthProviderFactory
 
