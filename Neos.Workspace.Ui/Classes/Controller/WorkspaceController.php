@@ -1140,6 +1140,7 @@ class WorkspaceController extends AbstractModuleController
         Workspace $userWorkspace,
         ContentRepository $contentRepository
     ): WorkspaceListItems {
+
         $userWorkspaceMetadata = $this->workspaceService->getWorkspaceMetadata($contentRepository->id, $userWorkspace->workspaceName);
         $userWorkspacesPermissions = $this->workspaceService->getWorkspacePermissionsForUser(
             $contentRepository->id,
