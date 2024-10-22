@@ -18,7 +18,7 @@ final readonly class ProjectionStatuses implements \IteratorAggregate
     ) {
     }
 
-    public static function create(): self
+    public static function createEmpty(): self
     {
         return new self([]);
     }

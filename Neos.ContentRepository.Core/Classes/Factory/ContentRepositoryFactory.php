@@ -100,6 +100,7 @@ final class ContentRepositoryFactory
                 $this->projectionFactoryDependencies->contentDimensionSource,
                 $this->authProvider,
                 $this->clock,
+                $this->projectionsAndCatchUpHooks->contentGraphProjection->getState()
             );
         }
         return $this->contentRepository;
@@ -124,7 +125,7 @@ final class ContentRepositoryFactory
             $this->projectionFactoryDependencies,
             $this->getOrBuild(),
             $this->buildEventPersister(),
-            $this->projectionsAndCatchUpHooks->projections,
+            $this->projectionsAndCatchUpHooks,
         );
         return $serviceFactory->build($serviceFactoryDependencies);
     }
