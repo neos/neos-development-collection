@@ -5,11 +5,7 @@ declare(strict_types=1);
 require_once(__DIR__ . '/../../../../Neos.ContentRepository.Export/Tests/Behavior/Features/Bootstrap/CrImportExportTrait.php');
 
 use Behat\Behat\Context\Context;
-use Behat\Gherkin\Node\PyStringNode;
 use Behat\Gherkin\Node\TableNode;
-use League\Flysystem\FileAttributes;
-use League\Flysystem\Filesystem;
-use League\Flysystem\InMemory\InMemoryFilesystemAdapter;
 use Neos\Behat\FlowBootstrapTrait;
 use Neos\ContentGraph\DoctrineDbalAdapter\Tests\Behavior\Features\Bootstrap\CrImportExportTrait;
 use Neos\ContentRepository\BehavioralTests\TestSuite\Behavior\CRBehavioralTestsSubjectProvider;
@@ -30,16 +26,12 @@ use Neos\ContentRepository\Export\Asset\ResourceLoaderInterface;
 use Neos\ContentRepository\Export\Asset\ValueObject\SerializedAsset;
 use Neos\ContentRepository\Export\Asset\ValueObject\SerializedImageVariant;
 use Neos\ContentRepository\Export\Asset\ValueObject\SerializedResource;
-use Neos\ContentRepository\Export\Event\ValueObject\ExportedEvents;
-use Neos\ContentRepository\Export\ProcessingContext;
-use Neos\ContentRepository\Export\Severity;
 use Neos\ContentRepository\LegacyNodeMigration\NodeDataToAssetsProcessor;
 use Neos\ContentRepository\LegacyNodeMigration\NodeDataToEventsProcessor;
 use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\CRTestSuiteTrait;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\Property\PropertyMapper;
 use Neos\Flow\ResourceManagement\PersistentResource;
-use PHPUnit\Framework\Assert;
 use PHPUnit\Framework\MockObject\Generator as MockGenerator;
 
 /**
