@@ -270,10 +270,9 @@ class WorkspaceController extends AbstractModuleController
         $workspaceMetadata = $this->workspaceService->getWorkspaceMetadata($contentRepositoryId, $workspace->workspaceName);
 
         $workspaceDto = new EditWorkspaceDto(
-            workspaceName: $workspace->workspaceName->value,
-            workspaceTitle: $workspaceMetadata->title->value,
-            workspaceDescription: $workspaceMetadata->description->value,
-            workspaceOwnerId: $workspaceMetadata->ownerUserId->value,
+            workspaceName: $workspace->workspaceName,
+            workspaceTitle: $workspaceMetadata->title,
+            workspaceDescription: $workspaceMetadata->description,
         );
 
 
@@ -425,6 +424,7 @@ class WorkspaceController extends AbstractModuleController
             $this->throwStatus(403, 'Workspace has unpublished nodes');
         // delete workspace on POST
         } elseif ($this->request->getHttpRequest()->getMethod() === 'POST') {
+            // TODO: WorkspaceMetadata is not being removed with this
             $contentRepository->handle(
                 DeleteWorkspace::create(
                     $workspaceName,
