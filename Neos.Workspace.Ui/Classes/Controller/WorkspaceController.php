@@ -43,6 +43,7 @@ use Neos\Flow\Mvc\Exception\StopActionException;
 use Neos\Flow\Package\PackageManager;
 use Neos\Flow\Property\PropertyMapper;
 use Neos\Flow\Security\Context;
+use Neos\Flow\Security\Exception\AccessDeniedException;
 use Neos\Media\Domain\Model\AssetInterface;
 use Neos\Media\Domain\Model\ImageInterface;
 use Neos\Neos\Controller\Module\AbstractModuleController;
@@ -287,6 +288,15 @@ class WorkspaceController extends AbstractModuleController
     ): void {
         $contentRepositoryId = SiteDetectionResult::fromRequest($this->request->getHttpRequest())->contentRepositoryId;
         $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryId);
+
+        $user = $this->userService->getCurrentUser();
+        if ($user === null) {
+            throw new AccessDeniedException('No user is authenticated', 1729620262);
+        }
+        $workspacePermissions = $this->contentRepositoryAuthorizationService->getWorkspacePermissionsForUser($contentRepository->id, $workspaceName, $user);
+        if (!$workspacePermissions->manage) {
+            throw new AccessDeniedException(sprintf('The authenticated user does not have manage permissions for workspace "%s"', $workspaceName->value), 1729620297);
+        }
 
         if ($title->value === '') {
             $title = WorkspaceTitle::fromString($workspaceName->value);

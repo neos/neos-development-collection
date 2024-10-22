@@ -27,7 +27,6 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\Workspace;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\Annotations as Flow;
-use Neos\Flow\Security\Context as SecurityContext;
 use Neos\Neos\Domain\Model\User;
 use Neos\Neos\Domain\Model\UserId;
 use Neos\Neos\Domain\Model\WorkspaceClassification;
@@ -45,20 +44,17 @@ use Neos\Neos\Security\Authorization\ContentRepositoryAuthorizationService;
 /**
  * Central authority to interact with Content Repository Workspaces within Neos
  *
- * TODO evaluate permissions for workspace changes
- *
  * @api
  */
 #[Flow\Scope('singleton')]
-final class WorkspaceService
+final readonly class WorkspaceService
 {
     private const TABLE_NAME_WORKSPACE_METADATA = 'neos_neos_workspace_metadata';
     private const TABLE_NAME_WORKSPACE_ROLE = 'neos_neos_workspace_role';
 
     public function __construct(
-        private readonly ContentRepositoryRegistry $contentRepositoryRegistry,
-        private readonly Connection $dbal,
-        private readonly SecurityContext $securityContext,
+        private ContentRepositoryRegistry $contentRepositoryRegistry,
+        private Connection $dbal,
     ) {
     }
 
@@ -83,10 +79,11 @@ final class WorkspaceService
 
     /**
      * Update/set title metadata for the specified workspace
+     *
+     * NOTE: The workspace privileges are not evaluated for this interaction, this should be done in the calling side if needed
      */
     public function setWorkspaceTitle(ContentRepositoryId $contentRepositoryId, WorkspaceName $workspaceName, WorkspaceTitle $newWorkspaceTitle): void
     {
-        // TODO check workspace permissions
         $this->updateWorkspaceMetadata($contentRepositoryId, $workspaceName, [
             'title' => $newWorkspaceTitle->value,
         ]);
@@ -94,10 +91,11 @@ final class WorkspaceService
 
     /**
      * Update/set description metadata for the specified workspace
+     *
+     * NOTE: The workspace privileges are not evaluated for this interaction, this should be done in the calling side if needed
      */
     public function setWorkspaceDescription(ContentRepositoryId $contentRepositoryId, WorkspaceName $workspaceName, WorkspaceDescription $newWorkspaceDescription): void
     {
-        // TODO check workspace permissions
         $this->updateWorkspaceMetadata($contentRepositoryId, $workspaceName, [
             'description' => $newWorkspaceDescription->value,
         ]);
@@ -178,14 +176,14 @@ final class WorkspaceService
             return;
         }
         $workspaceName = $this->getUniqueWorkspaceName($contentRepositoryId, $user->getLabel());
-        $this->securityContext->withoutAuthorizationChecks(fn () => $this->createPersonalWorkspace(
+        $this->createPersonalWorkspace(
             $contentRepositoryId,
             $workspaceName,
             WorkspaceTitle::fromString($user->getLabel()),
             WorkspaceDescription::empty(),
             WorkspaceName::forLive(),
             $user->getId(),
-        ));
+        );
     }
 
     /**

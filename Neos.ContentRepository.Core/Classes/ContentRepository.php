@@ -112,7 +112,6 @@ final class ContentRepository
         // publishing themselves
         $eventsToPublish = $this->commandBus->handle($command, $this->commandHandlingDependencies);
 
-        // TODO meaningful exception message
         $initiatingUserId = $this->authProvider->getAuthenticatedUserId() ?? UserId::forSystemUser();
         $initiatingTimestamp = $this->clock->now()->format(\DateTimeInterface::ATOM);
 
