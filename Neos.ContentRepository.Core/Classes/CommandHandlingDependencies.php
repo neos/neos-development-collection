@@ -116,4 +116,12 @@ final class CommandHandlingDependencies
             unset($this->overriddenContentGraphInstances[$workspaceName->value]);
         }
     }
+
+    /**
+     * Fixme only required to build the possible catchup hooks
+     */
+    public function getContentRepository(): ContentRepository
+    {
+        return $this->contentRepository;
+    }
 }
