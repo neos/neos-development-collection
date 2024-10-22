@@ -1,17 +1,21 @@
 prototype(Neos.Workspace.Ui:Component.Modal.Edit) < prototype(Neos.Fusion:Component) {
+  /// bool
+  disableBaseWorkspaceSelector = true
   /// array<Neos\ContentRepository\Core\Projection\Workspace\Workspace>
   baseWorkspaceOptions = ${[]}
-  /// boolean
-  showOwnerSelector = true
-  /// array<int|string,string>
-  ownerOptions = ${[]}
-  /// Neos\ContentRepository\Core\Projection\Workspace\Workspace
-  workspace = null
+
+  workspaceName = ''
+  workspaceTitle = ''
+  workspaceDescription = ''
+  baseWorkspaceName = ''
+
+  isPrivateWorkspace = false
+  isInternalWorkspace = false
 
   @private {
     i18n = ${I18n.id('').source('Main').package('Neos.Workspace.Ui')}
     popoverId = 'workspace-edit-modal'
-    workspaceTableRowId = ${'workspace-row-' + props.workspace.workspaceName.value}
+    workspaceTableRowId = ${'workspace-row-' + props.workspaceName}
   }
 
   prototype(Neos.Fusion.Form:LabelRenderer) {
@@ -38,14 +42,14 @@ prototype(Neos.Workspace.Ui:Component.Modal.Edit) < prototype(Neos.Fusion:Compon
           <Neos.Workspace.Ui:Component.Icon icon="times"/>
         </button>
         <div class="neos-header">
-          {private.i18n.id('workspaces.editWorkspace').arguments([props.workspace.workspaceTitle.value])}
+          {private.i18n.id('workspaces.editWorkspace').arguments([props.workspaceTitle])}
         </div>
       </header>
       <section>
         <Neos.Fusion.Form:Form
           form.target.action="update"
           form.target.format="htmx"
-          form.target.arguments.workspaceName={props.workspace.workspaceName.value}
+          form.target.arguments.workspaceName={props.workspaceName}
           attributes.class="neos-inline"
           attributes.hx-post={form.getTarget()}
           attributes.hx-disabled-elt="find button"
@@ -54,7 +58,7 @@ prototype(Neos.Workspace.Ui:Component.Modal.Edit) < prototype(Neos.Fusion:Compon
           <fieldset>
             <Neos.Fusion.Form:Neos.BackendModule.FieldContainer
               field.name="title"
-              field.value={props.workspace.workspaceTitle.value}
+              field.value={props.workspaceTitle}
               label="workspaces.workspace.title"
               class="neos-control-group"
             >
@@ -62,12 +66,13 @@ prototype(Neos.Workspace.Ui:Component.Modal.Edit) < prototype(Neos.Fusion:Compon
                 attributes.required
                 attributes.pattern="/^[\p{L}\p{P}\d \.]{1,200}$/u"
                 attributes.autofocus
+                attributes.placeholder={props.workspaceName}
               />
             </Neos.Fusion.Form:Neos.BackendModule.FieldContainer>
 
             <Neos.Fusion.Form:Neos.BackendModule.FieldContainer
               field.name="description"
-              field.value={props.workspace.workspaceDescription.value}
+              field.value={props.workspaceDescription}
               label="workspaces.workspace.description"
               class="neos-control-group"
             >
@@ -78,37 +83,19 @@ prototype(Neos.Workspace.Ui:Component.Modal.Edit) < prototype(Neos.Fusion:Compon
 
             <Neos.Fusion.Form:Neos.BackendModule.FieldContainer
               field.name="baseWorkspace"
-              field.value={props.workspace.baseWorkspaceName.value}
+              field.value={props.baseWorkspaceName}
               label="workspaces.workspace.baseWorkspace"
               class="neos-control-group"
             >
               <Neos.Fusion.Form:Select
-                attributes.disabled
+                attributes.disabled={props.disableBaseWorkspaceSelector}
               >
                 <Neos.Fusion:Loop items={props.baseWorkspaceOptions} itemName="workspaceTitle" itemKey="workspaceName">
                   <Neos.Fusion.Form:Select.Option
                     option.value={workspaceName}
-                    attributes.selected={workspaceName == props.workspace.baseWorkspaceName.value}
+                    attributes.selected={workspaceName == props.baseWorkspaceName}
                   >
                     {workspaceTitle}
-                  </Neos.Fusion.Form:Select.Option>
-                </Neos.Fusion:Loop>
-              </Neos.Fusion.Form:Select>
-            </Neos.Fusion.Form:Neos.BackendModule.FieldContainer>
-
-            <Neos.Fusion.Form:Neos.BackendModule.FieldContainer
-              field.name="workspaceOwner"
-              field.value={props.workspace.baseWorkspaceName.value}
-              label="workspaces.workspace.owner"
-              class="neos-control-group"
-              @if={props.showOwnerSelector}
-            >
-              <Neos.Fusion.Form:Select
-                field.value={props.workspace.baseWorkspaceName.value}
-              >
-                <Neos.Fusion:Loop items={props.ownerOptions} itemName="ownerTitle" itemKey="ownerName">
-                  <Neos.Fusion.Form:Select.Option option.value={ownerName}>
-                    {ownerTitle}
                   </Neos.Fusion.Form:Select.Option>
                 </Neos.Fusion:Loop>
               </Neos.Fusion.Form:Select>
@@ -128,7 +115,7 @@ prototype(Neos.Workspace.Ui:Component.Modal.Edit) < prototype(Neos.Fusion:Compon
                   id="visibility.private"
                   field.value="private"
                   attributes.disabled
-                  attributes.checked={props.workspace.privateWorkspace}
+                  attributes.checked={props.isPrivateWorkspace}
                 >
                   <span></span>
                   <span>
@@ -144,7 +131,7 @@ prototype(Neos.Workspace.Ui:Component.Modal.Edit) < prototype(Neos.Fusion:Compon
                   id="visibility.internal"
                   field.value="internal"
                   attributes.disabled
-                  attributes.checked={props.workspace.internalWorkspace}
+                  attributes.checked={props.isInternalWorkspace}
                 >
                   <span></span>
                   <span>
