@@ -78,45 +78,6 @@ Neos.Workspace.Ui.WorkspaceController.new = Neos.Fusion:Component {
             </Neos.Fusion.Form:Neos.BackendModule.FieldContainer>
           </fieldset>
           <fieldset>
-            <!-- TODO internal was removed -->
-            <Neos.Fusion:Fragment
-              @if={false && Security.hasAccess('Neos.Workspace.Ui:Backend.Module.Management.Workspace.ManageInternalWorkspaces')}>
-              <h3 class="neos-control-label">
-                {props.i18n.id('workspaces.workspace.visibility')}
-              </h3>
-              <Neos.Fusion.Form:Neos.BackendModule.FieldContainer
-                field.name="visibility"
-                class="neos-control-group"
-              >
-                <Neos.Fusion.Form:Radio id="visibility.private" field.value="private" attributes.checked>
-                  <span></span>
-                  <span>
-                    {props.i18n.id('workspaces.workspace.visibility.private').translate()}
-                    <span class="neos-help-inline">
-                      {props.i18n.id('workspaces.workspace.visibility.private.help')}
-                    </span>
-                  </span>
-                </Neos.Fusion.Form:Radio>
-                <br/>
-                <Neos.Fusion.Form:Radio id="visibility.internal" field.value="internal">
-                  <span></span>
-                  <span>
-                    {props.i18n.id('workspaces.workspace.visibility.internal').translate()}
-                    <span class="neos-help-inline">
-                      {props.i18n.id('workspaces.workspace.visibility.internal.help')}
-                    </span>
-                  </span>
-                </Neos.Fusion.Form:Radio>
-              </Neos.Fusion.Form:Neos.BackendModule.FieldContainer>
-            </Neos.Fusion:Fragment>
-
-            <!-- TODO private was removed -->
-            <Neos.Fusion.Form:Hidden
-              name="visibility"
-              value="private"
-              @if={false && !Security.hasAccess('Neos.Workspace.Ui:Backend.Module.Management.Workspace.ManageInternalWorkspaces')}
-            />
-
             <Neos.Fusion.Form:Button attributes.class="neos-button neos-button-primary">
               {props.i18n.id('workspaces.createWorkspace')}
             </Neos.Fusion.Form:Button>
