@@ -197,8 +197,12 @@ class NodeController extends ActionController
 
         $contentRepository = $this->contentRepositoryRegistry->get($nodeAddress->contentRepositoryId);
         $uncachedSubgraph = $contentRepository->getContentSubgraph($nodeAddress->workspaceName, $nodeAddress->dimensionSpacePoint);
-        // todo document
+
+        // By default, the visibility constraints only contain the SubtreeTags the authenticated user has _no_ access to
+        // Neos backend users have access to the "disabled" SubtreeTag so that they can see/edit disabled nodes.
+        // In this showAction (= "frontend") we have to explicitly remove those disabled nodes, even if the user was authenticated
         $uncachedSubgraph = $uncachedSubgraph->withVisibilityConstraints($uncachedSubgraph->getVisibilityConstraints()->withAddedSubtreeTag(SubtreeTag::disabled()));
+
         $subgraph = new ContentSubgraphWithRuntimeCaches($uncachedSubgraph, $this->subgraphCachePool);
 
         $nodeInstance = $subgraph->findNodeById($nodeAddress->aggregateId);

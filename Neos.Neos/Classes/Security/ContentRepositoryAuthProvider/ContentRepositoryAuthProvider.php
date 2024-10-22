@@ -6,6 +6,9 @@ namespace Neos\Neos\Security\ContentRepositoryAuthProvider;
 
 use Neos\ContentRepository\Core\CommandHandler\CommandInterface;
 use Neos\ContentRepository\Core\Feature\Common\RebasableToOtherWorkspaceInterface;
+use Neos\ContentRepository\Core\Feature\Security\AuthProviderInterface;
+use Neos\ContentRepository\Core\Feature\Security\Dto\Privilege;
+use Neos\ContentRepository\Core\Feature\Security\Dto\UserId;
 use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Command\CreateRootWorkspace;
 use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Command\CreateWorkspace;
 use Neos\ContentRepository\Core\Feature\WorkspaceModification\Command\ChangeBaseWorkspace;
@@ -16,9 +19,6 @@ use Neos\ContentRepository\Core\Feature\WorkspacePublication\Command\PublishIndi
 use Neos\ContentRepository\Core\Feature\WorkspacePublication\Command\PublishWorkspace;
 use Neos\ContentRepository\Core\Feature\WorkspaceRebase\Command\RebaseWorkspace;
 use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
-use Neos\ContentRepository\Core\SharedModel\Auth\AuthProviderInterface;
-use Neos\ContentRepository\Core\SharedModel\Auth\Privilege;
-use Neos\ContentRepository\Core\SharedModel\Auth\UserId;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\Flow\Security\Context as SecurityContext;

@@ -26,6 +26,9 @@ use Neos\ContentRepository\Core\EventStore\EventPersister;
 use Neos\ContentRepository\Core\EventStore\Events;
 use Neos\ContentRepository\Core\EventStore\EventsToPublish;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryFactory;
+use Neos\ContentRepository\Core\Feature\Security\AuthProviderInterface;
+use Neos\ContentRepository\Core\Feature\Security\Dto\UserId;
+use Neos\ContentRepository\Core\Feature\Security\Exception\AccessDenied;
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Core\Projection\CatchUp;
 use Neos\ContentRepository\Core\Projection\CatchUpOptions;
@@ -36,8 +39,6 @@ use Neos\ContentRepository\Core\Projection\ProjectionsAndCatchUpHooks;
 use Neos\ContentRepository\Core\Projection\ProjectionStateInterface;
 use Neos\ContentRepository\Core\Projection\ProjectionStatuses;
 use Neos\ContentRepository\Core\Projection\WithMarkStaleInterface;
-use Neos\ContentRepository\Core\SharedModel\Auth\AuthProviderInterface;
-use Neos\ContentRepository\Core\SharedModel\Auth\UserId;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryStatus;
 use Neos\ContentRepository\Core\SharedModel\Exception\WorkspaceDoesNotExist;
@@ -97,12 +98,13 @@ final class ContentRepository
      * The only API to send commands (mutation intentions) to the system.
      *
      * @param CommandInterface $command
+     * @throws AccessDenied
      */
     public function handle(CommandInterface $command): void
     {
         $privilege = $this->authProvider->getCommandPrivilege($command);
         if (!$privilege->granted) {
-            throw new \RuntimeException(sprintf('Command "%s" was denied: %s', $command::class, $privilege->reason), 1729086686);
+            throw AccessDenied::becauseCommandIsNotGranted($command, $privilege->reason);
         }
         // the commands only calculate which events they want to have published, but do not do the
         // publishing themselves
@@ -253,19 +255,20 @@ final class ContentRepository
 
     /**
      * @throws WorkspaceDoesNotExist if the workspace does not exist
+     * @throws AccessDenied if no read access is granted to the workspace ({@see AuthProviderInterface})
      */
     public function getContentGraph(WorkspaceName $workspaceName): ContentGraphInterface
     {
         $privilege = $this->authProvider->getReadNodesFromWorkspacePrivilege($workspaceName);
         if (!$privilege->granted) {
-            // TODO more specific exception
-            throw new \RuntimeException(sprintf('Read access denied for workspace "%s": %s', $workspaceName->value, $privilege->reason ?? ''), 1729014760);
+            throw AccessDenied::becauseWorkspaceCantBeRead($workspaceName, $privilege->reason);
         }
         return $this->getContentRepositoryReadModel()->getContentGraphByWorkspaceName($workspaceName);
     }
 
     /**
      * @throws WorkspaceDoesNotExist if the workspace does not exist
+     * @throws AccessDenied if no read access is granted to the workspace ({@see AuthProviderInterface})
      */
     public function getContentSubgraph(WorkspaceName $workspaceName, DimensionSpacePoint $dimensionSpacePoint): ContentSubgraphInterface
     {

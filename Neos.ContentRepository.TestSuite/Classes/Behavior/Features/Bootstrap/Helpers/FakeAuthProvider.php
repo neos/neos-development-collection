@@ -5,10 +5,10 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\Helpers;
 
 use Neos\ContentRepository\Core\CommandHandler\CommandInterface;
+use Neos\ContentRepository\Core\Feature\Security\AuthProviderInterface;
+use Neos\ContentRepository\Core\Feature\Security\Dto\Privilege;
+use Neos\ContentRepository\Core\Feature\Security\Dto\UserId;
 use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
-use Neos\ContentRepository\Core\SharedModel\Auth\Privilege;
-use Neos\ContentRepository\Core\SharedModel\Auth\UserId;
-use Neos\ContentRepository\Core\SharedModel\Auth\AuthProviderInterface;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 
 final class FakeAuthProvider implements AuthProviderInterface

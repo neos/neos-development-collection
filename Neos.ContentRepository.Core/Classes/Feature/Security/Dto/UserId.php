@@ -12,7 +12,7 @@
 
 declare(strict_types=1);
 
-namespace Neos\ContentRepository\Core\SharedModel\Auth;
+namespace Neos\ContentRepository\Core\Feature\Security\Dto;
 
 use Neos\ContentRepository\Core\SharedModel\Id\UuidFactory;
 

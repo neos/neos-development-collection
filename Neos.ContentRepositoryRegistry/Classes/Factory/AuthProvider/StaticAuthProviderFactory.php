@@ -2,10 +2,10 @@
 declare(strict_types=1);
 namespace Neos\ContentRepositoryRegistry\Factory\AuthProvider;
 
+use Neos\ContentRepository\Core\Feature\Security\AuthProviderInterface;
+use Neos\ContentRepository\Core\Feature\Security\Dto\UserId;
+use Neos\ContentRepository\Core\Feature\Security\StaticAuthProvider;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
-use Neos\ContentRepository\Core\SharedModel\Auth\StaticAuthProvider;
-use Neos\ContentRepository\Core\SharedModel\Auth\UserId;
-use Neos\ContentRepository\Core\SharedModel\Auth\AuthProviderInterface;
 
 /**
  * @api

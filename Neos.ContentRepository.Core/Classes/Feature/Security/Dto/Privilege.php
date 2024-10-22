@@ -12,7 +12,7 @@
 
 declare(strict_types=1);
 
-namespace Neos\ContentRepository\Core\SharedModel\Auth;
+namespace Neos\ContentRepository\Core\Feature\Security\Dto;
 
 /**
  * A privilege that is returned by the {@see AuthProviderInterface}
