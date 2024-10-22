@@ -124,8 +124,6 @@ class CrCommandController extends CommandController
         $projectionService->resetAllProjections();
         $this->outputLine('Truncated events');
 
-        $liveContentStreamId = ContentStreamId::create();
-
         $legacyMigrationService = $this->contentRepositoryRegistry->buildService(
             $contentRepositoryId,
             new LegacyMigrationServiceFactory(
@@ -137,7 +135,6 @@ class CrCommandController extends CommandController
                 $this->resourceRepository,
                 $this->resourceManager,
                 $this->propertyMapper,
-                $liveContentStreamId
             )
         );
         assert($legacyMigrationService instanceof LegacyMigrationService);
