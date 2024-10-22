@@ -16,7 +16,6 @@ namespace Neos\ContentRepository\Core\Feature\NodeReferencing\Dto;
 
 use Neos\ContentRepository\Core\Feature\NodeModification\Dto\SerializedPropertyValues;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
-use Neos\ContentRepository\Core\SharedModel\Node\ReferenceName;
 
 /**
  * "Raw" / Serialized node reference as saved in the event log // in projections.
@@ -26,31 +25,36 @@ use Neos\ContentRepository\Core\SharedModel\Node\ReferenceName;
 final readonly class SerializedNodeReference
 {
     public function __construct(
-        public ReferenceName $referenceName,
         public NodeAggregateId $targetNodeAggregateId,
         public ?SerializedPropertyValues $properties
     ) {
     }
 
+    public static function fromTarget(NodeAggregateId $targetNodeAggregateId): self
+    {
+        return new self($targetNodeAggregateId, SerializedPropertyValues::createEmpty());
+    }
+
     /**
-     * @param array{"referenceName": string, "target": string, "properties"?: array<string, mixed>} $array
+     * @param array{"target": string, "properties"?: array<string, mixed>} $array
      */
     public static function fromArray(array $array): self
     {
         return new self(
-            ReferenceName::fromString($array['referenceName']),
             NodeAggregateId::fromString($array['target']),
-            isset($array['properties']) ? SerializedPropertyValues::fromArray($array['properties']) : null
+            isset($array['properties']) ? SerializedPropertyValues::fromArray($array['properties']) : SerializedPropertyValues::createEmpty()
         );
     }
 
     /**
-     * @return array{"target": NodeAggregateId, "properties": SerializedPropertyValues|null}
+     * @return array{"target": string, "properties"?: mixed}
      */
-    public function targetAndPropertiesToArray(): array
+    public function toArray(): array
     {
+//        ['target' => $this->targetNodeAggregateId->value]
+//        if ($this->properties !== null) {}
         return [
-            'target' => $this->targetNodeAggregateId,
+            'target' => $this->targetNodeAggregateId->value,
             'properties' => $this->properties
         ];
     }

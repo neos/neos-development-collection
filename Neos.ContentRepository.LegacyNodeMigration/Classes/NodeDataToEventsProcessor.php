@@ -280,12 +280,6 @@ final class NodeDataToEventsProcessor implements ProcessorInterface
 
         $serializedPropertyValuesAndReferences = $this->extractPropertyValuesAndReferences($nodeDataRow, $nodeType);
 
-        $references = SerializedNodeReferences::createEmpty();
-        foreach ($serializedPropertyValuesAndReferences->references as $referencePropertyName => $destinationNodeAggregateIds) {
-            $localReferences = SerializedNodeReferences::fromReferenceNameAndNodeAggregateIds(ReferenceName::fromString($referencePropertyName), $destinationNodeAggregateIds);
-            $references = $references->merge($localReferences);
-        }
-
         if ($this->isAutoCreatedChildNode($parentNodeAggregate->nodeTypeName, $nodeName) && !$this->visitedNodes->containsNodeAggregate($nodeAggregateId)) {
             // Create tethered node if the node was not found before.
             // If the node was already visited, we want to create a node variant (and keep the tethering status)
@@ -302,7 +296,7 @@ final class NodeDataToEventsProcessor implements ProcessorInterface
                     $nodeName,
                     $serializedPropertyValuesAndReferences->serializedPropertyValues,
                     NodeAggregateClassification::CLASSIFICATION_TETHERED,
-                    $references,
+                    $serializedPropertyValuesAndReferences->references,
                 )
             );
         } elseif ($this->visitedNodes->containsNodeAggregate($nodeAggregateId)) {
@@ -326,7 +320,7 @@ final class NodeDataToEventsProcessor implements ProcessorInterface
                     $nodeName,
                     $serializedPropertyValuesAndReferences->serializedPropertyValues,
                     NodeAggregateClassification::CLASSIFICATION_REGULAR,
-                    $references,
+                    $serializedPropertyValuesAndReferences->references,
                 )
             );
         }
@@ -334,8 +328,9 @@ final class NodeDataToEventsProcessor implements ProcessorInterface
         if ($this->isNodeHidden($nodeDataRow)) {
             $this->exportEvent(new SubtreeWasTagged($this->workspaceName, $this->contentStreamId, $nodeAggregateId, $this->interDimensionalVariationGraph->getSpecializationSet($originDimensionSpacePoint->toDimensionSpacePoint(), true, $this->visitedNodes->alreadyVisitedOriginDimensionSpacePoints($nodeAggregateId)->toDimensionSpacePointSet()), SubtreeTag::disabled()));
         }
-        foreach ($serializedPropertyValuesAndReferences->references as $referencePropertyName => $destinationNodeAggregateIds) {
-            $this->nodeReferencesWereSetEvents[] = new NodeReferencesWereSet($this->workspaceName, $this->contentStreamId, $nodeAggregateId, new OriginDimensionSpacePointSet([$originDimensionSpacePoint]), SerializedNodeReferences::fromReferences(array_map(static function ($nodeAggregateId) use ($referencePropertyName) {return new SerializedNodeReference(ReferenceName::fromString($referencePropertyName), $nodeAggregateId, null);}, iterator_to_array($destinationNodeAggregateIds->getIterator()))));
+
+        if (!$serializedPropertyValuesAndReferences->references->isEmpty()) {
+            $this->nodeReferencesWereSetEvents[] = new NodeReferencesWereSet($this->workspaceName, $this->contentStreamId, $nodeAggregateId, new OriginDimensionSpacePointSet([$originDimensionSpacePoint]), $serializedPropertyValuesAndReferences->references);
         }
 
         $this->visitedNodes->add($nodeAggregateId, new DimensionSpacePointSet([$originDimensionSpacePoint->toDimensionSpacePoint()]), $nodeTypeName, $nodePath, $parentNodeAggregate->nodeAggregateId);
@@ -347,7 +342,7 @@ final class NodeDataToEventsProcessor implements ProcessorInterface
     public function extractPropertyValuesAndReferences(array $nodeDataRow, NodeType $nodeType): SerializedPropertyValuesAndReferences
     {
         $properties = [];
-        $references = [];
+        $references = SerializedNodeReferences::createEmpty();
 
         // Note: We use a PostgreSQL platform because the implementation is forward-compatible, @see JsonArrayType::convertToPHPValue()
         try {
@@ -365,7 +360,7 @@ final class NodeDataToEventsProcessor implements ProcessorInterface
                     if (!is_array($propertyValue)) {
                         $propertyValue = [$propertyValue];
                     }
-                    $references[$propertyName] = NodeAggregateIds::fromArray(array_map(static fn (string $identifier) => NodeAggregateId::fromString($identifier), $propertyValue));
+                    $references = $references->merge(SerializedNodeReferences::fromNameAndTargets(ReferenceName::fromString($propertyName), NodeAggregateIds::fromArray(array_map(static fn (string $identifier) => NodeAggregateId::fromString($identifier), $propertyValue))));
                 }
                 continue;
             }
@@ -483,6 +478,9 @@ final class NodeDataToEventsProcessor implements ProcessorInterface
                 )
             );
         }
+
+        // TODO: We should also set references here, shouldn't we?
+
         // When we specialize/generalize, we create a node variant at exactly the same tree location as the source node
         // If the parent node aggregate id differs, we need to move the just created variant to the new location
         $nodeAggregate = $this->visitedNodes->getByNodeAggregateId($nodeAggregateId);

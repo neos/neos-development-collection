@@ -68,42 +68,42 @@ Feature: Set node properties with different scopes
       | Key                             | Value                             |
       | sourceNodeAggregateId           | "source-nodandaise"               |
       | sourceOriginDimensionSpacePoint | {"language": "de"}                |
-      | references                      | {"unscopedReference": [{"target": "anthony-destinode"}]} |
+      | references                      | [{"referenceName": "unscopedReference", "references": [{"target": "anthony-destinode"}]}] |
     And the command SetNodeReferences is executed with payload:
       | Key                             | Value                             |
       | sourceNodeAggregateId           | "source-nodandaise"               |
       | sourceOriginDimensionSpacePoint | {"language": "de"}                |
-      | references                      | {"unscopedReferences": [{"target": "anthony-destinode"}]} |
+      | references                      | [{"referenceName": "unscopedReferences", "references": [{"target": "anthony-destinode"}]}] |
     And the command SetNodeReferences is executed with payload:
       | Key                             | Value                             |
       | sourceNodeAggregateId           | "source-nodandaise"               |
       | sourceOriginDimensionSpacePoint | {"language": "de"}                |
-      | references                      | {"nodeScopedReference": [{"target": "anthony-destinode"}]} |
+      | references                      | [{"referenceName": "nodeScopedReference", "references": [{"target": "anthony-destinode"}]}] |
     And the command SetNodeReferences is executed with payload:
       | Key                             | Value                             |
       | sourceNodeAggregateId           | "source-nodandaise"               |
       | sourceOriginDimensionSpacePoint | {"language": "de"}                |
-      | references                      | {"nodeScopedReferences": [{"target": "anthony-destinode"}]} |
+      | references                      | [{"referenceName": "nodeScopedReferences", "references": [{"target": "anthony-destinode"}]}] |
     And the command SetNodeReferences is executed with payload:
       | Key                             | Value                             |
       | sourceNodeAggregateId           | "source-nodandaise"               |
       | sourceOriginDimensionSpacePoint | {"language": "de"}                |
-      | references                      | {"nodeAggregateScopedReference": [{"target": "anthony-destinode"}]} |
+      | references                      | [{"referenceName": "nodeAggregateScopedReference", "references": [{"target": "anthony-destinode"}]}] |
     And the command SetNodeReferences is executed with payload:
       | Key                             | Value                             |
       | sourceNodeAggregateId           | "source-nodandaise"               |
       | sourceOriginDimensionSpacePoint | {"language": "de"}                |
-      | references                      | {"nodeAggregateScopedReferences": [{"target": "anthony-destinode"}]} |
+      | references                      | [{"referenceName": "nodeAggregateScopedReferences", "references": [{"target": "anthony-destinode"}]}] |
     And the command SetNodeReferences is executed with payload:
       | Key                             | Value                             |
       | sourceNodeAggregateId           | "source-nodandaise"               |
       | sourceOriginDimensionSpacePoint | {"language": "de"}                |
-      | references                      | {"specializationsScopedReference": [{"target": "anthony-destinode"}]} |
+      | references                      | [{"referenceName": "specializationsScopedReference", "references": [{"target": "anthony-destinode"}]}] |
     And the command SetNodeReferences is executed with payload:
       | Key                             | Value                             |
       | sourceNodeAggregateId           | "source-nodandaise"               |
       | sourceOriginDimensionSpacePoint | {"language": "de"}                |
-      | references                      | {"specializationsScopedReferences": [{"target": "anthony-destinode"}]} |
+      | references                      | [{"referenceName": "specializationsScopedReferences", "references": [{"target": "anthony-destinode"}]}] |
 
     When I am in workspace "live" and dimension space point {"language": "mul"}
     Then I expect node aggregate identifier "source-nodandaise" to lead to node cs-identifier;source-nodandaise;{"language": "mul"}
@@ -164,7 +164,7 @@ Feature: Set node properties with different scopes
       | Key                             | Value                                                    |
       | sourceNodeAggregateId           | "source-nodandaise"                                      |
       | sourceOriginDimensionSpacePoint | {"language": "de"}                                       |
-      | references                      | {"unscopedReference": [{"target": "anthony-destinode"}], "unscopedReferences": [{"target": "anthony-destinode"}], "nodeScopedReference": [{"target": "anthony-destinode"}], "nodeScopedReferences": [{"target": "anthony-destinode"}], "nodeAggregateScopedReference": [{"target": "anthony-destinode"}], "nodeAggregateScopedReferences": [{"target": "anthony-destinode"}], "specializationsScopedReference": [{"target": "anthony-destinode"}], "specializationsScopedReferences": [{"target": "anthony-destinode"}]}|
+      | references                      | [{"referenceName": "unscopedReference", "references": [{"target": "anthony-destinode"}]}, {"referenceName": "unscopedReferences", "references": [{"target": "anthony-destinode"}]}, {"referenceName": "nodeScopedReference", "references": [{"target": "anthony-destinode"}]}, {"referenceName": "nodeScopedReferences", "references": [{"target": "anthony-destinode"}]}, {"referenceName": "nodeAggregateScopedReference", "references": [{"target": "anthony-destinode"}]}, {"referenceName": "nodeAggregateScopedReferences", "references": [{"target": "anthony-destinode"}]}, {"referenceName": "specializationsScopedReference", "references": [{"target": "anthony-destinode"}]}, {"referenceName": "specializationsScopedReferences", "references": [{"target": "anthony-destinode"}]}]|
 
     When I am in workspace "live" and dimension space point {"language": "mul"}
     Then I expect node aggregate identifier "source-nodandaise" to lead to node cs-identifier;source-nodandaise;{"language": "mul"}

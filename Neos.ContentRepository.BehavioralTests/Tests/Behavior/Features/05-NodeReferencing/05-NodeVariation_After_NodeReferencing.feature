@@ -41,7 +41,7 @@ Feature: Node References with Dimensions
     When the command SetNodeReferences is executed with payload:
       | Key                   | Value                             |
       | sourceNodeAggregateId | "source-nodandaise"               |
-      | references            | {"referenceProperty": [{"target": "anthony-destinode"}]} |
+      | references            | [{"referenceName": "referenceProperty", "references": [{"target": "anthony-destinode"}]}] |
 
     When the command CreateNodeVariant is executed with payload:
       | Key             | Value               |
@@ -77,8 +77,7 @@ Feature: Node References with Dimensions
       | Key                             | Value                             |
       | sourceNodeAggregateId           | "source-nodandaise"               |
       | sourceOriginDimensionSpacePoint | {"language": "ch"}                |
-      | referenceName                   | "referenceProperty"               |
-      | references                      | {"referenceProperty": [{"target": "source-nodandaise"}]} |
+      | references                      | [{"referenceName": "referenceProperty", "references": [{"target": "source-nodandaise"}]}] |
 
     # reference to self (modified 2 lines above)
     When I am in workspace "live" and dimension space point {"language": "ch"}
@@ -112,7 +111,7 @@ Feature: Node References with Dimensions
       | Key                             | Value                             |
       | sourceNodeAggregateId           | "source-nodandaise"               |
       | sourceOriginDimensionSpacePoint | {"language": "ch"}                |
-      | references                      | {"referenceProperty": [{"target": "anthony-destinode"}]} |
+      | references                      | [{"referenceName": "referenceProperty", "references": [{"target": "anthony-destinode"}]}] |
 
 
     # on the specialization, the reference exists.
@@ -146,7 +145,7 @@ Feature: Node References with Dimensions
     When the command SetNodeReferences is executed with payload:
       | Key                   | Value                             |
       | sourceNodeAggregateId | "source-nodandaise"               |
-      | references            | {"referenceProperty": [{"target": "anthony-destinode"}]} |
+      | references            | [{"referenceName": "referenceProperty", "references": [{"target": "anthony-destinode"}]}] |
 
     When the command CreateNodeVariant is executed with payload:
       | Key             | Value               |
@@ -192,7 +191,7 @@ Feature: Node References with Dimensions
       | Key                             | Value                             |
       | sourceNodeAggregateId           | "source-nodandaise"               |
       | sourceOriginDimensionSpacePoint | {"language": "en"}                |
-      | references                      | {"referenceProperty": [{"target": "source-nodandaise"}]} |
+      | references                      | [{"referenceName": "referenceProperty", "references": [{"target": "source-nodandaise"}]}] |
 
     # reference to self (modified 2 lines above)
     When I am in workspace "live" and dimension space point {"language": "en"}
@@ -238,7 +237,7 @@ Feature: Node References with Dimensions
       | Key                             | Value                             |
       | sourceNodeAggregateId           | "ch-only"                         |
       | sourceOriginDimensionSpacePoint | {"language": "ch"}                |
-      | references                      | {"referenceProperty": [{"target": "anthony-destinode"}]} |
+      | references                      | [{"referenceName": "referenceProperty", "references": [{"target": "anthony-destinode"}]}] |
 
     # here we generalize
     When the command CreateNodeVariant is executed with payload:

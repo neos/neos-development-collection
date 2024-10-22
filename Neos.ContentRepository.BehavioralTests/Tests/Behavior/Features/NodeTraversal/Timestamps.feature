@@ -177,7 +177,7 @@ Feature: Behavior of Node timestamp properties "created", "originalCreated", "la
       | workspaceName                   | "user-test"        |
       | sourceOriginDimensionSpacePoint | {"language": "ch"} |
       | sourceNodeAggregateId           | "a"                |
-      | references                      | {"ref": [{"target": "b"}]}  |
+      | references                      | [{"referenceName": "ref", "references": [{"target": "b"}]}]  |
     And I am in workspace "user-test" and dimension space point {"language":"de"}
     Then I expect the node "a" to have the following timestamps:
       | created             | originalCreated     | lastModified | originalLastModified |

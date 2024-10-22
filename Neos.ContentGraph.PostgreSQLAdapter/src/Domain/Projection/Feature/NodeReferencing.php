@@ -19,7 +19,6 @@ use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\EventCouldNotBeApplied
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\NodeRecord;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\ProjectionHypergraph;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\ReferenceRelationRecord;
-use Neos\ContentRepository\Core\Feature\NodeReferencing\Dto\NodeReferenceNameToEmpty;
 use Neos\ContentRepository\Core\Feature\NodeReferencing\Event\NodeReferencesWereSet;
 
 /**
@@ -52,26 +51,24 @@ trait NodeReferencing
                 );
 
                 $position = 0;
-                foreach ($event->references as $referenceRecord) {
+                foreach ($event->references as $referencesForProperty) {
                     $this->getDatabaseConnection()->delete($this->tableNamePrefix . '_referencerelation', [
                         'sourcenodeanchor' => $anchorPoint->value,
-                        'name' => $referenceRecord->referenceName->value
+                        'name' => $referencesForProperty->referenceName->value
                     ]);
 
-                    if ($referenceRecord instanceof NodeReferenceNameToEmpty) {
-                        continue;
+                    foreach ($referencesForProperty->references as $reference) {
+                        // set new
+                        $referenceRecord = new ReferenceRelationRecord(
+                            $anchorPoint,
+                            $referencesForProperty->referenceName,
+                            $position,
+                            $reference->properties,
+                            $reference->targetNodeAggregateId
+                        );
+                        $referenceRecord->addToDatabase($this->getDatabaseConnection(), $this->tableNamePrefix);
+                        $position++;
                     }
-
-                    // set new
-                    $referenceRecord = new ReferenceRelationRecord(
-                        $anchorPoint,
-                        $referenceRecord->referenceName,
-                        $position,
-                        $referenceRecord->properties,
-                        $referenceRecord->targetNodeAggregateId
-                    );
-                    $referenceRecord->addToDatabase($this->getDatabaseConnection(), $this->tableNamePrefix);
-                    $position++;
                 }
             } else {
                 throw EventCouldNotBeAppliedToContentGraph::becauseTheSourceNodeIsMissing(get_class($event));

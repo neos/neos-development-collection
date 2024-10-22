@@ -30,27 +30,35 @@ use Neos\ContentRepository\Core\SharedModel\Node\ReferenceName;
 final readonly class NodeReferenceToWrite
 {
     public function __construct(
-        public ReferenceName $referenceName,
         public NodeAggregateId $targetNodeAggregateId,
-        public ?PropertyValuesToWrite $properties
+        public PropertyValuesToWrite $properties
     ) {
     }
 
+    public static function fromTargetAndProperties(NodeAggregateId $target, PropertyValuesToWrite $properties): self
+    {
+        return new self($target, $properties);
+    }
+
+    public static function fromTarget(NodeAggregateId $target): self
+    {
+        return new self($target, PropertyValuesToWrite::createEmpty());
+    }
+
     /**
-     * @param array{"referenceName": string, "target": string, "properties"?: array<string, mixed>} $array
+     * @param array{"target": string, "properties"?: array<string, mixed>} $array
      * @see NodeReferencesToWrite::fromArray()
      */
     public static function fromArray(array $array): self
     {
         return new self(
-            ReferenceName::fromString($array['referenceName']),
             NodeAggregateId::fromString($array['target']),
-            isset($array['properties']) ? PropertyValuesToWrite::fromArray($array['properties']) : null
+            isset($array['properties']) ? PropertyValuesToWrite::fromArray($array['properties']) : PropertyValuesToWrite::createEmpty()
         );
     }
 
     /**
-     * Provides a limited array representation which can be safely serialized in context of {@see NodeReferencesToWrite}
+     * Provides a limited array representation which can be safely serialized in context of {@see NodeReferencesForName}
      *
      * @return array{"target": NodeAggregateId, "properties": PropertyValuesToWrite|null}
      */

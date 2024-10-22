@@ -297,13 +297,13 @@ Feature: Publishing hide/show scenario of nodes
       | workspaceName                   | "user-test"                               |
       | sourceNodeAggregateId           | "sir-david-nodenborough"                  |
       | sourceOriginDimensionSpacePoint | {}                                        |
-      | references                      | {"referenceProperty": [{"target":"sir-nodeward-nodington-iii"}]} |
+      | references                      | [{"referenceName": "referenceProperty", "references": [{"target":"sir-nodeward-nodington-iii"}]}] |
     And the command SetNodeReferences is executed with payload:
       | Key                             | Value                                     |
       | workspaceName                   | "user-test"                               |
       | sourceNodeAggregateId           | "nody-mc-nodeface"                        |
       | sourceOriginDimensionSpacePoint | {}                                        |
-      | references                      | {"referenceProperty": [{"target":"sir-nodeward-nodington-iii"}]} |
+      | references                      | [{"referenceName": "referenceProperty", "references": [{"target":"sir-nodeward-nodington-iii"}]}] |
 
     When the command PublishIndividualNodesFromWorkspace is executed with payload:
       | Key                             | Value                                                                                                    |

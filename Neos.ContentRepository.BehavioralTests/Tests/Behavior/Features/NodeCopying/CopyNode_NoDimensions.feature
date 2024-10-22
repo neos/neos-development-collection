@@ -73,7 +73,7 @@ Feature: Copy nodes (without dimensions)
     And the command SetNodeReferences is executed with payload:
       | Key                   | Value                                           |
       | sourceNodeAggregateId | "sir-nodeward-nodington-iii"                    |
-      | references            | {"ref": [{"target": "sir-david-nodenborough"}]} |
+      | references            | [{"referenceName": "ref", "references": [{"target": "sir-david-nodenborough"}]}] |
 
     Then I expect node aggregate identifier "sir-nodeward-nodington-iii" to lead to node cs-identifier;sir-nodeward-nodington-iii;{}
     And the command CopyNodesRecursively is executed, copying the current node aggregate with payload:

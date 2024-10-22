@@ -24,8 +24,7 @@ use Neos\ContentRepository\Core\Feature\ContentStreamEventStreamName;
 use Neos\ContentRepository\Core\Feature\NodeModification\Dto\PropertyScope;
 use Neos\ContentRepository\Core\Feature\NodeReferencing\Command\SetNodeReferences;
 use Neos\ContentRepository\Core\Feature\NodeReferencing\Command\SetSerializedNodeReferences;
-use Neos\ContentRepository\Core\Feature\NodeReferencing\Dto\NodeReferenceNameToEmpty;
-use Neos\ContentRepository\Core\Feature\NodeReferencing\Dto\SerializedNodeReference;
+use Neos\ContentRepository\Core\Feature\NodeReferencing\Dto\SerializedNodeReferences;
 use Neos\ContentRepository\Core\Feature\NodeReferencing\Event\NodeReferencesWereSet;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphInterface;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate;
@@ -60,16 +59,15 @@ trait NodeReferencing
         $this->requireNodeAggregateToNotBeRoot($sourceNodeAggregate);
         $nodeTypeName = $sourceNodeAggregate->nodeTypeName;
 
-        foreach ($command->references as $reference) {
-            if ($reference instanceof NodeReferenceNameToEmpty) {
-                continue;
-            }
-            if ($reference->properties) {
-                $this->validateReferenceProperties(
-                    $reference->referenceName,
-                    $reference->properties,
-                    $nodeTypeName
-                );
+        foreach ($command->references as $referencesByProperty) {
+            foreach ($referencesByProperty->references as $reference) {
+                if ($reference->properties->values !== []) {
+                    $this->validateReferenceProperties(
+                        $referencesByProperty->referenceName,
+                        $reference->properties,
+                        $nodeTypeName
+                    );
+                }
             }
         }
 
@@ -113,17 +111,14 @@ trait NodeReferencing
             $sourceNodeAggregate->nodeTypeName
         );
 
-        foreach ($command->references->getReferenceNames() as $referenceName) {
+        foreach ($command->references as $referencesByProperty) {
+            $referenceName = $referencesByProperty->referenceName;
             $this->requireNodeTypeToDeclareReference($sourceNodeAggregate->nodeTypeName, $referenceName);
             $scopeDeclaration = $sourceNodeType->getReferences()[$referenceName->value]['scope'] ?? '';
             $scope = PropertyScope::tryFrom($scopeDeclaration) ?: PropertyScope::SCOPE_NODE;
             // TODO: Optimize affected sets into one event
-            $affectedReferences = $command->references->getForReferenceName($referenceName);
 
-            foreach ($affectedReferences as $reference) {
-                if ($reference instanceof NodeReferenceNameToEmpty) {
-                    continue;
-                }
+            foreach ($referencesByProperty->references as $reference) {
                 $destinationNodeAggregate = $this->requireProjectedNodeAggregate(
                     $contentGraph,
                     $reference->targetNodeAggregateId
@@ -135,7 +130,7 @@ trait NodeReferencing
                 );
                 $this->requireNodeTypeToAllowNodesOfTypeInReference(
                     $sourceNodeAggregate->nodeTypeName,
-                    $reference->referenceName,
+                    $referencesByProperty->referenceName,
                     $destinationNodeAggregate->nodeTypeName
                 );
             }
@@ -151,7 +146,7 @@ trait NodeReferencing
                 $contentGraph->getContentStreamId(),
                 $command->sourceNodeAggregateId,
                 $affectedOrigins,
-                $affectedReferences,
+                SerializedNodeReferences::fromReferences([$referencesByProperty]),
             );
         }
 

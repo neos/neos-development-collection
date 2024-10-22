@@ -247,17 +247,17 @@ trait ConstraintChecks
     {
         $nodeType = $this->requireNodeType($nodeTypeName);
 
-        foreach ($nodeReferences->references as $referenceName => $references) {
-            $maxItems = $nodeType->getReferences()[$referenceName]['constraints']['maxItems'] ?? null;
+        foreach ($nodeReferences->references as $referencesByPropertyName) {
+            $maxItems = $nodeType->getReferences()[$referencesByPropertyName->referenceName->value]['constraints']['maxItems'] ?? null;
             if ($maxItems === null) {
                 continue;
             }
 
-            if ($maxItems < count($references)) {
+            if ($maxItems < count($referencesByPropertyName->references)) {
                 throw ReferenceCannotBeSet::becauseTheItemsCountConstraintsAreNotMatched(
-                    ReferenceName::fromString($referenceName),
+                    $referencesByPropertyName->referenceName,
                     $nodeTypeName,
-                    count($references)
+                    count($referencesByPropertyName->references)
                 );
             }
         }
