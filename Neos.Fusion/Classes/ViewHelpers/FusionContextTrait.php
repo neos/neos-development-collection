@@ -21,7 +21,6 @@ use Neos\Fusion\FusionObjects\Helpers\FusionAwareViewInterface;
  */
 trait FusionContextTrait
 {
-
     /**
      * Get a variable value from the Fusion runtime context.
      *

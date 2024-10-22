@@ -20,7 +20,6 @@ namespace Neos\Fusion\FusionObjects;
  */
 class RendererImplementation extends AbstractFusionObject
 {
-
     /**
      * The type to render if condition is true
      *

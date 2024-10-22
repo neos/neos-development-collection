@@ -20,7 +20,6 @@ use Neos\Eel\CompilingEvaluator;
  */
 class RuntimeBench
 {
-
     /**
      * @var \Neos\Fusion\Core\Runtime
      */

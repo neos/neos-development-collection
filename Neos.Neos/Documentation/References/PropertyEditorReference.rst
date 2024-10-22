@@ -92,12 +92,20 @@ In case the text input should span multiple lines, a ``TextAreaEditor`` should b
             group: 'document'
             editor: 'Neos.Neos/Inspector/Editors/TextAreaEditor'
             editorOptions:
-              rows: 7
+              minRows: 5
+              expandedRows: 10
+              maxRows: 20
 
 Options Reference:
 
-``rows`` (integer)
-	Number of lines this textarea should have; Default ``5``.
+``minRows`` (integer)
+	Optional number to set the minRows of the TextArea if not expanded; Default ``2``.
+
+``maxRows`` (integer)
+	Optional number to set the maxRows of the TextArea if expanded; Default ``24``.
+
+``expandedRows`` (integer)
+	Optional number to set the expandedRows of the TextArea if expanded; Default ``6``.
 
 ** and all options from Text Field Editor -- see above**
 
@@ -392,7 +400,7 @@ The searchbox will accept:
 By default, links to generic ``Neos.Neos:Document`` nodes are allowed; but by setting the ``nodeTypes`` option,
 this can be further restricted (like with the ``reference`` editor). Additionally, links to assets can be disabled
 by setting ``assets`` to ``FALSE``. Links to external URLs are always possible. If you need a reference towards
-only an asset, use the ``asset`` property type; for a reference to another node, use the ``reference`` node type.
+only an asset, use the ``asset`` property type; for a reference to another node, use the ``reference`` property type.
 Furthermore, the placeholder text can be customized by setting the ``placeholder`` option::
 
 
@@ -729,8 +737,8 @@ Options Reference:
 
 		``aspectRatio``
 
-      ``forceCrop``
-        Show the crop dialog on image upload
+			``forceCrop`` (boolean)
+				Show the crop dialog on image upload
 
 			``locked``
 				Locks the aspect ratio to a specific width/height ratio

@@ -13,6 +13,7 @@ namespace Neos\Neos\Fusion;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\Neos\Domain\Exception;
+use Neos\Neos\Fusion\Helper\CachingHelper;
 use Neos\Neos\Service\LinkingService;
 use Neos\ContentRepository\Domain\Model\NodeInterface;
 use Neos\Fusion\FusionObjects\AbstractFusionObject;
@@ -57,6 +58,12 @@ class ConvertUrisImplementation extends AbstractFusionObject
     protected $linkingService;
 
     /**
+     * @Flow\Inject
+     * @var CachingHelper
+     */
+    protected $cachingHelper;
+
+    /**
      * Convert URIs matching a supported scheme with generated URIs
      *
      * If the workspace of the current node context is not live, no replacement will be done unless forceConversion is
@@ -97,11 +104,13 @@ class ConvertUrisImplementation extends AbstractFusionObject
             switch ($matches[1]) {
                 case 'node':
                     $resolvedUri = $linkingService->resolveNodeUri($matches[0], $node, $controllerContext, $absolute);
-                    $this->runtime->addCacheTag('node', $matches[2]);
+                    $cacheTagIdentifier = sprintf('%s_%s', $this->cachingHelper->renderWorkspaceTagForContextNode($node->getContext()->getWorkspaceName()), $matches[2]);
+                    $this->runtime->addCacheTag('node', $cacheTagIdentifier);
                     break;
                 case 'asset':
                     $resolvedUri = $linkingService->resolveAssetUri($matches[0]);
-                    $this->runtime->addCacheTag('asset', $matches[2]);
+                    $cacheTagIdentifier = sprintf('%s_%s', $this->cachingHelper->renderWorkspaceTagForContextNode($node->getContext()->getWorkspaceName()), $matches[2]);
+                    $this->runtime->addCacheTag('asset', $cacheTagIdentifier);
                     break;
                 default:
                     $resolvedUri = null;

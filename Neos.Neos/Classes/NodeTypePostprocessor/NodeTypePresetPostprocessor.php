@@ -21,7 +21,6 @@ use Neos\Utility\Arrays;
  */
 class NodeTypePresetPostprocessor implements NodeTypePostprocessorInterface
 {
-
     /**
      * @var array
      * @Flow\InjectConfiguration(package="Neos.Neos", path="nodeTypes.presets.properties")

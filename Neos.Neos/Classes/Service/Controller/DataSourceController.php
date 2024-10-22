@@ -27,7 +27,6 @@ use Neos\ContentRepository\Domain\Model\NodeInterface;
  */
 class DataSourceController extends AbstractServiceController
 {
-
     /**
      * @var array
      */
@@ -38,7 +37,7 @@ class DataSourceController extends AbstractServiceController
     /**
      * @param string $dataSourceIdentifier
      * @param NodeInterface $node
-     * @return string
+     * @return void
      * @throws NeosException
      */
     public function indexAction($dataSourceIdentifier, NodeInterface $node = null)

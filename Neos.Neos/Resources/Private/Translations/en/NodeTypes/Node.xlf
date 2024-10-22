@@ -11,6 +11,9 @@
 			<trans-unit id="views.nodeInfo" xml:space="preserve">
 				<source>Metadata</source>
 			</trans-unit>
+			<trans-unit id="groups.default" xml:space="preserve">
+				<source>General</source>
+			</trans-unit>
 			<trans-unit id="groups.nodeInfo" xml:space="preserve">
 				<source>Additional info</source>
 			</trans-unit>

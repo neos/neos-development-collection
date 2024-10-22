@@ -11,7 +11,6 @@ use Neos\Utility\Arrays;
  */
 final class RuntimeConfiguration
 {
-
     /**
      * The parsed Fusion configuration
      *
@@ -65,6 +64,10 @@ final class RuntimeConfiguration
             return $this->pathCache[$fusionPath]['c'];
         }
 
+        if ($fusionPath === '') {
+            throw new Exception('Fusion path cannot be empty.', 1695308681);
+        }
+
         // Find longest prefix of path that already is in path cache
         $pathUntilNow = '';
         $fusionPathLength = strlen($fusionPath);
@@ -90,6 +93,7 @@ final class RuntimeConfiguration
 
         // Build configuration for the remaining path parts
         $remainingPath = substr($fusionPath, $pathUntilNow === '' ? 0 : strlen($pathUntilNow) + 1);
+        /** @var non-empty-list<string> $pathParts */
         $pathParts = explode('/', $remainingPath);
         foreach ($pathParts as $pathPart) {
             if ($pathUntilNow === '') {
@@ -103,6 +107,7 @@ final class RuntimeConfiguration
                 continue;
             }
 
+            /** @phpstan-ignore-next-line $configuration is set */
             $configuration = $this->matchCurrentPathPart($pathPart, $configuration, $currentPrototypeDefinitions);
             $this->pathCache[$pathUntilNow]['c'] = $configuration;
             $this->pathCache[$pathUntilNow]['p'] = $currentPrototypeDefinitions;

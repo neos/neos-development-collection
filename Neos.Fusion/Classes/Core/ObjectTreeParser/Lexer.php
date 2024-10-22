@@ -44,12 +44,14 @@ class Lexer
         Token::MULTILINE_COMMENT => <<<'REGEX'
         `^
           /\*               # start of a comment '/*'
-          [^*]*             # match everything until special case '*'
+          [^*]*             # consume until special case '*'
+          \*+               # consume all '*'
           (?:
-            \*[^/]          # if after the '*' there is a '/' break, else continue
-            [^*]*           # until the special case '*' is encountered - unrolled loop following Jeffrey Friedl
+            [^/]            # break if its the end: '/'
+            [^*]*           # unrolled loop following Jeffrey E.F. Friedl
+            \*+
           )*
-          \*/               # the end of a comment.
+          /                 # the end of a comment.
         `x
         REGEX,
 
@@ -144,6 +146,9 @@ class Lexer
     {
         $token = $this->lookahead;
         $this->lookahead = null;
+        if ($token === null) {
+            throw new \LogicException('Cannot consume lookahead.', 1705652155);
+        }
         return $token;
     }
 

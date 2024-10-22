@@ -2,6 +2,11 @@
     "name": "neos/nodetypes",
     "type": "neos-package",
     "description": "Node type configuration for Neos",
+    "support": {
+        "source": "https://github.com/neos/neos-nodetypes.git",
+        "forum": "https://discuss.neos.io/",
+        "docs": "https://docs.neos.io/"
+    },
     "license": [
         "GPL-3.0-or-later"
     ],

@@ -200,6 +200,7 @@ class CacheSegmentParser
             $nextEndPosition = $this->calculateNextTokenPosition($currentPosition, ContentCache::CACHE_SEGMENT_END_TOKEN);
         }
 
+        /** may have to be phpstan-ignore-next-line'd: $toPosition expects int|null but int|false given. Is this a real case? */
         $remainingContent = $this->extractContent($currentPosition, $nextEndPosition);
         $segmentData['content'] .= $remainingContent;
         $segmentData['cleanContent'] .= $remainingContent;
@@ -234,7 +235,7 @@ class CacheSegmentParser
 
     /**
      * @param integer $fromPosition
-     * @param integer $toPosition
+     * @param integer|null $toPosition
      * @return string
      */
     protected function extractContent($fromPosition, $toPosition = null)
@@ -263,7 +264,7 @@ class CacheSegmentParser
      *
      * @param integer $currentPosition The position to start searching from
      * @param string $token the token to search for (will internally be appeneded by the randomCacheMarker)
-     * @return integer|boolean Position of the token or false if the token was not found
+     * @return integer|false Position of the token or false if the token was not found
      */
     protected function calculateNextTokenPosition($currentPosition, $token)
     {

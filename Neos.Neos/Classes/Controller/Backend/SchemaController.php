@@ -23,7 +23,6 @@ use Neos\Neos\Service\NodeTypeSchemaBuilder;
  */
 class SchemaController extends ActionController
 {
-
     /**
      * @var NodeTypeSchemaBuilder
      * @Flow\Inject

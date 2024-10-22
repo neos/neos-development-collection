@@ -20,5 +20,5 @@ use Neos\Flow\Annotations as Flow;
 #[Flow\Proxy(false)]
 abstract class AbstractNode
 {
-    abstract public function visit(AstNodeVisitorInterface $visitor, ...$args);
+    abstract public function visit(AstNodeVisitorInterface $visitor, mixed ...$args);
 }

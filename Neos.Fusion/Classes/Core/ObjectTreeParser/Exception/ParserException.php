@@ -100,7 +100,7 @@ class ParserException extends Exception
     }
 
     /**
-     * @param callable(MessageLinePart $next, MessageLinePart $prev): string $messageMaker
+     * @param callable(MessageLinePart $next, MessageLinePart $prev): string $messageCreator
      */
     public function setMessageCreator(callable $messageCreator): self
     {
@@ -131,7 +131,7 @@ class ParserException extends Exception
             $lineNumberCursor,
             $linePartAfterCursor,
             $linePartBeforeCursor
-            ) = self::splitAtCursorGetLinePartsAndLineNumber($this->fluentFusion, $this->fluentCursor);
+        ) = self::splitAtCursorGetLinePartsAndLineNumber($this->fluentFusion, $this->fluentCursor);
 
         $isEof = strlen($this->fluentFusion) === $this->fluentCursor;
         $nextLine = new MessageLinePart($linePartAfterCursor, $isEof);

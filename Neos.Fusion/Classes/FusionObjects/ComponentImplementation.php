@@ -12,6 +12,7 @@ namespace Neos\Fusion\FusionObjects;
  */
 
 use Neos\Fusion\FusionObjects\Helpers\LazyProps;
+use Neos\Fusion\FusionObjects\Helpers\LazySelfReferentialProps;
 
 /**
  * A Fusion Component-Object
@@ -55,6 +56,7 @@ class ComponentImplementation extends AbstractArrayFusionObject
     protected function prepare(array $context): array
     {
         $context['props'] = $this->getProps($context);
+        $context['private'] = $this->getPrivateProps($context);
         return $context;
     }
 
@@ -71,6 +73,16 @@ class ComponentImplementation extends AbstractArrayFusionObject
         return $props;
     }
 
+    protected function getPrivateProps(array $context): \ArrayAccess
+    {
+        return new LazySelfReferentialProps(
+            $this->path . '/__meta/private',
+            $this->runtime,
+            $context,
+            "private"
+        );
+    }
+
     /**
      * Evaluate the renderer with the give context and return
      *
@@ -80,8 +92,10 @@ class ComponentImplementation extends AbstractArrayFusionObject
     protected function render(array $context)
     {
         $this->runtime->pushContextArray($context);
-        $result = $this->runtime->render($this->path . '/renderer');
-        $this->runtime->popContext();
-        return $result;
+        try {
+            return $this->runtime->render($this->path . '/renderer');
+        } finally {
+            $this->runtime->popContext();
+        }
     }
 }

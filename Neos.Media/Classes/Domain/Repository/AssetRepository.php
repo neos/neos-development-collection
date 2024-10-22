@@ -79,15 +79,15 @@ class AssetRepository extends Repository
         $query = $this->createQuery();
 
         $constraints = [
-            $query->like('title', '%' . $searchTerm . '%'),
-            $query->like('resource.filename', '%' . $searchTerm . '%'),
-            $query->like('caption', '%' . $searchTerm . '%')
+            $query->like('title', '%' . $searchTerm . '%', false),
+            $query->like('resource.filename', '%' . $searchTerm . '%', false),
+            $query->like('caption', '%' . $searchTerm . '%', false)
         ];
         foreach ($tags as $tag) {
             $constraints[] = $query->contains('tags', $tag);
         }
         $query->matching($query->logicalOr($constraints));
-        $this->addAssetVariantFilterClause($query);
+        $this->addAssetVariantToQueryConstraints($query);
         $this->addAssetCollectionToQueryConstraints($query, $assetCollection);
         return $query->execute();
     }
@@ -104,7 +104,7 @@ class AssetRepository extends Repository
     {
         $query = $this->createQuery();
         $query->matching($query->contains('tags', $tag));
-        $this->addAssetVariantFilterClause($query);
+        $this->addAssetVariantToQueryConstraints($query);
         $this->addAssetCollectionToQueryConstraints($query, $assetCollection);
         return $query->execute();
     }
@@ -147,7 +147,7 @@ class AssetRepository extends Repository
     public function findAll(AssetCollection $assetCollection = null): QueryResultInterface
     {
         $query = $this->createQuery();
-        $this->addAssetVariantFilterClause($query);
+        $this->addAssetVariantToQueryConstraints($query);
         $this->addAssetCollectionToQueryConstraints($query, $assetCollection);
         return $query->execute();
     }
@@ -188,7 +188,7 @@ class AssetRepository extends Repository
     {
         $query = $this->createQuery();
         $query->matching($query->isEmpty('tags'));
-        $this->addAssetVariantFilterClause($query);
+        $this->addAssetVariantToQueryConstraints($query);
         $this->addAssetCollectionToQueryConstraints($query, $assetCollection);
         return $query->execute();
     }
@@ -229,7 +229,7 @@ class AssetRepository extends Repository
     public function findByAssetCollection(AssetCollection $assetCollection): QueryResultInterface
     {
         $query = $this->createQuery();
-        $this->addAssetVariantFilterClause($query);
+        $this->addAssetVariantToQueryConstraints($query);
         $this->addAssetCollectionToQueryConstraints($query, $assetCollection);
         return $query->execute();
     }
@@ -278,14 +278,20 @@ class AssetRepository extends Repository
      * @param Query $query
      * @return void
      */
-    protected function addAssetVariantFilterClause(Query $query): void
+    protected function addAssetVariantToQueryConstraints(QueryInterface $query): void
     {
-        $queryBuilder = $query->getQueryBuilder();
-
+        $variantsConstraints = [];
         $variantClassNames = $this->reflectionService->getAllImplementationClassNamesForInterface(AssetVariantInterface::class);
         foreach ($variantClassNames as $variantClassName) {
-            $queryBuilder->andWhere('e NOT INSTANCE OF ' . $variantClassName);
+            if (!$this->reflectionService->isClassAnnotatedWith($variantClassName, Flow\Entity::class)) {
+                // ignore non-entity classes to prevent "class schema found" error
+                continue;
+            }
+            $variantsConstraints[] = 'e NOT INSTANCE OF ' . $variantClassName;
         }
+
+        $constraints = $query->getConstraint();
+        $query->matching($query->logicalAnd([$constraints, $query->logicalAnd($variantsConstraints)]));
     }
 
     /**
@@ -352,7 +358,7 @@ class AssetRepository extends Repository
     {
         /** @var Query $query */
         $query = $this->createQuery();
-        $this->addAssetVariantFilterClause($query);
+        $this->addAssetVariantToQueryConstraints($query);
 
         return $query->getQueryBuilder()->getQuery()->iterate();
     }

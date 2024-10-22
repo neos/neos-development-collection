@@ -19,7 +19,7 @@ use Neos\Utility\Arrays;
 class MergedArrayTree
 {
     public function __construct(
-        protected array $tree = []
+        protected array $tree
     ) {
     }
 
@@ -67,7 +67,7 @@ class MergedArrayTree
         });
     }
 
-    protected static function arraySetOrMergeValueByPathWithCallback(array &$subject, array $path, $value, callable $toArray): void
+    protected static function arraySetOrMergeValueByPathWithCallback(array &$subject, array $path, mixed $value, callable $toArray): void
     {
         // points to the current path element, but inside the tree.
         $pointer = &$subject;

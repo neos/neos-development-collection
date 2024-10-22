@@ -25,7 +25,6 @@ use Neos\Flow\Persistence\QueryResultInterface;
  */
 class UserRepository extends Repository
 {
-
     /**
      * @return QueryResultInterface
      * @deprecated
@@ -54,8 +53,8 @@ class UserRepository extends Repository
             $query = $this->createQuery();
             $query->matching(
                 $query->logicalOr(
-                    $query->like('accounts.accountIdentifier', '%' . $searchTerm . '%'),
-                    $query->like('name.fullName', '%' . $searchTerm . '%')
+                    $query->like('accounts.accountIdentifier', '%' . $searchTerm . '%', false),
+                    $query->like('name.fullName', '%' . $searchTerm . '%', false)
                 )
             );
             return $query->setOrderings([$sortBy => $sortDirection])->execute();

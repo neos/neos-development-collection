@@ -1,0 +1,336 @@
+========
+Neos 8.3
+========
+
+This release of Neos comes with some great new features, bugfixes and a lot of modernisation of the existing code base.
+
+As usual, we worked hard to keep this release as backwards compatible as possible but, since it's a major release, some of the changes might require manual
+adjustments. So please make sure to carefully read the upgrade instructions below.
+
+
+************
+New Features
+************
+
+FEATURE: Change wallpaper images
+--------------------------------
+
+I was told, i could create a pull request for the wallpaper.
+So, here i am. As this is my first ever pull request on github, i hope everything is correct.
+
+I tried to find a sweet spot between image resolution and image size.
+
+- cropped it to 16:10
+- resized to 2500px width
+- exported with "quality by 4 of 6" (photoshop)
+- another compression via tinypng
+- converted to webp
+
+If you need another aspect ratio or anything, just let me know :)
+
+FEATURE: NodeType configuration command controller
+--------------------------------------------------
+
+
+### ``./flow nodetypes:show``
+
+ **Show NodeType Configuration**
+
+ Shows the merged configuration (including supertypes) of a NodeType
+
+ **Examples:**
+
+ ``./flow nodeTypes:show Vendor.Site:Content``
+
+ ``./flow nodeTypes:show Vendor.Site:Content --path="properties.bar"``
+
+
+ _Options_
+
+ ``--node-type-name`` The name of the NodeType to show
+ ``--path`` Optional path of the NodeType-configuration which will be shown
+
+
+### ``./flow nodetypes: list ``
+
+ **List NodeTypes**
+
+ Lists all declared NodeTypes grouped by namespace
+
+ **Examples:**
+
+ ``./flow nodeTypes:list --filter Vendor.Site:``
+
+ ``./flow nodeTypes:list --filter Vendor.Site:Document  --include-abstract``
+
+
+ _Options_
+
+ ``--filter`` Only NodeType-names containing this string will be listed
+ ``--include-abstract``  List abstract NodeTypes
+
+
+
+**Upgrade instructions**
+
+**Review instructions**
+
+adresses https://github.com/neos/flow-development-collection/pull/1903#issuecomment-580656209
+i figured even if the cli could handle dot paths https://github.com/neos/flow-development-collection/pull/2973 (which it wont in the future) one would be able to dump the nodeType config for a single node but what good is it, if you dont get the merged superType config.
+
+
+
+FEATURE: Assets Eel helper for Neos.Media
+-----------------------------------------
+
+This helper provides access to assets in Neos by either searching by Tag, AssetCollection, or
+a searchTerm combined with optionally Tags and an AssetCollection.
+
+**Review instructions**
+
+Add some assets to collections and tag them, then use the helpers in Fusion like this:
+
+```
+assetsByTag = ${Neos.Media.Assets.findByTag('MyTag')}
+assetsByCollection = ${Neos.Media.Assets.findByCollection('MyCollection')}
+assetsBySearchTerm = ${Neos.Media.Assets.findBySearchTerm('alice')}
+```
+
+
+FEATURE: Add commands `media:listVariantPresets` and `media:removeVariants`
+---------------------------------------------------------------------------
+
+Currently there is an option to create custom ImageVariant out of the ``Settings.Neos.Media.yaml``. These VariantPresets can be edited, but variants with old/removed/outdated presets will not be deleted.
+
+To solve this problem, I wrote a few lines of code and added two new commands...
+
+1. list all found configurations for variants - from file and database, to get every single variant configuration, still existing or not
+2. delete a variant preset by identifier and name provided by the other command
+
+ISSUE: https://github.com/neos/neos-development-collection/issues/3086
+
+**Upgrade instructions**
+
+Nothing I know about so far
+
+
+FEATURE: Support `iterables` that do not implement `countable` in `Neos.Fusion:Map`, `Neos.Fusion:Loop` and `Neos.Fusion:Reduce`
+--------------------------------------------------------------------------------------------------------------------------------
+
+Previously passing an object to a Map or a loop that did not implement countable lead to an error. Since we the only value that cannot be calculated is the isLast the code is adjusted to skip the calculation of isLast in that case.
+
+
+FEATURE: Introduce node:migrationcreate command
+-----------------------------------------------
+
+**Review instructions**
+
+Implements: `#3881 <https://github.com/neos/neos-development-collection/issues/3881>`_
+
+## Description
+
+This pull request introduces the new CLI command: ``node:migrationcreate``.
+
+This command is useful for creating node migrations via the CLI. I can specify a ``packageKey`` as an argument, and the given packageKey is the key for the respective site package. For example ``Neos.Demo``
+
+## Demo:
+
+https://user-images.githubusercontent.com/39345336/221870464-0352f045-299c-47cd-9853-7c16d8cdbcfa.mov
+
+The node migration is created as usual, with the ``Version`` appendix and also the current ``timeStamp`` in the respective package directory under: ``Migrations/ContentRepository``. And it comes also with a template, which can be customized directly. The template also contains a link to the node migrations part in the Neos documentation.
+
+
+FEATURE: add dimensions hash to node event model
+------------------------------------------------
+
+I want to extended the history view of the package https://github.com/aertmann/history with a filter for the dimension. With this website admins get a much needed additional filter for the history view of a web site with several dimensions and dimension values. In preparation for the extensions of the https://github.com/aertmann/history package I created these changes to the node event model. Please let me know, if additional changes are needed. Thank you in advanced.
+
+- [x] Code follows the PSR-2 coding style
+- [ ] Tests have been created, run and adjusted as needed
+
+FEATURE: Allow non eel labels in nodetypes
+------------------------------------------
+
+Previously only valid eel expressions were allowed as the main label for a nodetypes.
+Now the label just be returned if it doesn’t match the eel pattern and not throw an eel exception anymore.
+
+
+
+**Upgrade instructions**
+
+n/a
+
+**Review instructions**
+
+Set a plain label in a nodetype instead of an eel expression (not ui.label)
+
+```yaml
+My.Vendor:NodeType:
+  label: 'Hello world'
+```
+
+And check the included tests
+
+
+Related issue: `#4082 <https://github.com/neos/neos-development-collection/issues/4082>`_
+
+FEATURE: `Neos.Fusion:Component` `@private` props
+-------------------------------------------------
+
+The key ``@private`` is added to ``Neos.Fusion:Component`` (and derived prototypes like ``Neos.Neos:ContentComponent``) to allow calculating of values for the renderer with access to the props. The ``@private`` key can only be defined together with the prototype and must not be overridden from outside. Inside the renderer the calculated private values are accessible as private.XXX
+
+This feature replaces various patterns like nested components with ``@apply.props`` or using the ``this`` reference.
+
+See the documentation for more details: https://neos.readthedocs.io/en/stable/References/NeosFusionReference.html#neos-fusion-component
+
+**Example::**
+
+```
+prototype(Vendor.Site:Component) < prototype(Neos.Fusion:Component) {
+    title = 'Hello World'
+    titleTagName = 'h1'
+    bold = false
+
+    @private {
+        computedTitle = ${String.toLowercase(props.title)}
+        funnyTitle = Neos.Fusion:Value {
+            value = ${props.titleTagName + " " + private.computedTitle}
+        }
+    }
+
+    renderer = Neos.Fusion:Tag {
+        attributes.class {
+            component = 'component'
+            bold = ${props.bold && 'component--bold'}
+        }
+        content = Neos.Fusion:Join {
+            headline = Neos.Fusion:Tag {
+                tagName = ${props.titleTagName}
+                content = ${private.funnyTitle}
+            }
+            // nestedComponentScope = Neos.Fusion:Component {
+            //   prop1 = ${props.title} // works
+            //   renderer = ${props.title} // doest work!
+            // }
+      }
+    }
+}
+```
+
+
+**Review instructions**
+
+|                    |                                                                                                                                                                                                                           |
+|--------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| **[key]**          | (mixed) The public API of your component: Lazy evaluated props that will be available inside the current component's scope under the context ``props`` (is iterable)                                                      |
+| **``@private.[key]``** | (mixed) Can only be set inside the root component declaration: Lazy evaluated private props that will be available inside the current component's scope under the context ``private`` (is not iterable / is only a proxy) |
+| **renderer**       | (mixed, **required**) The value which gets rendered                                                                                                                                                                       |
+
+
+> **Note**
+> The context ``props`` and ``private`` is only available in the components scope
+> The component's scope will be available inside the ``renderer`` and ``@private`` and will extend inwards until inside another component's renderer
+> That means inside ``@private`` it's even allowed to reference another private prop (be carefully of circular references, though!)
+> But normal props are not inside the component's scope and thus cannot reference each other or ``private``
+
+
+Spec:
+- private is not Iterable but a simple proxy (no var_dump)
+- self referencing is allowed
+- in scope of the current component (a new component will have as usual its own scope)
+- can only be declared within the root prototype declaration (not "at call time")
+
+
+FEATURE: Add inspector group `default` to `Neos.Neos:Node`
+----------------------------------------------------------
+
+The group ``default`` can be used for basic properties instead introducing a custom group.
+
+
+
+
+Related issue: `#4060 <https://github.com/neos/neos-development-collection/issues/4060>`_
+
+FEATURE: Improve behavior of workspace review buttons
+-----------------------------------------------------
+
+**Upgrade instructions**
+
+_Empty_
+
+**Review instructions**
+
+ 
+
+# Description
+
+My pull request is about improving the behavior of the workspace review buttons.
+When I look at the change in a workspace, I don't always want to publish, or discard all changes. Because I also have the option to discard, or publish individual changes. But if I don't do that regularly, it could happen that you accidentally press the wrong button.
+
+## Solution
+
+The behavior should be such that when I select a single change, or all changes, the respective buttons should not be displayed. This provides better clarity, and less confusion for the backend user. Thanks to @bwaidelich for the idea regarding the new behavior ❤️ !
+
+### Demos
+
+Here I have included two examples to show the new behavior of the review buttons.
+
+#### Publish to Live Priviliges
+
+
+https://user-images.githubusercontent.com/39345336/214127918-96f6370e-66fb-40f5-a735-5769f323c7b0.mov
+
+
+#### No Publish to Live Priviliges
+
+
+
+https://user-images.githubusercontent.com/39345336/214128277-b9421ab7-d99d-4348-8db4-328d10d52b8c.mov
+
+
+
+Related issue: `#4003 <https://github.com/neos/neos-development-collection/issues/4003>`_
+
+FEATURE: Support search by property & exact value in NodeDataRepository
+-----------------------------------------------------------------------
+
+Currently it is only possible to search through the properties by
+giving a string that matches for any key or value found in the
+jsonified properties field.
+
+With this change, the term can also be an array to match exactly on a
+given key / value combination.
+The search term could be given as ``['key' => 'value']``.
+
+NEOS-1460 #close
+
+FEATURE: Allow including resources for all backend modules
+----------------------------------------------------------
+
+With this change it’s now possible to add stylesheets and javascript to all backend modules at the same time 
+without requiring to add the resources to each module separately.
+
+Example:
+
+```yaml
+Neos:
+  Neos:
+    moduleConfiguration:
+      additionalResources:
+        styleSheets:
+          'My.Package': 'resource://My.Package/Public/JavaScript/Main.css'
+        javaScripts:
+          'My.Package': 'resource://My.Package/Public/JavaScript/Main.js'
+```
+
+
+********************
+Upgrade Instructions
+********************
+
+See https://docs.neos.io/cms/references/upgrade-instructions/upgrade-instructions-8-2-8-3
+
+.. note::
+
+   Additionally all changes in Flow 8.3 apply, see the release notes to further information.
+   See https://flowframework.readthedocs.org/en/8.3/TheDefinitiveGuide/PartV/ReleaseNotes/830.html

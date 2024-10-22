@@ -20,7 +20,6 @@ namespace Neos\Fusion\FusionObjects;
  */
 class LoopImplementation extends MapImplementation
 {
-
     /**
      * Get the glue to insert between items
      *

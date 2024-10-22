@@ -82,7 +82,7 @@ class NodeTypeManager
     }
 
     /**
-     * Return all non-abstract node types which have a certain $superType, without
+     * Return all node types which have a certain $superType, without
      * the $superType itself.
      *
      * @param string $superTypeName

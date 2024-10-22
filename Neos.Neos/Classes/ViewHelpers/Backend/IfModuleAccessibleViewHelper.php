@@ -82,6 +82,7 @@ class IfModuleAccessibleViewHelper extends AbstractConditionViewHelper
         if (!$privilegeManager->isGranted(ModulePrivilege::class, new ModulePrivilegeSubject($arguments['modulePath']))) {
             return false;
         }
+        /** @phpstan-ignore-next-line condition will be fixed with Neos 9 */
         if (isset($moduleConfiguration['privilegeTarget'])) {
             return $privilegeManager->isPrivilegeTargetGranted($arguments['moduleConfiguration']['privilegeTarget']);
         }

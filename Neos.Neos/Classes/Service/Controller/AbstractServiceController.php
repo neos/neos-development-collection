@@ -110,6 +110,7 @@ abstract class AbstractServiceController extends ActionController
      */
     protected function convertException(\Exception $exception)
     {
+        $exceptionData = [];
         if ($this->objectManager->getContext()->isProduction()) {
             if ($exception instanceof FlowException) {
                 $exceptionData['message'] = 'When contacting the maintainer of this application please mention the following reference code:<br /><br />' . $exception->getReferenceCode();

@@ -26,7 +26,6 @@ use Neos\ContentRepository\Domain\Repository\WorkspaceRepository;
  */
 class WorkspacesController extends ActionController
 {
-
     /**
      * @Flow\Inject
      * @var WorkspaceRepository
@@ -61,7 +60,7 @@ class WorkspacesController extends ActionController
     /**
      * Shows a list of existing workspaces
      *
-     * @return string
+     * @return void
      */
     public function indexAction()
     {
@@ -69,7 +68,6 @@ class WorkspacesController extends ActionController
         $workspacesArray = [];
         /** @var Workspace $workspace */
         foreach ($this->workspaceRepository->findAll() as $workspace) {
-
             // FIXME: This check should be implemented through a specialized Workspace Privilege or something similar
             if ($workspace->getOwner() !== null && $workspace->getOwner() !== $user) {
                 continue;
@@ -94,7 +92,7 @@ class WorkspacesController extends ActionController
      * Shows details of the given workspace
      *
      * @param Workspace $workspace
-     * @return string
+     * @return void
      */
     public function showAction(Workspace $workspace)
     {

@@ -3,17 +3,21 @@
   <file original="" product-name="Neos.NodeTypes.Html" source-language="en" datatype="plaintext" target-language="pt-PT">
     <body>
       <trans-unit id="ui.label" xml:space="preserve">
-				<source>HTML</source>
-			<target state="needs-translation">HTML</target></trans-unit>
+        <source>HTML</source>
+        <target state="translated">HTML</target>
+      </trans-unit>
       <trans-unit id="groups.html" xml:space="preserve">
-				<source>HTML</source>
-			<target state="needs-translation">HTML</target></trans-unit>
+        <source>HTML</source>
+        <target state="translated">HTML</target>
+      </trans-unit>
       <trans-unit id="properties.source" xml:space="preserve">
-				<source>HTML Content</source>
-			<target state="needs-translation">HTML Content</target></trans-unit>
+        <source>HTML Content</source>
+        <target state="translated">Conteúdo de HTML</target>
+      </trans-unit>
       <trans-unit id="properties.source.codeEditor.buttonLabel" xml:space="preserve">
-				<source>Edit HTML source</source>
-			<target state="needs-translation">Edit HTML source</target></trans-unit>
+        <source>Edit HTML source</source>
+        <target state="translated">Editar código HTML</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

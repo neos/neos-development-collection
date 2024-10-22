@@ -103,7 +103,7 @@ const init = () => {
     const type = notificationElement.getAttribute("data-type");
     const title = notificationElement.textContent;
 
-    _renderNotification(title, "", type);
+    window.NeosCMS.Notification[type](title, "");
   });
 };
 

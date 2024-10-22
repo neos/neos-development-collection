@@ -4,28 +4,36 @@
     <body>
       <trans-unit id="ui.label" xml:space="preserve">
 				<source>Shortcut</source>
-			<target state="translated">Acceso directo</target></trans-unit>
+        <target state="translated">Acceso directo</target>
+      </trans-unit>
       <trans-unit id="tabs.document" xml:space="preserve">
 				<source>Shortcut options</source>
-			<target state="translated">Opciones de acceso directo</target></trans-unit>
+        <target state="translated">Opciones de acceso directo</target>
+      </trans-unit>
       <trans-unit id="groups.document" xml:space="preserve">
 				<source>Shortcut options</source>
-			<target state="translated">Opciones de acceso directo</target></trans-unit>
+        <target state="translated">Opciones de acceso directo</target>
+      </trans-unit>
       <trans-unit id="properties.targetMode" xml:space="preserve">
 				<source>Target mode</source>
-			<target state="translated">Modo de destino</target></trans-unit>
+        <target state="translated">Modo de destino</target>
+      </trans-unit>
       <trans-unit id="properties.target" xml:space="preserve">
 				<source>Target</source>
-			<target state="translated">Destino</target></trans-unit>
+        <target state="translated">Destino</target>
+      </trans-unit>
       <trans-unit id="properties.targetMode.selectBoxEditor.values.firstChildNode" xml:space="preserve">
 				<source>First child node</source>
-			<target state="translated">Primer nodo hijo</target></trans-unit>
+        <target state="translated">Primer nodo hijo</target>
+      </trans-unit>
       <trans-unit id="properties.targetMode.selectBoxEditor.values.parentNode" xml:space="preserve">
 				<source>Parent node</source>
-			<target state="translated">Nodo padre</target></trans-unit>
+        <target state="translated">Nodo padre</target>
+      </trans-unit>
       <trans-unit id="properties.targetMode.selectBoxEditor.values.selectedTarget" xml:space="preserve">
 				<source>Selected target</source>
-			<target state="translated">Destino seleccionado</target></trans-unit>
+        <target state="translated">Destino seleccionado</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

@@ -20,7 +20,6 @@ use Neos\Neos\Service\UserService;
  */
 class InterfaceLanguageViewHelper extends AbstractViewHelper
 {
-
     /**
      * @Flow\Inject
      * @var UserService

@@ -3,23 +3,33 @@
   <file original="" product-name="Neos.Neos" source-language="en" datatype="plaintext" target-language="ru">
     <body>
       <trans-unit id="tabs.default" xml:space="preserve" approved="yes">
-				<source>General</source>
-			<target state="final">Общие</target></trans-unit>
+        <source>General</source>
+        <target state="final">Общие</target>
+      </trans-unit>
       <trans-unit id="tabs.meta" xml:space="preserve" approved="yes">
-				<source>Metadata</source>
-			<target state="final">Метаданные</target></trans-unit>
+        <source>Metadata</source>
+        <target state="final">Метаданные</target>
+      </trans-unit>
       <trans-unit id="views.nodeInfo" xml:space="preserve" approved="yes">
-				<source>Metadata</source>
-			<target state="final">Метаданные</target></trans-unit>
+        <source>Metadata</source>
+        <target state="final">Метаданные</target>
+      </trans-unit>
       <trans-unit id="groups.nodeInfo" xml:space="preserve" approved="yes">
-				<source>Additional info</source>
-			<target state="final">Дополнительная информация</target></trans-unit>
+        <source>Additional info</source>
+        <target state="final">Дополнительная информация</target>
+      </trans-unit>
       <trans-unit id="groups.type" xml:space="preserve" approved="yes">
-				<source>Change type</source>
-			<target state="final">Изменить тип</target></trans-unit>
+        <source>Change type</source>
+        <target state="final">Изменить тип</target>
+      </trans-unit>
       <trans-unit id="properties._nodeType" xml:space="preserve" approved="yes">
-				<source>Type</source>
-			<target state="final">Тип</target></trans-unit>
+        <source>Type</source>
+        <target state="final">Тип</target>
+      </trans-unit>
+      <trans-unit id="groups.default" xml:space="preserve">
+        <source>General</source>
+        <target state="needs-translation">Общие</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

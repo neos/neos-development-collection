@@ -20,7 +20,6 @@ use Neos\Media\Domain\Model\AssetInterface;
  */
 class UsageReference
 {
-
     /**
      * @var AssetInterface
      */

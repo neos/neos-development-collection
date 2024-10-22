@@ -23,7 +23,6 @@ use Neos\Flow\I18n\EelHelper\TranslationHelper;
  */
 class NodeLabelToken implements ProtectedContextAwareInterface
 {
-
     /**
      * @Flow\Inject
      * @var TranslationHelper

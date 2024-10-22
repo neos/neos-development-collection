@@ -505,7 +505,7 @@ class UsersController extends AbstractModuleController
         $electronicAddressUsageTypes = [];
         $translationHelper = new TranslationHelper();
         foreach ($electronicAddress->getAvailableUsageTypes() as $type) {
-            $electronicAddressUsageTypes[$type] = $translationHelper->translate('users.electronicAddress.usage.type.' . $type, $type, [], 'Modules', 'Neos.Neos');
+            $electronicAddressUsageTypes[$type] = $type;
         }
         array_unshift($electronicAddressUsageTypes, '');
         $this->view->assignMultiple([
@@ -553,7 +553,7 @@ class UsersController extends AbstractModuleController
         $roles = $this->userService->currentUserIsAdministrator() ? $this->policyService->getRoles() : $currentUserRoles;
 
         usort($roles, static function (Role $a, Role $b) {
-            return strcmp($a->getName(), $b->getName());
+            return strcmp($a->getLabel(), $b->getLabel());
         });
 
         return $roles;

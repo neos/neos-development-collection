@@ -25,7 +25,7 @@ class EelExpressionValue extends AbstractPathValue
     ) {
     }
 
-    public function visit(AstNodeVisitorInterface $visitor, ...$args)
+    public function visit(AstNodeVisitorInterface $visitor, mixed ...$args)
     {
         return $visitor->visitEelExpressionValue($this, ...$args);
     }

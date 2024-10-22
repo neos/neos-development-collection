@@ -4,8 +4,15 @@
   "license": ["GPL-3.0-or-later"],
   "type": "neos-package-collection",
   "require": {
-    "neos/flow-development-collection": "8.3.x-dev",
-    "neos/neos-setup": "^1.0"
+    "neos/flow-development-collection": "8.4.x-dev"
+  },
+  "scripts": {
+    "lint:phpstan": "../../bin/phpstan analyse",
+    "lint": [
+      "@lint:phpstan"
+    ],
+    "test:behat-cli": "../../bin/behat -f progress --strict --no-interaction",
+    "build:composer-json": "php ../../Build/BuildEssentials/ComposerManifestMerger.php"
   },
   "replace": {
   },

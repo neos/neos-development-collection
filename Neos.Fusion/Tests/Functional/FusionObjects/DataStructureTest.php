@@ -12,6 +12,7 @@ namespace Neos\Fusion\Tests\Functional\FusionObjects;
  */
 
 use Neos\Fusion\Exception\MissingFusionImplementationException;
+use Neos\Utility\PositionalArraySorter;
 
 /**
  * Testcase for the Fusion Dictionary
@@ -144,5 +145,36 @@ class DataStructureTest extends AbstractFusionObjectTest
         $view = $this->buildView();
         $view->setFusionPath('dataStructure/unsetUntypedChildKeyWillRenderAsDataStructure');
         self::assertEquals(['buz' => 456, 'keyWithUnsetType' => ['bat' => 123]], $view->render());
+    }
+
+    /**
+     * @test
+     */
+    public function unsetChildKeyWillNotRender(): void
+    {
+        $view = $this->buildView();
+        $view->setFusionPath('dataStructure/unsetChildKeyWillNotRender');
+        self::assertEquals(['foo' => 'bar'], $view->render());
+    }
+
+    /**
+     * @test
+     * NOTE: This test mainly documents the current behavior. "null1" is removed by the {@see PositionalArraySorter} currently
+     */
+    public function nulledChildKeyWillRenderAsNull(): void
+    {
+        $view = $this->buildView();
+        $view->setFusionPath('dataStructure/nulledChildKeyWillRenderAsNull');
+        self::assertEquals(['foo' => 'bar', 'null2' => null], $view->render());
+    }
+
+    /**
+     * @test
+     */
+    public function appliedNullValueWillRenderAsNull(): void
+    {
+        $view = $this->buildView();
+        $view->setFusionPath('dataStructure/appliedNullValueWillRenderAsNull');
+        self::assertEquals(['nullAttribute' => null], $view->render());
     }
 }

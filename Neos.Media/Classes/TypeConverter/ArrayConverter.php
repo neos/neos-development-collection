@@ -151,5 +151,6 @@ class ArrayConverter extends AbstractTypeConverter
                     'assetCollections' => $convertedChildProperties['assetCollections']
                 ];
         }
+        return null;
     }
 }

@@ -111,12 +111,6 @@ trait NodeOperationsTrait
                     $identifier = null;
                 }
 
-                if (isset($row['Hidden']) && $row['Hidden'] === 'true') {
-                    $hidden = true;
-                } else {
-                    $hidden = false;
-                }
-
                 $parentNode = $context->getNode($parentPath);
                 if ($parentNode === null) {
                     throw new \Exception(sprintf('Could not get parent node with path %s to create node %s', $parentPath, $path));
@@ -133,8 +127,12 @@ trait NodeOperationsTrait
                         $node->setProperty($propertyName, $propertyValue);
                     }
                 }
-
-                $node->setHidden($hidden);
+                if (isset($row['Hidden']) && $row['Hidden'] === 'true') {
+                    $node->setHidden(true);
+                }
+                if (isset($row['Hidden in index']) && $row['Hidden in index'] === 'true') {
+                    $node->setHiddenInIndex(true);
+                }
             }
 
             // Make sure we do not use cached instances
@@ -414,7 +412,6 @@ trait NodeOperationsTrait
         if ($this->isolated === true) {
             $this->callStepInSubProcess(__METHOD__, sprintf(' %s %s', 'string', escapeshellarg($sourceWorkspaceName)));
         } else {
-
             /**
              * FIXME: Workspace properties from the previous workspace
              * like fallback dimensions are not available from this point forward.

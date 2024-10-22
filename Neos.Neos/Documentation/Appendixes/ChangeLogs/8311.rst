@@ -1,0 +1,39 @@
+`8.3.11 (2024-03-03) <https://github.com/neos/neos-development-collection/releases/tag/8.3.11>`_
+================================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`BUGFIX: 4915 fusion `ParsePartials` cache not flushed for symlinked packages <https://github.com/neos/neos-development-collection/pull/4916>`_
+-----------------------------------------------------------------------------------------------------------------------------------------------
+
+* Resolves: `#4915 <https://github.com/neos/neos-development-collection/issues/4915>`_
+By reverting fix https://github.com/neos/neos-development-collection/pull/4838
+Which will lead to the original problem to resurface https://github.com/neos/neos-development-collection/issues/4415 (but silently this time, no one will notice the cache flodding :D) 
+
+**Upgrade instructions**
+
+
+* Packages: ``Neos`` ``Fusion``
+
+`BUGFIX: Fix disablingSetNoOpenerWorks test for convertUri <https://github.com/neos/neos-development-collection/pull/3606>`_
+----------------------------------------------------------------------------------------------------------------------------
+
+Fixes the disablingSetNoOpenerWorks test for the convertUri. Now, the test respects the value of setNoOpener.
+
+fixes: `#3605 <https://github.com/neos/neos-development-collection/issues/3605>`_
+
+
+* Packages: ``Media`` ``Neos``
+
+`BUGFIX: Search assets in a case-insensitive way <https://github.com/neos/neos-development-collection/pull/4869>`_
+------------------------------------------------------------------------------------------------------------------
+
+This solves the problem that with Postgres the search was case-sensitive. Other database platforms didn’t have this issue as they ran case-insensitive comparisons by default.
+
+* Resolves: `#3432 <https://github.com/neos/neos-development-collection/issues/3432>`_
+
+* Packages: ``Media``
+
+`Detailed log <https://github.com/neos/neos-development-collection/compare/8.3.10...8.3.11>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

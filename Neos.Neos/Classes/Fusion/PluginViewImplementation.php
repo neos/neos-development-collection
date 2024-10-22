@@ -21,6 +21,7 @@ use Neos\ContentRepository\Domain\Model\NodeInterface;
 
 /**
  * A Fusion PluginView.
+ * @deprecated will be removed with Neos 9
  */
 class PluginViewImplementation extends PluginImplementation
 {

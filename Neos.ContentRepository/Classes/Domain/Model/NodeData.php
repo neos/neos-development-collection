@@ -422,7 +422,7 @@ class NodeData extends AbstractNodeData
             return null;
         }
 
-        return $this->nodeDataRepository->findOneByPath($this->parentPath, $this->workspace);
+        return $this->nodeDataRepository->findOneByPath($this->parentPath, $this->workspace, $this->dimensionValues);
     }
 
     /**
@@ -771,6 +771,7 @@ class NodeData extends AbstractNodeData
         }
         if ($sourceNode instanceof NodeData) {
             $propertyNames[] = 'index';
+            $propertyNames[] = 'removed';
         }
         foreach ($propertyNames as $propertyName) {
             ObjectAccess::setProperty($this, $propertyName, ObjectAccess::getProperty($sourceNode, $propertyName));
@@ -882,7 +883,6 @@ class NodeData extends AbstractNodeData
 
         if ($this->workspace->getName() !== $targetWorkspace->getName()) {
             if ($targetPath === $originalPath) {
-
                 // The existing shadow node in the target workspace will be used as the actual moved node
                 $movedNodeDataInTargetWorkspace = $targetPathShadowNodeData->getMovedTo();
                 if ($movedNodeDataInTargetWorkspace !== null) {

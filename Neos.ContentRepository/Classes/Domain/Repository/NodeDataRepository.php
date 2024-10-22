@@ -181,7 +181,7 @@ class NodeDataRepository extends Repository
      * @param array $dimensions An array of dimensions with array of ordered values to use for fallback matching
      * @param boolean|NULL $removedNodes Include removed nodes, NULL (all), false (no removed nodes) or true (only removed nodes)
      * @throws \InvalidArgumentException
-     * @return NodeData The matching node if found, otherwise NULL
+     * @return NodeData|null The matching node if found, otherwise NULL
      */
     public function findOneByPath($path, Workspace $workspace, array $dimensions = null, $removedNodes = false)
     {
@@ -321,7 +321,7 @@ class NodeDataRepository extends Repository
      * @param Workspace $workspace The containing workspace
      * @param array $dimensions An array of dimensions with array of ordered values to use for fallback matching
      * @param bool $removedNodes If shadow nodes should be considered while finding the specified node
-     * @return NodeData The matching node if found, otherwise NULL
+     * @return NodeData|null The matching node if found, otherwise NULL
      */
     public function findOneByIdentifier($identifier, Workspace $workspace, array $dimensions = null, $removedNodes = false)
     {
@@ -1133,7 +1133,7 @@ class NodeDataRepository extends Repository
             } else {
                 $negate = false;
             }
-            $nodeTypeFilterPartSubTypes = array_merge([$this->nodeTypeManager->getNodeType($nodeTypeFilterPart)], $this->nodeTypeManager->getSubNodeTypes($nodeTypeFilterPart));
+            $nodeTypeFilterPartSubTypes = array_merge([$this->nodeTypeManager->getNodeType($nodeTypeFilterPart)], $this->nodeTypeManager->getSubNodeTypes($nodeTypeFilterPart, false));
 
             foreach ($nodeTypeFilterPartSubTypes as $nodeTypeFilterPartSubType) {
                 if ($negate === true) {
@@ -1302,7 +1302,7 @@ class NodeDataRepository extends Repository
             // Find the position of the workspace, a smaller value means more priority
             $workspacePosition = array_search($node->getWorkspace()->getName(), $workspaceNames);
             if ($workspacePosition === false) {
-                throw new Exception\NodeException(sprintf('Node workspace "%s" not found in allowed workspaces (%s), this could result from a detached workspace entity in the context.', $node->getWorkspace()->getName(), implode($workspaceNames, ', ')), 1413902143);
+                throw new Exception\NodeException(sprintf('Node workspace "%s" not found in allowed workspaces (%s), this could result from a detached workspace entity in the context.', $node->getWorkspace()->getName(), implode(', ', $workspaceNames)), 1413902143);
             }
 
             // Find positions in dimensions, add workspace in front for highest priority
@@ -1360,7 +1360,6 @@ class NodeDataRepository extends Repository
         $minimalPositionByIdentifier = [];
         /** @var $node NodeData */
         foreach ($nodes as $node) {
-
             // Find the position of the workspace, a smaller value means more priority
             $workspaceNames = array_map(
                 function (Workspace $workspace) {
@@ -1711,24 +1710,29 @@ class NodeDataRepository extends Repository
         $constraints = [];
         $parameters = [];
 
+        // Use a counter to avoid parameter name conflicts and limit query metadata cache entries to the maximum number of relations
+        $identifierIndex = 0;
+
         foreach ($relationMap as $relatedObjectType => $relatedIdentifiers) {
             foreach ($relatedIdentifiers as $relatedIdentifier) {
                 // entity references like "__identifier": "so-me-uu-id"
-                $constraints[] = '(LOWER(NEOSCR_TOSTRING(n.properties)) LIKE :entity' . md5($relatedIdentifier) . ' )';
-                $parameters['entity' . md5($relatedIdentifier)] = '%"__identifier": "' . strtolower($relatedIdentifier) . '"%';
+                $constraints[] = '(LOWER(NEOSCR_TOSTRING(n.properties)) LIKE :entity' . $identifierIndex . ' )';
+                $parameters['entity' . $identifierIndex] = '%"__identifier": "' . strtolower($relatedIdentifier) . '"%';
 
                 // asset references in text like "asset://so-me-uu-id"
-                $constraints[] = '(LOWER(NEOSCR_TOSTRING(n.properties)) LIKE :asset' . md5($relatedIdentifier) . ' )';
+                $constraints[] = '(LOWER(NEOSCR_TOSTRING(n.properties)) LIKE :asset' . $identifierIndex . ' )';
                 switch ($this->entityManager->getConnection()->getDatabasePlatform()->getName()) {
                     case 'postgresql':
-                        $parameters['asset' . md5($relatedIdentifier)] = '%asset://' . strtolower($relatedIdentifier) . '%';
-                    break;
+                        $parameters['asset' . $identifierIndex] = '%asset://' . strtolower($relatedIdentifier) . '%';
+                        break;
                     case 'sqlite':
-                        $parameters['asset' . md5($relatedIdentifier)] = '%asset:\/\/' . strtolower($relatedIdentifier) . '%';
-                    break;
+                        $parameters['asset' . $identifierIndex] = '%asset:\/\/' . strtolower($relatedIdentifier) . '%';
+                        break;
                     default:
-                        $parameters['asset' . md5($relatedIdentifier)] = '%asset:\\\\/\\\\/' . strtolower($relatedIdentifier) . '%';
+                        $parameters['asset' . $identifierIndex] = '%asset:\\\\/\\\\/' . strtolower($relatedIdentifier) . '%';
                 }
+
+                $identifierIndex++;
             }
         }
 

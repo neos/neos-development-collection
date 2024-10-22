@@ -56,7 +56,7 @@ additionalProperties:
 
                           'group': { type: ['string', 'null'], description: 'Identifier of the inspector group in which this property should be edited. If not set, will not appear in inspector at all.' }
 
-                          'position': { type: ['integer', 'null'], description: 'Position inside the inspector group, small numbers are sorted on top' }
+                          'position': { type: ['string', 'integer', 'null'], description: 'Position inside the inspector group, small numbers are sorted on top' }
 
                           'editor': { type: ['string', 'null'], description: 'Name of the JavaScript Editor Class which is instanciated to edit this element in the inspector.' }
 
@@ -107,7 +107,7 @@ additionalProperties:
 
         'group': { type: string, description: "Name of the group this content element is grouped into for the 'New Content Element' dialog." }
 
-        'position': { type: integer, description: 'Position of the node type in the insert new panels' }
+        'position': { type: ['string', 'integer', 'null'], description: 'Position of the node type in the insert new panels' }
 
         'inspector':
           type: dictionary
@@ -127,7 +127,7 @@ additionalProperties:
 
                   'icon': { type: string, description: "CSS Class for displaying an icon for each tab." }
 
-                  'position': { type: integer, description: 'Position of the inspector tab, small numbers are sorted on left' }
+                  'position': { type: ['string', 'integer', 'null'], description: 'Position of the inspector tab, small numbers are sorted on left' }
 
             'groups':
               type: dictionary
@@ -142,7 +142,7 @@ additionalProperties:
 
                   'tab': { type: string, description: "Reference to a tab identifier." }
 
-                  'position': { type: integer, description: 'Position of the inspector group, small numbers are sorted on top' }
+                  'position': { type: ['string', 'integer', 'null'], description: 'Position of the inspector group, small numbers are sorted on top' }
 
                   'collapsed': { type: boolean, description: 'If true, the group in the inspector panel is collapsed by default.' }
 
@@ -165,7 +165,7 @@ additionalProperties:
 
                   'viewOptions': { type: dictionary, description: "Options for the view" }
 
-                  'position': { type: integer, description: 'Position of the view, small numbers are sorted on top' }
+                  'position': { type: ['string', 'integer', 'null'], description: 'Position of the view, small numbers are sorted on top' }
 
         'creationDialog':
           type: dictionary

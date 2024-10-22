@@ -27,7 +27,7 @@ class AssignedObjectPath extends AbstractNode
     ) {
     }
 
-    public function visit(AstNodeVisitorInterface $visitor, ...$args)
+    public function visit(AstNodeVisitorInterface $visitor, mixed ...$args)
     {
         return $visitor->visitAssignedObjectPath($this, ...$args);
     }

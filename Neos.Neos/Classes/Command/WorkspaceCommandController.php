@@ -27,7 +27,6 @@ use Neos\ContentRepository\Domain\Repository\WorkspaceRepository;
  */
 class WorkspaceCommandController extends CommandController
 {
-
     /**
      * @Flow\Inject
      * @var PublishingService

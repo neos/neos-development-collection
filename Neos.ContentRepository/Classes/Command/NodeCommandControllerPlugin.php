@@ -833,7 +833,16 @@ HELPTEXT;
                             $convertedProperty->__load();
                         } /** @noinspection PhpRedundantCatchClauseInspection */ catch (EntityNotFoundException $e) {
                             $nodesWithBrokenEntityReferences[$nodeData->getIdentifier()][$propertyName] = $nodeData;
-                            $this->dispatch(self::EVENT_NOTICE, sprintf('Broken reference in "<i>%s</i>" (%s), property "<i>%s</i>" (<i>%s</i>) referring to <i>%s</i>.', $nodeData->getPath(), $nodeData->getIdentifier(), $propertyName, $propertyType, $propertyValue));
+                            $this->dispatch(self::EVENT_NOTICE, sprintf(
+                                'Broken reference in "<i>%s</i>" (%s), property "<i>%s</i>" (<i>%s</i>)%s.',
+                                $nodeData->getPath(),
+                                $nodeData->getIdentifier(),
+                                $propertyName,
+                                $propertyType,
+                                method_exists($propertyValue, '__toString') ?
+                                    ' referring to <i>' . $propertyValue->__toString() . '</i>' :
+                                    ''
+                            ));
                             $brokenReferencesCount ++;
                         }
                     }

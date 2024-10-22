@@ -20,7 +20,6 @@ use Neos\Flow\Tests\Functional\Configuration\SchemaValidationTest as FlowSchemaV
  */
 class SchemaValidationTest extends FlowSchemaValidationTest
 {
-
     /**
      * @var array<string>
      */

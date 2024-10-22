@@ -80,11 +80,11 @@ class NodeTypeSchemaBuilderTest extends FunctionalTestCase
     {
         $subTypesDefinition = $this->schema['inheritanceMap']['subTypes'];
 
-        self::assertContains('Neos.Neos.BackendSchemaControllerTest:Document', $subTypesDefinition['Neos.Neos.BackendSchemaControllerTest:Node']);
-        self::assertContains('Neos.Neos.BackendSchemaControllerTest:Content', $subTypesDefinition['Neos.Neos.BackendSchemaControllerTest:Node']);
-        self::assertContains('Neos.Neos.BackendSchemaControllerTest:Page', $subTypesDefinition['Neos.Neos.BackendSchemaControllerTest:Node']);
-        self::assertContains('Neos.Neos.BackendSchemaControllerTest:SubPage', $subTypesDefinition['Neos.Neos.BackendSchemaControllerTest:Node']);
-        self::assertContains('Neos.Neos.BackendSchemaControllerTest:Text', $subTypesDefinition['Neos.Neos.BackendSchemaControllerTest:Node']);
+        self::assertContains('Neos.Neos.BackendSchemaControllerTest:Page', $subTypesDefinition['Neos.Neos.BackendSchemaControllerTest:Document']);
+        self::assertContains('Neos.Neos.BackendSchemaControllerTest:Folder', $subTypesDefinition['Neos.Neos.BackendSchemaControllerTest:Document']);
+        self::assertContains('Neos.Neos.BackendSchemaControllerTest:SubPage', $subTypesDefinition['Neos.Neos.BackendSchemaControllerTest:Page']);
+        self::assertContains('Neos.Neos.BackendSchemaControllerTest:Text', $subTypesDefinition['Neos.Neos.BackendSchemaControllerTest:Content']);
+        self::assertContains('Neos.Neos.BackendSchemaControllerTest:TwoColumn', $subTypesDefinition['Neos.Neos.BackendSchemaControllerTest:Content']);
     }
 
     /**

@@ -38,7 +38,7 @@ class YamlConfiguration extends Configuration
     /**
      * Loads a list of available versions into an array.
      *
-     * @return array
+     * @return void
      * @throws MigrationException
      */
     protected function registerAvailableVersions()

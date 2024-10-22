@@ -6,9 +6,8 @@
     ],
     "type": "neos-package-collection",
     "require": {
-        "neos/flow-development-collection": "8.3.x-dev",
-        "neos/neos-setup": "^1.0",
-        "php": "^8.0",
+        "neos/flow-development-collection": "8.4.x-dev",
+        "php": "^8.2",
         "neos/flow": "*",
         "neos/cache": "*",
         "neos/eel": "*",
@@ -21,17 +20,27 @@
         "behat/transliterator": "~1.0",
         "neos/utility-unicode": "*",
         "ext-dom": "*",
+        "ext-libxml": "*",
+        "neos/twitter-bootstrap": "^3.0.6",
         "neos/utility-mediatypes": "*",
         "neos/error-messages": "*",
         "doctrine/common": "^2.7 || ^3.0",
+        "enshrined/svg-sanitize": "^0.17.0",
         "neos/imagine": "^3.1.0",
         "imagine/imagine": "*",
-        "doctrine/dbal": "^2.8",
+        "doctrine/dbal": "^2.8 || ^3",
         "neos/party": "*",
-        "neos/twitter-bootstrap": "*",
         "neos/fusion-form": "^1.0 || ^2.0",
         "neos/form": "*",
-        "neos/kickstarter": "~8.3.0"
+        "neos/kickstarter": "~8.4.0"
+    },
+    "scripts": {
+        "lint:phpstan": "../../bin/phpstan analyse",
+        "lint": [
+            "@lint:phpstan"
+        ],
+        "test:behat-cli": "../../bin/behat -f progress --strict --no-interaction",
+        "build:composer-json": "php ../../Build/BuildEssentials/ComposerManifestMerger.php"
     },
     "replace": {
         "typo3/typo3cr": "self.version",
@@ -41,7 +50,6 @@
         "typo3/neos": "self.version",
         "typo3/neos-nodetypes": "self.version",
         "typo3/neos-kickstarter": "self.version",
-        "neos/cli-setup": "self.version",
         "neos/content-repository": "self.version",
         "neos/diff": "self.version",
         "neos/fusion-afx": "self.version",
@@ -67,9 +75,6 @@
     },
     "autoload": {
         "psr-4": {
-            "Neos\\CliSetup\\": [
-                "Neos.CliSetup/Classes"
-            ],
             "Neos\\ContentRepository\\": [
                 "Neos.ContentRepository/Classes"
             ],

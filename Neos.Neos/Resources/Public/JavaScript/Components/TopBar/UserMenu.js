@@ -2,21 +2,35 @@ import { isNil } from '../../Helper'
 import {ApiService} from '../../Services'
 import { RestoreButton } from '../../Templates/RestoreButton'
 
-const BASE_PATH = '/neos/impersonate/'
 export default class UserMenu {
     constructor(_root) {
-        const csfrTokenField = document.querySelector('[data-csrf-token]')
-        this._csrfToken = !isNil(csfrTokenField)
-            ? csfrTokenField.getAttribute('data-csrf-token')
-            : ''
+        const userMenuElement = document.querySelector('.neos-user-menu[data-csrf-token]')
+        this._csrfToken = isNil(userMenuElement) ? '' : userMenuElement.getAttribute('data-csrf-token')
+        this._baseModuleUri = this._getBaseModuleUri(userMenuElement)
+        this._basePath = this._getImpersonationBasePath()
         this._root = _root
-        this._apiService = new ApiService(BASE_PATH, this._csrfToken)
+        this._apiService = new ApiService(this._basePath, this._csrfToken)
 
         if (!isNil(_root)) {
             this._checkImpersonateStatus()
         }
     }
 
+    _getBaseModuleUri(element) {
+        let url = '/neos'
+        if (!isNil(element) && element.hasAttribute('data-module-basepath')) {
+            url = element.getAttribute('data-module-basepath')
+        }
+        return url
+    }
+
+    _getImpersonationBasePath() {
+        let basePath = this._baseModuleUri
+        if (!basePath.endsWith('/')) {
+            basePath += '/'
+        }
+        return basePath + 'impersonate/'
+    }
     _renderRestoreButton(user) {
         const userMenuDropDown = this._root.querySelector('.neos-dropdown-menu')
         if (isNil(userMenuDropDown) || isNil(user)) {
@@ -64,7 +78,7 @@ export default class UserMenu {
         const response = this._apiService.callRestore()
         response
             .then((data) => {
-                const { origin, impersonate, status } = data
+                const { origin, impersonate } = data
                 const message = window.NeosCMS.I18n.translate(
                     'impersonate.success.restoreUser',
                     'Switched back from {0} to the orginal user {1}.',
@@ -79,7 +93,7 @@ export default class UserMenu {
 
                 // load default backend, so we don't need to care for the module permissions.
                 // because in not every neos version the users have by default the content module or user module
-                window.location.pathname = '/neos'
+                window.location.href = this._baseModuleUri
             })
             .catch(function (error) {
                 if (window.NeosCMS) {

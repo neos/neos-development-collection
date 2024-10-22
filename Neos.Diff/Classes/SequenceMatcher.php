@@ -597,7 +597,7 @@ class SequenceMatcher
             ];
         }
 
-        if (!empty($group) && !(count($group) == 1 && $group[0][0] == 'equal')) {
+        if (!(count($group) == 1 && $group[0][0] == 'equal')) {
             $groups[] = $group;
         }
 
@@ -640,7 +640,7 @@ class SequenceMatcher
      * Quickly return an upper bound ratio for the similarity of the strings.
      * This is quicker to compute than Ratio().
      *
-     * @return float The calculated ratio.
+     * @return float|null The calculated ratio.
      * @todo throw away or make public
      */
     private function quickRatio()

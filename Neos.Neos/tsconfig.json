@@ -1,9 +1,10 @@
 {
   "compilerOptions": {
-    "target": "ES2016",
-    "module": "commonjs",
+    "module": "es6",
+    "target": "es6",
     "allowJs": true,
     "strict": true,
+    "moduleResolution": "node",
     "strictNullChecks": false,
     "esModuleInterop": true,
     "skipLibCheck": true,

@@ -19,7 +19,6 @@ use Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper;
  */
 class ChangeStatsViewHelper extends AbstractViewHelper
 {
-
     /**
      * @var boolean
      */

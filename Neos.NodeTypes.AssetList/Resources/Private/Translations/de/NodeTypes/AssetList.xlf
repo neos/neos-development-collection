@@ -2,18 +2,22 @@
 <xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
   <file original="" product-name="Neos.NodeTypes.AssetList" source-language="en" datatype="plaintext" target-language="de">
     <body>
-      <trans-unit id="ui.label" xml:space="preserve" approved="yes">
-				<source>Asset list</source>
-			<target state="final">Asset Liste</target></trans-unit>
+      <trans-unit id="ui.label" xml:space="preserve" approved="no">
+        <source>Asset list</source>
+        <target state="translated">Datei-Liste</target>
+      </trans-unit>
       <trans-unit id="groups.resources" xml:space="preserve" approved="yes">
-				<source>Resources</source>
-			<target state="final">Ressourcen</target></trans-unit>
-      <trans-unit id="properties.assets" xml:space="preserve" approved="yes">
-				<source>Assets</source>
-			<target state="final">Assets</target></trans-unit>
-      <trans-unit id="content.emptyAssetList" xml:space="preserve" approved="yes">
-				<source>Empty asset list</source>
-			<target state="final">Leere Asset-Liste</target></trans-unit>
+        <source>Resources</source>
+        <target state="final">Ressourcen</target>
+      </trans-unit>
+      <trans-unit id="properties.assets" xml:space="preserve" approved="no">
+        <source>Assets</source>
+        <target state="translated">Dateien</target>
+      </trans-unit>
+      <trans-unit id="content.emptyAssetList" xml:space="preserve" approved="no">
+        <source>Empty asset list</source>
+        <target state="translated">Leere Datei-Liste</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

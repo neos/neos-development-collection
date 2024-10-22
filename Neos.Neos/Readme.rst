@@ -18,3 +18,21 @@ Contribute
 If you want to contribute to Neos, please have a look at
 https://github.com/neos/neos-development-collection - it is the repository
 used for development and all pull requests should go into it.
+
+
+Build frontend assets
+---------------------
+
+If you need to rebuild the frontend assets you need to run the following commands within the
+Neos.Neos package directory:
+
+For develpment::
+
+  yarn
+  yarn build
+
+For production::
+
+  yarn
+  yarn build:production
+

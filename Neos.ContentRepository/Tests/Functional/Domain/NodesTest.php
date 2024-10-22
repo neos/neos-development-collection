@@ -262,6 +262,34 @@ class NodesTest extends FunctionalTestCase
     /**
      * @test
      */
+    public function removedChildNodesAreNotCopied()
+    {
+        $rootNode = $this->context->getRootNode();
+        $parentNode = $rootNode->createNode('parent');
+        $parentNode->createNode('child');
+
+        $context = $this->contextFactory->create([
+            'workspaceName' => 'user-admin',
+            'removedContentShown' => true,
+        ]);
+        $this->persistenceManager->persistAll();
+
+        $rootNode = $context->getRootNode();
+        $parentNode = $rootNode->getNode('parent');
+        self::assertTrue($parentNode->hasChildNodes(), 'Parent node should have child nodes, before they are removed');
+
+        $parentNode->getNode('child')->remove();
+        $this->persistenceManager->persistAll();
+
+        $parentNode = $rootNode->getNode('parent');
+        $parentClone = $parentNode->copyInto($rootNode, 'parent-clone');
+
+        self::assertFalse($parentClone->hasChildNodes(), 'Copied parent node should not have any child nodes');
+    }
+
+    /**
+     * @test
+     */
     public function creatingAChildNodeAndRetrievingItAfterPersistAllWorks()
     {
         $rootNode = $this->context->getRootNode();
@@ -1063,6 +1091,40 @@ class NodesTest extends FunctionalTestCase
     /**
      * @test
      */
+    public function getLabelReturnsParsedEelExpressionOrFallback()
+    {
+        $nodeTypeManager = $this->objectManager->get(NodeTypeManager::class);
+        $nodeTypeWithPlainLabel = $nodeTypeManager->getNodeType('Neos.ContentRepository.Testing:NodeTypeWithPlainLabel');
+        $nodeTypeWithEelExpressionLabel = $nodeTypeManager->getNodeType('Neos.ContentRepository.Testing:NodeTypeWithEelExpressionLabel');
+
+        $rootNode = $this->context->getNode('/');
+        $nodeWithPlainLabel = $rootNode->createNode('node-plain', $nodeTypeWithPlainLabel, '30e893c1-caef-0ca5-b53d-e5699bb8e506');
+        $nodeWithEelExpressionLabel = $rootNode->createNode('node-eel', $nodeTypeWithEelExpressionLabel, '81c848ed-abb5-7608-a5db-7eea0331ccfa');
+
+        self::assertEquals('Test nodetype', $nodeWithPlainLabel->getLabel());
+        self::assertEquals('Test nodetype', $nodeWithEelExpressionLabel->getLabel());
+    }
+
+    /**
+     * @test
+     */
+    public function getChildNodeLabelReturnsParsedEelExpressionOrFallback()
+    {
+        $nodeTypeManager = $this->objectManager->get(NodeTypeManager::class);
+        $nodeTypeWithPlainLabelInChildNode = $nodeTypeManager->getNodeType('Neos.ContentRepository.Testing:NodeTypeWithPlainLabelInChildNode');
+        $nodeTypeWithEelExpressionLabelInChildNode = $nodeTypeManager->getNodeType('Neos.ContentRepository.Testing:NodeTypeWithEelExpressionLabelInChildNode');
+
+        $rootNode = $this->context->getNode('/');
+        $nodeWithPlainLabelInChildNode = $rootNode->createNode('node-plain', $nodeTypeWithPlainLabelInChildNode, '30e893c1-caef-0ca5-b53d-e5699bb8e506');
+        $nodeWithEelExpressionLabelInChildNode = $rootNode->createNode('node-eel', $nodeTypeWithEelExpressionLabelInChildNode, '81c848ed-abb5-7608-a5db-7eea0331ccfa');
+
+        self::assertEquals('Test child node', $nodeWithPlainLabelInChildNode->getLabel());
+        self::assertEquals('Test child node', $nodeWithEelExpressionLabelInChildNode->getLabel());
+    }
+
+    /**
+     * @test
+     */
     public function nodesCanBeCopiedAfterAndBeforeAndKeepProperties()
     {
         $rootNode = $this->context->getNode('/');
@@ -1410,6 +1472,34 @@ class NodesTest extends FunctionalTestCase
         $testReferencedNodeProperty = $testNode->getProperty('property2');
         self::assertNotSame($testReferencedNodeProperty->getWorkspace(), $referencedNode->getWorkspace());
         self::assertSame($testReferencedNodeProperty->getWorkspace(), $testReferencedNode->getWorkspace());
+    }
+
+    /**
+     * @see https://github.com/neos/neos-development-collection/issues/3624
+     * @test
+     */
+    public function getPropertyReturnsReferencedNodesWithoutHolesInArrayKeys(): void
+    {
+        $nodeTypeManager = $this->objectManager->get(NodeTypeManager::class);
+        $nodeType = $nodeTypeManager->getNodeType('Neos.ContentRepository.Testing:NodeTypeWithReferences');
+
+        $rootNode = $this->context->getNode('/');
+        $nodeA = $rootNode->createNode('node-a', $nodeType, '30e893c1-caef-0ca5-b53d-e5699bb8e506');
+        $nodeB = $rootNode->createNode('node-b', $nodeType, '81c848ed-abb5-7608-a5db-7eea0331ccfa');
+        $nodeC = $rootNode->createNode('node-c', $nodeType, 'e3b99700-f632-4a4c-2f93-0ad07eaf733f');
+
+        $expectedNodes = [0 => $nodeB, 1 => $nodeC];
+
+        $nodeA->setProperty('property2', '81c848ed-abb5-7608-a5db-7eea0331ccfa');
+        $nodeA->setProperty('property3', [
+            '00000000-0000-0000-0000-000000000001',
+            '81c848ed-abb5-7608-a5db-7eea0331ccfa',
+            '00000000-0000-0000-0000-000000000002',
+            'e3b99700-f632-4a4c-2f93-0ad07eaf733f'
+        ]);
+
+        $actualProperties = $nodeA->getProperties();
+        self::assertSame($expectedNodes, $actualProperties['property3']);
     }
 
     /**

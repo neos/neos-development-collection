@@ -1,0 +1,20 @@
+`8.2.13 (2024-03-03) <https://github.com/neos/neos-development-collection/releases/tag/8.2.13>`_
+================================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`BUGFIX: 4915 fusion `ParsePartials` cache not flushed for symlinked packages <https://github.com/neos/neos-development-collection/pull/4916>`_
+-----------------------------------------------------------------------------------------------------------------------------------------------
+
+* Resolves: `#4915 <https://github.com/neos/neos-development-collection/issues/4915>`_
+By reverting fix https://github.com/neos/neos-development-collection/pull/4838
+Which will lead to the original problem to resurface https://github.com/neos/neos-development-collection/issues/4415 (but silently this time, no one will notice the cache flodding :D) 
+
+**Upgrade instructions**
+
+
+* Packages: ``Neos`` ``Fusion``
+
+`Detailed log <https://github.com/neos/neos-development-collection/compare/8.2.12...8.2.13>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

@@ -37,10 +37,11 @@ class MessageLinePart
 
     public function char(int $index = 0): string
     {
-        if ($index < 0) {
-            return mb_substr($this->linePart, $index, 1);
+        if ($index < 0 && mb_strlen($this->linePart) < abs($index)) {
+            // prevent mb_substr returning first char if out of bounds
+            return '';
         }
-        return mb_substr($this->linePart, $index, $index + 1);
+        return mb_substr($this->linePart, $index, 1);
     }
 
     public function charPrint(int $index = 0): string

@@ -101,7 +101,7 @@ class Runtime
     protected $defaultContextVariables;
 
     /**
-     * @var array
+     * @var RuntimeConfiguration
      */
     protected $runtimeConfiguration;
 
@@ -130,15 +130,13 @@ class Runtime
      */
     protected $lastEvaluationStatus;
 
-    /**
-     * Constructor for the Fusion Runtime
-     *
-     * @param array $fusionConfiguration
-     * @param ControllerContext $controllerContext
-     */
-    public function __construct(array $fusionConfiguration, ControllerContext $controllerContext)
+    public function __construct(FusionConfiguration|array $fusionConfiguration, ControllerContext $controllerContext)
     {
-        $this->runtimeConfiguration = new RuntimeConfiguration($fusionConfiguration);
+        $this->runtimeConfiguration = new RuntimeConfiguration(
+            $fusionConfiguration instanceof FusionConfiguration
+                ? $fusionConfiguration->toArray()
+                : $fusionConfiguration
+        );
         $this->controllerContext = $controllerContext;
         $this->runtimeContentCache = new RuntimeContentCache($this);
     }
@@ -603,7 +601,7 @@ class Runtime
                 MESSAGE, 1347952109);
         }
 
-        /** @var $fusionObject AbstractFusionObject */
+        /** @var AbstractFusionObject $fusionObject */
         $fusionObject = new $fusionObjectClassName($this, $fusionPath, $fusionObjectType);
         if ($this->shouldAssignPropertiesToFusionObject($fusionObject)) {
             /** @var $fusionObject AbstractArrayFusionObject */
@@ -693,6 +691,7 @@ class Runtime
         }
         $contextVariables['this'] = $contextObject;
 
+        /** may have to be phpstan-ignore-next-line'd: the mind of the great phpstan can and will not comprehend this */
         if ($this->eelEvaluator instanceof \Neos\Flow\ObjectManagement\DependencyInjection\DependencyProxy) {
             $this->eelEvaluator->_activateDependency();
         }
@@ -730,7 +729,7 @@ class Runtime
             $positionalArraySorter = new PositionalArraySorter($propertiesConfiguration, '__meta.position');
             foreach ($positionalArraySorter->getSortedKeys() as $key) {
                 // skip keys which start with __, as they are purely internal.
-                if ($key[0] === '_' && $key[1] === '_' && in_array($key, Parser::$reservedParseTreeKeys, true)) {
+                if (is_string($key) && $key[0] === '_' && $key[1] === '_' && in_array($key, Parser::$reservedParseTreeKeys, true)) {
                     continue;
                 }
 
@@ -746,7 +745,7 @@ class Runtime
                     if (is_array($singleApplyValues)) {
                         foreach ($singleApplyValues as $key => $value) {
                             // skip keys which start with __, as they are purely internal.
-                            if ($key[0] === '_' && $key[1] === '_' && in_array($key, Parser::$reservedParseTreeKeys, true)) {
+                            if (is_string($key) && $key[0] === '_' && $key[1] === '_' && in_array($key, Parser::$reservedParseTreeKeys, true)) {
                                 continue;
                             }
 
@@ -755,7 +754,7 @@ class Runtime
                                 'value' => $value
                             ];
                         }
-                    } elseif ($singleApplyValues instanceof \Traversable && $singleApplyValues instanceof \ArrayAccess) {
+                    } elseif ($singleApplyValues instanceof \Iterator && $singleApplyValues instanceof \ArrayAccess) {
                         for ($singleApplyValues->rewind(); ($key = $singleApplyValues->key()) !== null; $singleApplyValues->next()) {
                             $combinedApplyValues[$fusionPath . '/' . $key] = [
                                 'key' => $key,
@@ -869,6 +868,7 @@ class Runtime
      * @param string $behaviorIfPathNotFound One of the BEHAVIOR_* constants
      * @throws Exception\MissingFusionImplementationException
      * @throws Exception\MissingFusionObjectException
+     * @return void
      */
     protected function throwExceptionForUnrenderablePathIfNeeded($fusionPath, $fusionConfiguration, $behaviorIfPathNotFound)
     {

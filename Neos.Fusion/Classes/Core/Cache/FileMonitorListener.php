@@ -37,8 +37,8 @@ class FileMonitorListener
     }
 
     /**
-     * @param $fileMonitorIdentifier
-     * @param array $changedFiles
+     * @param string $fileMonitorIdentifier
+     * @param array<string, int> $changedFiles
      * @return void
      */
     public function flushContentCacheOnFileChanges($fileMonitorIdentifier, array $changedFiles)

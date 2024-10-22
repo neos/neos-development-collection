@@ -27,7 +27,7 @@ class FusionFile extends AbstractNode
     ) {
     }
 
-    public function visit(AstNodeVisitorInterface $visitor, ...$args)
+    public function visit(AstNodeVisitorInterface $visitor, mixed ...$args)
     {
         return $visitor->visitFusionFile($this, ...$args);
     }

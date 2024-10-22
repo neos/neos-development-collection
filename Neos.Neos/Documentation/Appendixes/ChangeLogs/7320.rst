@@ -1,0 +1,56 @@
+`7.3.20 (2024-02-23) <https://github.com/neos/neos-development-collection/releases/tag/7.3.20>`_
+================================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`BUGFIX: Add assetcollection privilege condition to asset edit view in Media.Browser <https://github.com/neos/neos-development-collection/pull/4404>`_
+------------------------------------------------------------------------------------------------------------------------------------------------------
+
+In the Media.Browser you can change the AssetCollections via checkboxes even when you don't have the privilege (Neos.Media.Browser:ManageAssetCollections) to do so.
+With this PR the checkboxes are only rendered with the right privilege.
+
+* Packages: ``Neos`` ``Media.Browser``
+
+`BUGFIX: MenuHelper uses content dimensions to get node for privilege check <https://github.com/neos/neos-development-collection/pull/4269>`_
+---------------------------------------------------------------------------------------------------------------------------------------------
+
+* Resolves: `#4625 <https://github.com/neos/neos-development-collection/issues/4625>`_
+
+The Neos backend MenuHelper received a bugfix to filter sites listed by the menu using NodePrivileges. In case of sites with multiple dimensions the dimensionCombinations are considered too.
+
+**Upgrade instructions**
+
+**Review instructions**
+
+This bugfix tries to fix #4025. If 7.3 and upwards is used on a multi site project with multiple dimensions, it might be that
+```
+$node = $context->getNode(\\Neos\\ContentRepository\\Domain\\Utility\\NodePaths::addNodePathSegment(SiteService::SITES_ROOT_PATH, $site->getNodeName()));
+```
+returns ``null``, causing the next line
+```
+if ($this->privilegeManager->isGranted(NodeTreePrivilege::class, new NodePrivilegeSubject($node))) {
+```
+to throw an exception. Thus the backend is not accessible anymore.  
+The reason is, that for multisite projects with multiple dimensions it might be that ``$node`` cannot be retrieved by the default context created.
+
+The fix is to use ``contentDimensionCombinator`` and also to explicitly check if ``$node`` could be retrieved.  
+I'm also using the property ``invisibleContentShown`` and ``inaccessibleContentShown`` because it might be that an editor set the Home of a site to ``hidden`` by mistake. Thus the site might not accessible via the menu anymore to possibly fix an editor mistake.
+
+
+* Packages: ``Neos``
+
+`BUGFIX: Add dimensions to Workspace module <https://github.com/neos/neos-development-collection/pull/3986>`_
+-------------------------------------------------------------------------------------------------------------
+
+resolves: `#3470 <https://github.com/neos/neos-development-collection/issues/3470>`_
+
+This adds Dimension handling to the current workspaces module. 
+
+Currently the Module only displays changes in different languages as one change. This is because the node path is the same in different languages after they are copied.
+
+
+* Packages: ``Neos``
+
+`Detailed log <https://github.com/neos/neos-development-collection/compare/7.3.19...7.3.20>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

@@ -79,15 +79,15 @@ class ConfigurationTreeViewHelper extends AbstractViewHelper
                 $this->output .= sprintf('<div class="key" title="%s">%s:</div> ', $pathEscaped, $keyEscaped);
                 $this->output .= sprintf('<div class="value" title="%s">', $typeEscaped);
                 switch ($typeEscaped) {
-                            case 'boolean':
-                                $this->output .= ($value ? 'true' : 'false');
-                                break;
-                            case 'NULL':
-                                $this->output .= 'NULL';
-                                break;
-                            default:
-                                $this->output .= htmlspecialchars($value);
-                        }
+                    case 'boolean':
+                        $this->output .= ($value ? 'true' : 'false');
+                        break;
+                    case 'NULL':
+                        $this->output .= 'NULL';
+                        break;
+                    default:
+                        $this->output .= htmlspecialchars($value);
+                }
                 $this->output .= '</div>';
                 $this->output .= '</li>';
             }

@@ -1,0 +1,5 @@
+# To prevent any breaking change, we map the separate packages the old NodeTypes package
+'Neos.NodeTypes:ImageAlignmentMixin':
+  abstract: true
+  superTypes:
+    'Neos.NodeTypes.BaseMixins:ImageAlignmentMixin': true

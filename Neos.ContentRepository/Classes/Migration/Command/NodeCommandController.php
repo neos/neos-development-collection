@@ -11,18 +11,23 @@ namespace Neos\ContentRepository\Migration\Command;
  * source code.
  */
 
+use Neos\ContentRepository\Migration\Service\MigrationGeneratorService;
 use Neos\Flow\Cli\CommandController;
+use Neos\Flow\Cli\Exception\StopCommandException;
 use Neos\Flow\Configuration\Source\YamlSource;
 use Neos\ContentRepository\Domain\Repository\NodeDataRepository;
 use Neos\ContentRepository\Domain\Service\ContextFactoryInterface;
 use Neos\ContentRepository\Migration\Domain\Factory\MigrationFactory;
 use Neos\ContentRepository\Migration\Domain\Repository\MigrationStatusRepository;
 use Neos\ContentRepository\Migration\Exception\MigrationException;
+use Neos\Flow\Package\Exception\UnknownPackageException;
+use Neos\Flow\Package\PackageManager;
 use Neos\Flow\Persistence\Doctrine\Exception\DatabaseException;
 use Neos\ContentRepository\Migration\Service\NodeMigration;
 use Neos\ContentRepository\Migration\Domain\Model\MigrationStatus;
 use Neos\ContentRepository\Migration\Domain\Model\MigrationConfiguration;
 use Neos\Flow\Annotations as Flow;
+use Neos\Utility\Exception\FilesException;
 
 /**
  * Command controller for tasks related to node handling.
@@ -60,6 +65,16 @@ class NodeCommandController extends CommandController
      * @var ContextFactoryInterface
      */
     protected $contextFactory;
+
+    /**
+     * @Flow\Inject
+     */
+    protected PackageManager $packageManager;
+
+    /**
+     * @Flow\Inject
+     */
+    protected MigrationGeneratorService $generatorService;
 
     /**
      * Do the configured migrations in the given migration.
@@ -149,6 +164,28 @@ class NodeCommandController extends CommandController
         $this->outputLine('<b>Available migrations</b>');
         $this->outputLine();
         $this->output->outputTable($tableRows, ['Version', 'Date', 'Package', 'Comments']);
+    }
+
+    /**
+     * Creates a node migration for the given package Key.
+     *
+     * @param string $packageKey The packageKey for the given package
+     * @return void
+     * @throws UnknownPackageException
+     * @throws FilesException
+     * @throws StopCommandException
+     * @see neos.contentrepository.migration:node:migrationcreate
+     */
+    public function migrationCreateCommand(string $packageKey): void
+    {
+        if (!$this->packageManager->isPackageAvailable($packageKey)) {
+            $this->outputLine('Package "%s" is not available.', [$packageKey]);
+            $this->quit(1);
+        }
+
+        $createdMigration = $this->generatorService->generateBoilerplateMigrationFileInPackage($packageKey);
+        $this->outputLine($createdMigration);
+        $this->outputLine('Your node migration has been created successfully.');
     }
 
     /**

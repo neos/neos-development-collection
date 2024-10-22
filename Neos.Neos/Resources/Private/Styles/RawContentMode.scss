@@ -1,4 +1,15 @@
+// Core variables and mixins
+@import "Foundation/variables";
+@import "Foundation/mixins";
 @import "Constants";
+@import "Mixins";
+@import "Fonts";
+@import "FontAwesome/fontawesome.scss";
+@import "FontAwesome/brands.scss";
+@import "FontAwesome/regular.scss";
+@import "FontAwesome/solid.scss";
+@import "Icons";
+@import "Global";
 
 // Typeplate
 @import "Typeplate/VarsTypeplate";
@@ -12,6 +23,9 @@ body {
   background-color: #f5f5f5;
   font-size: 14px;
   padding: 16px;
+
+  // Neos font definition
+  @include font;
 }
 
 #neos-raw-content-container {
@@ -83,7 +97,7 @@ body {
   background-color: #f8f8f8;
   border-left: 5px solid #cdcdcd;
   padding: 16px;
-  margin-bottom: 16px;
+  margin: 0 0 16px;
 }
 
 .neos-raw-content-properties > dd:last-child {

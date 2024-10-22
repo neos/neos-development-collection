@@ -3,7 +3,7 @@
 Eel Helpers Reference
 =====================
 
-This reference was automatically generated from code on 2023-02-23
+This reference was automatically generated from code on 2024-06-11
 
 
 .. _`Eel Helpers Reference: Api`:
@@ -1214,6 +1214,11 @@ The input is assumed to be an array or Collection of objects. Groups this input 
 
 **Return** (array)
 
+Neos.Array.sortByPropertyPath(set, positionPropertyPath)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Sorts the input array by the $positionProperty of each element.
+
 
 
 
@@ -1237,6 +1242,8 @@ Formatted as {@see \Neos\Flow\I18n\Locale} identifier, eg "de", "en", ...
 Example::
 
     Translation.id("mh").locale(Neos.Backend.interfaceLanguage()).translate()
+
+**Return** (string)
 
 
 
@@ -1357,6 +1364,37 @@ Neos.Link.resolveNodeUri(uri, contextNode, controllerContext)
 * ``controllerContext`` (ControllerContext)
 
 **Return** (string)
+
+
+
+
+
+
+.. _`Eel Helpers Reference: Neos.Media.Assets`:
+
+Neos.Media.Assets
+-----------------
+
+This is a helper for accessing assets from the media library
+
+Implemented in: ``Neos\Media\Eel\AssetsHelper``
+
+Neos.Media.Assets.findByCollection(collection)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+**Return** (QueryResultInterface<AssetInterface>) | null
+
+Neos.Media.Assets.findByTag(tag)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+**Return** (QueryResultInterface) | null
+
+Neos.Media.Assets.search(searchTerm, tags, collection)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+* ``tags`` (Tag[]|string[], *optional*)
+
+**Return** (QueryResultInterface<AssetInterface>) | null
 
 
 
@@ -2060,14 +2098,15 @@ Replace occurrences of a search string inside the string
 Example::
 
     String.replace("canal", "ana", "oo") == "cool"
+    String.replace("cool gridge", ["oo", "gri"], ["ana", "bri"]) == "canal bridge"
 
 Note: this method does not perform regular expression matching, @see pregReplace().
 
-* ``string`` (string) The input string
-* ``search`` (string) A search string
-* ``replace`` (string) A replacement string
+* ``string`` (array|string|null) The input string
+* ``search`` (array|string|null) A search string
+* ``replace`` (array|string|null) A replacement string
 
-**Return** (string) The string with all occurrences replaced
+**Return** (array|string|string[]) The string with all occurrences replaced
 
 String.sha1(string)
 ^^^^^^^^^^^^^^^^^^^
@@ -2324,6 +2363,15 @@ Get the class name of the given variable or NULL if it wasn't an object
 * ``variable`` (object)
 
 **Return** (string|NULL)
+
+Type.debugType(variable)
+^^^^^^^^^^^^^^^^^^^^^^^^
+
+Get the classname for objects or type for other values
+
+* ``variable`` (mixed)
+
+**Return** (string)
 
 Type.getType(variable)
 ^^^^^^^^^^^^^^^^^^^^^^

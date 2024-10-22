@@ -47,7 +47,6 @@ use Neos\Neos\Utility\User as UserUtility;
  */
 class WorkspacesController extends AbstractModuleController
 {
-
     /**
      * @Flow\Inject
      * @var PublishingService
@@ -413,13 +412,13 @@ class WorkspacesController extends AbstractModuleController
                 $this->addFlashMessage(
                     $this->translator->translateById('workspaces.selectedChangesHaveBeenPublished', [], null, null, 'Modules', 'Neos.Neos')
                 );
-            break;
+                break;
             case 'discard':
                 $this->publishingService->discardNodes($nodes);
                 $this->addFlashMessage(
                     $this->translator->translateById('workspaces.selectedChangesHaveBeenDiscarded', [], null, null, 'Modules', 'Neos.Neos')
                 );
-            break;
+                break;
             default:
                 throw new \RuntimeException('Invalid action "' . htmlspecialchars($action) . '" given.', 1346167441);
         }
@@ -471,16 +470,18 @@ class WorkspacesController extends AbstractModuleController
     {
         $changesCount = ['new' => 0, 'changed' => 0, 'removed' => 0, 'total' => 0];
         foreach ($this->computeSiteChanges($selectedWorkspace) as $siteChanges) {
-            foreach ($siteChanges['documents'] as $documentChanges) {
-                foreach ($documentChanges['changes'] as $change) {
-                    if ($change['node']->isRemoved()) {
-                        $changesCount['removed']++;
-                    } elseif ($change['isNew']) {
-                        $changesCount['new']++;
-                    } else {
-                        $changesCount['changed']++;
-                    };
-                    $changesCount['total']++;
+            foreach ($siteChanges['documents'] as $dimensions) {
+                foreach ($dimensions as $documentChanges) {
+                    foreach ($documentChanges['changes'] as $change) {
+                        if ($change['node']->isRemoved()) {
+                            $changesCount['removed']++;
+                        } elseif ($change['isNew']) {
+                            $changesCount['new']++;
+                        } else {
+                            $changesCount['changed']++;
+                        };
+                        $changesCount['total']++;
+                    }
                 }
             }
         }
@@ -510,11 +511,15 @@ class WorkspacesController extends AbstractModuleController
                     // $document will be null if we have a broken root line for this node. This actually should never happen, but currently can in some scenarios.
                     if ($document !== null) {
                         $documentPath = implode('/', array_slice(explode('/', $document->getPath()), 3));
+
+                        $dimensionValues = $document->getDimensions();
+                        $documentDimension = Utility::sortDimensionValueArrayAndReturnDimensionsHash($dimensionValues);
+
                         $relativePath = str_replace(sprintf(SiteService::SITES_ROOT_PATH . '/%s/%s', $siteNodeName, $documentPath), '', $node->getPath());
                         if (!isset($siteChanges[$siteNodeName]['siteNode'])) {
                             $siteChanges[$siteNodeName]['siteNode'] = $this->siteRepository->findOneByNodeName($siteNodeName);
                         }
-                        $siteChanges[$siteNodeName]['documents'][$documentPath]['documentNode'] = $document;
+                        $siteChanges[$siteNodeName]['documents'][$documentDimension][$documentPath]['documentNode'] = $document;
 
                         $change = [
                             'node' => $node,
@@ -523,7 +528,7 @@ class WorkspacesController extends AbstractModuleController
                         if ($node->getNodeType()->isOfType('Neos.Neos:Node')) {
                             $change['configuration'] = $node->getNodeType()->getFullConfiguration();
                         }
-                        $siteChanges[$siteNodeName]['documents'][$documentPath]['changes'][$relativePath] = $change;
+                        $siteChanges[$siteNodeName]['documents'][$documentDimension][$documentPath]['changes'][$relativePath] = $change;
                     }
                 }
             }
@@ -535,17 +540,21 @@ class WorkspacesController extends AbstractModuleController
 
         ksort($siteChanges);
         foreach ($siteChanges as $siteKey => $site) {
-            foreach ($site['documents'] as $documentKey => $document) {
-                $liveDocumentNode = $liveContext->getNodeByIdentifier($document['documentNode']->getIdentifier());
-                $siteChanges[$siteKey]['documents'][$documentKey]['isMoved'] = $liveDocumentNode && $document['documentNode']->getPath() !== $liveDocumentNode->getPath();
-                $siteChanges[$siteKey]['documents'][$documentKey]['isNew'] = $liveDocumentNode === null;
-                foreach ($document['changes'] as $changeKey => $change) {
-                    $liveNode = $liveContext->getNodeByIdentifier($change['node']->getIdentifier());
-                    $siteChanges[$siteKey]['documents'][$documentKey]['changes'][$changeKey]['isNew'] = is_null($liveNode);
-                    $siteChanges[$siteKey]['documents'][$documentKey]['changes'][$changeKey]['isMoved'] = $liveNode && $change['node']->getPath() !== $liveNode->getPath();
+            foreach ($site['documents'] as $documentDimension => $documentsPerDimension) {
+                foreach ($documentsPerDimension as $documentKey => $document) {
+                    $liveDocumentNode = $liveContext->getNodeByIdentifier($document['documentNode']->getIdentifier());
+                    $siteChanges[$siteKey]['documents'][$documentDimension][$documentKey]['isMoved'] = $liveDocumentNode && $document['documentNode']->getPath() !== $liveDocumentNode->getPath();
+                    $siteChanges[$siteKey]['documents'][$documentDimension][$documentKey]['isNew'] = $liveDocumentNode === null;
+                    foreach ($document['changes'] as $changeKey => $change) {
+                        $liveNode = $liveContext->getNodeByIdentifier($change['node']->getIdentifier());
+                        $siteChanges[$siteKey]['documents'][$documentDimension][$documentKey]['changes'][$changeKey]['isNew'] = is_null($liveNode);
+                        $siteChanges[$siteKey]['documents'][$documentDimension][$documentKey]['changes'][$changeKey]['isMoved'] = $liveNode && $change['node']->getPath() !== $liveNode->getPath();
+                    }
                 }
             }
-            ksort($siteChanges[$siteKey]['documents']);
+            foreach ($siteChanges[$siteKey]['documents'] as $key => $document) {
+                ksort($siteChanges[$siteKey]['documents'][$key]);
+            }
         }
         return $siteChanges;
     }
@@ -607,8 +616,8 @@ class WorkspacesController extends AbstractModuleController
                         'diff' => $diffArray
                     ];
                 }
-                // The && in belows condition is on purpose as creating a thumbnail for comparison only works if actually
-                // BOTH are ImageInterface (or NULL).
+            // The && in belows condition is on purpose as creating a thumbnail for comparison only works if actually
+            // BOTH are ImageInterface (or NULL).
             } elseif (
                 ($originalPropertyValue instanceof ImageInterface || $originalPropertyValue === null)
                 && ($changedPropertyValue instanceof ImageInterface || $changedPropertyValue === null)

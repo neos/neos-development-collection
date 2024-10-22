@@ -57,7 +57,17 @@ comment with // ane more comment
  Here comes some comment with # and /* and // in it
 */
 
+/**
+ * php doc style comment
+ */
 
+/***
+comment with multiple stars uneven
+***/
 
-// another edge-case mentioned in NEOS-864
+/**
+comment with multiple stars even
+**/
+
+// another edge-case mentioned in NEOS-864 (no new line at the end)
 #include: Pages/**/*.fusion

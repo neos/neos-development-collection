@@ -57,15 +57,10 @@ class UserInitialsViewHelper extends AbstractViewHelper
     /**
      * Render user initials or an abbreviated name for a given username. If the account was deleted, use the username as fallback.
      *
-     * @return string
      * @throws \Neos\Neos\Domain\Exception
      */
     public function render(): string
     {
-        if (!in_array($this->arguments['format'], ['fullFirstName', 'initials', 'fullName'])) {
-            throw new \InvalidArgumentException(sprintf('Format "%s" given to backend.userInitials(), only supporting "fullFirstName", "initials" and "fullName".', $format), 1415705861);
-        }
-
         $username = (string)$this->renderChildren();
 
         /* @var $requestedUser Person */
@@ -88,5 +83,7 @@ class UserInitialsViewHelper extends AbstractViewHelper
             case 'fullName':
                 return $you ?? $requestedUser->getName()->getFullName();
         }
+
+        throw new \InvalidArgumentException(sprintf('Format "%s" given to backend.userInitials(), only supporting "fullFirstName", "initials" and "fullName".', $this->arguments['format']), 1415705861);
     }
 }

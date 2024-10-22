@@ -18,7 +18,6 @@ use Neos\Flow\Tests\Functional\Configuration\ConfigurationValidationTest as Flow
  */
 class ConfigurationValidationTest extends FlowConfigurationValidationTest
 {
-
     /**
      * The application-contexts that are validated
      *

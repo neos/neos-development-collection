@@ -179,13 +179,13 @@ abstract class NodePaths
             switch ($pathSegment) {
                 case '.':
                     continue 2;
-                break;
+                    break;
                 case '..':
                     $absolutePath = NodePaths::getParentPath($absolutePath);
-                break;
+                    break;
                 default:
                     $absolutePath = NodePaths::addNodePathSegment($absolutePath, $pathSegment);
-                break;
+                    break;
             }
         }
 

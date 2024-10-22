@@ -2,13 +2,14 @@ import {isNil} from '../../Helper'
 import {ApiService} from '../../Services'
 import {ImpersonateButton} from '../../Templates/ImpersonateButton'
 
-const BASE_PATH = '/neos/impersonate/'
 export default class UserManagement {
     constructor(_root) {
-        const csfrTokenField = document.querySelector('[data-csrf-token]')
+        const userMenuElement = document.querySelector('.neos-user-menu[data-csrf-token]')
         this._root = _root
-        this._csrfToken = !isNil(csfrTokenField) ? csfrTokenField.getAttribute('data-csrf-token') : ''
-        this._apiService = new ApiService(BASE_PATH, this._csrfToken)
+        this._csrfToken = isNil(userMenuElement) ? '' : userMenuElement.getAttribute('data-csrf-token')
+        this._baseModuleUri = this._getBaseModuleUri(userMenuElement)
+        this._basePath = this._getImpersonationBasePath()
+        this._apiService = new ApiService(this._basePath, this._csrfToken)
 
         if (!isNil(_root)) {
             this._initialize()
@@ -27,6 +28,21 @@ export default class UserManagement {
         });
     }
 
+    _getBaseModuleUri(element) {
+        let url = '/neos'
+        if (!isNil(element) && element.hasAttribute('data-module-basepath')) {
+            url = element.getAttribute('data-module-basepath')
+        }
+        return url
+    }
+
+    _getImpersonationBasePath() {
+        let basePath = this._baseModuleUri
+        if (!basePath.endsWith('/')) {
+            basePath += '/'
+        }
+        return basePath + 'impersonate/'
+    }
     _renderImpersonateButtons() {
         const userTableActionButtons = Array.from(this._root.querySelectorAll('.neos-table .neos-action'))
         userTableActionButtons.forEach(_actionContainer => {
@@ -61,14 +77,14 @@ export default class UserManagement {
         const response = this._apiService.callUserChange(identifier);
         response
             .then((data) => {
-                const {user, status} = data
+                const {user} = data
                 const username = isNil(user) ? '' : user.accountIdentifier
                 const message = window.NeosCMS.I18n.translate('impersonate.success.impersonateUser', 'Switched to the new user {0}.', 'Neos.Neos', 'Main', {0: username})
                 window.NeosCMS.Notification.ok(message)
 
                 // load default backend, so we don't need to care for the module permissions.
                 // because in not every neos version the users have by default the content module or user module
-                window.location.pathname = '/neos'
+                window.location.href = this._baseModuleUri
             })
             .catch(function (error) {
                 if (window.NeosCMS) {

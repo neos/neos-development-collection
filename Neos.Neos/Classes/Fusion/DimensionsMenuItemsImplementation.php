@@ -22,7 +22,6 @@ use Neos\ContentRepository\Domain\Service\ContentDimensionCombinator;
  */
 class DimensionsMenuItemsImplementation extends AbstractMenuItemsImplementation
 {
-
     /**
      * @Flow\Inject
      * @var ConfigurationContentDimensionPresetSource
@@ -78,7 +77,7 @@ class DimensionsMenuItemsImplementation extends AbstractMenuItemsImplementation
 
         foreach ($this->contentDimensionCombinator->getAllAllowedCombinations() as $allowedCombination) {
             $targetDimensions = $this->calculateTargetDimensionsForCombination($allowedCombination);
-
+            $presets = $this->configurationContentDimensionPresetSource->findPresetsByTargetValues($allowedCombination);
             if ($pinnedDimensionName !== null && is_array($pinnedDimensionValues)) {
                 if (!in_array($targetDimensions[$pinnedDimensionName], $pinnedDimensionValues)) {
                     continue;
@@ -106,13 +105,13 @@ class DimensionsMenuItemsImplementation extends AbstractMenuItemsImplementation
             }
 
             // determine metadata for target dimensions of node
-            array_walk($targetDimensions, static function (&$dimensionValue, $dimensionName, $allDimensionPresets) use ($pinnedDimensionName) {
+            array_walk($targetDimensions, static function (&$dimensionValue, $dimensionName) use ($pinnedDimensionName, $presets) {
                 $dimensionValue = [
                     'value' => $dimensionValue,
-                    'label' => $allDimensionPresets[$dimensionName]['presets'][$dimensionValue]['label'],
+                    'label' => $presets[$dimensionName]['label'],
                     'isPinnedDimension' => $pinnedDimensionName === null || $dimensionName == $pinnedDimensionName
                 ];
-            }, $allDimensionPresets);
+            });
 
             $menuItems[] = [
                 'node' => $nodeInDimensions,

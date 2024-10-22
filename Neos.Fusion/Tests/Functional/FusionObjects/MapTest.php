@@ -31,6 +31,28 @@ class MapTest extends AbstractFusionObjectTest
     /**
      * @test
      */
+    public function basicMapWorksWithIterator()
+    {
+        $view = $this->buildView();
+        $view->assign('items', new \ArrayIterator(['element1', 'element2']));
+        $view->setFusionPath('map/basicLoop');
+        self::assertEquals(['Xelement1','Xelement2'], $view->render());
+    }
+
+    /**
+     * @test
+     */
+    public function basicMapWorksWithIteratorThatDoesNotImplementCount()
+    {
+        $view = $this->buildView();
+        $view->assign('items', new \IteratorIterator(new \ArrayIterator(['element1', 'element2'])));
+        $view->setFusionPath('map/basicLoop');
+        self::assertEquals(['Xelement1','Xelement2'], $view->render());
+    }
+
+    /**
+     * @test
+     */
     public function basicMapWorksWithContentRenderer()
     {
         $view = $this->buildView();

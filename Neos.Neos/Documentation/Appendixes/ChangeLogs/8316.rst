@@ -1,0 +1,63 @@
+`8.3.16 (2024-08-14) <https://github.com/neos/neos-development-collection/releases/tag/8.3.16>`_
+================================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`BUGFIX: Don’t include subnodetypes of subnodetypes in node search <https://github.com/neos/neos-development-collection/pull/4503>`_
+--------------------------------------------------------------------------------------------------------------------------------------
+
+The subnodetypes of the given filter are collected twice (once in the ``NodesController`` and once in the ``NodeDataRepository``) leading to nodetypes being included which don't inherit from the given list of nodetypes as the second list of nodetypes is not checked against the nodetypefilter but against the subnodetypes of the nodetypefilter. See details in #4502.
+
+* Resolves: `#4502 <https://github.com/neos/neos-development-collection/issues/4502>`_
+
+* Packages: ``Neos``
+
+`BUGFIX: Changed from hardcoded date format to user-localized format. <https://github.com/neos/neos-development-collection/pull/5198>`_
+---------------------------------------------------------------------------------------------------------------------------------------
+
+Changes the hardcoded Y-m-d date format with an user-localized format.
+
+German Interface Language
+!`image <https://github.com/user-attachments/assets/280593ac-53aa-4739-9745-a31d090a2905>`_
+
+English Interface Language
+!`image <https://github.com/user-attachments/assets/09d00aed-54ea-4f82-b290-004a2e15e53d>`_
+
+**Upgrade instructions**
+
+Tested within neos 8.3.15
+
+**Review instructions**
+
+Changed the branch to 8.3, as i've `accidentally <https://github.com/neos/neos-development-collection/pull/5197>`_ choose 8.0 👼 
+As discussed in `slack <https://neos-project.slack.com/archives/C050C8FEK/p1723202475407499>`_ we (actually Bastian) changed from a hardcoded date format to an user-localization.
+
+
+* Packages: ``Neos``
+
+`BUGFIX: Forward status codes and headers set in module actions <https://github.com/neos/neos-development-collection/pull/5179>`_
+---------------------------------------------------------------------------------------------------------------------------------
+
+Previously the status code set in module actions via ``throwStatus`` or ``response->setStatusCode()`` was ignored. With this change the individual module response is merged into the generic module response which then contains the desired status code, headers and other properties.
+
+This is essential if the client (f.e. HTMX) relies on proper headers and status codes to behave properly.
+
+**Review instructions**
+
+Use f.e. ``$this->throwStatus(404)`` in a Neos module controller action and check the status code of the response when calling the action.
+The response code should now be 404 instead of 200.
+
+
+* Packages: ``Neos``
+
+`BUGFIX: Case insensitive user search on PostgreSQL <https://github.com/neos/neos-development-collection/pull/5166>`_
+---------------------------------------------------------------------------------------------------------------------
+
+PostgreSQL is by default case sensitive and its hard to find users depending on their name in the users
+module.
+
+* Packages: ``Neos``
+
+`Detailed log <https://github.com/neos/neos-development-collection/compare/8.3.15...8.3.16>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

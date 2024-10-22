@@ -30,7 +30,7 @@ class StatementList extends AbstractNode
         $this->statements = $statements;
     }
 
-    public function visit(AstNodeVisitorInterface $visitor, ...$args)
+    public function visit(AstNodeVisitorInterface $visitor, mixed ...$args)
     {
         return $visitor->visitStatementList($this, ...$args);
     }

@@ -65,7 +65,7 @@ Neos:
     # Variant presets
     variantPresets: []
     # Automatically create asset variants for configured presets when assets are added
-    autoCreateImageVariantPresets: false
+    autoCreateImageVariantPresets: true
 
     thumbnailGenerators:
 
@@ -119,3 +119,7 @@ Neos:
           options:
             namespaces:
               neos.media: Neos\Media\ViewHelpers
+
+  Fusion:
+    defaultContext:
+      Neos.Media.Assets: 'Neos\Media\Eel\AssetsHelper'

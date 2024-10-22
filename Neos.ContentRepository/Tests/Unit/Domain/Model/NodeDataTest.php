@@ -371,7 +371,7 @@ class NodeDataTest extends UnitTestCase
 
         self::assertEquals('unstructured', $this->nodeData->getNodeType()->getName());
 
-        $myNodeType = $mockNodeTypeManager->getNodeType('typo3:mycontent');
+        $myNodeType = $mockNodeTypeManager->getNodeType('neos:mycontent');
         $this->nodeData->setNodeType($myNodeType);
         self::assertEquals($myNodeType, $this->nodeData->getNodeType());
     }

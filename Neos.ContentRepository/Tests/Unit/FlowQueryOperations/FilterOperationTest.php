@@ -19,7 +19,6 @@ use Neos\Eel\FlowQuery\FlowQuery;
  */
 class FilterOperationTest extends AbstractQueryOperationsTest
 {
-
     /**
      * @test
      */

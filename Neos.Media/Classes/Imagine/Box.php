@@ -15,9 +15,11 @@ use Imagine\Image\BoxInterface;
 use Imagine\Image\Point;
 use Imagine\Image\PointInterface;
 
+/**
+ * @phpstan-consistent-constructor
+ */
 class Box implements BoxInterface
 {
-
     /**
      * @var integer
      */

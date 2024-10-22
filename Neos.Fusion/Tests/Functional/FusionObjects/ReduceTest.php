@@ -32,6 +32,30 @@ class ReduceTest extends AbstractFusionObjectTest
     /**
      * @test
      */
+    public function basicReductionWorksWithIterator()
+    {
+        $view = $this->buildView();
+        $view->assign('items', new \ArrayIterator(['element1', 'element2']));
+        $view->assign('initialValue', 'InitialValue::');
+        $view->setFusionPath('reduce/basicLoop');
+        self::assertEquals('XXInitialValue::element1element2', $view->render());
+    }
+
+    /**
+     * @test
+     */
+    public function basicReductionWorksWithIteratorThatDoesNotImplementCount()
+    {
+        $view = $this->buildView();
+        $view->assign('items', new \IteratorIterator(new \ArrayIterator(['element1', 'element2'])));
+        $view->assign('initialValue', 'InitialValue::');
+        $view->setFusionPath('reduce/basicLoop');
+        self::assertEquals('XXInitialValue::element1element2', $view->render());
+    }
+
+    /**
+     * @test
+     */
     public function basicReductionAddsNumbers()
     {
         $view = $this->buildView();

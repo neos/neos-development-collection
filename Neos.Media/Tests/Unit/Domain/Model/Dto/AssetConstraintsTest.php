@@ -20,7 +20,6 @@ use Neos\Media\Domain\Model\Dto\AssetConstraints;
  */
 class AssetConstraintsTest extends UnitTestCase
 {
-
     /**
      * @test
      */

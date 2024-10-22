@@ -176,4 +176,19 @@ class Image extends Asset implements ImageInterface, VariantSupportInterface
         $this->width = is_int($imageSize['width']) ? $imageSize['width'] : null;
         $this->height = is_int($imageSize['height']) ? $imageSize['height'] : null;
     }
+
+    /**
+     * Set the asset collections that include this asset and
+     * keeps the attached variants' collections in sync.
+     *
+     * @param Collection $assetCollections
+     * @return void
+     */
+    public function setAssetCollections(Collection $assetCollections)
+    {
+        parent::setAssetCollections($assetCollections);
+        foreach ($this->variants as $variant) {
+            $variant->setAssetCollections($assetCollections);
+        }
+    }
 }

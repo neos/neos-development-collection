@@ -40,7 +40,6 @@ use Neos\Neos\Service\BackendRedirectionService;
  */
 class LoginController extends AbstractAuthenticationController
 {
-
     /**
      * @var string
      */

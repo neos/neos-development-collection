@@ -92,14 +92,14 @@ The following example shows the required structure and possible fields of the pr
                   options:
                     aspectRatio: '1:1'
 
-The automatic variant generation for new assets has to be enabled via setting as
-by default this feature is disabled.
+The automatic variant generation for new assets is active by default.
+It can be disabled via setting:
 
 .. code-block:: yaml
 
   Neos:
     Media:
-      autoCreateImageVariantPresets: true
+      autoCreateImageVariantPresets: false
 
 To show and edit the variants in the media module the variants tab has to be enabled.
 

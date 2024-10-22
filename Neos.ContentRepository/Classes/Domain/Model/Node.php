@@ -922,6 +922,7 @@ class Node implements NodeInterface, CacheAwareInterface, TraversableNodeInterfa
         }
 
         if (
+            /** @phpstan-ignore-next-line i will not touch this code */
             isset($expectedPropertyType) &&
             $expectedPropertyType === 'Neos\Media\Domain\Model\ImageInterface' &&
             empty($value)
@@ -946,6 +947,10 @@ class Node implements NodeInterface, CacheAwareInterface, TraversableNodeInterfa
         }
 
         try {
+            /**
+             * In case the value is a value object it _will_ already be deserialized due to the feature in flow_json_array
+             * {@see \Neos\Flow\Persistence\Doctrine\DataTypes\JsonArrayType::deserializeValueObject}
+             */
             return $this->propertyMapper->convert($value, $expectedPropertyType);
         } catch (\Neos\Flow\Property\Exception $exception) {
             throw new NodeException(sprintf('Failed to convert property "%s" of node "%s" to the expected type of "%s": %s', $propertyName, $this->getIdentifier(), $expectedPropertyType, $exception->getMessage()), 1630675703, $exception);
@@ -960,11 +965,15 @@ class Node implements NodeInterface, CacheAwareInterface, TraversableNodeInterfa
      */
     protected function resolvePropertyReferences(array $value = []): array
     {
-        $nodes = array_map(function ($nodeIdentifier) {
-            return $this->context->getNodeByIdentifier($nodeIdentifier);
-        }, $value);
-
-        return array_filter($nodes);
+        $nodes = [];
+        foreach ($value as $nodeIdentifier) {
+            $node = $this->context->getNodeByIdentifier($nodeIdentifier);
+            // $node can be NULL if the node is not visible (or removed) according to the current content context:
+            if ($node !== null) {
+                $nodes[] = $node;
+            }
+        }
+        return $nodes;
     }
 
     /**
@@ -1734,6 +1743,10 @@ class Node implements NodeInterface, CacheAwareInterface, TraversableNodeInterfa
         }
         /** @var $childNode Node */
         foreach ($this->getChildNodes() as $childNode) {
+            // Don't copy removed nodes
+            if ($childNode->isRemoved()) {
+                continue;
+            }
             // Prevent recursive copy when copying into itself
             if ($childNode->getIdentifier() !== $copiedNode->getIdentifier()) {
                 $childNode->copyIntoInternal($copiedNode, $childNode->getName(), $detachedCopy);

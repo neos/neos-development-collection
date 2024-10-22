@@ -15,6 +15,7 @@ namespace Neos\Fusion\Core\ObjectTreeParser;
 
 use Neos\Fusion;
 
+use Neos\Fusion\Core\FusionSourceCode;
 use Neos\Fusion\Core\ObjectTreeParser\Ast\FusionFile;
 use Neos\Fusion\Core\ObjectTreeParser\Ast\StatementList;
 use Neos\Fusion\Core\ObjectTreeParser\Ast\AbstractStatement;
@@ -46,6 +47,7 @@ use Neos\Fusion\Core\ObjectTreeParser\Exception\ParserUnexpectedCharException;
 
 /**
  * Parses a Fusion File to object ast-nodes
+ * @phpstan-consistent-constructor
  */
 class ObjectTreeParser
 {
@@ -59,10 +61,10 @@ class ObjectTreeParser
         $this->contextPathAndFilename = $contextPathAndFilename;
     }
 
-    public static function parse(string $sourceCode, ?string $contextPathAndFilename = null): FusionFile
+    public static function parse(FusionSourceCode $fusionCode): FusionFile
     {
-        $lexer = new Lexer($sourceCode);
-        $parser = new self($lexer, $contextPathAndFilename);
+        $lexer = new Lexer($fusionCode->getSourceCode());
+        $parser = new static($lexer, $fusionCode->getFilePath());
         return $parser->parseFusionFile();
     }
 
@@ -116,9 +118,9 @@ class ObjectTreeParser
     /**
      * Checks, if the token type matches the current, if so consume it and return true.
      * @param int $tokenType
-     * @return bool|null
+     * @return bool
      */
-    protected function lazyExpect(int $tokenType): ?bool
+    protected function lazyExpect(int $tokenType): bool
     {
         $token = $this->lexer->getCachedLookaheadOrTryToGenerateLookaheadForTokenAndGetLookahead($tokenType);
         if ($token === null || $token->getType() !== $tokenType) {

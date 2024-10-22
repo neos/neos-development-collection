@@ -303,6 +303,9 @@ class DefaultPropertyEditorPostprocessorTest extends UnitTestCase
                                 'elementValue' => 'fromPropertyConfig',
                             ]
                         ],
+                        'elementWithEditorFromDataTypeConfigWithoutUiConfig' => [
+                            'type' => 'TypeWithDataTypeConfig'
+                        ],
                         'elementWithOverriddenEditorConfig' => [
                             'type' => 'TypeWithDataTypeConfig',
                             'ui' => [
@@ -390,6 +393,14 @@ class DefaultPropertyEditorPostprocessorTest extends UnitTestCase
                                 'value' => 'fromPropertyConfig',
                                 'dataTypeValue' => 'fromDataTypeConfig',
                                 'elementValue' => 'fromPropertyConfig',
+                            ]
+                        ],
+                        'elementWithEditorFromDataTypeConfigWithoutUiConfig' => [
+                            'type' => 'TypeWithDataTypeConfig',
+                            'ui' => [
+                                'editor' => 'EditorFromDataTypeConfig',
+                                'value' => 'fromDataTypeConfig',
+                                'dataTypeValue' => 'fromDataTypeConfig',
                             ]
                         ],
                         'elementWithOverriddenEditorConfig' => [

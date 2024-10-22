@@ -17,7 +17,6 @@ use Neos\SiteKickstarter\Service\SimpleTemplateRenderer;
 
 class SimpleTemplateRendererTest extends UnitTestCase
 {
-
     /**
      * @var SimpleTemplateRenderer
      */

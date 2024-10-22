@@ -54,7 +54,6 @@ use Neos\Neos\Utility\User as UserUtility;
  */
 class UserService
 {
-
     /**
      * Might be configurable in the future, for now centralising this as a "constant"
      *
@@ -903,8 +902,13 @@ class UserService
     {
         $userWorkspace = $this->workspaceRepository->findByIdentifier(UserUtility::getPersonalWorkspaceNameForUsername($accountIdentifier));
         if ($userWorkspace instanceof Workspace) {
+            $rootNode = $userWorkspace->getRootNodeData();
             $this->publishingService->discardAllNodes($userWorkspace);
             $this->workspaceRepository->remove($userWorkspace);
+
+            // Persist removal of workspace so we can remove the root node without a foreign key constraint violation
+            $this->persistenceManager->persistAll();
+            $rootNode->remove();
         }
     }
 

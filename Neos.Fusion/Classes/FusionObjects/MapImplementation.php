@@ -84,7 +84,7 @@ class MapImplementation extends AbstractFusionObject
         }
         $itemKey = $this->getItemKey();
         $iterationName = $this->getIterationName();
-        $collectionTotalCount = count($collection);
+        $collectionTotalCount = is_countable($collection) ? count($collection) : null;
 
         $keyRenderPath = $this->path . '/keyRenderer';
         $keyRendererIsAvailable = $this->runtime->canRender($keyRenderPath);
@@ -124,7 +124,7 @@ class MapImplementation extends AbstractFusionObject
     }
 
     /**
-     * @param integer $collectionCount
+     * @param integer|null $collectionCount
      * @return array
      */
     protected function prepareIterationInformation($collectionCount)
@@ -141,7 +141,7 @@ class MapImplementation extends AbstractFusionObject
         if ($this->numberOfRenderedNodes === 0) {
             $iteration['isFirst'] = true;
         }
-        if (($this->numberOfRenderedNodes + 1) === $collectionCount) {
+        if ($collectionCount && ($this->numberOfRenderedNodes + 1) === $collectionCount) {
             $iteration['isLast'] = true;
         }
         if (($this->numberOfRenderedNodes + 1) % 2 === 0) {
