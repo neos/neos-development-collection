@@ -14,11 +14,11 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Core;
 
-use Neos\ContentGraph\DoctrineDbalAdapter\DoctrineDbalContentGraphProjection;
 use Neos\ContentRepository\Core\CommandHandler\CommandBus;
 use Neos\ContentRepository\Core\CommandHandler\CommandInterface;
 use Neos\ContentRepository\Core\EventStore\EventNormalizer;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphInterface;
+use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphProjectionInterface;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphReadModelInterface;
 use Neos\ContentRepository\Core\SharedModel\Exception\WorkspaceDoesNotExist;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
@@ -50,19 +50,17 @@ final class CommandHandlingDependencies
 
     public function __construct(
         private readonly ContentRepository $contentRepository,
+        private readonly ContentGraphReadModelInterface $contentGraphReadModel,
+        private readonly ContentGraphProjectionInterface $contentRepositoryProjection,
         private readonly CommandBus $commandBus,
         private readonly EventNormalizer $eventNormalizer,
-        // todo use GraphProjectionInterface!!!
-        private readonly DoctrineDbalContentGraphProjection $contentRepositoryProjection,
-        private readonly ContentGraphReadModelInterface $contentGraphReadModel
     ) {
     }
-
 
     public function handle(CommandInterface $command): void
     {
         if ($this->inMemoryStoreForSimulation !== null) {
-            $this->hanldeInSimulation($command, $this->inMemoryStoreForSimulation);
+            $this->handleInSimulation($command, $this->inMemoryStoreForSimulation);
         } else {
             $this->contentRepository->handle($command);
         }
@@ -86,7 +84,7 @@ final class CommandHandlingDependencies
         }
     }
 
-    private function hanldeInSimulation(CommandInterface $command, InMemoryEventStore $inMemoryEventStore): void
+    private function handleInSimulation(CommandInterface $command, InMemoryEventStore $inMemoryEventStore): void
     {
         $eventsToPublish = $this->commandBus->handle($command, $this);
 

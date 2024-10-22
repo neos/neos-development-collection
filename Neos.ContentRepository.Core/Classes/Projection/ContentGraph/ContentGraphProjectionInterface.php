@@ -13,4 +13,11 @@ use Neos\ContentRepository\Core\Projection\ProjectionInterface;
 interface ContentGraphProjectionInterface extends ProjectionInterface
 {
     public function getState(): ContentGraphReadModelInterface;
+
+    /**
+     * @template T
+     * @param \Closure(): T $fn
+     * @return T
+     */
+    public function inSimulation(\Closure $fn): mixed;
 }

@@ -259,15 +259,10 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
         }
     }
 
-    /**
-     * @template T
-     * @param \Closure(): T $fn
-     * @return T
-     */
     public function inSimulation(\Closure $fn): mixed
     {
         if ($this->dbal->isTransactionActive()) {
-            throw new \RuntimeException();
+            throw new \RuntimeException(sprintf('Invoking %s is not allowed to be invoked recursively. Current transaction nesting %d.', __FUNCTION__, $this->dbal->getTransactionNestingLevel()));
         }
         $this->dbal->beginTransaction();
         try {

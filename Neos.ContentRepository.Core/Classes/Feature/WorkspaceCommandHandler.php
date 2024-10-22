@@ -62,12 +62,12 @@ use Neos\ContentRepository\Core\Feature\WorkspaceRebase\CommandThatFailedDuringR
 use Neos\ContentRepository\Core\Feature\WorkspaceRebase\Dto\RebaseErrorHandlingStrategy;
 use Neos\ContentRepository\Core\Feature\WorkspaceRebase\Event\WorkspaceWasRebased;
 use Neos\ContentRepository\Core\Feature\WorkspaceRebase\Exception\WorkspaceRebaseFailed;
-use Neos\ContentRepository\Core\SharedModel\Workspace\Workspace;
 use Neos\ContentRepository\Core\SharedModel\Exception\ContentStreamAlreadyExists;
 use Neos\ContentRepository\Core\SharedModel\Exception\ContentStreamDoesNotExistYet;
 use Neos\ContentRepository\Core\SharedModel\Exception\WorkspaceDoesNotExist;
 use Neos\ContentRepository\Core\SharedModel\Exception\WorkspaceHasNoBaseWorkspaceName;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
+use Neos\ContentRepository\Core\SharedModel\Workspace\Workspace;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\EventStore\EventStoreInterface;
 use Neos\EventStore\Exception\ConcurrencyException;
@@ -75,7 +75,6 @@ use Neos\EventStore\Helper\InMemoryEventStore;
 use Neos\EventStore\Model\Event\EventType;
 use Neos\EventStore\Model\Event\SequenceNumber;
 use Neos\EventStore\Model\Event\Version;
-use Neos\EventStore\Model\EventEnvelope;
 use Neos\EventStore\Model\EventStream\EventStreamInterface;
 use Neos\EventStore\Model\EventStream\ExpectedVersion;
 use Neos\EventStore\Model\EventStream\VirtualStreamName;
@@ -243,54 +242,6 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
         );
     }
 
-
-
-    /**
-     * @throws BaseWorkspaceHasBeenModifiedInTheMeantime
-     * @throws \Exception
-     */
-    private function publishContentStreamRebase(
-        CommandHandlingDependencies $commandHandlingDependencies,
-        WorkspaceName $baseWorkspaceName,
-        ContentStreamId $baseContentStreamId,
-        EventStreamInterface $workspaceContentStream
-    ): void {
-        $baseWorkspaceContentStreamName = ContentStreamEventStreamName::fromContentStreamId(
-            $baseContentStreamId
-        );
-
-        // TODO: please check the code below in-depth. it does:
-        // - copy all events from the "user" content stream which implement @see{}"PublishableToOtherContentStreamsInterface"
-        // - extract the initial ContentStreamWasForked event,
-        //   to read the version of the source content stream when the fork occurred
-        // - ensure that no other changes have been done in the meantime in the base content stream
-
-        $events = [];
-        foreach ($workspaceContentStream as $eventEnvelope) {
-            $event = $this->eventNormalizer->denormalize($eventEnvelope->event);
-
-            if ($event instanceof PublishableToWorkspaceInterface) {
-                /** @var EventInterface $copiedEvent */
-                $copiedEvent = $event->withWorkspaceNameAndContentStreamId($baseWorkspaceName, $baseContentStreamId);
-                // We need to add the event metadata here for rebasing in nested workspace situations
-                // (and for exporting)
-                $events[] = DecoratedEvent::create($copiedEvent, metadata: $eventEnvelope->event->metadata, causationId: $eventEnvelope->event->causationId, correlationId: $eventEnvelope->event->correlationId);
-            }
-        }
-
-        if (count($events) === 0) {
-            return;
-        }
-        $commandHandlingDependencies->publishEvents(
-            new EventsToPublish(
-                $baseWorkspaceContentStreamName->getEventStreamName(),
-                Events::fromArray($events),
-                ExpectedVersion::fromVersion(Version::first())
-            )
-        );
-
-    }
-
     /**
      * @throws BaseWorkspaceHasBeenModifiedInTheMeantime
      * @throws \Exception
@@ -330,7 +281,8 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
             return;
         }
         try {
-            $commandHandlingDependencies->publishEvents(
+            $this->eventPersister->publishEvents(
+                $commandHandlingDependencies->getContentRepository(),
                 new EventsToPublish(
                     $baseWorkspaceContentStreamName->getEventStreamName(),
                     Events::fromArray($events),
@@ -451,7 +403,7 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
         // 2) extract the commands from the to-be-rebased content stream; and applies them on the new content stream
         $originalCommands = $this->extractCommandsFromContentStreamMetadata($workspaceContentStreamName);
         $commandsThatFailed = $commandHandlingDependencies->inSimulation(
-            function () use ($originalCommands, $commandHandlingDependencies, $baseWorkspace, $inMemoryEventStore): CommandsThatFailedDuringRebase {
+            function () use ($originalCommands, $commandHandlingDependencies, $baseWorkspace): CommandsThatFailedDuringRebase {
                 $commandsThatFailed = new CommandsThatFailedDuringRebase();
                 foreach ($originalCommands as $sequenceNumber => $originalCommand) {
                     if (!($originalCommand instanceof RebasableToOtherWorkspaceInterface)) { // todo remove that

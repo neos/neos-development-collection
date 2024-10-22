@@ -14,7 +14,6 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Core;
 
-use Neos\ContentGraph\DoctrineDbalAdapter\DoctrineDbalContentGraphProjection;
 use Neos\ContentRepository\Core\CommandHandler\CommandBus;
 use Neos\ContentRepository\Core\CommandHandler\CommandInterface;
 use Neos\ContentRepository\Core\Dimension\ContentDimensionSourceInterface;
@@ -30,8 +29,8 @@ use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Core\Projection\CatchUp;
 use Neos\ContentRepository\Core\Projection\CatchUpOptions;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphInterface;
-use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphReadModelInterface;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphProjectionInterface;
+use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphReadModelInterface;
 use Neos\ContentRepository\Core\Projection\ProjectionInterface;
 use Neos\ContentRepository\Core\Projection\ProjectionsAndCatchUpHooks;
 use Neos\ContentRepository\Core\Projection\ProjectionStateInterface;
@@ -90,7 +89,7 @@ final class ContentRepository
         private readonly ClockInterface $clock,
         private readonly ContentGraphReadModelInterface $contentGraphReadModel
     ) {
-        $this->commandHandlingDependencies = new CommandHandlingDependencies($this, $eventPersister, $this->commandBus, $this->eventNormalizer, $this->projectionsAndCatchUpHooks->projections->get(DoctrineDbalContentGraphProjection::class));
+        $this->commandHandlingDependencies = new CommandHandlingDependencies($this, $this->contentGraphReadModel, $this->projectionsAndCatchUpHooks->contentGraphProjection, $this->commandBus, $this->eventNormalizer);
     }
 
     /**
