@@ -17,7 +17,11 @@ namespace Neos\Neos\Domain\Import;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceFactoryDependencies;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceFactoryInterface;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceInterface;
+use Neos\ContentRepository\Export\Processors\EventExportProcessor;
 
+/**
+ * @implements ContentRepositoryServiceFactoryInterface<LiveWorkspaceIsEmptyProcessor>
+ */
 final readonly class LiveWorkspaceIsEmptyProcessorFactory implements ContentRepositoryServiceFactoryInterface
 {
     public function build(ContentRepositoryServiceFactoryDependencies $serviceFactoryDependencies): ContentRepositoryServiceInterface

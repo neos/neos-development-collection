@@ -20,7 +20,7 @@ use Neos\ContentRepository\Export\Event\ValueObject\ExportedEvent;
 use Neos\ContentRepository\Export\ProcessingContext;
 use Neos\ContentRepository\Export\ProcessorInterface;
 use Neos\ContentRepository\Export\Severity;
-use Neos\Flow\Persistence\Doctrine\PersistenceManager;
+use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Neos\Domain\Model\Domain;
 use Neos\Neos\Domain\Model\Site;
 use Neos\Neos\Domain\Repository\SiteRepository;
@@ -28,13 +28,14 @@ use Neos\Neos\Domain\Repository\SiteRepository;
 /**
  * Import processor that creates and persists a Neos {@see Site} instance
  *
- * @phpstan-type SiteShape array{name:string, packageKey:string, nodeName?: string, inactive?:bool}
+ * @phpstan-type DomainShape array{hostname: string, scheme?: ?string, port?: ?int, active?: ?bool, primary?: ?bool }
+ * @phpstan-type SiteShape array{name:string, siteResourcesPackageKey:string, nodeName?: string, online?:bool, domains?: ?DomainShape[] }
  */
 final readonly class SiteCreationProcessor implements ProcessorInterface
 {
     public function __construct(
         private SiteRepository $siteRepository,
-        private PersistenceManager $persistenceManager
+        private PersistenceManagerInterface $persistenceManager
     ) {
     }
 
@@ -63,17 +64,17 @@ final readonly class SiteCreationProcessor implements ProcessorInterface
             // TODO use node aggregate identifier instead of node name
             $siteInstance = new Site($siteNodeName->value);
             $siteInstance->setSiteResourcesPackageKey($site['siteResourcesPackageKey']);
-            $siteInstance->setState(($site['inactive'] ?? false) ? Site::STATE_OFFLINE : Site::STATE_ONLINE);
+            $siteInstance->setState(($site['online'] ?? false) ? Site::STATE_OFFLINE : Site::STATE_ONLINE);
             $siteInstance->setName($site['name']);
 
             foreach ($site['domains'] ?? [] as $domain) {
                 $domainInstance = new Domain();
                 $domainInstance->setSite($siteInstance);
                 $domainInstance->setHostname($domain['hostname']);
-                $domainInstance->setPort($domain['port']);
-                $domainInstance->setScheme($domain['scheme']);
+                $domainInstance->setPort($domain['port'] ?? null);
+                $domainInstance->setScheme($domain['scheme'] ?? null);
                 $domainInstance->setActive($domain['active'] ?? false);
-                if ($domain['primary']) {
+                if ($domain['primary'] ?? false) {
                     $siteInstance->setPrimaryDomain($domainInstance);
                 }
             }
@@ -102,7 +103,7 @@ final readonly class SiteCreationProcessor implements ProcessorInterface
             }
             if ($event->type === 'NodeAggregateWithNodeWasCreated' && in_array($event->payload['parentNodeAggregateId'], $rootNodeAggregateIds, true)) {
                 $sites[] = [
-                    'packageKey' => self::extractPackageKeyFromNodeTypeName($event->payload['nodeTypeName']),
+                    'siteResourcesPackageKey' => self::extractPackageKeyFromNodeTypeName($event->payload['nodeTypeName']),
                     'name' => $event->payload['initialPropertyValues']['title']['value'] ?? $event->payload['nodeTypeName'],
                     'nodeTypeName' => $event->payload['nodeTypeName'],
                     'nodeName' => $event->payload['nodeName'] ?? null,

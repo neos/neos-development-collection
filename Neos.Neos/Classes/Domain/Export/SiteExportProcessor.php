@@ -28,7 +28,9 @@ use Neos\Neos\Domain\Repository\SiteRepository;
 /**
  * Export processor exports Neos {@see Site} instances as json
  *
- * @phpstan-type SiteShape array{name:string, packageKey:string, nodeName?: string, inactive?:bool}
+ * @phpstan-type DomainShape array{hostname: string, scheme?: ?string, port?: ?int, active?: ?bool, primary?: ?bool }
+ * @phpstan-type SiteShape array{name:string, siteResourcesPackageKey:string, nodeName?: string, online?:bool, domains?: ?DomainShape[] }
+ *
  */
 final readonly class SiteExportProcessor implements ProcessorInterface
 {
@@ -39,7 +41,19 @@ final readonly class SiteExportProcessor implements ProcessorInterface
 
     public function run(ProcessingContext $context): void
     {
-        $sites = array_map(
+        $sites = $this->getSiteData();
+        $context->files->write(
+            'sites.json',
+            json_encode($sites, JSON_THROW_ON_ERROR | JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE)
+        );
+    }
+
+    /**
+     * @return SiteShape[]
+     */
+    private function getSiteData(): array
+    {
+        return array_map(
             fn(Site $site) => [
                 "name" => $site->getName(),
                 "nodeName" => $site->getNodeName()->value,
@@ -57,11 +71,6 @@ final readonly class SiteExportProcessor implements ProcessorInterface
                 )
             ],
             $this->siteRepository->findAll()->toArray()
-        );
-
-        $context->files->write(
-            'sites.json',
-            json_encode($sites, JSON_THROW_ON_ERROR | JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE)
         );
     }
 }

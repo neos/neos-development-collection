@@ -40,14 +40,9 @@ final readonly class SiteExportService
 {
     public function __construct(
         private ContentRepositoryRegistry $contentRepositoryRegistry,
-        private DoctrineService $doctrineService,
         private SiteRepository $siteRepository,
         private AssetRepository $assetRepository,
         private AssetUsageService $assetUsageService,
-        private ResourceRepository $resourceRepository,
-        private ResourceManager $resourceManager,
-        private PersistenceManagerInterface $persistenceManager,
-        private WorkspaceService $workspaceService,
     ) {
     }
 

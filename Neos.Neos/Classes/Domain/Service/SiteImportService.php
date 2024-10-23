@@ -71,7 +71,7 @@ final readonly class SiteImportService
             'Run doctrine migrations' => new DoctrineMigrateProcessor($this->doctrineService),
             'Setup content repository' => $this->contentRepositoryRegistry->buildService($contentRepositoryId, new ContentRepositorySetupProcessorFactory()),
             'Verify Live workspace does not exist yet' => $this->contentRepositoryRegistry->buildService($contentRepositoryId, new LiveWorkspaceIsEmptyProcessorFactory()),
-            'Create Neos sites' => new SiteCreationProcessor($this->siteRepository),
+            'Create Neos sites' => new SiteCreationProcessor($this->siteRepository, $this->persistenceManager),
             'Create Live workspace' => new LiveWorkspaceCreationProcessor($contentRepository, $this->workspaceService),
             'Import events' => $this->contentRepositoryRegistry->buildService($contentRepositoryId, new EventStoreImportProcessorFactory(WorkspaceName::forLive(), keepEventIds: true)),
             'Import assets' => new AssetRepositoryImportProcessor($this->assetRepository, $this->resourceRepository, $this->resourceManager, $this->persistenceManager),
