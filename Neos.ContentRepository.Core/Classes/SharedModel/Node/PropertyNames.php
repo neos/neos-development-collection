@@ -51,12 +51,14 @@ final readonly class PropertyNames implements \IteratorAggregate, \Countable, \J
         return $this->values;
     }
 
-    /**
-     * @return \Traversable<int, PropertyName>
-     */
     public function getIterator(): \Traversable
     {
         yield from $this->values;
+    }
+
+    public function isEmpty(): bool
+    {
+        return $this->values === [];
     }
 
     public function count(): int

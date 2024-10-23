@@ -18,7 +18,7 @@ final readonly class ProjectionStatuses implements \IteratorAggregate
     ) {
     }
 
-    public static function create(): self
+    public static function createEmpty(): self
     {
         return new self([]);
     }
@@ -36,6 +36,6 @@ final readonly class ProjectionStatuses implements \IteratorAggregate
 
     public function getIterator(): \Traversable
     {
-        return new \ArrayIterator($this->statuses);
+        yield from $this->statuses;
     }
 }

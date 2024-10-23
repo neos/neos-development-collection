@@ -12,7 +12,6 @@ use Neos\ContentRepository\BehavioralTests\TestSuite\Behavior\CRBehavioralTestsS
 use Neos\ContentRepository\BehavioralTests\TestSuite\Behavior\GherkinPyStringNodeBasedNodeTypeManagerFactory;
 use Neos\ContentRepository\BehavioralTests\TestSuite\Behavior\GherkinTableNodeBasedContentDimensionSourceFactory;
 use Neos\ContentRepository\Core\ContentRepository;
-use Neos\ContentRepository\Core\ContentRepositoryReadModel;
 use Neos\ContentRepository\Core\EventStore\EventNormalizer;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceFactoryDependencies;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceFactoryInterface;
@@ -49,8 +48,6 @@ class FeatureContext implements Context
     use CRTestSuiteTrait;
     use CRBehavioralTestsSubjectProvider;
 
-    protected $isolated = false;
-
     private array $nodeDataRows = [];
     /** @var array<PersistentResource> */
     private array $mockResources = [];
@@ -70,8 +67,6 @@ class FeatureContext implements Context
      * @var array<string>
      */
     private array $loggedWarnings = [];
-
-    private ContentRepository $contentRepository;
 
     protected ContentRepositoryRegistry $contentRepositoryRegistry;
 

@@ -49,9 +49,7 @@ use Neos\EventStore\Model\EventEnvelope;
  * is not needed:
  *
  * By calling {@see self::disabled(\Closure)} in your code, all projection updates
- * will never trigger catch up hooks. This will only work when
- * {@see CatchUpTriggerWithSynchronousOption::synchronously()} is called,
- * as otherwise this subprocess won't be called.
+ * will never trigger catch up hooks.
  *
  *
  *                                                  projection update

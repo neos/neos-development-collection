@@ -28,7 +28,6 @@ use Neos\ContentRepository\Core\Feature\NodeDuplication\NodeDuplicationCommandHa
 use Neos\ContentRepository\Core\Feature\WorkspaceCommandHandler;
 use Neos\ContentRepository\Core\Infrastructure\Property\PropertyConverter;
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
-use Neos\ContentRepository\Core\Projection\ProjectionCatchUpTriggerInterface;
 use Neos\ContentRepository\Core\Projection\ProjectionsAndCatchUpHooks;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
 use Neos\ContentRepository\Core\SharedModel\User\UserIdProviderInterface;
@@ -53,7 +52,6 @@ final class ContentRepositoryFactory
         ContentDimensionSourceInterface $contentDimensionSource,
         Serializer $propertySerializer,
         ProjectionsAndCatchUpHooksFactory $projectionsAndCatchUpHooksFactory,
-        private readonly ProjectionCatchUpTriggerInterface $projectionCatchUpTrigger,
         private readonly UserIdProviderInterface $userIdProvider,
         private readonly ClockInterface $clock,
     ) {
@@ -101,6 +99,7 @@ final class ContentRepositoryFactory
                 $this->projectionFactoryDependencies->contentDimensionSource,
                 $this->userIdProvider,
                 $this->clock,
+                $this->projectionsAndCatchUpHooks->contentGraphProjection->getState()
             );
         }
         return $this->contentRepository;
@@ -125,7 +124,7 @@ final class ContentRepositoryFactory
             $this->projectionFactoryDependencies,
             $this->getOrBuild(),
             $this->buildEventPersister(),
-            $this->projectionsAndCatchUpHooks->projections,
+            $this->projectionsAndCatchUpHooks,
         );
         return $serviceFactory->build($serviceFactoryDependencies);
     }
@@ -166,9 +165,7 @@ final class ContentRepositoryFactory
         if (!$this->eventPersister) {
             $this->eventPersister = new EventPersister(
                 $this->projectionFactoryDependencies->eventStore,
-                $this->projectionCatchUpTrigger,
                 $this->projectionFactoryDependencies->eventNormalizer,
-                $this->projectionsAndCatchUpHooks->projections,
             );
         }
         return $this->eventPersister;

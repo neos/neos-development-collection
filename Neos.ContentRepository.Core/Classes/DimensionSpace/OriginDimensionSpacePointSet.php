@@ -128,9 +128,6 @@ final class OriginDimensionSpacePointSet implements \JsonSerializable, \Iterator
         return count($this->points);
     }
 
-    /**
-     * @return \Traversable<string,OriginDimensionSpacePoint>
-     */
     public function getIterator(): \Traversable
     {
         yield from $this->points;
