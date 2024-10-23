@@ -224,7 +224,7 @@ trait NodeMove
 
     private function resolveAffectedDimensionSpacePointSet(
         NodeAggregate $nodeAggregate,
-        Dto\RelationDistributionStrategy $relationDistributionStrategy,
+        ?Dto\RelationDistributionStrategy $relationDistributionStrategy,
         DimensionSpace\DimensionSpacePoint $referenceDimensionSpacePoint
     ): DimensionSpacePointSet {
         return match ($relationDistributionStrategy) {
