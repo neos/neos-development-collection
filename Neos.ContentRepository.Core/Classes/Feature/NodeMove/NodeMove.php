@@ -95,6 +95,12 @@ trait NodeMove
             $contentGraph,
             $command->nodeAggregateId,
         );
+
+        if ($command->relationDistributionStrategy === null) {
+            $nodeType = $this->nodeTypeManager->getNodeType($nodeAggregate->nodeTypeName);
+            $command = $command->withRelationDistributionStrategy($nodeType->getMoveNodeRelationDistributionStrategy());
+        }
+
         $this->requireNodeAggregateToNotBeRoot($nodeAggregate);
         $this->requireNodeAggregateToBeUntethered($nodeAggregate);
         $this->requireNodeAggregateToCoverDimensionSpacePoint($nodeAggregate, $command->dimensionSpacePoint);
@@ -125,11 +131,12 @@ trait NodeMove
             if ($nodeAggregate->nodeName) {
                 $this->requireNodeTypeNotToDeclareTetheredChildNodeName($newParentNodeAggregate->nodeTypeName, $nodeAggregate->nodeName);
             }
-
-            $this->requireNodeAggregateToCoverDimensionSpacePoints(
-                $newParentNodeAggregate,
-                $affectedDimensionSpacePoints
-            );
+            if($command->relationDistributionStrategy !== RelationDistributionStrategy::STRATEGY_SCATTER){
+                $this->requireNodeAggregateToCoverDimensionSpacePoints(
+                    $newParentNodeAggregate,
+                    $affectedDimensionSpacePoints
+                );
+            }
 
             $this->requireNodeAggregateToNotBeDescendant(
                 $contentGraph,
