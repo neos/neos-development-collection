@@ -20,7 +20,6 @@ use Neos\ContentRepository\Core\EventStore\EventNormalizer;
 use Neos\ContentRepository\Core\EventStore\EventPersister;
 use Neos\ContentRepository\Core\EventStore\Events;
 use Neos\ContentRepository\Core\EventStore\EventsToPublish;
-use Neos\ContentRepository\Core\Feature\ContentStreamForking\Command\ForkContentStream;
 use Neos\ContentRepository\Core\Feature\NodeCreation\Command\CreateNodeAggregateWithNodeAndSerializedProperties;
 use Neos\ContentRepository\Core\Feature\NodeDisabling\Command\DisableNodeAggregate;
 use Neos\ContentRepository\Core\Feature\NodeDisabling\Command\EnableNodeAggregate;
@@ -105,7 +104,6 @@ trait GenericCommandExecutionAndEventPublication
             'PublishIndividualNodesFromWorkspace' => PublishIndividualNodesFromWorkspace::class,
             'RebaseWorkspace' => RebaseWorkspace::class,
             'CreateNodeAggregateWithNodeAndSerializedProperties' => CreateNodeAggregateWithNodeAndSerializedProperties::class,
-            'ForkContentStream' => ForkContentStream::class,
             'ChangeNodeAggregateName' => ChangeNodeAggregateName::class,
             'SetSerializedNodeProperties' => SetSerializedNodeProperties::class,
             'DisableNodeAggregate' => DisableNodeAggregate::class,
