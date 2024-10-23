@@ -7,7 +7,6 @@ namespace Neos\ContentRepository\Core\CommandHandler;
 use Neos\ContentRepository\Core\CommandHandlingDependencies;
 use Neos\ContentRepository\Core\EventStore\EventsToPublish;
 use Neos\ContentRepository\Core\EventStore\EventsToPublishFailed;
-use Neos\ContentRepository\Core\EventStore\EventsToPublishToStreams;
 
 /**
  * Common interface for all Content Repository command handlers

@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Core\EventStore;
 
-use Neos\ContentRepository\Core\CommandHandler\EventsPublishResult;
 use Neos\ContentRepository\Core\ContentRepository;
 use Neos\EventStore\EventStoreInterface;
 use Neos\EventStore\Exception\ConcurrencyException;

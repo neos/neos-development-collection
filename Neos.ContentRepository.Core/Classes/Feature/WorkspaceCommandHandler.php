@@ -16,7 +16,6 @@ namespace Neos\ContentRepository\Core\Feature;
 
 use Neos\ContentRepository\Core\CommandHandler\CommandHandlerInterface;
 use Neos\ContentRepository\Core\CommandHandler\CommandInterface;
-use Neos\ContentRepository\Core\CommandHandler\EventsPublishResult;
 use Neos\ContentRepository\Core\CommandHandlingDependencies;
 use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\EventStore\DecoratedEvent;
@@ -26,7 +25,6 @@ use Neos\ContentRepository\Core\EventStore\EventPersister;
 use Neos\ContentRepository\Core\EventStore\Events;
 use Neos\ContentRepository\Core\EventStore\EventsToPublish;
 use Neos\ContentRepository\Core\EventStore\EventsToPublishFailed;
-use Neos\ContentRepository\Core\EventStore\EventsToPublishToStreams;
 use Neos\ContentRepository\Core\Feature\Common\MatchableWithNodeIdToPublishOrDiscardInterface;
 use Neos\ContentRepository\Core\Feature\Common\PublishableToWorkspaceInterface;
 use Neos\ContentRepository\Core\Feature\Common\RebasableToOtherWorkspaceInterface;
@@ -470,7 +468,7 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
     }
 
     /**
-     * @return array<int,CommandInterface>
+     * @return array<int,CommandInterface&RebasableToOtherWorkspaceInterface>
      */
     private function extractCommandsFromContentStreamMetadata(
         ContentStreamEventStreamName $workspaceContentStreamName,
@@ -485,17 +483,18 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
             if (isset($metadata['commandClass'])) {
                 $commandToRebaseClass = $metadata['commandClass'];
                 $commandToRebasePayload = $metadata['commandPayload'];
-                if (!method_exists($commandToRebaseClass, 'fromArray')) {
+
+                if (array_diff(class_implements($commandToRebaseClass) ?: [], [CommandInterface::class, RebasableToOtherWorkspaceInterface::class]) === []) {
                     throw new \RuntimeException(sprintf(
-                        'Command "%s" can\'t be rebased because it does not implement a static "fromArray" constructor',
-                        $commandToRebaseClass
+                        'Command "%s" can\'t be rebased because it does not implement %s',
+                        $commandToRebaseClass,
+                        RebasableToOtherWorkspaceInterface::class
                     ), 1547815341);
                 }
-                /**
-                 * The "fromArray" might be declared via {@see RebasableToOtherWorkspaceInterface::fromArray()}
-                 * or any other command can just implement it.
-                 */
-                $commands[$eventEnvelope->sequenceNumber->value] = $commandToRebaseClass::fromArray($commandToRebasePayload);
+                /** @var class-string<CommandInterface&RebasableToOtherWorkspaceInterface> $commandToRebaseClass */
+                /** @var CommandInterface&RebasableToOtherWorkspaceInterface $commandInstance */
+                $commandInstance = $commandToRebaseClass::fromArray($commandToRebasePayload);
+                $commands[$eventEnvelope->sequenceNumber->value] = $commandInstance;
             }
         }
 
@@ -535,8 +534,6 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
         $matchingCommands = [];
         $remainingCommands = [];
         $this->separateMatchingAndRemainingCommands($command, $workspace, $matchingCommands, $remainingCommands);
-        /** @var array<int,RebasableToOtherWorkspaceInterface&CommandInterface> $matchingCommands */
-        /** @var array<int,RebasableToOtherWorkspaceInterface&CommandInterface> $remainingCommands */
 
         // 3) fork a new contentStream, based on the base WS, and apply MATCHING
         $commandHandlingDependencies->handle(
@@ -674,9 +671,7 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
 
         // 2) filter commands, only keeping the ones NOT MATCHING the nodes from the command
         // (i.e. the modifications we want to keep)
-        /** @var array<int,RebasableToOtherWorkspaceInterface&CommandInterface> $commandsToDiscard */
         $commandsToDiscard = [];
-        /** @var array<int,RebasableToOtherWorkspaceInterface&CommandInterface> $commandsToKeep */
         $commandsToKeep = [];
         $this->separateMatchingAndRemainingCommands($command, $workspace, $commandsToDiscard, $commandsToKeep);
 
@@ -695,13 +690,6 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
                 $command->newContentStreamId,
                 function () use ($commandsToKeep, $commandHandlingDependencies, $baseWorkspace): void {
                     foreach ($commandsToKeep as $matchingCommand) {
-                        if (!($matchingCommand instanceof RebasableToOtherWorkspaceInterface)) {
-                            throw new \RuntimeException(
-                                'ERROR: The command ' . get_class($matchingCommand)
-                                . ' does not implement ' . RebasableToOtherWorkspaceInterface::class . '; but it should!'
-                            );
-                        }
-
                         $commandHandlingDependencies->handle($matchingCommand->createCopyForWorkspace(
                             $baseWorkspace->workspaceName,
                         ));
@@ -749,6 +737,8 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
     /**
      * @param array<int,RebasableToOtherWorkspaceInterface&CommandInterface> &$matchingCommands
      * @param array<int,RebasableToOtherWorkspaceInterface&CommandInterface> &$remainingCommands
+     * @param-out array<int,RebasableToOtherWorkspaceInterface&CommandInterface> $matchingCommands
+     * @param-out array<int,RebasableToOtherWorkspaceInterface&CommandInterface> $remainingCommands
      */
     private function separateMatchingAndRemainingCommands(
         PublishIndividualNodesFromWorkspace|DiscardIndividualNodesFromWorkspace $command,
