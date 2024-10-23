@@ -47,7 +47,7 @@ Feature: Rebasing auto-created nodes works
 
   Scenario: complex scenario (to reproduce the bug) -- see the feature description
     # USER workspace: create a new node with auto-created child nodes
-    When the command CreateNodeAggregateWithNodeAndSerializedProperties is executed with payload:
+    When the command CreateNodeAggregateWithNode is executed with payload:
       | Key                       | Value                                    |
       | workspaceName             | "user-test"                              |
       | nodeAggregateId           | "nody-mc-nodeface"                       |
@@ -69,13 +69,19 @@ Feature: Rebasing auto-created nodes works
       | propertyValues            | {"text": {"value":"Modified","type":"string"}} |
       | propertiesToUnset         | {}                                             |
 
-    # user ws must be outdated!!! otherwise cheesy
+    # ensure that live is outdated so the rebase is required:
+    When the command CreateNodeAggregateWithNode is executed with payload:
+      | Key                       | Value                                    |
+      | workspaceName             | "live"                                   |
+      | nodeAggregateId           | "changington-van-live"                   |
+      | nodeTypeName              | "Neos.ContentRepository.Testing:Content" |
+      | originDimensionSpacePoint | {}                                       |
+      | parentNodeAggregateId     | "lady-eleonode-rootford"                 |
 
     # rebase of SetSerializedNodeProperties
-    # More than one node anchor point for content stream: b2a1d336-38a7-4183-815c-c49b2c7eba8c, node aggregate id: 7ef3c166-16d5-4aed-b8cb-5a44670607b7 and origin dimension space point: [] – this should not happen and might be a conceptual problem!
     When the command RebaseWorkspace is executed with payload:
-      | Key           | Value       |
-      | workspaceName | "user-test" |
+      | Key                    | Value       |
+      | workspaceName          | "user-test" |
       | rebasedContentStreamId | "user-cs-rebased" |
     # This should properly work; no error.
 
