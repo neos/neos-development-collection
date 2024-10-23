@@ -152,7 +152,7 @@ trait CRTestSuiteTrait
         foreach ($rawWorkspaceNames as $rawWorkspaceName) {
             $workspace = $this->currentContentRepository->findWorkspaceByName(WorkspaceName::fromString($rawWorkspaceName));
             Assert::assertNotNull($workspace, "Workspace $rawWorkspaceName does not exist.");
-            Assert::assertEquals($status, $workspace->status->value, "Workspace $rawWorkspaceName has unexpected status.");
+            Assert::assertEquals($status, $workspace->status->value, "Workspace '$rawWorkspaceName' has unexpected status.");
         }
     }
 

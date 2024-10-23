@@ -18,8 +18,8 @@ use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Exception;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\ContentGraph;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\NodeFactory;
-use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphReadModelInterface;
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
+use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphReadModelInterface;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStream;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
@@ -30,8 +30,6 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepository\Core\SharedModel\Workspace\Workspaces;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceStatus;
 use Neos\EventStore\Model\Event\Version;
-use Neos\EventStore\Model\EventStream\ExpectedVersion;
-use Neos\EventStore\Model\EventStream\MaybeVersion;
 
 /**
  * @internal
@@ -56,7 +54,7 @@ final readonly class ContentGraphReadModelAdapter implements ContentGraphReadMod
     {
         $workspaceByNameStatement = <<<SQL
             SELECT
-                ws.name, ws.baseWorkspaceName, ws.currentContentStreamId, cs.sourceContentStreamVersion as expectedSourceVersion, scs.version as sourceVersion
+                ws.name, ws.baseWorkspaceName, ws.currentContentStreamId, cs.sourceContentStreamVersion != scs.version as baseWorkspaceChanged
             FROM
                 {$this->tableNames->workspace()} ws
                 JOIN {$this->tableNames->contentStream()} cs ON cs.id = ws.currentcontentstreamid
@@ -82,7 +80,7 @@ final readonly class ContentGraphReadModelAdapter implements ContentGraphReadMod
     {
         $workspacesStatement = <<<SQL
             SELECT
-                ws.name, ws.baseWorkspaceName, ws.currentContentStreamId, cs.sourceContentStreamVersion as expectedSourceVersion, scs.version as sourceVersion
+                ws.name, ws.baseWorkspaceName, ws.currentContentStreamId, cs.sourceContentStreamVersion != scs.version as baseWorkspaceChanged
             FROM
                 {$this->tableNames->workspace()} ws
                 JOIN {$this->tableNames->contentStream()} cs ON cs.id = ws.currentcontentstreamid
@@ -157,17 +155,14 @@ final readonly class ContentGraphReadModelAdapter implements ContentGraphReadMod
     private static function workspaceFromDatabaseRow(array $row): Workspace
     {
         $baseWorkspaceName = $row['baseWorkspaceName'] !== null ? WorkspaceName::fromString($row['baseWorkspaceName']) : null;
+        $status = match($row['baseWorkspaceChanged']) {
+            // no base workspace, a root is always up-to-date
+            null => WorkspaceStatus::UP_TO_DATE,
+            // base workspace didnt change (sql 0 is _false_)
+            0 => WorkspaceStatus::UP_TO_DATE,
+            default => WorkspaceStatus::OUTDATED,
+        };
 
-        $status = WorkspaceStatus::UP_TO_DATE;
-        if ($baseWorkspaceName !== null) {
-            // root workspaces can never be out of date and dont have a source content stream
-            $sourceVersion = MaybeVersion::fromVersionOrNull(Version::fromInteger($row['sourceVersion']));
-            $expectedSourceVersion = ExpectedVersion::fromVersion(Version::fromInteger($row['expectedSourceVersion']));
-
-            if (!$expectedSourceVersion->isSatisfiedBy($sourceVersion)) {
-                $status = WorkspaceStatus::OUTDATED;
-            }
-        }
         return new Workspace(
             WorkspaceName::fromString($row['name']),
             $baseWorkspaceName,
