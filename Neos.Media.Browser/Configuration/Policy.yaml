@@ -28,6 +28,8 @@ privilegeTargets:
       label: Allowed to replace asset resources
       matcher: 'method(Neos\Media\Browser\Controller\(Asset|Image)Controller->(replaceAssetResource|updateAssetResource)Action())'
 
+    # We evaluate the WorkspaceName privilegeTarget in code (UsageController) to determine whether we should show workspace names or not.
+    # To control access to the module in general, Neos.Media.Browser:AssetUsage is used (so that's why they have the same matcher string).
     'Neos.Media.Browser:WorkspaceName':
       label: Allowed to see workspace owner
       matcher: 'method(Neos\Media\Browser\Controller\UsageController->relatedNodesAction())'
