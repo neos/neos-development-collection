@@ -44,19 +44,24 @@ class FusionService
      */
     protected $fusionConfigurationCache;
 
+    /**
+     * @Flow\Inject
+     * @var FusionAutoIncludeHandler
+     */
+    protected $fusionAutoIncludeHandler;
+
     public function createFusionConfigurationFromSite(Site $site): FusionConfiguration
     {
         return $this->fusionConfigurationCache->cacheFusionConfigurationBySite($site, function () use ($site) {
             $siteResourcesPackageKey = $site->getSiteResourcesPackageKey();
-
             return $this->fusionParser->parseFromSource(
-                $this->fusionSourceCodeFactory->createFromNodeTypeDefinitions($site->getConfiguration()->contentRepositoryId)
-                    ->union(
-                        $this->fusionSourceCodeFactory->createFromAutoIncludes()
-                    )
-                    ->union(
-                        FusionSourceCodeCollection::tryFromPackageRootFusion($siteResourcesPackageKey)
-                    )
+                $this->fusionAutoIncludeHandler->loadFusionFromPackage(
+                    $siteResourcesPackageKey,
+                    $this->fusionSourceCodeFactory->createFromNodeTypeDefinitions($site->getConfiguration()->contentRepositoryId)
+                        ->union(
+                            $this->fusionSourceCodeFactory->createFromAutoIncludes()
+                        )
+                )
             );
         });
     }

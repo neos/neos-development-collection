@@ -82,14 +82,15 @@ trait RoutingTrait
     /**
      * @Given A site exists for node name :nodeName
      * @Given A site exists for node name :nodeName and domain :domain
+     * @Given A site exists for node name :nodeName and domain :domain and package :package
      */
-    public function theSiteExists(string $nodeName, string $domain = null): void
+    public function theSiteExists(string $nodeName, string $domain = null, string $package = null): void
     {
         $siteRepository = $this->getObject(SiteRepository::class);
         $persistenceManager = $this->getObject(PersistenceManagerInterface::class);
 
         $site = new Site($nodeName);
-        $site->setSiteResourcesPackageKey('Neos.Neos');
+        $site->setSiteResourcesPackageKey($package ?: 'Neos.Neos');
         $site->setState(Site::STATE_ONLINE);
         $siteRepository->add($site);
 
