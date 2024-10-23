@@ -17,11 +17,8 @@ namespace Neos\ContentRepository\Core\Feature\WorkspaceCreation\Event;
 use Neos\ContentRepository\Core\EventStore\EventInterface;
 use Neos\ContentRepository\Core\Feature\Common\EmbedsWorkspaceName;
 use Neos\ContentRepository\Core\Feature\ContentStreamForking\Event\ContentStreamWasForked;
-use Neos\ContentRepository\Core\SharedModel\User\UserId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
-use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceDescription;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
-use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceTitle;
 
 /**
  * Event triggered to indicate that a workspace was created, based on a base workspace.
@@ -36,10 +33,7 @@ final readonly class WorkspaceWasCreated implements EventInterface, EmbedsWorksp
     public function __construct(
         public WorkspaceName $workspaceName,
         public WorkspaceName $baseWorkspaceName,
-        public WorkspaceTitle $workspaceTitle,
-        public WorkspaceDescription $workspaceDescription,
         public ContentStreamId $newContentStreamId,
-        public ?UserId $workspaceOwner = null
     ) {
     }
 
@@ -53,10 +47,7 @@ final readonly class WorkspaceWasCreated implements EventInterface, EmbedsWorksp
         return new self(
             WorkspaceName::fromString($values['workspaceName']),
             WorkspaceName::fromString($values['baseWorkspaceName']),
-            WorkspaceTitle::fromString($values['workspaceTitle']),
-            WorkspaceDescription::fromString($values['workspaceDescription']),
             ContentStreamId::fromString($values['newContentStreamId']),
-            $values['workspaceOwner'] ? UserId::fromString($values['workspaceOwner']) : null
         );
     }
 

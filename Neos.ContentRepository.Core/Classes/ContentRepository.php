@@ -16,7 +16,6 @@ namespace Neos\ContentRepository\Core;
 
 use Neos\ContentRepository\Core\CommandHandler\CommandBus;
 use Neos\ContentRepository\Core\CommandHandler\CommandInterface;
-use Neos\ContentRepository\Core\CommandHandler\CommandResult;
 use Neos\ContentRepository\Core\Dimension\ContentDimensionSourceInterface;
 use Neos\ContentRepository\Core\DimensionSpace\InterDimensionalVariationGraph;
 use Neos\ContentRepository\Core\EventStore\DecoratedEvent;
@@ -30,18 +29,23 @@ use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Core\Projection\CatchUp;
 use Neos\ContentRepository\Core\Projection\CatchUpOptions;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphInterface;
-use Neos\ContentRepository\Core\Projection\ContentStream\ContentStreamFinder;
+use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphReadModelInterface;
+use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphProjectionInterface;
 use Neos\ContentRepository\Core\Projection\ProjectionInterface;
 use Neos\ContentRepository\Core\Projection\ProjectionsAndCatchUpHooks;
 use Neos\ContentRepository\Core\Projection\ProjectionStateInterface;
 use Neos\ContentRepository\Core\Projection\ProjectionStatuses;
 use Neos\ContentRepository\Core\Projection\WithMarkStaleInterface;
-use Neos\ContentRepository\Core\Projection\Workspace\WorkspaceFinder;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryStatus;
 use Neos\ContentRepository\Core\SharedModel\Exception\WorkspaceDoesNotExist;
 use Neos\ContentRepository\Core\SharedModel\User\UserIdProviderInterface;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStream;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreams;
+use Neos\ContentRepository\Core\SharedModel\Workspace\Workspace;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
+use Neos\ContentRepository\Core\SharedModel\Workspace\Workspaces;
 use Neos\EventStore\EventStoreInterface;
 use Neos\EventStore\Model\Event\EventMetadata;
 use Neos\EventStore\Model\EventEnvelope;
@@ -68,7 +72,6 @@ final class ContentRepository
 
     private CommandHandlingDependencies $commandHandlingDependencies;
 
-
     /**
      * @internal use the {@see ContentRepositoryFactory::getOrBuild()} to instantiate
      */
@@ -84,17 +87,17 @@ final class ContentRepository
         private readonly ContentDimensionSourceInterface $contentDimensionSource,
         private readonly UserIdProviderInterface $userIdProvider,
         private readonly ClockInterface $clock,
+        private readonly ContentGraphReadModelInterface $contentGraphReadModel
     ) {
-        $this->commandHandlingDependencies = new CommandHandlingDependencies($this);
+        $this->commandHandlingDependencies = new CommandHandlingDependencies($this, $this->contentGraphReadModel);
     }
 
     /**
      * The only API to send commands (mutation intentions) to the system.
      *
      * @param CommandInterface $command
-     * @return CommandResult
      */
-    public function handle(CommandInterface $command): CommandResult
+    public function handle(CommandInterface $command): void
     {
         // the commands only calculate which events they want to have published, but do not do the
         // publishing themselves
@@ -129,7 +132,7 @@ final class ContentRepository
             $eventsToPublish->expectedVersion,
         );
 
-        return $this->eventPersister->publishEvents($eventsToPublish);
+        $this->eventPersister->publishEvents($this, $eventsToPublish);
     }
 
 
@@ -140,18 +143,24 @@ final class ContentRepository
      */
     public function projectionState(string $projectionStateClassName): ProjectionStateInterface
     {
+        if (!isset($this->projectionStateCache)) {
+            foreach ($this->projectionsAndCatchUpHooks->projections as $projection) {
+                if ($projection instanceof ContentGraphProjectionInterface) {
+                    continue;
+                }
+                $projectionState = $projection->getState();
+                $this->projectionStateCache[$projectionState::class] = $projectionState;
+            }
+        }
         if (isset($this->projectionStateCache[$projectionStateClassName])) {
             /** @var T $projectionState */
             $projectionState = $this->projectionStateCache[$projectionStateClassName];
             return $projectionState;
         }
-        foreach ($this->projectionsAndCatchUpHooks->projections as $projection) {
-            $projectionState = $projection->getState();
-            if ($projectionState instanceof $projectionStateClassName) {
-                $this->projectionStateCache[$projectionStateClassName] = $projectionState;
-                return $projectionState;
-            }
+        if (in_array(ContentGraphReadModelInterface::class, class_implements($projectionStateClassName), true)) {
+            throw new \InvalidArgumentException(sprintf('Accessing the internal content repository projection state via %s(%s) is not allowed. Please use the API on the content repository instead.', __FUNCTION__, $projectionStateClassName), 1729338679);
         }
+
         throw new \InvalidArgumentException(sprintf('A projection state of type "%s" is not registered in this content repository instance.', $projectionStateClassName), 1662033650);
     }
 
@@ -198,6 +207,15 @@ final class ContentRepository
         $catchUpHook?->onAfterCatchUp();
     }
 
+    public function catchupProjections(): void
+    {
+        foreach ($this->projectionsAndCatchUpHooks->projections as $projection) {
+            // FIXME optimise by only loading required events once and not per projection
+            // see https://github.com/neos/neos-development-collection/pull/4988/
+            $this->catchUpProjection($projection::class, CatchUpOptions::create());
+        }
+    }
+
     public function setUp(): void
     {
         $this->eventStore->setup();
@@ -208,7 +226,7 @@ final class ContentRepository
 
     public function status(): ContentRepositoryStatus
     {
-        $projectionStatuses = ProjectionStatuses::create();
+        $projectionStatuses = ProjectionStatuses::createEmpty();
         foreach ($this->projectionsAndCatchUpHooks->projections as $projectionClassName => $projection) {
             $projectionStatuses = $projectionStatuses->with($projectionClassName, $projection->status());
         }
@@ -234,27 +252,48 @@ final class ContentRepository
         $projection->reset();
     }
 
-    public function getNodeTypeManager(): NodeTypeManager
-    {
-        return $this->nodeTypeManager;
-    }
-
     /**
      * @throws WorkspaceDoesNotExist if the workspace does not exist
      */
     public function getContentGraph(WorkspaceName $workspaceName): ContentGraphInterface
     {
-        return $this->projectionState(ContentGraphFinder::class)->getByWorkspaceName($workspaceName);
+        $workspace = $this->contentGraphReadModel->findWorkspaceByName($workspaceName);
+        if ($workspace === null) {
+            throw WorkspaceDoesNotExist::butWasSupposedTo($workspaceName);
+        }
+        return $this->contentGraphReadModel->buildContentGraph($workspaceName, $workspace->currentContentStreamId);
     }
 
-    public function getWorkspaceFinder(): WorkspaceFinder
+    /**
+     * Returns the workspace with the given name, or NULL if it does not exist in this content repository
+     */
+    public function findWorkspaceByName(WorkspaceName $workspaceName): ?Workspace
     {
-        return $this->projectionState(WorkspaceFinder::class);
+        return $this->contentGraphReadModel->findWorkspaceByName($workspaceName);
     }
 
-    public function getContentStreamFinder(): ContentStreamFinder
+    /**
+     * Returns all workspaces of this content repository. To limit the set, {@see Workspaces::find()} and {@see Workspaces::filter()} can be used
+     * as well as {@see Workspaces::getBaseWorkspaces()} and {@see Workspaces::getDependantWorkspaces()}.
+     */
+    public function findWorkspaces(): Workspaces
     {
-        return $this->projectionState(ContentStreamFinder::class);
+        return $this->contentGraphReadModel->findWorkspaces();
+    }
+
+    public function findContentStreamById(ContentStreamId $contentStreamId): ?ContentStream
+    {
+        return $this->contentGraphReadModel->findContentStreamById($contentStreamId);
+    }
+
+    public function findContentStreams(): ContentStreams
+    {
+        return $this->contentGraphReadModel->findContentStreams();
+    }
+
+    public function getNodeTypeManager(): NodeTypeManager
+    {
+        return $this->nodeTypeManager;
     }
 
     public function getVariationGraph(): InterDimensionalVariationGraph

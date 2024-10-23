@@ -22,7 +22,7 @@ class DoctrineDbalContentGraphSchemaBuilder
     private const DEFAULT_TEXT_COLLATION = 'utf8mb4_unicode_520_ci';
 
     public function __construct(
-        private readonly ContentGraphTableNames $contentGraphTableNames
+        private readonly ContentGraphTableNames $tableNames
     ) {
     }
 
@@ -36,13 +36,15 @@ class DoctrineDbalContentGraphSchemaBuilder
             $this->createNodeTable(),
             $this->createHierarchyRelationTable(),
             $this->createReferenceRelationTable(),
-            $this->createDimensionSpacePointsTable()
+            $this->createDimensionSpacePointsTable(),
+            $this->createWorkspaceTable(),
+            $this->createContentStreamTable(),
         ]);
     }
 
     private function createNodeTable(): Table
     {
-        $table = self::createTable($this->contentGraphTableNames->node(), [
+        $table = self::createTable($this->tableNames->node(), [
             DbalSchemaFactory::columnForNodeAnchorPoint('relationanchorpoint')->setAutoincrement(true),
             DbalSchemaFactory::columnForNodeAggregateId('nodeaggregateid')->setNotnull(false),
             DbalSchemaFactory::columnForDimensionSpacePointHash('origindimensionspacepointhash')->setNotnull(false),
@@ -64,7 +66,7 @@ class DoctrineDbalContentGraphSchemaBuilder
 
     private function createHierarchyRelationTable(): Table
     {
-        $table = self::createTable($this->contentGraphTableNames->hierarchyRelation(), [
+        $table = self::createTable($this->tableNames->hierarchyRelation(), [
             (new Column('position', self::type(Types::INTEGER)))->setNotnull(true),
             DbalSchemaFactory::columnForContentStreamId('contentstreamid')->setNotnull(true),
             DbalSchemaFactory::columnForDimensionSpacePointHash('dimensionspacepointhash')->setNotnull(true),
@@ -84,7 +86,7 @@ class DoctrineDbalContentGraphSchemaBuilder
 
     private function createDimensionSpacePointsTable(): Table
     {
-        $table = self::createTable($this->contentGraphTableNames->dimensionSpacePoints(), [
+        $table = self::createTable($this->tableNames->dimensionSpacePoints(), [
             DbalSchemaFactory::columnForDimensionSpacePointHash('hash')->setNotnull(true),
             DbalSchemaFactory::columnForDimensionSpacePoint('dimensionspacepoint')->setNotnull(true)
         ]);
@@ -95,7 +97,7 @@ class DoctrineDbalContentGraphSchemaBuilder
 
     private function createReferenceRelationTable(): Table
     {
-        $table = self::createTable($this->contentGraphTableNames->referenceRelation(), [
+        $table = self::createTable($this->tableNames->referenceRelation(), [
             (new Column('name', self::type(Types::STRING)))->setLength(255)->setNotnull(true)->setPlatformOption('charset', 'ascii')->setPlatformOption('collation', 'ascii_general_ci'),
             (new Column('position', self::type(Types::INTEGER)))->setNotnull(true),
             DbalSchemaFactory::columnForNodeAnchorPoint('nodeanchorpoint'),
@@ -105,6 +107,30 @@ class DoctrineDbalContentGraphSchemaBuilder
 
         return $table
             ->setPrimaryKey(['name', 'position', 'nodeanchorpoint']);
+    }
+
+    private function createWorkspaceTable(): Table
+    {
+        $workspaceTable = self::createTable($this->tableNames->workspace(), [
+            DbalSchemaFactory::columnForWorkspaceName('name')->setNotnull(true),
+            DbalSchemaFactory::columnForWorkspaceName('baseWorkspaceName')->setNotnull(false),
+            DbalSchemaFactory::columnForContentStreamId('currentContentStreamId')->setNotNull(true),
+            (new Column('status', self::type(Types::BINARY)))->setLength(20)->setNotnull(false),
+        ]);
+
+        return $workspaceTable->setPrimaryKey(['name']);
+    }
+
+    private function createContentStreamTable(): Table
+    {
+        return self::createTable($this->tableNames->contentStream(), [
+            DbalSchemaFactory::columnForContentStreamId('id')->setNotnull(true),
+            (new Column('version', Type::getType(Types::INTEGER)))->setNotnull(true),
+            DbalSchemaFactory::columnForContentStreamId('sourceContentStreamId')->setNotnull(false),
+            // Should become a DB ENUM (unclear how to configure with DBAL) or int (latter needs adaption to code)
+            (new Column('status', Type::getType(Types::BINARY)))->setLength(20)->setNotnull(true),
+            (new Column('removed', Type::getType(Types::BOOLEAN)))->setDefault(false)->setNotnull(false)
+        ]);
     }
 
     /**

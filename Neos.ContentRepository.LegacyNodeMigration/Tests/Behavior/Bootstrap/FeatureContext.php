@@ -13,8 +13,10 @@ use Neos\ContentRepository\BehavioralTests\TestSuite\Behavior\GherkinPyStringNod
 use Neos\ContentRepository\BehavioralTests\TestSuite\Behavior\GherkinTableNodeBasedContentDimensionSourceFactory;
 use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\EventStore\EventNormalizer;
+use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceFactoryDependencies;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceFactoryInterface;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceInterface;
+use Neos\ContentRepository\Core\Infrastructure\Property\PropertyConverter;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
@@ -46,8 +48,6 @@ class FeatureContext implements Context
     use CRTestSuiteTrait;
     use CRBehavioralTestsSubjectProvider;
 
-    protected $isolated = false;
-
     private array $nodeDataRows = [];
     /** @var array<PersistentResource> */
     private array $mockResources = [];
@@ -67,8 +67,6 @@ class FeatureContext implements Context
      * @var array<string>
      */
     private array $loggedWarnings = [];
-
-    private ContentRepository $contentRepository;
 
     protected ContentRepositoryRegistry $contentRepositoryRegistry;
 
@@ -123,26 +121,26 @@ class FeatureContext implements Context
     {
         $nodeTypeManager = $this->currentContentRepository->getNodeTypeManager();
         $propertyMapper = $this->getObject(PropertyMapper::class);
-        $contentGraphFinder = $this->currentContentRepository->projectionState(\Neos\ContentRepository\Core\ContentGraphFinder::class);
-        // FIXME: Dirty
-        $contentGraphFactory = (new \ReflectionClass($contentGraphFinder))
-            ->getProperty('contentGraphFactory')
-            ->getValue($contentGraphFinder);
-        $nodeFactory = (new \ReflectionClass($contentGraphFactory))
-            ->getProperty('nodeFactory')
-            ->getValue($contentGraphFactory);
-        $propertyConverter = (new \ReflectionClass($nodeFactory))
-            ->getProperty('propertyConverter')
-            ->getValue($nodeFactory);
-        $interDimensionalVariationGraph = $this->currentContentRepository->getVariationGraph();
 
-        $eventNormalizer = $this->getObject(EventNormalizer::class);
+        // HACK to access the property converter
+        $propertyConverterAccess = new class implements ContentRepositoryServiceFactoryInterface {
+            public PropertyConverter|null $propertyConverter;
+            public function build(ContentRepositoryServiceFactoryDependencies $serviceFactoryDependencies): ContentRepositoryServiceInterface
+            {
+                $this->propertyConverter = $serviceFactoryDependencies->propertyConverter;
+                return new class implements ContentRepositoryServiceInterface
+                {
+                };
+            }
+        };
+        $this->getContentRepositoryService($propertyConverterAccess);
+
         $migration = new NodeDataToEventsProcessor(
             $nodeTypeManager,
             $propertyMapper,
-            $propertyConverter,
-            $interDimensionalVariationGraph,
-            $eventNormalizer,
+            $propertyConverterAccess->propertyConverter,
+            $this->currentContentRepository->getVariationGraph(),
+            $this->getObject(EventNormalizer::class),
             $this->mockFilesystem,
             $this->nodeDataRows
         );

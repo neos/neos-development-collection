@@ -51,7 +51,7 @@ final class AssetUsageStrategy implements AssetUsageStrategyInterface
                 $convertedUsages[] = new AssetUsageReference(
                     $asset,
                     ContentRepositoryId::fromString($contentRepositoryId),
-                    $usage->contentStreamId,
+                    $usage->workspaceName,
                     $usage->originDimensionSpacePoint,
                     $usage->nodeAggregateId
                 );

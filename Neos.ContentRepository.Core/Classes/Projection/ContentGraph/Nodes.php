@@ -69,9 +69,6 @@ final class Nodes implements \IteratorAggregate, \ArrayAccess, \Countable
         return $this->nodes[$offset] ?? null;
     }
 
-    /**
-     * @return \Traversable<Node>
-     */
     public function getIterator(): \Traversable
     {
         yield from $this->nodes;
@@ -209,8 +206,9 @@ final class Nodes implements \IteratorAggregate, \ArrayAccess, \Countable
     }
 
     /**
-     * @param \Closure(Node $node): mixed $callback
-     * @return array<mixed>
+     * @template T
+     * @param \Closure(Node $node): T $callback
+     * @return list<T>
      */
     public function map(\Closure $callback): array
     {
@@ -219,8 +217,6 @@ final class Nodes implements \IteratorAggregate, \ArrayAccess, \Countable
 
     public function toNodeAggregateIds(): NodeAggregateIds
     {
-        return NodeAggregateIds::create(...$this->map(
-            fn (Node $node): NodeAggregateId => $node->aggregateId,
-        ));
+        return NodeAggregateIds::fromNodes($this);
     }
 }

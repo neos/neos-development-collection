@@ -176,10 +176,9 @@ final class ContentGraph implements ContentGraphInterface
     public function findParentNodeAggregates(
         NodeAggregateId $childNodeAggregateId
     ): NodeAggregates {
-        $queryBuilder = $this->nodeQueryBuilder->buildBasicNodeAggregateQuery()
-            ->innerJoin('n', $this->nodeQueryBuilder->tableNames->hierarchyRelation(), 'ch', 'ch.parentnodeanchor = n.relationanchorpoint')
-            ->innerJoin('ch', $this->nodeQueryBuilder->tableNames->node(), 'cn', 'cn.relationanchorpoint = ch.childnodeanchor')
-            ->andWhere('ch.contentstreamid = :contentStreamId')
+        $queryBuilder = $this->nodeQueryBuilder->buildParentNodeAggregateQuery()
+            ->innerJoin('h', $this->nodeQueryBuilder->tableNames->node(), 'cn', 'cn.relationanchorpoint = h.childnodeanchor')
+            ->andWhere('h.contentstreamid = :contentStreamId')
             ->andWhere('cn.nodeaggregateid = :nodeAggregateId')
             ->setParameters([
                 'nodeAggregateId' => $childNodeAggregateId->value,
@@ -310,19 +309,6 @@ final class ContentGraph implements ContentGraphInterface
         }
 
         return new DimensionSpacePointSet($dimensionSpacePoints);
-    }
-
-    public function countNodes(): int
-    {
-        $queryBuilder = $this->createQueryBuilder()
-            ->select('COUNT(*)')
-            ->from($this->nodeQueryBuilder->tableNames->node());
-        try {
-            $result = $queryBuilder->executeQuery();
-            return (int)$result->fetchOne();
-        } catch (DBALException $e) {
-            throw new \RuntimeException(sprintf('Failed to count rows in database: %s', $e->getMessage()), 1701444590, $e);
-        }
     }
 
     public function findUsedNodeTypeNames(): NodeTypeNames

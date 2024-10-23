@@ -15,13 +15,14 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\Core;
 
 use Neos\ContentRepository\Core\CommandHandler\CommandInterface;
-use Neos\ContentRepository\Core\CommandHandler\CommandResult;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphInterface;
-use Neos\ContentRepository\Core\Projection\ContentStream\ContentStreamFinder;
-use Neos\ContentRepository\Core\Projection\Workspace\WorkspaceFinder;
+use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphReadModelInterface;
+use Neos\ContentRepository\Core\SharedModel\Workspace\Workspace;
 use Neos\ContentRepository\Core\SharedModel\Exception\WorkspaceDoesNotExist;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamStatus;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
+use Neos\EventStore\Model\Event\Version;
 
 /**
  * An adapter to provide aceess to read projection data and delegate (sub) commands
@@ -35,25 +36,45 @@ final class CommandHandlingDependencies
      * WorkspaceName->value to ContentGraphInterface
      * @var array<string, ContentGraphInterface>
      */
-    private array $overridenContentGraphInstances = [];
+    private array $overriddenContentGraphInstances = [];
 
-    public function __construct(private readonly ContentRepository $contentRepository)
-    {
+    public function __construct(
+        private readonly ContentRepository $contentRepository,
+        private readonly ContentGraphReadModelInterface $contentGraphReadModel
+    ) {
     }
 
-    public function handle(CommandInterface $command): CommandResult
+    public function handle(CommandInterface $command): void
     {
-        return $this->contentRepository->handle($command);
+        $this->contentRepository->handle($command);
     }
 
-    public function getWorkspaceFinder(): WorkspaceFinder
+    public function getContentStreamVersion(ContentStreamId $contentStreamId): Version
     {
-        return $this->contentRepository->getWorkspaceFinder();
+        $contentStream = $this->contentGraphReadModel->findContentStreamById($contentStreamId);
+        if ($contentStream === null) {
+            throw new \InvalidArgumentException(sprintf('Failed to find content stream with id "%s"', $contentStreamId->value), 1716902051);
+        }
+        return $contentStream->version;
     }
 
-    public function getContentStreamFinder(): ContentStreamFinder
+    public function contentStreamExists(ContentStreamId $contentStreamId): bool
     {
-        return $this->contentRepository->getContentStreamFinder();
+        return $this->contentGraphReadModel->findContentStreamById($contentStreamId) !== null;
+    }
+
+    public function getContentStreamStatus(ContentStreamId $contentStreamId): ContentStreamStatus
+    {
+        $contentStream = $this->contentGraphReadModel->findContentStreamById($contentStreamId);
+        if ($contentStream === null) {
+            throw new \InvalidArgumentException(sprintf('Failed to find content stream with id "%s"', $contentStreamId->value), 1716902219);
+        }
+        return $contentStream->status;
+    }
+
+    public function findWorkspaceByName(WorkspaceName $workspaceName): ?Workspace
+    {
+        return $this->contentGraphReadModel->findWorkspaceByName($workspaceName);
     }
 
     /**
@@ -61,11 +82,14 @@ final class CommandHandlingDependencies
      */
     public function getContentGraph(WorkspaceName $workspaceName): ContentGraphInterface
     {
-        if (isset($this->overridenContentGraphInstances[$workspaceName->value])) {
-            return $this->overridenContentGraphInstances[$workspaceName->value];
+        if (isset($this->overriddenContentGraphInstances[$workspaceName->value])) {
+            return $this->overriddenContentGraphInstances[$workspaceName->value];
         }
-
-        return $this->contentRepository->getContentGraph($workspaceName);
+        $workspace = $this->contentGraphReadModel->findWorkspaceByName($workspaceName);
+        if ($workspace === null) {
+            throw WorkspaceDoesNotExist::butWasSupposedTo($workspaceName);
+        }
+        return $this->contentGraphReadModel->buildContentGraph($workspace->workspaceName, $workspace->currentContentStreamId);
     }
 
     /**
@@ -79,17 +103,25 @@ final class CommandHandlingDependencies
      */
     public function overrideContentStreamId(WorkspaceName $workspaceName, ContentStreamId $contentStreamId, \Closure $fn): void
     {
-        if (isset($this->overridenContentGraphInstances[$workspaceName->value])) {
+        if (isset($this->overriddenContentGraphInstances[$workspaceName->value])) {
             throw new \RuntimeException('Contentstream override for this workspace already in effect, nesting not allowed.', 1715170938);
         }
 
-        $contentGraph = $this->contentRepository->projectionState(ContentGraphFinder::class)->getByWorkspaceNameAndContentStreamId($workspaceName, $contentStreamId);
-        $this->overridenContentGraphInstances[$workspaceName->value] = $contentGraph;
+        $contentGraph = $this->contentGraphReadModel->buildContentGraph($workspaceName, $contentStreamId);
+        $this->overriddenContentGraphInstances[$workspaceName->value] = $contentGraph;
 
         try {
             $fn();
         } finally {
-            unset($this->overridenContentGraphInstances[$workspaceName->value]);
+            unset($this->overriddenContentGraphInstances[$workspaceName->value]);
         }
+    }
+
+    /**
+     * Fixme only required to build the possible catchup hooks
+     */
+    public function getContentRepository(): ContentRepository
+    {
+        return $this->contentRepository;
     }
 }

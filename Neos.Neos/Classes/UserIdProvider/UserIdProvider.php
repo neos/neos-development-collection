@@ -20,10 +20,10 @@ final class UserIdProvider implements UserIdProviderInterface
 
     public function getUserId(): UserId
     {
-        $userId = $this->userService->getCurrentUserIdentifier();
-        if ($userId === null) {
+        $user = $this->userService->getCurrentUser();
+        if ($user === null) {
             return UserId::forSystemUser();
         }
-        return UserId::fromString($userId->value);
+        return UserId::fromString($user->getId()->value);
     }
 }

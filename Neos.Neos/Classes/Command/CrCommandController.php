@@ -7,31 +7,31 @@ namespace Neos\Neos\Command;
 use League\Flysystem\Filesystem;
 use League\Flysystem\Local\LocalFilesystemAdapter;
 use Neos\ContentRepository\Core\Projection\CatchUpOptions;
+use Neos\ContentRepository\Core\Service\ContentStreamPrunerFactory;
+use Neos\ContentRepository\Core\Service\WorkspaceMaintenanceServiceFactory;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
+use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepository\Export\ExportService;
 use Neos\ContentRepository\Export\ExportServiceFactory;
 use Neos\ContentRepository\Export\ImportService;
 use Neos\ContentRepository\Export\ImportServiceFactory;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\ContentRepositoryRegistry\Service\ProjectionReplayServiceFactory;
-use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Cli\CommandController;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Flow\ResourceManagement\ResourceManager;
 use Neos\Flow\ResourceManagement\ResourceRepository;
 use Neos\Media\Domain\Repository\AssetRepository;
-use Neos\Neos\AssetUsage\Projection\AssetUsageFinder;
+use Neos\Neos\AssetUsage\AssetUsageService;
+use Neos\Neos\Domain\Model\WorkspaceRole;
+use Neos\Neos\Domain\Model\WorkspaceRoleAssignment;
+use Neos\Neos\Domain\Model\WorkspaceTitle;
+use Neos\Neos\Domain\Service\WorkspaceService;
 use Neos\Utility\Files;
 
 class CrCommandController extends CommandController
 {
-    /**
-     * @var array<string|int,mixed>
-     */
-    #[Flow\InjectConfiguration(package: 'Neos.Flow')]
-    protected array $flowSettings;
-
     public function __construct(
         private readonly AssetRepository $assetRepository,
         private readonly ResourceRepository $resourceRepository,
@@ -39,6 +39,9 @@ class CrCommandController extends CommandController
         private readonly PersistenceManagerInterface $persistenceManager,
         private readonly ContentRepositoryRegistry $contentRepositoryRegistry,
         private readonly ProjectionReplayServiceFactory $projectionReplayServiceFactory,
+        private readonly AssetUsageService $assetUsageService,
+        private readonly WorkspaceService $workspaceService,
+        private readonly ProjectionReplayServiceFactory $projectionServiceFactory,
     ) {
         parent::__construct();
     }
@@ -54,18 +57,23 @@ class CrCommandController extends CommandController
     public function exportCommand(string $path, string $contentRepository = 'default', bool $verbose = false): void
     {
         $contentRepositoryId = ContentRepositoryId::fromString($contentRepository);
-        $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryId);
+        $contentRepositoryInstance = $this->contentRepositoryRegistry->get($contentRepositoryId);
 
         Files::createDirectoryRecursively($path);
         $filesystem = new Filesystem(new LocalFilesystemAdapter($path));
+
+        $liveWorkspace = $contentRepositoryInstance->findWorkspaceByName(WorkspaceName::forLive());
+        if ($liveWorkspace === null) {
+            throw new \RuntimeException('Failed to find live workspace', 1716652280);
+        }
 
         $exportService = $this->contentRepositoryRegistry->buildService(
             $contentRepositoryId,
             new ExportServiceFactory(
                 $filesystem,
-                $contentRepository->getWorkspaceFinder(),
+                $liveWorkspace,
                 $this->assetRepository,
-                $contentRepository->projectionState(AssetUsageFinder::class),
+                $this->assetUsageService,
             )
         );
         assert($exportService instanceof ExportService);
@@ -113,6 +121,56 @@ class CrCommandController extends CommandController
         $projectionService = $this->contentRepositoryRegistry->buildService($contentRepositoryId, $this->projectionReplayServiceFactory);
         $projectionService->replayAllProjections(CatchUpOptions::create());
 
+        $this->outputLine('Assigning live workspace role');
+        // set the live-workspace title to (implicitly) create the metadata record for this workspace
+        $this->workspaceService->setWorkspaceTitle($contentRepositoryId, WorkspaceName::forLive(), WorkspaceTitle::fromString('Live workspace'));
+        $this->workspaceService->assignWorkspaceRole($contentRepositoryId, WorkspaceName::forLive(), WorkspaceRoleAssignment::createForGroup('Neos.Neos:LivePublisher', WorkspaceRole::COLLABORATOR));
+
         $this->outputLine('<success>Done</success>');
+    }
+
+    /**
+     * This will completely prune the data of the specified content repository.
+     *
+     * @param string $contentRepository Name of the content repository where the data should be pruned from.
+     * @param bool $force Prune the cr without confirmation. This cannot be reverted!
+     * @return void
+     */
+    public function pruneCommand(string $contentRepository = 'default', bool $force = false): void
+    {
+        if (!$force && !$this->output->askConfirmation(sprintf('> This will prune your content repository "%s". Are you sure to proceed? (y/n) ', $contentRepository), false)) {
+            $this->outputLine('<comment>Abort.</comment>');
+            return;
+        }
+
+        $contentRepositoryId = ContentRepositoryId::fromString($contentRepository);
+
+        $contentStreamPruner = $this->contentRepositoryRegistry->buildService(
+            $contentRepositoryId,
+            new ContentStreamPrunerFactory()
+        );
+
+        $workspaceMaintenanceService = $this->contentRepositoryRegistry->buildService(
+            $contentRepositoryId,
+            new WorkspaceMaintenanceServiceFactory()
+        );
+
+        $projectionService = $this->contentRepositoryRegistry->buildService(
+            $contentRepositoryId,
+            $this->projectionServiceFactory
+        );
+
+        // remove the workspace metadata and role assignments for this cr
+        $this->workspaceService->pruneRoleAssignments($contentRepositoryId);
+        $this->workspaceService->pruneWorkspaceMetadata($contentRepositoryId);
+
+        // reset the events table
+        $contentStreamPruner->pruneAll();
+        $workspaceMaintenanceService->pruneAll();
+
+        // reset the projections state
+        $projectionService->resetAllProjections();
+
+        $this->outputLine('<success>Done.</success>');
     }
 }

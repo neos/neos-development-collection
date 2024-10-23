@@ -140,7 +140,7 @@ trait GenericCommandExecutionAndEventPublication
             ->getValue($eventPersister);
         $event = $eventNormalizer->denormalize($artificiallyConstructedEvent);
 
-        $eventPersister->publishEvents(new EventsToPublish(
+        $eventPersister->publishEvents($this->currentContentRepository, new EventsToPublish(
             $streamName,
             Events::with($event),
             ExpectedVersion::ANY()

@@ -34,7 +34,7 @@ use Neos\Flow\Annotations as Flow;
  *
  * To render the reference name of the first match:
  *
- *     $q{node).backReferences().get(0).name.value}
+ *     $q{node).backReferences().get(0).name}
  *
  * The {@see ReferencePropertyOperation} can be used to access any property on the reference relation:
  *

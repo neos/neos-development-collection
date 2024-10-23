@@ -16,8 +16,6 @@ Feature: Create an intact content graph and run integrity violation detection
     And the command CreateRootWorkspace is executed with payload:
       | Key                  | Value                |
       | workspaceName        | "live"               |
-      | workspaceTitle       | "Live"               |
-      | workspaceDescription | "The live workspace" |
       | newContentStreamId   | "cs-identifier"      |
 
   Scenario: Create an intact content graph

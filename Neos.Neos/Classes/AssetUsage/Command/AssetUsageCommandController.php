@@ -4,64 +4,37 @@ declare(strict_types=1);
 
 namespace Neos\Neos\AssetUsage\Command;
 
+use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\Cli\CommandController;
-use Neos\Media\Domain\Repository\AssetRepository;
-use Neos\Neos\AssetUsage\Projection\AssetUsageRepositoryFactory;
-use Neos\Neos\AssetUsage\Service\AssetUsageSyncServiceFactory;
+use Neos\Neos\AssetUsage\AssetUsageIndexingProcessor;
+use Neos\Neos\Domain\Service\NodeTypeNameFactory;
 
 final class AssetUsageCommandController extends CommandController
 {
     public function __construct(
-        private readonly AssetRepository $assetRepository,
-        private readonly AssetUsageRepositoryFactory $assetUsageRepositoryFactory,
         private readonly ContentRepositoryRegistry $contentRepositoryRegistry,
+        private readonly AssetUsageIndexingProcessor $assetUsageIndexingProcessor
     ) {
         parent::__construct();
     }
 
-    /**
-     * Remove asset usages that are no longer valid
-     *
-     * This is the case for usages that refer to
-     * * deleted nodes (i.e. nodes that were implicitly removed because an ancestor node was deleted)
-     * * invalid dimension space points (e.g. because dimension configuration has been changed)
-     * * removed content streams
-     *
-     * @param bool $quiet if Set, only errors will be outputted
-     */
-    public function syncCommand(string $contentRepository = 'default', bool $quiet = false): void
+    public function indexCommand(string $contentRepository = 'default', string $nodeTypeName = NodeTypeNameFactory::NAME_SITES): void
     {
         $contentRepositoryId = ContentRepositoryId::fromString($contentRepository);
-        $assetUsageSyncService = $this->contentRepositoryRegistry->buildService(
-            $contentRepositoryId,
-            new AssetUsageSyncServiceFactory(
-                $this->assetRepository,
-                $this->assetUsageRepositoryFactory
-            )
+        $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryId);
+
+        $this->outputFormatted("Start indexing asset usages");
+
+        $this->assetUsageIndexingProcessor->buildIndex(
+            $contentRepository,
+            NodeTypeName::fromString($nodeTypeName),
+            function (string $message) {
+                $this->outputFormatted($message);
+            }
         );
 
-        $usages = $assetUsageSyncService->findAllUsages();
-        if (!$quiet) {
-            $this->output->progressStart($usages->count());
-        }
-        $numberOfRemovedUsages = 0;
-        foreach ($usages as $usage) {
-            if (!$assetUsageSyncService->isAssetUsageStillValid($usage)) {
-                $assetUsageSyncService->removeAssetUsage($usage);
-                $numberOfRemovedUsages++;
-            }
-            if (!$quiet) {
-                $this->output->progressAdvance();
-            }
-        }
-        if (!$quiet) {
-            $this->output->progressFinish();
-            $this->outputLine();
-            $this->outputLine('Removed %d asset usage%s', [
-                $numberOfRemovedUsages, $numberOfRemovedUsages === 1 ? '' : 's'
-            ]);
-        }
+        $this->outputFormatted("Finished.");
     }
 }

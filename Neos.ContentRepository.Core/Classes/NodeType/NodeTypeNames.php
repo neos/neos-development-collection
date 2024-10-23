@@ -49,7 +49,7 @@ final class NodeTypeNames implements \IteratorAggregate
      */
     public static function fromStringArray(array $array): self
     {
-        return new self(... array_map(
+        return new self(...array_map(
             fn(string $serializedNodeTypeName): NodeTypeName => NodeTypeName::fromString($serializedNodeTypeName),
             $array
         ));
@@ -71,12 +71,19 @@ final class NodeTypeNames implements \IteratorAggregate
         return new self(...$nodeTypeNames);
     }
 
-    /**
-     * @return \Traversable<NodeTypeName>
-     */
     public function getIterator(): \Traversable
     {
         yield from $this->nodeTypeNames;
+    }
+
+    /**
+     * @template T
+     * @param \Closure(NodeTypeName $nodeTypeName): T $callback
+     * @return list<T>
+     */
+    public function map(\Closure $callback): array
+    {
+        return array_map($callback, $this->nodeTypeNames);
     }
 
     /**
@@ -84,7 +91,7 @@ final class NodeTypeNames implements \IteratorAggregate
      */
     public function toStringArray(): array
     {
-        return array_map(fn(NodeTypeName $nodeTypeName) => $nodeTypeName->value, $this->nodeTypeNames);
+        return $this->map(fn(NodeTypeName $nodeTypeName) => $nodeTypeName->value);
     }
 
     public function isEmpty(): bool

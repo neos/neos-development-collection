@@ -37,14 +37,11 @@ Feature: Workspace rebasing - conflicting changes
       | nodeAggregateId           | "nody-mc-nodeface"   |
       | originDimensionSpacePoint | {}                   |
       | propertyValues            | {"text": "Original"} |
-    # we need to ensure that the projections are up to date now; otherwise a content stream is forked with an out-
-    # of-date base version. This means the content stream can never be merged back, but must always be rebased.
     And the command CreateWorkspace is executed with payload:
       | Key                | Value                |
       | workspaceName      | "user-test"          |
       | baseWorkspaceName  | "live"               |
       | newContentStreamId | "user-cs-identifier" |
-      | workspaceOwner     | "owner-identifier"   |
 
   Scenario: Conflicting changes lead to OUTDATED_CONFLICT which can be recovered from via forced rebase
 
@@ -53,13 +50,11 @@ Feature: Workspace rebasing - conflicting changes
       | workspaceName      | "user-ws-one"      |
       | baseWorkspaceName  | "live"             |
       | newContentStreamId | "user-cs-one"      |
-      | workspaceOwner     | "owner-identifier" |
     And the command CreateWorkspace is executed with payload:
       | Key                | Value              |
       | workspaceName      | "user-ws-two"      |
       | baseWorkspaceName  | "live"             |
       | newContentStreamId | "user-cs-two"      |
-      | workspaceOwner     | "owner-identifier" |
 
     When the command RemoveNodeAggregate is executed with payload:
       | Key                          | Value              |

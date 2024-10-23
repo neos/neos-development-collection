@@ -182,11 +182,10 @@ jobs:
               # We enable the race condition tracker
               presets:
                 'default':
-                  projections:
-                    'Neos.ContentRepository:ContentGraph':
-                      catchUpHooks:
-                        'Neos.ContentRepository.BehavioralTests:RaceConditionTracker':
-                          factoryObjectName: Neos\ContentRepository\BehavioralTests\ProjectionRaceConditionTester\RaceTrackerCatchUpHookFactory
+                  contentGraphProjection:
+                    catchUpHooks:
+                      'Neos.ContentRepository.BehavioralTests:RaceConditionTracker':
+                        factoryObjectName: Neos\ContentRepository\BehavioralTests\ProjectionRaceConditionTester\RaceTrackerCatchUpHookFactory
             ContentRepository:
               BehavioralTests:
                 raceConditionTracker:
@@ -244,6 +243,7 @@ jobs:
           touch ${{ github.workspace }}/Data/DebugDatabaseDumps/keep
 
           ./flow package:list --loading-order
+          FLOW_CONTEXT=Testing/Behat ./flow doctrine:migrate --quiet
           cd Packages/Neos
 
           # composer test:behavioral

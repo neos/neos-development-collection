@@ -36,9 +36,7 @@ use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryI
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateClassification;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
-use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceDescription;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
-use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceTitle;
 use Neos\ContentRepositoryRegistry\Factory\EventStore\DoctrineEventStoreFactory;
 use Neos\EventStore\Model\EventStream\ExpectedVersion;
 
@@ -81,8 +79,6 @@ class PerformanceMeasurementService implements ContentRepositoryServiceInterface
     {
         $this->contentRepository->handle(CreateRootWorkspace::create(
             WorkspaceName::forLive(),
-            WorkspaceTitle::fromString('live'),
-            WorkspaceDescription::fromString(''),
             $this->contentStreamId
         ));
 
@@ -96,7 +92,7 @@ class PerformanceMeasurementService implements ContentRepositoryServiceInterface
             NodeAggregateClassification::CLASSIFICATION_ROOT,
         );
 
-        $this->eventPersister->publishEvents(new EventsToPublish(
+        $this->eventPersister->publishEvents($this->contentRepository, new EventsToPublish(
             $this->contentStreamEventStream->getEventStreamName(),
             Events::with($rootNodeAggregateWasCreated),
             ExpectedVersion::ANY()
@@ -106,7 +102,7 @@ class PerformanceMeasurementService implements ContentRepositoryServiceInterface
         $sumSoFar = 0;
         $events = [];
         $this->createHierarchy($rootNodeAggregateId, 1, $levels, $nodesPerLevel, $sumSoFar, $events);
-        $this->eventPersister->publishEvents(new EventsToPublish(
+        $this->eventPersister->publishEvents($this->contentRepository, new EventsToPublish(
             $this->contentStreamEventStream->getEventStreamName(),
             Events::fromArray($events),
             ExpectedVersion::ANY()
