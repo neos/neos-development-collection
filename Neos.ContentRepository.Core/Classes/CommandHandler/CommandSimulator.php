@@ -8,7 +8,9 @@ use Neos\ContentRepository\Core\CommandHandlingDependencies;
 use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\EventStore\EventNormalizer;
 use Neos\ContentRepository\Core\EventStore\EventsToPublish;
+use Neos\ContentRepository\Core\Feature\Common\RebasableToOtherWorkspaceInterface;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphProjectionInterface;
+use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\EventStore\Helper\InMemoryEventStore;
 use Neos\EventStore\Model\Event\SequenceNumber;
 use Neos\EventStore\Model\Events;
@@ -35,7 +37,8 @@ final class CommandSimulator
         private readonly ContentGraphProjectionInterface $contentRepositoryProjection,
         private readonly EventNormalizer $eventNormalizer,
         private readonly array $handlers,
-        private readonly InMemoryEventStore $inMemoryEventStore
+        private readonly InMemoryEventStore $inMemoryEventStore,
+        private readonly WorkspaceName $workspaceNameToSimulateIn,
     ) {
     }
 
@@ -54,13 +57,24 @@ final class CommandSimulator
         }
     }
 
-    public function handle(CommandInterface $command): void
+    /**
+     * Handle a command within a running simulation, otherwise throw.
+     *
+     * We will automatically copy given commands to the workspace this simulation
+     * is running in to ensure consistency in the simulations constraint checks.
+     *
+     * @see __construct()
+     */
+    public function handle(RebasableToOtherWorkspaceInterface $command): void
     {
         if ($this->inSimulation === false) {
             throw new \RuntimeException('Simulation is not running');
         }
 
-        $eventsToPublish = $this->handleCommand($command, $this->commandHandlingDependencies);
+        // FIXME: Check if workspace already matches and skip this
+        $commandInWorkspace = $command->createCopyForWorkspace($this->workspaceNameToSimulateIn);
+
+        $eventsToPublish = $this->handleCommand($commandInWorkspace, $this->commandHandlingDependencies);
 
         if ($eventsToPublish->events->isEmpty()) {
             return;

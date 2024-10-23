@@ -394,18 +394,16 @@ final readonly class WorkspaceCommandHandler implements ControlFlowAwareCommandH
             return;
         }
 
-        $commandSimulator = $this->commandSimulatorFactory->createSimulator();
+        $commandSimulator = $this->commandSimulatorFactory->createSimulator($baseWorkspace->workspaceName);
 
         $commandsThatFailed = $commandSimulator->run(
-            function () use ($commandSimulator, $originalCommands, $baseWorkspace): CommandsThatFailedDuringRebase {
+            static function () use ($commandSimulator, $originalCommands): CommandsThatFailedDuringRebase {
                 $commandsThatFailed = new CommandsThatFailedDuringRebase();
                 foreach ($originalCommands as $sequenceNumber => $originalCommand) {
                     // We no longer need to adjust commands as the workspace stays the same
                     try {
                         // We rebase here, but we apply the commands in the simulation on the base workspace so the constraint checks work
-                        $commandSimulator->handle($originalCommand->createCopyForWorkspace(
-                            $baseWorkspace->workspaceName
-                        ));
+                        $commandSimulator->handle($originalCommand);
                         // if we came this far, we know the command was applied successfully.
                     } catch (\Exception $e) {
                         $commandsThatFailed = $commandsThatFailed->add(
@@ -558,24 +556,20 @@ final readonly class WorkspaceCommandHandler implements ControlFlowAwareCommandH
         }
 
         // TODO if $remainingCommands === [] try to do a full publish, but we need to rebase if the workspace is outdated!
-        $commandSimulator = $this->commandSimulatorFactory->createSimulator();
+        $commandSimulator = $this->commandSimulatorFactory->createSimulator($baseWorkspace->workspaceName);
 
         try {
             // 4) using the new content stream, apply the matching commands
             $highestVersionForMatching = $commandSimulator->run(
-                function () use ($commandSimulator, $matchingCommands, $remainingCommands, $baseWorkspace): SequenceNumber {
+                static function () use ($commandSimulator, $matchingCommands, $remainingCommands): SequenceNumber {
                     foreach ($matchingCommands as $matchingCommand) {
-                        $commandSimulator->handle($matchingCommand->createCopyForWorkspace(
-                            $baseWorkspace->workspaceName,
-                        ));
+                        $commandSimulator->handle($matchingCommand);
                     }
 
                     $highestVersionForMatching = $commandSimulator->currentSequenceNumber();
 
                     foreach ($remainingCommands as $remainingCommand) {
-                        $commandSimulator->handle($remainingCommand->createCopyForWorkspace(
-                            $baseWorkspace->workspaceName,
-                        ));
+                        $commandSimulator->handle($remainingCommand);
                     }
 
                     return $highestVersionForMatching;
@@ -721,16 +715,14 @@ final readonly class WorkspaceCommandHandler implements ControlFlowAwareCommandH
             return;
         }
 
-        $commandSimulator = $this->commandSimulatorFactory->createSimulator();
+        $commandSimulator = $this->commandSimulatorFactory->createSimulator($baseWorkspace->workspaceName);
 
         // 4) using the new content stream, apply the commands to keep
         try {
             $commandSimulator->run(
-                function () use ($commandSimulator, $commandsToKeep, $baseWorkspace): void {
+                static function () use ($commandSimulator, $commandsToKeep): void {
                     foreach ($commandsToKeep as $matchingCommand) {
-                        $commandSimulator->handle($matchingCommand->createCopyForWorkspace(
-                            $baseWorkspace->workspaceName,
-                        ));
+                        $commandSimulator->handle($matchingCommand);
                     }
                 }
             );
