@@ -51,7 +51,7 @@ class StructureAdjustmentService implements ContentRepositoryServiceInterface
             $this->liveContentGraph,
             $nodeTypeManager,
             $interDimensionalVariationGraph,
-            $propertyConverter
+            $propertyConverter,
         );
 
         $this->unknownNodeTypeAdjustment = new UnknownNodeTypeAdjustment(

@@ -28,6 +28,10 @@ Feature: Change node aggregate type - basic error cases
         nodeTypes:
           '*': TRUE
           'Neos.ContentRepository.Testing:NodeTypeB': false
+    'Neos.ContentRepository.Testing:GrandParentNodeType':
+      childNodes:
+        tethered:
+          type: 'Neos.ContentRepository.Testing:ParentNodeType'
     'Neos.ContentRepository.Testing:ChildOfNodeTypeA': []
     'Neos.ContentRepository.Testing:ChildOfNodeTypeB': []
     'Neos.ContentRepository.Testing:NodeTypeA':
@@ -61,8 +65,8 @@ Feature: Change node aggregate type - basic error cases
     And the following CreateNodeAggregateWithNode commands are executed:
       | nodeAggregateId        | nodeName | parentNodeAggregateId  | nodeTypeName                                  | tetheredDescendantNodeAggregateIds |
       | sir-david-nodenborough | parent   | lady-eleonode-rootford | Neos.ContentRepository.Testing:ParentNodeType | {"tethered": "nodewyn-tetherton"}  |
-      | nody-mc-nodeface       | null         | sir-david-nodenborough | Neos.ContentRepository.Testing:Simple         |  {}                                  |
-      | nodimus-prime          | null         | nodewyn-tetherton      | Neos.ContentRepository.Testing:Simple         |    {}                                |
+      | nody-mc-nodeface       | null     | sir-david-nodenborough | Neos.ContentRepository.Testing:Simple         | {}                                 |
+      | nodimus-prime          | null     | nodewyn-tetherton      | Neos.ContentRepository.Testing:Simple         | {}                                 |
 
   Scenario: Try to change the node aggregate type in a workspace that currently does not exist
     When the command ChangeNodeAggregateType is executed with payload and exceptions are caught:
@@ -99,7 +103,7 @@ Feature: Change node aggregate type - basic error cases
       | nodeAggregateId | "lady-eleonode-rootford"                     |
       | newNodeTypeName | "Neos.ContentRepository.Testing:AnotherRoot" |
       | strategy        | "happypath"                                  |
-    Then the last command should have thrown an exception of type "NodeTypeIsOfTypeRoot"
+    Then the last command should have thrown an exception of type "NodeAggregateIsRoot"
 
   Scenario: Try to change the type of a tethered node aggregate:
     When the command ChangeNodeAggregateType is executed with payload and exceptions are caught:
@@ -116,6 +120,14 @@ Feature: Change node aggregate type - basic error cases
       | newNodeTypeName | "Neos.ContentRepository.Testing:Undefined" |
       | strategy        | "happypath"                                |
     Then the last command should have thrown an exception of type "NodeTypeNotFound"
+
+  Scenario: Try to change node aggregate to a root type:
+    When the command ChangeNodeAggregateType is executed with payload and exceptions are caught:
+      | Key             | Value                                        |
+      | nodeAggregateId | "sir-david-nodenborough"                     |
+      | newNodeTypeName | "Neos.ContentRepository.Testing:AnotherRoot" |
+      | strategy        | "happypath"                                  |
+    Then the last command should have thrown an exception of type "NodeTypeIsOfTypeRoot"
 
   Scenario: Try to change a node aggregate to an abstract type
     When the command ChangeNodeAggregateType is executed with payload and exceptions are caught:
@@ -171,3 +183,25 @@ Feature: Change node aggregate type - basic error cases
       | newNodeTypeName | "Neos.ContentRepository.Testing:NodeTypeB" |
       | strategy        | "happypath"                                |
     Then the last command should have thrown an exception of type "NodeConstraintException"
+
+  Scenario: Try to change a node to a type with a tethered node declaration, whose name is already occupied by a non-tethered node
+    When the following CreateNodeAggregateWithNode commands are executed:
+      | nodeAggregateId   | nodeName | parentNodeAggregateId | nodeTypeName                          |
+      | oddnode-tetherton | tethered | nody-mc-nodeface      | Neos.ContentRepository.Testing:Simple |
+    And the command ChangeNodeAggregateType is executed with payload and exceptions are caught:
+      | Key             | Value                                           |
+      | nodeAggregateId | "nody-mc-nodeface"                              |
+      | newNodeTypeName | "Neos.ContentRepository.Testing:ParentNodeType" |
+      | strategy        | "happypath"                                     |
+    Then the last command should have thrown an exception of type "NodeAggregateIsUntethered"
+
+  Scenario: Try to change a node to a type with a descendant tethered node declaration, whose name is already occupied by a non-tethered node (recursive case)
+    When the following CreateNodeAggregateWithNode commands are executed:
+      | nodeAggregateId   | nodeName | parentNodeAggregateId | nodeTypeName                          |
+      | oddnode-tetherton | tethered | nodewyn-tetherton     | Neos.ContentRepository.Testing:Simple |
+    And the command ChangeNodeAggregateType is executed with payload and exceptions are caught:
+      | Key             | Value                                                |
+      | nodeAggregateId | "sir-david-nodenborough"                             |
+      | newNodeTypeName | "Neos.ContentRepository.Testing:GrandParentNodeType" |
+      | strategy        | "happypath"                                          |
+    Then the last command should have thrown an exception of type "NodeAggregateIsUntethered"

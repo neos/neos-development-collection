@@ -15,36 +15,44 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\Core\Feature\NodeTypeChange;
 
 use Neos\ContentRepository\Core\CommandHandlingDependencies;
-use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePointSet;
 use Neos\ContentRepository\Core\EventStore\Events;
 use Neos\ContentRepository\Core\EventStore\EventsToPublish;
 use Neos\ContentRepository\Core\Feature\Common\NodeAggregateEventPublisher;
+use Neos\ContentRepository\Core\Feature\Common\NodeTypeChangeInternals;
+use Neos\ContentRepository\Core\Feature\Common\TetheredNodeInternals;
 use Neos\ContentRepository\Core\Feature\ContentStreamEventStreamName;
-use Neos\ContentRepository\Core\Feature\NodeRemoval\Event\NodeAggregateWasRemoved;
+use Neos\ContentRepository\Core\Feature\NodeCreation\Dto\NodeAggregateIdsByNodePaths;
+use Neos\ContentRepository\Core\Feature\NodeModification\Dto\SerializedPropertyValues;
+use Neos\ContentRepository\Core\Feature\NodeModification\Event\NodePropertiesWereSet;
 use Neos\ContentRepository\Core\Feature\NodeTypeChange\Command\ChangeNodeAggregateType;
 use Neos\ContentRepository\Core\Feature\NodeTypeChange\Dto\NodeAggregateTypeChangeChildConstraintConflictResolutionStrategy;
 use Neos\ContentRepository\Core\Feature\NodeTypeChange\Event\NodeAggregateTypeWasChanged;
 use Neos\ContentRepository\Core\NodeType\NodeType;
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
+use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\NodeType\TetheredNodeTypeDefinition;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphInterface;
-use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
+use Neos\ContentRepository\Core\Projection\ContentGraph\CoverageByOrigin;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodePath;
-use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeAggregatesTypeIsAmbiguous;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeConstraintException;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeTypeNotFound;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateIds;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
+use Neos\ContentRepository\Core\SharedModel\Node\PropertyNames;
 
 /**
  * @internal implementation detail of Command Handlers
  */
 trait NodeTypeChange
 {
+    use TetheredNodeInternals;
+    use NodeTypeChangeInternals;
+
     abstract protected function getNodeTypeManager(): NodeTypeManager;
 
     abstract protected function requireNodeAggregateToBeUntethered(NodeAggregate $nodeAggregate): void;
@@ -82,6 +90,27 @@ trait NodeTypeChange
         NodeType $nodeType
     ): bool;
 
+    abstract protected function createEventsForMissingTetheredNodeAggregate(
+        ContentGraphInterface $contentGraph,
+        TetheredNodeTypeDefinition $tetheredNodeTypeDefinition,
+        OriginDimensionSpacePointSet $affectedOriginDimensionSpacePoints,
+        CoverageByOrigin $coverageByOrigin,
+        NodeAggregateId $parentNodeAggregateId,
+        ?NodeAggregateId $succeedingSiblingNodeAggregateId,
+        NodeAggregateIdsByNodePaths $nodeAggregateIdsByNodePaths,
+        NodePath $currentNodePath,
+    ): Events;
+
+    abstract protected function createEventsForWronglyTypedNodeAggregate(
+        ContentGraphInterface $contentGraph,
+        NodeAggregate $nodeAggregate,
+        NodeTypeName $newNodeTypeName,
+        NodeAggregateIdsByNodePaths $nodeAggregateIdsByNodePaths,
+        NodePath $currentNodePath,
+        NodeAggregateTypeChangeChildConstraintConflictResolutionStrategy $conflictResolutionStrategy,
+        NodeAggregateIds $alreadyRemovedNodeAggregates,
+    ): Events;
+
     abstract protected function createEventsForMissingTetheredNode(
         ContentGraphInterface $contentGraph,
         NodeAggregate $parentNodeAggregate,
@@ -113,6 +142,7 @@ trait NodeTypeChange
             $contentGraph,
             $command->nodeAggregateId
         );
+        $this->requireNodeAggregateToNotBeRoot($nodeAggregate);
         $this->requireNodeAggregateToBeUntethered($nodeAggregate);
 
         // node type detail checks
@@ -120,6 +150,7 @@ trait NodeTypeChange
         $this->requireNodeTypeToNotBeAbstract($newNodeType);
         $this->requireTetheredDescendantNodeTypesToExist($newNodeType);
         $this->requireTetheredDescendantNodeTypesToNotBeOfTypeRoot($newNodeType);
+        $this->requireExistingDeclaredTetheredDescendantsToBeTethered($contentGraph, $nodeAggregate, $newNodeType);
 
         // the new node type must be allowed at this position in the tree
         $parentNodeAggregates = $contentGraph->findParentNodeAggregates(
@@ -134,13 +165,15 @@ trait NodeTypeChange
             );
         }
 
-        /** @codingStandardsIgnoreStart */
         match ($command->strategy) {
             NodeAggregateTypeChangeChildConstraintConflictResolutionStrategy::STRATEGY_HAPPY_PATH
-                => $this->requireConstraintsImposedByHappyPathStrategyAreMet($contentGraph, $nodeAggregate, $newNodeType),
+                => $this->requireConstraintsImposedByHappyPathStrategyAreMet(
+                    $contentGraph,
+                    $nodeAggregate,
+                    $newNodeType
+                ),
             NodeAggregateTypeChangeChildConstraintConflictResolutionStrategy::STRATEGY_DELETE => null
         };
-        /** @codingStandardsIgnoreStop */
 
         /**************
          * Preparation - make the command fully deterministic in case of rebase
@@ -161,48 +194,86 @@ trait NodeTypeChange
                 $contentGraph->getWorkspaceName(),
                 $contentGraph->getContentStreamId(),
                 $command->nodeAggregateId,
-                $command->newNodeTypeName
+                $command->newNodeTypeName,
             ),
         ];
 
+        # Handle property adjustments
+        $newNodeType = $this->requireNodeType($command->newNodeTypeName);
+        foreach ($nodeAggregate->getNodes() as $node) {
+            $presentPropertyKeys = array_keys(iterator_to_array($node->properties->serialized()));
+            $complementaryPropertyValues = SerializedPropertyValues::defaultFromNodeType(
+                $newNodeType,
+                $this->propertyConverter
+            )
+                ->unsetProperties(PropertyNames::fromArray($presentPropertyKeys));
+            $obsoletePropertyNames = PropertyNames::fromArray(
+                array_diff(
+                    $presentPropertyKeys,
+                    array_keys($newNodeType->getProperties()),
+                )
+            );
+
+            if (count($complementaryPropertyValues->values) > 0 || count($obsoletePropertyNames) > 0) {
+                $events[] = new NodePropertiesWereSet(
+                    $contentGraph->getWorkspaceName(),
+                    $contentGraph->getContentStreamId(),
+                    $nodeAggregate->nodeAggregateId,
+                    $node->originDimensionSpacePoint,
+                    $nodeAggregate->getCoverageByOccupant($node->originDimensionSpacePoint),
+                    $complementaryPropertyValues,
+                    $obsoletePropertyNames
+                );
+            }
+        }
+
         // remove disallowed nodes
+        $alreadyRemovedNodeAggregateIds = NodeAggregateIds::createEmpty();
         if ($command->strategy === NodeAggregateTypeChangeChildConstraintConflictResolutionStrategy::STRATEGY_DELETE) {
             array_push($events, ...iterator_to_array($this->deleteDisallowedNodesWhenChangingNodeType(
                 $contentGraph,
                 $nodeAggregate,
-                $newNodeType
+                $newNodeType,
+                $alreadyRemovedNodeAggregateIds,
             )));
             array_push($events, ...iterator_to_array($this->deleteObsoleteTetheredNodesWhenChangingNodeType(
                 $contentGraph,
                 $nodeAggregate,
-                $newNodeType
+                $newNodeType,
+                $alreadyRemovedNodeAggregateIds
             )));
         }
 
-        // new tethered child nodes
-        foreach ($nodeAggregate->getNodes() as $node) {
-            assert($node instanceof Node);
-            foreach ($newNodeType->tetheredNodeTypeDefinitions as $tetheredNodeTypeDefinition) {
-                $tetheredNode = $contentGraph->getSubgraph(
-                    $node->originDimensionSpacePoint->toDimensionSpacePoint(),
-                    VisibilityConstraints::withoutRestrictions()
-                )->findNodeByPath(
-                    $tetheredNodeTypeDefinition->name,
-                    $node->aggregateId,
-                );
-
-                if ($tetheredNode === null) {
-                    $tetheredNodeAggregateId = $command->tetheredDescendantNodeAggregateIds
-                        ->getNodeAggregateId(NodePath::fromNodeNames($tetheredNodeTypeDefinition->name))
-                        ?: NodeAggregateId::create();
-                    array_push($events, ...iterator_to_array($this->createEventsForMissingTetheredNode(
-                        $contentGraph,
-                        $nodeAggregate,
-                        $node->originDimensionSpacePoint,
-                        $tetheredNodeTypeDefinition,
-                        $tetheredNodeAggregateId
-                    )));
-                }
+        // handle (missing) tethered node aggregates
+        $nextSibling = null;
+        $succeedingSiblingIds = [];
+        foreach (array_reverse(iterator_to_array($newNodeType->tetheredNodeTypeDefinitions)) as $tetheredNodeTypeDefinition) {
+            $succeedingSiblingIds[$tetheredNodeTypeDefinition->name->value] = $nextSibling;
+            $nextSibling = $command->tetheredDescendantNodeAggregateIds->getNodeAggregateId(NodePath::fromNodeNames($tetheredNodeTypeDefinition->name));
+        }
+        foreach ($newNodeType->tetheredNodeTypeDefinitions as $tetheredNodeTypeDefinition) {
+            $tetheredNodeAggregate = $contentGraph->findChildNodeAggregateByName($nodeAggregate->nodeAggregateId, $tetheredNodeTypeDefinition->name);
+            if ($tetheredNodeAggregate === null) {
+                $events = array_merge($events, iterator_to_array($this->createEventsForMissingTetheredNodeAggregate(
+                    $contentGraph,
+                    $tetheredNodeTypeDefinition,
+                    $nodeAggregate->occupiedDimensionSpacePoints,
+                    $nodeAggregate->coverageByOccupant,
+                    $nodeAggregate->nodeAggregateId,
+                    $succeedingSiblingIds[$tetheredNodeTypeDefinition->nodeTypeName->value] ?? null,
+                    $command->tetheredDescendantNodeAggregateIds,
+                    NodePath::fromNodeNames($tetheredNodeTypeDefinition->name)
+                )));
+            } elseif (!$tetheredNodeAggregate->nodeTypeName->equals($tetheredNodeTypeDefinition->nodeTypeName)) {
+                $events = array_merge($events, iterator_to_array($this->createEventsForWronglyTypedNodeAggregate(
+                    $contentGraph,
+                    $tetheredNodeAggregate,
+                    $tetheredNodeTypeDefinition->nodeTypeName,
+                    $command->tetheredDescendantNodeAggregateIds,
+                    NodePath::fromNodeNames($tetheredNodeTypeDefinition->name),
+                    $command->strategy,
+                    $alreadyRemovedNodeAggregateIds
+                )));
             }
         }
 
@@ -215,7 +286,6 @@ trait NodeTypeChange
             $expectedVersion
         );
     }
-
 
     /**
      * NOTE: when changing this method, {@see NodeTypeChange::deleteDisallowedNodesWhenChangingNodeType}
@@ -272,178 +342,5 @@ trait NodeTypeChange
                 }
             }
         }
-    }
-
-    /**
-     * NOTE: when changing this method, {@see NodeTypeChange::requireConstraintsImposedByHappyPathStrategyAreMet}
-     * needs to be modified as well (as they are structurally the same)
-     */
-    private function deleteDisallowedNodesWhenChangingNodeType(
-        ContentGraphInterface $contentGraph,
-        NodeAggregate $nodeAggregate,
-        NodeType $newNodeType
-    ): Events {
-        $events = [];
-        // if we have children, we need to check whether they are still allowed
-        // after we changed the node type of the $nodeAggregate to $newNodeType.
-        $childNodeAggregates = $contentGraph->findChildNodeAggregates(
-            $nodeAggregate->nodeAggregateId
-        );
-        foreach ($childNodeAggregates as $childNodeAggregate) {
-            /* @var $childNodeAggregate NodeAggregate */
-            // the "parent" of the $childNode is $node; so we use $newNodeType
-            // (the target node type of $node after the operation) here.
-            if (
-                !$childNodeAggregate->classification->isTethered()
-                && !$this->areNodeTypeConstraintsImposedByParentValid(
-                    $newNodeType,
-                    $this->requireNodeType($childNodeAggregate->nodeTypeName)
-                )
-            ) {
-                // this aggregate (or parts thereof) are DISALLOWED according to constraints.
-                // We now need to find out which edges we need to remove,
-                $dimensionSpacePointsToBeRemoved = $this->findDimensionSpacePointsConnectingParentAndChildAggregate(
-                    $contentGraph,
-                    $nodeAggregate,
-                    $childNodeAggregate
-                );
-                // AND REMOVE THEM
-                $events[] = $this->removeNodeInDimensionSpacePointSet(
-                    $contentGraph,
-                    $childNodeAggregate,
-                    $dimensionSpacePointsToBeRemoved,
-                );
-            }
-
-            // we do not need to test for grandparents here, as we did not modify the grandparents.
-            // Thus, if it was allowed before, it is allowed now.
-            // additionally, we need to look one level down to the grandchildren as well
-            // - as it could happen that these are affected by our constraint checks as well.
-            $grandchildNodeAggregates = $contentGraph->findChildNodeAggregates($childNodeAggregate->nodeAggregateId);
-            foreach ($grandchildNodeAggregates as $grandchildNodeAggregate) {
-                /* @var $grandchildNodeAggregate NodeAggregate */
-                // we do not need to test for the parent of grandchild (=child),
-                // as we do not change the child's node type.
-                // we however need to check for the grandparent node type.
-                if (
-                    $childNodeAggregate->nodeName !== null
-                    && !$this->areNodeTypeConstraintsImposedByGrandparentValid(
-                        $newNodeType, // the grandparent node type changes
-                        $childNodeAggregate->nodeName,
-                        $this->requireNodeType($grandchildNodeAggregate->nodeTypeName)
-                    )
-                ) {
-                    // this aggregate (or parts thereof) are DISALLOWED according to constraints.
-                    // We now need to find out which edges we need to remove,
-                    $dimensionSpacePointsToBeRemoved = $this->findDimensionSpacePointsConnectingParentAndChildAggregate(
-                        $contentGraph,
-                        $childNodeAggregate,
-                        $grandchildNodeAggregate
-                    );
-                    // AND REMOVE THEM
-                    $events[] = $this->removeNodeInDimensionSpacePointSet(
-                        $contentGraph,
-                        $grandchildNodeAggregate,
-                        $dimensionSpacePointsToBeRemoved,
-                    );
-                }
-            }
-        }
-
-        return Events::fromArray($events);
-    }
-
-    private function deleteObsoleteTetheredNodesWhenChangingNodeType(
-        ContentGraphInterface $contentGraph,
-        NodeAggregate $nodeAggregate,
-        NodeType $newNodeType
-    ): Events {
-        $events = [];
-        // find disallowed tethered nodes
-        $tetheredNodeAggregates = $contentGraph->findTetheredChildNodeAggregates($nodeAggregate->nodeAggregateId);
-
-        foreach ($tetheredNodeAggregates as $tetheredNodeAggregate) {
-            /* @var $tetheredNodeAggregate NodeAggregate */
-            if ($tetheredNodeAggregate->nodeName !== null && !$newNodeType->tetheredNodeTypeDefinitions->contain($tetheredNodeAggregate->nodeName)) {
-                // this aggregate (or parts thereof) are DISALLOWED according to constraints.
-                // We now need to find out which edges we need to remove,
-                $dimensionSpacePointsToBeRemoved = $this->findDimensionSpacePointsConnectingParentAndChildAggregate(
-                    $contentGraph,
-                    $nodeAggregate,
-                    $tetheredNodeAggregate
-                );
-                // AND REMOVE THEM
-                $events[] = $this->removeNodeInDimensionSpacePointSet(
-                    $contentGraph,
-                    $tetheredNodeAggregate,
-                    $dimensionSpacePointsToBeRemoved,
-                );
-            }
-        }
-
-        return Events::fromArray($events);
-    }
-
-    /**
-     * Find all dimension space points which connect two Node Aggregates.
-     *
-     * After we found wrong node type constraints between two aggregates, we need to remove exactly the edges where the
-     * aggregates are connected as parent and child.
-     *
-     * Example: In this case, we want to find exactly the bold edge between PAR1 and A.
-     *
-     *          ╔══════╗ <------ $parentNodeAggregate (PAR1)
-     * ┌──────┐ ║ PAR1 ║   ┌──────┐
-     * │ PAR3 │ ╚══════╝   │ PAR2 │
-     * └──────┘    ║       └──────┘
-     *        ╲    ║          ╱
-     *         ╲   ║         ╱
-     *          ▼──▼──┐ ┌───▼─┐
-     *          │  A  │ │  A' │ <------ $childNodeAggregate (A+A')
-     *          └─────┘ └─────┘
-     *
-     * How do we do this?
-     * - we iterate over each covered dimension space point of the full aggregate
-     * - in each dimension space point, we check whether the parent node is "our" $nodeAggregate (where
-     *   we originated from)
-     */
-    private function findDimensionSpacePointsConnectingParentAndChildAggregate(
-        ContentGraphInterface $contentGraph,
-        NodeAggregate $parentNodeAggregate,
-        NodeAggregate $childNodeAggregate
-    ): DimensionSpacePointSet {
-        $points = [];
-        foreach ($childNodeAggregate->coveredDimensionSpacePoints as $coveredDimensionSpacePoint) {
-            $parentNode = $contentGraph->getSubgraph($coveredDimensionSpacePoint, VisibilityConstraints::withoutRestrictions())->findParentNode(
-                $childNodeAggregate->nodeAggregateId
-            );
-            if (
-                $parentNode
-                && $parentNode->aggregateId->equals($parentNodeAggregate->nodeAggregateId)
-            ) {
-                $points[] = $coveredDimensionSpacePoint;
-            }
-        }
-
-        return new DimensionSpacePointSet($points);
-    }
-
-    private function removeNodeInDimensionSpacePointSet(
-        ContentGraphInterface $contentGraph,
-        NodeAggregate $nodeAggregate,
-        DimensionSpacePointSet $coveredDimensionSpacePointsToBeRemoved,
-    ): NodeAggregateWasRemoved {
-        return new NodeAggregateWasRemoved(
-            $contentGraph->getWorkspaceName(),
-            $contentGraph->getContentStreamId(),
-            $nodeAggregate->nodeAggregateId,
-            // TODO: we also use the covered dimension space points as OCCUPIED dimension space points
-            // - however the OCCUPIED dimension space points are not really used by now
-            // (except for the change projector, which needs love anyways...)
-            OriginDimensionSpacePointSet::fromDimensionSpacePointSet(
-                $coveredDimensionSpacePointsToBeRemoved
-            ),
-            $coveredDimensionSpacePointsToBeRemoved,
-        );
     }
 }

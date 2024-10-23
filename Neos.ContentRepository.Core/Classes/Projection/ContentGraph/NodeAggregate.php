@@ -77,7 +77,7 @@ final readonly class NodeAggregate
         public ?NodeName $nodeName,
         public OriginDimensionSpacePointSet $occupiedDimensionSpacePoints,
         private array $nodesByOccupiedDimensionSpacePoint,
-        private CoverageByOrigin $coverageByOccupant,
+        public CoverageByOrigin $coverageByOccupant,
         public DimensionSpacePointSet $coveredDimensionSpacePoints,
         private array $nodesByCoveredDimensionSpacePoint,
         private OriginByCoverage $occupationByCovered,
