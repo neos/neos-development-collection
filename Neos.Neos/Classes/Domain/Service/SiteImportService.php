@@ -36,6 +36,7 @@ use Neos\Neos\Domain\Import\DoctrineMigrateProcessor;
 use Neos\Neos\Domain\Import\LiveWorkspaceCreationProcessor;
 use Neos\Neos\Domain\Import\LiveWorkspaceIsEmptyProcessorFactory;
 use Neos\Neos\Domain\Import\SiteCreationProcessor;
+use Neos\Neos\Domain\Repository\DomainRepository;
 use Neos\Neos\Domain\Repository\SiteRepository;
 
 #[Flow\Scope('singleton')]
@@ -45,6 +46,7 @@ final readonly class SiteImportService
         private ContentRepositoryRegistry $contentRepositoryRegistry,
         private DoctrineService $doctrineService,
         private SiteRepository $siteRepository,
+        private DomainRepository $domainRepository,
         private AssetRepository $assetRepository,
         private ResourceRepository $resourceRepository,
         private ResourceManager $resourceManager,
@@ -73,7 +75,7 @@ final readonly class SiteImportService
             'Run doctrine migrations' => new DoctrineMigrateProcessor($this->doctrineService),
             'Setup content repository' => $this->contentRepositoryRegistry->buildService($contentRepositoryId, new ContentRepositorySetupProcessorFactory()),
             'Verify Live workspace does not exist yet' => $this->contentRepositoryRegistry->buildService($contentRepositoryId, new LiveWorkspaceIsEmptyProcessorFactory()),
-            'Create Neos sites' => new SiteCreationProcessor($this->siteRepository, $this->persistenceManager),
+            'Create Neos sites' => new SiteCreationProcessor($this->siteRepository, $this->domainRepository, $this->persistenceManager),
             'Create Live workspace' => new LiveWorkspaceCreationProcessor($contentRepository, $this->workspaceService),
             'Import events' => $this->contentRepositoryRegistry->buildService($contentRepositoryId, new EventStoreImportProcessorFactory(WorkspaceName::forLive(), keepEventIds: true)),
             'Import assets' => new AssetRepositoryImportProcessor($this->assetRepository, $this->resourceRepository, $this->resourceManager, $this->persistenceManager),

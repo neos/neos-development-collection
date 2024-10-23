@@ -54,8 +54,9 @@ final readonly class SiteExportProcessor implements ProcessorInterface, ContentR
      */
     private function getSiteData(): array
     {
+        $sites = $this->findSites($this->workspaceName);
         $siteData = [];
-        foreach ($this->findSites($this->workspaceName) as $site) {
+        foreach ($sites as $site) {
             $siteData[] = [
                 "name" => $site->getName(),
                 "nodeName" => $site->getNodeName()->value,
@@ -79,17 +80,18 @@ final readonly class SiteExportProcessor implements ProcessorInterface, ContentR
 
     /**
      * @param WorkspaceName $workspaceName
-     * @return \Traversable<Site>
+     * @return Site[]
      */
-    private function findSites(WorkspaceName $workspaceName): \Traversable
+    private function findSites(WorkspaceName $workspaceName): array
     {
         $contentGraph = $this->contentRepository->getContentGraph($workspaceName);
         $sitesNodeAggregate = $contentGraph->findRootNodeAggregateByType(NodeTypeNameFactory::forSites());
         if ($sitesNodeAggregate === null) {
-            return;
+            return [];
         }
 
         $siteNodeAggregates = $contentGraph->findChildNodeAggregates($sitesNodeAggregate->nodeAggregateId);
+        $sites = [];
         foreach ($siteNodeAggregates as $siteNodeAggregate) {
             $siteNodeName = $siteNodeAggregate->nodeName?->value;
             if ($siteNodeName === null) {
@@ -99,7 +101,8 @@ final readonly class SiteExportProcessor implements ProcessorInterface, ContentR
             if ($site === null) {
                 continue;
             }
-            yield $site;
+            $sites[] = $site;
         }
+        return $sites;
     }
 }

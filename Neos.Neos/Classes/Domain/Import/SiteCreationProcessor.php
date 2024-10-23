@@ -23,6 +23,7 @@ use Neos\ContentRepository\Export\Severity;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Neos\Domain\Model\Domain;
 use Neos\Neos\Domain\Model\Site;
+use Neos\Neos\Domain\Repository\DomainRepository;
 use Neos\Neos\Domain\Repository\SiteRepository;
 
 /**
@@ -35,6 +36,7 @@ final readonly class SiteCreationProcessor implements ProcessorInterface
 {
     public function __construct(
         private SiteRepository $siteRepository,
+        private DomainRepository $domainRepository,
         private PersistenceManagerInterface $persistenceManager
     ) {
     }
@@ -51,7 +53,7 @@ final readonly class SiteCreationProcessor implements ProcessorInterface
         } else {
             $sites = self::extractSitesFromEventStream($context);
         }
-        $persistAllIsRequired = false;
+
         /** @var SiteShape $site */
         foreach ($sites as $site) {
             $context->dispatch(Severity::NOTICE, "Creating site \"{$site['name']}\"");
@@ -66,7 +68,8 @@ final readonly class SiteCreationProcessor implements ProcessorInterface
             $siteInstance->setSiteResourcesPackageKey($site['siteResourcesPackageKey']);
             $siteInstance->setState(($site['online'] ?? false) ? Site::STATE_OFFLINE : Site::STATE_ONLINE);
             $siteInstance->setName($site['name']);
-
+            $this->siteRepository->add($siteInstance);
+            $this->persistenceManager->persistAll();
             foreach ($site['domains'] ?? [] as $domain) {
                 $domainInstance = new Domain();
                 $domainInstance->setSite($siteInstance);
@@ -74,16 +77,13 @@ final readonly class SiteCreationProcessor implements ProcessorInterface
                 $domainInstance->setPort($domain['port'] ?? null);
                 $domainInstance->setScheme($domain['scheme'] ?? null);
                 $domainInstance->setActive($domain['active'] ?? false);
+                $this->domainRepository->add($domainInstance);
                 if ($domain['primary'] ?? false) {
                     $siteInstance->setPrimaryDomain($domainInstance);
+                    $this->siteRepository->update($siteInstance);
                 }
+                $this->persistenceManager->persistAll();
             }
-
-            $this->siteRepository->add($siteInstance);
-            $persistAllIsRequired = true;
-        }
-        if ($persistAllIsRequired) {
-            $this->persistenceManager->persistAll();
         }
     }
 

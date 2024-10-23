@@ -14,27 +14,31 @@ declare(strict_types=1);
 
 namespace Neos\Neos\Command;
 
+use Neos\ContentRepository\Core\ContentRepository;
+use Neos\ContentRepository\Core\Service\ContentStreamPrunerFactory;
+use Neos\ContentRepository\Core\Service\WorkspaceMaintenanceServiceFactory;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeNameIsAlreadyCovered;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeTypeNotFound;
-use Neos\ContentRepository\Export\ProcessorEventInterface;
+use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepository\Export\Severity;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
+use Neos\ContentRepositoryRegistry\Service\ProjectionReplayServiceFactory;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Cli\CommandController;
 use Neos\Flow\Cli\Exception\StopCommandException;
-use Neos\Flow\ObjectManagement\DependencyInjection\DependencyProxy;
 use Neos\Flow\Package\PackageManager;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Neos\Domain\Exception\SiteNodeNameIsAlreadyInUseByAnotherSite;
 use Neos\Neos\Domain\Exception\SiteNodeTypeIsInvalid;
 use Neos\Neos\Domain\Model\Site;
+use Neos\Neos\Domain\Repository\DomainRepository;
 use Neos\Neos\Domain\Repository\SiteRepository;
 use Neos\Neos\Domain\Service\NodeTypeNameFactory;
 use Neos\Neos\Domain\Service\SiteExportService;
 use Neos\Neos\Domain\Service\SiteImportService;
-use Neos\Neos\Domain\Service\SiteImportServiceFactory;
 use Neos\Neos\Domain\Service\SiteService;
+use Neos\Neos\Domain\Service\WorkspaceService;
 use Neos\Utility\Files;
 
 /**
@@ -49,6 +53,12 @@ class SiteCommandController extends CommandController
      * @var SiteRepository
      */
     protected $siteRepository;
+
+    /**
+     * @Flow\Inject
+     * @var DomainRepository
+     */
+    protected $domainRepository;
 
     /**
      * @Flow\Inject
@@ -85,6 +95,18 @@ class SiteCommandController extends CommandController
      * @var SiteExportService
      */
     protected $siteExportService;
+
+    /**
+     * @Flow\Inject
+     * @var WorkspaceService
+     */
+    protected $workspaceService;
+
+    /**
+     * @Flow\Inject(lazy=false)
+     * @var ProjectionReplayServiceFactory
+     */
+    protected $projectionServiceFactory;
 
     /**
      * Create a new site
@@ -253,31 +275,56 @@ class SiteCommandController extends CommandController
     }
 
     /**
-     * Remove site with content and related data (with globbing)
+     * This will completely prune the data of the specified content repository and remove all site-records.
      *
-     * In the future we need some more sophisticated cleanup.
-     *
-     * @param string $siteNode Name for site root nodes to clear only content of this sites (globbing is supported)
+     * @param string $contentRepository Name of the content repository where the data should be pruned from.
+     * @param bool $force Prune the cr without confirmation. This cannot be reverted!
      * @return void
      */
-    public function pruneCommand($siteNode)
+    public function pruneAllCommand(string $contentRepository = 'default', bool $force = false): void
     {
-        $sites = $this->findSitesByNodeNamePattern($siteNode);
-        if (empty($sites)) {
-            $this->outputLine('<error>No Site found for pattern "%s".</error>', [$siteNode]);
-            // Help the user a little about what he needs to provide as a parameter here
-            $this->outputLine('To find out which sites you have, use the <b>site:list</b> command.');
-            $this->outputLine('The site:prune command expects the "Node name" from the site list as a parameter.');
-            $this->outputLine('If you want to delete all sites, you can run <b>site:prune \'*\'</b>.');
-            $this->quit(1);
+        if (!$force && !$this->output->askConfirmation(sprintf('> This will prune your content repository "%s". Are you sure to proceed? (y/n) ', $contentRepository), false)) {
+            $this->outputLine('<comment>Abort.</comment>');
+            return;
         }
+        $contentRepositoryId = ContentRepositoryId::fromString($contentRepository);
+
+        // find and remove all sites
+        $sites = $this->findAllSites(
+            $this->contentRepositoryRegistry->get($contentRepositoryId),
+            WorkspaceName::forLive()
+        );
         foreach ($sites as $site) {
             $this->siteService->pruneSite($site);
-            $this->outputLine(
-                'Site with root "%s" matched pattern "%s" and has been removed.',
-                [$site->getNodeName(), $siteNode]
-            );
         }
+
+        // remove cr data
+        $contentStreamPruner = $this->contentRepositoryRegistry->buildService(
+            $contentRepositoryId,
+            new ContentStreamPrunerFactory()
+        );
+        $workspaceMaintenanceService = $this->contentRepositoryRegistry->buildService(
+            $contentRepositoryId,
+            new WorkspaceMaintenanceServiceFactory()
+        );
+
+        $projectionService = $this->contentRepositoryRegistry->buildService(
+            $contentRepositoryId,
+            $this->projectionServiceFactory
+        );
+
+        // remove the workspace metadata and roles for this cr
+        $this->workspaceService->pruneRoleAsssignments($contentRepositoryId);
+        $this->workspaceService->pruneWorkspaceMetadata($contentRepositoryId);
+
+        // reset the events table
+        $contentStreamPruner->pruneAll();
+        $workspaceMaintenanceService->pruneAll();
+
+        // reset the projections state
+        $projectionService->resetAllProjections();
+
+        $this->outputLine('<success>Done.</success>');
     }
 
     /**
@@ -361,5 +408,36 @@ class SiteCommandController extends CommandController
                 return fnmatch($siteNodePattern, $site->getNodeName()->value);
             }
         );
+    }
+
+    /**
+     * Find all sites in a cr by finding the children of the sites node
+     *
+     * @param ContentRepository $contentRepository
+     * @param WorkspaceName $workspaceName
+     * @return Site[]
+     */
+    protected function findAllSites(ContentRepository $contentRepository, WorkspaceName $workspaceName): array
+    {
+        $contentGraph = $contentRepository->getContentGraph($workspaceName);
+        $sitesNodeAggregate = $contentGraph->findRootNodeAggregateByType(NodeTypeNameFactory::forSites());
+        if ($sitesNodeAggregate === null) {
+            return [];
+        }
+
+        $siteNodeAggregates = $contentGraph->findChildNodeAggregates($sitesNodeAggregate->nodeAggregateId);
+        $sites = [];
+        foreach ($siteNodeAggregates as $siteNodeAggregate) {
+            $siteNodeName = $siteNodeAggregate->nodeName?->value;
+            if ($siteNodeName === null) {
+                continue;
+            }
+            $site = $this->siteRepository->findOneByNodeName($siteNodeName);
+            if ($site === null) {
+                continue;
+            }
+            $sites[] = $site;
+        }
+        return $sites;
     }
 }

@@ -27,7 +27,6 @@ use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\Annotations as Flow;
 use Neos\Media\Domain\Repository\AssetRepository;
 use Neos\Neos\AssetUsage\AssetUsageService;
-use Neos\Neos\Domain\Export\SiteExportProcessor;
 use Neos\Neos\Domain\Export\SiteExportProcessorFactory;
 use Neos\Neos\Domain\Repository\SiteRepository;
 
