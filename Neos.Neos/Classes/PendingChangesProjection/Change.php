@@ -36,7 +36,8 @@ final class Change
     public function __construct(
         public ContentStreamId $contentStreamId,
         public NodeAggregateId $nodeAggregateId,
-        public OriginDimensionSpacePoint $originDimensionSpacePoint,
+        // null for aggregate scoped changes (e.g. NodeAggregateNameWasChanged, NodeAggregateTypeWasChanged)
+        public ?OriginDimensionSpacePoint $originDimensionSpacePoint,
         public bool $created,
         public bool $changed,
         public bool $moved,
