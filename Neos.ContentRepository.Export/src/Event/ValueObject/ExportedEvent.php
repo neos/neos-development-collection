@@ -26,7 +26,7 @@ final readonly class ExportedEvent implements \JsonSerializable
     {
         $payload = \json_decode($event->data->value, true, 512, JSON_THROW_ON_ERROR);
         // unset content stream id as this is overwritten during import
-        unset($payload['contentStreamId']);
+        unset($payload['contentStreamId'], $payload['workspaceName']);
         return new self(
             $event->id->value,
             $event->type->value,

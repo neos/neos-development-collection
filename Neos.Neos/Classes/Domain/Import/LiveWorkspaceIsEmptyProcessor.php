@@ -37,7 +37,7 @@ final readonly class LiveWorkspaceIsEmptyProcessor implements ProcessorInterface
         $context->dispatch(Severity::NOTICE, 'Ensures empty live workspace');
 
         if ($this->workspaceHasEvents(WorkspaceName::forLive())) {
-            throw new \RuntimeException('Live workspace already contains events please run "cr:prune" before importing.');
+            throw new \RuntimeException('Live workspace already contains events please run "site:pruneAll" before importing.');
         }
     }
 

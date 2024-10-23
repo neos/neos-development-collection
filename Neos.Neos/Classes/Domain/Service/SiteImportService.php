@@ -25,6 +25,8 @@ use Neos\ContentRepository\Export\ProcessorInterface;
 use Neos\ContentRepository\Export\Processors\AssetRepositoryImportProcessor;
 use Neos\ContentRepository\Export\Severity;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
+use Neos\ContentRepositoryRegistry\Service\ProjectionCatchupService;
+use Neos\ContentRepositoryRegistry\Service\ProjectionCatchupServiceFactory;
 use Neos\ContentRepositoryRegistry\Service\ProjectionReplayServiceFactory;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Persistence\Doctrine\Service as DoctrineService;
@@ -52,7 +54,7 @@ final readonly class SiteImportService
         private ResourceManager $resourceManager,
         private PersistenceManagerInterface $persistenceManager,
         private WorkspaceService $workspaceService,
-        private ProjectionReplayServiceFactory $projectionReplayServiceFactory,
+        private ProjectionCatchupServiceFactory $projectionCatchupServiceFactory,
     ) {
     }
 
@@ -79,7 +81,7 @@ final readonly class SiteImportService
             'Create Live workspace' => new LiveWorkspaceCreationProcessor($contentRepository, $this->workspaceService),
             'Import events' => $this->contentRepositoryRegistry->buildService($contentRepositoryId, new EventStoreImportProcessorFactory(WorkspaceName::forLive(), keepEventIds: true)),
             'Import assets' => new AssetRepositoryImportProcessor($this->assetRepository, $this->resourceRepository, $this->resourceManager, $this->persistenceManager),
-            'Replay all projections' => $this->contentRepositoryRegistry->buildService($contentRepositoryId, $this->projectionReplayServiceFactory),
+            'Catchup all projections' => $this->contentRepositoryRegistry->buildService($contentRepositoryId, $this->projectionCatchupServiceFactory),
         ];
 
         foreach ($processors as $processorLabel => $processor) {

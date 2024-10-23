@@ -178,19 +178,6 @@ class SiteCommandController extends CommandController
      */
     public function importAllCommand(string $packageKey = null, string $path = null, string $contentRepository = 'default', bool $verbose = false): void
     {
-        $exceedingArguments = $this->request->getExceedingArguments();
-        if (isset($exceedingArguments[0]) && $packageKey === null && $path === null) {
-            if (file_exists($exceedingArguments[0])) {
-                $path = $exceedingArguments[0];
-            } elseif ($this->packageManager->isPackageAvailable($exceedingArguments[0])) {
-                $packageKey = $exceedingArguments[0];
-            }
-        }
-        if ($packageKey === null && $path === null) {
-            $this->outputLine('<error>You have to specify either <em>--package-key</em> or <em>--filename</em></error>');
-            $this->quit(1);
-        }
-
         // Since this command uses a lot of memory when large sites are imported, we warn the user to watch for
         // the confirmation of a successful import.
         $this->outputLine('<b>This command can use a lot of memory when importing sites with many resources.</b>');
@@ -200,25 +187,16 @@ class SiteCommandController extends CommandController
         $this->outputLine('Starting import...');
         $this->outputLine('---');
 
+        $path = $this->determineTargetPath($packageKey, $path);
+
         $contentRepositoryId = ContentRepositoryId::fromString($contentRepository);
-        $onProcessor = function (string $processorLabel) {
-            $this->outputLine('<info>%s...</info>', [$processorLabel]);
-        };
-        $onMessage = function (Severity $severity, string $message) use ($verbose) {
-            if (!$verbose && $severity === Severity::NOTICE) {
-                return;
-            }
-            $this->outputLine(match ($severity) {
-                Severity::NOTICE => $message,
-                Severity::WARNING => sprintf('<error>Warning: %s</error>', $message),
-                Severity::ERROR => sprintf('<error>Error: %s</error>', $message),
-            });
-        };
-        if ($path === null) {
-            $package = $this->packageManager->getPackage($packageKey);
-            $path = Files::concatenatePaths([$package->getPackagePath(), 'Resources/Private/Content']);
-        }
-        $this->siteImportService->importFromPath($contentRepositoryId, $path, $onProcessor, $onMessage);
+
+        $this->siteImportService->importFromPath(
+            $contentRepositoryId,
+            $path,
+            $this->createOnProcessorClosure(),
+            $this->createOnMessageClosure($verbose)
+        );
     }
 
     /**
@@ -237,41 +215,17 @@ class SiteCommandController extends CommandController
      */
     public function exportAllCommand(string $packageKey = null, string $path = null, string $contentRepository = 'default', bool $verbose = false): void
     {
-        $exceedingArguments = $this->request->getExceedingArguments();
-        if (isset($exceedingArguments[0]) && $packageKey === null && $path === null) {
-            if (file_exists($exceedingArguments[0])) {
-                $path = $exceedingArguments[0];
-            } elseif ($this->packageManager->isPackageAvailable($exceedingArguments[0])) {
-                $packageKey = $exceedingArguments[0];
-            }
-        }
-        if ($packageKey === null && $path === null) {
-            $this->outputLine('<error>You have to specify either <em>--package-key</em> or <em>--filename</em></error>');
-            $this->quit(1);
-        }
-
+        $path = $this->determineTargetPath($packageKey, $path);
         $contentRepositoryId = ContentRepositoryId::fromString($contentRepository);
-        $onProcessor = function (string $processorLabel) {
-            $this->outputLine('<info>%s...</info>', [$processorLabel]);
-        };
-        $onMessage = function (Severity $severity, string $message) use ($verbose) {
-            if (!$verbose && $severity === Severity::NOTICE) {
-                return;
-            }
-            $this->outputLine(match ($severity) {
-                Severity::NOTICE => $message,
-                Severity::WARNING => sprintf('<error>Warning: %s</error>', $message),
-                Severity::ERROR => sprintf('<error>Error: %s</error>', $message),
-            });
-        };
-        if ($path === null) {
-            $package = $this->packageManager->getPackage($packageKey);
-            $path = Files::concatenatePaths([$package->getPackagePath(), 'Resources/Private/Content']);
-        }
         if (file_exists($path) === false) {
             Files::createDirectoryRecursively($path);
         }
-        $this->siteExportService->exportToPath($contentRepositoryId, $path, $onProcessor, $onMessage);
+        $this->siteExportService->exportToPath(
+            $contentRepositoryId,
+            $path,
+            $this->createOnProcessorClosure(),
+            $this->createOnMessageClosure($verbose)
+        );
     }
 
     /**
@@ -439,5 +393,48 @@ class SiteCommandController extends CommandController
             $sites[] = $site;
         }
         return $sites;
+    }
+
+    protected function determineTargetPath(?string $packageKey, ?string $path): string
+    {
+        $exceedingArguments = $this->request->getExceedingArguments();
+        if (isset($exceedingArguments[0]) && $packageKey === null && $path === null) {
+            if (file_exists($exceedingArguments[0])) {
+                $path = $exceedingArguments[0];
+            } elseif ($this->packageManager->isPackageAvailable($exceedingArguments[0])) {
+                $packageKey = $exceedingArguments[0];
+            }
+        }
+        if ($packageKey === null && $path === null) {
+            $this->outputLine('<error>You have to specify either <em>--package-key</em> or <em>--filename</em></error>');
+            $this->quit(1);
+        }
+        if ($path === null) {
+            $package = $this->packageManager->getPackage($packageKey);
+            $path = Files::concatenatePaths([$package->getPackagePath(), 'Resources/Private/Content']);
+        }
+        return $path;
+    }
+
+    protected function createOnProcessorClosure(): \Closure
+    {
+        $onProcessor = function (string $processorLabel) {
+            $this->outputLine('<info>%s...</info>', [$processorLabel]);
+        };
+        return $onProcessor;
+    }
+
+    protected function createOnMessageClosure(bool $verbose): \Closure
+    {
+        return function (Severity $severity, string $message) use ($verbose) {
+            if (!$verbose && $severity === Severity::NOTICE) {
+                return;
+            }
+            $this->outputLine(match ($severity) {
+                Severity::NOTICE => $message,
+                Severity::WARNING => sprintf('<error>Warning: %s</error>', $message),
+                Severity::ERROR => sprintf('<error>Error: %s</error>', $message),
+            });
+        };
     }
 }
