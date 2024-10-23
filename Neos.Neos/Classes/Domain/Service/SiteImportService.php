@@ -25,6 +25,7 @@ use Neos\ContentRepository\Export\ProcessorInterface;
 use Neos\ContentRepository\Export\Processors\AssetRepositoryImportProcessor;
 use Neos\ContentRepository\Export\Severity;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
+use Neos\ContentRepositoryRegistry\Service\ProjectionReplayServiceFactory;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Persistence\Doctrine\Service as DoctrineService;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
@@ -49,6 +50,7 @@ final readonly class SiteImportService
         private ResourceManager $resourceManager,
         private PersistenceManagerInterface $persistenceManager,
         private WorkspaceService $workspaceService,
+        private ProjectionReplayServiceFactory $projectionReplayServiceFactory,
     ) {
     }
 
@@ -75,7 +77,9 @@ final readonly class SiteImportService
             'Create Live workspace' => new LiveWorkspaceCreationProcessor($contentRepository, $this->workspaceService),
             'Import events' => $this->contentRepositoryRegistry->buildService($contentRepositoryId, new EventStoreImportProcessorFactory(WorkspaceName::forLive(), keepEventIds: true)),
             'Import assets' => new AssetRepositoryImportProcessor($this->assetRepository, $this->resourceRepository, $this->resourceManager, $this->persistenceManager),
+            'Replay all projections' => $this->contentRepositoryRegistry->buildService($contentRepositoryId, $this->projectionReplayServiceFactory),
         ];
+
         foreach ($processors as $processorLabel => $processor) {
             ($onProcessor)($processorLabel);
             $processor->run($context);
