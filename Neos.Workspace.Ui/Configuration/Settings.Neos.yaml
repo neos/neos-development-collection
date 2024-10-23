@@ -13,6 +13,7 @@ Neos:
               javaScripts:
                 'HtmxLibrary': 'resource://Neos.Workspace.Ui/Public/Scripts/htmx.min.js'
                 'Module': 'resource://Neos.Workspace.Ui/Public/Scripts/Module.js'
+                'Review': 'resource://Neos.Workspace.Ui/Public/Scripts/Review.js'
               styleSheets:
                 'Module': 'resource://Neos.Workspace.Ui/Public/Styles/Module.css'
 

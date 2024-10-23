@@ -1,15 +1,8 @@
-- requestFilter: 'isPackage("Neos.Workspace.Ui") && isController("Workspace") && isFormat("html") && isAction("show")'
-  viewObjectName: 'Neos\FluidAdaptor\View\StandaloneView'
-  options:
-    layoutRootPathPattern: 'resource://Neos.Neos/Private/Layouts'
-    partialRootPaths:
-      - 'resource://Neos.Workspace.Ui/Private/Partials'
-      - 'resource://Neos.Neos/Private/Partials'
-
-- requestFilter: 'isPackage("Neos.Workspace.Ui") && isController("Workspace") && !isAction("show")'
+- requestFilter: 'isPackage("Neos.Workspace.Ui") && isController("Workspace")'
   viewObjectName: 'Neos\Fusion\View\FusionView'
   options:
     fusionPathPatterns:
+      - 'resource://Neos.Neos/Private/Fusion'
       - 'resource://Neos.Fusion/Private/Fusion'
       - 'resource://Neos.Fusion.Form/Private/Fusion'
       - 'resource://Neos.Workspace.Ui/Private/Fusion'

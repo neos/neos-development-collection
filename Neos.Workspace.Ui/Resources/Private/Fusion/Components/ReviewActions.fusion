@@ -1,0 +1,92 @@
+##
+# Renders a document for review
+#
+prototype(Neos.Workspace.Ui:Component.ReviewActions) < prototype(Neos.Fusion:Component) {
+
+  canPublishToBaseWorkspace = ${canPublishToBaseWorkspace}
+  selectedWorkspaceName = ${selectedWorkspaceName}
+  baseWorkspaceLabel = ${baseWorkspaceLabel}
+
+  @private {
+    i18n = ${I18n.id('').source('Main').package('Neos.Workspace.Ui')}
+    indexWorkspaceUri = Neos.Fusion:ActionUri {
+      action = 'index'
+
+    }
+    discardWorkspaceUri = Neos.Fusion:ActionUri {
+      action = 'discardWorkspace'
+      arguments {
+        workspace = ${props.selectedWorkspaceName}
+      }
+    }
+    publishWorkspaceUri = Neos.Fusion:ActionUri {
+      action = 'publishWorkspace'
+      arguments {
+        workspace = ${props.selectedWorkspaceName}
+      }
+    }
+    discardSelectedChanges = Neos.Fusion:ActionUri {
+      action = 'PublishOrDiscardNodes'
+      arguments {
+        action = 'discard'
+        workspace = ${props.selectedWorkspaceName}
+      }
+    }
+    publishSelectedChangesTo = Neos.Fusion:ActionUri {
+      action = 'PublishOrDiscardNodes'
+      arguments {
+        action = 'publish'
+        workspace = ${props.selectedWorkspaceName}
+      }
+    }
+
+  }
+
+  renderer = afx`
+      <div class="neos-footer">
+        <div class="neos-pull-left">
+          <Neos.Workspace.Ui:Component.Button
+            icon="fas fa-chevron-left"
+            label={props.i18n.id('back')}
+            attributes.hx-get={private.indexWorkspaceUri}
+            attributes.hx-target="body"
+            attributes.hx-swap="innerHTML"
+          />
+        </div>
+        <div class="neos-pull-right">
+          <Neos.Workspace.Ui:Component.Button
+            label={private.i18n.id('workspaces.discardAllChanges')}
+            icon="fas fa-trash-alt icon-white"
+            isDanger={true}
+            attributes.hx-get={private.discardWorkspaceUri}
+            attributes.hx-target="body"
+          />
+          <Neos.Workspace.Ui:Component.Button
+            @if.canPublishToBaseWorkspace={props.canPublishToBaseWorkspace}
+            label={private.i18n.id('workspaces.publishAllChangesTo').arguments([props.baseWorkspaceLabel])}
+            icon="fas fa-check-double icon-white"
+            isPrimary={true}
+            attributes.hx-get={private.publishWorkspaceUri}
+            attributes.hx-target="body"
+          />
+          <Neos.Workspace.Ui:Component.Button
+            label={private.i18n.id('workspaces.discardSelectedChanges')}
+            icon="fas fa-trash-alt icon-white"
+            isDanger={true}
+            attributes.hx-get={private.discardSelectedChanges}
+            attributes.hx-target="body"
+          />
+          <Neos.Workspace.Ui:Component.Button
+            @if.canPublishToBaseWorkspace={props.canPublishToBaseWorkspace}
+            label={I18n.id('workspaces.publishSelectedChangesTo')}
+            icon="fas fa-check icon-white"
+            isDanger={true}
+            attributes.hx-get={private.publishSelectedChangesTo}
+            attributes.hx-target="body"
+          />
+
+
+        </div>
+      </div>
+  `
+}

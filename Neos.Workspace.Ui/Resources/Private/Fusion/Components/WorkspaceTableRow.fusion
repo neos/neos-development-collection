@@ -55,9 +55,8 @@ prototype(Neos.Workspace.Ui:Component.WorkspaceTableRow) < prototype(Neos.Fusion
       // TODO removed internal = 'users'
       with-acl = 'user-plus'
     }
-    showWorkspaceUri = Neos.Fusion:ActionUri {
-      action = 'show'
-      format = 'html'
+    reviewWorkspaceUri = Neos.Fusion:ActionUri {
+      action = 'review'
       arguments {
         workspace = ${props.workspaceListItem.name}
       }
@@ -124,7 +123,7 @@ prototype(Neos.Workspace.Ui:Component.WorkspaceTableRow) < prototype(Neos.Fusion
           label={private.i18n.id('workspaces.reviewWorkspace.label')}
           title={private.i18n.id(props.workspaceListItem.pendingChanges.total ? 'workspaces.reviewWorkspace' : 'workspaces.reviewWorkspace.noChanges').arguments([props.workspaceListItem.title])}
           attributes.disabled={false && props.workspaceListItem.pendingChanges.total == 0}
-          attributes.hx-get={private.showWorkspaceUri}
+          attributes.hx-get={private.reviewWorkspaceUri}
           attributes.hx-target="body"
         />
         <Neos.Workspace.Ui:Component.Button
