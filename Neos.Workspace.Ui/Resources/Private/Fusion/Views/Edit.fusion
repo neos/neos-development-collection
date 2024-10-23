@@ -1,18 +1,15 @@
 Neos.Workspace.Ui.WorkspaceController.edit = Neos.Fusion:Component {
-  disableBaseWorkspaceSelector = ${disableBaseWorkspaceSelector}
-  /// array<Neos\ContentRepository\Core\Projection\Workspace\Workspace>
-  baseWorkspaceOptions = ${baseWorkspaceOptions}
-  /// \Neos\Workspace\Ui\ViewModel\EditWorkspaceDto
-  workspace = ${workspace}
+  /// \Neos\Workspace\Ui\ViewModel\EditWorkspaceFormData
+  editWorkspaceFormData = ${editWorkspaceFormData}
 
   renderer = afx`
     <Neos.Workspace.Ui:Component.Modal.Edit
-      workspaceName={workspace.workspaceName.value}
-      workspaceTitle={workspace.workspaceTitle.value}
-      workspaceDescription={workspace.workspaceDescription.value}
+      workspaceName={props.editWorkspaceFormData.workspaceName.value}
+      workspaceTitle={props.editWorkspaceFormData.workspaceTitle.value}
+      workspaceDescription={props.editWorkspaceFormData.workspaceDescription.value}
 
-      disableBaseWorkspaceSelector={props.disableBaseWorkspaceSelector}
-      baseWorkspaceOptions={props.baseWorkspaceOptions}
+      workspaceHasChanges={props.editWorkspaceFormData.workspaceHasChanges}
+      baseWorkspaceOptions={props.editWorkspaceFormData.baseWorkspaceOptions}
     />
   `
 }

@@ -20,12 +20,18 @@ use Neos\Neos\Domain\Model\WorkspaceDescription;
 use Neos\Neos\Domain\Model\WorkspaceTitle;
 
 #[Flow\Proxy(false)]
-final readonly class EditWorkspaceDto
+final readonly class EditWorkspaceFormData
 {
     public function __construct(
         public WorkspaceName $workspaceName,
         public WorkspaceTitle $workspaceTitle,
         public WorkspaceDescription $workspaceDescription,
+        public bool $workspaceHasChanges,
+        /**
+         * Options for the baseWorkspace selector where the key is the workspace name and the value is the workspace title.
+         * @var array<string, string>
+         */
+        public array $baseWorkspaceOptions,
     )
     {
     }

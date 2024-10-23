@@ -231,6 +231,9 @@
       <trans-unit id="workspaces.cantEditBecauseWorkspaceContainsChanges">
         <source>Your personal workspace contains changes, please publish or discard them first.</source>
       </trans-unit>
+      <trans-unit id="workspaces.cantChangeBaseWorkspaceBecauseWorkspaceContainsChanges">
+        <source>You cannot change the base workspace of workspace with unpublished changes.</source>
+      </trans-unit>
       <group id="workspaces.workspaceCannotBeDeletedBecauseOfUnpublishedNodes" restype="x-gettext-plurals">
         <trans-unit id="workspaces.workspaceCannotBeDeletedBecauseOfUnpublishedNodes[0]">
           <source>Did not delete workspace "{0}" because it currently contains {1} node.</source>

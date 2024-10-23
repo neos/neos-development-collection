@@ -65,7 +65,7 @@ use Neos\Neos\FrontendRouting\NodeUriBuilderFactory;
 use Neos\Neos\FrontendRouting\SiteDetection\SiteDetectionResult;
 use Neos\Neos\PendingChangesProjection\ChangeFinder;
 use Neos\Neos\Utility\NodeTypeWithFallbackProvider;
-use Neos\Workspace\Ui\ViewModel\EditWorkspaceDto;
+use Neos\Workspace\Ui\ViewModel\EditWorkspaceFormData;
 use Neos\Workspace\Ui\ViewModel\PendingChanges;
 use Neos\Workspace\Ui\ViewModel\WorkspaceListItem;
 use Neos\Workspace\Ui\ViewModel\WorkspaceListItems;
@@ -269,26 +269,15 @@ class WorkspaceController extends AbstractModuleController
 
         $workspaceMetadata = $this->workspaceService->getWorkspaceMetadata($contentRepositoryId, $workspace->workspaceName);
 
-        $workspaceDto = new EditWorkspaceDto(
+        $editWorkspaceDto = new EditWorkspaceFormData(
             workspaceName: $workspace->workspaceName,
             workspaceTitle: $workspaceMetadata->title,
             workspaceDescription: $workspaceMetadata->description,
+            workspaceHasChanges: $this->computePendingChanges($workspace, $contentRepository)->total > 0,
+            baseWorkspaceOptions: $this->prepareBaseWorkspaceOptions($contentRepository, $workspaceName),
         );
 
-
-        $this->view->assign('workspace', $workspaceDto);
-        $this->view->assign('baseWorkspaceOptions', $this->prepareBaseWorkspaceOptions($contentRepository, $workspaceName));
-        // TODO
-        $this->view->assign('disableBaseWorkspaceSelector', true);
-
-        // $this->publishingService->getUnpublishedNodesCount($workspace) > 0);
-
-        // TODO
-        // This has been here: $this->userService->currentUserCanTransferOwnershipOfWorkspace($workspace)
-        // We need to calc this from the new permissions model
-        $this->view->assign('showOwnerSelector', true);
-
-        $this->view->assign('ownerOptions', $this->prepareOwnerOptions());
+        $this->view->assign('editWorkspaceFormData', $editWorkspaceDto);
     }
 
     /**
@@ -304,6 +293,7 @@ class WorkspaceController extends AbstractModuleController
         WorkspaceName $workspaceName,
         WorkspaceTitle $title,
         WorkspaceDescription $description,
+        WorkspaceName $baseWorkspace,
     ): void {
         $contentRepositoryId = SiteDetectionResult::fromRequest($this->request->getHttpRequest())->contentRepositoryId;
         $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryId);
@@ -321,6 +311,8 @@ class WorkspaceController extends AbstractModuleController
             );
             $this->throwStatus(404, 'Workspace does not exist');
         }
+
+        // Update Metadata
         $this->workspaceService->setWorkspaceTitle(
             $contentRepositoryId,
             $workspaceName,
@@ -331,6 +323,14 @@ class WorkspaceController extends AbstractModuleController
             $workspaceName,
             $description,
         );
+
+        // Update Base Workspace
+        $this->workspaceService->setBaseWorkspace(
+            $contentRepositoryId,
+            $workspaceName,
+            $baseWorkspace,
+        );
+
         $this->addFlashMessage(
             $this->getModuleLabel(
                 'workspaces.workspaceHasBeenUpdated',
@@ -338,9 +338,6 @@ class WorkspaceController extends AbstractModuleController
             )
         );
 
-        $contentRepositoryId = SiteDetectionResult::fromRequest($this->request->getHttpRequest())
-            ->contentRepositoryId;
-        $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryId);
         $userWorkspace = $this->getUserWorkspace($contentRepository);
         $workspaceListItems = $this->getWorkspaceListItems($userWorkspace, $contentRepository);
 

@@ -1,16 +1,12 @@
 prototype(Neos.Workspace.Ui:Component.Modal.Edit) < prototype(Neos.Fusion:Component) {
-  /// bool
-  disableBaseWorkspaceSelector = true
-  /// array<Neos\ContentRepository\Core\Projection\Workspace\Workspace>
+  workspaceHasChanges = false
+  /// array<string, string>
   baseWorkspaceOptions = ${[]}
 
   workspaceName = ''
   workspaceTitle = ''
   workspaceDescription = ''
   baseWorkspaceName = ''
-
-  isPrivateWorkspace = false
-  isInternalWorkspace = false
 
   @private {
     i18n = ${I18n.id('').source('Main').package('Neos.Workspace.Ui')}
@@ -88,7 +84,7 @@ prototype(Neos.Workspace.Ui:Component.Modal.Edit) < prototype(Neos.Fusion:Compon
               class="neos-control-group"
             >
               <Neos.Fusion.Form:Select
-                attributes.disabled={props.disableBaseWorkspaceSelector}
+                attributes.disabled={props.workspaceHasChanges}
               >
                 <Neos.Fusion:Loop items={props.baseWorkspaceOptions} itemName="workspaceTitle" itemKey="workspaceName">
                   <Neos.Fusion.Form:Select.Option
@@ -99,6 +95,16 @@ prototype(Neos.Workspace.Ui:Component.Modal.Edit) < prototype(Neos.Fusion:Compon
                   </Neos.Fusion.Form:Select.Option>
                 </Neos.Fusion:Loop>
               </Neos.Fusion.Form:Select>
+              <p
+                style={{ marginTop: '.5em' }}
+                @if.workspaceHasChanges={props.workspaceHasChanges}
+              >
+                <i
+                  class="fas fa-exclamation-triangle"
+                  style={{ color: 'var(--warningText)', marginRight: '.5em' }}
+                ></i>{' '}
+                {private.i18n.id('workspaces.cantChangeBaseWorkspaceBecauseWorkspaceContainsChanges')}
+              </p>
             </Neos.Fusion.Form:Neos.BackendModule.FieldContainer>
           </fieldset>
           <fieldset>

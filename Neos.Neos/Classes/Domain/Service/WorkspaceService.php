@@ -21,6 +21,7 @@ use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Command\CreateRootWorkspace;
 use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Command\CreateWorkspace;
 use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Exception\WorkspaceAlreadyExists;
+use Neos\ContentRepository\Core\Feature\WorkspaceModification\Command\ChangeBaseWorkspace;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\Workspace;
@@ -330,6 +331,21 @@ final class WorkspaceService
             $attempt++;
         } while ($attempt <= 10);
         throw new \RuntimeException(sprintf('Failed to find unique workspace name for "%s" after %d attempts.', $candidate, $attempt - 1), 1725975479);
+    }
+
+    public function setBaseWorkspace(ContentRepositoryId $contentRepositoryId, WorkspaceName $workspaceName, WorkspaceName $baseWorkspaceName): void
+    {
+        $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryId);
+        $workspace = $this->requireWorkspace($contentRepositoryId, $workspaceName);
+
+        if ($workspace->workspaceName->equals($baseWorkspaceName)) {
+            // WHY: Do not update if the base workspace is the same
+            return;
+        }
+
+        $contentRepository->handle(
+            ChangeBaseWorkspace::create($workspaceName, $baseWorkspaceName)
+        );
     }
 
     // ------------------
