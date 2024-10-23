@@ -213,10 +213,13 @@ trait WorkspaceServiceTrait
     public function theNeosUserShouldHaveThePermissionsForWorkspace(string $username, string $expectedPermissions, string $workspaceName): void
     {
         $user = $this->getObject(UserService::class)->getUser($username);
-        $permissions = $this->getObject(ContentRepositoryAuthorizationService::class)->getWorkspacePermissionsForUser(
+        Assert::assertNotNull($user);
+        $account = $user->getAccounts()->first();
+        Assert::assertNotNull($account);
+        $permissions = $this->getObject(ContentRepositoryAuthorizationService::class)->getWorkspacePermissionsForAccount(
             $this->currentContentRepository->id,
             WorkspaceName::fromString($workspaceName),
-            $user,
+            $account,
         );
         Assert::assertSame($expectedPermissions, implode(',', array_keys(array_filter(get_object_vars($permissions)))));
     }
@@ -227,10 +230,13 @@ trait WorkspaceServiceTrait
     public function theNeosUserShouldHaveNoPermissionsForWorkspace(string $username, string $workspaceName): void
     {
         $user = $this->getObject(UserService::class)->getUser($username);
-        $permissions = $this->getObject(ContentRepositoryAuthorizationService::class)->getWorkspacePermissionsForUser(
+        Assert::assertNotNull($user);
+        $account = $user->getAccounts()->first();
+        Assert::assertNotNull($account);
+        $permissions = $this->getObject(ContentRepositoryAuthorizationService::class)->getWorkspacePermissionsForAccount(
             $this->currentContentRepository->id,
             WorkspaceName::fromString($workspaceName),
-            $user,
+            $account,
         );
         Assert::assertFalse($permissions->read);
         Assert::assertFalse($permissions->write);
