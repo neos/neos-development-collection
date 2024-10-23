@@ -78,9 +78,9 @@ prototype(Neos.Workspace.Ui:Component.ReviewActions) < prototype(Neos.Fusion:Com
           />
           <Neos.Workspace.Ui:Component.Button
             @if.canPublishToBaseWorkspace={props.canPublishToBaseWorkspace}
-            label={I18n.id('workspaces.publishSelectedChangesTo')}
+            label={private.i18n.id('workspaces.publishSelectedChangesTo').arguments([props.baseWorkspaceLabel])}
             icon="fas fa-check icon-white"
-            isDanger={true}
+            isPrimary={true}
             attributes.hx-get={private.publishSelectedChangesTo}
             attributes.hx-target="body"
           />

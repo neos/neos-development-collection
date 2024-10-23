@@ -26,6 +26,23 @@ prototype(Neos.Workspace.Ui:Component.ReviewDocumentTableRow) < prototype(Neos.F
       action = 'preview'
       // todo fixme
       @process.addQuery = ${value + '?node=' + document.documentNodeAddress}
+
+    }
+    discardDocumentAction = Neos.Fusion:ActionUri {
+      action = 'discardDocument'
+      format = 'json'
+      arguments {
+        nodeAddress = ${document.documentNodeAddress}
+        selectedWorkspace = ${selectedWorkspaceName}
+      }
+    }
+    publishDocumentAction = Neos.Fusion:ActionUri {
+      action = 'publishDocument'
+      format = 'json'
+      arguments {
+        nodeAddress = ${document.documentNodeAddress}
+        selectedWorkspace = ${selectedWorkspaceName}
+      }
     }
 
   }
@@ -48,6 +65,26 @@ prototype(Neos.Workspace.Ui:Component.ReviewDocumentTableRow) < prototype(Neos.F
           </div>
 
           <div class="neos-span2 neos-pull-right">
+
+            <!-- TODO: Does currently not work because of broken change projection -->
+            <Neos.Workspace.Ui:Component.Button
+              title={private.i18n.id('discard')}
+              icon="fas fa-trash-alt icon-white"
+              attributes.hx-get={private.discardDocumentAction}
+              attributes.hx-swap='innerHTML'
+              attributes.hx-target="#workspaceReview"
+              attributes.hx-swap="innerHTML"
+            />
+            <Neos.Workspace.Ui:Component.Button
+              title={private.i18n.id('discard')}
+              icon="fas fa-check icon-white"
+              attributes.hx-get={private.publishDocumentAction}
+              attributes.hx-swap='innerHTML'
+              attributes.hx-target="#workspaceReview"
+              attributes.hx-swap="innerHTML"
+            />
+
+
             <a href={private.openNodeInWorkspaceAction}
                target="_blank"
                title={private.i18n.id('edit')}

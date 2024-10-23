@@ -513,22 +513,15 @@ class WorkspaceController extends AbstractModuleController
      * @param string $nodeAddress
      * @param WorkspaceName $selectedWorkspace
      */
-    public function publishNodeAction(string $nodeAddress, WorkspaceName $selectedWorkspace): void
+    public function publishDocumentAction(string $nodeAddress, WorkspaceName $selectedWorkspace): void
     {
         $nodeAddress = NodeAddress::fromJsonString($nodeAddress);
-
-        $contentRepository = $this->contentRepositoryRegistry->get($nodeAddress->contentRepositoryId);
-
-        $command = PublishIndividualNodesFromWorkspace::create(
+        $contentRepositoryId = $nodeAddress->contentRepositoryId;
+        $this->workspacePublishingService->publishChangesInDocument(
+            $contentRepositoryId,
             $selectedWorkspace,
-            NodeIdsToPublishOrDiscard::create(
-                new NodeIdToPublishOrDiscard(
-                    $nodeAddress->aggregateId,
-                    $nodeAddress->dimensionSpacePoint
-                )
-            ),
+            $nodeAddress->aggregateId
         );
-        $contentRepository->handle($command);
 
         $this->addFlashMessage($this->getModuleLabel('workspaces.selectedChangeHasBeenPublished'));
         $this->redirect('review', null, null, ['workspace' => $selectedWorkspace->value]);
@@ -540,21 +533,15 @@ class WorkspaceController extends AbstractModuleController
      * @param string $nodeAddress
      * @param WorkspaceName $selectedWorkspace
      */
-    public function discardNodeAction(string $nodeAddress, WorkspaceName $selectedWorkspace): void
+    public function discardDocumentAction(string $nodeAddress, WorkspaceName $selectedWorkspace): void
     {
         $nodeAddress = NodeAddress::fromJsonString($nodeAddress);
-        $contentRepository = $this->contentRepositoryRegistry->get($nodeAddress->contentRepositoryId);
-        $nodeIdsToDiscard = NodeIdsToPublishOrDiscard::create(
-            new NodeIdToPublishOrDiscard(
-                $nodeAddress->aggregateId,
-                $nodeAddress->dimensionSpacePoint
-            )
-        );
-        $command = DiscardIndividualNodesFromWorkspace::create(
+        $contentRepositoryId = $nodeAddress->contentRepositoryId;
+        $this->workspacePublishingService->discardChangesInDocument(
+            $contentRepositoryId,
             $selectedWorkspace,
-            $nodeIdsToDiscard
+            $nodeAddress->aggregateId
         );
-        $contentRepository->handle($command);
 
         $this->addFlashMessage($this->getModuleLabel('workspaces.selectedChangeHasBeenDiscarded'));
 
