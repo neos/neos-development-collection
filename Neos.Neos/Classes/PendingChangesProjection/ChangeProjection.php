@@ -128,7 +128,7 @@ class ChangeProjection implements ProjectionInterface
             (new Column('moved', Type::getType(Types::BOOLEAN)))->setNotnull(true),
             DbalSchemaFactory::columnForNodeAggregateId('nodeAggregateId')->setNotnull(true),
             DbalSchemaFactory::columnForDimensionSpacePoint('originDimensionSpacePoint')->setNotnull(false),
-            DbalSchemaFactory::columnForDimensionSpacePointHash('originDimensionSpacePointHash')->setNotnull(false),
+            DbalSchemaFactory::columnForDimensionSpacePointHash('originDimensionSpacePointHash')->setNotnull(true),
             (new Column('deleted', Type::getType(Types::BOOLEAN)))->setNotnull(true),
             // Despite the name suggesting this might be an anchor point of sorts, this is a nodeAggregateId type
             DbalSchemaFactory::columnForNodeAggregateId('removalAttachmentPoint')->setNotnull(false)

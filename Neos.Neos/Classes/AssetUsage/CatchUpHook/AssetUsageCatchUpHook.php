@@ -146,6 +146,10 @@ class AssetUsageCatchUpHook implements CatchUpHookInterface
     private function discardNodes(WorkspaceName $workspaceName, NodeIdsToPublishOrDiscard $nodeIds): void
     {
         foreach ($nodeIds as $nodeId) {
+            if (!$nodeId->dimensionSpacePoint) {
+                // NodeAggregateTypeWasChanged and NodeAggregateNameWasChanged don't impact asset usage
+                continue;
+            }
             $this->assetUsageIndexingService->removeIndexForWorkspaceNameNodeAggregateIdAndDimensionSpacePoint(
                 $this->contentRepository->id,
                 $workspaceName,

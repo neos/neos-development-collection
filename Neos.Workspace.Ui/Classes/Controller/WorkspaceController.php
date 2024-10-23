@@ -16,6 +16,7 @@ namespace Neos\Workspace\Ui\Controller;
 
 use Doctrine\DBAL\Exception as DBALException;
 use Neos\ContentRepository\Core\ContentRepository;
+use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Exception\WorkspaceAlreadyExists;
 use Neos\ContentRepository\Core\Feature\WorkspaceModification\Command\DeleteWorkspace;
 use Neos\ContentRepository\Core\Feature\WorkspacePublication\Command\DiscardIndividualNodesFromWorkspace;
@@ -684,6 +685,9 @@ class WorkspaceController extends AbstractModuleController
             ->findByContentStreamId(
                 $selectedWorkspace->currentContentStreamId
             );
+        $dimensionSpacePoints = iterator_to_array($contentRepository->getVariationGraph()->getDimensionSpacePoints());
+        /** @var DimensionSpacePoint $arbitraryDimensionSpacePoint */
+        $arbitraryDimensionSpacePoint = reset($dimensionSpacePoints);
 
         foreach ($changes as $change) {
             $workspaceName = $selectedWorkspace->workspaceName;
@@ -697,7 +701,7 @@ class WorkspaceController extends AbstractModuleController
                 $workspaceName = $baseWorkspace->workspaceName;
             }
             $subgraph = $contentRepository->getContentGraph($workspaceName)->getSubgraph(
-                $change->originDimensionSpacePoint->toDimensionSpacePoint(),
+                $change->originDimensionSpacePoint?->toDimensionSpacePoint() ?: $arbitraryDimensionSpacePoint,
                 VisibilityConstraints::withoutRestrictions()
             );
 
@@ -765,7 +769,7 @@ class WorkspaceController extends AbstractModuleController
                     $nodeAddress = NodeAddress::create(
                         $contentRepository->id,
                         $selectedWorkspace->workspaceName,
-                        $change->originDimensionSpacePoint->toDimensionSpacePoint(),
+                        $change->originDimensionSpacePoint?->toDimensionSpacePoint() ?: $arbitraryDimensionSpacePoint,
                         $change->nodeAggregateId
                     );
 

@@ -84,7 +84,7 @@ final readonly class CreateNodeVariant implements
     public function matchesNodeId(NodeIdToPublishOrDiscard $nodeIdToPublish): bool
     {
         return $this->nodeAggregateId->equals($nodeIdToPublish->nodeAggregateId)
-            && $this->targetOrigin->equals($nodeIdToPublish->dimensionSpacePoint);
+            && $nodeIdToPublish->dimensionSpacePoint?->equals($this->targetOrigin);
     }
 
     public function createCopyForWorkspace(

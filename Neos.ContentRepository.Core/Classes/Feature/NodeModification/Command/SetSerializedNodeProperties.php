@@ -103,7 +103,7 @@ final readonly class SetSerializedNodeProperties implements
     public function matchesNodeId(NodeIdToPublishOrDiscard $nodeIdToPublish): bool
     {
         return (
-            $this->originDimensionSpacePoint->equals($nodeIdToPublish->dimensionSpacePoint)
+            $nodeIdToPublish->dimensionSpacePoint?->equals($this->originDimensionSpacePoint)
                 && $this->nodeAggregateId->equals($nodeIdToPublish->nodeAggregateId)
         );
     }

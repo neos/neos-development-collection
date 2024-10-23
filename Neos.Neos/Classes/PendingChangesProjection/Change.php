@@ -56,8 +56,8 @@ final class Change
             $databaseConnection->insert($tableName, [
                 'contentStreamId' => $this->contentStreamId->value,
                 'nodeAggregateId' => $this->nodeAggregateId->value,
-                'originDimensionSpacePoint' => $this->originDimensionSpacePoint->toJson(),
-                'originDimensionSpacePointHash' => $this->originDimensionSpacePoint->hash,
+                'originDimensionSpacePoint' => $this->originDimensionSpacePoint?->toJson(),
+                'originDimensionSpacePointHash' => $this->originDimensionSpacePoint?->hash ?: 'AGGREGATE',
                 'created' => (int)$this->created,
                 'changed' => (int)$this->changed,
                 'moved' => (int)$this->moved,
@@ -84,8 +84,8 @@ final class Change
                 [
                     'contentStreamId' => $this->contentStreamId->value,
                     'nodeAggregateId' => $this->nodeAggregateId->value,
-                    'originDimensionSpacePoint' => $this->originDimensionSpacePoint->toJson(),
-                    'originDimensionSpacePointHash' => $this->originDimensionSpacePoint->hash,
+                    'originDimensionSpacePoint' => $this->originDimensionSpacePoint?->toJson(),
+                    'originDimensionSpacePointHash' => $this->originDimensionSpacePoint?->hash ?: 'AGGREGATE',
                 ]
             );
         } catch (DbalException $e) {
@@ -101,7 +101,9 @@ final class Change
         return new self(
             ContentStreamId::fromString($databaseRow['contentStreamId']),
             NodeAggregateId::fromString($databaseRow['nodeAggregateId']),
-            OriginDimensionSpacePoint::fromJsonString($databaseRow['originDimensionSpacePoint']),
+            $databaseRow['originDimensionSpacePoint'] ?? null
+                ? OriginDimensionSpacePoint::fromJsonString($databaseRow['originDimensionSpacePoint'])
+                : null,
             (bool)$databaseRow['created'],
             (bool)$databaseRow['changed'],
             (bool)$databaseRow['moved'],
