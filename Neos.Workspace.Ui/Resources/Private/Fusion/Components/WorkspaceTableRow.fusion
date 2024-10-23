@@ -35,7 +35,7 @@ prototype(Neos.Workspace.Ui:Component.WorkspaceTableRow) < prototype(Neos.Fusion
       }
       default {
         condition = true
-        renderer = 'internal'
+        renderer = 'shared'
       }
     }
     workspaceStatusLabel = Neos.Fusion:Match {
@@ -50,7 +50,7 @@ prototype(Neos.Workspace.Ui:Component.WorkspaceTableRow) < prototype(Neos.Fusion
     workspaceStatusIcon = Neos.Fusion:Match {
       @subject = ${private.workspaceStatus}
       @default = 'user'
-      // TODO removed internal = 'users'
+      shared = 'users'
       with-acl = 'user-plus'
     }
     reviewWorkspaceUri = Neos.Fusion:ActionUri {

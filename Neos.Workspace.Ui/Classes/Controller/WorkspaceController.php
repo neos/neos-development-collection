@@ -1183,6 +1183,12 @@ class WorkspaceController extends AbstractModuleController
                 $this->userService->getCurrentUser()
             );
 
+            // Skip live workspace
+            // TODO: Why?
+            if ($workspace->workspaceName->isLive()) {
+                continue;
+            }
+
             if ($workspacesPermissions->read === false) {
                 continue;
             }
