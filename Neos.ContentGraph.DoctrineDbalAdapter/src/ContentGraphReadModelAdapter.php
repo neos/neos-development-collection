@@ -22,6 +22,7 @@ use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\NodeFactory;
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphReadModelInterface;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
+use Neos\ContentRepository\Core\SharedModel\Exception\WorkspaceDoesNotExist;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStream;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreams;
@@ -44,6 +45,31 @@ final readonly class ContentGraphReadModelAdapter implements ContentGraphReadMod
         private NodeTypeManager $nodeTypeManager,
         private ContentGraphTableNames $tableNames
     ) {
+    }
+
+    public function getContentGraph(WorkspaceName $workspaceName): ContentGraph
+    {
+        $currentContentStreamIdStatement = <<<SQL
+            SELECT
+                currentContentStreamId
+            FROM
+                {$this->tableNames->workspace()}
+            WHERE
+                name = :workspaceName
+            LIMIT 1
+        SQL;
+        try {
+            $row = $this->dbal->fetchAssociative($currentContentStreamIdStatement, [
+                'workspaceName' => $workspaceName->value,
+            ]);
+        } catch (Exception $e) {
+            throw new \RuntimeException(sprintf('Failed to load current content stream id from database: %s', $e->getMessage()), 1716903166, $e);
+        }
+        if ($row === false) {
+            throw WorkspaceDoesNotExist::butWasSupposedTo($workspaceName);
+        }
+        $currentContentStreamId = ContentStreamId::fromString($row['currentContentStreamId']);
+        return new ContentGraph($this->dbal, $this->nodeFactory, $this->contentRepositoryId, $this->nodeTypeManager, $this->tableNames, $workspaceName, $currentContentStreamId);
     }
 
     public function buildContentGraph(WorkspaceName $workspaceName, ContentStreamId $contentStreamId): ContentGraph
