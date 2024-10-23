@@ -21,6 +21,7 @@ use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Command\CreateRootWork
 use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Command\CreateWorkspace;
 use Neos\ContentRepository\Core\Feature\WorkspaceRebase\Command\RebaseWorkspace;
 use Neos\ContentRepository\Core\Feature\WorkspaceRebase\Dto\RebaseErrorHandlingStrategy;
+use Neos\ContentRepository\Core\Feature\WorkspaceRebase\Exception\WorkspaceRebaseFailed;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\CRTestSuiteRuntimeVariables;
@@ -36,22 +37,6 @@ trait WorkspaceCreation
     abstract protected function readPayloadTable(TableNode $payloadTable): array;
 
     abstract protected function publishEvent(string $eventType, StreamName $streamName, array $eventPayload): void;
-
-    /**
-     * @When /^the command CreateContentStream is executed with payload:$/
-     * @param TableNode $payloadTable
-     * @throws \Exception
-     */
-    public function theCommandCreateContentStreamIsExecutedWithPayload(TableNode $payloadTable)
-    {
-        $commandArguments = $this->readPayloadTable($payloadTable);
-
-        $command = CreateContentStream::create(
-            ContentStreamId::fromString($commandArguments['contentStreamId']),
-        );
-
-        $this->currentContentRepository->handle($command);
-    }
 
     /**
      * @When /^the command CreateRootWorkspace is executed with payload:$/
@@ -100,6 +85,19 @@ trait WorkspaceCreation
         $this->currentContentRepository->handle($command);
     }
 
+    /**
+     * @When /^the command CreateWorkspace is executed with payload and exceptions are caught:$/
+     * @param TableNode $payloadTable
+     * @throws \Exception
+     */
+    public function theCommandCreateWorkspaceIsExecutedWithPayloadAndExceptionsAreCaught(TableNode $payloadTable)
+    {
+        try {
+            $this->theCommandCreateWorkspaceIsExecutedWithPayload($payloadTable);
+        } catch (\Exception $e) {
+            $this->lastCommandException = $e;
+        }
+    }
 
     /**
      * @When /^the command RebaseWorkspace is executed with payload:$/

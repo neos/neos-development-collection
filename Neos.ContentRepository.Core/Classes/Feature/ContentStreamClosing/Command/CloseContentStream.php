@@ -18,9 +18,8 @@ use Neos\ContentRepository\Core\CommandHandler\CommandInterface;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 
 /**
- * @internal implementation detail. You must not use this command directly.
- * Direct use may lead to hard to revert senseless state in your content repository.
- * Please use the higher level workspace commands instead.
+ * @internal only exposed for testing purposes. You must not use this command directly.
+ * Direct use will leave your content stream in a closed state.
  */
 final readonly class CloseContentStream implements CommandInterface
 {
