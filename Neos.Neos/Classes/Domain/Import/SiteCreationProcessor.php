@@ -20,6 +20,7 @@ use Neos\ContentRepository\Export\Event\ValueObject\ExportedEvent;
 use Neos\ContentRepository\Export\ProcessingContext;
 use Neos\ContentRepository\Export\ProcessorInterface;
 use Neos\ContentRepository\Export\Severity;
+use Neos\Flow\Persistence\Doctrine\PersistenceManager;
 use Neos\Neos\Domain\Model\Site;
 use Neos\Neos\Domain\Repository\SiteRepository;
 
@@ -32,6 +33,7 @@ final readonly class SiteCreationProcessor implements ProcessorInterface
 {
     public function __construct(
         private SiteRepository $siteRepository,
+        private PersistenceManager $persistenceManager
     ) {
     }
 
@@ -47,6 +49,7 @@ final readonly class SiteCreationProcessor implements ProcessorInterface
         } else {
             $sites = self::extractSitesFromEventStream($context);
         }
+        $persistAllIsRequired = false;
         /** @var SiteShape $site */
         foreach ($sites as $site) {
             $context->dispatch(Severity::NOTICE, "Creating site \"{$site['name']}\"");
@@ -56,15 +59,18 @@ final readonly class SiteCreationProcessor implements ProcessorInterface
                 $context->dispatch(Severity::NOTICE, "Site for node name \"{$siteNodeName->value}\" already exists, skipping");
                 continue;
             }
-
             // TODO use node aggregate identifier instead of node name
             $siteInstance = new Site($siteNodeName->value);
             $siteInstance->setSiteResourcesPackageKey($site['packageKey']);
             $siteInstance->setState(($site['inactive'] ?? false) ? Site::STATE_OFFLINE : Site::STATE_ONLINE);
             $siteInstance->setName($site['name']);
             $this->siteRepository->add($siteInstance);
+            $persistAllIsRequired = true;
 
             // TODO add domains?
+        }
+        if ($persistAllIsRequired) {
+            $this->persistenceManager->persistAll();
         }
     }
 
