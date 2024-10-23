@@ -124,6 +124,11 @@ Feature: Workspace based content publishing
 
     Then the last command should have thrown an exception of type "BaseWorkspaceHasBeenModifiedInTheMeantime"
 
+    Then I expect exactly 4 event to be published on stream "ContentStream:user-cs-identifier"
+    And event at index 3 is of type "ContentStreamWasReopened" with payload:
+      | Key                  | Expected                 |
+      | contentStreamId      | "user-cs-identifier"     |
+
     # REBASING + Publishing: works now (TODO soft constraint check for old value)
     When the command RebaseWorkspace is executed with payload:
       | Key                    | Value           |
@@ -175,3 +180,25 @@ Feature: Workspace based content publishing
     And I expect this node to have the following properties:
       | Key  | Value           |
       | text | "Modified anew" |
+
+  Scenario: Publish is a no-op if there are no changes
+    And I am in workspace "user-test" and dimension space point {}
+    Then I expect node aggregate identifier "nody-mc-nodeface" to lead to node user-cs-identifier;nody-mc-nodeface;{}
+
+    And the command PublishWorkspace is executed with payload:
+      | Key                | Value         |
+      | workspaceName      | "user-test"   |
+      | newContentStreamId | "user-cs-new" |
+
+    # the user and live workspace are unchanged
+    Then I expect exactly 1 event to be published on stream "Workspace:user-test"
+    Then I expect exactly 3 event to be published on stream "ContentStream:user-cs-identifier"
+    And event at index 2 is of type "ContentStreamWasReopened" with payload:
+      | Key                  | Expected                 |
+      | contentStreamId      | "user-cs-identifier"     |
+
+    Then I expect node aggregate identifier "nody-mc-nodeface" to lead to node user-cs-identifier;nody-mc-nodeface;{}
+
+    # checks for the live workspace (same as above)
+    Then I expect exactly 4 events to be published on stream "ContentStream:cs-identifier"
+    Then I expect exactly 1 event to be published on stream "Workspace:live"

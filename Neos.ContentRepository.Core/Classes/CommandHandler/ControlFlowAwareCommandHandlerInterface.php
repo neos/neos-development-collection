@@ -21,7 +21,7 @@ interface ControlFlowAwareCommandHandlerInterface
     public function canHandle(CommandInterface $command): bool;
 
     /**
-     * @return \Generator<int, EventsToPublish, ?EventsToPublishFailed, void>
+     * @return \Generator<int, EventsToPublish>
      */
     public function handle(CommandInterface $command, CommandHandlingDependencies $commandHandlingDependencies): \Generator;
 }

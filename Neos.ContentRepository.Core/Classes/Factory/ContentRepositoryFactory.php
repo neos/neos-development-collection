@@ -120,8 +120,7 @@ final class ContentRepositoryFactory
         );
 
         $commandBus = new CommandBus(
-            new ContentStreamCommandHandler(
-            ),
+            new ContentStreamCommandHandler(),
             new WorkspaceCommandHandler(
                 $commandSimulatorFactory,
                 $this->projectionFactoryDependencies->eventStore,

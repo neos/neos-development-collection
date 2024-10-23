@@ -142,16 +142,20 @@ final class ContentRepository
                 try {
                     $this->eventPersister->publishEvents($this, $eventsToPublish);
                 } catch (ConcurrencyException $e) {
-                    $errorStrategy = $eventsToPublishOrGenerator->send(new EventsToPublishFailed(
-                        $eventsToPublish->expectedVersion,
-                        $e
-                    ));
+                    // we pass the exception into the generator, so it could be try-caught and reacted upon:
+                    //
+                    //   try {
+                    //      yield EventsToPublish();
+                    //   } catch (ConcurrencyException $e) {
+                    //      yield $restoreState();
+                    //      throw $e;
+                    //   }
+
+                    $errorStrategy = $eventsToPublishOrGenerator->throw($e);
 
                     if ($errorStrategy instanceof EventsToPublish) {
                         $this->eventPersister->publishEvents($this, $errorStrategy);
                     }
-                    // if the command handler didnt throw an error as after yielding the $errorStrategy we rethrow the exception
-                    throw $e;
                 }
             }
         }

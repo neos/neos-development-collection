@@ -66,6 +66,7 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\Workspace;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\EventStore\EventStoreInterface;
+use Neos\EventStore\Exception\ConcurrencyException;
 use Neos\EventStore\Model\Event\EventType;
 use Neos\EventStore\Model\Event\SequenceNumber;
 use Neos\EventStore\Model\EventStream\EventStreamInterface;
@@ -190,18 +191,48 @@ final readonly class WorkspaceCommandHandler implements ControlFlowAwareCommandH
     ): \Generator {
         $workspace = $this->requireWorkspace($command->workspaceName, $commandHandlingDependencies);
         $baseWorkspace = $this->requireBaseWorkspace($workspace, $commandHandlingDependencies);
+        if (!$commandHandlingDependencies->contentStreamExists($workspace->currentContentStreamId)) {
+            throw new \RuntimeException('Cannot publish nodes on a workspace with a stateless content stream', 1729711258);
+        }
+        $oldWorkspaceContentStreamIdState = $commandHandlingDependencies->getContentStreamStatus($workspace->currentContentStreamId);
 
-        $publishResult = yield $this->getCopiedEventsToPublishForContentStream(
+        // todo if workspace is outdated do an implicit rebase
+
+        yield $this->closeContentStream(
+            $workspace->currentContentStreamId,
+            $commandHandlingDependencies
+        );
+
+        $publishContentStream = $this->getCopiedEventsToPublishForContentStream(
             $workspace->currentContentStreamId,
             $baseWorkspace->workspaceName,
             $baseWorkspace->currentContentStreamId
         );
 
-        if ($publishResult instanceof EventsToPublishFailed) {
+        if ($publishContentStream->events->isEmpty()) {
+            // if there are no events this is almost a noop
+            yield $this->reopenContentStream(
+                $workspace->currentContentStreamId,
+                $oldWorkspaceContentStreamIdState,
+                $commandHandlingDependencies
+            );
+
+            return;
+        }
+
+        try {
+            yield $publishContentStream;
+        } catch (ConcurrencyException $exception) {
+            yield $this->reopenContentStream(
+                $workspace->currentContentStreamId,
+                $oldWorkspaceContentStreamIdState,
+                $commandHandlingDependencies
+            );
+
             throw new BaseWorkspaceHasBeenModifiedInTheMeantime(sprintf(
                 'The base workspace has been modified in the meantime; please rebase.'
                 . ' Expected version %d of source content stream %s',
-                $publishResult->expectedVersion->value,
+                $publishContentStream->expectedVersion->value,
                 $baseWorkspace->currentContentStreamId
             ));
         }
