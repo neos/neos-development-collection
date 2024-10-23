@@ -106,12 +106,12 @@ final class ContentRepository
         $eventsToPublishOrGenerator = $this->commandBus->handle($command, $this->commandHandlingDependencies);
 
         if ($eventsToPublishOrGenerator instanceof EventsToPublish) {
-            $eventsToPublish = $this->enrich($eventsToPublishOrGenerator);
+            $eventsToPublish = $this->enrichEventsToPublishWithMetadata($eventsToPublishOrGenerator);
             $this->eventPersister->publishEvents($this, $eventsToPublish);
         } else {
             foreach ($eventsToPublishOrGenerator as $eventsToPublish) {
                 assert($eventsToPublish instanceof EventsToPublish); // just for the ide
-                $eventsToPublish = $this->enrich($eventsToPublish);
+                $eventsToPublish = $this->enrichEventsToPublishWithMetadata($eventsToPublish);
                 try {
                     $this->eventPersister->publishEvents($this, $eventsToPublish);
                 } catch (ConcurrencyException $concurrencyException) {
@@ -121,7 +121,7 @@ final class ContentRepository
                     ));
 
                     if ($errorStrategy instanceof EventsToPublish) {
-                        $this->eventPersister->publishEvents($this, $errorStrategy);
+                        $this->eventPersister->publishEvents($this, $this->enrichEventsToPublishWithMetadata($errorStrategy));
                     }
                     // if we dont already throw an error throw an error now???? todo
                     throw $concurrencyException;
@@ -301,19 +301,21 @@ final class ContentRepository
         return $this->contentDimensionSource;
     }
 
-    private function enrich(EventsToPublish $eventsToPublish): EventsToPublish
+    /**
+     * Add "initiatingUserId" and "initiatingTimestamp" metadata to all events.
+     *                        This is done in order to keep information about the _original_ metadata when an
+     *                        event is re-applied during publishing/rebasing
+     * "initiatingUserId": The identifier of the user that originally triggered this event. This will never
+     *                     be overridden if it is set once.
+     * "initiatingTimestamp": The timestamp of the original event. The "recordedAt" timestamp will always be
+     *                        re-created and reflects the time an event was actually persisted in a stream,
+     *                        the "initiatingTimestamp" will be kept and is never overridden again.
+     */
+    private function enrichEventsToPublishWithMetadata(EventsToPublish $eventsToPublish): EventsToPublish
     {
         $initiatingUserId = $this->userIdProvider->getUserId();
         $initiatingTimestamp = $this->clock->now()->format(\DateTimeInterface::ATOM);
 
-        // Add "initiatingUserId" and "initiatingTimestamp" metadata to all events.
-        //                        This is done in order to keep information about the _original_ metadata when an
-        //                        event is re-applied during publishing/rebasing
-        // "initiatingUserId": The identifier of the user that originally triggered this event. This will never
-        //                     be overridden if it is set once.
-        // "initiatingTimestamp": The timestamp of the original event. The "recordedAt" timestamp will always be
-        //                        re-created and reflects the time an event was actually persisted in a stream,
-        // the "initiatingTimestamp" will be kept and is never overridden again.
         return new EventsToPublish(
             $eventsToPublish->streamName,
             Events::fromArray(
