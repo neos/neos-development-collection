@@ -21,6 +21,7 @@ use Neos\ContentRepository\Export\ProcessingContext;
 use Neos\ContentRepository\Export\ProcessorInterface;
 use Neos\ContentRepository\Export\Severity;
 use Neos\Flow\Persistence\Doctrine\PersistenceManager;
+use Neos\Neos\Domain\Model\Domain;
 use Neos\Neos\Domain\Model\Site;
 use Neos\Neos\Domain\Repository\SiteRepository;
 
@@ -61,13 +62,24 @@ final readonly class SiteCreationProcessor implements ProcessorInterface
             }
             // TODO use node aggregate identifier instead of node name
             $siteInstance = new Site($siteNodeName->value);
-            $siteInstance->setSiteResourcesPackageKey($site['packageKey']);
+            $siteInstance->setSiteResourcesPackageKey($site['siteResourcesPackageKey']);
             $siteInstance->setState(($site['inactive'] ?? false) ? Site::STATE_OFFLINE : Site::STATE_ONLINE);
             $siteInstance->setName($site['name']);
+
+            foreach ($site['domains'] ?? [] as $domain) {
+                $domainInstance = new Domain();
+                $domainInstance->setSite($siteInstance);
+                $domainInstance->setHostname($domain['hostname']);
+                $domainInstance->setPort($domain['port']);
+                $domainInstance->setScheme($domain['scheme']);
+                $domainInstance->setActive($domain['active'] ?? false);
+                if ($domain['primary']) {
+                    $siteInstance->setPrimaryDomain($domainInstance);
+                }
+            }
+
             $this->siteRepository->add($siteInstance);
             $persistAllIsRequired = true;
-
-            // TODO add domains?
         }
         if ($persistAllIsRequired) {
             $this->persistenceManager->persistAll();

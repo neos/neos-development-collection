@@ -31,6 +31,7 @@ use Neos\Neos\Domain\Exception\SiteNodeTypeIsInvalid;
 use Neos\Neos\Domain\Model\Site;
 use Neos\Neos\Domain\Repository\SiteRepository;
 use Neos\Neos\Domain\Service\NodeTypeNameFactory;
+use Neos\Neos\Domain\Service\SiteExportService;
 use Neos\Neos\Domain\Service\SiteImportService;
 use Neos\Neos\Domain\Service\SiteImportServiceFactory;
 use Neos\Neos\Domain\Service\SiteService;
@@ -78,6 +79,12 @@ class SiteCommandController extends CommandController
      * @var SiteImportService
      */
     protected $siteImportService;
+
+    /**
+     * @Flow\Inject
+     * @var SiteExportService
+     */
+    protected $siteExportService;
 
     /**
      * Create a new site
@@ -131,10 +138,12 @@ class SiteCommandController extends CommandController
     }
 
     /**
-     * Import sites content
+     * Import sites
      *
-     * This command allows for importing one or more sites or partial content from the file system. The format must
+     * This command allows importing sites from the given path/packahe. The format must
      * be identical to that produced by the export command.
+     *
+     * !!! At the moment the live workspace has to be empty prior to importing. This will be improved in future. !!!
      *
      * If a path is specified, this command expects the corresponding directory to contain the exported files
      *
@@ -188,6 +197,58 @@ class SiteCommandController extends CommandController
             $path = Files::concatenatePaths([$package->getPackagePath(), 'Resources/Private/Content']);
         }
         $this->siteImportService->importFromPath($contentRepositoryId, $path, $onProcessor, $onMessage);
+    }
+
+    /**
+     * Export sites
+     *
+     * This command allows to export all current sites.
+     *
+     * !!! At the moment always all sites are exported. This will be improved in future!!!
+     *
+     * If a path is specified, this command expects the corresponding directory to contain the exported files
+     *
+     * If a package key is specified, this command expects the export files to be located in the private resources
+     * directory of the given package (Resources/Private/Content).
+     *
+     * @param string|null $packageKey Package key specifying the package containing the sites content
+     * @param string|null $path relative or absolute path and filename to the export files
+     * @return void
+     */
+    public function exportCommand(string $packageKey = null, string $path = null, string $contentRepository = 'default', bool $verbose = false): void
+    {
+        $exceedingArguments = $this->request->getExceedingArguments();
+        if (isset($exceedingArguments[0]) && $packageKey === null && $path === null) {
+            if (file_exists($exceedingArguments[0])) {
+                $path = $exceedingArguments[0];
+            } elseif ($this->packageManager->isPackageAvailable($exceedingArguments[0])) {
+                $packageKey = $exceedingArguments[0];
+            }
+        }
+        if ($packageKey === null && $path === null) {
+            $this->outputLine('<error>You have to specify either <em>--package-key</em> or <em>--filename</em></error>');
+            $this->quit(1);
+        }
+
+        $contentRepositoryId = ContentRepositoryId::fromString($contentRepository);
+        $onProcessor = function (string $processorLabel) {
+            $this->outputLine('<info>%s...</info>', [$processorLabel]);
+        };
+        $onMessage = function (Severity $severity, string $message) use ($verbose) {
+            if (!$verbose && $severity === Severity::NOTICE) {
+                return;
+            }
+            $this->outputLine(match ($severity) {
+                Severity::NOTICE => $message,
+                Severity::WARNING => sprintf('<error>Warning: %s</error>', $message),
+                Severity::ERROR => sprintf('<error>Error: %s</error>', $message),
+            });
+        };
+        if ($path === null) {
+            $package = $this->packageManager->getPackage($packageKey);
+            $path = Files::concatenatePaths([$package->getPackagePath(), 'Resources/Private/Content']);
+        }
+        $this->siteExportService->exportToPath($contentRepositoryId, $path, $onProcessor, $onMessage);
     }
 
     /**
