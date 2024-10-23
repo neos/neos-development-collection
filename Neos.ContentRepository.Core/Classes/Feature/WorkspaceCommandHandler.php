@@ -539,7 +539,8 @@ final readonly class WorkspaceCommandHandler implements ControlFlowAwareCommandH
         }
 
         if ($highestVersionForMatching->equals(SequenceNumber::none())) {
-            $this->reopenContentStream(
+            // still a noop ;) (for example when a command returns empty events e.g. the node was already tagged with this subtree tag)
+            yield $this->reopenContentStream(
                 $oldWorkspaceContentStreamId,
                 $oldWorkspaceContentStreamIdState,
                 $commandHandlingDependencies

@@ -54,7 +54,7 @@ Feature: Publishing individual nodes (basics)
       | nodeAggregateId             | "sir-nodeward-nodington-iii"                            |
       | nodeTypeName                | "Neos.ContentRepository.Testing:Image"                  |
       | parentNodeAggregateId       | "lady-eleonode-rootford"                                |
-      | initialPropertyValues       | {"image": "Initial image"}                               |
+      | initialPropertyValues       | {"image": "Initial image"}                              |
     And the command CreateNodeAggregateWithNode is executed with payload:
       | Key                         | Value                                                   |
       | workspaceName               | "live"                                                  |
@@ -171,6 +171,50 @@ Feature: Publishing individual nodes (basics)
     And I expect this node to have the following properties:
       | Key   | Value            |
       | image | "Modified image" |
+
+    # assert that content stream is still open by writing to it:
+    And the command SetNodeProperties is executed with payload:
+      | Key                       | Value                        |
+      | workspaceName             | "user-test"                  |
+      | nodeAggregateId           | "sir-nodeward-nodington-iii" |
+      | originDimensionSpacePoint | {}                           |
+      | propertyValues            | {"image": "Bla bli blub"}    |
+
+  Scenario: Tag the same node in live and in the user workspace so that a rebase will omit the user change
+    When the command TagSubtree is executed with payload:
+      | Key                          | Value                     |
+      | workspaceName                | "live"                    |
+      | nodeAggregateId              | "sir-unchanged"           |
+      | nodeVariantSelectionStrategy | "allVariants"             |
+      | tag                          | "tag1"                    |
+    When the command TagSubtree is executed with payload:
+      | Key                          | Value                     |
+      | workspaceName                | "user-test"               |
+      | nodeAggregateId              | "sir-unchanged"           |
+      | nodeVariantSelectionStrategy | "allVariants"             |
+      | tag                          | "tag1"                    |
+    When the command PublishIndividualNodesFromWorkspace is executed with payload:
+      | Key                             | Value                                                             |
+      | workspaceName                   | "user-test"                                                       |
+      | nodesToPublish                  | [{"dimensionSpacePoint": {}, "nodeAggregateId": "sir-unchanged"}] |
+      | contentStreamIdForRemainingPart | "user-cs-identifier-remaining"                                    |
+
+    When I am in workspace "live" and dimension space point {}
+    Then I expect node aggregate identifier "sir-unchanged" to lead to node cs-identifier;sir-unchanged;{}
+    And I expect this node to be exactly explicitly tagged "tag1"
+
+    # the node is still in the original user cs
+    When I am in workspace "user-test" and dimension space point {}
+    Then I expect node aggregate identifier "sir-unchanged" to lead to node user-cs-identifier;sir-unchanged;{}
+    And I expect this node to be exactly explicitly tagged "tag1"
+
+    # assert that content stream is still open by writing to it:
+    And the command SetNodeProperties is executed with payload:
+      | Key                       | Value                        |
+      | workspaceName             | "user-test"                  |
+      | nodeAggregateId           | "sir-nodeward-nodington-iii" |
+      | originDimensionSpacePoint | {}                           |
+      | propertyValues            | {"image": "Bla bli blub"}    |
 
   Scenario: It is possible to publish all nodes
     When the command PublishIndividualNodesFromWorkspace is executed with payload:
