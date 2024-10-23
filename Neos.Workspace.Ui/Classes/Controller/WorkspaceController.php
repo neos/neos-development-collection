@@ -15,7 +15,6 @@ declare(strict_types=1);
 namespace Neos\Workspace\Ui\Controller;
 
 use Doctrine\DBAL\Exception as DBALException;
-use GuzzleHttp\Psr7\Response;
 use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\Dimension\ContentDimensionId;
 use Neos\ContentRepository\Core\Feature\SubtreeTagging\Dto\SubtreeTag;
