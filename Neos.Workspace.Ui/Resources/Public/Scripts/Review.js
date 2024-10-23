@@ -1,53 +1,77 @@
+
 window.addEventListener('DOMContentLoaded', (event) => {
-	jQuery(function ($) {
-		jQuery('#check-all').change(function () {
-			var value = false;
-			if (jQuery(this).is(':checked')) {
-				value = true;
-				jQuery('.batch-action').removeClass('neos-hidden').removeClass('neos-discardAllChanges').removeClass('neos-disabled').removeAttr('disabled');
-				jQuery('.review-button-action').addClass('neos-hidden').addClass('neos-disabled').attr('disabled', 'disabled');
-			} else {
-				jQuery('.batch-action').addClass('neos-hidden').addClass('neos-disabled').attr('disabled', 'disabled');
-				jQuery('.review-button-action').removeClass('neos-hidden').removeClass('neos-disabled').removeAttr('disabled', 'disabled');
-			}
-			jQuery('tbody input[type="checkbox"]').prop('checked', value);
-		});
+	document.body.addEventListener('htmx:afterOnLoad', function (evt) {
+		const input = document.getElementById("check-all");
 
-		jQuery('.neos-check-document').change(function () {
-			var documentIdentifier = jQuery(this).val();
-			var checked = jQuery(this).prop('checked');
-			jQuery(this).closest('table').find('tr.neos-change.document-' + documentIdentifier + ' td.check input').prop('checked', checked);
-		});
-
-		jQuery('tbody input[type="checkbox"]').change(function () {
-			if (jQuery(this).closest('tr').data('ismoved') === true || jQuery(this).closest('tr').data('isnew') === true) {
-				var currentNodePath = jQuery(this).closest('tr').attr('data-nodepath') + '/';
-				var checked = jQuery(this).prop('checked');
-
-				function nodePathStartsWith(nodePath) {
-					return function (index, element) {
-						return nodePath.indexOf(jQuery(element).data('nodepath')) === 0;
+		// Attach event listener after input is loaded
+		if (input) {
+			input.addEventListener(
+				'change', function (event) {
+					document.getElementById('batch-actions').classList.toggle('neos-hidden');
+					document.getElementById('all-actions').classList.toggle('neos-hidden');
+					for (const checkbox of document.querySelectorAll('tbody input[type="checkbox"]')) {
+						checkbox.checked = input.checked;
 					}
 				}
-
-				var movedOrNewParentDocuments = jQuery(this).closest('table').find('.neos-document[data-ismoved="true"], .neos-document[data-isnew="true"]').filter(nodePathStartsWith(currentNodePath));
-				jQuery(movedOrNewParentDocuments).each(function (index, movedParentDocument) {
-					jQuery('tr[data-nodepath^="' + jQuery(movedParentDocument).data('nodepath') + '"] td.check input').prop('checked', checked);
+			)
+			for (const checkbox of document.querySelectorAll('tbody input[type="checkbox"]')) {
+				checkbox.addEventListener( 'change', function(){
+					if(!checkbox.checked){
+						input.checked = false;
+					}
+					if(document.querySelectorAll('tbody input[type="checkbox"]:checked').length === 0){
+						document.getElementById('batch-actions').classList.add('neos-hidden');
+						document.getElementById('all-actions').classList.remove('neos-hidden');
+					}
 				});
-			}
 
-			if (jQuery('tbody input[type="checkbox"]:checked').length > 0) {
-				jQuery('.batch-action').removeClass('neos-hidden').removeClass('neos-disabled').removeAttr('disabled');
-				jQuery('.review-button-action').addClass('neos-hidden').addClass('neos-disabled').attr('disabled', 'disabled');
-			} else {
-				jQuery('.batch-action').addClass('neos-hidden').addClass('neos-disabled').attr('disabled', 'disabled');
-				jQuery('.review-button-action').removeClass('neos-hidden').removeClass('neos-disabled').removeAttr('disabled', 'disabled');
 			}
-		});
+			for (const toggleDocument of document.querySelectorAll('.fold-toggle')) {
+				toggleDocument.addEventListener( 'click', function(){
 
-		jQuery('.fold-toggle').click(function () {
-			jQuery(this).toggleClass('fas fa-chevron-down fas fa-chevron-up');
-			jQuery('tr.' + jQuery(this).data('toggle')).toggle();
-		});
+					toggleDocument.classList.toggle('fa-chevron-down');
+					toggleDocument.classList.toggle('fa-chevron-up');
+
+					let nextElement = toggleDocument.closest('.neos-document').nextElementSibling;
+					do{
+						nextElement.classList.toggle('neos-hidden')
+						nextElement = nextElement.nextElementSibling;
+					}
+					while (nextElement && !nextElement.classList.contains('neos-document'))
+				});
+
+			}
+			document.getElementById('collapse-all').addEventListener(
+				'click', function (event) {
+					const collapseButton = document.getElementById('collapse-all');
+					let status = (collapseButton.dataset.toggled === 'true');
+					console.log(status);
+					if(status){
+						for (const toggle of document.querySelectorAll('.fold-toggle')) {
+							toggle.classList.remove('fa-chevron-down');
+							toggle.classList.add('fa-chevron-up');
+						}
+						for (const change of document.querySelectorAll('.neos-change')) {
+							change.classList.add('neos-hidden');
+						}
+
+					} else {
+						for (const toggle of document.querySelectorAll('.fold-toggle')) {
+							toggle.classList.add('fa-chevron-down');
+							toggle.classList.remove('fa-chevron-up');
+						}
+						for (const change of document.querySelectorAll('.neos-change')) {
+							change.classList.remove('neos-hidden');
+						}
+					}
+
+					collapseButton.childNodes[0].classList.toggle('fa-up-right-and-down-left-from-center');
+					collapseButton.childNodes[0].classList.toggle('fa-down-left-and-up-right-to-center')
+					collapseButton.dataset.toggled = !status;
+
+				}
+			)
+
+		}
 	});
 });

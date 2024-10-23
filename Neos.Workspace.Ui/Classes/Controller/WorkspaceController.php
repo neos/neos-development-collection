@@ -521,22 +521,15 @@ class WorkspaceController extends AbstractModuleController
      * @param string $nodeAddress
      * @param WorkspaceName $selectedWorkspace
      */
-    public function publishNodeAction(string $nodeAddress, WorkspaceName $selectedWorkspace): void
+    public function publishDocumentAction(string $nodeAddress, WorkspaceName $selectedWorkspace): void
     {
         $nodeAddress = NodeAddress::fromJsonString($nodeAddress);
-
-        $contentRepository = $this->contentRepositoryRegistry->get($nodeAddress->contentRepositoryId);
-
-        $command = PublishIndividualNodesFromWorkspace::create(
+        $contentRepositoryId = $nodeAddress->contentRepositoryId;
+        $this->workspacePublishingService->publishChangesInDocument(
+            $contentRepositoryId,
             $selectedWorkspace,
-            NodeIdsToPublishOrDiscard::create(
-                new NodeIdToPublishOrDiscard(
-                    $nodeAddress->aggregateId,
-                    $nodeAddress->dimensionSpacePoint
-                )
-            ),
+            $nodeAddress->aggregateId
         );
-        $contentRepository->handle($command);
 
         $this->addFlashMessage($this->getModuleLabel('workspaces.selectedChangeHasBeenPublished'));
         $this->redirect('review', null, null, ['workspace' => $selectedWorkspace->value]);
@@ -548,21 +541,15 @@ class WorkspaceController extends AbstractModuleController
      * @param string $nodeAddress
      * @param WorkspaceName $selectedWorkspace
      */
-    public function discardNodeAction(string $nodeAddress, WorkspaceName $selectedWorkspace): void
+    public function discardDocumentAction(string $nodeAddress, WorkspaceName $selectedWorkspace): void
     {
         $nodeAddress = NodeAddress::fromJsonString($nodeAddress);
-        $contentRepository = $this->contentRepositoryRegistry->get($nodeAddress->contentRepositoryId);
-        $nodeIdsToDiscard = NodeIdsToPublishOrDiscard::create(
-            new NodeIdToPublishOrDiscard(
-                $nodeAddress->aggregateId,
-                $nodeAddress->dimensionSpacePoint
-            )
-        );
-        $command = DiscardIndividualNodesFromWorkspace::create(
+        $contentRepositoryId = $nodeAddress->contentRepositoryId;
+        $this->workspacePublishingService->discardChangesInDocument(
+            $contentRepositoryId,
             $selectedWorkspace,
-            $nodeIdsToDiscard
+            $nodeAddress->aggregateId
         );
-        $contentRepository->handle($command);
 
         $this->addFlashMessage($this->getModuleLabel('workspaces.selectedChangeHasBeenDiscarded'));
 
@@ -783,7 +770,7 @@ class WorkspaceController extends AbstractModuleController
                     );
                     $siteChanges[$siteNodeName]['documents'][$documentPath]['documentNode'] = $documentNode;
                     $siteChanges[$siteNodeName]['documents'][$documentPath]['documentBreadCrumb'] = array_reverse($documentPathSegmentsNames);
-
+                    $siteChanges[$siteNodeName]['documents'][$documentPath]['aggregateId'] = $documentNodeAddress->aggregateId;
                     $siteChanges[$siteNodeName]['documents'][$documentPath]['documentNodeAddress'] = $documentNodeAddress->toJson();
 
                     // We need to set `isNew` and `isMoved` on document level to make our JS behave as before.

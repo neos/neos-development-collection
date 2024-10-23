@@ -353,4 +353,7 @@ del, del a {
   color: var(--red);
   text-decoration: none;
 }
-
+.neos-content-diff th.neos-priority1,
+.neos-content-diff th.neos-action{
+  width: 30px
+}
