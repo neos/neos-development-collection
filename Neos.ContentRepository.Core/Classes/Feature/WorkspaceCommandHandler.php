@@ -325,6 +325,8 @@ final readonly class WorkspaceCommandHandler implements ControlFlowAwareCommandH
         }
         $oldWorkspaceContentStreamIdState = $commandHandlingDependencies->getContentStreamStatus($oldWorkspaceContentStreamId);
 
+        // FIXME no-op if workspace is not outdated and not RebaseErrorHandlingStrategy::STRATEGY_FORCE.
+
         // 0) close old content stream
         yield $this->closeContentStream(
             $oldWorkspaceContentStreamId,
@@ -337,6 +339,29 @@ final readonly class WorkspaceCommandHandler implements ControlFlowAwareCommandH
                 $workspace->currentContentStreamId
             )
         );
+
+        if ($originalCommands === []) {
+            // if we have no changes in the workspace we can fork from the base directly
+            yield $this->forkContentStream(
+                $command->rebasedContentStreamId,
+                $baseWorkspace->currentContentStreamId,
+                $commandHandlingDependencies
+            );
+
+            yield new EventsToPublish(
+                WorkspaceEventStreamName::fromWorkspaceName($command->workspaceName)->getEventStreamName(),
+                Events::with(
+                    new WorkspaceWasRebased(
+                        $command->workspaceName,
+                        $command->rebasedContentStreamId,
+                        $workspace->currentContentStreamId,
+                    ),
+                ),
+                ExpectedVersion::ANY()
+            );
+
+            return;
+        }
 
         $commandSimulator = $this->commandSimulatorFactory->createSimulator();
 
@@ -424,6 +449,10 @@ final readonly class WorkspaceCommandHandler implements ControlFlowAwareCommandH
         $commands = [];
         foreach ($workspaceContentStream as $eventEnvelope) {
             $metadata = $eventEnvelope->event->metadata?->value ?? [];
+            /**
+             * the metadata will be added to all readable commands via
+             * @see \Neos\ContentRepository\Core\Feature\Common\NodeAggregateEventPublisher::enrichWithCommand
+             */
             // TODO: Add this logic to the NodeAggregateCommandHandler;
             // so that we can be sure these can be parsed again.
             if (isset($metadata['commandClass'])) {
@@ -612,6 +641,11 @@ final readonly class WorkspaceCommandHandler implements ControlFlowAwareCommandH
         DiscardIndividualNodesFromWorkspace $command,
         CommandHandlingDependencies $commandHandlingDependencies,
     ): \Generator {
+        if ($command->nodesToDiscard->isEmpty()) {
+            // noop
+            return;
+        }
+
         $contentGraph = $commandHandlingDependencies->getContentGraph($command->workspaceName);
         $workspace = $this->requireWorkspace($command->workspaceName, $commandHandlingDependencies);
         $oldWorkspaceContentStreamId = $contentGraph->getContentStreamId();
@@ -632,6 +666,28 @@ final readonly class WorkspaceCommandHandler implements ControlFlowAwareCommandH
         $commandsToDiscard = [];
         $commandsToKeep = [];
         $this->separateMatchingAndRemainingCommands($command, $workspace, $commandsToDiscard, $commandsToKeep);
+
+        if ($commandsToDiscard === []) {
+            // if we have nothing to discard, we can just keep all. (e.g. random node ids were specified) It's almost a noop ;)
+            yield $this->reopenContentStream(
+                $oldWorkspaceContentStreamId,
+                $oldWorkspaceContentStreamIdState,
+                $commandHandlingDependencies
+            );
+            return;
+        }
+
+        if ($commandsToKeep === []) {
+            // quick path everything was discarded we just branch of from the base
+
+            yield from $this->discardWorkspace(
+                $workspace,
+                $baseWorkspace,
+                $command->newContentStreamId,
+                $commandHandlingDependencies
+            );
+            return;
+        }
 
         $commandSimulator = $this->commandSimulatorFactory->createSimulator();
 
@@ -755,7 +811,27 @@ final readonly class WorkspaceCommandHandler implements ControlFlowAwareCommandH
         $workspace = $this->requireWorkspace($command->workspaceName, $commandHandlingDependencies);
         $baseWorkspace = $this->requireBaseWorkspace($workspace, $commandHandlingDependencies);
 
-        $newContentStream = $command->newContentStreamId;
+        return $this->discardWorkspace(
+            $workspace,
+            $baseWorkspace,
+            $command->newContentStreamId,
+            $commandHandlingDependencies
+        );
+    }
+
+    /**
+     * @param Workspace $workspace
+     * @param Workspace $baseWorkspace
+     * @param ContentStreamId $newContentStream
+     * @param CommandHandlingDependencies $commandHandlingDependencies
+     * @phpstan-pure this method is pure, to persist the events they must be handled outside
+     */
+    private function discardWorkspace(
+        Workspace $workspace,
+        Workspace $baseWorkspace,
+        ContentStreamId $newContentStream,
+        CommandHandlingDependencies $commandHandlingDependencies
+    ): \Generator {
         yield $this->forkContentStream(
             $newContentStream,
             $baseWorkspace->currentContentStreamId,
@@ -764,10 +840,10 @@ final readonly class WorkspaceCommandHandler implements ControlFlowAwareCommandH
 
         // if we got so far without an Exception, we can switch the Workspace's active Content stream.
         yield new EventsToPublish(
-            WorkspaceEventStreamName::fromWorkspaceName($command->workspaceName)->getEventStreamName(),
+            WorkspaceEventStreamName::fromWorkspaceName($workspace->workspaceName)->getEventStreamName(),
             Events::with(
                 new WorkspaceWasDiscarded(
-                    $command->workspaceName,
+                    $workspace->workspaceName,
                     $newContentStream,
                     $workspace->currentContentStreamId,
                 )

@@ -128,7 +128,7 @@ Feature: Publishing individual nodes (basics)
       | Key   | Value            |
       | image | "Modified image" |
 
-  Scenario: It is possible to publish no node or trying to publish non existing or unchanged nodes is a no op
+  Scenario: Publish no node, non existing ones or unchanged nodes is a no-op
     # no node
     When the command PublishIndividualNodesFromWorkspace is executed with payload:
       | Key                             | Value                          |
