@@ -24,7 +24,6 @@ use Neos\ContentRepository\Core\EventStore\EventNormalizer;
 use Neos\ContentRepository\Core\EventStore\EventPersister;
 use Neos\ContentRepository\Core\EventStore\Events;
 use Neos\ContentRepository\Core\EventStore\EventsToPublish;
-use Neos\ContentRepository\Core\EventStore\EventsToPublishFailed;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryFactory;
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Core\Projection\CatchUp;
@@ -114,17 +113,22 @@ final class ContentRepository
                 $eventsToPublish = $this->enrichEventsToPublishWithMetadata($eventsToPublish);
                 try {
                     $this->eventPersister->publishEvents($this, $eventsToPublish);
-                } catch (ConcurrencyException $concurrencyException) {
-                    $errorStrategy = $eventsToPublishOrGenerator->send(new EventsToPublishFailed(
-                        $eventsToPublish->expectedVersion,
-                        $concurrencyException
-                    ));
+                } catch (ConcurrencyException $e) {
+                    // we pass the exception into the generator, so it could be try-caught and reacted upon:
+                    //
+                    //   try {
+                    //      yield EventsToPublish();
+                    //   } catch (ConcurrencyException $e) {
+                    //      yield $restoreState();
+                    //      throw $e;
+                    //   }
+
+                    $errorStrategy = $eventsToPublishOrGenerator->throw($e);
 
                     if ($errorStrategy instanceof EventsToPublish) {
-                        $this->eventPersister->publishEvents($this, $this->enrichEventsToPublishWithMetadata($errorStrategy));
+                        $eventsToPublish = $this->enrichEventsToPublishWithMetadata($errorStrategy);
+                        $this->eventPersister->publishEvents($this, $this->enrichEventsToPublishWithMetadata($eventsToPublish));
                     }
-                    // if we dont already throw an error throw an error now???? todo
-                    throw $concurrencyException;
                 }
             }
         }

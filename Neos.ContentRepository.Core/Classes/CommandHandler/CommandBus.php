@@ -28,7 +28,7 @@ final class CommandBus
     }
 
     /**
-     * @return EventsToPublish|\Generator<int, EventsToPublish, ?EventsToPublishFailed, void>
+     * @return EventsToPublish|\Generator<int, EventsToPublish>
      */
     public function handle(CommandInterface $command, CommandHandlingDependencies $commandHandlingDependencies): EventsToPublish|\Generator
     {

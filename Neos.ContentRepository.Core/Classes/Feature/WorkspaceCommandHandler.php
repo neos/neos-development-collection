@@ -195,17 +195,19 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
         $workspace = $this->requireWorkspace($command->workspaceName, $commandHandlingDependencies);
         $baseWorkspace = $this->requireBaseWorkspace($workspace, $commandHandlingDependencies);
 
-        $publishResult = yield $this->getCopiedEventsToPublishForContentStream(
+        $publishContentStream = $this->getCopiedEventsToPublishForContentStream(
             $workspace->currentContentStreamId,
             $baseWorkspace->workspaceName,
             $baseWorkspace->currentContentStreamId
         );
 
-        if ($publishResult instanceof EventsToPublishFailed) {
+        try {
+            yield $publishContentStream;
+        } catch (ConcurrencyException $exception) {
             throw new BaseWorkspaceHasBeenModifiedInTheMeantime(sprintf(
                 'The base workspace has been modified in the meantime; please rebase.'
                 . ' Expected version %d of source content stream %s',
-                $publishResult->expectedVersion->value,
+                $publishContentStream->expectedVersion->value,
                 $baseWorkspace->currentContentStreamId
             ));
         }
