@@ -415,51 +415,50 @@ final readonly class WorkspaceCommandHandler implements ControlFlowAwareCommandH
             }
         );
 
-
-        // if we got so far without an exception (or if we don't care), we can switch the workspace's active content stream.
-        if ($command->rebaseErrorHandlingStrategy === RebaseErrorHandlingStrategy::STRATEGY_FORCE || $commandsThatFailed->isEmpty()) {
-            $forkContentStream = $this->forkContentStream(
-                $command->rebasedContentStreamId,
-                $baseWorkspace->currentContentStreamId,
+        if (
+            $command->rebaseErrorHandlingStrategy === RebaseErrorHandlingStrategy::STRATEGY_FAIL
+            && !$commandsThatFailed->isEmpty()
+        ) {
+            yield $this->reopenContentStream(
+                $workspace->currentContentStreamId,
+                $currentWorkspaceContentStreamState,
                 $commandHandlingDependencies
             );
 
-            yield $forkContentStream->withAppendedEvents(
-                $this->getCopiedEventsOfEventStream(
-                    $command->workspaceName,
-                    $command->rebasedContentStreamId,
-                    $commandSimulator->eventStream(),
-                )
-            );
-
-            yield new EventsToPublish(
-                WorkspaceEventStreamName::fromWorkspaceName($command->workspaceName)->getEventStreamName(),
-                Events::with(
-                    new WorkspaceWasRebased(
-                        $command->workspaceName,
-                        $command->rebasedContentStreamId,
-                        $workspace->currentContentStreamId,
-                    ),
-                ),
-                ExpectedVersion::ANY()
-            );
-
-            return null;
+            // throw an exception that contains all the information about what exactly failed
+            throw new WorkspaceRebaseFailed($commandsThatFailed, 'Rebase failed', 1711713880);
         }
 
-        // error case
-        yield $this->reopenContentStream(
-            $workspace->currentContentStreamId,
-            $currentWorkspaceContentStreamState,
+        // if we got so far without an exception (or if we don't care), we can switch the workspace's active content stream.
+        $forkContentStream = $this->forkContentStream(
+            $command->rebasedContentStreamId,
+            $baseWorkspace->currentContentStreamId,
             $commandHandlingDependencies
         );
 
-        // throw an exception that contains all the information about what exactly failed
-        throw new WorkspaceRebaseFailed($commandsThatFailed, 'Rebase failed', 1711713880);
+        yield $forkContentStream->withAppendedEvents(
+            $this->getCopiedEventsOfEventStream(
+                $command->workspaceName,
+                $command->rebasedContentStreamId,
+                $commandSimulator->eventStream(),
+            )
+        );
+
+        yield new EventsToPublish(
+            WorkspaceEventStreamName::fromWorkspaceName($command->workspaceName)->getEventStreamName(),
+            Events::with(
+                new WorkspaceWasRebased(
+                    $command->workspaceName,
+                    $command->rebasedContentStreamId,
+                    $workspace->currentContentStreamId,
+                ),
+            ),
+            ExpectedVersion::ANY()
+        );
     }
 
     /**
-     * @return array<int,CommandInterface&RebasableToOtherWorkspaceInterface>
+     * @return array<int,RebasableToOtherWorkspaceInterface>
      */
     private function extractCommandsFromContentStreamMetadata(
         ContentStreamEventStreamName $workspaceContentStreamName,
@@ -479,15 +478,15 @@ final readonly class WorkspaceCommandHandler implements ControlFlowAwareCommandH
                 $commandToRebaseClass = $metadata['commandClass'];
                 $commandToRebasePayload = $metadata['commandPayload'];
 
-                if (array_diff(class_implements($commandToRebaseClass) ?: [], [CommandInterface::class, RebasableToOtherWorkspaceInterface::class]) === []) {
+                if (!in_array(RebasableToOtherWorkspaceInterface::class, class_implements($commandToRebaseClass) ?: [], true)) {
                     throw new \RuntimeException(sprintf(
                         'Command "%s" can\'t be rebased because it does not implement %s',
                         $commandToRebaseClass,
                         RebasableToOtherWorkspaceInterface::class
                     ), 1547815341);
                 }
-                /** @var class-string<CommandInterface&RebasableToOtherWorkspaceInterface> $commandToRebaseClass */
-                /** @var CommandInterface&RebasableToOtherWorkspaceInterface $commandInstance */
+                /** @var class-string<RebasableToOtherWorkspaceInterface> $commandToRebaseClass */
+                /** @var RebasableToOtherWorkspaceInterface $commandInstance */
                 $commandInstance = $commandToRebaseClass::fromArray($commandToRebasePayload);
                 $commands[$eventEnvelope->sequenceNumber->value] = $commandInstance;
             }
