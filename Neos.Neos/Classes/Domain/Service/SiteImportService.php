@@ -33,6 +33,7 @@ use Neos\Flow\ResourceManagement\ResourceRepository;
 use Neos\Media\Domain\Repository\AssetRepository;
 use Neos\Neos\Domain\Import\DoctrineMigrateProcessor;
 use Neos\Neos\Domain\Import\LiveWorkspaceCreationProcessor;
+use Neos\Neos\Domain\Import\LiveWorkspaceIsEmptyProcessorFactory;
 use Neos\Neos\Domain\Import\SiteCreationProcessor;
 use Neos\Neos\Domain\Repository\SiteRepository;
 
@@ -69,7 +70,7 @@ final readonly class SiteImportService
         $processors = [
             'Run doctrine migrations' => new DoctrineMigrateProcessor($this->doctrineService),
             'Setup content repository' => $this->contentRepositoryRegistry->buildService($contentRepositoryId, new ContentRepositorySetupProcessorFactory()),
-            // TODO Check if target content stream is empty, otherwise => nice error "prune..."
+            'Verify Live workspace does not exist yet' => $this->contentRepositoryRegistry->buildService($contentRepositoryId, new LiveWorkspaceIsEmptyProcessorFactory()),
             'Create Neos sites' => new SiteCreationProcessor($this->siteRepository),
             'Create Live workspace' => new LiveWorkspaceCreationProcessor($contentRepository, $this->workspaceService),
             'Import events' => $this->contentRepositoryRegistry->buildService($contentRepositoryId, new EventStoreImportProcessorFactory(WorkspaceName::forLive(), keepEventIds: true)),
