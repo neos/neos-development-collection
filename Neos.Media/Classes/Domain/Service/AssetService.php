@@ -33,6 +33,7 @@ use Neos\Media\Domain\Model\ImageVariant;
 use Neos\Media\Domain\Model\Thumbnail;
 use Neos\Media\Domain\Model\ThumbnailConfiguration;
 use Neos\Media\Domain\Repository\AssetRepository;
+use Neos\Media\Domain\Service\Imagor\ImagorService;
 use Neos\Media\Domain\Strategy\AssetUsageStrategyInterface;
 use Neos\Media\Exception\AssetServiceException;
 use Neos\Media\Exception\AssetVariantGeneratorException;
@@ -105,6 +106,12 @@ class AssetService
 
     /**
      * @Flow\Inject
+     * @var ImagorService
+     */
+    protected ImagorService $imagorService;
+
+    /**
+     * @Flow\Inject
      * @var AssetVariantGenerator
      */
     protected $assetVariantGenerator;
@@ -142,6 +149,13 @@ class AssetService
      */
     public function getThumbnailUriAndSizeForAsset(AssetInterface $asset, ThumbnailConfiguration $configuration, ActionRequest $request = null): ?array
     {
+        return $this->imagorService->getThumbnailUriAndSize($asset, $configuration);
+//        return [
+//            'src' => 'https://placehold.co/600x400?text=Hello\nWorld',
+//            'width' => 600,
+//            'height' => 400,
+//        ];
+
         $thumbnailImage = $this->thumbnailService->getThumbnail($asset, $configuration);
         if (!$thumbnailImage instanceof ImageInterface) {
             return null;

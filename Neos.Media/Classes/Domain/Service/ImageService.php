@@ -294,6 +294,10 @@ class ImageService
             if (!$adjustment instanceof ImageAdjustmentInterface) {
                 throw new ImageServiceException(sprintf('Could not apply the %s adjustment to image because it does not implement the ImageAdjustmentInterface.', get_class($adjustment)), 1381400362);
             }
+
+            // TODO this is called when running ./flow site:import!!
+            // $imagineAdjustmentApplier = self::findImagineAdjustmentApplier($adjustment);
+
             if ($adjustment->canBeApplied($image)) {
                 $image = $adjustment->applyToImage($image);
                 $adjustmentsApplied = true;
@@ -301,6 +305,10 @@ class ImageService
         }
 
         return $image;
+    }
+
+    private static function findImagineAdjustmentApplier(ImageAdjustmentInterface $adjustment): ImageAdjustmentInterface
+    {
     }
 
     /**
