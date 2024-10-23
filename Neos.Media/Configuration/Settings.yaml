@@ -45,6 +45,7 @@ Neos:
             className: Neos\Media\Domain\Model\Audio
           '[video/.*]':
             className: Neos\Media\Domain\Model\Video
+
     image:
       defaultOptions:
         # Image quality, from 0 to 100
@@ -61,6 +62,18 @@ Neos:
         # They roughly line up with ImageMagick filters, so read up on those to see differences.
         # A very cheap filter with reasonable quality would be "FILTER_BOX", alternative is "FILTER_CATROM".
         resizeFilter: '%\Imagine\Image\ImageInterface::FILTER_UNDEFINED%'
+
+    imagor:
+      # Whether the imagor image proxy should be used for image/thumbnail generation
+      # in favor for Imagine/Imagick/GD/Vips/...
+      enabled: true
+      # TODO - auto detect source base url
+      sourceBaseUrl: 'http://neos:8081'
+      # TODO - auto detect proxy base url
+      proxyBaseUrl: 'http://127.0.0.1:8000'
+      secret: ~
+      signerType: sha256
+      signerTruncate: 40
 
     # Variant presets
     variantPresets: []

@@ -26,6 +26,7 @@ interface ImageAdjustmentInterface extends AdjustmentInterface
      *
      * @param ImageInterface $image
      * @return ImageInterface
+     * !!! only called when using Imagine, not called when using Imagor (or other image proxies)
      */
     public function applyToImage(ImageInterface $image);
 
@@ -34,6 +35,7 @@ interface ImageAdjustmentInterface extends AdjustmentInterface
      *
      * @param ImageVariant $imageVariant
      * @return void
+     *  !!! only called when using Imagine, not called when using Imagor (or other image proxies)
      */
     public function setImageVariant(ImageVariant $imageVariant);
 
@@ -42,6 +44,7 @@ interface ImageAdjustmentInterface extends AdjustmentInterface
      *
      * @param ImageInterface $image
      * @return boolean
+     * !!! only called when using Imagine, not called when using Imagor (or other image proxies)
      */
     public function canBeApplied(ImageInterface $image);
 }
