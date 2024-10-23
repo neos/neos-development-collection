@@ -526,6 +526,7 @@ final readonly class WorkspaceCommandHandler implements ControlFlowAwareCommandH
             return null;
         }
 
+        // TODO if $remainingCommands === [] try to do a full publish, but we need to rebase if the workspace is outdated!
         $commandSimulator = $this->commandSimulatorFactory->createSimulator();
 
         try {
@@ -832,6 +833,7 @@ final readonly class WorkspaceCommandHandler implements ControlFlowAwareCommandH
         ContentStreamId $newContentStream,
         CommandHandlingDependencies $commandHandlingDependencies
     ): \Generator {
+        // todo only discard if changes, needs new changes flag on the Workspace model
         yield $this->forkContentStream(
             $newContentStream,
             $baseWorkspace->currentContentStreamId,
