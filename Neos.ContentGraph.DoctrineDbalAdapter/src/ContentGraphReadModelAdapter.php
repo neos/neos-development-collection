@@ -16,6 +16,7 @@ namespace Neos\ContentGraph\DoctrineDbalAdapter;
 
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Exception;
+use Doctrine\DBAL\Query\QueryBuilder;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\ContentGraph;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\NodeFactory;
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
@@ -52,21 +53,12 @@ final readonly class ContentGraphReadModelAdapter implements ContentGraphReadMod
 
     public function findWorkspaceByName(WorkspaceName $workspaceName): ?Workspace
     {
-        $workspaceByNameStatement = <<<SQL
-            SELECT
-                ws.name, ws.baseWorkspaceName, ws.currentContentStreamId, cs.sourceContentStreamVersion != scs.version as baseWorkspaceChanged
-            FROM
-                {$this->tableNames->workspace()} ws
-                JOIN {$this->tableNames->contentStream()} cs ON cs.id = ws.currentcontentstreamid
-                LEFT JOIN {$this->tableNames->contentStream()} scs ON scs.id = cs.sourceContentStreamId
-            WHERE
-                ws.name = :workspaceName
-            LIMIT 1
-        SQL;
+        $workspaceQuery = $this->getBasicWorkspaceQuery()
+            ->where('ws.name = :workspaceName')
+            ->setMaxResults(1)
+            ->setParameter('workspaceName', $workspaceName->value);
         try {
-            $row = $this->dbal->fetchAssociative($workspaceByNameStatement, [
-                'workspaceName' => $workspaceName->value,
-            ]);
+            $row = $workspaceQuery->fetchAssociative();
         } catch (Exception $e) {
             throw new \RuntimeException(sprintf('Failed to load workspace from database: %s', $e->getMessage()), 1716486077, $e);
         }
@@ -78,16 +70,9 @@ final readonly class ContentGraphReadModelAdapter implements ContentGraphReadMod
 
     public function findWorkspaces(): Workspaces
     {
-        $workspacesStatement = <<<SQL
-            SELECT
-                ws.name, ws.baseWorkspaceName, ws.currentContentStreamId, cs.sourceContentStreamVersion != scs.version as baseWorkspaceChanged
-            FROM
-                {$this->tableNames->workspace()} ws
-                JOIN {$this->tableNames->contentStream()} cs ON cs.id = ws.currentcontentstreamid
-                LEFT JOIN {$this->tableNames->contentStream()} scs ON scs.id = cs.sourceContentStreamId
-        SQL;
+        $workspacesQuery = $this->getBasicWorkspaceQuery();
         try {
-            $rows = $this->dbal->fetchAllAssociative($workspacesStatement);
+            $rows = $workspacesQuery->fetchAllAssociative();
         } catch (Exception $e) {
             throw new \RuntimeException(sprintf('Failed to load workspaces from database: %s', $e->getMessage()), 1716902981, $e);
         }
@@ -147,6 +132,17 @@ final readonly class ContentGraphReadModelAdapter implements ContentGraphReadMod
         } catch (Exception $e) {
             throw new \RuntimeException(sprintf('Failed to count rows in database: %s', $e->getMessage()), 1701444590, $e);
         }
+    }
+
+    private function getBasicWorkspaceQuery(): QueryBuilder
+    {
+        $queryBuilder = $this->dbal->createQueryBuilder();
+
+        return $queryBuilder
+            ->select('ws.name, ws.baseWorkspaceName, ws.currentContentStreamId, cs.sourceContentStreamVersion != scs.version as baseWorkspaceChanged')
+            ->from($this->tableNames->workspace(), 'ws')
+            ->join('ws', $this->tableNames->contentStream(), 'cs', 'cs.id = ws.currentcontentstreamid')
+            ->leftJoin('cs', $this->tableNames->contentStream(), 'scs', 'scs.id = cs.sourceContentStreamId');
     }
 
     /**
