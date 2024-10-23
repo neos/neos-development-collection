@@ -28,7 +28,6 @@ use Neos\ContentRepository\Core\EventStore\EventsToPublishFailed;
 use Neos\ContentRepository\Core\Feature\Common\MatchableWithNodeIdToPublishOrDiscardInterface;
 use Neos\ContentRepository\Core\Feature\Common\PublishableToWorkspaceInterface;
 use Neos\ContentRepository\Core\Feature\Common\RebasableToOtherWorkspaceInterface;
-use Neos\ContentRepository\Core\Feature\ContentStreamCreation\Command\CreateContentStream;
 use Neos\ContentRepository\Core\Feature\ContentStreamForking\Event\ContentStreamWasForked;
 use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Command\CreateRootWorkspace;
 use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Command\CreateWorkspace;
@@ -230,6 +229,10 @@ final readonly class WorkspaceCommandHandler implements ControlFlowAwareCommandH
     }
 
     /**
+     * 1.) Copy all events from the passed event stream which implement the {@see PublishableToOtherContentStreamsInterface}
+     * 2.) Extract the initial ContentStreamWasForked event, to read the version of the source content stream when the fork occurred
+     * 3.) Use the {@see ContentStreamWasForked::$versionOfSourceContentStream} to ensure that no other changes have been done in the meantime in the base content stream
+     *
      * @throws BaseWorkspaceHasBeenModifiedInTheMeantime
      * @throws \Exception
      */
@@ -241,12 +244,6 @@ final readonly class WorkspaceCommandHandler implements ControlFlowAwareCommandH
         $baseWorkspaceContentStreamName = ContentStreamEventStreamName::fromContentStreamId(
             $baseContentStreamId
         );
-
-        // TODO: please check the code below in-depth. it does:
-        // - copy all events from the "user" content stream which implement @see{}"PublishableToOtherContentStreamsInterface"
-        // - extract the initial ContentStreamWasForked event,
-        //   to read the version of the source content stream when the fork occurred
-        // - ensure that no other changes have been done in the meantime in the base content stream
 
         $workspaceContentStream = iterator_to_array($this->eventStore->load(
             ContentStreamEventStreamName::fromContentStreamId($contentStreamId)->getEventStreamName()
@@ -287,17 +284,14 @@ final readonly class WorkspaceCommandHandler implements ControlFlowAwareCommandH
         );
     }
 
+    /**
+     * Copy all events from the passed event stream which implement the {@see PublishableToOtherContentStreamsInterface}
+     */
     private function getCopiedEventsOfEventStream(
         WorkspaceName $targetWorkspaceName,
         ContentStreamId $targetContentStreamId,
         EventStreamInterface $eventStream
     ): Events {
-        // TODO: please check the code below in-depth. it does:
-        // - copy all events from the "user" content stream which implement @see{}"PublishableToOtherContentStreamsInterface"
-        // - extract the initial ContentStreamWasForked event,
-        //   to read the version of the source content stream when the fork occurred
-        // - ensure that no other changes have been done in the meantime in the base content stream
-
         $events = [];
         foreach ($eventStream as $eventEnvelope) {
             $event = $this->eventNormalizer->denormalize($eventEnvelope->event);
@@ -352,7 +346,7 @@ final readonly class WorkspaceCommandHandler implements ControlFlowAwareCommandH
                 foreach ($originalCommands as $sequenceNumber => $originalCommand) {
                     // We no longer need to adjust commands as the workspace stays the same
                     try {
-                        // TODO so the constraint checks work we need to use the base workspace here
+                        // We rebase here, but we apply the commands in the simulation on the base workspace so the constraint checks work
                         $commandSimulator->handle($originalCommand->createCopyForWorkspace(
                             $baseWorkspace->workspaceName
                         ));

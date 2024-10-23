@@ -150,7 +150,7 @@ final class ContentRepository
                     if ($errorStrategy instanceof EventsToPublish) {
                         $this->eventPersister->publishEvents($this, $errorStrategy);
                     }
-                    // if we dont already throw an error throw an error now???? todo
+                    // if the command handler didnt throw an error as after yielding the $errorStrategy we rethrow the exception
                     throw $e;
                 }
             }

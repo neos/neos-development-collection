@@ -117,12 +117,7 @@ trait WorkspaceCreation
             $command = $command->withErrorHandlingStrategy(RebaseErrorHandlingStrategy::from($commandArguments['rebaseErrorHandlingStrategy']));
         }
 
-        try {
-            $this->currentContentRepository->handle($command);
-        } catch (WorkspaceRebaseFailed $e) {
-            // todo improve error
-            throw $e;
-        }
+        $this->currentContentRepository->handle($command);
     }
 
     /**
