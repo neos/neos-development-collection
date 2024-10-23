@@ -18,11 +18,11 @@ use Neos\ContentRepository\Core\EventStore\EventsToPublishFailed;
 final class CommandBus
 {
     /**
-     * @var CommandHandlerInterface[]
+     * @var (CommandHandlerInterface|ControlFlowAwareCommandHandlerInterface)[]
      */
     private array $handlers;
 
-    public function __construct(CommandHandlerInterface ...$handlers)
+    public function __construct(CommandHandlerInterface|ControlFlowAwareCommandHandlerInterface ...$handlers)
     {
         $this->handlers = $handlers;
     }

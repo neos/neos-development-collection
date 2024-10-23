@@ -72,8 +72,6 @@ final class ContentRepository
      */
     private array $projectionStateCache;
 
-    private CommandHandlingDependencies $commandHandlingDependencies;
-
     /**
      * @internal use the {@see ContentRepositoryFactory::getOrBuild()} to instantiate
      */
@@ -89,9 +87,9 @@ final class ContentRepository
         private readonly ContentDimensionSourceInterface $contentDimensionSource,
         private readonly UserIdProviderInterface $userIdProvider,
         private readonly ClockInterface $clock,
-        private readonly ContentGraphReadModelInterface $contentGraphReadModel
+        private readonly ContentGraphReadModelInterface $contentGraphReadModel,
+        private readonly CommandHandlingDependencies $commandHandlingDependencies,
     ) {
-        $this->commandHandlingDependencies = new CommandHandlingDependencies($this, $this->contentGraphReadModel, $this->projectionsAndCatchUpHooks->contentGraphProjection, $this->commandBus, $this->eventNormalizer);
     }
 
     /**

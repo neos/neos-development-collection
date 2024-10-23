@@ -6,6 +6,7 @@ namespace Neos\ContentRepository\Core\CommandHandler;
 
 use Neos\ContentRepository\Core\CommandHandlingDependencies;
 use Neos\ContentRepository\Core\EventStore\EventsToPublish;
+use Neos\ContentRepository\Core\EventStore\EventsToPublishFailed;
 
 /**
  * Common interface for all Content Repository command handlers
@@ -15,8 +16,12 @@ use Neos\ContentRepository\Core\EventStore\EventsToPublish;
  *
  * @internal no public API, because commands are no extension points of the CR
  */
-interface CommandHandlerInterface
+interface ControlFlowAwareCommandHandlerInterface
 {
     public function canHandle(CommandInterface $command): bool;
-    public function handle(CommandInterface $command, CommandHandlingDependencies $commandHandlingDependencies): EventsToPublish;
+
+    /**
+     * @return \Generator<int, EventsToPublish, ?EventsToPublishFailed, void>
+     */
+    public function handle(CommandInterface $command, CommandHandlingDependencies $commandHandlingDependencies): \Generator;
 }
