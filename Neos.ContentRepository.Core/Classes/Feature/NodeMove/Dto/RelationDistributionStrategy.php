@@ -45,7 +45,7 @@ enum RelationDistributionStrategy: string implements \JsonSerializable
     {
         $name = substr($name, strpos($name, '::') + 2);
         foreach (self::cases() as $status) {
-            if( $name === $status->name ){
+            if ($name === $status->name) {
                 return $status;
             }
         }
