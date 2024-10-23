@@ -762,7 +762,7 @@ class WorkspaceController extends AbstractModuleController
                     );
                     $siteChanges[$siteNodeName]['documents'][$documentPath]['documentNode'] = $documentNode;
                     $siteChanges[$siteNodeName]['documents'][$documentPath]['documentBreadCrumb'] = array_reverse($documentPathSegmentsNames);
-
+                    $siteChanges[$siteNodeName]['documents'][$documentPath]['aggregateId'] = $documentNodeAddress->aggregateId;
                     $siteChanges[$siteNodeName]['documents'][$documentPath]['documentNodeAddress'] = $documentNodeAddress->toJson();
 
                     // We need to set `isNew` and `isMoved` on document level to make our JS behave as before.

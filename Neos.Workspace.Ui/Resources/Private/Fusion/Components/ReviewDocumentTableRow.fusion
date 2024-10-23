@@ -50,10 +50,9 @@ prototype(Neos.Workspace.Ui:Component.ReviewDocumentTableRow) < prototype(Neos.F
   renderer = afx`
     <tr class="neos-document" data-nodepath={documentPath} data-ismoved={document.isMoved} data-isnew={document.isNew}>
       <td class="neos-priority1">
-        <label
-               for="check-document-{document.documentNode.aggregateId.value}" class="neos-checkbox">
+        <label for={"check-document-" + document.aggregateId} class="neos-checkbox">
           <!-- TODO: make checkboxes work -->
-          <input type="checkbox" id="check-all" /><span></span>
+          <input type="checkbox" class="check-document" id={"check-document-" + document.aggregateId} /><span></span>
         </label>
       </td>
       <td class="neos-priority1 path-caption">
@@ -103,7 +102,7 @@ prototype(Neos.Workspace.Ui:Component.ReviewDocumentTableRow) < prototype(Neos.F
         </div>
       </td>
       <td class="neos-action neos-folder">
-        <i class="fold-toggle fas fa-chevron-up icon-white" data-toggle="fold-{document.documentNode.aggregateId.value}"></i>
+        <i class="fold-toggle fas fa-chevron-up icon-white"></i>
       </td>
     </tr>
   `
