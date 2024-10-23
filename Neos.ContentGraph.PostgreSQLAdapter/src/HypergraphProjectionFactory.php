@@ -7,16 +7,14 @@ namespace Neos\ContentGraph\PostgreSQLAdapter;
 use Doctrine\DBAL\Connection;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\HypergraphProjection;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Repository\NodeFactory;
-use Neos\ContentRepository\Core\ContentRepositoryReadModel;
 use Neos\ContentRepository\Core\Factory\ProjectionFactoryDependencies;
-use Neos\ContentRepository\Core\Projection\ProjectionFactoryInterface;
+use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphProjectionFactoryInterface;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
 
 /**
- * @implements ProjectionFactoryInterface<HypergraphProjection>
  * @api
  */
-final class HypergraphProjectionFactory implements ProjectionFactoryInterface
+final class HypergraphProjectionFactory implements ContentGraphProjectionFactoryInterface
 {
     public function __construct(
         private readonly Connection $dbal,
@@ -45,7 +43,7 @@ final class HypergraphProjectionFactory implements ProjectionFactoryInterface
         return new HypergraphProjection(
             $this->dbal,
             $tableNamePrefix,
-            new ContentRepositoryReadModel(new ContentHyperRepositoryReadModelAdapter($this->dbal, $nodeFactory, $projectionFactoryDependencies->contentRepositoryId, $projectionFactoryDependencies->nodeTypeManager, $tableNamePrefix))
+            new ContentHyperGraphReadModelAdapter($this->dbal, $nodeFactory, $projectionFactoryDependencies->contentRepositoryId, $projectionFactoryDependencies->nodeTypeManager, $tableNamePrefix)
         );
     }
 }

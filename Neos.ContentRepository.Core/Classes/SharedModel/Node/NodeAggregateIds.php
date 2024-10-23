@@ -109,9 +109,6 @@ final class NodeAggregateIds implements \IteratorAggregate, \Countable, \JsonSer
         return array_keys($this->nodeAggregateIds);
     }
 
-    /**
-     * @return \Traversable<string,NodeAggregateId>
-     */
     public function getIterator(): \Traversable
     {
         yield from $this->nodeAggregateIds;

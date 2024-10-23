@@ -34,9 +34,6 @@ final readonly class SerializedImageAdjustments implements \IteratorAggregate, \
         return new self(array_map(static fn(array $adjustment) => SerializedImageAdjustment::fromArray($adjustment), $array));
     }
 
-    /**
-     * @return \Traversable<SerializedImageAdjustment>
-     */
     public function getIterator(): \Traversable
     {
         yield from $this->serializedAdjustments;

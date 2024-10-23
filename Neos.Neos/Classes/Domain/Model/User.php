@@ -26,7 +26,7 @@ use Neos\Flow\Annotations as Flow;
  * @Flow\Scope("prototype")
  * @api
  */
-class User extends Person implements UserInterface
+class User extends Person
 {
     /**
      * Preferences of this user

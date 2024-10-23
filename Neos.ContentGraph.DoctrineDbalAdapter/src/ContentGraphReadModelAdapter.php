@@ -18,7 +18,7 @@ use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Exception;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\ContentGraph;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\NodeFactory;
-use Neos\ContentRepository\Core\ContentRepositoryReadModelAdapterInterface;
+use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphReadModelInterface;
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStream;
@@ -34,10 +34,9 @@ use Neos\EventStore\Model\EventStream\ExpectedVersion;
 use Neos\EventStore\Model\EventStream\MaybeVersion;
 
 /**
- * @internal only used inside the
- * @see ContentRepositoryReadModel
+ * @internal
  */
-final readonly class ContentRepositoryReadModelAdapter implements ContentRepositoryReadModelAdapterInterface
+final readonly class ContentGraphReadModelAdapter implements ContentGraphReadModelInterface
 {
     public function __construct(
         private Connection $dbal,
@@ -135,6 +134,21 @@ final readonly class ContentRepositoryReadModelAdapter implements ContentReposit
             throw new \RuntimeException(sprintf('Failed to load content streams from database: %s', $e->getMessage()), 1716903042, $e);
         }
         return ContentStreams::fromArray(array_map(self::contentStreamFromDatabaseRow(...), $rows));
+    }
+
+    public function countNodes(): int
+    {
+        $countNodesStatement = <<<SQL
+            SELECT
+                COUNT(*)
+            FROM
+                {$this->tableNames->node()}
+        SQL;
+        try {
+            return (int)$this->dbal->fetchOne($countNodesStatement);
+        } catch (Exception $e) {
+            throw new \RuntimeException(sprintf('Failed to count rows in database: %s', $e->getMessage()), 1701444590, $e);
+        }
     }
 
     /**

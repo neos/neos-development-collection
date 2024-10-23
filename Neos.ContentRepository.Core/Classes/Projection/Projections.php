@@ -7,7 +7,7 @@ namespace Neos\ContentRepository\Core\Projection;
 /**
  * An immutable set of Content Repository projections ({@see ProjectionInterface}
  *
- * @implements \IteratorAggregate<ProjectionInterface>
+ * @implements \IteratorAggregate<ProjectionInterface<ProjectionStateInterface>>
  * @internal
  */
 final class Projections implements \IteratorAggregate, \Countable
@@ -79,6 +79,15 @@ final class Projections implements \IteratorAggregate, \Countable
     }
 
     /**
+     * @param ProjectionInterface<ProjectionStateInterface> $projection
+     * @return self
+     */
+    public function with(ProjectionInterface $projection): self
+    {
+        return self::fromArray([...$this->projections, $projection]);
+    }
+
+    /**
      * @return list<class-string<ProjectionInterface<ProjectionStateInterface>>>
      */
     public function getClassNames(): array
@@ -86,9 +95,6 @@ final class Projections implements \IteratorAggregate, \Countable
         return array_keys($this->projections);
     }
 
-    /**
-     * @return \Traversable<ProjectionInterface<ProjectionStateInterface>>
-     */
     public function getIterator(): \Traversable
     {
         yield from $this->projections;
