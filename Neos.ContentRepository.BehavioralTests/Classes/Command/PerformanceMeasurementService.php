@@ -107,7 +107,6 @@ class PerformanceMeasurementService implements ContentRepositoryServiceInterface
             ExpectedVersion::ANY()
         ));
         echo $sumSoFar;
-        #$this->outputLine(microtime(true) - $time . ' elapsed');
     }
 
 
