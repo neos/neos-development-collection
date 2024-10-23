@@ -140,10 +140,10 @@ class SiteCommandController extends CommandController
     /**
      * Import sites
      *
-     * This command allows importing sites from the given path/packahe. The format must
-     * be identical to that produced by the export command.
+     * This command allows importing sites from the given path/package. The format must
+     * be identical to that produced by the exportAll command.
      *
-     * !!! At the moment the live workspace has to be empty prior to importing. This will be improved in future. !!!
+     * !!! The live workspace has to be empty prior to importing. !!!
      *
      * If a path is specified, this command expects the corresponding directory to contain the exported files
      *
@@ -154,7 +154,7 @@ class SiteCommandController extends CommandController
      * @param string|null $path relative or absolute path and filename to the export files
      * @return void
      */
-    public function importCommand(string $packageKey = null, string $path = null, string $contentRepository = 'default', bool $verbose = false): void
+    public function importAllCommand(string $packageKey = null, string $path = null, string $contentRepository = 'default', bool $verbose = false): void
     {
         $exceedingArguments = $this->request->getExceedingArguments();
         if (isset($exceedingArguments[0]) && $packageKey === null && $path === null) {
@@ -202,20 +202,18 @@ class SiteCommandController extends CommandController
     /**
      * Export sites
      *
-     * This command allows to export all current sites.
+     * This command exports all sites of the content repository.
+     **
+     * If a path is specified, this command creates the directory if needed and exports into that.
      *
-     * !!! At the moment always all sites are exported. This will be improved in future!!!
-     *
-     * If a path is specified, this command expects the corresponding directory to contain the exported files
-     *
-     * If a package key is specified, this command expects the export files to be located in the private resources
+     * If a package key is specified, this command exports to the private resources
      * directory of the given package (Resources/Private/Content).
      *
      * @param string|null $packageKey Package key specifying the package containing the sites content
      * @param string|null $path relative or absolute path and filename to the export files
      * @return void
      */
-    public function exportCommand(string $packageKey = null, string $path = null, string $contentRepository = 'default', bool $verbose = false): void
+    public function exportAllCommand(string $packageKey = null, string $path = null, string $contentRepository = 'default', bool $verbose = false): void
     {
         $exceedingArguments = $this->request->getExceedingArguments();
         if (isset($exceedingArguments[0]) && $packageKey === null && $path === null) {
@@ -247,6 +245,9 @@ class SiteCommandController extends CommandController
         if ($path === null) {
             $package = $this->packageManager->getPackage($packageKey);
             $path = Files::concatenatePaths([$package->getPackagePath(), 'Resources/Private/Content']);
+        }
+        if (file_exists($path) === false) {
+            Files::createDirectoryRecursively($path);
         }
         $this->siteExportService->exportToPath($contentRepositoryId, $path, $onProcessor, $onMessage);
     }

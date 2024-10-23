@@ -25,14 +25,10 @@ use Neos\ContentRepository\Export\Processors\AssetExportProcessor;
 use Neos\ContentRepository\Export\Severity;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\Annotations as Flow;
-use Neos\Flow\Persistence\Doctrine\Service as DoctrineService;
-use Neos\Flow\Persistence\PersistenceManagerInterface;
-use Neos\Flow\ResourceManagement\ResourceManager;
-use Neos\Flow\ResourceManagement\ResourceRepository;
 use Neos\Media\Domain\Repository\AssetRepository;
 use Neos\Neos\AssetUsage\AssetUsageService;
-use Neos\Neos\Domain\Import\SiteCreationProcessor;
 use Neos\Neos\Domain\Export\SiteExportProcessor;
+use Neos\Neos\Domain\Export\SiteExportProcessorFactory;
 use Neos\Neos\Domain\Repository\SiteRepository;
 
 #[Flow\Scope('singleton')]
@@ -40,9 +36,9 @@ final readonly class SiteExportService
 {
     public function __construct(
         private ContentRepositoryRegistry $contentRepositoryRegistry,
-        private SiteRepository $siteRepository,
         private AssetRepository $assetRepository,
         private AssetUsageService $assetUsageService,
+        private SiteRepository $siteRepository,
     ) {
     }
 
@@ -79,7 +75,13 @@ final readonly class SiteExportService
                 $liveWorkspace,
                 $this->assetUsageService
             ),
-            'Export sites' => new SiteExportProcessor($this->siteRepository),
+            'Export sites' => $this->contentRepositoryRegistry->buildService(
+                $contentRepositoryId,
+                new SiteExportProcessorFactory(
+                    $liveWorkspace->workspaceName,
+                    $this->siteRepository,
+                )
+            ),
         ];
         foreach ($processors as $processorLabel => $processor) {
             ($onProcessor)($processorLabel);

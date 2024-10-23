@@ -14,16 +14,15 @@ declare(strict_types=1);
 
 namespace Neos\Neos\Domain\Export;
 
-use JsonException;
-use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
-use Neos\ContentRepository\Export\Event\ValueObject\ExportedEvent;
+use Neos\ContentRepository\Core\ContentRepository;
+use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceInterface;
+use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepository\Export\ProcessingContext;
 use Neos\ContentRepository\Export\ProcessorInterface;
-use Neos\ContentRepository\Export\Severity;
-use Neos\Flow\Persistence\Doctrine\PersistenceManager;
 use Neos\Neos\Domain\Model\Domain;
 use Neos\Neos\Domain\Model\Site;
 use Neos\Neos\Domain\Repository\SiteRepository;
+use Neos\Neos\Domain\Service\NodeTypeNameFactory;
 
 /**
  * Export processor exports Neos {@see Site} instances as json
@@ -32,9 +31,11 @@ use Neos\Neos\Domain\Repository\SiteRepository;
  * @phpstan-type SiteShape array{name:string, siteResourcesPackageKey:string, nodeName?: string, online?:bool, domains?: ?DomainShape[] }
  *
  */
-final readonly class SiteExportProcessor implements ProcessorInterface
+final readonly class SiteExportProcessor implements ProcessorInterface, ContentRepositoryServiceInterface
 {
     public function __construct(
+        private ContentRepository $contentRepository,
+        private WorkspaceName $workspaceName,
         private SiteRepository $siteRepository,
     ) {
     }
@@ -53,8 +54,9 @@ final readonly class SiteExportProcessor implements ProcessorInterface
      */
     private function getSiteData(): array
     {
-        return array_map(
-            fn(Site $site) => [
+        $siteData = [];
+        foreach ($this->findSites($this->workspaceName) as $site) {
+            $siteData[] = [
                 "name" => $site->getName(),
                 "nodeName" => $site->getNodeName()->value,
                 "siteResourcesPackageKey" => $site->getSiteResourcesPackageKey(),
@@ -69,8 +71,35 @@ final readonly class SiteExportProcessor implements ProcessorInterface
                     ],
                     $site->getDomains()->toArray()
                 )
-            ],
-            $this->siteRepository->findAll()->toArray()
-        );
+            ];
+        }
+
+        return $siteData;
+    }
+
+    /**
+     * @param WorkspaceName $workspaceName
+     * @return \Traversable<Site>
+     */
+    private function findSites(WorkspaceName $workspaceName): \Traversable
+    {
+        $contentGraph = $this->contentRepository->getContentGraph($workspaceName);
+        $sitesNodeAggregate = $contentGraph->findRootNodeAggregateByType(NodeTypeNameFactory::forSites());
+        if ($sitesNodeAggregate === null) {
+            return;
+        }
+
+        $siteNodeAggregates = $contentGraph->findChildNodeAggregates($sitesNodeAggregate->nodeAggregateId);
+        foreach ($siteNodeAggregates as $siteNodeAggregate) {
+            $siteNodeName = $siteNodeAggregate->nodeName?->value;
+            if ($siteNodeName === null) {
+                continue;
+            }
+            $site = $this->siteRepository->findOneByNodeName($siteNodeName);
+            if ($site === null) {
+                continue;
+            }
+            yield $site;
+        }
     }
 }
