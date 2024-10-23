@@ -11,7 +11,6 @@ additionalProperties:
 
     'strategy':
       type: dictionary
-      additionalProperties: false
       properties:
         'nodeMove': { type: string, description: "Strategy for moving nodes of this type" }
 
