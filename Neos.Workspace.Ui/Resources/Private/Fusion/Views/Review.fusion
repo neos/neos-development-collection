@@ -40,6 +40,7 @@ Neos.Workspace.Ui.WorkspaceController.review = Neos.Fusion:Component {
             <div @if.hasNoSiteChange={!props.siteChanges} class="no-unpublished-changes">
               {props.i18n.id('workspaces.reviewWorkspace.disabled').arguments([selectedWorkspaceLabel]).translate()}
             </div>
+            <Neos.Workspace.Ui:Component.ReviewActions />
           </div>
         </main>
       </section>
