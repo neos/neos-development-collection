@@ -50,7 +50,7 @@ prototype(Neos.Workspace.Ui:Component.ReviewDocumentTableRow) < prototype(Neos.F
   renderer = afx`
     <tr class="neos-document" data-nodepath={documentPath} data-ismoved={document.isMoved} data-isnew={document.isNew}>
       <td class="neos-priority1">
-        <label @if.hasChanges={document.changesCount > 1}
+        <label
                for="check-document-{document.documentNode.aggregateId.value}" class="neos-checkbox">
           <!-- TODO: make checkboxes work -->
           <input type="checkbox" id="check-all" /><span></span>

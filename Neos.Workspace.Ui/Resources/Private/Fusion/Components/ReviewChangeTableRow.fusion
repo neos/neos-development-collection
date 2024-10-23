@@ -16,10 +16,6 @@ prototype(Neos.Workspace.Ui:Component.ReviewChangeTableRow) < prototype(Neos.Fus
   renderer = afx`
     <tr class={"neos-change fold-" + document.documentNode.aggregateId.value + "document-" + document.documentNode.aggregateId.value} data-nodepath={relativePath} data-ismoved={change.isMoved} data-isnew={change.isNew}>
       <td class="check neos-priority1">
-        <label for="{change.serializedNodeAddress}" class="neos-checkbox">
-          <input type="checkbox" id="check-all" />
-          <span></span>
-        </label>
       </td>
       <td id={"change-" + change.serializedNodeAddress} data-neos-toggle="tooltip" data-placement="left" data-container="body">
         <Neos.Fusion:DataStructure
