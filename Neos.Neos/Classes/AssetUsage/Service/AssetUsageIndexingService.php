@@ -291,6 +291,9 @@ class AssetUsageIndexingService
      */
     private function extractAssetIds(string $type, mixed $value): array
     {
+        if ($value === null) {
+            return [];
+        }
         if (is_string($value)) {
             preg_match_all('/asset:\/\/(?<assetId>[\w-]*)/i', $value, $matches, PREG_SET_ORDER);
             return array_map(static fn (array $match) => $match['assetId'], $matches);
