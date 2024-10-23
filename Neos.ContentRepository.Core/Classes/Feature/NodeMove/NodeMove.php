@@ -98,7 +98,10 @@ trait NodeMove
 
         if ($command->relationDistributionStrategy === null) {
             $nodeType = $this->nodeTypeManager->getNodeType($nodeAggregate->nodeTypeName);
-            $command = $command->withRelationDistributionStrategy($nodeType->getMoveNodeRelationDistributionStrategy() ?: RelationDistributionStrategy::STRATEGY_GATHER_ALL);
+            $command = $command->withRelationDistributionStrategy(
+                $nodeType ?
+                    $nodeType->getMoveNodeRelationDistributionStrategy() :
+                    RelationDistributionStrategy::STRATEGY_GATHER_ALL);
         }
 
         $this->requireNodeAggregateToNotBeRoot($nodeAggregate);
