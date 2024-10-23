@@ -236,7 +236,7 @@ final readonly class WorkspaceService
     /**
      * Get all role assignments for the specified workspace
      *
-     * NOTE: This should never be used to evaluate permissions, instead {@see ContentRepositoryAuthorizationService::getWorkspacePermissionsForUser()} should be used!
+     * NOTE: This should never be used to evaluate permissions, instead {@see ContentRepositoryAuthorizationService::getWorkspacePermissionsForAccount()} and {@see ContentRepositoryAuthorizationService::getWorkspacePermissionsForAnonymousUser()} should be used!
      */
     public function getWorkspaceRoleAssignments(ContentRepositoryId $contentRepositoryId, WorkspaceName $workspaceName): WorkspaceRoleAssignments
     {
@@ -272,7 +272,7 @@ final readonly class WorkspaceService
     /**
      * Get the role with the most privileges for the specified {@see WorkspaceRoleSubjects} on workspace $workspaceName
      *
-     * NOTE: This should never be used to evaluate permissions, instead {@see ContentRepositoryAuthorizationService::getWorkspacePermissionsForUser()} should be used!
+     * NOTE: This should never be used to evaluate permissions, instead {@see ContentRepositoryAuthorizationService::getWorkspacePermissionsForAccount()} and {@see ContentRepositoryAuthorizationService::getWorkspacePermissionsForAnonymousUser()} should be used!
      */
     public function getMostPrivilegedWorkspaceRoleForSubjects(ContentRepositoryId $contentRepositoryId, WorkspaceName $workspaceName, WorkspaceRoleSubjects $subjects): ?WorkspaceRole
     {

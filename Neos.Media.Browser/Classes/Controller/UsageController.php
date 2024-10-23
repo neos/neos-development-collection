@@ -19,6 +19,7 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\Controller\ActionController;
+use Neos\Flow\Security\Context as SecurityContext;
 use Neos\Media\Domain\Model\AssetInterface;
 use Neos\Media\Domain\Service\AssetService;
 use Neos\Neos\Domain\Repository\SiteRepository;
@@ -68,6 +69,12 @@ class UsageController extends ActionController
 
     /**
      * @Flow\Inject
+     * @var SecurityContext
+     */
+    protected $securityContext;
+
+    /**
+     * @Flow\Inject
      * @var ContentRepositoryAuthorizationService
      */
     protected $contentRepositoryAuthorizationService;
@@ -110,11 +117,12 @@ class UsageController extends ActionController
             );
             $nodeType = $nodeAggregate ? $contentRepository->getNodeTypeManager()->getNodeType($nodeAggregate->nodeTypeName) : null;
 
-            $workspacePermissions = $this->contentRepositoryAuthorizationService->getWorkspacePermissionsForUser(
-                $currentContentRepositoryId,
-                $usage->getWorkspaceName(),
-                $currentUser
-            );
+            $authenticatedAccount = $this->securityContext->getAccount();
+            if ($authenticatedAccount !== null) {
+                $workspacePermissions =  $this->contentRepositoryAuthorizationService->getWorkspacePermissionsForAccount($currentContentRepositoryId, $usage->getWorkspaceName(), $authenticatedAccount);
+            } else {
+                $workspacePermissions =  $this->contentRepositoryAuthorizationService->getWorkspacePermissionsForAnonymousUser($currentContentRepositoryId, $usage->getWorkspaceName());
+            }
 
             $workspace = $contentRepository->findWorkspaceByName($usage->getWorkspaceName());
 

@@ -203,7 +203,12 @@ class NodeController extends ActionController
         // By default, the visibility constraints only contain the SubtreeTags the authenticated user has _no_ access to
         // Neos backend users have access to the "disabled" SubtreeTag so that they can see/edit disabled nodes.
         // In this showAction (= "frontend") we have to explicitly remove those disabled nodes, even if the user was authenticated
-        $visibilityConstraints = $this->contentRepositoryAuthorizationService->getVisibilityConstraintsForRoles($contentRepository->id, $this->securityContext->getRoles());
+        $authenticatedAccount = $this->securityContext->getAccount();
+        if ($authenticatedAccount !== null) {
+            $visibilityConstraints = $this->contentRepositoryAuthorizationService->getVisibilityConstraintsForAccount($contentRepository->id, $authenticatedAccount);
+        } else {
+            $visibilityConstraints = $this->contentRepositoryAuthorizationService->getVisibilityConstraintsForAnonymousUser($contentRepository->id);
+        }
         $visibilityConstraints = $visibilityConstraints->withAddedSubtreeTag(SubtreeTag::disabled());
         $uncachedSubgraph = $contentRepository->getContentGraph($nodeAddress->workspaceName)->getSubgraph($nodeAddress->dimensionSpacePoint, $visibilityConstraints);
 

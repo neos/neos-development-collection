@@ -56,7 +56,11 @@ final class ContentRepositoryAuthProvider implements AuthProviderInterface
         if ($this->securityContext->areAuthorizationChecksDisabled()) {
             return VisibilityConstraints::default();
         }
-        return $this->authorizationService->getVisibilityConstraintsForRoles($this->contentRepositoryId, $this->securityContext->getRoles());
+        $authenticatedAccount = $this->securityContext->getAccount();
+        if ($authenticatedAccount) {
+            return $this->authorizationService->getVisibilityConstraintsForAccount($this->contentRepositoryId, $authenticatedAccount);
+        }
+        return $this->authorizationService->getVisibilityConstraintsForAnonymousUser($this->contentRepositoryId);
     }
 
     public function getReadNodesFromWorkspacePrivilege(WorkspaceName $workspaceName): Privilege
@@ -64,11 +68,11 @@ final class ContentRepositoryAuthProvider implements AuthProviderInterface
         if ($this->securityContext->areAuthorizationChecksDisabled()) {
             return Privilege::granted('Authorization checks are disabled');
         }
-        $user = $this->userService->getCurrentUser();
-        if ($user === null) {
+        $authenticatedAccount = $this->securityContext->getAccount();
+        if ($authenticatedAccount === null) {
             $workspacePermissions = $this->authorizationService->getWorkspacePermissionsForAnonymousUser($this->contentRepositoryId, $workspaceName);
         } else {
-            $workspacePermissions = $this->authorizationService->getWorkspacePermissionsForUser($this->contentRepositoryId, $workspaceName, $user);
+            $workspacePermissions = $this->authorizationService->getWorkspacePermissionsForAccount($this->contentRepositoryId, $workspaceName, $authenticatedAccount);
         }
         return $workspacePermissions->read ? Privilege::granted($workspacePermissions->getReason()) : Privilege::denied($workspacePermissions->getReason());
     }
@@ -124,10 +128,10 @@ final class ContentRepositoryAuthProvider implements AuthProviderInterface
 
     private function getWorkspacePermissionsForCurrentUser(WorkspaceName $workspaceName): WorkspacePermissions
     {
-        $user = $this->userService->getCurrentUser();
-        if ($user === null) {
+        $authenticatedAccount = $this->securityContext->getAccount();
+        if ($authenticatedAccount === null) {
             return $this->authorizationService->getWorkspacePermissionsForAnonymousUser($this->contentRepositoryId, $workspaceName);
         }
-        return $this->authorizationService->getWorkspacePermissionsForUser($this->contentRepositoryId, $workspaceName, $user);
+        return $this->authorizationService->getWorkspacePermissionsForAccount($this->contentRepositoryId, $workspaceName, $authenticatedAccount);
     }
 }
