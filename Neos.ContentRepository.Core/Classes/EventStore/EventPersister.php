@@ -24,7 +24,6 @@ final readonly class EventPersister
     }
 
     /**
-     * @param EventsToPublish $eventsToPublish
      * @throws ConcurrencyException in case the expectedVersion does not match
      */
     public function publishEvents(ContentRepository $contentRepository, EventsToPublish $eventsToPublish): void

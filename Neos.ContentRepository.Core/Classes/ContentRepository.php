@@ -24,6 +24,7 @@ use Neos\ContentRepository\Core\EventStore\EventNormalizer;
 use Neos\ContentRepository\Core\EventStore\EventPersister;
 use Neos\ContentRepository\Core\EventStore\Events;
 use Neos\ContentRepository\Core\EventStore\EventsToPublish;
+use Neos\ContentRepository\Core\EventStore\EventsToPublishFailed;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryFactory;
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Core\Projection\CatchUp;
@@ -47,6 +48,7 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\Workspace;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepository\Core\SharedModel\Workspace\Workspaces;
 use Neos\EventStore\EventStoreInterface;
+use Neos\EventStore\Exception\ConcurrencyException;
 use Neos\EventStore\Model\Event\EventMetadata;
 use Neos\EventStore\Model\EventEnvelope;
 use Neos\EventStore\Model\EventStream\VirtualStreamName;
@@ -101,38 +103,60 @@ final class ContentRepository
     {
         // the commands only calculate which events they want to have published, but do not do the
         // publishing themselves
-        $eventsToPublish = $this->commandBus->handle($command, $this->commandHandlingDependencies);
+        $eventsToPublishOrGenerator = $this->commandBus->handle($command, $this->commandHandlingDependencies);
 
-        // TODO meaningful exception message
-        $initiatingUserId = $this->userIdProvider->getUserId();
-        $initiatingTimestamp = $this->clock->now()->format(\DateTimeInterface::ATOM);
+        // TODO only apply metadata if is copied event?? In generator below we ignore this...
 
-        // Add "initiatingUserId" and "initiatingTimestamp" metadata to all events.
-        //                        This is done in order to keep information about the _original_ metadata when an
-        //                        event is re-applied during publishing/rebasing
-        // "initiatingUserId": The identifier of the user that originally triggered this event. This will never
-        //                     be overridden if it is set once.
-        // "initiatingTimestamp": The timestamp of the original event. The "recordedAt" timestamp will always be
-        //                        re-created and reflects the time an event was actually persisted in a stream,
-        // the "initiatingTimestamp" will be kept and is never overridden again.
-        // TODO: cleanup
-        $eventsToPublish = new EventsToPublish(
-            $eventsToPublish->streamName,
-            Events::fromArray(
-                $eventsToPublish->events->map(function (EventInterface|DecoratedEvent $event) use (
-                    $initiatingUserId,
-                    $initiatingTimestamp
-                ) {
-                    $metadata = $event instanceof DecoratedEvent ? $event->eventMetadata?->value ?? [] : [];
-                    $metadata['initiatingUserId'] ??= $initiatingUserId;
-                    $metadata['initiatingTimestamp'] ??= $initiatingTimestamp;
-                    return DecoratedEvent::create($event, metadata: EventMetadata::fromArray($metadata));
-                })
-            ),
-            $eventsToPublish->expectedVersion,
-        );
+        if ($eventsToPublishOrGenerator instanceof EventsToPublish) {
+            // TODO meaningful exception message
+            $initiatingUserId = $this->userIdProvider->getUserId();
+            $initiatingTimestamp = $this->clock->now()->format(\DateTimeInterface::ATOM);
 
-        $this->eventPersister->publishEvents($this, $eventsToPublish);
+            // Add "initiatingUserId" and "initiatingTimestamp" metadata to all events.
+            //                        This is done in order to keep information about the _original_ metadata when an
+            //                        event is re-applied during publishing/rebasing
+            // "initiatingUserId": The identifier of the user that originally triggered this event. This will never
+            //                     be overridden if it is set once.
+            // "initiatingTimestamp": The timestamp of the original event. The "recordedAt" timestamp will always be
+            //                        re-created and reflects the time an event was actually persisted in a stream,
+            // the "initiatingTimestamp" will be kept and is never overridden again.
+            // TODO: cleanup
+            $eventsToPublish = new EventsToPublish(
+                $eventsToPublishOrGenerator->streamName,
+                Events::fromArray(
+                    $eventsToPublishOrGenerator->events->map(function (EventInterface|DecoratedEvent $event) use (
+                        $initiatingUserId,
+                        $initiatingTimestamp
+                    ) {
+                        $metadata = $event instanceof DecoratedEvent ? $event->eventMetadata?->value ?? [] : [];
+                        $metadata['initiatingUserId'] ??= $initiatingUserId;
+                        $metadata['initiatingTimestamp'] ??= $initiatingTimestamp;
+                        return DecoratedEvent::create($event, metadata: EventMetadata::fromArray($metadata));
+                    })
+                ),
+                $eventsToPublishOrGenerator->expectedVersion,
+            );
+            $this->eventPersister->publishEvents($this, $eventsToPublish);
+        } else {
+            foreach ($eventsToPublishOrGenerator as $eventsToPublish) {
+                assert($eventsToPublish instanceof EventsToPublish); // just for the ide
+
+                try {
+                    $this->eventPersister->publishEvents($this, $eventsToPublish);
+                } catch (ConcurrencyException $e) {
+                    $errorStrategy = $eventsToPublishOrGenerator->send(new EventsToPublishFailed(
+                        $eventsToPublish->expectedVersion,
+                        $e
+                    ));
+
+                    if ($errorStrategy instanceof EventsToPublish) {
+                        $this->eventPersister->publishEvents($this, $errorStrategy);
+                    }
+                    // if we dont already throw an error throw an error now???? todo
+                    throw $e;
+                }
+            }
+        }
     }
 
 

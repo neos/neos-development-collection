@@ -15,14 +15,14 @@ namespace Neos\ContentRepository\Core\Feature\ContentStreamRemoval\Command;
  */
 
 use Neos\ContentRepository\Core\CommandHandler\CommandInterface;
+use Neos\ContentRepository\Core\Service\ContentStreamPruner;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 
 /**
  * Command to remove an existing content stream
  *
- * @internal implementation detail. You must not use this command directly.
- * Direct use may lead to hard to revert senseless state in your content repository.
- * Please use the higher level workspace commands instead.
+ * @internal implementation detail of the {@see ContentStreamPruner}. You must not use this command directly.
+ * Direct use would throw away the content stream and may leave a broken state.
  */
 final readonly class RemoveContentStream implements CommandInterface
 {
