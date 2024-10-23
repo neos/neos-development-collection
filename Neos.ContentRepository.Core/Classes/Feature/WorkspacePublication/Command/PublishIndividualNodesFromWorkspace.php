@@ -29,13 +29,11 @@ final readonly class PublishIndividualNodesFromWorkspace implements CommandInter
     /**
      * @param WorkspaceName $workspaceName Name of the affected workspace
      * @param NodeIdsToPublishOrDiscard $nodesToPublish Ids of the nodes to publish or discard
-     * @param ContentStreamId $contentStreamIdForMatchingPart The id of the new content stream that will contain all events to be published {@see self::withContentStreamIdForMatchingPart()}
      * @param ContentStreamId $contentStreamIdForRemainingPart The id of the new content stream that will contain all remaining events {@see self::withContentStreamIdForRemainingPart()}
      */
     private function __construct(
         public WorkspaceName $workspaceName,
         public NodeIdsToPublishOrDiscard $nodesToPublish,
-        public ContentStreamId $contentStreamIdForMatchingPart,
         public ContentStreamId $contentStreamIdForRemainingPart
     ) {
     }
@@ -49,24 +47,8 @@ final readonly class PublishIndividualNodesFromWorkspace implements CommandInter
         return new self(
             $workspaceName,
             $nodesToPublish,
-            ContentStreamId::create(),
             ContentStreamId::create()
         );
-    }
-
-    /**
-     * During the publish process, we sort the events so that the events we want to publish
-     * come first. In this process, two new content streams are generated:
-     * - the first one contains all events which we want to publish
-     * - the second one is based on the first one, and contains all the remaining events (which we want to keep
-     *   in the user workspace).
-     *
-     * This method adds the ID of the first content stream, so that the command
-     * can run fully deterministic - we need this for the test cases.
-     */
-    public function withContentStreamIdForMatchingPart(ContentStreamId $contentStreamIdForMatchingPart): self
-    {
-        return new self($this->workspaceName, $this->nodesToPublish, $contentStreamIdForMatchingPart, $this->contentStreamIdForRemainingPart);
     }
 
     /**
@@ -77,6 +59,6 @@ final readonly class PublishIndividualNodesFromWorkspace implements CommandInter
      */
     public function withContentStreamIdForRemainingPart(ContentStreamId $contentStreamIdForRemainingPart): self
     {
-        return new self($this->workspaceName, $this->nodesToPublish, $this->contentStreamIdForMatchingPart, $contentStreamIdForRemainingPart);
+        return new self($this->workspaceName, $this->nodesToPublish, $contentStreamIdForRemainingPart);
     }
 }

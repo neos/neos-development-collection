@@ -102,7 +102,6 @@ Feature: Publishing hide/show scenario of nodes
       | workspaceName                   | "user-test"                                                                                              |
       | nodesToPublish                  | [{"nodeAggregateId": "sir-david-nodenborough", "workspaceName": "user-test", "dimensionSpacePoint": {}}] |
       | contentStreamIdForRemainingPart | "remaining-cs-id"                                                                                        |
-      | contentStreamIdForMatchingPart  | "matching-cs-id"                                                                                         |
 
     When I am in workspace "live"
     Then I expect node aggregate identifier "sir-david-nodenborough" to lead to no node

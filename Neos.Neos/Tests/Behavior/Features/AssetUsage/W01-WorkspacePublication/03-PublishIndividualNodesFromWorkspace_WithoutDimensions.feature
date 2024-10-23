@@ -65,7 +65,6 @@ Feature: Publish nodes partially without dimensions
       | Key                             | Value                                                                                                         |
       | nodesToPublish                  | [{"workspaceName": "user-workspace", "dimensionSpacePoint": {}, "nodeAggregateId": "sir-david-nodenborough"}] |
       | contentStreamIdForRemainingPart | "user-cs-identifier-remaining"                                                                                |
-      | contentStreamIdForMatchingPart  | "user-cs-identifier-matching"                                                                                 |
 
     Then I expect the AssetUsageService to have the following AssetUsages:
       | assetId | nodeAggregateId            | propertyName | workspaceName  | originDimensionSpacePoint |
@@ -114,7 +113,6 @@ Feature: Publish nodes partially without dimensions
       | Key                             | Value                                                                                                         |
       | nodesToPublish                  | [{"workspaceName": "user-workspace", "dimensionSpacePoint": {}, "nodeAggregateId": "sir-david-nodenborough"}] |
       | contentStreamIdForRemainingPart | "user-cs-identifier-remaining"                                                                                |
-      | contentStreamIdForMatchingPart  | "user-cs-identifier-matching"                                                                                 |
 
     And I expect the AssetUsageService to have the following AssetUsages:
       | assetId | nodeAggregateId            | propertyName | workspaceName    | originDimensionSpacePoint |

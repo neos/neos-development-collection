@@ -98,7 +98,6 @@ Feature: Publishing individual nodes (basics)
       | workspaceName                   | "user-test"                                                                                                  |
       | nodesToPublish                  | [{"workspaceName": "user-test", "dimensionSpacePoint": {}, "nodeAggregateId": "sir-nodeward-nodington-iii"}] |
       | contentStreamIdForRemainingPart | "user-cs-identifier-remaining"                                                                               |
-      | contentStreamIdForMatchingPart  | "user-cs-identifier-matching"                                                                                |
 
     When I am in workspace "live" and dimension space point {}
     Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{}

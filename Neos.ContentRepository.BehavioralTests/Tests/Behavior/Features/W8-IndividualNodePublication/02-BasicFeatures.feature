@@ -53,7 +53,6 @@ Feature: Individual node publication
       | Key                             | Value                                                                                                    |
       | nodesToPublish                  | [{"workspaceName": "user-test", "dimensionSpacePoint": {}, "nodeAggregateId": "sir-david-nodenborough"}] |
       | contentStreamIdForRemainingPart | "user-cs-identifier-remaining"                                                                           |
-      | contentStreamIdForMatchingPart  | "user-cs-identifier-matching"                                                                            |
 
     And I am in workspace "live"
 
