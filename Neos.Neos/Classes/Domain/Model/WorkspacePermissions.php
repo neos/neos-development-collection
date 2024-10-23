@@ -47,4 +47,9 @@ final readonly class WorkspacePermissions
     {
         return new self(true, true, true);
     }
+
+    public static function none(): self
+    {
+        return new self(false, false, false);
+    }
 }

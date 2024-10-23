@@ -23,15 +23,16 @@ use Neos\Neos\Domain\Model\WorkspaceTitle;
 final readonly class EditWorkspaceFormData
 {
     public function __construct(
-        public WorkspaceName $workspaceName,
-        public WorkspaceTitle $workspaceTitle,
+        public WorkspaceName        $workspaceName,
+        public WorkspaceTitle       $workspaceTitle,
         public WorkspaceDescription $workspaceDescription,
-        public bool $workspaceHasChanges,
+        public bool                 $workspaceHasChanges,
+        public WorkspaceName        $baseWorkspaceName,
         /**
          * Options for the baseWorkspace selector where the key is the workspace name and the value is the workspace title.
          * @var array<string, string>
          */
-        public array $baseWorkspaceOptions,
+        public array                $baseWorkspaceOptions,
     )
     {
     }

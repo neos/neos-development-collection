@@ -1,5 +1,6 @@
 prototype(Neos.Workspace.Ui:Component.Modal.Edit) < prototype(Neos.Fusion:Component) {
   workspaceHasChanges = false
+  baseWorkspaceName = ''
   /// array<string, string>
   baseWorkspaceOptions = ${[]}
 

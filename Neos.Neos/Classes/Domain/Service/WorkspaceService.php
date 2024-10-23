@@ -289,19 +289,30 @@ final class WorkspaceService
         } catch (NoSuchRoleException $e) {
             throw new \RuntimeException(sprintf('Failed to determine roles for user "%s", check your package dependencies: %s', $user->getId()->value, $e->getMessage()), 1727084881, $e);
         }
-        $workspaceMetadata = $this->loadWorkspaceMetadata($contentRepositoryId, $workspaceName);
-        if ($workspaceMetadata !== null && $workspaceMetadata->ownerUserId !== null && $workspaceMetadata->ownerUserId->equals($user->getId())) {
+
+        $userIsAdministrator = in_array('Neos.Neos:Administrator', $userRoles, true);
+
+        if ($userIsAdministrator) {
             return WorkspacePermissions::all();
         }
-        $userWorkspaceRole = $this->loadWorkspaceRoleOfUser($contentRepositoryId, $workspaceName, $user->getId(), $userRoles);
-        $userIsAdministrator = in_array('Neos.Neos:Administrator', $userRoles, true);
-        if ($userWorkspaceRole === null) {
-            return WorkspacePermissions::create(false, false, $userIsAdministrator);
+
+        $workspaceMetadata = $this->loadWorkspaceMetadata($contentRepositoryId, $workspaceName);
+        $userIsOwner = $workspaceMetadata !== null && $workspaceMetadata->ownerUserId !== null && $workspaceMetadata->ownerUserId->equals($user->getId());
+
+        if ($userIsOwner) {
+            return WorkspacePermissions::all();
         }
+
+        $userWorkspaceRole = $this->loadWorkspaceRoleOfUser($contentRepositoryId, $workspaceName, $user->getId(), $userRoles);
+
+        if ($userWorkspaceRole === null) {
+            return WorkspacePermissions::none();
+        }
+
         return WorkspacePermissions::create(
             read: $userWorkspaceRole->isAtLeast(WorkspaceRole::COLLABORATOR),
             write: $userWorkspaceRole->isAtLeast(WorkspaceRole::COLLABORATOR),
-            manage: $userIsAdministrator || $userWorkspaceRole->isAtLeast(WorkspaceRole::MANAGER),
+            manage: $userWorkspaceRole->isAtLeast(WorkspaceRole::MANAGER),
         );
     }
 

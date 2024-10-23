@@ -23,7 +23,6 @@ prototype(Neos.Workspace.Ui:Component.WorkspaceTable) < prototype(Neos.Fusion:Co
           </button>
         </th>
         <th>{private.i18n.id('workspaces.workspace.description')}</th>
-        <th>{private.i18n.id('workspaces.workspace.owner')}</th>
         <th>
           <button type="button" class="icon-button">
             {private.i18n.id('workspaces.workspace.lastModified')}

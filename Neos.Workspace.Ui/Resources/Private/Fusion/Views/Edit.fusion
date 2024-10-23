@@ -9,6 +9,7 @@ Neos.Workspace.Ui.WorkspaceController.edit = Neos.Fusion:Component {
       workspaceDescription={props.editWorkspaceFormData.workspaceDescription.value}
 
       workspaceHasChanges={props.editWorkspaceFormData.workspaceHasChanges}
+      baseWorkspaceName={props.editWorkspaceFormData.baseWorkspaceName.value}
       baseWorkspaceOptions={props.editWorkspaceFormData.baseWorkspaceOptions}
     />
   `

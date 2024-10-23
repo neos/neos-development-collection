@@ -6,8 +6,6 @@ prototype(Neos.Workspace.Ui:Component.WorkspaceTableRow) < prototype(Neos.Fusion
   userWorkspaceName = null
   /// Neos\Workspace\Ui\ViewModel\WorkspaceListItem
   workspaceListItem = ${[]}
-  /// boolean todo unused!!!
-  canManage = false
   /// integer
   level = 0
 
@@ -96,7 +94,6 @@ prototype(Neos.Workspace.Ui:Component.WorkspaceTableRow) < prototype(Neos.Fusion
       <td class="workspace-description-column">
         {props.workspaceListItem.description || '﹘'}
       </td>
-      <td>{props.workspaceListItem.owner || '﹘'}</td>
       <td>﹘</td>
       <td>{private.i18n.id('workspaces.workspace.status.' + props.workspaceListItem.status).translate()}</td>
       <td>
@@ -133,13 +130,13 @@ prototype(Neos.Workspace.Ui:Component.WorkspaceTableRow) < prototype(Neos.Fusion
           attributes.hx-target='#popover-container'
           attributes.hx-swap='innerHTML'
           attributes.hx-on--after-request={'document.getElementById("' + private.editWorkspacePopoverId + '").showPopover()'}
-          @if={!props.canManage || props.workspaceListItem.pendingChanges == null}
+          attributes.disabled={props.workspaceListItem.permissions.manage == false}
         />
         <Neos.Workspace.Ui:Component.Button
           isDanger
           title={private.i18n.id('workspaces.deleteWorkspace').arguments([props.workspaceListItem.title])}
           icon="trash-alt icon-white"
-          disabled={props.workspaceListItem.pendingChanges.total > 0}
+          attributes.disabled={props.workspaceListItem.pendingChanges.total > 0 || props.workspaceListItem.permissions.manage == false}
           attributes.hx-get={private.deleteWorkspaceUri}
           attributes.hx-target='#popover-container'
           attributes.hx-swap='innerHTML'

@@ -58,6 +58,7 @@ use Neos\Neos\Domain\Model\WorkspaceClassification;
 use Neos\Neos\Domain\Model\WorkspaceDescription;
 use Neos\Neos\Domain\Model\WorkspaceRole;
 use Neos\Neos\Domain\Model\WorkspaceRoleAssignment;
+use Neos\Neos\Domain\Model\WorkspaceRoleSubjectType;
 use Neos\Neos\Domain\Model\WorkspaceTitle;
 use Neos\Neos\Domain\NodeLabel\NodeLabelGeneratorInterface;
 use Neos\Neos\Domain\Repository\SiteRepository;
@@ -281,6 +282,7 @@ class WorkspaceController extends AbstractModuleController
             workspaceTitle: $workspaceMetadata->title,
             workspaceDescription: $workspaceMetadata->description,
             workspaceHasChanges: $this->computePendingChanges($workspace, $contentRepository)->total > 0,
+            baseWorkspaceName: $workspace->baseWorkspaceName,
             baseWorkspaceOptions: $this->prepareBaseWorkspaceOptions($contentRepository, $workspaceName),
         );
 
@@ -310,6 +312,12 @@ class WorkspaceController extends AbstractModuleController
         }
 
         $workspace = $contentRepository->findWorkspaceByName($workspaceName);
+
+        $userCanManageWorkspace = $this->workspaceService->getWorkspacePermissionsForUser($contentRepositoryId, $workspaceName, $this->userService->getCurrentUser())->manage;
+        if (!$userCanManageWorkspace) {
+            $this->throwStatus(403);
+        }
+
         if ($workspace === null) {
             $this->addFlashMessage(
                 $this->getModuleLabel('workspaces.workspaceDoesNotExist'),
@@ -1129,34 +1137,11 @@ class WorkspaceController extends AbstractModuleController
 
     protected function getUserWorkspace(ContentRepository $contentRepository): Workspace
     {
-        /*
-        $items = [];
-        $allWorkspaces = $contentRepository->findWorkspaces();
-        foreach ($allWorkspaces as $workspace) {
-            $workspaceMetadata = $this->workspaceService->getWorkspaceMetadata($contentRepositoryId, $workspace->workspaceName);
-            $permissions = $this->workspaceService->getWorkspacePermissionsForUser($contentRepositoryId, $workspace->workspaceName, $currentUser);
-            if (!$permissions->read) {
-                continue;
-            }
-            $items[] = new WorkspaceListItem(
-                name: $workspace->workspaceName->value,
-                classification: $workspaceMetadata->classification->name,
-                title: $workspaceMetadata->title->value,
-                description: $workspaceMetadata->description->value,
-                baseWorkspaceName: $workspace->baseWorkspaceName?->value,
-                pendingChanges: $this->computePendingChanges($workspace, $contentRepository),
-                hasDependantWorkspaces: !$allWorkspaces->getDependantWorkspaces($workspace->workspaceName)->isEmpty(),
-                permissions: $permissions,
-            );
-        }
-        */
-
         $currentUser = $this->userService->getCurrentUser();
         if ($currentUser === null) {
             throw new \RuntimeException('No user is authenticated', 1729505338);
         }
-        $userWorkspace = $this->workspaceService->getPersonalWorkspaceForUser($contentRepository->id, $currentUser->getId());
-        return $userWorkspace;
+        return $this->workspaceService->getPersonalWorkspaceForUser($contentRepository->id, $currentUser->getId());
     }
 
     protected function getWorkspaceListItems(
@@ -1172,6 +1157,9 @@ class WorkspaceController extends AbstractModuleController
 
         $allWorkspaces = $contentRepository->findWorkspaces();
 
+        $userWorkspaceOwner = $this->userService->findUserById($userWorkspaceMetadata->ownerUserId);
+
+        // add user workspace first
         $workspaceListItems = [];
         $workspaceListItems[$userWorkspace->workspaceName->value] = new WorkspaceListItem(
             $userWorkspace->workspaceName->value,
@@ -1182,12 +1170,11 @@ class WorkspaceController extends AbstractModuleController
             $userWorkspace->baseWorkspaceName?->value,
             $this->computePendingChanges($userWorkspace, $contentRepository),
             !$allWorkspaces->getDependantWorkspaces($userWorkspace->workspaceName)->isEmpty(),
-            $userWorkspaceMetadata->ownerUserId ? $this->userService->findUserById(
-                UserId::fromString($userWorkspaceMetadata->ownerUserId->value)
-            )?->getLabel() : null,
+            $userWorkspaceOwner?->getLabel(),
             $userWorkspacesPermissions,
         );
 
+        // add other, accessible workspaces
         foreach ($allWorkspaces as $workspace) {
             $workspaceMetadata = $this->workspaceService->getWorkspaceMetadata($contentRepository->id, $workspace->workspaceName);
             $workspacesPermissions = $this->workspaceService->getWorkspacePermissionsForUser(
@@ -1196,7 +1183,36 @@ class WorkspaceController extends AbstractModuleController
                 $this->userService->getCurrentUser()
             );
 
-            // TODO: check permissions (read?, admin?)
+            if ($workspacesPermissions->read === false) {
+                continue;
+            }
+
+            $workspaceOwner = $workspaceMetadata->ownerUserId
+                ? $this->userService->findUserById($workspaceMetadata->ownerUserId)
+                : null;
+
+            $workspaceRoleAssignments = $this->workspaceService->getWorkspaceRoleAssignments($contentRepository->id, $workspace->workspaceName);
+
+            /**
+             * Managing users of the workspace excluding the owner
+             * @var array<string> $workspaceManagerUsers
+             */
+            $workspaceManagerUsers = [];
+            $workspaceManagerGroups = [];
+
+            foreach ($workspaceRoleAssignments as $roleAssignment) {
+                if ($roleAssignment->role === WorkspaceRole::MANAGER) {
+                    if ($roleAssignment->subjectType == WorkspaceRoleSubjectType::USER) {
+                        $userId = UserId::fromString($roleAssignment->subject->value);
+
+                        $workspaceManagerUsers[] = $this->userService
+                            ->findUserById($userId)
+                            ->getLabel();
+                    } elseif ($roleAssignment->subjectType == WorkspaceRoleSubjectType::GROUP) {
+                        $workspaceManagerGroups[] = $roleAssignment->subject->value;
+                    }
+                }
+            }
 
             $workspaceListItems[$workspace->workspaceName->value] = new WorkspaceListItem(
                 $workspace->workspaceName->value,
@@ -1207,10 +1223,8 @@ class WorkspaceController extends AbstractModuleController
                 $workspace->baseWorkspaceName?->value,
                 $this->computePendingChanges($workspace, $contentRepository),
                 !$allWorkspaces->getDependantWorkspaces($workspace->workspaceName)->isEmpty(),
-                $workspaceMetadata->ownerUserId ? $this->userService->findUserById(
-                    UserId::fromString($workspaceMetadata->ownerUserId->value)
-                )?->getLabel() : null,
-                $workspacesPermissions, // todo manage always true????
+                $workspaceOwner?->getLabel(),
+                $workspacesPermissions,
             );
         }
         return WorkspaceListItems::fromArray($workspaceListItems);
