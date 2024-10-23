@@ -48,8 +48,6 @@ class FeatureContext implements Context
     use CRTestSuiteTrait;
     use CRBehavioralTestsSubjectProvider;
 
-    protected $isolated = false;
-
     private array $nodeDataRows = [];
     /** @var array<PersistentResource> */
     private array $mockResources = [];
@@ -69,8 +67,6 @@ class FeatureContext implements Context
      * @var array<string>
      */
     private array $loggedWarnings = [];
-
-    private ContentRepository $contentRepository;
 
     protected ContentRepositoryRegistry $contentRepositoryRegistry;
 
