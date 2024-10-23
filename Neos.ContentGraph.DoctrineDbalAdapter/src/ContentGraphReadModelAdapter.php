@@ -177,7 +177,7 @@ final readonly class ContentGraphReadModelAdapter implements ContentGraphReadMod
     private static function workspaceFromDatabaseRow(array $row): Workspace
     {
         $baseWorkspaceName = $row['baseWorkspaceName'] !== null ? WorkspaceName::fromString($row['baseWorkspaceName']) : null;
-        $status = match($row['baseWorkspaceChanged']) {
+        $status = match ($row['baseWorkspaceChanged']) {
             // no base workspace, a root is always up-to-date
             null => WorkspaceStatus::UP_TO_DATE,
             // base workspace didnt change (sql 0 is _false_)
