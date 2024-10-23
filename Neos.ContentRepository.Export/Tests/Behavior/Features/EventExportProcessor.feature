@@ -1,5 +1,5 @@
 @contentrepository
-Feature: As a user of the CR I want to export the event stream
+Feature: As a user of the CR I want to export the event stream using the EventExportProcessor
 
   Background:
     Given using the following content dimensions:
@@ -12,9 +12,9 @@ Feature: As a user of the CR I want to export the event stream
     And using identifier "default", I define a content repository
     And I am in content repository "default"
     And the command CreateRootWorkspace is executed with payload:
-      | Key                  | Value                |
-      | workspaceName        | "live"               |
-      | newContentStreamId   | "cs-identifier"      |
+      | Key                | Value           |
+      | workspaceName      | "live"          |
+      | newContentStreamId | "cs-identifier" |
     And I am in workspace "live"
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key             | Value                         |

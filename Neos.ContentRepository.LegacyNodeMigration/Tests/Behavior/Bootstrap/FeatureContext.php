@@ -1,13 +1,13 @@
 <?php
 declare(strict_types=1);
 
+// @todo remove this require statement
+require_once(__DIR__ . '/../../../../Neos.ContentRepository.Export/Tests/Behavior/Features/Bootstrap/CrImportExportTrait.php');
+
 use Behat\Behat\Context\Context;
-use Behat\Gherkin\Node\PyStringNode;
 use Behat\Gherkin\Node\TableNode;
-use League\Flysystem\FileAttributes;
-use League\Flysystem\Filesystem;
-use League\Flysystem\InMemory\InMemoryFilesystemAdapter;
 use Neos\Behat\FlowBootstrapTrait;
+use Neos\ContentGraph\DoctrineDbalAdapter\Tests\Behavior\Features\Bootstrap\CrImportExportTrait;
 use Neos\ContentRepository\BehavioralTests\TestSuite\Behavior\CRBehavioralTestsSubjectProvider;
 use Neos\ContentRepository\BehavioralTests\TestSuite\Behavior\GherkinPyStringNodeBasedNodeTypeManagerFactory;
 use Neos\ContentRepository\BehavioralTests\TestSuite\Behavior\GherkinTableNodeBasedContentDimensionSourceFactory;
@@ -20,23 +20,18 @@ use Neos\ContentRepository\Core\Infrastructure\Property\PropertyConverter;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
-use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepository\Export\Asset\AssetExporter;
 use Neos\ContentRepository\Export\Asset\AssetLoaderInterface;
 use Neos\ContentRepository\Export\Asset\ResourceLoaderInterface;
 use Neos\ContentRepository\Export\Asset\ValueObject\SerializedAsset;
 use Neos\ContentRepository\Export\Asset\ValueObject\SerializedImageVariant;
 use Neos\ContentRepository\Export\Asset\ValueObject\SerializedResource;
-use Neos\ContentRepository\Export\Event\ValueObject\ExportedEvents;
-use Neos\ContentRepository\Export\ProcessorResult;
-use Neos\ContentRepository\Export\Severity;
 use Neos\ContentRepository\LegacyNodeMigration\NodeDataToAssetsProcessor;
 use Neos\ContentRepository\LegacyNodeMigration\NodeDataToEventsProcessor;
 use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\CRTestSuiteTrait;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\Property\PropertyMapper;
 use Neos\Flow\ResourceManagement\PersistentResource;
-use PHPUnit\Framework\Assert;
 use PHPUnit\Framework\MockObject\Generator as MockGenerator;
 
 /**
@@ -47,6 +42,7 @@ class FeatureContext implements Context
     use FlowBootstrapTrait;
     use CRTestSuiteTrait;
     use CRBehavioralTestsSubjectProvider;
+    use CrImportExportTrait;
 
     protected $isolated = false;
 
@@ -55,21 +51,6 @@ class FeatureContext implements Context
     private array $mockResources = [];
     /** @var array<SerializedAsset|SerializedImageVariant> */
     private array $mockAssets = [];
-    private InMemoryFilesystemAdapter $mockFilesystemAdapter;
-    private Filesystem $mockFilesystem;
-
-    private ProcessorResult|null $lastMigrationResult = null;
-
-    /**
-     * @var array<string>
-     */
-    private array $loggedErrors = [];
-
-    /**
-     * @var array<string>
-     */
-    private array $loggedWarnings = [];
-
     private ContentRepository $contentRepository;
 
     protected ContentRepositoryRegistry $contentRepositoryRegistry;
@@ -79,21 +60,7 @@ class FeatureContext implements Context
         self::bootstrapFlow();
         $this->contentRepositoryRegistry = $this->getObject(ContentRepositoryRegistry::class);
 
-        $this->mockFilesystemAdapter = new InMemoryFilesystemAdapter();
-        $this->mockFilesystem = new Filesystem($this->mockFilesystemAdapter);
-    }
-
-    /**
-     * @AfterScenario
-     */
-    public function failIfLastMigrationHasErrors(): void
-    {
-        if ($this->lastMigrationResult !== null && $this->lastMigrationResult->severity === Severity::ERROR) {
-            throw new \RuntimeException(sprintf('The last migration run led to an error: %s', $this->lastMigrationResult->message));
-        }
-        if ($this->loggedErrors !== []) {
-            throw new \RuntimeException(sprintf('The last migration run logged %d error%s', count($this->loggedErrors), count($this->loggedErrors) === 1 ? '' : 's'));
-        }
+        $this->setupCrImportExportTrait();
     }
 
     /**
@@ -145,89 +112,12 @@ class FeatureContext implements Context
             $propertyConverterAccess->propertyConverter,
             $this->currentContentRepository->getVariationGraph(),
             $this->getObject(EventNormalizer::class),
-            $this->mockFilesystem,
             $this->nodeDataRows
         );
         if ($contentStream !== null) {
             $migration->setContentStreamId(ContentStreamId::fromString($contentStream));
         }
-        $migration->onMessage(function (Severity $severity, string $message) {
-            if ($severity === Severity::ERROR) {
-                $this->loggedErrors[] = $message;
-            } elseif ($severity === Severity::WARNING) {
-                $this->loggedWarnings[] = $message;
-            }
-        });
-        $this->lastMigrationResult = $migration->run();
-    }
-
-    /**
-     * @Then I expect the following events to be exported
-     */
-    public function iExpectTheFollowingEventsToBeExported(TableNode $table): void
-    {
-
-        if (!$this->mockFilesystem->has('events.jsonl')) {
-            Assert::fail('No events were exported');
-        }
-        $eventsJson = $this->mockFilesystem->read('events.jsonl');
-        $exportedEvents = iterator_to_array(ExportedEvents::fromJsonl($eventsJson));
-
-        $expectedEvents = $table->getHash();
-        foreach ($exportedEvents as $exportedEvent) {
-            $expectedEventRow = array_shift($expectedEvents);
-            if ($expectedEventRow === null) {
-                Assert::assertCount(count($table->getHash()), $exportedEvents, 'Expected number of events does not match actual number');
-            }
-            if (!empty($expectedEventRow['Type'])) {
-                Assert::assertSame($expectedEventRow['Type'], $exportedEvent->type, 'Event: ' . $exportedEvent->toJson());
-            }
-            try {
-                $expectedEventPayload = json_decode($expectedEventRow['Payload'], true, 512, JSON_THROW_ON_ERROR);
-            } catch (JsonException $e) {
-                throw new \RuntimeException(sprintf('Failed to decode expected JSON: %s', $expectedEventRow['Payload']), 1655811083);
-            }
-            $actualEventPayload = $exportedEvent->payload;
-            foreach (array_keys($actualEventPayload) as $key) {
-                if (!array_key_exists($key, $expectedEventPayload)) {
-                    unset($actualEventPayload[$key]);
-                }
-            }
-            Assert::assertEquals($expectedEventPayload, $actualEventPayload, 'Actual event: ' . $exportedEvent->toJson());
-        }
-        Assert::assertCount(count($table->getHash()), $exportedEvents, 'Expected number of events does not match actual number');
-    }
-
-    /**
-     * @Then I expect the following errors to be logged
-     */
-    public function iExpectTheFollowingErrorsToBeLogged(TableNode $table): void
-    {
-        Assert::assertSame($table->getColumn(0), $this->loggedErrors, 'Expected logged errors do not match');
-        $this->loggedErrors = [];
-    }
-
-    /**
-     * @Then I expect the following warnings to be logged
-     */
-    public function iExpectTheFollowingWarningsToBeLogged(TableNode $table): void
-    {
-        Assert::assertSame($table->getColumn(0), $this->loggedWarnings, 'Expected logged warnings do not match');
-        $this->loggedWarnings = [];
-    }
-
-    /**
-     * @Then I expect a MigrationError
-     * @Then I expect a MigrationError with the message
-     */
-    public function iExpectAMigrationErrorWithTheMessage(PyStringNode $expectedMessage = null): void
-    {
-        Assert::assertNotNull($this->lastMigrationResult, 'Expected the previous migration to contain errors, but no migration has been executed');
-        Assert::assertSame(Severity::ERROR, $this->lastMigrationResult->severity, sprintf('Expected the previous migration to contain errors, but it ended with severity "%s"', $this->lastMigrationResult->severity->name));
-        if ($expectedMessage !== null) {
-            Assert::assertSame($expectedMessage->getRaw(), $this->lastMigrationResult->message);
-        }
-        $this->lastMigrationResult = null;
+        $this->runCrImportExportProcessors($migration);
     }
 
     /**
@@ -269,35 +159,19 @@ class FeatureContext implements Context
     }
 
     /**
-     * @Given the following ImageVariants exist
-     */
-    public function theFollowingImageVariantsExist(TableNode $imageVariants): void
-    {
-        foreach ($imageVariants->getHash() as $variantData) {
-            try {
-                $variantData['imageAdjustments'] = json_decode($variantData['imageAdjustments'], true, 512, JSON_THROW_ON_ERROR);
-            } catch (JsonException $e) {
-                throw new \RuntimeException(sprintf('Failed to JSON decode imageAdjustments for variant "%s"', $variantData['identifier']), 1659530081, $e);
-            }
-            $variantData['width'] = (int)$variantData['width'];
-            $variantData['height'] = (int)$variantData['height'];
-            $mockImageVariant = SerializedImageVariant::fromArray($variantData);
-            $this->mockAssets[$mockImageVariant->identifier] = $mockImageVariant;
-        }
-    }
-
-    /**
      * @When I run the asset migration
      */
     public function iRunTheAssetMigration(): void
     {
         $nodeTypeManager = $this->currentContentRepository->getNodeTypeManager();
-        $mockResourceLoader = new class ($this->mockResources) implements ResourceLoaderInterface {
-
+        $mockResourceLoader = new class ($this->mockResources) implements ResourceLoaderInterface
+        {
             /**
              * @param array<PersistentResource> $mockResources
              */
-            public function __construct(private array $mockResources) {}
+            public function __construct(private array $mockResources)
+            {
+            }
 
             public function getStreamBySha1(string $sha1)
             {
@@ -314,7 +188,9 @@ class FeatureContext implements Context
             /**
              * @param array<SerializedAsset|SerializedImageVariant> $mockAssets
              */
-            public function __construct(private array $mockAssets) {}
+            public function __construct(private array $mockAssets)
+            {
+            }
 
             public function findAssetById(string $assetId): SerializedAsset|SerializedImageVariant
             {
@@ -325,83 +201,12 @@ class FeatureContext implements Context
             }
         };
 
-        $this->mockFilesystemAdapter->deleteEverything();
-        $assetExporter = new AssetExporter($this->mockFilesystem, $mockAssetLoader, $mockResourceLoader);
+        $assetExporter = new AssetExporter($this->crImportExportTrait_filesystem, $mockAssetLoader, $mockResourceLoader);
         $migration = new NodeDataToAssetsProcessor($nodeTypeManager, $assetExporter, $this->nodeDataRows);
-        $migration->onMessage(function (Severity $severity, string $message) {
-            if ($severity === Severity::ERROR) {
-                $this->loggedErrors[] = $message;
-            } elseif ($severity === Severity::WARNING) {
-                $this->loggedWarnings[] = $message;
-            }
-        });
-        $this->lastMigrationResult = $migration->run();
+        $this->runCrImportExportProcessors($migration);
     }
-
-    /**
-     * @Then /^I expect the following (Assets|ImageVariants) to be exported:$/
-     */
-    public function iExpectTheFollowingToBeExported(string $type, PyStringNode $expectedAssets): void
-    {
-        $actualAssets = [];
-        if (!$this->mockFilesystem->directoryExists($type)) {
-            Assert::fail(sprintf('No %1$s have been exported (Directory "/%1$s" does not exist)', $type));
-        }
-        /** @var FileAttributes $file */
-        foreach ($this->mockFilesystem->listContents($type) as $file) {
-            $actualAssets[] = json_decode($this->mockFilesystem->read($file->path()), true, 512, JSON_THROW_ON_ERROR);
-        }
-        Assert::assertJsonStringEqualsJsonString($expectedAssets->getRaw(), json_encode($actualAssets, JSON_THROW_ON_ERROR));
-    }
-
-    /**
-     * @Then /^I expect no (Assets|ImageVariants) to be exported$/
-     */
-    public function iExpectNoAssetsToBeExported(string $type): void
-    {
-        Assert::assertFalse($this->mockFilesystem->directoryExists($type));
-    }
-
-    /**
-     * @Then I expect the following PersistentResources to be exported:
-     */
-    public function iExpectTheFollowingPersistentResourcesToBeExported(TableNode $expectedResources): void
-    {
-        $actualResources = [];
-        if (!$this->mockFilesystem->directoryExists('Resources')) {
-            Assert::fail('No PersistentResources have been exported (Directory "/Resources" does not exist)');
-        }
-        /** @var FileAttributes $file */
-        foreach ($this->mockFilesystem->listContents('Resources') as $file) {
-            $actualResources[] = ['Filename' => basename($file->path()), 'Contents' => $this->mockFilesystem->read($file->path())];
-        }
-        Assert::assertSame($expectedResources->getHash(), $actualResources);
-    }
-
-    /**
-     * @Then /^I expect no PersistentResources to be exported$/
-     */
-    public function iExpectNoPersistentResourcesToBeExported(): void
-    {
-        Assert::assertFalse($this->mockFilesystem->directoryExists('Resources'));
-    }
-
 
     /** ---------------------------------- */
-
-    /**
-     * @param TableNode $table
-     * @return array
-     * @throws JsonException
-     */
-    private function parseJsonTable(TableNode $table): array
-    {
-        return array_map(static function (array $row) {
-            return array_map(static function (string $jsonValue) {
-                return json_decode($jsonValue, true, 512, JSON_THROW_ON_ERROR);
-            }, $row);
-        }, $table->getHash());
-    }
 
     protected function getContentRepositoryService(
         ContentRepositoryServiceFactoryInterface $factory

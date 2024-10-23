@@ -16,14 +16,16 @@ namespace Neos\ContentGraph\DoctrineDbalAdapter\Tests\Behavior\Features\Bootstra
 
 use Behat\Gherkin\Node\PyStringNode;
 use Behat\Gherkin\Node\TableNode;
+use League\Flysystem\FileAttributes;
 use League\Flysystem\Filesystem;
 use League\Flysystem\InMemory\InMemoryFilesystemAdapter;
-use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceFactoryDependencies;
-use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceFactoryInterface;
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
+use Neos\ContentRepository\Export\Asset\ValueObject\SerializedImageVariant;
 use Neos\ContentRepository\Export\Event\ValueObject\ExportedEvents;
-use Neos\ContentRepository\Export\ProcessorResult;
+use Neos\ContentRepository\Export\Factory\EventExportProcessorFactory;
+use Neos\ContentRepository\Export\Factory\EventStoreImportProcessorFactory;
+use Neos\ContentRepository\Export\ProcessingContext;
+use Neos\ContentRepository\Export\ProcessorInterface;
 use Neos\ContentRepository\Export\Processors\EventExportProcessor;
 use Neos\ContentRepository\Export\Processors\EventStoreImportProcessor;
 use Neos\ContentRepository\Export\Severity;
@@ -39,7 +41,7 @@ trait CrImportExportTrait
 
     private Filesystem $crImportExportTrait_filesystem;
 
-    private ?ProcessorResult $crImportExportTrait_lastMigrationResult = null;
+    private \Throwable|null $crImportExportTrait_lastMigrationException = null;
 
     /** @var array<string> */
     private array $crImportExportTrait_loggedErrors = [];
@@ -47,83 +49,9 @@ trait CrImportExportTrait
     /** @var array<string> */
     private array $crImportExportTrait_loggedWarnings = [];
 
-    public function setupCrImportExportTrait()
+    private function setupCrImportExportTrait(): void
     {
         $this->crImportExportTrait_filesystem = new Filesystem(new InMemoryFilesystemAdapter());
-    }
-
-    /**
-     * @When /^the events are exported$/
-     */
-    public function theEventsAreExportedIExpectTheFollowingJsonl()
-    {
-        $eventExporter = $this->getContentRepositoryService(
-            new class ($this->crImportExportTrait_filesystem) implements ContentRepositoryServiceFactoryInterface {
-                public function __construct(private readonly Filesystem $filesystem)
-                {
-                }
-                public function build(ContentRepositoryServiceFactoryDependencies $serviceFactoryDependencies): EventExportProcessor {
-                    return new EventExportProcessor(
-                        $this->filesystem,
-                        $serviceFactoryDependencies->contentRepository->findWorkspaceByName(WorkspaceName::forLive()),
-                        $serviceFactoryDependencies->eventStore
-                    );
-                }
-            }
-        );
-        assert($eventExporter instanceof EventExportProcessor);
-
-        $eventExporter->onMessage(function (Severity $severity, string $message) {
-            if ($severity === Severity::ERROR) {
-                $this->crImportExportTrait_loggedErrors[] = $message;
-            } elseif ($severity === Severity::WARNING) {
-                $this->crImportExportTrait_loggedWarnings[] = $message;
-            }
-        });
-        $this->crImportExportTrait_lastMigrationResult = $eventExporter->run();
-    }
-
-    /**
-     * @When /^I import the events\.jsonl(?: into "([^"]*)")?$/
-     */
-    public function iImportTheFollowingJson(?string $contentStreamId = null)
-    {
-        $eventImporter = $this->getContentRepositoryService(
-            new class ($this->crImportExportTrait_filesystem, $contentStreamId ? ContentStreamId::fromString($contentStreamId) : null) implements ContentRepositoryServiceFactoryInterface {
-                public function __construct(
-                    private readonly Filesystem $filesystem,
-                    private readonly ?ContentStreamId $contentStreamId
-                ) {
-                }
-                public function build(ContentRepositoryServiceFactoryDependencies $serviceFactoryDependencies): EventStoreImportProcessor {
-                    return new EventStoreImportProcessor(
-                        false,
-                        $this->filesystem,
-                        $serviceFactoryDependencies->eventStore,
-                        $serviceFactoryDependencies->eventNormalizer,
-                        $this->contentStreamId
-                    );
-                }
-            }
-        );
-        assert($eventImporter instanceof EventStoreImportProcessor);
-
-        $eventImporter->onMessage(function (Severity $severity, string $message) {
-            if ($severity === Severity::ERROR) {
-                $this->crImportExportTrait_loggedErrors[] = $message;
-            } elseif ($severity === Severity::WARNING) {
-                $this->crImportExportTrait_loggedWarnings[] = $message;
-            }
-        });
-        $this->crImportExportTrait_lastMigrationResult = $eventImporter->run();
-    }
-
-    /**
-     * @Given /^using the following events\.jsonl:$/
-     */
-    public function usingTheFollowingEventsJsonl(PyStringNode $string)
-    {
-        $this->crImportExportTrait_filesystem->write('events.jsonl', $string->getRaw());
     }
 
     /**
@@ -131,12 +59,61 @@ trait CrImportExportTrait
      */
     public function failIfLastMigrationHasErrors(): void
     {
-        if ($this->crImportExportTrait_lastMigrationResult !== null && $this->crImportExportTrait_lastMigrationResult->severity === Severity::ERROR) {
-            throw new \RuntimeException(sprintf('The last migration run led to an error: %s', $this->crImportExportTrait_lastMigrationResult->message));
+        if ($this->crImportExportTrait_lastMigrationException !== null) {
+            throw new \RuntimeException(sprintf('The last migration run led to an exception: %s', $this->crImportExportTrait_lastMigrationException->getMessage()));
         }
         if ($this->crImportExportTrait_loggedErrors !== []) {
             throw new \RuntimeException(sprintf('The last migration run logged %d error%s', count($this->crImportExportTrait_loggedErrors), count($this->crImportExportTrait_loggedErrors) === 1 ? '' : 's'));
         }
+    }
+
+    private function runCrImportExportProcessors(ProcessorInterface ...$processors): void
+    {
+        $processingContext = new ProcessingContext($this->crImportExportTrait_filesystem, function (Severity $severity, string $message) {
+            if ($severity === Severity::ERROR) {
+                $this->crImportExportTrait_loggedErrors[] = $message;
+            } elseif ($severity === Severity::WARNING) {
+                $this->crImportExportTrait_loggedWarnings[] = $message;
+            }
+        });
+        foreach ($processors as $processor) {
+            assert($processor instanceof ProcessorInterface);
+            try {
+                $processor->run($processingContext);
+            } catch (\Throwable $e) {
+                $this->crImportExportTrait_lastMigrationException = $e;
+                break;
+            }
+        }
+    }
+
+    /**
+     * @When /^the events are exported$/
+     */
+    public function theEventsAreExported(): void
+    {
+        $eventExporter = $this->getContentRepositoryService(new EventExportProcessorFactory($this->currentContentRepository->findWorkspaceByName(WorkspaceName::forLive())->currentContentStreamId));
+        assert($eventExporter instanceof EventExportProcessor);
+        $this->runCrImportExportProcessors($eventExporter);
+    }
+
+    /**
+     * @When /^I import the events\.jsonl(?: into workspace "([^"]*)")?$/
+     */
+    public function iImportTheEventsJsonl(?string $workspace = null): void
+    {
+        $workspaceName = $workspace !== null ? WorkspaceName::fromString($workspace) : $this->currentWorkspaceName;
+        $eventImporter = $this->getContentRepositoryService(new EventStoreImportProcessorFactory($workspaceName, true));
+        assert($eventImporter instanceof EventStoreImportProcessor);
+        $this->runCrImportExportProcessors($eventImporter);
+    }
+
+    /**
+     * @Given /^using the following events\.jsonl:$/
+     */
+    public function usingTheFollowingEventsJsonl(PyStringNode $string): void
+    {
+        $this->crImportExportTrait_filesystem->write('events.jsonl', $string->getRaw());
     }
 
     /**
@@ -168,6 +145,43 @@ trait CrImportExportTrait
     }
 
     /**
+     * @Then I expect the following events to be exported
+     */
+    public function iExpectTheFollowingEventsToBeExported(TableNode $table): void
+    {
+
+        if (!$this->crImportExportTrait_filesystem->has('events.jsonl')) {
+            Assert::fail('No events were exported');
+        }
+        $eventsJson = $this->crImportExportTrait_filesystem->read('events.jsonl');
+        $exportedEvents = iterator_to_array(ExportedEvents::fromJsonl($eventsJson));
+
+        $expectedEvents = $table->getHash();
+        foreach ($exportedEvents as $exportedEvent) {
+            $expectedEventRow = array_shift($expectedEvents);
+            if ($expectedEventRow === null) {
+                Assert::assertCount(count($table->getHash()), $exportedEvents, 'Expected number of events does not match actual number');
+            }
+            if (!empty($expectedEventRow['Type'])) {
+                Assert::assertSame($expectedEventRow['Type'], $exportedEvent->type, 'Event: ' . $exportedEvent->toJson());
+            }
+            try {
+                $expectedEventPayload = json_decode($expectedEventRow['Payload'], true, 512, JSON_THROW_ON_ERROR);
+            } catch (\JsonException $e) {
+                throw new \RuntimeException(sprintf('Failed to decode expected JSON: %s', $expectedEventRow['Payload']), 1655811083);
+            }
+            $actualEventPayload = $exportedEvent->payload;
+            foreach (array_keys($actualEventPayload) as $key) {
+                if (!array_key_exists($key, $expectedEventPayload)) {
+                    unset($actualEventPayload[$key]);
+                }
+            }
+            Assert::assertEquals($expectedEventPayload, $actualEventPayload, 'Actual event: ' . $exportedEvent->toJson());
+        }
+        Assert::assertCount(count($table->getHash()), $exportedEvents, 'Expected number of events does not match actual number');
+    }
+
+    /**
      * @Then I expect the following errors to be logged
      */
     public function iExpectTheFollowingErrorsToBeLogged(TableNode $table): void
@@ -186,24 +200,82 @@ trait CrImportExportTrait
     }
 
     /**
-     * @Then I expect a MigrationError
-     * @Then I expect a MigrationError with the message
+     * @Then I expect a migration exception
+     * @Then I expect a migration exception with the message
      */
-    public function iExpectAMigrationErrorWithTheMessage(PyStringNode $expectedMessage = null): void
+    public function iExpectAMigrationExceptionWithTheMessage(PyStringNode $expectedMessage = null): void
     {
-        Assert::assertNotNull($this->crImportExportTrait_lastMigrationResult, 'Expected the previous migration to contain errors, but no migration has been executed');
-        Assert::assertSame(Severity::ERROR, $this->crImportExportTrait_lastMigrationResult->severity, sprintf('Expected the previous migration to contain errors, but it ended with severity "%s"', $this->crImportExportTrait_lastMigrationResult->severity->name));
+        Assert::assertNotNull($this->crImportExportTrait_lastMigrationException, 'Expected the previous migration to lead to an exception, but no exception was thrown');
         if ($expectedMessage !== null) {
-            Assert::assertSame($expectedMessage->getRaw(), $this->crImportExportTrait_lastMigrationResult->message);
+            Assert::assertSame($expectedMessage->getRaw(), $this->crImportExportTrait_lastMigrationException->getMessage());
         }
-        $this->crImportExportTrait_lastMigrationResult = null;
+        $this->crImportExportTrait_lastMigrationException = null;
     }
 
     /**
-     * @template T of object
-     * @param class-string<T> $className
-     *
-     * @return T
+     * @Given the following ImageVariants exist
      */
-    abstract private function getObject(string $className): object;
+    public function theFollowingImageVariantsExist(TableNode $imageVariants): void
+    {
+        foreach ($imageVariants->getHash() as $variantData) {
+            try {
+                $variantData['imageAdjustments'] = json_decode($variantData['imageAdjustments'], true, 512, JSON_THROW_ON_ERROR);
+            } catch (\JsonException $e) {
+                throw new \RuntimeException(sprintf('Failed to JSON decode imageAdjustments for variant "%s"', $variantData['identifier']), 1659530081, $e);
+            }
+            $variantData['width'] = (int)$variantData['width'];
+            $variantData['height'] = (int)$variantData['height'];
+            $mockImageVariant = SerializedImageVariant::fromArray($variantData);
+            $this->mockAssets[$mockImageVariant->identifier] = $mockImageVariant;
+        }
+    }
+
+    /**
+     * @Then /^I expect the following (Assets|ImageVariants) to be exported:$/
+     */
+    public function iExpectTheFollowingAssetsOrImageVariantsToBeExported(string $type, PyStringNode $expectedAssets): void
+    {
+        $actualAssets = [];
+        if (!$this->crImportExportTrait_filesystem->directoryExists($type)) {
+            Assert::fail(sprintf('No %1$s have been exported (Directory "/%1$s" does not exist)', $type));
+        }
+        /** @var FileAttributes $file */
+        foreach ($this->crImportExportTrait_filesystem->listContents($type) as $file) {
+            $actualAssets[] = json_decode($this->crImportExportTrait_filesystem->read($file->path()), true, 512, JSON_THROW_ON_ERROR);
+        }
+        Assert::assertJsonStringEqualsJsonString($expectedAssets->getRaw(), json_encode($actualAssets, JSON_THROW_ON_ERROR));
+    }
+
+
+    /**
+     * @Then /^I expect no (Assets|ImageVariants) to be exported$/
+     */
+    public function iExpectNoAssetsToBeExported(string $type): void
+    {
+        Assert::assertFalse($this->crImportExportTrait_filesystem->directoryExists($type));
+    }
+
+    /**
+     * @Then I expect the following PersistentResources to be exported:
+     */
+    public function iExpectTheFollowingPersistentResourcesToBeExported(TableNode $expectedResources): void
+    {
+        $actualResources = [];
+        if (!$this->crImportExportTrait_filesystem->directoryExists('Resources')) {
+            Assert::fail('No PersistentResources have been exported (Directory "/Resources" does not exist)');
+        }
+        /** @var FileAttributes $file */
+        foreach ($this->crImportExportTrait_filesystem->listContents('Resources') as $file) {
+            $actualResources[] = ['Filename' => basename($file->path()), 'Contents' => $this->crImportExportTrait_filesystem->read($file->path())];
+        }
+        Assert::assertSame($expectedResources->getHash(), $actualResources);
+    }
+
+    /**
+     * @Then /^I expect no PersistentResources to be exported$/
+     */
+    public function iExpectNoPersistentResourcesToBeExported(): void
+    {
+        Assert::assertFalse($this->crImportExportTrait_filesystem->directoryExists('Resources'));
+    }
 }

@@ -9,6 +9,8 @@ use Neos\ContentRepository\Core\Projection\CatchUpOptions;
 use Neos\ContentRepository\Core\Projection\ProjectionInterface;
 use Neos\ContentRepository\Core\Projection\Projections;
 use Neos\ContentRepository\Core\Projection\ProjectionStateInterface;
+use Neos\ContentRepository\Export\ProcessingContext;
+use Neos\ContentRepository\Export\ProcessorInterface;
 use Neos\EventStore\EventStoreInterface;
 use Neos\EventStore\Model\Event\SequenceNumber;
 use Neos\EventStore\Model\EventStream\VirtualStreamName;
@@ -18,7 +20,7 @@ use Neos\EventStore\Model\EventStream\VirtualStreamName;
  *
  * @internal this is currently only used by the {@see CrCommandController}
  */
-final class ProjectionReplayService implements ContentRepositoryServiceInterface
+final class ProjectionReplayService implements ProcessorInterface, ContentRepositoryServiceInterface
 {
 
     public function __construct(
@@ -26,6 +28,11 @@ final class ProjectionReplayService implements ContentRepositoryServiceInterface
         private readonly ContentRepository $contentRepository,
         private readonly EventStoreInterface $eventStore,
     ) {
+    }
+
+    public function run(ProcessingContext $context): void
+    {
+        $this->replayAllProjections(CatchUpOptions::create());
     }
 
     public function replayProjection(string $projectionAliasOrClassName, CatchUpOptions $options): void

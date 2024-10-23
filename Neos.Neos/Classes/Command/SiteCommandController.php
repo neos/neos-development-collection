@@ -14,11 +14,16 @@ declare(strict_types=1);
 
 namespace Neos\Neos\Command;
 
+use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeNameIsAlreadyCovered;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeTypeNotFound;
+use Neos\ContentRepository\Export\ProcessorEventInterface;
+use Neos\ContentRepository\Export\Severity;
+use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Cli\CommandController;
 use Neos\Flow\Cli\Exception\StopCommandException;
+use Neos\Flow\ObjectManagement\DependencyInjection\DependencyProxy;
 use Neos\Flow\Package\PackageManager;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Neos\Domain\Exception\SiteNodeNameIsAlreadyInUseByAnotherSite;
@@ -26,7 +31,11 @@ use Neos\Neos\Domain\Exception\SiteNodeTypeIsInvalid;
 use Neos\Neos\Domain\Model\Site;
 use Neos\Neos\Domain\Repository\SiteRepository;
 use Neos\Neos\Domain\Service\NodeTypeNameFactory;
+use Neos\Neos\Domain\Service\SiteExportService;
+use Neos\Neos\Domain\Service\SiteImportService;
+use Neos\Neos\Domain\Service\SiteImportServiceFactory;
 use Neos\Neos\Domain\Service\SiteService;
+use Neos\Utility\Files;
 
 /**
  * The Site Command Controller
@@ -55,9 +64,27 @@ class SiteCommandController extends CommandController
 
     /**
      * @Flow\Inject
+     * @var ContentRepositoryRegistry
+     */
+    protected $contentRepositoryRegistry;
+
+    /**
+     * @Flow\Inject
      * @var PersistenceManagerInterface
      */
     protected $persistenceManager;
+
+    /**
+     * @Flow\Inject
+     * @var SiteImportService
+     */
+    protected $siteImportService;
+
+    /**
+     * @Flow\Inject
+     * @var SiteExportService
+     */
+    protected $siteExportService;
 
     /**
      * Create a new site
@@ -108,6 +135,120 @@ class SiteCommandController extends CommandController
             'Successfully created site "%s" with siteNode "%s", type "%s", packageKey "%s" and state "%s"',
             [$name, $nodeName ?: $name, $nodeType, $packageKey, $inactive ? 'offline' : 'online']
         );
+    }
+
+    /**
+     * Import sites
+     *
+     * This command allows importing sites from the given path/packahe. The format must
+     * be identical to that produced by the export command.
+     *
+     * !!! At the moment the live workspace has to be empty prior to importing. This will be improved in future. !!!
+     *
+     * If a path is specified, this command expects the corresponding directory to contain the exported files
+     *
+     * If a package key is specified, this command expects the export files to be located in the private resources
+     * directory of the given package (Resources/Private/Content).
+     *
+     * @param string|null $packageKey Package key specifying the package containing the sites content
+     * @param string|null $path relative or absolute path and filename to the export files
+     * @return void
+     */
+    public function importCommand(string $packageKey = null, string $path = null, string $contentRepository = 'default', bool $verbose = false): void
+    {
+        $exceedingArguments = $this->request->getExceedingArguments();
+        if (isset($exceedingArguments[0]) && $packageKey === null && $path === null) {
+            if (file_exists($exceedingArguments[0])) {
+                $path = $exceedingArguments[0];
+            } elseif ($this->packageManager->isPackageAvailable($exceedingArguments[0])) {
+                $packageKey = $exceedingArguments[0];
+            }
+        }
+        if ($packageKey === null && $path === null) {
+            $this->outputLine('<error>You have to specify either <em>--package-key</em> or <em>--filename</em></error>');
+            $this->quit(1);
+        }
+
+        // Since this command uses a lot of memory when large sites are imported, we warn the user to watch for
+        // the confirmation of a successful import.
+        $this->outputLine('<b>This command can use a lot of memory when importing sites with many resources.</b>');
+        $this->outputLine('If the import is successful, you will see a message saying "Import of site ... finished".');
+        $this->outputLine('If you do not see this message, the import failed, most likely due to insufficient memory.');
+        $this->outputLine('Increase the <b>memory_limit</b> configuration parameter of your php CLI to attempt to fix this.');
+        $this->outputLine('Starting import...');
+        $this->outputLine('---');
+
+        $contentRepositoryId = ContentRepositoryId::fromString($contentRepository);
+        $onProcessor = function (string $processorLabel) {
+            $this->outputLine('<info>%s...</info>', [$processorLabel]);
+        };
+        $onMessage = function (Severity $severity, string $message) use ($verbose) {
+            if (!$verbose && $severity === Severity::NOTICE) {
+                return;
+            }
+            $this->outputLine(match ($severity) {
+                Severity::NOTICE => $message,
+                Severity::WARNING => sprintf('<error>Warning: %s</error>', $message),
+                Severity::ERROR => sprintf('<error>Error: %s</error>', $message),
+            });
+        };
+        if ($path === null) {
+            $package = $this->packageManager->getPackage($packageKey);
+            $path = Files::concatenatePaths([$package->getPackagePath(), 'Resources/Private/Content']);
+        }
+        $this->siteImportService->importFromPath($contentRepositoryId, $path, $onProcessor, $onMessage);
+    }
+
+    /**
+     * Export sites
+     *
+     * This command allows to export all current sites.
+     *
+     * !!! At the moment always all sites are exported. This will be improved in future!!!
+     *
+     * If a path is specified, this command expects the corresponding directory to contain the exported files
+     *
+     * If a package key is specified, this command expects the export files to be located in the private resources
+     * directory of the given package (Resources/Private/Content).
+     *
+     * @param string|null $packageKey Package key specifying the package containing the sites content
+     * @param string|null $path relative or absolute path and filename to the export files
+     * @return void
+     */
+    public function exportCommand(string $packageKey = null, string $path = null, string $contentRepository = 'default', bool $verbose = false): void
+    {
+        $exceedingArguments = $this->request->getExceedingArguments();
+        if (isset($exceedingArguments[0]) && $packageKey === null && $path === null) {
+            if (file_exists($exceedingArguments[0])) {
+                $path = $exceedingArguments[0];
+            } elseif ($this->packageManager->isPackageAvailable($exceedingArguments[0])) {
+                $packageKey = $exceedingArguments[0];
+            }
+        }
+        if ($packageKey === null && $path === null) {
+            $this->outputLine('<error>You have to specify either <em>--package-key</em> or <em>--filename</em></error>');
+            $this->quit(1);
+        }
+
+        $contentRepositoryId = ContentRepositoryId::fromString($contentRepository);
+        $onProcessor = function (string $processorLabel) {
+            $this->outputLine('<info>%s...</info>', [$processorLabel]);
+        };
+        $onMessage = function (Severity $severity, string $message) use ($verbose) {
+            if (!$verbose && $severity === Severity::NOTICE) {
+                return;
+            }
+            $this->outputLine(match ($severity) {
+                Severity::NOTICE => $message,
+                Severity::WARNING => sprintf('<error>Warning: %s</error>', $message),
+                Severity::ERROR => sprintf('<error>Error: %s</error>', $message),
+            });
+        };
+        if ($path === null) {
+            $package = $this->packageManager->getPackage($packageKey);
+            $path = Files::concatenatePaths([$package->getPackagePath(), 'Resources/Private/Content']);
+        }
+        $this->siteExportService->exportToPath($contentRepositoryId, $path, $onProcessor, $onMessage);
     }
 
     /**

@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Neos\ContentRepository\LegacyNodeMigration;
@@ -17,16 +18,19 @@ namespace Neos\ContentRepository\LegacyNodeMigration;
 use Doctrine\DBAL\Connection;
 use League\Flysystem\Filesystem;
 use League\Flysystem\Local\LocalFilesystemAdapter;
+use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\DimensionSpace\InterDimensionalVariationGraph;
 use Neos\ContentRepository\Core\EventStore\EventNormalizer;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceInterface;
 use Neos\ContentRepository\Core\Infrastructure\Property\PropertyConverter;
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
+use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepository\Export\Asset\Adapters\DbalAssetLoader;
 use Neos\ContentRepository\Export\Asset\Adapters\FileSystemResourceLoader;
 use Neos\ContentRepository\Export\Asset\AssetExporter;
-use Neos\ContentRepository\Export\ProcessorInterface;
+use Neos\ContentRepository\Export\ProcessingContext;
+use Neos\ContentRepository\Export\Processors;
 use Neos\ContentRepository\Export\Processors\AssetRepositoryImportProcessor;
 use Neos\ContentRepository\Export\Processors\EventStoreImportProcessor;
 use Neos\ContentRepository\Export\Severity;
@@ -42,7 +46,6 @@ use Neos\Utility\Files;
 
 class LegacyMigrationService implements ContentRepositoryServiceInterface
 {
-
     public function __construct(
         private readonly Connection $connection,
         private readonly string $resourcesPath,
@@ -57,7 +60,7 @@ class LegacyMigrationService implements ContentRepositoryServiceInterface
         private readonly EventNormalizer $eventNormalizer,
         private readonly PropertyConverter $propertyConverter,
         private readonly EventStoreInterface $eventStore,
-        private readonly ContentStreamId $contentStreamId,
+        private readonly ContentRepository $contentRepository,
     ) {
     }
 
@@ -70,26 +73,20 @@ class LegacyMigrationService implements ContentRepositoryServiceInterface
 
         $assetExporter = new AssetExporter($filesystem, new DbalAssetLoader($this->connection), new FileSystemResourceLoader($this->resourcesPath));
 
-        /** @var ProcessorInterface[] $processors */
-        $processors = [
+        $processors = Processors::fromArray([
             'Exporting assets' => new NodeDataToAssetsProcessor($this->nodeTypeManager, $assetExporter, new NodeDataLoader($this->connection)),
-            'Exporting node data' => new NodeDataToEventsProcessor($this->nodeTypeManager, $this->propertyMapper, $this->propertyConverter, $this->interDimensionalVariationGraph, $this->eventNormalizer, $filesystem, new NodeDataLoader($this->connection)),
-            'Importing assets' => new AssetRepositoryImportProcessor($filesystem, $this->assetRepository, $this->resourceRepository, $this->resourceManager, $this->persistenceManager),
-            'Importing events' => new EventStoreImportProcessor(true, $filesystem, $this->eventStore, $this->eventNormalizer, $this->contentStreamId),
-        ];
-
+            'Exporting node data' => new NodeDataToEventsProcessor($this->nodeTypeManager, $this->propertyMapper, $this->propertyConverter, $this->interDimensionalVariationGraph, $this->eventNormalizer, new NodeDataLoader($this->connection)),
+            'Importing assets' => new AssetRepositoryImportProcessor($this->assetRepository, $this->resourceRepository, $this->resourceManager, $this->persistenceManager),
+            'Importing events' => new EventStoreImportProcessor(WorkspaceName::forLive(), true, $this->eventStore, $this->eventNormalizer, $this->contentRepository),
+        ]);
+        $processingContext = new ProcessingContext($filesystem, function (Severity $severity, string $message) use ($verbose, $outputLineFn) {
+            if ($severity !== Severity::NOTICE || $verbose) {
+                $outputLineFn('<%1$s>%2$s</%1$s>', [$severity === Severity::ERROR ? 'error' : 'comment', $message]);
+            }
+        });
         foreach ($processors as $label => $processor) {
             $outputLineFn($label . '...');
-            $processor->onMessage(function (Severity $severity, string $message) use ($verbose, $outputLineFn) {
-                if ($severity !== Severity::NOTICE || $verbose) {
-                    $outputLineFn('<%1$s>%2$s</%1$s>', [$severity === Severity::ERROR ? 'error' : 'comment', $message]);
-                }
-            });
-            $result = $processor->run();
-            if ($result->severity === Severity::ERROR) {
-                throw new \RuntimeException($label . ': ' . $result->message);
-            }
-            $outputLineFn('  ' . $result->message);
+            $processor->run($processingContext);
             $outputLineFn();
         }
         Files::unlink($temporaryFilePath);
