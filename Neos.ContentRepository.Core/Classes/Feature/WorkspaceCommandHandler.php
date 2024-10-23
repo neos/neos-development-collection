@@ -24,7 +24,6 @@ use Neos\ContentRepository\Core\EventStore\EventInterface;
 use Neos\ContentRepository\Core\EventStore\EventNormalizer;
 use Neos\ContentRepository\Core\EventStore\Events;
 use Neos\ContentRepository\Core\EventStore\EventsToPublish;
-use Neos\ContentRepository\Core\EventStore\EventsToPublishFailed;
 use Neos\ContentRepository\Core\Feature\Common\MatchableWithNodeIdToPublishOrDiscardInterface;
 use Neos\ContentRepository\Core\Feature\Common\PublishableToWorkspaceInterface;
 use Neos\ContentRepository\Core\Feature\Common\RebasableToOtherWorkspaceInterface;
@@ -194,7 +193,7 @@ final readonly class WorkspaceCommandHandler implements ControlFlowAwareCommandH
         if (!$commandHandlingDependencies->contentStreamExists($workspace->currentContentStreamId)) {
             throw new \RuntimeException('Cannot publish nodes on a workspace with a stateless content stream', 1729711258);
         }
-        $oldWorkspaceContentStreamIdState = $commandHandlingDependencies->getContentStreamStatus($workspace->currentContentStreamId);
+        $currentWorkspaceContentStreamState = $commandHandlingDependencies->getContentStreamStatus($workspace->currentContentStreamId);
 
         // todo if workspace is outdated do an implicit rebase
 
@@ -213,7 +212,7 @@ final readonly class WorkspaceCommandHandler implements ControlFlowAwareCommandH
             // if there are no events this is almost a noop
             yield $this->reopenContentStream(
                 $workspace->currentContentStreamId,
-                $oldWorkspaceContentStreamIdState,
+                $currentWorkspaceContentStreamState,
                 $commandHandlingDependencies
             );
 
@@ -225,7 +224,7 @@ final readonly class WorkspaceCommandHandler implements ControlFlowAwareCommandH
         } catch (ConcurrencyException $exception) {
             yield $this->reopenContentStream(
                 $workspace->currentContentStreamId,
-                $oldWorkspaceContentStreamIdState,
+                $currentWorkspaceContentStreamState,
                 $commandHandlingDependencies
             );
 
@@ -350,21 +349,18 @@ final readonly class WorkspaceCommandHandler implements ControlFlowAwareCommandH
     ): \Generator {
         $workspace = $this->requireWorkspace($command->workspaceName, $commandHandlingDependencies);
         $baseWorkspace = $this->requireBaseWorkspace($workspace, $commandHandlingDependencies);
-        $oldWorkspaceContentStreamId = $workspace->currentContentStreamId;
-        if (!$commandHandlingDependencies->contentStreamExists($oldWorkspaceContentStreamId)) {
+        if (!$commandHandlingDependencies->contentStreamExists($workspace->currentContentStreamId)) {
             throw new \DomainException('Cannot rebase a workspace with a stateless content stream', 1711718314);
         }
-        $oldWorkspaceContentStreamIdState = $commandHandlingDependencies->getContentStreamStatus($oldWorkspaceContentStreamId);
+        $currentWorkspaceContentStreamState = $commandHandlingDependencies->getContentStreamStatus($workspace->currentContentStreamId);
 
         // FIXME no-op if workspace is not outdated and not RebaseErrorHandlingStrategy::STRATEGY_FORCE.
 
-        // 0) close old content stream
         yield $this->closeContentStream(
-            $oldWorkspaceContentStreamId,
+            $workspace->currentContentStreamId,
             $commandHandlingDependencies
         );
 
-        // 2) extract the commands from the to-be-rebased content stream; and applies them on the new content stream
         $originalCommands = $this->extractCommandsFromContentStreamMetadata(
             ContentStreamEventStreamName::fromContentStreamId(
                 $workspace->currentContentStreamId
@@ -400,7 +396,6 @@ final readonly class WorkspaceCommandHandler implements ControlFlowAwareCommandH
             static function () use ($commandSimulator, $originalCommands): CommandsThatFailedDuringRebase {
                 $commandsThatFailed = new CommandsThatFailedDuringRebase();
                 foreach ($originalCommands as $sequenceNumber => $originalCommand) {
-                    // We no longer need to adjust commands as the workspace stays the same
                     try {
                         // We rebase here, but we apply the commands in the simulation on the base workspace so the constraint checks work
                         $commandSimulator->handle($originalCommand);
@@ -421,7 +416,7 @@ final readonly class WorkspaceCommandHandler implements ControlFlowAwareCommandH
         );
 
 
-        // 3) if we got so far without an exception (or if we don't care), we can switch the workspace's active content stream.
+        // if we got so far without an exception (or if we don't care), we can switch the workspace's active content stream.
         if ($command->rebaseErrorHandlingStrategy === RebaseErrorHandlingStrategy::STRATEGY_FORCE || $commandsThatFailed->isEmpty()) {
             $forkContentStream = $this->forkContentStream(
                 $command->rebasedContentStreamId,
@@ -429,16 +424,12 @@ final readonly class WorkspaceCommandHandler implements ControlFlowAwareCommandH
                 $commandHandlingDependencies
             );
 
-            yield new EventsToPublish(
-                $forkContentStream->streamName,
-                $forkContentStream->events->merge(
-                    $this->getCopiedEventsOfEventStream(
-                        $command->workspaceName,
-                        $command->rebasedContentStreamId,
-                        $commandSimulator->eventStream(),
-                    )
-                ),
-                $forkContentStream->expectedVersion
+            yield $forkContentStream->withAppendedEvents(
+                $this->getCopiedEventsOfEventStream(
+                    $command->workspaceName,
+                    $command->rebasedContentStreamId,
+                    $commandSimulator->eventStream(),
+                )
             );
 
             yield new EventsToPublish(
@@ -456,14 +447,14 @@ final readonly class WorkspaceCommandHandler implements ControlFlowAwareCommandH
             return null;
         }
 
-        // 3.E) In case of an exception, reopen the old content stream...
+        // error case
         yield $this->reopenContentStream(
-            $oldWorkspaceContentStreamId,
-            $oldWorkspaceContentStreamIdState,
+            $workspace->currentContentStreamId,
+            $currentWorkspaceContentStreamState,
             $commandHandlingDependencies
         );
 
-        // ...and throw an exception that contains all the information about what exactly failed toto improve message!
+        // throw an exception that contains all the information about what exactly failed
         throw new WorkspaceRebaseFailed($commandsThatFailed, 'Rebase failed', 1711713880);
     }
 
@@ -526,21 +517,18 @@ final readonly class WorkspaceCommandHandler implements ControlFlowAwareCommandH
 
         $contentGraph = $commandHandlingDependencies->getContentGraph($command->workspaceName);
         $workspace = $this->requireWorkspace($command->workspaceName, $commandHandlingDependencies);
-        $oldWorkspaceContentStreamId = $workspace->currentContentStreamId;
-        if (!$commandHandlingDependencies->contentStreamExists($oldWorkspaceContentStreamId)) {
+        if (!$commandHandlingDependencies->contentStreamExists($workspace->currentContentStreamId)) {
             throw new \DomainException('Cannot publish nodes on a workspace with a stateless content stream', 1710410114);
         }
-        $oldWorkspaceContentStreamIdState = $commandHandlingDependencies->getContentStreamStatus($oldWorkspaceContentStreamId);
+        $currentWorkspaceContentStreamState = $commandHandlingDependencies->getContentStreamStatus($workspace->currentContentStreamId);
         $baseWorkspace = $this->requireBaseWorkspace($workspace, $commandHandlingDependencies);
         $baseContentStreamVersion = $commandHandlingDependencies->getContentStreamVersion($baseWorkspace->currentContentStreamId);
 
-        // 1) close old content stream
         yield $this->closeContentStream(
             $contentGraph->getContentStreamId(),
             $commandHandlingDependencies
         );
 
-        // 2) separate commands in two parts - the ones MATCHING the nodes from the command, and the REST
         $matchingCommands = [];
         $remainingCommands = [];
         $this->separateMatchingAndRemainingCommands($command, $workspace, $matchingCommands, $remainingCommands);
@@ -548,8 +536,8 @@ final readonly class WorkspaceCommandHandler implements ControlFlowAwareCommandH
         if ($matchingCommands === []) {
             // almost noop (e.g. random node ids were specified) ;)
             yield $this->reopenContentStream(
-                $oldWorkspaceContentStreamId,
-                $oldWorkspaceContentStreamIdState,
+                $workspace->currentContentStreamId,
+                $currentWorkspaceContentStreamState,
                 $commandHandlingDependencies
             );
             return null;
@@ -559,7 +547,6 @@ final readonly class WorkspaceCommandHandler implements ControlFlowAwareCommandH
         $commandSimulator = $this->commandSimulatorFactory->createSimulator($baseWorkspace->workspaceName);
 
         try {
-            // 4) using the new content stream, apply the matching commands
             $highestVersionForMatching = $commandSimulator->run(
                 static function () use ($commandSimulator, $matchingCommands, $remainingCommands): SequenceNumber {
                     foreach ($matchingCommands as $matchingCommand) {
@@ -575,18 +562,10 @@ final readonly class WorkspaceCommandHandler implements ControlFlowAwareCommandH
                     return $highestVersionForMatching;
                 }
             );
-
-
-            // 5) take EVENTS(MATCHING) and apply them to base WS.
-
-
-            // // 7) apply REMAINING commands to the workspace's new content stream
-
         } catch (\Exception $exception) {
-            // 4.E) In case of an exception, reopen the old content stream and remove the newly created
             yield $this->reopenContentStream(
-                $oldWorkspaceContentStreamId,
-                $oldWorkspaceContentStreamIdState,
+                $workspace->currentContentStreamId,
+                $currentWorkspaceContentStreamState,
                 $commandHandlingDependencies
             );
 
@@ -596,8 +575,8 @@ final readonly class WorkspaceCommandHandler implements ControlFlowAwareCommandH
         if ($highestVersionForMatching->equals(SequenceNumber::none())) {
             // still a noop ;) (for example when a command returns empty events e.g. the node was already tagged with this subtree tag)
             yield $this->reopenContentStream(
-                $oldWorkspaceContentStreamId,
-                $oldWorkspaceContentStreamIdState,
+                $workspace->currentContentStreamId,
+                $currentWorkspaceContentStreamState,
                 $commandHandlingDependencies
             );
 
@@ -615,28 +594,21 @@ final readonly class WorkspaceCommandHandler implements ControlFlowAwareCommandH
             ExpectedVersion::fromVersion($baseContentStreamVersion)
         );
 
-        // 6) fork a new content stream, based on the base WS, and apply REST
         $forkContentStream = $this->forkContentStream(
             $command->contentStreamIdForRemainingPart,
             $baseWorkspace->currentContentStreamId,
             $commandHandlingDependencies
         );
 
-        yield new EventsToPublish(
-            $forkContentStream->streamName,
-            $forkContentStream->events->merge(
-                $this->getCopiedEventsOfEventStream(
-                    $command->workspaceName,
-                    $command->contentStreamIdForRemainingPart,
-                    $commandSimulator->eventStream()->withMinimumSequenceNumber($highestVersionForMatching->previous()),
-                )
-            ),
-            $forkContentStream->expectedVersion
+        yield $forkContentStream->withAppendedEvents(
+            $this->getCopiedEventsOfEventStream(
+                $command->workspaceName,
+                $command->contentStreamIdForRemainingPart,
+                $commandSimulator->eventStream()->withMinimumSequenceNumber($highestVersionForMatching->previous()),
+            )
         );
 
-        // 8) to avoid dangling content streams, we need to remove our temporary content stream (whose events
-        // have already been published) as well as the old one
-        yield $this->removeContentStream($oldWorkspaceContentStreamId, $commandHandlingDependencies);
+        yield $this->removeContentStream($workspace->currentContentStreamId, $commandHandlingDependencies);
 
         yield new EventsToPublish(
             WorkspaceEventStreamName::fromWorkspaceName($command->workspaceName)->getEventStreamName(),
@@ -645,7 +617,7 @@ final readonly class WorkspaceCommandHandler implements ControlFlowAwareCommandH
                     $command->workspaceName,
                     $baseWorkspace->workspaceName,
                     $command->contentStreamIdForRemainingPart,
-                    $oldWorkspaceContentStreamId,
+                    $workspace->currentContentStreamId,
                     $command->nodesToPublish
                 )
             ]),
@@ -674,21 +646,18 @@ final readonly class WorkspaceCommandHandler implements ControlFlowAwareCommandH
 
         $contentGraph = $commandHandlingDependencies->getContentGraph($command->workspaceName);
         $workspace = $this->requireWorkspace($command->workspaceName, $commandHandlingDependencies);
-        $oldWorkspaceContentStreamId = $contentGraph->getContentStreamId();
         if (!$commandHandlingDependencies->contentStreamExists($contentGraph->getContentStreamId())) {
             throw new \DomainException('Cannot discard nodes on a workspace with a stateless content stream', 1710408112);
         }
-        $oldWorkspaceContentStreamIdState = $commandHandlingDependencies->getContentStreamStatus($contentGraph->getContentStreamId());
+        $currentWorkspaceContentStreamState = $commandHandlingDependencies->getContentStreamStatus($contentGraph->getContentStreamId());
         $baseWorkspace = $this->requireBaseWorkspace($workspace, $commandHandlingDependencies);
 
-        // 1) close old content stream
         yield $this->closeContentStream(
-            $oldWorkspaceContentStreamId,
+            $workspace->currentContentStreamId,
             $commandHandlingDependencies
         );
 
-        // 2) filter commands, only keeping the ones NOT MATCHING the nodes from the command
-        // (i.e. the modifications we want to keep)
+        // filter commands, only keeping the ones NOT MATCHING the nodes from the command (i.e. the modifications we want to keep)
         $commandsToDiscard = [];
         $commandsToKeep = [];
         $this->separateMatchingAndRemainingCommands($command, $workspace, $commandsToDiscard, $commandsToKeep);
@@ -696,8 +665,8 @@ final readonly class WorkspaceCommandHandler implements ControlFlowAwareCommandH
         if ($commandsToDiscard === []) {
             // if we have nothing to discard, we can just keep all. (e.g. random node ids were specified) It's almost a noop ;)
             yield $this->reopenContentStream(
-                $oldWorkspaceContentStreamId,
-                $oldWorkspaceContentStreamIdState,
+                $workspace->currentContentStreamId,
+                $currentWorkspaceContentStreamState,
                 $commandHandlingDependencies
             );
             return;
@@ -705,7 +674,6 @@ final readonly class WorkspaceCommandHandler implements ControlFlowAwareCommandH
 
         if ($commandsToKeep === []) {
             // quick path everything was discarded we just branch of from the base
-
             yield from $this->discardWorkspace(
                 $workspace,
                 $baseWorkspace,
@@ -717,7 +685,6 @@ final readonly class WorkspaceCommandHandler implements ControlFlowAwareCommandH
 
         $commandSimulator = $this->commandSimulatorFactory->createSimulator($baseWorkspace->workspaceName);
 
-        // 4) using the new content stream, apply the commands to keep
         try {
             $commandSimulator->run(
                 static function () use ($commandSimulator, $commandsToKeep): void {
@@ -727,36 +694,27 @@ final readonly class WorkspaceCommandHandler implements ControlFlowAwareCommandH
                 }
             );
         } catch (\Exception $exception) {
-            // 4.E) In case of an exception, reopen the old content stream and remove the newly created
             yield $this->reopenContentStream(
-                $oldWorkspaceContentStreamId,
-                $oldWorkspaceContentStreamIdState,
+                $workspace->currentContentStreamId,
+                $currentWorkspaceContentStreamState,
                 $commandHandlingDependencies
             );
             throw $exception;
         }
 
-        // 5) If everything worked, to avoid dangling content streams, we need to remove the old content stream
-
-        // 3) fork a new contentStream, based on the base WS, and apply the commands to keep
         $forkContentStream = $this->forkContentStream(
             $command->newContentStreamId,
             $baseWorkspace->currentContentStreamId,
             $commandHandlingDependencies
         );
 
-        yield new EventsToPublish(
-            $forkContentStream->streamName,
-            $forkContentStream->events->merge(
-                $this->getCopiedEventsOfEventStream(
-                    $command->workspaceName,
-                    $command->newContentStreamId,
-                    $commandSimulator->eventStream(),
-                )
-            ),
-            $forkContentStream->expectedVersion
+        yield $forkContentStream->withAppendedEvents(
+            $this->getCopiedEventsOfEventStream(
+                $command->workspaceName,
+                $command->newContentStreamId,
+                $commandSimulator->eventStream(),
+            )
         );
-
 
         yield new EventsToPublish(
             WorkspaceEventStreamName::fromWorkspaceName($command->workspaceName)->getEventStreamName(),
