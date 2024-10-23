@@ -14,16 +14,18 @@ declare(strict_types=1);
 
 namespace Neos\Workspace\Ui\ViewModel;
 
+use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\Flow\Annotations as Flow;
+use Neos\Neos\Domain\Model\WorkspaceDescription;
+use Neos\Neos\Domain\Model\WorkspaceTitle;
 
 #[Flow\Proxy(false)]
 final readonly class EditWorkspaceDto
 {
     public function __construct(
-        public string $workspaceName,
-        public string $workspaceTitle,
-        public string $workspaceDescription,
-        public string $workspaceOwnerId,
+        public WorkspaceName $workspaceName,
+        public WorkspaceTitle $workspaceTitle,
+        public WorkspaceDescription $workspaceDescription,
     )
     {
     }

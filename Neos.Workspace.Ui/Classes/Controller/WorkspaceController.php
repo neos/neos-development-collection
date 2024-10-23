@@ -181,16 +181,15 @@ class WorkspaceController extends AbstractModuleController
         ]);
     }
 
-    public function newAction(ContentRepositoryId $contentRepositoryId): void
+    public function newAction(): void
     {
+        $contentRepositoryId = SiteDetectionResult::fromRequest($this->request->getHttpRequest())->contentRepositoryId;
         $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryId);
 
         $this->view->assign('baseWorkspaceOptions', $this->prepareBaseWorkspaceOptions($contentRepository));
-        $this->view->assign('contentRepositoryId', $contentRepositoryId->value);
     }
 
     public function createAction(
-        ContentRepositoryId $contentRepositoryId,
         WorkspaceTitle $title,
         WorkspaceName $baseWorkspace,
         WorkspaceDescription $description,
@@ -199,7 +198,10 @@ class WorkspaceController extends AbstractModuleController
         if ($currentUser === null) {
             throw new \RuntimeException('No user authenticated', 1718303756);
         }
+
+        $contentRepositoryId = SiteDetectionResult::fromRequest($this->request->getHttpRequest())->contentRepositoryId;
         $workspaceName = $this->workspaceService->getUniqueWorkspaceName($contentRepositoryId, $title->value);
+
         try {
             $this->workspaceService->createSharedWorkspace(
                 $contentRepositoryId,
@@ -268,10 +270,9 @@ class WorkspaceController extends AbstractModuleController
         $workspaceMetadata = $this->workspaceService->getWorkspaceMetadata($contentRepositoryId, $workspace->workspaceName);
 
         $workspaceDto = new EditWorkspaceDto(
-            workspaceName: $workspace->workspaceName->value,
-            workspaceTitle: $workspaceMetadata->title->value,
-            workspaceDescription: $workspaceMetadata->description->value,
-            workspaceOwnerId: $workspaceMetadata->ownerUserId->value,
+            workspaceName: $workspace->workspaceName,
+            workspaceTitle: $workspaceMetadata->title,
+            workspaceDescription: $workspaceMetadata->description,
         );
 
 
@@ -421,10 +422,9 @@ class WorkspaceController extends AbstractModuleController
             );
             $this->addFlashMessage($message, '', Message::SEVERITY_WARNING);
             $this->throwStatus(403, 'Workspace has unpublished nodes');
-        }
-
-        // Render a confirmation form if the request is not a POST request
-        if ($this->request->getHttpRequest()->getMethod() === 'POST') {
+        // delete workspace on POST
+        } elseif ($this->request->getHttpRequest()->getMethod() === 'POST') {
+            // TODO: WorkspaceMetadata is not being removed with this
             $contentRepository->handle(
                 DeleteWorkspace::create(
                     $workspaceName,
@@ -437,8 +437,10 @@ class WorkspaceController extends AbstractModuleController
                     [$workspaceMetadata->title->value],
                 )
             );
+        // Render a confirmation form if the request is not a POST request
         } else {
-            $this->view->assign('workspace', $workspace);
+            $this->view->assign('workspaceName', $workspace->workspaceName->value);
+            $this->view->assign('workspaceTitle', $workspaceMetadata->title->value);
         }
     }
 
@@ -1165,9 +1167,8 @@ class WorkspaceController extends AbstractModuleController
                 $workspace->workspaceName,
                 $this->userService->getCurrentUser()
             );
-            if (!$workspacesPermissions->read) { // todo check corrrect?
-                continue;
-            }
+
+            // TODO: check permissions (read?, admin?)
 
             $workspaceListItems[$workspace->workspaceName->value] = new WorkspaceListItem(
                 $workspace->workspaceName->value,
