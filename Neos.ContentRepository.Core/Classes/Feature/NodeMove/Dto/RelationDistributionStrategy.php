@@ -43,10 +43,12 @@ enum RelationDistributionStrategy: string implements \JsonSerializable
 
     public static function fromName(string $name): self
     {
-        $name = substr($name, strpos($name, '::') + 2);
-        foreach (self::cases() as $status) {
-            if ($name === $status->name) {
-                return $status;
+        if (str_starts_with($name, 'RelationDistributionStrategy::')) {
+            $name = substr($name, strpos($name, '::') + 2);
+            foreach (self::cases() as $status) {
+                if ($name === $status->name) {
+                    return $status;
+                }
             }
         }
         return self::STRATEGY_GATHER_ALL;
