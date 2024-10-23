@@ -16,6 +16,7 @@ namespace Neos\ContentRepository\Core\Feature;
 
 use Neos\ContentRepository\Core\CommandHandler\CommandHandlerInterface;
 use Neos\ContentRepository\Core\CommandHandler\CommandInterface;
+use Neos\ContentRepository\Core\CommandHandler\EventsPublishResult;
 use Neos\ContentRepository\Core\CommandHandlingDependencies;
 use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\EventStore\DecoratedEvent;
@@ -24,6 +25,8 @@ use Neos\ContentRepository\Core\EventStore\EventNormalizer;
 use Neos\ContentRepository\Core\EventStore\EventPersister;
 use Neos\ContentRepository\Core\EventStore\Events;
 use Neos\ContentRepository\Core\EventStore\EventsToPublish;
+use Neos\ContentRepository\Core\EventStore\EventsToPublishFailed;
+use Neos\ContentRepository\Core\EventStore\EventsToPublishToStreams;
 use Neos\ContentRepository\Core\Feature\Common\MatchableWithNodeIdToPublishOrDiscardInterface;
 use Neos\ContentRepository\Core\Feature\Common\PublishableToWorkspaceInterface;
 use Neos\ContentRepository\Core\Feature\Common\RebasableToOtherWorkspaceInterface;
@@ -62,17 +65,16 @@ use Neos\ContentRepository\Core\Feature\WorkspaceRebase\CommandThatFailedDuringR
 use Neos\ContentRepository\Core\Feature\WorkspaceRebase\Dto\RebaseErrorHandlingStrategy;
 use Neos\ContentRepository\Core\Feature\WorkspaceRebase\Event\WorkspaceWasRebased;
 use Neos\ContentRepository\Core\Feature\WorkspaceRebase\Exception\WorkspaceRebaseFailed;
-use Neos\ContentRepository\Core\SharedModel\Workspace\Workspace;
 use Neos\ContentRepository\Core\SharedModel\Exception\ContentStreamAlreadyExists;
 use Neos\ContentRepository\Core\SharedModel\Exception\ContentStreamDoesNotExistYet;
 use Neos\ContentRepository\Core\SharedModel\Exception\WorkspaceDoesNotExist;
 use Neos\ContentRepository\Core\SharedModel\Exception\WorkspaceHasNoBaseWorkspaceName;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
+use Neos\ContentRepository\Core\SharedModel\Workspace\Workspace;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\EventStore\EventStoreInterface;
 use Neos\EventStore\Exception\ConcurrencyException;
 use Neos\EventStore\Model\Event\EventType;
-use Neos\EventStore\Model\EventEnvelope;
 use Neos\EventStore\Model\EventStream\ExpectedVersion;
 
 /**
@@ -80,6 +82,8 @@ use Neos\EventStore\Model\EventStream\ExpectedVersion;
  */
 final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
 {
+    use ContentStreamHandling;
+
     public function __construct(
         private EventPersister $eventPersister,
         private EventStoreInterface $eventStore,
@@ -92,7 +96,7 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
         return method_exists($this, 'handle' . (new \ReflectionClass($command))->getShortName());
     }
 
-    public function handle(CommandInterface $command, CommandHandlingDependencies $commandHandlingDependencies): EventsToPublish
+    public function handle(CommandInterface $command, CommandHandlingDependencies $commandHandlingDependencies): EventsToPublish|\Generator
     {
         /** @phpstan-ignore-next-line */
         return match ($command::class) {
@@ -196,44 +200,107 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
     private function handlePublishWorkspace(
         PublishWorkspace $command,
         CommandHandlingDependencies $commandHandlingDependencies,
-    ): EventsToPublish {
+    ): \Generator {
         $workspace = $this->requireWorkspace($command->workspaceName, $commandHandlingDependencies);
         $baseWorkspace = $this->requireBaseWorkspace($workspace, $commandHandlingDependencies);
 
-        $this->publishContentStream(
-            $commandHandlingDependencies,
+        $publishResult = yield $this->getCopiedEventsToPublishForContentStream(
             $workspace->currentContentStreamId,
             $baseWorkspace->workspaceName,
             $baseWorkspace->currentContentStreamId
         );
 
-        // After publishing a workspace, we need to again fork from Base.
-        $commandHandlingDependencies->handle(
-            ForkContentStream::create(
-                $command->newContentStreamId,
-                $baseWorkspace->currentContentStreamId,
-            )
-        );
+        if ($publishResult instanceof EventsToPublishFailed) {
+            throw new BaseWorkspaceHasBeenModifiedInTheMeantime(sprintf(
+                'The base workspace has been modified in the meantime; please rebase.'
+                . ' Expected version %d of source content stream %s',
+                $publishResult->expectedVersion->value,
+                $baseWorkspace->currentContentStreamId
+            ));
+        }
 
-        $streamName = WorkspaceEventStreamName::fromWorkspaceName($command->workspaceName)->getEventStreamName();
-        $events = Events::with(
-            new WorkspaceWasPublished(
-                $command->workspaceName,
-                $baseWorkspace->workspaceName,
-                $command->newContentStreamId,
-                $workspace->currentContentStreamId,
-            )
+        // After publishing a workspace, we need to again fork from Base.
+        yield $this->forkContentStream(
+            $command->newContentStreamId,
+            $baseWorkspace->currentContentStreamId,
+            $commandHandlingDependencies
         );
 
         // if we got so far without an Exception, we can switch the Workspace's active Content stream.
-        return new EventsToPublish(
-            $streamName,
-            $events,
+        yield new EventsToPublish(
+            WorkspaceEventStreamName::fromWorkspaceName($command->workspaceName)->getEventStreamName(),
+            Events::with(
+                new WorkspaceWasPublished(
+                    $command->workspaceName,
+                    $baseWorkspace->workspaceName,
+                    $command->newContentStreamId,
+                    $workspace->currentContentStreamId,
+                )
+            ),
             ExpectedVersion::ANY()
         );
     }
 
     /**
+     * @throws BaseWorkspaceHasBeenModifiedInTheMeantime
+     * @throws \Exception
+     */
+    private function getCopiedEventsToPublishForContentStream(
+        ContentStreamId $contentStreamId,
+        WorkspaceName $baseWorkspaceName,
+        ContentStreamId $baseContentStreamId,
+    ): EventsToPublish {
+        $baseWorkspaceContentStreamName = ContentStreamEventStreamName::fromContentStreamId(
+            $baseContentStreamId
+        );
+
+        // TODO: please check the code below in-depth. it does:
+        // - copy all events from the "user" content stream which implement @see{}"PublishableToOtherContentStreamsInterface"
+        // - extract the initial ContentStreamWasForked event,
+        //   to read the version of the source content stream when the fork occurred
+        // - ensure that no other changes have been done in the meantime in the base content stream
+
+        $workspaceContentStream = iterator_to_array($this->eventStore->load(
+            ContentStreamEventStreamName::fromContentStreamId($contentStreamId)->getEventStreamName()
+        ));
+
+        $events = [];
+        $contentStreamWasForkedEvent = null;
+        foreach ($workspaceContentStream as $eventEnvelope) {
+            $event = $this->eventNormalizer->denormalize($eventEnvelope->event);
+
+            if ($event instanceof ContentStreamWasForked) {
+                if ($contentStreamWasForkedEvent !== null) {
+                    throw new \RuntimeException(
+                        'Invariant violation: The content stream "' . $contentStreamId->value
+                        . '" has two forked events.',
+                        1658740373
+                    );
+                }
+                $contentStreamWasForkedEvent = $event;
+            } elseif ($event instanceof PublishableToWorkspaceInterface) {
+                /** @var EventInterface $copiedEvent */
+                $copiedEvent = $event->withWorkspaceNameAndContentStreamId($baseWorkspaceName, $baseContentStreamId);
+                // We need to add the event metadata here for rebasing in nested workspace situations
+                // (and for exporting)
+                $events[] = DecoratedEvent::create($copiedEvent, metadata: $eventEnvelope->event->metadata, causationId: $eventEnvelope->event->causationId, correlationId: $eventEnvelope->event->correlationId);
+            }
+        }
+
+        if ($contentStreamWasForkedEvent === null) {
+            throw new \RuntimeException('Invariant violation: The content stream "' . $contentStreamId->value
+                . '" has NO forked event.', 1658740407);
+        }
+
+        return new EventsToPublish(
+            $baseWorkspaceContentStreamName->getEventStreamName(),
+            Events::fromArray($events),
+            ExpectedVersion::fromVersion($contentStreamWasForkedEvent->versionOfSourceContentStream)
+        );
+    }
+
+    /**
+     * @deprecated FIXME REMOVE with https://github.com/neos/neos-development-collection/pull/5301
      * @throws BaseWorkspaceHasBeenModifiedInTheMeantime
      * @throws \Exception
      */
@@ -256,7 +323,6 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
         $workspaceContentStream = iterator_to_array($this->eventStore->load(
             ContentStreamEventStreamName::fromContentStreamId($contentStreamId)->getEventStreamName()
         ));
-        /** @var array<int,EventEnvelope> $workspaceContentStream */
 
         $events = [];
         $contentStreamWasForkedEvent = null;

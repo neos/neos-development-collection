@@ -1,34 +1,16 @@
 <?php
 
-/*
- * This file is part of the Neos.ContentRepository package.
- *
- * (c) Contributors of the Neos Project - www.neos.io
- *
- * This package is Open Source Software. For the full copyright and license
- * information, please view the LICENSE file which was distributed with this
- * source code.
- */
-
 declare(strict_types=1);
 
 namespace Neos\ContentRepository\Core\Feature;
 
-use Neos\ContentRepository\Core\CommandHandler\CommandHandlerInterface;
-use Neos\ContentRepository\Core\CommandHandler\CommandInterface;
 use Neos\ContentRepository\Core\CommandHandlingDependencies;
-use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\EventStore\Events;
 use Neos\ContentRepository\Core\EventStore\EventsToPublish;
-use Neos\ContentRepository\Core\Feature\ContentStreamClosing\Command\CloseContentStream;
-use Neos\ContentRepository\Core\Feature\ContentStreamClosing\Command\ReopenContentStream;
 use Neos\ContentRepository\Core\Feature\ContentStreamClosing\Event\ContentStreamWasClosed;
 use Neos\ContentRepository\Core\Feature\ContentStreamClosing\Event\ContentStreamWasReopened;
-use Neos\ContentRepository\Core\Feature\ContentStreamCreation\Command\CreateContentStream;
 use Neos\ContentRepository\Core\Feature\ContentStreamCreation\Event\ContentStreamWasCreated;
-use Neos\ContentRepository\Core\Feature\ContentStreamForking\Command\ForkContentStream;
 use Neos\ContentRepository\Core\Feature\ContentStreamForking\Event\ContentStreamWasForked;
-use Neos\ContentRepository\Core\Feature\ContentStreamRemoval\Command\RemoveContentStream;
 use Neos\ContentRepository\Core\Feature\ContentStreamRemoval\Event\ContentStreamWasRemoved;
 use Neos\ContentRepository\Core\SharedModel\Exception\ContentStreamAlreadyExists;
 use Neos\ContentRepository\Core\SharedModel\Exception\ContentStreamDoesNotExistYet;
@@ -38,89 +20,50 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamStatus;
 use Neos\EventStore\Model\EventStream\ExpectedVersion;
 
-/**
- * INTERNALS. Only to be used from WorkspaceCommandHandler!!!
- *
- * @internal from userland, you'll use ContentRepository::handle to dispatch commands
- */
-final class ContentStreamCommandHandler implements CommandHandlerInterface
+trait ContentStreamHandling
 {
-    use ContentStreamHandling;
-
-    public function canHandle(CommandInterface $command): bool
-    {
-        return method_exists($this, 'handle' . (new \ReflectionClass($command))->getShortName());
-    }
-
-    public function handle(CommandInterface $command, CommandHandlingDependencies $commandHandlingDependencies): EventsToPublish
-    {
-        return match ($command::class) {
-            CreateContentStream::class => $this->handleCreateContentStream($command, $commandHandlingDependencies),
-            CloseContentStream::class => $this->handleCloseContentStream($command, $commandHandlingDependencies),
-            ReopenContentStream::class => $this->handleReopenContentStream($command, $commandHandlingDependencies),
-            ForkContentStream::class => $this->handleForkContentStream($command, $commandHandlingDependencies),
-            RemoveContentStream::class => $this->handleRemoveContentStream($command, $commandHandlingDependencies),
-            default => throw new \DomainException('Cannot handle commands of class ' . get_class($command), 1710408206),
-        };
-    }
-
     /**
+     * @param ContentStreamId $contentStreamId The id of the content stream to create
      * @throws ContentStreamAlreadyExists
      */
-    private function handleCreateContentStream(
-        CreateContentStream $command,
+    private function createContentStream(
+        ContentStreamId $contentStreamId,
         CommandHandlingDependencies $commandHandlingDependencies,
     ): EventsToPublish {
-        $this->requireContentStreamToNotExistYet($command->contentStreamId, $commandHandlingDependencies);
-        $streamName = ContentStreamEventStreamName::fromContentStreamId($command->contentStreamId)
+        $this->requireContentStreamToNotExistYet($contentStreamId, $commandHandlingDependencies);
+        $streamName = ContentStreamEventStreamName::fromContentStreamId($contentStreamId)
             ->getEventStreamName();
 
         return new EventsToPublish(
             $streamName,
             Events::with(
                 new ContentStreamWasCreated(
-                    $command->contentStreamId,
+                    $contentStreamId,
                 )
             ),
             ExpectedVersion::NO_STREAM()
         );
     }
 
-    private function handleCloseContentStream(
-        CloseContentStream $command,
+    /**
+     * @param ContentStreamId $contentStreamId The id of the content stream to close
+     * @param CommandHandlingDependencies $commandHandlingDependencies
+     * @return EventsToPublish
+     */
+    private function closeContentStream(
+        ContentStreamId $contentStreamId,
         CommandHandlingDependencies $commandHandlingDependencies,
     ): EventsToPublish {
-        $this->requireContentStreamToExist($command->contentStreamId, $commandHandlingDependencies);
-        $expectedVersion = $this->getExpectedVersionOfContentStream($command->contentStreamId, $commandHandlingDependencies);
-        $this->requireContentStreamToNotBeClosed($command->contentStreamId, $commandHandlingDependencies);
-        $streamName = ContentStreamEventStreamName::fromContentStreamId($command->contentStreamId)->getEventStreamName();
+        $this->requireContentStreamToExist($contentStreamId, $commandHandlingDependencies);
+        $expectedVersion = $this->getExpectedVersionOfContentStream($contentStreamId, $commandHandlingDependencies);
+        $this->requireContentStreamToNotBeClosed($contentStreamId, $commandHandlingDependencies);
+        $streamName = ContentStreamEventStreamName::fromContentStreamId($contentStreamId)->getEventStreamName();
 
         return new EventsToPublish(
             $streamName,
             Events::with(
                 new ContentStreamWasClosed(
-                    $command->contentStreamId,
-                ),
-            ),
-            $expectedVersion
-        );
-    }
-
-    private function handleReopenContentStream(
-        ReopenContentStream $command,
-        CommandHandlingDependencies $commandHandlingDependencies,
-    ): EventsToPublish {
-        $this->requireContentStreamToExist($command->contentStreamId, $commandHandlingDependencies);
-        $expectedVersion = $this->getExpectedVersionOfContentStream($command->contentStreamId, $commandHandlingDependencies);
-        $this->requireContentStreamToBeClosed($command->contentStreamId, $commandHandlingDependencies);
-        $streamName = ContentStreamEventStreamName::fromContentStreamId($command->contentStreamId)->getEventStreamName();
-
-        return new EventsToPublish(
-            $streamName,
-            Events::with(
-                new ContentStreamWasReopened(
-                    $command->contentStreamId,
-                    $command->previousState,
+                    $contentStreamId,
                 ),
             ),
             $expectedVersion
@@ -128,28 +71,58 @@ final class ContentStreamCommandHandler implements CommandHandlerInterface
     }
 
     /**
+     * @param ContentStreamId $contentStreamId The id of the content stream to reopen
+     * @param ContentStreamStatus $previousState The state the content stream was in before closing and is to be reset to
+     */
+    private function reopenContentStream(
+        ContentStreamId $contentStreamId,
+        ContentStreamStatus $previousState,
+        CommandHandlingDependencies $commandHandlingDependencies,
+    ): EventsToPublish {
+        $this->requireContentStreamToExist($contentStreamId, $commandHandlingDependencies);
+        // todo dont we want to make sure this always succeeds? e.g. ANY?
+        $expectedVersion = $this->getExpectedVersionOfContentStream($contentStreamId, $commandHandlingDependencies);
+        $this->requireContentStreamToBeClosed($contentStreamId, $commandHandlingDependencies);
+        $streamName = ContentStreamEventStreamName::fromContentStreamId($contentStreamId)->getEventStreamName();
+
+        return new EventsToPublish(
+            $streamName,
+            Events::with(
+                new ContentStreamWasReopened(
+                    $contentStreamId,
+                    $previousState,
+                ),
+            ),
+            $expectedVersion
+        );
+    }
+
+    /**
+     * @param ContentStreamId $newContentStreamId The id of the new content stream
+     * @param ContentStreamId $sourceContentStreamId The id of the content stream to fork
      * @throws ContentStreamAlreadyExists
      * @throws ContentStreamDoesNotExistYet
      */
-    private function handleForkContentStream(
-        ForkContentStream $command,
+    private function forkContentStream(
+        ContentStreamId $newContentStreamId,
+        ContentStreamId $sourceContentStreamId,
         CommandHandlingDependencies $commandHandlingDependencies
     ): EventsToPublish {
-        $this->requireContentStreamToExist($command->sourceContentStreamId, $commandHandlingDependencies);
-        $this->requireContentStreamToNotBeClosed($command->sourceContentStreamId, $commandHandlingDependencies);
-        $this->requireContentStreamToNotExistYet($command->newContentStreamId, $commandHandlingDependencies);
+        $this->requireContentStreamToExist($sourceContentStreamId, $commandHandlingDependencies);
+        $this->requireContentStreamToNotBeClosed($sourceContentStreamId, $commandHandlingDependencies);
+        $this->requireContentStreamToNotExistYet($newContentStreamId, $commandHandlingDependencies);
 
-        $sourceContentStreamVersion = $commandHandlingDependencies->getContentStreamVersion($command->sourceContentStreamId);
+        $sourceContentStreamVersion = $commandHandlingDependencies->getContentStreamVersion($sourceContentStreamId);
 
-        $streamName = ContentStreamEventStreamName::fromContentStreamId($command->newContentStreamId)
+        $streamName = ContentStreamEventStreamName::fromContentStreamId($newContentStreamId)
             ->getEventStreamName();
 
         return new EventsToPublish(
             $streamName,
             Events::with(
                 new ContentStreamWasForked(
-                    $command->newContentStreamId,
-                    $command->sourceContentStreamId,
+                    $newContentStreamId,
+                    $sourceContentStreamId,
                     $sourceContentStreamVersion,
                 ),
             ),
@@ -158,22 +131,25 @@ final class ContentStreamCommandHandler implements CommandHandlerInterface
         );
     }
 
-    private function handleRemoveContentStream(
-        RemoveContentStream $command,
+    /**
+     * @param ContentStreamId $contentStreamId The id of the content stream to remove
+     */
+    private function removeContentStream(
+        ContentStreamId $contentStreamId,
         CommandHandlingDependencies $commandHandlingDependencies
     ): EventsToPublish {
-        $this->requireContentStreamToExist($command->contentStreamId, $commandHandlingDependencies);
-        $expectedVersion = $this->getExpectedVersionOfContentStream($command->contentStreamId, $commandHandlingDependencies);
+        $this->requireContentStreamToExist($contentStreamId, $commandHandlingDependencies);
+        $expectedVersion = $this->getExpectedVersionOfContentStream($contentStreamId, $commandHandlingDependencies);
 
         $streamName = ContentStreamEventStreamName::fromContentStreamId(
-            $command->contentStreamId
+            $contentStreamId
         )->getEventStreamName();
 
         return new EventsToPublish(
             $streamName,
             Events::with(
                 new ContentStreamWasRemoved(
-                    $command->contentStreamId,
+                    $contentStreamId,
                 ),
             ),
             $expectedVersion
@@ -185,7 +161,7 @@ final class ContentStreamCommandHandler implements CommandHandlerInterface
      * @param CommandHandlingDependencies $commandHandlingDependencies
      * @throws ContentStreamAlreadyExists
      */
-    protected function requireContentStreamToNotExistYet(
+    private function requireContentStreamToNotExistYet(
         ContentStreamId $contentStreamId,
         CommandHandlingDependencies $commandHandlingDependencies
     ): void {
@@ -202,7 +178,7 @@ final class ContentStreamCommandHandler implements CommandHandlerInterface
      * @param CommandHandlingDependencies $commandHandlingDependencies
      * @throws ContentStreamDoesNotExistYet
      */
-    protected function requireContentStreamToExist(
+    private function requireContentStreamToExist(
         ContentStreamId $contentStreamId,
         CommandHandlingDependencies $commandHandlingDependencies
     ): void {
@@ -214,7 +190,7 @@ final class ContentStreamCommandHandler implements CommandHandlerInterface
         }
     }
 
-    protected function requireContentStreamToNotBeClosed(
+    private function requireContentStreamToNotBeClosed(
         ContentStreamId $contentStreamId,
         CommandHandlingDependencies $commandHandlingDependencies
     ): void {
@@ -226,7 +202,7 @@ final class ContentStreamCommandHandler implements CommandHandlerInterface
         }
     }
 
-    protected function requireContentStreamToBeClosed(
+    private function requireContentStreamToBeClosed(
         ContentStreamId $contentStreamId,
         CommandHandlingDependencies $commandHandlingDependencies
     ): void {
@@ -238,7 +214,7 @@ final class ContentStreamCommandHandler implements CommandHandlerInterface
         }
     }
 
-    protected function getExpectedVersionOfContentStream(
+    private function getExpectedVersionOfContentStream(
         ContentStreamId $contentStreamId,
         CommandHandlingDependencies $commandHandlingDependencies
     ): ExpectedVersion {

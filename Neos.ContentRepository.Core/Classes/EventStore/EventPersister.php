@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Core\EventStore;
 
+use Neos\ContentRepository\Core\CommandHandler\EventsPublishResult;
 use Neos\ContentRepository\Core\ContentRepository;
 use Neos\EventStore\EventStoreInterface;
 use Neos\EventStore\Exception\ConcurrencyException;
@@ -24,7 +25,6 @@ final readonly class EventPersister
     }
 
     /**
-     * @param EventsToPublish $eventsToPublish
      * @throws ConcurrencyException in case the expectedVersion does not match
      */
     public function publishEvents(ContentRepository $contentRepository, EventsToPublish $eventsToPublish): void
