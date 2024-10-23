@@ -461,6 +461,11 @@ final readonly class WorkspaceCommandHandler implements ControlFlowAwareCommandH
         PublishIndividualNodesFromWorkspace $command,
         CommandHandlingDependencies $commandHandlingDependencies,
     ): \Generator {
+        if ($command->nodesToPublish->isEmpty()) {
+            // noop
+            return;
+        }
+
         $contentGraph = $commandHandlingDependencies->getContentGraph($command->workspaceName);
         $workspace = $this->requireWorkspace($command->workspaceName, $commandHandlingDependencies);
         $oldWorkspaceContentStreamId = $workspace->currentContentStreamId;
@@ -478,12 +483,12 @@ final readonly class WorkspaceCommandHandler implements ControlFlowAwareCommandH
         );
 
         // 2) separate commands in two parts - the ones MATCHING the nodes from the command, and the REST
-        /** @var RebasableToOtherWorkspaceInterface[] $matchingCommands */
         $matchingCommands = [];
         $remainingCommands = [];
         $this->separateMatchingAndRemainingCommands($command, $workspace, $matchingCommands, $remainingCommands);
 
-        if (empty($matchingCommands)) {
+        if ($matchingCommands === []) {
+            // almost noop (e.g. random node ids were specified) ;)
             yield $this->reopenContentStream(
                 $oldWorkspaceContentStreamId,
                 $oldWorkspaceContentStreamIdState,

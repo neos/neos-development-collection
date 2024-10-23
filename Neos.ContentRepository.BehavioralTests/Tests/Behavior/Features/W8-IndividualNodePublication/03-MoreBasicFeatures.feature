@@ -29,44 +29,38 @@ Feature: Publishing individual nodes (basics)
       | Key                | Value           |
       | workspaceName      | "live"          |
       | newContentStreamId | "cs-identifier" |
-    And I am in workspace "live"
+    And I am in workspace "live" and dimension space point {}
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key             | Value                         |
       | nodeAggregateId | "lady-eleonode-rootford"      |
       | nodeTypeName    | "Neos.ContentRepository:Root" |
-    And the event NodeAggregateWithNodeWasCreated was published with payload:
+    And the command CreateNodeAggregateWithNode is executed with payload:
       | Key                         | Value                                               |
       | workspaceName               | "live"                                              |
-      | contentStreamId             | "cs-identifier"                                     |
       | nodeAggregateId             | "sir-david-nodenborough"                            |
       | nodeTypeName                | "Neos.ContentRepository.Testing:Content"            |
-      | originDimensionSpacePoint   | {}                                                  |
-      | coveredDimensionSpacePoints | [{}]                                                |
       | parentNodeAggregateId       | "lady-eleonode-rootford"                            |
-      | initialPropertyValues       | {"text": {"type": "string", "value": "Initial t1"}} |
-      | nodeAggregateClassification | "regular"                                           |
-    And the event NodeAggregateWithNodeWasCreated was published with payload:
+      | initialPropertyValues       | {"text": "Initial t1"}                              |
+    And the command CreateNodeAggregateWithNode is executed with payload:
       | Key                         | Value                                               |
-      | workspaceName               | "live"                                              |
       | contentStreamId             | "cs-identifier"                                     |
       | nodeAggregateId             | "nody-mc-nodeface"                                  |
       | nodeTypeName                | "Neos.ContentRepository.Testing:Content"            |
-      | originDimensionSpacePoint   | {}                                                  |
-      | coveredDimensionSpacePoints | [{}]                                                |
       | parentNodeAggregateId       | "sir-david-nodenborough"                            |
-      | initialPropertyValues       | {"text": {"type": "string", "value": "Initial t2"}} |
-      | nodeAggregateClassification | "regular"                                           |
-    And the event NodeAggregateWithNodeWasCreated was published with payload:
+      | initialPropertyValues       | {"text": "Initial t2"}                              |
+    And the command CreateNodeAggregateWithNode is executed with payload:
       | Key                         | Value                                                   |
       | workspaceName               | "live"                                                  |
-      | contentStreamId             | "cs-identifier"                                         |
       | nodeAggregateId             | "sir-nodeward-nodington-iii"                            |
       | nodeTypeName                | "Neos.ContentRepository.Testing:Image"                  |
-      | originDimensionSpacePoint   | {}                                                      |
-      | coveredDimensionSpacePoints | [{}]                                                    |
       | parentNodeAggregateId       | "lady-eleonode-rootford"                                |
-      | initialPropertyValues       | {"image": {"type": "string", "value": "Initial image"}} |
-      | nodeAggregateClassification | "regular"                                               |
+      | initialPropertyValues       | {"image": "Initial image"}                               |
+    And the command CreateNodeAggregateWithNode is executed with payload:
+      | Key                         | Value                                                   |
+      | workspaceName               | "live"                                                  |
+      | nodeAggregateId             | "sir-unchanged"                                         |
+      | nodeTypeName                | "Neos.ContentRepository.Testing:Image"                  |
+      | parentNodeAggregateId       | "lady-eleonode-rootford"                                |
 
     # Create user workspace
     And the command CreateWorkspace is executed with payload:
@@ -134,40 +128,49 @@ Feature: Publishing individual nodes (basics)
       | Key   | Value            |
       | image | "Modified image" |
 
-#  Scenario: It is possible to publish no node
-#    When the command PublishIndividualNodesFromWorkspace is executed with payload:
-#      | Key                             | Value                          |
-#      | workspaceName                   | "user-test"                    |
-#      | nodesToPublish                  | []                             |
-#      | contentStreamIdForRemainingPart | "user-cs-identifier-remaining" |
-#
-#    When I am in workspace "live" and dimension space point {}
-#    Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{}
-#    And I expect this node to have the following properties:
-#      | Key  | Value        |
-#      | text | "Initial t1" |
-#    And I expect node aggregate identifier "nody-mc-nodeface" to lead to node cs-identifier;nody-mc-nodeface;{}
-#    And I expect this node to have the following properties:
-#      | Key  | Value        |
-#      | text | "Initial t2" |
-#    And I expect node aggregate identifier "sir-nodeward-nodington-iii" to lead to node cs-identifier;sir-nodeward-nodington-iii;{}
-#    And I expect this node to have the following properties:
-#      | Key   | Value           |
-#      | image | "Initial image" |
-#
-#    When I am in workspace "user-test" and dimension space point {}
-#    Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node user-cs-identifier-remaining;sir-david-nodenborough;{}
-#    And I expect this node to have the following properties:
-#      | Key  | Value         |
-#      | text | "Modified t1" |
-#    Then I expect node aggregate identifier "nody-mc-nodeface" to lead to node user-cs-identifier-remaining;nody-mc-nodeface;{}
-#    And I expect this node to have the following properties:
-#      | Key  | Value         |
-#      | text | "Modified t2" |
-#    Then I expect node aggregate identifier "sir-nodeward-nodington-iii" to lead to node user-cs-identifier-remaining;sir-nodeward-nodington-iii;{}
-#    And I expect this node to have the following properties:
-#      | Key   | Value            |
-#      | image | "Modified image" |
+  Scenario: It is possible to publish no node or trying to publish non existing or unchanged nodes is a no op
+    # no node
+    When the command PublishIndividualNodesFromWorkspace is executed with payload:
+      | Key                             | Value                          |
+      | workspaceName                   | "user-test"                    |
+      | nodesToPublish                  | []                             |
+      | contentStreamIdForRemainingPart | "user-cs-identifier-remaining" |
+
+    # unchanged or non existing nodes
+    When the command PublishIndividualNodesFromWorkspace is executed with payload:
+      | Key                             | Value                                                                                                                                  |
+      | workspaceName                   | "user-test"                                                                                                                            |
+      | nodesToPublish                  | [{"dimensionSpacePoint": {}, "nodeAggregateId": "non-existing-node"}, {"dimensionSpacePoint": {}, "nodeAggregateId": "sir-unchanged"}] |
+      | contentStreamIdForRemainingPart | "user-cs-identifier-remaining-two"                                                                                                     |
+
+    When I am in workspace "live" and dimension space point {}
+    Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{}
+    And I expect this node to have the following properties:
+      | Key  | Value        |
+      | text | "Initial t1" |
+    And I expect node aggregate identifier "nody-mc-nodeface" to lead to node cs-identifier;nody-mc-nodeface;{}
+    And I expect this node to have the following properties:
+      | Key  | Value        |
+      | text | "Initial t2" |
+    And I expect node aggregate identifier "sir-nodeward-nodington-iii" to lead to node cs-identifier;sir-nodeward-nodington-iii;{}
+    And I expect this node to have the following properties:
+      | Key   | Value           |
+      | image | "Initial image" |
+
+    # all nodes are still on the original user cs
+    When I am in workspace "user-test" and dimension space point {}
+    Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node user-cs-identifier;sir-david-nodenborough;{}
+    And I expect this node to have the following properties:
+      | Key  | Value         |
+      | text | "Modified t1" |
+    Then I expect node aggregate identifier "nody-mc-nodeface" to lead to node user-cs-identifier;nody-mc-nodeface;{}
+    And I expect this node to have the following properties:
+      | Key  | Value         |
+      | text | "Modified t2" |
+    Then I expect node aggregate identifier "sir-nodeward-nodington-iii" to lead to node user-cs-identifier;sir-nodeward-nodington-iii;{}
+    And I expect this node to have the following properties:
+      | Key   | Value            |
+      | image | "Modified image" |
 
   Scenario: It is possible to publish all nodes
     When the command PublishIndividualNodesFromWorkspace is executed with payload:
