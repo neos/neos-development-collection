@@ -122,3 +122,17 @@ Feature: Remove NodeAggregate
     And I expect node aggregate identifier "nodingers-cat" and node path "pet" to lead to node cs-identifier;nodingers-cat;{}
     And I expect this node to have no references
     And I expect node aggregate identifier "nodingers-kitten" and node path "pet/kitten" to lead to no node
+
+  Scenario: Remove a node aggregate with descendants and expect all of them to be gone
+    When the following CreateNodeAggregateWithNode commands are executed:
+      | nodeAggregateId        | nodeTypeName                            | parentNodeAggregateId  | nodeName |
+      | nody-mc-nodeface | Neos.ContentRepository.Testing:Document | sir-david-nodenborough | child |
+      | younger-mc-nodeface | Neos.ContentRepository.Testing:Document | sir-david-nodenborough | younger-child |
+    When the command RemoveNodeAggregate is executed with payload:
+      | Key                          | Value           |
+      | nodeAggregateId              | "sir-david-nodenborough" |
+      | nodeVariantSelectionStrategy | "allVariants"   |
+
+    Then I expect node aggregate identifier "sir-david-nodenborough" and node path "document" to lead to no node
+    And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child" to lead to no node
+    And I expect node aggregate identifier "younger-mc-nodeface" and node path "document/younger-child" to lead to no node
