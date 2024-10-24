@@ -689,18 +689,18 @@ class WorkspaceController extends AbstractModuleController
         /** @var DimensionSpacePoint $arbitraryDimensionSpacePoint */
         $arbitraryDimensionSpacePoint = reset($dimensionSpacePoints);
 
+        $selectedWorkspaceContentGraph = $contentRepository->getContentGraph($selectedWorkspace->workspaceName);
+        // If we deleted a node, there is no way for us to anymore find the deleted node in the ContentStream
+        // where the node was deleted.
+        // Thus, to figure out the rootline for display, we check the *base workspace* Content Stream.
+        //
+        // This is safe because the UI basically shows what would be removed once the deletion is published.
+        $baseWorkspace = $this->getBaseWorkspaceWhenSureItExists($selectedWorkspace, $contentRepository);
+        $baseWorkspaceContentGraph = $contentRepository->getContentGraph($baseWorkspace->workspaceName);
+
         foreach ($changes as $change) {
-            $workspaceName = $selectedWorkspace->workspaceName;
-            if ($change->deleted) {
-                // If we deleted a node, there is no way for us to anymore find the deleted node in the ContentStream
-                // where the node was deleted.
-                // Thus, to figure out the rootline for display, we check the *base workspace* Content Stream.
-                //
-                // This is safe because the UI basically shows what would be removed once the deletion is published.
-                $baseWorkspace = $this->getBaseWorkspaceWhenSureItExists($selectedWorkspace, $contentRepository);
-                $workspaceName = $baseWorkspace->workspaceName;
-            }
-            $subgraph = $contentRepository->getContentGraph($workspaceName)->getSubgraph(
+            $contentGraph = $change->deleted ? $baseWorkspaceContentGraph : $selectedWorkspaceContentGraph;
+            $subgraph = $contentGraph->getSubgraph(
                 $change->originDimensionSpacePoint?->toDimensionSpacePoint() ?: $arbitraryDimensionSpacePoint,
                 VisibilityConstraints::withoutRestrictions()
             );
@@ -836,7 +836,7 @@ class WorkspaceController extends AbstractModuleController
         );
         $originalNode = null;
         if ($currentWorkspace !== null) {
-            $baseWorkspace = $this->getBaseWorkspaceWhenSureItExists($currentWorkspace, $contentRepository);
+            $baseWorkspace = $this->getBaseWorkspaceWhengetContentGraphSureItExists($currentWorkspace, $contentRepository);
             $originalNode = $this->getOriginalNode($changedNode, $baseWorkspace->workspaceName, $contentRepository);
         }
 
@@ -886,8 +886,8 @@ class WorkspaceController extends AbstractModuleController
                         'diff' => $diffArray
                     ];
                 }
-            // The && in belows condition is on purpose as creating a thumbnail for comparison only works
-            // if actually BOTH are ImageInterface (or NULL).
+                // The && in belows condition is on purpose as creating a thumbnail for comparison only works
+                // if actually BOTH are ImageInterface (or NULL).
             } elseif (
                 ($originalPropertyValue instanceof ImageInterface || $originalPropertyValue === null)
                 && ($changedPropertyValue instanceof ImageInterface || $changedPropertyValue === null)
