@@ -110,24 +110,6 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
     {
         $statements = $this->determineRequiredSqlStatements();
 
-        // MIGRATION from 2024-05-25: copy data from "cr_<crid>_p_workspace"/"cr_<crid>_p_contentstream" to "cr_<crid>_p_graph_workspace"/"cr_<crid>_p_graph_contentstream" tables
-        $legacyWorkspaceTableName = str_replace('_p_graph_workspace', '_p_workspace', $this->tableNames->workspace());
-        if (
-            $this->dbal->getSchemaManager()->tablesExist([$legacyWorkspaceTableName])
-            && !$this->dbal->getSchemaManager()->tablesExist([$this->tableNames->workspace()])
-        ) {
-            // we ignore the legacy fields workspacetitle, workspacedescription and workspaceowner
-            $statements[] = 'INSERT INTO ' . $this->tableNames->workspace() . ' (name, baseWorkspaceName, currentContentStreamId, status) SELECT workspacename AS name, baseworkspacename, currentcontentstreamid, status FROM ' . $legacyWorkspaceTableName;
-        }
-        $legacyContentStreamTableName = str_replace('_p_graph_contentstream', '_p_contentstream', $this->tableNames->contentStream());
-        if (
-            $this->dbal->getSchemaManager()->tablesExist([$legacyContentStreamTableName])
-            && !$this->dbal->getSchemaManager()->tablesExist([$this->tableNames->contentStream()])
-        ) {
-            $statements[] = 'INSERT INTO ' . $this->tableNames->contentStream() . ' (id, version, sourceContentStreamId, status, removed) SELECT contentStreamId AS id, version, sourceContentStreamId, state AS status, removed FROM ' . $legacyContentStreamTableName;
-        }
-        // /MIGRATION
-
         foreach ($statements as $statement) {
             try {
                 $this->dbal->executeStatement($statement);

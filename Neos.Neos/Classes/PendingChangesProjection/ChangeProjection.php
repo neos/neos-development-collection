@@ -140,10 +140,7 @@ class ChangeProjection implements ProjectionInterface
 
         $schema = DbalSchemaFactory::createSchemaWithTables($schemaManager, [$changeTable]);
         $statements = DbalSchemaDiff::determineRequiredSqlStatements($connection, $schema);
-        // MIGRATIONS
-        if ($this->dbal->getSchemaManager()->tablesExist([$this->tableNamePrefix . '_livecontentstreams'])) {
-            $statements[] = sprintf('DROP table %s_livecontentstreams;', $this->tableNamePrefix);
-        }
+
         return $statements;
     }
 
