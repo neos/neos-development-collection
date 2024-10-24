@@ -128,7 +128,7 @@ final class CrCommandController extends CommandController
         $options = CatchUpOptions::create();
         if (!$quiet) {
             $this->outputLine('Replaying events for projection "%s" of Content Repository "%s" ...', [$projection, $contentRepositoryId->value]);
-            $progressBar->start(max($until > 0 ? $until : $projectionService->highestSequenceNumber()->value, 1));
+            $progressBar->start($until > 0 ? $until : null);
             $options = $options->with(progressCallback: fn () => $progressBar->advance());
         }
         if ($until > 0) {
@@ -187,14 +187,13 @@ final class CrCommandController extends CommandController
         if ($until > 0) {
             $options = $options->with(maximumSequenceNumber: SequenceNumber::fromInteger($until));
         }
-        $highestSequenceNumber = max($until > 0 ? $until : $projectionService->highestSequenceNumber()->value, 1);
-        $mainProgressBar->start($projectionService->numberOfProjections());
+        $mainProgressBar->start();
         $mainProgressCallback = null;
         if (!$quiet) {
-            $mainProgressCallback = static function (string $projectionAlias) use ($mainProgressBar, $progressBar, $highestSequenceNumber) {
+            $mainProgressCallback = static function (string $projectionAlias) use ($mainProgressBar, $progressBar, $until) {
                 $mainProgressBar->advance();
                 $progressBar->setMessage($projectionAlias);
-                $progressBar->start($highestSequenceNumber);
+                $progressBar->start($until > 0 ? $until : null);
                 $progressBar->setProgress(0);
             };
         }

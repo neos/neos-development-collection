@@ -167,6 +167,7 @@ trait CRTestSuiteTrait
             public ContentGraphReadModelInterface|null $instance;
             public function build(ContentRepositoryServiceFactoryDependencies $serviceFactoryDependencies): ContentRepositoryServiceInterface
             {
+                // TODO find replacement – is that needed at all?
                 $this->instance = $serviceFactoryDependencies->projectionsAndCatchUpHooks->contentGraphProjection->getState();
                 return new class implements ContentRepositoryServiceInterface
                 {
