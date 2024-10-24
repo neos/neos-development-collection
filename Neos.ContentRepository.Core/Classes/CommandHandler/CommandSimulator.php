@@ -23,37 +23,26 @@ use Neos\EventStore\Model\EventStream\VirtualStreamName;
  *
  * @internal
  */
-final class CommandSimulator
+final readonly class CommandSimulator
 {
-    private bool $inSimulation = false;
-
-    /**
-     * @param ContentGraphProjectionInterface $contentRepositoryProjection
-     * @param EventNormalizer $eventNormalizer
-     */
     public function __construct(
-        private readonly CommandHandlingDependencies $commandHandlingDependencies,
-        private readonly ContentGraphProjectionInterface $contentRepositoryProjection,
-        private readonly EventNormalizer $eventNormalizer,
-        private readonly CommandBus $commandBus,
-        private readonly InMemoryEventStore $inMemoryEventStore,
-        private readonly WorkspaceName $workspaceNameToSimulateIn,
+        private CommandHandlingDependencies $commandHandlingDependencies,
+        private ContentGraphProjectionInterface $contentRepositoryProjection,
+        private EventNormalizer $eventNormalizer,
+        private CommandBus $commandBus,
+        private InMemoryEventStore $inMemoryEventStore,
+        private WorkspaceName $workspaceNameToSimulateIn,
     ) {
     }
 
     /**
      * @template T
-     * @param \Closure(): T $fn
+     * @param \Closure(\Closure(RebasableToOtherWorkspaceInterface $command): void): T $fn
      * @return T
      */
     public function run(\Closure $fn): mixed
     {
-        $this->inSimulation = true;
-        try {
-            return $this->contentRepositoryProjection->inSimulation($fn);
-        } finally {
-            $this->inSimulation = false;
-        }
+        return $this->contentRepositoryProjection->inSimulation(fn () => $fn($this->handle(...)));
     }
 
     /**
@@ -62,13 +51,9 @@ final class CommandSimulator
      * We will automatically copy given commands to the workspace this simulation
      * is running in to ensure consistency in the simulations constraint checks.
      */
-    public function handle(RebasableToOtherWorkspaceInterface $command): void
+    private function handle(RebasableToOtherWorkspaceInterface $command): void
     {
-        if ($this->inSimulation === false) {
-            throw new \RuntimeException('Simulation is not running');
-        }
-
-        // FIXME: Check if workspace already matches and skip this
+        // FIXME: Check if workspace already matches and skip this ($command->workspaceName === workspaceNameToSimulateIn) ...
         $commandInWorkspace = $command->createCopyForWorkspace($this->workspaceNameToSimulateIn);
 
         $eventsToPublish = $this->commandBus->handle($commandInWorkspace, $this->commandHandlingDependencies);
