@@ -33,4 +33,13 @@ final readonly class EventsToPublish
             ExpectedVersion::ANY()
         );
     }
+
+    public function withAppendedEvents(Events $events): self
+    {
+        return new self(
+            $this->streamName,
+            $this->events->withAppendedEvents($events),
+            $this->expectedVersion
+        );
+    }
 }

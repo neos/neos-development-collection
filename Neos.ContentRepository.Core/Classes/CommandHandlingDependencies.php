@@ -14,13 +14,12 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Core;
 
-use Neos\ContentRepository\Core\CommandHandler\CommandInterface;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphInterface;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphReadModelInterface;
-use Neos\ContentRepository\Core\SharedModel\Workspace\Workspace;
 use Neos\ContentRepository\Core\SharedModel\Exception\WorkspaceDoesNotExist;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamStatus;
+use Neos\ContentRepository\Core\SharedModel\Workspace\Workspace;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\EventStore\Model\Event\Version;
 
@@ -30,23 +29,11 @@ use Neos\EventStore\Model\Event\Version;
  * @internal only command handlers are provided with this via the
  * @see ContentRepository::handle()
  */
-final class CommandHandlingDependencies
+final readonly class CommandHandlingDependencies
 {
-    /**
-     * WorkspaceName->value to ContentGraphInterface
-     * @var array<string, ContentGraphInterface>
-     */
-    private array $overriddenContentGraphInstances = [];
-
     public function __construct(
-        private readonly ContentRepository $contentRepository,
-        private readonly ContentGraphReadModelInterface $contentGraphReadModel
+        private ContentGraphReadModelInterface $contentGraphReadModel
     ) {
-    }
-
-    public function handle(CommandInterface $command): void
-    {
-        $this->contentRepository->handle($command);
     }
 
     public function getContentStreamVersion(ContentStreamId $contentStreamId): Version
@@ -82,46 +69,10 @@ final class CommandHandlingDependencies
      */
     public function getContentGraph(WorkspaceName $workspaceName): ContentGraphInterface
     {
-        if (isset($this->overriddenContentGraphInstances[$workspaceName->value])) {
-            return $this->overriddenContentGraphInstances[$workspaceName->value];
-        }
         $workspace = $this->contentGraphReadModel->findWorkspaceByName($workspaceName);
         if ($workspace === null) {
             throw WorkspaceDoesNotExist::butWasSupposedTo($workspaceName);
         }
         return $this->contentGraphReadModel->buildContentGraph($workspace->workspaceName, $workspace->currentContentStreamId);
-    }
-
-    /**
-     * Stateful (dirty) override of the chosen ContentStreamId for a given workspace, it applies within the given closure.
-     * Implementations must ensure that requesting the contentStreamId for this workspace will resolve to the given
-     * override ContentStreamId and vice versa resolving the WorkspaceName from this ContentStreamId should result in the
-     * given WorkspaceName within the closure.
-     *
-     * @internal Used in write operations applying commands to a contentstream that will have WorkspaceName in the future
-     * but doesn't have one yet.
-     */
-    public function overrideContentStreamId(WorkspaceName $workspaceName, ContentStreamId $contentStreamId, \Closure $fn): void
-    {
-        if (isset($this->overriddenContentGraphInstances[$workspaceName->value])) {
-            throw new \RuntimeException('Contentstream override for this workspace already in effect, nesting not allowed.', 1715170938);
-        }
-
-        $contentGraph = $this->contentGraphReadModel->buildContentGraph($workspaceName, $contentStreamId);
-        $this->overriddenContentGraphInstances[$workspaceName->value] = $contentGraph;
-
-        try {
-            $fn();
-        } finally {
-            unset($this->overriddenContentGraphInstances[$workspaceName->value]);
-        }
-    }
-
-    /**
-     * Fixme only required to build the possible catchup hooks
-     */
-    public function getContentRepository(): ContentRepository
-    {
-        return $this->contentRepository;
     }
 }

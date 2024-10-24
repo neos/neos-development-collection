@@ -46,9 +46,6 @@ trait WorkspacePublishing
                 : $this->currentWorkspaceName,
             $nodesToPublish,
         );
-        if (isset($commandArguments['contentStreamIdForMatchingPart'])) {
-            $command = $command->withContentStreamIdForMatchingPart(ContentStreamId::fromString($commandArguments['contentStreamIdForMatchingPart']));
-        }
         if (isset($commandArguments['contentStreamIdForRemainingPart'])) {
             $command = $command->withContentStreamIdForRemainingPart(ContentStreamId::fromString($commandArguments['contentStreamIdForRemainingPart']));
         }

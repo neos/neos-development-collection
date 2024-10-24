@@ -56,6 +56,11 @@ final readonly class NodeIdsToPublishOrDiscard implements \IteratorAggregate, \C
         yield from $this->nodeIds;
     }
 
+    public function isEmpty(): bool
+    {
+        return $this->nodeIds === [];
+    }
+
     public function count(): int
     {
         return count($this->nodeIds);

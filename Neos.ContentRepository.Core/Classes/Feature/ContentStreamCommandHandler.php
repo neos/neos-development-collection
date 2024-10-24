@@ -23,8 +23,6 @@ use Neos\ContentRepository\Core\Feature\ContentStreamClosing\Command\CloseConten
 use Neos\ContentRepository\Core\Feature\ContentStreamClosing\Command\ReopenContentStream;
 use Neos\ContentRepository\Core\Feature\ContentStreamForking\Command\ForkContentStream;
 use Neos\ContentRepository\Core\Feature\ContentStreamRemoval\Command\RemoveContentStream;
-use Neos\ContentRepository\Core\SharedModel\Exception\ContentStreamAlreadyExists;
-use Neos\ContentRepository\Core\SharedModel\Exception\ContentStreamDoesNotExistYet;
 
 /**
  * INTERNALS. Only to be used from WorkspaceCommandHandler!!!
@@ -46,7 +44,6 @@ final class ContentStreamCommandHandler implements CommandHandlerInterface
         return match ($command::class) {
             CloseContentStream::class => $this->handleCloseContentStream($command, $commandHandlingDependencies),
             ReopenContentStream::class => $this->handleReopenContentStream($command, $commandHandlingDependencies),
-            ForkContentStream::class => $this->handleForkContentStream($command, $commandHandlingDependencies),
             RemoveContentStream::class => $this->handleRemoveContentStream($command, $commandHandlingDependencies),
             default => throw new \DomainException('Cannot handle commands of class ' . get_class($command), 1710408206),
         };
@@ -64,17 +61,6 @@ final class ContentStreamCommandHandler implements CommandHandlerInterface
         CommandHandlingDependencies $commandHandlingDependencies,
     ): EventsToPublish {
         return $this->reopenContentStream($command->contentStreamId, $command->previousState, $commandHandlingDependencies);
-    }
-
-    /**
-     * @throws ContentStreamAlreadyExists
-     * @throws ContentStreamDoesNotExistYet
-     */
-    private function handleForkContentStream(
-        ForkContentStream $command,
-        CommandHandlingDependencies $commandHandlingDependencies
-    ): EventsToPublish {
-        return $this->forkContentStream($command->newContentStreamId, $command->sourceContentStreamId, $commandHandlingDependencies);
     }
 
     private function handleRemoveContentStream(

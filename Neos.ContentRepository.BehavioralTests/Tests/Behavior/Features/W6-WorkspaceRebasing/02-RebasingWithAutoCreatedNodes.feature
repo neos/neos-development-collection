@@ -47,7 +47,7 @@ Feature: Rebasing auto-created nodes works
 
   Scenario: complex scenario (to reproduce the bug) -- see the feature description
     # USER workspace: create a new node with auto-created child nodes
-    When the command CreateNodeAggregateWithNodeAndSerializedProperties is executed with payload:
+    When the command CreateNodeAggregateWithNode is executed with payload:
       | Key                       | Value                                    |
       | workspaceName             | "user-test"                              |
       | nodeAggregateId           | "nody-mc-nodeface"                       |
@@ -69,8 +69,19 @@ Feature: Rebasing auto-created nodes works
       | propertyValues            | {"text": {"value":"Modified","type":"string"}} |
       | propertiesToUnset         | {}                                             |
 
+    # ensure that live is outdated so the rebase is required:
+    When the command CreateNodeAggregateWithNode is executed with payload:
+      | Key                       | Value                                    |
+      | workspaceName             | "live"                                   |
+      | nodeAggregateId           | "changington-van-live"                   |
+      | nodeTypeName              | "Neos.ContentRepository.Testing:Content" |
+      | originDimensionSpacePoint | {}                                       |
+      | parentNodeAggregateId     | "lady-eleonode-rootford"                 |
+
+    # rebase of SetSerializedNodeProperties
     When the command RebaseWorkspace is executed with payload:
-      | Key           | Value       |
-      | workspaceName | "user-test" |
+      | Key                    | Value       |
+      | workspaceName          | "user-test" |
+      | rebasedContentStreamId | "user-cs-rebased" |
     # This should properly work; no error.
 

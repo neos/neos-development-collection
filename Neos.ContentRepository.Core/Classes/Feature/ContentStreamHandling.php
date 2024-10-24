@@ -25,6 +25,7 @@ trait ContentStreamHandling
     /**
      * @param ContentStreamId $contentStreamId The id of the content stream to create
      * @throws ContentStreamAlreadyExists
+     * @phpstan-pure this method is pure, to persist the events they must be handled outside
      */
     private function createContentStream(
         ContentStreamId $contentStreamId,
@@ -49,6 +50,7 @@ trait ContentStreamHandling
      * @param ContentStreamId $contentStreamId The id of the content stream to close
      * @param CommandHandlingDependencies $commandHandlingDependencies
      * @return EventsToPublish
+     * @phpstan-pure this method is pure, to persist the events they must be handled outside
      */
     private function closeContentStream(
         ContentStreamId $contentStreamId,
@@ -73,6 +75,7 @@ trait ContentStreamHandling
     /**
      * @param ContentStreamId $contentStreamId The id of the content stream to reopen
      * @param ContentStreamStatus $previousState The state the content stream was in before closing and is to be reset to
+     * @phpstan-pure this method is pure, to persist the events they must be handled outside
      */
     private function reopenContentStream(
         ContentStreamId $contentStreamId,
@@ -100,6 +103,7 @@ trait ContentStreamHandling
      * @param ContentStreamId $sourceContentStreamId The id of the content stream to fork
      * @throws ContentStreamAlreadyExists
      * @throws ContentStreamDoesNotExistYet
+     * @phpstan-pure this method is pure, to persist the events they must be handled outside
      */
     private function forkContentStream(
         ContentStreamId $newContentStreamId,
@@ -131,6 +135,7 @@ trait ContentStreamHandling
 
     /**
      * @param ContentStreamId $contentStreamId The id of the content stream to remove
+     * @phpstan-pure this method is pure, to persist the events they must be handled outside
      */
     private function removeContentStream(
         ContentStreamId $contentStreamId,

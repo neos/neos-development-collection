@@ -71,7 +71,6 @@ Feature: Publish nodes partially with dimensions
       | Key                             | Value                                                                                                                         |
       | nodesToPublish                  | [{"workspaceName": "user-workspace", "dimensionSpacePoint": {"language": "de"}, "nodeAggregateId": "sir-david-nodenborough"}] |
       | contentStreamIdForRemainingPart | "user-cs-identifier-remaining"                                                                                                |
-      | contentStreamIdForMatchingPart  | "user-cs-identifier-matching"                                                                                                 |
 
     Then I expect the AssetUsageService to have the following AssetUsages:
       | assetId | nodeAggregateId            | propertyName | workspaceName  | originDimensionSpacePoint |
@@ -138,7 +137,6 @@ Feature: Publish nodes partially with dimensions
       | Key                             | Value                                                                                                                         |
       | nodesToPublish                  | [{"workspaceName": "user-workspace", "dimensionSpacePoint": {"language": "de"}, "nodeAggregateId": "sir-david-nodenborough"}] |
       | contentStreamIdForRemainingPart | "user-cs-identifier-remaining"                                                                                                |
-      | contentStreamIdForMatchingPart  | "user-cs-identifier-matching"                                                                                                 |
 
     Then I expect the AssetUsageService to have the following AssetUsages:
       | assetId | nodeAggregateId            | propertyName | workspaceName    | originDimensionSpacePoint |
@@ -184,7 +182,6 @@ Feature: Publish nodes partially with dimensions
       | Key                             | Value                                                                                                                                                                                                                                                     |
       | nodesToPublish                  | [{"workspaceName": "user-workspace", "dimensionSpacePoint": {"language": "de"}, "nodeAggregateId": "sir-david-nodenborough"},{"workspaceName": "user-workspace", "dimensionSpacePoint": {"language": "en"}, "nodeAggregateId": "sir-david-nodenborough"}] |
       | contentStreamIdForRemainingPart | "user-cs-identifier-remaining"                                                                                                                                                                                                                            |
-      | contentStreamIdForMatchingPart  | "user-cs-identifier-matching"                                                                                                                                                                                                                             |
 
     And I expect the AssetUsageService to have the following AssetUsages:
       | assetId | nodeAggregateId            | propertyName | workspaceName  | originDimensionSpacePoint |

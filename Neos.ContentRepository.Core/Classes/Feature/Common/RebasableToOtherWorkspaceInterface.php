@@ -25,11 +25,11 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
  *
  * @internal used internally for the rebasing mechanism of content streams
  */
-interface RebasableToOtherWorkspaceInterface
+interface RebasableToOtherWorkspaceInterface extends CommandInterface
 {
     public function createCopyForWorkspace(
         WorkspaceName $targetWorkspaceName,
-    ): CommandInterface;
+    ): self;
 
     /**
      * called during deserialization from metadata

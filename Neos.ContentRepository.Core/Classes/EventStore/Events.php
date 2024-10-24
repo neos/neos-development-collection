@@ -27,6 +27,11 @@ final class Events implements \IteratorAggregate, \Countable
         return new self($event);
     }
 
+    public function withAppendedEvents(Events $events): self
+    {
+        return new self(...$this->events, ...$events->events);
+    }
+
     /**
      * @param array<EventInterface|DecoratedEvent> $events
      * @return static

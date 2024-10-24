@@ -213,6 +213,19 @@ final class HypergraphProjection implements ContentGraphProjectionInterface
         };
     }
 
+    public function inSimulation(\Closure $fn): mixed
+    {
+        if ($this->dbal->isTransactionActive()) {
+            throw new \RuntimeException(sprintf('Invoking %s is not allowed to be invoked recursively. Current transaction nesting %d.', __FUNCTION__, $this->dbal->getTransactionNestingLevel()));
+        }
+        $this->dbal->beginTransaction();
+        try {
+            return $fn();
+        } finally {
+            $this->dbal->rollBack();
+        }
+    }
+
     public function getCheckpointStorage(): DbalCheckpointStorage
     {
         return $this->checkpointStorage;
