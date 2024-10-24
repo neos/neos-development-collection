@@ -80,9 +80,6 @@ final readonly class SerializedNodeReferences implements \IteratorAggregate, \Co
         return new self(...array_merge($this->references, $other->references));
     }
 
-    /**
-     * @return \Traversable<SerializedNodeReference>
-     */
     public function getIterator(): \Traversable
     {
         yield from $this->references;

@@ -16,7 +16,6 @@ namespace Neos\ContentRepository\Core\Feature;
 
 use Neos\ContentRepository\Core\CommandHandler\CommandHandlerInterface;
 use Neos\ContentRepository\Core\CommandHandler\CommandInterface;
-use Neos\ContentRepository\Core\CommandHandler\CommandResult;
 use Neos\ContentRepository\Core\CommandHandlingDependencies;
 use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\EventStore\DecoratedEvent;
@@ -202,6 +201,7 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
         $baseWorkspace = $this->requireBaseWorkspace($workspace, $commandHandlingDependencies);
 
         $this->publishContentStream(
+            $commandHandlingDependencies,
             $workspace->currentContentStreamId,
             $baseWorkspace->workspaceName,
             $baseWorkspace->currentContentStreamId
@@ -238,10 +238,11 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
      * @throws \Exception
      */
     private function publishContentStream(
+        CommandHandlingDependencies $commandHandlingDependencies,
         ContentStreamId $contentStreamId,
         WorkspaceName $baseWorkspaceName,
         ContentStreamId $baseContentStreamId,
-    ): ?CommandResult {
+    ): void {
         $baseWorkspaceContentStreamName = ContentStreamEventStreamName::fromContentStreamId(
             $baseContentStreamId
         );
@@ -286,10 +287,11 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
         }
 
         if (count($events) === 0) {
-            return null;
+            return;
         }
         try {
-            return $this->eventPersister->publishEvents(
+            $this->eventPersister->publishEvents(
+                $commandHandlingDependencies->getContentRepository(),
                 new EventsToPublish(
                     $baseWorkspaceContentStreamName->getEventStreamName(),
                     Events::fromArray($events),
@@ -501,6 +503,7 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
 
             // 5) take EVENTS(MATCHING) and apply them to base WS.
             $this->publishContentStream(
+                $commandHandlingDependencies,
                 $command->contentStreamIdForMatchingPart,
                 $baseWorkspace->workspaceName,
                 $baseWorkspace->currentContentStreamId
@@ -755,8 +758,6 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
             )
         );
 
-        // It is safe to only return the last command result,
-        // as the commands which were rebased are already executed "synchronously"
         return new EventsToPublish(
             $streamName,
             $events,

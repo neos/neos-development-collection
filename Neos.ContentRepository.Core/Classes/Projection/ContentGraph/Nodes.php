@@ -69,9 +69,6 @@ final class Nodes implements \IteratorAggregate, \ArrayAccess, \Countable
         return $this->nodes[$offset] ?? null;
     }
 
-    /**
-     * @return \Traversable<Node>
-     */
     public function getIterator(): \Traversable
     {
         yield from $this->nodes;

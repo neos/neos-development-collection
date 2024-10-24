@@ -318,6 +318,34 @@ final class WorkspaceService
         throw new \RuntimeException(sprintf('Failed to find unique workspace name for "%s" after %d attempts.', $candidate, $attempt - 1), 1725975479);
     }
 
+    /**
+     * Removes all workspace metadata records for the specified content repository id
+     */
+    public function pruneWorkspaceMetadata(ContentRepositoryId $contentRepositoryId): void
+    {
+        try {
+            $this->dbal->delete(self::TABLE_NAME_WORKSPACE_METADATA, [
+                'content_repository_id' => $contentRepositoryId->value,
+            ]);
+        } catch (DbalException $e) {
+            throw new \RuntimeException(sprintf('Failed to prune workspace metadata Content Repository "%s": %s', $contentRepositoryId->value, $e->getMessage()), 1729512100, $e);
+        }
+    }
+
+    /**
+     * Removes all workspace role assignments for the specified content repository id
+     */
+    public function pruneRoleAssignments(ContentRepositoryId $contentRepositoryId): void
+    {
+        try {
+            $this->dbal->delete(self::TABLE_NAME_WORKSPACE_ROLE, [
+                'content_repository_id' => $contentRepositoryId->value,
+            ]);
+        } catch (DbalException $e) {
+            throw new \RuntimeException(sprintf('Failed to prune workspace roles for Content Repository "%s": %s', $contentRepositoryId->value, $e->getMessage()), 1729512142, $e);
+        }
+    }
+
     // ------------------
 
     private function loadWorkspaceMetadata(ContentRepositoryId $contentRepositoryId, WorkspaceName $workspaceName): ?WorkspaceMetadata

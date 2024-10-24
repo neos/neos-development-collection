@@ -146,9 +146,6 @@ final readonly class SerializedPropertyValues implements \IteratorAggregate, \Co
         return $this->values[$propertyName] ?? null;
     }
 
-    /**
-     * @return \Traversable<string,SerializedPropertyValue>
-     */
     public function getIterator(): \Traversable
     {
         yield from $this->values;
