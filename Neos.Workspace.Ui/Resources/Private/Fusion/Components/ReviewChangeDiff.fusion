@@ -15,93 +15,84 @@ prototype(Neos.Workspace.Ui:Component.ReviewChangeDiff) < prototype(Neos.Fusion:
   }
 
   renderer = afx`
-    <div class="neos-content-diff">
-      <table class="neos-content-diff">
+    <table class="neos-content-diff">
+      <tr>
+        <td class="diff-node-details" colspan="3">
+          <div class="neos-row-fluid">
+            <div class="neos-span8">
+              <Neos.Workspace.Ui:Component.Icon
+                      @if.hasIcon={change.icon}
+                      icon={change.icon} />
+              <span>{change.label}</span>
+            </div>
+            <div class="neos-span2">
+              <Neos.Fusion:Loop items={change.dimensions} itemKey="key" itemName="dimension">
+                <span class="neos-label neos-pull-right" title={dimension} >{dimension}</span>
+              </Neos.Fusion:Loop>
+            </div>
+            <div class="neos-span2">
+              <span class="neos-pull-right" @if.hasChangedDateTime={change.lastModificationDateTime} title={I18n.id('lastModification').source('Main').package('Neos.Neos')+ " : " + Date.format(change.lastModificationDateTime, 'Y-m-d H:i')} data-neos-toggle="tooltip">
+              <i class="fas fa-time"></i>{Date.format(change.lastModificationDateTime, 'Y-m-d H:i')}</span>
+            </div>
+          </div>
+        </td>
+
+      </tr>
+      <Neos.Fusion:Loop items={change.contentChanges} itemKey="propertyName" itemName="contentChanges">
         <tr>
-          <th>
-            <Neos.Workspace.Ui:Component.Icon
-                @if.hasIcon={change.icon}
-                icon={change.icon} />
-            {change.label}
-          </th>
-          <th>
-            <Neos.Fusion:Loop items={change.dimensions} itemKey="key" itemName="dimension">
-              <span class="neos-label" title={dimension} >{dimension}</span>
-            </Neos.Fusion:Loop>
-          </th>
-          <th>
-            <span @if.hasChangedDateTime={change.lastModificationDateTime} title={I18n.id('lastModification').source('Main').package('Neos.Neos')+ " : " + Date.format(change.lastModificationDateTime, 'Y-m-d H:i')} data-neos-toggle="tooltip">
-              <i class="fas fa-time"></i> {Date.format(change.lastModificationDateTime, 'Y-m-d H:i')}</span>
-          </th>
+          <td class="diff-property-label" colspan="3">
+            <i class="fas fa-level-up-alt"></i>
+            <span>{contentChanges.propertyLabel}</span>
+          </td>
         </tr>
-        <Neos.Fusion:Loop items={change.contentChanges} itemKey="propertyName" itemName="contentChanges">
-          <tr>
-            <th colspan="3">{contentChanges.propertyLabel}</th>
-          </tr>
-          <tr>
-            <td colspan="3">
-              <table @if.isText={contentChanges.type == 'text'}>
-                <Neos.Fusion:Loop items={contentChanges.diff} itemKey="index" itemName="blocks">
-                  <Neos.Fusion:Loop items={contentChanges.diff} itemKey="index" itemName="blocks">
-                    <Neos.Fusion:Loop items={blocks} itemName="block">
-                      <tr>
-                      <td>
-                        <Neos.Fusion:Loop items={block.base.lines} itemName="line">
-                          {line}
-                        </Neos.Fusion:Loop>
-                      </td>
-                      <td>
-                        <Neos.Fusion:Loop items={block.changed.lines} itemName="line">
-                          {line}
-                        </Neos.Fusion:Loop>
-                      </td>
-                    </tr>
+        <tr class="diff-property-content">
+          <td>
+          </td>
+          <Neos.Fusion:Loop @if.isText={contentChanges.type == 'text'} items={contentChanges.diff} itemKey="index" itemName="blocks">
+            <Neos.Fusion:Loop items={contentChanges.diff} itemKey="index" itemName="blocks">
+              <Neos.Fusion:Loop items={blocks} itemName="block">
+
+                  <td class="diff-property-content-left" >
+                    <Neos.Fusion:Loop items={block.base.lines} itemName="line">
+                      {line}
                     </Neos.Fusion:Loop>
-                  </Neos.Fusion:Loop>
-                </Neos.Fusion:Loop>
-              </table>
-              <table @if.isImage={contentChanges.type == 'image'}>
-                <tr>
-                  <td>
-                    <Neos.Neos:ImageTag @if.hasOriginal={contentChanges.original} asset={contentChanges.original} allowCropping="false" maximumWidth="500" maximumHeight="500" alt=""/>
                   </td>
-                  <td>
-                    <Neos.Neos:ImageTag @if.hasChanged={contentChanges.changed} asset={contentChanges.changed} allowCropping="false" maximumWidth="500" maximumHeight="500" alt=""/>
+                  <td class="diff-property-content-right">
+                    <Neos.Fusion:Loop items={block.changed.lines} itemName="line">
+                      {line}
+                    </Neos.Fusion:Loop>
                   </td>
-                </tr>
-              </table>
-              <table @if.isAsset={contentChanges.type == 'asset'}>
-                <tr>
-                  <td>
-                    <del @if.hasOriginal={contentChanges.original.resource}>
-                      <Neos.Fusion:Link.Resource class="resource-link" href.path={contentChanges.original.resource}>
-                        {contentChanges.original.resource.filename}
-                      </Neos.Fusion:Link.Resource>
-                    </del>
-                  </td>
-                  <td>
-                    <ins>
-                      <Neos.Fusion:Link.Resource class="resource-link" href.path={contentChanges.changed.resource}>
-                        {contentChanges.changed.resource.filename}
-                      </Neos.Fusion:Link.Resource>
-                    </ins>
-                  </td>
-                </tr>
-              </table>
-              <table @if.isDatetime={contentChanges.type == 'datetime'}>
-                <tr>
-                  <td>
-                    {Date.format(contentChanges.original, 'Y-m-d H:i')}
-                  </td>
-                  <td>
-                    {Date.format(contentChanges.changed, 'Y-m-d H:i')}
-                  </td>
-                </tr>
-              </table>
-            </td>
-          </tr>
-        </Neos.Fusion:Loop>
-      </table>
-    </div>
+              </Neos.Fusion:Loop>
+            </Neos.Fusion:Loop>
+          </Neos.Fusion:Loop>
+          <td @if.isImage={contentChanges.type == 'image'} >
+            <Neos.Neos:ImageTag @if.hasOriginal={contentChanges.original} asset={contentChanges.original} allowCropping="false" maximumWidth="500" maximumHeight="500" alt=""/>
+          </td>
+          <td @if.isImage={contentChanges.type == 'image'} >
+            <Neos.Neos:ImageTag @if.hasChanged={contentChanges.changed} asset={contentChanges.changed} allowCropping="false" maximumWidth="500" maximumHeight="500" alt=""/>
+          </td>
+          <td @if.isAsset={contentChanges.type == 'asset'}>
+            <del @if.hasOriginal={contentChanges.original.resource}>
+              <Neos.Fusion:Link.Resource class="resource-link" href.path={contentChanges.original.resource}>
+                {contentChanges.original.resource.filename}
+              </Neos.Fusion:Link.Resource>
+            </del>
+          </td>
+          <td @if.isAsset={contentChanges.type == 'asset'}>
+            <ins>
+              <Neos.Fusion:Link.Resource class="resource-link" href.path={contentChanges.changed.resource}>
+                {contentChanges.changed.resource.filename}
+              </Neos.Fusion:Link.Resource>
+            </ins>
+          </td>
+          <td @if.isDatetime={contentChanges.type == 'datetime'}>
+            {Date.format(contentChanges.original, 'Y-m-d H:i')}
+          </td>
+          <td @if.isDatetime={contentChanges.type == 'datetime'}>
+            {Date.format(contentChanges.changed, 'Y-m-d H:i')}
+          </td>
+        </tr>
+      </Neos.Fusion:Loop>
+    </table>
   `
 }

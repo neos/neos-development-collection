@@ -26,11 +26,11 @@ window.addEventListener('DOMContentLoaded', (event) => {
 				});
 
 			}
-			for (const toggleDocument of document.querySelectorAll('.fold-toggle')) {
+			for (const toggleDocument of document.querySelectorAll('.toggle-document')) {
 				toggleDocument.addEventListener( 'click', function(){
 
-					toggleDocument.classList.toggle('fa-chevron-down');
-					toggleDocument.classList.toggle('fa-chevron-up');
+					toggleDocument.children[0].classList.toggle('fa-chevron-down');
+					toggleDocument.children[0].classList.toggle('fa-chevron-up');
 
 					let nextElement = toggleDocument.closest('.neos-document').nextElementSibling;
 					do{
@@ -47,18 +47,18 @@ window.addEventListener('DOMContentLoaded', (event) => {
 					let status = (collapseButton.dataset.toggled === 'true');
 					console.log(status);
 					if(status){
-						for (const toggle of document.querySelectorAll('.fold-toggle')) {
-							toggle.classList.remove('fa-chevron-down');
-							toggle.classList.add('fa-chevron-up');
+						for (const toggle of document.querySelectorAll('.toggle-document')) {
+							toggle.children[0].classList.remove('fa-chevron-down');
+							toggle.children[0].classList.add('fa-chevron-up');
 						}
 						for (const change of document.querySelectorAll('.neos-change')) {
 							change.classList.add('neos-hidden');
 						}
 
 					} else {
-						for (const toggle of document.querySelectorAll('.fold-toggle')) {
-							toggle.classList.add('fa-chevron-down');
-							toggle.classList.remove('fa-chevron-up');
+						for (const toggle of document.querySelectorAll('.toggle-document')) {
+							toggle.children[0].classList.add('fa-chevron-down');
+							toggle.children[0].classList.remove('fa-chevron-up');
 						}
 						for (const change of document.querySelectorAll('.neos-change')) {
 							change.classList.remove('neos-hidden');

@@ -186,6 +186,12 @@
       <trans-unit id="workspaces.publishAllChangesTo" xml:space="preserve">
 				<source>Publish all changes to {0}</source>
 			</trans-unit>
+      <trans-unit id="workspaces.publishAllChangesInThisDocument" xml:space="preserve">
+				<source>Publish all changes in this document</source>
+			</trans-unit>
+      <trans-unit id="workspaces.discardAllChangesInThisDocument" xml:space="preserve">
+				<source>Discard all changes in this document</source>
+			</trans-unit>
       <trans-unit id="changedContentCaption" xml:space="preserve">
 				<source>Changed Content</source>
 			</trans-unit>

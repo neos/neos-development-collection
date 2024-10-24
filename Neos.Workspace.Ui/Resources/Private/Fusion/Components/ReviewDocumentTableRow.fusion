@@ -49,61 +49,60 @@ prototype(Neos.Workspace.Ui:Component.ReviewDocumentTableRow) < prototype(Neos.F
 
   renderer = afx`
     <tr class="neos-document" data-nodepath={documentPath} data-ismoved={document.isMoved} data-isnew={document.isNew}>
-      <td class="neos-priority1">
-        <label for={"check-document-" + document.aggregateId} class="neos-checkbox">
-          <!-- TODO: make checkboxes work -->
-          <input type="checkbox" class="check-document" id={"check-document-" + document.aggregateId} /><span></span>
-        </label>
-      </td>
-      <td class="neos-priority1 path-caption">
-        <div class="neos-row-fluid">
-          <div class="neos-span10">
-            <Neos.Fusion:Loop items={document.documentBreadCrumb} itemName="crumb">
-              <Neos.Workspace.Ui:Component.Icon icon="fas fa-chevron-right" /><span> {crumb} </span>
-            </Neos.Fusion:Loop>
-          </div>
-
-          <div class="neos-span2 neos-pull-right">
-
-            <!-- TODO: Does currently not work because of broken change projection -->
-            <Neos.Workspace.Ui:Component.Button
-              title={private.i18n.id('discard')}
-              icon="fas fa-trash-alt icon-white"
-              attributes.hx-get={private.discardDocumentAction}
-              attributes.hx-swap='innerHTML'
-              attributes.hx-target="#workspaceReview"
-              attributes.hx-swap="innerHTML"
-            />
-            <Neos.Workspace.Ui:Component.Button
-              title={private.i18n.id('discard')}
-              icon="fas fa-check icon-white"
-              attributes.hx-get={private.publishDocumentAction}
-              attributes.hx-swap='innerHTML'
-              attributes.hx-target="#workspaceReview"
-              attributes.hx-swap="innerHTML"
-            />
-
-
-            <a href={private.openNodeInWorkspaceAction}
-               target="_blank"
-               title={private.i18n.id('edit')}
-               class="neos-button neos-button-primary neos-pull-right"
-               @if.notRemoved={!document.isDeleted}>
-              <Neos.Workspace.Ui:Component.Icon icon="fas fa-pencil-alt" />
-            </a>
-            <a href={private.openNodeInPreviewAction}
-               target="_blank"
-               title={private.i18n.id('workspaces.openPageInWorkspace').arguments([selectedWorkspaceLabel])}
-               class="neos-button neos-button-primary neos-pull-right">
-              <Neos.Workspace.Ui:Component.Icon icon="fas fa-external-link-alt" />
-            </a>
-
-          </div>
+      <td>
+        <div class="toggle-document neos-button">
+          <i class="fas icon-white fa-chevron-down"></i>
         </div>
       </td>
-      <td class="neos-action neos-folder">
-        <i class="fold-toggle fas fa-chevron-up icon-white"></i>
+      <td>
+        <div class="neos-button">
+          <label for={"check-document-" + document.aggregateId} class="neos-checkbox">
+            <input type="checkbox" class="check-document" id={"check-document-" + document.aggregateId} /><span></span>
+          </label>
+        </div>
       </td>
+      <td class="document-details">
+        <Neos.Fusion:Loop items={document.documentBreadCrumb} itemName="crumb">
+          <Neos.Workspace.Ui:Component.Icon icon="fas fa-caret-right" @if.notFirst={!iterator.isFirst} /><span>{crumb}</span>
+        </Neos.Fusion:Loop>
+      </td>
+      <td class="document-actions">
+            <!-- TODO: Does currently not work because of broken change projection -->
+        <Neos.Workspace.Ui:Component.Button
+                title={private.i18n.id('workspaces.discardAllChangesInThisDocument')}
+                icon="fas fa-trash-alt icon-white"
+                isDanger={true}
+                attributes.hx-get={private.discardDocumentAction}
+                attributes.hx-swap='innerHTML'
+                attributes.hx-target="#workspaceReview"
+                attributes.hx-swap="innerHTML"
+        />
+        <Neos.Workspace.Ui:Component.Button
+                title={private.i18n.id('workspaces.publishAllChangesInThisDocument')}
+                icon="fas fa-check icon-white"
+                isSuccess={true}
+                attributes.hx-get={private.publishDocumentAction}
+                attributes.hx-swap='innerHTML'
+                attributes.hx-target="#workspaceReview"
+                attributes.hx-swap="innerHTML"
+        />
+
+        <a href={private.openNodeInWorkspaceAction}
+           target="_blank"
+           title={private.i18n.id('edit')}
+           class="neos-button neos-button-primary"
+           @if.notRemoved={!document.isDeleted}>
+          <Neos.Workspace.Ui:Component.Icon icon="fas fa-pencil-alt" />
+        </a>
+        <a href={private.openNodeInPreviewAction}
+           target="_blank"
+           title={private.i18n.id('workspaces.openPageInWorkspace').arguments([selectedWorkspaceLabel])}
+           class="neos-button neos-button-primary">
+          <Neos.Workspace.Ui:Component.Icon icon="fas fa-external-link-alt" />
+        </a>
+
+      </td>
+
     </tr>
   `
 }

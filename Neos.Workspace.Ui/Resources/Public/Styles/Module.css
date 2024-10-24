@@ -239,19 +239,66 @@ button .icon:not(:last-child) {
   }
 }
 
+.neos.neos-module #workspaceReview table.neos-table td:not(.diff-property-label):not(.neos-content-change){
+  border-top-width: 0;
+}
+.neos-content-diff {
+  width: 100%;
+  margin: 0 var(--spacing-Full) ;
+}
+#workspaceReview .diff-property-label,
+#workspaceReview .diff-node-details{
+  padding-left: var(--spacing-Half) !important;
+}
+#workspaceReview .diff-property-label{
+  height: auto !important;
+  padding-bottom: 0 !important;
+}
+#workspaceReview .neos-content-change{
+  padding-left: 0 !important;
+}
+#workspaceReview i + span{
+  padding-left: var(--spacing-Half);
+}
+#workspaceReview .neos-document,
 tr.neos-change + tr.neos-change td.neos-content-change {
   border-top: 1px solid var(--grayDark);
 }
-.neos .neos-table tbody td.neos-content-change {
-  background-color: var(--grayLighter);
-  color: var(--textOnWhite);
+#workspaceReview .workspace-action i{
+  padding-right: var(--spacing-Half);
 }
-.neos-content-diff table {
+#workspaceReview .toggle-document {
+  display: inline-block;
+  padding: 0 var(--spacing-Full);
+  cursor: pointer;
+}
+#workspaceReview .document-details i{
+  padding: 0 var(--spacing-Half);
+}
+#workspaceReview thead th,
+#workspaceReview .neos-document td{
+  padding: 0 !important;
+}
+
+#workspaceReview .check-document + span{
+  margin-right: 0;
+}
+#workspaceReview .table-action{
+  padding: 0 var(--spacing-Full);
+}
+#workspaceReview .table-action:hover{
+  color: var(--blue);
+  cursor: pointer;
+}
+#workspaceReview .document-actions {
+  width: 184px;
+}
+#workspaceReview .neos-content-diff table {
   table-layout: fixed;
   width: 100%;
 }
-.neos-content-diff table.neos-content-diff td,
-.neos.neos-module .neos-content-diff table.neos-content-diff th {
+
+.neos.neos-module .neos-content-diff td {
   height: auto;
   width: 50%;
   vertical-align: top;
@@ -259,8 +306,6 @@ tr.neos-change + tr.neos-change td.neos-content-change {
   padding: 10px 20px 10px 10px !important;
   border-top: none;
   white-space: normal;
-  background-color: var(--grayLighter);
-  color: var(--textOnWhite);
 }
 .neos-content-diff table.neos-content-diff td img,
 .neos-content-diff table.neos-content-diff th img {
@@ -270,90 +315,41 @@ tr.neos-change + tr.neos-change td.neos-content-change {
   border: 20px solid var(--white);
   box-sizing: border-box;
 }
-td.neos-folder i[class*="icon"] {
-  height: var(--unit);
-  line-height: var(--unit);
-  padding: 0 var(--defaultMargin);
-  margin: 0;
-  text-align: center;
-  vertical-align: middle;
-}
-td.neos-folder i[class*="icon"]:hover {
-  background: var(--blue);
-}
-.path-caption {
-  padding-left: 15px !important;
+#workspaceReview .document-details {
+  padding-left: 0 !important;
   padding-right: 0;
 }
-.fold-toggle {
-  cursor: pointer;
-  margin-top: -1px;
-  margin-right: 11px;
-}
+
 .neos-content-change {
-  border-left: 8px solid var(--orange);
+  border-left: 4px solid var(--orange);
 }
 .neos-content-change.legend-deleted {
-  border-left: 8px solid var(--warning);
+  border-left: 4px solid var(--warning);
 }
 .neos-content-change.legend-created {
-  border-left: 8px solid var(--green);
+  border-left: 4px solid var(--green);
 }
 .neos-content-change.legend-moved {
-  border-left: 8px solid var(--blue);
+  border-left: 4px solid var(--blue);
 }
-.neos-content-change.legend-hidden {
-  border-left: 8px solid var(--white);
-}
-td.actions {
+#workspaceReview  td.actions {
   width: 144px;
 }
-td.actions button {
-  display: inline-block;
-}
-tfoot {
-  font-size: var(--fontSizeSmall);
-  color: var(--textSubtle);
-}
-tfoot .legend {
-  margin-left: 15px;
-  text-align: center;
-  padding-right: var(--tightMargin);
-}
-.neos-change-stats {
-  width: 100px;
-  height: 40px;
-  position: relative;
-  display: inline-block;
-}
-.neos-change-stats span {
-  display: inline-block;
-  height: 8px;
-  position: relative;
-  overflow: hidden;
-}
-.neos-change-stats .new {
-  background-color: var(--green);
-}
-.neos-change-stats .changed {
-  background-color: var(--orange);
-}
-.neos-change-stats .removed {
-  background-color: var(--warning);
-}
-.neos-change-stats .unchanged {
-  background-color: var(--grayLight);
-  width: 100%;
-}
-ins, ins a {
+#workspaceReview ins,
+#workspaceReview ins a {
   color: var(--green);
   text-decoration: none;
 }
-del, del a {
-  color: var(--red);
+#workspaceReview del,
+#workspaceReview del a {
+  color: var(--warning);
   text-decoration: none;
 }
-.neos-content-diff th.neos-priority1,
-.neos-content-diff th.neos-action{
+#workspaceReview .diff-property-content td:first-child,
+#workspaceReview th.neos-action{
   width: 30px
 }
+#workspaceReview .fa-level-up-alt{
+  transform: rotate(90deg);
+}
+

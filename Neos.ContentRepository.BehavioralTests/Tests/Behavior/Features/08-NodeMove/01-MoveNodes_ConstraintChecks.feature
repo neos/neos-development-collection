@@ -122,8 +122,8 @@ Feature: Move node to a new parent / within the current parent before a sibling 
       | Key                          | Value                    |
       | nodeAggregateId              | "sir-david-nodenborough" |
       | dimensionSpacePoint          | {"example": "source"}    |
-      | newParentNodeAggregateId     | "anthony-destinode"      |
-      | relationDistributionStrategy | "scatter"                |
+      | newParentNodeAggtregateId     | "anthony-destinode"      |
+      | relationDistribuionStrategy | "scatter"                |
     Then the last command should have thrown an exception of type "NodeAggregateDoesCurrentlyNotCoverDimensionSpacePointSet"
 
   Scenario: Using the gatherSpecializations strategy, try to move a node to a new, existing parent in a dimension space point with a specialization the new parent does not cover
