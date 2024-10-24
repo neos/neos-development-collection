@@ -127,6 +127,7 @@ class UsersController extends AbstractModuleController
             'searchTerm' => $searchTerm,
             'sortBy' => $sortBy,
             'sortDirection' => $sortDirection,
+            'settings' => $this->moduleConfiguration['settings']
         ]);
     }
 
