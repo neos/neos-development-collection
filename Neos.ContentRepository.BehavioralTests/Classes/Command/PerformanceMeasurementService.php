@@ -26,6 +26,7 @@ use Neos\ContentRepository\Core\EventStore\EventsToPublish;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceInterface;
 use Neos\ContentRepository\Core\Feature\Common\InterdimensionalSiblings;
 use Neos\ContentRepository\Core\Feature\ContentStreamEventStreamName;
+use Neos\ContentRepository\Core\Feature\ContentStreamForking\Command\ForkContentStream;
 use Neos\ContentRepository\Core\Feature\NodeCreation\Event\NodeAggregateWithNodeWasCreated;
 use Neos\ContentRepository\Core\Feature\NodeModification\Dto\SerializedPropertyValues;
 use Neos\ContentRepository\Core\Feature\RootNodeCreation\Event\RootNodeAggregateWithNodeWasCreated;
@@ -107,6 +108,7 @@ class PerformanceMeasurementService implements ContentRepositoryServiceInterface
             ExpectedVersion::ANY()
         ));
         echo $sumSoFar;
+        #$this->outputLine(microtime(true) - $time . ' elapsed');
     }
 
 
@@ -152,10 +154,9 @@ class PerformanceMeasurementService implements ContentRepositoryServiceInterface
 
     public function forkContentStream(): void
     {
-        throw new \BadMethodCallException('not implemented');
-        // $this->contentRepository->handle(ForkContentStream::create(
-        //     ContentStreamId::create(),
-        //     $this->contentStreamId,
-        // ));
+        $this->contentRepository->handle(ForkContentStream::create(
+            ContentStreamId::create(),
+            $this->contentStreamId,
+        ));
     }
 }

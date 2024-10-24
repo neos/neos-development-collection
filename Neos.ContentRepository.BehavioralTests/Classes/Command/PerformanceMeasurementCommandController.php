@@ -50,4 +50,18 @@ final class PerformanceMeasurementCommandController extends CommandController
             fn() => $this->performanceMeasurementService->createNodesForPerformanceTest($nodesPerLevel, $levels)
         );
     }
+
+    /**
+     * Test the performance of forking a content stream and measure the time taken.
+     *
+     * @internal
+     */
+    public function testPerformanceCommand(): void
+    {
+        $time = microtime(true);
+        $this->performanceMeasurementService->forkContentStream();
+
+        $timeElapsed = microtime(true) - $time;
+        $this->outputLine('Time: ' . $timeElapsed);
+    }
 }
