@@ -27,7 +27,7 @@ final class Events implements \IteratorAggregate, \Countable
         return new self($event);
     }
 
-    public function merge(Events $events): self
+    public function withAppendedEvents(Events $events): self
     {
         return new self(...$this->events, ...$events->events);
     }

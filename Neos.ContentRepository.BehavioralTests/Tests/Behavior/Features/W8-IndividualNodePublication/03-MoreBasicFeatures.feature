@@ -249,3 +249,35 @@ Feature: Publishing individual nodes (basics)
     And I expect this node to have the following properties:
       | Key   | Value            |
       | image | "Modified image" |
+
+  Scenario: Publish individual nodes commits exactly the expected events on each stream
+    When the command PublishIndividualNodesFromWorkspace is executed with payload:
+      | Key                             | Value                                                                                                        |
+      | workspaceName                   | "user-test"                                                                                                  |
+      | nodesToPublish                  | [{"dimensionSpacePoint": {}, "nodeAggregateId": "sir-nodeward-nodington-iii"}, {"dimensionSpacePoint": {}, "nodeAggregateId": "sir-david-nodenborough"}] |
+      | contentStreamIdForRemainingPart | "user-cs-identifier-remaining"                                                                               |
+
+    Then I expect exactly 8 events to be published on stream "ContentStream:cs-identifier"
+    And event at index 6 is of type "NodePropertiesWereSet" with payload:
+      | Key                           | Expected                                                |
+      | contentStreamId               | "cs-identifier"                                         |
+      | nodeAggregateId               | "sir-david-nodenborough"                                |
+    And event at index 7 is of type "NodePropertiesWereSet" with payload:
+      | Key                           | Expected                                                |
+      | contentStreamId               | "cs-identifier"                                         |
+      | nodeAggregateId               | "sir-nodeward-nodington-iii"                            |
+
+    Then I expect exactly 4 events to be published on stream "ContentStream:user-cs-identifier-remaining"
+    And event at index 0 is of type "ContentStreamWasForked" with payload:
+      | Key                           | Expected                                                |
+      | newContentStreamId            | "user-cs-identifier-remaining"                          |
+    And event at index 1 is of type "ContentStreamWasClosed" with payload:
+      | Key                           | Expected                                                |
+      | contentStreamId               | "user-cs-identifier-remaining"                          |
+    And event at index 2 is of type "NodePropertiesWereSet" with payload:
+      | Key                           | Expected                                                |
+      | contentStreamId               | "user-cs-identifier-remaining"                          |
+      | nodeAggregateId               | "nody-mc-nodeface"                                      |
+    And event at index 3 is of type "ContentStreamWasReopened" with payload:
+      | Key                           | Expected                                                |
+      | contentStreamId               | "user-cs-identifier-remaining"                          |

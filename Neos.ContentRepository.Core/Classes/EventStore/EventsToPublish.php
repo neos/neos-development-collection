@@ -38,7 +38,7 @@ final readonly class EventsToPublish
     {
         return new self(
             $this->streamName,
-            $this->events->merge($events),
+            $this->events->withAppendedEvents($events),
             $this->expectedVersion
         );
     }
