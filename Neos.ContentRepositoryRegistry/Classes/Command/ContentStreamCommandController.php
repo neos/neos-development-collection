@@ -39,15 +39,10 @@ class ContentStreamCommandController extends CommandController
         $contentRepositoryId = ContentRepositoryId::fromString($contentRepository);
         $contentStreamPruner = $this->contentRepositoryRegistry->buildService($contentRepositoryId, new ContentStreamPrunerFactory());
 
-        $unusedContentStreams = $contentStreamPruner->prune($removeTemporary);
-        $unusedContentStreamsPresent = false;
-        foreach ($unusedContentStreams as $contentStreamId) {
-            $this->outputFormatted('Removed %s', [$contentStreamId->value]);
-            $unusedContentStreamsPresent = true;
-        }
-        if (!$unusedContentStreamsPresent) {
-            $this->outputLine('There are no unused content streams.');
-        }
+        $contentStreamPruner->prune(
+            $removeTemporary,
+            $this->outputLine(...)
+        );
     }
 
     /**

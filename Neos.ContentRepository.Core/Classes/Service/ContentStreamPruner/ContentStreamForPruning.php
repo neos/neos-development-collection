@@ -13,7 +13,7 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamStatus;
 final readonly class ContentStreamForPruning
 {
     private function __construct(
-        public ContentStreamId $contentStreamId,
+        public ContentStreamId $id,
         public ContentStreamStatus $status,
         public ?ContentStreamId $sourceContentStreamId,
         public bool $removed,
@@ -21,12 +21,12 @@ final readonly class ContentStreamForPruning
     }
 
     public static function create(
-        ContentStreamId $contentStreamId,
+        ContentStreamId $id,
         ContentStreamStatus $status,
         ?ContentStreamId $sourceContentStreamId
     ): self {
         return new self(
-            $contentStreamId,
+            $id,
             $status,
             $sourceContentStreamId,
             false
@@ -36,7 +36,7 @@ final readonly class ContentStreamForPruning
     public function withStatus(ContentStreamStatus $status): self
     {
         return new self(
-            $this->contentStreamId,
+            $this->id,
             $status,
             $this->sourceContentStreamId,
             $this->removed
@@ -46,7 +46,7 @@ final readonly class ContentStreamForPruning
     public function withRemoved(): self
     {
         return new self(
-            $this->contentStreamId,
+            $this->id,
             $this->status,
             $this->sourceContentStreamId,
             true

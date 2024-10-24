@@ -6,9 +6,6 @@ namespace Neos\ContentRepository\Core\Service;
 
 use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\EventStore\EventNormalizer;
-use Neos\ContentRepository\Core\EventStore\EventPersister;
-use Neos\ContentRepository\Core\EventStore\Events;
-use Neos\ContentRepository\Core\EventStore\EventsToPublish;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceInterface;
 use Neos\ContentRepository\Core\Feature\ContentStreamCreation\Event\ContentStreamWasCreated;
 use Neos\ContentRepository\Core\Feature\ContentStreamEventStreamName;
@@ -21,7 +18,6 @@ use Neos\ContentRepository\Core\Feature\WorkspacePublication\Event\WorkspaceWasP
 use Neos\ContentRepository\Core\Feature\WorkspacePublication\Event\WorkspaceWasPartiallyPublished;
 use Neos\ContentRepository\Core\Feature\WorkspaceRebase\Event\WorkspaceWasRebased;
 use Neos\ContentRepository\Core\Service\ContentStreamPruner\ContentStreamForPruning;
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStream;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamStatus;
 use Neos\EventStore\EventStoreInterface;
@@ -33,7 +29,7 @@ use Neos\EventStore\Model\EventStream\ExpectedVersion;
 use Neos\EventStore\Model\EventStream\VirtualStreamName;
 
 /**
- * For implementation details of the content stream states and removed state, see {@see ContentStream}.
+ * For implementation details of the content stream states and removed state, see {@see ContentStreamForPruning}.
  *
  * @api
  */
@@ -42,7 +38,6 @@ class ContentStreamPruner implements ContentRepositoryServiceInterface
     public function __construct(
         private readonly ContentRepository $contentRepository,
         private readonly EventStoreInterface $eventStore,
-        private readonly EventPersister $eventPersister,
         private readonly EventNormalizer $eventNormalizer
     ) {
     }
@@ -61,9 +56,8 @@ class ContentStreamPruner implements ContentRepositoryServiceInterface
      * to a workspace (f.e. dangling ones in FORKED, CLOSED or CREATED.).
      *
      * @param bool $removeTemporary if TRUE, will delete ALL content streams not bound to a workspace
-     * @return iterable<int,ContentStreamId> the identifiers of the removed content streams
      */
-    public function prune(bool $removeTemporary = false): iterable
+    public function prune(bool $removeTemporary, \Closure $outputFn): void
     {
         $status = [ContentStreamStatus::NO_LONGER_IN_USE];
         if ($removeTemporary) {
@@ -71,28 +65,39 @@ class ContentStreamPruner implements ContentRepositoryServiceInterface
             $status[] = ContentStreamStatus::FORKED;
             $status[] = ContentStreamStatus::CLOSED;
         }
-        $unusedContentStreams = $this->contentRepository->findContentStreams()->filter(
-            static fn (ContentStream $contentStream) => in_array($contentStream->status, $status, true),
-        );
-        $unusedContentStreamIds = [];
-        foreach ($unusedContentStreams as $contentStream) {
-            $removeContentStream = new EventsToPublish(
+
+        $allContentStreams = $this->getContentStreamsForPruning();
+
+        $unusedContentStreamsPresent = false;
+        foreach ($allContentStreams as $contentStream) {
+            if (!in_array($contentStream->status, $status, true)) {
+                continue;
+            }
+
+            $this->eventStore->commit(
                 ContentStreamEventStreamName::fromContentStreamId($contentStream->id)->getEventStreamName(),
-                Events::with(new ContentStreamWasRemoved(
-                    $contentStream->id
-                )),
-                ExpectedVersion::fromVersion($contentStream->version)
+                $this->eventNormalizer->normalize(
+                    new ContentStreamWasRemoved(
+                        $contentStream->id
+                    )
+                ),
+                ExpectedVersion::STREAM_EXISTS()
             );
 
-            $this->eventPersister->publishEvents(
-                $this->contentRepository,
-                $removeContentStream
-            );
+            $outputFn(sprintf('Removed %s', $contentStream->id));
 
-            $unusedContentStreamIds[] = $contentStream->id;
+            $unusedContentStreamsPresent = true;
         }
 
-        return $unusedContentStreamIds;
+        if ($unusedContentStreamsPresent) {
+            try {
+                $this->contentRepository->catchUpProjections();
+            } catch (\Exception $e) {
+                $outputFn(sprintf('Could not catchup after removing unused content streams: %s. You might need to use ./flow contentstream:pruneremovedfromeventstream and replay.', $e->getMessage()));
+            }
+        } else {
+            $outputFn('There are no unused content streams.');
+        }
     }
 
     /**
@@ -141,7 +146,7 @@ class ContentStreamPruner implements ContentRepositoryServiceInterface
         // Step 1: Find all content streams currently in direct use by a workspace
         foreach ($allContentStreams as $stream) {
             if ($stream->status === ContentStreamStatus::IN_USE_BY_WORKSPACE && !$stream->removed) {
-                $contentStreamIdsStack[] = $stream->contentStreamId;
+                $contentStreamIdsStack[] = $stream->id;
             }
         }
 
@@ -153,7 +158,7 @@ class ContentStreamPruner implements ContentRepositoryServiceInterface
 
                 // Find source content streams for the current stream
                 foreach ($allContentStreams as $stream) {
-                    if ($stream->contentStreamId === $currentStreamId && $stream->sourceContentStreamId !== null) {
+                    if ($stream->id === $currentStreamId && $stream->sourceContentStreamId !== null) {
                         $sourceStreamId = $stream->sourceContentStreamId;
                         if (!array_key_exists($sourceStreamId->value, $transitiveUsedStreams)) {
                             $contentStreamIdsStack[] = $sourceStreamId;
@@ -166,8 +171,8 @@ class ContentStreamPruner implements ContentRepositoryServiceInterface
         // Step 3: Check for removed content streams which we do not need anymore transitively
         $removedContentStreams = [];
         foreach ($allContentStreams as $contentStream) {
-            if ($contentStream->removed && !array_key_exists($contentStream->contentStreamId->value, $transitiveUsedStreams)) {
-                $removedContentStreams[] = $contentStream->contentStreamId;
+            if ($contentStream->removed && !array_key_exists($contentStream->id->value, $transitiveUsedStreams)) {
+                $removedContentStreams[] = $contentStream->id;
             }
         }
 
