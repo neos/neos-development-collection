@@ -67,6 +67,7 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamStatus;
 use Neos\ContentRepository\Core\SharedModel\Workspace\Workspace;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
+use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceStatus;
 use Neos\EventStore\EventStoreInterface;
 use Neos\EventStore\Exception\ConcurrencyException;
 use Neos\EventStore\Model\Event\EventType;
@@ -358,7 +359,13 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
         }
         $currentWorkspaceContentStreamState = $commandHandlingDependencies->getContentStreamStatus($workspace->currentContentStreamId);
 
-        // FIXME no-op if workspace is not outdated and not RebaseErrorHandlingStrategy::STRATEGY_FORCE.
+        if (
+            $workspace->status === WorkspaceStatus::UP_TO_DATE
+            && $command->rebaseErrorHandlingStrategy !== RebaseErrorHandlingStrategy::STRATEGY_FORCE
+        ) {
+            // no-op if workspace is not outdated and not forcing it
+            return;
+        }
 
         yield $this->closeContentStream(
             $workspace->currentContentStreamId,
@@ -391,6 +398,7 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
                 ExpectedVersion::ANY()
             );
 
+            yield $this->removeContentStream($workspace->currentContentStreamId, $commandHandlingDependencies);
             return;
         }
 
@@ -455,6 +463,8 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
             ),
             $commandHandlingDependencies
         );
+
+        yield $this->removeContentStream($workspace->currentContentStreamId, $commandHandlingDependencies);
     }
 
     /**
