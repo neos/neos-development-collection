@@ -7,6 +7,7 @@ namespace Neos\ContentRepository\Core\CommandHandler;
 use Neos\ContentRepository\Core\CommandHandlingDependencies;
 use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\EventStore\EventsToPublish;
+use Neos\ContentRepository\Core\EventStore\EventsToPublishFailed;
 
 /**
  * Implementation Detail of {@see ContentRepository::handle}, which does the command dispatching to the different
@@ -26,7 +27,10 @@ final class CommandBus
         $this->handlers = $handlers;
     }
 
-    public function handle(CommandInterface $command, CommandHandlingDependencies $commandHandlingDependencies): EventsToPublish
+    /**
+     * @return EventsToPublish|\Generator<int, EventsToPublish>
+     */
+    public function handle(CommandInterface $command, CommandHandlingDependencies $commandHandlingDependencies): EventsToPublish|\Generator
     {
         // TODO fail if multiple handlers can handle the same command
         foreach ($this->handlers as $handler) {

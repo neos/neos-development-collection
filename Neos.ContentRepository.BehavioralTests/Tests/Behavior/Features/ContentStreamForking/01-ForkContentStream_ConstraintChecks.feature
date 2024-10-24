@@ -49,12 +49,13 @@ Feature: ForkContentStream Without Dimensions
       | propertyValues               | {"text": {"value": "original value", "type": "string"}} |
       | propertiesToUnset            | {}                                                      |
 
-  Scenario: Try to fork a content stream that is closed:
+  Scenario: Try to create a workspace with the base workspace referring to a closed content stream
     When the command CloseContentStream is executed with payload:
       | Key             | Value           |
       | contentStreamId | "cs-identifier" |
-    When the command ForkContentStream is executed with payload and exceptions are caught:
-      | Key                   | Value                |
-      | contentStreamId       | "user-cs-identifier" |
-      | sourceContentStreamId | "cs-identifier"      |
+    When the command CreateWorkspace is executed with payload and exceptions are caught:
+      | Key                | Value                |
+      | workspaceName      | "user-test"          |
+      | baseWorkspaceName  | "live"               |
+      | newContentStreamId | "user-cs-identifier" |
     Then the last command should have thrown an exception of type "ContentStreamIsClosed"
