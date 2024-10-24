@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Neos\Neos\Domain\Model;
 
 use Neos\Flow\Annotations as Flow;
-use Traversable;
 
 /**
  * A set of {@see WorkspaceRoleAssignment} instances
@@ -39,7 +38,7 @@ final readonly class WorkspaceRoleAssignments implements \IteratorAggregate, \Co
         return $this->assignments === [];
     }
 
-    public function getIterator(): Traversable
+    public function getIterator(): \Traversable
     {
         yield from $this->assignments;
     }

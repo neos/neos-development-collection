@@ -31,6 +31,8 @@ interface RebasableToOtherWorkspaceInterface
         WorkspaceName $targetWorkspaceName,
     ): CommandInterface;
 
+    public function getWorkspaceName(): WorkspaceName;
+
     /**
      * called during deserialization from metadata
      * @param array<string,mixed> $array

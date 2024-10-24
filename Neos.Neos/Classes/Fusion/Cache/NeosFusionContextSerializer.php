@@ -73,12 +73,7 @@ final class NeosFusionContextSerializer implements NormalizerInterface, Denormal
         $contentRepository = $this->contentRepositoryRegistry->get($nodeAddress->contentRepositoryId);
 
         try {
-            $subgraph = $contentRepository->getContentGraph($nodeAddress->workspaceName)->getSubgraph(
-                $nodeAddress->dimensionSpacePoint,
-                $nodeAddress->workspaceName->isLive()
-                    ? VisibilityConstraints::frontend()
-                    : VisibilityConstraints::withoutRestrictions()
-            );
+            $subgraph = $contentRepository->getContentSubgraph($nodeAddress->workspaceName, $nodeAddress->dimensionSpacePoint);
         } catch (WorkspaceDoesNotExist $exception) {
             // in case the workspace was deleted the rendering should probably not come to this very point
             // still if it does we fail silently

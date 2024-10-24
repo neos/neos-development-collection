@@ -21,6 +21,7 @@ use Neos\ContentRepository\Core\DimensionSpace\ContentDimensionZookeeper;
 use Neos\ContentRepository\Core\DimensionSpace\InterDimensionalVariationGraph;
 use Neos\ContentRepository\Core\EventStore\EventNormalizer;
 use Neos\ContentRepository\Core\EventStore\EventPersister;
+use Neos\ContentRepository\Core\Feature\Security\AuthProviderInterface;
 use Neos\ContentRepository\Core\Feature\ContentStreamCommandHandler;
 use Neos\ContentRepository\Core\Feature\DimensionSpaceAdjustment\DimensionSpaceCommandHandler;
 use Neos\ContentRepository\Core\Feature\NodeAggregateCommandHandler;
@@ -30,7 +31,6 @@ use Neos\ContentRepository\Core\Infrastructure\Property\PropertyConverter;
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Core\Projection\ProjectionsAndCatchUpHooks;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
-use Neos\ContentRepository\Core\SharedModel\User\UserIdProviderInterface;
 use Neos\EventStore\EventStoreInterface;
 use Psr\Clock\ClockInterface;
 use Symfony\Component\Serializer\Serializer;
@@ -52,7 +52,7 @@ final class ContentRepositoryFactory
         ContentDimensionSourceInterface $contentDimensionSource,
         Serializer $propertySerializer,
         ProjectionsAndCatchUpHooksFactory $projectionsAndCatchUpHooksFactory,
-        private readonly UserIdProviderInterface $userIdProvider,
+        private readonly AuthProviderInterface $authProvider,
         private readonly ClockInterface $clock,
     ) {
         $contentDimensionZookeeper = new ContentDimensionZookeeper($contentDimensionSource);
@@ -68,7 +68,8 @@ final class ContentRepositoryFactory
             $contentDimensionSource,
             $contentDimensionZookeeper,
             $interDimensionalVariationGraph,
-            new PropertyConverter($propertySerializer)
+            new PropertyConverter($propertySerializer),
+            $this->authProvider,
         );
         $this->projectionsAndCatchUpHooks = $projectionsAndCatchUpHooksFactory->build($this->projectionFactoryDependencies);
     }
@@ -97,7 +98,7 @@ final class ContentRepositoryFactory
                 $this->projectionFactoryDependencies->nodeTypeManager,
                 $this->projectionFactoryDependencies->interDimensionalVariationGraph,
                 $this->projectionFactoryDependencies->contentDimensionSource,
-                $this->userIdProvider,
+                $this->authProvider,
                 $this->clock,
                 $this->projectionsAndCatchUpHooks->contentGraphProjection->getState()
             );

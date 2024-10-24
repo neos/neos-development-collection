@@ -19,12 +19,14 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\Controller\ActionController;
+use Neos\Flow\Security\Context as SecurityContext;
 use Neos\Media\Domain\Model\AssetInterface;
 use Neos\Media\Domain\Service\AssetService;
 use Neos\Neos\Domain\Repository\SiteRepository;
 use Neos\Neos\Domain\Service\NodeTypeNameFactory;
 use Neos\Neos\Domain\Service\WorkspaceService;
 use Neos\Neos\FrontendRouting\SiteDetection\SiteDetectionResult;
+use Neos\Neos\Security\Authorization\ContentRepositoryAuthorizationService;
 use Neos\Neos\Service\UserService;
 use Neos\Neos\AssetUsage\Dto\AssetUsageReference;
 
@@ -66,6 +68,18 @@ class UsageController extends ActionController
     protected $workspaceService;
 
     /**
+     * @Flow\Inject
+     * @var SecurityContext
+     */
+    protected $securityContext;
+
+    /**
+     * @Flow\Inject
+     * @var ContentRepositoryAuthorizationService
+     */
+    protected $contentRepositoryAuthorizationService;
+
+    /**
      * Get Related Nodes for an asset
      *
      * @param AssetInterface $asset
@@ -103,11 +117,12 @@ class UsageController extends ActionController
             );
             $nodeType = $nodeAggregate ? $contentRepository->getNodeTypeManager()->getNodeType($nodeAggregate->nodeTypeName) : null;
 
-            $workspacePermissions = $this->workspaceService->getWorkspacePermissionsForUser(
-                $currentContentRepositoryId,
-                $usage->getWorkspaceName(),
-                $currentUser
-            );
+            $authenticatedAccount = $this->securityContext->getAccount();
+            if ($authenticatedAccount !== null) {
+                $workspacePermissions =  $this->contentRepositoryAuthorizationService->getWorkspacePermissionsForAccount($currentContentRepositoryId, $usage->getWorkspaceName(), $authenticatedAccount);
+            } else {
+                $workspacePermissions =  $this->contentRepositoryAuthorizationService->getWorkspacePermissionsForAnonymousUser($currentContentRepositoryId, $usage->getWorkspaceName());
+            }
 
             $workspace = $contentRepository->findWorkspaceByName($usage->getWorkspaceName());
 

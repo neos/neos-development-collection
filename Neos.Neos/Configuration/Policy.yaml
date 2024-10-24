@@ -142,6 +142,14 @@ privilegeTargets:
       label: General access to the dimensions module
       matcher: 'administration/dimensions'
 
+
+  'Neos\Neos\Security\Authorization\Privilege\SubtreeTagPrivilege':
+
+    'Neos.Neos:ContentRepository.ReadDisabledNodes':
+      # !!! matcher payload in this case is a ContentRepository SubtreeTag,
+      # i.e. nodes with ths specified tag are only read if the user has the corresponding privilegeTarget assigned.
+      matcher: 'disabled'
+
 roles:
 
   'Neos.Flow:Everybody':
@@ -228,6 +236,11 @@ roles:
       -
         privilegeTarget: 'Neos.Neos:Backend.Module.Management'
         permission: GRANT
+
+      -
+        privilegeTarget: 'Neos.Neos:ContentRepository.ReadDisabledNodes'
+        permission: GRANT
+
 
 
   'Neos.Neos:RestrictedEditor':

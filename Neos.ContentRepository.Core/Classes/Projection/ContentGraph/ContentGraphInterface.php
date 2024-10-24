@@ -14,6 +14,7 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Core\Projection\ContentGraph;
 
+use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
@@ -50,7 +51,7 @@ interface ContentGraphInterface extends ProjectionStateInterface
     public function getWorkspaceName(): WorkspaceName;
 
     /**
-     * @api main API method of ContentGraph
+     * @api You most likely want to use {@see ContentRepository::getContentSubgraph()} because it automatically determines VisibilityConstraints for the current user.
      */
     public function getSubgraph(
         DimensionSpacePoint $dimensionSpacePoint,

@@ -14,6 +14,7 @@ declare(strict_types=1);
 
 namespace Neos\Neos\Controller\Frontend;
 
+use Neos\ContentRepository\Core\Feature\SubtreeTagging\Dto\SubtreeTag;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentSubgraphInterface;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindClosestNodeFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindSubtreeFilter;
@@ -35,6 +36,7 @@ use Neos\Flow\Security\Context as SecurityContext;
 use Neos\Flow\Session\SessionInterface;
 use Neos\Flow\Utility\Now;
 use Neos\Neos\Domain\Model\RenderingMode;
+use Neos\Neos\Domain\Model\User;
 use Neos\Neos\Domain\Service\NodeTypeNameFactory;
 use Neos\Neos\Domain\Service\RenderingModeService;
 use Neos\Neos\FrontendRouting\Exception\InvalidShortcutException;
@@ -42,6 +44,7 @@ use Neos\Neos\FrontendRouting\Exception\NodeNotFoundException;
 use Neos\Neos\FrontendRouting\NodeShortcutResolver;
 use Neos\Neos\FrontendRouting\NodeUriBuilderFactory;
 use Neos\Neos\FrontendRouting\SiteDetection\SiteDetectionResult;
+use Neos\Neos\Security\Authorization\ContentRepositoryAuthorizationService;
 use Neos\Neos\Utility\NodeTypeWithFallbackProvider;
 use Neos\Neos\View\FusionView;
 
@@ -110,6 +113,9 @@ class NodeController extends ActionController
     #[Flow\Inject]
     protected NodeUriBuilderFactory $nodeUriBuilderFactory;
 
+    #[Flow\Inject]
+    protected ContentRepositoryAuthorizationService $contentRepositoryAuthorizationService;
+
     /**
      * @param string $node
      * @throws NodeNotFoundException
@@ -125,21 +131,12 @@ class NodeController extends ActionController
     {
         // @todo add $renderingModeName as parameter and append it for successive links again as get parameter to node uris
         $renderingMode = $this->renderingModeService->findByCurrentUser();
-
-        $visibilityConstraints = VisibilityConstraints::frontend();
-        if ($this->privilegeManager->isPrivilegeTargetGranted('Neos.Neos:Backend.GeneralAccess')) {
-            $visibilityConstraints = VisibilityConstraints::withoutRestrictions();
-        }
-
         $siteDetectionResult = SiteDetectionResult::fromRequest($this->request->getHttpRequest());
         $contentRepository = $this->contentRepositoryRegistry->get($siteDetectionResult->contentRepositoryId);
 
         $nodeAddress = NodeAddress::fromJsonString($node);
 
-        $subgraph = $contentRepository->getContentGraph($nodeAddress->workspaceName)->getSubgraph(
-            $nodeAddress->dimensionSpacePoint,
-            $visibilityConstraints
-        );
+        $subgraph = $contentRepository->getContentSubgraph($nodeAddress->workspaceName, $nodeAddress->dimensionSpacePoint);
 
         $nodeInstance = $subgraph->findNodeById($nodeAddress->aggregateId);
 
@@ -197,17 +194,25 @@ class NodeController extends ActionController
     public function showAction(string $node): void
     {
         $nodeAddress = NodeAddress::fromJsonString($node);
-        unset($node);
 
         if (!$nodeAddress->workspaceName->isLive()) {
             throw new NodeNotFoundException('The requested node isn\'t accessible to the current user', 1430218623);
         }
 
         $contentRepository = $this->contentRepositoryRegistry->get($nodeAddress->contentRepositoryId);
-        $uncachedSubgraph = $contentRepository->getContentGraph($nodeAddress->workspaceName)->getSubgraph(
-            $nodeAddress->dimensionSpacePoint,
-            VisibilityConstraints::frontend()
-        );
+        $authenticatedAccount = $this->securityContext->getAccount();
+        if ($authenticatedAccount !== null) {
+            $visibilityConstraints = $this->contentRepositoryAuthorizationService->getVisibilityConstraintsForAccount($contentRepository->id, $authenticatedAccount);
+        } else {
+            $visibilityConstraints = $this->contentRepositoryAuthorizationService->getVisibilityConstraintsForAnonymousUser($contentRepository->id);
+        }
+        // By default, the visibility constraints only contain the SubtreeTags the authenticated user has _no_ access to
+        // Neos backend users have access to the "disabled" SubtreeTag so that they can see/edit disabled nodes.
+        // In this showAction (= "frontend") we have to explicitly remove those disabled nodes, even if the user was authenticated,
+        // to ensure that disabled nodes are NEVER shown recursively.
+        $visibilityConstraints = $visibilityConstraints->withAddedSubtreeTag(SubtreeTag::disabled());
+        $uncachedSubgraph = $contentRepository->getContentGraph($nodeAddress->workspaceName)->getSubgraph($nodeAddress->dimensionSpacePoint, $visibilityConstraints);
+
         $subgraph = new ContentSubgraphWithRuntimeCaches($uncachedSubgraph, $this->subgraphCachePool);
 
         $nodeInstance = $subgraph->findNodeById($nodeAddress->aggregateId);

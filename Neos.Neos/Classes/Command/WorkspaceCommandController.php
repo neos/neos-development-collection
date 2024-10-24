@@ -255,6 +255,7 @@ class WorkspaceCommandController extends CommandController
      *
      * Without explicit workspace roles, only administrators can change the corresponding workspace.
      * With this command, a user or group (represented by a Flow role identifier) can be granted one of the two roles:
+     * - viewer: Can read from the workspace
      * - collaborator: Can read from and write to the workspace
      * - manager: Can read from and write to the workspace and manage it (i.e. change metadata & role assignments)
      *
@@ -268,7 +269,7 @@ class WorkspaceCommandController extends CommandController
      *
      * @param string $workspace Name of the workspace, for example "some-workspace"
      * @param string $subject The user/group that should be assigned. By default, this is expected to be a Flow role identifier (e.g. 'Neos.Neos:AbstractEditor') – if $type is 'user', this is the username (aka account identifier) of a Neos user
-     * @param string $role Role to assign, either 'collaborator' or 'manager' – a collaborator can read and write from/to the workspace. A manager can _on top_ change the workspace metadata & roles itself
+     * @param string $role Role to assign, either 'viewer', 'collaborator' or 'manager' – a viewer can only read from the workspace, a collaborator can read and write from/to the workspace. A manager can _on top_ change the workspace metadata & roles itself
      * @param string $contentRepository Identifier of the content repository. (Default: 'default')
      * @param string $type Type of role, either 'group' (default) or 'user' – if 'group', $subject is expected to be a Flow role identifier, otherwise the username (aka account identifier) of a Neos user
      * @throws StopCommandException
@@ -284,30 +285,21 @@ class WorkspaceCommandController extends CommandController
             default => throw new \InvalidArgumentException(sprintf('type must be "group" or "user", given "%s"', $type), 1728398802),
         };
         $workspaceRole = match ($role) {
+            'viewer' => WorkspaceRole::VIEWER,
             'collaborator' => WorkspaceRole::COLLABORATOR,
             'manager' => WorkspaceRole::MANAGER,
-            default => throw new \InvalidArgumentException(sprintf('role must be "collaborator" or "manager", given "%s"', $role), 1728398880),
+            default => throw new \InvalidArgumentException(sprintf('role must be "viewer", "collaborator" or "manager", given "%s"', $role), 1728398880),
         };
-        if ($subjectType === WorkspaceRoleSubjectType::USER) {
-            $neosUser = $this->userService->getUser($subject);
-            if ($neosUser === null) {
-                $this->outputLine('<error>The user "%s" specified as subject does not exist</error>', [$subject]);
-                $this->quit(1);
-            }
-            $roleSubject = WorkspaceRoleSubject::fromString($neosUser->getId()->value);
-        } else {
-            $roleSubject = WorkspaceRoleSubject::fromString($subject);
-        }
+        $roleSubject = $this->buildWorkspaceRoleSubject($subjectType, $subject);
         $this->workspaceService->assignWorkspaceRole(
             $contentRepositoryId,
             $workspaceName,
             WorkspaceRoleAssignment::create(
-                $subjectType,
                 $roleSubject,
                 $workspaceRole
             )
         );
-        $this->outputLine('<success>Assigned role "%s" to subject "%s" for workspace "%s"</success>', [$workspaceRole->value, $roleSubject->value, $workspaceName->value]);
+        $this->outputLine('<success>Assigned role "%s" to subject "%s" for workspace "%s"</success>', [$workspaceRole->value, $roleSubject, $workspaceName->value]);
     }
 
     /**
@@ -331,11 +323,10 @@ class WorkspaceCommandController extends CommandController
             'user' => WorkspaceRoleSubjectType::USER,
             default => throw new \InvalidArgumentException(sprintf('type must be "group" or "user", given "%s"', $type), 1728398802),
         };
-        $roleSubject = WorkspaceRoleSubject::fromString($subject);
+        $roleSubject = $this->buildWorkspaceRoleSubject($subjectType, $subject);
         $this->workspaceService->unassignWorkspaceRole(
             $contentRepositoryId,
             $workspaceName,
-            $subjectType,
             $roleSubject,
         );
         $this->outputLine('<success>Removed role assignment from subject "%s" for workspace "%s"</success>', [$roleSubject->value, $workspaceName->value]);
@@ -524,7 +515,7 @@ class WorkspaceCommandController extends CommandController
             return;
         }
         $this->output->outputTable(array_map(static fn (WorkspaceRoleAssignment $assignment) => [
-            $assignment->subjectType->value,
+            $assignment->subject->type->value,
             $assignment->subject->value,
             $assignment->role->value,
         ], iterator_to_array($workspaceRoleAssignments)), [
@@ -532,5 +523,22 @@ class WorkspaceCommandController extends CommandController
             'Subject',
             'Role',
         ]);
+    }
+
+    // -----------------------
+
+    private function buildWorkspaceRoleSubject(WorkspaceRoleSubjectType $subjectType, string $usernameOrRoleIdentifier): WorkspaceRoleSubject
+    {
+        if ($subjectType === WorkspaceRoleSubjectType::USER) {
+            $neosUser = $this->userService->getUser($usernameOrRoleIdentifier);
+            if ($neosUser === null) {
+                $this->outputLine('<error>The user "%s" specified as subject does not exist</error>', [$usernameOrRoleIdentifier]);
+                $this->quit(1);
+            }
+            $roleSubject = WorkspaceRoleSubject::createForUser($neosUser->getId());
+        } else {
+            $roleSubject = WorkspaceRoleSubject::createForGroup($usernameOrRoleIdentifier);
+        }
+        return $roleSubject;
     }
 }
