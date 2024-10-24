@@ -33,11 +33,11 @@ use Neos\Utility\Files;
 class SiteCommandController extends CommandController
 {
     public function __construct(
-        private readonly Connection                  $connection,
-        private readonly Environment                 $environment,
-        private readonly PropertyMapper              $propertyMapper,
-        private readonly ContentRepositoryRegistry   $contentRepositoryRegistry,
-        private readonly SiteImportService        $siteImportService,
+        private readonly Connection $connection,
+        private readonly Environment $environment,
+        private readonly PropertyMapper $propertyMapper,
+        private readonly ContentRepositoryRegistry $contentRepositoryRegistry,
+        private readonly SiteImportService $siteImportService,
     ) {
         parent::__construct();
     }
