@@ -30,6 +30,7 @@ interface ContentGraphReadModelInterface extends ProjectionStateInterface
 {
     /**
      * @throws WorkspaceDoesNotExist if the workspace does not exist
+     * todo cache instances to reduce queries (revert https://github.com/neos/neos-development-collection/pull/5246)
      */
     public function getContentGraph(WorkspaceName $workspaceName): ContentGraphInterface;
 
