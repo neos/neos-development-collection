@@ -90,11 +90,6 @@ final class EventExportProcessor implements ProcessorInterface
         $this->visitedNodes = new VisitedNodeAggregates();
     }
 
-    public function setContentStreamId(ContentStreamId $contentStreamId): void
-    {
-        $this->contentStreamId = $contentStreamId;
-    }
-
     public function run(ProcessingContext $context): void
     {
         $this->resetRuntimeState();

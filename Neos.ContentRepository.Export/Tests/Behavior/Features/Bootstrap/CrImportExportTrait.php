@@ -182,6 +182,29 @@ trait CrImportExportTrait
     }
 
     /**
+     * @Then I expect the following sites to be exported
+     */
+    public function iExpectTheFollowingSitesToBeExported(TableNode $table): void
+    {
+        if (!$this->crImportExportTrait_filesystem->has('sites.json')) {
+            Assert::fail('No events were exported');
+        }
+        $actualSitesJson = $this->crImportExportTrait_filesystem->read('sites.json');
+        $actualSiteRows = json_decode($actualSitesJson, true, 512, JSON_THROW_ON_ERROR);
+
+        $expectedSites = $table->getHash();
+        foreach ($expectedSites as $key => $expectedSiteData) {
+            $actualSiteData = $actualSiteRows[$key] ?? [];
+            $expectedSiteData = array_map(
+                fn(string $value) => json_decode($value, true, 512, JSON_THROW_ON_ERROR),
+                $expectedSiteData
+            );
+            Assert::assertEquals($expectedSiteData, $actualSiteData, 'Actual site: ' . json_encode($actualSiteData, JSON_THROW_ON_ERROR));
+        }
+        Assert::assertCount(count($table->getHash()), $actualSiteRows, 'Expected number of sites does not match actual number');
+    }
+
+    /**
      * @Then I expect the following errors to be logged
      */
     public function iExpectTheFollowingErrorsToBeLogged(TableNode $table): void

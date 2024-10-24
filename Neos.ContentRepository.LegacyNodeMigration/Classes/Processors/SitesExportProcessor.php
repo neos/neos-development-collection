@@ -41,21 +41,23 @@ final class SitesExportProcessor implements ProcessorInterface
                 "nodeName" => $siteRow['nodename'],
                 "siteResourcesPackageKey" =>  $siteRow['siteresourcespackagekey'],
                 "online" => $siteRow['state'] === 1,
-                "domains" => array_filter(
-                    array_map(
-                        function(array $domainRow) use ($siteRow) {
-                            if ($siteRow['persistence_object_identifier'] !== $domainRow['site']) {
-                                return null;
-                            }
-                            return [
-                                'hostname' => $domainRow['hostname'],
-                                'scheme' => $domainRow['scheme'],
-                                'port' => $domainRow['port'],
-                                'active' => $domainRow['active'],
-                                'primary' => $domainRow === $siteRow['primarydomain'],
-                            ];
-                        },
-                        iterator_to_array($this->domainRows)
+                "domains" => array_values(
+                    array_filter(
+                        array_map(
+                            function(array $domainRow) use ($siteRow) {
+                                if ($siteRow['persistence_object_identifier'] !== $domainRow['site']) {
+                                    return null;
+                                }
+                                return [
+                                    'hostname' => $domainRow['hostname'],
+                                    'scheme' => $domainRow['scheme'],
+                                    'port' => $domainRow['port'],
+                                    'active' => $domainRow['active'],
+                                    'primary' => $domainRow['persistence_object_identifier'] === $siteRow['primarydomain'],
+                                ];
+                            },
+                            iterator_to_array($this->domainRows)
+                        )
                     )
                 )
             ];

@@ -23,35 +23,35 @@ Feature: Simple migrations without content dimensions for hidden state migration
       | Identifier    | Path             | Node Type             | Properties      | Hidden | Hidden after DateTime | Hidden before DateTime |
       | sites-node-id | /sites           | unstructured          |                 | 0      |                       |                        |
       | site-node-id  | /sites/test-site | Some.Package:Homepage | {"text": "foo"} | 1      |                       |                        |
-    And I run the event migration for content stream "cs-id"
+    And I run the event migration
     Then I expect the following events to be exported
       | Type                                | Payload                                                                                                                                                                                                                                                                                      |
-      | RootNodeAggregateWithNodeWasCreated | {"contentStreamId": "cs-id", "nodeAggregateId": "sites-node-id", "nodeTypeName": "Neos.Neos:Sites", "nodeAggregateClassification": "root"}                                                                                                                                                   |
-      | NodeAggregateWithNodeWasCreated     | {"contentStreamId": "cs-id", "nodeAggregateId": "site-node-id", "nodeTypeName": "Some.Package:Homepage", "nodeName": "test-site", "parentNodeAggregateId": "sites-node-id", "nodeAggregateClassification": "regular", "initialPropertyValues": {"text": {"type": "string", "value": "foo"}}} |
-      | SubtreeWasTagged                    | {"contentStreamId": "cs-id", "nodeAggregateId": "site-node-id", "tag": "disabled"}                                                                                                                                                                                                           |
+      | RootNodeAggregateWithNodeWasCreated | {"nodeAggregateId": "sites-node-id", "nodeTypeName": "Neos.Neos:Sites", "nodeAggregateClassification": "root"}                                                                                                                                                   |
+      | NodeAggregateWithNodeWasCreated     | {"nodeAggregateId": "site-node-id", "nodeTypeName": "Some.Package:Homepage", "nodeName": "test-site", "parentNodeAggregateId": "sites-node-id", "nodeAggregateClassification": "regular", "initialPropertyValues": {"text": {"type": "string", "value": "foo"}}} |
+      | SubtreeWasTagged                    | {"nodeAggregateId": "site-node-id", "tag": "disabled"}                                                                                                                                                                                                           |
 
   Scenario: A node with a "hidden" property false must not get disabled
     When I have the following node data rows:
       | Identifier    | Path             | Node Type             | Properties      | Hidden | Hidden after DateTime | Hidden before DateTime |
       | sites-node-id | /sites           | unstructured          |                 | 0      |                       |                        |
       | site-node-id  | /sites/test-site | Some.Package:Homepage | {"text": "foo"} | 0      |                       |                        |
-    And I run the event migration for content stream "cs-id"
+    And I run the event migration
     Then I expect the following events to be exported
       | Type                                | Payload                                                                                                                                                                                                                                                                                      |
-      | RootNodeAggregateWithNodeWasCreated | {"contentStreamId": "cs-id", "nodeAggregateId": "sites-node-id", "nodeTypeName": "Neos.Neos:Sites", "nodeAggregateClassification": "root"}                                                                                                                                                   |
-      | NodeAggregateWithNodeWasCreated     | {"contentStreamId": "cs-id", "nodeAggregateId": "site-node-id", "nodeTypeName": "Some.Package:Homepage", "nodeName": "test-site", "parentNodeAggregateId": "sites-node-id", "nodeAggregateClassification": "regular", "initialPropertyValues": {"text": {"type": "string", "value": "foo"}}} |
+      | RootNodeAggregateWithNodeWasCreated | {"nodeAggregateId": "sites-node-id", "nodeTypeName": "Neos.Neos:Sites", "nodeAggregateClassification": "root"}                                                                                                                                                   |
+      | NodeAggregateWithNodeWasCreated     | {"nodeAggregateId": "site-node-id", "nodeTypeName": "Some.Package:Homepage", "nodeName": "test-site", "parentNodeAggregateId": "sites-node-id", "nodeAggregateClassification": "regular", "initialPropertyValues": {"text": {"type": "string", "value": "foo"}}} |
 
   Scenario: A node with active "hidden after" property, after a "hidden before" property must get disabled
     When I have the following node data rows:
       | Identifier    | Path             | Node Type             | Properties      | Hidden | Hidden after DateTime | Hidden before DateTime |
       | sites-node-id | /sites           | unstructured          |                 | 0      |                       |                        |
       | site-node-id  | /sites/test-site | Some.Package:Homepage | {"text": "foo"} | 0      | 1990-01-01 10:10:10   | 1989-01-01 10:10:10    |
-    And I run the event migration for content stream "cs-id"
+    And I run the event migration
     Then I expect the following events to be exported
       | Type                                | Payload                                                                                                                                                                                                                                                                                      |
-      | RootNodeAggregateWithNodeWasCreated | {"contentStreamId": "cs-id", "nodeAggregateId": "sites-node-id", "nodeTypeName": "Neos.Neos:Sites", "nodeAggregateClassification": "root"}                                                                                                                                                   |
-      | NodeAggregateWithNodeWasCreated     | {"contentStreamId": "cs-id", "nodeAggregateId": "site-node-id", "nodeTypeName": "Some.Package:Homepage", "nodeName": "test-site", "parentNodeAggregateId": "sites-node-id", "nodeAggregateClassification": "regular", "initialPropertyValues": {"text": {"type": "string", "value": "foo"}}} |
-      | SubtreeWasTagged                    | {"contentStreamId": "cs-id", "nodeAggregateId": "site-node-id", "tag": "disabled"}                                                                                                                                                                                                           |
+      | RootNodeAggregateWithNodeWasCreated | {"nodeAggregateId": "sites-node-id", "nodeTypeName": "Neos.Neos:Sites", "nodeAggregateClassification": "root"}                                                                                                                                                   |
+      | NodeAggregateWithNodeWasCreated     | {"nodeAggregateId": "site-node-id", "nodeTypeName": "Some.Package:Homepage", "nodeName": "test-site", "parentNodeAggregateId": "sites-node-id", "nodeAggregateClassification": "regular", "initialPropertyValues": {"text": {"type": "string", "value": "foo"}}} |
+      | SubtreeWasTagged                    | {"nodeAggregateId": "site-node-id", "tag": "disabled"}                                                                                                                                                                                                           |
     And I expect the following warnings to be logged
       | Skipped the migration of your "hiddenBeforeDateTime" and "hiddenAfterDateTime" properties as your target NodeTypes do not inherit "Neos.TimeableNodeVisibility:Timeable". Please install neos/timeable-node-visibility, if you want to migrate them. |
 
@@ -60,11 +60,11 @@ Feature: Simple migrations without content dimensions for hidden state migration
       | Identifier    | Path             | Node Type             | Properties      | Hidden | Hidden after DateTime | Hidden before DateTime |
       | sites-node-id | /sites           | unstructured          |                 | 0      |                       |                        |
       | site-node-id  | /sites/test-site | Some.Package:Homepage | {"text": "foo"} | 0      | 1989-01-01 10:10:10   | 1990-01-01 10:10:10    |
-    And I run the event migration for content stream "cs-id"
+    And I run the event migration
     Then I expect the following events to be exported
       | Type                                | Payload                                                                                                                                                                                                                                                                                      |
-      | RootNodeAggregateWithNodeWasCreated | {"contentStreamId": "cs-id", "nodeAggregateId": "sites-node-id", "nodeTypeName": "Neos.Neos:Sites", "nodeAggregateClassification": "root"}                                                                                                                                                   |
-      | NodeAggregateWithNodeWasCreated     | {"contentStreamId": "cs-id", "nodeAggregateId": "site-node-id", "nodeTypeName": "Some.Package:Homepage", "nodeName": "test-site", "parentNodeAggregateId": "sites-node-id", "nodeAggregateClassification": "regular", "initialPropertyValues": {"text": {"type": "string", "value": "foo"}}} |
+      | RootNodeAggregateWithNodeWasCreated | {"nodeAggregateId": "sites-node-id", "nodeTypeName": "Neos.Neos:Sites", "nodeAggregateClassification": "root"}                                                                                                                                                   |
+      | NodeAggregateWithNodeWasCreated     | {"nodeAggregateId": "site-node-id", "nodeTypeName": "Some.Package:Homepage", "nodeName": "test-site", "parentNodeAggregateId": "sites-node-id", "nodeAggregateClassification": "regular", "initialPropertyValues": {"text": {"type": "string", "value": "foo"}}} |
     And I expect the following warnings to be logged
       | Skipped the migration of your "hiddenBeforeDateTime" and "hiddenAfterDateTime" properties as your target NodeTypes do not inherit "Neos.TimeableNodeVisibility:Timeable". Please install neos/timeable-node-visibility, if you want to migrate them. |
 
@@ -73,11 +73,11 @@ Feature: Simple migrations without content dimensions for hidden state migration
       | Identifier    | Path             | Node Type             | Properties      | Hidden | Hidden after DateTime | Hidden before DateTime |
       | sites-node-id | /sites           | unstructured          |                 | 0      |                       |                        |
       | site-node-id  | /sites/test-site | Some.Package:Homepage | {"text": "foo"} | 0      | 2099-01-01 10:10:10   | 1990-01-01 10:10:10    |
-    And I run the event migration for content stream "cs-id"
+    And I run the event migration
     Then I expect the following events to be exported
       | Type                                | Payload                                                                                                                                                                                                                                                                                      |
-      | RootNodeAggregateWithNodeWasCreated | {"contentStreamId": "cs-id", "nodeAggregateId": "sites-node-id", "nodeTypeName": "Neos.Neos:Sites", "nodeAggregateClassification": "root"}                                                                                                                                                   |
-      | NodeAggregateWithNodeWasCreated     | {"contentStreamId": "cs-id", "nodeAggregateId": "site-node-id", "nodeTypeName": "Some.Package:Homepage", "nodeName": "test-site", "parentNodeAggregateId": "sites-node-id", "nodeAggregateClassification": "regular", "initialPropertyValues": {"text": {"type": "string", "value": "foo"}}} |
+      | RootNodeAggregateWithNodeWasCreated | {"nodeAggregateId": "sites-node-id", "nodeTypeName": "Neos.Neos:Sites", "nodeAggregateClassification": "root"}                                                                                                                                                   |
+      | NodeAggregateWithNodeWasCreated     | {"nodeAggregateId": "site-node-id", "nodeTypeName": "Some.Package:Homepage", "nodeName": "test-site", "parentNodeAggregateId": "sites-node-id", "nodeAggregateClassification": "regular", "initialPropertyValues": {"text": {"type": "string", "value": "foo"}}} |
     And I expect the following warnings to be logged
       | Skipped the migration of your "hiddenBeforeDateTime" and "hiddenAfterDateTime" properties as your target NodeTypes do not inherit "Neos.TimeableNodeVisibility:Timeable". Please install neos/timeable-node-visibility, if you want to migrate them. |
 
@@ -86,12 +86,12 @@ Feature: Simple migrations without content dimensions for hidden state migration
       | Identifier    | Path             | Node Type             | Properties      | Hidden | Hidden after DateTime | Hidden before DateTime |
       | sites-node-id | /sites           | unstructured          |                 | 0      |                       |                        |
       | site-node-id  | /sites/test-site | Some.Package:Homepage | {"text": "foo"} | 0      | 1990-01-01 10:10:10   | 2099-01-01 10:10:10    |
-    And I run the event migration for content stream "cs-id"
+    And I run the event migration
     Then I expect the following events to be exported
       | Type                                | Payload                                                                                                                                                                                                                                                                                      |
-      | RootNodeAggregateWithNodeWasCreated | {"contentStreamId": "cs-id", "nodeAggregateId": "sites-node-id", "nodeTypeName": "Neos.Neos:Sites", "nodeAggregateClassification": "root"}                                                                                                                                                   |
-      | NodeAggregateWithNodeWasCreated     | {"contentStreamId": "cs-id", "nodeAggregateId": "site-node-id", "nodeTypeName": "Some.Package:Homepage", "nodeName": "test-site", "parentNodeAggregateId": "sites-node-id", "nodeAggregateClassification": "regular", "initialPropertyValues": {"text": {"type": "string", "value": "foo"}}} |
-      | SubtreeWasTagged                    | {"contentStreamId": "cs-id", "nodeAggregateId": "site-node-id", "tag": "disabled"}                                                                                                                                                                                                           |
+      | RootNodeAggregateWithNodeWasCreated | {"nodeAggregateId": "sites-node-id", "nodeTypeName": "Neos.Neos:Sites", "nodeAggregateClassification": "root"}                                                                                                                                                   |
+      | NodeAggregateWithNodeWasCreated     | {"nodeAggregateId": "site-node-id", "nodeTypeName": "Some.Package:Homepage", "nodeName": "test-site", "parentNodeAggregateId": "sites-node-id", "nodeAggregateClassification": "regular", "initialPropertyValues": {"text": {"type": "string", "value": "foo"}}} |
+      | SubtreeWasTagged                    | {"nodeAggregateId": "site-node-id", "tag": "disabled"}                                                                                                                                                                                                           |
     And I expect the following warnings to be logged
       | Skipped the migration of your "hiddenBeforeDateTime" and "hiddenAfterDateTime" properties as your target NodeTypes do not inherit "Neos.TimeableNodeVisibility:Timeable". Please install neos/timeable-node-visibility, if you want to migrate them. |
 
@@ -100,11 +100,11 @@ Feature: Simple migrations without content dimensions for hidden state migration
       | Identifier    | Path             | Node Type             | Properties      | Hidden | Hidden after DateTime | Hidden before DateTime |
       | sites-node-id | /sites           | unstructured          |                 | 0      |                       |                        |
       | site-node-id  | /sites/test-site | Some.Package:Homepage | {"text": "foo"} | 0      | 2098-01-01 10:10:10   | 2099-01-01 10:10:10    |
-    And I run the event migration for content stream "cs-id"
+    And I run the event migration
     Then I expect the following events to be exported
       | Type                                | Payload                                                                                                                                                                                                                                                                                      |
-      | RootNodeAggregateWithNodeWasCreated | {"contentStreamId": "cs-id", "nodeAggregateId": "sites-node-id", "nodeTypeName": "Neos.Neos:Sites", "nodeAggregateClassification": "root"}                                                                                                                                                   |
-      | NodeAggregateWithNodeWasCreated     | {"contentStreamId": "cs-id", "nodeAggregateId": "site-node-id", "nodeTypeName": "Some.Package:Homepage", "nodeName": "test-site", "parentNodeAggregateId": "sites-node-id", "nodeAggregateClassification": "regular", "initialPropertyValues": {"text": {"type": "string", "value": "foo"}}} |
+      | RootNodeAggregateWithNodeWasCreated | {"nodeAggregateId": "sites-node-id", "nodeTypeName": "Neos.Neos:Sites", "nodeAggregateClassification": "root"}                                                                                                                                                   |
+      | NodeAggregateWithNodeWasCreated     | {"nodeAggregateId": "site-node-id", "nodeTypeName": "Some.Package:Homepage", "nodeName": "test-site", "parentNodeAggregateId": "sites-node-id", "nodeAggregateClassification": "regular", "initialPropertyValues": {"text": {"type": "string", "value": "foo"}}} |
     And I expect the following warnings to be logged
       | Skipped the migration of your "hiddenBeforeDateTime" and "hiddenAfterDateTime" properties as your target NodeTypes do not inherit "Neos.TimeableNodeVisibility:Timeable". Please install neos/timeable-node-visibility, if you want to migrate them. |
 
@@ -113,12 +113,12 @@ Feature: Simple migrations without content dimensions for hidden state migration
       | Identifier    | Path             | Node Type             | Properties      | Hidden | Hidden after DateTime | Hidden before DateTime |
       | sites-node-id | /sites           | unstructured          |                 | 0      |                       |                        |
       | site-node-id  | /sites/test-site | Some.Package:Homepage | {"text": "foo"} | 0      | 2099-01-01 10:10:10   | 2098-01-01 10:10:10    |
-    And I run the event migration for content stream "cs-id"
+    And I run the event migration
     Then I expect the following events to be exported
       | Type                                | Payload                                                                                                                                                                                                                                                                                      |
-      | RootNodeAggregateWithNodeWasCreated | {"contentStreamId": "cs-id", "nodeAggregateId": "sites-node-id", "nodeTypeName": "Neos.Neos:Sites", "nodeAggregateClassification": "root"}                                                                                                                                                   |
-      | NodeAggregateWithNodeWasCreated     | {"contentStreamId": "cs-id", "nodeAggregateId": "site-node-id", "nodeTypeName": "Some.Package:Homepage", "nodeName": "test-site", "parentNodeAggregateId": "sites-node-id", "nodeAggregateClassification": "regular", "initialPropertyValues": {"text": {"type": "string", "value": "foo"}}} |
-      | SubtreeWasTagged                    | {"contentStreamId": "cs-id", "nodeAggregateId": "site-node-id", "tag": "disabled"}                                                                                                                                                                                                           |
+      | RootNodeAggregateWithNodeWasCreated | {"nodeAggregateId": "sites-node-id", "nodeTypeName": "Neos.Neos:Sites", "nodeAggregateClassification": "root"}                                                                                                                                                   |
+      | NodeAggregateWithNodeWasCreated     | {"nodeAggregateId": "site-node-id", "nodeTypeName": "Some.Package:Homepage", "nodeName": "test-site", "parentNodeAggregateId": "sites-node-id", "nodeAggregateClassification": "regular", "initialPropertyValues": {"text": {"type": "string", "value": "foo"}}} |
+      | SubtreeWasTagged                    | {"nodeAggregateId": "site-node-id", "tag": "disabled"}                                                                                                                                                                                                           |
     And I expect the following warnings to be logged
       | Skipped the migration of your "hiddenBeforeDateTime" and "hiddenAfterDateTime" properties as your target NodeTypes do not inherit "Neos.TimeableNodeVisibility:Timeable". Please install neos/timeable-node-visibility, if you want to migrate them. |
 
@@ -127,11 +127,11 @@ Feature: Simple migrations without content dimensions for hidden state migration
       | Identifier    | Path             | Node Type             | Properties      | Hidden | Hidden after DateTime | Hidden before DateTime |
       | sites-node-id | /sites           | unstructured          |                 | 0      |                       |                        |
       | site-node-id  | /sites/test-site | Some.Package:Homepage | {"text": "foo"} | 0      |                       | 1990-01-01 10:10:10    |
-    And I run the event migration for content stream "cs-id"
+    And I run the event migration
     Then I expect the following events to be exported
       | Type                                | Payload                                                                                                                                                                                                                                                                                      |
-      | RootNodeAggregateWithNodeWasCreated | {"contentStreamId": "cs-id", "nodeAggregateId": "sites-node-id", "nodeTypeName": "Neos.Neos:Sites", "nodeAggregateClassification": "root"}                                                                                                                                                   |
-      | NodeAggregateWithNodeWasCreated     | {"contentStreamId": "cs-id", "nodeAggregateId": "site-node-id", "nodeTypeName": "Some.Package:Homepage", "nodeName": "test-site", "parentNodeAggregateId": "sites-node-id", "nodeAggregateClassification": "regular", "initialPropertyValues": {"text": {"type": "string", "value": "foo"}}} |
+      | RootNodeAggregateWithNodeWasCreated | {"nodeAggregateId": "sites-node-id", "nodeTypeName": "Neos.Neos:Sites", "nodeAggregateClassification": "root"}                                                                                                                                                   |
+      | NodeAggregateWithNodeWasCreated     | {"nodeAggregateId": "site-node-id", "nodeTypeName": "Some.Package:Homepage", "nodeName": "test-site", "parentNodeAggregateId": "sites-node-id", "nodeAggregateClassification": "regular", "initialPropertyValues": {"text": {"type": "string", "value": "foo"}}} |
     And I expect the following warnings to be logged
       | Skipped the migration of your "hiddenBeforeDateTime" and "hiddenAfterDateTime" properties as your target NodeTypes do not inherit "Neos.TimeableNodeVisibility:Timeable". Please install neos/timeable-node-visibility, if you want to migrate them. |
 
@@ -140,12 +140,12 @@ Feature: Simple migrations without content dimensions for hidden state migration
       | Identifier    | Path             | Node Type             | Properties      | Hidden | Hidden after DateTime | Hidden before DateTime |
       | sites-node-id | /sites           | unstructured          |                 | 0      |                       |                        |
       | site-node-id  | /sites/test-site | Some.Package:Homepage | {"text": "foo"} | 0      | 1990-01-01 10:10:10   |                        |
-    And I run the event migration for content stream "cs-id"
+    And I run the event migration
     Then I expect the following events to be exported
       | Type                                | Payload                                                                                                                                                                                                                                                                                      |
-      | RootNodeAggregateWithNodeWasCreated | {"contentStreamId": "cs-id", "nodeAggregateId": "sites-node-id", "nodeTypeName": "Neos.Neos:Sites", "nodeAggregateClassification": "root"}                                                                                                                                                   |
-      | NodeAggregateWithNodeWasCreated     | {"contentStreamId": "cs-id", "nodeAggregateId": "site-node-id", "nodeTypeName": "Some.Package:Homepage", "nodeName": "test-site", "parentNodeAggregateId": "sites-node-id", "nodeAggregateClassification": "regular", "initialPropertyValues": {"text": {"type": "string", "value": "foo"}}} |
-      | SubtreeWasTagged                    | {"contentStreamId": "cs-id", "nodeAggregateId": "site-node-id", "tag": "disabled"}                                                                                                                                                                                                           |
+      | RootNodeAggregateWithNodeWasCreated | {"nodeAggregateId": "sites-node-id", "nodeTypeName": "Neos.Neos:Sites", "nodeAggregateClassification": "root"}                                                                                                                                                   |
+      | NodeAggregateWithNodeWasCreated     | {"nodeAggregateId": "site-node-id", "nodeTypeName": "Some.Package:Homepage", "nodeName": "test-site", "parentNodeAggregateId": "sites-node-id", "nodeAggregateClassification": "regular", "initialPropertyValues": {"text": {"type": "string", "value": "foo"}}} |
+      | SubtreeWasTagged                    | {"nodeAggregateId": "site-node-id", "tag": "disabled"}                                                                                                                                                                                                           |
     And I expect the following warnings to be logged
       | Skipped the migration of your "hiddenBeforeDateTime" and "hiddenAfterDateTime" properties as your target NodeTypes do not inherit "Neos.TimeableNodeVisibility:Timeable". Please install neos/timeable-node-visibility, if you want to migrate them. |
 
@@ -154,11 +154,11 @@ Feature: Simple migrations without content dimensions for hidden state migration
       | Identifier    | Path             | Node Type             | Properties      | Hidden | Hidden after DateTime | Hidden before DateTime |
       | sites-node-id | /sites           | unstructured          |                 | 0      |                       |                        |
       | site-node-id  | /sites/test-site | Some.Package:Homepage | {"text": "foo"} | 0      | 2099-01-01 10:10:10   |                        |
-    And I run the event migration for content stream "cs-id"
+    And I run the event migration
     Then I expect the following events to be exported
       | Type                                | Payload                                                                                                                                                                                                                                                                                      |
-      | RootNodeAggregateWithNodeWasCreated | {"contentStreamId": "cs-id", "nodeAggregateId": "sites-node-id", "nodeTypeName": "Neos.Neos:Sites", "nodeAggregateClassification": "root"}                                                                                                                                                   |
-      | NodeAggregateWithNodeWasCreated     | {"contentStreamId": "cs-id", "nodeAggregateId": "site-node-id", "nodeTypeName": "Some.Package:Homepage", "nodeName": "test-site", "parentNodeAggregateId": "sites-node-id", "nodeAggregateClassification": "regular", "initialPropertyValues": {"text": {"type": "string", "value": "foo"}}} |
+      | RootNodeAggregateWithNodeWasCreated | {"nodeAggregateId": "sites-node-id", "nodeTypeName": "Neos.Neos:Sites", "nodeAggregateClassification": "root"}                                                                                                                                                   |
+      | NodeAggregateWithNodeWasCreated     | {"nodeAggregateId": "site-node-id", "nodeTypeName": "Some.Package:Homepage", "nodeName": "test-site", "parentNodeAggregateId": "sites-node-id", "nodeAggregateClassification": "regular", "initialPropertyValues": {"text": {"type": "string", "value": "foo"}}} |
     And I expect the following warnings to be logged
       | Skipped the migration of your "hiddenBeforeDateTime" and "hiddenAfterDateTime" properties as your target NodeTypes do not inherit "Neos.TimeableNodeVisibility:Timeable". Please install neos/timeable-node-visibility, if you want to migrate them. |
 
@@ -167,11 +167,11 @@ Feature: Simple migrations without content dimensions for hidden state migration
       | Identifier    | Path             | Node Type             | Properties      | Hidden | Hidden after DateTime | Hidden before DateTime |
       | sites-node-id | /sites           | unstructured          |                 | 0      |                       |                        |
       | site-node-id  | /sites/test-site | Some.Package:Homepage | {"text": "foo"} | 0      |                       | 2099-01-01 10:10:10    |
-    And I run the event migration for content stream "cs-id"
+    And I run the event migration
     Then I expect the following events to be exported
       | Type                                | Payload                                                                                                                                                                                                                                                                                      |
-      | RootNodeAggregateWithNodeWasCreated | {"contentStreamId": "cs-id", "nodeAggregateId": "sites-node-id", "nodeTypeName": "Neos.Neos:Sites", "nodeAggregateClassification": "root"}                                                                                                                                                   |
-      | NodeAggregateWithNodeWasCreated     | {"contentStreamId": "cs-id", "nodeAggregateId": "site-node-id", "nodeTypeName": "Some.Package:Homepage", "nodeName": "test-site", "parentNodeAggregateId": "sites-node-id", "nodeAggregateClassification": "regular", "initialPropertyValues": {"text": {"type": "string", "value": "foo"}}} |
-      | SubtreeWasTagged                    | {"contentStreamId": "cs-id", "nodeAggregateId": "site-node-id", "tag": "disabled"}                                                                                                                                                                                                           |
+      | RootNodeAggregateWithNodeWasCreated | {"nodeAggregateId": "sites-node-id", "nodeTypeName": "Neos.Neos:Sites", "nodeAggregateClassification": "root"}                                                                                                                                                   |
+      | NodeAggregateWithNodeWasCreated     | {"nodeAggregateId": "site-node-id", "nodeTypeName": "Some.Package:Homepage", "nodeName": "test-site", "parentNodeAggregateId": "sites-node-id", "nodeAggregateClassification": "regular", "initialPropertyValues": {"text": {"type": "string", "value": "foo"}}} |
+      | SubtreeWasTagged                    | {"nodeAggregateId": "site-node-id", "tag": "disabled"}                                                                                                                                                                                                           |
     And I expect the following warnings to be logged
       | Skipped the migration of your "hiddenBeforeDateTime" and "hiddenAfterDateTime" properties as your target NodeTypes do not inherit "Neos.TimeableNodeVisibility:Timeable". Please install neos/timeable-node-visibility, if you want to migrate them. |

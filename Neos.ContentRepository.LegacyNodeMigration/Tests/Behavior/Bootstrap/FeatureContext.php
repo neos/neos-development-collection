@@ -27,7 +27,8 @@ use Neos\ContentRepository\Export\Asset\ValueObject\SerializedAsset;
 use Neos\ContentRepository\Export\Asset\ValueObject\SerializedImageVariant;
 use Neos\ContentRepository\Export\Asset\ValueObject\SerializedResource;
 use Neos\ContentRepository\LegacyNodeMigration\Processors\AssetExportProcessor;
-use Neos\ContentRepository\LegacyNodeMigration\SitesToSitesProcessor;
+use Neos\ContentRepository\LegacyNodeMigration\Processors\EventExportProcessor;
+use Neos\ContentRepository\LegacyNodeMigration\Processors\SitesExportProcessor;
 use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\CRTestSuiteTrait;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\Property\PropertyMapper;
@@ -47,6 +48,8 @@ class FeatureContext implements Context
     protected $isolated = false;
 
     private array $nodeDataRows = [];
+    private array $siteDataRows = [];
+    private array $domainDataRows = [];
     /** @var array<PersistentResource> */
     private array $mockResources = [];
     /** @var array<SerializedAsset|SerializedImageVariant> */
@@ -86,9 +89,9 @@ class FeatureContext implements Context
 
     /**
      * @When I run the event migration
-     * @When I run the event migration for content stream :contentStream
+     * @When I run the event migration for workspace :workspace
      */
-    public function iRunTheEventMigration(string $contentStream = null): void
+    public function iRunTheEventMigration(string $workspace = null): void
     {
         $nodeTypeManager = $this->currentContentRepository->getNodeTypeManager();
         $propertyMapper = $this->getObject(PropertyMapper::class);
@@ -106,7 +109,7 @@ class FeatureContext implements Context
         };
         $this->getContentRepositoryService($propertyConverterAccess);
 
-        $migration = new SitesToSitesProcessor(
+        $eventExportProcessor = new EventExportProcessor(
             $nodeTypeManager,
             $propertyMapper,
             $propertyConverterAccess->propertyConverter,
@@ -114,10 +117,8 @@ class FeatureContext implements Context
             $this->getObject(EventNormalizer::class),
             $this->nodeDataRows
         );
-        if ($contentStream !== null) {
-            $migration->setContentStreamId(ContentStreamId::fromString($contentStream));
-        }
-        $this->runCrImportExportProcessors($migration);
+
+        $this->runCrImportExportProcessors($eventExportProcessor);
     }
 
     /**
@@ -203,6 +204,42 @@ class FeatureContext implements Context
 
         $assetExporter = new AssetExporter($this->crImportExportTrait_filesystem, $mockAssetLoader, $mockResourceLoader);
         $migration = new AssetExportProcessor($nodeTypeManager, $assetExporter, $this->nodeDataRows);
+        $this->runCrImportExportProcessors($migration);
+    }
+
+    /**
+     * @When I have the following site data rows:
+     */
+    public function iHaveTheFollowingSiteDataRows(TableNode $siteDataRows): void
+    {
+        $this->siteDataRows = array_map(
+            fn (array $row) => array_map(
+                fn(string $value) => json_decode($value, true),
+                $row
+            ),
+            $siteDataRows->getHash()
+        );
+    }
+
+    /**
+     * @When I have the following domain data rows:
+     */
+    public function iHaveTheFollowingDomainDataRows(TableNode $domainDataRows): void
+    {
+        $this->domainDataRows = array_map(static function (array $row) {
+            return array_map(
+                fn(string $value) => json_decode($value, true),
+                $row
+            );
+        }, $domainDataRows->getHash());
+    }
+
+    /**
+     * @When I run the site migration
+     */
+    public function iRunTheSiteMigration(): void
+    {
+        $migration = new SitesExportProcessor($this->siteDataRows, $this->domainDataRows);
         $this->runCrImportExportProcessors($migration);
     }
 
