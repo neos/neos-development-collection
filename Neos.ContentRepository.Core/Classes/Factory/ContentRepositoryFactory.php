@@ -28,9 +28,20 @@ use Neos\ContentRepository\Core\Feature\NodeDuplication\NodeDuplicationCommandHa
 use Neos\ContentRepository\Core\Feature\WorkspaceCommandHandler;
 use Neos\ContentRepository\Core\Infrastructure\Property\PropertyConverter;
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
+use Neos\ContentRepository\Core\Projection\ProjectionEventHandler;
 use Neos\ContentRepository\Core\Projection\ProjectionsAndCatchUpHooks;
+use Neos\ContentRepository\Core\Projection\ProjectionStates;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
 use Neos\ContentRepository\Core\SharedModel\User\UserIdProviderInterface;
+use Neos\ContentRepository\Core\Subscription\Engine\SubscriptionEngine;
+use Neos\ContentRepository\Core\Subscription\EventStore\RunSubscriptionEventStore;
+use Neos\ContentRepository\Core\Subscription\RetryStrategy\NoRetryStrategy;
+use Neos\ContentRepository\Core\Subscription\RunMode;
+use Neos\ContentRepository\Core\Subscription\Store\SubscriptionStoreInterface;
+use Neos\ContentRepository\Core\Subscription\Subscriber\Subscriber;
+use Neos\ContentRepository\Core\Subscription\Subscriber\Subscribers;
+use Neos\ContentRepository\Core\Subscription\SubscriptionGroup;
+use Neos\ContentRepository\Core\Subscription\SubscriptionId;
 use Neos\EventStore\EventStoreInterface;
 use Psr\Clock\ClockInterface;
 use Symfony\Component\Serializer\Serializer;
@@ -45,6 +56,10 @@ final class ContentRepositoryFactory
     private ProjectionFactoryDependencies $projectionFactoryDependencies;
     private ProjectionsAndCatchUpHooks $projectionsAndCatchUpHooks;
 
+    private EventStoreInterface $eventStore;
+
+    private SubscriptionEngine $subscriptionEngine;
+
     public function __construct(
         private readonly ContentRepositoryId $contentRepositoryId,
         EventStoreInterface $eventStore,
@@ -54,16 +69,19 @@ final class ContentRepositoryFactory
         ProjectionsAndCatchUpHooksFactory $projectionsAndCatchUpHooksFactory,
         private readonly UserIdProviderInterface $userIdProvider,
         private readonly ClockInterface $clock,
+        SubscriptionStoreInterface $subscriptionStore,
     ) {
         $contentDimensionZookeeper = new ContentDimensionZookeeper($contentDimensionSource);
         $interDimensionalVariationGraph = new InterDimensionalVariationGraph(
             $contentDimensionSource,
             $contentDimensionZookeeper
         );
+
+
+        $eventNormalizer = new EventNormalizer();
         $this->projectionFactoryDependencies = new ProjectionFactoryDependencies(
             $contentRepositoryId,
-            $eventStore,
-            new EventNormalizer(),
+            $eventNormalizer,
             $nodeTypeManager,
             $contentDimensionSource,
             $contentDimensionZookeeper,
@@ -71,6 +89,21 @@ final class ContentRepositoryFactory
             new PropertyConverter($propertySerializer)
         );
         $this->projectionsAndCatchUpHooks = $projectionsAndCatchUpHooksFactory->build($this->projectionFactoryDependencies);
+        $subscribers = [];
+        foreach ($this->projectionsAndCatchUpHooks->projections as $projection) {
+            $subscribers[] = new Subscriber(
+                SubscriptionId::fromString(substr(strrchr($projection::class, '\\'), 1)),
+                SubscriptionGroup::fromString('default'),
+                RunMode::FROM_BEGINNING,
+                new ProjectionEventHandler(
+                    $projection,
+                    $this->projectionsAndCatchUpHooks->getCatchUpHookFactoryForProjection($projection)?->build($this->getOrBuild()),
+                ),
+            );
+
+        }
+        $this->subscriptionEngine = new SubscriptionEngine($eventStore, $subscriptionStore, Subscribers::fromArray($subscribers), $eventNormalizer, new NoRetryStrategy());
+        $this->eventStore = new RunSubscriptionEventStore($eventStore, $this->subscriptionEngine);
     }
 
     // The following properties store "singleton" references of objects for this content repository
@@ -87,19 +120,21 @@ final class ContentRepositoryFactory
     public function getOrBuild(): ContentRepository
     {
         if (!$this->contentRepository) {
+            $projectionStates = [];
+            foreach ($this->projectionsAndCatchUpHooks->projections as $projection) {
+                $projectionStates[] = $projection->getState();
+            }
             $this->contentRepository = new ContentRepository(
                 $this->contentRepositoryId,
                 $this->buildCommandBus(),
-                $this->projectionFactoryDependencies->eventStore,
-                $this->projectionsAndCatchUpHooks,
-                $this->projectionFactoryDependencies->eventNormalizer,
                 $this->buildEventPersister(),
                 $this->projectionFactoryDependencies->nodeTypeManager,
                 $this->projectionFactoryDependencies->interDimensionalVariationGraph,
                 $this->projectionFactoryDependencies->contentDimensionSource,
                 $this->userIdProvider,
                 $this->clock,
-                $this->projectionsAndCatchUpHooks->contentGraphProjection->getState()
+                $this->projectionsAndCatchUpHooks->contentGraphProjection->getState(),
+                ProjectionStates::fromArray($projectionStates),
             );
         }
         return $this->contentRepository;
@@ -122,9 +157,10 @@ final class ContentRepositoryFactory
 
         $serviceFactoryDependencies = ContentRepositoryServiceFactoryDependencies::create(
             $this->projectionFactoryDependencies,
+            $this->eventStore,
             $this->getOrBuild(),
             $this->buildEventPersister(),
-            $this->projectionsAndCatchUpHooks,
+            $this->subscriptionEngine,
         );
         return $serviceFactory->build($serviceFactoryDependencies);
     }
@@ -137,7 +173,7 @@ final class ContentRepositoryFactory
                 ),
                 new WorkspaceCommandHandler(
                     $this->buildEventPersister(),
-                    $this->projectionFactoryDependencies->eventStore,
+                    $this->eventStore,
                     $this->projectionFactoryDependencies->eventNormalizer,
                 ),
                 new NodeAggregateCommandHandler(
@@ -164,7 +200,7 @@ final class ContentRepositoryFactory
     {
         if (!$this->eventPersister) {
             $this->eventPersister = new EventPersister(
-                $this->projectionFactoryDependencies->eventStore,
+                $this->eventStore,
                 $this->projectionFactoryDependencies->eventNormalizer,
             );
         }

@@ -24,6 +24,7 @@ use Neos\ContentRepository\Core\Infrastructure\Property\PropertyConverter;
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Core\Projection\ProjectionsAndCatchUpHooks;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
+use Neos\ContentRepository\Core\Subscription\Engine\SubscriptionEngine;
 use Neos\EventStore\EventStoreInterface;
 
 /**
@@ -46,7 +47,7 @@ final readonly class ContentRepositoryServiceFactoryDependencies
         public ContentRepository $contentRepository,
         // we don't need CommandBus, because this is included in ContentRepository->handle()
         public EventPersister $eventPersister,
-        public ProjectionsAndCatchUpHooks $projectionsAndCatchUpHooks,
+        public SubscriptionEngine $subscriptionEngine,
     ) {
     }
 
@@ -55,13 +56,14 @@ final readonly class ContentRepositoryServiceFactoryDependencies
      */
     public static function create(
         ProjectionFactoryDependencies $projectionFactoryDependencies,
+        EventStoreInterface $eventStore,
         ContentRepository $contentRepository,
         EventPersister $eventPersister,
-        ProjectionsAndCatchUpHooks $projectionsAndCatchUpHooks,
+        SubscriptionEngine $subscriptionEngine,
     ): self {
         return new self(
             $projectionFactoryDependencies->contentRepositoryId,
-            $projectionFactoryDependencies->eventStore,
+            $eventStore,
             $projectionFactoryDependencies->eventNormalizer,
             $projectionFactoryDependencies->nodeTypeManager,
             $projectionFactoryDependencies->contentDimensionSource,
@@ -70,7 +72,7 @@ final readonly class ContentRepositoryServiceFactoryDependencies
             $projectionFactoryDependencies->propertyConverter,
             $contentRepository,
             $eventPersister,
-            $projectionsAndCatchUpHooks,
+            $subscriptionEngine,
         );
     }
 }

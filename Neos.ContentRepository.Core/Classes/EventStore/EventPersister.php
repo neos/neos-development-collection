@@ -42,7 +42,5 @@ final readonly class EventPersister
             $normalizedEvents,
             $eventsToPublish->expectedVersion
         );
-
-        $contentRepository->catchUpProjections();
     }
 }

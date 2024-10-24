@@ -21,12 +21,14 @@ use Neos\ContentRepository\Core\Projection\ProjectionStateInterface;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryIds;
 use Neos\ContentRepository\Core\SharedModel\User\UserIdProviderInterface;
+use Neos\ContentRepository\Core\Subscription\Store\SubscriptionStoreInterface;
 use Neos\ContentRepositoryRegistry\Exception\ContentRepositoryNotFoundException;
 use Neos\ContentRepositoryRegistry\Exception\InvalidConfigurationException;
 use Neos\ContentRepositoryRegistry\Factory\Clock\ClockFactoryInterface;
 use Neos\ContentRepositoryRegistry\Factory\ContentDimensionSource\ContentDimensionSourceFactoryInterface;
 use Neos\ContentRepositoryRegistry\Factory\EventStore\EventStoreFactoryInterface;
 use Neos\ContentRepositoryRegistry\Factory\NodeTypeManager\NodeTypeManagerFactoryInterface;
+use Neos\ContentRepositoryRegistry\Factory\SubscriptionStore\SubscriptionStoreFactoryInterface;
 use Neos\ContentRepositoryRegistry\Factory\UserIdProvider\UserIdProviderFactoryInterface;
 use Neos\ContentRepositoryRegistry\SubgraphCachingInMemory\ContentSubgraphWithRuntimeCaches;
 use Neos\ContentRepositoryRegistry\SubgraphCachingInMemory\SubgraphCachePool;
@@ -176,7 +178,8 @@ final class ContentRepositoryRegistry
                 $this->buildPropertySerializer($contentRepositoryId, $contentRepositorySettings),
                 $this->buildProjectionsFactory($contentRepositoryId, $contentRepositorySettings),
                 $this->buildUserIdProvider($contentRepositoryId, $contentRepositorySettings),
-                $clock
+                $clock,
+                $this->buildSubscriptionStore($contentRepositoryId, $clock, $contentRepositorySettings),
             );
         } catch (\Exception $exception) {
             throw InvalidConfigurationException::fromException($contentRepositoryId, $exception);
@@ -313,4 +316,16 @@ final class ContentRepositoryRegistry
         }
         return $clockFactory->build($contentRepositoryIdentifier, $contentRepositorySettings['clock']['options'] ?? []);
     }
+
+    /** @param array<string, mixed> $contentRepositorySettings */
+    private function buildSubscriptionStore(ContentRepositoryId $contentRepositoryId, ClockInterface $clock, array $contentRepositorySettings): SubscriptionStoreInterface
+    {
+        isset($contentRepositorySettings['subscriptionStore']['factoryObjectName']) || throw InvalidConfigurationException::fromMessage('Content repository "%s" does not have subscriptionStore.factoryObjectName configured.', $contentRepositoryId->value);
+        $subscriptionStoreFactory = $this->objectManager->get($contentRepositorySettings['subscriptionStore']['factoryObjectName']);
+        if (!$subscriptionStoreFactory instanceof SubscriptionStoreFactoryInterface) {
+            throw InvalidConfigurationException::fromMessage('subscriptionStore.factoryObjectName for content repository "%s" is not an instance of %s but %s.', $contentRepositoryId->value, SubscriptionStoreFactoryInterface::class, get_debug_type($subscriptionStoreFactory));
+        }
+        return $subscriptionStoreFactory->build($contentRepositoryId, $clock, $contentRepositorySettings['subscriptionStore']['options'] ?? []);
+    }
 }
+

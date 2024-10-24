@@ -30,7 +30,6 @@ final readonly class ProjectionFactoryDependencies
 {
     public function __construct(
         public ContentRepositoryId $contentRepositoryId,
-        public EventStoreInterface $eventStore,
         public EventNormalizer $eventNormalizer,
         public NodeTypeManager $nodeTypeManager,
         public ContentDimensionSourceInterface $contentDimensionSource,

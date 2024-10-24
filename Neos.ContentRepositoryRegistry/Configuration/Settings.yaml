@@ -37,6 +37,9 @@ Neos:
         clock:
           factoryObjectName: Neos\ContentRepositoryRegistry\Factory\Clock\SystemClockFactory
 
+        subscriptionStore:
+          factoryObjectName: Neos\ContentRepositoryRegistry\Factory\SubscriptionStore\SubscriptionStoreFactory
+
         propertyConverters:
           DateTimeNormalizer:
             className: Symfony\Component\Serializer\Normalizer\DateTimeNormalizer
