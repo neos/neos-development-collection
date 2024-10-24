@@ -21,6 +21,7 @@ use Neos\ContentRepository\Core\Feature\NodeCreation\Event\NodeAggregateWithNode
 use Neos\ContentRepository\Core\Feature\NodeModification\Dto\PropertyValuesToWrite;
 use Neos\ContentRepository\Core\Feature\NodeModification\Event\NodePropertiesWereSet;
 use Neos\ContentRepository\Core\Feature\NodeMove\Event\NodeAggregateWasMoved;
+use Neos\ContentRepository\Core\Feature\NodeReferencing\Dto\SerializedNodeReference;
 use Neos\ContentRepository\Core\Feature\NodeReferencing\Dto\SerializedNodeReferences;
 use Neos\ContentRepository\Core\Feature\NodeReferencing\Event\NodeReferencesWereSet;
 use Neos\ContentRepository\Core\Feature\NodeVariation\Event\NodeGeneralizationVariantWasCreated;
@@ -295,6 +296,7 @@ final class NodeDataToEventsProcessor implements ProcessorInterface
                     $nodeName,
                     $serializedPropertyValuesAndReferences->serializedPropertyValues,
                     NodeAggregateClassification::CLASSIFICATION_TETHERED,
+                    $serializedPropertyValuesAndReferences->references,
                 )
             );
         } elseif ($this->visitedNodes->containsNodeAggregate($nodeAggregateId)) {
@@ -318,6 +320,7 @@ final class NodeDataToEventsProcessor implements ProcessorInterface
                     $nodeName,
                     $serializedPropertyValuesAndReferences->serializedPropertyValues,
                     NodeAggregateClassification::CLASSIFICATION_REGULAR,
+                    $serializedPropertyValuesAndReferences->references,
                 )
             );
         }
@@ -325,8 +328,9 @@ final class NodeDataToEventsProcessor implements ProcessorInterface
         if ($this->isNodeHidden($nodeDataRow)) {
             $this->exportEvent(new SubtreeWasTagged($this->workspaceName, $this->contentStreamId, $nodeAggregateId, $this->interDimensionalVariationGraph->getSpecializationSet($originDimensionSpacePoint->toDimensionSpacePoint(), true, $this->visitedNodes->alreadyVisitedOriginDimensionSpacePoints($nodeAggregateId)->toDimensionSpacePointSet()), SubtreeTag::disabled()));
         }
-        foreach ($serializedPropertyValuesAndReferences->references as $referencePropertyName => $destinationNodeAggregateIds) {
-            $this->nodeReferencesWereSetEvents[] = new NodeReferencesWereSet($this->workspaceName, $this->contentStreamId, $nodeAggregateId, new OriginDimensionSpacePointSet([$originDimensionSpacePoint]), ReferenceName::fromString($referencePropertyName), SerializedNodeReferences::fromNodeAggregateIds($destinationNodeAggregateIds));
+
+        if (!$serializedPropertyValuesAndReferences->references->isEmpty()) {
+            $this->nodeReferencesWereSetEvents[] = new NodeReferencesWereSet($this->workspaceName, $this->contentStreamId, $nodeAggregateId, new OriginDimensionSpacePointSet([$originDimensionSpacePoint]), $serializedPropertyValuesAndReferences->references);
         }
 
         $this->visitedNodes->add($nodeAggregateId, new DimensionSpacePointSet([$originDimensionSpacePoint->toDimensionSpacePoint()]), $nodeTypeName, $nodePath, $parentNodeAggregate->nodeAggregateId);
@@ -338,7 +342,7 @@ final class NodeDataToEventsProcessor implements ProcessorInterface
     public function extractPropertyValuesAndReferences(array $nodeDataRow, NodeType $nodeType): SerializedPropertyValuesAndReferences
     {
         $properties = [];
-        $references = [];
+        $references = SerializedNodeReferences::createEmpty();
 
         // Note: We use a PostgreSQL platform because the implementation is forward-compatible, @see JsonArrayType::convertToPHPValue()
         try {
@@ -356,7 +360,7 @@ final class NodeDataToEventsProcessor implements ProcessorInterface
                     if (!is_array($propertyValue)) {
                         $propertyValue = [$propertyValue];
                     }
-                    $references[$propertyName] = NodeAggregateIds::fromArray(array_map(static fn (string $identifier) => NodeAggregateId::fromString($identifier), $propertyValue));
+                    $references = $references->merge(SerializedNodeReferences::fromNameAndTargets(ReferenceName::fromString($propertyName), NodeAggregateIds::fromArray(array_map(static fn (string $identifier) => NodeAggregateId::fromString($identifier), $propertyValue))));
                 }
                 continue;
             }
@@ -474,6 +478,9 @@ final class NodeDataToEventsProcessor implements ProcessorInterface
                 )
             );
         }
+
+        // TODO: We should also set references here, shouldn't we?
+
         // When we specialize/generalize, we create a node variant at exactly the same tree location as the source node
         // If the parent node aggregate id differs, we need to move the just created variant to the new location
         $nodeAggregate = $this->visitedNodes->getByNodeAggregateId($nodeAggregateId);

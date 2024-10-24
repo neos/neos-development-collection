@@ -97,4 +97,11 @@ class MigrateEventsCommandController extends CommandController
         $eventMigrationService = $this->contentRepositoryRegistry->buildService($contentRepositoryId, $this->eventMigrationServiceFactory);
         $eventMigrationService->migratePayloadToValidWorkspaceNames($this->outputLine(...));
     }
+
+    public function migrateSetReferencesToMultiNameFormatCommand(string $contentRepository = 'default'): void
+    {
+        $contentRepositoryId = ContentRepositoryId::fromString($contentRepository);
+        $eventMigrationService = $this->contentRepositoryRegistry->buildService($contentRepositoryId, $this->eventMigrationServiceFactory);
+        $eventMigrationService->migrateReferencesToMultiFormat($this->outputLine(...));
+    }
 }

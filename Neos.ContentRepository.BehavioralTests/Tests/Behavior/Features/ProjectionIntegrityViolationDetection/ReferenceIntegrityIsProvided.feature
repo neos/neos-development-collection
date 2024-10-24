@@ -40,8 +40,7 @@ Feature: Run integrity violation detection regarding reference relations
       | contentStreamId                          | "cs-identifier"                                                    |
       | sourceNodeAggregateId                    | "source-nodandaise"                                                |
       | affectedSourceOriginDimensionSpacePoints | [{"language":"de"}]                                                |
-      | referenceName                            | "referenceProperty"                                                |
-      | references                               | [{"targetNodeAggregateId":"anthony-destinode", "properties":null}] |
+      | references                               | [{"referenceName": "referenceProperty", "references": [{"target":"anthony-destinode", "properties":null}]}] |
     And I run integrity violation detection
     Then I expect the integrity violation detection result to contain exactly 1 error
     And I expect integrity violation detection result error number 1 to have code 1597919585
@@ -63,8 +62,7 @@ Feature: Run integrity violation detection regarding reference relations
       | contentStreamId                          | "cs-identifier"                                                    |
       | sourceNodeAggregateId                    | "source-nodandaise"                                                |
       | affectedSourceOriginDimensionSpacePoints | [{"language":"de"}]                                                |
-      | referenceName                            | "referenceProperty"                                                |
-      | references                               | [{"targetNodeAggregateId":"anthony-destinode", "properties":null}] |
+      | references                               | [{"referenceName": "referenceProperty", "references": [{"target":"anthony-destinode", "properties":null}]}] |
     And I run integrity violation detection
     Then I expect the integrity violation detection result to contain exactly 1 error
     And I expect integrity violation detection result error number 1 to have code 1597919585

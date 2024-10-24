@@ -14,36 +14,44 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Core\Feature\NodeReferencing\Dto;
 
-use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
+use Neos\ContentRepository\Core\Feature\NodeModification\Dto\SerializedPropertyValues;
+use Neos\ContentRepository\Core\Projection\ContentGraph\References;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateIds;
+use Neos\ContentRepository\Core\SharedModel\Node\ReferenceName;
 
 /**
- * A collection of SerializedNodeReference objects, to be used when creating reference relations.
+ * A collection of SerializedNodeReferencesForName objects, to be used when creating reference relations.
  *
- * @implements \IteratorAggregate<SerializedNodeReference>
- * @internal
+ * @implements \IteratorAggregate<SerializedNodeReferencesForName>
+ * @api used in commands and events
  */
-final readonly class SerializedNodeReferences implements \IteratorAggregate, \Countable, \JsonSerializable
+final readonly class SerializedNodeReferences implements \JsonSerializable, \IteratorAggregate
 {
     /**
-     * @var array<SerializedNodeReference>
+     * @var array<SerializedNodeReferencesForName>
      */
     public array $references;
 
-    private function __construct(SerializedNodeReference ...$references)
+    private function __construct(SerializedNodeReferencesForName ...$references)
     {
-        $existingTargets = [];
+        $seenNames = [];
         foreach ($references as $reference) {
-            if (isset($existingTargets[$reference->targetNodeAggregateId->value])) {
-                throw new \InvalidArgumentException(sprintf('Duplicate entry in references to write. Target "%s" already exists in collection.', $reference->targetNodeAggregateId->value), 1700150910);
+            $referenceNameExists = isset($seenNames[$reference->referenceName->value]);
+            if ($referenceNameExists) {
+                throw new \InvalidArgumentException(sprintf('You cannot set references for the same ReferenceName %s multiple times.', $reference->referenceName->value), 1718193720);
             }
-            $existingTargets[$reference->targetNodeAggregateId->value] = true;
+            $seenNames[$reference->referenceName->value] = true;
         }
         $this->references = $references;
     }
 
+    public static function createEmpty(): self
+    {
+        return new self();
+    }
+
     /**
-     * @param array<SerializedNodeReference> $references
+     * @param array<SerializedNodeReferencesForName> $references
      */
     public static function fromReferences(array $references): self
     {
@@ -51,50 +59,86 @@ final readonly class SerializedNodeReferences implements \IteratorAggregate, \Co
     }
 
     /**
-     * @param array<array<string,mixed>> $referenceData
+     * @param array<int, array{"referenceName": string, "references": array<array{"target": string, "properties": mixed}>}> $namesAndReferences
      */
-    public static function fromArray(array $referenceData): self
+    public static function fromArray(array $namesAndReferences): self
     {
-        return new self(...array_map(
-            fn (array $referenceDatum): SerializedNodeReference => SerializedNodeReference::fromArray($referenceDatum),
-            $referenceData
-        ));
+        $result = [];
+        foreach ($namesAndReferences as $referencesByProperty) {
+            $result[] = SerializedNodeReferencesForName::fromArray($referencesByProperty);
+        }
+
+        return new self(...$result);
     }
 
-    public static function fromNodeAggregateIds(NodeAggregateIds $nodeAggregateIds): self
+    public static function fromNameAndTargets(ReferenceName $referenceName, NodeAggregateIds $nodeAggregateIds): self
     {
-        return new self(...array_map(
-            static fn (NodeAggregateId $nodeAggregateId): SerializedNodeReference
-                => new SerializedNodeReference($nodeAggregateId, null),
-            iterator_to_array($nodeAggregateIds)
-        ));
+        $references = array_map(static function ($nodeAggregateId) {
+            return SerializedNodeReference::fromTarget($nodeAggregateId);
+        }, iterator_to_array($nodeAggregateIds));
+
+        return new self(SerializedNodeReferencesForName::fromNameAndSerializedReferences($referenceName, $references));
+    }
+
+    public static function fromReadReferences(References $references): self
+    {
+        $serializedReferences = [];
+        $serializedReferencesByName = [];
+        foreach ($references as $reference) {
+            if (!isset($serializedReferencesByName[$reference->name->value])) {
+                $serializedReferencesByName[$reference->name->value] = [];
+            }
+            $serializedReferencesByName[$reference->name->value][] = SerializedNodeReference::fromTargetAndProperties($reference->node->aggregateId, $reference->properties ? $reference->properties->serialized() : SerializedPropertyValues::createEmpty());
+        }
+
+        foreach ($serializedReferencesByName as $name => $referenceObjects) {
+            $serializedReferences[] = SerializedNodeReferencesForName::fromNameAndSerializedReferences(ReferenceName::fromString($name), $referenceObjects);
+        }
+
+        return new self(...$serializedReferences);
     }
 
     public static function fromJsonString(string $jsonString): self
     {
-        return self::fromArray(\json_decode($jsonString, true));
+        return self::fromArray(\json_decode($jsonString, true, 512, JSON_THROW_ON_ERROR));
     }
 
-    public function merge(self $other): self
+    public function merge(SerializedNodeReferences $serializedNodeReferences): self
     {
-        return new self(...array_merge($this->references, $other->references));
-    }
-
-    public function getIterator(): \Traversable
-    {
-        yield from $this->references;
-    }
-
-    public function count(): int
-    {
-        return count($this->references);
+        return new self(...$this->getIterator(), ...$serializedNodeReferences->getIterator());
     }
 
     /**
-     * @return array<SerializedNodeReference>
+     * @return \Traversable<SerializedNodeReferencesForName>
+     */
+    public function getIterator(): \Traversable
+    {
+        foreach ($this->references as $reference) {
+            yield $reference;
+        }
+    }
+
+    public function isEmpty(): bool
+    {
+        return count($this->references) === 0;
+    }
+
+    /**
+     * @return ReferenceName[]
+     */
+    public function getReferenceNames(): array
+    {
+        return array_map(static fn(SerializedNodeReferencesForName $referencesForProperty) => $referencesForProperty->referenceName, $this->references);
+    }
+
+    /**
+     * @return array<int, array{"referenceName": string, "references": array<array{"target": string, "properties"?: mixed}>}>
      */
     public function jsonSerialize(): array
     {
-        return $this->references;
+        return array_map(
+            static fn (SerializedNodeReferencesForName $referencesForProperty) => $referencesForProperty->toArray(),
+            $this->references
+        );
     }
 }

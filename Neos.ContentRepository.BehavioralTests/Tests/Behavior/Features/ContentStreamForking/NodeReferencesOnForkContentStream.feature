@@ -40,8 +40,7 @@ Feature: On forking a content stream, node references should be copied as well.
     Given the command SetNodeReferences is executed with payload:
       | Key                   | Value                             |
       | sourceNodeAggregateId | "source-nodandaise"               |
-      | referenceName         | "referenceProperty"               |
-      | references            | [{"target": "anthony-destinode"}] |
+      | references            | [{"referenceName": "referenceProperty", "references": [{"target": "anthony-destinode"}]}] |
 
     # Uses ForkContentStream implicitly
     When the command CreateWorkspace is executed with payload:

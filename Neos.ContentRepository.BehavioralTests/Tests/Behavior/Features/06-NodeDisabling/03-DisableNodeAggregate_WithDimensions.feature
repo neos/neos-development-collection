@@ -37,8 +37,7 @@ Feature: Disable a node aggregate
     And the command SetNodeReferences is executed with payload:
       | Key                   | Value                                  |
       | sourceNodeAggregateId | "preceding-nodenborough"               |
-      | referenceName         | "references"                           |
-      | references            | [{"target": "sir-david-nodenborough"}] |
+      | references            | [{"referenceName": "references", "references": [{"target": "sir-david-nodenborough"}]}] |
     # We need both a real and a virtual specialization to test the different selection strategies
     And the command CreateNodeVariant is executed with payload:
       | Key             | Value                    |

@@ -66,7 +66,6 @@ Feature: Create an intact content graph and run integrity violation detection
       | contentStreamId                          | "cs-identifier"                                                         |
       | sourceNodeAggregateId                    | "nody-mc-nodeface"                                                      |
       | affectedSourceOriginDimensionSpacePoints | [{"language":"de"}]                                                     |
-      | referenceName                            | "referenceProperty"                                                     |
-      | references                               | [{"targetNodeAggregateId":"sir-david-nodenborough", "properties":null}] |
+      | references                               | [{"referenceName": "referenceProperty", "references": [{"target":"sir-david-nodenborough", "properties":null}]}] |
     And I run integrity violation detection
     Then I expect the integrity violation detection result to contain exactly 0 errors

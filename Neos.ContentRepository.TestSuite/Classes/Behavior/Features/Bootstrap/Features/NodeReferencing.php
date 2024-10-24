@@ -19,6 +19,7 @@ use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
 use Neos\ContentRepository\Core\Feature\ContentStreamEventStreamName;
 use Neos\ContentRepository\Core\Feature\NodeModification\Dto\PropertyValuesToWrite;
 use Neos\ContentRepository\Core\Feature\NodeReferencing\Command\SetNodeReferences;
+use Neos\ContentRepository\Core\Feature\NodeReferencing\Dto\NodeReferencesForName;
 use Neos\ContentRepository\Core\Feature\NodeReferencing\Dto\NodeReferencesToWrite;
 use Neos\ContentRepository\Core\Feature\NodeReferencing\Dto\NodeReferenceToWrite;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
@@ -55,23 +56,12 @@ trait NodeReferencing
         $sourceOriginDimensionSpacePoint = isset($commandArguments['sourceOriginDimensionSpacePoint'])
             ? OriginDimensionSpacePoint::fromArray($commandArguments['sourceOriginDimensionSpacePoint'])
             : OriginDimensionSpacePoint::fromDimensionSpacePoint($this->currentDimensionSpacePoint);
-        $references = NodeReferencesToWrite::fromReferences(
-            array_map(
-                fn (array $referenceData): NodeReferenceToWrite => new NodeReferenceToWrite(
-                    NodeAggregateId::fromString($referenceData['target']),
-                    isset($referenceData['properties'])
-                        ? $this->deserializeProperties($referenceData['properties'])
-                        : null
-                ),
-                $commandArguments['references']
-            )
-        );
 
+        $references = $this->mapRawNodeReferencesToNodeReferencesToWrite($commandArguments['references']);
         $command = SetNodeReferences::create(
             $workspaceName,
             NodeAggregateId::fromString($commandArguments['sourceNodeAggregateId']),
             $sourceOriginDimensionSpacePoint,
-            ReferenceName::fromString($commandArguments['referenceName']),
             $references,
         );
 
@@ -106,5 +96,19 @@ trait NodeReferencing
         );
 
         $this->publishEvent('NodeReferencesWereSet', $streamName->getEventStreamName(), $eventPayload);
+    }
+
+    protected function mapRawNodeReferencesToNodeReferencesToWrite(array $deserializedTableContent): NodeReferencesToWrite
+    {
+        $referencesForProperty = [];
+        foreach ($deserializedTableContent as $nodeReferencesForProperty) {
+            $references = [];
+            foreach ($nodeReferencesForProperty['references'] as $referenceData) {
+                $properties = isset($referenceData['properties']) ? $this->deserializeProperties($referenceData['properties']) : PropertyValuesToWrite::createEmpty();
+                $references[] = NodeReferenceToWrite::fromTargetAndProperties(NodeAggregateId::fromString($referenceData['target']), $properties);
+            }
+            $referencesForProperty[] = NodeReferencesForName::fromNameAndReferences(ReferenceName::fromString($nodeReferencesForProperty['referenceName']), $references);
+        }
+        return NodeReferencesToWrite::fromReferences($referencesForProperty);
     }
 }

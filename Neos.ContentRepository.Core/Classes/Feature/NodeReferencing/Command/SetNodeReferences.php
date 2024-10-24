@@ -27,14 +27,12 @@ final readonly class SetNodeReferences implements CommandInterface
      * @param WorkspaceName $workspaceName The workspace in which the create operation is to be performed
      * @param NodeAggregateId $sourceNodeAggregateId The identifier of the node aggregate to set references
      * @param OriginDimensionSpacePoint $sourceOriginDimensionSpacePoint The dimension space for which the references should be set
-     * @param ReferenceName $referenceName Name of the reference to set
      * @param NodeReferencesToWrite $references Unserialized reference(s) to set
      */
     private function __construct(
         public WorkspaceName $workspaceName,
         public NodeAggregateId $sourceNodeAggregateId,
         public OriginDimensionSpacePoint $sourceOriginDimensionSpacePoint,
-        public ReferenceName $referenceName,
         public NodeReferencesToWrite $references,
     ) {
     }
@@ -43,11 +41,10 @@ final readonly class SetNodeReferences implements CommandInterface
      * @param WorkspaceName $workspaceName The workspace in which the create operation is to be performed
      * @param NodeAggregateId $sourceNodeAggregateId The identifier of the node aggregate to set references
      * @param OriginDimensionSpacePoint $sourceOriginDimensionSpacePoint The dimension space for which the references should be set
-     * @param ReferenceName $referenceName Name of the reference to set
      * @param NodeReferencesToWrite $references Unserialized reference(s) to set
      */
-    public static function create(WorkspaceName $workspaceName, NodeAggregateId $sourceNodeAggregateId, OriginDimensionSpacePoint $sourceOriginDimensionSpacePoint, ReferenceName $referenceName, NodeReferencesToWrite $references): self
+    public static function create(WorkspaceName $workspaceName, NodeAggregateId $sourceNodeAggregateId, OriginDimensionSpacePoint $sourceOriginDimensionSpacePoint, NodeReferencesToWrite $references): self
     {
-        return new self($workspaceName, $sourceNodeAggregateId, $sourceOriginDimensionSpacePoint, $referenceName, $references);
+        return new self($workspaceName, $sourceNodeAggregateId, $sourceOriginDimensionSpacePoint, $references);
     }
 }

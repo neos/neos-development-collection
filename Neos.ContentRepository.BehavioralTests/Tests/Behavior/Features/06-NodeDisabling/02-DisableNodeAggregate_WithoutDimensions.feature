@@ -35,8 +35,7 @@ Feature: Disable a node aggregate
     And the command SetNodeReferences is executed with payload:
       | Key                   | Value                                  |
       | sourceNodeAggregateId | "preceding-nodenborough"               |
-      | referenceName         | "references"                           |
-      | references            | [{"target": "sir-david-nodenborough"}] |
+      | references            | [{"referenceName": "references", "references": [{"target": "sir-david-nodenborough"}]}] |
 
   Scenario: Disable node with arbitrary strategy since dimensions are not involved
     When the command DisableNodeAggregate is executed with payload:

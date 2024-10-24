@@ -242,21 +242,23 @@ trait ConstraintChecks
         }
     }
 
-    protected function requireNodeTypeToAllowNumberOfReferencesInReference(SerializedNodeReferences $nodeReferences, ReferenceName $referenceName, NodeTypeName $nodeTypeName): void
+    protected function requireNodeTypeToAllowNumberOfReferencesInReference(SerializedNodeReferences $nodeReferences, NodeTypeName $nodeTypeName): void
     {
         $nodeType = $this->requireNodeType($nodeTypeName);
 
-        $maxItems = $nodeType->getReferences()[$referenceName->value]['constraints']['maxItems'] ?? null;
-        if ($maxItems === null) {
-            return;
-        }
+        foreach ($nodeReferences->references as $referencesByName) {
+            $maxItems = $nodeType->getReferences()[$referencesByName->referenceName->value]['constraints']['maxItems'] ?? null;
+            if ($maxItems === null) {
+                continue;
+            }
 
-        if ($maxItems < count($nodeReferences)) {
-            throw ReferenceCannotBeSet::becauseTheItemsCountConstraintsAreNotMatched(
-                $referenceName,
-                $nodeTypeName,
-                count($nodeReferences)
-            );
+            if ($maxItems < $referencesByName->count()) {
+                throw ReferenceCannotBeSet::becauseTheItemsCountConstraintsAreNotMatched(
+                    $referencesByName->referenceName,
+                    $nodeTypeName,
+                    $referencesByName->count()
+                );
+            }
         }
     }
 

@@ -23,6 +23,7 @@ use Neos\ContentRepository\Core\Feature\Common\EmbedsWorkspaceName;
 use Neos\ContentRepository\Core\Feature\Common\InterdimensionalSiblings;
 use Neos\ContentRepository\Core\Feature\Common\PublishableToWorkspaceInterface;
 use Neos\ContentRepository\Core\Feature\NodeModification\Dto\SerializedPropertyValues;
+use Neos\ContentRepository\Core\Feature\NodeReferencing\Dto\SerializedNodeReferences;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateClassification;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
@@ -53,6 +54,7 @@ final readonly class NodeAggregateWithNodeWasCreated implements
         public ?NodeName $nodeName,
         public SerializedPropertyValues $initialPropertyValues,
         public NodeAggregateClassification $nodeAggregateClassification,
+        public SerializedNodeReferences $nodeReferences,
     ) {
     }
 
@@ -89,6 +91,7 @@ final readonly class NodeAggregateWithNodeWasCreated implements
             $this->nodeName,
             $this->initialPropertyValues,
             $this->nodeAggregateClassification,
+            $this->nodeReferences,
         );
     }
 
@@ -112,6 +115,7 @@ final readonly class NodeAggregateWithNodeWasCreated implements
             isset($values['nodeName']) ? NodeName::fromString($values['nodeName']) : null,
             SerializedPropertyValues::fromArray($values['initialPropertyValues']),
             NodeAggregateClassification::from($values['nodeAggregateClassification']),
+            isset($values['nodeReferences']) ? SerializedNodeReferences::fromArray($values['nodeReferences']) : SerializedNodeReferences::createEmpty(),
         );
     }
 

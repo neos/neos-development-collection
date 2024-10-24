@@ -34,8 +34,7 @@ Feature: Remove NodeAggregate
     And the command SetNodeReferences is executed with payload:
       | Key                   | Value                                  |
       | sourceNodeAggregateId | "nodingers-cat"                        |
-      | referenceName         | "references"                           |
-      | references            | [{"target": "sir-david-nodenborough"}] |
+      | references            | [{"referenceName": "references", "references": [{"target": "sir-david-nodenborough"}]}] |
 
   Scenario: Remove a node aggregate
     When the command RemoveNodeAggregate is executed with payload:
