@@ -16,6 +16,7 @@ use Neos\ContentRepository\Core\Feature\WorkspaceEventStreamName;
 use Neos\ContentRepository\Core\Feature\WorkspacePublication\Event\WorkspaceWasDiscarded;
 use Neos\ContentRepository\Core\Feature\WorkspacePublication\Event\WorkspaceWasPartiallyDiscarded;
 use Neos\ContentRepository\Core\Feature\WorkspacePublication\Event\WorkspaceWasPartiallyPublished;
+use Neos\ContentRepository\Core\Feature\WorkspacePublication\Event\WorkspaceWasPublished;
 use Neos\ContentRepository\Core\Feature\WorkspaceRebase\Event\WorkspaceWasRebased;
 use Neos\ContentRepository\Core\Service\ContentStreamPruner\ContentStreamForPruning;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
@@ -271,6 +272,16 @@ class ContentStreamPruner implements ContentRepositoryServiceInterface
                     }
                     break;
                 case WorkspaceWasPartiallyPublished::class:
+                    if (isset($status[$domainEvent->newSourceContentStreamId->value])) {
+                        $status[$domainEvent->newSourceContentStreamId->value] = $status[$domainEvent->newSourceContentStreamId->value]
+                            ->withStatus(ContentStreamStatus::IN_USE_BY_WORKSPACE);
+                    }
+                    if (isset($status[$domainEvent->previousSourceContentStreamId->value])) {
+                        $status[$domainEvent->previousSourceContentStreamId->value] = $status[$domainEvent->previousSourceContentStreamId->value]
+                            ->withStatus(ContentStreamStatus::NO_LONGER_IN_USE);
+                    }
+                    break;
+                case WorkspaceWasPublished::class:
                     if (isset($status[$domainEvent->newSourceContentStreamId->value])) {
                         $status[$domainEvent->newSourceContentStreamId->value] = $status[$domainEvent->newSourceContentStreamId->value]
                             ->withStatus(ContentStreamStatus::IN_USE_BY_WORKSPACE);
