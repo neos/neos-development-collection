@@ -836,7 +836,7 @@ class WorkspaceController extends AbstractModuleController
         );
         $originalNode = null;
         if ($currentWorkspace !== null) {
-            $baseWorkspace = $this->getBaseWorkspaceWhengetContentGraphSureItExists($currentWorkspace, $contentRepository);
+            $baseWorkspace = $this->getBaseWorkspaceWhenSureItExists($currentWorkspace, $contentRepository);
             $originalNode = $this->getOriginalNode($changedNode, $baseWorkspace->workspaceName, $contentRepository);
         }
 
