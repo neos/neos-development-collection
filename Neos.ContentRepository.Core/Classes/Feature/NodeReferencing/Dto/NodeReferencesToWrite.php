@@ -14,10 +14,6 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Core\Feature\NodeReferencing\Dto;
 
-use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
-use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateIds;
-use Neos\ContentRepository\Core\SharedModel\Node\ReferenceName;
-
 /**
  * Node references to write, supports arbitrary objects as reference values.
  * Will be then converted to {@see SerializedNodeReferences} inside the events and persisted commands.
@@ -45,17 +41,6 @@ final readonly class NodeReferencesToWrite implements \JsonSerializable, \Iterat
             $seenNames[$reference->referenceName->value] = true;
         }
         $this->references = $references;
-    }
-
-    /**
-     * @param ReferenceName $referenceName
-     * @param NodeAggregateIds $targets
-     * @return self
-     */
-    public static function fromNameAndTargets(ReferenceName $referenceName, NodeAggregateIds $targets): self
-    {
-        $references = $targets->map(static fn(NodeAggregateId $target) => NodeReferenceToWrite::fromTarget($target));
-        return new self(NodeReferencesForName::fromNameAndReferences($referenceName, $references));
     }
 
     /**

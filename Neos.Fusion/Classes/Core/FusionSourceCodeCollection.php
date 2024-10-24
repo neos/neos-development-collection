@@ -68,9 +68,6 @@ final class FusionSourceCodeCollection implements \IteratorAggregate, \Countable
         return new self(...$this->fusionCodeCollection, ...$other->fusionCodeCollection);
     }
 
-    /**
-     * @return \Traversable<int,FusionSourceCode>
-     */
     public function getIterator(): \Traversable
     {
         yield from $this->fusionCodeCollection;

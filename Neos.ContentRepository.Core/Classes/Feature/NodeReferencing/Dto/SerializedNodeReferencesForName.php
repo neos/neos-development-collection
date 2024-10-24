@@ -71,4 +71,9 @@ class SerializedNodeReferencesForName
             "references" => array_map(static fn(SerializedNodeReference $reference) => $reference->toArray(), $this->references)
         ];
     }
+
+    public function count(): int
+    {
+        return count($this->references);
+    }
 }

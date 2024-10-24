@@ -32,7 +32,6 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindChildNodesFil
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindPrecedingSiblingNodesFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindSucceedingSiblingNodesFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate;
-use Neos\ContentRepository\Core\Projection\ContentGraph\Reference;
 use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
 use Neos\ContentRepository\Core\SharedModel\Exception\ContentStreamDoesNotExistYet;
 use Neos\ContentRepository\Core\SharedModel\Exception\ContentStreamIsClosed;
@@ -247,17 +246,17 @@ trait ConstraintChecks
     {
         $nodeType = $this->requireNodeType($nodeTypeName);
 
-        foreach ($nodeReferences->references as $referencesByPropertyName) {
-            $maxItems = $nodeType->getReferences()[$referencesByPropertyName->referenceName->value]['constraints']['maxItems'] ?? null;
+        foreach ($nodeReferences->references as $referencesByName) {
+            $maxItems = $nodeType->getReferences()[$referencesByName->referenceName->value]['constraints']['maxItems'] ?? null;
             if ($maxItems === null) {
                 continue;
             }
 
-            if ($maxItems < count($referencesByPropertyName->references)) {
+            if ($maxItems < $referencesByName->count()) {
                 throw ReferenceCannotBeSet::becauseTheItemsCountConstraintsAreNotMatched(
-                    $referencesByPropertyName->referenceName,
+                    $referencesByName->referenceName,
                     $nodeTypeName,
-                    count($referencesByPropertyName->references)
+                    $referencesByName->count()
                 );
             }
         }
