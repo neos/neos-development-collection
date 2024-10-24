@@ -137,8 +137,7 @@ trait CRTestSuiteTrait
     public function iExpectTheContentStreamToNotExist(string $rawContentStreamId): void
     {
         $contentStream = $this->currentContentRepository->findContentStreamById(ContentStreamId::fromString($rawContentStreamId));
-        $contentStreamExists = $contentStream !== null && !$contentStream->removed;
-        Assert::assertFalse($contentStreamExists, sprintf('Content stream "%s" was not expected to exist, but it does', $rawContentStreamId));
+        Assert::assertNull($contentStream, sprintf('Content stream "%s" was not expected to exist, but it does', $rawContentStreamId));
     }
 
     /**
@@ -273,7 +272,7 @@ trait CRTestSuiteTrait
     {
         /** @var ContentStreamPruner $contentStreamPruner */
         $contentStreamPruner = $this->getContentRepositoryService(new ContentStreamPrunerFactory());
-        $contentStreamPruner->prune();
+        $contentStreamPruner->prune(false, fn () => null);
     }
 
     /**

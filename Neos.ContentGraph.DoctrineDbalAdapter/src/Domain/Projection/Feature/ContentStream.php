@@ -36,9 +36,7 @@ trait ContentStream
 
     private function removeContentStream(ContentStreamId $contentStreamId): void
     {
-        $this->dbal->update($this->tableNames->contentStream(), [
-            'removed' => true,
-        ], [
+        $this->dbal->delete($this->tableNames->contentStream(), [
             'id' => $contentStreamId->value
         ]);
     }

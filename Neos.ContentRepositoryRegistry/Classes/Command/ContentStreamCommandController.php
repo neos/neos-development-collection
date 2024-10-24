@@ -27,7 +27,7 @@ class ContentStreamCommandController extends CommandController
      *       To remove the deleted Content Streams, use `./flow contentStream:pruneRemovedFromEventStream` after running
      *       `./flow contentStream:prune`.
      *
-     * By default, only content streams in STATE_NO_LONGER_IN_USE and STATE_REBASE_ERROR will be removed.
+     * By default, only content streams that are NO_LONGER_IN_USE will be removed.
      * If you also call with "--removeTemporary", will delete ALL content streams which are currently not assigned
      * to a workspace (f.e. dangling ones in FORKED or CREATED.).
      *
@@ -39,15 +39,10 @@ class ContentStreamCommandController extends CommandController
         $contentRepositoryId = ContentRepositoryId::fromString($contentRepository);
         $contentStreamPruner = $this->contentRepositoryRegistry->buildService($contentRepositoryId, new ContentStreamPrunerFactory());
 
-        $unusedContentStreams = $contentStreamPruner->prune($removeTemporary);
-        $unusedContentStreamsPresent = false;
-        foreach ($unusedContentStreams as $contentStreamId) {
-            $this->outputFormatted('Removed %s', [$contentStreamId->value]);
-            $unusedContentStreamsPresent = true;
-        }
-        if (!$unusedContentStreamsPresent) {
-            $this->outputLine('There are no unused content streams.');
-        }
+        $contentStreamPruner->prune(
+            $removeTemporary,
+            $this->outputLine(...)
+        );
     }
 
     /**
@@ -60,10 +55,10 @@ class ContentStreamCommandController extends CommandController
         $contentRepositoryId = ContentRepositoryId::fromString($contentRepository);
         $contentStreamPruner = $this->contentRepositoryRegistry->buildService($contentRepositoryId, new ContentStreamPrunerFactory());
 
-        $unusedContentStreams = $contentStreamPruner->pruneRemovedFromEventStream();
+        $unusedContentStreamNames = $contentStreamPruner->pruneRemovedFromEventStream();
         $unusedContentStreamsPresent = false;
-        foreach ($unusedContentStreams as $contentStreamId) {
-            $this->outputFormatted('Removed events for %s', [$contentStreamId->id->value]);
+        foreach ($unusedContentStreamNames as $contentStreamName) {
+            $this->outputFormatted('Removed events for %s', [$contentStreamName->value]);
             $unusedContentStreamsPresent = true;
         }
         if (!$unusedContentStreamsPresent) {
