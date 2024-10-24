@@ -109,7 +109,7 @@ class ContentStreamPruner implements ContentRepositoryServiceInterface
      *
      *   - Otherwise, we cannot replay the other content streams correctly (if the base content streams are missing).
      *
-     * @return list<StreamName> the removed content streams
+     * @return list<ContentStreamId> the removed content streams
      */
     public function pruneRemovedFromEventStream(): array
     {
@@ -206,7 +206,8 @@ class ContentStreamPruner implements ContentRepositoryServiceInterface
                         $domainEvent->contentStreamId,
                         ContentStreamStatus::CREATED,
                         null
-                    );                    break;
+                    );
+                    break;
                 case ContentStreamWasForked::class:
                     $status[$domainEvent->newContentStreamId->value] = ContentStreamForPruning::create(
                         $domainEvent->newContentStreamId,
