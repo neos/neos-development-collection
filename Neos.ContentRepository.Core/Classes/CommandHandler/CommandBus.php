@@ -14,14 +14,14 @@ use Neos\ContentRepository\Core\EventStore\EventsToPublish;
  *
  * @internal
  */
-final class CommandBus
+final readonly class CommandBus
 {
     /**
-     * @var (CommandHandlerInterface|ControlFlowAwareCommandHandlerInterface)[]
+     * @var CommandHandlerInterface[]
      */
-    private array $handlers;
+    public array $handlers;
 
-    public function __construct(CommandHandlerInterface|ControlFlowAwareCommandHandlerInterface ...$handlers)
+    public function __construct(CommandHandlerInterface ...$handlers)
     {
         $this->handlers = $handlers;
     }

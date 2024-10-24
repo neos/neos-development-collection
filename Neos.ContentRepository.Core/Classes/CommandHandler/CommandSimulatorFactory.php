@@ -15,14 +15,11 @@ use Neos\EventStore\Helper\InMemoryEventStore;
  */
 final readonly class CommandSimulatorFactory
 {
-    /**
-     * @param array<CommandHandlerInterface> $handlers
-     */
     public function __construct(
         private CommandHandlingDependencies $commandHandlingDependencies,
         private ContentGraphProjectionInterface $contentRepositoryProjection,
         private EventNormalizer $eventNormalizer,
-        private array $handlers
+        private CommandBus $commandBus
     ) {
     }
 
@@ -32,7 +29,7 @@ final readonly class CommandSimulatorFactory
             $this->commandHandlingDependencies,
             $this->contentRepositoryProjection,
             $this->eventNormalizer,
-            $this->handlers,
+            $this->commandBus,
             new InMemoryEventStore(),
             $workspaceNameToSimulateIn,
         );

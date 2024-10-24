@@ -30,13 +30,12 @@ final class CommandSimulator
     /**
      * @param ContentGraphProjectionInterface $contentRepositoryProjection
      * @param EventNormalizer $eventNormalizer
-     * @param array<CommandHandlerInterface> $handlers
      */
     public function __construct(
         private readonly CommandHandlingDependencies $commandHandlingDependencies,
         private readonly ContentGraphProjectionInterface $contentRepositoryProjection,
         private readonly EventNormalizer $eventNormalizer,
-        private readonly array $handlers,
+        private readonly CommandBus $commandBus,
         private readonly InMemoryEventStore $inMemoryEventStore,
         private readonly WorkspaceName $workspaceNameToSimulateIn,
     ) {
@@ -62,8 +61,6 @@ final class CommandSimulator
      *
      * We will automatically copy given commands to the workspace this simulation
      * is running in to ensure consistency in the simulations constraint checks.
-     *
-     * @see __construct()
      */
     public function handle(RebasableToOtherWorkspaceInterface $command): void
     {
@@ -74,7 +71,10 @@ final class CommandSimulator
         // FIXME: Check if workspace already matches and skip this
         $commandInWorkspace = $command->createCopyForWorkspace($this->workspaceNameToSimulateIn);
 
-        $eventsToPublish = $this->handleCommand($commandInWorkspace, $this->commandHandlingDependencies);
+        $eventsToPublish = $this->commandBus->handle($commandInWorkspace, $this->commandHandlingDependencies);
+        if (!$eventsToPublish instanceof EventsToPublish) {
+            throw new \RuntimeException(sprintf('CommandSimulator expects direct EventsToPublish to be returned when handling %s', $command::class));
+        }
 
         if ($eventsToPublish->events->isEmpty()) {
             return;
@@ -125,16 +125,5 @@ final class CommandSimulator
     public function eventStream(): EventStreamInterface
     {
         return $this->inMemoryEventStore->load(VirtualStreamName::all());
-    }
-
-    private function handleCommand(CommandInterface $command, CommandHandlingDependencies $commandHandlingDependencies): EventsToPublish
-    {
-        // TODO fail if multiple handlers can handle the same command
-        foreach ($this->handlers as $handler) {
-            if ($handler->canHandle($command)) {
-                return $handler->handle($command, $commandHandlingDependencies);
-            }
-        }
-        throw new \RuntimeException(sprintf('No handler found for Command "%s"', get_debug_type($command)), 1649582778);
     }
 }

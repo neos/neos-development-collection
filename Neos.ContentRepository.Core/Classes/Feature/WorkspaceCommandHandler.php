@@ -14,9 +14,9 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Core\Feature;
 
+use Neos\ContentRepository\Core\CommandHandler\CommandHandlerInterface;
 use Neos\ContentRepository\Core\CommandHandler\CommandInterface;
 use Neos\ContentRepository\Core\CommandHandler\CommandSimulatorFactory;
-use Neos\ContentRepository\Core\CommandHandler\ControlFlowAwareCommandHandlerInterface;
 use Neos\ContentRepository\Core\CommandHandlingDependencies;
 use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\EventStore\DecoratedEvent;
@@ -74,7 +74,7 @@ use Neos\EventStore\Model\EventStream\ExpectedVersion;
 /**
  * @internal from userland, you'll use ContentRepository::handle to dispatch commands
  */
-final readonly class WorkspaceCommandHandler implements ControlFlowAwareCommandHandlerInterface
+final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
 {
     use ContentStreamHandling;
 

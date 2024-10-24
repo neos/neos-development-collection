@@ -91,7 +91,8 @@ final class ContentRepositoryFactory
             return $this->contentRepository;
         }
 
-        $simpleCommandHandlers = [
+        // we dont need full recursion in rebase - e.g apply workspace commands - and thus we can use this set for simulation
+        $commandBusForRebaseAbleCommands = new CommandBus(
             new NodeAggregateCommandHandler(
                 $this->projectionFactoryDependencies->nodeTypeManager,
                 $this->projectionFactoryDependencies->contentDimensionZookeeper,
@@ -107,7 +108,7 @@ final class ContentRepositoryFactory
                 $this->projectionFactoryDependencies->contentDimensionZookeeper,
                 $this->projectionFactoryDependencies->interDimensionalVariationGraph,
             )
-        ];
+        );
 
         $contentGraphReadModel = $this->projectionsAndCatchUpHooks->contentGraphProjection->getState();
         $commandHandlingDependencies = new CommandHandlingDependencies($contentGraphReadModel);
@@ -116,22 +117,22 @@ final class ContentRepositoryFactory
             $commandHandlingDependencies,
             $this->projectionsAndCatchUpHooks->contentGraphProjection,
             $this->projectionFactoryDependencies->eventNormalizer,
-            $simpleCommandHandlers
+            $commandBusForRebaseAbleCommands
         );
 
-        $commandBus = new CommandBus(
+        $publicCommandBus = new CommandBus(
             new ContentStreamCommandHandler(),
             new WorkspaceCommandHandler(
                 $commandSimulatorFactory,
                 $this->projectionFactoryDependencies->eventStore,
                 $this->projectionFactoryDependencies->eventNormalizer,
             ),
-            ...$simpleCommandHandlers
+            ...$commandBusForRebaseAbleCommands->handlers
         );
 
         return $this->contentRepository = new ContentRepository(
             $this->contentRepositoryId,
-            $commandBus,
+            $publicCommandBus,
             $this->projectionFactoryDependencies->eventStore,
             $this->projectionsAndCatchUpHooks,
             $this->projectionFactoryDependencies->eventNormalizer,

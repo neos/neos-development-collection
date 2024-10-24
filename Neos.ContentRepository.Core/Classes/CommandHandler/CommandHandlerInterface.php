@@ -18,5 +18,9 @@ use Neos\ContentRepository\Core\EventStore\EventsToPublish;
 interface CommandHandlerInterface
 {
     public function canHandle(CommandInterface $command): bool;
-    public function handle(CommandInterface $command, CommandHandlingDependencies $commandHandlingDependencies): EventsToPublish;
+
+    /**
+     * @return EventsToPublish|\Generator<int, EventsToPublish>
+     */
+    public function handle(CommandInterface $command, CommandHandlingDependencies $commandHandlingDependencies): EventsToPublish|\Generator;
 }
