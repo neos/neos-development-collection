@@ -76,14 +76,16 @@ You can chose from one of the following options:
 
 # the following config points to a Neos 8.0 database (adjust to your needs), created by
 # the legacy "./flow site:import Neos.Demo" command.
-./flow cr:migrateLegacyData --config '{"dbal": {"dbname": "neos80"}, "resourcesPath": "/path/to/neos-8.0/Data/Persistent/Resources"}'
+./flow site:migrateLegacyData --config '{"dbal": {"dbname": "neos80"}, "resourcesPath": "/path/to/neos-8.0/Data/Persistent/Resources"}'
 ```
 
 #### Importing an existing (Neos >= 9.0) Site from an Export
 
 ``` bash
+# make sure this cr is empty
+./flow site:pruneAll
 # import the event stream from the Neos.Demo package
-./flow cr:import Packages/Sites/Neos.Demo/Resources/Private/Content
+./flow site:importAll Packages/Sites/Neos.Demo/Resources/Private/Content
 ```
 
 ### Running Neos

@@ -30,7 +30,7 @@ use Neos\Flow\Utility\Environment;
 use Neos\Neos\Domain\Service\SiteImportService;
 use Neos\Utility\Files;
 
-class CrCommandController extends CommandController
+class SiteCommandController extends CommandController
 {
     public function __construct(
         private readonly Connection                  $connection,

@@ -16,7 +16,7 @@ use Neos\EventStore\Model\EventStream\VirtualStreamName;
 /**
  * Content Repository service to perform Projection operations
  *
- * @internal this is currently only used by the {@see CrCommandController}
+ * @internal this is currently only used by the {@see SiteCommandController}
  */
 final class ProjectionService implements ContentRepositoryServiceInterface
 {
