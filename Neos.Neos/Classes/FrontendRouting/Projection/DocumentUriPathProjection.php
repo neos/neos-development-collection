@@ -108,10 +108,7 @@ final class DocumentUriPathProjection implements ProjectionInterface, WithMarkSt
         $schemaManager = $this->dbal->createSchemaManager();
         $schema = (new DocumentUriPathSchemaBuilder($this->tableNamePrefix))->buildSchema($schemaManager);
         $statements = DbalSchemaDiff::determineRequiredSqlStatements($this->dbal, $schema);
-        // MIGRATIONS
-        if ($this->dbal->getSchemaManager()->tablesExist([$this->tableNamePrefix . '_livecontentstreams'])) {
-            $statements[] = sprintf('DROP table %s_livecontentstreams;', $this->tableNamePrefix);
-        }
+
         return $statements;
     }
 

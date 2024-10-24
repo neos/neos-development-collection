@@ -102,42 +102,13 @@ final class ContentRepository
         // publishing themselves
         $eventsToPublishOrGenerator = $this->commandBus->handle($command, $this->commandHandlingDependencies);
 
-        // TODO only apply metadata if is copied event?? In generator below we ignore this...
-
         if ($eventsToPublishOrGenerator instanceof EventsToPublish) {
-            // TODO meaningful exception message
-            $initiatingUserId = $this->userIdProvider->getUserId();
-            $initiatingTimestamp = $this->clock->now()->format(\DateTimeInterface::ATOM);
-
-            // Add "initiatingUserId" and "initiatingTimestamp" metadata to all events.
-            //                        This is done in order to keep information about the _original_ metadata when an
-            //                        event is re-applied during publishing/rebasing
-            // "initiatingUserId": The identifier of the user that originally triggered this event. This will never
-            //                     be overridden if it is set once.
-            // "initiatingTimestamp": The timestamp of the original event. The "recordedAt" timestamp will always be
-            //                        re-created and reflects the time an event was actually persisted in a stream,
-            // the "initiatingTimestamp" will be kept and is never overridden again.
-            // TODO: cleanup
-            $eventsToPublish = new EventsToPublish(
-                $eventsToPublishOrGenerator->streamName,
-                Events::fromArray(
-                    $eventsToPublishOrGenerator->events->map(function (EventInterface|DecoratedEvent $event) use (
-                        $initiatingUserId,
-                        $initiatingTimestamp
-                    ) {
-                        $metadata = $event instanceof DecoratedEvent ? $event->eventMetadata?->value ?? [] : [];
-                        $metadata['initiatingUserId'] ??= $initiatingUserId;
-                        $metadata['initiatingTimestamp'] ??= $initiatingTimestamp;
-                        return DecoratedEvent::create($event, metadata: EventMetadata::fromArray($metadata));
-                    })
-                ),
-                $eventsToPublishOrGenerator->expectedVersion,
-            );
+            $eventsToPublish = $this->enrichEventsToPublishWithMetadata($eventsToPublishOrGenerator);
             $this->eventPersister->publishEvents($this, $eventsToPublish);
         } else {
             foreach ($eventsToPublishOrGenerator as $eventsToPublish) {
                 assert($eventsToPublish instanceof EventsToPublish); // just for the ide
-
+                $eventsToPublish = $this->enrichEventsToPublishWithMetadata($eventsToPublish);
                 try {
                     $this->eventPersister->publishEvents($this, $eventsToPublish);
                 } catch (ConcurrencyException $e) {
@@ -153,7 +124,8 @@ final class ContentRepository
                     $errorStrategy = $eventsToPublishOrGenerator->throw($e);
 
                     if ($errorStrategy instanceof EventsToPublish) {
-                        $this->eventPersister->publishEvents($this, $errorStrategy);
+                        $eventsToPublish = $this->enrichEventsToPublishWithMetadata($errorStrategy);
+                        $this->eventPersister->publishEvents($this, $this->enrichEventsToPublishWithMetadata($eventsToPublish));
                     }
                 }
             }
@@ -282,11 +254,7 @@ final class ContentRepository
      */
     public function getContentGraph(WorkspaceName $workspaceName): ContentGraphInterface
     {
-        $workspace = $this->contentGraphReadModel->findWorkspaceByName($workspaceName);
-        if ($workspace === null) {
-            throw WorkspaceDoesNotExist::butWasSupposedTo($workspaceName);
-        }
-        return $this->contentGraphReadModel->buildContentGraph($workspaceName, $workspace->currentContentStreamId);
+        return $this->contentGraphReadModel->getContentGraph($workspaceName);
     }
 
     /**
@@ -329,5 +297,38 @@ final class ContentRepository
     public function getContentDimensionSource(): ContentDimensionSourceInterface
     {
         return $this->contentDimensionSource;
+    }
+
+    /**
+     * Add "initiatingUserId" and "initiatingTimestamp" metadata to all events.
+     *                        This is done in order to keep information about the _original_ metadata when an
+     *                        event is re-applied during publishing/rebasing
+     * "initiatingUserId": The identifier of the user that originally triggered this event. This will never
+     *                     be overridden if it is set once.
+     * "initiatingTimestamp": The timestamp of the original event. The "recordedAt" timestamp will always be
+     *                        re-created and reflects the time an event was actually persisted in a stream,
+     *                        the "initiatingTimestamp" will be kept and is never overridden again.
+     */
+    private function enrichEventsToPublishWithMetadata(EventsToPublish $eventsToPublish): EventsToPublish
+    {
+        $initiatingUserId = $this->userIdProvider->getUserId();
+        $initiatingTimestamp = $this->clock->now()->format(\DateTimeInterface::ATOM);
+
+        return new EventsToPublish(
+            $eventsToPublish->streamName,
+            Events::fromArray(
+                $eventsToPublish->events->map(function (EventInterface|DecoratedEvent $event) use (
+                    $initiatingUserId,
+                    $initiatingTimestamp
+                ) {
+                    $metadata = $event instanceof DecoratedEvent ? $event->eventMetadata?->value ?? [] : [];
+                    $metadata['initiatingUserId'] ??= $initiatingUserId;
+                    $metadata['initiatingTimestamp'] ??= $initiatingTimestamp;
+
+                    return DecoratedEvent::create($event, metadata: EventMetadata::fromArray($metadata));
+                })
+            ),
+            $eventsToPublish->expectedVersion,
+        );
     }
 }

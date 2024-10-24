@@ -11,6 +11,7 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphReadModelInt
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphInterface;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
+use Neos\ContentRepository\Core\SharedModel\Exception\WorkspaceDoesNotExist;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStream;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreams;
@@ -30,6 +31,15 @@ final readonly class ContentHyperGraphReadModelAdapter implements ContentGraphRe
         private NodeTypeManager $nodeTypeManager,
         private string $tableNamePrefix,
     ) {
+    }
+
+    public function getContentGraph(WorkspaceName $workspaceName): ContentGraphInterface
+    {
+        $contentStreamId = $this->findWorkspaceByName($workspaceName)?->currentContentStreamId;
+        if ($contentStreamId === null) {
+            throw WorkspaceDoesNotExist::butWasSupposedTo($workspaceName);
+        }
+        return new ContentHyperGraph($this->dbal, $this->nodeFactory, $this->contentRepositoryId, $this->nodeTypeManager, $this->tableNamePrefix, $workspaceName, $contentStreamId);
     }
 
     public function buildContentGraph(WorkspaceName $workspaceName, ContentStreamId $contentStreamId): ContentGraphInterface

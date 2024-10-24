@@ -5,21 +5,25 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\StructureAdjustment\Adjustment;
 
 use Neos\ContentRepository\Core\DimensionSpace;
+use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Core\EventStore\Events;
 use Neos\ContentRepository\Core\EventStore\EventsToPublish;
 use Neos\ContentRepository\Core\Feature\Common\InterdimensionalSibling;
 use Neos\ContentRepository\Core\Feature\Common\InterdimensionalSiblings;
+use Neos\ContentRepository\Core\Feature\Common\NodeTypeChangeInternals;
 use Neos\ContentRepository\Core\Feature\Common\NodeVariationInternals;
 use Neos\ContentRepository\Core\Feature\Common\TetheredNodeInternals;
 use Neos\ContentRepository\Core\Feature\ContentStreamEventStreamName;
 use Neos\ContentRepository\Core\Feature\NodeMove\Event\NodeAggregateWasMoved;
 use Neos\ContentRepository\Core\Infrastructure\Property\PropertyConverter;
+use Neos\ContentRepository\Core\NodeType\NodeType;
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphInterface;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindChildNodesFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
+use Neos\ContentRepository\Core\SharedModel\Exception\NodeTypeNotFound;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\EventStore\Model\EventStream\ExpectedVersion;
@@ -29,6 +33,7 @@ class TetheredNodeAdjustments
     use NodeVariationInternals;
     use RemoveNodeAggregateTrait;
     use TetheredNodeInternals;
+    use NodeTypeChangeInternals;
 
     public function __construct(
         private readonly ContentGraphInterface $contentGraph,
@@ -189,6 +194,14 @@ class TetheredNodeAdjustments
         }
     }
 
+    protected function requireNodeType(NodeTypeName $nodeTypeName): NodeType
+    {
+        return $this->nodeTypeManager->getNodeType($nodeTypeName) ?? throw new NodeTypeNotFound(
+            'Node type "' . $nodeTypeName->value . '" is unknown to the node type manager.',
+            1729600849
+        );
+    }
+
     protected function getInterDimensionalVariationGraph(): DimensionSpace\InterDimensionalVariationGraph
     {
         return $this->interDimensionalVariationGraph;
@@ -247,5 +260,15 @@ class TetheredNodeAdjustments
             Events::fromArray($events),
             ExpectedVersion::ANY()
         );
+    }
+
+    protected function getNodeTypeManager(): NodeTypeManager
+    {
+        return $this->nodeTypeManager;
+    }
+
+    protected function getAllowedDimensionSubspace(): DimensionSpacePointSet
+    {
+        return $this->interDimensionalVariationGraph->getDimensionSpacePoints();
     }
 }

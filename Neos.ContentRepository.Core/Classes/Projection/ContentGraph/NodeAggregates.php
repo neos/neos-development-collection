@@ -60,9 +60,6 @@ final class NodeAggregates implements \IteratorAggregate, \Countable
         return new self([]);
     }
 
-    /**
-     * @return \Traversable<NodeAggregate>
-     */
     public function getIterator(): \Traversable
     {
         yield from $this->nodeAggregates;

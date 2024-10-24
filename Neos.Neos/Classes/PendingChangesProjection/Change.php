@@ -30,13 +30,16 @@ use Neos\Flow\Annotations as Flow;
  */
 final class Change
 {
+    public const AGGREGATE_DIMENSIONSPACEPOINT_HASH_PLACEHOLDER = 'AGGREGATE';
+
     /**
      * @param NodeAggregateId|null $removalAttachmentPoint {@see RemoveNodeAggregate::$removalAttachmentPoint} for docs
      */
     public function __construct(
         public ContentStreamId $contentStreamId,
         public NodeAggregateId $nodeAggregateId,
-        public OriginDimensionSpacePoint $originDimensionSpacePoint,
+        // null for aggregate scoped changes (e.g. NodeAggregateNameWasChanged, NodeAggregateTypeWasChanged)
+        public ?OriginDimensionSpacePoint $originDimensionSpacePoint,
         public bool $created,
         public bool $changed,
         public bool $moved,
@@ -55,8 +58,8 @@ final class Change
             $databaseConnection->insert($tableName, [
                 'contentStreamId' => $this->contentStreamId->value,
                 'nodeAggregateId' => $this->nodeAggregateId->value,
-                'originDimensionSpacePoint' => $this->originDimensionSpacePoint->toJson(),
-                'originDimensionSpacePointHash' => $this->originDimensionSpacePoint->hash,
+                'originDimensionSpacePoint' => $this->originDimensionSpacePoint?->toJson(),
+                'originDimensionSpacePointHash' => $this->originDimensionSpacePoint?->hash ?: self::AGGREGATE_DIMENSIONSPACEPOINT_HASH_PLACEHOLDER,
                 'created' => (int)$this->created,
                 'changed' => (int)$this->changed,
                 'moved' => (int)$this->moved,
@@ -83,8 +86,8 @@ final class Change
                 [
                     'contentStreamId' => $this->contentStreamId->value,
                     'nodeAggregateId' => $this->nodeAggregateId->value,
-                    'originDimensionSpacePoint' => $this->originDimensionSpacePoint->toJson(),
-                    'originDimensionSpacePointHash' => $this->originDimensionSpacePoint->hash,
+                    'originDimensionSpacePoint' => $this->originDimensionSpacePoint?->toJson(),
+                    'originDimensionSpacePointHash' => $this->originDimensionSpacePoint?->hash ?: self::AGGREGATE_DIMENSIONSPACEPOINT_HASH_PLACEHOLDER,
                 ]
             );
         } catch (DbalException $e) {
@@ -100,7 +103,9 @@ final class Change
         return new self(
             ContentStreamId::fromString($databaseRow['contentStreamId']),
             NodeAggregateId::fromString($databaseRow['nodeAggregateId']),
-            OriginDimensionSpacePoint::fromJsonString($databaseRow['originDimensionSpacePoint']),
+            $databaseRow['originDimensionSpacePoint'] ?? null
+                ? OriginDimensionSpacePoint::fromJsonString($databaseRow['originDimensionSpacePoint'])
+                : null,
             (bool)$databaseRow['created'],
             (bool)$databaseRow['changed'],
             (bool)$databaseRow['moved'],

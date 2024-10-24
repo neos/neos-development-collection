@@ -83,8 +83,6 @@ trait ContentStreamHandling
         CommandHandlingDependencies $commandHandlingDependencies,
     ): EventsToPublish {
         $this->requireContentStreamToExist($contentStreamId, $commandHandlingDependencies);
-        // todo dont we want to make sure this always succeeds? e.g. ANY?
-        $expectedVersion = $this->getExpectedVersionOfContentStream($contentStreamId, $commandHandlingDependencies);
         $this->requireContentStreamToBeClosed($contentStreamId, $commandHandlingDependencies);
         $streamName = ContentStreamEventStreamName::fromContentStreamId($contentStreamId)->getEventStreamName();
 
@@ -96,7 +94,7 @@ trait ContentStreamHandling
                     $previousState,
                 ),
             ),
-            $expectedVersion
+            ExpectedVersion::ANY()
         );
     }
 

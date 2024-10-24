@@ -45,6 +45,7 @@ use Neos\ContentRepository\Core\SharedModel\Exception\NodeAggregateIsNoChild;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeAggregateIsNoSibling;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeAggregateIsRoot;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeAggregateIsTethered;
+use Neos\ContentRepository\Core\SharedModel\Exception\NodeAggregateIsUntethered;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeAggregatesTypeIsAmbiguous;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeConstraintException;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeNameIsAlreadyCovered;
@@ -191,6 +192,30 @@ trait ConstraintChecks
                 );
             }
             $this->requireTetheredDescendantNodeTypesToNotBeOfTypeRoot($tetheredChildNodeType);
+        }
+    }
+
+    /**
+     * @throws NodeAggregateIsUntethered
+     */
+    protected function requireExistingDeclaredTetheredDescendantsToBeTethered(
+        ContentGraphInterface $contentGraph,
+        NodeAggregate $nodeAggregate,
+        NodeType $nodeType
+    ): void {
+        foreach ($nodeType->tetheredNodeTypeDefinitions as $tetheredNodeTypeDefinition) {
+            $tetheredNodeAggregate = $contentGraph->findChildNodeAggregateByName($nodeAggregate->nodeAggregateId, $tetheredNodeTypeDefinition->name);
+            if ($tetheredNodeAggregate === null) {
+                continue;
+            }
+            if (!$tetheredNodeAggregate->classification->isTethered()) {
+                throw new NodeAggregateIsUntethered(
+                    'Node name ' . $tetheredNodeTypeDefinition->name->value . ' is occupied by untethered node aggregate ' . $tetheredNodeAggregate->nodeAggregateId->value,
+                    1729592202
+                );
+            }
+            $tetheredNodeType = $this->requireNodeType($tetheredNodeTypeDefinition->nodeTypeName);
+            $this->requireExistingDeclaredTetheredDescendantsToBeTethered($contentGraph, $tetheredNodeAggregate, $tetheredNodeType);
         }
     }
 

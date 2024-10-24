@@ -49,7 +49,7 @@ Feature: ForkContentStream Without Dimensions
       | propertyValues               | {"text": {"value": "original value", "type": "string"}} |
       | propertiesToUnset            | {}                                                      |
 
-  Scenario: Try to fork a content stream (use it as base workspace) that is closed:
+  Scenario: Try to create a workspace with the base workspace referring to a closed content stream
     When the command CloseContentStream is executed with payload:
       | Key             | Value           |
       | contentStreamId | "cs-identifier" |

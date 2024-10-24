@@ -427,7 +427,7 @@ class ProjectionContentGraph
     }
 
     /**
-     *  @return array<string, HierarchyRelation> indexed by the dimension space point hash: ['<dimensionSpacePointHash>' => HierarchyRelation, ...]
+     *  @return array<int, HierarchyRelation>
      */
     public function findOutgoingHierarchyRelationsForNode(
         NodeRelationAnchorPoint $parentAnchorPoint,
@@ -461,7 +461,7 @@ class ProjectionContentGraph
         }
         $relations = [];
         foreach ($rows as $row) {
-            $relations[(string)$row['dimensionspacepointhash']] = $this->mapRawDataToHierarchyRelation($row);
+            $relations[] = $this->mapRawDataToHierarchyRelation($row);
         }
         return $relations;
     }
