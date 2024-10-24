@@ -84,7 +84,7 @@ final readonly class DisableNodeAggregate implements
     public function matchesNodeId(NodeIdToPublishOrDiscard $nodeIdToPublish): bool
     {
         return (
-           $this->coveredDimensionSpacePoint === $nodeIdToPublish->dimensionSpacePoint
+            $this->coveredDimensionSpacePoint === $nodeIdToPublish->dimensionSpacePoint
                 && $this->nodeAggregateId->equals($nodeIdToPublish->nodeAggregateId)
         );
     }

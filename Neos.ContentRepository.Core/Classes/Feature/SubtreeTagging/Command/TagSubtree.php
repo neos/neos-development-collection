@@ -97,7 +97,7 @@ final readonly class TagSubtree implements
     public function matchesNodeId(NodeIdToPublishOrDiscard $nodeIdToPublish): bool
     {
         return $this->nodeAggregateId->equals($nodeIdToPublish->nodeAggregateId)
-            && $this->coveredDimensionSpacePoint->equals($nodeIdToPublish->dimensionSpacePoint);
+            && $nodeIdToPublish->dimensionSpacePoint === $this->coveredDimensionSpacePoint;
     }
 
     /**

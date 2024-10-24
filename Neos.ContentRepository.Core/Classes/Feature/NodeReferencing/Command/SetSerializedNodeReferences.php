@@ -91,7 +91,7 @@ final readonly class SetSerializedNodeReferences implements
 
     public function matchesNodeId(NodeIdToPublishOrDiscard $nodeIdToPublish): bool
     {
-        return ($this->sourceOriginDimensionSpacePoint->equals($nodeIdToPublish->dimensionSpacePoint)
+        return ($nodeIdToPublish->dimensionSpacePoint?->equals($this->sourceOriginDimensionSpacePoint)
                 && $this->sourceNodeAggregateId->equals($nodeIdToPublish->nodeAggregateId)
         );
     }

@@ -26,9 +26,11 @@ use Neos\ContentRepository\Core\Feature\WorkspaceRebase\Command\RebaseWorkspace;
 use Neos\ContentRepository\Core\Feature\WorkspaceRebase\Dto\RebaseErrorHandlingStrategy;
 use Neos\ContentRepository\Core\Feature\WorkspaceRebase\Exception\WorkspaceRebaseFailed;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
+use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphInterface;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindClosestNodeFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate;
 use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateIds;
 use Neos\ContentRepository\Core\SharedModel\Workspace\Workspace as ContentRepositoryWorkspace;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeAggregateCurrentlyDoesNotExist;
@@ -339,7 +341,7 @@ final class WorkspacePublishingService
 
             $nodeIdsToPublishOrDiscard[] = new NodeIdToPublishOrDiscard(
                 $change->nodeAggregateId,
-                $change->originDimensionSpacePoint->toDimensionSpacePoint()
+                $change->originDimensionSpacePoint?->toDimensionSpacePoint()
             );
         }
 
@@ -358,7 +360,6 @@ final class WorkspacePublishingService
         return $contentRepository->projectionState(ChangeFinder::class)->countByContentStreamId($crWorkspace->currentContentStreamId);
     }
 
-
     private function isChangePublishableWithinAncestorScope(
         ContentRepository $contentRepository,
         WorkspaceName $workspaceName,
@@ -374,20 +375,38 @@ final class WorkspacePublishingService
             }
         }
 
-        $subgraph = $contentRepository->getContentGraph($workspaceName)->getSubgraph(
-            $change->originDimensionSpacePoint->toDimensionSpacePoint(),
-            VisibilityConstraints::withoutRestrictions()
-        );
+        if ($change->originDimensionSpacePoint) {
+            $subgraph = $contentRepository->getContentGraph($workspaceName)->getSubgraph(
+                $change->originDimensionSpacePoint->toDimensionSpacePoint(),
+                VisibilityConstraints::withoutRestrictions()
+            );
 
-        // A Change is publishable if the respective node (or the respective
-        // removal attachment point) has a closest ancestor that matches our
-        // current ancestor scope (Document/Site)
-        $actualAncestorNode = $subgraph->findClosestNode(
-            $change->removalAttachmentPoint ?? $change->nodeAggregateId,
-            FindClosestNodeFilter::create(nodeTypes: $ancestorNodeTypeName->value)
-        );
+            // A Change is publishable if the respective node (or the respective
+            // removal attachment point) has a closest ancestor that matches our
+            // current ancestor scope (Document/Site)
+            $actualAncestorNode = $subgraph->findClosestNode(
+                $change->removalAttachmentPoint ?? $change->nodeAggregateId,
+                FindClosestNodeFilter::create(nodeTypes: $ancestorNodeTypeName->value)
+            );
 
-        return $actualAncestorNode?->aggregateId->equals($ancestorId) ?? false;
+            return $actualAncestorNode?->aggregateId->equals($ancestorId) ?? false;
+        } else {
+            return $this->findAncestorAggregateIds(
+                $contentRepository->getContentGraph($workspaceName),
+                $change->nodeAggregateId
+            )->contain($ancestorId);
+        }
+    }
+
+    private function findAncestorAggregateIds(ContentGraphInterface $contentGraph, NodeAggregateId $descendantNodeAggregateId): NodeAggregateIds
+    {
+        $nodeAggregateIds = NodeAggregateIds::create($descendantNodeAggregateId);
+        foreach ($contentGraph->findParentNodeAggregates($descendantNodeAggregateId) as $parentNodeAggregate) {
+            $nodeAggregateIds = $nodeAggregateIds->merge(NodeAggregateIds::create($parentNodeAggregate->nodeAggregateId));
+            $nodeAggregateIds = $nodeAggregateIds->merge($this->findAncestorAggregateIds($contentGraph, $parentNodeAggregate->nodeAggregateId));
+        }
+
+        return $nodeAggregateIds;
     }
 
     /**

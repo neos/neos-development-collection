@@ -133,7 +133,7 @@ final readonly class CopyNodesRecursively implements
         );
         return (
             !is_null($targetNodeAggregateId)
-                && $this->targetDimensionSpacePoint->equals($nodeIdToPublish->dimensionSpacePoint)
+                && $nodeIdToPublish->dimensionSpacePoint?->equals($this->targetDimensionSpacePoint)
                 && $targetNodeAggregateId->equals($nodeIdToPublish->nodeAggregateId)
         );
     }

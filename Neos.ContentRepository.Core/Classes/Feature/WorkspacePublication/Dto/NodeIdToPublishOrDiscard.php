@@ -30,7 +30,8 @@ final readonly class NodeIdToPublishOrDiscard implements \JsonSerializable
 {
     public function __construct(
         public NodeAggregateId $nodeAggregateId,
-        public DimensionSpacePoint $dimensionSpacePoint,
+        /** Can be null for aggregate scoped changes, e.g. ChangeNodeAggregateName or ChangeNodeAggregateName */
+        public ?DimensionSpacePoint $dimensionSpacePoint,
     ) {
     }
 
@@ -41,7 +42,9 @@ final readonly class NodeIdToPublishOrDiscard implements \JsonSerializable
     {
         return new self(
             NodeAggregateId::fromString($array['nodeAggregateId']),
-            DimensionSpacePoint::fromArray($array['dimensionSpacePoint']),
+            is_array($array['dimensionSpacePoint'] ?? null)
+                ? DimensionSpacePoint::fromArray($array['dimensionSpacePoint'])
+                : null,
         );
     }
 
