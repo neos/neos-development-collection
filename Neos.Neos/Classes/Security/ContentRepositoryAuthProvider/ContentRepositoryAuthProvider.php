@@ -27,7 +27,10 @@ use Neos\Neos\Domain\Service\UserService;
 use Neos\Neos\Security\Authorization\ContentRepositoryAuthorizationService;
 
 /**
- * @api
+ * Implementation of Content Repository {@see AuthProviderInterface} which ties the authorization
+ * to Neos.
+ *
+ * @internal use {@see ContentRepositoryAuthorizationService} to ask for specific authorization decisions
  */
 final class ContentRepositoryAuthProvider implements AuthProviderInterface
 {
@@ -63,7 +66,7 @@ final class ContentRepositoryAuthProvider implements AuthProviderInterface
         return $this->authorizationService->getVisibilityConstraintsForAnonymousUser($this->contentRepositoryId);
     }
 
-    public function getReadNodesFromWorkspacePrivilege(WorkspaceName $workspaceName): Privilege
+    public function canReadNodesFromWorkspace(WorkspaceName $workspaceName): Privilege
     {
         if ($this->securityContext->areAuthorizationChecksDisabled()) {
             return Privilege::granted('Authorization checks are disabled');
@@ -77,7 +80,7 @@ final class ContentRepositoryAuthProvider implements AuthProviderInterface
         return $workspacePermissions->read ? Privilege::granted($workspacePermissions->getReason()) : Privilege::denied($workspacePermissions->getReason());
     }
 
-    public function getCommandPrivilege(CommandInterface $command): Privilege
+    public function canExecuteCommand(CommandInterface $command): Privilege
     {
         if ($this->securityContext->areAuthorizationChecksDisabled()) {
             return Privilege::granted('Authorization checks are disabled');

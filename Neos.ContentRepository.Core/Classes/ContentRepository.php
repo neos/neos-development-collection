@@ -104,7 +104,7 @@ final class ContentRepository
      */
     public function handle(CommandInterface $command): void
     {
-        $privilege = $this->authProvider->getCommandPrivilege($command);
+        $privilege = $this->authProvider->canExecuteCommand($command);
         if (!$privilege->granted) {
             throw AccessDenied::becauseCommandIsNotGranted($command, $privilege->reason);
         }
@@ -266,7 +266,7 @@ final class ContentRepository
      */
     public function getContentGraph(WorkspaceName $workspaceName): ContentGraphInterface
     {
-        $privilege = $this->authProvider->getReadNodesFromWorkspacePrivilege($workspaceName);
+        $privilege = $this->authProvider->canReadNodesFromWorkspace($workspaceName);
         if (!$privilege->granted) {
             throw AccessDenied::becauseWorkspaceCantBeRead($workspaceName, $privilege->reason);
         }
@@ -278,6 +278,9 @@ final class ContentRepository
     }
 
     /**
+     * Main API to retrieve a content subgraph, taking VisibilityConstraints of the current user
+     * into account ({@see AuthProviderInterface::getVisibilityConstraints()})
+     *
      * @throws WorkspaceDoesNotExist if the workspace does not exist
      * @throws AccessDenied if no read access is granted to the workspace ({@see AuthProviderInterface})
      */

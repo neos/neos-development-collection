@@ -24,6 +24,8 @@ use Neos\Neos\Security\Authorization\Privilege\SubtreeTagPrivilegeSubject;
 use Neos\Party\Domain\Service\PartyService;
 
 /**
+ * Central point which does ContentRepository authorization decisions within Neos.
+ *
  * @api
  */
 #[Flow\Scope('singleton')]
