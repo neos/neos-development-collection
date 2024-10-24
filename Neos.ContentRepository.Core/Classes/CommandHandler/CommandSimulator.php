@@ -86,21 +86,22 @@ final class CommandSimulator
             $eventsToPublish->events->map($this->eventNormalizer->normalize(...))
         );
 
+        $sequenceNumberBeforeCommit = $this->currentSequenceNumber();
+
         // The version of the stream in the IN MEMORY event store does not matter to us,
         // because this is only used in memory during the partial publish or rebase operation; so it cannot be written to
         // concurrently.
         // HINT: We cannot use $eventsToPublish->expectedVersion, because this is based on the PERSISTENT event stream (having different numbers)
-        $commitResult = $this->inMemoryEventStore->commit(
+        $this->inMemoryEventStore->commit(
             $eventsToPublish->streamName,
             $normalizedEvents,
             ExpectedVersion::ANY()
         );
 
-
         // fetch all events that were now committed. Plus one because the first sequence number is one too otherwise we get one event to many.
         // (all elephants shall be placed shamefully placed on my head)
         $eventStream = $this->inMemoryEventStore->load(VirtualStreamName::all())->withMinimumSequenceNumber(
-            SequenceNumber::fromInteger($commitResult->highestCommittedSequenceNumber->value - $eventsToPublish->events->count() + 1)
+            $sequenceNumberBeforeCommit->next()
         );
 
         foreach ($eventStream as $eventEnvelope) {
