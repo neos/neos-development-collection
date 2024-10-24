@@ -24,7 +24,7 @@ use Neos\ContentRepository\LegacyNodeMigration\LegacyMigrationService;
 use Neos\ContentRepository\LegacyNodeMigration\LegacyMigrationServiceFactory;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\ContentRepositoryRegistry\Factory\EventStore\DoctrineEventStoreFactory;
-use Neos\ContentRepositoryRegistry\Service\ProjectionReplayServiceFactory;
+use Neos\ContentRepositoryRegistry\Service\ProjectionServiceFactory;
 use Neos\Flow\Cli\CommandController;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Flow\Property\PropertyMapper;
@@ -38,16 +38,16 @@ use Neos\Neos\Domain\Repository\SiteRepository;
 class CrCommandController extends CommandController
 {
     public function __construct(
-        private readonly Connection $connection,
-        private readonly Environment $environment,
+        private readonly Connection                  $connection,
+        private readonly Environment                 $environment,
         private readonly PersistenceManagerInterface $persistenceManager,
-        private readonly AssetRepository $assetRepository,
-        private readonly ResourceRepository $resourceRepository,
-        private readonly ResourceManager $resourceManager,
-        private readonly PropertyMapper $propertyMapper,
-        private readonly ContentRepositoryRegistry $contentRepositoryRegistry,
-        private readonly SiteRepository $siteRepository,
-        private readonly ProjectionReplayServiceFactory $projectionReplayServiceFactory,
+        private readonly AssetRepository             $assetRepository,
+        private readonly ResourceRepository          $resourceRepository,
+        private readonly ResourceManager             $resourceManager,
+        private readonly PropertyMapper              $propertyMapper,
+        private readonly ContentRepositoryRegistry   $contentRepositoryRegistry,
+        private readonly SiteRepository              $siteRepository,
+        private readonly ProjectionServiceFactory    $projectionServiceFactory,
     ) {
         parent::__construct();
     }
@@ -120,7 +120,7 @@ class CrCommandController extends CommandController
         }
         $this->connection->executeStatement('TRUNCATE ' . $connection->quoteIdentifier($eventTableName));
         // we also need to reset the projections; in order to ensure the system runs deterministically
-        $projectionService = $this->contentRepositoryRegistry->buildService($contentRepositoryId, $this->projectionReplayServiceFactory);
+        $projectionService = $this->contentRepositoryRegistry->buildService($contentRepositoryId, $this->projectionServiceFactory);
         $projectionService->resetAllProjections();
         $this->outputLine('Truncated events');
 

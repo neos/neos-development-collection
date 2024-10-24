@@ -9,20 +9,17 @@ use Neos\ContentRepository\Core\Projection\CatchUpOptions;
 use Neos\ContentRepository\Core\Projection\ProjectionInterface;
 use Neos\ContentRepository\Core\Projection\Projections;
 use Neos\ContentRepository\Core\Projection\ProjectionStateInterface;
-use Neos\ContentRepository\Export\ProcessingContext;
-use Neos\ContentRepository\Export\ProcessorInterface;
 use Neos\EventStore\EventStoreInterface;
 use Neos\EventStore\Model\Event\SequenceNumber;
 use Neos\EventStore\Model\EventStream\VirtualStreamName;
 
 /**
- * Content Repository service to perform Projection replays
+ * Content Repository service to perform Projection operations
  *
  * @internal this is currently only used by the {@see CrCommandController}
  */
-final class ProjectionCatchupService implements ProcessorInterface, ContentRepositoryServiceInterface
+final class ProjectionService implements ContentRepositoryServiceInterface
 {
-
     public function __construct(
         private readonly Projections $projections,
         private readonly ContentRepository $contentRepository,
@@ -30,9 +27,29 @@ final class ProjectionCatchupService implements ProcessorInterface, ContentRepos
     ) {
     }
 
-    public function run(ProcessingContext $context): void
+    public function replayProjection(string $projectionAliasOrClassName, CatchUpOptions $options): void
     {
-        $this->catchupAllProjections(CatchUpOptions::create());
+        $projectionClassName = $this->resolveProjectionClassName($projectionAliasOrClassName);
+        $this->contentRepository->resetProjectionState($projectionClassName);
+        $this->contentRepository->catchUpProjection($projectionClassName, $options);
+    }
+
+    public function replayAllProjections(CatchUpOptions $options, ?\Closure $progressCallback = null): void
+    {
+        foreach ($this->projectionClassNamesAndAliases() as $classNamesAndAlias) {
+            if ($progressCallback) {
+                $progressCallback($classNamesAndAlias['alias']);
+            }
+            $this->contentRepository->resetProjectionState($classNamesAndAlias['className']);
+            $this->contentRepository->catchUpProjection($classNamesAndAlias['className'], $options);
+        }
+    }
+
+    public function resetAllProjections(): void
+    {
+        foreach ($this->projectionClassNamesAndAliases() as $classNamesAndAlias) {
+            $this->contentRepository->resetProjectionState($classNamesAndAlias['className']);
+        }
     }
 
     public function catchupProjection(string $projectionAliasOrClassName, CatchUpOptions $options): void
@@ -49,6 +66,19 @@ final class ProjectionCatchupService implements ProcessorInterface, ContentRepos
             }
             $this->contentRepository->catchUpProjection($classNamesAndAlias['className'], $options);
         }
+    }
+
+    public function highestSequenceNumber(): SequenceNumber
+    {
+        foreach ($this->eventStore->load(VirtualStreamName::all())->backwards()->limit(1) as $eventEnvelope) {
+            return $eventEnvelope->sequenceNumber;
+        }
+        return SequenceNumber::none();
+    }
+
+    public function numberOfProjections(): int
+    {
+        return count($this->projections);
     }
 
     /**

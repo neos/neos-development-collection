@@ -339,7 +339,7 @@ class SiteCommandController extends CommandController
             }
         }
         if ($packageKey === null && $path === null) {
-            $this->outputLine('<error>You have to specify either <em>--package-key</em> or <em>--filename</em></error>');
+            $this->outputLine('<error>You have to specify either <em>--package-key</em> or <em>--path</em></error>');
             $this->quit(1);
         }
         if ($path === null) {

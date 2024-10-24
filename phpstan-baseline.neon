@@ -3,7 +3,7 @@ parameters:
 		-
 			message: "#^The internal method \"Neos\\\\ContentRepository\\\\Core\\\\Projection\\\\Projections\\:\\:getClassNames\" is called\\.$#"
 			count: 1
-			path: Neos.ContentRepositoryRegistry/Classes/Service/ProjectionReplayService.php
+			path: Neos.ContentRepositoryRegistry/Classes/Service/ProjectionService.php
 
 		-
 			message: "#^Method Neos\\\\Neos\\\\Controller\\\\Backend\\\\MenuHelper\\:\\:buildModuleList\\(\\) return type has no value type specified in iterable type array\\.$#"

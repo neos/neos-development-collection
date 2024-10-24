@@ -26,11 +26,10 @@ use Neos\Neos\Domain\Repository\DomainRepository;
 use Neos\Neos\Domain\Repository\SiteRepository;
 
 /**
- * @implements ContentRepositoryServiceFactoryInterface<LiveWorkspaceIsEmptyProcessor>
+ * @implements ContentRepositoryServiceFactoryInterface<SitePruningProcessor>
  */
 final readonly class SitePruningProcessorFactory implements ContentRepositoryServiceFactoryInterface
 {
-
     public function __construct(
         private WorkspaceName $workspaceName,
         private SiteRepository $siteRepository,

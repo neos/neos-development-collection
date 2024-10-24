@@ -10,18 +10,17 @@ use Neos\ContentRepositoryRegistry\Command\CrCommandController;
 use Neos\Flow\Annotations as Flow;
 
 /**
- * Factory for the {@see ProjectionReplayService}
+ * Factory for the {@see ProjectionService}
  *
- * @implements ContentRepositoryServiceFactoryInterface<ProjectionCatchupService>
+ * @implements ContentRepositoryServiceFactoryInterface<ProjectionService>
  * @internal this is currently only used by the {@see CrCommandController}
  */
 #[Flow\Scope("singleton")]
-final class ProjectionCatchupServiceFactory implements ContentRepositoryServiceFactoryInterface
+final class ProjectionServiceFactory implements ContentRepositoryServiceFactoryInterface
 {
-
     public function build(ContentRepositoryServiceFactoryDependencies $serviceFactoryDependencies): ContentRepositoryServiceInterface
     {
-        return new ProjectionCatchupService(
+        return new ProjectionService(
             $serviceFactoryDependencies->projections,
             $serviceFactoryDependencies->contentRepository,
             $serviceFactoryDependencies->eventStore,

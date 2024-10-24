@@ -9,7 +9,7 @@ use Neos\ContentRepository\Core\Service\ContentStreamPrunerFactory;
 use Neos\ContentRepository\Core\Service\WorkspaceMaintenanceServiceFactory;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
-use Neos\ContentRepositoryRegistry\Service\ProjectionReplayServiceFactory;
+use Neos\ContentRepositoryRegistry\Service\ProjectionServiceFactory;
 use Neos\EventStore\Model\Event\SequenceNumber;
 use Neos\EventStore\Model\EventStore\StatusType;
 use Neos\Flow\Cli\CommandController;
@@ -23,7 +23,7 @@ final class CrCommandController extends CommandController
 
     public function __construct(
         private readonly ContentRepositoryRegistry $contentRepositoryRegistry,
-        private readonly ProjectionReplayServiceFactory $projectionServiceFactory,
+        private readonly ProjectionServiceFactory  $projectionServiceFactory,
     ) {
         parent::__construct();
     }

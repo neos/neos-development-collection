@@ -17,13 +17,6 @@ namespace Neos\Neos\Domain\Pruning;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceFactoryDependencies;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceFactoryInterface;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceInterface;
-use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
-use Neos\ContentRepository\Export\Processors\EventExportProcessor;
-use Neos\Flow\Persistence\Doctrine\PersistenceManager;
-use Neos\Flow\Persistence\PersistenceManagerInterface;
-use Neos\Neos\Domain\Import\LiveWorkspaceIsEmptyProcessor;
-use Neos\Neos\Domain\Repository\DomainRepository;
-use Neos\Neos\Domain\Repository\SiteRepository;
 use Neos\Neos\Domain\Service\WorkspaceService;
 
 /**
@@ -31,7 +24,6 @@ use Neos\Neos\Domain\Service\WorkspaceService;
  */
 final readonly class RoleAndMetadataPruningProcessorFactory implements ContentRepositoryServiceFactoryInterface
 {
-
     public function __construct(
         private WorkspaceService $workspaceService,
     ) {

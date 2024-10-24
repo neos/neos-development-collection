@@ -25,9 +25,9 @@ use Neos\ContentRepository\Export\ProcessorInterface;
 use Neos\ContentRepository\Export\Processors\AssetRepositoryImportProcessor;
 use Neos\ContentRepository\Export\Severity;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
-use Neos\ContentRepositoryRegistry\Service\ProjectionCatchupService;
-use Neos\ContentRepositoryRegistry\Service\ProjectionCatchupServiceFactory;
-use Neos\ContentRepositoryRegistry\Service\ProjectionReplayServiceFactory;
+use Neos\ContentRepositoryRegistry\Processors\ProjectionCatchupProcessor;
+use Neos\ContentRepositoryRegistry\Processors\ProjectionCatchupProcessorFactory;
+use Neos\ContentRepositoryRegistry\Service\ProjectionServiceFactory;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Persistence\Doctrine\Service as DoctrineService;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
@@ -45,16 +45,16 @@ use Neos\Neos\Domain\Repository\SiteRepository;
 final readonly class SiteImportService
 {
     public function __construct(
-        private ContentRepositoryRegistry $contentRepositoryRegistry,
-        private DoctrineService $doctrineService,
-        private SiteRepository $siteRepository,
-        private DomainRepository $domainRepository,
-        private AssetRepository $assetRepository,
-        private ResourceRepository $resourceRepository,
-        private ResourceManager $resourceManager,
-        private PersistenceManagerInterface $persistenceManager,
-        private WorkspaceService $workspaceService,
-        private ProjectionCatchupServiceFactory $projectionCatchupServiceFactory,
+        private ContentRepositoryRegistry         $contentRepositoryRegistry,
+        private DoctrineService                   $doctrineService,
+        private SiteRepository                    $siteRepository,
+        private DomainRepository                  $domainRepository,
+        private AssetRepository                   $assetRepository,
+        private ResourceRepository                $resourceRepository,
+        private ResourceManager                   $resourceManager,
+        private PersistenceManagerInterface       $persistenceManager,
+        private WorkspaceService                  $workspaceService,
+        private ProjectionCatchupProcessorFactory $projectionCatchupServiceFactory,
     ) {
     }
 
