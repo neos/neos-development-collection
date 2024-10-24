@@ -56,9 +56,6 @@ final class ContentRepositoryAuthProvider implements AuthProviderInterface
 
     public function getVisibilityConstraints(WorkspaceName $workspaceName): VisibilityConstraints
     {
-        if ($this->securityContext->areAuthorizationChecksDisabled()) {
-            return VisibilityConstraints::default();
-        }
         $authenticatedAccount = $this->securityContext->getAccount();
         if ($authenticatedAccount) {
             return $this->authorizationService->getVisibilityConstraintsForAccount($this->contentRepositoryId, $authenticatedAccount);
