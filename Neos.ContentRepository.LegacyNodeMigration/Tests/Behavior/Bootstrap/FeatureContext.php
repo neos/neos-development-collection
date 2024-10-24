@@ -26,8 +26,8 @@ use Neos\ContentRepository\Export\Asset\ResourceLoaderInterface;
 use Neos\ContentRepository\Export\Asset\ValueObject\SerializedAsset;
 use Neos\ContentRepository\Export\Asset\ValueObject\SerializedImageVariant;
 use Neos\ContentRepository\Export\Asset\ValueObject\SerializedResource;
-use Neos\ContentRepository\LegacyNodeMigration\NodeDataToAssetsProcessor;
-use Neos\ContentRepository\LegacyNodeMigration\NodeDataToEventsProcessor;
+use Neos\ContentRepository\LegacyNodeMigration\Processors\AssetExportProcessor;
+use Neos\ContentRepository\LegacyNodeMigration\SitesToSitesProcessor;
 use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\CRTestSuiteTrait;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\Property\PropertyMapper;
@@ -106,7 +106,7 @@ class FeatureContext implements Context
         };
         $this->getContentRepositoryService($propertyConverterAccess);
 
-        $migration = new NodeDataToEventsProcessor(
+        $migration = new SitesToSitesProcessor(
             $nodeTypeManager,
             $propertyMapper,
             $propertyConverterAccess->propertyConverter,
@@ -202,7 +202,7 @@ class FeatureContext implements Context
         };
 
         $assetExporter = new AssetExporter($this->crImportExportTrait_filesystem, $mockAssetLoader, $mockResourceLoader);
-        $migration = new NodeDataToAssetsProcessor($nodeTypeManager, $assetExporter, $this->nodeDataRows);
+        $migration = new AssetExportProcessor($nodeTypeManager, $assetExporter, $this->nodeDataRows);
         $this->runCrImportExportProcessors($migration);
     }
 

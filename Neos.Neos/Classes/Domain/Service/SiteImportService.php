@@ -45,16 +45,16 @@ use Neos\Neos\Domain\Repository\SiteRepository;
 final readonly class SiteImportService
 {
     public function __construct(
-        private ContentRepositoryRegistry         $contentRepositoryRegistry,
-        private DoctrineService                   $doctrineService,
-        private SiteRepository                    $siteRepository,
-        private DomainRepository                  $domainRepository,
-        private AssetRepository                   $assetRepository,
-        private ResourceRepository                $resourceRepository,
-        private ResourceManager                   $resourceManager,
-        private PersistenceManagerInterface       $persistenceManager,
-        private WorkspaceService                  $workspaceService,
-        private ProjectionCatchupProcessorFactory $projectionCatchupServiceFactory,
+        private ContentRepositoryRegistry $contentRepositoryRegistry,
+        private DoctrineService $doctrineService,
+        private SiteRepository $siteRepository,
+        private DomainRepository $domainRepository,
+        private AssetRepository $assetRepository,
+        private ResourceRepository $resourceRepository,
+        private ResourceManager $resourceManager,
+        private PersistenceManagerInterface $persistenceManager,
+        private WorkspaceService $workspaceService,
+        private ProjectionCatchupProcessorFactory $projectionCatchupProcessorFactory,
     ) {
     }
 
@@ -81,7 +81,7 @@ final readonly class SiteImportService
             'Create Live workspace' => new LiveWorkspaceCreationProcessor($contentRepository, $this->workspaceService),
             'Import events' => $this->contentRepositoryRegistry->buildService($contentRepositoryId, new EventStoreImportProcessorFactory(WorkspaceName::forLive(), keepEventIds: true)),
             'Import assets' => new AssetRepositoryImportProcessor($this->assetRepository, $this->resourceRepository, $this->resourceManager, $this->persistenceManager),
-            'Catchup all projections' => $this->contentRepositoryRegistry->buildService($contentRepositoryId, $this->projectionCatchupServiceFactory),
+            'Catchup all projections' => $this->contentRepositoryRegistry->buildService($contentRepositoryId, $this->projectionCatchupProcessorFactory),
         ];
 
         foreach ($processors as $processorLabel => $processor) {

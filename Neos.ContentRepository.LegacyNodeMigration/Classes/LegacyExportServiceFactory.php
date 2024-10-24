@@ -14,52 +14,35 @@ namespace Neos\ContentRepository\LegacyNodeMigration;
  * source code.
  */
 
-
 use Doctrine\DBAL\Connection;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceFactoryDependencies;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceFactoryInterface;
-use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Flow\Property\PropertyMapper;
-use Neos\Flow\ResourceManagement\ResourceManager;
-use Neos\Flow\ResourceManagement\ResourceRepository;
 use Neos\Flow\Utility\Environment;
-use Neos\Media\Domain\Repository\AssetRepository;
 
 /**
- * @implements ContentRepositoryServiceFactoryInterface<LegacyMigrationService>
+ * @implements ContentRepositoryServiceFactoryInterface<LegacyExportService>
  */
-class LegacyMigrationServiceFactory implements ContentRepositoryServiceFactoryInterface
+class LegacyExportServiceFactory implements ContentRepositoryServiceFactoryInterface
 {
     public function __construct(
         private readonly Connection $connection,
         private readonly string $resourcesPath,
-        private readonly Environment $environment,
-        private readonly PersistenceManagerInterface $persistenceManager,
-        private readonly AssetRepository $assetRepository,
-        private readonly ResourceRepository $resourceRepository,
-        private readonly ResourceManager $resourceManager,
         private readonly PropertyMapper $propertyMapper,
     ) {
     }
 
     public function build(
         ContentRepositoryServiceFactoryDependencies $serviceFactoryDependencies
-    ): LegacyMigrationService {
-        return new LegacyMigrationService(
+    ): LegacyExportService {
+        return new LegacyExportService(
             $this->connection,
             $this->resourcesPath,
-            $this->environment,
-            $this->persistenceManager,
-            $this->assetRepository,
-            $this->resourceRepository,
-            $this->resourceManager,
             $serviceFactoryDependencies->interDimensionalVariationGraph,
             $serviceFactoryDependencies->nodeTypeManager,
             $this->propertyMapper,
             $serviceFactoryDependencies->eventNormalizer,
             $serviceFactoryDependencies->propertyConverter,
-            $serviceFactoryDependencies->eventStore,
-            $serviceFactoryDependencies->contentRepository,
         );
     }
 }

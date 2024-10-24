@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Neos\ContentRepository\LegacyNodeMigration;
+namespace Neos\ContentRepository\LegacyNodeMigration\Processors;
 
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
@@ -14,7 +14,7 @@ use Neos\Media\Domain\Model\ResourceBasedInterface;
 use Neos\Utility\Exception\InvalidTypeException;
 use Neos\Utility\TypeHandling;
 
-final class NodeDataToAssetsProcessor implements ProcessorInterface
+final class AssetExportProcessor implements ProcessorInterface
 {
     /**
      * @var array<string, true>

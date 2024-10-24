@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Neos\ContentRepository\LegacyNodeMigration;
+namespace Neos\ContentRepository\LegacyNodeMigration\Processors;
 
 use Doctrine\DBAL\Platforms\PostgreSQLPlatform;
 use Doctrine\DBAL\Types\ConversionException;
@@ -54,7 +54,7 @@ use Neos\Flow\Property\PropertyMapper;
 use Neos\Neos\Domain\Service\NodeTypeNameFactory;
 use Webmozart\Assert\Assert;
 
-final class NodeDataToEventsProcessor implements ProcessorInterface
+final class EventExportProcessor implements ProcessorInterface
 {
     private NodeTypeName $sitesNodeTypeName;
     private WorkspaceName $workspaceName;
@@ -67,8 +67,6 @@ final class NodeDataToEventsProcessor implements ProcessorInterface
     private array $nodeReferencesWereSetEvents = [];
 
     private int $numberOfExportedEvents = 0;
-
-    private bool $metaDataExported = false;
 
     /**
      * @var resource|null
@@ -97,18 +95,6 @@ final class NodeDataToEventsProcessor implements ProcessorInterface
         $this->contentStreamId = $contentStreamId;
     }
 
-    public function setSitesNodeType(NodeTypeName $nodeTypeName): void
-    {
-        $nodeType = $this->nodeTypeManager->getNodeType($nodeTypeName);
-        if (!$nodeType?->isOfType(NodeTypeNameFactory::NAME_SITES)) {
-            throw new \InvalidArgumentException(
-                sprintf('Sites NodeType "%s" must be of type "%s"', $nodeTypeName->value, NodeTypeNameFactory::NAME_SITES),
-                1695802415
-            );
-        }
-        $this->sitesNodeTypeName = $nodeTypeName;
-    }
-
     public function run(ProcessingContext $context): void
     {
         $this->resetRuntimeState();
@@ -119,10 +105,6 @@ final class NodeDataToEventsProcessor implements ProcessorInterface
                 $this->visitedNodes->addRootNode($sitesNodeAggregateId, $this->sitesNodeTypeName, NodePath::fromString('/sites'), $this->interDimensionalVariationGraph->getDimensionSpacePoints());
                 $this->exportEvent(new RootNodeAggregateWithNodeWasCreated($this->workspaceName, $this->contentStreamId, $sitesNodeAggregateId, $this->sitesNodeTypeName, $this->interDimensionalVariationGraph->getDimensionSpacePoints(), NodeAggregateClassification::CLASSIFICATION_ROOT));
                 continue;
-            }
-            if ($this->metaDataExported === false && $nodeDataRow['parentpath'] === '/sites') {
-                $this->exportMetaData($context, $nodeDataRow);
-                $this->metaDataExported = true;
             }
             try {
                 $this->processNodeData($context, $nodeDataRow);
@@ -149,7 +131,6 @@ final class NodeDataToEventsProcessor implements ProcessorInterface
         $this->visitedNodes = new VisitedNodeAggregates();
         $this->nodeReferencesWereSetEvents = [];
         $this->numberOfExportedEvents = 0;
-        $this->metaDataExported = false;
         $this->eventFileResource = fopen('php://temp/maxmemory:5242880', 'rb+') ?: null;
         Assert::resource($this->eventFileResource, null, 'Failed to create temporary event file resource');
     }
@@ -162,6 +143,8 @@ final class NodeDataToEventsProcessor implements ProcessorInterface
         } catch (\JsonException $e) {
             throw new \RuntimeException(sprintf('Failed to JSON-decode "%s": %s', $normalizedEvent->data->value, $e->getMessage()), 1723032243, $e);
         }
+        // do not export crid and workspace as they are always imported into a single workspace
+        unset($exportedEventPayload['contentStreamId'], $exportedEventPayload['workspaceName']);
         $exportedEvent = new ExportedEvent(
             $normalizedEvent->id->value,
             $normalizedEvent->type->value,
@@ -171,23 +154,6 @@ final class NodeDataToEventsProcessor implements ProcessorInterface
         assert($this->eventFileResource !== null);
         fwrite($this->eventFileResource, $exportedEvent->toJson() . chr(10));
         $this->numberOfExportedEvents++;
-    }
-
-    /**
-     * @param array<string, mixed> $nodeDataRow
-     */
-    private function exportMetaData(ProcessingContext $context, array $nodeDataRow): void
-    {
-        if ($context->files->fileExists('meta.json')) {
-            $data = json_decode($context->files->read('meta.json'), true, 512, JSON_THROW_ON_ERROR);
-        } else {
-            $data = [];
-        }
-        $data['version'] = 1;
-        $data['sitePackageKey'] = strtok($nodeDataRow['nodetype'], ':');
-        $data['siteNodeName'] = substr($nodeDataRow['path'], 7);
-        $data['siteNodeType'] = $nodeDataRow['nodetype'];
-        $context->files->write('meta.json', json_encode($data, JSON_THROW_ON_ERROR | JSON_PRETTY_PRINT));
     }
 
     /**

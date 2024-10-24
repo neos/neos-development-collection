@@ -49,12 +49,12 @@ use Neos\Neos\Domain\Repository\SiteRepository;
 final readonly class SitePruningService
 {
     public function __construct(
-        private ContentRepositoryRegistry        $contentRepositoryRegistry,
-        private SiteRepository                   $siteRepository,
-        private DomainRepository                 $domainRepository,
-        private PersistenceManagerInterface      $persistenceManager,
-        private ProjectionReplayProcessorFactory $projectionReplayServiceFactory,
-        private WorkspaceService                 $workspaceService,
+        private ContentRepositoryRegistry $contentRepositoryRegistry,
+        private SiteRepository $siteRepository,
+        private DomainRepository $domainRepository,
+        private PersistenceManagerInterface $persistenceManager,
+        private ProjectionReplayProcessorFactory $projectionReplayProcessorFactory,
+        private WorkspaceService $workspaceService,
     ) {
     }
 
@@ -89,7 +89,7 @@ final readonly class SitePruningService
                     $this->workspaceService
                 )
             ),
-            'Replay all projections' => $this->contentRepositoryRegistry->buildService($contentRepositoryId, $this->projectionReplayServiceFactory),
+            'Replay all projections' => $this->contentRepositoryRegistry->buildService($contentRepositoryId, $this->projectionReplayProcessorFactory),
         ];
 
         foreach ($processors as $processorLabel => $processor) {
