@@ -30,6 +30,8 @@ use Neos\Flow\Annotations as Flow;
  */
 final class Change
 {
+    public const AGGREGATE_DIMENSIONSPACEPOINT_HASH_PLACEHOLDER = 'AGGREGATE';
+
     /**
      * @param NodeAggregateId|null $removalAttachmentPoint {@see RemoveNodeAggregate::$removalAttachmentPoint} for docs
      */
@@ -57,7 +59,7 @@ final class Change
                 'contentStreamId' => $this->contentStreamId->value,
                 'nodeAggregateId' => $this->nodeAggregateId->value,
                 'originDimensionSpacePoint' => $this->originDimensionSpacePoint?->toJson(),
-                'originDimensionSpacePointHash' => $this->originDimensionSpacePoint?->hash ?: 'AGGREGATE',
+                'originDimensionSpacePointHash' => $this->originDimensionSpacePoint?->hash ?: self::AGGREGATE_DIMENSIONSPACEPOINT_HASH_PLACEHOLDER,
                 'created' => (int)$this->created,
                 'changed' => (int)$this->changed,
                 'moved' => (int)$this->moved,

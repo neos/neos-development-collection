@@ -555,10 +555,11 @@ AND n.originDimensionSpacePointHash = :originDimensionSpacePointHash',
             'SELECT n.* FROM ' . $this->tableNamePrefix . ' n
 WHERE n.contentStreamId = :contentStreamId
 AND n.nodeAggregateId = :nodeAggregateId
-AND n.origindimensionspacepointhash = NULL',
+AND n.origindimensionspacepointhash = :origindimensionspacepointhash',
             [
                 'contentStreamId' => $contentStreamId->value,
                 'nodeAggregateId' => $nodeAggregateId->value,
+                'origindimensionspacepointhash' => Change::AGGREGATE_DIMENSIONSPACEPOINT_HASH_PLACEHOLDER
             ]
         )->fetchAssociative();
 
