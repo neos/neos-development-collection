@@ -98,7 +98,7 @@ Feature: Discard individual nodes (basics)
       | workspaceName      | "user-test"                                                                                                  |
       | nodesToDiscard     | [{"workspaceName": "user-test", "dimensionSpacePoint": {}, "nodeAggregateId": "sir-nodeward-nodington-iii"}] |
       | newContentStreamId | "user-cs-identifier-new"                                                                                     |
-
+    Then I expect the content stream "user-cs-identifier" to not exist
 
     When I am in workspace "user-test" and dimension space point {}
     Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node user-cs-identifier-new;sir-david-nodenborough;{}
@@ -120,6 +120,7 @@ Feature: Discard individual nodes (basics)
       | workspaceName      | "user-test"              |
       | nodesToDiscard     | []                       |
       | newContentStreamId | "user-cs-identifier-new" |
+    Then I expect the content stream "user-cs-identifier-new" to not exist
 
     # unchanged or non existing nodes
     When the command DiscardIndividualNodesFromWorkspace is executed with payload:

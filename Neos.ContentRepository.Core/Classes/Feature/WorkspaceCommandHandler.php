@@ -261,6 +261,8 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
             ),
             ExpectedVersion::ANY()
         );
+
+        yield $this->removeContentStream($workspace->currentContentStreamId, $commandHandlingDependencies);
     }
 
     /**
@@ -726,6 +728,8 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
             ),
             $commandHandlingDependencies
         );
+
+        yield $this->removeContentStream($workspace->currentContentStreamId, $commandHandlingDependencies);
     }
 
 
@@ -831,6 +835,8 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
             ),
             ExpectedVersion::ANY()
         );
+
+        yield $this->removeContentStream($workspace->currentContentStreamId, $commandHandlingDependencies);
     }
 
     /**

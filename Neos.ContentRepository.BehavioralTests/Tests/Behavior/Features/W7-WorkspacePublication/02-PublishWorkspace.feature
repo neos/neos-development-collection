@@ -95,6 +95,7 @@ Feature: Workspace based content publishing
     When the command PublishWorkspace is executed with payload:
       | Key           | Value       |
       | workspaceName | "user-test" |
+    Then I expect the content stream "user-cs-identifier" to not exist
 
     When I am in workspace "live" and dimension space point {}
     Then I expect node aggregate identifier "nody-mc-nodeface" to lead to node cs-identifier;nody-mc-nodeface;{}

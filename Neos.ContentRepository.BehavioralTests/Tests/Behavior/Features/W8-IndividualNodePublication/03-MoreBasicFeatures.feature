@@ -98,6 +98,7 @@ Feature: Publishing individual nodes (basics)
       | workspaceName                   | "user-test"                                                                                                  |
       | nodesToPublish                  | [{"workspaceName": "user-test", "dimensionSpacePoint": {}, "nodeAggregateId": "sir-nodeward-nodington-iii"}] |
       | contentStreamIdForRemainingPart | "user-cs-identifier-remaining"                                                                               |
+    Then I expect the content stream "user-cs-identifier" to not exist
 
     When I am in workspace "live" and dimension space point {}
     Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{}
@@ -134,6 +135,7 @@ Feature: Publishing individual nodes (basics)
       | workspaceName                   | "user-test"                    |
       | nodesToPublish                  | []                             |
       | contentStreamIdForRemainingPart | "user-cs-identifier-remaining" |
+    Then I expect the content stream "user-cs-identifier-remaining" to not exist
 
     # unchanged or non existing nodes
     When the command PublishIndividualNodesFromWorkspace is executed with payload:

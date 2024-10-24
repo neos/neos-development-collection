@@ -63,6 +63,7 @@ Feature: Workspace discarding - basic functionality
       | Key                | Value                         |
       | workspaceName      | "user-test"                   |
       | newContentStreamId | "user-cs-identifier-modified" |
+    Then I expect the content stream "user-cs-identifier" to not exist
 
     When I am in workspace "user-test" and dimension space point {}
     Then I expect node aggregate identifier "nody-mc-nodeface" to lead to node user-cs-identifier-modified;nody-mc-nodeface;{}
