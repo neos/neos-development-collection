@@ -5,14 +5,18 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\Core\Service;
 
 use Neos\ContentRepository\Core\ContentRepository;
+use Neos\ContentRepository\Core\EventStore\EventPersister;
+use Neos\ContentRepository\Core\EventStore\Events;
+use Neos\ContentRepository\Core\EventStore\EventsToPublish;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceInterface;
 use Neos\ContentRepository\Core\Feature\ContentStreamEventStreamName;
-use Neos\ContentRepository\Core\Feature\ContentStreamRemoval\Command\RemoveContentStream;
+use Neos\ContentRepository\Core\Feature\ContentStreamRemoval\Event\ContentStreamWasRemoved;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStream;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamStatus;
 use Neos\EventStore\EventStoreInterface;
 use Neos\EventStore\Model\Event\StreamName;
+use Neos\EventStore\Model\EventStream\ExpectedVersion;
 use Neos\EventStore\Model\EventStream\VirtualStreamName;
 
 /**
@@ -25,6 +29,7 @@ class ContentStreamPruner implements ContentRepositoryServiceInterface
     public function __construct(
         private readonly ContentRepository $contentRepository,
         private readonly EventStoreInterface $eventStore,
+        private readonly EventPersister $eventPersister,
     ) {
     }
 
@@ -57,9 +62,19 @@ class ContentStreamPruner implements ContentRepositoryServiceInterface
         );
         $unusedContentStreamIds = [];
         foreach ($unusedContentStreams as $contentStream) {
-            $this->contentRepository->handle(
-                RemoveContentStream::create($contentStream->id)
+            $removeContentStream = new EventsToPublish(
+                ContentStreamEventStreamName::fromContentStreamId($contentStream->id)->getEventStreamName(),
+                Events::with(new ContentStreamWasRemoved(
+                    $contentStream->id
+                )),
+                ExpectedVersion::fromVersion($contentStream->version)
             );
+
+            $this->eventPersister->publishEvents(
+                $this->contentRepository,
+                $removeContentStream
+            );
+
             $unusedContentStreamIds[] = $contentStream->id;
         }
 
