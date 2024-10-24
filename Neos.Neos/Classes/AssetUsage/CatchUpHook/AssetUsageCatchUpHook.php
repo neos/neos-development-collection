@@ -47,14 +47,11 @@ class AssetUsageCatchUpHook implements CatchUpHookInterface
 
     public function onBeforeEvent(EventInterface $eventInstance, EventEnvelope $eventEnvelope): void
     {
-        if ($eventInstance instanceof EmbedsWorkspaceName && $eventInstance instanceof EmbedsContentStreamId) {
-            // Safeguard for temporary content streams created during partial publish -> We want to skip these events, because their workspace doesn't match current content stream.
+        if ($eventInstance instanceof EmbedsWorkspaceName) {
             try {
-                $contentGraph = $this->contentRepository->getContentGraph($eventInstance->getWorkspaceName());
+                // Skip if the workspace does not exist: "The source workspace missing does not exist" https://github.com/neos/neos-development-collection/pull/5270
+                $this->contentRepository->getContentGraph($eventInstance->getWorkspaceName());
             } catch (WorkspaceDoesNotExist) {
-                return;
-            }
-            if (!$contentGraph->getContentStreamId()->equals($eventInstance->getContentStreamId())) {
                 return;
             }
         }
@@ -68,14 +65,11 @@ class AssetUsageCatchUpHook implements CatchUpHookInterface
 
     public function onAfterEvent(EventInterface $eventInstance, EventEnvelope $eventEnvelope): void
     {
-        if ($eventInstance instanceof EmbedsWorkspaceName && $eventInstance instanceof EmbedsContentStreamId) {
-            // Safeguard for temporary content streams created during partial publish -> We want to skip these events, because their workspace doesn't match current content stream.
+        if ($eventInstance instanceof EmbedsWorkspaceName) {
             try {
-                $contentGraph = $this->contentRepository->getContentGraph($eventInstance->getWorkspaceName());
+                // Skip if the workspace does not exist: "The source workspace missing does not exist" https://github.com/neos/neos-development-collection/pull/5270
+                $this->contentRepository->getContentGraph($eventInstance->getWorkspaceName());
             } catch (WorkspaceDoesNotExist) {
-                return;
-            }
-            if (!$contentGraph->getContentStreamId()->equals($eventInstance->getContentStreamId())) {
                 return;
             }
         }
