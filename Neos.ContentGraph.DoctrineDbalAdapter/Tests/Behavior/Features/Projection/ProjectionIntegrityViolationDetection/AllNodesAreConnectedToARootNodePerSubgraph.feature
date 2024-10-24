@@ -10,6 +10,9 @@ Feature: Run projection integrity violation detection regarding root connection
       | language   | de, gsw | gsw->de         |
     And using the following node types:
     """yaml
+    'Neos.ContentRepository.Testing:Root':
+      superTypes:
+        'Neos.ContentRepository:Root': true
     'Neos.ContentRepository.Testing:Document': []
     """
     And using identifier "default", I define a content repository
@@ -20,18 +23,16 @@ Feature: Run projection integrity violation detection regarding root connection
       | newContentStreamId   | "cs-identifier"      |
 
   Scenario: Create a cycle
-    When the event RootNodeAggregateWithNodeWasCreated was published with payload:
+    When the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key                         | Value                                     |
       | workspaceName               | "live"                                    |
-      | contentStreamId             | "cs-identifier"                           |
       | nodeAggregateId             | "lady-eleonode-rootford"                  |
-      | nodeTypeName                | "Neos.ContentRepository.Testing:Document" |
+      | nodeTypeName                | "Neos.ContentRepository.Testing:Root"     |
       | coveredDimensionSpacePoints | [{"language":"de"},{"language":"gsw"}]    |
       | nodeAggregateClassification | "root"                                    |
-    When the event NodeAggregateWithNodeWasCreated was published with payload:
+    When the command CreateNodeAggregateWithNode is executed with payload:
       | Key                         | Value                                     |
       | workspaceName               | "live"                                    |
-      | contentStreamId             | "cs-identifier"                           |
       | nodeAggregateId             | "sir-david-nodenborough"                  |
       | nodeTypeName                | "Neos.ContentRepository.Testing:Document" |
       | originDimensionSpacePoint   | {"language":"de"}                         |
@@ -39,10 +40,9 @@ Feature: Run projection integrity violation detection regarding root connection
       | parentNodeAggregateId       | "lady-eleonode-rootford"                  |
       | nodeName                    | "document"                                |
       | nodeAggregateClassification | "regular"                                 |
-    And the event NodeAggregateWithNodeWasCreated was published with payload:
+    When the command CreateNodeAggregateWithNode is executed with payload:
       | Key                         | Value                                     |
       | workspaceName               | "live"                                    |
-      | contentStreamId             | "cs-identifier"                           |
       | nodeAggregateId             | "nody-mc-nodeface"                        |
       | nodeTypeName                | "Neos.ContentRepository.Testing:Document" |
       | originDimensionSpacePoint   | {"language":"de"}                         |
@@ -50,15 +50,27 @@ Feature: Run projection integrity violation detection regarding root connection
       | parentNodeAggregateId       | "sir-david-nodenborough"                  |
       | nodeName                    | "child-document"                          |
       | nodeAggregateClassification | "regular"                                 |
-    And the event NodeAggregateWasMoved was published with payload:
-      | Key                           | Value                                                                                                                                  |
-      | workspaceName                 | "live"                                                                                                                                 |
-      | contentStreamId               | "cs-identifier"                                                                                                                        |
-      | nodeAggregateId               | "sir-david-nodenborough"                                                                                                               |
-      | newParentNodeAggregateId      | "nody-mc-nodeface"                                                                                                                     |
-      | succeedingSiblingsForCoverage | [{"dimensionSpacePoint":{"language":"de"},"nodeAggregateId": null},{"dimensionSpacePoint":{"language":"gsw"},"nodeAggregateId": null}] |
+
+    When I change the following hierarchy relation's parent:
+      | Key                        | Value                                      |
+      | contentStreamId            | "cs-identifier"                            |
+      | dimensionSpacePoint        | {"language":"de"}                          |
+      | parentNodeAggregateId      | "lady-eleonode-rootford"                   |
+      | childNodeAggregateId       | "sir-david-nodenborough"                   |
+      | newParentNodeAggregateId   | "nody-mc-nodeface"                         |
     And I run integrity violation detection
-    # one error per subgraph
+    Then I expect the integrity violation detection result to contain exactly 1 errors
+    And I expect integrity violation detection result error number 1 to have code 1597754245
+
+    # Another error. One error per subgraph
+    When I change the following hierarchy relation's parent:
+      | Key                        | Value                                       |
+      | contentStreamId            | "cs-identifier"                             |
+      | dimensionSpacePoint        | {"language":"gsw"}                          |
+      | parentNodeAggregateId      | "lady-eleonode-rootford"                    |
+      | childNodeAggregateId       | "sir-david-nodenborough"                    |
+      | newParentNodeAggregateId   | "nody-mc-nodeface"                          |
+    And I run integrity violation detection
     Then I expect the integrity violation detection result to contain exactly 2 errors
     And I expect integrity violation detection result error number 1 to have code 1597754245
     And I expect integrity violation detection result error number 2 to have code 1597754245

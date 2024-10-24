@@ -32,6 +32,7 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregates;
 use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateIds;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
@@ -181,6 +182,19 @@ final class ContentHypergraph implements ContentGraphInterface
             $nodeRows,
             VisibilityConstraints::withoutRestrictions()
         );
+    }
+
+    public function findAncestorNodeAggregateIds(NodeAggregateId $entryNodeAggregateId): NodeAggregateIds
+    {
+        $stack = iterator_to_array($this->findParentNodeAggregates($entryNodeAggregateId));
+
+        $ancestorNodeAggregateIds = [];
+        while ($stack !== []) {
+            $nodeAggregate = array_shift($stack);
+            $ancestorNodeAggregateIds[] = $nodeAggregate->nodeAggregateId;
+            array_push($stack, ...iterator_to_array($this->findParentNodeAggregates($nodeAggregate->nodeAggregateId)));
+        }
+        return NodeAggregateIds::fromArray($ancestorNodeAggregateIds);
     }
 
     public function findChildNodeAggregates(

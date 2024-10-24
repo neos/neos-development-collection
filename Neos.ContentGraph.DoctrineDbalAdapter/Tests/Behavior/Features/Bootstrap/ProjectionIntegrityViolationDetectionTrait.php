@@ -104,6 +104,31 @@ trait ProjectionIntegrityViolationDetectionTrait
     }
 
     /**
+     * @When /^I change the following hierarchy relation's parent:$/
+     * @throws DBALException
+     */
+    public function iChangeTheFollowingHierarchyRelationsParent(TableNode $payloadTable): void
+    {
+        $dataset = $this->transformPayloadTableToDataset($payloadTable);
+        $record = $this->transformDatasetToHierarchyRelationRecord($dataset);
+        unset($record['position']);
+
+        $newParentHierarchyRelation = $this->findHierarchyRelationByIds(
+            ContentStreamId::fromString($dataset['contentStreamId']),
+            DimensionSpacePoint::fromArray($dataset['dimensionSpacePoint']),
+            NodeAggregateId::fromString($dataset['newParentNodeAggregateId'])
+        );
+
+        $this->dbal->update(
+            $this->tableNames()->hierarchyRelation(),
+            [
+                'parentnodeanchor' => $newParentHierarchyRelation['childnodeanchor']
+            ],
+            $record
+        );
+    }
+
+    /**
      * @When /^I change the following hierarchy relation's dimension space point hash:$/
      * @param TableNode $payloadTable
      * @throws DBALException
