@@ -15,13 +15,11 @@ prototype(Neos.Workspace.Ui:Component.ReviewChangeTableRow) < prototype(Neos.Fus
 
   renderer = afx`
     <tr class={"neos-change fold-" + document.documentNode.aggregateId.value + "document-" + document.documentNode.aggregateId.value} data-nodepath={relativePath} data-ismoved={change.isMoved} data-isnew={change.isNew}>
-      <td class="check neos-priority1">
-      </td>
-      <td id={"change-" + change.serializedNodeAddress} data-neos-toggle="tooltip" data-placement="left" data-container="body">
+
+      <td id={"change-" + change.serializedNodeAddress} colspan="4">
         <Neos.Fusion:DataStructure
           @path="attributes.class"
           general="neos-content-change"
-          deleteddd={change.isNew}
           deleted={change.isRemoved ? 'legend-deleted' : ''}
           created={change.isNew ? 'legend-created' : ''}
           moved={change.isMoved ? 'legend-moved' : ''}
@@ -31,8 +29,6 @@ prototype(Neos.Workspace.Ui:Component.ReviewChangeTableRow) < prototype(Neos.Fus
           change={change}
           relativePath={relativePath}
           document={document}/>
-      </td>
-      <td >
       </td>
     </tr>
   `

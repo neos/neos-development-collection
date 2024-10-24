@@ -53,7 +53,7 @@ prototype(Neos.Workspace.Ui:Component.ReviewActions) < prototype(Neos.Fusion:Com
             attributes.hx-swap="innerHTML"
           />
         </div>
-        <div class="neos-pull-right">
+        <div class="neos-pull-right workspace-action">
           <div id="all-actions">
             <Neos.Workspace.Ui:Component.Button
               label={private.i18n.id('workspaces.discardAllChanges')}
