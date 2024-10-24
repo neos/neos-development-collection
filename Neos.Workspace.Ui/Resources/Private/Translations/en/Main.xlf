@@ -81,6 +81,27 @@
       <trans-unit id="workspaces.workspace.lastModified" xml:space="preserve">
 				<source>Last modified</source>
 			</trans-unit>
+      <trans-unit id="workspaces.workspace.workspaceManagerUsers" xml:space="preserve">
+				<source>Managed by Users</source>
+			</trans-unit>
+      <trans-unit id="workspaces.workspace.workspaceManagerGroups" xml:space="preserve">
+				<source>Managed by Groups</source>
+			</trans-unit>
+      <trans-unit id="workspaces.workspace.permissions" xml:space="preserve">
+				<source>Permissions</source>
+			</trans-unit>
+      <trans-unit id="workspaces.workspace.workspaceRoleAssignment.subjectType" xml:space="preserve">
+				<source>Typ</source>
+			</trans-unit>
+      <trans-unit id="workspaces.workspace.workspaceRoleAssignment.subject" xml:space="preserve">
+				<source>Name</source>
+			</trans-unit>
+      <trans-unit id="workspaces.workspace.workspaceRoleAssignment.role" xml:space="preserve">
+				<source>Role</source>
+			</trans-unit>
+      <trans-unit id="workspaces.workspace.workspaceRoleAssignment.actions" xml:space="preserve">
+				<source>Actions</source>
+			</trans-unit>
       <group id="workspaces.changes.new" restype="x-gettext-plurals">
         <trans-unit id="workspaces.changes.new[0]" xml:space="preserve">
           <source>{0} node was added</source>

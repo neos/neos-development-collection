@@ -17,6 +17,7 @@ namespace Neos\Workspace\Ui\ViewModel;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\Flow\Annotations as Flow;
 use Neos\Neos\Domain\Model\WorkspaceDescription;
+use Neos\Neos\Domain\Model\WorkspaceRoleAssignment;
 use Neos\Neos\Domain\Model\WorkspaceTitle;
 
 #[Flow\Proxy(false)]
@@ -33,6 +34,22 @@ final readonly class EditWorkspaceFormData
          * @var array<string, string>
          */
         public array                $baseWorkspaceOptions,
+        public bool                 $roleAssignmentsVisible,
+        public bool                 $roleAssignmentsEditable,
+        /**
+         * @var array<EditWorkspaceRoleAssignment>
+         */
+        public array                $roleAssignments,
+        /**
+         * Options for the workspaceManager selector where the key is the user identifier and the value is the user name.
+         * @var array<string, string>
+         */
+        public array                $roleAssignmentUserOptions,
+        /**
+         * Options for the workspaceManager selector where the value is the group.
+         * @var array<string>
+         */
+        public array                $roleAssignmentGroupOptions,
     )
     {
     }

@@ -1,13 +1,21 @@
 prototype(Neos.Workspace.Ui:Component.Modal.Edit) < prototype(Neos.Fusion:Component) {
-  workspaceHasChanges = false
-  baseWorkspaceName = ''
-  /// array<string, string>
-  baseWorkspaceOptions = ${[]}
-
   workspaceName = ''
   workspaceTitle = ''
   workspaceDescription = ''
   baseWorkspaceName = ''
+
+  workspaceHasChanges = false
+  /// array<string, string>
+  baseWorkspaceOptions = ${[]}
+
+  roleAssignmentsVisible = false
+  roleAssignmentsEditable = false
+  /// array<userId: string, label: string>
+  roleAssignmentUserOptions = ${[]}
+  /// array<string>
+  roleAssignmentGroupOptions = ${[]}
+  /// array<\Neos\Workspace\Ui\ViewModel\EditWorkspaceRoleAssignment>
+  roleAssignments = ${[]}
 
   @private {
     i18n = ${I18n.id('').source('Main').package('Neos.Workspace.Ui')}
@@ -96,6 +104,7 @@ prototype(Neos.Workspace.Ui:Component.Modal.Edit) < prototype(Neos.Fusion:Compon
                   </Neos.Fusion.Form:Select.Option>
                 </Neos.Fusion:Loop>
               </Neos.Fusion.Form:Select>
+              <!-- TODO: use component and styling -->
               <p
                 style={{ marginTop: '.5em' }}
                 @if.workspaceHasChanges={props.workspaceHasChanges}
@@ -108,65 +117,67 @@ prototype(Neos.Workspace.Ui:Component.Modal.Edit) < prototype(Neos.Fusion:Compon
               </p>
             </Neos.Fusion.Form:Neos.BackendModule.FieldContainer>
           </fieldset>
-          <fieldset>
-            <!-- TODO internal was removed -->
-            <Neos.Fusion:Fragment
-              @if={false && Security.hasAccess('Neos.Workspace.Ui:Backend.Module.Management.Workspace.ManageInternalWorkspaces')}>
-              <h3 class="neos-control-label">
-                {private.i18n.id('workspaces.workspace.visibility')}
-              </h3>
-              <Neos.Fusion.Form:Neos.BackendModule.FieldContainer
-                class="neos-control-group"
-              >
-                <Neos.Fusion.Form:Radio
-                  id="visibility.private"
-                  field.value="private"
-                  attributes.disabled
-                  attributes.checked={props.isPrivateWorkspace}
-                >
-                  <span></span>
-                  <span>
-                  {private.i18n.id('workspaces.workspace.visibility.private')}
-                    <span class="neos-help-inline">
-                    {private.i18n.id('workspaces.workspace.visibility.private.help')}
-                  </span>
-                </span>
-                </Neos.Fusion.Form:Radio>
-                <br/>
-                <!-- TODO internal was removed -->
-                <Neos.Fusion.Form:Radio
-                  id="visibility.internal"
-                  field.value="internal"
-                  attributes.disabled
-                  attributes.checked={props.isInternalWorkspace}
-                >
-                  <span></span>
-                  <span>
-                  {private.i18n.id('workspaces.workspace.visibility.internal')}
-                    <span class="neos-help-inline">
-                    {private.i18n.id('workspaces.workspace.visibility.internal.help')}
-                  </span>
-                </span>
-                </Neos.Fusion.Form:Radio>
-              </Neos.Fusion.Form:Neos.BackendModule.FieldContainer>
-            </Neos.Fusion:Fragment>
-
+          <fieldset @if.canView={props.roleAssignmentsVisible}>
+            <legend>{private.i18n.id('workspaces.workspace.permissions')}</legend>
+            <table class="workspace-table">
+              <thead>
+                <tr>
+                  <th>{private.i18n.id('workspaces.workspace.workspaceRoleAssignment.subjectType')}</th>
+                  <th>{private.i18n.id('workspaces.workspace.workspaceRoleAssignment.subject')}</th>
+                  <th>{private.i18n.id('workspaces.workspace.workspaceRoleAssignment.role')}</th>
+                  <th @if.canEdit={props.roleAssignmentsEditable}>
+                    {private.i18n.id('workspaces.workspace.workspaceRoleAssignment.actions')}
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                <Neos.Fusion:Loop items={props.roleAssignments} itemName="roleAssignment">
+                  <tr>
+                    <td
+                      title={roleAssignment.subjectTypeValue == 'USER' ? 'TODO user' : 'TODO users'}
+                    >
+                      <Neos.Workspace.Ui:Component.Icon
+                        icon={roleAssignment.subjectTypeValue == 'USER' ? 'user' : 'users'}
+                      />
+                    </td>
+                    <td>{roleAssignment.subjectLabel}</td>
+                    <td>{roleAssignment.roleLabel}</td>
+                    <td @if.canEdit={props.roleAssignmentsEditable}>
+                      <button
+                        type="button"
+                        class="neos-button neos-button-danger"
+                        title="remove"
+                      >
+                        <Neos.Workspace.Ui:Component.Icon icon="trash"/>
+                      </button>
+                    </td>
+                  </tr>
+                </Neos.Fusion:Loop>
+              </tbody>
+            </table>
+            <button
+              @if.canEdit={props.roleAssignmentsEditable}
+              type="button"
+              class="neos-button"
+            >
+              add
+            </button>
+          </fieldset>
+          <footer>
+            <button
+              type="button"
+              class="neos-button"
+              popovertarget={private.popoverId}
+              popovertargetaction="close"
+            >
+              {private.i18n.id('cancel', 'Cancel', [])}
+            </button>
             <Neos.Fusion.Form:Button attributes.class="neos-button neos-button-primary">
               {private.i18n.id('applyChanges')}
             </Neos.Fusion.Form:Button>
-          </fieldset>
+          </footer>
         </Neos.Fusion.Form:Form>
       </section>
-      <footer>
-        <button
-          type="button"
-          class="neos-button"
-          popovertarget={private.popoverId}
-          popovertargetaction="close"
-        >
-          {private.i18n.id('cancel', 'Cancel', [])}
-        </button>
-      </footer>
     </div>
   `
 }

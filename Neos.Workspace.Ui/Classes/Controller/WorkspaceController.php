@@ -71,6 +71,7 @@ use Neos\Neos\FrontendRouting\SiteDetection\SiteDetectionResult;
 use Neos\Neos\PendingChangesProjection\ChangeFinder;
 use Neos\Neos\Utility\NodeTypeWithFallbackProvider;
 use Neos\Workspace\Ui\ViewModel\EditWorkspaceFormData;
+use Neos\Workspace\Ui\ViewModel\EditWorkspaceRoleAssignment;
 use Neos\Workspace\Ui\ViewModel\PendingChanges;
 use Neos\Workspace\Ui\ViewModel\WorkspaceListItem;
 use Neos\Workspace\Ui\ViewModel\WorkspaceListItems;
@@ -277,6 +278,42 @@ class WorkspaceController extends AbstractModuleController
 
         $workspaceMetadata = $this->workspaceService->getWorkspaceMetadata($contentRepositoryId, $workspace->workspaceName);
 
+        // TODO can current user see/edit role assignments?
+        $roleAssignmentsVisible = true;
+        $roleAssignmentsEditable = true;
+
+        /** @var array<EditWorkspaceRoleAssignment> $workspaceRoleAssignments */
+        $workspaceRoleAssignments = [];
+
+        foreach ($this->workspaceService->getWorkspaceRoleAssignments($contentRepositoryId, $workspace->workspaceName) as $workspaceRoleAssignment) {
+            $subjectLabel = match ($workspaceRoleAssignment->subjectType) {
+                WorkspaceRoleSubjectType::USER => $this->userService->findUserById(UserId::fromString($workspaceRoleAssignment->subject->value))?->getLabel(),
+                default => $workspaceRoleAssignment->subject->value,
+            };
+
+            $roleLabel = $workspaceRoleAssignment->role->value;
+
+            $workspaceRoleAssignments[] = new EditWorkspaceRoleAssignment(
+                subjectLabel: $subjectLabel,
+                subjectTypeValue: $workspaceRoleAssignment->subjectType->value,
+                roleLabel: $roleLabel,
+            );
+        }
+
+        $roleAssignmentUserOptions = [];
+        foreach ($this->userService->getUsers()->toArray() as $user) {
+            $roleAssignmentUserOptions[$user->getId()->value] = $user->getLabel();
+        }
+
+        // TODO: get a set of configured groups in the system
+        // \Neos\Flow\Security\Policy\PolicyService::getRoles
+        $roleAssignmentGroupOptions = [
+            'Neos.Neos:AbstractEditor',
+            'Neos.Neos:Editor',
+            'Neos.Neos:LimitedEditor',
+            'Neos.Neos:LivePublisher',
+        ];
+
         $editWorkspaceDto = new EditWorkspaceFormData(
             workspaceName: $workspace->workspaceName,
             workspaceTitle: $workspaceMetadata->title,
@@ -284,6 +321,11 @@ class WorkspaceController extends AbstractModuleController
             workspaceHasChanges: $this->computePendingChanges($workspace, $contentRepository)->total > 0,
             baseWorkspaceName: $workspace->baseWorkspaceName,
             baseWorkspaceOptions: $this->prepareBaseWorkspaceOptions($contentRepository, $workspaceName),
+            roleAssignmentsVisible: $roleAssignmentsVisible,
+            roleAssignmentsEditable: $roleAssignmentsEditable,
+            roleAssignments: $workspaceRoleAssignments,
+            roleAssignmentUserOptions: $roleAssignmentUserOptions,
+            roleAssignmentGroupOptions: $roleAssignmentGroupOptions,
         );
 
         $this->view->assign('editWorkspaceFormData', $editWorkspaceDto);
@@ -303,6 +345,8 @@ class WorkspaceController extends AbstractModuleController
         WorkspaceTitle $title,
         WorkspaceDescription $description,
         WorkspaceName $baseWorkspace,
+        array $workspaceManagerUsers,
+        array $workspaceManagerGroups,
     ): void {
         $contentRepositoryId = SiteDetectionResult::fromRequest($this->request->getHttpRequest())->contentRepositoryId;
         $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryId);
@@ -345,6 +389,20 @@ class WorkspaceController extends AbstractModuleController
             $workspaceName,
             $baseWorkspace,
         );
+
+        // TODO: Update Workspace Managers
+        // remove all removed role assignments
+        $currentAssignments = $this->workspaceService->getWorkspaceRoleAssignments($contentRepositoryId, $workspaceName);
+        $newAssignments = [];
+
+        // add new role assignments
+        foreach ($workspaceManagerUsers as $userId) {
+            $userAssignment = WorkspaceRoleAssignment::createForUser(UserId::fromString($userId), WorkspaceRole::MANAGER);
+
+            if (!$currentAssignments->contains($userAssignment)) {
+                $this->workspaceService->assignWorkspaceRole($contentRepositoryId, $workspaceName, $userAssignment);
+            }
+        }
 
         $this->addFlashMessage(
             $this->getModuleLabel(
@@ -436,12 +494,7 @@ class WorkspaceController extends AbstractModuleController
             $this->throwStatus(403, 'Workspace has unpublished nodes');
         // delete workspace on POST
         } elseif ($this->request->getHttpRequest()->getMethod() === 'POST') {
-            // TODO: WorkspaceMetadata is not being removed with this
-            $contentRepository->handle(
-                DeleteWorkspace::create(
-                    $workspaceName,
-                )
-            );
+            $this->workspaceService->deleteWorkspace($contentRepositoryId, $workspaceName);
 
             $this->addFlashMessage(
                 $this->getModuleLabel(
@@ -1170,12 +1223,12 @@ class WorkspaceController extends AbstractModuleController
                 $this->userService->getCurrentUser()
             );
 
-            // Skip live workspace
-            // TODO: Why?
-            if ($workspace->workspaceName->isLive()) {
+            // ignore root workspaces, because they will not be shown in the UI
+            if ($workspaceMetadata->classification === WorkspaceClassification::ROOT) {
                 continue;
             }
 
+            // TODO use owner/WorkspaceRoleAssignment?
             if ($workspacesPermissions->read === false) {
                 continue;
             }
@@ -1183,29 +1236,6 @@ class WorkspaceController extends AbstractModuleController
             $workspaceOwner = $workspaceMetadata->ownerUserId
                 ? $this->userService->findUserById($workspaceMetadata->ownerUserId)
                 : null;
-
-            $workspaceRoleAssignments = $this->workspaceService->getWorkspaceRoleAssignments($contentRepository->id, $workspace->workspaceName);
-
-            /**
-             * Managing users of the workspace excluding the owner
-             * @var array<string> $workspaceManagerUsers
-             */
-            $workspaceManagerUsers = [];
-            $workspaceManagerGroups = [];
-
-            foreach ($workspaceRoleAssignments as $roleAssignment) {
-                if ($roleAssignment->role === WorkspaceRole::MANAGER) {
-                    if ($roleAssignment->subjectType == WorkspaceRoleSubjectType::USER) {
-                        $userId = UserId::fromString($roleAssignment->subject->value);
-
-                        $workspaceManagerUsers[] = $this->userService
-                            ->findUserById($userId)
-                            ->getLabel();
-                    } elseif ($roleAssignment->subjectType == WorkspaceRoleSubjectType::GROUP) {
-                        $workspaceManagerGroups[] = $roleAssignment->subject->value;
-                    }
-                }
-            }
 
             $workspaceListItems[$workspace->workspaceName->value] = new WorkspaceListItem(
                 $workspace->workspaceName->value,

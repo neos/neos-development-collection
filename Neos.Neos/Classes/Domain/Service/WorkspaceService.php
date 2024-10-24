@@ -22,6 +22,7 @@ use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Command\CreateRootWork
 use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Command\CreateWorkspace;
 use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Exception\WorkspaceAlreadyExists;
 use Neos\ContentRepository\Core\Feature\WorkspaceModification\Command\ChangeBaseWorkspace;
+use Neos\ContentRepository\Core\Feature\WorkspaceModification\Command\DeleteWorkspace;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\Workspace;
@@ -359,7 +360,48 @@ final class WorkspaceService
         );
     }
 
+    public function deleteWorkspace(ContentRepositoryId $contentRepositoryId, WorkspaceName $workspaceName)
+    {
+        $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryId);
+        $workspace = $this->requireWorkspace($contentRepositoryId, $workspaceName);
+
+        $contentRepository->handle(
+            DeleteWorkspace::create(
+                $workspaceName,
+            )
+        );
+
+        $this->deleteWorkspaceMetadata($contentRepositoryId, $workspaceName);
+        $this->deleteWorkspaceRoleAssignments($contentRepositoryId, $workspaceName);
+    }
+
     // ------------------
+
+    private function deleteWorkspaceMetadata(ContentRepositoryId $contentRepositoryId, $workspaceName): void
+    {
+        $table = self::TABLE_NAME_WORKSPACE_METADATA;
+        $query = <<<SQL
+            DELETE FROM
+                {$table}
+            WHERE
+                content_repository_id = :contentRepositoryId
+                AND workspace_name = :workspaceName
+        SQL;
+
+        try {
+            $this->dbal->executeStatement($query, [
+                'contentRepositoryId' => $contentRepositoryId->value,
+                'workspaceName' => $workspaceName->value,
+            ]);
+        } catch (DbalException $e) {
+            throw new \RuntimeException(sprintf(
+                'Failed to delete metadata for workspace "%s" (Content Repository "%s"): %s',
+                $workspaceName->value,
+                $contentRepositoryId->value,
+                $e->getMessage()
+            ), 1726821159, $e);
+        }
+    }
 
     private function loadWorkspaceMetadata(ContentRepositoryId $contentRepositoryId, WorkspaceName $workspaceName): ?WorkspaceMetadata
     {
@@ -471,6 +513,32 @@ final class WorkspaceService
             'userId' => $userId->value,
         ]);
         return $workspaceName === false ? null : WorkspaceName::fromString($workspaceName);
+    }
+
+    private function deleteWorkspaceRoleAssignments(ContentRepositoryId $contentRepositoryId, WorkspaceName $workspaceName): void
+    {
+        $table = self::TABLE_NAME_WORKSPACE_ROLE;
+        $query = <<<SQL
+            DELETE FROM
+                {$table}
+            WHERE
+                content_repository_id = :contentRepositoryId
+                AND workspace_name = :workspaceName
+        SQL;
+
+        try {
+            $this->dbal->executeStatement($query, [
+                'contentRepositoryId' => $contentRepositoryId->value,
+                'workspaceName' => $workspaceName->value,
+            ]);
+        } catch (DbalException $e) {
+            throw new \RuntimeException(sprintf(
+                'Failed to delete role assignments for workspace "%s" (Content Repository "%s"): %s',
+                $workspaceName->value,
+                $contentRepositoryId->value,
+                $e->getMessage()
+            ), 1726821159, $e);
+        }
     }
 
     /**
