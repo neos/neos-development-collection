@@ -43,7 +43,7 @@ Feature: Workspace rebasing - conflicting changes
       | baseWorkspaceName  | "live"               |
       | newContentStreamId | "user-cs-identifier" |
 
-  Scenario: Conflicting changes lead to OUTDATED_CONFLICT which can be recovered from via forced rebase
+  Scenario: Conflicting changes lead to OUTDATED which can be recovered from via forced rebase
 
     When the command CreateWorkspace is executed with payload:
       | Key                | Value              |
@@ -55,6 +55,8 @@ Feature: Workspace rebasing - conflicting changes
       | workspaceName      | "user-ws-two"      |
       | baseWorkspaceName  | "live"             |
       | newContentStreamId | "user-cs-two"      |
+
+    Then workspaces live,user-ws-one,user-ws-two have status UP_TO_DATE
 
     When the command RemoveNodeAggregate is executed with payload:
       | Key                          | Value              |
@@ -85,10 +87,13 @@ Feature: Workspace rebasing - conflicting changes
       | originDimensionSpacePoint | {}                         |
       | propertyValues            | {"text": "The other node"} |
 
+    Then workspaces live,user-ws-one,user-ws-two have status UP_TO_DATE
+
     And the command PublishWorkspace is executed with payload:
       | Key           | Value         |
       | workspaceName | "user-ws-one" |
 
+    Then workspaces live,user-ws-one have status UP_TO_DATE
     Then workspace user-ws-two has status OUTDATED
 
     When the command RebaseWorkspace is executed with payload:
@@ -97,5 +102,5 @@ Feature: Workspace rebasing - conflicting changes
       | rebasedContentStreamId      | "user-cs-two-rebased" |
       | rebaseErrorHandlingStrategy | "force"               |
 
-    Then workspace user-ws-two has status UP_TO_DATE
+    Then workspaces live,user-ws-one,user-ws-two have status UP_TO_DATE
     And I expect a node identified by user-cs-two-rebased;noderus-secundus;{} to exist in the content graph
