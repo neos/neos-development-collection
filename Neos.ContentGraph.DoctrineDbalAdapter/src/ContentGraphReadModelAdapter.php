@@ -194,7 +194,7 @@ final readonly class ContentGraphReadModelAdapter implements ContentGraphReadMod
     }
 
     /**
-     * @param array<string, mixed> $row
+     * @param array<string, mixed> $row todo fetch source content stream version and use for publishing as expected version
      */
     private static function contentStreamFromDatabaseRow(array $row): ContentStream
     {
