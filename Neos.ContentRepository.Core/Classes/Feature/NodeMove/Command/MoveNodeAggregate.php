@@ -61,7 +61,7 @@ final readonly class MoveNodeAggregate implements
         public WorkspaceName $workspaceName,
         public DimensionSpacePoint $dimensionSpacePoint,
         public NodeAggregateId $nodeAggregateId,
-        public RelationDistributionStrategy $relationDistributionStrategy,
+        public ?RelationDistributionStrategy $relationDistributionStrategy,
         public ?NodeAggregateId $newParentNodeAggregateId,
         public ?NodeAggregateId $newPrecedingSiblingNodeAggregateId,
         public ?NodeAggregateId $newSucceedingSiblingNodeAggregateId,
@@ -72,12 +72,12 @@ final readonly class MoveNodeAggregate implements
      * @param WorkspaceName $workspaceName The workspace in which the move operation is to be performed
      * @param DimensionSpacePoint $dimensionSpacePoint This is one of the *covered* dimension space points of the node aggregate and not necessarily one of the occupied ones. This allows us to move virtual specializations only when using the scatter strategy
      * @param NodeAggregateId $nodeAggregateId The id of the node aggregate to move
-     * @param RelationDistributionStrategy $relationDistributionStrategy The relation distribution strategy to be used ({@see RelationDistributionStrategy})
+     * @param RelationDistributionStrategy|null $relationDistributionStrategy The relation distribution strategy to be used ({@see RelationDistributionStrategy}). If not specified, is read from NodeTypes.yaml (strategy.moveNode)
      * @param NodeAggregateId|null $newParentNodeAggregateId The id of the new parent node aggregate. If given, it enforces that all nodes in the given aggregate are moved into nodes of the parent aggregate, even if the given siblings belong to other parents. In latter case, those siblings are ignored
      * @param NodeAggregateId|null $newPrecedingSiblingNodeAggregateId The id of the new preceding sibling node aggregate. If given and no successor found, it is attempted to insert the moved nodes right after nodes of this aggregate. In dimension space points this aggregate does not cover, other siblings, in order of proximity, are tried to be used instead
      * @param NodeAggregateId|null $newSucceedingSiblingNodeAggregateId The id of the new succeeding sibling node aggregate. If given, it is attempted to insert the moved nodes right before nodes of this aggregate. In dimension space points this aggregate does not cover, the preceding sibling is tried to be used instead
      */
-    public static function create(WorkspaceName $workspaceName, DimensionSpacePoint $dimensionSpacePoint, NodeAggregateId $nodeAggregateId, RelationDistributionStrategy $relationDistributionStrategy, ?NodeAggregateId $newParentNodeAggregateId = null, ?NodeAggregateId $newPrecedingSiblingNodeAggregateId = null, ?NodeAggregateId $newSucceedingSiblingNodeAggregateId = null): self
+    public static function create(WorkspaceName $workspaceName, DimensionSpacePoint $dimensionSpacePoint, NodeAggregateId $nodeAggregateId, ?RelationDistributionStrategy $relationDistributionStrategy = null, ?NodeAggregateId $newParentNodeAggregateId = null, ?NodeAggregateId $newPrecedingSiblingNodeAggregateId = null, ?NodeAggregateId $newSucceedingSiblingNodeAggregateId = null): self
     {
         return new self($workspaceName, $dimensionSpacePoint, $nodeAggregateId, $relationDistributionStrategy, $newParentNodeAggregateId, $newPrecedingSiblingNodeAggregateId, $newSucceedingSiblingNodeAggregateId);
     }
@@ -91,7 +91,9 @@ final readonly class MoveNodeAggregate implements
             WorkspaceName::fromString($array['workspaceName']),
             DimensionSpacePoint::fromArray($array['dimensionSpacePoint']),
             NodeAggregateId::fromString($array['nodeAggregateId']),
-            RelationDistributionStrategy::fromString($array['relationDistributionStrategy']),
+            isset($array['relationDistributionStrategy'])
+                ? RelationDistributionStrategy::fromString($array['relationDistributionStrategy'])
+                : null,
             isset($array['newParentNodeAggregateId'])
                 ? NodeAggregateId::fromString($array['newParentNodeAggregateId'])
                 : null,
@@ -116,6 +118,19 @@ final readonly class MoveNodeAggregate implements
     {
         return $this->nodeAggregateId->equals($nodeIdToPublish->nodeAggregateId)
             && $this->dimensionSpacePoint === $nodeIdToPublish->dimensionSpacePoint;
+    }
+
+    public function withRelationDistributionStrategy(RelationDistributionStrategy $relationDistributionStrategy): self
+    {
+        return new self(
+            $this->workspaceName,
+            $this->dimensionSpacePoint,
+            $this->nodeAggregateId,
+            $relationDistributionStrategy,
+            $this->newParentNodeAggregateId,
+            $this->newPrecedingSiblingNodeAggregateId,
+            $this->newSucceedingSiblingNodeAggregateId
+        );
     }
 
     public function createCopyForWorkspace(

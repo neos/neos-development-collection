@@ -14,6 +14,7 @@ namespace Neos\ContentRepository\Core\NodeType;
  * source code.
  */
 
+use Neos\ContentRepository\Core\Feature\NodeMove\Dto\RelationDistributionStrategy;
 use Neos\ContentRepository\Core\SharedModel\Exception\InvalidNodeTypePostprocessorException;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeConfigurationException;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
@@ -542,5 +543,14 @@ final class NodeType
     protected function setFullConfiguration(array $fullConfiguration): void
     {
         $this->fullConfiguration = $fullConfiguration;
+    }
+
+    /**
+     * Get the MoveNode strategy used when moving a node
+     */
+    public function getMoveNodeRelationDistributionStrategy(): RelationDistributionStrategy
+    {
+        $strategy = $this->getConfiguration('strategy.moveNode') ?: 'RelationDistributionStrategy::STRATEGY_GATHER_ALL';
+        return RelationDistributionStrategy::fromName($strategy);
     }
 }
