@@ -18,7 +18,6 @@ use Neos\Flow\Security\Context;
 use Neos\Flow\Security\Authorization\Privilege\Entity\Doctrine\ConditionGenerator as EntityConditionGenerator;
 use Neos\Flow\Security\Authorization\Privilege\Entity\Doctrine\DisjunctionGenerator;
 use Neos\Flow\Security\Authorization\Privilege\Entity\Doctrine\PropertyConditionGenerator;
-use Neos\ContentRepository\Security\Authorization\Privilege\Node\Doctrine\DecendantOfTypeConditionGenerator;
 use Neos\Flow\Security\Exception\InvalidPrivilegeException;
 use Neos\ContentRepository\Domain\Model\NodeData;
 use Neos\ContentRepository\Domain\Model\NodeInterface;
