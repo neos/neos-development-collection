@@ -14,7 +14,7 @@ Feature: Privilege to restrict editing of nodes
             matcher: 'isDescendantNodeOf("11d3aded-fb1a-70e7-1412-0b465b11fcd8")'
 
           'Neos.ContentRepository:EditCollectionType':
-            matcher: 'isDescendantOfNodetype("Neos.ContentRepository.Testing:ContentCollection")'
+            matcher: 'isDescendantOfType("Neos.ContentRepository.Testing:ContentCollection")'
 
       roles:
         'Neos.Flow:Everybody':
@@ -50,7 +50,7 @@ Feature: Privilege to restrict editing of nodes
       | 4f7230ba-36b2-4dc3-96fa-b4159371cd3b | /sites/content-repository/service/collection/text      | Neos.ContentRepository.Testing:Text              | {"text": "Cool text"}         | live      |
       
   @Isolated @fixtures
-  Scenario: Anonymous users are not granted to edit childnodes on ContenCollection nodetypes
+  Scenario: Anonymous users are not granted to edit childnodes on ContentCollection nodetypes
     Given I am not authenticated
     And I get a node by path "/sites/content-repository/service/collection/text" with the following context:
       | Workspace  |
@@ -59,7 +59,7 @@ Feature: Privilege to restrict editing of nodes
     And I should get false when asking the node authorization service if editing this node is granted
 
   @Isolated @fixtures
-  Scenario: Administrators are granted to edit childnodes on ContenCollection nodetypes
+  Scenario: Administrators are granted to edit childnodes on ContentCollection nodetypes
     Given I am authenticated with role "Neos.ContentRepository:Administrator"
     And I get a node by path "/sites/content-repository/service/collection/text" with the following context:
       | Workspace  |
