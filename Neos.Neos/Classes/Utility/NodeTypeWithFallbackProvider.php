@@ -30,10 +30,10 @@ trait NodeTypeWithFallbackProvider
      */
     protected function getNodeType(Node $node): NodeType
     {
-        $nodeTypeManager = $this->contentRepositoryRegistry->get($node->contentRepositoryId)->getNodeTypeManager();
+        $contentRepository = $this->contentRepositoryRegistry->get($node->contentRepositoryId);
 
-        return $nodeTypeManager->getNodeType($node->nodeTypeName)
-            ?? $nodeTypeManager->getNodeType(NodeTypeNameFactory::forFallback())
+        return $contentRepository->getNodeType($node->nodeTypeName)
+            ?? $contentRepository->getNodeType(NodeTypeNameFactory::forFallback())
             ?? throw new NodeTypeNotFound(sprintf('Fallback NodeType not found while attempting to get NodeType "%s".', $node->nodeTypeName->value), 1710789992);
     }
 }

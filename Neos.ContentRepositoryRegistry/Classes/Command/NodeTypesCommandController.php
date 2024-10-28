@@ -40,9 +40,9 @@ class NodeTypesCommandController extends CommandController
     public function showCommand(string $nodeTypeName, string $path = '', int $level = 0, string $contentRepository = 'default'): void
     {
         $contentRepositoryId = ContentRepositoryId::fromString($contentRepository);
-        $nodeTypeManager = $this->contentRepositoryRegistry->get($contentRepositoryId)->getNodeTypeManager();
+        $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryId);
 
-        $nodeType = $nodeTypeManager->getNodeType($nodeTypeName);
+        $nodeType = $contentRepository->getNodeType($nodeTypeName);
         if (!$nodeType) {
             $this->outputLine('<error>NodeType "%s" was not found!</error>', [$nodeTypeName]);
             $this->quit();

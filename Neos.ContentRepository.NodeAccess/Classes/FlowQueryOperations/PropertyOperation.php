@@ -97,9 +97,8 @@ class PropertyOperation extends AbstractOperation
         }
 
         $contentRepository = $this->contentRepositoryRegistry->get($element->contentRepositoryId);
-        $nodeTypeManager = $contentRepository->getNodeTypeManager();
 
-        if ($nodeTypeManager->getNodeType($element->nodeTypeName)?->hasReference($propertyName)) {
+        if ($contentRepository->getNodeType($element->nodeTypeName)?->hasReference($propertyName)) {
             // legacy access layer for references
             $subgraph = $this->contentRepositoryRegistry->subgraphForNode($element);
             $references = $subgraph->findReferences(
@@ -107,7 +106,7 @@ class PropertyOperation extends AbstractOperation
                 FindReferencesFilter::create(referenceName: $propertyName)
             )->getNodes();
 
-            $maxItems = $nodeTypeManager->getNodeType($element->nodeTypeName)->getReferences()[$propertyName]['constraints']['maxItems'] ?? null;
+            $maxItems = $contentRepository->getNodeType($element->nodeTypeName)->getReferences()[$propertyName]['constraints']['maxItems'] ?? null;
             if ($maxItems === 1) {
                 // legacy layer references with only one item like the previous `type: reference`
                 // (the node type transforms that to constraints.maxItems = 1)

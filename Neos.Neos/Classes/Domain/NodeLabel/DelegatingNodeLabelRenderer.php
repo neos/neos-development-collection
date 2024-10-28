@@ -25,9 +25,9 @@ final readonly class DelegatingNodeLabelRenderer implements NodeLabelGeneratorIn
 
     public function getLabel(Node $node): string
     {
-        $nodeTypeManager = $this->contentRepositoryRegistry->get($node->contentRepositoryId)->getNodeTypeManager();
-        $nodeType = $nodeTypeManager->getNodeType($node->nodeTypeName)
-            ?? $nodeTypeManager->getNodeType(NodeTypeNameFactory::forFallback());
+        $contentRepository = $this->contentRepositoryRegistry->get($node->contentRepositoryId);
+        $nodeType = $contentRepository->getNodeType($node->nodeTypeName)
+            ?? $contentRepository->getNodeType(NodeTypeNameFactory::forFallback());
         $generator = $this->getDelegatedGenerator($nodeType);
         if ($generator instanceof DelegatingNodeLabelRenderer) {
             throw new \RuntimeException(
