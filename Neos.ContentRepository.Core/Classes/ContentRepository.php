@@ -25,7 +25,9 @@ use Neos\ContentRepository\Core\EventStore\EventPersister;
 use Neos\ContentRepository\Core\EventStore\Events;
 use Neos\ContentRepository\Core\EventStore\EventsToPublish;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryFactory;
+use Neos\ContentRepository\Core\NodeType\NodeType;
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
+use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\Projection\CatchUp;
 use Neos\ContentRepository\Core\Projection\CatchUpOptions;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphInterface;
@@ -284,6 +286,14 @@ final class ContentRepository
     public function findContentStreams(): ContentStreams
     {
         return $this->contentGraphReadModel->findContentStreams();
+    }
+
+    /**
+     * Returns the specified node type (which could be abstract)
+     */
+    public function getNodeType(string|NodeTypeName $nodeTypeName): ?NodeType
+    {
+        return $this->nodeTypeManager->getNodeType($nodeTypeName);
     }
 
     public function getNodeTypeManager(): NodeTypeManager

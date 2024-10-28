@@ -304,8 +304,7 @@ final class WorkspacePublishingService
         }
 
         if (
-            !$contentRepository->getNodeTypeManager()
-                ->getNodeType($nodeAggregate->nodeTypeName)
+            !$contentRepository->getNodeType($nodeAggregate->nodeTypeName)
                 ?->isOfType($nodeTypeName)
         ) {
             throw new \RuntimeException(

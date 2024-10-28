@@ -170,7 +170,7 @@ class ContentCacheFlusher
         $tagsToFlush = [];
 
         $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryId);
-        $nodeType = $contentRepository->getNodeTypeManager()->getNodeType($nodeTypeName);
+        $nodeType = $contentRepository->getNodeType($nodeTypeName);
         if ($nodeType) {
             $nodeTypesNamesToFlush = $this->getAllImplementedNodeTypeNames($nodeType);
         } else {

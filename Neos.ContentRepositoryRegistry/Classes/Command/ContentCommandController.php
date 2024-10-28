@@ -99,7 +99,7 @@ final class ContentCommandController extends CommandController
 
         foreach ($childNodes as $childNode) {
             if ($childNode->classification->isRegular()) {
-                $childNodeType = $contentRepository->getNodeTypeManager()->getNodeType($childNode->nodeTypeName);
+                $childNodeType = $contentRepository->getNodeType($childNode->nodeTypeName);
                 if ($childNodeType?->isOfType('Neos.Neos:Document')) {
                     $this->output("%s- %s\n", [
                         str_repeat('  ', $level),

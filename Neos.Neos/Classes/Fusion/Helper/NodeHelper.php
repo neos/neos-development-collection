@@ -86,8 +86,7 @@ class NodeHelper implements ProtectedContextAwareInterface
     public function nodeType(Node $node): ?NodeType
     {
         $contentRepository = $this->contentRepositoryRegistry->get($node->contentRepositoryId);
-        return $contentRepository->getNodeTypeManager()
-            ->getNodeType($node->nodeTypeName);
+        return $contentRepository->getNodeType($node->nodeTypeName);
     }
 
     /**
@@ -97,8 +96,7 @@ class NodeHelper implements ProtectedContextAwareInterface
     public function isOfType(Node $node, string $nodeType): bool
     {
         $contentRepository = $this->contentRepositoryRegistry->get($node->contentRepositoryId);
-        return (bool)$contentRepository->getNodeTypeManager()
-            ->getNodeType($node->nodeTypeName)?->isOfType($nodeType);
+        return (bool)$contentRepository->getNodeType($node->nodeTypeName)?->isOfType($nodeType);
     }
 
     public function isDisabled(Node $node): bool

@@ -57,7 +57,7 @@ class AssetUsageIndexingService
     {
         $workspaceBases = $this->getWorkspaceBasesAndWorkspace($contentRepositoryId, $node->workspaceName);
         $workspaceDependents = $this->getWorkspaceDependents($contentRepositoryId, $node->workspaceName);
-        $nodeType = $this->contentRepositoryRegistry->get($contentRepositoryId)->getNodeTypeManager()->getNodeType($node->nodeTypeName);
+        $nodeType = $this->contentRepositoryRegistry->get($contentRepositoryId)->getNodeType($node->nodeTypeName);
 
         if ($nodeType === null) {
             return;

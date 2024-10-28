@@ -17,7 +17,7 @@ use Neos\Neos\Domain\Service\NodeTypeNameFactory;
  * This is only a temporary drop-in replacement as the automatic fallback handling
  * of the NodeTypeManager was removed and Node::getNodeType was also removed.
  *
- * Its preferred to use the nullable {@see NodeTypeManager::getNodeType()} instead, and for cases where
+ * Its preferred to use the nullable {@see NodeTypeManager::getNodeType()}, aliased {@see ContentRepository::getNodeType()} instead, and for cases where
  * the Fallback NodeType is really required use {@see NodeTypeNameFactory::forFallback()}.
  *
  * @property ContentRepositoryRegistry $contentRepositoryRegistry

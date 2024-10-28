@@ -101,7 +101,7 @@ class UsageController extends ActionController
             $nodeAggregate = $contentRepository->getContentGraph($usage->getWorkspaceName())->findNodeAggregateById(
                 $usage->getNodeAggregateId()
             );
-            $nodeType = $nodeAggregate ? $contentRepository->getNodeTypeManager()->getNodeType($nodeAggregate->nodeTypeName) : null;
+            $nodeType = $nodeAggregate ? $contentRepository->getNodeType($nodeAggregate->nodeTypeName) : null;
 
             $workspacePermissions = $this->workspaceService->getWorkspacePermissionsForUser(
                 $currentContentRepositoryId,
