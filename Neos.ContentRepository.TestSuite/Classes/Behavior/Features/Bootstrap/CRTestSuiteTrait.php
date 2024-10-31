@@ -17,6 +17,7 @@ namespace Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap;
 use Behat\Behat\Hook\Scope\BeforeScenarioScope;
 use Behat\Gherkin\Node\PyStringNode;
 use Behat\Gherkin\Node\TableNode;
+use Neos\ContentGraph\DoctrineDbalAdapter\DoctrineDbalContentGraphProjection;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceFactoryDependencies;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceFactoryInterface;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceInterface;
@@ -139,10 +140,38 @@ trait CRTestSuiteTrait
     /**
      * @Then /^I expect the content stream "([^"]*)" to not exist$/
      */
-    public function iExpectTheContentStreamToNotExist(string $rawContentStreamId, string $not = ''): void
+    public function iExpectTheContentStreamToNotExist(string $rawContentStreamId): void
     {
         $contentStream = $this->currentContentRepository->findContentStreamById(ContentStreamId::fromString($rawContentStreamId));
         Assert::assertNull($contentStream, sprintf('Content stream "%s" was not expected to exist, but it does', $rawContentStreamId));
+    }
+
+    /**
+     * @Then /^I expect the workspace "([^"]*)" to not exist$/
+     */
+    public function iExpectTheWorkspaceToNotExist(string $rawWorkspaceName): void
+    {
+        $workspaceByName = $this->currentContentRepository->findWorkspaceByName(WorkspaceName::fromString($rawWorkspaceName));
+        Assert::assertNull($workspaceByName, sprintf('Workspace "%s" was not expected to exist, but it does', $rawWorkspaceName));
+    }
+
+    /**
+     * @Then I expect the following workspaces to exist:
+     */
+    public function iExpectTheFollowingWorkspaces(TableNode $payloadTable): void
+    {
+        $actualComparableHash = [];
+        $workspaces = $this->currentContentRepository->findWorkspaces();
+        foreach ($workspaces as $workspace) {
+            $actualComparableHash[] = array_map(json_encode(...), [
+                'name' => $workspace->workspaceName,
+                'base' => $workspace->baseWorkspaceName,
+                'status' => $workspace->status,
+                'content stream' => $workspace->currentContentStreamId,
+                'publishable changes' => false, // todo https://github.com/neos/neos-development-collection/pull/5332
+            ]);
+        }
+        Assert::assertSame($payloadTable->getHash(), $actualComparableHash);
     }
 
     /**
@@ -283,6 +312,21 @@ trait CRTestSuiteTrait
     {
         $this->currentContentRepository->resetProjectionState($projectionName);
         $this->currentContentRepository->catchUpProjection($projectionName, CatchUpOptions::create());
+    }
+
+    /**
+     * @When I replay the content graph
+     * @When I replay the content graph until :maximumSequenceNumber
+     */
+    public function iReplayTheContentGraphProjection(?int $maximumSequenceNumber = null): void
+    {
+        // fixme allow to specify `ContentGraphProjectionInterface` here instead of adapter class
+        $this->currentContentRepository->resetProjectionState(DoctrineDbalContentGraphProjection::class);
+        $catchupOptions = CatchUpOptions::create();
+        if ($maximumSequenceNumber) {
+            $catchupOptions = $catchupOptions->with(maximumSequenceNumber: $maximumSequenceNumber);
+        }
+        $this->currentContentRepository->catchUpProjection(DoctrineDbalContentGraphProjection::class, $catchupOptions);
     }
 
     protected function deserializeProperties(array $properties): PropertyValuesToWrite

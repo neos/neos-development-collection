@@ -183,10 +183,6 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
             // no-op
             return;
         }
-
-        if (!$commandHandlingDependencies->contentStreamExists($workspace->currentContentStreamId)) {
-            throw new \RuntimeException('Cannot publish nodes on a workspace with a stateless content stream', 1729711258);
-        }
         $this->requireContentStreamToNotBeClosed($baseWorkspace->currentContentStreamId, $commandHandlingDependencies);
         $baseContentStreamVersion = $commandHandlingDependencies->getContentStreamVersion($baseWorkspace->currentContentStreamId);
 
@@ -336,9 +332,6 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
     ): \Generator {
         $workspace = $this->requireWorkspace($command->workspaceName, $commandHandlingDependencies);
         $baseWorkspace = $this->requireBaseWorkspace($workspace, $commandHandlingDependencies);
-        if (!$commandHandlingDependencies->contentStreamExists($workspace->currentContentStreamId)) {
-            throw new \RuntimeException('Cannot rebase a workspace with a stateless content stream', 1711718314);
-        }
 
         if (
             $workspace->status === WorkspaceStatus::UP_TO_DATE
@@ -440,10 +433,6 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
             return;
         }
 
-        // todo check that fetching workspace throws if there is no content stream id for it
-        if (!$commandHandlingDependencies->contentStreamExists($workspace->currentContentStreamId)) {
-            throw new \RuntimeException('Cannot publish nodes on a workspace with a stateless content stream', 1710410114);
-        }
         $this->requireContentStreamToNotBeClosed($baseWorkspace->currentContentStreamId, $commandHandlingDependencies);
         $baseContentStreamVersion = $commandHandlingDependencies->getContentStreamVersion($baseWorkspace->currentContentStreamId);
 
@@ -574,10 +563,6 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
         if ($command->nodesToDiscard->isEmpty() || !$workspace->hasPublishableChanges()) {
             // noop
             return;
-        }
-
-        if (!$commandHandlingDependencies->contentStreamExists($workspace->currentContentStreamId)) {
-            throw new \RuntimeException('Cannot discard nodes on a workspace with a stateless content stream', 1710408112);
         }
 
         yield $this->closeContentStream(

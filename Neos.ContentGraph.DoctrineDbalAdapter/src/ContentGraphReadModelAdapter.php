@@ -161,6 +161,7 @@ final readonly class ContentGraphReadModelAdapter implements ContentGraphReadMod
         return $queryBuilder
             ->select('ws.name, ws.baseWorkspaceName, ws.currentContentStreamId, cs.hasChanges, cs.sourceContentStreamVersion = scs.version as upToDateWithBase')
             ->from($this->tableNames->workspace(), 'ws')
+            // through this join we enforce that the `currentContentStreamId` actually exists in the content stream table
             ->join('ws', $this->tableNames->contentStream(), 'cs', 'cs.id = ws.currentcontentstreamid')
             ->leftJoin('cs', $this->tableNames->contentStream(), 'scs', 'scs.id = cs.sourceContentStreamId');
     }
@@ -170,6 +171,8 @@ final readonly class ContentGraphReadModelAdapter implements ContentGraphReadMod
      */
     private static function workspaceFromDatabaseRow(array $row): Workspace
     {
+        $name = WorkspaceName::fromString($row['name']);
+        $currentContentStreamId = ContentStreamId::fromString($row['currentContentStreamId']);
         $baseWorkspaceName = $row['baseWorkspaceName'] !== null ? WorkspaceName::fromString($row['baseWorkspaceName']) : null;
 
         if ($baseWorkspaceName === null) {
@@ -184,9 +187,9 @@ final readonly class ContentGraphReadModelAdapter implements ContentGraphReadMod
         }
 
         return Workspace::create(
-            WorkspaceName::fromString($row['name']),
+            $name,
             $baseWorkspaceName,
-            ContentStreamId::fromString($row['currentContentStreamId']),
+            $currentContentStreamId,
             $status,
             $baseWorkspaceName === null
                 ? false

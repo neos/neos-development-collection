@@ -211,3 +211,42 @@ Feature: If content streams are not in use anymore by the workspace, they can be
     And I expect this node to have the following properties:
       | Key  | Value                 |
       | text | "Review after replay" |
+
+  Scenario: Pruning removed content streams and replaying will lead to workspaces without content stream (and the workspace not fetch able)
+    When the command CreateWorkspace is executed with payload:
+      | Key                | Value                |
+      | workspaceName      | "user-test"          |
+      | baseWorkspaceName  | "live"               |
+      | newContentStreamId | "user-cs-identifier" |
+
+    When the command RebaseWorkspace is executed with payload:
+      | Key                         | Value                        |
+      | workspaceName               | "user-test"                  |
+      | rebasedContentStreamId      | "user-cs-identifier-rebased" |
+      | rebaseErrorHandlingStrategy | "force"                      |
+
+    Then I expect the content stream "user-cs-identifier" to not exist
+    And I prune removed content streams from the event stream
+    Then I expect exactly 0 events to be published on stream "ContentStream:user-cs-identifier"
+
+    Then I expect the highest sequence number to be 8
+    # replay before the rebase, when the workspaces content stream does not exist
+    And I replay the content graph until 7
+
+    Then I expect the workspace "user-test" to not exist
+    Then I expect the following workspaces to exist:
+      | name   | base | status       | content stream  | publishable changes |
+      | "live" | null | "UP_TO_DATE" | "cs-identifier" | false               |
+
+    When I am in workspace "user-test" and dimension space point {}
+    # FIXME maybe getContentGraph should already throw an exception if the content stream does not exist?
+    Then I expect node aggregate identifier "root-node" to lead to no node
+
+    And I replay the content graph
+    Then I expect the following workspaces to exist:
+      | name        | base   | status       | content stream               | publishable changes |
+      | "live"      | null   | "UP_TO_DATE" | "cs-identifier"              | false               |
+      | "user-test" | "live" | "UP_TO_DATE" | "user-cs-identifier-rebased" | false               |
+
+    When I am in workspace "user-test" and dimension space point {}
+    Then I expect node aggregate identifier "root-node" to lead to node user-cs-identifier-rebased;root-node;{}
