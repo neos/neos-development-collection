@@ -81,13 +81,6 @@ trait ConstraintChecks
         CommandHandlingDependencies $commandHandlingDependencies
     ): ContentStreamId {
         $contentStreamId = $commandHandlingDependencies->getContentGraph($workspaceName)->getContentStreamId();
-        if (!$commandHandlingDependencies->contentStreamExists($contentStreamId)) {
-            throw new ContentStreamDoesNotExistYet(
-                'Content stream for "' . $workspaceName->value . '" does not exist yet.',
-                1521386692
-            );
-        }
-
         if ($commandHandlingDependencies->isContentStreamClosed($contentStreamId)) {
             throw new ContentStreamIsClosed(
                 'Content stream "' . $contentStreamId->value . '" is closed.',
