@@ -6,6 +6,10 @@ Feature: If content streams are not in use anymore by the workspace, they can be
     Given using no content dimensions
     And using the following node types:
     """yaml
+    'Neos.ContentRepository.Testing:Content':
+      properties:
+        text:
+          type: string
     """
     And using identifier "default", I define a content repository
     And I am in content repository "default"
@@ -118,24 +122,47 @@ Feature: If content streams are not in use anymore by the workspace, they can be
       | workspaceName      | "review"               |
       | baseWorkspaceName  | "live"                 |
       | newContentStreamId | "review-cs-identifier" |
+    When the command CreateNodeAggregateWithNode is executed with payload:
+      | Key                       | Value                                    |
+      | workspaceName             | "review"                                 |
+      | nodeAggregateId           | "nody-mc-nodeface"                       |
+      | nodeTypeName              | "Neos.ContentRepository.Testing:Content" |
+      | originDimensionSpacePoint | {}                                       |
+      | parentNodeAggregateId     | "root-node"                              |
+      | initialPropertyValues     | {"text": "Review Initial"}               |
     And the command CreateWorkspace is executed with payload:
       | Key                | Value                |
       | workspaceName      | "user-test"          |
       | baseWorkspaceName  | "review"             |
       | newContentStreamId | "user-cs-identifier" |
 
+    When the command SetNodeProperties is executed with payload:
+      | Key             | Value                     |
+      | workspaceName   | "review"                  |
+      | nodeAggregateId | "nody-mc-nodeface"        |
+      | propertyValues  | {"text": "Review Edited"} |
+
+    When the command CreateNodeAggregateWithNode is executed with payload:
+      | Key                       | Value                                    |
+      | workspaceName             | "live"                                   |
+      | nodeAggregateId           | "nodimus-secondus"                       |
+      | nodeTypeName              | "Neos.ContentRepository.Testing:Content" |
+      | originDimensionSpacePoint | {}                                       |
+      | parentNodeAggregateId     | "root-node"                              |
+      | initialPropertyValues     | {"text": "Live WS"}                      |
+
+    Then workspaces user-test,review have status OUTDATED
+
     # now, we rebase the "review" workspace, effectively marking the "review-cs-identifier" content stream as no longer in use.
     # however, we are not allowed to drop the content stream from the event store yet, because the "user-cs-identifier" is based
     # on the (no-longer-in-direct-use) review-cs-identifier.
     When the command RebaseWorkspace is executed with payload:
-      | Key           | Value    |
-      | workspaceName | "review" |
-      | rebaseErrorHandlingStrategy | "force"               |
+      | Key                    | Value               |
+      | workspaceName          | "review"            |
+      | rebasedContentStreamId | "review-cs-rebased" |
 
-    And I prune removed content streams from the event stream
-
-    # the events should still exist
-    Then I expect exactly 3 events to be published on stream "ContentStream:review-cs-identifier"
+    Then workspace review has status UP_TO_DATE
+    Then workspace user-test has status OUTDATED
 
     Then I expect the content stream pruner status output:
     """
@@ -143,3 +170,44 @@ Feature: If content streams are not in use anymore by the workspace, they can be
 
     Okay. No pruneable streams in the event stream
     """
+
+    And I prune removed content streams from the event stream
+
+    # the events should still exist but not the projected content stream
+    Then I expect the content stream "review-cs-identifier" to not exist
+    Then I expect exactly 5 events to be published on stream "ContentStream:review-cs-identifier"
+
+    And I replay the content graph
+
+    Then workspaces review has status UP_TO_DATE
+    Then workspaces user-test has status OUTDATED
+
+    When I am in workspace "user-test" and dimension space point {}
+    Then I expect node aggregate identifier "nody-mc-nodeface" to lead to node user-cs-identifier;nody-mc-nodeface;{}
+    And I expect this node to have the following properties:
+      | Key  | Value            |
+      | text | "Review Initial" |
+    # because we didnt rebase the user workspace and are based on the old review ws, the live node doesnt exist here
+    Then I expect node aggregate identifier "nodimus-secondus" to lead to no node
+
+    When I am in workspace "review" and dimension space point {}
+    Then I expect node aggregate identifier "nody-mc-nodeface" to lead to node review-cs-rebased;nody-mc-nodeface;{}
+    And I expect this node to have the following properties:
+      | Key  | Value           |
+      | text | "Review Edited" |
+    Then I expect node aggregate identifier "nodimus-secondus" to lead to node review-cs-rebased;nodimus-secondus;{}
+    And I expect this node to have the following properties:
+      | Key  | Value     |
+      | text | "Live WS" |
+
+    # content stream is still writeable
+    When the command SetNodeProperties is executed with payload:
+      | Key             | Value                           |
+      | workspaceName   | "review"                        |
+      | nodeAggregateId | "nody-mc-nodeface"              |
+      | propertyValues  | {"text": "Review after replay"} |
+    When I am in workspace "review" and dimension space point {}
+    Then I expect node aggregate identifier "nody-mc-nodeface" to lead to node review-cs-rebased;nody-mc-nodeface;{}
+    And I expect this node to have the following properties:
+      | Key  | Value                 |
+      | text | "Review after replay" |
