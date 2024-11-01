@@ -47,6 +47,10 @@ final class EventStoreImportProcessor implements ProcessorInterface, ContentRepo
         if ($overrideContentStreamId) {
             $this->contentStreamId = $overrideContentStreamId;
         }
+
+        if ($this->files->fileExists('events.jsonl') === false) {
+            throw new \InvalidArgumentException('The provided folder does not contain an events.jsonl file, so EventStoreImport is impossible.', 1730488421);
+        }
     }
 
     public function onMessage(\Closure $callback): void

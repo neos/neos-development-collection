@@ -91,6 +91,11 @@ class CrCommandController extends CommandController
      */
     public function importCommand(string $path, string $contentRepository = 'default', bool $verbose = false): void
     {
+        if (!is_dir($path)) {
+            $this->outputLine('Argument "path" has to be the directory path to the stored events and additional resources.');
+            $this->sendAndExit(1);
+        }
+
         $filesystem = new Filesystem(new LocalFilesystemAdapter($path));
 
         $contentRepositoryId = ContentRepositoryId::fromString($contentRepository);
