@@ -338,7 +338,10 @@ trait ProjectionIntegrityViolationDetectionTrait
      */
     public function iRunIntegrityViolationDetection(): void
     {
-        $projectionIntegrityViolationDetectionRunner = $this->getContentRepositoryService(new DoctrineDbalProjectionIntegrityViolationDetectionRunnerFactory($this->dbal));
+        $projectionIntegrityViolationDetectionRunner = $this->getContentRepositoryService(
+            $this->currentContentRepository->id,
+            new DoctrineDbalProjectionIntegrityViolationDetectionRunnerFactory($this->dbal)
+        );
         $this->lastIntegrityViolationDetectionResult = $projectionIntegrityViolationDetectionRunner->run();
     }
 

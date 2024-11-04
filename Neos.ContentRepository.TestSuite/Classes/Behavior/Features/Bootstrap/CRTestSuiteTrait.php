@@ -217,7 +217,7 @@ trait CRTestSuiteTrait
      */
     public function iPruneRemovedContentStreamsFromTheEventStream(): void
     {
-        $this->getContentRepositoryService(new ContentStreamPrunerFactory())->pruneRemovedFromEventStream(fn () => null);
+        $this->getContentRepositoryService($this->currentContentRepository->id, new ContentStreamPrunerFactory())->pruneRemovedFromEventStream(fn () => null);
     }
 
     /**
@@ -227,20 +227,15 @@ trait CRTestSuiteTrait
     {
         // todo a little dirty to compare the cli output here :D
         $lines = [];
-        $this->getContentRepositoryService(new ContentStreamPrunerFactory())->outputStatus(function ($line = '') use (&$lines) {
+        $this->getContentRepositoryService($this->currentContentRepository->id, new ContentStreamPrunerFactory())->outputStatus(function ($line = '') use (&$lines) {
             $lines[] = $line;
         });
         Assert::assertSame($pyStringNode->getRaw(), join("\n", $lines));
     }
 
-
-    abstract protected function getContentRepositoryService(
-        ContentRepositoryServiceFactoryInterface $factory
-    ): ContentRepositoryServiceInterface;
-
     final protected function getContentGraphReadModel(): ContentGraphReadModelInterface
     {
-        return $this->getContentRepositoryService(new class implements ContentRepositoryServiceFactoryInterface {
+        return $this->getContentRepositoryService($this->currentContentRepository->id, new class implements ContentRepositoryServiceFactoryInterface {
             public function build(ContentRepositoryServiceFactoryDependencies $serviceFactoryDependencies): ContentRepositoryServiceInterface
             {
                 $contentGraphReadModel = $serviceFactoryDependencies->contentGraphReadModel;

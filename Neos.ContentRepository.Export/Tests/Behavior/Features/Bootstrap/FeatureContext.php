@@ -57,6 +57,7 @@ class FeatureContext implements BehatContext
     }
 
     protected function getContentRepositoryService(
+        ContentRepositoryId $contentRepositoryId,
         ContentRepositoryServiceFactoryInterface $factory
     ): ContentRepositoryServiceInterface {
         return $this->contentRepositoryRegistry->buildService(
