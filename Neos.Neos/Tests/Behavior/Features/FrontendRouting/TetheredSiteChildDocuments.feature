@@ -22,8 +22,8 @@ Feature: Tests for site node child documents. These are special in that they hav
         notFound:
           type: 'Neos.Neos:Document'
     """
-    And using identifier "default", I define a content repository
-    And I am in content repository "default"
+    And using identifier "testing", I define a content repository
+    And I am in content repository "testing"
     And I am user identified by "initiating-user-identifier"
 
     When the command CreateRootWorkspace is executed with payload:
@@ -46,7 +46,7 @@ Feature: Tests for site node child documents. These are special in that they hav
       Neos:
         sites:
           'site':
-            preset: default
+            contentRepository: testing
             uriPathSuffix: ''
             contentDimensions:
               resolver:

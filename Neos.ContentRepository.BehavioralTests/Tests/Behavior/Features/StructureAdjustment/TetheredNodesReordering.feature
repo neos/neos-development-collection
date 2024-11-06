@@ -17,8 +17,8 @@ Feature: Tethered Nodes Reordering Structure changes
           type: 'Neos.ContentRepository.Testing:Tethered'
     'Neos.ContentRepository.Testing:Tethered': []
     """
-    And using identifier "default", I define a content repository
-    And I am in content repository "default"
+    And using identifier "testing", I define a content repository
+    And I am in content repository "testing"
     And the command CreateRootWorkspace is executed with payload:
       | Key                  | Value                |
       | workspaceName        | "live"               |
@@ -47,7 +47,7 @@ Feature: Tethered Nodes Reordering Structure changes
       | cs-identifier;third-tethered-node-agg;{} |
 
   Scenario: re-ordering the tethered child nodes brings up wrongly sorted tethered nodes
-    Given I change the node types in content repository "default" to:
+    Given I change the node types in content repository "testing" to:
     """yaml
     'Neos.ContentRepository.Testing:Document':
       childNodes:

@@ -14,8 +14,8 @@ Feature: Simple migrations without content dimensions
           type: string
           defaultValue: 'My default text'
     """
-    And using identifier "default", I define a content repository
-    And I am in content repository "default"
+    And using identifier "testing", I define a content repository
+    And I am in content repository "testing"
 
   Scenario: Single homepage node with one property
     When I have the following node data rows:

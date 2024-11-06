@@ -35,8 +35,8 @@ Feature: Routing functionality with multiple content dimensions
       superTypes:
         'Neos.Neos:Test.Routing.Page': true
     """
-    And using identifier "default", I define a content repository
-    And I am in content repository "default"
+    And using identifier "testing", I define a content repository
+    And I am in content repository "testing"
     And I am user identified by "initiating-user-identifier"
 
     And the command CreateRootWorkspace is executed with payload:
@@ -70,7 +70,7 @@ Feature: Routing functionality with multiple content dimensions
       Neos:
         sites:
           'node1':
-            preset: default
+            contentRepository: testing
             uriPathSuffix: ''
             contentDimensions:
               defaultDimensionSpacePoint:
@@ -108,7 +108,7 @@ Feature: Routing functionality with multiple content dimensions
       Neos:
         sites:
           'node1':
-            preset: default
+            contentRepository: testing
             uriPathSuffix: ''
             contentDimensions:
               defaultDimensionSpacePoint:
@@ -158,7 +158,7 @@ Feature: Routing functionality with multiple content dimensions
     And the node "carl-destinode" in content stream "cs-identifier" and dimension '{"market":"DE", "language":"de"}' should resolve to URL "/de/nody/karl-de"
 
   Scenario: Move Dimension, then resolving should still work
-    Given I change the content dimensions in content repository "default" to:
+    Given I change the content dimensions in content repository "testing" to:
       | Identifier | Values         | Generalizations |
       | market     | DE, CH         | CH->DE          |
       | language   | en, de_DE, gsw | gsw->de_DE->en  |
@@ -168,7 +168,7 @@ Feature: Routing functionality with multiple content dimensions
       Neos:
         sites:
           'node1':
-            preset: default
+            contentRepository: testing
             uriPathSuffix: ''
             contentDimensions:
               resolver:
@@ -226,7 +226,7 @@ Feature: Routing functionality with multiple content dimensions
     Then the matched node should be "carl-destinode" in content stream "cs-identifier" and dimension '{"market":"DE", "language":"de"}'
 
   Scenario: Add Dimension shine through, then resolving should still work
-    Given I change the content dimensions in content repository "default" to:
+    Given I change the content dimensions in content repository "testing" to:
       | Identifier | Values          | Generalizations         |
       | market     | DE, CH          | CH->DE                  |
       | language   | en, de, gsw, at | gsw->de->en, at->de->en |
@@ -236,7 +236,7 @@ Feature: Routing functionality with multiple content dimensions
       Neos:
         sites:
           'node1':
-            preset: default
+            contentRepository: testing
             uriPathSuffix: ''
             contentDimensions:
               resolver:
@@ -291,7 +291,7 @@ Feature: Routing functionality with multiple content dimensions
 
   Scenario: Create new Dimension value and adjust root node, then root node resolving should still work.
     # new "fr" language
-    Given I change the content dimensions in content repository "default" to:
+    Given I change the content dimensions in content repository "testing" to:
       | Identifier | Values          | Generalizations |
       | market     | DE, CH          | CH->DE          |
       | language   | en, de, gsw, fr | gsw->de->en     |
@@ -301,7 +301,7 @@ Feature: Routing functionality with multiple content dimensions
       Neos:
         sites:
           'node1':
-            preset: default
+            contentRepository: testing
             uriPathSuffix: ''
             contentDimensions:
               resolver:
@@ -347,7 +347,7 @@ Feature: Routing functionality with multiple content dimensions
 
   Scenario: Create new Dimension value and adjust root node, then root node resolving should still work.
     # new "fr" language
-    Given I change the content dimensions in content repository "default" to:
+    Given I change the content dimensions in content repository "testing" to:
       | Identifier | Values          | Generalizations |
       | market     | DE, CH          | CH->DE          |
       | language   | en, de, gsw, fr | gsw->de->en     |
@@ -357,7 +357,7 @@ Feature: Routing functionality with multiple content dimensions
       Neos:
         sites:
           'node1':
-            preset: default
+            contentRepository: testing
             uriPathSuffix: ''
             contentDimensions:
               resolver:

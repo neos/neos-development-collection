@@ -13,8 +13,8 @@ Feature: Migrating nodes with content dimensions
         'Neos.Neos:Site': true
     'Some.Package:Thing': {}
     """
-    And using identifier "default", I define a content repository
-    And I am in content repository "default"
+    And using identifier "testing", I define a content repository
+    And I am in content repository "testing"
 
   Scenario: Node specialization variants are prioritized over peer variants
     When I have the following node data rows:
@@ -47,7 +47,7 @@ Feature: Migrating nodes with content dimensions
       | NodeGeneralizationVariantWasCreated | {"nodeAggregateId": "site-node-id", "sourceOrigin": {"language": "ch"}, "generalizationOrigin": {"language": "de"}, "variantSucceedingSiblings": [{"dimensionSpacePoint":{"language": "de"},"nodeAggregateId":null}]}                                                                                                                            |
 
   Scenario: Node variant with a subset of the original dimension space points (NodeSpecializationVariantWasCreated covers languages "de" _and_ "ch")
-    Given I change the content dimensions in content repository "default" to:
+    Given I change the content dimensions in content repository "testing" to:
       | Identifier | Default | Values          | Generalizations |
       | language   | mul     | mul, en, de, ch | ch->de->mul     |
     When I have the following node data rows:

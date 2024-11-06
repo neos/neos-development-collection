@@ -21,8 +21,8 @@ Feature: Create node aggregate with node
         nullText:
           type: string
     """
-    And using identifier "default", I define a content repository
-    And I am in content repository "default"
+    And using identifier "testing", I define a content repository
+    And I am in content repository "testing"
     And the command CreateRootWorkspace is executed with payload:
       | Key                  | Value                |
       | workspaceName        | "live"               |
@@ -188,8 +188,8 @@ Feature: Create node aggregate with node
     """yaml
     'Neos.ContentRepository.Testing:NodeWithoutTetheredChildNodes': []
     """
-    And using identifier "default", I define a content repository
-    And I am in content repository "default"
+    And using identifier "testing", I define a content repository
+    And I am in content repository "testing"
     And the command CreateRootWorkspace is executed with payload:
       | Key                  | Value                |
       | workspaceName        | "live"               |
@@ -266,8 +266,8 @@ Feature: Create node aggregate with node
           defaultValue: 'my default'
           type: string
     """
-    And using identifier "default", I define a content repository
-    And I am in content repository "default"
+    And using identifier "testing", I define a content repository
+    And I am in content repository "testing"
     And the command CreateRootWorkspace is executed with payload:
       | Key                  | Value                |
       | workspaceName        | "live"               |
@@ -445,8 +445,8 @@ Feature: Create node aggregate with node
           # transliterated invalidcharactors
           type: 'Neos.ContentRepository.Testing:SubNode'
     """
-    And using identifier "default", I define a content repository
-    And I am in content repository "default"
+    And using identifier "testing", I define a content repository
+    And I am in content repository "testing"
     And the command CreateRootWorkspace is executed with payload:
       | Key                  | Value                |
       | workspaceName        | "live"               |

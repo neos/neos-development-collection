@@ -22,8 +22,8 @@ Feature: Remove disallowed Child Nodes and grandchild nodes
 
     'Neos.ContentRepository.Testing:SubDocument': []
     """
-    And using identifier "default", I define a content repository
-    And I am in content repository "default"
+    And using identifier "testing", I define a content repository
+    And I am in content repository "testing"
     And the command CreateRootWorkspace is executed with payload:
       | Key                  | Value                |
       | workspaceName        | "live"               |
@@ -65,7 +65,7 @@ Feature: Remove disallowed Child Nodes and grandchild nodes
     ########################
     # Actual Test
     ########################
-    When I change the node types in content repository "default" to:
+    When I change the node types in content repository "testing" to:
     """yaml
     'Neos.ContentRepository:Root':
       constraints:
@@ -110,8 +110,8 @@ Feature: Remove disallowed Child Nodes and grandchild nodes
 
     'Neos.ContentRepository.Testing:SubDocument': []
     """
-    And using identifier "default", I define a content repository
-    And I am in content repository "default"
+    And using identifier "testing", I define a content repository
+    And I am in content repository "testing"
     And the command CreateRootWorkspace is executed with payload:
       | Key                  | Value                |
       | workspaceName        | "live"               |
@@ -154,7 +154,7 @@ Feature: Remove disallowed Child Nodes and grandchild nodes
     # Actual Test
     ########################
 
-    When I change the node types in content repository "default" to:
+    When I change the node types in content repository "testing" to:
     """yaml
     'Neos.ContentRepository:Root':
       childNodes:

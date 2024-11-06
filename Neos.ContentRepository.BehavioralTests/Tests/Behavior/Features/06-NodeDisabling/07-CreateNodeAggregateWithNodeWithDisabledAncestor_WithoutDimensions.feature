@@ -12,8 +12,8 @@ Feature: Creation of nodes underneath disabled nodes
     """yaml
     'Neos.ContentRepository.Testing:Document': {}
     """
-    And using identifier "default", I define a content repository
-    And I am in content repository "default"
+    And using identifier "testing", I define a content repository
+    And I am in content repository "testing"
     And I am user identified by "initiating-user-identifier"
     And the command CreateRootWorkspace is executed with payload:
       | Key                  | Value                |

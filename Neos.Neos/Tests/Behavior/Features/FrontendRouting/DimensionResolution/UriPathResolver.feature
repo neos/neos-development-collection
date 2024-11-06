@@ -31,15 +31,15 @@ Feature: UriPathResolver works as expected
     And using the following node types:
     """yaml
     """
-    And using identifier "default", I define a content repository
-    And I am in content repository "default"
+    And using identifier "testing", I define a content repository
+    And I am in content repository "testing"
 
   Scenario: No dimension
     When I am on URL "/"
 
     And I invoke the Dimension Resolver from site configuration:
     """yaml
-    contentRepository: default
+    contentRepository: testing
     contentDimensions:
       resolver:
         factoryClassName: Neos\Neos\FrontendRouting\DimensionResolution\Resolver\UriPathResolverFactory
@@ -47,14 +47,14 @@ Feature: UriPathResolver works as expected
     Then the resolved dimension should be '{}' and the remaining URI Path should be "/"
 
   Scenario: One dimension; with non-empty default value; /
-    Given I change the content dimensions in content repository "default" to:
+    Given I change the content dimensions in content repository "testing" to:
       | Identifier | Values | Generalizations |
       | language   | en, de |                 |
 
     When I am on URL "/"
     And I invoke the Dimension Resolver from site configuration:
     """yaml
-    contentRepository: default
+    contentRepository: testing
     contentDimensions:
       resolver:
         factoryClassName: Neos\Neos\FrontendRouting\DimensionResolution\Resolver\UriPathResolverFactory
@@ -72,14 +72,14 @@ Feature: UriPathResolver works as expected
     Then the resolved dimension should be '{}' and the remaining URI Path should be "/"
 
   Scenario: One dimension; with non-empty default value; /deu
-    Given I change the content dimensions in content repository "default" to:
+    Given I change the content dimensions in content repository "testing" to:
       | Identifier | Values | Generalizations |
       | language   | en, de |                 |
 
     When I am on URL "/deu"
     And I invoke the Dimension Resolver from site configuration:
     """yaml
-    contentRepository: default
+    contentRepository: testing
     contentDimensions:
       resolver:
         factoryClassName: Neos\Neos\FrontendRouting\DimensionResolution\Resolver\UriPathResolverFactory
@@ -95,14 +95,14 @@ Feature: UriPathResolver works as expected
     Then the resolved dimension should be '{"language": "de"}' and the remaining URI Path should be "/"
 
   Scenario: One dimension; with non-empty default value; /deu/test
-    Given I change the content dimensions in content repository "default" to:
+    Given I change the content dimensions in content repository "testing" to:
       | Identifier | Values | Generalizations |
       | language   | en, de |                 |
 
     When I am on URL "/deu/test"
     And I invoke the Dimension Resolver from site configuration:
     """yaml
-    contentRepository: default
+    contentRepository: testing
     contentDimensions:
       resolver:
         factoryClassName: Neos\Neos\FrontendRouting\DimensionResolution\Resolver\UriPathResolverFactory
@@ -118,14 +118,14 @@ Feature: UriPathResolver works as expected
     Then the resolved dimension should be '{"language": "de"}' and the remaining URI Path should be "/test"
 
   Scenario: One dimension; with empty default value; /
-    Given I change the content dimensions in content repository "default" to:
+    Given I change the content dimensions in content repository "testing" to:
       | Identifier | Values | Generalizations |
       | language   | en, de |                 |
 
     When I am on URL "/"
     And I invoke the Dimension Resolver from site configuration:
     """yaml
-    contentRepository: default
+    contentRepository: testing
     contentDimensions:
       resolver:
         factoryClassName: Neos\Neos\FrontendRouting\DimensionResolution\Resolver\UriPathResolverFactory
@@ -141,14 +141,14 @@ Feature: UriPathResolver works as expected
     Then the resolved dimension should be '{"language": "de"}' and the remaining URI Path should be "/"
 
   Scenario: One dimension; with empty default value; /test
-    Given I change the content dimensions in content repository "default" to:
+    Given I change the content dimensions in content repository "testing" to:
       | Identifier | Values | Generalizations |
       | language   | en, de |                 |
 
     When I am on URL "/test"
     And I invoke the Dimension Resolver from site configuration:
     """yaml
-    contentRepository: default
+    contentRepository: testing
     contentDimensions:
       resolver:
         factoryClassName: Neos\Neos\FrontendRouting\DimensionResolution\Resolver\UriPathResolverFactory
@@ -164,14 +164,14 @@ Feature: UriPathResolver works as expected
     Then the resolved dimension should be '{"language": "de"}' and the remaining URI Path should be "/test"
 
   Scenario: One dimension; with empty default value; /uk
-    Given I change the content dimensions in content repository "default" to:
+    Given I change the content dimensions in content repository "testing" to:
       | Identifier | Values | Generalizations |
       | language   | en, de |                 |
 
     When I am on URL "/uk"
     And I invoke the Dimension Resolver from site configuration:
     """yaml
-    contentRepository: default
+    contentRepository: testing
     contentDimensions:
       resolver:
         factoryClassName: Neos\Neos\FrontendRouting\DimensionResolution\Resolver\UriPathResolverFactory
@@ -187,14 +187,14 @@ Feature: UriPathResolver works as expected
     Then the resolved dimension should be '{"language": "en"}' and the remaining URI Path should be "/"
 
   Scenario: One dimension; with empty default value; /uk/test
-    Given I change the content dimensions in content repository "default" to:
+    Given I change the content dimensions in content repository "testing" to:
       | Identifier | Values | Generalizations |
       | language   | en, de |                 |
 
     When I am on URL "/uk/test"
     And I invoke the Dimension Resolver from site configuration:
     """yaml
-    contentRepository: default
+    contentRepository: testing
     contentDimensions:
       resolver:
         factoryClassName: Neos\Neos\FrontendRouting\DimensionResolution\Resolver\UriPathResolverFactory
@@ -210,7 +210,7 @@ Feature: UriPathResolver works as expected
     Then the resolved dimension should be '{"language": "en"}' and the remaining URI Path should be "/test"
 
   Scenario: Multiple dimensions; with non-empty default value; /
-    Given I change the content dimensions in content repository "default" to:
+    Given I change the content dimensions in content repository "testing" to:
       | Identifier   | Values         | Generalizations |
       | target_group | normal, simple |                 |
       | language     | en, de         |                 |
@@ -218,7 +218,7 @@ Feature: UriPathResolver works as expected
     When I am on URL "/"
     And I invoke the Dimension Resolver from site configuration:
     """yaml
-    contentRepository: default
+    contentRepository: testing
     contentDimensions:
       resolver:
         factoryClassName: Neos\Neos\FrontendRouting\DimensionResolution\Resolver\UriPathResolverFactory
@@ -240,7 +240,7 @@ Feature: UriPathResolver works as expected
     Then the resolved dimension should be '{}' and the remaining URI Path should be "/"
 
   Scenario: Multiple dimensions; with non-empty default value; /uk_si
-    Given I change the content dimensions in content repository "default" to:
+    Given I change the content dimensions in content repository "testing" to:
       | Identifier   | Values         | Generalizations |
       | target_group | normal, simple |                 |
       | language     | en, de         |                 |
@@ -248,7 +248,7 @@ Feature: UriPathResolver works as expected
     When I am on URL "/uk_si"
     And I invoke the Dimension Resolver from site configuration:
     """yaml
-    contentRepository: default
+    contentRepository: testing
     contentDimensions:
       resolver:
         factoryClassName: Neos\Neos\FrontendRouting\DimensionResolution\Resolver\UriPathResolverFactory
@@ -270,7 +270,7 @@ Feature: UriPathResolver works as expected
     Then the resolved dimension should be '{"language": "en", "target_group": "simple"}' and the remaining URI Path should be "/"
 
   Scenario: Multiple dimensions; with non-empty default value; /uk_si/test
-    Given I change the content dimensions in content repository "default" to:
+    Given I change the content dimensions in content repository "testing" to:
       | Identifier   | Values         | Generalizations |
       | target_group | normal, simple |                 |
       | language     | en, de         |                 |
@@ -278,7 +278,7 @@ Feature: UriPathResolver works as expected
     When I am on URL "/uk_si/test"
     And I invoke the Dimension Resolver from site configuration:
     """yaml
-    contentRepository: default
+    contentRepository: testing
     contentDimensions:
       resolver:
         factoryClassName: Neos\Neos\FrontendRouting\DimensionResolution\Resolver\UriPathResolverFactory
@@ -298,7 +298,7 @@ Feature: UriPathResolver works as expected
     Then the resolved dimension should be '{"language": "en", "target_group": "simple"}' and the remaining URI Path should be "/test"
 
   Scenario Outline: Multiple dimensions; with empty default value
-    Given I change the content dimensions in content repository "default" to:
+    Given I change the content dimensions in content repository "testing" to:
       | Identifier   | Values         | Generalizations |
       | target_group | normal, simple |                 |
       | language     | en, de         |                 |
@@ -306,7 +306,7 @@ Feature: UriPathResolver works as expected
     When I am on URL "<inputUri>"
     And I invoke the Dimension Resolver from site configuration:
     """yaml
-    contentRepository: default
+    contentRepository: testing
     contentDimensions:
       resolver:
         factoryClassName: Neos\Neos\FrontendRouting\DimensionResolution\Resolver\UriPathResolverFactory
@@ -339,7 +339,7 @@ Feature: UriPathResolver works as expected
     # TODO /uk_ do NOT RESOLVE
 
   Scenario: Error: two uri path segment identifiers mapping to different dimensions
-    Given I change the content dimensions in content repository "default" to:
+    Given I change the content dimensions in content repository "testing" to:
       | Identifier   | Values         | Generalizations |
       | target_group | normal, simple |                 |
       | language     | en, de         |                 |
@@ -347,7 +347,7 @@ Feature: UriPathResolver works as expected
     When I am on URL "/"
     And I invoke the Dimension Resolver from site configuration and exceptions are caught:
     """yaml
-    contentRepository: default
+    contentRepository: testing
     contentDimensions:
       resolver:
         factoryClassName: Neos\Neos\FrontendRouting\DimensionResolution\Resolver\UriPathResolverFactory
@@ -362,7 +362,7 @@ Feature: UriPathResolver works as expected
     Then the last command should have thrown an exception of type "UriPathResolverConfigurationException"
 
   Scenario: Error: two uri path segment identifiers mapping to different dimensions
-    Given I change the content dimensions in content repository "default" to:
+    Given I change the content dimensions in content repository "testing" to:
       | Identifier   | Values         | Generalizations |
       | target_group | normal, simple |                 |
       | language     | en, de         |                 |
@@ -370,7 +370,7 @@ Feature: UriPathResolver works as expected
     When I am on URL "/"
     And I invoke the Dimension Resolver from site configuration and exceptions are caught:
     """yaml
-    contentRepository: default
+    contentRepository: testing
     contentDimensions:
       resolver:
         factoryClassName: Neos\Neos\FrontendRouting\DimensionResolution\Resolver\UriPathResolverFactory
@@ -390,14 +390,14 @@ Feature: UriPathResolver works as expected
     Then the last command should have thrown an exception of type "UriPathResolverConfigurationException"
 
   Scenario: Error: non-existing dimension name
-    Given I change the content dimensions in content repository "default" to:
+    Given I change the content dimensions in content repository "testing" to:
       | Identifier | Values | Generalizations |
       | language   | en, de |                 |
 
     When I am on URL "/"
     And I invoke the Dimension Resolver from site configuration and exceptions are caught:
     """yaml
-    contentRepository: default
+    contentRepository: testing
     contentDimensions:
       resolver:
         factoryClassName: Neos\Neos\FrontendRouting\DimensionResolution\Resolver\UriPathResolverFactory
@@ -409,14 +409,14 @@ Feature: UriPathResolver works as expected
     Then the last command should have thrown an exception of type "UriPathResolverConfigurationException"
 
   Scenario: Error: non-existing dimension value
-    Given I change the content dimensions in content repository "default" to:
+    Given I change the content dimensions in content repository "testing" to:
       | Identifier | Values | Generalizations |
       | language   | en, de |                 |
 
     When I am on URL "/"
     And I invoke the Dimension Resolver from site configuration and exceptions are caught:
     """yaml
-    contentRepository: default
+    contentRepository: testing
     contentDimensions:
       resolver:
         factoryClassName: Neos\Neos\FrontendRouting\DimensionResolution\Resolver\UriPathResolverFactory
@@ -430,14 +430,14 @@ Feature: UriPathResolver works as expected
     Then the last command should have thrown an exception of type "UriPathResolverConfigurationException"
 
   Scenario: Error: / in dimensionValueMapping
-    Given I change the content dimensions in content repository "default" to:
+    Given I change the content dimensions in content repository "testing" to:
       | Identifier | Values | Generalizations |
       | language   | en, de |                 |
 
     When I am on URL "/"
     And I invoke the Dimension Resolver from site configuration and exceptions are caught:
     """yaml
-    contentRepository: default
+    contentRepository: testing
     contentDimensions:
       resolver:
         factoryClassName: Neos\Neos\FrontendRouting\DimensionResolution\Resolver\UriPathResolverFactory
@@ -452,14 +452,14 @@ Feature: UriPathResolver works as expected
     Then the last command should have thrown an exception of type "UriPathResolverConfigurationException"
 
   Scenario: Error: / as separator
-    Given I change the content dimensions in content repository "default" to:
+    Given I change the content dimensions in content repository "testing" to:
       | Identifier | Values | Generalizations |
       | language   | en, de |                 |
 
     When I am on URL "/"
     And I invoke the Dimension Resolver from site configuration and exceptions are caught:
     """yaml
-    contentRepository: default
+    contentRepository: testing
     contentDimensions:
       resolver:
         factoryClassName: Neos\Neos\FrontendRouting\DimensionResolution\Resolver\UriPathResolverFactory
@@ -475,14 +475,14 @@ Feature: UriPathResolver works as expected
     Then the last command should have thrown an exception of type "UriPathResolverConfigurationException"
 
   Scenario: Error: separator in dimensionValueMapping
-    Given I change the content dimensions in content repository "default" to:
+    Given I change the content dimensions in content repository "testing" to:
       | Identifier | Values | Generalizations |
       | language   | en, de |                 |
 
     When I am on URL "/"
     And I invoke the Dimension Resolver from site configuration and exceptions are caught:
     """yaml
-    contentRepository: default
+    contentRepository: testing
     contentDimensions:
       resolver:
         factoryClassName: Neos\Neos\FrontendRouting\DimensionResolution\Resolver\UriPathResolverFactory

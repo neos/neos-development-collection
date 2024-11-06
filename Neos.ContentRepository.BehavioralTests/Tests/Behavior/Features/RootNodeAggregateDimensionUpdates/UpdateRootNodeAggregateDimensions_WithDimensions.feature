@@ -10,8 +10,8 @@ Feature: Update Root Node aggregate dimensions
     And using the following node types:
     """yaml
     """
-    And using identifier "default", I define a content repository
-    And I am in content repository "default"
+    And using identifier "testing", I define a content repository
+    And I am in content repository "testing"
     And I am user identified by "initiating-user-identifier"
     And the command CreateRootWorkspace is executed with payload:
       | Key                  | Value                |
@@ -70,7 +70,7 @@ Feature: Update Root Node aggregate dimensions
 
 
   Scenario: Adding a dimension and updating the root node works
-    Given I change the content dimensions in content repository "default" to:
+    Given I change the content dimensions in content repository "testing" to:
       | Identifier | Values      | Generalizations |
       | language   | mul, de, en |                 |
 
@@ -132,7 +132,7 @@ Feature: Update Root Node aggregate dimensions
 
 
   Scenario: Adding a dimension updating the root node, removing dimension, updating the root node, works (dimension gone again)
-    Given I change the content dimensions in content repository "default" to:
+    Given I change the content dimensions in content repository "testing" to:
       | Identifier | Values      | Generalizations |
       | language   | mul, de, en |                 |
     And the command UpdateRootNodeAggregateDimensions is executed with payload:
@@ -145,7 +145,7 @@ Feature: Update Root Node aggregate dimensions
     And I expect node aggregate identifier "lady-eleonode-rootford" to lead to node cs-identifier;lady-eleonode-rootford;{}
 
     # again, remove "en"
-    Given I change the content dimensions in content repository "default" to:
+    Given I change the content dimensions in content repository "testing" to:
       | Identifier | Values   | Generalizations |
       | language   | mul, de, |                 |
     And the command UpdateRootNodeAggregateDimensions is executed with payload:

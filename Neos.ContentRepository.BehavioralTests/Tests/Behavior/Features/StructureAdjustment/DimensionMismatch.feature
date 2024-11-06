@@ -16,8 +16,8 @@ Feature: Dimension mismatch
     """yaml
     'Neos.ContentRepository.Testing:Document': []
     """
-    And using identifier "default", I define a content repository
-    And I am in content repository "default"
+    And using identifier "testing", I define a content repository
+    And I am in content repository "testing"
     And the command CreateRootWorkspace is executed with payload:
       | Key                  | Value                |
       | workspaceName        | "live"               |
@@ -37,7 +37,7 @@ Feature: Dimension mismatch
       | originDimensionSpacePoint | {"language": "en"}                        |
       | parentNodeAggregateId     | "lady-eleonode-rootford"                  |
 
-    When I change the content dimensions in content repository "default" to:
+    When I change the content dimensions in content repository "testing" to:
       | Identifier | Values | Generalizations |
       | language   | en, de | en->de          |
     Then I expect the following structure adjustments for type "Neos.ContentRepository.Testing:Document":

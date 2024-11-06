@@ -23,8 +23,8 @@ Feature: Tests for the ContentCacheFlusher and cache flushing on DynamicNodeTag 
         'Neos.Neos:Document': true
 
     """
-    And using identifier "default", I define a content repository
-    And I am in content repository "default"
+    And using identifier "testing", I define a content repository
+    And I am in content repository "testing"
     And I am user identified by "initiating-user-identifier"
 
     When the command CreateRootWorkspace is executed with payload:
@@ -56,7 +56,7 @@ Feature: Tests for the ContentCacheFlusher and cache flushing on DynamicNodeTag 
       Neos:
         sites:
           '*':
-            contentRepository: default
+            contentRepository: testing
             contentDimensions:
               resolver:
                 factoryClassName: Neos\Neos\FrontendRouting\DimensionResolution\Resolver\NoopResolverFactory

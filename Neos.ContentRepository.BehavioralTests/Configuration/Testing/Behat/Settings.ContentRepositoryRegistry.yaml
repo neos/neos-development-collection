@@ -1,7 +1,8 @@
 Neos:
   ContentRepositoryRegistry:
-    presets:
-      default:
+    contentRepositories:
+      testing:
+        preset: default
         userIdProvider:
           factoryObjectName: 'Neos\ContentRepository\BehavioralTests\TestSuite\Behavior\FakeUserIdProviderFactory'
         clock:

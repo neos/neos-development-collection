@@ -34,8 +34,8 @@ Feature: Tests for the ContentCacheFlusher and cache flushing on asset changes
           type: string
 
     """
-    And using identifier "default", I define a content repository
-    And I am in content repository "default"
+    And using identifier "testing", I define a content repository
+    And I am in content repository "testing"
     And I am user identified by "initiating-user-identifier"
 
     When an asset exists with id "an-asset-to-change"
@@ -79,7 +79,7 @@ Feature: Tests for the ContentCacheFlusher and cache flushing on asset changes
       Neos:
         sites:
           '*':
-            contentRepository: default
+            contentRepository: testing
             contentDimensions:
               resolver:
                 factoryClassName: Neos\Neos\FrontendRouting\DimensionResolution\Resolver\NoopResolverFactory

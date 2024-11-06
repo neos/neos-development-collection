@@ -22,8 +22,8 @@ Feature: Remove disallowed Child Nodes and grandchild nodes
 
     'Neos.ContentRepository.Testing:AnotherDocument': []
     """
-    And using identifier "default", I define a content repository
-    And I am in content repository "default"
+    And using identifier "testing", I define a content repository
+    And I am in content repository "testing"
     And the command CreateRootWorkspace is executed with payload:
       | Key                  | Value                |
       | workspaceName        | "live"               |

@@ -7,8 +7,8 @@ Feature: Neos WorkspaceService related features
     """yaml
     'Neos.ContentRepository:Root': {}
     """
-    And using identifier "default", I define a content repository
-    And I am in content repository "default"
+    And using identifier "testing", I define a content repository
+    And I am in content repository "testing"
     And the following Neos users exist:
       | Id      | Username | First name | Last name | Roles                                            |
       | janedoe | jane.doe | Jane       | Doe       | Neos.Neos:Administrator                          |
@@ -94,7 +94,7 @@ Feature: Neos WorkspaceService related features
 
   Scenario: Assign role to non-existing workspace
     When the role COLLABORATOR is assigned to workspace "some-workspace" for group "Neos.Neos:AbstractEditor"
-    Then an exception 'Failed to find workspace with name "some-workspace" for content repository "default"' should be thrown
+    Then an exception 'Failed to find workspace with name "some-workspace" for content repository "testing"' should be thrown
 
   Scenario: Assign group role to root workspace
     Given the root workspace "some-root-workspace" is created
@@ -107,7 +107,7 @@ Feature: Neos WorkspaceService related features
     Given the root workspace "some-root-workspace" is created
     When the role COLLABORATOR is assigned to workspace "some-root-workspace" for group "Neos.Neos:AbstractEditor"
     And the role MANAGER is assigned to workspace "some-root-workspace" for group "Neos.Neos:AbstractEditor"
-    Then an exception 'Failed to assign role for workspace "some-root-workspace" to subject "Neos.Neos:AbstractEditor" (Content Repository "default"): There is already a role assigned for that user/group, please unassign that first' should be thrown
+    Then an exception 'Failed to assign role for workspace "some-root-workspace" to subject "Neos.Neos:AbstractEditor" (Content Repository "testing"): There is already a role assigned for that user/group, please unassign that first' should be thrown
 
   Scenario: Assign user role to root workspace
     Given the root workspace "some-root-workspace" is created
@@ -120,16 +120,16 @@ Feature: Neos WorkspaceService related features
     Given the root workspace "some-root-workspace" is created
     When the role COLLABORATOR is assigned to workspace "some-root-workspace" for user "some-user-id"
     And the role MANAGER is assigned to workspace "some-root-workspace" for user "some-user-id"
-    Then an exception 'Failed to assign role for workspace "some-root-workspace" to subject "some-user-id" (Content Repository "default"): There is already a role assigned for that user/group, please unassign that first' should be thrown
+    Then an exception 'Failed to assign role for workspace "some-root-workspace" to subject "some-user-id" (Content Repository "testing"): There is already a role assigned for that user/group, please unassign that first' should be thrown
 
   Scenario: Unassign role from non-existing workspace
     When the role for group "Neos.Neos:AbstractEditor" is unassigned from workspace "some-workspace"
-    Then an exception 'Failed to find workspace with name "some-workspace" for content repository "default"' should be thrown
+    Then an exception 'Failed to find workspace with name "some-workspace" for content repository "testing"' should be thrown
 
   Scenario: Unassign role from workspace that has not been assigned before
     Given the root workspace "some-root-workspace" is created
     When the role for group "Neos.Neos:AbstractEditor" is unassigned from workspace "some-root-workspace"
-    Then an exception 'Failed to unassign role for subject "Neos.Neos:AbstractEditor" from workspace "some-root-workspace" (Content Repository "default"): No role assignment exists for this user/group' should be thrown
+    Then an exception 'Failed to unassign role for subject "Neos.Neos:AbstractEditor" from workspace "some-root-workspace" (Content Repository "testing"): No role assignment exists for this user/group' should be thrown
 
   Scenario: Assign two roles, then unassign one
     Given the root workspace "some-root-workspace" is created

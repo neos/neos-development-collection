@@ -23,8 +23,8 @@ Feature: Migrations that contain nodes with "reference" or "references propertie
         'text':
           type: string
     """
-    And using identifier "default", I define a content repository
-    And I am in content repository "default"
+    And using identifier "testing", I define a content repository
+    And I am in content repository "testing"
 
   Scenario: Two nodes with references
     When I have the following node data rows:
@@ -47,7 +47,7 @@ Feature: Migrations that contain nodes with "reference" or "references propertie
 
 
   Scenario: Node with references in one dimension
-    Given I change the content dimensions in content repository "default" to:
+    Given I change the content dimensions in content repository "testing" to:
       | Identifier | Default | Values     | Generalizations |
       | language   | en      | en, de, ch | ch->de          |
     When I have the following node data rows:

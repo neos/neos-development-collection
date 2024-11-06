@@ -25,8 +25,8 @@ Feature: Simple handling of nodes with exceeded enableAfter and disableAfter dat
         'Neos.TimeableNodeVisibility:Timeable': true
 
     """
-    And using identifier "default", I define a content repository
-    And I am in content repository "default"
+    And using identifier "testing", I define a content repository
+    And I am in content repository "testing"
     And the command CreateRootWorkspace is executed with payload:
       | Key                | Value           |
       | workspaceName      | "live"          |

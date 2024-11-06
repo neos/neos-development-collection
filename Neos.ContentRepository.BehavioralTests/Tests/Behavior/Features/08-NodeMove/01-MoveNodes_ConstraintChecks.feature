@@ -28,8 +28,8 @@ Feature: Move node to a new parent / within the current parent before a sibling 
               '*': true
               'Neos.ContentRepository.Testing:Content': false
     """
-    And using identifier "default", I define a content repository
-    And I am in content repository "default"
+    And using identifier "testing", I define a content repository
+    And I am in content repository "testing"
     And the command CreateRootWorkspace is executed with payload:
       | Key                  | Value                |
       | workspaceName        | "live"               |
@@ -175,7 +175,7 @@ Feature: Move node to a new parent / within the current parent before a sibling 
     Then the last command should have thrown an exception of type "NodeNameIsAlreadyCovered"
 
   Scenario: Using the scatter (or really any) strategy, try to move a node to a parent that reserves the name for a tethered child
-    Given I change the node types in content repository "default" to:
+    Given I change the node types in content repository "testing" to:
     """yaml
     'Neos.ContentRepository.Testing:Document': []
     'Neos.ContentRepository.Testing:Content':

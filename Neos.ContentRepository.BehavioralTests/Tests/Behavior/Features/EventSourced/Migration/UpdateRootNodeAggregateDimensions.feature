@@ -21,8 +21,8 @@ Feature: Update root node aggregate dimensions
     'Neos.ContentRepository.Testing:Document': []
     'Neos.ContentRepository.Testing:OtherDocument': []
     """
-    And using identifier "default", I define a content repository
-    And I am in content repository "default"
+    And using identifier "testing", I define a content repository
+    And I am in content repository "testing"
     And the command CreateRootWorkspace is executed with payload:
       | Key                  | Value                |
       | workspaceName        | "live"               |
@@ -35,7 +35,7 @@ Feature: Update root node aggregate dimensions
 
   Scenario: Run migration after adding a new dimension value
     # we change the dimension configuration
-    Given I change the content dimensions in content repository "default" to:
+    Given I change the content dimensions in content repository "testing" to:
       | Identifier | Values              | Generalizations      |
       | language   | mul, de, en, ch, fr | ch->de->mul, en->mul |
 
@@ -67,7 +67,7 @@ Feature: Update root node aggregate dimensions
 
   Scenario: Run migration after removing a new dimension value
     # we change the dimension configuration
-    Given I change the content dimensions in content repository "default" to:
+    Given I change the content dimensions in content repository "testing" to:
       | Identifier | Values      | Generalizations |
       | language   | mul, de, ch | ch->de->mul     |
 
@@ -99,7 +99,7 @@ Feature: Update root node aggregate dimensions
 
   Scenario: Run migration after renaming a new dimension value
     # we change the dimension configuration
-    Given I change the content dimensions in content repository "default" to:
+    Given I change the content dimensions in content repository "testing" to:
       | Identifier | Values      | Generalizations |
       | language   | mul, de_DE, en, ch | ch->de_DE->mul, en->mul |
 
@@ -131,7 +131,7 @@ Feature: Update root node aggregate dimensions
 
   Scenario: Without migration, creating new nodeaggregates in new dimensionspacepoint will fail
     # we change the dimension configuration
-    Given I change the content dimensions in content repository "default" to:
+    Given I change the content dimensions in content repository "testing" to:
       | Identifier | Values              | Generalizations      |
       | language   | mul, de, en, ch, fr | ch->de->mul, en->mul |
 

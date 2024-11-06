@@ -23,8 +23,8 @@ Feature: Routing behavior of removed, disabled and re-enabled nodes
         uriPathSegment:
           type: string
     """
-    And using identifier "default", I define a content repository
-    And I am in content repository "default"
+    And using identifier "testing", I define a content repository
+    And I am in content repository "testing"
     And I am user identified by "initiating-user-identifier"
     And the command CreateRootWorkspace is executed with payload:
       | Key                | Value           |
@@ -59,7 +59,7 @@ Feature: Routing behavior of removed, disabled and re-enabled nodes
       Neos:
         sites:
           'node1':
-            preset: default
+            contentRepository: testing
             uriPathSuffix: ''
             contentDimensions:
               resolver:

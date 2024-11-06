@@ -9,8 +9,8 @@ Feature: Unknown node types
     """yaml
     'Neos.ContentRepository.Testing:Document': []
     """
-    And using identifier "default", I define a content repository
-    And I am in content repository "default"
+    And using identifier "testing", I define a content repository
+    And I am in content repository "testing"
     And the command CreateRootWorkspace is executed with payload:
       | Key                  | Value                |
       | workspaceName        | "live"               |
@@ -35,7 +35,7 @@ Feature: Unknown node types
     Then I expect no needed structure adjustments for type "Neos.ContentRepository.Testing:Document"
 
   Scenario: When removing "Neos.ContentRepository.Testing:Document", we find a missing node type.
-    Given I change the node types in content repository "default" to:
+    Given I change the node types in content repository "testing" to:
     """yaml
     """
     Then I expect the following structure adjustments for type "Neos.ContentRepository.Testing:Document":

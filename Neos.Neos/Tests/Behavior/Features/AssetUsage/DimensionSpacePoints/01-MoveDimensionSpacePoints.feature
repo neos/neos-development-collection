@@ -17,8 +17,8 @@ Feature: Move DimensionSpacePoints
         assets:
           type: array<Neos\Media\Domain\Model\Asset>
     """
-    And using identifier "default", I define a content repository
-    And I am in content repository "default"
+    And using identifier "testing", I define a content repository
+    And I am in content repository "testing"
     And the command CreateRootWorkspace is executed with payload:
       | Key                  | Value                |
       | workspaceName        | "live"               |
@@ -76,7 +76,7 @@ Feature: Move DimensionSpacePoints
 
 
   Scenario: Rename a dimension value in live workspace
-    Given I change the content dimensions in content repository "default" to:
+    Given I change the content dimensions in content repository "testing" to:
       | Identifier | Values          | Generalizations    |
       | language   | de_DE,gsw,fr,en | gsw->de_DE->en, fr |
 
@@ -101,7 +101,7 @@ Feature: Move DimensionSpacePoints
 
 
   Scenario: Rename a dimension value in user workspace
-    Given I change the content dimensions in content repository "default" to:
+    Given I change the content dimensions in content repository "testing" to:
       | Identifier | Values          | Generalizations    |
       | language   | de_DE,gsw,fr,en | gsw->de_DE->en, fr |
 
@@ -126,7 +126,7 @@ Feature: Move DimensionSpacePoints
 
 
   Scenario: Adding a dimension in live workspace
-    Given I change the content dimensions in content repository "default" to:
+    Given I change the content dimensions in content repository "testing" to:
       | Identifier | Values       | Generalizations |
       | language   | de,gsw,fr,en | gsw->de->en, fr |
       | market     | DE, FR       | DE, FR          |
@@ -157,7 +157,7 @@ Feature: Move DimensionSpacePoints
 
 
   Scenario: Adding a dimension in user workspace
-    Given I change the content dimensions in content repository "default" to:
+    Given I change the content dimensions in content repository "testing" to:
       | Identifier | Values       | Generalizations |
       | language   | de,gsw,fr,en | gsw->de->en, fr |
       | market     | DE, FR       | DE, FR          |
