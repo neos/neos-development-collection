@@ -13,7 +13,6 @@ namespace Neos\ContentRepository\Security\Authorization\Privilege\Node\Doctrine;
 
 use Doctrine\Persistence\Mapping\ClassMetadata;
 use Doctrine\ORM\Query\Filter\SQLFilter as DoctrineSqlFilter;
-use Neos\Flow\Annotations as Flow;
 
 /**
  * A SQL generator to create a condition matching a node underneath a certain node type

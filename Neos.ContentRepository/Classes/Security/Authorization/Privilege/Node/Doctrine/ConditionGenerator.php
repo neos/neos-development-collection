@@ -88,7 +88,7 @@ class ConditionGenerator extends EntityConditionGenerator
 
     /**
      * Matches nodes underneath the given NodeType(s)
-     * 
+     *
      * @param array $nodeTypes
      * @return PropertyConditionGenerator
      */
