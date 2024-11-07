@@ -87,12 +87,14 @@ class ConditionGenerator extends EntityConditionGenerator
     }
 
     /**
+     * Matches nodes underneath the given NodeType(s)
+     * 
      * @param array $nodeTypes
      * @return PropertyConditionGenerator
      */
     public function isDescendantOfType($nodeTypes)
     {
-        return new DecendantOfTypeConditionGenerator($nodeTypes);
+        return new DescendantOfTypeConditionGenerator($nodeTypes);
     }
 
     /**
