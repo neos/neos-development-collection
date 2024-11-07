@@ -14,8 +14,8 @@ Feature: On forking a content stream, hidden nodes should be correctly copied as
         text:
           type: string
     """
-    And using identifier "default", I define a content repository
-    And I am in content repository "default"
+    And using identifier "testing", I define a content repository
+    And I am in content repository "testing"
     And the command CreateRootWorkspace is executed with payload:
       | Key                  | Value                |
       | workspaceName        | "live"               |

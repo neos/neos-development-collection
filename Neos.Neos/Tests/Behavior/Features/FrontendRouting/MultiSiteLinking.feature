@@ -32,8 +32,8 @@ Feature: Linking between multiple websites
       superTypes:
         'Neos.Neos:Test.Routing.Page': true
     """
-    And using identifier "default", I define a content repository
-    And I am in content repository "default"
+    And using identifier "testing", I define a content repository
+    And I am in content repository "testing"
     And I am user identified by "initiating-user-identifier"
     And the command CreateRootWorkspace is executed with payload:
       | Key                | Value           |
@@ -65,13 +65,13 @@ Feature: Linking between multiple websites
       Neos:
         sites:
           'site-1':
-            preset: default
+            contentRepository: testing
             uriPathSuffix: ''
             contentDimensions:
               resolver:
                 factoryClassName: Neos\Neos\FrontendRouting\DimensionResolution\Resolver\NoopResolverFactory
           'site-2':
-            preset: default
+            contentRepository: testing
             uriPathSuffix: ''
             contentDimensions:
               resolver:

@@ -38,8 +38,8 @@ Feature: Tests for the "Neos.Neos:Menu" and related Fusion prototypes
         'Neos.Neos:Content': true
 
     """
-    And using identifier "default", I define a content repository
-    And I am in content repository "default"
+    And using identifier "testing", I define a content repository
+    And I am in content repository "testing"
     And I am user identified by "initiating-user-identifier"
 
     When the command CreateRootWorkspace is executed with payload:
@@ -71,7 +71,7 @@ Feature: Tests for the "Neos.Neos:Menu" and related Fusion prototypes
       Neos:
         sites:
           'a':
-            preset: default
+            contentRepository: testing
             uriPathSuffix: ''
             contentDimensions:
               resolver:

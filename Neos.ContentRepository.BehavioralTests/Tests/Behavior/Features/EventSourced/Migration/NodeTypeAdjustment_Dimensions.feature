@@ -16,8 +16,8 @@ Feature: Adjust node types with a node migration
     'Neos.ContentRepository.Testing:Document': []
     'Neos.ContentRepository.Testing:OtherDocument': []
     """
-    And using identifier "default", I define a content repository
-    And I am in content repository "default"
+    And using identifier "testing", I define a content repository
+    And I am in content repository "testing"
 
   Scenario: Success Case
     ########################
@@ -44,7 +44,7 @@ Feature: Adjust node types with a node migration
     # Actual Test
     ########################
     # we remove the Document node type (which still exists in the CR)
-    When I change the node types in content repository "default" to:
+    When I change the node types in content repository "testing" to:
     """yaml
     'Neos.ContentRepository:Root':
       constraints:

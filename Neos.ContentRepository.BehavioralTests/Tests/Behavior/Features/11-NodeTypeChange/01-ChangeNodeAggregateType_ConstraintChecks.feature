@@ -51,8 +51,8 @@ Feature: Change node aggregate type - basic error cases
           type: string
           defaultValue: 'otherText'
     """
-    And using identifier "default", I define a content repository
-    And I am in content repository "default"
+    And using identifier "testing", I define a content repository
+    And I am in content repository "testing"
     And the command CreateRootWorkspace is executed with payload:
       | Key                | Value           |
       | workspaceName      | "live"          |

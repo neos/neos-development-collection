@@ -17,8 +17,8 @@ Feature: Change node name
         tethered:
           type: 'Neos.ContentRepository.Testing:Content'
     """
-    And using identifier "default", I define a content repository
-    And I am in content repository "default"
+    And using identifier "testing", I define a content repository
+    And I am in content repository "testing"
     And the command CreateRootWorkspace is executed with payload:
       | Key                  | Value                |
       | workspaceName        | "live"               |
@@ -101,7 +101,7 @@ Feature: Change node name
     Then the last command should have thrown an exception of type "NodeNameIsAlreadyCovered"
 
   Scenario: Try to rename a node aggregate using a name of a not yet existent, tethered child
-    Given I change the node types in content repository "default" to:
+    Given I change the node types in content repository "testing" to:
     """yaml
     'Neos.ContentRepository.Testing:Content': []
     'Neos.ContentRepository.Testing:Document':

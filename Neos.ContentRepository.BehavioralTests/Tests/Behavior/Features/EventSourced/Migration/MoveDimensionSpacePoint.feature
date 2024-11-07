@@ -27,8 +27,8 @@ Feature: Move dimension space point
     'Neos.ContentRepository.Testing:Document': []
     'Neos.ContentRepository.Testing:OtherDocument': []
     """
-    And using identifier "default", I define a content repository
-    And I am in content repository "default"
+    And using identifier "testing", I define a content repository
+    And I am in content repository "testing"
     And the command CreateRootWorkspace is executed with payload:
       | Key                  | Value                |
       | workspaceName        | "live"               |
@@ -49,7 +49,7 @@ Feature: Move dimension space point
 
   Scenario: Success Case - simple
     # we change the dimension configuration
-    Given I change the content dimensions in content repository "default" to:
+    Given I change the content dimensions in content repository "testing" to:
       | Identifier | Values     | Generalizations |
       | language   | mul, de_DE | de_DE->mul      |
 
@@ -97,7 +97,7 @@ Feature: Move dimension space point
     When VisibilityConstraints are set to "frontend"
 
     # we change the dimension configuration
-    When I change the content dimensions in content repository "default" to:
+    When I change the content dimensions in content repository "testing" to:
       | Identifier | Values     | Generalizations |
       | language   | mul, de_DE | de_DE->mul      |
 
@@ -132,7 +132,7 @@ Feature: Move dimension space point
 
   Scenario: Error case - there's already an edge in the target dimension
     # we change the dimension configuration
-    When I change the content dimensions in content repository "default" to:
+    When I change the content dimensions in content repository "testing" to:
       | Identifier | Values  | Generalizations |
       | language   | mul, ch | ch->mul         |
 

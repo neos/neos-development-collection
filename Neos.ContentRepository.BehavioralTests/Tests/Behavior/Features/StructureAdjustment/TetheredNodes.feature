@@ -28,8 +28,8 @@ Feature: Tethered Nodes integrity violations
           type: 'Neos.ContentRepository.Testing:TetheredLeaf'
     'Neos.ContentRepository.Testing:TetheredLeaf': []
     """
-    And using identifier "default", I define a content repository
-    And I am in content repository "default"
+    And using identifier "testing", I define a content repository
+    And I am in content repository "testing"
     And the command CreateRootWorkspace is executed with payload:
       | Key                  | Value                |
       | workspaceName        | "live"               |
@@ -82,7 +82,7 @@ Feature: Tethered Nodes integrity violations
     Then I expect no needed structure adjustments for type "Neos.ContentRepository.Testing:Document"
 
   Scenario: Adjusting the schema adding a new tethered node leads to a MissingTetheredNode integrity violation
-    Given I change the node types in content repository "default" to:
+    Given I change the node types in content repository "testing" to:
     """yaml
     'Neos.ContentRepository:Root':
       childNodes:
@@ -114,7 +114,7 @@ Feature: Tethered Nodes integrity violations
       | TETHERED_NODE_MISSING | lady-eleonode-rootford |
 
   Scenario: Adding missing tethered nodes resolves the corresponding integrity violations
-    Given I change the node types in content repository "default" to:
+    Given I change the node types in content repository "testing" to:
     """yaml
     'Neos.ContentRepository:Root':
       childNodes:
@@ -154,7 +154,7 @@ Feature: Tethered Nodes integrity violations
       | foo | "my default applied" |
 
   Scenario: Adding the same
-    Given I change the node types in content repository "default" to:
+    Given I change the node types in content repository "testing" to:
     """yaml
     'Neos.ContentRepository.Testing:Document':
       childNodes:
@@ -178,7 +178,7 @@ Feature: Tethered Nodes integrity violations
     Then I expect exactly 8 events to be published on stream "ContentStream:cs-identifier"
 
   Scenario: Adjusting the schema removing a tethered node leads to a DisallowedTetheredNode integrity violation (which can be fixed)
-    Given I change the node types in content repository "default" to:
+    Given I change the node types in content repository "testing" to:
     """yaml
     'Neos.ContentRepository:Root': []
     'Neos.ContentRepository.Testing:Document': []
@@ -208,7 +208,7 @@ Feature: Tethered Nodes integrity violations
     And  I expect path "tethered-node" to lead to no node
 
   Scenario: Adjusting the schema changing the type of a tethered node leads to a InvalidTetheredNodeType integrity violation
-    Given I change the node types in content repository "default" to:
+    Given I change the node types in content repository "testing" to:
     """yaml
     'Neos.ContentRepository.Testing:Document':
       childNodes:

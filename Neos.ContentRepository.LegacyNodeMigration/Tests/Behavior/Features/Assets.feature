@@ -21,8 +21,8 @@ Feature: Export of used Assets, Image Variants and Persistent Resources
         'assets':
           type: 'array<Neos\Media\Domain\Model\Asset>'
     """
-    And using identifier "default", I define a content repository
-    And I am in content repository "default"
+    And using identifier "testing", I define a content repository
+    And I am in content repository "testing"
     And the following PersistentResources exist
       | identifier | filename       | collectionName | mediaType       |
       | resource1  | Some-File1.jpg | persistent     | image/jpeg      |

@@ -23,8 +23,8 @@ Feature: Basic routing functionality (match & resolve document nodes in one dime
         uriPathSegment:
           type: string
     """
-    And using identifier "default", I define a content repository
-    And I am in content repository "default"
+    And using identifier "testing", I define a content repository
+    And I am in content repository "testing"
     And I am user identified by "initiating-user-identifier"
 
     When the command CreateRootWorkspace is executed with payload:
@@ -58,7 +58,7 @@ Feature: Basic routing functionality (match & resolve document nodes in one dime
       Neos:
         sites:
           'node1':
-            preset: 'default'
+            contentRepository: testing
             uriPathSuffix: ''
             contentDimensions:
               resolver:

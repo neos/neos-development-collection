@@ -29,8 +29,8 @@ Feature: Add Dimension Specialization
           type: string
     'Neos.ContentRepository.Testing:OtherDocument': []
     """
-    And using identifier "default", I define a content repository
-    And I am in content repository "default"
+    And using identifier "testing", I define a content repository
+    And I am in content repository "testing"
     And the command CreateRootWorkspace is executed with payload:
       | Key                  | Value                |
       | workspaceName        | "live"               |
@@ -52,7 +52,7 @@ Feature: Add Dimension Specialization
   Scenario: Success Case - simple
     # we change the dimension configuration
     ########################
-    Given I change the content dimensions in content repository "default" to:
+    Given I change the content dimensions in content repository "testing" to:
       | Identifier | Values      | Generalizations |
       | language   | mul, de, ch | ch->de->mul     |
     When I run the following node migration for workspace "live", creating target workspace "migration-workspace" on contentStreamId "migration-cs", without publishing on success:
@@ -145,7 +145,7 @@ Feature: Add Dimension Specialization
     When VisibilityConstraints are set to "frontend"
 
     # we change the dimension configuration
-    When I change the content dimensions in content repository "default" to:
+    When I change the content dimensions in content repository "testing" to:
       | Identifier | Values      | Generalizations |
       | language   | mul, de, ch | ch->de->mul     |
 
@@ -181,7 +181,7 @@ Feature: Add Dimension Specialization
 
   Scenario: Error case - there's already an edge in the target dimension
     # we change the dimension configuration
-    When I change the content dimensions in content repository "default" to:
+    When I change the content dimensions in content repository "testing" to:
       | Identifier | Values          | Generalizations |
       | language   | mul, de, ch, en | ch->de->mul     |
 
@@ -221,7 +221,7 @@ Feature: Add Dimension Specialization
 
 
   Scenario: Error case - the target dimension is not a specialization of the source dimension (1)
-    Given I change the content dimensions in content repository "default" to:
+    Given I change the content dimensions in content repository "testing" to:
       | Identifier | Values       | Generalizations |
       | language   | mul, de, foo | de->mul         |
 
@@ -240,7 +240,7 @@ Feature: Add Dimension Specialization
 
 
   Scenario: Error case - the target dimension is not a specialization of the source dimension (2)
-    Given I change the content dimensions in content repository "default" to:
+    Given I change the content dimensions in content repository "testing" to:
       | Identifier | Values       | Generalizations   |
       | language   | mul, de, foo | de->mul, foo->mul |
 

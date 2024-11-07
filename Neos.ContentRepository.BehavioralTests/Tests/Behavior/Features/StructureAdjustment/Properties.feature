@@ -16,8 +16,8 @@ Feature: Properties
           type: string
           defaultValue: "Foo"
     """
-    And using identifier "default", I define a content repository
-    And I am in content repository "default"
+    And using identifier "testing", I define a content repository
+    And I am in content repository "testing"
     And the command CreateRootWorkspace is executed with payload:
       | Key                  | Value                |
       | workspaceName        | "live"               |
@@ -42,7 +42,7 @@ Feature: Properties
       | myProp | "Foo" |
 
   Scenario: The property is removed
-    Given I change the node types in content repository "default" to:
+    Given I change the node types in content repository "testing" to:
     """yaml
     'Neos.ContentRepository.Testing:Document': []
     """
@@ -57,7 +57,7 @@ Feature: Properties
     And I expect this node to have no properties
 
   Scenario: a new property default value is set
-    Given I change the node types in content repository "default" to:
+    Given I change the node types in content repository "testing" to:
     """yaml
     'Neos.ContentRepository.Testing:Document':
       properties:
@@ -82,7 +82,7 @@ Feature: Properties
       | otherProp | "foo" |
 
   Scenario: a new property default value is not set if the value already contains the empty string
-    Given I change the node types in content repository "default" to:
+    Given I change the node types in content repository "testing" to:
     """yaml
     'Neos.ContentRepository.Testing:Document':
       properties:
@@ -101,7 +101,7 @@ Feature: Properties
     Then I expect no needed structure adjustments for type "Neos.ContentRepository.Testing:Document"
 
   Scenario: a broken property (which cannot be deserialized) is detected and removed
-    Given I change the node types in content repository "default" to:
+    Given I change the node types in content repository "testing" to:
     """yaml
     'Neos.ContentRepository.Testing:Document':
       properties:

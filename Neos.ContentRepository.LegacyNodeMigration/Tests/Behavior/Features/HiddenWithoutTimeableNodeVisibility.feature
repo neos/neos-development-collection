@@ -15,8 +15,8 @@ Feature: Simple migrations without content dimensions for hidden state migration
           defaultValue: 'My default text'
 
     """
-    And using identifier "default", I define a content repository
-    And I am in content repository "default"
+    And using identifier "testing", I define a content repository
+    And I am in content repository "testing"
 
   Scenario: A node with a "hidden" property true must get disabled
     When I have the following node data rows:

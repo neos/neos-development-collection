@@ -9,8 +9,8 @@ Feature: As a user of the CR I want to export the event stream
       superTypes:
         Neos.Neos:Site: true
     """
-    And using identifier "default", I define a content repository
-    And I am in content repository "default"
+    And using identifier "testing", I define a content repository
+    And I am in content repository "testing"
 
   Scenario: Import the event stream into a specific content stream
     Then I expect exactly 0 events to be published on stream with prefix "ContentStream:cs-identifier"

@@ -40,8 +40,8 @@ Feature: Tests for the ContentCacheFlusher and cache flushing when applied in us
         text:
           type: string
     """
-    And using identifier "default", I define a content repository
-    And I am in content repository "default"
+    And using identifier "testing", I define a content repository
+    And I am in content repository "testing"
     And I am user identified by "editor"
 
     When the command CreateRootWorkspace is executed with payload:
@@ -74,7 +74,7 @@ Feature: Tests for the ContentCacheFlusher and cache flushing when applied in us
       Neos:
         sites:
           '*':
-            contentRepository: default
+            contentRepository: testing
             contentDimensions:
               resolver:
                 factoryClassName: Neos\Neos\FrontendRouting\DimensionResolution\Resolver\NoopResolverFactory
@@ -295,4 +295,4 @@ Feature: Tests for the ContentCacheFlusher and cache flushing when applied in us
     """
     <div class="neos-contentcollection">secondRender[Text Node at the start of the document]secondRender[Text Node in the middle of the document]secondRender[Text Node at the end of the document]</div>
     """
-    
+

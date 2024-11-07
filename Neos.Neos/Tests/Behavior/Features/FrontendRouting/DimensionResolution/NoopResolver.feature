@@ -6,14 +6,14 @@ Feature: NoopResolver does nothing (boilerplate testcase)
     And using the following node types:
     """yaml
     """
-    And using identifier "default", I define a content repository
-    And I am in content repository "default"
+    And using identifier "testing", I define a content repository
+    And I am in content repository "testing"
 
   Scenario: Match homepage URL
     When I am on URL "/"
     And I invoke the Dimension Resolver from site configuration:
     """yaml
-    contentRepository: default
+    contentRepository: testing
     contentDimensions:
       resolver:
         factoryClassName: Neos\Neos\FrontendRouting\DimensionResolution\Resolver\NoopResolverFactory
@@ -24,7 +24,7 @@ Feature: NoopResolver does nothing (boilerplate testcase)
     When I am on URL "/foo"
     And I invoke the Dimension Resolver from site configuration:
     """yaml
-    contentRepository: default
+    contentRepository: testing
     contentDimensions:
       resolver:
         factoryClassName: Neos\Neos\FrontendRouting\DimensionResolution\Resolver\NoopResolverFactory

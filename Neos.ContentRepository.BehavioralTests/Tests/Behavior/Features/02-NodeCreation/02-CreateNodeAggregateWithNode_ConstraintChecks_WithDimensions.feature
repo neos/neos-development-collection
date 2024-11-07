@@ -30,8 +30,8 @@ Feature: Create node aggregate with node
     'Neos.ContentRepository.Testing:AbstractNode':
       abstract: true
     """
-    And using identifier "default", I define a content repository
-    And I am in content repository "default"
+    And using identifier "testing", I define a content repository
+    And I am in content repository "testing"
     And I am user identified by "initiating-user-identifier"
     And the command CreateRootWorkspace is executed with payload:
       | Key                  | Value                |
@@ -102,7 +102,7 @@ Feature: Create node aggregate with node
       | nodeTypeName              | "Neos.ContentRepository.Testing:Node" |
       | parentNodeAggregateId     | "lady-eleonode-rootford"              |
       | originDimensionSpacePoint | {"example":"source"}                  |
-    Given I change the node types in content repository "default" to:
+    Given I change the node types in content repository "testing" to:
     """yaml
     'Neos.ContentRepository.Testing:LeafNode': {}
     'Neos.ContentRepository.Testing:Node':

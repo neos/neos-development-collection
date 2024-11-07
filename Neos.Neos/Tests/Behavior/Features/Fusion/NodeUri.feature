@@ -22,8 +22,8 @@ Feature: Tests for the "Neos.Neos:NodeUri" Fusion prototype
       superTypes:
         'Neos.Neos:Document': true
     """
-    And using identifier "default", I define a content repository
-    And I am in content repository "default"
+    And using identifier "testing", I define a content repository
+    And I am in content repository "testing"
 
     When the command CreateRootWorkspace is executed with payload:
       | Key                | Value           |
@@ -45,7 +45,7 @@ Feature: Tests for the "Neos.Neos:NodeUri" Fusion prototype
       Neos:
         sites:
           'a':
-            preset: default
+            contentRepository: testing
             uriPathSuffix: ''
             contentDimensions:
               resolver:
