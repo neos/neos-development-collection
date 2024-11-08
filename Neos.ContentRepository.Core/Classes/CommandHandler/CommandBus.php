@@ -21,12 +21,24 @@ final readonly class CommandBus
      */
     private array $handlers;
 
+    /**
+     * @var CommandSerializerInterface[]
+     */
+    private array $serializers;
+
     public function __construct(
         // todo pass $commandHandlingDependencies in each command handler instead of into the commandBus
         private CommandHandlingDependencies $commandHandlingDependencies,
         CommandHandlerInterface ...$handlers
     ) {
         $this->handlers = $handlers;
+        $serializers = [];
+        foreach ($handlers as $handler) {
+            if ($handler instanceof CommandSerializerInterface) {
+                $serializers[] = $handler;
+            }
+        }
+        $this->serializers = $serializers;
     }
 
     /**
@@ -34,13 +46,23 @@ final readonly class CommandBus
      */
     public function handle(PublicCommandInterface|RebasableToOtherWorkspaceInterface $command): EventsToPublish|\Generator
     {
-        // multiple handlers must not handle the same command
-        foreach ($this->handlers as $handler) {
-            if ($handler->canHandle($command)) {
-                return $handler->handle($command, $this->commandHandlingDependencies);
+        $possiblySerializedCommand = $command;
+        if (!$command instanceof RebasableToOtherWorkspaceInterface) {
+            foreach ($this->serializers as $serializer) {
+                if ($serializer->canSerialize($command)) {
+                    $possiblySerializedCommand = $serializer->serialize($command, $this->commandHandlingDependencies);
+                    break;
+                }
             }
         }
-        throw new \RuntimeException(sprintf('No handler found for Command "%s"', get_debug_type($command)), 1649582778);
+
+        // multiple handlers must not handle the same command
+        foreach ($this->handlers as $handler) {
+            if ($handler->canHandle($possiblySerializedCommand)) {
+                return $handler->handle($possiblySerializedCommand, $this->commandHandlingDependencies);
+            }
+        }
+        throw new \RuntimeException(sprintf('No handler found for Command "%s"', get_debug_type($possiblySerializedCommand)), 1649582778);
     }
 
     public function withAdditionalHandlers(CommandHandlerInterface ...$handlers): self

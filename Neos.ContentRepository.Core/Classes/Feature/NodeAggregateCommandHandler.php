@@ -16,6 +16,7 @@ namespace Neos\ContentRepository\Core\Feature;
 
 use Neos\ContentRepository\Core\CommandHandler\CommandHandlerInterface;
 use Neos\ContentRepository\Core\CommandHandler\CommandHandlingDependencies;
+use Neos\ContentRepository\Core\CommandHandler\CommandSerializerInterface;
 use Neos\ContentRepository\Core\CommandHandler\PublicCommandInterface;
 use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\DimensionSpace;
@@ -58,7 +59,7 @@ use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 /**
  * @internal from userland, you'll use ContentRepository::handle to dispatch commands
  */
-final class NodeAggregateCommandHandler implements CommandHandlerInterface
+final class NodeAggregateCommandHandler implements CommandHandlerInterface, CommandSerializerInterface
 {
     use ConstraintChecks;
     use RootNodeHandling;
@@ -96,16 +97,12 @@ final class NodeAggregateCommandHandler implements CommandHandlerInterface
     {
         /** @phpstan-ignore-next-line */
         return match ($command::class) {
-            SetNodeProperties::class => $this->handleSetNodeProperties($command, $commandHandlingDependencies),
             SetSerializedNodeProperties::class
             => $this->handleSetSerializedNodeProperties($command, $commandHandlingDependencies),
-            SetNodeReferences::class => $this->handleSetNodeReferences($command, $commandHandlingDependencies),
             SetSerializedNodeReferences::class
             => $this->handleSetSerializedNodeReferences($command, $commandHandlingDependencies),
             ChangeNodeAggregateType::class => $this->handleChangeNodeAggregateType($command, $commandHandlingDependencies),
             RemoveNodeAggregate::class => $this->handleRemoveNodeAggregate($command, $commandHandlingDependencies),
-            CreateNodeAggregateWithNode::class
-            => $this->handleCreateNodeAggregateWithNode($command, $commandHandlingDependencies),
             CreateNodeAggregateWithNodeAndSerializedProperties::class
             => $this->handleCreateNodeAggregateWithNodeAndSerializedProperties($command, $commandHandlingDependencies),
             MoveNodeAggregate::class => $this->handleMoveNodeAggregate($command, $commandHandlingDependencies),
@@ -119,6 +116,21 @@ final class NodeAggregateCommandHandler implements CommandHandlerInterface
             TagSubtree::class => $this->handleTagSubtree($command, $commandHandlingDependencies),
             UntagSubtree::class => $this->handleUntagSubtree($command, $commandHandlingDependencies),
             ChangeNodeAggregateName::class => $this->handleChangeNodeAggregateName($command, $commandHandlingDependencies),
+        };
+    }
+
+    public function canSerialize(PublicCommandInterface $command): bool
+    {
+        return method_exists($this, 'serialize' . (new \ReflectionClass($command))->getShortName());
+    }
+
+    public function serialize(PublicCommandInterface $command, CommandHandlingDependencies $commandHandlingDependencies): RebasableToOtherWorkspaceInterface
+    {
+        /** @phpstan-ignore-next-line */
+        return match ($command::class) {
+            SetNodeProperties::class => $this->serializeSetNodeProperties($command, $commandHandlingDependencies),
+            SetNodeReferences::class => $this->serializeSetNodeReferences($command, $commandHandlingDependencies),
+            CreateNodeAggregateWithNode::class => $this->serializeCreateNodeAggregateWithNode($command, $commandHandlingDependencies),
         };
     }
 

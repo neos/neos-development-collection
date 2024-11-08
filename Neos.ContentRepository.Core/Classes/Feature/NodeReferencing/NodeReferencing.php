@@ -46,10 +46,10 @@ trait NodeReferencing
     ): NodeAggregate;
 
 
-    private function handleSetNodeReferences(
+    private function serializeSetNodeReferences(
         SetNodeReferences $command,
         CommandHandlingDependencies $commandHandlingDependencies
-    ): EventsToPublish {
+    ): SetSerializedNodeReferences {
         $this->requireContentStream($command->workspaceName, $commandHandlingDependencies);
         $contentGraph = $commandHandlingDependencies->getContentGraph($command->workspaceName);
         $this->requireDimensionSpacePointToExist($command->sourceOriginDimensionSpacePoint->toDimensionSpacePoint());
@@ -79,7 +79,7 @@ trait NodeReferencing
             $this->mapNodeReferencesToSerializedNodeReferences($command->references, $nodeTypeName),
         );
 
-        return $this->handleSetSerializedNodeReferences($lowLevelCommand, $commandHandlingDependencies);
+        return $lowLevelCommand;
     }
 
     /**

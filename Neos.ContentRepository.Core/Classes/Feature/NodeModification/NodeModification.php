@@ -17,13 +17,13 @@ namespace Neos\ContentRepository\Core\Feature\NodeModification;
 use Neos\ContentRepository\Core\CommandHandler\CommandHandlingDependencies;
 use Neos\ContentRepository\Core\EventStore\Events;
 use Neos\ContentRepository\Core\EventStore\EventsToPublish;
-use Neos\ContentRepository\Core\Feature\RebaseableCommand;
 use Neos\ContentRepository\Core\Feature\ContentStreamEventStreamName;
 use Neos\ContentRepository\Core\Feature\NodeModification\Command\SetNodeProperties;
 use Neos\ContentRepository\Core\Feature\NodeModification\Command\SetSerializedNodeProperties;
 use Neos\ContentRepository\Core\Feature\NodeModification\Dto\PropertyScope;
 use Neos\ContentRepository\Core\Feature\NodeModification\Dto\SerializedPropertyValues;
 use Neos\ContentRepository\Core\Feature\NodeModification\Event\NodePropertiesWereSet;
+use Neos\ContentRepository\Core\Feature\RebaseableCommand;
 use Neos\ContentRepository\Core\NodeType\NodeType;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphInterface;
@@ -43,10 +43,10 @@ trait NodeModification
         NodeAggregateId $nodeAggregateId
     ): NodeAggregate;
 
-    private function handleSetNodeProperties(
+    private function serializeSetNodeProperties(
         SetNodeProperties $command,
         CommandHandlingDependencies $commandHandlingDependencies
-    ): EventsToPublish {
+    ): SetSerializedNodeProperties {
         $this->requireContentStream($command->workspaceName, $commandHandlingDependencies);
         $contentGraph = $commandHandlingDependencies->getContentGraph($command->workspaceName);
         $this->requireDimensionSpacePointToExist($command->originDimensionSpacePoint->toDimensionSpacePoint());
@@ -70,7 +70,7 @@ trait NodeModification
             $command->propertyValues->getPropertiesToUnset()
         );
 
-        return $this->handleSetSerializedNodeProperties($lowLevelCommand, $commandHandlingDependencies);
+        return $lowLevelCommand;
     }
 
     private function handleSetSerializedNodeProperties(
