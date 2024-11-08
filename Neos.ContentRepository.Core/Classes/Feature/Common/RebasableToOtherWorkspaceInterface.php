@@ -19,10 +19,10 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 /**
  * Common (marker) interface for all **commands** that need to be serialized for rebasing to other workspaces
  *
- * If the api command {@see CommandInterface} is serializable on its own it will directly implement this interface.
+ * If the api command {@see PublicCommandInterface} is serializable on its own it will directly implement this interface.
  * For complex commands a serialized counterpart - which is not api - will be build which implements this interface.
  *
- * During a rebase, the command (either the original {@see CommandInterface} or its serialized counterpart) will be deserialized
+ * During a rebase, the command (either the original {@see PublicCommandInterface} or its serialized counterpart) will be deserialized
  * from array {@see SerializedCommandInterface::fromArray()} and reapplied via the {@see CommandSimulator}
  *
  * Reminder: a rebase can fail, because the target content stream might contain conflicting changes.

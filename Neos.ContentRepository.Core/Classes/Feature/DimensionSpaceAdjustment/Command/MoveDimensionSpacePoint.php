@@ -14,7 +14,7 @@ namespace Neos\ContentRepository\Core\Feature\DimensionSpaceAdjustment\Command;
  * source code.
  */
 
-use Neos\ContentRepository\Core\CommandHandler\CommandInterface;
+use Neos\ContentRepository\Core\CommandHandler\PublicCommandInterface;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\Feature\Common\RebasableToOtherWorkspaceInterface;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
@@ -30,7 +30,7 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
  */
 final readonly class MoveDimensionSpacePoint implements
     \JsonSerializable,
-    CommandInterface,
+    PublicCommandInterface,
     RebasableToOtherWorkspaceInterface
 {
     /**

@@ -32,7 +32,7 @@ final readonly class CommandBus
     /**
      * @return EventsToPublish|\Generator<int, EventsToPublish>
      */
-    public function handle(CommandInterface|RebasableToOtherWorkspaceInterface $command): EventsToPublish|\Generator
+    public function handle(PublicCommandInterface|RebasableToOtherWorkspaceInterface $command): EventsToPublish|\Generator
     {
         // multiple handlers must not handle the same command
         foreach ($this->handlers as $handler) {

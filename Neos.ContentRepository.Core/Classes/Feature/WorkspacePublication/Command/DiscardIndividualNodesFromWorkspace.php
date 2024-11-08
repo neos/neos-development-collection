@@ -14,7 +14,7 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Core\Feature\WorkspacePublication\Command;
 
-use Neos\ContentRepository\Core\CommandHandler\CommandInterface;
+use Neos\ContentRepository\Core\CommandHandler\PublicCommandInterface;
 use Neos\ContentRepository\Core\Feature\WorkspacePublication\Dto\NodeIdsToPublishOrDiscard;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
@@ -24,7 +24,7 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
  *
  * @api commands are the write-API of the ContentRepository
  */
-final readonly class DiscardIndividualNodesFromWorkspace implements CommandInterface
+final readonly class DiscardIndividualNodesFromWorkspace implements PublicCommandInterface
 {
     /**
      * @param WorkspaceName $workspaceName Name of the affected workspace

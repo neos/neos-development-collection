@@ -14,7 +14,7 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Core\Feature\NodeModification\Command;
 
-use Neos\ContentRepository\Core\CommandHandler\CommandInterface;
+use Neos\ContentRepository\Core\CommandHandler\PublicCommandInterface;
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
 use Neos\ContentRepository\Core\Feature\NodeModification\Dto\PropertyValuesToWrite;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
@@ -34,7 +34,7 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
  *
  * @api commands are the write-API of the ContentRepository
  */
-final readonly class SetNodeProperties implements CommandInterface
+final readonly class SetNodeProperties implements PublicCommandInterface
 {
     /**
      * @param WorkspaceName $workspaceName The workspace in which the set properties operation is to be performed

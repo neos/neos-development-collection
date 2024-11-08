@@ -15,7 +15,7 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\Core;
 
 use Neos\ContentRepository\Core\CommandHandler\CommandBus;
-use Neos\ContentRepository\Core\CommandHandler\CommandInterface;
+use Neos\ContentRepository\Core\CommandHandler\PublicCommandInterface;
 use Neos\ContentRepository\Core\Dimension\ContentDimensionSourceInterface;
 use Neos\ContentRepository\Core\DimensionSpace\InterDimensionalVariationGraph;
 use Neos\ContentRepository\Core\EventStore\EventNormalizer;
@@ -90,9 +90,9 @@ final class ContentRepository
     /**
      * The only API to send commands (mutation intentions) to the system.
      *
-     * @param CommandInterface $command
+     * @param PublicCommandInterface $command
      */
-    public function handle(CommandInterface $command): void
+    public function handle(PublicCommandInterface $command): void
     {
         // the commands only calculate which events they want to have published, but do not do the
         // publishing themselves

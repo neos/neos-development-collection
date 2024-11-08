@@ -16,7 +16,7 @@ namespace Neos\ContentRepository\Core\Feature\DimensionSpaceAdjustment;
 
 use Neos\ContentRepository\Core\CommandHandler\CommandHandlerInterface;
 use Neos\ContentRepository\Core\CommandHandler\CommandHandlingDependencies;
-use Neos\ContentRepository\Core\CommandHandler\CommandInterface;
+use Neos\ContentRepository\Core\CommandHandler\PublicCommandInterface;
 use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\DimensionSpace\ContentDimensionZookeeper;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
@@ -49,12 +49,12 @@ final readonly class DimensionSpaceCommandHandler implements CommandHandlerInter
     ) {
     }
 
-    public function canHandle(CommandInterface|RebasableToOtherWorkspaceInterface $command): bool
+    public function canHandle(PublicCommandInterface|RebasableToOtherWorkspaceInterface $command): bool
     {
         return method_exists($this, 'handle' . (new \ReflectionClass($command))->getShortName());
     }
 
-    public function handle(CommandInterface|RebasableToOtherWorkspaceInterface $command, CommandHandlingDependencies $commandHandlingDependencies): EventsToPublish
+    public function handle(PublicCommandInterface|RebasableToOtherWorkspaceInterface $command, CommandHandlingDependencies $commandHandlingDependencies): EventsToPublish
     {
         /** @phpstan-ignore-next-line */
         return match ($command::class) {

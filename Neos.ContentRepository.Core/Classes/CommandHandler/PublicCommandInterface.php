@@ -9,6 +9,6 @@ namespace Neos\ContentRepository\Core\CommandHandler;
  *
  * @internal sealed interface. Custom commands cannot be handled and are no extension point!
  */
-interface CommandInterface
+interface PublicCommandInterface
 {
 }

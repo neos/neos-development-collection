@@ -14,7 +14,7 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Core\Feature\NodeRenaming\Command;
 
-use Neos\ContentRepository\Core\CommandHandler\CommandInterface;
+use Neos\ContentRepository\Core\CommandHandler\PublicCommandInterface;
 use Neos\ContentRepository\Core\Feature\Common\MatchableWithNodeIdToPublishOrDiscardInterface;
 use Neos\ContentRepository\Core\Feature\Common\RebasableToOtherWorkspaceInterface;
 use Neos\ContentRepository\Core\Feature\WorkspacePublication\Dto\NodeIdToPublishOrDiscard;
@@ -32,7 +32,7 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
  * @api commands are the write-API of the ContentRepository
  */
 final readonly class ChangeNodeAggregateName implements
-    CommandInterface,
+    PublicCommandInterface,
     \JsonSerializable,
     MatchableWithNodeIdToPublishOrDiscardInterface,
     RebasableToOtherWorkspaceInterface

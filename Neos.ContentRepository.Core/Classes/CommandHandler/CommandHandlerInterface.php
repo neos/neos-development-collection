@@ -16,7 +16,7 @@ use Neos\ContentRepository\Core\Feature\Common\RebasableToOtherWorkspaceInterfac
  */
 interface CommandHandlerInterface
 {
-    public function canHandle(CommandInterface|RebasableToOtherWorkspaceInterface $command): bool;
+    public function canHandle(PublicCommandInterface|RebasableToOtherWorkspaceInterface $command): bool;
 
     /**
      * "simple" command handlers return EventsToPublish directly
@@ -26,5 +26,5 @@ interface CommandHandlerInterface
      *
      * @return EventsToPublish|\Generator<int, EventsToPublish>
      */
-    public function handle(CommandInterface|RebasableToOtherWorkspaceInterface $command, CommandHandlingDependencies $commandHandlingDependencies): EventsToPublish|\Generator;
+    public function handle(PublicCommandInterface|RebasableToOtherWorkspaceInterface $command, CommandHandlingDependencies $commandHandlingDependencies): EventsToPublish|\Generator;
 }

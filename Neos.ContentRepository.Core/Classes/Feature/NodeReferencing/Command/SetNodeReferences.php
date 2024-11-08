@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Core\Feature\NodeReferencing\Command;
 
-use Neos\ContentRepository\Core\CommandHandler\CommandInterface;
+use Neos\ContentRepository\Core\CommandHandler\PublicCommandInterface;
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
 use Neos\ContentRepository\Core\Feature\NodeReferencing\Dto\NodeReferencesToWrite;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
@@ -21,7 +21,7 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
  *
  * @api commands are the write-API of the ContentRepository
  */
-final readonly class SetNodeReferences implements CommandInterface
+final readonly class SetNodeReferences implements PublicCommandInterface
 {
     /**
      * @param WorkspaceName $workspaceName The workspace in which the create operation is to be performed
