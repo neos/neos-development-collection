@@ -51,6 +51,7 @@ final readonly class RebaseableCommand
         );
     }
 
+
     /**
      * Stores the command in the event's metadata for events on a content stream. This is an important prerequisite
      * for the rebase functionality-

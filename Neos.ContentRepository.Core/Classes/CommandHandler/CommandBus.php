@@ -7,6 +7,7 @@ namespace Neos\ContentRepository\Core\CommandHandler;
 use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\EventStore\EventsToPublish;
 use Neos\ContentRepository\Core\Feature\Common\RebasableToOtherWorkspaceInterface;
+use Neos\ContentRepository\Core\Feature\RebaseableCommand;
 
 /**
  * Implementation Detail of {@see ContentRepository::handle}, which does the command dispatching to the different
@@ -59,7 +60,25 @@ final readonly class CommandBus
         // multiple handlers must not handle the same command
         foreach ($this->handlers as $handler) {
             if ($handler->canHandle($possiblySerializedCommand)) {
-                return $handler->handle($possiblySerializedCommand, $this->commandHandlingDependencies);
+                $eventsToPublish = $handler->handle($possiblySerializedCommand, $this->commandHandlingDependencies);
+
+                if (!$eventsToPublish instanceof EventsToPublish) {
+                    // generator todo?
+                    return $eventsToPublish;
+                }
+
+                if ($possiblySerializedCommand instanceof RebasableToOtherWorkspaceInterface) {
+                    return new EventsToPublish(
+                        $eventsToPublish->streamName,
+                        RebaseableCommand::enrichWithCommand(
+                            $possiblySerializedCommand,
+                            $eventsToPublish->events
+                        ),
+                        $eventsToPublish->expectedVersion
+                    );
+                }
+
+                return $eventsToPublish;
             }
         }
         throw new \RuntimeException(sprintf('No handler found for Command "%s"', get_debug_type($possiblySerializedCommand)), 1649582778);

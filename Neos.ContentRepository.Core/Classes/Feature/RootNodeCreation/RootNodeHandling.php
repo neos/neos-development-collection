@@ -20,7 +20,6 @@ use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
 use Neos\ContentRepository\Core\EventStore\Events;
 use Neos\ContentRepository\Core\EventStore\EventsToPublish;
 use Neos\ContentRepository\Core\Feature\Common\InterdimensionalSiblings;
-use Neos\ContentRepository\Core\Feature\RebaseableCommand;
 use Neos\ContentRepository\Core\Feature\ContentStreamEventStreamName;
 use Neos\ContentRepository\Core\Feature\NodeCreation\Dto\NodeAggregateIdsByNodePaths;
 use Neos\ContentRepository\Core\Feature\NodeCreation\Event\NodeAggregateWithNodeWasCreated;
@@ -119,10 +118,7 @@ trait RootNodeHandling
         $contentStreamEventStream = ContentStreamEventStreamName::fromContentStreamId($contentGraph->getContentStreamId());
         return new EventsToPublish(
             $contentStreamEventStream->getEventStreamName(),
-            RebaseableCommand::enrichWithCommand(
-                $command,
-                Events::fromArray($events)
-            ),
+            Events::fromArray($events),
             $expectedVersion
         );
     }
@@ -174,10 +170,7 @@ trait RootNodeHandling
         );
         return new EventsToPublish(
             $contentStreamEventStream->getEventStreamName(),
-            RebaseableCommand::enrichWithCommand(
-                $command,
-                $events
-            ),
+            $events,
             $expectedVersion
         );
     }

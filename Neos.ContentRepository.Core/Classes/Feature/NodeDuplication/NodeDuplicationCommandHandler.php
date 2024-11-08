@@ -32,7 +32,6 @@ use Neos\ContentRepository\Core\Feature\ContentStreamEventStreamName;
 use Neos\ContentRepository\Core\Feature\NodeCreation\Event\NodeAggregateWithNodeWasCreated;
 use Neos\ContentRepository\Core\Feature\NodeDuplication\Command\CopyNodesRecursively;
 use Neos\ContentRepository\Core\Feature\NodeDuplication\Dto\NodeSubtreeSnapshot;
-use Neos\ContentRepository\Core\Feature\RebaseableCommand;
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphInterface;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeConstraintException;
@@ -160,10 +159,7 @@ final class NodeDuplicationCommandHandler implements CommandHandlerInterface
             ContentStreamEventStreamName::fromContentStreamId(
                 $contentGraph->getContentStreamId()
             )->getEventStreamName(),
-            RebaseableCommand::enrichWithCommand(
-                $command,
-                Events::fromArray($events)
-            ),
+            Events::fromArray($events),
             $expectedVersion
         );
     }
