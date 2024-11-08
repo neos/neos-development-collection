@@ -181,6 +181,7 @@ trait NodeTypeChange
             $command->newNodeTypeName,
             $this->nodeTypeManager
         );
+        // todo
         // Write the auto-created descendant node aggregate ids back to the command;
         // so that when rebasing the command, it stays fully deterministic.
         $command = $command->withTetheredDescendantNodeAggregateIds($descendantNodeAggregateIds);

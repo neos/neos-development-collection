@@ -91,9 +91,16 @@ trait NodeCreation
             ),
             $this->mapNodeReferencesToSerializedNodeReferences($command->references, $command->nodeTypeName)
         );
-        if (!$command->tetheredDescendantNodeAggregateIds->isEmpty()) {
-            $lowLevelCommand = $lowLevelCommand->withTetheredDescendantNodeAggregateIds($command->tetheredDescendantNodeAggregateIds);
-        }
+
+        $descendantNodeAggregateIds = $command->tetheredDescendantNodeAggregateIds->completeForNodeOfType(
+            $command->nodeTypeName,
+            $this->nodeTypeManager
+        );
+
+        // Write the auto-created descendant node aggregate ids back to the command;
+        // so that when rebasing the command, it stays fully deterministic.
+        $lowLevelCommand = $lowLevelCommand->withTetheredDescendantNodeAggregateIds($descendantNodeAggregateIds);
+
         if ($command->nodeName) {
             $lowLevelCommand = $lowLevelCommand->withNodeName($command->nodeName);
         }
@@ -182,16 +189,8 @@ trait NodeCreation
             $this->requireNodeTypeNotToDeclareTetheredChildNodeName($parentNodeAggregate->nodeTypeName, $command->nodeName);
         }
 
-        $descendantNodeAggregateIds = $command->tetheredDescendantNodeAggregateIds->completeForNodeOfType(
-            $command->nodeTypeName,
-            $this->nodeTypeManager
-        );
-        // Write the auto-created descendant node aggregate ids back to the command;
-        // so that when rebasing the command, it stays fully deterministic.
-        $command = $command->withTetheredDescendantNodeAggregateIds($descendantNodeAggregateIds);
-
         foreach (
-            $descendantNodeAggregateIds->getNodeAggregateIds() as $descendantNodeAggregateId
+            $command->tetheredDescendantNodeAggregateIds->getNodeAggregateIds() as $descendantNodeAggregateId
         ) {
             $this->requireProjectedNodeAggregateToNotExist(
                 $contentGraph,
@@ -217,7 +216,7 @@ trait NodeCreation
             $nodeType,
             $coveredDimensionSpacePoints,
             $command->nodeAggregateId,
-            $descendantNodeAggregateIds,
+            $command->tetheredDescendantNodeAggregateIds,
             null
         )));
 
