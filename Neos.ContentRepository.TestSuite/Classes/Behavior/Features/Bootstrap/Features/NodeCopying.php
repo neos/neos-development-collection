@@ -15,6 +15,7 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\Features;
 
 use Behat\Gherkin\Node\TableNode;
+use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
 use Neos\ContentRepository\Core\Feature\NodeDuplication\Command\CopyNodesRecursively;
 use Neos\ContentRepository\Core\Feature\NodeDuplication\Dto\NodeAggregateIdMapping;
@@ -34,30 +35,40 @@ trait NodeCopying
     abstract protected function readPayloadTable(TableNode $payloadTable): array;
 
     /**
-     * @When /^the command CopyNodesRecursively is executed, copying the current node aggregate with payload:$/
+     * @When /^the command CopyNodesRecursively is executed with payload:$/
      */
-    public function theCommandCopyNodesRecursivelyIsExecutedCopyingTheCurrentNodeAggregateWithPayload(TableNode $payloadTable): void
+    public function theCommandCopyNodesRecursivelyIsExecutedWithPayload(TableNode $payloadTable): void
     {
         $commandArguments = $this->readPayloadTable($payloadTable);
-        $subgraph = $this->currentContentRepository->getContentGraph($this->currentWorkspaceName)->getSubgraph(
-            $this->currentDimensionSpacePoint,
-            VisibilityConstraints::withoutRestrictions()
-        );
-        $targetDimensionSpacePoint = isset($commandArguments['targetDimensionSpacePoint'])
-            ? OriginDimensionSpacePoint::fromArray($commandArguments['targetDimensionSpacePoint'])
-            : OriginDimensionSpacePoint::fromDimensionSpacePoint($this->currentDimensionSpacePoint);
-        $targetSucceedingSiblingNodeAggregateId = isset($commandArguments['targetSucceedingSiblingNodeAggregateId'])
-            ? NodeAggregateId::fromString($commandArguments['targetSucceedingSiblingNodeAggregateId'])
-            : null;
 
         $workspaceName = isset($commandArguments['workspaceName'])
             ? WorkspaceName::fromString($commandArguments['workspaceName'])
             : $this->currentWorkspaceName;
 
+        // "virtual" command arguments that do not exist YET
+        $sourceNodeAggregateId = NodeAggregateId::fromString($commandArguments['sourceNodeAggregateId']);
+        $sourceDimensionSpacePoint = isset($commandArguments['sourceDimensionSpacePoint'])
+            ? DimensionSpacePoint::fromArray($commandArguments['sourceDimensionSpacePoint'])
+            : $this->currentDimensionSpacePoint;
+
+        $subgraphToCopy = $this->currentContentRepository->getContentGraph($workspaceName)->getSubgraph(
+            $sourceDimensionSpacePoint,
+            VisibilityConstraints::withoutRestrictions()
+        );
+        $nodeToCopy = $subgraphToCopy->findNodeById($sourceNodeAggregateId);
+
+        $targetDimensionSpacePoint = isset($commandArguments['targetDimensionSpacePoint'])
+            ? OriginDimensionSpacePoint::fromArray($commandArguments['targetDimensionSpacePoint'])
+            : OriginDimensionSpacePoint::fromDimensionSpacePoint($this->currentDimensionSpacePoint);
+
+        $targetSucceedingSiblingNodeAggregateId = isset($commandArguments['targetSucceedingSiblingNodeAggregateId'])
+            ? NodeAggregateId::fromString($commandArguments['targetSucceedingSiblingNodeAggregateId'])
+            : null;
+
         $command = CopyNodesRecursively::createFromSubgraphAndStartNode(
-            $subgraph,
+            $subgraphToCopy,
             $workspaceName,
-            $this->currentNode,
+            $nodeToCopy,
             $targetDimensionSpacePoint,
             NodeAggregateId::fromString($commandArguments['targetParentNodeAggregateId']),
             $targetSucceedingSiblingNodeAggregateId
