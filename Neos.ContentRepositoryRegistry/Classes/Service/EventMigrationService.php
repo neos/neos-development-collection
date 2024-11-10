@@ -15,7 +15,6 @@ use Neos\ContentRepository\Core\Feature\NodeDuplication\Command\CopyNodesRecursi
 use Neos\ContentRepository\Core\Feature\NodeModification\Command\SetSerializedNodeProperties;
 use Neos\ContentRepository\Core\Feature\NodeMove\Command\MoveNodeAggregate;
 use Neos\ContentRepository\Core\Feature\NodeReferencing\Command\SetSerializedNodeReferences;
-use Neos\ContentRepository\Core\Feature\NodeReferencing\Event\NodeReferencesWereSet;
 use Neos\ContentRepository\Core\Feature\NodeRemoval\Command\RemoveNodeAggregate;
 use Neos\ContentRepository\Core\Feature\NodeRenaming\Command\ChangeNodeAggregateName;
 use Neos\ContentRepository\Core\Feature\NodeTypeChange\Command\ChangeNodeAggregateType;
@@ -23,6 +22,7 @@ use Neos\ContentRepository\Core\Feature\NodeVariation\Command\CreateNodeVariant;
 use Neos\ContentRepository\Core\Feature\RootNodeCreation\Command\CreateRootNodeAggregateWithNode;
 use Neos\ContentRepository\Core\Feature\RootNodeCreation\Command\UpdateRootNodeAggregateDimensions;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateClassification;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepositoryRegistry\Command\MigrateEventsCommandController;
 use Neos\ContentRepositoryRegistry\Factory\EventStore\DoctrineEventStoreFactory;
@@ -63,6 +63,58 @@ final class EventMigrationService implements ContentRepositoryServiceInterface
             . '_bkp_' . date('Y_m_d_H_i_s');
         $this->copyEventTable($backupEventTableName);
         $outputFn(sprintf('Backup. Copied events table to %s', $backupEventTableName));
+    }
+
+    public function migrateCopyTetheredNode(\Closure $outputFn): void
+    {
+        $this->eventsModified = [];
+        $warnings = 0;
+
+        $backupEventTableName = DoctrineEventStoreFactory::databaseTableName($this->contentRepositoryId)
+            . '_bkp_' . date('Y_m_d_H_i_s');
+        $outputFn(sprintf('Backup: copying events table to %s', $backupEventTableName));
+
+        $this->copyEventTable($backupEventTableName);
+
+        $streamName = VirtualStreamName::all();
+        $eventStream = $this->eventStore->load($streamName, EventStreamFilter::create(EventTypes::create(EventType::fromString('NodeAggregateWithNodeWasCreated'))));
+        foreach ($eventStream as $eventEnvelope) {
+            $outputRewriteNotice = fn(string $message) => $outputFn(sprintf('%s@%s %s', $eventEnvelope->sequenceNumber->value, $eventEnvelope->event->type->value, $message));
+            if ($eventEnvelope->event->type->value !== 'NodeAggregateWithNodeWasCreated') {
+                throw new \RuntimeException(sprintf('Unhandled event: %s', $eventEnvelope->event->type->value));
+            }
+
+            $eventMetaData = $eventEnvelope->event->metadata?->value;
+            // a copy is basically a NodeAggregateWithNodeWasCreated with CopyNodesRecursively command, so we skip others:
+            if (!$eventMetaData || ($eventMetaData['commandClass'] ?? null) !== CopyNodesRecursively::class) {
+                continue;
+            }
+
+            $eventData = self::decodeEventPayload($eventEnvelope);
+            if ($eventData['nodeAggregateClassification'] !== NodeAggregateClassification::CLASSIFICATION_TETHERED->value) {
+                // this copy is okay
+                continue;
+            }
+
+            $eventData['nodeAggregateClassification'] = NodeAggregateClassification::CLASSIFICATION_REGULAR->value;
+            $this->updateEventPayload($eventEnvelope->sequenceNumber, $eventData);
+
+            $eventMetaData['commandPayload']['nodeTreeToInsert']['nodeAggregateClassification'] = NodeAggregateClassification::CLASSIFICATION_REGULAR->value;
+
+            $this->updateEventMetaData($eventEnvelope->sequenceNumber, $eventMetaData);
+            $outputRewriteNotice(sprintf('Copied tethered node "%s" of type "%s" (name: %s) was migrated', $eventData['nodeAggregateId'], $eventData['nodeTypeName'], json_encode($eventData['nodeName'])));
+        }
+
+        if (!count($this->eventsModified)) {
+            $outputFn('Migration was not necessary.');
+            return;
+        }
+
+        $outputFn();
+        $outputFn(sprintf('Migration applied to %s events. Please replay the projections `./flow cr:projectionReplayAll`', count($this->eventsModified)));
+        if ($warnings) {
+            $outputFn(sprintf('WARNING: Finished but %d warnings emitted.', $warnings));
+        }
     }
 
     /**

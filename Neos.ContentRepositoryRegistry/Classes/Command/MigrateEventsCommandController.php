@@ -116,4 +116,20 @@ class MigrateEventsCommandController extends CommandController
         $eventMigrationService = $this->contentRepositoryRegistry->buildService($contentRepositoryId, $this->eventMigrationServiceFactory);
         $eventMigrationService->migrateReferencesToMultiFormat($this->outputLine(...));
     }
+
+    /**
+     * Migrates "nodeAggregateClassification":"tethered" to "regular", in case for copied tethered nodes.
+     *
+     * Needed for #5350: https://github.com/neos/neos-development-collection/issues/5350
+     *
+     * Included in November 2024 - before final Neos 9.0 release
+     *
+     * @param string $contentRepository Identifier of the Content Repository to migrate
+     */
+    public function migrateCopyTetheredNodeCommand(string $contentRepository = 'default'): void
+    {
+        $contentRepositoryId = ContentRepositoryId::fromString($contentRepository);
+        $eventMigrationService = $this->contentRepositoryRegistry->buildService($contentRepositoryId, $this->eventMigrationServiceFactory);
+        $eventMigrationService->migrateCopyTetheredNode($this->outputLine(...));
+    }
 }

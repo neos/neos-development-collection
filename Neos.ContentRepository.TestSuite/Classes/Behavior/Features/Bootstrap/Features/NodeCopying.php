@@ -80,4 +80,18 @@ trait NodeCopying
 
         $this->currentContentRepository->handle($command);
     }
+
+    /**
+     * @Given /^the command CopyNodesRecursively is executed with payload and exceptions are caught:$/
+     * @param TableNode $payloadTable
+     * @throws \Exception
+     */
+    public function theCommandCopyNodesRecursivelyIsExecutedWithPayloadAndExceptionsAreCaught(TableNode $payloadTable)
+    {
+        try {
+            $this->theCommandCopyNodesRecursivelyIsExecutedWithPayload($payloadTable);
+        } catch (\Exception $exception) {
+            $this->lastCommandException = $exception;
+        }
+    }
 }

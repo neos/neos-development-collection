@@ -14,6 +14,7 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindChildNodesFil
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindReferencesFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Core\Projection\ContentGraph\References;
+use Neos\ContentRepository\Core\SharedModel\Exception\TetheredNodesCannotBePartiallyCopied;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateClassification;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
@@ -49,24 +50,34 @@ final readonly class NodeSubtreeSnapshot implements \JsonSerializable
 
     public static function fromSubgraphAndStartNode(ContentSubgraphInterface $subgraph, Node $sourceNode): self
     {
-        $childNodes = [];
+        return self::createSnapshotRecursively($subgraph, $sourceNode, true);
+    }
+
+    private static function createSnapshotRecursively(ContentSubgraphInterface $subgraph, Node $sourceNode, bool $firstLevel): self
+    {
+        $childNodeSnapshots = [];
         foreach (
             $subgraph->findChildNodes($sourceNode->aggregateId, FindChildNodesFilter::create()) as $sourceChildNode
         ) {
-            $childNodes[] = self::fromSubgraphAndStartNode($subgraph, $sourceChildNode);
+            if ($firstLevel && $sourceNode->classification->isTethered() && $sourceChildNode->classification->isTethered()) {
+                // we assume here that the child node is tethered because the grandparent specifies that.
+                // this is not always fully correct and we could loosen the constraint by checking the node type schema
+                throw new TetheredNodesCannotBePartiallyCopied(sprintf('Cannot copy tethered node %s because child node %s is also tethered. Only standalone tethered nodes can be copied.', $sourceNode->aggregateId->value, $sourceChildNode->aggregateId->value), 1731264887);
+            }
+
+            $childNodeSnapshots[] = self::createSnapshotRecursively($subgraph, $sourceChildNode, false);
         }
-        $properties = $sourceNode->properties;
 
         return new self(
             $sourceNode->aggregateId,
             $sourceNode->nodeTypeName,
             $sourceNode->name,
-            $sourceNode->classification,
-            $properties->serialized(),
+            $firstLevel ? NodeAggregateClassification::CLASSIFICATION_REGULAR : $sourceNode->classification,
+            $sourceNode->properties->serialized(),
             self::serializeProjectedReferences(
                 $subgraph->findReferences($sourceNode->aggregateId, FindReferencesFilter::create())
             ),
-            $childNodes
+            $childNodeSnapshots
         );
     }
 
