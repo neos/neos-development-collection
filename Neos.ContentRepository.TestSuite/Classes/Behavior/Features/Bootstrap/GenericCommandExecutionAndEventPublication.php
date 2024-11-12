@@ -369,6 +369,20 @@ trait GenericCommandExecutionAndEventPublication
         Assert::assertEquals($numberOfEvents, count($this->currentEventStreamAsArray), 'Number of events did not match');
     }
 
+
+    /**
+     * @Then /^I expect the highest sequence number to be (\d+)$/
+     * @param int $numberOfEvents
+     * @param string $streamName
+     */
+    public function iExpectTheHighestSequnceNumberToBe(int $highestSequenceNumber)
+    {
+        $streamName = VirtualStreamName::all();
+        $stream = iterator_to_array($this->getEventStore()->load($streamName)->backwards()->limit(1), false);
+        Assert::assertEquals($highestSequenceNumber, ($stream[0] ?? null)?->sequenceNumber->value, 'Sequence number did not match');
+    }
+
+
     /**
      * @Then /^event at index (\d+) is of type "([^"]*)" with payload:/
      * @param int $eventNumber
