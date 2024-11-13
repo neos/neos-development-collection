@@ -15,7 +15,7 @@ Neos:
     # Enable asynchronous thumbnails
     asyncThumbnails: true
     # Thumbnail presets
-    thumbnailPresets: {  }
+    thumbnailPresets: { }
     # Automatically create thumbnails for configured presets when assets are added
     autoCreateThumbnailPresets: true
 
@@ -54,7 +54,7 @@ Neos:
         # Image formats that shall always be converted regardless wether an adjustment was applied or not
         # The key is the the source media-type and the value is the target media-type or file-extension
         # like "image/tiff: image/jpeg". Please ensure the target format is supported by the imagine-driver.
-        convertFormats: []
+        convertFormats: [ ]
         interlace: '%\Imagine\Image\ImageInterface::INTERLACE_NONE%'
         # defines the filter to use for resize operations.
         # Note that the default GD driver only supports the FILTER_UNDEFINED.
@@ -64,19 +64,39 @@ Neos:
         resizeFilter: '%\Imagine\Image\ImageInterface::FILTER_UNDEFINED%'
 
     imagor:
-      # Whether the imagor image proxy should be used for image/thumbnail generation
-      # in favor for Imagine/Imagick/GD/Vips/...
+      # Imagor is a vips based image proxy which can be used for fast async image processing.
       enabled: true
-      # TODO - auto detect source base url
+
+      # If empty, all original asset resources will use the current request to get the base url.
+      # When not empty will replace the calculated domain with this one.
+      # Required when imagor is deployed in a container setup where imagor will directly call
+      # neos for the original image.
+      # Sample for Docker Development environment:
+      #   sourceBaseUrl: 'http://neos:8081'
+      #   proxyBaseUrl: 'http://127.0.0.1:8000'
       sourceBaseUrl: 'http://neos:8081'
-      # TODO - auto detect proxy base url
+
+      # This is the url of the imagor instance. Can be a full uri or a relative path:
+      # Full url sample:
+      #   proxyBaseUrl: 'http://127.0.0.1:8000'
+      # Path sample:
+      #   proxyBaseUrl: '/imagor'
+      #   This will use the requests domain as base and append the path for imagor
+      #   Like: https://my.neos.com/imagor
+      #   In this case you must configure your webserver to redirect all /imagor traffic to
+      #   your imagor service/container.
       proxyBaseUrl: 'http://127.0.0.1:8000'
+      # only as path => use current port and host + this path
+      # proxyBaseUrl: '/imagor'
+
+      # by default, we use imagor in unsecure mode, add shared secret for request signing
+      # see https://github.com/cshum/imagor?tab=readme-ov-file#security for details
       secret: ~
       signerType: sha256
       signerTruncate: 40
 
     # Variant presets
-    variantPresets: []
+    variantPresets: [ ]
     # Automatically create asset variants for configured presets when assets are added
     autoCreateImageVariantPresets: true
 

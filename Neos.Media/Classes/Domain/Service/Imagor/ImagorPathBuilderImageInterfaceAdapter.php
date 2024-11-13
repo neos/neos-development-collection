@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Neos\Media\Domain\Service\Imagor;
 
 use Imagine\Image\BoxInterface;
@@ -13,16 +15,11 @@ use Neos\Media\Imagine\Box;
 
 class ImagorPathBuilderImageInterfaceAdapter implements ImageInterface
 {
-    private readonly ImagorPathBuilder $builder;
-    private ?int $width;
-    private ?int $height;
+    private ImagorPathBuilder $builder;
+    private int $width;
+    private int $height;
 
-    /**
-     * @param ImagorPathBuilder $builder
-     * @param int|null $width
-     * @param int|null $height
-     */
-    public function __construct(ImagorPathBuilder $builder, ?int $width, ?int $height)
+    public function __construct(ImagorPathBuilder $builder, int $width, int $height)
     {
         $this->builder = $builder;
         $this->width = $width;
@@ -42,6 +39,7 @@ class ImagorPathBuilderImageInterfaceAdapter implements ImageInterface
             $start->getX() + $size->getWidth(),
             $start->getY() + $size->getHeight()
         );
+
         return $this;
     }
 
@@ -51,26 +49,28 @@ class ImagorPathBuilderImageInterfaceAdapter implements ImageInterface
             $size->getWidth(),
             $size->getHeight()
         );
+
         return $this;
     }
 
     public function rotate($angle, ColorInterface $background = null)
     {
         $this->builder->addFilter('rotate', $angle);
+
         return $this;
     }
 
     public function paste(ImageInterface $image, PointInterface $start, $alpha = 100)
     {
-        throw new NotSupportedByImagor();
+        throw new NotSupportedByImagorException();
     }
 
-    public function save($path = null, array $options = array())
+    public function save($path = null, array $options = [])
     {
         return $this;
     }
 
-    public function show($format, array $options = array())
+    public function show($format, array $options = [])
     {
         return $this;
     }
@@ -78,12 +78,14 @@ class ImagorPathBuilderImageInterfaceAdapter implements ImageInterface
     public function flipHorizontally()
     {
         $this->builder->flipHorizontally();
+
         return $this;
     }
 
     public function flipVertically()
     {
         $this->builder->flipVertically();
+
         return $this;
     }
 
@@ -91,6 +93,7 @@ class ImagorPathBuilderImageInterfaceAdapter implements ImageInterface
     {
         $this->builder->addFilter('strip_exif');
         $this->builder->addFilter('strip_icc');
+
         return $this;
     }
 
@@ -100,89 +103,83 @@ class ImagorPathBuilderImageInterfaceAdapter implements ImageInterface
         $filter = ImageInterface::FILTER_UNDEFINED
     ) {
         $this->resize($size);
+
         return $this;
     }
 
     public function applyMask(ImageInterface $mask)
     {
-        throw new NotSupportedByImagor();
+        throw new NotSupportedByImagorException();
     }
 
     public function fill(FillInterface $fill)
     {
-        throw new NotSupportedByImagor();
+        throw new NotSupportedByImagorException();
     }
 
-    public function get($format, array $options = array())
+    public function get($format, array $options = [])
     {
-        throw new NotSupportedByImagor();
+        throw new NotSupportedByImagorException();
     }
 
     public function draw()
     {
-        throw new NotSupportedByImagor();
+        throw new NotSupportedByImagorException();
     }
 
     public function effects()
     {
-        throw new NotSupportedByImagor();
+        throw new NotSupportedByImagorException();
     }
 
     public function getSize(): BoxInterface
     {
-        if ($this->width === null || $this->height === null) {
-            // If this happens somewhere in the image processing
-            // this exceptions is caught in the ImagorRendererImplementation (or earlier)
-            // and resulting in the URI to be ''.
-            throw new NotSupportedByImagor();
-        } else {
-            return new Box($this->width, $this->height);
-        }
+        return new Box($this->width, $this->height);
     }
 
     public function mask()
     {
-        throw new NotSupportedByImagor();
+        throw new NotSupportedByImagorException();
     }
 
     public function histogram()
     {
-        throw new NotSupportedByImagor();
+        throw new NotSupportedByImagorException();
     }
 
     public function getColorAt(PointInterface $point)
     {
-        throw new NotSupportedByImagor();
+        throw new NotSupportedByImagorException();
     }
 
     public function layers()
     {
-        throw new NotSupportedByImagor();
+        throw new NotSupportedByImagorException();
     }
 
     public function interlace($scheme)
     {
-        throw new NotSupportedByImagor();
+        throw new NotSupportedByImagorException();
     }
 
     public function palette()
     {
-        throw new NotSupportedByImagor();
+        throw new NotSupportedByImagorException();
     }
 
     public function usePalette(PaletteInterface $palette)
     {
-        throw new NotSupportedByImagor();
+        throw new NotSupportedByImagorException();
     }
 
     public function profile(ProfileInterface $profile)
     {
-        throw new NotSupportedByImagor();
+        throw new NotSupportedByImagorException();
     }
 
     public function metadata()
     {
-        throw new NotSupportedByImagor();
+        throw new NotSupportedByImagorException();
     }
 
     public function __toString(): string
