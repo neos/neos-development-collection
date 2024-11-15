@@ -63,6 +63,10 @@ final readonly class NodeAggregateWasMoved implements
         public ContentStreamId $contentStreamId,
         public NodeAggregateId $nodeAggregateId,
         public ?NodeAggregateId $newParentNodeAggregateId,
+        /**
+         * @var DimensionSpacePoint $dimensionSpacePoint This is one of the *covered* dimension space points of the node aggregate and not necessarily one of the occupied ones. This allows us to move virtual specializations only when using the scatter strategy
+         */
+        public DimensionSpacePoint $dimensionSpacePoint,
         public InterdimensionalSiblings $succeedingSiblingsForCoverage,
     ) {
     }
@@ -89,6 +93,7 @@ final readonly class NodeAggregateWasMoved implements
             $contentStreamId,
             $this->nodeAggregateId,
             $this->newParentNodeAggregateId,
+            $this->dimensionSpacePoint,
             $this->succeedingSiblingsForCoverage,
         );
     }
@@ -132,6 +137,7 @@ final readonly class NodeAggregateWasMoved implements
             ContentStreamId::fromString($values['contentStreamId']),
             NodeAggregateId::fromString($values['nodeAggregateId']),
             $newParentNodeAggregateId,
+            DimensionSpacePoint::fromArray($values['dimensionSpacePoint']),
             $succeedingSiblingsForCoverage,
         );
     }

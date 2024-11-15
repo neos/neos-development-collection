@@ -187,6 +187,7 @@ trait NodeMove
                 $contentStreamId,
                 $command->nodeAggregateId,
                 $command->newParentNodeAggregateId,
+                $command->dimensionSpacePoint,
                 $this->resolveInterdimensionalSiblingsForMove(
                     $contentGraph,
                     $command->dimensionSpacePoint,

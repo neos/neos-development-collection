@@ -443,6 +443,7 @@ final class EventExportProcessor implements ProcessorInterface
                 $this->contentStreamId,
                 $nodeAggregateId,
                 $parentNodeAggregate->nodeAggregateId,
+                $originDimensionSpacePoint->toDimensionSpacePoint(),
                 new InterdimensionalSiblings(
                     new InterdimensionalSibling(
                         $originDimensionSpacePoint->toDimensionSpacePoint(),
