@@ -88,7 +88,7 @@ final class DbalCheckpointStorage implements CheckpointStorageInterface
         }
         $this->connection->beginTransaction();
         try {
-            $highestAppliedSequenceNumber = $this->connection->fetchOne('SELECT appliedsequencenumber FROM ' . $this->connection->quoteIdentifier($this->tableName) . ' WHERE subscriberid = :subscriberId ' . $this->platform->getForUpdateSQL() . ' NOWAIT', [
+            $highestAppliedSequenceNumber = $this->connection->fetchOne('SELECT appliedsequencenumber FROM ' . $this->connection->quoteIdentifier($this->tableName) . ' WHERE subscriberid = :subscriberId ' . $this->platform->getForUpdateSQL(), [
                 'subscriberId' => $this->subscriberId
             ]);
         } catch (DBALException $exception) {
