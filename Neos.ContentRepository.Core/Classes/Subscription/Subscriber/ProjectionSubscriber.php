@@ -8,6 +8,7 @@ use Neos\ContentRepository\Core\EventStore\EventInterface;
 use Neos\ContentRepository\Core\Projection\CatchUpHook\CatchUpHookInterface;
 use Neos\ContentRepository\Core\Projection\ProjectionInterface;
 use Neos\ContentRepository\Core\Projection\ProjectionStateInterface;
+use Neos\ContentRepository\Core\Subscription\Store\SubscriptionStoreInterface;
 use Neos\ContentRepository\Core\Subscription\SubscriptionId;
 use Neos\ContentRepository\Core\Subscription\SubscriptionStatus;
 use Neos\EventStore\Model\EventEnvelope;
@@ -22,8 +23,9 @@ final class ProjectionSubscriber
      */
     public function __construct(
         public readonly SubscriptionId $id,
+        public readonly SubscriptionStoreInterface $store,
         public readonly ProjectionInterface $projection,
-        private readonly ?CatchUpHookInterface $catchUpHook
+        private readonly ?CatchUpHookInterface $catchUpHook,
     ) {
     }
 

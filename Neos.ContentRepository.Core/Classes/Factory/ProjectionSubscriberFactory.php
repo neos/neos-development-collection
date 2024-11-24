@@ -19,6 +19,7 @@ use Neos\ContentRepository\Core\Projection\CatchUpHook\CatchUpHookFactoryInterfa
 use Neos\ContentRepository\Core\Projection\ProjectionFactoryInterface;
 use Neos\ContentRepository\Core\Projection\ProjectionInterface;
 use Neos\ContentRepository\Core\Projection\ProjectionStateInterface;
+use Neos\ContentRepository\Core\Subscription\Store\SubscriptionStoreInterface;
 use Neos\ContentRepository\Core\Subscription\Subscriber\ProjectionSubscriber;
 use Neos\ContentRepository\Core\Subscription\SubscriptionId;
 
@@ -34,6 +35,7 @@ final readonly class ProjectionSubscriberFactory
      */
     public function __construct(
         private SubscriptionId $subscriptionId,
+        private SubscriptionStoreInterface $subscriptionStore,
         private ProjectionFactoryInterface $projectionFactory,
         private ?CatchUpHookFactoryInterface $catchUpHookFactory,
         private array $projectionFactoryOptions,
@@ -53,6 +55,7 @@ final readonly class ProjectionSubscriberFactory
 
         return new ProjectionSubscriber(
             $this->subscriptionId,
+            $this->subscriptionStore,
             $projection,
             $catchUpHook,
         );

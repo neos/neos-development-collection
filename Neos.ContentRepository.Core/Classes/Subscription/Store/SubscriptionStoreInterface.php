@@ -32,4 +32,6 @@ interface SubscriptionStoreInterface
     public function releaseSavepoint(): void;
 
     public function rollbackSavepoint(): void;
+
+    public function getId(): string;
 }

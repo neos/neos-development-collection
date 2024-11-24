@@ -198,11 +198,12 @@ final class ContentRepositoryRegistry
                 $this->buildPropertySerializer($contentRepositoryId, $contentRepositorySettings),
                 $this->buildAuthProviderFactory($contentRepositoryId, $contentRepositorySettings),
                 $clock,
-                $this->buildSubscriptionStore($contentRepositoryId, $clock, $contentRepositorySettings),
+                // todo if the contentGraphProjection factory uses different database, we need to use another $subscriptionStore here! Configure it per projection???
+                $subscriptionStore = $this->buildSubscriptionStore($contentRepositoryId, $clock, $contentRepositorySettings),
                 $this->buildContentGraphProjectionFactory($contentRepositoryId, $contentRepositorySettings),
                 $contentGraphCatchUpHookFactory,
                 $this->buildCommandHooksFactory($contentRepositoryId, $contentRepositorySettings),
-                $this->buildAdditionalSubscribersFactories($contentRepositoryId, $contentRepositorySettings),
+                $this->buildAdditionalSubscribersFactories($contentRepositoryId, $contentRepositorySettings, $subscriptionStore),
                 $this->logger,
             );
         } catch (\Exception $exception) {
@@ -330,7 +331,7 @@ final class ContentRepositoryRegistry
     }
 
     /** @param array<string, mixed> $contentRepositorySettings */
-    private function buildAdditionalSubscribersFactories(ContentRepositoryId $contentRepositoryId, array $contentRepositorySettings): ContentRepositorySubscriberFactories
+    private function buildAdditionalSubscribersFactories(ContentRepositoryId $contentRepositoryId, array $contentRepositorySettings, SubscriptionStoreInterface $subscriptionStore): ContentRepositorySubscriberFactories
     {
         if (!is_array($contentRepositorySettings['projections'] ?? [])) {
             throw InvalidConfigurationException::fromMessage('Content repository "%s" expects projections configured as array.', $contentRepositoryId->value);
@@ -351,6 +352,7 @@ final class ContentRepositoryRegistry
             }
             $projectionSubscriberFactories[$projectionName] = new ProjectionSubscriberFactory(
                 SubscriptionId::fromString($projectionName),
+                $subscriptionStore, // todo if projection factory uses different database, we need to use another $subscriptionStore here!
                 $projectionFactory,
                 $this->buildCatchUpHookFactory($contentRepositoryId, $projectionName, $projectionOptions),
                 $projectionOptions['options'] ?? [],

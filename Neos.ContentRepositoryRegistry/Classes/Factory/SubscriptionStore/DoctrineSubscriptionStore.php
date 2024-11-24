@@ -175,4 +175,9 @@ final class DoctrineSubscriptionStore implements SubscriptionStoreInterface
     {
         $this->dbal->rollbackSavepoint('SUBSCRIBER');
     }
+
+    public function getId(): string
+    {
+        return spl_object_hash($this->dbal);
+    }
 }

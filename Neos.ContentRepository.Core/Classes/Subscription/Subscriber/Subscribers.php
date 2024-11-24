@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Core\Subscription\Subscriber;
 
+use Neos\ContentRepository\Core\Subscription\Store\SubscriptionStoreInterface;
 use Neos\ContentRepository\Core\Subscription\SubscriptionId;
 
 /**
@@ -69,6 +70,23 @@ final class Subscribers implements \IteratorAggregate, \Countable, \JsonSerializ
     public function count(): int
     {
         return count($this->subscribersById);
+    }
+
+    /**
+     * @return iterable<array{SubscriptionStoreInterface, self}>
+     */
+    public function groupByStore(): iterable
+    {
+        $byStore = [];
+
+        foreach ($this->subscribersById as $subscriber) {
+            $byStore[$subscriber->store->getId()][] = $subscriber;
+        }
+
+        foreach ($byStore as $subscribers) {
+            $store = reset($subscribers)->store;
+            yield [$store, self::fromArray($subscribers)];
+        }
     }
 
     /**

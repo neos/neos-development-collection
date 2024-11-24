@@ -75,7 +75,7 @@ final class ContentRepositoryFactory
         Serializer $propertySerializer,
         private readonly AuthProviderFactoryInterface $authProviderFactory,
         private readonly ClockInterface $clock,
-        SubscriptionStoreInterface $subscriptionStore,
+        SubscriptionStoreInterface $contentGraphSubscriptionStore,
         ContentGraphProjectionFactoryInterface $contentGraphProjectionFactory,
         private readonly CatchUpHookFactoryInterface|null $contentGraphCatchUpHookFactory,
         private readonly CommandHooksFactory $commandHooksFactory,
@@ -106,14 +106,15 @@ final class ContentRepositoryFactory
         }
         $this->additionalProjectionStates = ProjectionStates::fromArray($additionalProjectionStates);
         $this->contentGraphProjection = $contentGraphProjectionFactory->build($this->subscriberFactoryDependencies);
-        $subscribers[] = $this->buildContentGraphSubscriber();
-        $this->subscriptionEngine = new SubscriptionEngine($this->eventStore, $subscriptionStore, Subscribers::fromArray($subscribers), $eventNormalizer, $logger);
+        $subscribers[] = $this->buildContentGraphSubscriber($contentGraphSubscriptionStore);
+        $this->subscriptionEngine = new SubscriptionEngine($this->eventStore, Subscribers::fromArray($subscribers), $eventNormalizer, $logger);
     }
 
-    private function buildContentGraphSubscriber(): ProjectionSubscriber
+    private function buildContentGraphSubscriber(SubscriptionStoreInterface $subscriptionStore): ProjectionSubscriber
     {
         return new ProjectionSubscriber(
             SubscriptionId::fromString('contentGraph'),
+            $subscriptionStore,
             $this->contentGraphProjection,
             $this->contentGraphCatchUpHookFactory?->build(CatchUpHookFactoryDependencies::create(
                 $this->contentRepositoryId,
