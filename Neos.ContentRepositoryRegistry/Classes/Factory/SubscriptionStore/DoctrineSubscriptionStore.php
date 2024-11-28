@@ -64,13 +64,12 @@ final class DoctrineSubscriptionStore implements SubscriptionStoreInterface
         }
     }
 
-    public function findByCriteriaForUpdate(SubscriptionCriteria $criteria): Subscriptions
+    public function findByCriteria(SubscriptionCriteria $criteria): Subscriptions
     {
         $queryBuilder = $this->dbal->createQueryBuilder()
             ->select('*')
             ->from($this->tableName)
             ->orderBy('id');
-        $queryBuilder->forUpdate();
         if ($criteria->ids !== null) {
             $queryBuilder->andWhere('id IN (:ids)')
                 ->setParameter(
@@ -163,6 +162,23 @@ final class DoctrineSubscriptionStore implements SubscriptionStoreInterface
             $subscriptionError,
             $lastSavedAt,
         );
+    }
+
+    public function acquireLock(): void
+    {
+        // todo fully implement https://github.com/patchlevel/event-sourcing/blob/caaf54fcf32c0e42b1036a5c7ff77c1a37af0105/src/Store/DoctrineDbalStore.php#L456
+        $result = $this->dbal->fetchOne(sprintf('SELECT GET_LOCK("%s", %d)', 'default', 0));
+        if ($result !== 1) {
+            throw new \RuntimeException('failed to acquire lock');
+        }
+    }
+
+    public function releaseLock(): void
+    {
+        $result = $this->dbal->fetchOne(sprintf('SELECT RELEASE_LOCK("%s")', 'default'));
+        if ($result !== 1) {
+            throw new \RuntimeException('failed to release lock');
+        }
     }
 
     public function transactional(\Closure $closure): mixed

@@ -18,7 +18,7 @@ interface SubscriptionStoreInterface
 {
     public function setup(): void;
 
-    public function findByCriteriaForUpdate(SubscriptionCriteria $criteria): Subscriptions;
+    public function findByCriteria(SubscriptionCriteria $criteria): Subscriptions;
 
     public function add(Subscription $subscription): void;
 
@@ -28,6 +28,10 @@ interface SubscriptionStoreInterface
         SequenceNumber $position,
         SubscriptionError|null $subscriptionError,
     ): void;
+
+    public function acquireLock(): void;
+
+    public function releaseLock(): void;
 
     /**
      * @template T
