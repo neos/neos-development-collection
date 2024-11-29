@@ -14,14 +14,14 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Core\Feature\Common;
 
-use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
+use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
 
 /**
- * This interface is implemented by **events** which affect a node aggregate.
+ * This interface is implemented by **events** which affect dimension space points.
  *
  * @internal
  */
-interface EmbedsNodeAggregateId
+interface EmbedsAffectedDimensionSpacePoints
 {
-    public function getNodeAggregateId(): NodeAggregateId;
+    public function getAffectedDimensionSpacePoints(): DimensionSpacePointSet;
 }

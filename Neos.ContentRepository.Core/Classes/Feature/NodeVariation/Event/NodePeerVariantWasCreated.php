@@ -17,6 +17,7 @@ namespace Neos\ContentRepository\Core\Feature\NodeVariation\Event;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
 use Neos\ContentRepository\Core\EventStore\EventInterface;
+use Neos\ContentRepository\Core\Feature\Common\EmbedsAffectedDimensionSpacePoints;
 use Neos\ContentRepository\Core\Feature\Common\EmbedsContentStreamId;
 use Neos\ContentRepository\Core\Feature\Common\EmbedsNodeAggregateId;
 use Neos\ContentRepository\Core\Feature\Common\EmbedsWorkspaceName;
@@ -34,6 +35,7 @@ final readonly class NodePeerVariantWasCreated implements
     PublishableToWorkspaceInterface,
     EmbedsContentStreamId,
     EmbedsNodeAggregateId,
+    EmbedsAffectedDimensionSpacePoints,
     EmbedsWorkspaceName
 {
     public function __construct(
@@ -59,6 +61,11 @@ final readonly class NodePeerVariantWasCreated implements
     public function getWorkspaceName(): WorkspaceName
     {
         return $this->workspaceName;
+    }
+
+    public function getAffectedDimensionSpacePoints(): DimensionSpacePointSet
+    {
+        return $this->peerSucceedingSiblings->toDimensionSpacePointSet();
     }
 
     public function withWorkspaceNameAndContentStreamId(WorkspaceName $targetWorkspaceName, ContentStreamId $contentStreamId): self

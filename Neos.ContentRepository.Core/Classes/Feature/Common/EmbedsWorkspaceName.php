@@ -17,9 +17,7 @@ namespace Neos\ContentRepository\Core\Feature\Common;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 
 /**
- * This interface is implemented by **events** which contain WorkspaceName.
- *
- * This is relevant e.g. for content cache flushing as a result of an event.
+ * This interface is implemented by **events** which affect a workspace.
  *
  * @internal
  */

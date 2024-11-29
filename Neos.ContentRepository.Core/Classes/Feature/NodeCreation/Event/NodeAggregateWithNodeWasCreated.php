@@ -17,6 +17,7 @@ namespace Neos\ContentRepository\Core\Feature\NodeCreation\Event;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
 use Neos\ContentRepository\Core\EventStore\EventInterface;
+use Neos\ContentRepository\Core\Feature\Common\EmbedsAffectedDimensionSpacePoints;
 use Neos\ContentRepository\Core\Feature\Common\EmbedsContentStreamId;
 use Neos\ContentRepository\Core\Feature\Common\EmbedsNodeAggregateId;
 use Neos\ContentRepository\Core\Feature\Common\EmbedsWorkspaceName;
@@ -41,6 +42,7 @@ final readonly class NodeAggregateWithNodeWasCreated implements
     PublishableToWorkspaceInterface,
     EmbedsContentStreamId,
     EmbedsNodeAggregateId,
+    EmbedsAffectedDimensionSpacePoints,
     EmbedsWorkspaceName
 {
     public function __construct(
@@ -76,6 +78,11 @@ final readonly class NodeAggregateWithNodeWasCreated implements
     public function getOriginDimensionSpacePoint(): OriginDimensionSpacePoint
     {
         return $this->originDimensionSpacePoint;
+    }
+
+    public function getAffectedDimensionSpacePoints(): DimensionSpacePointSet
+    {
+        return $this->succeedingSiblingsForCoverage->toDimensionSpacePointSet();
     }
 
     public function withWorkspaceNameAndContentStreamId(WorkspaceName $targetWorkspaceName, ContentStreamId $contentStreamId): self

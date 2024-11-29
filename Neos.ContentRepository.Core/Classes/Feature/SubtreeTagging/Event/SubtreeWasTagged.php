@@ -16,6 +16,7 @@ namespace Neos\ContentRepository\Core\Feature\SubtreeTagging\Event;
 
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Core\EventStore\EventInterface;
+use Neos\ContentRepository\Core\Feature\Common\EmbedsAffectedDimensionSpacePoints;
 use Neos\ContentRepository\Core\Feature\Common\EmbedsContentStreamId;
 use Neos\ContentRepository\Core\Feature\Common\EmbedsNodeAggregateId;
 use Neos\ContentRepository\Core\Feature\Common\EmbedsWorkspaceName;
@@ -35,6 +36,7 @@ final readonly class SubtreeWasTagged implements
     PublishableToWorkspaceInterface,
     EmbedsContentStreamId,
     EmbedsNodeAggregateId,
+    EmbedsAffectedDimensionSpacePoints,
     EmbedsWorkspaceName
 {
     /**
@@ -65,6 +67,11 @@ final readonly class SubtreeWasTagged implements
     public function getWorkspaceName(): WorkspaceName
     {
         return $this->workspaceName;
+    }
+
+    public function getAffectedDimensionSpacePoints(): DimensionSpacePointSet
+    {
+        return $this->affectedDimensionSpacePoints;
     }
 
     public function withWorkspaceNameAndContentStreamId(WorkspaceName $targetWorkspaceName, ContentStreamId $contentStreamId): self

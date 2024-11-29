@@ -17,6 +17,7 @@ namespace Neos\ContentRepository\Core\Feature\NodeRemoval\Event;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePointSet;
 use Neos\ContentRepository\Core\EventStore\EventInterface;
+use Neos\ContentRepository\Core\Feature\Common\EmbedsAffectedDimensionSpacePoints;
 use Neos\ContentRepository\Core\Feature\Common\EmbedsContentStreamId;
 use Neos\ContentRepository\Core\Feature\Common\EmbedsNodeAggregateId;
 use Neos\ContentRepository\Core\Feature\Common\EmbedsWorkspaceName;
@@ -34,6 +35,7 @@ final readonly class NodeAggregateWasRemoved implements
     PublishableToWorkspaceInterface,
     EmbedsContentStreamId,
     EmbedsNodeAggregateId,
+    EmbedsAffectedDimensionSpacePoints,
     EmbedsWorkspaceName
 {
     public function __construct(
@@ -60,6 +62,11 @@ final readonly class NodeAggregateWasRemoved implements
     public function getWorkspaceName(): WorkspaceName
     {
         return $this->workspaceName;
+    }
+
+    public function getAffectedDimensionSpacePoints(): DimensionSpacePointSet
+    {
+        return $this->affectedCoveredDimensionSpacePoints;
     }
 
     public function withWorkspaceNameAndContentStreamId(WorkspaceName $targetWorkspaceName, ContentStreamId $contentStreamId): self
