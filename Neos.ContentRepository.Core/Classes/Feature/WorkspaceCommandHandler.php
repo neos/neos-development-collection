@@ -19,10 +19,13 @@ use Neos\ContentRepository\Core\CommandHandler\CommandHandlingDependencies;
 use Neos\ContentRepository\Core\CommandHandler\CommandInterface;
 use Neos\ContentRepository\Core\CommandHandler\CommandSimulatorFactory;
 use Neos\ContentRepository\Core\ContentRepository;
+use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Core\EventStore\DecoratedEvent;
 use Neos\ContentRepository\Core\EventStore\EventNormalizer;
 use Neos\ContentRepository\Core\EventStore\Events;
 use Neos\ContentRepository\Core\EventStore\EventsToPublish;
+use Neos\ContentRepository\Core\Feature\Common\EmbedsAffectedDimensionSpacePoints;
+use Neos\ContentRepository\Core\Feature\Common\EmbedsNodeAggregateId;
 use Neos\ContentRepository\Core\Feature\Common\PublishableToWorkspaceInterface;
 use Neos\ContentRepository\Core\Feature\Common\RebasableToOtherWorkspaceInterface;
 use Neos\ContentRepository\Core\Feature\ContentStreamClosing\Event\ContentStreamWasClosed;
@@ -46,6 +49,8 @@ use Neos\ContentRepository\Core\Feature\WorkspacePublication\Command\DiscardIndi
 use Neos\ContentRepository\Core\Feature\WorkspacePublication\Command\DiscardWorkspace;
 use Neos\ContentRepository\Core\Feature\WorkspacePublication\Command\PublishIndividualNodesFromWorkspace;
 use Neos\ContentRepository\Core\Feature\WorkspacePublication\Command\PublishWorkspace;
+use Neos\ContentRepository\Core\Feature\WorkspacePublication\Dto\NodeIdsToPublishOrDiscard;
+use Neos\ContentRepository\Core\Feature\WorkspacePublication\Dto\NodeIdToPublishOrDiscard;
 use Neos\ContentRepository\Core\Feature\WorkspacePublication\Event\WorkspaceWasDiscarded;
 use Neos\ContentRepository\Core\Feature\WorkspacePublication\Event\WorkspaceWasPartiallyDiscarded;
 use Neos\ContentRepository\Core\Feature\WorkspacePublication\Event\WorkspaceWasPartiallyPublished;
@@ -59,6 +64,7 @@ use Neos\ContentRepository\Core\SharedModel\Exception\ContentStreamDoesNotExistY
 use Neos\ContentRepository\Core\SharedModel\Exception\ContentStreamIsClosed;
 use Neos\ContentRepository\Core\SharedModel\Exception\WorkspaceDoesNotExist;
 use Neos\ContentRepository\Core\SharedModel\Exception\WorkspaceHasNoBaseWorkspaceName;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\Workspace;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
@@ -599,6 +605,8 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
             return;
         }
 
+        $nodesToDiscard = $this->extractNodeAggregateIdsAndAffectedDimensionSpacePoints($commandsToDiscard);
+
         yield $this->closeContentStream(
             $workspace->currentContentStreamId,
             $workspaceContentStreamVersion
@@ -644,7 +652,7 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
                         $command->workspaceName,
                         $command->newContentStreamId,
                         $workspace->currentContentStreamId,
-                        $command->nodesToDiscard,
+                        $nodesToDiscard,
                     )
                 ),
                 ExpectedVersion::ANY()
@@ -657,6 +665,41 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
         );
 
         yield $this->removeContentStreamWithoutConstraintChecks($workspace->currentContentStreamId);
+    }
+
+    private function extractNodeAggregateIdsAndAffectedDimensionSpacePoints(RebaseableCommands $commands): NodeIdsToPublishOrDiscard
+    {
+        /** @var array<string,DimensionSpacePointSet> $affectedDimensionSpacePointsByNodeAggregateId */
+        $affectedDimensionSpacePointsByNodeAggregateId = [];
+        foreach ($commands as $command) {
+            $event = $this->eventNormalizer->denormalize($command->originalEvent);
+            assert($event instanceof EmbedsNodeAggregateId);
+            if (!$event instanceof EmbedsAffectedDimensionSpacePoints) {
+                // todo fix change node type and rename case!!! either event must contain all dsp or we need to use the variation graph here?
+                // -> all dimension would be forward compatible if we ever allow node type change for one dsp ...
+                continue;
+            }
+            $affectedDimensionSpacePoints = $affectedDimensionSpacePointsByNodeAggregateId[$event->getNodeAggregateId()->value] ?? null;
+
+            $affectedDimensionSpacePointsByNodeAggregateId[$event->getNodeAggregateId()->value] =
+                $affectedDimensionSpacePoints !== null
+                    ? $affectedDimensionSpacePoints->getUnion($event->getAffectedDimensionSpacePoints())
+                    : $event->getAffectedDimensionSpacePoints();
+
+        }
+
+        $nodeAggregateIdsWithDimension = [];
+        foreach ($affectedDimensionSpacePointsByNodeAggregateId as $nodeId => $affectedDimensionSpacePoints) {
+            foreach ($affectedDimensionSpacePoints as $dimensionSpacePoint) {
+                $nodeAggregateIdsWithDimension[] = new NodeIdToPublishOrDiscard(
+                    NodeAggregateId::fromString($nodeId),
+                    $dimensionSpacePoint
+                );
+            }
+        }
+
+        // todo optimise format like: [{NodeAggregateId -> DimensionSpacePointSet}] and rename collection to NodeAggregateIdsWithDimensionSpacePoints (less clumsy) ... in the event this happened already ... no TO ...!
+        return NodeIdsToPublishOrDiscard::create(...$nodeAggregateIdsWithDimension);
     }
 
     /**
