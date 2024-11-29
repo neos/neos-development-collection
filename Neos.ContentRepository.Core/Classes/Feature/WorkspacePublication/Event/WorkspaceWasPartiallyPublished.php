@@ -41,6 +41,9 @@ final readonly class WorkspaceWasPartiallyPublished implements EventInterface
          * The old content stream, which contains ALL the data (discarded and non-discarded)
          */
         public ContentStreamId $previousSourceContentStreamId,
+        /**
+         * Todo docs!
+         */
         public NodeIdsToPublishOrDiscard $publishedNodes,
     ) {
     }

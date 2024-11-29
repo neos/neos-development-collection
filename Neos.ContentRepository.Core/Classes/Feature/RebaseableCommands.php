@@ -71,6 +71,7 @@ class RebaseableCommands implements \IteratorAggregate
         NodeIdsToPublishOrDiscard $nodeIds,
     ): bool {
         foreach ($nodeIds as $nodeId) {
+            // todo rather use the domain event here and use `EmbedsNodeAggregateId` already!
             if ($command->matchesNodeId($nodeId)) {
                 return true;
             }

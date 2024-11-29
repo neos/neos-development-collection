@@ -477,6 +477,11 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
             return;
         }
 
+        // todo we should - similar to discard - also add the node aggregate IDs with dimension point to the event again. The question is if we use the old events to analyse that or the newly emitted (today) events?
+        // could they come to a different result like MORE or less dimensions are suddenly affected because of a change in configuration? And would it make sense to use the old or new events then? Probably the old
+        // to make it consistent with discard.
+        $nodesToPublish = $this->extractNodeAggregateIdsAndAffectedDimensionSpacePoints($matchingCommands);
+
         yield $this->closeContentStream(
             $workspace->currentContentStreamId,
             $workspaceContentStreamVersion
@@ -550,7 +555,7 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
                         $baseWorkspace->workspaceName,
                         $command->contentStreamIdForRemainingPart,
                         $workspace->currentContentStreamId,
-                        $command->nodesToPublish
+                        $nodesToPublish
                     )
                 ]),
                 ExpectedVersion::ANY()
