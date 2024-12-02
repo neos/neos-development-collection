@@ -29,7 +29,10 @@ interface SubscriptionStoreInterface
         SubscriptionError|null $subscriptionError,
     ): void;
 
-    public function acquireLock(): void;
+    /**
+     * @return bool if the lock could be acquired or if a parallel process has it
+     */
+    public function acquireLock(): bool;
 
     public function releaseLock(): void;
 

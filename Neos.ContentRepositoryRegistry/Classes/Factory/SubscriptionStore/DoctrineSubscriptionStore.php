@@ -166,22 +166,28 @@ final class DoctrineSubscriptionStore implements SubscriptionStoreInterface
         );
     }
 
-    public function acquireLock(): void
+    public function acquireLock(): bool
     {
         // todo fully implement https://github.com/patchlevel/event-sourcing/blob/caaf54fcf32c0e42b1036a5c7ff77c1a37af0105/src/Store/DoctrineDbalStore.php#L456
         // todo check if 16 chars (crID) is a good lock value?
         $result = $this->dbal->fetchOne(sprintf('SELECT GET_LOCK("%s", %d)', $this->contentRepositoryId->value, 0));
-        if ($result !== 1) {
-            throw new \RuntimeException('Failed to acquire lock for subscriptions.', 1733135506);
-        }
+        // https://dev.mysql.com/doc/refman/8.4/en/locking-functions.html#function_get-lock
+        return match ($result) {
+            0 => false,
+            1 => true,
+            null => throw new \RuntimeException(sprintf('Database error while acquiring lock "%s" for subscriptions.', $this->contentRepositoryId->value), 1733135506)
+        };
     }
 
     public function releaseLock(): void
     {
         $result = $this->dbal->fetchOne(sprintf('SELECT RELEASE_LOCK("%s")', $this->contentRepositoryId->value));
-        if ($result !== 1) {
-            throw new \RuntimeException('Failed to release lock for subscriptions.', 1733135506);
-        }
+        // https://dev.mysql.com/doc/refman/8.4/en/locking-functions.html#function_release-lock
+        match ($result) {
+            0 => throw new \RuntimeException(sprintf('The lock "%s" was not established by this thread (in which case the lock is not released', $this->contentRepositoryId->value), 1733142649),
+            1 => null,
+            null => throw new \RuntimeException(sprintf('The lock "%s" does not exist if it was never obtained or if it has previously been released.', $this->contentRepositoryId->value), 1733142651)
+        };
     }
 
     public function transactional(\Closure $closure): mixed

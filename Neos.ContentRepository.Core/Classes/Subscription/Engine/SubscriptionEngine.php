@@ -436,8 +436,11 @@ final class SubscriptionEngine
         if ($this->processing) {
             throw new SubscriptionEngineAlreadyProcessingException('Subscription engine is already processing', 1732714075);
         }
+        $acquiredLock = $this->subscriptionStore->acquireLock();
+        if ($acquiredLock === false) {
+            throw new \RuntimeException('Failed to acquire lock for subscriptions.', 1733135506);
+        }
         $this->processing = true;
-        $this->subscriptionStore->acquireLock();
         try {
             return $closure();
         } finally {
