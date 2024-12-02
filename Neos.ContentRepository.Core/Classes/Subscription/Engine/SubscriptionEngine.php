@@ -349,7 +349,7 @@ final class SubscriptionEngine
                     $this->logger?->debug(sprintf('Subscription Engine: Subscription "%s" is farther than the current position (%d >= %d), continue catch up.', $subscription->id->value, $subscription->position->value, $sequenceNumber->value));
                     continue;
                 }
-                $this->subscriptionStore->transactional(function () use ($eventEnvelope, $domainEvent, $subscription, $numberOfProcessedEvents, &$subscriptionsToCatchup, &$errors, &$highestSequenceNumberForSubscriber) {
+                $error = $this->subscriptionStore->transactional(function () use ($eventEnvelope, $domainEvent, $subscription, $numberOfProcessedEvents, &$subscriptionsToCatchup, &$highestSequenceNumberForSubscriber) {
                     $error = $this->handleEvent($eventEnvelope, $domainEvent, $subscription->id);
                     if ($error !== null) {
                         // ERROR Case:
@@ -366,18 +366,7 @@ final class SubscriptionEngine
                                 $error->throwable
                             ),
                         );
-                        // 3.) invoke onAfterCatchUp, as onBeforeCatchUp was invoked already and to be consistent we want to "shutdown" this catchup iteration event though we know it failed
-                        // todo put the ERROR $subscriptionStatus into the after hook, so it can properly be reacted upon
-                        try {
-                            $this->subscribers->get($subscription->id)->onAfterCatchUp();
-                        } catch (\Throwable $e) {
-                            // analog to onBeforeCatchUp, we tolerate no exceptions here and consider it a critical developer error.
-                            $message = sprintf('Subscriber "%s" had an error and also failed onAfterCatchUp: %s', $subscription->id->value, $e->getMessage());
-                            $this->logger?->critical($message);
-                            throw new CatchUpFailed($message, 1732733740, $e);
-                        }
-                        $errors[] = $error;
-                        return;
+                        return $error;
                     }
 
                     $highestSequenceNumberForSubscriber[$subscription->id->value] = $eventEnvelope->sequenceNumber;
@@ -393,8 +382,21 @@ final class SubscriptionEngine
                     if ($numberOfProcessedEvents === 0 && $subscription->status !== SubscriptionStatus::ACTIVE) {
                         $this->logger?->info(sprintf('Subscription Engine: Subscription "%s" has been set to active from %s.', $subscription->id->value, $subscription->status->name));
                     }
+                    return null;
                 });
-
+                if ($error !== null) {
+                    $errors[] = $error;
+                    // 3.) invoke onAfterCatchUp, as onBeforeCatchUp was invoked already and to be consistent we want to "shutdown" this catchup iteration event though we know it failed
+                    // todo put the ERROR $subscriptionStatus into the after hook, so it can properly be reacted upon
+                    try {
+                        $this->subscribers->get($subscription->id)->onAfterCatchUp();
+                    } catch (\Throwable $e) {
+                        // analog to onBeforeCatchUp, we tolerate no exceptions here and consider it a critical developer error.
+                        $message = sprintf('Subscriber "%s" had an error and also failed onAfterCatchUp: %s', $subscription->id->value, $e->getMessage());
+                        $this->logger?->critical($message);
+                        throw new CatchUpFailed($message, 1732733740, $e);
+                    }
+                }
             }
             $numberOfProcessedEvents++;
         }
