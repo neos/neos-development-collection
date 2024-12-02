@@ -296,16 +296,6 @@ final class SubscriptionEngine
 
     private function catchUpSubscriptions(Subscriptions $subscriptionsToCatchup, \Closure $progressClosure = null): ProcessedResult
     {
-
-        // problems:
-        // one the onBeforeCatchUp / onAfterCatchUp hooks will be more difficult and less obvious to invoke
-        // we cannot detach old subscriptions as we loop over the subscribers
-        // we have to fetch the subscriber and then skip its posisiont if its ahead
-        // we cannot abort easily if there ar no matching subscribers?
-        // if abortsCatchupAndRollBack fails we cannot abort transaction!!! -> but this is also a problem if we 'd start batching again....
-        // for batches before and after????
-
-
         foreach ($subscriptionsToCatchup as $subscription) {
             if (!$this->subscribers->contain($subscription->id)) {
                 // mark detached subscriptions as we cannot handle them and exclude them from catchup
