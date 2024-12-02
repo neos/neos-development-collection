@@ -22,6 +22,11 @@ final readonly class SubscriptionStoreFactory implements SubscriptionStoreFactor
     /** @param array<string, mixed> $options */
     public function build(ContentRepositoryId $contentRepositoryId, ClockInterface $clock, array $options): SubscriptionStoreInterface
     {
-        return new DoctrineSubscriptionStore(sprintf('cr_%s_subscriptions', $contentRepositoryId->value), $this->connection, $clock);
+        return new DoctrineSubscriptionStore(
+            $contentRepositoryId,
+            sprintf('cr_%s_subscriptions', $contentRepositoryId->value),
+            $this->connection,
+            $clock
+        );
     }
 }

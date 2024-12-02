@@ -14,6 +14,7 @@ use Doctrine\DBAL\Schema\Table;
 use Doctrine\DBAL\Types\Type;
 use Doctrine\DBAL\Types\Types;
 use Neos\ContentRepository\Core\Infrastructure\DbalSchemaDiff;
+use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
 use Neos\ContentRepository\Core\Subscription\Store\SubscriptionCriteria;
 use Neos\ContentRepository\Core\Subscription\Store\SubscriptionStoreInterface;
 use Neos\ContentRepository\Core\Subscription\Subscription;
@@ -31,7 +32,8 @@ use Neos\Flow\Annotations as Flow;
 final class DoctrineSubscriptionStore implements SubscriptionStoreInterface
 {
     public function __construct(
-        private string $tableName,
+        private readonly ContentRepositoryId $contentRepositoryId,
+        private readonly string $tableName,
         private readonly Connection $dbal,
         private readonly ClockInterface $clock,
     ) {
@@ -167,17 +169,18 @@ final class DoctrineSubscriptionStore implements SubscriptionStoreInterface
     public function acquireLock(): void
     {
         // todo fully implement https://github.com/patchlevel/event-sourcing/blob/caaf54fcf32c0e42b1036a5c7ff77c1a37af0105/src/Store/DoctrineDbalStore.php#L456
-        $result = $this->dbal->fetchOne(sprintf('SELECT GET_LOCK("%s", %d)', 'default', 0));
+        // todo check if 16 chars (crID) is a good lock value?
+        $result = $this->dbal->fetchOne(sprintf('SELECT GET_LOCK("%s", %d)', $this->contentRepositoryId->value, 0));
         if ($result !== 1) {
-            throw new \RuntimeException('failed to acquire lock');
+            throw new \RuntimeException('Failed to acquire lock for subscriptions.', 1733135506);
         }
     }
 
     public function releaseLock(): void
     {
-        $result = $this->dbal->fetchOne(sprintf('SELECT RELEASE_LOCK("%s")', 'default'));
+        $result = $this->dbal->fetchOne(sprintf('SELECT RELEASE_LOCK("%s")', $this->contentRepositoryId->value));
         if ($result !== 1) {
-            throw new \RuntimeException('failed to release lock');
+            throw new \RuntimeException('Failed to release lock for subscriptions.', 1733135506);
         }
     }
 
