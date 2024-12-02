@@ -14,11 +14,11 @@ trait ProjectionTransactionTrait
 {
     /**
      * DBAL default implementation for {@see ProjectionInterface::transactional()}
+     * @param \Closure(): void $closure
      */
     public function transactional(\Closure $closure): void
     {
         if ($this->dbal->isTransactionActive() === false) {
-            /** @phpstan-ignore argument.templateType */
             $this->dbal->transactional($closure);
             return;
         }

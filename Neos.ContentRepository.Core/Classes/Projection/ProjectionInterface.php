@@ -32,8 +32,8 @@ interface ProjectionInterface
 
     /**
      * Must invoke the closure which will update the catchup hooks and {@see apply}.
-     * Additionally, to guarantee exactly once delivery and also to behave correct during exceptions (even fatal ones),
-     * a database transaction should be started, or if a transaction is already active on the same connection save points
+     * Additionally, to guarantee exactly once delivery and also to behave correct during exceptions (even if php crashes),
+     * a database transaction must be started, or if a transaction is already active on the same connection save points
      * must be used and rolled back on error.
      *
      * @param-immediately-invoked-callable $closure
