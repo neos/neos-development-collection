@@ -415,10 +415,13 @@ class ChangeProjection implements ProjectionInterface
         if ($event->workspaceName->isLive()) {
             return;
         }
-        $this->markAggregateAsChanged(
-            $event->contentStreamId,
-            $event->nodeAggregateId,
-        );
+        foreach ($event->affectedOriginDimensionSpacePoints as $originDimensionSpacePoint) {
+            $this->markAsChanged(
+                $event->contentStreamId,
+                $event->nodeAggregateId,
+                $originDimensionSpacePoint
+            );
+        }
     }
 
     private function whenNodeAggregateNameWasChanged(NodeAggregateNameWasChanged $event): void
@@ -426,10 +429,13 @@ class ChangeProjection implements ProjectionInterface
         if ($event->workspaceName->isLive()) {
             return;
         }
-        $this->markAggregateAsChanged(
-            $event->contentStreamId,
-            $event->nodeAggregateId,
-        );
+        foreach ($event->affectedOriginDimensionSpacePoints as $originDimensionSpacePoint) {
+            $this->markAsChanged(
+                $event->contentStreamId,
+                $event->nodeAggregateId,
+                $originDimensionSpacePoint
+            );
+        }
     }
 
     private function whenContentStreamWasRemoved(ContentStreamWasRemoved $event): void
@@ -446,19 +452,6 @@ class ChangeProjection implements ProjectionInterface
             $contentStreamId,
             $nodeAggregateId,
             $originDimensionSpacePoint,
-            static function (Change $change) {
-                $change->changed = true;
-            }
-        );
-    }
-
-    private function markAggregateAsChanged(
-        ContentStreamId $contentStreamId,
-        NodeAggregateId $nodeAggregateId,
-    ): void {
-        $this->modifyChangeForAggregate(
-            $contentStreamId,
-            $nodeAggregateId,
             static function (Change $change) {
                 $change->changed = true;
             }
@@ -514,23 +507,6 @@ class ChangeProjection implements ProjectionInterface
         }
     }
 
-    private function modifyChangeForAggregate(
-        ContentStreamId $contentStreamId,
-        NodeAggregateId $nodeAggregateId,
-        callable $modifyFn
-    ): void {
-        $change = $this->getChangeForAggregate($contentStreamId, $nodeAggregateId);
-
-        if ($change === null) {
-            $change = new Change($contentStreamId, $nodeAggregateId, null, false, false, false, false);
-            $modifyFn($change);
-            $change->addToDatabase($this->dbal, $this->tableNamePrefix);
-        } else {
-            $modifyFn($change);
-            $change->updateToDatabase($this->dbal, $this->tableNamePrefix);
-        }
-    }
-
     private function getChange(
         ContentStreamId $contentStreamId,
         NodeAggregateId $nodeAggregateId,
@@ -549,25 +525,6 @@ AND n.originDimensionSpacePointHash = :originDimensionSpacePointHash',
         )->fetch();
 
         // We always allow root nodes
-        return $changeRow ? Change::fromDatabaseRow($changeRow) : null;
-    }
-
-    private function getChangeForAggregate(
-        ContentStreamId $contentStreamId,
-        NodeAggregateId $nodeAggregateId,
-    ): ?Change {
-        $changeRow = $this->dbal->executeQuery(
-            'SELECT n.* FROM ' . $this->tableNamePrefix . ' n
-WHERE n.contentStreamId = :contentStreamId
-AND n.nodeAggregateId = :nodeAggregateId
-AND n.origindimensionspacepointhash = :origindimensionspacepointhash',
-            [
-                'contentStreamId' => $contentStreamId->value,
-                'nodeAggregateId' => $nodeAggregateId->value,
-                'origindimensionspacepointhash' => Change::AGGREGATE_DIMENSIONSPACEPOINT_HASH_PLACEHOLDER
-            ]
-        )->fetchAssociative();
-
         return $changeRow ? Change::fromDatabaseRow($changeRow) : null;
     }
 

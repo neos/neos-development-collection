@@ -387,38 +387,20 @@ final class WorkspacePublishingService
             }
         }
 
-        if ($change->originDimensionSpacePoint) {
-            $subgraph = $contentRepository->getContentGraph($workspaceName)->getSubgraph(
-                $change->originDimensionSpacePoint->toDimensionSpacePoint(),
-                VisibilityConstraints::withoutRestrictions()
-            );
+        $subgraph = $contentRepository->getContentGraph($workspaceName)->getSubgraph(
+            $change->originDimensionSpacePoint->toDimensionSpacePoint(),
+            VisibilityConstraints::withoutRestrictions()
+        );
 
-            // A Change is publishable if the respective node (or the respective
-            // removal attachment point) has a closest ancestor that matches our
-            // current ancestor scope (Document/Site)
-            $actualAncestorNode = $subgraph->findClosestNode(
-                $change->removalAttachmentPoint ?? $change->nodeAggregateId,
-                FindClosestNodeFilter::create(nodeTypes: $ancestorNodeTypeName->value)
-            );
+        // A Change is publishable if the respective node (or the respective
+        // removal attachment point) has a closest ancestor that matches our
+        // current ancestor scope (Document/Site)
+        $actualAncestorNode = $subgraph->findClosestNode(
+            $change->removalAttachmentPoint ?? $change->nodeAggregateId,
+            FindClosestNodeFilter::create(nodeTypes: $ancestorNodeTypeName->value)
+        );
 
-            return $actualAncestorNode?->aggregateId->equals($ancestorId) ?? false;
-        } else {
-            return $this->findAncestorAggregateIds(
-                $contentRepository->getContentGraph($workspaceName),
-                $change->nodeAggregateId
-            )->contain($ancestorId);
-        }
-    }
-
-    private function findAncestorAggregateIds(ContentGraphInterface $contentGraph, NodeAggregateId $descendantNodeAggregateId): NodeAggregateIds
-    {
-        $nodeAggregateIds = NodeAggregateIds::create($descendantNodeAggregateId);
-        foreach ($contentGraph->findParentNodeAggregates($descendantNodeAggregateId) as $parentNodeAggregate) {
-            $nodeAggregateIds = $nodeAggregateIds->merge(NodeAggregateIds::create($parentNodeAggregate->nodeAggregateId));
-            $nodeAggregateIds = $nodeAggregateIds->merge($this->findAncestorAggregateIds($contentGraph, $parentNodeAggregate->nodeAggregateId));
-        }
-
-        return $nodeAggregateIds;
+        return $actualAncestorNode?->aggregateId->equals($ancestorId) ?? false;
     }
 
     /**
