@@ -195,6 +195,7 @@ trait NodeTypeChange
                 $contentGraph->getContentStreamId(),
                 $command->nodeAggregateId,
                 $command->newNodeTypeName,
+                $nodeAggregate->occupiedDimensionSpacePoints
             ),
         ];
 
