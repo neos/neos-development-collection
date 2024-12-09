@@ -22,7 +22,7 @@ use Neos\ContentRepository\Core\SharedModel\Node\PropertyName;
  *
  * @api because exception is thrown during invariant checks on command execution
  */
-final class PropertyTypeIsInvalid extends \DomainException
+final class PropertyTypeIsInvalid extends \RuntimeException
 {
     public static function becauseItIsUndefined(
         PropertyName $propertyName,

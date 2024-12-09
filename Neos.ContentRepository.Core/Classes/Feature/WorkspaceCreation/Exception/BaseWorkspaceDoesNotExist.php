@@ -19,7 +19,7 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 /**
  * @api
  */
-final class BaseWorkspaceDoesNotExist extends \DomainException
+final class BaseWorkspaceDoesNotExist extends \RuntimeException
 {
     public static function butWasSupposedTo(WorkspaceName $name): self
     {

@@ -23,7 +23,7 @@ use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
  *
  * @api because exception is thrown during invariant checks on command execution
  */
-final class NodeAggregateDoesCurrentlyNotOccupyDimensionSpacePoint extends \DomainException
+final class NodeAggregateDoesCurrentlyNotOccupyDimensionSpacePoint extends \RuntimeException
 {
     public static function butWasSupposedTo(
         NodeAggregateId $nodeAggregateId,

@@ -20,6 +20,6 @@ namespace Neos\ContentRepository\Core\SharedModel\Exception;
  *
  * @api because exception is thrown during invariant checks on command execution
  */
-final class NodeTypeIsNotOfTypeRoot extends \DomainException
+final class NodeTypeIsNotOfTypeRoot extends \RuntimeException
 {
 }

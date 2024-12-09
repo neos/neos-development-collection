@@ -20,6 +20,6 @@ namespace Neos\ContentRepository\Core\SharedModel\Exception;
  *
  * @api because exception is thrown during invariant checks on command execution
  */
-final class NodeAggregateIsAmbiguous extends \DomainException
+final class NodeAggregateIsAmbiguous extends \RuntimeException
 {
 }

@@ -21,6 +21,6 @@ namespace Neos\ContentRepository\Core\SharedModel\Exception;
  *
  * @api because exception is thrown during invariant checks on command execution
  */
-final class NodeAggregateIsDescendant extends \DomainException
+final class NodeAggregateIsDescendant extends \RuntimeException
 {
 }

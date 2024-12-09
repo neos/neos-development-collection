@@ -18,7 +18,7 @@ namespace Neos\ContentRepository\Core\Dimension\Exception;
  * The exception to be thrown if an invalid content dimension value specialization depth was tried to be initialized
  * @api
  */
-class ContentDimensionValueSpecializationDepthIsInvalid extends \DomainException
+class ContentDimensionValueSpecializationDepthIsInvalid extends \RuntimeException
 {
     public static function becauseItMustBeNonNegative(int $attemptedValue): self
     {

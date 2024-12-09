@@ -21,7 +21,7 @@ use Neos\ContentRepository\Core\Dimension\ContentDimensionValue;
  * The exception to be thrown if an invalid generalization of a content dimension value was tried to be initialized
  * @api
  */
-class GeneralizationIsInvalid extends \DomainException
+class GeneralizationIsInvalid extends \RuntimeException
 {
     public static function becauseComparedValueIsNoSpecialization(
         ContentDimensionValue $value,

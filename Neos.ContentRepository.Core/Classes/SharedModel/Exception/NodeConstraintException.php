@@ -19,6 +19,6 @@ namespace Neos\ContentRepository\Core\SharedModel\Exception;
  *
  * @api
  */
-class NodeConstraintException extends \DomainException
+class NodeConstraintException extends \RuntimeException
 {
 }

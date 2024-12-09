@@ -19,6 +19,6 @@ namespace Neos\ContentRepository\Core\SharedModel\Exception;
  *
  * @api because exception is thrown during invariant checks on command execution
  */
-final class ContentStreamDoesNotExistYet extends \DomainException
+final class ContentStreamDoesNotExistYet extends \RuntimeException
 {
 }

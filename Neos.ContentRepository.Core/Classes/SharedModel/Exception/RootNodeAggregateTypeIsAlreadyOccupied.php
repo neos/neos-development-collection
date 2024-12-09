@@ -9,7 +9,7 @@ use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 /**
  * @api Userland code might have to react to this
  */
-final class RootNodeAggregateTypeIsAlreadyOccupied extends \DomainException
+final class RootNodeAggregateTypeIsAlreadyOccupied extends \RuntimeException
 {
     public static function butWasExpectedNotTo(NodeTypeName $nodeTypeName): self
     {

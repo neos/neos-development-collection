@@ -19,6 +19,6 @@ namespace Neos\ContentRepository\Core\SharedModel\Exception;
  *
  * @api
  */
-class NodeConfigurationException extends \DomainException
+class NodeConfigurationException extends \RuntimeException
 {
 }

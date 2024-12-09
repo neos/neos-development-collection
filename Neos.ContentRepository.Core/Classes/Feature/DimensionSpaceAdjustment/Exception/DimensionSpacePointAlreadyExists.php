@@ -20,6 +20,6 @@ namespace Neos\ContentRepository\Core\Feature\DimensionSpaceAdjustment\Exception
  *
  * @api
  */
-final class DimensionSpacePointAlreadyExists extends \DomainException
+final class DimensionSpacePointAlreadyExists extends \RuntimeException
 {
 }

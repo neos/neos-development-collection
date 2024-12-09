@@ -21,7 +21,7 @@ use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
  * as a specialization of another one but isn't
  * @api
  */
-class DimensionSpacePointIsNoSpecialization extends \DomainException
+class DimensionSpacePointIsNoSpecialization extends \RuntimeException
 {
     public static function butWasSupposedToBe(DimensionSpacePoint $target, DimensionSpacePoint $source): self
     {

@@ -7,6 +7,6 @@ namespace Neos\ContentRepository\Core\Feature\WorkspaceModification\Exception;
 /**
  * @api
  */
-class CircularRelationBetweenWorkspacesException extends \DomainException
+class CircularRelationBetweenWorkspacesException extends \RuntimeException
 {
 }

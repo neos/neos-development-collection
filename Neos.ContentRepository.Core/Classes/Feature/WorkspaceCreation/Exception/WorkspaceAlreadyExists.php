@@ -17,6 +17,6 @@ namespace Neos\ContentRepository\Core\Feature\WorkspaceCreation\Exception;
 /**
  * @api
  */
-final class WorkspaceAlreadyExists extends \DomainException
+final class WorkspaceAlreadyExists extends \RuntimeException
 {
 }

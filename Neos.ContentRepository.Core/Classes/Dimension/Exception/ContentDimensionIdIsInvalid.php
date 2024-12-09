@@ -18,7 +18,7 @@ namespace Neos\ContentRepository\Core\Dimension\Exception;
  * The exception to be thrown if an invalid content dimension id was attempted to be initialized
  * @api
  */
-class ContentDimensionIdIsInvalid extends \DomainException
+class ContentDimensionIdIsInvalid extends \RuntimeException
 {
     public static function becauseItMustNotBeEmpty(): self
     {

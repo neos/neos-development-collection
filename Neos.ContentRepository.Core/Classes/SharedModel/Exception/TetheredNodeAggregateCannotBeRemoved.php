@@ -19,6 +19,6 @@ namespace Neos\ContentRepository\Core\SharedModel\Exception;
  *
  * @api because exception is thrown during invariant checks on command execution
  */
-final class TetheredNodeAggregateCannotBeRemoved extends \DomainException
+final class TetheredNodeAggregateCannotBeRemoved extends \RuntimeException
 {
 }

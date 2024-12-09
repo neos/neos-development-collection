@@ -23,7 +23,7 @@ use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
  *
  * @api because exception is thrown during invariant checks on command execution
  */
-final class NodeAggregateIsNoSibling extends \DomainException
+final class NodeAggregateIsNoSibling extends \RuntimeException
 {
     public static function butWasExpectedToBeInDimensionSpacePoint(NodeAggregateId $nodeAggregateId, NodeAggregateId $referenceNodeAggregateId, DimensionSpacePoint $dimensionSpacePoint): self
     {
