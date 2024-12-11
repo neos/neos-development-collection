@@ -1295,13 +1295,17 @@ Ao clicar num nó verá unicamente as suas opções-base e variantes. Clique nov
         <source>Select all current changes</source>
         <target state="translated">Selecionar todas as alterações</target>
       </trans-unit>
+      <trans-unit id="workspaces.publishSelectedChangesTo" xml:space="preserve">
+        <source>Publish selected changes to {0}</source>
+        <target state="translated">Publicar as alterações selecionadas para {0}</target>
+      </trans-unit>
       <trans-unit id="workspaces.discardSelectedChangesInWorkspaceConfirmation" xml:space="preserve">
         <source>Do you really want to discard the selected changes in the "{0}" workspace?</source>
         <target state="translated">Deseja descartar as alterações selecionadas na área de trabalho "{0}"?</target>
       </trans-unit>
-      <trans-unit id="workspaces.publishSelectedChangesTo" xml:space="preserve">
-        <source>Publish selected changes to {0}</source>
-        <target state="translated">Publicar as alterações selecionadas para {0}</target>
+      <trans-unit id="branding.link.title" xml:space="preserve">
+        <source>Go back to your starting module</source>
+        <target state="translated">Voltar ao seu módulo inicial</target>
       </trans-unit>
       <trans-unit id="user.description" xml:space="preserve">
         <source>Contains modules related to management of users</source>

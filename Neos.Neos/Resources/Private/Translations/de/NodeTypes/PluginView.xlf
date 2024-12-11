@@ -10,13 +10,13 @@
         <source>Plugin Views</source>
         <target state="final">Plugin-Ansichten</target>
       </trans-unit>
-      <trans-unit id="properties.plugin" xml:space="preserve" approved="no">
+      <trans-unit id="properties.plugin" xml:space="preserve" approved="yes">
         <source>Master View</source>
-        <target state="translated">Master-Ansicht</target>
+        <target state="final">Master Ansicht</target>
       </trans-unit>
-      <trans-unit id="properties.view" xml:space="preserve" approved="no">
+      <trans-unit id="properties.view" xml:space="preserve" approved="yes">
         <source>Plugin View</source>
-        <target state="translated">Plugin-Ansicht</target>
+        <target state="final">Plugin Ansicht</target>
       </trans-unit>
     </body>
   </file>

@@ -659,6 +659,10 @@
 				<source>The Configuration module provides you with an overview of all configuration types.</source>
 			</trans-unit>
 
+			<trans-unit id="branding.link.title" xml:space="preserve">
+				<source>Go back to your starting module</source>
+			</trans-unit>
+
 			<trans-unit id="dimensions.label" xml:space="preserve">
 				<source>Dimensions</source>
 			</trans-unit>

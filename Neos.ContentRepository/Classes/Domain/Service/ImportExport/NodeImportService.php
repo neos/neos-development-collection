@@ -13,6 +13,7 @@ namespace Neos\ContentRepository\Domain\Service\ImportExport;
 
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Types\Type;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\EntityManagerInterface;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Persistence\Aspect\PersistenceMagicInterface;
@@ -119,19 +120,19 @@ class NodeImportService
         'dimensionValues' => [],
         'properties' => [],
         'hiddenBeforeDateTime' => [
-            'columnType' => Type::DATETIME
+            'columnType' => Types::DATE_IMMUTABLE
         ],
         'hiddenAfterDateTime' => [
-            'columnType' => Type::DATETIME
+            'columnType' => Types::DATE_IMMUTABLE
         ],
         'creationDateTime' => [
-            'columnType' => Type::DATETIME
+            'columnType' => Types::DATE_IMMUTABLE
         ],
         'lastModificationDateTime' => [
-            'columnType' => Type::DATETIME
+            'columnType' => Types::DATE_IMMUTABLE
         ],
         'lastPublicationDateTime' => [
-            'columnType' => Type::DATETIME
+            'columnType' => Types::DATE_IMMUTABLE
         ],
         'accessRoles' => []
     ];

@@ -1307,6 +1307,10 @@ Klicken Sie auf einen der Knoten um nur die Fallbacks und Varianten für diesen 
         <source>Last Login</source>
         <target>Letzter Login</target>
       </trans-unit>
+      <trans-unit id="branding.link.title" xml:space="preserve">
+        <source>Go back to your starting module</source>
+        <target state="translated">Gehen Sie zurück zu Ihrem Startmodul</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

@@ -110,7 +110,7 @@ class NodePrivilegeContext
      * @param string|array $nodeTypes A single or an array of fully qualified NodeType name(s), e.g. "Neos.Neos:Document"
      * @return boolean true if the given node matches otherwise false
      */
-    public function isDescendantOfNodetype($nodeTypes)
+    public function isDescendantOfType($nodeTypes)
     {
         if ($this->node === null) {
             return true;

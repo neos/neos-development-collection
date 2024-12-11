@@ -21,7 +21,7 @@
         "imagine/imagine": "*",
         "doctrine/common": "^2.7 || ^3.0",
         "doctrine/orm": "^2.6",
-        "doctrine/dbal": "^2.8"
+        "doctrine/dbal": "^2.8 || ^3"
     },
     "replace": {
         "typo3/media": "self.version"

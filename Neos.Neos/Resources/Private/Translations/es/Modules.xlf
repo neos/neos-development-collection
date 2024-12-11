@@ -1301,11 +1301,15 @@ Haga clic en uno de los nodos para ver solo sus alternativas y variantes. Haga c
       </trans-unit>
       <trans-unit id="workspaces.publishSelectedChangesTo" xml:space="preserve">
         <source>Publish selected changes to {0}</source>
-        <target state="translated">Publicar cambios seleccionados en {0}</target>
+        <target state="translated">Publica los cambios seleccionados en {0}</target>
       </trans-unit>
       <trans-unit id="workspaces.discardSelectedChangesInWorkspaceConfirmation" xml:space="preserve">
         <source>Do you really want to discard the selected changes in the "{0}" workspace?</source>
-        <target state="translated">¿Realmente desea descartar los cambios seleccionados en el espacio de trabajo "{0}"?</target>
+        <target state="translated">¿Realmente deseas descartar los cambios seleccionados en el espacio de trabajo "{0}"?</target>
+      </trans-unit>
+      <trans-unit id="branding.link.title" xml:space="preserve">
+        <source>Go back to your starting module</source>
+        <target state="translated">Regresa a tu módulo inicial</target>
       </trans-unit>
     </body>
   </file>
