@@ -13,6 +13,7 @@ namespace Neos\ContentRepository\Security\Authorization\Privilege\Node\Doctrine;
 
 use Doctrine\Persistence\Mapping\ClassMetadata;
 use Doctrine\ORM\Query\Filter\SQLFilter as DoctrineSqlFilter;
+use Neos\Flow\Security\Authorization\Privilege\Entity\Doctrine\SqlGeneratorInterface;
 
 /**
  * A SQL generator to create a condition matching a node underneath a certain node type
@@ -39,7 +40,15 @@ class DescendantOfTypeConditionGenerator implements SqlGeneratorInterface
      */
     public function getSql(DoctrineSqlFilter $sqlFilter, ClassMetadata $targetEntity, $targetTableAlias)
     {
-        $nodetypeList = implode("','", $this->nodetypes);
+
+        $nodetypes = array_map('trim', $this->nodetypes);
+
+        $safeNodetypes = [];
+        foreach ($nodetypes as $nodetype) {
+            $safeNodetypes[] = str_replace(["'", "`"],"", $nodetype);
+        }
+
+        $nodetypeList = implode("','", $safeNodetypes);
 
         return "select * from public.neos_contentrepository_domain_model_nodedata n1
         JOIN public.neos_contentrepository_domain_model_nodedata n2 ON n1.path LIKE CONCAT(n2.path, '%')
