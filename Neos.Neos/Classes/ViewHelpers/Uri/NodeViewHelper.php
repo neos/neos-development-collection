@@ -171,7 +171,7 @@ class NodeViewHelper extends AbstractViewHelper
         $this->registerArgument(
             'baseNodeName',
             'string',
-            'The name of the base node inside the Fusion context to use for the ContentContext'
+            'The name of the base node inside the Fusion context to use for the subgraph'
             . ' or resolving relative paths',
             false,
             'documentNode'

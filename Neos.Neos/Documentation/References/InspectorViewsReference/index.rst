@@ -19,16 +19,12 @@ A data source is a PHP class implementing ``Neos\Neos\Service\DataSource\DataSou
 
   <?php
 
-  /*
-   * This script belongs to the package "Vendor.Site".
-   */
-
   declare(strict_types=1);
 
   namespace Vendor\Site\Application\Neos\DataSource;
 
   use Neos\Neos\Service\DataSource\AbstractDataSource;
-  use Neos\ContentRepository\Domain\Model\NodeInterface;
+  use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 
   final class ColumnViewDataSource extends AbstractDataSource
   {
@@ -38,11 +34,15 @@ A data source is a PHP class implementing ``Neos\Neos\Service\DataSource\DataSou
       static protected $identifier = 'vendor-site-column-view';
 
       /**
-      * Get data
-      *
-      * {@inheritdoc}
-      */
-      public function getData(NodeInterface $node = NULL, array $arguments = [])
+       * Get data
+       *
+       * The return value must be JSON serializable data structure.
+       *
+       * @param Node $node The node that is currently edited (optional)
+       * @param array<mixed> $arguments Additional arguments (key / value)
+       * @return mixed JSON serializable data
+       */
+      public function getData(Node $node = null, array $arguments = [])
       {
           return [
               'data' => [
@@ -134,30 +134,30 @@ A data source is a PHP class implementing ``Neos\Neos\Service\DataSource\DataSou
 
   <?php
 
-  /*
-   * This script belongs to the package "Vendor.Site".
-   */
-
   declare(strict_types=1);
 
   namespace Vendor\Site\Application\Neos\DataSource;
 
   use Neos\Neos\Service\DataSource\AbstractDataSource;
-  use Neos\ContentRepository\Domain\Model\NodeInterface;
+  use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 
   final class TableViewDataSource extends AbstractDataSource
   {
       /**
-      * @var string
-      */
+       * @var string
+       */
       static protected $identifier = 'vendor-site-table-view';
 
       /**
-      * Get data
-      *
-      * {@inheritdoc}
-      */
-      public function getData(NodeInterface $node = NULL, array $arguments = [])
+       * Get data
+       *
+       * The return value must be JSON serializable data structure.
+       *
+       * @param Node $node The node that is currently edited (optional)
+       * @param array<mixed> $arguments Additional arguments (key / value)
+       * @return mixed JSON serializable data
+       */
+      public function getData(Node $node = null, array $arguments = [])
       {
           return [
               'data' => [
@@ -262,20 +262,24 @@ A data source is a PHP class implementing ``Neos\Neos\Service\DataSource\DataSou
   namespace Vendor\Site\Application\Neos\DataSource;
 
   use Neos\Neos\Service\DataSource\AbstractDataSource;
-  use Neos\ContentRepository\Domain\Model\NodeInterface;
+  use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 
   final class TimeSeriesViewDataSource extends AbstractDataSource
   {
       /**
-      * @var string
-      */
+       * @var string
+       */
       static protected $identifier = 'vendor-site-time-series-view';
 
       /**
-      * Get data
-      *
-      * {@inheritdoc}
-      */
+       * Get data
+       *
+       * The return value must be JSON serializable data structure.
+       *
+       * @param Node $node The node that is currently edited (optional)
+       * @param array<mixed> $arguments Additional arguments (key / value)
+       * @return mixed JSON serializable data
+       */
       public function getData(NodeInterface $node = NULL, array $arguments = [])
       {
           return [
