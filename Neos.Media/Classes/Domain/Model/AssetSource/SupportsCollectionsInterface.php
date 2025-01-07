@@ -25,4 +25,10 @@ interface SupportsCollectionsInterface
      * @param AssetCollection $assetCollection
      */
     public function filterByCollection(AssetCollection $assetCollection = null): void;
+
+    /**
+     * @param AssetCollection $assetCollection
+     * @return int
+     */
+    public function countByAssetCollection(AssetCollection  $assetCollection): int;
 }
