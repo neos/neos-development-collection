@@ -1,0 +1,16 @@
+Neos:
+  Neos:
+    NodeSearch:
+      # Resolvers for various types of inputs which NodeSearchServiceInterface implementations can use to resolve search terms
+      resolvers:
+        'nodeIdentifier':
+          class: 'Neos\Neos\Domain\Service\NodeSearchIdentifierResolver'
+          position: 'start'
+        'nodePath':
+          class: 'Neos\Neos\Domain\Service\NodeSearchPathResolver'
+        'url':
+          class: 'Neos\Neos\Domain\Service\NodeSearchUrlResolver'
+        'term':
+          # Default fallback resolver
+          class: 'Neos\Neos\Domain\Service\NodeSearchTermResolver'
+          position: 'end'

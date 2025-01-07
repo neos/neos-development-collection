@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Neos\Domain\Service;
 
 /*
@@ -11,13 +12,10 @@ namespace Neos\Neos\Domain\Service;
  * source code.
  */
 
-use Neos\ContentRepository\Validation\Validator\NodeIdentifierValidator;
-use Neos\Flow\Annotations as Flow;
-use Neos\Flow\Persistence\PersistenceManagerInterface;
-use Neos\ContentRepository\Domain\Factory\NodeFactory;
 use Neos\ContentRepository\Domain\Model\NodeInterface;
-use Neos\ContentRepository\Domain\Repository\NodeDataRepository;
 use Neos\ContentRepository\Domain\Service\Context;
+use Neos\Flow\Annotations as Flow;
+use Neos\Utility\PositionalArraySorter;
 
 /**
  * Find nodes based on a fulltext search
@@ -26,23 +24,9 @@ use Neos\ContentRepository\Domain\Service\Context;
  */
 class NodeSearchService implements NodeSearchServiceInterface
 {
-    /**
-     * @Flow\Inject
-     * @var NodeDataRepository
-     */
-    protected $nodeDataRepository;
 
-    /**
-     * @Flow\Inject
-     * @var NodeFactory
-     */
-    protected $nodeFactory;
-
-    /**
-     * @Flow\Inject
-     * @var PersistenceManagerInterface
-     */
-    protected $persistenceManager;
+    #[Flow\InjectConfiguration('NodeSearch.resolvers', 'Neos.Neos')]
+    protected array $resolvers;
 
     /**
      * Search all properties for given $term
@@ -50,56 +34,58 @@ class NodeSearchService implements NodeSearchServiceInterface
      * TODO: Implement a better search when Flow offer the possibility
      *
      * @param string|array $term search term
-     * @param array $searchNodeTypes
-     * @param Context $context
-     * @param NodeInterface $startingPoint
-     * @return array <\Neos\ContentRepository\Domain\Model\NodeInterface>
+     * @param string[] $searchNodeTypes
+     * @return NodeInterface[]
      */
-    public function findByProperties($term, array $searchNodeTypes, Context $context, NodeInterface $startingPoint = null)
-    {
+    public function findByProperties(
+        $term,
+        array $searchNodeTypes,
+        Context $context,
+        NodeInterface $startingPoint = null
+    ) {
         if (empty($term)) {
             throw new \InvalidArgumentException('"term" cannot be empty: provide a term to search for.', 1421329285);
         }
 
         $searchResult = [];
-        $nodeTypeFilter = implode(',', $searchNodeTypes);
+        $searchTerms = is_string($term) ? [$term] : $term;
+        $sortedResolvers = (new PositionalArraySorter($this->resolvers))->toArray();
 
-        $searchTerm = is_string($term) ? [$term] : $term;
+        // Instantiate each configured resolver
+        /** @var NodeSearchResolverInterface[] $resolverInstances */
+        $resolverInstances = array_reduce($sortedResolvers, static function (array $carry, array $resolverConfig) {
+            try {
+                $resolverInstance = new $resolverConfig['class']();
+                if ($resolverInstance instanceof NodeSearchResolverInterface) {
+                    $carry[] = $resolverInstance;
+                }
+            } catch (\Exception) {
+                // TODO: Log invalid resolver configuration
+            }
+            return $carry;
+        }, []);
 
-        foreach ($searchTerm as $termvalue) {
-            if (preg_match(NodeIdentifierValidator::PATTERN_MATCH_NODE_IDENTIFIER, $termvalue) !== 0) {
-                $nodeByIdentifier = $context->getNodeByIdentifier($termvalue);
-                if ($nodeByIdentifier !== null && $this->nodeSatisfiesSearchNodeTypes($nodeByIdentifier, $searchNodeTypes)) {
-                    $searchResult[$nodeByIdentifier->getPath()] = $nodeByIdentifier;
+        // Iterate over each search term and try to resolve it with the resolvers
+        foreach ($searchTerms as $searchTerm) {
+            foreach ($resolverInstances as $resolver) {
+                if ($resolver->matches($searchTerm, $searchNodeTypes, $context, $startingPoint)) {
+                    $resolverResults = $resolver->resolve(
+                        $searchTerm,
+                        $searchNodeTypes,
+                        $context,
+                        $startingPoint
+                    );
+                    // If the resolver returns results, we can skip the other resolvers for the current term
+                    if ($resolverResults) {
+                        $searchResult = array_merge($searchResult, $resolverResults);
+                        break;
+                    }
                 }
             }
         }
 
-        $nodeDataRecords = $this->nodeDataRepository->findByProperties($term, $nodeTypeFilter, $context->getWorkspace(), $context->getDimensions(), $startingPoint ? $startingPoint->getPath() : null);
-        foreach ($nodeDataRecords as $nodeData) {
-            $node = $this->nodeFactory->createFromNodeData($nodeData, $context);
-            if ($node !== null) {
-                $searchResult[$node->getPath()] = $node;
-            }
-        }
+        // TODO: Sort results?
 
         return $searchResult;
-    }
-
-    /**
-     * Whether or not the given $node satisfies the specified types
-     *
-     * @param NodeInterface $node
-     * @param array $searchNodeTypes
-     * @return bool
-     */
-    protected function nodeSatisfiesSearchNodeTypes(NodeInterface $node, array $searchNodeTypes): bool
-    {
-        foreach ($searchNodeTypes as $nodeTypeName) {
-            if ($node->getNodeType()->isOfType($nodeTypeName)) {
-                return true;
-            }
-        }
-        return false;
     }
 }
