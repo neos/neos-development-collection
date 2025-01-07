@@ -54,8 +54,9 @@ trait NodeRenaming
             new NodeAggregateNameWasChanged(
                 $contentGraph->getWorkspaceName(),
                 $contentGraph->getContentStreamId(),
-                $command->nodeAggregateId,
+                $nodeAggregate->nodeAggregateId,
                 $command->newNodeName,
+                $nodeAggregate->occupiedDimensionSpacePoints
             ),
         );
 

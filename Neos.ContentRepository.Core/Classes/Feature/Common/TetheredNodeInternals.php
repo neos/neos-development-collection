@@ -279,6 +279,7 @@ trait TetheredNodeInternals
             $contentGraph->getContentStreamId(),
             $nodeAggregate->nodeAggregateId,
             $newNodeTypeName,
+            $nodeAggregate->occupiedDimensionSpacePoints
         );
 
         # Handle property adjustments

@@ -14,6 +14,7 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Core\Feature\NodeRenaming\Event;
 
+use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePointSet;
 use Neos\ContentRepository\Core\EventStore\EventInterface;
 use Neos\ContentRepository\Core\Feature\Common\EmbedsContentStreamId;
 use Neos\ContentRepository\Core\Feature\Common\EmbedsNodeAggregateId;
@@ -39,6 +40,8 @@ final readonly class NodeAggregateNameWasChanged implements
         public ContentStreamId $contentStreamId,
         public NodeAggregateId $nodeAggregateId,
         public NodeName $newNodeName,
+        /** All dimensions are always affected. All origins this node occupied. */
+        public OriginDimensionSpacePointSet $affectedOriginDimensionSpacePoints,
     ) {
     }
 
@@ -64,6 +67,7 @@ final readonly class NodeAggregateNameWasChanged implements
             $contentStreamId,
             $this->nodeAggregateId,
             $this->newNodeName,
+            $this->affectedOriginDimensionSpacePoints
         );
     }
 
@@ -74,6 +78,7 @@ final readonly class NodeAggregateNameWasChanged implements
             ContentStreamId::fromString($values['contentStreamId']),
             NodeAggregateId::fromString($values['nodeAggregateId']),
             NodeName::fromString($values['newNodeName']),
+            OriginDimensionSpacePointSet::fromArray($values['affectedOriginDimensionSpacePoints'])
         );
     }
 

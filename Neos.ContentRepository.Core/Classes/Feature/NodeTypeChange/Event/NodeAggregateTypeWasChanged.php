@@ -14,6 +14,7 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Core\Feature\NodeTypeChange\Event;
 
+use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePointSet;
 use Neos\ContentRepository\Core\EventStore\EventInterface;
 use Neos\ContentRepository\Core\Feature\Common\EmbedsContentStreamId;
 use Neos\ContentRepository\Core\Feature\Common\EmbedsNodeAggregateId;
@@ -38,7 +39,9 @@ final readonly class NodeAggregateTypeWasChanged implements
         public WorkspaceName $workspaceName,
         public ContentStreamId $contentStreamId,
         public NodeAggregateId $nodeAggregateId,
-        public NodeTypeName $newNodeTypeName
+        public NodeTypeName $newNodeTypeName,
+        /** All dimensions are always affected. All origins this node occupied. */
+        public OriginDimensionSpacePointSet $affectedOriginDimensionSpacePoints,
     ) {
     }
 
@@ -63,7 +66,8 @@ final readonly class NodeAggregateTypeWasChanged implements
             $targetWorkspaceName,
             $contentStreamId,
             $this->nodeAggregateId,
-            $this->newNodeTypeName
+            $this->newNodeTypeName,
+            $this->affectedOriginDimensionSpacePoints
         );
     }
 
@@ -74,6 +78,7 @@ final readonly class NodeAggregateTypeWasChanged implements
             ContentStreamId::fromString($values['contentStreamId']),
             NodeAggregateId::fromString($values['nodeAggregateId']),
             NodeTypeName::fromString($values['newNodeTypeName']),
+            OriginDimensionSpacePointSet::fromArray($values['affectedOriginDimensionSpacePoints'])
         );
     }
 

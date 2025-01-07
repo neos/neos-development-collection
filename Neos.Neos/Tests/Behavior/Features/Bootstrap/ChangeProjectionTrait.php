@@ -50,11 +50,7 @@ trait ChangeProjectionTrait
                     || $change->deleted !== (bool)$tableRow['deleted']
                     || $change->changed !== (bool)$tableRow['changed']
                     || $change->moved !== (bool)$tableRow['moved']
-                    || (
-                        ($change->originDimensionSpacePoint === null && strtolower($tableRow['originDimensionSpacePoint']) !== "null")
-                        &&
-                        ($change->originDimensionSpacePoint !== null && strtolower($tableRow['originDimensionSpacePoint']) !== "null" && !$change->originDimensionSpacePoint->equals(DimensionSpacePoint::fromJsonString($tableRow['originDimensionSpacePoint'])))
-                    )
+                    || !$change->originDimensionSpacePoint->equals(DimensionSpacePoint::fromJsonString($tableRow['originDimensionSpacePoint']))
                 ) {
                     continue;
                 }

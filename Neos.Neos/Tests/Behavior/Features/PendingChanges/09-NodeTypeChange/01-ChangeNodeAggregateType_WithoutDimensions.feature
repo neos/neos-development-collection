@@ -58,7 +58,7 @@ Feature: Change node aggregate type without dimensions
 
     Then I expect the ChangeProjection to have the following changes in "user-cs-id":
       | nodeAggregateId        | created | changed | moved | deleted | originDimensionSpacePoint |
-      | sir-david-nodenborough | 0       | 1       | 0     | 0       | null                      |
+      | sir-david-nodenborough | 0       | 1       | 0     | 0       | {}                        |
     And I expect the ChangeProjection to have no changes in "cs-identifier"
 
   Scenario: Change the node aggregate type with already applied changes
@@ -78,6 +78,5 @@ Feature: Change node aggregate type without dimensions
 
     Then I expect the ChangeProjection to have the following changes in "user-cs-id":
       | nodeAggregateId        | created | changed | moved | deleted | originDimensionSpacePoint |
-      | sir-david-nodenborough | 0       | 1       | 0     | 0       | null                      |
       | sir-david-nodenborough | 0       | 1       | 0     | 0       | {}                        |
     And I expect the ChangeProjection to have no changes in "cs-identifier"
