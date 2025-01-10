@@ -375,6 +375,48 @@ Feature: Tests for the "Neos.ContentRepository" Flow Query methods.
     absolutePath: a1b
     """
 
+  Scenario: FindByCriteria
+    When the Fusion context node is "a1"
+    When I execute the following Fusion code:
+    """fusion
+    test = Neos.Fusion:DataStructure {
+      nodeTypeFilter = ${q(node).findByCriteria('Neos.Neos:Test.DocumentType2').get()}
+      nodeTypeExcludeFilter = ${q(node).findByCriteria('Neos.Neos:Document,!Neos.Neos:Test.DocumentType1').get()}
+      nodeTypeCombinedFilter = ${q(node).findByCriteria('Neos.Neos:Test.DocumentType1,Neos.Neos:Test.DocumentType2a').get()}
+      nodeTypeFilterWithLimit = ${q(node).findByCriteria('Neos.Neos:Test.DocumentType2', null, {limit:2, offset:3}).get()}
+      propertyFilter = ${q(node).findByCriteria(null, 'uriPathSegment*="b1"').get()}
+      propertyAndNodeTypeFilter = ${q(node).findByCriteria('Neos.Neos:Test.DocumentType2a', 'uriPathSegment*="b1"').get()}
+      @process.render = Neos.Neos:Test.RenderNodesDataStructure
+    }
+    """
+    Then I expect the following Fusion rendering result:
+    """
+    nodeTypeFilter: a1a,a1a2,a1b2,a1a3,a1a4,a1a5,a1a6,a1b1a
+    nodeTypeExcludeFilter: a1a,a1a2,a1b2,a1a3,a1a4,a1a5,a1a6,a1b1a
+    nodeTypeCombinedFilter: a1a,a1b,a1c,a1a1,a1b1,a1c1,a1a3,a1b3,a1a4,a1a5,a1a7,a1b1a,a1b1b
+    nodeTypeFilterWithLimit: a1a3,a1a4
+    propertyFilter: a1b1,a1b1a,a1b1b
+    propertyAndNodeTypeFilter: a1b1a
+    """
+
+  Scenario: FindByIdentifier
+    When the Fusion context node is "a1"
+    When I execute the following Fusion code:
+    """fusion
+    test = Neos.Fusion:DataStructure {
+      child = ${q(node).findByIdentifier('a1b1').get()}
+      grandchild = ${q(node).findByIdentifier('a1b1a').get()}
+      sibling = ${q(node).findByIdentifier('a2').get()}
+      @process.render = Neos.Neos:Test.RenderNodesDataStructure
+    }
+    """
+    Then I expect the following Fusion rendering result:
+    """
+    child: a1b1
+    grandchild: a1b1a
+    sibling: a2
+    """
+
   Scenario: Unique
     When I execute the following Fusion code:
     """fusion
