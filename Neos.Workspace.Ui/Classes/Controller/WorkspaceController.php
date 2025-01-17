@@ -48,8 +48,6 @@ use Neos\Media\Domain\Model\ImageInterface;
 use Neos\Neos\Controller\Module\AbstractModuleController;
 use Neos\Neos\Domain\Model\WorkspaceClassification;
 use Neos\Neos\Domain\Model\WorkspaceDescription;
-use Neos\Neos\Domain\Model\WorkspaceRole;
-use Neos\Neos\Domain\Model\WorkspaceRoleAssignment;
 use Neos\Neos\Domain\Model\WorkspaceRoleAssignments;
 use Neos\Neos\Domain\Model\WorkspaceRoleSubject;
 use Neos\Neos\Domain\Model\WorkspaceTitle;
@@ -227,7 +225,6 @@ class WorkspaceController extends AbstractModuleController
         WorkspaceTitle $title,
         WorkspaceName $baseWorkspace,
         WorkspaceDescription $description,
-        string $visibility = 'shared',
     ): void {
         $currentUser = $this->userService->getCurrentUser();
         if ($currentUser === null) {
@@ -237,12 +234,6 @@ class WorkspaceController extends AbstractModuleController
         $contentRepositoryId = SiteDetectionResult::fromRequest($this->request->getHttpRequest())->contentRepositoryId;
         $workspaceName = $this->workspaceService->getUniqueWorkspaceName($contentRepositoryId, $title->value);
 
-        $assignments = match ($visibility) {
-            'shared' => WorkspaceRoleAssignments::createForSharedWorkspace($currentUser->getId()),
-            'private' => WorkspaceRoleAssignments::createForPrivateWorkspace($currentUser->getId()),
-            default => throw new \RuntimeException(sprintf('Invalid visibility %s given', $visibility), 1736343542)
-        };
-
         try {
             $this->workspaceService->createSharedWorkspace(
                 $contentRepositoryId,
@@ -250,7 +241,9 @@ class WorkspaceController extends AbstractModuleController
                 $title,
                 $description,
                 $baseWorkspace,
-                $assignments
+                WorkspaceRoleAssignments::createForSharedWorkspace(
+                    $currentUser->getId()
+                )
             );
         } catch (WorkspaceAlreadyExists $exception) {
             $this->addFlashMessage(

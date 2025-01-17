@@ -120,21 +120,6 @@
           <source>{0} nodes were removed</source>
         </trans-unit>
       </group>
-      <trans-unit id="workspaces.workspace.visibility" xml:space="preserve">
-				<source>Visibility</source>
-			</trans-unit>
-      <trans-unit id="workspaces.workspace.visibility.private" xml:space="preserve">
-				<source>Private</source>
-			</trans-unit>
-      <trans-unit id="workspaces.workspace.visibility.private.help" xml:space="preserve">
-				<source>Only the workspace owner can access and modify this workspace</source>
-			</trans-unit>
-      <trans-unit id="workspaces.workspace.visibility.shared" xml:space="preserve">
-				<source>Shared</source>
-			</trans-unit>
-      <trans-unit id="workspaces.workspace.visibility.shared.help" xml:space="preserve">
-				<source>Any logged in editor can see and modify this workspace.</source>
-			</trans-unit>
       <trans-unit id="workspaces.workspace.status" xml:space="preserve">
 				<source>Status</source>
 			</trans-unit>
