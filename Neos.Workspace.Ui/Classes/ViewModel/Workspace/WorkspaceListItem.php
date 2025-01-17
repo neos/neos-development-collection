@@ -47,11 +47,9 @@ final readonly class WorkspaceListItem
         return $this->classification === WorkspaceClassification::PERSONAL->value;
     }
 
+    // todo remove this old shared vs private mapping!
     public function isPrivate(): bool
     {
-        if ($this->classification !== WorkspaceClassification::SHARED->value) {
-            return false;
-        }
         foreach ($this->roleAssignments as $roleAssignment) {
             if ($roleAssignment->role === WorkspaceRole::COLLABORATOR) {
                 return false;
@@ -60,6 +58,7 @@ final readonly class WorkspaceListItem
         return true;
     }
 
+    // todo remove this old shared vs private mapping!
     public function isShared(): bool
     {
         foreach ($this->roleAssignments as $roleAssignment) {

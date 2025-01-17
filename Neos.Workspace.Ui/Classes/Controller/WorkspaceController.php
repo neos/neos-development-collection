@@ -49,7 +49,6 @@ use Neos\Neos\Controller\Module\AbstractModuleController;
 use Neos\Neos\Domain\Model\WorkspaceClassification;
 use Neos\Neos\Domain\Model\WorkspaceDescription;
 use Neos\Neos\Domain\Model\WorkspaceRoleAssignments;
-use Neos\Neos\Domain\Model\WorkspaceRoleSubject;
 use Neos\Neos\Domain\Model\WorkspaceTitle;
 use Neos\Neos\Domain\NodeLabel\NodeLabelGeneratorInterface;
 use Neos\Neos\Domain\Repository\SiteRepository;
@@ -291,15 +290,6 @@ class WorkspaceController extends AbstractModuleController
         }
 
         $workspaceMetadata = $this->workspaceService->getWorkspaceMetadata($contentRepositoryId, $workspace->workspaceName);
-        $workspaceRoleAssignments = $this->workspaceService->getWorkspaceRoleAssignments($contentRepositoryId, $workspace->workspaceName);
-        $isShared = false;
-        if ($workspaceMetadata->classification === WorkspaceClassification::SHARED) {
-            foreach ($workspaceRoleAssignments as $roleAssignment) {
-                if ($roleAssignment->role === WorkspaceRole::COLLABORATOR) {
-                    $isShared = true;
-                }
-            }
-        }
 
         $editWorkspaceDto = new EditWorkspaceFormData(
             workspaceName: $workspace->workspaceName,
@@ -308,7 +298,6 @@ class WorkspaceController extends AbstractModuleController
             workspaceHasChanges: $this->computePendingChanges($workspace, $contentRepository)->total > 0,
             baseWorkspaceName: $workspace->baseWorkspaceName,
             baseWorkspaceOptions: $this->prepareBaseWorkspaceOptions($contentRepository, $workspaceName),
-            isShared: $isShared,
         );
 
         $this->view->assign('editWorkspaceFormData', $editWorkspaceDto);
@@ -321,14 +310,12 @@ class WorkspaceController extends AbstractModuleController
      * @param WorkspaceName $workspaceName The name of the workspace that is being updated
      * @param WorkspaceTitle $title Human friendly title of the workspace, for example "Christmas Campaign"
      * @param WorkspaceDescription $description A description explaining the purpose of the new workspace
-     * @param string $visibility Allow other editors to collaborate on this workspace if set to "shared"
      * @param WorkspaceName|null $baseWorkspace The base workspace to rebase this workspace onto if modified
      */
     public function updateAction(
         WorkspaceName $workspaceName,
         WorkspaceTitle $title,
         WorkspaceDescription $description,
-        string $visibility,
         WorkspaceName|null $baseWorkspace = null,
     ): void {
         $currentUser = $this->userService->getCurrentUser();

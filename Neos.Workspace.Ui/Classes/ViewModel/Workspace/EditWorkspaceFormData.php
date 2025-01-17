@@ -35,7 +35,6 @@ final readonly class EditWorkspaceFormData
         public bool $workspaceHasChanges,
         public WorkspaceName $baseWorkspaceName,
         public array $baseWorkspaceOptions,
-        public bool $isShared,
     ) {
     }
 }
