@@ -1,0 +1,15 @@
+Neos.Workspace.Ui.WorkspaceController.createWorkspaceRoleAssignment = Neos.Fusion:Component {
+  createWorkspaceRoleAssignmentFormData = ${createWorkspaceRoleAssignmentFormData}
+
+  renderer = afx`
+    <Neos.Workspace.Ui:Component.Modal.CreateWorkspaceRoleAssignment
+      workspaceName={props.createWorkspaceRoleAssignmentFormData.workspaceName.value}
+      workspaceTitle={props.createWorkspaceRoleAssignmentFormData.workspaceTitle.value}
+
+      userOptions={props.createWorkspaceRoleAssignmentFormData.userOptions}
+      groupOptions={props.createWorkspaceRoleAssignmentFormData.groupOptions}
+      subjectTypeOptions={props.createWorkspaceRoleAssignmentFormData.subjectTypeOptions}
+      roleOptions={props.createWorkspaceRoleAssignmentFormData.roleOptions}
+    />
+  `
+}

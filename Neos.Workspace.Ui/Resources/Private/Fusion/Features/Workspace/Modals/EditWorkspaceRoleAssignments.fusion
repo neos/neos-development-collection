@@ -1,0 +1,76 @@
+prototype(Neos.Workspace.Ui:Component.Modal.EditWorkspaceRoleAssignments) < prototype(Neos.Fusion:Component) {
+  workspaceName=''
+  workspaceTitle=''
+  roleAssignmentsEditable=false
+
+  /// array<Neos\Workspace\Ui\ViewModel\RoleAssignmentListItem>
+  roleAssignments=${[]}
+
+  @private {
+    i18n = ${I18n.id('').source('Main').package('Neos.Workspace.Ui')}
+    popoverId = 'workspace-edit-role-assignments-modal'
+    workspaceTableRowId = ${'workspace-row-' + props.workspaceName}
+
+    confirmDeleteWorkspaceRoleAssignmentPopoverId = 'confirm-delete-workspace-role-assignment-popover'
+    createWorkspaceRoleAssignmentPopoverId = 'create-workspace-role-assignment-popover'
+    createWorkspaceRoleAssignmentUri = Neos.Fusion:ActionUri {
+      action = 'createWorkspaceRoleAssignment'
+      format = 'htmx'
+      arguments {
+        workspaceName = ${props.workspaceName}
+      }
+    }
+  }
+
+  renderer = afx`
+    <div popover id={private.popoverId} hx-on--load="this.showPopover();" hx-indicator="#indicator">
+      <header>
+        <button
+          type="button"
+          class="neos-close neos-button"
+          popovertarget={private.popoverId}
+          popovertargetaction="close"
+        >
+          <Neos.Workspace.Ui:Component.Icon icon="times"/>
+        </button>
+        <div class="neos-header">
+          {private.i18n.id('workspaces.editWorkspaceRoleAssignments').arguments([props.workspaceTitle])}
+        </div>
+      </header>
+      <section>
+        <table class="workspace-table">
+          <thead>
+            <tr>
+              <th>{private.i18n.id('workspaces.workspace.workspaceRoleAssignment.subjectType')}</th>
+              <th>{private.i18n.id('workspaces.workspace.workspaceRoleAssignment.subject')}</th>
+              <th>{private.i18n.id('workspaces.workspace.workspaceRoleAssignment.role')}</th>
+              <th>
+                {private.i18n.id('workspaces.workspace.workspaceRoleAssignment.actions')}
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <Neos.Fusion:Loop items={props.roleAssignments} itemName="roleAssignment">
+                <Neos.Workspace.Ui:Component.WorkspaceRoleAssignmentTableRow
+                  workspaceName={props.workspaceName}
+                  roleAssignmentsEditable={props.roleAssignmentsEditable}
+                  roleAssignmentFormData={roleAssignment}
+                />
+            </Neos.Fusion:Loop>
+          </tbody>
+        </table>
+        <Neos.Workspace.Ui:Component.Button
+          title={private.i18n.id('workspaces.editWorkspace').arguments([props.workspaceTitle])}
+          icon="plus"
+          attributes.hx-get={private.createWorkspaceRoleAssignmentUri}
+          attributes.hx-target={'#' + private.createWorkspaceRoleAssignmentPopoverId}
+          attributes.hx-swap='outerHTML'
+          attributes.hx-on--after-request={'document.getElementById("' + private.createWorkspaceRoleAssignmentPopoverId + '").showPopover()'}
+          attributes.disabled={!props.roleAssignmentsEditable}
+        />
+      </section>
+      <div popover id={private.createWorkspaceRoleAssignmentPopoverId}></div>
+      <div popover id={private.confirmDeleteWorkspaceRoleAssignmentPopoverId}></div>
+    </div>
+  `
+}

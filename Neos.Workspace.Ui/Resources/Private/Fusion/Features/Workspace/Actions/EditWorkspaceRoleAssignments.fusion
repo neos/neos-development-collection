@@ -1,0 +1,19 @@
+Neos.Workspace.Ui.WorkspaceController.editWorkspaceRoleAssignments = Neos.Fusion:Component {
+  /// \Neos\Workspace\Ui\ViewModel\EditWorkspaceRoleAssignmentsFormData
+  editWorkspaceRoleAssignmentsFormData = ${editWorkspaceRoleAssignmentsFormData}
+
+  renderer = afx`
+    <Neos.Workspace.Ui:Component.Modal.EditWorkspaceRoleAssignments
+      workspaceName={props.editWorkspaceRoleAssignmentsFormData.workspaceName.value}
+      workspaceTitle={props.editWorkspaceRoleAssignmentsFormData.workspaceTitle.value}
+      roleAssignmentsEditable={props.editWorkspaceRoleAssignmentsFormData.roleAssignmentsEditable}
+
+      roleAssignments={props.editWorkspaceRoleAssignmentsFormData.roleAssignments}
+
+      userOptions={props.editWorkspaceRoleAssignmentsFormData.roleAssignmentUserOptions}
+      groupOptions={props.editWorkspaceRoleAssignmentsFormData.roleAssignmentGroupOptions}
+      subjectTypeOptions={props.editWorkspaceRoleAssignmentsFormData.roleAssignmentSubjectTypeOptions}
+      roleOptions={props.editWorkspaceRoleAssignmentsFormData.roleAssignmentRoleOptions}
+    />
+  `
+}

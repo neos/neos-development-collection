@@ -1,0 +1,51 @@
+##
+# Renders a single WorkspaceRoleAssignment list item
+#
+prototype(Neos.Workspace.Ui:Component.WorkspaceRoleAssignmentTableRow) < prototype(Neos.Fusion:Component) {
+  /// string
+  workspaceName = null
+  /// bool
+  roleAssignmentsEditable = false
+  /// Neos\Workspace\Ui\ViewModel\RoleAssignmentListItem
+  roleAssignmentFormData = null
+
+  @private {
+    i18n = ${I18n.id('').source('Main').package('Neos.Workspace.Ui')}
+    confirmDeleteWorkspaceRoleAssignmentPopoverId = 'confirm-delete-workspace-role-assignment-popover'
+    confirmDeleteWorkspaceRoleAssignmentUri = Neos.Fusion:ActionUri {
+      action = 'confirmDeleteWorkspaceRoleAssignment'
+      format = 'htmx'
+      arguments {
+        workspaceName = ${props.workspaceName}
+        subjectValue = ${props.roleAssignmentFormData.subjectValue}
+        subjectType = ${props.roleAssignmentFormData.subjectType}
+      }
+    }
+  }
+
+  renderer = afx`
+    <tr>
+      <td
+        title={props.roleAssignmentFormData.subjectTypeValue == 'USER' ? 'TODO Translate user' : 'TODO Translate users'}
+      >
+        <Neos.Workspace.Ui:Component.Icon
+          icon={props.roleAssignmentFormData.subjectTypeValue == 'USER' ? 'user' : 'users'}
+        />
+      </td>
+      <td>{props.roleAssignmentFormData.subjectLabel}</td>
+      <td>{props.roleAssignmentFormData.roleLabel}</td>
+      <td>
+        <Neos.Workspace.Ui:Component.Button
+          isDanger
+          title="TODO title"
+          icon="trash-alt icon-white"
+          attributes.disabled={!props.roleAssignmentsEditable}
+          attributes.hx-get={private.confirmDeleteWorkspaceRoleAssignmentUri}
+          attributes.hx-target={'#' + private.confirmDeleteWorkspaceRoleAssignmentPopoverId}
+          attributes.hx-swap='outerHTML'
+          attributes.hx-on--after-request={'document.getElementById("' + private.confirmDeleteWorkspaceRoleAssignmentPopoverId + '").showPopover()'}
+        />
+      </td>
+    </tr>
+  `
+}

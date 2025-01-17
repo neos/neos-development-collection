@@ -51,8 +51,14 @@
       <trans-unit id="workspaces.editWorkspace" xml:space="preserve">
 				<source>Edit workspace "{0}"</source>
 			</trans-unit>
+      <trans-unit id="workspaces.editWorkspaceRoleAssignments" xml:space="preserve">
+				<source>Edit workspace permissions of "{0}"</source>
+			</trans-unit>
       <trans-unit id="workspaces.rebaseWorkspace" xml:space="preserve">
 				<source>Sync workspace "{0}" with its base workspace</source>
+			</trans-unit>
+       <trans-unit id="workspaces.createWorkspaceRoleAssignment" xml:space="preserve">
+				<source>Create Role Assignment for workspace "{0}"</source>
 			</trans-unit>
       <trans-unit id="workspaces.personalWorkspace" xml:space="preserve">
 				<source>Personal workspace</source>
@@ -95,6 +101,30 @@
 			</trans-unit>
       <trans-unit id="workspaces.workspaceDoesNotExist" xml:space="preserve">
 				<source>Workspace "{0}" does not exist</source>
+			</trans-unit>
+      <trans-unit id="workspaces.workspace.workspaceRoleAssignment.subjectType" xml:space="preserve">
+				<source>Type</source>
+			</trans-unit>
+			<trans-unit id="workspaces.workspace.workspaceRoleAssignment.subjectType.label.GROUP" xml:space="preserve">
+        <source>Group</source>
+      </trans-unit>
+      <trans-unit id="workspaces.workspace.workspaceRoleAssignment.subjectType.label.USER" xml:space="preserve">
+        <source>User</source>
+      </trans-unit>
+      <trans-unit id="workspaces.workspace.workspaceRoleAssignment.subject" xml:space="preserve">
+				<source>Name</source>
+			</trans-unit>
+      <trans-unit id="workspaces.workspace.workspaceRoleAssignment.role" xml:space="preserve">
+				<source>Role</source>
+			</trans-unit>
+			<trans-unit id="workspaces.workspace.workspaceRoleAssignment.role.label.MANAGER" xml:space="preserve">
+        <source>Manager</source>
+      </trans-unit>
+      <trans-unit id="workspaces.workspace.workspaceRoleAssignment.role.label.COLLABORATOR" xml:space="preserve">
+        <source>Collaborator</source>
+      </trans-unit>
+      <trans-unit id="workspaces.workspace.workspaceRoleAssignment.actions" xml:space="preserve">
+				<source>Actions</source>
 			</trans-unit>
       <group id="workspaces.changes.new" restype="x-gettext-plurals">
         <trans-unit id="workspaces.changes.new[0]" xml:space="preserve">

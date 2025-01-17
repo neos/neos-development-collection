@@ -10,6 +10,12 @@ Neos.Workspace.Ui.WorkspaceController.edit = Neos.Fusion:Component {
       baseWorkspaceName={props.editWorkspaceFormData.baseWorkspaceName.value}
       workspaceHasChanges={props.editWorkspaceFormData.workspaceHasChanges}
       baseWorkspaceOptions={props.editWorkspaceFormData.baseWorkspaceOptions}
+
+      roleAssignmentsVisible={props.editWorkspaceFormData.roleAssignmentsVisible}
+      roleAssignmentsEditable={props.editWorkspaceFormData.roleAssignmentsEditable}
+      roleAssignments={props.editWorkspaceFormData.roleAssignments}
+      roleAssignmentUserOptions={props.editWorkspaceFormData.roleAssignmentUserOptions}
+      roleAssignmentGroupOptions={props.editWorkspaceFormData.roleAssignmentGroupOptions}
     />
   `
 }

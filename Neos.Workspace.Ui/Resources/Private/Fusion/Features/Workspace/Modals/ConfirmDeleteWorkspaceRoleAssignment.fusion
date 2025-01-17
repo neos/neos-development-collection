@@ -1,0 +1,56 @@
+prototype(Neos.Workspace.Ui:Component.Modal.ConfirmDeleteWorkspaceRoleAssignment) < prototype(Neos.Fusion:Component) {
+  workspaceName=''
+  workspaceTitle=''
+  subjectValue=''
+  subjectType=''
+
+  # TODO: maybe just use system confirm dialog...
+
+  @private {
+    i18n = ${I18n.id('').source('Main').package('Neos.Workspace.Ui')}
+    popoverId = 'confirm-delete-workspace-role-assignment-popover'
+    editWorkspaceRoleAssignmentsPopoverId = 'workspace-edit-role-assignments-modal'
+    deleteWorkspaceRoleAssignmentUri = Neos.Fusion:ActionUri {
+      action = 'deleteWorkspaceRoleAssignment'
+      format = 'htmx'
+      arguments {
+        workspaceName = ${props.workspaceName}
+        subjectValue = ${props.subjectValue}
+        subjectType = ${props.subjectType}
+      }
+    }
+  }
+
+  renderer = afx`
+    <div popover id={private.popoverId} hx-indicator="#indicator">
+      <header>
+        <button
+          type="button"
+          class="neos-close neos-button"
+          popovertarget={private.popoverId}
+          popovertargetaction="close"
+        >
+          <Neos.Workspace.Ui:Component.Icon icon="times"/>
+        </button>
+        <div class="neos-header">
+          {private.i18n.id('workspaces.createWorkspaceRoleAssignment').arguments([props.workspaceTitle])}
+        </div>
+      </header>
+      <section>
+        <Neos.Workspace.Ui:Component.Button
+          label={"cancel"}
+          attributes.popovertarget={private.popoverId}
+          attributes.popovertargetaction="close"
+        />
+        <Neos.Workspace.Ui:Component.Button
+          isDanger
+          label={"delete"}
+          icon="trash-alt icon-white"
+          attributes.hx-target={'#popover-container'}
+          attributes.hx-swap='innerHTML'
+          attributes.hx-get={private.deleteWorkspaceRoleAssignmentUri}
+        />
+      </section>
+    </div>
+  `
+}

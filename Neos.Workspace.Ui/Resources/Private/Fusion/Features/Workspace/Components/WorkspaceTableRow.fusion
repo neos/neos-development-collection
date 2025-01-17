@@ -52,6 +52,13 @@ prototype(Neos.Workspace.Ui:Component.WorkspaceTableRow) < prototype(Neos.Fusion
         workspaceName = ${props.workspaceListItem.name}
       }
     }
+    editWorkspaceRoleAssignmentsUri = Neos.Fusion:ActionUri {
+      action = 'editWorkspaceRoleAssignments'
+      format = 'htmx'
+      arguments {
+        workspaceName = ${props.workspaceListItem.name}
+      }
+    }
     deleteWorkspaceUri = Neos.Fusion:ActionUri {
       action = 'delete'
       format = 'htmx'
@@ -78,6 +85,7 @@ prototype(Neos.Workspace.Ui:Component.WorkspaceTableRow) < prototype(Neos.Fusion
     rebaseWorkspacePopoverId = 'workspace-rebase-modal'
     deleteWorkspacePopoverId = 'workspace-delete-modal'
     editWorkspacePopoverId = 'workspace-edit-modal'
+    editWorkspaceRoleAssignmentsPopoverId = 'workspace-edit-role-assignments-modal'
   }
 
   renderer = afx`
@@ -138,6 +146,15 @@ prototype(Neos.Workspace.Ui:Component.WorkspaceTableRow) < prototype(Neos.Fusion
           attributes.hx-target='#popover-container'
           attributes.hx-swap='innerHTML'
           attributes.hx-on--after-request={'document.getElementById("' + private.editWorkspacePopoverId + '").showPopover()'}
+        />
+        <Neos.Workspace.Ui:Component.Button
+          title={private.i18n.id('workspaces.editWorkspaceRoleAssignments').arguments([props.workspaceListItem.title])}
+          icon="user-lock"
+          attributes.hx-get={private.editWorkspaceRoleAssignmentsUri}
+          attributes.hx-target='#popover-container'
+          attributes.hx-swap='innerHTML'
+          attributes.hx-on--after-request={'document.getElementById("' + private.editWorkspaceRoleAssignmentsPopoverId + '").showPopover()'}
+          attributes.disabled={props.workspaceListItem.permissions.manage == false}
         />
         <Neos.Workspace.Ui:Component.Button
           isDanger
