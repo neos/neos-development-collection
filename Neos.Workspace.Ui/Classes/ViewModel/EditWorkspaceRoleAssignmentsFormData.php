@@ -35,7 +35,8 @@ final readonly class EditWorkspaceRoleAssignmentsFormData
         public WorkspaceName $workspaceName,
         public WorkspaceTitle $workspaceTitle,
         public bool $roleAssignmentsEditable,
-        public array $roleAssignments,
+        public array $userRoleAssignments,
+        public array $groupRoleAssignments,
     ) {
     }
 }

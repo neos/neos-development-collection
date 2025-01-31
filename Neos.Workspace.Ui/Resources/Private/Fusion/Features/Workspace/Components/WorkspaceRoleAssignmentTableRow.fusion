@@ -25,13 +25,6 @@ prototype(Neos.Workspace.Ui:Component.WorkspaceRoleAssignmentTableRow) < prototy
 
   renderer = afx`
     <tr>
-      <td
-        title={props.roleAssignmentFormData.subjectTypeValue == 'USER' ? 'TODO Translate user' : 'TODO Translate users'}
-      >
-        <Neos.Workspace.Ui:Component.Icon
-          icon={props.roleAssignmentFormData.subjectTypeValue == 'USER' ? 'user' : 'users'}
-        />
-      </td>
       <td>{props.roleAssignmentFormData.subjectLabel}</td>
       <td>{props.roleAssignmentFormData.roleLabel}</td>
       <td>

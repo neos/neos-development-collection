@@ -114,9 +114,24 @@
       <trans-unit id="workspaces.workspace.workspaceRoleAssignment.subject" xml:space="preserve">
 				<source>Name</source>
 			</trans-unit>
+      <trans-unit id="workspaces.workspace.workspaceGroupRoleAssignment.subject" xml:space="preserve">
+				<source>Group</source>
+			</trans-unit>
+      <trans-unit id="workspaces.workspace.workspaceGroupRoleAssignment.default" xml:space="preserve">
+				<source>Select user group</source>
+			</trans-unit>
+      <trans-unit id="workspaces.workspace.workspaceUserRoleAssignment.subject" xml:space="preserve">
+				<source>User name</source>
+			</trans-unit>
+      <trans-unit id="workspaces.workspace.workspaceUserRoleAssignment.default" xml:space="preserve">
+				<source>Select user</source>
+			</trans-unit>
       <trans-unit id="workspaces.workspace.workspaceRoleAssignment.role" xml:space="preserve">
 				<source>Role</source>
 			</trans-unit>
+      <trans-unit id="workspaces.workspace.workspaceRoleAssignment.role.label.VIEWER" xml:space="preserve">
+        <source>Viewer</source>
+      </trans-unit>
 			<trans-unit id="workspaces.workspace.workspaceRoleAssignment.role.label.MANAGER" xml:space="preserve">
         <source>Manager</source>
       </trans-unit>

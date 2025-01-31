@@ -1,0 +1,101 @@
+prototype(Neos.Workspace.Ui:Component.Modal.CreateUserWorkspaceRoleAssignment) < prototype(Neos.Fusion:Component) {
+  workspaceName=''
+  workspaceTitle=''
+
+  options=${[]}
+  roleOptions=${[]}
+
+  @private {
+    i18n = ${I18n.id('').source('Main').package('Neos.Workspace.Ui')}
+    popoverId = 'create-workspace-user-role-assignment-popover'
+    userAssignmentPopoverId = 'workspace-edit-role-assignments-modal'
+
+    // Default SubjectType is USER.
+    defaultSubjectType = 'USER'
+  }
+
+  prototype(Neos.Fusion.Form:LabelRenderer) {
+    translationPackage = 'Neos.Workspace.Ui'
+    translationSource = 'Main'
+  }
+
+  prototype(Neos.Fusion.Form:Neos.BackendModule.FieldContainer) {
+    translation.label {
+      package = 'Neos.Workspace.Ui'
+      source = 'Main'
+    }
+  }
+  renderer = afx`
+    <div popover id={private.popoverId}>
+      <header>
+        <button
+          type="button"
+          class="neos-close neos-button"
+          popovertarget={private.popoverId}
+          popovertargetaction="close"
+        >
+          <Neos.Workspace.Ui:Component.Icon icon="times"/>
+        </button>
+        <div class="neos-header">
+          {private.i18n.id('workspaces.createWorkspaceRoleAssignment').arguments([props.workspaceTitle])}
+        </div>
+      </header>
+      <section>
+        <Neos.Fusion.Form:Form
+          form.target.action="addWorkspaceRoleAssignment"
+          form.target.format="htmx"
+          attributes.hx-post={form.getTarget()}
+          attributes.hx-disabled-elt="find button"
+          attributes.hx-on--after-request={'document.getElementById("' + private.popoverId + '").hidePopover()'}
+          attributes.hx-select={"#"+ private.userAssignmentPopoverId}
+          attributes.hx-target={"#"+ private.userAssignmentPopoverId}
+          attributes.hx-swap="innerHTML"
+          attributes.class="neos-inline"
+        >
+          <fieldset>
+            <Neos.Fusion.Form:Hidden
+              field.name="workspaceName"
+              field.value={props.workspaceName}
+            />
+            <Neos.Fusion.Form:Hidden
+              field.name="subjectType"
+              field.value='USER'
+            />
+            <Neos.Fusion.Form:Neos.BackendModule.FieldContainer
+              field.name="subject"
+              field.value=""
+              label="workspaces.workspace.workspaceUserRoleAssignment.subject"
+              class="neos-control-group"
+            >
+              <Neos.Fusion.Form:Select>
+                <option value="">{private.i18n.id('workspaces.workspace.workspaceUserRoleAssignment.default')}</option>
+                <Neos.Fusion:Loop items={props.options} itemName="userName" itemKey="userId">
+                  <Neos.Fusion.Form:Select.Option
+                    option.value={userId}
+                  >
+                    {userName}
+                  </Neos.Fusion.Form:Select.Option>
+                </Neos.Fusion:Loop>
+              </Neos.Fusion.Form:Select>
+            </Neos.Fusion.Form:Neos.BackendModule.FieldContainer>
+            <label>{private.i18n.id('workspaces.workspace.workspaceRoleAssignment.role')}</label>
+            <Neos.Fusion:Loop items={props.roleOptions} itemName="roleName" itemKey="roleIdentifier">
+              <label><Neos.Fusion.Form:Radio
+                field.name="role"
+                field.value={roleIdentifier}
+              />
+                {roleName}
+              </label>
+            </Neos.Fusion:Loop>
+
+          </fieldset>
+          <footer>
+            <Neos.Fusion.Form:Button attributes.class="neos-button neos-button-primary">
+              Add new permissions
+            </Neos.Fusion.Form:Button>
+          </footer>
+        </Neos.Fusion.Form:Form>
+      </section>
+    </div>
+  `
+}

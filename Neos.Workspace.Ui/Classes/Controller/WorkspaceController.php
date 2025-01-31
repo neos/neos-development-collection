@@ -486,24 +486,38 @@ class WorkspaceController extends AbstractModuleController
         $roleAssignmentsVisible = true;
         $roleAssignmentsEditable = true;
 
-        /** @var array<RoleAssignmentListItem> $workspaceRoleAssignments */
-        $workspaceRoleAssignments = [];
+        /** @var array<RoleAssignmentListItem> $workspaceUserRoleAssignments */
+        $workspaceUserRoleAssignments = [];
+        /** @var array<RoleAssignmentListItem> $workspaceGroupRoleAssignments */
+        $workspaceGroupRoleAssignments = [];
 
         foreach ($this->workspaceService->getWorkspaceRoleAssignments($contentRepositoryId, $workspaceName) as $workspaceRoleAssignment) {
             $subjectLabel = match ($workspaceRoleAssignment->subject->type) {
                 WorkspaceRoleSubjectType::USER => $this->userService->findUserById(UserId::fromString($workspaceRoleAssignment->subject->value))?->getLabel() ?? $workspaceRoleAssignment->subject->value,
-                WorkspaceRoleSubjectType::GROUP => $workspaceRoleAssignment->subject->value,
+                WorkspaceRoleSubjectType::GROUP => $this->policyService->getRole($workspaceRoleAssignment->subject->value)->getLabel() ?? $workspaceRoleAssignment->subject->value,
             };
 
             $roleLabel = $workspaceRoleAssignment->role->value;
-
-            $workspaceRoleAssignments[] = new RoleAssignmentListItem(
-                subjectValue: $workspaceRoleAssignment->subject->value,
-                subjectLabel: $subjectLabel,
-                subjectTypeValue: $workspaceRoleAssignment->subject->type->value,
-                roleLabel: $roleLabel,
-                subjectType: $workspaceRoleAssignment->subject->type->value,
-            );
+            switch ($workspaceRoleAssignment->subject->type) {
+                case WorkspaceRoleSubjectType::USER:
+                    $workspaceUserRoleAssignments[] = new RoleAssignmentListItem(
+                        subjectValue: $workspaceRoleAssignment->subject->value,
+                        subjectLabel: $subjectLabel,
+                        subjectTypeValue: $workspaceRoleAssignment->subject->type->value,
+                        roleLabel: $roleLabel,
+                        subjectType: $workspaceRoleAssignment->subject->type->value,
+                    );
+                    break;
+                case WorkspaceRoleSubjectType::GROUP:
+                    $workspaceGroupRoleAssignments[] = new RoleAssignmentListItem(
+                        subjectValue: $workspaceRoleAssignment->subject->value,
+                        subjectLabel: $subjectLabel,
+                        subjectTypeValue: $workspaceRoleAssignment->subject->type->value,
+                        roleLabel: $roleLabel,
+                        subjectType: $workspaceRoleAssignment->subject->type->value,
+                    );
+                    break;
+            }
         }
 
 
@@ -512,13 +526,14 @@ class WorkspaceController extends AbstractModuleController
             workspaceName: $workspaceName,
             workspaceTitle: $workspaceMetadata->title,
             roleAssignmentsEditable: $roleAssignmentsEditable,
-            roleAssignments: $workspaceRoleAssignments,
+            userRoleAssignments: $workspaceUserRoleAssignments,
+            groupRoleAssignments: $workspaceGroupRoleAssignments,
         );
 
         $this->view->assign('editWorkspaceRoleAssignmentsFormData', $editWorkspaceRoleAssignmentsFormData);
     }
 
-    public function createWorkspaceRoleAssignmentAction(WorkspaceName $workspaceName): void
+    public function createUserWorkspaceRoleAssignmentAction(WorkspaceName $workspaceName): void
     {
         $contentRepositoryId = SiteDetectionResult::fromRequest($this->request->getHttpRequest())->contentRepositoryId;
         $workspaceMetadata = $this->workspaceService->getWorkspaceMetadata($contentRepositoryId, $workspaceName);
@@ -526,19 +541,6 @@ class WorkspaceController extends AbstractModuleController
         $userOptions = [];
         foreach ($this->userService->getUsers()->toArray() as $user) {
             $userOptions[$user->getId()->value] = $user->getLabel();
-        }
-
-        $rolesInSystem = $this->policyService->getRoles();
-        $groupOptions = [];
-        foreach ($rolesInSystem as $role) {
-            $groupOptions[$role->getIdentifier()] = $role->getLabel();
-        }
-
-        $workspaceRoleSubjectTypes = WorkspaceRoleSubjectType::cases();
-        /** @var array<string, string> $subjectTypeOptions where key is the Id and value is the translated label of the SubjectType */
-        $subjectTypeOptions = [];
-        foreach ($workspaceRoleSubjectTypes as $workspaceRoleSubjectType) {
-            $subjectTypeOptions[$workspaceRoleSubjectType->value] = $this->getModuleLabel("workspaces.workspace.workspaceRoleAssignment.subjectType.label.$workspaceRoleSubjectType->value");
         }
 
         $workspaceRoles = WorkspaceRole::cases();
@@ -551,25 +553,47 @@ class WorkspaceController extends AbstractModuleController
         $this->view->assign('createWorkspaceRoleAssignmentFormData', new CreateWorkspaceRoleAssignmentFormData(
             workspaceName: $workspaceName,
             workspaceTitle: $workspaceMetadata->title,
-            userOptions: $userOptions,
-            groupOptions: $groupOptions,
-            subjectTypeOptions: $subjectTypeOptions,
+            options: $userOptions,
+            roleOptions: $roleOptions,
+        ));
+    }
+    public function createGroupWorkspaceRoleAssignmentAction(WorkspaceName $workspaceName): void
+    {
+        $contentRepositoryId = SiteDetectionResult::fromRequest($this->request->getHttpRequest())->contentRepositoryId;
+        $workspaceMetadata = $this->workspaceService->getWorkspaceMetadata($contentRepositoryId, $workspaceName);
+
+        $rolesInSystem = $this->policyService->getRoles();
+        $groupOptions = [];
+        foreach ($rolesInSystem as $role) {
+            $groupOptions[$role->getIdentifier()] = $role->getLabel();
+        }
+
+        $workspaceRoles = WorkspaceRole::cases();
+        /** @var array<string, string> $roleOptions where key is the Id and value is the translated label of the Role */
+        $roleOptions = [];
+        foreach ($workspaceRoles as $workspaceRole) {
+            $roleOptions[$workspaceRole->value] = $this->getModuleLabel("workspaces.workspace.workspaceRoleAssignment.role.label.$workspaceRole->value");
+        }
+        $this->view->assign('createWorkspaceRoleAssignmentFormData', new CreateWorkspaceRoleAssignmentFormData(
+            workspaceName: $workspaceName,
+            workspaceTitle: $workspaceMetadata->title,
+            options: $groupOptions,
             roleOptions: $roleOptions,
         ));
     }
 
     public function addWorkspaceRoleAssignmentAction(
         WorkspaceName $workspaceName,
-        string $subjectValue,
-        string $subjectTypeValue,
-        string $roleValue,
+        string $subject,
+        string $subjectType,
+        string $role,
     ): void
     {
         // TODO: Validate if user can add role assignment to workspace
 
-        $subjectType = WorkspaceRoleSubjectType::from($subjectTypeValue);
-        $subject = WorkspaceRoleSubject::create($subjectType, $subjectValue);
-        $role = WorkspaceRole::from($roleValue);
+        $subjectType = WorkspaceRoleSubjectType::from($subjectType);
+        $subject = WorkspaceRoleSubject::create($subjectType, $subject);
+        $role = WorkspaceRole::from($role);
 
         if ($subjectType === WorkspaceRoleSubjectType::USER) {
             $this->addUserRoleAssignment($workspaceName, $subject, $role);
@@ -583,6 +607,8 @@ class WorkspaceController extends AbstractModuleController
             );
             $this->throwStatus(400, 'Invalid subject type');
         }
+        //WorkspaceName $workspaceName):
+        $this->forward('editWorkspaceRoleAssignments', null, null, ['workspaceName' => $workspaceName->value]);
     }
 
     public function confirmDeleteWorkspaceRoleAssignmentAction(WorkspaceName $workspaceName, string $subjectValue, string $subjectType): void

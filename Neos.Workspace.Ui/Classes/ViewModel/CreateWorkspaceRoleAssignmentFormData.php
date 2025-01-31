@@ -31,22 +31,7 @@ final readonly class CreateWorkspaceRoleAssignmentFormData
     public function __construct(
         public WorkspaceName $workspaceName,
         public WorkspaceTitle $workspaceTitle,
-        /**
-         * Options for the workspaceManager selector where the key is the user identifier and the value is the user name.
-         * @var array<string, string>
-         */
-        public array $userOptions,
-        /**
-         * Options for the workspaceManager selector where the value is the group.
-         * @var array<string>
-         */
-        public array $groupOptions,
-        /**
-         * TODO: translate subject type labels?
-         * Options for the workspaceManager selector where the key is the subject type and the value is the subject label.
-         * @var array<string>
-         */
-        public array $subjectTypeOptions,
+        public array $options,
         /**
          * TODO: translate role labels?
          * Options for the workspaceManager selector where the key is the role identifier and the value is the role label.

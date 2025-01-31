@@ -8,7 +8,9 @@ Neos.Workspace.Ui.WorkspaceController.editWorkspaceRoleAssignments = Neos.Fusion
       workspaceTitle={props.editWorkspaceRoleAssignmentsFormData.workspaceTitle.value}
       roleAssignmentsEditable={props.editWorkspaceRoleAssignmentsFormData.roleAssignmentsEditable}
 
-      roleAssignments={props.editWorkspaceRoleAssignmentsFormData.roleAssignments}
+      userRoleAssignments={props.editWorkspaceRoleAssignmentsFormData.userRoleAssignments}
+
+      groupRoleAssignments={props.editWorkspaceRoleAssignmentsFormData.groupRoleAssignments}
 
       userOptions={props.editWorkspaceRoleAssignmentsFormData.roleAssignmentUserOptions}
       groupOptions={props.editWorkspaceRoleAssignmentsFormData.roleAssignmentGroupOptions}
