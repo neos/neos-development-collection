@@ -184,7 +184,7 @@ class FrontendNodeRoutePartHandler extends DynamicRoutePart implements FrontendN
         $contentContext = $this->buildContextFromRequestPath($requestPath);
         $requestPathWithoutContext = $this->removeContextFromPath($requestPath);
 
-        $workspace = $contentContext->getWorkspace();
+        $workspace = $contentContext->getWorkspace(false);
         if ($workspace === null) {
             throw new Exception\NoWorkspaceException(sprintf('No workspace found for request path "%s"', $requestPath), 1346949318);
         }
