@@ -9,6 +9,24 @@ use Neos\ContentRepository\Core\EventStore\Events;
 use Neos\ContentRepository\Core\EventStore\InitiatingEventMetadata;
 use Neos\ContentRepository\Core\Feature\Common\PublishableToWorkspaceInterface;
 use Neos\ContentRepository\Core\Feature\Common\RebasableToOtherWorkspaceInterface;
+use Neos\ContentRepository\Core\Feature\DimensionSpaceAdjustment\Command\AddDimensionShineThrough;
+use Neos\ContentRepository\Core\Feature\DimensionSpaceAdjustment\Command\MoveDimensionSpacePoint;
+use Neos\ContentRepository\Core\Feature\NodeCreation\Command\CreateNodeAggregateWithNodeAndSerializedProperties;
+use Neos\ContentRepository\Core\Feature\NodeDisabling\Command\DisableNodeAggregate;
+use Neos\ContentRepository\Core\Feature\NodeDisabling\Command\EnableNodeAggregate;
+use Neos\ContentRepository\Core\Feature\NodeDuplication\Command\CopyNodesRecursively;
+use Neos\ContentRepository\Core\Feature\NodeModification\Command\SetSerializedNodeProperties;
+use Neos\ContentRepository\Core\Feature\NodeMove\Command\MoveNodeAggregate;
+use Neos\ContentRepository\Core\Feature\NodeReferencing\Command\SetSerializedNodeReferences;
+use Neos\ContentRepository\Core\Feature\NodeRemoval\Command\RemoveNodeAggregate;
+use Neos\ContentRepository\Core\Feature\NodeRenaming\Command\ChangeNodeAggregateName;
+use Neos\ContentRepository\Core\Feature\NodeTypeChange\Command\ChangeNodeAggregateType;
+use Neos\ContentRepository\Core\Feature\NodeVariation\Command\CreateNodeVariant;
+use Neos\ContentRepository\Core\Feature\RootNodeCreation\Command\CreateRootNodeAggregateWithNode;
+use Neos\ContentRepository\Core\Feature\RootNodeCreation\Command\UpdateRootNodeAggregateDimensions;
+use Neos\ContentRepository\Core\Feature\SubtreeTagging\Command\TagSubtree;
+use Neos\ContentRepository\Core\Feature\SubtreeTagging\Command\UntagSubtree;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\EventStore\Model\Event;
 use Neos\EventStore\Model\Event\EventId;
 use Neos\EventStore\Model\Event\EventMetadata;
@@ -27,6 +45,33 @@ final readonly class RebaseableCommand
         public SequenceNumber $originalSequenceNumber
     ) {
     }
+
+    public function getClosestAffectedNodeAggregateId(): NodeAggregateId|null
+    {
+        return match ($this->originalCommand::class) {
+            CreateRootNodeAggregateWithNode::class => null,
+            CreateNodeAggregateWithNodeAndSerializedProperties::class => $this->originalCommand->parentNodeAggregateId,
+            DisableNodeAggregate::class,
+            EnableNodeAggregate::class,
+            SetSerializedNodeProperties::class,
+            MoveNodeAggregate::class, // todo moving behaves wrong and cant be published
+            RemoveNodeAggregate::class,
+            ChangeNodeAggregateName::class,
+            ChangeNodeAggregateType::class,
+            CreateNodeVariant::class,
+            TagSubtree::class,
+            UntagSubtree::class,
+            UpdateRootNodeAggregateDimensions::class,
+            => $this->originalCommand->nodeAggregateId,
+            CopyNodesRecursively::class => null,
+            SetSerializedNodeReferences::class => $this->originalCommand->sourceNodeAggregateId,
+            // for non node-aggregate-changes we return null, so they are kept as remainder:
+            AddDimensionShineThrough::class,
+            MoveDimensionSpacePoint::class => null,
+            default => throw new \RuntimeException(sprintf('Command %s does not have matching strategy. Partial workspace rebase not possible.', $this->originalCommand::class), 1645393655)
+        };
+    }
+
 
     public static function extractFromEventEnvelope(EventEnvelope $eventEnvelope): self
     {

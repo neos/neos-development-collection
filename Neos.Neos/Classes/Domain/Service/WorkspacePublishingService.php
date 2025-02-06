@@ -113,25 +113,23 @@ final class WorkspacePublishingService
         if ($crWorkspace->isRootWorkspace()) {
             throw new \InvalidArgumentException(sprintf('Failed to publish workspace "%s" because it has no base workspace', $workspaceName->value), 1717517240);
         }
-        $ancestorNodeTypeName = NodeTypeNameFactory::forSite();
         $this->requireNodeToBeOfType(
             $contentRepository,
             $workspaceName,
             $siteId,
-            $ancestorNodeTypeName
+            NodeTypeNameFactory::forSite()
         );
 
-        $nodeIdsToPublish = $this->resolveNodeIdsToPublishOrDiscard(
-            $contentRepository,
-            $workspaceName,
-            $siteId,
-            $ancestorNodeTypeName
+        $contentRepository->handle(
+            PublishIndividualNodesFromWorkspace::create(
+                $workspaceName,
+                $siteId,
+                NodeTypeNameFactory::forSite()
+            )
         );
-
-        $this->publishNodes($contentRepository, $workspaceName, $nodeIdsToPublish);
 
         return new PublishingResult(
-            count($nodeIdsToPublish),
+            42, // todo
             $crWorkspace->baseWorkspaceName,
         );
     }
@@ -146,25 +144,23 @@ final class WorkspacePublishingService
         if ($crWorkspace->isRootWorkspace()) {
             throw new \InvalidArgumentException(sprintf('Failed to publish workspace "%s" because it has no base workspace', $workspaceName->value), 1717517467);
         }
-        $ancestorNodeTypeName = NodeTypeNameFactory::forDocument();
         $this->requireNodeToBeOfType(
             $contentRepository,
             $workspaceName,
             $documentId,
-            $ancestorNodeTypeName
+            NodeTypeNameFactory::forDocument()
         );
 
-        $nodeIdsToPublish = $this->resolveNodeIdsToPublishOrDiscard(
-            $contentRepository,
-            $workspaceName,
-            $documentId,
-            $ancestorNodeTypeName
+        $contentRepository->handle(
+            PublishIndividualNodesFromWorkspace::create(
+                $workspaceName,
+                $documentId,
+                NodeTypeNameFactory::forDocument()
+            )
         );
-
-        $this->publishNodes($contentRepository, $workspaceName, $nodeIdsToPublish);
 
         return new PublishingResult(
-            count($nodeIdsToPublish),
+            42, // todo
             $crWorkspace->baseWorkspaceName,
         );
     }
@@ -269,22 +265,6 @@ final class WorkspacePublishingService
             DiscardIndividualNodesFromWorkspace::create(
                 $workspaceName,
                 $nodeIdsToDiscard
-            )
-        );
-    }
-
-    /**
-     * @throws WorkspaceRebaseFailed|PartialWorkspaceRebaseFailed|WorkspaceCommandSkipped
-     */
-    private function publishNodes(
-        ContentRepository $contentRepository,
-        WorkspaceName $workspaceName,
-        NodeAggregateIds $nodeIdsToPublish
-    ): void {
-        $contentRepository->handle(
-            PublishIndividualNodesFromWorkspace::create(
-                $workspaceName,
-                $nodeIdsToPublish
             )
         );
     }

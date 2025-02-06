@@ -177,6 +177,7 @@ final class ContentRepositoryFactory
                 $commandSimulatorFactory,
                 $this->eventStore,
                 $this->eventNormalizer,
+                $this->nodeTypeManager
             )
         );
         $authProvider = $this->authProviderFactory->build($this->contentRepositoryId, $contentGraphReadModel);

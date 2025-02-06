@@ -54,11 +54,17 @@ use Neos\ContentRepository\Core\Feature\WorkspaceRebase\Dto\RebaseErrorHandlingS
 use Neos\ContentRepository\Core\Feature\WorkspaceRebase\Event\WorkspaceWasRebased;
 use Neos\ContentRepository\Core\Feature\WorkspaceRebase\Exception\PartialWorkspaceRebaseFailed;
 use Neos\ContentRepository\Core\Feature\WorkspaceRebase\Exception\WorkspaceRebaseFailed;
+use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
+use Neos\ContentRepository\Core\NodeType\NodeTypeNames;
+use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphInterface;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\NodeType\ExpandedNodeTypeCriteria;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\NodeType\NodeTypeCriteria;
 use Neos\ContentRepository\Core\SharedModel\Exception\ContentStreamAlreadyExists;
 use Neos\ContentRepository\Core\SharedModel\Exception\ContentStreamDoesNotExistYet;
 use Neos\ContentRepository\Core\SharedModel\Exception\ContentStreamIsClosed;
 use Neos\ContentRepository\Core\SharedModel\Exception\WorkspaceDoesNotExist;
 use Neos\ContentRepository\Core\SharedModel\Exception\WorkspaceHasNoBaseWorkspaceName;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\Workspace;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
@@ -81,6 +87,7 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
         private CommandSimulatorFactory $commandSimulatorFactory,
         private EventStoreInterface $eventStore,
         private EventNormalizer $eventNormalizer,
+        private NodeTypeManager $nodeTypeManager
     ) {
     }
 
@@ -458,23 +465,33 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
             )
         );
 
-        [$matchingCommands, $remainingCommands] = $rebaseableCommands->separateMatchingAndRemainingCommands($command->nodesToPublish);
-
-        if ($matchingCommands->isEmpty()) {
-            throw WorkspaceCommandSkipped::becauseFilterDidNotMatch($command->workspaceName, $command->nodesToPublish);
-        }
-
         yield $this->closeContentStream(
             $workspace->currentContentStreamId,
             $workspaceContentStreamVersion
         );
 
         $commandSimulator = $this->commandSimulatorFactory->createSimulatorForWorkspace($baseWorkspace->workspaceName);
+        $contentGraph = $commandHandlingDependencies->getContentGraph($baseWorkspace->workspaceName);
+        $expandedNodeTypeCriteria = ExpandedNodeTypeCriteria::create(NodeTypeCriteria::createWithAllowedNodeTypeNames(NodeTypeNames::with($command->nodeTypeScope)), $this->nodeTypeManager);
 
         $highestSequenceNumberForMatching = $commandSimulator->run(
-            static function ($handle) use ($commandSimulator, $matchingCommands, $remainingCommands): SequenceNumber {
-                foreach ($matchingCommands as $matchingCommand) {
-                    $handle($matchingCommand);
+            function ($handle) use ($commandSimulator, $rebaseableCommands, $contentGraph, $command, $expandedNodeTypeCriteria): SequenceNumber {
+
+
+                $remainingCommands = [];
+                foreach ($rebaseableCommands as $rebaseableCommand) {
+                    $affectedNodeId = $rebaseableCommand->getClosestAffectedNodeAggregateId();
+
+                    // $subgraph = $contentGraph->getSubgraph(DimensionSpacePoint::fromArray(['language' => 'en_US']), VisibilityConstraints::withoutRestrictions()); // todo
+                    // $closestNode = $affectedNodeId ? $subgraph->findClosestNode($affectedNodeId, FindClosestNodeFilter::create(NodeTypeCriteria::createWithAllowedNodeTypeNames(NodeTypeNames::with($command->nodeTypeScope)))) : null;
+
+                    $closestNodeAggregateId = $affectedNodeId ? $this->findClosestAncestorNodeAggregate($contentGraph, $affectedNodeId, $expandedNodeTypeCriteria) : null;
+
+                    if ($closestNodeAggregateId !== null && $closestNodeAggregateId->equals($command->startingNodeAggregateId)) {
+                        $handle($rebaseableCommand);
+                        continue;
+                    }
+                    $remainingCommands[] = $rebaseableCommand;
                 }
                 $highestSequenceNumberForMatching = $commandSimulator->currentSequenceNumber();
                 foreach ($remainingCommands as $remainingCommand) {
@@ -535,7 +552,7 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
                         $baseWorkspace->workspaceName,
                         $command->contentStreamIdForRemainingPart,
                         $workspace->currentContentStreamId,
-                        partial: !$remainingCommands->isEmpty()
+                        partial: true // todo
                     )
                 ]),
                 ExpectedVersion::ANY()
@@ -549,6 +566,23 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
         );
 
         yield $this->removeContentStreamWithoutConstraintChecks($workspace->currentContentStreamId);
+    }
+
+
+    public function findClosestAncestorNodeAggregate(ContentGraphInterface $contentGraph, NodeAggregateId $entryNodeAggregateId, ExpandedNodeTypeCriteria $nodeTypeCriteria): NodeAggregateId|null
+    {
+        $stack = [$entryNodeAggregateId];
+
+        while ($stack !== []) {
+            $currentNodeAggregateId = array_shift($stack);
+            foreach ($contentGraph->findParentNodeAggregates($currentNodeAggregateId) as $nodeAggregate) {
+                if ($nodeTypeCriteria->matches($nodeAggregate->nodeTypeName)) {
+                    return $nodeAggregate->nodeAggregateId;
+                }
+                $stack[] = $nodeAggregate->nodeAggregateId;
+            }
+        }
+        return null;
     }
 
     /**
