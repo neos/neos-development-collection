@@ -29,6 +29,8 @@ use Neos\ContentRepository\Core\Feature\ContentStreamClosing\Event\ContentStream
 use Neos\ContentRepository\Core\Feature\ContentStreamClosing\Event\ContentStreamWasReopened;
 use Neos\ContentRepository\Core\Feature\ContentStreamCreation\Event\ContentStreamWasCreated;
 use Neos\ContentRepository\Core\Feature\ContentStreamRemoval\Event\ContentStreamWasRemoved;
+use Neos\ContentRepository\Core\Feature\NodeCreation\Command\CreateNodeAggregateWithNodeAndSerializedProperties;
+use Neos\ContentRepository\Core\Feature\NodeModification\Command\SetNodeProperties;
 use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Command\CreateRootWorkspace;
 use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Command\CreateWorkspace;
 use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Event\RootWorkspaceWasCreated;
@@ -478,7 +480,13 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
                 }
                 $highestSequenceNumberForMatching = $commandSimulator->currentSequenceNumber();
                 foreach ($remainingCommands as $remainingCommand) {
-                    $handle($remainingCommand);
+                    try {
+                        $handle($remainingCommand, collectConflicts: in_array(
+                            $remainingCommand->originalCommand::class,
+                            [CreateNodeAggregateWithNodeAndSerializedProperties::class, SetNodeProperties::class]
+                        ));
+                    } catch (\Exception) {
+                    }
                 }
                 return $highestSequenceNumberForMatching;
             }

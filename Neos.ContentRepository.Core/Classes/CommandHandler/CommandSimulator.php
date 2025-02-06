@@ -77,7 +77,7 @@ final class CommandSimulator
      * We will automatically copy given commands to the workspace this simulation
      * is running in to ensure consistency in the simulations constraint checks.
      */
-    private function handle(RebaseableCommand $rebaseableCommand): void
+    private function handle(RebaseableCommand $rebaseableCommand, bool $collectConflicts = true): void
     {
         // FIXME: Check if workspace already matches and skip this, e.g. $commandInWorkspace = $command->getWorkspaceName()->equals($this->workspaceNameToSimulateIn) ? $command : $command->createCopyForWorkspace($this->workspaceNameToSimulateIn);
         // when https://github.com/neos/neos-development-collection/pull/5298 is merged
@@ -86,6 +86,9 @@ final class CommandSimulator
         try {
             $eventsToPublish = $this->commandBus->handle($commandInWorkspace);
         } catch (\Exception $exception) {
+            if ($collectConflicts === false) {
+                throw $exception;
+            }
             $originalEvent = $this->eventNormalizer->denormalize($rebaseableCommand->originalEvent);
 
             $this->conflictingEvents = $this->conflictingEvents->withAppended(
