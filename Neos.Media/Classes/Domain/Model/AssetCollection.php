@@ -45,6 +45,14 @@ class AssetCollection
     protected $tags;
 
     /**
+     * @var AssetCollection
+     * @ORM\ManyToOne(inversedBy="children", cascade={"persist"})
+     * @ORM\JoinColumn(onDelete="SET NULL")
+     * @Flow\Lazy
+     */
+    protected $parent;
+
+    /**
      * @param string $title
      */
     public function __construct($title)
@@ -176,5 +184,44 @@ class AssetCollection
             return true;
         }
         return false;
+    }
+
+    public function getParent(): ?self
+    {
+        return $this->parent;
+    }
+
+    /**
+     * Throws an error if a circular dependency has been detected
+     * @throws \InvalidArgumentException
+     */
+    private function validateCircularHierarchy(): void
+    {
+        $parent = $this->parent;
+        while ($parent !== null) {
+            $parent = $parent->getParent();
+            if ($parent && $parent === $this->parent) {
+                throw new \InvalidArgumentException(sprintf(
+                    'Circular reference detected, parent AssetCollection "%s" appeared twice in the hierarchy',
+                    $parent->getTitle()
+                ), 1680328041);
+            }
+        }
+    }
+
+    public function setParent(self $parent): void
+    {
+        $this->parent = $parent;
+        $this->validateCircularHierarchy();
+    }
+
+    public function unsetParent(): void
+    {
+        $this->parent = null;
+    }
+
+    public function hasParent(): bool
+    {
+        return $this->parent !== null;
     }
 }
