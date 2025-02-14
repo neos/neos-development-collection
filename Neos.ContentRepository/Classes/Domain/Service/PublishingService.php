@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\ContentRepository\Domain\Service;
 
 /*
@@ -124,11 +125,11 @@ class PublishingService implements PublishingServiceInterface
     }
 
     /**
-     * Publishes the given nodes to the specified target workspace. If no workspace is specified, the source workspace's
+     * Publishes the given nodes to the specified target workspace. If no workspace is specified, the source workspaces
      * base workspace is assumed.
      *
      * @param array<\Neos\ContentRepository\Domain\Model\NodeInterface> $nodes The nodes to publish
-     * @param Workspace $targetWorkspace If not set the base workspace is assumed to be the publishing target
+     * @param Workspace|null $targetWorkspace If not set the base workspace is assumed to be the publishing target
      * @return void
      * @api
      */
