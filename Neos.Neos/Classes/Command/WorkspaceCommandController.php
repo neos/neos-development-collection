@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Neos\Command;
 
 /*
@@ -174,18 +175,27 @@ class WorkspaceCommandController extends CommandController
      *
      * This command creates a new workspace.
      *
-     * @param string $workspace Name of the workspace, for example "christmas-campaign"
+     * @param string $workspaceName Name of the workspace, for example "christmas-campaign"
      * @param string $baseWorkspace Name of the base workspace. If none is specified, "live" is assumed.
      * @param string $title Human friendly title of the workspace, for example "Christmas Campaign"
      * @param string $description A description explaining the purpose of the new workspace
      * @param string $owner The identifier of a User to own the workspace
      * @return void
      */
-    public function createCommand($workspace, $baseWorkspace = 'live', $title = null, $description = null, $owner = '')
+    public function createCommand($workspaceName, $baseWorkspace = 'live', $title = null, $description = null, $owner = '')
     {
-        $workspaceName = $workspace;
-        $workspace = $this->workspaceRepository->findOneByName($workspaceName);
-        if ($workspace instanceof Workspace) {
+        $workspaceNameMatched = preg_match(NodeInterface::MATCH_PATTERN_NAME, $workspaceName);
+        $workspaceNameValid = $workspaceNameMatched === 1;
+        if (!$workspaceNameValid) {
+            $this->outputLine(
+                'The workspace name "%s" is invalid. It must only contain letters, numbers and dashes (Regex: "%s").' . PHP_EOL,
+                [$workspaceName, NodeInterface::MATCH_PATTERN_NAME]
+            );
+            $this->quit(4);
+        }
+
+        $existingWorkspace = $this->workspaceRepository->findOneByName($workspaceName);
+        if ($existingWorkspace instanceof Workspace) {
             $this->outputLine('Workspace "%s" already exists', [$workspaceName]);
             $this->quit(1);
         }
