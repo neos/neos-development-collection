@@ -1034,12 +1034,25 @@ Neos.Neos:BreadcrumbMenu
 
 Render a breadcrumb (ancestor documents), based on :ref:`Neos_Neos__Menu`.
 
-Example::
+Examples:
+^^^^^^^^^
+
+::
 
 	breadcrumb = Neos.Neos:BreadcrumbMenu
 
-.. note:: The ``items`` of the ``BreadcrumbMenu`` are internally calculated with the prototype :ref:`Neos_Neos__MenuItems` which
-   you can use directly aswell.
+.. note:: The ``items`` of the ``BreadcrumbMenu`` are internally calculated with the prototype :ref:`Neos_Neos__BreadcrumbMenuItems` which
+   you can use directly as well. Also, you probably want to exclude
+   sub-items for the breadcrumb.
+
+Breadcrumb menu excluding sub-items:
+""""""""""""""""""""""""""""""""""""
+
+::
+
+	breadcrumb = Neos.Neos:BreadcrumbMenu {
+	  items.includeSubItems = false
+	}
 
 .. _Neos_Neos__DimensionMenu:
 .. _Neos_Neos__DimensionsMenu:
@@ -1185,6 +1198,12 @@ Neos.Neos:BreadcrumbMenuItems
 -----------------------------
 
 Create a list of of menu-items for a breadcrumb (ancestor documents), based on :ref:`Neos_Neos__MenuItems`.
+
+Usually sub-items (children) of nodes are not needed for a breadcrumb, so you should
+set `includeSubItems` to false. It is true by default, to keep the behaviour the
+implementation used to have before this flag was added.
+
+:includeSubItems: (boolean, default **true**) Include sub-items of the items
 
 Example::
 
