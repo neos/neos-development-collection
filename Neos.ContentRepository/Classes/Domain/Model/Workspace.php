@@ -422,7 +422,7 @@ class Workspace
 
         if ($matchingNodeVariantExistsInTargetWorkspace) {
             $this->replaceNodeData($nodeToPublish, $correspondingNodeDataInTargetWorkspace);
-            $this->moveNodeVariantsInOtherWorkspaces($nodeToPublish->getIdentifier(), $nodeToPublish->getPath(), $originalNodeWorkspace, $targetWorkspace);
+            $this->moveNodeVariantsInOtherWorkspaces($nodeToPublish->getIdentifier(), $nodeToPublish->getPath(), $nodeToPublish->getNodeData()->getDimensionsHash(), $originalNodeWorkspace, $targetWorkspace);
         } else {
             $this->moveNodeVariantToTargetWorkspace($nodeToPublish, $targetWorkspace);
         }
@@ -515,12 +515,13 @@ class Workspace
      * @param Workspace $sourceWorkspace The workspace the node is currently located
      * @param Workspace $targetWorkspace The workspace the node is being published to
      */
-    protected function moveNodeVariantsInOtherWorkspaces($nodeIdentifier, $targetPath, Workspace $sourceWorkspace, Workspace $targetWorkspace): void
+    protected function moveNodeVariantsInOtherWorkspaces($nodeIdentifier, $targetPath, string $dimensionsHash, Workspace $sourceWorkspace, Workspace $targetWorkspace): void
     {
         $nodeDataVariants = $this->nodeDataRepository->findByNodeIdentifier($nodeIdentifier);
         /** @var NodeData $nodeDataVariant */
         foreach ($nodeDataVariants as $nodeDataVariant) {
             if (
+                $nodeDataVariant->getDimensionsHash() !== $dimensionsHash ||
                 $nodeDataVariant->getWorkspace()->getBaseWorkspace() === null ||
                 $nodeDataVariant->getPath() === $targetPath ||
                 $nodeDataVariant->getWorkspace() === $sourceWorkspace ||
