@@ -93,7 +93,8 @@ trait CrImportExportTrait
      */
     public function theEventsAreExported(): void
     {
-        $eventExporter = $this->getContentRepositoryService(new EventExportProcessorFactory($this->currentContentRepository->findWorkspaceByName(WorkspaceName::forLive())->currentContentStreamId));
+        $eventExporter = $this->getContentRepositoryService($this->currentContentRepository->id,
+            new EventExportProcessorFactory($this->currentContentRepository->findWorkspaceByName(WorkspaceName::forLive())->currentContentStreamId));
         assert($eventExporter instanceof EventExportProcessor);
         $this->runCrImportExportProcessors($eventExporter);
     }

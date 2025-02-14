@@ -35,8 +35,7 @@ trait StructureAdjustmentsTrait
      */
     public function iAdjustTheNodeStructureForNodeType(string $nodeTypeName): void
     {
-        /** @var StructureAdjustmentService $structureAdjustmentService */
-        $structureAdjustmentService = $this->getContentRepositoryService(new StructureAdjustmentServiceFactory());
+        $structureAdjustmentService = $this->getContentRepositoryService($this->currentContentRepository->id, new StructureAdjustmentServiceFactory());
         $errors = $structureAdjustmentService->findAdjustmentsForNodeType(NodeTypeName::fromString($nodeTypeName));
         foreach ($errors as $error) {
             $structureAdjustmentService->fixError($error);
@@ -49,8 +48,7 @@ trait StructureAdjustmentsTrait
      */
     public function iExpectNoStructureAdjustmentsForType(string $nodeTypeName): void
     {
-        /** @var StructureAdjustmentService $structureAdjustmentService */
-        $structureAdjustmentService = $this->getContentRepositoryService(new StructureAdjustmentServiceFactory());
+        $structureAdjustmentService = $this->getContentRepositoryService($this->currentContentRepository->id, new StructureAdjustmentServiceFactory());
         $errors = $structureAdjustmentService->findAdjustmentsForNodeType(NodeTypeName::fromString($nodeTypeName));
         $errors = iterator_to_array($errors);
         Assert::assertEmpty($errors, implode(', ', array_map(fn (StructureAdjustment $adjustment) => $adjustment->render(), $errors)));
@@ -62,8 +60,7 @@ trait StructureAdjustmentsTrait
      */
     public function iExpectTheFollowingStructureAdjustmentsForType(string $nodeTypeName, TableNode $expectedAdjustments): void
     {
-        /** @var StructureAdjustmentService $structureAdjustmentService */
-        $structureAdjustmentService = $this->getContentRepositoryService(new StructureAdjustmentServiceFactory());
+        $structureAdjustmentService = $this->getContentRepositoryService($this->currentContentRepository->id, new StructureAdjustmentServiceFactory());
         $actualAdjustments = $structureAdjustmentService->findAdjustmentsForNodeType(NodeTypeName::fromString($nodeTypeName));
         $actualAdjustments = iterator_to_array($actualAdjustments);
 

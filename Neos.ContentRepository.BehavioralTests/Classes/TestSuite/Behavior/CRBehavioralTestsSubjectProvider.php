@@ -18,13 +18,15 @@ use Behat\Gherkin\Node\PyStringNode;
 use Behat\Gherkin\Node\TableNode;
 use Doctrine\DBAL\Connection;
 use Neos\ContentRepository\Core\ContentRepository;
+use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceFactoryDependencies;
+use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceFactoryInterface;
+use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceInterface;
 use Neos\ContentRepository\Core\Service\ContentRepositoryMaintainerFactory;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
 use Neos\ContentRepository\Core\Subscription\Engine\SubscriptionEngine;
 use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\Helpers\GherkinTableNodeBasedContentDimensionSource;
 use Neos\ContentRepository\TestSuite\Fakes\FakeContentDimensionSourceFactory;
 use Neos\ContentRepository\TestSuite\Fakes\FakeNodeTypeManagerFactory;
-use Neos\EventStore\EventStoreInterface;
 use PHPUnit\Framework\Assert;
 use Symfony\Component\Yaml\Yaml;
 
@@ -37,6 +39,12 @@ trait CRBehavioralTestsSubjectProvider
      * @var array<string,ContentRepository>
      */
     protected array $contentRepositories = [];
+
+    /**
+     * @internal {@see getContentRepositoryServiceFactoryDependencies}
+     * @var array<string,ContentRepositoryServiceFactoryDependencies>
+     */
+    protected array $contentRepositoryServiceFactoryDependenciesById = [];
 
     /**
      * A runtime cache of all content repositories already set up, represented by their ID
@@ -138,7 +146,7 @@ trait CRBehavioralTestsSubjectProvider
         }
     }
 
-    protected function setUpContentRepository(ContentRepositoryId $contentRepositoryId): ContentRepository
+    final protected function setUpContentRepository(ContentRepositoryId $contentRepositoryId): ContentRepository
     {
         /**
          * Reset events and projections
@@ -186,12 +194,10 @@ trait CRBehavioralTestsSubjectProvider
             $result = $contentRepositoryMaintainer->setUp();
             Assert::assertNull($result);
             self::$alreadySetUpContentRepositories[] = $contentRepository->id;
+            unset($this->contentRepositoryServiceFactoryDependenciesById[$contentRepositoryId->value]);
         }
         // todo we TRUNCATE here and do not want to use $contentRepositoryMaintainer->prune(); here as it would not reset the autoincrement sequence number making some assertions impossible
-        /** @var EventStoreInterface $eventStore */
-        $eventStore = (new \ReflectionClass($contentRepository))->getProperty('eventStore')->getValue($contentRepository);
-        /** @var Connection $databaseConnection */
-        $databaseConnection = (new \ReflectionClass($eventStore))->getProperty('connection')->getValue($eventStore);
+        $databaseConnection = $this->getObject(Connection::class);
         $eventTableName = sprintf('cr_%s_events', $contentRepositoryId->value);
         $databaseConnection->executeStatement('TRUNCATE ' . $eventTableName);
 
@@ -206,4 +212,26 @@ trait CRBehavioralTestsSubjectProvider
     }
 
     abstract protected function createContentRepository(ContentRepositoryId $contentRepositoryId): ContentRepository;
+
+    /**
+     * Access content repository services.
+     *
+     * @template T of ContentRepositoryServiceInterface
+     * @param ContentRepositoryServiceFactoryInterface<T> $contentRepositoryServiceFactory
+     * @return T
+     */
+    abstract protected function getContentRepositoryService(
+        ContentRepositoryId $contentRepositoryId,
+        ContentRepositoryServiceFactoryInterface $factory
+    ): ContentRepositoryServiceInterface;
+
+    final protected function getContentRepositoryServiceFactoryDependencies(ContentRepositoryId $contentRepositoryId): ContentRepositoryServiceFactoryDependencies
+    {
+        if (!isset($this->contentRepositoryServiceFactoryDependenciesById[$contentRepositoryId->value])) {
+            $accessor = new ContentRepositoryInternalsAccessor();
+            $this->getContentRepositoryService($contentRepositoryId, $accessor);
+            $this->contentRepositoryServiceFactoryDependenciesById[$contentRepositoryId->value] = $accessor->spiedInternals;
+        }
+        return $this->contentRepositoryServiceFactoryDependenciesById[$contentRepositoryId->value];
+    }
 }

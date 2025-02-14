@@ -115,7 +115,7 @@ class FeatureContext implements Context
                 };
             }
         };
-        $this->getContentRepositoryService($crInternalsAccess);
+        $this->getContentRepositoryService($this->currentContentRepository->id, $crInternalsAccess);
 
         $eventExportProcessor = new EventExportProcessor(
             $nodeTypeManager,
@@ -255,6 +255,7 @@ class FeatureContext implements Context
     /** ---------------------------------- */
 
     protected function getContentRepositoryService(
+        ContentRepositoryId $contentRepositoryId,
         ContentRepositoryServiceFactoryInterface $factory
     ): ContentRepositoryServiceInterface {
         return $this->contentRepositoryRegistry->buildService(

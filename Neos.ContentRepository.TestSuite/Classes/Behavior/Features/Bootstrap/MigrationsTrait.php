@@ -44,8 +44,7 @@ trait MigrationsTrait
             ContentStreamId::fromString($contentStreamId)
         );
 
-        /** @var NodeMigrationService $nodeMigrationService */
-        $nodeMigrationService = $this->getContentRepositoryService(new NodeMigrationServiceFactory());
+        $nodeMigrationService = $this->getContentRepositoryService($this->currentContentRepository->id, new NodeMigrationServiceFactory());
         $nodeMigrationService->executeMigration($command);
     }
 
