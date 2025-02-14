@@ -13,6 +13,34 @@ Feature: Move node
       | dc48851c-f653-ebd5-4d35-3feac69a3e09 | /sites/content-repository/about   | Neos.ContentRepository.Testing:Page | {"title": "About"}   | live      |
     And I am authenticated with role "Neos.Neos:Editor"
 
+  # the following behat test initially failed in about 50% of the cases -- see the commit description where this test was introduced
+  # for a full explanation of the bug being fixed (NodeDataRepository::findOneByIdentifier)
+  @fixtures
+  Scenario: Move a newly created node in user workspace and get it by identifier
+    Given I create the following nodes:
+      | Identifier                           | Path                          | Node Type                           | Properties | Workspace  |
+      | 86431a7c-3daf-430a-9a7d-e1eaafd46177 | /sites/content-repository/foo | Neos.ContentRepository.Testing:Page | {}         | user-admin |
+
+    And I get a node by identifier "86431a7c-3daf-430a-9a7d-e1eaafd46177" with the following context:
+      | Workspace  |
+      | user-admin |
+    When I move the node into the node with path "/sites/content-repository/company"
+    And I get a node by identifier "86431a7c-3daf-430a-9a7d-e1eaafd46177" with the following context:
+      | Workspace  |
+      | user-admin |
+    Then I should have one node
+
+  @fixtures
+  Scenario: Delete a node in a user workspace, it should not be found when retrieving it by identifier
+    Given I get a node by identifier "dc48851c-f653-ebd5-4d35-3feac69a3e09" with the following context:
+      | Workspace  |
+      | user-admin |
+    And I remove the node
+    And I get a node by identifier "dc48851c-f653-ebd5-4d35-3feac69a3e09" with the following context:
+      | Workspace  |
+      | user-admin |
+    Then I should have 0 nodes
+
   @fixtures
   Scenario: Move a node (into) in user workspace and get by path
     When I get a node by path "/sites/content-repository/service" with the following context:
