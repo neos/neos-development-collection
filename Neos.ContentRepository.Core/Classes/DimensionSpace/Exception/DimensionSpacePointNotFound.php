@@ -20,7 +20,7 @@ use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
  * A dimension space point was not found
  * @api
  */
-class DimensionSpacePointNotFound extends \DomainException
+class DimensionSpacePointNotFound extends \RuntimeException
 {
     public static function becauseItIsNotWithinTheAllowedDimensionSubspace(
         DimensionSpacePoint $dimensionSpacePoint

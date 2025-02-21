@@ -18,7 +18,7 @@ namespace Neos\ContentRepository\Core\Dimension\Exception;
  * The exception to be thrown if content dimension values are tried to be initialized empty
  * @api
  */
-class ContentDimensionValuesAreInvalid extends \DomainException
+class ContentDimensionValuesAreInvalid extends \RuntimeException
 {
     public static function becauseTheyMustNotBeEmpty(): self
     {

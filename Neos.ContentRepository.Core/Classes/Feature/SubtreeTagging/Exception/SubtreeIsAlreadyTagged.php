@@ -17,6 +17,6 @@ namespace Neos\ContentRepository\Core\Feature\SubtreeTagging\Exception;
 /**
  * @api
  */
-final class SubtreeIsAlreadyTagged extends \DomainException
+final class SubtreeIsAlreadyTagged extends \RuntimeException
 {
 }

@@ -23,7 +23,7 @@ use Neos\ContentRepository\Core\SharedModel\Node\ReferenceName;
  *
  * @api because exception is thrown during invariant checks on command execution
  */
-final class ReferenceCannotBeSet extends \DomainException
+final class ReferenceCannotBeSet extends \RuntimeException
 {
     public static function becauseTheNodeTypeDoesNotDeclareIt(
         ReferenceName $propertyName,

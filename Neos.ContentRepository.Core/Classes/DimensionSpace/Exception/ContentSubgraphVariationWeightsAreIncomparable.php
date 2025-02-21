@@ -21,7 +21,7 @@ use Neos\ContentRepository\Core\DimensionSpace\ContentSubgraphVariationWeight;
  * e.g. if they compose of different dimension combinations
  * @api
  */
-class ContentSubgraphVariationWeightsAreIncomparable extends \DomainException
+class ContentSubgraphVariationWeightsAreIncomparable extends \RuntimeException
 {
     public static function butWereAttemptedTo(
         ContentSubgraphVariationWeight $first,

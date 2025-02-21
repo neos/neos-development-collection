@@ -22,7 +22,7 @@ use Neos\ContentRepository\Core\SharedModel\Node\PropertyName;
  *
  * @api because exception is thrown during invariant checks on command execution
  */
-final class PropertyCannotBeSet extends \DomainException
+final class PropertyCannotBeSet extends \RuntimeException
 {
     public static function becauseTheValueDoesNotMatchTheConfiguredType(
         PropertyName $propertyName,

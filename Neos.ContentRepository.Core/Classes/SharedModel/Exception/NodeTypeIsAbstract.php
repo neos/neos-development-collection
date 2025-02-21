@@ -21,7 +21,7 @@ use Neos\ContentRepository\Core\NodeType\NodeTypeName;
  *
  * @api because exception is thrown during invariant checks on command execution
  */
-final class NodeTypeIsAbstract extends \DomainException
+final class NodeTypeIsAbstract extends \RuntimeException
 {
     public static function butWasNotSupposedToBe(NodeTypeName $nodeTypeName): self
     {

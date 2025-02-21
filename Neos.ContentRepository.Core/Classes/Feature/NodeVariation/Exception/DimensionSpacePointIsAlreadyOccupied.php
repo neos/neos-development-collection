@@ -20,6 +20,6 @@ namespace Neos\ContentRepository\Core\Feature\NodeVariation\Exception;
  *
  * @api
  */
-final class DimensionSpacePointIsAlreadyOccupied extends \DomainException
+final class DimensionSpacePointIsAlreadyOccupied extends \RuntimeException
 {
 }

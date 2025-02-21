@@ -19,6 +19,6 @@ namespace Neos\ContentRepository\Core\SharedModel\Exception;
  *
  * @api
  */
-class NodeTypeIsFinalException extends \DomainException
+class NodeTypeIsFinalException extends \RuntimeException
 {
 }

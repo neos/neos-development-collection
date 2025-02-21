@@ -19,7 +19,7 @@ namespace Neos\ContentRepository\Core\SharedModel\Exception;
  *
  * @api because this might have to be handled in the application layer
  */
-final class AbsoluteNodePathIsInvalid extends \DomainException
+final class AbsoluteNodePathIsInvalid extends \RuntimeException
 {
     public static function becauseItDoesNotMatchTheRequiredPattern(string $attemptedValue): self
     {

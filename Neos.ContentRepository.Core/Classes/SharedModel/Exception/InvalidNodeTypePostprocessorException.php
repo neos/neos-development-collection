@@ -19,6 +19,6 @@ namespace Neos\ContentRepository\Core\SharedModel\Exception;
  *
  * @api
  */
-class InvalidNodeTypePostprocessorException extends \DomainException
+class InvalidNodeTypePostprocessorException extends \RuntimeException
 {
 }

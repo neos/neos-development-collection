@@ -17,6 +17,6 @@ namespace Neos\ContentRepository\Core\Feature\NodeDisabling\Exception;
 /**
  * @api
  */
-final class NodeAggregateIsAlreadyDisabled extends \DomainException
+final class NodeAggregateIsAlreadyDisabled extends \RuntimeException
 {
 }
