@@ -100,7 +100,7 @@ final class ContentRepositoryMaintenanceCommandControllerTest extends AbstractSu
     }
 
     /** @test */
-    public function projectionInError(): void
+    public function projectionWithErrorOnHandle(): void
     {
         $this->eventStore->setup();
         $this->fakeProjection->expects(self::any())->method('setUp');
@@ -138,5 +138,34 @@ final class ContentRepositoryMaintenanceCommandControllerTest extends AbstractSu
         $this->subscriptionController->replayCommand(subscription: 'Vendor.Package:SecondFakeProjection', contentRepository: $this->contentRepository->id->value, force: true, quiet: true);
 
         $this->expectOkayStatus('Vendor.Package:SecondFakeProjection', SubscriptionStatus::ACTIVE, SequenceNumber::fromInteger(2));
+    }
+
+    /** @test */
+    public function projectionWithErrorOnSetup(): void
+    {
+        $this->eventStore->setup();
+        $this->fakeProjection->expects(self::any())->method('setUp');
+        $this->fakeProjection->expects(self::any())->method('resetState');
+        $this->fakeProjection->expects(self::any())->method('apply');
+        $this->fakeProjection->expects(self::any())->method('status')->willReturn(ProjectionStatus::ok());
+
+        $this->secondFakeProjection->injectSaboteur(fn () => throw new \RuntimeException('This projection cannot be setup.'));
+
+        try {
+            $this->crController->setupCommand(contentRepository: $this->contentRepository->id->value, quiet: true);
+        } catch (StopCommandException) {
+        }
+        // exit error code because one projection has a failure
+        self::assertEquals(1, $this->response->getExitCode());
+        self::assertEmpty($this->bufferedOutput->fetch());
+
+        self::assertEquals(
+            SubscriptionStatus::ERROR,
+            $this->subscriptionStatus('Vendor.Package:SecondFakeProjection')?->subscriptionStatus
+        );
+
+        $this->subscriptionController->replayAllCommand(contentRepository: $this->contentRepository->id->value, force: true, quiet: true);
+
+        $this->expectOkayStatus('Vendor.Package:SecondFakeProjection', SubscriptionStatus::ACTIVE, SequenceNumber::fromInteger(0));
     }
 }
