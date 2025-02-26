@@ -54,12 +54,14 @@ final readonly class NodeQueryBuilder
     public function buildChildNodeAggregateQuery(NodeAggregateId $parentNodeAggregateId, ContentStreamId $contentStreamId): QueryBuilder
     {
         return $this->createQueryBuilder()
-            ->select('cn.*, ch.contentstreamid, ch.subtreetags, cdsp.dimensionspacepoint AS covereddimensionspacepoint')
+            ->select('cn.*, ch.contentstreamid, ch.subtreetags, dsp.dimensionspacepoint AS covereddimensionspacepoint')
             ->from($this->tableNames->node(), 'pn')
+            ->innerJoin('pn', $this->tableNames->hierarchyRelation(), 'ph', 'ph.childnodeanchor = pn.relationanchorpoint')
             ->innerJoin('pn', $this->tableNames->hierarchyRelation(), 'ch', 'ch.parentnodeanchor = pn.relationanchorpoint')
-            ->innerJoin('ch', $this->tableNames->dimensionSpacePoints(), 'cdsp', 'cdsp.hash = ch.dimensionspacepointhash')
+            ->innerJoin('ph', $this->tableNames->dimensionSpacePoints(), 'dsp', 'dsp.hash = ph.dimensionspacepointhash')
             ->innerJoin('ch', $this->tableNames->node(), 'cn', 'cn.relationanchorpoint = ch.childnodeanchor')
             ->where('pn.nodeaggregateid = :parentNodeAggregateId')
+            ->andWhere('ph.contentstreamid = :contentStreamId')
             ->andWhere('ch.contentstreamid = :contentStreamId')
             ->orderBy('ch.position')
             ->setParameters([

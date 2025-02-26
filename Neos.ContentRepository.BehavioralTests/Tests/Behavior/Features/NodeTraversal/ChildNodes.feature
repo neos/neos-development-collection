@@ -181,4 +181,12 @@ Feature: Find and count nodes using the findChildNodes and countChildNodes queri
       | nodeAggregateId | nodeTypeName                        | coveredDimensionSpacePoints           | occupiedDimensionSpacePoints | explicitlyDisabledDimensions |
       | a1              | Neos.ContentRepository.Testing:Page | [{"language":"de"},{"language":"ch"}] | [{"language":"de"}]          | []                           |
       | a2              | Neos.ContentRepository.Testing:Page | [{"language":"de"},{"language":"ch"}] | [{"language":"de"}]          | []                           |
-      | b               | Neos.ContentRepository.Testing:Page | [{"language":"ch"}]                   | [{"language":"de"}]          | []                           |
+      | b               | Neos.ContentRepository.Testing:Page | [{"language":"de"},{"language":"ch"}] | [{"language":"de"}]          | []                           |
+
+    # children of the moved node
+    When I execute the findChildNodeAggregates query for node aggregate id "b" I expect the following node aggregates to be returned:
+      | nodeAggregateId | nodeTypeName                        | coveredDimensionSpacePoints           | occupiedDimensionSpacePoints | explicitlyDisabledDimensions |
+      | b1              | Neos.ContentRepository.Testing:Page | [{"language":"de"},{"language":"ch"}] | [{"language":"de"}]          | []                           |
+
+    When I execute the findChildNodeAggregates query for node aggregate id "non-existing" I expect the following node aggregates to be returned:
+      | nodeAggregateId | nodeTypeName                        | coveredDimensionSpacePoints           | occupiedDimensionSpacePoints | explicitlyDisabledDimensions |
