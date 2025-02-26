@@ -91,6 +91,12 @@ Feature: Find and count nodes using the findChildNodes and countChildNodes queri
       | Key                          | Value           |
       | nodeAggregateId              | "a2a3-disabled" |
       | nodeVariantSelectionStrategy | "allVariants"   |
+    When the command MoveNodeAggregate is executed with payload:
+      | Key                          | Value              |
+      | nodeAggregateId              | "b"                |
+      | dimensionSpacePoint          | {"language": "ch"} |
+      | newParentNodeAggregateId     | "a"                |
+      | relationDistributionStrategy | "scatter"          |
 
   Scenario:
       # Child nodes without filter
@@ -158,3 +164,21 @@ Feature: Find and count nodes using the findChildNodes and countChildNodes queri
     When I execute the findChildNodes query for parent node aggregate id "a2a" and filter '{"ordering": [{"type": "timestampField", "field": "CREATED", "direction": "ASCENDING"}]}' I expect the nodes "a2a1,a2a2,a2a4,a2a5,a2a6-empty" to be returned
     When I execute the findChildNodes query for parent node aggregate id "a2a" and filter '{"ordering": [{"type": "timestampField", "field": "LAST_MODIFIED", "direction": "DESCENDING"}]}' I expect the nodes "a2a5,a2a1,a2a2,a2a4,a2a6-empty" to be returned
 
+  Scenario:
+  Contentgraph queries
+    # subtree tags are fetched correctly
+    When I execute the findChildNodeAggregates query for node aggregate id "a2a" I expect the following node aggregates to be returned:
+      | nodeAggregateId | nodeTypeName                        | coveredDimensionSpacePoints           | occupiedDimensionSpacePoints | explicitlyDisabledDimensions          |
+      | a2a1            | Neos.ContentRepository.Testing:Page | [{"language":"de"},{"language":"ch"}] | [{"language":"de"}]          | []                                    |
+      | a2a2            | Neos.ContentRepository.Testing:Page | [{"language":"de"},{"language":"ch"}] | [{"language":"de"}]          | []                                    |
+      | a2a3-disabled   | Neos.ContentRepository.Testing:Page | [{"language":"de"},{"language":"ch"}] | [{"language":"de"}]          | [{"language":"de"},{"language":"ch"}] |
+      | a2a4            | Neos.ContentRepository.Testing:Page | [{"language":"de"},{"language":"ch"}] | [{"language":"de"}]          | []                                    |
+      | a2a5            | Neos.ContentRepository.Testing:Page | [{"language":"de"},{"language":"ch"}] | [{"language":"de"}]          | []                                    |
+      | a2a6-empty      | Neos.ContentRepository.Testing:Page | [{"language":"de"},{"language":"ch"}] | [{"language":"de"}]          | []                                    |
+
+    # multiple child node aggregates (via move) are fetched
+    When I execute the findChildNodeAggregates query for node aggregate id "a" I expect the following node aggregates to be returned:
+      | nodeAggregateId | nodeTypeName                        | coveredDimensionSpacePoints           | occupiedDimensionSpacePoints | explicitlyDisabledDimensions |
+      | a1              | Neos.ContentRepository.Testing:Page | [{"language":"de"},{"language":"ch"}] | [{"language":"de"}]          | []                           |
+      | a2              | Neos.ContentRepository.Testing:Page | [{"language":"de"},{"language":"ch"}] | [{"language":"de"}]          | []                           |
+      | b               | Neos.ContentRepository.Testing:Page | [{"language":"ch"}]                   | [{"language":"de"}]          | []                           |
