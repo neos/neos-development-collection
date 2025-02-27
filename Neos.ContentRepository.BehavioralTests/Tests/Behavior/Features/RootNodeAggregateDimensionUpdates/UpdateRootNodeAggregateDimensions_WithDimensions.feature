@@ -156,3 +156,26 @@ Feature: Update Root Node aggregate dimensions
     When I am in dimension space point {"language":"en"}
     Then I expect the subgraph projection to consist of exactly 0 nodes
     And I expect node aggregate identifier "lady-eleonode-rootford" to lead to no node
+
+  Scenario: Adding a dimension updating the root node keeps subtree tags
+    Given I change the content dimensions in content repository "default" to:
+      | Identifier | Values      | Generalizations |
+      | language   | mul, de, en |                 |
+
+    When I am in dimension space point {"language":"de"}
+    And the command DisableNodeAggregate is executed with payload:
+      | Key                          | Value                    |
+      | nodeAggregateId              | "lady-eleonode-rootford" |
+      | nodeVariantSelectionStrategy | "allVariants"            |
+
+    And I expect the node aggregate "lady-eleonode-rootford" to exist
+    And I expect this node aggregate to cover dimension space points [{"language":"mul"},{"language":"de"}]
+    And I expect this node aggregate to disable dimension space points [{"language":"mul"},{"language":"de"}]
+
+    And the command UpdateRootNodeAggregateDimensions is executed with payload:
+      | Key             | Value                    |
+      | nodeAggregateId | "lady-eleonode-rootford" |
+
+    And I expect the node aggregate "lady-eleonode-rootford" to exist
+    And I expect this node aggregate to cover dimension space points [{"language":"mul"},{"language":"de"},{"language":"en"}]
+    And I expect this node aggregate to disable dimension space points [{"language":"mul"},{"language":"de"}]

@@ -616,29 +616,56 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
             return;
         }
 
-        // delete all hierarchy edges of the root node
-        $deleteHierarchyRelationsStatement = <<<SQL
-            DELETE FROM {$this->tableNames->hierarchyRelation()}
+        $deleteOutdatedRootNodeAggregateDimensionsStatement = <<<SQL
+            DELETE
+                FROM {$this->tableNames->hierarchyRelation()}
             WHERE
                 parentnodeanchor = :parentNodeAnchor
                 AND childnodeanchor = :childNodeAnchor
                 AND contentstreamid = :contentStreamId
+                AND dimensionspacepointhash NOT IN (:coveredDimensionSpacePoints)
         SQL;
         try {
-            $this->dbal->executeStatement($deleteHierarchyRelationsStatement, [
+            $this->dbal->executeStatement($deleteOutdatedRootNodeAggregateDimensionsStatement, [
                 'parentNodeAnchor' => NodeRelationAnchorPoint::forRootEdge()->value,
                 'childNodeAnchor' => $rootNodeAnchorPoint->value,
                 'contentStreamId' => $event->contentStreamId->value,
+                'coveredDimensionSpacePoints' => $event->coveredDimensionSpacePoints->getPointHashes(),
+            ], [
+                'coveredDimensionSpacePoints' => ArrayParameterType::STRING
             ]);
         } catch (DBALException $e) {
             throw new \RuntimeException(sprintf('Failed to delete hierarchy relation: %s', $e->getMessage()), 1716488943, $e);
         }
-        // recreate hierarchy edges for the root node
+
+        $selectRemainingRootNodeAggregateDimensionsStatement = <<<SQL
+            SELECT dimensionspacepointhash
+                FROM {$this->tableNames->hierarchyRelation()}
+            WHERE parentnodeanchor = :parentNodeAnchor
+                AND childnodeanchor = :childNodeAnchor
+                AND contentstreamid = :contentStreamId
+        SQL;
+        try {
+            $remainingRootNodeAggregateDimensions = $this->dbal->fetchAllAssociative($selectRemainingRootNodeAggregateDimensionsStatement, [
+                'parentNodeAnchor' => NodeRelationAnchorPoint::forRootEdge()->value,
+                'childNodeAnchor' => $rootNodeAnchorPoint->value,
+                'contentStreamId' => $event->contentStreamId->value
+            ]);
+        } catch (DBALException $e) {
+            throw new \RuntimeException(sprintf('Failed to fetch current root hierarchy relations: %s', $e->getMessage()), 1740689113, $e);
+        }
+
+        $newDimensionSpacePoints = $event->coveredDimensionSpacePoints->points;
+        foreach ($remainingRootNodeAggregateDimensions as $row) {
+            unset($newDimensionSpacePoints[$row['dimensionspacepointhash']]);
+        }
+
+        // add hierarchy edges for newly added dimensions
         $this->connectHierarchy(
             $event->contentStreamId,
             NodeRelationAnchorPoint::forRootEdge(),
             $rootNodeAnchorPoint,
-            $event->coveredDimensionSpacePoints,
+            DimensionSpacePointSet::fromArray($newDimensionSpacePoints),
             null
         );
     }
