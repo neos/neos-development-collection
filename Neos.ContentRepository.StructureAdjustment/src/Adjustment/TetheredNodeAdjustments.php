@@ -6,7 +6,7 @@ namespace Neos\ContentRepository\StructureAdjustment\Adjustment;
 
 use Neos\ContentRepository\Core\DimensionSpace;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
-use Neos\ContentRepository\Core\EventStore\Events;
+use Neos\ContentRepository\Core\EventStore\DecoratedEvents;
 use Neos\ContentRepository\Core\EventStore\EventsToPublish;
 use Neos\ContentRepository\Core\Feature\Common\InterdimensionalSibling;
 use Neos\ContentRepository\Core\Feature\Common\InterdimensionalSiblings;
@@ -265,7 +265,7 @@ class TetheredNodeAdjustments
         $streamName = ContentStreamEventStreamName::fromContentStreamId($contentStreamId);
         return new EventsToPublish(
             $streamName->getEventStreamName(),
-            Events::fromArray($events),
+            DecoratedEvents::fromArray($events),
             ExpectedVersion::ANY()
         );
     }

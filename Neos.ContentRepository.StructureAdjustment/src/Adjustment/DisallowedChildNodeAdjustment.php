@@ -9,7 +9,7 @@ use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePointSet;
-use Neos\ContentRepository\Core\EventStore\Events;
+use Neos\ContentRepository\Core\EventStore\DecoratedEvents;
 use Neos\ContentRepository\Core\EventStore\EventsToPublish;
 use Neos\ContentRepository\Core\Feature\ContentStreamEventStreamName;
 use Neos\ContentRepository\Core\Feature\NodeRemoval\Event\NodeAggregateWasRemoved;
@@ -126,7 +126,7 @@ class DisallowedChildNodeAdjustment
         DimensionSpacePoint $dimensionSpacePoint
     ): EventsToPublish {
         $referenceOrigin = OriginDimensionSpacePoint::fromDimensionSpacePoint($dimensionSpacePoint);
-        $events = Events::with(
+        $events = DecoratedEvents::with(
             new NodeAggregateWasRemoved(
                 $this->contentGraph->getWorkspaceName(),
                 $this->contentGraph->getContentStreamId(),

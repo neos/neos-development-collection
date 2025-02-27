@@ -20,7 +20,7 @@ use Neos\EventStore\EventStoreInterface;
  * @implements \IteratorAggregate<EventInterface|DecoratedEvent>
  * @internal only used during event publishing (from within command handlers) - and their implementation is not API
  */
-final readonly class Events implements \IteratorAggregate, \Countable
+final readonly class DecoratedEvents implements \IteratorAggregate, \Countable
 {
     /**
      * @var non-empty-array<EventInterface|DecoratedEvent>
@@ -38,7 +38,7 @@ final readonly class Events implements \IteratorAggregate, \Countable
         return new self($event);
     }
 
-    public function withAppendedEvents(Events $events): self
+    public function withAppendedEvents(DecoratedEvents $events): self
     {
         return new self(...$this->items, ...$events->items);
     }

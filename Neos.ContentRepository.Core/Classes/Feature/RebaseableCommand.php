@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\Core\Feature;
 
 use Neos\ContentRepository\Core\EventStore\DecoratedEvent;
-use Neos\ContentRepository\Core\EventStore\Events;
+use Neos\ContentRepository\Core\EventStore\DecoratedEvents;
 use Neos\ContentRepository\Core\EventStore\InitiatingEventMetadata;
 use Neos\ContentRepository\Core\Feature\Common\PublishableToWorkspaceInterface;
 use Neos\ContentRepository\Core\Feature\Common\RebasableToOtherWorkspaceInterface;
@@ -61,8 +61,8 @@ final readonly class RebaseableCommand
      */
     public static function enrichWithCommand(
         RebasableToOtherWorkspaceInterface $command,
-        Events $events,
-    ): Events {
+        DecoratedEvents $events,
+    ): DecoratedEvents {
         $processedEvents = [];
         $causationId = null;
         $i = 0;
@@ -112,6 +112,6 @@ final readonly class RebaseableCommand
             $i++;
         }
 
-        return Events::fromArray($processedEvents);
+        return DecoratedEvents::fromArray($processedEvents);
     }
 }

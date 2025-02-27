@@ -17,7 +17,7 @@ namespace Neos\ContentRepository\Core\Feature\NodeRemoval;
 use Neos\ContentRepository\Core\CommandHandler\CommandHandlingDependencies;
 use Neos\ContentRepository\Core\DimensionSpace;
 use Neos\ContentRepository\Core\DimensionSpace\Exception\DimensionSpacePointNotFound;
-use Neos\ContentRepository\Core\EventStore\Events;
+use Neos\ContentRepository\Core\EventStore\DecoratedEvents;
 use Neos\ContentRepository\Core\EventStore\EventsToPublish;
 use Neos\ContentRepository\Core\Feature\RebaseableCommand;
 use Neos\ContentRepository\Core\Feature\ContentStreamEventStreamName;
@@ -69,7 +69,7 @@ trait NodeRemoval
             );
         }
 
-        $events = Events::with(
+        $events = DecoratedEvents::with(
             new NodeAggregateWasRemoved(
                 $contentGraph->getWorkspaceName(),
                 $contentGraph->getContentStreamId(),

@@ -30,13 +30,13 @@ final readonly class InitiatingEventMetadata
      *                        the "initiatingTimestamp" will be kept and is never overridden again.
      */
     public static function enrichEventsWithInitiatingMetadata(
-        Events $events,
+        DecoratedEvents $events,
         UserId $initiatingUserId,
         \DateTimeImmutable $initiatingTimestamp,
-    ): Events {
+    ): DecoratedEvents {
         $initiatingTimestampFormatted = $initiatingTimestamp->format(\DateTimeInterface::ATOM);
 
-        return Events::fromArray(
+        return DecoratedEvents::fromArray(
             $events->map(function (EventInterface|DecoratedEvent $event) use (
                 $initiatingUserId,
                 $initiatingTimestampFormatted

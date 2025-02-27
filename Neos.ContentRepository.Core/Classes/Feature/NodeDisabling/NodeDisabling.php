@@ -17,7 +17,7 @@ namespace Neos\ContentRepository\Core\Feature\NodeDisabling;
 use Neos\ContentRepository\Core\CommandHandler\CommandHandlingDependencies;
 use Neos\ContentRepository\Core\DimensionSpace;
 use Neos\ContentRepository\Core\DimensionSpace\Exception\DimensionSpacePointNotFound;
-use Neos\ContentRepository\Core\EventStore\Events;
+use Neos\ContentRepository\Core\EventStore\DecoratedEvents;
 use Neos\ContentRepository\Core\EventStore\EventsToPublish;
 use Neos\ContentRepository\Core\Feature\NodeDisabling\Exception\NodeAggregateIsAlreadyDisabled;
 use Neos\ContentRepository\Core\Feature\NodeDisabling\Exception\NodeAggregateIsAlreadyEnabled;
@@ -70,7 +70,7 @@ trait NodeDisabling
                 $this->getInterDimensionalVariationGraph()
             );
 
-        $events = Events::with(
+        $events = DecoratedEvents::with(
             new SubtreeWasTagged(
                 $contentGraph->getWorkspaceName(),
                 $contentGraph->getContentStreamId(),
@@ -125,7 +125,7 @@ trait NodeDisabling
                 $this->getInterDimensionalVariationGraph()
             );
 
-        $events = Events::with(
+        $events = DecoratedEvents::with(
             new SubtreeWasUntagged(
                 $contentGraph->getWorkspaceName(),
                 $contentGraph->getContentStreamId(),

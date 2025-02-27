@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\StructureAdjustment\Adjustment;
 
-use Neos\ContentRepository\Core\EventStore\Events;
+use Neos\ContentRepository\Core\EventStore\DecoratedEvents;
 use Neos\ContentRepository\Core\EventStore\EventsToPublish;
 use Neos\ContentRepository\Core\Feature\ContentStreamEventStreamName;
 use Neos\ContentRepository\Core\Feature\NodeRemoval\Event\NodeAggregateWasRemoved;
@@ -16,7 +16,7 @@ trait RemoveNodeAggregateTrait
 {
     private function removeNodeAggregate(ContentGraphInterface $contentGraph, NodeAggregate $tetheredNodeAggregate): EventsToPublish
     {
-        $events = Events::with(
+        $events = DecoratedEvents::with(
             new NodeAggregateWasRemoved(
                 $contentGraph->getWorkspaceName(),
                 $contentGraph->getContentStreamId(),

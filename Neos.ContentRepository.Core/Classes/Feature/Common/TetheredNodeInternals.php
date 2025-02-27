@@ -19,7 +19,7 @@ use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePointSet;
 use Neos\ContentRepository\Core\DimensionSpace\VariantType;
 use Neos\ContentRepository\Core\EventStore\EventInterface;
-use Neos\ContentRepository\Core\EventStore\Events;
+use Neos\ContentRepository\Core\EventStore\DecoratedEvents;
 use Neos\ContentRepository\Core\Feature\NodeCreation\Dto\NodeAggregateIdsByNodePaths;
 use Neos\ContentRepository\Core\Feature\NodeCreation\Event\NodeAggregateWithNodeWasCreated;
 use Neos\ContentRepository\Core\Feature\NodeModification\Dto\SerializedPropertyValues;
@@ -56,7 +56,7 @@ trait TetheredNodeInternals
         OriginDimensionSpacePoint $sourceOrigin,
         OriginDimensionSpacePoint $targetOrigin,
         NodeAggregate $nodeAggregate
-    ): Events;
+    ): DecoratedEvents;
 
     /**
      * This is the remediation action for non-existing tethered nodes.
@@ -74,7 +74,7 @@ trait TetheredNodeInternals
         OriginDimensionSpacePoint $originDimensionSpacePoint,
         TetheredNodeTypeDefinition $tetheredNodeTypeDefinition,
         ?NodeAggregateId $tetheredNodeAggregateId
-    ): Events {
+    ): DecoratedEvents {
         $tetheredNodeAggregateId ??= NodeAggregateId::create();
 
         $childNodeAggregate = $contentGraph->findChildNodeAggregateByName(
@@ -126,9 +126,9 @@ trait TetheredNodeInternals
                         $creationOriginDimensionSpacePoint = $rootGeneralizationOrigin;
                     }
                 }
-                $events = Events::fromArray($eventsArray);
+                $events = DecoratedEvents::fromArray($eventsArray);
             } else {
-                $events = Events::with(
+                $events = DecoratedEvents::with(
                     new NodeAggregateWithNodeWasCreated(
                         workspaceName: $contentGraph->getWorkspaceName(),
                         contentStreamId: $contentGraph->getContentStreamId(),
@@ -288,7 +288,7 @@ trait TetheredNodeInternals
         NodePath $currentNodePath,
         NodeAggregateTypeChangeChildConstraintConflictResolutionStrategy $conflictResolutionStrategy,
         NodeAggregateIds $alreadyRemovedNodeAggregateIds,
-    ): Events {
+    ): DecoratedEvents {
         $events = [];
 
         $tetheredNodeType = $this->requireNodeType($newNodeTypeName);
@@ -379,6 +379,6 @@ trait TetheredNodeInternals
             }
         }
 
-        return Events::fromArray($events);
+        return DecoratedEvents::fromArray($events);
     }
 }

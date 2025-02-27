@@ -18,7 +18,7 @@ use Neos\ContentRepository\Core\DimensionSpace;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
 use Neos\ContentRepository\Core\EventStore\EventInterface;
-use Neos\ContentRepository\Core\EventStore\Events;
+use Neos\ContentRepository\Core\EventStore\DecoratedEvents;
 use Neos\ContentRepository\Core\Feature\NodeVariation\Event\NodeGeneralizationVariantWasCreated;
 use Neos\ContentRepository\Core\Feature\NodeVariation\Event\NodePeerVariantWasCreated;
 use Neos\ContentRepository\Core\Feature\NodeVariation\Event\NodeSpecializationVariantWasCreated;
@@ -40,7 +40,7 @@ trait NodeVariationInternals
         OriginDimensionSpacePoint $sourceOrigin,
         OriginDimensionSpacePoint $targetOrigin,
         NodeAggregate $nodeAggregate
-    ): Events {
+    ): DecoratedEvents {
         return match (
             $this->getInterDimensionalVariationGraph()->getVariantType(
                 $targetOrigin->toDimensionSpacePoint(),
@@ -73,7 +73,7 @@ trait NodeVariationInternals
         OriginDimensionSpacePoint $sourceOrigin,
         OriginDimensionSpacePoint $targetOrigin,
         NodeAggregate $nodeAggregate
-    ): Events {
+    ): DecoratedEvents {
         $specializationVisibility = $this->calculateEffectiveVisibility($targetOrigin, $nodeAggregate);
         $events = $this->collectNodeSpecializationVariantsThatWillHaveBeenCreated(
             $contentGraph,
@@ -84,7 +84,7 @@ trait NodeVariationInternals
             []
         );
 
-        return Events::fromArray($events);
+        return DecoratedEvents::fromArray($events);
     }
 
     /**
@@ -136,7 +136,7 @@ trait NodeVariationInternals
         OriginDimensionSpacePoint $sourceOrigin,
         OriginDimensionSpacePoint $targetOrigin,
         NodeAggregate $nodeAggregate
-    ): Events {
+    ): DecoratedEvents {
         $generalizationVisibility = $this->calculateEffectiveVisibility($targetOrigin, $nodeAggregate);
         $events = $this->collectNodeGeneralizationVariantsThatWillHaveBeenCreated(
             $contentGraph,
@@ -147,7 +147,7 @@ trait NodeVariationInternals
             []
         );
 
-        return Events::fromArray($events);
+        return DecoratedEvents::fromArray($events);
     }
 
     /**
@@ -199,7 +199,7 @@ trait NodeVariationInternals
         OriginDimensionSpacePoint $sourceOrigin,
         OriginDimensionSpacePoint $targetOrigin,
         NodeAggregate $nodeAggregate
-    ): Events {
+    ): DecoratedEvents {
         $peerVisibility = $this->calculateEffectiveVisibility($targetOrigin, $nodeAggregate);
         $events = $this->collectNodePeerVariantsThatWillHaveBeenCreated(
             $contentGraph,
@@ -210,7 +210,7 @@ trait NodeVariationInternals
             []
         );
 
-        return Events::fromArray($events);
+        return DecoratedEvents::fromArray($events);
     }
 
     /**

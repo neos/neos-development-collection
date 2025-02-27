@@ -19,7 +19,7 @@ use Neos\ContentRepository\Core\DimensionSpace;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Core\DimensionSpace\Exception\DimensionSpacePointNotFound;
-use Neos\ContentRepository\Core\EventStore\Events;
+use Neos\ContentRepository\Core\EventStore\DecoratedEvents;
 use Neos\ContentRepository\Core\EventStore\EventsToPublish;
 use Neos\ContentRepository\Core\Feature\Common\InterdimensionalSibling;
 use Neos\ContentRepository\Core\Feature\Common\InterdimensionalSiblings;
@@ -181,7 +181,7 @@ trait NodeMove
             }
         }
 
-        $events = Events::with(
+        $events = DecoratedEvents::with(
             new NodeAggregateWasMoved(
                 $command->workspaceName,
                 $contentStreamId,

@@ -24,7 +24,7 @@ use Neos\ContentRepository\Core\DimensionSpace\Exception\DimensionSpacePointIsNo
 use Neos\ContentRepository\Core\DimensionSpace\Exception\DimensionSpacePointNotFound;
 use Neos\ContentRepository\Core\DimensionSpace\InterDimensionalVariationGraph;
 use Neos\ContentRepository\Core\DimensionSpace\VariantType;
-use Neos\ContentRepository\Core\EventStore\Events;
+use Neos\ContentRepository\Core\EventStore\DecoratedEvents;
 use Neos\ContentRepository\Core\EventStore\EventsToPublish;
 use Neos\ContentRepository\Core\Feature\Common\RebasableToOtherWorkspaceInterface;
 use Neos\ContentRepository\Core\Feature\ContentStreamEventStreamName;
@@ -81,7 +81,7 @@ final readonly class DimensionSpaceCommandHandler implements CommandHandlerInter
             $streamName,
             RebaseableCommand::enrichWithCommand(
                 $command,
-                Events::with(
+                DecoratedEvents::with(
                     new DimensionSpacePointWasMoved(
                         $contentGraph->getWorkspaceName(),
                         $contentGraph->getContentStreamId(),
@@ -114,7 +114,7 @@ final readonly class DimensionSpaceCommandHandler implements CommandHandlerInter
             $streamName,
             RebaseableCommand::enrichWithCommand(
                 $command,
-                Events::with(
+                DecoratedEvents::with(
                     new DimensionShineThroughWasAdded(
                         $contentGraph->getWorkspaceName(),
                         $contentGraph->getContentStreamId(),

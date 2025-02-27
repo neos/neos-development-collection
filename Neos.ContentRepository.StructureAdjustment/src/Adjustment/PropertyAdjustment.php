@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\StructureAdjustment\Adjustment;
 
-use Neos\ContentRepository\Core\EventStore\Events;
+use Neos\ContentRepository\Core\EventStore\DecoratedEvents;
 use Neos\ContentRepository\Core\EventStore\EventsToPublish;
 use Neos\ContentRepository\Core\Feature\ContentStreamEventStreamName;
 use Neos\ContentRepository\Core\Feature\NodeModification\Dto\SerializedPropertyValue;
@@ -114,7 +114,7 @@ class PropertyAdjustment
         SerializedPropertyValues $serializedPropertyValues,
         PropertyNames $propertyNames
     ): EventsToPublish {
-        $events = Events::with(
+        $events = DecoratedEvents::with(
             new NodePropertiesWereSet(
                 $this->contentGraph->getWorkspaceName(),
                 $this->contentGraph->getContentStreamId(),

@@ -16,7 +16,7 @@ namespace Neos\ContentRepository\Core\Feature\SubtreeTagging;
 
 use Neos\ContentRepository\Core\CommandHandler\CommandHandlingDependencies;
 use Neos\ContentRepository\Core\DimensionSpace;
-use Neos\ContentRepository\Core\EventStore\Events;
+use Neos\ContentRepository\Core\EventStore\DecoratedEvents;
 use Neos\ContentRepository\Core\EventStore\EventsToPublish;
 use Neos\ContentRepository\Core\Feature\Common\ConstraintChecks;
 use Neos\ContentRepository\Core\Feature\RebaseableCommand;
@@ -59,7 +59,7 @@ trait SubtreeTagging
                 $this->getInterDimensionalVariationGraph()
             );
 
-        $events = Events::with(
+        $events = DecoratedEvents::with(
             new SubtreeWasTagged(
                 $contentGraph->getWorkspaceName(),
                 $contentGraph->getContentStreamId(),
@@ -104,7 +104,7 @@ trait SubtreeTagging
                 $this->getInterDimensionalVariationGraph()
             );
 
-        $events = Events::with(
+        $events = DecoratedEvents::with(
             new SubtreeWasUntagged(
                 $contentGraph->getWorkspaceName(),
                 $contentGraph->getContentStreamId(),

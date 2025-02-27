@@ -21,7 +21,7 @@ use Neos\ContentRepository\Core\CommandHandler\CommandSimulatorFactory;
 use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\EventStore\DecoratedEvent;
 use Neos\ContentRepository\Core\EventStore\EventNormalizer;
-use Neos\ContentRepository\Core\EventStore\Events;
+use Neos\ContentRepository\Core\EventStore\DecoratedEvents;
 use Neos\ContentRepository\Core\EventStore\EventsToPublish;
 use Neos\ContentRepository\Core\Feature\Common\PublishableToWorkspaceInterface;
 use Neos\ContentRepository\Core\Feature\Common\RebasableToOtherWorkspaceInterface;
@@ -141,7 +141,7 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
 
         yield new EventsToPublish(
             WorkspaceEventStreamName::fromWorkspaceName($command->workspaceName)->getEventStreamName(),
-            Events::with(
+            DecoratedEvents::with(
                 new WorkspaceWasCreated(
                     $command->workspaceName,
                     $command->baseWorkspaceName,
@@ -166,7 +166,7 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
 
         yield new EventsToPublish(
             ContentStreamEventStreamName::fromContentStreamId($command->newContentStreamId)->getEventStreamName(),
-            Events::with(
+            DecoratedEvents::with(
                 new ContentStreamWasCreated(
                     $command->newContentStreamId,
                 )
@@ -176,7 +176,7 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
 
         yield new EventsToPublish(
             WorkspaceEventStreamName::fromWorkspaceName($command->workspaceName)->getEventStreamName(),
-            Events::with(
+            DecoratedEvents::with(
                 new RootWorkspaceWasCreated(
                     $command->workspaceName,
                     $command->newContentStreamId
@@ -261,7 +261,7 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
 
         yield new EventsToPublish(
             WorkspaceEventStreamName::fromWorkspaceName($workspace->workspaceName)->getEventStreamName(),
-            Events::with(
+            DecoratedEvents::with(
                 new WorkspaceWasPublished(
                     $workspace->workspaceName,
                     $baseWorkspace->workspaceName,
@@ -291,7 +291,7 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
 
         yield new EventsToPublish(
             WorkspaceEventStreamName::fromWorkspaceName($workspace->workspaceName)->getEventStreamName(),
-            Events::with(
+            DecoratedEvents::with(
                 new WorkspaceWasRebased(
                     $workspace->workspaceName,
                     $newContentStreamId,
@@ -312,7 +312,7 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
         WorkspaceName $targetWorkspaceName,
         ContentStreamId $targetContentStreamId,
         EventStreamInterface $eventStream
-    ): Events|null {
+    ): DecoratedEvents|null {
         $events = [];
         foreach ($eventStream as $eventEnvelope) {
             $event = $this->eventNormalizer->denormalize($eventEnvelope->event);
@@ -326,7 +326,7 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
         }
 
         // this could technically empty, but we handle it as a no-op
-        return $events !== [] ? Events::fromArray($events) : null;
+        return $events !== [] ? DecoratedEvents::fromArray($events) : null;
     }
 
     /**
@@ -410,7 +410,7 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
             $baseWorkspaceContentStreamVersion,
             new EventsToPublish(
                 WorkspaceEventStreamName::fromWorkspaceName($command->workspaceName)->getEventStreamName(),
-                Events::with(
+                DecoratedEvents::with(
                     new WorkspaceWasRebased(
                         $command->workspaceName,
                         $command->rebasedContentStreamId,
@@ -529,7 +529,7 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
             Version::fromInteger($baseWorkspaceContentStreamVersion->value + ($selectedEventsOfWorkspaceToPublish?->count() ?? 0)),
             new EventsToPublish(
                 WorkspaceEventStreamName::fromWorkspaceName($command->workspaceName)->getEventStreamName(),
-                Events::fromArray([
+                DecoratedEvents::fromArray([
                     new WorkspaceWasPublished(
                         $command->workspaceName,
                         $baseWorkspace->workspaceName,
@@ -637,7 +637,7 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
             $baseWorkspaceContentStreamVersion,
             new EventsToPublish(
                 WorkspaceEventStreamName::fromWorkspaceName($command->workspaceName)->getEventStreamName(),
-                Events::with(
+                DecoratedEvents::with(
                     new WorkspaceWasDiscarded(
                         $command->workspaceName,
                         $command->newContentStreamId,
@@ -703,7 +703,7 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
 
         yield new EventsToPublish(
             WorkspaceEventStreamName::fromWorkspaceName($workspace->workspaceName)->getEventStreamName(),
-            Events::with(
+            DecoratedEvents::with(
                 new WorkspaceWasDiscarded(
                     $workspace->workspaceName,
                     $newContentStream,
@@ -753,7 +753,7 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
 
         yield new EventsToPublish(
             WorkspaceEventStreamName::fromWorkspaceName($command->workspaceName)->getEventStreamName(),
-            Events::with(
+            DecoratedEvents::with(
                 new WorkspaceBaseWorkspaceWasChanged(
                     $command->workspaceName,
                     $command->baseWorkspaceName,
@@ -776,7 +776,7 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
 
         yield new EventsToPublish(
             ContentStreamEventStreamName::fromContentStreamId($workspace->currentContentStreamId)->getEventStreamName(),
-            Events::with(
+            DecoratedEvents::with(
                 new ContentStreamWasRemoved(
                     $workspace->currentContentStreamId,
                 ),
@@ -786,7 +786,7 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
 
         yield new EventsToPublish(
             WorkspaceEventStreamName::fromWorkspaceName($command->workspaceName)->getEventStreamName(),
-            Events::with(
+            DecoratedEvents::with(
                 new WorkspaceWasRemoved(
                     $command->workspaceName,
                 )
@@ -800,7 +800,7 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
         ContentStreamId $sourceContentStreamId,
         Version $sourceContentStreamVersion,
         EventsToPublish $pointWorkspaceToNewContentStream,
-        Events|null $eventsToApplyOnNewContentStream,
+        DecoratedEvents|null $eventsToApplyOnNewContentStream,
         string $debugReasonForFork
     ): \Generator {
         yield $this->forkContentStream(
@@ -808,7 +808,7 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
             $sourceContentStreamId,
             $sourceContentStreamVersion,
             $debugReasonForFork . sprintf('; Apply %d events on new (temporary closed) content stream', $eventsToApplyOnNewContentStream?->count() ?? 0)
-        )->withAppendedEvents(Events::with(
+        )->withAppendedEvents(DecoratedEvents::with(
             new ContentStreamWasClosed(
                 $newContentStreamId
             )
@@ -819,7 +819,7 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
         yield new EventsToPublish(
             ContentStreamEventStreamName::fromContentStreamId($newContentStreamId)
                 ->getEventStreamName(),
-            Events::fromArray([
+            DecoratedEvents::fromArray([
                 ...($eventsToApplyOnNewContentStream ?? []),
                 new ContentStreamWasReopened(
                     $newContentStreamId

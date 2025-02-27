@@ -18,7 +18,7 @@ use Neos\ContentRepository\Core\CommandHandler\CommandHandlingDependencies;
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePointSet;
 use Neos\ContentRepository\Core\EventStore\EventInterface;
-use Neos\ContentRepository\Core\EventStore\Events;
+use Neos\ContentRepository\Core\EventStore\DecoratedEvents;
 use Neos\ContentRepository\Core\EventStore\EventsToPublish;
 use Neos\ContentRepository\Core\Feature\RebaseableCommand;
 use Neos\ContentRepository\Core\Feature\Common\NodeTypeChangeInternals;
@@ -113,7 +113,7 @@ trait NodeTypeChange
         NodePath $currentNodePath,
         NodeAggregateTypeChangeChildConstraintConflictResolutionStrategy $conflictResolutionStrategy,
         NodeAggregateIds $alreadyRemovedNodeAggregates,
-    ): Events;
+    ): DecoratedEvents;
 
     /**
      * @throws NodeTypeNotFound
@@ -277,7 +277,7 @@ trait NodeTypeChange
             ContentStreamEventStreamName::fromContentStreamId($contentGraph->getContentStreamId())->getEventStreamName(),
             RebaseableCommand::enrichWithCommand(
                 $command,
-                Events::fromArray($events),
+                DecoratedEvents::fromArray($events),
             ),
             $expectedVersion
         );

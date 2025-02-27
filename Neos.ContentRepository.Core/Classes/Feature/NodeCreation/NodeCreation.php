@@ -18,7 +18,7 @@ use Neos\ContentRepository\Core\CommandHandler\CommandHandlingDependencies;
 use Neos\ContentRepository\Core\DimensionSpace;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Core\EventStore\EventInterface;
-use Neos\ContentRepository\Core\EventStore\Events;
+use Neos\ContentRepository\Core\EventStore\DecoratedEvents;
 use Neos\ContentRepository\Core\EventStore\EventsToPublish;
 use Neos\ContentRepository\Core\Feature\Common\InterdimensionalSiblings;
 use Neos\ContentRepository\Core\Feature\RebaseableCommand;
@@ -226,7 +226,7 @@ trait NodeCreation
         return new EventsToPublish(
             ContentStreamEventStreamName::fromContentStreamId($contentGraph->getContentStreamId())
                 ->getEventStreamName(),
-            RebaseableCommand::enrichWithCommand($command, Events::fromArray($events)),
+            RebaseableCommand::enrichWithCommand($command, DecoratedEvents::fromArray($events)),
             $expectedVersion
         );
     }

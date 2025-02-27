@@ -20,12 +20,12 @@ final readonly class EventsToPublish
 {
     public function __construct(
         public StreamName $streamName,
-        public Events $events,
+        public DecoratedEvents $events,
         public ExpectedVersion $expectedVersion,
     ) {
     }
 
-    public function withAppendedEvents(Events $events): self
+    public function withAppendedEvents(DecoratedEvents $events): self
     {
         return new self(
             $this->streamName,

@@ -15,7 +15,7 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\Core\Feature\NodeRenaming;
 
 use Neos\ContentRepository\Core\CommandHandler\CommandHandlingDependencies;
-use Neos\ContentRepository\Core\EventStore\Events;
+use Neos\ContentRepository\Core\EventStore\DecoratedEvents;
 use Neos\ContentRepository\Core\EventStore\EventsToPublish;
 use Neos\ContentRepository\Core\Feature\Common\ConstraintChecks;
 use Neos\ContentRepository\Core\Feature\RebaseableCommand;
@@ -50,7 +50,7 @@ trait NodeRenaming
             $this->requireNodeTypeNotToDeclareTetheredChildNodeName($parentNodeAggregate->nodeTypeName, $command->newNodeName);
         }
 
-        $events = Events::with(
+        $events = DecoratedEvents::with(
             new NodeAggregateNameWasChanged(
                 $contentGraph->getWorkspaceName(),
                 $contentGraph->getContentStreamId(),

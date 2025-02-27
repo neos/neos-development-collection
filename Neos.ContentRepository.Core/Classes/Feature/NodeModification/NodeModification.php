@@ -15,7 +15,7 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\Core\Feature\NodeModification;
 
 use Neos\ContentRepository\Core\CommandHandler\CommandHandlingDependencies;
-use Neos\ContentRepository\Core\EventStore\Events;
+use Neos\ContentRepository\Core\EventStore\DecoratedEvents;
 use Neos\ContentRepository\Core\EventStore\EventsToPublish;
 use Neos\ContentRepository\Core\Feature\RebaseableCommand;
 use Neos\ContentRepository\Core\Feature\ContentStreamEventStreamName;
@@ -139,7 +139,7 @@ trait NodeModification
                 ->getEventStreamName(),
             RebaseableCommand::enrichWithCommand(
                 $command,
-                Events::fromArray($events)
+                DecoratedEvents::fromArray($events)
             ),
             $expectedVersion
         );

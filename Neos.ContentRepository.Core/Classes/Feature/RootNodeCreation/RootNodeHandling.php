@@ -18,7 +18,7 @@ use Neos\ContentRepository\Core\CommandHandler\CommandHandlingDependencies;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
 use Neos\ContentRepository\Core\EventStore\EventInterface;
-use Neos\ContentRepository\Core\EventStore\Events;
+use Neos\ContentRepository\Core\EventStore\DecoratedEvents;
 use Neos\ContentRepository\Core\EventStore\EventsToPublish;
 use Neos\ContentRepository\Core\Feature\Common\InterdimensionalSiblings;
 use Neos\ContentRepository\Core\Feature\RebaseableCommand;
@@ -122,7 +122,7 @@ trait RootNodeHandling
             $contentStreamEventStream->getEventStreamName(),
             RebaseableCommand::enrichWithCommand(
                 $command,
-                Events::fromArray($events)
+                DecoratedEvents::fromArray($events)
             ),
             $expectedVersion
         );
@@ -161,7 +161,7 @@ trait RootNodeHandling
             throw new NodeAggregateIsNotRoot('The node aggregate ' . $nodeAggregate->nodeAggregateId->value . ' is not classified as root, but should be for command UpdateRootNodeAggregateDimensions.', 1678647355);
         }
 
-        $events = Events::with(
+        $events = DecoratedEvents::with(
             new RootNodeAggregateDimensionsWereUpdated(
                 $contentGraph->getWorkspaceName(),
                 $contentGraph->getContentStreamId(),

@@ -6,7 +6,7 @@ namespace Neos\ContentRepository\Core\Feature;
 
 use Neos\ContentRepository\Core\CommandHandler\CommandHandlingDependencies;
 use Neos\ContentRepository\Core\EventStore\DecoratedEvent;
-use Neos\ContentRepository\Core\EventStore\Events;
+use Neos\ContentRepository\Core\EventStore\DecoratedEvents;
 use Neos\ContentRepository\Core\EventStore\EventsToPublish;
 use Neos\ContentRepository\Core\Feature\ContentStreamClosing\Event\ContentStreamWasClosed;
 use Neos\ContentRepository\Core\Feature\ContentStreamClosing\Event\ContentStreamWasReopened;
@@ -36,7 +36,7 @@ trait ContentStreamHandling
 
         return new EventsToPublish(
             $streamName,
-            Events::with(
+            DecoratedEvents::with(
                 new ContentStreamWasClosed(
                     $contentStreamId,
                 ),
@@ -55,7 +55,7 @@ trait ContentStreamHandling
     ): EventsToPublish {
         return new EventsToPublish(
             ContentStreamEventStreamName::fromContentStreamId($contentStreamId)->getEventStreamName(),
-            Events::with(
+            DecoratedEvents::with(
                 DecoratedEvent::create(
                     new ContentStreamWasReopened(
                         $contentStreamId
@@ -84,7 +84,7 @@ trait ContentStreamHandling
     ): EventsToPublish {
         return new EventsToPublish(
             ContentStreamEventStreamName::fromContentStreamId($newContentStreamId)->getEventStreamName(),
-            Events::with(
+            DecoratedEvents::with(
                 DecoratedEvent::create(
                     event: new ContentStreamWasForked(
                         $newContentStreamId,
@@ -108,7 +108,7 @@ trait ContentStreamHandling
     ): EventsToPublish {
         return new EventsToPublish(
             ContentStreamEventStreamName::fromContentStreamId($contentStreamId)->getEventStreamName(),
-            Events::with(
+            DecoratedEvents::with(
                 new ContentStreamWasRemoved(
                     $contentStreamId,
                 ),
