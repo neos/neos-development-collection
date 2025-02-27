@@ -23,7 +23,7 @@ use Neos\ContentRepository\Core\DimensionSpace\InterDimensionalVariationGraph;
 use Neos\ContentRepository\Core\EventStore\DecoratedEvent;
 use Neos\ContentRepository\Core\EventStore\EventInterface;
 use Neos\ContentRepository\Core\EventStore\EventNormalizer;
-use Neos\ContentRepository\Core\EventStore\DecoratedEvents as DomainEvents;
+use Neos\ContentRepository\Core\EventStore\DecoratedEvents;
 use Neos\ContentRepository\Core\EventStore\EventsToPublish;
 use Neos\ContentRepository\Core\EventStore\InitiatingEventMetadata;
 use Neos\ContentRepository\Core\Feature\Security\AuthProviderInterface;
@@ -37,8 +37,6 @@ use Neos\ContentRepository\Core\Projection\ProjectionStateInterface;
 use Neos\ContentRepository\Core\Projection\ProjectionStates;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
 use Neos\ContentRepository\Core\SharedModel\Exception\WorkspaceDoesNotExist;
-use Neos\ContentRepository\Core\SharedModel\Id\UuidFactory;
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreams;
 use Neos\ContentRepository\Core\SharedModel\Workspace\Workspace;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepository\Core\SharedModel\Workspace\Workspaces;
@@ -210,7 +208,7 @@ final class ContentRepository
         return $this->contentDimensionSource;
     }
 
-    private function enrichAndNormalizeEvents(DomainEvents $events, CorrelationId $correlationId): Events
+    private function enrichAndNormalizeEvents(DecoratedEvents $events, CorrelationId $correlationId): Events
     {
         $initiatingUserId = $this->authProvider->getAuthenticatedUserId() ?? UserId::forSystemUser();
         $initiatingTimestamp = $this->clock->now();
