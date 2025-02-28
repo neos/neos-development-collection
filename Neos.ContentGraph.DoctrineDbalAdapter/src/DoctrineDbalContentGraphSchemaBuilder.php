@@ -110,6 +110,7 @@ class DoctrineDbalContentGraphSchemaBuilder
             DbalSchemaFactory::columnForWorkspaceName('name', $platform)->setNotnull(true),
             DbalSchemaFactory::columnForWorkspaceName('baseWorkspaceName', $platform)->setNotnull(false),
             DbalSchemaFactory::columnForContentStreamId('currentContentStreamId', $platform)->setNotNull(true),
+            (new Column('version', Type::getType(Types::INTEGER)))->setNotnull(true),
         ]);
 
         $workspaceTable->addUniqueIndex(['currentContentStreamId']);
