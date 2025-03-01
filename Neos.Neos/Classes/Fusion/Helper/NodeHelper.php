@@ -21,6 +21,7 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\ContentSubgraphInterface
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\CountAncestorNodesFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindAncestorNodesFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
+use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregateIdPath;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodePath;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAddress;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
@@ -73,6 +74,17 @@ class NodeHelper implements ProtectedContextAwareInterface
         )->reverse();
 
         return AbsoluteNodePath::fromLeafNodeAndAncestors($node, $ancestors)->serializeToString();
+    }
+
+    public function aggregateIdPath(Node $node): string
+    {
+        $subgraph = $this->contentRepositoryRegistry->subgraphForNode($node);
+        $ancestors = $subgraph->findAncestorNodes(
+            $node->aggregateId,
+            FindAncestorNodesFilter::create()
+        )->reverse();
+
+        return NodeAggregateIdPath::fromNodes($ancestors)->serializeToString();
     }
 
     /**
