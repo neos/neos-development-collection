@@ -21,7 +21,6 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\ContentSubgraphInterface
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\CountAncestorNodesFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindAncestorNodesFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
-use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregateIdPath;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodePath;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAddress;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
@@ -30,6 +29,7 @@ use Neos\Flow\Annotations as Flow;
 use Neos\Neos\Domain\Exception;
 use Neos\Neos\Domain\NodeLabel\NodeLabelGeneratorInterface;
 use Neos\Neos\Domain\Service\NodeTypeNameFactory;
+use Neos\Neos\Presentation\NodeAggregateIdPath;
 use Neos\Neos\Presentation\VisualNodePath;
 
 /**
@@ -63,7 +63,10 @@ class NodeHelper implements ProtectedContextAwareInterface
     }
 
     /**
+     * This path is build on node names. As the node names are not mandatory, this can fail easily.
+     *
      * @deprecated do not rely on this, as it is rather expensive to calculate
+     * @throws \InvalidArgumentException
      */
     public function path(Node $node): string
     {
@@ -76,6 +79,9 @@ class NodeHelper implements ProtectedContextAwareInterface
         return AbsoluteNodePath::fromLeafNodeAndAncestors($node, $ancestors)->serializeToString();
     }
 
+    /**
+     * Returns a reliable path based on node aggregate ids to display the position of the node in the hierarchy.
+     */
     public function aggregateIdPath(Node $node): string
     {
         $subgraph = $this->contentRepositoryRegistry->subgraphForNode($node);

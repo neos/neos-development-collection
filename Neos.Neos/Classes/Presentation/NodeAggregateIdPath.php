@@ -1,7 +1,8 @@
 <?php
 
-namespace Neos\ContentRepository\Core\Projection\ContentGraph;
+namespace Neos\Neos\Presentation;
 
+use Neos\ContentRepository\Core\Projection\ContentGraph\Nodes;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateIds;
 
 final readonly class NodeAggregateIdPath implements \JsonSerializable
