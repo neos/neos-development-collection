@@ -514,3 +514,15 @@ tr.neos-change + tr.neos-change td.neos-content-change {
     margin-bottom: 4px
   }
 }
+
+#workspace-edit-role-assignments-modal {
+  min-width: 50vw;
+}
+
+#workspace-edit-role-assignments-modal .role-assignments-table {
+  width: 100%;
+}
+
+#workspace-edit-role-assignments-modal label i {
+  margin-right: 7px;
+}

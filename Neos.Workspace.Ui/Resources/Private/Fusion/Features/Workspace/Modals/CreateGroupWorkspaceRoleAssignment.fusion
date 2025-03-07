@@ -79,10 +79,11 @@ prototype(Neos.Workspace.Ui:Component.Modal.CreateGroupWorkspaceRoleAssignment) 
             </Neos.Fusion.Form:Neos.BackendModule.FieldContainer>
             <label>{private.i18n.id('workspaces.workspace.workspaceRoleAssignment.role')}</label>
             <Neos.Fusion:Loop items={props.roleOptions} itemName="roleName" itemKey="roleIdentifier">
-              <label><Neos.Fusion.Form:Radio
-                field.name="role"
-                field.value={roleIdentifier}
-              />
+              <label class="neos-radio neos-inline">
+                <Neos.Fusion.Form:Radio
+                  field.name="role"
+                  field.value={roleIdentifier}
+                /><span></span>
                 {roleName}
               </label>
             </Neos.Fusion:Loop>

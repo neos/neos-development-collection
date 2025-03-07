@@ -14,7 +14,7 @@ prototype(Neos.Workspace.Ui:Component.WorkspaceRoleAssignmentTable) < prototype(
   }
 
   renderer = afx`
-    <table class="role-assignments-table">
+    <table class="role-assignments-table workspace-table">
       <thead>
       <tr>
         <th>{private.i18n.id('workspaces.workspace.workspaceRoleAssignment.subject')}</th>

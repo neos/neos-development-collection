@@ -26,7 +26,7 @@ prototype(Neos.Workspace.Ui:Component.WorkspaceRoleAssignmentTableRow) < prototy
   renderer = afx`
     <tr>
       <td>{props.roleAssignmentFormData.subjectLabel}</td>
-      <td>{props.roleAssignmentFormData.roleLabel}</td>
+      <td>{private.i18n.id('workspaces.workspace.workspaceRoleAssignment.role.label.' + props.roleAssignmentFormData.roleLabel)}</td>
       <td>
         <Neos.Workspace.Ui:Component.Button
           isDanger

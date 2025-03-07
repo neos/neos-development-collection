@@ -383,6 +383,12 @@
       <trans-unit id="workspaces.ForceRebaseWorkspaceFailed" xml:space="preserve">
 				<source>Forcing the sync has failed. Please try discarding your changes.</source>
 			</trans-unit>
+      <trans-unit id="workspaces.permission.noUserAssignmentsSet" xml:space="preserve">
+				<source>There are no user permissions for this workspace</source>
+			</trans-unit>
+      <trans-unit id="workspaces.permission.noGroupAssignmentsSet" xml:space="preserve">
+				<source>There are no group permissions for this workspace</source>
+			</trans-unit>
       <trans-unit id="workspace.RestoreButtonTitle" xml:space="preserve">
 				<source>Show and restore deleted elements in workspace "{0}"</source>
 			</trans-unit>
