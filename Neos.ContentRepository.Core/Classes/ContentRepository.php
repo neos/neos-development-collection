@@ -62,6 +62,14 @@ use Psr\Clock\ClockInterface;
 final class ContentRepository
 {
     /**
+     * @var array<string,ContentGraphInterface>|false indexed by workspace name, false if disabled
+     */
+    private array|false $contentGraphsRuntimeCache = [];
+
+    /** @var Workspaces|false|null false if disabled */
+    private Workspaces|null|false $workspacesRuntimeCache = null;
+
+    /**
      * @internal use the {@see ContentRepositoryFactory::getOrBuild()} to instantiate
      */
     public function __construct(
@@ -95,6 +103,7 @@ final class ContentRepository
             throw AccessDenied::becauseCommandIsNotGranted($command, $privilege->getReason());
         }
 
+        $this->resetRuntimeCaches(disable: true);
         $toPublish = $this->commandBus->handle($command);
         $correlationId = CorrelationId::fromString(sprintf('%s_%s', substr($command::class, strrpos($command::class, '\\') + 1, 20), bin2hex(random_bytes(9))));
 
@@ -143,12 +152,12 @@ final class ContentRepository
                 throw CatchUpHadErrors::createFromErrors($fullCatchUpResult->errors);
             }
         }
+        $this->resetRuntimeCaches();
         $additionalCommands = $this->commandHook->onAfterHandle($command, $publishedEvents);
         foreach ($additionalCommands as $additionalCommand) {
             $this->handle($additionalCommand);
         }
     }
-
 
     /**
      * @template T of ProjectionStateInterface
@@ -169,6 +178,9 @@ final class ContentRepository
         $privilege = $this->authProvider->canReadNodesFromWorkspace($workspaceName);
         if (!$privilege->granted) {
             throw AccessDenied::becauseWorkspaceCantBeRead($workspaceName, $privilege->getReason());
+        }
+        if ($this->contentGraphsRuntimeCache !== false) {
+            return $this->contentGraphsRuntimeCache[$workspaceName->value] ??= $this->contentGraphReadModel->getContentGraph($workspaceName);
         }
         return $this->contentGraphReadModel->getContentGraph($workspaceName);
     }
@@ -192,6 +204,9 @@ final class ContentRepository
      */
     public function findWorkspaceByName(WorkspaceName $workspaceName): ?Workspace
     {
+        if ($this->workspacesRuntimeCache) {
+            return $this->workspacesRuntimeCache->get($workspaceName);
+        }
         return $this->contentGraphReadModel->findWorkspaceByName($workspaceName);
     }
 
@@ -201,6 +216,9 @@ final class ContentRepository
      */
     public function findWorkspaces(): Workspaces
     {
+        if ($this->workspacesRuntimeCache !== false) {
+            return $this->workspacesRuntimeCache ??= $this->contentGraphReadModel->findWorkspaces();
+        }
         return $this->contentGraphReadModel->findWorkspaces();
     }
 
@@ -217,6 +235,15 @@ final class ContentRepository
     public function getContentDimensionSource(): ContentDimensionSourceInterface
     {
         return $this->contentDimensionSource;
+    }
+
+    /**
+     * @param bool $disable to fully reset & deactivate the caches. This is required to deliver correct (uncached) results in case a catchup hook accesses this content repository.
+     */
+    private function resetRuntimeCaches(bool $disable = false): void
+    {
+        $this->workspacesRuntimeCache = $disable ? false : null;
+        $this->contentGraphsRuntimeCache = $disable ? false : [];
     }
 
     private function enrichAndNormalizeEvents(DomainEvents $events, CorrelationId $correlationId): Events
