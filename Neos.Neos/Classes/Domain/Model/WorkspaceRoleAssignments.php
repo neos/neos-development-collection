@@ -53,11 +53,11 @@ final readonly class WorkspaceRoleAssignments implements \IteratorAggregate, \Co
     {
         return new self(
             WorkspaceRoleAssignment::createForGroup(
-                'Neos.Neos:LivePublisher',
+                NeosUserRole::LIVE_PUBLISHER->value,
                 WorkspaceRole::COLLABORATOR
             ),
             WorkspaceRoleAssignment::createForGroup(
-                'Neos.Flow:Everybody',
+                NeosUserRole::EVERYBODY->value,
                 WorkspaceRole::VIEWER
             )
         );
@@ -76,7 +76,7 @@ final readonly class WorkspaceRoleAssignments implements \IteratorAggregate, \Co
                 WorkspaceRole::MANAGER,
             ),
             WorkspaceRoleAssignment::createForGroup(
-                'Neos.Neos:AbstractEditor',
+                NeosUserRole::ABSTRACT_EDITOR->value,
                 WorkspaceRole::COLLABORATOR,
             )
         );

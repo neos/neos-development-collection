@@ -46,6 +46,7 @@ use Neos\EventStore\Model\Events;
 use Neos\EventStore\Model\EventStream\EventStreamFilter;
 use Neos\EventStore\Model\EventStream\ExpectedVersion;
 use Neos\EventStore\Model\EventStream\VirtualStreamName;
+use Neos\Neos\Domain\Model\NeosUserRole;
 use Neos\Neos\Domain\Model\WorkspaceClassification;
 use Neos\Neos\Domain\Model\WorkspaceRole;
 use Neos\Neos\Domain\Model\WorkspaceRoleSubjectType;
@@ -718,18 +719,18 @@ final class EventMigrationService implements ContentRepositoryServiceInterface
             if ($workspaceName->isLive()) {
                 $roleAssignments[] = [
                     'subject_type' => WorkspaceRoleSubjectType::GROUP->value,
-                    'subject' => 'Neos.Neos:LivePublisher',
+                    'subject' => NeosUserRole::LIVE_PUBLISHER->value,
                     'role' => WorkspaceRole::COLLABORATOR->value,
                 ];
                 $roleAssignments[] = [
                     'subject_type' => WorkspaceRoleSubjectType::GROUP->value,
-                    'subject' => 'Neos.Flow:Everybody',
+                    'subject' => NeosUserRole::EVERYBODY->value,
                     'role' => WorkspaceRole::VIEWER->value,
                 ];
             } elseif ($isInternalWorkspace) {
                 $roleAssignments[] = [
                     'subject_type' => WorkspaceRoleSubjectType::GROUP->value,
-                    'subject' => 'Neos.Neos:AbstractEditor',
+                    'subject' => NeosUserRole::ABSTRACT_EDITOR->value,
                     'role' => WorkspaceRole::COLLABORATOR->value,
                 ];
             } elseif ($isPrivateWorkspace) {

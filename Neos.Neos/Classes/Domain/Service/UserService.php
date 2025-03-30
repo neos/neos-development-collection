@@ -37,6 +37,7 @@ use Neos\Flow\Session\SessionInterface;
 use Neos\Flow\Session\SessionManager;
 use Neos\Flow\Utility\Now;
 use Neos\Neos\Domain\Exception;
+use Neos\Neos\Domain\Model\NeosUserRole;
 use Neos\Neos\Domain\Model\User;
 use Neos\Neos\Domain\Model\UserId;
 use Neos\Neos\Domain\Repository\UserRepository;
@@ -334,7 +335,7 @@ class UserService
         $authenticationProviderName = null
     ) {
         if ($roleIdentifiers === null) {
-            $roleIdentifiers = ['Neos.Neos:Editor'];
+            $roleIdentifiers = [NeosUserRole::EDITOR->value];
         }
         $roleIdentifiers = $this->normalizeRoleIdentifiers($roleIdentifiers);
         $account = $this->accountFactory->createAccountWithPassword(
@@ -680,7 +681,7 @@ class UserService
      */
     public function currentUserIsAdministrator(): bool
     {
-        return $this->securityContext->hasRole('Neos.Neos:Administrator');
+        return $this->securityContext->hasRole(NeosUserRole::ADMINISTRATOR->value);
     }
 
     /**
@@ -753,8 +754,8 @@ class UserService
     public function getAllRoles(User $user): array
     {
         $roles = [
-            'Neos.Flow:Everybody' => $this->policyService->getRole('Neos.Flow:Everybody'),
-            'Neos.Flow:AuthenticatedUser' => $this->policyService->getRole('Neos.Flow:AuthenticatedUser')
+            NeosUserRole::EVERYBODY->value => $this->policyService->getRole(NeosUserRole::EVERYBODY->value),
+            NeosUserRole::AUTHENTICATED_USER->value => $this->policyService->getRole(NeosUserRole::AUTHENTICATED_USER->value)
         ];
 
         /** @var Account $account */

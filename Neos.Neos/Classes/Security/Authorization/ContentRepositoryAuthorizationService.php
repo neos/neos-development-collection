@@ -13,6 +13,7 @@ use Neos\Flow\Security\Authorization\PrivilegeManagerInterface;
 use Neos\Flow\Security\Context;
 use Neos\Flow\Security\Policy\PolicyService;
 use Neos\Flow\Security\Policy\Role;
+use Neos\Neos\Domain\Model\NeosUserRole;
 use Neos\Neos\Domain\Model\NodePermissions;
 use Neos\Neos\Domain\Model\UserId;
 use Neos\Neos\Domain\Model\WorkspacePermissions;
@@ -33,8 +34,6 @@ use Neos\Neos\Security\Authorization\Privilege\SubtreeTagPrivilegeSubject;
 #[Flow\Scope('singleton')]
 final readonly class ContentRepositoryAuthorizationService
 {
-    private const ROLE_NEOS_ADMINISTRATOR = 'Neos.Neos:Administrator';
-
     public function __construct(
         private WorkspaceMetadataAndRoleRepository $metadataAndRoleRepository,
         private PolicyService $policyService,
@@ -63,7 +62,7 @@ final readonly class ContentRepositoryAuthorizationService
          * We hardcode the check against administrators to always grant manage permissions. This is done to allow administrators to fix permissions of all workspaces.
          * We don't allow all rights like read and write. Admins should be able to grant themselves permissions to write to other personal workspaces, but they should not have this permission automagically.
          */
-        $userIsAdministrator = in_array(self::ROLE_NEOS_ADMINISTRATOR, $roleIdentifiers, true);
+        $userIsAdministrator = in_array(NeosUserRole::ADMINISTRATOR->value, $roleIdentifiers, true);
         $userWorkspaceRole = $this->metadataAndRoleRepository->getMostPrivilegedWorkspaceRoleForSubjects($contentRepositoryId, $workspaceName, WorkspaceRoleSubjects::fromArray($subjects));
         if ($userWorkspaceRole === null) {
             if ($userIsAdministrator) {
