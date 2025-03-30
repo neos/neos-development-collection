@@ -176,25 +176,51 @@ final readonly class NodeQueryBuilder
         }
     }
 
-    public function addSearchTermConstraints(QueryBuilder $queryBuilder, SearchTerm $searchTerm, string $nodeTableAlias = 'n'): void
+    // todo combine with above
+    public function addNodeTypeCriteria2(QueryBuilder $queryBuilder, ExpandedNodeTypeCriteria $constraintsWithSubNodeTypes, string $nodeTableAlias = 'n'): string
+    {
+        $nodeTablePrefix = $nodeTableAlias === '' ? '' : $nodeTableAlias . '.';
+        $allowanceQueryPart = '';
+        if (!$constraintsWithSubNodeTypes->explicitlyAllowedNodeTypeNames->isEmpty()) {
+            $allowanceQueryPart = $queryBuilder->expr()->in($nodeTablePrefix . 'nodetypename', ':explicitlyAllowedNodeTypeNames');
+            $queryBuilder->setParameter('explicitlyAllowedNodeTypeNames', $constraintsWithSubNodeTypes->explicitlyAllowedNodeTypeNames->toStringArray(), ArrayParameterType::STRING);
+        }
+        $denyQueryPart = '';
+        if (!$constraintsWithSubNodeTypes->explicitlyDisallowedNodeTypeNames->isEmpty()) {
+            $denyQueryPart = $queryBuilder->expr()->notIn($nodeTablePrefix . 'nodetypename', ':explicitlyDisallowedNodeTypeNames');
+            $queryBuilder->setParameter('explicitlyDisallowedNodeTypeNames', $constraintsWithSubNodeTypes->explicitlyDisallowedNodeTypeNames->toStringArray(), ArrayParameterType::STRING);
+        }
+        if ($allowanceQueryPart && $denyQueryPart) {
+            if ($constraintsWithSubNodeTypes->isWildCardAllowed) {
+                return (string)$queryBuilder->expr()->or($allowanceQueryPart, $denyQueryPart);
+            } else {
+                return (string)$queryBuilder->expr()->and($allowanceQueryPart, $denyQueryPart);
+            }
+        } elseif ($allowanceQueryPart && !$constraintsWithSubNodeTypes->isWildCardAllowed) {
+            return $allowanceQueryPart;
+        } elseif ($denyQueryPart) {
+            return $denyQueryPart;
+        }
+        throw new \RuntimeException(sprintf('NO'), 1736614392);
+        return '';
+    }
+
+    public function addSearchTermConstraints(QueryBuilder $queryBuilder, SearchTerm $searchTerm, string $nodeTableAlias = 'n'): string
     {
         if ($searchTerm->term === '') {
-            return;
+            throw new \RuntimeException(sprintf('NO'), 1736614392);
+            return '';
         }
-        $queryBuilder->andWhere('JSON_SEARCH(' . $nodeTableAlias . '.properties, "one", :searchTermPattern, NULL, "$.*.value") IS NOT NULL')->setParameter('searchTermPattern', '%' . $searchTerm->term . '%');
+        $queryBuilder->setParameter('searchTermPattern', '%' . $searchTerm->term . '%');
+        return 'JSON_SEARCH(' . $nodeTableAlias . '.properties, "one", :searchTermPattern, NULL, "$.*.value") IS NOT NULL';
     }
 
-    public function addPropertyValueConstraints(QueryBuilder $queryBuilder, PropertyValueCriteriaInterface $propertyValue, string $nodeTableAlias = 'n'): void
-    {
-        $queryBuilder->andWhere($this->propertyValueConstraints($queryBuilder, $propertyValue, $nodeTableAlias));
-    }
-
-    private function propertyValueConstraints(QueryBuilder $queryBuilder, PropertyValueCriteriaInterface $propertyValue, string $nodeTableAlias): string
+    public function addPropertyValueConstraints(QueryBuilder $queryBuilder, PropertyValueCriteriaInterface $propertyValue, string $nodeTableAlias = 'n'): string
     {
         return match ($propertyValue::class) {
-            AndCriteria::class => (string)$queryBuilder->expr()->and($this->propertyValueConstraints($queryBuilder, $propertyValue->criteria1, $nodeTableAlias), $this->propertyValueConstraints($queryBuilder, $propertyValue->criteria2, $nodeTableAlias)),
-            NegateCriteria::class => 'NOT (' . $this->propertyValueConstraints($queryBuilder, $propertyValue->criteria, $nodeTableAlias) . ')',
-            OrCriteria::class => (string)$queryBuilder->expr()->or($this->propertyValueConstraints($queryBuilder, $propertyValue->criteria1, $nodeTableAlias), $this->propertyValueConstraints($queryBuilder, $propertyValue->criteria2, $nodeTableAlias)),
+            AndCriteria::class => (string)$queryBuilder->expr()->and($this->addPropertyValueConstraints($queryBuilder, $propertyValue->criteria1, $nodeTableAlias), $this->addPropertyValueConstraints($queryBuilder, $propertyValue->criteria2, $nodeTableAlias)),
+            NegateCriteria::class => 'NOT (' . $this->addPropertyValueConstraints($queryBuilder, $propertyValue->criteria, $nodeTableAlias) . ')',
+            OrCriteria::class => (string)$queryBuilder->expr()->or($this->addPropertyValueConstraints($queryBuilder, $propertyValue->criteria1, $nodeTableAlias), $this->addPropertyValueConstraints($queryBuilder, $propertyValue->criteria2, $nodeTableAlias)),
             PropertyValueContains::class => $this->searchPropertyValueStatement($queryBuilder, $propertyValue->propertyName, '%' . $propertyValue->value . '%', $nodeTableAlias, $propertyValue->caseSensitive),
             PropertyValueEndsWith::class => $this->searchPropertyValueStatement($queryBuilder, $propertyValue->propertyName, '%' . $propertyValue->value, $nodeTableAlias, $propertyValue->caseSensitive),
             PropertyValueEquals::class => is_string($propertyValue->value) ? $this->searchPropertyValueStatement($queryBuilder, $propertyValue->propertyName, $propertyValue->value, $nodeTableAlias, $propertyValue->caseSensitive) : $this->comparePropertyValueStatement($queryBuilder, $propertyValue->propertyName, $propertyValue->value, '=', $nodeTableAlias),

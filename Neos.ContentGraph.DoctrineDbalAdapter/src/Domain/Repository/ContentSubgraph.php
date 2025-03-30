@@ -488,10 +488,10 @@ final class ContentSubgraph implements ContentSubgraphInterface
             $this->nodeQueryBuilder->addNodeTypeCriteria($queryBuilder, ExpandedNodeTypeCriteria::create($filter->nodeTypes, $this->nodeTypeManager));
         }
         if ($filter->searchTerm !== null) {
-            $this->nodeQueryBuilder->addSearchTermConstraints($queryBuilder, $filter->searchTerm);
+            $queryBuilder->andWhere($this->nodeQueryBuilder->addSearchTermConstraints($queryBuilder, $filter->searchTerm));
         }
         if ($filter->propertyValue !== null) {
-            $this->nodeQueryBuilder->addPropertyValueConstraints($queryBuilder, $filter->propertyValue);
+            $queryBuilder->andWhere($this->nodeQueryBuilder->addPropertyValueConstraints($queryBuilder, $filter->propertyValue));
         }
         $this->addSubtreeTagConstraints($queryBuilder);
         return $queryBuilder;
@@ -519,16 +519,16 @@ final class ContentSubgraph implements ContentSubgraphInterface
             $this->nodeQueryBuilder->addNodeTypeCriteria($queryBuilder, ExpandedNodeTypeCriteria::create($filter->nodeTypes, $this->nodeTypeManager), "{$destinationTablePrefix}n");
         }
         if ($filter->nodeSearchTerm !== null) {
-            $this->nodeQueryBuilder->addSearchTermConstraints($queryBuilder, $filter->nodeSearchTerm, "{$destinationTablePrefix}n");
+            $queryBuilder->andWhere($this->nodeQueryBuilder->addSearchTermConstraints($queryBuilder, $filter->nodeSearchTerm, "{$destinationTablePrefix}n"));
         }
         if ($filter->nodePropertyValue !== null) {
-            $this->nodeQueryBuilder->addPropertyValueConstraints($queryBuilder, $filter->nodePropertyValue, "{$destinationTablePrefix}n");
+            $queryBuilder->andWhere($this->nodeQueryBuilder->addPropertyValueConstraints($queryBuilder, $filter->nodePropertyValue, "{$destinationTablePrefix}n"));
         }
         if ($filter->referenceSearchTerm !== null) {
-            $this->nodeQueryBuilder->addSearchTermConstraints($queryBuilder, $filter->referenceSearchTerm, 'r');
+            $queryBuilder->andWhere($this->nodeQueryBuilder->addSearchTermConstraints($queryBuilder, $filter->referenceSearchTerm, 'r'));
         }
         if ($filter->referencePropertyValue !== null) {
-            $this->nodeQueryBuilder->addPropertyValueConstraints($queryBuilder, $filter->referencePropertyValue, 'r');
+            $queryBuilder->andWhere($this->nodeQueryBuilder->addPropertyValueConstraints($queryBuilder, $filter->referencePropertyValue, 'r'));
         }
         if ($filter->referenceName !== null) {
             $queryBuilder->andWhere('r.name = :referenceName')->setParameter('referenceName', $filter->referenceName->value);
@@ -557,10 +557,10 @@ final class ContentSubgraph implements ContentSubgraphInterface
             $this->nodeQueryBuilder->addNodeTypeCriteria($queryBuilder, ExpandedNodeTypeCriteria::create($filter->nodeTypes, $this->nodeTypeManager));
         }
         if ($filter->searchTerm !== null) {
-            $this->nodeQueryBuilder->addSearchTermConstraints($queryBuilder, $filter->searchTerm);
+            $queryBuilder->andWhere($this->nodeQueryBuilder->addSearchTermConstraints($queryBuilder, $filter->searchTerm));
         }
         if ($filter->propertyValue !== null) {
-            $this->nodeQueryBuilder->addPropertyValueConstraints($queryBuilder, $filter->propertyValue);
+            $queryBuilder->andWhere($this->nodeQueryBuilder->addPropertyValueConstraints($queryBuilder, $filter->propertyValue));
         }
         if ($filter->pagination !== null) {
             $this->applyPagination($queryBuilder, $filter->pagination);
@@ -609,9 +609,20 @@ final class ContentSubgraph implements ContentSubgraphInterface
      */
     private function buildDescendantNodesQueries(NodeAggregateId $entryNodeAggregateId, FindDescendantNodesFilter|CountDescendantNodesFilter $filter): array
     {
-        $queryBuilderInitial = $this->createQueryBuilder()
+        $queryBuilderInitial = $this->createQueryBuilder();
+
+        // todo optimise also if ordering is ASC
+        $optimize = $filter->pagination !== null && $filter->pagination->limit === 1 && $filter->pagination->offset === 0 && $filter->ordering === null;
+
+        $nodeMatcher = (string)$queryBuilderInitial->expr()->and(...(array_filter([
+            $filter->nodeTypes !== null ? $this->nodeQueryBuilder->addNodeTypeCriteria2($queryBuilderInitial, ExpandedNodeTypeCriteria::create($filter->nodeTypes, $this->nodeTypeManager)) : '',
+            $filter->searchTerm !== null ? $this->nodeQueryBuilder->addSearchTermConstraints($queryBuilderInitial, $filter->searchTerm) : '',
+            $filter->propertyValue !== null ? $this->nodeQueryBuilder->addPropertyValueConstraints($queryBuilderInitial, $filter->propertyValue) : '',
+        ]) ?: ['true'])); // todo empty true case
+
+        $queryBuilderInitial
             // @see https://mariadb.com/kb/en/library/recursive-common-table-expressions-overview/#cast-to-avoid-data-truncation
-            ->select('n.*, h.subtreetags, CAST("ROOT" AS CHAR(50)) AS parentNodeAggregateId, 0 AS level, 0 AS position')
+            ->select('n.*, h.subtreetags, CAST("ROOT" AS CHAR(50)) AS parentNodeAggregateId, 0 AS level, 0 AS position' . ($optimize ? ", CASE WHEN $nodeMatcher THEN 1 ELSE 0 END AS isMatch" : ''))
             ->from($this->nodeQueryBuilder->tableNames->node(), 'n')
             // we need to join with the hierarchy relation, because we need the node name.
             ->innerJoin('n', $this->nodeQueryBuilder->tableNames->hierarchyRelation(), 'h', 'h.childnodeanchor = n.relationanchorpoint')
@@ -624,24 +635,40 @@ final class ContentSubgraph implements ContentSubgraphInterface
             ->andWhere('p.nodeaggregateid = :entryNodeAggregateId');
         $this->addSubtreeTagConstraints($queryBuilderInitial);
 
+        $nodeMatcher = (string)$queryBuilderInitial->expr()->and(...(array_filter([
+            $filter->nodeTypes !== null ? $this->nodeQueryBuilder->addNodeTypeCriteria2($queryBuilderInitial, ExpandedNodeTypeCriteria::create($filter->nodeTypes, $this->nodeTypeManager), 'cn') : '',
+            $filter->searchTerm !== null ? $this->nodeQueryBuilder->addSearchTermConstraints($queryBuilderInitial, $filter->searchTerm, 'cn') : '',
+            $filter->propertyValue !== null ? $this->nodeQueryBuilder->addPropertyValueConstraints($queryBuilderInitial, $filter->propertyValue, 'cn') : '',
+        ]) ?: ['true']));
+
         $queryBuilderRecursive = $this->createQueryBuilder()
-            ->select('cn.*, h.subtreetags, pn.nodeaggregateid AS parentNodeAggregateId, pn.level + 1 AS level, h.position')
+            ->select('cn.*, h.subtreetags, pn.nodeaggregateid AS parentNodeAggregateId, pn.level + 1 AS level, h.position' . ($optimize ? ", CASE WHEN $nodeMatcher THEN 1 ELSE 0 END AS isMatch" : ''))
             ->from('tree', 'pn')
             ->innerJoin('pn', $this->nodeQueryBuilder->tableNames->hierarchyRelation(), 'h', 'h.parentnodeanchor = pn.relationanchorpoint')
             ->innerJoin('pn', $this->nodeQueryBuilder->tableNames->node(), 'cn', 'cn.relationanchorpoint = h.childnodeanchor')
             ->where('h.contentstreamid = :contentStreamId')
             ->andWhere('h.dimensionspacepointhash = :dimensionSpacePointHash');
+
+        if ($optimize) {
+            $queryBuilderRecursive->andWhere('pn.isMatch = 0');
+        }
+
         $this->addSubtreeTagConstraints($queryBuilderRecursive);
 
         $queryBuilderCte = $this->nodeQueryBuilder->buildBasicNodesCteQuery($entryNodeAggregateId, $this->contentStreamId, $this->dimensionSpacePoint, 'tree', 'n');
-        if ($filter->nodeTypes !== null) {
-            $this->nodeQueryBuilder->addNodeTypeCriteria($queryBuilderCte, ExpandedNodeTypeCriteria::create($filter->nodeTypes, $this->nodeTypeManager));
-        }
-        if ($filter->searchTerm !== null) {
-            $this->nodeQueryBuilder->addSearchTermConstraints($queryBuilderCte, $filter->searchTerm);
-        }
-        if ($filter->propertyValue !== null) {
-            $this->nodeQueryBuilder->addPropertyValueConstraints($queryBuilderCte, $filter->propertyValue);
+
+        if ($optimize === false) {
+            if ($filter->nodeTypes !== null) {
+                $this->nodeQueryBuilder->addNodeTypeCriteria($queryBuilderCte, ExpandedNodeTypeCriteria::create($filter->nodeTypes, $this->nodeTypeManager));
+            }
+            if ($filter->searchTerm !== null && $filter->searchTerm !== '') {
+                $queryBuilderCte->andWhere($this->nodeQueryBuilder->addSearchTermConstraints($queryBuilderCte, $filter->searchTerm));
+            }
+            if ($filter->propertyValue !== null) {
+                $queryBuilderCte->andWhere($this->nodeQueryBuilder->addPropertyValueConstraints($queryBuilderCte, $filter->propertyValue));
+            }
+        } else {
+            $queryBuilderCte->where('n.isMatch = 1');
         }
         return compact('queryBuilderInitial', 'queryBuilderRecursive', 'queryBuilderCte');
     }

@@ -91,7 +91,7 @@ Feature: Find and count nodes using the findDescendantNodes and countDescendantN
       | nodeAggregateId              | "a2a2a"       |
       | nodeVariantSelectionStrategy | "allVariants" |
 
-  Scenario:
+  Scenario: Default
 
       # findDescendantNodes queries without results
     When I execute the findDescendantNodes query for entry node aggregate id "non-existing" I expect no nodes to be returned
@@ -131,3 +131,43 @@ Feature: Find and count nodes using the findDescendantNodes and countDescendantN
     When I execute the findDescendantNodes query for entry node aggregate id "home" and filter '{"ordering": [{"type": "propertyName", "field": "integerProperty", "direction": "DESCENDING"}]}' I expect the nodes "a2a2b,a2,a1,terms,contact,a,b,b1,a3,a2a,a2a1,a2a2" to be returned
     When I execute the findDescendantNodes query for entry node aggregate id "home" and filter '{"ordering": [{"type": "propertyName", "field": "booleanProperty", "direction": "ASCENDING"}, {"type": "timestampField", "field": "LAST_MODIFIED", "direction": "DESCENDING"}]}' I expect the nodes "terms,contact,b,a1,b1,a2,a2a,a2a1,a2a2,a3,a2a2b,a" to be returned
     When I execute the findDescendantNodes query for entry node aggregate id "home" and filter '{"ordering": [{"type": "propertyName", "field": "integerProperty", "direction": "DESCENDING"}], "pagination": {"limit": 3, "offset": 4}}' I expect the nodes "contact,a,b" to be returned and the total count to be 12
+
+  Scenario: Optimized limit=1
+
+      # findDescendantNodes queries without results
+    When I execute the findDescendantNodes query for entry node aggregate id "non-existing" and filter '{"pagination": {"limit": 1}}' I expect no nodes to be returned
+    When I execute the findDescendantNodes query for entry node aggregate id "home" and filter '{"searchTerm": "a2a2a", "pagination": {"limit": 1}}' I expect no nodes to be returned
+    When I execute the findDescendantNodes query for entry node aggregate id "home" and filter '{"searchTerm": "string", "pagination": {"limit": 1}}' I expect no nodes to be returned
+    When I execute the findDescendantNodes query for entry node aggregate id "home" and filter '{"propertyValue": "integerProperty > 125", "pagination": {"limit": 1}}' I expect no nodes to be returned
+    When I execute the findDescendantNodes query for entry node aggregate id "home" and filter '{"propertyValue": "integerProperty >= 126", "pagination": {"limit": 1}}' I expect no nodes to be returned
+    When I execute the findDescendantNodes query for entry node aggregate id "home" and filter '{"propertyValue": "integerProperty < 20", "pagination": {"limit": 1}}' I expect no nodes to be returned
+    When I execute the findDescendantNodes query for entry node aggregate id "home" and filter '{"propertyValue": "integerProperty <= 19", "pagination": {"limit": 1}}' I expect no nodes to be returned
+    When I execute the findDescendantNodes query for entry node aggregate id "home" and filter '{"propertyValue": "integerProperty <= 19 OR integerProperty <= 18", "pagination": {"limit": 1}}' I expect no nodes to be returned
+    # The following should not return node "b1" because boolean true !== "true"
+    # TODO Broken!!! When I execute the findDescendantNodes query for entry node aggregate id "home" and filter '{"propertyValue": "stringProperty = true", "pagination": {"limit": 1}}' I expect no nodes to be returned
+    # The following should not return any node because date time properties are serialized into a full timestamp in the format "1980-12-13T00:00:00+00:00"
+    When I execute the findDescendantNodes query for entry node aggregate id "home" and filter '{"propertyValue": "dateProperty = \"1980-12-13\"", "pagination": {"limit": 1}}' I expect no nodes to be returned
+
+      # findDescendantNodes queries with results
+    When I execute the findDescendantNodes query for entry node aggregate id "home" and filter '{"pagination": {"limit": 1}}' I expect the nodes "terms" to be returned
+    When I execute the findDescendantNodes query for entry node aggregate id "home" and filter '{"nodeTypes": "Neos.ContentRepository.Testing:Page", "pagination": {"limit": 1}}' I expect the nodes "a" to be returned
+    When I execute the findDescendantNodes query for entry node aggregate id "home" and filter '{"searchTerm": "a2", "pagination": {"limit": 1}}' I expect the nodes "a2" to be returned
+    When I execute the findDescendantNodes query for entry node aggregate id "home" and filter '{"searchTerm": "a1", "pagination": {"limit": 1}}' I expect the nodes "a1" to be returned
+    When I execute the findDescendantNodes query for entry node aggregate id "home" and filter '{"propertyValue": "text ^= \"a1\"", "pagination": {"limit": 1}}' I expect the nodes "a1" to be returned
+    When I execute the findDescendantNodes query for entry node aggregate id "home" and filter '{"propertyValue": "text ^= \"a1\" OR text $= \"a1\"", "pagination": {"limit": 1}}' I expect the nodes "a1" to be returned
+    # When I execute the findDescendantNodes query for entry node aggregate id "home" and filter '{"propertyValue": "stringProperty *= \"späCi\" OR text $= \"a1\"", "pagination": {"limit": 1}}' I expect the nodes "b" to be returned
+    When I execute the findDescendantNodes query for entry node aggregate id "home" and filter '{"propertyValue": "booleanProperty = true", "pagination": {"limit": 1}}' I expect the nodes "a" to be returned
+    When I execute the findDescendantNodes query for entry node aggregate id "home" and filter '{"propertyValue": "booleanProperty = false", "pagination": {"limit": 1}}' I expect the nodes "a3" to be returned
+    When I execute the findDescendantNodes query for entry node aggregate id "home" and filter '{"propertyValue": "integerProperty >= 20", "pagination": {"limit": 1}}' I expect the nodes "a1" to be returned
+    When I execute the findDescendantNodes query for entry node aggregate id "home" and filter '{"propertyValue": "integerProperty > 20", "pagination": {"limit": 1}}' I expect the nodes "a1" to be returned
+    When I execute the findDescendantNodes query for entry node aggregate id "home" and filter '{"propertyValue": "integerProperty <= 21", "pagination": {"limit": 1}}' I expect the nodes "a2a2b" to be returned
+    When I execute the findDescendantNodes query for entry node aggregate id "home" and filter '{"propertyValue": "integerProperty < 21", "pagination": {"limit": 1}}' I expect the nodes "a2a2b" to be returned
+    When I execute the findDescendantNodes query for entry node aggregate id "home" and filter '{"propertyValue": "floatProperty >= 123.45", "pagination": {"limit": 1}}' I expect the nodes "a2a" to be returned
+    When I execute the findDescendantNodes query for entry node aggregate id "home" and filter '{"propertyValue": "floatProperty > 123.45", "pagination": {"limit": 1}}' I expect the nodes "a2a1" to be returned
+    When I execute the findDescendantNodes query for entry node aggregate id "home" and filter '{"propertyValue": "floatProperty = 123.45", "pagination": {"limit": 1}}' I expect the nodes "a2a" to be returned
+    When I execute the findDescendantNodes query for entry node aggregate id "home" and filter '{"propertyValue": "dateProperty >= \"1980-12-13\"", "pagination": {"limit": 1}}' I expect the nodes "a2a1" to be returned
+    When I execute the findDescendantNodes query for entry node aggregate id "home" and filter '{"propertyValue": "dateProperty > \"1980-12-13\"", "pagination": {"limit": 1}}' I expect the nodes "a2a1" to be returned
+    # special cases with ordering
+    # Todo not when ordering When I execute the findDescendantNodes query for entry node aggregate id "home" and filter '{"ordering": [{"type": "propertyName", "field": "integerProperty", "direction": "DESCENDING"}], "pagination": {"limit": 1}}' I expect the nodes "a2a2b" to be returned
+    When I execute the findDescendantNodes query for entry node aggregate id "home" and filter '{"ordering": [{"type": "propertyName", "field": "booleanProperty", "direction": "ASCENDING"}, {"type": "timestampField", "field": "LAST_MODIFIED", "direction": "DESCENDING"}], "pagination": {"limit": 1}}' I expect the nodes "terms" to be returned
+    # todo When I execute the findDescendantNodes query for entry node aggregate id "home" and filter '{"ordering": [{"type": "propertyName", "field": "integerProperty", "direction": "DESCENDING"}], "pagination": {"limit": 1, "offset": 2}}' I expect the nodes "contact,a,b" to be returned and the total count to be 12
