@@ -517,6 +517,11 @@ Neos:
             'neos_neos_workspace_metadata': true
             'neos_neos_workspace_role': true
 
+        dbal:
+          mappingTypes:
+            'flow_json_array':
+              dbType: 'json_array'
+
   Fusion:
     rendering:
       exceptionHandler: Neos\Fusion\Core\ExceptionHandlers\ThrowingHandler
