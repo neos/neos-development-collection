@@ -18,9 +18,15 @@ use Behat\Gherkin\Node\PyStringNode;
 use Behat\Gherkin\Node\TableNode;
 use Doctrine\DBAL\Connection;
 use Neos\ContentRepository\Core\ContentRepository;
+use Neos\ContentRepository\Core\Service\ContentRepositoryMaintainerFactory;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
+use Neos\ContentRepository\Core\Subscription\Engine\SubscriptionEngine;
 use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\Helpers\GherkinTableNodeBasedContentDimensionSource;
+use Neos\ContentRepository\TestSuite\Fakes\FakeContentDimensionSourceFactory;
+use Neos\ContentRepository\TestSuite\Fakes\FakeNodeTypeManagerFactory;
 use Neos\EventStore\EventStoreInterface;
+use PHPUnit\Framework\Assert;
+use Symfony\Component\Yaml\Yaml;
 
 /**
  * Subject provider for behavioral tests
@@ -57,7 +63,7 @@ trait CRBehavioralTestsSubjectProvider
      */
     public function usingNoContentDimensions(): void
     {
-        GherkinTableNodeBasedContentDimensionSourceFactory::$contentDimensionsToUse = GherkinTableNodeBasedContentDimensionSource::createEmpty();
+        FakeContentDimensionSourceFactory::setWithoutDimensions();
     }
 
     /**
@@ -65,7 +71,9 @@ trait CRBehavioralTestsSubjectProvider
      */
     public function usingTheFollowingContentDimensions(TableNode $contentDimensions): void
     {
-        GherkinTableNodeBasedContentDimensionSourceFactory::initializeFromTableNode($contentDimensions);
+        FakeContentDimensionSourceFactory::setContentDimensionSource(
+            GherkinTableNodeBasedContentDimensionSource::fromGherkinTableNode($contentDimensions)
+        );
     }
 
     /**
@@ -73,7 +81,7 @@ trait CRBehavioralTestsSubjectProvider
      */
     public function usingTheFollowingNodeTypes(PyStringNode $serializedNodeTypesConfiguration): void
     {
-        GherkinPyStringNodeBasedNodeTypeManagerFactory::initializeWithPyStringNode($serializedNodeTypesConfiguration);
+        FakeNodeTypeManagerFactory::setConfiguration(Yaml::parse($serializedNodeTypesConfiguration->getRaw()) ?? []);
     }
 
     /**
@@ -97,8 +105,11 @@ trait CRBehavioralTestsSubjectProvider
             throw new \DomainException('undeclared content repository ' . $contentRepositoryId);
         } else {
             $contentRepository = $this->contentRepositories[$contentRepositoryId];
-            GherkinPyStringNodeBasedNodeTypeManagerFactory::$nodeTypesToUse = $contentRepository->getNodeTypeManager();
-            GherkinTableNodeBasedContentDimensionSourceFactory::initializeFromTableNode($contentDimensions);
+            // ensure that the current node types of exactly THE content repository are preserved
+            FakeNodeTypeManagerFactory::setNodeTypeManager($contentRepository->getNodeTypeManager());
+            FakeContentDimensionSourceFactory::setContentDimensionSource(
+                GherkinTableNodeBasedContentDimensionSource::fromGherkinTableNode($contentDimensions)
+            );
             $this->contentRepositories[$contentRepositoryId] = $this->createContentRepository(ContentRepositoryId::fromString($contentRepositoryId));
             if ($this->currentContentRepository->id->value === $contentRepositoryId) {
                 $this->currentContentRepository = $this->contentRepositories[$contentRepositoryId];
@@ -117,8 +128,9 @@ trait CRBehavioralTestsSubjectProvider
             throw new \DomainException('undeclared content repository ' . $contentRepositoryId);
         } else {
             $contentRepository = $this->contentRepositories[$contentRepositoryId];
-            GherkinPyStringNodeBasedNodeTypeManagerFactory::initializeWithPyStringNode($serializedNodeTypesConfiguration);
-            GherkinTableNodeBasedContentDimensionSourceFactory::$contentDimensionsToUse = $contentRepository->getContentDimensionSource();
+            // ensure that the current node types of exactly THE content repository are preserved
+            FakeContentDimensionSourceFactory::setContentDimensionSource($contentRepository->getContentDimensionSource());
+            FakeNodeTypeManagerFactory::setConfiguration(Yaml::parse($serializedNodeTypesConfiguration->getRaw()) ?? []);
             $this->contentRepositories[$contentRepositoryId] = $this->createContentRepository(ContentRepositoryId::fromString($contentRepositoryId));
             if ($this->currentContentRepository->id->value === $contentRepositoryId) {
                 $this->currentContentRepository = $this->contentRepositories[$contentRepositoryId];
@@ -169,17 +181,26 @@ trait CRBehavioralTestsSubjectProvider
          * Catch Up process and the testcase reset.
          */
         $contentRepository = $this->createContentRepository($contentRepositoryId);
+        $contentRepositoryMaintainer = $this->contentRepositoryRegistry->buildService($contentRepositoryId, new ContentRepositoryMaintainerFactory());
         if (!in_array($contentRepository->id, self::$alreadySetUpContentRepositories)) {
-            $contentRepository->setUp();
+            $result = $contentRepositoryMaintainer->setUp();
+            Assert::assertNull($result);
             self::$alreadySetUpContentRepositories[] = $contentRepository->id;
         }
+        // todo we TRUNCATE here and do not want to use $contentRepositoryMaintainer->prune(); here as it would not reset the autoincrement sequence number making some assertions impossible
         /** @var EventStoreInterface $eventStore */
         $eventStore = (new \ReflectionClass($contentRepository))->getProperty('eventStore')->getValue($contentRepository);
         /** @var Connection $databaseConnection */
         $databaseConnection = (new \ReflectionClass($eventStore))->getProperty('connection')->getValue($eventStore);
         $eventTableName = sprintf('cr_%s_events', $contentRepositoryId->value);
         $databaseConnection->executeStatement('TRUNCATE ' . $eventTableName);
-        $contentRepository->resetProjectionStates();
+
+        /** @var SubscriptionEngine $subscriptionEngine */
+        $subscriptionEngine = (new \ReflectionClass($contentRepositoryMaintainer))->getProperty('subscriptionEngine')->getValue($contentRepositoryMaintainer);
+        $result = $subscriptionEngine->reset();
+        Assert::assertNull($result->errors);
+        $result = $subscriptionEngine->boot();
+        Assert::assertNull($result->errors);
 
         return $contentRepository;
     }

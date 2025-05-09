@@ -14,8 +14,6 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\NodeMigration\Transformation;
 
-use Neos\ContentRepository\Core\CommandHandler\CommandResult;
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 
 /**
@@ -26,6 +24,7 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 interface GlobalTransformationInterface
 {
     public function execute(
+        WorkspaceName $workspaceNameForReading,
         WorkspaceName $workspaceNameForWriting,
-    ): CommandResult;
+    ): TransformationStep;
 }

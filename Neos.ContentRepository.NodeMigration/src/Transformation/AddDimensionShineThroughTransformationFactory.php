@@ -14,7 +14,6 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\NodeMigration\Transformation;
 
-use Neos\ContentRepository\Core\CommandHandler\CommandResult;
 use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\Feature\DimensionSpaceAdjustment\Command\AddDimensionShineThrough;
@@ -34,24 +33,23 @@ class AddDimensionShineThroughTransformationFactory implements TransformationFac
      */
     public function build(
         array $settings,
-        ContentRepository $contentRepository
+        ContentRepository $contentRepository,
     ): GlobalTransformationInterface|NodeAggregateBasedTransformationInterface|NodeBasedTransformationInterface {
         return new class (
             DimensionSpacePoint::fromArray($settings['from']),
             DimensionSpacePoint::fromArray($settings['to']),
-            $contentRepository
         ) implements GlobalTransformationInterface {
             public function __construct(
                 private readonly DimensionSpacePoint $from,
                 private readonly DimensionSpacePoint $to,
-                private readonly ContentRepository $contentRepository,
             ) {
             }
 
             public function execute(
+                WorkspaceName $workspaceNameForReading,
                 WorkspaceName $workspaceNameForWriting,
-            ): CommandResult {
-                return $this->contentRepository->handle(
+            ): TransformationStep {
+                return TransformationStep::fromCommand(
                     AddDimensionShineThrough::create(
                         $workspaceNameForWriting,
                         $this->from,

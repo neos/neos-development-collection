@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Neos\TimeableNodeVisibility\Command;
 
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;

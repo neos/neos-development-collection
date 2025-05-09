@@ -18,13 +18,13 @@ use Behat\Behat\Hook\Scope\BeforeScenarioScope;
 use Neos\Behat\FlowBootstrapTrait;
 use Neos\ContentGraph\DoctrineDbalAdapter\Tests\Behavior\Features\Bootstrap\ProjectionIntegrityViolationDetectionTrait;
 use Neos\ContentRepository\BehavioralTests\TestSuite\Behavior\CRBehavioralTestsSubjectProvider;
-use Neos\ContentRepository\BehavioralTests\TestSuite\Behavior\GherkinPyStringNodeBasedNodeTypeManagerFactory;
-use Neos\ContentRepository\BehavioralTests\TestSuite\Behavior\GherkinTableNodeBasedContentDimensionSourceFactory;
 use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceFactoryInterface;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceInterface;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
 use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\CRTestSuiteTrait;
+use Neos\ContentRepository\TestSuite\Fakes\FakeNodeTypeManagerFactory;
+use Neos\ContentRepository\TestSuite\Fakes\FakeContentDimensionSourceFactory;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 
 /**
@@ -52,8 +52,8 @@ class FeatureContext implements BehatContext
      */
     public function resetContentRepositoryComponents(BeforeScenarioScope $scope): void
     {
-        GherkinTableNodeBasedContentDimensionSourceFactory::reset();
-        GherkinPyStringNodeBasedNodeTypeManagerFactory::reset();
+        FakeContentDimensionSourceFactory::reset();
+        FakeNodeTypeManagerFactory::reset();
     }
 
     protected function getContentRepositoryService(
@@ -70,8 +70,8 @@ class FeatureContext implements BehatContext
     ): ContentRepository {
         $this->contentRepositoryRegistry->resetFactoryInstance($contentRepositoryId);
         $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryId);
-        GherkinTableNodeBasedContentDimensionSourceFactory::reset();
-        GherkinPyStringNodeBasedNodeTypeManagerFactory::reset();
+        FakeContentDimensionSourceFactory::reset();
+        FakeNodeTypeManagerFactory::reset();
 
         return $contentRepository;
     }

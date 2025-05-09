@@ -47,11 +47,6 @@ final class SubtreeTag implements \JsonSerializable
         return self::instance($value);
     }
 
-    public static function disabled(): self
-    {
-        return self::instance('disabled');
-    }
-
     public function equals(self $other): bool
     {
         return $this === $other;
@@ -60,5 +55,24 @@ final class SubtreeTag implements \JsonSerializable
     public function jsonSerialize(): string
     {
         return $this->value;
+    }
+
+    public function __toString(): string
+    {
+        return $this->value;
+    }
+
+    /** -------------- deprecations: ------------------- */
+
+    /**
+     * Legacy, only for Neos.Neos context!, for standalone use please use {@see self::fromString()}
+     *
+     * Please use {@see \Neos\Neos\Domain\SubtreeTagging\NeosSubtreeTag::disabled()} instead.
+     *
+     * @deprecated with Neos 9 beta 19. To be removed with Neos 10.
+     */
+    public static function disabled(): self
+    {
+        return self::instance('disabled');
     }
 }

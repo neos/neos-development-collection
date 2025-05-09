@@ -18,15 +18,13 @@ Feature: Variation of hidden nodes
     And the command CreateRootWorkspace is executed with payload:
       | Key                  | Value                |
       | workspaceName        | "live"               |
-      | workspaceTitle       | "Live"               |
-      | workspaceDescription | "The live workspace" |
       | newContentStreamId   | "cs-identifier"      |
     And I am in workspace "live" and dimension space point {"language":"mul"}
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key             | Value                         |
       | nodeAggregateId | "lady-eleonode-rootford"      |
       | nodeTypeName    | "Neos.ContentRepository:Root" |
-    And VisibilityConstraints are set to "frontend"
+    And VisibilityConstraints are set to "default"
 
   Scenario: Specialize a node where the specialization target is enabled
     Given I am in dimension space point {"language":"de"}

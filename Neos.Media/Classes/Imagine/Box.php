@@ -87,7 +87,7 @@ class Box implements BoxInterface
     /**
      * {@inheritdoc}
      */
-    public function contains(BoxInterface $box, PointInterface $start = null)
+    public function contains(BoxInterface $box, ?PointInterface $start = null)
     {
         $start ??= new Point(0, 0);
 

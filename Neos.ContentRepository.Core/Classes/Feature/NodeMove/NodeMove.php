@@ -14,7 +14,7 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Core\Feature\NodeMove;
 
-use Neos\ContentRepository\Core\CommandHandlingDependencies;
+use Neos\ContentRepository\Core\CommandHandler\CommandHandlingDependencies;
 use Neos\ContentRepository\Core\DimensionSpace;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
@@ -23,7 +23,7 @@ use Neos\ContentRepository\Core\EventStore\Events;
 use Neos\ContentRepository\Core\EventStore\EventsToPublish;
 use Neos\ContentRepository\Core\Feature\Common\InterdimensionalSibling;
 use Neos\ContentRepository\Core\Feature\Common\InterdimensionalSiblings;
-use Neos\ContentRepository\Core\Feature\Common\NodeAggregateEventPublisher;
+use Neos\ContentRepository\Core\Feature\RebaseableCommand;
 use Neos\ContentRepository\Core\Feature\ContentStreamEventStreamName;
 use Neos\ContentRepository\Core\Feature\NodeMove\Command\MoveNodeAggregate;
 use Neos\ContentRepository\Core\Feature\NodeMove\Dto\RelationDistributionStrategy;
@@ -40,7 +40,6 @@ use Neos\ContentRepository\Core\SharedModel\Exception\NodeAggregateCurrentlyDoes
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeAggregateIsDescendant;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeAggregateIsNoChild;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeAggregateIsNoSibling;
-use Neos\ContentRepository\Core\SharedModel\Exception\NodeAggregatesTypeIsAmbiguous;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
 
@@ -76,7 +75,6 @@ trait NodeMove
 
     /**
      * @throws ContentStreamDoesNotExistYet
-     * @throws NodeAggregatesTypeIsAmbiguous
      * @throws NodeAggregateCurrentlyDoesNotExist
      * @throws DimensionSpacePointNotFound
      * @throws NodeAggregateIsDescendant
@@ -207,7 +205,7 @@ trait NodeMove
 
         return new EventsToPublish(
             $contentStreamEventStreamName->getEventStreamName(),
-            NodeAggregateEventPublisher::enrichWithCommand(
+            RebaseableCommand::enrichWithCommand(
                 $command,
                 $events
             ),
@@ -251,7 +249,7 @@ trait NodeMove
     ): InterdimensionalSiblings {
         $selectedSubgraph = $contentGraph->getSubgraph(
             $selectedDimensionSpacePoint,
-            VisibilityConstraints::withoutRestrictions()
+            VisibilityConstraints::createEmpty()
         );
         $alternativeSucceedingSiblingIds = $succeedingSiblingId
             ? $selectedSubgraph->findSucceedingSiblingNodes(
@@ -270,7 +268,7 @@ trait NodeMove
         foreach ($affectedDimensionSpacePoints as $dimensionSpacePoint) {
             $variantSubgraph = $contentGraph->getSubgraph(
                 $dimensionSpacePoint,
-                VisibilityConstraints::withoutRestrictions()
+                VisibilityConstraints::createEmpty()
             );
             if ($succeedingSiblingId) {
                 $variantSucceedingSibling = $variantSubgraph->findNodeById($succeedingSiblingId);

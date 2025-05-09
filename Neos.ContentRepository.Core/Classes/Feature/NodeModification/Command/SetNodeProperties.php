@@ -48,6 +48,9 @@ final readonly class SetNodeProperties implements CommandInterface
         public OriginDimensionSpacePoint $originDimensionSpacePoint,
         public PropertyValuesToWrite $propertyValues,
     ) {
+        if ($this->propertyValues->isEmpty()) {
+            throw new \InvalidArgumentException(sprintf('The command "SetNodeProperties" for node %s must contain property values', $this->nodeAggregateId->value), 1733394351);
+        }
     }
 
     /**
@@ -59,5 +62,15 @@ final readonly class SetNodeProperties implements CommandInterface
     public static function create(WorkspaceName $workspaceName, NodeAggregateId $nodeAggregateId, OriginDimensionSpacePoint $originDimensionSpacePoint, PropertyValuesToWrite $propertyValues): self
     {
         return new self($workspaceName, $nodeAggregateId, $originDimensionSpacePoint, $propertyValues);
+    }
+
+    public static function fromArray(array $array): self
+    {
+        return new self(
+            WorkspaceName::fromString($array['workspaceName']),
+            NodeAggregateId::fromString($array['nodeAggregateId']),
+            OriginDimensionSpacePoint::fromArray($array['originDimensionSpacePoint']),
+            PropertyValuesToWrite::fromArray($array['propertyValues']),
+        );
     }
 }

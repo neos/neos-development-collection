@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 namespace Neos\Fusion\Core\Cache;
 
 /*
@@ -246,7 +249,7 @@ class RuntimeContentCache
             }
             $cacheTags = $this->buildCacheTags($evaluateContext['configuration'], $evaluateContext['fusionPath'], $fusionObject);
             $cacheMetadata = array_pop($this->cacheMetadata);
-            $output = $this->contentCache->createDynamicCachedSegment($output, $evaluateContext['fusionPath'], $this->serializeContext($contextVariables), $evaluateContext['cacheIdentifierValues'], $cacheTags, $cacheMetadata['lifetime'], $evaluateContext['cacheDiscriminator']);
+            $output = $this->contentCache->createDynamicCachedSegment($output, $evaluateContext['fusionPath'], $this->serializeContext($contextVariables), $evaluateContext['cacheIdentifierValues'], $cacheTags, $cacheMetadata['lifetime'], (string)$evaluateContext['cacheDiscriminator']);
         } elseif ($this->enableContentCache && $evaluateContext['cacheForPathEnabled']) {
             $cacheTags = $this->buildCacheTags($evaluateContext['configuration'], $evaluateContext['fusionPath'], $fusionObject);
             $cacheMetadata = array_pop($this->cacheMetadata);

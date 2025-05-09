@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Neos\ContentGraph\DoctrineDbalAdapter;
 
 use Doctrine\DBAL\ArrayParameterType;
@@ -8,6 +10,7 @@ use Doctrine\DBAL\ParameterType;
 use Doctrine\DBAL\Query\QueryBuilder;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\NodeRelationAnchorPoint;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
+use Neos\ContentRepository\Core\Infrastructure\DbalSchemaFactory;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindRootNodeAggregatesFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\NodeType\ExpandedNodeTypeCriteria;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\PropertyValue\Criteria\AndCriteria;
@@ -22,7 +25,7 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\PropertyValue\Cri
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\PropertyValue\Criteria\PropertyValueLessThan;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\PropertyValue\Criteria\PropertyValueLessThanOrEqual;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\PropertyValue\Criteria\PropertyValueStartsWith;
-use Neos\ContentRepository\Core\Projection\ContentGraph\SearchTerm;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\SearchTerm\SearchTerm;
 use Neos\ContentRepository\Core\SharedModel\Id\UuidFactory;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Node\PropertyName;
@@ -54,12 +57,10 @@ final readonly class NodeQueryBuilder
         return $this->createQueryBuilder()
             ->select('cn.*, ch.contentstreamid, ch.subtreetags, cdsp.dimensionspacepoint AS covereddimensionspacepoint')
             ->from($this->tableNames->node(), 'pn')
-            ->innerJoin('pn', $this->tableNames->hierarchyRelation(), 'ph', 'ph.childnodeanchor = pn.relationanchorpoint')
             ->innerJoin('pn', $this->tableNames->hierarchyRelation(), 'ch', 'ch.parentnodeanchor = pn.relationanchorpoint')
             ->innerJoin('ch', $this->tableNames->dimensionSpacePoints(), 'cdsp', 'cdsp.hash = ch.dimensionspacepointhash')
             ->innerJoin('ch', $this->tableNames->node(), 'cn', 'cn.relationanchorpoint = ch.childnodeanchor')
             ->where('pn.nodeaggregateid = :parentNodeAggregateId')
-            ->andWhere('ph.contentstreamid = :contentStreamId')
             ->andWhere('ch.contentstreamid = :contentStreamId')
             ->orderBy('ch.position')
             ->setParameters([
@@ -178,7 +179,10 @@ final readonly class NodeQueryBuilder
 
     public function addSearchTermConstraints(QueryBuilder $queryBuilder, SearchTerm $searchTerm, string $nodeTableAlias = 'n'): void
     {
-        $queryBuilder->andWhere('JSON_SEARCH(' . $nodeTableAlias . '.properties, "one", :searchTermPattern, NULL, "$.*.value") IS NOT NULL')->setParameter('searchTermPattern', '%' . $searchTerm->term . '%');
+        if ($searchTerm->term === '') {
+            return;
+        }
+        $queryBuilder->andWhere('JSON_SEARCH(' . $nodeTableAlias . '.properties, "one", :searchTermPattern COLLATE ' . DbalSchemaFactory::DEFAULT_MYSQL_COLLATION . ', NULL, "$.*.value") IS NOT NULL')->setParameter('searchTermPattern', '%' . $searchTerm->term . '%');
     }
 
     public function addPropertyValueConstraints(QueryBuilder $queryBuilder, PropertyValueCriteriaInterface $propertyValue, string $nodeTableAlias = 'n'): void
@@ -206,14 +210,20 @@ final readonly class NodeQueryBuilder
 
     private function comparePropertyValueStatement(QueryBuilder $queryBuilder, PropertyName $propertyName, string|int|float|bool $value, string $operator, string $nodeTableAlias): string
     {
-        $paramName = $this->createUniqueParameterName();
-        $paramType = match (gettype($value)) {
-            'boolean' => ParameterType::BOOLEAN,
-            'integer' => ParameterType::INTEGER,
-            default => ParameterType::STRING,
-        };
-        $queryBuilder->setParameter($paramName, $value, $paramType);
+        if (gettype($value) === 'boolean') {
+            return $this->extractPropertyValue($propertyName, $nodeTableAlias) . ' ' . $operator . ($value ? 'true' : 'false');
+        }
 
+        if (gettype($value) === 'integer') {
+            return $this->extractPropertyValue($propertyName, $nodeTableAlias) . ' ' . $operator . $value;
+        }
+
+        if (gettype($value) === 'double') {
+            return $this->extractPropertyValue($propertyName, $nodeTableAlias) . ' ' . $operator . $value;
+        }
+
+        $paramName = $this->createUniqueParameterName();
+        $queryBuilder->setParameter($paramName, $value);
         return $this->extractPropertyValue($propertyName, $nodeTableAlias) . ' ' . $operator . ' :' . $paramName;
     }
 
@@ -228,23 +238,22 @@ final readonly class NodeQueryBuilder
         return 'JSON_EXTRACT(' . $nodeTableAlias . '.properties, \'$.' . $escapedPropertyName . '.value\')';
     }
 
-    private function searchPropertyValueStatement(QueryBuilder $queryBuilder, PropertyName $propertyName, string|bool|int|float $value, string $nodeTableAlias, bool $caseSensitive): string
+    private function searchPropertyValueStatement(QueryBuilder $queryBuilder, PropertyName $propertyName, string $value, string $nodeTableAlias, bool $caseSensitive): string
     {
         try {
             $escapedPropertyName = addslashes(json_encode($propertyName->value, JSON_THROW_ON_ERROR));
         } catch (\JsonException $e) {
             throw new \RuntimeException(sprintf('Failed to escape property name: %s', $e->getMessage()), 1679394579, $e);
         }
-        if (is_bool($value)) {
-            return 'JSON_SEARCH(' . $nodeTableAlias . '.properties, \'one\', \'' . ($value ? 'true' : 'false') . '\', NULL, \'$.' . $escapedPropertyName . '.value\') IS NOT NULL';
-        }
+
         $paramName = $this->createUniqueParameterName();
         $queryBuilder->setParameter($paramName, $value);
+
         if ($caseSensitive) {
             return 'JSON_SEARCH(' . $nodeTableAlias . '.properties COLLATE utf8mb4_bin, \'one\', :' . $paramName . ' COLLATE utf8mb4_bin, NULL, \'$.' . $escapedPropertyName . '.value\') IS NOT NULL';
         }
 
-        return 'JSON_SEARCH(' . $nodeTableAlias . '.properties, \'one\', :' . $paramName . ', NULL, \'$.' . $escapedPropertyName . '.value\') IS NOT NULL';
+        return 'JSON_SEARCH(' . $nodeTableAlias . '.properties COLLATE ' . DbalSchemaFactory::DEFAULT_MYSQL_COLLATION . ', \'one\', :' . $paramName . ' COLLATE ' . DbalSchemaFactory::DEFAULT_MYSQL_COLLATION . ', NULL, \'$.' . $escapedPropertyName . '.value\') IS NOT NULL';
     }
 
     public function buildFindUsedNodeTypeNamesQuery(): QueryBuilder

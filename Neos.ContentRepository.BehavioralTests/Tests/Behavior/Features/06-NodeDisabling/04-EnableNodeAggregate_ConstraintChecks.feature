@@ -19,8 +19,6 @@ Feature: Enable a node aggregate
     And the command CreateRootWorkspace is executed with payload:
       | Key                  | Value                |
       | workspaceName        | "live"               |
-      | workspaceTitle       | "Live"               |
-      | workspaceDescription | "The live workspace" |
       | newContentStreamId   | "cs-identifier"      |
     And I am in workspace "live" and dimension space point {"language":"de"}
     And the command CreateRootNodeAggregateWithNode is executed with payload:
@@ -46,13 +44,12 @@ Feature: Enable a node aggregate
       | nodeVariantSelectionStrategy | "allVariants"    |
     Then the last command should have thrown an exception of type "NodeAggregateCurrentlyDoesNotExist"
 
-    # Note: The behavior has been changed with https://github.com/neos/neos-development-collection/pull/4284 and the test was adjusted accordingly
   Scenario: Try to enable an already enabled node aggregate
-    When the command EnableNodeAggregate is executed with payload:
+    When the command EnableNodeAggregate is executed with payload and exceptions are caught:
       | Key                          | Value                    |
       | nodeAggregateId              | "sir-david-nodenborough" |
       | nodeVariantSelectionStrategy | "allVariants"            |
-    Then I expect exactly 3 events to be published on stream with prefix "ContentStream:cs-identifier"
+    Then the last command should have thrown an exception of type "SubtreeIsNotTagged"
 
   Scenario: Try to enable a node aggregate in a non-existing dimension space point
     When the command EnableNodeAggregate is executed with payload and exceptions are caught:

@@ -15,41 +15,32 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\Core\Feature\WorkspacePublication\Event;
 
 use Neos\ContentRepository\Core\EventStore\EventInterface;
-use Neos\ContentRepository\Core\Feature\WorkspacePublication\Dto\NodeIdsToPublishOrDiscard;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 
 /**
- * @api events are the persistence-API of the content repository
+ * @deprecated This event will never be emitted, it is up-casted to a corresponding {@see WorkspaceWasDiscarded} event instead. This implementation is just kept for backwards-compatibility
+ * @internal
  */
 final readonly class WorkspaceWasPartiallyDiscarded implements EventInterface
 {
-    public function __construct(
-        public WorkspaceName $workspaceName,
-        /**
-         * The new content stream; containing the data which we want to keep
-         */
-        public ContentStreamId $newContentStreamId,
-        /**
-         * The old content stream, which contains ALL the data (discarded and non-discarded)
-         */
-        public ContentStreamId $previousContentStreamId,
-        public NodeIdsToPublishOrDiscard $discardedNodes,
-    ) {
+    private function __construct()
+    {
+        // legacy event must not be instantiated
     }
 
-    public static function fromArray(array $values): self
+    public static function fromArray(array $values): EventInterface
     {
-        return new self(
+        return new WorkspaceWasDiscarded(
             WorkspaceName::fromString($values['workspaceName']),
             ContentStreamId::fromString($values['newContentStreamId']),
             ContentStreamId::fromString($values['previousContentStreamId']),
-            NodeIdsToPublishOrDiscard::fromArray($values['discardedNodes']),
+            partial: true
         );
     }
 
     public function jsonSerialize(): array
     {
-        return get_object_vars($this);
+        throw new \RuntimeException('Legacy event instance must not exist.');
     }
 }

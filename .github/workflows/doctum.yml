@@ -11,7 +11,7 @@ jobs:
   build-api-docs:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Build API documentation
         # we need this fix: https://github.com/code-lts/doctum/issues/59 so we need to run @dev
@@ -23,7 +23,7 @@ jobs:
           cli-args: "--output-format=github --no-ansi --no-progress --ignore-parse-errors --only-version=${{ github.ref_name }}"
 
       - name: Check out documentation site
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           repository: neos/neos.github.io
           path: docs-site

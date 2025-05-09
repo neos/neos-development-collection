@@ -8,7 +8,7 @@ namespace Neos\ContentRepository\Core\SharedModel\Node;
  * @implements \IteratorAggregate<int, PropertyName>
  * @api
  */
-final readonly class PropertyNames implements \IteratorAggregate, \JsonSerializable
+final readonly class PropertyNames implements \IteratorAggregate, \Countable, \JsonSerializable
 {
     /**
      * @var array<int, PropertyName>
@@ -51,11 +51,18 @@ final readonly class PropertyNames implements \IteratorAggregate, \JsonSerializa
         return $this->values;
     }
 
-    /**
-     * @return \Traversable<int, PropertyName>
-     */
     public function getIterator(): \Traversable
     {
         yield from $this->values;
+    }
+
+    public function isEmpty(): bool
+    {
+        return $this->values === [];
+    }
+
+    public function count(): int
+    {
+        return count($this->values);
     }
 }

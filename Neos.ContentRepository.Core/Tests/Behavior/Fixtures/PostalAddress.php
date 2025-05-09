@@ -31,10 +31,10 @@ final readonly class PostalAddress
     public static function fromArray(array $array): self
     {
         return new self(
-            $array['streetAddress'],
-            $array['postalCode'],
-            $array['addressLocality'],
-            $array['addressCountry']
+            $array['streetAddress'] ?? throw new \InvalidArgumentException('streetAddress is not set.'),
+            $array['postalCode'] ?? throw new \InvalidArgumentException('postalCode is not set.'),
+            $array['addressLocality'] ?? throw new \InvalidArgumentException('addressLocality is not set.'),
+            $array['addressCountry'] ?? throw new \InvalidArgumentException('addressCountry is not set.')
         );
     }
 

@@ -15,20 +15,18 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\Core\Feature;
 
 use Neos\ContentRepository\Core\CommandHandler\CommandHandlerInterface;
+use Neos\ContentRepository\Core\CommandHandler\CommandHandlingDependencies;
 use Neos\ContentRepository\Core\CommandHandler\CommandInterface;
-use Neos\ContentRepository\Core\CommandHandlingDependencies;
-use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\DimensionSpace;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Core\EventStore\EventsToPublish;
 use Neos\ContentRepository\Core\Feature\Common\ConstraintChecks;
+use Neos\ContentRepository\Core\Feature\Common\RebasableToOtherWorkspaceInterface;
 use Neos\ContentRepository\Core\Feature\Common\TetheredNodeInternals;
+use Neos\ContentRepository\Core\Feature\Common\WorkspaceConstraintChecks;
 use Neos\ContentRepository\Core\Feature\NodeCreation\Command\CreateNodeAggregateWithNode;
 use Neos\ContentRepository\Core\Feature\NodeCreation\Command\CreateNodeAggregateWithNodeAndSerializedProperties;
 use Neos\ContentRepository\Core\Feature\NodeCreation\NodeCreation;
-use Neos\ContentRepository\Core\Feature\NodeDisabling\Command\DisableNodeAggregate;
-use Neos\ContentRepository\Core\Feature\NodeDisabling\Command\EnableNodeAggregate;
-use Neos\ContentRepository\Core\Feature\NodeDisabling\NodeDisabling;
 use Neos\ContentRepository\Core\Feature\NodeModification\Command\SetNodeProperties;
 use Neos\ContentRepository\Core\Feature\NodeModification\Command\SetSerializedNodeProperties;
 use Neos\ContentRepository\Core\Feature\NodeModification\NodeModification;
@@ -60,9 +58,9 @@ use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 final class NodeAggregateCommandHandler implements CommandHandlerInterface
 {
     use ConstraintChecks;
+    use WorkspaceConstraintChecks;
     use RootNodeHandling;
     use NodeCreation;
-    use NodeDisabling;
     use SubtreeTagging;
     use NodeModification;
     use NodeMove;
@@ -86,12 +84,12 @@ final class NodeAggregateCommandHandler implements CommandHandlerInterface
     ) {
     }
 
-    public function canHandle(CommandInterface $command): bool
+    public function canHandle(CommandInterface|RebasableToOtherWorkspaceInterface $command): bool
     {
         return method_exists($this, 'handle' . (new \ReflectionClass($command))->getShortName());
     }
 
-    public function handle(CommandInterface $command, CommandHandlingDependencies $commandHandlingDependencies): EventsToPublish
+    public function handle(CommandInterface|RebasableToOtherWorkspaceInterface $command, CommandHandlingDependencies $commandHandlingDependencies): EventsToPublish
     {
         /** @phpstan-ignore-next-line */
         return match ($command::class) {
@@ -113,8 +111,6 @@ final class NodeAggregateCommandHandler implements CommandHandlerInterface
             => $this->handleCreateRootNodeAggregateWithNode($command, $commandHandlingDependencies),
             UpdateRootNodeAggregateDimensions::class
             => $this->handleUpdateRootNodeAggregateDimensions($command, $commandHandlingDependencies),
-            DisableNodeAggregate::class => $this->handleDisableNodeAggregate($command, $commandHandlingDependencies),
-            EnableNodeAggregate::class => $this->handleEnableNodeAggregate($command, $commandHandlingDependencies),
             TagSubtree::class => $this->handleTagSubtree($command, $commandHandlingDependencies),
             UntagSubtree::class => $this->handleUntagSubtree($command, $commandHandlingDependencies),
             ChangeNodeAggregateName::class => $this->handleChangeNodeAggregateName($command, $commandHandlingDependencies),

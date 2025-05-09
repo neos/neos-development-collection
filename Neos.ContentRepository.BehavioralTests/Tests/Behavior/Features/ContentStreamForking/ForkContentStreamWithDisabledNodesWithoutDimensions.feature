@@ -19,8 +19,6 @@ Feature: On forking a content stream, hidden nodes should be correctly copied as
     And the command CreateRootWorkspace is executed with payload:
       | Key                  | Value                |
       | workspaceName        | "live"               |
-      | workspaceTitle       | "Live"               |
-      | workspaceDescription | "The live workspace" |
       | newContentStreamId   | "cs-identifier"      |
     And I am in workspace "live"
     And the command CreateRootNodeAggregateWithNode is executed with payload:
@@ -77,7 +75,7 @@ Feature: On forking a content stream, hidden nodes should be correctly copied as
       | 1     | the-great-nodini       |
       | 2     | nodingers-cat          |
 
-    And VisibilityConstraints are set to "frontend"
+    And VisibilityConstraints are set to "default"
     Then I expect node aggregate identifier "lady-eleonode-rootford" to lead to node user-cs-identifier;lady-eleonode-rootford;{}
     And I expect this node to have no child nodes
     And the subtree for node aggregate "lady-eleonode-rootford" with node types "" and 2 levels deep should be:

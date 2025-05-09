@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\NodeMigration\Filter;
 
+use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\NodeMigration\MigrationException;
 use Neos\ContentRepository\NodeMigration\NodeMigrationService;
 
@@ -16,6 +17,11 @@ class FiltersFactory
      * @var array<string,FilterFactoryInterface>
      */
     private array $filterFactories = [];
+
+    public function __construct(
+        private readonly ContentRepository $contentRepository
+    ) {
+    }
 
     /**
      * @param array<int,array<string,mixed>> $filterConfigurations
@@ -45,7 +51,7 @@ class FiltersFactory
     ): NodeAggregateBasedFilterInterface|NodeBasedFilterInterface
     {
         $filterFactory = $this->resolveFilterFactory($filterConfiguration['type']);
-        return $filterFactory->build($filterConfiguration['settings'] ?? []);
+        return $filterFactory->build($filterConfiguration['settings'] ?? [], $this->contentRepository);
     }
 
     /**

@@ -1,15 +1,16 @@
 <?php
+
 declare(strict_types=1);
+
 namespace Neos\ContentRepository\Export\Processors;
 
-use League\Flysystem\Filesystem;
 use League\Flysystem\StorageAttributes;
 use Neos\ContentRepository\Export\Asset\ValueObject\AssetType;
 use Neos\ContentRepository\Export\Asset\ValueObject\ImageAdjustmentType;
 use Neos\ContentRepository\Export\Asset\ValueObject\SerializedAsset;
 use Neos\ContentRepository\Export\Asset\ValueObject\SerializedImageVariant;
+use Neos\ContentRepository\Export\ProcessingContext;
 use Neos\ContentRepository\Export\ProcessorInterface;
-use Neos\ContentRepository\Export\ProcessorResult;
 use Neos\ContentRepository\Export\Severity;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Flow\ResourceManagement\PersistentResource;
@@ -34,75 +35,59 @@ use Neos\Utility\ObjectAccess;
  */
 final class AssetRepositoryImportProcessor implements ProcessorInterface
 {
-    /** @var array<int, \Closure> */
-    private array $callbacks = [];
-
     public function __construct(
-        private readonly Filesystem $files,
         private readonly AssetRepository $assetRepository,
         private readonly ResourceRepository $resourceRepository,
         private readonly ResourceManager $resourceManager,
         private readonly PersistenceManagerInterface $persistenceManager,
-    ) {}
-
-    public function onMessage(\Closure $callback): void
-    {
-        $this->callbacks[] = $callback;
+    ) {
     }
 
-    public function run(): ProcessorResult
+    public function run(ProcessingContext $context): void
     {
         $this->persistenceManager->clearState();
-        $numberOfErrors = 0;
-        $numberOfImportedAssets = 0;
-        foreach ($this->files->listContents('/Assets') as $file) {
+        foreach ($context->files->listContents('/Assets') as $file) {
             if (!$file->isFile()) {
                 continue;
             }
             try {
-                $this->importAsset($file);
-                $numberOfImportedAssets ++;
+                $this->importAsset($context, $file);
             } catch (\Throwable $e) {
-                $numberOfErrors ++;
-                $this->dispatch(Severity::ERROR, 'Failed to import asset from file "%s": %s', $file->path(), $e->getMessage());
+                $context->dispatch(Severity::ERROR, "Failed to import asset from file \"{$file->path()}\": {$e->getMessage()}");
             }
         }
-        $numberOfImportedImageVariants = 0;
-        foreach ($this->files->listContents('/ImageVariants') as $file) {
+        foreach ($context->files->listContents('/ImageVariants') as $file) {
             if (!$file->isFile()) {
                 continue;
             }
             try {
-                $this->importImageVariant($file);
-                $numberOfImportedImageVariants ++;
+                $this->importImageVariant($context, $file);
             } catch (\Throwable $e) {
-                $numberOfErrors ++;
-                $this->dispatch(Severity::ERROR, 'Failed to import image variant from file "%s": %s', $file->path(), $e->getMessage());
+                $context->dispatch(Severity::ERROR, "Failed to import image variant from file \"{$file->path()}\": {$e->getMessage()}");
             }
         }
-        return ProcessorResult::success(sprintf('Imported %d Asset%s and %d Image Variant%s. Errors: %d', $numberOfImportedAssets, $numberOfImportedAssets === 1 ? '' : 's', $numberOfImportedImageVariants, $numberOfImportedImageVariants === 1 ? '' : 's', $numberOfErrors));
     }
 
     /** --------------------------------------- */
 
-    private function importAsset(StorageAttributes $file): void
+    private function importAsset(ProcessingContext $context, StorageAttributes $file): void
     {
-        $fileContents = $this->files->read($file->path());
+        $fileContents = $context->files->read($file->path());
         $serializedAsset = SerializedAsset::fromJson($fileContents);
         /** @var Asset|null $existingAsset */
         $existingAsset = $this->assetRepository->findByIdentifier($serializedAsset->identifier);
         if ($existingAsset !== null) {
             if ($serializedAsset->matches($existingAsset)) {
-                $this->dispatch(Severity::NOTICE, 'Asset "%s" was skipped because it already exists!', $serializedAsset->identifier);
+                $context->dispatch(Severity::NOTICE, "Asset \"{$serializedAsset->identifier}\" was skipped because it already exists!");
             } else {
-                $this->dispatch(Severity::ERROR, 'Asset "%s" has been changed in the meantime, it was NOT updated!', $serializedAsset->identifier);
+                $context->dispatch(Severity::ERROR, "Asset \"{$serializedAsset->identifier}\" has been changed in the meantime, it was NOT updated!");
             }
             return;
         }
         /** @var PersistentResource|null $resource */
         $resource = $this->resourceRepository->findBySha1AndCollectionName($serializedAsset->resource->sha1, $serializedAsset->resource->collectionName)[0] ?? null;
         if ($resource === null) {
-            $content = $this->files->read('/Resources/' . $serializedAsset->resource->sha1);
+            $content = $context->files->read('/Resources/' . $serializedAsset->resource->sha1);
             $resource = $this->resourceManager->importResourceFromContent($content, $serializedAsset->resource->filename, $serializedAsset->resource->collectionName);
             $resource->setMediaType($serializedAsset->resource->mediaType);
         }
@@ -116,27 +101,28 @@ final class AssetRepositoryImportProcessor implements ProcessorInterface
         ObjectAccess::setProperty($asset, 'Persistence_Object_Identifier', $serializedAsset->identifier, true);
         $asset->setTitle($serializedAsset->title);
         $asset->setCaption($serializedAsset->caption);
+        $asset->setCopyrightNotice($serializedAsset->copyrightNotice);
         $this->assetRepository->add($asset);
         $this->persistenceManager->persistAll();
     }
 
-    private function importImageVariant(StorageAttributes $file): void
+    private function importImageVariant(ProcessingContext $context, StorageAttributes $file): void
     {
-        $fileContents = $this->files->read($file->path());
+        $fileContents = $context->files->read($file->path());
         $serializedImageVariant = SerializedImageVariant::fromJson($fileContents);
         $existingImageVariant = $this->assetRepository->findByIdentifier($serializedImageVariant->identifier);
         assert($existingImageVariant === null || $existingImageVariant instanceof ImageVariant);
         if ($existingImageVariant !== null) {
             if ($serializedImageVariant->matches($existingImageVariant)) {
-                $this->dispatch(Severity::NOTICE, 'Image Variant "%s" was skipped because it already exists!', $serializedImageVariant->identifier);
+                $context->dispatch(Severity::NOTICE, "Image Variant \"{$serializedImageVariant->identifier}\" was skipped because it already exists!");
             } else {
-                $this->dispatch(Severity::ERROR, 'Image Variant "%s" has been changed in the meantime, it was NOT updated!', $serializedImageVariant->identifier);
+                $context->dispatch(Severity::ERROR, "Image Variant \"{$serializedImageVariant->identifier}\" has been changed in the meantime, it was NOT updated!");
             }
             return;
         }
         $originalImage = $this->assetRepository->findByIdentifier($serializedImageVariant->originalAssetIdentifier);
         if ($originalImage === null) {
-            $this->dispatch(Severity::ERROR, 'Failed to find original asset "%s", skipping image variant "%s"', $serializedImageVariant->originalAssetIdentifier, $serializedImageVariant->identifier);
+            $context->dispatch(Severity::ERROR, "Failed to find original asset \"{$serializedImageVariant->originalAssetIdentifier}\", skipping image variant \"{$serializedImageVariant->identifier}\"");
             return;
         }
         assert($originalImage instanceof Image);
@@ -153,13 +139,5 @@ final class AssetRepositoryImportProcessor implements ProcessorInterface
         }
         $this->assetRepository->add($imageVariant);
         $this->persistenceManager->persistAll();
-    }
-
-    private function dispatch(Severity $severity, string $message, mixed ...$args): void
-    {
-        $renderedMessage = sprintf($message, ...$args);
-        foreach ($this->callbacks as $callback) {
-            $callback($severity, $renderedMessage);
-        }
     }
 }

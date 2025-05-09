@@ -24,8 +24,6 @@ Feature: Test cases for node creation edge cases
     And the command CreateRootWorkspace is executed with payload:
       | Key                  | Value                |
       | workspaceName        | "live"               |
-      | workspaceTitle       | "Live"               |
-      | workspaceDescription | "The live workspace" |
       | newContentStreamId   | "cs-identifier"      |
     And I am in workspace "live" and dimension space point {"example":"source"}
     And the command CreateRootNodeAggregateWithNode is executed with payload:
@@ -38,6 +36,7 @@ Feature: Test cases for node creation edge cases
       | nodeTypeName              | "Neos.Neos:Site"         |
       | parentNodeAggregateId     | "lady-eleonode-rootford" |
       | originDimensionSpacePoint | {"example":"source"}     |
+      | nodeName                  | "site"                   |
     And the following CreateNodeAggregateWithNode commands are executed:
       | nodeAggregateId      | nodeName          | parentNodeAggregateId | succeedingSiblingNodeAggregateId | nodeTypeName       | initialPropertyValues          |
     # Let's prepare some siblings to check orderings. Also, everything gets better with siblings.

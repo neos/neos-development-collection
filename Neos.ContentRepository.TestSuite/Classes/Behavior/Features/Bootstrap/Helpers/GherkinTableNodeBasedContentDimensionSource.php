@@ -27,12 +27,14 @@ use Neos\ContentRepository\Core\Dimension\ContentDimensionValueVariationEdges;
 use Neos\Utility\Arrays;
 
 /**
- * The node creation trait for behavioral tests
+ * Compact syntax to declare content dimensions in gherkin tables.
+ *
+ * see also {@see \Neos\ContentRepository\TestSuite\Tests\Unit\GherkinTableNodeBasedContentDimensionSourceTest}
  */
 final readonly class GherkinTableNodeBasedContentDimensionSource implements ContentDimensionSourceInterface
 {
+    /** @param array<string,ContentDimension> $contentDimensions */
     private function __construct(
-        /** @var array<string,ContentDimension> */
         private array $contentDimensions
     ) {
     }

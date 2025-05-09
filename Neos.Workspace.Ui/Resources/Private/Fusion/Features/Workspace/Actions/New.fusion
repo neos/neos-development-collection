@@ -1,0 +1,10 @@
+Neos.Workspace.Ui.WorkspaceController.new = Neos.Fusion:Component {
+  /// array<string>
+  baseWorkspaceOptions = ${baseWorkspaceOptions}
+
+  renderer = afx`
+    <Neos.Workspace.Ui:Component.Modal.Create
+      baseWorkspaceOptions={props.baseWorkspaceOptions}
+    />
+  `
+}

@@ -19,7 +19,7 @@ use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\Neos\Domain\Service\NodeTypeNameFactory;
 
 /**
- * @internal is subject to change and may be removed / refactored beyond recognition at any time
+ * @internal implementation detail to manage document node uris. For resolving please use the NodeUriBuilder and for matching the Router.
  */
 enum DocumentTypeClassification
 {

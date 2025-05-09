@@ -1,8 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Neos\ContentRepository\Core\Projection;
 
 /**
+ * The setup status of a projection.
+ *
+ * E.g. are the database tables created or any columns missing.
+ *
  * @api
  */
 final readonly class ProjectionStatus
@@ -32,21 +38,5 @@ final readonly class ProjectionStatus
     public static function setupRequired(string $details): self
     {
         return new self(ProjectionStatusType::SETUP_REQUIRED, $details);
-    }
-
-    /**
-     * @param non-empty-string $details
-     */
-    public static function replayRequired(string $details): self
-    {
-        return new self(ProjectionStatusType::REPLAY_REQUIRED, $details);
-    }
-
-    /**
-     * @param non-empty-string $details
-     */
-    public function withDetails(string $details): self
-    {
-        return new self($this->type, $details);
     }
 }

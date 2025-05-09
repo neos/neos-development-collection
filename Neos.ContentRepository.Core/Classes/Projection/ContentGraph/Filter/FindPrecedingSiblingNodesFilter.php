@@ -9,7 +9,7 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\Ordering\Ordering
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\Pagination\Pagination;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\PropertyValue\Criteria\PropertyValueCriteriaInterface;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\PropertyValue\PropertyValueCriteriaParser;
-use Neos\ContentRepository\Core\Projection\ContentGraph\SearchTerm;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\SearchTerm\SearchTerm;
 
 /**
  * Immutable filter DTO for {@see ContentSubgraphInterface::findPrecedingSiblingNodes()}
@@ -44,11 +44,11 @@ final readonly class FindPrecedingSiblingNodesFilter
      * @param Pagination|array<string, mixed>|null $pagination
      */
     public static function create(
-        NodeTypeCriteria|string $nodeTypes = null,
-        SearchTerm|string $searchTerm = null,
-        PropertyValueCriteriaInterface|string $propertyValue = null,
-        Ordering|array $ordering = null,
-        Pagination|array $pagination = null,
+        NodeTypeCriteria|string|null $nodeTypes = null,
+        SearchTerm|string|null $searchTerm = null,
+        PropertyValueCriteriaInterface|string|null $propertyValue = null,
+        Ordering|array|null $ordering = null,
+        Pagination|array|null $pagination = null,
     ): self {
         if (is_string($nodeTypes)) {
             $nodeTypes = NodeTypeCriteria::fromFilterString($nodeTypes);
@@ -78,11 +78,11 @@ final readonly class FindPrecedingSiblingNodesFilter
      * @param Pagination|array<string, mixed>|null $pagination
      */
     public function with(
-        NodeTypeCriteria|string $nodeTypes = null,
-        SearchTerm|string $searchTerm = null,
-        PropertyValueCriteriaInterface|string $propertyValue = null,
-        Ordering|array $ordering = null,
-        Pagination|array $pagination = null,
+        NodeTypeCriteria|string|null $nodeTypes = null,
+        SearchTerm|string|null $searchTerm = null,
+        PropertyValueCriteriaInterface|string|null $propertyValue = null,
+        Ordering|array|null $ordering = null,
+        Pagination|array|null $pagination = null,
     ): self {
         return self::create(
             $nodeTypes ?? $this->nodeTypes,

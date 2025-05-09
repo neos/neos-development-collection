@@ -1,0 +1,49 @@
+Neos.Workspace.Ui.WorkspaceController.index = Neos.Fusion:Component {
+  /// Neos\Workspace\Ui\ViewModel\WorkspaceListItems
+  workspaceListItems = ${workspaceListItems}
+  /// array
+  flashMessages = ${flashMessages}
+  /// Neos\Workspace\Ui\ViewModel\Sorting
+  sorting = ${sorting}
+
+  newAction = Neos.Fusion:UriBuilder {
+    action = 'new'
+    format = 'htmx'
+  }
+
+  createNewPopoverId = 'create-workspace-popover'
+
+  i18n = ${I18n.id('').source('Main').package('Neos.Workspace.Ui')}
+
+  renderer = afx`
+    <Neos.Workspace.Ui:Component.ModuleWrapper
+      flashMessages={props.flashMessages}
+    >
+      <main class="neos-content neos-container-fluid">
+        <div class="neos-row-fluid">
+          <Neos.Workspace.Ui:Component.WorkspaceTable
+            workspaceListItems={props.workspaceListItems}
+            sorting={props.sorting}
+          />
+        </div>
+      </main>
+      <Neos.Workspace.Ui:Component.Footer>
+        <button
+          id="createButton"
+          type="button"
+          class="neos-button neos-button-success"
+          hx-get={props.newAction}
+          hx-target="#popover-container"
+          hx-swap="innerHTML"
+          hx-on--after-request={'document.getElementById("' + props.createNewPopoverId + '").showPopover()'}
+          @if={Security.hasAccess('Neos.Workspace.Ui:Backend.CreateWorkspaces')}
+        >
+          {props.i18n.id('workspaces.createNewWorkspace')}
+        </button>
+        <Neos.Workspace.Ui:Component.WorkspaceCount
+          workspaceCount={Array.length(props.workspaceListItems)}
+        />
+      </Neos.Workspace.Ui:Component.Footer>
+    </Neos.Workspace.Ui:Component.ModuleWrapper>
+  `
+}

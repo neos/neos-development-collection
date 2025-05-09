@@ -3,8 +3,21 @@ Neos:
     presets:
       'default':
 
-        userIdProvider:
-          factoryObjectName: Neos\Neos\UserIdProvider\UserIdProviderFactory
+        authProvider:
+          factoryObjectName: Neos\Neos\Security\ContentRepositoryAuthProvider\ContentRepositoryAuthProviderFactory
+
+        commandHooks:
+          'Neos.Neos:SubtreeTaggingConstraints':
+            factoryObjectName: Neos\Neos\Domain\SubtreeTagging\NeosSubtreeTaggingConstraintChecksFactory
+
+        contentGraphProjection:
+          catchUpHooks:
+            'Neos.Neos:FlushContentCache':
+              factoryObjectName: Neos\Neos\Fusion\Cache\GraphProjectorCatchUpHookForCacheFlushingFactory
+            'Neos.Neos:AssetUsage':
+              factoryObjectName: Neos\Neos\AssetUsage\CatchUpHook\AssetUsageCatchUpHookFactory
+            'Neos.Neos:ImpendingHardRemovalConflictDetection':
+              factoryObjectName: Neos\Neos\Domain\SubtreeTagging\SoftRemoval\ImpendingHardRemovalConflictDetectionHookFactory
 
         projections:
           'Neos.Neos:DocumentUriPathProjection':
@@ -15,9 +28,3 @@ Neos:
 
           'Neos.Neos:PendingChangesProjection':
             factoryObjectName: Neos\Neos\PendingChangesProjection\ChangeProjectionFactory
-          'Neos.ContentRepository:ContentGraph':
-            catchUpHooks:
-              'Neos.Neos:FlushContentCache':
-                factoryObjectName: Neos\Neos\Fusion\Cache\GraphProjectorCatchUpHookForCacheFlushingFactory
-          'Neos.Neos:AssetUsage':
-            factoryObjectName: Neos\Neos\AssetUsage\Projection\AssetUsageProjectionFactory

@@ -18,7 +18,7 @@ readonly class DefaultNodeTypeManagerFactory implements NodeTypeManagerFactoryIn
     /** @param array<string, mixed> $options */
     public function build(ContentRepositoryId $contentRepositoryId, array $options): NodeTypeManager
     {
-        return new NodeTypeManager(
+        return NodeTypeManager::createFromArrayConfigurationLoader(
             function () {
                 $configuration = $this->configurationManager->getConfiguration('NodeTypes');
                 return $this->nodeTypeEnrichmentService->enrichNodeTypeLabelsConfiguration($configuration);

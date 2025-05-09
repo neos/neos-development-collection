@@ -97,8 +97,9 @@ final readonly class NodeTags implements \IteratorAggregate, \Countable, \JsonSe
     }
 
     /**
-     * @param \Closure(SubtreeTag $tag, bool $inherited): mixed $callback
-     * @return array<mixed>
+     * @template T
+     * @param \Closure(SubtreeTag $tag, bool $inherited): T $callback
+     * @return list<T>
      */
     public function map(\Closure $callback): array
     {
@@ -114,6 +115,12 @@ final readonly class NodeTags implements \IteratorAggregate, \Countable, \JsonSe
     public function toStringArray(): array
     {
         return $this->map(static fn (SubtreeTag $tag) => $tag->value);
+    }
+
+    public function equals(NodeTags $other): bool
+    {
+        return $this->tags->equals($other->tags)
+            && $this->inheritedTags->equals($other->inheritedTags);
     }
 
     public function getIterator(): Traversable

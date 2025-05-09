@@ -101,12 +101,13 @@ final class NodeAggregateIdsByNodePaths implements \JsonSerializable
         return new self($nodeAggregateIds);
     }
 
-    /**
-     * @throws \JsonException
-     */
     public static function fromJsonString(string $jsonString): self
     {
-        return self::fromArray(\json_decode($jsonString, true, 512, JSON_THROW_ON_ERROR));
+        try {
+            return self::fromArray(\json_decode($jsonString, true, 512, JSON_THROW_ON_ERROR));
+        } catch (\JsonException $e) {
+            throw new \RuntimeException(sprintf('Failed to JSON-decode "%s": %s', $jsonString, $e->getMessage()), 1723032037, $e);
+        }
     }
 
     public function merge(self $other): self

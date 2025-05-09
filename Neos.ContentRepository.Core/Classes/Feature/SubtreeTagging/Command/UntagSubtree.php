@@ -16,17 +16,15 @@ namespace Neos\ContentRepository\Core\Feature\SubtreeTagging\Command;
 
 use Neos\ContentRepository\Core\CommandHandler\CommandInterface;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
-use Neos\ContentRepository\Core\Feature\Common\MatchableWithNodeIdToPublishOrDiscardInterface;
 use Neos\ContentRepository\Core\Feature\Common\RebasableToOtherWorkspaceInterface;
 use Neos\ContentRepository\Core\Feature\SubtreeTagging\Dto\SubtreeTag;
-use Neos\ContentRepository\Core\Feature\WorkspacePublication\Dto\NodeIdToPublishOrDiscard;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeVariantSelectionStrategy;
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 
 /**
  * Remove a {@see SubtreeTag} from a node aggregate and its descendants.
+ *
  * Note: This will remove the tag from the node aggregate and all inherited instances. If the same tag is added for another Subtree below this aggregate, this will still be set!
  *
  * @api commands are the write-API of the ContentRepository
@@ -34,8 +32,7 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 final readonly class UntagSubtree implements
     CommandInterface,
     \JsonSerializable,
-    RebasableToOtherWorkspaceInterface,
-    MatchableWithNodeIdToPublishOrDiscardInterface
+    RebasableToOtherWorkspaceInterface
 {
     /**
      * @param WorkspaceName $workspaceName The workspace in which the remove tag operation is to be performed
@@ -65,9 +62,6 @@ final readonly class UntagSubtree implements
         return new self($workspaceName, $nodeAggregateId, $coveredDimensionSpacePoint, $nodeVariantSelectionStrategy, $tag);
     }
 
-    /**
-     * @param array<string,mixed> $array
-     */
     public static function fromArray(array $array): self
     {
         return new self(
@@ -88,12 +82,6 @@ final readonly class UntagSubtree implements
             $this->nodeVariantSelectionStrategy,
             $this->tag,
         );
-    }
-
-    public function matchesNodeId(NodeIdToPublishOrDiscard $nodeIdToPublish): bool
-    {
-        return $this->nodeAggregateId->equals($nodeIdToPublish->nodeAggregateId)
-            && $this->coveredDimensionSpacePoint->equals($nodeIdToPublish->dimensionSpacePoint);
     }
 
     /**

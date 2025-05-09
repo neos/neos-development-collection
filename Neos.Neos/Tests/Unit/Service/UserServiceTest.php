@@ -121,54 +121,6 @@ class UserServiceTest extends UnitTestCase
     /**
      * @test
      */
-    public function getPersonalWorkspaceReturnsNullIfNoUserIsLoggedIn()
-    {
-        $this->mockUserDomainService->expects(self::atLeastOnce())->method('getCurrentUser')->will(self::returnValue(null));
-        self::assertNull($this->userService->getPersonalWorkspace());
-    }
-
-    /**
-     * @test
-     */
-    public function getPersonalWorkspaceReturnsTheUsersWorkspaceIfAUserIsLoggedIn()
-    {
-        $mockUser = $this->getMockBuilder(User::class)->disableOriginalConstructor()->getMock();
-        $mockUserWorkspace = $this->getMockBuilder(Workspace::class)->disableOriginalConstructor()->getMock();
-        $mockAccount = $this->getMockBuilder(Account::class)->disableOriginalConstructor()->getMock();
-
-        $this->mockSecurityContext->expects(self::atLeastOnce())->method('getAccount')->will(self::returnValue($mockAccount));
-        $this->mockUserDomainService->expects(self::atLeastOnce())->method('getCurrentUser')->will(self::returnValue($mockUser));
-        $this->mockUserDomainService->expects(self::atLeastOnce())->method('getUserName')->with($mockUser)->will(self::returnValue('TheUserName'));
-        $this->mockWorkspaceRepository->expects(self::atLeastOnce())->method('findOneByName')->with('user-TheUserName')->will(self::returnValue($mockUserWorkspace));
-        self::assertSame($mockUserWorkspace, $this->userService->getPersonalWorkspace());
-    }
-
-    /**
-     * @test
-     */
-    public function getPersonalWorkspaceNameReturnsNullIfNoUserIsLoggedIn()
-    {
-        $this->mockUserDomainService->expects(self::atLeastOnce())->method('getCurrentUser')->will(self::returnValue(null));
-        self::assertNull($this->userService->getPersonalWorkspaceName());
-    }
-
-    /**
-     * @test
-     */
-    public function getPersonalWorkspaceNameReturnsTheUsersWorkspaceNameIfAUserIsLoggedIn()
-    {
-        $mockUser = $this->getMockBuilder(User::class)->disableOriginalConstructor()->getMock();
-        $mockAccount = $this->getMockBuilder(Account::class)->disableOriginalConstructor()->getMock();
-
-        $this->mockSecurityContext->expects(self::atLeastOnce())->method('getAccount')->will(self::returnValue($mockAccount));
-        $this->mockUserDomainService->expects(self::atLeastOnce())->method('getCurrentUser')->will(self::returnValue($mockUser));
-        $this->mockUserDomainService->expects(self::atLeastOnce())->method('getUserName')->with($mockUser)->will(self::returnValue('TheUserName'));
-        self::assertSame('user-TheUserName', $this->userService->getPersonalWorkspaceName());
-    }
-
-    /**
-     * @test
-     */
     public function getUserReturnsNullForInvalidUser()
     {
         self::assertNull($this->mockUserDomainService->getUser('NonExistantUser'));

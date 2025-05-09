@@ -6,6 +6,9 @@ namespace Neos\ContentRepository\NodeMigration\Transformation;
 
 use Neos\ContentRepository\Core\ContentRepository;
 
+/**
+ * Factory to build a transformation
+ */
 interface TransformationFactoryInterface
 {
     /**

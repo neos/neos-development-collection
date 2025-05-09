@@ -59,10 +59,10 @@ final readonly class DelegatingNodeLabelRenderer implements NodeLabelGeneratorIn
                 public function getLabel(Node $node): string
                 {
                     return sprintf(
-                        '%s %s',
+                        '%s%s',
                         $node->nodeTypeName->value,
                         $node->name
-                            ? sprintf('(%s)', $node->name->value)
+                            ? sprintf(' (%s)', $node->name->value)
                             : ''
                     );
                 }

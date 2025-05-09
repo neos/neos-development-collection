@@ -3,7 +3,7 @@
 Neos Signals Reference
 ======================
 
-This reference was automatically generated from code on 2024-05-14
+This reference was automatically generated from code on 2025-02-11
 
 
 .. _`Neos Signals Reference: AbstractModuleController (``Neos\Neos\Controller\Module\AbstractModuleController``)`:
@@ -171,6 +171,23 @@ viewResolved
 Emit that the view is resolved. The passed ViewInterface reference,
 gives the possibility to add variables to the view,
 before passing it on to further rendering
+
+
+
+
+
+
+.. _`Neos Signals Reference: ContentCacheFlusher (``Neos\Neos\Fusion\Cache\ContentCacheFlusher``)`:
+
+ContentCacheFlusher (``Neos\Neos\Fusion\Cache\ContentCacheFlusher``)
+--------------------------------------------------------------------
+
+This class contains the following signals.
+
+tagsFlushed
+^^^^^^^^^^^
+
+Signal that is triggered whenever cache tags get flushed
 
 
 
@@ -590,25 +607,6 @@ before passing it on to further rendering
 
 UsersController (``Neos\Neos\Controller\Module\Administration\UsersController``)
 --------------------------------------------------------------------------------
-
-This class contains the following signals.
-
-viewResolved
-^^^^^^^^^^^^
-
-Emit that the view is resolved. The passed ViewInterface reference,
-gives the possibility to add variables to the view,
-before passing it on to further rendering
-
-
-
-
-
-
-.. _`Neos Signals Reference: WorkspacesController (``Neos\Neos\Controller\Module\Management\WorkspacesController``)`:
-
-WorkspacesController (``Neos\Neos\Controller\Module\Management\WorkspacesController``)
---------------------------------------------------------------------------------------
 
 This class contains the following signals.
 

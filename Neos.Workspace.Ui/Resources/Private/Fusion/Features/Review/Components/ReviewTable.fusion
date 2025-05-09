@@ -1,0 +1,50 @@
+##
+# Shows a list of changes in a workspace
+#
+prototype(Neos.Workspace.Ui:Component.ReviewTable) < prototype(Neos.Fusion:Component) {
+  siteChanges = null
+  canPublishToBaseWorkspace = true
+  canPublishToWorkspace = true
+
+  @private {
+    i18n = ${I18n.id('').source('Main').package('Neos.Workspace.Ui')}
+  }
+
+  renderer = afx`
+    <table class="neos-table">
+        <thead>
+        <tr>
+          <th class="neos-action">
+            <a id="collapse-all" class="neos-pull-right table-action" data-toggled="true">
+              <i class=" fas fa-down-left-and-up-right-to-center icon-white"></i>
+            </a>
+          </th>
+          <th class="neos-action">
+            <label for="check-all" class="neos-checkbox">
+              <input type="checkbox" id="check-all"/><span></span>
+            </label>
+          </th>
+          <th class="column-header__title">{private.i18n.id('workspaces.workspace.title')}</th>
+          <th class="column-header__actions">{private.i18n.id('workspaces.workspace.actions')}</th>
+        </tr>
+        </thead>
+        <tbody>
+        <Neos.Fusion:Loop items={props.siteChanges} itemName="site">
+          <Neos.Fusion:Loop items={site.documents} itemKey="documentPath" itemName="document">
+            <Neos.Workspace.Ui:Component.ReviewDocumentTableRow
+              document={document}
+              documentPath={documentPath}
+              canPublishToBaseWorkspace={props.canPublishToBaseWorkspace}
+              canPublishToWorkspace={props.canPublishToWorkspace}
+            />
+            <Neos.Fusion:Loop items={document.changes} itemKey="relativePath" itemName="dimensions">
+              <Neos.Fusion:Loop items={dimensions} itemKey="relativePath" itemName="change">
+                <Neos.Workspace.Ui:Component.ReviewChangeTableRow change={change}/>
+              </Neos.Fusion:Loop>
+            </Neos.Fusion:Loop>
+          </Neos.Fusion:Loop>
+        </Neos.Fusion:Loop>
+        </tbody>
+    </table>
+  `
+}

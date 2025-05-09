@@ -14,6 +14,7 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\NodeMigration\Filter;
 
+use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
 
@@ -25,7 +26,7 @@ class NodeNameFilterFactory implements FilterFactoryInterface
     /**
      * @param array<string,string> $settings
      */
-    public function build(array $settings): NodeAggregateBasedFilterInterface|NodeBasedFilterInterface
+    public function build(array $settings, ContentRepository $contentRepository): NodeAggregateBasedFilterInterface|NodeBasedFilterInterface
     {
         $nodeName = NodeName::fromString($settings['nodeName']);
 

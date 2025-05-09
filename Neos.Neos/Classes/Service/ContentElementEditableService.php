@@ -15,11 +15,11 @@ declare(strict_types=1);
 namespace Neos\Neos\Service;
 
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAddress;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Security\Authorization\PrivilegeManagerInterface;
 use Neos\Fusion\Service\HtmlAugmenter as FusionHtmlAugmenter;
-use Neos\Neos\FrontendRouting\NodeAddressFactory;
 
 /**
  * The content element editable service adds the necessary markup around
@@ -61,9 +61,7 @@ class ContentElementEditableService
 
         $attributes = [
             'data-__neos-property' => $property,
-            'data-__neos-editable-node-contextpath' => NodeAddressFactory::create($contentRepository)
-                ->createFromNode($node)
-                ->serializeForUri()
+            'data-__neos-editable-node-contextpath' => NodeAddress::fromNode($node)->toJson()
         ];
 
         return $this->htmlAugmenter->addAttributes($content, $attributes, 'span');

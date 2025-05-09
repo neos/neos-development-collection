@@ -65,9 +65,6 @@ final readonly class References implements \IteratorAggregate, \ArrayAccess, \Co
         ));
     }
 
-    /**
-     * @return \Traversable<int,Reference>
-     */
     public function getIterator(): \Traversable
     {
         yield from $this->references;

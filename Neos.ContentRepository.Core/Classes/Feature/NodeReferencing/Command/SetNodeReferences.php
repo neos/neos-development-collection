@@ -6,6 +6,7 @@ namespace Neos\ContentRepository\Core\Feature\NodeReferencing\Command;
 
 use Neos\ContentRepository\Core\CommandHandler\CommandInterface;
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
+use Neos\ContentRepository\Core\Feature\NodeModification\Dto\PropertyValuesToWrite;
 use Neos\ContentRepository\Core\Feature\NodeReferencing\Dto\NodeReferencesToWrite;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Node\ReferenceName;
@@ -27,27 +28,37 @@ final readonly class SetNodeReferences implements CommandInterface
      * @param WorkspaceName $workspaceName The workspace in which the create operation is to be performed
      * @param NodeAggregateId $sourceNodeAggregateId The identifier of the node aggregate to set references
      * @param OriginDimensionSpacePoint $sourceOriginDimensionSpacePoint The dimension space for which the references should be set
-     * @param ReferenceName $referenceName Name of the reference to set
      * @param NodeReferencesToWrite $references Unserialized reference(s) to set
      */
     private function __construct(
         public WorkspaceName $workspaceName,
         public NodeAggregateId $sourceNodeAggregateId,
         public OriginDimensionSpacePoint $sourceOriginDimensionSpacePoint,
-        public ReferenceName $referenceName,
         public NodeReferencesToWrite $references,
     ) {
+        if ($this->references->isEmpty()) {
+            throw new \InvalidArgumentException(sprintf('The command "SetNodeReferences" for node %s must contain references to modify', $this->sourceNodeAggregateId->value), 1736797678);
+        }
     }
 
     /**
      * @param WorkspaceName $workspaceName The workspace in which the create operation is to be performed
      * @param NodeAggregateId $sourceNodeAggregateId The identifier of the node aggregate to set references
      * @param OriginDimensionSpacePoint $sourceOriginDimensionSpacePoint The dimension space for which the references should be set
-     * @param ReferenceName $referenceName Name of the reference to set
      * @param NodeReferencesToWrite $references Unserialized reference(s) to set
      */
-    public static function create(WorkspaceName $workspaceName, NodeAggregateId $sourceNodeAggregateId, OriginDimensionSpacePoint $sourceOriginDimensionSpacePoint, ReferenceName $referenceName, NodeReferencesToWrite $references): self
+    public static function create(WorkspaceName $workspaceName, NodeAggregateId $sourceNodeAggregateId, OriginDimensionSpacePoint $sourceOriginDimensionSpacePoint, NodeReferencesToWrite $references): self
     {
-        return new self($workspaceName, $sourceNodeAggregateId, $sourceOriginDimensionSpacePoint, $referenceName, $references);
+        return new self($workspaceName, $sourceNodeAggregateId, $sourceOriginDimensionSpacePoint, $references);
+    }
+
+    public static function fromArray(array $array): self
+    {
+        return new self(
+            WorkspaceName::fromString($array['workspaceName']),
+            NodeAggregateId::fromString($array['sourceNodeAggregateId']),
+            OriginDimensionSpacePoint::fromArray($array['sourceOriginDimensionSpacePoint']),
+            NodeReferencesToWrite::fromArray($array['references']),
+        );
     }
 }

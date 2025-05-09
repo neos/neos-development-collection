@@ -236,6 +236,28 @@ Feature: Simple handling of nodes with exceeded enableAfter and disableAfter dat
     Then I expect this node to be enabled
     And I expect exactly 6 events to be published on stream "ContentStream:cs-identifier"
 
+  # <===========================|now|===========================>
+  #  -----|Removed|++++++++++++++|---|+++++++++++++++++++++++++++
+  Scenario: A disabled, soft removed node with enableAfter past will be ignored because its soft removed
+    When the following CreateNodeAggregateWithNode commands are executed:
+      | nodeAggregateId      | parentNodeAggregateId  | nodeTypeName          | initialPropertyValues                                                                    |
+      | shernode-homes       | lady-eleonode-rootford | Some.Package:Homepage | {}                                                                                       |
+      | duke-of-contentshire | shernode-homes         | Some.Package:Content  | {"enableAfterDateTime": {"__type": "DateTimeImmutable", "value": "-10 days"}} |
+    Then I expect node aggregate identifier "duke-of-contentshire" to lead to node cs-identifier;duke-of-contentshire;{}
+    And the command DisableNodeAggregate is executed with payload:
+      | Key                          | Value                  |
+      | nodeAggregateId              | "duke-of-contentshire" |
+      | nodeVariantSelectionStrategy | "allVariants"          |
+    And the command TagSubtree is executed with payload:
+      | Key                          | Value                  |
+      | nodeAggregateId              | "duke-of-contentshire" |
+      | nodeVariantSelectionStrategy | "allVariants"          |
+      | tag                          | "removed"              |
+    And I expect exactly 6 events to be published on stream "ContentStream:cs-identifier"
+
+    Then I handle exceeded node dates
+    Then I expect this node to be disabled
+    And I expect exactly 6 events to be published on stream "ContentStream:cs-identifier"
 
   # <===========================|now|===========================>
   #  ---------------------------|---|---|Enable|+++++|Disable|--

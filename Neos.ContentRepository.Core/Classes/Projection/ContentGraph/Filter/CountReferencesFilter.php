@@ -7,7 +7,7 @@ namespace Neos\ContentRepository\Core\Projection\ContentGraph\Filter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\NodeType\NodeTypeCriteria;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\PropertyValue\Criteria\PropertyValueCriteriaInterface;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\PropertyValue\PropertyValueCriteriaParser;
-use Neos\ContentRepository\Core\Projection\ContentGraph\SearchTerm;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\SearchTerm\SearchTerm;
 use Neos\ContentRepository\Core\SharedModel\Node\ReferenceName;
 
 /**
@@ -49,12 +49,12 @@ final readonly class CountReferencesFilter
      * @see https://www.php.net/manual/en/functions.arguments.php#functions.named-arguments
      */
     public static function create(
-        NodeTypeCriteria|string $nodeTypes = null,
-        SearchTerm|string $nodeSearchTerm = null,
-        PropertyValueCriteriaInterface|string $nodePropertyValue = null,
-        SearchTerm|string $referenceSearchTerm = null,
-        PropertyValueCriteriaInterface|string $referencePropertyValue = null,
-        ReferenceName|string $referenceName = null,
+        NodeTypeCriteria|string|null $nodeTypes = null,
+        SearchTerm|string|null $nodeSearchTerm = null,
+        PropertyValueCriteriaInterface|string|null $nodePropertyValue = null,
+        SearchTerm|string|null $referenceSearchTerm = null,
+        PropertyValueCriteriaInterface|string|null $referencePropertyValue = null,
+        ReferenceName|string|null $referenceName = null,
     ): self {
         if (is_string($nodeTypes)) {
             $nodeTypes = NodeTypeCriteria::fromFilterString($nodeTypes);
@@ -89,12 +89,12 @@ final readonly class CountReferencesFilter
      * @see https://www.php.net/manual/en/functions.arguments.php#functions.named-arguments
      */
     public function with(
-        NodeTypeCriteria|string $nodeTypes = null,
-        SearchTerm|string $nodeSearchTerm = null,
-        PropertyValueCriteriaInterface|string $nodePropertyValue = null,
-        SearchTerm|string $referenceSearchTerm = null,
-        PropertyValueCriteriaInterface|string $referencePropertyValue = null,
-        ReferenceName|string $referenceName = null,
+        NodeTypeCriteria|string|null $nodeTypes = null,
+        SearchTerm|string|null $nodeSearchTerm = null,
+        PropertyValueCriteriaInterface|string|null $nodePropertyValue = null,
+        SearchTerm|string|null $referenceSearchTerm = null,
+        PropertyValueCriteriaInterface|string|null $referencePropertyValue = null,
+        ReferenceName|string|null $referenceName = null,
     ): self {
         return self::create(
             $nodeTypes ?? $this->nodeTypes,

@@ -48,7 +48,7 @@ This change adds the prototype ``Neos.Fusion:ActionUri`` as a 1:1 replacement th
 - ``request``: (ActionRequest, defaults to the the current ``request``) The action request the uri is built from.
 - ... all other attributes equal ``Neos.Fusion:UriBuilder``
 
-Examples: 
+Examples:
 
 ```
 uri = Neos.Fusion:ActionUri {

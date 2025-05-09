@@ -14,11 +14,11 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Core\Feature\NodeRenaming;
 
-use Neos\ContentRepository\Core\CommandHandlingDependencies;
+use Neos\ContentRepository\Core\CommandHandler\CommandHandlingDependencies;
 use Neos\ContentRepository\Core\EventStore\Events;
 use Neos\ContentRepository\Core\EventStore\EventsToPublish;
 use Neos\ContentRepository\Core\Feature\Common\ConstraintChecks;
-use Neos\ContentRepository\Core\Feature\Common\NodeAggregateEventPublisher;
+use Neos\ContentRepository\Core\Feature\RebaseableCommand;
 use Neos\ContentRepository\Core\Feature\ContentStreamEventStreamName;
 use Neos\ContentRepository\Core\Feature\NodeRenaming\Command\ChangeNodeAggregateName;
 use Neos\ContentRepository\Core\Feature\NodeRenaming\Event\NodeAggregateNameWasChanged;
@@ -61,7 +61,7 @@ trait NodeRenaming
 
         return new EventsToPublish(
             ContentStreamEventStreamName::fromContentStreamId($contentGraph->getContentStreamId())->getEventStreamName(),
-            NodeAggregateEventPublisher::enrichWithCommand(
+            RebaseableCommand::enrichWithCommand(
                 $command,
                 $events
             ),

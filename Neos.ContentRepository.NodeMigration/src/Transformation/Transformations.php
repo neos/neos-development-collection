@@ -7,7 +7,6 @@ namespace Neos\ContentRepository\NodeMigration\Transformation;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate;
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 
 final class Transformations
@@ -90,32 +89,43 @@ final class Transformations
         return $nonEmptyTransformationTypes > 1;
     }
 
-    public function executeGlobalAndBlock(
+    public function executeGlobal(
+        WorkspaceName $workspaceNameForReading,
         WorkspaceName $workspaceNameForWriting,
-    ): void {
+    ): TransformationSteps {
+        $transformationSteps = TransformationSteps::createEmpty();
         foreach ($this->globalTransformations as $globalTransformation) {
-            $globalTransformation->execute($workspaceNameForWriting);
+            $transformationSteps = $transformationSteps->withAppended(
+                $globalTransformation->execute($workspaceNameForReading, $workspaceNameForWriting)
+            );
         }
+        return $transformationSteps;
     }
 
-    public function executeNodeAggregateBasedAndBlock(
+    public function executeNodeAggregateBased(
         NodeAggregate $nodeAggregate,
-        WorkspaceName $workspaceNameForWriting,
-        ContentStreamId $contentStreamForWriting
-    ): void {
+        WorkspaceName $workspaceNameForWriting
+    ): TransformationSteps {
+        $transformationSteps = TransformationSteps::createEmpty();
         foreach ($this->nodeAggregateBasedTransformations as $nodeAggregateBasedTransformation) {
-            $nodeAggregateBasedTransformation->execute($nodeAggregate, $workspaceNameForWriting, $contentStreamForWriting);
+            $transformationSteps = $transformationSteps->withAppended(
+                $nodeAggregateBasedTransformation->execute($nodeAggregate, $workspaceNameForWriting)
+            );
         }
+        return $transformationSteps;
     }
 
-    public function executeNodeBasedAndBlock(
+    public function executeNodeBased(
         Node $node,
         DimensionSpacePointSet $coveredDimensionSpacePoints,
-        WorkspaceName $workspaceNameForWriting,
-        ContentStreamId $contentStreamForWriting
-    ): void {
+        WorkspaceName $workspaceNameForWriting
+    ): TransformationSteps {
+        $transformationSteps = TransformationSteps::createEmpty();
         foreach ($this->nodeBasedTransformations as $nodeBasedTransformation) {
-            $nodeBasedTransformation->execute($node, $coveredDimensionSpacePoints, $workspaceNameForWriting, $contentStreamForWriting);
+            $transformationSteps = $transformationSteps->withAppended(
+                $nodeBasedTransformation->execute($node, $coveredDimensionSpacePoints, $workspaceNameForWriting)
+            );
         }
+        return $transformationSteps;
     }
 }

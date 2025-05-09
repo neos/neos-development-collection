@@ -19,7 +19,7 @@ final class Version20231012072631 extends AbstractMigration
     {
         $this->abortIf(
             !$this->connection->getDatabasePlatform() instanceof AbstractMySQLPlatform,
-            "Migration can only be executed safely on '\Doctrine\DBAL\Platforms\MariaDb1027Platform'."
+            "Migration can only be executed safely on '\Doctrine\DBAL\Platforms\AbstractMySQLPlatform'."
         );
 
         $this->addSql('DROP TABLE IF EXISTS neos_neos_eventlog_domain_model_event');
@@ -29,7 +29,7 @@ final class Version20231012072631 extends AbstractMigration
     {
         $this->abortIf(
             !$this->connection->getDatabasePlatform() instanceof AbstractMySQLPlatform,
-            "Migration can only be executed safely on '\Doctrine\DBAL\Platforms\MariaDb1027Platform'."
+            "Migration can only be executed safely on '\Doctrine\DBAL\Platforms\AbstractMySQLPlatform'."
         );
 
         $this->addSql('CREATE TABLE neos_neos_eventlog_domain_model_event (parentevent int(10) unsigned DEFAULT NULL, timestamp datetime NOT NULL, uid int(10) unsigned NOT NULL AUTO_INCREMENT, eventtype varchar(255) NOT NULL, accountidentifier varchar(255) DEFAULT NULL, data longtext NOT NULL COMMENT \'(DC2Type:flow_json_array)\', dtype varchar(255) NOT NULL, nodeidentifier varchar(255) DEFAULT NULL, documentnodeidentifier varchar(255) DEFAULT NULL, workspacename varchar(255) DEFAULT NULL, dimension longtext DEFAULT NULL COMMENT \'(DC2Type:array)\', dimensionshash varchar(32) DEFAULT NULL, PRIMARY KEY (uid), KEY eventtype (eventtype), KEY IDX_D6DBC30A5B684C08 (parentevent), KEY documentnodeidentifier (documentnodeidentifier), KEY dimensionshash (dimensionshash), KEY workspacename_parentevent (`workspacename`,`parentevent`), CONSTRAINT `FK_30AB3A75B684C08` FOREIGN KEY (`parentevent`) REFERENCES `neos_neos_eventlog_domain_model_event` (`uid`)) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci');

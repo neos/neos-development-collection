@@ -20,8 +20,6 @@ Feature: Disable a node aggregate
     And the command CreateRootWorkspace is executed with payload:
       | Key                  | Value                |
       | workspaceName        | "live"               |
-      | workspaceTitle       | "Live"               |
-      | workspaceDescription | "The live workspace" |
       | newContentStreamId   | "cs-identifier"      |
     And I am in workspace "live" and dimension space point {}
     And the command CreateRootNodeAggregateWithNode is executed with payload:
@@ -37,8 +35,7 @@ Feature: Disable a node aggregate
     And the command SetNodeReferences is executed with payload:
       | Key                   | Value                                  |
       | sourceNodeAggregateId | "preceding-nodenborough"               |
-      | referenceName         | "references"                           |
-      | references            | [{"target": "sir-david-nodenborough"}] |
+      | references            | [{"referenceName": "references", "references": [{"target": "sir-david-nodenborough"}]}] |
 
   Scenario: Disable node with arbitrary strategy since dimensions are not involved
     When the command DisableNodeAggregate is executed with payload:
@@ -111,7 +108,7 @@ Feature: Disable a node aggregate
     And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document" to lead to node cs-identifier;nody-mc-nodeface;{}
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{}
 
-    When VisibilityConstraints are set to "frontend"
+    When VisibilityConstraints are set to "default"
     Then I expect node aggregate identifier "lady-eleonode-rootford" to lead to node cs-identifier;lady-eleonode-rootford;{}
     And I expect this node to have the following child nodes:
       | Name                | NodeDiscriminator                        |

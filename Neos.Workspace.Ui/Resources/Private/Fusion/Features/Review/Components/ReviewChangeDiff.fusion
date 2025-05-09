@@ -1,0 +1,107 @@
+##
+# Renders a document for review
+#
+prototype(Neos.Workspace.Ui:Component.ReviewChangeDiff) < prototype(Neos.Fusion:Component) {
+  change = ''
+
+  @private {
+    i18n = ${I18n.id('').source('Main').package('Neos.Workspace.Ui')}
+  }
+
+  renderer = afx`
+    <table class="neos-content-diff">
+      <tr>
+        <td class="diff-node-details" colspan="3">
+          <div class="neos-row-fluid">
+            <div class="neos-span8">
+              <div class="node-icons">
+                <Neos.Workspace.Ui:Component.Icon
+                        @if.hasIcon={props.change.icon}
+                        icon={props.change.icon}
+                />
+                <i @if.nodeIsHidden={props.change.hidden} class="icon-red fa-solid fa-circle-xmark"></i>
+              </div>
+              <span>{props.change.label}</span>
+            </div>
+            <div class="neos-span2">
+              <Neos.Fusion:Loop items={props.change.dimensions} itemKey="key" itemName="dimension">
+                <span class="neos-label neos-pull-right" title={dimension}>{dimension}</span>
+              </Neos.Fusion:Loop>
+            </div>
+            <div class="neos-span2">
+              <span
+                class="neos-pull-right"
+                @if.hasChangedDateTime={props.change.lastModificationDateTime}
+                title={I18n.id('lastModification').source('Main').package('Neos.Neos')+ " : " + props.change.lastModificationDateTime}
+                data-neos-toggle="tooltip"
+              >
+                <i class="fas fa-time"></i>{props.change.lastModificationDateTime}
+              </span>
+            </div>
+          </div>
+        </td>
+      </tr>
+      <Neos.Fusion:Loop items={props.change.contentChanges} itemKey="propertyName" itemName="contentChanges">
+        <tr>
+          <td class="diff-property-label" colspan="3">
+            <i class="fas fa-level-up-alt"></i>
+            <span>{contentChanges.properties.propertyLabel}</span>
+          </td>
+        </tr>
+        <tr class="diff-property-content">
+          <td></td>
+          <Neos.Fusion:Loop @if.isText={contentChanges.properties.type == 'text'} items={contentChanges.changes.diff} itemKey="index" itemName="blocks">
+            <Neos.Fusion:Loop items={blocks} itemName="block">
+              <td class="diff-property-content-left" >
+                <Neos.Fusion:Loop items={block.base.lines} itemName="line">
+                  {line}
+                </Neos.Fusion:Loop>
+              </td>
+              <td class="diff-property-content-right">
+                <Neos.Fusion:Loop items={block.changed.lines} itemName="line">
+                  {line}
+                </Neos.Fusion:Loop>
+              </td>
+            </Neos.Fusion:Loop>
+          </Neos.Fusion:Loop>
+          <td @if.isImage={contentChanges.properties.type == 'image'} >
+            <Neos.Neos:ImageTag @if.hasOriginal={contentChanges.changes.original} asset={contentChanges.changes.original} allowCropping="false" maximumWidth="500" maximumHeight="500" alt=""/>
+          </td>
+          <td @if.isImage={contentChanges.properties.type == 'image'} >
+            <Neos.Neos:ImageTag @if.hasChanged={contentChanges.changes.changed} asset={contentChanges.changes.changed} allowCropping="false" maximumWidth="500" maximumHeight="500" alt=""/>
+          </td>
+          <td @if.isAsset={contentChanges.properties.type == 'asset'}>
+            <del @if.hasOriginal={contentChanges.changes.original.resource}>
+              <Neos.Fusion:Link.Resource class="resource-link" href.path={contentChanges.changes.original.resource}>
+                {contentChanges.original.resource.filename}
+              </Neos.Fusion:Link.Resource>
+            </del>
+          </td>
+          <td @if.isAsset={contentChanges.properties.type == 'asset'}>
+            <ins>
+              <Neos.Fusion:Link.Resource class="resource-link" href.path={contentChanges.changes.changed.resource}>
+                {contentChanges.changes.changed.resource.filename}
+              </Neos.Fusion:Link.Resource>
+            </ins>
+          </td>
+          <td @if.isDatetime={contentChanges.properties.type == 'datetime'}>
+            {Date.format(contentChanges.changes.original, 'Y-m-d H:i')}
+          </td>
+          <td @if.isDatetime={contentChanges.properties.type == 'datetime'}>
+            {Date.format(contentChanges.changes.changed, 'Y-m-d H:i')}
+          </td>
+          <td @if.isTag={contentChanges.properties.type == 'tags'} class="diff-property-content-left">
+            <Neos.Fusion:Loop items={contentChanges.changes.addedTags} itemName="tag">
+              <ins>{tag} </ins>
+            </Neos.Fusion:Loop>
+            <Neos.Fusion:Loop items={contentChanges.changes.removedTags} itemName="tag">
+              <del>{tag}</del>
+            </Neos.Fusion:Loop>
+          </td>
+          <td @if.isTag={contentChanges.properties.type == 'tags'} class="diff-property-content-right">
+          </td>
+        </tr>
+      </Neos.Fusion:Loop>
+    </table>
+  `
+}

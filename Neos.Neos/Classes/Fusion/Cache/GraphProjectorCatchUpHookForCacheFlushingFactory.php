@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Neos\Neos\Fusion\Cache;
 
 /*
@@ -12,9 +14,13 @@ namespace Neos\Neos\Fusion\Cache;
  * source code.
  */
 
-use Neos\ContentRepository\Core\ContentRepository;
-use Neos\ContentRepository\Core\Projection\CatchUpHookFactoryInterface;
+use Neos\ContentRepository\Core\Projection\CatchUpHook\CatchUpHookFactoryDependencies;
+use Neos\ContentRepository\Core\Projection\CatchUpHook\CatchUpHookFactoryInterface;
+use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphReadModelInterface;
 
+/**
+ * @implements CatchUpHookFactoryInterface<ContentGraphReadModelInterface>
+ */
 class GraphProjectorCatchUpHookForCacheFlushingFactory implements CatchUpHookFactoryInterface
 {
     public function __construct(
@@ -22,10 +28,11 @@ class GraphProjectorCatchUpHookForCacheFlushingFactory implements CatchUpHookFac
     ) {
     }
 
-    public function build(ContentRepository $contentRepository): GraphProjectorCatchUpHookForCacheFlushing
+    public function build(CatchUpHookFactoryDependencies $dependencies): GraphProjectorCatchUpHookForCacheFlushing
     {
         return new GraphProjectorCatchUpHookForCacheFlushing(
-            $contentRepository,
+            $dependencies->contentRepositoryId,
+            $dependencies->projectionState,
             $this->contentCacheFlusher
         );
     }

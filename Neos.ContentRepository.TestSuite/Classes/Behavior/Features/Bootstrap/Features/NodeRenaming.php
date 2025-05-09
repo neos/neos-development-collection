@@ -14,11 +14,7 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\Features;
 
-use Behat\Gherkin\Node\TableNode;
-use Neos\ContentRepository\Core\Feature\NodeRenaming\Command\ChangeNodeAggregateName;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
-use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
-use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\CRTestSuiteRuntimeVariables;
 use PHPUnit\Framework\Assert;
 
@@ -28,41 +24,6 @@ use PHPUnit\Framework\Assert;
 trait NodeRenaming
 {
     use CRTestSuiteRuntimeVariables;
-
-    /**
-     * @Given /^the command ChangeNodeAggregateName is executed with payload:$/
-     * @param TableNode $payloadTable
-     * @throws \Exception
-     */
-    public function theCommandChangeNodeAggregateNameIsExecutedWithPayload(TableNode $payloadTable)
-    {
-        $commandArguments = $this->readPayloadTable($payloadTable);
-        $workspaceName = isset($commandArguments['workspaceName'])
-            ? WorkspaceName::fromString($commandArguments['workspaceName'])
-            : $this->currentWorkspaceName;
-
-        $command = ChangeNodeAggregateName::create(
-            $workspaceName,
-            NodeAggregateId::fromString($commandArguments['nodeAggregateId']),
-            NodeName::fromString($commandArguments['newNodeName']),
-        );
-
-        $this->currentContentRepository->handle($command);
-    }
-
-    /**
-     * @Given /^the command ChangeNodeAggregateName is executed with payload and exceptions are caught:$/
-     * @param TableNode $payloadTable
-     * @throws \Exception
-     */
-    public function theCommandChangeNodeAggregateNameIsExecutedWithPayloadAndExceptionsAreCaught(TableNode $payloadTable)
-    {
-        try {
-            $this->theCommandChangeNodeAggregateNameIsExecutedWithPayload($payloadTable);
-        } catch (\Exception $exception) {
-            $this->lastCommandException = $exception;
-        }
-    }
 
     /**
      * @Then /^I expect the node "([^"]*)" to have the name "([^"]*)"$/

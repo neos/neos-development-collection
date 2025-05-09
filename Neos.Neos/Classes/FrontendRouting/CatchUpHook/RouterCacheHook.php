@@ -1,16 +1,18 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Neos\Neos\FrontendRouting\CatchUpHook;
 
-use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\EventStore\EventInterface;
 use Neos\ContentRepository\Core\Feature\NodeModification\Event\NodePropertiesWereSet;
 use Neos\ContentRepository\Core\Feature\NodeMove\Event\NodeAggregateWasMoved;
 use Neos\ContentRepository\Core\Feature\NodeRemoval\Event\NodeAggregateWasRemoved;
 use Neos\ContentRepository\Core\Feature\SubtreeTagging\Event\SubtreeWasTagged;
-use Neos\ContentRepository\Core\Projection\CatchUpHookInterface;
+use Neos\ContentRepository\Core\Projection\CatchUpHook\CatchUpHookInterface;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
+use Neos\ContentRepository\Core\Subscription\SubscriptionStatus;
 use Neos\EventStore\Model\EventEnvelope;
 use Neos\Flow\Mvc\Routing\RouterCachingService;
 use Neos\Neos\FrontendRouting\Exception\NodeNotFoundException;
@@ -26,12 +28,12 @@ final class RouterCacheHook implements CatchUpHookInterface
     private array $tagsToFlush = [];
 
     public function __construct(
-        private readonly ContentRepository $contentRepository,
+        private readonly DocumentUriPathFinder $documentUriPathFinder,
         private readonly RouterCachingService $routerCachingService,
     ) {
     }
 
-    public function onBeforeCatchUp(): void
+    public function onBeforeCatchUp(SubscriptionStatus $subscriptionStatus): void
     {
         // Nothing to do here
     }
@@ -58,7 +60,7 @@ final class RouterCacheHook implements CatchUpHookInterface
         };
     }
 
-    public function onBeforeBatchCompleted(): void
+    public function onAfterBatchCompleted(): void
     {
         // Nothing to do here
     }
@@ -70,7 +72,7 @@ final class RouterCacheHook implements CatchUpHookInterface
 
     private function onBeforeSubtreeWasTagged(SubtreeWasTagged $event): void
     {
-        if (!$this->getState()->isLiveContentStream($event->contentStreamId)) {
+        if (!$event->workspaceName->isLive()) {
             return;
         }
 
@@ -83,14 +85,14 @@ final class RouterCacheHook implements CatchUpHookInterface
 
             $this->collectTagsToFlush($node);
 
-            $descendantsOfNode = $this->getState()->getDescendantsOfNode($node);
+            $descendantsOfNode = $this->documentUriPathFinder->getDescendantsOfNode($node);
             array_map($this->collectTagsToFlush(...), iterator_to_array($descendantsOfNode));
         }
     }
 
     private function onBeforeNodeAggregateWasRemoved(NodeAggregateWasRemoved $event): void
     {
-        if (!$this->getState()->isLiveContentStream($event->contentStreamId)) {
+        if (!$event->workspaceName->isLive()) {
             return;
         }
 
@@ -103,14 +105,14 @@ final class RouterCacheHook implements CatchUpHookInterface
 
             $this->collectTagsToFlush($node);
 
-            $descendantsOfNode = $this->getState()->getDescendantsOfNode($node);
+            $descendantsOfNode = $this->documentUriPathFinder->getDescendantsOfNode($node);
             array_map($this->collectTagsToFlush(...), iterator_to_array($descendantsOfNode));
         }
     }
 
     private function onBeforeNodePropertiesWereSet(NodePropertiesWereSet $event): void
     {
-        if (!$this->getState()->isLiveContentStream($event->contentStreamId)) {
+        if (!$event->workspaceName->isLive()) {
             return;
         }
 
@@ -128,14 +130,14 @@ final class RouterCacheHook implements CatchUpHookInterface
 
             $this->collectTagsToFlush($node);
 
-            $descendantsOfNode = $this->getState()->getDescendantsOfNode($node);
+            $descendantsOfNode = $this->documentUriPathFinder->getDescendantsOfNode($node);
             array_map($this->collectTagsToFlush(...), iterator_to_array($descendantsOfNode));
         }
     }
 
     private function onBeforeNodeAggregateWasMoved(NodeAggregateWasMoved $event): void
     {
-        if (!$this->getState()->isLiveContentStream($event->contentStreamId)) {
+        if (!$event->workspaceName->isLive()) {
             return;
         }
 
@@ -151,7 +153,7 @@ final class RouterCacheHook implements CatchUpHookInterface
 
             $this->collectTagsToFlush($node);
 
-            $descendantsOfNode = $this->getState()->getDescendantsOfNode($node);
+            $descendantsOfNode = $this->documentUriPathFinder->getDescendantsOfNode($node);
             array_map($this->collectTagsToFlush(...), iterator_to_array($descendantsOfNode));
         }
     }
@@ -171,15 +173,10 @@ final class RouterCacheHook implements CatchUpHookInterface
         $this->tagsToFlush = [];
     }
 
-    private function getState(): DocumentUriPathFinder
-    {
-        return $this->contentRepository->projectionState(DocumentUriPathFinder::class);
-    }
-
     private function findDocumentNodeInfoByIdAndDimensionSpacePoint(NodeAggregateId $nodeAggregateId, DimensionSpacePoint $dimensionSpacePoint): ?DocumentNodeInfo
     {
         try {
-            return $this->getState()->getByIdAndDimensionSpacePointHash(
+            return $this->documentUriPathFinder->getByIdAndDimensionSpacePointHash(
                 $nodeAggregateId,
                 $dimensionSpacePoint->hash
             );

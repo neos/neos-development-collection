@@ -151,7 +151,7 @@ class ImpersonateService
      * @param Account|null $account
      * @return void
      */
-    protected function refreshTokens(Account $account = null): void
+    protected function refreshTokens(?Account $account = null): void
     {
         if ($account === null) {
             return;

@@ -16,65 +16,36 @@ namespace Neos\ContentRepository\Core\Feature\NodeDisabling\Event;
 
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Core\EventStore\EventInterface;
-use Neos\ContentRepository\Core\Feature\Common\EmbedsContentStreamAndNodeAggregateId;
-use Neos\ContentRepository\Core\Feature\Common\PublishableToWorkspaceInterface;
+use Neos\ContentRepository\Core\Feature\SubtreeTagging\Dto\SubtreeTag;
 use Neos\ContentRepository\Core\Feature\SubtreeTagging\Event\SubtreeWasTagged;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 
 /**
- * A node aggregate was disabled
- *
- * @deprecated This event will never be emitted, it is up-casted to a corresponding {@see SubtreeWasTagged} event instead in the {@see EventNormalizer}. This implementation is just kept for backwards-compatibility
+ * @deprecated This event will never be emitted, it is up-casted to a corresponding {@see SubtreeWasTagged} event instead. This implementation is just kept for backwards-compatibility
  * @internal
  */
-final readonly class NodeAggregateWasDisabled implements
-    EventInterface,
-    PublishableToWorkspaceInterface,
-    EmbedsContentStreamAndNodeAggregateId
+final readonly class NodeAggregateWasDisabled implements EventInterface
 {
-    public function __construct(
-        public WorkspaceName $workspaceName,
-        public ContentStreamId $contentStreamId,
-        public NodeAggregateId $nodeAggregateId,
-        /** The dimension space points the node aggregate was disabled in */
-        public DimensionSpacePointSet $affectedDimensionSpacePoints,
-    ) {
-    }
-
-    public function getContentStreamId(): ContentStreamId
+    private function __construct()
     {
-        return $this->contentStreamId;
-    }
-
-    public function getNodeAggregateId(): NodeAggregateId
-    {
-        return $this->nodeAggregateId;
-    }
-
-    public function withWorkspaceNameAndContentStreamId(WorkspaceName $targetWorkspaceName, ContentStreamId $contentStreamId): self
-    {
-        return new self(
-            $targetWorkspaceName,
-            $contentStreamId,
-            $this->nodeAggregateId,
-            $this->affectedDimensionSpacePoints,
-        );
+        // legacy event must not be instantiated
     }
 
     public static function fromArray(array $values): EventInterface
     {
-        return new self(
+        return new SubtreeWasTagged(
             WorkspaceName::fromString($values['workspaceName']),
             ContentStreamId::fromString($values['contentStreamId']),
             NodeAggregateId::fromString($values['nodeAggregateId']),
             DimensionSpacePointSet::fromArray($values['affectedDimensionSpacePoints']),
+            SubtreeTag::disabled()
         );
     }
 
     public function jsonSerialize(): array
     {
-        return get_object_vars($this);
+        throw new \RuntimeException('Legacy event instance must not exist.');
     }
 }

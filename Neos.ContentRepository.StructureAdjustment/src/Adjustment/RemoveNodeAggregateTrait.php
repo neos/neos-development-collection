@@ -21,7 +21,6 @@ trait RemoveNodeAggregateTrait
                 $contentGraph->getWorkspaceName(),
                 $contentGraph->getContentStreamId(),
                 $tetheredNodeAggregate->nodeAggregateId,
-                $tetheredNodeAggregate->occupiedDimensionSpacePoints,
                 $tetheredNodeAggregate->coveredDimensionSpacePoints,
             )
         );

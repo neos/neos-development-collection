@@ -41,8 +41,8 @@ class NodeTypeManagerTest extends TestCase
      */
     protected function prepareNodeTypeManager(array $nodeTypesFixtureData)
     {
-        $this->nodeTypeManager = new NodeTypeManager(
-            fn() => $nodeTypesFixtureData
+        $this->nodeTypeManager = NodeTypeManager::createFromArrayConfiguration(
+            $nodeTypesFixtureData
         );
     }
 
@@ -114,7 +114,6 @@ class NodeTypeManagerTest extends TestCase
         ],
         'Neos.ContentRepository.Testing:Document' => [
             'abstract' => true,
-            'aggregate' => true
         ],
         'Neos.ContentRepository.Testing:Page' => [
             'superTypes' => ['Neos.ContentRepository.Testing:Document' => true],
@@ -276,23 +275,6 @@ class NodeTypeManagerTest extends TestCase
     /**
      * @test
      */
-    public function aggregateNodeTypeFlagIsFalseByDefault()
-    {
-        self::assertFalse($this->nodeTypeManager->getNodeType('Neos.ContentRepository.Testing:Text')->isAggregate());
-    }
-
-    /**
-     * @test
-     */
-    public function aggregateNodeTypeFlagIsInherited()
-    {
-        self::assertTrue($this->nodeTypeManager->getNodeType('Neos.ContentRepository.Testing:Document')->isAggregate());
-        self::assertTrue($this->nodeTypeManager->getNodeType('Neos.ContentRepository.Testing:Page')->isAggregate());
-    }
-
-    /**
-     * @test
-     */
     public function getNodeTypeThrowsExceptionIfFinalNodeTypeIsSubclassed()
     {
         $this->expectException(NodeTypeIsFinalException::class);
@@ -443,23 +425,10 @@ class NodeTypeManagerTest extends TestCase
      */
     public function rootNodeTypeIsAlwaysPresent()
     {
-        $nodeTypeManager = new NodeTypeManager(
-            fn() => []
+        $nodeTypeManager = NodeTypeManager::createFromArrayConfiguration(
+            []
         );
         self::assertTrue($nodeTypeManager->hasNodeType(NodeTypeName::ROOT_NODE_TYPE_NAME));
         self::assertInstanceOf(NodeType::class, $nodeTypeManager->getNodeType(NodeTypeName::ROOT_NODE_TYPE_NAME));
-    }
-
-    /**
-     * @test
-     */
-    public function rootNodeTypeIsPresentAfterOverride()
-    {
-        $nodeTypeManager = new NodeTypeManager(
-            fn() => []
-        );
-        $nodeTypeManager->overrideNodeTypes(['Some:NewNodeType' => []]);
-        self::assertTrue($nodeTypeManager->hasNodeType(NodeTypeName::fromString('Some:NewNodeType')));
-        self::assertTrue($nodeTypeManager->hasNodeType(NodeTypeName::ROOT_NODE_TYPE_NAME));
     }
 }

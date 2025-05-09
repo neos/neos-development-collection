@@ -14,6 +14,7 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Core\Feature\Common;
 
+use Neos\ContentRepository\Core\EventStore\EventInterface;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 
@@ -26,7 +27,7 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
  *
  * @internal used internally for the publishing mechanism of workspaces
  */
-interface PublishableToWorkspaceInterface
+interface PublishableToWorkspaceInterface extends EventInterface
 {
     public function withWorkspaceNameAndContentStreamId(WorkspaceName $targetWorkspaceName, ContentStreamId $contentStreamId): self;
 }

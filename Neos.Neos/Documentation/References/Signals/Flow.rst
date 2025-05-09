@@ -3,7 +3,7 @@
 Flow Signals Reference
 ======================
 
-This reference was automatically generated from code on 2024-05-14
+This reference was automatically generated from code on 2025-02-11
 
 
 .. _`Flow Signals Reference: AbstractAdvice (``Neos\Flow\Aop\Advice\AbstractAdvice``)`:
@@ -57,26 +57,6 @@ viewResolved
 Emit that the view is resolved. The passed ViewInterface reference,
 gives the possibility to add variables to the view,
 before passing it on to further rendering
-
-
-
-
-
-
-.. _`Flow Signals Reference: ActionRequest (``Neos\Flow\Mvc\ActionRequest``)`:
-
-ActionRequest (``Neos\Flow\Mvc\ActionRequest``)
------------------------------------------------
-
-This class contains the following signals.
-
-requestDispatched
-^^^^^^^^^^^^^^^^^
-
-Emits a signal when a Request has been dispatched
-
-The action request is not proxyable, so the signal is dispatched manually here.
-The safeguard allows unit tests without the dispatcher dependency.
 
 
 
@@ -304,6 +284,29 @@ Signals that the compile command was successfully finished.
 
 
 
+.. _`Flow Signals Reference: Dispatcher (``Neos\Flow\Cli\Dispatcher``)`:
+
+Dispatcher (``Neos\Flow\Cli\Dispatcher``)
+-----------------------------------------
+
+This class contains the following signals.
+
+beforeControllerInvocation
+^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+This signal is emitted directly before the request is been dispatched to a controller.
+
+afterControllerInvocation
+^^^^^^^^^^^^^^^^^^^^^^^^^
+
+This signal is emitted directly after the request has been dispatched to a controller and the controller
+returned control back to the dispatcher.
+
+
+
+
+
+
 .. _`Flow Signals Reference: Dispatcher (``Neos\Flow\Mvc\Dispatcher``)`:
 
 Dispatcher (``Neos\Flow\Mvc\Dispatcher``)
@@ -314,7 +317,7 @@ This class contains the following signals.
 beforeControllerInvocation
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-This signal is emitted directly before the request is been dispatched to a controller.
+This signal is emitted directly before the request is being dispatched to a controller.
 
 afterControllerInvocation
 ^^^^^^^^^^^^^^^^^^^^^^^^^

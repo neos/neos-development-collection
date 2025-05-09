@@ -14,15 +14,11 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Core\Feature\NodeModification\Command;
 
-use Neos\ContentRepository\Core\CommandHandler\CommandInterface;
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
-use Neos\ContentRepository\Core\Feature\Common\MatchableWithNodeIdToPublishOrDiscardInterface;
 use Neos\ContentRepository\Core\Feature\Common\RebasableToOtherWorkspaceInterface;
 use Neos\ContentRepository\Core\Feature\NodeModification\Dto\SerializedPropertyValues;
-use Neos\ContentRepository\Core\Feature\WorkspacePublication\Dto\NodeIdToPublishOrDiscard;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Node\PropertyNames;
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 
 /**
@@ -33,9 +29,7 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
  * @internal implementation detail, use {@see SetNodeProperties} instead.
  */
 final readonly class SetSerializedNodeProperties implements
-    CommandInterface,
     \JsonSerializable,
-    MatchableWithNodeIdToPublishOrDiscardInterface,
     RebasableToOtherWorkspaceInterface
 {
     /**
@@ -77,9 +71,6 @@ final readonly class SetSerializedNodeProperties implements
         );
     }
 
-    /**
-     * @param array<string,mixed> $array
-     */
     public static function fromArray(array $array): self
     {
         return new self(
@@ -98,14 +89,6 @@ final readonly class SetSerializedNodeProperties implements
     public function jsonSerialize(): array
     {
         return get_object_vars($this);
-    }
-
-    public function matchesNodeId(NodeIdToPublishOrDiscard $nodeIdToPublish): bool
-    {
-        return (
-            $this->originDimensionSpacePoint->equals($nodeIdToPublish->dimensionSpacePoint)
-                && $this->nodeAggregateId->equals($nodeIdToPublish->nodeAggregateId)
-        );
     }
 
     public function createCopyForWorkspace(

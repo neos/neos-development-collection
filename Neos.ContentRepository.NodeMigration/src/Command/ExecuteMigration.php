@@ -20,14 +20,66 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 /**
  * Execute a Content Repository migration (which is defined in a YAML file)
  */
-final class ExecuteMigration
+final readonly class ExecuteMigration
 {
-    public function __construct(
-        public readonly MigrationConfiguration $migrationConfiguration,
-        public readonly WorkspaceName $sourceWorkspaceName,
-        public readonly WorkspaceName $targetWorkspaceName,
-        public readonly bool $publishOnSuccess,
-        public readonly ContentStreamId $contentStreamId,
+    private function __construct(
+        public MigrationConfiguration $migrationConfiguration,
+        public WorkspaceName $sourceWorkspaceName,
+        public WorkspaceName $targetWorkspaceName,
+        public ContentStreamId $contentStreamId,
+        public bool $publishOnSuccess,
+        public bool $requireConfirmation,
     ) {
+    }
+
+    public static function create(
+        MigrationConfiguration $migrationConfiguration,
+        WorkspaceName $sourceWorkspaceName,
+        WorkspaceName $targetWorkspaceName
+    ): self {
+        return new self(
+            $migrationConfiguration,
+            $sourceWorkspaceName,
+            $targetWorkspaceName,
+            ContentStreamId::create(),
+            publishOnSuccess: true,
+            requireConfirmation: true
+        );
+    }
+
+    public function withoutPublishOnSuccess(): self
+    {
+        return new self(
+            $this->migrationConfiguration,
+            $this->sourceWorkspaceName,
+            $this->targetWorkspaceName,
+            $this->contentStreamId,
+            false,
+            $this->requireConfirmation,
+        );
+    }
+
+    public function withoutRequiringConfirmation(): self
+    {
+        return new self(
+            $this->migrationConfiguration,
+            $this->sourceWorkspaceName,
+            $this->targetWorkspaceName,
+            $this->contentStreamId,
+            $this->publishOnSuccess,
+            false,
+        );
+    }
+
+    public function withContentStreamId(ContentStreamId $contentStreamId): self
+    {
+        return new self(
+            $this->migrationConfiguration,
+            $this->sourceWorkspaceName,
+            $this->targetWorkspaceName,
+            $contentStreamId,
+            $this->publishOnSuccess,
+            $this->requireConfirmation,
+        );
     }
 }

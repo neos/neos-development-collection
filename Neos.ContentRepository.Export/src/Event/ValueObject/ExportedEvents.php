@@ -46,9 +46,6 @@ final class ExportedEvents implements \IteratorAggregate
         return $result;
     }
 
-    /**
-     * @return \Traversable<ExportedEvent>
-     */
     public function getIterator(): \Traversable
     {
         return ($this->generator)();

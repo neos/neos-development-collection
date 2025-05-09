@@ -1,0 +1,156 @@
+prototype(Neos.Workspace.Ui:Component.Modal.Edit) < prototype(Neos.Fusion:Component) {
+  /// string
+  workspaceName = ''
+  /// string
+  workspaceTitle = ''
+  /// string
+  workspaceDescription = ''
+  /// string
+  baseWorkspaceName = ''
+  /// boolean
+  workspaceHasChanges = false
+  /// array<workspaceName: string, workspaceTitle: string>
+  baseWorkspaceOptions = ${[]}
+  /// boolean
+  isShared = false
+
+  @private {
+    i18n = ${I18n.id('').source('Main').package('Neos.Workspace.Ui')}
+    popoverId = 'workspace-edit-modal'
+    workspaceTableRowId = ${'workspace-row-' + props.workspaceName}
+  }
+
+  prototype(Neos.Fusion.Form:LabelRenderer) {
+    translationPackage = 'Neos.Workspace.Ui'
+    translationSource = 'Main'
+  }
+
+  prototype(Neos.Fusion.Form:Neos.BackendModule.FieldContainer) {
+    translation.label {
+      package = 'Neos.Workspace.Ui'
+      source = 'Main'
+    }
+  }
+
+  renderer = afx`
+    <div popover id={private.popoverId}>
+      <header>
+        <button
+          type="button"
+          class="neos-close neos-button"
+          popovertarget={private.popoverId}
+          popovertargetaction="close"
+        >
+          <Neos.Workspace.Ui:Component.Icon icon="times"/>
+        </button>
+        <div class="neos-header">
+          {private.i18n.id('workspaces.editWorkspace').arguments([props.workspaceTitle])}
+        </div>
+      </header>
+      <Neos.Fusion.Form:Form
+        form.target.action="update"
+        form.target.format="htmx"
+        form.data.visibility={props.isShared ? 'shared' : 'private'}
+        attributes.class="neos-inline"
+        attributes.hx-post={form.getTarget()}
+        attributes.hx-disabled-elt="find button"
+        attributes.hx-on--after-request={'document.getElementById("' + private.popoverId + '").hidePopover()'}
+        attributes.hx-select="#workspace-module-content"
+        attributes.hx-target="#workspace-module-content"
+        attributes.hx-swap="outerHTML"
+      >
+        <section>
+          <fieldset>
+            <Neos.Fusion.Form:Hidden
+              field.name="workspaceName"
+              field.value={props.workspaceName}
+            />
+            <Neos.Fusion.Form:Neos.BackendModule.FieldContainer
+              field.name="title"
+              field.value={props.workspaceTitle}
+              label="workspaces.workspace.title"
+              class="neos-control-group"
+            >
+              <Neos.Fusion.Form:Textfield
+                attributes.required
+                attributes.pattern="^[\\p{L}\\p{P}\\d \\.]{1,200}$"
+                attributes.autofocus
+                attributes.placeholder={props.workspaceName}
+              />
+            </Neos.Fusion.Form:Neos.BackendModule.FieldContainer>
+
+            <Neos.Fusion.Form:Neos.BackendModule.FieldContainer
+              field.name="description"
+              field.value={props.workspaceDescription}
+              label="workspaces.workspace.description"
+              class="neos-control-group"
+            >
+              <Neos.Fusion.Form:Textfield
+                attributes.pattern="^[\\p{L}\\p{P}\\d \\.]{0,500}$"
+              />
+            </Neos.Fusion.Form:Neos.BackendModule.FieldContainer>
+
+            <Neos.Fusion.Form:Neos.BackendModule.FieldContainer
+              field.name="baseWorkspace"
+              field.value={props.baseWorkspaceName}
+              label="workspaces.workspace.baseWorkspace"
+              class="neos-control-group"
+            >
+              <Neos.Fusion.Form:Select
+                attributes.disabled={props.workspaceHasChanges}
+              >
+                <Neos.Fusion:Loop items={props.baseWorkspaceOptions} itemName="workspaceTitle" itemKey="workspaceName">
+                  <Neos.Fusion.Form:Select.Option
+                    option.value={workspaceName}
+                    attributes.selected={workspaceName == props.baseWorkspaceName}
+                  >
+                    {workspaceTitle}
+                  </Neos.Fusion.Form:Select.Option>
+                </Neos.Fusion:Loop>
+              </Neos.Fusion.Form:Select>
+              <br/>
+              <p @if.workspaceHasChanges={props.workspaceHasChanges}>
+                <Neos.Workspace.Ui:Component.Icon icon="exclamation-triangle" style={{ color: 'var(--warningText)' }}/>
+                {' '}
+                {private.i18n.id('workspaces.cantChangeBaseWorkspaceBecauseWorkspaceContainsChanges')}
+              </p>
+            </Neos.Fusion.Form:Neos.BackendModule.FieldContainer>
+
+            <Neos.Fusion.Form:Neos.BackendModule.FieldContainer
+              label="workspaces.workspace.visibility"
+              class="neos-control-group"
+              field.name="visibility"
+            >
+              <Neos.Fusion.Form:Radio field.value="shared">
+                {private.i18n.id('workspaces.workspace.visibility.shared')}
+              </Neos.Fusion.Form:Radio>
+              <p>
+                {private.i18n.id('workspaces.workspace.visibility.shared.help')}
+              </p>
+              <br/>
+              <Neos.Fusion.Form:Radio field.value="private">
+                {private.i18n.id('workspaces.workspace.visibility.private')}
+              </Neos.Fusion.Form:Radio>
+              <p>
+                {private.i18n.id('workspaces.workspace.visibility.private.help')}
+              </p>
+            </Neos.Fusion.Form:Neos.BackendModule.FieldContainer>
+          </fieldset>
+        </section>
+        <footer>
+          <button
+            type="button"
+            class="neos-button"
+            popovertarget={private.popoverId}
+            popovertargetaction="close"
+          >
+            {private.i18n.id('cancel')}
+          </button>
+          <Neos.Fusion.Form:Button attributes.class="neos-button neos-button-primary">
+            {private.i18n.id('applyChanges')}
+          </Neos.Fusion.Form:Button>
+        </footer>
+      </Neos.Fusion.Form:Form>
+    </div>
+  `
+}

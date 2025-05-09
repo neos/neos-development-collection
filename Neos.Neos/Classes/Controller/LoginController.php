@@ -190,7 +190,7 @@ class LoginController extends AbstractAuthenticationController
      * @param AuthenticationRequiredException $exception The exception thrown while the authentication process
      * @return void
      */
-    protected function onAuthenticationFailure(AuthenticationRequiredException $exception = null): void
+    protected function onAuthenticationFailure(?AuthenticationRequiredException $exception = null): void
     {
         if ($this->view instanceof JsonView) {
             $this->view->assign('value', ['success' => false]);
@@ -214,7 +214,7 @@ class LoginController extends AbstractAuthenticationController
      * @throws StopActionException
      * @throws \Neos\Flow\Mvc\Exception\NoSuchArgumentException
      */
-    protected function onAuthenticationSuccess(ActionRequest $originalRequest = null): null
+    protected function onAuthenticationSuccess(?ActionRequest $originalRequest = null): null
     {
         if ($this->view instanceof JsonView) {
             $this->view->assign(

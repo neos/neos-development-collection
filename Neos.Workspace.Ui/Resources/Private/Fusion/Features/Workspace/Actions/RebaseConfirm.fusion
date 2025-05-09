@@ -1,0 +1,16 @@
+Neos.Workspace.Ui.WorkspaceController.rebaseConfirm = Neos.Fusion:Component {
+  /// string
+  workspaceName = ${workspaceName}
+  /// string
+  workspaceTitle = ${workspaceTitle}
+  /// int
+  conflictCount = ${conflictCount}
+
+  renderer = afx`
+    <Neos.Workspace.Ui:Component.Modal.RebaseConfirm
+      workspaceName={props.workspaceName}
+      workspaceTitle={props.workspaceTitle}
+      conflictCount={props.conflictCount}
+    />
+  `
+}

@@ -63,7 +63,10 @@ class Site
      * Node name of this site in the content repository.
      *
      * The first level of nodes of a site can be reached via a path like
-     * "/Sites/MySite/" where "MySite" is the nodeName.
+     * "/<Neos.Neos:Sites>/my-site" where "my-site" is the nodeName.
+     *
+     * TODO use node aggregate identifier instead of node name
+     * see https://github.com/neos/neos-development-collection/issues/4470
      *
      * @var string
      * @Flow\Identity
@@ -308,7 +311,7 @@ class Site
      * @return void
      * @api
      */
-    public function setPrimaryDomain(Domain $domain = null)
+    public function setPrimaryDomain(?Domain $domain = null)
     {
         if ($domain === null) {
             $this->primaryDomain = null;
@@ -328,11 +331,15 @@ class Site
     /**
      * Returns the primary domain, if one has been defined.
      *
+     * @param boolean $fallbackToActive if true falls back to the first active domain instead returning null if no primary domain was explicitly set
      * @return ?Domain The primary domain or NULL
      * @api
      */
-    public function getPrimaryDomain(): ?Domain
+    public function getPrimaryDomain(bool $fallbackToActive = true): ?Domain
     {
+        if (!$fallbackToActive) {
+            return $this->primaryDomain;
+        }
         return $this->primaryDomain instanceof Domain && $this->primaryDomain->getActive()
             ? $this->primaryDomain
             : $this->getFirstActiveDomain();
@@ -350,7 +357,7 @@ class Site
      * @param AssetCollection $assetCollection
      * @return void
      */
-    public function setAssetCollection(AssetCollection $assetCollection = null)
+    public function setAssetCollection(?AssetCollection $assetCollection = null)
     {
         $this->assetCollection = $assetCollection;
     }

@@ -18,41 +18,39 @@ use Neos\ContentRepository\Core\Feature\NodeModification\Dto\PropertyValuesToWri
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 
 /**
- * A single node references to write, supports arbitrary objects as reference property values
- * by using {@see PropertyValuesToWrite}.
- * Will be then converted to {@see SerializedNodeReferences} inside the events and persisted commands.
+ * A single node references to write
  *
- * We expect the property value types to match the NodeType's property types
- * (this is validated in the command handler).
+ * Simple:
+ *   Just a node aggregate id as target {@see fromTarget}
+ *
+ * With properties:
+ *   Additionally to the target also properties can be specified to be set on the references by using {@see PropertyValuesToWrite} in {@see fromTargetAndProperties}.
+ *   We expect the value types to match the configured types of the NodeType
+ *
+ * Will be converted to {@see SerializedNodeReferences} inside the events and persisted commands.
+ *
  * @api used as part of commands
  */
-final readonly class NodeReferenceToWrite implements \JsonSerializable
+final readonly class NodeReferenceToWrite
 {
-    public function __construct(
+    private function __construct(
         public NodeAggregateId $targetNodeAggregateId,
-        public ?PropertyValuesToWrite $properties
+        public PropertyValuesToWrite $properties
     ) {
     }
 
     /**
-     * @param array<string,mixed> $array
+     * The node aggregate id as target of the reference to write
+     *
+     * To set a collection of node aggregate ids as targets see {@see NodeReferencesForName::fromTargets()} as utility
      */
-    public static function fromArray(array $array): self
+    public static function fromTarget(NodeAggregateId $target): self
     {
-        return new self(
-            NodeAggregateId::fromString($array['targetNodeAggregateId']),
-            isset($array['properties']) ? PropertyValuesToWrite::fromArray($array['properties']) : null
-        );
+        return new self($target, PropertyValuesToWrite::createEmpty());
     }
 
-    /**
-     * @return array<string,mixed>
-     */
-    public function jsonSerialize(): array
+    public static function fromTargetAndProperties(NodeAggregateId $target, PropertyValuesToWrite $properties): self
     {
-        return [
-            'targetNodeAggregateId' => $this->targetNodeAggregateId,
-            'properties' => $this->properties
-        ];
+        return new self($target, $properties);
     }
 }

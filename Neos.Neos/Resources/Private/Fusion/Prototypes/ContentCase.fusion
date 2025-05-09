@@ -6,6 +6,6 @@ prototype(Neos.Neos:ContentCase) < prototype(Neos.Fusion:Case) {
   default {
     @position = 'end'
     condition = true
-    type = ${Neos.Node.isNodeTypeExistent(node) ? q(node).nodeTypeName() : 'Neos.Neos:FallbackNode'}
+    type = ${Neos.Node.isNodeTypeExistent(node) ? node.nodeTypeName : 'Neos.Neos:FallbackNode'}
   }
 }

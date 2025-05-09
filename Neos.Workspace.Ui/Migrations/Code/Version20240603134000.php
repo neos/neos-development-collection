@@ -27,28 +27,8 @@ class Version20240603134000 extends AbstractMigration
     public function up(): void
     {
         $this->searchAndReplace(
-            'Neos.Neos:Backend.PublishAllToLiveWorkspace',
-            'Neos.Workspace.Ui:Backend.PublishAllToLiveWorkspace',
-            ['yaml', 'html', 'php']
-        );
-        $this->searchAndReplace(
             'Neos.Neos:Backend.CreateWorkspaces',
             'Neos.Workspace.Ui:Backend.CreateWorkspaces',
-            ['yaml', 'html', 'php']
-        );
-        $this->searchAndReplace(
-            'Neos.Neos:Backend.Module.Management.Workspaces.ManageOwnWorkspaces',
-            'Neos.Workspace.Ui:Backend.Module.Management.Workspace.ManageOwnWorkspaces',
-            ['yaml', 'html', 'php']
-        );
-        $this->searchAndReplace(
-            'Neos.Neos:Backend.Module.Management.Workspaces.ManageInternalWorkspaces',
-            'Neos.Workspace.Ui:Backend.Module.Management.Workspace.ManageInternalWorkspaces',
-            ['yaml', 'html', 'php']
-        );
-        $this->searchAndReplace(
-            'Neos.Neos:Backend.Module.Management.Workspaces.ManageAllPrivateWorkspaces',
-            'Neos.Workspace.Ui:Backend.Module.Management.Workspace.ManageAllPrivateWorkspaces',
             ['yaml', 'html', 'php']
         );
         $this->searchAndReplace(

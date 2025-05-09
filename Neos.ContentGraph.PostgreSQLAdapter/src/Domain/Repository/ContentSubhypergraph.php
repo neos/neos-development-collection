@@ -49,6 +49,7 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateClassification;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateIds;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
@@ -120,6 +121,11 @@ final readonly class ContentSubhypergraph implements ContentSubgraphInterface
             $this->visibilityConstraints,
             $this->dimensionSpacePoint
         ) : null;
+    }
+
+    public function findNodesByIds(NodeAggregateIds $nodeAggregateIds): Nodes
+    {
+        throw new \BadMethodCallException(sprintf('Not implemented'), 1740572440);
     }
 
     public function findRootNodeByType(NodeTypeName $nodeTypeName): ?Node

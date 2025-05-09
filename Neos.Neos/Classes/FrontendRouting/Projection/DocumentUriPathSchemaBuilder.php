@@ -1,10 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Neos\Neos\FrontendRouting\Projection;
 
+use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Exception as DBALException;
 use Doctrine\DBAL\Platforms\AbstractPlatform;
-use Doctrine\DBAL\Schema\AbstractSchemaManager;
 use Doctrine\DBAL\Schema\Column;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\DBAL\Schema\SchemaException;
@@ -13,46 +15,45 @@ use Doctrine\DBAL\Types\Type;
 use Doctrine\DBAL\Types\Types;
 use Neos\ContentRepository\Core\Infrastructure\DbalSchemaFactory;
 
-class DocumentUriPathSchemaBuilder
+/**
+ * @internal implementation detail to manage document node uris. For resolving please use the NodeUriBuilder and for matching the Router.
+ */
+final class DocumentUriPathSchemaBuilder
 {
-    private const DEFAULT_TEXT_COLLATION = 'utf8mb4_unicode_520_ci';
-
     public function __construct(
         private readonly string $tableNamePrefix,
     ) {
     }
 
     /**
-     * @param AbstractSchemaManager<AbstractPlatform> $schemaManager
+     * @param Connection $connection
      * @return Schema
      * @throws DBALException
      * @throws SchemaException
      */
-    public function buildSchema(AbstractSchemaManager $schemaManager): Schema
+    public function buildSchema(Connection $connection): Schema
     {
-        $schema = DbalSchemaFactory::createSchemaWithTables($schemaManager, [
-            $this->createUriTable(),
-            $this->createLiveContentStreamsTable()
+        return DbalSchemaFactory::createSchemaWithTables($connection, [
+            $this->createUriTable($connection->getDatabasePlatform())
         ]);
-
-        return $schema;
     }
 
-    private function createUriTable(): Table
+    private function createUriTable(AbstractPlatform $platform): Table
     {
         $table = new Table($this->tableNamePrefix . '_uri', [
-            DbalSchemaFactory::columnForNodeAggregateId('nodeaggregateid')->setNotNull(true),
-            (new Column('uripath', Type::getType(Types::STRING)))->setLength(4000)->setDefault('')->setNotnull(true)->setPlatformOption('collation', self::DEFAULT_TEXT_COLLATION),
-            DbalSchemaFactory::columnForDimensionSpacePointHash('dimensionspacepointhash')->setNotNull(true),
+            DbalSchemaFactory::columnForNodeAggregateId('nodeaggregateid', $platform)->setNotNull(true),
+            DbalSchemaFactory::columnForGenericString('uripath', $platform)->setLength(4000)->setDefault('')->setNotnull(true),
+            DbalSchemaFactory::columnForDimensionSpacePointHash('dimensionspacepointhash', $platform)->setNotNull(true),
             (new Column('disabled', Type::getType(Types::INTEGER)))->setLength(4)->setUnsigned(true)->setDefault(0)->setNotnull(true),
-            (new Column('nodeaggregateidpath', Type::getType(Types::STRING)))->setLength(4000)->setDefault('')->setNotnull(true)->setPlatformOption('collation', self::DEFAULT_TEXT_COLLATION),
-            (new Column('sitenodename', Type::getType(Types::STRING)))->setLength(255)->setDefault('')->setNotnull(true)->setPlatformOption('collation', self::DEFAULT_TEXT_COLLATION),
-            DbalSchemaFactory::columnForDimensionSpacePointHash('origindimensionspacepointhash')->setNotNull(true),
-            DbalSchemaFactory::columnForNodeAggregateId('parentnodeaggregateid')->setNotNull(false),
-            DbalSchemaFactory::columnForNodeAggregateId('precedingnodeaggregateid')->setNotNull(false),
-            DbalSchemaFactory::columnForNodeAggregateId('succeedingnodeaggregateid')->setNotNull(false),
-            (new Column('shortcuttarget', Type::getType(Types::STRING)))->setLength(1000)->setNotnull(false)->setPlatformOption('collation', self::DEFAULT_TEXT_COLLATION),
-            DbalSchemaFactory::columnForNodeTypeName('nodetypename'),
+            (new Column('removed', Type::getType(Types::INTEGER)))->setLength(4)->setUnsigned(true)->setDefault(0)->setNotnull(true),
+            DbalSchemaFactory::columnForGenericString('nodeaggregateidpath', $platform)->setLength(4000)->setDefault('')->setNotnull(true),
+            DbalSchemaFactory::columnForGenericString('sitenodename', $platform)->setLength(255)->setDefault('')->setNotnull(true),
+            DbalSchemaFactory::columnForDimensionSpacePointHash('origindimensionspacepointhash', $platform)->setNotNull(true),
+            DbalSchemaFactory::columnForNodeAggregateId('parentnodeaggregateid', $platform)->setNotNull(false),
+            DbalSchemaFactory::columnForNodeAggregateId('precedingnodeaggregateid', $platform)->setNotNull(false),
+            DbalSchemaFactory::columnForNodeAggregateId('succeedingnodeaggregateid', $platform)->setNotNull(false),
+            DbalSchemaFactory::columnForGenericString('shortcuttarget', $platform)->setLength(1000)->setNotnull(false),
+            DbalSchemaFactory::columnForNodeTypeName('nodetypename', $platform),
             (new Column('isplaceholder', Type::getType(Types::INTEGER)))->setLength(4)->setUnsigned(true)->setDefault(0)->setNotnull(true),
         ]);
 
@@ -63,15 +64,6 @@ class DocumentUriPathSchemaBuilder
                 'precedingnodeaggregateid',
                 'succeedingnodeaggregateid'
             ], 'preceding_succeeding')
-            ->addIndex(['sitenodename', 'uripath'], null, [], ['lengths' => [null,100]]);
-    }
-
-    private function createLiveContentStreamsTable(): Table
-    {
-        $table = new Table($this->tableNamePrefix . '_livecontentstreams', [
-            DbalSchemaFactory::columnForContentStreamId('contentstreamid')->setNotNull(true),
-            (new Column('workspacename', Type::getType(Types::STRING)))->setLength(255)->setDefault('')->setNotnull(true)
-        ]);
-        return $table->setPrimaryKey(['contentstreamid']);
+            ->addIndex(['sitenodename', 'uripath'], null, [], ['lengths' => [null, 100]]);
     }
 }

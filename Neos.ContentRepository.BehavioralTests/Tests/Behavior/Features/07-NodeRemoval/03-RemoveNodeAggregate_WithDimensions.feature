@@ -22,8 +22,6 @@ Feature: Remove NodeAggregate
     And the command CreateRootWorkspace is executed with payload:
       | Key                  | Value                |
       | workspaceName        | "live"               |
-      | workspaceTitle       | "Live"               |
-      | workspaceDescription | "The live workspace" |
       | newContentStreamId   | "cs-identifier"      |
     And I am in workspace "live" and dimension space point {"language":"en"}
     And the command CreateRootNodeAggregateWithNode is executed with payload:
@@ -38,8 +36,7 @@ Feature: Remove NodeAggregate
     And the command SetNodeReferences is executed with payload:
       | Key                   | Value                                  |
       | sourceNodeAggregateId | "nodingers-cat"                        |
-      | referenceName         | "references"                           |
-      | references            | [{"target": "sir-david-nodenborough"}] |
+      | references            | [{"referenceName": "references", "references": [{"target": "sir-david-nodenborough"}]}] |
 
   Scenario: Remove a node aggregate with strategy allSpecializations
     When the command RemoveNodeAggregate is executed with payload:
@@ -52,9 +49,7 @@ Feature: Remove NodeAggregate
       | Key                                  | Expected                               |
       | contentStreamId                      | "cs-identifier"                        |
       | nodeAggregateId                      | "nodingers-cat"                        |
-      | affectedOccupiedDimensionSpacePoints | [{"language":"en"}]                    |
       | affectedCoveredDimensionSpacePoints  | [{"language":"de"},{"language":"gsw"}] |
-      | removalAttachmentPoint               | null                                   |
     Then I expect the graph projection to consist of exactly 4 nodes
     And I expect a node identified by cs-identifier;lady-eleonode-rootford;{} to exist in the content graph
     And I expect a node identified by cs-identifier;sir-david-nodenborough;{"language":"en"} to exist in the content graph
@@ -199,9 +194,7 @@ Feature: Remove NodeAggregate
       | Key                                  | Expected                                                                   |
       | contentStreamId                      | "cs-identifier"                                                            |
       | nodeAggregateId                      | "nodingers-cat"                                                            |
-      | affectedOccupiedDimensionSpacePoints | [{"language":"de"},{"language":"en"}]                                      |
       | affectedCoveredDimensionSpacePoints  | [{"language":"de"},{"language":"en"},{"language":"gsw"},{"language":"fr"}] |
-      | removalAttachmentPoint               | null                                                                       |
     Then I expect the graph projection to consist of exactly 2 nodes
     And I expect a node identified by cs-identifier;lady-eleonode-rootford;{} to exist in the content graph
     And I expect a node identified by cs-identifier;sir-david-nodenborough;{"language":"en"} to exist in the content graph
@@ -223,8 +216,8 @@ Feature: Remove NodeAggregate
     And I expect this node to have no references
     And I expect this node to not be referenced
 
-    And I expect node aggregate identifier "nodingers-cat" and node path "pet" to lead to no node
-    And I expect node aggregate identifier "nodingers-kitten" and node path "pet/kitten" to lead to no node
+    And I expect the node aggregate "nodingers-cat" to not exist
+    And I expect the node aggregate "nodingers-kitten" to not exist
 
     # Check the generalization
     When I am in dimension space point {"language":"en"}
@@ -295,6 +288,7 @@ Feature: Remove NodeAggregate
       | Key                          | Value           |
       | nodeAggregateId              | "nodingers-cat" |
       | nodeVariantSelectionStrategy | "allVariants"   |
+    And I expect the node aggregate "nodingers-cat" to not exist
     And the following CreateNodeAggregateWithNode commands are executed:
       | nodeAggregateId  | nodeTypeName                            | parentNodeAggregateId  | nodeName |
       | nodingers-cat    | Neos.ContentRepository.Testing:Document | lady-eleonode-rootford | pet      |

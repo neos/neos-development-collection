@@ -14,9 +14,9 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap;
 
-use Neos\ContentRepository\Core\ContentGraphFinder;
 use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
+use Neos\ContentRepository\Core\Feature\Security\Dto\UserId;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentSubgraphInterface;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate;
@@ -24,11 +24,9 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\NodePath;
 use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
-use Neos\ContentRepository\Core\SharedModel\User\UserId;
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
-use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\Helpers\FakeClock;
-use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\Helpers\FakeUserIdProvider;
+use Neos\ContentRepository\TestSuite\Fakes\FakeAuthProvider;
+use Neos\ContentRepository\TestSuite\Fakes\FakeClock;
 
 /**
  * The node creation trait for behavioral tests
@@ -74,7 +72,7 @@ trait CRTestSuiteRuntimeVariables
      */
     public function iAmUserIdentifiedBy(string $userId): void
     {
-        FakeUserIdProvider::setUserId(UserId::fromString($userId));
+        FakeAuthProvider::setDefaultUserId(UserId::fromString($userId));
     }
 
     /**
@@ -112,24 +110,20 @@ trait CRTestSuiteRuntimeVariables
     }
 
     /**
-     * @When /^VisibilityConstraints are set to "(withoutRestrictions|frontend)"$/
+     * @When /^VisibilityConstraints are set to "(withoutRestrictions|default)"$/
      */
     public function visibilityConstraintsAreSetTo(string $restrictionType): void
     {
         $this->currentVisibilityConstraints = match ($restrictionType) {
             'withoutRestrictions' => VisibilityConstraints::withoutRestrictions(),
-            'frontend' => VisibilityConstraints::frontend(),
+            'default' => VisibilityConstraints::default(),
             default => throw new \InvalidArgumentException('Visibility constraint "' . $restrictionType . '" not supported.'),
         };
     }
 
     public function getCurrentSubgraph(): ContentSubgraphInterface
     {
-        $contentGraphFinder = $this->currentContentRepository->projectionState(ContentGraphFinder::class);
-        // todo why do we use the ContentGraphFinder here and clear caches? Test pass without
-        $contentGraphFinder->forgetInstances();
-
-        return $contentGraphFinder->getByWorkspaceName($this->currentWorkspaceName)->getSubgraph(
+        return $this->currentContentRepository->getContentGraph($this->currentWorkspaceName)->getSubgraph(
             $this->currentDimensionSpacePoint,
             $this->currentVisibilityConstraints
         );
@@ -146,9 +140,8 @@ trait CRTestSuiteRuntimeVariables
         )->aggregateId;
     }
 
-    protected function getCurrentNodeAggregateId(): NodeAggregateId
+    protected function getCurrentNodeAggregateId(): ?NodeAggregateId
     {
-        assert($this->currentNode instanceof Node);
-        return $this->currentNode->aggregateId;
+        return $this->currentNode?->aggregateId;
     }
 }

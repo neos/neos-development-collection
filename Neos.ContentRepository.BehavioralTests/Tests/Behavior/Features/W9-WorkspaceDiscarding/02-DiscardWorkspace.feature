@@ -37,14 +37,12 @@ Feature: Workspace discarding - basic functionality
       | nodeAggregateId           | "nody-mc-nodeface"   |
       | originDimensionSpacePoint | {}                   |
       | propertyValues            | {"text": "Original"} |
-    # we need to ensure that the projections are up to date now; otherwise a content stream is forked with an out-
-    # of-date base version. This means the content stream can never be merged back, but must always be rebased.
+
     And the command CreateWorkspace is executed with payload:
       | Key                | Value                |
       | workspaceName      | "user-test"          |
       | baseWorkspaceName  | "live"               |
       | newContentStreamId | "user-cs-identifier" |
-      | workspaceOwner     | "owner-identifier"   |
 
   Scenario: Discarding a full workspace works
     When the command SetNodeProperties is executed with payload:
@@ -65,6 +63,15 @@ Feature: Workspace discarding - basic functionality
       | Key                | Value                         |
       | workspaceName      | "user-test"                   |
       | newContentStreamId | "user-cs-identifier-modified" |
+    Then I expect the content stream "user-cs-identifier" to not exist
+
+    Then I expect exactly 2 events to be published on stream with prefix "Workspace:user-test"
+    And event at index 1 is of type "WorkspaceWasDiscarded" with payload:
+      | Key                     | Expected                      |
+      | workspaceName           | "user-test"                   |
+      | newContentStreamId      | "user-cs-identifier-modified" |
+      | previousContentStreamId | "user-cs-identifier"          |
+      | partial                 | false                         |
 
     When I am in workspace "user-test" and dimension space point {}
     Then I expect node aggregate identifier "nody-mc-nodeface" to lead to node user-cs-identifier-modified;nody-mc-nodeface;{}
@@ -99,20 +106,20 @@ Feature: Workspace discarding - basic functionality
       | Key  | Value                        |
       | text | "Modified in live workspace" |
 
-  Scenario: Conflicting changes lead to OUTDATED which can be recovered from via discard
+  Scenario: Conflicting changes lead to exception on rebase which can be recovered from via discard
 
     When the command CreateWorkspace is executed with payload:
       | Key                | Value              |
       | workspaceName      | "user-ws-one"      |
       | baseWorkspaceName  | "live"             |
       | newContentStreamId | "user-cs-one"      |
-      | workspaceOwner     | "owner-identifier" |
     And the command CreateWorkspace is executed with payload:
       | Key                | Value              |
       | workspaceName      | "user-ws-two"      |
       | baseWorkspaceName  | "live"             |
       | newContentStreamId | "user-cs-two"      |
-      | workspaceOwner     | "owner-identifier" |
+
+    Then workspaces live,user-ws-one,user-ws-two have status UP_TO_DATE
 
     When the command RemoveNodeAggregate is executed with payload:
       | Key                          | Value              |
@@ -132,12 +139,16 @@ Feature: Workspace discarding - basic functionality
       | Key           | Value         |
       | workspaceName | "user-ws-one" |
 
+    Then workspaces live,user-ws-one have status UP_TO_DATE
     Then workspace user-ws-two has status OUTDATED
 
     When the command RebaseWorkspace is executed with payload and exceptions are caught:
       | Key                    | Value                 |
       | workspaceName          | "user-ws-two"         |
       | rebasedContentStreamId | "user-cs-two-rebased" |
+    Then the last command should have thrown the WorkspaceRebaseFailed exception with:
+      | SequenceNumber | Event                 | Exception                          |
+      | 13             | NodePropertiesWereSet | NodeAggregateCurrentlyDoesNotExist |
 
     Then workspace user-ws-two has status OUTDATED
 
@@ -146,5 +157,33 @@ Feature: Workspace discarding - basic functionality
       | workspaceName      | "user-ws-two"           |
       | newContentStreamId | "user-cs-two-discarded" |
 
-    Then workspace user-ws-two has status OUTDATED
+    Then workspaces live,user-ws-one,user-ws-two have status UP_TO_DATE
 
+  Scenario: Discard is a no-op if there are no changes (and the workspace is outdated)
+    And the command SetNodeProperties is executed with payload:
+      | Key                       | Value                                  |
+      | workspaceName             | "live"                                 |
+      | nodeAggregateId           | "nody-mc-nodeface"                     |
+      | originDimensionSpacePoint | {}                                     |
+      | propertyValues            | {"text": "Modified in live workspace"} |
+
+    And the command DiscardWorkspace is executed with payload and exceptions are caught:
+      | Key                | Value                   |
+      | workspaceName      | "user-test"             |
+      | newContentStreamId | "user-cs-two-discarded" |
+
+    Then the last command should have thrown an exception of type "WorkspaceCommandSkipped" with code 1730463156 and message:
+    """
+    Skipped discard workspace "user-test" without any publishable changes.
+    """
+
+    Then workspaces user-test has status OUTDATED
+
+    Then I expect exactly 1 events to be published on stream with prefix "Workspace:user-test"
+
+    And I am in workspace "user-test" and dimension space point {}
+    Then I expect node aggregate identifier "nody-mc-nodeface" to lead to node user-cs-identifier;nody-mc-nodeface;{}
+    And I expect this node to have the following properties:
+      | Key  | Value      |
+      | text | "Original" |
+    Then I expect the content stream "user-cs-two-discarded" to not exist

@@ -292,25 +292,6 @@ final class NodeType
     }
 
     /**
-     * Returns whether this node type (or any parent type) is an *aggregate*.
-     *
-     * The most prominent *aggregate* is a Document and everything which inherits from it, like a Page.
-     *
-     * If a node type is marked as aggregate, it means that:
-     *
-     * - the node type can "live on its own", i.e. can be part of an external URL
-     * - when moving this node, all node variants are also moved (across all dimensions)
-     * - Recursive copying only happens *inside* this aggregate, and stops at nested aggregates.
-     *
-     * @return boolean true if the node type is an aggregate
-     * @api
-     */
-    public function isAggregate(): bool
-    {
-        return $this->getConfiguration('aggregate') === true;
-    }
-
-    /**
      * If this node type or any of the direct or indirect super types
      * has the given name.
      *

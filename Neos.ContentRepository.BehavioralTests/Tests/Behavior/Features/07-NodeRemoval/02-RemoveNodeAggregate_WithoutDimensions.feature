@@ -20,8 +20,6 @@ Feature: Remove NodeAggregate
     And the command CreateRootWorkspace is executed with payload:
       | Key                  | Value                |
       | workspaceName        | "live"               |
-      | workspaceTitle       | "Live"               |
-      | workspaceDescription | "The live workspace" |
       | newContentStreamId   | "cs-identifier"      |
     And I am in workspace "live" and dimension space point {}
     And the command CreateRootNodeAggregateWithNode is executed with payload:
@@ -36,8 +34,7 @@ Feature: Remove NodeAggregate
     And the command SetNodeReferences is executed with payload:
       | Key                   | Value                                  |
       | sourceNodeAggregateId | "nodingers-cat"                        |
-      | referenceName         | "references"                           |
-      | references            | [{"target": "sir-david-nodenborough"}] |
+      | references            | [{"referenceName": "references", "references": [{"target": "sir-david-nodenborough"}]}] |
 
   Scenario: Remove a node aggregate
     When the command RemoveNodeAggregate is executed with payload:
@@ -49,9 +46,7 @@ Feature: Remove NodeAggregate
       | Key                                  | Expected        |
       | contentStreamId                      | "cs-identifier" |
       | nodeAggregateId                      | "nodingers-cat" |
-      | affectedOccupiedDimensionSpacePoints | [[]]            |
       | affectedCoveredDimensionSpacePoints  | [[]]            |
-      | removalAttachmentPoint               | null            |
     Then I expect the graph projection to consist of exactly 2 nodes
     And I expect a node identified by cs-identifier;lady-eleonode-rootford;{} to exist in the content graph
     And I expect a node identified by cs-identifier;sir-david-nodenborough;{} to exist in the content graph
@@ -66,8 +61,8 @@ Feature: Remove NodeAggregate
     And I expect node aggregate identifier "sir-david-nodenborough" and node path "document" to lead to node cs-identifier;sir-david-nodenborough;{}
     And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
     And I expect this node to have no references
-    And I expect node aggregate identifier "nodingers-cat" and node path "pet" to lead to no node
-    And I expect node aggregate identifier "nodingers-kitten" and node path "pet/kitten" to lead to no node
+    And I expect the node aggregate "nodingers-cat" to not exist
+    And I expect the node aggregate "nodingers-kitten" to not exist
 
   Scenario: Disable a node aggregate, remove it, recreate it and expect it to be enabled
     When the command DisableNodeAggregate is executed with payload:
@@ -104,7 +99,7 @@ Feature: Remove NodeAggregate
     And I expect node aggregate identifier "sir-david-nodenborough" and node path "document" to lead to node cs-identifier;sir-david-nodenborough;{}
     And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
     And I expect node aggregate identifier "nodingers-cat" and node path "pet" to lead to node cs-identifier;nodingers-cat;{}
-    And I expect node aggregate identifier "nodingers-kitten" and node path "pet/kitten" to lead to no node
+    And I expect the node aggregate "nodingers-kitten" to not exist
 
   Scenario: Remove a node aggregate, recreate it and expect it to have no references
     When the command RemoveNodeAggregate is executed with payload:
@@ -124,3 +119,17 @@ Feature: Remove NodeAggregate
     And I expect node aggregate identifier "nodingers-cat" and node path "pet" to lead to node cs-identifier;nodingers-cat;{}
     And I expect this node to have no references
     And I expect node aggregate identifier "nodingers-kitten" and node path "pet/kitten" to lead to no node
+
+  Scenario: Remove a node aggregate with descendants and expect all of them to be gone
+    When the following CreateNodeAggregateWithNode commands are executed:
+      | nodeAggregateId        | nodeTypeName                            | parentNodeAggregateId  | nodeName |
+      | nody-mc-nodeface | Neos.ContentRepository.Testing:Document | sir-david-nodenborough | child |
+      | younger-mc-nodeface | Neos.ContentRepository.Testing:Document | sir-david-nodenborough | younger-child |
+    When the command RemoveNodeAggregate is executed with payload:
+      | Key                          | Value           |
+      | nodeAggregateId              | "sir-david-nodenborough" |
+      | nodeVariantSelectionStrategy | "allVariants"   |
+
+    And I expect the node aggregate "sir-david-nodenborough" to not exist
+    And I expect the node aggregate "nody-mc-nodeface" to not exist
+    And I expect the node aggregate "younger-mc-nodeface" to not exist

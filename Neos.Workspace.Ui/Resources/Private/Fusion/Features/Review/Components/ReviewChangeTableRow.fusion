@@ -1,0 +1,25 @@
+##
+# Renders a change for review
+#
+prototype(Neos.Workspace.Ui:Component.ReviewChangeTableRow) < prototype(Neos.Fusion:Component) {
+  change = ${{}}
+
+  @private {
+    i18n = ${I18n.id('').source('Main').package('Neos.Workspace.Ui')}
+  }
+
+  renderer = afx`
+    <tr class="neos-change" >
+      <td colspan="4">
+        <Neos.Fusion:DataStructure
+          @path="attributes.class"
+          general="neos-content-change"
+          deleted={props.change.isRemoved ? 'legend-deleted' : ''}
+          created={props.change.isNew ? 'legend-created' : ''}
+          moved={props.change.isMoved ? 'legend-moved' : ''}
+        />
+        <Neos.Workspace.Ui:Component.ReviewChangeDiff change={props.change}/>
+      </td>
+    </tr>
+  `
+}

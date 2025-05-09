@@ -1,13 +1,11 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Neos\ContentRepository\Export\Processors;
 
-use League\Flysystem\Filesystem;
 use Neos\ContentRepository\Core\EventStore\DecoratedEvent;
-use Neos\ContentRepository\Core\EventStore\EventInterface;
 use Neos\ContentRepository\Core\EventStore\EventNormalizer;
-use Neos\ContentRepository\Core\EventStore\EventPersister;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceInterface;
 use Neos\ContentRepository\Core\Feature\ContentStreamCreation\Event\ContentStreamWasCreated;
 use Neos\ContentRepository\Core\Feature\ContentStreamEventStreamName;
@@ -15,68 +13,66 @@ use Neos\ContentRepository\Core\Feature\ContentStreamForking\Event\ContentStream
 use Neos\ContentRepository\Core\Feature\ContentStreamRemoval\Event\ContentStreamWasRemoved;
 use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Event\RootWorkspaceWasCreated;
 use Neos\ContentRepository\Core\Feature\WorkspaceEventStreamName;
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
-use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceDescription;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
-use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceTitle;
 use Neos\ContentRepository\Export\Event\ValueObject\ExportedEvent;
+use Neos\ContentRepository\Export\ProcessingContext;
 use Neos\ContentRepository\Export\ProcessorInterface;
-use Neos\ContentRepository\Export\ProcessorResult;
-use Neos\ContentRepository\Export\Severity;
 use Neos\EventStore\EventStoreInterface;
 use Neos\EventStore\Exception\ConcurrencyException;
 use Neos\EventStore\Model\Event;
 use Neos\EventStore\Model\Event\EventId;
+use Neos\EventStore\Model\Event\EventType;
+use Neos\EventStore\Model\Event\EventTypes;
+use Neos\EventStore\Model\Event\Version;
 use Neos\EventStore\Model\Events;
+use Neos\EventStore\Model\EventStream\EventStreamFilter;
 use Neos\EventStore\Model\EventStream\ExpectedVersion;
 use Neos\Flow\Utility\Algorithms;
 
 /**
  * Processor that imports all events from an "events.jsonl" file to the event store
  */
-final class EventStoreImportProcessor implements ProcessorInterface, ContentRepositoryServiceInterface
+final readonly class EventStoreImportProcessor implements ProcessorInterface, ContentRepositoryServiceInterface
 {
-    /** @var array<int, \Closure> */
-    private array $callbacks = [];
-
-    private ?ContentStreamId $contentStreamId = null;
-
     public function __construct(
-        private readonly bool $keepEventIds,
-        private readonly Filesystem $files,
-        private readonly EventStoreInterface $eventStore,
-        private readonly EventNormalizer $eventNormalizer,
-        ?ContentStreamId $overrideContentStreamId
+        private WorkspaceName $targetWorkspaceName,
+        private bool $keepEventIds,
+        private EventStoreInterface $eventStore,
+        private EventNormalizer $eventNormalizer
     ) {
-        if ($overrideContentStreamId) {
-            $this->contentStreamId = $overrideContentStreamId;
-        }
     }
 
-    public function onMessage(\Closure $callback): void
+    public function run(ProcessingContext $context): void
     {
-        $this->callbacks[] = $callback;
-    }
-
-    public function run(): ProcessorResult
-    {
-        /** @var array<Event> $domainEvents */
-        $domainEvents = [];
-        $eventFileResource = $this->files->readStream('events.jsonl');
+        /** @var array<Event> $events */
+        $events = [];
+        $eventFileResource = $context->files->readStream('events.jsonl');
 
         /** @var array<string, string> $eventIdMap */
         $eventIdMap = [];
 
-        $keepStreamName = false;
+        $rootWorkspaceContentStreamId = null;
+        foreach ($this->eventStore->load(
+            WorkspaceEventStreamName::fromWorkspaceName($this->targetWorkspaceName)->getEventStreamName(),
+            EventStreamFilter::create(EventTypes::create(EventType::fromString('RootWorkspaceWasCreated')))
+        ) as $eventEnvelope) {
+            $rootWorkspaceWasCreatedEvent = $this->eventNormalizer->denormalize($eventEnvelope->event);
+            if (!$rootWorkspaceWasCreatedEvent instanceof RootWorkspaceWasCreated) {
+                throw new \RuntimeException(sprintf('Expected event of type %s got %s', RootWorkspaceWasCreated::class, $rootWorkspaceWasCreatedEvent::class), 1732109840);
+            }
+            $rootWorkspaceContentStreamId = $rootWorkspaceWasCreatedEvent->newContentStreamId;
+            break;
+        }
+
+        if ($rootWorkspaceContentStreamId === null) {
+            throw new \InvalidArgumentException(sprintf('Workspace "%s" does not exist or is not a root workspace', $this->targetWorkspaceName), 1729530978);
+        }
+
+        $correlationId = Event\CorrelationId::fromString(sprintf('EventStoreImporter_%s', bin2hex(random_bytes(9))));
         while (($line = fgets($eventFileResource)) !== false) {
-            $event = ExportedEvent::fromJson(trim($line));
-            if ($this->contentStreamId === null) {
-                $this->contentStreamId = self::extractContentStreamId($event->payload);
-                $keepStreamName = true;
-            }
-            if (!$keepStreamName) {
-                $event = $event->processPayload(fn(array $payload) => isset($payload['contentStreamId']) ? [...$payload, 'contentStreamId' => $this->contentStreamId->value] : $payload);
-            }
+            $event =
+                ExportedEvent::fromJson(trim($line))
+                ->processPayload(fn (array $payload) => [...$payload, 'contentStreamId' => $rootWorkspaceContentStreamId->value, 'workspaceName' => $this->targetWorkspaceName->value]);
             if (!$this->keepEventIds) {
                 try {
                     $newEventId = Algorithms::generateUUID();
@@ -88,15 +84,11 @@ final class EventStoreImportProcessor implements ProcessorInterface, ContentRepo
                     ->withIdentifier($newEventId)
                     ->processMetadata(static function (array $metadata) use ($eventIdMap) {
                         $processedMetadata = $metadata;
+                        // todo the causationId is NOT written to the EventMetadata anymore but a dedicated field and must be exported separately
                         /** @var string|null $causationId */
                         $causationId = $processedMetadata['causationId'] ?? null;
                         if ($causationId !== null && array_key_exists($causationId, $eventIdMap)) {
                             $processedMetadata['causationId'] = $eventIdMap[$causationId];
-                        }
-                        /** @var string|null $correlationId */
-                        $correlationId = $processedMetadata['correlationId'] ?? null;
-                        if ($correlationId !== null && array_key_exists($correlationId, $eventIdMap)) {
-                            $processedMetadata['correlationId'] = $eventIdMap[$correlationId];
                         }
                         return $processedMetadata;
                     });
@@ -110,76 +102,17 @@ final class EventStoreImportProcessor implements ProcessorInterface, ContentRepo
                 )
             );
             if (in_array($domainEvent::class, [ContentStreamWasCreated::class, ContentStreamWasForked::class, ContentStreamWasRemoved::class], true)) {
-                return ProcessorResult::error(sprintf('Failed to read events. %s is not expected in imported event stream.', $event->type));
+                throw new \RuntimeException(sprintf('Failed to read events. %s is not expected in imported event stream.', $event->type), 1729506757);
             }
-            $domainEvent = DecoratedEvent::create($domainEvent, eventId: EventId::fromString($event->identifier), metadata: $event->metadata);
-            $domainEvents[] = $this->eventNormalizer->normalize($domainEvent);
+            $domainEvent = DecoratedEvent::create($domainEvent, eventId: EventId::fromString($event->identifier), metadata: $event->metadata, correlationId: $correlationId);
+            $events[] = $this->eventNormalizer->normalize($domainEvent);
         }
 
-        assert($this->contentStreamId !== null);
-
-        $contentStreamStreamName = ContentStreamEventStreamName::fromContentStreamId($this->contentStreamId)->getEventStreamName();
-        $events = Events::with(
-            $this->eventNormalizer->normalize(
-                new ContentStreamWasCreated(
-                    $this->contentStreamId,
-                )
-            )
-        );
+        $contentStreamStreamName = ContentStreamEventStreamName::fromContentStreamId($rootWorkspaceContentStreamId)->getEventStreamName();
         try {
-            $contentStreamCreationCommitResult = $this->eventStore->commit($contentStreamStreamName, $events, ExpectedVersion::NO_STREAM());
+            $this->eventStore->commit($contentStreamStreamName, Events::fromArray($events), ExpectedVersion::fromVersion(Version::first()));
         } catch (ConcurrencyException $e) {
-            return ProcessorResult::error(sprintf('Failed to publish workspace events because the event stream "%s" already exists (1)', $this->contentStreamId->value));
-        }
-
-        $workspaceName = WorkspaceName::forLive();
-        $workspaceStreamName = WorkspaceEventStreamName::fromWorkspaceName($workspaceName)->getEventStreamName();
-        $events = Events::with(
-            $this->eventNormalizer->normalize(
-                new RootWorkspaceWasCreated(
-                    $workspaceName,
-                    WorkspaceTitle::fromString('live workspace'),
-                    WorkspaceDescription::fromString('live workspace'),
-                    $this->contentStreamId
-                )
-            )
-        );
-        try {
-            $this->eventStore->commit($workspaceStreamName, $events, ExpectedVersion::NO_STREAM());
-        } catch (ConcurrencyException $e) {
-            return ProcessorResult::error(sprintf('Failed to publish workspace events because the event stream "%s" already exists (2)', $workspaceStreamName->value));
-        }
-
-        try {
-            $this->eventStore->commit($contentStreamStreamName, Events::fromArray($domainEvents), ExpectedVersion::fromVersion($contentStreamCreationCommitResult->highestCommittedVersion));
-        } catch (ConcurrencyException $e) {
-            return ProcessorResult::error(sprintf('Failed to publish %d events because the event stream "%s" already exists (3)', count($domainEvents), $contentStreamStreamName->value));
-        }
-        return ProcessorResult::success(sprintf('Imported %d event%s into stream "%s"', count($domainEvents), count($domainEvents) === 1 ? '' : 's', $contentStreamStreamName->value));
-    }
-
-    /** --------------------------- */
-
-    /**
-     * @param array<string, mixed> $payload
-     * @return ContentStreamId
-     */
-    private static function extractContentStreamId(array $payload): ContentStreamId
-    {
-        if (!isset($payload['contentStreamId']) || !is_string($payload['contentStreamId'])) {
-            throw new \RuntimeException('Failed to extract "contentStreamId" from event', 1646404169);
-        }
-        return ContentStreamId::fromString($payload['contentStreamId']);
-    }
-
-    /**
-     * @phpstan-ignore-next-line currently this private method is unused ... but it does no harm keeping it
-     */
-    private function dispatch(Severity $severity, string $message, mixed ...$args): void
-    {
-        $renderedMessage = sprintf($message, ...$args);
-        foreach ($this->callbacks as $callback) {
-            $callback($severity, $renderedMessage);
+            throw new \RuntimeException(sprintf('Failed to publish %d events because the content stream "%s" for workspace "%s" already contains events. Please consider to prune the content repository first via `./flow site:pruneAll`.', count($events), $contentStreamStreamName->value, $this->targetWorkspaceName->value), 1729506818, $e);
         }
     }
 }

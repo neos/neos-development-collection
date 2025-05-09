@@ -37,59 +37,6 @@ trait NodeMove
     abstract protected function publishEvent(string $eventType, StreamName $streamName, array $eventPayload): void;
 
     /**
-     * @Given /^the command MoveNodeAggregate is executed with payload:$/
-     * @param TableNode $payloadTable
-     * @throws \Exception
-     */
-    public function theCommandMoveNodeIsExecutedWithPayload(TableNode $payloadTable): void
-    {
-        $commandArguments = $this->readPayloadTable($payloadTable);
-        $workspaceName = isset($commandArguments['workspaceName'])
-            ? WorkspaceName::fromString($commandArguments['workspaceName'])
-            : $this->currentWorkspaceName;
-        $dimensionSpacePoint = isset($commandArguments['dimensionSpacePoint'])
-            ? DimensionSpacePoint::fromArray($commandArguments['dimensionSpacePoint'])
-            : $this->currentDimensionSpacePoint;
-        $newParentNodeAggregateId = isset($commandArguments['newParentNodeAggregateId'])
-            ? NodeAggregateId::fromString($commandArguments['newParentNodeAggregateId'])
-            : null;
-        $newPrecedingSiblingNodeAggregateId = isset($commandArguments['newPrecedingSiblingNodeAggregateId'])
-            ? NodeAggregateId::fromString($commandArguments['newPrecedingSiblingNodeAggregateId'])
-            : null;
-        $newSucceedingSiblingNodeAggregateId = isset($commandArguments['newSucceedingSiblingNodeAggregateId'])
-            ? NodeAggregateId::fromString($commandArguments['newSucceedingSiblingNodeAggregateId'])
-            : null;
-        $relationDistributionStrategy = RelationDistributionStrategy::fromString(
-            $commandArguments['relationDistributionStrategy'] ?? null
-        );
-
-        $command = MoveNodeAggregate::create(
-            $workspaceName,
-            $dimensionSpacePoint,
-            NodeAggregateId::fromString($commandArguments['nodeAggregateId']),
-            $relationDistributionStrategy,
-            $newParentNodeAggregateId,
-            $newPrecedingSiblingNodeAggregateId,
-            $newSucceedingSiblingNodeAggregateId,
-        );
-
-        $this->currentContentRepository->handle($command);
-    }
-
-    /**
-     * @Given /^the command MoveNodeAggregate is executed with payload and exceptions are caught:$/
-     * @param TableNode $payloadTable
-     */
-    public function theCommandMoveNodeIsExecutedWithPayloadAndExceptionsAreCaught(TableNode $payloadTable): void
-    {
-        try {
-            $this->theCommandMoveNodeIsExecutedWithPayload($payloadTable);
-        } catch (\Exception $exception) {
-            $this->lastCommandException = $exception;
-        }
-    }
-
-    /**
      * @Given /^the event NodeAggregateWasMoved was published with payload:$/
      * @param TableNode $payloadTable
      * @throws \Exception

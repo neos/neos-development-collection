@@ -9,6 +9,13 @@ Neos:
             description: 'Neos.Workspace.Ui:Main:workspaces.description'
             icon: fas fa-th-large
             mainStylesheet: 'Lite'
+            additionalResources:
+              javaScripts:
+                'HtmxLibrary': 'resource://Neos.Workspace.Ui/Public/Scripts/htmx.min.js'
+                'Module': 'resource://Neos.Workspace.Ui/Public/Scripts/Module.js'
+                'Review': 'resource://Neos.Workspace.Ui/Public/Scripts/Review.js'
+              styleSheets:
+                'Module': 'resource://Neos.Workspace.Ui/Public/Styles/Module.css'
 
     userInterface:
       translation:

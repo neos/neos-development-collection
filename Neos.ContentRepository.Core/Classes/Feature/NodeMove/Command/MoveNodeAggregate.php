@@ -16,12 +16,9 @@ namespace Neos\ContentRepository\Core\Feature\NodeMove\Command;
 
 use Neos\ContentRepository\Core\CommandHandler\CommandInterface;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
-use Neos\ContentRepository\Core\Feature\Common\MatchableWithNodeIdToPublishOrDiscardInterface;
 use Neos\ContentRepository\Core\Feature\Common\RebasableToOtherWorkspaceInterface;
 use Neos\ContentRepository\Core\Feature\NodeMove\Dto\RelationDistributionStrategy;
-use Neos\ContentRepository\Core\Feature\WorkspacePublication\Dto\NodeIdToPublishOrDiscard;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 
 /**
@@ -37,6 +34,7 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
  *
  * Why can you specify **both** newPrecedingSiblingNodeAggregateId
  * and newSucceedingSiblingNodeAggregateId?
+ *
  * - it can happen that in one subgraph, only one of these match.
  * - See the PHPDoc of the attributes (a few lines down) for the exact behavior.
  *
@@ -45,7 +43,6 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 final readonly class MoveNodeAggregate implements
     CommandInterface,
     \JsonSerializable,
-    MatchableWithNodeIdToPublishOrDiscardInterface,
     RebasableToOtherWorkspaceInterface
 {
     /**
@@ -72,7 +69,7 @@ final readonly class MoveNodeAggregate implements
      * @param WorkspaceName $workspaceName The workspace in which the move operation is to be performed
      * @param DimensionSpacePoint $dimensionSpacePoint This is one of the *covered* dimension space points of the node aggregate and not necessarily one of the occupied ones. This allows us to move virtual specializations only when using the scatter strategy
      * @param NodeAggregateId $nodeAggregateId The id of the node aggregate to move
-     * @param RelationDistributionStrategy $relationDistributionStrategy The relation distribution strategy to be used ({@see RelationDistributionStrategy})
+     * @param RelationDistributionStrategy $relationDistributionStrategy The relation distribution strategy to be used ({@see RelationDistributionStrategy}).
      * @param NodeAggregateId|null $newParentNodeAggregateId The id of the new parent node aggregate. If given, it enforces that all nodes in the given aggregate are moved into nodes of the parent aggregate, even if the given siblings belong to other parents. In latter case, those siblings are ignored
      * @param NodeAggregateId|null $newPrecedingSiblingNodeAggregateId The id of the new preceding sibling node aggregate. If given and no successor found, it is attempted to insert the moved nodes right after nodes of this aggregate. In dimension space points this aggregate does not cover, other siblings, in order of proximity, are tried to be used instead
      * @param NodeAggregateId|null $newSucceedingSiblingNodeAggregateId The id of the new succeeding sibling node aggregate. If given, it is attempted to insert the moved nodes right before nodes of this aggregate. In dimension space points this aggregate does not cover, the preceding sibling is tried to be used instead
@@ -82,16 +79,15 @@ final readonly class MoveNodeAggregate implements
         return new self($workspaceName, $dimensionSpacePoint, $nodeAggregateId, $relationDistributionStrategy, $newParentNodeAggregateId, $newPrecedingSiblingNodeAggregateId, $newSucceedingSiblingNodeAggregateId);
     }
 
-    /**
-     * @param array<string,mixed> $array
-     */
     public static function fromArray(array $array): self
     {
         return new self(
             WorkspaceName::fromString($array['workspaceName']),
             DimensionSpacePoint::fromArray($array['dimensionSpacePoint']),
             NodeAggregateId::fromString($array['nodeAggregateId']),
-            RelationDistributionStrategy::fromString($array['relationDistributionStrategy']),
+            isset($array['relationDistributionStrategy'])
+                ? RelationDistributionStrategy::from($array['relationDistributionStrategy'])
+                : RelationDistributionStrategy::default(),
             isset($array['newParentNodeAggregateId'])
                 ? NodeAggregateId::fromString($array['newParentNodeAggregateId'])
                 : null,
@@ -110,12 +106,6 @@ final readonly class MoveNodeAggregate implements
     public function jsonSerialize(): array
     {
         return get_object_vars($this);
-    }
-
-    public function matchesNodeId(NodeIdToPublishOrDiscard $nodeIdToPublish): bool
-    {
-        return $this->nodeAggregateId->equals($nodeIdToPublish->nodeAggregateId)
-            && $this->dimensionSpacePoint === $nodeIdToPublish->dimensionSpacePoint;
     }
 
     public function createCopyForWorkspace(

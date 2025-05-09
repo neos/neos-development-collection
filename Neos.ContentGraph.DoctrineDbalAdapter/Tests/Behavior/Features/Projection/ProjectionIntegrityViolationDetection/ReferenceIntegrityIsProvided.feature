@@ -19,8 +19,6 @@ Feature: Run integrity violation detection regarding reference relations
     And the command CreateRootWorkspace is executed with payload:
       | Key                  | Value                |
       | workspaceName        | "live"               |
-      | workspaceTitle       | "Live"               |
-      | workspaceDescription | "The live workspace" |
       | newContentStreamId   | "cs-identifier"      |
     And I am in workspace "live" and dimension space point {"language":"de"}
     And the command CreateRootNodeAggregateWithNode is executed with payload:
@@ -53,8 +51,7 @@ Feature: Run integrity violation detection regarding reference relations
       | Key                             | Value                             |
       | sourceOriginDimensionSpacePoint | {"language":"de"}                 |
       | sourceNodeAggregateId           | "source-nodandaise"               |
-      | referenceName                   | "referenceProperty"               |
-      | references                      | [{"target": "anthony-destinode"}] |
+      | references                      | [{"referenceName": "referenceProperty", "references": [{"target": "anthony-destinode"}]}] |
     And I detach the following reference relation from its source:
       | Key                        | Value               |
       | contentStreamId            | "cs-identifier"     |

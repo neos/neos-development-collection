@@ -15,7 +15,7 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\Core\Feature\WorkspacePublication\Command;
 
 use Neos\ContentRepository\Core\CommandHandler\CommandInterface;
-use Neos\ContentRepository\Core\Feature\WorkspacePublication\Dto\NodeIdsToPublishOrDiscard;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateIds;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 
@@ -28,55 +28,49 @@ final readonly class PublishIndividualNodesFromWorkspace implements CommandInter
 {
     /**
      * @param WorkspaceName $workspaceName Name of the affected workspace
-     * @param NodeIdsToPublishOrDiscard $nodesToPublish Ids of the nodes to publish or discard
-     * @param ContentStreamId $contentStreamIdForMatchingPart The id of the new content stream that will contain all events to be published {@see self::withContentStreamIdForMatchingPart()}
+     * @param NodeAggregateIds $nodesToPublish Ids of the nodes to publish or discard
      * @param ContentStreamId $contentStreamIdForRemainingPart The id of the new content stream that will contain all remaining events {@see self::withContentStreamIdForRemainingPart()}
      */
     private function __construct(
         public WorkspaceName $workspaceName,
-        public NodeIdsToPublishOrDiscard $nodesToPublish,
-        public ContentStreamId $contentStreamIdForMatchingPart,
+        public NodeAggregateIds $nodesToPublish,
         public ContentStreamId $contentStreamIdForRemainingPart
     ) {
+        if ($this->nodesToPublish->isEmpty()) {
+            throw new \InvalidArgumentException(sprintf('The command "PublishIndividualNodesFromWorkspace" for workspace %s must contain nodes to publish', $this->workspaceName->value), 1737448717);
+        }
     }
 
     /**
      * @param WorkspaceName $workspaceName Name of the affected workspace
-     * @param NodeIdsToPublishOrDiscard $nodesToPublish Ids of the nodes to publish or discard
+     * @param NodeAggregateIds $nodesToPublish Ids of the nodes to publish or discard
      */
-    public static function create(WorkspaceName $workspaceName, NodeIdsToPublishOrDiscard $nodesToPublish): self
+    public static function create(WorkspaceName $workspaceName, NodeAggregateIds $nodesToPublish): self
     {
         return new self(
             $workspaceName,
             $nodesToPublish,
-            ContentStreamId::create(),
             ContentStreamId::create()
         );
     }
 
-    /**
-     * During the publish process, we sort the events so that the events we want to publish
-     * come first. In this process, two new content streams are generated:
-     * - the first one contains all events which we want to publish
-     * - the second one is based on the first one, and contains all the remaining events (which we want to keep
-     *   in the user workspace).
-     *
-     * This method adds the ID of the first content stream, so that the command
-     * can run fully deterministic - we need this for the test cases.
-     */
-    public function withContentStreamIdForMatchingPart(ContentStreamId $contentStreamIdForMatchingPart): self
+    public static function fromArray(array $array): self
     {
-        return new self($this->workspaceName, $this->nodesToPublish, $contentStreamIdForMatchingPart, $this->contentStreamIdForRemainingPart);
+        return new self(
+            WorkspaceName::fromString($array['workspaceName']),
+            NodeAggregateIds::fromArray($array['nodesToPublish']),
+            isset($array['contentStreamIdForRemainingPart']) ? ContentStreamId::fromString($array['contentStreamIdForRemainingPart']) : ContentStreamId::create(),
+        );
     }
 
     /**
-     * See the description of {@see self::withContentStreamIdForMatchingPart()}.
+     * The id of the new content stream that will contain all remaining events
      *
-     * This property adds the ID of the second content stream, so that the command
+     * This method adds its ID, so that the command
      * can run fully deterministic - we need this for the test cases.
      */
     public function withContentStreamIdForRemainingPart(ContentStreamId $contentStreamIdForRemainingPart): self
     {
-        return new self($this->workspaceName, $this->nodesToPublish, $this->contentStreamIdForMatchingPart, $contentStreamIdForRemainingPart);
+        return new self($this->workspaceName, $this->nodesToPublish, $contentStreamIdForRemainingPart);
     }
 }

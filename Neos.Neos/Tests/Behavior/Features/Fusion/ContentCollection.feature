@@ -75,7 +75,7 @@ Feature: Tests for the "Neos.Neos:ContentCollection" Fusion prototype
     """
     Then I expect the following Fusion rendering error:
     """
-    No content collection of type Neos.Neos:ContentCollection could be found in the current node (/[root]) or at the path "to-be-set-by-user". You might want to adjust your node type configuration and create the missing child node through the "flow structureadjustments:fix --node-type Neos.Neos:Site" command.
+    No content collection of type Neos.Neos:ContentCollection could be found in the current node (/Neos.Neos:Sites/Neos.Neos:Site) or at the path "to-be-set-by-user". You might want to adjust your node type configuration and create the missing child node through the "flow structureadjustments:fix --node-type Neos.Neos:Site" command.
     """
 
   Scenario: invalid nodePath
@@ -90,7 +90,7 @@ Feature: Tests for the "Neos.Neos:ContentCollection" Fusion prototype
     """
     Then I expect the following Fusion rendering error:
     """
-    No content collection of type Neos.Neos:ContentCollection could be found in the current node (/[root]) or at the path "invalid". You might want to adjust your node type configuration and create the missing child node through the "flow structureadjustments:fix --node-type Neos.Neos:Site" command.
+    No content collection of type Neos.Neos:ContentCollection could be found in the current node (/Neos.Neos:Sites/Neos.Neos:Site) or at the path "invalid". You might want to adjust your node type configuration and create the missing child node through the "flow structureadjustments:fix --node-type Neos.Neos:Site" command.
     """
 
   Scenario: empty ContentCollection
@@ -109,12 +109,11 @@ Feature: Tests for the "Neos.Neos:ContentCollection" Fusion prototype
     """
 
   Scenario:
-    When the command CreateNodeAggregateWithNodeAndSerializedProperties is executed with payload:
+    When the command CreateNodeAggregateWithNode is executed with payload:
       | Key                                | Value                         |
       | nodeAggregateId                    | "a1"                          |
       | nodeTypeName                       | "Neos.Neos:Test.DocumentType" |
       | parentNodeAggregateId              | "a"                           |
-      | initialPropertyValues              | {}                            |
       | tetheredDescendantNodeAggregateIds | { "main": "a1-main"}          |
     When the following CreateNodeAggregateWithNode commands are executed:
       | nodeAggregateId | parentNodeAggregateId | nodeTypeName               |
@@ -127,7 +126,7 @@ Feature: Tests for the "Neos.Neos:ContentCollection" Fusion prototype
     include: resource://Neos.Neos/Private/Fusion/Root.fusion
 
     prototype(Neos.Neos:Test.ContentType) < prototype(Neos.Fusion:Value) {
-      value = ${q(node).id() + ' (' + node.nodeTypeName.value + ') '}
+      value = ${node.aggregateId + ' (' + node.nodeTypeName.value + ') '}
     }
 
     test = Neos.Neos:ContentCollection {

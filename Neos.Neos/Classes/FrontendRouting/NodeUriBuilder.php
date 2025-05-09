@@ -115,13 +115,14 @@ final readonly class NodeUriBuilder
      * @api
      * @throws NoMatchingRouteException
      *   The exception is thrown for various unlike cases in which uri building fails:
+     *   - the node is disabled in the live workspace (a preview url should be built instead)
      *   - the default route definitions are misconfigured
      *   - the custom uri building options don't macht a route
      *   - the shortcut points to an invalid target
      *   - the live node address cannot be found in the projection
      *   Please consult the logs for further information.
      */
-    public function uriFor(NodeAddress $nodeAddress, Options $options = null): UriInterface
+    public function uriFor(NodeAddress $nodeAddress, ?Options $options = null): UriInterface
     {
         $options ??= Options::createEmpty();
 

@@ -34,6 +34,14 @@ final readonly class PublishWorkspace implements CommandInterface
     ) {
     }
 
+    public static function fromArray(array $array): self
+    {
+        return new self(
+            WorkspaceName::fromString($array['workspaceName']),
+            isset($array['newContentStreamId']) ? ContentStreamId::fromString($array['newContentStreamId']) : ContentStreamId::create(),
+        );
+    }
+
     /**
      * During the publish process, we create a new content stream.
      *

@@ -38,7 +38,7 @@ class NodeTypeSchemaBuilderTest extends FunctionalTestCase
         parent::setUp();
         $configurationManager = $this->objectManager->get(ConfigurationManager::class);
         $this->nodeTypeSchemaBuilder = NodeTypeSchemaBuilder::create(
-            new NodeTypeManager(
+            NodeTypeManager::createFromArrayConfigurationLoader(
                 fn() => $configurationManager->getConfiguration('NodeTypes')
             )
         );

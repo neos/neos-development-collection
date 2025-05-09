@@ -30,7 +30,7 @@ final class ContentGraphIntegrityCommandController extends CommandController
     #[Flow\Inject()]
     protected ContentRepositoryRegistry $contentRepositoryRegistry;
 
-    public function runViolationDetectionCommand(string $contentRepository = 'default', string $outputMode = null): void
+    public function runViolationDetectionCommand(string $contentRepository = 'default', ?string $outputMode = null): void
     {
         $detectionRunner = $this->contentRepositoryRegistry->buildService(
             ContentRepositoryId::fromString($contentRepository),

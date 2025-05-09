@@ -1,0 +1,9 @@
+Neos.Workspace.Ui.WorkspaceController.confirmDiscardAllChanges = Neos.Fusion:Component {
+  workspaceTitle = ${workspaceTitle}
+
+  renderer = afx`
+    <Neos.Workspace.Ui:Component.Modal.ConfirmDiscardAllChanges
+      workspaceTitle={props.workspaceTitle}
+    />
+  `
+}

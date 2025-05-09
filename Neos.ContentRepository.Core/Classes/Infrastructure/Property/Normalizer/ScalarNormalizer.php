@@ -17,12 +17,12 @@ final class ScalarNormalizer implements NormalizerInterface, DenormalizerInterfa
      * @param array<string,mixed> $context
      * @return int|float|bool|string
      */
-    public function normalize($object, string $format = null, array $context = []): mixed
+    public function normalize($object, ?string $format = null, array $context = []): mixed
     {
         return $object;
     }
 
-    public function supportsNormalization($data, string $format = null)
+    public function supportsNormalization($data, ?string $format = null)
     {
         $type = TypeHandling::getTypeForValue($data);
         return TypeHandling::isSimpleType($type) && !TypeHandling::isCollectionType($type);
@@ -31,12 +31,12 @@ final class ScalarNormalizer implements NormalizerInterface, DenormalizerInterfa
     /**
      * @param array<string,mixed> $context
      */
-    public function denormalize($data, $type, string $format = null, array $context = [])
+    public function denormalize($data, $type, ?string $format = null, array $context = [])
     {
         return $data;
     }
 
-    public function supportsDenormalization($data, $type, string $format = null)
+    public function supportsDenormalization($data, $type, ?string $format = null)
     {
         return TypeHandling::isSimpleType($type) && !TypeHandling::isCollectionType($type);
     }

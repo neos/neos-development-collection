@@ -80,28 +80,28 @@ Feature: Linking between multiple websites
 
   Scenario: Resolve foreign website homepage node
     When I am on URL "http://domain1.tld/"
-    Then the node "homepage1" in content stream "cs-identifier" and dimension "{}" should resolve to URL "/"
-    And the node "homepage2" in content stream "cs-identifier" and dimension "{}" should resolve to URL "http://domain2.tld/"
+    Then the node "homepage1" in dimension "{}" should resolve to URL "/"
+    And the node "homepage2" in dimension "{}" should resolve to URL "http://domain2.tld/"
     When I am on URL "http://domain2.tld/"
-    Then the node "homepage1" in content stream "cs-identifier" and dimension "{}" should resolve to URL "http://domain1.tld/"
-    And the node "homepage2" in content stream "cs-identifier" and dimension "{}" should resolve to URL "/"
+    Then the node "homepage1" in dimension "{}" should resolve to URL "http://domain1.tld/"
+    And the node "homepage2" in dimension "{}" should resolve to URL "/"
 
   Scenario: Resolve foreign website nodes
     When I am on URL "http://domain1.tld/"
-    Then the node "sir-david-nodenborough" in content stream "cs-identifier" and dimension "{}" should resolve to URL "/david-nodenborough"
-    And the node "sir-david-nodenborough2" in content stream "cs-identifier" and dimension "{}" should resolve to URL "http://domain2.tld/david-nodenborough"
+    Then the node "sir-david-nodenborough" in dimension "{}" should resolve to URL "/david-nodenborough"
+    And the node "sir-david-nodenborough2" in dimension "{}" should resolve to URL "http://domain2.tld/david-nodenborough"
     When I am on URL "http://domain2.tld/"
-    Then the node "sir-david-nodenborough" in content stream "cs-identifier" and dimension "{}" should resolve to URL "http://domain1.tld/david-nodenborough"
-    And the node "sir-david-nodenborough2" in content stream "cs-identifier" and dimension "{}" should resolve to URL "/david-nodenborough"
+    Then the node "sir-david-nodenborough" in dimension "{}" should resolve to URL "http://domain1.tld/david-nodenborough"
+    And the node "sir-david-nodenborough2" in dimension "{}" should resolve to URL "/david-nodenborough"
 
   Scenario: Match homepage node
     When I am on URL "http://domain1.tld/"
-    Then the matched node should be "homepage1" in content stream "cs-identifier" and dimension "{}"
+    Then the matched node should be "homepage1" in dimension "{}"
     When I am on URL "http://domain2.tld/"
-    Then the matched node should be "homepage2" in content stream "cs-identifier" and dimension "{}"
+    Then the matched node should be "homepage2" in dimension "{}"
 
   Scenario: Match other nodes
     When I am on URL "http://domain1.tld/david-nodenborough"
-    Then the matched node should be "sir-david-nodenborough" in content stream "cs-identifier" and dimension "{}"
+    Then the matched node should be "sir-david-nodenborough" in dimension "{}"
     When I am on URL "http://domain2.tld/david-nodenborough"
-    Then the matched node should be "sir-david-nodenborough2" in content stream "cs-identifier" and dimension "{}"
+    Then the matched node should be "sir-david-nodenborough2" in dimension "{}"

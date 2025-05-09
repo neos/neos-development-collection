@@ -73,7 +73,8 @@ Feature: Routing behavior of removed, disabled and re-enabled nodes
       | coveredDimensionSpacePoint   | {}             |
       | nodeVariantSelectionStrategy | "allVariants"  |
     Then No node should match URL "/david-nodenborough/earl-document/leaf"
-    And The node "leaf-mc-node" in content stream "cs-identifier" and dimension "{}" should resolve to URL "/david-nodenborough/earl-document/leaf"
+    # contraire to matching, we DO allow resolving of disabled nodes https://github.com/neos/neos-development-collection/pull/4363
+    And The node "leaf-mc-node" in dimension "{}" should resolve to URL "/david-nodenborough/earl-document/leaf"
 
   Scenario: Disable node with child nodes
     When the command DisableNodeAggregate is executed with payload:
@@ -83,8 +84,8 @@ Feature: Routing behavior of removed, disabled and re-enabled nodes
       | nodeVariantSelectionStrategy | "allVariants"            |
     Then No node should match URL "/david-nodenborough"
     And No node should match URL "/david-nodenborough/earl-document"
-    And The node "sir-david-nodenborough" in content stream "cs-identifier" and dimension "{}" should resolve to URL "/david-nodenborough"
-    And The node "earl-o-documentbourgh" in content stream "cs-identifier" and dimension "{}" should resolve to URL "/david-nodenborough/earl-document"
+    And The node "sir-david-nodenborough" in dimension "{}" should resolve to URL "/david-nodenborough"
+    And The node "earl-o-documentbourgh" in dimension "{}" should resolve to URL "/david-nodenborough/earl-document"
 
   Scenario: Disable two nodes, re-enable the higher one
     When the command DisableNodeAggregate is executed with payload:
@@ -99,18 +100,18 @@ Feature: Routing behavior of removed, disabled and re-enabled nodes
       | nodeVariantSelectionStrategy | "allVariants"           |
     Then No node should match URL "/david-nodenborough"
     And No node should match URL "/david-nodenborough/earl-document"
-    And The node "sir-david-nodenborough" in content stream "cs-identifier" and dimension "{}" should resolve to URL "/david-nodenborough"
-    And The node "earl-o-documentbourgh" in content stream "cs-identifier" and dimension "{}" should resolve to URL "/david-nodenborough/earl-document"
+    And The node "sir-david-nodenborough" in dimension "{}" should resolve to URL "/david-nodenborough"
+    And The node "earl-o-documentbourgh" in dimension "{}" should resolve to URL "/david-nodenborough/earl-document"
     When the command EnableNodeAggregate is executed with payload:
       | Key                          | Value                    |
       | nodeAggregateId              | "sir-david-nodenborough" |
       | coveredDimensionSpacePoint   | {}                       |
       | nodeVariantSelectionStrategy | "allVariants"            |
     When I am on URL "/david-nodenborough"
-    Then the matched node should be "sir-david-nodenborough" in content stream "cs-identifier" and dimension "{}"
+    Then the matched node should be "sir-david-nodenborough" in dimension "{}"
     And No node should match URL "/david-nodenborough/earl-document"
-    And The node "sir-david-nodenborough" in content stream "cs-identifier" and dimension "{}" should resolve to URL "/david-nodenborough"
-    And The node "earl-o-documentbourgh" in content stream "cs-identifier" and dimension "{}" should resolve to URL "/david-nodenborough/earl-document"
+    And The node "sir-david-nodenborough" in dimension "{}" should resolve to URL "/david-nodenborough"
+    And The node "earl-o-documentbourgh" in dimension "{}" should resolve to URL "/david-nodenborough/earl-document"
 
   Scenario: Disable two nodes, re-enable the lower one
     When the command DisableNodeAggregate is executed with payload:
@@ -125,8 +126,8 @@ Feature: Routing behavior of removed, disabled and re-enabled nodes
       | nodeVariantSelectionStrategy | "allVariants"           |
     Then No node should match URL "/david-nodenborough"
     And No node should match URL "/david-nodenborough/earl-document"
-    And The node "sir-david-nodenborough" in content stream "cs-identifier" and dimension "{}" should resolve to URL "/david-nodenborough"
-    And The node "earl-o-documentbourgh" in content stream "cs-identifier" and dimension "{}" should resolve to URL "/david-nodenborough/earl-document"
+    And The node "sir-david-nodenborough" in dimension "{}" should resolve to URL "/david-nodenborough"
+    And The node "earl-o-documentbourgh" in dimension "{}" should resolve to URL "/david-nodenborough/earl-document"
     When the command EnableNodeAggregate is executed with payload:
       | Key                          | Value                   |
       | nodeAggregateId              | "earl-o-documentbourgh" |
@@ -134,69 +135,8 @@ Feature: Routing behavior of removed, disabled and re-enabled nodes
       | nodeVariantSelectionStrategy | "allVariants"           |
     Then No node should match URL "/david-nodenborough"
     And No node should match URL "/david-nodenborough/earl-document"
-    And The node "sir-david-nodenborough" in content stream "cs-identifier" and dimension "{}" should resolve to URL "/david-nodenborough"
-    And The node "earl-o-documentbourgh" in content stream "cs-identifier" and dimension "{}" should resolve to URL "/david-nodenborough/earl-document"
-
-  Scenario: Disable the same node twice
-    When the command DisableNodeAggregate is executed with payload:
-      | Key                          | Value                    |
-      | nodeAggregateId              | "sir-david-nodenborough" |
-      | coveredDimensionSpacePoint   | {}                       |
-      | nodeVariantSelectionStrategy | "allVariants"            |
-    And the event SubtreeWasTagged was published with payload:
-      | Key                          | Value                    |
-      | workspaceName                | "live"                   |
-      | contentStreamId              | "cs-identifier"          |
-      | nodeAggregateId              | "sir-david-nodenborough" |
-      | affectedDimensionSpacePoints | [{}]                     |
-      | tag                          | "disabled"               |
-    Then No node should match URL "/david-nodenborough"
-    And No node should match URL "/david-nodenborough/earl-document"
-    And The node "sir-david-nodenborough" in content stream "cs-identifier" and dimension "{}" should resolve to URL "/david-nodenborough"
-    And The node "earl-o-documentbourgh" in content stream "cs-identifier" and dimension "{}" should resolve to URL "/david-nodenborough/earl-document"
-    When the command EnableNodeAggregate is executed with payload:
-      | Key                          | Value                    |
-      | nodeAggregateId              | "sir-david-nodenborough" |
-      | coveredDimensionSpacePoint   | {}                       |
-      | nodeVariantSelectionStrategy | "allVariants"            |
-    When I am on URL "/david-nodenborough"
-    Then the matched node should be "sir-david-nodenborough" in content stream "cs-identifier" and dimension "{}"
-    And The node "sir-david-nodenborough" in content stream "cs-identifier" and dimension "{}" should resolve to URL "/david-nodenborough"
-    And The node "earl-o-documentbourgh" in content stream "cs-identifier" and dimension "{}" should resolve to URL "/david-nodenborough/earl-document"
-
-  Scenario: Re-enable the same node twice
-    When the command DisableNodeAggregate is executed with payload:
-      | Key                          | Value                    |
-      | nodeAggregateId              | "sir-david-nodenborough" |
-      | coveredDimensionSpacePoint   | {}                       |
-      | nodeVariantSelectionStrategy | "allVariants"            |
-    And the event SubtreeWasTagged was published with payload:
-      | Key                          | Value                   |
-      | workspaceName                | "live"                  |
-      | contentStreamId              | "cs-identifier"         |
-      | nodeAggregateId              | "earl-o-documentbourgh" |
-      | affectedDimensionSpacePoints | [{}]                    |
-      | tag                          | "disabled"              |
-    Then No node should match URL "/david-nodenborough"
-    And No node should match URL "/david-nodenborough/earl-document"
-    And The node "sir-david-nodenborough" in content stream "cs-identifier" and dimension "{}" should resolve to URL "/david-nodenborough"
-    And The node "earl-o-documentbourgh" in content stream "cs-identifier" and dimension "{}" should resolve to URL "/david-nodenborough/earl-document"
-    When the command EnableNodeAggregate is executed with payload:
-      | Key                          | Value                    |
-      | nodeAggregateId              | "sir-david-nodenborough" |
-      | coveredDimensionSpacePoint   | {}                       |
-      | nodeVariantSelectionStrategy | "allVariants"            |
-    And the event SubtreeWasUntagged was published with payload:
-      | Key                          | Value                    |
-      | workspaceName                | "live"                   |
-      | contentStreamId              | "cs-identifier"          |
-      | nodeAggregateId              | "sir-david-nodenborough" |
-      | affectedDimensionSpacePoints | [{}]                     |
-      | tag                          | "disabled"               |
-    When I am on URL "/david-nodenborough"
-    Then the matched node should be "sir-david-nodenborough" in content stream "cs-identifier" and dimension "{}"
-    And The node "sir-david-nodenborough" in content stream "cs-identifier" and dimension "{}" should resolve to URL "/david-nodenborough"
-    And The node "earl-o-documentbourgh" in content stream "cs-identifier" and dimension "{}" should resolve to URL "/david-nodenborough/earl-document"
+    And The node "sir-david-nodenborough" in dimension "{}" should resolve to URL "/david-nodenborough"
+    And The node "earl-o-documentbourgh" in dimension "{}" should resolve to URL "/david-nodenborough/earl-document"
 
   Scenario: Move implicit disabled node
     When the command DisableNodeAggregate is executed with payload:
@@ -211,7 +151,7 @@ Feature: Routing behavior of removed, disabled and re-enabled nodes
       | newParentNodeAggregateId            | "nody-mc-nodeface"      |
       | newSucceedingSiblingNodeAggregateId | null                    |
     When I am on URL "/nody/earl-document"
-    Then the matched node should be "earl-o-documentbourgh" in content stream "cs-identifier" and dimension "{}"
+    Then the matched node should be "earl-o-documentbourgh" in dimension "{}"
 
   Scenario: Move explicit disabled node
     When the command DisableNodeAggregate is executed with payload:
@@ -226,7 +166,7 @@ Feature: Routing behavior of removed, disabled and re-enabled nodes
       | newParentNodeAggregateId            | "nody-mc-nodeface"      |
       | newSucceedingSiblingNodeAggregateId | null                    |
     Then No node should match URL "/nody/earl-document"
-    And The node "leaf-mc-node" in content stream "cs-identifier" and dimension "{}" should resolve to URL "/nody/earl-document/leaf"
+    And The node "leaf-mc-node" in dimension "{}" should resolve to URL "/nody/earl-document/leaf"
 
   Scenario: Add child node underneath disabled node and re-enable parent (see https://github.com/neos/neos-development-collection/issues/4639)
     When the command DisableNodeAggregate is executed with payload:
@@ -243,4 +183,30 @@ Feature: Routing behavior of removed, disabled and re-enabled nodes
       | coveredDimensionSpacePoint   | {}                 |
       | nodeVariantSelectionStrategy | "allVariants"      |
     When I am on URL "/nody/nody-child"
-    Then the matched node should be "nody-mc-nodeface-child" in content stream "cs-identifier" and dimension "{}"
+    Then the matched node should be "nody-mc-nodeface-child" in dimension "{}"
+
+  Scenario: Disable leaf node and create sibling with same uri path segment
+    When I am on URL "/david-nodenborough/earl-document/leaf"
+    Then the matched node should be "leaf-mc-node" in dimension "{}"
+    And The node "leaf-mc-node" in dimension "{}" should resolve to URL "/david-nodenborough/earl-document/leaf"
+
+    When the command DisableNodeAggregate is executed with payload:
+      | Key                          | Value              |
+      | nodeAggregateId              | "leaf-mc-node" |
+      | coveredDimensionSpacePoint   | {}                 |
+      | nodeVariantSelectionStrategy | "allVariants"      |
+    Then No node should match URL "/david-nodenborough/earl-document/leaf"
+    # uri building is ambiguous but not matching!
+    And The node "leaf-mc-node" in dimension "{}" should resolve to URL "/david-nodenborough/earl-document/leaf"
+
+    # create sibling with the same path
+    When the command CreateNodeAggregateWithNode is executed with payload:
+      | Key                   | Value                         |
+      | nodeAggregateId       | "leaf-sibling"                |
+      | nodeTypeName          | "Neos.Neos:Test.Routing.Page" |
+      | parentNodeAggregateId | "earl-o-documentbourgh"       |
+      | initialPropertyValues | {"uriPathSegment": "leaf"}    |
+
+    When I am on URL "/david-nodenborough/earl-document/leaf"
+    Then the matched node should be "leaf-sibling" in dimension "{}"
+    And The node "leaf-sibling" in dimension "{}" should resolve to URL "/david-nodenborough/earl-document/leaf"

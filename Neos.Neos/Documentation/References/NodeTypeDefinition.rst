@@ -3,7 +3,7 @@
 NodeType Definition Reference
 =============================
 
-THe manual to understand NodeType definitions can be found in the Neos Docs (https://docs.neos.io/cms/manual/content-repository/nodetype-definition).
+The manual to understand NodeType definitions can be found in the Neos Docs (https://docs.neos.io/cms/manual/content-repository/nodetype-definition).
 
 The following options are allowed for defining a NodeType:
 
@@ -13,16 +13,6 @@ The following options are allowed for defining a NodeType:
 
   Abstract node types are useful when using inheritance and composition, so mark base node types and
   mixins as abstract.
-
-``aggregate``
-  A boolean flag, marking a node type as *aggregate*. If a node type is marked as aggregate, it means that:
-
-  - the node type can "live on its own", i.e. can be part of an external URL
-  - when moving this node, all node variants are also moved (across all dimensions)
-  - Recursive copying only happens *inside* this aggregate, and stops at nested aggregates.
-
-  The most prominent *aggregate* is `Neos.Neos:Document` and everything which inherits from it, like
-  `Neos.NodeTypes:Page`.
 
 ``superTypes``
   An array of parent node types as keys with a boolean value::
@@ -55,7 +45,7 @@ The following options are allowed for defining a NodeType:
   Here is an example::
 
     childNodes:
-      someChild:
+      'some-child':
         type: 'Neos.Neos:ContentCollection'
         constraints:
           nodeTypes:
@@ -68,11 +58,11 @@ The following options are allowed for defining a NodeType:
 
     'Neos.NodeTypes:Page':
       childNodes:
-        'someChild':
+        'some-child':
           type: 'Neos.Neos:ContentCollection'
           position: 'before main'
 
-  This adds a new ContentCollection called someChild to the default page.
+  This adds a new ContentCollection called ``some-child`` to the default page.
   It will be positioned before the main ContentCollection that the default page has.
   The position setting follows the same sorting logic used in Fusion
   (see the :ref:`neos-fusion-reference`).

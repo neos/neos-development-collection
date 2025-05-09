@@ -14,18 +14,28 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Core\SharedModel\Exception;
 
+use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 
 /**
- * @api because exception is thrown during invariant checks on command execution
+ * @api because exception is thrown during invariant checks on command execution or when attempting to query a non-existing workspace
  */
 final class WorkspaceDoesNotExist extends \DomainException
 {
     public static function butWasSupposedTo(WorkspaceName $name): self
     {
         return new self(sprintf(
-            'The source workspace %s does not exist',
+            'The workspace "%s" does not exist',
             $name->value
         ), 1513924741);
+    }
+
+    public static function butWasSupposedToInContentRepository(WorkspaceName $name, ContentRepositoryId $contentRepositoryId): self
+    {
+        return new self(sprintf(
+            'The workspace "%s" does not exist in content repository "%s"',
+            $name->value,
+            $contentRepositoryId->value
+        ), 1733737361);
     }
 }

@@ -17,6 +17,8 @@ namespace Neos\ContentRepository\Core\Feature\NodeModification\Dto;
 use Neos\ContentRepository\Core\DimensionSpace\InterDimensionalVariationGraph;
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePointSet;
+use Neos\ContentRepository\Core\Feature\NodeModification\Command\SetSerializedNodeProperties;
+use Neos\ContentRepository\Core\Feature\NodeReferencing\Command\SetSerializedNodeReferences;
 use Neos\ContentRepository\Core\NodeType\NodeType;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate;
 use Neos\ContentRepository\Core\SharedModel\Node\PropertyName;
@@ -25,7 +27,7 @@ use Neos\ContentRepository\Core\SharedModel\Node\PropertyName;
  * The property scope to be used in NodeType property declarations.
  * Will affect node operations on properties in that they decide which of the node's variants will be modified as well.
  *
- * @api used as part of commands
+ * @internal implementation of the {@see SetSerializedNodeProperties} and {@see SetSerializedNodeReferences} handling
  */
 enum PropertyScope: string implements \JsonSerializable
 {

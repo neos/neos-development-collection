@@ -22,7 +22,7 @@ class NodePathTest extends TestCase
      */
     public function testDeserialization(
         string $serializedPath,
-        bool $expectedRootState,
+        bool $expectedEmptyState,
         /** @var array<int,NodeName> $expectedParts */
         array $expectedParts,
         int $expectedLength
@@ -30,7 +30,7 @@ class NodePathTest extends TestCase
         $subject = NodePath::fromString($serializedPath);
 
         self::assertSame($serializedPath, $subject->serializeToString());
-        self::assertSame($expectedRootState, $subject->isRoot());
+        self::assertSame($expectedEmptyState, $subject->isEmpty());
         self::assertEquals($expectedParts, $subject->getParts());
         self::assertSame($expectedLength, $subject->getLength());
     }
@@ -39,7 +39,7 @@ class NodePathTest extends TestCase
     {
         yield 'nonRoot' => [
             'serializedPath' => 'child/grandchild',
-            'expectedRootState' => false,
+            'isEmpty' => false,
             'expectedParts' => [
                 NodeName::fromString('child'),
                 NodeName::fromString('grandchild'),
@@ -49,7 +49,7 @@ class NodePathTest extends TestCase
 
         yield 'root' => [
             'serializedPath' => '',
-            'expectedRootState' => true,
+            'isEmpty' => true,
             'expectedParts' => [],
             'expectedLength' => 0
         ];

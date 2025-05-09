@@ -9,7 +9,7 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\Ordering\Ordering
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\Pagination\Pagination;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\PropertyValue\Criteria\PropertyValueCriteriaInterface;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\PropertyValue\PropertyValueCriteriaParser;
-use Neos\ContentRepository\Core\Projection\ContentGraph\SearchTerm;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\SearchTerm\SearchTerm;
 use Neos\ContentRepository\Core\SharedModel\Node\ReferenceName;
 
 /**
@@ -51,14 +51,14 @@ final readonly class FindReferencesFilter
      * @param Pagination|array<string, mixed>|null $pagination
      */
     public static function create(
-        NodeTypeCriteria|string $nodeTypes = null,
-        SearchTerm|string $nodeSearchTerm = null,
-        PropertyValueCriteriaInterface|string $nodePropertyValue = null,
-        SearchTerm|string $referenceSearchTerm = null,
-        PropertyValueCriteriaInterface|string $referencePropertyValue = null,
-        ReferenceName|string $referenceName = null,
-        Ordering|array $ordering = null,
-        Pagination|array $pagination = null,
+        NodeTypeCriteria|string|null $nodeTypes = null,
+        SearchTerm|string|null $nodeSearchTerm = null,
+        PropertyValueCriteriaInterface|string|null $nodePropertyValue = null,
+        SearchTerm|string|null $referenceSearchTerm = null,
+        PropertyValueCriteriaInterface|string|null $referencePropertyValue = null,
+        ReferenceName|string|null $referenceName = null,
+        Ordering|array|null $ordering = null,
+        Pagination|array|null $pagination = null,
     ): self {
         if (is_string($nodeTypes)) {
             $nodeTypes = NodeTypeCriteria::fromFilterString($nodeTypes);
@@ -97,14 +97,14 @@ final readonly class FindReferencesFilter
      * @param Pagination|array<string, mixed>|null $pagination
      */
     public function with(
-        NodeTypeCriteria|string $nodeTypes = null,
-        SearchTerm|string $nodeSearchTerm = null,
-        PropertyValueCriteriaInterface|string $nodePropertyValue = null,
-        SearchTerm|string $referenceSearchTerm = null,
-        PropertyValueCriteriaInterface|string $referencePropertyValue = null,
-        ReferenceName|string $referenceName = null,
-        Ordering|array $ordering = null,
-        Pagination|array $pagination = null,
+        NodeTypeCriteria|string|null $nodeTypes = null,
+        SearchTerm|string|null $nodeSearchTerm = null,
+        PropertyValueCriteriaInterface|string|null $nodePropertyValue = null,
+        SearchTerm|string|null $referenceSearchTerm = null,
+        PropertyValueCriteriaInterface|string|null $referencePropertyValue = null,
+        ReferenceName|string|null $referenceName = null,
+        Ordering|array|null $ordering = null,
+        Pagination|array|null $pagination = null,
     ): self {
         return self::create(
             $nodeTypes ?? $this->nodeTypes,

@@ -32,8 +32,8 @@ class NodeAggregateIdsByNodePathsTest extends TestCase
      */
     public function testCompleteForNodeOfType(NodeAggregateIdsByNodePaths $subject, array $expectedNodeAggregateIdsByPath): void
     {
-        $nodeTypeManager = new NodeTypeManager(
-            fn (): array => [
+        $nodeTypeManager = NodeTypeManager::createFromArrayConfiguration(
+            [
                 'Neos.ContentRepository.Testing:Content' => [],
                 'Neos.ContentRepository.Testing:LeafDocument' => [
                     'childNodes' => [

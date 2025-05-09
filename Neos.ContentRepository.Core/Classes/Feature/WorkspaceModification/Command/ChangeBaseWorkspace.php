@@ -35,4 +35,24 @@ final readonly class ChangeBaseWorkspace implements CommandInterface
     {
         return new self($workspaceName, $baseWorkspaceName, ContentStreamId::create());
     }
+
+    public static function fromArray(array $array): self
+    {
+        return new self(
+            WorkspaceName::fromString($array['workspaceName']),
+            WorkspaceName::fromString($array['baseWorkspaceName']),
+            isset($array['newContentStreamId']) ? ContentStreamId::fromString($array['newContentStreamId']) : ContentStreamId::create(),
+        );
+    }
+
+    /**
+     * During the publish process, we create a new content stream.
+     *
+     * This method adds its ID, so that the command
+     * can run fully deterministic - we need this for the test cases.
+     */
+    public function withNewContentStreamId(ContentStreamId $newContentStreamId): self
+    {
+        return new self($this->workspaceName, $this->baseWorkspaceName, $newContentStreamId);
+    }
 }

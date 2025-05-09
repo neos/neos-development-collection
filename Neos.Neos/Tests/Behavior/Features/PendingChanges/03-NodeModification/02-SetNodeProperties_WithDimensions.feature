@@ -1,0 +1,148 @@
+@contentrepository @adapters=DoctrineDBAL
+@flowEntities
+Feature: Create node aggregate with node with dimensions
+
+  Background: Create node aggregate with initial node
+    Given using the following content dimensions:
+      | Identifier | Values    | Generalizations |
+      | language   | de,gsw,fr | gsw->de, fr     |
+    And using the following node types:
+    """yaml
+    'Neos.ContentRepository:Root': {}
+    'Neos.Neos:Sites':
+      superTypes:
+        'Neos.ContentRepository:Root': true
+    'Neos.Neos:Site':
+      superTypes:
+        'Neos.Neos:Document': true
+    'Neos.Neos:Document':
+      properties:
+        title:
+          type: string
+        uriPathSegment:
+          type: string
+    'Neos.Neos:Test.DocumentType':
+      superTypes:
+        'Neos.Neos:Document': true
+      childNodes:
+        main:
+          type: 'Neos.Neos:ContentCollection'
+    'Neos.Neos:Content': {}
+    'Neos.Neos:ContentCollection': {}
+    'Neos.Neos:Test.ContentType':
+      superTypes:
+        'Neos.Neos:Content': true
+    """
+    And using identifier "default", I define a content repository
+    And I am in content repository "default"
+    And the command CreateRootWorkspace is executed with payload:
+      | Key                  | Value                |
+      | workspaceName        | "live"               |
+      | workspaceTitle       | "Live"               |
+      | workspaceDescription | "The live workspace" |
+      | newContentStreamId   | "cs-identifier"      |
+
+    And I am in workspace "live"
+    And I am in dimension space point {"language": "de"}
+    And the command CreateRootNodeAggregateWithNode is executed with payload:
+      | Key             | Value             |
+      | nodeAggregateId | "root"            |
+      | nodeTypeName    | "Neos.Neos:Sites" |
+
+    And the command CreateNodeAggregateWithNode is executed with payload:
+      | Key                   | Value            |
+      | nodeAggregateId       | "site"           |
+      | nodeTypeName          | "Neos.Neos:Site" |
+      | parentNodeAggregateId | "root"           |
+      | nodeName              | "site"           |
+
+    And the command CreateNodeVariant is executed with payload:
+      | Key             | Value             |
+      | nodeAggregateId | "site"            |
+      | sourceOrigin    | {"language":"de"} |
+      | targetOrigin    | {"language":"fr"} |
+
+    And the following CreateNodeAggregateWithNode commands are executed:
+      | nodeAggregateId           | parentNodeAggregateId  | nodeTypeName                | initialPropertyValues                                       | tetheredDescendantNodeAggregateIds |
+      | sir-david-nodenborough    | site                   | Neos.Neos:Test.DocumentType | {}                                                          | { "main": "main-1"}                |
+      | davids-child              | main-1                 | Neos.Neos:Test.ContentType  | {}                                                          |                                    |
+      | nody-mc-nodeface          | sir-david-nodenborough | Neos.Neos:Test.DocumentType | {"title": "This is a text about Nody Mc Nodeface"}          | { "main": "main-2"}                |
+      | sir-nodeward-nodington-iv | site                   | Neos.Neos:Test.DocumentType | {"title": "This is a text about Sir Nodeward Nodington IV"} | { "main": "main-3"}                |
+
+    And the command CreateNodeVariant is executed with payload:
+      | Key             | Value                    |
+      | nodeAggregateId | "sir-david-nodenborough" |
+      | sourceOrigin    | {"language":"de"}        |
+      | targetOrigin    | {"language":"fr"}        |
+
+    Then the command CreateWorkspace is executed with payload:
+      | Key                | Value            |
+      | workspaceName      | "user-workspace" |
+      | baseWorkspaceName  | "live"           |
+      | newContentStreamId | "user-cs-id"     |
+
+    And I am in workspace "user-workspace"
+    And I am in dimension space point {"language": "de"}
+
+  Scenario: Set node properties
+    Given the command SetNodeProperties is executed with payload:
+      | Key                       | Value                    |
+      | workspaceName             | "user-workspace"         |
+      | nodeAggregateId           | "sir-david-nodenborough" |
+      | originDimensionSpacePoint | {"language":"de"}        |
+      | propertyValues            | {"title": "Other text"}  |
+
+    # unset a property
+    Given the command SetNodeProperties is executed with payload:
+      | Key                       | Value              |
+      | workspaceName             | "user-workspace"   |
+      | nodeAggregateId           | "nody-mc-nodeface" |
+      | originDimensionSpacePoint | {"language":"de"}  |
+      | propertyValues            | {"title": null}    |
+
+    Then I expect to have the following changes in workspace "user-workspace":
+      | nodeAggregateId        | created | changed | moved | deleted | originDimensionSpacePoint |
+      | sir-david-nodenborough | 0       | 1       | 0     | 0       | {"language":"de"}         |
+      | nody-mc-nodeface       | 0       | 1       | 0     | 0       | {"language":"de"}         |
+    And I expect to have no changes in workspace "live"
+
+    When I publish the 1 changes in document "sir-david-nodenborough" from workspace "user-workspace" to "live"
+
+    Then I expect that the following node events have been published
+      | type                  | event payload                                                                              |
+      | NodePropertiesWereSet | {"nodeAggregateId":"sir-david-nodenborough","originDimensionSpacePoint":{"language":"de"}} |
+
+    Then I expect that the following node events are kept as remainder
+      | type                  | event payload                                                                        |
+      | NodePropertiesWereSet | {"nodeAggregateId":"nody-mc-nodeface","originDimensionSpacePoint":{"language":"de"}} |
+
+  Scenario: Set node properties across dimensions are published together
+    Given the command SetNodeProperties is executed with payload:
+      | Key                       | Value                    |
+      | workspaceName             | "user-workspace"         |
+      | nodeAggregateId           | "sir-david-nodenborough" |
+      | originDimensionSpacePoint | {"language":"de"}        |
+      | propertyValues            | {"title": "German Text"} |
+
+    Given the command SetNodeProperties is executed with payload:
+      | Key                       | Value                    |
+      | workspaceName             | "user-workspace"         |
+      | nodeAggregateId           | "sir-david-nodenborough" |
+      | originDimensionSpacePoint | {"language":"fr"}        |
+      | propertyValues            | {"title": "French Text"} |
+
+    Then I expect to have the following changes in workspace "user-workspace":
+      | nodeAggregateId        | created | changed | moved | deleted | originDimensionSpacePoint |
+      | sir-david-nodenborough | 0       | 1       | 0     | 0       | {"language":"de"}         |
+      | sir-david-nodenborough | 0       | 1       | 0     | 0       | {"language":"fr"}         |
+    And I expect to have no changes in workspace "live"
+
+    When I publish the 1 changes in document "sir-david-nodenborough" from workspace "user-workspace" to "live"
+
+    Then I expect that the following node events have been published
+      | type                  | event payload                                                                              |
+      | NodePropertiesWereSet | {"nodeAggregateId":"sir-david-nodenborough","originDimensionSpacePoint":{"language":"de"}} |
+      | NodePropertiesWereSet | {"nodeAggregateId":"sir-david-nodenborough","originDimensionSpacePoint":{"language":"fr"}} |
+
+    Then I expect that the following node events are kept as remainder
+      | type | event payload |

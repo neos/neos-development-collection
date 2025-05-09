@@ -1,0 +1,63 @@
+Neos.Workspace.Ui.WorkspaceController.review = Neos.Fusion:Component {
+  /// string
+  selectedWorkspaceName = ${selectedWorkspaceName}
+  /// string
+  selectedWorkspaceLabel = ${selectedWorkspaceLabel}
+  /// \Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName
+  baseWorkspaceName = ${baseWorkspaceName}
+  /// string
+  baseWorkspaceLabel = ${baseWorkspaceLabel}
+  /// bool
+  canPublishToBaseWorkspace = ${canPublishToBaseWorkspace}
+  /// bool
+  canPublishToWorkspace = ${canPublishToWorkspace}
+  /// array
+  siteChanges = ${siteChanges}
+  /// array
+  contentDimensions = ${contentDimensions}
+  /// array
+  flashMessages = ${flashMessages}
+
+  i18n = ${I18n.id('').source('Main').package('Neos.Workspace.Ui')}
+
+  renderer = afx`
+    <Neos.Workspace.Ui:Component.ModuleWrapper
+      flashMessages={props.flashMessages}
+    >
+      <main id="workspaceReview" class="neos-content neos-container-fluid">
+        <div class="neos-row-fluid">
+          <legend>
+            {props.i18n.id('workspaces.unpublishedChanges').arguments([selectedWorkspaceLabel]).translate()}
+          </legend>
+
+          <Neos.Fusion.Form:Form
+            form.target.action="publishOrDiscardNodes"
+            form.target.format="htmx"
+            form.target.arguments.workspaceName={props.selectedWorkspaceName}
+            attributes.hx-post={form.getTarget()}
+            attributes.id="publishOrDiscardNodesForm"
+          >
+            <Neos.Workspace.Ui:Component.ReviewTable
+              @if.hasSiteChanges={props.siteChanges}
+              siteChanges={props.siteChanges}
+              selectedWorkspaceName={props.selectedWorkspaceName}
+              selectedWorkspaceLabel={props.selectedWorkspaceLabel}
+              canPublishToBaseWorkspace={props.canPublishToBaseWorkspace}
+              canPublishToWorkspace={props.canPublishToWorkspace}
+            />
+            <div @if.hasNoSiteChange={!props.siteChanges} class="no-unpublished-changes">
+              {props.i18n.id('workspaces.reviewWorkspace.disabled').arguments([selectedWorkspaceLabel]).translate()}
+            </div>
+          </Neos.Fusion.Form:Form>
+        </div>
+      </main>
+      <Neos.Workspace.Ui:Component.ReviewActions
+        hasSiteChanges={!!props.siteChanges}
+        canPublishToBaseWorkspace={props.canPublishToBaseWorkspace}
+        canPublishToWorkspace={props.canPublishToWorkspace}
+        selectedWorkspaceName={props.selectedWorkspaceName}
+        baseWorkspaceLabel={props.baseWorkspaceLabel}
+      />
+    </Neos.Workspace.Ui:Component.ModuleWrapper>
+  `
+}

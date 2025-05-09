@@ -27,7 +27,7 @@ final readonly class DiscardWorkspace implements CommandInterface
 {
     /**
      * @param WorkspaceName $workspaceName Name of the affected workspace
-     * @param ContentStreamId $newContentStreamId The id of the newly created content stream that will contain the remaining changes that were not discarded
+     * @param ContentStreamId $newContentStreamId The id of the newly forked content stream with no changes
      */
     private function __construct(
         public WorkspaceName $workspaceName,
@@ -41,6 +41,14 @@ final readonly class DiscardWorkspace implements CommandInterface
     public static function create(WorkspaceName $workspaceName): self
     {
         return new self($workspaceName, ContentStreamId::create());
+    }
+
+    public static function fromArray(array $array): self
+    {
+        return new self(
+            WorkspaceName::fromString($array['workspaceName']),
+            isset($array['newContentStreamId']) ? ContentStreamId::fromString($array['newContentStreamId']) : ContentStreamId::create(),
+        );
     }
 
     /**

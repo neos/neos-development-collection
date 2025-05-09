@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Neos\ContentRepository\Core\Projection;
 
 /**
@@ -7,8 +9,17 @@ namespace Neos\ContentRepository\Core\Projection;
  */
 enum ProjectionStatusType
 {
+    /**
+     * No actions needed
+     */
     case OK;
-    case ERROR;
+    /**
+     * The projection needs to be setup to adjust its schema
+     * {@see \Neos\ContentRepository\Core\Service\ContentRepositoryMaintainer::setUp()}
+     */
     case SETUP_REQUIRED;
-    case REPLAY_REQUIRED;
+    /**
+     * An error occurred while determining the status (e.g. connection is closed)
+     */
+    case ERROR;
 }

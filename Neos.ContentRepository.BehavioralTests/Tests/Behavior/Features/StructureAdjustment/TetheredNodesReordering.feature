@@ -22,15 +22,13 @@ Feature: Tethered Nodes Reordering Structure changes
     And the command CreateRootWorkspace is executed with payload:
       | Key                  | Value                |
       | workspaceName        | "live"               |
-      | workspaceTitle       | "Live"               |
-      | workspaceDescription | "The live workspace" |
       | newContentStreamId   | "cs-identifier"      |
     When I am in workspace "live" and dimension space point {}
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key             | Value                         |
       | nodeAggregateId | "lady-eleonode-rootford"      |
       | nodeTypeName    | "Neos.ContentRepository:Root" |
-    And the command CreateNodeAggregateWithNodeAndSerializedProperties is executed with payload:
+    And the command CreateNodeAggregateWithNode is executed with payload:
       | Key                                | Value                                                                                                                                      |
       | nodeAggregateId                    | "sir-david-nodenborough"                                                                                                                   |
       | nodeTypeName                       | "Neos.ContentRepository.Testing:Document"                                                                                                  |

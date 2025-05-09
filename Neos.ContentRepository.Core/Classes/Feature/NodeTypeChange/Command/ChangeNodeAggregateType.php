@@ -15,23 +15,21 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\Core\Feature\NodeTypeChange\Command;
 
 use Neos\ContentRepository\Core\CommandHandler\CommandInterface;
-use Neos\ContentRepository\Core\Feature\Common\MatchableWithNodeIdToPublishOrDiscardInterface;
 use Neos\ContentRepository\Core\Feature\Common\RebasableToOtherWorkspaceInterface;
 use Neos\ContentRepository\Core\Feature\NodeCreation\Dto\NodeAggregateIdsByNodePaths;
 use Neos\ContentRepository\Core\Feature\NodeTypeChange\Dto\NodeAggregateTypeChangeChildConstraintConflictResolutionStrategy;
-use Neos\ContentRepository\Core\Feature\WorkspacePublication\Dto\NodeIdToPublishOrDiscard;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 
 /**
+ * The "Change node aggregate type" command
+ *
  * @api commands are the write-API of the ContentRepository
  */
 final readonly class ChangeNodeAggregateType implements
     CommandInterface,
     \JsonSerializable,
-    MatchableWithNodeIdToPublishOrDiscardInterface,
     RebasableToOtherWorkspaceInterface
 {
     /**
@@ -61,9 +59,6 @@ final readonly class ChangeNodeAggregateType implements
         return new self($workspaceName, $nodeAggregateId, $newNodeTypeName, $strategy, NodeAggregateIdsByNodePaths::createEmpty());
     }
 
-    /**
-     * @param array<string,mixed> $array
-     */
     public static function fromArray(array $array): self
     {
         return new self(
@@ -75,11 +70,6 @@ final readonly class ChangeNodeAggregateType implements
                 ? NodeAggregateIdsByNodePaths::fromArray($array['tetheredDescendantNodeAggregateIds'])
                 : NodeAggregateIdsByNodePaths::createEmpty()
         );
-    }
-
-    public function matchesNodeId(NodeIdToPublishOrDiscard $nodeIdToPublish): bool
-    {
-        return $this->nodeAggregateId->equals($nodeIdToPublish->nodeAggregateId);
     }
 
     /**

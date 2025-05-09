@@ -40,8 +40,6 @@ Feature: Set node properties with different scopes
     And the command CreateRootWorkspace is executed with payload:
       | Key                  | Value                |
       | workspaceName        | "live"               |
-      | workspaceTitle       | "Live"               |
-      | workspaceDescription | "The live workspace" |
       | newContentStreamId   | "cs-identifier"      |
     And I am in workspace "live" and dimension space point {"language":"mul"}
     And the command CreateRootNodeAggregateWithNode is executed with payload:
@@ -65,55 +63,108 @@ Feature: Set node properties with different scopes
       | sourceOrigin    | {"language":"mul"}  |
       | targetOrigin    | {"language":"gsw"}  |
 
-  Scenario: Set node properties
+  Scenario: Set node references in separate commands
     And the command SetNodeReferences is executed with payload:
       | Key                             | Value                             |
       | sourceNodeAggregateId           | "source-nodandaise"               |
-      | referenceName                   | "unscopedReference"               |
       | sourceOriginDimensionSpacePoint | {"language": "de"}                |
-      | references                      | [{"target": "anthony-destinode"}] |
+      | references                      | [{"referenceName": "unscopedReference", "references": [{"target": "anthony-destinode"}]}] |
     And the command SetNodeReferences is executed with payload:
       | Key                             | Value                             |
       | sourceNodeAggregateId           | "source-nodandaise"               |
-      | referenceName                   | "unscopedReferences"              |
       | sourceOriginDimensionSpacePoint | {"language": "de"}                |
-      | references                      | [{"target": "anthony-destinode"}] |
+      | references                      | [{"referenceName": "unscopedReferences", "references": [{"target": "anthony-destinode"}]}] |
     And the command SetNodeReferences is executed with payload:
       | Key                             | Value                             |
       | sourceNodeAggregateId           | "source-nodandaise"               |
-      | referenceName                   | "nodeScopedReference"             |
       | sourceOriginDimensionSpacePoint | {"language": "de"}                |
-      | references                      | [{"target": "anthony-destinode"}] |
+      | references                      | [{"referenceName": "nodeScopedReference", "references": [{"target": "anthony-destinode"}]}] |
     And the command SetNodeReferences is executed with payload:
       | Key                             | Value                             |
       | sourceNodeAggregateId           | "source-nodandaise"               |
-      | referenceName                   | "nodeScopedReferences"            |
       | sourceOriginDimensionSpacePoint | {"language": "de"}                |
-      | references                      | [{"target": "anthony-destinode"}] |
+      | references                      | [{"referenceName": "nodeScopedReferences", "references": [{"target": "anthony-destinode"}]}] |
     And the command SetNodeReferences is executed with payload:
       | Key                             | Value                             |
       | sourceNodeAggregateId           | "source-nodandaise"               |
-      | referenceName                   | "nodeAggregateScopedReference"    |
       | sourceOriginDimensionSpacePoint | {"language": "de"}                |
-      | references                      | [{"target": "anthony-destinode"}] |
+      | references                      | [{"referenceName": "nodeAggregateScopedReference", "references": [{"target": "anthony-destinode"}]}] |
     And the command SetNodeReferences is executed with payload:
       | Key                             | Value                             |
       | sourceNodeAggregateId           | "source-nodandaise"               |
-      | referenceName                   | "nodeAggregateScopedReferences"   |
       | sourceOriginDimensionSpacePoint | {"language": "de"}                |
-      | references                      | [{"target": "anthony-destinode"}] |
+      | references                      | [{"referenceName": "nodeAggregateScopedReferences", "references": [{"target": "anthony-destinode"}]}] |
     And the command SetNodeReferences is executed with payload:
       | Key                             | Value                             |
       | sourceNodeAggregateId           | "source-nodandaise"               |
-      | referenceName                   | "specializationsScopedReference"  |
       | sourceOriginDimensionSpacePoint | {"language": "de"}                |
-      | references                      | [{"target": "anthony-destinode"}] |
+      | references                      | [{"referenceName": "specializationsScopedReference", "references": [{"target": "anthony-destinode"}]}] |
     And the command SetNodeReferences is executed with payload:
       | Key                             | Value                             |
       | sourceNodeAggregateId           | "source-nodandaise"               |
-      | referenceName                   | "specializationsScopedReferences" |
       | sourceOriginDimensionSpacePoint | {"language": "de"}                |
-      | references                      | [{"target": "anthony-destinode"}] |
+      | references                      | [{"referenceName": "specializationsScopedReferences", "references": [{"target": "anthony-destinode"}]}] |
+
+    When I am in workspace "live" and dimension space point {"language": "mul"}
+    Then I expect node aggregate identifier "source-nodandaise" to lead to node cs-identifier;source-nodandaise;{"language": "mul"}
+    And I expect this node to have the following references:
+      | Name                          | Node                                                | Properties |
+      | nodeAggregateScopedReference  | cs-identifier;anthony-destinode;{"language": "mul"} | null       |
+      | nodeAggregateScopedReferences | cs-identifier;anthony-destinode;{"language": "mul"} | null       |
+
+    And I expect node aggregate identifier "anthony-destinode" to lead to node cs-identifier;anthony-destinode;{"language": "mul"}
+    And I expect this node to be referenced by:
+      | Name                          | Node                                                | Properties |
+      | nodeAggregateScopedReference  | cs-identifier;source-nodandaise;{"language": "mul"} | null       |
+      | nodeAggregateScopedReferences | cs-identifier;source-nodandaise;{"language": "mul"} | null       |
+
+    When I am in workspace "live" and dimension space point {"language": "de"}
+    Then I expect node aggregate identifier "source-nodandaise" to lead to node cs-identifier;source-nodandaise;{"language": "de"}
+    And I expect this node to have the following references:
+      | Name                            | Node                                                | Properties |
+      | nodeAggregateScopedReference    | cs-identifier;anthony-destinode;{"language": "mul"} | null       |
+      | nodeAggregateScopedReferences   | cs-identifier;anthony-destinode;{"language": "mul"} | null       |
+      | nodeScopedReference             | cs-identifier;anthony-destinode;{"language": "mul"} | null       |
+      | nodeScopedReferences            | cs-identifier;anthony-destinode;{"language": "mul"} | null       |
+      | specializationsScopedReference  | cs-identifier;anthony-destinode;{"language": "mul"} | null       |
+      | specializationsScopedReferences | cs-identifier;anthony-destinode;{"language": "mul"} | null       |
+      | unscopedReference               | cs-identifier;anthony-destinode;{"language": "mul"} | null       |
+      | unscopedReferences              | cs-identifier;anthony-destinode;{"language": "mul"} | null       |
+    And I expect node aggregate identifier "anthony-destinode" to lead to node cs-identifier;anthony-destinode;{"language": "mul"}
+    And I expect this node to be referenced by:
+      | Name                            | Node                                               | Properties |
+      | nodeAggregateScopedReference    | cs-identifier;source-nodandaise;{"language": "de"} | null       |
+      | nodeAggregateScopedReferences   | cs-identifier;source-nodandaise;{"language": "de"} | null       |
+      | nodeScopedReference             | cs-identifier;source-nodandaise;{"language": "de"} | null       |
+      | nodeScopedReferences            | cs-identifier;source-nodandaise;{"language": "de"} | null       |
+      | specializationsScopedReference  | cs-identifier;source-nodandaise;{"language": "de"} | null       |
+      | specializationsScopedReferences | cs-identifier;source-nodandaise;{"language": "de"} | null       |
+      | unscopedReference               | cs-identifier;source-nodandaise;{"language": "de"} | null       |
+      | unscopedReferences              | cs-identifier;source-nodandaise;{"language": "de"} | null       |
+
+    When I am in workspace "live" and dimension space point {"language": "gsw"}
+    Then I expect node aggregate identifier "source-nodandaise" to lead to node cs-identifier;source-nodandaise;{"language": "gsw"}
+    And I expect this node to have the following references:
+      | Name                            | Node                                                | Properties |
+      | nodeAggregateScopedReference    | cs-identifier;anthony-destinode;{"language": "mul"} | null       |
+      | nodeAggregateScopedReferences   | cs-identifier;anthony-destinode;{"language": "mul"} | null       |
+      | specializationsScopedReference  | cs-identifier;anthony-destinode;{"language": "mul"} | null       |
+      | specializationsScopedReferences | cs-identifier;anthony-destinode;{"language": "mul"} | null       |
+    And I expect node aggregate identifier "anthony-destinode" to lead to node cs-identifier;anthony-destinode;{"language": "mul"}
+    And I expect this node to be referenced by:
+      | Name                            | Node                                                | Properties |
+      | nodeAggregateScopedReference    | cs-identifier;source-nodandaise;{"language": "gsw"} | null       |
+      | nodeAggregateScopedReferences   | cs-identifier;source-nodandaise;{"language": "gsw"} | null       |
+      | specializationsScopedReference  | cs-identifier;source-nodandaise;{"language": "gsw"} | null       |
+      | specializationsScopedReferences | cs-identifier;source-nodandaise;{"language": "gsw"} | null       |
+
+
+  Scenario: Set node properties in single command
+    And the command SetNodeReferences is executed with payload:
+      | Key                             | Value                                                    |
+      | sourceNodeAggregateId           | "source-nodandaise"                                      |
+      | sourceOriginDimensionSpacePoint | {"language": "de"}                                       |
+      | references                      | [{"referenceName": "unscopedReference", "references": [{"target": "anthony-destinode"}]}, {"referenceName": "unscopedReferences", "references": [{"target": "anthony-destinode"}]}, {"referenceName": "nodeScopedReference", "references": [{"target": "anthony-destinode"}]}, {"referenceName": "nodeScopedReferences", "references": [{"target": "anthony-destinode"}]}, {"referenceName": "nodeAggregateScopedReference", "references": [{"target": "anthony-destinode"}]}, {"referenceName": "nodeAggregateScopedReferences", "references": [{"target": "anthony-destinode"}]}, {"referenceName": "specializationsScopedReference", "references": [{"target": "anthony-destinode"}]}, {"referenceName": "specializationsScopedReferences", "references": [{"target": "anthony-destinode"}]}]|
 
     When I am in workspace "live" and dimension space point {"language": "mul"}
     Then I expect node aggregate identifier "source-nodandaise" to lead to node cs-identifier;source-nodandaise;{"language": "mul"}

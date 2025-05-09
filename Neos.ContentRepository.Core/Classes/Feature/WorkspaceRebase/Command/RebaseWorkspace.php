@@ -42,6 +42,15 @@ final readonly class RebaseWorkspace implements CommandInterface
         return new self($workspaceName, ContentStreamId::create(), RebaseErrorHandlingStrategy::STRATEGY_FAIL);
     }
 
+    public static function fromArray(array $array): self
+    {
+        return new self(
+            WorkspaceName::fromString($array['workspaceName']),
+            isset($array['rebasedContentStreamId']) ? ContentStreamId::fromString($array['rebasedContentStreamId']) : ContentStreamId::create(),
+            isset($array['rebaseErrorHandlingStrategy']) ? RebaseErrorHandlingStrategy::from($array['rebaseErrorHandlingStrategy']) : RebaseErrorHandlingStrategy::STRATEGY_FAIL,
+        );
+    }
+
     /**
      * Call this method if you want to run this command fully deterministically, f.e. during test cases
      */

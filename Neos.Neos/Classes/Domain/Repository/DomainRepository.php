@@ -84,6 +84,7 @@ class DomainRepository extends Repository
     public function findOneByHost($hostname, $onlyActive = false): ?Domain
     {
         $allMatchingDomains = $this->findByHost($hostname, $onlyActive);
+        // Fixme, requesting `onedimension.localhost` if domain `localhost` exists in the set would return the latter because of `getSortedMatches`
         return count($allMatchingDomains) > 0 ? $allMatchingDomains[0] : null;
     }
 

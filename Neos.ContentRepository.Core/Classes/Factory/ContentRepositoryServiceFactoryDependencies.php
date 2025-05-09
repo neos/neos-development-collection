@@ -19,22 +19,21 @@ use Neos\ContentRepository\Core\Dimension\ContentDimensionSourceInterface;
 use Neos\ContentRepository\Core\DimensionSpace\ContentDimensionZookeeper;
 use Neos\ContentRepository\Core\DimensionSpace\InterDimensionalVariationGraph;
 use Neos\ContentRepository\Core\EventStore\EventNormalizer;
-use Neos\ContentRepository\Core\EventStore\EventPersister;
 use Neos\ContentRepository\Core\Infrastructure\Property\PropertyConverter;
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
-use Neos\ContentRepository\Core\Projection\Projections;
+use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphReadModelInterface;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
+use Neos\ContentRepository\Core\Subscription\Engine\SubscriptionEngine;
 use Neos\EventStore\EventStoreInterface;
 
 /**
  * Implementation detail of {@see ContentRepositoryServiceFactoryInterface}
  *
- * @api because you get it as argument inside {@see ContentRepositoryServiceFactoryInterface}
+ * @internal as dependency collection inside {@see ContentRepositoryServiceFactoryInterface}
  */
 final readonly class ContentRepositoryServiceFactoryDependencies
 {
     private function __construct(
-        // These properties are from ProjectionFactoryDependencies
         public ContentRepositoryId $contentRepositoryId,
         public EventStoreInterface $eventStore,
         public EventNormalizer $eventNormalizer,
@@ -44,9 +43,8 @@ final readonly class ContentRepositoryServiceFactoryDependencies
         public InterDimensionalVariationGraph $interDimensionalVariationGraph,
         public PropertyConverter $propertyConverter,
         public ContentRepository $contentRepository,
-        // we don't need CommandBus, because this is included in ContentRepository->handle()
-        public EventPersister $eventPersister,
-        public Projections $projections,
+        public ContentGraphReadModelInterface $contentGraphReadModel,
+        public SubscriptionEngine $subscriptionEngine,
     ) {
     }
 
@@ -54,23 +52,30 @@ final readonly class ContentRepositoryServiceFactoryDependencies
      * @internal
      */
     public static function create(
-        ProjectionFactoryDependencies $projectionFactoryDependencies,
+        ContentRepositoryId $contentRepositoryId,
+        EventStoreInterface $eventStore,
+        EventNormalizer $eventNormalizer,
+        NodeTypeManager $nodeTypeManager,
+        ContentDimensionSourceInterface $contentDimensionSource,
+        ContentDimensionZookeeper $contentDimensionZookeeper,
+        InterDimensionalVariationGraph $interDimensionalVariationGraph,
+        PropertyConverter $propertyConverter,
         ContentRepository $contentRepository,
-        EventPersister $eventPersister,
-        Projections $projections,
+        ContentGraphReadModelInterface $contentGraphReadModel,
+        SubscriptionEngine $subscriptionEngine,
     ): self {
         return new self(
-            $projectionFactoryDependencies->contentRepositoryId,
-            $projectionFactoryDependencies->eventStore,
-            $projectionFactoryDependencies->eventNormalizer,
-            $projectionFactoryDependencies->nodeTypeManager,
-            $projectionFactoryDependencies->contentDimensionSource,
-            $projectionFactoryDependencies->contentDimensionZookeeper,
-            $projectionFactoryDependencies->interDimensionalVariationGraph,
-            $projectionFactoryDependencies->propertyConverter,
+            $contentRepositoryId,
+            $eventStore,
+            $eventNormalizer,
+            $nodeTypeManager,
+            $contentDimensionSource,
+            $contentDimensionZookeeper,
+            $interDimensionalVariationGraph,
+            $propertyConverter,
             $contentRepository,
-            $eventPersister,
-            $projections,
+            $contentGraphReadModel,
+            $subscriptionEngine,
         );
     }
 }

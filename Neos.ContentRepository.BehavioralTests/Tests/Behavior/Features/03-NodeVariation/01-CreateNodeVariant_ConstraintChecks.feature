@@ -10,6 +10,10 @@ Feature: Create node variant
       | language   | de, gsw | gsw->de         |
     And using the following node types:
     """yaml
+    'Neos.ContentRepository:Root':
+      childNodes:
+        tethered:
+          type: 'Neos.ContentRepository.Testing:Tethered'
     'Neos.ContentRepository.Testing:Document':
       childNodes:
         tethered:
@@ -20,16 +24,15 @@ Feature: Create node variant
     And I am in content repository "default"
     And I am user identified by "initiating-user-identifier"
     And the command CreateRootWorkspace is executed with payload:
-      | Key                  | Value                |
-      | workspaceName        | "live"               |
-      | workspaceTitle       | "Live"               |
-      | workspaceDescription | "The live workspace" |
-      | newContentStreamId   | "cs-identifier"      |
+      | Key                | Value           |
+      | workspaceName      | "live"          |
+      | newContentStreamId | "cs-identifier" |
     And I am in workspace "live" and dimension space point {"market":"DE", "language":"gsw"}
     And the command CreateRootNodeAggregateWithNode is executed with payload:
-      | Key             | Value                         |
-      | nodeAggregateId | "lady-eleonode-rootford"      |
-      | nodeTypeName    | "Neos.ContentRepository:Root" |
+      | Key                                | Value                             |
+      | nodeAggregateId                    | "lady-eleonode-rootford"          |
+      | nodeTypeName                       | "Neos.ContentRepository:Root"     |
+      | tetheredDescendantNodeAggregateIds | {"tethered": "nodimer-tetherton"} |
     # We have to add another node since root nodes have no dimension space points and thus cannot be varied
     # Node /document
     And the following CreateNodeAggregateWithNode commands are executed:
@@ -49,7 +52,7 @@ Feature: Create node variant
     Then the last command should have thrown an exception of type "WorkspaceDoesNotExist"
 
   Scenario: Try to create a variant in a workspace that does not exist
-    When the command CloseContentStream is executed with payload:
+    When the event ContentStreamWasClosed was published with payload:
       | Key             | Value           |
       | contentStreamId | "cs-identifier" |
     And the command CreateNodeVariant is executed with payload and exceptions are caught:
@@ -75,7 +78,7 @@ Feature: Create node variant
       | targetOrigin    | {"market":"DE", "language":"de"}  |
     Then the last command should have thrown an exception of type "NodeAggregateIsRoot"
 
-  Scenario: Try to create a variant in a tethered node aggregate
+  Scenario: Try to create a variant in a tethered node aggregate which is not a child of a root node aggregate
     When the command CreateNodeVariant is executed with payload and exceptions are caught:
       | Key             | Value                             |
       | nodeAggregateId | "nodewyn-tetherton"               |
@@ -122,3 +125,11 @@ Feature: Create node variant
       | sourceOrigin    | {"market":"DE", "language":"gsw"} |
       | targetOrigin    | {"market":"DE", "language":"de"}  |
     Then the last command should have thrown an exception of type "NodeAggregateDoesCurrentlyNotCoverDimensionSpacePoint"
+
+  Scenario: Creating variants of tethered root children is allowed
+    When the command CreateNodeVariant is executed with payload:
+      | Key             | Value                             |
+      | nodeAggregateId | "nodimer-tetherton"               |
+      | sourceOrigin    | {"market":"DE", "language":"de"}  |
+      | targetOrigin    | {"market":"DE", "language":"gsw"} |
+    # no exceptions

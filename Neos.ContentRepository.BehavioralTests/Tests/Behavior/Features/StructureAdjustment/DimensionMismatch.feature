@@ -21,8 +21,6 @@ Feature: Dimension mismatch
     And the command CreateRootWorkspace is executed with payload:
       | Key                  | Value                |
       | workspaceName        | "live"               |
-      | workspaceTitle       | "Live"               |
-      | workspaceDescription | "The live workspace" |
       | newContentStreamId   | "cs-identifier"      |
     And I am in workspace "live" and dimension space point {"language": "en"}
     And the command CreateRootNodeAggregateWithNode is executed with payload:
@@ -32,7 +30,7 @@ Feature: Dimension mismatch
 
   Scenario: Generalization detection
     # Node /document
-    When the command CreateNodeAggregateWithNodeAndSerializedProperties is executed with payload:
+    When the command CreateNodeAggregateWithNode is executed with payload:
       | Key                       | Value                                     |
       | nodeAggregateId           | "sir-david-nodenborough"                  |
       | nodeTypeName              | "Neos.ContentRepository.Testing:Document" |

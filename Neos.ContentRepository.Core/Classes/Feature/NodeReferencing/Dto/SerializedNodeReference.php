@@ -20,35 +20,46 @@ use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 /**
  * "Raw" / Serialized node reference as saved in the event log // in projections.
  *
- * @internal
+ * @api used in commands and events {@see SerializedNodeReferences}
  */
 final readonly class SerializedNodeReference implements \JsonSerializable
 {
-    public function __construct(
+    private function __construct(
         public NodeAggregateId $targetNodeAggregateId,
-        public ?SerializedPropertyValues $properties
+        public SerializedPropertyValues $properties
     ) {
     }
 
+    public static function fromTargetAndProperties(NodeAggregateId $targetNodeAggregateId, SerializedPropertyValues $properties): self
+    {
+        return new self($targetNodeAggregateId, $properties);
+    }
+
+    public static function fromTarget(NodeAggregateId $targetNodeAggregateId): self
+    {
+        return new self($targetNodeAggregateId, SerializedPropertyValues::createEmpty());
+    }
+
     /**
-     * @param array<string,mixed> $array
+     * @param array{"target": string, "properties"?: array<string, mixed>} $array
      */
     public static function fromArray(array $array): self
     {
         return new self(
-            NodeAggregateId::fromString($array['targetNodeAggregateId']),
-            $array['properties'] ? SerializedPropertyValues::fromArray($array['properties']) : null
+            NodeAggregateId::fromString($array['target']),
+            isset($array['properties']) ? SerializedPropertyValues::fromArray($array['properties']) : SerializedPropertyValues::createEmpty()
         );
     }
 
     /**
-     * @return array<string,mixed>
+     * @return array{"target": NodeAggregateId, "properties"?: SerializedPropertyValues}
      */
     public function jsonSerialize(): array
     {
-        return [
-            'targetNodeAggregateId' => $this->targetNodeAggregateId,
-            'properties' => $this->properties
-        ];
+        $result = ['target' => $this->targetNodeAggregateId];
+        if (count($this->properties) > 0) {
+            $result['properties'] = $this->properties;
+        }
+        return $result;
     }
 }

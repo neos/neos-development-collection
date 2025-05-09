@@ -15,13 +15,14 @@ namespace Neos\ContentRepository\Core\Feature\ContentStreamForking\Event;
  */
 
 use Neos\ContentRepository\Core\EventStore\EventInterface;
+use Neos\ContentRepository\Core\Feature\Common\EmbedsContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\EventStore\Model\Event\Version;
 
 /**
  * @api events are the persistence-API of the content repository
  */
-final readonly class ContentStreamWasForked implements EventInterface
+final readonly class ContentStreamWasForked implements EventInterface, EmbedsContentStreamId
 {
     public function __construct(
         /**
@@ -31,6 +32,11 @@ final readonly class ContentStreamWasForked implements EventInterface
         public ContentStreamId $sourceContentStreamId,
         public Version $versionOfSourceContentStream,
     ) {
+    }
+
+    public function getContentStreamId(): ContentStreamId
+    {
+        return $this->newContentStreamId;
     }
 
     public static function fromArray(array $values): self

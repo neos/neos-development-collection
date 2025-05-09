@@ -14,14 +14,11 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\NodeMigration\Transformation;
 
-use Neos\ContentRepository\Core\CommandHandler\CommandResult;
 use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
-use Neos\ContentRepository\Core\Feature\NodeModification\Command\SetSerializedNodeProperties;
-use Neos\ContentRepository\Core\Feature\NodeModification\Dto\SerializedPropertyValues;
+use Neos\ContentRepository\Core\Feature\NodeModification\Command\SetNodeProperties;
+use Neos\ContentRepository\Core\Feature\NodeModification\Dto\PropertyValuesToWrite;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
-use Neos\ContentRepository\Core\SharedModel\Node\PropertyNames;
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 
 /**
@@ -34,13 +31,12 @@ class RenamePropertyTransformationFactory implements TransformationFactoryInterf
      */
     public function build(
         array $settings,
-        ContentRepository $contentRepository
+        ContentRepository $contentRepository,
     ): GlobalTransformationInterface|NodeAggregateBasedTransformationInterface|NodeBasedTransformationInterface
     {
         return new class (
             $settings['from'],
             $settings['to'],
-            $contentRepository
         ) implements NodeBasedTransformationInterface {
             public function __construct(
                 /**
@@ -51,7 +47,6 @@ class RenamePropertyTransformationFactory implements TransformationFactoryInterf
                  * New name of property
                  */
                 private readonly string $to,
-                private readonly ContentRepository $contentRepository
             )
             {
             }
@@ -59,26 +54,24 @@ class RenamePropertyTransformationFactory implements TransformationFactoryInterf
             public function execute(
                 Node $node,
                 DimensionSpacePointSet $coveredDimensionSpacePoints,
-                WorkspaceName $workspaceNameForWriting,
-                ContentStreamId $contentStreamForWriting
-            ): ?CommandResult
+                WorkspaceName $workspaceNameForWriting
+            ): TransformationStep
             {
-                $serializedPropertyValue = $node->properties->serialized()->getProperty($this->from);
-                if ($serializedPropertyValue !== null) {
-                    return $this->contentRepository->handle(
-                        SetSerializedNodeProperties::create(
-                            $workspaceNameForWriting,
-                            $node->aggregateId,
-                            $node->originDimensionSpacePoint,
-                            SerializedPropertyValues::fromArray([
-                                $this->to => $serializedPropertyValue
-                            ]),
-                            PropertyNames::fromArray([$this->from])
-                        )
-                    );
+                $propertyValue = $node->properties[$this->from];
+                if ($propertyValue === null) {
+                    return TransformationStep::createEmpty();
                 }
-
-                return null;
+                return TransformationStep::fromCommand(
+                    SetNodeProperties::create(
+                        $workspaceNameForWriting,
+                        $node->aggregateId,
+                        $node->originDimensionSpacePoint,
+                        PropertyValuesToWrite::fromArray([
+                            $this->to => $propertyValue,
+                            $this->from => null,
+                        ]),
+                    )
+                );
             }
         };
     }

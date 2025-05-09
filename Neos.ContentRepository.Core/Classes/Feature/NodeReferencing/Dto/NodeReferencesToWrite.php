@@ -14,93 +14,71 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Core\Feature\NodeReferencing\Dto;
 
-use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
-use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateIds;
-
 /**
- * Node references to write, supports arbitrary objects as reference property values.
- * Will be then converted to {@see SerializedNodeReferences} inside the events and persisted commands.
+ * Node references to write
  *
- * We expect the value types to match the NodeType's property types (this is validated in the command handler).
+ * As we support property values on the reference this definition object structure will be converted to its Serialized* counterparts.
+ * These serializable objects will then be part of the events and persisted commands. See {@see SerializedNodeReferences}
  *
- * @implements \IteratorAggregate<NodeReferenceToWrite>
+ * @implements \IteratorAggregate<NodeReferencesForName>
  * @api used as part of commands
  */
-final readonly class NodeReferencesToWrite implements \IteratorAggregate, \Countable, \JsonSerializable
+final readonly class NodeReferencesToWrite implements \IteratorAggregate
 {
     /**
-     * @var array<NodeReferenceToWrite>
+     * @var array<string, NodeReferencesForName>
      */
-    public array $references;
+    public array $referencesForName;
 
-    private function __construct(NodeReferenceToWrite ...$references)
+    private function __construct(NodeReferencesForName ...$items)
     {
-        $this->references = $references;
+        $referencesForName = [];
+        foreach ($items as $item) {
+            if (isset($referencesForName[$item->referenceName->value])) {
+                throw new \InvalidArgumentException(sprintf('NodeReferencesToWrite does not accept references for the same name %s multiple times.', $item->referenceName->value), 1718193720);
+            }
+            $referencesForName[$item->referenceName->value] = $item;
+        }
+        $this->referencesForName = $referencesForName;
     }
 
-    /**
-     * @param array<NodeReferenceToWrite> $references
-     */
-    public static function fromReferences(array $references): self
-    {
-        return new self(...$references);
-    }
-
-    /**
-     * @param array<int,array<string,mixed>> $values
-     */
-    public static function fromArray(array $values): self
-    {
-        return new self(...array_map(
-            fn (array $serializedReference): NodeReferenceToWrite
-                => NodeReferenceToWrite::fromArray($serializedReference),
-            $values
-        ));
-    }
-
-    /**
-     * Unset all references for this reference name.
-     */
     public static function createEmpty(): self
     {
         return new self();
     }
 
-    public static function fromNodeAggregateIds(NodeAggregateIds $nodeAggregateIds): self
+    public static function create(NodeReferencesForName ...$referencesForName): self
     {
-        return new self(...array_map(
-            fn (NodeAggregateId $nodeAggregateId): NodeReferenceToWrite
-                => new NodeReferenceToWrite($nodeAggregateId, null),
-            iterator_to_array($nodeAggregateIds)
-        ));
+        return new self(...$referencesForName);
     }
 
     /**
-     * @throws \JsonException
+     * @param array<NodeReferencesForName> $references
      */
-    public static function fromJsonString(string $jsonString): self
+    public static function fromArray(array $references): self
     {
-        return self::fromArray(\json_decode($jsonString, true, 512, JSON_THROW_ON_ERROR));
+        return new self(...$references);
     }
 
-    /**
-     * @return \Traversable<NodeReferenceToWrite>
-     */
+    public function withReference(NodeReferencesForName $referencesForName): self
+    {
+        $references = $this->referencesForName;
+        $references[$referencesForName->referenceName->value] = $referencesForName;
+        return new self(...$references);
+    }
+
+    public function merge(NodeReferencesToWrite $other): self
+    {
+        return new self(...array_merge($this->referencesForName, $other->referencesForName));
+    }
+
     public function getIterator(): \Traversable
     {
-        yield from $this->references;
+        yield from array_values($this->referencesForName);
     }
 
-    /**
-     * @return array<NodeReferenceToWrite>
-     */
-    public function jsonSerialize(): array
+    public function isEmpty(): bool
     {
-        return $this->references;
-    }
-
-    public function count(): int
-    {
-        return count($this->references);
+        return count($this->referencesForName) === 0;
     }
 }

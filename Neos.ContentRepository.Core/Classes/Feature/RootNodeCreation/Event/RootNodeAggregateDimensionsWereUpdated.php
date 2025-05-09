@@ -16,8 +16,11 @@ namespace Neos\ContentRepository\Core\Feature\RootNodeCreation\Event;
 
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Core\EventStore\EventInterface;
-use Neos\ContentRepository\Core\Feature\Common\EmbedsContentStreamAndNodeAggregateId;
+use Neos\ContentRepository\Core\Feature\Common\EmbedsContentStreamId;
+use Neos\ContentRepository\Core\Feature\Common\EmbedsNodeAggregateId;
+use Neos\ContentRepository\Core\Feature\Common\EmbedsWorkspaceName;
 use Neos\ContentRepository\Core\Feature\Common\PublishableToWorkspaceInterface;
+use Neos\ContentRepository\Core\Feature\NodeRemoval\Event\NodeAggregateWasRemoved;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
@@ -26,12 +29,17 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
  * A root node aggregate is now visible in other dimensions. Needed when configured dimensions
  * change.
  *
+ * This event is only emitted if new root generalisations were added.
+ * For the removal of a dimension a {@see NodeAggregateWasRemoved} targeting the root node will be emitted.
+ *
  * @api events are the persistence-API of the content repository
  */
 final readonly class RootNodeAggregateDimensionsWereUpdated implements
     EventInterface,
     PublishableToWorkspaceInterface,
-    EmbedsContentStreamAndNodeAggregateId
+    EmbedsContentStreamId,
+    EmbedsNodeAggregateId,
+    EmbedsWorkspaceName
 {
     public function __construct(
         public WorkspaceName $workspaceName,
@@ -50,6 +58,11 @@ final readonly class RootNodeAggregateDimensionsWereUpdated implements
     public function getNodeAggregateId(): NodeAggregateId
     {
         return $this->nodeAggregateId;
+    }
+
+    public function getWorkspaceName(): WorkspaceName
+    {
+        return $this->workspaceName;
     }
 
     public function withWorkspaceNameAndContentStreamId(WorkspaceName $targetWorkspaceName, ContentStreamId $contentStreamId): self

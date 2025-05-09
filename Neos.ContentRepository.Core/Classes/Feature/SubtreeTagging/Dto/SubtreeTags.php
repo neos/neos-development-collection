@@ -27,7 +27,6 @@ final readonly class SubtreeTags implements \IteratorAggregate, \Countable, \Jso
      */
     private array $tags;
 
-
     private function __construct(SubtreeTag ...$tags)
     {
         $tagsByValue = [];
@@ -42,6 +41,11 @@ final readonly class SubtreeTags implements \IteratorAggregate, \Countable, \Jso
         return new self();
     }
 
+    public static function create(SubtreeTag ...$tags): self
+    {
+        return new self(...$tags);
+    }
+
     /**
      * @param array<SubtreeTag> $tags
      */
@@ -53,6 +57,14 @@ final readonly class SubtreeTags implements \IteratorAggregate, \Countable, \Jso
     public static function fromStrings(string ...$tags): self
     {
         return new self(...array_map(SubtreeTag::fromString(...), $tags));
+    }
+
+    public function with(SubtreeTag $subtreeTagToAdd): self
+    {
+        if ($this->contain($subtreeTagToAdd)) {
+            return $this;
+        }
+        return new self(...[...$this->tags, $subtreeTagToAdd]);
     }
 
     public function without(SubtreeTag $subtreeTagToRemove): self
@@ -83,14 +95,20 @@ final readonly class SubtreeTags implements \IteratorAggregate, \Countable, \Jso
         return self::fromArray(array_intersect_key($this->tags, $other->tags));
     }
 
+    public function difference(self $other): self
+    {
+        return self::fromArray(array_diff_key($this->tags, $other->tags));
+    }
+
     public function merge(self $other): self
     {
         return self::fromArray(array_merge($this->tags, $other->tags));
     }
 
     /**
-     * @param \Closure(SubtreeTag): mixed $callback
-     * @return array<mixed>
+     * @template T
+     * @param \Closure(SubtreeTag $tag): T $callback
+     * @return list<T>
      */
     public function map(\Closure $callback): array
     {
@@ -105,9 +123,14 @@ final readonly class SubtreeTags implements \IteratorAggregate, \Countable, \Jso
         return $this->map(static fn (SubtreeTag $tag) => $tag->value);
     }
 
+    public function equals(SubtreeTags $other): bool
+    {
+        return count($this->tags) === count($other->tags) && array_diff_key($this->tags, $other->tags) === [];
+    }
+
     public function getIterator(): \Traversable
     {
-        return new \ArrayIterator(array_values($this->tags));
+        yield from array_values($this->tags);
     }
 
     /**

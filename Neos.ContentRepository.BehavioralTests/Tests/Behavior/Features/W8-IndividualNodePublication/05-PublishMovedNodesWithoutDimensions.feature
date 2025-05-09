@@ -78,7 +78,7 @@ Feature: Publishing moved nodes without dimensions
     And the command PublishIndividualNodesFromWorkspace is executed with payload:
       | Key            | Value                                                                                               |
       | workspaceName  | "user"                                                                                              |
-      | nodesToPublish | [{"workspaceName": "user", "dimensionSpacePoint": {}, "nodeAggregateId": "sir-david-nodenborough"}] |
+      | nodesToPublish | ["sir-david-nodenborough"] |
 
     Then I expect the graph projection to consist of exactly 4 nodes
     And I expect a node identified by cs-identifier;lady-eleonode-rootford;{} to exist in the content graph
@@ -117,7 +117,7 @@ Feature: Publishing moved nodes without dimensions
     And the command PublishIndividualNodesFromWorkspace is executed with payload:
       | Key            | Value                                                                                                   |
       | workspaceName  | "user"                                                                                                  |
-      | nodesToPublish | [{"workspaceName": "user", "dimensionSpacePoint": {}, "nodeAggregateId": "sir-nodeward-nodington-iii"}] |
+      | nodesToPublish | ["sir-nodeward-nodington-iii"] |
 
     Then I expect the graph projection to consist of exactly 4 nodes
     And I expect a node identified by cs-identifier;lady-eleonode-rootford;{} to exist in the content graph
@@ -166,7 +166,7 @@ Feature: Publishing moved nodes without dimensions
     And the command PublishIndividualNodesFromWorkspace is executed with payload:
       | Key            | Value                                                                                               |
       | workspaceName  | "user"                                                                                              |
-      | nodesToPublish | [{"workspaceName": "user", "dimensionSpacePoint": {}, "nodeAggregateId": "sir-david-nodenborough"}] |
+      | nodesToPublish | ["sir-david-nodenborough"] |
 
     Then I expect the graph projection to consist of exactly 5 nodes
     And I expect a node identified by cs-identifier;lady-eleonode-rootford;{} to exist in the content graph
@@ -210,7 +210,7 @@ Feature: Publishing moved nodes without dimensions
     And the command PublishIndividualNodesFromWorkspace is executed with payload:
       | Key            | Value                                                                                         |
       | workspaceName  | "user"                                                                                        |
-      | nodesToPublish | [{"workspaceName": "user", "dimensionSpacePoint": {}, "nodeAggregateId": "nody-mc-nodeface"}] |
+      | nodesToPublish | ["nody-mc-nodeface"] |
 
     Then I expect the graph projection to consist of exactly 4 nodes
     And I expect a node identified by cs-identifier;lady-eleonode-rootford;{} to exist in the content graph

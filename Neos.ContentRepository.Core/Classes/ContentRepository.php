@@ -15,59 +15,52 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\Core;
 
 use Neos\ContentRepository\Core\CommandHandler\CommandBus;
+use Neos\ContentRepository\Core\CommandHandler\CommandHookInterface;
 use Neos\ContentRepository\Core\CommandHandler\CommandInterface;
-use Neos\ContentRepository\Core\CommandHandler\CommandResult;
 use Neos\ContentRepository\Core\Dimension\ContentDimensionSourceInterface;
+use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\DimensionSpace\InterDimensionalVariationGraph;
 use Neos\ContentRepository\Core\EventStore\DecoratedEvent;
 use Neos\ContentRepository\Core\EventStore\EventInterface;
 use Neos\ContentRepository\Core\EventStore\EventNormalizer;
-use Neos\ContentRepository\Core\EventStore\EventPersister;
-use Neos\ContentRepository\Core\EventStore\Events;
+use Neos\ContentRepository\Core\EventStore\Events as DomainEvents;
 use Neos\ContentRepository\Core\EventStore\EventsToPublish;
-use Neos\ContentRepository\Core\Factory\ContentRepositoryFactory;
+use Neos\ContentRepository\Core\EventStore\InitiatingEventMetadata;
+use Neos\ContentRepository\Core\EventStore\PublishedEvents;
+use Neos\ContentRepository\Core\Feature\Security\AuthProviderInterface;
+use Neos\ContentRepository\Core\Feature\Security\Dto\UserId;
+use Neos\ContentRepository\Core\Feature\Security\Exception\AccessDenied;
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
-use Neos\ContentRepository\Core\Projection\CatchUp;
-use Neos\ContentRepository\Core\Projection\CatchUpOptions;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphInterface;
-use Neos\ContentRepository\Core\Projection\ContentStream\ContentStreamFinder;
-use Neos\ContentRepository\Core\Projection\ProjectionInterface;
-use Neos\ContentRepository\Core\Projection\ProjectionsAndCatchUpHooks;
+use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphReadModelInterface;
+use Neos\ContentRepository\Core\Projection\ContentGraph\ContentSubgraphInterface;
 use Neos\ContentRepository\Core\Projection\ProjectionStateInterface;
-use Neos\ContentRepository\Core\Projection\ProjectionStatuses;
-use Neos\ContentRepository\Core\Projection\Workspace\WorkspaceFinder;
+use Neos\ContentRepository\Core\Projection\ProjectionStates;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
-use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryStatus;
 use Neos\ContentRepository\Core\SharedModel\Exception\WorkspaceDoesNotExist;
-use Neos\ContentRepository\Core\SharedModel\User\UserIdProviderInterface;
+use Neos\ContentRepository\Core\SharedModel\Workspace\Workspace;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
+use Neos\ContentRepository\Core\SharedModel\Workspace\Workspaces;
+use Neos\ContentRepository\Core\Subscription\Engine\SubscriptionEngine;
+use Neos\ContentRepository\Core\Subscription\Exception\CatchUpHadErrors;
 use Neos\EventStore\EventStoreInterface;
-use Neos\EventStore\Model\Event\EventMetadata;
-use Neos\EventStore\Model\EventEnvelope;
-use Neos\EventStore\Model\EventStream\VirtualStreamName;
+use Neos\EventStore\Exception\ConcurrencyException;
+use Neos\EventStore\Model\Event\CorrelationId;
+use Neos\EventStore\Model\Events;
 use Psr\Clock\ClockInterface;
 
 /**
  * Main Entry Point to the system. Encapsulates the full event-sourced Content Repository.
  *
  * Use this to:
- * - set up the necessary database tables and contents via {@see ContentRepository::setUp()}
- * - send commands to the system (to mutate state) via {@see ContentRepository::handle()}
- * - access projection state (to read state) via {@see ContentRepository::projectionState()}
- * - catch up projections via {@see ContentRepository::catchUpProjection()}
+ * - send commands to the system (to mutate state) via {@see self::handle()}
+ * - access the content graph read model
+ * - access 3rd party read models via {@see self::projectionState()}
  *
  * @api
  */
 final class ContentRepository
 {
-    /**
-     * @var array<class-string<ProjectionStateInterface>, ProjectionStateInterface>
-     */
-    private array $projectionStateCache;
-
-    private CommandHandlingDependencies $commandHandlingDependencies;
-
-
     /**
      * @internal use the {@see ContentRepositoryFactory::getOrBuild()} to instantiate
      */
@@ -75,60 +68,85 @@ final class ContentRepository
         public readonly ContentRepositoryId $id,
         private readonly CommandBus $commandBus,
         private readonly EventStoreInterface $eventStore,
-        private readonly ProjectionsAndCatchUpHooks $projectionsAndCatchUpHooks,
         private readonly EventNormalizer $eventNormalizer,
-        private readonly EventPersister $eventPersister,
+        private readonly SubscriptionEngine $subscriptionEngine,
         private readonly NodeTypeManager $nodeTypeManager,
         private readonly InterDimensionalVariationGraph $variationGraph,
         private readonly ContentDimensionSourceInterface $contentDimensionSource,
-        private readonly UserIdProviderInterface $userIdProvider,
+        private readonly AuthProviderInterface $authProvider,
         private readonly ClockInterface $clock,
+        private readonly ContentGraphReadModelInterface $contentGraphReadModel,
+        private readonly CommandHookInterface $commandHook,
+        private readonly ProjectionStates $projectionStates,
     ) {
-        $this->commandHandlingDependencies = new CommandHandlingDependencies($this);
     }
 
     /**
      * The only API to send commands (mutation intentions) to the system.
      *
      * @param CommandInterface $command
-     * @return CommandResult
+     * @throws AccessDenied
      */
-    public function handle(CommandInterface $command): CommandResult
+    public function handle(CommandInterface $command): void
     {
-        // the commands only calculate which events they want to have published, but do not do the
-        // publishing themselves
-        $eventsToPublish = $this->commandBus->handle($command, $this->commandHandlingDependencies);
+        $command = $this->commandHook->onBeforeHandle($command);
+        $privilege = $this->authProvider->canExecuteCommand($command);
+        if (!$privilege->granted) {
+            throw AccessDenied::becauseCommandIsNotGranted($command, $privilege->getReason());
+        }
 
-        // TODO meaningful exception message
-        $initiatingUserId = $this->userIdProvider->getUserId();
-        $initiatingTimestamp = $this->clock->now()->format(\DateTimeInterface::ATOM);
+        $toPublish = $this->commandBus->handle($command);
+        $correlationId = CorrelationId::fromString(sprintf('%s_%s', substr($command::class, strrpos($command::class, '\\') + 1, 20), bin2hex(random_bytes(9))));
 
-        // Add "initiatingUserId" and "initiatingTimestamp" metadata to all events.
-        //                        This is done in order to keep information about the _original_ metadata when an
-        //                        event is re-applied during publishing/rebasing
-        // "initiatingUserId": The identifier of the user that originally triggered this event. This will never
-        //                     be overridden if it is set once.
-        // "initiatingTimestamp": The timestamp of the original event. The "recordedAt" timestamp will always be
-        //                        re-created and reflects the time an event was actually persisted in a stream,
-        // the "initiatingTimestamp" will be kept and is never overridden again.
-        // TODO: cleanup
-        $eventsToPublish = new EventsToPublish(
-            $eventsToPublish->streamName,
-            Events::fromArray(
-                $eventsToPublish->events->map(function (EventInterface|DecoratedEvent $event) use (
-                    $initiatingUserId,
-                    $initiatingTimestamp
-                ) {
-                    $metadata = $event instanceof DecoratedEvent ? $event->eventMetadata?->value ?? [] : [];
-                    $metadata['initiatingUserId'] ??= $initiatingUserId;
-                    $metadata['initiatingTimestamp'] ??= $initiatingTimestamp;
-                    return DecoratedEvent::create($event, metadata: EventMetadata::fromArray($metadata));
-                })
-            ),
-            $eventsToPublish->expectedVersion,
-        );
+        // simple case
+        if ($toPublish instanceof EventsToPublish) {
+            $this->eventStore->commit($toPublish->streamName, $this->enrichAndNormalizeEvents($toPublish->events, $correlationId), $toPublish->expectedVersion);
+            $fullCatchUpResult = $this->subscriptionEngine->catchUpActive(); // NOTE: we don't batch here, to ensure the catchup is run completely and any errors don't stop it.
+            if ($fullCatchUpResult->hadErrors()) {
+                throw CatchUpHadErrors::createFromErrors($fullCatchUpResult->errors);
+            }
+            $additionalCommands = $this->commandHook->onAfterHandle($command, $toPublish->events->toInnerEvents());
+            foreach ($additionalCommands as $additionalCommand) {
+                $this->handle($additionalCommand);
+            }
+            return;
+        }
 
-        return $this->eventPersister->publishEvents($eventsToPublish);
+        // control-flow aware command handling via generator
+        $publishedEvents = PublishedEvents::createEmpty();
+        try {
+            foreach ($toPublish as $eventsToPublish) {
+                try {
+                    $this->eventStore->commit($eventsToPublish->streamName, $this->enrichAndNormalizeEvents($eventsToPublish->events, $correlationId), $eventsToPublish->expectedVersion);
+                    $publishedEvents = $publishedEvents->withAppendedEvents($eventsToPublish->events->toInnerEvents());
+                } catch (ConcurrencyException $concurrencyException) {
+                    // we pass the exception into the generator (->throw), so it could be try-caught and reacted upon:
+                    //
+                    //   try {
+                    //      yield new EventsToPublish(...);
+                    //   } catch (ConcurrencyException $e) {
+                    //      yield $this->reopenContentStream();
+                    //      throw $e;
+                    //   }
+                    $yieldedErrorStrategy = $toPublish->throw($concurrencyException);
+                    if ($yieldedErrorStrategy instanceof EventsToPublish) {
+                        $this->eventStore->commit($yieldedErrorStrategy->streamName, $this->enrichAndNormalizeEvents($yieldedErrorStrategy->events, $correlationId), $yieldedErrorStrategy->expectedVersion);
+                    }
+                    throw $concurrencyException;
+                }
+            }
+        } finally {
+            // We always NEED to catchup even if there was an unexpected ConcurrencyException to make sure previous commits are handled.
+            // Technically it would be acceptable for the catchup to fail here (due to hook errors) because all the events are already persisted.
+            $fullCatchUpResult = $this->subscriptionEngine->catchUpActive(); // NOTE: we don't batch here, to ensure the catchup is run completely and any errors don't stop it.
+            if ($fullCatchUpResult->hadErrors()) {
+                throw CatchUpHadErrors::createFromErrors($fullCatchUpResult->errors);
+            }
+        }
+        $additionalCommands = $this->commandHook->onAfterHandle($command, $publishedEvents);
+        foreach ($additionalCommands as $additionalCommand) {
+            $this->handle($additionalCommand);
+        }
     }
 
 
@@ -139,118 +157,56 @@ final class ContentRepository
      */
     public function projectionState(string $projectionStateClassName): ProjectionStateInterface
     {
-        if (isset($this->projectionStateCache[$projectionStateClassName])) {
-            /** @var T $projectionState */
-            $projectionState = $this->projectionStateCache[$projectionStateClassName];
-            return $projectionState;
-        }
-        foreach ($this->projectionsAndCatchUpHooks->projections as $projection) {
-            $projectionState = $projection->getState();
-            if ($projectionState instanceof $projectionStateClassName) {
-                $this->projectionStateCache[$projectionStateClassName] = $projectionState;
-                return $projectionState;
-            }
-        }
-        throw new \InvalidArgumentException(sprintf('A projection state of type "%s" is not registered in this content repository instance.', $projectionStateClassName), 1662033650);
+        return $this->projectionStates->get($projectionStateClassName);
     }
 
     /**
-     * @param class-string<ProjectionInterface<ProjectionStateInterface>> $projectionClassName
+     * @throws WorkspaceDoesNotExist if the workspace does not exist
+     * @throws AccessDenied if no read access is granted to the workspace ({@see AuthProviderInterface})
      */
-    public function catchUpProjection(string $projectionClassName, CatchUpOptions $options): void
+    public function getContentGraph(WorkspaceName $workspaceName): ContentGraphInterface
     {
-        $projection = $this->projectionsAndCatchUpHooks->projections->get($projectionClassName);
-
-        $catchUpHookFactory = $this->projectionsAndCatchUpHooks->getCatchUpHookFactoryForProjection($projection);
-        $catchUpHook = $catchUpHookFactory?->build($this);
-
-        // TODO allow custom stream name per projection
-        $streamName = VirtualStreamName::all();
-        $eventStream = $this->eventStore->load($streamName);
-        if ($options->maximumSequenceNumber !== null) {
-            $eventStream = $eventStream->withMaximumSequenceNumber($options->maximumSequenceNumber);
+        $privilege = $this->authProvider->canReadNodesFromWorkspace($workspaceName);
+        if (!$privilege->granted) {
+            throw AccessDenied::becauseWorkspaceCantBeRead($workspaceName, $privilege->getReason());
         }
-
-        $eventApplier = function (EventEnvelope $eventEnvelope) use ($projection, $catchUpHook, $options) {
-            $event = $this->eventNormalizer->denormalize($eventEnvelope->event);
-            if ($options->progressCallback !== null) {
-                ($options->progressCallback)($event, $eventEnvelope);
-            }
-            if (!$projection->canHandle($event)) {
-                return;
-            }
-            $catchUpHook?->onBeforeEvent($event, $eventEnvelope);
-            $projection->apply($event, $eventEnvelope);
-            $catchUpHook?->onAfterEvent($event, $eventEnvelope);
-        };
-
-        $catchUp = CatchUp::create($eventApplier, $projection->getCheckpointStorage());
-
-        if ($catchUpHook !== null) {
-            $catchUpHook->onBeforeCatchUp();
-            $catchUp = $catchUp->withOnBeforeBatchCompleted(fn() => $catchUpHook->onBeforeBatchCompleted());
-        }
-        $catchUp->run($eventStream);
-        $catchUpHook?->onAfterCatchUp();
-    }
-
-    public function setUp(): void
-    {
-        $this->eventStore->setup();
-        foreach ($this->projectionsAndCatchUpHooks->projections as $projection) {
-            $projection->setUp();
-        }
-    }
-
-    public function status(): ContentRepositoryStatus
-    {
-        $projectionStatuses = ProjectionStatuses::create();
-        foreach ($this->projectionsAndCatchUpHooks->projections as $projectionClassName => $projection) {
-            $projectionStatuses = $projectionStatuses->with($projectionClassName, $projection->status());
-        }
-        return new ContentRepositoryStatus(
-            $this->eventStore->status(),
-            $projectionStatuses,
-        );
-    }
-
-    public function resetProjectionStates(): void
-    {
-        foreach ($this->projectionsAndCatchUpHooks->projections as $projection) {
-            $projection->reset();
-        }
+        return $this->contentGraphReadModel->getContentGraph($workspaceName);
     }
 
     /**
-     * @param class-string<ProjectionInterface<ProjectionStateInterface>> $projectionClassName
+     * Main API to retrieve a content subgraph, taking VisibilityConstraints of the current user
+     * into account ({@see AuthProviderInterface::getVisibilityConstraints()})
+     *
+     * @throws WorkspaceDoesNotExist if the workspace does not exist
+     * @throws AccessDenied if no read access is granted to the workspace ({@see AuthProviderInterface})
      */
-    public function resetProjectionState(string $projectionClassName): void
+    public function getContentSubgraph(WorkspaceName $workspaceName, DimensionSpacePoint $dimensionSpacePoint): ContentSubgraphInterface
     {
-        $projection = $this->projectionsAndCatchUpHooks->projections->get($projectionClassName);
-        $projection->reset();
+        $contentGraph = $this->getContentGraph($workspaceName);
+        $visibilityConstraints = $this->authProvider->getVisibilityConstraints($workspaceName);
+        return $contentGraph->getSubgraph($dimensionSpacePoint, $visibilityConstraints);
+    }
+
+    /**
+     * Returns the workspace with the given name, or NULL if it does not exist in this content repository
+     */
+    public function findWorkspaceByName(WorkspaceName $workspaceName): ?Workspace
+    {
+        return $this->contentGraphReadModel->findWorkspaceByName($workspaceName);
+    }
+
+    /**
+     * Returns all workspaces of this content repository. To limit the set, {@see Workspaces::find()} and {@see Workspaces::filter()} can be used
+     * as well as {@see Workspaces::getBaseWorkspaces()} and {@see Workspaces::getDependantWorkspacesRecursively()}.
+     */
+    public function findWorkspaces(): Workspaces
+    {
+        return $this->contentGraphReadModel->findWorkspaces();
     }
 
     public function getNodeTypeManager(): NodeTypeManager
     {
         return $this->nodeTypeManager;
-    }
-
-    /**
-     * @throws WorkspaceDoesNotExist if the workspace does not exist
-     */
-    public function getContentGraph(WorkspaceName $workspaceName): ContentGraphInterface
-    {
-        return $this->projectionState(ContentGraphFinder::class)->getByWorkspaceName($workspaceName);
-    }
-
-    public function getWorkspaceFinder(): WorkspaceFinder
-    {
-        return $this->projectionState(WorkspaceFinder::class);
-    }
-
-    public function getContentStreamFinder(): ContentStreamFinder
-    {
-        return $this->projectionState(ContentStreamFinder::class);
     }
 
     public function getVariationGraph(): InterDimensionalVariationGraph
@@ -261,5 +217,22 @@ final class ContentRepository
     public function getContentDimensionSource(): ContentDimensionSourceInterface
     {
         return $this->contentDimensionSource;
+    }
+
+    private function enrichAndNormalizeEvents(DomainEvents $events, CorrelationId $correlationId): Events
+    {
+        $initiatingUserId = $this->authProvider->getAuthenticatedUserId() ?? UserId::forSystemUser();
+        $initiatingTimestamp = $this->clock->now();
+
+        $eventsWithMetaData = InitiatingEventMetadata::enrichEventsWithInitiatingMetadata(
+            $events,
+            $initiatingUserId,
+            $initiatingTimestamp
+        );
+
+        return Events::fromArray($eventsWithMetaData->map(function (EventInterface|DecoratedEvent $event) use ($correlationId) {
+            $decoratedEvent = DecoratedEvent::create($event, correlationId: $correlationId);
+            return $this->eventNormalizer->normalize($decoratedEvent);
+        }));
     }
 }

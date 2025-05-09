@@ -51,7 +51,7 @@ This change removes that support. So this is breaking and projects need to be ad
 
 The advantage of removing them is that the number of cache tags to be flushed during publishing is lower. TODO: Add number.
 
-This change requires `#3631 <https://github.com/neos/neos-development-collection/issues/3631>`_to be merged first.
+This change requires `#3631 <https://github.com/neos/neos-development-collection/issues/3631>`_ to be merged first.
 
 Removed the legacy cache tag generation.
 
@@ -178,8 +178,7 @@ I was wondering about making this more open by allowing a string/array to be set
 
 When using the ConvertUrisImplementation in fusion, the option setExternal can be used to add rel="external" to a link.
 
-`
-   @class = 'Neos\\\Neos\\\Fusion\\\ConvertUrisImplementation'
+    @class = 'Neos\\\Neos\\\Fusion\\\ConvertUrisImplementation'
     value = ${value}
     node = ${node}
     externalLinkTarget = '_blank'
@@ -188,7 +187,6 @@ When using the ConvertUrisImplementation in fusion, the option setExternal can b
     forceConversion = false
     setNoOpener = true
     setExternal = true
-`
 
 
 ********************
@@ -250,7 +248,7 @@ This change removes that support. So this is breaking and projects need to be ad
 
 The advantage of removing them is that the number of cache tags to be flushed during publishing is lower. TODO: Add number.
 
-This change requires `#3631 <https://github.com/neos/neos-development-collection/issues/3631>`_to be merged first.
+This change requires `#3631 <https://github.com/neos/neos-development-collection/issues/3631>`_ to be merged first.
 
 Removed the legacy cache tag generation.
 

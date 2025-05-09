@@ -60,20 +60,18 @@ class ContentDimensionsController extends ActionController
     {
         $contentRepositoryId = SiteDetectionResult::fromRequest($this->request->getHttpRequest())
             ->contentRepositoryId;
-        $controllerInternals = $this->contentRepositoryRegistry->buildService(
-            $contentRepositoryId,
-            new ContentDimensionsControllerInternalsFactory()
-        );
+        $interDimensionalVariationGraph = $this->contentRepositoryRegistry->get($contentRepositoryId)
+            ->getVariationGraph();
 
         if ($this->view instanceof JsonView) {
             $this->view->assign(
                 'value',
-                $controllerInternals->interDimensionalVariationGraph->getDimensionSpacePoints()
+                $interDimensionalVariationGraph->getDimensionSpacePoints()
             );
         } else {
             $this->view->assign(
                 'contentDimensionsPresets',
-                $controllerInternals->interDimensionalVariationGraph->getDimensionSpacePoints()
+                $interDimensionalVariationGraph->getDimensionSpacePoints()
             );
         }
     }

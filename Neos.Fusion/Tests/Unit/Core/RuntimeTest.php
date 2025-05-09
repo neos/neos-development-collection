@@ -59,7 +59,7 @@ class RuntimeTest extends UnitTestCase
         $this->expectException(Exception::class);
         $objectManager = $this->getMockBuilder(ObjectManager::class)->disableOriginalConstructor()->setMethods(['isRegistered', 'get'])->getMock();
         $runtimeException = new RuntimeException('I am a parent exception', 123, new Exception('I am a previous exception'), 'root');
-        $runtime = new Runtime(FusionConfiguration::fromArray([]), FusionGlobals::empty());
+        $runtime = new Runtime(FusionConfiguration::fromArray([]), FusionGlobals::createEmpty());
         $this->inject($runtime, 'objectManager', $objectManager);
         $exceptionHandlerSetting = 'settings';
         $runtime->injectSettings(['rendering' => ['exceptionHandler' => $exceptionHandlerSetting]]);
@@ -81,7 +81,7 @@ class RuntimeTest extends UnitTestCase
             self::callback(fn (ProtectedContext $actualContext) => $actualContext->get('foo') === '19')
         );
 
-        $runtime = new Runtime(FusionConfiguration::fromArray([]), FusionGlobals::empty());
+        $runtime = new Runtime(FusionConfiguration::fromArray([]), FusionGlobals::createEmpty());
         $this->inject($runtime, 'eelEvaluator', $eelEvaluator);
 
         $runtime->pushContextArray(['foo' => '19']);
@@ -108,7 +108,7 @@ class RuntimeTest extends UnitTestCase
                     ]
                 ]
             ]
-        ]), FusionGlobals::empty());
+        ]), FusionGlobals::createEmpty());
 
         $runtime->evaluate('foo/bar');
     }
@@ -131,7 +131,7 @@ class RuntimeTest extends UnitTestCase
      */
     public function runtimeCurrentContextStackWorksSimplePushPop()
     {
-        $runtime = new Runtime(FusionConfiguration::fromArray([]), FusionGlobals::empty());
+        $runtime = new Runtime(FusionConfiguration::fromArray([]), FusionGlobals::createEmpty());
 
         self::assertSame([], $runtime->getCurrentContext(), 'context should be empty at start.');
 
@@ -149,7 +149,7 @@ class RuntimeTest extends UnitTestCase
      */
     public function runtimeCurrentContextStack3PushesAndPops()
     {
-        $runtime = new Runtime(FusionConfiguration::fromArray([]), FusionGlobals::empty());
+        $runtime = new Runtime(FusionConfiguration::fromArray([]), FusionGlobals::createEmpty());
 
         self::assertSame([], $runtime->getCurrentContext(), 'empty at start');
 
@@ -298,7 +298,7 @@ class RuntimeTest extends UnitTestCase
     public function renderEntryPathStream(mixed $rawValue, string $expectedStreamContents)
     {
         $runtime = $this->getMockBuilder(Runtime::class)
-            ->setConstructorArgs([FusionConfiguration::fromArray([]), FusionGlobals::empty()])
+            ->setConstructorArgs([FusionConfiguration::fromArray([]), FusionGlobals::createEmpty()])
             ->onlyMethods(['render'])
             ->getMock();
 
@@ -319,7 +319,7 @@ class RuntimeTest extends UnitTestCase
     public function renderEntryPathResponse(mixed $rawValue, string $expectedHttpResponseString)
     {
         $runtime = $this->getMockBuilder(Runtime::class)
-            ->setConstructorArgs([FusionConfiguration::fromArray([]), FusionGlobals::empty()])
+            ->setConstructorArgs([FusionConfiguration::fromArray([]), FusionGlobals::createEmpty()])
             ->onlyMethods(['render'])
             ->getMock();
 
@@ -372,7 +372,7 @@ class RuntimeTest extends UnitTestCase
         $this->expectExceptionMessage(sprintf('Fusion entry path "path" is expected to render a compatible http response body: string|\Stringable|null. Got %s instead.', get_debug_type($illegalValue)));
 
         $runtime = $this->getMockBuilder(Runtime::class)
-            ->setConstructorArgs([FusionConfiguration::fromArray([]), FusionGlobals::empty()])
+            ->setConstructorArgs([FusionConfiguration::fromArray([]), FusionGlobals::createEmpty()])
             ->onlyMethods(['render'])
             ->getMock();
 

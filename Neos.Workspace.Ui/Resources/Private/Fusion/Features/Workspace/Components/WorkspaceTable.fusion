@@ -1,0 +1,57 @@
+##
+# Renders a list of workspaces
+#
+prototype(Neos.Workspace.Ui:Component.WorkspaceTable) < prototype(Neos.Fusion:Component) {
+  /// \Neos\Workspace\Ui\ViewModel\WorkspaceListItems
+  workspaceListItems = null
+  /// Neos\Workspace\Ui\ViewModel\Sorting
+  sorting = null
+
+  @private {
+    i18n = ${I18n.id('').source('Main').package('Neos.Workspace.Ui')}
+    workspacesUri = Neos.Fusion:ActionUri {
+      action = 'index'
+      format = 'html'
+      arguments {
+        // Todo hack convert to array manually, flows routing chokes on value objects: Tried to convert an object of type "Neos\Workspace\Ui\ViewModel\Sorting" to an identity array, but it is unknown to the Persistence Manager.
+        sorting = ${sorting.withInvertedSorting().jsonSerialize()}
+      }
+    }
+  }
+
+  renderer = afx`
+    <table id="workspaceTable" class="workspace-table" hx-swap-oob="true">
+      <thead>
+      <tr>
+        <th></th>
+        <th>
+          <button
+            type="button"
+            class="icon-button"
+            hx-get={private.workspacesUri}
+            hx-select="#workspace-module-content"
+            hx-target="#workspace-module-content"
+            hx-swap="outerHTML"
+          >
+            {private.i18n.id('workspaces.workspace.title').translate()}
+            <Neos.Workspace.Ui:Component.Icon icon={props.sorting.sortAscending ? 'sort-alpha-down' : 'sort-alpha-up'}/>
+          </button>
+        </th>
+        <th>{private.i18n.id('workspaces.workspace.description')}</th>
+        <th>{private.i18n.id('workspaces.workspace.status')}</th>
+        <th>{private.i18n.id('workspaces.workspace.changes')}</th>
+        <th>{private.i18n.id('workspaces.workspace.actions')}</th>
+      </tr>
+      </thead>
+      <tbody>
+        <Neos.Workspace.Ui:Component.WorkspaceTreeNode
+          workspaceListItems={props.workspaceListItems}
+          baseWorkspaceListItems={Array.filter(props.workspaceListItems, (entryWorkspace) =>
+              entryWorkspace.baseWorkspaceName == 'live'
+              || !Array.some(props.workspaceListItems, (workspace) => entryWorkspace.baseWorkspaceName == workspace.name)
+          )}
+        />
+      </tbody>
+    </table>
+  `
+}

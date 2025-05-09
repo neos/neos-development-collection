@@ -34,8 +34,6 @@ Feature: Create node aggregate with node
     And the command CreateRootWorkspace is executed with payload:
       | Key                  | Value                |
       | workspaceName        | "live"               |
-      | workspaceTitle       | "Live"               |
-      | workspaceDescription | "The live workspace" |
       | newContentStreamId   | "cs-identifier"      |
     And I am in workspace "live" and dimension space point {}
     And the command CreateRootNodeAggregateWithNode is executed with payload:
@@ -55,7 +53,7 @@ Feature: Create node aggregate with node
     Then the last command should have thrown an exception of type "WorkspaceDoesNotExist"
 
   Scenario: Try to create a node aggregate in a workspace whose content stream is closed:
-    When the command CloseContentStream is executed with payload:
+    When the event ContentStreamWasClosed was published with payload:
       | Key             | Value           |
       | contentStreamId | "cs-identifier" |
     And the command CreateNodeAggregateWithNode is executed with payload and exceptions are caught:
@@ -184,4 +182,4 @@ Feature: Create node aggregate with node
       | nodeAggregateId       | "nody-mc-nodeface"                                           |
       | nodeTypeName          | "Neos.ContentRepository.Testing:NodeWithInvalidDefaultValue" |
       | parentNodeAggregateId | "lady-eleonode-rootford"                                     |
-    Then the last command should have thrown an exception of type "CallErrorException"
+    Then the last command should have thrown an exception of type "InvalidArgumentException"

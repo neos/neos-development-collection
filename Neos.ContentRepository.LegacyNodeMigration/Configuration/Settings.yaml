@@ -1,0 +1,6 @@
+Neos:
+  ContentRepository:
+    LegacyNodeMigration:
+      rootNodeMapping:
+        default:
+            '/sites': 'Neos.Neos:Sites'

@@ -245,12 +245,12 @@ you probably need to install some packages through pip.
   sudo pacman -S python-pip
 
 There are different ways of dealing with Python-packages.
-The following way is to install it in the user-directory and a
-dding the bin-path to the $PATH – Environment.
+The following way is to install it in the user-directory and
+add the bin-path to the $PATH – Environment.
 
 .. code-block:: bash
 
-  pip install --user Sphinx
+  pip install --user sphinx
   pip install --user sphinx-autobuild
   pip install --user sphinx_rtd_theme
 
@@ -322,6 +322,9 @@ With *todo* you are able to point out that there is still some work necessary.
 Add a todo, if you feel like there is something missing here, or someone else needs to check
 if what you have written is correct like this. Just use it a lot to make sure it's obvious
 what still needs to be done...
+
+.. todo::
+  This is a todo
 
 .. note::
   Every following line which is indented by two spaces now, is part of the note.

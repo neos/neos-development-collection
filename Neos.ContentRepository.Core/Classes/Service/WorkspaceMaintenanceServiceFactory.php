@@ -17,8 +17,7 @@ class WorkspaceMaintenanceServiceFactory implements ContentRepositoryServiceFact
         ContentRepositoryServiceFactoryDependencies $serviceFactoryDependencies
     ): WorkspaceMaintenanceService {
         return new WorkspaceMaintenanceService(
-            $serviceFactoryDependencies->contentRepository,
-            $serviceFactoryDependencies->eventStore,
+            $serviceFactoryDependencies->contentRepository
         );
     }
 }

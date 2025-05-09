@@ -50,24 +50,26 @@ trait NodeReferencing
                     }
                 );
 
-                // remove old
-                $this->getDatabaseConnection()->delete($this->tableNamePrefix . '_referencerelation', [
-                    'sourcenodeanchor' => $anchorPoint->value,
-                    'name' => $event->referenceName->value
-                ]);
-
-                // set new
                 $position = 0;
-                foreach ($event->references as $reference) {
-                    $referenceRecord = new ReferenceRelationRecord(
-                        $anchorPoint,
-                        $event->referenceName,
-                        $position,
-                        $reference->properties,
-                        $reference->targetNodeAggregateId
-                    );
-                    $referenceRecord->addToDatabase($this->getDatabaseConnection(), $this->tableNamePrefix);
-                    $position++;
+                foreach ($event->references as $referencesForProperty) {
+                    // TODO can't we turn this into two atomic queries?
+                    $this->getDatabaseConnection()->delete($this->tableNamePrefix . '_referencerelation', [
+                        'sourcenodeanchor' => $anchorPoint->value,
+                        'name' => $referencesForProperty->referenceName->value
+                    ]);
+
+                    foreach ($referencesForProperty->references as $reference) {
+                        // set new
+                        $referenceRecord = new ReferenceRelationRecord(
+                            $anchorPoint,
+                            $referencesForProperty->referenceName,
+                            $position,
+                            $reference->properties,
+                            $reference->targetNodeAggregateId
+                        );
+                        $referenceRecord->addToDatabase($this->getDatabaseConnection(), $this->tableNamePrefix);
+                        $position++;
+                    }
                 }
             } else {
                 throw EventCouldNotBeAppliedToContentGraph::becauseTheSourceNodeIsMissing(get_class($event));

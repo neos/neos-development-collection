@@ -1,26 +1,3 @@
-Neos\ContentRepositoryRegistry\ContentRepositoryRegistry:
-  arguments:
-    1:
-      setting: Neos.ContentRepositoryRegistry
-
-# !!! UGLY WORKAROUNDS, because we cannot wire non-Flow class constructor arguments here.
-Neos\ContentRepository\Core\Projection\ContentStream\ContentStreamProjectionFactory:
-  scope: singleton
-  factoryObjectName: Neos\ContentRepositoryRegistry\Infrastructure\GenericObjectFactory
-  arguments:
-    1:
-      value: Neos\ContentRepository\Core\Projection\ContentStream\ContentStreamProjectionFactory
-    2:
-      object: 'Doctrine\DBAL\Connection'
-
-Neos\ContentRepository\Core\Projection\Workspace\WorkspaceProjectionFactory:
-  scope: singleton
-  factoryObjectName: Neos\ContentRepositoryRegistry\Infrastructure\GenericObjectFactory
-  arguments:
-    1:
-      value: Neos\ContentRepository\Core\Projection\Workspace\WorkspaceProjectionFactory
-    2:
-      object: 'Doctrine\DBAL\Connection'
 
 # This adds a soft-dependency to the neos/contentgraph-doctrinedbaladapter package
 Neos\ContentGraph\DoctrineDbalAdapter\DoctrineDbalContentGraphProjectionFactory:
@@ -31,3 +8,12 @@ Neos\ContentGraph\DoctrineDbalAdapter\DoctrineDbalContentGraphProjectionFactory:
       value: 'Neos\ContentGraph\DoctrineDbalAdapter\DoctrineDbalContentGraphProjectionFactory'
     2:
       object: 'Doctrine\DBAL\Connection'
+
+'Neos.ContentRepositoryRegistry:Logger':
+  className: Psr\Log\LoggerInterface
+  scope: singleton
+  factoryObjectName: Neos\Flow\Log\PsrLoggerFactoryInterface
+  factoryMethodName: get
+  arguments:
+    1:
+      value: contentRepositoryLogger

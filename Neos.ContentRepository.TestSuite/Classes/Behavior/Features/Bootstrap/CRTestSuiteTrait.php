@@ -15,38 +15,33 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap;
 
 use Behat\Behat\Hook\Scope\BeforeScenarioScope;
+use Behat\Gherkin\Node\PyStringNode;
 use Behat\Gherkin\Node\TableNode;
+use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceFactoryDependencies;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceFactoryInterface;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceInterface;
 use Neos\ContentRepository\Core\Feature\NodeModification\Dto\PropertyValuesToWrite;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
-use Neos\ContentRepository\Core\Projection\CatchUpOptions;
+use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphReadModelInterface;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindSubtreeFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\NodeType\NodeTypeCriteria;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Subtree;
 use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
-use Neos\ContentRepository\Core\Service\ContentStreamPruner;
+use Neos\ContentRepository\Core\Service\ContentRepositoryMaintainerFactory;
 use Neos\ContentRepository\Core\Service\ContentStreamPrunerFactory;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamState;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
+use Neos\ContentRepository\Core\Subscription\SubscriptionId;
 use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\Features\ContentStreamClosing;
-use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\Features\ContentStreamForking;
-use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\Features\NodeCopying;
 use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\Features\NodeCreation;
-use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\Features\NodeDisabling;
 use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\Features\NodeModification;
 use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\Features\NodeMove;
 use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\Features\NodeReferencing;
 use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\Features\NodeRemoval;
 use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\Features\NodeRenaming;
-use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\Features\NodeTypeChange;
-use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\Features\NodeVariation;
 use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\Features\SubtreeTagging;
 use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\Features\WorkspaceCreation;
-use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\Features\WorkspaceDiscarding;
-use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\Features\WorkspacePublishing;
 use Neos\EventStore\EventStoreInterface;
 use PHPUnit\Framework\Assert;
 
@@ -63,24 +58,17 @@ trait CRTestSuiteTrait
     use ProjectedNodeTrait;
     use GenericCommandExecutionAndEventPublication;
 
-    use ContentStreamForking;
     use ContentStreamClosing;
 
     use NodeCreation;
-    use NodeCopying;
-    use NodeDisabling;
     use SubtreeTagging;
     use NodeModification;
     use NodeMove;
     use NodeReferencing;
     use NodeRemoval;
     use NodeRenaming;
-    use NodeTypeChange;
-    use NodeVariation;
 
     use WorkspaceCreation;
-    use WorkspaceDiscarding;
-    use WorkspacePublishing;
 
     /**
      * @BeforeScenario
@@ -92,7 +80,7 @@ trait CRTestSuiteTrait
             $this->contentRepositories = [];
         }
         $this->currentContentRepository = null;
-        $this->currentVisibilityConstraints = VisibilityConstraints::frontend();
+        $this->currentVisibilityConstraints = VisibilityConstraints::default();
         $this->currentDimensionSpacePoint = null;
         $this->currentRootNodeAggregateId = null;
         $this->currentWorkspaceName = null;
@@ -108,24 +96,19 @@ trait CRTestSuiteTrait
     {
         $eventPayload = [];
         foreach ($payloadTable->getHash() as $line) {
-            if (\str_starts_with($line['Value'], '$this->')) {
-                // Special case: Referencing stuff from the context here
-                $propertyOrMethodName = \mb_substr($line['Value'], \mb_strlen('$this->'));
-                $value = match ($propertyOrMethodName) {
-                    'currentNodeAggregateId' => $this->getCurrentNodeAggregateId()->value,
-                    default => method_exists($this, $propertyOrMethodName) ? (string)$this->$propertyOrMethodName() : (string)$this->$propertyOrMethodName,
-                };
-            } else {
-                // default case
-                $value = json_decode($line['Value'], true);
-                if ($value === null && json_last_error() !== JSON_ERROR_NONE) {
-                    throw new \Exception(sprintf('The value "%s" is no valid JSON string', $line['Value']), 1546522626);
-                }
-            }
-            $eventPayload[$line['Key']] = $value;
+            $eventPayload[$line['Key']] = json_decode($line['Value'], true, 512, JSON_THROW_ON_ERROR);
         }
 
         return $eventPayload;
+    }
+
+    /**
+     * @Then /^I expect the content stream "([^"]*)" to exist$/
+     */
+    public function iExpectTheContentStreamToExist(string $rawContentStreamId): void
+    {
+        $contentStream = $this->getContentGraphReadModel()->findContentStreamById(ContentStreamId::fromString($rawContentStreamId));
+        Assert::assertNotNull($contentStream, sprintf('Content stream "%s" was expected to exist, but it does not', $rawContentStreamId));
     }
 
     /**
@@ -133,20 +116,51 @@ trait CRTestSuiteTrait
      */
     public function iExpectTheContentStreamToNotExist(string $rawContentStreamId): void
     {
-        Assert::assertTrue(
-            $this->currentContentRepository->getContentStreamFinder()->hasContentStream(ContentStreamId::fromString($rawContentStreamId)),
-            sprintf('The content stream "%s" does exist.', $rawContentStreamId)
-        );
+        $contentStream = $this->getContentGraphReadModel()->findContentStreamById(ContentStreamId::fromString($rawContentStreamId));
+        Assert::assertNull($contentStream, sprintf('Content stream "%s" was not expected to exist, but it does', $rawContentStreamId));
     }
 
     /**
-     * @Then /^workspace ([^"]*) has status ([^"]*)$/
+     * @Then /^I expect the workspace "([^"]*)" to not exist$/
      */
-    public function workspaceHasStatus(string $rawWorkspaceName, string $status): void
+    public function iExpectTheWorkspaceToNotExist(string $rawWorkspaceName): void
     {
-        $workspace = $this->currentContentRepository->getWorkspaceFinder()->findOneByName(WorkspaceName::fromString($rawWorkspaceName));
+        $workspaceByName = $this->currentContentRepository->findWorkspaceByName(WorkspaceName::fromString($rawWorkspaceName));
+        Assert::assertNull($workspaceByName, sprintf('Workspace "%s" was not expected to exist, but it does', $rawWorkspaceName));
+    }
 
-        Assert::assertSame($status, $workspace->status->value);
+    /**
+     * @Then I expect the following workspaces to exist:
+     */
+    public function iExpectTheFollowingWorkspaces(TableNode $payloadTable): void
+    {
+        $actualComparableHash = [];
+        $workspaces = $this->currentContentRepository->findWorkspaces();
+        foreach ($workspaces as $workspace) {
+            $actualComparableHash[] = array_map(json_encode(...), [
+                'name' => $workspace->workspaceName,
+                'base workspace' => $workspace->baseWorkspaceName,
+                'status' => $workspace->status,
+                'content stream' => $workspace->currentContentStreamId,
+                'publishable changes' => $workspace->hasPublishableChanges()
+            ]);
+        }
+        Assert::assertSame($payloadTable->getHash(), $actualComparableHash);
+    }
+
+    /**
+     * @Then /^workspace(?:s)? ([^"]*) ha(?:s|ve) status ([^"]*)$/
+     */
+    public function workspaceStatusMatchesExpected(string $rawWorkspaceNames, string $status): void
+    {
+        $rawWorkspaceNames = explode(',', $rawWorkspaceNames);
+        Assert::assertNotEmpty($rawWorkspaceNames);
+
+        foreach ($rawWorkspaceNames as $rawWorkspaceName) {
+            $workspace = $this->currentContentRepository->findWorkspaceByName(WorkspaceName::fromString($rawWorkspaceName));
+            Assert::assertNotNull($workspace, "Workspace $rawWorkspaceName does not exist.");
+            Assert::assertEquals($status, $workspace->status->value, "Workspace '$rawWorkspaceName' has unexpected status.");
+        }
     }
 
     /**
@@ -155,7 +169,7 @@ trait CRTestSuiteTrait
      */
     public function iExpectTheGraphProjectionToConsistOfExactlyNodes(int $expectedNumberOfNodes): void
     {
-        $actualNumberOfNodes = $this->currentContentRepository->getContentGraph($this->currentWorkspaceName)->countNodes();
+        $actualNumberOfNodes = $this->getContentGraphReadModel()->countNodes();
         Assert::assertSame($expectedNumberOfNodes, $actualNumberOfNodes, 'Content graph consists of ' . $actualNumberOfNodes . ' nodes, expected were ' . $expectedNumberOfNodes . '.');
     }
 
@@ -227,60 +241,55 @@ trait CRTestSuiteTrait
     }
 
     /**
-     * @Then the content stream :contentStreamId has state :expectedState
-     */
-    public function theContentStreamHasState(string $contentStreamId, string $expectedState): void
-    {
-        $contentStreamId = ContentStreamId::fromString($contentStreamId);
-        $contentStreamFinder = $this->currentContentRepository->getContentStreamFinder();
-
-        $actual = $contentStreamFinder->findStateForContentStream($contentStreamId);
-        Assert::assertSame(ContentStreamState::tryFrom($expectedState), $actual);
-    }
-
-    /**
-     * @Then the current content stream has state :expectedState
-     */
-    public function theCurrentContentStreamHasState(string $expectedState): void
-    {
-        $this->theContentStreamHasState(
-            $this->currentContentRepository
-                ->getWorkspaceFinder()
-                ->findOneByName($this->currentWorkspaceName)
-                ->currentContentStreamId->value,
-            $expectedState
-        );
-    }
-
-    /**
-     * @When I prune unused content streams
-     */
-    public function iPruneUnusedContentStreams(): void
-    {
-        /** @var ContentStreamPruner $contentStreamPruner */
-        $contentStreamPruner = $this->getContentRepositoryService(new ContentStreamPrunerFactory());
-        $contentStreamPruner->prune();
-    }
-
-    /**
      * @When I prune removed content streams from the event stream
      */
     public function iPruneRemovedContentStreamsFromTheEventStream(): void
     {
-        $this->getContentRepositoryService(new ContentStreamPrunerFactory())->pruneRemovedFromEventStream();
+        $this->getContentRepositoryService(new ContentStreamPrunerFactory())->pruneRemovedFromEventStream(fn () => null);
     }
+
+    /**
+     * @When I expect the content stream pruner status output:
+     */
+    public function iExpectTheContentStreamStatus(PyStringNode $pyStringNode): void
+    {
+        // todo a little dirty to compare the cli output here :D
+        $lines = [];
+        $this->getContentRepositoryService(new ContentStreamPrunerFactory())->outputStatus(function ($line = '') use (&$lines) {
+            $lines[] = $line;
+        });
+        Assert::assertSame($pyStringNode->getRaw(), join("\n", $lines));
+    }
+
 
     abstract protected function getContentRepositoryService(
         ContentRepositoryServiceFactoryInterface $factory
     ): ContentRepositoryServiceInterface;
+
+    final protected function getContentGraphReadModel(): ContentGraphReadModelInterface
+    {
+        return $this->getContentRepositoryService(new class implements ContentRepositoryServiceFactoryInterface {
+            public function build(ContentRepositoryServiceFactoryDependencies $serviceFactoryDependencies): ContentRepositoryServiceInterface
+            {
+                $contentGraphReadModel = $serviceFactoryDependencies->contentGraphReadModel;
+                return new class ($contentGraphReadModel) implements ContentRepositoryServiceInterface {
+                    public function __construct(
+                        public ContentGraphReadModelInterface $contentGraphReadModel,
+                    ) {
+                    }
+                };
+            }
+        })->contentGraphReadModel;
+    }
 
     /**
      * @When I replay the :projectionName projection
      */
     public function iReplayTheProjection(string $projectionName): void
     {
-        $this->currentContentRepository->resetProjectionState($projectionName);
-        $this->currentContentRepository->catchUpProjection($projectionName, CatchUpOptions::create());
+        $contentRepositoryMaintainer = $this->getContentRepositoryService(new ContentRepositoryMaintainerFactory());
+        $result = $contentRepositoryMaintainer->replaySubscription(SubscriptionId::fromString($projectionName));
+        Assert::assertNull($result);
     }
 
     protected function deserializeProperties(array $properties): PropertyValuesToWrite

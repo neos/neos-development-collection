@@ -17,7 +17,9 @@ namespace Neos\ContentRepository\Core\Projection\ContentGraph;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
 
 /**
- * The relative node path is a collection of node names {@see NodeName}. If it contains no elements, it is considered root.
+ * The relative node path is a collection of node names {@see NodeName}.
+ *
+ * If it contains no elements, it is considered root in combination with {@see AbsoluteNodePath}.
  *
  * Example:
  * root path: '' is resolved to []
@@ -39,11 +41,6 @@ use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
 final readonly class NodePath implements \JsonSerializable
 {
     /**
-     * @deprecated use {@see self::serializeToString()} instead
-     */
-    public string $value;
-
-    /**
      * @var array<NodeName>
      */
     private array $nodeNames;
@@ -51,10 +48,9 @@ final readonly class NodePath implements \JsonSerializable
     private function __construct(NodeName ...$nodeNames)
     {
         $this->nodeNames = $nodeNames;
-        $this->value = $this->serializeToString();
     }
 
-    public static function forRoot(): self
+    public static function createEmpty(): self
     {
         return new self();
     }
@@ -63,7 +59,7 @@ final readonly class NodePath implements \JsonSerializable
     {
         $path = ltrim($path, '/');
         if ($path === '') {
-            return self::forRoot();
+            return self::createEmpty();
         }
 
         return self::fromPathSegments(
@@ -98,7 +94,7 @@ final readonly class NodePath implements \JsonSerializable
         return new self(...$nodeNames);
     }
 
-    public function isRoot(): bool
+    public function isEmpty(): bool
     {
         return $this->getLength() === 0;
     }
@@ -144,6 +140,11 @@ final readonly class NodePath implements \JsonSerializable
     }
 
     public function jsonSerialize(): string
+    {
+        return $this->serializeToString();
+    }
+
+    public function __toString(): string
     {
         return $this->serializeToString();
     }

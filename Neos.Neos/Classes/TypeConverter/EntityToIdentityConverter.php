@@ -79,7 +79,7 @@ class EntityToIdentityConverter extends AbstractTypeConverter
         $source,
         $targetType,
         array $convertedChildProperties = [],
-        PropertyMappingConfigurationInterface $configuration = null
+        ?PropertyMappingConfigurationInterface $configuration = null
     ) {
         return [
             '__identity' => $this->persistenceManager->getIdentifierByObject($source),

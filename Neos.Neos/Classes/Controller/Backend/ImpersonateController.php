@@ -103,12 +103,12 @@ class ImpersonateController extends ActionController
      */
     protected function redirectWithParentRequest(
         string $actionName,
-        string $controllerName = null,
-        string $packageKey = null,
+        ?string $controllerName = null,
+        ?string $packageKey = null,
         array $arguments = [],
         int $delay = 0,
         int $statusCode = 303,
-        string $format = null
+        ?string $format = null
     ): void {
         $request = $this->getControllerContext()->getRequest()->getMainRequest();
         $uriBuilder = new UriBuilder();

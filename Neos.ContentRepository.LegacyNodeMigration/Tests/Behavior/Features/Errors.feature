@@ -5,6 +5,7 @@ Feature: Exceptional cases during migrations
     Given using no content dimensions
     And using the following node types:
     """yaml
+    'unstructured': {}
     'Neos.Neos:Site': {}
     'Some.Package:Homepage':
       superTypes:
@@ -34,7 +35,7 @@ Feature: Exceptional cases during migrations
       | site-node-id  | /sites/test-site | Some.Package:Homepage          | {"language": ["de"]} |
       | site-node-id  | /sites/test-site | Some.Package:SomeOtherHomepage | {"language": ["en"]} |
     And I run the event migration
-    Then I expect a MigrationError with the message
+    Then I expect a migration exception with the message
     """
     Node aggregate with id "site-node-id" has a type of "Some.Package:SomeOtherHomepage" in content dimension [{"language":"en"}]. I was visited previously for content dimension [{"language":"de"}] with the type "Some.Package:Homepage". Node variants must not have different types
     """
@@ -94,7 +95,7 @@ Feature: Exceptional cases during migrations
       | sites      | /sites   |                  |
       | a          | /sites/a | not json         |
     And I run the event migration
-    Then I expect a MigrationError
+    Then I expect a migration exception
 
   Scenario: Invalid node properties (no JSON)
     When I have the following node data rows:
@@ -102,7 +103,7 @@ Feature: Exceptional cases during migrations
       | sites      | /sites   |            |                       |
       | a          | /sites/a | not json   | Some.Package:Homepage |
     And I run the event migration
-    Then I expect a MigrationError with the message
+    Then I expect a migration exception with the message
     """
     Failed to decode properties "not json" of node "a" (type: "Some.Package:Homepage"): Could not convert database value "not json" to Doctrine Type flow_json_array
     """
@@ -118,7 +119,7 @@ Feature: Exceptional cases during migrations
       | site-node-id  | /sites/test-site | Some.Package:Homepage | {"language": ["ch"]} |
       | site-node-id  | /sites/test-site | Some.Package:Homepage | {"language": ["ch"]} |
     And I run the event migration
-    Then I expect a MigrationError with the message
+    Then I expect a migration exception with the message
     """
     Node "site-node-id" with dimension space point "{"language":"ch"}" was already visited before
     """
@@ -133,7 +134,7 @@ Feature: Exceptional cases during migrations
       | site-node-id  | /sites/test-site | Some.Package:Homepage | {"language": ["de"]} |
       | site-node-id  | /sites/test-site | Some.Package:Homepage | {"language": ["de"]} |
     And I run the event migration
-    Then I expect a MigrationError with the message
+    Then I expect a migration exception with the message
     """
     Node "site-node-id" for dimension {"language":"de"} was already created previously
     """
@@ -144,7 +145,7 @@ Feature: Exceptional cases during migrations
       | sites-node-id | /sites           | unstructured |
       | site-node-id  | /sites/test-site | unstructured |
     And I run the event migration
-    Then I expect a MigrationError with the message
+    Then I expect a migration exception with the message
     """
-    The site node "site-node-id" (type: "unstructured") must be of type "Neos.Neos:Site"
+    The site node "site-node-id" (type: "unstructured") must be of type "Neos.Neos:Site". Currently declared super types: ""
     """

@@ -15,7 +15,7 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\Features;
 
 use Behat\Gherkin\Node\TableNode;
-use Neos\ContentRepository\Core\Feature\ContentStreamClosing\Command\CloseContentStream;
+use Neos\ContentRepository\Core\Feature\ContentStreamEventStreamName;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\CRTestSuiteRuntimeVariables;
 
@@ -29,26 +29,17 @@ trait ContentStreamClosing
     abstract protected function readPayloadTable(TableNode $payloadTable): array;
 
     /**
-     * @Given /^the command CloseContentStream is executed with payload:$/
+     * @Given /^the event ContentStreamWasClosed was published with payload:$/
+     * @param TableNode $payloadTable
      * @throws \Exception
      */
-    public function theCommandCloseContentStreamIsExecutedWithPayload(TableNode $payloadTable): void
+    public function theEventContentStreamWasClosedWasPublishedWithPayload(TableNode $payloadTable)
     {
-        $commandArguments = $this->readPayloadTable($payloadTable);
-        $command = CloseContentStream::create(ContentStreamId::fromString($commandArguments['contentStreamId']));
+        $eventPayload = $this->readPayloadTable($payloadTable);
+        $streamName = ContentStreamEventStreamName::fromContentStreamId(
+            ContentStreamId::fromString($eventPayload['contentStreamId'])
+        );
 
-        $this->currentContentRepository->handle($command);
-    }
-
-    /**
-     * @Given /^the command CloseContentStream is executed with payload and exceptions are caught:$/
-     */
-    public function theCommandCloseContentStreamIsExecutedWithPayloadAndExceptionsAreCaught(TableNode $payloadTable): void
-    {
-        try {
-            $this->theCommandCloseContentStreamIsExecutedWithPayload($payloadTable);
-        } catch (\Exception $exception) {
-            $this->lastCommandException = $exception;
-        }
+        $this->publishEvent('ContentStreamWasClosed', $streamName->getEventStreamName(), $eventPayload);
     }
 }

@@ -62,7 +62,7 @@ class DateStringConverter extends AbstractTypeConverter
         $source,
         $targetType,
         array $convertedChildProperties = [],
-        PropertyMappingConfigurationInterface $configuration = null
+        ?PropertyMappingConfigurationInterface $configuration = null
     ): ?string {
         if (!$source instanceof \DateTimeInterface) {
             return null;

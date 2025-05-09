@@ -70,7 +70,7 @@ Feature: ForkContentStream Without Dimensions
 
     And the event NodePropertiesWereSet was published with payload:
       | Key                          | Value                                                   |
-      | workspaceName                | "user"                                                  |
+      | workspaceName                | "user-test"                                             |
       | contentStreamId              | "user-cs-identifier"                                    |
       | nodeAggregateId              | "nody-mc-nodeface"                                      |
       | originDimensionSpacePoint    | {}                                                      |

@@ -25,8 +25,6 @@ Feature: On forking a content stream, node references should be copied as well.
     And the command CreateRootWorkspace is executed with payload:
       | Key                  | Value                |
       | workspaceName        | "live"               |
-      | workspaceTitle       | "Live"               |
-      | workspaceDescription | "The live workspace" |
       | newContentStreamId   | "cs-identifier"      |
     And I am in workspace "live" and dimension space point {"language":"de"}
     And the command CreateRootNodeAggregateWithNode is executed with payload:
@@ -42,8 +40,7 @@ Feature: On forking a content stream, node references should be copied as well.
     Given the command SetNodeReferences is executed with payload:
       | Key                   | Value                             |
       | sourceNodeAggregateId | "source-nodandaise"               |
-      | referenceName         | "referenceProperty"               |
-      | references            | [{"target": "anthony-destinode"}] |
+      | references            | [{"referenceName": "referenceProperty", "references": [{"target": "anthony-destinode"}]}] |
 
     # Uses ForkContentStream implicitly
     When the command CreateWorkspace is executed with payload:

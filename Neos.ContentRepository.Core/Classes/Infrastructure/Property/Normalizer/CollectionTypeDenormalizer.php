@@ -34,7 +34,7 @@ final class CollectionTypeDenormalizer implements
      * @return array<int|string,mixed>
      * @throws NotNormalizableValueException
      */
-    public function denormalize($data, string $type, string $format = null, array $context = []): array
+    public function denormalize($data, string $type, ?string $format = null, array $context = []): array
     {
         if ($this->serializer === null) {
             throw new BadMethodCallException('Please set a serializer before calling denormalize()!', 1596463254);
@@ -72,7 +72,7 @@ final class CollectionTypeDenormalizer implements
      * {@inheritdoc}
      * @param array<string,mixed> $context
      */
-    public function supportsDenormalization($data, string $type, string $format = null, array $context = []): bool
+    public function supportsDenormalization($data, string $type, ?string $format = null, array $context = []): bool
     {
         if ($this->serializer === null) {
             throw new BadMethodCallException(sprintf(

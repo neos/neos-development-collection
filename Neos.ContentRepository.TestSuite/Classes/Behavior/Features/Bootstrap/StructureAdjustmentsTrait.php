@@ -15,7 +15,10 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap;
 
 use Behat\Gherkin\Node\TableNode;
+use Neos\ContentRepository\Core\Feature\WorkspaceRebase\Dto\RebaseErrorHandlingStrategy;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
+use Neos\ContentRepository\Core\Service\WorkspaceMaintenanceService;
+use Neos\ContentRepository\Core\Service\WorkspaceMaintenanceServiceFactory;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeTypeNotFound;
 use Neos\ContentRepository\StructureAdjustment\Adjustment\StructureAdjustment;
 use Neos\ContentRepository\StructureAdjustment\StructureAdjustmentService;
@@ -78,9 +81,9 @@ trait StructureAdjustmentsTrait
             if (!isset($row['Type']) || !isset($row['nodeAggregateId'])) {
                 Assert::fail('Type and nodeAggregateId must be specified in assertion!');
             }
-            $adjustment = $this->findAdjustmentsBasedOnTypeAndNodeAggregateId($actualAdjustments, $row['Type'], $row['nodeAggregateId']);
+            $adjustment = $this->findAdjustmentsBasedOnTypeAndNodeAggregateIdAndDimensionSpacePoint($actualAdjustments, $row['Type'], $row['nodeAggregateId'], $row['dimensionSpacePoint'] ?? null);
             foreach ($row as $k => $v) {
-                if (in_array($k, ['Type', 'nodeAggregateId'])) {
+                if (in_array($k, ['Type', 'nodeAggregateId', 'dimensionSpacePoint'])) {
                     continue;
                 }
 
@@ -89,14 +92,45 @@ trait StructureAdjustmentsTrait
         }
     }
 
-    private function findAdjustmentsBasedOnTypeAndNodeAggregateId(array $actualAdjustments, string $type, string $nodeAggregateId): StructureAdjustment
-    {
+    private function findAdjustmentsBasedOnTypeAndNodeAggregateIdAndDimensionSpacePoint(
+        array $actualAdjustments,
+        string $type,
+        string $nodeAggregateId,
+        ?string $dimensionSpacePointAsJSON
+    ): StructureAdjustment {
         foreach ($actualAdjustments as $adjustment) {
             assert($adjustment instanceof StructureAdjustment);
-            if ($adjustment->getType() === $type && $adjustment->getArguments()['nodeAggregateId'] === $nodeAggregateId) {
+            if (
+                $adjustment->getType() === $type
+                && $adjustment->getArguments()['nodeAggregateId'] === $nodeAggregateId
+                && ($dimensionSpacePointAsJSON === null || $adjustment->getArguments()['dimensionSpacePoint'] === $dimensionSpacePointAsJSON)
+            ) {
                 return $adjustment;
             }
         }
-        Assert::fail('Adjustment not found for type "' . $type . '" and node aggregate id "' . $nodeAggregateId . '"');
+        Assert::fail(
+            'Adjustment not found for type "' . $type . '", node aggregate id "' . $nodeAggregateId . '"'
+                ($dimensionSpacePointAsJSON ? ' and dimension space point "' . $dimensionSpacePointAsJSON . '"' : '')
+        );
+    }
+
+    /**
+     * @When outdated workspaces are rebased
+     */
+    public function outdatedWorkspacesAreRebased(): void
+    {
+        /** @var WorkspaceMaintenanceService $workspaceMaintenanceService */
+        $workspaceMaintenanceService = $this->getContentRepositoryService(new WorkspaceMaintenanceServiceFactory());
+        $workspaceMaintenanceService->rebaseOutdatedWorkspaces();
+    }
+
+    /**
+     * @When outdated workspaces are rebased with strategy :strategy
+     */
+    public function outdatedWorkspacesAreRebasedWithStrategy(string $strategy): void
+    {
+        /** @var WorkspaceMaintenanceService $workspaceMaintenanceService */
+        $workspaceMaintenanceService = $this->getContentRepositoryService(new WorkspaceMaintenanceServiceFactory());
+        $workspaceMaintenanceService->rebaseOutdatedWorkspaces(RebaseErrorHandlingStrategy::from($strategy));
     }
 }

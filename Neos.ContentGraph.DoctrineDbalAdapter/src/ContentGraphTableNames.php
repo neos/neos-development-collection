@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Neos\ContentGraph\DoctrineDbalAdapter;
 
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
@@ -40,8 +42,13 @@ final readonly class ContentGraphTableNames
         return $this->tableNamePrefix . '_referencerelation';
     }
 
-    public function checkpoint(): string
+    public function workspace(): string
     {
-        return $this->tableNamePrefix . '_checkpoint';
+        return $this->tableNamePrefix . '_workspace';
+    }
+
+    public function contentStream(): string
+    {
+        return $this->tableNamePrefix . '_contentstream';
     }
 }

@@ -54,7 +54,7 @@ class ApiOrInternalAnnotationRule implements Rule
             return [
                 RuleErrorBuilder::message(
                     'Class needs @api or @internal annotation.'
-                )->build(),
+                )->identifier('neos.cr.internal')->build(),
             ];
         }
         return [];

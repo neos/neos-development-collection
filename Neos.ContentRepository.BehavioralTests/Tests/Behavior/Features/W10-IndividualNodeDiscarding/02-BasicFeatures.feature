@@ -29,44 +29,38 @@ Feature: Discard individual nodes (basics)
       | Key                | Value           |
       | workspaceName      | "live"          |
       | newContentStreamId | "cs-identifier" |
-    And I am in workspace "live"
+    And I am in workspace "live" and dimension space point {}
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key             | Value                         |
       | nodeAggregateId | "lady-eleonode-rootford"      |
       | nodeTypeName    | "Neos.ContentRepository:Root" |
-    And the event NodeAggregateWithNodeWasCreated was published with payload:
+    And the command CreateNodeAggregateWithNode is executed with payload:
       | Key                         | Value                                               |
       | workspaceName               | "live"                                              |
-      | contentStreamId             | "cs-identifier"                                     |
       | nodeAggregateId             | "sir-david-nodenborough"                            |
       | nodeTypeName                | "Neos.ContentRepository.Testing:Content"            |
-      | originDimensionSpacePoint   | {}                                                  |
-      | coveredDimensionSpacePoints | [{}]                                                |
       | parentNodeAggregateId       | "lady-eleonode-rootford"                            |
-      | initialPropertyValues       | {"text": {"type": "string", "value": "Initial t1"}} |
-      | nodeAggregateClassification | "regular"                                           |
-    And the event NodeAggregateWithNodeWasCreated was published with payload:
+      | initialPropertyValues       | {"text": "Initial t1"}                              |
+    And the command CreateNodeAggregateWithNode is executed with payload:
       | Key                         | Value                                               |
-      | workspaceName               | "live"                                              |
       | contentStreamId             | "cs-identifier"                                     |
       | nodeAggregateId             | "nody-mc-nodeface"                                  |
       | nodeTypeName                | "Neos.ContentRepository.Testing:Content"            |
-      | originDimensionSpacePoint   | {}                                                  |
-      | coveredDimensionSpacePoints | [{}]                                                |
       | parentNodeAggregateId       | "sir-david-nodenborough"                            |
-      | initialPropertyValues       | {"text": {"type": "string", "value": "Initial t2"}} |
-      | nodeAggregateClassification | "regular"                                           |
-    And the event NodeAggregateWithNodeWasCreated was published with payload:
+      | initialPropertyValues       | {"text": "Initial t2"}                              |
+    And the command CreateNodeAggregateWithNode is executed with payload:
       | Key                         | Value                                                   |
       | workspaceName               | "live"                                                  |
-      | contentStreamId             | "cs-identifier"                                         |
       | nodeAggregateId             | "sir-nodeward-nodington-iii"                            |
       | nodeTypeName                | "Neos.ContentRepository.Testing:Image"                  |
-      | originDimensionSpacePoint   | {}                                                      |
-      | coveredDimensionSpacePoints | [{}]                                                    |
       | parentNodeAggregateId       | "lady-eleonode-rootford"                                |
-      | initialPropertyValues       | {"image": {"type": "string", "value": "Initial image"}} |
-      | nodeAggregateClassification | "regular"                                               |
+      | initialPropertyValues       | {"image": "Initial image"}                              |
+    And the command CreateNodeAggregateWithNode is executed with payload:
+      | Key                         | Value                                                   |
+      | workspaceName               | "live"                                                  |
+      | nodeAggregateId             | "sir-unchanged"                                         |
+      | nodeTypeName                | "Neos.ContentRepository.Testing:Image"                  |
+      | parentNodeAggregateId       | "lady-eleonode-rootford"                                |
 
     # Create user workspace
     And the command CreateWorkspace is executed with payload:
@@ -102,9 +96,17 @@ Feature: Discard individual nodes (basics)
     When the command DiscardIndividualNodesFromWorkspace is executed with payload:
       | Key                | Value                                                                                                        |
       | workspaceName      | "user-test"                                                                                                  |
-      | nodesToDiscard     | [{"workspaceName": "user-test", "dimensionSpacePoint": {}, "nodeAggregateId": "sir-nodeward-nodington-iii"}] |
+      | nodesToDiscard     | ["sir-nodeward-nodington-iii"] |
       | newContentStreamId | "user-cs-identifier-new"                                                                                     |
+    Then I expect the content stream "user-cs-identifier" to not exist
 
+    Then I expect exactly 2 events to be published on stream with prefix "Workspace:user-test"
+    And event at index 1 is of type "WorkspaceWasDiscarded" with payload:
+      | Key                     | Expected                 |
+      | workspaceName           | "user-test"              |
+      | newContentStreamId      | "user-cs-identifier-new" |
+      | previousContentStreamId | "user-cs-identifier"     |
+      | partial                 | true                     |
 
     When I am in workspace "user-test" and dimension space point {}
     Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node user-cs-identifier-new;sir-david-nodenborough;{}
@@ -120,33 +122,64 @@ Feature: Discard individual nodes (basics)
       | Key   | Value           |
       | image | "Initial image" |
 
-  Scenario: It is possible to discard no node
-    When the command DiscardIndividualNodesFromWorkspace is executed with payload:
+  Scenario: Discard no node is not allowed
+    When the command DiscardIndividualNodesFromWorkspace is executed with payload and exceptions are caught:
       | Key                | Value                    |
       | workspaceName      | "user-test"              |
       | nodesToDiscard     | []                       |
       | newContentStreamId | "user-cs-identifier-new" |
+    Then the last command should have thrown an exception of type "InvalidArgumentException" with code 1737448741
 
+  Scenario: Discard non existing nodes or unchanged nodes is skipped (via exception)
+    # unchanged or non existing nodes
+    When the command DiscardIndividualNodesFromWorkspace is executed with payload and exceptions are caught:
+      | Key                             | Value                                                                                                                                  |
+      | workspaceName                   | "user-test"                                                                                                                            |
+      | nodesToDiscard                  | ["non-existing-node", "sir-unchanged"] |
+      | newContentStreamId              | "user-cs-identifier-new-two"                                                                                                           |
+
+    Then the last command should have thrown an exception of type "WorkspaceCommandSkipped" with code 1737477674 and message:
+    """
+    No nodes matched in workspace "user-test" the filter non-existing-node,sir-unchanged.
+    """
+
+    # all nodes are still on the original user cs
     When I am in workspace "user-test" and dimension space point {}
-    Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node user-cs-identifier-new;sir-david-nodenborough;{}
+    Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node user-cs-identifier;sir-david-nodenborough;{}
     And I expect this node to have the following properties:
       | Key  | Value         |
       | text | "Modified t1" |
-    Then I expect node aggregate identifier "nody-mc-nodeface" to lead to node user-cs-identifier-new;nody-mc-nodeface;{}
+    Then I expect node aggregate identifier "nody-mc-nodeface" to lead to node user-cs-identifier;nody-mc-nodeface;{}
     And I expect this node to have the following properties:
       | Key  | Value         |
       | text | "Modified t2" |
-    Then I expect node aggregate identifier "sir-nodeward-nodington-iii" to lead to node user-cs-identifier-new;sir-nodeward-nodington-iii;{}
+    Then I expect node aggregate identifier "sir-nodeward-nodington-iii" to lead to node user-cs-identifier;sir-nodeward-nodington-iii;{}
     And I expect this node to have the following properties:
       | Key   | Value            |
       | image | "Modified image" |
+
+    # assert that content stream is still open by writing to it:
+    And the command SetNodeProperties is executed with payload:
+      | Key                       | Value                        |
+      | workspaceName             | "user-test"                  |
+      | nodeAggregateId           | "sir-nodeward-nodington-iii" |
+      | originDimensionSpacePoint | {}                           |
+      | propertyValues            | {"image": "Bla bli blub"}    |
 
   Scenario: It is possible to discard all nodes
     When the command DiscardIndividualNodesFromWorkspace is executed with payload:
       | Key                | Value                                                                                                                                                                                                                                                                                                                  |
       | workspaceName      | "user-test"                                                                                                                                                                                                                                                                                                            |
-      | nodesToDiscard     | [{"workspaceName": "user-test", "dimensionSpacePoint": {}, "nodeAggregateId": "sir-david-nodenborough"}, {"workspaceName": "user-test", "dimensionSpacePoint": {}, "nodeAggregateId": "nody-mc-nodeface"}, {"workspaceName": "user-test", "dimensionSpacePoint": {}, "nodeAggregateId": "sir-nodeward-nodington-iii"}] |
+      | nodesToDiscard     | ["sir-david-nodenborough", "nody-mc-nodeface", "sir-nodeward-nodington-iii"] |
       | newContentStreamId | "user-cs-identifier-new"                                                                                                                                                                                                                                                                                               |
+
+    Then I expect exactly 2 events to be published on stream with prefix "Workspace:user-test"
+    And event at index 1 is of type "WorkspaceWasDiscarded" with payload:
+      | Key                     | Expected                 |
+      | workspaceName           | "user-test"              |
+      | newContentStreamId      | "user-cs-identifier-new" |
+      | previousContentStreamId | "user-cs-identifier"     |
+      | partial                 | false                    |
 
     When I am in workspace "user-test" and dimension space point {}
     Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node user-cs-identifier-new;sir-david-nodenborough;{}
@@ -167,7 +200,7 @@ Feature: Discard individual nodes (basics)
     When the command DiscardIndividualNodesFromWorkspace is executed with payload:
       | Key            | Value                                                                                                        |
       | workspaceName  | "user-test"                                                                                                  |
-      | nodesToDiscard | [{"workspaceName": "user-test", "dimensionSpacePoint": {}, "nodeAggregateId": "sir-nodeward-nodington-iii"}] |
+      | nodesToDiscard | ["sir-nodeward-nodington-iii"] |
 
     # live WS does not change because of a discard
     When I am in workspace "live" and dimension space point {}

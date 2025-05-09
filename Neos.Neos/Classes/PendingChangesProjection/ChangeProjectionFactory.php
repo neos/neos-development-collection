@@ -15,7 +15,7 @@ declare(strict_types=1);
 namespace Neos\Neos\PendingChangesProjection;
 
 use Doctrine\DBAL\Connection;
-use Neos\ContentRepository\Core\Factory\ProjectionFactoryDependencies;
+use Neos\ContentRepository\Core\Factory\SubscriberFactoryDependencies;
 use Neos\ContentRepository\Core\Projection\ProjectionFactoryInterface;
 
 /**
@@ -29,7 +29,7 @@ class ChangeProjectionFactory implements ProjectionFactoryInterface
     }
 
     public function build(
-        ProjectionFactoryDependencies $projectionFactoryDependencies,
+        SubscriberFactoryDependencies $projectionFactoryDependencies,
         array $options,
     ): ChangeProjection {
         return new ChangeProjection(

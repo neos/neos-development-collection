@@ -20,6 +20,7 @@ use Neos\ContentRepository\Core\Feature\Common\InterdimensionalSibling;
 use Neos\ContentRepository\Core\Feature\Common\InterdimensionalSiblings;
 use Neos\ContentRepository\Core\Feature\NodeCreation\Event\NodeAggregateWithNodeWasCreated;
 use Neos\ContentRepository\Core\Feature\NodeModification\Dto\SerializedPropertyValues;
+use Neos\ContentRepository\Core\Feature\NodeReferencing\Dto\SerializedNodeReferences;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateClassification;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
@@ -87,7 +88,8 @@ class NodeAggregateWithNodeWasCreatedTest extends TestCase
                 NodeAggregateId::fromString('6b6e1251-4346-494f-ac56-526a30a5741d'),
                 null,
                 SerializedPropertyValues::createEmpty(),
-                NodeAggregateClassification::CLASSIFICATION_REGULAR
+                NodeAggregateClassification::CLASSIFICATION_REGULAR,
+                SerializedNodeReferences::createEmpty(),
             )
         ];
 
@@ -128,7 +130,8 @@ class NodeAggregateWithNodeWasCreatedTest extends TestCase
                 NodeAggregateId::fromString('6b6e1251-4346-494f-ac56-526a30a5741d'),
                 null,
                 SerializedPropertyValues::createEmpty(),
-                NodeAggregateClassification::CLASSIFICATION_REGULAR
+                NodeAggregateClassification::CLASSIFICATION_REGULAR,
+                SerializedNodeReferences::createEmpty(),
             )
         ];
     }

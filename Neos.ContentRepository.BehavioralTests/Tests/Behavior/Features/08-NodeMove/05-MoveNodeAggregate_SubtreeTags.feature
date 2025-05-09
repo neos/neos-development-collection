@@ -24,8 +24,6 @@ Feature: Move a node aggregate into and out of a tagged parent
     And the command CreateRootWorkspace is executed with payload:
       | Key                  | Value                |
       | workspaceName        | "live"               |
-      | workspaceTitle       | "Live"               |
-      | workspaceDescription | "The live workspace" |
       | newContentStreamId   | "cs-identifier"      |
     And I am in workspace "live" and dimension space point {"example": "general"}
     And the command CreateRootNodeAggregateWithNode is executed with payload:

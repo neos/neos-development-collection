@@ -6,7 +6,6 @@
     'Neos.Neos:Node': true
     'Neos.Neos:Hidable': true
   abstract: true
-  aggregate: true
   constraints:
     nodeTypes:
       '*': false

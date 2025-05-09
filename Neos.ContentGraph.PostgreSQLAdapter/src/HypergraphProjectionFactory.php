@@ -7,16 +7,14 @@ namespace Neos\ContentGraph\PostgreSQLAdapter;
 use Doctrine\DBAL\Connection;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\HypergraphProjection;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Repository\NodeFactory;
-use Neos\ContentRepository\Core\ContentGraphFinder;
-use Neos\ContentRepository\Core\Factory\ProjectionFactoryDependencies;
-use Neos\ContentRepository\Core\Projection\ProjectionFactoryInterface;
+use Neos\ContentRepository\Core\Factory\SubscriberFactoryDependencies;
+use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphProjectionFactoryInterface;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
 
 /**
- * @implements ProjectionFactoryInterface<HypergraphProjection>
  * @api
  */
-final class HypergraphProjectionFactory implements ProjectionFactoryInterface
+final class HypergraphProjectionFactory implements ContentGraphProjectionFactoryInterface
 {
     public function __construct(
         private readonly Connection $dbal,
@@ -30,8 +28,7 @@ final class HypergraphProjectionFactory implements ProjectionFactoryInterface
     }
 
     public function build(
-        ProjectionFactoryDependencies $projectionFactoryDependencies,
-        array $options,
+        SubscriberFactoryDependencies $projectionFactoryDependencies,
     ): HypergraphProjection {
         $tableNamePrefix = self::graphProjectionTableNamePrefix(
             $projectionFactoryDependencies->contentRepositoryId
@@ -39,13 +36,13 @@ final class HypergraphProjectionFactory implements ProjectionFactoryInterface
 
         $nodeFactory = new NodeFactory(
             $projectionFactoryDependencies->contentRepositoryId,
-            $projectionFactoryDependencies->propertyConverter
+            $projectionFactoryDependencies->getPropertyConverter()
         );
 
         return new HypergraphProjection(
             $this->dbal,
             $tableNamePrefix,
-            new ContentGraphFinder(new ContentHyperGraphFactory($this->dbal, $nodeFactory, $projectionFactoryDependencies->contentRepositoryId, $projectionFactoryDependencies->nodeTypeManager, $tableNamePrefix))
+            new ContentHyperGraphReadModelAdapter($this->dbal, $nodeFactory, $projectionFactoryDependencies->contentRepositoryId, $projectionFactoryDependencies->nodeTypeManager, $tableNamePrefix)
         );
     }
 }

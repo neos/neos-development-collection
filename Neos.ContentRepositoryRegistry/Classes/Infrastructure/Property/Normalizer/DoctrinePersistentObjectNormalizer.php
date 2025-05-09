@@ -30,7 +30,7 @@ final class DoctrinePersistentObjectNormalizer implements NormalizerInterface, D
      * @param array<string,mixed> $context
      * @return array<string,mixed>
      */
-    public function normalize($object, string $format = null, array $context = []): array
+    public function normalize($object, ?string $format = null, array $context = []): array
     {
         return [
             '__flow_object_type' => TypeHandling::getTypeForValue($object),
@@ -38,7 +38,7 @@ final class DoctrinePersistentObjectNormalizer implements NormalizerInterface, D
         ];
     }
 
-    public function supportsNormalization($data, string $format = null)
+    public function supportsNormalization($data, ?string $format = null)
     {
         return (
             $this->reflectionService->isClassAnnotatedWith(TypeHandling::getTypeForValue($data), Entity::class) ||
@@ -53,12 +53,12 @@ final class DoctrinePersistentObjectNormalizer implements NormalizerInterface, D
     /**
      * @param array<string,mixed> $context
      */
-    public function denormalize($data, $type, string $format = null, array $context = [])
+    public function denormalize($data, $type, ?string $format = null, array $context = [])
     {
         return $this->persistenceManager->getObjectByIdentifier($data['__identifier'], $data['__flow_object_type']);
     }
 
-    public function supportsDenormalization($data, $type, string $format = null)
+    public function supportsDenormalization($data, $type, ?string $format = null)
     {
         // NOTE: we do not check for $type which is the expected type,
         // but we instead check for $data['__flow_object_type']. This is

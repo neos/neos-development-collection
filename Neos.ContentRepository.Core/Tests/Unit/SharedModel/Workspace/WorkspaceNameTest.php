@@ -58,11 +58,10 @@ final class WorkspaceNameTest extends TestCase
     private static function invalidWorkspaceNames(): iterable
     {
         yield 'empty string' => [''];
-        yield 'only digits' => ['123'];
         yield 'leading dash' => ['-invalid'];
         yield 'upper case characters' => ['thisIsNotAllowed'];
         yield 'whitespace' => ['this neither'];
-        yield 'exceeding max length' => ['this-is-just-a-little-too-long-'];
+        yield 'exceeding max length' => ['this-is-just-a-little-little-bit-too-long-'];
     }
 
     /**
@@ -99,8 +98,8 @@ final class WorkspaceNameTest extends TestCase
         yield 'chinese characters' => ['value' => '北京', 'expectedResult' => 'bei-jing'];
         yield 'german umlauts' => ['value' => 'ümläute', 'expectedResult' => 'umlaute'];
         yield 'white space' => ['value' => ' Contains spaces ', 'expectedResult' => 'contains-spaces'];
-        yield 'exceeding max length' => ['value' => 'This name is just a little too long', 'expectedResult' => 'this-name-is-just-a-little-too'];
-        yield 'only special characters' => ['value' => '-', 'expectedResult' => 'workspace-336d5ebc5436534e61d1'];
+        yield 'exceeding max length' => ['value' => 'This name is just a little little bit too long', 'expectedResult' => 'this-name-is-just-a-little-little-bi'];
+        yield 'only special characters' => ['value' => '-', 'expectedResult' => '336d5ebc5436534e61d16e63ddfca327'];
     }
 
     /**

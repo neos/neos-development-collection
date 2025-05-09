@@ -328,70 +328,6 @@
         <source>Deactivated</source>
         <target state="translated">Deaktiválva</target>
       </trans-unit>
-      <trans-unit id="packages.tooltip.unfreeze" xml:space="preserve">
-        <source>This package is currently frozen. Click to unfreeze it.</source>
-        <target state="translated">A csomag le lett fagyasztva. Kattintson ide a kiolvasztáshoz.</target>
-      </trans-unit>
-      <trans-unit id="packages.tooltip.freeze" xml:space="preserve">
-        <source>Freeze the package in order to speed up your website.</source>
-        <target state="translated">Fagyassza le a csomagot annak érdekében, hogy felgyorsítsa az oldalt.</target>
-      </trans-unit>
-      <trans-unit id="packages.tooltip.noDeactivate" xml:space="preserve">
-        <source>This package is protected and cannot be deactivated.</source>
-        <target state="translated">Ez a csomag védelem alatt áll és nem lehet deaktiválni.</target>
-      </trans-unit>
-      <trans-unit id="packages.tooltip.deactivate" xml:space="preserve">
-        <source>Deactivate Package</source>
-        <target state="translated">Csomag deaktiválása</target>
-      </trans-unit>
-      <trans-unit id="packages.tooltip.activate" xml:space="preserve">
-        <source>Activate Package</source>
-        <target state="translated">Csomag aktiválása</target>
-      </trans-unit>
-      <trans-unit id="packages.tooltip.noDelete" xml:space="preserve">
-        <source>This package is protected and cannot be deleted.</source>
-        <target state="translated">Ez a csomag védelem alatt áll és nem lehet törölni.</target>
-      </trans-unit>
-      <trans-unit id="packages.tooltip.delete" xml:space="preserve">
-        <source>Delete Package</source>
-        <target state="translated">Csomag törlése</target>
-      </trans-unit>
-      <trans-unit id="packages.message.reallyDelete" xml:space="preserve">
-        <source>Do you really want to delete "{0}"?</source>
-        <target state="translated">Valóban törölni akarja "{0}"?</target>
-      </trans-unit>
-      <trans-unit id="packages.message.confirmDelete" xml:space="preserve">
-        <source>Yes, delete the package</source>
-        <target state="translated">Igen, törlöm a csomagot</target>
-      </trans-unit>
-      <trans-unit id="packages.message.confirmDeletes" xml:space="preserve">
-        <source>Yes, delete the packages</source>
-        <target state="translated">Igen, törlöm a csomagokat</target>
-      </trans-unit>
-      <trans-unit id="packages.message.selected.reallyDelete" xml:space="preserve">
-        <source>Do you really want to delete the selected packages?</source>
-        <target state="translated">Biztosan törli a kijelölt csomagokat?</target>
-      </trans-unit>
-      <trans-unit id="packages.selected.freeze" xml:space="preserve">
-        <source>Freeze selected packages</source>
-        <target state="translated">Kiválasztott csomagok fagyasztása</target>
-      </trans-unit>
-      <trans-unit id="packages.selected.unfreeze" xml:space="preserve">
-        <source>Unfreeze selected packages</source>
-        <target state="translated">Kiválasztott csomagok kiolvasztása</target>
-      </trans-unit>
-      <trans-unit id="packages.selected.delete" xml:space="preserve">
-        <source>Delete selected packages</source>
-        <target state="translated">Kiválasztott csomagok törlése</target>
-      </trans-unit>
-      <trans-unit id="packages.selected.deactivate" xml:space="preserve">
-        <source>Deactivate selected packages</source>
-        <target state="translated">Kiválasztott csomagok deaktiválása</target>
-      </trans-unit>
-      <trans-unit id="packages.selected.activate" xml:space="preserve">
-        <source>Activate selected packages</source>
-        <target state="translated">Kiválasztott csomagok aktiválása</target>
-      </trans-unit>
       <trans-unit id="sites.label" xml:space="preserve">
         <source>Sites Management</source>
         <target state="translated">Oldalak kezelése</target>
@@ -455,10 +391,6 @@
       <trans-unit id="sites.confirmDelete" xml:space="preserve">
         <source>Yes, delete the site</source>
         <target state="translated">Igen, törölje az oldalt</target>
-      </trans-unit>
-      <trans-unit id="sites.import" xml:space="preserve">
-        <source>Import a site</source>
-        <target state="translated">Oldal importálása</target>
       </trans-unit>
       <trans-unit id="sites.select" xml:space="preserve">
         <source>Select a site package</source>
@@ -684,18 +616,6 @@ Click on one of the nodes to only see its fallbacks and variants. Click again to
       <trans-unit id="sites.update.body" xml:space="preserve">
         <source>The site "{0}" has been updated.</source>
         <target state="needs-translation">The site "{0}" has been updated.</target>
-      </trans-unit>
-      <trans-unit id="sites.theSiteHasBeenImported.body" xml:space="preserve">
-        <source>The site has been imported.</source>
-        <target state="needs-translation">The site has been imported.</target>
-      </trans-unit>
-      <trans-unit id="sites.importError.title" xml:space="preserve">
-        <source>Import error</source>
-        <target state="needs-translation">Import error</target>
-      </trans-unit>
-      <trans-unit id="sites.importError.body" xml:space="preserve">
-        <source>Error: During the import of the "Sites.xml" from the package "{0}" an exception occurred: {1}</source>
-        <target state="needs-translation">Error: During the import of the "Sites.xml" from the package "{0}" an exception occurred: {1}</target>
       </trans-unit>
       <trans-unit id="sites.siteCreationError.siteWithSiteNodeNameAlreadyExists.title" xml:space="preserve">
         <source>Site creation error</source>

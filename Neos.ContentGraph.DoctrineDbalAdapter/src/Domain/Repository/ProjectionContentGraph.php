@@ -235,6 +235,13 @@ class ProjectionContentGraph
                 throw new \RuntimeException(sprintf('Failed to load succeeding sibling relations for content stream %s, anchor point %s and dimension space point %s from database: %s', $contentStreamId->value, $succeedingSiblingAnchorPoint->value, $dimensionSpacePoint->toJson(), $e->getMessage()), 1716474854, $e);
             }
 
+            if (!$succeedingSiblingRelation) {
+                throw new \RuntimeException(
+                    sprintf('Could not fetch succeeding sibling relation for anchor point: %s with dimensionSpacePointHash : %s', $succeedingSiblingAnchorPoint->value, $dimensionSpacePoint->hash),
+                    1696405259
+                );
+            }
+
             $succeedingSiblingPosition = (int)$succeedingSiblingRelation['position'];
             $parentAnchorPoint = NodeRelationAnchorPoint::fromInteger($succeedingSiblingRelation['parentnodeanchor']);
 
@@ -392,7 +399,7 @@ class ProjectionContentGraph
     public function findIngoingHierarchyRelationsForNode(
         NodeRelationAnchorPoint $childAnchorPoint,
         ContentStreamId $contentStreamId,
-        DimensionSpacePointSet $restrictToSet = null
+        ?DimensionSpacePointSet $restrictToSet = null
     ): array {
         $ingoingHierarchyRelationsStatement = <<<SQL
             SELECT
@@ -427,12 +434,12 @@ class ProjectionContentGraph
     }
 
     /**
-     *  @return array<string, HierarchyRelation> indexed by the dimension space point hash: ['<dimensionSpacePointHash>' => HierarchyRelation, ...]
+     *  @return array<int, HierarchyRelation>
      */
     public function findOutgoingHierarchyRelationsForNode(
         NodeRelationAnchorPoint $parentAnchorPoint,
         ContentStreamId $contentStreamId,
-        DimensionSpacePointSet $restrictToSet = null
+        ?DimensionSpacePointSet $restrictToSet = null
     ): array {
         $outgoingHierarchyRelationsStatement = <<<SQL
             SELECT
@@ -461,7 +468,7 @@ class ProjectionContentGraph
         }
         $relations = [];
         foreach ($rows as $row) {
-            $relations[(string)$row['dimensionspacepointhash']] = $this->mapRawDataToHierarchyRelation($row);
+            $relations[] = $this->mapRawDataToHierarchyRelation($row);
         }
         return $relations;
     }
@@ -505,7 +512,7 @@ class ProjectionContentGraph
     public function findIngoingHierarchyRelationsForNodeAggregate(
         ContentStreamId $contentStreamId,
         NodeAggregateId $nodeAggregateId,
-        DimensionSpacePointSet $dimensionSpacePointSet = null
+        ?DimensionSpacePointSet $dimensionSpacePointSet = null
     ): array {
         $ingoingHierarchyRelationsStatement = <<<SQL
             SELECT

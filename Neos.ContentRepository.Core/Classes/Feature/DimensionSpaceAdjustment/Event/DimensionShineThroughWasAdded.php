@@ -16,6 +16,8 @@ namespace Neos\ContentRepository\Core\Feature\DimensionSpaceAdjustment\Event;
 
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\EventStore\EventInterface;
+use Neos\ContentRepository\Core\Feature\Common\EmbedsContentStreamId;
+use Neos\ContentRepository\Core\Feature\Common\EmbedsWorkspaceName;
 use Neos\ContentRepository\Core\Feature\Common\PublishableToWorkspaceInterface;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
@@ -33,7 +35,7 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
  *
  * @api events are the persistence-API of the content repository
  */
-final readonly class DimensionShineThroughWasAdded implements EventInterface, PublishableToWorkspaceInterface
+final readonly class DimensionShineThroughWasAdded implements EventInterface, PublishableToWorkspaceInterface, EmbedsContentStreamId, EmbedsWorkspaceName
 {
     public function __construct(
         public WorkspaceName $workspaceName,
@@ -41,6 +43,16 @@ final readonly class DimensionShineThroughWasAdded implements EventInterface, Pu
         public DimensionSpacePoint $source,
         public DimensionSpacePoint $target
     ) {
+    }
+
+    public function getContentStreamId(): ContentStreamId
+    {
+        return $this->contentStreamId;
+    }
+
+    public function getWorkspaceName(): WorkspaceName
+    {
+        return $this->workspaceName;
     }
 
     public function withWorkspaceNameAndContentStreamId(WorkspaceName $targetWorkspaceName, ContentStreamId $contentStreamId): self

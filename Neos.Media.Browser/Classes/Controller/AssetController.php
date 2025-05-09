@@ -26,6 +26,7 @@ use Neos\Flow\Mvc\View\JsonView;
 use Neos\Flow\Mvc\View\ViewInterface;
 use Neos\Flow\Package\PackageManager;
 use Neos\Flow\Persistence\Exception\IllegalObjectTypeException;
+use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Flow\Property\TypeConverter\PersistentObjectConverter;
 use Neos\Flow\ResourceManagement\PersistentResource;
 use Neos\FluidAdaptor\View\TemplateView;
@@ -69,6 +70,9 @@ use Neos\Utility\MediaTypes;
 class AssetController extends ActionController
 {
     use BackendUserTranslationTrait;
+    use BackendUserTranslationTrait {
+        BackendUserTranslationTrait::initializeObject as backendUserTranslationTraitInitializeObject;
+    }
     use AddTranslatedFlashMessageTrait;
 
     protected const TAG_GIVEN = 0;
@@ -147,6 +151,12 @@ class AssetController extends ActionController
     protected $assetVariantGenerator;
 
     /**
+     * @Flow\Inject
+     * @var PersistenceManagerInterface
+     */
+    protected $persistenceManager;
+
+    /**
      * @var AssetSourceInterface[]
      */
     protected $assetSources = [];
@@ -167,6 +177,8 @@ class AssetController extends ActionController
      */
     public function initializeObject(): void
     {
+        $this->backendUserTranslationTraitInitializeObject();
+
         $domain = $this->domainRepository->findOneByActiveRequest();
 
         // Set active asset collection to the current site's asset collection, if it has one, on the first view if a matching domain is found
@@ -231,7 +243,7 @@ class AssetController extends ActionController
      * @return void
      * @throws FilesException
      */
-    public function indexAction($view = null, $sortBy = null, $sortDirection = null, $filter = null, $tagMode = self::TAG_GIVEN, Tag $tag = null, $searchTerm = null, $collectionMode = self::COLLECTION_GIVEN, AssetCollection $assetCollection = null, $assetSourceIdentifier = null): void
+    public function indexAction($view = null, $sortBy = null, $sortDirection = null, $filter = null, $tagMode = self::TAG_GIVEN, ?Tag $tag = null, $searchTerm = null, $collectionMode = self::COLLECTION_GIVEN, ?AssetCollection $assetCollection = null, $assetSourceIdentifier = null): void
     {
         $assetSourceIdentifier = $this->assetConstraints->applyToAssetSourceIdentifiers($assetSourceIdentifier);
 
@@ -849,7 +861,7 @@ class AssetController extends ActionController
      * @param string $sortDirection
      * @param string $filter
      */
-    private function applyViewOptionsToBrowserState(string $view = null, string $sortBy = null, string $sortDirection = null, string $filter = null): void
+    private function applyViewOptionsToBrowserState(?string $view = null, ?string $sortBy = null, ?string $sortDirection = null, ?string $filter = null): void
     {
         if (!empty($view)) {
             $this->browserState->set('view', $view);
@@ -885,7 +897,7 @@ class AssetController extends ActionController
      * @param Tag $tag
      * @param AssetCollection|null $activeAssetCollection
      */
-    private function applyTagToBrowserState(int $tagMode = null, Tag $tag = null, AssetCollection $activeAssetCollection = null): void
+    private function applyTagToBrowserState(?int $tagMode = null, ?Tag $tag = null, ?AssetCollection $activeAssetCollection = null): void
     {
         if ($tagMode === self::TAG_GIVEN && $tag !== null) {
             $this->browserState->set('activeTag', $tag);
@@ -924,7 +936,7 @@ class AssetController extends ActionController
      * @param int $collectionMode
      * @param AssetCollection $assetCollection
      */
-    private function applyAssetCollectionOptionsToBrowserState(int $collectionMode = null, AssetCollection $assetCollection = null): void
+    private function applyAssetCollectionOptionsToBrowserState(?int $collectionMode = null, ?AssetCollection $assetCollection = null): void
     {
         if ($collectionMode === self::COLLECTION_GIVEN && $assetCollection !== null) {
             $this->browserState->set('activeAssetCollection', $assetCollection);

@@ -33,6 +33,11 @@ Neos:
     # This option is suited only for development and enabled there by default.
     enableParsePartialsCache: true
 
+    # Experimental logging for deprecated fusion code at runtime.
+    # Either disabled or "LOG" or "EXCEPTION" to let the exception handler step in ensuring no deprecated syntax is used.
+    # Should only be used during development
+    deprecationTracer: false
+
     # Default context objects that are available in Eel expressions
     #
     # New variables should be added with a package key prefix. Example:

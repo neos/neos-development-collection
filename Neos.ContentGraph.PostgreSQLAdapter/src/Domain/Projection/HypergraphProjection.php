@@ -15,7 +15,6 @@ declare(strict_types=1);
 namespace Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection;
 
 use Doctrine\DBAL\Connection;
-use Doctrine\DBAL\Schema\AbstractSchemaManager;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\Feature\ContentStreamForking;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\Feature\NodeCreation;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\Feature\NodeModification;
@@ -26,7 +25,6 @@ use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\Feature\NodeTypeChange
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\Feature\NodeVariation;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\Feature\SubtreeTagging;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\SchemaBuilder\HypergraphSchemaBuilder;
-use Neos\ContentRepository\Core\ContentGraphFinder;
 use Neos\ContentRepository\Core\EventStore\EventInterface;
 use Neos\ContentRepository\Core\Feature\ContentStreamForking\Event\ContentStreamWasForked;
 use Neos\ContentRepository\Core\Feature\NodeCreation\Event\NodeAggregateWithNodeWasCreated;
@@ -41,21 +39,18 @@ use Neos\ContentRepository\Core\Feature\NodeVariation\Event\NodeSpecializationVa
 use Neos\ContentRepository\Core\Feature\RootNodeCreation\Event\RootNodeAggregateWithNodeWasCreated;
 use Neos\ContentRepository\Core\Feature\SubtreeTagging\Event\SubtreeWasTagged;
 use Neos\ContentRepository\Core\Feature\SubtreeTagging\Event\SubtreeWasUntagged;
-use Neos\ContentRepository\Core\Infrastructure\DbalCheckpointStorage;
 use Neos\ContentRepository\Core\Infrastructure\DbalSchemaDiff;
-use Neos\ContentRepository\Core\Projection\CheckpointStorageStatusType;
-use Neos\ContentRepository\Core\Projection\ProjectionInterface;
+use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphProjectionInterface;
+use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphReadModelInterface;
 use Neos\ContentRepository\Core\Projection\ProjectionStatus;
-use Neos\EventStore\Model\Event\SequenceNumber;
 use Neos\EventStore\Model\EventEnvelope;
 
 /**
  * The alternate reality-aware hypergraph projector for the PostgreSQL backend via Doctrine DBAL
  *
- * @implements ProjectionInterface<ContentGraphFinder>
  * @internal the parent Content Graph is public
  */
-final class HypergraphProjection implements ProjectionInterface
+final class HypergraphProjection implements ContentGraphProjectionInterface
 {
     use ContentStreamForking;
     use NodeCreation;
@@ -67,20 +62,14 @@ final class HypergraphProjection implements ProjectionInterface
     use NodeTypeChange;
     use NodeVariation;
 
-    private DbalCheckpointStorage $checkpointStorage;
     private ProjectionHypergraph $projectionHypergraph;
 
     public function __construct(
         private readonly Connection $dbal,
         private readonly string $tableNamePrefix,
-        private readonly ContentGraphFinder $contentGraphFinder
+        private readonly ContentGraphReadModelInterface $contentGraphReadModel
     ) {
         $this->projectionHypergraph = new ProjectionHypergraph($this->dbal, $this->tableNamePrefix);
-        $this->checkpointStorage = new DbalCheckpointStorage(
-            $this->dbal,
-            $this->tableNamePrefix . '_checkpoint',
-            self::class
-        );
     }
 
 
@@ -98,18 +87,10 @@ final class HypergraphProjection implements ProjectionInterface
             create index if not exists restriction_affected
                 on ' . $this->tableNamePrefix . '_restrictionhyperrelation using gin (affectednodeaggregateids);
         ');
-        $this->checkpointStorage->setUp();
     }
 
     public function status(): ProjectionStatus
     {
-        $checkpointStorageStatus = $this->checkpointStorage->status();
-        if ($checkpointStorageStatus->type === CheckpointStorageStatusType::ERROR) {
-            return ProjectionStatus::error($checkpointStorageStatus->details);
-        }
-        if ($checkpointStorageStatus->type === CheckpointStorageStatusType::SETUP_REQUIRED) {
-            return ProjectionStatus::setupRequired($checkpointStorageStatus->details);
-        }
         try {
             $this->getDatabaseConnection()->connect();
         } catch (\Throwable $e) {
@@ -136,12 +117,9 @@ final class HypergraphProjection implements ProjectionInterface
         return DbalSchemaDiff::determineRequiredSqlStatements($this->dbal, $schema);
     }
 
-    public function reset(): void
+    public function resetState(): void
     {
         $this->truncateDatabaseTables();
-
-        $this->checkpointStorage->acquireLock();
-        $this->checkpointStorage->updateAndReleaseLock(SequenceNumber::none());
     }
 
     private function truncateDatabaseTables(): void
@@ -150,39 +128,6 @@ final class HypergraphProjection implements ProjectionInterface
         $this->dbal->executeQuery('TRUNCATE table ' . $this->tableNamePrefix . '_hierarchyhyperrelation');
         $this->dbal->executeQuery('TRUNCATE table ' . $this->tableNamePrefix . '_referencerelation');
         $this->dbal->executeQuery('TRUNCATE table ' . $this->tableNamePrefix . '_restrictionhyperrelation');
-    }
-
-    public function canHandle(EventInterface $event): bool
-    {
-        return in_array($event::class, [
-            // ContentStreamForking
-            ContentStreamWasForked::class,
-            // NodeCreation
-            RootNodeAggregateWithNodeWasCreated::class,
-            NodeAggregateWithNodeWasCreated::class,
-            // SubtreeTagging
-            SubtreeWasTagged::class,
-            SubtreeWasUntagged::class,
-            // NodeModification
-            NodePropertiesWereSet::class,
-            // NodeReferencing
-            NodeReferencesWereSet::class,
-            // NodeRemoval
-            NodeAggregateWasRemoved::class,
-            // NodeRenaming
-            NodeAggregateNameWasChanged::class,
-            // NodeTypeChange
-            NodeAggregateTypeWasChanged::class,
-            // NodeVariation
-            NodeSpecializationVariantWasCreated::class,
-            NodeGeneralizationVariantWasCreated::class,
-            NodePeerVariantWasCreated::class,
-            // TODO: not yet supported:
-            //ContentStreamWasRemoved::class,
-            //DimensionSpacePointWasMoved::class,
-            //DimensionShineThroughWasAdded::class,
-            //NodeAggregateWasMoved::class,
-        ]);
     }
 
     public function apply(EventInterface $event, EventEnvelope $eventEnvelope): void
@@ -210,18 +155,28 @@ final class HypergraphProjection implements ProjectionInterface
             NodeSpecializationVariantWasCreated::class => $this->whenNodeSpecializationVariantWasCreated($event),
             NodeGeneralizationVariantWasCreated::class => $this->whenNodeGeneralizationVariantWasCreated($event),
             NodePeerVariantWasCreated::class => $this->whenNodePeerVariantWasCreated($event),
-            default => throw new \InvalidArgumentException(sprintf('Unsupported event %s', get_debug_type($event))),
+            default => null,
         };
     }
 
-    public function getCheckpointStorage(): DbalCheckpointStorage
+    public function inSimulation(\Closure $fn): mixed
     {
-        return $this->checkpointStorage;
+        if ($this->dbal->isTransactionActive()) {
+            throw new \RuntimeException(sprintf('Invoking %s is not allowed to be invoked recursively. Current transaction nesting %d.', __FUNCTION__, $this->dbal->getTransactionNestingLevel()));
+        }
+        $this->dbal->beginTransaction();
+        $this->dbal->setRollbackOnly();
+        try {
+            return $fn();
+        } finally {
+            // unsets rollback only flag and allows the connection to work regular again
+            $this->dbal->rollBack();
+        }
     }
 
-    public function getState(): ContentGraphFinder
+    public function getState(): ContentGraphReadModelInterface
     {
-        return $this->contentGraphFinder;
+        return $this->contentGraphReadModel;
     }
 
     protected function getProjectionHypergraph(): ProjectionHypergraph

@@ -30,10 +30,10 @@ final readonly class DecoratedEvent
      */
     public static function create(
         DecoratedEvent|EventInterface $event,
-        EventId $eventId = null,
-        EventMetadata|array $metadata = null,
-        EventId|CausationId $causationId = null,
-        CorrelationId $correlationId = null,
+        ?EventId $eventId = null,
+        EventMetadata|array|null $metadata = null,
+        EventId|CausationId|null $causationId = null,
+        ?CorrelationId $correlationId = null,
     ): self {
         if ($event instanceof EventInterface) {
             $event = new self($event, null, null, null, null);

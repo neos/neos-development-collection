@@ -15,13 +15,14 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\Core\Feature\WorkspacePublication\Event;
 
 use Neos\ContentRepository\Core\EventStore\EventInterface;
+use Neos\ContentRepository\Core\Feature\Common\EmbedsWorkspaceName;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 
 /**
  * @api events are the persistence-API of the content repository
  */
-final readonly class WorkspaceWasDiscarded implements EventInterface
+final readonly class WorkspaceWasDiscarded implements EventInterface, EmbedsWorkspaceName
 {
     public function __construct(
         public WorkspaceName $workspaceName,
@@ -33,7 +34,16 @@ final readonly class WorkspaceWasDiscarded implements EventInterface
          * The old content stream (which contains the discarded data)
          */
         public ContentStreamId $previousContentStreamId,
+        /**
+         * Indicates if all events in the workspace have been discarded or if remaining changes are reapplied
+         */
+        public bool $partial
     ) {
+    }
+
+    public function getWorkspaceName(): WorkspaceName
+    {
+        return $this->workspaceName;
     }
 
     public static function fromArray(array $values): self
@@ -42,15 +52,12 @@ final readonly class WorkspaceWasDiscarded implements EventInterface
             WorkspaceName::fromString($values['workspaceName']),
             ContentStreamId::fromString($values['newContentStreamId']),
             ContentStreamId::fromString($values['previousContentStreamId']),
+            $values['partial'] ?? false
         );
     }
 
     public function jsonSerialize(): array
     {
-        return [
-            'workspaceName' => $this->workspaceName,
-            'newContentStreamId' => $this->newContentStreamId,
-            'previousContentStreamId' => $this->previousContentStreamId,
-        ];
+        return get_object_vars($this);
     }
 }

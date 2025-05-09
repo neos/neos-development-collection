@@ -13,9 +13,8 @@ interface EventInterface extends \JsonSerializable
 {
     /**
      * @param array<string,mixed> $values
-     * @return static
      */
-    public static function fromArray(array $values): self;
+    public static function fromArray(array $values): EventInterface;
 
     /**
      * @return array<string,mixed>

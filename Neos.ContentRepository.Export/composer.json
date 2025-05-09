@@ -15,7 +15,7 @@
     },
     "require-dev": {
         "roave/security-advisories": "dev-latest",
-        "phpstan/phpstan": "^1.8"
+        "phpstan/phpstan": "^1.11"
     },
     "suggest": {
         "league/flysystem-ziparchive": "to export zip archives",

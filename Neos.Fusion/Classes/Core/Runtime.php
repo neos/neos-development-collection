@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 namespace Neos\Fusion\Core;
 
 /*
@@ -21,6 +24,7 @@ use Neos\Flow\Configuration\Exception\InvalidConfigurationException;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\ActionResponse;
 use Neos\Flow\Mvc\Exception\StopActionException;
+use Neos\Flow\Mvc\Exception\ForwardException;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Security\Exception as SecurityException;
 use Neos\Fusion\Core\Cache\RuntimeContentCache;
@@ -475,7 +479,7 @@ class Runtime
             // fast path for expression or value
             try {
                 return $this->evaluateExpressionOrValueInternal($fusionPath, $fusionConfiguration, $contextObject);
-            } catch (StopActionException | SecurityException | RuntimeException $exception) {
+            } catch (StopActionException | ForwardException | SecurityException | RuntimeException $exception) {
                 throw $exception;
             } catch (\Exception $exception) {
                 return $this->handleRenderingException($fusionPath, $exception, true);
@@ -763,7 +767,7 @@ class Runtime
      * @return mixed The result of the evaluated Eel expression
      * @throws Exception
      */
-    protected function evaluateEelExpression($expression, AbstractFusionObject $contextObject = null)
+    protected function evaluateEelExpression($expression, ?AbstractFusionObject $contextObject = null)
     {
         if ($expression[0] !== '$' || $expression[1] !== '{') {
             // We still assume this is an EEL expression and wrap the markers for backwards compatibility.
@@ -782,7 +786,13 @@ class Runtime
             $this->eelEvaluator->_activateDependency();
         }
 
-        return EelUtility::evaluateEelExpression($expression, $this->eelEvaluator, $contextVariables);
+        $tracer = match ($this->settings['deprecationTracer'] ?? null) {
+            'LOG' => new EelNeosDeprecationTracer($expression, false),
+            'EXCEPTION' => new EelNeosDeprecationTracer($expression, true),
+            default => null
+        };
+
+        return EelUtility::evaluateEelExpression($expression, $this->eelEvaluator, $contextVariables, [], $tracer);
     }
 
     /**
@@ -868,7 +878,7 @@ class Runtime
      * @param AbstractFusionObject $contextObject
      * @return mixed
      */
-    protected function evaluateProcessors($valueToProcess, $configurationWithEventualProcessors, $fusionPath, AbstractFusionObject $contextObject = null)
+    protected function evaluateProcessors($valueToProcess, $configurationWithEventualProcessors, $fusionPath, ?AbstractFusionObject $contextObject = null)
     {
         $processorConfiguration = $configurationWithEventualProcessors['__meta']['process'];
         $positionalArraySorter = new PositionalArraySorter($processorConfiguration, '__meta.position');
@@ -906,7 +916,7 @@ class Runtime
      * @param AbstractFusionObject $contextObject
      * @return boolean
      */
-    protected function evaluateIfCondition($configurationWithEventualIf, $configurationPath, AbstractFusionObject $contextObject = null)
+    protected function evaluateIfCondition($configurationWithEventualIf, $configurationPath, ?AbstractFusionObject $contextObject = null)
     {
         foreach ($configurationWithEventualIf['__meta']['if'] as $conditionKey => $conditionValue) {
             $conditionValue = $this->evaluate($configurationPath . '/__meta/if/' . $conditionKey, $contextObject, self::BEHAVIOR_EXCEPTION);
@@ -963,7 +973,7 @@ class Runtime
     private function withSimulatedLegacyControllerContext(\Closure $renderer): ResponseInterface|StreamInterface
     {
         if ($this->legacyActionResponseForCurrentRendering !== null) {
-            throw new Exception('Recursion detected in `Runtime::renderResponse`. This entry point is only allowed to be invoked once per rendering.', 1706993940);
+            throw new Exception('Recursion detected in `Runtime::renderEntryPathWithContext`. This entry point is only allowed to be invoked once per rendering.', 1706993940);
         }
         $this->legacyActionResponseForCurrentRendering = new ActionResponse();
 
@@ -1013,7 +1023,7 @@ class Runtime
         // legacy controller context layer
         $actionRequest = $this->fusionGlobals->get('request');
         if ($this->legacyActionResponseForCurrentRendering === null || !$actionRequest instanceof ActionRequest) {
-            throw new Exception(sprintf('Fusions simulated legacy controller context is only available inside `Runtime::renderResponse` and when the Fusion global "request" is an ActionRequest.'), 1706458355);
+            throw new Exception(sprintf('Fusions simulated legacy controller context is only available inside `Runtime::renderEntryPathWithContext` and when the Fusion global "request" is an ActionRequest.'), 1706458355);
         }
 
         return new LegacyFusionControllerContext(

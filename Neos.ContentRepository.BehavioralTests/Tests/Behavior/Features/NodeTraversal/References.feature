@@ -70,8 +70,6 @@ Feature: Find and count references and their target nodes using the findReferenc
     And the command CreateRootWorkspace is executed with payload:
       | Key                  | Value                |
       | workspaceName        | "live"               |
-      | workspaceTitle       | "Live"               |
-      | workspaceDescription | "The live workspace" |
       | newContentStreamId   | "cs-identifier"      |
     And I am in workspace "live" and dimension space point {"language":"de"}
     And the command CreateRootNodeAggregateWithNode is executed with payload:
@@ -95,54 +93,45 @@ Feature: Find and count references and their target nodes using the findReferenc
     And the command SetNodeReferences is executed with payload:
       | Key                   | Value                                |
       | sourceNodeAggregateId | "a"                                  |
-      | referenceName         | "refs"                               |
-      | references            | [{"target":"b1"}, {"target":"a2a2"}] |
+      | references            | [{"referenceName": "refs", "references": [{"target":"b1"}, {"target":"a2a2"}]}] |
     And the command SetNodeReferences is executed with payload:
       | Key                   | Value            |
       | sourceNodeAggregateId | "b1"             |
-      | referenceName         | "ref"            |
-      | references            | [{"target":"a"}] |
+      | references            | [{"referenceName": "ref", "references": [{"target":"a"}]}] |
     And the command SetNodeReferences is executed with payload:
       | Key                   | Value                                                                                            |
       | sourceNodeAggregateId | "b"                                                                                              |
-      | referenceName         | "refs"                                                                                           |
-      | references            | [{"target":"a2", "properties": {"foo": "bar"}}, {"target":"a2a1", "properties": {"foo": "baz"}}] |
+      | references            | [{"referenceName": "refs", "references": [{"target":"a2", "properties": {"foo": "bar"}}, {"target":"a2a1", "properties": {"foo": "baz"}}]}] |
     And the command SetNodeReferences is executed with payload:
       | Key                   | Value                                           |
       | sourceNodeAggregateId | "a"                                             |
-      | referenceName         | "ref"                                           |
-      | references            | [{"target":"b1", "properties": {"foo": "bar"}}] |
+      | references            | [{"referenceName": "ref", "references": [{"target":"b1", "properties": {"foo": "bar"}}]}] |
     And the command SetNodeReferences is executed with payload:
       | Key                   | Value               |
       | sourceNodeAggregateId | "a2"                |
-      | referenceName         | "ref"               |
-      | references            | [{"target":"a2a3"}] |
+      | references            | [{"referenceName": "ref", "references": [{"target":"a2a3"}]}] |
     And the command SetNodeReferences is executed with payload:
       | Key                   | Value             |
       | sourceNodeAggregateId | "a2a3"            |
-      | referenceName         | "ref"             |
-      | references            | [{"target":"a2"}] |
+      | references            | [{"referenceName": "ref", "references": [{"target":"a2"}]}] |
     And the command SetNodeReferences is executed with payload:
       | Key                   | Value                                           |
       | sourceNodeAggregateId | "b"                                             |
-      | referenceName         | "refs"                                          |
-      | references            | [{"target":"a3", "properties": {"foo": "bar"}}] |
+      | references            | [{"referenceName": "refs", "references": [{"target":"a3", "properties": {"foo": "bar"}}]}] |
     And the command SetNodeReferences is executed with payload:
       | Key                   | Value                                            |
       | sourceNodeAggregateId | "c"                                              |
-      | referenceName         | "refs"                                           |
-      | references            | [{"target":"b1", "properties": {"foo": "foos"}}] |
+      | references            | [{"referenceName": "refs", "references": [{"target":"b1", "properties": {"foo": "foos"}}]}] |
     And the command SetNodeReferences is executed with payload:
       | Key                   | Value            |
       | sourceNodeAggregateId | "c"              |
-      | referenceName         | "ref"            |
-      | references            | [{"target":"b"}] |
+      | references            | [{"referenceName": "ref", "references": [{"target":"b"}]}] |
     And the command DisableNodeAggregate is executed with payload:
       | Key                          | Value         |
       | nodeAggregateId              | "a2a3"        |
       | nodeVariantSelectionStrategy | "allVariants" |
 
-  Scenario:
+  Scenario: Check consistency of findReferences results
     # findReferences queries without results
     When I execute the findReferences query for node aggregate id "non-existing" I expect no references to be returned
     When I execute the findReferences query for node aggregate id "c" and filter '{"nodeTypes": "Neos.ContentRepository.Testing:NonExisting"}' I expect no references to be returned

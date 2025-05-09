@@ -21,6 +21,7 @@ The Content Repository comes with a number of common transformations:
 - ``RenameNodeAggregate``
 - ``RenameProperty``
 - ``StripTagsOnProperty``
+- ``UpdateRootNodeAggregateDimensions``
 
 They all implement the ``Neos\ContentRepository\NodeMigration\Transformation\TransformationFactoryInterface``. Custom transformations
 can be developed against that interface as well, just use the fully qualified class name for those when specifying
@@ -78,7 +79,7 @@ Transformations Reference
 -------------------------
 
 AddDimensionShineThrough
-~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~
 
 Add a Dimension Space Point (DSP) Shine-Through; basically making all content available not just in the source (original) DSP,  but also in the target-DimensionSpacePoint.
 
@@ -197,7 +198,7 @@ Options Reference:
   value.
 
 MoveDimensionSpacePoint
-~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~
 
 Moves a dimension space point globally.
 
@@ -228,7 +229,7 @@ Options Reference:
   The name of the property to be removed.
 
 RenameNodeAggregate
-~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~
 
 Rename a node aggregate.
 
@@ -262,13 +263,24 @@ Options Reference:
 ``property`` (string)
   The name of the property to work on.
 
+UpdateRootNodeAggregateDimensions
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Updates all root node aggregate dimensions regarding the current content repository configuration.
+
+Creates empty root node aggregate dimensions for each allowed dimension combination and removes them for all non-configured ones.
+
+Options Reference:
+
+``nodeType`` (string)
+  The node type name of the root node. For Neos this is usually "Neos.Neos:Sites"
 
 
 Filters Reference
 -----------------
 
 DimensionSpacePoints
-~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~
 
 Filter nodes by origin dimension space point.
 
@@ -316,7 +328,7 @@ Options Reference:
   The property name to be checked for non-empty value.
 
 PropertyValue
-~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~
 
 Filter nodes having the given property with the corresponding value.
 

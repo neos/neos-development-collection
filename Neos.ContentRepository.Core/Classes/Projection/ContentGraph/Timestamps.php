@@ -85,10 +85,10 @@ final readonly class Timestamps
      * @see https://www.php.net/manual/en/functions.arguments.php#functions.named-arguments
      */
     public function with(
-        DateTimeImmutable $created = null,
-        DateTimeImmutable $originalCreated = null,
-        DateTimeImmutable $lastModified = null,
-        DateTimeImmutable $originalLastModified = null,
+        ?DateTimeImmutable $created = null,
+        ?DateTimeImmutable $originalCreated = null,
+        ?DateTimeImmutable $lastModified = null,
+        ?DateTimeImmutable $originalLastModified = null,
     ): self {
         return new self(
             $created ?? $this->created,

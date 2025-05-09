@@ -231,9 +231,9 @@
         <source>Save</source>
         <target state="final">Tallenna</target>
       </trans-unit>
-      <trans-unit id="saving" xml:space="preserve" approved="yes">
+      <trans-unit id="saving" xml:space="preserve" approved="no">
         <source>Saving</source>
-        <target state="final">Tallentaa...</target>
+        <target state="translated">Tallennetaan</target>
       </trans-unit>
       <trans-unit id="saved" xml:space="preserve" approved="yes">
         <source>Saved</source>
@@ -373,7 +373,7 @@
       </trans-unit>
       <trans-unit id="package" xml:space="preserve">
         <source>Package</source>
-        <target state="needs-translation">Package</target>
+        <target state="translated">Paketti</target>
       </trans-unit>
       <trans-unit id="deactivated" xml:space="preserve" approved="yes">
         <source>Deactivated</source>
@@ -381,11 +381,11 @@
       </trans-unit>
       <trans-unit id="unavailable" xml:space="preserve">
         <source>Unavailable</source>
-        <target state="needs-translation">Unavailable</target>
+        <target state="translated">Ei saatavilla</target>
       </trans-unit>
       <trans-unit id="inactive" xml:space="preserve">
         <source>Inactive</source>
-        <target state="needs-translation">Inactive</target>
+        <target state="translated">Ei-aktiivinen</target>
       </trans-unit>
       <trans-unit id="clickToEdit" xml:space="preserve" approved="yes">
         <source>Click to edit</source>
@@ -393,11 +393,11 @@
       </trans-unit>
       <trans-unit id="clickToDeactivate" xml:space="preserve">
         <source>Click to deactivate</source>
-        <target state="needs-translation">Click to deactivate</target>
+        <target state="translated">Poista käytöstä napsauttamalla</target>
       </trans-unit>
       <trans-unit id="clickToActivate" xml:space="preserve">
         <source>Click to activate</source>
-        <target state="needs-translation">Click to activate</target>
+        <target state="translated">Aktivoi napsauttamalla</target>
       </trans-unit>
       <trans-unit id="clickToDelete" xml:space="preserve" approved="yes">
         <source>Click to delete</source>
@@ -405,27 +405,27 @@
       </trans-unit>
       <trans-unit id="clickToCreate" xml:space="preserve">
         <source>Click to create new</source>
-        <target state="needs-translation">Click to create new</target>
+        <target state="translated">Luo uusi napsauttamalla</target>
       </trans-unit>
       <trans-unit id="state" xml:space="preserve">
         <source>Status</source>
-        <target state="needs-translation">Status</target>
+        <target state="translated">Tila</target>
       </trans-unit>
       <trans-unit id="active" xml:space="preserve">
         <source>Active</source>
-        <target state="needs-translation">Active</target>
+        <target state="translated">Aktiivinen</target>
       </trans-unit>
       <trans-unit id="domains" xml:space="preserve">
         <source>Domains</source>
-        <target state="needs-translation">Domains</target>
+        <target state="translated">Toimialueet</target>
       </trans-unit>
       <trans-unit id="domain" xml:space="preserve">
         <source>Domain</source>
-        <target state="needs-translation">Domain</target>
+        <target state="translated">Toimialue</target>
       </trans-unit>
       <trans-unit id="deleteConfirm" xml:space="preserve">
         <source>Yes, delete it!</source>
-        <target state="needs-translation">Yes, delete it!</target>
+        <target state="translated">Kyllä, poista se!</target>
       </trans-unit>
       <trans-unit id="packageKey" xml:space="preserve" approved="yes">
         <source>Package Key</source>
@@ -437,23 +437,23 @@
       </trans-unit>
       <trans-unit id="toggleContentTree" xml:space="preserve">
         <source>Toggle content tree</source>
-        <target state="needs-translation">Toggle content tree</target>
+        <target state="translated">Vaihda sisältöpuuta</target>
       </trans-unit>
       <trans-unit id="showPublishOptions" xml:space="preserve">
         <source>Show publish options</source>
-        <target state="needs-translation">Show publish options</target>
+        <target state="translated">Näytä julkaisuvaihtoehdot</target>
       </trans-unit>
       <trans-unit id="activateFullscreen" xml:space="preserve">
         <source>Activate Fullscreen edit mode</source>
-        <target state="needs-translation">Activate Fullscreen edit mode</target>
+        <target state="translated">Ota koko näytön muokkaustila käyttöön</target>
       </trans-unit>
       <trans-unit id="deactivateFullscreen" xml:space="preserve">
         <source>Deactivate Fullscreen edit mode</source>
-        <target state="needs-translation">Deactivate Fullscreen edit mode</target>
+        <target state="translated">Poista koko näytön muokkaustila käytöstä</target>
       </trans-unit>
       <trans-unit id="showPreview" xml:space="preserve">
         <source>Show preview</source>
-        <target state="needs-translation">Show preview</target>
+        <target state="translated">Näytä esikatselu</target>
       </trans-unit>
       <!-- node types -->
       <trans-unit id="nodeTypes.groups.general" xml:space="preserve" approved="yes">
@@ -607,9 +607,9 @@
         <source>This text may not exceed {maximum} characters.</source>
         <target state="final">Tekstin enimmäispituus on {{maximum}} merkkiä.</target>
       </trans-unit>
-      <trans-unit id="content.inspector.validators.alphanumericValidator" xml:space="preserve" approved="yes">
+      <trans-unit id="content.inspector.validators.alphanumericValidator" xml:space="preserve" approved="no">
         <source>Only regular characters (a to z, umlauts, ...) and numbers are allowed.</source>
-        <target state="final">Ainoastaan kirjaimet ja numerot ovat sallittuja</target>
+        <target state="translated">Vain tavalliset merkit (a–z, umlautit, ...) ja numerot ovat sallittuja.</target>
       </trans-unit>
       <trans-unit id="content.inspector.validators.countValidator.notCountable" xml:space="preserve" approved="yes">
         <source>The given subject was not countable.</source>
@@ -836,7 +836,7 @@
       <!-- Error handlers -->
       <trans-unit id="error.exception.welcomeToNeos" xml:space="preserve">
         <source>Welcome to Neos</source>
-        <target state="needs-translation">Welcome to Neos</target>
+        <target state="translated">Tervetuloa Neosiin</target>
       </trans-unit>
       <trans-unit id="error.exception.goToSetup" xml:space="preserve" approved="yes">
         <source>Go to setup</source>
@@ -844,7 +844,7 @@
       </trans-unit>
       <trans-unit id="error.exception.technicalInformation" xml:space="preserve">
         <source>Technical Information</source>
-        <target state="needs-translation">Technical Information</target>
+        <target state="translated">Tekniset tiedot</target>
       </trans-unit>
       <trans-unit id="error.exception.databaseConnectionExceptions.title" xml:space="preserve" approved="yes">
         <source>Database Error</source>
@@ -852,11 +852,11 @@
       </trans-unit>
       <trans-unit id="error.exception.databaseConnectionExceptions.description" xml:space="preserve">
         <source>There is no database connection yet or the Neos database schema has not been created.</source>
-        <target state="needs-translation">There is no database connection yet or the Neos database schema has not been created.</target>
+        <target state="translated">Tietokantayhteyttä ei vielä ole tai Neos-tietokantaskeemaa ei ole luotu.</target>
       </trans-unit>
       <trans-unit id="error.exception.databaseConnectionExceptions.setupMessage" xml:space="preserve">
         <source>Run the setup to configure your database.</source>
-        <target state="needs-translation">Run the setup to configure your database.</target>
+        <target state="translated">Määritä tietokanta suorittamalla asettamisen.</target>
       </trans-unit>
       <trans-unit id="error.exception.notFoundExceptions.title" xml:space="preserve" approved="yes">
         <source>Page Not Found</source>
@@ -920,51 +920,51 @@
       <!-- New UI labels -->
       <trans-unit id="copy__from__to--title" xml:space="preserve">
         <source>Copy {source} to {target}</source>
-        <target state="needs-translation">Copy {source} to {target}</target>
+        <target state="translated">Kopioi {source} kohteeseen {target}</target>
       </trans-unit>
       <trans-unit id="move__from__to--title" xml:space="preserve">
         <source>Move {source} to {target}</source>
-        <target state="needs-translation">Move {source} to {target}</target>
+        <target state="translated">Siirrä {source} kohteeseen {target}</target>
       </trans-unit>
       <trans-unit id="copy__from__to--description" xml:space="preserve">
         <source>Please select the position at which you want {source} inserted relative to {target}.</source>
-        <target state="needs-translation">Please select the position at which you want {source} inserted relative to {target}.</target>
+        <target state="translated">Valitse sijainti, johon haluat lisätä {source}:n suhteessa kohteeseen {target}.</target>
       </trans-unit>
       <trans-unit id="insert" xml:space="preserve">
         <source>Insert</source>
-        <target state="needs-translation">Insert</target>
+        <target state="translated">Lisää</target>
       </trans-unit>
       <trans-unit id="insertMode" xml:space="preserve">
         <source>Insert mode</source>
-        <target state="needs-translation">Insert mode</target>
+        <target state="translated">Lisää-tila</target>
       </trans-unit>
       <trans-unit id="imageCropper__aspect-ratio-placeholder" xml:space="preserve">
         <source>Choose an Aspect Ratio</source>
-        <target state="needs-translation">Choose an Aspect Ratio</target>
+        <target state="translated">Valitse kuvasuhde</target>
       </trans-unit>
       <trans-unit id="ckeditor__toolbar__bold" xml:space="preserve">
         <source>Bold</source>
-        <target state="needs-translation">Bold</target>
+        <target state="translated">Lihavoitu</target>
       </trans-unit>
       <trans-unit id="ckeditor__toolbar__italic" xml:space="preserve">
         <source>Italic</source>
-        <target state="needs-translation">Italic</target>
+        <target state="translated">Kursiivi</target>
       </trans-unit>
       <trans-unit id="ckeditor__toolbar__underline" xml:space="preserve">
         <source>Underline</source>
-        <target state="needs-translation">Underline</target>
+        <target state="translated">Alleviivaa</target>
       </trans-unit>
       <trans-unit id="ckeditor__toolbar__subscript" xml:space="preserve">
         <source>Subscript</source>
-        <target state="needs-translation">Subscript</target>
+        <target state="translated">Aliskripti</target>
       </trans-unit>
       <trans-unit id="ckeditor__toolbar__superscript" xml:space="preserve">
         <source>Superscript</source>
-        <target state="needs-translation">Superscript</target>
+        <target state="translated">Superskripti</target>
       </trans-unit>
       <trans-unit id="ckeditor__toolbar__strikethrough" xml:space="preserve">
         <source>Strikethrough</source>
-        <target state="needs-translation">Strikethrough</target>
+        <target state="translated">Yliviivattu</target>
       </trans-unit>
       <trans-unit id="ckeditor__toolbar__link" xml:space="preserve" approved="yes">
         <source>Link</source>
@@ -972,43 +972,43 @@
       </trans-unit>
       <trans-unit id="ckeditor__toolbar__ordered-list" xml:space="preserve">
         <source>Ordered list</source>
-        <target state="needs-translation">Ordered list</target>
+        <target state="translated">Tilattu lista</target>
       </trans-unit>
       <trans-unit id="ckeditor__toolbar__unordered-list" xml:space="preserve">
         <source>Unordered list</source>
-        <target state="needs-translation">Unordered list</target>
+        <target state="translated">Järjestämätön lista</target>
       </trans-unit>
       <trans-unit id="ckeditor__toolbar__align-left" xml:space="preserve">
         <source>Align left</source>
-        <target state="needs-translation">Align left</target>
+        <target state="translated">Tasaa vasemmalle</target>
       </trans-unit>
       <trans-unit id="ckeditor__toolbar__align-right" xml:space="preserve">
         <source>Align right</source>
-        <target state="needs-translation">Align right</target>
+        <target state="translated">Tasaa oikealle</target>
       </trans-unit>
       <trans-unit id="ckeditor__toolbar__align-center" xml:space="preserve">
         <source>Align center</source>
-        <target state="needs-translation">Align center</target>
+        <target state="translated">Tasaa keskelle</target>
       </trans-unit>
       <trans-unit id="ckeditor__toolbar__align-justify" xml:space="preserve">
         <source>Align justify</source>
-        <target state="needs-translation">Align justify</target>
+        <target state="translated">Tasaa tasaus</target>
       </trans-unit>
       <trans-unit id="ckeditor__toolbar__table" xml:space="preserve">
         <source>Table</source>
-        <target state="needs-translation">Table</target>
+        <target state="translated">Taulukko</target>
       </trans-unit>
       <trans-unit id="ckeditor__toolbar__remove-format" xml:space="preserve">
         <source>Remove format</source>
-        <target state="needs-translation">Remove format</target>
+        <target state="translated">Poista muoto</target>
       </trans-unit>
       <trans-unit id="ckeditor__toolbar__outdent" xml:space="preserve">
         <source>Outdent</source>
-        <target state="needs-translation">Outdent</target>
+        <target state="translated">Uloslommo</target>
       </trans-unit>
       <trans-unit id="ckeditor__toolbar__indent" xml:space="preserve">
         <source>Indent</source>
-        <target state="needs-translation">Indent</target>
+        <target state="translated">Sisennä</target>
       </trans-unit>
       <trans-unit id="createNew" xml:space="preserve" approved="yes">
         <source>Create new</source>
@@ -1016,15 +1016,15 @@
       </trans-unit>
       <trans-unit id="noMatchesFound" xml:space="preserve">
         <source>No matches found</source>
-        <target state="needs-translation">No matches found</target>
+        <target state="translated">Osumia ei löytynyt</target>
       </trans-unit>
       <trans-unit id="searchBoxLeftToType" xml:space="preserve">
         <source>Please enter ###CHARACTERS### more character</source>
-        <target state="needs-translation">Please enter ###CHARACTERS### more character</target>
+        <target state="translated">Syötä ###MERKIT### lisää merkkiä</target>
       </trans-unit>
       <trans-unit id="login.wrongCredentials.title" xml:space="preserve">
         <source>Wrong Credentials</source>
-        <target state="needs-translation">Wrong Credentials</target>
+        <target state="translated">Väärät valtuustiedot</target>
       </trans-unit>
       <trans-unit id="login.wrongCredentials.body" xml:space="preserve" approved="yes">
         <source>The entered username or password was wrong</source>
@@ -1032,11 +1032,11 @@
       </trans-unit>
       <trans-unit id="login.loggedOut.title" xml:space="preserve">
         <source>Logged Out</source>
-        <target state="needs-translation">Logged Out</target>
+        <target state="translated">Kirjautunut ulos</target>
       </trans-unit>
       <trans-unit id="login.loggedOut.body" xml:space="preserve">
         <source>Successfully logged out</source>
-        <target state="needs-translation">Successfully logged out</target>
+        <target state="translated">Uloskirjautuminen onnistui</target>
       </trans-unit>
       <trans-unit id="pathCaption" xml:space="preserve">
         <source>Path</source>
@@ -1045,6 +1045,50 @@
       <trans-unit id="relativePathCaption" xml:space="preserve">
         <source>Relative Path</source>
         <target state="needs-translation">Suhteellinen polku</target>
+      </trans-unit>
+      <trans-unit id="documentTree" xml:space="preserve">
+        <source>Document Tree</source>
+        <target state="translated">Asiakirjapuu</target>
+      </trans-unit>
+      <trans-unit id="contentTree" xml:space="preserve">
+        <source>Content Tree</source>
+        <target state="translated">Sisältöpuu</target>
+      </trans-unit>
+      <trans-unit id="impersonate.success.impersonateUser" xml:space="preserve" approved="no">
+        <source>Switched to the new user "{0}".</source>
+        <target state="translated">Vaihdettu uuteen käyttäjään "{0}".</target>
+      </trans-unit>
+      <trans-unit id="impersonate.error.impersonateUser" xml:space="preserve" approved="no">
+        <source>Could not switch to the selected user.</source>
+        <target state="translated">Ei voitu vaihtaa valittuun käyttäjään.</target>
+      </trans-unit>
+      <trans-unit id="impersonate.tooltip.impersonateUserButton" xml:space="preserve" approved="no">
+        <source>Login as user</source>
+        <target state="translated">Sisäänkirjautuminen käyttäjänä</target>
+      </trans-unit>
+      <trans-unit id="impersonate.error.restoreUser" xml:space="preserve" approved="no">
+        <source>Could not switch back to the original user.</source>
+        <target state="translated">Ei voitu vaihtaa takaisin alkuperäiseen käyttäjään.</target>
+      </trans-unit>
+      <trans-unit id="impersonate.success.restoreUser" xml:space="preserve" approved="no">
+        <source>Switched back from "{0}" to the orginal user "{1}"</source>
+        <target state="translated">Vaihdettu takaisin käyttäjästä "{0}" alkuperäiselle käyttäjälle "{1}"</target>
+      </trans-unit>
+      <trans-unit id="impersonate.label.restoreUserButton" xml:space="preserve" approved="no">
+        <source>Back to user "{0}"</source>
+        <target state="translated">Takaisin käyttäjälle "{0}"</target>
+      </trans-unit>
+      <trans-unit id="impersonate.title.restoreUserButton" xml:space="preserve" approved="no">
+        <source>Switch back to the orginal user account</source>
+        <target state="translated">Vaihda takaisin alkuperäiseen käyttäjätiliin</target>
+      </trans-unit>
+      <trans-unit id="cantPublishSingleNodeInNewPage" xml:space="preserve">
+        <source>Can't publish a single node in a new page</source>
+        <target state="translated">Yhtäkään solmua ei voi julkaista uudella sivulla</target>
+      </trans-unit>
+      <trans-unit id="shortcut.toSpecificTarget" xml:space="preserve">
+        <source>This is a shortcut to a specific target:</source>
+        <target state="translated">Tämä on pikakuvake tiettyyn kohteeseen:</target>
       </trans-unit>
     </body>
   </file>

@@ -70,7 +70,7 @@ final readonly class AbsoluteNodePath implements \JsonSerializable
     public static function fromLeafNodeAndAncestors(Node $leafNode, Nodes $ancestors): self
     {
         if ($leafNode->classification->isRoot()) {
-            return new self($leafNode->nodeTypeName, NodePath::forRoot());
+            return new self($leafNode->nodeTypeName, NodePath::createEmpty());
         }
         $rootNode = $ancestors->first();
         if (!$rootNode || !$rootNode->classification->isRoot()) {
@@ -147,7 +147,7 @@ final readonly class AbsoluteNodePath implements \JsonSerializable
      */
     public function isRoot(): bool
     {
-        return $this->path->isRoot();
+        return $this->path->isEmpty();
     }
 
     /**
@@ -175,6 +175,11 @@ final readonly class AbsoluteNodePath implements \JsonSerializable
     }
 
     public function jsonSerialize(): string
+    {
+        return $this->serializeToString();
+    }
+
+    public function __toString(): string
     {
         return $this->serializeToString();
     }

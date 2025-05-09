@@ -22,7 +22,6 @@ use Neos\ContentRepository\Core\Feature\NodeModification\Dto\SerializedPropertyV
 use Neos\ContentRepository\Core\Infrastructure\Property\PropertyConverter;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\Projection\ContentGraph\CoverageByOrigin;
-use Neos\ContentRepository\Core\Projection\ContentGraph\DimensionSpacePointsBySubtreeTags;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregates;
@@ -33,6 +32,7 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\PropertyCollection;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Reference;
 use Neos\ContentRepository\Core\Projection\ContentGraph\References;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Subtree;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Subtrees;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Timestamps;
 use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
@@ -154,7 +154,11 @@ final class NodeFactory
             $nodeAggregateId = $nodeRow['nodeaggregateid'];
             $parentNodeAggregateId = $nodeRow['parentnodeaggregateid'];
             $node = $this->mapNodeRowToNode($nodeRow, $visibilityConstraints);
-            $subtree = new Subtree((int)$nodeRow['level'], $node, array_key_exists($nodeAggregateId, $subtreesByParentNodeId) ? array_reverse($subtreesByParentNodeId[$nodeAggregateId]) : []);
+            $subtree = Subtree::create(
+                (int)$nodeRow['level'],
+                $node,
+                array_key_exists($nodeAggregateId, $subtreesByParentNodeId) ? Subtrees::fromArray(array_reverse($subtreesByParentNodeId[$nodeAggregateId])) : Subtrees::createEmpty()
+            );
             if ($subtree->level === 0) {
                 return $subtree;
             }
@@ -189,7 +193,6 @@ final class NodeFactory
         $coverageByOccupant = [];
         /** @var DimensionSpacePoint[] $coveredDimensionSpacePoints */
         $coveredDimensionSpacePoints = [];
-        $nodesByCoveredDimensionSpacePoint = [];
         $occupationByCovered = [];
         /** @var DimensionSpacePoint[] $disabledDimensionSpacePoints */
         $disabledDimensionSpacePoints = [];
@@ -217,7 +220,6 @@ final class NodeFactory
             $coverageByOccupant[$node->originDimensionSpacePoint->hash][$coveredDimensionSpacePoint->hash]
                 = $coveredDimensionSpacePoint;
             $coveredDimensionSpacePoints[$coveredDimensionSpacePoint->hash] = $coveredDimensionSpacePoint;
-            $nodesByCoveredDimensionSpacePoint[$coveredDimensionSpacePoint->hash] = $node;
             $occupationByCovered[$coveredDimensionSpacePoint->hash] = $node->originDimensionSpacePoint;
             if (isset($nodeRow['disableddimensionspacepointhash']) && $nodeRow['disableddimensionspacepointhash']) {
                 $disabledDimensionSpacePoints[$nodeRow['disableddimensionspacepointhash']]
@@ -236,10 +238,9 @@ final class NodeFactory
             $nodesByOccupiedDimensionSpacePoint,
             CoverageByOrigin::fromArray($coverageByOccupant),
             new DimensionSpacePointSet($coveredDimensionSpacePoints),
-            $nodesByCoveredDimensionSpacePoint,
             OriginByCoverage::fromArray($occupationByCovered),
             // TODO implement (see \Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\NodeFactory::mapNodeRowsToNodeAggregate())
-            DimensionSpacePointsBySubtreeTags::create(),
+            array_fill_keys(array_keys($coveredDimensionSpacePoints), NodeTags::createEmpty()),
         );
     }
 
@@ -271,8 +272,6 @@ final class NodeFactory
         $coverageByOccupant = [];
         /** @var DimensionSpacePoint[][] $coveredDimensionSpacePoints */
         $coveredDimensionSpacePoints = [];
-        /** @var Node[][] $nodesByCoveredDimensionSpacePoint */
-        $nodesByCoveredDimensionSpacePoint = [];
         /** @var OriginDimensionSpacePoint[][] $occupationByCovered */
         $occupationByCovered = [];
         /** @var DimensionSpacePoint[][] $disabledDimensionSpacePoints */
@@ -310,7 +309,6 @@ final class NodeFactory
             $coveredDimensionSpacePoints[$key][$coveredDimensionSpacePoint->hash] = $coveredDimensionSpacePoint;
             $coverageByOccupant[$key][$node->originDimensionSpacePoint->hash][$coveredDimensionSpacePoint->hash]
                 = $coveredDimensionSpacePoint;
-            $nodesByCoveredDimensionSpacePoint[$key][$coveredDimensionSpacePoint->hash] = $node;
             $occupationByCovered[$key][$coveredDimensionSpacePoint->hash] = $node->originDimensionSpacePoint;
             if (!isset($disabledDimensionSpacePoints[$key])) {
                 $disabledDimensionSpacePoints[$key] = [];
@@ -333,10 +331,9 @@ final class NodeFactory
                 $nodesByOccupiedDimensionSpacePoint[$key],
                 CoverageByOrigin::fromArray($coverageByOccupant[$key]),
                 new DimensionSpacePointSet($coveredDimensionSpacePoints[$key]),
-                $nodesByCoveredDimensionSpacePoint[$key],
                 OriginByCoverage::fromArray($occupationByCovered[$key]),
                 // TODO implement (see \Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\NodeFactory::mapNodeRowsToNodeAggregates())
-                DimensionSpacePointsBySubtreeTags::create(),
+                array_fill_keys(array_keys($coveredDimensionSpacePoints), NodeTags::createEmpty()),
             );
         }
 

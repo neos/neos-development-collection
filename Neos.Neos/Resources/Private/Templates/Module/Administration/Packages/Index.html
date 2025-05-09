@@ -11,7 +11,6 @@
       <th>{neos:backend.translate(id: 'version', package: 'Neos.Neos')}</th>
       <th>{neos:backend.translate(id: 'packages.key', source: 'Modules', package: 'Neos.Neos')}</th>
       <th>{neos:backend.translate(id: 'packages.type', source: 'Modules', package: 'Neos.Neos')}</th>
-      <th class="neos-aCenter neos-span1">Frozen</th>
     </thead>
     <tbody>
       <f:for each="{packageGroups}" key="packageGroup" as="packages">
@@ -47,7 +46,6 @@
                 <span class="neos-label">{package.type}</span>
               </label>
             </td>
-            <td class="neos-priority1 neos-aCenter"><i class="fas fa-{f:if(condition: package.isFrozen, then: 'check', else: 'times')}"></i></td>
           </tr>
         </f:for>
       </f:for>

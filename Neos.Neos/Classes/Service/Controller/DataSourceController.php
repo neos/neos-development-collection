@@ -15,18 +15,15 @@ declare(strict_types=1);
 namespace Neos\Neos\Service\Controller;
 
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
-use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAddress;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\View\JsonView;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
-use Neos\Neos\FrontendRouting\NodeAddressFactory;
-use Neos\Neos\FrontendRouting\SiteDetection\SiteDetectionResult;
-use Neos\Utility\ObjectAccess;
 use Neos\Flow\Reflection\ReflectionService;
 use Neos\Neos\Exception as NeosException;
 use Neos\Neos\Service\DataSource\DataSourceInterface;
+use Neos\Utility\ObjectAccess;
 
 /**
  * Data Source Controller
@@ -49,7 +46,7 @@ class DataSourceController extends AbstractServiceController
      * @param string $dataSourceIdentifier
      * @throws NeosException
      */
-    public function indexAction($dataSourceIdentifier, string $node = null): void
+    public function indexAction($dataSourceIdentifier, ?string $node = null): void
     {
         $dataSources = static::getDataSources($this->objectManager);
 
@@ -70,27 +67,22 @@ class DataSourceController extends AbstractServiceController
         unset($arguments['dataSourceIdentifier']);
         unset($arguments['node']);
 
-        $values = $dataSource->getData($this->deserializeNodeFromLegacyAddress($node), $arguments);
+        $values = $dataSource->getData($this->deserializeNodeFromNodeAddress($node), $arguments);
 
         $this->view->assign('value', $values);
     }
 
-    private function deserializeNodeFromLegacyAddress(?string $stringFormattedNodeAddress): ?Node
+    private function deserializeNodeFromNodeAddress(?string $stringFormattedNodeAddress): ?Node
     {
         if (!$stringFormattedNodeAddress) {
             return null;
         }
 
-        $contentRepositoryId = SiteDetectionResult::fromRequest($this->request->getHttpRequest())
-            ->contentRepositoryId;
-        $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryId);
-        // todo legacy uri node address notation used. Should be refactored to use json encoded NodeAddress
-        $nodeAddress = NodeAddressFactory::create($contentRepository)->createCoreNodeAddressFromLegacyUriString($stringFormattedNodeAddress);
+        $nodeAddress = NodeAddress::fromJsonString($stringFormattedNodeAddress);
 
-        return $contentRepository->getContentGraph($nodeAddress->workspaceName)->getSubgraph(
-            $nodeAddress->dimensionSpacePoint,
-            VisibilityConstraints::withoutRestrictions()
-        )->findNodeById($nodeAddress->aggregateId);
+        $contentRepository = $this->contentRepositoryRegistry->get($nodeAddress->contentRepositoryId);
+        return $contentRepository->getContentSubgraph($nodeAddress->workspaceName, $nodeAddress->dimensionSpacePoint)
+            ->findNodeById($nodeAddress->aggregateId);
     }
 
     /**

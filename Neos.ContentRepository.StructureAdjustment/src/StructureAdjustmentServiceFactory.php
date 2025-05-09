@@ -16,7 +16,9 @@ class StructureAdjustmentServiceFactory implements ContentRepositoryServiceFacto
     {
         return new StructureAdjustmentService(
             $serviceFactoryDependencies->contentRepository,
-            $serviceFactoryDependencies->eventPersister,
+            $serviceFactoryDependencies->eventStore,
+            $serviceFactoryDependencies->eventNormalizer,
+            $serviceFactoryDependencies->subscriptionEngine,
             $serviceFactoryDependencies->nodeTypeManager,
             $serviceFactoryDependencies->interDimensionalVariationGraph,
             $serviceFactoryDependencies->propertyConverter,

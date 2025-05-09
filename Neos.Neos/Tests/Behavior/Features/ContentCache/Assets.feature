@@ -42,6 +42,8 @@ Feature: Tests for the ContentCacheFlusher and cache flushing on asset changes
     And the asset "an-asset-to-change" has the title "First asset" and caption "This is an asset" and copyright notice "Copyright Neos 2024"
     When an asset exists with id "some-other-asset"
     And the asset "some-other-asset" has the title "Some other asset" and caption "This is some other asset" and copyright notice "Copyright Neos 2024"
+    When an asset exists with id "an-asset-to-change-deep-in-tree"
+    And the asset "an-asset-to-change-deep-in-tree" has the title "Deep in the tree" and caption "This is an asset, deep in the tree" and copyright notice "Copyright Neos 2024"
     And the ContentCacheFlusher flushes all collected tags
 
     When the command CreateRootWorkspace is executed with payload:
@@ -59,13 +61,14 @@ Feature: Tests for the ContentCacheFlusher and cache flushing on asset changes
       | nodeAggregateId | "root"            |
       | nodeTypeName    | "Neos.Neos:Sites" |
     And the following CreateNodeAggregateWithNode commands are executed:
-      | nodeAggregateId | parentNodeAggregateId | nodeTypeName                 | initialPropertyValues                                                                       | nodeName |
-      | a               | root                  | Neos.Neos:Site               | {}                                                                                          | site     |
-      | a1              | a                     | Neos.Neos:Test.DocumentType1 | {"uriPathSegment": "a1", "title": "Node a1", "asset": "Asset:an-asset-to-change"}           | a1       |
-      | a1-1            | a1                    | Neos.Neos:Test.DocumentType1 | {"uriPathSegment": "a1-1", "title": "Node a1-1", "assets": ["Asset:an-asset-to-change"]}    | a1-1     |
-      | a1-2            | a1                    | Neos.Neos:Test.DocumentType1 | {"uriPathSegment": "a1-2", "title": "Node a1-2", "asset": "Asset:some-other-asset"}         | a1-2     |
-      | a2              | a                     | Neos.Neos:Test.DocumentType2 | {"uriPathSegment": "a2", "title": "Node a2", "text": "Link to asset://an-asset-to-change."} | a2       |
-      | a3              | a                     | Neos.Neos:Test.DocumentType2 | {"uriPathSegment": "a2", "title": "Node a2", "text": "Link to asset://some-other-asset."}   | a3       |
+      | nodeAggregateId | parentNodeAggregateId | nodeTypeName                 | initialPropertyValues                                                                                     | nodeName |
+      | a               | root                  | Neos.Neos:Site               | {}                                                                                                        | site     |
+      | a1              | a                     | Neos.Neos:Test.DocumentType1 | {"uriPathSegment": "a1", "title": "Node a1", "asset": "Asset:an-asset-to-change"}                         | a1       |
+      | a1-1            | a1                    | Neos.Neos:Test.DocumentType1 | {"uriPathSegment": "a1-1", "title": "Node a1-1", "assets": ["Asset:an-asset-to-change"]}                  | a1-1     |
+      | a1-2            | a1                    | Neos.Neos:Test.DocumentType1 | {"uriPathSegment": "a1-2", "title": "Node a1-2", "asset": "Asset:some-other-asset"}                       | a1-2     |
+      | a1-1-1          | a1-1                  | Neos.Neos:Test.DocumentType1 | {"uriPathSegment": "a1-1-1", "title": "Node a1-1-1", "assets": ["Asset:an-asset-to-change-deep-in-tree"]} | a1-1-1   |
+      | a2              | a                     | Neos.Neos:Test.DocumentType2 | {"uriPathSegment": "a2", "title": "Node a2", "text": "Link to asset://an-asset-to-change."}               | a2       |
+      | a3              | a                     | Neos.Neos:Test.DocumentType2 | {"uriPathSegment": "a2", "title": "Node a2", "text": "Link to asset://some-other-asset."}                 | a3       |
     When the command RebaseWorkspace is executed with payload:
       | Key           | Value       |
       | workspaceName | "user-test" |
@@ -318,4 +321,34 @@ Feature: Tests for the ContentCacheFlusher and cache flushing on asset changes
     Then I expect the following Fusion rendering result:
     """
     cacheVerifier=first execution, text=Link to asset://some-other-asset.
+    """
+
+  Scenario: ContentCache gets flushed when an referenced asset in a property has changed in a descendant node (2 levels)
+    Given I have Fusion content cache enabled
+    And the Fusion context node is "a1"
+
+    And I execute the following Fusion code:
+    """fusion
+    test = Neos.Neos:Test.DocumentType1 {
+      cacheVerifier = ${"first execution"}
+    }
+    """
+    Then I expect the following Fusion rendering result:
+    """
+    cacheVerifier=first execution, assetTitle=First asset, assetTitleOfArray=
+    """
+
+    Then the asset "an-asset-to-change-deep-in-tree" has the title "Deep in the tree changed"
+    And the ContentCacheFlusher flushes all collected tags
+
+    Then the Fusion context node is "a1"
+    And I execute the following Fusion code:
+    """fusion
+    test = Neos.Neos:Test.DocumentType1 {
+      cacheVerifier = ${"second execution"}
+    }
+    """
+    Then I expect the following Fusion rendering result:
+    """
+    cacheVerifier=second execution, assetTitle=First asset, assetTitleOfArray=
     """

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Neos\Media\Browser\Controller;
 
 /*
@@ -14,20 +16,21 @@ namespace Neos\Media\Browser\Controller;
 
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindClosestNodeFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
-use Neos\ContentRepository\Core\SharedModel\Exception\NodeTypeNotFound;
-use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
+use Neos\ContentRepository\Core\SharedModel\Workspace\Workspace;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\Controller\ActionController;
+use Neos\Flow\Security\Authorization\PrivilegeManagerInterface;
+use Neos\Flow\Security\Context;
 use Neos\Media\Domain\Model\AssetInterface;
 use Neos\Media\Domain\Service\AssetService;
+use Neos\Neos\AssetUsage\Dto\AssetUsageReference;
 use Neos\Neos\Domain\Repository\SiteRepository;
 use Neos\Neos\Domain\Service\NodeTypeNameFactory;
+use Neos\Neos\Domain\Service\WorkspaceService;
 use Neos\Neos\FrontendRouting\SiteDetection\SiteDetectionResult;
+use Neos\Neos\Security\Authorization\ContentRepositoryAuthorizationService;
 use Neos\Neos\Service\UserService;
-use Neos\Neos\Domain\Service\UserService as DomainUserService;
-use Neos\Neos\AssetUsage\Dto\AssetUsageReference;
-use Neos\Neos\Domain\Model\Site;
 
 /**
  * Controller for asset usage handling
@@ -62,9 +65,27 @@ class UsageController extends ActionController
 
     /**
      * @Flow\Inject
-     * @var DomainUserService
+     * @var WorkspaceService
      */
-    protected $domainUserService;
+    protected $workspaceService;
+
+    /**
+     * @Flow\Inject
+     * @var Context
+     */
+    protected $securityContext;
+
+    /**
+     * @Flow\Inject
+     * @var ContentRepositoryAuthorizationService
+     */
+    protected $contentRepositoryAuthorizationService;
+
+    /**
+     * @Flow\Inject
+     * @var PrivilegeManagerInterface
+     */
+    protected $privilegeManager;
 
     /**
      * Get Related Nodes for an asset
@@ -76,8 +97,9 @@ class UsageController extends ActionController
     {
         $currentContentRepositoryId = SiteDetectionResult::fromRequest($this->request->getHttpRequest())->contentRepositoryId;
         $currentContentRepository = $this->contentRepositoryRegistry->get($currentContentRepositoryId);
-        $userWorkspaceName = WorkspaceName::fromString($this->userService->getPersonalWorkspaceName());
-        $userWorkspace = $currentContentRepository->getWorkspaceFinder()->findOneByName($userWorkspaceName);
+        $currentUser = $this->userService->getBackendUser();
+        assert($currentUser !== null);
+        $userWorkspace = $this->workspaceService->getPersonalWorkspaceForUser($currentContentRepositoryId, $currentUser->getId());
 
         $usageReferences = $this->assetService->getUsageReferences($asset);
         $relatedNodes = [];
@@ -98,34 +120,29 @@ class UsageController extends ActionController
 
             $contentRepository = $this->contentRepositoryRegistry->get($usage->getContentRepositoryId());
 
-            $workspace = $contentRepository->getWorkspaceFinder()->findOneByCurrentContentStreamId($usage->getContentStreamId());
-
-            // FIXME: AssetUsageReference->workspaceName ?
-            $nodeAggregate = $contentRepository->getContentGraph($workspace->workspaceName)->findNodeAggregateById(
+            $nodeAggregate = $contentRepository->getContentGraph($usage->getWorkspaceName())->findNodeAggregateById(
                 $usage->getNodeAggregateId()
             );
-            try {
-                $nodeType = $contentRepository->getNodeTypeManager()->getNodeType($nodeAggregate->nodeTypeName);
-            } catch (NodeTypeNotFound $e) {
-                $nodeType = null;
-            }
+            $nodeType = $nodeAggregate ? $contentRepository->getNodeTypeManager()->getNodeType($nodeAggregate->nodeTypeName) : null;
 
-            $accessible = $this->domainUserService->currentUserCanReadWorkspace($workspace);
+            $workspacePermissions = $this->contentRepositoryAuthorizationService->getWorkspacePermissions($currentContentRepositoryId, $usage->getWorkspaceName(), $this->securityContext->getRoles(), $this->userService->getBackendUser()?->getId());
+            $workspace = $contentRepository->findWorkspaceByName($usage->getWorkspaceName());
 
+            $inaccessibleRelation['label'] = $workspace && $this->getLabelForInaccessibleWorkspace($workspace);
             $inaccessibleRelation['nodeIdentifier'] = $usage->getNodeAggregateId()->value;
-            $inaccessibleRelation['workspaceName'] = $workspace->workspaceName->value;
+            $inaccessibleRelation['workspaceName'] = $usage->getWorkspaceName()->value;
             $inaccessibleRelation['workspace'] = $workspace;
             $inaccessibleRelation['nodeType'] = $nodeType;
-            $inaccessibleRelation['accessible'] = $accessible;
+            $inaccessibleRelation['accessible'] = $workspacePermissions->read;
 
-            if (!$accessible) {
+            if (!$workspacePermissions->read) {
                 $inaccessibleRelations[] = $inaccessibleRelation;
                 continue;
             }
 
-            $subgraph = $contentRepository->getContentGraph($workspace->workspaceName)->getSubgraph(
+            $subgraph = $contentRepository->getContentGraph($usage->getWorkspaceName())->getSubgraph(
                 $usage->getOriginDimensionSpacePoint()->toDimensionSpacePoint(),
-                VisibilityConstraints::withoutRestrictions()
+                VisibilityConstraints::createEmpty()
             );
 
             $node = $subgraph->findNodeById($usage->getNodeAggregateId());
@@ -144,15 +161,20 @@ class UsageController extends ActionController
 
             $siteNode = $subgraph->findClosestNode($node->aggregateId, FindClosestNodeFilter::create(nodeTypes: NodeTypeNameFactory::NAME_SITE));
             // this should actually never happen, too. :D
-            if (!$siteNode) {
+            if (!$siteNode || !$siteNode->name) {
                 $inaccessibleRelations[] = $inaccessibleRelation;
                 continue;
             }
+            $site = null;
             foreach ($existingSites as $existingSite) {
-                /** @var Site $existingSite * */
                 if ($siteNode->name->equals($existingSite->getNodeName()->toNodeName())) {
                     $site = $existingSite;
                 }
+            }
+            // guessed it? this should actually never as well ^^
+            if (!$site) {
+                $inaccessibleRelations[] = $inaccessibleRelation;
+                continue;
             }
 
             $relatedNodes[$site->getNodeName()->value]['site'] = $site;
@@ -170,7 +192,28 @@ class UsageController extends ActionController
             'inaccessibleRelations' => $inaccessibleRelations,
             'relatedNodes' => $relatedNodes,
             'contentDimensions' => $currentContentRepository->getContentDimensionSource()->getContentDimensionsOrderedByPriority(),
-            'userWorkspace' => $userWorkspace
+            'userWorkspace' => $userWorkspace,
         ]);
+    }
+
+    private function getLabelForInaccessibleWorkspace(Workspace $workspace): string
+    {
+        /*
+        TODO: Needs to get re-implemented for Neos 9.
+              See: https://github.com/neos/neos-development-collection/pull/5182
+
+        $currentAccount = $this->securityContext->getAccount();
+
+        if ($currentAccount != null && $this->privilegeManager->isPrivilegeTargetGranted('Neos.Media.Browser:WorkspaceName')) {
+            if ($workspace->isPrivateWorkspace()) {
+                $owner = $workspace->getOwner();
+                return '(' . $owner->getLabel() . ')';
+            } else {
+                return '(' . $workspace->getTitle() . ')';
+            }
+        }
+        */
+
+        return '';
     }
 }

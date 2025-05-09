@@ -3,7 +3,7 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\LegacyNodeMigration\Helpers;
 
 use Neos\ContentRepository\Core\Feature\NodeModification\Dto\SerializedPropertyValues;
-use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateIds;
+use Neos\ContentRepository\Core\Feature\NodeReferencing\Dto\SerializedNodeReferences;
 use Neos\Flow\Annotations as Flow;
 
 /**
@@ -11,12 +11,8 @@ use Neos\Flow\Annotations as Flow;
  */
 final readonly class SerializedPropertyValuesAndReferences
 {
-
-    /**
-     * @param array<string, NodeAggregateIds> $references
-     */
     public function __construct(
         public SerializedPropertyValues $serializedPropertyValues,
-        public array $references,
+        public SerializedNodeReferences $references,
     ) {}
 }

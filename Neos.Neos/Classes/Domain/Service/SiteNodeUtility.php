@@ -17,19 +17,15 @@ namespace Neos\Neos\Domain\Service;
 
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
-use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\Annotations as Flow;
 use Neos\Neos\Domain\Model\Site;
 use Neos\Neos\Domain\Repository\SiteRepository;
-use Neos\Neos\Utility\NodeTypeWithFallbackProvider;
 
 #[Flow\Scope('singleton')]
 final class SiteNodeUtility
 {
-    use NodeTypeWithFallbackProvider;
-
     public function __construct(
         private readonly ContentRepositoryRegistry $contentRepositoryRegistry
     ) {
@@ -44,8 +40,7 @@ final class SiteNodeUtility
      * $siteNode = $this->siteNodeUtility->findSiteNodeBySite(
      *     $site,
      *     WorkspaceName::forLive(),
-     *     DimensionSpacePoint::createWithoutDimensions(),
-     *     VisibilityConstraints::frontend()
+     *     DimensionSpacePoint::createWithoutDimensions()
      * );
      * ```
      *
@@ -54,25 +49,17 @@ final class SiteNodeUtility
     public function findSiteNodeBySite(
         Site $site,
         WorkspaceName $workspaceName,
-        DimensionSpacePoint $dimensionSpacePoint,
-        VisibilityConstraints $visibilityConstraints
+        DimensionSpacePoint $dimensionSpacePoint
     ): Node {
         $contentRepository = $this->contentRepositoryRegistry->get($site->getConfiguration()->contentRepositoryId);
 
-        $contentGraph = $contentRepository->getContentGraph($workspaceName);
-        $subgraph = $contentGraph->getSubgraph(
-            $dimensionSpacePoint,
-            $visibilityConstraints,
-        );
+        $subgraph = $contentRepository->getContentSubgraph($workspaceName, $dimensionSpacePoint);
 
-        $rootNodeAggregate = $contentGraph->findRootNodeAggregateByType(
-            NodeTypeNameFactory::forSites()
-        );
-        if (!$rootNodeAggregate) {
+        $rootNode = $subgraph->findRootNodeByType(NodeTypeNameFactory::forSites());
+
+        if (!$rootNode) {
             throw new \RuntimeException(sprintf('No sites root node found in content repository "%s", while fetching site node "%s"', $contentRepository->id->value, $site->getNodeName()), 1719046570);
         }
-
-        $rootNode = $rootNodeAggregate->getNodeByCoveredDimensionSpacePoint($dimensionSpacePoint);
 
         $siteNode = $subgraph->findNodeByPath(
             $site->getNodeName()->toNodeName(),
@@ -83,7 +70,7 @@ final class SiteNodeUtility
             throw new \RuntimeException(sprintf('No site node found for site "%s"', $site->getNodeName()), 1697140379);
         }
 
-        if (!$this->getNodeType($siteNode)->isOfType(NodeTypeNameFactory::NAME_SITE)) {
+        if (!$contentRepository->getNodeTypeManager()->getNodeType($siteNode->nodeTypeName)?->isOfType(NodeTypeNameFactory::NAME_SITE)) {
             throw new \RuntimeException(sprintf(
                 'The site node "%s" (type: "%s") must be of type "%s"',
                 $siteNode->aggregateId->value,

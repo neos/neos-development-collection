@@ -25,12 +25,12 @@ final readonly class EventsToPublish
     ) {
     }
 
-    public static function empty(): self
+    public function withAppendedEvents(Events $events): self
     {
-        return new EventsToPublish(
-            StreamName::fromString("empty"),
-            Events::fromArray([]),
-            ExpectedVersion::ANY()
+        return new self(
+            $this->streamName,
+            $this->events->withAppendedEvents($events),
+            $this->expectedVersion
         );
     }
 }

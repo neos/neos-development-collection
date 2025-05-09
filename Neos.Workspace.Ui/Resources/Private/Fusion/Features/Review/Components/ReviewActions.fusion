@@ -1,0 +1,114 @@
+##
+# Renders a document for review
+#
+prototype(Neos.Workspace.Ui:Component.ReviewActions) < prototype(Neos.Fusion:Component) {
+  hasSiteChanges = false
+  canPublishToBaseWorkspace = false
+  canPublishToWorkspace =  false
+  selectedWorkspaceName = ''
+  baseWorkspaceLabel = ''
+
+  @private {
+    i18n = ${I18n.id('').source('Main').package('Neos.Workspace.Ui')}
+    indexWorkspaceUri = Neos.Fusion:ActionUri {
+      action = 'index'
+      format = 'html'
+    }
+    confirmDiscardAllChanges = Neos.Fusion:ActionUri {
+      action = 'confirmDiscardAllChanges'
+      format = 'htmx'
+      arguments {
+        workspaceName = ${props.selectedWorkspaceName}
+      }
+    }
+    confirmPublishAllChanges = Neos.Fusion:ActionUri {
+      action = 'confirmPublishAllChanges'
+      format = 'htmx'
+      arguments {
+        workspaceName = ${props.selectedWorkspaceName}
+      }
+    }
+    confirmDiscardSelectedChanges = Neos.Fusion:ActionUri {
+      action = 'confirmDiscardSelectedChanges'
+      format = 'htmx'
+      arguments {
+        workspaceName = ${props.selectedWorkspaceName}
+      }
+    }
+    confirmPublishSelectedChanges= Neos.Fusion:ActionUri {
+      action = 'confirmPublishSelectedChanges'
+      format = 'htmx'
+      arguments {
+        workspaceName = ${props.selectedWorkspaceName}
+      }
+    }
+
+    discardAllChangesPopoverId = 'confirm-discard-all-changes-popover'
+    publishAllChangesPopoverId = 'confirm-publish-all-changes-popover'
+    publishSelectedChangesPopoverId = 'confirm-publish-selected-changes-popover'
+    discardSelectedChangesPopoverId = 'confirm-discard-selected-changes-popover'
+  }
+
+  renderer = afx`
+      <div class="neos-footer">
+        <div class="neos-pull-left">
+          <Neos.Workspace.Ui:Component.Button
+            icon="fas fa-chevron-left"
+            label={props.i18n.id('back')}
+            attributes.hx-get={private.indexWorkspaceUri}
+            attributes.hx-replace-url={private.indexWorkspaceUri}
+            attributes.hx-select="#workspace-module-content"
+            attributes.hx-target="#workspace-module-content"
+            attributes.hx-swap="outerHTML"
+          />
+        </div>
+        <div class="neos-pull-right workspace-action" @if={props.hasSiteChanges}>
+          <div id="all-actions">
+            <Neos.Workspace.Ui:Component.Button
+              label={private.i18n.id('workspaces.discardAllChanges')}
+              icon="fas fa-trash-alt icon-white"
+              isDanger
+              disabled={!props.canPublishToWorkspace}
+              attributes.hx-get={private.confirmDiscardAllChanges}
+              attributes.hx-target='#popover-container'
+              attributes.hx-swap='innerHTML'
+              attributes.hx-on--after-request={'document.getElementById("' + private.discardAllChangesPopoverId + '").showPopover()'}
+            />
+            <Neos.Workspace.Ui:Component.Button
+              label={private.i18n.id('workspaces.publishAllChangesTo').arguments([props.baseWorkspaceLabel])}
+              icon="fas fa-check-double icon-white"
+              isPrimary
+              disabled={!props.canPublishToBaseWorkspace}
+              attributes.hx-get={private.confirmPublishAllChanges}
+              attributes.hx-target='#popover-container'
+              attributes.hx-swap='innerHTML'
+              attributes.hx-on--after-request={'document.getElementById("' + private.publishAllChangesPopoverId + '").showPopover()'}
+            />
+          </div>
+          <div id="batch-actions" class="neos-hidden">
+            <Neos.Workspace.Ui:Component.Button
+              label={private.i18n.id('workspaces.discardSelectedChanges')}
+              icon="fas fa-trash-alt icon-white"
+              isDanger
+              disabled={!props.canPublishToBaseWorkspace}
+              attributes.hx-get={private.confirmDiscardSelectedChanges}
+              attributes.hx-target='#popover-container'
+              attributes.hx-swap='innerHTML'
+              attributes.hx-on--after-request={'document.getElementById("' + private.discardSelectedChangesPopoverId + '").showPopover()'}
+            />
+            <Neos.Workspace.Ui:Component.Button
+              label={private.i18n.id('workspaces.publishSelectedChangesTo').arguments([props.baseWorkspaceLabel])}
+              icon="fas fa-check icon-white"
+              isPrimary
+              disabled={!props.canPublishToBaseWorkspace}
+              attributes.hx-target={'#popover-container'}
+              attributes.hx-swap='innerHTML'
+              attributes.hx-post={private.confirmPublishSelectedChanges}
+              attributes.hx-on--after-request={'document.getElementById("' + private.publishSelectedChangesPopoverId + '").showPopover()'}
+            />
+          </div>
+
+        </div>
+      </div>
+  `
+}

@@ -20,6 +20,7 @@ use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
+use Neos\Flow\Security\Context as SecurityContext;
 use Neos\Media\Domain\Model\Asset;
 use Neos\Media\Domain\Repository\AssetCollectionRepository;
 use Neos\Neos\Domain\Exception\SiteNodeNameIsAlreadyInUseByAnotherSite;
@@ -65,13 +66,26 @@ class SiteService
     protected $assetCollectionRepository;
 
     /**
+     * @Flow\Inject(lazy=false)
+     * @var WorkspaceService
+     */
+    protected $workspaceService;
+
+    /**
+     * @Flow\Inject
+     * @var SecurityContext
+     */
+    protected $securityContext;
+
+    /**
      * Remove given site all nodes for that site and all domains associated.
      */
     public function pruneSite(Site $site): void
     {
-        $siteServiceInternals = $this->contentRepositoryRegistry->buildService(
-            $site->getConfiguration()->contentRepositoryId,
-            new SiteServiceInternalsFactory()
+        $siteServiceInternals = new SiteServiceInternals(
+            $this->contentRepositoryRegistry->get($site->getConfiguration()->contentRepositoryId),
+            $this->workspaceService,
+            $this->securityContext
         );
 
         try {
@@ -161,22 +175,22 @@ class SiteService
         ?string $nodeName = null,
         bool $inactive = false
     ): Site {
-        $siteNodeName = NodeName::fromString($nodeName ?: $siteName);
+        $siteNodeName = NodeName::transliterateFromString($nodeName ?: $siteName);
 
         if ($this->siteRepository->findOneByNodeName($siteNodeName->value)) {
             throw SiteNodeNameIsAlreadyInUseByAnotherSite::butWasAttemptedToBeClaimed($siteNodeName);
         }
 
-        // @todo use node aggregate identifier instead of node name
         $site = new Site($siteNodeName->value);
         $site->setSiteResourcesPackageKey($packageKey);
         $site->setState($inactive ? Site::STATE_OFFLINE : Site::STATE_ONLINE);
         $site->setName($siteName);
         $this->siteRepository->add($site);
 
-        $siteServiceInternals = $this->contentRepositoryRegistry->buildService(
-            $site->getConfiguration()->contentRepositoryId,
-            new SiteServiceInternalsFactory()
+        $siteServiceInternals = new SiteServiceInternals(
+            $this->contentRepositoryRegistry->get($site->getConfiguration()->contentRepositoryId),
+            $this->workspaceService,
+            $this->securityContext
         );
         $siteServiceInternals->createSiteNodeIfNotExists($site, $nodeTypeName);
 

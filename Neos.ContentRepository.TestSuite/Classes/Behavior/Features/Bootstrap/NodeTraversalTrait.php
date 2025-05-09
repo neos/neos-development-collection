@@ -16,6 +16,8 @@ namespace Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap;
 
 use Behat\Gherkin\Node\PyStringNode;
 use Behat\Gherkin\Node\TableNode;
+use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
+use Neos\ContentRepository\Core\Feature\SubtreeTagging\Dto\SubtreeTag;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\Projection\ContentGraph\AbsoluteNodePath;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\CountAncestorNodesFilter;
@@ -33,11 +35,15 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindReferencesFil
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindSubtreeFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindSucceedingSiblingNodesFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
+use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate;
+use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregates;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodePath;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Reference;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Subtree;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateIds;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
+use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\Helpers\DimensionSpacePointSetSorter;
 use PHPUnit\Framework\Assert;
 
 /**
@@ -50,7 +56,7 @@ trait NodeTraversalTrait
     /**
      * @When /^I execute the findChildNodes query for parent node aggregate id "(?<parentNodeIdSerialized>[^"]*)"(?: and filter '(?<filterSerialized>[^']*)')? I expect (?:the nodes "(?<expectedNodeIdsSerialized>[^"]*)"|no nodes) to be returned( and the total count to be (?<expectedTotalCount>\d+))?$/
      */
-    public function iExecuteTheFindChildNodesQueryIExpectTheFollowingNodes(string $parentNodeIdSerialized, string $filterSerialized = '', string $expectedNodeIdsSerialized = '', int $expectedTotalCount = null): void
+    public function iExecuteTheFindChildNodesQueryIExpectTheFollowingNodes(string $parentNodeIdSerialized, string $filterSerialized = '', string $expectedNodeIdsSerialized = '', ?int $expectedTotalCount = null): void
     {
         $parentNodeAggregateId = NodeAggregateId::fromString($parentNodeIdSerialized);
         $expectedNodeIds = array_filter(explode(',', $expectedNodeIdsSerialized));
@@ -67,7 +73,7 @@ trait NodeTraversalTrait
     /**
      * @When /^I execute the findReferences query for node aggregate id "(?<nodeIdSerialized>[^"]*)"(?: and filter '(?<filterSerialized>[^']*)')? I expect (?:the references '(?<referencesSerialized>[^']*)'|no references) to be returned( and the total count to be (?<expectedTotalCount>\d+))?$/
      */
-    public function iExecuteTheFindReferencesQueryIExpectTheFollowingReferences(string $nodeIdSerialized, string $filterSerialized = null, string $referencesSerialized = null, int $expectedTotalCount = null): void
+    public function iExecuteTheFindReferencesQueryIExpectTheFollowingReferences(string $nodeIdSerialized, ?string $filterSerialized = null, ?string $referencesSerialized = null, ?int $expectedTotalCount = null): void
     {
         $nodeAggregateId = NodeAggregateId::fromString($nodeIdSerialized);
         $expectedReferences = $referencesSerialized !== null ? json_decode($referencesSerialized, true, 512, JSON_THROW_ON_ERROR) : [];
@@ -87,7 +93,7 @@ trait NodeTraversalTrait
     /**
      * @When /^I execute the findBackReferences query for node aggregate id "(?<nodeIdSerialized>[^"]*)"(?: and filter '(?<filterSerialized>[^']*)')? I expect (?:the references '(?<referencesSerialized>[^']*)'|no references) to be returned( and the total count to be (?<expectedTotalCount>\d+))?$/
      */
-    public function iExecuteTheFindBackReferencesQueryIExpectTheFollowingReferences(string $nodeIdSerialized, string $filterSerialized = null, string $referencesSerialized = null, int $expectedTotalCount = null): void
+    public function iExecuteTheFindBackReferencesQueryIExpectTheFollowingReferences(string $nodeIdSerialized, ?string $filterSerialized = null, ?string $referencesSerialized = null, ?int $expectedTotalCount = null): void
     {
         $nodeAggregateId = NodeAggregateId::fromString($nodeIdSerialized);
         $expectedReferences = $referencesSerialized !== null ? json_decode($referencesSerialized, true, 512, JSON_THROW_ON_ERROR) : [];
@@ -107,7 +113,7 @@ trait NodeTraversalTrait
      * @When I execute the findNodeById query for node aggregate id :nodeIdSerialized I expect no node to be returned
      * @When I execute the findNodeById query for node aggregate id :nodeIdSerialized I expect the node :expectedNodeIdSerialized to be returned
      */
-    public function iExecuteTheFindNodeByIdQueryIExpectTheFollowingNodes(string $nodeIdSerialized, string $expectedNodeIdSerialized = null): void
+    public function iExecuteTheFindNodeByIdQueryIExpectTheFollowingNodes(string $nodeIdSerialized, ?string $expectedNodeIdSerialized = null): void
     {
         $nodeAggregateId = NodeAggregateId::fromString($nodeIdSerialized);
         $expectedNodeAggregateId = $expectedNodeIdSerialized !== null ? NodeAggregateId::fromString($expectedNodeIdSerialized) : null;
@@ -117,10 +123,47 @@ trait NodeTraversalTrait
     }
 
     /**
+     * @When I execute the findNodesByIds query for node aggregate id :entryNodeIdsSerialized I expect the nodes :expectedNodeIdsSerialized to be returned
+     */
+    public function iExecuteTheFindNodeByIdsQueryIExpectTheFollowingNodes(string $entryNodeIdsSerialized, string $expectedNodeIdsSerialized): void
+    {
+        $entryNodeAggregateIds = NodeAggregateIds::fromArray(explode(',', $entryNodeIdsSerialized));
+        $expectedNodeAggregateIds = NodeAggregateIds::fromArray(explode(',', $expectedNodeIdsSerialized));
+
+        $actualNodes = $this->getCurrentSubgraph()->findNodesByIds($entryNodeAggregateIds);
+        Assert::assertEquals($actualNodes->toNodeAggregateIds(), $expectedNodeAggregateIds);
+    }
+
+    /**
+     * @When I execute the findNodeAggregateById query for node aggregate id :entryNodeIdSerialized I expect the following node aggregates to be returned:
+     */
+    public function iExecuteTheFindNodeAggregateByIdQueryIExpectTheFollowingNodes(string $entryNodeIdSerialized, TableNode $expectedNodes): void
+    {
+        $entryNodeAggregateId = NodeAggregateId::fromString($entryNodeIdSerialized);
+        $contentGraph = $this->currentContentRepository->getContentGraph($this->currentWorkspaceName);
+        $actualNodeAggregate = $contentGraph->findNodeAggregateById($entryNodeAggregateId);
+
+        self::assertNodeAggregatesEqualTable($expectedNodes->getHash(), NodeAggregates::fromArray([$actualNodeAggregate]), 'findNodeAggregateById returned an unexpected result');
+    }
+
+    /**
+     * @When I execute the findNodeAggregatesByIds query for node aggregate id :entryNodeIdsSerialized I expect the following node aggregates to be returned:
+     */
+    public function iExecuteTheFindNodeAggregatesByIdsByIdsQueryIExpectTheFollowingNodes(string $entryNodeIdsSerialized, TableNode $expectedNodes): void
+    {
+        $entryNodeAggregateIds = NodeAggregateIds::fromArray(explode(',', $entryNodeIdsSerialized));
+        $contentGraph = $this->currentContentRepository->getContentGraph($this->currentWorkspaceName);
+        $actualNodeAggregates = $contentGraph->findNodeAggregatesByIds($entryNodeAggregateIds);
+
+        self::assertNodeAggregatesEqualTable($expectedNodes->getHash(), $actualNodeAggregates, 'findNodeAggregatesByIds returned an unexpected result');
+    }
+
+
+    /**
      * @When I execute the findParentNode query for node aggregate id :nodeIdSerialized I expect no node to be returned
      * @When I execute the findParentNode query for node aggregate id :nodeIdSerialized I expect the node :expectedNodeIdSerialized to be returned
      */
-    public function iExecuteTheFindParentNodeQueryIExpectTheFollowingNodes(string $nodeIdSerialized, string $expectedNodeIdSerialized = null): void
+    public function iExecuteTheFindParentNodeQueryIExpectTheFollowingNodes(string $nodeIdSerialized, ?string $expectedNodeIdSerialized = null): void
     {
         $nodeAggregateId = NodeAggregateId::fromString($nodeIdSerialized);
         $expectedNodeAggregateId = $expectedNodeIdSerialized !== null ? NodeAggregateId::fromString($expectedNodeIdSerialized) : null;
@@ -130,10 +173,22 @@ trait NodeTraversalTrait
     }
 
     /**
+     * @When I execute the findParentNodeAggregates query for node aggregate id :entryNodeIdSerialized I expect the following node aggregates to be returned:
+     */
+    public function iExecuteTheFindParentNodeAggregatesQueryIExpectTheFollowingNodes(string $entryNodeIdSerialized, TableNode $expectedNodes): void
+    {
+        $entryNodeAggregateId = NodeAggregateId::fromString($entryNodeIdSerialized);
+        $contentGraph = $this->currentContentRepository->getContentGraph($this->currentWorkspaceName);
+        $actualNodeAggregates = $contentGraph->findParentNodeAggregates($entryNodeAggregateId);
+
+        self::assertNodeAggregatesEqualTable($expectedNodes->getHash(), $actualNodeAggregates, 'findParentNodeAggregates returned an unexpected result');
+    }
+
+    /**
      * @When I execute the findNodeByPath query for path :pathSerialized and starting node aggregate id :startingNodeIdSerialized I expect no node to be returned
      * @When I execute the findNodeByPath query for path :pathSerialized and starting node aggregate id :startingNodeIdSerialized I expect the node :expectedNodeIdSerialized to be returned
      */
-    public function iExecuteTheFindNodeByPathQueryIExpectTheFollowingNodes(string $pathSerialized, string $startingNodeIdSerialized, string $expectedNodeIdSerialized = null): void
+    public function iExecuteTheFindNodeByPathQueryIExpectTheFollowingNodes(string $pathSerialized, string $startingNodeIdSerialized, ?string $expectedNodeIdSerialized = null): void
     {
         $path = NodePath::fromString($pathSerialized);
         $startingNodeAggregateId = NodeAggregateId::fromString($startingNodeIdSerialized);
@@ -147,7 +202,7 @@ trait NodeTraversalTrait
      * @When I execute the findNodeByAbsolutePath query for path :pathSerialized I expect no node to be returned
      * @When I execute the findNodeByAbsolutePath query for path :pathSerialized I expect the node :expectedNodeIdSerialized to be returned
      */
-    public function iExecuteTheFindNodeByAbsolutePathQueryIExpectTheFollowingNodes(string $pathSerialized, string $expectedNodeIdSerialized = null): void
+    public function iExecuteTheFindNodeByAbsolutePathQueryIExpectTheFollowingNodes(string $pathSerialized, ?string $expectedNodeIdSerialized = null): void
     {
         $path = AbsoluteNodePath::fromString($pathSerialized);
         $expectedNodeAggregateId = $expectedNodeIdSerialized !== null ? NodeAggregateId::fromString($expectedNodeIdSerialized) : null;
@@ -160,7 +215,7 @@ trait NodeTraversalTrait
      * @When I execute the findNodeByPath query for parent node aggregate id :parentNodeIdSerialized and node name :edgeNameSerialized as path I expect no node to be returned
      * @When I execute the findNodeByPath query for parent node aggregate id :parentNodeIdSerialized and node name :edgeNameSerialized as path I expect the node :expectedNodeIdSerialized to be returned
      */
-    public function iExecuteTheFindChildNodeByNodeNameQueryIExpectTheFollowingNodes(string $parentNodeIdSerialized, string $edgeNameSerialized, string $expectedNodeIdSerialized = null): void
+    public function iExecuteTheFindChildNodeByNodeNameQueryIExpectTheFollowingNodes(string $parentNodeIdSerialized, string $edgeNameSerialized, ?string $expectedNodeIdSerialized = null): void
     {
         $parentNodeAggregateId = NodeAggregateId::fromString($parentNodeIdSerialized);
         $edgeName = NodeName::fromString($edgeNameSerialized);
@@ -173,7 +228,7 @@ trait NodeTraversalTrait
     /**
      * @When /^I execute the findSucceedingSiblingNodes query for sibling node aggregate id "(?<siblingNodeIdSerialized>[^"]*)"(?: and filter '(?<filterSerialized>[^']*)')? I expect (?:the nodes "(?<expectedNodeIdsSerialized>[^"]*)"|no nodes) to be returned$/
      */
-    public function iExecuteTheFindSucceedingSiblingNodesQueryIExpectTheFollowingNodes(string $siblingNodeIdSerialized, string $filterSerialized = null, string $expectedNodeIdsSerialized = null): void
+    public function iExecuteTheFindSucceedingSiblingNodesQueryIExpectTheFollowingNodes(string $siblingNodeIdSerialized, ?string $filterSerialized = null, ?string $expectedNodeIdsSerialized = null): void
     {
         $siblingNodeAggregateId = NodeAggregateId::fromString($siblingNodeIdSerialized);
         $expectedNodeIds = $expectedNodeIdsSerialized !== null ? array_filter(explode(',', $expectedNodeIdsSerialized)) : [];
@@ -190,7 +245,7 @@ trait NodeTraversalTrait
     /**
      * @When /^I execute the findPrecedingSiblingNodes query for sibling node aggregate id "(?<siblingNodeIdSerialized>[^"]*)"(?: and filter '(?<filterSerialized>[^']*)')? I expect (?:the nodes "(?<expectedNodeIdsSerialized>[^"]*)"|no nodes) to be returned$/
      */
-    public function iExecuteTheFindPrecedingSiblingNodesQueryIExpectTheFollowingNodes(string $siblingNodeIdSerialized, string $filterSerialized = null, string $expectedNodeIdsSerialized = null): void
+    public function iExecuteTheFindPrecedingSiblingNodesQueryIExpectTheFollowingNodes(string $siblingNodeIdSerialized, ?string $filterSerialized = null, ?string $expectedNodeIdsSerialized = null): void
     {
         $siblingNodeAggregateId = NodeAggregateId::fromString($siblingNodeIdSerialized);
         $expectedNodeIds = $expectedNodeIdsSerialized !== null ? array_filter(explode(',', $expectedNodeIdsSerialized)) : [];
@@ -208,7 +263,7 @@ trait NodeTraversalTrait
      * @When I execute the retrieveNodePath query for node aggregate id :nodeIdSerialized I expect the path :expectedPathSerialized to be returned
      * @When I execute the retrieveNodePath query for node aggregate id :nodeIdSerialized I expect an exception :expectedExceptionMessage
      */
-    public function iExecuteTheRetrieveNodePathQueryIExpectTheFollowingNodes(string $nodeIdSerialized, string $expectedPathSerialized = null, string $expectedExceptionMessage = null): void
+    public function iExecuteTheRetrieveNodePathQueryIExpectTheFollowingNodes(string $nodeIdSerialized, ?string $expectedPathSerialized = null, ?string $expectedExceptionMessage = null): void
     {
         try {
             $actualNodePath = $this->getCurrentSubgraph()->retrieveNodePath(NodeAggregateId::fromString($nodeIdSerialized));
@@ -231,7 +286,7 @@ trait NodeTraversalTrait
      * @When I execute the findSubtree query for entry node aggregate id :entryNodeIdSerialized and filter :filterSerialized I expect no results
      * @When /^I execute the findSubtree query for entry node aggregate id "(?<entryNodeIdSerialized>[^"]*)" I expect the following tree (?<withTags>with tags):$/
      */
-    public function iExecuteTheFindSubtreeQueryIExpectTheFollowingTrees(string $entryNodeIdSerialized, string $filterSerialized = null, PyStringNode $expectedTree = null, string $withTags = null): void
+    public function iExecuteTheFindSubtreeQueryIExpectTheFollowingTrees(string $entryNodeIdSerialized, ?string $filterSerialized = null, ?PyStringNode $expectedTree = null, ?string $withTags = null): void
     {
         $entryNodeAggregateId = NodeAggregateId::fromString($entryNodeIdSerialized);
         $filterValues = !empty($filterSerialized) ? json_decode($filterSerialized, true, 512, JSON_THROW_ON_ERROR) : [];
@@ -263,7 +318,7 @@ trait NodeTraversalTrait
     /**
      * @When /^I execute the findDescendantNodes query for entry node aggregate id "(?<entryNodeIdSerialized>[^"]*)"(?: and filter '(?<filterSerialized>[^']*)')? I expect (?:the nodes "(?<expectedNodeIdsSerialized>[^"]*)"|no nodes) to be returned( and the total count to be (?<expectedTotalCount>\d+))?$/
      */
-    public function iExecuteTheFindDescendantNodesQueryIExpectTheFollowingNodes(string $entryNodeIdSerialized, string $filterSerialized = '', string $expectedNodeIdsSerialized = '', int $expectedTotalCount = null): void
+    public function iExecuteTheFindDescendantNodesQueryIExpectTheFollowingNodes(string $entryNodeIdSerialized, string $filterSerialized = '', string $expectedNodeIdsSerialized = '', ?int $expectedTotalCount = null): void
     {
         $entryNodeAggregateId = NodeAggregateId::fromString($entryNodeIdSerialized);
         $expectedNodeIds = array_filter(explode(',', $expectedNodeIdsSerialized));
@@ -280,7 +335,7 @@ trait NodeTraversalTrait
     /**
      * @When /^I execute the findAncestorNodes query for entry node aggregate id "(?<entryNodeIdSerialized>[^"]*)"(?: and filter '(?<filterSerialized>[^']*)')? I expect (?:the nodes "(?<expectedNodeIdsSerialized>[^"]*)"|no nodes) to be returned( and the total count to be (?<expectedTotalCount>\d+))?$/
      */
-    public function iExecuteTheFindAncestorNodesQueryIExpectTheFollowingNodes(string $entryNodeIdSerialized, string $filterSerialized = '', string $expectedNodeIdsSerialized = '', int $expectedTotalCount = null): void
+    public function iExecuteTheFindAncestorNodesQueryIExpectTheFollowingNodes(string $entryNodeIdSerialized, string $filterSerialized = '', string $expectedNodeIdsSerialized = '', ?int $expectedTotalCount = null): void
     {
         $entryNodeAggregateId = NodeAggregateId::fromString($entryNodeIdSerialized);
         $expectedNodeIds = array_filter(explode(',', $expectedNodeIdsSerialized));
@@ -294,9 +349,21 @@ trait NodeTraversalTrait
     }
 
     /**
+     * @When /^I execute the findAncestorNodeAggregateIds query for entry node aggregate id "(?<entryNodeIdSerialized>[^"]*)" I expect (?:the nodes "(?<expectedNodeIdsSerialized>[^"]*)" to be returned in any order|no nodes to be returned)$/
+     */
+    public function iExecuteTheFindAncestorNodeAggregateIdsQueryIExpectTheFollowingNodes(string $entryNodeIdSerialized, string $expectedNodeIdsSerialized = ''): void
+    {
+        $entryNodeAggregateId = NodeAggregateId::fromString($entryNodeIdSerialized);
+        $expectedNodeIds = array_filter(explode(',', $expectedNodeIdsSerialized));
+        $contentGraph = $this->currentContentRepository->getContentGraph($this->currentWorkspaceName);
+        $actualNodeIds = $contentGraph->findAncestorNodeAggregateIds($entryNodeAggregateId)->toStringArray();
+        Assert::assertEqualsCanonicalizing($expectedNodeIds, $actualNodeIds, 'findAncestorNodeAggregateIds returned an unexpected result');
+    }
+
+    /**
      * @When /^I execute the findClosestNode query for entry node aggregate id "(?<entryNodeIdSerialized>[^"]*)"(?: and filter '(?<filterSerialized>[^']*)')? I expect (?:the node "(?<expectedNodeId>[^"]*)"|no node) to be returned?$/
      */
-    public function iExecuteTheFindClosestNodeQueryIExpectTheFollowingNodes(string $entryNodeIdSerialized, string $filterSerialized = '', string $expectedNodeId = null): void
+    public function iExecuteTheFindClosestNodeQueryIExpectTheFollowingNodes(string $entryNodeIdSerialized, string $filterSerialized = '', ?string $expectedNodeId = null): void
     {
         $entryNodeAggregateId = NodeAggregateId::fromString($entryNodeIdSerialized);
         $filterValues = !empty($filterSerialized) ? json_decode($filterSerialized, true, 512, JSON_THROW_ON_ERROR) : [];
@@ -335,12 +402,22 @@ trait NodeTraversalTrait
         Assert::assertEquals($expectedTimestamps, $actualTimestamps);
     }
 
+    /**
+     * @When I execute the findNodeAggregatesTaggedBy query for tag :subtreeTag I expect the following node aggregates to be returned:
+     */
+    public function iExecuteTheFindNodeAggregatesTaggedByQueryIExpectTheFollowingNodes(string $subtreeTag, TableNode $expectedNodes): void
+    {
+        $contentGraph = $this->currentContentRepository->getContentGraph($this->currentWorkspaceName);
+        $actualNodeAggregates = $contentGraph->findNodeAggregatesTaggedBy(SubtreeTag::fromString($subtreeTag));
+
+        self::assertNodeAggregatesEqualTable($expectedNodes->getHash(), $actualNodeAggregates, 'findNodeAggregatesTaggedBy returned an unexpected result');
+    }
 
     /**
      * @When I execute the findRootNodeByType query for node type :serializedNodeTypeName I expect no node to be returned
      * @When I execute the findRootNodeByType query for node type :serializedNodeTypeName I expect the node :serializedExpectedNodeId to be returned
      */
-    public function iExecuteTheFindRootNodeByTypeQueryIExpectTheFollowingNodes(string $serializedNodeTypeName, string $serializedExpectedNodeId = null): void
+    public function iExecuteTheFindRootNodeByTypeQueryIExpectTheFollowingNodes(string $serializedNodeTypeName, ?string $serializedExpectedNodeId = null): void
     {
         $expectedNodeAggregateId = $serializedExpectedNodeId !== null
             ? NodeAggregateId::fromString($serializedExpectedNodeId)
@@ -348,5 +425,28 @@ trait NodeTraversalTrait
 
         $actualNode = $this->getCurrentSubgraph()->findRootNodeByType(NodeTypeName::fromString($serializedNodeTypeName));
         Assert::assertSame($actualNode?->aggregateId->value, $expectedNodeAggregateId?->value);
+    }
+
+    private static function assertNodeAggregatesEqualTable(array $expectedNodeAggregates, NodeAggregates $actualNodeAggregates, string $message): void
+    {
+        $actualNodeAggregatesTable = array_map(static fn (NodeAggregate $nodeAggregate) => [
+            'nodeAggregateId' => $nodeAggregate->nodeAggregateId->value,
+            'nodeTypeName' => $nodeAggregate->nodeTypeName->value,
+            'coveredDimensionSpacePoints' => DimensionSpacePointSetSorter::sortSet($nodeAggregate->coveredDimensionSpacePoints)->toJson(),
+            'occupiedDimensionSpacePoints' => DimensionSpacePointSetSorter::sortOriginSet($nodeAggregate->occupiedDimensionSpacePoints)->toJson(),
+            'explicitlyDisabledDimensions' => DimensionSpacePointSetSorter::sortSet($nodeAggregate->getCoveredDimensionsTaggedBy(SubtreeTag::disabled(), withoutInherited: true))->toJson(),
+        ], iterator_to_array($actualNodeAggregates));
+
+        $expectedNodeAggregatesWithNormalisedJson = array_map(
+            fn (array $row) => [
+                ...$row,
+                'coveredDimensionSpacePoints' => DimensionSpacePointSetSorter::sortSet($row['coveredDimensionSpacePoints'])->toJson(),
+                'occupiedDimensionSpacePoints' => DimensionSpacePointSetSorter::sortOriginSet($row['occupiedDimensionSpacePoints'])->toJson(),
+                'explicitlyDisabledDimensions' => DimensionSpacePointSetSorter::sortSet($row['explicitlyDisabledDimensions'])->toJson(),
+            ],
+            $expectedNodeAggregates
+        );
+
+        Assert::assertSame($expectedNodeAggregatesWithNormalisedJson, $actualNodeAggregatesTable, $message);
     }
 }

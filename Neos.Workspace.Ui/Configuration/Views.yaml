@@ -1,6 +1,8 @@
-- requestFilter: 'isPackage("Neos.Workspace.Ui") && isController("Workspace") && isFormat("html")'
+- requestFilter: 'isPackage("Neos.Workspace.Ui") && isController("Workspace")'
+  viewObjectName: 'Neos\Fusion\View\FusionView'
   options:
-    layoutRootPathPattern: 'resource://Neos.Neos/Private/Layouts'
-    partialRootPaths:
-      - 'resource://Neos.Workspace.Ui/Private/Partials'
-      - 'resource://Neos.Neos/Private/Partials'
+    fusionPathPatterns:
+      - 'resource://Neos.Neos/Private/Fusion'
+      - 'resource://Neos.Fusion/Private/Fusion'
+      - 'resource://Neos.Fusion.Form/Private/Fusion'
+      - 'resource://Neos.Workspace.Ui/Private/Fusion'

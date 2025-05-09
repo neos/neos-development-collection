@@ -14,15 +14,17 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Core\Projection\ContentGraph;
 
+use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
+use Neos\ContentRepository\Core\Feature\SubtreeTagging\Dto\SubtreeTag;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\NodeType\NodeTypeNames;
 use Neos\ContentRepository\Core\Projection\ProjectionStateInterface;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
-use Neos\ContentRepository\Core\SharedModel\Exception\NodeAggregatesTypeIsAmbiguous;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateIds;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
@@ -50,7 +52,7 @@ interface ContentGraphInterface extends ProjectionStateInterface
     public function getWorkspaceName(): WorkspaceName;
 
     /**
-     * @api main API method of ContentGraph
+     * @api You most likely want to use {@see ContentRepository::getContentSubgraph()} because it automatically determines VisibilityConstraints for the current user.
      */
     public function getSubgraph(
         DimensionSpacePoint $dimensionSpacePoint,
@@ -79,12 +81,19 @@ interface ContentGraphInterface extends ProjectionStateInterface
     ): NodeAggregates;
 
     /**
-     * @throws NodeAggregatesTypeIsAmbiguous
      * @api
      */
     public function findNodeAggregateById(
         NodeAggregateId $nodeAggregateId
     ): ?NodeAggregate;
+
+    /**
+     * @api
+     * @return NodeAggregates the node aggregates that exist in this graph. The order is not defined.
+     */
+    public function findNodeAggregatesByIds(
+        NodeAggregateIds $nodeAggregateIds
+    ): NodeAggregates;
 
     /**
      * Returns all node types in use, from the graph projection
@@ -107,6 +116,13 @@ interface ContentGraphInterface extends ProjectionStateInterface
     public function findParentNodeAggregates(
         NodeAggregateId $childNodeAggregateId
     ): NodeAggregates;
+
+    /**
+     * @internal the returned order of node aggregate ids is undefined and not to be relied upon
+     */
+    public function findAncestorNodeAggregateIds(
+        NodeAggregateId $entryNodeAggregateId
+    ): NodeAggregateIds;
 
     /**
      * @internal only for consumption inside the Command Handler
@@ -143,11 +159,9 @@ interface ContentGraphInterface extends ProjectionStateInterface
     ): DimensionSpacePointSet;
 
     /**
-     * Provides the total number of projected nodes regardless of workspace or content stream.
-     *
-     * @internal only for consumption in testcases
+     * @internal experimental api, the order of the returned node aggregates is undefined and does not follow the hierarchy
      */
-    public function countNodes(): int;
+    public function findNodeAggregatesTaggedBy(SubtreeTag $subtreeTag): NodeAggregates;
 
     /** @internal The content stream id where the workspace name points to for this instance */
     public function getContentStreamId(): ContentStreamId;

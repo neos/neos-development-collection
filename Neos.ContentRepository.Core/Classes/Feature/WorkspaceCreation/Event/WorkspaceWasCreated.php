@@ -15,12 +15,10 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\Core\Feature\WorkspaceCreation\Event;
 
 use Neos\ContentRepository\Core\EventStore\EventInterface;
+use Neos\ContentRepository\Core\Feature\Common\EmbedsWorkspaceName;
 use Neos\ContentRepository\Core\Feature\ContentStreamForking\Event\ContentStreamWasForked;
-use Neos\ContentRepository\Core\SharedModel\User\UserId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
-use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceDescription;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
-use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceTitle;
 
 /**
  * Event triggered to indicate that a workspace was created, based on a base workspace.
@@ -30,16 +28,18 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceTitle;
  *
  * @api events are the persistence-API of the content repository
  */
-final readonly class WorkspaceWasCreated implements EventInterface
+final readonly class WorkspaceWasCreated implements EventInterface, EmbedsWorkspaceName
 {
     public function __construct(
         public WorkspaceName $workspaceName,
         public WorkspaceName $baseWorkspaceName,
-        public WorkspaceTitle $workspaceTitle,
-        public WorkspaceDescription $workspaceDescription,
         public ContentStreamId $newContentStreamId,
-        public ?UserId $workspaceOwner = null
     ) {
+    }
+
+    public function getWorkspaceName(): WorkspaceName
+    {
+        return $this->workspaceName;
     }
 
     public static function fromArray(array $values): self
@@ -47,10 +47,7 @@ final readonly class WorkspaceWasCreated implements EventInterface
         return new self(
             WorkspaceName::fromString($values['workspaceName']),
             WorkspaceName::fromString($values['baseWorkspaceName']),
-            WorkspaceTitle::fromString($values['workspaceTitle']),
-            WorkspaceDescription::fromString($values['workspaceDescription']),
             ContentStreamId::fromString($values['newContentStreamId']),
-            $values['workspaceOwner'] ? UserId::fromString($values['workspaceOwner']) : null
         );
     }
 

@@ -1,0 +1,198 @@
+Neos:
+  # DocTools is a tool used by Neos Developers to help with a variety of documentation tasks.
+  # These settings are only used in generating Documentation.
+  DocTools:
+    collections:
+      Neos:
+        commandReferences:
+          'Neos:NeosCommands': true
+        references:
+          'TYPO3Fluid:ViewHelpers': true
+          'Neos:FluidAdaptorViewHelpers': true
+          'Neos:MediaViewHelpers': true
+          'Neos:FormViewHelpers': true
+          'Neos:NeosViewHelpers': true
+          'Neos:FusionViewHelpers': true
+          'Neos:FlowValidators': true
+          'Neos:PartyValidators': true
+          'Neos:MediaValidators': true
+          'Neos:FlowSignals': true
+          'Neos:NeosSignals': true
+          'Neos:MediaSignals': true
+          'Neos:FlowQueryOperations': true
+          'Neos:EelHelpers': true
+          'Neos:ContentRepositoryCommands': true
+    commandReferences:
+      'Neos:NeosCommands':
+        title: 'Neos Command Reference'
+        packageKeys: # These are actually no package keys, but rather command controller identifiers extracted out of namespaces.
+          'Neos.Flow': true
+          'Neos.Party': true
+          'Neos.FluidAdaptor': true
+          'Neos.Kickstarter': true
+          'Neos.Welcome': true
+          'Neos.Media': true
+          'Neos.ContentRepository': true
+          'Neos.ContentRepository.Migration': true
+          'Neos.SiteKickstarter': true
+          'Neos.Neos': true
+          'Neos.Neos.Setup': true
+          'Neos.Setup': true
+        savePathAndFilename: '%FLOW_PATH_PACKAGES%Neos/Neos.Neos/Documentation/References/CommandReference.rst'
+    references:
+      'TYPO3Fluid:ViewHelpers':
+        title: 'TYPO3 Fluid ViewHelper Reference'
+        savePathAndFilename: '%FLOW_PATH_PACKAGES%Neos/Neos.Neos/Documentation/References/ViewHelpers/TYPO3Fluid.rst'
+        templatePathAndFilename: 'resource://Neos.DocTools/Private/Templates/ViewHelperReferenceTemplate.txt'
+        affectedClasses:
+          parentClassName: TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper
+          classNamePattern: '/^TYPO3Fluid\\Fluid\\ViewHelpers\\.*$/i'
+        parser:
+          implementationClassName: Neos\DocTools\Domain\Service\FluidViewHelperClassParser
+          options:
+            namespaces:
+              f: TYPO3Fluid\Fluid\ViewHelpers
+      'Neos:FluidAdaptorViewHelpers':
+        title: 'FluidAdaptor ViewHelper Reference'
+        savePathAndFilename: '%FLOW_PATH_PACKAGES%Neos/Neos.Neos/Documentation/References/ViewHelpers/FluidAdaptor.rst'
+        templatePathAndFilename: 'resource://Neos.DocTools/Private/Templates/ViewHelperReferenceTemplate.txt'
+        affectedClasses:
+          parentClassName: Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper
+          classNamePattern: '/^Neos\\FluidAdaptor\\ViewHelpers\\.*$/i'
+        parser:
+          implementationClassName: Neos\DocTools\Domain\Service\FluidViewHelperClassParser
+          options:
+            namespaces:
+              f: Neos\FluidAdaptor\ViewHelpers
+      'Neos:MediaViewHelpers':
+        title: 'Media ViewHelper Reference'
+        savePathAndFilename: '%FLOW_PATH_PACKAGES%Neos/Neos.Neos/Documentation/References/ViewHelpers/Media.rst'
+        templatePathAndFilename: 'resource://Neos.DocTools/Private/Templates/ViewHelperReferenceTemplate.txt'
+        affectedClasses:
+          parentClassName: Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper
+          classNamePattern: '/^Neos\\Media\\ViewHelpers\\.*$/i'
+        parser:
+          implementationClassName: Neos\DocTools\Domain\Service\FluidViewHelperClassParser
+          options:
+            namespaces:
+              neos.media: Neos\Media\ViewHelpers
+      'Neos:FormViewHelpers':
+        title: 'Form ViewHelper Reference'
+        savePathAndFilename: '%FLOW_PATH_PACKAGES%Neos/Neos.Neos/Documentation/References/ViewHelpers/Form.rst'
+        templatePathAndFilename: 'resource://Neos.DocTools/Private/Templates/ViewHelperReferenceTemplate.txt'
+        affectedClasses:
+          parentClassName: Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper
+          classNamePattern: '/^Neos\\Form\\ViewHelpers\\.*$/i'
+        parser:
+          implementationClassName: Neos\DocTools\Domain\Service\FluidViewHelperClassParser
+          options:
+            namespaces:
+              neos.form: Neos\Form\ViewHelpers
+      'Neos:NeosViewHelpers':
+        title: 'Neos ViewHelper Reference'
+        savePathAndFilename: '%FLOW_PATH_PACKAGES%Neos/Neos.Neos/Documentation/References/ViewHelpers/Neos.rst'
+        templatePathAndFilename: 'resource://Neos.DocTools/Private/Templates/ViewHelperReferenceTemplate.txt'
+        affectedClasses:
+          parentClassName: Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper
+          classNamePattern: '/^Neos\\Neos\\ViewHelpers\\.*$/i'
+        parser:
+          implementationClassName: Neos\DocTools\Domain\Service\FluidViewHelperClassParser
+          options:
+            namespaces:
+              f: Neos\FluidAdaptor\ViewHelpers
+              neos: Neos\Neos\ViewHelpers
+      'Neos:FusionViewHelpers':
+        title: 'Fusion ViewHelper Reference'
+        savePathAndFilename: '%FLOW_PATH_PACKAGES%Neos/Neos.Neos/Documentation/References/ViewHelpers/Fusion.rst'
+        templatePathAndFilename: 'resource://Neos.DocTools/Private/Templates/ViewHelperReferenceTemplate.txt'
+        affectedClasses:
+          parentClassName: Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper
+          classNamePattern: '/^Neos\\Fusion\\ViewHelpers\\.*$/i'
+        parser:
+          implementationClassName: Neos\DocTools\Domain\Service\FluidViewHelperClassParser
+          options:
+            namespaces:
+              f: Neos\FluidAdaptor\ViewHelpers
+              fusion: Neos\Fusion\ViewHelpers
+      'Neos:FlowValidators':
+        title: 'Flow Validator Reference'
+        savePathAndFilename: '%FLOW_PATH_PACKAGES%Neos/Neos.Neos/Documentation/References/Validators/Flow.rst'
+        affectedClasses:
+          parentClassName: Neos\Flow\Validation\Validator\AbstractValidator
+          classNamePattern: '/^Neos\\Flow\\Validation\\Validator\\.*$/i'
+        parser:
+          implementationClassName: Neos\DocTools\Domain\Service\FlowValidatorClassParser
+      'Neos:PartyValidators':
+        title: 'Party Validator Reference'
+        savePathAndFilename: '%FLOW_PATH_PACKAGES%Neos/Neos.Neos/Documentation/References/Validators/Party.rst'
+        affectedClasses:
+          parentClassName: Neos\Flow\Validation\Validator\AbstractValidator
+          classNamePattern: '/^Neos\\Party\\Validation\\Validator\\.*$/i'
+        parser:
+          implementationClassName: Neos\DocTools\Domain\Service\FlowValidatorClassParser
+      'Neos:MediaValidators':
+        title: 'Media Validator Reference'
+        savePathAndFilename: '%FLOW_PATH_PACKAGES%Neos/Neos.Neos/Documentation/References/Validators/Media.rst'
+        affectedClasses:
+          parentClassName: Neos\Flow\Validation\Validator\AbstractValidator
+          classNamePattern: '/^Neos\\Media\\Validator\\.*$/i'
+        parser:
+          implementationClassName: Neos\DocTools\Domain\Service\FlowValidatorClassParser
+      'Neos:FlowSignals':
+        title: 'Flow Signals Reference'
+        savePathAndFilename: '%FLOW_PATH_PACKAGES%Neos/Neos.Neos/Documentation/References/Signals/Flow.rst'
+        affectedClasses:
+          classesContainingMethodsAnnotatedWith: Neos\Flow\Annotations\Signal
+          classNamePattern: '/^Neos\\Flow\\.*$/i'
+          includeAbstractClasses: true
+        parser:
+          implementationClassName: Neos\DocTools\Domain\Service\SignalsParser
+      'Neos:NeosSignals':
+        title: 'Neos Signals Reference'
+        savePathAndFilename: '%FLOW_PATH_PACKAGES%Neos/Neos.Neos/Documentation/References/Signals/Neos.rst'
+        affectedClasses:
+          classesContainingMethodsAnnotatedWith: Neos\Flow\Annotations\Signal
+          classNamePattern: '/^Neos\\Neos\\.*$/i'
+          includeAbstractClasses: true
+        parser:
+          implementationClassName: Neos\DocTools\Domain\Service\SignalsParser
+      'Neos:MediaSignals':
+        title: 'Media Signals Reference'
+        savePathAndFilename: '%FLOW_PATH_PACKAGES%Neos/Neos.Neos/Documentation/References/Signals/Media.rst'
+        affectedClasses:
+          classesContainingMethodsAnnotatedWith: Neos\Flow\Annotations\Signal
+          classNamePattern: '/^Neos\\Media\\.*$/i'
+          includeAbstractClasses: true
+        parser:
+          implementationClassName: Neos\DocTools\Domain\Service\SignalsParser
+      'Neos:FlowQueryOperations':
+        title: 'FlowQuery Operation Reference'
+        savePathAndFilename: '%FLOW_PATH_PACKAGES%Neos/Neos.Neos/Documentation/References/FlowQueryOperationReference.rst'
+        affectedClasses:
+          interface: Neos\Eel\FlowQuery\OperationInterface
+        parser:
+          implementationClassName: Neos\DocTools\Domain\Service\FlowQueryOperationClassParser
+      'Neos:EelHelpers':
+        title: 'Eel Helpers Reference'
+        savePathAndFilename: '%FLOW_PATH_PACKAGES%Neos/Neos.Neos/Documentation/References/EelHelpersReference.rst'
+        affectedClasses:
+          interface: Neos\Eel\ProtectedContextAwareInterface
+          # exclude possible EEL helpers residing in `Neos.Ui` as they are internal
+          classNamePattern: '/^(?!Neos\\Neos\\Ui\\).*Helper$/i'
+        parser:
+          implementationClassName: Neos\DocTools\Domain\Service\EelHelperClassParser
+      'Neos:ContentRepositoryCommands':
+        title: 'ContentRepository Command Reference'
+        savePathAndFilename: '%FLOW_PATH_PACKAGES%Neos/Neos.Neos/Documentation/References/ContentRepositoryCommandReference.rst'
+        affectedClasses:
+          interface: Neos\ContentRepository\Core\CommandHandler\CommandInterface
+        parser:
+          implementationClassName: 'Neos\DocTools\Domain\Service\ContentRepositoryCommandClassParser'
+
+  # This is needed for the Neos:ContentRepositoryCommands reference – without this the
+  # interface implementations cannot be found because the ReflectionService never looks
+  # at those classes. We set it during reference rendering in Jenkins…
+  # Flow:
+  #  object:
+  #    includeClasses:
+  #      'neos.contentrepositorycore': [ 'Neos\\ContentRepository\\Core\\Feature\\.*\\Command\\.*' ]

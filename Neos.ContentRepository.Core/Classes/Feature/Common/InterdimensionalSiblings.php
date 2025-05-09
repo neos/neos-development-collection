@@ -92,9 +92,6 @@ final readonly class InterdimensionalSiblings implements \JsonSerializable, \Ite
         ));
     }
 
-    /**
-     * @return \Traversable<InterdimensionalSibling>
-     */
     public function getIterator(): \Traversable
     {
         yield from $this->items;

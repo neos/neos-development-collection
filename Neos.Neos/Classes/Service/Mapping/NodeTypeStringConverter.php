@@ -56,7 +56,7 @@ class NodeTypeStringConverter extends AbstractTypeConverter
         $source,
         $targetType,
         array $convertedChildProperties = [],
-        PropertyMappingConfigurationInterface $configuration = null
+        ?PropertyMappingConfigurationInterface $configuration = null
     ) {
         if ($source instanceof NodeType) {
             return $source->name->value;

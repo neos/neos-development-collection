@@ -4,16 +4,18 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Core\Projection;
 
+use Neos\ContentRepository\Core\Subscription\SubscriptionId;
+
 /**
  * An immutable set of Content Repository projections ({@see ProjectionInterface}
  *
- * @implements \IteratorAggregate<ProjectionInterface>
+ * @implements \IteratorAggregate<ProjectionInterface<ProjectionStateInterface>>
  * @internal
  */
 final class Projections implements \IteratorAggregate, \Countable
 {
     /**
-     * @var array<class-string<ProjectionInterface<ProjectionStateInterface>>, ProjectionInterface<ProjectionStateInterface>>
+     * @var array<string, ProjectionInterface<ProjectionStateInterface>>
      */
     private array $projections;
 
@@ -26,13 +28,13 @@ final class Projections implements \IteratorAggregate, \Countable
         $this->projections = $projections;
     }
 
-    public static function empty(): self
+    public static function createEmpty(): self
     {
         return new self();
     }
 
     /**
-     * @param array<ProjectionInterface<ProjectionStateInterface>> $projections
+     * @param array<string, ProjectionInterface<ProjectionStateInterface>> $projections
      * @return self
      */
     public static function fromArray(array $projections): self
@@ -54,41 +56,30 @@ final class Projections implements \IteratorAggregate, \Countable
     }
 
     /**
-     * @template T of ProjectionInterface
-     * @param class-string<T> $projectionClassName
-     * @return T
+     * @return ProjectionInterface<ProjectionStateInterface>
      */
-    public function get(string $projectionClassName): ProjectionInterface
+    public function get(SubscriptionId $id): ProjectionInterface
     {
-        $projection = $this->projections[$projectionClassName] ?? null;
-        if (!$projection instanceof $projectionClassName) {
-            throw new \InvalidArgumentException(
-                sprintf(
-                    'a projection of type "%s" is not registered in this content repository instance.',
-                    $projectionClassName
-                ),
-                1650120813
-            );
+        if (!$this->has($id)) {
+            throw new \InvalidArgumentException(sprintf('a projection with id "%s" is not registered in this content repository instance.', $id->value), 1650120813);
         }
-        return $projection;
+        return $this->projections[$id->value];
     }
 
-    public function has(string $projectionClassName): bool
+    public function has(SubscriptionId $id): bool
     {
-        return array_key_exists($projectionClassName, $this->projections);
+        return array_key_exists($id->value, $this->projections);
     }
 
     /**
-     * @return list<class-string<ProjectionInterface<ProjectionStateInterface>>>
+     * @param ProjectionInterface<ProjectionStateInterface> $projection
+     * @return self
      */
-    public function getClassNames(): array
+    public function with(SubscriptionId $id, ProjectionInterface $projection): self
     {
-        return array_keys($this->projections);
+        return self::fromArray([...$this->projections, ...[$id->value => $projection]]);
     }
 
-    /**
-     * @return \Traversable<ProjectionInterface<ProjectionStateInterface>>
-     */
     public function getIterator(): \Traversable
     {
         yield from $this->projections;

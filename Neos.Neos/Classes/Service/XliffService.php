@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Neos\Neos\Service;
 
 /*
@@ -92,7 +94,7 @@ class XliffService
      */
     public function getCachedJson(Locale $locale): string
     {
-        $cacheIdentifier = md5($locale);
+        $cacheIdentifier = md5((string)$locale);
 
         if ($this->xliffToJsonTranslationsCache->has($cacheIdentifier)) {
             $json = $this->xliffToJsonTranslationsCache->get($cacheIdentifier);

@@ -26,8 +26,6 @@ Feature: Node References with Dimensions
     And the command CreateRootWorkspace is executed with payload:
       | Key                  | Value                |
       | workspaceName        | "live"               |
-      | workspaceTitle       | "Live"               |
-      | workspaceDescription | "The live workspace" |
       | newContentStreamId   | "cs-identifier"      |
     And I am in workspace "live" and dimension space point {"language":"de"}
     And the command CreateRootNodeAggregateWithNode is executed with payload:
@@ -43,8 +41,7 @@ Feature: Node References with Dimensions
     When the command SetNodeReferences is executed with payload:
       | Key                   | Value                             |
       | sourceNodeAggregateId | "source-nodandaise"               |
-      | referenceName         | "referenceProperty"               |
-      | references            | [{"target": "anthony-destinode"}] |
+      | references            | [{"referenceName": "referenceProperty", "references": [{"target": "anthony-destinode"}]}] |
 
     When I am in workspace "live" and dimension space point {"language": "de"}
     Then I expect node aggregate identifier "source-nodandaise" to lead to node cs-identifier;source-nodandaise;{"language": "de"}

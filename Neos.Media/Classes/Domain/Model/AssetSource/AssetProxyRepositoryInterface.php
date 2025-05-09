@@ -27,7 +27,7 @@ interface AssetProxyRepositoryInterface
     /**
      * @param AssetTypeFilter $assetType
      */
-    public function filterByType(AssetTypeFilter $assetType = null): void;
+    public function filterByType(?AssetTypeFilter $assetType = null): void;
 
     /**
      * @return AssetProxyQueryResultInterface

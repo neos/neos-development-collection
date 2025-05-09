@@ -14,11 +14,16 @@ declare(strict_types=1);
 
 namespace Neos\Neos\Presentation;
 
+use Neos\ContentRepository\Core\ContentRepository;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindAncestorNodesFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Nodes;
+use Neos\Neos\Domain\NodeLabel\NodeLabelGeneratorInterface;
 
 /**
- * The string-based visual node path, composed of node names and node aggregate IDs as fallback
+ * The string-based visual node path
+ *
+ * @internal helper for enriched debug information
  */
 final readonly class VisualNodePath
 {
@@ -27,13 +32,23 @@ final readonly class VisualNodePath
     ) {
     }
 
-    public static function fromAncestors(Node $leafNode, Nodes $ancestors): self
+    public static function buildFromNodes(Nodes $nodes, NodeLabelGeneratorInterface $nodeLabelGenerator): self
     {
         $pathSegments = [];
-        foreach ($ancestors->reverse() as $ancestor) {
-            $pathSegments[] = $ancestor->name?->value ?: '[' . $ancestor->aggregateId->value . ']';
+        foreach ($nodes as $node) {
+            $pathSegments[] = $nodeLabelGenerator->getLabel($node);
         }
-
         return new self('/' . implode('/', $pathSegments));
+    }
+
+    public static function buildFromAncestors(Node $startingNode, ContentRepository $contentRepository, NodeLabelGeneratorInterface $nodeLabelGenerator): self
+    {
+        $nodes = $contentRepository->getContentGraph($startingNode->workspaceName)
+            ->getSubgraph($startingNode->dimensionSpacePoint, $startingNode->visibilityConstraints)
+            ->findAncestorNodes(
+                $startingNode->aggregateId,
+                FindAncestorNodesFilter::create()
+            )->reverse()->append($startingNode);
+        return self::buildFromNodes($nodes, $nodeLabelGenerator);
     }
 }

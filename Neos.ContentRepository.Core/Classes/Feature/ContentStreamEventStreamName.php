@@ -36,6 +36,11 @@ final readonly class ContentStreamEventStreamName
         return new self(self::EVENT_STREAM_NAME_PREFIX . $contentStreamId->value);
     }
 
+    public static function isContentStreamStreamName(StreamName $streamName): bool
+    {
+        return str_starts_with($streamName->value, self::EVENT_STREAM_NAME_PREFIX);
+    }
+
     public function getEventStreamName(): StreamName
     {
         return StreamName::fromString($this->value);

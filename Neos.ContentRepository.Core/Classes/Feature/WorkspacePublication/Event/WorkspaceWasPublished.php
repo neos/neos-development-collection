@@ -15,13 +15,14 @@ namespace Neos\ContentRepository\Core\Feature\WorkspacePublication\Event;
  */
 
 use Neos\ContentRepository\Core\EventStore\EventInterface;
+use Neos\ContentRepository\Core\Feature\Common\EmbedsWorkspaceName;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 
 /**
  * @api events are the persistence-API of the content repository
  */
-final readonly class WorkspaceWasPublished implements EventInterface
+final readonly class WorkspaceWasPublished implements EventInterface, EmbedsWorkspaceName
 {
     public function __construct(
         /**
@@ -39,7 +40,11 @@ final readonly class WorkspaceWasPublished implements EventInterface
         /**
          * The old content stream ID of $sourceWorkspaceName (which is not active anymore now)
          */
-        public ContentStreamId $previousSourceContentStreamId
+        public ContentStreamId $previousSourceContentStreamId,
+        /**
+         * Indicates if all events in the workspace have been published or if remaining changes are reapplied
+         */
+        public bool $partial
     ) {
     }
 
@@ -50,7 +55,13 @@ final readonly class WorkspaceWasPublished implements EventInterface
             WorkspaceName::fromString($values['targetWorkspaceName']),
             ContentStreamId::fromString($values['newSourceContentStreamId']),
             ContentStreamId::fromString($values['previousSourceContentStreamId']),
+            $values['partial'] ?? false,
         );
+    }
+
+    public function getWorkspaceName(): WorkspaceName
+    {
+        return $this->sourceWorkspaceName;
     }
 
     public function jsonSerialize(): array

@@ -14,8 +14,11 @@ declare(strict_types=1);
 
 namespace Neos\Neos\Command;
 
+use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeNameIsAlreadyCovered;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeTypeNotFound;
+use Neos\ContentRepository\Export\Severity;
+use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Cli\CommandController;
 use Neos\Flow\Cli\Exception\StopCommandException;
@@ -24,9 +27,15 @@ use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Neos\Domain\Exception\SiteNodeNameIsAlreadyInUseByAnotherSite;
 use Neos\Neos\Domain\Exception\SiteNodeTypeIsInvalid;
 use Neos\Neos\Domain\Model\Site;
+use Neos\Neos\Domain\Repository\DomainRepository;
 use Neos\Neos\Domain\Repository\SiteRepository;
 use Neos\Neos\Domain\Service\NodeTypeNameFactory;
+use Neos\Neos\Domain\Service\SiteExportService;
+use Neos\Neos\Domain\Service\SiteImportService;
+use Neos\Neos\Domain\Service\SitePruningService;
 use Neos\Neos\Domain\Service\SiteService;
+use Neos\Neos\Domain\Service\WorkspaceService;
+use Neos\Utility\Files;
 
 /**
  * The Site Command Controller
@@ -43,6 +52,12 @@ class SiteCommandController extends CommandController
 
     /**
      * @Flow\Inject
+     * @var DomainRepository
+     */
+    protected $domainRepository;
+
+    /**
+     * @Flow\Inject
      * @var SiteService
      */
     protected $siteService;
@@ -55,9 +70,39 @@ class SiteCommandController extends CommandController
 
     /**
      * @Flow\Inject
+     * @var ContentRepositoryRegistry
+     */
+    protected $contentRepositoryRegistry;
+
+    /**
+     * @Flow\Inject
      * @var PersistenceManagerInterface
      */
     protected $persistenceManager;
+
+    /**
+     * @Flow\Inject
+     * @var SiteImportService
+     */
+    protected $siteImportService;
+
+    /**
+     * @Flow\Inject
+     * @var SiteExportService
+     */
+    protected $siteExportService;
+
+    /**
+     * @Flow\Inject
+     * @var SitePruningService
+     */
+    protected $sitePruningService;
+
+    /**
+     * @Flow\Inject
+     * @var WorkspaceService
+     */
+    protected $workspaceService;
 
     /**
      * Create a new site
@@ -111,31 +156,94 @@ class SiteCommandController extends CommandController
     }
 
     /**
-     * Remove site with content and related data (with globbing)
+     * Import sites
      *
-     * In the future we need some more sophisticated cleanup.
+     * This command allows importing sites from the given path/package. The format must
+     * be identical to that produced by the exportAll command.
      *
-     * @param string $siteNode Name for site root nodes to clear only content of this sites (globbing is supported)
+     * If a path is specified, this command expects the corresponding directory to contain the exported files
+     *
+     * If a package key is specified, this command expects the export files to be located in the private resources
+     * directory of the given package (Resources/Private/Content).
+     *
+     * **Note that the live workspace has to be empty prior to importing.**
+     *
+     * @param string|null $packageKey Package key specifying the package containing the sites content
+     * @param string|null $path relative or absolute path and filename to the export files
      * @return void
      */
-    public function pruneCommand($siteNode)
+    public function importAllCommand(?string $packageKey = null, ?string $path = null, string $contentRepository = 'default', bool $verbose = false): void
     {
-        $sites = $this->findSitesByNodeNamePattern($siteNode);
-        if (empty($sites)) {
-            $this->outputLine('<error>No Site found for pattern "%s".</error>', [$siteNode]);
-            // Help the user a little about what he needs to provide as a parameter here
-            $this->outputLine('To find out which sites you have, use the <b>site:list</b> command.');
-            $this->outputLine('The site:prune command expects the "Node name" from the site list as a parameter.');
-            $this->outputLine('If you want to delete all sites, you can run <b>site:prune \'*\'</b>.');
-            $this->quit(1);
+        // TODO check if this warning is still necessary with Neos 9
+        // Since this command uses a lot of memory when large sites are imported, we warn the user to watch for
+        // the confirmation of a successful import.
+        $this->outputLine('<b>This command can use a lot of memory when importing sites with many resources.</b>');
+        $this->outputLine('If the import is successful, you will see a message saying "Import finished".');
+        $this->outputLine('If you do not see this message, the import failed, most likely due to insufficient memory.');
+        $this->outputLine('Increase the <b>memory_limit</b> configuration parameter of your php CLI to attempt to fix this.');
+        $this->outputLine('Starting import...');
+        $this->outputLine('---');
+
+        $path = $this->determineTargetPath($packageKey, $path);
+
+        $contentRepositoryId = ContentRepositoryId::fromString($contentRepository);
+
+        $this->siteImportService->importFromPath(
+            $contentRepositoryId,
+            $path,
+            $this->createOnProcessorClosure(),
+            $this->createOnMessageClosure($verbose)
+        );
+
+        $this->outputLine('Import finished.');
+    }
+
+    /**
+     * Export sites
+     *
+     * This command exports all sites of the content repository.
+     *
+     * If a path is specified, this command creates the directory if needed and exports into that.
+     *
+     * If a package key is specified, this command exports to the private resources
+     * directory of the given package (Resources/Private/Content).
+     *
+     * @param string|null $packageKey Package key specifying the package containing the sites content
+     * @param string|null $path relative or absolute path and filename to the export files
+     * @return void
+     */
+    public function exportAllCommand(?string $packageKey = null, ?string $path = null, string $contentRepository = 'default', bool $verbose = false): void
+    {
+        $path = $this->determineTargetPath($packageKey, $path);
+        $contentRepositoryId = ContentRepositoryId::fromString($contentRepository);
+        Files::createDirectoryRecursively($path);
+        $this->siteExportService->exportToPath(
+            $contentRepositoryId,
+            $path,
+            $this->createOnProcessorClosure(),
+            $this->createOnMessageClosure($verbose)
+        );
+    }
+
+    /**
+     * This will completely prune the data of the specified content repository and remove all site-records.
+     *
+     * @param bool $force Prune the cr without confirmation. This cannot be reverted!
+     * @return void
+     */
+    public function pruneAllCommand(string $contentRepository = 'default', bool $force = false, bool $verbose = false): void
+    {
+        if (!$force && !$this->output->askConfirmation(sprintf('> This will prune your content repository "%s" and all its attached sites. Are you sure to proceed? (y/n) ', $contentRepository), false)) {
+            $this->outputLine('<comment>Abort.</comment>');
+            return;
         }
-        foreach ($sites as $site) {
-            $this->siteService->pruneSite($site);
-            $this->outputLine(
-                'Site with root "%s" matched pattern "%s" and has been removed.',
-                [$site->getNodeName(), $siteNode]
-            );
-        }
+        $contentRepositoryId = ContentRepositoryId::fromString($contentRepository);
+
+        $this->sitePruningService->pruneAll(
+            $contentRepositoryId,
+            $this->createOnProcessorClosure(),
+            $this->createOnMessageClosure($verbose)
+        );
     }
 
     /**
@@ -219,5 +327,52 @@ class SiteCommandController extends CommandController
                 return fnmatch($siteNodePattern, $site->getNodeName()->value);
             }
         );
+    }
+
+    protected function determineTargetPath(?string $packageKey, ?string $path): string
+    {
+        $exceedingArguments = $this->request->getExceedingArguments();
+        if (isset($exceedingArguments[0]) && $packageKey === null && $path === null) {
+            if (file_exists($exceedingArguments[0])) {
+                $path = $exceedingArguments[0];
+            } elseif ($this->packageManager->isPackageAvailable($exceedingArguments[0])) {
+                $packageKey = $exceedingArguments[0];
+            }
+        }
+        if ($packageKey === null && $path === null) {
+            $this->outputLine('<error>You have to specify either <em>--package-key</em> or <em>--path</em></error>');
+            $this->quit(1);
+        }
+        if ($path === null) {
+            $package = $this->packageManager->getPackage($packageKey);
+            $path = Files::concatenatePaths([$package->getPackagePath(), 'Resources/Private/Content']);
+        }
+        if (str_starts_with($path, 'resource://')) {
+            $this->outputLine('<error>Resource paths are not allowed, please use <em>--package-key</em> instead or a real path.</error>');
+            $this->quit(1);
+        }
+        return $path;
+    }
+
+    protected function createOnProcessorClosure(): \Closure
+    {
+        $onProcessor = function (string $processorLabel) {
+            $this->outputLine('<info>%s...</info>', [$processorLabel]);
+        };
+        return $onProcessor;
+    }
+
+    protected function createOnMessageClosure(bool $verbose): \Closure
+    {
+        return function (Severity $severity, string $message) use ($verbose) {
+            if (!$verbose && $severity === Severity::NOTICE) {
+                return;
+            }
+            $this->outputLine(match ($severity) {
+                Severity::NOTICE => $message,
+                Severity::WARNING => sprintf('<comment>Warning: %s</comment>', $message),
+                Severity::ERROR => sprintf('<error>Error: %s</error>', $message),
+            });
+        };
     }
 }

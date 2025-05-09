@@ -17,9 +17,10 @@ namespace Neos\ContentRepository\Core\Feature\NodeRemoval\Event;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePointSet;
 use Neos\ContentRepository\Core\EventStore\EventInterface;
-use Neos\ContentRepository\Core\Feature\Common\EmbedsContentStreamAndNodeAggregateId;
+use Neos\ContentRepository\Core\Feature\Common\EmbedsContentStreamId;
+use Neos\ContentRepository\Core\Feature\Common\EmbedsNodeAggregateId;
+use Neos\ContentRepository\Core\Feature\Common\EmbedsWorkspaceName;
 use Neos\ContentRepository\Core\Feature\Common\PublishableToWorkspaceInterface;
-use Neos\ContentRepository\Core\Feature\NodeRemoval\Command\RemoveNodeAggregate;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
@@ -30,17 +31,23 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 final readonly class NodeAggregateWasRemoved implements
     EventInterface,
     PublishableToWorkspaceInterface,
-    EmbedsContentStreamAndNodeAggregateId
+    EmbedsContentStreamId,
+    EmbedsNodeAggregateId,
+    EmbedsWorkspaceName
 {
+    /**
+     * @deprecated with Neos 9 Beta 19. Must not be specified any longer. Might get removed at any point.
+     */
+    public ?NodeAggregateId $removalAttachmentPoint;
+
     public function __construct(
         public WorkspaceName $workspaceName,
         public ContentStreamId $contentStreamId,
         public NodeAggregateId $nodeAggregateId,
-        public OriginDimensionSpacePointSet $affectedOccupiedDimensionSpacePoints,
         public DimensionSpacePointSet $affectedCoveredDimensionSpacePoints,
-        /** {@see RemoveNodeAggregate::$removalAttachmentPoint} for detailed docs what this is used for. */
-        public ?NodeAggregateId $removalAttachmentPoint = null
+        ?NodeAggregateId $removalAttachmentPoint = null
     ) {
+        $this->removalAttachmentPoint = $removalAttachmentPoint;
     }
 
     public function getContentStreamId(): ContentStreamId
@@ -53,13 +60,17 @@ final readonly class NodeAggregateWasRemoved implements
         return $this->nodeAggregateId;
     }
 
+    public function getWorkspaceName(): WorkspaceName
+    {
+        return $this->workspaceName;
+    }
+
     public function withWorkspaceNameAndContentStreamId(WorkspaceName $targetWorkspaceName, ContentStreamId $contentStreamId): self
     {
-        return new NodeAggregateWasRemoved(
+        return new self(
             $targetWorkspaceName,
             $contentStreamId,
             $this->nodeAggregateId,
-            $this->affectedOccupiedDimensionSpacePoints,
             $this->affectedCoveredDimensionSpacePoints,
             $this->removalAttachmentPoint
         );
@@ -71,7 +82,6 @@ final readonly class NodeAggregateWasRemoved implements
             WorkspaceName::fromString($values['workspaceName']),
             ContentStreamId::fromString($values['contentStreamId']),
             NodeAggregateId::fromString($values['nodeAggregateId']),
-            OriginDimensionSpacePointSet::fromArray($values['affectedOccupiedDimensionSpacePoints']),
             DimensionSpacePointSet::fromArray($values['affectedCoveredDimensionSpacePoints']),
             isset($values['removalAttachmentPoint'])
                 ? NodeAggregateId::fromString($values['removalAttachmentPoint'])

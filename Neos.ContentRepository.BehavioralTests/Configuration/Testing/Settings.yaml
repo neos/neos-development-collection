@@ -1,0 +1,105 @@
+
+Neos:
+  # To detect race conditions, enable the code block below, and set raceConditionTracker.enabled to TRUE
+  # and then use ./flow raceConditionTracker:analyzeTrace
+  #ContentRepositoryRegistry:
+  #  presets:
+  #    'default':
+  #        contentGraphProjection:
+  #          catchUpHooks:
+  #            'Neos.ContentRepository.BehavioralTests:RaceConditionTracker':
+  #              factoryObjectName: Neos\ContentRepository\BehavioralTests\ProjectionRaceConditionTester\RaceTrackerCatchUpHookFactory
+
+  ContentRepository:
+    BehavioralTests:
+      raceConditionTracker:
+        enabled: false
+        redis:
+          host: 127.0.0.1
+          port: 6379
+
+  ContentRepositoryRegistry:
+    contentRepositories:
+      test_parallel:
+        eventStore:
+          factoryObjectName: Neos\ContentRepositoryRegistry\Factory\EventStore\DoctrineEventStoreFactory
+        nodeTypeManager:
+          factoryObjectName: Neos\ContentRepository\TestSuite\Fakes\FakeNodeTypeManagerFactory
+        contentDimensionSource:
+          factoryObjectName: Neos\ContentRepository\TestSuite\Fakes\FakeContentDimensionSourceFactory
+        authProvider:
+          factoryObjectName: Neos\ContentRepository\TestSuite\Fakes\FakeAuthProviderFactory
+        clock:
+          factoryObjectName: Neos\ContentRepositoryRegistry\Factory\Clock\SystemClockFactory
+        subscriptionStore:
+          factoryObjectName: Neos\ContentRepositoryRegistry\Factory\SubscriptionStore\SubscriptionStoreFactory
+        propertyConverters: {}
+        contentGraphProjection:
+          factoryObjectName: Neos\ContentGraph\DoctrineDbalAdapter\DoctrineDbalContentGraphProjectionFactory
+          catchUpHooks: {}
+        projections:
+          'Neos.Testing:DebugProjection':
+            factoryObjectName: Neos\ContentRepository\TestSuite\Fakes\FakeProjectionFactory
+            options:
+              instanceId: debug
+
+      t_extensibility:
+        eventStore:
+          factoryObjectName: Neos\ContentRepositoryRegistry\Factory\EventStore\DoctrineEventStoreFactory
+        nodeTypeManager:
+          factoryObjectName: Neos\ContentRepository\TestSuite\Fakes\FakeNodeTypeManagerFactory
+        contentDimensionSource:
+          factoryObjectName: Neos\ContentRepository\TestSuite\Fakes\FakeContentDimensionSourceFactory
+        authProvider:
+          factoryObjectName: Neos\ContentRepository\TestSuite\Fakes\FakeAuthProviderFactory
+        clock:
+          factoryObjectName: Neos\ContentRepositoryRegistry\Factory\Clock\SystemClockFactory
+        subscriptionStore:
+          factoryObjectName: Neos\ContentRepositoryRegistry\Factory\SubscriptionStore\SubscriptionStoreFactory
+        propertyConverters: {}
+        contentGraphProjection:
+          factoryObjectName: Neos\ContentGraph\DoctrineDbalAdapter\DoctrineDbalContentGraphProjectionFactory
+          catchUpHooks: {}
+        commandHooks:
+          'Neos.Testing:FakeCommandHook':
+            factoryObjectName: Neos\ContentRepository\TestSuite\Fakes\FakeCommandHookFactory
+
+      t_subscription:
+        eventStore:
+          factoryObjectName: Neos\ContentRepositoryRegistry\Factory\EventStore\DoctrineEventStoreFactory
+        nodeTypeManager:
+          factoryObjectName: Neos\ContentRepository\TestSuite\Fakes\FakeNodeTypeManagerFactory
+        contentDimensionSource:
+          factoryObjectName: Neos\ContentRepository\TestSuite\Fakes\FakeContentDimensionSourceFactory
+        authProvider:
+          factoryObjectName: Neos\ContentRepository\TestSuite\Fakes\FakeAuthProviderFactory
+        clock:
+          factoryObjectName: Neos\ContentRepositoryRegistry\Factory\Clock\SystemClockFactory
+        subscriptionStore:
+          factoryObjectName: Neos\ContentRepositoryRegistry\Factory\SubscriptionStore\SubscriptionStoreFactory
+        propertyConverters: {}
+        contentGraphProjection:
+          factoryObjectName: Neos\ContentGraph\DoctrineDbalAdapter\DoctrineDbalContentGraphProjectionFactory
+          catchUpHooks: {}
+        projections:
+          'Vendor.Package:FakeProjection':
+            factoryObjectName: Neos\ContentRepository\TestSuite\Fakes\FakeProjectionFactory
+            options:
+              instanceId: default
+            catchUpHooks:
+              'Vendor.Package:FakeCatchupHook':
+                factoryObjectName: Neos\ContentRepository\TestSuite\Fakes\FakeCatchUpHookFactory
+          'Vendor.Package:SecondFakeProjection':
+            factoryObjectName: Neos\ContentRepository\TestSuite\Fakes\FakeProjectionFactory
+            options:
+              instanceId: second
+            catchUpHooks:
+              'Vendor.Package:SecondFakeCatchupHook':
+                factoryObjectName: Neos\ContentRepository\TestSuite\Fakes\FakeCatchUpHookFactory
+              'Vendor.Package:AdditionalSecondFakeCatchupHook':
+                factoryObjectName: Neos\ContentRepository\TestSuite\Fakes\FakeCatchUpHookFactory2
+  Flow:
+    object:
+      includeClasses:
+        # do NOT include PhpstanRules here
+        'Neos.ContentRepository.BehavioralTests': [ 'Neos\\ContentRepository\\BehavioralTests\\(Command|ProjectionRaceConditionTester)' ]

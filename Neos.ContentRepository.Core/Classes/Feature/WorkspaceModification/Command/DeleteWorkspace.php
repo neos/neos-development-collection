@@ -29,4 +29,11 @@ final readonly class DeleteWorkspace implements CommandInterface
     {
         return new self($workspaceName);
     }
+
+    public static function fromArray(array $array): self
+    {
+        return new self(
+            WorkspaceName::fromString($array['workspaceName']),
+        );
+    }
 }

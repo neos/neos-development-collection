@@ -26,8 +26,6 @@ Feature: Create node aggregate with node
     And the command CreateRootWorkspace is executed with payload:
       | Key                  | Value                |
       | workspaceName        | "live"               |
-      | workspaceTitle       | "Live"               |
-      | workspaceDescription | "The live workspace" |
       | newContentStreamId   | "cs-identifier"      |
     And I am in workspace "live"
     And I am in dimension space point {}
@@ -193,11 +191,9 @@ Feature: Create node aggregate with node
     And using identifier "default", I define a content repository
     And I am in content repository "default"
     And the command CreateRootWorkspace is executed with payload:
-      | Key                  | Value                |
-      | workspaceName        | "live"               |
-      | workspaceTitle       | "Live"               |
-      | workspaceDescription | "The live workspace" |
-      | newContentStreamId   | "cs-identifier"      |
+      | Key                | Value           |
+      | workspaceName      | "live"          |
+      | newContentStreamId | "cs-identifier" |
     And I am in workspace "live"
     And I am in dimension space point {}
     And I am user identified by "initiating-user-identifier"
@@ -206,14 +202,14 @@ Feature: Create node aggregate with node
       | nodeAggregateId | "lady-eleonode-rootford"      |
       | nodeTypeName    | "Neos.ContentRepository:Root" |
 
-    Given the command CreateNodeAggregateWithNodeAndSerializedProperties is executed with payload:
+    Given the command CreateNodeAggregateWithNode is executed with payload:
       | Key                       | Value                                                          |
       | nodeAggregateId           | "sir-david-nodenborough"                                       |
       | nodeTypeName              | "Neos.ContentRepository.Testing:NodeWithoutTetheredChildNodes" |
       | originDimensionSpacePoint | {}                                                             |
       | parentNodeAggregateId     | "lady-eleonode-rootford"                                       |
       | nodeName                  | "node"                                                         |
-    And the command CreateNodeAggregateWithNodeAndSerializedProperties is executed with payload:
+    And the command CreateNodeAggregateWithNode is executed with payload:
       | Key                              | Value                                                          |
       | nodeAggregateId                  | "sir-nodeward-nodington-iii"                                   |
       | nodeTypeName                     | "Neos.ContentRepository.Testing:NodeWithoutTetheredChildNodes" |
@@ -275,8 +271,6 @@ Feature: Create node aggregate with node
     And the command CreateRootWorkspace is executed with payload:
       | Key                  | Value                |
       | workspaceName        | "live"               |
-      | workspaceTitle       | "Live"               |
-      | workspaceDescription | "The live workspace" |
       | newContentStreamId   | "cs-identifier"      |
     And I am in workspace "live"
     And I am in dimension space point {}
@@ -286,7 +280,7 @@ Feature: Create node aggregate with node
       | nodeAggregateId | "lady-eleonode-rootford"      |
       | nodeTypeName    | "Neos.ContentRepository:Root" |
 
-    When the command CreateNodeAggregateWithNodeAndSerializedProperties is executed with payload:
+    When the command CreateNodeAggregateWithNode is executed with payload:
       | Key                                | Value                                                                             |
       | nodeAggregateId                    | "sir-david-nodenborough"                                                          |
       | nodeTypeName                       | "Neos.ContentRepository.Testing:NodeWithTetheredChildNodes"                       |
@@ -456,8 +450,6 @@ Feature: Create node aggregate with node
     And the command CreateRootWorkspace is executed with payload:
       | Key                  | Value                |
       | workspaceName        | "live"               |
-      | workspaceTitle       | "Live"               |
-      | workspaceDescription | "The live workspace" |
       | newContentStreamId   | "cs-identifier"      |
     And I am in workspace "live"
     And I am in dimension space point {}
@@ -467,7 +459,7 @@ Feature: Create node aggregate with node
       | nodeAggregateId | "lady-eleonode-rootford"      |
       | nodeTypeName    | "Neos.ContentRepository:Root" |
 
-    When the command CreateNodeAggregateWithNodeAndSerializedProperties is executed with payload:
+    When the command CreateNodeAggregateWithNode is executed with payload:
       | Key                                | Value                                                                                   |
       | nodeAggregateId                    | "sir-david-nodenborough"                                                                |
       | nodeTypeName                       | "Neos.ContentRepository.Testing:NodeWithTetheredChildNodes"                             |
