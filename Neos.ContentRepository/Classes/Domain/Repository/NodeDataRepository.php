@@ -183,7 +183,7 @@ class NodeDataRepository extends Repository
      * @throws \InvalidArgumentException
      * @return NodeData|null The matching node if found, otherwise NULL
      */
-    public function findOneByPath($path, Workspace $workspace, array $dimensions = null, $removedNodes = false)
+    public function findOneByPath($path, Workspace $workspace, ?array $dimensions = null, $removedNodes = false)
     {
         if ($path === '/') {
             return $workspace->getRootNodeData();
@@ -216,7 +216,7 @@ class NodeDataRepository extends Repository
      * @param array|null $dimensions
      * @return NodeData|null
      */
-    public function findShadowNodeByPath($path, Workspace $workspace, array $dimensions = null)
+    public function findShadowNodeByPath($path, Workspace $workspace, ?array $dimensions = null)
     {
         $workspaces = $this->collectWorkspaceAndAllBaseWorkspaces($workspace);
         $nodes = $this->findRawNodesByPath($path, $workspace, $dimensions, true);
@@ -244,7 +244,7 @@ class NodeDataRepository extends Repository
      * @return array
      * @throws \InvalidArgumentException
      */
-    protected function findRawNodesByPath($path, Workspace $workspace, array $dimensions = null, $onlyShadowNodes = false)
+    protected function findRawNodesByPath($path, Workspace $workspace, ?array $dimensions = null, $onlyShadowNodes = false)
     {
         $path = strtolower($path);
         if ($path === '' || ($path !== '/' && ($path[0] !== '/' || substr($path, -1, 1) === '/'))) {
@@ -323,7 +323,7 @@ class NodeDataRepository extends Repository
      * @param bool $removedNodes If shadow nodes should be considered while finding the specified node
      * @return NodeData|null The matching node if found, otherwise NULL
      */
-    public function findOneByIdentifier($identifier, Workspace $workspace, array $dimensions = null, $removedNodes = false)
+    public function findOneByIdentifier($identifier, Workspace $workspace, ?array $dimensions = null, $removedNodes = false)
     {
         $workspaces = [];
         while ($workspace !== null) {
@@ -397,7 +397,7 @@ class NodeDataRepository extends Repository
      * @param callable $callback
      * @return \Generator
      */
-    public function iterate(IterableResult $iterator, callable $callback = null)
+    public function iterate(IterableResult $iterator, ?callable $callback = null)
     {
         $iteration = 0;
         foreach ($iterator as $object) {
@@ -427,7 +427,7 @@ class NodeDataRepository extends Repository
      * @return void
      * @throws \InvalidArgumentException
      */
-    public function setNewIndex(NodeData $node, $position, NodeInterface $referenceNode = null)
+    public function setNewIndex(NodeData $node, $position, ?NodeInterface $referenceNode = null)
     {
         $parentPath = $node->getParentPath();
 
@@ -505,7 +505,7 @@ class NodeDataRepository extends Repository
      * @param boolean $removedNodes If true the result has ONLY removed nodes. If false removed nodes are NOT inside the result. If NULL the result contains BOTH removed and non-removed nodes. (defaults to false)
      * @return array<\Neos\ContentRepository\Domain\Model\NodeData> The nodes found on the given path
      */
-    public function findByParentAndNodeTypeRecursively($parentPath, $nodeTypeFilter, Workspace $workspace, array $dimensions = null, $removedNodes = false)
+    public function findByParentAndNodeTypeRecursively($parentPath, $nodeTypeFilter, Workspace $workspace, ?array $dimensions = null, $removedNodes = false)
     {
         return $this->findByParentAndNodeType($parentPath, $nodeTypeFilter, $workspace, $dimensions, $removedNodes, true);
     }
@@ -528,7 +528,7 @@ class NodeDataRepository extends Repository
      * @return array<\Neos\ContentRepository\Domain\Model\NodeData> The nodes found on the given path
      * @todo Improve implementation by using DQL
      */
-    public function findByParentAndNodeType($parentPath, $nodeTypeFilter, Workspace $workspace, array $dimensions = null, $removedNodes = false, $recursive = false)
+    public function findByParentAndNodeType($parentPath, $nodeTypeFilter, Workspace $workspace, ?array $dimensions = null, $removedNodes = false, $recursive = false)
     {
         $parentPath = strtolower($parentPath);
         $foundNodes = $this->getNodeDataForParentAndNodeType($parentPath, $nodeTypeFilter, $workspace, $dimensions, $removedNodes, $recursive);
@@ -587,7 +587,7 @@ class NodeDataRepository extends Repository
      * @param boolean $recursive
      * @return array
      */
-    protected function getNodeDataForParentAndNodeType($parentPath, $nodeTypeFilter, Workspace $workspace, array $dimensions = null, $removedNodes = false, $recursive = false)
+    protected function getNodeDataForParentAndNodeType($parentPath, $nodeTypeFilter, Workspace $workspace, ?array $dimensions = null, $removedNodes = false, $recursive = false)
     {
         $workspaces = $this->collectWorkspaceAndAllBaseWorkspaces($workspace);
 
@@ -715,7 +715,7 @@ class NodeDataRepository extends Repository
      * @param boolean $includeRemovedNodes Should removed nodes be included in the result (defaults to false)
      * @return integer The number of nodes a similar call to findByParentAndNodeType() would return without any pending added nodes
      */
-    public function countByParentAndNodeType($parentPath, $nodeTypeFilter, Workspace $workspace, array $dimensions = null, $includeRemovedNodes = false)
+    public function countByParentAndNodeType($parentPath, $nodeTypeFilter, Workspace $workspace, ?array $dimensions = null, $includeRemovedNodes = false)
     {
         return count($this->findByParentAndNodeType($parentPath, $nodeTypeFilter, $workspace, $dimensions, $includeRemovedNodes));
     }
@@ -959,7 +959,7 @@ class NodeDataRepository extends Repository
      * @return array<\Neos\ContentRepository\Domain\Model\NodeData> The nodes found on the given path
      * @todo findOnPath should probably not return child nodes of removed nodes unless removed nodes are included.
      */
-    public function findOnPath($pathStartingPoint, $pathEndPoint, Workspace $workspace, array $dimensions = null, $includeRemovedNodes = false, $nodeTypeFilter = null)
+    public function findOnPath($pathStartingPoint, $pathEndPoint, Workspace $workspace, ?array $dimensions = null, $includeRemovedNodes = false, $nodeTypeFilter = null)
     {
         $pathStartingPoint = strtolower($pathStartingPoint);
         $pathEndPoint = strtolower($pathEndPoint);
@@ -1302,7 +1302,7 @@ class NodeDataRepository extends Repository
             // Find the position of the workspace, a smaller value means more priority
             $workspacePosition = array_search($node->getWorkspace()->getName(), $workspaceNames);
             if ($workspacePosition === false) {
-                throw new Exception\NodeException(sprintf('Node workspace "%s" not found in allowed workspaces (%s), this could result from a detached workspace entity in the context.', $node->getWorkspace()->getName(), implode($workspaceNames, ', ')), 1413902143);
+                throw new Exception\NodeException(sprintf('Node workspace "%s" not found in allowed workspaces (%s), this could result from a detached workspace entity in the context.', $node->getWorkspace()->getName(), implode(', ', $workspaceNames)), 1413902143);
             }
 
             // Find positions in dimensions, add workspace in front for highest priority
@@ -1334,6 +1334,7 @@ class NodeDataRepository extends Repository
                 }
             }
             $dimensionPositions[] = $workspacePosition;
+            $dimensionPositions[] = $node->isRemoved() ? PHP_INT_MAX : PHP_INT_MIN;
 
             $identifier = $node->getIdentifier();
             // Yes, it seems to work comparing arrays that way!

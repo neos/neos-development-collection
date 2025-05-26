@@ -121,7 +121,7 @@ abstract class AbstractMenuItemsImplementation extends AbstractFusionObject
      * @param NodeInterface $node
      * @return string
      */
-    protected function calculateItemState(NodeInterface $node = null)
+    protected function calculateItemState(?NodeInterface $node = null)
     {
         if ($node === null) {
             return self::STATE_ABSENT;

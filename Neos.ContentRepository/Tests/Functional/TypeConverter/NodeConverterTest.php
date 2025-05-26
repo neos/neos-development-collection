@@ -240,7 +240,7 @@ class NodeConverterTest extends FunctionalTestCase
      * @param $nodePath
      * @return NodeInterface
      */
-    protected function convert($nodePath, PropertyMappingConfiguration $propertyMappingConfiguration = null)
+    protected function convert($nodePath, ?PropertyMappingConfiguration $propertyMappingConfiguration = null)
     {
         $nodeConverter = new NodeConverter();
         $result = $nodeConverter->convertFrom($nodePath, null, [], $propertyMappingConfiguration);

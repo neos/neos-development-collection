@@ -3,23 +3,33 @@
   <file original="" product-name="Neos.Neos" source-language="en" datatype="plaintext" target-language="hu">
     <body>
       <trans-unit id="tabs.default" xml:space="preserve">
-				<source>General</source>
-			<target state="translated">Általános </target></trans-unit>
+        <source>General</source>
+        <target state="translated">Általános </target>
+      </trans-unit>
       <trans-unit id="tabs.meta" xml:space="preserve">
-				<source>Metadata</source>
-			<target state="translated">Metaadatok</target></trans-unit>
+        <source>Metadata</source>
+        <target state="translated">Metaadatok</target>
+      </trans-unit>
       <trans-unit id="views.nodeInfo" xml:space="preserve">
-				<source>Metadata</source>
-			<target state="translated">Metaadatok</target></trans-unit>
+        <source>Metadata</source>
+        <target state="translated">Metaadatok</target>
+      </trans-unit>
       <trans-unit id="groups.nodeInfo" xml:space="preserve">
-				<source>Additional info</source>
-			<target state="translated">További információ</target></trans-unit>
+        <source>Additional info</source>
+        <target state="translated">További információ</target>
+      </trans-unit>
       <trans-unit id="groups.type" xml:space="preserve">
-				<source>Change type</source>
-			<target state="translated">Típus megváltoztatása</target></trans-unit>
+        <source>Change type</source>
+        <target state="translated">Típus megváltoztatása</target>
+      </trans-unit>
       <trans-unit id="properties._nodeType" xml:space="preserve">
-				<source>Type</source>
-			<target state="translated">Típus</target></trans-unit>
+        <source>Type</source>
+        <target state="translated">Típus</target>
+      </trans-unit>
+      <trans-unit id="groups.default" xml:space="preserve">
+        <source>General</source>
+        <target state="needs-translation">Általános</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

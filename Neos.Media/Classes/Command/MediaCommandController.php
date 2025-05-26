@@ -195,7 +195,7 @@ class MediaCommandController extends CommandController
      * @throws IllegalObjectTypeException
      * @throws AssetServiceException
      */
-    public function removeUnusedCommand(string $assetSource = '', bool $quiet = false, bool $assumeYes = false, string $onlyTags = '', int $limit = null, string $onlyCollections = ''): void
+    public function removeUnusedCommand(string $assetSource = '', bool $quiet = false, bool $assumeYes = false, string $onlyTags = '', ?int $limit = null, string $onlyCollections = ''): void
     {
         $iterator = $this->assetRepository->findAllIterator();
         $assetCount = $this->assetRepository->countAll();
@@ -318,7 +318,7 @@ class MediaCommandController extends CommandController
      * @return void
      * @throws ThumbnailServiceException
      */
-    public function createThumbnailsCommand(string $preset = null, bool $async = null, bool $quiet = false)
+    public function createThumbnailsCommand(?string $preset = null, ?bool $async = null, bool $quiet = false)
     {
         $async = $async ?? $this->asyncThumbnails;
         $presets = $preset !== null ? [$preset] : array_keys($this->thumbnailService->getPresets());
@@ -352,7 +352,7 @@ class MediaCommandController extends CommandController
      * @throws IllegalObjectTypeException
      * @throws ThumbnailServiceException
      */
-    public function clearThumbnailsCommand(string $preset = null, bool $quiet = false): void
+    public function clearThumbnailsCommand(?string $preset = null, bool $quiet = false): void
     {
         if ($preset !== null) {
             $thumbnailConfiguration = $this->thumbnailService->getThumbnailConfigurationForPreset($preset);
@@ -385,7 +385,7 @@ class MediaCommandController extends CommandController
      * @param bool $quiet If set, only errors will be displayed.
      * @return void
      */
-    public function renderThumbnailsCommand(int $limit = null, bool $quiet = false)
+    public function renderThumbnailsCommand(?int $limit = null, bool $quiet = false)
     {
         $thumbnailCount = $this->thumbnailRepository->countUngenerated();
         $iterator = $this->thumbnailRepository->findUngeneratedIterator();
@@ -472,7 +472,7 @@ class MediaCommandController extends CommandController
      *
      * @throws StopCommandException
      */
-    public function removeVariantsCommand(string $identifier, string $variantName, bool $quiet = false, bool $assumeYes = false, int $limit = null)
+    public function removeVariantsCommand(string $identifier, string $variantName, bool $quiet = false, bool $assumeYes = false, ?int $limit = null)
     {
         $variantsToRemove = $this->imageVariantRepository->findVariantsByIdentifierAndVariantName($identifier, $variantName, $limit);
         if (empty($variantsToRemove)) {
@@ -536,7 +536,7 @@ class MediaCommandController extends CommandController
      * @throws AssetVariantGeneratorException
      * @throws IllegalObjectTypeException
      */
-    public function renderVariantsCommand(int $limit = null, bool $quiet = false, bool $recreate = false): void
+    public function renderVariantsCommand(?int $limit = null, bool $quiet = false, bool $recreate = false): void
     {
         $resultMessage = null;
         $generatedVariants = 0;

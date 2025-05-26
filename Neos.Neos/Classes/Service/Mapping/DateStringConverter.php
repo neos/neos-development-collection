@@ -55,7 +55,7 @@ class DateStringConverter extends AbstractTypeConverter
      * @param PropertyMappingConfigurationInterface $configuration
      * @return string the target type
      */
-    public function convertFrom($source, $targetType, array $convertedChildProperties = [], PropertyMappingConfigurationInterface $configuration = null)
+    public function convertFrom($source, $targetType, array $convertedChildProperties = [], ?PropertyMappingConfigurationInterface $configuration = null)
     {
         if (!$source instanceof \DateTime) {
             return null;

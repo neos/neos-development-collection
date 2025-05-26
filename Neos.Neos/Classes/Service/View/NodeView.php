@@ -112,7 +112,7 @@ class NodeView extends JsonView
      * @param NodeInterface $untilNode if given, expand all nodes on the rootline towards $untilNode, no matter what is defined with $depth.
      * @return void
      */
-    public function assignChildNodes(NodeInterface $node, $nodeTypeFilter, $outputStyle = self::STYLE_LIST, $depth = 0, NodeInterface $untilNode = null)
+    public function assignChildNodes(NodeInterface $node, $nodeTypeFilter, $outputStyle = self::STYLE_LIST, $depth = 0, ?NodeInterface $untilNode = null)
     {
         $this->outputStyle = $outputStyle;
         $nodes = [];
@@ -133,7 +133,7 @@ class NodeView extends JsonView
      * @param NodeInterface $untilNode if given, expand all nodes on the rootline towards $untilNode, no matter what is defined with $depth.
      * @return void
      */
-    public function assignNodeAndChildNodes(NodeInterface $node, $nodeTypeFilter = '', $depth = 0, NodeInterface $untilNode = null)
+    public function assignNodeAndChildNodes(NodeInterface $node, $nodeTypeFilter = '', $depth = 0, ?NodeInterface $untilNode = null)
     {
         $this->outputStyle = self::STYLE_TREE;
         $data = [];
@@ -175,7 +175,7 @@ class NodeView extends JsonView
      * @param integer $recursionPointer current recursion level
      * @return void
      */
-    protected function collectChildNodeData(array &$nodes, NodeInterface $node, $nodeTypeFilter, $depth = 0, NodeInterface $untilNode = null, $recursionPointer = 1)
+    protected function collectChildNodeData(array &$nodes, NodeInterface $node, $nodeTypeFilter, $depth = 0, ?NodeInterface $untilNode = null, $recursionPointer = 1)
     {
         foreach ($node->getChildNodes($nodeTypeFilter) as $childNode) {
             if (!$this->privilegeManager->isGranted(NodeTreePrivilege::class, new NodePrivilegeSubject($childNode))) {

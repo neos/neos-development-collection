@@ -124,7 +124,7 @@ class PluginImplementation extends AbstractArrayFusionObject
      * @throws InvalidActionNameException
      * @throws InvalidControllerNameException
      */
-    protected function resolveDispatchArgumentsForPluginRequest(ActionRequest $pluginRequest, NodeInterface $node = null): ActionRequest
+    protected function resolveDispatchArgumentsForPluginRequest(ActionRequest $pluginRequest, ?NodeInterface $node = null): ActionRequest
     {
         $packageKey = $this->getPackage();
         $subpackageKey = $this->getSubpackage();

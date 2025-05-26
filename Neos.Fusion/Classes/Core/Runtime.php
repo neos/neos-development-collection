@@ -677,7 +677,7 @@ class Runtime
      * @return mixed The result of the evaluated Eel expression
      * @throws Exception
      */
-    protected function evaluateEelExpression($expression, AbstractFusionObject $contextObject = null)
+    protected function evaluateEelExpression($expression, ?AbstractFusionObject $contextObject = null)
     {
         if ($expression[0] !== '$' || $expression[1] !== '{') {
             // We still assume this is an EEL expression and wrap the markers for backwards compatibility.
@@ -782,7 +782,7 @@ class Runtime
      * @param AbstractFusionObject $contextObject
      * @return mixed
      */
-    protected function evaluateProcessors($valueToProcess, $configurationWithEventualProcessors, $fusionPath, AbstractFusionObject $contextObject = null)
+    protected function evaluateProcessors($valueToProcess, $configurationWithEventualProcessors, $fusionPath, ?AbstractFusionObject $contextObject = null)
     {
         $processorConfiguration = $configurationWithEventualProcessors['__meta']['process'];
         $positionalArraySorter = new PositionalArraySorter($processorConfiguration, '__meta.position');
@@ -820,7 +820,7 @@ class Runtime
      * @param AbstractFusionObject $contextObject
      * @return boolean
      */
-    protected function evaluateIfCondition($configurationWithEventualIf, $configurationPath, AbstractFusionObject $contextObject = null)
+    protected function evaluateIfCondition($configurationWithEventualIf, $configurationPath, ?AbstractFusionObject $contextObject = null)
     {
         foreach ($configurationWithEventualIf['__meta']['if'] as $conditionKey => $conditionValue) {
             $conditionValue = $this->evaluate($configurationPath . '/__meta/if/' . $conditionKey, $contextObject, self::BEHAVIOR_EXCEPTION);

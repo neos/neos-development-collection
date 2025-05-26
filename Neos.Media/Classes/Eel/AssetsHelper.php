@@ -86,7 +86,7 @@ class AssetsHelper implements ProtectedContextAwareInterface
      * @param Tag[]|string[] $tags
      * @return QueryResultInterface<AssetInterface> | null
      */
-    public function search(?string $searchTerm, array $tags = [], AssetCollection|string $collection = null): ?QueryResultInterface
+    public function search(?string $searchTerm, array $tags = [], AssetCollection|string|null $collection = null): ?QueryResultInterface
     {
         if (!$searchTerm) {
             return null;

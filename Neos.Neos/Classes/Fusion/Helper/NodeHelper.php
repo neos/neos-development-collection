@@ -53,7 +53,7 @@ class NodeHelper implements ProtectedContextAwareInterface
      * @param NodeInterface|null $node
      * @return NodeLabelToken
      */
-    public function labelForNode(NodeInterface $node = null): NodeLabelToken
+    public function labelForNode(?NodeInterface $node = null): NodeLabelToken
     {
         return new NodeLabelToken($node);
     }

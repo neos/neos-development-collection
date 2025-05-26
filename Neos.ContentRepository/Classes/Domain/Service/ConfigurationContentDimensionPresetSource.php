@@ -215,7 +215,7 @@ class ConfigurationContentDimensionPresetSource implements ContentDimensionPrese
      * @param array $currentBestPreset
      * @return array
      */
-    protected function comparePresetsForTargetValue(array $possibleBetterPreset, array $targetValues, array $currentBestPreset = null)
+    protected function comparePresetsForTargetValue(array $possibleBetterPreset, array $targetValues, ?array $currentBestPreset = null)
     {
         if (!isset($possibleBetterPreset['values'][0])) {
             return $currentBestPreset;

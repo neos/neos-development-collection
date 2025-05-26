@@ -74,14 +74,14 @@ class AssetRepository extends Repository
      * @return QueryResultInterface
      * @throws InvalidQueryException
      */
-    public function findBySearchTermOrTags($searchTerm, array $tags = [], AssetCollection $assetCollection = null): QueryResultInterface
+    public function findBySearchTermOrTags($searchTerm, array $tags = [], ?AssetCollection $assetCollection = null): QueryResultInterface
     {
         $query = $this->createQuery();
 
         $constraints = [
-            $query->like('title', '%' . $searchTerm . '%'),
-            $query->like('resource.filename', '%' . $searchTerm . '%'),
-            $query->like('caption', '%' . $searchTerm . '%')
+            $query->like('title', '%' . $searchTerm . '%', false),
+            $query->like('resource.filename', '%' . $searchTerm . '%', false),
+            $query->like('caption', '%' . $searchTerm . '%', false)
         ];
         foreach ($tags as $tag) {
             $constraints[] = $query->contains('tags', $tag);
@@ -100,7 +100,7 @@ class AssetRepository extends Repository
      * @return QueryResultInterface
      * @throws InvalidQueryException
      */
-    public function findByTag(Tag $tag, AssetCollection $assetCollection = null): QueryResultInterface
+    public function findByTag(Tag $tag, ?AssetCollection $assetCollection = null): QueryResultInterface
     {
         $query = $this->createQuery();
         $query->matching($query->contains('tags', $tag));
@@ -116,7 +116,7 @@ class AssetRepository extends Repository
      * @param AssetCollection $assetCollection
      * @return integer
      */
-    public function countByTag(Tag $tag, AssetCollection $assetCollection = null): int
+    public function countByTag(Tag $tag, ?AssetCollection $assetCollection = null): int
     {
         $rsm = new ResultSetMapping();
         $rsm->addScalarResult('c', 'c');
@@ -144,7 +144,7 @@ class AssetRepository extends Repository
      * @return QueryResultInterface
      * @throws InvalidQueryException
      */
-    public function findAll(AssetCollection $assetCollection = null): QueryResultInterface
+    public function findAll(?AssetCollection $assetCollection = null): QueryResultInterface
     {
         $query = $this->createQuery();
         $this->addAssetVariantToQueryConstraints($query);
@@ -184,7 +184,7 @@ class AssetRepository extends Repository
      * @return QueryResultInterface
      * @throws InvalidQueryException
      */
-    public function findUntagged(AssetCollection $assetCollection = null): QueryResultInterface
+    public function findUntagged(?AssetCollection $assetCollection = null): QueryResultInterface
     {
         $query = $this->createQuery();
         $query->matching($query->isEmpty('tags'));
@@ -199,7 +199,7 @@ class AssetRepository extends Repository
      * @param AssetCollection $assetCollection
      * @return integer
      */
-    public function countUntagged(AssetCollection $assetCollection = null): int
+    public function countUntagged(?AssetCollection $assetCollection = null): int
     {
         $rsm = new ResultSetMapping();
         $rsm->addScalarResult('c', 'c');
@@ -262,7 +262,7 @@ class AssetRepository extends Repository
      * @return void
      * @throws InvalidQueryException
      */
-    protected function addAssetCollectionToQueryConstraints(QueryInterface $query, AssetCollection $assetCollection = null): void
+    protected function addAssetCollectionToQueryConstraints(QueryInterface $query, ?AssetCollection $assetCollection = null): void
     {
         if ($assetCollection === null) {
             return;
@@ -283,6 +283,10 @@ class AssetRepository extends Repository
         $variantsConstraints = [];
         $variantClassNames = $this->reflectionService->getAllImplementationClassNamesForInterface(AssetVariantInterface::class);
         foreach ($variantClassNames as $variantClassName) {
+            if (!$this->reflectionService->isClassAnnotatedWith($variantClassName, Flow\Entity::class)) {
+                // ignore non-entity classes to prevent "class schema found" error
+                continue;
+            }
             $variantsConstraints[] = 'e NOT INSTANCE OF ' . $variantClassName;
         }
 
@@ -332,7 +336,7 @@ class AssetRepository extends Repository
      * @param callable $callback
      * @return \Generator
      */
-    public function iterate(IterableResult $iterator, callable $callback = null): ?\Generator
+    public function iterate(IterableResult $iterator, ?callable $callback = null): ?\Generator
     {
         $iteration = 0;
         foreach ($iterator as $object) {

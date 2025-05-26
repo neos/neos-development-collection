@@ -86,7 +86,7 @@ interface TraversableNodeInterface extends NodeInterface
      * @return TraversableNodes Traversable nodes that matched the given constraints
      * @api
      */
-    public function findChildNodes(NodeTypeConstraints $nodeTypeConstraints = null, int $limit = null, int $offset = null): TraversableNodes;
+    public function findChildNodes(?NodeTypeConstraints $nodeTypeConstraints = null, ?int $limit = null, ?int $offset = null): TraversableNodes;
 
     /**
      * Returns the number of direct child nodes of this node from its subgraph.
@@ -94,7 +94,7 @@ interface TraversableNodeInterface extends NodeInterface
      * @param NodeTypeConstraints|null $nodeTypeConstraints If specified, only nodes with that node type are considered
      * @return int
      */
-    public function countChildNodes(NodeTypeConstraints $nodeTypeConstraints = null): int;
+    public function countChildNodes(?NodeTypeConstraints $nodeTypeConstraints = null): int;
 
     /**
      * Retrieves and returns all nodes referenced by this node from its subgraph.

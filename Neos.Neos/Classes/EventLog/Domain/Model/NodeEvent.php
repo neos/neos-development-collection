@@ -35,7 +35,7 @@ use Neos\ContentRepository\Domain\Service\ContextFactoryInterface;
  *    indexes={
  *      @ORM\Index(name="documentnodeidentifier", columns={"documentnodeidentifier"}),
  *      @ORM\Index(name="workspacename_parentevent", columns={"workspacename", "parentevent"}),
- *      @ORM\Index(name="dimensionshashindex", columns={"dimensionshash"})
+ *      @ORM\Index(name="dimensionshash", columns={"dimensionshash"})
  *    }
  * )
  */

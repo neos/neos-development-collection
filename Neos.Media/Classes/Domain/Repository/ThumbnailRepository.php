@@ -54,7 +54,7 @@ class ThumbnailRepository extends Repository
      * @param callable $callback
      * @return \Generator
      */
-    public function iterate(IterableResult $iterator, callable $callback = null): ?\Generator
+    public function iterate(IterableResult $iterator, ?callable $callback = null): ?\Generator
     {
         $iteration = 0;
         foreach ($iterator as $object) {

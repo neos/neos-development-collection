@@ -98,7 +98,7 @@ class ImageService
      * @throws InvalidConfigurationException
      * @throws Exception
      */
-    public function processImage(PersistentResource $originalResource, array $adjustments, string $format = null)
+    public function processImage(PersistentResource $originalResource, array $adjustments, ?string $format = null)
     {
         $additionalOptions = [];
         $adjustmentsApplied = false;
@@ -140,6 +140,8 @@ class ImageService
         if ($convertCMYKToRGB && $imagineImage->palette() instanceof CMYK) {
             $imagineImage->usePalette(new RGB());
         }
+
+        $imagineImage->strip();
 
         if ($this->imagineService instanceof Imagine && $originalResource->getFileExtension() === 'gif' && $this->isAnimatedGif(file_get_contents($resourceUri)) === true) {
             $imagineImage->layers()->coalesce();

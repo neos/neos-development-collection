@@ -74,7 +74,7 @@ class ContentContext extends Context
      * @param Domain $currentDomain The current Domain object
      * @see ContextFactoryInterface
      */
-    public function __construct($workspaceName, \DateTimeInterface $currentDateTime, array $dimensions, array $targetDimensions, $invisibleContentShown, $removedContentShown, $inaccessibleContentShown, Site $currentSite = null, Domain $currentDomain = null)
+    public function __construct($workspaceName, \DateTimeInterface $currentDateTime, array $dimensions, array $targetDimensions, $invisibleContentShown, $removedContentShown, $inaccessibleContentShown, ?Site $currentSite = null, ?Domain $currentDomain = null)
     {
         parent::__construct($workspaceName, $currentDateTime, $dimensions, $targetDimensions, $invisibleContentShown, $removedContentShown, $inaccessibleContentShown);
         $this->currentSite = $currentSite;

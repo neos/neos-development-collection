@@ -428,7 +428,7 @@ class FrontendNodeRoutePartHandler extends DynamicRoutePart implements FrontendN
      * @return ContentContext
      * @throws Exception\NoSiteException
      */
-    protected function buildContextFromWorkspaceName($workspaceName, array $dimensions = null)
+    protected function buildContextFromWorkspaceName($workspaceName, ?array $dimensions = null)
     {
         $contextProperties = [
             'workspaceName' => $workspaceName,

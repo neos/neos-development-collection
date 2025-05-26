@@ -262,6 +262,34 @@ class NodesTest extends FunctionalTestCase
     /**
      * @test
      */
+    public function removedChildNodesAreNotCopied()
+    {
+        $rootNode = $this->context->getRootNode();
+        $parentNode = $rootNode->createNode('parent');
+        $parentNode->createNode('child');
+
+        $context = $this->contextFactory->create([
+            'workspaceName' => 'user-admin',
+            'removedContentShown' => true,
+        ]);
+        $this->persistenceManager->persistAll();
+
+        $rootNode = $context->getRootNode();
+        $parentNode = $rootNode->getNode('parent');
+        self::assertTrue($parentNode->hasChildNodes(), 'Parent node should have child nodes, before they are removed');
+
+        $parentNode->getNode('child')->remove();
+        $this->persistenceManager->persistAll();
+
+        $parentNode = $rootNode->getNode('parent');
+        $parentClone = $parentNode->copyInto($rootNode, 'parent-clone');
+
+        self::assertFalse($parentClone->hasChildNodes(), 'Copied parent node should not have any child nodes');
+    }
+
+    /**
+     * @test
+     */
     public function creatingAChildNodeAndRetrievingItAfterPersistAllWorks()
     {
         $rootNode = $this->context->getRootNode();

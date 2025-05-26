@@ -201,6 +201,33 @@ Neos:
               features:
                 upload: true
                 mediaBrowser: true
+          Neos\Media\Domain\Model\Audio:
+            typeConverter: Neos\Neos\TypeConverter\EntityToIdentityConverter
+            editor: Neos.Neos/Inspector/Editors/AssetEditor
+            editorOptions:
+              features:
+                upload: true
+                mediaBrowser: true
+              constraints:
+                mediaTypes:
+                  - 'audio/*'
+          Neos\Media\Domain\Model\Document:
+            typeConverter: Neos\Neos\TypeConverter\EntityToIdentityConverter
+            editor: Neos.Neos/Inspector/Editors/AssetEditor
+            editorOptions:
+              features:
+                upload: true
+                mediaBrowser: true
+          Neos\Media\Domain\Model\Video:
+            typeConverter: Neos\Neos\TypeConverter\EntityToIdentityConverter
+            editor: Neos.Neos/Inspector/Editors/AssetEditor
+            editorOptions:
+              features:
+                upload: true
+                mediaBrowser: true
+              constraints:
+                mediaTypes:
+                  - 'video/*'
           array<Neos\Media\Domain\Model\Asset>:
             typeConverter: Neos\Flow\Property\TypeConverter\TypedArrayConverter
             editor: Neos.Neos/Inspector/Editors/AssetEditor
@@ -343,6 +370,9 @@ Neos:
               new:
                 label: 'Neos.Neos:Modules:users.actions.new.label'
                 title: 'Neos.Neos:Modules:users.actions.new.title'
+            settings:
+              pagination:
+                itemsPerPage: 10
           packages:
             label: 'Neos.Neos:Modules:packages.label'
             controller: 'Neos\Neos\Controller\Module\Administration\PackagesController'
@@ -590,7 +620,7 @@ Neos:
     commandReferences:
       'Neos:NeosCommands':
         title: 'Neos Command Reference'
-        packageKeys:
+        packageKeys: # These are actually no package keys, but rather command controller identifiers extracted out of namespaces.
           'Neos.Flow': true
           'Neos.Party': true
           'Neos.FluidAdaptor': true
@@ -598,8 +628,11 @@ Neos:
           'Neos.Welcome': true
           'Neos.Media': true
           'Neos.ContentRepository': true
+          'Neos.ContentRepository.Migration': true
           'Neos.SiteKickstarter': true
           'Neos.Neos': true
+          'Neos.Neos.Setup': true
+          'Neos.Setup': true
         savePathAndFilename: '%FLOW_PATH_PACKAGES%Neos/Neos.Neos/Documentation/References/CommandReference.rst'
     references:
       'TYPO3Fluid:ViewHelpers':

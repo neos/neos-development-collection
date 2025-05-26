@@ -27,7 +27,7 @@ class IntraDimensionalFallbackGraph
      * @param string|null $label
      * @return ContentDimension
      */
-    public function createDimension(string $dimensionName, string $label = null): ContentDimension
+    public function createDimension(string $dimensionName, ?string $label = null): ContentDimension
     {
         $dimension = new ContentDimension($dimensionName, $label);
         $this->dimensions[$dimension->getName()] = $dimension;

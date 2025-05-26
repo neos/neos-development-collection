@@ -63,7 +63,7 @@ class FirstLevelNodeCache
      * @param NodeInterface $node
      * @return void
      */
-    public function setByPath($path, NodeInterface $node = null)
+    public function setByPath($path, ?NodeInterface $node = null)
     {
         $this->nodesByPath[$path] = $node;
         if ($node !== null) {
@@ -96,7 +96,7 @@ class FirstLevelNodeCache
      * @param NodeInterface $node
      * @return void
      */
-    public function setByIdentifier($identifier, NodeInterface $node = null)
+    public function setByIdentifier($identifier, ?NodeInterface $node = null)
     {
         $this->nodesByIdentifier[$identifier] = $node;
         if ($node !== null) {

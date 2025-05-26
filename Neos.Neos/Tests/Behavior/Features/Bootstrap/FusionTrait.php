@@ -85,7 +85,7 @@ trait FusionTrait
     /**
      * @When the Fusion context request URI is :requestUri
      */
-    public function theFusionContextRequestIs(string $requestUri = null): void
+    public function theFusionContextRequestIs(?string $requestUri = null): void
     {
         $httpRequest = $this->objectManager->get(ServerRequestFactoryInterface::class)->createServerRequest('GET', $requestUri);
         $httpRequest = $this->addRoutingParameters($httpRequest);

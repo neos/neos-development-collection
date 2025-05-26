@@ -56,7 +56,7 @@ class ProcessingInstructionsConverter extends AbstractTypeConverter
      * @throws TypeConverterException thrown in case a developer error occurred
      * @api
      */
-    public function convertFrom($source, $targetType = 'array', array $convertedChildProperties = [], PropertyMappingConfigurationInterface $configuration = null)
+    public function convertFrom($source, $targetType = 'array', array $convertedChildProperties = [], ?PropertyMappingConfigurationInterface $configuration = null)
     {
         $result = [];
         foreach ($source as $processingInstruction) {

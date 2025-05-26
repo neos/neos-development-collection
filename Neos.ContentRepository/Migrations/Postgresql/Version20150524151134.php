@@ -13,13 +13,15 @@ class Version20150524151134 extends AbstractMigration
      * @param Schema $schema
      * @return void
      */
-    public function up(Schema $schema): void 
+    public function up(Schema $schema): void
     {
         $this->abortIf($this->connection->getDatabasePlatform()->getName() != "postgresql");
         if ($this->connection->getWrappedConnection() instanceof \Doctrine\DBAL\Driver\ServerInfoAwareConnection) {
             $version = $this->connection->getWrappedConnection()->getServerVersion();
             // This means we are using a jsonb field (see Version20150324210627) and this already stores unescaped unicode, so we can skip here.
-            $this->skipIf(version_compare($version, '9.4', '>='), 'Node properties stored in a JSONB column, no migration necessary.');
+            if (version_compare($version, '9.4', '>=')) {
+                return;
+            }
         }
 
         $select = $this->connection->query("SELECT persistence_object_identifier, properties FROM typo3_typo3cr_domain_model_nodedata");
@@ -39,13 +41,15 @@ class Version20150524151134 extends AbstractMigration
      * @param Schema $schema
      * @return void
      */
-    public function down(Schema $schema): void 
+    public function down(Schema $schema): void
     {
         $this->abortIf($this->connection->getDatabasePlatform()->getName() != "postgresql");
         if ($this->connection->getWrappedConnection() instanceof \Doctrine\DBAL\Driver\ServerInfoAwareConnection) {
             $version = $this->connection->getWrappedConnection()->getServerVersion();
             // This means we are using a jsonb field (see Version20150324210627) and this already stores unescaped unicode, so we can skip here.
-            $this->skipIf(version_compare($version, '9.4', '>='), 'Node properties stored in a JSONB column, no migration necessary.');
+            if(version_compare($version, '9.4', '>=')) {
+                return;
+            }
         }
 
         $select = $this->connection->query("SELECT persistence_object_identifier, properties FROM typo3_typo3cr_domain_model_nodedata");

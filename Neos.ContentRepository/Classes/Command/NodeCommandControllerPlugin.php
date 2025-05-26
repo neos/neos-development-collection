@@ -239,7 +239,7 @@ HELPTEXT;
      * @param string $only Only execute the given check or checks (comma separated)
      * @return void
      */
-    public function invokeSubCommand($controllerCommandName, ConsoleOutput $output, NodeType $nodeType = null, $workspaceName = 'live', $dryRun = false, $cleanup = true, $skip = null, $only = null)
+    public function invokeSubCommand($controllerCommandName, ConsoleOutput $output, ?NodeType $nodeType = null, $workspaceName = 'live', $dryRun = false, $cleanup = true, $skip = null, $only = null)
     {
         /** @noinspection PhpDeprecationInspection This is only set for backwards compatibility */
         $this->output = $output;
@@ -288,7 +288,7 @@ HELPTEXT;
      * @throws NodeConfigurationException
      * @throws NodeTypeNotFoundException
      */
-    protected function createMissingChildNodes($workspaceName, $dryRun, NodeType $nodeType = null)
+    protected function createMissingChildNodes($workspaceName, $dryRun, ?NodeType $nodeType = null)
     {
         if ($nodeType !== null) {
             $this->dispatch(self::EVENT_NOTICE, sprintf('Checking nodes of type "<i>%s</i>" for missing child nodes ...', $nodeType->getName()));
@@ -437,7 +437,7 @@ HELPTEXT;
      * @throws NodeConfigurationException
      * @throws NodeTypeNotFoundException
      */
-    public function addMissingDefaultValues($workspaceName, $dryRun, NodeType $nodeType = null)
+    public function addMissingDefaultValues($workspaceName, $dryRun, ?NodeType $nodeType = null)
     {
         if ($nodeType !== null) {
             $this->dispatch(self::EVENT_NOTICE, sprintf('Checking nodes of type <i>%s</i> for missing default values ...', $nodeType));
@@ -645,7 +645,7 @@ HELPTEXT;
      * @param NodeType $nodeType Only for this node type, if specified
      * @return void
      */
-    protected function removeOrphanNodes($workspaceName, /** @noinspection PhpUnusedParameterInspection */$dryRun, NodeType $nodeType = null)
+    protected function removeOrphanNodes($workspaceName, /** @noinspection PhpUnusedParameterInspection */$dryRun, ?NodeType $nodeType = null)
     {
         $this->dispatch(self::EVENT_NOTICE, 'Checking for orphan nodes ...');
 
@@ -712,7 +712,7 @@ HELPTEXT;
      * @return void
      * @throws NodeConfigurationException
      */
-    public function removeUndefinedProperties($workspaceName, /** @noinspection PhpUnusedParameterInspection */$dryRun, NodeType $nodeType = null)
+    public function removeUndefinedProperties($workspaceName, /** @noinspection PhpUnusedParameterInspection */$dryRun, ?NodeType $nodeType = null)
     {
         $this->dispatch(self::EVENT_NOTICE, 'Checking for undefined properties ...');
 
@@ -1173,7 +1173,7 @@ HELPTEXT;
      * @throws NodeConfigurationException
      * @throws NodeTypeNotFoundException
      */
-    protected function reorderChildNodes($workspaceName, $dryRun, NodeType $nodeType = null)
+    protected function reorderChildNodes($workspaceName, $dryRun, ?NodeType $nodeType = null)
     {
         if ($nodeType !== null) {
             $this->dispatch(self::EVENT_NOTICE, sprintf('Checking nodes of type "<i>%s</i>" for child nodes that need reordering ...', $nodeType));
@@ -1261,7 +1261,7 @@ HELPTEXT;
      * @param NodeType $nodeType This argument will be ignored
      * @return void
      */
-    protected function repairShadowNodes($workspaceName, /** @noinspection PhpUnusedParameterInspection */$dryRun, NodeType $nodeType = null)
+    protected function repairShadowNodes($workspaceName, /** @noinspection PhpUnusedParameterInspection */$dryRun, ?NodeType $nodeType = null)
     {
         /** @var Workspace $workspace */
         $workspace = $this->workspaceRepository->findByIdentifier($workspaceName);
@@ -1295,7 +1295,7 @@ HELPTEXT;
      * @param NodeType $nodeType
      * @return array in the form [['nodeData' => <nodeDataInstance>, 'shadowPath' => '<shadowPath>'], ...]
      */
-    protected function findMissingShadowNodesInWorkspace(Workspace $workspace, NodeType $nodeType = null)
+    protected function findMissingShadowNodesInWorkspace(Workspace $workspace, ?NodeType $nodeType = null)
     {
         $workspaces = array_merge([$workspace], $workspace->getBaseWorkspaces());
 

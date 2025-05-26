@@ -11,6 +11,7 @@ namespace Neos\Neos\Tests\Functional\Service\Mapping;
  * source code.
  */
 
+use GuzzleHttp\Psr7\Uri;
 use Neos\ContentRepository\Domain\Model\Node;
 use Neos\ContentRepository\Domain\Model\NodeType;
 use Neos\Flow\Tests\FunctionalTestCase;
@@ -182,5 +183,68 @@ class NodePropertyConverterServiceTest extends FunctionalTestCase
         $actual = $nodePropertyConverterService->getProperty($node, 'dontcare');
 
         self::assertEquals($expected, $actual);
+    }
+
+    /**
+     * @test
+     */
+    public function jsonSerializedAbleTypesAreDirectlySerialized()
+    {
+        $voClassName = 'Value' . md5(uniqid(mt_rand(), true));
+        eval('class ' . $voClassName . ' implements \JsonSerializable' . <<<'PHP'
+        {
+            public function __construct(
+                public \Psr\Http\Message\UriInterface $uri
+            ) {
+            }
+
+            public static function fromArray(array $array): self
+            {
+                return new self(
+                    new \GuzzleHttp\Psr7\Uri($array['uri'])
+                );
+            }
+
+            public function jsonSerialize(): array
+            {
+                return [
+                    'uri' => $this->uri->__toString()
+                ];
+            }
+        }
+        PHP);
+
+        $propertyValue = new $voClassName(new Uri('localhost://foo.html'));
+        $expected = '{"uri":"localhost:\\/\\/foo.html"}';
+
+        $nodeType = $this
+            ->getMockBuilder(NodeType::class)
+            ->setMethods(['getPropertyType'])
+            ->disableOriginalConstructor()
+            ->getMock();
+        $nodeType
+            ->expects(self::any())
+            ->method('getPropertyType')
+            ->willReturn(ImageInterface::class);
+
+        $node = $this
+            ->getMockBuilder(Node::class)
+            ->setMethods(['getProperty', 'getNodeType'])
+            ->disableOriginalConstructor()
+            ->getMock();
+        $node
+            ->expects(self::any())
+            ->method('getProperty')
+            ->willReturn($propertyValue);
+        $node
+            ->expects(self::any())
+            ->method('getNodeType')
+            ->willReturn($nodeType);
+
+        $nodePropertyConverterService = new NodePropertyConverterService();
+
+        $actual = $nodePropertyConverterService->getProperty($node, 'dontcare');
+
+        self::assertEquals($expected, json_encode($actual));
     }
 }

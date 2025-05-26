@@ -128,7 +128,7 @@ class ContentCacheFlusher
      * @param NodeInterface $node The node which has changed in some way
      * @param Workspace|null $targetWorkspace An optional workspace to flush
      */
-    public function registerNodeChange(NodeInterface $node, Workspace $targetWorkspace = null): void
+    public function registerNodeChange(NodeInterface $node, ?Workspace $targetWorkspace = null): void
     {
         $this->addTagToFlush(ContentCache::TAG_EVERYTHING, 'which were tagged with "Everything".');
 
@@ -157,6 +157,20 @@ class ContentCacheFlusher
 
     protected function registerAllTagsToFlushForNodeInWorkspace(NodeInterface $node, Workspace $workspace): void
     {
+        // Ensure that we're dealing with the variant of the given node that actually
+        // lives in the given workspace
+        if ($node->isRemoved() === false && $node->getWorkspace()->getName() !== $workspace->getName()) {
+            $workspaceContext = $this->contextFactory->create(
+                array_merge(
+                    $node->getContext()->getProperties(),
+                    ['workspaceName' => $workspace->getName()]
+                )
+            );
+            $node = $workspaceContext->getNodeByIdentifier($node->getIdentifier());
+            if ($node === null) {
+                return;
+            }
+        }
         $nodeIdentifier = $node->getIdentifier();
 
         if (!array_key_exists($workspace->getName(), $this->workspacesToFlush) || is_array($this->workspacesToFlush[$workspace->getName()]) === false) {
@@ -228,7 +242,7 @@ class ContentCacheFlusher
      *
      * @throws NodeTypeNotFoundException
      */
-    public function registerChangeOnNodeType(string $nodeTypeName, string $referenceNodeIdentifier = null, string $nodeTypePrefix = ''): void
+    public function registerChangeOnNodeType(string $nodeTypeName, ?string $referenceNodeIdentifier = null, string $nodeTypePrefix = ''): void
     {
         $this->addTagToFlush(ContentCache::TAG_EVERYTHING, 'which were tagged with "Everything".');
 

@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\ContentRepository\Domain\Model;
 
 /*
@@ -234,7 +235,7 @@ class NodeData extends AbstractNodeData
      * @param string $identifier The node identifier (not the persistence object identifier!). Specifying this only makes sense while creating corresponding nodes
      * @param array $dimensions An array of dimension name to dimension values
      */
-    public function __construct($path, Workspace $workspace, $identifier = null, array $dimensions = null)
+    public function __construct($path, Workspace $workspace, $identifier = null, ?array $dimensions = null)
     {
         parent::__construct();
         $this->creationDateTime = new \DateTime();
@@ -350,7 +351,7 @@ class NodeData extends AbstractNodeData
      * @param Workspace $workspace
      * @return void
      */
-    public function setWorkspace(Workspace $workspace = null)
+    public function setWorkspace(?Workspace $workspace = null)
     {
         if ($this->workspace !== $workspace) {
             $this->workspace = $workspace;
@@ -446,7 +447,7 @@ class NodeData extends AbstractNodeData
      * @param array $dimensions
      * @return NodeData
      */
-    public function createNodeData($name, NodeType $nodeType = null, $identifier = null, Workspace $workspace = null, array $dimensions = null)
+    public function createNodeData($name, ?NodeType $nodeType = null, $identifier = null, ?Workspace $workspace = null, ?array $dimensions = null)
     {
         $newNodeData = $this->createSingleNodeData($name, $nodeType, $identifier, $workspace, $dimensions);
         if ($nodeType !== null) {
@@ -475,11 +476,11 @@ class NodeData extends AbstractNodeData
      * @param string $identifier The identifier of the node, unique within the workspace, optional(!)
      * @param Workspace $workspace
      * @param array $dimensions An array of dimension name to dimension values
-     * @throws NodeExistsException if a node with this path already exists.
-     * @throws \InvalidArgumentException if the node name is not accepted.
      * @return NodeData
+     * @throws \InvalidArgumentException if the node name is not accepted.
+     * @throws NodeExistsException if a node with this path already exists.
      */
-    public function createSingleNodeData($name, NodeType $nodeType = null, $identifier = null, Workspace $workspace = null, array $dimensions = null)
+    public function createSingleNodeData($name, ?NodeType $nodeType = null, $identifier = null, ?Workspace $workspace = null, ?array $dimensions = null)
     {
         if (!is_string($name) || preg_match(NodeInterface::MATCH_PATTERN_NAME, $name) !== 1) {
             throw new \InvalidArgumentException('Invalid node name "' . $name . '" (a node name must only contain lowercase characters, numbers and the "-" sign).', 1292428697);
@@ -509,7 +510,7 @@ class NodeData extends AbstractNodeData
      * @param array $dimensions
      * @return NodeData the freshly generated node
      */
-    public function createNodeDataFromTemplate(NodeTemplate $nodeTemplate, $nodeName = null, Workspace $workspace = null, array $dimensions = null)
+    public function createNodeDataFromTemplate(NodeTemplate $nodeTemplate, $nodeName = null, ?Workspace $workspace = null, ?array $dimensions = null)
     {
         $newNodeName = $nodeName !== null ? $nodeName : $nodeTemplate->getName();
         $possibleNodeName = $this->nodeService->generateUniqueNodeName($this->getPath(), $newNodeName);
@@ -733,7 +734,7 @@ class NodeData extends AbstractNodeData
      * @param NodeData $nodeData
      * @return void
      */
-    public function setMovedTo(NodeData $nodeData = null)
+    public function setMovedTo(?NodeData $nodeData = null)
     {
         $this->movedTo = $nodeData;
     }
@@ -767,13 +768,21 @@ class NodeData extends AbstractNodeData
         ];
         if (!$isCopy) {
             $propertyNames[] = 'creationDateTime';
-            $propertyNames[] = 'lastModificationDateTime';
         }
         if ($sourceNode instanceof NodeData) {
             $propertyNames[] = 'index';
+            $propertyNames[] = 'removed';
         }
+
+        // We need to force direct access for the following properties, as they don't have a setter in AbstractNodeData
+        $propertyNamesToForceDirectAccess = ['creationDateTime'];
         foreach ($propertyNames as $propertyName) {
-            ObjectAccess::setProperty($this, $propertyName, ObjectAccess::getProperty($sourceNode, $propertyName));
+            ObjectAccess::setProperty(
+                $this,
+                $propertyName,
+                ObjectAccess::getProperty($sourceNode, $propertyName),
+                in_array($propertyName, $propertyNamesToForceDirectAccess)
+            );
         }
 
         $contentObject = $sourceNode->getContentObject();
@@ -827,7 +836,7 @@ class NodeData extends AbstractNodeData
      * @param array $dimensions
      * @return boolean
      */
-    public function matchesWorkspaceAndDimensions($workspace, array $dimensions = null)
+    public function matchesWorkspaceAndDimensions($workspace, ?array $dimensions = null)
     {
         if ($this->workspace->getName() !== $workspace->getName()) {
             return false;
@@ -1030,7 +1039,7 @@ class NodeData extends AbstractNodeData
      * @param NodeData $nodeData
      * @return void
      */
-    protected function setAsShadowOf(NodeData $nodeData = null)
+    protected function setAsShadowOf(?NodeData $nodeData = null)
     {
         $this->setMovedTo($nodeData);
         $this->setRemoved(($nodeData !== null));
@@ -1062,7 +1071,7 @@ class NodeData extends AbstractNodeData
      * @param NodeData $nodeData Other NodeData object to addOrUpdate
      * @throws IllegalObjectTypeException
      */
-    protected function addOrUpdate(NodeData $nodeData = null)
+    protected function addOrUpdate(?NodeData $nodeData = null)
     {
         $nodeData = ($nodeData === null ? $this : $nodeData);
 
@@ -1077,7 +1086,7 @@ class NodeData extends AbstractNodeData
 
         // If the node is marked to be removed but didn't exist in a base workspace yet, we can delete it for real, without creating a shadow node.
         // This optimization cannot be made for shadow nodes which are moved.
-        if ($nodeData->isRemoved() && $nodeData->getMovedTo() === null && $this->nodeDataRepository->findOneByIdentifier($nodeData->getIdentifier(), $this->workspace->getBaseWorkspace()) === null) {
+        if ($nodeData->isRemoved() && $nodeData->getMovedTo() === null && $this->nodeDataRepository->findOneByIdentifier($nodeData->getIdentifier(), $this->workspace->getBaseWorkspace(), removedNodes: true) === null) {
             if ($this->persistenceManager->isNewObject($nodeData) === false) {
                 $this->nodeDataRepository->remove($nodeData);
             }

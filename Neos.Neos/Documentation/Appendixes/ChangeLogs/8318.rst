@@ -1,0 +1,35 @@
+`8.3.18 (2024-11-18) <https://github.com/neos/neos-development-collection/releases/tag/8.3.18>`_
+================================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`BUGFIX: Restore asset collection assignment capabilities <https://github.com/neos/neos-development-collection/pull/5367>`_
+---------------------------------------------------------------------------------------------------------------------------
+
+resolves `#5365 <https://github.com/neos/neos-development-collection/issues/5365>`_
+reverts `#4404 <https://github.com/neos/neos-development-collection/issues/4404>`_
+
+**Upgrade instructions**
+
+none
+
+**Review instructions**
+
+none
+
+
+* Packages: ``Neos`` ``Media.Browser``
+
+`BUGFIX: show workspace owner/title in media usage tab <https://github.com/neos/neos-development-collection/pull/5182>`_
+------------------------------------------------------------------------------------------------------------------------
+
+Issue: https://github.com/neos/neos-development-collection/issues/5181
+
+Possibility to enable showing all workspace titles/owners to user with certain roles in the media usage tab.
+
+
+* Packages: ``Neos`` ``Media.Browser``
+
+`Detailed log <https://github.com/neos/neos-development-collection/compare/8.3.17...8.3.18>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

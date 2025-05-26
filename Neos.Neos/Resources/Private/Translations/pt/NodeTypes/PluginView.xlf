@@ -3,20 +3,20 @@
   <file original="" product-name="Neos.Neos" source-language="en" datatype="plaintext" target-language="pt-PT">
     <body>
       <trans-unit id="ui.label" xml:space="preserve">
-				<source>Plugin View</source>
-        <target state="needs-translation">Plugin View</target>
+        <source>Plugin View</source>
+        <target state="translated">Apresentação de Extensão</target>
       </trans-unit>
       <trans-unit id="groups.pluginViews" xml:space="preserve">
-				<source>Plugin Views</source>
-        <target state="needs-translation">Plugin Views</target>
+        <source>Plugin Views</source>
+        <target state="translated">Apresentações da Extensão</target>
       </trans-unit>
       <trans-unit id="properties.plugin" xml:space="preserve">
-				<source>Master View</source>
-        <target state="translated">Visualização principal</target>
+        <source>Master View</source>
+        <target state="translated">Apresentação Principal</target>
       </trans-unit>
       <trans-unit id="properties.view" xml:space="preserve">
-				<source>Plugin View</source>
-        <target state="needs-translation">Plugin View</target>
+        <source>Plugin View</source>
+        <target state="translated">Apresentação de Extensão</target>
       </trans-unit>
     </body>
   </file>

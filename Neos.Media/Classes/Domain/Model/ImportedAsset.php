@@ -61,7 +61,7 @@ class ImportedAsset
         string $remoteAssetIdentifier,
         string $localAssetIdentifier,
         \DateTimeImmutable $importedAt,
-        string $localOriginalAssetIdentifier = null
+        ?string $localOriginalAssetIdentifier = null
     ) {
         $this->assetSourceIdentifier = $assetSourceIdentifier;
         $this->remoteAssetIdentifier = $remoteAssetIdentifier;

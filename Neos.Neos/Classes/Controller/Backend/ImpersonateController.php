@@ -92,7 +92,7 @@ class ImpersonateController extends ActionController
      * @param string $format The format to use for the redirect URI
      * @see redirect()
      */
-    protected function redirectWithParentRequest(string $actionName, string $controllerName = null, string $packageKey = null, array $arguments = [], int $delay = 0, int $statusCode = 303, string $format = null): void
+    protected function redirectWithParentRequest(string $actionName, ?string $controllerName = null, ?string $packageKey = null, array $arguments = [], int $delay = 0, int $statusCode = 303, ?string $format = null): void
     {
         $request = $this->getControllerContext()->getRequest()->getMainRequest();
         $uriBuilder = new UriBuilder();

@@ -3,23 +3,23 @@
   <file original="" product-name="Neos.Neos" source-language="en" datatype="plaintext" target-language="pt-PT">
     <body>
       <trans-unit id="groups.document" xml:space="preserve">
-				<source>Document</source>
+        <source>Document</source>
         <target state="translated">Documento</target>
       </trans-unit>
       <trans-unit id="properties.title" xml:space="preserve">
-				<source>Title</source>
+        <source>Title</source>
         <target state="translated">Título</target>
       </trans-unit>
       <trans-unit id="properties.uriPathSegment" xml:space="preserve">
-				<source>URL path segment</source>
+        <source>URL path segment</source>
         <target state="translated">Segmento de caminho de URL</target>
       </trans-unit>
       <trans-unit id="properties._hiddenInIndex" xml:space="preserve">
-				<source>Hide in menus</source>
-        <target state="translated">Ocultar em menus</target>
+        <source>Hide in menus</source>
+        <target state="translated">Ocultar dos menus</target>
       </trans-unit>
       <trans-unit id="creationDialog.title" xml:space="preserve">
-				<source>Title</source>
+        <source>Title</source>
         <target state="translated">Título</target>
       </trans-unit>
     </body>

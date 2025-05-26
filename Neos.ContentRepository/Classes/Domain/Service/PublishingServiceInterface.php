@@ -47,7 +47,7 @@ interface PublishingServiceInterface
      * @return void
      * @api
      */
-    public function publishNode(NodeInterface $node, Workspace $targetWorkspace = null);
+    public function publishNode(NodeInterface $node, ?Workspace $targetWorkspace = null);
 
     /**
      * Publishes the given nodes to the specified target workspace. If no workspace is specified, "live" is assumed.
@@ -57,7 +57,7 @@ interface PublishingServiceInterface
      * @return void
      * @api
      */
-    public function publishNodes(array $nodes, Workspace $targetWorkspace = null);
+    public function publishNodes(array $nodes, ?Workspace $targetWorkspace = null);
 
     /**
      * Discards the given node.

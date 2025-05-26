@@ -140,7 +140,7 @@ class Workspace
      * @param UserInterface $owner The user that created the workspace (if any, "system" workspaces have none)
      * @api
      */
-    public function __construct($name, Workspace $baseWorkspace = null, UserInterface $owner = null)
+    public function __construct($name, ?Workspace $baseWorkspace = null, ?UserInterface $owner = null)
     {
         $this->name = $name;
         $this->title = $name;
@@ -715,7 +715,7 @@ class Workspace
      * @return void
      * @Flow\Signal
      */
-    protected function emitBaseWorkspaceChanged(Workspace $workspace, Workspace $oldBaseWorkspace = null, Workspace $newBaseWorkspace = null): void
+    protected function emitBaseWorkspaceChanged(Workspace $workspace, ?Workspace $oldBaseWorkspace = null, ?Workspace $newBaseWorkspace = null): void
     {
     }
 

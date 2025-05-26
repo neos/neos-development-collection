@@ -63,7 +63,7 @@ class RouteCacheFlusher
      * @param Workspace|null $newBaseWorkspace
      * @return void
      */
-    public function registerBaseWorkspaceChange(Workspace $workspace, Workspace $oldBaseWorkspace = null, Workspace $newBaseWorkspace = null)
+    public function registerBaseWorkspaceChange(Workspace $workspace, ?Workspace $oldBaseWorkspace = null, ?Workspace $newBaseWorkspace = null)
     {
         if (!in_array($workspace->getName(), $this->tagsToFlush)) {
             $this->tagsToFlush[] = $workspace->getName();

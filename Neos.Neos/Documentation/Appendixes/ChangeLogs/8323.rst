@@ -1,0 +1,76 @@
+`8.3.23 (2025-03-27) <https://github.com/neos/neos-development-collection/releases/tag/8.3.23>`_
+================================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`BUGFIX: Boot media module flash-messages correctly if rendered outside Neos module <https://github.com/neos/neos-development-collection/pull/5528>`_
+-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+Solves the bug described in https://github.com/neos/neos-development-collection/issues/5379#issuecomment-2701041702
+
+Previously only flashmessages in the Default template (e.g. on show) where shown but neither for editing or uploading
+
+Flashmessages in the media module are not shown for all actions if the media module is booted within the Neos ui.
+The current error for ``edit`` or ``new`` action is that ``this.container`` (``#neos-notification-container``) is null and thus no flashmessages can be rendered in the dom:
+
+https://github.com/neos/neos-development-collection/blob/`c7be41ac865e096b62a019f3cf700222834b29f6 <https://github.com/neos/neos-development-collection/commit/c7be41ac865e096b62a019f3cf700222834b29f6>`_/Neos.Neos/Resources/Public/JavaScript/Components/Notification/Toast.ts#L39
+
+The mentioned container is normally created by js itself as child to ``#neos-application``
+
+https://github.com/neos/neos-development-collection/blob/`c7be41ac865e096b62a019f3cf700222834b29f6 <https://github.com/neos/neos-development-collection/commit/c7be41ac865e096b62a019f3cf700222834b29f6>`_/Neos.Neos/Resources/Public/JavaScript/Components/Notification/Toast.ts#L24
+
+But the ``#neos-application`` is only rendered by the Backend Module Index template from Neos:
+
+https://github.com/neos/neos-development-collection/blob/`89d4c84c5640a49867d56592b6def1a2c6e5db0d <https://github.com/neos/neos-development-collection/commit/89d4c84c5640a49867d56592b6def1a2c6e5db0d>`_/Neos.Neos/Resources/Private/Templates/Backend/Module/Index.html#L90
+
+
+As the Media Ui provides a layout for the case of being rendered in the Neos backend module and for plain rendering as in the neos ui iframe (added via https://github.com/neos/neos-development-collection/pull/2171), the non module layouts must ensure that the shared javascript works by providing the desired dom structure.
+
+- Module/Default.html
+- Module/UploadImage.html
+- Module/EditImage.html
+- Default.html
+- UploadImage.html
+- EditImage.html
+
+
+The flashmessages for ``showAction`` (e.g. default layout) work already in the neos ui as two changes https://github.com/neos/neos-development-collection/pull/5133 and https://github.com/neos/neos-development-collection/pull/5117 provided a fix to make the flashmessages work by ensuring ``<div id="neos-notification-container">`` is present.
+
+
+This pull request extends the fix of providing an ``#neos-notification-container`` container for the ``UploadImage`` and ``EditImage`` template:
+
+
+<img width="1179" alt="image" src="https://github.com/user-attachments/assets/53d17902-a6ae-40f3-8449-0cc7194ae589" />
+
+
+
+
+**Upgrade instructions**
+
+
+* Packages: ``Media.Browser``
+
+`BUGFIX: Allow boolean values for hidden properties in nodetype schema <https://github.com/neos/neos-development-collection/pull/5521>`_
+----------------------------------------------------------------------------------------------------------------------------------------
+
+This prevents matching warnings in the configuration module or when verifying nodetypes via cli.
+
+* Resolves: `#5520 <https://github.com/neos/neos-development-collection/issues/5520>`_
+
+* Packages: ``Neos``
+
+`BUGFIX: Missing flash messages after Dropzone upload in Neos Media Browser <https://github.com/neos/neos-development-collection/pull/5523>`_
+---------------------------------------------------------------------------------------------------------------------------------------------
+
+related: https://github.com/neos/neos-development-collection/issues/5522
+
+**Review instructions**
+
+- Navigate to the Neos Media Browser backend Module
+- Upload an Asset via the Dropzone by either Drag'n Dropping or clicking into the dropzone
+
+* Packages: ``Neos`` ``Media.Browser``
+
+`Detailed log <https://github.com/neos/neos-development-collection/compare/8.3.22...8.3.23>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

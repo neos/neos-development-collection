@@ -98,7 +98,7 @@ class Event
      * @param string $user
      * @param Event $parentEvent
      */
-    public function __construct($eventType, $data, $user = null, Event $parentEvent = null)
+    public function __construct($eventType, $data, $user = null, ?Event $parentEvent = null)
     {
         $this->timestamp = new \DateTime();
         $this->eventType = $eventType;

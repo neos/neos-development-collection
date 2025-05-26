@@ -289,7 +289,7 @@ class UserService
      * @return User The created user instance
      * @api
      */
-    public function createUser($username, $password, $firstName, $lastName, array $roleIdentifiers = null, $authenticationProviderName = null)
+    public function createUser($username, $password, $firstName, $lastName, ?array $roleIdentifiers = null, $authenticationProviderName = null)
     {
         $user = new User();
         $name = new PersonName('', $firstName, '', $lastName, '', $username);
@@ -315,7 +315,7 @@ class UserService
      * @return User The same user object
      * @api
      */
-    public function addUser($username, $password, User $user, array $roleIdentifiers = null, $authenticationProviderName = null)
+    public function addUser($username, $password, User $user, ?array $roleIdentifiers = null, $authenticationProviderName = null)
     {
         if ($roleIdentifiers === null) {
             $roleIdentifiers = ['Neos.Neos:Editor'];
@@ -902,8 +902,13 @@ class UserService
     {
         $userWorkspace = $this->workspaceRepository->findByIdentifier(UserUtility::getPersonalWorkspaceNameForUsername($accountIdentifier));
         if ($userWorkspace instanceof Workspace) {
+            $rootNode = $userWorkspace->getRootNodeData();
             $this->publishingService->discardAllNodes($userWorkspace);
             $this->workspaceRepository->remove($userWorkspace);
+
+            // Persist removal of workspace so we can remove the root node without a foreign key constraint violation
+            $this->persistenceManager->persistAll();
+            $rootNode->remove();
         }
     }
 

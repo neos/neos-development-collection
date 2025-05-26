@@ -12,15 +12,15 @@ const RestoreButton = (user) => {
         attributes += `${key}="${attributesObject[key]}" `
     })
 
-    const restoreLabel = isNil(window.NeosCMS)
+    const restoreLabel = !isNil(window.NeosCMS)
         ? window.NeosCMS.I18n.translate(
             'impersonate.label.restoreUserButton',
             'Back to user "{0}"',
             'Neos.Neos',
             'Main',
-            user.accountIdentifier
+            [user.fullName]
         )
-        : `Restore user "${user.accountIdentifier}"`
+        : `Restore user "${user.fullName}"`
     return `<button ${attributes}>${impersonateIcon} ${restoreLabel}</button>`
 }
 

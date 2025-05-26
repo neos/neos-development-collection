@@ -55,7 +55,7 @@ class NodeSearchService implements NodeSearchServiceInterface
      * @param NodeInterface $startingPoint
      * @return array <\Neos\ContentRepository\Domain\Model\NodeInterface>
      */
-    public function findByProperties($term, array $searchNodeTypes, Context $context, NodeInterface $startingPoint = null)
+    public function findByProperties($term, array $searchNodeTypes, Context $context, ?NodeInterface $startingPoint = null)
     {
         if (empty($term)) {
             throw new \InvalidArgumentException('"term" cannot be empty: provide a term to search for.', 1421329285);

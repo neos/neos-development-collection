@@ -64,7 +64,7 @@ class NodePrivilegeContext
     /**
      * @param NodeInterface $node
      */
-    public function __construct(NodeInterface $node = null)
+    public function __construct(?NodeInterface $node = null)
     {
         $this->node = $node;
     }

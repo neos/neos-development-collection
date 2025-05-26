@@ -153,3 +153,20 @@ dataStructure.unsetUntypedChildKeyWillRenderAsDataStructure = Neos.Fusion:DataSt
   }
   buz = 456
 }
+
+dataStructure.unsetChildKeyWillNotRender = Neos.Fusion:DataStructure {
+  foo = 'bar'
+  baz >
+}
+
+dataStructure.nulledChildKeyWillRenderAsNull = Neos.Fusion:DataStructure {
+  foo = 'bar'
+  null1 = null
+  null2 = ${null}
+}
+
+dataStructure.appliedNullValueWillRenderAsNull = Neos.Fusion:DataStructure {
+  @apply.attributes = ${{
+    nullAttribute: null
+  }}
+}

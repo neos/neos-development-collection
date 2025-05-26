@@ -1,0 +1,94 @@
+`8.3.17 (2024-09-17) <https://github.com/neos/neos-development-collection/releases/tag/8.3.17>`_
+================================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`BUGFIX: Fix autoselection of ancestor nodes in Workspace module <https://github.com/neos/neos-development-collection/pull/5232>`_
+----------------------------------------------------------------------------------------------------------------------------------
+
+* Fixes: `#5231 <https://github.com/neos/neos-development-collection/issues/5231>`_
+
+* Packages: ``Neos``
+
+`BUGFIX: Remove rootnode when user workspace is deleted <https://github.com/neos/neos-development-collection/pull/5207>`_
+-------------------------------------------------------------------------------------------------------------------------
+
+* Fixes: `#2193 <https://github.com/neos/neos-development-collection/issues/2193>`_
+
+**Review instructions**
+
+Previously all root nodes of workspaces that belonged to removed users stayed in the database.
+With this change, the root nodes are removed as well.
+
+1. Create a user
+2. Delete the new user
+3. No root node should remain of the personal workspace of the removed user
+
+* Packages: ``Neos``
+
+`BUGFIX: Translate FlashMessage if asset is still in use in media browser inspector  <https://github.com/neos/neos-development-collection/pull/5133>`_
+------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Bugfix for `#5085 <https://github.com/neos/neos-development-collection/issues/5085>`_no error if asset still in use and show flashmessage solution set class neos-notification-container as id
+
+In media browser inspector if assets are deleted wich are still used no FlashMessage was showed  and on second delete an error pages was showed.
+
+Solution:
+In Neos.Media:Browser/Resources/Private/Layouts/Default.html change class neos-notification-container to id neos-notification-container, because Notification.js / Toast is searching for id neos-notification-container to insert FlashMessages.
+
+`       <div class="neos-media-content{f:if(condition: '{tags -> f:count()} > 25', then: ' neos-media-aside-condensed')}">
+            <div class="neos-media-assets">
+                <div **id="neos-notification-container"**>
+                    <f:render partial="FlashMessages"/>
+                </div>
+                <f:render section="Content"/>
+            </div>
+            <aside class="neos-media-aside">`
+
+related: `#5085 <https://github.com/neos/neos-development-collection/issues/5085>`_
+
+
+* Packages: ``Neos`` ``Media.Browser``
+
+`BUGFIX: Sort roles for users by label instead of internal name in the UI <https://github.com/neos/neos-development-collection/pull/5203>`_
+-------------------------------------------------------------------------------------------------------------------------------------------
+
+**Review instructions**
+
+Before:
+
+!`CleanShot 2024-08-15 at 13 01 03@2x <https://github.com/user-attachments/assets/61fb4a4f-4a43-45e9-bc1f-7c5b417848e7>`_
+
+After:
+
+!`CleanShot 2024-08-15 at 13 00 37@2x <https://github.com/user-attachments/assets/91f4e486-6e0e-4f03-9f57-5058b06c3044>`_
+
+
+* Packages: ``Neos``
+
+`BUGFIX: Don’t copy removed nodes <https://github.com/neos/neos-development-collection/pull/5186>`_
+-----------------------------------------------------------------------------------------------------
+
+With this change, removed nodes are not copied anymore in the recursive copy actions. 
+
+Also the removed state is now kept when a node is similarisied to prevent unpublished removed nodes from popping up again inadvertendly.
+
+* Resolves: `#5185 <https://github.com/neos/neos-development-collection/issues/5185>`_
+
+* Packages: ``Neos`` ``ContentRepository``
+
+`TASK: Update GitHub actions <https://github.com/neos/neos-development-collection/pull/5237>`_
+----------------------------------------------------------------------------------------------
+
+Fix warnings:
+
+> The following actions uses node12 which is deprecated and will be forced to run on node16: actions/checkout@v2, actions/cache@v2, actions/upload-artifact@v2. For more info: https://github.blog/changelog/2023-06-13-github-actions-all-actions-will-run-on-node16-instead-of-node12-by-default/
+
+
+
+
+* Packages: ``Neos`` ``.github``
+
+`Detailed log <https://github.com/neos/neos-development-collection/compare/8.3.16...8.3.17>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

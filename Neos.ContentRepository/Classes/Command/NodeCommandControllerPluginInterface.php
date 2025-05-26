@@ -46,5 +46,5 @@ interface NodeCommandControllerPluginInterface
      * @param boolean $cleanup If false, cleanup tasks are skipped
      * @return void
      */
-    public function invokeSubCommand($controllerCommandName, ConsoleOutput $output, NodeType $nodeType = null, $workspaceName = 'live', $dryRun = false, $cleanup = true);
+    public function invokeSubCommand($controllerCommandName, ConsoleOutput $output, ?NodeType $nodeType = null, $workspaceName = 'live', $dryRun = false, $cleanup = true);
 }

@@ -35,7 +35,7 @@ class PublishingService extends \Neos\ContentRepository\Domain\Service\Publishin
      * @return void
      * @api
      */
-    public function publishNode(NodeInterface $node, Workspace $targetWorkspace = null)
+    public function publishNode(NodeInterface $node, ?Workspace $targetWorkspace = null)
     {
         if ($targetWorkspace === null) {
             $targetWorkspace = $node->getWorkspace()->getBaseWorkspace();

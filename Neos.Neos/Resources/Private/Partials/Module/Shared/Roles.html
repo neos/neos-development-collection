@@ -5,5 +5,6 @@
 	</span>
 </f:for>
 
-<f:section name="tooltip">{neos:backend.translate(id: 'package', value: 'Package')}: {role.packageKey}<br />
-<f:if condition="{role.parentRoles}">{neos:backend.translate(id: 'parentRoles', value: 'Parent role(s)')}: <f:for each="{role.parentRoles}" as="parentRole" iteration="iteration">{parentRole}{f:if(condition: iteration.isLast, else: ', ')}</f:for></f:if></f:section>
+<f:section name="tooltip">{neos:backend.translate(id: 'package', value: 'Package')}: {role.packageKey}&#13;
+<f:if condition="{role.parentRoles}">{neos:backend.translate(id: 'parentRoles', value: 'Parent role(s)')}:&#13;
+<f:for each="{role.parentRoles}" as="parentRole" iteration="iteration">- {parentRole.name} ({parentRole.identifier}){f:if(condition: iteration.isLast, else: '&#13;')}</f:for></f:if></f:section>

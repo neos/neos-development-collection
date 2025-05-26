@@ -229,7 +229,7 @@ interface NodeInterface
      * @return void
      * @api
      */
-    public function setHiddenBeforeDateTime(\DateTimeInterface $dateTime = null);
+    public function setHiddenBeforeDateTime(?\DateTimeInterface $dateTime = null);
 
     /**
      * Returns the date and time before which this node will be automatically hidden.
@@ -245,7 +245,7 @@ interface NodeInterface
      * @return void
      * @api
      */
-    public function setHiddenAfterDateTime(\DateTimeInterface $dateTime = null);
+    public function setHiddenAfterDateTime(?\DateTimeInterface $dateTime = null);
 
     /**
      * Returns the date and time after which this node will be automatically hidden.
@@ -403,7 +403,7 @@ interface NodeInterface
      * @throws NodeExistsException if a node with this path already exists.
      * @api
      */
-    public function createNode($name, NodeType $nodeType = null, $identifier = null);
+    public function createNode($name, ?NodeType $nodeType = null, $identifier = null);
 
     /**
      * Creates, adds and returns a child node of this node, without setting default
@@ -418,7 +418,7 @@ interface NodeInterface
      * @throws \InvalidArgumentException if the node name is not accepted.
      * @throws NodeExistsException if a node with this path already exists.
      */
-    public function createSingleNode($name, NodeType $nodeType = null, $identifier = null);
+    public function createSingleNode($name, ?NodeType $nodeType = null, $identifier = null);
 
     /**
      * Creates and persists a node from the given $nodeTemplate as child node

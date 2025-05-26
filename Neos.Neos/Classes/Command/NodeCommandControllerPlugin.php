@@ -159,7 +159,7 @@ HELPTEXT;
      * @param string $only Only execute the given check or checks (comma separated)
      * @return void
      */
-    public function invokeSubCommand($controllerCommandName, ConsoleOutput $output, NodeType $nodeType = null, $workspaceName = 'live', $dryRun = false, $cleanup = true, $skip = null, $only = null)
+    public function invokeSubCommand($controllerCommandName, ConsoleOutput $output, ?NodeType $nodeType = null, $workspaceName = 'live', $dryRun = false, $cleanup = true, $skip = null, $only = null)
     {
         /** @noinspection PhpDeprecationInspection This is only set for backwards compatibility */
         $this->output = $output;

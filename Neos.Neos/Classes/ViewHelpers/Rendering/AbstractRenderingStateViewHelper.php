@@ -49,7 +49,7 @@ abstract class AbstractRenderingStateViewHelper extends AbstractViewHelper
      * @return ContentContext
      * @throws ViewHelperException
      */
-    protected function getNodeContext(NodeInterface $node = null)
+    protected function getNodeContext(?NodeInterface $node = null)
     {
         if ($node === null) {
             $node = $this->getContextNode();

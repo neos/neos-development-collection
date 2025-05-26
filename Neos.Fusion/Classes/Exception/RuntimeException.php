@@ -28,7 +28,7 @@ class RuntimeException extends Exception
      * @param \Exception $previous
      * @param string $fusionPath
      */
-    public function __construct($message = '', $code = 0, \Exception $previous = null, $fusionPath = null)
+    public function __construct($message = '', $code = 0, ?\Exception $previous = null, $fusionPath = null)
     {
         parent::__construct($message, $code, $previous);
 

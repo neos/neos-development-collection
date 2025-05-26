@@ -40,7 +40,7 @@ final class Variant
      * @param Label $label
      * @param string $description
      */
-    public function __construct(string $identifier, Label $label, string $description = null)
+    public function __construct(string $identifier, Label $label, ?string $description = null)
     {
         $this->setIdentifier($identifier);
         $this->label = $label;

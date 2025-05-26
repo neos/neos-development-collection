@@ -182,6 +182,9 @@ class NodeTypeConfigurationEnrichmentAspect
                     if ($this->shouldFetchTranslation($optionConfiguration)) {
                         $optionConfiguration['label'] = $translationIdGenerator('selectBoxEditor.values.' . $value);
                     }
+                    if ($this->shouldFetchTranslation($optionConfiguration, 'group')) {
+                        $optionConfiguration['group'] = $translationIdGenerator('selectBoxEditor.groups.' . $value);
+                    }
                 }
                 break;
             case 'Neos.Neos/Inspector/Editors/CodeEditor':

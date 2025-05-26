@@ -138,7 +138,7 @@ class NodeConverter extends AbstractTypeConverter
      * @return mixed An object or \Neos\Error\Messages\Error if the input format is not supported or could not be converted for other reasons
      * @throws NodeException
      */
-    public function convertFrom($source, $targetType, array $subProperties = [], PropertyMappingConfigurationInterface $configuration = null)
+    public function convertFrom($source, $targetType, array $subProperties = [], ?PropertyMappingConfigurationInterface $configuration = null)
     {
         if (is_string($source)) {
             $source = ['__contextNodePath' => $source];
@@ -197,7 +197,7 @@ class NodeConverter extends AbstractTypeConverter
      * @return void
      * @throws TypeConverterException
      */
-    protected function setNodeProperties($nodeLike, NodeType $nodeType, array $properties, ContentRepositoryContext $context, PropertyMappingConfigurationInterface $configuration = null)
+    protected function setNodeProperties($nodeLike, NodeType $nodeType, array $properties, ContentRepositoryContext $context, ?PropertyMappingConfigurationInterface $configuration = null)
     {
         $nodeTypeProperties = $nodeType->getProperties();
         unset($properties['_lastPublicationDateTime']);
@@ -280,7 +280,7 @@ class NodeConverter extends AbstractTypeConverter
      * @param array $dimensions
      * @return array
      */
-    protected function prepareContextProperties($workspaceName, PropertyMappingConfigurationInterface $configuration = null, array $dimensions = null)
+    protected function prepareContextProperties($workspaceName, ?PropertyMappingConfigurationInterface $configuration = null, ?array $dimensions = null)
     {
         $contextProperties = [
             'workspaceName' => $workspaceName,

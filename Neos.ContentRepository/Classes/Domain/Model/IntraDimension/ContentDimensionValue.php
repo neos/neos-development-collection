@@ -40,7 +40,7 @@ class ContentDimensionValue
      * @param string $value
      * @param ContentDimensionValue|null $fallback
      */
-    public function __construct(string $value, ContentDimensionValue $fallback = null)
+    public function __construct(string $value, ?ContentDimensionValue $fallback = null)
     {
         $this->value = $value;
         if ($fallback) {

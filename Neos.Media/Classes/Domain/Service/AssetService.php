@@ -140,7 +140,7 @@ class AssetService
      * @throws MissingActionNameException
      * @throws HttpException
      */
-    public function getThumbnailUriAndSizeForAsset(AssetInterface $asset, ThumbnailConfiguration $configuration, ActionRequest $request = null): ?array
+    public function getThumbnailUriAndSizeForAsset(AssetInterface $asset, ThumbnailConfiguration $configuration, ?ActionRequest $request = null): ?array
     {
         $thumbnailImage = $this->thumbnailService->getThumbnail($asset, $configuration);
         if (!$thumbnailImage instanceof ImageInterface) {
@@ -339,7 +339,7 @@ class AssetService
             }
         }
 
-        if ($redirectHandlerEnabled && class_exists(RedirectStorageInterface::class)) {
+        if ($redirectHandlerEnabled && interface_exists(RedirectStorageInterface::class)) {
             /** @var RedirectStorageInterface $redirectStorage */
             $redirectStorage = $this->objectManager->get(RedirectStorageInterface::class);
             foreach ($uriMapping as $originalUri => $newUri) {

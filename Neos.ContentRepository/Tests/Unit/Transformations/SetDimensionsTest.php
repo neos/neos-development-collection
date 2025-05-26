@@ -81,7 +81,7 @@ class SetDimensionsTest extends UnitTestCase
      * @param array $expectedValues The values that are expected to be set on the node
      * @param array $configuredDimensions Optional set of dimensions "configured in the system"
      */
-    public function setDimensionsWorksAsExpected(array $setValues, array $expectedValues, array $configuredDimensions = null)
+    public function setDimensionsWorksAsExpected(array $setValues, array $expectedValues, ?array $configuredDimensions = null)
     {
         $transformation = new SetDimensions();
 

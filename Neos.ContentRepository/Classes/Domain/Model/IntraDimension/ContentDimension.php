@@ -67,7 +67,7 @@ class ContentDimension
      * @param ContentDimensionValue|null $fallback
      * @return ContentDimensionValue
      */
-    public function createValue(string $value, ContentDimensionValue $fallback = null): ContentDimensionValue
+    public function createValue(string $value, ?ContentDimensionValue $fallback = null): ContentDimensionValue
     {
         $contentDimensionValue = new ContentDimensionValue($value, $fallback);
         if ($fallback) {

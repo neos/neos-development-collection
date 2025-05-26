@@ -144,7 +144,7 @@ class NodeExportService
      * @param string $nodeTypeFilter Filter the node type of the nodes, allows complex expressions (e.g. "Neos.Neos:Page", "!Neos.Neos:Page,Neos.Neos:Text")
      * @return \XMLWriter
      */
-    public function export($startingPointNodePath = '/', $workspaceName = 'live', \XMLWriter $xmlWriter = null, $tidy = true, $endDocument = true, $resourceSavePath = null, $nodeTypeFilter = null)
+    public function export($startingPointNodePath = '/', $workspaceName = 'live', ?\XMLWriter $xmlWriter = null, $tidy = true, $endDocument = true, $resourceSavePath = null, $nodeTypeFilter = null)
     {
         $this->propertyMappingConfiguration = new ImportExportPropertyMappingConfiguration($resourceSavePath);
         $this->exceptionsDuringExport = [];

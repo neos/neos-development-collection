@@ -82,7 +82,7 @@ class CachingHelper implements ProtectedContextAwareInterface
      * @return string
      *
      */
-    public function nodeTagForIdentifier(string $identifier, NodeInterface $contextNode = null): string
+    public function nodeTagForIdentifier(string $identifier, ?NodeInterface $contextNode = null): string
     {
         $workspaceTag = '';
         if ($contextNode instanceof NodeInterface) {

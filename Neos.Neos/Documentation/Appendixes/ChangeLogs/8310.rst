@@ -1,0 +1,464 @@
+`8.3.10 (2024-02-23) <https://github.com/neos/neos-development-collection/releases/tag/8.3.10>`_
+================================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`BUGFIX: Allow dimension preset keys to be different from values for DimensionsMenu <https://github.com/neos/neos-development-collection/pull/4859>`_
+-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+This removes the implicit convention that dimensionPresetKey must be the same as the dimensionValue. 
+
+**Review instructions**
+- Follow the manual to set up a bilingual site: https://docs.neos.io/guide/manual/content-repository/content-dimensions/multiple-languages#configuring-a-bilingual-site
+- Open frontend with rendering of ``Neos.Neos:DimensionsMenu``
+
+Fixes https://github.com/neos/neos-development-collection/issues/4857
+
+* Packages: ``Neos``
+
+`BUGFIX: Allow non-entity asset variants <https://github.com/neos/neos-development-collection/pull/4198>`_
+----------------------------------------------------------------------------------------------------------
+
+Allow implementations of the ``AssetVariantInterface`` to not be doctrine entities.
+
+Without this fix, all ``AssetRepository::find*()`` calls lead to an exception when a class implements the interface but is not an entity (for example because it is just used to generate dummy images for Monocle).
+
+## Steps to reproduce
+
+1. Implement the interface with a new custom class like
+
+```php
+final class DummyImageVariant implements AssetVariantInterface {
+    // ...
+}
+```
+
+2. Trigger ``AssetRepository::find*()`` method, eg. by invoking ``./ flow media:removeunused``
+
+### Expected result
+
+No error, the custom implementation should be ignored
+
+### Actual result
+
+Exception:
+
+```
+Failure while fetching class schema class "Some\\Package\\DummyImageVariant": No class schema found for "Some\\Package\\DummyImageVariant".
+
+  Type: Doctrine\\ORM\\Mapping\\MappingException
+  Code: 1542792708
+  File: Data/Temporary/Development/Cache/Code/Flow_Object_Classes/Neos_Flow_Persist
+        ence_Doctrine_Mapping_Driver_FlowAnnotationDriver.php
+  Line: 187
+```
+
+* Packages: ``Media``
+
+`BUGFIX: Neos Ui JSON serializable property values <https://github.com/neos/neos-development-collection/pull/4638>`_
+--------------------------------------------------------------------------------------------------------------------
+
+This bugfix will make use of the ``\\JsonSerializable`` interface instead directly when serializing properties for the neos ui.
+
+With https://github.com/neos/flow-development-collection/pull/2762 native support for vo's in ``flow_json_array`` was introduced.
+
+That also allows value object support for node properties, as they can be stored directly the node properties flow_json_array.
+
+Unfortunately the property serialisation for the NeosUi does NOT use the expected ``\\JsonSerializable::jsonSerialize`` but the property mapper and the ``ArrayFromObjectConverter`` for object types to get an array that will be json encoded.
+
+This works mostly fine but in some cases it fails:
+- when your ``fromArray`` fields and property names values dont match
+- when a "object" subtypes the object mapper is no convertable like the ``GuzzleHttp\\Psr7\\Uri``:
+
+```
+Too few arguments to function GuzzleHttp\\Psr7\\Uri::isAbsolute(), 0 passed in /core/neos-manufacture-highest/Packages/Framework/Neos.Utility.ObjectHandling/Classes/ObjectAccess.php on line 151 and exactly 1 expected
+
+72 GuzzleHttp\\Psr7\\Uri::isAbsolute()
+71 Neos\\Utility\\ObjectAccess::getPropertyInternal(GuzzleHttp\\Psr7\\Uri, "absolute", false, true)
+70 Neos\\Utility\\ObjectAccess::getGettableProperties(GuzzleHttp\\Psr7\\Uri)
+69 Neos\\Flow\\Property\\TypeConverter\\ArrayFromObjectConverter_Original::getSourceChildPropertiesToBeConverted(GuzzleHttp\\Psr7\\Uri)
+```
+
+Current workarounds are aop:
+https://github.com/sitegeist/Sitegeist.InspectorGadget/blob/`78f5f4a206287b1c4bedf5cb88582ed51cb4a311 <https://github.com/neos/neos-development-collection/commit/78f5f4a206287b1c4bedf5cb88582ed51cb4a311>`_/Classes/Infrastructure/NodeInfo/NodeInfoPostProcessingAspect.php#L17
+Or to use a dumb property mapper:
+https://github.com/sitegeist/Sitegeist.Archaeopteryx/blob/`9322b9cb8e4824bcaf7aaa247c23b1244a2f1167 <https://github.com/neos/neos-development-collection/commit/9322b9cb8e4824bcaf7aaa247c23b1244a2f1167>`_/Classes/LinkToArrayForNeosUiConverter.php#L12C16-L12C78
+
+
+
+**Upgrade instructions**
+
+
+* Packages: ``Neos`` ``ContentRepository``
+
+`BUGFIX: Private props obscure error <https://github.com/neos/neos-development-collection/pull/4887>`_
+------------------------------------------------------------------------------------------------------
+
+…uated
+
+instead of the original error that something went wrong
+
+> Circular reference detected while evaluating prop: "private.thepath"
+
+is shown.
+
+That happens because the locking didnt anticipate this case.
+
+**Upgrade instructions**
+
+**Review instructions**
+
+this code reproduces the problem ... yes i know :D
+
+```
+prototype(YourVendor:FusionPrototype) < prototype(Neos.Fusion:Component) {
+  @private {
+    lol = ${true}
+    throwingPath = ${private.lol && NonExistingFunctionError()}
+  }
+
+  renderer = YourVendor:FusionPrototypeWithPrivate {
+    content = ${private.throwingPath}
+  }
+}
+
+prototype(YourVendor:FusionPrototypeWithPrivate) < prototype(Neos.Fusion:Component) {
+  renderer = ${props.content}
+}
+```
+
+
+
+* Packages: ``Neos`` ``Fusion``
+
+`BUGFIX: Fusion parser fix multi line comment <https://github.com/neos/neos-development-collection/pull/4882>`_
+---------------------------------------------------------------------------------------------------------------
+
+This fixes a bug where the Fusion parser would not parse following c-style comments correctly:
+
+```
+/**
+comment with multiple stars even
+**/
+```
+
+This happed when the ending count of ``*`` was even. So ending a comment with ``***/`` worked previously.
+
+Now we use the "correct" regex from Jeffrey E.F. Friedl's book "Mastering Regular Expressions" Page 272 "Unrolling C Comments"
+We already use his regex for string matching and it is really fast due to the unrolled loop. Faster than using the lazy quantifier ``~^/\\*.*?\\*/~s``.
+
+I did a performance test with 1 million iteration on three different comment samples (with each sample having a dynamic part to clear possible caches):
+
+| Unrolled (this pr) | Simple Lazy Quantifier  |
+|--------|--------|
+| 0.143725s | 0.160235s |
+| 0.181047s | 0.203759s |
+| 0.156254s | 0.170144s | 
+
+
+Additionally the error message for comments starting with ``/**`` was improved. Previously $nextLine->char(1) would return ``**`` instead of just one ``*`` because wrongly implemented.
+
+**Upgrade instructions**
+
+
+* Packages: ``Fusion``
+
+`BUGFIX: Use a dynamic URL for user impersonation <https://github.com/neos/neos-development-collection/pull/4875>`_
+-------------------------------------------------------------------------------------------------------------------
+
+As described in the issue, the impersonation does not work when Neos is running in a subfolder. This change adds a data attribute with a dynamic URL to the DOM, and the user impersonation is using this module URL as base.
+
+* Fixes: `#4797 <https://github.com/neos/neos-development-collection/issues/4797>`_
+
+**Review instructions**
+
+Use the user impersonation in the Backend modules (User Management and other) when Neos is running in a subfolder.
+e.g. BASEURL.com/cms/neos
+
+
+* Packages: ``Neos``
+
+`BUGFIX: Add assetcollection privilege condition to asset edit view in Media.Browser <https://github.com/neos/neos-development-collection/pull/4404>`_
+------------------------------------------------------------------------------------------------------------------------------------------------------
+
+In the Media.Browser you can change the AssetCollections via checkboxes even when you don't have the privilege (Neos.Media.Browser:ManageAssetCollections) to do so.
+With this PR the checkboxes are only rendered with the right privilege.
+
+* Packages: ``Neos`` ``Media.Browser``
+
+`BUGFIX: MenuHelper uses content dimensions to get node for privilege check <https://github.com/neos/neos-development-collection/pull/4269>`_
+---------------------------------------------------------------------------------------------------------------------------------------------
+
+* Resolves: `#4625 <https://github.com/neos/neos-development-collection/issues/4625>`_
+
+The Neos backend MenuHelper received a bugfix to filter sites listed by the menu using NodePrivileges. In case of sites with multiple dimensions the dimensionCombinations are considered too.
+
+**Upgrade instructions**
+
+**Review instructions**
+
+This bugfix tries to fix #4025. If 7.3 and upwards is used on a multi site project with multiple dimensions, it might be that
+```
+$node = $context->getNode(\\Neos\\ContentRepository\\Domain\\Utility\\NodePaths::addNodePathSegment(SiteService::SITES_ROOT_PATH, $site->getNodeName()));
+```
+returns ``null``, causing the next line
+```
+if ($this->privilegeManager->isGranted(NodeTreePrivilege::class, new NodePrivilegeSubject($node))) {
+```
+to throw an exception. Thus the backend is not accessible anymore.  
+The reason is, that for multisite projects with multiple dimensions it might be that ``$node`` cannot be retrieved by the default context created.
+
+The fix is to use ``contentDimensionCombinator`` and also to explicitly check if ``$node`` could be retrieved.  
+I'm also using the property ``invisibleContentShown`` and ``inaccessibleContentShown`` because it might be that an editor set the Home of a site to ``hidden`` by mistake. Thus the site might not accessible via the menu anymore to possibly fix an editor mistake.
+
+
+* Packages: ``Neos``
+
+`BUGFIX: Prevent cache overflow when querying nodes by related entities <https://github.com/neos/neos-development-collection/pull/4877>`_
+-----------------------------------------------------------------------------------------------------------------------------------------
+
+Without this change new cache entries in Flow_Persistence_Doctrine are generated for each entry in the relationMap causing massive slowdowns in Neos f.e. when many assets are deleted as the file system cache cannot handle large numbers of entries well.
+
+With this change only one entry per number of relations is generated which is usually only a few and the entries can be reused.
+
+* Resolves: `#4876 <https://github.com/neos/neos-development-collection/issues/4876>`_
+
+* Packages: ``Neos`` ``ContentRepository``
+
+`BUGFIX: Followup `nodeTypes:show` with `--path` to primitive value <https://github.com/neos/neos-development-collection/pull/4837>`_
+-------------------------------------------------------------------------------------------------------------------------------------
+
+* Related: `#4619 <https://github.com/neos/neos-development-collection/issues/4619>`_
+
+Primitive values cannot be shown currently:
+
+```
+flow nodetypes:show Neos.Neos:Document --path properties.title.ui.label
+Neos\\ContentRepository\\Command\\NodeTypesCommandController_Original::truncateArrayAtLevel(): Argument `#1 <https://github.com/neos/neos-development-collection/issues/1>`_($array) must be of type array, string given
+```
+
+**Upgrade instructions**
+
+
+* Packages: ``Neos`` ``ContentRepository``
+
+`BUGFIX: Fusion avoid error parser cache to crash if cache is broken <https://github.com/neos/neos-development-collection/pull/4839>`_
+--------------------------------------------------------------------------------------------------------------------------------------
+
+* Resolves: `#4595 <https://github.com/neos/neos-development-collection/issues/4595>`_
+
+It seems a cache's ``has`` operation doesnt work that reliable thats why we will be using ``get`` instead and check against false.  
+
+**Upgrade instructions**
+
+
+* Packages: ``Neos`` ``Fusion``
+
+`BUGFIX: #3624 Node::getProperty does not always return list for references <https://github.com/neos/neos-development-collection/pull/4731>`_
+---------------------------------------------------------------------------------------------------------------------------------------------
+
+EEL can only operate on an array of nodes if the ``[0]`` item is a node (simple duck typing)
+
+Instead of fixing eel like proposed here https://github.com/neos/neos-development-collection/pull/3946 with this fix we avoid returning non 0 indexed arrays here:
+
+```
+${q(node).property("someReference")}
+```
+
+Currently, this might indeed return an array with holes like ``[1 => NODE, 2 => NODE, 5 => NODE]`` if the identifiers in fields 0, 3 and 4 are not resolvable.
+
+Thats because of the "unsafe" ``array_filter`` method in ``resolvePropertyReferences`` https://github.com/neos/neos-development-collection/blob/`378a029d0cc7ea6acb853751e7592873584a4aac <https://github.com/neos/neos-development-collection/commit/378a029d0cc7ea6acb853751e7592873584a4aac>`_/Neos.ContentRepository/Classes/Domain/Model/Node.php#L961 which will leave holes in the array.
+
+Using ``array_filter`` was introduced with Neos 2.2 so this is technically a regression of https://github.com/neos/neos-development-collection/commit/`87804e12082e7d6d06bd22f50739e20eeaa45539 <https://github.com/neos/neos-development-collection/commit/87804e12082e7d6d06bd22f50739e20eeaa45539>`_ ^^
+
+* Fixes: `#3624 <https://github.com/neos/neos-development-collection/issues/3624>`_
+
+* Packages: ``Neos`` ``ContentRepository``
+
+`BUGFIX: Add dimensions to Workspace module <https://github.com/neos/neos-development-collection/pull/3986>`_
+-------------------------------------------------------------------------------------------------------------
+
+resolves: `#3470 <https://github.com/neos/neos-development-collection/issues/3470>`_
+
+This adds Dimension handling to the current workspaces module. 
+
+Currently the Module only displays changes in different languages as one change. This is because the node path is the same in different languages after they are copied.
+
+
+* Packages: ``Neos``
+
+`BUGFIX: Fusion avoid error on cache invalidation while developing <https://github.com/neos/neos-development-collection/pull/4838>`_
+------------------------------------------------------------------------------------------------------------------------------------
+
+Replaces `#4509 <https://github.com/neos/neos-development-collection/issues/4509>`_
+* Resolves: `#4415 <https://github.com/neos/neos-development-collection/issues/4415>`_
+
+After deleting a fusion file like ``BrandLogo.fusion`` one will face the error after booting flow and thus triggering the file monitor and its listeners: (even like a simple ``flow help``)
+
+```
+Couldn't resolve realpath for: '/absolutePath/Code/core/Neos.NeosIo/Packages/Sites/Neos.NeosIo/Resources/Private/Fusion/Content/BrandLogo/BrandLogo.fusion'
+```
+
+This is caused as ``realpath`` returns false if the file was deleted, and we were to eager validating this. But as flows file monitor already returns absolute paths we can skip the realpath calculation here and move it to the ``ParserCache::cacheForFusionFile``. Initially the call to ``realpath`` was made in a single place to avoid making to many assumptions about the form flow returned file paths.
+
+**Upgrade instructions**
+
+
+* Packages: ``Neos`` ``Fusion``
+
+`BUGFIX: More precise selection of the DomNode with CSFR token <https://github.com/neos/neos-development-collection/pull/4823>`_
+--------------------------------------------------------------------------------------------------------------------------------
+
+To prevent issues with selecting the wrong CSFR Token in the DOM, we now have a more precise selection of the DomNode with the CSFR token.
+
+fixes: `#4822 <https://github.com/neos/neos-development-collection/issues/4822>`_
+
+**Review instructions**
+
+Install a version before 1.0.1 of the `Shel.Neos.WorkspaceModule <https://github.com/Sebobo/Shel.Neos.WorkspaceModule>`_
+and go to the user management module to impersonate a user. Then switch to the Workspace module and try to restore the original user. Without this patch, it should fail. With version 1.0.1 it will not fail btw.
+
+
+* Packages: ``Media.Browser`` ``Neos``
+
+`TASK: Cleanup SVG Sanitzer workaround after 0.17.0 release <https://github.com/neos/neos-development-collection/pull/4893>`_
+-----------------------------------------------------------------------------------------------------------------------------
+
+SVG Sanitizer has merged and released the fix for restoring libxml error handler. So we can remove the workaround.
+
+See: https://github.com/darylldoyle/svg-sanitizer/pull/90
+
+* Packages: ``Neos`` ``Media.Browser``
+
+`TASK: Fix fusion docs a little <https://github.com/neos/neos-development-collection/pull/4867>`_
+-------------------------------------------------------------------------------------------------
+
+Fixes: https://github.com/neos/neos-development-collection/pull/3915#issuecomment-1296302491
+
+**Upgrade instructions**
+
+
+* Packages: ``Neos``
+
+`TASK: PhpStan level 1 for Neos 8.3 <https://github.com/neos/neos-development-collection/pull/4842>`_
+-----------------------------------------------------------------------------------------------------
+
+Adds phpstan to the Neos 8.3 branch to all packages with a minimal level 1:
+
+- Neos.ContentRepository/Classes
+- Neos.Diff/Classes
+- Neos.Fusion.Afx/Classes
+- Neos.Fusion/Classes
+- Neos.Media.Browser/Classes
+- Neos.Media/Classes
+- Neos.Neos/Classes
+- Neos.NodeTypes.Form/Classes
+- Neos.SiteKickstarter/Classes
+
+Errors caused by the back-port of the ESCR TraversableNodeInterface, have been directly ignored via ``ignoreErrors``.
+Other actually fixable errors have been fixed in a non breaking way. (Adjusting the doc types e.g.)
+
+This should provide a little starting base for extending php stan level across all packages to higher levels in the upcoming 9.0 branch, where we actually use phpstan at level 8 for the following packages:
+
+- Neos.ContentGraph.DoctrineDbalAdapter/src
+- Neos.ContentGraph.PostgreSQLAdapter/src
+- Neos.ContentRepository.BehavioralTests/Classes
+- Neos.ContentRepository.Core/Classes
+- Neos.ContentRepository.Export/src
+- Neos.ContentRepository.LegacyNodeMigration/Classes
+- Neos.ContentRepository.NodeAccess/Classes
+- Neos.ContentRepository.StructureAdjustment/src
+- Neos.ContentRepository.TestSuite/Classes
+- Neos.ContentRepositoryRegistry/Classes
+- Neos.Neos/Classes (also exists in 8.3)
+- Neos.NodeTypes.Form/Classes (also exists in 8.3)
+
+As ``Neos.Fusion`` didnt need to be adjusted for neos 9 i started to migrate this package to level 8 for neos 8.3 already to avoid too many upmerge conflicts:
+
+https://github.com/neos/neos-development-collection/pull/4844
+
+More packages, if applicable, will follow.
+
+
+**Upgrade instructions**
+
+
+* Packages: ``Neos`` ``ContentRepository`` ``Diff`` ``Fusion`` ``Media.Browser`` ``Media``
+
+`TASK: Migrate Neos.Fusion/Core to phpstan level 8 (Neos 8.3) <https://github.com/neos/neos-development-collection/pull/4844>`_
+-------------------------------------------------------------------------------------------------------------------------------
+
+Requires: https://github.com/neos/neos-development-collection/pull/4842
+
+Only files in ``Neos.Fusion/Classes/Core`` have been migrated, as they contain relatively new code like the parser.
+
+Two kind of errors have been partially ignored from the level 8
+
+For one: "no value type specified in iterable type array" as adding ``array<int|string, mixed>`` would just bloat this commit up. In these files we are mostly dealing with the fusion configuration which is highly dynamic:
+
+- Neos.Fusion/Classes/Core/Runtime.php
+- Neos.Fusion/Classes/Core/Cache/RuntimeContentCache.php
+- Neos.Fusion/Classes/Core/Cache/ContentCache.php
+- Neos.Fusion/Classes/Core/Cache/CacheSegmentParser.php
+- Neos.Fusion/Classes/Core/RuntimeConfiguration.php
+- Neos.Fusion/Classes/Core/ObjectTreeParser/MergedArrayTreeVisitor.php
+- Neos.Fusion/Classes/Core/ObjectTreeParser/MergedArrayTree.php
+
+And "has no return type specified" was noticed a lot in the ast visiting code. But i plan to refactor this instead to something better type- and readable in general:
+
+- Neos.Fusion/Classes/Core/ObjectTreeParser/MergedArrayTreeVisitor.php
+- Neos.Fusion/Classes/Core/ObjectTreeParser/AstNodeVisitorInterface.php
+- Neos.Fusion/Classes/Core/ObjectTreeParser/Ast/*
+
+**The phpstan config i used for local development & testing:**
+
+<details><summary>local phpstan config</summary>
+<p>
+
+```
+parameters:
+    level: 8
+    ignoreErrors:
+        -
+          message: '#no value type specified in iterable type array.$#'
+          paths:
+            - Neos.Fusion/Classes/Core/Runtime.php
+            - Neos.Fusion/Classes/Core/Cache/RuntimeContentCache.php
+            - Neos.Fusion/Classes/Core/Cache/ContentCache.php
+            - Neos.Fusion/Classes/Core/Cache/CacheSegmentParser.php
+            - Neos.Fusion/Classes/Core/RuntimeConfiguration.php
+            - Neos.Fusion/Classes/Core/ObjectTreeParser/MergedArrayTreeVisitor.php
+            - Neos.Fusion/Classes/Core/ObjectTreeParser/MergedArrayTree.php
+        -
+          message: '#has no return type specified.$#'
+          paths:
+            - Neos.Fusion/Classes/Core/ObjectTreeParser/MergedArrayTreeVisitor.php
+            - Neos.Fusion/Classes/Core/ObjectTreeParser/AstNodeVisitorInterface.php
+            - Neos.Fusion/Classes/Core/ObjectTreeParser/Ast
+    paths:
+        - Neos.Fusion/Classes/Core
+    bootstrapFiles:
+         - ../Framework/bootstrap-phpstan.php
+```
+
+</p>
+</details> 
+
+As phpstan `doesnt <https://github.com/phpstan/phpstan/discussions/10459>``_ allow to configure multiple levels by path, and i dont want to have to burden running phpstan multiple times, i decided against actually linting the migrated ``Neos.Fusion/Core` code in ci for Neos 8.3. On the neos 9 branch this we will activate the full linting power though!
+
+* Packages: ``Neos`` ``Fusion``
+
+`TASK: Correct `DoctrineProxy` import in AssetController <https://github.com/neos/neos-development-collection/pull/4854>`_
+--------------------------------------------------------------------------------------------------------------------------
+
+The old import was deprecated with ``doctrine/persistence:1.3`` and one should use Doctrine\\Persistence\\Proxy instead:
+https://github.com/greg0ire/persistence/blob/`da3b167cde5c029d7941941c635879524d6e1484 <https://github.com/neos/neos-development-collection/commit/da3b167cde5c029d7941941c635879524d6e1484>`_/lib/Doctrine/Common/Persistence/Proxy.php#L26
+
+
+slack -> https://neos-project.slack.com/archives/C04PYL8H3/p1705607919309889
+
+* Packages: ``Neos`` ``Media.Browser``
+
+`Detailed log <https://github.com/neos/neos-development-collection/compare/8.3.9...8.3.10>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

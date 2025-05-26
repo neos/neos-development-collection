@@ -199,7 +199,7 @@ class LinkingService
      * @param NodeInterface $contextNode
      * @return NodeInterface|AssetInterface|NULL
      */
-    public function convertUriToObject($uri, NodeInterface $contextNode = null)
+    public function convertUriToObject($uri, ?NodeInterface $contextNode = null)
     {
         if ($uri instanceof UriInterface) {
             $uri = (string)$uri;
@@ -242,7 +242,7 @@ class LinkingService
      * @throws HttpException
      * @throws \Neos\Flow\Persistence\Exception\IllegalObjectTypeException
      */
-    public function createNodeUri(ControllerContext $controllerContext, $node = null, NodeInterface $baseNode = null, $format = null, $absolute = false, array $arguments = [], $section = '', $addQueryString = false, array $argumentsToBeExcludedFromQueryString = [], $resolveShortcuts = true): string
+    public function createNodeUri(ControllerContext $controllerContext, $node = null, ?NodeInterface $baseNode = null, $format = null, $absolute = false, array $arguments = [], $section = '', $addQueryString = false, array $argumentsToBeExcludedFromQueryString = [], $resolveShortcuts = true): string
     {
         $this->lastLinkedNode = null;
         if ($resolveShortcuts === false) {

@@ -9,7 +9,7 @@ jobs:
   build-api-docs:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Build API documentation
         uses: sudo-bot/action-doctum@v5
@@ -20,7 +20,7 @@ jobs:
           cli-args: "--output-format=github --no-ansi --no-progress --ignore-parse-errors --only-version=${{ github.ref_name }}"
 
       - name: Check out documentation site
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           repository: neos/neos.github.io
           path: docs-site

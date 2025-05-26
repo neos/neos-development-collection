@@ -62,7 +62,7 @@ class NodeUriPathSegmentGenerator
      * @param string $text Optional text
      * @return string
      */
-    public function generateUriPathSegment(NodeInterface $node = null, $text = null)
+    public function generateUriPathSegment(?NodeInterface $node = null, $text = null)
     {
         if ($node) {
             $text = $text ?: $node->getLabel() ?: $node->getName();

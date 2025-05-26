@@ -1,0 +1,38 @@
+`8.3.22 (2025-03-10) <https://github.com/neos/neos-development-collection/releases/tag/8.3.22>`_
+================================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`BUGFIX: Recognize removed-state while reducing <https://github.com/neos/neos-development-collection/pull/5457>`_
+-----------------------------------------------------------------------------------------------------------------
+
+Please read Issue #3651, to get the problem. 
+
+By adding the removed-state as 3rd priority while reducing NodeData results, we should always get the not-removed NodeData, if there are 2 (because of Node-move). 
+
+I tested this fix on our projects, and it worked. I can't find something breaking. But since this is deep inside NodeData, I've no idea, if we could get unexpected side-effects on it. Thanks to @Nikdro for the change.
+
+Fixes:  #3651
+
+* Packages: ``ContentRepository``
+
+`BUGFIX: Fix return type error with `getUriForThumbnail()` <https://github.com/neos/neos-development-collection/pull/5447>`_
+----------------------------------------------------------------------------------------------------------------------------
+
+In ``getUriForThumbnail()`` the result of ``getPublicPersistentResourceUri()`` is returned unchecked, but may be ``false``. This conflicts with the declared return type ``string``.
+
+In that case an exception is now thrown (similar to when a static resource thumbnail URI cannot be generated).
+
+
+* Packages: ``Media.Browser`` ``Neos`` ``Media``
+
+`TASK: Update github actions to checkout@v4 and cache@v4 <https://github.com/neos/neos-development-collection/pull/5465>`_
+--------------------------------------------------------------------------------------------------------------------------
+
+
+
+* Packages: ``Neos`` ``.github``
+
+`Detailed log <https://github.com/neos/neos-development-collection/compare/8.3.20...8.3.22>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

@@ -231,7 +231,7 @@ class SitesController extends AbstractModuleController
      * @Flow\IgnoreValidation("$site")
      * @return void
      */
-    public function newSiteAction(Site $site = null)
+    public function newSiteAction(?Site $site = null)
     {
         $sitePackages = $this->packageManager->getFilteredPackages('available', 'neos-site');
         $documentNodeTypes = $this->nodeTypeManager->getSubNodeTypes('Neos.Neos:Document', false);
@@ -517,7 +517,7 @@ class SitesController extends AbstractModuleController
      * @Flow\IgnoreValidation("$domain")
      * @return void
      */
-    public function newDomainAction(Domain $domain = null, Site $site = null)
+    public function newDomainAction(?Domain $domain = null, ?Site $site = null)
     {
         $this->view->assignMultiple([
             'domain' => $domain,

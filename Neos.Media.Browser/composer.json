@@ -24,7 +24,7 @@
         "neos/error-messages": "*",
         "doctrine/common": "^2.7 || ^3.0",
         "doctrine/orm": "^2.6",
-        "enshrined/svg-sanitize": "^0.16.0"
+        "enshrined/svg-sanitize": "^0.17.0"
     },
     "autoload": {
         "psr-4": {

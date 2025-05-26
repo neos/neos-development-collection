@@ -67,7 +67,7 @@ class InterDimensionalFallbackGraph
     public function __construct(
         InterDimension\InterDimensionalFallbackGraph $fallbackGraph,
         IntraDimension\IntraDimensionalFallbackGraph $intraDimensionalFallbackGraph,
-        string $rootSubgraphIdentifier = null
+        ?string $rootSubgraphIdentifier = null
     ) {
         $this->fallbackGraph = $fallbackGraph;
         $this->intraDimensionalFallbackGraph = $intraDimensionalFallbackGraph;

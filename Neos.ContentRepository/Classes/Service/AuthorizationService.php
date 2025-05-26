@@ -70,7 +70,7 @@ class AuthorizationService
      * @param NodeType $typeOfNewNode
      * @return boolean
      */
-    public function isGrantedToCreateNode(NodeInterface $referenceNode, NodeType $typeOfNewNode = null)
+    public function isGrantedToCreateNode(NodeInterface $referenceNode, ?NodeType $typeOfNewNode = null)
     {
         return $this->privilegeManager->isGranted(CreateNodePrivilege::class, new CreateNodePrivilegeSubject($referenceNode, $typeOfNewNode));
     }

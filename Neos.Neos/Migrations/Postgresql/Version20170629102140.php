@@ -33,7 +33,7 @@ class Version20170629102140 extends AbstractMigration
      * @param Schema $schema
      * @return void
      */
-    public function down(Schema $schema): void 
+    public function down(Schema $schema): void
     {
         // No down migration available
     }

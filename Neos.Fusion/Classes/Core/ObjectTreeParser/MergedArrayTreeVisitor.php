@@ -108,7 +108,7 @@ class MergedArrayTreeVisitor implements AstNodeVisitorInterface
         $this->isInsidePrototypeDeclaration = $wasPreviouslyInPrototypeDeclaration;
     }
 
-    public function visitBlock(Block $block, array $currentPath = null)
+    public function visitBlock(Block $block, ?array $currentPath = null)
     {
         $currentPath ?? throw new \BadMethodCallException('$currentPath is required.');
 
@@ -151,7 +151,7 @@ class MergedArrayTreeVisitor implements AstNodeVisitorInterface
         return [$key];
     }
 
-    public function visitValueAssignment(ValueAssignment $valueAssignment, array $currentPath = null)
+    public function visitValueAssignment(ValueAssignment $valueAssignment, ?array $currentPath = null)
     {
         $currentPath ?? throw new \BadMethodCallException('$currentPath is required.');
 
@@ -214,7 +214,7 @@ class MergedArrayTreeVisitor implements AstNodeVisitorInterface
         return $stringValue->value;
     }
 
-    public function visitValueCopy(ValueCopy $valueCopy, array $currentPath = null)
+    public function visitValueCopy(ValueCopy $valueCopy, ?array $currentPath = null)
     {
         $currentPath ?? throw new \BadMethodCallException('$currentPath is required.');
 
@@ -263,7 +263,7 @@ class MergedArrayTreeVisitor implements AstNodeVisitorInterface
         return $assignedObjectPath->objectPath->visit($this, $path);
     }
 
-    public function visitValueUnset(ValueUnset $valueUnset, array $currentPath = null)
+    public function visitValueUnset(ValueUnset $valueUnset, ?array $currentPath = null)
     {
         $currentPath ?? throw new \BadMethodCallException('$currentPath is required.');
 

@@ -97,7 +97,7 @@ class ResizeImageAdjustment extends AbstractImageAdjustment
      * @return void
      * @api
      */
-    public function setMaximumHeight(int $maximumHeight = null): void
+    public function setMaximumHeight(?int $maximumHeight = null): void
     {
         $this->maximumHeight = $maximumHeight;
     }
@@ -120,7 +120,7 @@ class ResizeImageAdjustment extends AbstractImageAdjustment
      * @return void
      * @api
      */
-    public function setMaximumWidth(int $maximumWidth = null): void
+    public function setMaximumWidth(?int $maximumWidth = null): void
     {
         $this->maximumWidth = $maximumWidth;
     }
@@ -143,7 +143,7 @@ class ResizeImageAdjustment extends AbstractImageAdjustment
      * @return void
      * @api
      */
-    public function setHeight(int $height = null): void
+    public function setHeight(?int $height = null): void
     {
         $this->height = $height;
     }
@@ -166,7 +166,7 @@ class ResizeImageAdjustment extends AbstractImageAdjustment
      * @return void
      * @api
      */
-    public function setWidth(int $width = null): void
+    public function setWidth(?int $width = null): void
     {
         $this->width = $width;
     }
@@ -189,7 +189,7 @@ class ResizeImageAdjustment extends AbstractImageAdjustment
      * @return void
      * @api
      */
-    public function setMinimumHeight(int $minimumHeight = null): void
+    public function setMinimumHeight(?int $minimumHeight = null): void
     {
         $this->minimumHeight = $minimumHeight;
     }
@@ -212,7 +212,7 @@ class ResizeImageAdjustment extends AbstractImageAdjustment
      * @return void
      * @api
      */
-    public function setMinimumWidth(int $minimumWidth = null): void
+    public function setMinimumWidth(?int $minimumWidth = null): void
     {
         $this->minimumWidth = $minimumWidth;
     }

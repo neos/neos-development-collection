@@ -35,7 +35,7 @@ class FluidView extends StandaloneView implements FusionAwareViewInterface
      * @param ActionRequest $request The current action request. If none is specified it will be created from the environment.
      * @throws \Neos\FluidAdaptor\Exception
      */
-    public function __construct(AbstractFusionObject $fusionObject, ActionRequest $request = null)
+    public function __construct(AbstractFusionObject $fusionObject, ?ActionRequest $request = null)
     {
         parent::__construct($request);
         $this->fusionObject = $fusionObject;

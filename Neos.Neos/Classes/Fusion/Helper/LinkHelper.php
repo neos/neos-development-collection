@@ -73,7 +73,7 @@ class LinkHelper implements ProtectedContextAwareInterface
      * @param NodeInterface $contextNode
      * @return NodeInterface|AssetInterface|NULL
      */
-    public function convertUriToObject($uri, NodeInterface $contextNode = null)
+    public function convertUriToObject($uri, ?NodeInterface $contextNode = null)
     {
         return $this->linkingService->convertUriToObject($uri, $contextNode);
     }

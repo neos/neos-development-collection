@@ -28,7 +28,7 @@ class BaseUriHelper implements ProtectedContextAwareInterface
      * @return UriInterface
      * @throws \Exception
      */
-    public function getConfiguredBaseUriOrFallbackToCurrentRequest(ServerRequestInterface $fallbackRequest = null): UriInterface
+    public function getConfiguredBaseUriOrFallbackToCurrentRequest(?ServerRequestInterface $fallbackRequest = null): UriInterface
     {
         try {
             $baseUri = $this->baseUriProvider->getConfiguredBaseUriOrFallbackToCurrentRequest();

@@ -41,7 +41,7 @@ class TestModelSerializer extends AbstractTypeConverter
      * @param PropertyMappingConfigurationInterface $configuration
      * @return boolean
      */
-    public function convertFrom($source, $targetType, array $convertedChildProperties = [], PropertyMappingConfigurationInterface $configuration = null)
+    public function convertFrom($source, $targetType, array $convertedChildProperties = [], ?PropertyMappingConfigurationInterface $configuration = null)
     {
         // This would use the identifier of the source in reality
         return serialize($source);

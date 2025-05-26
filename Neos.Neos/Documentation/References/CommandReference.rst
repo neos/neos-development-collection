@@ -19,7 +19,7 @@ commands that may be available, use::
 
   ./flow help
 
-The following reference was automatically generated from code on 2024-02-11
+The following reference was automatically generated from code on 2025-02-12
 
 
 .. _`Neos Command Reference: NEOS.CONTENTREPOSITORY`:
@@ -219,6 +219,96 @@ Options
   Truncate the configuration at this depth and show '...' (Usefully for only seeing the keys of the properties)
 
 
+
+
+
+.. _`Neos Command Reference: NEOS.CONTENTREPOSITORY.MIGRATION`:
+
+Package *NEOS.CONTENTREPOSITORY.MIGRATION*
+------------------------------------------
+
+
+.. _`Neos Command Reference: NEOS.CONTENTREPOSITORY.MIGRATION neos.contentrepository.migration:node:migrate`:
+
+``neos.contentrepository.migration:node:migrate``
+*************************************************
+
+**Do the configured migrations in the given migration.**
+
+By default the up direction is applied, using the direction parameter this can
+be changed.
+
+Arguments
+^^^^^^^^^
+
+``--version``
+  The version of the migration configuration you want to use.
+
+
+
+Options
+^^^^^^^
+
+``--confirmation``
+  Confirm application of this migration, only needed if the given migration contains any warnings.
+``--direction``
+  The direction to work in, MigrationStatus::DIRECTION_UP or MigrationStatus::DIRECTION_DOWN
+
+
+
+Related commands
+^^^^^^^^^^^^^^^^
+
+``neos.contentrepository.migration:node:migrationstatus``
+  List available and applied migrations
+
+
+
+.. _`Neos Command Reference: NEOS.CONTENTREPOSITORY.MIGRATION neos.contentrepository.migration:node:migrationcreate`:
+
+``neos.contentrepository.migration:node:migrationcreate``
+*********************************************************
+
+**Creates a node migration for the given package Key.**
+
+
+
+Arguments
+^^^^^^^^^
+
+``--package-key``
+  The packageKey for the given package
+
+
+
+
+
+Related commands
+^^^^^^^^^^^^^^^^
+
+``neos.contentrepository.migration:node:migrationcreate``
+  Creates a node migration for the given package Key.
+
+
+
+.. _`Neos Command Reference: NEOS.CONTENTREPOSITORY.MIGRATION neos.contentrepository.migration:node:migrationstatus`:
+
+``neos.contentrepository.migration:node:migrationstatus``
+*********************************************************
+
+**List available and applied migrations**
+
+
+
+
+
+
+
+Related commands
+^^^^^^^^^^^^^^^^
+
+``neos.contentrepository.migration:node:migrate``
+  Do the configured migrations in the given migration.
 
 
 
@@ -3097,6 +3187,83 @@ Arguments
   Name of the workspace to rebase, for example "user-john
 ``--base-workspace``
   Name of the new base workspace
+
+
+
+
+
+
+
+.. _`Neos Command Reference: NEOS.NEOS.SETUP`:
+
+Package *NEOS.NEOS.SETUP*
+-------------------------
+
+
+.. _`Neos Command Reference: NEOS.NEOS.SETUP neos.neos.setup:setup:imagehandler`:
+
+``neos.neos.setup:setup:imagehandler``
+**************************************
+
+****
+
+
+
+
+
+Options
+^^^^^^^
+
+``--driver``
+  driver
+
+
+
+
+
+.. _`Neos Command Reference: NEOS.SETUP`:
+
+Package *NEOS.SETUP*
+--------------------
+
+
+.. _`Neos Command Reference: NEOS.SETUP neos.setup:setup:database`:
+
+``neos.setup:setup:database``
+*****************************
+
+**Configure the database connection for flow persistence**
+
+
+
+
+
+Options
+^^^^^^^
+
+``--driver``
+  Driver
+``--host``
+  Hostname or IP
+``--dbname``
+  Database name
+``--user``
+  Username
+``--password``
+  Password
+
+
+
+
+
+.. _`Neos Command Reference: NEOS.SETUP neos.setup:setup:index`:
+
+``neos.setup:setup:index``
+**************************
+
+**Show information about the system health**
+
+
 
 
 
