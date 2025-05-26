@@ -925,7 +925,7 @@ class NodeData extends AbstractNodeData
                 $movedNodeData->createShadow($originalPath);
             }
         } else {
-            $referencedShadowNode = $this->nodeDataRepository->findOneByMovedTo($sourceNodeData);
+            $referencedShadowNode = $this->nodeDataRepository->findOneByMovedTo($sourceNodeData->getMovedTo());
             if ($targetPathShadowNodeData === null) {
                 if ($referencedShadowNode === null) {
                     // There is no shadow node on the original or target path, so the current node data will be turned to a shadow node and a new node data will be created for the moved node.
