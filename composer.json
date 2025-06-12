@@ -15,7 +15,7 @@
         "neos/error-messages": "*",
         "neos/utility-objecthandling": "*",
         "neos/utility-arrays": "*",
-        "symfony/serializer": "^6.3",
+        "symfony/serializer": "^6.3 || ^7.0",
         "psr/clock": "^1",
         "behat/transliterator": "~1.0",
         "ramsey/uuid": "^3.0 || ^4.0",
