@@ -5,9 +5,16 @@ Neos.Neos.Module.Administration.ConfigurationController.index = Neos.Fusion:Comp
   /// Neos\Flow\I18n\EelHelper\TranslationParameterToken
   i18n = ${I18n.id('').source('Main').package('Neos.Workspace.Ui')}
 
+  /// string
   type = ${type}
+
+  /// string[]
   availableConfigurationTypes = ${availableConfigurationTypes}
+
+  // array
   configuration = ${configuration}
+
+  // array
   validationResult = ${validationResult}
 
   renderer = afx`
@@ -16,7 +23,23 @@ Neos.Neos.Module.Administration.ConfigurationController.index = Neos.Fusion:Comp
     >
       <main class="neos-content neos-container-fluid">
         <div class="neos-row-fluid">
-          Hello I'm the configuration module
+          <Neos.Fusion:Loop items={props.availableConfigurationTypes}>
+            <ul>
+              <li>
+                <a>
+                  <Neos.Fusion:ActionUri
+                    @path="attributes.href"
+                    controller="Module\\Administration\\Configuration"
+                    action="index"
+                    format="html"
+                    arguments.type={item}
+                  />
+                  {item}
+                  {item == props.type ? 'Active' : ''}
+                </a>
+              </li>
+            </ul>
+          </Neos.Fusion:Loop>
         </div>
       </main>
       <Neos.Workspace.Ui:Component.Footer>
