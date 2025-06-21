@@ -1,0 +1,10 @@
+prototype(Neos.Neos:Common.Container) < prototype(Neos.Fusion:Component) {
+  content = ''
+  id = ''
+
+  renderer = afx`
+    <div class="neos-py-2" id={props.id}>
+      {props.content}
+    </div>
+  `
+}

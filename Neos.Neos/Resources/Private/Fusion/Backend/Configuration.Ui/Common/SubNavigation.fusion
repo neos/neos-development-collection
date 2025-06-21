@@ -1,0 +1,9 @@
+prototype(Neos.Neos:Common.SubNavigation) < prototype(Neos.Fusion:Component) {
+  content = ''
+
+  renderer = afx`
+    <nav class="sub-navigation">
+      {props.content}
+    </nav>
+  `
+}

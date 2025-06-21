@@ -1,0 +1,11 @@
+.neos-flex-row {
+  display: flex;
+}
+
+.neos-py-1 {
+  padding-block: 1rem;
+}
+
+.neos-py-2 {
+  padding-block: 2rem;
+}
