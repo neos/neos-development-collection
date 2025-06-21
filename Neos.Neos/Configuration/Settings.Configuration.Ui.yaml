@@ -1,0 +1,27 @@
+Neos:
+  Flow:
+    mvc:
+      flashMessages:
+        containers:
+          # FIXME: This is a temporary solution to make the Configuration.UI flash messages work with HTMX.
+          # The 'htmx' request pattern should be provided by a common package for all modules like Neos.Neos.
+          'Neos.Workspace.Ui:httpHeaderFlashMessages':
+            requestPatterns:
+              'htmx':
+                options:
+                  matchingPackageKeys:
+                    'Neos.Neos': true
+
+  Neos:
+    modules:
+      administration:
+        submodules:
+          configuration:
+            additionalResources:
+              # FIXME: This is a temporary solution to make the Configuration.UI work with HTMX.
+              # The common HTMX related resources should be provided by a common package for all modules like Neos.Neos.
+              javaScripts:
+                'HtmxLibrary': 'resource://Neos.Workspace.Ui/Public/Scripts/htmx.min.js'
+                'Module': 'resource://Neos.Workspace.Ui/Public/Scripts/Module.js'
+              styleSheets:
+                'Module': 'resource://Neos.Neos/Public/Styles/Module.Configuration.Ui.css'
