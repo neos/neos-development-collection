@@ -8,3 +8,6 @@ Neos:
             requestPatterns:
               'htmx':
                 pattern: 'Neos\Workspace\Ui\Mvc\HtmxRequestPattern'
+                options:
+                  matchingPackageKeys:
+                    'Neos.Workspace.Ui': true

@@ -18,12 +18,24 @@ use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Security\RequestPatternInterface;
 
 /**
- * @internal for communication within the Workspace UI only
+ * @internal for communication within configured backend modules only
  */
 final class HtmxRequestPattern implements RequestPatternInterface
 {
+    private array $matchingPackageKeys = [];
+
+    public function __construct(array $options) {
+        $this->matchingPackageKeys = array_keys(
+            array_filter(
+                $options['matchingPackageKeys'] ?? [],
+                static fn($value) => (bool)$value,
+            )
+        );
+    }
+
     public function matchRequest(ActionRequest $request): bool
     {
-        return $request->getFormat() === 'htmx' && $request->getControllerPackageKey() === 'Neos.Workspace.Ui';
+        return $request->getFormat() === 'htmx'
+            && in_array($request->getControllerPackageKey(), $this->matchingPackageKeys, true);
     }
 }
