@@ -379,6 +379,13 @@ Neos:
             description: 'Neos.Neos:Modules:configuration.description'
             icon: fas fa-list-alt
             mainStylesheet: 'Lite'
+            settings:
+              #
+              # Here you can define paths by configuration type that contain secrets and should be scrubbed before displaying
+              #
+              configurationPathsWithSecrets:
+                Settings:
+                  - Neos.Flow.persistence.backendOptions.password
           dimensions:
             label: 'Neos.Neos:Modules:dimensions.label'
             controller: 'Neos\Neos\Controller\Module\Administration\DimensionController'

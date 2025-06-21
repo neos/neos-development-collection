@@ -19,6 +19,7 @@ use Neos\Flow\Configuration\ConfigurationManager;
 use Neos\Flow\Configuration\ConfigurationSchemaValidator;
 use Neos\Flow\Configuration\Exception\SchemaValidationException;
 use Neos\Neos\Controller\Module\ModuleTranslationTrait;
+use Neos\Utility\Arrays;
 use Neos\Utility\SchemaGenerator;
 use Neos\Neos\Controller\Module\AbstractModuleController;
 use Neos\Error\Messages\Message;
@@ -61,7 +62,10 @@ class ConfigurationController extends AbstractModuleController
         ]);
 
         if (in_array($type, $availableConfigurationTypes)) {
-            $this->view->assign('configuration', $this->configurationManager->getConfiguration($type));
+            $this->view->assign('configuration', self::scrubConfiguredSecrets(
+                $this->configurationManager->getConfiguration($type),
+                $this->moduleConfiguration['settings']['configurationPathsWithSecrets'][$type] ?? []
+            ));
 
             try {
                 $this->view->assign('validationResult', $this->configurationSchemaValidator->validate($type));
@@ -83,5 +87,17 @@ class ConfigurationController extends AbstractModuleController
                 1412373998
             );
         }
+    }
+
+    public static function scrubConfiguredSecrets(array $configuration, array $pathsToBeScrubbed): array
+    {
+        $scrubbedConfiguration = $configuration;
+        foreach ($pathsToBeScrubbed as $path) {
+            $doesPathExistInConfiguration = Arrays::getValueByPath($scrubbedConfiguration, $path) !== null;
+            if ($doesPathExistInConfiguration) {
+                $scrubbedConfiguration = Arrays::setValueByPath($scrubbedConfiguration, $path, '***');
+            }
+        }
+        return $scrubbedConfiguration;
     }
 }
