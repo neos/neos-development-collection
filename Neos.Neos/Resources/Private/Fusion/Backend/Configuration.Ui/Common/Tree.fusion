@@ -1,0 +1,22 @@
+prototype(Neos.Neos:Component.Tree) < prototype(Neos.Fusion:Component) {
+  configuration = ${[]}
+
+  renderer = afx`
+    <ul>
+      <Neos.Fusion:Loop items={props.configuration}>
+        <li class={'neos-tree-node' + (Type.isArray(item)? ' neos-tree-folder' : '')}>
+          <span class="node-tree-title">{itemKey}
+            <Neos.Fusion:Fragment @if.isString={!Type.isArray(item)}>{": "}</Neos.Fusion:Fragment>
+            <span @if.isArray={Type.isArray(item)}>{" "}({Array.length(item)})</span>
+          </span>
+          <Neos.Neos:Component.Tree
+            @if.isArray={Type.isArray(item)}
+            configuration={item}/>
+          <span @if.isString={!Type.isArray(item)} class={'value -is-' + Type.getType(item)}>
+            {Type.isBoolean(item) ? (item ? 'true' : 'false') : item}
+          </span>
+        </li>
+      </Neos.Fusion:Loop>
+    </ul>
+  `
+}

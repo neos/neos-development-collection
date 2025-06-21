@@ -38,17 +38,17 @@
     }
 
     .value {
-      &[title="boolean"],
-      &[title="NULL"] {
+      &.-is-boolean,
+      &.-is-NULL {
         color: $orange;
       }
 
-      &[title="integer"],
-      &[title="double"] {
+      &.-is-integer,
+      &.-is-double {
         color: $warning;
       }
 
-      &[title="string"] {
+      &.-is-string {
         color: $blue;
       }
     }
