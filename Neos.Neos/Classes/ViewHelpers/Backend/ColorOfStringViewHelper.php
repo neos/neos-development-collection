@@ -18,6 +18,7 @@ use Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper;
 
 /**
  * Generates a color code for a given string
+ * @deprecated will be removed in Neos 10.0
  */
 class ColorOfStringViewHelper extends AbstractViewHelper
 {
