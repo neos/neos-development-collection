@@ -1,1 +1,5 @@
+include: resource://Neos.Neos/Private/Fusion/*
+include: resource://Neos.Fusion/Private/Fusion/*
+include: resource://Neos.Fusion.Form/Private/Fusion/*
+
 include: **/*
