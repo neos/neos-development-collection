@@ -110,7 +110,7 @@ class ConfigurationController extends AbstractModuleController
                 $automaticSecretScrubbingPattern,
                     (string)$key
             )) {
-                // If the path matches the automatic secret scrubbing pattern, replace the value with '***'
+                // If the key matches the automatic secret scrubbing pattern, replace the value with '***'
                 $scrubbedConfiguration[$key] = '***';
             }
         }
