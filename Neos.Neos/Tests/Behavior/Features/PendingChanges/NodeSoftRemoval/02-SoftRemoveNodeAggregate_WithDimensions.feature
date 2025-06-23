@@ -113,6 +113,14 @@ Feature: Soft remove node aggregate with node
       | nodeAggregateId | created | changed | moved | deleted | originDimensionSpacePoint |
       | other-removal   | 0       | 0       | 0     | 1       | {"language": "de"}        |
       | other-removal   | 0       | 0       | 0     | 1       | {"language": "gsw"}       |
+    And I expect to have the following deleted nodeAggregateIds in workspace "user-workspace" for dimension '{"language": "de"}':
+      | nodeAggregateId  |
+      | other-removal    |
+    And I expect to have the following deleted nodeAggregateIds in workspace "user-workspace" for dimension '{"language": "gsw"}':
+      | nodeAggregateId  |
+      | other-removal    |
+    And I expect to have no deletions in workspace "live" for dimension '{"language": "de"}'
+    And I expect to have no deletions in workspace "live" for dimension '{"language": "gsw"}'
 
   Scenario: Soft remove node aggregate in user-workspace with "allSpecializations"
     Given the command TagSubtree is executed with payload:

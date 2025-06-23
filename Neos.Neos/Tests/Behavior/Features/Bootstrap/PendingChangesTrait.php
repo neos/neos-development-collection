@@ -17,6 +17,7 @@ use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
 use Neos\ContentRepository\Core\Feature\Common\EmbedsNodeAggregateId;
 use Neos\ContentRepository\Core\Feature\ContentStreamEventStreamName;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateIds;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\EventStore\Model\EventStream\VirtualStreamName;
@@ -49,6 +50,55 @@ trait PendingChangesTrait
      * @return T
      */
     abstract private function getObject(string $className): object;
+
+    /**
+     * @Then I expect to have the following deleted nodeAggregateIds in workspace :workspace for dimension :dimensionSpacePoint:
+     */
+    public function iExpectTheChangeProjectionToHaveTheFollowingDeletionsForContentStream(TableNode $table, string $workspace, string $dimensionSpacePoint)
+    {
+        // forwards compatible adjustment, we make the test assertions on workspace names even tough we store the data in content streams
+        $workspaceInstance = $this->currentContentRepository->findWorkspaceByName(WorkspaceName::fromString($workspace));
+        Assert::assertNotNull($workspaceInstance, 'workspace doesnt exist');
+
+        $changeFinder = $this->currentContentRepository->projectionState(ChangeFinder::class);
+        $deletedNodeAggregateIde = $changeFinder->findNodeAggregateIdsForDeletedNodes(
+            $workspaceInstance->currentContentStreamId,
+            OriginDimensionSpacePoint::fromJsonString($dimensionSpacePoint),
+        );
+
+        $expectedNodeAggregateIds = NodeAggregateIds::fromArray(
+            array_map(
+                fn (array $row) => $row['nodeAggregateId'],
+                $table->getHash()
+            )
+        );
+
+        $deletedNodeAggregateIdsJson = $deletedNodeAggregateIde->toStringArray();
+        $expectedNodeAggregateIdsJson = $expectedNodeAggregateIds->toStringArray();
+
+        sort($expectedNodeAggregateIdsJson);
+        sort($deletedNodeAggregateIdsJson);
+
+        Assert::assertEquals($expectedNodeAggregateIdsJson, $deletedNodeAggregateIdsJson, 'Mismatch of changes');
+    }
+
+    /**
+     * @Then I expect to have no deletions in workspace :workspace for dimension :dimensionSpacePoint
+     */
+    public function iExpectTheChangeProjectionToHaveNoDeletionsForContentStreamAndDimension(string $workspace, string $dimensionSpacePoint)
+    {
+        // forwards compatible adjustment, we make the test assertions on workspace names even tough we store the data in content streams
+        $workspaceInstance = $this->currentContentRepository->findWorkspaceByName(WorkspaceName::fromString($workspace));
+        Assert::assertNotNull($workspaceInstance, 'workspace doesnt exist');
+
+        $changeFinder = $this->currentContentRepository->projectionState(ChangeFinder::class);
+        $deletedNodeAggregateIde = $changeFinder->findNodeAggregateIdsForDeletedNodes(
+            $workspaceInstance->currentContentStreamId,
+            OriginDimensionSpacePoint::fromJsonString($dimensionSpacePoint),
+        );
+
+        Assert::assertEquals(0, $deletedNodeAggregateIde->count(), 'Mismatch of changes');
+    }
 
     /**
      * @Then I expect to have the following changes in workspace :workspace:

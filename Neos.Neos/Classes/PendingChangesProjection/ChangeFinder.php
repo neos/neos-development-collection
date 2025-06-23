@@ -15,7 +15,10 @@ declare(strict_types=1);
 namespace Neos\Neos\PendingChangesProjection;
 
 use Doctrine\DBAL\Connection;
+use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
+use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
 use Neos\ContentRepository\Core\Projection\ProjectionStateInterface;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateIds;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\Flow\Annotations as Flow;
 
@@ -31,6 +34,23 @@ final class ChangeFinder implements ProjectionStateInterface
         private readonly Connection $dbal,
         private readonly string $tableName,
     ) {
+    }
+
+    public function findNodeAggregateIdsForDeletedNodes(ContentStreamId $contentStreamId, OriginDimensionSpacePoint $originDimensionSpacePoint): NodeAggregateIds
+    {
+        $deletedRows = $this->dbal->executeQuery(
+            <<<SQL
+                SELECT nodeAggregateId FROM {$this->tableName}
+                WHERE contentStreamId = :contentStreamId
+                AND deleted IS TRUE
+                AND originDimensionSpacePointHash = :originDimensionSpacePointHash
+            SQL,
+            [
+                'contentStreamId' => $contentStreamId->value,
+                'originDimensionSpacePointHash' => $originDimensionSpacePoint->hash
+            ]
+        )->fetchAllAssociative();
+        return NodeAggregateIds::fromArray(array_map(fn(array $row) => $row['nodeAggregateId'], $deletedRows));
     }
 
     public function findByContentStreamId(ContentStreamId $contentStreamId): Changes

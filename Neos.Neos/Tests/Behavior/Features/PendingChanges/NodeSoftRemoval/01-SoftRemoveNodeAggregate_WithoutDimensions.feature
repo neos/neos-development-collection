@@ -57,7 +57,11 @@ Feature: Soft remove node aggregate with node without dimensions
     Then I expect to have the following changes in workspace "user-workspace":
       | nodeAggregateId  | created | changed | moved | deleted | originDimensionSpacePoint |
       | nody-mc-nodeface | 0       | 0       | 0     | 1       | {}                        |
+    And I expect to have the following deleted nodeAggregateIds in workspace "user-workspace" for dimension "{}":
+      | nodeAggregateId  |
+      | nody-mc-nodeface |
     And I expect to have no changes in workspace "live"
+    And I expect to have no deletions in workspace "live" for dimension "{}"
 
   Scenario: Soft remove node aggregate in live workspace
     Given the command TagSubtree is executed with payload:
@@ -70,6 +74,8 @@ Feature: Soft remove node aggregate with node without dimensions
 
     Then I expect to have no changes in workspace "live"
     And I expect to have no changes in workspace "user-workspace"
+    And I expect to have no deletions in workspace "live" for dimension "{}"
+    And I expect to have no deletions in workspace "user-workspace" for dimension "{}"
 
   Scenario: Soft remove node aggregate with children in user workspace
     Given the command TagSubtree is executed with payload:
@@ -84,6 +90,10 @@ Feature: Soft remove node aggregate with node without dimensions
       | nodeAggregateId        | created | changed | moved | deleted | originDimensionSpacePoint |
       | sir-david-nodenborough | 0       | 0       | 0     | 1       | {}                        |
     And I expect to have no changes in workspace "live"
+    And I expect to have the following deleted nodeAggregateIds in workspace "user-workspace" for dimension "{}":
+      | nodeAggregateId        |
+      | sir-david-nodenborough |
+    And I expect to have no deletions in workspace "live" for dimension "{}"
 
   Scenario: Soft remove node aggregate with children in live workspace
     Given the command TagSubtree is executed with payload:
@@ -96,6 +106,8 @@ Feature: Soft remove node aggregate with node without dimensions
 
     Then I expect to have no changes in workspace "live"
     And I expect to have no changes in workspace "user-workspace"
+    And I expect to have no deletions in workspace "live" for dimension "{}"
+    And I expect to have no deletions in workspace "user-workspace" for dimension "{}"
 
   Scenario: Soft remove node aggregate in user workspace which was already modified
     Given the command SetNodeProperties is executed with payload:
@@ -117,3 +129,7 @@ Feature: Soft remove node aggregate with node without dimensions
       | nodeAggregateId        | created | changed | moved | deleted | originDimensionSpacePoint |
       | sir-david-nodenborough | 0       | 1       | 0     | 1       | {}                        |
     And I expect to have no changes in workspace "live"
+    And I expect to have the following deleted nodeAggregateIds in workspace "user-workspace" for dimension "{}":
+      | nodeAggregateId        |
+      | sir-david-nodenborough |
+    And I expect to have no deletions in workspace "live" for dimension "{}":
