@@ -1,0 +1,11 @@
+prototype(Neos.Configuration.Ui:Component.Tabs.Caches) < prototype(Neos.Fusion:Component) {
+  configuration = ${{}}
+
+  renderer = afx`
+    <div class="neos-configuration-tab neos-configuration-tab--caches">
+      <Neos.Neos:Component.Tree
+          configuration={props.configuration}
+      />
+    </div>
+  `
+}

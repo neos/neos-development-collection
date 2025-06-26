@@ -1,7 +1,6 @@
 include: resource://Neos.Fusion/Private/Fusion/Root.fusion
 include: resource://Neos.Fusion.Form/Private/Fusion/Root.fusion
 include: resource://Neos.Neos/Private/Fusion/SharedCoreComponents/*
-include: resource://Neos.Neos/Private/Fusion/Backend/*
 include: resource://Neos.Neos/Private/Fusion/*
 include: resource://Neos.Workspace.Ui/Private/Fusion/*
 include: **/*

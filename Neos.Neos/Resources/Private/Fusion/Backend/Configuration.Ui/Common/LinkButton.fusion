@@ -1,8 +1,10 @@
-prototype(Neos.Workspace.Ui:Component.Button) < prototype(Neos.Fusion:Component) {
+prototype(Neos.Neos:Component.LinkButton) < prototype(Neos.Fusion:Component) {
   /// string
   title = ''
   /// string
   label = ''
+  /// string
+  href = ''
   /// boolean
   isDanger = false
   /// boolean
@@ -13,12 +15,8 @@ prototype(Neos.Workspace.Ui:Component.Button) < prototype(Neos.Fusion:Component)
   isSuccess = false
   ///boolean
   isActive = false
-  /// boolean
-  disabled = false
   /// string
   icon = ''
-  /// boolean
-  autofocus = false
   /// array<string,mixed>
   attributes = Neos.Fusion:DataStructure
 
@@ -34,19 +32,16 @@ prototype(Neos.Workspace.Ui:Component.Button) < prototype(Neos.Fusion:Component)
   }
 
   renderer = afx`
-    <button
+    <a
       type="button"
       title={props.title}
       class={private.classNames}
-      autofocus
-      autofocus.@if={!props.isLink && props.autofocus}
-      disabled
-      disabled.@if={!props.isLink && props.disabled}
+      href={props.href}
       aria-current={props.isActive ? 'page' : null}
       {...props.attributes}
     >
       <Neos.Workspace.Ui:Component.Icon icon={props.icon} @if={props.icon}/>
       {props.icon ? ' ' : ''}{props.label}
-    </button>
+    </a>
   `
 }
