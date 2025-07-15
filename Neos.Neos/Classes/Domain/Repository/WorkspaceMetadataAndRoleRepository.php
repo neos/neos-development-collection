@@ -42,15 +42,17 @@ use Neos\Neos\Security\Authorization\ContentRepositoryAuthorizationService;
  * @internal Neos users should not need to deal with this low level repository. No security is imposed here. Please use the {@see WorkspaceService}!
  */
 #[Flow\Scope('singleton')]
-final readonly class WorkspaceMetadataAndRoleRepository
+final class WorkspaceMetadataAndRoleRepository
 {
     private const TABLE_NAME_WORKSPACE_METADATA = 'neos_neos_workspace_metadata';
     private const TABLE_NAME_WORKSPACE_ROLE = 'neos_neos_workspace_role';
 
-    public function __construct(
-        private Connection $dbal
-    ) {
-    }
+    /**
+     * Lazy inject to prevent connection to database if object is loaded
+     * @var Connection
+     */
+    #[Flow\Inject(lazy: true)]
+    protected $dbal;
 
     /**
      * The public and documented API is {@see WorkspaceService::assignWorkspaceRole}
