@@ -17,7 +17,8 @@ namespace Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\Feature;
 use Doctrine\DBAL\Connection;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\NodeRecord;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\NodeRelationAnchorPoint;
-use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\ProjectionHypergraph;
+use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\ProjectionReadQueries;
+use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\ProjectionWriteQueries;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 
 /**
@@ -35,7 +36,7 @@ trait CopyOnWrite
         NodeRecord $originNode,
         callable $preprocessor
     ): NodeRelationAnchorPoint {
-        $numberOfContentStreamsNodeDoesCover = $this->getProjectionHypergraph()
+        $numberOfContentStreamsNodeDoesCover = $this->getReadQueries()
             ->countContentStreamCoverage($originNode->relationAnchorPoint);
 
         if ($numberOfContentStreamsNodeDoesCover > 1) {
@@ -81,7 +82,7 @@ trait CopyOnWrite
         NodeRelationAnchorPoint $targetRelationAnchorPoint
     ): void {
         foreach (
-            $this->getProjectionHypergraph()->findIngoingHierarchyHyperrelationRecords(
+            $this->getReadQueries()->findIngoingHierarchyHyperrelationRecords(
                 $originContentStreamId,
                 $originRelationAnchorPoint
             ) as $ingoingHierarchyRelation
@@ -104,7 +105,7 @@ trait CopyOnWrite
         NodeRelationAnchorPoint $targetRelationAnchorPoint
     ): void {
         foreach (
-            $this->getProjectionHypergraph()->findOutgoingHierarchyHyperrelationRecords(
+            $this->getReadQueries()->findOutgoingHierarchyHyperrelationRecords(
                 $originContentStreamId,
                 $originRelationAnchorPoint
             ) as $outgoingHierarchyRelation
@@ -125,16 +126,16 @@ trait CopyOnWrite
         NodeRelationAnchorPoint $newSourceNodeAnchor
     ): void {
         foreach (
-            $this->getProjectionHypergraph()->findOutgoingReferenceHyperrelationRecords(
+            $this->getReadQueries()->findOutgoingReferenceHyperrelationRecords(
                 $sourceNodeAnchor
             ) as $outgoingReferenceRelation
         ) {
             $copiedReferenceRelation = $outgoingReferenceRelation->withSourceNodeAnchor($newSourceNodeAnchor);
-            $copiedReferenceRelation->addToDatabase($this->getDatabaseConnection(), $this->tableNamePrefix);
+            $this->getWriteQueries()->addReferenceToDatabase($this->getDatabaseConnection(), $copiedReferenceRelation);
         }
     }
 
-    abstract protected function getProjectionHypergraph(): ProjectionHypergraph;
-
     abstract protected function getDatabaseConnection(): Connection;
+    abstract protected function getWriteQueries(): ProjectionWriteQueries;
+
 }

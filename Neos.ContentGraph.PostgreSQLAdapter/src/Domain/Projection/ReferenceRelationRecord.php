@@ -14,8 +14,6 @@ declare(strict_types=1);
 
 namespace Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection;
 
-use Doctrine\DBAL\Connection;
-use Doctrine\DBAL\Exception as DBALException;
 use Neos\ContentRepository\Core\Feature\NodeModification\Dto\SerializedPropertyValues;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Node\ReferenceName;
@@ -52,22 +50,6 @@ final readonly class ReferenceRelationRecord
         );
     }
 
-    /**
-     * @throws DBALException
-     */
-    public function addToDatabase(Connection $databaseConnection, string $tableNamePrefix): void
-    {
-        $databaseConnection->insert($tableNamePrefix . '_referencerelation', [
-            'sourcenodeanchor' => $this->sourceNodeAnchor->value,
-            'name' => $this->name->value,
-            'position' => $this->position,
-            'properties' => $this->properties
-                ? \json_encode($this->properties)
-                : null,
-            'targetnodeaggregateid' => $this->targetNodeAggregateId->value
-        ]);
-    }
-
     public function withSourceNodeAnchor(NodeRelationAnchorPoint $sourceNodeAnchor): self
     {
         return new self(
@@ -79,13 +61,4 @@ final readonly class ReferenceRelationRecord
         );
     }
 
-    public static function removeFromDatabaseForSource(
-        NodeRelationAnchorPoint $sourceNodeAnchor,
-        Connection $databaseConnection,
-        string $tableNamePrefix
-    ): void {
-        $databaseConnection->delete($tableNamePrefix . '_referencerelation', [
-            'sourcenodeanchor' => $sourceNodeAnchor->value
-        ]);
-    }
 }

@@ -15,6 +15,8 @@ declare(strict_types=1);
 namespace Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection;
 
 use Doctrine\DBAL\Connection;
+use Neos\ContentGraph\PostgreSQLAdapter\ContentGraphTableNames;
+use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\Feature\ContentStream;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\Feature\ContentStreamForking;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\Feature\NodeCreation;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\Feature\NodeModification;
@@ -24,9 +26,14 @@ use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\Feature\NodeRenaming;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\Feature\NodeTypeChange;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\Feature\NodeVariation;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\Feature\SubtreeTagging;
+use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\Feature\Workspace;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\SchemaBuilder\HypergraphSchemaBuilder;
 use Neos\ContentRepository\Core\EventStore\EventInterface;
+use Neos\ContentRepository\Core\Feature\ContentStreamClosing\Event\ContentStreamWasClosed;
+use Neos\ContentRepository\Core\Feature\ContentStreamClosing\Event\ContentStreamWasReopened;
+use Neos\ContentRepository\Core\Feature\ContentStreamCreation\Event\ContentStreamWasCreated;
 use Neos\ContentRepository\Core\Feature\ContentStreamForking\Event\ContentStreamWasForked;
+use Neos\ContentRepository\Core\Feature\ContentStreamRemoval\Event\ContentStreamWasRemoved;
 use Neos\ContentRepository\Core\Feature\NodeCreation\Event\NodeAggregateWithNodeWasCreated;
 use Neos\ContentRepository\Core\Feature\NodeModification\Event\NodePropertiesWereSet;
 use Neos\ContentRepository\Core\Feature\NodeReferencing\Event\NodeReferencesWereSet;
@@ -39,18 +46,33 @@ use Neos\ContentRepository\Core\Feature\NodeVariation\Event\NodeSpecializationVa
 use Neos\ContentRepository\Core\Feature\RootNodeCreation\Event\RootNodeAggregateWithNodeWasCreated;
 use Neos\ContentRepository\Core\Feature\SubtreeTagging\Event\SubtreeWasTagged;
 use Neos\ContentRepository\Core\Feature\SubtreeTagging\Event\SubtreeWasUntagged;
+use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Event\RootWorkspaceWasCreated;
+use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Event\WorkspaceWasCreated;
+use Neos\ContentRepository\Core\Feature\WorkspacePublication\Event\WorkspaceWasDiscarded;
+use Neos\ContentRepository\Core\Feature\WorkspacePublication\Event\WorkspaceWasPublished;
+use Neos\ContentRepository\Core\Feature\WorkspaceRebase\Event\WorkspaceWasRebased;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphProjectionInterface;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphReadModelInterface;
 use Neos\ContentRepository\Core\Projection\ProjectionStatus;
+use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
 use Neos\ContentRepository\Dbal\DbalSchemaDiff;
 use Neos\EventStore\Model\EventEnvelope;
 
 /**
- * The alternate reality-aware hypergraph projector for the PostgreSQL backend via Doctrine DBAL
+ * Postgres implementation for the {@link ContentGraphProjectionInterface}.
+ *
+ * This class has three responsibilities:
+ * <ol>
+ * <li>It provides DB schema creation and reset queries to initialize the content repository.</li>
+ * <li>It implements the WRITE side of the content repository by reacting to emitted events.</li>
+ * <li>It provides access to the READ side by exposing the {@link ContentGraphReadModelInterface}.</li>
+ * </ol>
+ *
+ *
  *
  * @internal the parent Content Graph is public
  */
-final class HypergraphProjection implements ContentGraphProjectionInterface
+final readonly class PostgresContentGraphProjection implements ContentGraphProjectionInterface
 {
     use ContentStreamForking;
     use NodeCreation;
@@ -61,15 +83,21 @@ final class HypergraphProjection implements ContentGraphProjectionInterface
     use NodeRenaming;
     use NodeTypeChange;
     use NodeVariation;
+    use Workspace;
+    use ContentStream;
 
-    private ProjectionHypergraph $projectionHypergraph;
+    private ProjectionReadQueries $readQueries;
+    private ProjectionWriteQueries $writeQueries;
+    private ContentGraphTableNames $tableNames;
 
     public function __construct(
-        private readonly Connection $dbal,
-        private readonly string $tableNamePrefix,
-        private readonly ContentGraphReadModelInterface $contentGraphReadModel
+        private Connection $dbal,
+        private ContentRepositoryId $contentRepositoryId,
+        private ContentGraphReadModelInterface $contentGraphReadModel
     ) {
-        $this->projectionHypergraph = new ProjectionHypergraph($this->dbal, $this->tableNamePrefix);
+        $this->tableNames = ContentGraphTableNames::create($contentRepositoryId);
+        $this->readQueries = new ProjectionReadQueries($this->dbal, $contentRepositoryId);
+        $this->writeQueries = new ProjectionWriteQueries($contentRepositoryId);
     }
 
 
@@ -78,15 +106,28 @@ final class HypergraphProjection implements ContentGraphProjectionInterface
         foreach ($this->determineRequiredSqlStatements() as $statement) {
             $this->dbal->executeStatement($statement);
         }
-        $this->dbal->executeStatement('
-            CREATE INDEX IF NOT EXISTS node_properties ON ' . $this->tableNamePrefix . '_node USING GIN(properties);
-
-            create index if not exists hierarchy_children
-                on ' . $this->tableNamePrefix . '_hierarchyhyperrelation using gin (childnodeanchors);
-
-            create index if not exists restriction_affected
-                on ' . $this->tableNamePrefix . '_restrictionhyperrelation using gin (affectednodeaggregateids);
-        ');
+        $tableNode = $this->tableNames->node();
+        $tableHierarchyRelation = $this->tableNames->hierarchyRelation();
+        $this->dbal->executeStatement(<<<SQL
+            create index if not exists node_properties on $tableNode using gin(properties);
+            create index if not exists hierarchy_children on $tableHierarchyRelation using gin(childnodeanchors);
+        SQL);
+        $this->dbal->executeStatement(<<<SQL
+            create or replace function insert_into_array_before_successor(ids bigint[], value bigint, successor bigint)
+                returns bigint[]
+            as
+            $$
+            declare
+                successor_idx integer := array_position(ids, successor);
+            begin
+                return case when successor is null or successor_idx is null then
+                    (select ids || value)
+                else
+                    (select ids[:successor_idx - 1] || value || ids[successor_idx:])
+                end;
+            end;
+            $$ language plpgsql;
+        SQL);
     }
 
     public function status(): ProjectionStatus
@@ -112,9 +153,15 @@ final class HypergraphProjection implements ContentGraphProjectionInterface
      */
     private function determineRequiredSqlStatements(): array
     {
-        HypergraphSchemaBuilder::registerTypes($this->dbal->getDatabasePlatform());
-        $schema = (new HypergraphSchemaBuilder($this->tableNamePrefix))->buildSchema();
-        return DbalSchemaDiff::determineRequiredSqlStatements($this->dbal, $schema);
+        try {
+            HypergraphSchemaBuilder::registerTypes($this->dbal->getDatabasePlatform());
+            $schema = (new HypergraphSchemaBuilder($this->tableNames))->buildSchema();
+            $queries = DbalSchemaDiff::determineRequiredSqlStatements($this->dbal, $schema);
+            return $queries;
+        } catch (\Throwable $e) {
+            //return [];
+            throw $e;
+        }
     }
 
     public function resetState(): void
@@ -124,17 +171,19 @@ final class HypergraphProjection implements ContentGraphProjectionInterface
 
     private function truncateDatabaseTables(): void
     {
-        $this->dbal->executeQuery('TRUNCATE table ' . $this->tableNamePrefix . '_node');
-        $this->dbal->executeQuery('TRUNCATE table ' . $this->tableNamePrefix . '_hierarchyhyperrelation');
-        $this->dbal->executeQuery('TRUNCATE table ' . $this->tableNamePrefix . '_referencerelation');
-        $this->dbal->executeQuery('TRUNCATE table ' . $this->tableNamePrefix . '_restrictionhyperrelation');
+        $this->dbal->executeQuery('TRUNCATE table ' . $this->tableNames->node());
+        $this->dbal->executeQuery('TRUNCATE table ' . $this->tableNames->hierarchyRelation());
+        $this->dbal->executeQuery('TRUNCATE table ' . $this->tableNames->referenceRelation());
+        $this->dbal->executeQuery('TRUNCATE table ' . $this->tableNames->workspace());
+        $this->dbal->executeQuery('TRUNCATE table ' . $this->tableNames->contentStream());
+        $this->dbal->executeQuery('TRUNCATE table ' . $this->tableNames->dimensionSpacePoints());
+        // TODO implement sub-tree tags
+        //$this->dbal->executeQuery('TRUNCATE table ' . $this->tableNames->subTreeTags());
     }
 
     public function apply(EventInterface $event, EventEnvelope $eventEnvelope): void
     {
         match ($event::class) {
-            // ContentStreamForking
-            ContentStreamWasForked::class => $this->whenContentStreamWasForked($event),
             // NodeCreation
             RootNodeAggregateWithNodeWasCreated::class => $this->whenRootNodeAggregateWithNodeWasCreated($event),
             NodeAggregateWithNodeWasCreated::class => $this->whenNodeAggregateWithNodeWasCreated($event),
@@ -155,6 +204,19 @@ final class HypergraphProjection implements ContentGraphProjectionInterface
             NodeSpecializationVariantWasCreated::class => $this->whenNodeSpecializationVariantWasCreated($event),
             NodeGeneralizationVariantWasCreated::class => $this->whenNodeGeneralizationVariantWasCreated($event),
             NodePeerVariantWasCreated::class => $this->whenNodePeerVariantWasCreated($event),
+            // Workspaces
+            RootWorkspaceWasCreated::class => $this->whenRootWorkspaceWasCreated($event),
+            WorkspaceWasCreated::class => $this->whenWorkspaceWasCreated($event),
+            WorkspaceWasDiscarded::class => $this->whenWorkspaceWasDiscarded($event),
+            WorkspaceWasPublished::class => $this->whenWorkspaceWasPublished($event),
+            WorkspaceWasRebased::class => $this->whenWorkspaceWasRebased($event),
+            // ContentStream
+            ContentStreamWasClosed::class => $this->whenContentStreamWasClosed($event),
+            ContentStreamWasCreated::class => $this->whenContentStreamWasCreated($event),
+            ContentStreamWasRemoved::class => $this->whenContentStreamWasRemoved($event),
+            ContentStreamWasReopened::class => $this->whenContentStreamWasReopened($event),
+            // ContentStreamForking
+            ContentStreamWasForked::class => $this->whenContentStreamWasForked($event),
             default => null,
         };
     }
@@ -179,13 +241,24 @@ final class HypergraphProjection implements ContentGraphProjectionInterface
         return $this->contentGraphReadModel;
     }
 
-    protected function getProjectionHypergraph(): ProjectionHypergraph
+    protected function getReadQueries(): ProjectionReadQueries
     {
-        return $this->projectionHypergraph;
+        return $this->readQueries;
     }
 
     protected function getDatabaseConnection(): Connection
     {
         return $this->dbal;
     }
+
+    protected function getWriteQueries(): ProjectionWriteQueries
+    {
+        return $this->writeQueries;
+    }
+
+    protected function getTableNames(): ContentGraphTableNames
+    {
+        return $this->tableNames;
+    }
+
 }

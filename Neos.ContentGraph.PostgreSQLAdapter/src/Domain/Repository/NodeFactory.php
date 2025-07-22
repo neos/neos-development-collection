@@ -247,7 +247,11 @@ final class NodeFactory
     /**
      * @param array<int,array<string,mixed>> $nodeRows
      */
-    public function mapNodeRowsToNodeAggregates(array $nodeRows, VisibilityConstraints $visibilityConstraints): NodeAggregates
+    public function mapNodeRowsToNodeAggregates(
+        array $nodeRows,
+        WorkspaceName $workspaceName,
+        VisibilityConstraints $visibilityConstraints
+    ): NodeAggregates
     {
         if (empty($nodeRows)) {
             return NodeAggregates::createEmpty();
@@ -322,7 +326,7 @@ final class NodeFactory
         foreach ($nodeAggregateIds as $key => $nodeAggregateId) {
             $nodeAggregates[] = NodeAggregate::create(
                 $this->contentRepositoryId,
-                WorkspaceName::fromString('missing'), // todo
+                $workspaceName,
                 $nodeAggregateId,
                 $nodeAggregateClassifications[$key],
                 $nodeTypeNames[$key],

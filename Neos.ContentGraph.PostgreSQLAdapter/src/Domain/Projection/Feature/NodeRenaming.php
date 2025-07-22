@@ -16,7 +16,7 @@ namespace Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\Feature;
 
 use Doctrine\DBAL\Connection;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\NodeRecord;
-use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\ProjectionHypergraph;
+use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\ProjectionReadQueries;
 use Neos\ContentRepository\Core\Feature\NodeRenaming\Event\NodeAggregateNameWasChanged;
 
 /**
@@ -34,7 +34,7 @@ trait NodeRenaming
     private function whenNodeAggregateNameWasChanged(NodeAggregateNameWasChanged $event): void
     {
         foreach (
-            $this->getProjectionHyperGraph()->findNodeRecordsForNodeAggregate(
+            $this->getReadQueries()->findNodeRecordsForNodeAggregate(
                 $event->contentStreamId,
                 $event->nodeAggregateId
             ) as $originNode
@@ -49,7 +49,7 @@ trait NodeRenaming
         }
     }
 
-    abstract protected function getProjectionHyperGraph(): ProjectionHypergraph;
+    abstract protected function getReadQueries(): ProjectionReadQueries;
 
     abstract protected function getDatabaseConnection(): Connection;
 }

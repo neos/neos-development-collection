@@ -15,21 +15,10 @@ declare(strict_types=1);
 namespace Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\Feature;
 
 use Doctrine\DBAL\Connection;
-use Doctrine\DBAL\Exception as DBALException;
-use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\EventCouldNotBeAppliedToContentGraph;
-use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\HierarchyHyperrelationRecord;
-use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\NodeRecord;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\NodeRelationAnchorPoint;
-use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\NodeRelationAnchorPoints;
-use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\ProjectionHypergraph;
-use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
-use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
 use Neos\ContentRepository\Core\Feature\NodeCreation\Event\NodeAggregateWithNodeWasCreated;
-use Neos\ContentRepository\Core\Feature\NodeModification\Dto\SerializedPropertyValues;
 use Neos\ContentRepository\Core\Feature\RootNodeCreation\Event\RootNodeAggregateWithNodeWasCreated;
-use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 
 /**
  * The node creation feature set for the hypergraph projector
@@ -43,28 +32,71 @@ trait NodeCreation
      */
     private function whenRootNodeAggregateWithNodeWasCreated(RootNodeAggregateWithNodeWasCreated $event): void
     {
-        $nodeRelationAnchorPoint = NodeRelationAnchorPoint::create();
+        //  1. Create a node entry
+        //  2. Connect the hierarchy to the root edge (add the node as child-node in each content dimension)
+
+        $query = <<<SQL
+            with created_node as (
+              -- first, we create the node record
+              insert into {$this->tableNames->node()}
+                (nodeaggregateid, origindimensionspacepoint, origindimensionspacepointhash, nodetypename,
+                 properties, classification, nodename)
+                -- all values are passed via parameter
+                values (:nodeaggregateid, :origindimensionspacepoint, :origindimensionspacepointhash, :nodetypename,
+                        '{}', -- empty properties
+                        :classification,
+                        '' -- no node name
+                        )
+                -- we want to keep track of the created ID (it is auto-increment)
+                returning relationanchorpoint)
+            -- now we connect the hierarchy for each content dimension (this node needs to be placed below its parent)
+            -- ### this node is the first child node of its parent
+            insert
+            into {$this->tableNames->hierarchyRelation()}
+            (contentstreamid, parentnodeanchor, dimensionspacepointhash, dimensionspacepoint, childnodeanchors)
+            -- contentstream and root edge is passed via parameter
+            select :contentstreamid        as contentstreamid,
+                   :rootedgeanchor         as parentnodeanchor,
+                   dim.dimensionhash       as dimensionspacepointhash,
+                   dsp.dimensionspacepoint as dimensionspacepoint,
+                   array [cn.relationanchorpoint]
+            -- here we access the created node ID
+            from created_node cn
+                   -- we pass in the target dimensions via JSON object parameter
+                   -- jsonb_array_elements_text transforms the JSON array to rows
+                   left join jsonb_array_elements_text(:dimensions) dim(dimensionhash)
+                             on true
+              -- here, we access the dimension values to copy them on the hierarchy record
+                   left join {$this->tableNames->dimensionSpacePoints()} dsp
+                             on dsp.hash = dim.dimensionhash
+            -- fixme this seems wrong
+            where dsp.dimensionspacepoint is not null
+        SQL;
+
         $originDimensionSpacePoint = OriginDimensionSpacePoint::createWithoutDimensions();
 
-        $node = new NodeRecord(
-            $nodeRelationAnchorPoint,
-            $event->nodeAggregateId,
-            $originDimensionSpacePoint,
-            $originDimensionSpacePoint->hash,
-            SerializedPropertyValues::createEmpty(),
-            $event->nodeTypeName,
-            $event->nodeAggregateClassification,
-            null
-        );
-
-        $node->addToDatabase($this->getDatabaseConnection(), $this->tableNamePrefix);
-        $this->connectToHierarchy(
-            $event->contentStreamId,
-            NodeRelationAnchorPoint::forRootHierarchyRelation(),
-            $node->relationAnchorPoint,
-            $event->coveredDimensionSpacePoints,
-            null
-        );
+        $result = $this->getDatabaseConnection()->executeQuery($query, [
+            'nodeaggregateid' => $event->nodeAggregateId->value,
+            'origindimensionspacepoint' => $originDimensionSpacePoint->toJson(),
+            'origindimensionspacepointhash' => $originDimensionSpacePoint->hash,
+            'nodetypename' => $event->nodeTypeName->value,
+            'classification' => $event->nodeAggregateClassification->value,
+            'contentstreamid' => $event->contentStreamId->value,
+            // This is an JSON object where the keys are the dimension hash
+            // and the values are the successors (optional, null value means -> append child to end)
+            'dimensions' => json_encode($event->coveredDimensionSpacePoints->getPointHashes()),
+            // this could be done directly in the query (value 0), but I leave it here for verbosity
+            // and code usage navigation
+            'rootedgeanchor' => NodeRelationAnchorPoint::forRootEdge()
+        ]);
+        /*
+         * TODO error handling
+        if (is_null($parentNode)) {
+            throw EventCouldNotBeAppliedToContentGraph::becauseTheTargetParentNodeIsMissing(
+                get_class($event)
+            );
+        }
+        */
     }
 
     /**
@@ -73,132 +105,90 @@ trait NodeCreation
      */
     public function whenNodeAggregateWithNodeWasCreated(NodeAggregateWithNodeWasCreated $event): void
     {
-        $nodeRelationAnchorPoint = NodeRelationAnchorPoint::create();
-        $node = new NodeRecord(
-            $nodeRelationAnchorPoint,
-            $event->nodeAggregateId,
-            $event->originDimensionSpacePoint,
-            $event->originDimensionSpacePoint->hash,
-            $event->initialPropertyValues,
-            $event->nodeTypeName,
-            $event->nodeAggregateClassification,
-            $event->nodeName
-        );
+        // This event handler performs the following actions:
+        //  1. Create a node entry
+        //  2. Connect the hierarchy (add the node as child-node in each content dimension)
 
-        $node->addToDatabase($this->getDatabaseConnection(), $this->tableNamePrefix);
-        foreach ($event->succeedingSiblingsForCoverage->toDimensionSpacePointSet() as $dimensionSpacePoint) {
-            $hierarchyRelation = $this->getProjectionHypergraph()->findChildHierarchyHyperrelationRecord(
-                $event->contentStreamId,
-                $dimensionSpacePoint,
-                $event->parentNodeAggregateId
-            );
-            if ($hierarchyRelation) {
-                $succeedingSiblingNodeAnchor = null;
-                $succeedingSiblingNodeAggregateId = $event->succeedingSiblingsForCoverage->getSucceedingSiblingIdForDimensionSpacePoint($dimensionSpacePoint);
-                if ($succeedingSiblingNodeAggregateId) {
-                    $succeedingSiblingNode = $this->getProjectionHypergraph()->findNodeRecordByCoverage(
-                        $event->contentStreamId,
-                        $dimensionSpacePoint,
-                        $succeedingSiblingNodeAggregateId
-                    );
-                    $succeedingSiblingNodeAnchor = $succeedingSiblingNode?->relationAnchorPoint;
-                }
-                $hierarchyRelation->addChildNodeAnchor(
-                    $node->relationAnchorPoint,
-                    $succeedingSiblingNodeAnchor,
-                    $this->getDatabaseConnection(),
-                    $this->tableNamePrefix
-                );
-            } else {
-                $parentNode = $this->getProjectionHypergraph()->findNodeRecordByCoverage(
-                    $event->contentStreamId,
-                    $dimensionSpacePoint,
-                    $event->parentNodeAggregateId
-                );
-                if (is_null($parentNode)) {
-                    throw EventCouldNotBeAppliedToContentGraph::becauseTheTargetParentNodeIsMissing(
-                        get_class($event)
-                    );
-                }
-                $hierarchyRelation = new HierarchyHyperrelationRecord(
-                    $event->contentStreamId,
-                    $parentNode->relationAnchorPoint,
-                    $dimensionSpacePoint,
-                    NodeRelationAnchorPoints::fromArray([$node->relationAnchorPoint])
-                );
-                $hierarchyRelation->addToDatabase($this->getDatabaseConnection(), $this->tableNamePrefix);
-            }
-            $this->connectToRestrictionRelations(
-                $event->contentStreamId,
-                $dimensionSpacePoint,
-                $event->parentNodeAggregateId,
-                $event->nodeAggregateId
-            );
-        }
-    }
+        $query = <<<SQL
+            with created_node as (
+              -- first, we create the node record
+              insert into {$this->tableNames->node()}
+                (nodeaggregateid, origindimensionspacepoint, origindimensionspacepointhash, nodetypename,
+                 properties, classification, nodename)
+                -- all values are passed via parameter
+                values (:nodeaggregateid, :origindimensionspacepoint, :origindimensionspacepointhash, :nodetypename, :properties,
+                        :classification, :nodename)
+                -- we want to keep track of the created ID (it is auto-increment)
+                returning relationanchorpoint)
+            -- now we connect the hierarchy for each content dimension (this node needs to be placed below its parent)
+            -- ### initial case (INSERT) - this node is the first child node of its parent
+            insert
+            into {$this->tableNames->hierarchyRelation()}
+            (contentstreamid, parentnodeanchor, dimensionspacepointhash, dimensionspacepoint, childnodeanchors)
+            -- contentstream and parent ID is passed via parameter
+            select :contentstreamid        as contentstreamid,
+                   pn.relationanchorpoint  as parentnodeanchor,
+                   sibl.dimensionhash      as dimensionspacepointhash,
+                   dsp.dimensionspacepoint as dimensionspacepoint,
+                   array [cn.relationanchorpoint]
+            -- here we access the created node ID
+            from created_node cn
+                   -- we pass in the target dimensions and successors via JSON object parameter
+                   -- jsonb_each_text transforms the JSON object key-values to rows
+                   left join jsonb_each_text(:interdimensionalsiblings) sibl(dimensionhash, successor)
+                             on true
+              -- here, we access the dimension values to copy them on the hierarchy record
+                   left join {$this->tableNames->dimensionSpacePoints()} dsp
+                             on dsp.hash = sibl.dimensionhash
+              -- The parent relation input is a **Node Aggregate ID**, but we need the anchorpoint
+                   left join lateral (
+              select pn.relationanchorpoint
+              from {$this->tableNames->node()} pn
+                     left join {$this->tableNames->hierarchyRelation()} ph
+                               on ph.childnodeanchors = any (pn.relationanchorpoint)
+              where ph.contentstreamid = :contentstreamid
+                and ph.dimensionspacepoint = sibl.dimensionhash
+                and pn.nodeaggregateid = :parentnodeaggregateid
+              ) pn on true
+            -- ### parent hierarchy entry already exists (UPDATE) - there are siblings for the new node
+            -- the primary key is multi-column, so we check for the named constraint
+            -- fixme dynamic name
+            on conflict on constraint cr_default_p_graph_hierarchyrelation_pkey
+              do update
+              -- sort in the node in the child-node array
+              set childnodeanchors = insert_into_array_before_successor(
+                childnodeanchors,
+                cn.relationanchorpoint,
+                -- the successor is optional, if none is given, it is appended at the end of the array
+                sibl.successor)
+        SQL;
 
-    /**
-     * @throws DBALException
-     * @throws \Doctrine\DBAL\Driver\Exception
-     */
-    protected function connectToHierarchy(
-        ContentStreamId $contentStreamId,
-        NodeRelationAnchorPoint $parentNodeAnchor,
-        NodeRelationAnchorPoint $childNodeAnchor,
-        DimensionSpacePointSet $dimensionSpacePointSet,
-        ?NodeRelationAnchorPoint $succeedingSiblingNodeAnchor
-    ): void {
-        foreach ($dimensionSpacePointSet as $dimensionSpacePoint) {
-            $hierarchyRelation = $this->getProjectionHypergraph()->findHierarchyHyperrelationRecordByParentNodeAnchor(
-                $contentStreamId,
-                $dimensionSpacePoint,
-                $parentNodeAnchor
-            );
-            if ($hierarchyRelation) {
-                $hierarchyRelation->addChildNodeAnchor(
-                    $childNodeAnchor,
-                    $succeedingSiblingNodeAnchor,
-                    $this->getDatabaseConnection(),
-                    $this->tableNamePrefix
-                );
-            } else {
-                $hierarchyRelation = new HierarchyHyperrelationRecord(
-                    $contentStreamId,
-                    $parentNodeAnchor,
-                    $dimensionSpacePoint,
-                    NodeRelationAnchorPoints::fromArray([$childNodeAnchor])
-                );
-                $hierarchyRelation->addToDatabase($this->getDatabaseConnection(), $this->tableNamePrefix);
-            }
-        }
-    }
 
-    /**
-     * @throws DBALException
-     * @throws \Doctrine\DBAL\Driver\Exception
-     */
-    protected function connectToRestrictionRelations(
-        ContentStreamId $contentStreamId,
-        DimensionSpacePoint $dimensionSpacePoint,
-        NodeAggregateId $parentNodeAggregateId,
-        NodeAggregateId $affectedNodeAggregateId
-    ): void {
-        foreach (
-            $this->getProjectionHypergraph()->findIngoingRestrictionRelations(
-                $contentStreamId,
-                $dimensionSpacePoint,
-                $parentNodeAggregateId
-            ) as $ingoingRestrictionRelation
-        ) {
-            $ingoingRestrictionRelation->addAffectedNodeAggregateId(
-                $affectedNodeAggregateId,
-                $this->getDatabaseConnection(),
-                $this->tableNamePrefix
+        $result = $this->getDatabaseConnection()->executeQuery($query, [
+            'nodeaggregateid' => $event->nodeAggregateId->value,
+            'origindimensionspacepoint' => $event->originDimensionSpacePoint->toJson(),
+            'origindimensionspacepointhash' => $event->originDimensionSpacePoint->hash,
+            'nodetypename' => $event->nodeTypeName->value,
+            'properties' => json_encode($event->initialPropertyValues),
+            'classification' => $event->nodeAggregateClassification->value,
+            'nodename' => $event->nodeName->value,
+            'contentstreamid' => $event->contentStreamId->value,
+            'parentnodeaggregateid' => $event->parentNodeAggregateId->value,
+            // This is an JSON object where the keys are the dimension hash
+            // and the values are the successors (optional, null value means -> append child to end)
+            'interdimensionalsiblings' => json_encode($event->succeedingSiblingsForCoverage->items)
+        ]);
+
+        // TODO sub-tree tags
+        /*
+         * TODO error handling
+        if (is_null($parentNode)) {
+            throw EventCouldNotBeAppliedToContentGraph::becauseTheTargetParentNodeIsMissing(
+                get_class($event)
             );
         }
+        */
     }
-
-    abstract protected function getProjectionHypergraph(): ProjectionHypergraph;
 
     abstract protected function getDatabaseConnection(): Connection;
 }

@@ -15,6 +15,7 @@ declare(strict_types=1);
 namespace Neos\ContentGraph\PostgreSQLAdapter\Domain\Repository\Query;
 
 use Doctrine\DBAL\Connection;
+use Neos\ContentGraph\PostgreSQLAdapter\ContentGraphTableNames;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\NodeType\ExpandedNodeTypeCriteria;
 use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
 
@@ -25,8 +26,8 @@ final class QueryUtility
 {
     public static function getRestrictionClause(
         VisibilityConstraints $visibilityConstraints,
-        string $tableNamePrefix,
-        string $prefix = ''
+        ContentGraphTableNames $tableNames,
+        string $tableAlias = ''
     ): string {
         // TODO evaluate $visibilityConstraints->tagConstraints {@see Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\ContentSubgraph::addSubtreeTagConstraints}
 
@@ -35,14 +36,14 @@ final class QueryUtility
 
     /**
      * @param ExpandedNodeTypeCriteria $nodeTypeCriteria
-     * @param string $prefix
+     * @param string $tableAlias
      * @param array<string,mixed> $parameters
      * @param array<string,int|string> $types
      * @return string
      */
     public static function getNodeTypeCriteriaClause(
         ExpandedNodeTypeCriteria $nodeTypeCriteria,
-        string $prefix,
+        string $tableAlias,
         array &$parameters,
         array &$types,
     ): string {
@@ -55,22 +56,22 @@ final class QueryUtility
             if (!$nodeTypeCriteria->explicitlyDisallowedNodeTypeNames->isEmpty()) {
                 if ($nodeTypeCriteria->isWildCardAllowed) {
                     $query .= '
-            AND ' . $prefix . '.nodetypename NOT IN (:disallowedNodeTypeNames)
-            OR ' . $prefix . '.nodetypename IN (:allowedNodeTypeNames)';
+            AND ' . $tableAlias . '.nodetypename NOT IN (:disallowedNodeTypeNames)
+            OR ' . $tableAlias . '.nodetypename IN (:allowedNodeTypeNames)';
                 } else {
                     $query .= '
-            AND ' . $prefix . '.nodetypename IN (:allowedNodeTypeNames)
-            AND ' . $prefix . '.nodetypename NOT IN (:disallowedNodeTypeNames)';
+            AND ' . $tableAlias . '.nodetypename IN (:allowedNodeTypeNames)
+            AND ' . $tableAlias . '.nodetypename NOT IN (:disallowedNodeTypeNames)';
                 }
             } else {
                 if (!$nodeTypeCriteria->isWildCardAllowed) {
                     $query .= '
-            AND ' . $prefix . '.nodetypename IN (:allowedNodeTypeNames)';
+            AND ' . $tableAlias . '.nodetypename IN (:allowedNodeTypeNames)';
                 }
             }
         } elseif (!$nodeTypeCriteria->explicitlyDisallowedNodeTypeNames->isEmpty()) {
             $query .= '
-            AND ' . $prefix . '.nodetypename NOT IN (:disallowedNodeTypeNames)';
+            AND ' . $tableAlias . '.nodetypename NOT IN (:disallowedNodeTypeNames)';
         }
         return $query;
     }

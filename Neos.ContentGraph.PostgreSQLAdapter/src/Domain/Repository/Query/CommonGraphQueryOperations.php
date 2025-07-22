@@ -16,6 +16,7 @@ namespace Neos\ContentGraph\PostgreSQLAdapter\Domain\Repository\Query;
 
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Result as QueryResult;
+use Neos\ContentGraph\PostgreSQLAdapter\ContentGraphTableNames;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\NodeType\ExpandedNodeTypeCriteria;
 
 /**
@@ -42,7 +43,7 @@ trait CommonGraphQueryOperations
     final protected function __construct(
         string $query,
         array $parameters,
-        private readonly string $tableNamePrefix,
+        private readonly ContentGraphTableNames $tableNames,
         array $types = []
     ) {
         $this->query = $query;
@@ -57,7 +58,7 @@ trait CommonGraphQueryOperations
         $parameters = $this->parameters;
         $types = $this->types;
         $query = $this->query . QueryUtility::getNodeTypeCriteriaClause($nodeTypeCriteria, $prefix, $parameters, $types);
-        return new self($query, $parameters, $this->tableNamePrefix, $types);
+        return new self($query, $parameters, $this->tableNames, $types);
     }
 
     public function withLimit(int $limit): self
@@ -65,7 +66,7 @@ trait CommonGraphQueryOperations
         $query = $this->query . '
             LIMIT ' . $limit;
 
-        return new self($query, $this->parameters, $this->tableNamePrefix, $this->types);
+        return new self($query, $this->parameters, $this->tableNames, $this->types);
     }
 
     public function withOffset(int $offset): self
@@ -73,7 +74,7 @@ trait CommonGraphQueryOperations
         $query = $this->query . '
             OFFSET ' . $offset;
 
-        return new self($query, $this->parameters, $this->tableNamePrefix, $this->types);
+        return new self($query, $this->parameters, $this->tableNames, $this->types);
     }
 
     public function getQuery(): string

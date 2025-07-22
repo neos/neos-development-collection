@@ -39,8 +39,8 @@ final readonly class NodeRelationAnchorPoints implements \IteratorAggregate, \Co
     {
         $values = [];
         foreach ($array as $item) {
-            if (is_string($item)) {
-                $values[] = NodeRelationAnchorPoint::fromString($item);
+            if (is_int($item)) {
+                $values[] = NodeRelationAnchorPoint::fromInteger($item);
             } elseif ($item instanceof NodeRelationAnchorPoint) {
                 $values[] = $item;
             }
@@ -58,6 +58,7 @@ final readonly class NodeRelationAnchorPoints implements \IteratorAggregate, \Co
         return '{' . implode(',', $this->nodeRelationAnchorPoints) .  '}';
     }
 
+    // Logic: append to list or insert before succeeding sibling
     public function add(
         NodeRelationAnchorPoint $nodeRelationAnchorPoint,
         ?NodeRelationAnchorPoint $succeedingSibling

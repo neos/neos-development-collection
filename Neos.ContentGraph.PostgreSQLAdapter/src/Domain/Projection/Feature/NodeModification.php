@@ -17,7 +17,7 @@ namespace Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\Feature;
 use Doctrine\DBAL\Connection;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\EventCouldNotBeAppliedToContentGraph;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\NodeRecord;
-use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\ProjectionHypergraph;
+use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\ProjectionReadQueries;
 use Neos\ContentRepository\Core\Feature\NodeModification\Event\NodePropertiesWereSet;
 
 /**
@@ -34,7 +34,7 @@ trait NodeModification
      */
     private function whenNodePropertiesWereSet(NodePropertiesWereSet $event): void
     {
-        $nodeRecord = $this->getProjectionHypergraph()->findNodeRecordByOrigin(
+        $nodeRecord = $this->getReadQueries()->findNodeRecordByOrigin(
             $event->contentStreamId,
             $event->originDimensionSpacePoint,
             $event->nodeAggregateId
@@ -53,7 +53,7 @@ trait NodeModification
         );
     }
 
-    abstract protected function getProjectionHypergraph(): ProjectionHypergraph;
+    abstract protected function getReadQueries(): ProjectionReadQueries;
 
     abstract protected function getDatabaseConnection(): Connection;
 }

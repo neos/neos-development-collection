@@ -17,6 +17,7 @@ namespace Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\Query;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Result;
 use Doctrine\DBAL\Types\Types;
+use Neos\ContentGraph\PostgreSQLAdapter\ContentGraphTableNames;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
@@ -25,6 +26,7 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 
 /**
  * @internal
+ * TODO remove this class in favor of concrete SQL queries. only three usages so far
  */
 final class ProjectionHypergraphQuery implements ProjectionHypergraphQueryInterface
 {
@@ -51,12 +53,12 @@ final class ProjectionHypergraphQuery implements ProjectionHypergraphQueryInterf
         $this->types = $types;
     }
 
-    public static function create(ContentStreamId $contentStreamId, string $tableNamePrefix): self
+    public static function create(ContentStreamId $contentStreamId, ContentGraphTableNames $tableNames): self
     {
         $query = /** @lang PostgreSQL */
             'SELECT n.*
-            FROM ' . $tableNamePrefix . '_hierarchyhyperrelation h
-            JOIN ' . $tableNamePrefix . '_node n ON n.relationanchorpoint = ANY(h.childnodeanchors)
+            FROM ' . $tableNames->hierarchyRelation() . ' h
+            JOIN ' . $tableNames->node() . ' n ON n.relationanchorpoint = ANY(h.childnodeanchors)
             WHERE h.contentstreamid = :contentStreamId';
 
         $parameters = [

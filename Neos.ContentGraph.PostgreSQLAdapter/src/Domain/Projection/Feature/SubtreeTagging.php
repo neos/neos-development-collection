@@ -15,7 +15,7 @@ declare(strict_types=1);
 namespace Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\Feature;
 
 use Doctrine\DBAL\Connection;
-use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\ProjectionHypergraph;
+use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\ProjectionReadQueries;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\RestrictionHyperrelationRecord;
 use Neos\ContentRepository\Core\Feature\SubtreeTagging\Event\SubtreeWasTagged;
 use Neos\ContentRepository\Core\Feature\SubtreeTagging\Event\SubtreeWasUntagged;
@@ -33,7 +33,7 @@ trait SubtreeTagging
     private function whenSubtreeWasTagged(SubtreeWasTagged $event): void
     {
         $descendantNodeAggregateIdsByAffectedDimensionSpacePoint
-            = $this->getProjectionHypergraph()->findDescendantNodeAggregateIds(
+            = $this->getReadQueries()->findDescendantNodeAggregateIds(
                 $event->contentStreamId,
                 $event->affectedDimensionSpacePoints,
                 $event->nodeAggregateId
@@ -58,7 +58,7 @@ trait SubtreeTagging
      */
     private function whenSubtreeWasUntagged(SubtreeWasUntagged $event): void
     {
-        $restrictionRelations = $this->getProjectionHypergraph()->findOutgoingRestrictionRelations(
+        $restrictionRelations = $this->getReadQueries()->findOutgoingRestrictionRelations(
             $event->contentStreamId,
             $event->affectedDimensionSpacePoints,
             $event->nodeAggregateId,
@@ -68,7 +68,7 @@ trait SubtreeTagging
         }
     }
 
-    abstract protected function getProjectionHypergraph(): ProjectionHypergraph;
+    abstract protected function getReadQueries(): ProjectionReadQueries;
 
     abstract protected function getDatabaseConnection(): Connection;
 }

@@ -16,10 +16,11 @@ namespace Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\Feature;
 
 use Doctrine\DBAL\Connection;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\EventCouldNotBeAppliedToContentGraph;
-use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\HierarchyHyperrelationRecord;
+use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\HierarchyRelationRecord;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\NodeRecord;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\NodeRelationAnchorPoint;
-use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\ProjectionHypergraph;
+use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\ProjectionReadQueries;
+use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\ProjectionWriteQueries;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\ReferenceRelationRecord;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\Feature\NodeRemoval\Event\NodeAggregateWasRemoved;
@@ -41,7 +42,7 @@ trait NodeRemoval
         $affectedRelationAnchorPoints = [];
         // first step: remove hierarchy relations
         foreach ($event->affectedCoveredDimensionSpacePoints as $dimensionSpacePoint) {
-            $nodeRecord = $this->getProjectionHypergraph()->findNodeRecordByCoverage(
+            $nodeRecord = $this->getReadQueries()->findNodeRecordByCoverage(
                 $event->getContentStreamId(),
                 $dimensionSpacePoint,
                 $event->getNodeAggregateId()
@@ -50,8 +51,8 @@ trait NodeRemoval
                 throw EventCouldNotBeAppliedToContentGraph::becauseTheSourceNodeIsMissing(get_class($event));
             }
 
-            /** @var HierarchyHyperrelationRecord $ingoingHierarchyRelation */
-            $ingoingHierarchyRelation = $this->getProjectionHypergraph()
+            /** @var HierarchyRelationRecord $ingoingHierarchyRelation */
+            $ingoingHierarchyRelation = $this->getReadQueries()
                 ->findHierarchyHyperrelationRecordByChildNodeAnchor(
                     $event->getContentStreamId(),
                     $dimensionSpacePoint,
@@ -116,7 +117,7 @@ trait NodeRemoval
         NodeRelationAnchorPoint $nodeRelationAnchorPoint,
         array &$affectedRelationAnchorPoints
     ): void {
-        $childHierarchyRelation = $this->getProjectionHypergraph()->findHierarchyHyperrelationRecordByParentNodeAnchor(
+        $childHierarchyRelation = $this->getReadQueries()->findHierarchyHyperrelationRecordByParentNodeAnchor(
             $contentStreamId,
             $dimensionSpacePoint,
             $nodeRelationAnchorPoint
@@ -126,15 +127,14 @@ trait NodeRemoval
 
             foreach ($childHierarchyRelation->childNodeAnchors as $childNodeAnchor) {
                 /** @var NodeRecord $nodeRecord */
-                $nodeRecord = $this->getProjectionHypergraph()
+                $nodeRecord = $this->getReadQueries()
                     ->findNodeRecordByRelationAnchorPoint($childNodeAnchor);
-                $ingoingHierarchyRelations = $this->getProjectionHypergraph()
+                $ingoingHierarchyRelations = $this->getReadQueries()
                     ->findHierarchyHyperrelationRecordsByChildNodeAnchor($childNodeAnchor);
                 if (empty($ingoingHierarchyRelations)) {
-                    ReferenceRelationRecord::removeFromDatabaseForSource(
-                        $nodeRecord->relationAnchorPoint,
+                    $this->getWriteQueries()->removeReferenceFromDatabaseForSource(
                         $this->getDatabaseConnection(),
-                        $this->tableNamePrefix
+                        $nodeRecord->relationAnchorPoint
                     );
                     $affectedRelationAnchorPoints[] = $nodeRecord->relationAnchorPoint;
                 }
@@ -166,7 +166,7 @@ trait NodeRemoval
         NodeAggregateId $nodeAggregateId
     ): void {
         foreach (
-            $this->getProjectionHypergraph()->findIngoingRestrictionRelations(
+            $this->getReadQueries()->findIngoingRestrictionRelations(
                 $contentStreamId,
                 $dimensionSpacePoint,
                 $nodeAggregateId
@@ -180,7 +180,8 @@ trait NodeRemoval
         }
     }
 
-    abstract protected function getProjectionHypergraph(): ProjectionHypergraph;
+    abstract protected function getReadQueries(): ProjectionReadQueries;
+    abstract protected function getWriteQueries(): ProjectionWriteQueries;
 
     abstract protected function getDatabaseConnection(): Connection;
 }

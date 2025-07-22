@@ -14,6 +14,7 @@ declare(strict_types=1);
 
 namespace Neos\ContentGraph\PostgreSQLAdapter\Domain\Repository\Query;
 
+use Neos\ContentGraph\PostgreSQLAdapter\ContentGraphTableNames;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
@@ -31,14 +32,14 @@ final class HypergraphSiblingQuery implements HypergraphQueryInterface
         DimensionSpacePoint $dimensionSpacePoint,
         NodeAggregateId $nodeAggregateId,
         HypergraphSiblingQueryMode $queryMode,
-        string $tableNamePrefix
+        ContentGraphTableNames $tableNames
     ): self {
         $query = /** @lang PostgreSQL */
             'SELECT sn.*, sh.contentstreamid, sh.dimensionspacepoint, ordinality, childnodeanchor
-    FROM ' . $tableNamePrefix . '_node n
-        JOIN ' . $tableNamePrefix . '_hierarchyhyperrelation sh ON n.relationanchorpoint = ANY(sh.childnodeanchors),
+    FROM ' . $tableNames->node() . ' n
+        JOIN ' . $tableNames->hierarchyRelation() . ' sh ON n.relationanchorpoint = ANY(sh.childnodeanchors),
             unnest(sh.childnodeanchors) WITH ORDINALITY childnodeanchor
-        JOIN ' . $tableNamePrefix . '_node sn ON childnodeanchor = sn.relationanchorpoint
+        JOIN ' . $tableNames->node() . ' sn ON childnodeanchor = sn.relationanchorpoint
     WHERE sh.contentstreamid = :contentStreamId
         AND sh.dimensionspacepointhash = :dimensionSpacePointHash
         AND n.nodeaggregateid = :nodeAggregateId
@@ -51,21 +52,20 @@ final class HypergraphSiblingQuery implements HypergraphQueryInterface
             'nodeAggregateId' => $nodeAggregateId->value
         ];
 
-        return new self($query, $parameters, $tableNamePrefix);
+        return new self($query, $parameters, $tableNames);
     }
 
     public function withRestriction(VisibilityConstraints $visibilityConstraints): self
     {
-        $query = $this->query . QueryUtility::getRestrictionClause($visibilityConstraints, $this->tableNamePrefix, 's');
+        $query = $this->query . QueryUtility::getRestrictionClause($visibilityConstraints, $this->tableNames, 's');
 
-        return new self($query, $this->parameters, $this->tableNamePrefix, $this->types);
+        return new self($query, $this->parameters, $this->tableNames, $this->types);
     }
 
     public function withOrdinalityOrdering(bool $reverse): self
     {
-        $query = $this->query . '
-    ORDER BY ordinality ' . ($reverse ? 'DESC' : 'ASC');
+        $query = $this->query . ' ORDER BY ordinality ' . ($reverse ? 'DESC' : 'ASC');
 
-        return new self($query, $this->parameters, $this->tableNamePrefix, $this->types);
+        return new self($query, $this->parameters, $this->tableNames, $this->types);
     }
 }

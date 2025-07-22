@@ -14,42 +14,44 @@ declare(strict_types=1);
 
 namespace Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection;
 
-use Neos\ContentRepository\Core\SharedModel\Id\UuidFactory;
-
 /**
  * The node relation anchor value object
  *
  * @internal
  */
-final readonly class NodeRelationAnchorPoint implements \JsonSerializable, \Stringable
+final readonly class NodeRelationAnchorPoint implements \JsonSerializable
 {
     private function __construct(
-        public string $value
+        public int $value
     ) {
+        if ($value < 0) {
+            throw new \InvalidArgumentException('A NodeRelationAnchorPoint cannot be negative, got %d', $value);
+        }
     }
 
-    public static function create(): self
+    public static function forRootEdge(): self
     {
-        return new self(UuidFactory::create());
+        return new self(0);
     }
 
-    public static function forRootHierarchyRelation(): self
-    {
-        return new self('00000000-0000-0000-0000-000000000000');
-    }
-
-    public static function fromString(string $value): self
+    public static function fromInteger(int $value): self
     {
         return new self($value);
     }
 
     public function jsonSerialize(): string
     {
-        return $this->value;
+        return (string)$this->value;
     }
 
     public function __toString(): string
     {
-        return $this->value;
+        return (string)$this->value;
     }
+
+    public function equals(self $other): bool
+    {
+        return $other->value === $this->value;
+    }
+
 }
