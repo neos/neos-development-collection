@@ -5,16 +5,13 @@ declare(strict_types=1);
 namespace Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\SchemaBuilder;
 
 use Doctrine\DBAL\Connection;
-use Doctrine\DBAL\Platforms\AbstractPlatform;
 use Doctrine\DBAL\PostgresTypes\IntArrayType;
 use Doctrine\DBAL\PostgresTypes\TextArrayType;
 use Doctrine\DBAL\Schema\Schema;
-use Doctrine\DBAL\Types\BigIntType;
 use Doctrine\DBAL\Types\Type;
 use Doctrine\DBAL\Types\Types;
 use Neos\ContentGraph\PostgreSQLAdapter\ContentGraphTableNames;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\PostgresContentGraphProjection;
-use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
 
 /**
  * Let's try to be as consistent as possible to the MariaDB/MySQL adapter.
@@ -58,8 +55,11 @@ final readonly class HypergraphSchemaBuilder
         // FIXME this is currently a bit messy, other packages seem also require the
     }
 
-    private static function registerTypeIfNotPresent(Connection $databaseConnection, string $doctrineTypeName, string $typeClass): void
-    {
+    private static function registerTypeIfNotPresent(
+        Connection $databaseConnection,
+        string $doctrineTypeName,
+        string $typeClass
+    ): void {
         $platform = $databaseConnection->getDatabasePlatform();
         if (!Type::hasType($doctrineTypeName)) {
             Type::addType($doctrineTypeName, $typeClass);
@@ -212,7 +212,7 @@ final readonly class HypergraphSchemaBuilder
             ->addIndex(['contentstreamid'])
             ->addIndex(['dimensionspacepointhash'])
             ->addIndex(['originnodeaggregateid']);
-            /** NOTE: the GIN index on affectednodeaggregateids is added in {@see PostgresContentGraphProjection::setupTables()} */
+        /** NOTE: the GIN index on affectednodeaggregateids is added in {@see PostgresContentGraphProjection::setupTables()} */
     }
 
     private function createDimensionSpacePointsTable(Schema $schema): void
