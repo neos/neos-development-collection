@@ -45,7 +45,8 @@ final class AssetUsageCatchUpHook implements CatchUpHookInterface
     public function onBeforeCatchUp(SubscriptionStatus $subscriptionStatus): void
     {
         if ($subscriptionStatus === SubscriptionStatus::BOOTING) {
-            $this->assetUsageIndexingService->pruneIndex($this->contentRepositoryId);
+            // FIXME WIP just disabled for now in the Postgres Adapter development process until the table/feature is added.
+            //$this->assetUsageIndexingService->pruneIndex($this->contentRepositoryId);
         }
     }
 
