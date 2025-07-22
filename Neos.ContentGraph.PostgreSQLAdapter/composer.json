@@ -11,7 +11,8 @@
     "require": {
         "neos/contentrepository-core": "self.version",
         "doctrine/dbal": "^3.1.4",
-        "doctrine/migrations": "*"
+        "doctrine/migrations": "*",
+        "opensoft/doctrine-postgres-types": "1.3.1"
     },
     "autoload": {
         "psr-4": {

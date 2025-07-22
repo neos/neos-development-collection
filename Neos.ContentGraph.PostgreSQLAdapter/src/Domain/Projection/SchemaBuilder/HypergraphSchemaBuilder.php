@@ -4,7 +4,10 @@ declare(strict_types=1);
 
 namespace Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\SchemaBuilder;
 
+use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Platforms\AbstractPlatform;
+use Doctrine\DBAL\PostgresTypes\IntArrayType;
+use Doctrine\DBAL\PostgresTypes\TextArrayType;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\DBAL\Types\BigIntType;
 use Doctrine\DBAL\Types\Type;
@@ -43,14 +46,29 @@ final readonly class HypergraphSchemaBuilder
         return $schema;
     }
 
-    public static function registerTypes(AbstractPlatform $platform): void
+    public static function registerTypes(Connection $databaseConnection): void
     {
+        self::registerTypeIfNotPresent($databaseConnection, 'hypergraphjsonb', JsonbType::class);
+        self::registerTypeIfNotPresent($databaseConnection, 'hypergraphvarchars', VarcharArrayType::class);
+        self::registerTypeIfNotPresent($databaseConnection, 'text_array', TextArrayType::class);
+        self::registerTypeIfNotPresent($databaseConnection, 'int_array', IntArrayType::class);
+        self::registerTypeIfNotPresent($databaseConnection, 'bigint_array', BigintArrayType::class);
         // do NOT RELY ON THESE TYPES BEING PRESENT - we only load them to build the schema.
         // TODO comment why we need type wrappers?
-        if (!Type::hasType('hypergraphjsonb')) {
-            Type::addType('hypergraphjsonb', JsonbType::class);
-            Type::addType('bigint_array', BigintArrayType::class);
-            Type::addType('hypergraphvarchars', VarcharArrayType::class);
+        // FIXME this is currently a bit messy, other packages seem also require the
+    }
+
+    private static function registerTypeIfNotPresent(Connection $databaseConnection, string $doctrineTypeName, string $typeClass): void
+    {
+        $platform = $databaseConnection->getDatabasePlatform();
+        if (!Type::hasType($doctrineTypeName)) {
+            Type::addType($doctrineTypeName, $typeClass);
+        }
+        $type = Type::getType($doctrineTypeName);
+        foreach ($type->getMappedDatabaseTypes($platform) as $dbType) {
+            if (!$platform->hasDoctrineTypeMappingFor($dbType)) {
+                $platform->registerDoctrineTypeMapping($dbType, $doctrineTypeName);
+            }
         }
     }
 

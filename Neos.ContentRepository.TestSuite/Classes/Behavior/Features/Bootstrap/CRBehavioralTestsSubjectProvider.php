@@ -194,6 +194,14 @@ trait CRBehavioralTestsSubjectProvider
             $subscriptionEngine
         );
 
+        /** @var Connection $databaseConnection */
+        $databaseConnection = (new \ReflectionClass($eventStore))->getProperty('connection')->getValue($eventStore);
+
+        $this->registerCustomDoctrineTypes($databaseConnection);
+
+        $result = $subscriptionEngine->reset();
+        Assert::assertNull($result->errors);
+
         if (!in_array($contentRepository->id, self::$alreadySetUpContentRepositories)) {
             $result = $contentRepositoryMaintainer->setUp();
             Assert::assertNull($result);
@@ -201,13 +209,9 @@ trait CRBehavioralTestsSubjectProvider
         }
         // todo we TRUNCATE here and do not want to use $contentRepositoryMaintainer->prune(); here as it would not reset the autoincrement sequence number making some assertions impossible
 
-        /** @var Connection $databaseConnection */
-        $databaseConnection = (new \ReflectionClass($eventStore))->getProperty('connection')->getValue($eventStore);
         $eventTableName = sprintf('cr_%s_events', $contentRepositoryId->value);
         $databaseConnection->executeStatement('TRUNCATE ' . $eventTableName);
 
-        $result = $subscriptionEngine->reset();
-        Assert::assertNull($result->errors);
         $result = $subscriptionEngine->boot();
         Assert::assertNull($result->errors);
 
@@ -215,4 +219,9 @@ trait CRBehavioralTestsSubjectProvider
     }
 
     abstract protected function createContentRepository(ContentRepositoryId $contentRepositoryId): ContentRepository;
+
+    protected function registerCustomDoctrineTypes(Connection $databaseConnection): void
+    {
+        // intent to be overridden if needed
+    }
 }

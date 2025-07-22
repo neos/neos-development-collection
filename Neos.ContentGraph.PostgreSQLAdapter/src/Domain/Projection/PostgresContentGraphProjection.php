@@ -154,12 +154,11 @@ final readonly class PostgresContentGraphProjection implements ContentGraphProje
     private function determineRequiredSqlStatements(): array
     {
         try {
-            HypergraphSchemaBuilder::registerTypes($this->dbal->getDatabasePlatform());
             $schema = (new HypergraphSchemaBuilder($this->tableNames))->buildSchema();
             $queries = DbalSchemaDiff::determineRequiredSqlStatements($this->dbal, $schema);
             return $queries;
         } catch (\Throwable $e) {
-            //return [];
+            // TODO error handling
             throw $e;
         }
     }

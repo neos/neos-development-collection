@@ -20,6 +20,7 @@ use Doctrine\DBAL\Connection;
 use GuzzleHttp\Psr7\Uri;
 use Neos\Behat\FlowBootstrapTrait;
 use Neos\ContentGraph\DoctrineDbalAdapter\Tests\Behavior\Features\Bootstrap\ProjectionIntegrityViolationDetectionTrait;
+use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\SchemaBuilder\HypergraphSchemaBuilder;
 use Neos\ContentRepository\BehavioralTests\ProjectionRaceConditionTester\Dto\TraceEntryType;
 use Neos\ContentRepository\BehavioralTests\ProjectionRaceConditionTester\RedisInterleavingLogger;
 use Neos\ContentRepository\Core\ContentRepository;
@@ -166,4 +167,12 @@ class FeatureContext implements BehatContext
 
         return $contentRepository;
     }
+
+    protected function registerCustomDoctrineTypes(Connection $databaseConnection): void
+    {
+        if (getenv('FLOW_CONTEXT') === 'Development/Docker/Postgres') {
+            HypergraphSchemaBuilder::registerTypes($databaseConnection);
+        }
+    }
+
 }

@@ -42,7 +42,8 @@
         "neos/party": "~7.0.3",
         "neos/fusion-form": "^2.1 || ^3.0",
         "neos/form": "*",
-        "neos/kickstarter": "~9.1.0"
+        "neos/kickstarter": "~9.1.0",
+        "opensoft/doctrine-postgres-types": "1.2.0"
     },
     "replace": {
         "packagefactory/atomicfusion-afx": "*",
