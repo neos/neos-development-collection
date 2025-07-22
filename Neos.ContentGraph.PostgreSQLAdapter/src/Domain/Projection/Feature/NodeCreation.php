@@ -36,8 +36,17 @@ trait NodeCreation
         //  2. Connect the hierarchy to the root edge (add the node as child-node in each content dimension)
 
         $query = <<<SQL
-            with created_node as (
-              -- first, we create the node record
+            with created_dsps as (
+              insert into {$this->tableNames->dimensionSpacePoints()}
+                (hash, dimensionspacepoint)
+              select
+                dim.dimensionhash,
+                dim.dimensionvalues
+              from jsonb_each(:dimensions) dim(dimensionhash, dimensionvalues)
+              on conflict do nothing
+            ),
+            created_node as (
+              -- then, we create the node record
               insert into {$this->tableNames->node()}
                 (nodeaggregateid, origindimensionspacepoint, origindimensionspacepointhash, nodetypename,
                  properties, classification, nodename)
@@ -58,19 +67,13 @@ trait NodeCreation
             select :contentstreamid        as contentstreamid,
                    :rootedgeanchor         as parentnodeanchor,
                    dim.dimensionhash       as dimensionspacepointhash,
-                   dsp.dimensionspacepoint as dimensionspacepoint,
+                   dim.dimensionspacepoint as dimensionspacepoint,
                    array [cn.relationanchorpoint]
             -- here we access the created node ID
             from created_node cn
                    -- we pass in the target dimensions via JSON object parameter
-                   -- jsonb_array_elements_text transforms the JSON array to rows
-                   left join jsonb_array_elements_text(:dimensions) dim(dimensionhash)
+                   left join jsonb_each(:dimensions) dim(dimensionhash, dimensionspacepoint)
                              on true
-              -- here, we access the dimension values to copy them on the hierarchy record
-                   left join {$this->tableNames->dimensionSpacePoints()} dsp
-                             on dsp.hash = dim.dimensionhash
-            -- fixme this seems wrong
-            where dsp.dimensionspacepoint is not null
         SQL;
 
         $originDimensionSpacePoint = OriginDimensionSpacePoint::createWithoutDimensions();
@@ -84,7 +87,7 @@ trait NodeCreation
             'contentstreamid' => $event->contentStreamId->value,
             // This is an JSON object where the keys are the dimension hash
             // and the values are the successors (optional, null value means -> append child to end)
-            'dimensions' => json_encode($event->coveredDimensionSpacePoints->getPointHashes()),
+            'dimensions' => json_encode($event->coveredDimensionSpacePoints->points),
             // this could be done directly in the query (value 0), but I leave it here for verbosity
             // and code usage navigation
             'rootedgeanchor' => NodeRelationAnchorPoint::forRootEdge()
