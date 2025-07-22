@@ -122,7 +122,7 @@ final readonly class ContentHypergraph implements ContentGraphInterface
                 select
                     n.*,
                     h.contentstreamid,
-                    dsp.dimensionspacepoint as covereddimensionspacepoint
+                    dsp.dimensionspacepoint
                 from {$this->tableNames->node()} n
                     inner join {$this->tableNames->hierarchyRelation()} h
                         on n.relationanchorpoint = any(h.childnodeanchors)
