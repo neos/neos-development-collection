@@ -60,6 +60,8 @@ final class AssetUsageCatchUpHook implements CatchUpHookInterface
 
     public function onAfterEvent(EventInterface $eventInstance, EventEnvelope $eventEnvelope): void
     {
+        // FIXME WIP just disabled for now in the Postgres Adapter development process until the table/feature is added.
+        return;
         // Note that we don't need to update the index for WorkspaceWasPublished, as updateNode will be invoked already with the published node and then clean up its previous usages in nested workspaces
         match ($eventInstance::class) {
             NodeAggregateWithNodeWasCreated::class => $this->updateNode($eventInstance->getWorkspaceName(), $eventInstance->nodeAggregateId, $eventInstance->originDimensionSpacePoint->toDimensionSpacePoint()),

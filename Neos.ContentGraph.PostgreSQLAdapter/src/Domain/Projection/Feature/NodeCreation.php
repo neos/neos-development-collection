@@ -19,6 +19,7 @@ use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\NodeRelationAnchorPoin
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
 use Neos\ContentRepository\Core\Feature\NodeCreation\Event\NodeAggregateWithNodeWasCreated;
 use Neos\ContentRepository\Core\Feature\RootNodeCreation\Event\RootNodeAggregateWithNodeWasCreated;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
 
 /**
  * The node creation feature set for the hypergraph projector
@@ -41,8 +42,25 @@ if (is_null($parentNode)) {
      */
     private function whenRootNodeAggregateWithNodeWasCreated(RootNodeAggregateWithNodeWasCreated $event): void
     {
-        //  1. Create a node entry
-        //  2. Connect the hierarchy to the root edge (add the node as child-node in each content dimension)
+        //  1. Create the given Dimension Space Point entries
+        //  2. Create a Node entry
+        //  3. Connect the Hierarchy to the root edge (add the node as child-node in each content dimension)
+
+        $originDimensionSpacePoint = OriginDimensionSpacePoint::createWithoutDimensions();
+        $parameters = [
+            'nodeaggregateid' => $event->nodeAggregateId->value,
+            'origindimensionspacepoint' => $originDimensionSpacePoint->toJson(),
+            'origindimensionspacepointhash' => $originDimensionSpacePoint->hash,
+            'nodetypename' => $event->nodeTypeName->value,
+            'classification' => $event->nodeAggregateClassification->value,
+            'contentstreamid' => $event->contentStreamId->value,
+            // This is an JSON object where the keys are the dimension hash
+            // and the values are the successors (optional, null value means -> append child to end)
+            'dimensions' => json_encode($event->coveredDimensionSpacePoints->points),
+            // this could be done directly in the query (value 0), but I leave it here for verbosity
+            // and code usage navigation
+            'rootedgeanchor' => NodeRelationAnchorPoint::forRootEdge()
+        ];
 
         $query = <<<SQL
             with created_dsps as ( -- first, we create the dimension space point entries...
@@ -83,24 +101,24 @@ if (is_null($parentNode)) {
                    -- we pass in the target dimensions via JSON object parameter
                    left join jsonb_each(:dimensions) dim(dimensionhash, dimensionspacepoint)
                              on true
+            -- ### parent hierarchy entry already exists (UPDATE) - there are siblings for the new node
+            -- the primary key is multi-column, so we check for the named constraint
+            -- fixme dynamic name
+            on conflict on constraint cr_default_p_graph_hierarchyrelation_pkey
+              do update
+              -- append the node in the child-node array
+              set childnodeanchors = insert_into_array_before_successor(
+                -- by aliasing with the table name, we access the original existing value
+                {$this->tableNames->hierarchyRelation()}.childnodeanchors,
+                -- 'exluded' alias references the insert data that was rejected by constraint
+                -- we cannot access 'cn' alias here
+                excluded.childnodeanchors[1],
+                -- There is no order of the root nodes.
+                -- Root nodes live in the childnodes array of a single root node edge row.
+                null)
         SQL;
 
-        $originDimensionSpacePoint = OriginDimensionSpacePoint::createWithoutDimensions();
-
-        $this->getDatabaseConnection()->executeQuery($query, [
-            'nodeaggregateid' => $event->nodeAggregateId->value,
-            'origindimensionspacepoint' => $originDimensionSpacePoint->toJson(),
-            'origindimensionspacepointhash' => $originDimensionSpacePoint->hash,
-            'nodetypename' => $event->nodeTypeName->value,
-            'classification' => $event->nodeAggregateClassification->value,
-            'contentstreamid' => $event->contentStreamId->value,
-            // This is an JSON object where the keys are the dimension hash
-            // and the values are the successors (optional, null value means -> append child to end)
-            'dimensions' => json_encode($event->coveredDimensionSpacePoints->points),
-            // this could be done directly in the query (value 0), but I leave it here for verbosity
-            // and code usage navigation
-            'rootedgeanchor' => NodeRelationAnchorPoint::forRootEdge()
-        ]);
+        $this->getDatabaseConnection()->executeQuery($query, $parameters);
     }
 
     /**
@@ -113,8 +131,44 @@ if (is_null($parentNode)) {
         //  1. Create a node entry
         //  2. Connect the hierarchy (add the node as child-node in each content dimension)
 
+        // the query requires the interdimensional siblings as JSON object (key: hash, value: sibling aggregate ID)
+        $siblings = [];
+        foreach ($event->succeedingSiblingsForCoverage->items as $sibling) {
+            $siblings[$sibling->dimensionSpacePoint->hash] = $sibling->nodeAggregateId?->value;
+        }
+
+        $parameters = [
+            'nodeaggregateid' => $event->nodeAggregateId->value,
+            'origindimensionspacepoint' => $event->originDimensionSpacePoint->toJson(),
+            'origindimensionspacepointhash' => $event->originDimensionSpacePoint->hash,
+            'nodetypename' => $event->nodeTypeName->value,
+            'properties' => json_encode($event->initialPropertyValues),
+            'classification' => $event->nodeAggregateClassification->value,
+            // empty string means "unnamend"
+            'nodename' => $event->nodeName !== null ? $event->nodeName->value : '',
+            'contentstreamid' => $event->contentStreamId->value,
+            'parentnodeaggregateid' => $event->parentNodeAggregateId->value,
+            // This is an JSON object where the keys are the dimension hash
+            // and the values are the successors (optional, null value means -> append child to end)
+            'interdimensionalsiblings' => json_encode($siblings)
+        ];
+
         $query = <<<SQL
-            with created_node as (
+            with dimensions_and_successor as (
+                -- we pass in the target dimensions and successors via JSON object parameter
+                -- jsonb_each_text transforms the JSON object key-values to rows
+                select sibl.dimensionhash, r.relationanchorpoint
+                from jsonb_each_text(:interdimensionalsiblings) sibl(dimensionhash, successor)
+                  -- The successor input is a **Node Aggregate ID**, but we need the anchorpoint
+                    left join lateral (
+                        select {$this->tableNames->functionGetRelationAnchorPoint()}(
+                                sibl.successor,
+                                :contentstreamid,
+                                sibl.dimensionhash
+                             ) as relationanchorpoint
+                    ) r on true
+            ),
+            created_node as (
               -- first, we create the node record
               insert into {$this->tableNames->node()}
                 (nodeaggregateid, origindimensionspacepoint, origindimensionspacepointhash, nodetypename,
@@ -137,23 +191,19 @@ if (is_null($parentNode)) {
                    array [cn.relationanchorpoint]
             -- here we access the created node ID
             from created_node cn
-                   -- we pass in the target dimensions and successors via JSON object parameter
-                   -- jsonb_each_text transforms the JSON object key-values to rows
-                   left join jsonb_each_text(:interdimensionalsiblings) sibl(dimensionhash, successor)
+                   left join dimensions_and_successor sibl
                              on true
               -- here, we access the dimension values to copy them on the hierarchy record
                    left join {$this->tableNames->dimensionSpacePoints()} dsp
                              on dsp.hash = sibl.dimensionhash
               -- The parent relation input is a **Node Aggregate ID**, but we need the anchorpoint
                    left join lateral (
-              select pn.relationanchorpoint
-              from {$this->tableNames->node()} pn
-                     left join {$this->tableNames->hierarchyRelation()} ph
-                               on ph.childnodeanchors = any (pn.relationanchorpoint)
-              where ph.contentstreamid = :contentstreamid
-                and ph.dimensionspacepoint = sibl.dimensionhash
-                and pn.nodeaggregateid = :parentnodeaggregateid
-              ) pn on true
+                       select {$this->tableNames->functionGetRelationAnchorPoint()}(
+                                :parentnodeaggregateid,
+                                :contentstreamid,
+                                sibl.dimensionhash
+                             ) as relationanchorpoint
+                   ) pn on true
             -- ### parent hierarchy entry already exists (UPDATE) - there are siblings for the new node
             -- the primary key is multi-column, so we check for the named constraint
             -- fixme dynamic name
@@ -161,27 +211,21 @@ if (is_null($parentNode)) {
               do update
               -- sort in the node in the child-node array
               set childnodeanchors = insert_into_array_before_successor(
-                childnodeanchors,
-                cn.relationanchorpoint,
+                -- by aliasing with the table name, we access the original existing value
+                {$this->tableNames->hierarchyRelation()}.childnodeanchors,
+                -- 'exluded' alias references the insert data that was rejected by constraint
+                -- we cannot access 'cn' alias here
+                excluded.childnodeanchors[1],
                 -- the successor is optional, if none is given, it is appended at the end of the array
-                sibl.successor)
+                (
+                    select s.relationanchorpoint
+                    from dimensions_and_successor s
+                    where s.dimensionhash = excluded.dimensionspacepointhash
+                )
+              )
         SQL;
 
-
-        $result = $this->getDatabaseConnection()->executeQuery($query, [
-            'nodeaggregateid' => $event->nodeAggregateId->value,
-            'origindimensionspacepoint' => $event->originDimensionSpacePoint->toJson(),
-            'origindimensionspacepointhash' => $event->originDimensionSpacePoint->hash,
-            'nodetypename' => $event->nodeTypeName->value,
-            'properties' => json_encode($event->initialPropertyValues),
-            'classification' => $event->nodeAggregateClassification->value,
-            'nodename' => $event->nodeName->value,
-            'contentstreamid' => $event->contentStreamId->value,
-            'parentnodeaggregateid' => $event->parentNodeAggregateId->value,
-            // This is an JSON object where the keys are the dimension hash
-            // and the values are the successors (optional, null value means -> append child to end)
-            'interdimensionalsiblings' => json_encode($event->succeedingSiblingsForCoverage->items)
-        ]);
+        $this->getDatabaseConnection()->executeQuery($query, $parameters);
 
         // TODO sub-tree tags
         /*

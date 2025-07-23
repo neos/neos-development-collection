@@ -7,19 +7,23 @@ namespace Neos\ContentGraph\PostgreSQLAdapter;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
 
 /**
- * Encapsulates table name generation for content graph tables
+ * Encapsulates table name generation for content graph tables and functions
  * @internal
  */
 final readonly class ContentGraphTableNames
 {
     private function __construct(
-        private string $tableNamePrefix
+        private string $tableNamePrefix,
+        private string $functionNamePrefix
     ) {
     }
 
     public static function create(ContentRepositoryId $contentRepositoryId): self
     {
-        return new self(sprintf('cr_%s_p_graph', $contentRepositoryId->value));
+        return new self(
+            sprintf('cr_%s_p_graph', $contentRepositoryId->value),
+            sprintf('neoscr_%s', $contentRepositoryId->value)
+        );
     }
 
     public function node(): string
@@ -56,5 +60,10 @@ final readonly class ContentGraphTableNames
     public function contentStream(): string
     {
         return $this->tableNamePrefix . '_contentstream';
+    }
+
+    public function functionGetRelationAnchorPoint(): string
+    {
+        return $this->functionNamePrefix . '_get_relationanchorpoint';
     }
 }

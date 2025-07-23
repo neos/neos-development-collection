@@ -251,8 +251,7 @@ final readonly class ContentHypergraph implements ContentGraphInterface
 
         return $this->nodeFactory->mapNodeRowsToNodeAggregates(
             $nodeRows,
-            // TODO workspace name
-            WorkspaceName::fromString('todo'),
+            $this->workspaceName,
             VisibilityConstraints::createEmpty()
         );
     }

@@ -29,9 +29,12 @@ use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\Feature\SubtreeTagging
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\Feature\Workspace;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\SchemaBuilder\HypergraphSchemaBuilder;
 use Neos\ContentRepository\Core\EventStore\EventInterface;
+use Neos\ContentRepository\Core\Feature\Common\EmbedsContentStreamId;
+use Neos\ContentRepository\Core\Feature\Common\PublishableToWorkspaceInterface;
 use Neos\ContentRepository\Core\Feature\ContentStreamClosing\Event\ContentStreamWasClosed;
 use Neos\ContentRepository\Core\Feature\ContentStreamClosing\Event\ContentStreamWasReopened;
 use Neos\ContentRepository\Core\Feature\ContentStreamCreation\Event\ContentStreamWasCreated;
+use Neos\ContentRepository\Core\Feature\ContentStreamEventStreamName;
 use Neos\ContentRepository\Core\Feature\ContentStreamForking\Event\ContentStreamWasForked;
 use Neos\ContentRepository\Core\Feature\ContentStreamRemoval\Event\ContentStreamWasRemoved;
 use Neos\ContentRepository\Core\Feature\NodeCreation\Event\NodeAggregateWithNodeWasCreated;
@@ -128,6 +131,29 @@ final readonly class PostgresContentGraphProjection implements ContentGraphProje
             end;
             $$ language plpgsql;
         SQL);
+        // TODO discuss, wdyt about this approach
+        $this->dbal->executeStatement(<<<SQL
+            create or replace function {$this->tableNames->functionGetRelationAnchorPoint()}(
+                    nodeaggregateid varchar(64),
+                    contentstreamid varchar(40),
+                    dimensionhash varchar(255)
+                )
+                returns bigint
+            as
+            $$
+            begin
+                return (
+                    select pn.relationanchorpoint
+                    from {$this->tableNames->node()} pn
+                           left join {$this->tableNames->hierarchyRelation()} ph
+                                     on pn.relationanchorpoint = any (ph.childnodeanchors)
+                    where ph.contentstreamid = {$this->tableNames->functionGetRelationAnchorPoint()}.contentstreamid
+                      and ph.dimensionspacepointhash = {$this->tableNames->functionGetRelationAnchorPoint()}.dimensionhash
+                      and pn.nodeaggregateid = {$this->tableNames->functionGetRelationAnchorPoint()}.nodeaggregateid
+                );
+            end;
+            $$ language plpgsql;
+        SQL);
     }
 
     public function status(): ProjectionStatus
@@ -218,6 +244,17 @@ final readonly class PostgresContentGraphProjection implements ContentGraphProje
             ContentStreamWasForked::class => $this->whenContentStreamWasForked($event),
             default => null,
         };
+        if (
+            $event instanceof EmbedsContentStreamId
+            && ContentStreamEventStreamName::isContentStreamStreamName($eventEnvelope->streamName)
+            && !(
+                // special case as we dont need to update anything. The handling above takes care of setting the version to 0
+                $event instanceof ContentStreamWasForked
+                || $event instanceof ContentStreamWasCreated
+            )
+        ) {
+            $this->updateContentStreamVersion($event->getContentStreamId(), $eventEnvelope->version, $event instanceof PublishableToWorkspaceInterface);
+        }
     }
 
     public function inSimulation(\Closure $fn): mixed
