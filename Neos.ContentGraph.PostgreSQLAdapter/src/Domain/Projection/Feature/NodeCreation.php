@@ -27,6 +27,15 @@ use Neos\ContentRepository\Core\Feature\RootNodeCreation\Event\RootNodeAggregate
  */
 trait NodeCreation
 {
+    /*
+ * TODO error handling
+if (is_null($parentNode)) {
+    throw EventCouldNotBeAppliedToContentGraph::becauseTheTargetParentNodeIsMissing(
+        get_class($event)
+    );
+}
+*/
+
     /**
      * @throws \Throwable
      */
@@ -36,14 +45,14 @@ trait NodeCreation
         //  2. Connect the hierarchy to the root edge (add the node as child-node in each content dimension)
 
         $query = <<<SQL
-            with created_dsps as (
+            with created_dsps as ( -- first, we create the dimension space point entries...
               insert into {$this->tableNames->dimensionSpacePoints()}
                 (hash, dimensionspacepoint)
               select
                 dim.dimensionhash,
                 dim.dimensionvalues
-              from jsonb_each(:dimensions) dim(dimensionhash, dimensionvalues)
-              on conflict do nothing
+              from jsonb_each(:dimensions) dim(dimensionhash, dimensionvalues) -- they are a query parameter JSON object
+              on conflict do nothing -- TODO validate, if this is correct behavior
             ),
             created_node as (
               -- then, we create the node record
@@ -78,7 +87,7 @@ trait NodeCreation
 
         $originDimensionSpacePoint = OriginDimensionSpacePoint::createWithoutDimensions();
 
-        $result = $this->getDatabaseConnection()->executeQuery($query, [
+        $this->getDatabaseConnection()->executeQuery($query, [
             'nodeaggregateid' => $event->nodeAggregateId->value,
             'origindimensionspacepoint' => $originDimensionSpacePoint->toJson(),
             'origindimensionspacepointhash' => $originDimensionSpacePoint->hash,
@@ -92,14 +101,6 @@ trait NodeCreation
             // and code usage navigation
             'rootedgeanchor' => NodeRelationAnchorPoint::forRootEdge()
         ]);
-        /*
-         * TODO error handling
-        if (is_null($parentNode)) {
-            throw EventCouldNotBeAppliedToContentGraph::becauseTheTargetParentNodeIsMissing(
-                get_class($event)
-            );
-        }
-        */
     }
 
     /**

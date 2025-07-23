@@ -119,6 +119,7 @@ final readonly class ContentSubhypergraph implements ContentSubgraphInterface
 
         return $nodeRow ? $this->nodeFactory->mapNodeRowToNode(
             $nodeRow,
+            $this->workspaceName,
             $this->visibilityConstraints,
             $this->dimensionSpacePoint
         ) : null;
@@ -141,6 +142,7 @@ final readonly class ContentSubhypergraph implements ContentSubgraphInterface
 
         return $nodeRow ? $this->nodeFactory->mapNodeRowToNode(
             $nodeRow,
+            $this->workspaceName,
             $this->visibilityConstraints,
             $this->dimensionSpacePoint
         ) : null;
@@ -174,6 +176,7 @@ final readonly class ContentSubhypergraph implements ContentSubgraphInterface
 
         return $this->nodeFactory->mapNodeRowsToNodes(
             $childNodeRows,
+            $this->workspaceName,
             $this->visibilityConstraints
         );
     }
@@ -211,6 +214,7 @@ final readonly class ContentSubhypergraph implements ContentSubgraphInterface
 
         return $this->nodeFactory->mapReferenceRowsToReferences(
             $referenceRows,
+            $this->workspaceName,
             $this->visibilityConstraints
         );
     }
@@ -261,6 +265,7 @@ final readonly class ContentSubhypergraph implements ContentSubgraphInterface
 
         return $this->nodeFactory->mapReferenceRowsToReferences(
             $referenceRows,
+            $this->workspaceName,
             $this->visibilityConstraints
         );
     }
@@ -282,6 +287,7 @@ final readonly class ContentSubhypergraph implements ContentSubgraphInterface
 
         return $nodeRow ? $this->nodeFactory->mapNodeRowToNode(
             $nodeRow,
+            $this->workspaceName,
             $this->visibilityConstraints,
             $this->dimensionSpacePoint
         ) : null;
@@ -324,6 +330,7 @@ final readonly class ContentSubhypergraph implements ContentSubgraphInterface
 
         return $nodeRow ? $this->nodeFactory->mapNodeRowToNode(
             $nodeRow,
+            $this->workspaceName,
             $this->visibilityConstraints,
             $this->dimensionSpacePoint,
         ) : null;
@@ -383,7 +390,7 @@ final readonly class ContentSubhypergraph implements ContentSubgraphInterface
 
         $siblingsRows = $query->execute($this->dbal)->fetchAllAssociative();
 
-        return $this->nodeFactory->mapNodeRowsToNodes($siblingsRows, $this->visibilityConstraints);
+        return $this->nodeFactory->mapNodeRowsToNodes($siblingsRows, $this->workspaceName, $this->visibilityConstraints);
     }
 
     public function retrieveNodePath(NodeAggregateId $nodeAggregateId): AbsoluteNodePath
@@ -474,7 +481,7 @@ final readonly class ContentSubhypergraph implements ContentSubgraphInterface
             return null;
         }
 
-        return $this->nodeFactory->mapNodeRowsToSubtree($nodeRows, $this->visibilityConstraints);
+        return $this->nodeFactory->mapNodeRowsToSubtree($nodeRows, $this->workspaceName, $this->visibilityConstraints);
     }
 
     public function findAncestorNodes(

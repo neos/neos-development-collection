@@ -64,13 +64,14 @@ final class NodeFactory
      */
     public function mapNodeRowToNode(
         array $nodeRow,
+        WorkspaceName $workspaceName,
         VisibilityConstraints $visibilityConstraints,
         ?DimensionSpacePoint $dimensionSpacePoint = null
     ): Node {
         return Node::create(
             $this->contentRepositoryId,
             // todo use actual workspace name
-            WorkspaceName::fromString('missing'),
+            $workspaceName,
             $dimensionSpacePoint ?: DimensionSpacePoint::fromJsonString($nodeRow['dimensionspacepoint']),
             NodeAggregateId::fromString($nodeRow['nodeaggregateid']),
             OriginDimensionSpacePoint::fromJsonString($nodeRow['origindimensionspacepoint']),
@@ -99,12 +100,14 @@ final class NodeFactory
      */
     public function mapNodeRowsToNodes(
         array $nodeRows,
+        WorkspaceName $workspaceName,
         VisibilityConstraints $visibilityConstraints
     ): Nodes {
         $nodes = [];
         foreach ($nodeRows as $nodeRow) {
             $nodes[] = $this->mapNodeRowToNode(
                 $nodeRow,
+                $workspaceName,
                 $visibilityConstraints,
                 null
             );
@@ -118,6 +121,7 @@ final class NodeFactory
      */
     public function mapReferenceRowsToReferences(
         array $referenceRows,
+        WorkspaceName $workspaceName,
         VisibilityConstraints $visibilityConstraints
     ): References {
         $references = [];
@@ -125,6 +129,7 @@ final class NodeFactory
             $references[] = new Reference(
                 $this->mapNodeRowToNode(
                     $referenceRow,
+                    $workspaceName,
                     $visibilityConstraints,
                     null
                 ),
@@ -146,6 +151,7 @@ final class NodeFactory
      */
     public function mapNodeRowsToSubtree(
         array $nodeRows,
+        WorkspaceName $workspaceName,
         VisibilityConstraints $visibilityConstraints
     ): ?Subtree {
         /** @var array<string, Subtree[]> $subtreesByParentNodeId */
@@ -153,7 +159,7 @@ final class NodeFactory
         foreach (array_reverse($nodeRows) as $nodeRow) {
             $nodeAggregateId = $nodeRow['nodeaggregateid'];
             $parentNodeAggregateId = $nodeRow['parentnodeaggregateid'];
-            $node = $this->mapNodeRowToNode($nodeRow, $visibilityConstraints);
+            $node = $this->mapNodeRowToNode($nodeRow, $workspaceName, $visibilityConstraints);
             $subtree = Subtree::create(
                 (int)$nodeRow['level'],
                 $node,
@@ -175,6 +181,7 @@ final class NodeFactory
      */
     public function mapNodeRowsToNodeAggregate(
         array $nodeRows,
+        WorkspaceName $workspaceName,
         VisibilityConstraints $visibilityConstraints
     ): ?NodeAggregate {
         if (empty($nodeRows)) {
@@ -201,6 +208,7 @@ final class NodeFactory
                 ?: ContentStreamId::fromString($nodeRow['contentstreamid']);
             $node = $this->mapNodeRowToNode(
                 $nodeRow,
+                $workspaceName,
                 $visibilityConstraints,
                 null
             );
@@ -286,6 +294,7 @@ final class NodeFactory
                 ?: ContentStreamId::fromString($nodeRow['contentstreamid']);
             $node = $this->mapNodeRowToNode(
                 $nodeRow,
+                $workspaceName,
                 $visibilityConstraints,
                 null
             );

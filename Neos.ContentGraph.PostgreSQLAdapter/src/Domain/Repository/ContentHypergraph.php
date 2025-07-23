@@ -160,6 +160,7 @@ final readonly class ContentHypergraph implements ContentGraphInterface
 
         return $this->nodeFactory->mapNodeRowsToNodeAggregate(
             $nodeRows,
+            $this->workspaceName,
             VisibilityConstraints::createEmpty()
         );
     }
@@ -204,6 +205,7 @@ final readonly class ContentHypergraph implements ContentGraphInterface
 
         return $this->nodeFactory->mapNodeRowsToNodeAggregate(
             $nodeRows,
+            $this->workspaceName,
             VisibilityConstraints::createEmpty()
         );
     }
@@ -218,8 +220,7 @@ final readonly class ContentHypergraph implements ContentGraphInterface
 
         return $this->nodeFactory->mapNodeRowsToNodeAggregates(
             $nodeRows,
-            // TODO workspace name
-            WorkspaceName::fromString('todo'),
+            $this->workspaceName,
             VisibilityConstraints::createEmpty()
         );
     }
@@ -271,6 +272,7 @@ final readonly class ContentHypergraph implements ContentGraphInterface
 
         return $this->nodeFactory->mapNodeRowsToNodeAggregate(
             $nodeRows,
+            $this->workspaceName,
             VisibilityConstraints::createEmpty()
         );
     }
@@ -289,8 +291,7 @@ final readonly class ContentHypergraph implements ContentGraphInterface
 
         return $this->nodeFactory->mapNodeRowsToNodeAggregates(
             $nodeRows,
-            // TODO workspace name
-            WorkspaceName::fromString('todo'),
+            $this->workspaceName,
             VisibilityConstraints::createEmpty()
         );
     }

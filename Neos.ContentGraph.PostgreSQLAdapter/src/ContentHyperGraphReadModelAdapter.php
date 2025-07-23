@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Neos\ContentGraph\PostgreSQLAdapter;
 
 use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\Exception;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Repository\ContentHypergraph;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Repository\NodeFactory;
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
@@ -58,18 +59,26 @@ final readonly class ContentHyperGraphReadModelAdapter implements ContentGraphRe
         $result = $this->dbal->executeQuery(
             <<<SQL
                 select
-                    ws.name,
-                    ws.baseworkspacename,
-                    ws.currentcontentstreamid,
-                    cs.haschanges,
-                    cs.sourcecontentstreamversion = scs.version as uptodatewithbase
+                    ws.name                                     as name,
+                    ws.baseworkspacename                        as baseworkspacename,
+                    ws.currentcontentstreamid                   as currentcontentstreamid,
+                    (
+                        ws.baseworkspacename is not null
+                        and cs.haschanges
+                    )                                           as haspublishablechanges,
+                    (
+                        -- base workspace is always up-to-date
+                        ws.baseworkspacename is null
+                        -- up to date with base workspace?
+                        or cs.sourcecontentstreamversion = scs.version
+                    )                                           as uptodate
                 from {$this->tableNames->workspace()} ws
                     left join {$this->tableNames->contentStream()} cs
                         on cs.id = ws.currentcontentstreamid
                     left join {$this->tableNames->contentStream()} scs
                         on scs.id = cs.sourcecontentstreamid
                 where ws.name = :workspace_name
-                limit 1;
+                limit 1
             SQL,
             [
                 'workspace_name' => $workspaceName->value
@@ -84,8 +93,31 @@ final readonly class ContentHyperGraphReadModelAdapter implements ContentGraphRe
 
     public function findWorkspaces(): Workspaces
     {
-        // TODO: Implement getWorkspaces() method.
-        return Workspaces::createEmpty();
+        $result = $this->dbal->executeQuery(
+            <<<SQL
+                select
+                    ws.name                                     as name,
+                    ws.baseworkspacename                        as baseworkspacename,
+                    ws.currentcontentstreamid                   as currentcontentstreamid,
+                    (
+                        ws.baseworkspacename is not null
+                        and cs.haschanges
+                    )                                           as haspublishablechanges,
+                    (
+                        -- base workspace is always up-to-date
+                        ws.baseworkspacename is null
+                        -- up to date with base workspace?
+                        or cs.sourcecontentstreamversion = scs.version
+                    )                                           as uptodate
+                from {$this->tableNames->workspace()} ws
+                    left join {$this->tableNames->contentStream()} cs
+                        on cs.id = ws.currentcontentstreamid
+                    left join {$this->tableNames->contentStream()} scs
+                        on scs.id = cs.sourcecontentstreamid
+            SQL
+        );
+        $rows = $result->fetchAllAssociative();
+        return Workspaces::fromArray(array_map(fn($row) => self::workspaceFromDatabaseRow($row), $rows));
     }
 
     public function findContentStreamById(ContentStreamId $contentStreamId): ?ContentStream
@@ -114,8 +146,16 @@ final readonly class ContentHyperGraphReadModelAdapter implements ContentGraphRe
 
     public function countNodes(): int
     {
-        // TODO: Implement countNodes method.
-        return 0;
+        $countNodesStatement = <<<SQL
+            select
+                count(*)
+            from {$this->tableNames->node()}
+        SQL;
+        try {
+            return (int)$this->dbal->fetchOne($countNodesStatement);
+        } catch (Exception $e) {
+            throw new \RuntimeException(sprintf('Failed to count rows in database: %s', $e->getMessage()), 1701444590, $e);
+        }
     }
 
     /**
@@ -123,25 +163,12 @@ final readonly class ContentHyperGraphReadModelAdapter implements ContentGraphRe
      */
     private static function workspaceFromDatabaseRow(array $row): Workspace
     {
-        $baseWorkspaceName = $row['baseworkspacename'] !== null ? WorkspaceName::fromString($row['baseworkspacename']) : null;
-
-        if ($baseWorkspaceName === null) {
-            // no base workspace, a root is always up-to-date
-            $status = WorkspaceStatus::UP_TO_DATE;
-        } elseif ($row['uptodatewithbase'] === 1) {
-            // base workspace didnt change
-            $status = WorkspaceStatus::UP_TO_DATE;
-        } else {
-            // base content stream was removed or contains newer changes
-            $status = WorkspaceStatus::OUTDATED;
-        }
-
         return Workspace::create(
             WorkspaceName::fromString($row['name']),
-            $baseWorkspaceName,
+            WorkspaceName::fromOptionalString($row['baseworkspacename']),
             ContentStreamId::fromString($row['currentcontentstreamid']),
-            $status,
-            !($baseWorkspaceName === null) && (bool)$row['haschanges'],
+            ($row['uptodate'] === true) ? WorkspaceStatus::UP_TO_DATE : WorkspaceStatus::OUTDATED,
+            $row['haspublishablechanges'] === true,
         );
     }
 
