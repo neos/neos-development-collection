@@ -61,7 +61,7 @@ trait NodeVariation
                                                           from jsonb_array_elements_text(:specializeddimensions) sdim(specializeddimensionhash)),
                         -- we need the source node, to copy its values
                         source_node as (select *
-                                         from neoscr_default_find_node_by_origin(
+                                         from {$this->tableNames->functionFindNodeByOrigin()}(
                                            :nodeaggregateid,
                                            :contentstreamid,
                                            :origindimensionspacepointhash
@@ -69,7 +69,7 @@ trait NodeVariation
                         ),
                         -- create the specialized copy and keep the auto-incremented ID
                         specialized_node_copy as (
-                            insert into cr_default_p_graph_node
+                            insert into {$this->tableNames->node()}
                               (nodeaggregateid, origindimensionspacepoint, origindimensionspacepointhash,
                                nodetypename, properties, classification, nodename)
                             select sn.nodeaggregateid,
@@ -84,7 +84,7 @@ trait NodeVariation
                         ),
                         -- we need the old covering node to decide how to connect the hierarchy
                         old_covering_node as (select relationanchorpoint
-                                              from neoscr_default_find_node_by_coverage(
+                                              from {$this->tableNames->functionFindNodeByCoverage()}(
                                                 :nodeaggregateid,
                                                 :contentstreamid,
                                                 :specializationoriginhash
@@ -93,39 +93,41 @@ trait NodeVariation
                         -- Replace the old covering node with the specialized variant in
                         -- all hierarchy records (child and parent references).
                         update_ingoing_hierarchy as (
-                          update cr_default_p_graph_hierarchyrelation
+                          update {$this->tableNames->hierarchyRelation()}
                             set childnodeanchors = array_replace(
-                              cr_default_p_graph_hierarchyrelation.childnodeanchors,
+                              {$this->tableNames->hierarchyRelation()}.childnodeanchors,
                               o.relationanchorpoint,
                               s.relationanchorpoint
                                                    )
                             from old_covering_node o, specialized_node_copy s
                             where o.relationanchorpoint = any (childnodeanchors)
                               -- only affected dimensions
-                              and dimensionspacepointhash = any (select d.specializeddimensionhash from specialized_dimensions d)
+                              and exists(select 1 from specialized_dimensions d
+                                         where {$this->tableNames->hierarchyRelation()}.dimensionspacepointhash = d.specializeddimensionhash)
                               -- only if there is an old covering node
                               and o.relationanchorpoint is not null
                         ),
                         update_outgoing_hierarchy as (
-                          update cr_default_p_graph_hierarchyrelation
+                          update {$this->tableNames->hierarchyRelation()}
                             set parentnodeanchor = s.relationanchorpoint
                             from old_covering_node o, specialized_node_copy s
                             where parentnodeanchor = o.relationanchorpoint
                               -- only affected dimensions
-                              and dimensionspacepointhash = any (select d.specializeddimensionhash from specialized_dimensions d)
+                              and exists(select 1 from specialized_dimensions d
+                                         where {$this->tableNames->hierarchyRelation()}.dimensionspacepointhash = d.specializeddimensionhash)
                               -- only if there is an old covering node
                               and o.relationanchorpoint is not null)
                     -- ### CASE 2 - an old covering node does not exist - create hierarchy
                     -- Add the specialized node as child to each relation entry of all dimensions
                     -- of the parent node aggregate.
-                    update cr_default_p_graph_hierarchyrelation
+                    update {$this->tableNames->hierarchyRelation()}
                     set childnodeanchors = childnodeanchors || (select s.relationanchorpoint from specialized_node_copy s)
                     from (select sd.specializeddimensionhash,
                                  parent_hierarchy.parenthierarchyrelationanchor
                           from specialized_dimensions sd
                                  -- source parent node aggregate ID
                                  left join lateral (
-                            select neoscr_default_get_parent_relationanchorpoint(
+                            select {$this->tableNames->functionGetParentRelationAnchorPoint()}(
                                      :nodeaggregateid,
                                      :contentstreamid,
                                      sd.specializeddimensionhash
