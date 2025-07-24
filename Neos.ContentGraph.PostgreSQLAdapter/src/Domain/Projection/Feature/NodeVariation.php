@@ -37,7 +37,6 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
  */
 trait NodeVariation
 {
-    abstract protected function getReadQueries(): ProjectionReadQueries;
 
     abstract protected function getDatabaseConnection(): Connection;
 
@@ -46,86 +45,108 @@ trait NodeVariation
      */
     private function whenNodeSpecializationVariantWasCreated(NodeSpecializationVariantWasCreated $event): void
     {
-        $sourceNode = $this->getReadQueries()->findNodeRecordByOrigin(
-            $event->contentStreamId,
-            $event->sourceOrigin,
-            $event->nodeAggregateId
-        );
-        if (is_null($sourceNode)) {
-            throw EventCouldNotBeAppliedToContentGraph::becauseTheSourceNodeIsMissing((get_class($event)));
-        }
-        $specializedNode = $this->copyNodeToOriginDimensionSpacePoint(
-            $sourceNode,
-            $event->specializationOrigin
-        );
+        $parameters = [
+            'contentstreamid' => $event->contentStreamId->value,
+            'nodeaggregateid' => $event->nodeAggregateId->value,
+            'origindimensionspacepointhash' => $event->sourceOrigin->hash,
+            'specializationorigin' => $event->specializationOrigin->toJson(),
+            'specializationoriginhash' => $event->specializationOrigin->hash,
+            'specializeddimensions' => json_encode($event->specializationSiblings
+                ->toDimensionSpacePointSet()->getPointHashes())
+        ];
 
-        $oldCoveringNode = $this->projectionHypergraph->findNodeRecordByCoverage(
-            $event->contentStreamId,
-            $event->specializationOrigin->toDimensionSpacePoint(),
-            $event->nodeAggregateId
-        );
-        if ($oldCoveringNode instanceof NodeRecord) {
-            $this->assignNewChildNodeToAffectedHierarchyRelations(
-                $event->contentStreamId,
-                $oldCoveringNode->relationAnchorPoint,
-                $specializedNode->relationAnchorPoint,
-                $event->specializationSiblings->toDimensionSpacePointSet()
-            );
-            $this->assignNewParentNodeToAffectedHierarchyRelations(
-                $event->contentStreamId,
-                $oldCoveringNode->relationAnchorPoint,
-                $specializedNode->relationAnchorPoint,
-                $event->specializationSiblings->toDimensionSpacePointSet()
-            );
-        } else {
-            // the dimension space point is not yet covered by the node aggregate,
-            // but it is known that the source's parent node aggregate does
-            $sourceParent = $this->projectionHypergraph->findParentNodeRecordByOrigin(
-                $event->contentStreamId,
-                $event->sourceOrigin,
-                $event->nodeAggregateId
-            );
-            if (is_null($sourceParent)) {
-                throw EventCouldNotBeAppliedToContentGraph::becauseTheSourceParentNodeIsMissing(
-                    (get_class($event))
-                );
-            }
-            foreach ($event->specializationSiblings->toDimensionSpacePointSet() as $specializedDimensionSpacePoint) {
-                $parentNode = $this->projectionHypergraph->findNodeRecordByCoverage(
-                    $event->contentStreamId,
-                    $specializedDimensionSpacePoint,
-                    $sourceParent->nodeAggregateId
-                );
-                if (is_null($parentNode)) {
-                    throw EventCouldNotBeAppliedToContentGraph::becauseTheTargetParentNodeIsMissing(
-                        (get_class($event))
-                    );
-                }
-                $parentRelation = $this->projectionHypergraph->findHierarchyHyperrelationRecordByParentNodeAnchor(
-                    $event->contentStreamId,
-                    $specializedDimensionSpacePoint,
-                    $parentNode->relationAnchorPoint
-                );
-                if (is_null($parentRelation)) {
-                    throw EventCouldNotBeAppliedToContentGraph::becauseTheIngoingSourceHierarchyRelationIsMissing(
-                        (get_class($event))
-                    );
-                }
+        $query = <<<SQL
+                    with
+                        specialized_dimensions as (select *
+                                                          from jsonb_array_elements_text(:specializeddimensions) sdim(specializeddimensionhash)),
+                        -- we need the source node, to copy its values
+                        source_node as (select *
+                                         from neoscr_default_find_node_by_origin(
+                                           :nodeaggregateid,
+                                           :contentstreamid,
+                                           :origindimensionspacepointhash
+                                              )
+                        ),
+                        -- create the specialized copy and keep the auto-incremented ID
+                        specialized_node_copy as (
+                            insert into cr_default_p_graph_node
+                              (nodeaggregateid, origindimensionspacepoint, origindimensionspacepointhash,
+                               nodetypename, properties, classification, nodename)
+                            select sn.nodeaggregateid,
+                                   :specializationorigin,
+                                   :specializationoriginhash,
+                                   sn.nodetypename,
+                                   sn.properties,
+                                   sn.classification,
+                                   sn.nodename
+                            from source_node sn
+                            returning relationanchorpoint
+                        ),
+                        -- we need the old covering node to decide how to connect the hierarchy
+                        old_covering_node as (select relationanchorpoint
+                                              from neoscr_default_find_node_by_coverage(
+                                                :nodeaggregateid,
+                                                :contentstreamid,
+                                                :specializationoriginhash
+                                                   )),
+                        -- ### CASE 1 - an old covering node exists - replace hierarchy
+                        -- Replace the old covering node with the specialized variant in
+                        -- all hierarchy records (child and parent references).
+                        update_ingoing_hierarchy as (
+                          update cr_default_p_graph_hierarchyrelation
+                            set childnodeanchors = array_replace(
+                              cr_default_p_graph_hierarchyrelation.childnodeanchors,
+                              o.relationanchorpoint,
+                              s.relationanchorpoint
+                                                   )
+                            from old_covering_node o, specialized_node_copy s
+                            where o.relationanchorpoint = any (childnodeanchors)
+                              -- only affected dimensions
+                              and dimensionspacepointhash = any (select d.specializeddimensionhash from specialized_dimensions d)
+                              -- only if there is an old covering node
+                              and o.relationanchorpoint is not null
+                        ),
+                        update_outgoing_hierarchy as (
+                          update cr_default_p_graph_hierarchyrelation
+                            set parentnodeanchor = s.relationanchorpoint
+                            from old_covering_node o, specialized_node_copy s
+                            where parentnodeanchor = o.relationanchorpoint
+                              -- only affected dimensions
+                              and dimensionspacepointhash = any (select d.specializeddimensionhash from specialized_dimensions d)
+                              -- only if there is an old covering node
+                              and o.relationanchorpoint is not null)
+                    -- ### CASE 2 - an old covering node does not exist - create hierarchy
+                    -- Add the specialized node as child to each relation entry of all dimensions
+                    -- of the parent node aggregate.
+                    update cr_default_p_graph_hierarchyrelation
+                    set childnodeanchors = childnodeanchors || (select s.relationanchorpoint from specialized_node_copy s)
+                    from (select sd.specializeddimensionhash,
+                                 parent_hierarchy.parenthierarchyrelationanchor
+                          from specialized_dimensions sd
+                                 -- source parent node aggregate ID
+                                 left join lateral (
+                            select neoscr_default_get_parent_relationanchorpoint(
+                                     :nodeaggregateid,
+                                     :contentstreamid,
+                                     sd.specializeddimensionhash
+                                   ) as parenthierarchyrelationanchor
+                            ) parent_hierarchy on true) parent_hierarchy_records
+                    -- only if there is NO old covering node
+                    where contentstreamid = :contentstreamid
+                      and dimensionspacepointhash = parent_hierarchy_records.specializeddimensionhash
+                      and parentnodeanchor = parent_hierarchy_records.parenthierarchyrelationanchor
+                      and not exists(select 1 from old_covering_node)
+        SQL;
 
-                // fixme -> this must NOT be in a loop
-                $parentRelation->addChildNodeAnchor(
-                    $specializedNode->relationAnchorPoint,
-                    null,
-                    $this->getDatabaseConnection(),
-                    $this->tableNamePrefix
-                );
-            }
-        }
+        $this->getDatabaseConnection()->executeQuery($query, $parameters);
 
+        /**
+         * TODO references
         $this->copyReferenceRelations(
             $sourceNode->relationAnchorPoint,
             $specializedNode->relationAnchorPoint
         );
+         */
     }
 
     private function whenNodeGeneralizationVariantWasCreated(NodeGeneralizationVariantWasCreated $event): void

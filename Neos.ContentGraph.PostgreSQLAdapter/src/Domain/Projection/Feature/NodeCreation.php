@@ -19,7 +19,6 @@ use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\NodeRelationAnchorPoin
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
 use Neos\ContentRepository\Core\Feature\NodeCreation\Event\NodeAggregateWithNodeWasCreated;
 use Neos\ContentRepository\Core\Feature\RootNodeCreation\Event\RootNodeAggregateWithNodeWasCreated;
-use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
 
 /**
  * The node creation feature set for the hypergraph projector
@@ -28,6 +27,9 @@ use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
  */
 trait NodeCreation
 {
+
+    abstract protected function getDatabaseConnection(): Connection;
+
     /*
  * TODO error handling
 if (is_null($parentNode)) {
@@ -177,55 +179,78 @@ if (is_null($parentNode)) {
                 values (:nodeaggregateid, :origindimensionspacepoint, :origindimensionspacepointhash, :nodetypename, :properties,
                         :classification, :nodename)
                 -- we want to keep track of the created ID (it is auto-increment)
-                returning relationanchorpoint)
-            -- now we connect the hierarchy for each content dimension (this node needs to be placed below its parent)
-            -- ### initial case (INSERT) - this node is the first child node of its parent
-            insert
-            into {$this->tableNames->hierarchyRelation()}
-            (contentstreamid, parentnodeanchor, dimensionspacepointhash, dimensionspacepoint, childnodeanchors)
-            -- contentstream and parent ID is passed via parameter
-            select :contentstreamid        as contentstreamid,
-                   pn.relationanchorpoint  as parentnodeanchor,
-                   sibl.dimensionhash      as dimensionspacepointhash,
-                   dsp.dimensionspacepoint as dimensionspacepoint,
-                   array [cn.relationanchorpoint]
-            -- here we access the created node ID
+                returning relationanchorpoint),
+            upserted_hierarchy as (
+                -- now we connect the hierarchy for each content dimension (this node needs to be placed below its parent)
+                -- ### initial case (INSERT) - this node is the first child node of its parent
+                insert
+                into {$this->tableNames->hierarchyRelation()}
+                (contentstreamid, parentnodeanchor, dimensionspacepointhash, dimensionspacepoint, childnodeanchors)
+                -- contentstream and parent ID is passed via parameter
+                select :contentstreamid        as contentstreamid,
+                       pn.relationanchorpoint  as parentnodeanchor,
+                       sibl.dimensionhash      as dimensionspacepointhash,
+                       dsp.dimensionspacepoint as dimensionspacepoint,
+                       array [cn.relationanchorpoint]
+                -- here we access the created node ID
+                from created_node cn
+                       left join dimensions_and_successor sibl
+                                 on true
+                  -- here, we access the dimension values to copy them on the hierarchy record
+                       left join {$this->tableNames->dimensionSpacePoints()} dsp
+                                 on dsp.hash = sibl.dimensionhash
+                  -- The parent relation input is a **Node Aggregate ID**, but we need the anchorpoint
+                       left join lateral (
+                           select {$this->tableNames->functionGetRelationAnchorPoint()}(
+                                    :parentnodeaggregateid,
+                                    :contentstreamid,
+                                    sibl.dimensionhash
+                                 ) as relationanchorpoint
+                       ) pn on true
+                -- ### parent hierarchy entry already exists (UPDATE) - there are siblings for the new node
+                -- the primary key is multi-column, so we check for the named constraint
+                -- fixme dynamic name
+                on conflict on constraint cr_default_p_graph_hierarchyrelation_pkey
+                  do update
+                  -- sort in the node in the child-node array
+                  set childnodeanchors = insert_into_array_before_successor(
+                    -- by aliasing with the table name, we access the original existing value
+                    {$this->tableNames->hierarchyRelation()}.childnodeanchors,
+                    -- 'exluded' alias references the insert data that was rejected by constraint
+                    -- we cannot access 'cn' alias here
+                    excluded.childnodeanchors[1],
+                    -- the successor is optional, if none is given, it is appended at the end of the array
+                    (
+                        select s.relationanchorpoint
+                        from dimensions_and_successor s
+                        where s.dimensionhash = excluded.dimensionspacepointhash
+                    )
+                  )
+                returning contentstreamid, parentnodeanchor, dimensionspacepointhash,
+                      -- see https://sigpwned.com/2023/08/10/postgres-upsert-created-or-updated/
+                      (xmax = 0) AS _created
+            )
+            -- return values for result debugging in PHP
+            select
+                cn.relationanchorpoint as created_node_relationanchorpoint,
+                (select jsonb_agg(jsonb_build_object(
+                    'contentstreamid', h.contentstreamid,
+                    'parentnodeanchor', h.parentnodeanchor,
+                    'dimensionspacepointhash', h.dimensionspacepointhash,
+                    'created', h._created
+                )) from upserted_hierarchy h) as upserted_hierarchy
             from created_node cn
-                   left join dimensions_and_successor sibl
-                             on true
-              -- here, we access the dimension values to copy them on the hierarchy record
-                   left join {$this->tableNames->dimensionSpacePoints()} dsp
-                             on dsp.hash = sibl.dimensionhash
-              -- The parent relation input is a **Node Aggregate ID**, but we need the anchorpoint
-                   left join lateral (
-                       select {$this->tableNames->functionGetRelationAnchorPoint()}(
-                                :parentnodeaggregateid,
-                                :contentstreamid,
-                                sibl.dimensionhash
-                             ) as relationanchorpoint
-                   ) pn on true
-            -- ### parent hierarchy entry already exists (UPDATE) - there are siblings for the new node
-            -- the primary key is multi-column, so we check for the named constraint
-            -- fixme dynamic name
-            on conflict on constraint cr_default_p_graph_hierarchyrelation_pkey
-              do update
-              -- sort in the node in the child-node array
-              set childnodeanchors = insert_into_array_before_successor(
-                -- by aliasing with the table name, we access the original existing value
-                {$this->tableNames->hierarchyRelation()}.childnodeanchors,
-                -- 'exluded' alias references the insert data that was rejected by constraint
-                -- we cannot access 'cn' alias here
-                excluded.childnodeanchors[1],
-                -- the successor is optional, if none is given, it is appended at the end of the array
-                (
-                    select s.relationanchorpoint
-                    from dimensions_and_successor s
-                    where s.dimensionhash = excluded.dimensionspacepointhash
-                )
-              )
         SQL;
 
-        $this->getDatabaseConnection()->executeQuery($query, $parameters);
+        $result = $this->getDatabaseConnection()->executeQuery($query, $parameters);
+        $row = $result->fetchAssociative();
+
+        $createdNodeRelationAnchorPoint = $row['created_node_relationanchorpoint'];
+        $upsertedHierarchyRecords = json_decode($row['upserted_hierarchy'], true);
+
+        if (count($upsertedHierarchyRecords) === null) {
+            // TODO error handling and/or logging?
+        }
 
         // TODO sub-tree tags
         /*
@@ -238,5 +263,4 @@ if (is_null($parentNode)) {
         */
     }
 
-    abstract protected function getDatabaseConnection(): Connection;
 }

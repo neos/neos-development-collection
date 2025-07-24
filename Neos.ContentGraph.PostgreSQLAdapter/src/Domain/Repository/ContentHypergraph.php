@@ -152,7 +152,7 @@ final readonly class ContentHypergraph implements ContentGraphInterface
     public function findNodeAggregateById(
         NodeAggregateId $nodeAggregateId
     ): ?NodeAggregate {
-        // FIXME why join sub-tree tags? parameter was "true"
+        // FIXME join sub-tree tags, parameter was "true"
         $query = HypergraphQuery::create($this->contentStreamId, $this->tableNames, false);
         $query = $query->withNodeAggregateId($nodeAggregateId);
 

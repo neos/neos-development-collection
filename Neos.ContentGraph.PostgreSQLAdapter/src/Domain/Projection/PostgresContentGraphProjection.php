@@ -154,6 +154,75 @@ final readonly class PostgresContentGraphProjection implements ContentGraphProje
             end;
             $$ language plpgsql;
         SQL);
+        $this->dbal->executeStatement(<<<SQL
+            create or replace function {$this->tableNames->functionFindNodeByOrigin()}(
+                    nodeaggregateid varchar(64),
+                    contentstreamid varchar(40),
+                    dimensionhash varchar(255)
+                )
+                returns {$this->tableNames->node()}
+            as
+            $$
+            begin
+                return pn
+                from {$this->tableNames->node()} pn
+                       left join {$this->tableNames->hierarchyRelation()} ph
+                                 on pn.relationanchorpoint = any (ph.childnodeanchors)
+                where ph.contentstreamid = {$this->tableNames->functionFindNodeByOrigin()}.contentstreamid
+                  and pn.origindimensionspacepointhash = {$this->tableNames->functionFindNodeByOrigin()}.dimensionhash
+                  and ph.dimensionspacepointhash = {$this->tableNames->functionFindNodeByOrigin()}.dimensionhash
+                  and pn.nodeaggregateid = {$this->tableNames->functionFindNodeByOrigin()}.nodeaggregateid;
+            end;
+            $$ language plpgsql;
+        SQL);
+        $this->dbal->executeStatement(<<<SQL
+            create or replace function {$this->tableNames->functionFindNodeByCoverage()}(
+                    nodeaggregateid varchar(64),
+                    contentstreamid varchar(40),
+                    dimensionhash varchar(255)
+                )
+                returns {$this->tableNames->node()}
+            as
+            $$
+            begin
+                return pn
+                from {$this->tableNames->node()} pn
+                       left join {$this->tableNames->hierarchyRelation()} ph
+                                 on pn.relationanchorpoint = any (ph.childnodeanchors)
+                where ph.contentstreamid = {$this->tableNames->functionFindNodeByCoverage()}.contentstreamid
+                  and ph.dimensionspacepointhash = {$this->tableNames->functionFindNodeByCoverage()}.dimensionhash
+                  and pn.nodeaggregateid = {$this->tableNames->functionFindNodeByCoverage()}.nodeaggregateid;
+            end;
+            $$ language plpgsql;
+        SQL);
+        $this->dbal->executeStatement(<<<SQL
+            create or replace function {$this->tableNames->functionGetParentRelationAnchorPoint()}(
+                    nodeaggregateid varchar(64),
+                    contentstreamid varchar(40),
+                    dimensionhash varchar(255)
+                )
+                returns bigint
+            as
+            $$
+            begin
+                return (
+                    select pn.relationanchorpoint
+                    from {$this->tableNames->node()} pn
+                           left join {$this->tableNames->hierarchyRelation()} h
+                                     on h.parentnodeanchor = p.relationanchorpoint
+                           left join {$this->tableNames->node()} cn
+                                     on cn.relationanchorpoint = any (h.childnodeanchors)
+                    where ph.contentstreamid = {$this->tableNames->functionGetParentRelationAnchorPoint()}.contentstreamid
+                      and ph.dimensionspacepointhash = {$this->tableNames->functionGetParentRelationAnchorPoint()}.dimensionhash
+                      and pn.nodeaggregateid = {$this->tableNames->functionGetParentRelationAnchorPoint()}.nodeaggregateid
+                );
+            end;
+            $$ language plpgsql;
+        SQL);
+        // TODO remove this - only for development
+        $this->dbal->executeStatement(<<<SQL
+            alter sequence cr_default_p_graph_node_relationanchorpoint_seq restart with 1;
+        SQL);
     }
 
     public function status(): ProjectionStatus

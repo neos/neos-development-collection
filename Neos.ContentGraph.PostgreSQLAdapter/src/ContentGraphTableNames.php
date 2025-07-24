@@ -66,4 +66,21 @@ final readonly class ContentGraphTableNames
     {
         return $this->functionNamePrefix . '_get_relationanchorpoint';
     }
+
+    public function functionGetParentRelationAnchorPoint(): string
+    {
+        return $this->functionNamePrefix . '_get_parent_relationanchorpoint';
+    }
+
+    public function functionFindNodeByOrigin(): string
+    {
+        return $this->functionNamePrefix . '_find_node_by_origin';
+    }
+
+    public function functionFindNodeByCoverage(): string
+    {
+        return $this->functionNamePrefix . '_find_node_by_coverage';
+    }
+
+
 }

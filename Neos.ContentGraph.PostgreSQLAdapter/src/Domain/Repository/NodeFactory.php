@@ -70,7 +70,6 @@ final class NodeFactory
     ): Node {
         return Node::create(
             $this->contentRepositoryId,
-            // todo use actual workspace name
             $workspaceName,
             $dimensionSpacePoint ?: DimensionSpacePoint::fromJsonString($nodeRow['dimensionspacepoint']),
             NodeAggregateId::fromString($nodeRow['nodeaggregateid']),
@@ -156,14 +155,17 @@ final class NodeFactory
     ): ?Subtree {
         /** @var array<string, Subtree[]> $subtreesByParentNodeId */
         $subtreesByParentNodeId = [];
-        foreach (array_reverse($nodeRows) as $nodeRow) {
-            $nodeAggregateId = $nodeRow['nodeaggregateid'];
+        foreach ($nodeRows as $nodeRow) {
             $parentNodeAggregateId = $nodeRow['parentnodeaggregateid'];
             $node = $this->mapNodeRowToNode($nodeRow, $workspaceName, $visibilityConstraints);
+            $nodeAggregateId = $node->aggregateId->value;
+            $level = (int)$nodeRow['level'];
             $subtree = Subtree::create(
-                (int)$nodeRow['level'],
+                $level,
                 $node,
-                array_key_exists($nodeAggregateId, $subtreesByParentNodeId) ? Subtrees::fromArray(array_reverse($subtreesByParentNodeId[$nodeAggregateId])) : Subtrees::createEmpty()
+                array_key_exists($nodeAggregateId, $subtreesByParentNodeId) ?
+                    Subtrees::fromArray($subtreesByParentNodeId[$nodeAggregateId]) :
+                    Subtrees::createEmpty()
             );
             if ($subtree->level === 0) {
                 return $subtree;
@@ -237,7 +239,7 @@ final class NodeFactory
 
         return NodeAggregate::create(
             $this->contentRepositoryId,
-            WorkspaceName::fromString('missing'), // todo
+            $workspaceName,
             $nodeAggregateId,
             $nodeAggregateClassification,
             $nodeTypeName,
