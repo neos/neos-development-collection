@@ -156,17 +156,20 @@ trait NodeVariation
                                     where ad.specializeddimensionhash = excluded.dimensionspacepointhash)
                                  )
                         )
-                    select 1
+                    -- finally, copy the reference relations
+                    insert into {$this->tableNames->referenceRelation()}
+                        (sourcenodeanchor, name, position, properties, targetnodeaggregateid)
+                    select
+                        c.relationanchorpoint,
+                        ref.name,
+                        ref.position,
+                        ref.properties,
+                        ref.targetnodeaggregateid
+                    from {$this->tableNames->referenceRelation()} ref, source_node sn, specialized_node_copy c
+                    where ref.sourcenodeanchor = sn.relationanchorpoint
         SQL;
 
         $this->getDatabaseConnection()->executeQuery($query, $parameters);
-        /**
-         * TODO references
-         * $this->copyReferenceRelations(
-         * $sourceNode->relationAnchorPoint,
-         * $specializedNode->relationAnchorPoint
-         * );
-         */
     }
 
     private function whenNodeGeneralizationVariantWasCreated(NodeGeneralizationVariantWasCreated $event): void
@@ -303,18 +306,20 @@ trait NodeVariation
                              where ad.specializeddimensionhash = excluded.dimensionspacepointhash)
                           )
                  )
-            -- TODO copy reference relations
-            select 1
+            -- finally, copy the reference relations
+            insert into {$this->tableNames->referenceRelation()}
+                (sourcenodeanchor, name, position, properties, targetnodeaggregateid)
+            select
+                c.relationanchorpoint,
+                ref.name,
+                ref.position,
+                ref.properties,
+                ref.targetnodeaggregateid
+            from {$this->tableNames->referenceRelation()} ref, source_node sn, generalized_node_copy c
+            where ref.sourcenodeanchor = sn.relationanchorpoint
         SQL;
 
         $this->getDatabaseConnection()->executeQuery($query, $parameters);
-
-        /* TODO
-        $this->copyReferenceRelations(
-            $sourceNode->relationAnchorPoint,
-            $generalizedNode->relationAnchorPoint
-        );
-        */
     }
 
     private function whenNodePeerVariantWasCreated(NodePeerVariantWasCreated $event): void
@@ -458,51 +463,20 @@ trait NodeVariation
                              where ad.specializeddimensionhash = excluded.dimensionspacepointhash)
                           )
                  )
-            select 1
+            -- finally, copy the reference relations
+            insert into {$this->tableNames->referenceRelation()}
+                (sourcenodeanchor, name, position, properties, targetnodeaggregateid)
+            select
+                c.relationanchorpoint,
+                ref.name,
+                ref.position,
+                ref.properties,
+                ref.targetnodeaggregateid
+            from {$this->tableNames->referenceRelation()} ref, source_node sn, peer_node_copy c
+            where ref.sourcenodeanchor = sn.relationanchorpoint
         SQL;
 
         $this->getDatabaseConnection()->executeQuery($query, $parameters);
-
-        /* TODO
-        $this->copyReferenceRelations(
-            $sourceNode->relationAnchorPoint,
-            $generalizedNode->relationAnchorPoint
-        );
-        */
     }
 
-    /*
-    protected function copyReferenceRelations(
-        NodeRelationAnchorPoint $sourceRelationAnchorPoint,
-        NodeRelationAnchorPoint $newSourceRelationAnchorPoint
-    ): void {
-        // we don't care whether the target node aggregate covers the variant's origin
-        // since if it doesn't, it already didn't match the source's coverage before
-
-        $this->getDatabaseConnection()->executeStatement(
-            '
-                INSERT INTO ' . $this->tableNamePrefix . '_referencerelation (
-                  sourcenodeanchor,
-                  name,
-                  position,
-                  properties,
-                  targetnodeaggregateid
-                )
-                SELECT
-                  :newSourceRelationAnchorPoint AS sourcenodeanchor,
-                  ref.name,
-                  ref.position,
-                  ref.properties,
-                  ref.targetnodeaggregateid
-                FROM
-                    ' . $this->tableNamePrefix . '_referencerelation ref
-                    WHERE ref.sourcenodeanchor = :sourceNodeAnchorPoint
-            ',
-            [
-                'sourceNodeAnchorPoint' => $sourceRelationAnchorPoint->value,
-                'newSourceRelationAnchorPoint' => $newSourceRelationAnchorPoint->value
-            ]
-        );
-    }
-    */
 }

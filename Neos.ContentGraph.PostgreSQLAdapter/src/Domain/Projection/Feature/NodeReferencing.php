@@ -140,7 +140,8 @@ trait NodeReferencing
                     select
                       refs.reference_name,
                       refs_for_prop.target_nodeaggregateid,
-                      refs_for_prop.ref_props
+                      refs_for_prop.ref_props,
+                      row_number() over (partition by refs.reference_name) as position_offset
                     from reference_json_objects refs
                       left join lateral (
                         select
@@ -149,25 +150,39 @@ trait NodeReferencing
                         from jsonb_array_elements(refs.refs_for_property) refs(ref_for_prop)
                       ) refs_for_prop on true
                 ),
+                affected_refs as (
+                    select en.relationanchorpoint
+                    from affected_source_dimensions_and_existing_nodes en
+                    where not en.is_copy_necessary
+                    union
+                    select c.relationanchorpoint
+                    from copy_node_on_write c
+                ),
+                -- fixme this seems to be solvable more smart (partial update, create and delete)
+                -- for now, we just delete the old references and create new ones (the unique position must be consistent over all references)
+                delete_old_references as (
+                    delete from {$this->tableNames->referenceRelation()} dh
+                    using all_new_references nr, affected_refs cn
+                    where dh.sourcenodeanchor = cn.relationanchorpoint
+                      and dh."name" = nr.reference_name
+                ),
                 create_new_reference_records as (
                     insert into {$this->tableNames->referenceRelation()}
                         (sourcenodeanchor, "name", position, properties, targetnodeaggregateid)
                     select
                       cn.relationanchorpoint,
                       nr.reference_name,
-                      0, -- todo position
+                      nr.position_offset,
                       -- convert empty array to null (as the CR expects it that way)
                       case when nr.ref_props != '[]'::jsonb then nr.ref_props end,
                       nr.target_nodeaggregateid
-                    from all_new_references nr
-                        left join lateral (
-                            select en.relationanchorpoint
-                            from affected_source_dimensions_and_existing_nodes en
-                            where not en.is_copy_necessary
-                            union
-                            select c.relationanchorpoint
-                            from copy_node_on_write c
-                        ) cn on true
+                    from all_new_references nr, affected_refs cn
+                    where nr.target_nodeaggregateid is not null
+                    -- since the DELETE from above is not yet committed, we need conflict handling here
+                    on conflict on constraint cr_default_p_graph_referencerelation_pkey
+                        do update
+                            set properties = excluded.properties,
+                                targetnodeaggregateid = excluded.targetnodeaggregateid
                 )
             select 1
         SQL;
