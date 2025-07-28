@@ -72,6 +72,11 @@ final readonly class ContentGraphTableNames
         return $this->functionNamePrefix . '_get_parent_relationanchorpoint';
     }
 
+    public function functionGetParentRelationAnchorPointInDimension(): string
+    {
+        return $this->functionNamePrefix . '_get_parent_relationanchorpoint_in_dim';
+    }
+
     public function functionFindNodeByOrigin(): string
     {
         return $this->functionNamePrefix . '_find_node_by_origin';
@@ -82,5 +87,19 @@ final readonly class ContentGraphTableNames
         return $this->functionNamePrefix . '_find_node_by_coverage';
     }
 
+    public function functionFindCoverageByNodeAggregateId(): string
+    {
+        return $this->functionNamePrefix . '_find_coverage_by_node_aggregate_id';
+    }
+
+    public function functionFindIngoingHierarchy(): string
+    {
+        return $this->functionNamePrefix . '_find_ingoing_hierarchy';
+    }
+
+    public function functionFindOutgoingHierarchy(): string
+    {
+        return $this->functionNamePrefix . '_find_outgoing_hierarchy';
+    }
 
 }

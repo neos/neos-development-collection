@@ -209,21 +209,139 @@ final readonly class PostgresContentGraphProjection implements ContentGraphProje
                     select pn.relationanchorpoint
                     from {$this->tableNames->node()} pn
                            left join {$this->tableNames->hierarchyRelation()} h
-                                     on h.parentnodeanchor = p.relationanchorpoint
+                                     on h.parentnodeanchor = pn.relationanchorpoint
                            left join {$this->tableNames->node()} cn
                                      on cn.relationanchorpoint = any (h.childnodeanchors)
-                    where ph.contentstreamid = {$this->tableNames->functionGetParentRelationAnchorPoint()}.contentstreamid
-                      and ph.dimensionspacepointhash = {$this->tableNames->functionGetParentRelationAnchorPoint()}.dimensionhash
-                      and pn.nodeaggregateid = {$this->tableNames->functionGetParentRelationAnchorPoint()}.nodeaggregateid
+                    where h.contentstreamid = {$this->tableNames->functionGetParentRelationAnchorPoint()}.contentstreamid
+                      and h.dimensionspacepointhash = {$this->tableNames->functionGetParentRelationAnchorPoint()}.dimensionhash
+                      and cn.nodeaggregateid = {$this->tableNames->functionGetParentRelationAnchorPoint()}.nodeaggregateid
                 );
             end;
             $$ language plpgsql;
         SQL);
+        $this->dbal->executeStatement(<<<SQL
+            create or replace function {$this->tableNames->functionFindCoverageByNodeAggregateId()}(
+                    nodeaggregateid varchar(64),
+                    contentstreamid varchar(40)
+                )
+                returns table(dimensionspacepoint json, hash varchar(255))
+            as
+            $$
+            begin
+                return query select h.dimensionspacepoint, h.dimensionspacepointhash
+                from {$this->tableNames->hierarchyRelation()} h
+                    left join {$this->tableNames->node()} n
+                        on h.parentnodeanchor = n.relationanchorpoint
+                where h.contentstreamid = {$this->tableNames->functionFindCoverageByNodeAggregateId()}.contentstreamid
+                  and n.nodeaggregateid = {$this->tableNames->functionFindCoverageByNodeAggregateId()}.nodeaggregateid;
+            end;
+            $$ language plpgsql;
+        SQL);
+        $this->dbal->executeStatement(<<<SQL
+            create or replace function {$this->tableNames->functionFindIngoingHierarchy()}(
+                    nodeaggregateid varchar(64),
+                    contentstreamid varchar(40),
+                    dimensionspacepointhashes varchar(255)[]
+                )
+                returns table(
+                    relationanchorpoint bigint,
+                    parentnodeanchor bigint,
+                    dimensionspacepointhash varchar(255),
+                    contentstream varchar(40)
+                )
+            as
+            $$
+            begin
+                return query select
+                    n.relationanchorpoint,
+                    h.parentnodeanchor,
+                    h.dimensionspacepointhash,
+                    h.contentstreamid
+                from {$this->tableNames->hierarchyRelation()} h
+                    left join {$this->tableNames->node()} n
+                        on n.relationanchorpoint = any (h.childnodeanchors)
+                where h.contentstreamid = {$this->tableNames->functionFindIngoingHierarchy()}.contentstreamid
+                  and n.nodeaggregateid = {$this->tableNames->functionFindIngoingHierarchy()}.nodeaggregateid
+                  and (
+                    {$this->tableNames->functionFindIngoingHierarchy()}.dimensionspacepointhashes is null
+                    or
+                    h.dimensionspacepointhash = any({$this->tableNames->functionFindIngoingHierarchy()}.dimensionspacepointhashes)
+                  );
+            end;
+            $$ language plpgsql;
+        SQL);
+        $this->dbal->executeStatement(<<<SQL
+            create or replace function {$this->tableNames->functionFindOutgoingHierarchy()}(
+                    nodeaggregateid varchar(64),
+                    contentstreamid varchar(40),
+                    dimensionspacepointhashes varchar(255)[]
+                )
+                returns table(
+                    relationanchorpoint bigint,
+                    parentnodeanchor bigint,
+                    dimensionspacepointhash varchar(255),
+                    contentstream varchar(40)
+                )
+            as
+            $$
+            begin
+                return query select
+                    n.relationanchorpoint,
+                    h.parentnodeanchor,
+                    h.dimensionspacepointhash,
+                    h.contentstreamid
+                from {$this->tableNames->hierarchyRelation()} h
+                    left join {$this->tableNames->node()} n
+                        on n.relationanchorpoint = h.parentnodeanchor
+                where h.contentstreamid = {$this->tableNames->functionFindOutgoingHierarchy()}.contentstreamid
+                  and n.nodeaggregateid = {$this->tableNames->functionFindOutgoingHierarchy()}.nodeaggregateid
+                  and (
+                    {$this->tableNames->functionFindOutgoingHierarchy()}.dimensionspacepointhashes is null
+                    or
+                    h.dimensionspacepointhash = any({$this->tableNames->functionFindOutgoingHierarchy()}.dimensionspacepointhashes)
+                  );
+            end;
+            $$ language plpgsql;
+        SQL);
+        $this->dbal->executeStatement(<<<SQL
+            create or replace function {$this->tableNames->functionGetParentRelationAnchorPointInDimension()}(
+                    nodeaggregateid varchar(64),
+                    contentstreamid varchar(40),
+                    dimensionhash varchar(255),
+                    parentdimensionhash varchar(255)
+                )
+                returns bigint
+            as
+            $$
+            begin
+                return (
+                    select distinct pds.relationanchorpoint
+                    from {$this->tableNames->node()} cn
+                           left join {$this->tableNames->hierarchyRelation()} h
+                                    on cn.relationanchorpoint = any (h.childnodeanchors)
+                           left join {$this->tableNames->node()} pn
+                                    on pn.relationanchorpoint = h.parentnodeanchor
+                           left join {$this->tableNames->node()} pds
+                                    on pds.nodeaggregateid = pn.nodeaggregateid
+                           left join {$this->tableNames->hierarchyRelation()} hi
+                                    on pds.relationanchorpoint = any (hi.childnodeanchors)
+                    where h.contentstreamid = {$this->tableNames->functionGetParentRelationAnchorPointInDimension()}.contentstreamid
+                      and hi.contentstreamid = {$this->tableNames->functionGetParentRelationAnchorPointInDimension()}.contentstreamid
+                      and cn.nodeaggregateid = {$this->tableNames->functionGetParentRelationAnchorPointInDimension()}.nodeaggregateid
+                      and cn.origindimensionspacepointhash = {$this->tableNames->functionGetParentRelationAnchorPointInDimension()}.dimensionhash
+                      and hi.dimensionspacepointhash = {$this->tableNames->functionGetParentRelationAnchorPointInDimension()}.parentdimensionhash
+                );
+            end;
+            $$ language plpgsql;
+        SQL);
+
         // TODO remove this - only for development
         $this->dbal->executeStatement(<<<SQL
             alter sequence cr_default_p_graph_node_relationanchorpoint_seq restart with 1;
         SQL);
     }
+
+
 
     public function status(): ProjectionStatus
     {
