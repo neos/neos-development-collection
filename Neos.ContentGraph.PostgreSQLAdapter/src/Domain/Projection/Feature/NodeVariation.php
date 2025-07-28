@@ -15,14 +15,9 @@ declare(strict_types=1);
 namespace Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\Feature;
 
 use Doctrine\DBAL\Connection;
-use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\NodeRelationAnchorPoint;
-use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
-use Neos\ContentRepository\Core\Feature\Common\InterdimensionalSiblings;
 use Neos\ContentRepository\Core\Feature\NodeVariation\Event\NodeGeneralizationVariantWasCreated;
 use Neos\ContentRepository\Core\Feature\NodeVariation\Event\NodePeerVariantWasCreated;
 use Neos\ContentRepository\Core\Feature\NodeVariation\Event\NodeSpecializationVariantWasCreated;
-use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 
 /**
  * The node disabling feature set for the hypergraph projector
@@ -101,8 +96,7 @@ trait NodeVariation
                             set childnodeanchors = array_replace(
                               {$this->tableNames->hierarchyRelation()}.childnodeanchors,
                               o.relationanchorpoint,
-                              s.relationanchorpoint
-                                                   )
+                              s.relationanchorpoint)
                             from old_covering_node o, specialized_node_copy s
                             where o.relationanchorpoint = any (childnodeanchors)
                               -- only affected dimensions

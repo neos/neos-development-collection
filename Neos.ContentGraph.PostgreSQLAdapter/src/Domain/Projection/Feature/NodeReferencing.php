@@ -37,6 +37,14 @@ trait NodeReferencing
      */
     private function whenNodeReferencesWereSet(NodeReferencesWereSet $event): void
     {
+        $parameters = [
+
+        ];
+
+        $query = <<<SQL
+
+        SQL;
+
         foreach ($event->affectedSourceOriginDimensionSpacePoints as $originDimensionSpacePoint) {
             $nodeRecord = $this->getReadQueries()->findNodeRecordByOrigin(
                 $event->contentStreamId,
