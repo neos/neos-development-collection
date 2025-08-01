@@ -175,4 +175,11 @@ class FeatureContext implements BehatContext
         }
     }
 
+    protected function cleanupViews(Connection $databaseConnection, ContentRepositoryId $contentRepositoryId): void
+    {
+        if (getenv('FLOW_CONTEXT') === 'Development/Docker/Postgres') {
+            HypergraphSchemaBuilder::cleanupViews($databaseConnection, $contentRepositoryId);
+        }
+    }
+
 }

@@ -28,6 +28,17 @@ final readonly class HypergraphSchemaBuilder
     ) {
     }
 
+    // FIXME nasty race condition when setting up the schema, we need to drop the view
+    public static function cleanupViews(
+        Connection $databaseConnection,
+        ContentRepositoryId $contentRepositoryId
+    ) {
+        $tableNames = ContentGraphTableNames::create($contentRepositoryId);
+        $databaseConnection->executeStatement(<<<SQL
+            drop view if exists {$tableNames->viewSubtree()};
+        SQL);
+    }
+
     public function buildSchema(): Schema
     {
         $schema = new Schema();
