@@ -19,12 +19,14 @@ Advantages:
          with the DB when we never actually return anything a.k.a. it is "unused" after setting it)
    - Also, in other places but the event handlers, those domain classes were used as well.
      That kind of felt like "god components", which made it hard for me to "assign a function to a specific use-case".
- - PHP loops get replaced by JOIN queries: this way, we:
+ - PHP loops get replaced by JOIN queries, multi-inserts / updates: this way, we:
    - categorically exclude the possibility to nest loops, in loops, in loops, ... and do lots of SQL queries in
      a single event handling action
    - slow event handlers that need to be optimized will show up in the **slow query log** instead of "flooding" 
      the log with "fast but lot's" of queries
    - set operations, aggregations and filters can take advantage of **database indices**
+ - the common "upsert" pattern (insert, or update if already present) is performed via single query
+   ( instead of read (SQL) -> if/else (PHP) -> write (SQL) )
  - Event Handler queries are data modifying operations, so they usually won't return any result rows.
    You can, however, return results to check for plausibility in PHP after a writing query inside an
    event handler function. (or for debugging reasons)
@@ -45,7 +47,9 @@ Disadvantages:
        - f.e. "what is the use case of updating this field?" AND "why do we use a INNER join here?"
      - also the Event Handler PHP classes (usually traits) need to be well documented
      - The respective Behavioral tests are referenced in the EventHandlers as well.
-
+ - you have no PHP API level "domain consistency guarantees", meaning:
+   "forgot a where condition in a single use-case? -> update all nodes in the table f.e."
+   - that should/must be covered by tests imho.
 
 ## no query builders or string concatenation building SQL queries
 
@@ -76,6 +80,8 @@ function handleMyEvent($e): void
 ```
 !!! IMPORTANT: **never use untrusted content repository IDs as query input** as they are prune to **SQL injection**.
 And, please do not call your content repository "default; truncate table users;" ;)
+
+-> this should be impossible thou, due to the constraints in the ContentRepositoryId value object.
 
 Advantages:
 
@@ -183,7 +189,7 @@ Disadvantages:
 Eric Kloss, 1.8.2025
 
 Looking at the both main Read APIs: `ContentGraphInterface` and `ContentSubGraphInterface`, there is a lot of 
-business logic implemented on the read-side or more specific at read-time. 
+business logic implemented on the read-side, or - more specific - at **read-time**. 
 
 First, I think there are two "modes" in which the Neos CR can act:
 
@@ -198,7 +204,7 @@ Recursive queries can get really slow in certain situations - most likely due to
 in-memory thus can't use any indices when read from (which happens during the recursive iterations). 
 Also, each iteration of the CTE needs to join the hierarchy relation as well to work with the correct node variants.
 
-The idea to move this logic to the write side, could look like this:
+The idea to **move this logic to the write side**, could look like this:
 
  - we create a table called "..._subtree", which contains the whole subtree for each node variant
  - this table is basically a read-optimized, redundant store to optimize subtree lookups.
@@ -209,10 +215,12 @@ The idea to move this logic to the write side, could look like this:
      and of actual nodes "unnesting" this array
    - the tree structure as jsonb -> for conserving the depth and ordinality for ordering and tree re-construction in PHP
    - the subtree-tags for lightning fast filtering of hidden nodes (and also other excluded tags)
- - each node write operation that concerns the node tree, will cause a partial update of this table
+ - each node **write operation** that concerns the node tree, will cause a partial update of this table
    - for this operation, a query very similar to the original recursive CTE is used
    - my assumption: but is then called fewer times (way fewer)
-
+ -> I tested this approach with a view. see this commit: https://github.com/neos/neos-development-collection/commit/5514fd68b5630b14d36c37d6492875d01627608d
+   - I am aware, that the view approach is actually even worse performance than it was before, but I wanted to PoC without
+     implementing partial update of this table (im currently working on that).
 
 **BUT**: what if Neos is in write-heavy mode?
 
