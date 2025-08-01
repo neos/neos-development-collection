@@ -185,8 +185,8 @@ business logic implemented on the read-side or more specific at read-time.
 
 First, I think there are two "modes" in which the Neos CR can act:
 
- - read heavy -> regular usage of the Neos backend and frontend rendering
- - write heavy -> during site imports or importers creating lots of nodes but does not perform a single rendering action
+ - read heavy -> regular usage of the Neos backend editing and frontend rendering
+ - write heavy -> during site imports or importers creating lots of nodes (with no rendering actions)
 
 (I need more examples here to get a better understanding.)
 
@@ -207,7 +207,7 @@ The idea to move this logic to the write side, could look like this:
      and of actual nodes "unnesting" this array
    - the tree structure as jsonb -> for conserving the depth and ordinality for ordering and tree re-construction in PHP
    - the subtree-tags for lightning fast filtering of hidden nodes (and also other excluded tags)
- - each node write operation that concerns the node tree, will cause a partial update this table
+ - each node write operation that concerns the node tree, will cause a partial update of this table
    - for this operation, a query very similar to the original recursive CTE is used
    - my assumption: but is then called fewer times (way fewer)
 
