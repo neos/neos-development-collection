@@ -79,7 +79,7 @@
       box-sizing: border-box;
 
       &:before {
-        content: fa-content($fa-var-times);
+        content: fa-content(fa.$var-times);
       }
 
       &:hover {

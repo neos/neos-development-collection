@@ -20,7 +20,7 @@ ul.neos-tree-container {
     &.neos-hidden {
       span + span:after {
         @extend .fas;
-        content: fa-content($fa-var-times-circle);
+        content: fa-content(fa.$var-times-circle);
         position: absolute;
         left: 12px;
         top: 0px;
@@ -38,7 +38,7 @@ ul.neos-tree-container {
     &.neos-timedVisibility {
       span + span:after {
         @extend .fas;
-        content: fa-content($fa-var-clock);
+        content: fa-content(fa.$var-clock);
         font-weight: 400;
         position: absolute;
         left: 12px;
@@ -105,7 +105,7 @@ ul.neos-tree-container {
     &.neos-tree-open > .neos-tree-expander {
       display: inline-block;
       line-height: 24px;
-      @extend .#{$fa-css-prefix}-caret-down;
+      @extend .#{fa.$css-prefix}-caret-down;
       @extend .fas;
 
       &:before {
@@ -123,7 +123,7 @@ ul.neos-tree-container {
 
     .neos-tree-expander {
       line-height: 24px;
-      @extend .#{$fa-css-prefix}-caret-right;
+      @extend .#{fa.$css-prefix}-caret-right;
       @extend .fas;
       cursor: pointer;
       font-size: 16px;

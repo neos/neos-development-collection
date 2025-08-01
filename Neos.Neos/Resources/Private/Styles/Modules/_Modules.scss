@@ -272,7 +272,7 @@
 
     &:after {
       @extend .fas;
-      content: fa-content($fa-var-caret-down);
+      content: fa-content(fa.$var-caret-down);
       display: block;
       position: absolute;
       right: 0;

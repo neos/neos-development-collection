@@ -255,7 +255,7 @@
 
       &:after {
         @extend .fas;
-        content: fa-content($fa-var-caret-down);
+        content: fa-content(fa.$var-caret-down);
         display: block;
         position: absolute;
         width: $unit;
@@ -305,7 +305,7 @@
         text-decoration: inherit;
         display: inline-block;
         speak: none;
-        content: fa-content($fa-var-search);
+        content: fa-content(fa.$var-search);
         line-height: 100%;
         font-size: 14px;
         cursor: pointer;
@@ -386,7 +386,7 @@
       text-decoration: inherit;
       display: inline-block;
       speak: none;
-      content: fa-content($fa-var-search);
+      content: fa-content(fa.$var-search);
       line-height: 100%;
       font-size: 14px;
       cursor: pointer;

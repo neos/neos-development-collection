@@ -1,13 +1,19 @@
+// load Font Awesome
+@use './FontAwesome/variables' with (
+  $font-path: '../Fonts/FontAwesome',
+);
+@use './FontAwesome/fontawesome';
+@use './FontAwesome/fa' as fa;
+@use './FontAwesome/solid' as fa-solid;
+@use './FontAwesome/brands' as fa-brands;
+@use './FontAwesome/regular' as fa-regular;
+
 // Core variables and mixins
 @import "Foundation/variables"; // Modify this for custom colors, font-sizes, etc
 @import "Foundation/mixins";
 @import "Constants";
 @import "Mixins";
 @import "Fonts";
-@import "FontAwesome/fontawesome.scss";
-@import "FontAwesome/brands.scss";
-@import "FontAwesome/regular.scss";
-@import "FontAwesome/solid.scss";
 @import "Icons";
 
 .neos {
