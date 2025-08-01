@@ -1,7 +1,7 @@
 # Log of important architecture decisions
 
 
-## Single Queries in Favor of PHP business logic (Event Handlers / wirte side)
+## Single Queries in Favor of PHP business logic (Event Handlers / write side)
 
 Eric Kloss, 1.8.2025
 
@@ -16,7 +16,7 @@ Advantages:
    - also, event handlers never actually return anything (always void)
    - that also removes the "Active Record" pattern in the event handlers
       -> for me that was a massive cognitive overhead (I wondered why we need the domain objects to be in sync 
-         with the DB when we never return anything a.k.a. it is "unused" after setting it)
+         with the DB when we never actually return anything a.k.a. it is "unused" after setting it)
    - Also, in other places but the event handlers, those domain classes were used as well.
      That kind of felt like "god components", which made it hard for me to "assign a function to a specific use-case".
  - PHP loops get replaced by JOIN queries: this way, we:
@@ -42,6 +42,7 @@ Disadvantages:
  - The cognitive overhead that is reduced in PHP, moves to more complex SQL queries.
    - possible solutions for this disadvantage:
      - queries need to be **documented in detail** (both technically and use-case specific)
+       - f.e. "what is the use case of updating this field?" AND "why do we use a INNER join here?"
      - also the Event Handler PHP classes (usually traits) need to be well documented
      - The respective Behavioral tests are referenced in the EventHandlers as well.
 
@@ -73,7 +74,8 @@ function handleMyEvent($e): void
     SQL;
 }
 ```
-!!! IMPORTANT: **never use untrusted content repository IDs as query input** as they are prune to SQL injection.
+!!! IMPORTANT: **never use untrusted content repository IDs as query input** as they are prune to **SQL injection**.
+And, please do not call your content repository "default; truncate table users;" ;)
 
 Advantages:
 
