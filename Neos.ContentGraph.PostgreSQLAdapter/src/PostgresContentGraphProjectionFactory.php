@@ -33,6 +33,7 @@ final readonly class PostgresContentGraphProjectionFactory implements ContentGra
             $projectionFactoryDependencies->contentRepositoryId,
             new ContentHyperGraphReadModelAdapter(
                 $this->dbal,
+                $projectionFactoryDependencies->getPropertyConverter(),
                 $nodeFactory,
                 $projectionFactoryDependencies->contentRepositoryId,
                 $projectionFactoryDependencies->nodeTypeManager

@@ -46,7 +46,7 @@ final readonly class ContentGraphTableNames
         return $this->tableNamePrefix . '_referencerelation';
     }
 
-    // TODO implement
+    // TODO remove in favor of subtree table
     public function subTreeTagsRelation(): string
     {
         return $this->tableNamePrefix . '_subtreetags';
@@ -100,6 +100,11 @@ final readonly class ContentGraphTableNames
     public function functionFindOutgoingHierarchy(): string
     {
         return $this->functionNamePrefix . '_find_outgoing_hierarchy';
+    }
+
+    public function viewSubtree(): string
+    {
+        return $this->tableNamePrefix .'_subtree';
     }
 
 }

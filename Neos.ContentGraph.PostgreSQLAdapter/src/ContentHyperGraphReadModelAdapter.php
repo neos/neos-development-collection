@@ -6,8 +6,9 @@ namespace Neos\ContentGraph\PostgreSQLAdapter;
 
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Exception;
-use Neos\ContentGraph\PostgreSQLAdapter\Domain\Repository\ContentHypergraph;
+use Neos\ContentGraph\PostgreSQLAdapter\Domain\Repository\PostgresContentGraph;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Repository\NodeFactory;
+use Neos\ContentRepository\Core\Infrastructure\Property\PropertyConverter;
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphInterface;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphReadModelInterface;
@@ -31,6 +32,7 @@ final readonly class ContentHyperGraphReadModelAdapter implements ContentGraphRe
 
     public function __construct(
         private Connection $dbal,
+        private PropertyConverter $propertyConverter,
         private NodeFactory $nodeFactory,
         private ContentRepositoryId $contentRepositoryId,
         private NodeTypeManager $nodeTypeManager
@@ -44,8 +46,9 @@ final readonly class ContentHyperGraphReadModelAdapter implements ContentGraphRe
         if ($contentStreamId === null) {
             throw WorkspaceDoesNotExist::butWasSupposedTo($workspaceName);
         }
-        return new ContentHyperGraph(
+        return new PostgresContentGraph(
             $this->dbal,
+            $this->propertyConverter,
             $this->nodeFactory,
             $this->contentRepositoryId,
             $this->nodeTypeManager,

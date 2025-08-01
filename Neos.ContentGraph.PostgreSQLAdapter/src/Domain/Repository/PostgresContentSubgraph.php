@@ -16,6 +16,7 @@ namespace Neos\ContentGraph\PostgreSQLAdapter\Domain\Repository;
 
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Connection as DatabaseConnection;
+use Doctrine\DBAL\Types\Types;
 use Neos\ContentGraph\PostgreSQLAdapter\ContentGraphTableNames;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Repository\Query\HypergraphChildQuery;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Repository\Query\HypergraphParentQuery;
@@ -25,6 +26,10 @@ use Neos\ContentGraph\PostgreSQLAdapter\Domain\Repository\Query\HypergraphSiblin
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Repository\Query\HypergraphSiblingQueryMode;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Repository\Query\QueryUtility;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
+use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
+use Neos\ContentRepository\Core\Feature\NodeModification\Dto\SerializedPropertyValues;
+use Neos\ContentRepository\Core\Feature\SubtreeTagging\Dto\SubtreeTags;
+use Neos\ContentRepository\Core\Infrastructure\Property\PropertyConverter;
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\Projection\ContentGraph\AbsoluteNodePath;
@@ -44,8 +49,12 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\Pagination\Pagina
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodePath;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Nodes;
+use Neos\ContentRepository\Core\Projection\ContentGraph\NodeTags;
+use Neos\ContentRepository\Core\Projection\ContentGraph\PropertyCollection;
 use Neos\ContentRepository\Core\Projection\ContentGraph\References;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Subtree;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Subtrees;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Timestamps;
 use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateClassification;
@@ -54,6 +63,7 @@ use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateIds;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
+use Neos\Flow\Persistence\Doctrine\Query;
 
 /**
  * The content subgraph application repository
@@ -73,8 +83,11 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
  *
  * @internal but the public {@see ContentSubgraphInterface} is API
  */
-final readonly class ContentSubhypergraph implements ContentSubgraphInterface
+final readonly class PostgresContentSubgraph implements ContentSubgraphInterface
 {
+
+    private const DEFAULT_CHILD_NODE_LIMIT = 100000;
+
     public function __construct(
         private ContentRepositoryId $contentRepositoryId,
         private ContentStreamId $contentStreamId,
@@ -82,6 +95,7 @@ final readonly class ContentSubhypergraph implements ContentSubgraphInterface
         private DimensionSpacePoint $dimensionSpacePoint,
         private VisibilityConstraints $visibilityConstraints,
         private Connection $dbal,
+        private PropertyConverter $propertyConverter,
         private NodeFactory $nodeFactory,
         private NodeTypeManager $nodeTypeManager,
         private ContentGraphTableNames $tableNames
@@ -152,6 +166,192 @@ final readonly class ContentSubhypergraph implements ContentSubgraphInterface
         NodeAggregateId $parentNodeAggregateId,
         FindChildNodesFilter $filter
     ): Nodes {
+
+        $excludedSubtreeTags = $this->visibilityConstraints->excludedSubtreeTags->toStringArray();
+        if (count($excludedSubtreeTags) === 0) {
+            $excludedSubtreeTags = null;
+        }
+
+        // FIXME lets think about adding all inherited node types as column to the DB, this would move
+        //       the calculation heavy part to the write side (which I assume happens a lot less than actual reading)
+        if ($filter->nodeTypes !== null) {
+            $expandedNodeTypeCriteria = ExpandedNodeTypeCriteria::create(
+                $filter->nodeTypes,
+                $this->nodeTypeManager
+            );
+        } else {
+            $expandedNodeTypeCriteria = null;
+        }
+
+        $nonEmptyNodeTypeFilter = $expandedNodeTypeCriteria !== null &&
+            (!$expandedNodeTypeCriteria->explicitlyAllowedNodeTypeNames->isEmpty()
+                || !$expandedNodeTypeCriteria->explicitlyDisallowedNodeTypeNames->isEmpty());
+
+        $parameters = [
+            'parentnodeaggregateid' => $parentNodeAggregateId->value,
+            'contentstreamid' => $this->contentStreamId->value,
+            'dimensionhash' => $this->dimensionSpacePoint->hash,
+            'result_offset' => $filter->pagination?->offset ?? 0,
+            'result_limit' => $filter->pagination?->limit ?? self::DEFAULT_CHILD_NODE_LIMIT,
+            'subtreetag_filter_active' => count($excludedSubtreeTags) > 0,
+            'excluded_subtreetags' => $excludedSubtreeTags,
+            'mode_wildcard_both' => $nonEmptyNodeTypeFilter && $expandedNodeTypeCriteria->isWildCardAllowed
+                && !$expandedNodeTypeCriteria->explicitlyAllowedNodeTypeNames->isEmpty()
+                && !$expandedNodeTypeCriteria->explicitlyDisallowedNodeTypeNames->isEmpty(),
+            'mode_no_wildcard_both' => $nonEmptyNodeTypeFilter && !$expandedNodeTypeCriteria->isWildCardAllowed
+                && !$expandedNodeTypeCriteria->explicitlyAllowedNodeTypeNames->isEmpty()
+                && !$expandedNodeTypeCriteria->explicitlyDisallowedNodeTypeNames->isEmpty(),
+            'mode_no_wildcard_only_allowed' => $nonEmptyNodeTypeFilter && !$expandedNodeTypeCriteria->isWildCardAllowed
+                && $expandedNodeTypeCriteria->explicitlyDisallowedNodeTypeNames->isEmpty(),
+            'mode_only_disallowed' => $nonEmptyNodeTypeFilter
+                && $expandedNodeTypeCriteria->explicitlyAllowedNodeTypeNames->isEmpty(),
+            'nodetype_allowed' => $expandedNodeTypeCriteria?->explicitlyAllowedNodeTypeNames ?? [],
+            'nodetype_disallowed' => $expandedNodeTypeCriteria?->explicitlyDisallowedNodeTypeNames ?? [],
+        ];
+
+        $parameterTypes = [
+            'excluded_subtreetags' => Connection::PARAM_STR_ARRAY,
+            'nodetype_allowed' => Connection::PARAM_STR_ARRAY,
+            'nodetype_disallowed' => Connection::PARAM_STR_ARRAY,
+            'mode_wildcard_both' => Types::BOOLEAN,
+            'mode_no_wildcard_both' => Types::BOOLEAN,
+            'mode_no_wildcard_only_allowed' => Types::BOOLEAN,
+            'mode_only_disallowed' => Types::BOOLEAN,
+        ];
+
+        // TODO hier weiter (filter)
+
+        $query = <<<SQL
+            with parent as (
+                select {$this->tableNames->functionGetRelationAnchorPoint()}(
+                        :parentnodeaggregateid,
+                        :contentstreamid,
+                        :dimensionhash
+                    ) as parentnodeanchor
+            ),
+            child_node_anchors as (
+                select
+                    ph.childnodeanchors,
+                    -- FIXME check if this assumption is correct
+                    -- since all childnodes must be in the same dimension,
+                    -- we can use the parent dimension as resulting covered dimension
+                    ph.dimensionspacepoint,
+                    ph.dimensionspacepointhash
+                from {$this->tableNames->hierarchyRelation()} ph, parent pna
+                where ph.parentnodeanchor = pna.parentnodeanchor
+                  and ph.contentstreamid = :contentstreamid
+            )
+            select
+                cn.nodeaggregateid,
+                cn.origindimensionspacepoint,
+                cn.nodetypename,
+                cn.nodename,
+                cn.properties,
+                cn.classification,
+                cna.dimensionspacepoint,
+                -- subtreetags
+                subtree_tags.tags
+            from {$this->tableNames->node()} cn, child_node_anchors cna
+                left join lateral (
+                    with all_affected_subtrees as (
+                        select *
+                        from cr_default_p_graph_subtreetags st
+                        where cn.nodeaggregateid = any (st.affectednodeaggregateids)
+                          and st.contentstreamid = :contentstreamid
+                          and st.dimensionspacepointhash = cna.dimensionspacepointhash
+                    )
+                    select
+                      -- Since there is no removal of tags down the inheritance chain,
+                      -- we can simply add together all parent tags without having to look at the
+                      -- inheritance chain order.
+                      jsonb_build_object(
+                        'explicit_tags', (select jsonb_agg(t.tag)
+                                           from (select distinct unnest(expl_st.subtreetags)
+                                                 from all_affected_subtrees expl_st
+                                                 -- include only explicitly set tags
+                                                 where expl_st.originnodeaggregateid = cn.nodeaggregateid) t(tag)
+                             ),
+                        'only_inherited', (select jsonb_agg(t.tag)
+                                           from (select distinct unnest(expl_st.subtreetags)
+                                                 from all_affected_subtrees expl_st
+                                                 -- exclude explicitly set tags
+                                                 where expl_st.originnodeaggregateid != cn.nodeaggregateid) t(tag))
+                      ) as tags
+                ) subtree_tags on true
+            where cn.relationanchorpoint = any(cna.childnodeanchors)
+              -- subtree tag filtering
+              and (
+                  -- deactivate filter when no values are set
+                  not :subtreetag_filter_active
+                    or
+                  not exists(
+                    select 1
+                    from {$this->tableNames->subTreeTagsRelation()} st
+                    where cn.nodeaggregateid = any(st.affectednodeaggregateids)
+                      and st.dimensionspacepointhash = :dimensionhash
+                      and st.contentstreamid = :contentstreamid
+                      and st.subtreetags && array[:excluded_subtreetags]::varchar(36)[]
+                  )
+              )
+              -- node type filtering
+                and
+                ( not :mode_wildcard_both or
+                  (cn.nodetypename not in (:nodetype_disallowed)
+                      or cn.nodetypename in (:nodetype_allowed))
+                )
+                and
+                ( not :mode_no_wildcard_both or
+                  (cn.nodetypename not in (:nodetype_disallowed)
+                      and cn.nodetypename in (:nodetype_allowed))
+                )
+                and
+                ( not :mode_no_wildcard_only_allowed or
+                  cn.nodetypename in (:nodetype_allowed)
+                )
+                and
+                ( not :mode_only_disallowed or
+                  cn.nodetypename not in (:nodetype_disallowed)
+                )
+            limit :result_limit
+            offset :result_offset
+        SQL;
+
+        $result = $this->dbal->executeQuery($query, $parameters, $parameterTypes);
+        $rows = $result->fetchAllAssociative();
+
+
+        $nodesDeserialized = [];
+        foreach ($rows as $nodeRow) {
+            $subtreeTags = json_decode($nodeRow['tags'], true);
+            $nodesDeserialized[] = Node::create(
+                $this->contentRepositoryId,
+                $this->workspaceName,
+                DimensionSpacePoint::fromJsonString($nodeRow['dimensionspacepoint']),
+                NodeAggregateId::fromString($nodeRow['nodeaggregateid']),
+                OriginDimensionSpacePoint::fromJsonString($nodeRow['origindimensionspacepoint']),
+                NodeAggregateClassification::from($nodeRow['classification']),
+                NodeTypeName::fromString($nodeRow['nodetypename']),
+                new PropertyCollection(
+                    SerializedPropertyValues::fromJsonString($nodeRow['properties']),
+                    $this->propertyConverter
+                ),
+                !empty($nodeRow['nodename']) ? NodeName::fromString($nodeRow['nodename']) : null,
+                NodeTags::create(
+                    SubtreeTags::fromStrings(...($subtreeTags['explicit_tags'] ?? [])),
+                    SubtreeTags::fromStrings(...($subtreeTags['only_inherited'] ?? [])),
+                ),
+                Timestamps::create(
+                // TODO replace with $nodeRow['created'] and $nodeRow['originalcreated'] once projection has implemented support
+                    QueryUtility::parseDateTimeString('2023-03-17 12:00:00'),
+                    QueryUtility::parseDateTimeString('2023-03-17 12:00:00'),
+                    null,
+                    null,
+                ),
+                $this->visibilityConstraints,
+            );
+        }
+        return Nodes::fromArray($nodesDeserialized);
+
         $query = HypergraphChildQuery::create(
             $this->contentStreamId,
             $parentNodeAggregateId,
@@ -160,6 +360,8 @@ final readonly class ContentSubhypergraph implements ContentSubgraphInterface
         $query = $query->withDimensionSpacePoint($this->dimensionSpacePoint)
             ->withRestriction($this->visibilityConstraints);
         if (!is_null($filter->nodeTypes)) {
+            // FIXME lets think about adding all inherited node types as column to the DB, this would move
+            //       the calculation heavy part to the write side (which I assume happens a lot less than actual reading)
             $expandedNodeTypeCriteria = ExpandedNodeTypeCriteria::create(
                 $filter->nodeTypes,
                 $this->nodeTypeManager
@@ -403,10 +605,10 @@ final readonly class ContentSubhypergraph implements ContentSubgraphInterface
         FindSubtreeFilter $filter
     ): ?Subtree {
         $parameters = [
-            'entryNodeAggregateId' => $entryNodeAggregateId->value,
-            'contentStreamId' => $this->contentStreamId->value,
-            'dimensionSpacePointHash' => $this->dimensionSpacePoint->hash,
-            'maximumLevels' => $filter->maximumLevels
+            'nodeaggregateid' => $entryNodeAggregateId->value,
+            'contentstreamid' => $this->contentStreamId->value,
+            'dimensionspacepointhash' => $this->dimensionSpacePoint->hash,
+            'maximum_levels' => $filter->maximumLevels
         ];
 
         $types = [];
@@ -420,68 +622,109 @@ final readonly class ContentSubhypergraph implements ContentSubgraphInterface
             $nodeTypeCriteriaClause = '';
         }
 
-        $query = /** @lang PostgreSQL */
-            '-- ContentSubhypergraph::findSubtree
-    WITH RECURSIVE subtree AS (
-        SELECT n.*, h.contentstreamid,
-            h.dimensionspacepoint,
-            \'ROOT\'::varchar AS parentNodeAggregateId,
-            0 as level,
-            h.ordinality
-        FROM ' . $this->tableNames->node() . ' n
-            INNER JOIN (
-                SELECT *
-                FROM ' . $this->tableNames->hierarchyRelation() . ',
-                     -- this creates a new generated column "ordinality" which contains the sorting
-                     -- order of the childnodeanchor entries. We use this on the top level query to
-                     -- ensure that we preserve sorting of child nodes.
-                     unnest(childnodeanchors) WITH ORDINALITY childnodeanchor
-            ) h ON n.relationanchorpoint = h.childnodeanchor
-        WHERE n.nodeaggregateid = :entryNodeAggregateId
-            AND h.contentstreamid = :contentStreamId
-	    	AND h.dimensionspacepointhash = :dimensionSpacePointHash
-        ' . QueryUtility::getRestrictionClause($this->visibilityConstraints, $this->tableNames) . '
-    UNION ALL
-         -- --------------------------------
-         -- RECURSIVE query: do one "child" query step, taking into account the depth and node type constraints
-         -- --------------------------------
-        SELECT cn.*, ch.contentstreamid,
-            ch.dimensionspacepoint,
-            p.nodeaggregateid as parentNodeAggregateId,
-            p.level + 1 as level,
-            ch.ordinality
-        FROM subtree p
-            INNER JOIN (
-                SELECT *
-                FROM ' . $this->tableNames->hierarchyRelation() . ',
-                     -- this creates a new generated column "ordinality" which contains the sorting
-                     -- order of the childnodeanchor entries. We use this on the top level query to
-                     -- ensure that we preserve sorting of child nodes.
-                     unnest(childnodeanchors) WITH ORDINALITY childnodeanchor
-            ) ch ON ch.parentnodeanchor = p.relationanchorpoint
-            INNER JOIN ' . $this->tableNames->node() . ' cn ON cn.relationanchorpoint = ch.childnodeanchor
-	    WHERE
-	 	    ch.contentstreamid = :contentStreamId
-		    AND ch.dimensionspacepointhash = :dimensionSpacePointHash
-		    ' . ($filter->maximumLevels !== null ? 'AND p.level + 1 <= :maximumLevels' : '') . '
-            ' . QueryUtility::getRestrictionClause($this->visibilityConstraints, $this->tableNames, 'c') . '
-		    ' . $nodeTypeCriteriaClause . '
-    )
-    SELECT * FROM subtree
-    -- NOTE: it is crucially important that *inside* a single level, we
-    -- additionally order by ordinality (i.e. sort order of the childnodeanchor list)
-    -- to preserve node ordering when fetching subtrees.
-    ORDER BY level DESC, ordinality';
+        $query = <<<SQL
+            with subtree_entry as (
+                select
+                    st.affected_anchors,
+                    st.dimensionspacepoint,
+                    st.subtree_structure
+                -- TODO make this a materialized view or even better, a table with partitial updates on write
+                from {$this->tableNames->viewSubtree()} st
+                where st.nodeaggregateid = :nodeaggregateid
+                  and st.contentstreamid = :contentstreamid
+                  and st.dimensionspacepointhash = :dimensionspacepointhash
+            )
+            select
+                st.dimensionspacepoint,
+                subtree_nodes.nodes
+            from subtree_entry st
+                left join lateral (
+                    with nodes_of_subtree as (
+                        select n.*,
+                            st.subtree_structure -> n.nodeaggregateid ->> 'depth' as depth,
+                            st.subtree_structure -> n.nodeaggregateid ->> 'parent' as parent
+                        from unnest(st.affected_anchors) affected_anchors(relationanchorpoint)
+                            left join {$this->tableNames->node()} n
+                                on n.relationanchorpoint = affected_anchors.relationanchorpoint
+                        order by st.subtree_structure -> n.nodeaggregateid ->> 'depth' desc,
+                                     st.subtree_structure -> n.nodeaggregateid ->> 'ordinality'
+                    )
+                    select
+                        jsonb_agg(jsonb_build_object(
+                            -- 'relationanchorpoint', n.relationanchorpoint,
+                            'nodeaggregateid', n.nodeaggregateid,
+                            'parentnodeaggregateid', n.parent,
+                            'origindimensionspacepoint', n.origindimensionspacepoint,
+                            'nodetypename', n.nodetypename,
+                            'nodename', n.nodename,
+                            'properties', n.properties,
+                            'classification', n.classification,
+                            'depth', n.depth
+                        )) as nodes
+                    from nodes_of_subtree n
+                ) subtree_nodes on true
+        SQL;
 
-
-
-        $nodeRows = $this->dbal->executeQuery($query, $parameters, $types)
-            ->fetchAllAssociative();
-        if ($nodeRows === []) {
+        $result = $this->dbal->executeQuery($query, $parameters, $types);
+        $resultRow = $result->fetchAssociative();
+        if ($resultRow === false) {
+            return null;
+        }
+        $nodesArray = json_decode($resultRow['nodes'], true);
+        if (!is_array($nodesArray) || empty($nodesArray)) {
             return null;
         }
 
-        return $this->nodeFactory->mapNodeRowsToSubtree($nodeRows, $this->workspaceName, $this->visibilityConstraints);
+        // we have results
+        $dimensionSpacePoint = DimensionSpacePoint::fromJsonString($resultRow['dimensionspacepoint']);
+
+        /** @var array<string, Subtree[]> $subtreesByParentNodeId */
+        $subtreesByParentNodeId = [];
+        foreach ($nodesArray as $nodeJson) {
+            $parentNodeAggregateId = $nodeJson['parentnodeaggregateid'];
+            $node = Node::create(
+                $this->contentRepositoryId,
+                $this->workspaceName,
+                $dimensionSpacePoint,
+                NodeAggregateId::fromString($nodeJson['nodeaggregateid']),
+                OriginDimensionSpacePoint::fromArray($nodeJson['origindimensionspacepoint']),
+                NodeAggregateClassification::from($nodeJson['classification']),
+                NodeTypeName::fromString($nodeJson['nodetypename']),
+                new PropertyCollection(
+                    SerializedPropertyValues::fromArray($nodeJson['properties']),
+                    $this->propertyConverter
+                ),
+                $nodeJson['nodename'] ? NodeName::fromString($nodeJson['nodename']) : null,
+                // TODO implement {@see \Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\NodeFactory::mapNodeRowToNode()}
+                NodeTags::createEmpty(),
+                Timestamps::create(
+                // TODO replace with $nodeRow['created'] and $nodeRow['originalcreated'] once projection has implemented support
+                    QueryUtility::parseDateTimeString('2023-03-17 12:00:00'),
+                    QueryUtility::parseDateTimeString('2023-03-17 12:00:00'),
+                    null,
+                    null,
+                ),
+                $this->visibilityConstraints,
+            );
+            $nodeAggregateId = $node->aggregateId->value;
+            $level = (int)$nodeJson['depth'];
+            $subtree = Subtree::create(
+                $level,
+                $node,
+                array_key_exists($nodeAggregateId, $subtreesByParentNodeId) ?
+                    Subtrees::fromArray($subtreesByParentNodeId[$nodeAggregateId]) :
+                    Subtrees::createEmpty()
+            );
+            if ($subtree->level === 0) {
+                return $subtree;
+            }
+            if (!array_key_exists($parentNodeAggregateId, $subtreesByParentNodeId)) {
+                $subtreesByParentNodeId[$parentNodeAggregateId] = [];
+            }
+            $subtreesByParentNodeId[$parentNodeAggregateId][] = $subtree;
+        }
+
+        return null;
     }
 
     public function findAncestorNodes(
