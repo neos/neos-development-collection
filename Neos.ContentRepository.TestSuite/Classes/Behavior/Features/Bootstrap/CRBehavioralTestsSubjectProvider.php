@@ -198,6 +198,10 @@ trait CRBehavioralTestsSubjectProvider
         $databaseConnection = (new \ReflectionClass($eventStore))->getProperty('connection')->getValue($eventStore);
 
         $this->registerCustomDoctrineTypes($databaseConnection);
+        // FIXME !!! NASTY workaround - when and CR projection uses views
+        //   there are errors when doing schema migration.
+        // TODO reproduce / doc more in detail / discuss how to solve
+        $this->cleanupViews($databaseConnection, $contentRepositoryId);
 
         $result = $subscriptionEngine->reset();
         Assert::assertNull($result->errors);
@@ -221,6 +225,11 @@ trait CRBehavioralTestsSubjectProvider
     abstract protected function createContentRepository(ContentRepositoryId $contentRepositoryId): ContentRepository;
 
     protected function registerCustomDoctrineTypes(Connection $databaseConnection): void
+    {
+        // intent to be overridden if needed
+    }
+
+    protected function cleanupViews(Connection $databaseConnection, ContentRepositoryId $contentRepositoryId): void
     {
         // intent to be overridden if needed
     }
