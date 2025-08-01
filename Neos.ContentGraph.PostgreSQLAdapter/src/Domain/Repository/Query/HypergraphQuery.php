@@ -35,6 +35,7 @@ final class HypergraphQuery implements HypergraphQueryInterface
         ContentGraphTableNames $tableNames,
         bool $joinSubTreeTags = false
     ): self {
+        // TODO hier weiter
         $query = /** @lang PostgreSQL */
             'SELECT n.origindimensionspacepoint, n.nodeaggregateid,
                 n.nodetypename, n.classification, n.properties, n.nodename,

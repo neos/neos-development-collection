@@ -24,6 +24,19 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
  */
 final class QueryUtility
 {
+    // Postgresadapter:
+    //   optimizedSubtreeTags: ['requiredRole']
+
+    public static function parseDateTimeString(string $string): \DateTimeImmutable
+    {
+        $result = \DateTimeImmutable::createFromFormat('Y-m-d H:i:s', $string);
+        if ($result === false) {
+            throw new \RuntimeException(sprintf('Failed to parse "%s" into a valid DateTime', $string), 1678902055);
+        }
+        return $result;
+    }
+
+
     public static function getRestrictionClause(
         VisibilityConstraints $visibilityConstraints,
         ContentGraphTableNames $tableNames,
@@ -31,6 +44,7 @@ final class QueryUtility
     ): string {
         // TODO evaluate $visibilityConstraints->tagConstraints {@see Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\ContentSubgraph::addSubtreeTagConstraints}
 
+        //
         return '';
     }
 
@@ -59,6 +73,7 @@ final class QueryUtility
             AND ' . $tableAlias . '.nodetypename NOT IN (:disallowedNodeTypeNames)
             OR ' . $tableAlias . '.nodetypename IN (:allowedNodeTypeNames)';
                 } else {
+                    // FIXME what is the usecase here?
                     $query .= '
             AND ' . $tableAlias . '.nodetypename IN (:allowedNodeTypeNames)
             AND ' . $tableAlias . '.nodetypename NOT IN (:disallowedNodeTypeNames)';

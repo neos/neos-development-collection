@@ -22,20 +22,32 @@ use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\NodeRelationAnchorPoin
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Repository\Query\HypergraphChildQuery;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Repository\Query\HypergraphParentQuery;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Repository\Query\HypergraphQuery;
+use Neos\ContentGraph\PostgreSQLAdapter\Domain\Repository\Query\QueryUtility;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
+use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePointSet;
+use Neos\ContentRepository\Core\Feature\NodeModification\Dto\SerializedPropertyValues;
 use Neos\ContentRepository\Core\Feature\SubtreeTagging\Dto\SubtreeTag;
+use Neos\ContentRepository\Core\Feature\SubtreeTagging\Dto\SubtreeTags;
+use Neos\ContentRepository\Core\Infrastructure\Property\PropertyConverter;
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\NodeType\NodeTypeNames;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphInterface;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentSubgraphInterface;
+use Neos\ContentRepository\Core\Projection\ContentGraph\CoverageByOrigin;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindRootNodeAggregatesFilter;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregates;
+use Neos\ContentRepository\Core\Projection\ContentGraph\NodeTags;
+use Neos\ContentRepository\Core\Projection\ContentGraph\OriginByCoverage;
+use Neos\ContentRepository\Core\Projection\ContentGraph\PropertyCollection;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Timestamps;
 use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateClassification;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateIds;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
@@ -49,16 +61,17 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
  *
  * @internal but the parent {@see ContentGraphInterface} is API
  */
-final readonly class ContentHypergraph implements ContentGraphInterface
+final readonly class PostgresContentGraph implements ContentGraphInterface
 {
 
     private ContentGraphTableNames $tableNames;
 
     public function __construct(
-        private  Connection $dbal,
-        private  NodeFactory $nodeFactory,
-        private  ContentRepositoryId $contentRepositoryId,
-        private  NodeTypeManager $nodeTypeManager,
+        private Connection $dbal,
+        private PropertyConverter $propertyConverter,
+        private NodeFactory $nodeFactory,
+        private ContentRepositoryId $contentRepositoryId,
+        private NodeTypeManager $nodeTypeManager,
         public WorkspaceName $workspaceName,
         public ContentStreamId $contentStreamId
     ) {
@@ -79,13 +92,14 @@ final readonly class ContentHypergraph implements ContentGraphInterface
         DimensionSpacePoint $dimensionSpacePoint,
         VisibilityConstraints $visibilityConstraints
     ): ContentSubgraphInterface {
-        return new ContentSubhypergraph(
+        return new PostgresContentSubgraph(
             $this->contentRepositoryId,
             $this->contentStreamId,
             $this->workspaceName,
             $dimensionSpacePoint,
             $visibilityConstraints,
             $this->dbal,
+            $this->propertyConverter,
             $this->nodeFactory,
             $this->nodeTypeManager,
             $this->tableNames
@@ -104,11 +118,13 @@ final readonly class ContentHypergraph implements ContentGraphInterface
             foreach ($rootNodeAggregates as $rootNodeAggregate) {
                 $ids[] = $rootNodeAggregate->nodeAggregateId->value;
             }
-            throw new \RuntimeException(sprintf(
-                'More than one root node aggregate of type "%s" found (IDs: %s).',
-                $nodeTypeName->value,
-                implode(', ', $ids)
-            ));
+            throw new \RuntimeException(
+                sprintf(
+                    'More than one root node aggregate of type "%s" found (IDs: %s).',
+                    $nodeTypeName->value,
+                    implode(', ', $ids)
+                )
+            );
         }
 
         return $rootNodeAggregates->first();
@@ -149,10 +165,11 @@ final readonly class ContentHypergraph implements ContentGraphInterface
         return NodeAggregates::createEmpty();
     }
 
-    public function findNodeAggregateById(
+    private function findNodeAgg_old(
         NodeAggregateId $nodeAggregateId
     ): ?NodeAggregate {
-        // FIXME join sub-tree tags, parameter was "true"
+
+
         $query = HypergraphQuery::create($this->contentStreamId, $this->tableNames, false);
         $query = $query->withNodeAggregateId($nodeAggregateId);
 
@@ -162,6 +179,151 @@ final readonly class ContentHypergraph implements ContentGraphInterface
             $nodeRows,
             $this->workspaceName,
             VisibilityConstraints::createEmpty()
+        );
+    }
+
+    public function findNodeAggregateById(
+        NodeAggregateId $nodeAggregateId
+    ): ?NodeAggregate {
+
+        //return $this->findNodeAgg_old($nodeAggregateId);
+
+        $parameters = [
+            'nodeaggregateid' => $nodeAggregateId->value,
+            'contentstreamid' => $this->contentStreamId->value
+        ];
+
+        $query = <<<SQL
+            with aggregate_nodes as (
+                  -- find all node variants for this aggregate ID
+                  select *
+                  from cr_default_p_graph_node an
+                  where an.nodeaggregateid = :nodeaggregateid)
+            select an.nodetypename,
+                   an.nodename,
+                   an.classification,
+                   jsonb_object_agg(an.origindimensionspacepointhash, an.origindimensionspacepoint)
+                                                                         as occupied_dsps,
+                   jsonb_agg(jsonb_build_object(
+                     'dimensionspacepointhash', h.dimensionspacepointhash,
+                     'dimensionspacepoint', h.dimensionspacepoint,
+                     'origindimensionspacepoint', an.origindimensionspacepoint,
+                     'properties', an.properties
+                                                                      )) as nodes_by_covered_dsp,
+                   jsonb_object_agg(h.dimensionspacepointhash, subtree_tags.tags)
+                                                                         as subtreetags_by_covered
+            -- aggregations
+            from aggregate_nodes an
+                   -- hierarchy relation for variants
+                   left join cr_default_p_graph_hierarchyrelation h
+                             on an.relationanchorpoint = any (h.childnodeanchors)
+                               and h.contentstreamid = :contentstreamid
+              -- subtree tags for each variant
+              -- TODO mehr subtree logik / vererbung? let's see...
+                   left join lateral (
+               -- TODO expose function?
+              with all_affected_subtrees as (select *
+                                             from cr_default_p_graph_subtreetags st
+                                             where :nodeaggregateid = any (st.affectednodeaggregateids)
+                                               and st.contentstreamid = :contentstreamid
+                                               and st.dimensionspacepointhash = h.dimensionspacepointhash)
+              select
+                -- Since there is no removal of tags down the inheritance chain,
+                -- we can simply add together all parent tags without having to look at the
+                -- inheritance chain order.
+                jsonb_build_object(
+                  'explicit_tags', (select jsonb_agg(t.tag)
+                                     from (select distinct unnest(expl_st.subtreetags)
+                                           from all_affected_subtrees expl_st
+                                           -- include only explicitly set tags
+                                           where expl_st.originnodeaggregateid = :nodeaggregateid) t(tag)
+                       ),
+                  'only_inherited', (select jsonb_agg(t.tag)
+                                     from (select distinct unnest(expl_st.subtreetags)
+                                           from all_affected_subtrees expl_st
+                                           -- exclude explicitly set tags
+                                           where expl_st.originnodeaggregateid != :nodeaggregateid) t(tag))
+                ) as tags
+              ) subtree_tags on true
+            group by an.nodetypename, an.nodename, an.classification
+        SQL;
+
+        $result = $this->dbal->executeQuery($query, $parameters);
+        $aggregateRow = $result->fetchAssociative();
+        if (!is_array($aggregateRow)) {
+            return null;
+        }
+
+        $classification = NodeAggregateClassification::from($aggregateRow['classification']);
+        $nodeTypeName = NodeTypeName::fromString($aggregateRow['nodetypename']);
+        $nodeNameValue = $aggregateRow['nodename'];
+        $nodeName = !empty($nodeNameValue) ? NodeName::fromString($nodeNameValue) : null;
+
+        $subtreeTagsByCovered = json_decode($aggregateRow['subtreetags_by_covered'], true);
+        $subtreeTagsByCoveredDeserialized = array_map(function ($subtreeTags) {
+            return NodeTags::create(
+                SubtreeTags::fromStrings(...($subtreeTags['explicit_tags'] ?? [])),
+                SubtreeTags::fromStrings(...($subtreeTags['only_inherited'] ?? [])),
+            );
+        }, $subtreeTagsByCovered);
+
+        $nodesByCovered = json_decode($aggregateRow['nodes_by_covered_dsp'], true);
+        $nodesByOccupiedDeserialized = [];
+        $coveredDimensionSpacePoints = [];
+        $coverageByOccupant = [];
+        $occupationByCovered = [];
+        foreach ($nodesByCovered as $nodeJson) {
+            $coveredDSPHash = $nodeJson['dimensionspacepointhash'];
+            $coveredDSP = DimensionSpacePoint::fromArray($nodeJson['dimensionspacepoint']);
+            $occupiedDSP = OriginDimensionSpacePoint::fromArray($nodeJson['origindimensionspacepoint']);
+            $coveredDimensionSpacePoints[$coveredDSPHash] = $coveredDSP;
+            $coverageByOccupant[$occupiedDSP->hash][$coveredDSPHash] = $coveredDSP;
+            $occupationByCovered[$coveredDSPHash] = $occupiedDSP;
+            $nodesByOccupiedDeserialized[$occupiedDSP->hash] = Node::create(
+                $this->contentRepositoryId,
+                $this->workspaceName,
+                $coveredDSP,
+                $nodeAggregateId,
+                $occupiedDSP,
+                $classification,
+                $nodeTypeName,
+                new PropertyCollection(
+                    SerializedPropertyValues::fromArray($nodeJson['properties']),
+                    $this->propertyConverter
+                ),
+                $nodeName,
+                $subtreeTagsByCoveredDeserialized[$coveredDSP->hash],
+                Timestamps::create(
+                // TODO replace with $nodeRow['created'] and $nodeRow['originalcreated'] once projection has implemented support
+                    QueryUtility::parseDateTimeString('2023-03-17 12:00:00'),
+                    QueryUtility::parseDateTimeString('2023-03-17 12:00:00'),
+                    null,
+                    null,
+                ),
+                // when looking at a node aggregate, there are no visibility constraints
+                VisibilityConstraints::createEmpty()
+            );
+        }
+
+        return NodeAggregate::create(
+            $this->contentRepositoryId,
+            $this->workspaceName,
+            $nodeAggregateId,
+            $classification,
+            $nodeTypeName,
+            $nodeName,
+            OriginDimensionSpacePointSet::fromArray(json_decode($aggregateRow['occupied_dsps'], true)),
+            // FIXME: !!! we currently assume, that there is no explicit test coverage for the node contained in a queried NodeAggregate, so we might need to add them.
+            // TODO: discuss, to extend the Neos core with the following distinction:
+            //    - Problem: NodeAggregate often dont need access to its containing node instances, especially not the node properties.
+            //               In this layer of abstraction we cannot distinguish those two cases, so we ALWAYS load and instantiate all nodes in the aggregate
+            //               even if we might not need them in all cases. -> idea: add another object (like a NodeAggregate"Light" and another API function)
+            //               OR: do we need the properties at all.
+            $nodesByOccupiedDeserialized,
+            CoverageByOrigin::fromArray($coverageByOccupant),
+            new DimensionSpacePointSet($coveredDimensionSpacePoints),
+            OriginByCoverage::fromArray($occupationByCovered),
+            $subtreeTagsByCoveredDeserialized
         );
     }
 
@@ -175,7 +337,8 @@ final readonly class ContentHypergraph implements ContentGraphInterface
         NodeAggregateId $childNodeAggregateId,
         OriginDimensionSpacePoint $childOriginDimensionSpacePoint
     ): ?NodeAggregate {
-        $query = /** @lang PostgreSQL */ '
+        $query = /** @lang PostgreSQL */
+            '
             SELECT n.origindimensionspacepoint, n.nodeaggregateid, n.nodetypename,
                    n.classification, n.properties, n.nodename, ph.contentstreamid, ph.dimensionspacepoint
                 FROM ' . $this->tableNames->hierarchyRelation() . ' ph
