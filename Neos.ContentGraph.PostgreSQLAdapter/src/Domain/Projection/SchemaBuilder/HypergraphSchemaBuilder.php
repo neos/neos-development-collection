@@ -12,6 +12,7 @@ use Doctrine\DBAL\Types\Type;
 use Doctrine\DBAL\Types\Types;
 use Neos\ContentGraph\PostgreSQLAdapter\ContentGraphTableNames;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\PostgresContentGraphProjection;
+use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
 
 /**
  * Let's try to be as consistent as possible to the MariaDB/MySQL adapter.
@@ -34,8 +35,7 @@ final readonly class HypergraphSchemaBuilder
         $this->createNodeTable($schema);
         $this->createHierarchyRelationTable($schema);
         $this->createReferenceRelationTable($schema);
-        // TODO implement subtreetags
-        //$this->createRestrictionHyperrelationTable($schema);
+        $this->createSubTreeTagsTable($schema);
         $this->createContentStreamTable($schema);
         $this->createWorkspaceTable($schema);
         $this->createDimensionSpacePointsTable($schema);
@@ -45,14 +45,16 @@ final readonly class HypergraphSchemaBuilder
 
     public static function registerTypes(Connection $databaseConnection): void
     {
-        self::registerTypeIfNotPresent($databaseConnection, 'hypergraphjsonb', JsonbType::class);
-        self::registerTypeIfNotPresent($databaseConnection, 'hypergraphvarchars', VarcharArrayType::class);
+        self::registerTypeIfNotPresent($databaseConnection, 'jsonb', JsonbType::class);
         self::registerTypeIfNotPresent($databaseConnection, 'text_array', TextArrayType::class);
+        self::registerTypeIfNotPresent($databaseConnection, 'varchar64_array', Varchar64ArrayType::class);
+        self::registerTypeIfNotPresent($databaseConnection, 'varchar36_array', Varchar36ArrayType::class);
         self::registerTypeIfNotPresent($databaseConnection, 'int_array', IntArrayType::class);
         self::registerTypeIfNotPresent($databaseConnection, 'bigint_array', BigintArrayType::class);
         // do NOT RELY ON THESE TYPES BEING PRESENT - we only load them to build the schema.
-        // TODO comment why we need type wrappers?
-        // FIXME this is currently a bit messy, other packages seem also require the
+        // TODO comment why we need type wrappers and the whole doctrine schema mechanics
+        // FIXME this is currently a bit messy, other packages seem also require the types when comparing schemas
+        // FIXME document this behavior and remove the HOTFIX -> see callee of this function
     }
 
     private static function registerTypeIfNotPresent(
@@ -81,7 +83,7 @@ final readonly class HypergraphSchemaBuilder
         $table->addColumn('nodeaggregateid', Types::STRING)
             ->setLength(64)
             ->setNotnull(true);
-        $table->addColumn('origindimensionspacepoint', Types::JSON)
+        $table->addColumn('origindimensionspacepoint', 'jsonb')
             ->setNotnull(true);
         $table->addColumn('origindimensionspacepointhash', Types::STRING)
             ->setLength(255)
@@ -89,7 +91,7 @@ final readonly class HypergraphSchemaBuilder
         $table->addColumn('nodetypename', Types::STRING)
             ->setLength(255)
             ->setNotnull(true);
-        $table->addColumn('properties', 'hypergraphjsonb')
+        $table->addColumn('properties', 'jsonb')
             ->setNotnull(true);
         $table->addColumn('classification', Types::STRING)
             ->setLength(255)
@@ -113,7 +115,7 @@ final readonly class HypergraphSchemaBuilder
             ->setNotnull(true);
         $table->addColumn('parentnodeanchor', Types::BIGINT)
             ->setNotnull(true);
-        $table->addColumn('dimensionspacepoint', Types::JSON)
+        $table->addColumn('dimensionspacepoint', 'jsonb')
             ->setNotnull(true);
         $table->addColumn('dimensionspacepointhash', Types::STRING)
             ->setLength(255)
@@ -139,7 +141,7 @@ final readonly class HypergraphSchemaBuilder
         $table->addColumn('position', Types::INTEGER)
             // TODO: SMALLINT?
             ->setNotnull(true);
-        $table->addColumn('properties', 'hypergraphjsonb')
+        $table->addColumn('properties', 'jsonb')
             ->setNotnull(false);
         $table->addColumn('targetnodeaggregateid', Types::STRING)
             ->setLength(64)
@@ -200,7 +202,9 @@ final readonly class HypergraphSchemaBuilder
         $table->addColumn('originnodeaggregateid', Types::STRING)
             ->setLength(64)
             ->setNotnull(true);
-        $table->addColumn('affectednodeaggregateids', 'hypergraphvarchars')
+        $table->addColumn('affectednodeaggregateids', 'varchar64_array')
+            ->setNotnull(true);
+        $table->addColumn('subtreetags', 'varchar36_array')
             ->setNotnull(true);
 
         $table
@@ -221,7 +225,7 @@ final readonly class HypergraphSchemaBuilder
         $table->addColumn('hash', Types::STRING)
             ->setLength(255)
             ->setNotnull(true);
-        $table->addColumn('dimensionspacepoint', Types::JSON)
+        $table->addColumn('dimensionspacepoint', 'jsonb')
             ->setNotnull(true);
         $table
             ->setPrimaryKey(['hash']);

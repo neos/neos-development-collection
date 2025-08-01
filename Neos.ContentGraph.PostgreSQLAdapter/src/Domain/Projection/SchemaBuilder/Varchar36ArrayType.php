@@ -10,15 +10,15 @@ use Doctrine\DBAL\Types\Type;
 /**
  * @internal
  */
-class JsonbType extends Type
+class Varchar36ArrayType extends Type
 {
     public function getSQLDeclaration(array $fieldDeclaration, AbstractPlatform $platform)
     {
-        return 'jsonb';
+        return 'varchar(36)[]';
     }
 
     public function getName()
     {
-        return 'jsonb';
+        return 'varchar36_array';
     }
 }
