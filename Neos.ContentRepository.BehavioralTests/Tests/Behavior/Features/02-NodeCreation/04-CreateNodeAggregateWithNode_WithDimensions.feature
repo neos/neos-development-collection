@@ -275,6 +275,7 @@ Feature: Create node aggregate with node
       | node | cs-identifier;sir-david-nodenborough;{"language":"mul"} |
 
     And I expect node aggregate identifier "sir-david-nodenborough" and node path "node" to lead to node cs-identifier;sir-david-nodenborough;{"language":"mul"}
+    # HINT: this step failed for me because the order of child nodes was not correct
     And I expect this node to have the following child nodes:
       | Name                | NodeDiscriminator                                             |
       | elder-child-node    | cs-identifier;nody-mc-nodeface-the-elder;{"language":"de"}    |
