@@ -49,7 +49,7 @@ from aggregate_nodes an
                          from (select distinct unnest(expl_st.subtreetags)
                                from all_affected_subtrees expl_st
                                -- exclude explicitly set tags
-                               where expl_st.originnodeaggregateid != :nodeaggregateid) t(tag))
+                               where expl_st.nodeaggregateid != :nodeaggregateid) t(tag))
     ) as tags
   ) subtree_tags on true
 group by an.nodetypename, an.nodename, an.classification;

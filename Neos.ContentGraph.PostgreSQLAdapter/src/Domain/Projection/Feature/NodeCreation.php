@@ -86,38 +86,63 @@ if (is_null($parentNode)) {
                         '' -- no node name
                         )
                 -- we want to keep track of the created ID (it is auto-increment)
-                returning relationanchorpoint)
+                returning relationanchorpoint),
             -- now we connect the hierarchy for each content dimension (this node needs to be placed below its parent)
             -- ### this node is the first child node of its parent
-            insert
-            into {$this->tableNames->hierarchyRelation()}
-            (contentstreamid, parentnodeanchor, dimensionspacepointhash, dimensionspacepoint, childnodeanchors)
-            -- contentstream and root edge is passed via parameter
-            select :contentstreamid        as contentstreamid,
-                   :rootedgeanchor         as parentnodeanchor,
-                   dim.dimensionhash       as dimensionspacepointhash,
-                   dim.dimensionspacepoint as dimensionspacepoint,
-                   array [cn.relationanchorpoint]
-            -- here we access the created node ID
-            from created_node cn
-                   -- we pass in the target dimensions via JSON object parameter
-                   left join jsonb_each(:dimensions) dim(dimensionhash, dimensionspacepoint)
-                             on true
-            -- ### parent hierarchy entry already exists (UPDATE) - there are siblings for the new node
-            -- the primary key is multi-column, so we check for the named constraint
-            -- fixme dynamic name
-            on conflict on constraint cr_default_p_graph_hierarchyrelation_pkey
-              do update
-              -- append the node in the child-node array
-              set childnodeanchors = insert_into_array_before_successor(
-                -- by aliasing with the table name, we access the original existing value
-                {$this->tableNames->hierarchyRelation()}.childnodeanchors,
-                -- 'exluded' alias references the insert data that was rejected by constraint
-                -- we cannot access 'cn' alias here
-                excluded.childnodeanchors[1],
-                -- There is no order of the root nodes.
-                -- Root nodes live in the childnodes array of a single root node edge row.
-                null)
+            created_hierarchy_relations as (
+                insert
+                into {$this->tableNames->hierarchyRelation()}
+                (contentstreamid, parentnodeanchor, dimensionspacepointhash, dimensionspacepoint, childnodeanchors)
+                -- contentstream and root edge is passed via parameter
+                select :contentstreamid        as contentstreamid,
+                       :rootedgeanchor         as parentnodeanchor,
+                       dim.dimensionhash       as dimensionspacepointhash,
+                       dim.dimensionspacepoint as dimensionspacepoint,
+                       array [cn.relationanchorpoint]
+                -- here we access the created node ID
+                from created_node cn
+                       -- we pass in the target dimensions via JSON object parameter
+                       left join jsonb_each(:dimensions) dim(dimensionhash, dimensionspacepoint)
+                                 on true
+                -- ### parent hierarchy entry already exists (UPDATE) - there are siblings for the new node
+                -- the primary key is multi-column, so we check for the named constraint
+                -- fixme dynamic name
+                on conflict on constraint cr_default_p_graph_hierarchyrelation_pkey
+                  do update
+                  -- append the node in the child-node array
+                  set childnodeanchors = insert_into_array_before_successor(
+                    -- by aliasing with the table name, we access the original existing value
+                    {$this->tableNames->hierarchyRelation()}.childnodeanchors,
+                    -- 'exluded' alias references the insert data that was rejected by constraint
+                    -- we cannot access 'cn' alias here
+                    excluded.childnodeanchors[1],
+                    -- There is no order of the root nodes.
+                    -- Root nodes live in the childnodes array of a single root node edge row.
+                    null)
+               returning dimensionspacepointhash, dimensionspacepoint, childnodeanchors[1] as relationanchorpoint
+            )
+            -- finally, create the subtree entries
+            insert into {$this->tableNames->subTreeRelation()}
+                (contentstreamid, dimensionspacepointhash, nodeaggregateid, dimensionspacepoint,
+                 affected_nodeaggregateids, affected_relationanchorpoints, subtree_structure, subtreetags)
+            select
+                :contentstreamid,
+                crh.dimensionspacepointhash,
+                :nodeaggregateid,
+                crh.dimensionspacepoint,
+                -- only the root node is currently part of the subtree, so this is the trivial case
+                array[:nodeaggregateid]::varchar(64)[],
+                array[crh.relationanchorpoint]::bigint[],
+                jsonb_build_object(
+                    :nodeaggregateid::varchar(64), jsonb_build_object(
+                        'parent', null,
+                        'depth', 0,
+                        'ordinality', 1
+                    )
+                ),
+                -- no subtree tags yet
+                array[]::varchar(36)[]
+            from created_hierarchy_relations crh
         SQL;
 
         $this->getDatabaseConnection()->executeQuery($query, $parameters);
@@ -132,6 +157,13 @@ if (is_null($parentNode)) {
         // This event handler performs the following actions:
         //  1. Create a node entry
         //  2. Connect the hierarchy (add the node as child-node in each content dimension)
+        //  3. create new subtree entries for the created node
+        //  4. update the subtree entries for all parent nodes (currently, this is done in a separate query)
+        // see: https://www.postgresql.org/docs/current/queries-with.html
+        //  All the (CTE/with) statements are executed with the same snapshot, so we cannot access table rows that are
+        //  inserted in one CTE via table select in another part of the same query.
+        //  There are ways around that (returning * PLUS more fine-granular partial update of the subtree) ->
+        //  BUT for simplicity reasons, we currently recalculate the whole subtree of all affected parents.
 
         // the query requires the interdimensional siblings as JSON object (key: hash, value: sibling aggregate ID)
         $siblings = [];
@@ -226,41 +258,78 @@ if (is_null($parentNode)) {
                         where s.dimensionhash = excluded.dimensionspacepointhash
                     )
                   )
-                returning contentstreamid, parentnodeanchor, dimensionspacepointhash,
+                returning contentstreamid, parentnodeanchor, dimensionspacepointhash, dimensionspacepoint,
                       -- see https://sigpwned.com/2023/08/10/postgres-upsert-created-or-updated/
                       (xmax = 0) AS _created
+            ),
+            create_subtree_for_node as (
+                -- finally, create and update all affected subtree entries
+                insert into {$this->tableNames->subTreeRelation()}
+                    (contentstreamid, dimensionspacepointhash, nodeaggregateid, dimensionspacepoint,
+                     affected_nodeaggregateids, affected_relationanchorpoints, subtree_structure, subtreetags)
+                select
+                    :contentstreamid,
+                    uh.dimensionspacepointhash,
+                    :nodeaggregateid,
+                    uh.dimensionspacepoint,
+                    -- only the created node is currently part of the subtree, so this is the trivial case
+                    array[:nodeaggregateid]::varchar(64)[],
+                    array[cn.relationanchorpoint]::bigint[],
+                    jsonb_build_object(
+                        :nodeaggregateid::varchar(64), jsonb_build_object(
+                            'parent', null,
+                            'depth', 0,
+                            'ordinality', 1
+                        )
+                    ),
+                    -- no subtree tags yet
+                    array[]::varchar(36)[]
+                from upserted_hierarchy uh, created_node cn
             )
-            -- return values for result debugging in PHP
-            select
-                cn.relationanchorpoint as created_node_relationanchorpoint,
-                (select jsonb_agg(jsonb_build_object(
-                    'contentstreamid', h.contentstreamid,
-                    'parentnodeanchor', h.parentnodeanchor,
-                    'dimensionspacepointhash', h.dimensionspacepointhash,
-                    'created', h._created
-                )) from upserted_hierarchy h) as upserted_hierarchy
-            from created_node cn
+            select 1
+            -- We need to update the subtree in another query, since inserts done in a CTE are not accessible via table
+            -- select in the same query.
         SQL;
+        $this->getDatabaseConnection()->executeQuery($query, $parameters);
 
-        $result = $this->getDatabaseConnection()->executeQuery($query, $parameters);
-        $row = $result->fetchAssociative();
-
-        $createdNodeRelationAnchorPoint = $row['created_node_relationanchorpoint'];
-        $upsertedHierarchyRecords = json_decode($row['upserted_hierarchy'], true);
-
-        if (count($upsertedHierarchyRecords) === null) {
-            // TODO error handling and/or logging?
-        }
-
-        // TODO sub-tree tags
-        /*
-         * TODO error handling
-        if (is_null($parentNode)) {
-            throw EventCouldNotBeAppliedToContentGraph::becauseTheTargetParentNodeIsMissing(
-                get_class($event)
-            );
-        }
-        */
+        $parametersUpdateParentSubtree = [
+            'contentstreamid' => $event->contentStreamId->value,
+            'parentnodeaggregateid' => $event->parentNodeAggregateId->value,
+            'dimensionspacepointhashes' => $event->succeedingSiblingsForCoverage->toDimensionSpacePointSet()->getPointHashes()
+        ];
+        $parameterTypesUpdateParentSubtree = [
+            'dimensionspacepointhashes' => Connection::PARAM_STR_ARRAY
+        ];
+        $queryUpdateParentSubtrees = <<<SQL
+            with all_affected_parent_subtrees as (
+                select
+                    st.*,
+                    recalculated_subtree.affected_anchors as updated_affected_anchors,
+                    recalculated_subtree.affected_aggregateids as updated_affected_aggregateids,
+                    recalculated_subtree.subtree_structure as updated_subtree_structure
+                from {$this->tableNames->subTreeRelation()} st
+                    left join lateral (
+                        select * from {$this->tableNames->functionCalculateSubtree()}(
+                            st.nodeaggregateid,
+                            st.contentstreamid,
+                            st.dimensionspacepointhash
+                        )
+                    ) recalculated_subtree on true
+                where st.contentstreamid = :contentstreamid
+                  and st.dimensionspacepointhash in (:dimensionspacepointhashes)
+                  -- here we also get the parents of the parents recursively but with linear efford
+                  and :parentnodeaggregateid = any (st.affected_nodeaggregateids)
+            )
+            update {$this->tableNames->subTreeRelation()} ust
+                set affected_relationanchorpoints = ast.updated_affected_anchors,
+                    affected_nodeaggregateids = ast.updated_affected_aggregateids,
+                    subtree_structure = ast.updated_subtree_structure
+            from all_affected_parent_subtrees ast
+            where ust.contentstreamid = :contentstreamid
+                and ust.nodeaggregateid = ast.nodeaggregateid
+                and ust.dimensionspacepointhash = ast.dimensionspacepointhash;
+        SQL;
+        $this->getDatabaseConnection()->executeQuery($queryUpdateParentSubtrees, $parametersUpdateParentSubtree, $parameterTypesUpdateParentSubtree);
     }
 
 }

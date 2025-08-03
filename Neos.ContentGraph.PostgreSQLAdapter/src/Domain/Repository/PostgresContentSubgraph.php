@@ -231,15 +231,20 @@ final readonly class PostgresContentSubgraph implements ContentSubgraphInterface
             ),
             child_node_anchors as (
                 select
-                    ph.childnodeanchors,
-                    -- FIXME check if this assumption is correct
-                    -- since all childnodes must be in the same dimension,
-                    -- we can use the parent dimension as resulting covered dimension
+                    cna.*,
                     ph.dimensionspacepoint,
                     ph.dimensionspacepointhash
                 from {$this->tableNames->hierarchyRelation()} ph, parent pna
-                where ph.parentnodeanchor = pna.parentnodeanchor
+                    -- with this join, we keep the order of the child nodes from inside the array
+                    left join lateral (
+                        select
+                            *
+                        from unnest(ph.childnodeanchors) with ordinality as children(childnodeanchor, position)
+                    ) cna on true
+                -- parent node anchor == null means root node
+                where ph.parentnodeanchor = coalesce(pna.parentnodeanchor, 0)
                   and ph.contentstreamid = :contentstreamid
+                  and ph.dimensionspacepointhash = :dimensionhash
             )
             select
                 cn.nodeaggregateid,
@@ -251,12 +256,14 @@ final readonly class PostgresContentSubgraph implements ContentSubgraphInterface
                 cna.dimensionspacepoint,
                 -- subtreetags
                 subtree_tags.tags
-            from {$this->tableNames->node()} cn, child_node_anchors cna
+            from child_node_anchors cna
+                left join {$this->tableNames->node()} cn
+                    on cn.relationanchorpoint = cna.childnodeanchor
                 left join lateral (
                     with all_affected_subtrees as (
                         select *
-                        from cr_default_p_graph_subtreetags st
-                        where cn.nodeaggregateid = any (st.affectednodeaggregateids)
+                        from {$this->tableNames->subTreeRelation()} st
+                        where cn.nodeaggregateid = any (st.affected_nodeaggregateids)
                           and st.contentstreamid = :contentstreamid
                           and st.dimensionspacepointhash = cna.dimensionspacepointhash
                     )
@@ -269,32 +276,32 @@ final readonly class PostgresContentSubgraph implements ContentSubgraphInterface
                                            from (select distinct unnest(expl_st.subtreetags)
                                                  from all_affected_subtrees expl_st
                                                  -- include only explicitly set tags
-                                                 where expl_st.originnodeaggregateid = cn.nodeaggregateid) t(tag)
+                                                 where expl_st.nodeaggregateid = cn.nodeaggregateid) t(tag)
                              ),
                         'only_inherited', (select jsonb_agg(t.tag)
                                            from (select distinct unnest(expl_st.subtreetags)
                                                  from all_affected_subtrees expl_st
                                                  -- exclude explicitly set tags
-                                                 where expl_st.originnodeaggregateid != cn.nodeaggregateid) t(tag))
+                                                 where expl_st.nodeaggregateid != cn.nodeaggregateid) t(tag))
                       ) as tags
                 ) subtree_tags on true
-            where cn.relationanchorpoint = any(cna.childnodeanchors)
+            where
               -- subtree tag filtering
-              and (
+              (
                   -- deactivate filter when no values are set
                   not :subtreetag_filter_active
                     or
                   not exists(
                     select 1
-                    from {$this->tableNames->subTreeTagsRelation()} st
-                    where cn.nodeaggregateid = any(st.affectednodeaggregateids)
+                    from {$this->tableNames->subTreeRelation()} st
+                    where cn.nodeaggregateid = any(st.affected_nodeaggregateids)
                       and st.dimensionspacepointhash = :dimensionhash
                       and st.contentstreamid = :contentstreamid
                       and st.subtreetags && array[:excluded_subtreetags]::varchar(36)[]
                   )
               )
               -- node type filtering
-                and
+              and
                 ( not :mode_wildcard_both or
                   (cn.nodetypename not in (:nodetype_disallowed)
                       or cn.nodetypename in (:nodetype_allowed))
@@ -312,6 +319,7 @@ final readonly class PostgresContentSubgraph implements ContentSubgraphInterface
                 ( not :mode_only_disallowed or
                   cn.nodetypename not in (:nodetype_disallowed)
                 )
+            order by cna.position
             limit :result_limit
             offset :result_offset
         SQL;
@@ -351,36 +359,6 @@ final readonly class PostgresContentSubgraph implements ContentSubgraphInterface
             );
         }
         return Nodes::fromArray($nodesDeserialized);
-
-        $query = HypergraphChildQuery::create(
-            $this->contentStreamId,
-            $parentNodeAggregateId,
-            $this->tableNames
-        );
-        $query = $query->withDimensionSpacePoint($this->dimensionSpacePoint)
-            ->withRestriction($this->visibilityConstraints);
-        if (!is_null($filter->nodeTypes)) {
-            // FIXME lets think about adding all inherited node types as column to the DB, this would move
-            //       the calculation heavy part to the write side (which I assume happens a lot less than actual reading)
-            $expandedNodeTypeCriteria = ExpandedNodeTypeCriteria::create(
-                $filter->nodeTypes,
-                $this->nodeTypeManager
-            );
-            $query = $query->withNodeTypeCriteria($expandedNodeTypeCriteria, 'cn');
-        }
-        if (!is_null($filter->pagination)) {
-            $query = $query
-                ->withLimit($filter->pagination->limit)
-                ->withOffset($filter->pagination->offset);
-        }
-
-        $childNodeRows = $query->execute($this->dbal)->fetchAllAssociative();
-
-        return $this->nodeFactory->mapNodeRowsToNodes(
-            $childNodeRows,
-            $this->workspaceName,
-            $this->visibilityConstraints
-        );
     }
 
     public function countChildNodes(NodeAggregateId $parentNodeAggregateId, Filter\CountChildNodesFilter $filter): int
@@ -625,11 +603,11 @@ final readonly class PostgresContentSubgraph implements ContentSubgraphInterface
         $query = <<<SQL
             with subtree_entry as (
                 select
-                    st.affected_anchors,
+                    st.affected_relationanchorpoints,
                     st.dimensionspacepoint,
                     st.subtree_structure
                 -- TODO make this a materialized view or even better, a table with partitial updates on write
-                from {$this->tableNames->viewSubtree()} st
+                from {$this->tableNames->subTreeRelation()} st
                 where st.nodeaggregateid = :nodeaggregateid
                   and st.contentstreamid = :contentstreamid
                   and st.dimensionspacepointhash = :dimensionspacepointhash
@@ -643,7 +621,7 @@ final readonly class PostgresContentSubgraph implements ContentSubgraphInterface
                         select n.*,
                             st.subtree_structure -> n.nodeaggregateid ->> 'depth' as depth,
                             st.subtree_structure -> n.nodeaggregateid ->> 'parent' as parent
-                        from unnest(st.affected_anchors) affected_anchors(relationanchorpoint)
+                        from unnest(st.affected_relationanchorpoints) affected_anchors(relationanchorpoint)
                             left join {$this->tableNames->node()} n
                                 on n.relationanchorpoint = affected_anchors.relationanchorpoint
                         order by st.subtree_structure -> n.nodeaggregateid ->> 'depth' desc,
