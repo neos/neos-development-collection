@@ -90,8 +90,8 @@ trait SubtreeTagging
                     from all_subtree_nodes subt
                     group by subt.dimensionspacepointhash
                 )
-            insert into {$this->tableNames->subTreeTagsRelation()}
-                (contentstreamid, dimensionspacepointhash, originnodeaggregateid,
+            insert into {$this->tableNames->subTreeRelation()}
+                (contentstreamid, dimensionspacepointhash, nodeaggregateid,
                  affectednodeaggregateids, subtreetags)
             select
                 :contentstreamid,
@@ -102,7 +102,7 @@ trait SubtreeTagging
             from grouped_by_variant vg
             on conflict on constraint cr_default_p_graph_subtreetags_pkey
                 do update
-                    set subtreetags = array(select distinct unnest({$this->tableNames->subTreeTagsRelation()}.subtreetags || :subtreetag::varchar(36)))
+                    set subtreetags = array(select distinct unnest({$this->tableNames->subTreeRelation()}.subtreetags || :subtreetag::varchar(36)))
         SQL;
         $this->getDatabaseConnection()->executeQuery($query, $parameters, $parameterTypes);
     }

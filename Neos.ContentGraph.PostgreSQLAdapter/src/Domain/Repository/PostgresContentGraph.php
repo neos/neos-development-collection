@@ -223,8 +223,8 @@ final readonly class PostgresContentGraph implements ContentGraphInterface
                    left join lateral (
                -- TODO expose function?
               with all_affected_subtrees as (select *
-                                             from cr_default_p_graph_subtreetags st
-                                             where :nodeaggregateid = any (st.affectednodeaggregateids)
+                                             from {$this->tableNames->subTreeRelation()} st
+                                             where :nodeaggregateid = any (st.affected_nodeaggregateids)
                                                and st.contentstreamid = :contentstreamid
                                                and st.dimensionspacepointhash = h.dimensionspacepointhash)
               select
@@ -236,13 +236,13 @@ final readonly class PostgresContentGraph implements ContentGraphInterface
                                      from (select distinct unnest(expl_st.subtreetags)
                                            from all_affected_subtrees expl_st
                                            -- include only explicitly set tags
-                                           where expl_st.originnodeaggregateid = :nodeaggregateid) t(tag)
+                                           where expl_st.nodeaggregateid = :nodeaggregateid) t(tag)
                        ),
                   'only_inherited', (select jsonb_agg(t.tag)
                                      from (select distinct unnest(expl_st.subtreetags)
                                            from all_affected_subtrees expl_st
                                            -- exclude explicitly set tags
-                                           where expl_st.originnodeaggregateid != :nodeaggregateid) t(tag))
+                                           where expl_st.nodeaggregateid != :nodeaggregateid) t(tag))
                 ) as tags
               ) subtree_tags on true
             group by an.nodetypename, an.nodename, an.classification

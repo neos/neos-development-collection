@@ -34,9 +34,12 @@ final readonly class HypergraphSchemaBuilder
         ContentRepositoryId $contentRepositoryId
     ) {
         $tableNames = ContentGraphTableNames::create($contentRepositoryId);
+        /*
         $databaseConnection->executeStatement(<<<SQL
-            drop view if exists {$tableNames->viewSubtree()};
+            -- no view anymore for now...
+            -- drop view if exists ...;
         SQL);
+        */
     }
 
     public function buildSchema(): Schema
@@ -46,7 +49,7 @@ final readonly class HypergraphSchemaBuilder
         $this->createNodeTable($schema);
         $this->createHierarchyRelationTable($schema);
         $this->createReferenceRelationTable($schema);
-        $this->createSubTreeTagsTable($schema);
+        $this->createSubTreeTable($schema);
         $this->createContentStreamTable($schema);
         $this->createWorkspaceTable($schema);
         $this->createDimensionSpacePointsTable($schema);
@@ -201,19 +204,27 @@ final readonly class HypergraphSchemaBuilder
             ->setPrimaryKey(['id']);
     }
 
-    private function createSubTreeTagsTable(Schema $schema): void
+    private function createSubTreeTable(Schema $schema): void
     {
-        $table = $schema->createTable($this->tableNames->subTreeTagsRelation());
+        $table = $schema->createTable($this->tableNames->subTreeRelation());
+        // ID columns
         $table->addColumn('contentstreamid', Types::STRING)
             ->setLength(40)
             ->setNotnull(true);
         $table->addColumn('dimensionspacepointhash', Types::STRING)
             ->setLength(255)
             ->setNotnull(true);
-        $table->addColumn('originnodeaggregateid', Types::STRING)
+        $table->addColumn('nodeaggregateid', Types::STRING)
             ->setLength(64)
             ->setNotnull(true);
-        $table->addColumn('affectednodeaggregateids', 'varchar64_array')
+        // data columns
+        $table->addColumn('dimensionspacepoint', 'jsonb')
+            ->setNotnull(true);
+        $table->addColumn('affected_nodeaggregateids', 'varchar64_array')
+            ->setNotnull(true);
+        $table->addColumn('affected_relationanchorpoints', 'bigint_array')
+            ->setNotnull(true);
+        $table->addColumn('subtree_structure', 'jsonb')
             ->setNotnull(true);
         $table->addColumn('subtreetags', 'varchar36_array')
             ->setNotnull(true);
@@ -222,12 +233,12 @@ final readonly class HypergraphSchemaBuilder
             ->setPrimaryKey([
                 'contentstreamid',
                 'dimensionspacepointhash',
-                'originnodeaggregateid'
+                'nodeaggregateid'
             ])
             ->addIndex(['contentstreamid'])
             ->addIndex(['dimensionspacepointhash'])
-            ->addIndex(['originnodeaggregateid']);
-        /** NOTE: the GIN index on affectednodeaggregateids is added in {@see PostgresContentGraphProjection::setupTables()} */
+            ->addIndex(['nodeaggregateid']);
+        /** TODO: use GIN index on affected_.... in {@see PostgresContentGraphProjection::setupTables()} */
     }
 
     private function createDimensionSpacePointsTable(Schema $schema): void

@@ -45,8 +45,8 @@ final class HypergraphQuery implements HypergraphQueryInterface
             JOIN ' . $tableNames->node() . ' n ON n.relationanchorpoint = ANY(h.childnodeanchors)'
             . ($joinSubTreeTags
                 ? '
-            LEFT JOIN ' . $tableNames->subTreeTagsRelation() . ' r
-                ON n.nodeaggregateid = r.originnodeaggregateid
+            LEFT JOIN ' . $tableNames->subTreeRelation() . ' r
+                ON n.nodeaggregateid = r.nodeaggregateid
                 AND r.contentstreamid = h.contentstreamid
                 AND r.dimensionspacepointhash = h.dimensionspacepointhash'
                 : '')

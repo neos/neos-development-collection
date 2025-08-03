@@ -475,10 +475,10 @@ final readonly class ProjectionReadQueries
     ): array {
         $query = /** @lang PostgreSQL */
             'SELECT r.*
-            FROM ' . $this->tableNames->subTreeTagsRelation() . ' r
+            FROM ' . $this->tableNames->subTreeRelation() . ' r
             WHERE r.contentstreamid = :contentStreamId
             AND r.dimensionspacepointhash IN (:dimensionSpacePointHashes)
-            AND r.originnodeaggregateid = :originNodeAggregateId';
+            AND r.nodeaggregateid = :originNodeAggregateId';
 
         $parameters = [
             'contentStreamId' => $contentStreamId->value,
@@ -511,7 +511,7 @@ final readonly class ProjectionReadQueries
     ): array {
         $query = /** @lang PostgreSQL */
             'SELECT r.*
-            FROM ' . $this->tableNames->subTreeTagsRelation() . ' r
+            FROM ' . $this->tableNames->subTreeRelation() . ' r
             WHERE r.contentstreamid = :contentStreamId
             AND r.dimensionspacepointhash = :dimensionSpacePointHash
             AND :nodeAggregateId = ANY(r.affectednodeaggregateids)';
