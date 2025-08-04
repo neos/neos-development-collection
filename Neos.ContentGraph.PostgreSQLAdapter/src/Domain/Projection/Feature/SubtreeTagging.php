@@ -44,65 +44,11 @@ trait SubtreeTagging
         ];
 
         $query = <<<SQL
-            with all_subtree_nodes as (
-                    -- TODO I think, the "other way around" would be better, ask for affected nodes later
-                    --      since we only need the affected nodes in the INSERT case (not in the UPDATE case)
-                    with recursive descendant_nodes as (
-                        -- --------------------------------
-                        -- INITIAL query: select the root nodes
-                        -- --------------------------------
-                        select
-                           n.nodeaggregateid,
-                           n.relationanchorpoint,
-                           h.dimensionspacepointhash
-                        from {$this->tableNames->node()} n
-                        inner join {$this->tableNames->hierarchyRelation()} h
-                            on n.relationanchorpoint = any(h.childnodeanchors)
-                        where n.nodeaggregateid = :nodeaggregateid
-                            and h.contentstreamid = :contentstreamid
-                            and h.dimensionspacepointhash in (:affecteddimensionspacepointhashes)
-                        union all
-                        -- --------------------------------
-                        -- RECURSIVE query: do one "child" query step
-                        -- --------------------------------
-                        select
-                            c.nodeaggregateid,
-                            c.relationanchorpoint,
-                            h.dimensionspacepointhash
-                        from
-                            descendant_nodes p
-                        inner join {$this->tableNames->hierarchyRelation()} h
-                            on h.parentnodeanchor = p.relationanchorpoint
-                        inner join {$this->tableNames->node()} c
-                            on c.relationanchorpoint = any(h.childnodeanchors)
-                        where
-                            h.contentstreamid = :contentstreamid
-                            and h.dimensionspacepointhash in (:affecteddimensionspacepointhashes)
-                    )
-                    select
-                        dn.nodeaggregateid,
-                        dn.dimensionspacepointhash
-                    from descendant_nodes dn
-                ),
-                grouped_by_variant as (
-                    select subt.dimensionspacepointhash,
-                        array_agg(subt.nodeaggregateid) as affectednodeaggregateids
-                    from all_subtree_nodes subt
-                    group by subt.dimensionspacepointhash
-                )
-            insert into {$this->tableNames->subTreeRelation()}
-                (contentstreamid, dimensionspacepointhash, nodeaggregateid,
-                 affectednodeaggregateids, subtreetags)
-            select
-                :contentstreamid,
-                vg.dimensionspacepointhash,
-                :nodeaggregateid,
-                vg.affectednodeaggregateids,
-                array[:subtreetag]::varchar(36)[]
-            from grouped_by_variant vg
-            on conflict on constraint cr_default_p_graph_subtreetags_pkey
-                do update
-                    set subtreetags = array(select distinct unnest({$this->tableNames->subTreeRelation()}.subtreetags || :subtreetag::varchar(36)))
+            update {$this->tableNames->subTreeRelation()} st
+            set subtreetags = array(select distinct unnest(st.subtreetags || :subtreetag::varchar(36)))
+            where st.contentstreamid = :contentstreamid
+              and st.nodeaggregateid = :nodeaggregateid
+              and st.dimensionspacepointhash in (:affecteddimensionspacepointhashes)
         SQL;
         $this->getDatabaseConnection()->executeQuery($query, $parameters, $parameterTypes);
     }
@@ -113,17 +59,26 @@ trait SubtreeTagging
      */
     private function whenSubtreeWasUntagged(SubtreeWasUntagged $event): void
     {
-        $restrictionRelations = $this->getReadQueries()->findOutgoingRestrictionRelations(
-            $event->contentStreamId,
-            $event->affectedDimensionSpacePoints,
-            $event->nodeAggregateId,
-        );
-        foreach ($restrictionRelations as $restrictionRelation) {
-            $restrictionRelation->removeFromDatabase($this->getDatabaseConnection(), $this->tableNamePrefix);
-        }
-    }
+        $parameters = [
+            'nodeaggregateid' => $event->nodeAggregateId->value,
+            'contentstreamid' => $event->contentStreamId->value,
+            'affecteddimensionspacepointhashes' => $event->affectedDimensionSpacePoints->getPointHashes(),
+            'subtreetag' => $event->tag->value
+        ];
 
-    abstract protected function getReadQueries(): ProjectionReadQueries;
+        $parameterTypes = [
+            'affecteddimensionspacepointhashes' => Connection::PARAM_STR_ARRAY
+        ];
+
+        $query = <<<SQL
+            update {$this->tableNames->subTreeRelation()} st
+            set subtreetags = array_remove(st.subtreetags, :subtreetag::varchar(36))
+            where st.contentstreamid = :contentstreamid
+              and st.nodeaggregateid = :nodeaggregateid
+              and st.dimensionspacepointhash in (:affecteddimensionspacepointhashes)
+        SQL;
+        $this->getDatabaseConnection()->executeQuery($query, $parameters, $parameterTypes);
+    }
 
     abstract protected function getDatabaseConnection(): Connection;
 }

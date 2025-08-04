@@ -92,13 +92,15 @@ if (is_null($parentNode)) {
             created_hierarchy_relations as (
                 insert
                 into {$this->tableNames->hierarchyRelation()}
-                (contentstreamid, parentnodeanchor, dimensionspacepointhash, dimensionspacepoint, childnodeanchors)
+                (contentstreamid, parentnodeanchor, dimensionspacepointhash, dimensionspacepoint, childnodeanchors,
+                 parent_nodepath_absolute)
                 -- contentstream and root edge is passed via parameter
                 select :contentstreamid        as contentstreamid,
                        :rootedgeanchor         as parentnodeanchor,
                        dim.dimensionhash       as dimensionspacepointhash,
                        dim.dimensionspacepoint as dimensionspacepoint,
-                       array [cn.relationanchorpoint]
+                       array [cn.relationanchorpoint],
+                       '/' -- we are the root, so the absolute path is /
                 -- here we access the created node ID
                 from created_node cn
                        -- we pass in the target dimensions via JSON object parameter
@@ -210,6 +212,7 @@ if (is_null($parentNode)) {
                 -- all values are passed via parameter
                 values (:nodeaggregateid, :origindimensionspacepoint, :origindimensionspacepointhash, :nodetypename, :properties,
                         :classification, :nodename)
+                        -- TODO maybe we need this query part more times and use a custom function here
                 -- we want to keep track of the created ID (it is auto-increment)
                 returning relationanchorpoint),
             upserted_hierarchy as (
@@ -217,13 +220,24 @@ if (is_null($parentNode)) {
                 -- ### initial case (INSERT) - this node is the first child node of its parent
                 insert
                 into {$this->tableNames->hierarchyRelation()}
-                (contentstreamid, parentnodeanchor, dimensionspacepointhash, dimensionspacepoint, childnodeanchors)
+                (contentstreamid, parentnodeanchor, dimensionspacepointhash, dimensionspacepoint, childnodeanchors,
+                 parent_nodepath_absolute)
                 -- contentstream and parent ID is passed via parameter
                 select :contentstreamid        as contentstreamid,
                        pn.relationanchorpoint  as parentnodeanchor,
                        sibl.dimensionhash      as dimensionspacepointhash,
                        dsp.dimensionspacepoint as dimensionspacepoint,
-                       array [cn.relationanchorpoint]
+                       array [cn.relationanchorpoint],
+                       -- calculate absolute path
+                       (
+                            select ph.parent_nodepath_absolute || case when ph.parentnodeanchor != 0 then '/' else '' end || :nodename
+                            from cr_default_p_graph_hierarchyrelation ph
+                              left join cr_default_p_graph_node pn
+                                on pn.relationanchorpoint = any(ph.childnodeanchors)
+                            where ph.contentstreamid = :contentstreamid
+                              and ph.dimensionspacepointhash = sibl.dimensionhash
+                              and pn.nodeaggregateid = :parentnodeaggregateid
+                       )
                 -- here we access the created node ID
                 from created_node cn
                        left join dimensions_and_successor sibl
@@ -291,6 +305,14 @@ if (is_null($parentNode)) {
             -- select in the same query.
         SQL;
         $this->getDatabaseConnection()->executeQuery($query, $parameters);
+
+        // ##### second query: update all affected parent subtrees
+
+        // HINT: This has potential to be optimized further.
+        // Currently, we find all affected subtrees and re-calculate them (using the custom SQL function).
+        // This is already "partial" update, since we don't update **all** subtrees in this operation.
+        // To optimize this further, we can implement partial updates of the existing subtree entries instead of
+        // re-calculating them every time. (We know f.e., this is a pure add operation)
 
         $parametersUpdateParentSubtree = [
             'contentstreamid' => $event->contentStreamId->value,
