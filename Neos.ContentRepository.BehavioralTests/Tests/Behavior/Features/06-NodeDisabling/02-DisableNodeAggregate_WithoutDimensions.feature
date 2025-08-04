@@ -122,10 +122,21 @@ Feature: Disable a node aggregate
     And I expect node aggregate identifier "preceding-nodenborough" and node path "preceding-document" to lead to node cs-identifier;preceding-nodenborough;{}
     And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
     And I expect this node to have no preceding siblings
+    # HINT: This failed for me, because the ContentSubgraphInterface::findPrecedingSiblingNodes was not implemented correctly.
+    #       Also, subtree tags must be filtered and the order must be correct.
+    #       fail with 3 rows -> all children (probably wrong position filter)
+    #       fail with 2 rows -> "hidden" subtree tag not filtered
     And I expect this node to have the following succeeding siblings:
       | NodeDiscriminator                        |
       | cs-identifier;succeeding-nodenborough;{} |
+    # The target node is disabled!
+    # HINT: this failed for me, because ContentSubgraphInterface::findReferences was not implemented correctly.
+    #       fail with -> has **one** reference -> the excluded subtree tags were not filtered when loading reference targets
     And I expect this node to have no references
+    # This node is disabled and should not lead somewhere
+    # HINT: this failed for me, because ContentSubgraphInterface::findNodeById was not implemented correctly.
+    #       fail with "A node was found by node aggregate id "sir-david-nodenborough" in content subgraph {[],live}"
+    #          -> your findNodeById probably does not filter by subtree tags -> the node is disabled
     And I expect node aggregate identifier "sir-david-nodenborough" and node path "document" to lead to no node
     And I expect node aggregate identifier "succeeding-nodenborough" and node path "succeeding-document" to lead to node cs-identifier;succeeding-nodenborough;{}
     And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}

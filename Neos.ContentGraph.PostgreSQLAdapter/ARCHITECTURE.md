@@ -238,3 +238,47 @@ update the subtrees on write side every time. It shouldn't be that expensive any
  - node aggregates (why is there no explicit table for node aggregates?)
  - NodeType filter and inheritance (why don't we write all inherited nodetypes to the DB?)
 
+
+## Additional thoughts to "no query builder"
+
+Eric Kloss, 3.8.2025
+
+In my opinion, we also could implement the read models without any query builders, as explained in the point above.
+That would also lead to the removal of most of the **internal Domain model PHP classes**. There already are domain 
+objects for each use-case we need to implement (the classes we get as parameters or need to return from the read model).
+
+That has the potential to slim this package drastically to the following classes:
+ - write-side Event handlers structured in "Feature" traits
+ - the implementation classes of the read models
+ - the factory and "management" code
+
+To be honest, with large SQL queries, the PHP classes can get pretty large as well in terms of lines of code.
+That's why I propose to separate the read model implementations of
+ContentGraph and ContentSubgraph into traits as well if they get to large. 
+
+## Additional thoughts to "move logic to write side"
+
+Eric Kloss, 3.8.2025
+
+The PoC is implemented with the subtree logic. Its calculation-heavy part is now implemented in the
+CreateNode feature event handlers.
+Also, I applied this paradigm to the find node by absolute / relative path.
+We now calculate and store the **absolute path of each node** in its hierarchy relation record at **write-time**. 
+
+This removes the requirement of a recursive algorithm for this feature **at all**.
+
+### NodeCreation
+
+Write-time: there is only one more PK lookup + join to get the parent path when creating new hierarchy edges. 
+Read-time: the filter for absolute and relative nodename paths is now a **linear operation**:
+  - one query
+  - can take advantage of an index on the absolute path column
+  - relative queries just take one step more to load the absolute path of the "starting point" node
+    - this additional step is also done via PK lookup
+
+This should make the ContentSubgraphInterface::findNodeByPath and the absolute variant of it scalable and pretty fast.
+
+Note to myself: wait till we get to NodeMoved thou :/ ;)
+
+PS: (Idea) maybe the absolute path column should be an array of strings (path segments) for even better read operations like
+sub-path queries.

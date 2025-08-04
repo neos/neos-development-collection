@@ -16,6 +16,7 @@ namespace Neos\ContentGraph\PostgreSQLAdapter\Domain\Repository\Query;
 
 /**
  * @internal
+ * @deprecated remove in favor of query internals
  */
 enum HypergraphSiblingQueryMode: string
 {
