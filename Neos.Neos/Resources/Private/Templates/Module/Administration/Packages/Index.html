@@ -6,13 +6,45 @@
   <legend><neos:backend.translate id="packages.index.legend" source="Modules" package="Neos.Neos" /></legend>
   <br />
   <table class="neos-table">
-    <thead>
-      <th>{neos:backend.translate(id: 'packages.name', source: 'Modules', package: 'Neos.Neos')}</th>
-      <th>{neos:backend.translate(id: 'version', package: 'Neos.Neos')}</th>
-      <th>{neos:backend.translate(id: 'packages.key', source: 'Modules', package: 'Neos.Neos')}</th>
-      <th>{neos:backend.translate(id: 'packages.type', source: 'Modules', package: 'Neos.Neos')}</th>
-      <th class="neos-aCenter neos-span1">Frozen</th>
-    </thead>
+		<thead>
+			<tr>
+				<th title="{neos:backend.translate(id: 'packages.sortBy.packageName', source: 'Modules', package: 'Neos.Neos')}">
+					<f:render section="headerLabel" arguments="{
+						sortDirection: sortDirection,
+						sortBy: sortBy,
+						sortingField: 'name',
+						labelIdentifier: 'packages.name'
+					}" />
+				</th>
+				<th title="{neos:backend.translate(id: 'packages.sortBy.packageVersion', source: 'Modules', package: 'Neos.Neos')}">
+					<f:render section="headerLabel" arguments="{
+						sortDirection: sortDirection,
+						sortBy: sortBy,
+						sortingField: 'version',
+						labelIdentifier: 'packages.version'
+					}" />
+				</th>
+				<th title="{neos:backend.translate(id: 'packages.sortBy.packageKey', source: 'Modules', package: 'Neos.Neos')}">
+					<f:render section="headerLabel" arguments="{
+						sortDirection: sortDirection,
+						sortBy: sortBy,
+						sortingField: 'sanitizedPackageKey',
+						labelIdentifier: 'packages.key'
+					}" />
+				</th>
+				<th title="{neos:backend.translate(id: 'packages.sortBy.packageType', source: 'Modules', package: 'Neos.Neos')}">
+					<f:render section="headerLabel" arguments="{
+						sortDirection: sortDirection,
+						sortBy: sortBy,
+						sortingField: 'type',
+						labelIdentifier: 'packages.type'
+					}" />
+				</th>
+				<th class="neos-aCenter neos-span1">
+					Frozen
+				</th>
+			</tr>
+		</thead>
     <tbody>
       <f:for each="{packageGroups}" key="packageGroup" as="packages">
         <tr class="neos-folder" id="{packageGroup}">
@@ -54,4 +86,30 @@
     </tbody>
   </table>
 </div>
+</f:section>
+
+<f:section name="headerLabel">
+	<f:if condition="{sortBy} === {sortingField}">
+		<f:then>
+			<f:if condition="{sortDirection} === 'ASC'">
+				<f:then>
+					<f:link.action action="index" arguments="{sortDirection: 'DESC', sortBy: sortingField}" addQueryString="TRUE">
+						<neos:backend.translate id="{labelIdentifier}" source="Modules" package="Neos.Neos"/>
+						<i class="fas fa-sort-amount-up"></i>
+					</f:link.action>
+				</f:then>
+				<f:else>
+					<f:link.action action="index" arguments="{sortDirection: 'ASC', sortBy: sortingField}" addQueryString="TRUE">
+						<neos:backend.translate id="{labelIdentifier}" source="Modules" package="Neos.Neos"/>
+						<i class="fas fa-sort-amount-down"></i>
+					</f:link.action>
+				</f:else>
+			</f:if>
+		</f:then>
+		<f:else>
+			<f:link.action action="index" arguments="{sortBy: sortingField}" addQueryString="TRUE">
+				<neos:backend.translate id="{labelIdentifier}" source="Modules" package="Neos.Neos"/>
+			</f:link.action>
+		</f:else>
+	</f:if>
 </f:section>

@@ -14,6 +14,7 @@ namespace Neos\Neos\Controller\Module\Administration;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Package;
 use Neos\Flow\Package\PackageManager;
+use Neos\Flow\Persistence\QueryInterface;
 use Neos\Neos\Controller\Module\AbstractModuleController;
 
 /**
@@ -30,13 +31,15 @@ class PackagesController extends AbstractModuleController
     /**
      * @return void
      */
-    public function indexAction()
+    public function indexAction(string $sortBy = 'name', string $sortDirection = QueryInterface::ORDER_ASCENDING)
     {
         $packageGroups = [];
+
         foreach ($this->packageManager->getAvailablePackages() as $package) {
             /** @var Package $package */
             $packagePath = substr($package->getPackagepath(), strlen(FLOW_PATH_PACKAGES));
             $packageGroup = substr($packagePath, 0, strpos($packagePath, '/'));
+
             $packageGroups[$packageGroup][$package->getPackageKey()] = [
                 'sanitizedPackageKey' => str_replace('.', '', $package->getPackageKey()),
                 'version' => $package->getInstalledVersion(),
@@ -46,13 +49,23 @@ class PackagesController extends AbstractModuleController
                 'isFrozen' => $this->packageManager->isPackageFrozen($package->getPackageKey())
             ];
         }
-        ksort($packageGroups);
-        foreach (array_keys($packageGroups) as $packageGroup) {
-            ksort($packageGroups[$packageGroup]);
+
+        foreach ($packageGroups as &$packages) {
+            uasort($packages, function ($a, $b) use ($sortBy, $sortDirection) {
+                $valueA = $a[$sortBy] ?? '';
+                $valueB = $b[$sortBy] ?? '';
+
+                $result = strnatcasecmp((string)$valueA, (string)$valueB);
+                return $sortDirection === QueryInterface::ORDER_DESCENDING ? -$result : $result;
+            });
         }
+        unset($packages);
+
         $this->view->assignMultiple([
             'packageGroups' => $packageGroups,
-            'isDevelopmentContext' => $this->objectManager->getContext()->isDevelopment()
+            'isDevelopmentContext' => $this->objectManager->getContext()->isDevelopment(),
+            'sortDirection' => $sortDirection,
+            'sortBy' => $sortBy,
         ]);
     }
 }

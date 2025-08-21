@@ -489,6 +489,21 @@
 			<trans-unit id="packages.type" xml:space="preserve">
 				<source>Package Type</source>
 			</trans-unit>
+      <trans-unit id="packages.version" xml:space="preserve">
+				<source>Package Version</source>
+			</trans-unit>
+      <trans-unit id="packages.sortBy.packageName" xml:space="preserve">
+				<source>Sort by package name</source>
+      </trans-unit>
+      <trans-unit id="packages.sortBy.packageVersion" xml:space="preserve">
+				<source>Sort by package version</source>
+      </trans-unit>
+      <trans-unit id="packages.sortBy.packageKey" xml:space="preserve">
+				<source>Sort by package key</source>
+      </trans-unit>
+      <trans-unit id="packages.sortBy.packageType" xml:space="preserve">
+				<source>Sort by package type</source>
+      </trans-unit>
 			<trans-unit id="packages.deactivated" xml:space="preserve">
 				<source>Deactivated</source>
 			</trans-unit>
