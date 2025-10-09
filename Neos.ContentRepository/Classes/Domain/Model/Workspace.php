@@ -91,7 +91,7 @@ class Workspace
      * Root node data of this workspace
      *
      * @var NodeData
-     * @ORM\ManyToOne
+     * @ORM\ManyToOne(cascade={"persist"})
      * @ORM\JoinColumn(referencedColumnName="id")
      */
     protected $rootNodeData;
@@ -160,7 +160,6 @@ class Workspace
     {
         if ($initializationCause === ObjectManagerInterface::INITIALIZATIONCAUSE_CREATED) {
             $this->rootNodeData = new NodeData('/', $this);
-            $this->nodeDataRepository->add($this->rootNodeData);
 
             if ($this->owner instanceof UserInterface) {
                 $this->setOwner($this->owner);
