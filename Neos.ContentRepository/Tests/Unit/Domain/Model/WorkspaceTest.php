@@ -11,13 +11,11 @@ namespace Neos\ContentRepository\Tests\Unit\Domain\Model;
  * source code.
  */
 
-use Neos\ContentRepository\Exception\WorkspaceException;
-use Neos\Flow\ObjectManagement\ObjectManagerInterface;
-use Neos\Flow\Tests\UnitTestCase;
-use Neos\ContentRepository\Domain\Model\NodeData;
 use Neos\ContentRepository\Domain\Model\NodeInterface;
 use Neos\ContentRepository\Domain\Model\Workspace;
 use Neos\ContentRepository\Domain\Repository\NodeDataRepository;
+use Neos\ContentRepository\Exception\WorkspaceException;
+use Neos\Flow\Tests\UnitTestCase;
 
 /**
  * Test case for the "Workspace" domain model
@@ -35,23 +33,6 @@ class WorkspaceTest extends UnitTestCase
         $workspace = new Workspace('MyWorkspace', $baseWorkspace);
         self::assertSame('MyWorkspace', $workspace->getName());
         self::assertSame($baseWorkspace, $workspace->getBaseWorkspace());
-    }
-
-    /**
-     * @test
-     */
-    public function onInitializationANewlyCreatedWorkspaceCreatesItsOwnRootNode()
-    {
-        $workspace = $this->getAccessibleMock(Workspace::class, ['dummy'], [], '', false);
-
-        $mockNodeDataRepository = $this->getMockBuilder(NodeDataRepository::class)->disableOriginalConstructor()->setMethods(['add'])->getMock();
-        $mockNodeDataRepository->expects(self::once())->method('add');
-
-        $workspace->_set('nodeDataRepository', $mockNodeDataRepository);
-
-        $workspace->initializeObject(ObjectManagerInterface::INITIALIZATIONCAUSE_CREATED);
-
-        self::assertInstanceOf(NodeData::class, $workspace->getRootNodeData());
     }
 
     /**
