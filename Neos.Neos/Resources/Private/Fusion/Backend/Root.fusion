@@ -1,11 +1,6 @@
 include: resource://Neos.Fusion/Private/Fusion/Root.fusion
 include: resource://Neos.Fusion.Form/Private/Fusion/Root.fusion
 include: resource://Neos.Neos/Private/Fusion/SharedCoreComponents/*
-include: Views/*.fusion
-
-Neos.Neos.LoginController.index = Neos.Neos:View.Login {
-  site = ${site}
-  styles = ${styles}
-  username = ${username}
-  flashMessages = ${flashMessages}
-}
+include: resource://Neos.Neos/Private/Fusion/*
+include: resource://Neos.Workspace.Ui/Private/Fusion/*
+include: **/*

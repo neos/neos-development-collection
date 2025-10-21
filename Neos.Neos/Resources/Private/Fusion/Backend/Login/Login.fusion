@@ -146,3 +146,10 @@ prototype(Neos.Neos:Component.Login.Form) < prototype(Neos.Fusion:Component) {
     </Neos.Fusion.Form:Form>
   `
 }
+
+Neos.Neos.LoginController.index = Neos.Neos:View.Login {
+  site = ${site}
+  styles = ${styles}
+  username = ${username}
+  flashMessages = ${flashMessages}
+}

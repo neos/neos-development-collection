@@ -20,6 +20,7 @@ use Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper;
  * Render HTML markup for the full configuration tree in the Neos Administration -> Configuration Module.
  *
  * For performance reasons, this is done inside a ViewHelper instead of Fluid itself.
+ * @deprecated will be removed in Neos 10.0
  */
 class ConfigurationTreeViewHelper extends AbstractViewHelper
 {

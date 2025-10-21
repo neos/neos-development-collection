@@ -18,6 +18,7 @@ use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Configuration\ConfigurationManager;
 use Neos\Flow\Configuration\ConfigurationSchemaValidator;
 use Neos\Flow\Configuration\Exception\SchemaValidationException;
+use Neos\Fusion\View\FusionView;
 use Neos\Neos\Controller\Module\ModuleTranslationTrait;
 use Neos\Utility\SchemaGenerator;
 use Neos\Neos\Controller\Module\AbstractModuleController;
@@ -29,6 +30,8 @@ use Neos\Error\Messages\Message;
 class ConfigurationController extends AbstractModuleController
 {
     use ModuleTranslationTrait;
+
+    protected $defaultViewObjectName = FusionView::class;
 
     /**
      * @Flow\Inject

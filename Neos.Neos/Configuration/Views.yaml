@@ -4,3 +4,8 @@
   options:
     fusionPathPatterns:
       - 'resource://Neos.Neos/Private/Fusion/Backend'
+
+- requestFilter: 'isPackage("Neos.Neos") && isController("Module\Administration\Configuration")'
+  options:
+    fusionPathPatterns:
+      - 'resource://Neos.Neos/Private/Fusion/Backend'

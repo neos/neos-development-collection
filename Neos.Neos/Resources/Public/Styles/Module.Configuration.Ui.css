@@ -1,0 +1,70 @@
+.neos-flex-row {
+  display: flex;
+}
+
+.neos-py-1 {
+  padding-block: 1rem;
+}
+
+.neos-py-2 {
+  padding-block: 2rem;
+}
+
+.neos-module-administration-configuration {
+  .neos-configuration-tab {
+    > ul {
+      display: block;
+
+      ul {
+        padding-left: 1rem;
+      }
+
+      .neos-tree-node {
+        cursor: pointer;
+        height: auto;
+
+        &.neos-tree-folder .neos-tree-title {
+          user-select: none;
+        }
+
+        .neos-tree-icon {
+          display: none;
+        }
+
+        .neos-tree-title {
+          width: calc(100% - 24px);
+          height: auto;
+          white-space: normal;
+          text-align: left;
+          word-break: break-word;
+          word-wrap: break-word;
+        }
+      }
+    }
+
+    .key,
+    .value {
+      display: inline;
+    }
+
+    .value {
+      &.-is-boolean,
+      &.-is-NULL {
+        color: var(--warningText);
+      }
+
+      &.-is-integer,
+      &.-is-double {
+        color: var(--warningText);
+      }
+
+      &.-is-string {
+        color: var(--warningText);
+      }
+
+      &.-is-string {
+        color: var(--infoText);
+      }
+    }
+  }
+}
