@@ -9,34 +9,10 @@ Feature: Filter nodes based on their subtree tags
     """yaml
     'Neos.ContentRepository.Testing:AbstractPage':
       abstract: true
-    'Neos.ContentRepository.Testing:SomeMixin':
-      abstract: true
     'Neos.ContentRepository.Testing:Homepage':
       superTypes:
         'Neos.ContentRepository.Testing:AbstractPage': true
-      childNodes:
-        terms:
-          type: 'Neos.ContentRepository.Testing:Terms'
-        contact:
-          type: 'Neos.ContentRepository.Testing:Contact'
-
-    'Neos.ContentRepository.Testing:Terms':
-      superTypes:
-        'Neos.ContentRepository.Testing:AbstractPage': true
-      properties:
-        text:
-          defaultValue: 'Terms default'
-    'Neos.ContentRepository.Testing:Contact':
-      superTypes:
-        'Neos.ContentRepository.Testing:AbstractPage': true
-        'Neos.ContentRepository.Testing:SomeMixin': true
-      properties:
-        text:
-          defaultValue: 'Contact default'
     'Neos.ContentRepository.Testing:Page':
-      superTypes:
-        'Neos.ContentRepository.Testing:AbstractPage': true
-    'Neos.ContentRepository.Testing:SpecialPage':
       superTypes:
         'Neos.ContentRepository.Testing:AbstractPage': true
     """
@@ -58,7 +34,7 @@ Feature: Filter nodes based on their subtree tags
       | a               | a        | Neos.ContentRepository.Testing:Page        | home                   | {}                    | {}                                       |
       | a1              | a1       | Neos.ContentRepository.Testing:Page        | a                      | {}                    | {}                                       |
       | a2              | a2       | Neos.ContentRepository.Testing:Page        | a                      | {}                    | {}                                       |
-      | a2a             | a2a      | Neos.ContentRepository.Testing:SpecialPage | a2                     | {}                    | {}                                       |
+      | a2a             | a2a      | Neos.ContentRepository.Testing:Page | a2                     | {}                    | {}                                       |
       | a2a1            | a2a1     | Neos.ContentRepository.Testing:Page        | a2a                    | {}                    | {}                                       |
       | a2a2            | a2a2     | Neos.ContentRepository.Testing:Page        | a2a                    | {}                    | {}                                       |
       | a2a2a           | a2a2a    | Neos.ContentRepository.Testing:Page        | a2a2                   | {}                    | {}                                       |
