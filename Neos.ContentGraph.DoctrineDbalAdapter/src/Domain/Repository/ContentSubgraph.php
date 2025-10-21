@@ -136,18 +136,21 @@ final class ContentSubgraph implements ContentSubgraphInterface
             $this->applyOrdering($queryBuilder, $filter->ordering);
         }
         $queryBuilder->addOrderBy('h.position');
+
         return $this->fetchNodes($queryBuilder);
     }
 
     public function countChildNodes(NodeAggregateId $parentNodeAggregateId, CountChildNodesFilter $filter): int
     {
         $queryBuilder = $this->buildChildNodesQuery($parentNodeAggregateId, $filter);
+
         return $this->fetchCount($queryBuilder);
     }
 
     public function findReferences(NodeAggregateId $nodeAggregateId, FindReferencesFilter $filter): References
     {
         $queryBuilder = $this->buildReferencesQuery(false, $nodeAggregateId, $filter);
+
         return $this->fetchReferences($queryBuilder);
     }
 
@@ -159,6 +162,7 @@ final class ContentSubgraph implements ContentSubgraphInterface
     public function findBackReferences(NodeAggregateId $nodeAggregateId, FindBackReferencesFilter $filter): References
     {
         $queryBuilder = $this->buildReferencesQuery(true, $nodeAggregateId, $filter);
+
         return $this->fetchReferences($queryBuilder);
     }
 
@@ -173,6 +177,7 @@ final class ContentSubgraph implements ContentSubgraphInterface
             ->andWhere('n.nodeaggregateid = :nodeAggregateId')
             ->setParameter('nodeAggregateId', $nodeAggregateId->value);
         $this->addSubtreeTagConstraints($queryBuilder);
+
         return $this->fetchNode($queryBuilder);
     }
 
@@ -182,6 +187,7 @@ final class ContentSubgraph implements ContentSubgraphInterface
             ->andWhere('n.nodeaggregateid in (:nodeAggregateIds)')
             ->setParameter('nodeAggregateIds', $nodeAggregateIds->toStringArray(), ArrayParameterType::STRING);
         $this->addSubtreeTagConstraints($queryBuilder);
+
         return $this->fetchNodes($queryBuilder);
     }
 
@@ -191,6 +197,7 @@ final class ContentSubgraph implements ContentSubgraphInterface
             ->andWhere('n.nodetypename = :nodeTypeName')->setParameter('nodeTypeName', $nodeTypeName->value)
             ->andWhere('n.classification = :nodeAggregateClassification')->setParameter('nodeAggregateClassification', NodeAggregateClassification::CLASSIFICATION_ROOT->value);
         $this->addSubtreeTagConstraints($queryBuilder);
+
         return $this->fetchNode($queryBuilder);
     }
 
@@ -198,6 +205,7 @@ final class ContentSubgraph implements ContentSubgraphInterface
     {
         $queryBuilder = $this->nodeQueryBuilder->buildBasicParentNodeQuery($childNodeAggregateId, $this->contentStreamId, $this->dimensionSpacePoint);
         $this->addSubtreeTagConstraints($queryBuilder, 'ph');
+
         return $this->fetchNode($queryBuilder);
     }
 
@@ -231,18 +239,21 @@ final class ContentSubgraph implements ContentSubgraphInterface
         $queryBuilder = $this->nodeQueryBuilder->buildBasicChildNodesQuery($parentNodeAggregateId, $this->contentStreamId, $this->dimensionSpacePoint)
             ->andWhere('n.name = :edgeName')->setParameter('edgeName', $nodeName->value);
         $this->addSubtreeTagConstraints($queryBuilder);
+
         return $this->fetchNode($queryBuilder);
     }
 
     public function findSucceedingSiblingNodes(NodeAggregateId $siblingNodeAggregateId, FindSucceedingSiblingNodesFilter $filter): Nodes
     {
         $queryBuilder = $this->buildSiblingsQuery(false, $siblingNodeAggregateId, $filter);
+
         return $this->fetchNodes($queryBuilder);
     }
 
     public function findPrecedingSiblingNodes(NodeAggregateId $siblingNodeAggregateId, FindPrecedingSiblingNodesFilter $filter): Nodes
     {
         $queryBuilder = $this->buildSiblingsQuery(true, $siblingNodeAggregateId, $filter);
+
         return $this->fetchNodes($queryBuilder);
     }
 
@@ -330,6 +341,7 @@ final class ContentSubgraph implements ContentSubgraphInterface
             }
             $subtreesByParentNodeId[$parentNodeAggregateId][] = $subtree;
         }
+
         return null;
     }
 
@@ -402,6 +414,7 @@ final class ContentSubgraph implements ContentSubgraphInterface
             $queryBuilderCte,
             'ancestry'
         );
+
         return $this->nodeFactory->mapNodeRowsToNodes(
             $nodeRows,
             $this->workspaceName,
@@ -412,7 +425,11 @@ final class ContentSubgraph implements ContentSubgraphInterface
 
     public function findDescendantNodes(NodeAggregateId $entryNodeAggregateId, FindDescendantNodesFilter $filter): Nodes
     {
-        ['queryBuilderInitial' => $queryBuilderInitial, 'queryBuilderRecursive' => $queryBuilderRecursive, 'queryBuilderCte' => $queryBuilderCte] = $this->buildDescendantNodesQueries($entryNodeAggregateId, $filter);
+        [
+            'queryBuilderInitial' => $queryBuilderInitial,
+            'queryBuilderRecursive' => $queryBuilderRecursive,
+            'queryBuilderCte' => $queryBuilderCte
+        ] = $this->buildDescendantNodesQueries($entryNodeAggregateId, $filter);
         if ($filter->ordering !== null) {
             $this->applyOrdering($queryBuilderCte, $filter->ordering);
         }
@@ -421,6 +438,7 @@ final class ContentSubgraph implements ContentSubgraphInterface
         }
         $queryBuilderCte->addOrderBy('level')->addOrderBy('position');
         $nodeRows = $this->fetchCteResults($queryBuilderInitial, $queryBuilderRecursive, $queryBuilderCte, 'tree');
+
         return $this->nodeFactory->mapNodeRowsToNodes(
             $nodeRows,
             $this->workspaceName,
@@ -431,7 +449,12 @@ final class ContentSubgraph implements ContentSubgraphInterface
 
     public function countDescendantNodes(NodeAggregateId $entryNodeAggregateId, CountDescendantNodesFilter $filter): int
     {
-        ['queryBuilderInitial' => $queryBuilderInitial, 'queryBuilderRecursive' => $queryBuilderRecursive, 'queryBuilderCte' => $queryBuilderCte] = $this->buildDescendantNodesQueries($entryNodeAggregateId, $filter);
+        [
+            'queryBuilderInitial' => $queryBuilderInitial,
+            'queryBuilderRecursive' => $queryBuilderRecursive,
+            'queryBuilderCte' => $queryBuilderCte
+        ] = $this->buildDescendantNodesQueries($entryNodeAggregateId, $filter);
+
         return $this->fetchCteCountResult($queryBuilderInitial, $queryBuilderRecursive, $queryBuilderCte, 'tree');
     }
 
@@ -463,6 +486,7 @@ final class ContentSubgraph implements ContentSubgraphInterface
                 return null;
             }
         }
+
         return $currentNode;
     }
 
@@ -475,9 +499,23 @@ final class ContentSubgraph implements ContentSubgraphInterface
     {
         $hierarchyRelationTablePrefix = $hierarchyRelationTableAlias === '' ? '' : $hierarchyRelationTableAlias . '.';
         $i = 0;
+
         foreach ($this->visibilityConstraints->excludedSubtreeTags as $excludedTag) {
-            $queryBuilder->andWhere('NOT JSON_CONTAINS_PATH(' . $hierarchyRelationTablePrefix . 'subtreetags, \'one\', :tagPath' . $i . ')')->setParameter('tagPath' . $i, '$."' . $excludedTag->value . '"');
+            $queryBuilder->andWhere(
+                'NOT JSON_CONTAINS_PATH(' . $hierarchyRelationTablePrefix . 'subtreetags, \'one\', :tagPath' . $i . ')')
+                ->setParameter('tagPath' . $i, '$."' . $excludedTag->value . '"');
             $i++;
+        }
+
+        if (!$this->visibilityConstraints->includedSubtreeTags->isEmpty()) {
+            $includedParts = [];
+            foreach ($this->visibilityConstraints->includedSubtreeTags as $includedTag) {
+                $includedParts[] = 'JSON_CONTAINS_PATH(' . $hierarchyRelationTablePrefix . 'subtreetags, \'one\', :tagPath' . $i . ')';
+                $queryBuilder->setParameter('tagPath' . $i, '$."' . $includedTag->value . '"');
+                $i++;
+            }
+            $where = '(' . implode(' OR ', $includedParts) . ')';
+            $queryBuilder->andWhere($where);
         }
     }
 
@@ -494,6 +532,7 @@ final class ContentSubgraph implements ContentSubgraphInterface
             $this->nodeQueryBuilder->addPropertyValueConstraints($queryBuilder, $filter->propertyValue);
         }
         $this->addSubtreeTagConstraints($queryBuilder);
+
         return $queryBuilder;
     }
 
@@ -545,6 +584,7 @@ final class ContentSubgraph implements ContentSubgraphInterface
                 $this->applyPagination($queryBuilder, $filter->pagination);
             }
         }
+
         return $queryBuilder;
     }
 
@@ -565,6 +605,7 @@ final class ContentSubgraph implements ContentSubgraphInterface
         if ($filter->pagination !== null) {
             $this->applyPagination($queryBuilder, $filter->pagination);
         }
+
         return $queryBuilder;
     }
 
@@ -601,6 +642,7 @@ final class ContentSubgraph implements ContentSubgraphInterface
         if ($filter->nodeTypes !== null) {
             $this->nodeQueryBuilder->addNodeTypeCriteria($queryBuilderCte, ExpandedNodeTypeCriteria::create($filter->nodeTypes, $this->nodeTypeManager), 'pn');
         }
+
         return compact('queryBuilderInitial', 'queryBuilderRecursive', 'queryBuilderCte');
     }
 
@@ -643,6 +685,7 @@ final class ContentSubgraph implements ContentSubgraphInterface
         if ($filter->propertyValue !== null) {
             $this->nodeQueryBuilder->addPropertyValueConstraints($queryBuilderCte, $filter->propertyValue);
         }
+
         return compact('queryBuilderInitial', 'queryBuilderRecursive', 'queryBuilderCte');
     }
 
@@ -692,6 +735,7 @@ final class ContentSubgraph implements ContentSubgraphInterface
         if ($nodeRow === false) {
             return null;
         }
+
         return $this->nodeFactory->mapNodeRowToNode(
             $nodeRow,
             $this->workspaceName,
@@ -707,6 +751,7 @@ final class ContentSubgraph implements ContentSubgraphInterface
         } catch (DBALException $e) {
             throw new \RuntimeException(sprintf('Failed to fetch nodes: %s', $e->getMessage()), 1678292896, $e);
         }
+
         return $this->nodeFactory->mapNodeRowsToNodes(
             $nodeRows,
             $this->workspaceName,
@@ -731,6 +776,7 @@ final class ContentSubgraph implements ContentSubgraphInterface
         } catch (DBALException $e) {
             throw new \RuntimeException(sprintf('Failed to fetch references: %s', $e->getMessage()), 1678364944, $e);
         }
+
         return $this->nodeFactory->mapReferenceRowsToReferences(
             $referenceRows,
             $this->workspaceName,
