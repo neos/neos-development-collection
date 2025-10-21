@@ -5,16 +5,16 @@ declare(strict_types=1);
 namespace Neos\Neos\Domain\Model;
 
 use Neos\Flow\Annotations as Flow;
-use Neos\Neos\Security\Authorization\ContentRepositoryAuthorizationService;
+use Neos\Neos\Security\Authorization\ContentRepositoryAuthorizationInterface;
 
 /**
- * Evaluated permissions a specific user has on a workspace, usually evaluated by the {@see ContentRepositoryAuthorizationService}
+ * Evaluated permissions a specific user has on a workspace, usually evaluated by the {@see ContentRepositoryAuthorizationInterface}
  *
  * - read: Permission to read data from the corresponding workspace (e.g. get hold of and traverse the content graph)
  * - write: Permission to write to the corresponding workspace, including publishing a derived workspace to it
  * - manage: Permission to change the metadata and roles of the corresponding workspace (e.g. change description/title or add/remove workspace roles)
  *
- * @api because it is returned by the {@see ContentRepositoryAuthorizationService}
+ * @api because it is returned by the {@see ContentRepositoryAuthorizationInterface}
  */
 #[Flow\Proxy(false)]
 final readonly class WorkspacePermissions

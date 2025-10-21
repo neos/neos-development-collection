@@ -10,7 +10,7 @@ use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryI
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Security\Context as SecurityContext;
 use Neos\Neos\Domain\Service\UserService;
-use Neos\Neos\Security\Authorization\ContentRepositoryAuthorizationService;
+use Neos\Neos\Security\Authorization\ContentRepositoryAuthorizationInterface;
 
 /**
  * Implementation of the {@see AuthProviderFactoryInterface} in order to provide authentication and authorization for Content Repositories
@@ -22,7 +22,7 @@ final readonly class ContentRepositoryAuthProviderFactory implements AuthProvide
 {
     public function __construct(
         private UserService $userService,
-        private ContentRepositoryAuthorizationService $contentRepositoryAuthorizationService,
+        private ContentRepositoryAuthorizationInterface $contentRepositoryAuthorizationService,
         private SecurityContext $securityContext,
     ) {
     }

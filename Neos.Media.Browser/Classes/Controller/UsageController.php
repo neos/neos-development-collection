@@ -29,7 +29,7 @@ use Neos\Neos\Domain\Repository\SiteRepository;
 use Neos\Neos\Domain\Service\NodeTypeNameFactory;
 use Neos\Neos\Domain\Service\WorkspaceService;
 use Neos\Neos\FrontendRouting\SiteDetection\SiteDetectionResult;
-use Neos\Neos\Security\Authorization\ContentRepositoryAuthorizationService;
+use Neos\Neos\Security\Authorization\ContentRepositoryAuthorizationInterface;
 use Neos\Neos\Service\UserService;
 
 /**
@@ -77,7 +77,7 @@ class UsageController extends ActionController
 
     /**
      * @Flow\Inject
-     * @var ContentRepositoryAuthorizationService
+     * @var ContentRepositoryAuthorizationInterface
      */
     protected $contentRepositoryAuthorizationService;
 

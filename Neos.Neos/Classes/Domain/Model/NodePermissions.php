@@ -5,15 +5,16 @@ declare(strict_types=1);
 namespace Neos\Neos\Domain\Model;
 
 use Neos\Flow\Annotations as Flow;
-use Neos\Neos\Security\Authorization\ContentRepositoryAuthorizationService;
+use Neos\Neos\Security\Authorization\ContentRepositoryAuthorizationInterface;
 
 /**
- * Evaluated permissions a specific user has on a node, usually evaluated by the {@see ContentRepositoryAuthorizationService}
+ * Evaluated permissions a specific user has on a node, usually evaluated by the {@see ContentRepositoryAuthorizationInterface}
  *
  * - read: Permission to read the node and its properties and references
  * - edit: Permission to change the node
+ * - remove: Permission to remove the node
  *
- * @api because it is returned by the {@see ContentRepositoryAuthorizationService}
+ * @api because it is returned by the {@see ContentRepositoryAuthorizationInterface}
  */
 #[Flow\Proxy(false)]
 final readonly class NodePermissions
@@ -25,6 +26,7 @@ final readonly class NodePermissions
     private function __construct(
         public bool $read,
         public bool $edit,
+        public bool $remove,
         private string $reason,
     ) {
     }
@@ -37,19 +39,20 @@ final readonly class NodePermissions
     public static function create(
         bool $read,
         bool $edit,
+        bool $remove,
         string $reason,
     ): self {
-        return new self($read, $edit, $reason);
+        return new self($read, $edit, $remove, $reason);
     }
 
     public static function all(string $reason): self
     {
-        return new self(true, true, $reason);
+        return new self(true, true, true, $reason);
     }
 
     public static function none(string $reason): self
     {
-        return new self(false, false, $reason);
+        return new self(false, false, false, $reason);
     }
 
     /**

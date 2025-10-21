@@ -31,7 +31,7 @@ use Neos\Neos\Security\Authorization\Privilege\SubtreeTagPrivilegeSubject;
  * @api
  */
 #[Flow\Scope('singleton')]
-final readonly class ContentRepositoryAuthorizationService
+final readonly class ContentRepositoryAuthorizationService implements ContentRepositoryAuthorizationInterface
 {
     private const ROLE_NEOS_ADMINISTRATOR = 'Neos.Neos:Administrator';
 
@@ -92,6 +92,7 @@ final readonly class ContentRepositoryAuthorizationService
         return NodePermissions::create(
             read: $readGranted,
             edit: $writeGranted,
+            remove: $writeGranted, // TODO: separate privilege for removal
             reason: $readReason . "\n" . $writeReason,
         );
     }
