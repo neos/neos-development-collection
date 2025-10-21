@@ -150,13 +150,13 @@ trait CRTestSuiteRuntimeVariables
     private function parseTags(string $tags): SubtreeTags
     {
         $tags = array_filter(array_map(
-            static fn(string $s) => trim($s),
+            fn(string $s) => SubtreeTag::fromString(trim($s)),
             explode(',', $tags)
-        ), static fn(string $s) => $s !== '');
+        ), fn(string $s) => $s !== '');
 
         return empty($tags)
             ? SubtreeTags::createEmpty()
-            : SubtreeTags::create(...array_map(static fn(string $t) => SubtreeTag::fromString($t), $tags));
+            : SubtreeTags::create(...$tags);
     }
 
     public function getCurrentSubgraph(): ContentSubgraphInterface
