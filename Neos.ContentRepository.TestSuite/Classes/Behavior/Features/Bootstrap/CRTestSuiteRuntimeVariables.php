@@ -133,7 +133,7 @@ trait CRTestSuiteRuntimeVariables
                 return;
 
             case 'include':
-                $included = $excludeTags ? $this->parseTags($excludeTags) : SubtreeTags::createEmpty(); // zweites Arg wird hier als Include-Liste genutzt
+                $included = $excludeTags ? $this->parseTags($excludeTags) : SubtreeTags::createEmpty();
                 $this->currentVisibilityConstraints = VisibilityConstraints::includeSubtreeTags($included);
                 return;
 
