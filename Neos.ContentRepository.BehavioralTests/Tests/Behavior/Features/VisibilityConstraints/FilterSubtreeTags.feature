@@ -2,9 +2,7 @@
 Feature: Filter nodes based on their subtree tags
 
   Background:
-    Given using the following content dimensions:
-      | Identifier | Values          | Generalizations      |
-      | language   | mul, de, en, ch | ch->de->mul, en->mul |
+    Given using no content dimensions
     And using the following node types:
     """yaml
     'Neos.ContentRepository.Testing:AbstractPage':
@@ -23,7 +21,7 @@ Feature: Filter nodes based on their subtree tags
       | Key                  | Value                |
       | workspaceName        | "live"               |
       | newContentStreamId   | "cs-identifier"      |
-    And I am in workspace "live" and dimension space point {"language":"de"}
+    And I am in workspace "live" and dimension space point {}
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key             | Value                         |
       | nodeAggregateId | "lady-eleonode-rootford"      |
@@ -44,21 +42,6 @@ Feature: Filter nodes based on their subtree tags
       | a2b             | a2b      | Neos.ContentRepository.Testing:Page        | a2                     | {}                    | {}                                       |
       | a2b1            | a2b1     | Neos.ContentRepository.Testing:Page        | a2b                    | {}                    | {}                                       |
       | b               | b        | Neos.ContentRepository.Testing:Page        | home                   | {}                    | {}                                       |
-    And the command DisableNodeAggregate is executed with payload:
-      | Key                          | Value         |
-      | nodeAggregateId              | "a2a2a"       |
-      | nodeVariantSelectionStrategy | "allVariants" |
-    And the command DisableNodeAggregate is executed with payload:
-      | Key                          | Value         |
-      | nodeAggregateId              | "a2b"         |
-      | nodeVariantSelectionStrategy | "allVariants" |
-    And the command MoveNodeAggregate is executed with payload:
-      | Key                          | Value                   |
-      | workspaceName                | "live"                  |
-      | dimensionSpacePoint          | {"language": "ch"}      |
-      | relationDistributionStrategy | "scatter"               |
-      | nodeAggregateId              | "a2a2c"                 |
-      | newParentNodeAggregateId     | "b"                     |
     And the command TagSubtree is executed with payload:
       | Key                          | Value                  |
       | nodeAggregateId              | "a2a2c"     |
