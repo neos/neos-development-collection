@@ -412,11 +412,7 @@ final class ContentSubgraph implements ContentSubgraphInterface
 
     public function findDescendantNodes(NodeAggregateId $entryNodeAggregateId, FindDescendantNodesFilter $filter): Nodes
     {
-        [
-            'queryBuilderInitial' => $queryBuilderInitial,
-            'queryBuilderRecursive' => $queryBuilderRecursive,
-            'queryBuilderCte' => $queryBuilderCte
-        ] = $this->buildDescendantNodesQueries($entryNodeAggregateId, $filter);
+        ['queryBuilderInitial' => $queryBuilderInitial, 'queryBuilderRecursive' => $queryBuilderRecursive, 'queryBuilderCte' => $queryBuilderCte] = $this->buildDescendantNodesQueries($entryNodeAggregateId, $filter);
         if ($filter->ordering !== null) {
             $this->applyOrdering($queryBuilderCte, $filter->ordering);
         }
@@ -435,11 +431,7 @@ final class ContentSubgraph implements ContentSubgraphInterface
 
     public function countDescendantNodes(NodeAggregateId $entryNodeAggregateId, CountDescendantNodesFilter $filter): int
     {
-        [
-            'queryBuilderInitial' => $queryBuilderInitial,
-            'queryBuilderRecursive' => $queryBuilderRecursive,
-            'queryBuilderCte' => $queryBuilderCte
-        ] = $this->buildDescendantNodesQueries($entryNodeAggregateId, $filter);
+        ['queryBuilderInitial' => $queryBuilderInitial, 'queryBuilderRecursive' => $queryBuilderRecursive, 'queryBuilderCte' => $queryBuilderCte] = $this->buildDescendantNodesQueries($entryNodeAggregateId, $filter);
         return $this->fetchCteCountResult($queryBuilderInitial, $queryBuilderRecursive, $queryBuilderCte, 'tree');
     }
 
