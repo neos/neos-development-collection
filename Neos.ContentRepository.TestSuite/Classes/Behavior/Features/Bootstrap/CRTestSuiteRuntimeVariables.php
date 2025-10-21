@@ -147,11 +147,11 @@ trait CRTestSuiteRuntimeVariables
         throw new \InvalidArgumentException("Visibility constraint '$type' not supported.");
     }
 
-    private function parseTags(string $pipeSeparated): SubtreeTags
+    private function parseTags(string $tags): SubtreeTags
     {
         $tags = array_filter(array_map(
             static fn(string $s) => trim($s),
-            explode('|', $pipeSeparated)
+            explode(',', $tags)
         ), static fn(string $s) => $s !== '');
 
         return empty($tags)

@@ -101,6 +101,10 @@ Feature: Filter nodes based on their subtree tags
   Scenario: Include Subtree Tag
     When VisibilityConstraints are set to "include" "mytag"
     And I execute the findDescendantNodes query for entry node aggregate id "a2a2" I expect the nodes "a2a2c" to be returned
+    When VisibilityConstraints are set to "include" "nonexistenttag"
+    And I execute the findDescendantNodes query for entry node aggregate id "a2a2" I expect no nodes to be returned
+    When VisibilityConstraints are set to "include" "mytag,mysecondtag"
+    And I execute the findDescendantNodes query for entry node aggregate id "a2a2" I expect the nodes "a2a2c,a2a2d" to be returned
   Scenario: Include and exclude Subtree Tag
     When VisibilityConstraints are set to "exclude and include" "mysecondtag" "mytag"
     And I execute the findDescendantNodes query for entry node aggregate id "a2a2" I expect the nodes "a2a2c" to be returned
