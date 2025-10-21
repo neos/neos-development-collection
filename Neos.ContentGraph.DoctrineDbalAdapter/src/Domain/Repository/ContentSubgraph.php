@@ -486,13 +486,16 @@ final class ContentSubgraph implements ContentSubgraphInterface
 
         if (!$this->visibilityConstraints->includedSubtreeTags->isEmpty()) {
             $includedParts = [];
+            $expression = $queryBuilder->expr();
             foreach ($this->visibilityConstraints->includedSubtreeTags as $includedTag) {
-                $includedParts[] = 'JSON_CONTAINS_PATH(' . $hierarchyRelationTablePrefix . 'subtreetags, \'one\', :tagPath' . $i . ')';
+                $includedParts[] = $expression->eq(
+                    'JSON_CONTAINS_PATH(' . $hierarchyRelationTablePrefix . 'subtreetags, \'one\', :tagPath' . $i . ')',
+                    $expression->literal(1)
+                );
                 $queryBuilder->setParameter('tagPath' . $i, '$."' . $includedTag->value . '"');
                 $i++;
             }
-            $where = '(' . implode(' OR ', $includedParts) . ')';
-            $queryBuilder->andWhere($where);
+            $queryBuilder->andWhere($expression->or(...$includedParts));
         }
     }
 
