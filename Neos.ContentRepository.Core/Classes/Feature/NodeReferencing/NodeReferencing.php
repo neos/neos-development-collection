@@ -148,6 +148,11 @@ trait NodeReferencing
             );
         }
 
+        if ($events === []) {
+            // cannot happen here as the command could not be instantiated without any intention see constructor validation
+            throw new \RuntimeException('Cannot handle "SetSerializedNodeReferences" with no references to modify', 1736797975);
+        }
+
         $events = Events::fromArray($events);
 
         return new EventsToPublish(

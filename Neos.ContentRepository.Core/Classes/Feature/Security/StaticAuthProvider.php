@@ -29,7 +29,7 @@ final class StaticAuthProvider implements AuthProviderInterface
 
     public function getVisibilityConstraints(WorkspaceName $workspaceName): VisibilityConstraints
     {
-        return VisibilityConstraints::default();
+        return VisibilityConstraints::createEmpty();
     }
 
     public function canReadNodesFromWorkspace(WorkspaceName $workspaceName): Privilege

@@ -14,22 +14,25 @@ declare(strict_types=1);
 
 namespace Neos\Neos\Domain\Pruning;
 
-use Neos\ContentRepository\Core\Service\ContentStreamPruner;
+use Neos\ContentRepository\Core\Service\ContentRepositoryMaintainer;
 use Neos\ContentRepository\Export\ProcessingContext;
 use Neos\ContentRepository\Export\ProcessorInterface;
 
 /**
- * Pruning processor that removes all events from the given cr
+ * Pruning processor that removes all events from the given cr and resets the projections
  */
 final readonly class ContentRepositoryPruningProcessor implements ProcessorInterface
 {
     public function __construct(
-        private ContentStreamPruner $contentStreamPruner,
+        private ContentRepositoryMaintainer $contentRepositoryMaintainer,
     ) {
     }
 
     public function run(ProcessingContext $context): void
     {
-        $this->contentStreamPruner->pruneAllWorkspacesAndContentStreamsFromEventStream();
+        $result = $this->contentRepositoryMaintainer->prune();
+        if ($result !== null) {
+            throw new \RuntimeException($result->getMessage(), 1732461335);
+        }
     }
 }

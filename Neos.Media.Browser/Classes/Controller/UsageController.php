@@ -14,17 +14,28 @@ namespace Neos\Media\Browser\Controller;
  * source code.
  */
 
+use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindClosestNodeFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
+use Neos\ContentRepository\Core\SharedModel\Exception\WorkspaceDoesNotExist;
+use Neos\ContentRepository\Core\SharedModel\Workspace\Workspace;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\Controller\ActionController;
-use Neos\Flow\Security\Context as SecurityContext;
+use Neos\Flow\Security\Authorization\PrivilegeManagerInterface;
+use Neos\Flow\Security\Context;
 use Neos\Media\Domain\Model\AssetInterface;
 use Neos\Media\Domain\Service\AssetService;
 use Neos\Neos\AssetUsage\Dto\AssetUsageReference;
+use Neos\Neos\Domain\Model\User;
+use Neos\Neos\Domain\Model\UserId;
+use Neos\Neos\Domain\Model\WorkspaceClassification;
+use Neos\Neos\Domain\Model\WorkspaceRole;
+use Neos\Neos\Domain\Model\WorkspaceRoleSubjectType;
+use Neos\Neos\Domain\Model\WorkspaceTitle;
 use Neos\Neos\Domain\Repository\SiteRepository;
 use Neos\Neos\Domain\Service\NodeTypeNameFactory;
+use Neos\Neos\Domain\Service\UserService as DomainUserService;
 use Neos\Neos\Domain\Service\WorkspaceService;
 use Neos\Neos\FrontendRouting\SiteDetection\SiteDetectionResult;
 use Neos\Neos\Security\Authorization\ContentRepositoryAuthorizationService;
@@ -69,7 +80,7 @@ class UsageController extends ActionController
 
     /**
      * @Flow\Inject
-     * @var SecurityContext
+     * @var Context
      */
     protected $securityContext;
 
@@ -78,6 +89,18 @@ class UsageController extends ActionController
      * @var ContentRepositoryAuthorizationService
      */
     protected $contentRepositoryAuthorizationService;
+
+    /**
+     * @Flow\Inject
+     * @var PrivilegeManagerInterface
+     */
+    protected $privilegeManager;
+
+    /**
+     * @Flow\Inject
+     * @var DomainUserService
+     */
+    protected $domainUserService;
 
     /**
      * Get Related Nodes for an asset
@@ -112,8 +135,16 @@ class UsageController extends ActionController
 
             $contentRepository = $this->contentRepositoryRegistry->get($usage->getContentRepositoryId());
 
-            $nodeAggregate = $contentRepository->getContentGraph($usage->getWorkspaceName())->findNodeAggregateById(
-                $usage->getNodeAggregateId()
+            $nodeAggregate =  $this->securityContext->withoutAuthorizationChecks(
+                function () use ($contentRepository, $usage) {
+                    try {
+                        return $contentRepository->getContentGraph($usage->getWorkspaceName())->findNodeAggregateById(
+                            $usage->getNodeAggregateId()
+                        );
+                    } catch (WorkspaceDoesNotExist $e) {
+                        return null;
+                    }
+                }
             );
             $nodeType = $nodeAggregate ? $contentRepository->getNodeTypeManager()->getNodeType($nodeAggregate->nodeTypeName) : null;
 
@@ -121,19 +152,21 @@ class UsageController extends ActionController
             $workspace = $contentRepository->findWorkspaceByName($usage->getWorkspaceName());
 
             $inaccessibleRelation['nodeIdentifier'] = $usage->getNodeAggregateId()->value;
-            $inaccessibleRelation['workspaceName'] = $usage->getWorkspaceName()->value;
             $inaccessibleRelation['workspace'] = $workspace;
+            $inaccessibleRelation['relevantWorkspaceMetadata'] = $this->getRelevantMetadataFromInaccessibleWorkspace($workspace, $contentRepository);
             $inaccessibleRelation['nodeType'] = $nodeType;
             $inaccessibleRelation['accessible'] = $workspacePermissions->read;
 
-            if (!$workspacePermissions->read) {
+            // the workspace from `usage` might not be found, but we expect a given workspace in further function
+            // and user should have access to it, if not we have an inaccessible relation
+            if ($workspace === null || !$workspacePermissions->read) {
                 $inaccessibleRelations[] = $inaccessibleRelation;
                 continue;
             }
 
             $subgraph = $contentRepository->getContentGraph($usage->getWorkspaceName())->getSubgraph(
                 $usage->getOriginDimensionSpacePoint()->toDimensionSpacePoint(),
-                VisibilityConstraints::withoutRestrictions()
+                VisibilityConstraints::createEmpty()
             );
 
             $node = $subgraph->findNodeById($usage->getNodeAggregateId());
@@ -172,6 +205,7 @@ class UsageController extends ActionController
             $relatedNodes[$site->getNodeName()->value]['nodes'][] = [
                 'node' => $node,
                 'workspace' => $workspace,
+                'workspaceMetadata' => $this->workspaceService->getWorkspaceMetadata($contentRepository->id, $workspace->workspaceName),
                 'documentNode' => $documentNode
             ];
         }
@@ -183,7 +217,56 @@ class UsageController extends ActionController
             'inaccessibleRelations' => $inaccessibleRelations,
             'relatedNodes' => $relatedNodes,
             'contentDimensions' => $currentContentRepository->getContentDimensionSource()->getContentDimensionsOrderedByPriority(),
-            'userWorkspace' => $userWorkspace
+            'userWorkspace' => $userWorkspace,
         ]);
+    }
+
+    /**
+     * @return array{title: WorkspaceTitle|null, relatedUserName: string|null, personalWorkspace: bool, privateWorkspace: bool}
+     */
+    private function getRelevantMetadataFromInaccessibleWorkspace(?Workspace $workspace, ?ContentRepository $contentRepository): array
+    {
+        $structuredReturn = [
+            'title' => null,
+            'relatedUserName' => '',
+            'personalWorkspace' => false,
+            'privateWorkspace' => false,
+        ];
+
+        if ($workspace === null) {
+            return $structuredReturn;
+        }
+
+        $currentAccount = $this->securityContext->getAccount();
+
+        if ($currentAccount != null && $contentRepository != null && $this->privilegeManager->isPrivilegeTargetGranted('Neos.Media.Browser:WorkspaceName')) {
+            $workspaceMetadata = $this->workspaceService->getWorkspaceMetadata($contentRepository->id, $workspace->workspaceName);
+            $workspaceOwner = $workspaceMetadata->ownerUserId
+                ? $this->domainUserService->findUserById($workspaceMetadata->ownerUserId)
+                : null;
+
+            $roleAssignments = $this->workspaceService->getWorkspaceRoleAssignments(
+                $contentRepository->id,
+                $workspace->workspaceName
+            );
+            $relatedUser = null;
+            foreach ($roleAssignments as $roleAssignment) {
+                if (($roleAssignment->role->value !== WorkspaceRole::VIEWER->value) && ($roleAssignment->subject->type->value === WorkspaceRoleSubjectType::USER->value)) {
+                    $relatedUser = $this->domainUserService->findUserById(UserId::fromString($roleAssignment->subject->value));
+                    break;
+                }
+            }
+
+            if ($workspaceMetadata->classification->value === WorkspaceClassification::PERSONAL->value) {
+                $structuredReturn['relatedUserName'] = $workspaceOwner?->getLabel();
+                $structuredReturn['personalWorkspace'] = true;
+            } else {
+                $structuredReturn['title'] = $workspaceMetadata->title;
+                $structuredReturn['relatedUserName'] = $relatedUser?->getLabel();
+                $structuredReturn['privateWorkspace'] = true;
+            }
+        }
+
+        return $structuredReturn;
     }
 }

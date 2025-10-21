@@ -203,7 +203,7 @@ Feature: Change Property Value across dimensions; and test DimensionSpacePoints 
 
 
   Scenario: matching only happens based on originDimensionSpacePoint, not on visibleDimensionSpacePoints - we try to change CH, but should not see any modification (includeSpecializations = FALSE - default)
-    When I run the following node migration for workspace "live", creating target workspace "migration-workspace" on contentStreamId "migration-cs", without publishing on success:
+    When I run the following node migration for workspace "live", creating target workspace "migration-workspace" on contentStreamId "migration-cs" and exceptions are caught:
     """yaml
     migration:
       -
@@ -225,22 +225,14 @@ Feature: Change Property Value across dimensions; and test DimensionSpacePoints 
               property: 'text'
               newSerializedValue: 'fixed value'
     """
-
-    # neither DE or CH is modified
-    When I am in workspace "migration-workspace" and dimension space point {"language": "de"}
-    Then I expect a node identified by migration-cs;sir-david-nodenborough;{"language": "de"} to exist in the content graph
-    And I expect this node to have the following properties:
-      | Key  | Value           |
-      | text | "Original text" |
-
-    When I am in workspace "migration-workspace" and dimension space point {"language": "ch"}
-    Then I expect a node identified by migration-cs;sir-david-nodenborough;{"language": "de"} to exist in the content graph
-    And I expect this node to have the following properties:
-      | Key  | Value           |
-      | text | "Original text" |
+    Then the last command should have thrown an exception of type "MigrationException" with message:
+    """
+    Migration did not issue any commands.
+    """
+    And I expect the content stream "migration-cs" to not exist
 
   Scenario: matching only happens based on originDimensionSpacePoint, not on visibleDimensionSpacePoints - we try to change CH, but should not see any modification (includeSpecializations = TRUE)
-    When I run the following node migration for workspace "live", creating target workspace "migration-workspace" on contentStreamId "migration-cs", without publishing on success:
+    When I run the following node migration for workspace "live", creating target workspace "migration-workspace" on contentStreamId "migration-cs" and exceptions are caught:
     """yaml
     migration:
       -
@@ -263,16 +255,8 @@ Feature: Change Property Value across dimensions; and test DimensionSpacePoints 
               property: 'text'
               newSerializedValue: 'fixed value'
     """
-
-    # neither DE or CH is modified
-    When I am in workspace "migration-workspace" and dimension space point {"language": "de"}
-    Then I expect a node identified by migration-cs;sir-david-nodenborough;{"language": "de"} to exist in the content graph
-    And I expect this node to have the following properties:
-      | Key  | Value           |
-      | text | "Original text" |
-
-    When I am in workspace "migration-workspace" and dimension space point {"language": "ch"}
-    Then I expect a node identified by migration-cs;sir-david-nodenborough;{"language": "de"} to exist in the content graph
-    And I expect this node to have the following properties:
-      | Key  | Value           |
-      | text | "Original text" |
+    Then the last command should have thrown an exception of type "MigrationException" with message:
+    """
+    Migration did not issue any commands.
+    """
+    And I expect the content stream "migration-cs" to not exist

@@ -49,17 +49,17 @@ window.addEventListener('DOMContentLoaded', () => {
 		const assets = document.querySelectorAll('[data-asset-identifier]');
 		assets.forEach((asset) => {
 			asset.addEventListener('click', (e) => {
-				const assetLink = e.target.closest('a[data-asset-identifier], button[data-asset-identifier]');
-				if (!assetLink) {
+				if(e.target.closest('.neos-action')) {
 					return;
 				}
+				const assetLink = e.currentTarget;
 
-				const localAssetIdentifier = asset.dataset.localAssetIdentifier;
+				const localAssetIdentifier = assetLink.dataset.localAssetIdentifier;
 				if (localAssetIdentifier !== '' && !NeosCMS.Helper.isNil(localAssetIdentifier)) {
 					NeosMediaBrowserCallbacks.assetChosen(localAssetIdentifier);
 				} else {
-					if (asset.dataset.importInProcess !== 'true') {
-						asset.dataset.importInProcess = 'true';
+					if (assetLink.dataset.importInProcess !== 'true') {
+                        assetLink.dataset.importInProcess = 'true';
 						const message = NeosCMS.I18n.translate(
 							'assetImport.importInfo',
 							'Asset is being imported. Please wait.',
@@ -67,7 +67,7 @@ window.addEventListener('DOMContentLoaded', () => {
 						);
 						NeosCMS.Notification.ok(message);
 
-						importAsset(asset);
+						importAsset(assetLink);
 					} else {
 						const message = NeosCMS.I18n.translate(
 							'assetImport.importInProcess',

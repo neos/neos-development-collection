@@ -21,9 +21,18 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        php-versions: ['8.2', '8.3']
+        php-versions: ['8.2', '8.3', '8.4']
         dependencies: ['highest']
+        # see services, this is mariadb
+        mysqlport: [3306]
         composer-arguments: [''] # to run --ignore-platform-reqs in experimental builds
+        include:
+          - php-versions: '8.4'
+            dependencies: 'highest'
+            parallel-parts: escr-behavioral
+            # see services, this is mysql
+            mysqlport: 3307
+            experimental: false
 
         # we want to parallelize quite some parts of the test suite; but these need similar setup steps.
         # that's why we parallelize via a Matrix; and not via different jobs.
@@ -53,7 +62,7 @@ jobs:
           #  experimental: false
           #  dependencies: 'lowest'
 
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
     services:
       mariadb:
         # see https://mariadb.com/kb/en/mariadb-server-release-dates/
@@ -66,6 +75,16 @@ jobs:
           MYSQL_ROOT_PASSWORD: neos
         ports:
           - "3306:3306"
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_USER: neos
+          MYSQL_PASSWORD: neos
+          MYSQL_DATABASE: flow_functional_testing
+          MYSQL_ROOT_PASSWORD: neos
+        ports:
+          - "3307:3306"
         options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
       postgres:
         # see https://www.postgresql.org/support/versioning/
@@ -163,6 +182,7 @@ jobs:
               persistence:
                 backendOptions:
                   host: '127.0.0.1'
+                  port: ${{ matrix.mysqlport }}
                   driver: pdo_mysql
                   user: 'neos'
                   password: 'neos'
@@ -295,7 +315,7 @@ jobs:
         uses: actions/upload-artifact@v4
         if: matrix.parallel-parts == 'escr-behavioral'
         with:
-          name: database-dumps-${{ matrix.php-versions }}-${{ matrix.dependencies }}-${{ matrix.parallel-parts }}
+          name: database-dumps-${{ matrix.php-versions }}-${{ matrix.dependencies }}-${{ matrix.parallel-parts }}-${{ matrix.mysqlport }}
           path: Data/DebugDatabaseDumps
 
       - name: Fail pipeline if ES CR tests broke (after uploading artifacts)
@@ -335,7 +355,7 @@ jobs:
 
   buildall:
     if: "!contains(github.event.head_commit.message, '[skip ci]') && !contains(github.event.head_commit.message, '[skip travis]')"
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
     name: CI build (matrix)
     needs: build
     steps:

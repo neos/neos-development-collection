@@ -15,16 +15,14 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\Core\Feature\NodeMove\Dto;
 
 /**
- * The relation distribution strategy for node aggregates as defined in the NodeType declaration
+ * The relation distribution strategy for node aggregates
+ *
  * Used for building relations to other node aggregates
  *
- * - `scatter` means that different nodes within the aggregate may be related to different other aggregates
- *      (e.g. parent).
- *      Still, specializations pointing to the same node using the fallback mechanism will be kept gathered.
+ * - `scatter` means that different nodes within the aggregate may be related to different other aggregates (e.g. parent).
  * - `gatherAll` means that all nodes within the aggregate must be related to the same other aggregate (e.g. parent)
  * - `gatherSpecializations` means that when a node is related to another node aggregate (e.g. parent),
- *      all specializations of that node will be related to that same aggregate while generalizations
- *      may be related to others
+ *      all specializations of that node will be related to that same aggregate while generalizations may be related to others
  *
  * @api DTO of {@see MoveNodeAggregate} command
  */

@@ -93,7 +93,8 @@ final class ProjectionIntegrityViolationDetector implements ProjectionIntegrityV
         $hierarchyRelationsAppearingMultipleTimesStatement = <<<SQL
             SELECT
                 COUNT(*) as uniquenessCounter,
-                h.* FROM {$this->tableNames->hierarchyRelation()} h
+                c.nodeaggregateid,
+                h.dimensionspacepointhash, h.contentstreamid FROM {$this->tableNames->hierarchyRelation()} h
                 LEFT JOIN {$this->tableNames->node()} p ON h.parentnodeanchor = p.relationanchorpoint
                 LEFT JOIN {$this->tableNames->node()} c ON h.childnodeanchor = c.relationanchorpoint
             WHERE
@@ -127,7 +128,7 @@ final class ProjectionIntegrityViolationDetector implements ProjectionIntegrityV
 
         $ambiguouslySortedHierarchyRelationStatement = <<<SQL
             SELECT
-                *,
+                contentstreamid, dimensionspacepointhash, parentnodeanchor,
                 COUNT(position)
             FROM
                 {$this->tableNames->hierarchyRelation()}
@@ -152,13 +153,15 @@ final class ProjectionIntegrityViolationDetector implements ProjectionIntegrityV
 
         $ambiguouslySortedNodesStatement = <<<SQL
             SELECT nodeaggregateid
-            FROM {$this->tableNames->node()}
-            WHERE relationanchorpoint = :relationAnchorPoint
+            FROM {$this->tableNames->node()} n
+            LEFT JOIN {$this->tableNames->hierarchyRelation()} ph
+            ON ph.childnodeanchor = n.relationanchorpoint
+            WHERE ph.parentnodeanchor = :relationAnchorPoint
         SQL;
         foreach ($ambiguouslySortedHierarchyRelationRecords->iterateAssociative() as $hierarchyRelationRecord) {
             try {
                 $ambiguouslySortedNodeRecords = $this->dbal->fetchAllAssociative($ambiguouslySortedNodesStatement, [
-                    'relationAnchorPoint' => $hierarchyRelationRecord['childnodeanchor']
+                    'relationAnchorPoint' => $hierarchyRelationRecord['parentnodeanchor'],
                 ]);
             } catch (DBALException $e) {
                 throw new \RuntimeException(sprintf('Failed to load ambiguously sorted nodes: %s', $e->getMessage()), 1716492358, $e);
@@ -227,7 +230,7 @@ final class ProjectionIntegrityViolationDetector implements ProjectionIntegrityV
                     AND ph.dimensionspacepointhash = h.dimensionspacepointhash
             WHERE
                 EXISTS (
-                    SELECT t.tag FROM JSON_TABLE(JSON_KEYS(ph.subtreetags), '\$[*]' COLUMNS(tag VARCHAR(30) PATH '\$')) t WHERE NOT JSON_EXISTS(h.subtreetags, CONCAT('\$.', t.tag))
+                    SELECT t.tag FROM JSON_TABLE(JSON_KEYS(ph.subtreetags), '\$[*]' COLUMNS(tag VARCHAR(30) PATH '\$')) t WHERE JSON_CONTAINS_PATH(h.subtreetags, 'all', CONCAT('\$.', t.tag)) = 0
                 )
         SQL;
         try {
@@ -293,7 +296,9 @@ final class ProjectionIntegrityViolationDetector implements ProjectionIntegrityV
                 WHERE
                     d.nodeaggregateid IS NULL
                 GROUP BY
-                    s.nodeaggregateid
+                    s.nodeaggregateid,
+                    sh.contentstreamid,
+                    r.destinationnodeaggregateid
         SQL;
         try {
             $referenceRelationRecordsWithInvalidTarget = $this->dbal->fetchAllAssociative($referenceRelationRecordsWithInvalidTargetStatement);

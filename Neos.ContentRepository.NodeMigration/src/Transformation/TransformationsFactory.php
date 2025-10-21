@@ -15,7 +15,7 @@ use Neos\ContentRepository\NodeMigration\NodeMigrationService;
 class TransformationsFactory
 {
     /**
-     * @var array<string,TransformationFactoryInterface>
+     * @var array<string,TransformationFactoryInterface|PropertyConverterAwareTransformationFactoryInterface>
      */
     private array $transformationFactories = [];
 
@@ -25,7 +25,7 @@ class TransformationsFactory
     ) {
     }
 
-    public function registerTransformation(string $transformationIdentifier, TransformationFactoryInterface $transformationFactory): self
+    public function registerTransformation(string $transformationIdentifier, TransformationFactoryInterface|PropertyConverterAwareTransformationFactoryInterface $transformationFactory): self
     {
         $this->transformationFactories[$transformationIdentifier] = $transformationFactory;
         return $this;
@@ -60,7 +60,10 @@ class TransformationsFactory
     ): GlobalTransformationInterface|NodeAggregateBasedTransformationInterface|NodeBasedTransformationInterface
     {
         $transformationFactory = $this->resolveTransformationFactory($transformationConfiguration['type']);
-        return $transformationFactory->build($transformationConfiguration['settings'] ?? [], $this->contentRepository, $this->propertyConverter);
+        if ($transformationFactory instanceof PropertyConverterAwareTransformationFactoryInterface) {
+            return $transformationFactory->build($transformationConfiguration['settings'] ?? [], $this->contentRepository, $this->propertyConverter);
+        }
+        return $transformationFactory->build($transformationConfiguration['settings'] ?? [], $this->contentRepository);
     }
 
     /**
@@ -72,7 +75,7 @@ class TransformationsFactory
      * @param string $transformationName
      * @throws MigrationException
      */
-    protected function resolveTransformationFactory(string $transformationName): TransformationFactoryInterface
+    protected function resolveTransformationFactory(string $transformationName): TransformationFactoryInterface|PropertyConverterAwareTransformationFactoryInterface
     {
         if (isset($this->transformationFactories[$transformationName])) {
             return $this->transformationFactories[$transformationName];

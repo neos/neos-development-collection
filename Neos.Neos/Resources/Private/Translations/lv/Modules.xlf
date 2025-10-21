@@ -328,70 +328,6 @@
         <source>Deactivated</source>
         <target state="translated">Deaktivizēt</target>
       </trans-unit>
-      <trans-unit id="packages.tooltip.unfreeze" xml:space="preserve" approved="yes">
-        <source>This package is currently frozen. Click to unfreeze it.</source>
-        <target state="final">Pašlaik šī pakotne ir iesaldēta. Noklikšķiniet lai atsaldētu.</target>
-      </trans-unit>
-      <trans-unit id="packages.tooltip.freeze" xml:space="preserve" approved="yes">
-        <source>Freeze the package in order to speed up your website.</source>
-        <target state="final">Iesaldējiet paketi lai paātrinātu jūsu mājas lapas darbību.</target>
-      </trans-unit>
-      <trans-unit id="packages.tooltip.noDeactivate" xml:space="preserve" approved="yes">
-        <source>This package is protected and cannot be deactivated.</source>
-        <target state="final">Šī pakeotne ir aizsargāta un to nevar deaktivizēt.</target>
-      </trans-unit>
-      <trans-unit id="packages.tooltip.deactivate" xml:space="preserve" approved="yes">
-        <source>Deactivate Package</source>
-        <target state="final">Deaktivizēt pakotni</target>
-      </trans-unit>
-      <trans-unit id="packages.tooltip.activate" xml:space="preserve" approved="yes">
-        <source>Activate Package</source>
-        <target state="final">Aktivizēt pakotni</target>
-      </trans-unit>
-      <trans-unit id="packages.tooltip.noDelete" xml:space="preserve" approved="yes">
-        <source>This package is protected and cannot be deleted.</source>
-        <target state="final">Šī pakotne ir aizsargāta un to nevar izdzēst.</target>
-      </trans-unit>
-      <trans-unit id="packages.tooltip.delete" xml:space="preserve" approved="yes">
-        <source>Delete Package</source>
-        <target state="final">Dzēst pakotni</target>
-      </trans-unit>
-      <trans-unit id="packages.message.reallyDelete" xml:space="preserve" approved="yes">
-        <source>Do you really want to delete "{0}"?</source>
-        <target state="final">Vai tiešām vēlaties dzēst "{0}"?</target>
-      </trans-unit>
-      <trans-unit id="packages.message.confirmDelete" xml:space="preserve" approved="yes">
-        <source>Yes, delete the package</source>
-        <target state="final">Jā, dzēst pakotni</target>
-      </trans-unit>
-      <trans-unit id="packages.message.confirmDeletes" xml:space="preserve" approved="yes">
-        <source>Yes, delete the packages</source>
-        <target state="final">Jā, dzēst pakotnes</target>
-      </trans-unit>
-      <trans-unit id="packages.message.selected.reallyDelete" xml:space="preserve" approved="yes">
-        <source>Do you really want to delete the selected packages?</source>
-        <target state="final">Vai tiešām vēlaties dzēst iezīmētās pakotnes?</target>
-      </trans-unit>
-      <trans-unit id="packages.selected.freeze" xml:space="preserve" approved="yes">
-        <source>Freeze selected packages</source>
-        <target state="final">Iesaldēt atzīmētās pakotnes</target>
-      </trans-unit>
-      <trans-unit id="packages.selected.unfreeze" xml:space="preserve" approved="yes">
-        <source>Unfreeze selected packages</source>
-        <target state="final">Atsaldēt atlasītās pakotnes</target>
-      </trans-unit>
-      <trans-unit id="packages.selected.delete" xml:space="preserve" approved="yes">
-        <source>Delete selected packages</source>
-        <target state="final">Dzēst atzīmētās pakotnes</target>
-      </trans-unit>
-      <trans-unit id="packages.selected.deactivate" xml:space="preserve" approved="yes">
-        <source>Deactivate selected packages</source>
-        <target state="final">Deaktivizēt atzīmētās pakotnes</target>
-      </trans-unit>
-      <trans-unit id="packages.selected.activate" xml:space="preserve" approved="yes">
-        <source>Activate selected packages</source>
-        <target state="final">Aktivizēt atzīmētās pakotnes</target>
-      </trans-unit>
       <trans-unit id="sites.label" xml:space="preserve" approved="yes">
         <source>Sites Management</source>
         <target state="final">Vietņu pārvaldība</target>
@@ -455,10 +391,6 @@
       <trans-unit id="sites.confirmDelete" xml:space="preserve">
         <source>Yes, delete the site</source>
         <target state="translated">Jā, dzēst vietni</target>
-      </trans-unit>
-      <trans-unit id="sites.import" xml:space="preserve">
-        <source>Import a site</source>
-        <target state="translated">Importēt vietni</target>
       </trans-unit>
       <trans-unit id="sites.select" xml:space="preserve">
         <source>Select a site package</source>
@@ -684,18 +616,6 @@ Iezīmējiet vienu no mezgliem redzēsiet visus iespējamos elementu (mezglu) sa
       <trans-unit id="sites.update.body" xml:space="preserve">
         <source>The site "{0}" has been updated.</source>
         <target state="translated">Vietne "{0}" ir atjaunināta.</target>
-      </trans-unit>
-      <trans-unit id="sites.theSiteHasBeenImported.body" xml:space="preserve">
-        <source>The site has been imported.</source>
-        <target state="translated">Vietne tika importēta.</target>
-      </trans-unit>
-      <trans-unit id="sites.importError.title" xml:space="preserve">
-        <source>Import error</source>
-        <target state="translated">Importēšanas kļūda</target>
-      </trans-unit>
-      <trans-unit id="sites.importError.body" xml:space="preserve">
-        <source>Error: During the import of the "Sites.xml" from the package "{0}" an exception occurred: {1}</source>
-        <target state="translated">Kļūda: importējot "Vietnes.xml" no pakotnes "{0}", radās izņēmums: {1}</target>
       </trans-unit>
       <trans-unit id="sites.siteCreationError.siteWithSiteNodeNameAlreadyExists.title" xml:space="preserve">
         <source>Site creation error</source>

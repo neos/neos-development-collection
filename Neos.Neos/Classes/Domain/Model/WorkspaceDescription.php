@@ -27,7 +27,7 @@ final readonly class WorkspaceDescription implements \JsonSerializable
         return new self($value);
     }
 
-    public static function empty(): self
+    public static function createEmpty(): self
     {
         return new self('');
     }

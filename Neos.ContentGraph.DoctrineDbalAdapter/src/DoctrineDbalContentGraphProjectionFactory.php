@@ -8,7 +8,7 @@ use Doctrine\DBAL\Connection;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\DimensionSpacePointsRepository;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\NodeFactory;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\ProjectionContentGraph;
-use Neos\ContentRepository\Core\Factory\ProjectionFactoryDependencies;
+use Neos\ContentRepository\Core\Factory\SubscriberFactoryDependencies;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphProjectionFactoryInterface;
 
 /**
@@ -24,8 +24,7 @@ final class DoctrineDbalContentGraphProjectionFactory implements ContentGraphPro
     }
 
     public function build(
-        ProjectionFactoryDependencies $projectionFactoryDependencies,
-        array $options,
+        SubscriberFactoryDependencies $projectionFactoryDependencies,
     ): DoctrineDbalContentGraphProjection {
         $tableNames = ContentGraphTableNames::create(
             $projectionFactoryDependencies->contentRepositoryId
@@ -35,7 +34,7 @@ final class DoctrineDbalContentGraphProjectionFactory implements ContentGraphPro
 
         $nodeFactory = new NodeFactory(
             $projectionFactoryDependencies->contentRepositoryId,
-            $projectionFactoryDependencies->propertyConverter,
+            $projectionFactoryDependencies->getPropertyConverter(),
             $dimensionSpacePointsRepository
         );
 

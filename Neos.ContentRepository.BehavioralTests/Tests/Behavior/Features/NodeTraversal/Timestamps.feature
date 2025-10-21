@@ -110,7 +110,7 @@ Feature: Behavior of Node timestamp properties "created", "originalCreated", "la
 
   Scenario: NodeAggregateNameWasChanged events update last modified timestamps
     When the current date and time is "2023-03-16T13:00:00+01:00"
-    And the command "ChangeNodeAggregateName" is executed with payload:
+    And the command ChangeNodeAggregateName is executed with payload:
       | Key             | Value       |
       | workspaceName   | "user-test" |
       | nodeAggregateId | "a"         |
@@ -134,7 +134,7 @@ Feature: Behavior of Node timestamp properties "created", "originalCreated", "la
       | Key           | Value    |
       | workspaceName | "review" |
     And the current date and time is "2023-03-16T14:00:00+01:00"
-    And the command "ChangeNodeAggregateName" is executed with payload:
+    And the command ChangeNodeAggregateName is executed with payload:
       | Key             | Value       |
       | workspaceName   | "user-test" |
       | nodeAggregateId | "a"         |
@@ -173,11 +173,11 @@ Feature: Behavior of Node timestamp properties "created", "originalCreated", "la
   Scenario: NodeReferencesWereSet events update last modified timestamps
     When the current date and time is "2023-03-16T13:00:00+01:00"
     And the command SetNodeReferences is executed with payload:
-      | Key                             | Value              |
-      | workspaceName                   | "user-test"        |
-      | sourceOriginDimensionSpacePoint | {"language": "ch"} |
-      | sourceNodeAggregateId           | "a"                |
-      | references                      | [{"referenceName": "ref", "references": [{"target": "b"}]}]  |
+      | Key                             | Value                                                       |
+      | workspaceName                   | "user-test"                                                 |
+      | sourceOriginDimensionSpacePoint | {"language": "ch"}                                          |
+      | sourceNodeAggregateId           | "a"                                                         |
+      | references                      | [{"referenceName": "ref", "references": [{"target": "b"}]}] |
     And I am in workspace "user-test" and dimension space point {"language":"de"}
     Then I expect the node "a" to have the following timestamps:
       | created             | originalCreated     | lastModified | originalLastModified |
@@ -246,7 +246,6 @@ Feature: Behavior of Node timestamp properties "created", "originalCreated", "la
       | created             | originalCreated     | lastModified | originalLastModified |
       | 2023-03-16 13:00:00 | 2023-03-16 13:00:00 |              |                      |
 
-
   Scenario: NodeAggregateWasMoved events don't update last modified timestamps
     When the current date and time is "2023-03-16T13:00:00+01:00"
     And the command MoveNodeAggregate is executed with payload:
@@ -267,16 +266,29 @@ Feature: Behavior of Node timestamp properties "created", "originalCreated", "la
       | 2023-03-16 12:30:00 | 2023-03-16 12:30:00 |              |                      |
 
   Scenario: RootNodeAggregateDimensionsWereUpdated events don't update last modified timestamps
-    When the current date and time is "2023-03-16T13:00:00+01:00"
-    And the command UpdateRootNodeAggregateDimensions is executed with payload:
+    # UpdateRootNodeAggregateDimensions can only be run on root workspaces or their direct children,
+    # so we have to adjust the stage to be able to run the tests on the review workspace
+
+    # First, we have to make sure there are nodes in the review workspace at all
+    Given the command PublishWorkspace is executed with payload:
+      | Key           | Value            |
+      | workspaceName | "user-test" |
+    And the current date and time is "2023-03-16T13:00:00+01:00"
+    And I change the content dimensions in content repository "default" to:
+      | Identifier | Values              | Generalizations          |
+      | language   | mul, de, en, ch, fr | ch->de->mul, en->mul, fr |
+
+    When the command UpdateRootNodeAggregateDimensions is executed with payload:
       | Key             | Value                    |
       | nodeAggregateId | "lady-eleonode-rootford" |
-    And I am in workspace "user-test" and dimension space point {"language":"de"}
+      # Next, we have to explicitly run the command on the review workspace
+      | workspaceName   | "review"                 |
+    And I am in workspace "review" and dimension space point {"language":"de"}
     Then I expect the node "a" to have the following timestamps:
       | created             | originalCreated     | lastModified | originalLastModified |
-      | 2023-03-16 12:00:00 | 2023-03-16 12:00:00 |              |                      |
+      | 2023-03-16 12:30:00 | 2023-03-16 12:00:00 |              |                      |
 
-    When I am in workspace "user-test" and dimension space point {"language":"ch"}
+    When I am in workspace "review" and dimension space point {"language":"ch"}
     Then I expect the node "a" to have the following timestamps:
       | created             | originalCreated     | lastModified | originalLastModified |
       | 2023-03-16 12:30:00 | 2023-03-16 12:30:00 |              |                      |
@@ -362,8 +374,8 @@ Feature: Behavior of Node timestamp properties "created", "originalCreated", "la
   Scenario: Original created when rebasing and partially publishing nodes
     And I am in workspace "user-test" and dimension space point {"language":"de"}
     Then I expect the node "a" to have the following timestamps:
-      | created             | originalCreated     | lastModified        | originalLastModified |
-      | 2023-03-16 12:00:00 | 2023-03-16 12:00:00 | null                | null                 |
+      | created             | originalCreated     | lastModified | originalLastModified |
+      | 2023-03-16 12:00:00 | 2023-03-16 12:00:00 | null         | null                 |
 
     Given the current date and time is "2023-03-16T14:00:00+01:00"
     When the command RebaseWorkspace is executed with payload:
@@ -372,5 +384,5 @@ Feature: Behavior of Node timestamp properties "created", "originalCreated", "la
       | rebaseErrorHandlingStrategy | "force"     |
 
     Then I expect the node "a" to have the following timestamps:
-      | created             | originalCreated     | lastModified        | originalLastModified |
-      | 2023-03-16 14:00:00 | 2023-03-16 12:00:00 | null                | null                 |
+      | created             | originalCreated     | lastModified | originalLastModified |
+      | 2023-03-16 14:00:00 | 2023-03-16 12:00:00 | null         | null                 |

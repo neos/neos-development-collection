@@ -95,7 +95,7 @@ class RuntimeBench
                 ]
             ]
         ];
-        $this->runtime = (new RuntimeFactory())->createFromConfiguration(FusionConfiguration::fromArray($fusionConfiguration), FusionGlobals::empty());
+        $this->runtime = (new RuntimeFactory())->createFromConfiguration(FusionConfiguration::fromArray($fusionConfiguration), FusionGlobals::createEmpty());
 
         // Build an EEL evaluator suitable for benchmarking
         $evaluator = $this->buildEelEvaluator();

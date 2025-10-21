@@ -19,6 +19,7 @@ use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Core\DimensionSpace\Exception\DimensionSpacePointNotFound;
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
+use Neos\ContentRepository\Core\Feature\Common\DimensionSpacePointsWithAllowedSpecializations;
 use Neos\ContentRepository\Core\Feature\NodeModification\Dto\PropertyValuesToWrite;
 use Neos\ContentRepository\Core\Feature\NodeReferencing\Dto\SerializedNodeReferences;
 use Neos\ContentRepository\Core\Feature\NodeVariation\Exception\DimensionSpacePointIsAlreadyOccupied;
@@ -40,13 +41,13 @@ use Neos\ContentRepository\Core\SharedModel\Exception\NodeAggregateCurrentlyDoes
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeAggregateCurrentlyExists;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeAggregateDoesCurrentlyNotCoverDimensionSpacePoint;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeAggregateDoesCurrentlyNotCoverDimensionSpacePointSet;
+use Neos\ContentRepository\Core\SharedModel\Exception\NodeAggregateDoesCurrentlyNotOccupyDimensionSpacePoint;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeAggregateIsDescendant;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeAggregateIsNoChild;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeAggregateIsNoSibling;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeAggregateIsRoot;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeAggregateIsTethered;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeAggregateIsUntethered;
-use Neos\ContentRepository\Core\SharedModel\Exception\NodeAggregatesTypeIsAmbiguous;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeConstraintException;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeNameIsAlreadyCovered;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeTypeIsAbstract;
@@ -389,7 +390,6 @@ trait ConstraintChecks
     }
 
     /**
-     * @throws NodeAggregatesTypeIsAmbiguous
      * @throws NodeAggregateCurrentlyDoesNotExist
      */
     protected function requireProjectedNodeAggregate(
@@ -411,7 +411,6 @@ trait ConstraintChecks
     }
 
     /**
-     * @throws NodeAggregatesTypeIsAmbiguous
      * @throws NodeAggregateCurrentlyExists
      */
     protected function requireProjectedNodeAggregateToNotExist(
@@ -554,7 +553,7 @@ trait ConstraintChecks
     ): void {
         $succeedingSiblings = $contentGraph->getSubgraph(
             $dimensionSpacePoint,
-            VisibilityConstraints::withoutRestrictions()
+            VisibilityConstraints::createEmpty()
         )->findSucceedingSiblingNodes($referenceNodeAggregateId, FindSucceedingSiblingNodesFilter::create());
         if ($succeedingSiblings->toNodeAggregateIds()->contain($siblingNodeAggregateId)) {
             return;
@@ -562,7 +561,7 @@ trait ConstraintChecks
 
         $precedingSiblings = $contentGraph->getSubgraph(
             $dimensionSpacePoint,
-            VisibilityConstraints::withoutRestrictions()
+            VisibilityConstraints::createEmpty()
         )->findPrecedingSiblingNodes($referenceNodeAggregateId, FindPrecedingSiblingNodesFilter::create());
         if ($precedingSiblings->toNodeAggregateIds()->contain($siblingNodeAggregateId)) {
             return;
@@ -586,7 +585,7 @@ trait ConstraintChecks
     ): void {
         $childNodes = $contentGraph->getSubgraph(
             $dimensionSpacePoint,
-            VisibilityConstraints::withoutRestrictions()
+            VisibilityConstraints::createEmpty()
         )->findChildNodes($parentNodeAggregateId, FindChildNodesFilter::create());
         if ($childNodes->toNodeAggregateIds()->contain($childNodeAggregateId)) {
             return;
@@ -698,5 +697,29 @@ trait ConstraintChecks
         return ExpectedVersion::fromVersion(
             $commandHandlingDependencies->getContentStreamVersion($contentStreamId)
         );
+    }
+
+    protected function requireDescendantNodesToNotFallbackToDimensionSpacePointsOtherThan(
+        NodeAggregateId $nodeAggregateId,
+        ContentGraphInterface $contentGraph,
+        DimensionSpacePointsWithAllowedSpecializations $fallbackConstraints,
+    ): void {
+        foreach ($contentGraph->findChildNodeAggregates($nodeAggregateId) as $childNodeAggregate) {
+            foreach ($childNodeAggregate->occupiedDimensionSpacePoints as $occupiedDimensionSpacePoint) {
+                if (!$fallbackConstraints->constraint($occupiedDimensionSpacePoint->toDimensionSpacePoint())) {
+                    continue;
+                }
+                $disallowedFallbacks = $childNodeAggregate
+                    ->getCoverageByOccupant($occupiedDimensionSpacePoint)
+                    // exclude the occupied e.g. no- fallback dimension space point itself
+                    ->getDifference(DimensionSpacePointSet::fromArray([$occupiedDimensionSpacePoint->toDimensionSpacePoint()]))
+                    // exclude all dimension space points that are still allowed to fall back after the operation
+                    ->getDifference($fallbackConstraints->getAllowedSpecializations($occupiedDimensionSpacePoint));
+                if (!$disallowedFallbacks->isEmpty()) {
+                    throw new NodeAggregateDoesCurrentlyNotOccupyDimensionSpacePoint(sprintf('Descendant Node %s in dimensions %s must not fallback to dimension %s which will be removed.', $childNodeAggregate->nodeAggregateId, $disallowedFallbacks->toJson(), $occupiedDimensionSpacePoint->toJson()));
+                }
+            }
+            $this->requireDescendantNodesToNotFallbackToDimensionSpacePointsOtherThan($childNodeAggregate->nodeAggregateId, $contentGraph, $fallbackConstraints);
+        }
     }
 }

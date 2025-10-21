@@ -97,7 +97,6 @@ Feature: Test the default Fusion rendering for a request
     HTTP/1.1 200 OK
     Content-Type: text/html
     X-Flow-Powered: Flow/dev Neos/dev
-    Content-Length: 486
 
     <!DOCTYPE html><html>
     <!--

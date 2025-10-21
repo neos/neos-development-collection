@@ -123,9 +123,9 @@ Feature: Workspace permission related features
   Scenario Outline: Changing a base workspace without MANAGE permissions or READ permissions on the base workspace
     Given I am authenticated as <user>
     When the command ChangeBaseWorkspace is executed with payload and exceptions are caught:
-      | Key               | Value                   |
-      | workspaceName     | "workspace"             |
-      | baseWorkspaceName | "shared-workspace"      |
+      | Key               | Value              |
+      | workspaceName     | "workspace"        |
+      | baseWorkspaceName | "shared-workspace" |
     Then the last command should have thrown an exception of type "AccessDenied" with code 1729086686
 
     Examples:
@@ -137,15 +137,15 @@ Feature: Workspace permission related features
   Scenario Outline: Changing a base workspace with MANAGE permissions or READ permissions on the base workspace
     Given I am authenticated as <user>
     When the command ChangeBaseWorkspace is executed with payload:
-      | Key               | Value                   |
-      | workspaceName     | "workspace"             |
-      | baseWorkspaceName | "shared-workspace"      |
+      | Key               | Value              |
+      | workspaceName     | "workspace"        |
+      | baseWorkspaceName | "shared-workspace" |
 
     Examples:
-      | user         |
-      | admin        |
-      | manager      |
-      | owner        |
+      | user    |
+      | admin   |
+      | manager |
+      | owner   |
 
   Scenario Outline: Deleting a workspace without MANAGE permissions
     Given I am authenticated as <user>
@@ -210,13 +210,9 @@ Feature: Workspace permission related features
       | nodeVariantSelectionStrategy | "allSpecializations" |
       | tag                          | "subtree_a"          |
     And the command DisableNodeAggregate is executed with payload:
-      | Key                          | Value             |
-      | nodeAggregateId              | "a1a1a"           |
-      | nodeVariantSelectionStrategy | "allVariants"     |
-    # The following step was added in order to make the `AddDimensionShineThrough` command viable
-    And I change the content dimensions in content repository "default" to:
-      | Identifier | Values      | Generalizations |
-      | language   | mul, de, ch | ch->de->mul     |
+      | Key                          | Value         |
+      | nodeAggregateId              | "a1a1a"       |
+      | nodeVariantSelectionStrategy | "allVariants" |
     And the command RebaseWorkspace is executed with payload:
       | Key           | Value       |
       | workspaceName | "workspace" |
@@ -247,29 +243,126 @@ Feature: Workspace permission related features
     # And the command <command> is executed with payload '<command payload>' and exceptions are caught
 
     Examples:
-      | command                             | command payload                                                                                        |
-      | CreateNodeAggregateWithNode         | {"nodeAggregateId":"a1b1","parentNodeAggregateId":"a1b","nodeTypeName":"Neos.Neos:Document"}           |
-      | CreateNodeVariant                   | {"nodeAggregateId":"a1","sourceOrigin":{"language":"de"},"targetOrigin":{"language":"mul"}}             |
-      | DisableNodeAggregate                | {"nodeAggregateId":"a1","nodeVariantSelectionStrategy":"allVariants"}                                  |
-      | EnableNodeAggregate                 | {"nodeAggregateId":"a1a1a","nodeVariantSelectionStrategy":"allVariants"}                               |
-      | RemoveNodeAggregate                 | {"nodeAggregateId":"a1","nodeVariantSelectionStrategy":"allVariants"}                                  |
-      | TagSubtree                          | {"nodeAggregateId":"a1","tag":"some_tag","nodeVariantSelectionStrategy":"allVariants"}                 |
-      | UntagSubtree                        | {"nodeAggregateId":"a","tag":"subtree_a","nodeVariantSelectionStrategy":"allVariants"}                 |
-      | MoveNodeAggregate                   | {"nodeAggregateId":"a1","newParentNodeAggregateId":"b"}                                                |
-      | SetNodeProperties                   | {"nodeAggregateId":"a1","propertyValues":{"foo":"bar"}}                                                |
-      | SetNodeReferences                   | {"sourceNodeAggregateId":"a1","references":[{"referenceName": "ref", "references": [{"target":"b"}]}]} |
+      | command                         | command payload                                                                                        |
+      | CreateNodeAggregateWithNode     | {"nodeAggregateId":"a1b1","parentNodeAggregateId":"a1b","nodeTypeName":"Neos.Neos:Document"}           |
+      | CreateNodeVariant               | {"nodeAggregateId":"a1","sourceOrigin":{"language":"de"},"targetOrigin":{"language":"mul"}}            |
+      | DisableNodeAggregate            | {"nodeAggregateId":"a1","nodeVariantSelectionStrategy":"allVariants"}                                  |
+      | EnableNodeAggregate             | {"nodeAggregateId":"a1a1a","nodeVariantSelectionStrategy":"allVariants"}                               |
+      | RemoveNodeAggregate             | {"nodeAggregateId":"a1","nodeVariantSelectionStrategy":"allVariants"}                                  |
+      | TagSubtree                      | {"nodeAggregateId":"a1","tag":"some_tag","nodeVariantSelectionStrategy":"allVariants"}                 |
+      | UntagSubtree                    | {"nodeAggregateId":"a","tag":"subtree_a","nodeVariantSelectionStrategy":"allVariants"}                 |
+      | MoveNodeAggregate               | {"nodeAggregateId":"a1","newParentNodeAggregateId":"b"}                                                |
+      | SetNodeProperties               | {"nodeAggregateId":"a1","propertyValues":{"foo":"bar"}}                                                |
+      | SetNodeReferences               | {"sourceNodeAggregateId":"a1","references":[{"referenceName": "ref", "references": [{"target":"b"}]}]} |
 
-      | AddDimensionShineThrough            | {"nodeAggregateId":"a1","source":{"language":"de"},"target":{"language":"ch"}}                         |
-      | ChangeNodeAggregateName             | {"nodeAggregateId":"a1","newNodeName":"changed"}                                                       |
-      | ChangeNodeAggregateType             | {"nodeAggregateId":"a1","newNodeTypeName":"Neos.Neos:Document2","strategy":"happypath"}                |
-      | CreateRootNodeAggregateWithNode     | {"nodeAggregateId":"c","nodeTypeName":"Neos.Neos:CustomRoot"}                                          |
-      | MoveDimensionSpacePoint             | {"source":{"language":"de"},"target":{"language":"ch"}}                                                |
-      | UpdateRootNodeAggregateDimensions   | {"nodeAggregateId":"root"}                                                                             |
-      | DiscardWorkspace                    | {}                                                                                                     |
-      | DiscardIndividualNodesFromWorkspace | {"nodesToDiscard":["a1"]}                                                                              |
-      | RebaseWorkspace                     | {}                                                                                                     |
+      | ChangeNodeAggregateName         | {"nodeAggregateId":"a1","newNodeName":"changed"}                                                       |
+      | ChangeNodeAggregateType         | {"nodeAggregateId":"a1","newNodeTypeName":"Neos.Neos:Document2","strategy":"happypath"}                |
+      | CreateRootNodeAggregateWithNode | {"nodeAggregateId":"c","nodeTypeName":"Neos.Neos:CustomRoot"}                                          |
+
+      | RebaseWorkspace                 | {"rebaseErrorHandlingStrategy": "force"}                                                               |
       # note, creating a core workspace will not grant permissions to it to the current user: Missing "read" permissions for base workspace "new-workspace"
-      | CreateWorkspace                     | {"workspaceName":"new-workspace","baseWorkspaceName":"workspace","newContentStreamId":"any"}           |
+      | CreateWorkspace                 | {"workspaceName":"new-workspace","baseWorkspaceName":"workspace","newContentStreamId":"any"}           |
+
+  Scenario Outline: Handling commands that require WRITE permissions on the workspace - dimension adjustments
+    # Prepare the content repository so all commands are applicable
+    When I am authenticated as "owner"
+    And I am in workspace "live" and dimension space point {"language":"de"}
+    And the command TagSubtree is executed with payload:
+      | Key                          | Value                |
+      | nodeAggregateId              | "a"                  |
+      | nodeVariantSelectionStrategy | "allSpecializations" |
+      | tag                          | "subtree_a"          |
+    And the command DisableNodeAggregate is executed with payload:
+      | Key                          | Value         |
+      | nodeAggregateId              | "a1a1a"       |
+      | nodeVariantSelectionStrategy | "allVariants" |
+    # The following step was added in order to make the `AddDimensionShineThrough` and `MoveDimensionSpacePoint` command viable
+    And I change the content dimensions in content repository "default" to:
+      | Identifier | Values                        | Generalizations                                      |
+      | language   | mul, de, en_new, ch, gsw, ltz | ltz->de->mul, ch->de->mul, gsw->de->mul, en_new->mul |
+    And the command RebaseWorkspace is executed with payload:
+      | Key           | Value       |
+      | workspaceName | "workspace" |
+
+    And I am in workspace "workspace"
+
+    Given I am not authenticated
+    And the command <command> is executed with payload '<command payload>' and exceptions are caught
+    Then the last command should have thrown an exception of type "AccessDenied" with code 1729086686
+
+    When I am authenticated as "uninvolved_editor"
+    And the command <command> is executed with payload '<command payload>' and exceptions are caught
+    Then the last command should have thrown an exception of type "AccessDenied" with code 1729086686
+
+    When I am authenticated as "restricted_editor"
+    And the command <command> is executed with payload '<command payload>' and exceptions are caught
+    Then the last command should have thrown an exception of type "AccessDenied" with code 1729086686
+
+    When I am authenticated as "admin"
+    And the command <command> is executed with payload '<command payload>' and exceptions are caught
+    Then the last command should have thrown an exception of type "AccessDenied" with code 1729086686
+
+    When I am authenticated as "owner"
+    And the command <command> is executed with payload '<command payload>'
+
+    # todo test also collaborator, but cannot commands twice here:
+    # When I am authenticated as "collaborator"
+    # And the command <command> is executed with payload '<command payload>' and exceptions are caught
+
+    Examples:
+      | command                           | command payload                                                                |
+      | AddDimensionShineThrough          | {"nodeAggregateId":"a1","source":{"language":"de"},"target":{"language":"ch"}} |
+      | MoveDimensionSpacePoint           | {"source":{"language":"en"},"target":{"language":"en_new"}}                    |
+
+  Scenario Outline: Handling commands that require WRITE permissions on the workspace - root node aggregate dimension update
+    # Prepare the content repository so all commands are applicable
+    When I am authenticated as "owner"
+    And I am in workspace "live" and dimension space point {"language":"de"}
+    And the command TagSubtree is executed with payload:
+      | Key                          | Value                |
+      | nodeAggregateId              | "a"                  |
+      | nodeVariantSelectionStrategy | "allSpecializations" |
+      | tag                          | "subtree_a"          |
+    And the command DisableNodeAggregate is executed with payload:
+      | Key                          | Value         |
+      | nodeAggregateId              | "a1a1a"       |
+      | nodeVariantSelectionStrategy | "allVariants" |
+    # The following step was added in order to make the `UpdateRootNodeAggregateDimensions` viable
+    And I change the content dimensions in content repository "default" to:
+      | Identifier | Values                        | Generalizations                                      |
+      | language   | mul, de, fr, gsw, ltz | ltz->de->mul, gsw->de->mul |
+    And the command RebaseWorkspace is executed with payload:
+      | Key           | Value       |
+      | workspaceName | "workspace" |
+
+    And I am in workspace "workspace"
+
+    Given I am not authenticated
+    And the command <command> is executed with payload '<command payload>' and exceptions are caught
+    Then the last command should have thrown an exception of type "AccessDenied" with code 1729086686
+
+    When I am authenticated as "uninvolved_editor"
+    And the command <command> is executed with payload '<command payload>' and exceptions are caught
+    Then the last command should have thrown an exception of type "AccessDenied" with code 1729086686
+
+    When I am authenticated as "restricted_editor"
+    And the command <command> is executed with payload '<command payload>' and exceptions are caught
+    Then the last command should have thrown an exception of type "AccessDenied" with code 1729086686
+
+    When I am authenticated as "admin"
+    And the command <command> is executed with payload '<command payload>' and exceptions are caught
+    Then the last command should have thrown an exception of type "AccessDenied" with code 1729086686
+
+    When I am authenticated as "owner"
+    And the command <command> is executed with payload '<command payload>'
+
+    # todo test also collaborator, but cannot commands twice here:
+    # When I am authenticated as "collaborator"
+    # And the command <command> is executed with payload '<command payload>' and exceptions are caught
+
+    Examples:
+      | command                           | command payload            |
+      | UpdateRootNodeAggregateDimensions | {"nodeAggregateId":"root"} |
 
   Scenario Outline: Publishing a workspace without WRITE permissions to live
     # make changes as owner
@@ -284,8 +377,8 @@ Feature: Workspace permission related features
     Given I am authenticated as <user>
 
     And the command PublishIndividualNodesFromWorkspace is executed with payload and exceptions are caught:
-      | Key            | Value                                  |
-      | workspaceName  | "workspace"                            |
+      | Key            | Value              |
+      | workspaceName  | "workspace"        |
       | nodesToPublish | ["shernode-homes"] |
     Then the last command should have thrown an exception of type "AccessDenied" with code 1729086686
 
@@ -310,11 +403,63 @@ Feature: Workspace permission related features
       | other-node      | Neos.Neos:Document | a                     | workspace     | {"language":"de"}         |
 
     And the command PublishIndividualNodesFromWorkspace is executed with payload:
-      | Key            | Value                                  |
-      | workspaceName  | "workspace"                            |
+      | Key            | Value              |
+      | workspaceName  | "workspace"        |
       | nodesToPublish | ["shernode-homes"] |
 
     And the command PublishWorkspace is executed with payload:
+      | Key           | Value       |
+      | workspaceName | "workspace" |
+
+    Examples:
+      | user         |
+      | owner        |
+      | collaborator |
+
+  Scenario Outline: Discarding a workspace without WRITE permissions
+    # make changes as owner
+    Given I am authenticated as owner
+
+    And the following CreateNodeAggregateWithNode commands are executed:
+      | nodeAggregateId | nodeTypeName       | parentNodeAggregateId | workspaceName | originDimensionSpacePoint |
+      | shernode-homes  | Neos.Neos:Document | a                     | workspace     | {"language":"de"}         |
+      | other-node      | Neos.Neos:Document | a                     | workspace     | {"language":"de"}         |
+
+    # someone else attempts to discard
+    Given I am authenticated as <user>
+
+    And the command DiscardIndividualNodesFromWorkspace is executed with payload and exceptions are caught:
+      | Key            | Value              |
+      | workspaceName  | "workspace"        |
+      | nodesToDiscard | ["shernode-homes"] |
+    Then the last command should have thrown an exception of type "AccessDenied" with code 1729086686
+
+    And the command DiscardWorkspace is executed with payload and exceptions are caught:
+      | Key           | Value       |
+      | workspaceName | "workspace" |
+    Then the last command should have thrown an exception of type "AccessDenied" with code 1729086686
+
+    Examples:
+      | user              |
+      | restricted_editor |
+      | simple_user       |
+      | uninvolved_editor |
+      | admin             |
+
+  Scenario Outline: Discarding a workspace with WRITE permissions
+    Given I am authenticated as <user>
+
+    And the following CreateNodeAggregateWithNode commands are executed:
+      | nodeAggregateId | nodeTypeName       | parentNodeAggregateId | workspaceName | originDimensionSpacePoint |
+      | shernode-homes  | Neos.Neos:Document | a                     | workspace     | {"language":"de"}         |
+      | other-node      | Neos.Neos:Document | a                     | workspace     | {"language":"de"}         |
+
+    And the command DiscardIndividualNodesFromWorkspace is executed with payload:
+      | Key            | Value              |
+      | workspaceName  | "workspace"        |
+      | nodesToDiscard | ["shernode-homes"] |
+
+    And the command DiscardWorkspace is executed with payload:
       | Key           | Value       |
       | workspaceName | "workspace" |
 

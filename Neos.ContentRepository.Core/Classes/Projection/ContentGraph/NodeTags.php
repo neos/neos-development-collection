@@ -117,6 +117,12 @@ final readonly class NodeTags implements \IteratorAggregate, \Countable, \JsonSe
         return $this->map(static fn (SubtreeTag $tag) => $tag->value);
     }
 
+    public function equals(NodeTags $other): bool
+    {
+        return $this->tags->equals($other->tags)
+            && $this->inheritedTags->equals($other->inheritedTags);
+    }
+
     public function getIterator(): Traversable
     {
         foreach ($this->tags as $tag) {

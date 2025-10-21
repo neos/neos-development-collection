@@ -7,7 +7,7 @@ namespace Neos\ContentGraph\PostgreSQLAdapter;
 use Doctrine\DBAL\Connection;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\HypergraphProjection;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Repository\NodeFactory;
-use Neos\ContentRepository\Core\Factory\ProjectionFactoryDependencies;
+use Neos\ContentRepository\Core\Factory\SubscriberFactoryDependencies;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphProjectionFactoryInterface;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
 
@@ -28,8 +28,7 @@ final class HypergraphProjectionFactory implements ContentGraphProjectionFactory
     }
 
     public function build(
-        ProjectionFactoryDependencies $projectionFactoryDependencies,
-        array $options,
+        SubscriberFactoryDependencies $projectionFactoryDependencies,
     ): HypergraphProjection {
         $tableNamePrefix = self::graphProjectionTableNamePrefix(
             $projectionFactoryDependencies->contentRepositoryId
@@ -37,7 +36,7 @@ final class HypergraphProjectionFactory implements ContentGraphProjectionFactory
 
         $nodeFactory = new NodeFactory(
             $projectionFactoryDependencies->contentRepositoryId,
-            $projectionFactoryDependencies->propertyConverter
+            $projectionFactoryDependencies->getPropertyConverter()
         );
 
         return new HypergraphProjection(

@@ -4,9 +4,10 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Core\Infrastructure;
 
+use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Exception;
+use Doctrine\DBAL\Platforms\AbstractMySQLPlatform;
 use Doctrine\DBAL\Platforms\AbstractPlatform;
-use Doctrine\DBAL\Schema\AbstractSchemaManager;
 use Doctrine\DBAL\Schema\Column;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\DBAL\Schema\SchemaException;
@@ -23,11 +24,11 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
  * Provide doctrine DBAL column schema definitions for common types in the content repository to
  * produce consistent columns across projections.
  *
- * @internal Because we might need to check for platform later on and generally change the input and output format of functions within.
+ * @internal Because platform checks are limited for now and the input and output format of functions might change.
  */
 final class DbalSchemaFactory
 {
-    private const DEFAULT_TEXT_COLLATION = 'utf8mb4_unicode_520_ci';
+    public const DEFAULT_MYSQL_COLLATION = 'utf8mb4_unicode_520_ci';
 
     // This class only contains static members and should not be constructed
     private function __construct()
@@ -39,12 +40,18 @@ final class DbalSchemaFactory
      *
      * @see NodeAggregateId
      */
-    public static function columnForNodeAggregateId(string $columnName): Column
+    public static function columnForNodeAggregateId(string $columnName, AbstractPlatform $platform): Column
     {
-        return (new Column($columnName, Type::getType(Types::STRING)))
-            ->setLength(64)
-            ->setPlatformOption('charset', 'ascii')
-            ->setPlatformOption('collation', 'ascii_general_ci');
+        $column = (new Column($columnName, Type::getType(Types::STRING)))
+            ->setLength(64);
+
+        if ($platform instanceof AbstractMySQLPlatform) {
+            $column = $column
+                ->setPlatformOption('charset', 'ascii')
+                ->setPlatformOption('collation', 'ascii_general_ci');
+        }
+
+        return $column;
     }
 
     /**
@@ -57,7 +64,7 @@ final class DbalSchemaFactory
      *
      * @see ContentStreamId
      */
-    public static function columnForContentStreamId(string $columnName): Column
+    public static function columnForContentStreamId(string $columnName, AbstractPlatform $platform): Column
     {
         return (new Column($columnName, Type::getType(Types::BINARY)))
             ->setLength(36);
@@ -71,7 +78,7 @@ final class DbalSchemaFactory
      * A simpler and faster format would be preferable though, int or a shorter binary format if possible. Fortunately
      * this is a pure projection information and therefore could change by replay.
      */
-    public static function columnForNodeAnchorPoint(string $columnName): Column
+    public static function columnForNodeAnchorPoint(string $columnName, AbstractPlatform $platform): Column
     {
         return (new Column($columnName, Type::getType(Types::BIGINT)))
             ->setNotnull(true);
@@ -85,11 +92,9 @@ final class DbalSchemaFactory
      *
      * @see DimensionSpacePoint
      */
-    public static function columnForDimensionSpacePoint(string $columnName): Column
+    public static function columnForDimensionSpacePoint(string $columnName, AbstractPlatform $platform): Column
     {
-        return (new Column($columnName, Type::getType(Types::TEXT)))
-            ->setDefault('{}')
-            ->setPlatformOption('collation', self::DEFAULT_TEXT_COLLATION);
+        return (new Column($columnName, Type::getType(Types::JSON)));
     }
 
     /**
@@ -100,7 +105,7 @@ final class DbalSchemaFactory
      *
      * @see DimensionSpacePoint
      */
-    public static function columnForDimensionSpacePointHash(string $columnName): Column
+    public static function columnForDimensionSpacePointHash(string $columnName, AbstractPlatform $platform): Column
     {
         return (new Column($columnName, Type::getType(Types::BINARY)))
             ->setLength(32)
@@ -112,39 +117,89 @@ final class DbalSchemaFactory
      *
      * @see NodeTypeName
      */
-    public static function columnForNodeTypeName(string $columnName): Column
+    public static function columnForNodeTypeName(string $columnName, AbstractPlatform $platform): Column
     {
-        return (new Column($columnName, Type::getType(Types::STRING)))
+        $column = (new Column($columnName, Type::getType(Types::STRING)))
             ->setLength(255)
-            ->setNotnull(true)
-            ->setPlatformOption('charset', 'ascii')
-            ->setPlatformOption('collation', 'ascii_general_ci');
+            ->setNotnull(true);
+
+        if ($platform instanceof AbstractMySQLPlatform) {
+            $column = $column
+                ->setPlatformOption('charset', 'ascii')
+                ->setPlatformOption('collation', 'ascii_general_ci');
+        }
+
+        return $column;
     }
 
     /**
      * @see WorkspaceName
      */
-    public static function columnForWorkspaceName(string $columnName): Column
+    public static function columnForWorkspaceName(string $columnName, AbstractPlatform $platform): Column
     {
-        return (new Column($columnName, Type::getType(Types::STRING)))
+        $column = (new Column($columnName, Type::getType(Types::STRING)))
             ->setLength(WorkspaceName::MAX_LENGTH)
-            ->setNotnull(true)
-            ->setPlatformOption('collation', self::DEFAULT_TEXT_COLLATION);
+            ->setNotnull(true);
+
+        if ($platform instanceof AbstractMySQLPlatform) {
+            $column = $column
+                ->setPlatformOption('charset', 'ascii')
+                ->setPlatformOption('collation', 'ascii_general_ci');
+        }
+
+        return $column;
+    }
+
+    public static function columnForProperties(string $columnName, AbstractPlatform $platform): Column
+    {
+        $column = (new Column($columnName, Type::getType(Types::JSON)));
+
+        if ($platform instanceof AbstractMySQLPlatform) {
+            $column = (new Column($columnName, Type::getType(Types::TEXT)))
+                ->setPlatformOption('collation', self::DEFAULT_MYSQL_COLLATION);
+        }
+
+        return $column;
+    }
+
+    public static function columnForGenericString(string $columnName, AbstractPlatform $platform): Column
+    {
+        $column = (new Column($columnName, Type::getType(Types::STRING)));
+
+        if ($platform instanceof AbstractMySQLPlatform) {
+            $column = $column->setPlatformOption('collation', self::DEFAULT_MYSQL_COLLATION);
+        }
+
+        return $column;
+    }
+
+    public static function columnForGenericText(string $columnName, AbstractPlatform $platform): Column
+    {
+        $column = (new Column($columnName, Type::getType(Types::TEXT)));
+        if ($platform instanceof AbstractMySQLPlatform) {
+            $column = $column->setPlatformOption('collation', self::DEFAULT_MYSQL_COLLATION);
+        }
+
+        return $column;
     }
 
     /**
-     * @param AbstractSchemaManager<AbstractPlatform> $schemaManager
+     * @param Connection $dbal
      * @param Table[] $tables
      * @return Schema
      * @throws Exception
      * @throws SchemaException
      */
-    public static function createSchemaWithTables(AbstractSchemaManager $schemaManager, array $tables): Schema
+    public static function createSchemaWithTables(Connection $dbal, array $tables): Schema
     {
+        $schemaManager = $dbal->createSchemaManager();
         $schemaConfig = $schemaManager->createSchemaConfig();
-        $schemaConfig->setDefaultTableOptions([
-            'charset' => 'utf8mb4'
-        ]);
+
+        if ($dbal->getDatabasePlatform() instanceof AbstractMySQLPlatform) {
+            $schemaConfig->setDefaultTableOptions([
+                'charset' => 'utf8mb4'
+            ]);
+        }
 
         return new Schema($tables, [], $schemaConfig);
     }

@@ -48,6 +48,9 @@ final readonly class SetNodeProperties implements CommandInterface
         public OriginDimensionSpacePoint $originDimensionSpacePoint,
         public PropertyValuesToWrite $propertyValues,
     ) {
+        if ($this->propertyValues->isEmpty()) {
+            throw new \InvalidArgumentException(sprintf('The command "SetNodeProperties" for node %s must contain property values', $this->nodeAggregateId->value), 1733394351);
+        }
     }
 
     /**

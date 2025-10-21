@@ -67,7 +67,7 @@ Feature: Constraint checks on node aggregate disabling
       | nodeAggregateId              | "sir-david-nodenborough" |
       | coveredDimensionSpacePoint   | {"language": "de"}       |
       | nodeVariantSelectionStrategy | "allVariants"            |
-    Then the last command should have thrown an exception of type "NodeAggregateIsAlreadyDisabled"
+    Then the last command should have thrown an exception of type "SubtreeIsAlreadyTagged"
 
 
   Scenario: Try to disable a node aggregate in a non-existing dimension space point

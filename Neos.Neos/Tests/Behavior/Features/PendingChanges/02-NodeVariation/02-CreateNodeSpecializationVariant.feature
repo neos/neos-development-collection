@@ -53,6 +53,6 @@ Feature: Create node specialization variant
       | sourceOrigin    | {"language":"de"}  |
       | targetOrigin    | {"language":"gsw"} |
 
-    Then I expect the ChangeProjection to have the following changes in "user-cs-id":
+    Then I expect to have the following changes in workspace "user-workspace":
       | nodeAggregateId  | created | changed | moved | deleted | originDimensionSpacePoint |
       | nody-mc-nodeface | 1       | 1       | 0     | 0       | {"language":"gsw"}        |

@@ -14,7 +14,6 @@ namespace Neos\Neos\Domain\Service\NodeDuplication;
  * source code.
  */
 
-use Neos\ContentRepository\Core\Feature\NodeDuplication\Dto\NodeSubtreeSnapshot;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 
 /**
@@ -64,23 +63,6 @@ final class NodeAggregateIdMapping implements \JsonSerializable
     }
 
     /**
-     * Create a new id mapping, *GENERATING* new ids.
-     */
-    public static function generateForNodeSubtreeSnapshot(NodeSubtreeSnapshot $nodeSubtreeSnapshot): self
-    {
-        $nodeAggregateIdMapping = [];
-        /** @phpstan-ignore neos.cr.internal */
-        $nodeSubtreeSnapshot->walk(
-            function (NodeSubtreeSnapshot $nodeSubtreeSnapshot) use (&$nodeAggregateIdMapping) {
-                // here, we create new random NodeAggregateIds.
-                $nodeAggregateIdMapping[$nodeSubtreeSnapshot->nodeAggregateId->value] = NodeAggregateId::create();
-            }
-        );
-
-        return new self($nodeAggregateIdMapping);
-    }
-
-    /**
      * @param array<string,string|NodeAggregateId> $array
      */
     public static function fromArray(array $array): self
@@ -105,13 +87,5 @@ final class NodeAggregateIdMapping implements \JsonSerializable
     public function jsonSerialize(): array
     {
         return $this->nodeAggregateIds;
-    }
-
-    /**
-     * @return array<int,NodeAggregateId>
-     */
-    public function getAllNewNodeAggregateIds(): array
-    {
-        return array_values($this->nodeAggregateIds);
     }
 }

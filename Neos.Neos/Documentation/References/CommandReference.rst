@@ -19,7 +19,7 @@ commands that may be available, use::
 
   ./flow help
 
-The following reference was automatically generated from code on 2024-12-15
+The following reference was automatically generated from code on 2025-02-11
 
 
 .. _`Neos Command Reference: NEOS.FLOW`:
@@ -3164,6 +3164,83 @@ Options
   Identifier of the content repository. (Default: 'default')
 ``--type``
   Type of role, either 'group' (default) or 'user' – if 'group', $subject is expected to be a Flow role identifier, otherwise the username (aka account identifier) of a Neos user
+
+
+
+
+
+.. _`Neos Command Reference: NEOS.NEOS.SETUP`:
+
+Package *NEOS.NEOS.SETUP*
+-------------------------
+
+
+.. _`Neos Command Reference: NEOS.NEOS.SETUP neos.neos.setup:setup:imagehandler`:
+
+``neos.neos.setup:setup:imagehandler``
+**************************************
+
+****
+
+
+
+
+
+Options
+^^^^^^^
+
+``--driver``
+  driver
+
+
+
+
+
+.. _`Neos Command Reference: NEOS.SETUP`:
+
+Package *NEOS.SETUP*
+--------------------
+
+
+.. _`Neos Command Reference: NEOS.SETUP neos.setup:setup:database`:
+
+``neos.setup:setup:database``
+*****************************
+
+**Configure the database connection for flow persistence**
+
+
+
+
+
+Options
+^^^^^^^
+
+``--driver``
+  Driver
+``--host``
+  Hostname or IP
+``--dbname``
+  Database name
+``--user``
+  Username
+``--password``
+  Password
+
+
+
+
+
+.. _`Neos Command Reference: NEOS.SETUP neos.setup:setup:index`:
+
+``neos.setup:setup:index``
+**************************
+
+**Show information about the system health**
+
+
+
+
 
 
 

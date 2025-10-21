@@ -1,0 +1,52 @@
+prototype(Neos.Workspace.Ui:Component.Modal.ConfirmPublishAllChanges) < prototype(Neos.Fusion:Component) {
+  workspaceTitle = ''
+
+  @private {
+    i18n = ${I18n.id('').source('Main').package('Neos.Workspace.Ui')}
+    popoverId = 'confirm-publish-all-changes-popover'
+
+    publishWorkspaceUri = Neos.Fusion:ActionUri {
+      action = 'publishWorkspace'
+      format = 'htmx'
+      arguments {
+        workspace = ${workspaceName}
+      }
+    }
+  }
+
+  renderer = afx`
+    <div popover id={private.popoverId} hx-indicator="#indicator">
+      <header>
+        <button
+          type="button"
+          class="neos-close neos-button"
+          popovertarget={private.popoverId}
+          popovertargetaction="close"
+        >
+          <Neos.Workspace.Ui:Component.Icon icon="times"/>
+        </button>
+        <div class="neos-header">
+          {private.i18n.id('workspaces.publishAllChangesInWorkspaceConfirmation').arguments([props.workspaceTitle])}
+        </div>
+      </header>
+      <footer>
+        <Neos.Workspace.Ui:Component.Button
+          label={private.i18n.id('cancel')}
+          attributes.popovertarget={private.popoverId}
+          attributes.popovertargetaction="close"
+        />
+        <Neos.Workspace.Ui:Component.Button
+          isSuccess
+          autofocus
+          label={private.i18n.id('workspaces.publishAllChanges')}
+          icon="fas fa-check-double icon-white"
+          attributes.hx-get={private.publishWorkspaceUri}
+          attributes.hx-select="#workspace-module-content"
+          attributes.hx-target="#workspace-module-content"
+          attributes.hx-swap="outerHTML"
+          attributes.hx-on--after-request={'document.getElementById("' + private.popoverId + '").hidePopover()'}
+        />
+      </footer>
+    </div>
+  `
+}

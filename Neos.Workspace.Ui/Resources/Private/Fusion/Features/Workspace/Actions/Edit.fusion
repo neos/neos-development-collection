@@ -1,0 +1,16 @@
+Neos.Workspace.Ui.WorkspaceController.edit = Neos.Fusion:Component {
+  /// \Neos\Workspace\Ui\ViewModel\EditWorkspaceFormData
+  editWorkspaceFormData = ${editWorkspaceFormData}
+
+  renderer = afx`
+    <Neos.Workspace.Ui:Component.Modal.Edit
+      workspaceName={props.editWorkspaceFormData.workspaceName.value}
+      workspaceTitle={props.editWorkspaceFormData.workspaceTitle.value}
+      workspaceDescription={props.editWorkspaceFormData.workspaceDescription.value}
+      baseWorkspaceName={props.editWorkspaceFormData.baseWorkspaceName.value}
+      workspaceHasChanges={props.editWorkspaceFormData.workspaceHasChanges}
+      baseWorkspaceOptions={props.editWorkspaceFormData.baseWorkspaceOptions}
+      isShared={props.editWorkspaceFormData.isShared}
+    />
+  `
+}

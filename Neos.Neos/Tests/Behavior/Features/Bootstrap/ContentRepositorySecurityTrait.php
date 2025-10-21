@@ -17,7 +17,7 @@ use Neos\ContentRepository\BehavioralTests\TestSuite\Behavior\CRBehavioralTestsS
 use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceFactoryDependencies;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceFactoryInterface;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceInterface;
-use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphProjectionInterface;
+use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphReadModelInterface;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\Flow\Mvc\ActionRequest;
@@ -67,19 +67,8 @@ trait ContentRepositorySecurityTrait
             return;
         }
         $contentRepositoryAuthProviderFactory = $this->getObject(ContentRepositoryAuthProviderFactory::class);
-        $contentGraphProjection = $this->getContentRepositoryService(new class implements ContentRepositoryServiceFactoryInterface {
-            public function build(ContentRepositoryServiceFactoryDependencies $serviceFactoryDependencies): ContentRepositoryServiceInterface
-            {
-                $contentGraphProjection = $serviceFactoryDependencies->projectionsAndCatchUpHooks->contentGraphProjection;
-                return new class ($contentGraphProjection) implements ContentRepositoryServiceInterface {
-                    public function __construct(
-                        public ContentGraphProjectionInterface $contentGraphProjection,
-                    ) {
-                    }
-                };
-            }
-        })->contentGraphProjection;
-        $contentRepositoryAuthProvider = $contentRepositoryAuthProviderFactory->build($this->currentContentRepository->id, $contentGraphProjection->getState());
+        $contentGraphReadModel = $this->getContentGraphReadModel();
+        $contentRepositoryAuthProvider = $contentRepositoryAuthProviderFactory->build($this->currentContentRepository->id, $contentGraphReadModel);
 
         FakeAuthProvider::replaceAuthProvider($contentRepositoryAuthProvider);
         $this->crSecurity_contentRepositorySecurityEnabled = true;

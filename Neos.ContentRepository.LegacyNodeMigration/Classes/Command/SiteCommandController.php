@@ -54,7 +54,7 @@ class SiteCommandController extends CommandController
      * @param string|null $config JSON encoded configuration, for example --config '{"dbal": {"dbname": "some-other-db"}, "resourcesPath": "/absolute-path/Data/Persistent/Resources", "rootNodes": {"/sites": "Neos.Neos:Sites", "/other": "My.Package:SomeOtherRoot"}}'
      * @throws \Exception
      */
-    public function exportLegacyDataCommand(string $path, string $contentRepository = 'default', string $config = null, bool $verbose = false): void
+    public function exportLegacyDataCommand(string $path, string $contentRepository = 'default', ?string $config = null, bool $verbose = false): void
     {
         Files::createDirectoryRecursively($path);
         if ($config !== null) {

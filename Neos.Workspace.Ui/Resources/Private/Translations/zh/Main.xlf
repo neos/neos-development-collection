@@ -23,10 +23,6 @@
         <source>Workspaces</source>
         <target state="translated">工作区</target>
       </trans-unit>
-      <trans-unit id="workspaces.detailsForWorkspace" xml:space="preserve">
-        <source>Details for "{0}"</source>
-        <target state="translated">"{0}" 的详细信息</target>
-      </trans-unit>
       <trans-unit id="workspaces.createNewWorkspace" xml:space="preserve">
         <source>Create new workspace</source>
         <target state="translated">创建新工作区</target>
@@ -36,8 +32,8 @@
         <target state="translated">创建工作区</target>
       </trans-unit>
       <trans-unit id="workspaces.deleteWorkspace" xml:space="preserve">
-        <source>Delete workspace</source>
-        <target state="translated">删除工作区</target>
+        <source>Delete workspace "{0}"</source>
+        <target state="needs-translation">删除工作区</target>
       </trans-unit>
       <trans-unit id="workspaces.editWorkspace" xml:space="preserve">
         <source>Edit workspace</source>
@@ -59,8 +55,8 @@
         <source>Private workspace</source>
         <target state="translated">私有工作区</target>
       </trans-unit>
-      <trans-unit id="workspaces.internalWorkspace" xml:space="preserve">
-        <source>Internal workspace</source>
+      <trans-unit id="workspaces.sharedWorkspace" xml:space="preserve">
+        <source>Shared workspace</source>
         <target state="translated">内部工作区</target>
       </trans-unit>
       <trans-unit id="workspaces.readonlyWorkspace" xml:space="preserve">
@@ -95,11 +91,11 @@
         <source>Only reviewers and administrators can access and modify this workspace</source>
         <target state="translated">只有审阅者和管理员可以访问和修改此工作区</target>
       </trans-unit>
-      <trans-unit id="workspaces.workspace.visibility.internal" xml:space="preserve">
-        <source>Internal</source>
-        <target state="needs-translation">Internal</target>
+      <trans-unit id="workspaces.workspace.visibility.shared" xml:space="preserve">
+        <source>Shared</source>
+        <target state="needs-translation">Shared</target>
       </trans-unit>
-      <trans-unit id="workspaces.workspace.visibility.internal.help" xml:space="preserve">
+      <trans-unit id="workspaces.workspace.visibility.shared.help" xml:space="preserve">
         <source>Any logged in editor can see and modify this workspace.</source>
         <target state="needs-translation">Any logged in editor can see and modify this workspace.</target>
       </trans-unit>
@@ -252,6 +248,26 @@
       <trans-unit id="workspaces.allChangesInWorkspaceHaveBeenDiscarded">
         <source>All changes from workspace "{0}" have been discarded.</source>
         <target state="translated">工作区 "{0}" 中的所有更改已丢弃。</target>
+      </trans-unit>
+      <trans-unit id="workspaces.workspace.lastModified" xml:space="preserve">
+        <source>Last modified</source>
+        <target state="needs-translation">上次修改</target>
+      </trans-unit>
+      <trans-unit id="workspaces.workspace.status" xml:space="preserve">
+        <source>Status</source>
+        <target state="needs-translation">状态</target>
+      </trans-unit>
+      <trans-unit id="applyChanges" xml:space="preserve">
+        <source>Apply changes</source>
+        <target state="needs-translation">应用更改</target>
+      </trans-unit>
+      <trans-unit id="workspaces.reviewWorkspace.label" xml:space="preserve">
+        <source>Review</source>
+        <target state="needs-translation">审查</target>
+      </trans-unit>
+      <trans-unit id="workspaces.dialog.rebase.node" xml:space="preserve">
+        <source>Node</source>
+        <target state="needs-translation">节点</target>
       </trans-unit>
     </body>
   </file>

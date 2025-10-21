@@ -55,7 +55,7 @@ class ExpressionsTest extends AbstractFusionObjectTest
     {
         $fusionAst = (new Parser())->parseFromSource(FusionSourceCodeCollection::fromString('root = ${"foo"}'));
 
-        $runtime = (new RuntimeFactory())->createFromConfiguration($fusionAst, FusionGlobals::empty());
+        $runtime = (new RuntimeFactory())->createFromConfiguration($fusionAst, FusionGlobals::createEmpty());
 
         $renderedFusion = $runtime->render('root');
 

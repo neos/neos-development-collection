@@ -17,12 +17,13 @@ namespace Neos\ContentRepository\BehavioralTests\ProjectionRaceConditionTester;
 use Neos\ContentRepository\BehavioralTests\ProjectionRaceConditionTester\Dto\TraceEntries;
 use Neos\ContentRepository\BehavioralTests\ProjectionRaceConditionTester\Dto\TraceEntryType;
 use Neos\ContentRepository\Core\EventStore\EventInterface;
-use Neos\ContentRepository\Core\Projection\CatchUpHookInterface;
+use Neos\ContentRepository\Core\Projection\CatchUpHook\CatchUpHookInterface;
+use Neos\ContentRepository\Core\Subscription\SubscriptionStatus;
 use Neos\EventStore\Model\EventEnvelope;
 use Neos\Flow\Annotations as Flow;
 
 /**
- * We had some race conditions in projections, where {@see \Neos\ContentRepository\Core\Infrastructure\DbalCheckpointStorage} was not working properly.
+ * We had some race conditions in projections
  * We saw some non-deterministic, random errors when running the tests - unluckily only on Linux, not on OSX:
  * On OSX, forking a new subprocess in {@see SubprocessProjectionCatchUpTrigger} is *WAY* slower than in Linux;
  * and thus the race conditions which appears if two projector instances of the same class run concurrently
@@ -73,7 +74,7 @@ use Neos\Flow\Annotations as Flow;
  *
  * When {@see onBeforeEvent} is called, we know that we are inside applyEvent() in the diagram above,
  * thus we know the lock *HAS* been acquired.
- * When {@see onBeforeBatchCompleted}is called, we know the lock will be released directly afterwards.
+ * When {@see onAfterCatchUp}is called, we know the lock will be released directly afterwards.
  *
  * We track these timings across processes in a single Redis Stream. Because Redis is single-threaded,
  * we can be sure that we observe the correct, total order of interleavings *across multiple processes*
@@ -107,7 +108,7 @@ final class RaceTrackerCatchUpHook implements CatchUpHookInterface
     protected $configuration;
     private bool $inCriticalSection = false;
 
-    public function onBeforeCatchUp(): void
+    public function onBeforeCatchUp(SubscriptionStatus $subscriptionStatus): void
     {
         RedisInterleavingLogger::connect($this->configuration['redis']['host'], $this->configuration['redis']['port']);
     }
@@ -126,16 +127,16 @@ final class RaceTrackerCatchUpHook implements CatchUpHookInterface
     {
     }
 
-    public function onBeforeBatchCompleted(): void
+    public function onAfterBatchCompleted(): void
+    {
+    }
+
+    public function onAfterCatchUp(): void
     {
         // we only want to track relevant lock release calls (i.e. if we were in the event processing loop before)
         if ($this->inCriticalSection) {
             $this->inCriticalSection = false;
             RedisInterleavingLogger::trace(TraceEntryType::LockWillBeReleasedIfItWasAcquiredBefore);
         }
-    }
-
-    public function onAfterCatchUp(): void
-    {
     }
 }

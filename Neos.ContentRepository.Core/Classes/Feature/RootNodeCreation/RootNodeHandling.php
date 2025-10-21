@@ -15,11 +15,16 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\Core\Feature\RootNodeCreation;
 
 use Neos\ContentRepository\Core\CommandHandler\CommandHandlingDependencies;
+use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
+use Neos\ContentRepository\Core\EventStore\EventInterface;
 use Neos\ContentRepository\Core\EventStore\Events;
 use Neos\ContentRepository\Core\EventStore\EventsToPublish;
 use Neos\ContentRepository\Core\Feature\Common\InterdimensionalSiblings;
+use Neos\ContentRepository\Core\Feature\Common\DimensionSpacePointsWithAllowedSpecializations;
+use Neos\ContentRepository\Core\Feature\Common\DimensionSpacePointWithAllowedSpecializations;
+use Neos\ContentRepository\Core\Feature\NodeRemoval\Event\NodeAggregateWasRemoved;
 use Neos\ContentRepository\Core\Feature\RebaseableCommand;
 use Neos\ContentRepository\Core\Feature\ContentStreamEventStreamName;
 use Neos\ContentRepository\Core\Feature\NodeCreation\Dto\NodeAggregateIdsByNodePaths;
@@ -32,17 +37,18 @@ use Neos\ContentRepository\Core\Feature\RootNodeCreation\Event\RootNodeAggregate
 use Neos\ContentRepository\Core\Feature\RootNodeCreation\Event\RootNodeAggregateWithNodeWasCreated;
 use Neos\ContentRepository\Core\NodeType\NodeType;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
+use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphInterface;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodePath;
 use Neos\ContentRepository\Core\SharedModel\Exception\ContentStreamDoesNotExistYet;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeAggregateCurrentlyExists;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeAggregateIsNotRoot;
-use Neos\ContentRepository\Core\SharedModel\Exception\NodeAggregatesTypeIsAmbiguous;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeTypeIsNotOfTypeRoot;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeTypeNotFound;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateClassification;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
+use Neos\ContentRepository\Core\SharedModel\Workspace\Workspace;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 
 /**
@@ -64,7 +70,6 @@ trait RootNodeHandling
      * @return EventsToPublish
      * @throws ContentStreamDoesNotExistYet
      * @throws NodeAggregateCurrentlyExists
-     * @throws NodeAggregatesTypeIsAmbiguous
      * @throws NodeTypeNotFound
      * @throws NodeTypeIsNotOfTypeRoot
      */
@@ -104,7 +109,7 @@ trait RootNodeHandling
         ];
 
         foreach ($this->getInterDimensionalVariationGraph()->getRootGeneralizations() as $rootGeneralization) {
-            array_push($events, ...iterator_to_array($this->handleTetheredRootChildNodes(
+            array_push($events, ...$this->handleTetheredRootChildNodes(
                 $contentGraph->getWorkspaceName(),
                 $contentGraph->getContentStreamId(),
                 $nodeType,
@@ -113,7 +118,7 @@ trait RootNodeHandling
                 $command->nodeAggregateId,
                 $command->tetheredDescendantNodeAggregateIds,
                 null
-            )));
+            ));
         }
 
         $contentStreamEventStream = ContentStreamEventStreamName::fromContentStreamId($contentGraph->getContentStreamId());
@@ -152,22 +157,74 @@ trait RootNodeHandling
     ): EventsToPublish {
         $contentGraph = $commandHandlingDependencies->getContentGraph($command->workspaceName);
         $expectedVersion = $this->getExpectedVersionOfContentStream($contentGraph->getContentStreamId(), $commandHandlingDependencies);
-        $nodeAggregate = $this->requireProjectedNodeAggregate(
+        $rootNodeAggregate = $this->requireProjectedNodeAggregate(
             $contentGraph,
             $command->nodeAggregateId
         );
-        if (!$nodeAggregate->classification->isRoot()) {
-            throw new NodeAggregateIsNotRoot('The node aggregate ' . $nodeAggregate->nodeAggregateId->value . ' is not classified as root, but should be for command UpdateRootNodeAggregateDimensions.', 1678647355);
+        if (!$rootNodeAggregate->classification->isRoot()) {
+            throw new NodeAggregateIsNotRoot('The node aggregate ' . $rootNodeAggregate->nodeAggregateId->value . ' is not classified as root, but should be for command UpdateRootNodeAggregateDimensions.', 1678647355);
         }
 
-        $events = Events::with(
-            new RootNodeAggregateDimensionsWereUpdated(
+        $this->requireWorkspaceToBeRootOrRootBasedForDimensionAdjustment($command->workspaceName, $commandHandlingDependencies);
+        $relevantWorkspaces = $commandHandlingDependencies->findAllWorkspaces()->filter(
+            fn (Workspace $workspace): bool => !$workspace->workspaceName->equals($command->initialWorkspaceName)
+        );
+        self::requireNoWorkspaceToHaveChanges($relevantWorkspaces);
+
+        $allowedDimensionSubspace = $this->getAllowedDimensionSubspace();
+
+        $newDimensionSpacePoints = $allowedDimensionSubspace->getDifference($rootNodeAggregate->coveredDimensionSpacePoints);
+        foreach ($newDimensionSpacePoints as $newDimensionSpacePoint) {
+            foreach ($relevantWorkspaces as $workspace) {
+                self::requireDimensionSpacePointToBeEmptyInContentStream(
+                    $commandHandlingDependencies->getContentGraph($workspace->workspaceName),
+                    $newDimensionSpacePoint,
+                );
+            }
+        }
+        $removedDimensionSpacePoints = $rootNodeAggregate->coveredDimensionSpacePoints->getDifference($allowedDimensionSubspace);
+
+        $generalisationsCoveredAlreadyByRootNodeAggregate = $this->getInterDimensionalVariationGraph()->getGeneralizationSetForSet($newDimensionSpacePoints, includeOrigins: false)
+            ->getIntersection($rootNodeAggregate->coveredDimensionSpacePoints);
+
+        if (!$generalisationsCoveredAlreadyByRootNodeAggregate->isEmpty()) {
+            throw new \RuntimeException(sprintf('Cannot add fallback dimensions via update root node aggregate because node %s already covers generalisations %s. Use AddDimensionShineThrough instead.', $rootNodeAggregate->nodeAggregateId->value, $generalisationsCoveredAlreadyByRootNodeAggregate->toJson()), 1741898260);
+        }
+
+        $events = [];
+        if (!$removedDimensionSpacePoints->isEmpty()) {
+            $this->requireDescendantNodesToNotFallbackToDimensionSpacePointsOtherThan(
+                $rootNodeAggregate->nodeAggregateId,
+                $contentGraph,
+                DimensionSpacePointsWithAllowedSpecializations::create(...array_map(
+                    fn (DimensionSpacePoint $removedDimensionSpacePoint): DimensionSpacePointWithAllowedSpecializations
+                        => DimensionSpacePointWithAllowedSpecializations::create(
+                            $removedDimensionSpacePoint,
+                            $removedDimensionSpacePoints, // only fallbacks to also removed DSPs allowed
+                        ),
+                    $removedDimensionSpacePoints->points
+                ))
+            );
+            $events[] = new NodeAggregateWasRemoved(
+                $contentGraph->getWorkspaceName(),
+                $contentGraph->getContentStreamId(),
+                $rootNodeAggregate->nodeAggregateId,
+                $removedDimensionSpacePoints,
+            );
+        }
+
+        if (!$newDimensionSpacePoints->isEmpty()) {
+            $events[] = new RootNodeAggregateDimensionsWereUpdated(
                 $contentGraph->getWorkspaceName(),
                 $contentGraph->getContentStreamId(),
                 $command->nodeAggregateId,
-                $this->getAllowedDimensionSubspace()
-            )
-        );
+                $allowedDimensionSubspace
+            );
+        }
+
+        if ($events === []) {
+            throw new \RuntimeException(sprintf('The root node aggregate %s covers already all allowed dimensions: %s.', $rootNodeAggregate->nodeAggregateId->value, $allowedDimensionSubspace->toJson()), 1741897071);
+        }
 
         $contentStreamEventStream = ContentStreamEventStreamName::fromContentStreamId(
             $contentGraph->getContentStreamId()
@@ -176,7 +233,7 @@ trait RootNodeHandling
             $contentStreamEventStream->getEventStreamName(),
             RebaseableCommand::enrichWithCommand(
                 $command,
-                $events
+                Events::fromArray($events)
             ),
             $expectedVersion
         );
@@ -185,6 +242,7 @@ trait RootNodeHandling
     /**
      * @throws ContentStreamDoesNotExistYet
      * @throws NodeTypeNotFound
+     * @return array<EventInterface>
      */
     private function handleTetheredRootChildNodes(
         WorkspaceName $workspaceName,
@@ -195,7 +253,7 @@ trait RootNodeHandling
         NodeAggregateId $parentNodeAggregateId,
         NodeAggregateIdsByNodePaths $nodeAggregateIdsByNodePath,
         ?NodePath $nodePath
-    ): Events {
+    ): array {
         $events = [];
         foreach ($nodeType->tetheredNodeTypeDefinitions as $tetheredNodeTypeDefinition) {
             $childNodeType = $this->requireNodeType($tetheredNodeTypeDefinition->nodeTypeName);
@@ -218,7 +276,7 @@ trait RootNodeHandling
                 $initialPropertyValues
             );
 
-            array_push($events, ...iterator_to_array($this->handleTetheredRootChildNodes(
+            array_push($events, ...$this->handleTetheredRootChildNodes(
                 $workspaceName,
                 $contentStreamId,
                 $childNodeType,
@@ -227,11 +285,17 @@ trait RootNodeHandling
                 $childNodeAggregateId,
                 $nodeAggregateIdsByNodePath,
                 $childNodePath
-            )));
+            ));
         }
 
-        return Events::fromArray($events);
+        return $events;
     }
+
+    abstract protected function requireDescendantNodesToNotFallbackToDimensionSpacePointsOtherThan(
+        NodeAggregateId $nodeAggregateId,
+        ContentGraphInterface $contentGraph,
+        DimensionSpacePointsWithAllowedSpecializations $fallbackConstraints,
+    ): void;
 
     private function createTetheredWithNodeForRoot(
         WorkspaceName $workspaceName,

@@ -36,6 +36,9 @@ final readonly class SetNodeReferences implements CommandInterface
         public OriginDimensionSpacePoint $sourceOriginDimensionSpacePoint,
         public NodeReferencesToWrite $references,
     ) {
+        if ($this->references->isEmpty()) {
+            throw new \InvalidArgumentException(sprintf('The command "SetNodeReferences" for node %s must contain references to modify', $this->sourceNodeAggregateId->value), 1736797678);
+        }
     }
 
     /**

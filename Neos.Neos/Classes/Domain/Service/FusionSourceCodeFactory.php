@@ -50,7 +50,7 @@ class FusionSourceCodeFactory
 
     public function createFromAutoIncludes(): FusionSourceCodeCollection
     {
-        $sourcecode = FusionSourceCodeCollection::empty();
+        $sourcecode = FusionSourceCodeCollection::createEmpty();
         foreach (array_keys($this->packageManager->getAvailablePackages()) as $packageKey) {
             if (isset($this->autoIncludeConfiguration[$packageKey]) && $this->autoIncludeConfiguration[$packageKey] === true) {
                 $sourcecode = $this->fusionAutoIncludeHandler->loadFusionFromPackage($packageKey, $sourcecode);

@@ -41,10 +41,6 @@ Feature: Create node aggregate with node without dimensions
       | workspaceName      | "user-workspace" |
       | baseWorkspaceName  | "live"           |
       | newContentStreamId | "user-cs-id"     |
-    And the command RebaseWorkspace is executed with payload:
-      | Key           | Value            |
-      | workspaceName | "user-workspace" |
-    And I am in dimension space point {}
 
   Scenario: Nodes on live workspace have been created
     Given I am in workspace "live"

@@ -19,7 +19,7 @@ use Neos\EventStore\Model\Event\Version;
 /**
  * Content Stream Read Model
  *
- * @api Note: The constructor is not part of the public API
+ * @internal the public API is limited to the {@see Workspace} read model
  */
 final readonly class ContentStream
 {
@@ -31,9 +31,6 @@ final readonly class ContentStream
     ) {
     }
 
-    /**
-     * @internal
-     */
     public static function create(
         ContentStreamId $id,
         ?ContentStreamId $sourceContentStreamId,

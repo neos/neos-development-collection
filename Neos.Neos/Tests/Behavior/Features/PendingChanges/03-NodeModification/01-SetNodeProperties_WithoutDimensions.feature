@@ -1,7 +1,7 @@
 @contentrepository @adapters=DoctrineDBAL
 @flowEntities
 Feature: Create node aggregate with node without dimensions
-
+  TODO remove this test, obsolete because of 02-SetNodeProperties_WithDimensions
   Background: Create node aggregate with initial node
     Given using no content dimensions
     And using the following node types:
@@ -53,10 +53,10 @@ Feature: Create node aggregate with node without dimensions
       | originDimensionSpacePoint | {}                       |
       | propertyValues            | {"text": "Other text"}   |
 
-    Then I expect the ChangeProjection to have the following changes in "user-cs-id":
+    Then I expect to have the following changes in workspace "user-workspace":
       | nodeAggregateId        | created | changed | moved | deleted | originDimensionSpacePoint |
       | sir-david-nodenborough | 0       | 1       | 0     | 0       | {}                        |
-    And I expect the ChangeProjection to have no changes in "cs-identifier"
+    And I expect to have no changes in workspace "live"
 
   Scenario: Remove an text from an existing property
     Given the command SetNodeProperties is executed with payload:
@@ -66,7 +66,7 @@ Feature: Create node aggregate with node without dimensions
       | originDimensionSpacePoint | {}                       |
       | propertyValues            | {"text": null}           |
 
-    Then I expect the ChangeProjection to have the following changes in "user-cs-id":
+    Then I expect to have the following changes in workspace "user-workspace":
       | nodeAggregateId        | created | changed | moved | deleted | originDimensionSpacePoint |
       | sir-david-nodenborough | 0       | 1       | 0     | 0       | {}                        |
-    And I expect the ChangeProjection to have no changes in "cs-identifier"
+    And I expect to have no changes in workspace "live"

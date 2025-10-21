@@ -51,7 +51,7 @@ class QualityImageAdjustment extends AbstractImageAdjustment
      * @param integer $quality
      * @return void
      */
-    public function setQuality(int $quality = null): void
+    public function setQuality(?int $quality = null): void
     {
         $this->quality = $quality;
     }

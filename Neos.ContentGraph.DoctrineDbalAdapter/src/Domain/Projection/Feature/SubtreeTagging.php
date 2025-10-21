@@ -58,7 +58,7 @@ trait SubtreeTagging
                 'contentStreamId' => $contentStreamId->value,
                 'nodeAggregateId' => $nodeAggregateId->value,
                 'dimensionSpacePointHashes' => $affectedDimensionSpacePoints->getPointHashes(),
-                'tagPath' => '$.' . $tag->value,
+                'tagPath' => '$."' . $tag->value . '"',
             ], [
                 'dimensionSpacePointHashes' => ArrayParameterType::STRING,
             ]);
@@ -80,7 +80,7 @@ trait SubtreeTagging
                 'contentStreamId' => $contentStreamId->value,
                 'nodeAggregateId' => $nodeAggregateId->value,
                 'dimensionSpacePointHashes' => $affectedDimensionSpacePoints->getPointHashes(),
-                'tagPath' => '$.' . $tag->value,
+                'tagPath' => '$."' . $tag->value . '"',
             ], [
                 'dimensionSpacePointHashes' => ArrayParameterType::STRING,
             ]);
@@ -93,35 +93,35 @@ trait SubtreeTagging
     {
         $removeTagStatement = <<<SQL
             UPDATE {$this->tableNames->hierarchyRelation()} h
-            INNER JOIN {$this->tableNames->hierarchyRelation()} ph ON ph.childnodeanchor = h.parentnodeanchor
-            SET h.subtreetags = IF((
-              SELECT
-                JSON_CONTAINS_PATH(ph.subtreetags, 'one', :tagPath)
+            SET subtreetags = IF((
+              SELECT containsTag FROM (SELECT
+                JSON_CONTAINS_PATH(gph.subtreetags, 'one', :tagPath) as containsTag
               FROM
-                {$this->tableNames->hierarchyRelation()} ph
-                INNER JOIN {$this->tableNames->hierarchyRelation()} ch ON ch.parentnodeanchor = ph.childnodeanchor
-                INNER JOIN {$this->tableNames->node()} n ON n.relationanchorpoint = ch.childnodeanchor
+                {$this->tableNames->hierarchyRelation()} gph
+                INNER JOIN {$this->tableNames->hierarchyRelation()} ph ON ph.parentnodeanchor = gph.childnodeanchor
+                INNER JOIN {$this->tableNames->node()} n ON n.relationanchorpoint = ph.childnodeanchor
               WHERE
-                n.nodeaggregateid = :nodeAggregateId
-                AND ph.contentstreamid = :contentStreamId
-                AND ph.dimensionspacepointhash in (:dimensionSpacePointHashes)
-              LIMIT 1
-            ), JSON_SET(h.subtreetags, :tagPath, null), JSON_REMOVE(h.subtreetags, :tagPath))
-            WHERE h.childnodeanchor IN (
+                ph.parentnodeanchor = gph.childnodeanchor
+                AND n.nodeaggregateid = :nodeAggregateId
+                AND gph.contentstreamid = :contentStreamId
+                AND gph.dimensionspacepointhash in (:dimensionSpacePointHashes)
+              LIMIT 1) as containsTagSubQuery
+            ), JSON_SET(subtreetags, :tagPath, null), JSON_REMOVE(subtreetags, :tagPath))
+            WHERE childnodeanchor IN (
               WITH RECURSIVE cte (id) AS (
-                SELECT ch.childnodeanchor
-                FROM {$this->tableNames->hierarchyRelation()} ch
-                INNER JOIN {$this->tableNames->node()} n ON n.relationanchorpoint = ch.childnodeanchor
+                SELECT ph.childnodeanchor
+                FROM {$this->tableNames->hierarchyRelation()} ph
+                INNER JOIN {$this->tableNames->node()} n ON n.relationanchorpoint = ph.childnodeanchor
                 WHERE
                   n.nodeaggregateid = :nodeAggregateId
-                  AND ch.contentstreamid = :contentStreamId
-                  AND ch.dimensionspacepointhash in (:dimensionSpacePointHashes)
+                  AND ph.contentstreamid = :contentStreamId
+                  AND ph.dimensionspacepointhash in (:dimensionSpacePointHashes)
                 UNION ALL
                 SELECT
                   dh.childnodeanchor
                 FROM
                   cte
-                  JOIN {$this->tableNames->hierarchyRelation()} dh ON dh.parentnodeanchor = cte.id 
+                  JOIN {$this->tableNames->hierarchyRelation()} dh ON dh.parentnodeanchor = cte.id
                     AND dh.contentstreamid = :contentStreamId
                     AND dh.dimensionspacepointhash in (:dimensionSpacePointHashes)
                 WHERE
@@ -129,15 +129,15 @@ trait SubtreeTagging
               )
               SELECT DISTINCT id FROM cte
             )
-              AND h.contentstreamid = :contentStreamId
-              AND h.dimensionspacepointhash in (:dimensionSpacePointHashes)
+              AND contentstreamid = :contentStreamId
+              AND dimensionspacepointhash in (:dimensionSpacePointHashes)
         SQL;
         try {
             $this->dbal->executeStatement($removeTagStatement, [
                 'contentStreamId' => $contentStreamId->value,
                 'nodeAggregateId' => $nodeAggregateId->value,
                 'dimensionSpacePointHashes' => $affectedDimensionSpacePoints->getPointHashes(),
-                'tagPath' => '$.' . $tag->value,
+                'tagPath' => '$."' . $tag->value . '"',
             ], [
                 'dimensionSpacePointHashes' => ArrayParameterType::STRING,
             ]);
@@ -196,6 +196,8 @@ trait SubtreeTagging
               AND h.dimensionspacepointhash = :dimensionSpacePointHash
         SQL;
         try {
+            // Mysql hack, too eager to optimize https://dev.mysql.com/doc/refman/8.4/en/derived-table-optimization.html
+            $this->dbal->executeQuery('set optimizer_switch="derived_merge=off"');
             $this->dbal->executeStatement($moveSubtreeTagsStatement, [
                 'contentStreamId' => $contentStreamId->value,
                 'newParentNodeAggregateId' => $newParentNodeAggregateId->value,

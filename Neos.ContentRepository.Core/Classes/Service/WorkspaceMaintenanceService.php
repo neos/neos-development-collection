@@ -23,27 +23,50 @@ class WorkspaceMaintenanceService implements ContentRepositoryServiceInterface
     }
 
     /**
-     * @return Workspaces the workspaces of the removed content streams
+     * @return Workspaces the rebased workspaces
      */
     public function rebaseOutdatedWorkspaces(?RebaseErrorHandlingStrategy $strategy = null): Workspaces
     {
-        $outdatedWorkspaces = $this->contentRepository->findWorkspaces()->filter(
-            fn (Workspace $workspace) => $workspace->status === WorkspaceStatus::OUTDATED
-        );
-        // todo we need to loop through the workspaces from root level first
-        foreach ($outdatedWorkspaces as $workspace) {
-            if ($workspace->status !== WorkspaceStatus::OUTDATED) {
-                continue;
-            }
-            $rebaseCommand = RebaseWorkspace::create(
-                $workspace->workspaceName,
-            );
-            if ($strategy) {
-                $rebaseCommand = $rebaseCommand->withErrorHandlingStrategy($strategy);
-            }
-            $this->contentRepository->handle($rebaseCommand);
+        $rebasedWorkspaces = [];
+        $workspaces = $this->contentRepository->findWorkspaces();
+        foreach ($workspaces->getRootWorkspaces() as $rootWorkspace) {
+            // root workspaces can by definition neither be outdated nor rebased
+            $this->rebaseOutdatedDependentWorkspaces($rootWorkspace, $workspaces, $strategy, $rebasedWorkspaces);
         }
 
-        return $outdatedWorkspaces;
+        return Workspaces::fromArray($rebasedWorkspaces);
+    }
+
+    /**
+     * @param list<Workspace> $rebasedWorkspaces
+     */
+    private function rebaseOutdatedDependentWorkspaces(Workspace $workspace, Workspaces $workspaces, ?RebaseErrorHandlingStrategy $strategy, array &$rebasedWorkspaces): void
+    {
+        foreach ($workspaces->getDependantWorkspaces($workspace->workspaceName) as $dependentWorkspace) {
+            if ($dependentWorkspace->status === WorkspaceStatus::OUTDATED) {
+                $this->rebaseWorkspaceAndDependants($dependentWorkspace, $workspaces, $strategy, $rebasedWorkspaces);
+            } else {
+                $this->rebaseOutdatedDependentWorkspaces($dependentWorkspace, $workspaces, $strategy, $rebasedWorkspaces);
+            }
+        }
+    }
+
+    /**
+     * @param list<Workspace> $rebasedWorkspaces
+     */
+    private function rebaseWorkspaceAndDependants(Workspace $workspace, Workspaces $workspaces, ?RebaseErrorHandlingStrategy $strategy, array &$rebasedWorkspaces): void
+    {
+        $rebaseCommand = RebaseWorkspace::create(
+            $workspace->workspaceName,
+        );
+        if ($strategy) {
+            $rebaseCommand = $rebaseCommand->withErrorHandlingStrategy($strategy);
+        }
+        $this->contentRepository->handle($rebaseCommand);
+        $rebasedWorkspaces[] = $workspace;
+
+        foreach ($workspaces->getDependantWorkspaces($workspace->workspaceName) as $dependentWorkspace) {
+            $this->rebaseWorkspaceAndDependants($dependentWorkspace, $workspaces, $strategy, $rebasedWorkspaces);
+        }
     }
 }

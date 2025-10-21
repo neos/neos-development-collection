@@ -59,11 +59,11 @@ Feature: Create node peer variant with internal workspace between live and user 
       | sourceOrigin    | {"language":"de"}  |
       | targetOrigin    | {"language":"gsw"} |
 
-    Then I expect the ChangeProjection to have the following changes in "internal-cs-id":
+    Then I expect to have the following changes in workspace "internal-workspace":
       | nodeAggregateId            | created | changed | moved | deleted | originDimensionSpacePoint |
       | nody-mc-nodeface           | 1       | 1       | 0     | 0       | {"language":"gsw"}                      |
-    And I expect the ChangeProjection to have no changes in "cs-identifier"
-    And I expect the ChangeProjection to have no changes in "user-cs-id"
+    And I expect to have no changes in workspace "live"
+    And I expect to have no changes in workspace "user-workspace"
 
   Scenario: Create node peer variant of node
 
@@ -74,8 +74,8 @@ Feature: Create node peer variant with internal workspace between live and user 
       | sourceOrigin    | {"language":"de"}  |
       | targetOrigin    | {"language":"gsw"} |
 
-    Then I expect the ChangeProjection to have the following changes in "user-cs-id":
+    Then I expect to have the following changes in workspace "user-workspace":
       | nodeAggregateId            | created | changed | moved | deleted | originDimensionSpacePoint |
       | nody-mc-nodeface           | 1       | 1       | 0     | 0       | {"language":"gsw"}                      |
-    And I expect the ChangeProjection to have no changes in "cs-identifier"
+    And I expect to have no changes in workspace "live"
     And I expect the ChangeProjection to have no changes in "internal-cs-id"

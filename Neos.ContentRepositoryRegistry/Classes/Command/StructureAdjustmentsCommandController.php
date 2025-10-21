@@ -35,7 +35,7 @@ final class StructureAdjustmentsCommandController extends CommandController
      * @param string|null $nodeType The node type to find structure adjustments for. If not provided, all adjustments will be shown. (Default: null)
      * @param string $contentRepository Identifier of the content repository. (Default: 'default')
      */
-    public function detectCommand(string $nodeType = null, string $contentRepository = 'default'): void
+    public function detectCommand(?string $nodeType = null, string $contentRepository = 'default'): void
     {
         $contentRepositoryId = ContentRepositoryId::fromString($contentRepository);
         $structureAdjustmentService = $this->contentRepositoryRegistry->buildService($contentRepositoryId, new StructureAdjustmentServiceFactory());
@@ -58,7 +58,7 @@ final class StructureAdjustmentsCommandController extends CommandController
      * @param string $contentRepository Identifier of the content repository. (Default: 'default')
      * @return void
      */
-    public function fixCommand(string $nodeType = null, string $contentRepository = 'default'): void
+    public function fixCommand(?string $nodeType = null, string $contentRepository = 'default'): void
     {
         $contentRepositoryId = ContentRepositoryId::fromString($contentRepository);
         $structureAdjustmentService = $this->contentRepositoryRegistry->buildService($contentRepositoryId, new StructureAdjustmentServiceFactory());

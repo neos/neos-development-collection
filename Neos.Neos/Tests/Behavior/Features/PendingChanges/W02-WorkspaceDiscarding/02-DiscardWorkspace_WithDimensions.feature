@@ -53,7 +53,7 @@ Feature: Discard workspace with dimensions
       | nodeAggregateId            | nodeName | parentNodeAggregateId  | nodeTypeName                        | initialPropertyValues                                                |
       | sir-nodeward-nodington-iii | esquire  | lady-eleonode-rootford | Neos.ContentRepository.Testing:Node | {"text": "This is a extended text about Sir Nodeward Nodington III"} |
 
-    Then I expect the ChangeProjection to have the following changes in "user-cs-id":
+    Then I expect to have the following changes in workspace "user-workspace":
       | nodeAggregateId            | created | changed | moved | deleted | originDimensionSpacePoint |
       | nody-mc-nodeface           | 1       | 1       | 0     | 0       | {"language":"de"}         |
       | sir-nodeward-nodington-iv  | 1       | 1       | 0     | 0       | {"language":"de"}         |
@@ -64,8 +64,8 @@ Feature: Discard workspace with dimensions
       | workspaceName      | "user-workspace" |
       | newContentStreamId | "new-user-cs-id" |
 
-    Then I expect the ChangeProjection to have no changes in "user-cs-id"
-    And I expect the ChangeProjection to have no changes in "new-user-cs-id"
+    Then I expect to have no changes in workspace "user-workspace"
+    And I expect to have no changes in workspace "user-workspace"
 
 
   Scenario: Discard user workspace with a non-live base workspace
@@ -113,12 +113,12 @@ Feature: Discard workspace with dimensions
       | nodeAggregateId            | nodeName | parentNodeAggregateId  | nodeTypeName                        | initialPropertyValues                                                |
       | sir-nodeward-nodington-iii | esquire  | lady-eleonode-rootford | Neos.ContentRepository.Testing:Node | {"text": "This is a extended text about Sir Nodeward Nodington III"} |
 
-    Then I expect the ChangeProjection to have the following changes in "user-cs-id":
+    Then I expect to have the following changes in workspace "user-workspace":
       | nodeAggregateId            | created | changed | moved | deleted | originDimensionSpacePoint |
       | nody-mc-nodeface           | 1       | 1       | 0     | 0       | {"language":"gsw"}        |
       | sir-nodeward-nodington-iv  | 1       | 1       | 0     | 0       | {"language":"de"}         |
       | sir-nodeward-nodington-iii | 1       | 1       | 0     | 0       | {"language":"fr"}         |
-    Then I expect the ChangeProjection to have the following changes in "review-cs-id":
+    Then I expect to have the following changes in workspace "review-workspace":
       | nodeAggregateId  | created | changed | moved | deleted | originDimensionSpacePoint |
       | nody-mc-nodeface | 1       | 1       | 0     | 0       | {"language":"de"}         |
 
@@ -127,9 +127,9 @@ Feature: Discard workspace with dimensions
       | workspaceName      | "user-workspace" |
       | newContentStreamId | "new-user-cs-id" |
 
-    Then I expect the ChangeProjection to have no changes in "user-cs-id"
-    And I expect the ChangeProjection to have no changes in "new-user-cs-id"
-    And I expect the ChangeProjection to have the following changes in "review-cs-id":
+    Then I expect to have no changes in workspace "user-workspace"
+    And I expect to have no changes in workspace "user-workspace"
+    And I expect to have the following changes in workspace "review-workspace":
       | nodeAggregateId  | created | changed | moved | deleted | originDimensionSpacePoint |
       | nody-mc-nodeface | 1       | 1       | 0     | 0       | {"language":"de"}         |
 
@@ -153,7 +153,7 @@ Feature: Discard workspace with dimensions
       | sourceOrigin    | {"language":"de"}        |
       | targetOrigin    | {"language":"en"}        |
 
-    Then I expect the ChangeProjection to have the following changes in "user-cs-id":
+    Then I expect to have the following changes in workspace "user-workspace":
       | nodeAggregateId           | created | changed | moved | deleted | originDimensionSpacePoint |
       | nody-mc-nodeface          | 1       | 1       | 0     | 0       | {"language":"de"}         |
       | sir-nodeward-nodington-iv | 1       | 1       | 0     | 0       | {"language":"de"}         |
@@ -164,8 +164,8 @@ Feature: Discard workspace with dimensions
       | workspaceName      | "user-workspace" |
       | newContentStreamId | "new-user-cs-id" |
 
-    Then I expect the ChangeProjection to have no changes in "user-cs-id"
-    And I expect the ChangeProjection to have no changes in "new-user-cs-id"
+    Then I expect to have no changes in workspace "user-workspace"
+    And I expect to have no changes in workspace "user-workspace"
 
   Scenario: Discard user workspace after change to an existing asseet usage of a property
     Given the command CreateWorkspace is executed with payload:
@@ -183,7 +183,7 @@ Feature: Discard workspace with dimensions
       | originDimensionSpacePoint | {"language":"de"}        |
       | propertyValues            | {"text": "New text"}     |
 
-    Then I expect the ChangeProjection to have the following changes in "user-cs-id":
+    Then I expect to have the following changes in workspace "user-workspace":
       | nodeAggregateId        | created | changed | moved | deleted | originDimensionSpacePoint |
       | sir-david-nodenborough | 0       | 1       | 0     | 0       | {"language":"de"}         |
 
@@ -192,5 +192,5 @@ Feature: Discard workspace with dimensions
       | workspaceName      | "user-workspace" |
       | newContentStreamId | "new-user-cs-id" |
 
-    Then I expect the ChangeProjection to have no changes in "user-cs-id"
-    And I expect the ChangeProjection to have no changes in "new-user-cs-id"
+    Then I expect to have no changes in workspace "user-workspace"
+    And I expect to have no changes in workspace "user-workspace"

@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Core\CommandHandler;
 
+use Neos\ContentRepository\Core\EventStore\Events;
+use Neos\ContentRepository\Core\EventStore\PublishedEvents;
+
 /**
  * Collection of {@see CommandHookInterface} instances, functioning as a delegating command hook implementation
  *
@@ -31,7 +34,7 @@ final readonly class CommandHooks implements CommandHookInterface, \IteratorAggr
         return new self(...$commandHooks);
     }
 
-    public static function none(): self
+    public static function createEmpty(): self
     {
         return new self();
     }
@@ -52,5 +55,14 @@ final readonly class CommandHooks implements CommandHookInterface, \IteratorAggr
             $command = $commandHook->onBeforeHandle($command);
         }
         return $command;
+    }
+
+    public function onAfterHandle(CommandInterface $command, PublishedEvents $events): Commands
+    {
+        $commands = Commands::createEmpty();
+        foreach ($this->commandHooks as $commandHook) {
+            $commands = $commands->merge($commandHook->onAfterHandle($command, $events));
+        }
+        return $commands;
     }
 }

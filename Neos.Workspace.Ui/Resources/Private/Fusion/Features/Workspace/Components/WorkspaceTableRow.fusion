@@ -1,0 +1,156 @@
+##
+# Renders a single workspace list item
+#
+prototype(Neos.Workspace.Ui:Component.WorkspaceTableRow) < prototype(Neos.Fusion:Component) {
+  /// Neos\Workspace\Ui\ViewModel\WorkspaceListItem
+  workspaceListItem = ${[]}
+  /// integer
+  level = 0
+
+  @private {
+    i18n = ${I18n.id('').source('Main').package('Neos.Workspace.Ui')}
+    workspace = ${props.workspaceListItem.workspace}
+    workspaceTableRowId = ${'workspace-row-' + props.workspaceListItem.name}
+    workspaceStatus = Neos.Fusion:Case {
+      personal {
+        condition = ${props.workspaceListItem.personal}
+        renderer = 'personal'
+      }
+      private {
+        condition = ${props.workspaceListItem.private}
+        renderer = 'private'
+      }
+      default {
+        condition = true
+        renderer = 'shared'
+      }
+    }
+    workspaceStatusLabel = Neos.Fusion:Match {
+      @subject = ${private.workspaceStatus}
+      @default = ${private.i18n.id('table.column.access.shared')}
+      personal = ${private.i18n.id('table.column.access.personal').arguments([props.workspaceListItem.owner])}
+      private = ${private.i18n.id('table.column.access.private')}
+    }
+    workspaceStatusIcon = Neos.Fusion:Match {
+      @subject = ${private.workspaceStatus}
+      @default = 'user'
+      shared = 'users'
+      private = 'user-shield'
+      with-acl = 'user-plus'
+    }
+    reviewWorkspaceUri = Neos.Fusion:ActionUri {
+      action = 'review'
+      format = 'html'
+      arguments {
+        workspace = ${props.workspaceListItem.name}
+      }
+    }
+    editWorkspaceUri = Neos.Fusion:ActionUri {
+      action = 'edit'
+      format = 'htmx'
+      arguments {
+        workspaceName = ${props.workspaceListItem.name}
+      }
+    }
+    deleteWorkspaceUri = Neos.Fusion:ActionUri {
+      action = 'delete'
+      format = 'htmx'
+      arguments {
+        workspaceName = ${props.workspaceListItem.name}
+      }
+    }
+    rebaseWorkspaceUri = Neos.Fusion:ActionUri {
+      action = 'rebase'
+      format = 'htmx'
+      arguments {
+        workspaceName = ${props.workspaceListItem.name}
+        force = false
+      }
+    }
+    rebaseWorkspacePopoverId = 'workspace-rebase-modal'
+    deleteWorkspacePopoverId = 'workspace-delete-modal'
+    editWorkspacePopoverId = 'workspace-edit-modal'
+  }
+
+  renderer = afx`
+    <tr id={private.workspaceTableRowId} class={'workspace--' + private.workspaceStatus}>
+      <td class="workspace-type-column" title={private.workspaceStatusLabel}>
+        <Neos.Workspace.Ui:Component.Icon
+          icon={private.workspaceStatusIcon}
+          secondaryIcon={private.workspaceStatus == 'stale' ? 'clock' : ''}
+        />
+      </td>
+      <td class="workspace-label-column" style={'--indent-level:' + props.level }>
+        <Neos.Workspace.Ui:Component.Icon icon="level-up-alt" @if={props.level > 1}/>
+        {props.workspaceListItem.title}
+        <span class="workspace__info-text" @if={props.workspaceListItem.personal}>
+          ({private.i18n.id('workspaces.workspace.userWorkspace')})
+        </span>
+      </td>
+      <td class="workspace-description-column">
+        {props.workspaceListItem.description || '﹘'}
+      </td>
+      <td>{private.i18n.id('workspaces.workspace.status.' + props.workspaceListItem.status).translate()}</td>
+      <td>
+        <Neos.Workspace.Ui:Component.Badge
+          label={props.workspaceListItem.pendingChanges.new}
+          title={private.i18n.id('workspaces.changes.new').arguments([props.workspaceListItem.pendingChanges.new])}
+          type="success"
+        />
+        <Neos.Workspace.Ui:Component.Badge
+          label={props.workspaceListItem.pendingChanges.changed}
+          title={private.i18n.id('workspaces.changes.changed').arguments([props.workspaceListItem.pendingChanges.changed])}
+          type="warning"
+        />
+        <Neos.Workspace.Ui:Component.Badge
+          label={props.workspaceListItem.pendingChanges.removed}
+          title={private.i18n.id('workspaces.changes.removed').arguments([props.workspaceListItem.pendingChanges.removed])}
+          type="danger"
+        />
+        <span @if={props.workspaceListItem.pendingChanges.total == 0}>﹘</span>
+      </td>
+      <td class="workspace-action-column">
+        <Neos.Workspace.Ui:Component.Button
+          icon="review"
+          label={private.i18n.id('workspaces.reviewWorkspace.label')}
+          title={private.i18n.id(props.workspaceListItem.pendingChanges.total ? 'workspaces.reviewWorkspace' : 'workspaces.reviewWorkspace.noChanges').arguments([props.workspaceListItem.title])}
+          disabled={props.workspaceListItem.pendingChanges.total == 0}
+          attributes.hx-get={private.reviewWorkspaceUri}
+          attributes.hx-replace-url={private.reviewWorkspaceUri}
+          attributes.hx-target="#workspace-module-content"
+          attributes.hx-select="#workspace-module-content"
+          attributes.hx-swap="outerHTML"
+        />
+        <Neos.Workspace.Ui:Component.Button
+          title={private.i18n.id('workspaces.editWorkspace').arguments([props.workspaceListItem.title])}
+          icon="pencil-alt"
+          disabled={props.workspaceListItem.personal || props.workspaceListItem.permissions.manage == false}
+          attributes.hx-get={private.editWorkspaceUri}
+          attributes.hx-target='#popover-container'
+          attributes.hx-swap='innerHTML'
+          attributes.hx-on--after-request={'document.getElementById("' + private.editWorkspacePopoverId + '").showPopover()'}
+        />
+        <Neos.Workspace.Ui:Component.Button
+          isDanger
+          title={private.i18n.id('workspaces.deleteWorkspace').arguments([props.workspaceListItem.title])}
+          icon="trash-alt icon-white"
+          disabled={props.workspaceListItem.personal || props.workspaceListItem.pendingChanges.total > 0 || props.workspaceListItem.permissions.manage == false}
+          attributes.hx-get={private.deleteWorkspaceUri}
+          attributes.hx-target='#popover-container'
+          attributes.hx-swap='innerHTML'
+          attributes.hx-on--after-request={'document.getElementById("' + private.deleteWorkspacePopoverId + '").showPopover()'}
+        />
+        <Neos.Workspace.Ui:Component.Button
+          isDanger
+          title={private.i18n.id('workspaces.rebaseWorkspace').arguments([props.workspaceListItem.title])}
+          icon="sync icon-white"
+          disabled={props.workspaceListItem.status != 'OUTDATED' || props.workspaceListItem.permissions.edit == false}
+          attributes.hx-get={private.rebaseWorkspaceUri}
+          attributes.hx-target="#workspace-module-content"
+          attributes.hx-swap="outerHTML"
+          attributes.hx-on--after-request={'document.getElementById("' + private.rebaseWorkspacePopoverId + '")?.showPopover()'}
+        />
+      </td>
+    </tr>
+  `
+}

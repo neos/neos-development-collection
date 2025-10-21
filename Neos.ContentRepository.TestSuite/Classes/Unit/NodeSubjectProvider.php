@@ -81,7 +81,7 @@ final class NodeSubjectProvider
 
     public function createMinimalNodeOfType(
         NodeTypeName $nodeTypeName,
-        SerializedPropertyValues $propertyValues = null,
+        ?SerializedPropertyValues $propertyValues = null,
         ?NodeName $nodeName = null
     ): Node {
         return Node::create(
@@ -104,7 +104,7 @@ final class NodeSubjectProvider
                 new \DateTimeImmutable(),
                 new \DateTimeImmutable()
             ),
-            VisibilityConstraints::withoutRestrictions(),
+            VisibilityConstraints::createEmpty(),
         );
     }
 }

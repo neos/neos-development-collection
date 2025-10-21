@@ -29,7 +29,6 @@ use Neos\Neos\Controller\Backend\ContentController;
 use Neos\Neos\Domain\Model\Site;
 use Neos\Neos\Domain\Service\SiteService;
 use Neos\Neos\Fusion\Cache\AssetChangeHandlerForCacheFlushing;
-use Neos\Neos\Routing\Cache\RouteCacheFlusher;
 
 /**
  * The Neos Package
@@ -108,13 +107,6 @@ class Package extends BasePackage
             'assetUploaded',
             SiteService::class,
             'assignUploadedAssetToSiteAssetCollection'
-        );
-
-        $dispatcher->connect(
-            PersistenceManager::class,
-            'allObjectsPersisted',
-            RouteCacheFlusher::class,
-            'commit'
         );
 
         $dispatcher->connect(

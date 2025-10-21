@@ -1,7 +1,7 @@
 @contentrepository @adapters=DoctrineDBAL
 @flowEntities
 Feature: Create node aggregate with node without dimensions
-
+  TODO Remove this test, obsolete because of 02-CreateNodeAggregateWithNode_WithDimensions
   Background:
     Given using no content dimensions
     And using the following node types:
@@ -43,7 +43,7 @@ Feature: Create node aggregate with node without dimensions
       | nody-mc-nodeface           | child-node | sir-david-nodenborough | Neos.ContentRepository.Testing:Node | {"text": "This is a text about Nody Mc Nodeface"}           |
       | sir-nodeward-nodington-iii | esquire    | lady-eleonode-rootford | Neos.ContentRepository.Testing:Node | {"text": "This is a text about Sir Nodeward Nodington III"} |
 
-    Then I expect the ChangeProjection to have no changes in "cs-identifier"
+    Then I expect to have no changes in workspace "live"
 
 
   Scenario: Nodes on user workspace have been created
@@ -55,10 +55,10 @@ Feature: Create node aggregate with node without dimensions
       | nody-mc-nodeface           | child-node | sir-david-nodenborough | Neos.ContentRepository.Testing:Node | {"text": "This is a text about Nody Mc Nodeface"}           |
       | sir-nodeward-nodington-iii | esquire    | lady-eleonode-rootford | Neos.ContentRepository.Testing:Node | {"text": "This is a text about Sir Nodeward Nodington III"} |
 
-    Then I expect the ChangeProjection to have the following changes in "user-cs-id":
+    Then I expect to have the following changes in workspace "user-workspace":
       | nodeAggregateId            | created | changed | moved | deleted | originDimensionSpacePoint |
       | sir-david-nodenborough     | 1       | 1       | 0     | 0       | {}                        |
       | nody-mc-nodeface           | 1       | 1       | 0     | 0       | {}                        |
       | sir-nodeward-nodington-iii | 1       | 1       | 0     | 0       | {}                        |
 
-    And I expect the ChangeProjection to have no changes in "cs-identifier"
+    And I expect to have no changes in workspace "live"

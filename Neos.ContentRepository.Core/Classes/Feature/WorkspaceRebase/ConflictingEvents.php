@@ -55,4 +55,14 @@ final readonly class ConflictingEvents implements \IteratorAggregate, \Countable
     {
         return count($this->items);
     }
+
+    /**
+     * @template T
+     * @param \Closure(ConflictingEvent): T $callback
+     * @return list<T>
+     */
+    public function map(\Closure $callback): array
+    {
+        return array_map($callback, $this->items);
+    }
 }

@@ -17,7 +17,6 @@ namespace Neos\ContentRepository\NodeMigration\Transformation;
 use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\Feature\DimensionSpaceAdjustment\Command\MoveDimensionSpacePoint;
-use Neos\ContentRepository\Core\Infrastructure\Property\PropertyConverter;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 
 /**
@@ -31,30 +30,28 @@ class MoveDimensionSpacePointTransformationFactory implements TransformationFact
     public function build(
         array $settings,
         ContentRepository $contentRepository,
-        PropertyConverter $propertyConverter,
     ): GlobalTransformationInterface|NodeAggregateBasedTransformationInterface|NodeBasedTransformationInterface {
         $from = DimensionSpacePoint::fromArray($settings['from']);
         $to = DimensionSpacePoint::fromArray($settings['to']);
         return new class (
             $from,
             $to,
-            $contentRepository
         ) implements GlobalTransformationInterface {
             public function __construct(
                 private readonly DimensionSpacePoint $from,
                 private readonly DimensionSpacePoint $to,
-                private readonly ContentRepository $contentRepository,
             ) {
             }
 
             public function execute(
+                WorkspaceName $workspaceNameForReading,
                 WorkspaceName $workspaceNameForWriting,
-            ): void {
-                $this->contentRepository->handle(
+            ): TransformationStep {
+                return TransformationStep::fromCommand(
                     MoveDimensionSpacePoint::create(
                         $workspaceNameForWriting,
                         $this->from,
-                        $this->to
+                        $this->to,
                     )
                 );
             }

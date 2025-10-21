@@ -14,8 +14,9 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\BehavioralTests\Tests\Parallel;
 
-use Doctrine\DBAL\Connection;
 use Neos\ContentRepository\Core\ContentRepository;
+use Neos\ContentRepository\Core\Service\ContentRepositoryMaintainer;
+use Neos\ContentRepository\Core\Service\ContentRepositoryMaintainerFactory;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\Core\Bootstrap;
@@ -55,7 +56,7 @@ abstract class AbstractParallelTestCase extends TestCase // we don't use Flows f
     final protected function awaitFileRemoval(string $filename): void
     {
         $waiting = 0;
-        while (!is_file($filename)) {
+        while (is_file($filename)) {
             usleep(1000);
             $waiting++;
             clearstatcache(true, $filename);
@@ -69,21 +70,17 @@ abstract class AbstractParallelTestCase extends TestCase // we don't use Flows f
         ContentRepositoryId $contentRepositoryId
     ): ContentRepository {
         $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryId);
-        $contentRepository->setUp();
-
-        $connection = $this->objectManager->get(Connection::class);
-
+        /** @var ContentRepositoryMaintainer $contentRepositoryMaintainer */
+        $contentRepositoryMaintainer = $this->contentRepositoryRegistry->buildService($contentRepositoryId, new ContentRepositoryMaintainerFactory());
+        $contentRepositoryMaintainer->setUp();
         // reset events and projections
-        $eventTableName = sprintf('cr_%s_events', $contentRepositoryId->value);
-        $connection->executeStatement('TRUNCATE ' . $eventTableName);
-        $contentRepository->resetProjectionStates();
-
+        $contentRepositoryMaintainer->prune();
         return $contentRepository;
     }
 
     final protected function log(string $message): void
     {
-        file_put_contents(self::LOGGING_PATH, self::shortClassName($this::class) . ': ' . getmypid() . ': ' .  $message . PHP_EOL, FILE_APPEND);
+        file_put_contents(self::LOGGING_PATH, self::shortClassName($this::class) . ': [pid ' . getmypid() . ', time ' . time() . '] ' .  $message . PHP_EOL, FILE_APPEND);
     }
 
     final protected static function shortClassName(string $className): string

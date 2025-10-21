@@ -416,9 +416,8 @@ trait ProjectedNodeTrait
     public function iExpectThisNodeToHaveNoProperties(): void
     {
         $this->assertOnCurrentNode(function (Node $currentNode) {
-            $properties = $currentNode->properties;
-            $properties = iterator_to_array($properties);
-            Assert::assertCount(0, $properties, 'No properties were expected');
+            $properties = $currentNode->properties->serialized()->getPlainValues();
+            Assert::assertCount(0, $properties, 'No properties were expected. Got: ' . json_encode($properties));
         });
     }
 

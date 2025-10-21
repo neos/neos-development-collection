@@ -17,25 +17,30 @@ namespace Neos\ContentRepository\Core\Feature\DimensionSpaceAdjustment;
 use Neos\ContentRepository\Core\CommandHandler\CommandHandlerInterface;
 use Neos\ContentRepository\Core\CommandHandler\CommandHandlingDependencies;
 use Neos\ContentRepository\Core\CommandHandler\CommandInterface;
-use Neos\ContentRepository\Core\ContentRepository;
-use Neos\ContentRepository\Core\DimensionSpace\ContentDimensionZookeeper;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
+use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Core\DimensionSpace\Exception\DimensionSpacePointIsNoSpecialization;
-use Neos\ContentRepository\Core\DimensionSpace\Exception\DimensionSpacePointNotFound;
 use Neos\ContentRepository\Core\DimensionSpace\InterDimensionalVariationGraph;
 use Neos\ContentRepository\Core\DimensionSpace\VariantType;
 use Neos\ContentRepository\Core\EventStore\Events;
 use Neos\ContentRepository\Core\EventStore\EventsToPublish;
+use Neos\ContentRepository\Core\Feature\Common\ConstraintChecks;
 use Neos\ContentRepository\Core\Feature\Common\RebasableToOtherWorkspaceInterface;
+use Neos\ContentRepository\Core\Feature\Common\WorkspaceConstraintChecks;
 use Neos\ContentRepository\Core\Feature\ContentStreamEventStreamName;
 use Neos\ContentRepository\Core\Feature\DimensionSpaceAdjustment\Command\AddDimensionShineThrough;
 use Neos\ContentRepository\Core\Feature\DimensionSpaceAdjustment\Command\MoveDimensionSpacePoint;
+use Neos\ContentRepository\Core\Feature\Common\DimensionSpacePointsWithAllowedSpecializations;
+use Neos\ContentRepository\Core\Feature\Common\DimensionSpacePointWithAllowedSpecializations;
 use Neos\ContentRepository\Core\Feature\DimensionSpaceAdjustment\Event\DimensionShineThroughWasAdded;
 use Neos\ContentRepository\Core\Feature\DimensionSpaceAdjustment\Event\DimensionSpacePointWasMoved;
 use Neos\ContentRepository\Core\Feature\DimensionSpaceAdjustment\Exception\DimensionSpacePointAlreadyExists;
 use Neos\ContentRepository\Core\Feature\RebaseableCommand;
+use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphInterface;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindRootNodeAggregatesFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
+use Neos\ContentRepository\Core\SharedModel\Workspace\Workspace;
 use Neos\EventStore\Model\EventStream\ExpectedVersion;
 
 /**
@@ -43,9 +48,12 @@ use Neos\EventStore\Model\EventStream\ExpectedVersion;
  */
 final readonly class DimensionSpaceCommandHandler implements CommandHandlerInterface
 {
+    use ConstraintChecks;
+    use WorkspaceConstraintChecks;
+
     public function __construct(
-        private ContentDimensionZookeeper $contentDimensionZookeeper,
         private InterDimensionalVariationGraph $interDimensionalVariationGraph,
+        private NodeTypeManager $nodeTypeManager,
     ) {
     }
 
@@ -68,14 +76,36 @@ final readonly class DimensionSpaceCommandHandler implements CommandHandlerInter
         CommandHandlingDependencies $commandHandlingDependencies
     ): EventsToPublish {
         $contentGraph = $commandHandlingDependencies->getContentGraph($command->workspaceName);
+        $expectedVersion = ExpectedVersion::fromVersion($commandHandlingDependencies->getContentStreamVersion($contentGraph->getContentStreamId()));
         $streamName = ContentStreamEventStreamName::fromContentStreamId($contentGraph->getContentStreamId())
             ->getEventStreamName();
 
-        self::requireDimensionSpacePointToBeEmptyInContentStream(
-            $contentGraph,
-            $command->target
-        );
         $this->requireDimensionSpacePointToExist($command->target);
+        $this->requireWorkspaceToBeRootOrRootBasedForDimensionAdjustment($command->workspaceName, $commandHandlingDependencies);
+        $relevantWorkspaces = $commandHandlingDependencies->findAllWorkspaces()->filter(
+            fn (Workspace $workspace): bool => $workspace->isRootWorkspace()
+                || !$workspace->workspaceName->equals($command->initialWorkspaceName)
+        );
+        foreach ($relevantWorkspaces as $workspace) {
+            self::requireDimensionSpacePointToBeEmptyInContentStream(
+                $commandHandlingDependencies->getContentGraph($workspace->workspaceName),
+                $command->target,
+            );
+        }
+        self::requireNoWorkspaceToHaveChanges($relevantWorkspaces);
+        $fallbackConstraints = DimensionSpacePointsWithAllowedSpecializations::create(
+            DimensionSpacePointWithAllowedSpecializations::create(
+                $command->source,
+                $this->interDimensionalVariationGraph->getSpecializationSet($command->target, false),
+            )
+        );
+        foreach ($contentGraph->findRootNodeAggregates(FindRootNodeAggregatesFilter::create()) as $rootNodeAggregate) {
+            $this->requireDescendantNodesToNotFallbackToDimensionSpacePointsOtherThan(
+                $rootNodeAggregate->nodeAggregateId,
+                $contentGraph,
+                $fallbackConstraints,
+            );
+        }
 
         return new EventsToPublish(
             $streamName,
@@ -90,7 +120,7 @@ final readonly class DimensionSpaceCommandHandler implements CommandHandlerInter
                     ),
                 )
             ),
-            ExpectedVersion::ANY()
+            $expectedVersion
         );
     }
 
@@ -99,16 +129,23 @@ final readonly class DimensionSpaceCommandHandler implements CommandHandlerInter
         CommandHandlingDependencies $commandHandlingDependencies
     ): EventsToPublish {
         $contentGraph = $commandHandlingDependencies->getContentGraph($command->workspaceName);
+        $expectedVersion = ExpectedVersion::fromVersion($commandHandlingDependencies->getContentStreamVersion($contentGraph->getContentStreamId()));
         $streamName = ContentStreamEventStreamName::fromContentStreamId($contentGraph->getContentStreamId())
             ->getEventStreamName();
 
-        self::requireDimensionSpacePointToBeEmptyInContentStream(
-            $contentGraph,
-            $command->target
-        );
         $this->requireDimensionSpacePointToExist($command->target);
-
         $this->requireDimensionSpacePointToBeSpecialization($command->target, $command->source);
+        $this->requireWorkspaceToBeRootOrRootBasedForDimensionAdjustment($command->workspaceName, $commandHandlingDependencies);
+        $relevantWorkspaces = $commandHandlingDependencies->findAllWorkspaces()->filter(
+            fn (Workspace $workspace): bool => $workspace->isRootWorkspace()
+                || !$workspace->workspaceName->equals($command->initialWorkspaceName)
+        );
+        foreach ($relevantWorkspaces as $workspace) {
+            self::requireDimensionSpacePointToBeEmptyInContentStream(
+                $commandHandlingDependencies->getContentGraph($workspace->workspaceName),
+                $command->target,
+            );
+        }
 
         return new EventsToPublish(
             $streamName,
@@ -123,33 +160,8 @@ final readonly class DimensionSpaceCommandHandler implements CommandHandlerInter
                     )
                 )
             ),
-            ExpectedVersion::ANY()
+            $expectedVersion
         );
-    }
-
-    /**
-     * @throws DimensionSpacePointNotFound
-     */
-    protected function requireDimensionSpacePointToExist(DimensionSpacePoint $dimensionSpacePoint): void
-    {
-        $allowedDimensionSubspace = $this->contentDimensionZookeeper->getAllowedDimensionSubspace();
-        if (!$allowedDimensionSubspace->contains($dimensionSpacePoint)) {
-            throw DimensionSpacePointNotFound::becauseItIsNotWithinTheAllowedDimensionSubspace($dimensionSpacePoint);
-        }
-    }
-
-    private static function requireDimensionSpacePointToBeEmptyInContentStream(
-        ContentGraphInterface $contentGraph,
-        DimensionSpacePoint $dimensionSpacePoint
-    ): void {
-        $hasNodes = $contentGraph->getSubgraph($dimensionSpacePoint, VisibilityConstraints::withoutRestrictions())->countNodes();
-        if ($hasNodes > 0) {
-            throw new DimensionSpacePointAlreadyExists(sprintf(
-                'the content stream %s already contained nodes in dimension space point %s - this is not allowed.',
-                $contentGraph->getContentStreamId()->value,
-                $dimensionSpacePoint->toJson(),
-            ), 1612898126);
-        }
     }
 
     private function requireDimensionSpacePointToBeSpecialization(
@@ -164,5 +176,15 @@ final readonly class DimensionSpaceCommandHandler implements CommandHandlerInter
         ) {
             throw DimensionSpacePointIsNoSpecialization::butWasSupposedToBe($target, $source);
         }
+    }
+
+    protected function getNodeTypeManager(): NodeTypeManager
+    {
+        return $this->nodeTypeManager;
+    }
+
+    protected function getAllowedDimensionSubspace(): DimensionSpacePointSet
+    {
+        return $this->interDimensionalVariationGraph->getDimensionSpacePoints();
     }
 }

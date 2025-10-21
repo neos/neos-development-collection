@@ -11,6 +11,7 @@ prototype(Neos.Neos:View.Login) < prototype(Neos.Fusion:Component) {
     backgroundImageSource = Neos.Neos:Core.ImageSource {
       path = ${Configuration.setting('Neos.Neos.userInterface.backendLoginForm.backgroundImage')}
     }
+    backgroundImageAttribution = ${Configuration.setting('Neos.Neos.userInterface.backendLoginForm.backgroundImageAttribution')}
     backgroundImageSourceIsWebp = ${private.backgroundImageSource ? String.endsWith(private.backgroundImageSource, '.webp') : null}
 
     additionalStyles = Neos.Fusion:Loop {
@@ -59,6 +60,9 @@ prototype(Neos.Neos:View.Login) < prototype(Neos.Fusion:Component) {
           </main>
           <footer class="neos-login-footer">
             <p>
+              <strong @if={private.backgroundImageSource && private.backgroundImageAttribution}>
+                {private.backgroundImageAttribution}
+              </strong><br/>
               <a href="http://neos.io" target="_blank">Neos</a> –&nbsp;
               © 2006-{Date.format('now', 'Y')} This is free software, licensed under GPL3 or higher, and you are welcome to redistribute it under certain conditions;&nbsp;
               Neos comes with ABSOLUTELY NO WARRANTY;&nbsp;

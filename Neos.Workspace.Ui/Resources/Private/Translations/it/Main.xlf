@@ -23,10 +23,6 @@
         <source>Workspaces</source>
         <target state="translated">Aree Lavoro (Workspaces)</target>
       </trans-unit>
-      <trans-unit id="workspaces.detailsForWorkspace" xml:space="preserve">
-        <source>Details for "{0}"</source>
-        <target state="translated">Dettagli per "{0}"</target>
-      </trans-unit>
       <trans-unit id="workspaces.createNewWorkspace" xml:space="preserve">
         <source>Create new workspace</source>
         <target state="translated">Crea nuovo spazio di lavoro</target>
@@ -36,8 +32,8 @@
         <target state="translated">Crea spazio di lavoro</target>
       </trans-unit>
       <trans-unit id="workspaces.deleteWorkspace" xml:space="preserve">
-        <source>Delete workspace</source>
-        <target state="translated">Elimina spazio di lavoro</target>
+        <source>Delete workspace "{0}"</source>
+        <target state="needs-translation">Elimina spazio di lavoro</target>
       </trans-unit>
       <trans-unit id="workspaces.editWorkspace" xml:space="preserve">
         <source>Edit workspace</source>
@@ -59,8 +55,8 @@
         <source>Private workspace</source>
         <target state="translated">Spazio di lavoro privato</target>
       </trans-unit>
-      <trans-unit id="workspaces.internalWorkspace" xml:space="preserve">
-        <source>Internal workspace</source>
+      <trans-unit id="workspaces.sharedWorkspace" xml:space="preserve">
+        <source>Shared workspace</source>
         <target state="translated">Spazio di lavoro interno</target>
       </trans-unit>
       <trans-unit id="workspaces.readonlyWorkspace" xml:space="preserve">
@@ -95,11 +91,11 @@
         <source>Only reviewers and administrators can access and modify this workspace</source>
         <target state="translated">Solo i revisori e gli amministratori possono accedere e modificare questo spazio di lavoro</target>
       </trans-unit>
-      <trans-unit id="workspaces.workspace.visibility.internal" xml:space="preserve">
-        <source>Internal</source>
+      <trans-unit id="workspaces.workspace.visibility.shared" xml:space="preserve">
+        <source>Shared</source>
         <target state="translated">Interno</target>
       </trans-unit>
-      <trans-unit id="workspaces.workspace.visibility.internal.help" xml:space="preserve">
+      <trans-unit id="workspaces.workspace.visibility.shared.help" xml:space="preserve">
         <source>Any logged in editor can see and modify this workspace.</source>
         <target state="translated">Ogni editore loggato può vedere e modificare questo spazio di lavoro.</target>
       </trans-unit>
@@ -256,6 +252,26 @@
       <trans-unit id="workspaces.allChangesInWorkspaceHaveBeenDiscarded">
         <source>All changes from workspace "{0}" have been discarded.</source>
         <target state="translated">Tutte le modifiche dallo spazio di lavoro "{0}" sono state scartate.</target>
+      </trans-unit>
+      <trans-unit id="applyChanges" xml:space="preserve">
+        <source>Apply changes</source>
+        <target state="needs-translation">Applica i cambiamenti</target>
+      </trans-unit>
+      <trans-unit id="workspaces.reviewWorkspace.label" xml:space="preserve">
+        <source>Review</source>
+        <target state="needs-translation">Revisiona</target>
+      </trans-unit>
+      <trans-unit id="workspaces.workspace.lastModified" xml:space="preserve">
+        <source>Last modified</source>
+        <target state="needs-translation">Ultimo modificato</target>
+      </trans-unit>
+      <trans-unit id="workspaces.workspace.status" xml:space="preserve">
+        <source>Status</source>
+        <target state="needs-translation">Stato</target>
+      </trans-unit>
+      <trans-unit id="workspaces.dialog.rebase.node" xml:space="preserve">
+        <source>Node</source>
+        <target state="needs-translation">Nodo</target>
       </trans-unit>
     </body>
   </file>

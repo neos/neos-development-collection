@@ -95,4 +95,9 @@ final readonly class PropertyValuesToWrite
             )
         );
     }
+
+    public function isEmpty(): bool
+    {
+        return $this->values === [];
+    }
 }

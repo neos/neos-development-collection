@@ -39,6 +39,7 @@ Feature: Basic routing functionality (match & resolve nodes with unknown types)
       | nodeTypeName                | "Neos.Neos:Test.Routing.Page" |
       | parentNodeAggregateId       | "lady-eleonode-rootford"      |
       | nodeAggregateClassification | "regular"                     |
+      | nodeName                    | "site"                        |
     And the event NodeAggregateWithNodeWasCreated was published with payload:
       | Key                         | Value                                                                 |
       | workspaceName               | "live"                                                                |

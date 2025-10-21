@@ -37,6 +37,16 @@ trait AssetUsageTrait
     abstract private function getObject(string $className): object;
 
     /**
+     * @BeforeScenario
+     */
+    final public function pruneAssetUsage(): void
+    {
+        foreach (static::$alreadySetUpContentRepositories as $contentRepositoryId) {
+            $this->getObject(\Neos\Neos\AssetUsage\Domain\AssetUsageRepository::class)->removeAll($contentRepositoryId);
+        }
+    }
+
+    /**
      * @Then I expect the AssetUsageService to have the following AssetUsages:
      */
     public function iExpectTheAssetUsageServiceToHaveTheFollowingAssetUsages(TableNode $table)

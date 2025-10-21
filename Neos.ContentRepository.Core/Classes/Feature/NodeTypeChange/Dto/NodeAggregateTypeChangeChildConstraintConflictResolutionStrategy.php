@@ -36,6 +36,12 @@ enum NodeAggregateTypeChangeChildConstraintConflictResolutionStrategy: string im
     case STRATEGY_HAPPY_PATH = 'happypath';
 
     /**
+     * This strategy extends happypath by expecting that identically typed children will also be changed, affecting validation.
+     * Required e.g. for global type change transformations
+     */
+    case STRATEGY_PROMISED_CASCADE = 'promisedCascade';
+
+    /**
      * @return string
      */
     public function jsonSerialize(): string

@@ -83,7 +83,7 @@ class ImageInterfaceArrayPresenter extends AbstractTypeConverter
      * @param PropertyMappingConfigurationInterface $configuration
      * @return string|Error The converted Image, a Validation Error or NULL
      */
-    public function convertFrom($source, $targetType, array $convertedChildProperties = [], PropertyMappingConfigurationInterface $configuration = null)
+    public function convertFrom($source, $targetType, array $convertedChildProperties = [], ?PropertyMappingConfigurationInterface $configuration = null)
     {
         $data = [
             '__identity' => $this->persistenceManager->getIdentifierByObject($source),

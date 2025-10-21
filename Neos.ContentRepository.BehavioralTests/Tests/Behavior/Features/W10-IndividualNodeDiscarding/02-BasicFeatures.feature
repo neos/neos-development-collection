@@ -121,21 +121,27 @@ Feature: Discard individual nodes (basics)
     And I expect this node to have the following properties:
       | Key   | Value           |
       | image | "Initial image" |
-  Scenario: Discard no node, non existing ones or unchanged nodes is a no-op
-    # no node
-    When the command DiscardIndividualNodesFromWorkspace is executed with payload:
+
+  Scenario: Discard no node is not allowed
+    When the command DiscardIndividualNodesFromWorkspace is executed with payload and exceptions are caught:
       | Key                | Value                    |
       | workspaceName      | "user-test"              |
       | nodesToDiscard     | []                       |
       | newContentStreamId | "user-cs-identifier-new" |
-    Then I expect the content stream "user-cs-identifier-new" to not exist
+    Then the last command should have thrown an exception of type "InvalidArgumentException" with code 1737448741
 
+  Scenario: Discard non existing nodes or unchanged nodes is skipped (via exception)
     # unchanged or non existing nodes
-    When the command DiscardIndividualNodesFromWorkspace is executed with payload:
+    When the command DiscardIndividualNodesFromWorkspace is executed with payload and exceptions are caught:
       | Key                             | Value                                                                                                                                  |
       | workspaceName                   | "user-test"                                                                                                                            |
       | nodesToDiscard                  | ["non-existing-node", "sir-unchanged"] |
       | newContentStreamId              | "user-cs-identifier-new-two"                                                                                                           |
+
+    Then the last command should have thrown an exception of type "WorkspaceCommandSkipped" with code 1737477674 and message:
+    """
+    No nodes matched in workspace "user-test" the filter non-existing-node,sir-unchanged.
+    """
 
     # all nodes are still on the original user cs
     When I am in workspace "user-test" and dimension space point {}

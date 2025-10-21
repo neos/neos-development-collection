@@ -311,7 +311,7 @@ class Site
      * @return void
      * @api
      */
-    public function setPrimaryDomain(Domain $domain = null)
+    public function setPrimaryDomain(?Domain $domain = null)
     {
         if ($domain === null) {
             $this->primaryDomain = null;
@@ -357,7 +357,7 @@ class Site
      * @param AssetCollection $assetCollection
      * @return void
      */
-    public function setAssetCollection(AssetCollection $assetCollection = null)
+    public function setAssetCollection(?AssetCollection $assetCollection = null)
     {
         $this->assetCollection = $assetCollection;
     }

@@ -52,10 +52,10 @@ Feature: Move node aggregate without dimensions
       | nodeAggregateId          | "nody-mc-nodeface"          |
       | newParentNodeAggregateId | "sir-nodeward-nodington-iv" |
 
-    Then I expect the ChangeProjection to have the following changes in "user-cs-id":
+    Then I expect to have the following changes in workspace "user-workspace":
       | nodeAggregateId  | created | changed | moved | deleted | originDimensionSpacePoint |
       | nody-mc-nodeface | 0       | 0       | 1     | 0       | {}                        |
-    And I expect the ChangeProjection to have no changes in "cs-identifier"
+    And I expect to have no changes in workspace "live"
 
   Scenario: Move nodeAggregate with children into new parent
     When the command MoveNodeAggregate is executed with payload:
@@ -63,9 +63,9 @@ Feature: Move node aggregate without dimensions
       | nodeAggregateId          | "sir-nodeward-nodington-iv" |
       | newParentNodeAggregateId | "nody-mc-nodeface"          |
 
-    Then I expect the ChangeProjection to have the following changes in "user-cs-id":
+    Then I expect to have the following changes in workspace "user-workspace":
       | nodeAggregateId           | created | changed | moved | deleted | originDimensionSpacePoint |
       | sir-nodeward-nodington-iv | 0       | 0       | 1     | 0       | {}                        |
-    And I expect the ChangeProjection to have no changes in "cs-identifier"
+    And I expect to have no changes in workspace "live"
 
 

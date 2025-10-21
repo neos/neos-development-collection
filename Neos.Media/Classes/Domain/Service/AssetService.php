@@ -140,7 +140,7 @@ class AssetService
      * @throws MissingActionNameException
      * @throws HttpException
      */
-    public function getThumbnailUriAndSizeForAsset(AssetInterface $asset, ThumbnailConfiguration $configuration, ActionRequest $request = null): ?array
+    public function getThumbnailUriAndSizeForAsset(AssetInterface $asset, ThumbnailConfiguration $configuration, ?ActionRequest $request = null): ?array
     {
         $thumbnailImage = $this->thumbnailService->getThumbnail($asset, $configuration);
         if (!$thumbnailImage instanceof ImageInterface) {

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\Core\Feature;
 
 use Neos\ContentRepository\Core\CommandHandler\CommandHandlingDependencies;
+use Neos\ContentRepository\Core\EventStore\DecoratedEvent;
 use Neos\ContentRepository\Core\EventStore\Events;
 use Neos\ContentRepository\Core\EventStore\EventsToPublish;
 use Neos\ContentRepository\Core\Feature\ContentStreamClosing\Event\ContentStreamWasClosed;
@@ -18,6 +19,9 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\EventStore\Model\Event\Version;
 use Neos\EventStore\Model\EventStream\ExpectedVersion;
 
+/**
+ * @internal
+ */
 trait ContentStreamHandling
 {
     /**
@@ -47,16 +51,20 @@ trait ContentStreamHandling
      */
     private function reopenContentStreamWithoutConstraintChecks(
         ContentStreamId $contentStreamId,
+        string $debugReason
     ): EventsToPublish {
         return new EventsToPublish(
             ContentStreamEventStreamName::fromContentStreamId($contentStreamId)->getEventStreamName(),
             Events::with(
-                new ContentStreamWasReopened(
-                    $contentStreamId
-                ),
+                DecoratedEvent::create(
+                    new ContentStreamWasReopened(
+                        $contentStreamId
+                    ),
+                    metadata: array_filter(['debug_reason' => $debugReason])
+                )
             ),
             // We operate here without constraints on purpose to ensure this can be commited.
-            //Constraints have been checked beforehand and its expected that the content stream is closed.
+            // Constraints have been checked beforehand and its expected that the content stream is closed.
             ExpectedVersion::ANY()
         );
     }
@@ -71,16 +79,20 @@ trait ContentStreamHandling
     private function forkContentStream(
         ContentStreamId $newContentStreamId,
         ContentStreamId $sourceContentStreamId,
-        Version $sourceContentStreamVersion
+        Version $sourceContentStreamVersion,
+        string $debugReason
     ): EventsToPublish {
         return new EventsToPublish(
             ContentStreamEventStreamName::fromContentStreamId($newContentStreamId)->getEventStreamName(),
             Events::with(
-                new ContentStreamWasForked(
-                    $newContentStreamId,
-                    $sourceContentStreamId,
-                    $sourceContentStreamVersion,
-                ),
+                DecoratedEvent::create(
+                    event: new ContentStreamWasForked(
+                        $newContentStreamId,
+                        $sourceContentStreamId,
+                        $sourceContentStreamVersion,
+                    ),
+                    metadata: ['debug_reason' => $debugReason]
+                )
             ),
             // NO_STREAM to ensure the "fork" happens as the first event of the new content stream
             ExpectedVersion::NO_STREAM()

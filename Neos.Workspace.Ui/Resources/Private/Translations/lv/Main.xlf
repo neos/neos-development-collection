@@ -23,10 +23,6 @@
         <source>Workspaces</source>
         <target state="final">Darba virsmas</target>
       </trans-unit>
-      <trans-unit id="workspaces.detailsForWorkspace" xml:space="preserve" approved="yes">
-        <source>Details for "{0}"</source>
-        <target state="final">Informācija par {0}</target>
-      </trans-unit>
       <trans-unit id="workspaces.createNewWorkspace" xml:space="preserve" approved="yes">
         <source>Create new workspace</source>
         <target state="final">Izveidot jaunu darba virsmu</target>
@@ -35,9 +31,9 @@
         <source>Create workspace</source>
         <target state="final">Izveidot darba virsmu</target>
       </trans-unit>
-      <trans-unit id="workspaces.deleteWorkspace" xml:space="preserve" approved="yes">
-        <source>Delete workspace</source>
-        <target state="final">Dzēst darba virsmu</target>
+      <trans-unit id="workspaces.deleteWorkspace" xml:space="preserve" approved="no">
+        <source>Delete workspace "{0}"</source>
+        <target state="needs-translation">Dzēst darba virsmu</target>
       </trans-unit>
       <trans-unit id="workspaces.editWorkspace" xml:space="preserve" approved="yes">
         <source>Edit workspace</source>
@@ -59,8 +55,8 @@
         <source>Private workspace</source>
         <target state="final">Privāta darba virsma</target>
       </trans-unit>
-      <trans-unit id="workspaces.internalWorkspace" xml:space="preserve" approved="yes">
-        <source>Internal workspace</source>
+      <trans-unit id="workspaces.sharedWorkspace" xml:space="preserve" approved="yes">
+        <source>Shared workspace</source>
         <target state="final">Iekšējā darba virsma</target>
       </trans-unit>
       <trans-unit id="workspaces.readonlyWorkspace" xml:space="preserve" approved="yes">
@@ -95,11 +91,11 @@
         <source>Only reviewers and administrators can access and modify this workspace</source>
         <target state="final">Tikai recenzenti un administratori var piekļūt un modificēt šo darba virsmu</target>
       </trans-unit>
-      <trans-unit id="workspaces.workspace.visibility.internal" xml:space="preserve" approved="yes">
-        <source>Internal</source>
+      <trans-unit id="workspaces.workspace.visibility.shared" xml:space="preserve" approved="yes">
+        <source>Shared</source>
         <target state="final">Iekšēji</target>
       </trans-unit>
-      <trans-unit id="workspaces.workspace.visibility.internal.help" xml:space="preserve" approved="yes">
+      <trans-unit id="workspaces.workspace.visibility.shared.help" xml:space="preserve" approved="yes">
         <source>Any logged in editor can see and modify this workspace.</source>
         <target state="final">Autorizēts redaktors var redzēt un rediģēt šo darba virsmu.</target>
       </trans-unit>
@@ -256,6 +252,26 @@
       <trans-unit id="workspaces.allChangesInWorkspaceHaveBeenDiscarded" approved="yes">
         <source>All changes from workspace "{0}" have been discarded.</source>
         <target state="final">Visas izmaiņas no darba virsmas "{0}" ir atceltas.</target>
+      </trans-unit>
+      <trans-unit id="applyChanges" xml:space="preserve">
+        <source>Apply changes</source>
+        <target state="needs-translation">Apskatīt izmaiņas</target>
+      </trans-unit>
+      <trans-unit id="workspaces.reviewWorkspace.label" xml:space="preserve">
+        <source>Review</source>
+        <target state="needs-translation">Recenzija</target>
+      </trans-unit>
+      <trans-unit id="workspaces.workspace.lastModified" xml:space="preserve">
+        <source>Last modified</source>
+        <target state="needs-translation">Pēdējo reizi mainīts</target>
+      </trans-unit>
+      <trans-unit id="workspaces.workspace.status" xml:space="preserve">
+        <source>Status</source>
+        <target state="needs-translation">Statuss</target>
+      </trans-unit>
+      <trans-unit id="workspaces.dialog.rebase.node" xml:space="preserve">
+        <source>Node</source>
+        <target state="needs-translation">Mezgls</target>
       </trans-unit>
     </body>
   </file>

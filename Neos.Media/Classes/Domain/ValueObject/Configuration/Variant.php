@@ -43,7 +43,7 @@ final class Variant
      * @param string $description
      * @Flow\Autowiring(false)
      */
-    public function __construct(string $identifier, Label $label, string $description = null)
+    public function __construct(string $identifier, Label $label, ?string $description = null)
     {
         $this->setIdentifier($identifier);
         $this->label = $label;

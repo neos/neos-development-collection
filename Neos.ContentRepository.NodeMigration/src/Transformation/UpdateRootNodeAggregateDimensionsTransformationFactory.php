@@ -6,7 +6,6 @@ namespace Neos\ContentRepository\NodeMigration\Transformation;
 
 use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\Feature\RootNodeCreation\Command\UpdateRootNodeAggregateDimensions;
-use Neos\ContentRepository\Core\Infrastructure\Property\PropertyConverter;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepository\NodeMigration\MigrationException;
@@ -19,7 +18,6 @@ class UpdateRootNodeAggregateDimensionsTransformationFactory implements Transfor
     public function build(
         array $settings,
         ContentRepository $contentRepository,
-        PropertyConverter $propertyConverter,
     ): GlobalTransformationInterface|NodeAggregateBasedTransformationInterface|NodeBasedTransformationInterface {
         if (!isset($settings['nodeType'])) {
             throw new MigrationException(
@@ -47,10 +45,11 @@ class UpdateRootNodeAggregateDimensionsTransformationFactory implements Transfor
             }
 
             public function execute(
+                WorkspaceName $workspaceNameForReading,
                 WorkspaceName $workspaceNameForWriting,
-            ): void {
+            ): TransformationStep {
 
-                $rootNodeAggregate = $this->contentRepository->getContentGraph($workspaceNameForWriting)->findRootNodeAggregateByType($this->nodeTypeName);
+                $rootNodeAggregate = $this->contentRepository->getContentGraph($workspaceNameForReading)->findRootNodeAggregateByType($this->nodeTypeName);
 
                 if (!$rootNodeAggregate) {
                     throw new MigrationException(
@@ -59,12 +58,22 @@ class UpdateRootNodeAggregateDimensionsTransformationFactory implements Transfor
                     );
                 }
 
-                $this->contentRepository->handle(
+                $transformationStep = TransformationStep::fromCommand(
                     UpdateRootNodeAggregateDimensions::create(
                         $workspaceNameForWriting,
                         $rootNodeAggregate->nodeAggregateId
                     )
                 );
+
+                $allowedDimensionSubspace = $this->contentRepository->getVariationGraph()->getDimensionSpacePoints();
+                $toBeRemovedDimensionSpacePoints = $rootNodeAggregate->coveredDimensionSpacePoints->getDifference($allowedDimensionSubspace);
+                if (!$toBeRemovedDimensionSpacePoints->isEmpty()) {
+                    return $transformationStep->withRequiredConfirmation(
+                        sprintf('Updating the dimensions of root node %s will remove all its descendants in dimensions %s', $rootNodeAggregate->nodeAggregateId->value, $toBeRemovedDimensionSpacePoints->toJson())
+                    );
+                }
+
+                return $transformationStep;
             }
         };
     }

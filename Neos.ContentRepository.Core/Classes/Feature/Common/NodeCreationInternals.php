@@ -45,7 +45,7 @@ trait NodeCreationInternals
         OriginDimensionSpacePoint $sourceOrigin,
         DimensionSpacePointSet $coveredDimensionSpacePoints,
     ): InterdimensionalSiblings {
-        $subGraph = $contentGraph->getSubgraph($sourceOrigin->toDimensionSpacePoint(), VisibilityConstraints::withoutRestrictions());
+        $subGraph = $contentGraph->getSubgraph($sourceOrigin->toDimensionSpacePoint(), VisibilityConstraints::createEmpty());
         $originAlternativeSucceedingSiblings = $subGraph->findSucceedingSiblingNodes(
             $requestedSucceedingSiblingNodeAggregateId,
             FindSucceedingSiblingNodesFilter::create()
@@ -53,7 +53,7 @@ trait NodeCreationInternals
 
         $interdimensionalSiblings = [];
         foreach ($coveredDimensionSpacePoints as $coveredDimensionSpacePoint) {
-            $subGraph = $contentGraph->getSubgraph($coveredDimensionSpacePoint, VisibilityConstraints::withoutRestrictions());
+            $subGraph = $contentGraph->getSubgraph($coveredDimensionSpacePoint, VisibilityConstraints::createEmpty());
             $variantSucceedingSibling = $subGraph->findNodeById($requestedSucceedingSiblingNodeAggregateId);
             if ($variantSucceedingSibling) {
                 // a) happy path, the explicitly requested succeeding sibling also exists in this dimension space point

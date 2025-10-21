@@ -54,10 +54,10 @@ Feature: Node referencing without dimensions
       | sourceNodeAggregateId | "sir-david-nodenborough"                                                                        |
       | references            | [{"referenceName": "singleReference", "references": [{"target": "sir-nodeward-nodington-iv"}]}] |
 
-    Then I expect the ChangeProjection to have the following changes in "user-cs-id":
+    Then I expect to have the following changes in workspace "user-workspace":
       | nodeAggregateId        | created | changed | moved | deleted | originDimensionSpacePoint |
       | sir-david-nodenborough | 0       | 1       | 0     | 0       | {}                        |
-    And I expect the ChangeProjection to have no changes in "cs-identifier"
+    And I expect to have no changes in workspace "live"
 
   Scenario: Remove an existing reference from node
     When the command SetNodeReferences is executed with payload:
@@ -65,7 +65,7 @@ Feature: Node referencing without dimensions
       | sourceNodeAggregateId | "nody-mc-nodeface"                                       |
       | references            | [{"referenceName": "singleReference", "references": []}] |
 
-    Then I expect the ChangeProjection to have the following changes in "user-cs-id":
+    Then I expect to have the following changes in workspace "user-workspace":
       | nodeAggregateId  | created | changed | moved | deleted | originDimensionSpacePoint |
       | nody-mc-nodeface | 0       | 1       | 0     | 0       | {}                        |
-    And I expect the ChangeProjection to have no changes in "cs-identifier"
+    And I expect to have no changes in workspace "live"

@@ -35,7 +35,7 @@ class FormDefinitionDataSource extends AbstractDataSource
      * @param array<mixed> $arguments
      * @return array<int|string, array{label: mixed}>
      */
-    public function getData(Node $node = null, array $arguments = []): array
+    public function getData(?Node $node = null, array $arguments = []): array
     {
         $formDefinitions['']['label'] = '';
         $forms = $this->yamlPersistenceManager->listForms();

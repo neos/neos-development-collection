@@ -19,6 +19,7 @@ use Neos\ContentRepository\Core\Feature\RootNodeCreation\RootNodeHandling;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateIds;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 
@@ -63,6 +64,13 @@ interface ContentSubgraphInterface
      * @return Node|null the node or NULL if no node with the specified id is accessible in this subgraph
      */
     public function findNodeById(NodeAggregateId $nodeAggregateId): ?Node;
+
+    /**
+     * Find all nodes by the specified aggregate ids
+     *
+     * @return Nodes the nodes that exist in this subgraph. The order is not defined.
+     */
+    public function findNodesByIds(NodeAggregateIds $nodeAggregateIds): Nodes;
 
     /**
      * Find a root node by its type

@@ -18,9 +18,7 @@ use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Core\Feature\NodeModification\Command\SetNodeProperties;
 use Neos\ContentRepository\Core\Feature\NodeModification\Dto\PropertyValuesToWrite;
-use Neos\ContentRepository\Core\Infrastructure\Property\PropertyConverter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 
 /**
@@ -34,30 +32,26 @@ class StripTagsOnPropertyTransformationFactory implements TransformationFactoryI
     public function build(
         array $settings,
         ContentRepository $contentRepository,
-        PropertyConverter $propertyConverter,
     ): GlobalTransformationInterface|NodeAggregateBasedTransformationInterface|NodeBasedTransformationInterface {
         return new class (
             $settings['property'],
-            $contentRepository
         ) implements NodeBasedTransformationInterface {
             public function __construct(
                 /**
                  * the name of the property to work on.
                  */
                 private readonly string $propertyName,
-                private readonly ContentRepository $contentRepository
             ) {
             }
 
             public function execute(
                 Node $node,
                 DimensionSpacePointSet $coveredDimensionSpacePoints,
-                WorkspaceName $workspaceNameForWriting,
-                ContentStreamId $contentStreamForWriting
-            ): void {
+                WorkspaceName $workspaceNameForWriting
+            ): TransformationStep {
                 $propertyValue = $node->properties[$this->propertyName];
                 if ($propertyValue === null) {
-                    return;
+                    return TransformationStep::createEmpty();
                 }
                 if (!is_string($propertyValue)) {
                     throw new \Exception(
@@ -66,7 +60,7 @@ class StripTagsOnPropertyTransformationFactory implements TransformationFactoryI
                     );
                 }
                 $newValue = strip_tags($propertyValue);
-                $this->contentRepository->handle(
+                return TransformationStep::fromCommand(
                     SetNodeProperties::create(
                         $workspaceNameForWriting,
                         $node->aggregateId,

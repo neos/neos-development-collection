@@ -127,6 +127,7 @@ class UsersController extends AbstractModuleController
             'searchTerm' => $searchTerm,
             'sortBy' => $sortBy,
             'sortDirection' => $sortDirection,
+            'settings' => $this->moduleConfiguration['settings']
         ]);
     }
 
@@ -150,7 +151,7 @@ class UsersController extends AbstractModuleController
      * @param User $user
      * @return void
      */
-    public function newAction(User $user = null): void
+    public function newAction(?User $user = null): void
     {
         $this->view->assignMultiple([
             'currentUser' => $this->currentUser,
@@ -177,7 +178,7 @@ class UsersController extends AbstractModuleController
      * @Flow\Validate(argumentName="username", type="\Neos\Neos\Validation\Validator\UserDoesNotExistValidator")
      * @Flow\Validate(argumentName="password", type="\Neos\Neos\Validation\Validator\PasswordValidator", options={ "allowEmpty"=0, "minimum"=1, "maximum"=255 })
      */
-    public function createAction(string $username, array $password, User $user, array $roleIdentifiers, string $authenticationProviderName = null): void
+    public function createAction(string $username, array $password, User $user, array $roleIdentifiers, ?string $authenticationProviderName = null): void
     {
         $currentUserRoles = $this->userService->getAllRoles($this->currentUser);
         $isCreationAllowed = $this->userService->currentUserIsAdministrator() || count(array_diff($roleIdentifiers, $currentUserRoles)) === 0;

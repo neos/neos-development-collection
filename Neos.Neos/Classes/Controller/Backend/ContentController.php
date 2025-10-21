@@ -148,11 +148,7 @@ class ContentController extends ActionController
         $nodeAddress = NodeAddress::fromJsonString($node);
 
         $contentRepository = $this->contentRepositoryRegistry->get($nodeAddress->contentRepositoryId);
-        $node = $contentRepository->getContentGraph($nodeAddress->workspaceName)
-            ->getSubgraph(
-                $nodeAddress->dimensionSpacePoint,
-                VisibilityConstraints::withoutRestrictions()
-            )
+        $node = $contentRepository->getContentSubgraph($nodeAddress->workspaceName, $nodeAddress->dimensionSpacePoint)
             ->findNodeById($nodeAddress->aggregateId);
 
 

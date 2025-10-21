@@ -17,12 +17,12 @@ namespace Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap;
 use Behat\Gherkin\Node\PyStringNode;
 use Behat\Gherkin\Node\TableNode;
 use Neos\ContentRepository\Core\CommandHandler\CommandInterface;
+use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
-use Neos\ContentRepository\Core\EventStore\EventNormalizer;
-use Neos\ContentRepository\Core\EventStore\EventPersister;
-use Neos\ContentRepository\Core\EventStore\Events;
-use Neos\ContentRepository\Core\EventStore\EventsToPublish;
+use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceFactoryDependencies;
+use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceFactoryInterface;
+use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceInterface;
 use Neos\ContentRepository\Core\Feature\Common\RebasableToOtherWorkspaceInterface;
 use Neos\ContentRepository\Core\Feature\DimensionSpaceAdjustment\Command\AddDimensionShineThrough;
 use Neos\ContentRepository\Core\Feature\DimensionSpaceAdjustment\Command\MoveDimensionSpacePoint;
@@ -57,10 +57,12 @@ use Neos\ContentRepository\Core\Feature\WorkspaceRebase\Exception\PartialWorkspa
 use Neos\ContentRepository\Core\Feature\WorkspaceRebase\Exception\WorkspaceRebaseFailed;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Node\ReferenceName;
+use Neos\ContentRepository\Core\Subscription\Engine\SubscriptionEngine;
 use Neos\EventStore\EventStoreInterface;
 use Neos\EventStore\Model\Event;
 use Neos\EventStore\Model\Event\StreamName;
 use Neos\EventStore\Model\EventEnvelope;
+use Neos\EventStore\Model\Events;
 use Neos\EventStore\Model\EventStream\ExpectedVersion;
 use Neos\EventStore\Model\EventStream\VirtualStreamName;
 use Neos\Utility\Arrays;
@@ -81,14 +83,233 @@ trait GenericCommandExecutionAndEventPublication
 
     abstract protected function deserializeProperties(array $properties): PropertyValuesToWrite;
 
-    /**
-     * @When the command :shortCommandName is executed with payload:
-     * @throws \Exception
+    /*
+     * Stubs for all commands to be easily resolvable for IDE's
      */
-    public function theCommandIsExecutedWithPayload(string $shortCommandName, TableNode $payloadTable): void
+
+    /**
+     * @When the command AddDimensionShineThrough is executed with payload:
+     */
+    public function theCommandAddDimensionShineThroughIsExecutedWithPayload(TableNode $payloadTable): void
     {
         $commandArguments = $this->readPayloadTable($payloadTable);
-        $this->handleCommand($shortCommandName, $commandArguments);
+        $this->handleCommand(AddDimensionShineThrough::class, $commandArguments);
+    }
+
+    /**
+     * @When the command MoveDimensionSpacePoint is executed with payload:
+     */
+    public function theCommandMoveDimensionSpacePointIsExecutedWithPayload(TableNode $payloadTable): void
+    {
+        $commandArguments = $this->readPayloadTable($payloadTable);
+        $this->handleCommand(MoveDimensionSpacePoint::class, $commandArguments);
+    }
+
+    /**
+     * @When the command CreateNodeAggregateWithNode is executed with payload:
+     */
+    public function theCommandCreateNodeAggregateWithNodeIsExecutedWithPayload(TableNode $payloadTable): void
+    {
+        $commandArguments = $this->readPayloadTable($payloadTable);
+        $this->handleCommand(CreateNodeAggregateWithNode::class, $commandArguments);
+    }
+
+    /**
+     * @When the command SetNodeProperties is executed with payload:
+     */
+    public function theCommandSetNodePropertiesIsExecutedWithPayload(TableNode $payloadTable): void
+    {
+        $commandArguments = $this->readPayloadTable($payloadTable);
+        $this->handleCommand(SetNodeProperties::class, $commandArguments);
+    }
+
+    /**
+     * @When the command MoveNodeAggregate is executed with payload:
+     */
+    public function theCommandMoveNodeAggregateIsExecutedWithPayload(TableNode $payloadTable): void
+    {
+        $commandArguments = $this->readPayloadTable($payloadTable);
+        $this->handleCommand(MoveNodeAggregate::class, $commandArguments);
+    }
+
+    /**
+     * @When the command SetNodeReferences is executed with payload:
+     */
+    public function theCommandSetNodeReferencesIsExecutedWithPayload(TableNode $payloadTable): void
+    {
+        $commandArguments = $this->readPayloadTable($payloadTable);
+        $this->handleCommand(SetNodeReferences::class, $commandArguments);
+    }
+
+    /**
+     * @When the command RemoveNodeAggregate is executed with payload:
+     */
+    public function theCommandRemoveNodeAggregateIsExecutedWithPayload(TableNode $payloadTable): void
+    {
+        $commandArguments = $this->readPayloadTable($payloadTable);
+        $this->handleCommand(RemoveNodeAggregate::class, $commandArguments);
+    }
+
+    /**
+     * @When the command ChangeNodeAggregateName is executed with payload:
+     */
+    public function theCommandChangeNodeAggregateNameIsExecutedWithPayload(TableNode $payloadTable): void
+    {
+        $commandArguments = $this->readPayloadTable($payloadTable);
+        $this->handleCommand(ChangeNodeAggregateName::class, $commandArguments);
+    }
+
+    /**
+     * @When the command ChangeNodeAggregateType is executed with payload:
+     */
+    public function theCommandChangeNodeAggregateTypeIsExecutedWithPayload(TableNode $payloadTable): void
+    {
+        $commandArguments = $this->readPayloadTable($payloadTable);
+        $this->handleCommand(ChangeNodeAggregateType::class, $commandArguments);
+    }
+
+    /**
+     * @When the command CreateNodeVariant is executed with payload:
+     */
+    public function theCommandCreateNodeVariantIsExecutedWithPayload(TableNode $payloadTable): void
+    {
+        $commandArguments = $this->readPayloadTable($payloadTable);
+        $this->handleCommand(CreateNodeVariant::class, $commandArguments);
+    }
+
+    /**
+     * @When the command CreateRootNodeAggregateWithNode is executed with payload:
+     */
+    public function theCommandCreateRootNodeAggregateWithNodeIsExecutedWithPayload(TableNode $payloadTable): void
+    {
+        $commandArguments = $this->readPayloadTable($payloadTable);
+        $this->handleCommand(CreateRootNodeAggregateWithNode::class, $commandArguments);
+    }
+
+    /**
+     * @When the command UpdateRootNodeAggregateDimensions is executed with payload:
+     */
+    public function theCommandUpdateRootNodeAggregateDimensionsIsExecutedWithPayload(TableNode $payloadTable): void
+    {
+        $commandArguments = $this->readPayloadTable($payloadTable);
+        $this->handleCommand(UpdateRootNodeAggregateDimensions::class, $commandArguments);
+    }
+
+    /**
+     * @When the command TagSubtree is executed with payload:
+     */
+    public function theCommandTagSubtreeIsExecutedWithPayload(TableNode $payloadTable): void
+    {
+        $commandArguments = $this->readPayloadTable($payloadTable);
+        $this->handleCommand(TagSubtree::class, $commandArguments);
+    }
+
+    /**
+     * @When the command UntagSubtree is executed with payload:
+     */
+    public function theCommandUntagSubtreeIsExecutedWithPayload(TableNode $payloadTable): void
+    {
+        $commandArguments = $this->readPayloadTable($payloadTable);
+        $this->handleCommand(UntagSubtree::class, $commandArguments);
+    }
+
+    /**
+     * @When the command DisableNodeAggregate is executed with payload:
+     */
+    public function theCommandDisableNodeAggregateIsExecutedWithPayload(TableNode $payloadTable): void
+    {
+        $commandArguments = $this->readPayloadTable($payloadTable);
+        $this->handleCommand(DisableNodeAggregate::class, $commandArguments);
+    }
+
+    /**
+     * @When the command EnableNodeAggregate is executed with payload:
+     */
+    public function theCommandEnableNodeAggregateIsExecutedWithPayload(TableNode $payloadTable): void
+    {
+        $commandArguments = $this->readPayloadTable($payloadTable);
+        $this->handleCommand(EnableNodeAggregate::class, $commandArguments);
+    }
+
+    /**
+     * @When the command CreateRootWorkspace is executed with payload:
+     */
+    public function theCommandCreateRootWorkspaceIsExecutedWithPayload(TableNode $payloadTable): void
+    {
+        $commandArguments = $this->readPayloadTable($payloadTable);
+        $this->handleCommand(CreateRootWorkspace::class, $commandArguments);
+    }
+
+    /**
+     * @When the command CreateWorkspace is executed with payload:
+     */
+    public function theCommandCreateWorkspaceIsExecutedWithPayload(TableNode $payloadTable): void
+    {
+        $commandArguments = $this->readPayloadTable($payloadTable);
+        $this->handleCommand(CreateWorkspace::class, $commandArguments);
+    }
+
+    /**
+     * @When the command ChangeBaseWorkspace is executed with payload:
+     */
+    public function theCommandChangeBaseWorkspaceIsExecutedWithPayload(TableNode $payloadTable): void
+    {
+        $commandArguments = $this->readPayloadTable($payloadTable);
+        $this->handleCommand(ChangeBaseWorkspace::class, $commandArguments);
+    }
+
+    /**
+     * @When the command DeleteWorkspace is executed with payload:
+     */
+    public function theCommandDeleteWorkspaceIsExecutedWithPayload(TableNode $payloadTable): void
+    {
+        $commandArguments = $this->readPayloadTable($payloadTable);
+        $this->handleCommand(DeleteWorkspace::class, $commandArguments);
+    }
+
+    /**
+     * @When the command DiscardIndividualNodesFromWorkspace is executed with payload:
+     */
+    public function theCommandDiscardIndividualNodesFromWorkspaceIsExecutedWithPayload(TableNode $payloadTable): void
+    {
+        $commandArguments = $this->readPayloadTable($payloadTable);
+        $this->handleCommand(DiscardIndividualNodesFromWorkspace::class, $commandArguments);
+    }
+
+    /**
+     * @When the command DiscardWorkspace is executed with payload:
+     */
+    public function theCommandDiscardWorkspaceIsExecutedWithPayload(TableNode $payloadTable): void
+    {
+        $commandArguments = $this->readPayloadTable($payloadTable);
+        $this->handleCommand(DiscardWorkspace::class, $commandArguments);
+    }
+
+    /**
+     * @When the command PublishIndividualNodesFromWorkspace is executed with payload:
+     */
+    public function theCommandPublishIndividualNodesFromWorkspaceIsExecutedWithPayload(TableNode $payloadTable): void
+    {
+        $commandArguments = $this->readPayloadTable($payloadTable);
+        $this->handleCommand(PublishIndividualNodesFromWorkspace::class, $commandArguments);
+    }
+
+    /**
+     * @When the command PublishWorkspace is executed with payload:
+     */
+    public function theCommandPublishWorkspaceIsExecutedWithPayload(TableNode $payloadTable): void
+    {
+        $commandArguments = $this->readPayloadTable($payloadTable);
+        $this->handleCommand(PublishWorkspace::class, $commandArguments);
+    }
+
+    /**
+     * @When the command RebaseWorkspace is executed with payload:
+     */
+    public function theCommandRebaseWorkspaceIsExecutedWithPayload(TableNode $payloadTable): void
+    {
+        $commandArguments = $this->readPayloadTable($payloadTable);
+        $this->handleCommand(RebaseWorkspace::class, $commandArguments);
     }
 
     /**
@@ -98,7 +319,7 @@ trait GenericCommandExecutionAndEventPublication
     {
         $commandArguments = $this->readPayloadTable($payloadTable);
         try {
-            $this->handleCommand($shortCommandName, $commandArguments);
+            $this->handleCommand(self::resolveShortCommandName($shortCommandName), $commandArguments);
         } catch (\Exception $exception) {
             $this->lastCommandException = $exception;
         }
@@ -110,7 +331,7 @@ trait GenericCommandExecutionAndEventPublication
     public function theCommandIsExecutedWithJsonPayload(string $shortCommandName, string $payload): void
     {
         $commandArguments = json_decode($payload, true, 512, JSON_THROW_ON_ERROR);
-        $this->handleCommand($shortCommandName, $commandArguments);
+        $this->handleCommand(self::resolveShortCommandName($shortCommandName), $commandArguments);
     }
 
     /**
@@ -120,7 +341,7 @@ trait GenericCommandExecutionAndEventPublication
     {
         $commandArguments = json_decode($payload, true, 512, JSON_THROW_ON_ERROR);
         try {
-            $this->handleCommand($shortCommandName, $commandArguments);
+            $this->handleCommand(self::resolveShortCommandName($shortCommandName), $commandArguments);
         } catch (\Exception $exception) {
             $this->lastCommandException = $exception;
         }
@@ -132,13 +353,15 @@ trait GenericCommandExecutionAndEventPublication
     public function theFollowingCreateNodeAggregateWithNodeCommandsAreExecuted(string $shortCommandName, TableNode $table): void
     {
         foreach ($table->getHash() as $row) {
-            $this->handleCommand($shortCommandName, $row);
+            $this->handleCommand(self::resolveShortCommandName($shortCommandName), $row);
         }
     }
 
-    private function handleCommand(string $shortCommandName, array $commandArguments): void
+    /**
+     * @param class-string<CommandInterface> $commandClassName
+     */
+    private function handleCommand(string $commandClassName, array $commandArguments): void
     {
-        $commandClassName = self::resolveShortCommandName($shortCommandName);
         $commandArguments = $this->addDefaultCommandArgumentValues($commandClassName, $commandArguments);
         $command = $commandClassName::fromArray($commandArguments);
         if ($command instanceof CreateRootNodeAggregateWithNode) {
@@ -154,6 +377,9 @@ trait GenericCommandExecutionAndEventPublication
     {
         $commandArguments['workspaceName'] = $commandArguments['workspaceName'] ?? $this->currentWorkspaceName?->value;
         $commandArguments['coveredDimensionSpacePoint'] = $commandArguments['coveredDimensionSpacePoint'] ?? $this->currentDimensionSpacePoint?->coordinates;
+        if (is_string($commandArguments['coveredDimensionSpacePoint'])) {
+            $commandArguments['coveredDimensionSpacePoint'] = \json_decode($commandArguments['coveredDimensionSpacePoint'], true, 512, JSON_THROW_ON_ERROR);
+        }
         $commandArguments['dimensionSpacePoint'] = $commandArguments['dimensionSpacePoint'] ?? $this->currentDimensionSpacePoint?->coordinates;
         if (is_string($commandArguments['nodeAggregateId'] ?? null) && str_starts_with($commandArguments['nodeAggregateId'], '$')) {
             $commandArguments['nodeAggregateId'] = $this->rememberedNodeAggregateIds[substr($commandArguments['nodeAggregateId'], 1)]?->value;
@@ -277,7 +503,6 @@ trait GenericCommandExecutionAndEventPublication
     }
 
     /**
-     * @throws \Exception
      * @throws \Symfony\Component\Serializer\Exception\ExceptionInterface
      */
     protected function publishEvent(string $eventType, StreamName $streamName, array $eventPayload): void
@@ -288,19 +513,23 @@ trait GenericCommandExecutionAndEventPublication
             Event\EventData::fromString(json_encode($eventPayload)),
             Event\EventMetadata::fromArray([])
         );
-        /** @var EventPersister $eventPersister */
-        $eventPersister = (new \ReflectionClass($this->currentContentRepository))->getProperty('eventPersister')
-            ->getValue($this->currentContentRepository);
-        /** @var EventNormalizer $eventNormalizer */
-        $eventNormalizer = (new \ReflectionClass($eventPersister))->getProperty('eventNormalizer')
-            ->getValue($eventPersister);
-        $event = $eventNormalizer->denormalize($artificiallyConstructedEvent);
 
-        $eventPersister->publishEvents($this->currentContentRepository, new EventsToPublish(
-            $streamName,
-            Events::with($event),
-            ExpectedVersion::ANY()
-        ));
+        // HACK can be replaced, once https://github.com/neos/neos-development-collection/pull/5341 is merged
+        $eventStoreAndSubscriptionEngine = new class implements ContentRepositoryServiceFactoryInterface {
+            public EventStoreInterface|null $eventStore;
+            public SubscriptionEngine|null $subscriptionEngine;
+            public function build(ContentRepositoryServiceFactoryDependencies $serviceFactoryDependencies): ContentRepositoryServiceInterface
+            {
+                $this->eventStore = $serviceFactoryDependencies->eventStore;
+                $this->subscriptionEngine = $serviceFactoryDependencies->subscriptionEngine;
+                return new class implements ContentRepositoryServiceInterface
+                {
+                };
+            }
+        };
+        $this->getContentRepositoryService($eventStoreAndSubscriptionEngine);
+        $eventStoreAndSubscriptionEngine->eventStore->commit($streamName, Events::with($artificiallyConstructedEvent), ExpectedVersion::ANY());
+        $eventStoreAndSubscriptionEngine->subscriptionEngine->catchUpActive();
     }
 
     /**
@@ -309,7 +538,7 @@ trait GenericCommandExecutionAndEventPublication
      * @Then the last command should have thrown an exception of type :shortExceptionName with message:
      * @Then the last command should have thrown an exception of type :shortExceptionName
      */
-    public function theLastCommandShouldHaveThrown(string $shortExceptionName, ?int $expectedCode = null, PyStringNode $expectedMessage = null): void
+    public function theLastCommandShouldHaveThrown(string $shortExceptionName, ?int $expectedCode = null, ?PyStringNode $expectedMessage = null): void
     {
         if ($shortExceptionName === 'WorkspaceRebaseFailed' || $shortExceptionName === 'PartialWorkspaceRebaseFailed') {
             throw new \RuntimeException('Please use the assertion "the last command should have thrown the WorkspaceRebaseFailed exception with" instead.');

@@ -65,7 +65,7 @@ Feature: Remove Property
     And I expect this node to have no properties
 
   Scenario: Ignoring transformation if property does not exist on node
-    When I run the following node migration for workspace "live", creating target workspace "migration-workspace" on contentStreamId "migration-cs", without publishing on success:
+    When I run the following node migration for workspace "live", creating target workspace "migration-workspace" on contentStreamId "migration-cs" and exceptions are caught:
     """yaml
     migration:
       -
@@ -80,9 +80,9 @@ Feature: Remove Property
             settings:
               property: 'notExisting'
     """
-    # we did not change anything because notExisting does not exist
-    When I am in workspace "migration-workspace" and dimension space point {}
-    Then I expect a node identified by migration-cs;sir-david-nodenborough;{} to exist in the content graph
-    And I expect this node to have the following properties:
-      | Key  | Value           |
-      | text | "Original text" |
+
+    Then the last command should have thrown an exception of type "MigrationException" with message:
+    """
+    Migration did not issue any commands.
+    """
+    And I expect the content stream "migration-cs" to not exist

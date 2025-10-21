@@ -36,6 +36,7 @@ Feature: Test cases for partial publish to live and uri path generation
       | nodeTypeName              | "Neos.Neos:Site"         |
       | parentNodeAggregateId     | "lady-eleonode-rootford" |
       | originDimensionSpacePoint | {"example":"source"}     |
+      | nodeName                  | "site"                   |
     And the command CreateWorkspace is executed with payload:
       | Key                       | Value                    |
       | workspaceName             | "myworkspace"            |
@@ -49,7 +50,7 @@ Feature: Test cases for partial publish to live and uri path generation
       | nodeTypeName              | "Neos.Neos:Document"      |
       | parentNodeAggregateId     | "shernode-homes"          |
       | originDimensionSpacePoint | {"example":"source"}      |
-      | properties                | {"uriPathSegment": "just"}|
+      | initialPropertyValues     | {"uriPathSegment": "just"}|
       | workspaceName             | "myworkspace"             |
     And the command PublishIndividualNodesFromWorkspace is executed with payload:
       | Key                       | Value                      |
@@ -65,4 +66,4 @@ Feature: Test cases for partial publish to live and uri path generation
       | "65901ded4f068dac14ad0dce4f459b29" | ""         | "lady-eleonode-rootford"                                     | "lady-eleonode-rootford" | null                     | null                     | null                      | "Neos.Neos:Sites"    |
       | "fbe53ddc3305685fbb4dbf529f283a0e" | ""         | "lady-eleonode-rootford"                                     | "lady-eleonode-rootford" | null                     | null                     | null                      | "Neos.Neos:Sites"    |
       | "65901ded4f068dac14ad0dce4f459b29" | ""         | "lady-eleonode-rootford/shernode-homes"                      | "shernode-homes"         | "lady-eleonode-rootford" | null                     | null                      | "Neos.Neos:Site"     |
-      | "65901ded4f068dac14ad0dce4f459b29" | ""         | "lady-eleonode-rootford/shernode-homes/justsomepage"         | "justsomepage"           | "shernode-homes"         | null                     | null                      | "Neos.Neos:Document"     |
+      | "65901ded4f068dac14ad0dce4f459b29" | "just"     | "lady-eleonode-rootford/shernode-homes/justsomepage"         | "justsomepage"           | "shernode-homes"         | null                     | null                      | "Neos.Neos:Document"     |

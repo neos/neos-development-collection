@@ -63,16 +63,18 @@ final class TetheredNodeTypeDefinitions implements \IteratorAggregate
         return $this->tetheredNodeTypeDefinitions[$nodeName] ?? null;
     }
 
+    /**
+     * @template T
+     * @param \Closure(TetheredNodeTypeDefinition): T $callback
+     * @return list<T>
+     */
+    public function map(\Closure $callback): array
+    {
+        return array_map($callback, array_values($this->tetheredNodeTypeDefinitions));
+    }
+
     public function getIterator(): \Traversable
     {
         yield from $this->tetheredNodeTypeDefinitions;
-    }
-
-    /**
-     * @return array<TetheredNodeTypeDefinition>
-     */
-    public function toArray(): array
-    {
-        return $this->tetheredNodeTypeDefinitions;
     }
 }

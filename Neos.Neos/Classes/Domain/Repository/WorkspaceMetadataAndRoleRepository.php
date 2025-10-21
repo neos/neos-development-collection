@@ -362,6 +362,30 @@ final readonly class WorkspaceMetadataAndRoleRepository
     }
 
     /**
+     * @return \Traversable<ContentRepositoryId,WorkspaceName>
+     */
+    public function findAllPersonalWorkspaceNamesByUser(UserId $userId): \Traversable
+    {
+        $tableMetadata = self::TABLE_NAME_WORKSPACE_METADATA;
+        $query = <<<SQL
+            SELECT
+                content_repository_id, workspace_name
+            FROM
+                {$tableMetadata}
+            WHERE
+                classification = :personalWorkspaceClassification
+                AND owner_user_id = :userId
+        SQL;
+        $rows = $this->dbal->fetchAllAssociative($query, [
+            'personalWorkspaceClassification' => WorkspaceClassification::PERSONAL->value,
+            'userId' => $userId->value,
+        ]);
+        foreach ($rows as $row) {
+            yield ContentRepositoryId::fromString($row['content_repository_id']) => WorkspaceName::fromString($row['workspace_name']);
+        }
+    }
+
+    /**
      * @param \Closure(): void $fn
      * @return void
      */

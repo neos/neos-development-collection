@@ -16,11 +16,11 @@ namespace Neos\Neos\Controller\Module\Administration;
 
 use Neos\ContentRepository\Core\Feature\NodeRenaming\Command\ChangeNodeAggregateName;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate;
-use Neos\ContentRepository\Core\SharedModel\Workspace\Workspace;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeNameIsAlreadyCovered;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeTypeNotFound;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
+use Neos\ContentRepository\Core\SharedModel\Workspace\Workspace;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\ContentRepositoryRegistry\Exception\ContentRepositoryNotFoundException;
@@ -41,10 +41,6 @@ use Neos\Neos\Domain\Repository\SiteRepository;
 use Neos\Neos\Domain\Service\NodeTypeNameFactory;
 use Neos\Neos\Domain\Service\SiteService;
 use Neos\Neos\Domain\Service\UserService;
-use Neos\Neos\FrontendRouting\SiteDetection\SiteDetectionResult;
-use Neos\SiteKickstarter\Generator\SitePackageGeneratorInterface;
-use Neos\SiteKickstarter\Service\SiteGeneratorCollectingService;
-use Neos\SiteKickstarter\Service\SitePackageGeneratorNameService;
 
 /**
  * The Neos Sites Management module controller
@@ -88,6 +84,18 @@ class SitesController extends AbstractModuleController
      * @var SessionInterface
      */
     protected $session;
+
+    /**
+     * This is not 100% correct, but it is as good as we can get it to work right now
+     * It works when the created site's name will use the configuration "*" which by default uses the default preset.
+     *
+     * As proposed here https://github.com/neos/neos-development-collection/issues/4470#issuecomment-2432140074
+     * the site must have a field to define the contentRepositoryId to correctly create sites dynamically.
+     *
+     * @Flow\InjectConfiguration("sitePresets.default.contentRepository")
+     * @var string|null
+     */
+    protected $defaultContentRepositoryForNewSites;
 
     #[Flow\Inject]
     protected UserService $domainUserService;
@@ -236,64 +244,28 @@ class SitesController extends AbstractModuleController
      */
     public function newSiteAction(): void
     {
-        // This is not 100% correct, but it is as good as we can get it to work right now
         try {
-            $contentRepositoryId = SiteDetectionResult::fromRequest($this->request->getHttpRequest())
-                ->contentRepositoryId;
-        } catch (\RuntimeException) {
-            $contentRepositoryId = ContentRepositoryId::fromString('default');
+            $contentRepositoryId = ContentRepositoryId::fromString($this->defaultContentRepositoryForNewSites ?? '');
+        } catch (\InvalidArgumentException $e) {
+            throw new \RuntimeException('The default content repository for new sites configured in "Neos.Neos.sitePresets.default.contentRepository" is not valid.', 1736946907, $e);
         }
 
         try {
             $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryId);
-            $documentNodeTypes = $contentRepository->getNodeTypeManager()->getSubNodeTypes(NodeTypeNameFactory::forSite(), false);
-        } catch (ContentRepositoryNotFoundException) {
-            $documentNodeTypes = [];
+        } catch (ContentRepositoryNotFoundException $e) {
+            throw new \RuntimeException(sprintf('The default content repository for new sites "%s" could not be instantiated.', $contentRepositoryId->value), 1736946907);
         }
 
+        $documentNodeTypes = $contentRepository->getNodeTypeManager()->getSubNodeTypes(NodeTypeNameFactory::forSite(), false);
 
         $sitePackages = $this->packageManager->getFilteredPackages('available', 'neos-site');
 
         $this->view->assignMultiple([
+            'defaultContentRepositoryForNewSites' => $contentRepositoryId->value,
             'sitePackages' => $sitePackages,
             'documentNodeTypes' => $documentNodeTypes
         ]);
     }
-
-    /**
-     * Import a site from site package.
-     *
-     * @param string $packageKey Package from where the import will come
-     * @Flow\Validate(argumentName="$packageKey", type="\Neos\Neos\Validation\Validator\PackageKeyValidator")
-     * @return void
-     */
-    /*public function importSiteAction($packageKey)
-    {
-        try {
-            $this->siteImportService->importFromPackage($packageKey);
-            $this->addFlashMessage(
-                $this->getModuleLabel('sites.theSiteHasBeenImported.body'),
-                '',
-                Message::SEVERITY_OK,
-                [],
-                1412372266
-            );
-        } catch (\Exception $exception) {
-            $logMessage = $this->throwableStorage->logThrowable($exception);
-            $this->logger->error($logMessage, LogEnvironment::fromMethodName(__METHOD__));
-            $this->addFlashMessage(
-                $this->getModuleLabel(
-                    'sites.importError.body',
-                    [htmlspecialchars($packageKey), htmlspecialchars($exception->getMessage())]
-                ),
-                $this->getModuleLabel('sites.importError.title'),
-                Message::SEVERITY_ERROR,
-                [],
-                1412372375
-            );
-        }
-        $this->unsetLastVisitedNodeAndRedirect('index');
-    }*/
 
     /**
      * Create a new empty site.
@@ -456,7 +428,7 @@ class SitesController extends AbstractModuleController
      * @Flow\IgnoreValidation("$domain")
      * @return void
      */
-    public function newDomainAction(Domain $domain = null, Site $site = null)
+    public function newDomainAction(?Domain $domain = null, ?Site $site = null)
     {
         $this->view->assignMultiple([
             'domain' => $domain,

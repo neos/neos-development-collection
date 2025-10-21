@@ -1,0 +1,62 @@
+prototype(Neos.Workspace.Ui:Component.Modal.Delete) < prototype(Neos.Fusion:Component) {
+  /// string
+  workspaceName = null
+  /// string
+  workspaceTitle = null
+
+  @private {
+    i18n = ${I18n.id('').source('Main').package('Neos.Workspace.Ui')}
+    popoverId = 'workspace-delete-modal'
+    workspaceTableRowId = ${'workspace-row-' + props.workspaceName}
+  }
+
+  renderer = afx`
+    <div popover id={private.popoverId}>
+      <header>
+        <button
+          type="button"
+          class="neos-close neos-button"
+          popovertarget={private.popoverId}
+          popovertargetaction="close"
+        >
+          <Neos.Workspace.Ui:Component.Icon icon="times"/>
+        </button>
+        <div class="neos-header">
+          {private.i18n.id('workspaces.dialog.confirmWorkspaceDeletion').arguments([props.workspaceTitle])}
+        </div>
+      </header>
+      <section>
+        <p>{private.i18n.id('workspaces.dialog.thisWillDeleteTheWorkspace')}</p>
+      </section>
+      <footer>
+        <button
+          type="button"
+          class="neos-button"
+          popovertarget={private.popoverId}
+          popovertargetaction="close"
+        >
+          {private.i18n.id('cancel')}
+        </button>
+        <Neos.Fusion.Form:Form
+          form.target.action="delete"
+          form.target.format="htmx"
+          form.target.arguments.workspaceName={props.workspaceName}
+          attributes.class="neos-inline"
+          attributes.hx-post={form.getTarget()}
+          attributes.hx-target={'#' + private.workspaceTableRowId}
+          attributes.hx-swap="delete"
+          attributes.hx-disabled-elt="find button"
+          attributes.hx-on--after-request={'document.getElementById("' + private.popoverId + '").hidePopover()'}
+        >
+          <button
+            autofocus
+            type="submit"
+            class="neos-button neos-button-danger"
+          >
+            {private.i18n.id('workspaces.yesDeleteWorkspace')}
+          </button>
+        </Neos.Fusion.Form:Form>
+      </footer>
+    </div>
+  `
+}

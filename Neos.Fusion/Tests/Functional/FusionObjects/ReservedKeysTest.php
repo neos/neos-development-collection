@@ -30,7 +30,7 @@ class ReservedKeysTest extends AbstractFusionObjectTest
         $this->expectException(Exception::class);
         $this->objectManager->get(RuntimeFactory::class)->createFromSourceCode(
             FusionSourceCodeCollection::fromFilePath(__DIR__ . '/Fixtures/ReservedKeysFusion/ReservedKeys.fusion'),
-            FusionGlobals::empty()
+            FusionGlobals::createEmpty()
         );
     }
 

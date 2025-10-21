@@ -46,7 +46,7 @@ class ContentCacheFlusher
     /**
      * @var array<string,string>
      */
-    private array $tagsToFlushAfterPersistance = [];
+    private array $tagsToFlushAfterPersistence = [];
 
     public function __construct(
         protected readonly ContentCache $contentCache,
@@ -227,6 +227,7 @@ class ContentCacheFlusher
             $affectedEntries = $this->contentCache->flushByTags(array_keys($tagsToFlush));
             $this->systemLogger->debug(sprintf('Content cache: Removed %s entries', $affectedEntries));
         }
+        $this->emitTagsFlushed($tagsToFlush);
     }
 
     /**
@@ -236,7 +237,7 @@ class ContentCacheFlusher
      */
     protected function collectTagsForFlushOnShutdown(array $tagsToFlush): void
     {
-        $this->tagsToFlushAfterPersistance = array_merge($tagsToFlush, $this->tagsToFlushAfterPersistance);
+        $this->tagsToFlushAfterPersistence = array_merge($tagsToFlush, $this->tagsToFlushAfterPersistence);
     }
 
     /**
@@ -262,12 +263,23 @@ class ContentCacheFlusher
      */
     public function flushCollectedTags(): void
     {
-        $this->flushTagsImmediately($this->tagsToFlushAfterPersistance);
-        $this->tagsToFlushAfterPersistance = [];
+        $this->flushTagsImmediately($this->tagsToFlushAfterPersistence);
+        $this->tagsToFlushAfterPersistence = [];
     }
 
     public function shutdownObject(): void
     {
         $this->flushCollectedTags();
+    }
+
+    /**
+     * Signal that is triggered whenever cache tags get flushed
+     *
+     * @Flow\Signal
+     * @param array<string, string> $tagsToFlush
+     * @return void
+     */
+    protected function emitTagsFlushed(array $tagsToFlush): void
+    {
     }
 }

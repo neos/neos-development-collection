@@ -29,7 +29,7 @@ class DimensionController extends AbstractModuleController
     #[Flow\Inject]
     protected ContentRepositoryRegistry $contentRepositoryRegistry;
 
-    public function indexAction(string $type = 'intraDimension', string $dimensionSpacePointHash = null): void
+    public function indexAction(string $type = 'intraDimension', ?string $dimensionSpacePointHash = null): void
     {
         $contentRepositoryId = SiteDetectionResult::fromRequest($this->request->getHttpRequest())
             ->contentRepositoryId;

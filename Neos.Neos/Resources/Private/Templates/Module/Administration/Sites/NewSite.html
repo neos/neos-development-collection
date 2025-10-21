@@ -5,30 +5,11 @@
 	<h2>{neos:backend.translate(id: 'sites.new', value: 'New site', source: 'Modules')}</h2>
 
   <div class="neos-row-fluid">
-    <f:form action="importSite">
-      <fieldset class="neos-span3">
-        <legend>{neos:backend.translate(id: 'sites.import', value: 'Import a site', source: 'Modules')}</legend>
-        <f:if condition="{sitePackages -> f:count()} > 0">
-          <f:then>
-            <div class="neos-control-group">
-              <label class="neos-control-label" for="site">{neos:backend.translate(id: 'sites.select', value: 'Select a site package', source: 'Modules')}</label>
-              <div class="neos-controls neos-select">
-                <f:form.select name="packageKey" options="{sitePackages}" optionLabelField="packageKey" optionValueField="packageKey" id="site" class="neos-span12" />
-              </div>
-            </div>
-            <f:form.submit value="{neos:backend.translate(id: 'sites.import', value: 'Import Site', source: 'Modules')}" class="neos-button neos-button-primary" />
-          </f:then>
-          <f:else>
-            <p>{neos:backend.translate(id: 'sites.noPackackeInfo', value: 'No site packages are available. Make sure you have an active site package.', source: 'Modules')}
-            </p>
-          </f:else>
-        </f:if>
-      </fieldset>
-    </f:form>
-
     <f:form action="createSiteNode">
-      <fieldset class="neos-span3 neos-offset1">
+      <fieldset class="neos-span3">
         <legend>{neos:backend.translate(id: 'sites.createBlank', value: 'Create a blank site', source: 'Modules')}</legend>
+				{neos:backend.translate(id: 'sites.creationContentRepository', value: 'In the content repository: "{defaultContentRepositoryForNewSites}"', source: 'Modules', arguments: {0: defaultContentRepositoryForNewSites})}
+
         <f:if condition="{sitePackages -> f:count()} > 0">
           <f:then>
             <div class="neos-control-group">
@@ -59,6 +40,7 @@
         </f:if>
       </fieldset>
     </f:form>
+
   </div>
   <div class="neos-footer">
     <f:link.action action="index" class="neos-button">{neos:backend.translate(id: 'cancel', value: 'Cancel')}</f:link.action>

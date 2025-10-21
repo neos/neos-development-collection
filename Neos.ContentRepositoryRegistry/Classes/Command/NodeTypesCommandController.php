@@ -34,10 +34,10 @@ class NodeTypesCommandController extends CommandController
      *
      * @param string $nodeTypeName The name of the NodeType to show
      * @param string $path Path of the NodeType-configuration which will be shown
-     * @param int $level Truncate the configuration at this depth and show '...' (Usefully for only seeing the keys of the properties)
+     * @param int $depth Truncate the configuration at this depth and show '...' (Usefully for only seeing the keys of the properties)
      * @param string $contentRepository Identifier of the Content Repository to determine the set of NodeTypes
      */
-    public function showCommand(string $nodeTypeName, string $path = '', int $level = 0, string $contentRepository = 'default'): void
+    public function showCommand(string $nodeTypeName, string $path = '', int $depth = 0, string $contentRepository = 'default'): void
     {
         $contentRepositoryId = ContentRepositoryId::fromString($contentRepository);
         $nodeTypeManager = $this->contentRepositoryRegistry->get($contentRepositoryId)->getNodeTypeManager();
@@ -54,11 +54,11 @@ class NodeTypesCommandController extends CommandController
         }
 
         if (empty($path)) {
-            $configuration = [$nodeTypeName => self::truncateArrayAtLevel($nodeType->getFullConfiguration(), $level)];
+            $configuration = [$nodeTypeName => self::truncateArrayAtDepth($nodeType->getFullConfiguration(), $depth)];
         } else {
             $configuration = $nodeType->getConfiguration($path);
             if (is_array($configuration)) {
-                $configuration = self::truncateArrayAtLevel($configuration, $level);
+                $configuration = self::truncateArrayAtDepth($configuration, $depth);
             }
         }
 
@@ -107,18 +107,18 @@ class NodeTypesCommandController extends CommandController
 
     /**
      * @param array<string, mixed> $array
-     * @param int $truncateLevel 0 for no truncation and 1 to only show the first keys of the array
+     * @param int $maximumDepth 0 for no truncation and 1 to only show the first keys of the array
      * @param int $currentLevel 1 for the start and will be incremented recursively
      * @return array<string, mixed>
      */
-    private static function truncateArrayAtLevel(array $array, int $truncateLevel, int $currentLevel = 1): array
+    private static function truncateArrayAtDepth(array $array, int $maximumDepth, int $currentLevel = 1): array
     {
-        if ($truncateLevel <= 0) {
+        if ($maximumDepth <= 0) {
             return $array;
         }
         $truncatedArray = [];
         foreach ($array as $key => $value) {
-            if ($currentLevel >= $truncateLevel) {
+            if ($currentLevel >= $maximumDepth) {
                 $truncatedArray[$key] = '...'; // truncated
                 continue;
             }
@@ -126,7 +126,7 @@ class NodeTypesCommandController extends CommandController
                 $truncatedArray[$key] = $value;
                 continue;
             }
-            $truncatedArray[$key] = self::truncateArrayAtLevel($value, $truncateLevel, $currentLevel + 1);
+            $truncatedArray[$key] = self::truncateArrayAtDepth($value, $maximumDepth, $currentLevel + 1);
         }
         return $truncatedArray;
     }

@@ -20,59 +20,47 @@ use Neos\ContentRepository\Core\CommandHandler\CommandInterface;
 use Neos\ContentRepository\Core\Dimension\ContentDimensionSourceInterface;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\DimensionSpace\InterDimensionalVariationGraph;
+use Neos\ContentRepository\Core\EventStore\DecoratedEvent;
+use Neos\ContentRepository\Core\EventStore\EventInterface;
 use Neos\ContentRepository\Core\EventStore\EventNormalizer;
-use Neos\ContentRepository\Core\EventStore\EventPersister;
+use Neos\ContentRepository\Core\EventStore\Events as DomainEvents;
 use Neos\ContentRepository\Core\EventStore\EventsToPublish;
 use Neos\ContentRepository\Core\EventStore\InitiatingEventMetadata;
+use Neos\ContentRepository\Core\EventStore\PublishedEvents;
 use Neos\ContentRepository\Core\Feature\Security\AuthProviderInterface;
 use Neos\ContentRepository\Core\Feature\Security\Dto\UserId;
 use Neos\ContentRepository\Core\Feature\Security\Exception\AccessDenied;
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
-use Neos\ContentRepository\Core\Projection\CatchUp;
-use Neos\ContentRepository\Core\Projection\CatchUpHookFactoryDependencies;
-use Neos\ContentRepository\Core\Projection\CatchUpOptions;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphInterface;
-use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphProjectionInterface;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphReadModelInterface;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentSubgraphInterface;
-use Neos\ContentRepository\Core\Projection\ProjectionInterface;
-use Neos\ContentRepository\Core\Projection\ProjectionsAndCatchUpHooks;
 use Neos\ContentRepository\Core\Projection\ProjectionStateInterface;
-use Neos\ContentRepository\Core\Projection\ProjectionStatuses;
-use Neos\ContentRepository\Core\Projection\WithMarkStaleInterface;
+use Neos\ContentRepository\Core\Projection\ProjectionStates;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
-use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryStatus;
 use Neos\ContentRepository\Core\SharedModel\Exception\WorkspaceDoesNotExist;
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStream;
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreams;
 use Neos\ContentRepository\Core\SharedModel\Workspace\Workspace;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepository\Core\SharedModel\Workspace\Workspaces;
+use Neos\ContentRepository\Core\Subscription\Engine\SubscriptionEngine;
+use Neos\ContentRepository\Core\Subscription\Exception\CatchUpHadErrors;
 use Neos\EventStore\EventStoreInterface;
 use Neos\EventStore\Exception\ConcurrencyException;
-use Neos\EventStore\Model\EventEnvelope;
-use Neos\EventStore\Model\EventStream\VirtualStreamName;
+use Neos\EventStore\Model\Event\CorrelationId;
+use Neos\EventStore\Model\Events;
 use Psr\Clock\ClockInterface;
 
 /**
  * Main Entry Point to the system. Encapsulates the full event-sourced Content Repository.
  *
  * Use this to:
- * - set up the necessary database tables and contents via {@see ContentRepository::setUp()}
- * - send commands to the system (to mutate state) via {@see ContentRepository::handle()}
- * - access projection state (to read state) via {@see ContentRepository::projectionState()}
- * - catch up projections via {@see ContentRepository::catchUpProjection()}
+ * - send commands to the system (to mutate state) via {@see self::handle()}
+ * - access the content graph read model
+ * - access 3rd party read models via {@see self::projectionState()}
  *
  * @api
  */
 final class ContentRepository
 {
-    /**
-     * @var array<class-string<ProjectionStateInterface>, ProjectionStateInterface>
-     */
-    private array $projectionStateCache;
-
     /**
      * @internal use the {@see ContentRepositoryFactory::getOrBuild()} to instantiate
      */
@@ -80,9 +68,8 @@ final class ContentRepository
         public readonly ContentRepositoryId $id,
         private readonly CommandBus $commandBus,
         private readonly EventStoreInterface $eventStore,
-        private readonly ProjectionsAndCatchUpHooks $projectionsAndCatchUpHooks,
         private readonly EventNormalizer $eventNormalizer,
-        private readonly EventPersister $eventPersister,
+        private readonly SubscriptionEngine $subscriptionEngine,
         private readonly NodeTypeManager $nodeTypeManager,
         private readonly InterDimensionalVariationGraph $variationGraph,
         private readonly ContentDimensionSourceInterface $contentDimensionSource,
@@ -90,6 +77,7 @@ final class ContentRepository
         private readonly ClockInterface $clock,
         private readonly ContentGraphReadModelInterface $contentGraphReadModel,
         private readonly CommandHookInterface $commandHook,
+        private readonly ProjectionStates $projectionStates,
     ) {
     }
 
@@ -108,33 +96,41 @@ final class ContentRepository
         }
 
         $toPublish = $this->commandBus->handle($command);
+        $correlationId = CorrelationId::fromString(sprintf('%s_%s', substr($command::class, strrpos($command::class, '\\') + 1, 20), bin2hex(random_bytes(9))));
 
         // simple case
         if ($toPublish instanceof EventsToPublish) {
-            $eventsToPublish = $this->enrichEventsToPublishWithMetadata($toPublish);
-            $this->eventPersister->publishWithoutCatchup($eventsToPublish);
-            $this->catchupProjections();
+            $this->eventStore->commit($toPublish->streamName, $this->enrichAndNormalizeEvents($toPublish->events, $correlationId), $toPublish->expectedVersion);
+            $fullCatchUpResult = $this->subscriptionEngine->catchUpActive(); // NOTE: we don't batch here, to ensure the catchup is run completely and any errors don't stop it.
+            if ($fullCatchUpResult->hadErrors()) {
+                throw CatchUpHadErrors::createFromErrors($fullCatchUpResult->errors);
+            }
+            $additionalCommands = $this->commandHook->onAfterHandle($command, $toPublish->events->toInnerEvents());
+            foreach ($additionalCommands as $additionalCommand) {
+                $this->handle($additionalCommand);
+            }
             return;
         }
 
         // control-flow aware command handling via generator
+        $publishedEvents = PublishedEvents::createEmpty();
         try {
-            foreach ($toPublish as $yieldedEventsToPublish) {
-                $eventsToPublish = $this->enrichEventsToPublishWithMetadata($yieldedEventsToPublish);
+            foreach ($toPublish as $eventsToPublish) {
                 try {
-                    $this->eventPersister->publishWithoutCatchup($eventsToPublish);
+                    $this->eventStore->commit($eventsToPublish->streamName, $this->enrichAndNormalizeEvents($eventsToPublish->events, $correlationId), $eventsToPublish->expectedVersion);
+                    $publishedEvents = $publishedEvents->withAppendedEvents($eventsToPublish->events->toInnerEvents());
                 } catch (ConcurrencyException $concurrencyException) {
                     // we pass the exception into the generator (->throw), so it could be try-caught and reacted upon:
                     //
                     //   try {
-                    //      yield EventsToPublish(...);
+                    //      yield new EventsToPublish(...);
                     //   } catch (ConcurrencyException $e) {
                     //      yield $this->reopenContentStream();
                     //      throw $e;
                     //   }
                     $yieldedErrorStrategy = $toPublish->throw($concurrencyException);
                     if ($yieldedErrorStrategy instanceof EventsToPublish) {
-                        $this->eventPersister->publishWithoutCatchup($yieldedErrorStrategy);
+                        $this->eventStore->commit($yieldedErrorStrategy->streamName, $this->enrichAndNormalizeEvents($yieldedErrorStrategy->events, $correlationId), $yieldedErrorStrategy->expectedVersion);
                     }
                     throw $concurrencyException;
                 }
@@ -142,7 +138,14 @@ final class ContentRepository
         } finally {
             // We always NEED to catchup even if there was an unexpected ConcurrencyException to make sure previous commits are handled.
             // Technically it would be acceptable for the catchup to fail here (due to hook errors) because all the events are already persisted.
-            $this->catchupProjections();
+            $fullCatchUpResult = $this->subscriptionEngine->catchUpActive(); // NOTE: we don't batch here, to ensure the catchup is run completely and any errors don't stop it.
+            if ($fullCatchUpResult->hadErrors()) {
+                throw CatchUpHadErrors::createFromErrors($fullCatchUpResult->errors);
+            }
+        }
+        $additionalCommands = $this->commandHook->onAfterHandle($command, $publishedEvents);
+        foreach ($additionalCommands as $additionalCommand) {
+            $this->handle($additionalCommand);
         }
     }
 
@@ -154,119 +157,7 @@ final class ContentRepository
      */
     public function projectionState(string $projectionStateClassName): ProjectionStateInterface
     {
-        if (!isset($this->projectionStateCache)) {
-            foreach ($this->projectionsAndCatchUpHooks->projections as $projection) {
-                if ($projection instanceof ContentGraphProjectionInterface) {
-                    continue;
-                }
-                $projectionState = $projection->getState();
-                $this->projectionStateCache[$projectionState::class] = $projectionState;
-            }
-        }
-        if (isset($this->projectionStateCache[$projectionStateClassName])) {
-            /** @var T $projectionState */
-            $projectionState = $this->projectionStateCache[$projectionStateClassName];
-            return $projectionState;
-        }
-        if (in_array(ContentGraphReadModelInterface::class, class_implements($projectionStateClassName), true)) {
-            throw new \InvalidArgumentException(sprintf('Accessing the internal content repository projection state via %s(%s) is not allowed. Please use the API on the content repository instead.', __FUNCTION__, $projectionStateClassName), 1729338679);
-        }
-
-        throw new \InvalidArgumentException(sprintf('A projection state of type "%s" is not registered in this content repository instance.', $projectionStateClassName), 1662033650);
-    }
-
-    /**
-     * @param class-string<ProjectionInterface<ProjectionStateInterface>> $projectionClassName
-     */
-    public function catchUpProjection(string $projectionClassName, CatchUpOptions $options): void
-    {
-        $projection = $this->projectionsAndCatchUpHooks->projections->get($projectionClassName);
-
-        $catchUpHookFactory = $this->projectionsAndCatchUpHooks->getCatchUpHookFactoryForProjection($projection);
-        $catchUpHook = $catchUpHookFactory?->build(CatchUpHookFactoryDependencies::create(
-            $this->id,
-            $projection->getState(),
-            $this->nodeTypeManager,
-            $this->contentDimensionSource,
-            $this->variationGraph
-        ));
-
-        // TODO allow custom stream name per projection
-        $streamName = VirtualStreamName::all();
-        $eventStream = $this->eventStore->load($streamName);
-        if ($options->maximumSequenceNumber !== null) {
-            $eventStream = $eventStream->withMaximumSequenceNumber($options->maximumSequenceNumber);
-        }
-
-        $eventApplier = function (EventEnvelope $eventEnvelope) use ($projection, $catchUpHook, $options) {
-            $event = $this->eventNormalizer->denormalize($eventEnvelope->event);
-            if ($options->progressCallback !== null) {
-                ($options->progressCallback)($event, $eventEnvelope);
-            }
-            if (!$projection->canHandle($event)) {
-                return;
-            }
-            $catchUpHook?->onBeforeEvent($event, $eventEnvelope);
-            $projection->apply($event, $eventEnvelope);
-            if ($projection instanceof WithMarkStaleInterface) {
-                $projection->markStale();
-            }
-            $catchUpHook?->onAfterEvent($event, $eventEnvelope);
-        };
-
-        $catchUp = CatchUp::create($eventApplier, $projection->getCheckpointStorage());
-
-        if ($catchUpHook !== null) {
-            $catchUpHook->onBeforeCatchUp();
-            $catchUp = $catchUp->withOnBeforeBatchCompleted(fn() => $catchUpHook->onBeforeBatchCompleted());
-        }
-        $catchUp->run($eventStream);
-        $catchUpHook?->onAfterCatchUp();
-    }
-
-    public function catchupProjections(): void
-    {
-        foreach ($this->projectionsAndCatchUpHooks->projections as $projection) {
-            // FIXME optimise by only loading required events once and not per projection
-            // see https://github.com/neos/neos-development-collection/pull/4988/
-            $this->catchUpProjection($projection::class, CatchUpOptions::create());
-        }
-    }
-
-    public function setUp(): void
-    {
-        $this->eventStore->setup();
-        foreach ($this->projectionsAndCatchUpHooks->projections as $projection) {
-            $projection->setUp();
-        }
-    }
-
-    public function status(): ContentRepositoryStatus
-    {
-        $projectionStatuses = ProjectionStatuses::createEmpty();
-        foreach ($this->projectionsAndCatchUpHooks->projections as $projectionClassName => $projection) {
-            $projectionStatuses = $projectionStatuses->with($projectionClassName, $projection->status());
-        }
-        return new ContentRepositoryStatus(
-            $this->eventStore->status(),
-            $projectionStatuses,
-        );
-    }
-
-    public function resetProjectionStates(): void
-    {
-        foreach ($this->projectionsAndCatchUpHooks->projections as $projection) {
-            $projection->reset();
-        }
-    }
-
-    /**
-     * @param class-string<ProjectionInterface<ProjectionStateInterface>> $projectionClassName
-     */
-    public function resetProjectionState(string $projectionClassName): void
-    {
-        $projection = $this->projectionsAndCatchUpHooks->projections->get($projectionClassName);
-        $projection->reset();
+        return $this->projectionStates->get($projectionStateClassName);
     }
 
     /**
@@ -306,21 +197,11 @@ final class ContentRepository
 
     /**
      * Returns all workspaces of this content repository. To limit the set, {@see Workspaces::find()} and {@see Workspaces::filter()} can be used
-     * as well as {@see Workspaces::getBaseWorkspaces()} and {@see Workspaces::getDependantWorkspaces()}.
+     * as well as {@see Workspaces::getBaseWorkspaces()} and {@see Workspaces::getDependantWorkspacesRecursively()}.
      */
     public function findWorkspaces(): Workspaces
     {
         return $this->contentGraphReadModel->findWorkspaces();
-    }
-
-    public function findContentStreamById(ContentStreamId $contentStreamId): ?ContentStream
-    {
-        return $this->contentGraphReadModel->findContentStreamById($contentStreamId);
-    }
-
-    public function findContentStreams(): ContentStreams
-    {
-        return $this->contentGraphReadModel->findContentStreams();
     }
 
     public function getNodeTypeManager(): NodeTypeManager
@@ -338,19 +219,20 @@ final class ContentRepository
         return $this->contentDimensionSource;
     }
 
-    private function enrichEventsToPublishWithMetadata(EventsToPublish $eventsToPublish): EventsToPublish
+    private function enrichAndNormalizeEvents(DomainEvents $events, CorrelationId $correlationId): Events
     {
         $initiatingUserId = $this->authProvider->getAuthenticatedUserId() ?? UserId::forSystemUser();
         $initiatingTimestamp = $this->clock->now();
 
-        return new EventsToPublish(
-            $eventsToPublish->streamName,
-            InitiatingEventMetadata::enrichEventsWithInitiatingMetadata(
-                $eventsToPublish->events,
-                $initiatingUserId,
-                $initiatingTimestamp
-            ),
-            $eventsToPublish->expectedVersion,
+        $eventsWithMetaData = InitiatingEventMetadata::enrichEventsWithInitiatingMetadata(
+            $events,
+            $initiatingUserId,
+            $initiatingTimestamp
         );
+
+        return Events::fromArray($eventsWithMetaData->map(function (EventInterface|DecoratedEvent $event) use ($correlationId) {
+            $decoratedEvent = DecoratedEvent::create($event, correlationId: $correlationId);
+            return $this->eventNormalizer->normalize($decoratedEvent);
+        }));
     }
 }

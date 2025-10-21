@@ -14,8 +14,8 @@ namespace Neos\Neos\Fusion\Cache;
  * source code.
  */
 
-use Neos\ContentRepository\Core\Projection\CatchUpHookFactoryDependencies;
-use Neos\ContentRepository\Core\Projection\CatchUpHookFactoryInterface;
+use Neos\ContentRepository\Core\Projection\CatchUpHook\CatchUpHookFactoryDependencies;
+use Neos\ContentRepository\Core\Projection\CatchUpHook\CatchUpHookFactoryInterface;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphReadModelInterface;
 
 /**

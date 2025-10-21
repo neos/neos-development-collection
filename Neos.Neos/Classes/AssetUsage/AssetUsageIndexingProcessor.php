@@ -13,7 +13,7 @@ use Neos\ContentRepository\Core\SharedModel\Exception\WorkspaceDoesNotExist;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\Neos\AssetUsage\Service\AssetUsageIndexingService;
 
-readonly class AssetUsageIndexingProcessor
+final readonly class AssetUsageIndexingProcessor
 {
     public function __construct(
         private AssetUsageIndexingService $assetUsageIndexingService
@@ -23,24 +23,22 @@ readonly class AssetUsageIndexingProcessor
     /**
      * @param callable(string $message):void|null $callback
      */
-    public function buildIndex(ContentRepository $contentRepository, NodeTypeName $nodeTypeName, callable $callback = null): void
+    public function buildIndex(ContentRepository $contentRepository, NodeTypeName $nodeTypeName, ?callable $callback = null): void
     {
         $variationGraph = $contentRepository->getVariationGraph();
 
         $allWorkspaces = $contentRepository->findWorkspaces();
-        $liveWorkspace = $contentRepository->findWorkspaceByName(WorkspaceName::forLive());
+        $liveWorkspace = $allWorkspaces->get(WorkspaceName::forLive());
         if ($liveWorkspace === null) {
             throw WorkspaceDoesNotExist::butWasSupposedTo(WorkspaceName::forLive());
         }
 
         $this->assetUsageIndexingService->pruneIndex($contentRepository->id);
 
-        $workspaces = [$liveWorkspace];
+        $workspacesDependingOnLive = $allWorkspaces->getDependantWorkspacesRecursively(WorkspaceName::forLive());
 
         $this->dispatchMessage($callback, sprintf('ContentRepository "%s"', $contentRepository->id->value));
-        while ($workspaces !== []) {
-            $workspace = array_shift($workspaces);
-
+        foreach ([$liveWorkspace, ...$workspacesDependingOnLive] as $workspace) {
             $contentGraph = $contentRepository->getContentGraph($workspace->workspaceName);
             $this->dispatchMessage($callback, sprintf('  Workspace: %s', $contentGraph->getWorkspaceName()->value));
 
@@ -58,7 +56,7 @@ readonly class AssetUsageIndexingProcessor
             foreach ($dimensionSpacePoints as $dimensionSpacePoint) {
                 $this->dispatchMessage($callback, sprintf('    DimensionSpacePoint: %s', $dimensionSpacePoint->toJson()));
 
-                $subgraph = $contentGraph->getSubgraph($dimensionSpacePoint, VisibilityConstraints::withoutRestrictions());
+                $subgraph = $contentGraph->getSubgraph($dimensionSpacePoint, VisibilityConstraints::createEmpty());
                 $childNodes = iterator_to_array($subgraph->findChildNodes($rootNodeAggregateId, FindChildNodesFilter::create()));
 
                 while ($childNodes !== []) {
@@ -67,12 +65,15 @@ readonly class AssetUsageIndexingProcessor
                     if (!$childNode->originDimensionSpacePoint->equals($childNode->dimensionSpacePoint)) {
                         continue;
                     }
-                    $this->assetUsageIndexingService->updateIndex($contentRepository->id, $childNode);
+
+                    $nodeType = $contentRepository->getNodeTypeManager()->getNodeType($childNode->nodeTypeName);
+                    if ($nodeType === null) {
+                        return;
+                    }
+                    $this->assetUsageIndexingService->updateIndex($contentRepository->id, $childNode, $nodeType, $allWorkspaces);
                     array_push($childNodes, ...iterator_to_array($subgraph->findChildNodes($childNode->aggregateId, FindChildNodesFilter::create())));
                 }
             }
-
-            array_push($workspaces, ...iterator_to_array($allWorkspaces->getDependantWorkspaces($workspace->workspaceName)));
         }
     }
 

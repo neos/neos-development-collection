@@ -15,10 +15,6 @@
         <source>Workspaces</source>
         <target state="translated">Werkruimten</target>
       </trans-unit>
-      <trans-unit id="workspaces.detailsForWorkspace" xml:space="preserve" approved="yes">
-        <source>Details for "{0}"</source>
-        <target state="final">Details voor "{0}"</target>
-      </trans-unit>
       <trans-unit id="workspaces.createNewWorkspace" xml:space="preserve" approved="yes">
         <source>Create new workspace</source>
         <target state="final">Maak nieuwe workspace aan</target>
@@ -27,9 +23,9 @@
         <source>Create workspace</source>
         <target state="final">Maak workspace aan</target>
       </trans-unit>
-      <trans-unit id="workspaces.deleteWorkspace" xml:space="preserve" approved="yes">
-        <source>Delete workspace</source>
-        <target state="final">Verwijder workspace</target>
+      <trans-unit id="workspaces.deleteWorkspace" xml:space="preserve" approved="no">
+        <source>Delete workspace "{0}"</source>
+        <target state="translated">Verwijder workspace "{0}"</target>
       </trans-unit>
       <trans-unit id="workspaces.editWorkspace" xml:space="preserve" approved="yes">
         <source>Edit workspace</source>
@@ -51,8 +47,8 @@
         <source>Private workspace</source>
         <target state="final">Privé workspace</target>
       </trans-unit>
-      <trans-unit id="workspaces.internalWorkspace" xml:space="preserve">
-        <source>Internal workspace</source>
+      <trans-unit id="workspaces.sharedWorkspace" xml:space="preserve">
+        <source>Shared workspace</source>
         <target state="translated">Interne workspace</target>
       </trans-unit>
       <trans-unit id="workspaces.readonlyWorkspace" xml:space="preserve" approved="yes">
@@ -87,11 +83,11 @@
         <source>Only reviewers and administrators can access and modify this workspace</source>
         <target state="translated">Alleen reviewers en administrators hebben toegang en kunnen wijzigingen aanbrengen in deze workspace</target>
       </trans-unit>
-      <trans-unit id="workspaces.workspace.visibility.internal" xml:space="preserve">
-        <source>Internal</source>
+      <trans-unit id="workspaces.workspace.visibility.shared" xml:space="preserve">
+        <source>Shared</source>
         <target state="translated">Intern</target>
       </trans-unit>
-      <trans-unit id="workspaces.workspace.visibility.internal.help" xml:space="preserve">
+      <trans-unit id="workspaces.workspace.visibility.shared.help" xml:space="preserve">
         <source>Any logged in editor can see and modify this workspace.</source>
         <target state="translated">Iedere ingelogde redacteur kan deze workspace bekijken en wijzigen.</target>
       </trans-unit>
@@ -251,23 +247,191 @@
       </trans-unit>
       <trans-unit id="workspaces.discardSelectedChangesInWorkspaceConfirmation" xml:space="preserve">
         <source>Do you really want to discard the selected changes in the "{0}" workspace?</source>
-        <target state="needs-translation">Weet u zeker dat u de geselecteerde wijzigingen in de "{0}" workspace wilt annuleren?</target>
+        <target state="translated">Weet u zeker dat u de geselecteerde wijzigingen in de "{0}" workspace ongedaan wilt maken?</target>
       </trans-unit>
       <trans-unit id="workspaces.selectAllCurrentChanges" xml:space="preserve">
         <source>Select all current changes</source>
-        <target state="needs-translation">Selecteer alle huidige wijzigingen</target>
+        <target state="translated">Selecteer alle huidige wijzigingen</target>
       </trans-unit>
       <trans-unit id="pathCaption" xml:space="preserve">
         <source>Path</source>
-        <target state="needs-translation">Pad</target>
+        <target state="translated">Pad</target>
       </trans-unit>
       <trans-unit id="relativePathCaption" xml:space="preserve">
         <source>Relative Path</source>
-        <target state="needs-translation">Relatief pad</target>
+        <target state="translated">Relatief pad</target>
       </trans-unit>
       <trans-unit id="workspaces.publishSelectedChangesTo" xml:space="preserve">
         <source>Publish selected changes to {0}</source>
-        <target state="needs-translation">Publiceer geselecteerde wijzigingen naar {0}</target>
+        <target state="translated">Publiceer geselecteerde wijzigingen naar {0}</target>
+      </trans-unit>
+      <trans-unit id="applyChanges" xml:space="preserve">
+        <source>Apply changes</source>
+        <target state="translated">Wijzigingen toepassen</target>
+      </trans-unit>
+      <trans-unit id="workspaces.workspace.lastModified" xml:space="preserve">
+        <source>Last modified</source>
+        <target state="translated">Laatst bewerkt</target>
+      </trans-unit>
+      <trans-unit id="workspaces.reviewWorkspace.label" xml:space="preserve">
+        <source>Review</source>
+        <target state="translated">Controleer</target>
+      </trans-unit>
+      <trans-unit id="workspaces.workspace.status" xml:space="preserve">
+        <source>Status</source>
+        <target state="translated">Status</target>
+      </trans-unit>
+      <trans-unit id="workspaces.rebaseWorkspace" xml:space="preserve">
+        <source>Sync workspace "{0}" with its base workspace</source>
+        <target state="translated">Synchroniseer workspace "{0}" met de basis workspace</target>
+      </trans-unit>
+      <trans-unit id="workspaces.workspace.userWorkspace" xml:space="preserve">
+        <source>This is your workspace</source>
+        <target state="translated">Dit is jouw workspace</target>
+      </trans-unit>
+      <trans-unit id="workspaces.workspace.workspaceManagerGroups" xml:space="preserve">
+        <source>Managed by Groups</source>
+        <target state="translated">Beheerd door groepen</target>
+      </trans-unit>
+      <trans-unit id="workspaces.workspace.permissions" xml:space="preserve">
+        <source>Permissions</source>
+        <target state="translated">Machtigingen</target>
+      </trans-unit>
+      <trans-unit id="workspaces.workspaceDoesNotExist" xml:space="preserve">
+        <source>Workspace "{0}" does not exist</source>
+        <target state="translated">Workspace "{0}" bestaat niet</target>
+      </trans-unit>
+      <trans-unit id="workspaces.changes.new[0]" xml:space="preserve">
+        <source>{0} node was added</source>
+        <target state="translated">{0} node was toegevoegd</target>
+      </trans-unit>
+      <trans-unit id="workspaces.changes.new[1]" xml:space="preserve">
+        <source>{0} nodes were added</source>
+        <target state="translated">{0} nodes waren toegevoegd</target>
+      </trans-unit>
+      <trans-unit id="workspaces.changes.changed[1]" xml:space="preserve">
+        <source>{0} nodes were changed</source>
+        <target state="translated">{0} nodes waren gewijzigd</target>
+      </trans-unit>
+      <trans-unit id="workspaces.changes.removed[0]" xml:space="preserve">
+        <source>{0} node was removed</source>
+        <target state="translated">{0} node was verwijderd</target>
+      </trans-unit>
+      <trans-unit id="workspaces.changes.removed[1]" xml:space="preserve">
+        <source>{0} nodes were removed</source>
+        <target state="translated">{0} nodes waren verwijderd</target>
+      </trans-unit>
+      <trans-unit id="workspaces.workspace.status.UP_TO_DATE" xml:space="preserve">
+        <source>Up to date</source>
+        <target state="translated">Up to date</target>
+      </trans-unit>
+      <trans-unit id="workspaces.workspace.status.OUTDATED" xml:space="preserve">
+        <source>Outdated</source>
+        <target state="translated">Verouderd</target>
+      </trans-unit>
+      <trans-unit id="workspaces.dialog.forceSyncWorkspace" xml:space="preserve">
+        <source>Conflicts between workspace "{0}" and "{1}"</source>
+        <target state="needs-translation">Synchroniseren is mislukt</target>
+      </trans-unit>
+      <trans-unit id="workspaces.dialog.thisCanLeadToLostChanges" xml:space="preserve">
+        <source>Workspace "{0}" contains modifications that are in conflict with the changes in workspace "{1}".</source>
+        <target state="needs-translation">Een conflict is opgetreden tijdens het synchroniseren van de worksapce. Weet je zeker dat je de conflicterende wijzigingen wilt verwijderen?</target>
+      </trans-unit>
+      <trans-unit id="workspaces.modal.yesRebaseWorkspace" xml:space="preserve">
+        <source>Yes, drop changes</source>
+        <target state="translated">Ja, verwijder wijzigingen</target>
+      </trans-unit>
+      <trans-unit id="workspaces.publishAllChangesInThisDocument" xml:space="preserve">
+        <source>Publish all changes in this document</source>
+        <target state="translated">Publiceer alle wijzigingen in dit document</target>
+      </trans-unit>
+      <trans-unit id="workspaces.workspaceCouldNotBeCreated" xml:space="preserve">
+        <source>Workspace could not be created.</source>
+        <target state="translated">Workspace kon niet aangemaakt worden.</target>
+      </trans-unit>
+      <trans-unit id="workspaces.changedTags" xml:space="preserve">
+        <source>New element tags</source>
+        <target state="translated">Nieuw element tag</target>
+      </trans-unit>
+      <trans-unit id="workspaces.changes.noPermissionToPublishToBaseWorkspace" xml:space="preserve">
+        <source>You do not have permission to publish to the base workspace</source>
+        <target state="translated">Je hebt niet de juiste machtiging om de basis workspace the publiceren</target>
+      </trans-unit>
+      <trans-unit id="workspaces.changes.noPermissionToPublishToWorkspace" xml:space="preserve">
+        <source>You do not have permission to publish to the this workspace</source>
+        <target state="translated">Je hebt geen machtiging om naar deze workspace the publiceren</target>
+      </trans-unit>
+      <trans-unit id="table.column.access.private" xml:space="preserve">
+        <source>This is a private workspace</source>
+        <target state="translated">Dit is een private workspace</target>
+      </trans-unit>
+      <trans-unit id="table.column.access.personal" xml:space="preserve">
+        <source>This is the personal workspace of "{0}"</source>
+        <target state="translated">Dit is de persoonlijke workspace van "{0}"</target>
+      </trans-unit>
+      <trans-unit id="workspaces.workspaceHasBeenRebased" xml:space="preserve">
+        <source>The workspace has been successfully synced</source>
+        <target state="translated">De worksapce is succesvol gesynchroniseerd</target>
+      </trans-unit>
+      <trans-unit id="workspaces.ForceRebaseWorkspaceFailed" xml:space="preserve">
+        <source>Forcing the sync has failed. Please try discarding your changes.</source>
+        <target state="translated">Forceren van de synchronisatie is mislukt. Probeer je wijzigingen ongedaan te maken.</target>
+      </trans-unit>
+      <trans-unit id="workspaces.deleteWorkspace.disabled" xml:space="preserve">
+        <source>Workspace "{0}" has unpublished changes</source>
+        <target state="translated">Workspace "{0}" heeft niet gepubliseerde wijzigingen</target>
+      </trans-unit>
+      <trans-unit id="workspaces.reviewWorkspace" xml:space="preserve">
+        <source>Review workspace "{0}"</source>
+        <target state="translated">Workspace controle "{0}"</target>
+      </trans-unit>
+      <trans-unit id="workspaces.reviewWorkspace.disabled" xml:space="preserve">
+        <source>Workspace "{0}" has no unpublished changes</source>
+        <target state="translated">Worksapce "{0}" heeft geen ongepubliceerde wijzigingen</target>
+      </trans-unit>
+      <trans-unit id="workspaces.numberOfWorkspaces" xml:space="preserve">
+        <source>{0} workspaces</source>
+        <target state="translated">{0} workspaces</target>
+      </trans-unit>
+      <trans-unit id="workspaces.workspace.workspaceManagerUsers" xml:space="preserve">
+        <source>Managed by Users</source>
+        <target state="translated">Beheerd door gebruikers</target>
+      </trans-unit>
+      <trans-unit id="workspaces.changes.changed[0]" xml:space="preserve">
+        <source>{0} node was changed</source>
+        <target state="translated">{0} node was gewijzigd</target>
+      </trans-unit>
+      <trans-unit id="workspaces.cantChangeBaseWorkspaceBecauseWorkspaceContainsChanges" xml:space="preserve">
+        <source>You cannot change the base workspace of workspace with unpublished changes.</source>
+        <target state="translated">Je kan niet de basis workspace aanpassen omdat de workspace niet gepubliceerde wijzigingen bevat.</target>
+      </trans-unit>
+      <trans-unit id="workspaces.changes.noPermissionToReadWorkspace" xml:space="preserve">
+        <source>You do not have permission to see this workspace</source>
+        <target state="translated">Je hebt geen machtiging om deze workspace te bekijken</target>
+      </trans-unit>
+      <trans-unit id="table.column.access.shared" xml:space="preserve">
+        <source>This is a shared workspace</source>
+        <target state="translated">Dit is een gedeelde workspace</target>
+      </trans-unit>
+      <trans-unit id="workspaces.discardAllChangesInThisDocument" xml:space="preserve">
+        <source>Discard all changes in this document</source>
+        <target state="translated">Maak alle wijzigingen in dit document ongedaan</target>
+      </trans-unit>
+      <trans-unit id="workspaces.workspaceHasBeenCreated" xml:space="preserve">
+        <source>The workspace "{0}" has been created.</source>
+        <target state="translated">De workspace "{0}" is aangemaakt.</target>
+      </trans-unit>
+      <trans-unit id="workspaces.workspace.actions" xml:space="preserve">
+        <source>Actions</source>
+        <target state="translated">Acties</target>
+      </trans-unit>
+      <trans-unit id="workspaces.publishAllChangesInWorkspaceConfirmation" xml:space="preserve">
+        <source>Do you really want to publish all changes in the "{0}" workspace?</source>
+        <target state="translated">Weet u zeker dat je alle wijzigingen in de "{0}" workspace wilt publiceren?</target>
+      </trans-unit>
+      <trans-unit id="workspaces.dialog.rebase.node" xml:space="preserve">
+        <source>Node</source>
+        <target state="needs-translation">Node</target>
       </trans-unit>
     </body>
   </file>

@@ -17,6 +17,7 @@ namespace Neos\Neos\Fusion\Helper;
 use Doctrine\Common\Collections\Collection;
 use Neos\Eel\ProtectedContextAwareInterface;
 use Neos\Flow\Annotations as Flow;
+use Neos\Fusion\Service\RenderAttributesTrait;
 use Neos\Utility\ObjectAccess;
 use Neos\Utility\PositionalArraySorter;
 
@@ -29,6 +30,8 @@ use Neos\Utility\PositionalArraySorter;
  */
 class ArrayHelper implements ProtectedContextAwareInterface
 {
+    use RenderAttributesTrait;
+
     /**
      * Filter an array of objects, by only keeping the elements where each object's $filterProperty evaluates to true.
      *
@@ -103,6 +106,16 @@ class ArrayHelper implements ProtectedContextAwareInterface
     public function sortByPropertyPath(array $set, string $positionPropertyPath = 'position'): array
     {
         return (new PositionalArraySorter($set, $positionPropertyPath))->toArray();
+    }
+
+    /**
+     * Converts an array into an HTML attributes string like 'class="foo" id="bar"'
+     * @param array<string> $attributes
+     * @return string
+     */
+    public function toHtmlAttributesString(array $attributes): string
+    {
+        return $this->renderAttributes($attributes);
     }
 
     /**

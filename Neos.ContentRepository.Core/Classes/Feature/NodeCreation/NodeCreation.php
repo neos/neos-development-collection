@@ -17,6 +17,7 @@ namespace Neos\ContentRepository\Core\Feature\NodeCreation;
 use Neos\ContentRepository\Core\CommandHandler\CommandHandlingDependencies;
 use Neos\ContentRepository\Core\DimensionSpace;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
+use Neos\ContentRepository\Core\EventStore\EventInterface;
 use Neos\ContentRepository\Core\EventStore\Events;
 use Neos\ContentRepository\Core\EventStore\EventsToPublish;
 use Neos\ContentRepository\Core\Feature\Common\InterdimensionalSiblings;
@@ -212,7 +213,7 @@ trait NodeCreation
             )
         ];
 
-        array_push($events, ...iterator_to_array($this->handleTetheredChildNodes(
+        array_push($events, ...$this->handleTetheredChildNodes(
             $command,
             $contentGraph,
             $nodeType,
@@ -220,7 +221,7 @@ trait NodeCreation
             $command->nodeAggregateId,
             $descendantNodeAggregateIds,
             null
-        )));
+        ));
 
         return new EventsToPublish(
             ContentStreamEventStreamName::fromContentStreamId($contentGraph->getContentStreamId())
@@ -261,6 +262,7 @@ trait NodeCreation
     /**
      * @throws ContentStreamDoesNotExistYet
      * @throws NodeTypeNotFound
+     * @return array<EventInterface>
      */
     private function handleTetheredChildNodes(
         CreateNodeAggregateWithNodeAndSerializedProperties $command,
@@ -270,7 +272,7 @@ trait NodeCreation
         NodeAggregateId $parentNodeAggregateId,
         NodeAggregateIdsByNodePaths $nodeAggregateIds,
         ?NodePath $nodePath
-    ): Events {
+    ): array {
         $events = [];
         foreach ($nodeType->tetheredNodeTypeDefinitions as $tetheredNodeTypeDefinition) {
             $childNodeType = $this->requireNodeType($tetheredNodeTypeDefinition->nodeTypeName);
@@ -298,7 +300,7 @@ trait NodeCreation
                 SerializedNodeReferences::createEmpty(),
             );
 
-            array_push($events, ...iterator_to_array($this->handleTetheredChildNodes(
+            array_push($events, ...$this->handleTetheredChildNodes(
                 $command,
                 $contentGraph,
                 $childNodeType,
@@ -306,9 +308,9 @@ trait NodeCreation
                 $childNodeAggregateId,
                 $nodeAggregateIds,
                 $childNodePath
-            )));
+            ));
         }
 
-        return Events::fromArray($events);
+        return $events;
     }
 }

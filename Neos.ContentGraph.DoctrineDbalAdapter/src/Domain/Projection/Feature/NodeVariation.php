@@ -204,7 +204,14 @@ trait NodeVariation
                     $unassignedDimensionSpacePoint
                 );
                 if (is_null($generalizationParentNode)) {
-                    throw new \RuntimeException(sprintf('Failed to create node generalization variant for node "%s" in sub graph %s@%s because the target parent node "%s" is missing', $nodeAggregateId->value, $sourceOrigin->toJson(), $contentStreamId->value, $sourceParentNode->nodeAggregateId->value), 1716498961);
+                    throw new \RuntimeException(sprintf(
+                        'Failed to assign node generalization relation for node "%s" from dimension space point %s to dimension space point %s in content stream %s because the target parent node "%s" is missing',
+                        $nodeAggregateId->value,
+                        $sourceOrigin->toJson(),
+                        $unassignedDimensionSpacePoint->toJson(),
+                        $contentStreamId->value,
+                        $sourceParentNode->nodeAggregateId->value
+                    ), 1716498961);
                 }
 
                 $generalizationSucceedingSiblingNodeAggregateId = $variantSucceedingSiblings

@@ -21,6 +21,7 @@ use Neos\ContentRepository\Core\SharedModel\Exception\WorkspaceDoesNotExist;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\Workspace;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
+use Neos\ContentRepository\Core\SharedModel\Workspace\Workspaces;
 use Neos\EventStore\Model\Event\Version;
 
 /**
@@ -75,5 +76,10 @@ final readonly class CommandHandlingDependencies
     public function getContentGraph(WorkspaceName $workspaceName): ContentGraphInterface
     {
         return $this->contentGraphReadModel->getContentGraph($workspaceName);
+    }
+
+    public function findAllWorkspaces(): Workspaces
+    {
+        return $this->contentGraphReadModel->findWorkspaces();
     }
 }

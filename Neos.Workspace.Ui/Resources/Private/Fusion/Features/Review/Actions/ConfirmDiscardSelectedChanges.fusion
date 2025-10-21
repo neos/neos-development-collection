@@ -1,0 +1,9 @@
+Neos.Workspace.Ui.WorkspaceController.confirmDiscardSelectedChanges = Neos.Fusion:Component {
+  workspaceTitle = ${workspaceTitle}
+
+  renderer = afx`
+    <Neos.Workspace.Ui:Component.Modal.ConfirmDiscardSelectedChanges
+      workspaceTitle={props.workspaceTitle}
+    />
+  `
+}

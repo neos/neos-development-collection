@@ -29,7 +29,7 @@ final class FusionContextSerializer implements NormalizerInterface, Denormalizer
     /**
      * @param array<int|string,mixed> $context
      */
-    public function denormalize(mixed $data, string $type, string $format = null, array $context = [])
+    public function denormalize(mixed $data, string $type, ?string $format = null, array $context = [])
     {
         return $this->propertyMapper->convert($data, $type);
     }
@@ -38,17 +38,17 @@ final class FusionContextSerializer implements NormalizerInterface, Denormalizer
      * @param array<int|string,mixed> $context
      * @return array<int|string,mixed>
      */
-    public function normalize(mixed $object, string $format = null, array $context = [])
+    public function normalize(mixed $object, ?string $format = null, array $context = [])
     {
         return $this->propertyMapper->convert($object, 'string');
     }
 
-    public function supportsDenormalization(mixed $data, string $type, string $format = null)
+    public function supportsDenormalization(mixed $data, string $type, ?string $format = null)
     {
         return true;
     }
 
-    public function supportsNormalization(mixed $data, string $format = null)
+    public function supportsNormalization(mixed $data, ?string $format = null)
     {
         return true;
     }

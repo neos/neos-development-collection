@@ -77,6 +77,9 @@ trait ProjectionIntegrityViolationDetectionTrait
         $subtreeTagToRemove = SubtreeTag::fromString($dataset['subtreeTag']);
         $record = $this->transformDatasetToHierarchyRelationRecord($dataset);
         $subtreeTags = NodeFactory::extractNodeTagsFromJson($record['subtreetags']);
+        unset($record['subtreetags']);
+        unset($record['position']);
+
         if (!$subtreeTags->contain($subtreeTagToRemove)) {
             throw new \RuntimeException(sprintf('Failed to remove subtree tag "%s" because that tag is not set', $subtreeTagToRemove->value), 1708618267);
         }
@@ -112,6 +115,7 @@ trait ProjectionIntegrityViolationDetectionTrait
         $dataset = $this->transformPayloadTableToDataset($payloadTable);
         $record = $this->transformDatasetToHierarchyRelationRecord($dataset);
         unset($record['position']);
+        unset($record['subtreetags']);
 
         $newParentHierarchyRelation = $this->findHierarchyRelationByIds(
             ContentStreamId::fromString($dataset['contentStreamId']),
@@ -138,6 +142,7 @@ trait ProjectionIntegrityViolationDetectionTrait
         $dataset = $this->transformPayloadTableToDataset($payloadTable);
         $record = $this->transformDatasetToHierarchyRelationRecord($dataset);
         unset($record['position']);
+        unset($record['subtreetags']);
 
         $this->dbal->update(
             $this->tableNames()->hierarchyRelation(),

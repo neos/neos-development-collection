@@ -1,0 +1,114 @@
+##
+# Renders a document for review
+#
+prototype(Neos.Workspace.Ui:Component.ReviewDocumentTableRow) < prototype(Neos.Fusion:Component) {
+
+  document = null
+  documentPath = ''
+  selectedWorkspaceName = ${selectedWorkspaceName}
+  selectedWorkspaceLabel = ${selectedWorkspaceLabel}
+  canPublishToBaseWorkspace = ${canPublishToBaseWorkspace}
+  canPublishToWorkspace = ${canPublishToWorkspace}
+
+  @private {
+    i18n = ${I18n.id('').source('Main').package('Neos.Workspace.Ui')}
+
+    openNodeInPreviewAction = Neos.Fusion:ActionUri {
+      request = ${request.mainRequest}
+      package = 'Neos.Neos'
+      controller = 'Frontend\\\Node'
+      action = 'preview'
+      arguments = ${{node: document.document.documentNodeAddress}}
+    }
+    discardDocumentAction = Neos.Fusion:ActionUri {
+      action = 'discardDocument'
+      format = 'htmx'
+      arguments {
+        nodeAddress = ${document.document.documentNodeAddress}
+        selectedWorkspace = ${selectedWorkspaceName}
+      }
+    }
+    publishDocumentAction = Neos.Fusion:ActionUri {
+      action = 'publishDocument'
+      format = 'htmx'
+      arguments {
+        nodeAddress = ${document.document.documentNodeAddress}
+        selectedWorkspace = ${selectedWorkspaceName}
+      }
+    }
+
+  }
+
+  renderer = afx`
+    <tr
+      data-documentPath={documentPath}
+      data-isNew={document.documentChanges.isNew}
+      data-isMoved={document.documentChanges.isMoved}
+    >
+      <Neos.Fusion:DataStructure
+        @path="attributes.class"
+        general="neos-document"
+        deleted={document.documentChanges.isRemoved ? 'legend-deleted' : ''}
+        created={document.documentChanges.isNew ? 'legend-created' : ''}
+        moved={document.documentChanges.isMoved ? 'legend-moved' : ''}
+      />
+      <td>
+        <div class="toggle-document neos-button">
+          <i class="fas icon-white fa-chevron-down"></i>
+        </div>
+      </td>
+      <td>
+        <div class="neos-button document-toggle-button">
+          <label for={"check-document-" + document.document.aggregateId} class="neos-checkbox">
+            <input type="checkbox" name="moduleArguments[nodes][]" class="check-document"
+                   id={"check-document-" + document.document.aggregateId}
+                   value={document.document.documentNodeAddress}/><span></span>
+          </label>
+        </div>
+      </td>
+      <td class="document-details">
+        <Neos.Fusion:Loop items={document.document.documentBreadCrumb} itemName="crumb">
+          <Neos.Workspace.Ui:Component.Icon icon="fas fa-caret-right" @if.notFirst={!iterator.isFirst}/>
+          <span>
+            <span class="node-icons" @if.hasIcon={document.document.documentIcon} @if.isLast={iterator.isLast}>
+              <Neos.Workspace.Ui:Component.Icon icon={document.document.documentIcon}/>
+              <i @if.nodeIsHidden={document.documentChanges.isHidden} class="icon-red fa-solid fa-circle-xmark"></i>
+            </span>
+            <span>
+              {crumb}
+            </span>
+          </span>
+        </Neos.Fusion:Loop>
+      </td>
+      <td class="document-actions">
+        <Neos.Workspace.Ui:Component.Button
+          title={props.canPublishToWorkspace ? private.i18n.id('workspaces.discardAllChangesInThisDocument'): private.i18n.id('workspaces.changes.noPermissionToPublishToWorkspace')}
+          icon="trash-alt icon-white"
+          isDanger
+          disabled={!props.canPublishToWorkspace }
+          attributes.hx-get={private.discardDocumentAction}
+          attributes.hx-select="#workspace-module-content"
+          attributes.hx-target="#workspace-module-content"
+          attributes.hx-swap="outerHTML"
+        />
+        <Neos.Workspace.Ui:Component.Button
+          title={props.canPublishToBaseWorkspace ? private.i18n.id('workspaces.publishAllChangesInThisDocument') :  private.i18n.id('workspaces.changes.noPermissionToPublishToBaseWorkspace')}
+          icon="check icon-white"
+          isSuccess
+          disabled={!props.canPublishToBaseWorkspace}
+          attributes.hx-get={private.publishDocumentAction}
+          attributes.hx-select="#workspace-module-content"
+          attributes.hx-target="#workspace-module-content"
+          attributes.hx-swap="outerHTML"
+        />
+
+        <a href={private.openNodeInPreviewAction}
+           target="_blank"
+           title={private.i18n.id('workspaces.openPageInWorkspace').arguments([selectedWorkspaceLabel])}
+           class="neos-button neos-button-primary">
+          <Neos.Workspace.Ui:Component.Icon icon="fas fa-external-link-alt"/>
+        </a>
+      </td>
+    </tr>
+  `
+}

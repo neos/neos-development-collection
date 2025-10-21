@@ -51,8 +51,8 @@ Feature: Create node generalization variant
       | sourceOrigin    | {"language":"de"}        |
       | targetOrigin    | {"language":"en"}        |
 
-    Then I expect the ChangeProjection to have no changes in "cs-identifier"
-    Then I expect the ChangeProjection to have the following changes in "user-cs-id":
+    Then I expect to have no changes in workspace "live"
+    Then I expect to have the following changes in workspace "user-workspace":
       | nodeAggregateId        | created | changed | moved | deleted | originDimensionSpacePoint |
       | sir-david-nodenborough | 1       | 1       | 0     | 0       | {"language":"en"}         |
 
@@ -61,6 +61,6 @@ Feature: Create node generalization variant
       | workspaceName      | "user-workspace"           |
       | newContentStreamId | "new-user-workspace-cs-id" |
 
-    Then I expect the ChangeProjection to have no changes in "cs-identifier"
-    Then I expect the ChangeProjection to have no changes in "user-cs-id"
+    Then I expect to have no changes in workspace "live"
+    Then I expect to have no changes in workspace "user-workspace"
     Then I expect the ChangeProjection to have no changes in "new-user-workspace-cs-id"

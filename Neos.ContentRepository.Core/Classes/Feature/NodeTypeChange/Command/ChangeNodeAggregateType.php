@@ -23,6 +23,8 @@ use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 
 /**
+ * The "Change node aggregate type" command
+ *
  * @api commands are the write-API of the ContentRepository
  */
 final readonly class ChangeNodeAggregateType implements

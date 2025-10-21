@@ -33,8 +33,8 @@ final readonly class FindSubtreeFilter
      * @see https://www.php.net/manual/en/functions.arguments.php#functions.named-arguments
      */
     public static function create(
-        NodeTypeCriteria|string $nodeTypes = null,
-        int $maximumLevels = null,
+        NodeTypeCriteria|string|null $nodeTypes = null,
+        ?int $maximumLevels = null,
     ): self {
         if (is_string($nodeTypes)) {
             $nodeTypes = NodeTypeCriteria::fromFilterString($nodeTypes);
@@ -49,8 +49,8 @@ final readonly class FindSubtreeFilter
      * @see https://www.php.net/manual/en/functions.arguments.php#functions.named-arguments
      */
     public function with(
-        NodeTypeCriteria|string $nodeTypes = null,
-        int $maximumLevels = null,
+        NodeTypeCriteria|string|null $nodeTypes = null,
+        ?int $maximumLevels = null,
     ): self {
         return self::create(
             $nodeTypes ?? $this->nodeTypes,

@@ -14,7 +14,9 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\BehavioralTests\Tests\Parallel\WorkspacePublicationDuringWriting;
 
+use Doctrine\DBAL\Connection;
 use Neos\ContentRepository\BehavioralTests\Tests\Parallel\AbstractParallelTestCase;
+use Neos\ContentRepository\BehavioralTests\TestSuite\DebugEventProjection;
 use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
@@ -34,6 +36,7 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepository\TestSuite\Fakes\FakeContentDimensionSourceFactory;
 use Neos\ContentRepository\TestSuite\Fakes\FakeNodeTypeManagerFactory;
+use Neos\ContentRepository\TestSuite\Fakes\FakeProjectionFactory;
 use Neos\EventStore\Exception\ConcurrencyException;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use PHPUnit\Framework\Assert;
@@ -51,6 +54,16 @@ class WorkspacePublicationDuringWritingTest extends AbstractParallelTestCase
     {
         parent::setUp();
         $this->log('------ process started ------');
+
+        $debugProjection = new DebugEventProjection(
+            'cr_test_parallel_debug_projection',
+            $this->objectManager->get(Connection::class)
+        );
+        FakeProjectionFactory::setProjection(
+            'debug',
+            $debugProjection
+        );
+
         FakeContentDimensionSourceFactory::setWithoutDimensions();
         FakeNodeTypeManagerFactory::setConfiguration([
             'Neos.ContentRepository:Root' => [],
@@ -155,6 +168,11 @@ class WorkspacePublicationDuringWritingTest extends AbstractParallelTestCase
 
         $this->log('writing finished');
         Assert::assertTrue(true, 'No exception was thrown ;)');
+
+        $subgraph = $this->contentRepository->getContentGraph(WorkspaceName::forLive())->getSubgraph(DimensionSpacePoint::createWithoutDimensions(), VisibilityConstraints::createEmpty());
+        $node = $subgraph->findNodeById(NodeAggregateId::fromString('nody-mc-nodeface'));
+        Assert::assertNotNull($node);
+        Assert::assertSame($node->getProperty('title'), 'changed-title-50');
     }
 
     /**
@@ -235,7 +253,7 @@ class WorkspacePublicationDuringWritingTest extends AbstractParallelTestCase
         }
 
         $node = $this->contentRepository->getContentGraph(WorkspaceName::fromString('user-test'))
-            ->getSubgraph(DimensionSpacePoint::createWithoutDimensions(), VisibilityConstraints::withoutRestrictions())
+            ->getSubgraph(DimensionSpacePoint::createWithoutDimensions(), VisibilityConstraints::createEmpty())
             ->findNodeById(NodeAggregateId::fromString('nody-mc-nodeface'));
 
         Assert::assertSame('written-after-failed-publish', $node?->getProperty('title'));

@@ -32,7 +32,7 @@ final readonly class CountAncestorNodesFilter
      * @see https://www.php.net/manual/en/functions.arguments.php#functions.named-arguments
      */
     public static function create(
-        NodeTypeCriteria|string $nodeTypes = null
+        NodeTypeCriteria|string|null $nodeTypes = null
     ): self {
         if (is_string($nodeTypes)) {
             $nodeTypes = NodeTypeCriteria::fromFilterString($nodeTypes);
@@ -52,7 +52,7 @@ final readonly class CountAncestorNodesFilter
      * @see https://www.php.net/manual/en/functions.arguments.php#functions.named-arguments
      */
     public function with(
-        NodeTypeCriteria|string $nodeTypes = null
+        NodeTypeCriteria|string|null $nodeTypes = null
     ): self {
         return self::create(
             $nodeTypes ?? $this->nodeTypes,

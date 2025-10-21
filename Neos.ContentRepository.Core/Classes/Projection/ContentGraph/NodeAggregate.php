@@ -26,7 +26,6 @@ use Neos\ContentRepository\Core\SharedModel\Exception\NodeAggregateDoesCurrently
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateClassification;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 
 /**
@@ -61,9 +60,8 @@ final readonly class NodeAggregate
      * @param non-empty-array<string,Node> $nodesByOccupiedDimensionSpacePoint At least one node will be occupied.
      * @param CoverageByOrigin $coverageByOccupant
      * @param DimensionSpacePointSet $coveredDimensionSpacePoints This node aggregate will cover at least one dimension space.
-     * @param non-empty-array<string,Node> $nodesByCoveredDimensionSpacePoint At least one node will be covered.
      * @param OriginByCoverage $occupationByCovered
-     * @param DimensionSpacePointsBySubtreeTags $dimensionSpacePointsBySubtreeTags dimension space points for every subtree tag this node aggregate is *explicitly* tagged with (excluding inherited tags)
+     * @param non-empty-array<string,NodeTags> $nodeTagsByCoveredDimensionSpacePoint node tags by every covered dimension space point
      */
     private function __construct(
         public ContentRepositoryId $contentRepositoryId,
@@ -76,15 +74,14 @@ final readonly class NodeAggregate
         private array $nodesByOccupiedDimensionSpacePoint,
         public CoverageByOrigin $coverageByOccupant,
         public DimensionSpacePointSet $coveredDimensionSpacePoints,
-        private array $nodesByCoveredDimensionSpacePoint,
         private OriginByCoverage $occupationByCovered,
-        private DimensionSpacePointsBySubtreeTags $dimensionSpacePointsBySubtreeTags,
+        private array $nodeTagsByCoveredDimensionSpacePoint,
     ) {
     }
 
     /**
      * @param non-empty-array<string,Node> $nodesByOccupiedDimensionSpacePoint
-     * @param non-empty-array<string,Node> $nodesByCoveredDimensionSpacePoint
+     * @param non-empty-array<string,NodeTags> $nodeTagsByCoveredDimensionSpacePoint
      * @internal The signature of this method can change in the future!
      */
     public static function create(
@@ -98,9 +95,8 @@ final readonly class NodeAggregate
         array $nodesByOccupiedDimensionSpacePoint,
         CoverageByOrigin $coverageByOccupant,
         DimensionSpacePointSet $coveredDimensionSpacePoints,
-        array $nodesByCoveredDimensionSpacePoint,
         OriginByCoverage $occupationByCovered,
-        DimensionSpacePointsBySubtreeTags $dimensionSpacePointsBySubtreeTags,
+        array $nodeTagsByCoveredDimensionSpacePoint,
     ): self {
         return new self(
             $contentRepositoryId,
@@ -113,9 +109,8 @@ final readonly class NodeAggregate
             $nodesByOccupiedDimensionSpacePoint,
             $coverageByOccupant,
             $coveredDimensionSpacePoints,
-            $nodesByCoveredDimensionSpacePoint,
             $occupationByCovered,
-            $dimensionSpacePointsBySubtreeTags,
+            $nodeTagsByCoveredDimensionSpacePoint,
         );
     }
 
@@ -124,6 +119,18 @@ final readonly class NodeAggregate
         return $this->occupiedDimensionSpacePoints->contains($originDimensionSpacePoint);
     }
 
+    /**
+     * Returns the node for the occupied dimension space point.
+     *
+     * The node aggregate does only know about nodes from dimensions where they originate in.
+     * Fallback nodes are not part of the node aggregate as there is currently no use-case.
+     *
+     * To fetch the occupying node by covered dimension space point use {@see self::getOccupationByCovered}:
+     *
+     *     $node = $this->getNodeByOccupiedDimensionSpacePoint(
+     *         $this->getOccupationByCovered($coveredDimensionSpacePoint)
+     *     );
+     */
     public function getNodeByOccupiedDimensionSpacePoint(
         OriginDimensionSpacePoint $occupiedDimensionSpacePoint
     ): Node {
@@ -156,18 +163,6 @@ final readonly class NodeAggregate
         return $coverage;
     }
 
-    public function getNodeByCoveredDimensionSpacePoint(DimensionSpacePoint $coveredDimensionSpacePoint): Node
-    {
-        if (!isset($this->coveredDimensionSpacePoints[$coveredDimensionSpacePoint->hash])) {
-            throw NodeAggregateDoesCurrentlyNotCoverDimensionSpacePoint::butWasSupposedTo(
-                $this->nodeAggregateId,
-                $coveredDimensionSpacePoint
-            );
-        }
-
-        return $this->nodesByCoveredDimensionSpacePoint[$coveredDimensionSpacePoint->hash];
-    }
-
     public function getOccupationByCovered(DimensionSpacePoint $coveredDimensionSpacePoint): OriginDimensionSpacePoint
     {
         $occupation = $this->occupationByCovered->getOrigin($coveredDimensionSpacePoint);
@@ -182,14 +177,33 @@ final readonly class NodeAggregate
     }
 
     /**
-     * Returns the dimension space points this aggregate is *explicitly* tagged in with the specified $subtreeTag
-     * NOTE: This won't respect inherited subtree tags!
+     * Get the dimension space points this node aggregate is tagged according to the provided tag
      *
-     * @internal This is a low level concept that is not meant to be used outside the core or tests
+     * Implementation note:
+     *
+     * We need to pass ${@see $nodeTagsByCoveredDimensionSpacePoint} additionally to the NodeAggregate as this information doesn't exist otherwise.
+     * The node aggregate only knows about its occupying nodes {@see $nodesByOccupiedDimensionSpacePoint} - so no fallbacks.
+     * This means we CANNOT substitute this implementation by iterating over the occupied nodes as explicitly tagged specialisations will not show up as tagged.
+     *
+     * We could simplify this logic if we also add these specialisation node rows explicitly to the NodeAggregate, but currently there is no use for that.
+     *
+     * @param bool $withoutInherited only dimensions where the subtree tag was set explicitly will be returned, taking inheritance out of account {@see NodeTags::withoutInherited()}
+     * @internal Experimental api, this is a low level concept that is mostly not meant to be used outside the core or tests
      */
-    public function getDimensionSpacePointsTaggedWith(SubtreeTag $subtreeTag): DimensionSpacePointSet
+    public function getCoveredDimensionsTaggedBy(SubtreeTag $subtreeTag, bool $withoutInherited): DimensionSpacePointSet
     {
-        return $this->dimensionSpacePointsBySubtreeTags->forSubtreeTag($subtreeTag);
+        $explicitlyTagged = [];
+        foreach ($this->coveredDimensionSpacePoints as $coveredDimensionSpacePoint) {
+            $nodeTags = $this->nodeTagsByCoveredDimensionSpacePoint[$coveredDimensionSpacePoint->hash];
+            $tagExistsInDimension = match ($withoutInherited) {
+                true => $nodeTags->withoutInherited()->contain($subtreeTag),
+                false => $nodeTags->contain($subtreeTag)
+            };
+            if ($tagExistsInDimension) {
+                $explicitlyTagged[] = $coveredDimensionSpacePoint;
+            }
+        }
+        return DimensionSpacePointSet::fromArray($explicitlyTagged);
     }
 
     /**

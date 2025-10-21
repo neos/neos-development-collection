@@ -30,6 +30,7 @@ use Neos\ContentRepository\Core\SharedModel\Exception\NodeTypeNotFound;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeVariantSelectionStrategy;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
+use Neos\Flow\Security\Context as SecurityContext;
 use Neos\Neos\Domain\Exception\SiteNodeTypeIsInvalid;
 use Neos\Neos\Domain\Model\Site;
 use Neos\Neos\Domain\Model\SiteNodeName;
@@ -49,6 +50,7 @@ readonly class SiteServiceInternals
     public function __construct(
         private ContentRepository $contentRepository,
         private WorkspaceService $workspaceService,
+        private SecurityContext $securityContext
     ) {
         $this->nodeTypeManager = $this->contentRepository->getNodeTypeManager();
         $this->interDimensionalVariationGraph = $this->contentRepository->getVariationGraph();
@@ -66,9 +68,13 @@ readonly class SiteServiceInternals
             );
         }
 
+        // todo only remove site node in base workspace and rebase dependant workspaces to avoid also the security hacks here.
         foreach ($this->contentRepository->findWorkspaces() as $workspace) {
-            $contentGraph = $this->contentRepository->getContentGraph($workspace->workspaceName);
-            $sitesNodeAggregate = $contentGraph->findRootNodeAggregateByType(
+            $contentGraph = null;
+            $this->securityContext->withoutAuthorizationChecks(function () use (&$contentGraph, $workspace) {
+                $contentGraph = $this->contentRepository->getContentGraph($workspace->workspaceName);
+            });
+            $sitesNodeAggregate = $contentGraph?->findRootNodeAggregateByType(
                 NodeTypeNameFactory::forSites()
             );
             if (!$sitesNodeAggregate) {
@@ -80,12 +86,14 @@ readonly class SiteServiceInternals
                 $siteNodeName->toNodeName()
             );
             if ($siteNodeAggregate instanceof NodeAggregate) {
-                $this->contentRepository->handle(RemoveNodeAggregate::create(
-                    $workspace->workspaceName,
-                    $siteNodeAggregate->nodeAggregateId,
-                    $arbitraryDimensionSpacePoint,
-                    NodeVariantSelectionStrategy::STRATEGY_ALL_VARIANTS,
-                ));
+                $this->securityContext->withoutAuthorizationChecks(
+                    fn () => $this->contentRepository->handle(RemoveNodeAggregate::create(
+                        $workspace->workspaceName,
+                        $siteNodeAggregate->nodeAggregateId,
+                        $arbitraryDimensionSpacePoint,
+                        NodeVariantSelectionStrategy::STRATEGY_ALL_VARIANTS,
+                    ))
+                );
             }
         }
     }
@@ -94,12 +102,15 @@ readonly class SiteServiceInternals
     {
         $liveWorkspace = $this->contentRepository->findWorkspaceByName(WorkspaceName::forLive());
         if ($liveWorkspace === null) {
-            $this->workspaceService->createRootWorkspace(
-                $this->contentRepository->id,
-                WorkspaceName::forLive(),
-                WorkspaceTitle::fromString('Public live workspace'),
-                WorkspaceDescription::empty(),
-                WorkspaceRoleAssignments::createForLiveWorkspace()
+            // CreateRootWorkspace was denied: Creation of root workspaces is currently only allowed with disabled authorization checks
+            $this->securityContext->withoutAuthorizationChecks(
+                fn () => $this->workspaceService->createRootWorkspace(
+                    $this->contentRepository->id,
+                    WorkspaceName::forLive(),
+                    WorkspaceTitle::fromString('Public live workspace'),
+                    WorkspaceDescription::createEmpty(),
+                    WorkspaceRoleAssignments::createForLiveWorkspace()
+                )
             );
         }
 

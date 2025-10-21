@@ -14,6 +14,8 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Core\Feature\WorkspaceRebase\Dto;
 
+use Neos\ContentRepository\Core\Feature\WorkspaceRebase\Exception\WorkspaceRebaseFailed;
+
 /**
  * The strategy how to handle errors during workspace rebase
  *
@@ -25,7 +27,7 @@ namespace Neos\ContentRepository\Core\Feature\WorkspaceRebase\Dto;
 enum RebaseErrorHandlingStrategy: string implements \JsonSerializable
 {
     /**
-     * This strategy rebasing will fail if conflicts are detected and the "WorkspaceRebaseFailed" event is added.
+     * This strategy rebasing will fail if conflicts are detected and the {@see WorkspaceRebaseFailed} exception is thrown.
      */
     case STRATEGY_FAIL = 'fail';
 

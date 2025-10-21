@@ -103,14 +103,15 @@ final class CommandSimulator
             throw new \RuntimeException(sprintf('%s expects an instance of %s to be returned. Got %s when handling %s', self::class, EventsToPublish::class, get_debug_type($eventsToPublish), $rebaseableCommand->originalCommand::class));
         }
 
+        $isFirstEvent = true;
         $normalizedEvents = Events::fromArray(
-            $eventsToPublish->events->map(function (EventInterface|DecoratedEvent $event) use (
-                $rebaseableCommand
-            ) {
+            $eventsToPublish->events->map(function (EventInterface|DecoratedEvent $event) use ($rebaseableCommand, &$isFirstEvent) {
                 $metadata = $event instanceof DecoratedEvent ? $event->eventMetadata?->value ?? [] : [];
-                $decoratedEvent = DecoratedEvent::create($event, metadata: EventMetadata::fromArray(
-                    array_merge($metadata, $rebaseableCommand->initiatingMetaData->value ?? [])
-                ));
+                if ($isFirstEvent) {
+                    $metadata['debug_reason'] = sprintf('Rebased from %s', $rebaseableCommand->originalSequenceNumber->value);
+                    $isFirstEvent = false;
+                }
+                $decoratedEvent = DecoratedEvent::create($event, metadata: array_merge($metadata, $rebaseableCommand->initiatingMetaData->value ?? []));
                 return $this->eventNormalizer->normalize($decoratedEvent);
             })
         );
@@ -135,11 +136,6 @@ final class CommandSimulator
 
         foreach ($eventStream as $eventEnvelope) {
             $event = $this->eventNormalizer->denormalize($eventEnvelope->event);
-
-            if (!$this->contentRepositoryProjection->canHandle($event)) {
-                continue;
-            }
-
             $this->contentRepositoryProjection->apply($event, $eventEnvelope);
         }
     }

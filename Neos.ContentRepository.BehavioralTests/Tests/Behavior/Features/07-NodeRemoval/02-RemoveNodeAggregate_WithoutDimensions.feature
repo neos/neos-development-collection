@@ -46,9 +46,7 @@ Feature: Remove NodeAggregate
       | Key                                  | Expected        |
       | contentStreamId                      | "cs-identifier" |
       | nodeAggregateId                      | "nodingers-cat" |
-      | affectedOccupiedDimensionSpacePoints | [[]]            |
       | affectedCoveredDimensionSpacePoints  | [[]]            |
-      | removalAttachmentPoint               | null            |
     Then I expect the graph projection to consist of exactly 2 nodes
     And I expect a node identified by cs-identifier;lady-eleonode-rootford;{} to exist in the content graph
     And I expect a node identified by cs-identifier;sir-david-nodenborough;{} to exist in the content graph
@@ -63,8 +61,8 @@ Feature: Remove NodeAggregate
     And I expect node aggregate identifier "sir-david-nodenborough" and node path "document" to lead to node cs-identifier;sir-david-nodenborough;{}
     And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
     And I expect this node to have no references
-    And I expect node aggregate identifier "nodingers-cat" and node path "pet" to lead to no node
-    And I expect node aggregate identifier "nodingers-kitten" and node path "pet/kitten" to lead to no node
+    And I expect the node aggregate "nodingers-cat" to not exist
+    And I expect the node aggregate "nodingers-kitten" to not exist
 
   Scenario: Disable a node aggregate, remove it, recreate it and expect it to be enabled
     When the command DisableNodeAggregate is executed with payload:
@@ -101,7 +99,7 @@ Feature: Remove NodeAggregate
     And I expect node aggregate identifier "sir-david-nodenborough" and node path "document" to lead to node cs-identifier;sir-david-nodenborough;{}
     And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
     And I expect node aggregate identifier "nodingers-cat" and node path "pet" to lead to node cs-identifier;nodingers-cat;{}
-    And I expect node aggregate identifier "nodingers-kitten" and node path "pet/kitten" to lead to no node
+    And I expect the node aggregate "nodingers-kitten" to not exist
 
   Scenario: Remove a node aggregate, recreate it and expect it to have no references
     When the command RemoveNodeAggregate is executed with payload:
@@ -132,6 +130,6 @@ Feature: Remove NodeAggregate
       | nodeAggregateId              | "sir-david-nodenborough" |
       | nodeVariantSelectionStrategy | "allVariants"   |
 
-    Then I expect node aggregate identifier "sir-david-nodenborough" and node path "document" to lead to no node
-    And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child" to lead to no node
-    And I expect node aggregate identifier "younger-mc-nodeface" and node path "document/younger-child" to lead to no node
+    And I expect the node aggregate "sir-david-nodenborough" to not exist
+    And I expect the node aggregate "nody-mc-nodeface" to not exist
+    And I expect the node aggregate "younger-mc-nodeface" to not exist

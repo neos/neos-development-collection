@@ -3,7 +3,7 @@
 FlowQuery Operation Reference
 =============================
 
-This reference was automatically generated from code on 2024-05-14
+This reference was automatically generated from code on 2025-02-11
 
 
 .. _`FlowQuery Operation Reference: add`:
@@ -65,7 +65,7 @@ The result is an array of {@see Reference} instances.
 
 To render the reference name of the first match:
 
-    $q{node).backReferences().get(0).name.value}
+    $q{node).backReferences().get(0).name}
 
 The {@see ReferencePropertyOperation} can be used to access any property on the reference relation:
 
@@ -130,6 +130,40 @@ traversing up through its ancestors.
 
 :Implementation: Neos\\ContentRepository\\NodeAccess\\FlowQueryOperations\\ClosestOperation
 :Priority: 100
+:Final: No
+:Returns: void
+
+
+
+
+
+.. _`FlowQuery Operation Reference: context`:
+
+context
+-------
+
+"context" operation working on ContentRepository nodes. Modifies the ContentRepository Context of each
+node in the current FlowQuery context by the given properties and returns the same
+nodes by identifier if they can be accessed in the new Context (otherwise they
+will be skipped).
+
+Example:
+
+	q(node).context({'invisibleContentShown': true}).children()
+
+Supported options:
+- workspaceName
+- dimensions
+- invisibleContentShown
+
+Unsupported legacy options:
+- currentDateTime
+- targetDimensions
+- removedContentShown
+- inaccessibleContentShown
+
+:Implementation: Neos\\ContentRepository\\NodeAccess\\FlowQueryOperations\\ContextOperation
+:Priority: 1
 :Final: No
 :Returns: void
 
@@ -251,6 +285,8 @@ find
 "find" operation working on ContentRepository nodes. This operation allows for retrieval
 of nodes specified by a path, identifier or node type (recursive).
 
+Relative examples depending on the node's workspace, dimension space point, visibility constraints and location in the graph:
+
 Example (node name):
 
  q(node).find('main')
@@ -258,14 +294,6 @@ Example (node name):
 Example (relative path):
 
  q(node).find('main/text1')
-
-Example (absolute path):
-
- q(node).find('/<Neos.Neos:Sites>/my-site/home')
-
-Example (identifier):
-
- q(node).find('#30e893c1-caef-0ca5-b53d-e5699bb8e506')
 
 Example (node type):
 
@@ -278,6 +306,16 @@ Example (multiple node types):
 Example (node type with filter):
 
  q(node).find('[instanceof Neos.NodeTypes:Text][text*="Neos"]')
+
+Absolute / global examples depending only on the node's workspace and dimension space point as well as visibility constraints:
+
+Example (absolute path):
+
+ q(site).find('/<Neos.Neos:Sites>/my-site/home')
+
+Example (global identifier):
+
+ q(site).find('#30e893c1-caef-0ca5-b53d-e5699bb8e506')
 
 This operation operates rather on the given Context object than on the given node
 and thus may work with the legacy node interface until subgraphs are available
@@ -365,7 +403,7 @@ are given, they are used to filter the context before evaluation.
 :Implementation: Neos\\Eel\\FlowQuery\\Operations\\IsOperation
 :Priority: 1
 :Final: Yes
-:Returns: void|boolean
+:Returns: mixed
 
 
 
@@ -590,18 +628,19 @@ it only returns the nodes matching the given expression.
 
 .. _`FlowQuery Operation Reference: property`:
 
-property
---------
+property (deprecated)
+---------------------
 
-Used to access properties of a ContentRepository Node. If the property mame is
-prefixed with _, internal node properties like start time, end time,
-hidden are accessed.
+Used to access properties of a ContentRepository Node.
 
 :Implementation: Neos\\ContentRepository\\NodeAccess\\FlowQueryOperations\\PropertyOperation
 :Priority: 100
 :Final: Yes
 :Returns: mixed
 
+
+
+**DEPRECATED** with Neos 9.0 for simple case like ${q(node).property(propertyName)} please use ${node.properties.title} or ${node.properties[propertyName]} instead.
 
 
 
@@ -639,7 +678,7 @@ This operation can be used to find the nodes that are referenced from a given no
 
 If a referenceName is given as argument only the references for this name are returned
 
-    ${q(node).referenceNodes("someReferenceName").}
+    ${q(node).referenceNodes("someReferenceName").property("title")}
 
 
 
@@ -689,7 +728,7 @@ The result is an array of {@see Reference} instances.
 
 To render the reference name of the first match:
 
-    $q{node).references().get(0).name.value}
+    $q{node).references().get(0).name}
 
 The {@see ReferencePropertyOperation} can be used to access any property on the reference relation:
 
@@ -812,9 +851,7 @@ sort
 "sort" operation working on ContentRepository nodes.
 Sorts nodes by specified node properties.
 
-{@inheritdoc}
-
-First argument is the node property to sort by. Works with internal arguments (_xyz) as well.
+First argument is the node property to sort by.
 Second argument is the sort direction (ASC or DESC).
 Third optional argument are the sort options (see https://www.php.net/manual/en/function.sort):
  - 'SORT_REGULAR'
@@ -830,7 +867,30 @@ Example usages:
      sort("title", "ASC", ["SORT_NATURAL", "SORT_FLAG_CASE"])
      sort("risk", "DESC", "SORT_NUMERIC")
 
-:Implementation: Neos\\Neos\\Eel\\FlowQueryOperations\\SortOperation
+:Implementation: Neos\\ContentRepository\\NodeAccess\\FlowQueryOperations\\SortOperation
+:Priority: 1
+:Final: No
+:Returns: void
+
+
+
+
+
+.. _`FlowQuery Operation Reference: sortByTimestamp`:
+
+sortByTimestamp
+---------------
+
+"sortByTimestamp" operation working on ContentRepository nodes.
+Sorts nodes by specified timestamp.
+
+First argument is the timestamp to sort by like created, lastModified, originalCreated and originalLastModified
+Second argument is the sort direction (ASC or DESC).
+
+     sortByTimestamp("created", "ASC")
+     sortByTimestamp("lastModified", "DESC")
+
+:Implementation: Neos\\ContentRepository\\NodeAccess\\FlowQueryOperations\\SortByTimestampOperation
 :Priority: 1
 :Final: No
 :Returns: void

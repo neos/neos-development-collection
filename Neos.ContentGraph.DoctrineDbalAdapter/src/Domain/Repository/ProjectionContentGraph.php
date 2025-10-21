@@ -399,7 +399,7 @@ class ProjectionContentGraph
     public function findIngoingHierarchyRelationsForNode(
         NodeRelationAnchorPoint $childAnchorPoint,
         ContentStreamId $contentStreamId,
-        DimensionSpacePointSet $restrictToSet = null
+        ?DimensionSpacePointSet $restrictToSet = null
     ): array {
         $ingoingHierarchyRelationsStatement = <<<SQL
             SELECT
@@ -439,7 +439,7 @@ class ProjectionContentGraph
     public function findOutgoingHierarchyRelationsForNode(
         NodeRelationAnchorPoint $parentAnchorPoint,
         ContentStreamId $contentStreamId,
-        DimensionSpacePointSet $restrictToSet = null
+        ?DimensionSpacePointSet $restrictToSet = null
     ): array {
         $outgoingHierarchyRelationsStatement = <<<SQL
             SELECT
@@ -512,7 +512,7 @@ class ProjectionContentGraph
     public function findIngoingHierarchyRelationsForNodeAggregate(
         ContentStreamId $contentStreamId,
         NodeAggregateId $nodeAggregateId,
-        DimensionSpacePointSet $dimensionSpacePointSet = null
+        ?DimensionSpacePointSet $dimensionSpacePointSet = null
     ): array {
         $ingoingHierarchyRelationsStatement = <<<SQL
             SELECT

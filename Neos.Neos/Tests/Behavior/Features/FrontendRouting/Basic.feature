@@ -67,23 +67,23 @@ Feature: Basic routing functionality (match & resolve document nodes in one dime
 
   Scenario: Match homepage URL
     When I am on URL "/"
-    Then the matched node should be "shernode-homes" in content stream "cs-identifier" and dimension "{}"
+    Then the matched node should be "shernode-homes" in dimension "{}"
 
   Scenario: Resolve nodes correctly from homepage
     When I am on URL "/"
-    Then the node "shernode-homes" in content stream "cs-identifier" and dimension "{}" should resolve to URL "/"
-    And the node "sir-david-nodenborough" in content stream "cs-identifier" and dimension "{}" should resolve to URL "/david-nodenborough"
-    And the node "earl-o-documentbourgh" in content stream "cs-identifier" and dimension "{}" should resolve to URL "/david-nodenborough/earl-document"
+    Then the node "shernode-homes" in dimension "{}" should resolve to URL "/"
+    And the node "sir-david-nodenborough" in dimension "{}" should resolve to URL "/david-nodenborough"
+    And the node "earl-o-documentbourgh" in dimension "{}" should resolve to URL "/david-nodenborough/earl-document"
 
   Scenario: Match node lower in the tree
     When I am on URL "/david-nodenborough/earl-document"
-    Then the matched node should be "earl-o-documentbourgh" in content stream "cs-identifier" and dimension "{}"
+    Then the matched node should be "earl-o-documentbourgh" in dimension "{}"
 
   Scenario: Resolve from node lower in the tree
     When I am on URL "/david-nodenborough/earl-document"
-    Then the node "shernode-homes" in content stream "cs-identifier" and dimension "{}" should resolve to URL "/"
-    And the node "sir-david-nodenborough" in content stream "cs-identifier" and dimension "{}" should resolve to URL "/david-nodenborough"
-    And the node "earl-o-documentbourgh" in content stream "cs-identifier" and dimension "{}" should resolve to URL "/david-nodenborough/earl-document"
+    Then the node "shernode-homes" in dimension "{}" should resolve to URL "/"
+    And the node "sir-david-nodenborough" in dimension "{}" should resolve to URL "/david-nodenborough"
+    And the node "earl-o-documentbourgh" in dimension "{}" should resolve to URL "/david-nodenborough/earl-document"
 
   Scenario: Change uri path segment
     When the command SetNodeProperties is executed with payload:
@@ -92,8 +92,27 @@ Feature: Basic routing functionality (match & resolve document nodes in one dime
       | originDimensionSpacePoint | {}                                               |
       | propertyValues            | {"uriPathSegment": "david-nodenborough-updated"} |
     And I am on URL "/"
-    Then the node "sir-david-nodenborough" in content stream "cs-identifier" and dimension "{}" should resolve to URL "/david-nodenborough-updated"
-    And the node "earl-o-documentbourgh" in content stream "cs-identifier" and dimension "{}" should resolve to URL "/david-nodenborough-updated/earl-document"
+    Then the node "sir-david-nodenborough" in dimension "{}" should resolve to URL "/david-nodenborough-updated"
+    And the node "earl-o-documentbourgh" in dimension "{}" should resolve to URL "/david-nodenborough-updated/earl-document"
+
+  Scenario: Change uri path segment disables caches
+    Note that its relatively hard to test that the cache is invalidated correctly,
+    because one might implement it by disabling of caches only via `resetState()` which is invoked BEFORE every test essentially disabling testing for everything
+    Only a new php runtime with an already setup'd cr can guarantee that the caches are flushed correctly, or your brain!
+
+    # before changing assert previous values and have cache triggerd.
+    And I am on URL "/"
+    Then the node "sir-david-nodenborough" in dimension "{}" should resolve to URL "/david-nodenborough"
+    And the node "earl-o-documentbourgh" in dimension "{}" should resolve to URL "/david-nodenborough/earl-document"
+
+    When the command SetNodeProperties is executed with payload:
+      | Key                       | Value                                            |
+      | nodeAggregateId           | "sir-david-nodenborough"                         |
+      | originDimensionSpacePoint | {}                                               |
+      | propertyValues            | {"uriPathSegment": "david-nodenborough-updated"} |
+    And I am on URL "/"
+    Then the node "sir-david-nodenborough" in dimension "{}" should resolve to URL "/david-nodenborough-updated"
+    And the node "earl-o-documentbourgh" in dimension "{}" should resolve to URL "/david-nodenborough-updated/earl-document"
 
   Scenario: Change uri path segment works multiple times (bug #4253)
     When the command SetNodeProperties is executed with payload:
@@ -108,14 +127,14 @@ Feature: Basic routing functionality (match & resolve document nodes in one dime
       | propertyValues            | {"uriPathSegment": "david-nodenborough-updated-b"} |
 
     And I am on URL "/"
-    Then the node "sir-david-nodenborough" in content stream "cs-identifier" and dimension "{}" should resolve to URL "/david-nodenborough-updated-b"
-    And the node "earl-o-documentbourgh" in content stream "cs-identifier" and dimension "{}" should resolve to URL "/david-nodenborough-updated-b/earl-document"
+    Then the node "sir-david-nodenborough" in dimension "{}" should resolve to URL "/david-nodenborough-updated-b"
+    And the node "earl-o-documentbourgh" in dimension "{}" should resolve to URL "/david-nodenborough-updated-b/earl-document"
 
     # !!! when caches were still enabled (without calling DocumentUriPathFinder->disableCache()), the replay below will
     # show really "interesting" (non-correct) results. This was bug #4253.
-    When I replay the "Neos\Neos\FrontendRouting\Projection\DocumentUriPathProjection" projection
-    Then the node "sir-david-nodenborough" in content stream "cs-identifier" and dimension "{}" should resolve to URL "/david-nodenborough-updated-b"
-    And the node "earl-o-documentbourgh" in content stream "cs-identifier" and dimension "{}" should resolve to URL "/david-nodenborough-updated-b/earl-document"
+    When I replay the "Neos.Neos:DocumentUriPathProjection" projection
+    Then the node "sir-david-nodenborough" in dimension "{}" should resolve to URL "/david-nodenborough-updated-b"
+    And the node "earl-o-documentbourgh" in dimension "{}" should resolve to URL "/david-nodenborough-updated-b/earl-document"
 
 
   Scenario: Move node upwards in the tree
@@ -126,8 +145,8 @@ Feature: Basic routing functionality (match & resolve document nodes in one dime
       | newParentNodeAggregateId            | "shernode-homes"        |
       | newSucceedingSiblingNodeAggregateId | null                    |
     And I am on URL "/earl-document"
-    Then the matched node should be "earl-o-documentbourgh" in content stream "cs-identifier" and dimension "{}"
-    And the node "earl-o-documentbourgh" in content stream "cs-identifier" and dimension "{}" should resolve to URL "/earl-document"
+    Then the matched node should be "earl-o-documentbourgh" in dimension "{}"
+    And the node "earl-o-documentbourgh" in dimension "{}" should resolve to URL "/earl-document"
 
   Scenario: Move node downwards in the tree
     When the command MoveNodeAggregate is executed with payload:
@@ -137,5 +156,5 @@ Feature: Basic routing functionality (match & resolve document nodes in one dime
       | newParentNodeAggregateId            | "earl-o-documentbourgh" |
       | newSucceedingSiblingNodeAggregateId | null                    |
     And I am on URL "/david-nodenborough/earl-document/nody"
-    Then the matched node should be "nody-mc-nodeface" in content stream "cs-identifier" and dimension "{}"
-    And the node "nody-mc-nodeface" in content stream "cs-identifier" and dimension "{}" should resolve to URL "/david-nodenborough/earl-document/nody"
+    Then the matched node should be "nody-mc-nodeface" in dimension "{}"
+    And the node "nody-mc-nodeface" in dimension "{}" should resolve to URL "/david-nodenborough/earl-document/nody"

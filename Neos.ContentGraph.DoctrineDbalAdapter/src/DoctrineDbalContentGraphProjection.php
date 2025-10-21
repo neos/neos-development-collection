@@ -59,10 +59,8 @@ use Neos\ContentRepository\Core\Feature\WorkspacePublication\Event\WorkspaceWasD
 use Neos\ContentRepository\Core\Feature\WorkspacePublication\Event\WorkspaceWasPublished;
 use Neos\ContentRepository\Core\Feature\WorkspaceRebase\Event\WorkspaceRebaseFailed;
 use Neos\ContentRepository\Core\Feature\WorkspaceRebase\Event\WorkspaceWasRebased;
-use Neos\ContentRepository\Core\Infrastructure\DbalCheckpointStorage;
 use Neos\ContentRepository\Core\Infrastructure\DbalSchemaDiff;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
-use Neos\ContentRepository\Core\Projection\CheckpointStorageStatusType;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphProjectionInterface;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphReadModelInterface;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodeTags;
@@ -73,7 +71,6 @@ use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
 use Neos\ContentRepository\Core\SharedModel\Node\ReferenceName;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
-use Neos\EventStore\Model\Event\SequenceNumber;
 use Neos\EventStore\Model\EventEnvelope;
 
 /**
@@ -91,8 +88,6 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
 
     public const RELATION_DEFAULT_OFFSET = 128;
 
-    private DbalCheckpointStorage $checkpointStorage;
-
     public function __construct(
         private readonly Connection $dbal,
         private readonly ProjectionContentGraph $projectionContentGraph,
@@ -100,11 +95,6 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
         private readonly DimensionSpacePointsRepository $dimensionSpacePointsRepository,
         private readonly ContentGraphReadModelInterface $contentGraphReadModel
     ) {
-        $this->checkpointStorage = new DbalCheckpointStorage(
-            $this->dbal,
-            $this->tableNames->checkpoint(),
-            self::class
-        );
     }
 
     public function setUp(): void
@@ -118,18 +108,10 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
                 throw new \RuntimeException(sprintf('Failed to setup projection %s: %s', self::class, $e->getMessage()), 1716478255, $e);
             }
         }
-        $this->checkpointStorage->setUp();
     }
 
     public function status(): ProjectionStatus
     {
-        $checkpointStorageStatus = $this->checkpointStorage->status();
-        if ($checkpointStorageStatus->type === CheckpointStorageStatusType::ERROR) {
-            return ProjectionStatus::error($checkpointStorageStatus->details);
-        }
-        if ($checkpointStorageStatus->type === CheckpointStorageStatusType::SETUP_REQUIRED) {
-            return ProjectionStatus::setupRequired($checkpointStorageStatus->details);
-        }
         try {
             $this->dbal->connect();
         } catch (\Throwable $e) {
@@ -147,57 +129,14 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
         return ProjectionStatus::ok();
     }
 
-    public function reset(): void
+    public function resetState(): void
     {
         $this->truncateDatabaseTables();
-
-        $this->checkpointStorage->acquireLock();
-        $this->checkpointStorage->updateAndReleaseLock(SequenceNumber::none());
-    }
-
-    public function getCheckpointStorage(): DbalCheckpointStorage
-    {
-        return $this->checkpointStorage;
     }
 
     public function getState(): ContentGraphReadModelInterface
     {
         return $this->contentGraphReadModel;
-    }
-
-    public function canHandle(EventInterface $event): bool
-    {
-        return in_array($event::class, [
-            ContentStreamWasClosed::class,
-            ContentStreamWasCreated::class,
-            ContentStreamWasForked::class,
-            ContentStreamWasRemoved::class,
-            ContentStreamWasReopened::class,
-            DimensionShineThroughWasAdded::class,
-            DimensionSpacePointWasMoved::class,
-            NodeAggregateNameWasChanged::class,
-            NodeAggregateTypeWasChanged::class,
-            NodeAggregateWasMoved::class,
-            NodeAggregateWasRemoved::class,
-            NodeAggregateWithNodeWasCreated::class,
-            NodeGeneralizationVariantWasCreated::class,
-            NodePeerVariantWasCreated::class,
-            NodePropertiesWereSet::class,
-            NodeReferencesWereSet::class,
-            NodeSpecializationVariantWasCreated::class,
-            RootNodeAggregateDimensionsWereUpdated::class,
-            RootNodeAggregateWithNodeWasCreated::class,
-            RootWorkspaceWasCreated::class,
-            SubtreeWasTagged::class,
-            SubtreeWasUntagged::class,
-            WorkspaceBaseWorkspaceWasChanged::class,
-            WorkspaceRebaseFailed::class,
-            WorkspaceWasCreated::class,
-            WorkspaceWasDiscarded::class,
-            WorkspaceWasPublished::class,
-            WorkspaceWasRebased::class,
-            WorkspaceWasRemoved::class,
-        ]) || $event instanceof EmbedsContentStreamId;
     }
 
     public function apply(EventInterface $event, EventEnvelope $eventEnvelope): void
@@ -232,7 +171,7 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
             WorkspaceWasPublished::class => $this->whenWorkspaceWasPublished($event),
             WorkspaceWasRebased::class => $this->whenWorkspaceWasRebased($event),
             WorkspaceWasRemoved::class => $this->whenWorkspaceWasRemoved($event),
-            default => $event instanceof EmbedsContentStreamId || throw new \InvalidArgumentException(sprintf('Unsupported event %s', get_debug_type($event))),
+            default => null,
         };
         if (
             $event instanceof EmbedsContentStreamId
@@ -677,29 +616,24 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
             return;
         }
 
-        // delete all hierarchy edges of the root node
-        $deleteHierarchyRelationsStatement = <<<SQL
-            DELETE FROM {$this->tableNames->hierarchyRelation()}
-            WHERE
-                parentnodeanchor = :parentNodeAnchor
-                AND childnodeanchor = :childNodeAnchor
-                AND contentstreamid = :contentStreamId
-        SQL;
-        try {
-            $this->dbal->executeStatement($deleteHierarchyRelationsStatement, [
-                'parentNodeAnchor' => NodeRelationAnchorPoint::forRootEdge()->value,
-                'childNodeAnchor' => $rootNodeAnchorPoint->value,
-                'contentStreamId' => $event->contentStreamId->value,
-            ]);
-        } catch (DBALException $e) {
-            throw new \RuntimeException(sprintf('Failed to delete hierarchy relation: %s', $e->getMessage()), 1716488943, $e);
+        $ingoingRelations = $this->projectionContentGraph->findIngoingHierarchyRelationsForNode(
+            $rootNodeAnchorPoint,
+            $event->contentStreamId
+        );
+
+        $currentlyCoveredDimensionSpacePoints = [];
+        foreach ($ingoingRelations as $ingoingRelation) {
+            $currentlyCoveredDimensionSpacePoints[] = $ingoingRelation->dimensionSpacePoint;
         }
-        // recreate hierarchy edges for the root node
+
+        $newlyCoveredDimensionSpacePoints = $event->coveredDimensionSpacePoints->getDifference(DimensionSpacePointSet::fromArray($currentlyCoveredDimensionSpacePoints));
+
+        // add hierarchy edges for newly added dimensions
         $this->connectHierarchy(
             $event->contentStreamId,
             NodeRelationAnchorPoint::forRootEdge(),
             $rootNodeAnchorPoint,
-            $event->coveredDimensionSpacePoints,
+            $newlyCoveredDimensionSpacePoints,
             null
         );
     }
@@ -790,8 +724,7 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
      */
     private function determineRequiredSqlStatements(): array
     {
-        $schemaManager = $this->dbal->createSchemaManager();
-        $schema = (new DoctrineDbalContentGraphSchemaBuilder($this->tableNames))->buildSchema($schemaManager);
+        $schema = (new DoctrineDbalContentGraphSchemaBuilder($this->tableNames))->buildSchema($this->dbal);
         return DbalSchemaDiff::determineRequiredSqlStatements($this->dbal, $schema);
     }
 

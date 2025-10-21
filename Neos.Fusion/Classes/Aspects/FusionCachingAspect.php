@@ -14,6 +14,7 @@ namespace Neos\Fusion\Aspects;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Aop\JoinPointInterface;
 use Neos\Cache\Frontend\VariableFrontend;
+use Neos\Fusion\View\FusionView;
 
 /**
  * @Flow\Scope("singleton")
@@ -34,7 +35,9 @@ class FusionCachingAspect
      */
     public function cacheGetMergedFusionObjectTree(JoinPointInterface $joinPoint)
     {
-        $fusionPathPatterns = $joinPoint->getProxy()->getFusionPathPatterns();
+        /** @var FusionView $view */
+        $view = $joinPoint->getProxy();
+        $fusionPathPatterns = $view->getFusionPathPatterns();
         $cacheIdentifier = md5(serialize($fusionPathPatterns));
 
         if ($this->fusionCache->has($cacheIdentifier)) {

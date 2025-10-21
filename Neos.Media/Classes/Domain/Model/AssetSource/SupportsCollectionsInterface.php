@@ -24,5 +24,5 @@ interface SupportsCollectionsInterface
      *
      * @param AssetCollection $assetCollection
      */
-    public function filterByCollection(AssetCollection $assetCollection = null): void;
+    public function filterByCollection(?AssetCollection $assetCollection = null): void;
 }

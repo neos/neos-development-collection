@@ -215,6 +215,14 @@ final class Nodes implements \IteratorAggregate, \ArrayAccess, \Countable
         return array_map($callback, $this->nodes);
     }
 
+    /**
+     * @param \Closure(Node $node): bool $callback
+     */
+    public function filter(\Closure $callback): self
+    {
+        return self::fromArray(array_filter($this->nodes, $callback));
+    }
+
     public function toNodeAggregateIds(): NodeAggregateIds
     {
         return NodeAggregateIds::fromNodes($this);

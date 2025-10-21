@@ -12,6 +12,21 @@ Neos:
         ignoredClasses:
           Neos\\ContentRepository\\SharedModel\\NodeType\\NodeTypeManager: true
 
+    log:
+      psr3:
+        'Neos\Flow\Log\PsrLoggerFactory':
+          contentRepositoryLogger:
+            default:
+              class: Neos\Flow\Log\Backend\FileBackend
+              options:
+                # todo context aware? FLOW_APPLICATION_CONTEXT .. but that contains /
+                logFileURL: '%FLOW_PATH_DATA%Logs/ContentRepository.log'
+                createParentDirectories: true
+                severityThreshold: '%LOG_INFO%'
+                maximumLogFileSize: 10485760
+                logFilesToKeep: 1
+                logMessageOrigin: false
+
   ContentRepositoryRegistry:
     contentRepositories:
       default:
@@ -36,6 +51,9 @@ Neos:
 
         clock:
           factoryObjectName: Neos\ContentRepositoryRegistry\Factory\Clock\SystemClockFactory
+
+        subscriptionStore:
+          factoryObjectName: Neos\ContentRepositoryRegistry\Factory\SubscriptionStore\SubscriptionStoreFactory
 
         propertyConverters:
           DateTimeNormalizer:
@@ -86,3 +104,23 @@ Neos:
         # commandHooks:
         #   'My.Package:SomeCommandHook': # just a name
         #     factoryObjectName: My\Package\CommandHook\SomeCommandHookFactory
+
+    nodeMigration:
+      filterFactories:
+        DimensionSpacePoints: Neos\ContentRepository\NodeMigration\Filter\DimensionSpacePointsFilterFactory
+        NodeName: Neos\ContentRepository\NodeMigration\Filter\NodeNameFilterFactory
+        NodeType: Neos\ContentRepository\NodeMigration\Filter\NodeTypeFilterFactory
+        PropertyNotEmpty: Neos\ContentRepository\NodeMigration\Filter\PropertyNotEmptyFilterFactory
+        PropertyValue: Neos\ContentRepository\NodeMigration\Filter\PropertyValueFilterFactory
+      transformationFactories:
+        AddDimensionShineThrough: Neos\ContentRepository\NodeMigration\Transformation\AddDimensionShineThroughTransformationFactory
+        AddNewProperty: Neos\ContentRepository\NodeMigration\Transformation\AddNewPropertyConverterAwareTransformationFactory
+        ChangeNodeType: Neos\ContentRepository\NodeMigration\Transformation\ChangeNodeTypeTransformationFactory
+        ChangePropertyValue: Neos\ContentRepository\NodeMigration\Transformation\ChangePropertyValueConverterAwareTransformationFactory
+        MoveDimensionSpacePoint: Neos\ContentRepository\NodeMigration\Transformation\MoveDimensionSpacePointTransformationFactory
+        RemoveNode: Neos\ContentRepository\NodeMigration\Transformation\RemoveNodeTransformationFactory
+        RemoveProperty: Neos\ContentRepository\NodeMigration\Transformation\RemovePropertyTransformationFactory
+        RenameNodeAggregate: Neos\ContentRepository\NodeMigration\Transformation\RenameNodeAggregateTransformationFactory
+        RenameProperty: Neos\ContentRepository\NodeMigration\Transformation\RenamePropertyTransformationFactory
+        StripTagsOnProperty: Neos\ContentRepository\NodeMigration\Transformation\StripTagsOnPropertyTransformationFactory
+        UpdateRootNodeAggregateDimensions: Neos\ContentRepository\NodeMigration\Transformation\UpdateRootNodeAggregateDimensionsTransformationFactory

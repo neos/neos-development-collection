@@ -51,9 +51,4 @@ final readonly class ContentGraphTableNames
     {
         return $this->tableNamePrefix . '_contentstream';
     }
-
-    public function checkpoint(): string
-    {
-        return $this->tableNamePrefix . '_checkpoint';
-    }
 }

@@ -14,18 +14,10 @@ declare(strict_types=1);
 
 namespace Neos\Neos\Controller\Frontend;
 
-use Neos\ContentRepository\Core\Feature\SubtreeTagging\Dto\SubtreeTag;
-use Neos\ContentRepository\Core\Projection\ContentGraph\ContentSubgraphInterface;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindClosestNodeFilter;
-use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindSubtreeFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
-use Neos\ContentRepository\Core\Projection\ContentGraph\Nodes;
-use Neos\ContentRepository\Core\Projection\ContentGraph\Subtree;
-use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAddress;
-use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
-use Neos\ContentRepositoryRegistry\SubgraphCachingInMemory\ContentSubgraphWithRuntimeCaches;
 use Neos\ContentRepositoryRegistry\SubgraphCachingInMemory\SubgraphCachePool;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\Controller\ActionController;
@@ -36,9 +28,9 @@ use Neos\Flow\Security\Context as SecurityContext;
 use Neos\Flow\Session\SessionInterface;
 use Neos\Flow\Utility\Now;
 use Neos\Neos\Domain\Model\RenderingMode;
-use Neos\Neos\Domain\Model\User;
 use Neos\Neos\Domain\Service\NodeTypeNameFactory;
 use Neos\Neos\Domain\Service\RenderingModeService;
+use Neos\Neos\Domain\SubtreeTagging\NeosVisibilityConstraints;
 use Neos\Neos\FrontendRouting\Exception\InvalidShortcutException;
 use Neos\Neos\FrontendRouting\Exception\NodeNotFoundException;
 use Neos\Neos\FrontendRouting\NodeShortcutResolver;
@@ -116,6 +108,9 @@ class NodeController extends ActionController
     #[Flow\Inject]
     protected ContentRepositoryAuthorizationService $contentRepositoryAuthorizationService;
 
+    #[Flow\Inject]
+    protected ContentSubgraphCacheWarmup|null $contentSubgraphCacheWarmup = null;
+
     /**
      * @param string $node
      * @throws NodeNotFoundException
@@ -152,7 +147,7 @@ class NodeController extends ActionController
             throw new NodeNotFoundException("TODO: SITE NOT FOUND; should not happen (for identity " . $nodeAddress->toJson());
         }
 
-        $this->fillCacheWithContentNodes($nodeAddress->aggregateId, $subgraph);
+        $this->contentSubgraphCacheWarmup?->fillCacheWithContentNodes($nodeAddress->aggregateId, $subgraph);
 
         if (
             $this->getNodeType($nodeInstance)->isOfType(NodeTypeNameFactory::NAME_SHORTCUT)
@@ -205,10 +200,8 @@ class NodeController extends ActionController
         // Neos backend users have access to the "disabled" SubtreeTag so that they can see/edit disabled nodes.
         // In this showAction (= "frontend") we have to explicitly remove those disabled nodes, even if the user was authenticated,
         // to ensure that disabled nodes are NEVER shown recursively.
-        $visibilityConstraints = $visibilityConstraints->withAddedSubtreeTag(SubtreeTag::disabled());
-        $uncachedSubgraph = $contentRepository->getContentGraph($nodeAddress->workspaceName)->getSubgraph($nodeAddress->dimensionSpacePoint, $visibilityConstraints);
-
-        $subgraph = new ContentSubgraphWithRuntimeCaches($uncachedSubgraph, $this->subgraphCachePool);
+        $visibilityConstraints = $visibilityConstraints->merge(NeosVisibilityConstraints::excludeDisabled());
+        $subgraph = $this->subgraphCachePool->getContentSubgraph($contentRepository, $nodeAddress->workspaceName, $nodeAddress->dimensionSpacePoint, $visibilityConstraints);
 
         $nodeInstance = $subgraph->findNodeById($nodeAddress->aggregateId);
         if ($nodeInstance === null) {
@@ -220,7 +213,7 @@ class NodeController extends ActionController
             throw new NodeNotFoundException(sprintf('The site node of %s could not be resolved.', $nodeAddress->toJson()), 1707300861);
         }
 
-        $this->fillCacheWithContentNodes($nodeAddress->aggregateId, $subgraph);
+        $this->contentSubgraphCacheWarmup?->fillCacheWithContentNodes($nodeAddress->aggregateId, $subgraph);
 
         if ($this->getNodeType($nodeInstance)->isOfType(NodeTypeNameFactory::NAME_SHORTCUT)) {
             $this->handleShortcutNode($nodeAddress);
@@ -304,70 +297,5 @@ class NodeController extends ActionController
         }
 
         $this->redirectToUri($resolvedUri, statusCode: $this->shortcutRedirectHttpStatusCode);
-    }
-
-    private function fillCacheWithContentNodes(
-        NodeAggregateId $nodeAggregateId,
-        ContentSubgraphInterface $subgraph,
-    ): void {
-        $subtree = $subgraph->findSubtree(
-            $nodeAggregateId,
-            FindSubtreeFilter::create(nodeTypes: '!' . NodeTypeNameFactory::NAME_DOCUMENT, maximumLevels: 20)
-        );
-        if ($subtree === null) {
-            return;
-        }
-
-        $currentDocumentNode = $subtree->node;
-
-        foreach ($subtree->children as $childSubtree) {
-            self::fillCacheInternal(
-                $childSubtree,
-                $currentDocumentNode,
-                $this->subgraphCachePool,
-                $subgraph
-            );
-        }
-    }
-
-    private static function fillCacheInternal(
-        Subtree $subtree,
-        Node $parentNode,
-        SubgraphCachePool $subgraphCachePool,
-        ContentSubgraphInterface $subgraph,
-    ): void {
-        $node = $subtree->node;
-
-        $parentNodeIdentifierByChildNodeIdentifierCache
-            = $subgraphCachePool->getParentNodeIdByChildNodeIdCache($subgraph);
-        $namedChildNodeByNodeIdentifierCache = $subgraphCachePool->getNamedChildNodeByNodeIdCache($subgraph);
-        $allChildNodesByNodeIdentifierCache = $subgraphCachePool->getAllChildNodesByNodeIdCache($subgraph);
-        if ($node->name !== null) {
-            $namedChildNodeByNodeIdentifierCache->add(
-                $parentNode->aggregateId,
-                $node->name,
-                $node
-            );
-        } else {
-            // @todo use node aggregate identifier instead?
-        }
-
-        $parentNodeIdentifierByChildNodeIdentifierCache->add(
-            $node->aggregateId,
-            $parentNode->aggregateId
-        );
-
-        $allChildNodes = [];
-        foreach ($subtree->children as $childSubtree) {
-            self::fillCacheInternal($childSubtree, $node, $subgraphCachePool, $subgraph);
-            $childNode = $childSubtree->node;
-            $allChildNodes[] = $childNode;
-        }
-        // TODO Explain why this is safe (Content can not contain other documents)
-        $allChildNodesByNodeIdentifierCache->add(
-            $node->aggregateId,
-            null,
-            Nodes::fromArray($allChildNodes)
-        );
     }
 }

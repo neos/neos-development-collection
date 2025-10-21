@@ -1,0 +1,98 @@
+prototype(Neos.Workspace.Ui:Component.Modal.Rebase) < prototype(Neos.Fusion:Component) {
+  /// string
+  workspaceName = ''
+  /// string
+  workspaceTitle = ''
+  /// string
+  baseWorkspaceTitle = ''
+  /// array
+  conflictInformation = null
+
+  @private {
+    i18n = ${I18n.id('').source('Main').package('Neos.Workspace.Ui')}
+    popoverId = 'workspace-rebase-modal'
+    popoverConfirmId = 'workspace-rebase-confirm-modal'
+    confirmRebaseUri = Neos.Fusion:ActionUri {
+      action = 'rebaseConfirm'
+      format = 'htmx'
+      arguments {
+        workspaceName = ${workspaceName}
+        conflictCount = ${Array.length(props.conflictInformation)}
+      }
+    }
+  }
+
+  renderer = afx`
+    <div popover class="error" id={private.popoverId}>
+      <header>
+        <button
+          type="button"
+          class="neos-close neos-button"
+          popovertarget={private.popoverId}
+          popovertargetaction="close"
+        >
+          <Neos.Workspace.Ui:Component.Icon icon="times"/>
+        </button>
+        <div class="neos-header">
+          <i class="fas fa-bolt"></i> {private.i18n.id('workspaces.dialog.forceSyncWorkspace').arguments([props.workspaceTitle, props.baseWorkspaceTitle])}
+        </div>
+      </header>
+      <section>
+        <p>{private.i18n.id('workspaces.dialog.thisCanLeadToLostChanges').arguments([props.baseWorkspaceTitle, props.workspaceTitle])}</p>
+        <details>
+          <summary>
+            {private.i18n.id('workspaces.dialog.ShowInformationAboutConflict').arguments([Array.length(props.conflictInformation)])}
+          </summary>
+          <br/>
+          <Neos.Fusion:Loop items={props.conflictInformation} itemName="conflict">
+            <table class="neos-table">
+              <tbody>
+              <tr>
+                <td>{private.i18n.id('workspaces.dialog.rebase.error')}:</td>
+                <td><b>{conflict.error}</b></td>
+              </tr>
+              <tr>
+                <td>{private.i18n.id('workspaces.dialog.rebase.node')}:</td>
+                <td>
+                  {conflict.affectedNode}
+                </td>
+              </tr>
+              <tr>
+                <td>{private.i18n.id('workspaces.dialog.rebase.event')}:</td>
+                <td>
+                  <details>
+                    <summary>{private.i18n.id('workspaces.dialog.rebase.eventDetails')}: {conflict.event}</summary>
+                    <pre style="line-height: 1.5">
+                        {conflict.eventPayload}
+                    </pre>
+                  </details>
+                </td>
+              </tr>
+              </tbody>
+            </table>
+          </Neos.Fusion:Loop>
+        </details>
+        <p>{private.i18n.id('workspaces.dialog.thisCanLeadToLostChangesConfirmation').arguments([Array.length(props.conflictInformation)])}</p>
+      </section>
+      <footer>
+        <button
+          type="button"
+          class="neos-button"
+          popovertarget={private.popoverId}
+          popovertargetaction="close"
+        >
+          {private.i18n.id('cancel')}
+        </button>
+        <Neos.Workspace.Ui:Component.Button
+          isDanger
+          label={private.i18n.id('workspaces.modal.yesRebaseWorkspace')}
+          attributes.hx-get={private.confirmRebaseUri}
+          attributes.hx-target={'#' + private.popoverConfirmId}
+          attributes.hx-swap="outerHTML"
+          attributes.hx-on--after-request={'document.getElementById("' + private.popoverConfirmId + '").showPopover()'}
+        />
+      </footer>
+      <div popover id={private.popoverConfirmId}></div>
+    </div>
+  `
+}

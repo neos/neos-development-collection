@@ -71,7 +71,7 @@ Feature: Individual node publication
     Then I expect a node identified by cs-identifier;sir-david-nodenborough;{} to exist in the content graph
 
 
-  Scenario: Partial publish is a no-op if the workspace doesnt contain any changes (and the workspace is outdated)
+  Scenario: Partial publish is skipped (via exception) if the workspace doesnt contain any changes (and the workspace is outdated)
 
     When the command CreateNodeAggregateWithNode is executed with payload:
       | Key                       | Value                                    |
@@ -85,11 +85,17 @@ Feature: Individual node publication
     And I am in workspace "user-test" and dimension space point {}
     Then I expect node aggregate identifier "nody-mc-nodeface" to lead to no node
 
-    When the command PublishIndividualNodesFromWorkspace is executed with payload:
+    When the command PublishIndividualNodesFromWorkspace is executed with payload and exceptions are caught:
       | Key                             | Value                                                            |
       | workspaceName                   | "user-test"                                                      |
       | nodesToPublish                  | ["non-existing"] |
       | contentStreamIdForRemainingPart | "user-cs-new"                                                    |
+
+    Then the last command should have thrown an exception of type "WorkspaceCommandSkipped" with code 1730463156 and message:
+    """
+    Skipped publish workspace "user-test" without any publishable changes.
+    """
+
     Then workspaces user-test has status OUTDATED
 
     And I am in workspace "user-test" and dimension space point {}

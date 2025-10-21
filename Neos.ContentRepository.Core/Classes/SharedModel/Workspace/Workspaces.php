@@ -21,7 +21,7 @@ namespace Neos\ContentRepository\Core\SharedModel\Workspace;
  *
  * @api
  */
-final class Workspaces implements \IteratorAggregate, \Countable
+final readonly class Workspaces implements \IteratorAggregate, \Countable
 {
     /**
      * @var array<string,Workspace>
@@ -29,19 +29,38 @@ final class Workspaces implements \IteratorAggregate, \Countable
     private array $workspaces;
 
     /**
+     * @var array<string,list<Workspace>>
+     */
+    private array $workspacesByBaseWorkspaceName;
+
+    /**
+     * @var list<Workspace>
+     */
+    private array $rootWorkspaces;
+
+    /**
      * @param iterable<Workspace> $collection
      */
     private function __construct(iterable $collection)
     {
         $workspaces = [];
+        $rootWorkspaces = [];
+        $workspacesByBaseWorkspaceName = [];
         foreach ($collection as $item) {
             if (!$item instanceof Workspace) {
                 throw new \InvalidArgumentException(sprintf('Workspaces must only consist of %s objects, got: %s', Workspace::class, get_debug_type($item)), 1677833509);
             }
             $workspaces[$item->workspaceName->value] = $item;
+            if ($item->baseWorkspaceName !== null) {
+                $workspacesByBaseWorkspaceName[$item->baseWorkspaceName->value][] = $item;
+            } else {
+                $rootWorkspaces[] = $item;
+            }
         }
 
         $this->workspaces = $workspaces;
+        $this->rootWorkspaces = $rootWorkspaces;
+        $this->workspacesByBaseWorkspaceName = $workspacesByBaseWorkspaceName;
     }
 
     /**
@@ -63,37 +82,51 @@ final class Workspaces implements \IteratorAggregate, \Countable
     }
 
     /**
-     * Get all base workspaces (if they are included in this result set).
+     * @return list<Workspace>
      */
-    public function getBaseWorkspaces(WorkspaceName $workspaceName): Workspaces
+    public function getRootWorkspaces(): array
     {
-        $baseWorkspaces = [];
-
-        $workspace = $this->get($workspaceName);
-        if (!$workspace) {
-            return self::createEmpty();
-        }
-        $baseWorkspaceName = $workspace->baseWorkspaceName;
-        while ($baseWorkspaceName !== null) {
-            $baseWorkspace = $this->get($baseWorkspaceName);
-            if ($baseWorkspace) {
-                $baseWorkspaces[] = $baseWorkspace;
-                $baseWorkspaceName = $baseWorkspace->baseWorkspaceName;
-            } else {
-                $baseWorkspaceName = null;
-            }
-        }
-        return self::fromArray($baseWorkspaces);
+        return $this->rootWorkspaces;
     }
 
     /**
-     * Get all dependent workspaces (if they are included in this result set).
+     * Get all base workspaces (if they are included in this set).
+     */
+    public function getBaseWorkspaces(WorkspaceName $workspaceName): Workspaces
+    {
+        $bases = [];
+        $workspace = $this->workspaces[$workspaceName->value] ?? null;
+        while ($workspace?->baseWorkspaceName !== null) {
+            $workspace = $this->workspaces[$workspace->baseWorkspaceName->value] ?? null;
+            // base workspace might not be in this set!
+            if ($workspace !== null) {
+                $bases[] = $workspace;
+            }
+        }
+        return Workspaces::fromArray($bases);
+    }
+
+    /**
+     * Get all dependent workspaces recursively (if they are included in this set).
+     */
+    public function getDependantWorkspacesRecursively(WorkspaceName $workspaceName): Workspaces
+    {
+        $dependants = [];
+        $stack = $this->workspacesByBaseWorkspaceName[$workspaceName->value] ?? [];
+        while ($stack !== []) {
+            $workspace = array_shift($stack);
+            $dependants[] = $workspace;
+            $stack = [...$stack, ...$this->workspacesByBaseWorkspaceName[$workspace->workspaceName->value] ?? []];
+        }
+        return self::fromArray($dependants);
+    }
+
+    /**
+     * Get all immediately dependent workspaces (if they are included in this set).
      */
     public function getDependantWorkspaces(WorkspaceName $workspaceName): Workspaces
     {
-        return $this->filter(
-            static fn (Workspace $potentiallyDependentWorkspace) => $potentiallyDependentWorkspace->baseWorkspaceName?->equals($workspaceName) ?? false
-        );
+        return self::fromArray($this->workspacesByBaseWorkspaceName[$workspaceName->value] ?? []);
     }
 
     public function getIterator(): \Traversable

@@ -89,7 +89,7 @@ trait NodeVariationInternals
 
     /**
      * @param array<int,EventInterface> $events
-     * @return array<int,EventInterface>
+     * @return non-empty-array<int,EventInterface>
      */
     protected function collectNodeSpecializationVariantsThatWillHaveBeenCreated(
         ContentGraphInterface $contentGraph,
@@ -152,7 +152,7 @@ trait NodeVariationInternals
 
     /**
      * @param array<int,EventInterface> $events
-     * @return array<int,EventInterface>
+     * @return non-empty-array<int,EventInterface>
      */
     protected function collectNodeGeneralizationVariantsThatWillHaveBeenCreated(
         ContentGraphInterface $contentGraph,
@@ -215,7 +215,7 @@ trait NodeVariationInternals
 
     /**
      * @param array<int,EventInterface> $events
-     * @return array<int,EventInterface>
+     * @return non-empty-array<int,EventInterface>
      */
     protected function collectNodePeerVariantsThatWillHaveBeenCreated(
         ContentGraphInterface $contentGraph,
@@ -276,14 +276,14 @@ trait NodeVariationInternals
         DimensionSpacePointSet $variantCoverage,
     ): InterdimensionalSiblings {
         $originSiblings = $contentGraph
-            ->getSubgraph($sourceOrigin->toDimensionSpacePoint(), VisibilityConstraints::withoutRestrictions())
+            ->getSubgraph($sourceOrigin->toDimensionSpacePoint(), VisibilityConstraints::createEmpty())
             ->findSucceedingSiblingNodes($varyingNodeAggregateId, FindSucceedingSiblingNodesFilter::create());
 
         $interdimensionalSiblings = [];
         foreach ($variantCoverage as $variantDimensionSpacePoint) {
             // check the siblings succeeding in the origin dimension space point
             foreach ($originSiblings as $originSibling) {
-                $variantSibling = $contentGraph->getSubgraph($variantDimensionSpacePoint, VisibilityConstraints::withoutRestrictions())->findNodeById($originSibling->aggregateId);
+                $variantSibling = $contentGraph->getSubgraph($variantDimensionSpacePoint, VisibilityConstraints::createEmpty())->findNodeById($originSibling->aggregateId);
                 if (!$variantSibling) {
                     continue;
                 }

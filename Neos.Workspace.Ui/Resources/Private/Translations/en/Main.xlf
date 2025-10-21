@@ -8,6 +8,9 @@
       <trans-unit id="cancel" xml:space="preserve">
 				<source>Cancel</source>
 			</trans-unit>
+      <trans-unit id="applyChanges" xml:space="preserve">
+				<source>Apply changes</source>
+			</trans-unit>
       <trans-unit id="pathCaption" xml:space="preserve">
 				<source>Path</source>
 			</trans-unit>
@@ -18,8 +21,14 @@
       <trans-unit id="workspaces.label" xml:space="preserve">
 				<source>Workspaces</source>
 			</trans-unit>
-      <trans-unit id="workspaces.detailsForWorkspace" xml:space="preserve">
-				<source>Details for "{0}"</source>
+      <trans-unit id="workspaces.reviewWorkspace" xml:space="preserve">
+				<source>Review workspace "{0}"</source>
+			</trans-unit>
+      <trans-unit id="workspaces.reviewWorkspace.label" xml:space="preserve">
+				<source>Review</source>
+			</trans-unit>
+      <trans-unit id="workspaces.reviewWorkspace.disabled" xml:space="preserve">
+				<source>Workspace "{0}" has no unpublished changes</source>
 			</trans-unit>
       <trans-unit id="workspaces.createNewWorkspace" xml:space="preserve">
 				<source>Create new workspace</source>
@@ -28,7 +37,13 @@
 				<source>Create workspace</source>
 			</trans-unit>
       <trans-unit id="workspaces.deleteWorkspace" xml:space="preserve">
-				<source>Delete workspace</source>
+				<source>Delete workspace "{0}"</source>
+			</trans-unit>
+      <trans-unit id="workspaces.numberOfWorkspaces" xml:space="preserve">
+				<source>{0} workspaces</source>
+			</trans-unit>
+      <trans-unit id="workspaces.deleteWorkspace.disabled" xml:space="preserve">
+				<source>Workspace "{0}" has unpublished changes</source>
 			</trans-unit>
       <trans-unit id="workspaces.yesDeleteWorkspace" xml:space="preserve">
 				<source>Yes, delete the workspace</source>
@@ -36,14 +51,17 @@
       <trans-unit id="workspaces.editWorkspace" xml:space="preserve">
 				<source>Edit workspace "{0}"</source>
 			</trans-unit>
+      <trans-unit id="workspaces.rebaseWorkspace" xml:space="preserve">
+				<source>Sync workspace "{0}" with its base workspace</source>
+			</trans-unit>
       <trans-unit id="workspaces.personalWorkspace" xml:space="preserve">
 				<source>Personal workspace</source>
 			</trans-unit>
       <trans-unit id="workspaces.privateWorkspace" xml:space="preserve">
 				<source>Private workspace</source>
 			</trans-unit>
-      <trans-unit id="workspaces.internalWorkspace" xml:space="preserve">
-				<source>Internal workspace</source>
+      <trans-unit id="workspaces.sharedWorkspace" xml:space="preserve">
+				<source>Shared workspace</source>
 			</trans-unit>
       <trans-unit id="workspaces.readonlyWorkspace" xml:space="preserve">
 				<source>Read-only workspace</source>
@@ -57,9 +75,51 @@
       <trans-unit id="workspaces.workspace.baseWorkspace" xml:space="preserve">
 				<source>Base workspace</source>
 			</trans-unit>
+      <trans-unit id="workspaces.workspace.userWorkspace" xml:space="preserve">
+				<source>This is your workspace</source>
+			</trans-unit>
       <trans-unit id="workspaces.workspace.owner" xml:space="preserve">
 				<source>Owner</source>
 			</trans-unit>
+      <trans-unit id="workspaces.workspace.lastModified" xml:space="preserve">
+				<source>Last modified</source>
+			</trans-unit>
+      <trans-unit id="workspaces.workspace.workspaceManagerUsers" xml:space="preserve">
+				<source>Managed by Users</source>
+			</trans-unit>
+      <trans-unit id="workspaces.workspace.workspaceManagerGroups" xml:space="preserve">
+				<source>Managed by Groups</source>
+			</trans-unit>
+      <trans-unit id="workspaces.workspace.permissions" xml:space="preserve">
+				<source>Permissions</source>
+			</trans-unit>
+      <trans-unit id="workspaces.workspaceDoesNotExist" xml:space="preserve">
+				<source>Workspace "{0}" does not exist</source>
+			</trans-unit>
+      <group id="workspaces.changes.new" restype="x-gettext-plurals">
+        <trans-unit id="workspaces.changes.new[0]" xml:space="preserve">
+          <source>{0} node was added</source>
+        </trans-unit>
+        <trans-unit id="workspaces.changes.new[1]" xml:space="preserve">
+          <source>{0} nodes were added</source>
+        </trans-unit>
+      </group>
+      <group id="workspaces.changes.changed" restype="x-gettext-plurals">
+        <trans-unit id="workspaces.changes.changed[0]" xml:space="preserve">
+          <source>{0} node was changed</source>
+        </trans-unit>
+        <trans-unit id="workspaces.changes.changed[1]" xml:space="preserve">
+          <source>{0} nodes were changed</source>
+        </trans-unit>
+      </group>
+      <group id="workspaces.changes.removed" restype="x-gettext-plurals">
+        <trans-unit id="workspaces.changes.removed[0]" xml:space="preserve">
+          <source>{0} node was removed</source>
+        </trans-unit>
+        <trans-unit id="workspaces.changes.removed[1]" xml:space="preserve">
+          <source>{0} nodes were removed</source>
+        </trans-unit>
+      </group>
       <trans-unit id="workspaces.workspace.visibility" xml:space="preserve">
 				<source>Visibility</source>
 			</trans-unit>
@@ -69,14 +129,26 @@
       <trans-unit id="workspaces.workspace.visibility.private.help" xml:space="preserve">
 				<source>Only reviewers and administrators can access and modify this workspace</source>
 			</trans-unit>
-      <trans-unit id="workspaces.workspace.visibility.internal" xml:space="preserve">
-				<source>Internal</source>
+      <trans-unit id="workspaces.workspace.visibility.shared" xml:space="preserve">
+				<source>Shared</source>
 			</trans-unit>
-      <trans-unit id="workspaces.workspace.visibility.internal.help" xml:space="preserve">
+      <trans-unit id="workspaces.workspace.visibility.shared.help" xml:space="preserve">
 				<source>Any logged in editor can see and modify this workspace.</source>
+			</trans-unit>
+      <trans-unit id="workspaces.workspace.status" xml:space="preserve">
+				<source>Status</source>
+			</trans-unit>
+      <trans-unit id="workspaces.workspace.status.UP_TO_DATE" xml:space="preserve">
+				<source>Up to date</source>
+			</trans-unit>
+      <trans-unit id="workspaces.workspace.status.OUTDATED" xml:space="preserve">
+				<source>Outdated</source>
 			</trans-unit>
       <trans-unit id="workspaces.workspace.changes" xml:space="preserve">
 				<source>Changes</source>
+			</trans-unit>
+      <trans-unit id="workspaces.workspace.actions" xml:space="preserve">
+				<source>Actions</source>
 			</trans-unit>
       <trans-unit id="workspaces.openPageInWorkspace" xml:space="preserve">
 				<source>Open page in "{0}" workspace</source>
@@ -101,6 +173,42 @@
 			</trans-unit>
       <trans-unit id="workspaces.dialog.thisWillDeleteTheWorkspace" xml:space="preserve">
 				<source>This will delete the workspace including all unpublished content. This operation cannot be undone.</source>
+			</trans-unit>
+      <trans-unit id="workspaces.dialog.forceSyncWorkspace" xml:space="preserve">
+				<source>Conflicts between workspace "{0}" and "{1}"</source>
+			</trans-unit>
+      <trans-unit id="workspaces.dialog.ShowInformationAboutConflict" xml:space="preserve">
+				<source>Show information about {0} conflict(s)</source>
+			</trans-unit>
+      <trans-unit id="workspaces.dialog.thisCanLeadToLostChanges" xml:space="preserve">
+				<source>Workspace "{0}" contains modifications that are in conflict with the changes in workspace "{1}".</source>
+			</trans-unit>
+      <trans-unit id="workspaces.dialog.thisCanLeadToLostChangesConfirmation" xml:space="preserve">
+				<source>Do you want to drop {0} conflicting change(s)?</source>
+			</trans-unit>
+      <trans-unit id="workspaces.dialog.ConfirmationDropConflictingChanges" xml:space="preserve">
+				<source>Do you really want to drop all conflicting changes from workspace "{0}"?</source>
+			</trans-unit>
+      <trans-unit id="workspaces.dialog.ConfirmationDropConflictingChangesCount" xml:space="preserve">
+				<source>This will remove {0} change(s) from the workspace.</source>
+			</trans-unit>
+      <trans-unit id="workspaces.dialog.ConfirmationDropConflictingChangesText" xml:space="preserve">
+				<source>This can not be undone! Do you wish to proceed?</source>
+			</trans-unit>
+      <trans-unit id="workspaces.dialog.rebase.error" xml:space="preserve">
+				<source>Error</source>
+			</trans-unit>
+      <trans-unit id="workspaces.dialog.rebase.node" xml:space="preserve">
+				<source>Node</source>
+			</trans-unit>
+      <trans-unit id="workspaces.dialog.rebase.event" xml:space="preserve">
+				<source>Event</source>
+			</trans-unit>
+      <trans-unit id="workspaces.dialog.rebase.eventDetails" xml:space="preserve">
+				<source>Event details</source>
+			</trans-unit>
+      <trans-unit id="workspaces.modal.yesRebaseWorkspace" xml:space="preserve">
+				<source>Yes, drop changes</source>
 			</trans-unit>
       <trans-unit id="workspaces.description" xml:space="preserve">
 				<source>This module contains the overview of all elements within the current workspace and it enables to continue the review and publishing workflow for them.</source>
@@ -129,6 +237,12 @@
       <trans-unit id="workspaces.publishAllChangesTo" xml:space="preserve">
 				<source>Publish all changes to {0}</source>
 			</trans-unit>
+      <trans-unit id="workspaces.publishAllChangesInThisDocument" xml:space="preserve">
+				<source>Publish all changes in this document</source>
+			</trans-unit>
+      <trans-unit id="workspaces.discardAllChangesInThisDocument" xml:space="preserve">
+				<source>Discard all changes in this document</source>
+			</trans-unit>
       <trans-unit id="changedContentCaption" xml:space="preserve">
 				<source>Changed Content</source>
 			</trans-unit>
@@ -156,11 +270,14 @@
       <trans-unit id="workspaces.discardAllChangesInWorkspaceConfirmation" xml:space="preserve">
 				<source>Do you really want to discard all changes in the "{0}" workspace?</source>
 			</trans-unit>
+      <trans-unit id="workspaces.publishAllChangesInWorkspaceConfirmation" xml:space="preserve">
+				<source>Do you really want to publish all changes in the "{0}" workspace?</source>
+			</trans-unit>
       <trans-unit id="workspaces.workspaceWithThisTitleAlreadyExists">
         <source>A workspace with this title already exists.</source>
       </trans-unit>
-      <trans-unit id="workspaces.workspaceHasBeenCreated">
-        <source>The workspace "{0}" has been created.</source>
+      <trans-unit id="workspaces.workspaceCouldNotBeCreated">
+        <source>Workspace could not be created.</source>
       </trans-unit>
       <trans-unit id="workspaces.workspaceHasBeenUpdated">
         <source>The workspace "{0}" has been updated.</source>
@@ -170,6 +287,9 @@
       </trans-unit>
       <trans-unit id="workspaces.cantEditBecauseWorkspaceContainsChanges">
         <source>Your personal workspace contains changes, please publish or discard them first.</source>
+      </trans-unit>
+      <trans-unit id="workspaces.cantChangeBaseWorkspaceBecauseWorkspaceContainsChanges">
+        <source>You cannot change the base workspace of workspace with unpublished changes.</source>
       </trans-unit>
       <group id="workspaces.workspaceCannotBeDeletedBecauseOfUnpublishedNodes" restype="x-gettext-plurals">
         <trans-unit id="workspaces.workspaceCannotBeDeletedBecauseOfUnpublishedNodes[0]">
@@ -203,6 +323,36 @@
       <trans-unit id="workspaces.selectAllCurrentChanges">
         <source>Select all current changes</source>
       </trans-unit>
+      <trans-unit id="workspaces.workspaceHasBeenCreated">
+        <source>The workspace "{0}" has been created.</source>
+      </trans-unit>
+      <trans-unit id="workspaces.changedTags" xml:space="preserve">
+				<source>New element tags</source>
+			</trans-unit>
+      <trans-unit id="workspaces.changes.noPermissionToPublishToBaseWorkspace" xml:space="preserve">
+				<source>You do not have permission to publish to the base workspace</source>
+			</trans-unit>
+      <trans-unit id="workspaces.changes.noPermissionToPublishToWorkspace" xml:space="preserve">
+				<source>You do not have permission to publish to the this workspace</source>
+			</trans-unit>
+      <trans-unit id="workspaces.changes.noPermissionToReadWorkspace" xml:space="preserve">
+				<source>You do not have permission to see this workspace</source>
+			</trans-unit>
+      <trans-unit id="table.column.access.shared" xml:space="preserve">
+				<source>This is a shared workspace</source>
+			</trans-unit>
+      <trans-unit id="table.column.access.private" xml:space="preserve">
+				<source>This is a private workspace</source>
+			</trans-unit>
+      <trans-unit id="table.column.access.personal" xml:space="preserve">
+				<source>This is the personal workspace of "{0}"</source>
+			</trans-unit>
+      <trans-unit id="workspaces.workspaceHasBeenRebased" xml:space="preserve">
+				<source>The workspace has been successfully synced</source>
+			</trans-unit>
+      <trans-unit id="workspaces.ForceRebaseWorkspaceFailed" xml:space="preserve">
+				<source>Forcing the sync has failed. Please try discarding your changes.</source>
+			</trans-unit>
     </body>
   </file>
 </xliff>

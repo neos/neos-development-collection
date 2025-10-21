@@ -16,12 +16,12 @@ final class UriNormalizer implements NormalizerInterface, DenormalizerInterface
     /**
      * @param array<string,mixed> $context
      */
-    public function normalize($data, string $format = null, array $context = []): string
+    public function normalize($data, ?string $format = null, array $context = []): string
     {
         return (string)$data;
     }
 
-    public function supportsNormalization($data, string $format = null)
+    public function supportsNormalization($data, ?string $format = null)
     {
         return $data instanceof Uri;
     }
@@ -29,12 +29,12 @@ final class UriNormalizer implements NormalizerInterface, DenormalizerInterface
     /**
      * @param array<string,mixed> $context
      */
-    public function denormalize($data, string $type, string $format = null, array $context = [])
+    public function denormalize($data, string $type, ?string $format = null, array $context = [])
     {
         return new Uri($data);
     }
 
-    public function supportsDenormalization($data, string $type, string $format = null)
+    public function supportsDenormalization($data, string $type, ?string $format = null)
     {
         return is_string($data) && $type === Uri::class;
     }

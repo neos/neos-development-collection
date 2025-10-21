@@ -25,7 +25,6 @@ use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryI
 use Neos\ContentRepository\Core\SharedModel\Exception\WorkspaceDoesNotExist;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStream;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreams;
 use Neos\ContentRepository\Core\SharedModel\Workspace\Workspace;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepository\Core\SharedModel\Workspace\Workspaces;
@@ -121,22 +120,6 @@ final readonly class ContentGraphReadModelAdapter implements ContentGraphReadMod
             return null;
         }
         return self::contentStreamFromDatabaseRow($row);
-    }
-
-    public function findContentStreams(): ContentStreams
-    {
-        $contentStreamsStatement = <<<SQL
-            SELECT
-                id, sourceContentStreamId, version, closed
-            FROM
-                {$this->tableNames->contentStream()}
-        SQL;
-        try {
-            $rows = $this->dbal->fetchAllAssociative($contentStreamsStatement);
-        } catch (Exception $e) {
-            throw new \RuntimeException(sprintf('Failed to load content streams from database: %s', $e->getMessage()), 1716903042, $e);
-        }
-        return ContentStreams::fromArray(array_map(self::contentStreamFromDatabaseRow(...), $rows));
     }
 
     public function countNodes(): int

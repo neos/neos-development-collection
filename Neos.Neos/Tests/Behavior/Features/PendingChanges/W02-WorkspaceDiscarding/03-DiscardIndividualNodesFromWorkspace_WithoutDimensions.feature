@@ -45,7 +45,7 @@ Feature: Discard nodes partially without dimensions
       | nody-mc-nodeface           | child-node | sir-david-nodenborough | Neos.ContentRepository.Testing:Node | {"text": "This is a text about Nody Mc Nodeface"}           |
       | sir-nodeward-nodington-iii | esquire    | lady-eleonode-rootford | Neos.ContentRepository.Testing:Node | {"text": "This is a text about Sir Nodeward Nodington III"} |
 
-    Then I expect the ChangeProjection to have the following changes in "user-cs-id":
+    Then I expect to have the following changes in workspace "user-workspace":
       | nodeAggregateId            | created | changed | moved | deleted | originDimensionSpacePoint |
       | nody-mc-nodeface           | 1       | 1       | 0     | 0       | {}                        |
       | sir-nodeward-nodington-iii | 1       | 1       | 0     | 0       | {}                        |
@@ -56,11 +56,11 @@ Feature: Discard nodes partially without dimensions
       | nodesToDiscard     | ["sir-nodeward-nodington-iii"] |
       | newContentStreamId | "user-cs-id-remaining"                                                                                            |
 
-    Then I expect the ChangeProjection to have the following changes in "user-cs-id-remaining":
+    Then I expect to have the following changes in workspace "user-workspace":
       | nodeAggregateId  | created | changed | moved | deleted | originDimensionSpacePoint |
       | nody-mc-nodeface | 1       | 1       | 0     | 0       | {}                        |
     And I expect the ChangeProjection to have no changes in "user-cs-id"
-    And I expect the ChangeProjection to have no changes in "cs-identifier"
+    And I expect to have no changes in workspace "live"
 
   Scenario: Discards multiple nodes partially from user workspace
     Given the command CreateWorkspace is executed with payload:
@@ -76,7 +76,7 @@ Feature: Discard nodes partially without dimensions
       | sir-nodeward-nodington-iii | esquire    | lady-eleonode-rootford | Neos.ContentRepository.Testing:Node | {"text": "This is a text about Sir Nodeward Nodington III"} |
       | sir-nodeward-nodington-iv  | bakura     | lady-eleonode-rootford | Neos.ContentRepository.Testing:Node | {"text": "This is a text about Sir Nodeward Nodington IV"}  |
 
-    Then I expect the ChangeProjection to have the following changes in "user-cs-id":
+    Then I expect to have the following changes in workspace "user-workspace":
       | nodeAggregateId            | created | changed | moved | deleted | originDimensionSpacePoint |
       | nody-mc-nodeface           | 1       | 1       | 0     | 0       | {}                        |
       | sir-nodeward-nodington-iii | 1       | 1       | 0     | 0       | {}                        |
@@ -88,11 +88,11 @@ Feature: Discard nodes partially without dimensions
       | nodesToDiscard     | ["sir-nodeward-nodington-iii", "sir-nodeward-nodington-iv"] |
       | newContentStreamId | "user-cs-id-remaining"                                                                                                                                                                                                           |
 
-    Then I expect the ChangeProjection to have the following changes in "user-cs-id-remaining":
+    Then I expect to have the following changes in workspace "user-workspace":
       | nodeAggregateId  | created | changed | moved | deleted | originDimensionSpacePoint |
       | nody-mc-nodeface | 1       | 1       | 0     | 0       | {}                        |
     And I expect the ChangeProjection to have no changes in "user-cs-id"
-    And I expect the ChangeProjection to have no changes in "cs-identifier"
+    And I expect to have no changes in workspace "live"
 
   Scenario: Discards nodes partially from user workspace with a non-live base workspace
     Given the command CreateWorkspace is executed with payload:
@@ -120,11 +120,11 @@ Feature: Discard nodes partially without dimensions
       | sir-nodeward-nodington-iii | esquire  | lady-eleonode-rootford | Neos.ContentRepository.Testing:Node | {"text": "This is a text about Sir Nodeward Nodington III"} |
       | sir-nodeward-nodington-iv  | bukara   | lady-eleonode-rootford | Neos.ContentRepository.Testing:Node | {"text": "This is a text about Sir Nodeward Nodington IV"}  |
 
-    Then I expect the ChangeProjection to have the following changes in "user-cs-id":
+    Then I expect to have the following changes in workspace "user-workspace":
       | nodeAggregateId            | created | changed | moved | deleted | originDimensionSpacePoint |
       | sir-nodeward-nodington-iii | 1       | 1       | 0     | 0       | {}                        |
       | sir-nodeward-nodington-iv  | 1       | 1       | 0     | 0       | {}                        |
-    And I expect the ChangeProjection to have the following changes in "review-cs-id":
+    And I expect to have the following changes in workspace "review-workspace":
       | nodeAggregateId  | created | changed | moved | deleted | originDimensionSpacePoint |
       | nody-mc-nodeface | 1       | 1       | 0     | 0       | {}                        |
 
@@ -134,14 +134,14 @@ Feature: Discard nodes partially without dimensions
       | nodesToDiscard     | ["sir-nodeward-nodington-iv"] |
       | newContentStreamId | "user-cs-id-remaining"                                                                                           |
 
-    Then I expect the ChangeProjection to have the following changes in "user-cs-id-remaining":
+    Then I expect to have the following changes in workspace "user-workspace":
       | nodeAggregateId            | created | changed | moved | deleted | originDimensionSpacePoint |
       | sir-nodeward-nodington-iii | 1       | 1       | 0     | 0       | {}                        |
-    And I expect the ChangeProjection to have the following changes in "review-cs-id":
+    And I expect to have the following changes in workspace "review-workspace":
       | nodeAggregateId  | created | changed | moved | deleted | originDimensionSpacePoint |
       | nody-mc-nodeface | 1       | 1       | 0     | 0       | {}                        |
     And I expect the ChangeProjection to have no changes in "user-cs-id"
-    And I expect the ChangeProjection to have no changes in "cs-identifier"
+    And I expect to have no changes in workspace "live"
 
   Scenario: Discards multiple nodes partially from user workspace with a non-live base workspace
     Given the command CreateWorkspace is executed with payload:
@@ -170,12 +170,12 @@ Feature: Discard nodes partially without dimensions
       | sir-nodeward-nodington-iv  | bukara    | lady-eleonode-rootford | Neos.ContentRepository.Testing:Node | {"text": "This is a text about Sir Nodeward Nodington IV"}  |
       | sir-nodeward-nodington-v   | tinquarto | lady-eleonode-rootford | Neos.ContentRepository.Testing:Node | {"text": "This is a text about Sir Nodeward Nodington V"}   |
 
-    Then I expect the ChangeProjection to have the following changes in "user-cs-id":
+    Then I expect to have the following changes in workspace "user-workspace":
       | nodeAggregateId            | created | changed | moved | deleted | originDimensionSpacePoint |
       | sir-nodeward-nodington-iii | 1       | 1       | 0     | 0       | {}                        |
       | sir-nodeward-nodington-iv  | 1       | 1       | 0     | 0       | {}                        |
       | sir-nodeward-nodington-v   | 1       | 1       | 0     | 0       | {}                        |
-    And I expect the ChangeProjection to have the following changes in "review-cs-id":
+    And I expect to have the following changes in workspace "review-workspace":
       | nodeAggregateId  | created | changed | moved | deleted | originDimensionSpacePoint |
       | nody-mc-nodeface | 1       | 1       | 0     | 0       | {}                        |
 
@@ -185,11 +185,11 @@ Feature: Discard nodes partially without dimensions
       | nodesToDiscard     | ["sir-nodeward-nodington-iv", "sir-nodeward-nodington-v"] |
       | newContentStreamId | "user-cs-id-remaining"                                                                                                                                                                                                         |
 
-    Then I expect the ChangeProjection to have the following changes in "user-cs-id-remaining":
+    Then I expect to have the following changes in workspace "user-workspace":
       | nodeAggregateId            | created | changed | moved | deleted | originDimensionSpacePoint |
       | sir-nodeward-nodington-iii | 1       | 1       | 0     | 0       | {}                        |
-    And I expect the ChangeProjection to have the following changes in "review-cs-id":
+    And I expect to have the following changes in workspace "review-workspace":
       | nodeAggregateId  | created | changed | moved | deleted | originDimensionSpacePoint |
       | nody-mc-nodeface | 1       | 1       | 0     | 0       | {}                        |
     And I expect the ChangeProjection to have no changes in "user-cs-id"
-    And I expect the ChangeProjection to have no changes in "cs-identifier"
+    And I expect to have no changes in workspace "live"

@@ -22,55 +22,55 @@ Feature: Run integrity violation detection regarding subtree tag inheritance
       | Key             | Value                         |
       | nodeAggregateId | "lady-eleonode-rootford"      |
       | nodeTypeName    | "Neos.ContentRepository:Root" |
-
-  Scenario: Create nodes, disable the topmost and remove some restriction edges manually
-    When the event NodeAggregateWithNodeWasCreated was published with payload:
-      | Key                         | Value                                                    |
-      | workspaceName               | "live"                                                   |
-      | contentStreamId             | "cs-identifier"                                          |
-      | nodeAggregateId             | "sir-david-nodenborough"                                 |
-      | nodeTypeName                | "Neos.ContentRepository.Testing:Document"                |
-      | originDimensionSpacePoint   | {"language":"de"}                                        |
-      | coveredDimensionSpacePoints | [{"language":"de"},{"language":"gsw"},{"language":"fr"}] |
-      | parentNodeAggregateId       | "lady-eleonode-rootford"                                 |
-      | nodeName                    | "document"                                               |
-      | nodeAggregateClassification | "regular"                                                |
-    And the event NodeAggregateWithNodeWasCreated was published with payload:
-      | Key                         | Value                                                    |
-      | workspaceName               | "live"                                                   |
-      | contentStreamId             | "cs-identifier"                                          |
-      | nodeAggregateId             | "sir-nodeward-nodington-iii"                             |
-      | nodeTypeName                | "Neos.ContentRepository.Testing:Document"                |
-      | originDimensionSpacePoint   | {"language":"de"}                                        |
-      | coveredDimensionSpacePoints | [{"language":"de"},{"language":"gsw"},{"language":"fr"}] |
-      | parentNodeAggregateId       | "sir-david-nodenborough"                                 |
-      | nodeName                    | "esquire"                                                |
-      | nodeAggregateClassification | "regular"                                                |
-    And the event NodeAggregateWithNodeWasCreated was published with payload:
-      | Key                         | Value                                                    |
-      | workspaceName               | "live"                                                   |
-      | contentStreamId             | "cs-identifier"                                          |
-      | nodeAggregateId             | "nody-mc-nodeface"                                       |
-      | nodeTypeName                | "Neos.ContentRepository.Testing:Document"                |
-      | originDimensionSpacePoint   | {"language":"de"}                                        |
-      | coveredDimensionSpacePoints | [{"language":"de"},{"language":"gsw"},{"language":"fr"}] |
-      | parentNodeAggregateId       | "sir-nodeward-nodington-iii"                             |
-      | nodeName                    | "child-document"                                         |
-      | nodeAggregateClassification | "regular"                                                |
-    And the event SubtreeWasTagged was published with payload:
-      | Key                          | Value                                                    |
-      | workspaceName                | "live"                                                   |
-      | contentStreamId              | "cs-identifier"                                          |
-      | nodeAggregateId              | "sir-david-nodenborough"                                 |
-      | affectedDimensionSpacePoints | [{"language":"de"},{"language":"gsw"},{"language":"fr"}] |
-      | tag                          | "disabled"                                               |
-    And I remove the following subtree tag:
-      | Key                   | Value                        |
-      | contentStreamId       | "cs-identifier"              |
-      | dimensionSpacePoint   | {"language":"de"}            |
-      | parentNodeAggregateId | "sir-nodeward-nodington-iii" |
-      | childNodeAggregateId  | "nody-mc-nodeface"           |
-      | subtreeTag            | "disabled"                   |
-    And I run integrity violation detection
-    Then I expect the integrity violation detection result to contain exactly 1 error
-    And I expect integrity violation detection result error number 1 to have code 1597837797
+#
+#  Scenario: Create nodes, disable the topmost and remove some restriction edges manually
+#    When the event NodeAggregateWithNodeWasCreated was published with payload:
+#      | Key                         | Value                                                    |
+#      | workspaceName               | "live"                                                   |
+#      | contentStreamId             | "cs-identifier"                                          |
+#      | nodeAggregateId             | "sir-david-nodenborough"                                 |
+#      | nodeTypeName                | "Neos.ContentRepository.Testing:Document"                |
+#      | originDimensionSpacePoint   | {"language":"de"}                                        |
+#      | coveredDimensionSpacePoints | [{"language":"de"},{"language":"gsw"},{"language":"fr"}] |
+#      | parentNodeAggregateId       | "lady-eleonode-rootford"                                 |
+#      | nodeName                    | "document"                                               |
+#      | nodeAggregateClassification | "regular"                                                |
+#    And the event NodeAggregateWithNodeWasCreated was published with payload:
+#      | Key                         | Value                                                    |
+#      | workspaceName               | "live"                                                   |
+#      | contentStreamId             | "cs-identifier"                                          |
+#      | nodeAggregateId             | "sir-nodeward-nodington-iii"                             |
+#      | nodeTypeName                | "Neos.ContentRepository.Testing:Document"                |
+#      | originDimensionSpacePoint   | {"language":"de"}                                        |
+#      | coveredDimensionSpacePoints | [{"language":"de"},{"language":"gsw"},{"language":"fr"}] |
+#      | parentNodeAggregateId       | "sir-david-nodenborough"                                 |
+#      | nodeName                    | "esquire"                                                |
+#      | nodeAggregateClassification | "regular"                                                |
+#    And the event NodeAggregateWithNodeWasCreated was published with payload:
+#      | Key                         | Value                                                    |
+#      | workspaceName               | "live"                                                   |
+#      | contentStreamId             | "cs-identifier"                                          |
+#      | nodeAggregateId             | "nody-mc-nodeface"                                       |
+#      | nodeTypeName                | "Neos.ContentRepository.Testing:Document"                |
+#      | originDimensionSpacePoint   | {"language":"de"}                                        |
+#      | coveredDimensionSpacePoints | [{"language":"de"},{"language":"gsw"},{"language":"fr"}] |
+#      | parentNodeAggregateId       | "sir-nodeward-nodington-iii"                             |
+#      | nodeName                    | "child-document"                                         |
+#      | nodeAggregateClassification | "regular"                                                |
+#    And the event SubtreeWasTagged was published with payload:
+#      | Key                          | Value                                                    |
+#      | workspaceName                | "live"                                                   |
+#      | contentStreamId              | "cs-identifier"                                          |
+#      | nodeAggregateId              | "sir-david-nodenborough"                                 |
+#      | affectedDimensionSpacePoints | [{"language":"de"},{"language":"gsw"},{"language":"fr"}] |
+#      | tag                          | "disabled"                                               |
+#    And I remove the following subtree tag:
+#      | Key                   | Value                        |
+#      | contentStreamId       | "cs-identifier"              |
+#      | dimensionSpacePoint   | {"language":"de"}            |
+#      | parentNodeAggregateId | "sir-nodeward-nodington-iii" |
+#      | childNodeAggregateId  | "nody-mc-nodeface"           |
+#      | subtreeTag            | "disabled"                   |
+#    And I run integrity violation detection
+#    Then I expect the integrity violation detection result to contain exactly 1 error
+#    And I expect integrity violation detection result error number 1 to have code 1597837797

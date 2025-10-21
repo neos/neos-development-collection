@@ -1,9 +1,19 @@
 parameters:
 	ignoreErrors:
 		-
-			message: "#^The internal method \"Neos\\\\ContentRepository\\\\Core\\\\Projection\\\\Projections\\:\\:getClassNames\" is called\\.$#"
+			message: "#^The internal method \"Neos\\\\ContentRepository\\\\Core\\\\Subscription\\\\SubscriptionIds\\:\\:toStringArray\" is called\\.$#"
 			count: 1
-			path: Neos.ContentRepositoryRegistry/Classes/Service/ProjectionService.php
+			path: Neos.ContentRepositoryRegistry/Classes/Factory/SubscriptionStore/DoctrineSubscriptionStore.php
+
+		-
+			message: "#^The internal method \"Neos\\\\ContentRepository\\\\Core\\\\Subscription\\\\SubscriptionStatusFilter\\:\\:isEmpty\" is called\\.$#"
+			count: 1
+			path: Neos.ContentRepositoryRegistry/Classes/Factory/SubscriptionStore/DoctrineSubscriptionStore.php
+
+		-
+			message: "#^The internal method \"Neos\\\\ContentRepository\\\\Core\\\\Subscription\\\\SubscriptionStatusFilter\\:\\:toStringArray\" is called\\.$#"
+			count: 1
+			path: Neos.ContentRepositoryRegistry/Classes/Factory/SubscriptionStore/DoctrineSubscriptionStore.php
 
 		-
 			message: "#^Method Neos\\\\Neos\\\\Controller\\\\Backend\\\\MenuHelper\\:\\:buildModuleList\\(\\) return type has no value type specified in iterable type array\\.$#"

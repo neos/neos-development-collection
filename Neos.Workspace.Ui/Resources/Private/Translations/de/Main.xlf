@@ -23,10 +23,6 @@
         <source>Workspaces</source>
         <target state="final">Arbeitsbereiche</target>
       </trans-unit>
-      <trans-unit id="workspaces.detailsForWorkspace" xml:space="preserve" approved="yes">
-        <source>Details for "{0}"</source>
-        <target state="final">Details für "{0}"</target>
-      </trans-unit>
       <trans-unit id="workspaces.createNewWorkspace" xml:space="preserve" approved="yes">
         <source>Create new workspace</source>
         <target state="final">Neuen Arbeitsbereich erstellen</target>
@@ -35,9 +31,9 @@
         <source>Create workspace</source>
         <target state="final">Arbeitsbereich erstellen</target>
       </trans-unit>
-      <trans-unit id="workspaces.deleteWorkspace" xml:space="preserve" approved="yes">
-        <source>Delete workspace</source>
-        <target state="final">Arbeitsbereich löschen</target>
+      <trans-unit id="workspaces.deleteWorkspace" xml:space="preserve" approved="no">
+        <source>Delete workspace "{0}"</source>
+        <target state="needs-translation">Arbeitsbereich löschen</target>
       </trans-unit>
       <trans-unit id="workspaces.editWorkspace" xml:space="preserve" approved="yes">
         <source>Edit workspace</source>
@@ -59,8 +55,8 @@
         <source>Private workspace</source>
         <target state="final">Privater Arbeitsbereich</target>
       </trans-unit>
-      <trans-unit id="workspaces.internalWorkspace" xml:space="preserve" approved="yes">
-        <source>Internal workspace</source>
+      <trans-unit id="workspaces.sharedWorkspace" xml:space="preserve" approved="yes">
+        <source>Shared workspace</source>
         <target state="final">Interner Arbeitsbereich</target>
       </trans-unit>
       <trans-unit id="workspaces.readonlyWorkspace" xml:space="preserve" approved="yes">
@@ -95,11 +91,11 @@
         <source>Only reviewers and administrators can access and modify this workspace</source>
         <target state="final">Nur Reviewer und Administratoren können auf diesen Arbeitsbereich zugreifen und ihn bearbeiten</target>
       </trans-unit>
-      <trans-unit id="workspaces.workspace.visibility.internal" xml:space="preserve" approved="yes">
-        <source>Internal</source>
+      <trans-unit id="workspaces.workspace.visibility.shared" xml:space="preserve" approved="yes">
+        <source>Shared</source>
         <target state="final">Intern</target>
       </trans-unit>
-      <trans-unit id="workspaces.workspace.visibility.internal.help" xml:space="preserve" approved="yes">
+      <trans-unit id="workspaces.workspace.visibility.shared.help" xml:space="preserve" approved="yes">
         <source>Any logged in editor can see and modify this workspace.</source>
         <target state="final">Jeder angemeldete Redakteur kann diesen Arbeitsbereich sehen und bearbeiten.</target>
       </trans-unit>
@@ -268,6 +264,42 @@
       <trans-unit id="workspaces.selectAllCurrentChanges" approved="yes">
         <source>Select all current changes</source>
         <target state="final">Alle aktuellen Änderungen auswählen</target>
+      </trans-unit>
+      <trans-unit id="table.column.access.shared" approved="yes">
+        <source>This is a shared workspace</source>
+        <target>Dies ist ein gemeinsamer Arbeitsbereich</target>
+      </trans-unit>
+      <trans-unit id="table.column.access.private" approved="yes">
+        <source>This is a private workspace</source>
+        <target>Dies ist ein privater Arbeitsbereich</target>
+      </trans-unit>
+      <trans-unit id="table.column.access.personal" approved="yes">
+        <source>This is the personal workspace of "{0}"</source>
+        <target>Dies ist der persönliche Arbeitsbereich von "{0}"</target>
+      </trans-unit>
+      <trans-unit id="applyChanges" xml:space="preserve">
+        <source>Apply changes</source>
+        <target state="needs-translation">Änderungen übernehmen</target>
+      </trans-unit>
+      <trans-unit id="workspaces.reviewWorkspace.label" xml:space="preserve">
+        <source>Review</source>
+        <target state="needs-translation">Überprüfen</target>
+      </trans-unit>
+      <trans-unit id="workspaces.workspace.lastModified" xml:space="preserve">
+        <source>Last modified</source>
+        <target state="needs-translation">Zuletzt geändert</target>
+      </trans-unit>
+      <trans-unit id="workspaces.workspace.status" xml:space="preserve">
+        <source>Status</source>
+        <target state="needs-translation">Status</target>
+      </trans-unit>
+      <trans-unit id="workspaces.workspace.actions" xml:space="preserve">
+        <source>Actions</source>
+        <target state="needs-translation">Aktionen</target>
+      </trans-unit>
+      <trans-unit id="workspaces.dialog.rebase.node" xml:space="preserve">
+        <source>Node</source>
+        <target state="needs-translation">Knoten</target>
       </trans-unit>
     </body>
   </file>

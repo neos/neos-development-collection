@@ -66,7 +66,7 @@ final readonly class RebaseableCommand
         $processedEvents = [];
         $causationId = null;
         $i = 0;
-        foreach ($events as $event) {
+        foreach ($events->items as $event) {
             if ($event instanceof DecoratedEvent) {
                 $undecoratedEvent = $event->innerEvent;
                 if (!$undecoratedEvent instanceof PublishableToWorkspaceInterface) {

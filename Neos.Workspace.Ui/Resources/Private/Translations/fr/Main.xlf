@@ -23,10 +23,6 @@
         <source>Workspaces</source>
         <target state="final">Espaces de travail</target>
       </trans-unit>
-      <trans-unit id="workspaces.detailsForWorkspace" xml:space="preserve" approved="yes">
-        <source>Details for "{0}"</source>
-        <target state="final">Détails pour «{0} »</target>
-      </trans-unit>
       <trans-unit id="workspaces.createNewWorkspace" xml:space="preserve" approved="yes">
         <source>Create new workspace</source>
         <target state="final">Créer un nouvel espace de travail</target>
@@ -35,9 +31,9 @@
         <source>Create workspace</source>
         <target state="final">Créer l'espace de travail</target>
       </trans-unit>
-      <trans-unit id="workspaces.deleteWorkspace" xml:space="preserve" approved="yes">
-        <source>Delete workspace</source>
-        <target state="final">Supprimer l'espace de travail</target>
+      <trans-unit id="workspaces.deleteWorkspace" xml:space="preserve" approved="no">
+        <source>Delete workspace "{0}"</source>
+        <target state="needs-translation">Supprimer l'espace de travail</target>
       </trans-unit>
       <trans-unit id="workspaces.editWorkspace" xml:space="preserve" approved="yes">
         <source>Edit workspace</source>
@@ -59,8 +55,8 @@
         <source>Private workspace</source>
         <target state="final">Espace de travail privé</target>
       </trans-unit>
-      <trans-unit id="workspaces.internalWorkspace" xml:space="preserve" approved="yes">
-        <source>Internal workspace</source>
+      <trans-unit id="workspaces.sharedWorkspace" xml:space="preserve" approved="yes">
+        <source>Shared workspace</source>
         <target state="final">Espace de travail interne</target>
       </trans-unit>
       <trans-unit id="workspaces.readonlyWorkspace" xml:space="preserve" approved="yes">
@@ -95,11 +91,11 @@
         <source>Only reviewers and administrators can access and modify this workspace</source>
         <target state="final">Seulement les relecteurs et les administrateurs peuvent accéder et modifier cet espace de travail</target>
       </trans-unit>
-      <trans-unit id="workspaces.workspace.visibility.internal" xml:space="preserve" approved="yes">
-        <source>Internal</source>
+      <trans-unit id="workspaces.workspace.visibility.shared" xml:space="preserve" approved="yes">
+        <source>Shared</source>
         <target state="final">Interne</target>
       </trans-unit>
-      <trans-unit id="workspaces.workspace.visibility.internal.help" xml:space="preserve" approved="yes">
+      <trans-unit id="workspaces.workspace.visibility.shared.help" xml:space="preserve" approved="yes">
         <source>Any logged in editor can see and modify this workspace.</source>
         <target state="final">N'importe quel éditeur connecté peut voir et modifier cet espace de travail.</target>
       </trans-unit>
@@ -256,6 +252,26 @@
       <trans-unit id="workspaces.allChangesInWorkspaceHaveBeenDiscarded" approved="yes">
         <source>All changes from workspace "{0}" have been discarded.</source>
         <target state="final">Toutes les modifications d'espace de travail « {0} » ont été ignorées.</target>
+      </trans-unit>
+      <trans-unit id="applyChanges" xml:space="preserve">
+        <source>Apply changes</source>
+        <target state="needs-translation">Appliquer les modifications</target>
+      </trans-unit>
+      <trans-unit id="workspaces.reviewWorkspace.label" xml:space="preserve">
+        <source>Review</source>
+        <target state="needs-translation">Relire</target>
+      </trans-unit>
+      <trans-unit id="workspaces.workspace.status" xml:space="preserve">
+        <source>Status</source>
+        <target state="needs-translation">Statut</target>
+      </trans-unit>
+      <trans-unit id="workspaces.workspace.lastModified" xml:space="preserve">
+        <source>Last modified</source>
+        <target state="needs-translation">Dernière modification</target>
+      </trans-unit>
+      <trans-unit id="workspaces.dialog.rebase.node" xml:space="preserve">
+        <source>Node</source>
+        <target state="needs-translation">Noeud</target>
       </trans-unit>
     </body>
   </file>

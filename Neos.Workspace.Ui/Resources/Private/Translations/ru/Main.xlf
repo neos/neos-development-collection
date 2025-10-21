@@ -23,10 +23,6 @@
         <source>Workspaces</source>
         <target state="final">Рабочие области</target>
       </trans-unit>
-      <trans-unit id="workspaces.detailsForWorkspace" xml:space="preserve" approved="yes">
-        <source>Details for "{0}"</source>
-        <target state="final">Подробно об "{0}"</target>
-      </trans-unit>
       <trans-unit id="workspaces.createNewWorkspace" xml:space="preserve" approved="yes">
         <source>Create new workspace</source>
         <target state="final">Создать новую рабочую область</target>
@@ -35,9 +31,9 @@
         <source>Create workspace</source>
         <target state="final">Создать рабочую область</target>
       </trans-unit>
-      <trans-unit id="workspaces.deleteWorkspace" xml:space="preserve" approved="yes">
-        <source>Delete workspace</source>
-        <target state="final">Удалить рабочую область</target>
+      <trans-unit id="workspaces.deleteWorkspace" xml:space="preserve" approved="no">
+        <source>Delete workspace "{0}"</source>
+        <target state="needs-translation">Удалить рабочую область</target>
       </trans-unit>
       <trans-unit id="workspaces.editWorkspace" xml:space="preserve" approved="yes">
         <source>Edit workspace</source>
@@ -59,8 +55,8 @@
         <source>Private workspace</source>
         <target state="final">Приватная рабочая область</target>
       </trans-unit>
-      <trans-unit id="workspaces.internalWorkspace" xml:space="preserve" approved="yes">
-        <source>Internal workspace</source>
+      <trans-unit id="workspaces.sharedWorkspace" xml:space="preserve" approved="yes">
+        <source>Shared workspace</source>
         <target state="final">Внутренняя рабочая область</target>
       </trans-unit>
       <trans-unit id="workspaces.readonlyWorkspace" xml:space="preserve" approved="yes">
@@ -95,11 +91,11 @@
         <source>Only reviewers and administrators can access and modify this workspace</source>
         <target state="final">Только рецензенты и администраторы имеют доступ к этой рабочей области и могут изменять её</target>
       </trans-unit>
-      <trans-unit id="workspaces.workspace.visibility.internal" xml:space="preserve" approved="yes">
-        <source>Internal</source>
+      <trans-unit id="workspaces.workspace.visibility.shared" xml:space="preserve" approved="yes">
+        <source>Shared</source>
         <target state="final">Внутренняя</target>
       </trans-unit>
-      <trans-unit id="workspaces.workspace.visibility.internal.help" xml:space="preserve" approved="yes">
+      <trans-unit id="workspaces.workspace.visibility.shared.help" xml:space="preserve" approved="yes">
         <source>Any logged in editor can see and modify this workspace.</source>
         <target state="final">Любой вошедший в систему редактор может просматривать и редактировать эту рабочую область.</target>
       </trans-unit>
@@ -256,6 +252,26 @@
       <trans-unit id="workspaces.allChangesInWorkspaceHaveBeenDiscarded" approved="yes">
         <source>All changes from workspace "{0}" have been discarded.</source>
         <target state="final">Все изменения из рабочей области "{0}" были отменены.</target>
+      </trans-unit>
+      <trans-unit id="workspaces.reviewWorkspace.label" xml:space="preserve">
+        <source>Review</source>
+        <target state="needs-translation">Проверить</target>
+      </trans-unit>
+      <trans-unit id="applyChanges" xml:space="preserve">
+        <source>Apply changes</source>
+        <target state="needs-translation">Применить изменения</target>
+      </trans-unit>
+      <trans-unit id="workspaces.workspace.lastModified" xml:space="preserve">
+        <source>Last modified</source>
+        <target state="needs-translation">Дата последнего изменения</target>
+      </trans-unit>
+      <trans-unit id="workspaces.workspace.status" xml:space="preserve">
+        <source>Status</source>
+        <target state="needs-translation">Статус</target>
+      </trans-unit>
+      <trans-unit id="workspaces.dialog.rebase.node" xml:space="preserve">
+        <source>Node</source>
+        <target state="needs-translation">Элемент</target>
       </trans-unit>
     </body>
   </file>

@@ -160,7 +160,7 @@ Feature: Workspace based content publishing
 
     When the command SetNodeProperties is executed with payload:
       | Key                       | Value                     |
-      | workspaceName             | "live"                    |
+      | workspaceName             | "user-test"               |
       | nodeAggregateId           | "nody-mc-nodeface"        |
       | originDimensionSpacePoint | {}                        |
       | propertyValues            | {"text": "Modified anew"} |
@@ -177,14 +177,19 @@ Feature: Workspace based content publishing
       | Key  | Value           |
       | text | "Modified anew" |
 
-  Scenario: Publish is a no-op if there are no changes
+  Scenario: Publish is skipped (via exception) if there are no changes
     And I am in workspace "user-test" and dimension space point {}
     Then I expect node aggregate identifier "nody-mc-nodeface" to lead to node user-cs-identifier;nody-mc-nodeface;{}
 
-    And the command PublishWorkspace is executed with payload:
+    And the command PublishWorkspace is executed with payload and exceptions are caught:
       | Key                | Value         |
       | workspaceName      | "user-test"   |
       | newContentStreamId | "user-cs-new" |
+
+    Then the last command should have thrown an exception of type "WorkspaceCommandSkipped" with code 1730463156 and message:
+    """
+    Skipped publish workspace "user-test" without any publishable changes.
+    """
 
     # the user and live workspace are unchanged
     Then I expect exactly 1 event to be published on stream "Workspace:user-test"
@@ -196,7 +201,7 @@ Feature: Workspace based content publishing
     Then I expect exactly 4 events to be published on stream "ContentStream:cs-identifier"
     Then I expect exactly 1 event to be published on stream "Workspace:live"
 
-  Scenario: Publish is a no-op if there are no changes (and the workspace is outdated)
+  Scenario: Publish is skipped (via exception) if there are no changes (and the workspace is outdated)
     And the command SetNodeProperties is executed with payload:
       | Key                       | Value                                  |
       | workspaceName             | "live"                                 |
@@ -204,14 +209,19 @@ Feature: Workspace based content publishing
       | originDimensionSpacePoint | {}                                     |
       | propertyValues            | {"text": "Modified in live workspace"} |
 
-    And the command PublishWorkspace is executed with payload:
+    And the command PublishWorkspace is executed with payload and exceptions are caught:
       | Key                | Value         |
       | workspaceName      | "user-test"   |
       | newContentStreamId | "user-cs-new" |
+
+    Then the last command should have thrown an exception of type "WorkspaceCommandSkipped" with code 1730463156 and message:
+    """
+    Skipped publish workspace "user-test" without any publishable changes.
+    """
+
     Then workspaces user-test has status OUTDATED
 
     Then I expect exactly 1 events to be published on stream with prefix "Workspace:user-test"
-
     And I am in workspace "user-test" and dimension space point {}
     Then I expect node aggregate identifier "nody-mc-nodeface" to lead to node user-cs-identifier;nody-mc-nodeface;{}
     And I expect this node to have the following properties:

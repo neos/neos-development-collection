@@ -132,6 +132,44 @@ class SubtreeTagsTest extends TestCase
         self::assertSame($expectedResult, SubtreeTags::fromStrings(...$tags1)->intersection(SubtreeTags::fromStrings(...$tags2))->toStringArray());
     }
 
+    public static function differenceDataProvider(): iterable
+    {
+        yield 'empty' => ['tags1' => [], 'tags2' => [], 'expectedResult' => []];
+        yield 'one empty' => ['tags1' => [], 'tags2' => ['foo'], 'expectedResult' => []];
+        yield 'two empty' => ['tags1' => ['foo'], 'tags2' => [], 'expectedResult' => ['foo']];
+        yield 'no intersection' => ['tags1' => ['foo', 'bar'], 'tags2' => ['baz', 'foos'], 'expectedResult' => ['foo', 'bar']];
+        yield 'with intersection' => ['tags1' => ['foo', 'bar', 'baz'], 'tags2' => ['baz', 'bars', 'foo'], 'expectedResult' => ['bar']];
+        yield 'with intersection reversed' => ['tags1' => ['baz', 'bars', 'foo'], 'tags2' => ['foo', 'bar', 'baz'], 'expectedResult' => ['bars']];
+    }
+
+    /**
+     * @test
+     * @dataProvider differenceDataProvider
+     */
+    public function differenceTests(array $tags1, array $tags2, array $expectedResult): void
+    {
+        self::assertSame($expectedResult, SubtreeTags::fromStrings(...$tags1)->difference(SubtreeTags::fromStrings(...$tags2))->toStringArray());
+    }
+
+
+    public static function equalsDataProvider(): iterable
+    {
+        yield 'empty' => ['tags1' => [], 'tags2' => [], 'expectedResult' => true];
+        yield 'one empty' => ['tags1' => [], 'tags2' => ['foo'], 'expectedResult' => false];
+        yield 'other empty' => ['tags1' => ['foo'], 'tags2' => [], 'expectedResult' => false];
+        yield 'equals' => ['tags1' => ['foo', 'bar'], 'tags2' => ['foo', 'bar'], 'expectedResult' => true];
+        yield 'equals reversed' => ['tags1' => ['foo', 'bar'], 'tags2' => ['bar', 'foo'], 'expectedResult' => true];
+    }
+
+    /**
+     * @test
+     * @dataProvider equalsDataProvider
+     */
+    public function equalsTests(array $tags1, array $tags2, bool $expectedResult): void
+    {
+        self::assertSame($expectedResult, SubtreeTags::fromStrings(...$tags1)->equals(SubtreeTags::fromStrings(...$tags2)));
+    }
+
     public static function mergeDataProvider(): iterable
     {
         yield 'empty' => ['tags1' => [], 'tags2' => [], 'expectedResult' => []];

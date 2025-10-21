@@ -14,12 +14,12 @@ final class ArrayNormalizer implements DenormalizerInterface
     /**
      * @param array<string,mixed> $context
      */
-    public function denormalize($data, $type, string $format = null, array $context = [])
+    public function denormalize($data, $type, ?string $format = null, array $context = [])
     {
         return $data;
     }
 
-    public function supportsDenormalization($data, $type, string $format = null)
+    public function supportsDenormalization($data, $type, ?string $format = null)
     {
         return $type === 'array';
     }

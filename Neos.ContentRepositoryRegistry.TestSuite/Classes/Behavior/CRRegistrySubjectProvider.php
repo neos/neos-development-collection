@@ -13,14 +13,14 @@ namespace Neos\ContentRepositoryRegistry\TestSuite\Behavior;
  * source code.
  */
 
-use Doctrine\DBAL\Connection;
 use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceFactoryInterface;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceInterface;
+use Neos\ContentRepository\Core\Service\ContentRepositoryMaintainerFactory;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\ContentRepositoryRegistry\Exception\ContentRepositoryNotFoundException;
-use Neos\EventStore\EventStoreInterface;
+use PHPUnit\Framework\Assert;
 
 /**
  * The CR registry subject provider trait for behavioral tests
@@ -52,21 +52,18 @@ trait CRRegistrySubjectProvider
     /**
      * @Given /^I initialize content repository "([^"]*)"$/
      */
-    public function iInitializeContentRepository(string $contentRepositoryId): void
+    public function iInitializeContentRepository(string $rawContentRepositoryId): void
     {
-        $contentRepository = $this->getContentRepository(ContentRepositoryId::fromString($contentRepositoryId));
-        /** @var EventStoreInterface $eventStore */
-        $eventStore = (new \ReflectionClass($contentRepository))->getProperty('eventStore')->getValue($contentRepository);
-        /** @var Connection $databaseConnection */
-        $databaseConnection = (new \ReflectionClass($eventStore))->getProperty('connection')->getValue($eventStore);
-        $eventTableName = sprintf('cr_%s_events', $contentRepositoryId);
-        $databaseConnection->executeStatement('TRUNCATE ' . $eventTableName);
+        $contentRepositoryId = ContentRepositoryId::fromString($rawContentRepositoryId);
 
-        if (!in_array($contentRepository->id, self::$alreadySetUpContentRepositories)) {
-            $contentRepository->setUp();
-            self::$alreadySetUpContentRepositories[] = $contentRepository->id;
+        $contentRepositoryMaintainer = $this->contentRepositoryRegistry->buildService($contentRepositoryId, new ContentRepositoryMaintainerFactory());
+        if (!in_array($contentRepositoryId, self::$alreadySetUpContentRepositories)) {
+            $result = $contentRepositoryMaintainer->setUp();
+            Assert::assertNull($result);
+            self::$alreadySetUpContentRepositories[] = $contentRepositoryId;
         }
-        $contentRepository->resetProjectionStates();
+        $result = $contentRepositoryMaintainer->prune();
+        Assert::assertNull($result);
     }
 
     /**

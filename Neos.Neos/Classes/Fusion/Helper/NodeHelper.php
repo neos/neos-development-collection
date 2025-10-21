@@ -14,7 +14,6 @@ declare(strict_types=1);
 
 namespace Neos\Neos\Fusion\Helper;
 
-use Neos\ContentRepository\Core\Feature\SubtreeTagging\Dto\SubtreeTag;
 use Neos\ContentRepository\Core\NodeType\NodeType;
 use Neos\ContentRepository\Core\Projection\ContentGraph\AbsoluteNodePath;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentSubgraphInterface;
@@ -29,6 +28,7 @@ use Neos\Flow\Annotations as Flow;
 use Neos\Neos\Domain\Exception;
 use Neos\Neos\Domain\NodeLabel\NodeLabelGeneratorInterface;
 use Neos\Neos\Domain\Service\NodeTypeNameFactory;
+use Neos\Neos\Domain\SubtreeTagging\NeosSubtreeTag;
 use Neos\Neos\Presentation\VisualNodePath;
 
 /**
@@ -103,7 +103,7 @@ class NodeHelper implements ProtectedContextAwareInterface
 
     public function isDisabled(Node $node): bool
     {
-        return $node->tags->contain(SubtreeTag::disabled());
+        return $node->tags->contain(NeosSubtreeTag::disabled());
     }
 
     /**

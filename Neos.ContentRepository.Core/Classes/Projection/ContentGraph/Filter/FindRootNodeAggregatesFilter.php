@@ -33,7 +33,7 @@ final readonly class FindRootNodeAggregatesFilter
      * @see https://www.php.net/manual/en/functions.arguments.php#functions.named-arguments
      */
     public static function create(
-        NodeTypeName|string $nodeTypeName = null,
+        NodeTypeName|string|null $nodeTypeName = null,
     ): self {
         if (is_string($nodeTypeName)) {
             $nodeTypeName = NodeTypeName::fromString($nodeTypeName);
@@ -48,7 +48,7 @@ final readonly class FindRootNodeAggregatesFilter
      * @see https://www.php.net/manual/en/functions.arguments.php#functions.named-arguments
      */
     public function with(
-        NodeTypeName $nodeTypeName = null,
+        ?NodeTypeName $nodeTypeName = null,
     ): self {
         return self::create(
             $nodeTypeName ?? $this->nodeTypeName,

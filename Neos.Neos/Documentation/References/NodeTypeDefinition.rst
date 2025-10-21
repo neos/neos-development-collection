@@ -3,7 +3,7 @@
 NodeType Definition Reference
 =============================
 
-THe manual to understand NodeType definitions can be found in the Neos Docs (https://docs.neos.io/cms/manual/content-repository/nodetype-definition).
+The manual to understand NodeType definitions can be found in the Neos Docs (https://docs.neos.io/cms/manual/content-repository/nodetype-definition).
 
 The following options are allowed for defining a NodeType:
 
@@ -45,7 +45,7 @@ The following options are allowed for defining a NodeType:
   Here is an example::
 
     childNodes:
-      someChild:
+      'some-child':
         type: 'Neos.Neos:ContentCollection'
         constraints:
           nodeTypes:
@@ -58,11 +58,11 @@ The following options are allowed for defining a NodeType:
 
     'Neos.NodeTypes:Page':
       childNodes:
-        'someChild':
+        'some-child':
           type: 'Neos.Neos:ContentCollection'
           position: 'before main'
 
-  This adds a new ContentCollection called someChild to the default page.
+  This adds a new ContentCollection called ``some-child`` to the default page.
   It will be positioned before the main ContentCollection that the default page has.
   The position setting follows the same sorting logic used in Fusion
   (see the :ref:`neos-fusion-reference`).

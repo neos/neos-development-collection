@@ -36,6 +36,9 @@ final readonly class PublishIndividualNodesFromWorkspace implements CommandInter
         public NodeAggregateIds $nodesToPublish,
         public ContentStreamId $contentStreamIdForRemainingPart
     ) {
+        if ($this->nodesToPublish->isEmpty()) {
+            throw new \InvalidArgumentException(sprintf('The command "PublishIndividualNodesFromWorkspace" for workspace %s must contain nodes to publish', $this->workspaceName->value), 1737448717);
+        }
     }
 
     /**

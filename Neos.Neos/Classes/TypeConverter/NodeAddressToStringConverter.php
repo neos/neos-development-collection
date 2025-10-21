@@ -51,7 +51,7 @@ class NodeAddressToStringConverter extends AbstractTypeConverter
         $source,
         $targetType,
         array $convertedChildProperties = [],
-        PropertyMappingConfigurationInterface $configuration = null
+        ?PropertyMappingConfigurationInterface $configuration = null
     ): string {
         return $source->toJson();
     }

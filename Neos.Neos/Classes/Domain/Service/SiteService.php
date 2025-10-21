@@ -20,6 +20,7 @@ use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
+use Neos\Flow\Security\Context as SecurityContext;
 use Neos\Media\Domain\Model\Asset;
 use Neos\Media\Domain\Repository\AssetCollectionRepository;
 use Neos\Neos\Domain\Exception\SiteNodeNameIsAlreadyInUseByAnotherSite;
@@ -71,13 +72,20 @@ class SiteService
     protected $workspaceService;
 
     /**
+     * @Flow\Inject
+     * @var SecurityContext
+     */
+    protected $securityContext;
+
+    /**
      * Remove given site all nodes for that site and all domains associated.
      */
     public function pruneSite(Site $site): void
     {
         $siteServiceInternals = new SiteServiceInternals(
             $this->contentRepositoryRegistry->get($site->getConfiguration()->contentRepositoryId),
-            $this->workspaceService
+            $this->workspaceService,
+            $this->securityContext
         );
 
         try {
@@ -181,7 +189,8 @@ class SiteService
 
         $siteServiceInternals = new SiteServiceInternals(
             $this->contentRepositoryRegistry->get($site->getConfiguration()->contentRepositoryId),
-            $this->workspaceService
+            $this->workspaceService,
+            $this->securityContext
         );
         $siteServiceInternals->createSiteNodeIfNotExists($site, $nodeTypeName);
 

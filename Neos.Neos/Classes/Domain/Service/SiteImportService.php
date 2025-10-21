@@ -17,9 +17,12 @@ namespace Neos\Neos\Domain\Service;
 use Doctrine\DBAL\Exception as DBALException;
 use League\Flysystem\Filesystem;
 use League\Flysystem\Local\LocalFilesystemAdapter;
-use Neos\ContentRepository\Core\ContentRepository;
+use Neos\ContentRepository\Core\Projection\ProjectionStatusType;
+use Neos\ContentRepository\Core\Service\ContentRepositoryMaintainer;
+use Neos\ContentRepository\Core\Service\ContentRepositoryMaintainerFactory;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
+use Neos\ContentRepository\Core\Subscription\ProjectionSubscriptionStatus;
 use Neos\ContentRepository\Export\Factory\EventStoreImportProcessorFactory;
 use Neos\ContentRepository\Export\ProcessingContext;
 use Neos\ContentRepository\Export\ProcessorInterface;
@@ -27,8 +30,8 @@ use Neos\ContentRepository\Export\Processors;
 use Neos\ContentRepository\Export\Processors\AssetRepositoryImportProcessor;
 use Neos\ContentRepository\Export\Severity;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
-use Neos\ContentRepositoryRegistry\Processors\ProjectionCatchupProcessor;
-use Neos\ContentRepositoryRegistry\Service\ProjectionServiceFactory;
+use Neos\ContentRepositoryRegistry\Processors\SubscriptionReplayProcessor;
+use Neos\EventStore\Model\EventStore\StatusType;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Persistence\Doctrine\Service as DoctrineService;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
@@ -67,8 +70,10 @@ final readonly class SiteImportService
         }
         $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryId);
 
+        $contentRepositoryMaintainer = $this->contentRepositoryRegistry->buildService($contentRepositoryId, new ContentRepositoryMaintainerFactory());
+
         $this->requireDataBaseSchemaToBeSetup();
-        $this->requireContentRepositoryToBeSetup($contentRepository);
+        $this->requireContentRepositoryToBeSetup($contentRepositoryMaintainer, $contentRepositoryId);
 
         $filesystem = new Filesystem(new LocalFilesystemAdapter($path));
         $context = new ProcessingContext($filesystem, $onMessage);
@@ -78,7 +83,9 @@ final readonly class SiteImportService
             'Create Neos sites' => new SiteCreationProcessor($this->siteRepository, $this->domainRepository, $this->persistenceManager),
             'Import events' => $this->contentRepositoryRegistry->buildService($contentRepositoryId, new EventStoreImportProcessorFactory(WorkspaceName::forLive(), keepEventIds: true)),
             'Import assets' => new AssetRepositoryImportProcessor($this->assetRepository, $this->resourceRepository, $this->resourceManager, $this->persistenceManager),
-            'Catchup all projections' => new ProjectionCatchupProcessor($this->contentRepositoryRegistry->buildService($contentRepositoryId, new ProjectionServiceFactory())),
+            // WARNING! We do a replay here even though it will redo the live workspace creation. But otherwise the catchup hooks cannot determine that they need to be skipped as it seems like a regular catchup
+            // In case we allow to import events into other root workspaces, or don't expect live to be empty (see Import events), this would need to be adjusted, as otherwise existing data will be replayed
+            'Replay all subscriptions' => new SubscriptionReplayProcessor($contentRepositoryMaintainer),
         ]);
 
         foreach ($processors as $processorLabel => $processor) {
@@ -87,11 +94,18 @@ final readonly class SiteImportService
         }
     }
 
-    private function requireContentRepositoryToBeSetup(ContentRepository $contentRepository): void
+    private function requireContentRepositoryToBeSetup(ContentRepositoryMaintainer $contentRepositoryMaintainer, ContentRepositoryId $contentRepositoryId): void
     {
-        $status = $contentRepository->status();
-        if (!$status->isOk()) {
-            throw new \RuntimeException(sprintf('Content repository %s is not setup correctly, please run `./flow cr:setup`', $contentRepository->id->value));
+        $status = $contentRepositoryMaintainer->status();
+        if ($status->eventStoreStatus->type !== StatusType::OK) {
+            throw new \RuntimeException(sprintf('Content repository %s is not setup correctly, please run `./flow cr:setup`', $contentRepositoryId->value));
+        }
+        foreach ($status->subscriptionStatus as $status) {
+            if ($status instanceof ProjectionSubscriptionStatus) {
+                if ($status->setupStatus->type !== ProjectionStatusType::OK) {
+                    throw new \RuntimeException(sprintf('Projection %s in content repository %s is not setup correctly, please run `./flow cr:setup`', $status->subscriptionId->value, $contentRepositoryId->value));
+                }
+            }
         }
     }
 

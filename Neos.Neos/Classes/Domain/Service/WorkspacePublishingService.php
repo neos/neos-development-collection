@@ -15,31 +15,36 @@ declare(strict_types=1);
 namespace Neos\Neos\Domain\Service;
 
 use Neos\ContentRepository\Core\ContentRepository;
+use Neos\ContentRepository\Core\Feature\WorkspaceCommandSkipped;
 use Neos\ContentRepository\Core\Feature\WorkspaceModification\Command\ChangeBaseWorkspace;
-use Neos\ContentRepository\Core\Feature\WorkspaceModification\Exception\WorkspaceIsNotEmptyException;
+use Neos\ContentRepository\Core\Feature\WorkspaceModification\Exception\BaseWorkspaceEqualsWorkspaceException;
+use Neos\ContentRepository\Core\Feature\WorkspaceModification\Exception\CircularRelationBetweenWorkspacesException;
 use Neos\ContentRepository\Core\Feature\WorkspacePublication\Command\DiscardIndividualNodesFromWorkspace;
 use Neos\ContentRepository\Core\Feature\WorkspacePublication\Command\DiscardWorkspace;
 use Neos\ContentRepository\Core\Feature\WorkspacePublication\Command\PublishIndividualNodesFromWorkspace;
 use Neos\ContentRepository\Core\Feature\WorkspacePublication\Command\PublishWorkspace;
 use Neos\ContentRepository\Core\Feature\WorkspaceRebase\Command\RebaseWorkspace;
 use Neos\ContentRepository\Core\Feature\WorkspaceRebase\Dto\RebaseErrorHandlingStrategy;
+use Neos\ContentRepository\Core\Feature\WorkspaceRebase\Exception\PartialWorkspaceRebaseFailed;
 use Neos\ContentRepository\Core\Feature\WorkspaceRebase\Exception\WorkspaceRebaseFailed;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphInterface;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindClosestNodeFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate;
 use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
-use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateIds;
-use Neos\ContentRepository\Core\SharedModel\Workspace\Workspace as ContentRepositoryWorkspace;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeAggregateCurrentlyDoesNotExist;
 use Neos\ContentRepository\Core\SharedModel\Exception\WorkspaceDoesNotExist;
+use Neos\ContentRepository\Core\SharedModel\Exception\WorkspaceContainsPublishableChanges;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateIds;
+use Neos\ContentRepository\Core\SharedModel\Workspace\Workspace as ContentRepositoryWorkspace;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\Annotations as Flow;
 use Neos\Neos\Domain\Model\DiscardingResult;
 use Neos\Neos\Domain\Model\PublishingResult;
+use Neos\Neos\Domain\SubtreeTagging\SoftRemoval\SoftRemovalGarbageCollector;
 use Neos\Neos\PendingChangesProjection\Change;
 use Neos\Neos\PendingChangesProjection\ChangeFinder;
 use Neos\Neos\PendingChangesProjection\Changes;
@@ -54,9 +59,9 @@ final class WorkspacePublishingService
 {
     public function __construct(
         private readonly ContentRepositoryRegistry $contentRepositoryRegistry,
+        private readonly SoftRemovalGarbageCollector $softRemovalGarbageCollector
     ) {
     }
-
 
     /**
      * @internal experimental api, until actually used by the Neos.Ui
@@ -77,18 +82,17 @@ final class WorkspacePublishingService
     }
 
     /**
-     * @throws WorkspaceRebaseFailed is thrown if there are conflicts and the rebase strategy was {@see RebaseErrorHandlingStrategy::STRATEGY_FAIL}
-     * The workspace will be unchanged for this case.
+     * @throws WorkspaceRebaseFailed|WorkspaceCommandSkipped
      */
     public function rebaseWorkspace(ContentRepositoryId $contentRepositoryId, WorkspaceName $workspaceName, RebaseErrorHandlingStrategy $rebaseErrorHandlingStrategy = RebaseErrorHandlingStrategy::STRATEGY_FAIL): void
     {
         $rebaseCommand = RebaseWorkspace::create($workspaceName)->withErrorHandlingStrategy($rebaseErrorHandlingStrategy);
         $this->contentRepositoryRegistry->get($contentRepositoryId)->handle($rebaseCommand);
+        $this->softRemovalGarbageCollector->run($contentRepositoryId);
     }
 
     /**
-     * @throws WorkspaceRebaseFailed is thrown if the workspace was outdated and an automatic rebase failed due to conflicts.
-     * No changes would be published for this case.
+     * @throws WorkspaceRebaseFailed|WorkspaceCommandSkipped
      */
     public function publishWorkspace(ContentRepositoryId $contentRepositoryId, WorkspaceName $workspaceName): PublishingResult
     {
@@ -99,12 +103,12 @@ final class WorkspacePublishingService
         }
         $numberOfPendingChanges = $this->countPendingWorkspaceChangesInternal($contentRepository, $workspaceName);
         $this->contentRepositoryRegistry->get($contentRepositoryId)->handle(PublishWorkspace::create($workspaceName));
+        $this->softRemovalGarbageCollector->run($contentRepositoryId);
         return new PublishingResult($numberOfPendingChanges, $crWorkspace->baseWorkspaceName);
     }
 
     /**
-     * @throws WorkspaceRebaseFailed is thrown if the workspace was outdated and an automatic rebase failed due to conflicts.
-     * No changes would be published for this case.
+     * @throws WorkspaceRebaseFailed|PartialWorkspaceRebaseFailed|WorkspaceCommandSkipped
      */
     public function publishChangesInSite(ContentRepositoryId $contentRepositoryId, WorkspaceName $workspaceName, NodeAggregateId $siteId): PublishingResult
     {
@@ -129,6 +133,7 @@ final class WorkspacePublishingService
         );
 
         $this->publishNodes($contentRepository, $workspaceName, $nodeIdsToPublish);
+        $this->softRemovalGarbageCollector->run($contentRepositoryId);
 
         return new PublishingResult(
             count($nodeIdsToPublish),
@@ -137,8 +142,7 @@ final class WorkspacePublishingService
     }
 
     /**
-     * @throws WorkspaceRebaseFailed is thrown if the workspace was outdated and an automatic rebase failed due to conflicts.
-     * No changes would be published for this case.
+     * @throws WorkspaceRebaseFailed|PartialWorkspaceRebaseFailed|WorkspaceCommandSkipped
      */
     public function publishChangesInDocument(ContentRepositoryId $contentRepositoryId, WorkspaceName $workspaceName, NodeAggregateId $documentId): PublishingResult
     {
@@ -163,6 +167,7 @@ final class WorkspacePublishingService
         );
 
         $this->publishNodes($contentRepository, $workspaceName, $nodeIdsToPublish);
+        $this->softRemovalGarbageCollector->run($contentRepositoryId);
 
         return new PublishingResult(
             count($nodeIdsToPublish),
@@ -170,6 +175,9 @@ final class WorkspacePublishingService
         );
     }
 
+    /**
+     * @throws WorkspaceRebaseFailed|WorkspaceCommandSkipped
+     */
     public function discardAllWorkspaceChanges(ContentRepositoryId $contentRepositoryId, WorkspaceName $workspaceName): DiscardingResult
     {
         $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryId);
@@ -178,13 +186,13 @@ final class WorkspacePublishingService
         $numberOfChangesToBeDiscarded = $this->countPendingWorkspaceChangesInternal($contentRepository, $workspaceName);
 
         $contentRepository->handle(DiscardWorkspace::create($workspaceName));
+        $this->softRemovalGarbageCollector->run($contentRepositoryId);
 
         return new DiscardingResult($numberOfChangesToBeDiscarded);
     }
 
     /**
-     * @throws WorkspaceRebaseFailed is thrown if the workspace was outdated and an automatic rebase failed due to conflicts.
-     * No changes would be discarded for this case.
+     * @throws WorkspaceRebaseFailed|PartialWorkspaceRebaseFailed|WorkspaceCommandSkipped
      */
     public function discardChangesInSite(ContentRepositoryId $contentRepositoryId, WorkspaceName $workspaceName, NodeAggregateId $siteId): DiscardingResult
     {
@@ -206,6 +214,7 @@ final class WorkspacePublishingService
         );
 
         $this->discardNodes($contentRepository, $workspaceName, $nodeIdsToDiscard);
+        $this->softRemovalGarbageCollector->run($contentRepositoryId);
 
         return new DiscardingResult(
             count($nodeIdsToDiscard)
@@ -213,8 +222,7 @@ final class WorkspacePublishingService
     }
 
     /**
-     * @throws WorkspaceRebaseFailed is thrown if the workspace was outdated and an automatic rebase failed due to conflicts.
-     * No changes would be discarded for this case.
+     * @throws WorkspaceRebaseFailed|WorkspaceCommandSkipped
      */
     public function discardChangesInDocument(ContentRepositoryId $contentRepositoryId, WorkspaceName $workspaceName, NodeAggregateId $documentId): DiscardingResult
     {
@@ -236,6 +244,7 @@ final class WorkspacePublishingService
         );
 
         $this->discardNodes($contentRepository, $workspaceName, $nodeIdsToDiscard);
+        $this->softRemovalGarbageCollector->run($contentRepositoryId);
 
         return new DiscardingResult(
             count($nodeIdsToDiscard)
@@ -243,7 +252,7 @@ final class WorkspacePublishingService
     }
 
     /**
-     * @throws WorkspaceIsNotEmptyException in case a switch is attempted while the workspace still has pending changes
+     * @throws WorkspaceCommandSkipped|WorkspaceContainsPublishableChanges|BaseWorkspaceEqualsWorkspaceException|CircularRelationBetweenWorkspacesException
      */
     public function changeBaseWorkspace(ContentRepositoryId $contentRepositoryId, WorkspaceName $workspaceName, WorkspaceName $newBaseWorkspaceName): void
     {
@@ -258,8 +267,7 @@ final class WorkspacePublishingService
     }
 
     /**
-     * @throws WorkspaceRebaseFailed is thrown if the workspace was outdated and an automatic rebase failed due to conflicts.
-     * No changes would be discarded for this case.
+     * @throws WorkspaceRebaseFailed|PartialWorkspaceRebaseFailed|WorkspaceCommandSkipped
      */
     private function discardNodes(
         ContentRepository $contentRepository,
@@ -275,8 +283,7 @@ final class WorkspacePublishingService
     }
 
     /**
-     * @throws WorkspaceRebaseFailed is thrown if the workspace was outdated and an automatic rebase failed due to conflicts.
-     * No changes would be published for this case.
+     * @throws WorkspaceRebaseFailed|PartialWorkspaceRebaseFailed|WorkspaceCommandSkipped
      */
     private function publishNodes(
         ContentRepository $contentRepository,
@@ -340,12 +347,13 @@ final class WorkspacePublishingService
         NodeAggregateId $ancestorId,
         NodeTypeName $ancestorNodeTypeName
     ): NodeAggregateIds {
+        $contentGraph = $contentRepository->getContentGraph($workspaceName);
+
         $nodeIdsToPublishOrDiscard = [];
         foreach ($this->pendingWorkspaceChangesInternal($contentRepository, $workspaceName) as $change) {
             if (
                 !$this->isChangePublishableWithinAncestorScope(
-                    $contentRepository,
-                    $workspaceName,
+                    $contentGraph,
                     $change,
                     $ancestorNodeTypeName,
                     $ancestorId
@@ -373,38 +381,28 @@ final class WorkspacePublishingService
     }
 
     private function isChangePublishableWithinAncestorScope(
-        ContentRepository $contentRepository,
-        WorkspaceName $workspaceName,
+        ContentGraphInterface $contentGraph,
         Change $change,
         NodeTypeName $ancestorNodeTypeName,
         NodeAggregateId $ancestorId
     ): bool {
-        // see method comment for `isChangeWithSelfReferencingRemovalAttachmentPoint`
-        // to get explanation for this condition
-        if ($this->isChangeWithSelfReferencingRemovalAttachmentPoint($change)) {
-            if ($ancestorNodeTypeName->equals(NodeTypeNameFactory::forSite())) {
-                return true;
-            }
-        }
-
         if ($change->originDimensionSpacePoint) {
-            $subgraph = $contentRepository->getContentGraph($workspaceName)->getSubgraph(
+            $subgraph = $contentGraph->getSubgraph(
                 $change->originDimensionSpacePoint->toDimensionSpacePoint(),
-                VisibilityConstraints::withoutRestrictions()
+                VisibilityConstraints::createEmpty()
             );
 
-            // A Change is publishable if the respective node (or the respective
-            // removal attachment point) has a closest ancestor that matches our
+            // A Change is publishable if the respective node has a closest ancestor that matches our
             // current ancestor scope (Document/Site)
             $actualAncestorNode = $subgraph->findClosestNode(
-                $change->removalAttachmentPoint ?? $change->nodeAggregateId,
+                $change->getLegacyRemovalAttachmentPoint() ?? $change->nodeAggregateId,
                 FindClosestNodeFilter::create(nodeTypes: $ancestorNodeTypeName->value)
             );
 
             return $actualAncestorNode?->aggregateId->equals($ancestorId) ?? false;
         } else {
             return $this->findAncestorAggregateIds(
-                $contentRepository->getContentGraph($workspaceName),
+                $contentGraph,
                 $change->nodeAggregateId
             )->contain($ancestorId);
         }
@@ -419,33 +417,5 @@ final class WorkspacePublishingService
         }
 
         return $nodeAggregateIds;
-    }
-
-    /**
-     * Before the introduction of the {@see WorkspacePublishingService}, the UI only ever
-     * referenced the closest document node as a removal attachment point.
-     *
-     * Removed document nodes therefore were referencing themselves.
-     *
-     * In order to enable publish/discard of removed documents, the removal
-     * attachment point of a document MUST refer to an ancestor. The UI now
-     * references the site node in those cases.
-     *
-     * Workspaces that were created before this change was introduced may
-     * contain removed documents, for which the site node can longer be
-     * located, because we have no reference to their respective site.
-     *
-     * Every document node that matches that description will be published
-     * or discarded by {@see WorkspacePublishingService::publishChangesInSite()}, regardless of what
-     * the current site is.
-     *
-     * @deprecated remove once we are sure this check is no longer needed due to
-     * * the UI sending proper commands
-     * * the ChangeFinder being refactored / rewritten
-     * (whatever happens first)
-     */
-    private function isChangeWithSelfReferencingRemovalAttachmentPoint(Change $change): bool
-    {
-        return $change->removalAttachmentPoint?->equals($change->nodeAggregateId) ?? false;
     }
 }

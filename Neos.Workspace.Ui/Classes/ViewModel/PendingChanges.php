@@ -16,6 +16,9 @@ namespace Neos\Workspace\Ui\ViewModel;
 
 use Neos\Flow\Annotations as Flow;
 
+/**
+ * @internal for communication within the Workspace UI only
+ */
 #[Flow\Proxy(false)]
 final readonly class PendingChanges
 {
@@ -29,6 +32,7 @@ final readonly class PendingChanges
         $this->total = $this->new + $this->changed + $this->removed;
     }
 
+    // todo check if necessary
     public function getNewCountRatio(): float
     {
         return $this->new / $this->total * 100;

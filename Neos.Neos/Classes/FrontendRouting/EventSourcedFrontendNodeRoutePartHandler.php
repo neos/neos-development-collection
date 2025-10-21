@@ -16,6 +16,7 @@ namespace Neos\Neos\FrontendRouting;
 
 use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAddress;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
@@ -264,8 +265,19 @@ final class EventSourcedFrontendNodeRoutePartHandler extends AbstractRoutePart i
         }
         $currentRequestSiteDetectionResult = SiteDetectionResult::fromRouteParameters($parameters);
 
-        $nodeAddress = $routeValues[$this->name];
-        if (!$nodeAddress instanceof NodeAddress) {
+        $nodeRouteValue = $routeValues[$this->name];
+
+        if ($nodeRouteValue instanceof Node) {
+            $nodeAddress = NodeAddress::fromNode($nodeRouteValue);
+        } elseif ($nodeRouteValue instanceof NodeAddress) {
+            $nodeAddress = $nodeRouteValue;
+        } elseif (is_string($nodeRouteValue)) {
+            try {
+                $nodeAddress = NodeAddress::fromJsonString($nodeRouteValue);
+            } catch (\InvalidArgumentException) {
+                return false;
+            }
+        } else {
             return false;
         }
 
@@ -303,7 +315,13 @@ final class EventSourcedFrontendNodeRoutePartHandler extends AbstractRoutePart i
             $nodeAddress->aggregateId,
             $nodeAddress->dimensionSpacePoint->hash
         );
-
+        if ($nodeInfo->isRemoved()) {
+            throw new NodeNotFoundException(sprintf(
+                'The resolved node for address %s in dimension %s is removed',
+                $nodeAddress->aggregateId->value,
+                $nodeAddress->dimensionSpacePoint->toJson()
+            ), 1741017189);
+        }
         if ($nodeInfo->isShortcut()) {
             $nodeInfo = $this->nodeShortcutResolver->resolveNode($nodeInfo, $contentRepository);
             if ($nodeInfo instanceof UriInterface) {

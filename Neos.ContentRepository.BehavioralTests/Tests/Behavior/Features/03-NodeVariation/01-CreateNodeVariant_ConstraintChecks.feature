@@ -10,6 +10,10 @@ Feature: Create node variant
       | language   | de, gsw | gsw->de         |
     And using the following node types:
     """yaml
+    'Neos.ContentRepository:Root':
+      childNodes:
+        tethered:
+          type: 'Neos.ContentRepository.Testing:Tethered'
     'Neos.ContentRepository.Testing:Document':
       childNodes:
         tethered:
@@ -35,9 +39,10 @@ Feature: Create node variant
       | newContentStreamId | "cs-identifier" |
     And I am in workspace "live" and dimension space point {"market":"DE", "language":"gsw"}
     And the command CreateRootNodeAggregateWithNode is executed with payload:
-      | Key             | Value                         |
-      | nodeAggregateId | "lady-eleonode-rootford"      |
-      | nodeTypeName    | "Neos.ContentRepository:Root" |
+      | Key                                | Value                             |
+      | nodeAggregateId                    | "lady-eleonode-rootford"          |
+      | nodeTypeName                       | "Neos.ContentRepository:Root"     |
+      | tetheredDescendantNodeAggregateIds | {"tethered": "nodimer-tetherton"} |
     # We have to add another node since root nodes have no dimension space points and thus cannot be varied
     # Node /document
     And the following CreateNodeAggregateWithNode commands are executed:
@@ -92,7 +97,7 @@ Feature: Create node variant
       | targetOrigin    | {"market":"DE", "language":"de"}  |
     Then the last command should have thrown an exception of type "NodeAggregateIsRoot"
 
-  Scenario: Try to create a variant in a tethered node aggregate
+  Scenario: Try to create a variant in a tethered node aggregate which is not a child of a root node aggregate
     When the command CreateNodeVariant is executed with payload and exceptions are caught:
       | Key             | Value                             |
       | nodeAggregateId | "nodewyn-tetherton"               |
@@ -139,6 +144,14 @@ Feature: Create node variant
       | sourceOrigin    | {"market":"DE", "language":"gsw"} |
       | targetOrigin    | {"market":"DE", "language":"de"}  |
     Then the last command should have thrown an exception of type "NodeAggregateDoesCurrentlyNotCoverDimensionSpacePoint"
+
+  Scenario: Creating variants of tethered root children is allowed
+    When the command CreateNodeVariant is executed with payload:
+      | Key             | Value                             |
+      | nodeAggregateId | "nodimer-tetherton"               |
+      | sourceOrigin    | {"market":"DE", "language":"de"}  |
+      | targetOrigin    | {"market":"DE", "language":"gsw"} |
+    # no exceptions
 
   Scenario: Try to create a variant as a child of a different parent aggregate that does not exist
     When the command CreateNodeVariant is executed with payload and exceptions are caught:

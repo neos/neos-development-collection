@@ -84,12 +84,3 @@ Feature: Remove NodeAggregate
       | coveredDimensionSpacePoint   | {"language": "en"}       |
       | nodeVariantSelectionStrategy | "allVariants"            |
     Then the last command should have thrown an exception of type "NodeAggregateDoesCurrentlyNotCoverDimensionSpacePoint"
-
-  Scenario: Try to remove a node aggregate using a non-existent removalAttachmentPoint
-    When the command RemoveNodeAggregate is executed with payload and exceptions are caught:
-      | Key                          | Value                    |
-      | nodeAggregateId              | "sir-david-nodenborough" |
-      | nodeVariantSelectionStrategy | "allVariants"            |
-      | coveredDimensionSpacePoint   | {"language":"de"}        |
-      | removalAttachmentPoint       | "i-do-not-exist"         |
-    Then the last command should have thrown an exception of type "NodeAggregateCurrentlyDoesNotExist"

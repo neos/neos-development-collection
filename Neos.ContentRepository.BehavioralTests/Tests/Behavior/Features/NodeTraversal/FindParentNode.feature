@@ -81,8 +81,15 @@ Feature: Find nodes using the findParentNodes query
       | Key                          | Value         |
       | nodeAggregateId              | "a2a"         |
       | nodeVariantSelectionStrategy | "allVariants" |
+    When the command MoveNodeAggregate is executed with payload:
+      | Key                          | Value              |
+      | nodeAggregateId              | "b"                |
+      | dimensionSpacePoint          | {"language": "ch"} |
+      | newParentNodeAggregateId     | "a"                |
+      | relationDistributionStrategy | "scatter"          |
 
   Scenario:
+    Subgraph queries
     # findParentNode queries without result
     When I execute the findParentNode query for node aggregate id "non-existing" I expect no node to be returned
     When I execute the findParentNode query for node aggregate id "lady-eleonode-rootford" I expect no node to be returned
@@ -94,3 +101,19 @@ Feature: Find nodes using the findParentNodes query
     # findParentNode queries with result
     When I execute the findParentNode query for node aggregate id "home" I expect the node "lady-eleonode-rootford" to be returned
     When I execute the findParentNode query for node aggregate id "a2" I expect the node "a" to be returned
+
+  Scenario:
+    Contentgraph queries
+    # subtree tags are fetched correctly
+    When I execute the findParentNodeAggregates query for node aggregate id "a2a1" I expect the following node aggregates to be returned:
+      | nodeAggregateId | nodeTypeName                               | coveredDimensionSpacePoints           | occupiedDimensionSpacePoints | explicitlyDisabledDimensions            |
+      | a2a             | Neos.ContentRepository.Testing:SpecialPage | [{"language":"de"},{"language":"ch"}] | [{"language":"de"}]          | [{"language":"de"}, {"language": "ch"}] |
+
+    # multiple parent node aggregates (via move) are fetched
+    When I execute the findParentNodeAggregates query for node aggregate id "b" I expect the following node aggregates to be returned:
+      | nodeAggregateId | nodeTypeName                            | coveredDimensionSpacePoints           | occupiedDimensionSpacePoints | explicitlyDisabledDimensions |
+      | home            | Neos.ContentRepository.Testing:Homepage | [{"language":"de"},{"language":"ch"}] | [{"language":"de"}]          | []                           |
+      | a               | Neos.ContentRepository.Testing:Page     | [{"language":"de"},{"language":"ch"}] | [{"language":"de"}]          | []                           |
+
+    When I execute the findParentNodeAggregates query for node aggregate id "non-existing" I expect the following node aggregates to be returned:
+      | nodeAggregateId | nodeTypeName                        | coveredDimensionSpacePoints           | occupiedDimensionSpacePoints | explicitlyDisabledDimensions |

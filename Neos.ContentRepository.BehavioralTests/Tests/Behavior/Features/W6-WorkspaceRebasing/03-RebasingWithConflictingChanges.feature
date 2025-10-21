@@ -179,6 +179,14 @@ Feature: Workspace rebasing - conflicting changes
       | rebasedContentStreamId      | "user-cs-identifier-rebased" |
       | rebaseErrorHandlingStrategy | "force"                      |
 
+    Then I expect exactly 2 events to be published on stream with prefix "Workspace:user-ws"
+    And event at index 1 is of type "WorkspaceWasRebased" with payload:
+      | Key                     | Expected                     |
+      | workspaceName           | "user-ws"                    |
+      | newContentStreamId      | "user-cs-identifier-rebased" |
+      | previousContentStreamId | "user-cs-identifier"         |
+      | skippedEvents           | [12,14]                      |
+
     Then I expect the content stream "user-cs-identifier" to not exist
     Then I expect the content stream "user-cs-identifier-rebased" to exist
 

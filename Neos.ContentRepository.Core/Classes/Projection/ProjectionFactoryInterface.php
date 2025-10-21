@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Core\Projection;
 
-use Neos\ContentRepository\Core\Factory\ProjectionFactoryDependencies;
+use Neos\ContentRepository\Core\Factory\SubscriberFactoryDependencies;
 
 /**
  * @template-covariant T of ProjectionInterface
@@ -17,7 +17,7 @@ interface ProjectionFactoryInterface
      * @return T
      */
     public function build(
-        ProjectionFactoryDependencies $projectionFactoryDependencies,
+        SubscriberFactoryDependencies $projectionFactoryDependencies,
         array $options,
     ): ProjectionInterface;
 }

@@ -20,7 +20,6 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindReferencesFil
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindSubtreeFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\References;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Subtree;
-use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeAggregateCurrentlyDoesNotExist;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
@@ -32,6 +31,7 @@ use Neos\Flow\Annotations as Flow;
 use Neos\Neos\Domain\Exception\TetheredNodesCannotBePartiallyCopied;
 use Neos\Neos\Domain\Service\NodeDuplication\NodeAggregateIdMapping;
 use Neos\Neos\Domain\Service\NodeDuplication\TransientNodeCopy;
+use Neos\Neos\Domain\SubtreeTagging\NeosVisibilityConstraints;
 
 /**
  * Service to copy node recursively - as there is no equivalent content repository core command.
@@ -87,7 +87,7 @@ final class NodeDuplicationService
     ): void {
         $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryId);
 
-        $subgraph = $contentRepository->getContentGraph($workspaceName)->getSubgraph($sourceDimensionSpacePoint, VisibilityConstraints::withoutRestrictions());
+        $subgraph = $contentRepository->getContentGraph($workspaceName)->getSubgraph($sourceDimensionSpacePoint, NeosVisibilityConstraints::excludeRemoved());
 
         $targetParentNode = $subgraph->findNodeById($targetParentNodeAggregateId);
         if ($targetParentNode === null) {

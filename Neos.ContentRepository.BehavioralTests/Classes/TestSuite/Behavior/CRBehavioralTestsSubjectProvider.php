@@ -18,11 +18,14 @@ use Behat\Gherkin\Node\PyStringNode;
 use Behat\Gherkin\Node\TableNode;
 use Doctrine\DBAL\Connection;
 use Neos\ContentRepository\Core\ContentRepository;
+use Neos\ContentRepository\Core\Service\ContentRepositoryMaintainerFactory;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
+use Neos\ContentRepository\Core\Subscription\Engine\SubscriptionEngine;
 use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\Helpers\GherkinTableNodeBasedContentDimensionSource;
 use Neos\ContentRepository\TestSuite\Fakes\FakeContentDimensionSourceFactory;
 use Neos\ContentRepository\TestSuite\Fakes\FakeNodeTypeManagerFactory;
 use Neos\EventStore\EventStoreInterface;
+use PHPUnit\Framework\Assert;
 use Symfony\Component\Yaml\Yaml;
 
 /**
@@ -178,17 +181,26 @@ trait CRBehavioralTestsSubjectProvider
          * Catch Up process and the testcase reset.
          */
         $contentRepository = $this->createContentRepository($contentRepositoryId);
+        $contentRepositoryMaintainer = $this->contentRepositoryRegistry->buildService($contentRepositoryId, new ContentRepositoryMaintainerFactory());
         if (!in_array($contentRepository->id, self::$alreadySetUpContentRepositories)) {
-            $contentRepository->setUp();
+            $result = $contentRepositoryMaintainer->setUp();
+            Assert::assertNull($result);
             self::$alreadySetUpContentRepositories[] = $contentRepository->id;
         }
+        // todo we TRUNCATE here and do not want to use $contentRepositoryMaintainer->prune(); here as it would not reset the autoincrement sequence number making some assertions impossible
         /** @var EventStoreInterface $eventStore */
         $eventStore = (new \ReflectionClass($contentRepository))->getProperty('eventStore')->getValue($contentRepository);
         /** @var Connection $databaseConnection */
         $databaseConnection = (new \ReflectionClass($eventStore))->getProperty('connection')->getValue($eventStore);
         $eventTableName = sprintf('cr_%s_events', $contentRepositoryId->value);
         $databaseConnection->executeStatement('TRUNCATE ' . $eventTableName);
-        $contentRepository->resetProjectionStates();
+
+        /** @var SubscriptionEngine $subscriptionEngine */
+        $subscriptionEngine = (new \ReflectionClass($contentRepositoryMaintainer))->getProperty('subscriptionEngine')->getValue($contentRepositoryMaintainer);
+        $result = $subscriptionEngine->reset();
+        Assert::assertNull($result->errors);
+        $result = $subscriptionEngine->boot();
+        Assert::assertNull($result->errors);
 
         return $contentRepository;
     }

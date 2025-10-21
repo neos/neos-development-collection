@@ -19,6 +19,7 @@ use Neos\ContentRepository\Core\Infrastructure\Property\PropertyConverter;
 use Neos\ContentRepository\Core\NodeType\NodeType;
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
+use Neos\ContentRepository\Core\NodeType\TetheredNodeTypeDefinition;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphInterface;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindChildNodesFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
@@ -66,7 +67,7 @@ class TetheredNodeAdjustments
                 foreach ($nodeType->tetheredNodeTypeDefinitions as $tetheredNodeTypeDefinition) {
                     $tetheredNode = $this->contentGraph->getSubgraph(
                         $originDimensionSpacePoint->toDimensionSpacePoint(),
-                        VisibilityConstraints::withoutRestrictions()
+                        VisibilityConstraints::createEmpty()
                     )->findNodeByPath(
                         $tetheredNodeTypeDefinition->name,
                         $nodeAggregate->nodeAggregateId
@@ -83,11 +84,15 @@ class TetheredNodeAdjustments
                             'The tethered child node "' . $tetheredNodeTypeDefinition->name->value . '" is missing.',
                             function () use ($nodeAggregate, $originDimensionSpacePoint, $tetheredNodeTypeDefinition) {
                                 $events = $this->createEventsForMissingTetheredNode(
-                                    $this->contentGraph,
-                                    $nodeAggregate,
-                                    $originDimensionSpacePoint,
-                                    $tetheredNodeTypeDefinition,
-                                    null
+                                    contentGraph: $this->contentGraph,
+                                    parentNodeAggregateId: $nodeAggregate->nodeAggregateId,
+                                    parentNodeTypeName: $nodeAggregate->nodeTypeName,
+                                    parentNodeAggregateCoverageByOccupant: $nodeAggregate->classification->isRoot()
+                                        ? $nodeAggregate->coveredDimensionSpacePoints
+                                        : $nodeAggregate->getCoverageByOccupant($originDimensionSpacePoint),
+                                    originDimensionSpacePoint: $originDimensionSpacePoint,
+                                    tetheredNodeTypeDefinition: $tetheredNodeTypeDefinition,
+                                    tetheredNodeAggregateId: null
                                 );
 
                                 $streamName = ContentStreamEventStreamName::fromContentStreamId(
@@ -130,7 +135,7 @@ class TetheredNodeAdjustments
             // find wrongly ordered tethered nodes
             if ($foundMissingOrDisallowedTetheredNodes === false) {
                 foreach ($originDimensionSpacePoints as $originDimensionSpacePoint) {
-                    $childNodes = $this->contentGraph->getSubgraph($originDimensionSpacePoint->toDimensionSpacePoint(), VisibilityConstraints::withoutRestrictions())->findChildNodes($nodeAggregate->nodeAggregateId, FindChildNodesFilter::create());
+                    $childNodes = $this->contentGraph->getSubgraph($originDimensionSpacePoint->toDimensionSpacePoint(), VisibilityConstraints::createEmpty())->findChildNodes($nodeAggregate->nodeAggregateId, FindChildNodesFilter::create());
 
                     /** is indexed by node name, and the value is the tethered node itself */
                     $actualTetheredChildNodes = [];
@@ -141,7 +146,9 @@ class TetheredNodeAdjustments
                         }
                     }
 
-                    if (array_keys($actualTetheredChildNodes) !== array_keys($nodeType->tetheredNodeTypeDefinitions->toArray())) {
+                    $expectedTetheredNodeOrder = $nodeType->tetheredNodeTypeDefinitions->map(fn (TetheredNodeTypeDefinition $definition) => $definition->name->value);
+                    if (count($expectedTetheredNodeOrder) > 1 && array_keys($actualTetheredChildNodes) !== $expectedTetheredNodeOrder) {
+                        /** @var array<int<2,max>,string> $expectedTetheredNodeOrder */
                         // we need to re-order: We go from the last to the first
                         yield StructureAdjustment::createForNodeIdentity(
                             $nodeAggregate->workspaceName,
@@ -149,7 +156,7 @@ class TetheredNodeAdjustments
                             $nodeAggregate->nodeAggregateId,
                             StructureAdjustment::TETHERED_NODE_WRONGLY_ORDERED,
                             'Tethered nodes wrongly ordered, expected: '
-                                . implode(', ', array_keys($nodeType->tetheredNodeTypeDefinitions->toArray()))
+                                . implode(', ', $expectedTetheredNodeOrder)
                                 . ' - actual: '
                                 . implode(', ', array_keys($actualTetheredChildNodes)),
                             fn () => $this->reorderNodes(
@@ -157,7 +164,7 @@ class TetheredNodeAdjustments
                                 $this->contentGraph->getContentStreamId(),
                                 $nodeAggregate->getCoverageByOccupant($originDimensionSpacePoint),
                                 $actualTetheredChildNodes,
-                                array_keys($nodeType->tetheredNodeTypeDefinitions->toArray())
+                                $expectedTetheredNodeOrder
                             )
                         );
                     }
@@ -216,7 +223,7 @@ class TetheredNodeAdjustments
      * array key: name of tethered child node. Value: the Node itself.
      * @param array<string,Node> $actualTetheredChildNodes
      * an array depicting the expected tethered order, like ["node1", "node2"]
-     * @param array<int,string> $expectedNodeOrdering
+     * @param array<int<2,max>,string> $expectedNodeOrdering
      */
     private function reorderNodes(
         WorkspaceName $workspaceName,
@@ -254,6 +261,7 @@ class TetheredNodeAdjustments
             $succeedingSiblingNodeName = $nodeNameToMove;
         }
 
+        /** @var non-empty-array<NodeAggregateWasMoved> $events */
         $streamName = ContentStreamEventStreamName::fromContentStreamId($contentStreamId);
         return new EventsToPublish(
             $streamName->getEventStreamName(),

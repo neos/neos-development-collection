@@ -16,7 +16,7 @@ namespace Neos\ContentRepository\Core\Feature\Common;
 
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePointSet;
-use Neos\ContentRepository\Core\EventStore\Events;
+use Neos\ContentRepository\Core\EventStore\EventInterface;
 use Neos\ContentRepository\Core\Feature\NodeRemoval\Event\NodeAggregateWasRemoved;
 use Neos\ContentRepository\Core\NodeType\NodeType;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphInterface;
@@ -34,13 +34,15 @@ trait NodeTypeChangeInternals
     /**
      * NOTE: when changing this method, {@see NodeTypeChange::requireConstraintsImposedByHappyPathStrategyAreMet}
      * needs to be modified as well (as they are structurally the same)
+     *
+     * @return array<EventInterface>
      */
     private function deleteDisallowedNodesWhenChangingNodeType(
         ContentGraphInterface $contentGraph,
         NodeAggregate $nodeAggregate,
         NodeType $newNodeType,
         NodeAggregateIds &$alreadyRemovedNodeAggregateIds,
-    ): Events {
+    ): array {
         $events = [];
         // if we have children, we need to check whether they are still allowed
         // after we changed the node type of the $nodeAggregate to $newNodeType.
@@ -117,15 +119,18 @@ trait NodeTypeChangeInternals
             }
         }
 
-        return Events::fromArray($events);
+        return $events;
     }
 
+    /**
+     * @return array<EventInterface>
+     */
     private function deleteObsoleteTetheredNodesWhenChangingNodeType(
         ContentGraphInterface $contentGraph,
         NodeAggregate $nodeAggregate,
         NodeType $newNodeType,
         NodeAggregateIds &$alreadyRemovedNodeAggregateIds,
-    ): Events {
+    ): array {
         $events = [];
         // find disallowed tethered nodes
         $tetheredNodeAggregates = $contentGraph->findTetheredChildNodeAggregates($nodeAggregate->nodeAggregateId);
@@ -156,7 +161,7 @@ trait NodeTypeChangeInternals
             }
         }
 
-        return Events::fromArray($events);
+        return $events;
     }
 
     /**
@@ -189,7 +194,7 @@ trait NodeTypeChangeInternals
     ): DimensionSpacePointSet {
         $points = [];
         foreach ($childNodeAggregate->coveredDimensionSpacePoints as $coveredDimensionSpacePoint) {
-            $parentNode = $contentGraph->getSubgraph($coveredDimensionSpacePoint, VisibilityConstraints::withoutRestrictions())->findParentNode(
+            $parentNode = $contentGraph->getSubgraph($coveredDimensionSpacePoint, VisibilityConstraints::createEmpty())->findParentNode(
                 $childNodeAggregate->nodeAggregateId
             );
             if (
@@ -212,12 +217,6 @@ trait NodeTypeChangeInternals
             $contentGraph->getWorkspaceName(),
             $contentGraph->getContentStreamId(),
             $nodeAggregate->nodeAggregateId,
-            // TODO: we also use the covered dimension space points as OCCUPIED dimension space points
-            // - however the OCCUPIED dimension space points are not really used by now
-            // (except for the change projector, which needs love anyways...)
-            OriginDimensionSpacePointSet::fromDimensionSpacePointSet(
-                $coveredDimensionSpacePointsToBeRemoved
-            ),
             $coveredDimensionSpacePointsToBeRemoved,
         );
     }

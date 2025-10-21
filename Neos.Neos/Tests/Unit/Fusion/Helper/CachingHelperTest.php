@@ -257,7 +257,7 @@ class CachingHelperTest extends UnitTestCase
             null,
             NodeTags::createEmpty(),
             Timestamps::create($now, $now, null, null),
-            VisibilityConstraints::withoutRestrictions(),
+            VisibilityConstraints::createEmpty(),
         );
     }
 }

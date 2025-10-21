@@ -7,14 +7,13 @@ namespace Neos\ContentGraph\PostgreSQLAdapter;
 use Doctrine\DBAL\Connection;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Repository\ContentHypergraph;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Repository\NodeFactory;
-use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphReadModelInterface;
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphInterface;
+use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphReadModelInterface;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
 use Neos\ContentRepository\Core\SharedModel\Exception\WorkspaceDoesNotExist;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStream;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreams;
 use Neos\ContentRepository\Core\SharedModel\Workspace\Workspace;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepository\Core\SharedModel\Workspace\Workspaces;
@@ -58,12 +57,6 @@ final readonly class ContentHyperGraphReadModelAdapter implements ContentGraphRe
     {
         // TODO: Implement findContentStreamById() method.
         return null;
-    }
-
-    public function findContentStreams(): ContentStreams
-    {
-        // TODO: Implement getContentStreams() method.
-        return ContentStreams::createEmpty();
     }
 
     public function countNodes(): int

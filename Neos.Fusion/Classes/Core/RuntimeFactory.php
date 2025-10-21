@@ -43,7 +43,7 @@ class RuntimeFactory
      * @param array<int|string, mixed> $fusionConfiguration
      * @deprecated with Neos 8.3 might be removed with Neos 9.0 use {@link createFromConfiguration} instead.
      */
-    public function create(array $fusionConfiguration, ControllerContext $controllerContext = null): Runtime
+    public function create(array $fusionConfiguration, ?ControllerContext $controllerContext = null): Runtime
     {
         $defaultContextVariables = EelUtility::getDefaultContextVariables(
             $this->defaultContextConfiguration ?? []

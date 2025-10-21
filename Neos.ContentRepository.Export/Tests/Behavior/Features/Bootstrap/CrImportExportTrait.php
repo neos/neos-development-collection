@@ -222,7 +222,7 @@ trait CrImportExportTrait
      * @Then I expect a migration exception
      * @Then I expect a migration exception with the message
      */
-    public function iExpectAMigrationExceptionWithTheMessage(PyStringNode $expectedMessage = null): void
+    public function iExpectAMigrationExceptionWithTheMessage(?PyStringNode $expectedMessage = null): void
     {
         Assert::assertNotNull($this->crImportExportTrait_lastMigrationException, 'Expected the previous migration to lead to an exception, but no exception was thrown');
         if ($expectedMessage !== null) {

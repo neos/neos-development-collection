@@ -27,7 +27,7 @@ use Neos\ContentRepository\Core\SharedModel\Exception\ContentStreamDoesNotExistY
 use Neos\ContentRepository\Core\SharedModel\Exception\DimensionSpacePointIsNotYetOccupied;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeAggregateCurrentlyExists;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeAggregateDoesCurrentlyNotCoverDimensionSpacePoint;
-use Neos\ContentRepository\Core\SharedModel\Exception\NodeAggregatesTypeIsAmbiguous;
+use Neos\ContentRepository\Core\SharedModel\Exception\NodeAggregateIsTethered;
 
 /**
  * @internal implementation detail of Command Handlers
@@ -41,7 +41,6 @@ trait NodeVariation
      * @throws ContentStreamDoesNotExistYet
      * @throws NodeAggregateCurrentlyExists
      * @throws DimensionSpacePointNotFound
-     * @throws NodeAggregatesTypeIsAmbiguous
      * @throws DimensionSpacePointIsNotYetOccupied
      * @throws DimensionSpacePointIsAlreadyOccupied
      * @throws NodeAggregateDoesCurrentlyNotCoverDimensionSpacePoint
@@ -62,7 +61,18 @@ trait NodeVariation
         $this->requireNodeAggregateToNotBeRoot($nodeAggregate, 'and Root Node Aggregates cannot be varied; If this error happens, you most likely need to run a node migration "UpdateRootNodeAggregateDimensions" to update the root node dimensions.');
         $this->requireDimensionSpacePointToExist($command->sourceOrigin->toDimensionSpacePoint());
         $this->requireDimensionSpacePointToExist($command->targetOrigin->toDimensionSpacePoint());
-        $this->requireNodeAggregateToBeUntethered($nodeAggregate);
+        if ($nodeAggregate->classification->isTethered()) {
+            // there should be only one parent node aggregate as the given one is tethered, but anyways
+            foreach ($contentGraph->findParentNodeAggregates($nodeAggregate->nodeAggregateId) as $parentNodeAggregate) {
+                if (!$parentNodeAggregate->classification->isRoot()) {
+                    throw new NodeAggregateIsTethered(
+                        'Node aggregate "' . $nodeAggregate->nodeAggregateId->value
+                            . '" is classified as tethered and cannot be varied since its parent "' . $parentNodeAggregate->nodeAggregateId->value . '" is not root.',
+                        1742295155
+                    );
+                }
+            }
+        }
         $this->requireNodeAggregateToOccupyDimensionSpacePoint($nodeAggregate, $command->sourceOrigin);
         $this->requireNodeAggregateToNotOccupyDimensionSpacePoint($nodeAggregate, $command->targetOrigin);
 

@@ -77,10 +77,10 @@ Feature: Move node aggregate with dimensions
       | newParentNodeAggregateId     | "nody-mc-nodeface"          |
       | relationDistributionStrategy | "scatter"                   |
 
-    Then I expect the ChangeProjection to have the following changes in "user-cs-id":
+    Then I expect to have the following changes in workspace "user-workspace":
       | nodeAggregateId           | created | changed | moved | deleted | originDimensionSpacePoint |
       | sir-nodeward-nodington-iv | 0       | 0       | 1     | 0       | {"language": "fr"}        |
-    And I expect the ChangeProjection to have no changes in "cs-identifier"
+    And I expect to have no changes in workspace "live"
 
   Scenario: Move nodeAggregate (generalization) into new parent with scatter
     When I am in dimension space point {"language": "de"}
@@ -90,10 +90,10 @@ Feature: Move node aggregate with dimensions
       | newParentNodeAggregateId     | "sir-nodeward-nodington-iv" |
       | relationDistributionStrategy | "scatter"                   |
 
-    Then I expect the ChangeProjection to have the following changes in "user-cs-id":
+    Then I expect to have the following changes in workspace "user-workspace":
       | nodeAggregateId  | created | changed | moved | deleted | originDimensionSpacePoint |
       | nody-mc-nodeface | 0       | 0       | 1     | 0       | {"language": "de"}        |
-    And I expect the ChangeProjection to have no changes in "cs-identifier"
+    And I expect to have no changes in workspace "live"
 
   Scenario: Move nodeAggregate (specialization) into new parent with scatter
     When I am in dimension space point {"language": "gsw"}
@@ -103,10 +103,10 @@ Feature: Move node aggregate with dimensions
       | newParentNodeAggregateId     | "sir-nodeward-nodington-iv" |
       | relationDistributionStrategy | "scatter"                   |
 
-    Then I expect the ChangeProjection to have the following changes in "user-cs-id":
+    Then I expect to have the following changes in workspace "user-workspace":
       | nodeAggregateId  | created | changed | moved | deleted | originDimensionSpacePoint |
       | nody-mc-nodeface | 0       | 0       | 1     | 0       | {"language": "gsw"}       |
-    And I expect the ChangeProjection to have no changes in "cs-identifier"
+    And I expect to have no changes in workspace "live"
 
   Scenario: Move nodeAggregate (variant) into new parent with gatherAll
     When I am in dimension space point {"language": "fr"}
@@ -116,12 +116,12 @@ Feature: Move node aggregate with dimensions
       | newParentNodeAggregateId     | "sir-nodeward-nodington-iv" |
       | relationDistributionStrategy | "gatherAll"                 |
 
-    Then I expect the ChangeProjection to have the following changes in "user-cs-id":
+    Then I expect to have the following changes in workspace "user-workspace":
       | nodeAggregateId  | created | changed | moved | deleted | originDimensionSpacePoint |
       | nody-mc-nodeface | 0       | 0       | 1     | 0       | {"language": "fr"}        |
       | nody-mc-nodeface | 0       | 0       | 1     | 0       | {"language": "de"}        |
       | nody-mc-nodeface | 0       | 0       | 1     | 0       | {"language": "gsw"}       |
-    And I expect the ChangeProjection to have no changes in "cs-identifier"
+    And I expect to have no changes in workspace "live"
 
   Scenario: Move nodeAggregate (specialization) into new parent with gatherAll
     When I am in dimension space point {"language": "gsw"}
@@ -131,12 +131,12 @@ Feature: Move node aggregate with dimensions
       | newParentNodeAggregateId     | "sir-nodeward-nodington-iv" |
       | relationDistributionStrategy | "gatherAll"                 |
 
-    Then I expect the ChangeProjection to have the following changes in "user-cs-id":
+    Then I expect to have the following changes in workspace "user-workspace":
       | nodeAggregateId  | created | changed | moved | deleted | originDimensionSpacePoint |
       | nody-mc-nodeface | 0       | 0       | 1     | 0       | {"language": "de"}        |
       | nody-mc-nodeface | 0       | 0       | 1     | 0       | {"language": "fr"}        |
       | nody-mc-nodeface | 0       | 0       | 1     | 0       | {"language": "gsw"}       |
-    And I expect the ChangeProjection to have no changes in "cs-identifier"
+    And I expect to have no changes in workspace "live"
 
   Scenario: Move nodeAggregate (generalization) into new parent with gatherAll
     When I am in dimension space point {"language": "de"}
@@ -146,12 +146,12 @@ Feature: Move node aggregate with dimensions
       | newParentNodeAggregateId     | "sir-nodeward-nodington-iv" |
       | relationDistributionStrategy | "gatherAll"                 |
 
-    Then I expect the ChangeProjection to have the following changes in "user-cs-id":
+    Then I expect to have the following changes in workspace "user-workspace":
       | nodeAggregateId  | created | changed | moved | deleted | originDimensionSpacePoint |
       | nody-mc-nodeface | 0       | 0       | 1     | 0       | {"language": "de"}        |
       | nody-mc-nodeface | 0       | 0       | 1     | 0       | {"language": "fr"}        |
       | nody-mc-nodeface | 0       | 0       | 1     | 0       | {"language": "gsw"}       |
-    And I expect the ChangeProjection to have no changes in "cs-identifier"
+    And I expect to have no changes in workspace "live"
 
   Scenario: Move nodeAggregate (variant) into new parent with gatherSpecializations
     When I am in dimension space point {"language": "fr"}
@@ -161,10 +161,10 @@ Feature: Move node aggregate with dimensions
       | newParentNodeAggregateId     | "sir-nodeward-nodington-iv" |
       | relationDistributionStrategy | "gatherSpecializations"     |
 
-    Then I expect the ChangeProjection to have the following changes in "user-cs-id":
+    Then I expect to have the following changes in workspace "user-workspace":
       | nodeAggregateId  | created | changed | moved | deleted | originDimensionSpacePoint |
       | nody-mc-nodeface | 0       | 0       | 1     | 0       | {"language": "fr"}        |
-    And I expect the ChangeProjection to have no changes in "cs-identifier"
+    And I expect to have no changes in workspace "live"
 
   Scenario: Move nodeAggregate (specialization) into new parent with gatherSpecializations
     When I am in dimension space point {"language": "gsw"}
@@ -174,10 +174,10 @@ Feature: Move node aggregate with dimensions
       | newParentNodeAggregateId     | "sir-nodeward-nodington-iv" |
       | relationDistributionStrategy | "gatherSpecializations"     |
 
-    Then I expect the ChangeProjection to have the following changes in "user-cs-id":
+    Then I expect to have the following changes in workspace "user-workspace":
       | nodeAggregateId  | created | changed | moved | deleted | originDimensionSpacePoint |
       | nody-mc-nodeface | 0       | 0       | 1     | 0       | {"language": "gsw"}       |
-    And I expect the ChangeProjection to have no changes in "cs-identifier"
+    And I expect to have no changes in workspace "live"
 
   Scenario: Move nodeAggregate (generalization) into new parent with gatherSpecializations
     When I am in dimension space point {"language": "de"}
@@ -187,11 +187,11 @@ Feature: Move node aggregate with dimensions
       | newParentNodeAggregateId     | "sir-nodeward-nodington-iv" |
       | relationDistributionStrategy | "gatherSpecializations"     |
 
-    Then I expect the ChangeProjection to have the following changes in "user-cs-id":
+    Then I expect to have the following changes in workspace "user-workspace":
       | nodeAggregateId  | created | changed | moved | deleted | originDimensionSpacePoint |
       | nody-mc-nodeface | 0       | 0       | 1     | 0       | {"language": "de"}        |
       | nody-mc-nodeface | 0       | 0       | 1     | 0       | {"language": "gsw"}       |
-    And I expect the ChangeProjection to have no changes in "cs-identifier"
+    And I expect to have no changes in workspace "live"
 
   Scenario: Move nodeAggregate with children into new parent
     When I am in dimension space point {"language": "de"}
@@ -201,8 +201,8 @@ Feature: Move node aggregate with dimensions
       | newParentNodeAggregateId     | "nody-mc-nodeface"          |
       | relationDistributionStrategy | "scatter"                   |
 
-    Then I expect the ChangeProjection to have the following changes in "user-cs-id":
+    Then I expect to have the following changes in workspace "user-workspace":
       | nodeAggregateId           | created | changed | moved | deleted | originDimensionSpacePoint |
       | sir-nodeward-nodington-iv | 0       | 0       | 1     | 0       | {"language": "de"}        |
-    And I expect the ChangeProjection to have no changes in "cs-identifier"
+    And I expect to have no changes in workspace "live"
 

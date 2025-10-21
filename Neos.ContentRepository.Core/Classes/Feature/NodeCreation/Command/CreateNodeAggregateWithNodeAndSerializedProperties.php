@@ -70,7 +70,7 @@ final readonly class CreateNodeAggregateWithNodeAndSerializedProperties implemen
      * @param SerializedPropertyValues|null $initialPropertyValues The node's initial property values (serialized). Will be merged over the node type's default property values
      * @param SerializedNodeReferences|null $references The node's initial references (serialized).
      */
-    public static function create(WorkspaceName $workspaceName, NodeAggregateId $nodeAggregateId, NodeTypeName $nodeTypeName, OriginDimensionSpacePoint $originDimensionSpacePoint, NodeAggregateId $parentNodeAggregateId, NodeAggregateId $succeedingSiblingNodeAggregateId = null, SerializedPropertyValues $initialPropertyValues = null, SerializedNodeReferences $references = null): self
+    public static function create(WorkspaceName $workspaceName, NodeAggregateId $nodeAggregateId, NodeTypeName $nodeTypeName, OriginDimensionSpacePoint $originDimensionSpacePoint, NodeAggregateId $parentNodeAggregateId, ?NodeAggregateId $succeedingSiblingNodeAggregateId = null, ?SerializedPropertyValues $initialPropertyValues = null, ?SerializedNodeReferences $references = null): self
     {
         return new self($workspaceName, $nodeAggregateId, $nodeTypeName, $originDimensionSpacePoint, $parentNodeAggregateId, $initialPropertyValues ?? SerializedPropertyValues::createEmpty(), $succeedingSiblingNodeAggregateId, null, NodeAggregateIdsByNodePaths::createEmpty(), $references ?: SerializedNodeReferences::createEmpty());
     }

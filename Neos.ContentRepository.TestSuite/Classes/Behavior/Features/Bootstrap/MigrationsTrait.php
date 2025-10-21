@@ -30,23 +30,63 @@ trait MigrationsTrait
 {
     use CRTestSuiteRuntimeVariables;
 
-    /**
-     * @When I run the following node migration for workspace :sourceWorkspaceName, creating target workspace :targetWorkspaceName on contentStreamId :contentStreamId, with publishing on success:
-     */
-    public function iRunTheFollowingNodeMigrationWithTargetWorkspace(string $sourceWorkspaceName, string $targetWorkspaceName, string $contentStreamId, PyStringNode $string, bool $publishingOnSuccess = true): void
-    {
-        $migrationConfiguration = new MigrationConfiguration(Yaml::parse($string->getRaw()));
-        $command = new ExecuteMigration(
+    private function executeNodeMigration(
+        string $sourceWorkspaceName,
+        string $targetWorkspaceName,
+        string $contentStreamId,
+        string $migrationConfigurationYaml,
+        bool $publishingOnSuccess,
+        bool $force,
+    ): void {
+        $migrationConfiguration = new MigrationConfiguration(Yaml::parse($migrationConfigurationYaml));
+        $command = ExecuteMigration::create(
             $migrationConfiguration,
             WorkspaceName::fromString($sourceWorkspaceName),
             WorkspaceName::fromString($targetWorkspaceName),
-            $publishingOnSuccess,
+        )->withContentStreamId(
             ContentStreamId::fromString($contentStreamId)
         );
+        if ($publishingOnSuccess === false) {
+            $command = $command->withoutPublishOnSuccess();
+        }
+        if ($force === true) {
+            $command = $command->withoutRequiringConfirmation();
+        }
 
         /** @var NodeMigrationService $nodeMigrationService */
-        $nodeMigrationService = $this->getContentRepositoryService(new NodeMigrationServiceFactory());
+        $nodeMigrationService = $this->getContentRepositoryService(NodeMigrationServiceFactory::createDefault());
         $nodeMigrationService->executeMigration($command);
+    }
+
+
+    /**
+     * @When I run the following node migration for workspace :sourceWorkspaceName, creating target workspace :targetWorkspaceName on contentStreamId :contentStreamId, with publishing on success:
+     */
+    public function iRunTheFollowingNodeMigrationWithTargetWorkspace(string $sourceWorkspaceName, string $targetWorkspaceName, string $contentStreamId, PyStringNode $string): void
+    {
+        $this->executeNodeMigration(
+            sourceWorkspaceName: $sourceWorkspaceName,
+            targetWorkspaceName: $targetWorkspaceName,
+            contentStreamId: $contentStreamId,
+            migrationConfigurationYaml: $string->getRaw(),
+            publishingOnSuccess: true,
+            force: false
+        );
+    }
+
+    /**
+     * @When I run the following node migration for workspace :sourceWorkspaceName, creating target workspace :targetWorkspaceName on contentStreamId :contentStreamId, with force and publishing on success:
+     */
+    public function iRunTheFollowingNodeMigrationWithForceWithPublishingOnSuccess(string $sourceWorkspaceName, string $targetWorkspaceName, string $contentStreamId, PyStringNode $string): void
+    {
+        $this->executeNodeMigration(
+            sourceWorkspaceName: $sourceWorkspaceName,
+            targetWorkspaceName: $targetWorkspaceName,
+            contentStreamId: $contentStreamId,
+            migrationConfigurationYaml: $string->getRaw(),
+            publishingOnSuccess: false,
+            force: true
+        );
     }
 
     /**
@@ -54,7 +94,14 @@ trait MigrationsTrait
      */
     public function iRunTheFollowingNodeMigrationWithoutPublishingOnSuccess(string $sourceWorkspaceName, string $targetWorkspaceName, string $contentStreamId, PyStringNode $string): void
     {
-        $this->iRunTheFollowingNodeMigrationWithTargetWorkspace($sourceWorkspaceName, $targetWorkspaceName, $contentStreamId, $string, false);
+        $this->executeNodeMigration(
+            sourceWorkspaceName: $sourceWorkspaceName,
+            targetWorkspaceName: $targetWorkspaceName,
+            contentStreamId: $contentStreamId,
+            migrationConfigurationYaml: $string->getRaw(),
+            publishingOnSuccess: false,
+            force: false
+        );
     }
 
     /**
@@ -63,7 +110,14 @@ trait MigrationsTrait
     public function iRunTheFollowingNodeMigrationAndExceptionsAreCaught(string $sourceWorkspaceName, string $targetWorkspaceName, string $contentStreamId, PyStringNode $string): void
     {
         try {
-            $this->iRunTheFollowingNodeMigrationWithTargetWorkspace($sourceWorkspaceName, $targetWorkspaceName, $contentStreamId, $string);
+            $this->executeNodeMigration(
+                sourceWorkspaceName: $sourceWorkspaceName,
+                targetWorkspaceName: $targetWorkspaceName,
+                contentStreamId: $contentStreamId,
+                migrationConfigurationYaml: $string->getRaw(),
+                publishingOnSuccess: true,
+                force: false
+            );
         } catch (\Exception $exception) {
             $this->lastCommandException = $exception;
         }

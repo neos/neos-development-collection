@@ -51,10 +51,7 @@ class Package extends BasePackage
                 $nodeTypeConfigurationFileMonitor = FileMonitor::createFileMonitorAtBoot('ContentRepository_NodeTypesConfiguration', $bootstrap);
                 /** @var PackageManager $packageManager */
                 $packageManager = $bootstrap->getEarlyInstance(PackageManager::class);
-                foreach ($packageManager->getFlowPackages() as $packageKey => $package) {
-                    if ($packageManager->isPackageFrozen($packageKey)) {
-                        continue;
-                    }
+                foreach ($packageManager->getFlowPackages() as $package) {
                     if (file_exists($package->getConfigurationPath())) {
                         $nodeTypeConfigurationFileMonitor->monitorDirectory($package->getConfigurationPath(), 'NodeTypes(\..+)\.yaml');
                     }

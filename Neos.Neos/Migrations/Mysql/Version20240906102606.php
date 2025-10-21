@@ -29,7 +29,7 @@ final class Version20240906102606 extends AbstractMigration
                  `originalassetid` varchar(40) DEFAULT NULL,
                  `workspacename` char(36) NOT NULL,
                  `nodeaggregateid` varchar(64) CHARACTER SET ascii COLLATE ascii_general_ci NOT NULL,
-                 `origindimensionspacepoint` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_520_ci DEFAULT '{}',
+                 `origindimensionspacepoint` json DEFAULT (JSON_OBJECT()),
                  `origindimensionspacepointhash` varbinary(32) NOT NULL DEFAULT '',
                  `propertyname` varchar(255) NOT NULL DEFAULT '',
                  UNIQUE KEY `IDX_14C94F11044B499EB28F27DAEAC5D4BB` (`contentrepositoryid`, `assetid`,`originalassetid`,`workspacename`,`nodeaggregateid`,`origindimensionspacepointhash`,`propertyname`),

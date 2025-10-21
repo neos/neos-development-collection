@@ -20,7 +20,7 @@ Feature: Tag subtree with dimensions
       | Key                  | Value                |
       | workspaceName        | "live"               |
       | newContentStreamId   | "cs-identifier"      |
-    And I am in workspace "live" and dimension space point {}
+    And I am in workspace "live"
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key             | Value                         |
       | nodeAggregateId | "root"                        |

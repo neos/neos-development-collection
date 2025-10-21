@@ -328,70 +328,6 @@
         <source>Deactivated</source>
         <target state="translated">Dinonaktifkan</target>
       </trans-unit>
-      <trans-unit id="packages.tooltip.unfreeze" xml:space="preserve">
-        <source>This package is currently frozen. Click to unfreeze it.</source>
-        <target state="translated">Paket tersebut saat ini dibekukan. Klik untuk mengembalikan.</target>
-      </trans-unit>
-      <trans-unit id="packages.tooltip.freeze" xml:space="preserve">
-        <source>Freeze the package in order to speed up your website.</source>
-        <target state="translated">Bekukan paket untuk mempercepat website Anda.</target>
-      </trans-unit>
-      <trans-unit id="packages.tooltip.noDeactivate" xml:space="preserve">
-        <source>This package is protected and cannot be deactivated.</source>
-        <target state="translated">Paket ini dilindungi dan tidak dapat dinonaktifkan.</target>
-      </trans-unit>
-      <trans-unit id="packages.tooltip.deactivate" xml:space="preserve">
-        <source>Deactivate Package</source>
-        <target state="translated">Menonaktifkan paket</target>
-      </trans-unit>
-      <trans-unit id="packages.tooltip.activate" xml:space="preserve">
-        <source>Activate Package</source>
-        <target state="translated">Aktifkan paket</target>
-      </trans-unit>
-      <trans-unit id="packages.tooltip.noDelete" xml:space="preserve">
-        <source>This package is protected and cannot be deleted.</source>
-        <target state="translated">Paket ini dilindungi dan tidak dapat dihapus.</target>
-      </trans-unit>
-      <trans-unit id="packages.tooltip.delete" xml:space="preserve">
-        <source>Delete Package</source>
-        <target state="translated">Menghapus paket</target>
-      </trans-unit>
-      <trans-unit id="packages.message.reallyDelete" xml:space="preserve">
-        <source>Do you really want to delete "{0}"?</source>
-        <target state="translated">Apakah Anda benar-benar ingin menghapus "{0}"?</target>
-      </trans-unit>
-      <trans-unit id="packages.message.confirmDelete" xml:space="preserve">
-        <source>Yes, delete the package</source>
-        <target state="translated">Ya, menghapus paket</target>
-      </trans-unit>
-      <trans-unit id="packages.message.confirmDeletes" xml:space="preserve">
-        <source>Yes, delete the packages</source>
-        <target state="translated">Ya, menghapus paket-paket</target>
-      </trans-unit>
-      <trans-unit id="packages.message.selected.reallyDelete" xml:space="preserve">
-        <source>Do you really want to delete the selected packages?</source>
-        <target state="translated">Apakah Anda benar-benar ingin menghapus paket yang dipilih?</target>
-      </trans-unit>
-      <trans-unit id="packages.selected.freeze" xml:space="preserve">
-        <source>Freeze selected packages</source>
-        <target state="translated">Bekukan paket Terpilih</target>
-      </trans-unit>
-      <trans-unit id="packages.selected.unfreeze" xml:space="preserve">
-        <source>Unfreeze selected packages</source>
-        <target state="translated">Kembalikan paket Terpilih</target>
-      </trans-unit>
-      <trans-unit id="packages.selected.delete" xml:space="preserve">
-        <source>Delete selected packages</source>
-        <target state="translated">Menghapus paket-paket yang dipilih</target>
-      </trans-unit>
-      <trans-unit id="packages.selected.deactivate" xml:space="preserve">
-        <source>Deactivate selected packages</source>
-        <target state="translated">Menonaktifkan paket Terpilih</target>
-      </trans-unit>
-      <trans-unit id="packages.selected.activate" xml:space="preserve">
-        <source>Activate selected packages</source>
-        <target state="translated">Aktifkan paket Terpilih</target>
-      </trans-unit>
       <trans-unit id="sites.label" xml:space="preserve">
         <source>Sites Management</source>
         <target state="translated">Manajemen situs</target>
@@ -455,10 +391,6 @@
       <trans-unit id="sites.confirmDelete" xml:space="preserve">
         <source>Yes, delete the site</source>
         <target state="translated">Ya, hapus situs tersebut</target>
-      </trans-unit>
-      <trans-unit id="sites.import" xml:space="preserve">
-        <source>Import a site</source>
-        <target state="translated">Impor situs</target>
       </trans-unit>
       <trans-unit id="sites.select" xml:space="preserve">
         <source>Select a site package</source>
@@ -684,18 +616,6 @@ Klik salah satu node untuk hanya melihat fallback dan variannya. Klik lagi untuk
       <trans-unit id="sites.update.body" xml:space="preserve">
         <source>The site "{0}" has been updated.</source>
         <target state="needs-translation">The site "{0}" has been updated.</target>
-      </trans-unit>
-      <trans-unit id="sites.theSiteHasBeenImported.body" xml:space="preserve">
-        <source>The site has been imported.</source>
-        <target state="needs-translation">The site has been imported.</target>
-      </trans-unit>
-      <trans-unit id="sites.importError.title" xml:space="preserve">
-        <source>Import error</source>
-        <target state="needs-translation">Import error</target>
-      </trans-unit>
-      <trans-unit id="sites.importError.body" xml:space="preserve">
-        <source>Error: During the import of the "Sites.xml" from the package "{0}" an exception occurred: {1}</source>
-        <target state="needs-translation">Error: During the import of the "Sites.xml" from the package "{0}" an exception occurred: {1}</target>
       </trans-unit>
       <trans-unit id="sites.siteCreationError.siteWithSiteNodeNameAlreadyExists.title" xml:space="preserve">
         <source>Site creation error</source>

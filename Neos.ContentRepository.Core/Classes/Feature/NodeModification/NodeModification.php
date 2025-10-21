@@ -129,6 +129,11 @@ trait NodeModification
 
         $events = $this->mergeSplitEvents($events);
 
+        if ($events === []) {
+            // cannot happen here as the command could not be instantiated without any intention see constructor validation
+            throw new \RuntimeException('Cannot handle "SetSerializedNodeProperties" with no properties to modify', 1736798016);
+        }
+
         return new EventsToPublish(
             ContentStreamEventStreamName::fromContentStreamId($contentGraph->getContentStreamId())
                 ->getEventStreamName(),

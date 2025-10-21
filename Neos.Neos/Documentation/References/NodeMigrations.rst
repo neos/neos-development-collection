@@ -79,7 +79,7 @@ Transformations Reference
 -------------------------
 
 AddDimensionShineThrough
-~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~
 
 Add a Dimension Space Point (DSP) Shine-Through; basically making all content available not just in the source (original) DSP,  but also in the target-DimensionSpacePoint.
 
@@ -198,7 +198,7 @@ Options Reference:
   value.
 
 MoveDimensionSpacePoint
-~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~
 
 Moves a dimension space point globally.
 
@@ -229,7 +229,7 @@ Options Reference:
   The name of the property to be removed.
 
 RenameNodeAggregate
-~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~
 
 Rename a node aggregate.
 
@@ -264,7 +264,7 @@ Options Reference:
   The name of the property to work on.
 
 UpdateRootNodeAggregateDimensions
-~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Updates all root node aggregate dimensions regarding the current content repository configuration.
 
@@ -280,7 +280,7 @@ Filters Reference
 -----------------
 
 DimensionSpacePoints
-~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~
 
 Filter nodes by origin dimension space point.
 
@@ -328,7 +328,7 @@ Options Reference:
   The property name to be checked for non-empty value.
 
 PropertyValue
-~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~
 
 Filter nodes having the given property with the corresponding value.
 

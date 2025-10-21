@@ -249,7 +249,7 @@ Example::
 .. _Neos_Fusion__Debug_Console:
 
 Neos.Fusion:Debug.Console
------------------
+-------------------------
 
 Wraps the given value with a script tag to print it to the browser console.
 When used as process the script tag is appended to the processed value.
@@ -478,7 +478,7 @@ Example::
 
 
 Neos.Fusion:DataStructure
---------------------
+-------------------------
 
 Evaluate nested definitions as an array (opposed to *string* for :ref:`Neos_Fusion__Join`)
 
@@ -718,7 +718,7 @@ Example::
 	}
 
 Neos.Neos Fusion Objects
-=============================
+========================
 
 The Fusion objects defined in the Neos package contain all Fusion objects which
 are needed to integrate a site. Often, it contains generic Fusion objects
@@ -996,7 +996,7 @@ The following fusion properties are passed over to :ref:`Neos_Neos__DimensionsMe
 .. _Neos_Neos__MenuItemListRenderer:
 
 Neos.Neos:MenuItemListRenderer
--------------------------------
+------------------------------
 
 A very basic renderer that takes a list of MenuItems and renders the result as unordered list. If item states were calculated
 they are applied as classnames to the list items.
@@ -1019,10 +1019,8 @@ Create a list of menu-items items for nodes.
 :calculateItemStates: (boolean) activate the *expensive* calculation of item states defaults to ``false``.
 :itemCollection: (optional, array of Nodes) Explicitly set the Node items for the menu (taking precedence over ``startingPoints`` and ``entryLevel`` and ``lastLevel``). The children for each ``Node`` will be fetched taking the ``maximumLevels`` property into account.
 
-Note::
-
 MenuItems item properties:
-^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 :node: (Node) A node instance (with resolved shortcuts) that should be used to link to the item
 :originalNode: (Node) Original node for the item
@@ -1192,7 +1190,7 @@ Example::
 .. _Neos_Neos__NodeLink:
 
 Neos.Neos:NodeLink
------------------
+------------------
 
 Renders an anchor tag pointing to the node given via the argument. Based on :ref:`Neos_Neos__NodeUri`.
 The link text is the node label, unless overridden.
@@ -1332,14 +1330,14 @@ Example::
 
 
 Deprecated Fusion Prototypes
-----------------------------
+============================
 
 The following prototypes are deprecated and will be removed in future versions of Neos!
 
 .. _Neos_Fusion__UriBuilder:
 
 Neos.Fusion:UriBuilder
-~~~~~~~~~~~~~~~~~~~~~~
+----------------------
 
 Built a URI to a controller action
 
@@ -1368,16 +1366,8 @@ Removed Fusion Prototypes
 
 The following Fusion Prototypes have been removed:
 
-.. _Neos_Fusion__Array:
 * `Neos.Fusion:Array` replaced with :ref:`Neos_Fusion__Join`
-.. _Neos_Fusion__RawArray:
 * `Neos.Fusion:RawArray` replaced with :ref:`Neos_Fusion__DataStructure`
-.. _Neos_Fusion__Collection:
 * `Neos.Fusion:Collection` replaced with :ref:`Neos_Fusion__Loop`
-.. _Neos_Fusion__RawCollection:
 * `Neos.Fusion:RawCollection` replaced with :ref:`Neos_Fusion__Map`
-.. _Neos_Fusion__Attributes:
 * `Neos.Fusion:Attributes` use property `attributes` in :ref:`Neos_Fusion__Tag`
-
-
-

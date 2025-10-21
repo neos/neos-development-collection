@@ -167,10 +167,16 @@ Feature: Workspace discarding - basic functionality
       | originDimensionSpacePoint | {}                                     |
       | propertyValues            | {"text": "Modified in live workspace"} |
 
-    And the command DiscardWorkspace is executed with payload:
+    And the command DiscardWorkspace is executed with payload and exceptions are caught:
       | Key                | Value                   |
       | workspaceName      | "user-test"             |
       | newContentStreamId | "user-cs-two-discarded" |
+
+    Then the last command should have thrown an exception of type "WorkspaceCommandSkipped" with code 1730463156 and message:
+    """
+    Skipped discard workspace "user-test" without any publishable changes.
+    """
+
     Then workspaces user-test has status OUTDATED
 
     Then I expect exactly 1 events to be published on stream with prefix "Workspace:user-test"

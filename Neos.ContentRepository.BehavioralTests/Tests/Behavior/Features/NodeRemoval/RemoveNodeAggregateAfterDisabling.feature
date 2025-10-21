@@ -47,7 +47,6 @@ Feature: Disable a node aggregate
       | workspaceName                        | "live"             |
       | contentStreamId                      | "cs-identifier"    |
       | nodeAggregateId                      | "nody-mc-nodeface" |
-      | affectedOccupiedDimensionSpacePoints | [{}]               |
       | affectedCoveredDimensionSpacePoints  | [{}]               |
 
     When the command CreateNodeAggregateWithNode is executed with payload:

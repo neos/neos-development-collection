@@ -90,7 +90,7 @@ trait BrowserTrait
      * @param string|null $alias
      * @return \Neos\Neos\FrontendRouting\NodeAddress
      */
-    protected function getCurrentNodeAddress(string $alias = null): NodeAddress
+    protected function getCurrentNodeAddress(?string $alias = null): NodeAddress
     {
         if ($alias === null) {
             $alias = 'DEFAULT';

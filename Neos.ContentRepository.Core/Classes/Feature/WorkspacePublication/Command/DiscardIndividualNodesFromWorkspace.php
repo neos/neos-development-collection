@@ -36,6 +36,9 @@ final readonly class DiscardIndividualNodesFromWorkspace implements CommandInter
         public NodeAggregateIds $nodesToDiscard,
         public ContentStreamId $newContentStreamId
     ) {
+        if ($this->nodesToDiscard->isEmpty()) {
+            throw new \InvalidArgumentException(sprintf('The command "DiscardIndividualNodesFromWorkspace" for workspace %s must contain nodes to publish', $this->workspaceName->value), 1737448741);
+        }
     }
 
     /**

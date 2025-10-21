@@ -77,7 +77,7 @@ class NodeLabelToken implements ProtectedContextAwareInterface
         $this->node = $node;
     }
 
-    public function override(string $override = null): NodeLabelToken
+    public function override(?string $override = null): NodeLabelToken
     {
         if (empty($this->label) && $override) {
             $this->label = $override;

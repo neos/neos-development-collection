@@ -41,9 +41,9 @@ final readonly class CountChildNodesFilter
      * @see https://www.php.net/manual/en/functions.arguments.php#functions.named-arguments
      */
     public static function create(
-        NodeTypeCriteria|string $nodeTypes = null,
-        SearchTerm|string $searchTerm = null,
-        PropertyValueCriteriaInterface|string $propertyValue = null,
+        NodeTypeCriteria|string|null $nodeTypes = null,
+        SearchTerm|string|null $searchTerm = null,
+        PropertyValueCriteriaInterface|string|null $propertyValue = null,
     ): self {
         if (is_string($nodeTypes)) {
             $nodeTypes = NodeTypeCriteria::fromFilterString($nodeTypes);
@@ -69,14 +69,19 @@ final readonly class CountChildNodesFilter
      * @see https://www.php.net/manual/en/functions.arguments.php#functions.named-arguments
      */
     public function with(
-        NodeTypeCriteria|string $nodeTypes = null,
-        SearchTerm|string $searchTerm = null,
-        PropertyValueCriteriaInterface|string $propertyValue = null,
+        NodeTypeCriteria|string|null $nodeTypes = null,
+        SearchTerm|string|null $searchTerm = null,
+        PropertyValueCriteriaInterface|string|null $propertyValue = null,
     ): self {
         return self::create(
             $nodeTypes ?? $this->nodeTypes,
             $searchTerm ?? $this->searchTerm,
             $propertyValue ?? $this->propertyValue,
         );
+    }
+
+    public function isEmpty(): bool
+    {
+        return $this->nodeTypes === null && $this->searchTerm === null && $this->propertyValue === null;
     }
 }

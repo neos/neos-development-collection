@@ -22,9 +22,9 @@ Feature: Test cases for node variation edge cases
     And I am in content repository "default"
     And I am user identified by "initiating-user-identifier"
     And the command CreateRootWorkspace is executed with payload:
-      | Key                  | Value                |
-      | workspaceName        | "live"               |
-      | newContentStreamId   | "cs-identifier"      |
+      | Key                | Value           |
+      | workspaceName      | "live"          |
+      | newContentStreamId | "cs-identifier" |
     And I am in workspace "live" and dimension space point {"example":"source"}
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key             | Value                    |
@@ -36,6 +36,7 @@ Feature: Test cases for node variation edge cases
       | nodeTypeName              | "Neos.Neos:Site"         |
       | parentNodeAggregateId     | "lady-eleonode-rootford" |
       | originDimensionSpacePoint | {"example":"source"}     |
+      | nodeName                  | "site"                   |
     And the command CreateNodeVariant is executed with payload:
       | Key             | Value                |
       | nodeAggregateId | "shernode-homes"     |
@@ -100,6 +101,108 @@ Feature: Test cases for node variation edge cases
       | "65901ded4f068dac14ad0dce4f459b29" | "youngest" | "lady-eleonode-rootford/shernode-homes/youngest-mc-nodeface" | "youngest-mc-nodeface"   | "shernode-homes"         | "nody-mc-nodeface"       | null                      | "Neos.Neos:Document" |
       | "fbe53ddc3305685fbb4dbf529f283a0e" | "youngest" | "lady-eleonode-rootford/shernode-homes/youngest-mc-nodeface" | "youngest-mc-nodeface"   | "shernode-homes"         | "younger-mc-nodeface"    | null                      | "Neos.Neos:Document" |
 
+  Scenario: Create peer variant of a shortcut with descendants and a parent node aggregate with differing uri path segments
+    Given using the following content dimensions:
+      | Identifier | Values       | Generalizations |
+      | example    | peerA, peerB |                 |
+    And using the following node types:
+    """yaml
+    'Neos.Neos:Sites':
+      superTypes:
+        'Neos.ContentRepository:Root': true
+    'Neos.Neos:Document':
+      properties:
+        uriPathSegment:
+          type: string
+    'Neos.Neos:Site':
+      superTypes:
+        'Neos.Neos:Document': true
+    'Neos.Neos:Shortcut':
+      superTypes:
+        'Neos.Neos:Document': true
+      properties:
+        targetMode:
+          type: string
+        target:
+          type: string
+    'Neos.Neos:ExtendedShortcut':
+      superTypes:
+        'Neos.Neos:Shortcut': true
+        'Neos.Neos:Document': true
+    """
+    And using identifier "default", I define a content repository
+    And I am in content repository "default"
+    And I am user identified by "initiating-user-identifier"
+    And the command CreateRootWorkspace is executed with payload:
+      | Key                | Value           |
+      | workspaceName      | "live"          |
+      | newContentStreamId | "cs-identifier" |
+    And I am in workspace "live" and dimension space point {"example":"peerA"}
+    And the command CreateRootNodeAggregateWithNode is executed with payload:
+      | Key             | Value                    |
+      | nodeAggregateId | "lady-eleonode-rootford" |
+      | nodeTypeName    | "Neos.Neos:Sites"        |
+    And the following CreateNodeAggregateWithNode commands are executed:
+      | nodeAggregateId        | originDimensionSpacePoint | nodeName       | parentNodeAggregateId  | nodeTypeName       | initialPropertyValues                                              |
+      | shernode-homes         | {"example":"peerA"}       | site           | lady-eleonode-rootford | Neos.Neos:Site     | {}                                                                 |
+      | sir-david-nodenborough | {"example":"peerA"}       | document       | shernode-homes         | Neos.Neos:Document | {"uriPathSegment": "sir-david-nodenborough"}                       |
+      | nody-mc-nodeface       | {"example":"peerA"}       | document       | sir-david-nodenborough | Neos.Neos:ExtendedShortcut | {"targetMode": "parentNode", "uriPathSegment": "nody-mc-nodeface"} |
+      | nodimus-mediocre       | {"example":"peerA"}       | child-document | nody-mc-nodeface       | Neos.Neos:Document | {"uriPathSegment": "nodimus-mediocre"}                             |
+    And the command CreateNodeVariant is executed with payload:
+      | Key             | Value               |
+      | nodeAggregateId | "shernode-homes"    |
+      | sourceOrigin    | {"example":"peerA"} |
+      | targetOrigin    | {"example":"peerB"} |
+    And the command CreateNodeVariant is executed with payload:
+      | Key             | Value                    |
+      | nodeAggregateId | "sir-david-nodenborough" |
+      | sourceOrigin    | {"example":"peerA"}      |
+      | targetOrigin    | {"example":"peerB"}      |
+    And the command SetNodeProperties is executed with payload:
+      | Key                       | Value                                   |
+      | nodeAggregateId           | "sir-david-nodenborough"                      |
+      | originDimensionSpacePoint | {"example":"peerB"}                     |
+      | propertyValues            | {"uriPathSegment": "sir-david-nodenborough-b"} |
+    And the command CreateNodeVariant is executed with payload:
+      | Key             | Value               |
+      | nodeAggregateId | "nody-mc-nodeface"  |
+      | sourceOrigin    | {"example":"peerA"} |
+      | targetOrigin    | {"example":"peerB"} |
+    And the command CreateNodeVariant is executed with payload:
+      | Key             | Value               |
+      | nodeAggregateId | "nodimus-mediocre"  |
+      | sourceOrigin    | {"example":"peerA"} |
+      | targetOrigin    | {"example":"peerB"} |
+    And the command SetNodeProperties is executed with payload:
+      | Key                       | Value                                   |
+      | nodeAggregateId           | "nody-mc-nodeface"                      |
+      | originDimensionSpacePoint | {"example":"peerA"}                     |
+      | propertyValues            | {"uriPathSegment": "nody-mc-nodeface-a"} |
+    And the command SetNodeProperties is executed with payload:
+      | Key                       | Value                                    |
+      | nodeAggregateId           | "nodimus-mediocre"                       |
+      | originDimensionSpacePoint | {"example":"peerB"}                      |
+      | propertyValues            | {"uriPathSegment": "nodimus-mediocre-b"} |
+    And the command SetNodeProperties is executed with payload:
+      | Key                       | Value                                    |
+      | nodeAggregateId           | "nody-mc-nodeface"                       |
+      | originDimensionSpacePoint | {"example":"peerB"}                      |
+      | propertyValues            | {"uriPathSegment": "nody-mc-nodeface-b"} |
+    Then I expect the documenturipath table to contain exactly:
+      # peerA: ce8c33b8706a371bdb180b4c827970d1
+      # peerB: 90e084beff988e487bd0fa6c4854e2cf
+      | dimensionspacepointhash            | uripath                                                        | nodeaggregateidpath                                                                              | nodeaggregateid          | parentnodeaggregateid    | precedingnodeaggregateid | succeedingnodeaggregateid | nodetypename         |
+      | "90e084beff988e487bd0fa6c4854e2cf" | ""                                                             | "lady-eleonode-rootford"                                                                         | "lady-eleonode-rootford" | null                     | null                     | null                      | "Neos.Neos:Sites"    |
+      | "ce8c33b8706a371bdb180b4c827970d1" | ""                                                             | "lady-eleonode-rootford"                                                                         | "lady-eleonode-rootford" | null                     | null                     | null                      | "Neos.Neos:Sites"    |
+      | "90e084beff988e487bd0fa6c4854e2cf" | ""                                                             | "lady-eleonode-rootford/shernode-homes"                                                          | "shernode-homes"         | "lady-eleonode-rootford" | null                     | null                      | "Neos.Neos:Site"     |
+      | "ce8c33b8706a371bdb180b4c827970d1" | ""                                                             | "lady-eleonode-rootford/shernode-homes"                                                          | "shernode-homes"         | "lady-eleonode-rootford" | null                     | null                      | "Neos.Neos:Site"     |
+      | "90e084beff988e487bd0fa6c4854e2cf" | "sir-david-nodenborough-b"                                       | "lady-eleonode-rootford/shernode-homes/sir-david-nodenborough"                                   | "sir-david-nodenborough" | "shernode-homes"         | null                     | null                      | "Neos.Neos:Document" |
+      | "ce8c33b8706a371bdb180b4c827970d1" | "sir-david-nodenborough"                                       | "lady-eleonode-rootford/shernode-homes/sir-david-nodenborough"                                   | "sir-david-nodenborough" | "shernode-homes"         | null                     | null                      | "Neos.Neos:Document" |
+      | "90e084beff988e487bd0fa6c4854e2cf" | "sir-david-nodenborough-b/nody-mc-nodeface-b" | "lady-eleonode-rootford/shernode-homes/sir-david-nodenborough/nody-mc-nodeface" | "nody-mc-nodeface"       | "sir-david-nodenborough"       | null                     | null                      | "Neos.Neos:ExtendedShortcut" |
+      | "ce8c33b8706a371bdb180b4c827970d1" | "sir-david-nodenborough/nody-mc-nodeface-a"    | "lady-eleonode-rootford/shernode-homes/sir-david-nodenborough/nody-mc-nodeface" | "nody-mc-nodeface"       | "sir-david-nodenborough"       | null                     | null                      | "Neos.Neos:ExtendedShortcut" |
+      | "90e084beff988e487bd0fa6c4854e2cf" | "sir-david-nodenborough-b/nody-mc-nodeface-b/nodimus-mediocre-b" | "lady-eleonode-rootford/shernode-homes/sir-david-nodenborough/nody-mc-nodeface/nodimus-mediocre" | "nodimus-mediocre"       | "nody-mc-nodeface"       | null                     | null                      | "Neos.Neos:Document" |
+      | "ce8c33b8706a371bdb180b4c827970d1" | "sir-david-nodenborough/nody-mc-nodeface-a/nodimus-mediocre"    | "lady-eleonode-rootford/shernode-homes/sir-david-nodenborough/nody-mc-nodeface/nodimus-mediocre" | "nodimus-mediocre"       | "nody-mc-nodeface"       | null                     | null                      | "Neos.Neos:Document" |
+
   Scenario: Create generalization of node to dimension space point with further generalization and specializations
     Given using the following content dimensions:
       | Identifier | Values                              | Generalizations                                                   |
@@ -121,9 +224,9 @@ Feature: Test cases for node variation edge cases
     And I am in content repository "default"
     And I am user identified by "initiating-user-identifier"
     And the command CreateRootWorkspace is executed with payload:
-      | Key                  | Value                |
-      | workspaceName        | "live"               |
-      | newContentStreamId   | "cs-identifier"      |
+      | Key                | Value           |
+      | workspaceName      | "live"          |
+      | newContentStreamId | "cs-identifier" |
     And I am in workspace "live" and dimension space point {"example":"source"}
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key             | Value                    |
@@ -135,6 +238,7 @@ Feature: Test cases for node variation edge cases
       | nodeTypeName              | "Neos.Neos:Site"          |
       | parentNodeAggregateId     | "lady-eleonode-rootford"  |
       | originDimensionSpacePoint | {"example":"rootGeneral"} |
+      | nodeName                  | "site"                    |
     And the following CreateNodeAggregateWithNode commands are executed:
       | nodeAggregateId      | originDimensionSpacePoint | nodeName          | parentNodeAggregateId | succeedingSiblingNodeAggregateId | nodeTypeName       | initialPropertyValues          |
     # Let's create some siblings, both in source and target, to check ordering
@@ -211,9 +315,9 @@ Feature: Test cases for node variation edge cases
     And I am in content repository "default"
     And I am user identified by "initiating-user-identifier"
     And the command CreateRootWorkspace is executed with payload:
-      | Key                  | Value                |
-      | workspaceName        | "live"               |
-      | newContentStreamId   | "cs-identifier"      |
+      | Key                | Value           |
+      | workspaceName      | "live"          |
+      | newContentStreamId | "cs-identifier" |
     And I am in workspace "live" and dimension space point {"example":"source"}
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key             | Value                    |
@@ -225,6 +329,7 @@ Feature: Test cases for node variation edge cases
       | nodeTypeName              | "Neos.Neos:Site"         |
       | parentNodeAggregateId     | "lady-eleonode-rootford" |
       | originDimensionSpacePoint | {"example":"source"}     |
+      | nodeName                  | "site"                   |
     And the following CreateNodeAggregateWithNode commands are executed:
       | nodeAggregateId      | nodeName          | parentNodeAggregateId | succeedingSiblingNodeAggregateId | nodeTypeName       | initialPropertyValues          |
     # Let's create our test subject...

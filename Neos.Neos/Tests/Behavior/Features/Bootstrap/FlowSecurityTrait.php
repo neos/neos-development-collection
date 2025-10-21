@@ -125,7 +125,7 @@ trait FlowSecurityTrait
             ) {
             }
 
-            public function getConfiguration(string $configurationType, string $configurationPath = null)
+            public function getConfiguration(string $configurationType, ?string $configurationPath = null)
             {
                 Assert::assertSame(ConfigurationManager::CONFIGURATION_TYPE_POLICY, $configurationType);
                 Assert::assertSame(null, $configurationPath);

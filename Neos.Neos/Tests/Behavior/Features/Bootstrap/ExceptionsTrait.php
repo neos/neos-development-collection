@@ -42,7 +42,7 @@ trait ExceptionsTrait
      * @Then an exception of type :expectedShortExceptionName should be thrown with message:
      * @Then an exception of type :expectedShortExceptionName should be thrown
      */
-    public function anExceptionShouldBeThrown(string $expectedShortExceptionName, ?int $code = null, PyStringNode $expectedExceptionMessage = null): void
+    public function anExceptionShouldBeThrown(string $expectedShortExceptionName, ?int $code = null, ?PyStringNode $expectedExceptionMessage = null): void
     {
         Assert::assertNotNull($this->lastCaughtException, 'Expected an exception but none was thrown');
         $lastCaughtExceptionShortName = (new \ReflectionClass($this->lastCaughtException))->getShortName();

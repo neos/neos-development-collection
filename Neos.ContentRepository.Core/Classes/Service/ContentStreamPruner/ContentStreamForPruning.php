@@ -71,13 +71,13 @@ final readonly class ContentStreamForPruning
         ContentStreamId $id,
         ContentStreamStatus $status,
         ?ContentStreamId $sourceContentStreamId,
-        \DateTimeImmutable $create,
+        \DateTimeImmutable $created,
     ): self {
         return new self(
             $id,
             $status,
             $sourceContentStreamId,
-            $create,
+            $created,
             false
         );
     }

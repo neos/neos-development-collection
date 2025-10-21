@@ -21,6 +21,7 @@ use Neos\ContentGraph\PostgreSQLAdapter\Domain\Repository\Query\HypergraphQuery;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
+use Neos\ContentRepository\Core\Feature\SubtreeTagging\Dto\SubtreeTag;
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\NodeType\NodeTypeNames;
@@ -128,8 +129,14 @@ final class ContentHypergraph implements ContentGraphInterface
 
         return $this->nodeFactory->mapNodeRowsToNodeAggregate(
             $nodeRows,
-            VisibilityConstraints::withoutRestrictions()
+            VisibilityConstraints::createEmpty()
         );
+    }
+
+    public function findNodeAggregatesByIds(
+        NodeAggregateIds $nodeAggregateIds
+    ): NodeAggregates {
+        throw new \BadMethodCallException(sprintf('Not implemented'), 1740572440);
     }
 
     public function findParentNodeAggregateByChildOriginDimensionSpacePoint(
@@ -166,7 +173,7 @@ final class ContentHypergraph implements ContentGraphInterface
 
         return $this->nodeFactory->mapNodeRowsToNodeAggregate(
             $nodeRows,
-            VisibilityConstraints::withoutRestrictions()
+            VisibilityConstraints::createEmpty()
         );
     }
 
@@ -180,7 +187,7 @@ final class ContentHypergraph implements ContentGraphInterface
 
         return $this->nodeFactory->mapNodeRowsToNodeAggregates(
             $nodeRows,
-            VisibilityConstraints::withoutRestrictions()
+            VisibilityConstraints::createEmpty()
         );
     }
 
@@ -210,7 +217,7 @@ final class ContentHypergraph implements ContentGraphInterface
 
         return $this->nodeFactory->mapNodeRowsToNodeAggregates(
             $nodeRows,
-            VisibilityConstraints::withoutRestrictions()
+            VisibilityConstraints::createEmpty()
         );
     }
 
@@ -229,7 +236,7 @@ final class ContentHypergraph implements ContentGraphInterface
 
         return $this->nodeFactory->mapNodeRowsToNodeAggregate(
             $nodeRows,
-            VisibilityConstraints::withoutRestrictions()
+            VisibilityConstraints::createEmpty()
         );
     }
 
@@ -245,7 +252,7 @@ final class ContentHypergraph implements ContentGraphInterface
 
         $nodeRows = $query->execute($this->dbal)->fetchAllAssociative();
 
-        return $this->nodeFactory->mapNodeRowsToNodeAggregates($nodeRows, VisibilityConstraints::withoutRestrictions());
+        return $this->nodeFactory->mapNodeRowsToNodeAggregates($nodeRows, VisibilityConstraints::createEmpty());
     }
 
     public function getDimensionSpacePointsOccupiedByChildNodeName(
@@ -271,6 +278,11 @@ final class ContentHypergraph implements ContentGraphInterface
         }
 
         return new DimensionSpacePointSet($occupiedDimensionSpacePoints);
+    }
+
+    public function findNodeAggregatesTaggedBy(SubtreeTag $subtreeTag): NodeAggregates
+    {
+        throw new \BadMethodCallException('Not implemented.', 1740574672);
     }
 
     public function findUsedNodeTypeNames(): NodeTypeNames

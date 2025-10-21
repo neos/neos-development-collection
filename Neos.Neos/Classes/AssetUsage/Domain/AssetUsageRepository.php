@@ -5,7 +5,10 @@ declare(strict_types=1);
 namespace Neos\Neos\AssetUsage\Domain;
 
 use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\Exception;
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
+use Doctrine\DBAL\Platforms\MariaDBPlatform;
+use Doctrine\DBAL\Platforms\PostgreSQLPlatform;
 use Doctrine\DBAL\Result;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
@@ -31,8 +34,22 @@ final class AssetUsageRepository
     public function findUsages(ContentRepositoryId $contentRepositoryId, AssetUsageFilter $filter): AssetUsages
     {
         $queryBuilder = $this->dbal->createQueryBuilder();
+        if ($this->dbal->getDatabasePlatform() instanceof MariaDBPlatform) {
+            $select = '*';
+        } else {
+            $select = 'ANY_VALUE(assetid) as assetid,
+            ANY_VALUE(originalassetid) as originalassetid,
+            ANY_VALUE(contentrepositoryid) as contentrepositoryid,
+            ANY_VALUE(nodeaggregateid) as nodeaggregateid,
+            ANY_VALUE(workspacename) as workspacename,
+            ANY_VALUE(origindimensionspacepointhash) as origindimensionspacepointhash,
+            ANY_VALUE(origindimensionspacepoint) as origindimensionspacepoint,
+            ANY_VALUE(propertyname) as propertyname
+            ';
+        }
+
         $queryBuilder
-            ->select('*')
+            ->select($select)
             ->from(self::TABLE);
         $queryBuilder->andWhere('contentrepositoryid = :contentRepositoryId');
         $queryBuilder->setParameter('contentRepositoryId', $contentRepositoryId->value);

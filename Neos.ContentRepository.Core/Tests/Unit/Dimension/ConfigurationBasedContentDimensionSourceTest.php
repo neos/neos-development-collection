@@ -252,14 +252,14 @@ class ConfigurationBasedContentDimensionSourceTest extends TestCase
         $valueA1 = $dimensionA->getValue('valueA1');
         $this->assertSame(
             false,
-            $valueA1->getConstraints($dimensionB->id)->isWildcardAllowed
+            $valueA1->constraints->getConstraints($dimensionB->id)->isWildcardAllowed
         );
         $this->assertEquals(
             [
                 'valueB1' => true,
                 'valueB2' => false
             ],
-            $valueA1->getConstraints($dimensionB->id)->identifierRestrictions
+            $valueA1->constraints->getConstraints($dimensionB->id)->identifierRestrictions
         );
 
         $valueA11 = $dimensionA->getValue('valueA1.1');
@@ -271,14 +271,14 @@ class ConfigurationBasedContentDimensionSourceTest extends TestCase
         $valueA2 = $dimensionA->getValue('valueA2');
         $this->assertSame(
             true,
-            $valueA2->getConstraints($dimensionB->id)->isWildcardAllowed
+            $valueA2->constraints->getConstraints($dimensionB->id)->isWildcardAllowed
         );
         $this->assertEquals(
             [
                 'valueB1' => false,
                 'valueB2' => true
             ],
-            $valueA2->getConstraints($dimensionB->id)->identifierRestrictions
+            $valueA2->constraints->getConstraints($dimensionB->id)->identifierRestrictions
         );
 
         $valueB1 = $dimensionB->getValue('valueB1');

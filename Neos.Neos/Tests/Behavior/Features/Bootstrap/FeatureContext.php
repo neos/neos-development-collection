@@ -45,13 +45,15 @@ class FeatureContext implements BehatContext
     use ContentCacheTrait;
     use AssetUsageTrait;
     use AssetTrait;
-    use ChangeProjectionTrait;
+    use PendingChangesTrait;
 
     use WorkspaceServiceTrait;
     use ContentRepositorySecurityTrait;
     use UserServiceTrait;
 
     use NodeDuplicationTrait;
+
+    use SoftRemovalGarbageCollectionTrait;
 
     protected Environment $environment;
 
@@ -130,8 +132,8 @@ class FeatureContext implements BehatContext
     private function loadObjectsRecursive(mixed $value): mixed
     {
         if (is_string($value) && str_starts_with($value, 'Asset:')) {
-            $assetIdentier = substr($value, strlen('Asset:'));
-            return $this->persistenceManager->getObjectByIdentifier($assetIdentier, 'Neos\\Media\\Domain\\Model\\Asset', true);
+            $assetIdentifier = substr($value, strlen('Asset:'));
+            return $this->persistenceManager->getObjectByIdentifier($assetIdentifier, 'Neos\\Media\\Domain\\Model\\Asset', true);
         } elseif (is_array($value)) {
             return array_map(
                 $this->loadObjectsRecursive(...),

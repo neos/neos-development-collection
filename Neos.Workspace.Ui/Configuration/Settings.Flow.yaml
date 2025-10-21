@@ -1,0 +1,10 @@
+Neos:
+  Flow:
+    mvc:
+      flashMessages:
+        containers:
+          'Neos.Workspace.Ui:httpHeaderFlashMessages':
+            storage: 'Neos\Workspace\Ui\Mvc\HttpHeaderFlashMessageStorage'
+            requestPatterns:
+              'htmx':
+                pattern: 'Neos\Workspace\Ui\Mvc\HtmxRequestPattern'

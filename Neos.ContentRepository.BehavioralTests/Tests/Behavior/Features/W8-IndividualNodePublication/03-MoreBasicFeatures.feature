@@ -129,21 +129,28 @@ Feature: Publishing individual nodes (basics)
       | Key   | Value            |
       | image | "Modified image" |
 
-  Scenario: Publish no node, non existing ones or unchanged nodes is a no-op
-    # no node
-    When the command PublishIndividualNodesFromWorkspace is executed with payload:
+  Scenario: Publish no node is not allowed
+    When the command PublishIndividualNodesFromWorkspace is executed with payload and exceptions are caught:
       | Key                             | Value                          |
       | workspaceName                   | "user-test"                    |
       | nodesToPublish                  | []                             |
       | contentStreamIdForRemainingPart | "user-cs-identifier-remaining" |
-    Then I expect the content stream "user-cs-identifier-remaining" to not exist
+    Then the last command should have thrown an exception of type "InvalidArgumentException" with code 1737448717
 
+  Scenario: Publish non existing nodes or unchanged nodes is skipped (via exception)
     # unchanged or non existing nodes
-    When the command PublishIndividualNodesFromWorkspace is executed with payload:
-      | Key                             | Value                                                                                                                                  |
-      | workspaceName                   | "user-test"                                                                                                                            |
+    When the command PublishIndividualNodesFromWorkspace is executed with payload and exceptions are caught:
+      | Key                             | Value                                  |
+      | workspaceName                   | "user-test"                            |
       | nodesToPublish                  | ["non-existing-node", "sir-unchanged"] |
-      | contentStreamIdForRemainingPart | "user-cs-identifier-remaining-two"                                                                                                     |
+      | contentStreamIdForRemainingPart | "user-cs-identifier-remaining"         |
+
+    Then the last command should have thrown an exception of type "WorkspaceCommandSkipped" with code 1737477674 and message:
+    """
+    No nodes matched in workspace "user-test" the filter non-existing-node,sir-unchanged.
+    """
+
+    Then I expect the content stream "user-cs-identifier-remaining" to not exist
 
     When I am in workspace "live" and dimension space point {}
     Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{}
@@ -288,11 +295,17 @@ Feature: Publishing individual nodes (basics)
       | originDimensionSpacePoint | {}                                     |
       | propertyValues            | {"text": "Modified in live workspace"} |
 
-    When the command PublishIndividualNodesFromWorkspace is executed with payload:
+    When the command PublishIndividualNodesFromWorkspace is executed with payload and exceptions are caught:
       | Key                             | Value                                                            |
       | workspaceName                   | "user-test"                                                      |
       | nodesToPublish                  | ["non-existing"] |
       | contentStreamIdForRemainingPart | "user-cs-new"                                                    |
+
+    Then the last command should have thrown an exception of type "WorkspaceCommandSkipped" with code 1737477674 and message:
+    """
+    No nodes matched in workspace "user-test" the filter non-existing.
+    """
+
     Then workspaces user-test has status OUTDATED
 
     Then I expect exactly 1 events to be published on stream with prefix "Workspace:user-test"

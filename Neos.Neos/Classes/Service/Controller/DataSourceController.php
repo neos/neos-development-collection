@@ -46,7 +46,7 @@ class DataSourceController extends AbstractServiceController
      * @param string $dataSourceIdentifier
      * @throws NeosException
      */
-    public function indexAction($dataSourceIdentifier, string $node = null): void
+    public function indexAction($dataSourceIdentifier, ?string $node = null): void
     {
         $dataSources = static::getDataSources($this->objectManager);
 

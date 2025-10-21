@@ -116,7 +116,7 @@ class PluginImplementation extends AbstractArrayFusionObject
      */
     protected function resolveDispatchArgumentsForPluginRequest(
         ActionRequest $pluginRequest,
-        Node $node = null
+        ?Node $node = null
     ): ActionRequest {
         $packageKey = $this->getPackage();
         $subpackageKey = $this->getSubpackage();

@@ -42,7 +42,7 @@ final class NeosFusionContextSerializer implements NormalizerInterface, Denormal
     /**
      * @param array<int|string,mixed> $context
      */
-    public function denormalize(mixed $data, string $type, string $format = null, array $context = [])
+    public function denormalize(mixed $data, string $type, ?string $format = null, array $context = [])
     {
         if ($type === Node::class) {
             /** @var $data array<string, mixed> */
@@ -55,7 +55,7 @@ final class NeosFusionContextSerializer implements NormalizerInterface, Denormal
      * @param array<int|string,mixed> $context
      * @return array<int|string,mixed>
      */
-    public function normalize(mixed $object, string $format = null, array $context = [])
+    public function normalize(mixed $object, ?string $format = null, array $context = [])
     {
         if ($object instanceof Node) {
             return $this->serializeNode($object);
@@ -99,12 +99,12 @@ final class NeosFusionContextSerializer implements NormalizerInterface, Denormal
         return NodeAddress::fromNode($source)->jsonSerialize();
     }
 
-    public function supportsDenormalization(mixed $data, string $type, string $format = null)
+    public function supportsDenormalization(mixed $data, string $type, ?string $format = null)
     {
         return true;
     }
 
-    public function supportsNormalization(mixed $data, string $format = null)
+    public function supportsNormalization(mixed $data, ?string $format = null)
     {
         return true;
     }

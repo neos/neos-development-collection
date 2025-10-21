@@ -1,0 +1,9 @@
+Neos.Workspace.Ui.WorkspaceController.confirmPublishSelectedChanges = Neos.Fusion:Component {
+  baseWorkspaceTitle = ${baseWorkspaceTitle}
+
+  renderer = afx`
+    <Neos.Workspace.Ui:Component.Modal.ConfirmPublishSelectedChanges
+      baseWorkspaceTitle={props.baseWorkspaceTitle}
+    />
+  `
+}

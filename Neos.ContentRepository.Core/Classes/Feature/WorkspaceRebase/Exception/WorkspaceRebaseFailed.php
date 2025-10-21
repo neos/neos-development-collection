@@ -14,9 +14,32 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Core\Feature\WorkspaceRebase\Exception;
 
+use Neos\ContentRepository\Core\Feature\WorkspacePublication\Command\DiscardIndividualNodesFromWorkspace;
+use Neos\ContentRepository\Core\Feature\WorkspacePublication\Command\DiscardWorkspace;
+use Neos\ContentRepository\Core\Feature\WorkspacePublication\Command\PublishIndividualNodesFromWorkspace;
+use Neos\ContentRepository\Core\Feature\WorkspacePublication\Command\PublishWorkspace;
+use Neos\ContentRepository\Core\Feature\WorkspaceRebase\Command\RebaseWorkspace;
 use Neos\ContentRepository\Core\Feature\WorkspaceRebase\ConflictingEvents;
+use Neos\ContentRepository\Core\Feature\WorkspaceRebase\Dto\RebaseErrorHandlingStrategy;
 
 /**
+ * Thrown if the workspace was outdated and an automatic rebase failed due to conflicts.
+ *
+ * No changes to the workspace/content-stream were made and the operation was aborted.
+ *
+ * Affected workspace operations:
+ *
+ * *Workspace publish*
+ * Via the commands {@see PublishWorkspace} or {@see PublishIndividualNodesFromWorkspace}.
+ *
+ * *Workspace discard*
+ * Via the commands {@see DiscardWorkspace} or {@see DiscardIndividualNodesFromWorkspace}.
+ *
+ * *Workspace rebase*
+ * Via the command {@see RebaseWorkspace}, if the strategy was set to {@see RebaseErrorHandlingStrategy::STRATEGY_FAIL}.
+ *
+ * Related: {@see PartialWorkspaceRebaseFailed}
+ *
  * @api this exception contains information about what exactly went wrong during rebase
  */
 final class WorkspaceRebaseFailed extends \RuntimeException
@@ -63,6 +86,6 @@ final class WorkspaceRebaseFailed extends \RuntimeException
     private static function renderMessage(ConflictingEvents $conflictingEvents): string
     {
         $firstConflict = $conflictingEvents->first();
-        return sprintf('"%s" and %d further conflicts', $firstConflict?->getException()->getMessage(), count($conflictingEvents) - 1);
+        return sprintf('"%s"%s', $firstConflict?->getException()->getMessage(), count($conflictingEvents) > 1 ? sprintf(' and %d further conflicts', count($conflictingEvents) - 1) : '');
     }
 }

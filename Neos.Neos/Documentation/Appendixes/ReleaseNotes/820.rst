@@ -31,7 +31,6 @@ FEATURE: Add Fusion EEL Helper `${Neos.Backend.interfaceLanguage()}`
 closes `#3638 <https://github.com/neos/neos-development-collection/issues/3638>`_
 implemented as discussed in `#3638 <https://github.com/neos/neos-development-collection/issues/3638>`_
 
-```
 Neos.Backend
 ------------
 
@@ -46,10 +45,9 @@ The interface language the user selected or the default language defined in the 
 Formatted as {@see \\Neos\\Flow\\I18n\\Locale} identifier, eg "de", "en", ...
 
 **Return** (string)
-```
 
 
-If no user is available. ``assert`` https://www.php.net/manual/de/function.assert.php will fail and depending on you php config - throw an error 
+If no user is available. ``assert`` https://www.php.net/manual/de/function.assert.php will fail and depending on you php config - throw an error
 
 
 **Upgrade instructions**
@@ -62,7 +60,7 @@ Try to switch your language via user-settings (possibly flush the fusion cache) 
 ```
 root >
 root = ${Neos.Backend.interfaceLanguage()}
-``` 
+```
 
 
 
@@ -90,16 +88,17 @@ To support colocation of NodeTypes and Fusion Files the ``nodetypes://`` stream 
 
 The following line in the ``Root.fusion`` will load all fusion files from the ``NodeTypes`` folder of package ``Vendor.Site``
 ```
-include: nodetypes://Vendor.Site/**/*.fusion 
+include: nodetypes://Vendor.Site/**/*.fusion
 ```
 
 **Review instructions**
 
-Basically the stream wrapper is a copy of the resource stream wrapper from flow (https://github.com/neos/flow-development-collection/blob/8.2/Neos.Flow/Classes/ResourceManagement/Streams/ResourceStreamWrapper.php) with the following adjustments. 
+Basically the stream wrapper is a copy of the resource stream wrapper from flow (https://github.com/neos/flow-development-collection/blob/8.2/Neos.Flow/Classes/ResourceManagement/Streams/ResourceStreamWrapper.php) with the following adjustments.
+
 - Added protection against traversal out of the path via multiple ``..`` in the path
 - Support an empty path as this is needed in the most likely globbing pattern ``nodetypes://Vendor.Site/**/*.fusion``
 
-The explicit filter for ``..`` in the filePatternResolver is needed as otherwise the traversal protection will throw a valid exception because of boundary violation when calling isDir on the path ``NodeTypes/..``. 
+The explicit filter for ``..`` in the filePatternResolver is needed as otherwise the traversal protection will throw a valid exception because of boundary violation when calling isDir on the path ``NodeTypes/..``.
 
 
 FEATURE: Provide Uris in MenuItemsImplementation

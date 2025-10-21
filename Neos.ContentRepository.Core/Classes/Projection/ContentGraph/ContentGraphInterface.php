@@ -18,11 +18,11 @@ use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
+use Neos\ContentRepository\Core\Feature\SubtreeTagging\Dto\SubtreeTag;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\NodeType\NodeTypeNames;
 use Neos\ContentRepository\Core\Projection\ProjectionStateInterface;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
-use Neos\ContentRepository\Core\SharedModel\Exception\NodeAggregatesTypeIsAmbiguous;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateIds;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
@@ -81,12 +81,19 @@ interface ContentGraphInterface extends ProjectionStateInterface
     ): NodeAggregates;
 
     /**
-     * @throws NodeAggregatesTypeIsAmbiguous
      * @api
      */
     public function findNodeAggregateById(
         NodeAggregateId $nodeAggregateId
     ): ?NodeAggregate;
+
+    /**
+     * @api
+     * @return NodeAggregates the node aggregates that exist in this graph. The order is not defined.
+     */
+    public function findNodeAggregatesByIds(
+        NodeAggregateIds $nodeAggregateIds
+    ): NodeAggregates;
 
     /**
      * Returns all node types in use, from the graph projection
@@ -150,6 +157,11 @@ interface ContentGraphInterface extends ProjectionStateInterface
         OriginDimensionSpacePoint $parentNodeOriginDimensionSpacePoint,
         DimensionSpacePointSet $dimensionSpacePointsToCheck
     ): DimensionSpacePointSet;
+
+    /**
+     * @internal experimental api, the order of the returned node aggregates is undefined and does not follow the hierarchy
+     */
+    public function findNodeAggregatesTaggedBy(SubtreeTag $subtreeTag): NodeAggregates;
 
     /** @internal The content stream id where the workspace name points to for this instance */
     public function getContentStreamId(): ContentStreamId;

@@ -122,7 +122,7 @@ final readonly class NodeUriBuilder
      *   - the live node address cannot be found in the projection
      *   Please consult the logs for further information.
      */
-    public function uriFor(NodeAddress $nodeAddress, Options $options = null): UriInterface
+    public function uriFor(NodeAddress $nodeAddress, ?Options $options = null): UriInterface
     {
         $options ??= Options::createEmpty();
 

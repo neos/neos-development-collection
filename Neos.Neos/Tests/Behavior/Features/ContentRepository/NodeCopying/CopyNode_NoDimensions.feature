@@ -177,6 +177,33 @@ Feature: Copy nodes (without dimensions)
       | Key   | Type   | Value          |
       | title | string | "I am Node A1" |
 
+  Scenario: Soft removed nodes are not copied
+    When I am in workspace "live" and dimension space point {}
+    When the following CreateNodeAggregateWithNode commands are executed:
+      | nodeAggregateId | parentNodeAggregateId      | nodeTypeName                            | initialPropertyValues     |
+      | child-a         | sir-nodeward-nodington-iii | Neos.ContentRepository.Testing:Document | {}                        |
+      | child-a1        | child-a                    | Neos.ContentRepository.Testing:Document | {"title": "I am Node A1"} |
+      | child-a2        | child-a                    | Neos.ContentRepository.Testing:Document | {}                        |
+      | child-b         | sir-nodeward-nodington-iii | Neos.ContentRepository.Testing:Document | {}                        |
+    Given the command TagSubtree is executed with payload:
+      | Key                          | Value         |
+      | nodeAggregateId              | "child-a"     |
+      | coveredDimensionSpacePoint   | {}            |
+      | nodeVariantSelectionStrategy | "allVariants" |
+      | tag                          | "removed"     |
+
+    When copy nodes recursively is executed with payload:
+      | Key                                    | Value                                                                                        |
+      | sourceDimensionSpacePoint              | {}                                                                                           |
+      | sourceNodeAggregateId                  | "sir-nodeward-nodington-iii"                                                                 |
+      | targetDimensionSpacePoint              | {}                                                                                           |
+      | targetParentNodeAggregateId            | "nody-mc-nodeface"                                                                           |
+      | targetSucceedingSiblingnodeAggregateId | null                                                                                         |
+      | nodeAggregateIdMapping                 | {"sir-nodeward-nodington-iii": "sir-nodeward-nodington-iii-copy", "child-b": "child-b-copy"} |
+
+    And I expect the node aggregate "sir-nodeward-nodington-iii-copy" to exist
+    And I expect this node aggregate to have the child node aggregates ["child-b-copy"]
+
   Scenario: References are copied for child nodes
     When I am in workspace "live" and dimension space point {}
     When the following CreateNodeAggregateWithNode commands are executed:

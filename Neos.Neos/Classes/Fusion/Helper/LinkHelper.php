@@ -126,7 +126,7 @@ class LinkHelper implements ProtectedContextAwareInterface
 
     public function convertUriToObject(
         string|UriInterface $uri,
-        Node $contextNode = null
+        ?Node $contextNode = null
     ): Node|AssetInterface|null {
         if (is_string($uri)) {
             $uri = new Uri($uri);

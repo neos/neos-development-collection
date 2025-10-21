@@ -1,7 +1,7 @@
 Contribute
 ==========
 
-.. Short description of the different ways to contribute to neos with a link to the webpage.
+.. Short description of the different ways to contribute to Neos with a link to the webpage.
 
 
 .. toctree::

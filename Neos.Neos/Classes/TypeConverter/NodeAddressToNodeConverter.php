@@ -54,7 +54,7 @@ class NodeAddressToNodeConverter extends AbstractTypeConverter
         $source,
         $targetType = null,
         array $subProperties = [],
-        PropertyMappingConfigurationInterface $configuration = null
+        ?PropertyMappingConfigurationInterface $configuration = null
     ) {
         $nodeAddress = NodeAddress::fromJsonString($source);
         $contentRepository = $this->contentRepositoryRegistry->get($nodeAddress->contentRepositoryId);

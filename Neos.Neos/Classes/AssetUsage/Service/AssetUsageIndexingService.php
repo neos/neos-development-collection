@@ -14,7 +14,7 @@ use Neos\ContentRepository\Core\SharedModel\Exception\WorkspaceDoesNotExist;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\Workspace;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
-use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
+use Neos\ContentRepository\Core\SharedModel\Workspace\Workspaces;
 use Neos\Flow\Persistence\Doctrine\PersistenceManager;
 use Neos\Media\Domain\Model\AssetInterface;
 use Neos\Media\Domain\Model\AssetVariantInterface;
@@ -34,40 +34,32 @@ use Neos\Utility\TypeHandling;
  * 2. Which cache entries do I need to flush on a change to an asset (this requires an additional traversal over all
  *    dependent workspaces).
  */
-class AssetUsageIndexingService
+final class AssetUsageIndexingService
 {
     /** @var array <string, string> */
     private array $originalAssetIdMappingRuntimeCache = [];
 
     public function __construct(
-        private readonly ContentRepositoryRegistry $contentRepositoryRegistry,
         private readonly AssetUsageRepository $assetUsageRepository,
         private readonly AssetRepository $assetRepository,
         private readonly PersistenceManager $persistenceManager,
     ) {
     }
 
-    /** @var array<string, array<string, WorkspaceName[]>> */
-    private array $workspaceBases = [];
-
-    /** @var array<string, array<string, WorkspaceName[]>> */
-    private array $workspaceDependents = [];
-
-    public function updateIndex(ContentRepositoryId $contentRepositoryId, Node $node): void
+    public function updateIndex(ContentRepositoryId $contentRepositoryId, Node $node, NodeType $nodeType, Workspaces $allWorkspaces): void
     {
-        $workspaceBases = $this->getWorkspaceBasesAndWorkspace($contentRepositoryId, $node->workspaceName);
-        $workspaceDependents = $this->getWorkspaceDependents($contentRepositoryId, $node->workspaceName);
-        $nodeType = $this->contentRepositoryRegistry->get($contentRepositoryId)->getNodeTypeManager()->getNodeType($node->nodeTypeName);
-
-        if ($nodeType === null) {
-            return;
+        if ($allWorkspaces->get($node->workspaceName) === null) {
+            throw WorkspaceDoesNotExist::butWasSupposedTo($node->workspaceName);
         }
+
+        $workspaceBases = $allWorkspaces->getBaseWorkspaces($node->workspaceName)->map(fn (Workspace $workspace) => $workspace->workspaceName);
+        $workspaceDependents = $allWorkspaces->getDependantWorkspacesRecursively($node->workspaceName)->map(fn (Workspace $workspace) => $workspace->workspaceName);
 
         // 1. Get all asset usages of given node.
         $assetIdsByPropertyOfNode = $this->getAssetIdsByProperty($nodeType, $node->properties);
 
         // 2. Get all existing asset usages of ancestor workspaces.
-        $assetUsagesInAncestorWorkspaces = $this->assetUsageRepository->findUsageForNodeInWorkspaces($contentRepositoryId, $node, $workspaceBases);
+        $assetUsagesInAncestorWorkspaces = $this->assetUsageRepository->findUsageForNodeInWorkspaces($contentRepositoryId, $node, [$node->workspaceName, ...$workspaceBases]);
 
         // 3a. Filter only asset usages of given node, which are NOT already in place in ancestor workspaces. This way we get new asset usages in this particular workspace.
         $propertiesAndAssetIdsNotExistingInAncestors = [];
@@ -181,69 +173,6 @@ class AssetUsageIndexingService
     public function pruneIndex(ContentRepositoryId $contentRepositoryId): void
     {
         $this->assetUsageRepository->removeAll($contentRepositoryId);
-    }
-
-    /**
-     * @return WorkspaceName[]
-     */
-    private function getWorkspaceBasesAndWorkspace(ContentRepositoryId $contentRepositoryId, WorkspaceName $workspaceName): array
-    {
-        if (!isset($this->workspaceBases[$contentRepositoryId->value][$workspaceName->value])) {
-            $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryId);
-            $workspace = $contentRepository->findWorkspaceByName($workspaceName);
-            if ($workspace === null) {
-                throw WorkspaceDoesNotExist::butWasSupposedTo($workspaceName);
-            }
-
-            $stack = [$workspace];
-
-            $collectedWorkspaceNames = [$workspaceName];
-
-            while ($stack !== []) {
-                $workspace = array_shift($stack);
-                if ($workspace->baseWorkspaceName) {
-                    $ancestor = $contentRepository->findWorkspaceByName($workspace->baseWorkspaceName);
-                    if ($ancestor === null) {
-                        throw WorkspaceDoesNotExist::butWasSupposedTo($workspace->baseWorkspaceName);
-                    }
-                    $stack[] = $ancestor;
-                    $collectedWorkspaceNames[] = $ancestor->workspaceName;
-                }
-            }
-
-            $this->workspaceBases[$contentRepositoryId->value][$workspaceName->value] = $collectedWorkspaceNames;
-        }
-
-        return $this->workspaceBases[$contentRepositoryId->value][$workspaceName->value];
-    }
-
-    /**
-     * @return WorkspaceName[]
-     */
-    private function getWorkspaceDependents(ContentRepositoryId $contentRepositoryId, WorkspaceName $workspaceName): array
-    {
-        if (!isset($this->workspaceDependents[$contentRepositoryId->value][$workspaceName->value])) {
-            $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryId);
-            $workspace = $contentRepository->findWorkspaceByName($workspaceName);
-            if ($workspace === null) {
-                throw WorkspaceDoesNotExist::butWasSupposedTo($workspaceName);
-            }
-            $stack = [$workspace];
-            $collectedWorkspaceNames = [];
-
-            while ($stack !== []) {
-                /** @var Workspace $workspace */
-                $workspace = array_shift($stack);
-                $descendants = $contentRepository->findWorkspaces()->getDependantWorkspaces($workspace->workspaceName);
-                foreach ($descendants as $descendant) {
-                    $collectedWorkspaceNames[] = $descendant->workspaceName;
-                    $stack[] = $descendant;
-                }
-            }
-            $this->workspaceDependents[$contentRepositoryId->value][$workspaceName->value] = $collectedWorkspaceNames;
-        }
-
-        return $this->workspaceDependents[$contentRepositoryId->value][$workspaceName->value];
     }
 
     private function getAssetIdsByProperty(NodeType $nodeType, PropertyCollection $propertyValues): AssetIdsByProperty

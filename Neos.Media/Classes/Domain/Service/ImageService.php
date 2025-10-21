@@ -98,7 +98,7 @@ class ImageService
      * @throws InvalidConfigurationException
      * @throws Exception
      */
-    public function processImage(PersistentResource $originalResource, array $adjustments, string $format = null)
+    public function processImage(PersistentResource $originalResource, array $adjustments, ?string $format = null)
     {
         $additionalOptions = [];
         $adjustmentsApplied = false;

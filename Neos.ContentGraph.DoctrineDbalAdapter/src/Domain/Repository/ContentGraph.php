@@ -23,6 +23,7 @@ use Neos\ContentGraph\DoctrineDbalAdapter\NodeQueryBuilder;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
+use Neos\ContentRepository\Core\Feature\SubtreeTagging\Dto\SubtreeTag;
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\NodeType\NodeTypeNames;
@@ -165,8 +166,24 @@ final class ContentGraph implements ContentGraphInterface
         return $this->nodeFactory->mapNodeRowsToNodeAggregate(
             $this->fetchRows($queryBuilder),
             $this->workspaceName,
-            VisibilityConstraints::withoutRestrictions()
+            VisibilityConstraints::createEmpty()
         );
+    }
+
+    public function findNodeAggregatesByIds(
+        NodeAggregateIds $nodeAggregateIds
+    ): NodeAggregates {
+        $queryBuilder = $this->nodeQueryBuilder->buildBasicNodeAggregateQuery()
+            ->andWhere('n.nodeaggregateid in (:nodeAggregateIds)')
+            ->orderBy('n.relationanchorpoint', 'DESC')
+            ->setParameters([
+                'nodeAggregateIds' => $nodeAggregateIds->toStringArray(),
+                'contentStreamId' => $this->contentStreamId->value
+            ], [
+                'nodeAggregateIds' => ArrayParameterType::STRING
+            ]);
+
+        return $this->mapQueryBuilderToNodeAggregates($queryBuilder);
     }
 
     /**
@@ -177,9 +194,10 @@ final class ContentGraph implements ContentGraphInterface
     public function findParentNodeAggregates(
         NodeAggregateId $childNodeAggregateId
     ): NodeAggregates {
-        $queryBuilder = $this->nodeQueryBuilder->buildParentNodeAggregateQuery()
-            ->innerJoin('h', $this->nodeQueryBuilder->tableNames->node(), 'cn', 'cn.relationanchorpoint = h.childnodeanchor')
-            ->andWhere('h.contentstreamid = :contentStreamId')
+        $queryBuilder = $this->nodeQueryBuilder->buildBasicNodeAggregateQuery()
+            ->innerJoin('n', $this->nodeQueryBuilder->tableNames->hierarchyRelation(), 'ch', 'ch.parentnodeanchor = n.relationanchorpoint')
+            ->innerJoin('ch', $this->nodeQueryBuilder->tableNames->node(), 'cn', 'cn.relationanchorpoint = ch.childnodeanchor')
+            ->andWhere('ch.contentstreamid = :contentStreamId')
             ->andWhere('cn.nodeaggregateid = :nodeAggregateId')
             ->setParameters([
                 'nodeAggregateId' => $childNodeAggregateId->value,
@@ -256,7 +274,7 @@ final class ContentGraph implements ContentGraphInterface
         return $this->nodeFactory->mapNodeRowsToNodeAggregate(
             $this->fetchRows($queryBuilder),
             $this->workspaceName,
-            VisibilityConstraints::withoutRestrictions()
+            VisibilityConstraints::createEmpty()
         );
     }
 
@@ -311,6 +329,27 @@ final class ContentGraph implements ContentGraphInterface
         return new DimensionSpacePointSet($dimensionSpacePoints);
     }
 
+    public function findNodeAggregatesTaggedBy(SubtreeTag $subtreeTag): NodeAggregates
+    {
+        $queryBuilder =  $this->createQueryBuilder()
+            ->select('n.*, h.contentstreamid, h.subtreetags, dsp.dimensionspacepoint AS covereddimensionspacepoint')
+            // select the subtree tags from tagged (t) h and then join h again to fetch all node rows in that aggregate
+            ->from($this->tableNames->hierarchyRelation(), 'th')
+            ->innerJoin('th', $this->tableNames->hierarchyRelation(), 'h', 'th.childnodeanchor = h.childnodeanchor')
+            ->innerJoin('h', $this->tableNames->node(), 'n', 'h.childnodeanchor = n.relationanchorpoint')
+            ->innerJoin('h', $this->tableNames->dimensionSpacePoints(), 'dsp', 'dsp.hash = h.dimensionspacepointhash')
+            ->where('th.contentstreamid = :contentStreamId')
+            ->andWhere('JSON_EXTRACT(th.subtreetags, :tagPath) LIKE "true"')
+            ->andWhere('h.contentstreamid = :contentStreamId')
+            ->orderBy('n.relationanchorpoint', 'DESC')
+            ->setParameters([
+                'tagPath' => '$."' . $subtreeTag->value . '"',
+                'contentStreamId' => $this->contentStreamId->value
+            ]);
+
+        return $this->mapQueryBuilderToNodeAggregates($queryBuilder);
+    }
+
     public function findUsedNodeTypeNames(): NodeTypeNames
     {
         return NodeTypeNames::fromArray(array_map(
@@ -329,7 +368,7 @@ final class ContentGraph implements ContentGraphInterface
         return $this->nodeFactory->mapNodeRowsToNodeAggregate(
             $this->fetchRows($queryBuilder),
             $this->workspaceName,
-            VisibilityConstraints::withoutRestrictions()
+            VisibilityConstraints::createEmpty()
         );
     }
 
@@ -342,7 +381,7 @@ final class ContentGraph implements ContentGraphInterface
         return $this->nodeFactory->mapNodeRowsToNodeAggregates(
             $this->fetchRows($queryBuilder),
             $this->workspaceName,
-            VisibilityConstraints::withoutRestrictions()
+            VisibilityConstraints::createEmpty()
         );
     }
 

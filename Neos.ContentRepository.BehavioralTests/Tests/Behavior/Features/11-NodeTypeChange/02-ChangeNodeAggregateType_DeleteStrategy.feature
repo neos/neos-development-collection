@@ -305,9 +305,7 @@ Feature: Change node aggregate type - behavior of DELETE strategy
       | workspaceName                        | "live"                                 |
       | contentStreamId                      | "cs-identifier"                        |
       | nodeAggregateId                      | "nodingers-cat"                        |
-      | affectedOccupiedDimensionSpacePoints | [{"language":"de"},{"language":"gsw"}] |
       | affectedCoveredDimensionSpacePoints  | [{"language":"de"},{"language":"gsw"}] |
-      | removalAttachmentPoint               | null                                   |
     And event at index 14 is of type "NodeAggregateTypeWasChanged" with payload:
       | Key             | Expected                                             |
       | workspaceName   | "live"                                               |

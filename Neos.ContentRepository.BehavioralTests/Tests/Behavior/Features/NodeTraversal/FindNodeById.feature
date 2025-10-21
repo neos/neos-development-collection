@@ -83,6 +83,7 @@ Feature: Find nodes using the findNodeById query
       | nodeVariantSelectionStrategy | "allVariants" |
 
   Scenario:
+    Subgraph queries
     # findNodeById queries without result
     When I execute the findNodeById query for node aggregate id "non-existing" I expect no node to be returned
     When I execute the findNodeById query for node aggregate id "a2a1" I expect no node to be returned
@@ -90,3 +91,18 @@ Feature: Find nodes using the findNodeById query
     # findNodeById queries with result
     When I execute the findNodeById query for node aggregate id "home" I expect the node "home" to be returned
     When I execute the findNodeById query for node aggregate id "a2a2" I expect the node "a2a2" to be returned
+
+    When I execute the findNodesByIds query for node aggregate id "home,a2a2,a2a1,non-existing" I expect the nodes "home,a2a2" to be returned
+
+  Scenario:
+    Contentgraph queries
+    When I execute the findNodeAggregateById query for node aggregate id "a" I expect the following node aggregates to be returned:
+      | nodeAggregateId | nodeTypeName                        | coveredDimensionSpacePoints           | occupiedDimensionSpacePoints | explicitlyDisabledDimensions |
+      | a               | Neos.ContentRepository.Testing:Page | [{"language":"de"},{"language":"ch"}] | [{"language":"de"}]          | []                           |
+
+    When I execute the findNodeAggregatesByIds query for node aggregate id "a,a2a1,b,home,non-existing" I expect the following node aggregates to be returned:
+      | nodeAggregateId | nodeTypeName                            | coveredDimensionSpacePoints           | occupiedDimensionSpacePoints | explicitlyDisabledDimensions          |
+      | b               | Neos.ContentRepository.Testing:Page     | [{"language":"de"},{"language":"ch"}] | [{"language":"de"}]          | []                                    |
+      | a2a1            | Neos.ContentRepository.Testing:Page     | [{"language":"de"},{"language":"ch"}] | [{"language":"de"}]          | [{"language":"de"},{"language":"ch"}] |
+      | a               | Neos.ContentRepository.Testing:Page     | [{"language":"de"},{"language":"ch"}] | [{"language":"de"}]          | []                                    |
+      | home            | Neos.ContentRepository.Testing:Homepage | [{"language":"de"},{"language":"ch"}] | [{"language":"de"}]          | []                                    |

@@ -328,70 +328,6 @@
         <source>Deactivated</source>
         <target state="final">Deaktiviert</target>
       </trans-unit>
-      <trans-unit id="packages.tooltip.unfreeze" xml:space="preserve" approved="yes">
-        <source>This package is currently frozen. Click to unfreeze it.</source>
-        <target state="final">Dieses Paket ist derzeit eingefroren. Hier klicken, um es freizugeben.</target>
-      </trans-unit>
-      <trans-unit id="packages.tooltip.freeze" xml:space="preserve" approved="yes">
-        <source>Freeze the package in order to speed up your website.</source>
-        <target state="final">Frieren Sie das Paket ein, um Ihre Webseite zu beschleunigen.</target>
-      </trans-unit>
-      <trans-unit id="packages.tooltip.noDeactivate" xml:space="preserve" approved="yes">
-        <source>This package is protected and cannot be deactivated.</source>
-        <target state="final">Dieses Paket ist geschützt und kann nicht deaktiviert werden.</target>
-      </trans-unit>
-      <trans-unit id="packages.tooltip.deactivate" xml:space="preserve" approved="yes">
-        <source>Deactivate Package</source>
-        <target state="final">Paket deaktivieren</target>
-      </trans-unit>
-      <trans-unit id="packages.tooltip.activate" xml:space="preserve" approved="yes">
-        <source>Activate Package</source>
-        <target state="final">Paket aktivieren</target>
-      </trans-unit>
-      <trans-unit id="packages.tooltip.noDelete" xml:space="preserve" approved="yes">
-        <source>This package is protected and cannot be deleted.</source>
-        <target state="final">Dieses Paket ist geschützt und kann nicht entfernt werden.</target>
-      </trans-unit>
-      <trans-unit id="packages.tooltip.delete" xml:space="preserve" approved="yes">
-        <source>Delete Package</source>
-        <target state="final">Paket löschen</target>
-      </trans-unit>
-      <trans-unit id="packages.message.reallyDelete" xml:space="preserve" approved="yes">
-        <source>Do you really want to delete "{0}"?</source>
-        <target state="final">Wollen Sie "{0}" wirklich löschen?</target>
-      </trans-unit>
-      <trans-unit id="packages.message.confirmDelete" xml:space="preserve" approved="yes">
-        <source>Yes, delete the package</source>
-        <target state="final">Ja, das Paket löschen</target>
-      </trans-unit>
-      <trans-unit id="packages.message.confirmDeletes" xml:space="preserve" approved="yes">
-        <source>Yes, delete the packages</source>
-        <target state="final">Ja, die Pakete löschen</target>
-      </trans-unit>
-      <trans-unit id="packages.message.selected.reallyDelete" xml:space="preserve" approved="yes">
-        <source>Do you really want to delete the selected packages?</source>
-        <target state="final">Wollen Sie wirklich die ausgewählten Pakete löschen?</target>
-      </trans-unit>
-      <trans-unit id="packages.selected.freeze" xml:space="preserve" approved="yes">
-        <source>Freeze selected packages</source>
-        <target state="final">Ausgewählte Pakete einfrieren</target>
-      </trans-unit>
-      <trans-unit id="packages.selected.unfreeze" xml:space="preserve" approved="yes">
-        <source>Unfreeze selected packages</source>
-        <target state="final">Ausgewählte Pakete auftauen</target>
-      </trans-unit>
-      <trans-unit id="packages.selected.delete" xml:space="preserve" approved="yes">
-        <source>Delete selected packages</source>
-        <target state="final">Ausgewählte Pakete löschen</target>
-      </trans-unit>
-      <trans-unit id="packages.selected.deactivate" xml:space="preserve" approved="yes">
-        <source>Deactivate selected packages</source>
-        <target state="final">Ausgewählte Pakete deaktivieren</target>
-      </trans-unit>
-      <trans-unit id="packages.selected.activate" xml:space="preserve" approved="yes">
-        <source>Activate selected packages</source>
-        <target state="final">Ausgewählte Pakete aktivieren</target>
-      </trans-unit>
       <trans-unit id="sites.label" xml:space="preserve" approved="yes">
         <source>Sites Management</source>
         <target state="final">Websites Verwaltung</target>
@@ -455,10 +391,6 @@
       <trans-unit id="sites.confirmDelete" xml:space="preserve" approved="yes">
         <source>Yes, delete the site</source>
         <target state="final">Ja, Seite löschen</target>
-      </trans-unit>
-      <trans-unit id="sites.import" xml:space="preserve" approved="yes">
-        <source>Import a site</source>
-        <target state="final">Eine Seite importieren</target>
       </trans-unit>
       <trans-unit id="sites.select" xml:space="preserve" approved="yes">
         <source>Select a site package</source>
@@ -688,18 +620,6 @@ Klicken Sie auf einen der Knoten um nur die Fallbacks und Varianten für diesen 
       <trans-unit id="sites.update.body" xml:space="preserve">
         <source>The site "{0}" has been updated.</source>
         <target state="final">Die Seite "{0}" wurde aktualisiert.</target>
-      </trans-unit>
-      <trans-unit id="sites.theSiteHasBeenImported.body" xml:space="preserve">
-        <source>The site has been imported.</source>
-        <target state="final">Die Seite wurde importiert.</target>
-      </trans-unit>
-      <trans-unit id="sites.importError.title" xml:space="preserve">
-        <source>Import error</source>
-        <target state="final">Fehler beim Importieren</target>
-      </trans-unit>
-      <trans-unit id="sites.importError.body" xml:space="preserve">
-        <source>Error: During the import of the "Sites.xml" from the package "{0}" an exception occurred: {1}</source>
-        <target state="translated">Fehler: Während des Importierens von "Sites.xml" aus dem Package "{0}" trat ein Ausnahme-Fehler auf: {1}</target>
       </trans-unit>
       <trans-unit id="sites.siteCreationError.siteWithSiteNodeNameAlreadyExists.title" xml:space="preserve">
         <source>Site creation error</source>

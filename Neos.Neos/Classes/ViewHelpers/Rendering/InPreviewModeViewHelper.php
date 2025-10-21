@@ -78,7 +78,7 @@ class InPreviewModeViewHelper extends AbstractViewHelper
         );
     }
 
-    public function render(Node $node = null, string $mode = null): bool
+    public function render(?Node $node = null, ?string $mode = null): bool
     {
         $renderingMode = $this->getContextVariable('renderingMode');
         if ($renderingMode instanceof RenderingMode) {

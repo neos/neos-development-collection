@@ -172,7 +172,7 @@ class SiteCommandController extends CommandController
      * @param string|null $path relative or absolute path and filename to the export files
      * @return void
      */
-    public function importAllCommand(string $packageKey = null, string $path = null, string $contentRepository = 'default', bool $verbose = false): void
+    public function importAllCommand(?string $packageKey = null, ?string $path = null, string $contentRepository = 'default', bool $verbose = false): void
     {
         // TODO check if this warning is still necessary with Neos 9
         // Since this command uses a lot of memory when large sites are imported, we warn the user to watch for
@@ -212,7 +212,7 @@ class SiteCommandController extends CommandController
      * @param string|null $path relative or absolute path and filename to the export files
      * @return void
      */
-    public function exportAllCommand(string $packageKey = null, string $path = null, string $contentRepository = 'default', bool $verbose = false): void
+    public function exportAllCommand(?string $packageKey = null, ?string $path = null, string $contentRepository = 'default', bool $verbose = false): void
     {
         $path = $this->determineTargetPath($packageKey, $path);
         $contentRepositoryId = ContentRepositoryId::fromString($contentRepository);

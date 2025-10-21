@@ -45,7 +45,7 @@ class FusionSourceCodeDtosTest extends UnitTestCase
         self::assertEquals("a", $code->getSourceCode());
         self::assertEquals("memory://a", $code->getFilePath());
 
-        $code = FusionSourceCodeCollection::empty();
+        $code = FusionSourceCodeCollection::createEmpty();
         self::assertCount(0, $code);
     }
 

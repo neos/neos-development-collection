@@ -52,7 +52,7 @@ final class RaceConditionTrackerCommandController extends CommandController
      * @param string|null $storeTrace The path to store the full trace in NDJSON format (optional).
      * @internal
      */
-    public function analyzeTraceCommand(string $storeTrace = null): void
+    public function analyzeTraceCommand(?string $storeTrace = null): void
     {
         RedisInterleavingLogger::connect($this->configuration['redis']['host'], $this->configuration['redis']['port']);
         $traces = RedisInterleavingLogger::getTraces();

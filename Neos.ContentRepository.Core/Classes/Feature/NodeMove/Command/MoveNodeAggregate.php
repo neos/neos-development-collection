@@ -34,6 +34,7 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
  *
  * Why can you specify **both** newPrecedingSiblingNodeAggregateId
  * and newSucceedingSiblingNodeAggregateId?
+ *
  * - it can happen that in one subgraph, only one of these match.
  * - See the PHPDoc of the attributes (a few lines down) for the exact behavior.
  *

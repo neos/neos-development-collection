@@ -14,16 +14,10 @@ use Neos\Neos\FrontendRouting\Exception\NodeNotFoundException;
 
 /**
  * @Flow\Proxy(false)
+ * @internal implementation detail to manage document node uris. For resolving please use the NodeUriBuilder and for matching the Router.
  */
 final class DocumentUriPathFinder implements ProjectionStateInterface
 {
-    private bool $cacheEnabled = true;
-
-    /**
-     * @var array<string,DocumentNodeInfo>
-     */
-    private array $getByIdAndDimensionSpacePointHashCache = [];
-
     public function __construct(
         private readonly Connection $dbal,
         private readonly string $tableNamePrefix
@@ -39,7 +33,6 @@ final class DocumentUriPathFinder implements ProjectionStateInterface
      * @return DocumentNodeInfo
      * @throws NodeNotFoundException if no matching DocumentNodeInfo can be found
      * (node is disabled, node doesn't exist in live workspace, projection not up to date)
-     * @api
      */
     public function getEnabledBySiteNodeNameUriPathAndDimensionSpacePointHash(
         SiteNodeName $siteNodeName,
@@ -51,6 +44,7 @@ final class DocumentUriPathFinder implements ProjectionStateInterface
                 AND siteNodeName = :siteNodeName
                 AND uriPath = :uriPath
                 AND disabled = 0
+                AND removed = 0
                 AND isPlaceholder = 0',
             [
                 'dimensionSpacePointHash' => $dimensionSpacePointHash,
@@ -70,16 +64,11 @@ final class DocumentUriPathFinder implements ProjectionStateInterface
      * @return DocumentNodeInfo
      * @throws NodeNotFoundException if no matching DocumentNodeInfo can be found
      *  (node doesn't exist in live workspace, projection not up to date)
-     * @api
      */
     public function getByIdAndDimensionSpacePointHash(
         NodeAggregateId $nodeAggregateId,
         string $dimensionSpacePointHash
     ): DocumentNodeInfo {
-        $cacheKey = $this->calculateCacheKey($nodeAggregateId, $dimensionSpacePointHash);
-        if ($this->cacheEnabled && isset($this->getByIdAndDimensionSpacePointHashCache[$cacheKey])) {
-            return $this->getByIdAndDimensionSpacePointHashCache[$cacheKey];
-        }
         $result = $this->fetchSingle(
             'nodeAggregateId = :nodeAggregateId
                 AND dimensionSpacePointHash = :dimensionSpacePointHash',
@@ -88,9 +77,6 @@ final class DocumentUriPathFinder implements ProjectionStateInterface
                 'dimensionSpacePointHash' => $dimensionSpacePointHash,
             ]
         );
-        if ($this->cacheEnabled) {
-            $this->getByIdAndDimensionSpacePointHashCache[$cacheKey] = $result;
-        }
         return $result;
     }
 
@@ -103,7 +89,6 @@ final class DocumentUriPathFinder implements ProjectionStateInterface
      * @return DocumentNodeInfo
      * @throws NodeNotFoundException if no matching DocumentNodeInfo can be found
      *  (given $nodeInfo belongs to a site root node, projection not up to date)
-     * @api
      */
     public function getParentNode(DocumentNodeInfo $nodeInfo): DocumentNodeInfo
     {
@@ -126,7 +111,7 @@ final class DocumentUriPathFinder implements ProjectionStateInterface
      * @throws NodeNotFoundException if no preceding DocumentNodeInfo can be found
      *  (given $succeedingNodeAggregateId doesn't exist or refers to the first/only node
      *  with the given $parentNodeAggregateId)
-     * @internal
+     * @internal only for use within the document uri path projection
      */
     public function getPrecedingNode(
         NodeAggregateId $succeedingNodeAggregateId,
@@ -154,7 +139,6 @@ final class DocumentUriPathFinder implements ProjectionStateInterface
      * @param string $dimensionSpacePointHash
      * @return DocumentNodeInfo
      * @throws NodeNotFoundException
-     * @api
      */
     public function getFirstEnabledChildNode(
         NodeAggregateId $parentNodeAggregateId,
@@ -164,6 +148,7 @@ final class DocumentUriPathFinder implements ProjectionStateInterface
             'dimensionSpacePointHash = :dimensionSpacePointHash
                 AND parentNodeAggregateId = :parentNodeAggregateId
                 AND precedingNodeAggregateId IS NULL
+                AND removed = 0
                 AND disabled = 0',
             [
                 'dimensionSpacePointHash' => $dimensionSpacePointHash,
@@ -177,7 +162,7 @@ final class DocumentUriPathFinder implements ProjectionStateInterface
      * @param string $dimensionSpacePointHash
      * @return DocumentNodeInfo
      * @throws NodeNotFoundException
-     * @internal
+     * @internal only for use within the document uri path projection
      */
     public function getLastChildNode(
         NodeAggregateId $parentNodeAggregateId,
@@ -196,7 +181,7 @@ final class DocumentUriPathFinder implements ProjectionStateInterface
 
     /**
      * @throws NodeNotFoundException
-     * @internal
+     * @internal only for use within the document uri path projection
      */
     public function getLastChildNodeNotBeing(
         NodeAggregateId $parentNodeAggregateId,
@@ -273,25 +258,6 @@ final class DocumentUriPathFinder implements ProjectionStateInterface
         return DocumentNodeInfos::create(
             array_map(DocumentNodeInfo::fromDatabaseRow(...), $rows)
         );
-    }
-
-    private function calculateCacheKey(NodeAggregateId $nodeAggregateId, string $dimensionSpacePointHash): string
-    {
-        return $nodeAggregateId->value . '#' . $dimensionSpacePointHash;
-    }
-
-    public function purgeCacheFor(DocumentNodeInfo $nodeInfo): void
-    {
-        if ($this->cacheEnabled) {
-            $cacheKey = $this->calculateCacheKey($nodeInfo->getNodeAggregateId(), $nodeInfo->getDimensionSpacePointHash());
-            unset($this->getByIdAndDimensionSpacePointHashCache[$cacheKey]);
-        }
-    }
-
-    public function disableCache(): void
-    {
-        $this->cacheEnabled = false;
-        $this->getByIdAndDimensionSpacePointHashCache = [];
     }
 
     /**

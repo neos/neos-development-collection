@@ -60,6 +60,18 @@ class UserService
     }
 
     /**
+     * 8.3 behaviour: Returns the name of the currently logged in user's personal workspace
+     * (even if that might not exist at that time).
+     * If no user is logged in this method returns null.
+     *
+     * @deprecated and not implemented with Neos 9.0 - can be removed any time, just for the 8.3 upgrade phase
+     */
+    public function getPersonalWorkspaceName(): ?string
+    {
+        throw new \LogicException('`userInformation.personalWorkspaceName` was removed in Neos 9.0 see https://github.com/neos/neos-development-collection/pull/5418');
+    }
+
+    /**
      * Returns the stored preferences of a user
      *
      * @param string $preference

@@ -4,8 +4,8 @@ Feature: Move DimensionSpacePoints
 
   Background:
     Given using the following content dimensions:
-      | Identifier | Values       | Generalizations |
-      | language   | de,gsw,fr,en | gsw->de->en, fr |
+      | Identifier | Values   | Generalizations |
+      | language   | de,fr,en | de->en, fr      |
     And using the following node types:
     """yaml
     'Neos.ContentRepository.Testing:NodeWithAssetProperties':
@@ -58,29 +58,32 @@ Feature: Move DimensionSpacePoints
 
     And I am in workspace "user-workspace"
 
-    Then the command SetNodeProperties is executed with payload:
+    And the command SetNodeProperties is executed with payload:
       | Key                       | Value                      |
       | workspaceName             | "user-workspace"           |
       | nodeAggregateId           | "sir-david-nodenborough"   |
       | originDimensionSpacePoint | {"language": "de"}         |
       | propertyValues            | {"asset": "Asset:asset-2"} |
 
-    And I expect the AssetUsageService to have the following AssetUsages:
+    Then I expect the AssetUsageService to have the following AssetUsages:
       | assetId | nodeAggregateId            | propertyName | workspaceName  | originDimensionSpacePoint |
       | asset-1 | sir-david-nodenborough     | asset        | live           | {"language": "de"}        |
       | asset-2 | sir-david-nodenborough     | asset        | user-workspace | {"language": "de"}        |
       | asset-2 | nody-mc-nodeface           | assets       | live           | {"language": "de"}        |
       | asset-3 | sir-nodeward-nodington-iii | text         | live           | {"language": "fr"}        |
 
+    # without publishing, dimension space point moving will be blocked due to changes in the user workspace
+    When the command PublishWorkspace is executed with payload:
+      | Key           | Value            |
+      | workspaceName | "user-workspace" |
     And I am in workspace "live"
 
-
   Scenario: Rename a dimension value in live workspace
-    Given I change the content dimensions in content repository "default" to:
-      | Identifier | Values          | Generalizations    |
-      | language   | de_DE,gsw,fr,en | gsw->de_DE->en, fr |
+    When I change the content dimensions in content repository "default" to:
+      | Identifier | Values      | Generalizations |
+      | language   | de_DE,fr,en | de_DE->en, fr   |
 
-    And I run the following node migration for workspace "live", creating target workspace "migration-cs" on contentStreamId "migration-cs", with publishing on success:
+    And I run the following node migration for workspace "live", creating target workspace "migration-cs" on contentStreamId "migration-cs-id", with publishing on success:
     """yaml
     migration:
       -
@@ -92,44 +95,17 @@ Feature: Move DimensionSpacePoints
               to: {"language":"de_DE"}
     """
 
-    And I expect the AssetUsageService to have the following AssetUsages:
-      | assetId | nodeAggregateId            | propertyName | workspaceName  | originDimensionSpacePoint |
-      | asset-1 | sir-david-nodenborough     | asset        | live           | {"language": "de_DE"}     |
-      | asset-2 | nody-mc-nodeface           | assets       | live           | {"language": "de_DE"}     |
-      | asset-2 | sir-david-nodenborough     | asset        | user-workspace | {"language": "de"}        |
-      | asset-3 | sir-nodeward-nodington-iii | text         | live           | {"language": "fr"}        |
-
-
-  Scenario: Rename a dimension value in user workspace
-    Given I change the content dimensions in content repository "default" to:
-      | Identifier | Values          | Generalizations    |
-      | language   | de_DE,gsw,fr,en | gsw->de_DE->en, fr |
-
-    And I run the following node migration for workspace "user-workspace", creating target workspace "migration-cs" on contentStreamId "migration-cs", with publishing on success:
-    """yaml
-    migration:
-      -
-        transformations:
-          -
-            type: 'MoveDimensionSpacePoint'
-            settings:
-              from: {"language":"de"}
-              to: {"language":"de_DE"}
-    """
-
-    And I expect the AssetUsageService to have the following AssetUsages:
-      | assetId | nodeAggregateId            | propertyName | workspaceName  | originDimensionSpacePoint |
-      | asset-1 | sir-david-nodenborough     | asset        | live           | {"language": "de"}        |
-      | asset-2 | sir-david-nodenborough     | asset        | user-workspace | {"language": "de_DE"}     |
-      | asset-2 | nody-mc-nodeface           | assets       | live           | {"language": "de"}        |
-      | asset-3 | sir-nodeward-nodington-iii | text         | live           | {"language": "fr"}        |
-
+    Then I expect the AssetUsageService to have the following AssetUsages:
+      | assetId | nodeAggregateId            | propertyName | workspaceName | originDimensionSpacePoint |
+      | asset-2 | sir-david-nodenborough     | asset        | live          | {"language": "de_DE"}     |
+      | asset-2 | nody-mc-nodeface           | assets       | live          | {"language": "de_DE"}     |
+      | asset-3 | sir-nodeward-nodington-iii | text         | live          | {"language": "fr"}        |
 
   Scenario: Adding a dimension in live workspace
     Given I change the content dimensions in content repository "default" to:
-      | Identifier | Values       | Generalizations |
-      | language   | de,gsw,fr,en | gsw->de->en, fr |
-      | market     | DE, FR       | DE, FR          |
+      | Identifier | Values   | Generalizations |
+      | language   | de,fr,en | de->en, fr      |
+      | market     | DE, FR   | DE, FR          |
 
     And I run the following node migration for workspace "live", creating target workspace "migration-cs" on contentStreamId "migration-cs", with publishing on success:
     """yaml
@@ -150,38 +126,14 @@ Feature: Move DimensionSpacePoints
 
     And I expect the AssetUsageService to have the following AssetUsages:
       | assetId | nodeAggregateId            | propertyName | workspaceName  | originDimensionSpacePoint         |
-      | asset-1 | sir-david-nodenborough     | asset        | live           | {"language":"de", "market": "DE"} |
+      | asset-2 | sir-david-nodenborough     | asset        | live           | {"language":"de", "market": "DE"} |
       | asset-2 | nody-mc-nodeface           | assets       | live           | {"language":"de", "market": "DE"} |
-      | asset-2 | sir-david-nodenborough     | asset        | user-workspace | {"language": "de"}                |
       | asset-3 | sir-nodeward-nodington-iii | text         | live           | {"language":"fr", "market": "FR"} |
 
-
-  Scenario: Adding a dimension in user workspace
-    Given I change the content dimensions in content repository "default" to:
-      | Identifier | Values       | Generalizations |
-      | language   | de,gsw,fr,en | gsw->de->en, fr |
-      | market     | DE, FR       | DE, FR          |
-
-    And I run the following node migration for workspace "user-workspace", creating target workspace "migration-cs" on contentStreamId "migration-cs", with publishing on success:
-    """yaml
-    migration:
-      -
-        transformations:
-          -
-            type: 'MoveDimensionSpacePoint'
-            settings:
-              from: {"language":"de"}
-              to: {"language":"de", "market": "DE"}
-          -
-            type: 'MoveDimensionSpacePoint'
-            settings:
-              from: {"language":"fr"}
-              to: {"language":"fr", "market": "FR"}
-    """
-
+    # Ensure after replay no asset usages are duplicated: https://github.com/neos/neos-development-collection/pull/5511
+    And I replay the contentGraph projection
     And I expect the AssetUsageService to have the following AssetUsages:
       | assetId | nodeAggregateId            | propertyName | workspaceName  | originDimensionSpacePoint         |
-      | asset-1 | sir-david-nodenborough     | asset        | live           | {"language": "de"}                |
-      | asset-2 | sir-david-nodenborough     | asset        | user-workspace | {"language":"de", "market": "DE"} |
-      | asset-2 | nody-mc-nodeface           | assets       | live           | {"language": "de"}                |
-      | asset-3 | sir-nodeward-nodington-iii | text         | live           | {"language": "fr"}                |
+      | asset-2 | sir-david-nodenborough     | asset        | live           | {"language":"de", "market": "DE"} |
+      | asset-2 | nody-mc-nodeface           | assets       | live           | {"language":"de", "market": "DE"} |
+      | asset-3 | sir-nodeward-nodington-iii | text         | live           | {"language":"fr", "market": "FR"} |

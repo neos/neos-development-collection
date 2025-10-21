@@ -73,7 +73,7 @@ Feature: Change base workspace constraints
       | baseWorkspaceName  | "shared"                     |
       | newContentStreamId | "user-rebased-cs-identifier" |
 
-    Then the last command should have thrown an exception of type "WorkspaceIsNotEmptyException"
+    Then the last command should have thrown an exception of type "WorkspaceContainsPublishableChanges"
 
   Scenario: Changing the base workspace does not work if the new base is the current workspace (cyclic)
     When the command ChangeBaseWorkspace is executed with payload and exceptions are caught:

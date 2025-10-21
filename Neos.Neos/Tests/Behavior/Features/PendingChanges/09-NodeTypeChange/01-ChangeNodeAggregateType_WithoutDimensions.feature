@@ -56,10 +56,10 @@ Feature: Change node aggregate type without dimensions
       | newNodeTypeName | "Neos.ContentRepository.Testing:NewNode" |
       | strategy        | "happypath"                              |
 
-    Then I expect the ChangeProjection to have the following changes in "user-cs-id":
+    Then I expect to have the following changes in workspace "user-workspace":
       | nodeAggregateId        | created | changed | moved | deleted | originDimensionSpacePoint |
       | sir-david-nodenborough | 0       | 1       | 0     | 0       | null                      |
-    And I expect the ChangeProjection to have no changes in "cs-identifier"
+    And I expect to have no changes in workspace "live"
 
   Scenario: Change the node aggregate type with already applied changes
     Given the command SetNodeProperties is executed with payload:
@@ -76,8 +76,8 @@ Feature: Change node aggregate type without dimensions
       | newNodeTypeName | "Neos.ContentRepository.Testing:NewNode" |
       | strategy        | "happypath"                              |
 
-    Then I expect the ChangeProjection to have the following changes in "user-cs-id":
+    Then I expect to have the following changes in workspace "user-workspace":
       | nodeAggregateId        | created | changed | moved | deleted | originDimensionSpacePoint |
       | sir-david-nodenborough | 0       | 1       | 0     | 0       | null                      |
       | sir-david-nodenborough | 0       | 1       | 0     | 0       | {}                        |
-    And I expect the ChangeProjection to have no changes in "cs-identifier"
+    And I expect to have no changes in workspace "live"

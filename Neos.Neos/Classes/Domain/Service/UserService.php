@@ -40,6 +40,7 @@ use Neos\Neos\Domain\Exception;
 use Neos\Neos\Domain\Model\User;
 use Neos\Neos\Domain\Model\UserId;
 use Neos\Neos\Domain\Repository\UserRepository;
+use Neos\Neos\Domain\Repository\WorkspaceMetadataAndRoleRepository;
 use Neos\Party\Domain\Model\AbstractParty;
 use Neos\Party\Domain\Model\PersonName;
 use Neos\Party\Domain\Repository\PartyRepository;
@@ -145,6 +146,18 @@ class UserService
     protected $now;
 
     /**
+     * @Flow\Inject
+     * @var WorkspaceService
+     */
+    protected $workspaceService;
+
+    /**
+     * @Flow\Inject
+     * @var WorkspaceMetadataAndRoleRepository
+     */
+    protected $workspaceMetadataAndRoleRepository;
+
+    /**
      * @var array<string,string>
      */
     protected $runtimeUserCache = [];
@@ -223,7 +236,7 @@ class UserService
      * @param string $authenticationProviderName
      * @return ?string The username or null if the given user does not have a backend account
      */
-    public function getUsername(User $user, string $authenticationProviderName = null): ?string
+    public function getUsername(User $user, ?string $authenticationProviderName = null): ?string
     {
         $authenticationProviderName = $authenticationProviderName ?: $this->defaultAuthenticationProviderName;
         foreach ($user->getAccounts() as $account) {
@@ -286,7 +299,7 @@ class UserService
         $password,
         $firstName,
         $lastName,
-        array $roleIdentifiers = null,
+        ?array $roleIdentifiers = null,
         $authenticationProviderName = null
     ) {
         $user = new User();
@@ -303,7 +316,7 @@ class UserService
      * object itself. If you need to create the User object elsewhere, for example in your ActionController, make sure
      * to call this method for registering the new user instead of adding it to the PartyRepository manually.
      *
-     * This method also creates a new user workspace for the given user if no such workspace exist.
+     * A personal workspace for editor users is created on demand via {@see WorkspaceService::getPersonalWorkspaceForUser()}
      *
      * @param string $username The username of the user to be created.
      * @param string $password Password of the user to be created
@@ -317,7 +330,7 @@ class UserService
         $username,
         $password,
         User $user,
-        array $roleIdentifiers = null,
+        ?array $roleIdentifiers = null,
         $authenticationProviderName = null
     ) {
         if ($roleIdentifiers === null) {
@@ -353,7 +366,7 @@ class UserService
     }
 
     /**
-     * Deletes the specified user and all remaining content in his personal workspaces
+     * Deletes the specified user and all remaining content in his personal workspaces across all content repositories
      *
      * @param User $user The user to delete
      * @return void
@@ -371,6 +384,10 @@ class UserService
         }
 
         $this->partyRepository->remove($user);
+        foreach ($this->workspaceMetadataAndRoleRepository->findAllPersonalWorkspaceNamesByUser($user->getId()) as $contentRepositoryId => $workspaceName) {
+            // we delete the workspace WITH possible pending changes
+            $this->workspaceService->deleteWorkspace($contentRepositoryId, $workspaceName);
+        }
         $this->emitUserDeleted($user);
     }
 

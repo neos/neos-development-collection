@@ -49,7 +49,7 @@ Feature: Enable a node aggregate
       | Key                          | Value                    |
       | nodeAggregateId              | "sir-david-nodenborough" |
       | nodeVariantSelectionStrategy | "allVariants"            |
-    Then the last command should have thrown an exception of type "NodeAggregateIsAlreadyEnabled"
+    Then the last command should have thrown an exception of type "SubtreeIsNotTagged"
 
   Scenario: Try to enable a node aggregate in a non-existing dimension space point
     When the command EnableNodeAggregate is executed with payload and exceptions are caught:

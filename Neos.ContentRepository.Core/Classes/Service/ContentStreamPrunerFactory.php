@@ -16,9 +16,9 @@ class ContentStreamPrunerFactory implements ContentRepositoryServiceFactoryInter
     public function build(ContentRepositoryServiceFactoryDependencies $serviceFactoryDependencies): ContentStreamPruner
     {
         return new ContentStreamPruner(
-            $serviceFactoryDependencies->contentRepository,
             $serviceFactoryDependencies->eventStore,
-            $serviceFactoryDependencies->eventNormalizer
+            $serviceFactoryDependencies->eventNormalizer,
+            $serviceFactoryDependencies->subscriptionEngine,
         );
     }
 }

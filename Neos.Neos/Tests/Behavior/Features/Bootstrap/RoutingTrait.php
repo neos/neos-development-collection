@@ -18,10 +18,9 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Event\LifecycleEventArgs;
 use GuzzleHttp\Psr7\Uri;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
-use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAddress;
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
-use Neos\ContentRepository\Core\SharedModel\Workspace\Workspace;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
+use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\CRTestSuiteRuntimeVariables;
 use Neos\Flow\Configuration\ConfigurationManager;
 use Neos\Flow\Http\ServerRequestAttributes;
@@ -84,7 +83,7 @@ trait RoutingTrait
      * @Given A site exists for node name :nodeName and domain :domain
      * @Given A site exists for node name :nodeName and domain :domain and package :package
      */
-    public function theSiteExists(string $nodeName, string $domain = null, string $package = null): void
+    public function theSiteExists(string $nodeName, ?string $domain = null, ?string $package = null): void
     {
         $siteRepository = $this->getObject(SiteRepository::class);
         $persistenceManager = $this->getObject(PersistenceManagerInterface::class);
@@ -178,19 +177,14 @@ trait RoutingTrait
     }
 
     /**
-     * @Then the matched node should be :nodeAggregateId in content stream :contentStreamId and dimension :dimensionSpacePoint
+     * @Then the matched node should be :nodeAggregateId in dimension :dimensionSpacePoint
      */
-    public function theMatchedNodeShouldBeInContentStreamAndOriginDimension(string $nodeAggregateId, string $contentStreamId, string $dimensionSpacePoint): void
+    public function theMatchedNodeShouldBeInOriginDimension(string $nodeAggregateId, string $dimensionSpacePoint): void
     {
         $matchedNodeAddress = $this->match($this->requestUrl);
         Assert::assertNotNull($matchedNodeAddress, 'Routing result does not have "node" key - this probably means that the FrontendNodeRoutePartHandler did not properly resolve the result.');
-        Assert::assertTrue($matchedNodeAddress->workspaceName->isLive());
+        Assert::assertTrue($matchedNodeAddress->workspaceName->isLive(), 'Workspace should be always live.');
         Assert::assertSame($nodeAggregateId, $matchedNodeAddress->aggregateId->value);
-        // todo useless check?
-        $workspace = $this->currentContentRepository->findWorkspaces()->find(
-            fn (Workspace $potentialWorkspace) => $potentialWorkspace->currentContentStreamId->equals(ContentStreamId::fromString($contentStreamId))
-        );
-        Assert::assertSame($contentStreamId, $workspace?->currentContentStreamId->value);
         Assert::assertSame(
             DimensionSpacePoint::fromJsonString($dimensionSpacePoint),
             $matchedNodeAddress->dimensionSpacePoint,
@@ -212,20 +206,16 @@ trait RoutingTrait
     }
 
     /**
-     * @Then The URL :url should match the node :nodeAggregateId in content stream :contentStreamId and dimension :dimensionSpacePoint
+     * @Then The URL :url should match the node :nodeAggregateId in dimension :dimensionSpacePoint
      */
-    public function theUrlShouldMatchTheNodeInContentStreamAndDimension(string $url, $nodeAggregateId, $contentStreamId, $dimensionSpacePoint): void
+    public function theUrlShouldMatchTheNodeInDimension(string $url, $nodeAggregateId, $dimensionSpacePoint): void
     {
         $matchedNodeAddress = $this->match(new Uri($url));
 
         Assert::assertNotNull($matchedNodeAddress, 'Expected node to be found, but instead nothing was found.');
         Assert::assertEquals(NodeAggregateId::fromString($nodeAggregateId), $matchedNodeAddress->aggregateId, 'Expected nodeAggregateId doesn\'t match.');
 
-        // todo use workspace name instead here:
-        $workspace = $this->currentContentRepository->findWorkspaces()->find(
-            fn (Workspace $potentialWorkspace) => $potentialWorkspace->currentContentStreamId->equals(ContentStreamId::fromString($contentStreamId))
-        );
-        Assert::assertEquals($workspace->workspaceName, $matchedNodeAddress->workspaceName, 'Expected workspace doesn\'t match.');
+        Assert::assertTrue($matchedNodeAddress->workspaceName->isLive(), 'Workspace should be always live.');
         Assert::assertTrue($matchedNodeAddress->dimensionSpacePoint->equals(DimensionSpacePoint::fromJsonString($dimensionSpacePoint)), 'Expected dimensionSpacePoint doesn\'t match.');
     }
 
@@ -254,19 +244,19 @@ trait RoutingTrait
 
 
     /**
-     * @Then The node :nodeAggregateId in content stream :contentStreamId and dimension :dimensionSpacePoint should resolve to URL :url
+     * @Then The node :nodeAggregateId in dimension :dimensionSpacePoint should resolve to URL :url
      */
-    public function theNodeShouldResolveToUrl(string $nodeAggregateId, string $contentStreamId, string $dimensionSpacePoint, string $url): void
+    public function theNodeShouldResolveToUrl(string $nodeAggregateId, string $dimensionSpacePoint, string $url): void
     {
-        $resolvedUrl = $this->resolveUrl($nodeAggregateId, $contentStreamId, $dimensionSpacePoint);
+        $resolvedUrl = $this->resolveUrl($nodeAggregateId, $dimensionSpacePoint);
         Assert::assertSame($url, (string)$resolvedUrl);
     }
 
 
     /**
-     * @Then The node :nodeAggregateId in content stream :contentStreamId and dimension :dimensionSpacePoint should not resolve to an URL
+     * @Then The node :nodeAggregateId in dimension :dimensionSpacePoint should not resolve to an URL
      */
-    public function theNodeShouldNotResolve(string $nodeAggregateId, string $contentStreamId, string $dimensionSpacePoint): void
+    public function theNodeShouldNotResolve(string $nodeAggregateId, string $dimensionSpacePoint): void
     {
         if (
             ($this->getObject(ConfigurationManager::class)
@@ -278,7 +268,7 @@ trait RoutingTrait
         $resolvedUrl = null;
         $exception = false;
         try {
-            $resolvedUrl = $this->resolveUrl($nodeAggregateId, $contentStreamId, $dimensionSpacePoint);
+            $resolvedUrl = $this->resolveUrl($nodeAggregateId, $dimensionSpacePoint);
         } catch (NoMatchingRouteException $exception) {
             $exception = true;
         }
@@ -296,7 +286,7 @@ trait RoutingTrait
         $tablePrefix = DocumentUriPathProjectionFactory::projectionTableNamePrefix(
             $this->currentContentRepository->id
         );
-        $actualResult = $dbal->fetchAllAssociative('SELECT ' . $columns . ' FROM ' . $tablePrefix . '_uri ORDER BY nodeaggregateidpath');
+        $actualResult = $dbal->fetchAllAssociative('SELECT ' . $columns . ' FROM ' . $tablePrefix . '_uri ORDER BY nodeaggregateidpath, dimensionspacepointhash');
         $expectedResult = array_map(static function (array $row) {
             return array_map(static function (string $cell) {
                 return json_decode($cell, true, 512, JSON_THROW_ON_ERROR);
@@ -305,18 +295,15 @@ trait RoutingTrait
         Assert::assertEquals($expectedResult, $actualResult);
     }
 
-    private function resolveUrl(string $nodeAggregateId, string $contentStreamId, string $dimensionSpacePoint): UriInterface
+    private function resolveUrl(string $nodeAggregateId, string $dimensionSpacePoint): UriInterface
     {
         if ($this->requestUrl === null) {
             $this->iAmOnUrl('/');
         }
-        $workspace = $this->currentContentRepository->findWorkspaces()->find(
-            fn (Workspace $potentialWorkspace) => $potentialWorkspace->currentContentStreamId->equals(ContentStreamId::fromString($contentStreamId))
-        );
 
         $nodeAddress = NodeAddress::create(
             $this->currentContentRepository->id,
-            $workspace->workspaceName, // todo always live?
+            WorkspaceName::forLive(),
             DimensionSpacePoint::fromJsonString($dimensionSpacePoint),
             \str_starts_with($nodeAggregateId, '$')
                 ? $this->rememberedNodeAggregateIds[\mb_substr($nodeAggregateId, 1)]

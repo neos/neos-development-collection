@@ -67,7 +67,7 @@ Feature: Set node properties: Constraint checks
       | Key                       | Value                    |
       | nodeAggregateId           | "lady-eleonode-rootford" |
       | originDimensionSpacePoint | {"language":"de"}        |
-      | propertyValues            | {}                       |
+      | propertyValues            | {"text":"New text"}      |
     Then the last command should have thrown an exception of type "NodeAggregateIsRoot"
 
   Scenario: Try to set properties in an origin dimension space point that does not exist
