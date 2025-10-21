@@ -87,13 +87,11 @@ final readonly class ContentRepositoryAuthorizationService implements ContentRep
     public function getNodePermissions(Node $node, array $roles): NodePermissions
     {
         $subtreeTagPrivilegeSubject = new SubtreeTagPrivilegeSubject($node->tags->all(), $node->contentRepositoryId);
-        $readGranted = $this->privilegeManager->isGrantedForRoles($roles, ReadNodePrivilege::class, $subtreeTagPrivilegeSubject, $readReason);
         $writeGranted = $this->privilegeManager->isGrantedForRoles($roles, EditNodePrivilege::class, $subtreeTagPrivilegeSubject, $writeReason);
         return NodePermissions::create(
-            read: $readGranted,
             edit: $writeGranted,
             remove: $writeGranted, // TODO: separate privilege for removal
-            reason: $readReason . "\n" . $writeReason,
+            reason: $writeReason,
         );
     }
 

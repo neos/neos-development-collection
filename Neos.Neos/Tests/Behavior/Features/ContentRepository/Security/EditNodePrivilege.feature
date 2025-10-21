@@ -71,33 +71,38 @@ Feature: EditNodePrivilege related features
 
   Scenario Outline: Handling all relevant EditNodePrivilege related commands with different users
     Given I am authenticated as "editor"
+    Then the Neos user "editor" for node "<node aggregate id>" should have the permissions ""
     When the command <command> is executed with payload '<command payload>' and exceptions are caught
     Then the last command should have thrown an exception of type "AccessDenied" with code 1729086686
 
     When I am authenticated as "restricted_editor"
+    Then the Neos user "restricted_editor" for node "<node aggregate id>" should have the permissions ""
     When the command <command> is executed with payload '<command payload>' and exceptions are caught
     Then the last command should have thrown an exception of type "AccessDenied" with code 1729086686
 
     When I am authenticated as "admin"
+    Then the Neos user "admin" for node "<node aggregate id>" should have the permissions ""
     When the command <command> is executed with payload '<command payload>' and exceptions are caught
     Then the last command should have thrown an exception of type "AccessDenied" with code 1729086686
 
     When I am authenticated as "editor_with_privilege"
+    Then the Neos user "editor_with_privilege" for node "<node aggregate id>" should have the permissions "edit,remove"
     And the command <command> is executed with payload '<command payload>'
+    # command should not fail, no error here :)
 
     When I am in workspace "edward-editor"
     And the command <command> is executed with payload '<command payload>' and exceptions are caught
     Then the last command should have thrown an exception of type "AccessDenied" with code 1729086686
 
     Examples:
-      | command                     | command payload                                                                                        |
-      | CreateNodeAggregateWithNode | {"nodeAggregateId":"a1b1","parentNodeAggregateId":"a1b","nodeTypeName":"Neos.Neos:Document"}           |
-      | CreateNodeVariant           | {"nodeAggregateId":"a1","sourceOrigin":{"language":"de"},"targetOrigin":{"language":"en"}}             |
-      | DisableNodeAggregate        | {"nodeAggregateId":"a1","nodeVariantSelectionStrategy":"allVariants"}                                  |
-      | EnableNodeAggregate         | {"nodeAggregateId":"a1a1a","nodeVariantSelectionStrategy":"allVariants"}                               |
-      | RemoveNodeAggregate         | {"nodeAggregateId":"a1","nodeVariantSelectionStrategy":"allVariants"}                                  |
-      | TagSubtree                  | {"nodeAggregateId":"a1","tag":"some_tag","nodeVariantSelectionStrategy":"allVariants"}                 |
-      | UntagSubtree                | {"nodeAggregateId":"a","tag":"subtree_a","nodeVariantSelectionStrategy":"allVariants"}                 |
-      | MoveNodeAggregate           | {"nodeAggregateId":"a1","newParentNodeAggregateId":"b"}                                                |
-      | SetNodeProperties           | {"nodeAggregateId":"a1","propertyValues":{"foo":"bar"}}                                                |
-      | SetNodeReferences           | {"sourceNodeAggregateId":"a1","references":[{"referenceName": "ref", "references": [{"target":"b"}]}]} |
+      | command                     | command payload                                                                                        | node aggregate id |
+      | CreateNodeAggregateWithNode | {"nodeAggregateId":"a1b1","parentNodeAggregateId":"a1b","nodeTypeName":"Neos.Neos:Document"}           | a1b               |
+      | CreateNodeVariant           | {"nodeAggregateId":"a1","sourceOrigin":{"language":"de"},"targetOrigin":{"language":"en"}}             | a1                |
+      | DisableNodeAggregate        | {"nodeAggregateId":"a1","nodeVariantSelectionStrategy":"allVariants"}                                  | a1                |
+      | EnableNodeAggregate         | {"nodeAggregateId":"a1a1a","nodeVariantSelectionStrategy":"allVariants"}                               | a1a1a             |
+      | RemoveNodeAggregate         | {"nodeAggregateId":"a1","nodeVariantSelectionStrategy":"allVariants"}                                  | a1                |
+      | TagSubtree                  | {"nodeAggregateId":"a1","tag":"some_tag","nodeVariantSelectionStrategy":"allVariants"}                 | a1                |
+      | UntagSubtree                | {"nodeAggregateId":"a","tag":"subtree_a","nodeVariantSelectionStrategy":"allVariants"}                 | a                 |
+      | MoveNodeAggregate           | {"nodeAggregateId":"a1","newParentNodeAggregateId":"b"}                                                | a1                |
+      | SetNodeProperties           | {"nodeAggregateId":"a1","propertyValues":{"foo":"bar"}}                                                | a1                |
+      | SetNodeReferences           | {"sourceNodeAggregateId":"a1","references":[{"referenceName": "ref", "references": [{"target":"b"}]}]} | a1                |

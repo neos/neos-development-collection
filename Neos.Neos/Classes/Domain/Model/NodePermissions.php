@@ -24,7 +24,6 @@ final readonly class NodePermissions
      * @param bool $edit Permission to edit the corresponding node
      */
     private function __construct(
-        public bool $read,
         public bool $edit,
         public bool $remove,
         private string $reason,
@@ -32,27 +31,25 @@ final readonly class NodePermissions
     }
 
     /**
-     * @param bool $read Permission to read data from the corresponding node
      * @param bool $edit Permission to edit the corresponding node
      * @param string $reason Human-readable explanation for why this permission was evaluated {@see getReason()}
      */
     public static function create(
-        bool $read,
         bool $edit,
         bool $remove,
         string $reason,
     ): self {
-        return new self($read, $edit, $remove, $reason);
+        return new self($edit, $remove, $reason);
     }
 
     public static function all(string $reason): self
     {
-        return new self(true, true, true, $reason);
+        return new self(true, true, $reason);
     }
 
     public static function none(string $reason): self
     {
-        return new self(false, false, false, $reason);
+        return new self(false, false, $reason);
     }
 
     /**

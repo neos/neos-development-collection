@@ -20,6 +20,7 @@ use Neos\ContentRepository\TestSuite\Fakes\FakeAuthProvider;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Security\Authentication\Provider\TestingProvider;
 use Neos\Neos\Domain\Service\UserService;
+use Neos\Neos\Security\Authorization\ContentRepositoryAuthorizationService;
 use Neos\Neos\Security\ContentRepositoryAuthProvider\ContentRepositoryAuthProviderFactory;
 use PHPUnit\Framework\Assert;
 
@@ -116,5 +117,27 @@ trait ContentRepositorySecurityTrait
         if ($node === null) {
             Assert::fail(sprintf('Expected node "%s" to be accessible but it could not be loaded', $nodeAggregateId));
         }
+    }
+
+    /**
+     * @Then the Neos user :username for node :nodeAggregateId should have the permissions :expectedPermissions
+     */
+    public function theNeosUserForNodeShouldHaveThePermissionsForWorkspace(string $username, string $nodeAggregateId, string $expectedPermissions): void
+    {
+        $userService = $this->getObject(UserService::class);
+        $user = $userService->getUser($username);
+        Assert::assertNotNull($user);
+        $roles = $userService->getAllRoles($user);
+
+        $node = $this->currentContentRepository->getContentSubgraph($this->currentWorkspaceName, $this->currentDimensionSpacePoint)->findNodeById(NodeAggregateId::fromString($nodeAggregateId));
+
+        if ($node === null) {
+            Assert::fail(sprintf('Expected node "%s" to be accessible but it could not be loaded', $nodeAggregateId));
+        }
+        $permissions = $this->getObject(ContentRepositoryAuthorizationService::class)->getNodePermissions(
+            $node,
+            $roles,
+        );
+        Assert::assertSame($expectedPermissions, implode(',', array_keys(array_filter(get_object_vars($permissions)))));
     }
 }
