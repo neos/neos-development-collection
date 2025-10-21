@@ -17,6 +17,8 @@ namespace Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap;
 use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\Feature\Security\Dto\UserId;
+use Neos\ContentRepository\Core\Feature\SubtreeTagging\Dto\SubtreeTag;
+use Neos\ContentRepository\Core\Feature\SubtreeTagging\Dto\SubtreeTags;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentSubgraphInterface;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate;
@@ -110,15 +112,51 @@ trait CRTestSuiteRuntimeVariables
     }
 
     /**
-     * @When /^VisibilityConstraints are set to "(withoutRestrictions|default)"$/
+     * @When /^VisibilityConstraints are set to "(withoutRestrictions|default|empty|exclude|include|exclude and include)"(?: "([^"]*)")?(?: "([^"]*)")?$/
      */
-    public function visibilityConstraintsAreSetTo(string $restrictionType): void
+    public function visibilityConstraintsAreSetTo(string $type, ?string $excludeTags = null, ?string $includeTags = null): void
     {
-        $this->currentVisibilityConstraints = match ($restrictionType) {
-            'withoutRestrictions' => VisibilityConstraints::withoutRestrictions(),
-            'default' => VisibilityConstraints::default(),
-            default => throw new \InvalidArgumentException('Visibility constraint "' . $restrictionType . '" not supported.'),
-        };
+        switch ($type) {
+            case 'withoutRestrictions':
+                $this->currentVisibilityConstraints = VisibilityConstraints::withoutRestrictions();
+                return;
+            case 'default':
+                $this->currentVisibilityConstraints = VisibilityConstraints::default();
+                return;
+            case 'empty':
+                $this->currentVisibilityConstraints = VisibilityConstraints::createEmpty();
+                return;
+
+            case 'exclude':
+                $excluded = $excludeTags ? $this->parseTags($excludeTags) : SubtreeTags::createEmpty();
+                $this->currentVisibilityConstraints = VisibilityConstraints::excludeSubtreeTags($excluded);
+                return;
+
+            case 'include':
+                $included = $excludeTags ? $this->parseTags($excludeTags) : SubtreeTags::createEmpty(); // zweites Arg wird hier als Include-Liste genutzt
+                $this->currentVisibilityConstraints = VisibilityConstraints::includeSubtreeTags($included);
+                return;
+
+            case 'exclude and include':
+                $excluded = $excludeTags ? $this->parseTags($excludeTags) : SubtreeTags::createEmpty();
+                $included = $includeTags ? $this->parseTags($includeTags) : SubtreeTags::createEmpty();
+                $this->currentVisibilityConstraints = VisibilityConstraints::excludeAndIncludeSubtreeTags($excluded, $included);
+                return;
+        }
+
+        throw new \InvalidArgumentException("Visibility constraint '$type' not supported.");
+    }
+
+    private function parseTags(string $pipeSeparated): SubtreeTags
+    {
+        $tags = array_filter(array_map(
+            static fn(string $s) => trim($s),
+            explode('|', $pipeSeparated)
+        ), static fn(string $s) => $s !== '');
+
+        return empty($tags)
+            ? SubtreeTags::createEmpty()
+            : SubtreeTags::create(...array_map(static fn(string $t) => SubtreeTag::fromString($t), $tags));
     }
 
     public function getCurrentSubgraph(): ContentSubgraphInterface
