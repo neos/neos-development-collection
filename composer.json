@@ -42,7 +42,7 @@
         "neos/imagine": "^3.1.0",
         "imagine/imagine": "*",
         "neos/party": "~7.0.3",
-        "neos/fusion-form": "^1.0 || ^2.0",
+        "neos/fusion-form": "^2.0 || ^3.0",
         "neos/form": "*",
         "neos/kickstarter": "~9.1.0"
     },

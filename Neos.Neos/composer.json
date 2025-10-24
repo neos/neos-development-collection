@@ -21,7 +21,7 @@
         "neos/contentrepository-export": "self.version",
         "neos/fusion": "self.version",
         "neos/fusion-afx": "self.version",
-        "neos/fusion-form": "^1.0 || ^2.0",
+        "neos/fusion-form": "^2.0 || ^3.0",
         "neos/fluid-adaptor": "~9.1.0",
         "neos/media": "self.version",
         "neos/workspace-ui": "self.version",

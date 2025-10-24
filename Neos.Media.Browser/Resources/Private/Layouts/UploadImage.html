@@ -10,8 +10,9 @@
 </head>
 <body class="{settings.bodyClasses} media-browser-inspector">
 <div class="neos-row-fluid">
-	<f:render partial="FlashMessages" />
-
+	<div id="neos-notification-container">
+		<f:render partial="FlashMessages"/>
+	</div>
 	<f:render section="Content" />
 </div>
 <f:for each="{settings.scripts}" as="script">

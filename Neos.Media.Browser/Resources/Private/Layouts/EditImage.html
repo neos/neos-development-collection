@@ -9,9 +9,10 @@
 	</f:for>
 </head>
 <body class="{settings.bodyClasses} media-browser-inspector">
-    <f:render partial="FlashMessages"/>
-
-    <f:render section="Content"/>
+	<div id="neos-notification-container">
+		<f:render partial="FlashMessages"/>
+	</div>
+	<f:render section="Content"/>
 	<script src="{f:uri.resource(path: 'resource://Neos.Media.Browser/Public/JavaScript/pdf.js')}"></script>
 	<f:for each="{settings.scripts}" as="script">
 		<script src="{f:uri.resource(path: script)}"></script>
