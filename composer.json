@@ -194,6 +194,9 @@
             "Neos\\Neos\\": [
                 "Neos.Neos/Classes"
             ],
+            "Neos\\Neos\\TestSuite\\": [
+                "Neos.Neos.TestSuite/Classes"
+            ],
             "Neos\\NodeTypes\\AssetList\\": [
                 "Neos.NodeTypes.AssetList/Classes"
             ],
