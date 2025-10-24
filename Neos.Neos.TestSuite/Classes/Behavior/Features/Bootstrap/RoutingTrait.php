@@ -14,7 +14,6 @@ declare(strict_types=1);
 
 namespace Neos\Neos\TestSuite\Behavior\Features\Bootstrap;
 
-use;
 use Behat\Gherkin\Node\PyStringNode;
 use Behat\Gherkin\Node\TableNode;
 use Doctrine\DBAL\Connection;
