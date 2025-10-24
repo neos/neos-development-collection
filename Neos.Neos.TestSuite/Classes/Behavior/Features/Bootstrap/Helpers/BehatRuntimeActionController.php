@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+namespace Neos\Neos\TestSuite\Behavior\Features\Bootstrap\Helpers;
+
 use Neos\Flow\Mvc\Controller\ActionController;
 
 /**

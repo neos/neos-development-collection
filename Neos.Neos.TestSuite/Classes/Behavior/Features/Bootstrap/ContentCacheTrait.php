@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 /*
@@ -10,6 +11,8 @@ declare(strict_types=1);
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+
+namespace Neos\Neos\TestSuite\Classes\Behavior\Features\Bootstrap;
 
 use Neos\Neos\Fusion\Cache\ContentCacheFlusher;
 

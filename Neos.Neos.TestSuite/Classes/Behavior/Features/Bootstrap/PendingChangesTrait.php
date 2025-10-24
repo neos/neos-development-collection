@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 /*
@@ -11,6 +12,8 @@ declare(strict_types=1);
  * source code.
  */
 
+
+namespace Neos\Neos\TestSuite\Classes\Behavior\Features\Bootstrap;
 
 use Behat\Gherkin\Node\TableNode;
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
@@ -53,16 +56,20 @@ trait PendingChangesTrait
     /**
      * @Then I expect to have the following changes in workspace :workspace:
      */
-    public function iExpectTheChangeProjectionToHaveTheFollowingChangesInContentStream(TableNode $table, string $workspace)
-    {
+    public function iExpectTheChangeProjectionToHaveTheFollowingChangesInContentStream(
+        TableNode $table,
+        string $workspace
+    ) {
         // forwards compatible adjustment, we make the test assertions on workspace names even tough we store the data in content streams
-        $workspaceInstance = $this->currentContentRepository->findWorkspaceByName(WorkspaceName::fromString($workspace));
+        $workspaceInstance = $this->currentContentRepository->findWorkspaceByName(
+            WorkspaceName::fromString($workspace)
+        );
         Assert::assertNotNull($workspaceInstance, 'workspace doesnt exist');
 
         $changeFinder = $this->currentContentRepository->projectionState(ChangeFinder::class);
         $changes = iterator_to_array($changeFinder->findByContentStreamId($workspaceInstance->currentContentStreamId));
 
-        $actualChangesTable = array_map(static fn (Change $change) => [
+        $actualChangesTable = array_map(static fn(Change $change) => [
             'nodeAggregateId' => $change->nodeAggregateId->value,
             'created' => (string)(int)$change->created,
             'changed' => (string)(int)$change->changed,
@@ -72,9 +79,12 @@ trait PendingChangesTrait
         ], iterator_to_array($changes));
 
         $expectedChangesWithNormalisedJson = array_map(
-            fn (array $row) => [
+            fn(array $row) => [
                 ...$row,
-                'originDimensionSpacePoint' => ($originDimensionSpacePoint = json_decode($row['originDimensionSpacePoint'], true)) !== null
+                'originDimensionSpacePoint' => ($originDimensionSpacePoint = json_decode(
+                    $row['originDimensionSpacePoint'],
+                    true
+                )) !== null
                     ? OriginDimensionSpacePoint::fromArray($originDimensionSpacePoint)->toJson()
                     : null,
             ],
@@ -83,7 +93,10 @@ trait PendingChangesTrait
 
         // assertEqualsCanonicalizing removes keys by using sort recursively that's why we sort manually
         // sort by unique index to make rows easier comparable when diffing
-        $sortRows = fn ($rowA, $rowB) => strcmp($rowA['nodeAggregateId'], $rowB['nodeAggregateId']) ?: strcmp($rowA['originDimensionSpacePoint'] ?? '', $rowB['originDimensionSpacePoint'] ?? '');
+        $sortRows = fn($rowA, $rowB) => strcmp($rowA['nodeAggregateId'], $rowB['nodeAggregateId']) ?: strcmp(
+            $rowA['originDimensionSpacePoint'] ?? '',
+            $rowB['originDimensionSpacePoint'] ?? ''
+        );
         usort($actualChangesTable, $sortRows);
         usort($expectedChangesWithNormalisedJson, $sortRows);
 
@@ -96,7 +109,9 @@ trait PendingChangesTrait
     public function iExpectToHaveNoChangesInWorkspace(string $workspace)
     {
         // forwards compatible adjustment, we make the test assertions on workspace names even tough we store the data in content streams
-        $workspaceInstance = $this->currentContentRepository->findWorkspaceByName(WorkspaceName::fromString($workspace));
+        $workspaceInstance = $this->currentContentRepository->findWorkspaceByName(
+            WorkspaceName::fromString($workspace)
+        );
         Assert::assertNotNull($workspaceInstance, 'workspace doesnt exist');
 
         $changeFinder = $this->currentContentRepository->projectionState(ChangeFinder::class);
@@ -112,7 +127,9 @@ trait PendingChangesTrait
     public function iExpectTheChangeProjectionToHaveNoChangesInContentStream(string $contentStreamId)
     {
         $changeFinder = $this->currentContentRepository->projectionState(ChangeFinder::class);
-        $changes = iterator_to_array($changeFinder->findByContentStreamId(ContentStreamId::fromString($contentStreamId)));
+        $changes = iterator_to_array(
+            $changeFinder->findByContentStreamId(ContentStreamId::fromString($contentStreamId))
+        );
 
         Assert::assertEmpty($changes, 'No changes expected, got: ' . json_encode($changes, JSON_PRETTY_PRINT));
     }
@@ -120,11 +137,17 @@ trait PendingChangesTrait
     /**
      * @Then I expect for the site :siteNodeAggregateId to have :count publishable changes in workspace :workspace
      */
-    public function iExpectTheSiteToHaveXPublishableChanges(string $siteNodeAggregateId, int $count, string $workspace): void
-    {
+    public function iExpectTheSiteToHaveXPublishableChanges(
+        string $siteNodeAggregateId,
+        int $count,
+        string $workspace
+    ): void {
         // the actual information for this resides in the Ui Neos\Neos\Ui\ContentRepository\Service\WorkspaceService in combination with client js calculation logic
         // in the future the WorkspacePublishingService must be able to calculate the pending changes based on the publishing scope with hierarchy
-        $actualCount = $this->getObject(WorkspacePublishingService::class)->countPendingWorkspaceChanges($this->currentContentRepository->id, WorkspaceName::fromString($workspace));
+        $actualCount = $this->getObject(WorkspacePublishingService::class)->countPendingWorkspaceChanges(
+            $this->currentContentRepository->id,
+            WorkspaceName::fromString($workspace)
+        );
         Assert::assertEquals($count, $actualCount);
     }
 
@@ -132,25 +155,44 @@ trait PendingChangesTrait
      * @Then I publish the :expectedCount changes in document :documentNodeAggregateId from workspace :workspace to :expectedTarget
      * @Then I publish the :expectedCount changes in site :siteNodeAggregateId from workspace :workspace to :expectedTarget
      */
-    public function iPublishTheDocumentFromWorkspace(string $workspace, int $expectedCount, string $expectedTarget, ?string $documentNodeAggregateId = null, ?string $siteNodeAggregateId = null): void
-    {
+    public function iPublishTheDocumentFromWorkspace(
+        string $workspace,
+        int $expectedCount,
+        string $expectedTarget,
+        ?string $documentNodeAggregateId = null,
+        ?string $siteNodeAggregateId = null
+    ): void {
         $sourceWorkspace = $this->currentContentRepository->findWorkspaceByName(WorkspaceName::fromString($workspace));
         Assert::assertEquals($expectedTarget, $sourceWorkspace->baseWorkspaceName->value);
 
-        $nextSequenceNumber = iterator_to_array($this->getEventStore()->load(VirtualStreamName::all())->backwards()->limit(1))[0]->sequenceNumber->next();
+        $nextSequenceNumber = iterator_to_array(
+            $this->getEventStore()->load(VirtualStreamName::all())->backwards()->limit(1)
+        )[0]->sequenceNumber->next();
 
         $workspacePublishingService = $this->getObject(WorkspacePublishingService::class);
 
-        $actualResult = match(true) {
-            $siteNodeAggregateId !== null => $workspacePublishingService->publishChangesInSite($this->currentContentRepository->id, WorkspaceName::fromString($workspace), NodeAggregateId::fromString($siteNodeAggregateId)),
-            $documentNodeAggregateId !== null => $workspacePublishingService->publishChangesInDocument($this->currentContentRepository->id, WorkspaceName::fromString($workspace), NodeAggregateId::fromString($documentNodeAggregateId))
+        $actualResult = match (true) {
+            $siteNodeAggregateId !== null => $workspacePublishingService->publishChangesInSite(
+                $this->currentContentRepository->id,
+                WorkspaceName::fromString($workspace),
+                NodeAggregateId::fromString($siteNodeAggregateId)
+            ),
+            $documentNodeAggregateId !== null => $workspacePublishingService->publishChangesInDocument(
+                $this->currentContentRepository->id,
+                WorkspaceName::fromString($workspace),
+                NodeAggregateId::fromString($documentNodeAggregateId)
+            )
         };
 
         Assert::assertEquals($sourceWorkspace->baseWorkspaceName, $actualResult->targetWorkspaceName);
         Assert::assertEquals($expectedCount, $actualResult->numberOfPublishedChanges);
 
         /** @var \Neos\ContentRepository\Core\EventStore\EventNormalizer $eventNormaliser */
-        $eventNormaliser = \Neos\Utility\ObjectAccess::getProperty($this->currentContentRepository, 'eventNormalizer', true);
+        $eventNormaliser = \Neos\Utility\ObjectAccess::getProperty(
+            $this->currentContentRepository,
+            'eventNormalizer',
+            true
+        );
 
         $targetWorkspace = $this->currentContentRepository->findWorkspaceByName($sourceWorkspace->baseWorkspaceName);
 
@@ -159,26 +201,44 @@ trait PendingChangesTrait
         // refetch workspace with new cs id
         $sourceWorkspace = $this->currentContentRepository->findWorkspaceByName(WorkspaceName::fromString($workspace));
         $remainingEvents = [];
-        foreach ($this->getEventStore()->load(ContentStreamEventStreamName::fromContentStreamId($sourceWorkspace->currentContentStreamId)->getEventStreamName())->withMinimumSequenceNumber($nextSequenceNumber) as $eventEnvelope) {
+        foreach (
+            $this->getEventStore()->load(
+                ContentStreamEventStreamName::fromContentStreamId(
+                    $sourceWorkspace->currentContentStreamId
+                )->getEventStreamName()
+            )->withMinimumSequenceNumber($nextSequenceNumber) as $eventEnvelope
+        ) {
             assert($eventEnvelope->event->correlationId !== null);
             $publishCorrelationId ??= $eventEnvelope->event->correlationId;
             if ($eventEnvelope->event->correlationId->value !== $publishCorrelationId->value) {
                 break;
             }
-            if (in_array(EmbedsNodeAggregateId::class, class_implements($eventNormaliser->getEventClassName($eventEnvelope->event)))) {
+            if (in_array(
+                EmbedsNodeAggregateId::class,
+                class_implements($eventNormaliser->getEventClassName($eventEnvelope->event))
+            )) {
                 $remainingEvents[] = $eventEnvelope->event;
             }
         }
         $this->pendingChanges_remainingEvents = $remainingEvents;
 
         $publishedEvents = [];
-        foreach ($this->getEventStore()->load(ContentStreamEventStreamName::fromContentStreamId($targetWorkspace->currentContentStreamId)->getEventStreamName())->withMinimumSequenceNumber($nextSequenceNumber) as $eventEnvelope) {
+        foreach (
+            $this->getEventStore()->load(
+                ContentStreamEventStreamName::fromContentStreamId(
+                    $targetWorkspace->currentContentStreamId
+                )->getEventStreamName()
+            )->withMinimumSequenceNumber($nextSequenceNumber) as $eventEnvelope
+        ) {
             assert($eventEnvelope->event->correlationId !== null);
             $publishCorrelationId ??= $eventEnvelope->event->correlationId;
             if ($eventEnvelope->event->correlationId->value !== $publishCorrelationId->value) {
                 break;
             }
-            if (in_array(EmbedsNodeAggregateId::class, class_implements($eventNormaliser->getEventClassName($eventEnvelope->event)))) {
+            if (in_array(
+                EmbedsNodeAggregateId::class,
+                class_implements($eventNormaliser->getEventClassName($eventEnvelope->event))
+            )) {
                 $publishedEvents[] = $eventEnvelope->event;
             }
         }
@@ -189,14 +249,24 @@ trait PendingChangesTrait
      * @Then I expect the publishing of document :documentNodeAggregateId from workspace :workspace to fail
      * @Then I expect the publishing of site :siteNodeAggregateId from workspace :workspace to fail
      */
-    public function iExpectThePublicationOfTheDocumentFromWorkspaceToFail(string $workspace, ?string $documentNodeAggregateId = null, ?string $siteNodeAggregateId = null): void
-    {
+    public function iExpectThePublicationOfTheDocumentFromWorkspaceToFail(
+        string $workspace,
+        ?string $documentNodeAggregateId = null,
+        ?string $siteNodeAggregateId = null
+    ): void {
         $workspacePublishingService = $this->getObject(WorkspacePublishingService::class);
-        $this->tryCatchingExceptions(fn () =>
-            match(true) {
-                $siteNodeAggregateId !== null => $workspacePublishingService->publishChangesInSite($this->currentContentRepository->id, WorkspaceName::fromString($workspace), NodeAggregateId::fromString($siteNodeAggregateId)),
-                $documentNodeAggregateId !== null => $workspacePublishingService->publishChangesInDocument($this->currentContentRepository->id, WorkspaceName::fromString($workspace), NodeAggregateId::fromString($documentNodeAggregateId))
-            }
+        $this->tryCatchingExceptions(fn() => match (true) {
+            $siteNodeAggregateId !== null => $workspacePublishingService->publishChangesInSite(
+                $this->currentContentRepository->id,
+                WorkspaceName::fromString($workspace),
+                NodeAggregateId::fromString($siteNodeAggregateId)
+            ),
+            $documentNodeAggregateId !== null => $workspacePublishingService->publishChangesInDocument(
+                $this->currentContentRepository->id,
+                WorkspaceName::fromString($workspace),
+                NodeAggregateId::fromString($documentNodeAggregateId)
+            )
+        }
         );
         Assert::assertNotNull($this->lastCaughtException, 'Expected an exception but none was thrown');
     }
@@ -223,7 +293,7 @@ trait PendingChangesTrait
      */
     private function assertEventsTableMatchesExpected(array $expectedEventsTable, array $actualEvents)
     {
-        $expectedEventsTableNormalised = array_map(fn (array $row) => [
+        $expectedEventsTableNormalised = array_map(fn(array $row) => [
             ...$row,
             'event payload' => json_decode($row['event payload'], true)
         ], $expectedEventsTable);

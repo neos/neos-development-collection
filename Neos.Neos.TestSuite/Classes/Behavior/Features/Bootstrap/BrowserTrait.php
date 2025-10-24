@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 /*
@@ -11,8 +12,11 @@ declare(strict_types=1);
  * source code.
  */
 
+namespace Neos\Neos\TestSuite\Classes\Behavior\Features\Bootstrap;
+
 use Behat\Gherkin\Node\TableNode;
 use GuzzleHttp\Psr7\Uri;
+use JsonException;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodePath;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\CRTestSuiteRuntimeVariables;
@@ -113,7 +117,10 @@ trait BrowserTrait
      */
     public function iGetTheNodeAddressForNodeAggregate(string $rawNodeAggregateId, $alias = 'DEFAULT')
     {
-        $subgraph = $this->currentContentRepository->getContentGraph($this->currentWorkspaceName)->getSubgraph($this->currentDimensionSpacePoint, $this->currentVisibilityConstraints);
+        $subgraph = $this->currentContentRepository->getContentGraph($this->currentWorkspaceName)->getSubgraph(
+            $this->currentDimensionSpacePoint,
+            $this->currentVisibilityConstraints
+        );
         $nodeAggregateId = NodeAggregateId::fromString($rawNodeAggregateId);
         $node = $subgraph->findNodeById($nodeAggregateId);
         Assert::assertNotNull($node, 'Did not find a node with aggregate id "' . $nodeAggregateId->value . '"');
@@ -134,9 +141,14 @@ trait BrowserTrait
      */
     public function iGetTheNodeAddressForTheNodeAtPath(string $serializedNodePath, $alias = 'DEFAULT')
     {
-        $subgraph = $this->currentContentRepository->getContentGraph($this->currentWorkspaceName)->getSubgraph($this->currentDimensionSpacePoint, $this->currentVisibilityConstraints);
+        $subgraph = $this->currentContentRepository->getContentGraph($this->currentWorkspaceName)->getSubgraph(
+            $this->currentDimensionSpacePoint,
+            $this->currentVisibilityConstraints
+        );
         if (!$this->getRootNodeAggregateId()) {
-            throw new \Exception('ERROR: rootNodeAggregateId needed for running this step. You need to use "the event RootNodeAggregateWithNodeWasCreated was published with payload" to create a root node..');
+            throw new \Exception(
+                'ERROR: rootNodeAggregateId needed for running this step. You need to use "the event RootNodeAggregateWithNodeWasCreated was published with payload" to create a root node..'
+            );
         }
         $node = $subgraph->findNodeByPath(NodePath::fromString($serializedNodePath), $this->getRootNodeAggregateId());
         Assert::assertNotNull($node, 'Did not find a node at path "' . $serializedNodePath . '"');
@@ -184,7 +196,11 @@ trait BrowserTrait
     public function theUrlIs($expectedUrlPath)
     {
         $actual = $this->currentRequest->getUri()->getPath();
-        Assert::assertEquals($expectedUrlPath, $actual, 'URL Paths do not match. Expected: ' . $expectedUrlPath . '; Actual: ' . $actual);
+        Assert::assertEquals(
+            $expectedUrlPath,
+            $actual,
+            'URL Paths do not match. Expected: ' . $expectedUrlPath . '; Actual: ' . $actual
+        );
     }
 
     /**
@@ -233,7 +249,10 @@ trait BrowserTrait
         $changes = [];
         foreach ($changeDefinition->getHash() as $singleChange) {
             $payload = json_decode($this->replacePlaceholders($singleChange['Payload']), true);
-            Assert::assertNotNull($payload, "The following string was no valid JSON: " . $this->replacePlaceholders($singleChange['Payload']));
+            Assert::assertNotNull(
+                $payload,
+                "The following string was no valid JSON: " . $this->replacePlaceholders($singleChange['Payload'])
+            );
             $changes[] = [
 
                 'type' => $singleChange['Type'],
@@ -245,10 +264,20 @@ trait BrowserTrait
         $server = [
             'HTTP_X_FLOW_CSRFTOKEN' => $this->getObject(\Neos\Flow\Security\Context::class)->getCsrfProtectionToken(),
         ];
-        $this->currentResponse = $this->browser->request('http://localhost/neos/ui-services/change', 'POST', ['changes' => $changes], [], $server);
+        $this->currentResponse = $this->browser->request(
+            'http://localhost/neos/ui-services/change',
+            'POST',
+            ['changes' => $changes],
+            [],
+            $server
+        );
         $this->currentResponseContents = $this->currentResponse->getBody()->getContents();
         $this->currentRequest = $this->browser->getLastRequest();
-        Assert::assertEquals(200, $this->currentResponse->getStatusCode(), 'Status code wrong. Full response was: ' . $this->currentResponseContents);
+        Assert::assertEquals(
+            200,
+            $this->currentResponse->getStatusCode(),
+            'Status code wrong. Full response was: ' . $this->currentResponseContents
+        );
     }
 
     /**
@@ -271,10 +300,20 @@ trait BrowserTrait
             'targetWorkspaceName' => $targetWorkspaceName
         ];
 
-        $this->currentResponse = $this->browser->request('http://localhost/neos/ui-services/publish', 'POST', $payload, [], $server);
+        $this->currentResponse = $this->browser->request(
+            'http://localhost/neos/ui-services/publish',
+            'POST',
+            $payload,
+            [],
+            $server
+        );
         $this->currentResponseContents = $this->currentResponse->getBody()->getContents();
         $this->currentRequest = $this->browser->getLastRequest();
-        Assert::assertEquals(200, $this->currentResponse->getStatusCode(), 'Status code wrong. Full response was: ' . $this->currentResponseContents);
+        Assert::assertEquals(
+            200,
+            $this->currentResponse->getStatusCode(),
+            'Status code wrong. Full response was: ' . $this->currentResponseContents
+        );
     }
 
     /**
@@ -290,6 +329,9 @@ trait BrowserTrait
                 return;
             }
         }
-        Assert::assertTrue(false, 'Did not find feedback ' . $feedbackType . ' in response: ' . $this->currentResponseContents);
+        Assert::assertTrue(
+            false,
+            'Did not find feedback ' . $feedbackType . ' in response: ' . $this->currentResponseContents
+        );
     }
 }

@@ -12,10 +12,13 @@ declare(strict_types=1);
  * source code.
  */
 
+namespace Neos\Neos\TestSuite\Classes\Behavior\Features\Bootstrap;
+
 use Behat\Gherkin\Node\PyStringNode;
 use GuzzleHttp\Psr7\Message;
 use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\CRTestSuiteRuntimeVariables;
 use Neos\Fusion\Core\Cache\ContentCache;
+use Neos\Neos\TestSuite\Behavior\Features\Bootstrap\Helpers\BehatRuntimeActionController;
 use org\bovigo\vfs\vfsStream;
 use PHPUnit\Framework\Assert;
 use Psr\Http\Message\ResponseInterface;
@@ -66,7 +69,10 @@ trait FrontendNodeControllerTrait
     public function iHaveTheFollowingFusionCodeForTheSite(PyStringNode $fusionCode, string $package)
     {
         $testingFusionHandler = $this->getObject(\Neos\Neos\Testing\TestingFusionAutoIncludeHandler::class);
-        $testingFusionHandler->setFusionForPackage($package, \Neos\Fusion\Core\FusionSourceCodeCollection::fromString($fusionCode->getRaw()));
+        $testingFusionHandler->setFusionForPackage(
+            $package,
+            \Neos\Fusion\Core\FusionSourceCodeCollection::fromString($fusionCode->getRaw())
+        );
     }
 
     /**
@@ -84,7 +90,13 @@ trait FrontendNodeControllerTrait
         $controllerClassName = '\\' . ltrim($fullyQualifiedClassName, '\\');
 
         if (!in_array(BehatRuntimeActionController::class, class_parents($controllerClassName), true)) {
-            throw new \RuntimeException(sprintf('The controller %s must implement %s for testing', $controllerClassName, BehatRuntimeActionController::class), 1740068618);
+            throw new \RuntimeException(
+                sprintf(
+                    'The controller %s must implement %s for testing',
+                    $controllerClassName,
+                    BehatRuntimeActionController::class
+                ), 1740068618
+            );
         }
         $controllerClassName::registerInstance();
     }
@@ -100,7 +112,9 @@ trait FrontendNodeControllerTrait
 
         $httpRequest = $this->getObject(ServerRequestFactoryInterface::class)->createServerRequest('GET', $requestUri);
 
-        $this->frontendNodeControllerResponse = $this->getObject(\Neos\Flow\Http\Middleware\MiddlewaresChain::class)->handle(
+        $this->frontendNodeControllerResponse = $this->getObject(
+            \Neos\Flow\Http\Middleware\MiddlewaresChain::class
+        )->handle(
             $httpRequest
         );
     }
@@ -111,6 +125,13 @@ trait FrontendNodeControllerTrait
     public function iExpectTheFollowingResponse(PyStringNode $expectedResult): void
     {
         Assert::assertNotNull($this->frontendNodeControllerResponse);
-        Assert::assertEquals($expectedResult->getRaw(), str_replace("\r\n", "\n", Message::toString($this->frontendNodeControllerResponse->withoutHeader('Content-Length'))));
+        Assert::assertEquals(
+            $expectedResult->getRaw(),
+            str_replace(
+                "\r\n",
+                "\n",
+                Message::toString($this->frontendNodeControllerResponse->withoutHeader('Content-Length'))
+            )
+        );
     }
 }

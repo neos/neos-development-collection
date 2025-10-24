@@ -21,11 +21,24 @@ use Neos\ContentRepository\Core\Feature\NodeModification\Dto\PropertyValuesToWri
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
 use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\CRTestSuiteTrait;
 use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\MigrationsTrait;
-use Neos\ContentRepository\TestSuite\Fakes\FakeNodeTypeManagerFactory;
 use Neos\ContentRepository\TestSuite\Fakes\FakeContentDimensionSourceFactory;
+use Neos\ContentRepository\TestSuite\Fakes\FakeNodeTypeManagerFactory;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Flow\Utility\Environment;
+use Neos\Neos\TestSuite\Classes\Behavior\Features\Bootstrap\AssetTrait;
+use Neos\Neos\TestSuite\Classes\Behavior\Features\Bootstrap\AssetUsageTrait;
+use Neos\Neos\TestSuite\Classes\Behavior\Features\Bootstrap\BrowserTrait;
+use Neos\Neos\TestSuite\Classes\Behavior\Features\Bootstrap\ContentCacheTrait;
+use Neos\Neos\TestSuite\Classes\Behavior\Features\Bootstrap\ContentRepositorySecurityTrait;
+use Neos\Neos\TestSuite\Classes\Behavior\Features\Bootstrap\FrontendNodeControllerTrait;
+use Neos\Neos\TestSuite\Classes\Behavior\Features\Bootstrap\FusionTrait;
+use Neos\Neos\TestSuite\Classes\Behavior\Features\Bootstrap\NodeDuplicationTrait;
+use Neos\Neos\TestSuite\Classes\Behavior\Features\Bootstrap\PendingChangesTrait;
+use Neos\Neos\TestSuite\Classes\Behavior\Features\Bootstrap\RoutingTrait;
+use Neos\Neos\TestSuite\Classes\Behavior\Features\Bootstrap\SoftRemovalGarbageCollectionTrait;
+use Neos\Neos\TestSuite\Classes\Behavior\Features\Bootstrap\UserServiceTrait;
+use Neos\Neos\TestSuite\Classes\Behavior\Features\Bootstrap\WorkspaceServiceTrait;
 
 class FeatureContext implements BehatContext
 {
