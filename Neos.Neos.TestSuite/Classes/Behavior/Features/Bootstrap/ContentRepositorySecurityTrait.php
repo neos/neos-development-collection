@@ -12,9 +12,8 @@ declare(strict_types=1);
  * source code.
  */
 
-namespace Neos\Neos\TestSuite\Classes\Behavior\Features\Bootstrap;
+namespace Neos\Neos\TestSuite\Behavior\Features\Bootstrap;
 
-use FlowSecurityTrait;
 use Neos\ContentRepository\BehavioralTests\TestSuite\Behavior\CRBehavioralTestsSubjectProvider;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;

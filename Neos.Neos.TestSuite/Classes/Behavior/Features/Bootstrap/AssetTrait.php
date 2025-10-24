@@ -12,7 +12,7 @@ declare(strict_types=1);
  * source code.
  */
 
-namespace Neos\Neos\TestSuite\Classes\Behavior\Features\Bootstrap;
+namespace Neos\Neos\TestSuite\Behavior\Features\Bootstrap;
 
 use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Flow\ResourceManagement\ResourceManager;
