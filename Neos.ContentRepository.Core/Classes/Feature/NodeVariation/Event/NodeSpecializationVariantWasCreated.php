@@ -45,6 +45,7 @@ final readonly class NodeSpecializationVariantWasCreated implements
         public OriginDimensionSpacePoint $sourceOrigin,
         public OriginDimensionSpacePoint $specializationOrigin,
         public InterdimensionalSiblings $specializationSiblings,
+        public ?NodeAggregateId $parentNodeAggregateId,
     ) {
     }
 
@@ -66,28 +67,32 @@ final readonly class NodeSpecializationVariantWasCreated implements
     public function withWorkspaceNameAndContentStreamId(WorkspaceName $targetWorkspaceName, ContentStreamId $contentStreamId): self
     {
         return new self(
-            $targetWorkspaceName,
-            $contentStreamId,
-            $this->nodeAggregateId,
-            $this->sourceOrigin,
-            $this->specializationOrigin,
-            $this->specializationSiblings,
+            workspaceName: $targetWorkspaceName,
+            contentStreamId: $contentStreamId,
+            nodeAggregateId: $this->nodeAggregateId,
+            sourceOrigin: $this->sourceOrigin,
+            specializationOrigin: $this->specializationOrigin,
+            specializationSiblings: $this->specializationSiblings,
+            parentNodeAggregateId: $this->parentNodeAggregateId,
         );
     }
 
     public static function fromArray(array $values): self
     {
         return new self(
-            WorkspaceName::fromString($values['workspaceName']),
-            ContentStreamId::fromString($values['contentStreamId']),
-            NodeAggregateId::fromString($values['nodeAggregateId']),
-            OriginDimensionSpacePoint::fromArray($values['sourceOrigin']),
-            OriginDimensionSpacePoint::fromArray($values['specializationOrigin']),
-            array_key_exists('specializationSiblings', $values)
+            workspaceName: WorkspaceName::fromString($values['workspaceName']),
+            contentStreamId: ContentStreamId::fromString($values['contentStreamId']),
+            nodeAggregateId: NodeAggregateId::fromString($values['nodeAggregateId']),
+            sourceOrigin: OriginDimensionSpacePoint::fromArray($values['sourceOrigin']),
+            specializationOrigin: OriginDimensionSpacePoint::fromArray($values['specializationOrigin']),
+            specializationSiblings: array_key_exists('specializationSiblings', $values)
                 ? InterdimensionalSiblings::fromArray($values['specializationSiblings'])
                 : InterdimensionalSiblings::fromDimensionSpacePointSetWithoutSucceedingSiblings(
                     DimensionSpacePointSet::fromArray($values['specializationCoverage'])
                 ),
+            parentNodeAggregateId: array_key_exists('parentNodeAggregateId', $values)
+                ? NodeAggregateId::fromString($values['parentNodeAggregateId'])
+                : null,
         );
     }
 
