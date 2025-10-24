@@ -12,6 +12,8 @@ declare(strict_types=1);
  * source code.
  */
 
+namespace Neos\Neos\TestSuite\Behavior\Features\Bootstrap;
+
 use Behat\Gherkin\Node\PyStringNode;
 use PHPUnit\Framework\Assert;
 
@@ -27,7 +29,12 @@ trait ExceptionsTrait
     private function tryCatchingExceptions(\Closure $callback): mixed
     {
         if ($this->lastCaughtException !== null) {
-            throw new \RuntimeException(sprintf('Can\'t execute new commands before catching previous exception: %s', $this->lastCaughtException->getMessage()), 1728464381, $this->lastCaughtException);
+            throw new \RuntimeException(
+                sprintf(
+                    'Can\'t execute new commands before catching previous exception: %s',
+                    $this->lastCaughtException->getMessage()
+                ), 1728464381, $this->lastCaughtException
+            );
         }
         try {
             return $callback();
@@ -42,11 +49,23 @@ trait ExceptionsTrait
      * @Then an exception of type :expectedShortExceptionName should be thrown with message:
      * @Then an exception of type :expectedShortExceptionName should be thrown
      */
-    public function anExceptionShouldBeThrown(string $expectedShortExceptionName, ?int $code = null, ?PyStringNode $expectedExceptionMessage = null): void
-    {
+    public function anExceptionShouldBeThrown(
+        string $expectedShortExceptionName,
+        ?int $code = null,
+        ?PyStringNode $expectedExceptionMessage = null
+    ): void {
         Assert::assertNotNull($this->lastCaughtException, 'Expected an exception but none was thrown');
         $lastCaughtExceptionShortName = (new \ReflectionClass($this->lastCaughtException))->getShortName();
-        Assert::assertSame($expectedShortExceptionName, $lastCaughtExceptionShortName, sprintf('Actual exception: %s (%s): %s', get_debug_type($this->lastCaughtException), $this->lastCaughtException->getCode(), $this->lastCaughtException->getMessage()));
+        Assert::assertSame(
+            $expectedShortExceptionName,
+            $lastCaughtExceptionShortName,
+            sprintf(
+                'Actual exception: %s (%s): %s',
+                get_debug_type($this->lastCaughtException),
+                $this->lastCaughtException->getCode(),
+                $this->lastCaughtException->getMessage()
+            )
+        );
         if ($expectedExceptionMessage !== null) {
             Assert::assertSame($expectedExceptionMessage->getRaw(), $this->lastCaughtException->getMessage());
         }
@@ -72,7 +91,11 @@ trait ExceptionsTrait
     public function afterScenarioExceptionsTrait(): void
     {
         if ($this->lastCaughtException !== null) {
-            throw new \RuntimeException(sprintf('Previous exception was not handled: %s', $this->lastCaughtException->getMessage()), 1728464379, $this->lastCaughtException);
+            throw new \RuntimeException(
+                sprintf('Previous exception was not handled: %s', $this->lastCaughtException->getMessage()),
+                1728464379,
+                $this->lastCaughtException
+            );
         }
     }
 }

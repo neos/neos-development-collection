@@ -12,6 +12,8 @@ declare(strict_types=1);
  * source code.
  */
 
+namespace Neos\Neos\TestSuite\Behavior\Features\Bootstrap;
+
 use Behat\Gherkin\Node\TableNode;
 use Neos\ContentRepository\BehavioralTests\TestSuite\Behavior\CRBehavioralTestsSubjectProvider;
 use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Command\CreateRootWorkspace;
@@ -55,8 +57,12 @@ trait WorkspaceServiceTrait
     final public function pruneWorkspaceService(): void
     {
         foreach (static::$alreadySetUpContentRepositories as $contentRepositoryId) {
-            $this->getObject(\Neos\Neos\Domain\Repository\WorkspaceMetadataAndRoleRepository::class)->pruneWorkspaceMetadata($contentRepositoryId);
-            $this->getObject(\Neos\Neos\Domain\Repository\WorkspaceMetadataAndRoleRepository::class)->pruneRoleAssignments($contentRepositoryId);
+            $this->getObject(
+                \Neos\Neos\Domain\Repository\WorkspaceMetadataAndRoleRepository::class
+            )->pruneWorkspaceMetadata($contentRepositoryId);
+            $this->getObject(
+                \Neos\Neos\Domain\Repository\WorkspaceMetadataAndRoleRepository::class
+            )->pruneRoleAssignments($contentRepositoryId);
         }
     }
 
@@ -64,9 +70,12 @@ trait WorkspaceServiceTrait
      * @When the root workspace :workspaceName is created
      * @When the root workspace :workspaceName with title :title and description :description is created
      */
-    public function theRootWorkspaceIsCreated(string $workspaceName, ?string $title = null, ?string $description = null): void
-    {
-        $this->tryCatchingExceptions(fn () => $this->getObject(WorkspaceService::class)->createRootWorkspace(
+    public function theRootWorkspaceIsCreated(
+        string $workspaceName,
+        ?string $title = null,
+        ?string $description = null
+    ): void {
+        $this->tryCatchingExceptions(fn() => $this->getObject(WorkspaceService::class)->createRootWorkspace(
             $this->currentContentRepository->id,
             WorkspaceName::fromString($workspaceName),
             WorkspaceTitle::fromString($title ?? $workspaceName),
@@ -80,7 +89,7 @@ trait WorkspaceServiceTrait
      */
     public function theWorkspaceIsDeleted(string $workspaceName): void
     {
-        $this->tryCatchingExceptions(fn () => $this->getObject(WorkspaceService::class)->deleteWorkspace(
+        $this->tryCatchingExceptions(fn() => $this->getObject(WorkspaceService::class)->deleteWorkspace(
             $this->currentContentRepository->id,
             WorkspaceName::fromString($workspaceName),
         ));
@@ -103,10 +112,13 @@ trait WorkspaceServiceTrait
     /**
      * @When the personal workspace :workspaceName is created with the target workspace :targetWorkspace for user :username
      */
-    public function thePersonalWorkspaceIsCreatedWithTheTargetWorkspace(string $workspaceName, string $targetWorkspace, string $username): void
-    {
+    public function thePersonalWorkspaceIsCreatedWithTheTargetWorkspace(
+        string $workspaceName,
+        string $targetWorkspace,
+        string $username
+    ): void {
         $ownerUserId = $this->userIdForUsername($username);
-        $this->tryCatchingExceptions(fn () => $this->getObject(WorkspaceService::class)->createPersonalWorkspace(
+        $this->tryCatchingExceptions(fn() => $this->getObject(WorkspaceService::class)->createPersonalWorkspace(
             $this->currentContentRepository->id,
             WorkspaceName::fromString($workspaceName),
             WorkspaceTitle::fromString($workspaceName),
@@ -122,10 +134,12 @@ trait WorkspaceServiceTrait
     public function aPersonalWorkspaceForUserIsCreated(string $username): void
     {
         $user = $this->getObject(UserService::class)->getUser($username);
-        $this->tryCatchingExceptions(fn () => $this->getObject(WorkspaceService::class)->createPersonalWorkspaceForUserIfMissing(
-            $this->currentContentRepository->id,
-            $user,
-        ));
+        $this->tryCatchingExceptions(
+            fn() => $this->getObject(WorkspaceService::class)->createPersonalWorkspaceForUserIfMissing(
+                $this->currentContentRepository->id,
+                $user,
+            )
+        );
     }
 
     /**
@@ -134,7 +148,10 @@ trait WorkspaceServiceTrait
     public function thePersonalWorkspaceForUserIs(string $username, string $workspaceName): void
     {
         $ownerUserId = $this->userIdForUsername($username);
-        $actualWorkspace = $this->getObject(WorkspaceService::class)->getPersonalWorkspaceForUser($this->currentContentRepository->id, $ownerUserId);
+        $actualWorkspace = $this->getObject(WorkspaceService::class)->getPersonalWorkspaceForUser(
+            $this->currentContentRepository->id,
+            $ownerUserId
+        );
         Assert::assertNotNull($actualWorkspace);
         Assert::assertSame($workspaceName, $actualWorkspace->workspaceName->value);
     }
@@ -146,7 +163,10 @@ trait WorkspaceServiceTrait
     {
         $ownerUserId = $this->userIdForUsername($username);
         try {
-            $this->getObject(WorkspaceService::class)->getPersonalWorkspaceForUser($this->currentContentRepository->id, $ownerUserId);
+            $this->getObject(WorkspaceService::class)->getPersonalWorkspaceForUser(
+                $this->currentContentRepository->id,
+                $ownerUserId
+            );
         } catch (\Throwable $e) {
             // todo throw WorkspaceDoesNotExist instead??
             Assert::assertInstanceOf(\RuntimeException::class, $e, $e->getMessage());
@@ -160,20 +180,25 @@ trait WorkspaceServiceTrait
      * @When the shared workspace :workspaceName is created with the target workspace :targetWorkspace
      * @When the shared workspace :workspaceName is created with the target workspace :targetWorkspace and role assignments:
      */
-    public function theSharedWorkspaceIsCreatedWithTheTargetWorkspace(string $workspaceName, string $targetWorkspace, ?TableNode $rawRoleAssignments = null): void
-    {
+    public function theSharedWorkspaceIsCreatedWithTheTargetWorkspace(
+        string $workspaceName,
+        string $targetWorkspace,
+        ?TableNode $rawRoleAssignments = null
+    ): void {
         $workspaceRoleAssignments = WorkspaceRoleAssignments::createEmpty();
         foreach ($rawRoleAssignments?->getHash() ?? [] as $row) {
-            $workspaceRoleAssignments = $workspaceRoleAssignments->withAssignment(WorkspaceRoleAssignment::create(
-                WorkspaceRoleSubject::create(
-                    WorkspaceRoleSubjectType::from($row['Type']),
-                    $row['Value']
-                ),
-                WorkspaceRole::from($row['Role'])
-            ));
+            $workspaceRoleAssignments = $workspaceRoleAssignments->withAssignment(
+                WorkspaceRoleAssignment::create(
+                    WorkspaceRoleSubject::create(
+                        WorkspaceRoleSubjectType::from($row['Type']),
+                        $row['Value']
+                    ),
+                    WorkspaceRole::from($row['Role'])
+                )
+            );
         }
 
-        $this->tryCatchingExceptions(fn () => $this->getObject(WorkspaceService::class)->createSharedWorkspace(
+        $this->tryCatchingExceptions(fn() => $this->getObject(WorkspaceService::class)->createSharedWorkspace(
             $this->currentContentRepository->id,
             WorkspaceName::fromString($workspaceName),
             WorkspaceTitle::fromString($workspaceName),
@@ -188,10 +213,12 @@ trait WorkspaceServiceTrait
      */
     public function aRootWorkspaceExistsWithoutMetadata(string $workspaceName): void
     {
-        $this->currentContentRepository->handle(CreateRootWorkspace::create(
-            WorkspaceName::fromString($workspaceName),
-            ContentStreamId::create(),
-        ));
+        $this->currentContentRepository->handle(
+            CreateRootWorkspace::create(
+                WorkspaceName::fromString($workspaceName),
+                ContentStreamId::create(),
+            )
+        );
     }
 
     /**
@@ -199,7 +226,7 @@ trait WorkspaceServiceTrait
      */
     public function theTitleOfWorkspaceIsSetTo(string $workspaceName, string $newTitle): void
     {
-        $this->tryCatchingExceptions(fn () => $this->getObject(WorkspaceService::class)->setWorkspaceTitle(
+        $this->tryCatchingExceptions(fn() => $this->getObject(WorkspaceService::class)->setWorkspaceTitle(
             $this->currentContentRepository->id,
             WorkspaceName::fromString($workspaceName),
             WorkspaceTitle::fromString($newTitle),
@@ -211,7 +238,7 @@ trait WorkspaceServiceTrait
      */
     public function theDescriptionOfWorkspaceIsSetTo(string $workspaceName, string $newDescription): void
     {
-        $this->tryCatchingExceptions(fn () => $this->getObject(WorkspaceService::class)->setWorkspaceDescription(
+        $this->tryCatchingExceptions(fn() => $this->getObject(WorkspaceService::class)->setWorkspaceDescription(
             $this->currentContentRepository->id,
             WorkspaceName::fromString($workspaceName),
             WorkspaceDescription::fromString($newDescription),
@@ -223,7 +250,10 @@ trait WorkspaceServiceTrait
      */
     public function theWorkspaceShouldHaveTheFollowingMetadata($workspaceName, TableNode $expectedMetadata): void
     {
-        $workspaceMetadata = $this->getObject(WorkspaceService::class)->getWorkspaceMetadata($this->currentContentRepository->id, WorkspaceName::fromString($workspaceName));
+        $workspaceMetadata = $this->getObject(WorkspaceService::class)->getWorkspaceMetadata(
+            $this->currentContentRepository->id,
+            WorkspaceName::fromString($workspaceName)
+        );
         Assert::assertSame($expectedMetadata->getHash()[0], [
             'Title' => $workspaceMetadata->title->value,
             'Description' => $workspaceMetadata->description->value,
@@ -237,12 +267,17 @@ trait WorkspaceServiceTrait
      */
     public function theWorkspaceMetadataFails($workspaceName): void
     {
-        $metaData = $this->getObject(\Neos\Neos\Domain\Repository\WorkspaceMetadataAndRoleRepository::class)->loadWorkspaceMetadata($this->currentContentRepository->id, WorkspaceName::fromString($workspaceName));
+        $metaData = $this->getObject(
+            \Neos\Neos\Domain\Repository\WorkspaceMetadataAndRoleRepository::class
+        )->loadWorkspaceMetadata($this->currentContentRepository->id, WorkspaceName::fromString($workspaceName));
         Assert::assertNull($metaData);
 
         // asking the API FAILS!
         try {
-            $this->getObject(WorkspaceService::class)->getWorkspaceMetadata($this->currentContentRepository->id, WorkspaceName::fromString($workspaceName));
+            $this->getObject(WorkspaceService::class)->getWorkspaceMetadata(
+                $this->currentContentRepository->id,
+                WorkspaceName::fromString($workspaceName)
+            );
         } catch (\Throwable $e) {
             Assert::assertInstanceOf(WorkspaceDoesNotExist::class, $e, $e->getMessage());
             return;
@@ -255,12 +290,17 @@ trait WorkspaceServiceTrait
      */
     public function theWorkspaceRolesFails($workspaceName): void
     {
-        $roles = $this->getObject(\Neos\Neos\Domain\Repository\WorkspaceMetadataAndRoleRepository::class)->getWorkspaceRoleAssignments($this->currentContentRepository->id, WorkspaceName::fromString($workspaceName));
+        $roles = $this->getObject(
+            \Neos\Neos\Domain\Repository\WorkspaceMetadataAndRoleRepository::class
+        )->getWorkspaceRoleAssignments($this->currentContentRepository->id, WorkspaceName::fromString($workspaceName));
         Assert::assertTrue($roles->isEmpty());
 
         // asking the API FAILS!
         try {
-            $this->getObject(WorkspaceService::class)->getWorkspaceRoleAssignments($this->currentContentRepository->id, WorkspaceName::fromString($workspaceName));
+            $this->getObject(WorkspaceService::class)->getWorkspaceRoleAssignments(
+                $this->currentContentRepository->id,
+                WorkspaceName::fromString($workspaceName)
+            );
         } catch (\Throwable $e) {
             Assert::assertInstanceOf(WorkspaceDoesNotExist::class, $e, $e->getMessage());
             return;
@@ -272,14 +312,18 @@ trait WorkspaceServiceTrait
      * @When the role :role is assigned to workspace :workspaceName for group :groupName
      * @When the role :role is assigned to workspace :workspaceName for user :username
      */
-    public function theRoleIsAssignedToWorkspaceForGroupOrUser(string $role, string $workspaceName, ?string $groupName = null, ?string $username = null): void
-    {
+    public function theRoleIsAssignedToWorkspaceForGroupOrUser(
+        string $role,
+        string $workspaceName,
+        ?string $groupName = null,
+        ?string $username = null
+    ): void {
         if ($groupName !== null) {
             $subject = WorkspaceRoleSubject::createForGroup($groupName);
         } else {
             $subject = WorkspaceRoleSubject::createForUser($this->userIdForUsername($username));
         }
-        $this->tryCatchingExceptions(fn () => $this->getObject(WorkspaceService::class)->assignWorkspaceRole(
+        $this->tryCatchingExceptions(fn() => $this->getObject(WorkspaceService::class)->assignWorkspaceRole(
             $this->currentContentRepository->id,
             WorkspaceName::fromString($workspaceName),
             WorkspaceRoleAssignment::create(
@@ -293,14 +337,17 @@ trait WorkspaceServiceTrait
      * @When the role for group :groupName is unassigned from workspace :workspaceName
      * @When the role for user :username is unassigned from workspace :workspaceName
      */
-    public function theRoleIsUnassignedFromWorkspace(string $workspaceName, ?string $groupName = null, ?string $username = null): void
-    {
+    public function theRoleIsUnassignedFromWorkspace(
+        string $workspaceName,
+        ?string $groupName = null,
+        ?string $username = null
+    ): void {
         if ($groupName !== null) {
             $subject = WorkspaceRoleSubject::createForGroup($groupName);
         } else {
             $subject = WorkspaceRoleSubject::createForUser($this->userIdForUsername($username));
         }
-        $this->tryCatchingExceptions(fn () => $this->getObject(WorkspaceService::class)->unassignWorkspaceRole(
+        $this->tryCatchingExceptions(fn() => $this->getObject(WorkspaceService::class)->unassignWorkspaceRole(
             $this->currentContentRepository->id,
             WorkspaceName::fromString($workspaceName),
             $subject,
@@ -310,10 +357,15 @@ trait WorkspaceServiceTrait
     /**
      * @Then the workspace :workspaceName should have the following role assignments:
      */
-    public function theWorkspaceShouldHaveTheFollowingRoleAssignments($workspaceName, TableNode $expectedAssignments): void
-    {
-        $workspaceAssignments = $this->getObject(WorkspaceService::class)->getWorkspaceRoleAssignments($this->currentContentRepository->id, WorkspaceName::fromString($workspaceName));
-        $actualAssignments = array_map(static fn (WorkspaceRoleAssignment $assignment) => [
+    public function theWorkspaceShouldHaveTheFollowingRoleAssignments(
+        $workspaceName,
+        TableNode $expectedAssignments
+    ): void {
+        $workspaceAssignments = $this->getObject(WorkspaceService::class)->getWorkspaceRoleAssignments(
+            $this->currentContentRepository->id,
+            WorkspaceName::fromString($workspaceName)
+        );
+        $actualAssignments = array_map(static fn(WorkspaceRoleAssignment $assignment) => [
             'Subject type' => $assignment->subject->type->value,
             'Subject' => $assignment->subject->value,
             'Role' => $assignment->role->value,
@@ -324,8 +376,11 @@ trait WorkspaceServiceTrait
     /**
      * @Then the Neos user :username should have the permissions :expectedPermissions for workspace :workspaceName
      */
-    public function theNeosUserShouldHaveThePermissionsForWorkspace(string $username, string $expectedPermissions, string $workspaceName): void
-    {
+    public function theNeosUserShouldHaveThePermissionsForWorkspace(
+        string $username,
+        string $expectedPermissions,
+        string $workspaceName
+    ): void {
         $userService = $this->getObject(UserService::class);
         $user = $userService->getUser($username);
         Assert::assertNotNull($user);

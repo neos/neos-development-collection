@@ -13,11 +13,12 @@
 declare(strict_types=1);
 
 
+namespace Neos\Neos\TestSuite\Behavior\Features\Bootstrap;
+
 use Behat\Gherkin\Node\TableNode;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
-use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\CRTestSuiteRuntimeVariables;
 use Neos\Neos\Domain\Service\NodeDuplication\NodeAggregateIdMapping;
@@ -66,7 +67,7 @@ trait NodeDuplicationTrait
             : null;
 
         $this->tryCatchingExceptions(
-            fn () => $this->getObject(NodeDuplicationService::class)->copyNodesRecursively(
+            fn() => $this->getObject(NodeDuplicationService::class)->copyNodesRecursively(
                 $this->currentContentRepository->id,
                 $workspaceName,
                 $sourceDimensionSpacePoint,

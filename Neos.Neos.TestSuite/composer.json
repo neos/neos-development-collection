@@ -1,0 +1,23 @@
+{
+    "name": "neos/neos-testsuite",
+    "type": "neos-package",
+    "description": "Testing support suite for Neos. Contains fixtures and helpers for all layers of tests",
+    "support": {
+        "source": "https://github.com/neos/neos-testsuite.git",
+        "forum": "https://discuss.neos.io/",
+        "docs": "https://docs.neos.io/"
+    },
+    "license": [
+        "GPL-3.0-or-later"
+    ],
+    "require": {
+        "neos/neos": "self.version",
+        "behat/behat": "^3.5",
+        "phpunit/phpunit": "^9.6"
+    },
+    "autoload": {
+        "psr-4": {
+            "Neos\\Neos\\TestSuite\\": "Classes"
+        }
+    }
+}

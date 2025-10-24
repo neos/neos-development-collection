@@ -71,6 +71,7 @@
         "neos/media-browser": "self.version",
         "neos/media": "self.version",
         "neos/neos": "self.version",
+        "neos/neos-testsuite": "self.version",
         "neos/nodetypes-assetlist": "self.version",
         "neos/nodetypes-basemixins": "self.version",
         "neos/nodetypes-columnlayouts": "self.version",
@@ -192,6 +193,9 @@
             ],
             "Neos\\Neos\\": [
                 "Neos.Neos/Classes"
+            ],
+            "Neos\\Neos\\TestSuite\\": [
+                "Neos.Neos.TestSuite/Classes"
             ],
             "Neos\\NodeTypes\\AssetList\\": [
                 "Neos.NodeTypes.AssetList/Classes"

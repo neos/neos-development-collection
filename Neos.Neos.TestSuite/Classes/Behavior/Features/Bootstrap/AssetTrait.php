@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 /*
@@ -10,6 +11,8 @@ declare(strict_types=1);
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+
+namespace Neos\Neos\TestSuite\Behavior\Features\Bootstrap;
 
 use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Flow\ResourceManagement\ResourceManager;
@@ -52,8 +55,12 @@ trait AssetTrait
      * @Given the asset :assetId has the title :title and caption :caption
      * @Given the asset :assetId has the title :title and caption :caption and copyright notice :copyrightNotice
      */
-    public function theAssetHasTheTitleAndCaptionAndCopyrightNotice($assetId, $title, $caption = null, $copyrightNotice = null): void
-    {
+    public function theAssetHasTheTitleAndCaptionAndCopyrightNotice(
+        $assetId,
+        $title,
+        $caption = null,
+        $copyrightNotice = null
+    ): void {
         $repository = $this->getObject(AssetRepository::class);
         $asset = $repository->findByIdentifier($assetId);
 

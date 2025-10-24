@@ -12,8 +12,9 @@ declare(strict_types=1);
  * source code.
  */
 
+namespace Neos\Neos\TestSuite\Behavior\Features\Bootstrap;
+
 use Behat\Gherkin\Node\PyStringNode;
-use Behat\Hook\BeforeScenario;
 use Neos\Flow\Configuration\ConfigurationManager;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Security\Account;
@@ -84,7 +85,10 @@ trait FlowSecurityTrait
 
         $securityContext = $this->getObject(SecurityContext::class);
         $securityContext->clearContext(); // enable authorizationChecks
-        $httpRequest = $this->getObject(ServerRequestFactoryInterface::class)->createServerRequest('GET', 'http://localhost/');
+        $httpRequest = $this->getObject(ServerRequestFactoryInterface::class)->createServerRequest(
+            'GET',
+            'http://localhost/'
+        );
         $this->flowSecurity_mockActionRequest = ActionRequest::fromHttpRequest($httpRequest);
         $securityContext->setRequest($this->flowSecurity_mockActionRequest);
         $this->flowSecurity_securityEnabled = true;
@@ -110,7 +114,9 @@ trait FlowSecurityTrait
         $policyService = $this->getObject(PolicyService::class);
 
         $mergedPolicyConfiguration = Arrays::arrayMergeRecursiveOverrule(
-            $this->getObject(ConfigurationManager::class)->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_POLICY),
+            $this->getObject(ConfigurationManager::class)->getConfiguration(
+                ConfigurationManager::CONFIGURATION_TYPE_POLICY
+            ),
             Yaml::parse($policies->getRaw())
         );
 
@@ -118,20 +124,21 @@ trait FlowSecurityTrait
         // we can change the roles and privileges at runtime :D
         $policyService->reset(); // TODO also reset privilegeTargets in ->reset()
         ObjectAccess::setProperty($policyService, 'privilegeTargets', [], true);
-        $policyService->injectConfigurationManager(new class ($mergedPolicyConfiguration) extends ConfigurationManager
-        {
-            public function __construct(
-                private array $mergedPolicyConfiguration
-            ) {
-            }
+        $policyService->injectConfigurationManager(
+            new class ($mergedPolicyConfiguration) extends ConfigurationManager {
+                public function __construct(
+                    private array $mergedPolicyConfiguration
+                ) {
+                }
 
-            public function getConfiguration(string $configurationType, ?string $configurationPath = null)
-            {
-                Assert::assertSame(ConfigurationManager::CONFIGURATION_TYPE_POLICY, $configurationType);
-                Assert::assertSame(null, $configurationPath);
-                return $this->mergedPolicyConfiguration;
+                public function getConfiguration(string $configurationType, ?string $configurationPath = null)
+                {
+                    Assert::assertSame(ConfigurationManager::CONFIGURATION_TYPE_POLICY, $configurationType);
+                    Assert::assertSame(null, $configurationPath);
+                    return $this->mergedPolicyConfiguration;
+                }
             }
-        });
+        );
     }
 
     /**

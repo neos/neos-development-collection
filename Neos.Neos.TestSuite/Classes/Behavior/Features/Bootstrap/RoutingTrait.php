@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 /*
@@ -10,6 +11,8 @@ declare(strict_types=1);
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+
+namespace Neos\Neos\TestSuite\Behavior\Features\Bootstrap;
 
 use Behat\Gherkin\Node\PyStringNode;
 use Behat\Gherkin\Node\TableNode;
@@ -119,7 +122,10 @@ trait RoutingTrait
         $entityManager = $this->getObject(EntityManagerInterface::class);
         // clean up old PostLoad Hook
         if ($this->routingTraitSiteConfigurationPostLoadHook !== null) {
-            $entityManager->getEventManager()->removeEventListener('postLoad', $this->routingTraitSiteConfigurationPostLoadHook);
+            $entityManager->getEventManager()->removeEventListener(
+                'postLoad',
+                $this->routingTraitSiteConfigurationPostLoadHook
+            );
         }
 
         $config = Yaml::parse($configYaml->getRaw());
@@ -133,12 +139,20 @@ trait RoutingTrait
             {
                 $object = $lifecycleEventArgs->getObject();
                 if ($object instanceof Site) {
-                    ObjectAccess::setProperty($object, 'sitesConfiguration', $this->config['Neos']['Neos']['sites'], true);
+                    ObjectAccess::setProperty(
+                        $object,
+                        'sitesConfiguration',
+                        $this->config['Neos']['Neos']['sites'],
+                        true
+                    );
                 }
             }
         };
 
-        $entityManager->getEventManager()->addEventListener('postLoad', $this->routingTraitSiteConfigurationPostLoadHook);
+        $entityManager->getEventManager()->addEventListener(
+            'postLoad',
+            $this->routingTraitSiteConfigurationPostLoadHook
+        );
     }
 
     /**
@@ -172,7 +186,12 @@ trait RoutingTrait
             $this->requestUrl = $this->requestUrl->withScheme('http')->withHost('localhost');
         }
         $activeRequestHandler = self::$bootstrap->getActiveRequestHandler();
-        assert($activeRequestHandler instanceof FunctionalTestRequestHandler, 'wrong request handler - given ' . get_class($activeRequestHandler) . ' -> You need to include BrowserTrait in the FeatureContext!');
+        assert(
+            $activeRequestHandler instanceof FunctionalTestRequestHandler,
+            'wrong request handler - given ' . get_class(
+                $activeRequestHandler
+            ) . ' -> You need to include BrowserTrait in the FeatureContext!'
+        );
         $activeRequestHandler->setHttpRequest($activeRequestHandler->getHttpRequest()->withUri($this->requestUrl));
     }
 
@@ -182,7 +201,10 @@ trait RoutingTrait
     public function theMatchedNodeShouldBeInOriginDimension(string $nodeAggregateId, string $dimensionSpacePoint): void
     {
         $matchedNodeAddress = $this->match($this->requestUrl);
-        Assert::assertNotNull($matchedNodeAddress, 'Routing result does not have "node" key - this probably means that the FrontendNodeRoutePartHandler did not properly resolve the result.');
+        Assert::assertNotNull(
+            $matchedNodeAddress,
+            'Routing result does not have "node" key - this probably means that the FrontendNodeRoutePartHandler did not properly resolve the result.'
+        );
         Assert::assertTrue($matchedNodeAddress->workspaceName->isLive(), 'Workspace should be always live.');
         Assert::assertSame($nodeAggregateId, $matchedNodeAddress->aggregateId->value);
         Assert::assertSame(
@@ -202,7 +224,11 @@ trait RoutingTrait
     public function noNodeShouldMatchUrl(string $url): void
     {
         $matchedNodeAddress = $this->match(new Uri($url));
-        Assert::assertNull($matchedNodeAddress, 'Expected no node to be found, but instead the following node address was matched: ' . $matchedNodeAddress?->toJson() ?? '- none -');
+        Assert::assertNull(
+            $matchedNodeAddress,
+            'Expected no node to be found, but instead the following node address was matched: ' . $matchedNodeAddress?->toJson(
+            ) ?? '- none -'
+        );
     }
 
     /**
@@ -213,10 +239,17 @@ trait RoutingTrait
         $matchedNodeAddress = $this->match(new Uri($url));
 
         Assert::assertNotNull($matchedNodeAddress, 'Expected node to be found, but instead nothing was found.');
-        Assert::assertEquals(NodeAggregateId::fromString($nodeAggregateId), $matchedNodeAddress->aggregateId, 'Expected nodeAggregateId doesn\'t match.');
+        Assert::assertEquals(
+            NodeAggregateId::fromString($nodeAggregateId),
+            $matchedNodeAddress->aggregateId,
+            'Expected nodeAggregateId doesn\'t match.'
+        );
 
         Assert::assertTrue($matchedNodeAddress->workspaceName->isLive(), 'Workspace should be always live.');
-        Assert::assertTrue($matchedNodeAddress->dimensionSpacePoint->equals(DimensionSpacePoint::fromJsonString($dimensionSpacePoint)), 'Expected dimensionSpacePoint doesn\'t match.');
+        Assert::assertTrue(
+            $matchedNodeAddress->dimensionSpacePoint->equals(DimensionSpacePoint::fromJsonString($dimensionSpacePoint)),
+            'Expected dimensionSpacePoint doesn\'t match.'
+        );
     }
 
     private $eventListenerRegistered = false;
@@ -228,7 +261,9 @@ trait RoutingTrait
         $httpRequest = $serverRequestFactory->createServerRequest('GET', $uri);
         $httpRequest = $this->addRoutingParameters($httpRequest);
 
-        $routeParameters = $httpRequest->getAttribute(ServerRequestAttributes::ROUTING_PARAMETERS) ?? RouteParameters::createEmpty();
+        $routeParameters = $httpRequest->getAttribute(
+            ServerRequestAttributes::ROUTING_PARAMETERS
+        ) ?? RouteParameters::createEmpty();
         $routeContext = new RouteContext($httpRequest, $routeParameters);
         try {
             $routeValues = $router->route($routeContext);
@@ -260,9 +295,14 @@ trait RoutingTrait
     {
         if (
             ($this->getObject(ConfigurationManager::class)
-                ->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, 'Neos.Flow.mvc.routes')['Neos.Flow'] ?? false) !== false
+                ->getConfiguration(
+                    ConfigurationManager::CONFIGURATION_TYPE_SETTINGS,
+                    'Neos.Flow.mvc.routes'
+                )['Neos.Flow'] ?? false) !== false
         ) {
-            Assert::fail('In this distribution the Flow routes are included into the global configuration and thus any route arguments will always resolve. Please set in Neos.Flow.mvc.routes "Neos.Flow": false.');
+            Assert::fail(
+                'In this distribution the Flow routes are included into the global configuration and thus any route arguments will always resolve. Please set in Neos.Flow.mvc.routes "Neos.Flow": false.'
+            );
         }
 
         $resolvedUrl = null;
@@ -272,7 +312,10 @@ trait RoutingTrait
         } catch (NoMatchingRouteException $exception) {
             $exception = true;
         }
-        Assert::assertTrue($exception, 'Expected an NoMatchingRouteException to be thrown but instead the following URL is resolved: ' . $resolvedUrl ?? '- none -');
+        Assert::assertTrue(
+            $exception,
+            'Expected an NoMatchingRouteException to be thrown but instead the following URL is resolved: ' . $resolvedUrl ?? '- none -'
+        );
     }
 
     /**
@@ -286,7 +329,9 @@ trait RoutingTrait
         $tablePrefix = DocumentUriPathProjectionFactory::projectionTableNamePrefix(
             $this->currentContentRepository->id
         );
-        $actualResult = $dbal->fetchAllAssociative('SELECT ' . $columns . ' FROM ' . $tablePrefix . '_uri ORDER BY nodeaggregateidpath, dimensionspacepointhash');
+        $actualResult = $dbal->fetchAllAssociative(
+            'SELECT ' . $columns . ' FROM ' . $tablePrefix . '_uri ORDER BY nodeaggregateidpath, dimensionspacepointhash'
+        );
         $expectedResult = array_map(static function (array $row) {
             return array_map(static function (string $cell) {
                 return json_decode($cell, true, 512, JSON_THROW_ON_ERROR);
@@ -309,7 +354,10 @@ trait RoutingTrait
                 ? $this->rememberedNodeAggregateIds[\mb_substr($nodeAggregateId, 1)]
                 : NodeAggregateId::fromString($nodeAggregateId)
         );
-        $httpRequest = $this->getObject(ServerRequestFactoryInterface::class)->createServerRequest('GET', $this->requestUrl);
+        $httpRequest = $this->getObject(ServerRequestFactoryInterface::class)->createServerRequest(
+            'GET',
+            $this->requestUrl
+        );
         $httpRequest = $this->addRoutingParameters($httpRequest);
 
         return $this->getObject(NodeUriBuilderFactory::class)
@@ -337,7 +385,10 @@ trait RoutingTrait
 
         $dimensionResolverFactory = $this->getObject($siteConfiguration->contentDimensionResolverFactoryClassName);
         assert($dimensionResolverFactory instanceof DimensionResolverFactoryInterface);
-        $dimensionResolver = $dimensionResolverFactory->create($siteConfiguration->contentRepositoryId, $siteConfiguration);
+        $dimensionResolver = $dimensionResolverFactory->create(
+            $siteConfiguration->contentRepositoryId,
+            $siteConfiguration
+        );
 
         $siteNodeName = SiteNodeName::fromString("site-node");
         $siteDetectionResult = SiteDetectionResult::create($siteNodeName, $siteConfiguration->contentRepositoryId);
@@ -345,7 +396,11 @@ trait RoutingTrait
 
         $site = new Site($siteNodeName->value);
 
-        $dimensionResolverContext = RequestToDimensionSpacePointContext::fromUriPathAndRouteParametersAndResolvedSite($this->requestUrl->getPath(), $routeParameters, $site);
+        $dimensionResolverContext = RequestToDimensionSpacePointContext::fromUriPathAndRouteParametersAndResolvedSite(
+            $this->requestUrl->getPath(),
+            $routeParameters,
+            $site
+        );
         $dimensionResolverContext = $dimensionResolver->fromRequestToDimensionSpacePoint($dimensionResolverContext);
         $this->dimensionResolverContext = $dimensionResolverContext;
     }
@@ -369,8 +424,15 @@ trait RoutingTrait
     {
         $expected = DimensionSpacePoint::fromJsonString($dimensionSpacePointString);
         $actual = $this->dimensionResolverContext->resolvedDimensionSpacePoint;
-        Assert::assertTrue($expected->equals($actual), 'Resolved dimension does not match - actual: ' . $actual->toJson());
+        Assert::assertTrue(
+            $expected->equals($actual),
+            'Resolved dimension does not match - actual: ' . $actual->toJson()
+        );
 
-        Assert::assertEquals($remainingUriPathString, $this->dimensionResolverContext->remainingUriPath, 'Remaining URI path does not match');
+        Assert::assertEquals(
+            $remainingUriPathString,
+            $this->dimensionResolverContext->remainingUriPath,
+            'Remaining URI path does not match'
+        );
     }
 }

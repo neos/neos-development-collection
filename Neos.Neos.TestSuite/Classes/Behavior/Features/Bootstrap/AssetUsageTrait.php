@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 /*
@@ -10,6 +11,8 @@ declare(strict_types=1);
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+
+namespace Neos\Neos\TestSuite\Behavior\Features\Bootstrap;
 
 use Behat\Gherkin\Node\TableNode;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
@@ -52,7 +55,9 @@ trait AssetUsageTrait
     public function iExpectTheAssetUsageServiceToHaveTheFollowingAssetUsages(TableNode $table)
     {
         $assetUsageService = $this->getObject(AssetUsageService::class);
-        $assetUsages = iterator_to_array($assetUsageService->findByFilter($this->currentContentRepository->id, AssetUsageFilter::create()));
+        $assetUsages = iterator_to_array(
+            $assetUsageService->findByFilter($this->currentContentRepository->id, AssetUsageFilter::create())
+        );
 
         $tableRows = $table->getHash();
         foreach ($assetUsages as $assetUsage) {
@@ -61,7 +66,9 @@ trait AssetUsageTrait
                     || $assetUsage->propertyName !== $tableRow['propertyName']
                     || !$assetUsage->workspaceName->equals(WorkspaceName::fromString($tableRow['workspaceName']))
                     || !$assetUsage->nodeAggregateId->equals(NodeAggregateId::fromString($tableRow['nodeAggregateId']))
-                    || !$assetUsage->originDimensionSpacePoint->equals(DimensionSpacePoint::fromJsonString($tableRow['originDimensionSpacePoint']))
+                    || !$assetUsage->originDimensionSpacePoint->equals(
+                        DimensionSpacePoint::fromJsonString($tableRow['originDimensionSpacePoint'])
+                    )
                 ) {
                     continue;
                 }
@@ -72,7 +79,11 @@ trait AssetUsageTrait
 
         Assert::assertTrue(
             $tableRows === [] && count($assetUsages) === count($table->getHash()),
-            sprintf('Mismatch between all actual asset usages %s and leftover asset usages to match %s', json_encode($assetUsages, JSON_PRETTY_PRINT), json_encode($tableRows, JSON_PRETTY_PRINT))
+            sprintf(
+                'Mismatch between all actual asset usages %s and leftover asset usages to match %s',
+                json_encode($assetUsages, JSON_PRETTY_PRINT),
+                json_encode($tableRows, JSON_PRETTY_PRINT)
+            )
         );
     }
 

@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 /*
@@ -11,6 +12,8 @@ declare(strict_types=1);
  * source code.
  */
 
+namespace Neos\Neos\TestSuite\Behavior\Features\Bootstrap;
+
 use Behat\Gherkin\Node\PyStringNode;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindClosestNodeFilter;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
@@ -18,6 +21,7 @@ use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\CRTestSuiteRunt
 use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\ProjectedNodeTrait;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Tests\FunctionalTestRequestHandler;
+use Neos\Fusion\Core\Cache\ContentCache;
 use Neos\Fusion\Core\ExceptionHandlers\ThrowingHandler;
 use Neos\Fusion\Core\FusionGlobals;
 use Neos\Fusion\Core\FusionSourceCodeCollection;
@@ -28,7 +32,6 @@ use Neos\Neos\Domain\Service\NodeTypeNameFactory;
 use Neos\Neos\Domain\Service\RenderingModeService;
 use PHPUnit\Framework\Assert;
 use Psr\Http\Message\ServerRequestFactoryInterface;
-use Neos\Fusion\Core\Cache\ContentCache;
 
 /**
  * @internal only for behat tests within the Neos.Neos package
@@ -87,15 +90,29 @@ trait FusionTrait
         $subgraph = $this->getCurrentSubgraph();
         $this->fusionContext['node'] = $subgraph->findNodeById(NodeAggregateId::fromString($nodeAggregateId));
         if ($this->fusionContext['node'] === null) {
-            throw new InvalidArgumentException(sprintf('Node with aggregate id "%s" could not be found in the current subgraph', $nodeAggregateId), 1696700222);
+            throw new InvalidArgumentException(
+                sprintf('Node with aggregate id "%s" could not be found in the current subgraph', $nodeAggregateId),
+                1696700222
+            );
         }
-        $this->fusionContext['documentNode'] = $subgraph->findClosestNode(NodeAggregateId::fromString($nodeAggregateId), FindClosestNodeFilter::create('Neos.Neos:Document'));
+        $this->fusionContext['documentNode'] = $subgraph->findClosestNode(
+            NodeAggregateId::fromString($nodeAggregateId),
+            FindClosestNodeFilter::create('Neos.Neos:Document')
+        );
         if ($this->fusionContext['documentNode'] === null) {
-            throw new \RuntimeException(sprintf('Failed to find closest document node for node with aggregate id "%s"', $nodeAggregateId), 1697790940);
+            throw new \RuntimeException(
+                sprintf('Failed to find closest document node for node with aggregate id "%s"', $nodeAggregateId),
+                1697790940
+            );
         }
-        $this->fusionContext['site'] = $subgraph->findClosestNode($this->fusionContext['documentNode']->aggregateId, FindClosestNodeFilter::create(nodeTypes: NodeTypeNameFactory::NAME_SITE));
+        $this->fusionContext['site'] = $subgraph->findClosestNode(
+            $this->fusionContext['documentNode']->aggregateId,
+            FindClosestNodeFilter::create(nodeTypes: NodeTypeNameFactory::NAME_SITE)
+        );
         if ($this->fusionContext['site'] === null) {
-            throw new \RuntimeException(sprintf('Failed to resolve site node for node with aggregate id "%s"', $nodeAggregateId), 1697790963);
+            throw new \RuntimeException(
+                sprintf('Failed to resolve site node for node with aggregate id "%s"', $nodeAggregateId), 1697790963
+            );
         }
     }
 
@@ -138,7 +155,9 @@ trait FusionTrait
         }
         $this->throwExceptionIfLastRenderingLedToAnError();
         $this->renderingResult = null;
-        $fusionAst = (new Parser())->parseFromSource(FusionSourceCodeCollection::fromString($this->fusionCode . chr(10) . $fusionCode->getRaw()));
+        $fusionAst = (new Parser())->parseFromSource(
+            FusionSourceCodeCollection::fromString($this->fusionCode . chr(10) . $fusionCode->getRaw())
+        );
 
         $fusionGlobals = FusionGlobals::fromArray($this->fusionGlobalContext);
 
@@ -172,7 +191,11 @@ trait FusionTrait
     public function iExpectTheFollowingFusionRenderingResultAsHtml(PyStringNode $expectedResult): void
     {
         Assert::assertIsString($this->renderingResult, 'Previous Fusion rendering did not produce a string');
-        $stripWhitespace = static fn (string $input): string => preg_replace(['/>[^\S ]+/s', '/[^\S ]+</s', '/(\s)+/s', '/> </s'], ['>', '<', '\\1', '><'], $input);
+        $stripWhitespace = static fn(string $input): string => preg_replace(
+            ['/>[^\S ]+/s', '/[^\S ]+</s', '/(\s)+/s', '/> </s'],
+            ['>', '<', '\\1', '><'],
+            $input
+        );
 
         $expectedDom = new DomDocument();
         $expectedDom->preserveWhiteSpace = false;
@@ -201,7 +224,11 @@ trait FusionTrait
     public function throwExceptionIfLastRenderingLedToAnError(): void
     {
         if ($this->lastRenderingException !== null) {
-            throw new \RuntimeException(sprintf('The last rendering led to an error: %s', $this->lastRenderingException->getMessage()), 1698319254, $this->lastRenderingException);
+            throw new \RuntimeException(
+                sprintf('The last rendering led to an error: %s', $this->lastRenderingException->getMessage()),
+                1698319254,
+                $this->lastRenderingException
+            );
         }
     }
 

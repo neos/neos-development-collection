@@ -12,19 +12,16 @@ declare(strict_types=1);
  * source code.
  */
 
-use Behat\Hook\BeforeScenario;
+namespace Neos\Neos\TestSuite\Behavior\Features\Bootstrap;
+
 use Neos\ContentRepository\BehavioralTests\TestSuite\Behavior\CRBehavioralTestsSubjectProvider;
-use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceFactoryDependencies;
-use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceFactoryInterface;
-use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceInterface;
-use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphReadModelInterface;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
+use Neos\ContentRepository\TestSuite\Fakes\FakeAuthProvider;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Security\Authentication\Provider\TestingProvider;
 use Neos\Neos\Domain\Service\UserService;
 use Neos\Neos\Security\ContentRepositoryAuthProvider\ContentRepositoryAuthProviderFactory;
-use Neos\ContentRepository\TestSuite\Fakes\FakeAuthProvider;
 use PHPUnit\Framework\Assert;
 
 /**
@@ -68,7 +65,10 @@ trait ContentRepositorySecurityTrait
         }
         $contentRepositoryAuthProviderFactory = $this->getObject(ContentRepositoryAuthProviderFactory::class);
         $contentGraphReadModel = $this->getContentGraphReadModel();
-        $contentRepositoryAuthProvider = $contentRepositoryAuthProviderFactory->build($this->currentContentRepository->id, $contentGraphReadModel);
+        $contentRepositoryAuthProvider = $contentRepositoryAuthProviderFactory->build(
+            $this->currentContentRepository->id,
+            $contentGraphReadModel
+        );
 
         FakeAuthProvider::replaceAuthProvider($contentRepositoryAuthProvider);
         $this->crSecurity_contentRepositorySecurityEnabled = true;
@@ -97,7 +97,9 @@ trait ContentRepositorySecurityTrait
      */
     public function iAccessesTheContentGraphForWorkspace(string $workspaceName): void
     {
-        $this->tryCatchingExceptions(fn () => $this->currentContentRepository->getContentGraph(WorkspaceName::fromString($workspaceName)));
+        $this->tryCatchingExceptions(
+            fn() => $this->currentContentRepository->getContentGraph(WorkspaceName::fromString($workspaceName))
+        );
     }
 
     /**
@@ -105,7 +107,10 @@ trait ContentRepositorySecurityTrait
      */
     public function iShouldNotBeAbleToReadNode(string $nodeAggregateId): void
     {
-        $node = $this->currentContentRepository->getContentSubgraph($this->currentWorkspaceName, $this->currentDimensionSpacePoint)->findNodeById(NodeAggregateId::fromString($nodeAggregateId));
+        $node = $this->currentContentRepository->getContentSubgraph(
+            $this->currentWorkspaceName,
+            $this->currentDimensionSpacePoint
+        )->findNodeById(NodeAggregateId::fromString($nodeAggregateId));
         if ($node !== null) {
             Assert::fail(sprintf('Expected node "%s" to be inaccessible but it was loaded', $nodeAggregateId));
         }
@@ -116,7 +121,10 @@ trait ContentRepositorySecurityTrait
      */
     public function iShouldBeAbleToReadNode(string $nodeAggregateId): void
     {
-        $node = $this->currentContentRepository->getContentSubgraph($this->currentWorkspaceName, $this->currentDimensionSpacePoint)->findNodeById(NodeAggregateId::fromString($nodeAggregateId));
+        $node = $this->currentContentRepository->getContentSubgraph(
+            $this->currentWorkspaceName,
+            $this->currentDimensionSpacePoint
+        )->findNodeById(NodeAggregateId::fromString($nodeAggregateId));
         if ($node === null) {
             Assert::fail(sprintf('Expected node "%s" to be accessible but it could not be loaded', $nodeAggregateId));
         }

@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+namespace Neos\Neos\TestSuite\Behavior\Features\Bootstrap;
+
 use Behat\Gherkin\Node\TableNode;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
@@ -30,13 +32,18 @@ trait SoftRemovalGarbageCollectionTrait
             return DimensionSpacePointSet::fromArray($points);
         };
 
-        $actualConflictsTable = array_map(static fn (ImpendingHardRemovalConflict $conflict) => [
+        $actualConflictsTable = array_map(static fn(ImpendingHardRemovalConflict $conflict) => [
             'nodeAggregateId' => $conflict->nodeAggregateId->value,
             'dimensionSpacePoints' => $sortDsp($conflict->dimensionSpacePointSet)->toJson(),
         ], iterator_to_array($actualConflicts));
 
         $expectedConflictsWithNormalisedJson = array_map(
-            fn (array $row) => [...$row, 'dimensionSpacePoints' => $sortDsp(DimensionSpacePointSet::fromJsonString($row['dimensionSpacePoints']))->toJson()],
+            fn(array $row) => [
+                ...$row,
+                'dimensionSpacePoints' => $sortDsp(
+                    DimensionSpacePointSet::fromJsonString($row['dimensionSpacePoints'])
+                )->toJson()
+            ],
             $payloadTable->getHash()
         );
 
@@ -48,7 +55,9 @@ trait SoftRemovalGarbageCollectionTrait
      */
     public function softRemovalGarbageCollectionIsRunForContentRepository(string $contentRepositoryId): void
     {
-        $this->getObject(SoftRemovalGarbageCollector::class)->run(ContentRepositoryId::fromString($contentRepositoryId));
+        $this->getObject(SoftRemovalGarbageCollector::class)->run(
+            ContentRepositoryId::fromString($contentRepositoryId)
+        );
     }
 
     /**
@@ -57,7 +66,9 @@ trait SoftRemovalGarbageCollectionTrait
     final public function pruneImpendingHardRemovalConflicts(): void
     {
         foreach (static::$alreadySetUpContentRepositories as $contentRepositoryId) {
-            $this->getObject(ImpendingHardRemovalConflictRepository::class)->pruneConflictsForContentRepository($contentRepositoryId);
+            $this->getObject(ImpendingHardRemovalConflictRepository::class)->pruneConflictsForContentRepository(
+                $contentRepositoryId
+            );
         }
     }
 }

@@ -12,6 +12,8 @@ declare(strict_types=1);
  * source code.
  */
 
+namespace Neos\Neos\TestSuite\Behavior\Features\Bootstrap;
+
 use Behat\Gherkin\Node\TableNode;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Flow\Security\AccountFactory;
@@ -41,8 +43,13 @@ trait UserServiceTrait
      * @Given the Neos user :username exists with first name :firstName and last name :lastName
      * @Given the Neos user :username exists
      */
-    public function theNeosUserExists(string $username, ?string $id = null, ?string $firstName = null, ?string $lastName = null, ?string $roles = null): void
-    {
+    public function theNeosUserExists(
+        string $username,
+        ?string $id = null,
+        ?string $firstName = null,
+        ?string $lastName = null,
+        ?string $roles = null
+    ): void {
         $this->createUser(
             username: $username,
             firstName: $firstName,
@@ -60,7 +67,9 @@ trait UserServiceTrait
     {
         foreach ($usersTable->getHash() as $userData) {
             if (empty($userData['Roles'])) {
-                throw new \InvalidArgumentException('Please specify explicit roles for the Neos user, to avoid using any fallbacks.');
+                throw new \InvalidArgumentException(
+                    'Please specify explicit roles for the Neos user, to avoid using any fallbacks.'
+                );
             }
             $this->createUser(
                 username: $userData['Username'],
@@ -72,8 +81,13 @@ trait UserServiceTrait
         }
     }
 
-    private function createUser(string $username, ?string $firstName = null, ?string $lastName = null, ?array $roleIdentifiers = null, ?string $id = null): void
-    {
+    private function createUser(
+        string $username,
+        ?string $firstName = null,
+        ?string $lastName = null,
+        ?array $roleIdentifiers = null,
+        ?string $id = null
+    ): void {
         $userService = $this->getObject(UserService::class);
         $user = new User();
         if ($id !== null) {
