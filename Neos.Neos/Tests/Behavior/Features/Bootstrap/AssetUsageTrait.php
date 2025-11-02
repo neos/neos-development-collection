@@ -12,6 +12,7 @@ declare(strict_types=1);
  */
 
 use Behat\Gherkin\Node\TableNode;
+use Doctrine\DBAL\Connection;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
@@ -41,9 +42,8 @@ trait AssetUsageTrait
      */
     final public function pruneAssetUsage(): void
     {
-        foreach (static::$alreadySetUpContentRepositories as $contentRepositoryId) {
-            $this->getObject(\Neos\Neos\AssetUsage\Domain\AssetUsageRepository::class)->removeAll($contentRepositoryId);
-        }
+        /** Flushes the pure dbal @see AssetUsageRepository which is not trucated via the @flowEntities hook. */
+        $this->getObject(Connection::class)->exec('TRUNCATE TABLE neos_asset_usage');
     }
 
     /**

@@ -13,6 +13,7 @@ declare(strict_types=1);
  */
 
 use Behat\Gherkin\Node\TableNode;
+use Doctrine\DBAL\Connection;
 use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Command\CreateRootWorkspace;
 use Neos\ContentRepository\Core\SharedModel\Exception\WorkspaceDoesNotExist;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
@@ -54,10 +55,9 @@ trait WorkspaceServiceTrait
      */
     final public function pruneWorkspaceService(): void
     {
-        foreach (static::$alreadySetUpContentRepositories as $contentRepositoryId) {
-            $this->getObject(\Neos\Neos\Domain\Repository\WorkspaceMetadataAndRoleRepository::class)->pruneWorkspaceMetadata($contentRepositoryId);
-            $this->getObject(\Neos\Neos\Domain\Repository\WorkspaceMetadataAndRoleRepository::class)->pruneRoleAssignments($contentRepositoryId);
-        }
+        /** Flushes the pure dbal @see WorkspaceMetadataAndRoleRepository which is not trucated via the @flowEntities hook. */
+        $this->getObject(Connection::class)->exec('TRUNCATE TABLE neos_neos_workspace_metadata');
+        $this->getObject(Connection::class)->exec('TRUNCATE TABLE neos_neos_workspace_role');
     }
 
     /**
