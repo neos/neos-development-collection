@@ -45,7 +45,7 @@ Feature: Create node specialization
       | nodeTypeName    | "Neos.ContentRepository:Root" |
 
     And the following CreateNodeAggregateWithNode commands are executed:
-      | nodeAggregateId            | nodeName          | parentNodeAggregateId                   | nodeTypeName               | tetheredDescendantNodeAggregateIds                                                                           |
+      | nodeAggregateId            | nodeName          | nodeTypeName                            | parentNodeAggregateId      | tetheredDescendantNodeAggregateIds                                                                           |
       | sir-david-nodenborough     | parent-document   | Neos.ContentRepository.Testing:Document | lady-eleonode-rootford     | {}                                                                                                           |
       | eldest-mc-nodeface         | eldest-document   | Neos.ContentRepository.Testing:Document | sir-david-nodenborough     | {"tethered-node": "eldest-nodewyn-tetherton", "tethered-node/tethered-leaf": "eldest-nodimer-tetherton"}     |
       | elder-mc-nodeface          | elder-document    | Neos.ContentRepository.Testing:Document | sir-david-nodenborough     | {"tethered-node": "elder-nodewyn-tetherton", "tethered-node/tethered-leaf": "elder-nodimer-tetherton"}       |
@@ -62,8 +62,8 @@ Feature: Create node specialization
       | targetOrigin                     | {"example":"source"}     |
       | parentNodeAggregateId            | "sir-david-nodenborough" |
       | succeedingSiblingNodeAggregateId | "eldest-mc-nodeface"     |
-    Then I expect exactly 13 events to be published on stream "ContentStream:cs-identifier"
-    And event at index 10 is of type "NodeSpecializationVariantWasCreated" with payload:
+    Then I expect exactly 26 events to be published on stream "ContentStream:cs-identifier"
+    And event at index 23 is of type "NodeSpecializationVariantWasCreated" with payload:
       | Key                    | Expected                                                                                                                                                                |
       | contentStreamId        | "cs-identifier"                                                                                                                                                         |
       | nodeAggregateId        | "nody-mc-nodeface"                                                                                                                                                      |
@@ -71,7 +71,7 @@ Feature: Create node specialization
       | specializationOrigin   | {"example":"source"}                                                                                                                                                    |
       | specializationSiblings | [{"dimensionSpacePoint":{"example":"source"},"nodeAggregateId":"eldest-mc-nodeface"},{"dimensionSpacePoint":{"example":"spec"},"nodeAggregateId":"eldest-mc-nodeface"}] |
       | parentNodeAggregateId  | "sir-david-nodenborough"                                                                                                                                                |
-    And event at index 11 is of type "NodeSpecializationVariantWasCreated" with payload:
+    And event at index 24 is of type "NodeSpecializationVariantWasCreated" with payload:
       | Key                    | Expected                                                                                                                                                                        |
       | contentStreamId        | "cs-identifier"                                                                                                                                                                 |
       | nodeAggregateId        | "nodewyn-tetherton"                                                                                                                                                             |
@@ -79,7 +79,7 @@ Feature: Create node specialization
       | specializationOrigin   | {"example":"source"}                                                                                                                                                            |
       | specializationSiblings | [{"dimensionSpacePoint":{"example":"source"},"nodeAggregateId":"invariable-mc-nodeface"},{"dimensionSpacePoint":{"example":"spec"},"nodeAggregateId":"invariable-mc-nodeface"}] |
       | parentNodeAggregateId  | null                                                                                                                                                                            |
-    And event at index 12 is of type "NodeSpecializationVariantWasCreated" with payload:
+    And event at index 25 is of type "NodeSpecializationVariantWasCreated" with payload:
       | Key                    | Expected                                                                                                                                |
       | contentStreamId        | "cs-identifier"                                                                                                                         |
       | nodeAggregateId        | "nodimer-tetherton"                                                                                                                     |

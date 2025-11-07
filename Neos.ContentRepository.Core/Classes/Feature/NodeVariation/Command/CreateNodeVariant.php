@@ -46,6 +46,7 @@ final readonly class CreateNodeVariant implements
         public OriginDimensionSpacePoint $sourceOrigin,
         public OriginDimensionSpacePoint $targetOrigin,
         public ?NodeAggregateId $parentNodeAggregateId,
+        public ?NodeAggregateId $precedingSiblingNodeAggregateId,
         public ?NodeAggregateId $succeedingSiblingNodeAggregateId,
     ) {
     }
@@ -55,12 +56,13 @@ final readonly class CreateNodeVariant implements
      * @param NodeAggregateId $nodeAggregateId The identifier of the affected node aggregate
      * @param OriginDimensionSpacePoint $sourceOrigin Dimension Space Point from which the node is to be copied from
      * @param OriginDimensionSpacePoint $targetOrigin Dimension Space Point to which the node is to be copied to
-     * @param ?NodeAggregateId $parentNodeAggregateId The id of the node aggregate to be used as the variant's parent
+     * @param ?NodeAggregateId $parentNodeAggregateId The optional id of the node aggregate to be used as the variant's parent
+     * @param ?NodeAggregateId $precedingSiblingNodeAggregateId The optional id of the node aggregate to be used as the variant's preceding sibling
      * @param ?NodeAggregateId $succeedingSiblingNodeAggregateId The optional id of the node aggregate to be used as the variant's succeeding sibling
      */
-    public static function create(WorkspaceName $workspaceName, NodeAggregateId $nodeAggregateId, OriginDimensionSpacePoint $sourceOrigin, OriginDimensionSpacePoint $targetOrigin, ?NodeAggregateId $parentNodeAggregateId = null, ?NodeAggregateId $succeedingSiblingNodeAggregateId = null): self
+    public static function create(WorkspaceName $workspaceName, NodeAggregateId $nodeAggregateId, OriginDimensionSpacePoint $sourceOrigin, OriginDimensionSpacePoint $targetOrigin, ?NodeAggregateId $parentNodeAggregateId = null, ?NodeAggregateId $precedingSiblingNodeAggregateId = null, ?NodeAggregateId $succeedingSiblingNodeAggregateId = null): self
     {
-        return new self($workspaceName, $nodeAggregateId, $sourceOrigin, $targetOrigin, $parentNodeAggregateId, $succeedingSiblingNodeAggregateId);
+        return new self($workspaceName, $nodeAggregateId, $sourceOrigin, $targetOrigin, $parentNodeAggregateId, $precedingSiblingNodeAggregateId, $succeedingSiblingNodeAggregateId);
     }
 
     public static function fromArray(array $array): self
@@ -72,6 +74,9 @@ final readonly class CreateNodeVariant implements
             OriginDimensionSpacePoint::fromArray($array['targetOrigin']),
             array_key_exists('parentNodeAggregateId', $array)
                 ? NodeAggregateId::fromString($array['parentNodeAggregateId'])
+                : null,
+            array_key_exists('precedingSiblingNodeAggregateId', $array)
+                ? NodeAggregateId::fromString($array['precedingSiblingNodeAggregateId'])
                 : null,
             array_key_exists('succeedingSiblingNodeAggregateId', $array)
                 ? NodeAggregateId::fromString($array['succeedingSiblingNodeAggregateId'])
@@ -96,7 +101,8 @@ final readonly class CreateNodeVariant implements
             $this->sourceOrigin,
             $this->targetOrigin,
             $this->parentNodeAggregateId,
-            $this->succeedingSiblingNodeAggregateId,
+            $this->precedingSiblingNodeAggregateId,
+            $this->succeedingSiblingNodeAggregateId
         );
     }
 }

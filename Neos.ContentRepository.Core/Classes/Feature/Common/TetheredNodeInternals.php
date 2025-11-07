@@ -55,7 +55,8 @@ trait TetheredNodeInternals
         ContentGraphInterface $contentGraph,
         OriginDimensionSpacePoint $sourceOrigin,
         OriginDimensionSpacePoint $targetOrigin,
-        NodeAggregate $nodeAggregate
+        NodeAggregate $nodeAggregate,
+        ?NodeAggregateId $parentNodeAggregateId,
     ): Events;
 
     /**
@@ -178,7 +179,8 @@ trait TetheredNodeInternals
             contentGraph: $contentGraph,
             sourceOrigin: $arbitraryOccupiedDimensionSpacePoint,
             targetOrigin: $originDimensionSpacePoint,
-            nodeAggregate: $childNodeAggregate
+            nodeAggregate: $childNodeAggregate,
+            parentNodeAggregateId: null,
         );
     }
 

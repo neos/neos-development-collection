@@ -123,7 +123,8 @@ trait NodeVariation
             $contentGraph,
             $command->sourceOrigin,
             $command->targetOrigin,
-            $nodeAggregate
+            $nodeAggregate,
+            $command->parentNodeAggregateId,
         );
 
         return new EventsToPublish(
