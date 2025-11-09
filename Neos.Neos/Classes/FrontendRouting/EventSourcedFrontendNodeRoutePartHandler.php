@@ -210,9 +210,6 @@ final class EventSourcedFrontendNodeRoutePartHandler extends AbstractRoutePart i
             )
         );
         $dimensionSpacePoint = $dimensionResolvingResult->resolvedDimensionSpacePoint;
-        // TODO Validate for full context
-        // TODO validate dsp == complete (ContentDimensionZookeeper::getAllowedDimensionSubspace()->contains()...)
-        // if incomplete -> no match + log
 
         $contentRepository = $this->contentRepositoryRegistry->get($resolvedSite->getConfiguration()->contentRepositoryId);
 
@@ -500,4 +497,3 @@ final class EventSourcedFrontendNodeRoutePartHandler extends AbstractRoutePart i
         );*/
     }
 }
-
