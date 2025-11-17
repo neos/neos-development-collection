@@ -18,6 +18,7 @@ use GuzzleHttp\Psr7\Uri;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\Flow\Annotations as Flow;
 use Neos\Media\Domain\Model\AssetId;
+use Neos\Neos\AssetUsage\ProvidesAssetIdsInterface;
 use Psr\Http\Message\UriInterface;
 
 /**
@@ -40,7 +41,7 @@ use Psr\Http\Message\UriInterface;
  *
  * @Flow\Proxy(false)
  */
-final readonly class Link implements \JsonSerializable
+final readonly class Link implements \JsonSerializable, ProvidesAssetIdsInterface
 {
     /**
      * A selection of frequently used target attribute values
@@ -180,6 +181,15 @@ final readonly class Link implements \JsonSerializable
     {
         $rawAssetId = $this->extractForScheme('asset');
         return $rawAssetId ? AssetId::fromString($rawAssetId) : null;
+    }
+
+    /**
+     * @return list<AssetId>
+     */
+    public function getAssetIds(): array
+    {
+        $assetId = $this->extractAssetId();
+        return $assetId ? [$assetId] : [];
     }
 
     public function jsonSerialize(): mixed

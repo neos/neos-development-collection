@@ -17,6 +17,7 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepository\Core\SharedModel\Workspace\Workspaces;
 use Neos\Flow\Annotations\Scope;
 use Neos\Flow\Persistence\Doctrine\PersistenceManager;
+use Neos\Media\Domain\Model\AssetId;
 use Neos\Media\Domain\Model\AssetInterface;
 use Neos\Media\Domain\Model\AssetVariantInterface;
 use Neos\Media\Domain\Model\ResourceBasedInterface;
@@ -24,7 +25,7 @@ use Neos\Media\Domain\Repository\AssetRepository;
 use Neos\Neos\AssetUsage\Domain\AssetUsageRepository;
 use Neos\Neos\AssetUsage\Dto\AssetIdAndOriginalAssetId;
 use Neos\Neos\AssetUsage\Dto\AssetIdsByProperty;
-use Neos\Neos\Domain\Link\Link;
+use Neos\Neos\AssetUsage\ProvidesAssetIdsInterface;
 use Neos\Utility\TypeHandling;
 
 /**
@@ -219,9 +220,9 @@ final class AssetUsageIndexingService
             return array_map(static fn (array $match) => $match['assetId'], $matches);
         }
 
-        if ($value instanceof Link) {
-            $assetId = $value->extractAssetId();
-            return $assetId ? [$assetId->value] : [];
+        if ($value instanceof ProvidesAssetIdsInterface) {
+            $assetIds = $value->getAssetIds();
+            return array_map(fn (AssetId $id) => $id->value, $assetIds);
         }
 
         if (is_subclass_of($type, ResourceBasedInterface::class)) {
