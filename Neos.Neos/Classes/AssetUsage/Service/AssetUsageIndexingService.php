@@ -220,10 +220,8 @@ final class AssetUsageIndexingService
         }
 
         if ($value instanceof Link) {
-            if ($value->href->getScheme() === 'asset') {
-                return [$value->href->getHost() . $value->href->getPath()];
-            }
-            return [];
+            $assetId = $value->extractAssetId();
+            return $assetId ? [$assetId->value] : [];
         }
 
         if (is_subclass_of($type, ResourceBasedInterface::class)) {

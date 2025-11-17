@@ -15,7 +15,9 @@ declare(strict_types=1);
 namespace Neos\Neos\Domain\Link;
 
 use GuzzleHttp\Psr7\Uri;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\Flow\Annotations as Flow;
+use Neos\Media\Domain\Model\AssetId;
 use Psr\Http\Message\UriInterface;
 
 /**
@@ -158,6 +160,26 @@ final readonly class Link implements \JsonSerializable
             $this->rel,
             $download,
         );
+    }
+
+    public function extractForScheme(string $scheme): string|null
+    {
+        if ($this->href->getScheme() !== $scheme) {
+            return null;
+        }
+        return $this->href->getHost() . $this->href->getPath();
+    }
+
+    public function extractNodeAggregateId(): ?NodeAggregateId
+    {
+        $rawNodeId = $this->extractForScheme('node');
+        return $rawNodeId ? NodeAggregateId::fromString($rawNodeId) : null;
+    }
+
+    public function extractAssetId(): ?AssetId
+    {
+        $rawAssetId = $this->extractForScheme('asset');
+        return $rawAssetId ? AssetId::fromString($rawAssetId) : null;
     }
 
     public function jsonSerialize(): mixed
