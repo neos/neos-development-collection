@@ -20,6 +20,7 @@ use Neos\Flow\Configuration\ConfigurationSchemaValidator;
 use Neos\Flow\Configuration\Exception\SchemaValidationException;
 use Neos\Fusion\View\FusionView;
 use Neos\Neos\Controller\Module\ModuleTranslationTrait;
+use Neos\Utility\Arrays;
 use Neos\Utility\SchemaGenerator;
 use Neos\Neos\Controller\Module\AbstractModuleController;
 use Neos\Error\Messages\Message;
@@ -64,7 +65,11 @@ class ConfigurationController extends AbstractModuleController
         ]);
 
         if (in_array($type, $availableConfigurationTypes)) {
-            $this->view->assign('configuration', $this->configurationManager->getConfiguration($type));
+            $this->view->assign('configuration', self::scrubConfiguredSecrets(
+                $this->configurationManager->getConfiguration($type),
+                $this->moduleConfiguration['settings']['automaticSecretScrubbingPattern'] ?? null,
+                $this->moduleConfiguration['settings']['configurationPathsWithSecrets'][$type] ?? []
+            ));
 
             try {
                 $this->view->assign('validationResult', $this->configurationSchemaValidator->validate($type));
@@ -86,5 +91,33 @@ class ConfigurationController extends AbstractModuleController
                 1412373998
             );
         }
+    }
+
+    public static function scrubConfiguredSecrets(array $configuration, ?string $automaticSecretScrubbingPattern, array $pathsToBeScrubbed, string $currentPathPrefix = ''): array
+    {
+        $scrubbedConfiguration = $configuration;
+        foreach ($scrubbedConfiguration as $key => $value) {
+            $path = $currentPathPrefix . $key;
+            if (is_array($value)) {
+                $scrubbedConfiguration[$key] = self::scrubConfiguredSecrets($value, $automaticSecretScrubbingPattern, $pathsToBeScrubbed, $path . '.');
+                continue;
+            }
+
+            if (in_array($path, $pathsToBeScrubbed, true)) {
+                // If the path is in the list of paths to be scrubbed, replace the value with '***'
+                $scrubbedConfiguration[$key] = '***';
+                continue;
+            }
+
+            if ($automaticSecretScrubbingPattern && preg_match(
+                $automaticSecretScrubbingPattern,
+                    (string)$key
+            )) {
+                // If the key matches the automatic secret scrubbing pattern, replace the value with '***'
+                $scrubbedConfiguration[$key] = '***';
+            }
+        }
+
+        return $scrubbedConfiguration;
     }
 }

@@ -379,6 +379,24 @@ Neos:
             description: 'Neos.Neos:Modules:configuration.description'
             icon: fas fa-list-alt
             mainStylesheet: 'Lite'
+            settings:
+              #
+              # This pattern is matched against the last part of a configuration path
+              # e.g. '/^(password|secret)$/' will lead to any path with the last part containing 'password' or 'secret'
+              # being scrubbed before displaying in the backend.
+              #
+              automaticSecretScrubbingPattern: '/^(password|secret)$/'
+              #
+              # Here you can additionally define explicit paths by configuration type
+              # that contain secrets and should be scrubbed before displaying
+              # e.g.:
+              #  configurationPathsWithSecrets:
+              #    Settings:
+              #      - Neos.Flow.persistence.backendOptions.dbname
+              #
+              configurationPathsWithSecrets:
+                Settings:
+                  - Neos.Flow.persistence.backendOptions.dbname
           dimensions:
             label: 'Neos.Neos:Modules:dimensions.label'
             controller: 'Neos\Neos\Controller\Module\Administration\DimensionController'
