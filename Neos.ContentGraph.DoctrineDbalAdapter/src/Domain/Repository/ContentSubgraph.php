@@ -475,9 +475,27 @@ final class ContentSubgraph implements ContentSubgraphInterface
     {
         $hierarchyRelationTablePrefix = $hierarchyRelationTableAlias === '' ? '' : $hierarchyRelationTableAlias . '.';
         $i = 0;
+
         foreach ($this->visibilityConstraints->excludedSubtreeTags as $excludedTag) {
             $queryBuilder->andWhere('NOT JSON_CONTAINS_PATH(' . $hierarchyRelationTablePrefix . 'subtreetags, \'one\', :tagPath' . $i . ')')->setParameter('tagPath' . $i, '$."' . $excludedTag->value . '"');
+            $queryBuilder->andWhere(
+                'NOT JSON_CONTAINS_PATH(' . $hierarchyRelationTablePrefix . 'subtreetags, \'one\', :tagPath' . $i . ')')
+                ->setParameter('tagPath' . $i, '$."' . $excludedTag->value . '"');
             $i++;
+        }
+
+        if (!$this->visibilityConstraints->includedSubtreeTags->isEmpty()) {
+            $includedParts = [];
+            $expression = $queryBuilder->expr();
+            foreach ($this->visibilityConstraints->includedSubtreeTags as $includedTag) {
+                $includedParts[] = $expression->eq(
+                    'JSON_CONTAINS_PATH(' . $hierarchyRelationTablePrefix . 'subtreetags, \'one\', :tagPath' . $i . ')',
+                    $expression->literal(1)
+                );
+                $queryBuilder->setParameter('tagPath' . $i, '$."' . $includedTag->value . '"');
+                $i++;
+            }
+            $queryBuilder->andWhere($expression->or(...$includedParts));
         }
     }
 

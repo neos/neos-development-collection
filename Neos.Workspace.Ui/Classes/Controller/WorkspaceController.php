@@ -63,7 +63,7 @@ use Neos\Neos\FrontendRouting\NodeUriBuilderFactory;
 use Neos\Neos\FrontendRouting\SiteDetection\SiteDetectionResult;
 use Neos\Neos\PendingChangesProjection\ChangeFinder;
 use Neos\Neos\PendingChangesProjection\Changes;
-use Neos\Neos\Security\Authorization\ContentRepositoryAuthorizationService;
+use Neos\Neos\Security\Authorization\ContentRepositoryAuthorizationInterface;
 use Neos\Neos\Utility\NodeTypeWithFallbackProvider;
 use Neos\Workspace\Ui\ViewModel\ChangeItem;
 use Neos\Workspace\Ui\ViewModel\ContentChangeItem;
@@ -131,7 +131,7 @@ class WorkspaceController extends AbstractModuleController
     protected PolicyService $policyService;
 
     #[Flow\Inject]
-    protected ContentRepositoryAuthorizationService $authorizationService;
+    protected ContentRepositoryAuthorizationInterface $authorizationService;
 
     /**
      * Display a list of unpublished content

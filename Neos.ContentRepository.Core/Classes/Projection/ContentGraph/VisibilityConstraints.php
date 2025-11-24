@@ -42,9 +42,11 @@ final readonly class VisibilityConstraints implements \JsonSerializable
 {
     /**
      * @param SubtreeTags $excludedSubtreeTags A set of {@see SubtreeTag} instances that will be _excluded_ from the results of any content graph query
+     * @param SubtreeTags $includedSubtreeTags A set of {@see SubtreeTag} instances that will be _included_ in the results of any content graph query
      */
     private function __construct(
         public SubtreeTags $excludedSubtreeTags,
+        public SubtreeTags $includedSubtreeTags,
     ) {
     }
 
@@ -53,7 +55,16 @@ final readonly class VisibilityConstraints implements \JsonSerializable
      */
     public static function createEmpty(): self
     {
-        return new self(SubtreeTags::createEmpty());
+        return new self(SubtreeTags::createEmpty(), SubtreeTags::createEmpty());
+    }
+
+    /**
+     * @param SubtreeTags $excluded A set of {@see SubtreeTag} instances that will be _excluded_ from the results of any content graph query
+     * @param SubtreeTags $included A set of {@see SubtreeTag} instances that will be _included_ in the results of any content graph query
+     */
+    public static function excludeAndIncludeSubtreeTags(SubtreeTags $excluded, SubtreeTags $included): self
+    {
+        return new self($excluded, $included);
     }
 
     /**
@@ -61,17 +72,32 @@ final readonly class VisibilityConstraints implements \JsonSerializable
      */
     public static function excludeSubtreeTags(SubtreeTags $subtreeTags): self
     {
-        return new self($subtreeTags);
+        return new self($subtreeTags, SubtreeTags::createEmpty());
+    }
+
+    /**
+     * @param SubtreeTags $subtreeTags A set of {@see SubtreeTag} instances that will be _included_ in the results of any content graph query
+     */
+    public static function includeSubtreeTags(SubtreeTags $subtreeTags): self
+    {
+        return new self(SubtreeTags::createEmpty(), $subtreeTags);
     }
 
     public function getHash(): string
     {
-        return md5(implode('|', $this->excludedSubtreeTags->toStringArray()));
+        return md5(
+            implode('|', $this->excludedSubtreeTags->toStringArray())
+            . '|' .
+            implode('|', $this->includedSubtreeTags->toStringArray())
+        );
     }
 
     public function merge(VisibilityConstraints $other): self
     {
-        return new self($this->excludedSubtreeTags->merge($other->excludedSubtreeTags));
+        return new self(
+            $this->excludedSubtreeTags->merge($other->excludedSubtreeTags),
+            $this->includedSubtreeTags->merge($other->includedSubtreeTags)
+        );
     }
 
     /**

@@ -36,7 +36,7 @@ use Neos\Neos\FrontendRouting\Exception\NodeNotFoundException;
 use Neos\Neos\FrontendRouting\NodeShortcutResolver;
 use Neos\Neos\FrontendRouting\NodeUriBuilderFactory;
 use Neos\Neos\FrontendRouting\SiteDetection\SiteDetectionResult;
-use Neos\Neos\Security\Authorization\ContentRepositoryAuthorizationService;
+use Neos\Neos\Security\Authorization\ContentRepositoryAuthorizationInterface;
 use Neos\Neos\Utility\NodeTypeWithFallbackProvider;
 use Neos\Neos\View\FusionView;
 
@@ -106,7 +106,7 @@ class NodeController extends ActionController
     protected NodeUriBuilderFactory $nodeUriBuilderFactory;
 
     #[Flow\Inject]
-    protected ContentRepositoryAuthorizationService $contentRepositoryAuthorizationService;
+    protected ContentRepositoryAuthorizationInterface $contentRepositoryAuthorizationService;
 
     #[Flow\Inject]
     protected ContentSubgraphCacheWarmup|null $contentSubgraphCacheWarmup = null;

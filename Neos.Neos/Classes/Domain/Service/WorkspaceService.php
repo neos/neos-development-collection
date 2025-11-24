@@ -39,7 +39,7 @@ use Neos\Neos\Domain\Model\WorkspaceRoleSubject;
 use Neos\Neos\Domain\Model\WorkspaceTitle;
 use Neos\Neos\Domain\Repository\WorkspaceMetadataAndRoleRepository;
 use Neos\Neos\Domain\SubtreeTagging\SoftRemoval\SoftRemovalGarbageCollector;
-use Neos\Neos\Security\Authorization\ContentRepositoryAuthorizationService;
+use Neos\Neos\Security\Authorization\ContentRepositoryAuthorizationInterface;
 
 /**
  * Central authority to interact with Content Repository Workspaces within Neos
@@ -53,7 +53,7 @@ final readonly class WorkspaceService
         private ContentRepositoryRegistry $contentRepositoryRegistry,
         private WorkspaceMetadataAndRoleRepository $metadataAndRoleRepository,
         private UserService $userService,
-        private ContentRepositoryAuthorizationService $authorizationService,
+        private ContentRepositoryAuthorizationInterface $authorizationService,
         private SecurityContext $securityContext,
         private SoftRemovalGarbageCollector $softRemovalGarbageCollector,
     ) {
@@ -265,7 +265,7 @@ final readonly class WorkspaceService
     /**
      * Get all role assignments for the specified workspace
      *
-     * NOTE: This should never be used to evaluate permissions, instead {@see ContentRepositoryAuthorizationService::getWorkspacePermissions()} should be used!
+     * NOTE: This should never be used to evaluate permissions, instead {@see ContentRepositoryAuthorizationInterface::getWorkspacePermissions()} should be used!
      */
     public function getWorkspaceRoleAssignments(ContentRepositoryId $contentRepositoryId, WorkspaceName $workspaceName): WorkspaceRoleAssignments
     {

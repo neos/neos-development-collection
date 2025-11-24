@@ -42,14 +42,14 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\Flow\Security\Context as SecurityContext;
 use Neos\Neos\Domain\Model\WorkspacePermissions;
 use Neos\Neos\Domain\Service\UserService;
-use Neos\Neos\Security\Authorization\ContentRepositoryAuthorizationService;
+use Neos\Neos\Security\Authorization\ContentRepositoryAuthorizationInterface;
 use Neos\Neos\Security\Authorization\Privilege\EditNodePrivilege;
 
 /**
  * Implementation of Content Repository {@see AuthProviderInterface} which ties the authorization
  * to Neos.
  *
- * @internal use {@see ContentRepositoryAuthorizationService} to ask for specific authorization decisions
+ * @internal use {@see ContentRepositoryAuthorizationInterface} to ask for specific authorization decisions
  */
 final readonly class ContentRepositoryAuthProvider implements AuthProviderInterface
 {
@@ -57,7 +57,7 @@ final readonly class ContentRepositoryAuthProvider implements AuthProviderInterf
         private ContentRepositoryId $contentRepositoryId,
         private UserService $userService,
         private ContentGraphReadModelInterface $contentGraphReadModel,
-        private ContentRepositoryAuthorizationService $authorizationService,
+        private ContentRepositoryAuthorizationInterface $authorizationService,
         private SecurityContext $securityContext,
     ) {
     }

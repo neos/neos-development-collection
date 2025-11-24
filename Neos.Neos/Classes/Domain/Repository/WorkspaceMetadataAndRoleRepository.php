@@ -34,10 +34,10 @@ use Neos\Neos\Domain\Model\WorkspaceRoleSubjects;
 use Neos\Neos\Domain\Model\WorkspaceRoleSubjectType;
 use Neos\Neos\Domain\Model\WorkspaceTitle;
 use Neos\Neos\Domain\Service\WorkspaceService;
-use Neos\Neos\Security\Authorization\ContentRepositoryAuthorizationService;
+use Neos\Neos\Security\Authorization\ContentRepositoryAuthorizationInterface;
 
 /**
- * Implementation detail of {@see WorkspaceService} and {@see ContentRepositoryAuthorizationService}
+ * Implementation detail of {@see WorkspaceService} and {@see ContentRepositoryAuthorizationInterface}
  *
  * @internal Neos users should not need to deal with this low level repository. No security is imposed here. Please use the {@see WorkspaceService}!
  */
