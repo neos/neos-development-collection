@@ -114,6 +114,31 @@ final readonly class HierarchyRelation
         }
     }
 
+    public function assignNewParentAndChildNode(
+        NodeRelationAnchorPoint $parentAnchorPoint,
+        NodeRelationAnchorPoint $childAnchorPoint,
+        ?int $position,
+        Connection $databaseConnection,
+        ContentGraphTableNames $tableNames
+    ): void {
+        $data = [
+            'parentnodeanchor' => $parentAnchorPoint->value,
+            'childnodeanchor' => $childAnchorPoint->value,
+        ];
+        if (!is_null($position)) {
+            $data['position'] = $position;
+        }
+        try {
+            $databaseConnection->update(
+                $tableNames->hierarchyRelation(),
+                $data,
+                $this->getDatabaseId()
+            );
+        } catch (DBALException $e) {
+            throw new \RuntimeException(sprintf('Failed to update hierarchy relation: %s', $e->getMessage()), 1716478609, $e);
+        }
+    }
+
     public function assignNewPosition(int $position, Connection $databaseConnection, ContentGraphTableNames $tableNames): void
     {
         try {

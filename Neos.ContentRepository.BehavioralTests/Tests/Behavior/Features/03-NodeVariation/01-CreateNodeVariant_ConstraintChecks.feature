@@ -59,7 +59,7 @@ Feature: Create node variant
     # ...and we have to add yet another node for node type constraint checks
     And the following CreateNodeAggregateWithNode commands are executed:
       | nodeAggregateId      | nodeName       | parentNodeAggregateId  | nodeTypeName                            | tetheredDescendantNodeAggregateIds |
-      | the-governode        | governode | lady-eleonode-rootford | Neos.ContentRepository.Testing:RestrictiveDocument | {"tethered": "nodimer-tetherton"} |
+      | the-governode        | governode | lady-eleonode-rootford | Neos.ContentRepository.Testing:RestrictiveDocument | {"tethered": "another-tetherton"} |
 
   Scenario: Try to create a variant in a workspace that does not exist
     When the command CreateNodeVariant is executed with payload and exceptions are caught:
@@ -229,5 +229,5 @@ Feature: Create node variant
       | nodeAggregateId       | "polyglot-mc-nodeface"            |
       | sourceOrigin          | {"market":"DE", "language":"de"}  |
       | targetOrigin          | {"market":"DE", "language":"gsw"} |
-      | parentNodeAggregateId | "nodimer-tetherton"                |
+      | parentNodeAggregateId | "another-tetherton"                |
     Then the last command should have thrown an exception of type "NodeConstraintException"

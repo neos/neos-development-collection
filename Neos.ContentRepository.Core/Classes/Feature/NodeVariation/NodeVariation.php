@@ -120,11 +120,13 @@ trait NodeVariation
         );
 
         $events = $this->createEventsForVariations(
-            $contentGraph,
-            $command->sourceOrigin,
-            $command->targetOrigin,
-            $nodeAggregate,
-            $command->parentNodeAggregateId,
+            contentGraph: $contentGraph,
+            sourceOrigin: $command->sourceOrigin,
+            targetOrigin: $command->targetOrigin,
+            nodeAggregate: $nodeAggregate,
+            parentNodeAggregateId: $command->parentNodeAggregateId,
+            precedingSiblingNodeAggregateId: $command->precedingSiblingNodeAggregateId,
+            succeedingSiblingNodeAggregateId: $command->succeedingSiblingNodeAggregateId,
         );
 
         return new EventsToPublish(

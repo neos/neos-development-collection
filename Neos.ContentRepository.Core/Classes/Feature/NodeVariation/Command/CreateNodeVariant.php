@@ -68,18 +68,18 @@ final readonly class CreateNodeVariant implements
     public static function fromArray(array $array): self
     {
         return new self(
-            WorkspaceName::fromString($array['workspaceName']),
-            NodeAggregateId::fromString($array['nodeAggregateId']),
-            OriginDimensionSpacePoint::fromArray($array['sourceOrigin']),
-            OriginDimensionSpacePoint::fromArray($array['targetOrigin']),
-            array_key_exists('parentNodeAggregateId', $array)
-                ? NodeAggregateId::fromString($array['parentNodeAggregateId'])
+            workspaceName: WorkspaceName::fromString($array['workspaceName']),
+            nodeAggregateId: NodeAggregateId::fromString($array['nodeAggregateId']),
+            sourceOrigin: OriginDimensionSpacePoint::fromArray($array['sourceOrigin']),
+            targetOrigin: OriginDimensionSpacePoint::fromArray($array['targetOrigin']),
+            parentNodeAggregateId: (is_string($parentNodeAggregateId = $array['parentNodeAggregateId'] ?? null))
+                ? NodeAggregateId::fromString($parentNodeAggregateId)
                 : null,
-            array_key_exists('precedingSiblingNodeAggregateId', $array)
-                ? NodeAggregateId::fromString($array['precedingSiblingNodeAggregateId'])
+            precedingSiblingNodeAggregateId: (is_string($precedingSiblingNodeAggregateId = $array['precedingSiblingNodeAggregateId'] ?? null))
+                ? NodeAggregateId::fromString($precedingSiblingNodeAggregateId)
                 : null,
-            array_key_exists('succeedingSiblingNodeAggregateId', $array)
-                ? NodeAggregateId::fromString($array['succeedingSiblingNodeAggregateId'])
+            succeedingSiblingNodeAggregateId: (is_string($succeedingSiblingNodeAggregateId = $array['succeedingSiblingNodeAggregateId'] ?? null))
+                ? NodeAggregateId::fromString($succeedingSiblingNodeAggregateId)
                 : null,
         );
     }

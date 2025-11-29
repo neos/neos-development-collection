@@ -68,7 +68,33 @@ Feature: Create node specialization
       | sourceOrigin    | {"example":"source"} |
       | targetOrigin    | {"example":"spec"}   |
 
-    Then I expect the graph projection to consist of exactly 13 nodes
+    Then I expect exactly 21 events to be published on stream "ContentStream:cs-identifier"
+    And event at index 18 is of type "NodeSpecializationVariantWasCreated" with payload:
+      | Key                    | Expected                                                                                                                                                                    |
+      | contentStreamId        | "cs-identifier"                                                                                                                                                             |
+      | nodeAggregateId        | "nody-mc-nodeface"                                                                                                                                                          |
+      | sourceOrigin           | {"example":"source"}                                                                                                                                                        |
+      | specializationOrigin   | {"example":"spec"}                                                                                                                                                          |
+      | specializationSiblings | [{"dimensionSpacePoint":{"example":"spec"},"nodeAggregateId":"younger-mc-nodeface"},{"dimensionSpacePoint":{"example":"leafSpec"},"nodeAggregateId":"younger-mc-nodeface"}] |
+      | parentNodeAggregateId  | null                                                                                                                                                                        |
+    And event at index 19 is of type "NodeSpecializationVariantWasCreated" with payload:
+      | Key                    | Expected                                                            |
+      | contentStreamId        | "cs-identifier"                                                     |
+      | nodeAggregateId        | "nodewyn-tetherton"                                                 |
+      | sourceOrigin           | {"example":"source"}                                                |
+      | specializationOrigin   | {"example":"spec"}                                                  |
+      | specializationSiblings | [{"dimensionSpacePoint":{"example":"spec"},"nodeAggregateId":null},{"dimensionSpacePoint":{"example":"leafSpec"},"nodeAggregateId":null}] |
+      | parentNodeAggregateId  | null                                                                |
+    And event at index 20 is of type "NodeSpecializationVariantWasCreated" with payload:
+      | Key                    | Expected                                                            |
+      | contentStreamId        | "cs-identifier"                                                     |
+      | nodeAggregateId        | "nodimer-tetherton"                                                 |
+      | sourceOrigin           | {"example":"source"}                                                |
+      | specializationOrigin   | {"example":"spec"}                                                  |
+      | specializationSiblings | [{"dimensionSpacePoint":{"example":"spec"},"nodeAggregateId":null},{"dimensionSpacePoint":{"example":"leafSpec"},"nodeAggregateId":null}] |
+      | parentNodeAggregateId  | null                                                                |
+
+    And I expect the graph projection to consist of exactly 13 nodes
     And I expect a node identified by cs-identifier;lady-eleonode-rootford;{} to exist in the content graph
     And I expect a node identified by cs-identifier;sir-david-nodenborough;{"example":"source"} to exist in the content graph
     And I expect a node identified by cs-identifier;eldest-mc-nodeface;{"example":"source"} to exist in the content graph
@@ -128,16 +154,16 @@ Feature: Create node specialization
     Then I expect the subgraph projection to consist of exactly 9 nodes
     Then I expect node aggregate identifier "lady-eleonode-rootford" to lead to node cs-identifier;lady-eleonode-rootford;{}
     And I expect this node to have the following child nodes:
-      | Name              | NodeDiscriminator                                         |
-      | document          | cs-identifier;sir-david-nodenborough;{"example":"source"} |
+      | Name     | NodeDiscriminator                                         |
+      | document | cs-identifier;sir-david-nodenborough;{"example":"source"} |
     And I expect node aggregate identifier "sir-david-nodenborough" and node path "document" to lead to node cs-identifier;sir-david-nodenborough;{"example":"source"}
     And I expect this node to have the following child nodes:
-      | Name              | NodeDiscriminator                                         |
-      | eldest-document   | cs-identifier;eldest-mc-nodeface;{"example":"source"}     |
-      | elder-document    | cs-identifier;elder-mc-nodeface;{"example":"source"}      |
-      | child-document    | cs-identifier;nody-mc-nodeface;{"example":"spec"}         |
-      | younger-document  | cs-identifier;younger-mc-nodeface;{"example":"source"}    |
-      | youngest-document | cs-identifier;youngest-mc-nodeface;{"example":"source"}   |
+      | Name              | NodeDiscriminator                                       |
+      | eldest-document   | cs-identifier;eldest-mc-nodeface;{"example":"source"}   |
+      | elder-document    | cs-identifier;elder-mc-nodeface;{"example":"source"}    |
+      | child-document    | cs-identifier;nody-mc-nodeface;{"example":"spec"}       |
+      | younger-document  | cs-identifier;younger-mc-nodeface;{"example":"source"}  |
+      | youngest-document | cs-identifier;youngest-mc-nodeface;{"example":"source"} |
     And I expect node aggregate identifier "eldest-mc-nodeface" and node path "document/eldest-document" to lead to node cs-identifier;eldest-mc-nodeface;{"example":"source"}
     And I expect this node to have no preceding siblings
     And I expect this node to have the following succeeding siblings:
@@ -197,8 +223,8 @@ Feature: Create node specialization
     Then I expect the subgraph projection to consist of exactly 9 nodes
     Then I expect node aggregate identifier "lady-eleonode-rootford" to lead to node cs-identifier;lady-eleonode-rootford;{}
     And I expect this node to have the following child nodes:
-      | Name              | NodeDiscriminator                                       |
-      | document   | cs-identifier;sir-david-nodenborough;{"example":"source"}   |
+      | Name     | NodeDiscriminator                                         |
+      | document | cs-identifier;sir-david-nodenborough;{"example":"source"} |
     Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{"example":"source"}
     And I expect this node to have the following child nodes:
       | Name              | NodeDiscriminator                                       |

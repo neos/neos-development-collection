@@ -90,8 +90,8 @@ final readonly class NodeSpecializationVariantWasCreated implements
                 : InterdimensionalSiblings::fromDimensionSpacePointSetWithoutSucceedingSiblings(
                     DimensionSpacePointSet::fromArray($values['specializationCoverage'])
                 ),
-            parentNodeAggregateId: array_key_exists('parentNodeAggregateId', $values)
-                ? NodeAggregateId::fromString($values['parentNodeAggregateId'])
+            parentNodeAggregateId: is_string($parentNodeAggregateId = ($values['parentNodeAggregateId'] ?? null))
+                ? NodeAggregateId::fromString($parentNodeAggregateId)
                 : null,
         );
     }

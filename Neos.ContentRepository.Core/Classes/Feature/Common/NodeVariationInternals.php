@@ -25,6 +25,7 @@ use Neos\ContentRepository\Core\Feature\NodeVariation\Event\NodeSpecializationVa
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphInterface;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindPrecedingSiblingNodesFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindSucceedingSiblingNodesFilter;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\Pagination\Pagination;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate;
 use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
@@ -34,6 +35,8 @@ use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
  */
 trait NodeVariationInternals
 {
+    use InterdimensionalSiblingsProvider;
+
     abstract protected function getInterDimensionalVariationGraph(): DimensionSpace\InterDimensionalVariationGraph;
 
     protected function createEventsForVariations(
@@ -42,6 +45,8 @@ trait NodeVariationInternals
         OriginDimensionSpacePoint $targetOrigin,
         NodeAggregate $nodeAggregate,
         ?NodeAggregateId $parentNodeAggregateId,
+        ?NodeAggregateId $precedingSiblingNodeAggregateId,
+        ?NodeAggregateId $succeedingSiblingNodeAggregateId,
     ): Events {
         return match (
             $this->getInterDimensionalVariationGraph()->getVariantType(
@@ -50,11 +55,13 @@ trait NodeVariationInternals
             )
         ) {
             DimensionSpace\VariantType::TYPE_SPECIALIZATION => $this->handleCreateNodeSpecializationVariant(
-                $contentGraph,
-                $sourceOrigin,
-                $targetOrigin,
-                $nodeAggregate,
-                $parentNodeAggregateId,
+                contentGraph: $contentGraph,
+                sourceOrigin: $sourceOrigin,
+                targetOrigin: $targetOrigin,
+                nodeAggregate: $nodeAggregate,
+                parentNodeAggregateId: $parentNodeAggregateId,
+                precedingSiblingNodeAggregateId: $precedingSiblingNodeAggregateId,
+                succeedingSiblingNodeAggregateId: $succeedingSiblingNodeAggregateId,
             ),
             DimensionSpace\VariantType::TYPE_GENERALIZATION => $this->handleCreateNodeGeneralizationVariant(
                 $contentGraph,
@@ -77,16 +84,20 @@ trait NodeVariationInternals
         OriginDimensionSpacePoint $targetOrigin,
         NodeAggregate $nodeAggregate,
         ?NodeAggregateId $parentNodeAggregateId,
+        ?NodeAggregateId $precedingSiblingNodeAggregateId,
+        ?NodeAggregateId $succeedingSiblingNodeAggregateId,
     ): Events {
         $specializationVisibility = $this->calculateEffectiveVisibility($targetOrigin, $nodeAggregate);
         $events = $this->collectNodeSpecializationVariantsThatWillHaveBeenCreated(
-            $contentGraph,
-            $sourceOrigin,
-            $targetOrigin,
-            $nodeAggregate,
-            $specializationVisibility,
-            $parentNodeAggregateId,
-            [],
+            contentGraph: $contentGraph,
+            sourceOrigin: $sourceOrigin,
+            targetOrigin: $targetOrigin,
+            nodeAggregate: $nodeAggregate,
+            specializationVisibility: $specializationVisibility,
+            parentNodeAggregateId: $parentNodeAggregateId,
+            precedingSiblingNodeAggregateId: $precedingSiblingNodeAggregateId,
+            succeedingSiblingNodeAggregateId: $succeedingSiblingNodeAggregateId,
+            events: [],
         );
 
         return Events::fromArray($events);
@@ -103,21 +114,42 @@ trait NodeVariationInternals
         NodeAggregate $nodeAggregate,
         DimensionSpacePointSet $specializationVisibility,
         ?NodeAggregateId $parentNodeAggregateId,
+        ?NodeAggregateId $precedingSiblingNodeAggregateId,
+        ?NodeAggregateId $succeedingSiblingNodeAggregateId,
         array $events,
     ): array {
+        if (!$parentNodeAggregateId && !$succeedingSiblingNodeAggregateId && !$precedingSiblingNodeAggregateId) {
+            // preserve legacy behavior: this means the variant is to be created in place
+            $originSubgraph = $contentGraph->getSubgraph(
+                $sourceOrigin->toDimensionSpacePoint(),
+                VisibilityConstraints::createEmpty()
+            );
+            $precedingSiblingNodeAggregateId = $originSubgraph->findPrecedingSiblingNodes(
+                siblingNodeAggregateId: $nodeAggregate->nodeAggregateId,
+                filter: FindPrecedingSiblingNodesFilter::create(pagination: Pagination::fromLimitAndOffset(1, 0))
+            )->first()?->aggregateId;
+            $succeedingSiblingNodeAggregateId = $originSubgraph->findSucceedingSiblingNodes(
+                siblingNodeAggregateId: $nodeAggregate->nodeAggregateId,
+                filter: FindSucceedingSiblingNodesFilter::create(pagination: Pagination::fromLimitAndOffset(1, 0))
+            )->first()?->aggregateId;
+        }
         $events[] = new NodeSpecializationVariantWasCreated(
-            $contentGraph->getWorkspaceName(),
-            $contentGraph->getContentStreamId(),
-            $nodeAggregate->nodeAggregateId,
-            $sourceOrigin,
-            $targetOrigin,
-            $this->resolveInterdimensionalSiblings(
-                $contentGraph,
-                $nodeAggregate->nodeAggregateId,
-                $sourceOrigin,
-                $specializationVisibility
+            workspaceName: $contentGraph->getWorkspaceName(),
+            contentStreamId: $contentGraph->getContentStreamId(),
+            nodeAggregateId: $nodeAggregate->nodeAggregateId,
+            sourceOrigin: $sourceOrigin,
+            specializationOrigin: $targetOrigin,
+            specializationSiblings: $this->resolveInterdimensionalSiblings(
+                contentGraph: $contentGraph,
+                selectedDimensionSpacePoint: $sourceOrigin->toDimensionSpacePoint(),
+                affectedDimensionSpacePoints: $specializationVisibility,
+                nodeAggregateId: $nodeAggregate->nodeAggregateId,
+                parentNodeAggregateId: $parentNodeAggregateId,
+                precedingSiblingNodeAggregateId: $precedingSiblingNodeAggregateId,
+                succeedingSiblingNodeAggregateId: $succeedingSiblingNodeAggregateId,
+                completeSet: true,
             ),
-            $parentNodeAggregateId,
+            parentNodeAggregateId: $parentNodeAggregateId,
         );
 
         foreach (
@@ -125,14 +157,28 @@ trait NodeVariationInternals
                 $nodeAggregate->nodeAggregateId
             ) as $tetheredChildNodeAggregate
         ) {
+            $originSubgraph = $contentGraph->getSubgraph(
+                $sourceOrigin->toDimensionSpacePoint(),
+                VisibilityConstraints::createEmpty()
+            );
+            $originChildPrecedingSibling = $originSubgraph->findPrecedingSiblingNodes(
+                siblingNodeAggregateId: $tetheredChildNodeAggregate->nodeAggregateId,
+                filter: FindPrecedingSiblingNodesFilter::create(pagination: Pagination::fromLimitAndOffset(1, 0))
+            )->first();
+            $originChildSucceedingSibling = $originSubgraph->findSucceedingSiblingNodes(
+                siblingNodeAggregateId: $tetheredChildNodeAggregate->nodeAggregateId,
+                filter: FindSucceedingSiblingNodesFilter::create(pagination: Pagination::fromLimitAndOffset(1, 0))
+            )->first();
             $events = $this->collectNodeSpecializationVariantsThatWillHaveBeenCreated(
-                $contentGraph,
-                $sourceOrigin,
-                $targetOrigin,
-                $tetheredChildNodeAggregate,
-                $specializationVisibility,
-                $parentNodeAggregateId,
-                $events
+                contentGraph: $contentGraph,
+                sourceOrigin: $sourceOrigin,
+                targetOrigin: $targetOrigin,
+                nodeAggregate: $tetheredChildNodeAggregate,
+                specializationVisibility: $specializationVisibility,
+                parentNodeAggregateId: null,
+                precedingSiblingNodeAggregateId: $originChildPrecedingSibling?->aggregateId,
+                succeedingSiblingNodeAggregateId: $originChildSucceedingSibling?->aggregateId,
+                events: $events
             );
         }
 
@@ -176,7 +222,7 @@ trait NodeVariationInternals
             $nodeAggregate->nodeAggregateId,
             $sourceOrigin,
             $targetOrigin,
-            $this->resolveInterdimensionalSiblings(
+            $this->resolveInterdimensionalSiblingsForVariation(
                 $contentGraph,
                 $nodeAggregate->nodeAggregateId,
                 $sourceOrigin,
@@ -239,7 +285,7 @@ trait NodeVariationInternals
             $nodeAggregate->nodeAggregateId,
             $sourceOrigin,
             $targetOrigin,
-            $this->resolveInterdimensionalSiblings(
+            $this->resolveInterdimensionalSiblingsForVariation(
                 $contentGraph,
                 $nodeAggregate->nodeAggregateId,
                 $sourceOrigin,
@@ -263,120 +309,6 @@ trait NodeVariationInternals
         }
 
         return $events;
-    }
-
-    /**
-     * Resolves the succeeding siblings for the node variant to be created and all dimension space points the variant will cover.
-     *
-     * For each dimension space point in the variant coverage
-     * a) All the succeeding siblings of the node aggregate in the source origin are checked
-     * and the first one existing in this dimension space point is used
-     * b) As fallback no succeeding sibling is specified
-     *
-     * Developers hint:
-     * Similar to {@see NodeCreationInternals::resolveInterdimensionalSiblingsForCreation()}
-     * except this operates on the to-be-varied node itself instead of an explicitly set succeeding sibling
-     */
-    private function resolveInterdimensionalSiblings(
-        ContentGraphInterface $contentGraph,
-        NodeAggregateId $varyingNodeAggregateId,
-        OriginDimensionSpacePoint $sourceOrigin,
-        DimensionSpacePointSet $variantCoverage,
-    ): InterdimensionalSiblings {
-        $originSiblings = $contentGraph
-            ->getSubgraph($sourceOrigin->toDimensionSpacePoint(), VisibilityConstraints::createEmpty())
-            ->findSucceedingSiblingNodes($varyingNodeAggregateId, FindSucceedingSiblingNodesFilter::create());
-
-        $interdimensionalSiblings = [];
-        foreach ($variantCoverage as $variantDimensionSpacePoint) {
-            // check the siblings succeeding in the origin dimension space point
-            foreach ($originSiblings as $originSibling) {
-                $variantSibling = $contentGraph->getSubgraph($variantDimensionSpacePoint, VisibilityConstraints::createEmpty())->findNodeById($originSibling->aggregateId);
-                if (!$variantSibling) {
-                    continue;
-                }
-                // a) one of the further succeeding sibling exists in this dimension space point
-                $interdimensionalSiblings[] = new InterdimensionalSibling(
-                    $variantDimensionSpacePoint,
-                    $variantSibling->aggregateId,
-                );
-                continue 2;
-            }
-
-            // b) fallback; there is no succeeding sibling in this dimension space point
-            $interdimensionalSiblings[] = new InterdimensionalSibling(
-                $variantDimensionSpacePoint,
-                null,
-            );
-        }
-
-        return new InterdimensionalSiblings(...$interdimensionalSiblings);
-    }
-
-    /**
-     * Resolves the succeeding siblings for the node variant to be created using a new parent
-     * and all dimension space points the variant will cover.
-     *
-     * For each dimension space point in the variant coverage
-     * a) All the succeeding siblings of the node aggregate in the source origin are checked
-     * and the first one existing in this dimension space point is used
-     * b) As fallback no succeeding sibling is specified
-     *
-     * Developers hint:
-     * Similar to {@see NodeCreationInternals::resolveInterdimensionalSiblingsForCreation()}
-     * except this operates on the to-be-varied node itself instead of an explicitly set succeeding sibling
-     */
-    private function resolveInterdimensionalSiblingsForNewParent(
-        ContentGraphInterface $contentGraph,
-        NodeAggregateId $varyingNodeAggregateId,
-        OriginDimensionSpacePoint $sourceOrigin,
-        DimensionSpacePointSet $variantCoverage,
-        NodeAggregateId $parentNodeAggregateId,
-    ): InterdimensionalSiblings {
-        $selectedSubgraph = $contentGraph->getSubgraph(
-            $selectedDimensionSpacePoint,
-            VisibilityConstraints::createEmpty()
-        );
-        $alternativeSucceedingSiblingIds = $succeedingSiblingId
-            ? $selectedSubgraph->findSucceedingSiblingNodes(
-                $succeedingSiblingId,
-                FindSucceedingSiblingNodesFilter::create()
-            )->toNodeAggregateIds()
-            : null;
-        $alternativePrecedingSiblingIds = $precedingSiblingId
-            ? $selectedSubgraph->findPrecedingSiblingNodes(
-                $precedingSiblingId,
-                FindPrecedingSiblingNodesFilter::create()
-            )->toNodeAggregateIds()
-            : null;
-        $originSiblings = $contentGraph
-            ->getSubgraph($sourceOrigin->toDimensionSpacePoint(), VisibilityConstraints::createEmpty())
-            ->findSucceedingSiblingNodes($varyingNodeAggregateId, FindSucceedingSiblingNodesFilter::create());
-
-        $interdimensionalSiblings = [];
-        foreach ($variantCoverage as $variantDimensionSpacePoint) {
-            // check the siblings succeeding in the origin dimension space point
-            foreach ($originSiblings as $originSibling) {
-                $variantSibling = $contentGraph->getSubgraph($variantDimensionSpacePoint, VisibilityConstraints::createEmpty())->findNodeById($originSibling->aggregateId);
-                if (!$variantSibling) {
-                    continue;
-                }
-                // a) one of the further succeeding sibling exists in this dimension space point
-                $interdimensionalSiblings[] = new InterdimensionalSibling(
-                    $variantDimensionSpacePoint,
-                    $variantSibling->aggregateId,
-                );
-                continue 2;
-            }
-
-            // b) fallback; there is no succeeding sibling in this dimension space point
-            $interdimensionalSiblings[] = new InterdimensionalSibling(
-                $variantDimensionSpacePoint,
-                null,
-            );
-        }
-
-        return new InterdimensionalSiblings(...$interdimensionalSiblings);
     }
 
     private function calculateEffectiveVisibility(

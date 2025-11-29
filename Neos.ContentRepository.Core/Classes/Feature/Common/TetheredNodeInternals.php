@@ -57,6 +57,8 @@ trait TetheredNodeInternals
         OriginDimensionSpacePoint $targetOrigin,
         NodeAggregate $nodeAggregate,
         ?NodeAggregateId $parentNodeAggregateId,
+        ?NodeAggregateId $precedingSiblingNodeAggregateId,
+        ?NodeAggregateId $succeedingSiblingNodeAggregateId,
     ): Events;
 
     /**
@@ -181,6 +183,9 @@ trait TetheredNodeInternals
             targetOrigin: $originDimensionSpacePoint,
             nodeAggregate: $childNodeAggregate,
             parentNodeAggregateId: null,
+            // @todo this was and still is wrong
+            precedingSiblingNodeAggregateId: null,
+            succeedingSiblingNodeAggregateId: null,
         );
     }
 
@@ -228,6 +233,7 @@ trait TetheredNodeInternals
                         $creationOrigin,
                         $originDimensionSpacePoint,
                         $interdimensionalSiblings,
+                        null,
                     ),
                     VariantType::TYPE_GENERALIZATION => new NodeGeneralizationVariantWasCreated(
                         $contentGraph->getWorkspaceName(),
