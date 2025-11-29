@@ -26,6 +26,7 @@ use Neos\ContentRepository\Core\Feature\DimensionSpaceAdjustment\DimensionSpaceC
 use Neos\ContentRepository\Core\Feature\NodeAggregateCommandHandler;
 use Neos\ContentRepository\Core\Feature\WorkspaceCommandHandler;
 use Neos\ContentRepository\Core\Infrastructure\Property\PropertyConverter;
+use Neos\ContentRepository\Core\Infrastructure\PerformanceTracing\PerformanceTracerInterface;
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Core\Projection\CatchUpHook\CatchUpHookFactoryDependencies;
 use Neos\ContentRepository\Core\Projection\CatchUpHook\CatchUpHookFactoryInterface;
@@ -39,7 +40,6 @@ use Neos\ContentRepository\Core\Subscription\Store\SubscriptionStoreInterface;
 use Neos\ContentRepository\Core\Subscription\Subscriber\ProjectionSubscriber;
 use Neos\ContentRepository\Core\Subscription\Subscriber\Subscribers;
 use Neos\ContentRepository\Core\Subscription\SubscriptionId;
-use Neos\ContentRepositoryRegistry\Factory\AuthProvider\AuthProviderFactoryInterface;
 use Neos\EventStore\EventStoreInterface;
 use Psr\Clock\ClockInterface;
 use Psr\Log\LoggerInterface;
@@ -83,6 +83,7 @@ final class ContentRepositoryFactory
         private readonly CommandHooksFactory $commandHooksFactory,
         private readonly ContentRepositorySubscriberFactories $additionalSubscriberFactories,
         LoggerInterface|null $logger = null,
+        private readonly PerformanceTracerInterface|null $performanceTracer = null,
     ) {
         $this->contentDimensionZookeeper = new ContentDimensionZookeeper($contentDimensionSource);
         $this->interDimensionalVariationGraph = new InterDimensionalVariationGraph(
@@ -108,7 +109,7 @@ final class ContentRepositoryFactory
         $this->additionalProjectionStates = ProjectionStates::fromArray($additionalProjectionStates);
         $this->contentGraphProjection = $contentGraphProjectionFactory->build($subscriberFactoryDependencies);
         $subscribers[] = $this->buildContentGraphSubscriber();
-        $this->subscriptionEngine = new SubscriptionEngine($this->eventStore, $subscriptionStore, Subscribers::fromArray($subscribers), $this->eventNormalizer, $logger);
+        $this->subscriptionEngine = new SubscriptionEngine($this->eventStore, $subscriptionStore, Subscribers::fromArray($subscribers), $this->eventNormalizer, $this->performanceTracer, $logger);
     }
 
     private function buildContentGraphSubscriber(): ProjectionSubscriber
@@ -195,6 +196,7 @@ final class ContentRepositoryFactory
             $contentGraphReadModel,
             $commandHooks,
             $this->additionalProjectionStates,
+            $this->performanceTracer,
         );
         $this->isBuilding = false;
         return $this->contentRepositoryRuntimeCache;

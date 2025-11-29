@@ -1,0 +1,32 @@
+`8.3.28 (2025-09-26) <https://github.com/neos/neos-development-collection/releases/tag/8.3.28>`_
+================================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`BUGFIX: Preview modes do not display hidden nodes <https://github.com/neos/neos-development-collection/pull/5604>`_
+--------------------------------------------------------------------------------------------------------------------
+
+This makes the preview more realistic and helps editors better estimate how the end result will look like.
+
+* Packages: ``Neos``
+
+`BUGFIX: Avoid duplicating shadow nodes <https://github.com/neos/neos-development-collection/pull/5624>`_
+---------------------------------------------------------------------------------------------------------
+
+This fixes a regression in handling shadow nodes while publishing in nested workspaces.
+
+Without this change we first create a new shadow node by replicating the move in the target workspace and then try to adjust the existing source shadow node to exist in the target, which triggers a duplicate key error.
+
+As commented, we can be sufficiently sure that the move operation will take care of (not) creating shadow nodes as necessary and any previously existing shadow node in the source workspace can be discarded safely.
+
+The new "else" branch should probably not be necessary, as if there was no move, there should never be a shadow node to adjust. Just in case though we leave this in place. Might clean up some leftover shadow nodes.
+
+* Fixes: `#5561 <https://github.com/neos/neos-development-collection/issues/5561>`_
+* Related: `#1608 <https://github.com/neos/neos-development-collection/issues/1608>`_
+
+
+* Packages: ``Media.Browser`` ``Neos`` ``NodeTypes.BaseMixins`` ``NodeTypes.ColumnLayouts`` ``NodeTypes`` ``ContentRepository``
+
+`Detailed log <https://github.com/neos/neos-development-collection/compare/8.3.27...8.3.28>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

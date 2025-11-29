@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Neos\Neos\Security\ContentRepositoryAuthProvider;
 
+use Neos\ContentRepository\Core\Factory\AuthProviderFactoryInterface;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphReadModelInterface;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
-use Neos\ContentRepositoryRegistry\Factory\AuthProvider\AuthProviderFactoryInterface;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Security\Context as SecurityContext;
 use Neos\Neos\Domain\Service\UserService;

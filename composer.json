@@ -10,7 +10,6 @@
         "doctrine/dbal": "^3.1.4",
         "doctrine/migrations": "*",
         "neos/eventstore": "^1",
-        "neos/eventstore-doctrineadapter": "^1 || ^2",
         "php": "^8.2",
         "neos/error-messages": "*",
         "neos/utility-objecthandling": "*",
@@ -19,12 +18,11 @@
         "psr/clock": "^1",
         "behat/transliterator": "~1.0",
         "ramsey/uuid": "^3.0 || ^4.0",
+        "neos/eventstore-doctrineadapter": "^1 || ^2",
         "league/flysystem": "^3",
         "webmozart/assert": "^1.11",
         "neos/flow": "*",
         "behat/behat": "^3.5",
-        "phpunit/phpunit": "^9.6",
-        "brianium/paratest": "^6.11",
         "neos/behat": "^9.0",
         "neos/contentrepositoryregistry-storageclient": "self.version",
         "symfony/property-access": "^5.4|^6.0",
@@ -38,11 +36,11 @@
         "neos/utility-files": "*",
         "neos/utility-mediatypes": "*",
         "doctrine/common": "^2.7 || ^3.0",
-        "enshrined/svg-sanitize": "^0.17.0",
+        "enshrined/svg-sanitize": "^0.22.0",
         "neos/imagine": "^3.1.0",
         "imagine/imagine": "*",
         "neos/party": "~7.0.3",
-        "neos/fusion-form": "^1.0 || ^2.0",
+        "neos/fusion-form": "^2.1 || ^3.0",
         "neos/form": "*",
         "neos/kickstarter": "~9.1.0"
     },
@@ -57,6 +55,7 @@
         "neos/contentgraph-postgresqladapter": "self.version",
         "neos/contentrepository-behavioraltests": "self.version",
         "neos/contentrepository-core": "self.version",
+        "neos/contentrepository-dbal": "self.version",
         "neos/contentrepository-export": "self.version",
         "neos/contentrepository-legacynodemigration": "self.version",
         "neos/contentrepository-nodeaccess": "self.version",
@@ -88,6 +87,9 @@
         "league/flysystem-ziparchive": "to export zip archives",
         "neos/media": "to import Assets",
         "neos/escr-asset-usage": "to export used assets",
+        "phpunit/phpunit": "to run assertions in the steps (>=9.6 <13)",
+        "neos/contentrepository-structureadjustment": "for certain steps",
+        "neos/contentrepository-nodemigration": "for certain steps",
         "phpbench/phpbench": "For running performance benchmarks of the Fusion runtime",
         "neos/site-kickstarter": "Helps with creating new site packages for Neos.",
         "neos/redirecthandler-neosadapter": "Adds automatic redirects for moved/renamed pages"
@@ -150,6 +152,9 @@
             ],
             "Neos\\ContentRepository\\Core\\": [
                 "Neos.ContentRepository.Core/Classes"
+            ],
+            "Neos\\ContentRepository\\Dbal\\": [
+                "Neos.ContentRepository.Dbal/Classes"
             ],
             "Neos\\ContentRepository\\Export\\": [
                 "Neos.ContentRepository.Export/src/"
@@ -290,10 +295,11 @@
         }
     },
     "require-dev": {
+        "phpunit/phpunit": "^9.6",
+        "brianium/paratest": "^6.11",
         "roave/security-advisories": "dev-latest",
         "phpstan/phpstan": "^1.11",
         "squizlabs/php_codesniffer": "^3.6",
-        "phpunit/phpunit": "^9.0",
         "neos/behat": "*",
         "league/flysystem-memory": "^3"
     }

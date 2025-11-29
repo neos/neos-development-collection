@@ -16,6 +16,7 @@ use Neos\ContentRepository\Core\Feature\NodeReferencing\Dto\NodeReferencesToWrit
 use Neos\ContentRepository\Core\Feature\NodeReferencing\Dto\NodeReferenceToWrite;
 use Neos\ContentRepository\Core\Feature\SubtreeTagging\Command\TagSubtree;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentSubgraphInterface;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindChildNodesFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindReferencesFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindSubtreeFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\References;
@@ -109,7 +110,28 @@ final class NodeDuplicationService
             $nodeAggregateIdMapping
         );
 
+        $isFirstCommand = true;
         foreach ($commands as $command) {
+            if ($isFirstCommand) {
+                if (
+                    $command instanceof CreateNodeAggregateWithNode
+                    && $contentRepository->getNodeTypeManager()->getNodeType($command->nodeTypeName)
+                        ?->isOfType('Neos.Neos:Document')
+                    && array_key_exists('uriPathSegment', $command->initialPropertyValues->values)
+                ) {
+                    $command = $command->withInitialPropertyValues(
+                        newInitialPropertyValues: $command->initialPropertyValues->withValue(
+                            valueName: 'uriPathSegment',
+                            value: $this->resolveUriPathSegmentForCopy(
+                                originalUriPathSegment: $command->initialPropertyValues->values['uriPathSegment'],
+                                targetParentNodeAggregateId: $targetParentNodeAggregateId,
+                                subgraph: $subgraph,
+                            ),
+                        )
+                    );
+                }
+                $isFirstCommand = false;
+            }
             $contentRepository->handle($command);
         }
     }
@@ -177,6 +199,34 @@ final class NodeDuplicationService
         }
 
         return $commands;
+    }
+
+    private function resolveUriPathSegmentForCopy(
+        string $originalUriPathSegment,
+        NodeAggregateId $targetParentNodeAggregateId,
+        ContentSubgraphInterface $subgraph
+    ): string {
+        $alreadyClaimedUriPathSegments = [];
+        foreach (
+            $subgraph->findChildNodes(
+                $targetParentNodeAggregateId,
+                FindChildNodesFilter::create(),
+            ) as $futureSibling
+        ) {
+            $siblingUriPathSegment = $futureSibling->getProperty('uriPathSegment');
+            if (is_string($siblingUriPathSegment)) {
+                $alreadyClaimedUriPathSegments[$siblingUriPathSegment] = true;
+            }
+        }
+
+        $uriPathSegment = $originalUriPathSegment;
+        $i = 1;
+        while (array_key_exists($uriPathSegment, $alreadyClaimedUriPathSegments)) {
+            $uriPathSegment = $originalUriPathSegment . '-' . $i;
+            $i++;
+        }
+
+        return $uriPathSegment;
     }
 
     private function commandsForSubtreeRecursively(TransientNodeCopy $transientParentNode, Subtree $subtree, ContentSubgraphInterface $subgraph, Commands $commands): Commands

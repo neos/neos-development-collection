@@ -88,8 +88,8 @@
         <target state="translated">Privát</target>
       </trans-unit>
       <trans-unit id="workspaces.workspace.visibility.private.help" xml:space="preserve">
-        <source>Only reviewers and administrators can access and modify this workspace</source>
-        <target state="translated">Csak moderátorok és adminisztrátoroknak van engedélye a tartalom szerkesztéséhez ezen a munkafelületen</target>
+        <source>Only the workspace owner can access and modify this workspace</source>
+        <target state="needs-translation">Csak moderátorok és adminisztrátoroknak van engedélye a tartalom szerkesztéséhez ezen a munkafelületen</target>
       </trans-unit>
       <trans-unit id="workspaces.workspace.visibility.shared" xml:space="preserve">
         <source>Shared</source>

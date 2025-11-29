@@ -88,16 +88,16 @@
         <target state="translated">Privado</target>
       </trans-unit>
       <trans-unit id="workspaces.workspace.visibility.private.help" xml:space="preserve">
-        <source>Only reviewers and administrators can access and modify this workspace</source>
-        <target state="translated">Apenas os revisores e os administradores podem aceder e modificar esta área de trabalho</target>
+        <source>Only the workspace owner can access and modify this workspace</source>
+        <target state="translated">Apenas o proprietário da área de trabalho pode aceder e modificar esta área de trabalho</target>
       </trans-unit>
       <trans-unit id="workspaces.workspace.visibility.shared" xml:space="preserve">
         <source>Shared</source>
-        <target state="translated">Interno</target>
+        <target state="translated">Partilhado</target>
       </trans-unit>
       <trans-unit id="workspaces.workspace.visibility.shared.help" xml:space="preserve">
         <source>Any logged in editor can see and modify this workspace.</source>
-        <target state="translated">Qualquer editor pode ver e modificar esta área de trabalho.</target>
+        <target state="translated">Qualquer editor autenticado pode ver e modificar esta área de trabalho.</target>
       </trans-unit>
       <trans-unit id="workspaces.workspace.changes" xml:space="preserve">
         <source>Changes</source>
@@ -407,7 +407,63 @@
       </trans-unit>
       <trans-unit id="workspaces.dialog.rebase.node" xml:space="preserve">
         <source>Node</source>
-        <target state="needs-translation">Nó</target>
+        <target state="translated">Nó</target>
+      </trans-unit>
+      <trans-unit id="workspaces.rebaseWorkspace" xml:space="preserve">
+        <source>Sync workspace "{0}" with its base workspace</source>
+        <target state="translated">Sincronizar a área de trabalho "{0}" com a sua área de trabalho base</target>
+      </trans-unit>
+      <trans-unit id="workspaces.dialog.forceSyncWorkspace" xml:space="preserve">
+        <source>Conflicts between workspace "{0}" and "{1}"</source>
+        <target state="translated">Conflitos entre a área de trabalho "{0}" e "{1}"</target>
+      </trans-unit>
+      <trans-unit id="workspaces.dialog.thisCanLeadToLostChanges" xml:space="preserve">
+        <source>Workspace "{0}" contains modifications that are in conflict with the changes in workspace "{1}".</source>
+        <target state="translated">A área de trabalho "{0}" contém modificações que estão em conflito com modificações na área de trabalho "{1}".</target>
+      </trans-unit>
+      <trans-unit id="workspaces.modal.yesRebaseWorkspace" xml:space="preserve">
+        <source>Yes, drop changes</source>
+        <target state="translated">Sim, perder alterações</target>
+      </trans-unit>
+      <trans-unit id="workspaces.dialog.rebase.error" xml:space="preserve">
+        <source>Error</source>
+        <target state="translated">Erro</target>
+      </trans-unit>
+      <trans-unit id="workspaces.dialog.thisCanLeadToLostChangesConfirmation" xml:space="preserve">
+        <source>Do you want to drop {0} conflicting change(s)?</source>
+        <target state="translated">Deseja perder {0} alteração(ões) em conflito?</target>
+      </trans-unit>
+      <trans-unit id="workspaces.dialog.ShowInformationAboutConflict" xml:space="preserve">
+        <source>Show information about {0} conflict(s)</source>
+        <target state="translated">Mostrar informações sobre {0} conflito(s)</target>
+      </trans-unit>
+      <trans-unit id="workspaces.ForceRebaseWorkspaceFailed" xml:space="preserve">
+        <source>Forcing the sync has failed. Please try discarding your changes.</source>
+        <target state="translated">A sincronização forçada falhou. Por favor, tente descartar as suas modificações.</target>
+      </trans-unit>
+      <trans-unit id="workspaces.dialog.ConfirmationDropConflictingChanges" xml:space="preserve">
+        <source>Do you really want to drop all conflicting changes from workspace "{0}"?</source>
+        <target state="translated">Tem a certeza que deseja perder todas as alterações em conflito na área de trabalho "{0}"?</target>
+      </trans-unit>
+      <trans-unit id="workspaces.dialog.ConfirmationDropConflictingChangesCount" xml:space="preserve">
+        <source>This will remove {0} change(s) from the workspace.</source>
+        <target state="translated">Isto irá remover {0} alteração(ões) da área de trabalho.</target>
+      </trans-unit>
+      <trans-unit id="workspaces.dialog.ConfirmationDropConflictingChangesText" xml:space="preserve">
+        <source>This can not be undone! Do you wish to proceed?</source>
+        <target state="translated">Esta ação não pode ser anulada! Deseja continuar?</target>
+      </trans-unit>
+      <trans-unit id="workspaces.dialog.rebase.event" xml:space="preserve">
+        <source>Event</source>
+        <target state="translated">Evento</target>
+      </trans-unit>
+      <trans-unit id="workspaces.dialog.rebase.eventDetails" xml:space="preserve">
+        <source>Event details</source>
+        <target state="translated">Detalhes do evento</target>
+      </trans-unit>
+      <trans-unit id="workspaces.workspaceHasBeenRebased" xml:space="preserve">
+        <source>The workspace has been successfully synced</source>
+        <target state="translated">A área de trabalho foi sincronizada com sucesso</target>
       </trans-unit>
     </body>
   </file>

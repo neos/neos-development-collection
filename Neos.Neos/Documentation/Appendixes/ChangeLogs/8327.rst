@@ -1,0 +1,17 @@
+`8.3.27 (2025-08-19) <https://github.com/neos/neos-development-collection/releases/tag/8.3.27>`_
+================================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`Revert "BUGFIX: Reload node if hidden state is updated via inspector" <https://github.com/neos/neos-development-collection/pull/5616>`_
+----------------------------------------------------------------------------------------------------------------------------------------
+
+Reverts `#5602 <https://github.com/neos/neos-development-collection/issues/5602>`_ as it raises issues while using the toolbar actions to hide and show nodes.
+
+* See: `#5615 <https://github.com/neos/neos-development-collection/issues/5615>`_ 
+
+* Packages: ``ContentRepository`` ``Media.Browser`` ``Neos`` ``NodeTypes.AssetList`` ``NodeTypes.BaseMixins`` ``NodeTypes.ColumnLayouts`` ``NodeTypes.ContentReferences`` ``NodeTypes.Form`` ``NodeTypes.Html`` ``NodeTypes.Navigation`` ``NodeTypes``
+
+`Detailed log <https://github.com/neos/neos-development-collection/compare/8.3.26...8.3.27>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

@@ -174,7 +174,7 @@ class NodeHelper implements ProtectedContextAwareInterface
                 throw new Exception(sprintf(
                     'No content collection of type %s could be found in the current node (%s) or at the path "%s".'
                     . ' You might want to adjust your node type configuration and create the missing child node'
-                    . ' through the "flow structureadjustments:fix --node-type %s" command.',
+                    . ' through the "./flow structureadjustments:fix --node-type %s" command.',
                     $contentCollectionType,
                     $nodePathOfNode->value,
                     $nodePath->serializeToString(),

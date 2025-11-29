@@ -1,0 +1,21 @@
+{
+  "name": "neos/contentrepository-dbal",
+  "type": "library",
+  "description": "The Doctrine DBAL implementations and tools for the content-repository",
+  "support": {
+    "source": "https://github.com/neos/contentrepository-dbal.git",
+    "forum": "https://discuss.neos.io/",
+    "docs": "https://docs.neos.io/"
+  },
+  "license": "GPL-3.0+",
+  "require": {
+    "neos/contentrepository-core": "self.version",
+    "neos/eventstore-doctrineadapter": "^1 || ^2",
+    "doctrine/dbal": "^3.1.4"
+  },
+  "autoload": {
+    "psr-4": {
+        "Neos\\ContentRepository\\Dbal\\": "Classes"
+    }
+  }
+}

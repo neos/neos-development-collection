@@ -35,6 +35,7 @@ class InternalMethodsNotAllowedOutsideContentRepositoryRule implements Rule
             $scope->getNamespace()
             && (
                 str_starts_with($scope->getNamespace(), 'Neos\ContentRepository\Core')
+                || str_starts_with($scope->getNamespace(), 'Neos\ContentRepository\Dbal')
                 || str_starts_with($scope->getNamespace(), 'Neos\ContentGraph\DoctrineDbalAdapter')
                 || str_starts_with($scope->getNamespace(), 'Neos\ContentRepository\BehavioralTests')
                 || str_starts_with($scope->getNamespace(), 'Neos\ContentRepository\Export')

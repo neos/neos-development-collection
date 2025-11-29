@@ -88,8 +88,8 @@
         <target state="translated">Rahasia</target>
       </trans-unit>
       <trans-unit id="workspaces.workspace.visibility.private.help" xml:space="preserve">
-        <source>Only reviewers and administrators can access and modify this workspace</source>
-        <target state="translated">Hanya pengulas dan administrator yang dapat mengakses dan memodifikasi bidang kerja ini</target>
+        <source>Only the workspace owner can access and modify this workspace</source>
+        <target state="needs-translation">Hanya pengulas dan administrator yang dapat mengakses dan memodifikasi bidang kerja ini</target>
       </trans-unit>
       <trans-unit id="workspaces.workspace.visibility.shared" xml:space="preserve">
         <source>Shared</source>

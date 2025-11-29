@@ -16,12 +16,14 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
+use Neos\Flow\Annotations\Scope;
 use Neos\Neos\AssetUsage\Dto\AssetUsageFilter;
 use Neos\Neos\AssetUsage\Dto\AssetUsages;
 
 /**
  * @internal Not meant to be used in user land code. In order to look up asset usages the AssetUsageService or GlobalAssetUsageService can be used
  */
+#[Scope("singleton")]
 final class AssetUsageRepository
 {
     public const TABLE = 'neos_asset_usage';

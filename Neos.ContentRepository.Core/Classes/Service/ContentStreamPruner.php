@@ -14,6 +14,7 @@ use Neos\ContentRepository\Core\Feature\ContentStreamRemoval\Event\ContentStream
 use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Event\RootWorkspaceWasCreated;
 use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Event\WorkspaceWasCreated;
 use Neos\ContentRepository\Core\Feature\WorkspaceEventStreamName;
+use Neos\ContentRepository\Core\Feature\WorkspaceModification\Event\WorkspaceBaseWorkspaceWasChanged;
 use Neos\ContentRepository\Core\Feature\WorkspacePublication\Event\WorkspaceWasDiscarded;
 use Neos\ContentRepository\Core\Feature\WorkspacePublication\Event\WorkspaceWasPublished;
 use Neos\ContentRepository\Core\Feature\WorkspaceRebase\Event\WorkspaceRebaseFailed;
@@ -286,15 +287,12 @@ class ContentStreamPruner implements ContentRepositoryServiceInterface
                 case ContentStreamWasCreated::class:
                     $cs[$domainEvent->contentStreamId->value] = ContentStreamForPruning::create(
                         $domainEvent->contentStreamId,
-                        ContentStreamStatus::CREATED,
-                        null,
                         $eventEnvelope->recordedAt
                     );
                     break;
                 case ContentStreamWasForked::class:
-                    $cs[$domainEvent->newContentStreamId->value] = ContentStreamForPruning::create(
+                    $cs[$domainEvent->newContentStreamId->value] = ContentStreamForPruning::createForked(
                         $domainEvent->newContentStreamId,
-                        ContentStreamStatus::FORKED,
                         $domainEvent->sourceContentStreamId,
                         $eventEnvelope->recordedAt
                     );
@@ -324,6 +322,7 @@ class ContentStreamPruner implements ContentRepositoryServiceInterface
                     EventType::fromString('WorkspaceWasRebased'),
                     EventType::fromString('WorkspaceRebaseFailed'),
                     // we don't need to track WorkspaceWasRemoved as a ContentStreamWasRemoved event would be emitted before
+                    EventType::fromString('WorkspaceBaseWorkspaceWasChanged'),
                 )
             )
         );
@@ -334,43 +333,43 @@ class ContentStreamPruner implements ContentRepositoryServiceInterface
                 case RootWorkspaceWasCreated::class:
                     if (isset($cs[$domainEvent->newContentStreamId->value])) {
                         $cs[$domainEvent->newContentStreamId->value] = $cs[$domainEvent->newContentStreamId->value]
-                                ->withStatus(ContentStreamStatus::IN_USE_BY_WORKSPACE);
+                                ->withWorkspace($domainEvent->workspaceName);
                     }
                     break;
                 case WorkspaceWasCreated::class:
                     if (isset($cs[$domainEvent->newContentStreamId->value])) {
                         $cs[$domainEvent->newContentStreamId->value] = $cs[$domainEvent->newContentStreamId->value]
-                                ->withStatus(ContentStreamStatus::IN_USE_BY_WORKSPACE);
+                                ->withWorkspace($domainEvent->workspaceName);
                     }
                     break;
                 case WorkspaceWasDiscarded::class:
                     if (isset($cs[$domainEvent->newContentStreamId->value])) {
                         $cs[$domainEvent->newContentStreamId->value] = $cs[$domainEvent->newContentStreamId->value]
-                            ->withStatus(ContentStreamStatus::IN_USE_BY_WORKSPACE);
+                            ->withWorkspace($domainEvent->workspaceName);
                     }
                     if (isset($cs[$domainEvent->previousContentStreamId->value])) {
                         $cs[$domainEvent->previousContentStreamId->value] = $cs[$domainEvent->previousContentStreamId->value]
-                            ->withStatus(ContentStreamStatus::NO_LONGER_IN_USE);
+                            ->withNoLongerInUse();
                     }
                     break;
                 case WorkspaceWasPublished::class:
                     if (isset($cs[$domainEvent->newSourceContentStreamId->value])) {
                         $cs[$domainEvent->newSourceContentStreamId->value] = $cs[$domainEvent->newSourceContentStreamId->value]
-                            ->withStatus(ContentStreamStatus::IN_USE_BY_WORKSPACE);
+                            ->withWorkspace($domainEvent->sourceWorkspaceName);
                     }
                     if (isset($cs[$domainEvent->previousSourceContentStreamId->value])) {
                         $cs[$domainEvent->previousSourceContentStreamId->value] = $cs[$domainEvent->previousSourceContentStreamId->value]
-                            ->withStatus(ContentStreamStatus::NO_LONGER_IN_USE);
+                            ->withNoLongerInUse();
                     }
                     break;
                 case WorkspaceWasRebased::class:
                     if (isset($cs[$domainEvent->newContentStreamId->value])) {
                         $cs[$domainEvent->newContentStreamId->value] = $cs[$domainEvent->newContentStreamId->value]
-                            ->withStatus(ContentStreamStatus::IN_USE_BY_WORKSPACE);
+                            ->withWorkspace($domainEvent->workspaceName);
                     }
                     if (isset($cs[$domainEvent->previousContentStreamId->value])) {
                         $cs[$domainEvent->previousContentStreamId->value] = $cs[$domainEvent->previousContentStreamId->value]
-                            ->withStatus(ContentStreamStatus::NO_LONGER_IN_USE);
+                            ->withNoLongerInUse();
                     }
                     break;
                 case WorkspaceRebaseFailed::class:
@@ -378,6 +377,24 @@ class ContentStreamPruner implements ContentRepositoryServiceInterface
                     if (isset($cs[$domainEvent->candidateContentStreamId->value])) {
                         $cs[$domainEvent->candidateContentStreamId->value] = $cs[$domainEvent->candidateContentStreamId->value]
                             ->withRemoved();
+                    }
+                    break;
+                case WorkspaceBaseWorkspaceWasChanged::class:
+                    $previousContentStreamId = null;
+                    // the event does not contain the $previousContentStreamId so we look into the build up state
+                    foreach ($cs as $contentStreamForPruning) {
+                        if ($contentStreamForPruning->workspaceName === $domainEvent->workspaceName) {
+                            $previousContentStreamId = $contentStreamForPruning->id;
+                            break;
+                        }
+                    }
+                    if (isset($cs[$domainEvent->newContentStreamId->value])) {
+                        $cs[$domainEvent->newContentStreamId->value] = $cs[$domainEvent->newContentStreamId->value]
+                            ->withWorkspace($domainEvent->workspaceName);
+                    }
+                    if ($previousContentStreamId) {
+                        $cs[$previousContentStreamId->value] = $cs[$previousContentStreamId->value]
+                            ->withNoLongerInUse();
                     }
                     break;
                 default:

@@ -19,9 +19,9 @@ Feature: Move a node with content dimensions
     And using identifier "default", I define a content repository
     And I am in content repository "default"
     And the command CreateRootWorkspace is executed with payload:
-      | Key                  | Value                |
-      | workspaceName        | "live"               |
-      | newContentStreamId   | "cs-identifier"      |
+      | Key                | Value           |
+      | workspaceName      | "live"          |
+      | newContentStreamId | "cs-identifier" |
     And I am in workspace "live" and dimension space point {"example": "general"}
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key             | Value                         |
@@ -2074,3 +2074,38 @@ Feature: Move a node with content dimensions
 
     When I am in workspace "live" and dimension space point {"example": "general"}
     And I expect node aggregate identifier "nody-mc-nodeface-ii" to lead to node cs-identifier;nody-mc-nodeface-ii;{"example": "general"}
+
+  Scenario: Move a node variant back and forth
+    # should bypass the constraint checks for unique names
+    # because this already is the variant the name should otherwise be reserved for
+
+    When the command MoveNodeAggregate is executed with payload:
+      | Key                          | Value                    |
+      | nodeAggregateId              | "nody-mc-nodeface"       |
+      | newParentNodeAggregateId     | "sir-david-nodenborough" |
+      | dimensionSpacePoint          | {"example": "source"}    |
+      | relationDistributionStrategy | "scatter"                |
+    And the command MoveNodeAggregate is executed with payload:
+      | Key                          | Value                        |
+      | nodeAggregateId              | "nody-mc-nodeface"           |
+      | newParentNodeAggregateId     | "sir-nodeward-nodington-iii" |
+      | dimensionSpacePoint          | {"example": "source"}        |
+      | relationDistributionStrategy | "scatter"                    |
+
+    Then I expect exactly 14 events to be published on stream "ContentStream:cs-identifier"
+    And event at index 12 is of type "NodeAggregateWasMoved" with payload:
+      | Key                           | Expected                                                              |
+      | contentStreamId               | "cs-identifier"                                                       |
+      | nodeAggregateId               | "nody-mc-nodeface"                                                    |
+      | newParentNodeAggregateId      | "sir-david-nodenborough"                                              |
+      | succeedingSiblingsForCoverage | [{"dimensionSpacePoint":{"example":"source"},"nodeAggregateId":null}] |
+    And event at index 13 is of type "NodeAggregateWasMoved" with payload:
+      | Key                           | Expected                                                              |
+      | contentStreamId               | "cs-identifier"                                                       |
+      | nodeAggregateId               | "nody-mc-nodeface"                                                    |
+      | newParentNodeAggregateId      | "sir-nodeward-nodington-iii"                                          |
+      | succeedingSiblingsForCoverage | [{"dimensionSpacePoint":{"example":"source"},"nodeAggregateId":null}] |
+
+    When I am in workspace "live" and dimension space point {"example": "source"}
+    And I expect node aggregate identifier "nody-mc-nodeface" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
+    And I expect this node to be a child of node cs-identifier;sir-nodeward-nodington-iii;{"example": "general"}

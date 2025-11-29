@@ -1,0 +1,495 @@
+`9.0.7 (2025-11-07) <https://github.com/neos/neos-development-collection/releases/tag/9.0.7>`_
+==============================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`FEATURE: Performance Measurement tooling in Content Repository <https://github.com/neos/neos-development-collection/pull/5666>`_
+---------------------------------------------------------------------------------------------------------------------------------
+
+Performance measurement instrumentation.
+
+Two providers implemented, one which outputs to a log file (see below), and the other one for sandstorm/plumber in https://github.com/sandstorm/Plumber/pull/23 .
+
+To activate, set the following setting:
+
+```yaml
+Neos:
+  ContentRepositoryRegistry:
+    presets:
+      'default':
+        # PERFORMANCE TRACING (Local Debugging)
+        # To enable Performance Tracing, comment-in the following lines:
+        performanceTracer:
+          factoryObjectName: Neos\\ContentRepository\\Core\\Infrastructure\\Tracing\\LogFileTracerFactory
+          options:
+            fileName: '%FLOW_PATH_DATA%Logs/ContentRepositoryProfile.log'
+            # how long should a mark be at least, to be logged? if 0, everything is shown.
+            minimumMarkDurationMs: 1
+```
+
+The log then looks as follows:
+
+```
+=== Trace started at 2025-10-23 15:36:22 ===
+[1761233782.416987] > ContentRepository::handle {"c":"Neos\\\ContentRepository\\\Core\\\Feature\\\WorkspacePublication\\\Command\\\PublishIndividualNodesFromWorkspace"}
+[1761233782.418458]   • AuthProvider::canExecuteCommand (+1.5 ms)   
+[1761233782.428737]   • EventStore::commit (+10.2 ms)   {"streamName":"ContentStream:e44f2ed7-29ca-476e-b395-d749f2a7164f","cnt":1}
+[1761233782.549531]   • EventStore::commit (+120.8 ms)   {"streamName":"ContentStream:676e7382-362b-42a5-bb7a-c4be0b12cd9a","cnt":5}
+[1761233782.550988]   • EventStore::commit (+1.5 ms)   {"streamName":"ContentStream:59bf0d34-750e-431c-becd-9430d26ba9e2","cnt":2}
+[1761233782.552129]   • EventStore::commit (+1.1 ms)   {"streamName":"Workspace:sebastian-kurfurst","cnt":1}
+[1761233782.553186]   • EventStore::commit (+1.1 ms)   {"streamName":"ContentStream:59bf0d34-750e-431c-becd-9430d26ba9e2","cnt":1}
+[1761233782.554152]   > SubscriptionEngine::catchUpSubscriptions
+[1761233782.562991]     • Projection::apply (+8.1 ms)   {"subscription":"contentGraph","event":"NodeAggregateWasMoved"}
+[1761233782.566092]     • Projection::apply (+3.1 ms)   {"subscription":"Neos.Neos:DocumentUriPathProjection","event":"NodeAggregateWasMoved"}
+[1761233782.569134]     • Projection::apply (+3.0 ms)   {"subscription":"Neos.Neos:PendingChangesProjection","event":"NodeAggregateWasMoved"}
+[1761233782.576953]     • Projection::apply (+7.8 ms)   {"subscription":"contentGraph","event":"NodeAggregateWasMoved"}
+[1761233782.579729]     • Projection::apply (+2.8 ms)   {"subscription":"Neos.Neos:DocumentUriPathProjection","event":"NodeAggregateWasMoved"}
+[1761233782.581504]     • Projection::apply (+1.8 ms)   {"subscription":"Neos.Neos:PendingChangesProjection","event":"NodeAggregateWasMoved"}
+[1761233782.588162]     • Projection::apply (+6.7 ms)   {"subscription":"contentGraph","event":"NodeAggregateWasMoved"}
+[1761233782.591160]     • Projection::apply (+3.0 ms)   {"subscription":"Neos.Neos:DocumentUriPathProjection","event":"NodeAggregateWasMoved"}
+[1761233782.593770]     • Projection::apply (+2.6 ms)   {"subscription":"Neos.Neos:PendingChangesProjection","event":"NodeAggregateWasMoved"}
+[1761233782.595989]     • Projection::apply (+2.2 ms)   {"subscription":"contentGraph","event":"NodeAggregateWasMoved"}
+[1761233782.600017]     • Projection::apply (+4.0 ms)   {"subscription":"Neos.Neos:DocumentUriPathProjection","event":"NodeAggregateWasMoved"}
+[1761233782.602218]     • Projection::apply (+2.2 ms)   {"subscription":"Neos.Neos:PendingChangesProjection","event":"NodeAggregateWasMoved"}
+[1761233782.605688]     • Projection::apply (+3.5 ms)   {"subscription":"contentGraph","event":"SubtreeWasTagged"}
+[1761233782.607961]     • Projection::apply (+2.3 ms)   {"subscription":"Neos.Neos:DocumentUriPathProjection","event":"SubtreeWasTagged"}
+[1761233782.613298]     • Projection::apply (+5.3 ms)   {"subscription":"Neos.Neos:PendingChangesProjection","event":"SubtreeWasTagged"}
+[1761233782.620998]     • Projection::apply (+7.7 ms)   {"subscription":"contentGraph","event":"ContentStreamWasForked"}
+[1761233782.622145]     • Projection::apply (+1.1 ms)   {"subscription":"contentGraph","event":"ContentStreamWasClosed"}
+[1761233782.624199]     • Projection::apply (+1.2 ms)   {"subscription":"contentGraph","event":"ContentStreamWasReopened"}
+[1761233782.628091]     • Projection::apply (+3.9 ms)   {"subscription":"contentGraph","event":"ContentStreamWasRemoved"}
+[1761233782.631268]   < SubscriptionEngine::catchUpSubscriptions (77.116 ms)
+[1761233782.631294] < ContentRepository::handle (214.307 ms)
+[1761233782.636723] > ContentRepository::handle {"c":"Neos\\\ContentRepository\\\Core\\\Feature\\\NodeRemoval\\\Command\\\RemoveNodeAggregate"}
+[1761233782.638603]   • CommandBus::handle (+1.9 ms)   
+[1761233782.640052]   • EventStore::commit (+1.4 ms)   
+[1761233782.640092]   > SubscriptionEngine::catchUpSubscriptions
+[1761233782.912316]     • Projection::apply (+271.9 ms)   {"subscription":"contentGraph","event":"NodeAggregateWasRemoved"}
+[1761233782.915076]     • Projection::apply (+2.8 ms)   {"subscription":"Neos.Neos:DocumentUriPathProjection","event":"NodeAggregateWasRemoved"}
+[1761233782.919056]     • Projection::apply (+4.0 ms)   {"subscription":"Neos.Neos:PendingChangesProjection","event":"NodeAggregateWasRemoved"}
+[1761233782.926900]   < SubscriptionEngine::catchUpSubscriptions (286.808 ms)
+[1761233782.926922] < ContentRepository::handle (290.199 ms)
+```
+
+* Resolves: `#5665 <https://github.com/neos/neos-development-collection/issues/5665>`_
+
+* Packages: ``Fusion.Afx`` ``Fusion`` ``Neos`` ``ContentRepository.Core``
+
+`FEATURE: Restrict site creation module to site nodetype and hide legacy options <https://github.com/neos/neos-development-collection/pull/5644>`_
+--------------------------------------------------------------------------------------------------------------------------------------------------
+
+Hide "Import a site" and "Create a new site-package" by default in Neos 8.4 and add settings to re-enable
+
+these options were removed via Neos 9.0 but can be restored by settings:
+
+```yaml
+Neos.Neos.modules.administration.submodules.sites.settings.enableLegacyPackageImport: true
+Neos.Neos.modules.administration.submodules.sites.settings.enableLegacyPackageCreation: true
+```
+
+**Upgrade instructions**
+
+
+* Packages: ``Neos``
+
+`FEATURE: Add image helper and render image dimensions in image tag attributes <https://github.com/neos/neos-development-collection/pull/5131>`_
+------------------------------------------------------------------------------------------------------------------------------------------------
+
+With this change a new image helper is introduced in Neos.Media which allows creating a thumbnail and using its various properties in Fusion object. This way the actual size of a thumbnail can be rendered into the HTML attributes.
+Until now we only had the uri from the ImageUri helper and component.
+
+**Review instructions**
+
+Adjust the image prototype renderer in the Demo like this:
+```
+prototype(Neos.Demo:Content.Image) < prototype(Neos.Neos:ContentComponent) {
+    renderer = afx`
+        <figure>
+            <Neos.Neos:ImageTag
+                asset={q(node).property('image')}
+                width={900}
+                height={200}
+                allowUpScaling={true}
+            />
+        </figure>
+    `
+//    renderer = afx``<Neos.Demo:Presentation.Image {...props} />``
+}
+```
+
+The resulting image should have with and height properties of the generated thumbnail and not the ones of the original.
+
+I'm not 100% sure if we could break something with this change if somebody modified the ImageTag prototype. 
+We can also target 9.0 if the anybody thinks this would be better.
+
+* Packages: ``Media`` ``Neos``
+
+`FEATURE: Fusion (EEL) core migrations for new 9.0 API (replaces `neos/rector` for Fusion) <https://github.com/neos/neos-development-collection/pull/5638>`_
+------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Fixes the fusion part of https://github.com/neos/neos-development-collection/issues/5607 in a simple manner as a first iteration
+
+### Behaviour for 9.0
+
+This change introduces an extended way to write flow core migrations by providing a trait which allows for exact eel replacements. For this framework code see the changes in "Neos.Fusion" and its tests.
+
+Also this change introduces a first major user of this new migration api. The migration "20251005080230" contains all fusion  migrations concerning the content repository that currently reside in ``neos/rector`` and were executed with rector.
+
+They are now part of "Neos.Neos" and can be executed as any flow core migration:
+
+```
+flow flow:core:migrate Neos.Demo --version 20251005080230
+```
+
+The comprehensive testsuite for this cr-fusion migration was copied and adjusted from ``neos/rector`` to ensure all replacements work as desired.
+
+
+### Behaviour for Neos 8.4
+
+Introducing a core migration for 8.4 was considered but was found to be too magic as its truly an optional step which makes the code not backwardscompatible to previous neos versions.
+
+You can run the adjustments manually. They will not add todo comments like the 9.0 migration. It will be safe to rerun this migration and also to run the 9.0 migration via ``flow:core:migrate`` when updating.
+
+```
+./flow neos9preparation:preadjustfusion Neos.Demo
+```
+
+
+**Upgrade instructions**
+
+
+* Packages: ``Neos``
+
+`FEATURE: Filter users by role <https://github.com/neos/neos-development-collection/pull/5209>`_
+------------------------------------------------------------------------------------------------
+
+* Resolves: `#5208 <https://github.com/neos/neos-development-collection/issues/5208>`_ 
+
+**Review instructions**
+
+Go to there users module and filter the users by their role, also in combination with the search term
+
+!`CleanShot 2024-08-16 at 11 07 15@2x <https://github.com/user-attachments/assets/af7d834c-4ed8-476d-b500-854f381012da>`_
+
+* Packages: ``Neos``
+
+`FEATURE: Improve user sorting behavior <https://github.com/neos/neos-development-collection/pull/5584>`_
+---------------------------------------------------------------------------------------------------------
+
+**Upgrade instructions**
+
+_None_
+
+**Review instructions**
+
+Original PR: `#5159 <https://github.com/neos/neos-development-collection/issues/5159>`_
+
+
+* Packages: ``Neos``
+
+`FEATURE: Backport NodeHelper methods from 9.0 <https://github.com/neos/neos-development-collection/pull/5635>`_
+----------------------------------------------------------------------------------------------------------------
+
+* Resolves: `#5627 <https://github.com/neos/neos-development-collection/issues/5627>`_
+
+**Upgrade instructions**
+
+
+
+* Packages: ``Neos``
+
+`FEATURE: Hacky backport of the 9.0 `renderingMode` in Fusion <https://github.com/neos/neos-development-collection/pull/5637>`_
+-------------------------------------------------------------------------------------------------------------------------------
+
+Neos 9.0 contains the introduction of FusionGlobals https://github.com/neos/neos-development-collection/pull/4425 which allowed to introduce ``renderingMode`` https://github.com/neos/neos-development-collection/pull/4505 as global like ``request``.
+
+We evaluated to fully back-port these features but this would require lots of effort and might be not agreeable as it certainly would break APIs across Fusion and Neos.
+
+But herby we introduce a super slim backport which disregards any architecture and makes ``${renderingMode}`` magically possible in Fusion when Neos is installed and nodes are rendered.
+
+The ``renderingMode`` attempts to align to the new 9.0 specification as close as possible - but the implementation is limited in two regards:
+
+- ``site``, ``documentNode`` or ``node`` have to be available in the current fusion context which can be tampered with in fusion by forgetting to register those in a cached segment. This would lead to ``renderingMode`` not being available but in 9.0 it would as its ever-present.
+- when nodes from the "live" workspace are rendered the renderingMode will switch to ``frontend`` which results in ``renderingMode.isEdit`` being false. In Neos 9 the rendering mode and the rendered nodes are decoupled from each other. With this backport a decoupling is not possible and using ``q().context()`` on a node and replacing that fusion variable might thus have implications on the ``renderingMode``.
+
+
+Also users of the herby introduced 8.4 ``renderingMode`` and its 9.0 brother should be aware its not behaving exactly as ``node.context.currentRenderingMode``.
+The rendering mode of the ``context`` returns for every logged in users its current rendering mode. This leads to ``edit`` being true for the frontend and for the backend in the neos ui. Only if logged out or when using a private window the frontend behaviour aligns to the Neos 9 specification and ``edit`` is false.
+ 
+The rector migration ```FusionContextCurrentRenderingModeRector`` <https://github.com/neos/rector/blob/`e397f70ed1340c5a62b9d20b0b70253b87201617 <https://github.com/neos/neos-development-collection/commit/e397f70ed1340c5a62b9d20b0b70253b87201617>`_/src/ContentRepository90/Rules/FusionContextCurrentRenderingModeRector.php#L27-L28>`_ still migrates it as an exact replacement to improve the current situation.
+
+**Upgrade instructions**
+
+
+* Packages: ``Neos``
+
+`FEATURE: Adds new login wallpaper and backport attribution  <https://github.com/neos/neos-development-collection/pull/5640>`_
+------------------------------------------------------------------------------------------------------------------------------
+
+resolves `#5620 <https://github.com/neos/neos-development-collection/issues/5620>`_
+
+<img width="1829" height="1066" alt="Bildschirmfoto 2025-10-07 um 09 04 07" src="https://github.com/user-attachments/assets/499b6b22-9921-4396-bd78-f55730c109d2" />
+
+* Packages: ``Diff`` ``Fusion.Afx`` ``Fusion`` ``Media.Browser`` ``Media`` ``Neos`` ``NodeTypes.Form`` ``SiteKickstarter``
+
+`FEATURE: Backport Neos.Caching Helper <https://github.com/neos/neos-development-collection/pull/5631>`_
+--------------------------------------------------------------------------------------------------------
+
+Backport of Neos.Caching Eel Helper to provide forward compatibility in Neos 8.4.
+```
+prototype(Acme.Site:Document) {
+    @cache {
+        mode = "cached"
+        entryIdentifier {
+            documentNode = ${Neos.Caching.entryIdentifierForNode(documentNode)}
+        }
+     }
+}
+```
+* Fixes: `#5628 <https://github.com/neos/neos-development-collection/issues/5628>`_ 
+
+* Packages: ``Neos``
+
+`FEATURE: Backport Neos.Site Helper <https://github.com/neos/neos-development-collection/pull/5630>`_
+-----------------------------------------------------------------------------------------------------
+
+Backport of Neos.Site Eel Helper to provide forward compatibility in Neos 8.4.
+
+```
+prototype(Acme.Site:Document) {
+   name = ${Neos.Site.findBySiteNode(site).siteResourcesPackageKey}
+}
+
+```
+
+* Fixes: `#5629 <https://github.com/neos/neos-development-collection/issues/5629>`_ 
+
+* Packages: ``Neos``
+
+`FEATURE: Backport aggregateId from 9.0 <https://github.com/neos/neos-development-collection/pull/5634>`_
+---------------------------------------------------------------------------------------------------------
+
+* Resolves: `#5633 <https://github.com/neos/neos-development-collection/issues/5633>`_
+
+**Upgrade instructions**
+
+With this change it's possible to use ``node.aggregateId`` which will return an instance of ``NodeAggregateIdentifier`` that can also be cast to a string which equals the ``node.identifier``. It is recommended to replace all ``node.identifier`` instances this way to already be compatible with Neos 9. See the related rector rule https://github.com/neos/rector/blob/main/docs/rules_overview.md#fusionnodeidentifierrector.
+
+Keep in mind to adjust places where you do a strict comparison as the returned value is not a plain string.
+
+
+* Packages: ``Neos``
+
+`FEATURE: Site nodetype <https://github.com/neos/neos-development-collection/pull/5622>`_
+-----------------------------------------------------------------------------------------
+
+* Resolves: `#5617 <https://github.com/neos/neos-development-collection/issues/5617>`_
+
+**Upgrade instructions**
+
+Add the abstract nodetype ``Neos.Neos:Site`` to your homepage nodetype like this:
+
+```yaml
+'My.SitePackage:Document.Homepage':
+  superTypes:
+    'Neos.Neos:Site': true
+```
+
+**Review instructions**
+
+Newly generated sites and empty content repository should be initialised with the new sites nodetype and use the site mixing in the generated homepage.
+
+* Packages: ``SiteKickstarter``
+
+`BUGFIX: Use the resolved target to replace the origin target <https://github.com/neos/neos-development-collection/pull/5678>`_
+-------------------------------------------------------------------------------------------------------------------------------
+
+The resolved target wasn't used to build the new target node address. 
+
+* Fixes: `#5677 <https://github.com/neos/neos-development-collection/issues/5677>`_ 
+
+**Review instructions**
+
+- Create a ShortCut node with target "parent" and publish
+- Manuelly open the URL of the ShortCut node 
+- Expected: Redirect to the parent node
+
+* Packages: ``Neos``
+
+`BUGFIX: ensure PHPUnit exists only as dev dependency <https://github.com/neos/neos-development-collection/pull/5675>`_
+-----------------------------------------------------------------------------------------------------------------------
+
+I am currently experimenting with Pest PHP (and specially Playwright based Browser testing)  - and this prevents me from installing Pest :-)
+
+* Packages: ``ContentRepository.BehavioralTests`` ``ContentRepository.Core`` ``Fusion.Afx``
+
+`BUGFIX: Allow moving of nodes to a parent with an already covered child name… <https://github.com/neos/neos-development-collection/pull/5662>`_
+--------------------------------------------------------------------------------------------------------------------------------------------------
+
+… in case the name is covered by variants of the to-be-moved node.
+
+Previously, we rejected moving a node to a new parent that already had a child node aggregate of the same name, even if the requested dimension space point was yet uncovered.
+This was necessary to reserve that name for future variants of the node already residing there.
+
+In the special case that the node to be moved is already said variant, i.e. it shares the node aggregate id with the node aggregate already covering the name, the move operation is safe though.
+
+This is especially demonstrated in `#5663 <https://github.com/neos/neos-development-collection/issues/5663>`_when simply moving a node variant back and forth.
+
+With this, the constraint checks have been relaxed just enough to let the respective command pass.
+
+**Upgrade instructions**
+
+none required
+
+**Review instructions**
+
+This seemed almost too easy and I may have overlooked something.
+
+The only reason why we are so strict regarding names when moving that came to my mind was that we want to reserve the name for future variants, though, which is not necessary in this case.
+
+Does anyone remember other reasons?
+
+* Resolves: `#5663 <https://github.com/neos/neos-development-collection/issues/5663>`_ 
+
+* Packages: ``ContentRepository.BehavioralTests`` ``ContentRepository.Core``
+
+`BUGFIX: Handle WorkspaceBaseWorkspaceWasChanged in ContentStreamPruner <https://github.com/neos/neos-development-collection/pull/5672>`_
+-----------------------------------------------------------------------------------------------------------------------------------------
+
+* Solves: `#5670 <https://github.com/neos/neos-development-collection/issues/5670>`_
+
+the previousContentStreamId is not included in the event thus we build up the ContentStreamForPruning state with workspace names
+
+**Upgrade instructions**
+
+
+* Packages: ``ContentRepository.BehavioralTests``
+
+`BUGFIX: prevent dangling content stream if switching base workspace <https://github.com/neos/neos-development-collection/pull/5671>`_
+--------------------------------------------------------------------------------------------------------------------------------------
+
+This change helps with performance, because we do not want the list of content streams to grow unbounded.
+
+* Resolves: `#5670 <https://github.com/neos/neos-development-collection/issues/5670>`_ 
+
+* Packages: ``ContentRepository.BehavioralTests`` ``ContentRepository.Core``
+
+`BUGFIX: move paratest to require-dev, as it is not required for using the CR (only for developing it) <https://github.com/neos/neos-development-collection/pull/5619>`_
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+This helps me with a version conflict I am currently encountering, and should have no negative side-effects. I want to try out PestPHP with Neos, especially Browser Testing: https://pestphp.com/docs/pest-v4-is-here-now-with-browser-testing#content-pest-v4-is-here-now-with-browser-testing
+
+* Packages: ``ContentRepository.BehavioralTests``
+
+`BUGFIX: Apply MariaDB specific fix only for MariaDB database <https://github.com/neos/neos-development-collection/pull/5649>`_
+-------------------------------------------------------------------------------------------------------------------------------
+
+With https://github.com/neos/neos-development-collection/commit/`84a7016a4b72f2ee7ef1a4371a599ee1eee48131 <https://github.com/neos/neos-development-collection/commit/84a7016a4b72f2ee7ef1a4371a599ee1eee48131>`_ we fixed a MariaDB specific issue, which now raises compaibility issues with MySQL 8.4.
+
+To prevent this incompatibility, we check now the database type before applying this fix.
+
+* Fixes: `#5550 <https://github.com/neos/neos-development-collection/issues/5550>`_
+
+* Packages: ``NodeTypes.ColumnLayouts`` ``.github``
+
+`BUGFIX: Resolve PHP 8.4 deprecation warnings and other minor warnings <https://github.com/neos/neos-development-collection/pull/5646>`_
+----------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+* Packages: ``.github``
+
+`BUGFIX: Fix AFX AST positions to fix fusion migrations <https://github.com/neos/neos-development-collection/pull/5648>`_
+-------------------------------------------------------------------------------------------------------------------------
+
+positions in the AFX AST are now calculated properly:
+
+```
+{abc}
+ 1 3
+```
+
+``abc`` starts at character ``1`` (``a``) and goes to character ``3`` (``c``) position ``0`` and ``4`` are the outer braces.
+
+This is also done correctly for spreads or when the expression is in a tag content
+```
+foo={abc}
+     5 7
+
+{...abc}
+    4 6
+```
+
+The ``EelExpressionTransformer`` works with the positions differently and thus we offset them. But the semantic we now hold for the afx parser and the tests should ideally apply to all ast positions we use.
+
+**Upgrade instructions**
+
+
+* Packages: ``Neos`` ``Fusion.Afx`` ``Fusion``
+
+`BUGFIX: Preview modes do not display hidden nodes <https://github.com/neos/neos-development-collection/pull/5604>`_
+--------------------------------------------------------------------------------------------------------------------
+
+This makes the preview more realistic and helps editors better estimate how the end result will look like.
+
+* Packages: ``Neos``
+
+`BUGFIX: Avoid duplicating shadow nodes <https://github.com/neos/neos-development-collection/pull/5624>`_
+---------------------------------------------------------------------------------------------------------
+
+This fixes a regression in handling shadow nodes while publishing in nested workspaces.
+
+Without this change we first create a new shadow node by replicating the move in the target workspace and then try to adjust the existing source shadow node to exist in the target, which triggers a duplicate key error.
+
+As commented, we can be sufficiently sure that the move operation will take care of (not) creating shadow nodes as necessary and any previously existing shadow node in the source workspace can be discarded safely.
+
+The new "else" branch should probably not be necessary, as if there was no move, there should never be a shadow node to adjust. Just in case though we leave this in place. Might clean up some leftover shadow nodes.
+
+* Fixes: `#5561 <https://github.com/neos/neos-development-collection/issues/5561>`_
+* Related: `#1608 <https://github.com/neos/neos-development-collection/issues/1608>`_
+
+
+* Packages: ``Media.Browser`` ``Neos`` ``NodeTypes.BaseMixins`` ``NodeTypes.ColumnLayouts`` ``NodeTypes``
+
+`TASK: Avoid prototype injection in constructors <https://github.com/neos/neos-development-collection/pull/5621>`_
+------------------------------------------------------------------------------------------------------------------
+
+This removes occurances of constructor injection with prototypes, the modified classes are all injected via constructor and should therefore be singletons.
+
+Related: `#3494 <https://github.com/neos/flow-development-collection/issues/3494>`_
+
+* Packages: ``NodeTypes.ColumnLayouts`` ``Neos``
+
+`TASK: Add missing fusion migrations and runtime helper for 9.0 <https://github.com/neos/neos-development-collection/pull/5641>`_
+---------------------------------------------------------------------------------------------------------------------------------
+
+Followup to https://github.com/neos/neos-development-collection/pull/5638
+
+I did a full re-review on all the Fusion migrations that were copied from ``neos/rector``
+
+The Fusion migrations were refined to ensure we handle even more cases (and in 9.0 write comments for all the things)
+
+Doing that i noticed we were missing the 8.4 api for ``node.workspaceName`` and ``node.classification.tethered`` and ``q(node).property("hiddenInMenu")`` and ~enableAfterDateTime, disableAfterDateTime~ so i added the missing runtime layers for those too.
+
+**Upgrade instructions**
+
+
+* Packages: ``Neos``
+
+`TASK: Adjust README to 8.4 branch <https://github.com/neos/neos-development-collection/pull/5639>`_
+----------------------------------------------------------------------------------------------------
+
+
+
+`TASK: Adjust to new behat refactoring from 90 and fix CI test for previous PRs  <https://github.com/neos/neos-development-collection/pull/5632>`_
+--------------------------------------------------------------------------------------------------------------------------------------------------
+
+these behat refactorings were backmerged to 8.4 and thus neos needs an adjustment herby.
+
+The @Isolated tests are still broken because of changes in flow and are currently skipped in CI in favour of having some tests running already.
+
+In Neos 9 everything will be better because all the code i attemted to fix is already dead and new written. Dont you worry.
+
+`Detailed log <https://github.com/neos/neos-development-collection/compare/9.0.6...9.0.7>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

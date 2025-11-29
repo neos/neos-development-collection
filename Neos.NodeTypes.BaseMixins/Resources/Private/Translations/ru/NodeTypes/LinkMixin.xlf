@@ -2,9 +2,10 @@
 <xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
   <file original="" product-name="Neos.NodeTypes.BaseMixins" source-language="en" datatype="plaintext" target-language="ru">
     <body>
-      <trans-unit id="properties.link" xml:space="preserve" approved="yes">
-				<source>Link</source>
-			<target state="final">Ссылка</target></trans-unit>
+      <trans-unit id="properties.link" xml:space="preserve" approved="no">
+        <source>Link</source>
+        <target state="translated">Связать</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

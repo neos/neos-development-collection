@@ -19,8 +19,10 @@ use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
+use Neos\Flow\Annotations\Scope;
 
 /** @internal */
+#[Scope("singleton")]
 final readonly class ImpendingHardRemovalConflictRepository
 {
     private const CONFLICT_TABLE_NAME = 'neos_neos_impending_hard_removal_conflict';

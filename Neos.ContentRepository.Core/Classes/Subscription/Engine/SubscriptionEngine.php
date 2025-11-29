@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Core\Subscription\Engine;
 
-use Doctrine\DBAL\Exception\TableNotFoundException;
 use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\EventStore\EventNormalizer;
+use Neos\ContentRepository\Core\Infrastructure\PerformanceTracing\PerformanceTracerInterface;
 use Neos\ContentRepository\Core\Service\ContentRepositoryMaintainer;
 use Neos\ContentRepository\Core\Subscription\DetachedSubscriptionStatus;
 use Neos\ContentRepository\Core\Subscription\Exception\SubscriptionEngineAlreadyProcessingException;
@@ -44,6 +44,7 @@ final class SubscriptionEngine
         private readonly SubscriptionStoreInterface $subscriptionStore,
         private readonly Subscribers $subscribers,
         private readonly EventNormalizer $eventNormalizer,
+        private readonly ?PerformanceTracerInterface $performanceTracer,
         private readonly LoggerInterface|null $logger = null,
     ) {
     }
@@ -80,7 +81,7 @@ final class SubscriptionEngine
     {
         $criteria ??= SubscriptionEngineCriteria::noConstraints();
         return $this->processExclusively(
-            fn () => $this->catchUpSubscriptions($criteria, SubscriptionStatusFilter::fromArray([SubscriptionStatus::BOOTING]), $progressCallback, $batchSize)
+            fn() => $this->catchUpSubscriptions($criteria, SubscriptionStatusFilter::fromArray([SubscriptionStatus::BOOTING]), $progressCallback, $batchSize)
         );
     }
 
@@ -88,7 +89,7 @@ final class SubscriptionEngine
     {
         $criteria ??= SubscriptionEngineCriteria::noConstraints();
         return $this->processExclusively(
-            fn () => $this->catchUpSubscriptions($criteria, SubscriptionStatusFilter::fromArray([SubscriptionStatus::ACTIVE]), $progressCallback, $batchSize)
+            fn() => $this->catchUpSubscriptions($criteria, SubscriptionStatusFilter::fromArray([SubscriptionStatus::ACTIVE]), $progressCallback, $batchSize)
         );
     }
 
@@ -96,7 +97,7 @@ final class SubscriptionEngine
     {
         $criteria ??= SubscriptionEngineCriteria::noConstraints();
         return $this->processExclusively(
-            fn () => $this->catchUpSubscriptions($criteria, SubscriptionStatusFilter::fromArray([SubscriptionStatus::ERROR, SubscriptionStatus::DETACHED]), $progressCallback, $batchSize)
+            fn() => $this->catchUpSubscriptions($criteria, SubscriptionStatusFilter::fromArray([SubscriptionStatus::ERROR, SubscriptionStatus::DETACHED]), $progressCallback, $batchSize)
         );
     }
 
@@ -132,7 +133,8 @@ final class SubscriptionEngine
         $statuses = [];
         try {
             $subscriptions = $this->subscriptionStore->findByCriteriaForUpdate(SubscriptionCriteria::create(ids: $criteria?->ids));
-        } catch (TableNotFoundException) {
+        } catch (\Doctrine\DBAL\Exception\TableNotFoundException) {
+            // todo do not depend on the dbal exception as this is totally implementation specific and the core has no dependency to dbal!
             // the schema is not setup - thus there are no subscribers
             return SubscriptionStatusCollection::createEmpty();
         }
@@ -271,178 +273,185 @@ final class SubscriptionEngine
      */
     private function catchUpSubscriptions(SubscriptionEngineCriteria $criteria, SubscriptionStatusFilter $status, \Closure|null $progressCallback, int|null $batchSize): ProcessedResult
     {
-        if ($batchSize !== null && $batchSize <= 0) {
-            throw new \InvalidArgumentException(sprintf('Invalid batchSize %d specified, must be either NULL or a positive integer.', $batchSize), 1733597950);
-        }
-
-        $this->logger?->info(sprintf('Subscription Engine: Start catching up subscriptions in states %s.', join(',', $status->toStringArray())));
-
-        $subscriptionCriteria = SubscriptionCriteria::forEngineCriteriaAndStatus($criteria, $status);
-
-        $numberOfProcessedEvents = 0;
-        /** @var array<Error> $errors */
-        $errors = [];
-
-        $this->subscriptionStore->beginTransaction();
-
-        $subscriptionsToCatchup = $this->subscriptionStore->findByCriteriaForUpdate($subscriptionCriteria);
-        foreach ($subscriptionsToCatchup as $subscription) {
-            if (!$this->subscribers->contain($subscription->id)) {
-                // mark detached subscriptions as we cannot handle them and exclude them from catchup
-                $this->subscriptionStore->update(
-                    $subscription->id,
-                    status: SubscriptionStatus::DETACHED,
-                    position: $subscription->position,
-                    subscriptionError: null,
-                );
-                $this->logger?->info(sprintf('Subscription Engine: Subscriber for "%s" not found and has been marked as detached.', $subscription->id->value));
-                $subscriptionsToCatchup = $subscriptionsToCatchup->without($subscription->id);
+        $this->performanceTracer?->openSpan('SubscriptionEngine::catchUpSubscriptions', []);
+        try {
+            if ($batchSize !== null && $batchSize <= 0) {
+                throw new \InvalidArgumentException(sprintf('Invalid batchSize %d specified, must be either NULL or a positive integer.', $batchSize), 1733597950);
             }
-        }
 
-        if ($subscriptionsToCatchup->isEmpty()) {
-            $this->logger?->info('Subscription Engine: No subscriptions matched criteria. Finishing catch up.');
-            $this->subscriptionStore->commit();
-            return ProcessedResult::success(0);
-        }
+            $this->logger?->info(sprintf('Subscription Engine: Start catching up subscriptions in states %s.', join(',', $status->toStringArray())));
 
-        $subscriptionIdsToInvokeAroundCatchUpHooks = $subscriptionsToCatchup->getIds();
-        foreach ($subscriptionsToCatchup as $subscription) {
-            $subscriber = $this->subscribers->get($subscription->id);
-            try {
-                $subscriber->catchUpHook?->onBeforeCatchUp($subscription->status);
-            } catch (\Throwable $e) {
-                $errors[] = $error = Error::create($subscription->id, $e->getMessage(), $errors === [] ? $e : null, position: null);
-                $this->logCatchupHookError($error);
+            $subscriptionCriteria = SubscriptionCriteria::forEngineCriteriaAndStatus($criteria, $status);
+
+            $numberOfProcessedEvents = 0;
+            /** @var array<Error> $errors */
+            $errors = [];
+
+            $this->subscriptionStore->beginTransaction();
+
+            $subscriptionsToCatchup = $this->subscriptionStore->findByCriteriaForUpdate($subscriptionCriteria);
+            foreach ($subscriptionsToCatchup as $subscription) {
+                if (!$this->subscribers->contain($subscription->id)) {
+                    // mark detached subscriptions as we cannot handle them and exclude them from catchup
+                    $this->subscriptionStore->update(
+                        $subscription->id,
+                        status: SubscriptionStatus::DETACHED,
+                        position: $subscription->position,
+                        subscriptionError: null,
+                    );
+                    $this->logger?->info(sprintf('Subscription Engine: Subscriber for "%s" not found and has been marked as detached.', $subscription->id->value));
+                    $subscriptionsToCatchup = $subscriptionsToCatchup->without($subscription->id);
+                }
             }
-        }
 
-        while (true) {
-            /**
-             * If batching is enabled, the {@see $continueBatching} flag will indicate that the last run was stopped and continuation is necessary to handle the rest of the events.
-             * It's possible that batching stops at the last event, in that case the transaction is still reopened to set the active state correctly.
-             */
-            $continueBatching = false;
+            if ($subscriptionsToCatchup->isEmpty()) {
+                $this->logger?->info('Subscription Engine: No subscriptions matched criteria. Finishing catch up.');
+                $this->subscriptionStore->commit();
+                return ProcessedResult::success(0);
+            }
 
-            $startSequenceNumber = $subscriptionsToCatchup->lowestPosition()?->next() ?? SequenceNumber::none();
-            $this->logger?->debug(sprintf('Subscription Engine: Event stream is processed from position %s.', $startSequenceNumber->value));
-
-            /** @var array<string,SequenceNumber> $highestSequenceNumberForSubscriber */
-            $highestSequenceNumberForSubscriber = [];
-
-            $eventStream = $this->eventStore->load(VirtualStreamName::all())->withMinimumSequenceNumber($startSequenceNumber);
-            foreach ($eventStream as $eventEnvelope) {
-                $sequenceNumber = $eventEnvelope->sequenceNumber;
-                if ($numberOfProcessedEvents > 0) {
-                    $this->logger?->debug(sprintf('Subscription Engine: Current event stream position: %s', $sequenceNumber->value));
+            $subscriptionIdsToInvokeAroundCatchUpHooks = $subscriptionsToCatchup->getIds();
+            foreach ($subscriptionsToCatchup as $subscription) {
+                $subscriber = $this->subscribers->get($subscription->id);
+                try {
+                    $subscriber->catchUpHook?->onBeforeCatchUp($subscription->status);
+                } catch (\Throwable $e) {
+                    $errors[] = $error = Error::create($subscription->id, $e->getMessage(), $errors === [] ? $e : null, position: null);
+                    $this->logCatchupHookError($error);
                 }
-                if ($progressCallback !== null) {
-                    $progressCallback($eventEnvelope);
+            }
+            $this->performanceTracer?->mark('CatchUpHooks::onBeforeCatchUp');
+
+            while (true) {
+                /**
+                 * If batching is enabled, the {@see $continueBatching} flag will indicate that the last run was stopped and continuation is necessary to handle the rest of the events.
+                 * It's possible that batching stops at the last event, in that case the transaction is still reopened to set the active state correctly.
+                 */
+                $continueBatching = false;
+
+                $startSequenceNumber = $subscriptionsToCatchup->lowestPosition()?->next() ?? SequenceNumber::none();
+                $this->logger?->debug(sprintf('Subscription Engine: Event stream is processed from position %s.', $startSequenceNumber->value));
+
+                /** @var array<string,SequenceNumber> $highestSequenceNumberForSubscriber */
+                $highestSequenceNumberForSubscriber = [];
+
+                $eventStream = $this->eventStore->load(VirtualStreamName::all())->withMinimumSequenceNumber($startSequenceNumber);
+                foreach ($eventStream as $eventEnvelope) {
+                    $sequenceNumber = $eventEnvelope->sequenceNumber;
+                    if ($numberOfProcessedEvents > 0) {
+                        $this->logger?->debug(sprintf('Subscription Engine: Current event stream position: %s', $sequenceNumber->value));
+                    }
+                    if ($progressCallback !== null) {
+                        $progressCallback($eventEnvelope);
+                    }
+                    $domainEvent = $this->eventNormalizer->denormalize($eventEnvelope->event);
+                    foreach ($subscriptionsToCatchup as $subscription) {
+                        if ($subscription->position->value >= $sequenceNumber->value) {
+                            $this->logger?->debug(sprintf('Subscription Engine: Subscription "%s" is farther than the current position (%d >= %d), continue catch up.', $subscription->id->value, $subscription->position->value, $sequenceNumber->value));
+                            continue;
+                        }
+                        if (!$subscriptionIdsToInvokeAroundCatchUpHooks->contain($subscription->id)) {
+                            $this->logger?->info(sprintf('Subscription Engine: Subscription "%s" with status "%s" was not part of the first batch, continue catch up.', $subscription->id->value, $subscription->status->value));
+                            continue;
+                        }
+                        $subscriber = $this->subscribers->get($subscription->id);
+
+                        try {
+                            $subscriber->catchUpHook?->onBeforeEvent($domainEvent, $eventEnvelope);
+                        } catch (\Throwable $e) {
+                            $errors[] = $error = Error::create($subscription->id, $e->getMessage(), $errors === [] ? $e : null, $eventEnvelope->sequenceNumber);
+                            $this->logCatchupHookError($error);
+                        }
+
+                        try {
+                            $subscriber->projection->apply($domainEvent, $eventEnvelope);
+                            $this->performanceTracer?->mark('Projection::apply', ['subscription' => $subscription->id->value, 'event' => $eventEnvelope->event->type->value]);
+                        } catch (\Throwable $e) {
+                            // ERROR Case:
+                            $errors[] = Error::create($subscription->id, $e->getMessage(), $errors === [] ? $e : null, $eventEnvelope->sequenceNumber);
+                            $this->logger?->error(sprintf('Subscription Engine: Subscriber "%s" for "%s" could not process the event "%s" (sequence number: %d): %s', $subscriber::class, $subscription->id->value, $eventEnvelope->event->type->value, $eventEnvelope->sequenceNumber->value, $e->getMessage()));
+
+                            // for the leftover events we are not including this failed subscription for catchup
+                            $subscriptionsToCatchup = $subscriptionsToCatchup->without($subscription->id);
+                            // update the subscription error state on either its unchanged or new position (if some events worked)
+                            // note that the possibly partially applied event will not be rolled back.
+                            $this->subscriptionStore->update(
+                                $subscription->id,
+                                status: SubscriptionStatus::ERROR,
+                                position: $highestSequenceNumberForSubscriber[$subscription->id->value] ?? $subscription->position,
+                                subscriptionError: SubscriptionError::fromPreviousStatusAndException(
+                                    $subscription->status,
+                                    $e
+                                ),
+                            );
+                            continue;
+                        }
+                        // HAPPY Case:
+                        $this->logger?->debug(sprintf('Subscription Engine: Subscriber "%s" for "%s" processed the event "%s" (sequence number: %d).', substr(strrchr($subscriber::class, '\\') ?: '', 1), $subscription->id->value, $eventEnvelope->event->type->value, $eventEnvelope->sequenceNumber->value));
+                        $highestSequenceNumberForSubscriber[$subscription->id->value] = $eventEnvelope->sequenceNumber;
+
+                        try {
+                            $subscriber->catchUpHook?->onAfterEvent($domainEvent, $eventEnvelope);
+                        } catch (\Throwable $e) {
+                            $errors[] = $error = Error::create($subscription->id, $e->getMessage(), $errors === [] ? $e : null, $eventEnvelope->sequenceNumber);
+                            $this->logCatchupHookError($error);
+                        }
+                    }
+                    $numberOfProcessedEvents++;
+                    if ($batchSize !== null && $numberOfProcessedEvents % $batchSize === 0) {
+                        $continueBatching = true;
+                        $this->logger?->info(sprintf('Subscription Engine: Batch completed with %d events', $numberOfProcessedEvents));
+                        break;
+                    }
                 }
-                $domainEvent = $this->eventNormalizer->denormalize($eventEnvelope->event);
                 foreach ($subscriptionsToCatchup as $subscription) {
-                    if ($subscription->position->value >= $sequenceNumber->value) {
-                        $this->logger?->debug(sprintf('Subscription Engine: Subscription "%s" is farther than the current position (%d >= %d), continue catch up.', $subscription->id->value, $subscription->position->value, $sequenceNumber->value));
-                        continue;
+                    // after catchup mark all subscriptions as active, so they are triggered automatically now.
+                    // The position will be set to the one the subscriber handled last, or if no events were in the stream, and we booted we keep the persisted position
+                    $this->subscriptionStore->update(
+                        $subscription->id,
+                        status: $continueBatching === false ? SubscriptionStatus::ACTIVE : $subscription->status,
+                        position: $highestSequenceNumberForSubscriber[$subscription->id->value] ?? $subscription->position,
+                        subscriptionError: null,
+                    );
+                    if ($continueBatching === false && $subscription->status !== SubscriptionStatus::ACTIVE) {
+                        $this->logger?->info(sprintf('Subscription Engine: Subscription "%s" has been set to active after booting', $subscription->id->value));
                     }
-                    if (!$subscriptionIdsToInvokeAroundCatchUpHooks->contain($subscription->id)) {
-                        $this->logger?->info(sprintf('Subscription Engine: Subscription "%s" with status "%s" was not part of the first batch, continue catch up.', $subscription->id->value, $subscription->status->value));
-                        continue;
-                    }
-                    $subscriber = $this->subscribers->get($subscription->id);
+                }
+                $this->logger?->info(sprintf('Subscription Engine: Finish catch up. %d processed events %d errors.', $numberOfProcessedEvents, count($errors)));
 
+                $this->subscriptionStore->commit();
+
+                foreach ($subscriptionIdsToInvokeAroundCatchUpHooks as $subscriptionId) {
                     try {
-                        $subscriber->catchUpHook?->onBeforeEvent($domainEvent, $eventEnvelope);
+                        $this->subscribers->get($subscriptionId)->catchUpHook?->onAfterBatchCompleted();
                     } catch (\Throwable $e) {
-                        $errors[] = $error = Error::create($subscription->id, $e->getMessage(), $errors === [] ? $e : null, $eventEnvelope->sequenceNumber);
-                        $this->logCatchupHookError($error);
-                    }
-
-                    try {
-                        $subscriber->projection->apply($domainEvent, $eventEnvelope);
-                    } catch (\Throwable $e) {
-                        // ERROR Case:
-                        $errors[] = Error::create($subscription->id, $e->getMessage(), $errors === [] ? $e : null, $eventEnvelope->sequenceNumber);
-                        $this->logger?->error(sprintf('Subscription Engine: Subscriber "%s" for "%s" could not process the event "%s" (sequence number: %d): %s', $subscriber::class, $subscription->id->value, $eventEnvelope->event->type->value, $eventEnvelope->sequenceNumber->value, $e->getMessage()));
-
-                        // for the leftover events we are not including this failed subscription for catchup
-                        $subscriptionsToCatchup = $subscriptionsToCatchup->without($subscription->id);
-                        // update the subscription error state on either its unchanged or new position (if some events worked)
-                        // note that the possibly partially applied event will not be rolled back.
-                        $this->subscriptionStore->update(
-                            $subscription->id,
-                            status: SubscriptionStatus::ERROR,
-                            position: $highestSequenceNumberForSubscriber[$subscription->id->value] ?? $subscription->position,
-                            subscriptionError: SubscriptionError::fromPreviousStatusAndException(
-                                $subscription->status,
-                                $e
-                            ),
-                        );
-                        continue;
-                    }
-                    // HAPPY Case:
-                    $this->logger?->debug(sprintf('Subscription Engine: Subscriber "%s" for "%s" processed the event "%s" (sequence number: %d).', substr(strrchr($subscriber::class, '\\') ?: '', 1), $subscription->id->value, $eventEnvelope->event->type->value, $eventEnvelope->sequenceNumber->value));
-                    $highestSequenceNumberForSubscriber[$subscription->id->value] = $eventEnvelope->sequenceNumber;
-
-                    try {
-                        $subscriber->catchUpHook?->onAfterEvent($domainEvent, $eventEnvelope);
-                    } catch (\Throwable $e) {
-                        $errors[] = $error = Error::create($subscription->id, $e->getMessage(), $errors === [] ? $e : null, $eventEnvelope->sequenceNumber);
+                        $errors[] = $error = Error::create($subscriptionId, $e->getMessage(), $errors === [] ? $e : null, position: null);
                         $this->logCatchupHookError($error);
                     }
                 }
-                $numberOfProcessedEvents++;
-                if ($batchSize !== null && $numberOfProcessedEvents % $batchSize === 0) {
-                    $continueBatching = true;
-                    $this->logger?->info(sprintf('Subscription Engine: Batch completed with %d events', $numberOfProcessedEvents));
+
+                if ($continueBatching === true && $errors === []) {
+                    // start new batch
+                    $this->subscriptionStore->beginTransaction();
+                    $subscriptionsToCatchup = $this->subscriptionStore->findByCriteriaForUpdate($subscriptionCriteria);
+                } else {
                     break;
                 }
             }
-            foreach ($subscriptionsToCatchup as $subscription) {
-                // after catchup mark all subscriptions as active, so they are triggered automatically now.
-                // The position will be set to the one the subscriber handled last, or if no events were in the stream, and we booted we keep the persisted position
-                $this->subscriptionStore->update(
-                    $subscription->id,
-                    status: $continueBatching === false ? SubscriptionStatus::ACTIVE : $subscription->status,
-                    position: $highestSequenceNumberForSubscriber[$subscription->id->value] ?? $subscription->position,
-                    subscriptionError: null,
-                );
-                if ($continueBatching === false && $subscription->status !== SubscriptionStatus::ACTIVE) {
-                    $this->logger?->info(sprintf('Subscription Engine: Subscription "%s" has been set to active after booting', $subscription->id->value));
-                }
-            }
-            $this->logger?->info(sprintf('Subscription Engine: Finish catch up. %d processed events %d errors.', $numberOfProcessedEvents, count($errors)));
-
-            $this->subscriptionStore->commit();
 
             foreach ($subscriptionIdsToInvokeAroundCatchUpHooks as $subscriptionId) {
                 try {
-                    $this->subscribers->get($subscriptionId)->catchUpHook?->onAfterBatchCompleted();
+                    $this->subscribers->get($subscriptionId)->catchUpHook?->onAfterCatchUp();
                 } catch (\Throwable $e) {
                     $errors[] = $error = Error::create($subscriptionId, $e->getMessage(), $errors === [] ? $e : null, position: null);
                     $this->logCatchupHookError($error);
                 }
             }
 
-            if ($continueBatching === true && $errors === []) {
-                // start new batch
-                $this->subscriptionStore->beginTransaction();
-                $subscriptionsToCatchup = $this->subscriptionStore->findByCriteriaForUpdate($subscriptionCriteria);
-            } else {
-                break;
-            }
+            return $errors === [] ? ProcessedResult::success($numberOfProcessedEvents) : ProcessedResult::failed($numberOfProcessedEvents, Errors::fromArray($errors));
+        } finally {
+            $this->performanceTracer?->closeSpan();
         }
-
-        foreach ($subscriptionIdsToInvokeAroundCatchUpHooks as $subscriptionId) {
-            try {
-                $this->subscribers->get($subscriptionId)->catchUpHook?->onAfterCatchUp();
-            } catch (\Throwable $e) {
-                $errors[] = $error = Error::create($subscriptionId, $e->getMessage(), $errors === [] ? $e : null, position: null);
-                $this->logCatchupHookError($error);
-            }
-        }
-
-        return $errors === [] ? ProcessedResult::success($numberOfProcessedEvents) : ProcessedResult::failed($numberOfProcessedEvents, Errors::fromArray($errors));
     }
 
     private function logCatchupHookError(Error $error): void

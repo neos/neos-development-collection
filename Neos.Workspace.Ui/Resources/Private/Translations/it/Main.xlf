@@ -88,8 +88,8 @@
         <target state="translated">Privato</target>
       </trans-unit>
       <trans-unit id="workspaces.workspace.visibility.private.help" xml:space="preserve">
-        <source>Only reviewers and administrators can access and modify this workspace</source>
-        <target state="translated">Solo i revisori e gli amministratori possono accedere e modificare questo spazio di lavoro</target>
+        <source>Only the workspace owner can access and modify this workspace</source>
+        <target state="needs-translation">Solo i revisori e gli amministratori possono accedere e modificare questo spazio di lavoro</target>
       </trans-unit>
       <trans-unit id="workspaces.workspace.visibility.shared" xml:space="preserve">
         <source>Shared</source>

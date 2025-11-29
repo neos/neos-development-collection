@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\Core\Service\ContentStreamPruner;
 
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
+use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 
 /**
  * This model reflects if content streams are currently in use or not. Each content stream
@@ -61,6 +62,7 @@ final readonly class ContentStreamForPruning
     private function __construct(
         public ContentStreamId $id,
         public ContentStreamStatus $status,
+        public ?WorkspaceName $workspaceName,
         public ?ContentStreamId $sourceContentStreamId,
         public \DateTimeImmutable $created,
         public bool $removed,
@@ -69,24 +71,51 @@ final readonly class ContentStreamForPruning
 
     public static function create(
         ContentStreamId $id,
-        ContentStreamStatus $status,
-        ?ContentStreamId $sourceContentStreamId,
         \DateTimeImmutable $created,
     ): self {
         return new self(
             $id,
-            $status,
+            ContentStreamStatus::CREATED,
+            null,
+            null,
+            $created,
+            false
+        );
+    }
+
+    public static function createForked(
+        ContentStreamId $id,
+        ContentStreamId $sourceContentStreamId,
+        \DateTimeImmutable $created,
+    ): self {
+        return new self(
+            $id,
+            ContentStreamStatus::FORKED,
+            null,
             $sourceContentStreamId,
             $created,
             false
         );
     }
 
-    public function withStatus(ContentStreamStatus $status): self
+    public function withNoLongerInUse(): self
     {
         return new self(
             $this->id,
-            $status,
+            ContentStreamStatus::NO_LONGER_IN_USE,
+            null,
+            $this->sourceContentStreamId,
+            $this->created,
+            $this->removed
+        );
+    }
+
+    public function withWorkspace(WorkspaceName $workspaceName): self
+    {
+        return new self(
+            $this->id,
+            ContentStreamStatus::IN_USE_BY_WORKSPACE,
+            $workspaceName,
             $this->sourceContentStreamId,
             $this->created,
             $this->removed
@@ -98,6 +127,7 @@ final readonly class ContentStreamForPruning
         return new self(
             $this->id,
             $this->status,
+            $this->workspaceName,
             $this->sourceContentStreamId,
             $this->created,
             true

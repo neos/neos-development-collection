@@ -13,7 +13,7 @@ use Doctrine\DBAL\Schema\SchemaException;
 use Doctrine\DBAL\Schema\Table;
 use Doctrine\DBAL\Types\Type;
 use Doctrine\DBAL\Types\Types;
-use Neos\ContentRepository\Core\Infrastructure\DbalSchemaFactory;
+use Neos\ContentRepository\Dbal\DbalSchemaFactory;
 
 /**
  * @internal implementation detail to manage document node uris. For resolving please use the NodeUriBuilder and for matching the Router.

@@ -15,6 +15,7 @@ use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\Workspace;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepository\Core\SharedModel\Workspace\Workspaces;
+use Neos\Flow\Annotations\Scope;
 use Neos\Flow\Persistence\Doctrine\PersistenceManager;
 use Neos\Media\Domain\Model\AssetInterface;
 use Neos\Media\Domain\Model\AssetVariantInterface;
@@ -23,6 +24,7 @@ use Neos\Media\Domain\Repository\AssetRepository;
 use Neos\Neos\AssetUsage\Domain\AssetUsageRepository;
 use Neos\Neos\AssetUsage\Dto\AssetIdAndOriginalAssetId;
 use Neos\Neos\AssetUsage\Dto\AssetIdsByProperty;
+use Neos\Neos\Domain\Link\Link;
 use Neos\Utility\TypeHandling;
 
 /**
@@ -34,6 +36,7 @@ use Neos\Utility\TypeHandling;
  * 2. Which cache entries do I need to flush on a change to an asset (this requires an additional traversal over all
  *    dependent workspaces).
  */
+#[Scope("singleton")]
 final class AssetUsageIndexingService
 {
     /** @var array <string, string> */
@@ -215,6 +218,14 @@ final class AssetUsageIndexingService
             preg_match_all('/asset:\/\/(?<assetId>[\w-]*)/i', $value, $matches, PREG_SET_ORDER);
             return array_map(static fn (array $match) => $match['assetId'], $matches);
         }
+
+        if ($value instanceof Link) {
+            if ($value->href->getScheme() === 'asset') {
+                return [$value->href->getHost() . $value->href->getPath()];
+            }
+            return [];
+        }
+
         if (is_subclass_of($type, ResourceBasedInterface::class)) {
             return [$this->persistenceManager->getIdentifierByObject($value)];
         }

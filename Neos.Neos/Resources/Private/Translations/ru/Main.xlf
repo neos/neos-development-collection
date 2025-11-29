@@ -383,9 +383,9 @@
         <source>Unavailable</source>
         <target state="final">Недоступно</target>
       </trans-unit>
-      <trans-unit id="inactive" xml:space="preserve" approved="yes">
+      <trans-unit id="inactive" xml:space="preserve" approved="no">
         <source>Inactive</source>
-        <target state="final">Откл.</target>
+        <target state="translated">Неактивно</target>
       </trans-unit>
       <trans-unit id="clickToEdit" xml:space="preserve" approved="yes">
         <source>Click to edit</source>
@@ -411,9 +411,9 @@
         <source>Status</source>
         <target state="final">Статус</target>
       </trans-unit>
-      <trans-unit id="active" xml:space="preserve" approved="yes">
+      <trans-unit id="active" xml:space="preserve" approved="no">
         <source>Active</source>
-        <target state="final">Вкл.</target>
+        <target state="translated">Активный</target>
       </trans-unit>
       <trans-unit id="domains" xml:space="preserve" approved="yes">
         <source>Domains</source>

@@ -25,34 +25,36 @@ trait SubtreeTagging
     private function addSubtreeTag(ContentStreamId $contentStreamId, NodeAggregateId $nodeAggregateId, DimensionSpacePointSet $affectedDimensionSpacePoints, SubtreeTag $tag): void
     {
         $addTagToDescendantsStatement = <<<SQL
-            UPDATE {$this->tableNames->hierarchyRelation()} h
+        UPDATE {$this->tableNames->hierarchyRelation()} h
+            JOIN (
+                WITH RECURSIVE cte (id, dsp) AS (
+                    SELECT ch.childnodeanchor, ch.dimensionspacepointhash
+                    FROM {$this->tableNames->hierarchyRelation()} ch
+                    INNER JOIN {$this->tableNames->node()} n ON n.relationanchorpoint = ch.parentnodeanchor
+                    WHERE
+                      n.nodeaggregateid = :nodeAggregateId
+                      AND ch.contentstreamid = :contentStreamId
+                      AND ch.dimensionspacepointhash in (:dimensionSpacePointHashes)
+                      AND NOT JSON_CONTAINS_PATH(ch.subtreetags, 'one', :tagPath)
+                    UNION ALL
+                    SELECT
+                      dh.childnodeanchor,
+                      dh.dimensionspacepointhash
+                    FROM
+                      cte
+                      JOIN {$this->tableNames->hierarchyRelation()} dh ON dh.parentnodeanchor = cte.id
+                        AND dh.contentstreamid = :contentStreamId
+                        AND dh.dimensionspacepointhash = cte.dsp
+                    WHERE
+                      NOT JSON_CONTAINS_PATH(dh.subtreetags, 'one', :tagPath)
+                )
+                SELECT * FROM cte
+            ) subquery ON h.dimensionspacepointhash = subquery.dsp
+                AND h.childnodeanchor = subquery.id
             SET h.subtreetags = JSON_INSERT(h.subtreetags, :tagPath, null)
-            WHERE h.childnodeanchor IN (
-              WITH RECURSIVE cte (id) AS (
-                SELECT ch.childnodeanchor
-                FROM {$this->tableNames->hierarchyRelation()} ch
-                INNER JOIN {$this->tableNames->node()} n ON n.relationanchorpoint = ch.parentnodeanchor
-                WHERE
-                  n.nodeaggregateid = :nodeAggregateId
-                  AND ch.contentstreamid = :contentStreamId
-                  AND ch.dimensionspacepointhash in (:dimensionSpacePointHashes)
-                  AND NOT JSON_CONTAINS_PATH(ch.subtreetags, 'one', :tagPath)
-                UNION ALL
-                SELECT
-                  dh.childnodeanchor
-                FROM
-                  cte
-                  JOIN {$this->tableNames->hierarchyRelation()} dh ON dh.parentnodeanchor = cte.id
-                    AND dh.contentstreamid = :contentStreamId
-                    AND dh.dimensionspacepointhash in (:dimensionSpacePointHashes)
-                WHERE
-                  NOT JSON_CONTAINS_PATH(dh.subtreetags, 'one', :tagPath)
-              )
-              SELECT DISTINCT id FROM cte
-            )
-              AND h.contentstreamid = :contentStreamId
-              AND h.dimensionspacepointhash in (:dimensionSpacePointHashes)
+            WHERE h.contentstreamid = :contentStreamId
         SQL;
+
         try {
             $this->dbal->executeStatement($addTagToDescendantsStatement, [
                 'contentStreamId' => $contentStreamId->value,
@@ -63,7 +65,7 @@ trait SubtreeTagging
                 'dimensionSpacePointHashes' => ArrayParameterType::STRING,
             ]);
         } catch (DBALException $e) {
-            throw new \RuntimeException(sprintf('Failed to add subtree tag %s for content stream %s, node aggregate id %s and dimension space points %s: %s', $tag->value, $contentStreamId->value, $nodeAggregateId->value, $affectedDimensionSpacePoints->toJson(), $e->getMessage()), 1716479749, $e);
+            throw new \RuntimeException(sprintf('1: Failed to add subtree tag %s for content stream %s, node aggregate id %s and dimension space points %s: %s', $tag->value, $contentStreamId->value, $nodeAggregateId->value, $affectedDimensionSpacePoints->toJson(), $e->getMessage()), 1716479749, $e);
         }
 
         $addTagToNodeStatement = <<<SQL
@@ -85,7 +87,7 @@ trait SubtreeTagging
                 'dimensionSpacePointHashes' => ArrayParameterType::STRING,
             ]);
         } catch (DBALException $e) {
-            throw new \RuntimeException(sprintf('Failed to add subtree tag %s for content stream %s, node aggregate id %s and dimension space points %s: %s', $tag->value, $contentStreamId->value, $nodeAggregateId->value, $affectedDimensionSpacePoints->toJson(), $e->getMessage()), 1716479840, $e);
+            throw new \RuntimeException(sprintf('2: Failed to add subtree tag %s for content stream %s, node aggregate id %s and dimension space points %s: %s', $tag->value, $contentStreamId->value, $nodeAggregateId->value, $affectedDimensionSpacePoints->toJson(), $e->getMessage()), 1716479840, $e);
         }
     }
 
@@ -93,23 +95,9 @@ trait SubtreeTagging
     {
         $removeTagStatement = <<<SQL
             UPDATE {$this->tableNames->hierarchyRelation()} h
-            SET subtreetags = IF((
-              SELECT containsTag FROM (SELECT
-                JSON_CONTAINS_PATH(gph.subtreetags, 'one', :tagPath) as containsTag
-              FROM
-                {$this->tableNames->hierarchyRelation()} gph
-                INNER JOIN {$this->tableNames->hierarchyRelation()} ph ON ph.parentnodeanchor = gph.childnodeanchor
-                INNER JOIN {$this->tableNames->node()} n ON n.relationanchorpoint = ph.childnodeanchor
-              WHERE
-                ph.parentnodeanchor = gph.childnodeanchor
-                AND n.nodeaggregateid = :nodeAggregateId
-                AND gph.contentstreamid = :contentStreamId
-                AND gph.dimensionspacepointhash in (:dimensionSpacePointHashes)
-              LIMIT 1) as containsTagSubQuery
-            ), JSON_SET(subtreetags, :tagPath, null), JSON_REMOVE(subtreetags, :tagPath))
-            WHERE childnodeanchor IN (
-              WITH RECURSIVE cte (id) AS (
-                SELECT ph.childnodeanchor
+            JOIN (
+              WITH RECURSIVE cte (id, dsp) AS (
+                SELECT ph.childnodeanchor, ph.dimensionspacepointhash
                 FROM {$this->tableNames->hierarchyRelation()} ph
                 INNER JOIN {$this->tableNames->node()} n ON n.relationanchorpoint = ph.childnodeanchor
                 WHERE
@@ -118,19 +106,35 @@ trait SubtreeTagging
                   AND ph.dimensionspacepointhash in (:dimensionSpacePointHashes)
                 UNION ALL
                 SELECT
-                  dh.childnodeanchor
+                  dh.childnodeanchor,
+                  dh.dimensionspacepointhash
                 FROM
                   cte
                   JOIN {$this->tableNames->hierarchyRelation()} dh ON dh.parentnodeanchor = cte.id
                     AND dh.contentstreamid = :contentStreamId
-                    AND dh.dimensionspacepointhash in (:dimensionSpacePointHashes)
+                    AND dh.dimensionspacepointhash = cte.dsp
                 WHERE
                   JSON_EXTRACT(dh.subtreetags, :tagPath) != TRUE
               )
-              SELECT DISTINCT id FROM cte
-            )
-              AND contentstreamid = :contentStreamId
-              AND dimensionspacepointhash in (:dimensionSpacePointHashes)
+              SELECT * FROM cte
+            ) subquery ON h.dimensionspacepointhash = subquery.dsp
+                AND h.childnodeanchor = subquery.id
+                SET subtreetags = IF(
+                (
+                    SELECT containsTag FROM (SELECT
+                        JSON_CONTAINS_PATH(gph.subtreetags, 'one', :tagPath) as containsTag
+                  FROM
+                    {$this->tableNames->hierarchyRelation()} gph
+                    INNER JOIN {$this->tableNames->hierarchyRelation()} ph ON ph.parentnodeanchor = gph.childnodeanchor
+                    INNER JOIN {$this->tableNames->node()} n ON n.relationanchorpoint = ph.childnodeanchor
+                  WHERE
+                    ph.parentnodeanchor = gph.childnodeanchor
+                    AND n.nodeaggregateid = :nodeAggregateId
+                    AND gph.contentstreamid = :contentStreamId
+                  LIMIT 1) as containsTagSubQuery
+                ), JSON_SET(subtreetags, :tagPath, null), JSON_REMOVE(subtreetags, :tagPath)
+              )
+              WHERE contentstreamid = :contentStreamId
         SQL;
         try {
             $this->dbal->executeStatement($removeTagStatement, [

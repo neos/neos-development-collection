@@ -10,6 +10,10 @@ Feature: Create node aggregate with node without dimensions
       properties:
         text:
           type: string
+        assetLinkString:
+          type: string
+        assetLinkObject:
+          type: Neos\Neos\Domain\Link\Link
         asset:
           type: Neos\Media\Domain\Model\Asset
         assets:
@@ -35,6 +39,8 @@ Feature: Create node aggregate with node without dimensions
     When an asset exists with id "asset-1"
     And an asset exists with id "asset-2"
     And an asset exists with id "asset-3"
+    And an asset exists with id "asset-4"
+    And an asset exists with id "asset-5"
 
     When the command CreateWorkspace is executed with payload:
       | Key                | Value            |
@@ -46,16 +52,20 @@ Feature: Create node aggregate with node without dimensions
     Given I am in workspace "live"
 
     And the following CreateNodeAggregateWithNode commands are executed:
-      | nodeAggregateId            | nodeName   | parentNodeAggregateId  | nodeTypeName                                           | initialPropertyValues                |
-      | sir-david-nodenborough     | node       | lady-eleonode-rootford | Neos.ContentRepository.Testing:NodeWithAssetProperties | {"asset": "Asset:asset-1"}           |
-      | nody-mc-nodeface           | child-node | sir-david-nodenborough | Neos.ContentRepository.Testing:NodeWithAssetProperties | {"assets": ["Asset:asset-2"]}        |
-      | sir-nodeward-nodington-iii | esquire    | lady-eleonode-rootford | Neos.ContentRepository.Testing:NodeWithAssetProperties | {"text": "Link to asset://asset-3."} |
+      | nodeAggregateId            | nodeName   | parentNodeAggregateId  | nodeTypeName                                           | initialPropertyValues                                                                                             |
+      | sir-david-nodenborough     | node       | lady-eleonode-rootford | Neos.ContentRepository.Testing:NodeWithAssetProperties | {"asset": "Asset:asset-1"}                                                                                        |
+      | nody-mc-nodeface           | child-node | sir-david-nodenborough | Neos.ContentRepository.Testing:NodeWithAssetProperties | {"assets": ["Asset:asset-2"]}                                                                                     |
+      | sir-nodeward-nodington-iii | esquire    | lady-eleonode-rootford | Neos.ContentRepository.Testing:NodeWithAssetProperties | {"text": "Link to asset://asset-3."}                                                                              |
+      | sir-nodeward-lincoln       |            | lady-eleonode-rootford | Neos.ContentRepository.Testing:NodeWithAssetProperties | {"assetLinkString": "asset://asset-4"}                                                                            |
+      | sir-objectward-lincoln     |            | lady-eleonode-rootford | Neos.ContentRepository.Testing:NodeWithAssetProperties | {"assetLinkObject": {"__type": "Neos\\\\Neos\\\\Domain\\\\Link\\\\Link", "value": { "href": "asset://asset-5" }}} |
 
     Then I expect the AssetUsageService to have the following AssetUsages:
-      | assetId | nodeAggregateId            | propertyName | workspaceName | originDimensionSpacePoint |
-      | asset-1 | sir-david-nodenborough     | asset        | live          | {}                        |
-      | asset-2 | nody-mc-nodeface           | assets       | live          | {}                        |
-      | asset-3 | sir-nodeward-nodington-iii | text         | live          | {}                        |
+      | assetId | nodeAggregateId            | propertyName    | workspaceName | originDimensionSpacePoint |
+      | asset-1 | sir-david-nodenborough     | asset           | live          | {}                        |
+      | asset-2 | nody-mc-nodeface           | assets          | live          | {}                        |
+      | asset-3 | sir-nodeward-nodington-iii | text            | live          | {}                        |
+      | asset-4 | sir-nodeward-lincoln       | assetLinkString | live          | {}                        |
+      | asset-5 | sir-objectward-lincoln     | assetLinkObject | live          | {}                        |
 
   Scenario: Nodes on user workspace have been created
     Given I am in workspace "user-workspace"

@@ -88,8 +88,8 @@
         <target state="translated">Riêng</target>
       </trans-unit>
       <trans-unit id="workspaces.workspace.visibility.private.help" xml:space="preserve">
-        <source>Only reviewers and administrators can access and modify this workspace</source>
-        <target state="translated">Chỉ có người đánh giá và quản trị viên có thể truy cập và chỉnh sửa không gian làm việc này</target>
+        <source>Only the workspace owner can access and modify this workspace</source>
+        <target state="needs-translation">Chỉ có người đánh giá và quản trị viên có thể truy cập và chỉnh sửa không gian làm việc này</target>
       </trans-unit>
       <trans-unit id="workspaces.workspace.visibility.shared" xml:space="preserve">
         <source>Shared</source>

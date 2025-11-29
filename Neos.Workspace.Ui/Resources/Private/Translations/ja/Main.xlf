@@ -88,8 +88,8 @@
         <target state="translated">民間</target>
       </trans-unit>
       <trans-unit id="workspaces.workspace.visibility.private.help" xml:space="preserve">
-        <source>Only reviewers and administrators can access and modify this workspace</source>
-        <target state="translated">のみ応募には管理者アクセスし、修正するこのワークスペース</target>
+        <source>Only the workspace owner can access and modify this workspace</source>
+        <target state="needs-translation">のみ応募には管理者アクセスし、修正するこのワークスペース</target>
       </trans-unit>
       <trans-unit id="workspaces.workspace.visibility.shared" xml:space="preserve">
         <source>Shared</source>

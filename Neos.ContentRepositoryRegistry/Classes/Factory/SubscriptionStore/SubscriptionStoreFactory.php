@@ -7,6 +7,7 @@ namespace Neos\ContentRepositoryRegistry\Factory\SubscriptionStore;
 use Doctrine\DBAL\Connection;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
 use Neos\ContentRepository\Core\Subscription\Store\SubscriptionStoreInterface;
+use Neos\ContentRepository\Dbal\SubscriptionStore\DoctrineSubscriptionStore;
 use Psr\Clock\ClockInterface;
 
 /**

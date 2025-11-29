@@ -9,6 +9,7 @@ parameters:
         - Neos.ContentGraph.PostgreSQLAdapter/src
         - Neos.ContentRepository.BehavioralTests/Classes
         - Neos.ContentRepository.Core/Classes
+        - Neos.ContentRepository.Dbal/Classes
         - Neos.ContentRepository.Export/src
         - Neos.ContentRepository.LegacyNodeMigration/Classes
         - Neos.ContentRepository.NodeAccess/Classes

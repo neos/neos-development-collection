@@ -206,7 +206,7 @@ Feature: Move node to a new parent / within the current parent before a sibling 
       | relationDistributionStrategy | "scatter"                |
     Then the last command should have thrown an exception of type "NodeNameIsAlreadyCovered"
 
-  Scenario: Using the gatherSpecializations strategy, try to move a node to a parent that already has a child node of the same name in a specialization
+  Scenario: Using the gatherSpecializations strategy, try to move a node to a parent that already has a child node of the same name and different aggregate id in a specialization
     Given the following CreateNodeAggregateWithNode commands are executed:
       | nodeAggregateId  | originDimensionSpacePoint | nodeTypeName                            | parentNodeAggregateId      | nodeName        |
       | nody-mc-nodeface | {"example": "source"}     | Neos.ContentRepository.Testing:Document | sir-nodeward-nodington-iii | target-document |
@@ -219,7 +219,7 @@ Feature: Move node to a new parent / within the current parent before a sibling 
       | relationDistributionStrategy | "gatherSpecializations"  |
     Then the last command should have thrown an exception of type "NodeNameIsAlreadyCovered"
 
-  Scenario: Using the gatherAll strategy, try to move a node to a parent that already has a child node of the same name in a generalization
+  Scenario: Using the gatherAll strategy, try to move a node to a parent that already has a child node of the same name and different aggregate id in a generalization
     Given the following CreateNodeAggregateWithNode commands are executed:
       | nodeAggregateId  | originDimensionSpacePoint | nodeTypeName                            | parentNodeAggregateId | nodeName        |
       | rival-destinode  | {"example": "general"}    | Neos.ContentRepository.Testing:Document | general-nodesworth    | target-document |

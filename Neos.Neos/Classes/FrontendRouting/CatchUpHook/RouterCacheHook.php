@@ -12,6 +12,7 @@ use Neos\ContentRepository\Core\Feature\NodeRemoval\Event\NodeAggregateWasRemove
 use Neos\ContentRepository\Core\Feature\SubtreeTagging\Event\SubtreeWasTagged;
 use Neos\ContentRepository\Core\Projection\CatchUpHook\CatchUpHookInterface;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
+use Neos\ContentRepository\Core\SharedModel\Node\PropertyName;
 use Neos\ContentRepository\Core\Subscription\SubscriptionStatus;
 use Neos\EventStore\Model\EventEnvelope;
 use Neos\Flow\Mvc\Routing\RouterCachingService;
@@ -117,7 +118,11 @@ final class RouterCacheHook implements CatchUpHookInterface
         }
 
         $newPropertyValues = $event->propertyValues->getPlainValues();
-        if (!isset($newPropertyValues['uriPathSegment'])) {
+        $unsetPropertyValues = array_flip(array_map(
+            fn (PropertyName $propertyName) => $propertyName->value,
+            iterator_to_array($event->propertiesToUnset)
+        ));
+        if (!isset($newPropertyValues['uriPathSegment']) && !isset($unsetPropertyValues['uriPathSegment'])) {
             return;
         }
 

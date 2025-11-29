@@ -23,7 +23,6 @@ use Neos\EventStore\Model\Event\SequenceNumber;
 use Neos\EventStore\Model\Event\StreamName;
 use Neos\EventStore\Model\EventStream\EventStreamFilter;
 use Neos\EventStore\Model\EventStream\VirtualStreamName;
-use Doctrine\DBAL\Exception as DBALException;
 
 /**
  * Set up and manage a content repository
@@ -104,7 +103,8 @@ final readonly class ContentRepositoryMaintainer implements ContentRepositorySer
         try {
             $lastEventEnvelope = current(iterator_to_array($this->eventStore->load(VirtualStreamName::all())->backwards()->limit(1))) ?: null;
             $sequenceNumber = $lastEventEnvelope?->sequenceNumber ?? SequenceNumber::none();
-        } catch (DBALException) {
+        } catch (\Doctrine\DBAL\Exception) {
+            // todo do not depend on the dbal exception as this is totally implementation specific and the core has no dependency to dbal!
             $sequenceNumber = null;
         }
 

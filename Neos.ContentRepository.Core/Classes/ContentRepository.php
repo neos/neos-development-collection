@@ -30,6 +30,7 @@ use Neos\ContentRepository\Core\EventStore\PublishedEvents;
 use Neos\ContentRepository\Core\Feature\Security\AuthProviderInterface;
 use Neos\ContentRepository\Core\Feature\Security\Dto\UserId;
 use Neos\ContentRepository\Core\Feature\Security\Exception\AccessDenied;
+use Neos\ContentRepository\Core\Infrastructure\PerformanceTracing\PerformanceTracerInterface;
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphInterface;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphReadModelInterface;
@@ -78,6 +79,7 @@ final class ContentRepository
         private readonly ContentGraphReadModelInterface $contentGraphReadModel,
         private readonly CommandHookInterface $commandHook,
         private readonly ProjectionStates $projectionStates,
+        private readonly ?PerformanceTracerInterface $performanceTracer,
     ) {
     }
 
@@ -89,63 +91,79 @@ final class ContentRepository
      */
     public function handle(CommandInterface $command): void
     {
-        $command = $this->commandHook->onBeforeHandle($command);
-        $privilege = $this->authProvider->canExecuteCommand($command);
-        if (!$privilege->granted) {
-            throw AccessDenied::becauseCommandIsNotGranted($command, $privilege->getReason());
-        }
+        $this->performanceTracer?->openSpan('ContentRepository::handle', ['c' => get_class($command)]);
+        try {
+            $command = $this->commandHook->onBeforeHandle($command);
+            $this->performanceTracer?->mark('CommandHook::onBeforeHandle');
 
-        $toPublish = $this->commandBus->handle($command);
-        $correlationId = CorrelationId::fromString(sprintf('%s_%s', substr($command::class, strrpos($command::class, '\\') + 1, 20), bin2hex(random_bytes(9))));
-
-        // simple case
-        if ($toPublish instanceof EventsToPublish) {
-            $this->eventStore->commit($toPublish->streamName, $this->enrichAndNormalizeEvents($toPublish->events, $correlationId), $toPublish->expectedVersion);
-            $fullCatchUpResult = $this->subscriptionEngine->catchUpActive(); // NOTE: we don't batch here, to ensure the catchup is run completely and any errors don't stop it.
-            if ($fullCatchUpResult->hadErrors()) {
-                throw CatchUpHadErrors::createFromErrors($fullCatchUpResult->errors);
+            $privilege = $this->authProvider->canExecuteCommand($command);
+            $this->performanceTracer?->mark('AuthProvider::canExecuteCommand');
+            if (!$privilege->granted) {
+                throw AccessDenied::becauseCommandIsNotGranted($command, $privilege->getReason());
             }
-            $additionalCommands = $this->commandHook->onAfterHandle($command, $toPublish->events->toInnerEvents());
+            $toPublish = $this->commandBus->handle($command);
+            $this->performanceTracer?->mark('CommandBus::handle');
+
+            $correlationId = CorrelationId::fromString(sprintf('%s_%s', substr($command::class, strrpos($command::class, '\\') + 1, 20), bin2hex(random_bytes(9))));
+
+            // simple case
+            if ($toPublish instanceof EventsToPublish) {
+                $this->eventStore->commit($toPublish->streamName, $this->enrichAndNormalizeEvents($toPublish->events, $correlationId), $toPublish->expectedVersion);
+                $this->performanceTracer?->mark('EventStore::commit');
+                $fullCatchUpResult = $this->subscriptionEngine->catchUpActive(); // NOTE: we don't batch here, to ensure the catchup is run completely and any errors don't stop it.
+                // SubscriptionEngine is tracing automatically; so we do not need to add this here
+                if ($fullCatchUpResult->hadErrors()) {
+                    throw CatchUpHadErrors::createFromErrors($fullCatchUpResult->errors);
+                }
+                $additionalCommands = $this->commandHook->onAfterHandle($command, $toPublish->events->toInnerEvents());
+                foreach ($additionalCommands as $additionalCommand) {
+                    $this->handle($additionalCommand);
+                }
+                $this->performanceTracer?->mark('CommandHook::onAfterHandle');
+                return;
+            }
+
+            // control-flow aware command handling via generator
+            $publishedEvents = PublishedEvents::createEmpty();
+            try {
+                foreach ($toPublish as $eventsToPublish) {
+                    try {
+                        $this->eventStore->commit($eventsToPublish->streamName, $this->enrichAndNormalizeEvents($eventsToPublish->events, $correlationId), $eventsToPublish->expectedVersion);
+                        $this->performanceTracer?->mark('EventStore::commit', ['streamName' => $eventsToPublish->streamName->value, 'cnt' => $eventsToPublish->events->count()]);
+                        $publishedEvents = $publishedEvents->withAppendedEvents($eventsToPublish->events->toInnerEvents());
+                    } catch (ConcurrencyException $concurrencyException) {
+                        // we pass the exception into the generator (->throw), so it could be try-caught and reacted upon:
+                        //
+                        //   try {
+                        //      yield new EventsToPublish(...);
+                        //   } catch (ConcurrencyException $e) {
+                        //      yield $this->reopenContentStream();
+                        //      throw $e;
+                        //   }
+                        $yieldedErrorStrategy = $toPublish->throw($concurrencyException);
+                        if ($yieldedErrorStrategy instanceof EventsToPublish) {
+                            $this->eventStore->commit($yieldedErrorStrategy->streamName, $this->enrichAndNormalizeEvents($yieldedErrorStrategy->events, $correlationId), $yieldedErrorStrategy->expectedVersion);
+                            $this->performanceTracer?->mark('EventStore::commit');
+                        }
+                        throw $concurrencyException;
+                    }
+                }
+            } finally {
+                // We always NEED to catchup even if there was an unexpected ConcurrencyException to make sure previous commits are handled.
+                // Technically it would be acceptable for the catchup to fail here (due to hook errors) because all the events are already persisted.
+                $fullCatchUpResult = $this->subscriptionEngine->catchUpActive(); // NOTE: we don't batch here, to ensure the catchup is run completely and any errors don't stop it.
+                $this->performanceTracer?->mark('SubscriptionEngine::catchUpActive');
+                if ($fullCatchUpResult->hadErrors()) {
+                    throw CatchUpHadErrors::createFromErrors($fullCatchUpResult->errors);
+                }
+            }
+            $additionalCommands = $this->commandHook->onAfterHandle($command, $publishedEvents);
             foreach ($additionalCommands as $additionalCommand) {
                 $this->handle($additionalCommand);
             }
-            return;
-        }
-
-        // control-flow aware command handling via generator
-        $publishedEvents = PublishedEvents::createEmpty();
-        try {
-            foreach ($toPublish as $eventsToPublish) {
-                try {
-                    $this->eventStore->commit($eventsToPublish->streamName, $this->enrichAndNormalizeEvents($eventsToPublish->events, $correlationId), $eventsToPublish->expectedVersion);
-                    $publishedEvents = $publishedEvents->withAppendedEvents($eventsToPublish->events->toInnerEvents());
-                } catch (ConcurrencyException $concurrencyException) {
-                    // we pass the exception into the generator (->throw), so it could be try-caught and reacted upon:
-                    //
-                    //   try {
-                    //      yield new EventsToPublish(...);
-                    //   } catch (ConcurrencyException $e) {
-                    //      yield $this->reopenContentStream();
-                    //      throw $e;
-                    //   }
-                    $yieldedErrorStrategy = $toPublish->throw($concurrencyException);
-                    if ($yieldedErrorStrategy instanceof EventsToPublish) {
-                        $this->eventStore->commit($yieldedErrorStrategy->streamName, $this->enrichAndNormalizeEvents($yieldedErrorStrategy->events, $correlationId), $yieldedErrorStrategy->expectedVersion);
-                    }
-                    throw $concurrencyException;
-                }
-            }
+            $this->performanceTracer?->mark('CommandHook::onAfterHandle');
         } finally {
-            // We always NEED to catchup even if there was an unexpected ConcurrencyException to make sure previous commits are handled.
-            // Technically it would be acceptable for the catchup to fail here (due to hook errors) because all the events are already persisted.
-            $fullCatchUpResult = $this->subscriptionEngine->catchUpActive(); // NOTE: we don't batch here, to ensure the catchup is run completely and any errors don't stop it.
-            if ($fullCatchUpResult->hadErrors()) {
-                throw CatchUpHadErrors::createFromErrors($fullCatchUpResult->errors);
-            }
-        }
-        $additionalCommands = $this->commandHook->onAfterHandle($command, $publishedEvents);
-        foreach ($additionalCommands as $additionalCommand) {
-            $this->handle($additionalCommand);
+            $this->performanceTracer?->closeSpan();
         }
     }
 

@@ -80,12 +80,12 @@
         <target state="final">Privé</target>
       </trans-unit>
       <trans-unit id="workspaces.workspace.visibility.private.help" xml:space="preserve">
-        <source>Only reviewers and administrators can access and modify this workspace</source>
-        <target state="translated">Alleen reviewers en administrators hebben toegang en kunnen wijzigingen aanbrengen in deze workspace</target>
+        <source>Only the workspace owner can access and modify this workspace</source>
+        <target state="translated">Alleen workspace eigenaren hebben toegang en kunnen wijzigingen aanbrengen in deze workspace</target>
       </trans-unit>
       <trans-unit id="workspaces.workspace.visibility.shared" xml:space="preserve">
         <source>Shared</source>
-        <target state="translated">Intern</target>
+        <target state="translated">Gedeeld</target>
       </trans-unit>
       <trans-unit id="workspaces.workspace.visibility.shared.help" xml:space="preserve">
         <source>Any logged in editor can see and modify this workspace.</source>
@@ -331,11 +331,11 @@
       </trans-unit>
       <trans-unit id="workspaces.dialog.forceSyncWorkspace" xml:space="preserve">
         <source>Conflicts between workspace "{0}" and "{1}"</source>
-        <target state="needs-translation">Synchroniseren is mislukt</target>
+        <target state="translated">Conflicten tussen workspace "{0}" en "{1}"</target>
       </trans-unit>
       <trans-unit id="workspaces.dialog.thisCanLeadToLostChanges" xml:space="preserve">
         <source>Workspace "{0}" contains modifications that are in conflict with the changes in workspace "{1}".</source>
-        <target state="needs-translation">Een conflict is opgetreden tijdens het synchroniseren van de worksapce. Weet je zeker dat je de conflicterende wijzigingen wilt verwijderen?</target>
+        <target state="translated">Workspace "{0}" bevat wijzigingen die een conflict veroorzaken met de wijzigingen in workspace "{1}".</target>
       </trans-unit>
       <trans-unit id="workspaces.modal.yesRebaseWorkspace" xml:space="preserve">
         <source>Yes, drop changes</source>
@@ -431,7 +431,39 @@
       </trans-unit>
       <trans-unit id="workspaces.dialog.rebase.node" xml:space="preserve">
         <source>Node</source>
-        <target state="needs-translation">Node</target>
+        <target state="translated">Node</target>
+      </trans-unit>
+      <trans-unit id="workspaces.dialog.rebase.event" xml:space="preserve">
+        <source>Event</source>
+        <target state="translated">Evenement</target>
+      </trans-unit>
+      <trans-unit id="workspaces.dialog.rebase.error" xml:space="preserve">
+        <source>Error</source>
+        <target state="translated">Fout</target>
+      </trans-unit>
+      <trans-unit id="workspaces.dialog.thisCanLeadToLostChangesConfirmation" xml:space="preserve">
+        <source>Do you want to drop {0} conflicting change(s)?</source>
+        <target state="translated">Wilt u de conflicterende {0} wijziging(en) verwijderen?</target>
+      </trans-unit>
+      <trans-unit id="workspaces.dialog.ShowInformationAboutConflict" xml:space="preserve">
+        <source>Show information about {0} conflict(s)</source>
+        <target state="translated">Toon informatie over {0} conflict(en)</target>
+      </trans-unit>
+      <trans-unit id="workspaces.dialog.ConfirmationDropConflictingChanges" xml:space="preserve">
+        <source>Do you really want to drop all conflicting changes from workspace "{0}"?</source>
+        <target state="translated">Weet u zeker dat u alle conflicterende wijzigingen wilt verwijderen van workspace "{0}"?</target>
+      </trans-unit>
+      <trans-unit id="workspaces.dialog.ConfirmationDropConflictingChangesCount" xml:space="preserve">
+        <source>This will remove {0} change(s) from the workspace.</source>
+        <target state="translated">Dit verwijdert {0} wijziging(en) van de workspace.</target>
+      </trans-unit>
+      <trans-unit id="workspaces.dialog.ConfirmationDropConflictingChangesText" xml:space="preserve">
+        <source>This can not be undone! Do you wish to proceed?</source>
+        <target state="translated">Dit kan niet ongedaan gemaakt worden! Wilt u doorgaan?</target>
+      </trans-unit>
+      <trans-unit id="workspaces.dialog.rebase.eventDetails" xml:space="preserve">
+        <source>Event details</source>
+        <target state="translated">Evenementdetails</target>
       </trans-unit>
     </body>
   </file>

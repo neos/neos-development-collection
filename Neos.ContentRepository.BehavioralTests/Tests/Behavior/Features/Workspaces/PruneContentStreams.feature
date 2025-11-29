@@ -50,7 +50,7 @@ Feature: If content streams are not in use anymore by the workspace, they can be
     Okay. No pruneable streams in the event stream
     """
 
-  Scenario: no longer in use content streams will be properly cleaned from the graph projection.
+  Scenario: RebaseWorkspace - no longer in use content streams will be properly cleaned from the graph projection
     When the command CreateWorkspace is executed with payload:
       | Key                | Value                |
       | workspaceName      | "user-test"          |
@@ -72,6 +72,44 @@ Feature: If content streams are not in use anymore by the workspace, they can be
     When I am in workspace "user-test" and dimension space point {}
     # todo test that the graph projection really is cleaned up and that no hierarchy stil exist?
     Then I expect node aggregate identifier "root-node" to lead to node user-cs-identifier-rebased;root-node;{}
+
+  Scenario: ChangeBaseWorkspace - no longer in use content streams will be properly cleaned from the graph projection.
+    When the command CreateWorkspace is executed with payload:
+      | Key                | Value                   |
+      | workspaceName      | "review1"               |
+      | baseWorkspaceName  | "live"                  |
+      | newContentStreamId | "review1-cs-identifier" |
+
+    When the command CreateWorkspace is executed with payload:
+      | Key                | Value                |
+      | workspaceName      | "user-test"          |
+      | baseWorkspaceName  | "live"               |
+      | newContentStreamId | "user-cs-identifier" |
+    When I am in workspace "user-test" and dimension space point {}
+    # Ensure that we are in content user-cs-identifier
+    Then I expect node aggregate identifier "root-node" to lead to node user-cs-identifier;root-node;{}
+
+    When the command ChangeBaseWorkspace is executed with payload:
+      | Key                | Value                    |
+      | workspaceName      | "user-test"              |
+      | baseWorkspaceName  | "review1"                |
+      | newContentStreamId | "user-cs-identifier-new" |
+    # now, we have one unused content stream (the old content stream of the user-test workspace)
+    # -> this needs to be auto-cleaned-up
+
+    Then I expect the content stream "user-cs-identifier" to not exist
+
+    When I am in workspace "user-test" and dimension space point {}
+    Then I expect node aggregate identifier "root-node" to lead to node user-cs-identifier-new;root-node;{}
+
+    Then I expect the content stream pruner status output:
+    """
+    Okay. No dangling streams found
+
+    Removed content streams that can be pruned from the event stream
+      id: user-cs-identifier previous state: no longer in use
+    To prune the removed streams from the event stream run ./flow contentStream:pruneRemovedFromEventstream
+    """
 
   Scenario: no longer in use content streams can be cleaned up completely (simple case)
 

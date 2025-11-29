@@ -1,0 +1,2846 @@
+`8.4.0 (2025-10-10) <https://github.com/neos/neos-development-collection/releases/tag/8.4.0>`_
+==============================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`FEATURE: Restrict site creation module to site nodetype and hide legacy options <https://github.com/neos/neos-development-collection/pull/5644>`_
+--------------------------------------------------------------------------------------------------------------------------------------------------
+
+Hide "Import a site" and "Create a new site-package" by default in Neos 8.4 and add settings to re-enable
+
+these options were removed via Neos 9.0 but can be restored by settings:
+
+```yaml
+Neos.Neos.modules.administration.submodules.sites.settings.enableLegacyPackageImport: true
+Neos.Neos.modules.administration.submodules.sites.settings.enableLegacyPackageCreation: true
+```
+
+**Upgrade instructions**
+
+
+* Packages: ``Neos``
+
+`FEATURE: Add image helper and render image dimensions in image tag attributes <https://github.com/neos/neos-development-collection/pull/5131>`_
+------------------------------------------------------------------------------------------------------------------------------------------------
+
+With this change a new image helper is introduced in Neos.Media which allows creating a thumbnail and using its various properties in Fusion object. This way the actual size of a thumbnail can be rendered into the HTML attributes.
+Until now we only had the uri from the ImageUri helper and component.
+
+**Review instructions**
+
+Adjust the image prototype renderer in the Demo like this:
+```
+prototype(Neos.Demo:Content.Image) < prototype(Neos.Neos:ContentComponent) {
+    renderer = afx`
+        <figure>
+            <Neos.Neos:ImageTag
+                asset={q(node).property('image')}
+                width={900}
+                height={200}
+                allowUpScaling={true}
+            />
+        </figure>
+    `
+//    renderer = afx``<Neos.Demo:Presentation.Image {...props} />``
+}
+```
+
+The resulting image should have with and height properties of the generated thumbnail and not the ones of the original.
+
+I'm not 100% sure if we could break something with this change if somebody modified the ImageTag prototype. 
+We can also target 9.0 if the anybody thinks this would be better.
+
+* Packages: ``Media`` ``Neos``
+
+`FEATURE: Fusion (EEL) core migrations for new 9.0 API (replaces `neos/rector` for Fusion) <https://github.com/neos/neos-development-collection/pull/5638>`_
+------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Fixes the fusion part of https://github.com/neos/neos-development-collection/issues/5607 in a simple manner as a first iteration
+
+### Behaviour for 9.0
+
+This change introduces an extended way to write flow core migrations by providing a trait which allows for exact eel replacements. For this framework code see the changes in "Neos.Fusion" and its tests.
+
+Also this change introduces a first major user of this new migration api. The migration "20251005080230" contains all fusion  migrations concerning the content repository that currently reside in ``neos/rector`` and were executed with rector.
+
+They are now part of "Neos.Neos" and can be executed as any flow core migration:
+
+```
+flow flow:core:migrate Neos.Demo --version 20251005080230
+```
+
+The comprehensive testsuite for this cr-fusion migration was copied and adjusted from ``neos/rector`` to ensure all replacements work as desired.
+
+
+### Behaviour for Neos 8.4
+
+Introducing a core migration for 8.4 was considered but was found to be too magic as its truly an optional step which makes the code not backwardscompatible to previous neos versions.
+
+You can run the adjustments manually. They will not add todo comments like the 9.0 migration. It will be safe to rerun this migration and also to run the 9.0 migration via ``flow:core:migrate`` when updating.
+
+```
+./flow neos9preparation:preadjustfusion Neos.Demo
+```
+
+
+**Upgrade instructions**
+
+
+* Packages: ``Neos``
+
+`FEATURE: Filter users by role <https://github.com/neos/neos-development-collection/pull/5209>`_
+------------------------------------------------------------------------------------------------
+
+* Resolves: `#5208 <https://github.com/neos/neos-development-collection/issues/5208>`_ 
+
+**Review instructions**
+
+Go to there users module and filter the users by their role, also in combination with the search term
+
+!`CleanShot 2024-08-16 at 11 07 15@2x <https://github.com/user-attachments/assets/af7d834c-4ed8-476d-b500-854f381012da>`_
+
+* Packages: ``Neos``
+
+`FEATURE: Improve user sorting behavior <https://github.com/neos/neos-development-collection/pull/5584>`_
+---------------------------------------------------------------------------------------------------------
+
+**Upgrade instructions**
+
+_None_
+
+**Review instructions**
+
+Original PR: `#5159 <https://github.com/neos/neos-development-collection/issues/5159>`_
+
+
+* Packages: ``Neos``
+
+`FEATURE: Backport NodeHelper methods from 9.0 <https://github.com/neos/neos-development-collection/pull/5635>`_
+----------------------------------------------------------------------------------------------------------------
+
+* Resolves: `#5627 <https://github.com/neos/neos-development-collection/issues/5627>`_
+
+**Upgrade instructions**
+
+
+
+* Packages: ``ContentRepository`` ``Neos``
+
+`FEATURE: Hacky backport of the 9.0 `renderingMode` in Fusion <https://github.com/neos/neos-development-collection/pull/5637>`_
+-------------------------------------------------------------------------------------------------------------------------------
+
+Neos 9.0 contains the introduction of FusionGlobals https://github.com/neos/neos-development-collection/pull/4425 which allowed to introduce ``renderingMode`` https://github.com/neos/neos-development-collection/pull/4505 as global like ``request``.
+
+We evaluated to fully back-port these features but this would require lots of effort and might be not agreeable as it certainly would break APIs across Fusion and Neos.
+
+But herby we introduce a super slim backport which disregards any architecture and makes ``${renderingMode}`` magically possible in Fusion when Neos is installed and nodes are rendered.
+
+The ``renderingMode`` attempts to align to the new 9.0 specification as close as possible - but the implementation is limited in two regards:
+
+- ``site``, ``documentNode`` or ``node`` have to be available in the current fusion context which can be tampered with in fusion by forgetting to register those in a cached segment. This would lead to ``renderingMode`` not being available but in 9.0 it would as its ever-present.
+- when nodes from the "live" workspace are rendered the renderingMode will switch to ``frontend`` which results in ``renderingMode.isEdit`` being false. In Neos 9 the rendering mode and the rendered nodes are decoupled from each other. With this backport a decoupling is not possible and using ``q().context()`` on a node and replacing that fusion variable might thus have implications on the ``renderingMode``.
+
+
+Also users of the herby introduced 8.4 ``renderingMode`` and its 9.0 brother should be aware its not behaving exactly as ``node.context.currentRenderingMode``.
+The rendering mode of the ``context`` returns for every logged in users its current rendering mode. This leads to ``edit`` being true for the frontend and for the backend in the neos ui. Only if logged out or when using a private window the frontend behaviour aligns to the Neos 9 specification and ``edit`` is false.
+ 
+The rector migration ```FusionContextCurrentRenderingModeRector`` <https://github.com/neos/rector/blob/`e397f70ed1340c5a62b9d20b0b70253b87201617 <https://github.com/neos/neos-development-collection/commit/e397f70ed1340c5a62b9d20b0b70253b87201617>`_/src/ContentRepository90/Rules/FusionContextCurrentRenderingModeRector.php#L27-L28>`_ still migrates it as an exact replacement to improve the current situation.
+
+**Upgrade instructions**
+
+
+* Packages: ``Neos``
+
+`FEATURE: Adds new login wallpaper and backport attribution  <https://github.com/neos/neos-development-collection/pull/5640>`_
+------------------------------------------------------------------------------------------------------------------------------
+
+resolves `#5620 <https://github.com/neos/neos-development-collection/issues/5620>`_
+
+<img width="1829" height="1066" alt="Bildschirmfoto 2025-10-07 um 09 04 07" src="https://github.com/user-attachments/assets/499b6b22-9921-4396-bd78-f55730c109d2" />
+
+* Packages: ``ContentRepository`` ``Diff`` ``Fusion.Afx`` ``Fusion`` ``Media.Browser`` ``Media`` ``Neos`` ``NodeTypes.Form`` ``SiteKickstarter``
+
+`FEATURE: Backport Neos.Caching Helper <https://github.com/neos/neos-development-collection/pull/5631>`_
+--------------------------------------------------------------------------------------------------------
+
+Backport of Neos.Caching Eel Helper to provide forward compatibility in Neos 8.4.
+```
+prototype(Acme.Site:Document) {
+    @cache {
+        mode = "cached"
+        entryIdentifier {
+            documentNode = ${Neos.Caching.entryIdentifierForNode(documentNode)}
+        }
+     }
+}
+```
+* Fixes: `#5628 <https://github.com/neos/neos-development-collection/issues/5628>`_ 
+
+* Packages: ``Neos``
+
+`FEATURE: Backport Neos.Site Helper <https://github.com/neos/neos-development-collection/pull/5630>`_
+-----------------------------------------------------------------------------------------------------
+
+Backport of Neos.Site Eel Helper to provide forward compatibility in Neos 8.4.
+
+```
+prototype(Acme.Site:Document) {
+   name = ${Neos.Site.findBySiteNode(site).siteResourcesPackageKey}
+}
+
+```
+
+* Fixes: `#5629 <https://github.com/neos/neos-development-collection/issues/5629>`_ 
+
+* Packages: ``Neos``
+
+`FEATURE: Backport aggregateId from 9.0 <https://github.com/neos/neos-development-collection/pull/5634>`_
+---------------------------------------------------------------------------------------------------------
+
+* Resolves: `#5633 <https://github.com/neos/neos-development-collection/issues/5633>`_
+
+**Upgrade instructions**
+
+With this change it's possible to use ``node.aggregateId`` which will return an instance of ``NodeAggregateIdentifier`` that can also be cast to a string which equals the ``node.identifier``. It is recommended to replace all ``node.identifier`` instances this way to already be compatible with Neos 9. See the related rector rule https://github.com/neos/rector/blob/main/docs/rules_overview.md#fusionnodeidentifierrector.
+
+Keep in mind to adjust places where you do a strict comparison as the returned value is not a plain string.
+
+
+* Packages: ``Neos``
+
+`FEATURE: Site nodetype <https://github.com/neos/neos-development-collection/pull/5622>`_
+-----------------------------------------------------------------------------------------
+
+* Resolves: `#5617 <https://github.com/neos/neos-development-collection/issues/5617>`_
+
+**Upgrade instructions**
+
+Add the abstract nodetype ``Neos.Neos:Site`` to your homepage nodetype like this:
+
+```yaml
+'My.SitePackage:Document.Homepage':
+  superTypes:
+    'Neos.Neos:Site': true
+```
+
+**Review instructions**
+
+Newly generated sites and empty content repository should be initialised with the new sites nodetype and use the site mixing in the generated homepage.
+
+* Packages: ``SiteKickstarter``
+
+`FEATURE: add more details to user list and user show command <https://github.com/neos/neos-development-collection/pull/5230>`_
+-------------------------------------------------------------------------------------------------------------------------------
+
+### Description
+
+Adds more informations to the ``./flow user:list`` and ``./flow user:show`` command.
+
+**Upgrade instructions**
+
+_None_
+
+**Review instructions**
+
+resolves: `#4357 <https://github.com/neos/neos-development-collection/issues/4357>`_
+
+- [ ] Reviewer - Breaking Changes are marked with ``!!!`` and have upgrade-instructions
+
+* Packages: ``ContentRepository`` ``Media.Browser`` ``Neos`` ``NodeTypes.BaseMixins``
+
+`FEATURE: Custom label for auto created child nodes <https://github.com/neos/neos-development-collection/pull/530>`_
+--------------------------------------------------------------------------------------------------------------------
+
+Resolves: https://github.com/neos/neos-development-collection/issues/2276
+
+This change add a node type configuration to generate a custom node label
+for auto created child nodes:
+
+```
+'Neos.Neos.NodeTypes:Page':
+  superTypes:
+    'Neos.Neos:Document': TRUE
+  childNodes:
+    main:
+      label: 'Main Content Collection'
+      type: 'Neos.Neos:ContentCollection'
+```
+
+This allow to have a less technical content tree. This change include the
+schema validation and default label for default node types.
+
+The label can be a string or an EEL expression. Inside the
+expression you can access the parent node in the variable ``parentNode``.
+
+* Packages: ``Neos`` ``ContentRepository``
+
+`FEATURE: Support doctrine/dbal 2.x and 3.x <https://github.com/neos/neos-development-collection/pull/5174>`_
+-------------------------------------------------------------------------------------------------------------
+
+Declares compatibility with ``doctrine/dbal`` 3.x (in addition to the already supported versions ``2.8+``) and adjusts affected code such that it works with both versions
+
+* Packages: ``ContentRepository``
+
+`FEATURE: Improve site:list command <https://github.com/neos/neos-development-collection/pull/5135>`_
+-----------------------------------------------------------------------------------------------------
+
+**Upgrade instructions**
+
+_None_
+
+**Review instructions**
+
+Improves our ``./flow site:list`` command by render the list of all available sites directly in a table.
+
+!`WindowsTerminal_2VE3pBUkYq <https://github.com/neos/neos-development-collection/assets/39345336/63951db9-dab5-4fdc-90da-531769f0b4a1>`_
+
+
+* Packages: ``Neos``
+
+`FEATURE: Link Neos logo in modules to primary module <https://github.com/neos/neos-development-collection/pull/5126>`_
+-----------------------------------------------------------------------------------------------------------------------
+
+In the default configuration this links to the content module, or to their user settings if they don’t have access to the content module.
+
+* Resolves: `#4799 <https://github.com/neos/neos-development-collection/issues/4799>`_
+
+* Packages: ``Neos`` ``SiteKickstarter``
+
+`BUGFIX: Preview modes do not display hidden nodes <https://github.com/neos/neos-development-collection/pull/5604>`_
+--------------------------------------------------------------------------------------------------------------------
+
+This makes the preview more realistic and helps editors better estimate how the end result will look like.
+
+* Packages: ``Neos``
+
+`BUGFIX: Avoid duplicating shadow nodes <https://github.com/neos/neos-development-collection/pull/5624>`_
+---------------------------------------------------------------------------------------------------------
+
+This fixes a regression in handling shadow nodes while publishing in nested workspaces.
+
+Without this change we first create a new shadow node by replicating the move in the target workspace and then try to adjust the existing source shadow node to exist in the target, which triggers a duplicate key error.
+
+As commented, we can be sufficiently sure that the move operation will take care of (not) creating shadow nodes as necessary and any previously existing shadow node in the source workspace can be discarded safely.
+
+The new "else" branch should probably not be necessary, as if there was no move, there should never be a shadow node to adjust. Just in case though we leave this in place. Might clean up some leftover shadow nodes.
+
+* Fixes: `#5561 <https://github.com/neos/neos-development-collection/issues/5561>`_
+* Related: `#1608 <https://github.com/neos/neos-development-collection/issues/1608>`_
+
+
+* Packages: ``Media.Browser`` ``Neos`` ``NodeTypes.BaseMixins`` ``NodeTypes.ColumnLayouts`` ``NodeTypes`` ``ContentRepository``
+
+`Revert "BUGFIX: Reload node if hidden state is updated via inspector" <https://github.com/neos/neos-development-collection/pull/5616>`_
+----------------------------------------------------------------------------------------------------------------------------------------
+
+Reverts `#5602 <https://github.com/neos/neos-development-collection/issues/5602>`_ as it raises issues while using the toolbar actions to hide and show nodes.
+
+* See: `#5615 <https://github.com/neos/neos-development-collection/issues/5615>`_ 
+
+* Packages: ``ContentRepository`` ``Media.Browser`` ``Neos`` ``NodeTypes.AssetList`` ``NodeTypes.BaseMixins`` ``NodeTypes.ColumnLayouts`` ``NodeTypes.ContentReferences`` ``NodeTypes.Form`` ``NodeTypes.Html`` ``NodeTypes.Navigation`` ``NodeTypes``
+
+`BUGFIX: backend module links with no hover color <https://github.com/neos/neos-development-collection/pull/5588>`_
+-------------------------------------------------------------------------------------------------------------------
+
+**Upgrade instructions**
+
+_None_
+
+**Review instructions**
+
+Issue: `#5586 <https://github.com/neos/neos-development-collection/issues/5586>`_
+
+This fixes the issue at some places in the neos backend where links dont have a hover color. That where all places i found 🤔:
+
+
+https://github.com/user-attachments/assets/7c448606-5922-46b1-a0ae-400f724a2fad
+
+
+
+
+* Packages: ``Neos``
+
+`BUGFIX: Reload node if hidden state is updated via inspector <https://github.com/neos/neos-development-collection/pull/5602>`_
+-------------------------------------------------------------------------------------------------------------------------------
+
+With this change nodes are updated in the guest frame when the hidden state is updated in the inspector.
+
+* Resolves: `#5601 <https://github.com/neos/neos-development-collection/issues/5601>`_
+
+* Packages: ``Neos``
+
+`BUGFIX: Neos backend login autofocus username <https://github.com/neos/neos-development-collection/pull/5599>`_
+----------------------------------------------------------------------------------------------------------------
+
+When loading the backend login screen, one have to either TAB or click in the username field to input the login.
+
+Increase accessibility (and convenience) by autofocusing the field upon loading.
+
+**Note**: The password field already gets autofocus if the username is already filled (i.e. after a failed password attempt), which is why we have the ``@if`` here.
+
+* Packages: ``Neos``
+
+`BUGFIX: Convert *DateTime XML elements to \DateTimeImmutable during import <https://github.com/neos/neos-development-collection/pull/5249>`_
+---------------------------------------------------------------------------------------------------------------------------------------------
+
+fixes: `#5248 <https://github.com/neos/neos-development-collection/issues/5248>`_
+
+**Steps To Reproduce**
+
+Run ``./flow site:import`` on a site export (presumably one that has been done with Neos 8.3 or earlier) in a Neos 8.4 setup. Make sure ``doctrine/dbal@3.*`` is installed. You should see an error like this:
+```
+Exception `#1300360480 <https://github.com/neos/neos-development-collection/issues/1300360480>`_in line 99 of [...]/Framework/Neos.Flow/Classes/ObjectManagement/DependencyInjection/DependencyProxy.php: Error: During import an exception occurred: "Could not convert PHP value of type DateTime to type date_immutable. Expected one of the following types: null, DateTimeImmutable".
+```
+
+After checking out this branch, the error should be gone.
+
+* Packages: ``ContentRepository``
+
+`BUGFIX: Fix checking workspaces when move nodes <https://github.com/neos/neos-development-collection/pull/5562>`_
+------------------------------------------------------------------------------------------------------------------
+
+**Upgrade instructions**
+
+While fixing the move of nodes in `#5561 <https://github.com/neos/neos-development-collection/issues/5561>``_I also noticed, that the workspace itself has not been checked correctly, as the workspaceName was checked against the Workspace (class) in the ``beginning of the move()-Method <https://github.com/neos/neos-development-collection/blob/`65cbf7b7e0aeedcaea68eae4332d15b719a694c9 <https://github.com/neos/neos-development-collection/commit/65cbf7b7e0aeedcaea68eae4332d15b719a694c9>`_/Neos.ContentRepository/Classes/Domain/Model/NodeData.php#L886>``_. This PR fixes this and correctly compares the workspaces at the beginning of the ``NodaData::move()` method.
+
+
+* Packages: ``ContentRepository``
+
+`BUGFIX: MediaBrowser's upload action shows empty flash message if file is too big <https://github.com/neos/neos-development-collection/pull/5553>`_
+----------------------------------------------------------------------------------------------------------------------------------------------------
+
+expected (like in the standalone media browser)
+
+<img width="1118" alt="image" src="https://github.com/user-attachments/assets/bcb151bf-c240-409e-803e-36693f604fe8" />
+
+actual (media browser insider neos ui):
+
+<img width="873" alt="image" src="https://github.com/user-attachments/assets/bbc5de87-0133-47f3-b932-c6718b693d3b" />
+
+interestingly the error works in the neos ui when one uses the media browsers drag and drop
+
+<img width="747" alt="image" src="https://github.com/user-attachments/assets/312b2cc8-79b6-4fb0-bb5b-4fd1a4f125a1" />
+
+-------
+
+The existence of this bug was uncovered via https://github.com/neos/neos-development-collection/pull/5528 because previously no validation error was shown and on upload the server just died:
+
+<img width="670" alt="image" src="https://github.com/user-attachments/assets/95b5a2ec-0c5c-4c12-8d66-2d9bcf874b0a" />
+
+> Could not convert target type "Neos\\Media\\Domain\\Model\\Asset": Missing constructor argument "resource" for object of type "Neos\\Media\\Domain\\Model\\Asset".
+
+
+
+
+**Upgrade instructions**
+
+**Review instructions**
+
+This bug was uncovered because translate() simply returns undefined, if not initialised. No error no fallback, nuthing.
+Also while ``I18n.init()`` _IS_ called, it doesnt actually initialise anything. For that 
+
+https://github.com/neos/neos-development-collection/blob/`847e4647d761249b5c48ade07fe08ad7d1db58c5 <https://github.com/neos/neos-development-collection/commit/847e4647d761249b5c48ade07fe08ad7d1db58c5>`_/Neos.Neos/Resources/Public/JavaScript/index.js#L23-L27
+
+has to be invoked and that is done by adding the link.
+
+------------------
+
+Notice also that ist not particularly keen of us to initialise I18n once in the host (neos.ui) and then in the iframe too. This is just extra work for the browser, and we dump the iframe after selecting the image.
+Now my pr doenst improve that but there are ideas outlined here https://github.com/neos/neos-ui/issues/3119 and the first step for a global translate api was already introduced via https://github.com/neos/neos-ui/pull/3804.
+Nothing for a bugfix to build up on though.
+
+
+* Packages: ``Media.Browser``
+
+`BUGFIX: Convert selectbox group labels i18n values <https://github.com/neos/neos-development-collection/pull/5560>`_
+---------------------------------------------------------------------------------------------------------------------
+
+**Review instructions**
+
+This change converts ``i18n`` values of group labels to shorthand strings like ``Neos.Demo:NodeTypes.Content.Headline:properties.tagName.selectBoxEditor.groups.h1``.
+This works together with https://github.com/neos/neos-ui/pull/3955 to make it possible to localise group labels for select box values like in the following example:
+
+```yaml
+    tagName:
+      type: string
+      defaultValue: 'h2'
+      ui:
+        label: i18n
+        reloadIfChanged: true
+        inspector:
+          group: settings
+          position: 10
+          editor: Neos.Neos/Inspector/Editors/SelectBoxEditor
+          editorOptions:
+            values:
+              h1:
+                label: h1
+                group: i18n
+              h2:
+                label: h2
+                group: i18n
+              h3:
+                label: h3
+                group: 'Neos.Demo:Main:group.label'
+              h4:
+                label: h4
+                group: Just some text
+              h5:
+                label: h5
+                group: 'Neos.Demo:Main:group.label'
+```
+
+* Packages: ``Neos``
+
+`BUGFIX: Replace skip migrations with simple return <https://github.com/neos/neos-development-collection/pull/5555>`_
+---------------------------------------------------------------------------------------------------------------------
+
+If we use the skip migrations feature of doctrine, the migrations never get marked as applied. Which leads to situations, where your migration status will never be clean. So I replaced all skipif with a simple return.
+
+See also: https://github.com/doctrine/migrations/issues/1179
+
+* Packages: ``ContentRepository``
+
+`BUGFIX: Fix publishing for `Neos.Neos:RestrictedEditor` from 3rd level workspace <https://github.com/neos/neos-development-collection/pull/5546>`_
+---------------------------------------------------------------------------------------------------------------------------------------------------
+
+**Changes I made:**
+- ``WorkspacesController``: explicitly define the target workspace for case ``publish`` in ``publishOrDiscardNodesAction()``
+
+**Why I'm changing this:**
+Our project has a workspace setup like ``Workspace A -> Workspace B -> Live``. Users, who are not allowed to publish to Live (like ``Neos.Neos:RestrictedEditor``) cannot publish nodes with childNodes from Workspace A to Workspace B, because it wrongly assumes that the targetWorkspace for the childNodes is Live. This fix sets the target workspace explicitly to prevent the system from assuming the wrong target workspace. The problem is more fully explained in the linked issue. 
+
+resolved: https://github.com/neos/neos-development-collection/issues/5373
+
+
+
+* Packages: ``Neos``
+
+`BUGFIX: Find nodes marked as removed in other dimension <https://github.com/neos/neos-development-collection/pull/5498>`_
+--------------------------------------------------------------------------------------------------------------------------
+
+If you delete a node in a workspace that has already been deleted in the workspace in another dimension, the node is not marked as removed in the database.
+
+With this PR, nodes marked as removed are also found in non-live workspaces.
+
+related: `#5031 <https://github.com/neos/neos-development-collection/issues/5031>`_
+
+
+* Packages: ``ContentRepository``
+
+`BUGFIX: Boot media module flash-messages correctly if rendered outside Neos module <https://github.com/neos/neos-development-collection/pull/5528>`_
+-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+Solves the bug described in https://github.com/neos/neos-development-collection/issues/5379#issuecomment-2701041702
+
+Previously only flashmessages in the Default template (e.g. on show) where shown but neither for editing or uploading
+
+Flashmessages in the media module are not shown for all actions if the media module is booted within the Neos ui.
+The current error for ``edit`` or ``new`` action is that ``this.container`` (``#neos-notification-container``) is null and thus no flashmessages can be rendered in the dom:
+
+https://github.com/neos/neos-development-collection/blob/`c7be41ac865e096b62a019f3cf700222834b29f6 <https://github.com/neos/neos-development-collection/commit/c7be41ac865e096b62a019f3cf700222834b29f6>`_/Neos.Neos/Resources/Public/JavaScript/Components/Notification/Toast.ts#L39
+
+The mentioned container is normally created by js itself as child to ``#neos-application``
+
+https://github.com/neos/neos-development-collection/blob/`c7be41ac865e096b62a019f3cf700222834b29f6 <https://github.com/neos/neos-development-collection/commit/c7be41ac865e096b62a019f3cf700222834b29f6>`_/Neos.Neos/Resources/Public/JavaScript/Components/Notification/Toast.ts#L24
+
+But the ``#neos-application`` is only rendered by the Backend Module Index template from Neos:
+
+https://github.com/neos/neos-development-collection/blob/`89d4c84c5640a49867d56592b6def1a2c6e5db0d <https://github.com/neos/neos-development-collection/commit/89d4c84c5640a49867d56592b6def1a2c6e5db0d>`_/Neos.Neos/Resources/Private/Templates/Backend/Module/Index.html#L90
+
+
+As the Media Ui provides a layout for the case of being rendered in the Neos backend module and for plain rendering as in the neos ui iframe (added via https://github.com/neos/neos-development-collection/pull/2171), the non module layouts must ensure that the shared javascript works by providing the desired dom structure.
+
+- Module/Default.html
+- Module/UploadImage.html
+- Module/EditImage.html
+- Default.html
+- UploadImage.html
+- EditImage.html
+
+
+The flashmessages for ``showAction`` (e.g. default layout) work already in the neos ui as two changes https://github.com/neos/neos-development-collection/pull/5133 and https://github.com/neos/neos-development-collection/pull/5117 provided a fix to make the flashmessages work by ensuring ``<div id="neos-notification-container">`` is present.
+
+
+This pull request extends the fix of providing an ``#neos-notification-container`` container for the ``UploadImage`` and ``EditImage`` template:
+
+
+<img width="1179" alt="image" src="https://github.com/user-attachments/assets/53d17902-a6ae-40f3-8449-0cc7194ae589" />
+
+
+
+
+**Upgrade instructions**
+
+
+* Packages: ``Media.Browser``
+
+`BUGFIX: Allow boolean values for hidden properties in nodetype schema <https://github.com/neos/neos-development-collection/pull/5521>`_
+----------------------------------------------------------------------------------------------------------------------------------------
+
+This prevents matching warnings in the configuration module or when verifying nodetypes via cli.
+
+* Resolves: `#5520 <https://github.com/neos/neos-development-collection/issues/5520>`_
+
+* Packages: ``Neos``
+
+`BUGFIX: Missing flash messages after Dropzone upload in Neos Media Browser <https://github.com/neos/neos-development-collection/pull/5523>`_
+---------------------------------------------------------------------------------------------------------------------------------------------
+
+related: https://github.com/neos/neos-development-collection/issues/5522
+
+**Review instructions**
+
+- Navigate to the Neos Media Browser backend Module
+- Upload an Asset via the Dropzone by either Drag'n Dropping or clicking into the dropzone
+
+* Packages: ``Neos`` ``Media.Browser``
+
+`BUGFIX: Recognize removed-state while reducing <https://github.com/neos/neos-development-collection/pull/5457>`_
+-----------------------------------------------------------------------------------------------------------------
+
+Please read Issue #3651, to get the problem. 
+
+By adding the removed-state as 3rd priority while reducing NodeData results, we should always get the not-removed NodeData, if there are 2 (because of Node-move). 
+
+I tested this fix on our projects, and it worked. I can't find something breaking. But since this is deep inside NodeData, I've no idea, if we could get unexpected side-effects on it. Thanks to @Nikdro for the change.
+
+Fixes:  #3651
+
+* Packages: ``ContentRepository``
+
+`BUGFIX: Fix return type error with `getUriForThumbnail()` <https://github.com/neos/neos-development-collection/pull/5447>`_
+----------------------------------------------------------------------------------------------------------------------------
+
+In ``getUriForThumbnail()`` the result of ``getPublicPersistentResourceUri()`` is returned unchecked, but may be ``false``. This conflicts with the declared return type ``string``.
+
+In that case an exception is now thrown (similar to when a static resource thumbnail URI cannot be generated).
+
+
+* Packages: ``Media.Browser`` ``Neos`` ``Media``
+
+`BUGFIX: fix error during site import <https://github.com/neos/neos-development-collection/pull/5449>`_
+-------------------------------------------------------------------------------------------------------
+
+This adjusts the annotation to work with Flow 8.3.13  ... before the type with spaces was interpreted as ``mixed`` and caused the following error during site:import.
+
+```
+During the import of the "Sites.xml" from the package "Neos.Demo" an exception occurred: Error: During import an exception occurred: "Could not convert target type "Neos\\Media\\Domain\\Model\\ImageVariant": Could not convert target type "Neos\\Media\\Domain\\Model\\Adjustment\\CropImageAdjustment", at property path "aspectRatio": Could not find a suitable type converter for "mixed" because the class / interface "mixed" does not exist."., see log for further information.
+```
+
+* Resolves: `#5448 <https://github.com/neos/neos-development-collection/issues/5448>`_
+
+**Review instructions**
+
+The new behavior was introduced to flow with pr: https://github.com/neos/flow-development-collection/pull/3424
+
+
+* Packages: ``Neos`` ``Media``
+
+`BUGFIX: Add missing event emitters to internal node properties <https://github.com/neos/neos-development-collection/pull/5343>`_
+---------------------------------------------------------------------------------------------------------------------------------
+
+**Review instructions**
+
+Currently, when using the event log, internal node data is not logged. So whenever an internal property like ``_hiddenBeforeDateTime`` is changed, you can't see that property in the event log. Therefore, this PR adds missing event emitters to the methods used to set the internal properties.
+
+resolved: `#3284 <https://github.com/neos/neos-development-collection/issues/3284>`_
+
+
+* Packages: ``Neos`` ``ContentRepository``
+
+`BUGFIX: Force direct access on setting node properties in node data similarize <https://github.com/neos/neos-development-collection/pull/5281>`_
+-------------------------------------------------------------------------------------------------------------------------------------------------
+
+The ``creationDateTime`` has no setters in AbstractNodeData, so the NodeData::similarize can't set them in the target node propery. We need to allow the ``ObjectAccess::setProperty`` to force direct access to the class properties.
+
+The ``lastModificationDateTime`` was also not copied before this bugfix and shouldn't be copied anyways.
+
+* Fixes: `#5280 <https://github.com/neos/neos-development-collection/issues/5280>`_ 
+
+* Packages: ``ContentRepository``
+
+`BUGFIX: Fixed table view of asset editor <https://github.com/neos/neos-development-collection/pull/5432>`_
+-----------------------------------------------------------------------------------------------------------
+
+Related to https://github.com/neos/neos-development-collection/issues/5430
+
+This table view:
+
+<img width="1594" alt="image" src="https://github.com/user-attachments/assets/3ff81f3e-477a-42fe-ad77-3074fa0d14ae" />
+
+doesn't currently work because the event listener checks whether there is an <a> or a <button> but doesn't check for <tr>. I fixed it by removing the check completely and using e.currentTarget instead of e.target.
+
+The check was not necessary because the eventlistener was already only added to the elements that meet the criteria.
+The use of event.currentTarget ensures that you always use the element that the eventlistener was actually added to, whereas event.target is the element that was clicked, which is not necessary in this case.
+
+Nothing has to be adjusted to use this.
+
+* Packages: ``Media.Browser``
+
+`BUGFIX: Share same role details when adding user as when editing them <https://github.com/neos/neos-development-collection/pull/5206>`_
+----------------------------------------------------------------------------------------------------------------------------------------
+
+When editing users, much more information was shown about the individual roles than when adding a user, where whoever adds them gets no information about the role except its name.
+
+With this change the descriptions of the role and their individual privileges are displayed in the same way as in the edit account view.
+
+**Review instructions**
+
+Before:
+
+<img src="https://github.com/user-attachments/assets/744c1f60-3927-4178-810e-1e0635af9dcc" width="500" />
+
+After:
+
+<img src="https://github.com/user-attachments/assets/b725bf47-925e-474b-890b-0e06eae410a3" width="500" />
+
+
+Current edit account view:
+
+<img src="https://github.com/user-attachments/assets/603889c7-38af-4d6f-92b0-e3e1640a1f5e" width="500" />
+
+
+* Packages: ``Neos``
+
+`BUGFIX: Correct node naming scheme in nodetype definition example <https://github.com/neos/neos-development-collection/pull/5426>`_
+------------------------------------------------------------------------------------------------------------------------------------
+
+The example uses an outdated camelcase variant for node names.
+
+Relates: https://github.com/Sebobo/Shel.Neos.Schema/issues/26
+
+* Packages: ``Neos``
+
+`BUGFIX: Restore asset collection assignment capabilities <https://github.com/neos/neos-development-collection/pull/5367>`_
+---------------------------------------------------------------------------------------------------------------------------
+
+resolves `#5365 <https://github.com/neos/neos-development-collection/issues/5365>`_
+reverts `#4404 <https://github.com/neos/neos-development-collection/issues/4404>`_
+
+**Upgrade instructions**
+
+none
+
+**Review instructions**
+
+none
+
+
+* Packages: ``Neos`` ``Media.Browser``
+
+`BUGFIX: show workspace owner/title in media usage tab <https://github.com/neos/neos-development-collection/pull/5182>`_
+------------------------------------------------------------------------------------------------------------------------
+
+Issue: https://github.com/neos/neos-development-collection/issues/5181
+
+Possibility to enable showing all workspace titles/owners to user with certain roles in the media usage tab.
+
+
+* Packages: ``Neos`` ``Media.Browser``
+
+`BUGFIX: Fix autoselection of ancestor nodes in Workspace module <https://github.com/neos/neos-development-collection/pull/5232>`_
+----------------------------------------------------------------------------------------------------------------------------------
+
+* Fixes: `#5231 <https://github.com/neos/neos-development-collection/issues/5231>`_
+
+* Packages: ``Neos``
+
+`BUGFIX: Remove rootnode when user workspace is deleted <https://github.com/neos/neos-development-collection/pull/5207>`_
+-------------------------------------------------------------------------------------------------------------------------
+
+* Fixes: `#2193 <https://github.com/neos/neos-development-collection/issues/2193>`_
+
+**Review instructions**
+
+Previously all root nodes of workspaces that belonged to removed users stayed in the database.
+With this change, the root nodes are removed as well.
+
+1. Create a user
+2. Delete the new user
+3. No root node should remain of the personal workspace of the removed user
+
+* Packages: ``Neos``
+
+`BUGFIX: Translate FlashMessage if asset is still in use in media browser inspector  <https://github.com/neos/neos-development-collection/pull/5133>`_
+------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Bugfix for `#5085 <https://github.com/neos/neos-development-collection/issues/5085>`_no error if asset still in use and show flashmessage solution set class neos-notification-container as id
+
+In media browser inspector if assets are deleted wich are still used no FlashMessage was showed  and on second delete an error pages was showed.
+
+Solution:
+In Neos.Media:Browser/Resources/Private/Layouts/Default.html change class neos-notification-container to id neos-notification-container, because Notification.js / Toast is searching for id neos-notification-container to insert FlashMessages.
+
+`       <div class="neos-media-content{f:if(condition: '{tags -> f:count()} > 25', then: ' neos-media-aside-condensed')}">
+            <div class="neos-media-assets">
+                <div **id="neos-notification-container"**>
+                    <f:render partial="FlashMessages"/>
+                </div>
+                <f:render section="Content"/>
+            </div>
+            <aside class="neos-media-aside">`
+
+related: `#5085 <https://github.com/neos/neos-development-collection/issues/5085>`_
+
+
+* Packages: ``Neos`` ``Media.Browser``
+
+`BUGFIX: Sort roles for users by label instead of internal name in the UI <https://github.com/neos/neos-development-collection/pull/5203>`_
+-------------------------------------------------------------------------------------------------------------------------------------------
+
+**Review instructions**
+
+Before:
+
+!`CleanShot 2024-08-15 at 13 01 03@2x <https://github.com/user-attachments/assets/61fb4a4f-4a43-45e9-bc1f-7c5b417848e7>`_
+
+After:
+
+!`CleanShot 2024-08-15 at 13 00 37@2x <https://github.com/user-attachments/assets/91f4e486-6e0e-4f03-9f57-5058b06c3044>`_
+
+
+* Packages: ``Neos``
+
+`BUGFIX: Don’t copy removed nodes <https://github.com/neos/neos-development-collection/pull/5186>`_
+-----------------------------------------------------------------------------------------------------
+
+With this change, removed nodes are not copied anymore in the recursive copy actions. 
+
+Also the removed state is now kept when a node is similarisied to prevent unpublished removed nodes from popping up again inadvertendly.
+
+* Resolves: `#5185 <https://github.com/neos/neos-development-collection/issues/5185>`_
+
+* Packages: ``Neos`` ``ContentRepository``
+
+`BUGFIX: Don’t include subnodetypes of subnodetypes in node search <https://github.com/neos/neos-development-collection/pull/4503>`_
+--------------------------------------------------------------------------------------------------------------------------------------
+
+The subnodetypes of the given filter are collected twice (once in the ``NodesController`` and once in the ``NodeDataRepository``) leading to nodetypes being included which don't inherit from the given list of nodetypes as the second list of nodetypes is not checked against the nodetypefilter but against the subnodetypes of the nodetypefilter. See details in #4502.
+
+* Resolves: `#4502 <https://github.com/neos/neos-development-collection/issues/4502>`_
+
+* Packages: ``Neos``
+
+`BUGFIX: Changed from hardcoded date format to user-localized format. <https://github.com/neos/neos-development-collection/pull/5198>`_
+---------------------------------------------------------------------------------------------------------------------------------------
+
+Changes the hardcoded Y-m-d date format with an user-localized format.
+
+German Interface Language
+!`image <https://github.com/user-attachments/assets/280593ac-53aa-4739-9745-a31d090a2905>`_
+
+English Interface Language
+!`image <https://github.com/user-attachments/assets/09d00aed-54ea-4f82-b290-004a2e15e53d>`_
+
+**Upgrade instructions**
+
+Tested within neos 8.3.15
+
+**Review instructions**
+
+Changed the branch to 8.3, as i've `accidentally <https://github.com/neos/neos-development-collection/pull/5197>`_ choose 8.0 👼 
+As discussed in `slack <https://neos-project.slack.com/archives/C050C8FEK/p1723202475407499>`_ we (actually Bastian) changed from a hardcoded date format to an user-localization.
+
+
+* Packages: ``Neos``
+
+`BUGFIX: Forward status codes and headers set in module actions <https://github.com/neos/neos-development-collection/pull/5179>`_
+---------------------------------------------------------------------------------------------------------------------------------
+
+Previously the status code set in module actions via ``throwStatus`` or ``response->setStatusCode()`` was ignored. With this change the individual module response is merged into the generic module response which then contains the desired status code, headers and other properties.
+
+This is essential if the client (f.e. HTMX) relies on proper headers and status codes to behave properly.
+
+**Review instructions**
+
+Use f.e. ``$this->throwStatus(404)`` in a Neos module controller action and check the status code of the response when calling the action.
+The response code should now be 404 instead of 200.
+
+
+* Packages: ``Neos``
+
+`BUGFIX: Case insensitive user search on PostgreSQL <https://github.com/neos/neos-development-collection/pull/5166>`_
+---------------------------------------------------------------------------------------------------------------------
+
+PostgreSQL is by default case sensitive and its hard to find users depending on their name in the users
+module.
+
+* Packages: ``Neos``
+
+`BUGFIX: Access isNil function from Helper function to apply selected image to property <https://github.com/neos/neos-development-collection/pull/5140>`_
+---------------------------------------------------------------------------------------------------------------------------------------------------------
+
+**Upgrade instructions**
+
+_None_
+
+**Review instructions**
+
+Follow-up to: `#5117 <https://github.com/neos/neos-development-collection/issues/5117>`_
+
+With the latest Bugfix release of Neos 8.3.14 currently when selecting an image from the media browser it not will be applyied to the image property as the ``IsNil`` function has to be accessed inside of the ``Helper`` function.
+
+```javascript
+NeosCMS.isNil()
+```
+In this case, leads to an unresolved function or method.
+
+### Before
+
+https://github.com/neos/neos-development-collection/assets/39345336/ed761221-924d-467f-bd9f-6eb6c97dd553
+
+### After
+
+https://github.com/neos/neos-development-collection/assets/39345336/2c78211a-c8a8-4f55-808a-15b495fde586
+
+
+
+* Packages: ``Neos`` ``Media.Browser``
+
+`BUGFIX: Prevent multiple imports of the same remote asset in the frontend <https://github.com/neos/neos-development-collection/pull/5117>`_
+--------------------------------------------------------------------------------------------------------------------------------------------
+
+This is a frontend fix for `#5116 <https://github.com/neos/neos-development-collection/issues/5116>`_and prevents users from triggering multiple import processes for the same remote asset. It is not a sufficient fix to only prevent this in the frontend though, since it doesn't catch it, if two or more different users trigger the import for the same asset at the same time.
+
+Changes:
+- ``select.js``: add data attribute ``data-import-in-process`` to asset once import process has started and remove it when import is done
+- ``select.js``: check for new data attribute and only start import process if attribute does not exist
+- ``select.js``: add notification to inform user that asset is being imported
+- ``select.js``: add notification as warning for user if import is already in process
+- ``Main.xlf``: add new notification messages for english
+- ``Default.html``: add id for notification container to be able to send notifications to it via js
+- ``Configuration.js``: update ``hasConfiguration`` after configuration object was created, because otherwise it will always be false and the translations don't work
+
+``related:`` https://github.com/neos/neos-development-collection/issues/5116
+
+**Info for testing:**
+You need to bundle the Neos.Neos assets to get the text for the notification messages.
+- navigate to the Neos.Neos package
+- run ``yarn``
+- run ``yarn build``
+
+* Packages: ``Media.Browser``
+
+`BUGFIX: Flush cache also for deleted nodes <https://github.com/neos/neos-development-collection/pull/5124>`_
+-------------------------------------------------------------------------------------------------------------
+
+Removed nodes can't get found, so they regarding caches don't get flushed.
+
+The bug was introduced with `#4291 <https://github.com/neos/neos-development-collection/issues/4291>`_
+* Fixes: `#5105 <https://github.com/neos/neos-development-collection/issues/5105>`_ 
+
+* Packages: ``Neos``
+
+`BUGFIX: Fix title attribute for impersonate button in user management <https://github.com/neos/neos-development-collection/pull/5121>`_
+----------------------------------------------------------------------------------------------------------------------------------------
+
+With this change the localized text is rendered instead of always defaulting to english.
+
+Changes: 
+
+- ImpersonateButton.js change postion of const localizedTooltip inside ImpersonateButton function and change isNil(window.Typo3Neos) to isNil(window.NeosCMS)
+- RestoreButton.js it was always fallback text used change isNil(window.NeosCMS) to !isNil(window.NeosCMS) 
+
+* Fixes: `#4511 <https://github.com/neos/neos-development-collection/issues/4511>`_ 
+
+Checklist
+
+- [ ] Code follows the PSR-2 coding style
+- [ ] Tests have been created, run and adjusted as needed
+- [x] The PR is created against the `lowest maintained branch <https://www.neos.io/features/release-roadmap.html>`_
+- [x] Reviewer - PR Title is brief but complete and starts with ``FEATURE|TASK|BUGFIX``
+- [ ] Reviewer - The first section explains the change briefly for change-logs
+- [ ] Reviewer - Breaking Changes are marked with ``!!!`` and have upgrade-instructions
+
+* Packages: ``Neos``
+
+`BUGFIX: Workspace module: Tweak UX for collapsed rows in rewiew <https://github.com/neos/neos-development-collection/pull/5013>`_
+----------------------------------------------------------------------------------------------------------------------------------
+
+This change adds a checkbox to all rows of the workspace review module in order to get a unified look and feel when collapsing those lines.
+
+Previously, the checkbox was hidden for documents that only contained a single change:
+
+!`image <https://github.com/neos/neos-development-collection/assets/307571/fe3a4964-0604-4394-b9a3-29879880d76d>`_
+
+With this change, the list looks cleaner and single changes can be selected more easily even when collapsed:
+
+!`image <https://github.com/neos/neos-development-collection/assets/307571/fd098312-6b58-4df1-b9d2-bdd23c9e7699>`_
+
+* Packages: ``Neos``
+
+`BUGFIX: Fix handling of unset/nulled DataStructure keys <https://github.com/neos/neos-development-collection/pull/5033>`_
+--------------------------------------------------------------------------------------------------------------------------
+
+Re-establishes the Neos < 8.0 behavior of removed/nulled data structure keys
+
+## Background:
+
+With `#3645 <https://github.com/neos/neos-development-collection/issues/3645>``_a lot of Fusion core logic was refactored. As an unwanted side-effect, ``Neos.Fusion:DataStructure`` prototypes (effectively all implementations of the ``AbstractArrayFusionObject`) now behave differently when it comes to removed or nulled keys and
+
+```fusion
+Neos.Fusion:DataStructure {
+    someProperty >
+}
+```
+
+led to an array with:
+
+```json
+{"someProperty":[]}
+```
+
+in Neos 8.0+.
+
+This fix reverts this side-effect, making the above return
+
+```json
+[]
+```
+
+again.
+
+* Fixes: `#3859 <https://github.com/neos/neos-development-collection/issues/3859>`_
+* Related: `#3577 <https://github.com/neos/neos-development-collection/issues/3577>`_, #3646
+
+* Packages: ``Neos`` ``Fusion``
+
+`BUGFIX: Invalidate caches correctly after node move changes have been discarded <https://github.com/neos/neos-development-collection/pull/4291>`_
+--------------------------------------------------------------------------------------------------------------------------------------------------
+
+**NOTE:** This PR needs to be tested in combination with its companion PR over at ``neos-ui``: https://github.com/neos/neos-ui/pull/3503
+
+## The overall problem
+
+This one's a bit complex and it stretches over two repositories. The basic scenario is:
+
+1. You move some (document) node(s) to a position below a different parent node (so, just sorting them within their own hierarchical level doesn't count)
+2. You discard those changes
+3. Chaos ensues
+
+https://github.com/neos/neos-ui/issues/3184 describes the issues that happen only partially. During my investigation I found several problems that I need to disect piece by piece.
+
+## (I) The UI does not (entirely) recognize that nodes have been moved to a position below a different parent node
+
+**The problem**
+
+https://github.com/neos/neos-ui/assets/2522299/9ce3bdb9-35d7-423d-90af-b2c55a009c9d
+
+In the video you can see that after the two document nodes have been moved, the change is not made visible by the usual orange change indicator on the left hand side of the tree nodes. Also, on the attempt to discard the current set of changes, an error occurs that reads:
+
+```
+Call to a member function isRemoved() on null - Check logs for details
+```
+
+Both phenomena are related, because - as it turns out - the ``UpdateWorkspaceInfo`` feedback object, that is supposed to inform the UI about pending changes, delivers the wrong node context paths for the nodes that have just been moved (the context paths are still the old ones).
+
+Because the context paths are now out of sync, the UI is unable to associate the pending change with the respective tree node. It then also uses the stale workspace information as payload to the discard command, which leads to the above error at the following line:
+
+https://github.com/neos/neos-ui/blob/`5c52e08b8a1effc985911390a7124579c4018c25 <https://github.com/neos/neos-development-collection/commit/5c52e08b8a1effc985911390a7124579c4018c25>`_/Classes/Controller/BackendServiceController.php#L272
+
+How come the context paths are incorrect after the nodes have been moved?
+
+<s>After some investigation I found that the ``Neos\\ContentRepository\\Domain\\Factory\\NodeFactory`` class memoizes stale data - as opposed to e.g. ``ContentContext`` which gets its in-memory cache flushed when nodes were moved:
+
+https://github.com/neos/neos-development-collection/blob/`0e28ef208111f5b1576df9078bb9abfedf12500c <https://github.com/neos/neos-development-collection/commit/0e28ef208111f5b1576df9078bb9abfedf12500c>`_/Neos.ContentRepository/Classes/Domain/Factory/NodeFactory.php#L81
+
+When the ``PublishingService`` is asked for unpublished nodes via ``getUnpublishedNodes``, it receives cache hits within ``NodeFactory->createFromNodeData`` for the nodes that have just been moved - thus the old context paths.</s>
+
+**EDIT:** Not at all true :sweat_smile:! I investigated further after the functional tests over here failed (hooray for functional tests!). The actual reason is as follows:
+
+The Neos UI API uses a slightly different content context configuration than ``getUnpublishedNodes``. So, ``NodeFactory`` actually keeps track of two variants of the moved nodes. The ones that ``getUnpublishedNodes`` receives are not the ones that the move operation has been performed on.
+
+**The solution**
+
+The solution for this is implemented over here: https://github.com/neos/neos-ui/pull/3503
+
+## (II) Discarded move changes are not properly reflected in the document tree
+
+**The problem**
+
+Problem (I) can be circumvented by hard-reloading the UI (after that, the workspace info will be correct again). But, there's still some strangeness going on...
+
+https://github.com/neos/neos-ui/assets/2522299/9f4e6d55-9c92-4590-8b1a-362532f7f799
+
+In the video you can see that the tree actually reflects the discarded changes correctly for a brief moment there. It then quickly jumps to a broken state in which the nodes that should be at their original positions just disappear.
+
+This problem persists even if you hard-reload the UI after discarding:
+
+https://github.com/neos/neos-ui/assets/2522299/7085ee21-91a3-428a-a5e0-55bc0a7899a6
+
+Now, if you use the reload button of the document tree to manually reload the tree, the nodes reappear:
+
+https://github.com/neos/neos-ui/assets/2522299/c7b2dafd-8113-4a28-a3a8-ac3bc56675f8
+
+(But also: If you hard-reload the UI again, the nodes will once again flash briefly and then disappear)
+
+How does this happen?
+
+In those videos, the parent document that originally contained the moved nodes is focused and open in the guest frame. After discard, it should contain those nodes again. The UI reloads the guest frame, but the document is now rendered with stale node metadata. After the guest frame finished loading, the stale metadata (which still thinks the nodes have been moved elsewhere) overwrites the node data in the UI redux store.
+
+This is why the correct state shows up for a brief moment. It gets overwritten after a short delay when the guest frame is loaded. (Also: The nodes do not disappear if you focus a different document and hard-reload the UI).
+
+Looking at the cache configuration for the node metadata:
+
+https://github.com/neos/neos-ui/blob/`5c52e08b8a1effc985911390a7124579c4018c25 <https://github.com/neos/neos-development-collection/commit/5c52e08b8a1effc985911390a7124579c4018c25>`_/Resources/Private/Fusion/Prototypes/Page.fusion#L26-L46
+
+... one should actually assume that the data shouldn't be stale (``Neos.Caching.descendantOfTag(documentNode)`` should do the trick). It turns out though, that the ``Neos\\Neos\\Fusion\\Cache\\ContentCacheFlusher`` class - in case of discard - will only flush tags related to a node's current workspace. We actually need to have all tags flushed in the base workspace as well to cover the ``DescendantOf_*``-tag of the original parent node.
+
+**The solution**
+
+I'm not entirely sure about this. I did two things:
+
+1. I modified the ``nodeDiscarded`` signal so that it carries the base workspace of each discarded node
+
+The reason behind this is that the ``ContentCacheFlusher`` listens to both the ``nodeDiscarded`` and the ``nodePublished`` signal with its method ``registerNodeChange``. ``nodePublished`` carries the target workspace of the publishing operation, which is accepted as a second argument by ``registerNodeChange``. ``nodeDiscarded`` used to not carry such "target workspace" information, so that the ``ContentCacheFlusher`` had no chance to actually flush tags for this workspace.
+
+It feels to me like a bit of a stretch on semantics to just add the base workspace to the ``nodeDiscarded`` signal in such fashion, but I found it to be the least invasive yet most effective solution.
+
+2. I made sure that the ``registerAllTagsToFlushForNodeInWorkspace`` method of the ``ContentCacheFlusher`` actually deals with the given node in the given workspace.
+
+``registerAllTagsToFlushForNodeInWorkspace`` takes a node and a workspace as arguments. It used to just assume that the given node is actually its variant in the given workspace, which seems to be working in a lot of cases, but in the case of discarded node move changes, the method makes false assumptions. It goes up the parent chain of the given node to find all ``DescendantOf_*``-tags that need to be flushed. The given node however has the wrong parent.
+
+I therefore added some code at the start of the method, that replaces the ``$node`` variable with the given node's variant in the given workspace, if the respective workspace names differ.
+
+*Related Commit(s):* https://github.com/neos/neos-development-collection/pull/4291/commits/`f97268a7a3b4259285b45a7a0ed7572d0e03d02a <https://github.com/neos/neos-development-collection/commit/f97268a7a3b4259285b45a7a0ed7572d0e03d02a>``_, https://github.com/neos/neos-development-collection/pull/4291/commits/``184692dd6398924ff769fc8d452454d3427f92c0 <https://github.com/neos/neos-development-collection/commit/184692dd6398924ff769fc8d452454d3427f92c0>`_
+
+## (III) Discarding a node move while having a moved document node open in the guest frame results in an error page
+
+**The problem**
+
+https://github.com/neos/neos-ui/assets/2522299/7ddda073-47b7-4587-bf3f-ad5c50bdf411
+
+The video shows that when you're currently editing a moved document and then discard the move change, the guest frame reloads and shows a misleading fusion error. This is because the guest frame tries to render a document node that doesn't exist anymore.
+
+A similar situation would be a document that has just been created. If you stay on that document and then discard it, the UI behaves correctly and redirects you to the next-higher document:
+
+https://github.com/neos/neos-ui/assets/2522299/bce265f5-507e-4dd2-bb05-9c72d53564a0
+
+Here, the problem lies within the ``discardAction`` of the ``Neos\\Neos\\Ui\\Controller\\BackendServiceController`` which does not recognize discarded move changes and thus misses to inform the UI that it needs to remove the nodes at their former positions and re-insert them at their original positions.
+
+**The solution**
+
+The solution for this is implemented over here: https://github.com/neos/neos-ui/pull/3503
+
+## All solutions combined
+
+Here's what it looks like when the PRs in ``neos-ui`` and ``neos-development-collection`` are combined:
+
+https://github.com/neos/neos-ui/assets/2522299/2904f731-e101-4033-b617-5c196a44bdec
+
+`BUGFIX: Add missing type converts for asset subtypes <https://github.com/neos/neos-development-collection/pull/5007>`_
+-----------------------------------------------------------------------------------------------------------------------
+
+This prevents the raw data from being base64 encoded into the rendered output of the Neos backend and included in xhr requests from the Neos UI.
+
+Additionally the default settings for editor and constraints makes the usage of those affected types easier in nodetype properties.
+
+* Resolves: `#5006 <https://github.com/neos/neos-development-collection/issues/5006>`_
+
+**Review instructions**
+
+Example nodetype to use in the Neos backend with the raw content mode:
+
+```
+'Neos.Demo:Content.Test':
+  superTypes:
+    'Neos.Neos:Content': true
+    'Neos.Demo:Constraint.Content.Column': true
+    'Neos.Demo:Constraint.Content.Main': true
+  ui:
+    label: Test
+    icon: picture
+    position: start
+    inspector:
+      groups:
+        settings:
+          label: Test Settings
+  properties:
+    video:
+      type: Neos\\Media\\Domain\\Model\\Video
+      ui:
+        label: 'Video'
+        reloadIfChanged: true
+        showInCreationDialog: true
+        inspector:
+          group: 'settings'
+          editor: Neos.Neos/Inspector/Editors/AssetEditor
+    document:
+      type: Neos\\Media\\Domain\\Model\\Document
+      ui:
+        label: Document
+        inspector:
+          group: 'settings'
+          editor: Neos.Neos/Inspector/Editors/AssetEditor
+    audio:
+      type: Neos\\Media\\Domain\\Model\\Audio
+      ui:
+        label: Audio
+        inspector:
+          group: 'settings'
+          editor: Neos.Neos/Inspector/Editors/AssetEditor
+```
+
+Without the change in this PR, setting the 3 properties will each increase the size of the ``preview`` html and node change requests.
+Also errors are thrown if the editor for each property is not defined.
+
+With this change, the size of the output does not increase and the editor does not need to be defined anymore.
+
+* Packages: ``Neos``
+
+`BUGFIX: Fix the check for RedirectStorageInterface <https://github.com/neos/neos-development-collection/pull/5001>`_
+---------------------------------------------------------------------------------------------------------------------
+
+Existance of interfaces needs to be checked with interface_exists
+
+* Fixes: `#5000 <https://github.com/neos/neos-development-collection/issues/5000>`_
+
+* Packages: ``Media``
+
+`BUGFIX: Remove br from role tooltip and improve readability <https://github.com/neos/neos-development-collection/pull/4986>`_
+------------------------------------------------------------------------------------------------------------------------------
+
+A ``<br>`` was displayed as text in the title of roles in the user management module.
+With this change it is replaced by a proper line break and the parent roles are now displayed as list with their name and identifier.
+
+Before:
+
+!`CleanShot 2024-04-11 at 13 37 07@2x <https://github.com/neos/neos-development-collection/assets/596967/d1fc5f07-f5bd-454c-ab7d-196222537ad3>`_
+
+After:
+
+!`CleanShot 2024-04-11 at 13 40 50@2x <https://github.com/neos/neos-development-collection/assets/596967/1cc40c6b-6222-495f-a22c-60f1592ed24b>`_
+
+* Packages: ``Neos``
+
+`BUGFIX: Sort properties in raw content mode <https://github.com/neos/neos-development-collection/pull/4957>`_
+--------------------------------------------------------------------------------------------------------------
+
+Previously there was no obvious sorting for properties in the ``Raw content`` mode and the resulting order of properties appeared "random", which is an issue if the properties don't appear in the order the editor should edit them.
+
+With this change the sorting option which is also used for the inspector is used to sort the items and therefore giving an option to the integrator on their arrangement.
+
+That the inspector order is used for the raw content is not the cleanest solution, but introducing another sorting option also doesn't seem the right choice at this point.
+
+* Packages: ``Neos``
+
+`BUGFIX: Make text formatting visible in raw content mode <https://github.com/neos/neos-development-collection/pull/4985>`_
+---------------------------------------------------------------------------------------------------------------------------
+
+This change removes the css reset which made it impossible to
+see any text formatting in raw content mode.
+
+Also the font is now set to use the Neos font instead of just arial
+which matches the backend default font.
+
+Before:
+
+!`CleanShot 2024-04-11 at 09 26 51@2x <https://github.com/neos/neos-development-collection/assets/596967/3484adf2-0361-4b4f-8849-ca2f138acec4>`_
+
+After:
+
+!`CleanShot 2024-04-11 at 09 23 08@2x <https://github.com/neos/neos-development-collection/assets/596967/ae9285f9-fc58-4847-9122-3aedeef8ddff>`_
+
+* Packages: ``Neos``
+
+`BUGFIX: Strip image to prevent wrong orientation information in exif data <https://github.com/neos/neos-development-collection/pull/4945>`_
+--------------------------------------------------------------------------------------------------------------------------------------------
+
+After autorotating the thumbnail image we need to remove the according exif data for the thumbnail, to prevent the thumbnail is shown rotated again.
+
+See also: https://github.com/php-imagine/Imagine/issues/467
+
+* Fixes: `#3148 <https://github.com/neos/neos-development-collection/issues/3148>`_ 
+
+!`image <https://github.com/neos/neos-development-collection/assets/13046100/c039f852-623c-4d8a-9848-416f0ab27498>`_
+
+* Packages: ``Neos`` ``Media``
+
+`BUGFIX: Fix argument order of implode() <https://github.com/neos/neos-development-collection/pull/4962>`_
+----------------------------------------------------------------------------------------------------------
+
+Passing the separator after the array is not supported since PHP 8.0 anymore
+
+**Upgrade instructions**
+
+
+* Packages: ``Neos`` ``ContentRepository``
+
+`BUGFIX: 4915 fusion `ParsePartials` cache not flushed for symlinked packages <https://github.com/neos/neos-development-collection/pull/4916>`_
+-----------------------------------------------------------------------------------------------------------------------------------------------
+
+* Resolves: `#4915 <https://github.com/neos/neos-development-collection/issues/4915>`_
+By reverting fix https://github.com/neos/neos-development-collection/pull/4838
+Which will lead to the original problem to resurface https://github.com/neos/neos-development-collection/issues/4415 (but silently this time, no one will notice the cache flodding :D) 
+
+**Upgrade instructions**
+
+
+* Packages: ``Neos`` ``Fusion``
+
+`BUGFIX: Fix disablingSetNoOpenerWorks test for convertUri <https://github.com/neos/neos-development-collection/pull/3606>`_
+----------------------------------------------------------------------------------------------------------------------------
+
+Fixes the disablingSetNoOpenerWorks test for the convertUri. Now, the test respects the value of setNoOpener.
+
+fixes: `#3605 <https://github.com/neos/neos-development-collection/issues/3605>`_
+
+
+* Packages: ``Media`` ``Neos``
+
+`BUGFIX: Search assets in a case-insensitive way <https://github.com/neos/neos-development-collection/pull/4869>`_
+------------------------------------------------------------------------------------------------------------------
+
+This solves the problem that with Postgres the search was case-sensitive. Other database platforms didn’t have this issue as they ran case-insensitive comparisons by default.
+
+* Resolves: `#3432 <https://github.com/neos/neos-development-collection/issues/3432>`_
+
+* Packages: ``Media``
+
+`BUGFIX: Allow dimension preset keys to be different from values for DimensionsMenu <https://github.com/neos/neos-development-collection/pull/4859>`_
+-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+This removes the implicit convention that dimensionPresetKey must be the same as the dimensionValue. 
+
+**Review instructions**
+- Follow the manual to set up a bilingual site: https://docs.neos.io/guide/manual/content-repository/content-dimensions/multiple-languages#configuring-a-bilingual-site
+- Open frontend with rendering of ``Neos.Neos:DimensionsMenu``
+
+Fixes https://github.com/neos/neos-development-collection/issues/4857
+
+* Packages: ``Neos``
+
+`BUGFIX: Allow non-entity asset variants <https://github.com/neos/neos-development-collection/pull/4198>`_
+----------------------------------------------------------------------------------------------------------
+
+Allow implementations of the ``AssetVariantInterface`` to not be doctrine entities.
+
+Without this fix, all ``AssetRepository::find*()`` calls lead to an exception when a class implements the interface but is not an entity (for example because it is just used to generate dummy images for Monocle).
+
+## Steps to reproduce
+
+1. Implement the interface with a new custom class like
+
+```php
+final class DummyImageVariant implements AssetVariantInterface {
+    // ...
+}
+```
+
+2. Trigger ``AssetRepository::find*()`` method, eg. by invoking ``./ flow media:removeunused``
+
+### Expected result
+
+No error, the custom implementation should be ignored
+
+### Actual result
+
+Exception:
+
+```
+Failure while fetching class schema class "Some\\Package\\DummyImageVariant": No class schema found for "Some\\Package\\DummyImageVariant".
+
+  Type: Doctrine\\ORM\\Mapping\\MappingException
+  Code: 1542792708
+  File: Data/Temporary/Development/Cache/Code/Flow_Object_Classes/Neos_Flow_Persist
+        ence_Doctrine_Mapping_Driver_FlowAnnotationDriver.php
+  Line: 187
+```
+
+* Packages: ``Media``
+
+`BUGFIX: Neos Ui JSON serializable property values <https://github.com/neos/neos-development-collection/pull/4638>`_
+--------------------------------------------------------------------------------------------------------------------
+
+This bugfix will make use of the ``\\JsonSerializable`` interface instead directly when serializing properties for the neos ui.
+
+With https://github.com/neos/flow-development-collection/pull/2762 native support for vo's in ``flow_json_array`` was introduced.
+
+That also allows value object support for node properties, as they can be stored directly the node properties flow_json_array.
+
+Unfortunately the property serialisation for the NeosUi does NOT use the expected ``\\JsonSerializable::jsonSerialize`` but the property mapper and the ``ArrayFromObjectConverter`` for object types to get an array that will be json encoded.
+
+This works mostly fine but in some cases it fails:
+- when your ``fromArray`` fields and property names values dont match
+- when a "object" subtypes the object mapper is no convertable like the ``GuzzleHttp\\Psr7\\Uri``:
+
+```
+Too few arguments to function GuzzleHttp\\Psr7\\Uri::isAbsolute(), 0 passed in /core/neos-manufacture-highest/Packages/Framework/Neos.Utility.ObjectHandling/Classes/ObjectAccess.php on line 151 and exactly 1 expected
+
+72 GuzzleHttp\\Psr7\\Uri::isAbsolute()
+71 Neos\\Utility\\ObjectAccess::getPropertyInternal(GuzzleHttp\\Psr7\\Uri, "absolute", false, true)
+70 Neos\\Utility\\ObjectAccess::getGettableProperties(GuzzleHttp\\Psr7\\Uri)
+69 Neos\\Flow\\Property\\TypeConverter\\ArrayFromObjectConverter_Original::getSourceChildPropertiesToBeConverted(GuzzleHttp\\Psr7\\Uri)
+```
+
+Current workarounds are aop:
+https://github.com/sitegeist/Sitegeist.InspectorGadget/blob/`78f5f4a206287b1c4bedf5cb88582ed51cb4a311 <https://github.com/neos/neos-development-collection/commit/78f5f4a206287b1c4bedf5cb88582ed51cb4a311>`_/Classes/Infrastructure/NodeInfo/NodeInfoPostProcessingAspect.php#L17
+Or to use a dumb property mapper:
+https://github.com/sitegeist/Sitegeist.Archaeopteryx/blob/`9322b9cb8e4824bcaf7aaa247c23b1244a2f1167 <https://github.com/neos/neos-development-collection/commit/9322b9cb8e4824bcaf7aaa247c23b1244a2f1167>`_/Classes/LinkToArrayForNeosUiConverter.php#L12C16-L12C78
+
+
+
+**Upgrade instructions**
+
+
+* Packages: ``Neos`` ``ContentRepository``
+
+`BUGFIX: Private props obscure error <https://github.com/neos/neos-development-collection/pull/4887>`_
+------------------------------------------------------------------------------------------------------
+
+…uated
+
+instead of the original error that something went wrong
+
+> Circular reference detected while evaluating prop: "private.thepath"
+
+is shown.
+
+That happens because the locking didnt anticipate this case.
+
+**Upgrade instructions**
+
+**Review instructions**
+
+this code reproduces the problem ... yes i know :D
+
+```
+prototype(YourVendor:FusionPrototype) < prototype(Neos.Fusion:Component) {
+  @private {
+    lol = ${true}
+    throwingPath = ${private.lol && NonExistingFunctionError()}
+  }
+
+  renderer = YourVendor:FusionPrototypeWithPrivate {
+    content = ${private.throwingPath}
+  }
+}
+
+prototype(YourVendor:FusionPrototypeWithPrivate) < prototype(Neos.Fusion:Component) {
+  renderer = ${props.content}
+}
+```
+
+
+
+* Packages: ``Neos`` ``Fusion``
+
+`BUGFIX: Fusion parser fix multi line comment <https://github.com/neos/neos-development-collection/pull/4882>`_
+---------------------------------------------------------------------------------------------------------------
+
+This fixes a bug where the Fusion parser would not parse following c-style comments correctly:
+
+```
+/**
+comment with multiple stars even
+**/
+```
+
+This happed when the ending count of ``*`` was even. So ending a comment with ``***/`` worked previously.
+
+Now we use the "correct" regex from Jeffrey E.F. Friedl's book "Mastering Regular Expressions" Page 272 "Unrolling C Comments"
+We already use his regex for string matching and it is really fast due to the unrolled loop. Faster than using the lazy quantifier ``~^/\\*.*?\\*/~s``.
+
+I did a performance test with 1 million iteration on three different comment samples (with each sample having a dynamic part to clear possible caches):
+
+| Unrolled (this pr) | Simple Lazy Quantifier  |
+|--------|--------|
+| 0.143725s | 0.160235s |
+| 0.181047s | 0.203759s |
+| 0.156254s | 0.170144s | 
+
+
+Additionally the error message for comments starting with ``/**`` was improved. Previously $nextLine->char(1) would return ``**`` instead of just one ``*`` because wrongly implemented.
+
+**Upgrade instructions**
+
+
+* Packages: ``Fusion``
+
+`BUGFIX: Use a dynamic URL for user impersonation <https://github.com/neos/neos-development-collection/pull/4875>`_
+-------------------------------------------------------------------------------------------------------------------
+
+As described in the issue, the impersonation does not work when Neos is running in a subfolder. This change adds a data attribute with a dynamic URL to the DOM, and the user impersonation is using this module URL as base.
+
+* Fixes: `#4797 <https://github.com/neos/neos-development-collection/issues/4797>`_
+
+**Review instructions**
+
+Use the user impersonation in the Backend modules (User Management and other) when Neos is running in a subfolder.
+e.g. BASEURL.com/cms/neos
+
+
+* Packages: ``Neos``
+
+`BUGFIX: Add assetcollection privilege condition to asset edit view in Media.Browser <https://github.com/neos/neos-development-collection/pull/4404>`_
+------------------------------------------------------------------------------------------------------------------------------------------------------
+
+In the Media.Browser you can change the AssetCollections via checkboxes even when you don't have the privilege (Neos.Media.Browser:ManageAssetCollections) to do so.
+With this PR the checkboxes are only rendered with the right privilege.
+
+* Packages: ``Neos`` ``Media.Browser``
+
+`BUGFIX: MenuHelper uses content dimensions to get node for privilege check <https://github.com/neos/neos-development-collection/pull/4269>`_
+---------------------------------------------------------------------------------------------------------------------------------------------
+
+* Resolves: `#4625 <https://github.com/neos/neos-development-collection/issues/4625>`_
+
+The Neos backend MenuHelper received a bugfix to filter sites listed by the menu using NodePrivileges. In case of sites with multiple dimensions the dimensionCombinations are considered too.
+
+**Upgrade instructions**
+
+**Review instructions**
+
+This bugfix tries to fix #4025. If 7.3 and upwards is used on a multi site project with multiple dimensions, it might be that
+```
+$node = $context->getNode(\\Neos\\ContentRepository\\Domain\\Utility\\NodePaths::addNodePathSegment(SiteService::SITES_ROOT_PATH, $site->getNodeName()));
+```
+returns ``null``, causing the next line
+```
+if ($this->privilegeManager->isGranted(NodeTreePrivilege::class, new NodePrivilegeSubject($node))) {
+```
+to throw an exception. Thus the backend is not accessible anymore.  
+The reason is, that for multisite projects with multiple dimensions it might be that ``$node`` cannot be retrieved by the default context created.
+
+The fix is to use ``contentDimensionCombinator`` and also to explicitly check if ``$node`` could be retrieved.  
+I'm also using the property ``invisibleContentShown`` and ``inaccessibleContentShown`` because it might be that an editor set the Home of a site to ``hidden`` by mistake. Thus the site might not accessible via the menu anymore to possibly fix an editor mistake.
+
+
+* Packages: ``Neos``
+
+`BUGFIX: Prevent cache overflow when querying nodes by related entities <https://github.com/neos/neos-development-collection/pull/4877>`_
+-----------------------------------------------------------------------------------------------------------------------------------------
+
+Without this change new cache entries in Flow_Persistence_Doctrine are generated for each entry in the relationMap causing massive slowdowns in Neos f.e. when many assets are deleted as the file system cache cannot handle large numbers of entries well.
+
+With this change only one entry per number of relations is generated which is usually only a few and the entries can be reused.
+
+* Resolves: `#4876 <https://github.com/neos/neos-development-collection/issues/4876>`_
+
+* Packages: ``Neos`` ``ContentRepository``
+
+`BUGFIX: Followup `nodeTypes:show` with `--path` to primitive value <https://github.com/neos/neos-development-collection/pull/4837>`_
+-------------------------------------------------------------------------------------------------------------------------------------
+
+* Related: `#4619 <https://github.com/neos/neos-development-collection/issues/4619>`_
+
+Primitive values cannot be shown currently:
+
+```
+flow nodetypes:show Neos.Neos:Document --path properties.title.ui.label
+Neos\\ContentRepository\\Command\\NodeTypesCommandController_Original::truncateArrayAtLevel(): Argument `#1 <https://github.com/neos/neos-development-collection/issues/1>`_($array) must be of type array, string given
+```
+
+**Upgrade instructions**
+
+
+* Packages: ``Neos`` ``ContentRepository``
+
+`BUGFIX: Fusion avoid error parser cache to crash if cache is broken <https://github.com/neos/neos-development-collection/pull/4839>`_
+--------------------------------------------------------------------------------------------------------------------------------------
+
+* Resolves: `#4595 <https://github.com/neos/neos-development-collection/issues/4595>`_
+
+It seems a cache's ``has`` operation doesnt work that reliable thats why we will be using ``get`` instead and check against false.  
+
+**Upgrade instructions**
+
+
+* Packages: ``Neos`` ``Fusion``
+
+`BUGFIX: #3624 Node::getProperty does not always return list for references <https://github.com/neos/neos-development-collection/pull/4731>`_
+---------------------------------------------------------------------------------------------------------------------------------------------
+
+EEL can only operate on an array of nodes if the ``[0]`` item is a node (simple duck typing)
+
+Instead of fixing eel like proposed here https://github.com/neos/neos-development-collection/pull/3946 with this fix we avoid returning non 0 indexed arrays here:
+
+```
+${q(node).property("someReference")}
+```
+
+Currently, this might indeed return an array with holes like ``[1 => NODE, 2 => NODE, 5 => NODE]`` if the identifiers in fields 0, 3 and 4 are not resolvable.
+
+Thats because of the "unsafe" ``array_filter`` method in ``resolvePropertyReferences`` https://github.com/neos/neos-development-collection/blob/`378a029d0cc7ea6acb853751e7592873584a4aac <https://github.com/neos/neos-development-collection/commit/378a029d0cc7ea6acb853751e7592873584a4aac>`_/Neos.ContentRepository/Classes/Domain/Model/Node.php#L961 which will leave holes in the array.
+
+Using ``array_filter`` was introduced with Neos 2.2 so this is technically a regression of https://github.com/neos/neos-development-collection/commit/`87804e12082e7d6d06bd22f50739e20eeaa45539 <https://github.com/neos/neos-development-collection/commit/87804e12082e7d6d06bd22f50739e20eeaa45539>`_ ^^
+
+* Fixes: `#3624 <https://github.com/neos/neos-development-collection/issues/3624>`_
+
+* Packages: ``Neos`` ``ContentRepository``
+
+`BUGFIX: Add dimensions to Workspace module <https://github.com/neos/neos-development-collection/pull/3986>`_
+-------------------------------------------------------------------------------------------------------------
+
+resolves: `#3470 <https://github.com/neos/neos-development-collection/issues/3470>`_
+
+This adds Dimension handling to the current workspaces module. 
+
+Currently the Module only displays changes in different languages as one change. This is because the node path is the same in different languages after they are copied.
+
+
+* Packages: ``Neos``
+
+`BUGFIX: Fusion avoid error on cache invalidation while developing <https://github.com/neos/neos-development-collection/pull/4838>`_
+------------------------------------------------------------------------------------------------------------------------------------
+
+Replaces `#4509 <https://github.com/neos/neos-development-collection/issues/4509>`_
+* Resolves: `#4415 <https://github.com/neos/neos-development-collection/issues/4415>`_
+
+After deleting a fusion file like ``BrandLogo.fusion`` one will face the error after booting flow and thus triggering the file monitor and its listeners: (even like a simple ``flow help``)
+
+```
+Couldn't resolve realpath for: '/absolutePath/Code/core/Neos.NeosIo/Packages/Sites/Neos.NeosIo/Resources/Private/Fusion/Content/BrandLogo/BrandLogo.fusion'
+```
+
+This is caused as ``realpath`` returns false if the file was deleted, and we were to eager validating this. But as flows file monitor already returns absolute paths we can skip the realpath calculation here and move it to the ``ParserCache::cacheForFusionFile``. Initially the call to ``realpath`` was made in a single place to avoid making to many assumptions about the form flow returned file paths.
+
+**Upgrade instructions**
+
+
+* Packages: ``Neos`` ``Fusion``
+
+`BUGFIX: More precise selection of the DomNode with CSFR token <https://github.com/neos/neos-development-collection/pull/4823>`_
+--------------------------------------------------------------------------------------------------------------------------------
+
+To prevent issues with selecting the wrong CSFR Token in the DOM, we now have a more precise selection of the DomNode with the CSFR token.
+
+fixes: `#4822 <https://github.com/neos/neos-development-collection/issues/4822>`_
+
+**Review instructions**
+
+Install a version before 1.0.1 of the `Shel.Neos.WorkspaceModule <https://github.com/Sebobo/Shel.Neos.WorkspaceModule>`_
+and go to the user management module to impersonate a user. Then switch to the Workspace module and try to restore the original user. Without this patch, it should fail. With version 1.0.1 it will not fail btw.
+
+
+* Packages: ``Media.Browser`` ``Neos``
+
+`BUGFIX: Check SVG files for malicious code before providing original asset url links <https://github.com/neos/neos-development-collection/pull/4812>`_
+-------------------------------------------------------------------------------------------------------------------------------------------------------
+
+This adds a check in the preview of assets in the media module and checks for malicous content in svgs. If detected, the direct links to the original url get removed from the preview pages and a warning is shown.
+
+!`image <https://github.com/neos/neos-development-collection/assets/13046100/bb8a2b73-a251-499e-926a-1e6b866bbc87>`_
+
+Fixes: 
+- https://github.com/neos/neos-development-collection/issues/4833
+- https://github.com/neos/flow-development-collection/issues/3248
+
+* Packages: ``Neos`` ``Media.Browser``
+
+`BUGFIX: Resolve StyleCI issues <https://github.com/neos/neos-development-collection/pull/4820>`_
+-------------------------------------------------------------------------------------------------
+
+
+
+* Packages: ``Neos`` ``Fusion``
+
+`BUGFIX: Fix StyleCI issues <https://github.com/neos/neos-development-collection/pull/4819>`_
+---------------------------------------------------------------------------------------------
+
+
+
+* Packages: ``Neos``
+
+`BUGFIX: add dimensionshash migration to postgres <https://github.com/neos/neos-development-collection/pull/4429>`_
+-------------------------------------------------------------------------------------------------------------------
+
+Regression https://github.com/neos/neos-development-collection/pull/3279
+
+We need to generate add dimensions hash to node event model in order to be able to save new nodes as we do in MySQL: Neos.Neos/Migrations/Mysql/Version20210125134503.php
+
+**Upgrade instructions**
+
+Run ./flow doctrine:migrate
+
+**Review instructions**
+
+You want to make sure that the dimensions table has valid values. If not you might want to add a custom migration like this one:
+
+```php
+<?php
+declare(strict_types=1);
+
+namespace Neos\\Flow\\Persistence\\Doctrine\\Migrations;
+
+use Doctrine\\Migrations\\AbstractMigration;
+use Doctrine\\DBAL\\Schema\\Schema;
+
+class Version20230727164559 extends AbstractMigration
+{
+    public function getDescription(): string
+    {
+        return 'Correct null entries in event log caused by automated import';
+    }
+
+    public function up(Schema $schema): void
+    {
+        $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'postgresql', 'Migration can only be executed safely on \\'postgresql\\'.');
+
+        $this->addSql('UPDATE neos_neos_eventlog_domain_model_event SET dimension = NULL WHERE dimension = :dimension AND dtype = :dtype;', ['dimension' => 'N;', 'dtype' => 'ttree_contentrepositoryimporter_event']);
+    }
+
+    public function down(Schema $schema): void
+    {
+        $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'postgresql', 'Migration can only be executed safely on \\'postgresql\\'.');
+
+        $this->addSql('UPDATE neos_neos_eventlog_domain_model_event SET dimension = :dimension WHERE dimension IS NULL AND dtype = :dtype;', ['dimension' => 'N;', 'dtype' => 'ttree_contentrepositoryimporter_event']);
+    }
+}
+```
+
+
+
+* Packages: ``Neos``
+
+`BUGFIX: node:repair fails with could not be converted to string <https://github.com/neos/neos-development-collection/pull/4795>`_
+----------------------------------------------------------------------------------------------------------------------------------
+
+Fixes the following crash during node:repair
+
+```shell
+./flow node:repair --dry-run --only removeBrokenEntityReferences
+Dry run, not committing any changes.
+
+Checking for broken entity references ...
+Object of class Neos\\Flow\\Persistence\\Doctrine\\Proxies\\__CG__\\Neos\\Media\\Domain\\Model\\ImageVariant could not be converted to string
+
+  Type: Error
+  File: Data/Temporary/Development/SubContextWbWeb/Cache/Code/Flow_Object_Classes/Neos_ContentRepository_Command_NodeCommandControllerPlugin.php
+  Line: 836
+```
+
+resolved `#4794 <https://github.com/neos/neos-development-collection/issues/4794>`_
+
+**Upgrade instructions**
+
+- [x] Code follows the PSR-2 coding style
+- ~~Tests have been created, run and adjusted as needed~~
+    - There are not tests in place and I added none.
+- [x] The PR is created against the `lowest maintained branch <https://www.neos.io/features/release-roadmap.html>`_ -> 7.3
+- [ ] Reviewer - PR Title is brief but complete and starts with ``FEATURE|TASK|BUGFIX``
+- [ ] Reviewer - The first section explains the change briefly for change-logs
+- [ ] Reviewer - Breaking Changes are marked with ``!!!`` and have upgrade-instructions
+
+* Packages: ``Neos`` ``ContentRepository``
+
+`BUGFIX: Filter for assets by asset collection by using constraints <https://github.com/neos/neos-development-collection/pull/4802>`_
+-------------------------------------------------------------------------------------------------------------------------------------
+
+Fixes a bug, that was introduced with: https://github.com/neos/neos-development-collection/pull/4724
+
+Because of using the QueryBuilder twice, the count of the paramter and for the query is not correct anymore.
+
+* Fixes: `#4801 <https://github.com/neos/neos-development-collection/issues/4801>`_
+
+* Packages: ``Neos`` ``Media``
+
+`BUGFIX: Remove unnecessary basemixins dependency for ContentReferences <https://github.com/neos/neos-development-collection/pull/4648>`_
+-----------------------------------------------------------------------------------------------------------------------------------------
+
+The package has no direct dependency to the basemixins and should be usable without the other basemixins.
+
+* Packages: ``NodeTypes.ContentReferences``
+
+`BUGFIX: Replace incorrect mention of itemRenderer to itemReducer <https://github.com/neos/neos-development-collection/pull/4785>`_
+-----------------------------------------------------------------------------------------------------------------------------------
+
+I'm not sure if we should target the 7.0 branch and then apply this to all following versions?
+
+Was introduced here:
+https://github.com/neos/neos-development-collection/commit/`a7bc229541baa91dde6a85fbe4853b88db511af5 <https://github.com/neos/neos-development-collection/commit/a7bc229541baa91dde6a85fbe4853b88db511af5>``_#diff-``3ed794da2fb825c61dd55eee6535b77958799b33 <https://github.com/neos/neos-development-collection/commit/3ed794da2fb825c61dd55eee6535b77958799b33>`_384df7c47ac2a22242608969R207-R210
+
+* Packages: ``Neos``
+
+`BUGFIX: Add workspace hash to NodeDynamicTag_ and AssetDynamicTag_ cache tags <https://github.com/neos/neos-development-collection/pull/4782>`_
+------------------------------------------------------------------------------------------------------------------------------------------------
+
+* Fixes: `#4781 <https://github.com/neos/neos-development-collection/issues/4781>`_ 
+
+* Packages: ``Neos``
+
+`BUGFIX: Filter for assets by asset collection without overriding existing WHERE conditions <https://github.com/neos/neos-development-collection/pull/4724>`_
+-------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+The query to fetch assets gets build in multiple steps. E.g in ``findAll`` it creates the query, adds the "variant filter clause" and afterwards the "asset collection filter clause".
+
+```
+    public function findAll(AssetCollection $assetCollection = null): QueryResultInterface
+    {
+        $query = $this->createQuery();
+        $this->addAssetVariantFilterClause($query);
+        $this->addAssetCollectionToQueryConstraints($query, $assetCollection);
+        return $query->execute();
+    }
+```
+But adding the "asset collection filter clause" removes/overrides the existing "variant filter clause"
+
+This fix replaces the way of setting "asset collection filter clause", so the existing where clauses are retained.
+
+* Fixes: `#4723 <https://github.com/neos/neos-development-collection/issues/4723>`_
+
+* Packages: ``Media``
+
+`BUGFIX: flashmessages in legacy modules work as expected <https://github.com/neos/neos-development-collection/pull/4765>`_
+---------------------------------------------------------------------------------------------------------------------------
+
+This applies the, since a while unused, presets for message severity types to notifications in classic Neos backend modules again so that eg. warnings and errors stay on display and can be copied / screenshotted.
+
+Also regenerates js maps that seem to have compiled wrongly before.
+
+* Fixes: `#4672 <https://github.com/neos/neos-development-collection/issues/4672>`_
+
+* Packages: ``Neos``
+
+`BUGFIX: Check if image is possible to refit on replacement <https://github.com/neos/neos-development-collection/pull/4753>`_
+-----------------------------------------------------------------------------------------------------------------------------
+
+* Fixes: `#4752 <https://github.com/neos/neos-development-collection/issues/4752>`_
+
+Checks if the replacement is an image and has a size.
+
+* Packages: ``Neos`` ``NodeTypes.BaseMixins`` ``Media``
+
+`BUGFIX: Fix and make `nodeTypes:show` command usable <https://github.com/neos/neos-development-collection/pull/4619>`_
+-----------------------------------------------------------------------------------------------------------------------
+
+Fixes handling of invalid nodetype or invalid path.
+
+And introduces new option ``level`` to clamp the input (previously this command was useless for bigger nodetypes):
+
+```
+flow nodeTypes:show Neos.Demo:Document.Homepage --path properties --level 1
+NodeType configuration "Neos.Demo:Document.Homepage.properties":
+
+_removed: ...
+_creationDateTime: ...
+_lastModificationDateTime: ...
+_lastPublicationDateTime: ...
+_path: ...
+_name: ...
+_nodeType: ...
+_hidden: ...
+_hiddenBeforeDateTime: ...
+_hiddenAfterDateTime: ...
+titleOverride: ...
+metaDescription: ...
+...
+```
+
+
+* Packages: ``Neos`` ``ContentRepository``
+
+`BUGFIX: Allow disabling of auto-created Image Variants <https://github.com/neos/neos-development-collection/pull/4303>`_
+-------------------------------------------------------------------------------------------------------------------------
+
+Fixes support for the setting ``autoCreateImageVariantPresets`` that was documented for a long time but never actually evaluated.
+
+This change set:
+
+* Adjusts ``AssetService::assetCreated()`` signal to only trigger ``AssetVariantGenerator::createVariants()`` if the ``autoCreateImageVariantPresets`` flag is set
+* Sets the default value of the flag to ``true`` for greater backwards compatibility
+* Adjusts ``AssetVariantGenerator::createVariant()`` to only create a variant if it does not exist already – previously multiple variants with the same identifiers could be created for a single asset leading to undeterministic behavior
+* Adds a button "Create missing Variants" to the ``Variants`` tab of the Media Module allowing editors to manually trigger creation of (missing) variants.
+
+* Fixes: `#4300 <https://github.com/neos/neos-development-collection/issues/4300>`_
+
+* Packages: ``Neos`` ``Media``
+
+`BUGFIX: `props` will be unset after an exception <https://github.com/neos/neos-development-collection/pull/4526>`_
+-------------------------------------------------------------------------------------------------------------------
+
+* Resolves: `#4525 <https://github.com/neos/neos-development-collection/issues/4525>`_
+
+The rendering in a Neos.Fusion Component had a bug where the ``props`` might be undefined if an exception happened earlier in an eel expression.
+
+This was caused by not correctly poping the runtimes context and thus causing a unexpected shift in the context stack.
+
+**Upgrade instructions**
+
+
+* Packages: ``Neos`` ``Fusion``
+
+`BUGFIX: Reduce nodetype schema size <https://github.com/neos/neos-development-collection/pull/4561>`_
+------------------------------------------------------------------------------------------------------
+
+With this change the following optimisations are done to improve speed and reduce size of the schema generation:
+
+* Abstract nodetypes are not queried anymore for constraints as they are already resolved by the nodetype manager.
+
+* Entries in the inheritance map and constraints will be skipped if they don’t contain any data.
+
+These optimisations reduce the size of the schema in the Neos.Demo from ~357KB to ~300KB and improve the response time by ~20% in my tests.
+
+The more nodetypes a project has, the bigger the benefit is.
+
+**Review instructions**
+
+Everything should work the same, adding nodes, constraints, etc.
+
+
+* Packages: ``Neos``
+
+`BUGFIX: Only discard nodes in same workspace <https://github.com/neos/neos-development-collection/pull/4578>`_
+---------------------------------------------------------------------------------------------------------------
+
+* Resolves: `#4577 <https://github.com/neos/neos-development-collection/issues/4577>`_
+
+* Packages: ``ContentRepository``
+
+`BUGFIX: Load all thumbnails for an asset to skip further requests <https://github.com/neos/neos-development-collection/pull/4624>`_
+------------------------------------------------------------------------------------------------------------------------------------
+
+For the usecase of images with responsive variants this change prevents additional database requests for each additional variant of an image.
+
+This can greatly reduce the number of queries on pages with many source tags or sources attributes for pictures and images.
+
+**Review instructions**
+
+As soon as an image is rendered in several sizes on a page the patch should skip additional db requests in the thumbnails repository.
+Persistent resources and image entities are still queried as via the node property getter and to resolve the thumbnail.
+
+
+* Packages: ``Neos`` ``Media``
+
+`BUGFIX: Allow unsetting thumbnail presets <https://github.com/neos/neos-development-collection/pull/4516>`_
+------------------------------------------------------------------------------------------------------------
+
+* Resolves: `#3544 <https://github.com/neos/neos-development-collection/issues/3544>`_
+
+* Packages: ``Neos`` ``Media``
+
+`BUGFIX: Don’t query for abstract nodetypes in nodedata repository <https://github.com/neos/neos-development-collection/pull/4501>`_
+--------------------------------------------------------------------------------------------------------------------------------------
+
+As abstract nodetypes don't (shouldn't) appear in the database it makes no sense to query them.
+
+This is a regression that was introduced a long time ago, when the default parameter to include abstract nodetypes was added to the ``getSubNodeTypes`` method in the ``NodeTypeManager`` without adjusting the call in the ``NodeDataRepository->getNodeTypeFilterConstraintsForDql`` which relied on the previous behaviour.
+
+The call in the method ``getNodeTypeFilterConstraints`` was fixed some years ago, but that method seems unused.
+
+* Packages: ``ContentRepository``
+
+`BUGFIX: Consistently initialize asset sources via `createFromConfiguration` <https://github.com/neos/neos-development-collection/pull/4008>`_
+----------------------------------------------------------------------------------------------------------------------------------------------
+
+fixes: `#3965 <https://github.com/neos/neos-development-collection/issues/3965>`_
+
+**The Problem**
+
+The case at hand was an asset source that uses a value object to validate the incoming asset source options. I expected to be able to define a promoted constructor property with said value object as its declared type:
+
+```php
+final class MyAssetSource implements AssetSourceInterface
+{
+    public function __construct(
+        private readonly string $assetSourceIdentifier,
+        private readonly Options $options
+    ) {
+    }
+
+   /* ... */
+}
+```
+
+...and initialize the value object in the ``createFromConfiguration`` static factory method defined by the ``AssetSourceInterface``:
+
+```php
+final class MyAssetSource implements AssetSourceInterface
+{
+   /* ... */
+
+    public static function createFromConfiguration(string $assetSourceIdentifier, array $assetSourceOptions): AssetSourceInterface
+    {
+        return new static(
+            $assetSourceIdentifier,
+            Options::fromArray($assetSourceOptions)
+        );
+    }
+}
+```
+
+This failed with a Type Error, because the ``AssetSourceService``, which is responsible for initializing asset sources, at one point does not utilize ``createFromConfiguration`` to perform initialization, but calls the asset source constructor directly:
+
+https://github.com/neos/neos-development-collection/blob/`a4791b623161259b31d2d11b343310bd7ef76507 <https://github.com/neos/neos-development-collection/commit/a4791b623161259b31d2d11b343310bd7ef76507>`_/Neos.Media/Classes/Domain/Service/AssetSourceService.php#L178
+
+**The Solution**
+
+I adjusted the aforementioned routine of the ``AssetSourceService`` to use the ``AssetSourceInterface``-defined ``createFromConfiguration`` static factory method instead of the asset source's constructor.
+
+Even though the pattern I described above only makes sense in a PHP >8.0 environment, I decided to target Neos 7.3 with this PR, because it should constitute a non-breaking bugfix.
+
+* Packages: ``Neos`` ``Media``
+
+`BUGFIX: Guard that Fusion path cannot be empty <https://github.com/neos/neos-development-collection/pull/4547>`_
+-----------------------------------------------------------------------------------------------------------------
+
+Previously in php 7.4 this ``Neos\\Fusion\\Exception\\MissingFusionObjectException`` was thrown
+
+> No Fusion object found in path ""
+
+but with php 8 this ``ValueError`` is thrown which is unexpected
+
+> strrpos(): Argument `#3 <https://github.com/neos/neos-development-collection/issues/3>``_($offset) must be contained in argument ``#1 <https://github.com/neos/neos-development-collection/issues/1>`_($haystack)
+
+This change takes care of throwing an explicit ``Neos\\Fusion\\Exception`` instead:
+
+> Fusion path cannot be empty.
+
+
+--------
+
+This error was noticed in the out of band rendering, when there is no content element wrapping: https://discuss.neos.io/t/argument-3-offset-must-be-contained-in-argument-1-haystack/6416/4
+
+<img width="593" alt="image" src="https://github.com/neos/neos-development-collection/assets/85400359/0ac8d025-3ab4-44e8-9034-eb883f0b1894">
+
+
+
+**Upgrade instructions**
+
+
+* Packages: ``Neos`` ``Fusion``
+
+`BUGFIX: Fix `NodeType` `getTypeOfAutoCreatedChildNode` and `getPropertyType` <https://github.com/neos/neos-development-collection/pull/4482>`_
+-----------------------------------------------------------------------------------------------------------------------------------------------
+
+resolves partially `#4333 <https://github.com/neos/neos-development-collection/issues/4333>`_
+resolves partially `#4344 <https://github.com/neos/neos-development-collection/issues/4344>`_
+
+**Upgrade instructions**
+
+
+* Packages: ``Neos`` ``ContentRepository``
+
+`BUGFIX: show title on hover in ImpersonateButton <https://github.com/neos/neos-development-collection/pull/4438>`_
+-------------------------------------------------------------------------------------------------------------------
+
+**Review instructions**
+
+Currently if you hovered over the button, the title was not showing up.
+
+Since the Feature `#3648 <https://github.com/neos/neos-development-collection/issues/3648>`_was introduced in Neos 8.0 I'm open this against the 8.0 Branch.
+
+### Demo
+!`SCR-20230803-nhty <https://github.com/neos/neos-development-collection/assets/39345336/b3a75136-d493-49e1-a82a-e70f599e5cca>`_
+
+
+* Packages: ``Neos``
+
+`BUGFIX: Make getParent work in NodeData <https://github.com/neos/neos-development-collection/pull/4295>`_
+----------------------------------------------------------------------------------------------------------
+
+resolved: `#4283 <https://github.com/neos/neos-development-collection/issues/4283>`_
+
+**Review instructions**
+I am unsure why the dimensions were not passed to findOneByPath, but without it it does not really work.
+Also, it is kind of strange that the dimensions in findOneByPath is optional but returns nothing if it is not set.
+This fixes it for now. 
+
+
+* Packages: ``Neos`` ``ContentRepository``
+
+`BUGFIX: Use correct URL to FontAwesome icons <https://github.com/neos/neos-development-collection/pull/4453>`_
+---------------------------------------------------------------------------------------------------------------
+
+**Upgrade instructions**
+
+
+* Packages: ``Neos``
+
+`BUGFIX: Assign original asset collections to variant <https://github.com/neos/neos-development-collection/pull/3562>`_
+-----------------------------------------------------------------------------------------------------------------------
+
+* Fixes: `#3560 <https://github.com/neos/neos-development-collection/issues/3560>`_
+
+* Packages: ``Neos``
+
+`BUGFIX: Fix editing of Electronic Address type in Backend module <https://github.com/neos/neos-development-collection/pull/4419>`_
+-----------------------------------------------------------------------------------------------------------------------------------
+
+* Fixes: `#4418 <https://github.com/neos/neos-development-collection/issues/4418>`_
+
+* Packages: ``Neos``
+
+`BUGFIX: Disable content element wrapping and inline editable for references in content reference list <https://github.com/neos/neos-development-collection/pull/4399>`_
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+The NeosUI tries to initialize the inline editor for rendered references in content reference list. But they are not accessable at this moment. As references shouldn't get edited anyways, we can simple disable the content element wrapping for these references.
+
+Fixes https://github.com/neos/neos-ui/issues/3574
+
+* Packages: ``Neos`` ``NodeTypes.ContentReferences``
+
+`BUGFIX: Disable publish checkmark for new pages in workspace <https://github.com/neos/neos-development-collection/pull/4277>`_
+-------------------------------------------------------------------------------------------------------------------------------
+
+closes `#3991 <https://github.com/neos/neos-development-collection/issues/3991>`_
+
+**Review instructions**
+If the document is new, I show a small disabled checkmark instead of the functioning checkmark. This will force the user to use the checkboxes on the left side to publish changes. 
+This does not solve the underlying problem but it will at least disable the function for Editors. 
+
+<img width="1240" alt="Bildschirmfoto 2023-05-12 um 11 12 21" src="https://github.com/neos/neos-development-collection/assets/91674611/bc7d0f47-a54b-474d-a74a-230eb3a92546">
+
+
+* Packages: ``Neos``
+
+`BUGFIX: Fusion's FilePatternResolver windows compatible <https://github.com/neos/neos-development-collection/pull/4359>`_
+--------------------------------------------------------------------------------------------------------------------------
+
+resolves `#4358 <https://github.com/neos/neos-development-collection/issues/4358>``_in combination with ``#4374 <https://github.com/neos/neos-development-collection/issues/4374>`_
+
+
+The FilePatternResolver is responsible to handle glob patterns in includes in fusion.
+For more in depth information see the test: https://github.com/neos/neos-development-collection/blob/`a461dbc8f976588b30f34a5ed34f1eeebf5a0cd2 <https://github.com/neos/neos-development-collection/commit/a461dbc8f976588b30f34a5ed34f1eeebf5a0cd2>`_/Neos.Fusion/Tests/Unit/Core/Parser/ParserIncludeTest.php#L156-L167
+
+**Upgrade instructions**
+
+
+* Packages: ``Neos`` ``Fusion``
+
+`BUGFIX: Allow string position values in NodeType schema <https://github.com/neos/neos-development-collection/pull/4209>`_
+--------------------------------------------------------------------------------------------------------------------------
+
+The PositionalArraySorter implementation allows string values for the position of nodetypes, tabs, groups and views since a long time but the schema validation showed warnings.
+
+**Review instructions**
+
+Open the ``NodeTypes`` tab in the ``Configuration`` module with the Neos.Demo and the previous validation warnings shouldn't show up anymore.
+
+
+* Packages: ``Neos``
+
+`BUGFIX: Undefined array key "ui" in nodeType creationDialog <https://github.com/neos/neos-development-collection/pull/4288>`_
+------------------------------------------------------------------------------------------------------------------------------
+
+Currently, its not possible to use the shorthand
+```yaml
+    creationDialog:
+      elements:
+        hasFoo:
+          type: boolean
+          # ui: {} # this must be set to an empty array
+```
+
+as there is an unsafe access on the ui property
+> Warning: Undefined array key "ui" in /Data/Temporary/Development/Cache/Code/Flow_Object_Classes/Neos_Neos_NodeTypePostprocessor_DefaultPropertyEditorPostprocessor.php line 110
+
+
+
+regression from `#3473 <https://github.com/neos/neos-development-collection/issues/3473>`_
+
+**Upgrade instructions**
+
+
+* Packages: ``Neos``
+
+`BUGFIX: flow command typo in exception in nearestContentCollection method <https://github.com/neos/neos-development-collection/pull/4306>`_
+--------------------------------------------------------------------------------------------------------------------------------------------
+
+**Upgrade instructions**
+
+_None_
+
+**Review instructions**
+
+Command in exception should be start with ``./flow command...`` and not ``flow command...``
+
+!`SCR-20230605-jytx <https://github.com/neos/neos-development-collection/assets/39345336/0d9bb60e-2335-4afa-80e3-1a0ed4942610>`_
+
+
+
+* Packages: ``Neos``
+
+`BUGFIX: CreationDialog hideable elements <https://github.com/neos/neos-development-collection/pull/4297>`_
+-----------------------------------------------------------------------------------------------------------
+
+closes cross repo issue: https://github.com/neos/neos-ui/issues/3483
+
+In the UI it will be once https://github.com/neos/neos-ui/pull/3507 is merged possible to use the ``hidden`` property in the node creation dialog
+
+```yaml
+ui:
+  creationDialog:
+    elements:
+      hiddenProperty:
+        type: string
+        ui:
+          hidden: true
+```
+
+This change adjusts neos creationDialogPostprocessor so that creationDialog items that are generated from properties via ``showInCreationDialog`` will have the hidden property copied
+
+```yaml
+properties:
+  hiddenProperty:
+    type: string
+    ui:
+      showInCreationDialog: true
+      inspector:
+        hidden: true
+```
+
+**Upgrade instructions**
+
+
+* Packages: ``ContentRepository`` ``Fusion.Afx`` ``Neos``
+
+`BUGFIX: Use correct configuration path for enableObjectTreeCache <https://github.com/neos/neos-development-collection/pull/4301>`_
+-----------------------------------------------------------------------------------------------------------------------------------
+
+Due to the wrong path the value of enableObjectTreeCache was always interpreted as ``false``. So in Neos in production context the Cache was disabled.
+
+* Packages: ``Neos``
+
+`BUGFIX: RenderAttributesTrait allows Stringable objects <https://github.com/neos/neos-development-collection/pull/4267>`_
+--------------------------------------------------------------------------------------------------------------------------
+
+RenderAttributesTrait converts Stringable objects to strings via ``__toString()``
+
+related: `#4225 <https://github.com/neos/neos-development-collection/issues/4225>`_
+
+**Upgrade instructions**
+
+Not sure what to write here :thinking: 
+
+**Review instructions**
+
+Up until 8.3 it was possible to use EelHelpers with a fluent interface like API for attributes. E.g. the following was working fine in fusion afx:
+```
+class={[block.element('subline').modifier('light')]}
+```
+The variable ``block`` is an EelHelper which returns ``self``. In 8.3 this fails with an Exception
+```
+$attributes may contain values of type array<string|bool|null> type: array...
+```
+The reason is, that with PR #4225, in ``RenderAttributesTrait`` there are two different ways the object is processed:
+1. In case ``$attributeValue`` is not an array, e.g. an object, it is basically converted to a string
+2. In case of an array it is checked if ``$attributeValuePart`` is actually of type plain string, boolean or null. In case  of an object an exception is raised. This exception then breaks the previous behaviour in case of a ``\\Stringable`` object.
+
+
+* Packages: ``Neos`` ``Fusion``
+
+`BUGFIX: point to 8.3.x-dev branch in README <https://github.com/neos/neos-development-collection/pull/4260>`_
+--------------------------------------------------------------------------------------------------------------
+
+Set the correct branch name to setup the neos-development-collection for ``8.3.x-dev``
+
+
+* Packages: ``Neos``
+
+`BUGFIX: Add translation keys in translation files <https://github.com/neos/neos-development-collection/pull/4237>`_
+--------------------------------------------------------------------------------------------------------------------
+
+The following translation keys are missing their translation in the Main.xlf file.
+
+https://github.com/neos/neos-ui/blob/7.3/packages/neos-ui/src/Containers/LeftSideBar/index.js#L82
+https://github.com/neos/neos-ui/blob/7.3/packages/neos-ui/src/Containers/LeftSideBar/NodeTreeToolBar/Buttons/ToggleContentTree/index.js#L39
+
+* Packages: ``Neos``
+
+`BUGFIX: HtmlAugmenter & Attributes Rendering <https://github.com/neos/neos-development-collection/pull/4225>`_
+---------------------------------------------------------------------------------------------------------------
+
+Regression: https://github.com/neos/neos-development-collection/pull/4081
+
+* Fixes: `#4213 <https://github.com/neos/neos-development-collection/issues/4213>`_ - null should not remove existing attribute
+
+Fixes applying string on existing empty attribute
+(or empty string)
+
+Thanks to @tellenrieder @ClaraRuna and @KommunikativCh and @fcool  ;) 
+
+**Upgrade instructions**
+
+
+* Packages: ``Neos`` ``Fusion``
+
+`BUGFIX: Fix missing icon in case of fusion errors <https://github.com/neos/neos-development-collection/pull/4224>`_
+--------------------------------------------------------------------------------------------------------------------
+
+Change html class for icon which gets rendered if a fusion error occurs.
+
+Closes `#4223 <https://github.com/neos/neos-development-collection/issues/4223>`_
+
+
+* Packages: ``Neos`` ``Fusion``
+
+`BUGFIX: make pagination work with Traversable <https://github.com/neos/neos-development-collection/pull/4220>`_
+----------------------------------------------------------------------------------------------------------------
+
+Fixes a warning: ``array_slice() expects parameter 1 to be array, object given in /…/Neos_ContentRepository_ViewHelpers_Widget_Controller_PaginateController.php line 124``
+
+Variant of `#3891 <https://github.com/neos/neos-development-collection/pull/3891>`_ based on the (correct) 7.3 branch.
+
+* See: `#1112 <https://github.com/neos/neos-development-collection/issues/1112>`_ 
+
+* Packages: ``Neos`` ``ContentRepository``
+
+`BUGFIX: Add php version declaration to neos/fusion-afx <https://github.com/neos/neos-development-collection/pull/4212>`_
+-------------------------------------------------------------------------------------------------------------------------
+
+
+
+* Packages: ``Neos`` ``Fusion.Afx``
+
+`TASK: Add missing fusion migrations and runtime helper for 9.0 <https://github.com/neos/neos-development-collection/pull/5641>`_
+---------------------------------------------------------------------------------------------------------------------------------
+
+Followup to https://github.com/neos/neos-development-collection/pull/5638
+
+I did a full re-review on all the Fusion migrations that were copied from ``neos/rector``
+
+The Fusion migrations were refined to ensure we handle even more cases (and in 9.0 write comments for all the things)
+
+Doing that i noticed we were missing the 8.4 api for ``node.workspaceName`` and ``node.classification.tethered`` and ``q(node).property("hiddenInMenu")`` and ~enableAfterDateTime, disableAfterDateTime~ so i added the missing runtime layers for those too.
+
+**Upgrade instructions**
+
+
+* Packages: ``Neos``
+
+`TASK: Adjust README to 8.4 branch <https://github.com/neos/neos-development-collection/pull/5639>`_
+----------------------------------------------------------------------------------------------------
+
+
+
+`TASK: Adjust to new behat refactoring from 90 and fix CI test for previous PRs  <https://github.com/neos/neos-development-collection/pull/5632>`_
+--------------------------------------------------------------------------------------------------------------------------------------------------
+
+these behat refactorings were backmerged to 8.4 and thus neos needs an adjustment herby.
+
+The @Isolated tests are still broken because of changes in flow and are currently skipped in CI in favour of having some tests running already.
+
+In Neos 9 everything will be better because all the code i attemted to fix is already dead and new written. Dont you worry.
+
+`TASK: New build of neos/neos css assets <https://github.com/neos/neos-development-collection/pull/5613>`_
+----------------------------------------------------------------------------------------------------------
+
+* Relates: `#5588 <https://github.com/neos/neos-development-collection/issues/5588>`_
+
+* Packages: ``Neos``
+
+`TASK: Update enshrined/svg-sanitize to ^0.22.0 <https://github.com/neos/neos-development-collection/pull/5609>`_
+-----------------------------------------------------------------------------------------------------------------
+
+Upgraded the enshrined/svg-sanitize dependency from ^0.17.0 to ^0.22.0 in composer.json due to CVE-2025-55166
+
+Relates to: #4812
+
+* Packages: ``Media.Browser``
+
+`TASK: Allow neos/fusion-form in version 3.x to support neos/symfonymailer. <https://github.com/neos/neos-development-collection/pull/5544>`_
+---------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+* Packages: ``Neos``
+
+`TASK: Update github actions to checkout@v4 and cache@v4 <https://github.com/neos/neos-development-collection/pull/5465>`_
+--------------------------------------------------------------------------------------------------------------------------
+
+
+
+* Packages: ``Neos`` ``.github``
+
+`TASK: Check if index need to be renamed <https://github.com/neos/neos-development-collection/pull/5446>`_
+----------------------------------------------------------------------------------------------------------
+
+In some instances the index is already renamed. This PR adds a check if this is the case and skips the migration in these cases.
+
+resolves `#5445 <https://github.com/neos/neos-development-collection/issues/5445>`_
+
+* Packages: ``Neos`` ``ContentRepository``
+
+`TASK: Render command references  <https://github.com/neos/neos-development-collection/pull/5443>`_
+---------------------------------------------------------------------------------------------------
+
+also for Neos.ContentRepository.Migration, Neos.Neos.Setup and Neos.Setup
+
+They were simply missing in the list of command identifier which are allowed to render the command reference.
+
+See: https://github.com/neos/neos-development-collection/pull/4177#issuecomment-2598509517
+
+* Packages: ``Neos``
+
+`TASK: Fix MySQL migration differences on fresh setup <https://github.com/neos/neos-development-collection/pull/4236>`_
+-----------------------------------------------------------------------------------------------------------------------
+
+This eliminates some differences in the actual vs the expected DB setup in a fresh
+Neos 8.3 installation.
+
+* Fixes: `#3118 <https://github.com/neos/neos-development-collection/issues/3118>`_ (at least partly.)
+
+**Review instructions**
+
+``doctrine:migrationgenerate`` should just say ``No changes detected`` after Neos has been set up.
+
+
+* Packages: ``Neos`` ``ContentRepository`` ``Media``
+
+`TASK: Allow setting itemsPerPage in user administration listing <https://github.com/neos/neos-development-collection/pull/5325>`_
+----------------------------------------------------------------------------------------------------------------------------------
+
+With Neos 8.3, pagination was added to the user management module, but the number of users page page was not made configurable and set at a very low number of 10. This non-breaking change introduces this as a setting, keeping the default of 10.
+
+* Packages: ``ContentRepository`` ``Neos``
+
+`TASK: Make nullable parameter explicit to become PHP 8.4 compatible <https://github.com/neos/neos-development-collection/pull/5433>`_
+--------------------------------------------------------------------------------------------------------------------------------------
+
+I've used rector to migrate all occurrences.
+
+https://getrector.com/rule-detail/explicit-nullable-param-type-rector
+
+See also for Flow: https://github.com/neos/flow-development-collection/pull/3429
+
+Note: We should run the rector migration again on 9.0 after upmerging this PR
+
+* Packages: ``.github``
+
+`TASK: Update GitHub actions (8.3) <https://github.com/neos/neos-development-collection/pull/5237>`_
+----------------------------------------------------------------------------------------------------
+
+Fix warnings:
+
+> The following actions uses node12 which is deprecated and will be forced to run on node16: actions/checkout@v2, actions/cache@v2, actions/upload-artifact@v2. For more info: https://github.blog/changelog/2023-06-13-github-actions-all-actions-will-run-on-node16-instead-of-node12-by-default/
+
+
+
+
+* Packages: ``Neos`` ``.github``
+
+`TASK: Update textarea docs to latest version <https://github.com/neos/neos-development-collection/pull/5170>`_
+---------------------------------------------------------------------------------------------------------------
+
+Depends on https://github.com/neos/neos-ui/pull/3821
+
+* Packages: ``.github`` ``Neos``
+
+`TASK: Upgrade to FontAwesome 6.5.2 <https://github.com/neos/neos-development-collection/pull/5108>`_
+-----------------------------------------------------------------------------------------------------
+
+Issue: https://github.com/neos/neos-development-collection/issues/5107
+
+Upgraded FontAwesome in neos-development-collection to 6.5.2.
+
+Briefly tested locally and it was functioning fine. Oriented on the last upgrade branch for 5.8.2.
+
+
+* Packages: ``Neos``
+
+`TASK: set new-password in EditAccount page <https://github.com/neos/neos-development-collection/pull/5017>`_
+-------------------------------------------------------------------------------------------------------------
+
+Solves https://github.com/neos/neos-development-collection/issues/4944
+
+**Upgrade instructions**
+
+Not needed
+
+**Review instructions**
+
+Allow your password manager to autofill everything on page load.
+The password field (for setting new password) will not be autofilled.
+
+
+* Packages: ``Neos``
+
+`TASK: Update plupload library to latest 2.3.9 <https://github.com/neos/neos-development-collection/pull/5004>`_
+----------------------------------------------------------------------------------------------------------------
+
+Backport of https://github.com/neos/neos-development-collection/pull/5003 for 7.3
+
+Fixes https://github.com/advisories/GHSA-rp2c-jrgp-cvr8: https://nvd.nist.gov/vuln/detail/CVE-2021-23562
+
+* Packages: ``Neos`` ``Media.Browser``
+
+`TASK: Update plupload library to latest 2.3.9 <https://github.com/neos/neos-development-collection/pull/5003>`_
+----------------------------------------------------------------------------------------------------------------
+
+Fixes CVE-2021-23562: https://nvd.nist.gov/vuln/detail/CVE-2021-23562 
+
+* Packages: ``Neos`` ``Media.Browser``
+
+`TASK: Cleanup SVG Sanitzer workaround after 0.17.0 release <https://github.com/neos/neos-development-collection/pull/4893>`_
+-----------------------------------------------------------------------------------------------------------------------------
+
+SVG Sanitizer has merged and released the fix for restoring libxml error handler. So we can remove the workaround.
+
+See: https://github.com/darylldoyle/svg-sanitizer/pull/90
+
+* Packages: ``Neos`` ``Media.Browser``
+
+`TASK: Fix fusion docs a little <https://github.com/neos/neos-development-collection/pull/4867>`_
+-------------------------------------------------------------------------------------------------
+
+Fixes: https://github.com/neos/neos-development-collection/pull/3915#issuecomment-1296302491
+
+**Upgrade instructions**
+
+
+* Packages: ``Neos``
+
+`TASK: PhpStan level 1 for Neos 8.3 <https://github.com/neos/neos-development-collection/pull/4842>`_
+-----------------------------------------------------------------------------------------------------
+
+Adds phpstan to the Neos 8.3 branch to all packages with a minimal level 1:
+
+- Neos.ContentRepository/Classes
+- Neos.Diff/Classes
+- Neos.Fusion.Afx/Classes
+- Neos.Fusion/Classes
+- Neos.Media.Browser/Classes
+- Neos.Media/Classes
+- Neos.Neos/Classes
+- Neos.NodeTypes.Form/Classes
+- Neos.SiteKickstarter/Classes
+
+Errors caused by the back-port of the ESCR TraversableNodeInterface, have been directly ignored via ``ignoreErrors``.
+Other actually fixable errors have been fixed in a non breaking way. (Adjusting the doc types e.g.)
+
+This should provide a little starting base for extending php stan level across all packages to higher levels in the upcoming 9.0 branch, where we actually use phpstan at level 8 for the following packages:
+
+- Neos.ContentGraph.DoctrineDbalAdapter/src
+- Neos.ContentGraph.PostgreSQLAdapter/src
+- Neos.ContentRepository.BehavioralTests/Classes
+- Neos.ContentRepository.Core/Classes
+- Neos.ContentRepository.Export/src
+- Neos.ContentRepository.LegacyNodeMigration/Classes
+- Neos.ContentRepository.NodeAccess/Classes
+- Neos.ContentRepository.StructureAdjustment/src
+- Neos.ContentRepository.TestSuite/Classes
+- Neos.ContentRepositoryRegistry/Classes
+- Neos.Neos/Classes (also exists in 8.3)
+- Neos.NodeTypes.Form/Classes (also exists in 8.3)
+
+As ``Neos.Fusion`` didnt need to be adjusted for neos 9 i started to migrate this package to level 8 for neos 8.3 already to avoid too many upmerge conflicts:
+
+https://github.com/neos/neos-development-collection/pull/4844
+
+More packages, if applicable, will follow.
+
+
+**Upgrade instructions**
+
+
+* Packages: ``Neos`` ``ContentRepository`` ``Diff`` ``Fusion`` ``Media.Browser`` ``Media``
+
+`TASK: Migrate Neos.Fusion/Core to phpstan level 8 (Neos 8.3) <https://github.com/neos/neos-development-collection/pull/4844>`_
+-------------------------------------------------------------------------------------------------------------------------------
+
+Requires: https://github.com/neos/neos-development-collection/pull/4842
+
+Only files in ``Neos.Fusion/Classes/Core`` have been migrated, as they contain relatively new code like the parser.
+
+Two kind of errors have been partially ignored from the level 8
+
+For one: "no value type specified in iterable type array" as adding ``array<int|string, mixed>`` would just bloat this commit up. In these files we are mostly dealing with the fusion configuration which is highly dynamic:
+
+- Neos.Fusion/Classes/Core/Runtime.php
+- Neos.Fusion/Classes/Core/Cache/RuntimeContentCache.php
+- Neos.Fusion/Classes/Core/Cache/ContentCache.php
+- Neos.Fusion/Classes/Core/Cache/CacheSegmentParser.php
+- Neos.Fusion/Classes/Core/RuntimeConfiguration.php
+- Neos.Fusion/Classes/Core/ObjectTreeParser/MergedArrayTreeVisitor.php
+- Neos.Fusion/Classes/Core/ObjectTreeParser/MergedArrayTree.php
+
+And "has no return type specified" was noticed a lot in the ast visiting code. But i plan to refactor this instead to something better type- and readable in general:
+
+- Neos.Fusion/Classes/Core/ObjectTreeParser/MergedArrayTreeVisitor.php
+- Neos.Fusion/Classes/Core/ObjectTreeParser/AstNodeVisitorInterface.php
+- Neos.Fusion/Classes/Core/ObjectTreeParser/Ast/*
+
+**The phpstan config i used for local development & testing:**
+
+<details><summary>local phpstan config</summary>
+<p>
+
+```
+parameters:
+    level: 8
+    ignoreErrors:
+        -
+          message: '#no value type specified in iterable type array.$#'
+          paths:
+            - Neos.Fusion/Classes/Core/Runtime.php
+            - Neos.Fusion/Classes/Core/Cache/RuntimeContentCache.php
+            - Neos.Fusion/Classes/Core/Cache/ContentCache.php
+            - Neos.Fusion/Classes/Core/Cache/CacheSegmentParser.php
+            - Neos.Fusion/Classes/Core/RuntimeConfiguration.php
+            - Neos.Fusion/Classes/Core/ObjectTreeParser/MergedArrayTreeVisitor.php
+            - Neos.Fusion/Classes/Core/ObjectTreeParser/MergedArrayTree.php
+        -
+          message: '#has no return type specified.$#'
+          paths:
+            - Neos.Fusion/Classes/Core/ObjectTreeParser/MergedArrayTreeVisitor.php
+            - Neos.Fusion/Classes/Core/ObjectTreeParser/AstNodeVisitorInterface.php
+            - Neos.Fusion/Classes/Core/ObjectTreeParser/Ast
+    paths:
+        - Neos.Fusion/Classes/Core
+    bootstrapFiles:
+         - ../Framework/bootstrap-phpstan.php
+```
+
+</p>
+</details> 
+
+As phpstan `doesnt <https://github.com/phpstan/phpstan/discussions/10459>``_ allow to configure multiple levels by path, and i dont want to have to burden running phpstan multiple times, i decided against actually linting the migrated ``Neos.Fusion/Core` code in ci for Neos 8.3. On the neos 9 branch this we will activate the full linting power though!
+
+* Packages: ``Neos`` ``Fusion``
+
+`TASK: Correct `DoctrineProxy` import in AssetController <https://github.com/neos/neos-development-collection/pull/4854>`_
+--------------------------------------------------------------------------------------------------------------------------
+
+The old import was deprecated with ``doctrine/persistence:1.3`` and one should use Doctrine\\Persistence\\Proxy instead:
+https://github.com/greg0ire/persistence/blob/`da3b167cde5c029d7941941c635879524d6e1484 <https://github.com/neos/neos-development-collection/commit/da3b167cde5c029d7941941c635879524d6e1484>`_/lib/Doctrine/Common/Persistence/Proxy.php#L26
+
+
+slack -> https://neos-project.slack.com/archives/C04PYL8H3/p1705607919309889
+
+* Packages: ``Neos`` ``Media.Browser``
+
+`TASK: Removes neos/neos-setup <https://github.com/neos/neos-development-collection/pull/4803>`_
+------------------------------------------------------------------------------------------------
+
+**Summary:**
+When attempting to install Neos version 8.3 using the command ``composer create-project neos/neos-development-distribution neos-development 8.3.x-dev --keep-vcs``, the installation results in the neos-setup (version 1.x) being installed. The ``neos/cli-setup`` tool has been removed and the default command ``./flow welcome`` is still called. But the  command is no longer available due to the absence of the CLI setup tool. Consequently, the setup process is not possible as the recommended command is missing.
+
+We remove the dependency from the development collection and adds the ``neos/neos-setup`` in the latest version to the `neos-development-distribution <https://github.com/neos/neos-development-distribution>`_ 
+
+* Packages: ``Neos``
+
+`TASK: Use role label in list users/new user view if available <https://github.com/neos/neos-development-collection/pull/4793>`_
+--------------------------------------------------------------------------------------------------------------------------------
+
+In Neos 7 (and with https://github.com/neos/flow-development-collection/issues/2162), role labels were introduced. While we now have a nice table view in the "edit account" view, the role label is not displayed anywhere else.
+
+I'm aware that Neos 7 and 8 are in maintenance-only mode, but I think we all agree that Neos 8 will be around for quite a while. I suggest the minimal change to use the role label in the user list and the "new user" view if there is one.
+
+- [N/A] Code follows the PSR-2 coding style
+- [N/A] Tests have been created, run and adjusted as needed
+- [x] The PR is created against the `lowest maintained branch <https://www.neos.io/features/release-roadmap.html>`_
+- [x] Reviewer - PR Title is brief but complete and starts with ``FEATURE|TASK|BUGFIX``
+- [x] Reviewer - The first section explains the change briefly for change-logs
+- [N/A] Reviewer - Breaking Changes are marked with ``!!!`` and have upgrade-instructions
+
+* Packages: ``Neos``
+
+`TASK: Add PHP 8.3 to build workflow matrix <https://github.com/neos/neos-development-collection/pull/4784>`_
+-------------------------------------------------------------------------------------------------------------
+
+This will test Flow against PHP 8.3
+
+
+* Packages: ``Neos`` ``.github``
+
+`TASK: Fusion Behat Test Make Sure To Throw Runtime Exceptions <https://github.com/neos/neos-development-collection/pull/4743>`_
+--------------------------------------------------------------------------------------------------------------------------------
+
+Additional fix for https://github.com/neos/neos-development-collection/pull/4686
+
+Instead of manually declaring ``@exceptionHandler`` we set it automatically for the entry point ;) This will help us detect exceptions which would otherwise be absorbed.
+
+Dont worry, this is only temporary and not at all needed with neos 9
+
+**Upgrade instructions**
+
+
+* Packages: ``Neos``
+
+`TASK: Adjust neos/neos css build to work on apple silicon <https://github.com/neos/neos-development-collection/pull/4691>`_
+----------------------------------------------------------------------------------------------------------------------------
+
+
+
+* Packages: ``Neos``
+
+`TASK: Add tests for FlowQuery `nextUntil`, `prevUntil`, `siblings` and `find` <https://github.com/neos/neos-development-collection/pull/4702>`_
+------------------------------------------------------------------------------------------------------------------------------------------------
+
+The tests of ``nextUntil``, ``prevUntil``, ``siblings`` and ``find`` that were still missing.
+
+**Upgrade instructions**
+
+
+* Packages: ``Neos``
+
+`TASK: Add behat tests for flowQuery cr operations <https://github.com/neos/neos-development-collection/pull/4695>`_
+--------------------------------------------------------------------------------------------------------------------
+
+This should help to ensure that the behvior of flowQuery stays compatible with Neos 9.
+
+
+* Packages: ``Neos``
+
+`TASK: Add support information to package composer.json <https://github.com/neos/neos-development-collection/pull/4690>`_
+-------------------------------------------------------------------------------------------------------------------------
+
+The git url will be useful for automating the split configuration later.
+
+* Packages: ``Neos`` ``Media``
+
+`TASK: 2nd fixup for PR #4641 ContentCollection.feature <https://github.com/neos/neos-development-collection/pull/4686>`_
+-------------------------------------------------------------------------------------------------------------------------
+
+see `#4641 <https://github.com/neos/neos-development-collection/issues/4641>`_
+
+**Upgrade instructions**
+
+
+* Packages: ``Neos``
+
+`TASK: Tweak dependency on neos/twitter-bootstrap <https://github.com/neos/neos-development-collection/pull/4673>`_
+-------------------------------------------------------------------------------------------------------------------
+
+- move the dependency from ``neos/neos`` to ``neos/media-browser``
+- change from ``*`` to ``^3.0.6`` (the first version allowing Neos 7.x)
+
+
+* Packages: ``Neos`` ``Media.Browser``
+
+`TASK: All dependencies within collection point to `self.version` <https://github.com/neos/neos-development-collection/pull/4666>`_
+-----------------------------------------------------------------------------------------------------------------------------------
+
+Re-adjusts dependencies to point to ``self.version`` for easier maintenance.
+
+* Fixes: `#4257 <https://github.com/neos/neos-development-collection/issues/4257>`_
+
+* Packages: ``Neos``
+
+`TASK: Behat-based Fusion tests (v1) <https://github.com/neos/neos-development-collection/pull/4641>`_
+------------------------------------------------------------------------------------------------------
+
+* Related: `#3594 <https://github.com/neos/neos-development-collection/issues/3594>`_
+
+* Packages: ``Neos``
+
+`TASK: Fix documentation builds <https://github.com/neos/neos-development-collection/pull/4607>`_
+-------------------------------------------------------------------------------------------------
+
+… by pinning updated dependencies.
+
+**Review instructions**
+
+Best is to see if the builds succeed on RTD again with this merged…
+
+
+* Packages: ``Neos`` ``Media``
+
+`TASK: Fix paths for Neos.Media RTD rendering setup <https://github.com/neos/neos-development-collection/pull/4568>`_
+---------------------------------------------------------------------------------------------------------------------
+
+The paths need to be from the repo root, not relative to the ``.readthedocs.yaml`` file (it seems).
+
+
+* Packages: ``Neos`` ``Media``
+
+`TASK: Add configuration files for RTD <https://github.com/neos/neos-development-collection/pull/4565>`_
+--------------------------------------------------------------------------------------------------------
+
+This add ``.readthedocs.yaml`` files for the collection (handling ``Neos.Neos``) and for ``neos.Media``, to solve failing documentation rendering.
+
+**Review instructions**
+
+This can be compared to the configuration we have in place for ``Neos.Flow`` in the Flow development collection.
+
+
+* Packages: ``Media``
+
+`TASK: Avoid potential deprecation warnings <https://github.com/neos/neos-development-collection/pull/4409>`_
+-------------------------------------------------------------------------------------------------------------
+
+``trim()`` and ``preg_match()`` expect strings, but Eel with it's loose typing might pass in different types.
+
+
+* Packages: ``Neos`` ``Fusion``
+
+`TASK: add default value for generatorName at kickstart command in SiteKickstarter <https://github.com/neos/neos-development-collection/pull/4214>`_
+----------------------------------------------------------------------------------------------------------------------------------------------------
+
+We tried to reproduce #4053.
+We can't reproduce this issue, but while reproducing we found a flow command prompt, without a default value.
+
+The command ``flow kickstart:site AnySite.Site`` asks for a site generator.
+We added a default value by adding: 
+```php
+array_key_first($selection)
+```
+
+**Review instructions**
+At https://github.com/neos/neos-development-collection/blob/`79dd4e1a26b7ffceb80cc628fdbe570ff6013b16 <https://github.com/neos/neos-development-collection/commit/79dd4e1a26b7ffceb80cc628fdbe570ff6013b16>``_/Neos.CliSetup/Classes/Command/SetupCommandController.php#L165 ``array_key_last`` is used. Should we use ``array_key_last`` too or is ``array_key_first` fine for it?
+
+
+* Packages: ``SiteKickstarter``
+
+`TASK: PHP 8.1 deprecations compatibility <https://github.com/neos/neos-development-collection/pull/4352>`_
+-----------------------------------------------------------------------------------------------------------
+
+This tweaks the code so that it runs without deprecations on PHP 8.1.
+
+**Upgrade instructions**
+
+None.
+
+**Review instructions**
+
+None.
+
+
+* Packages: ``Fusion`` ``Neos``
+
+`TASK: Change variablename in Neos Fusion documentation <https://github.com/neos/neos-development-collection/pull/4367>`_
+-------------------------------------------------------------------------------------------------------------------------
+
+Now use "myString" in documentation, because the return value is a string and not an array. This can lead to confusion under certain circumstances.
+
+**Upgrade instructions**
+
+
+* Packages: ``Neos``
+
+`TASK: Adjust link editor documentation <https://github.com/neos/neos-development-collection/pull/4210>`_
+---------------------------------------------------------------------------------------------------------
+
+Tiny mistake in link editor documentation:
+To refer to another node type the reference **property** type is used, not the reference node type.
+
+
+* Packages: ``Neos``
+
+`TASK: Require all collection packages as self.version <https://github.com/neos/neos-development-collection/pull/4258>`_
+------------------------------------------------------------------------------------------------------------------------
+
+Any dependency from one package in the collection to another should always be "to the same version".
+
+This changes makes sure this is the case by using ``self.version`` as the required version.
+
+See `#4257 <https://github.com/neos/neos-development-collection/issues/4257>`_
+
+**Upgrade instructions**
+
+
+* Packages: ``Neos`` ``Fusion.Afx`` ``NodeTypes.AssetList`` ``NodeTypes.BaseMixins`` ``NodeTypes.ColumnLayouts`` ``NodeTypes.ContentReferences`` ``NodeTypes.Form`` ``NodeTypes.Html`` ``NodeTypes.Navigation``
+
+`TASK: Apply fixes from StyleCI <https://github.com/neos/neos-development-collection/pull/4138>`_
+-------------------------------------------------------------------------------------------------
+
+This pull request applies code style fixes from an analysis carried out by `StyleCI <https://github.styleci.io>`_.
+
+---
+
+For more information, click `here <https://github.styleci.io/analyses/o72VmP>`_.
+
+* Packages: ``Neos`` ``ContentRepository`` ``Fusion.Afx`` ``Fusion`` ``Media`` ``SiteKickstarter``
+
+`DOCS: Fix indentation of ImageEditor options <https://github.com/neos/neos-development-collection/pull/4920>`_
+---------------------------------------------------------------------------------------------------------------
+
+
+
+* Packages: ``Neos``
+
+`Detailed log <https://github.com/neos/neos-development-collection/compare/8.3.0...8.4.0>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

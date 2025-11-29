@@ -69,7 +69,9 @@ class AfxNodeList
 
                 $contents[] = [
                     'type' => 'expression',
-                    'payload' => Expression::parse($lexer)
+                    'from' => $lexer->getCharacterPosition() + 1,
+                    'payload' => Expression::parse($lexer),
+                    'to' => $lexer->getCharacterPosition() - ($lexer->isEnd() ? 1 : 2),
                 ];
                 $currentText = '';
                 continue;

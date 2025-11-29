@@ -599,12 +599,16 @@ trait ConstraintChecks
     }
 
     /**
+     * @param ?NodeAggregateId $exclusivelyAllowedNodeAggregateId in some cases, aggregates of a given ID
+     *      are allowed to cover this name. E.g. in the move case, if a node is moved (back) to its other variants,
+     *      the name does not need to be reserved for future variants because the moved node already is that exact one
      * @throws NodeNameIsAlreadyCovered
      */
     protected function requireNodeNameToBeUncovered(
         ContentGraphInterface $contentGraph,
         ?NodeName $nodeName,
         NodeAggregateId $parentNodeAggregateId,
+        ?NodeAggregateId $exclusivelyAllowedNodeAggregateId = null,
     ): void {
         if ($nodeName === null) {
             return;
@@ -614,7 +618,10 @@ trait ConstraintChecks
             $parentNodeAggregateId,
             $nodeName
         );
-        if ($childNodeAggregate instanceof NodeAggregate) {
+        if (
+            $childNodeAggregate instanceof NodeAggregate
+            && ($exclusivelyAllowedNodeAggregateId === null || !$childNodeAggregate->nodeAggregateId->equals($exclusivelyAllowedNodeAggregateId))
+        ) {
             throw new NodeNameIsAlreadyCovered(
                 'Node name "' . $nodeName->value . '" is already covered by node aggregate "'
                     . $childNodeAggregate->nodeAggregateId->value . '".'

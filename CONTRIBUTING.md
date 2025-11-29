@@ -48,7 +48,7 @@ We are currently in the process to create the identity for the Neos brand. If yo
 
 ### You have other skills that you think can be useful for the community?
 
-Who knows, some of your skills are not in this list, but can be really useful for the community. You are a project manager, an event organizer, a brewer, a team builder and yoga trainer and you want to support an open source community, connect with us: **hello@neos.io** 
+Who knows, some of your skills are not in this list, but can be really useful for the community. You are a project manager, an event organizer, a brewer, a team builder and yoga trainer and you want to support an open source community, connect with us: **hello@neos.io**
 
 We certainly have a something that matches your dream job and where you can help the project.
 
@@ -67,7 +67,7 @@ We spend our time on the following tools, you should have a good understanding o
 
 - PHPunit (unit and functional testing)
 - Behat (functional testing)
-- GIT 
+- GIT
 
 You can find us on [Github](https://github.com/neos) and we also use it as our main issue tracker.
 
@@ -101,15 +101,15 @@ If you have any questions, [we are happy to help you](https://www.neos.io/contac
 If you want to contribute to Neos and want to set up a development environment, then follow these steps:
 
 ```shell
-composer create-project neos/neos-development-distribution neos-development 8.3.x-dev --keep-vcs
+composer create-project neos/neos-development-distribution neos-development 9.0.x-dev --keep-vcs
 ```
 
 Note the **-distribution** repository you create a project from, instead of just checking out this repository.
 
-If you need a different branch, you can either use it from the start (replace the ``8.3.x-dev`` by ``9.0.x-dev`` or whatever you need), or switch after checkout (just make sure to run composer update afterwards to get matching dependencies installed.) In a nutshell, to switch the branch you intend to work on, run:
+If you need a different branch, you can either use it from the start (replace the ``9.0.x-dev`` by ``8.3.x-dev`` or whatever you need), or switch after checkout (just make sure to run composer update afterwards to get matching dependencies installed.) In a nutshell, to switch the branch you intend to work on, run:
 
 ```shell
-git checkout 9.0 && composer update
+git checkout 8.3 && composer update
 ```
 
 The code of the CMS can then be found inside `Packages/Neos`, which itself is the neos-development-collection Git repository. You commit changes and create pull requests from this repository.

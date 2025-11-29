@@ -7,6 +7,7 @@
     <file>./Neos.ContentRepository.BehavioralTests/Classes</file>
     <file>./Neos.ContentRepository.TestSuite/Classes</file>
     <file>./Neos.ContentRepository.Core/Classes</file>
+    <file>./Neos.ContentRepository.Dbal/Classes</file>
     <file>./Neos.Neos/Classes</file>
 
     <rule ref="PSR12">

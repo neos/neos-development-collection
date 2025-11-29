@@ -1006,9 +1006,9 @@
         <source>Outdent</source>
         <target state="final">Anular indentación</target>
       </trans-unit>
-      <trans-unit id="ckeditor__toolbar__indent" xml:space="preserve" approved="yes">
+      <trans-unit id="ckeditor__toolbar__indent" xml:space="preserve" approved="no">
         <source>Indent</source>
-        <target state="final">Indentado</target>
+        <target state="translated">Sangría</target>
       </trans-unit>
       <trans-unit id="createNew" xml:space="preserve">
         <source>Create new</source>

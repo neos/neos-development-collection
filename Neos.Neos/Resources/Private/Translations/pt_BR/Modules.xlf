@@ -238,7 +238,7 @@
       </trans-unit>
       <trans-unit id="users.roles.directlyAssignedPrivileges" xml:space="preserve">
         <source>Directly assigned privilege</source>
-        <target state="needs-translation">Directly assigned privilege</target>
+        <target state="translated">Privilégio diretamente atribuído</target>
       </trans-unit>
       <trans-unit id="users.name" xml:space="preserve">
         <source>Name</source>
@@ -246,7 +246,7 @@
       </trans-unit>
       <trans-unit id="users.roles.fromParentRole" xml:space="preserve">
         <source>From Parent Role "{role}"</source>
-        <target state="needs-translation">From Parent Role "{role}"</target>
+        <target state="translated">Do papel dos pais "{role}"</target>
       </trans-unit>
       <trans-unit id="users.accountsAndRoles" xml:space="preserve">
         <source>Accounts and Roles</source>
@@ -262,11 +262,11 @@
       </trans-unit>
       <trans-unit id="users.tooltip.editDisallowed" xml:space="preserve">
         <source>Not enough privileges to edit this user</source>
-        <target state="needs-translation">Not enough privileges to edit this user</target>
+        <target state="needs-translation">Não há privilégios suficientes para editar este usuário</target>
       </trans-unit>
       <trans-unit id="users.tooltip.deleteDisallowed" xml:space="preserve">
         <source>Not enough privileges to delete this user</source>
-        <target state="needs-translation">Not enough privileges to delete this user</target>
+        <target state="needs-translation">Não há privilégios suficientes para excluir este usuário</target>
       </trans-unit>
       <trans-unit id="users.tooltip.delete" xml:space="preserve">
         <source>Delete user</source>
@@ -595,11 +595,11 @@ Clique em um dos nós para apenas ver seus fallbacks e variantes. Clique novamen
       </trans-unit>
       <trans-unit id="configuration.anErrorOccurredDuringValidationOfTheConfiguration.title" xml:space="preserve">
         <source>An error occurred during validation of the configuration.</source>
-        <target state="needs-translation">An error occurred during validation of the configuration.</target>
+        <target state="needs-translation">Um erro ocorreu durante a validação da configuração.</target>
       </trans-unit>
       <trans-unit id="configuration.configurationTypeNotFound.body" xml:space="preserve">
         <source>Configuration type not found.</source>
-        <target state="needs-translation">Configuration type not found.</target>
+        <target state="needs-translation">Tipo de configuração não encontrado.</target>
       </trans-unit>
       <trans-unit id="sites.sitePackageNotFound.title" xml:space="preserve">
         <source>Site package not found</source>
@@ -607,7 +607,7 @@ Clique em um dos nós para apenas ver seus fallbacks e variantes. Clique novamen
       </trans-unit>
       <trans-unit id="sites.sitePackageNotFound.body" xml:space="preserve">
         <source>The site package with key "{0}" was not found.</source>
-        <target state="needs-translation">The site package with key "{0}" was not found.</target>
+        <target state="translated">O pacote do site com chave "{0}" não foi encontrado.</target>
       </trans-unit>
       <trans-unit id="sites.update.title" xml:space="preserve">
         <source>Update</source>
@@ -615,7 +615,7 @@ Clique em um dos nós para apenas ver seus fallbacks e variantes. Clique novamen
       </trans-unit>
       <trans-unit id="sites.update.body" xml:space="preserve">
         <source>The site "{0}" has been updated.</source>
-        <target state="needs-translation">The site "{0}" has been updated.</target>
+        <target state="needs-translation">O site "{0}" foi atualizado.</target>
       </trans-unit>
       <trans-unit id="sites.siteCreationError.siteWithSiteNodeNameAlreadyExists.title" xml:space="preserve">
         <source>Site creation error</source>
@@ -623,7 +623,7 @@ Clique em um dos nós para apenas ver seus fallbacks e variantes. Clique novamen
       </trans-unit>
       <trans-unit id="sites.siteCreationError.siteWithSiteNodeNameAlreadyExists.body" xml:space="preserve">
         <source>Error: A site with siteNodeName "{0}" already exists</source>
-        <target state="needs-translation">Error: A site with siteNodeName "{0}" already exists</target>
+        <target state="translated">Erro: Um site com siteNodeName "{0}" já existe</target>
       </trans-unit>
       <trans-unit id="sites.siteCreationError.givenNodeTypeNotFound.title" xml:space="preserve">
         <source>Site creation error</source>
@@ -631,7 +631,7 @@ Clique em um dos nós para apenas ver seus fallbacks e variantes. Clique novamen
       </trans-unit>
       <trans-unit id="sites.siteCreationError.givenNodeTypeNotFound.body" xml:space="preserve">
         <source>Error: The given node type "{0}" was not found</source>
-        <target state="needs-translation">Error: The given node type "{0}" was not found</target>
+        <target state="needs-translation">Erro: O tipo de nó "{0}" não foi encontrado</target>
       </trans-unit>
       <trans-unit id="sites.siteCreationError.givenNodeTypeNotBasedOnSuperType.title" xml:space="preserve">
         <source>Site creation error</source>
@@ -667,15 +667,15 @@ Clique em um dos nós para apenas ver seus fallbacks e variantes. Clique novamen
       </trans-unit>
       <trans-unit id="sites.siteDeactivated.body" xml:space="preserve">
         <source>The site "{0}" has been deactivated.</source>
-        <target state="needs-translation">The site "{0}" has been deactivated.</target>
+        <target state="needs-translation">O site "{0}" foi desativado.</target>
       </trans-unit>
       <trans-unit id="sites.domainUpdated.title" xml:space="preserve">
         <source>Domain updated</source>
-        <target state="needs-translation">Domain updated</target>
+        <target state="translated">Domínio atualizado</target>
       </trans-unit>
       <trans-unit id="sites.domainUpdated.body" xml:space="preserve">
         <source>The domain "{0}" has been updated.</source>
-        <target state="needs-translation">The domain "{0}" has been updated.</target>
+        <target state="translated">O domínio "{0}" foi atualizado.</target>
       </trans-unit>
       <trans-unit id="sites.domainCreated.title" xml:space="preserve">
         <source>Domain created</source>

@@ -151,7 +151,6 @@ jobs:
       - name: Run behat tests
         if: ${{matrix.dependencies != 'lowest' }}
         run: |
-          FLOW_CONTEXT=Testing/Behat ./flow behat:setup
           FLOW_CONTEXT=Testing/Behat ./flow doctrine:create
           FLOW_CONTEXT=Testing/Behat ./flow doctrine:migrationversion --add --version all
           bin/behat --stop-on-failure -f progress -c Packages/Neos/Neos.Neos/Tests/Behavior/behat.yml.dist

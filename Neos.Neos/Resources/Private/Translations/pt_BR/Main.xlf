@@ -5,7 +5,7 @@
       <!-- general translations like button -->
       <trans-unit id="autoPublish" xml:space="preserve">
         <source>Auto-Publish</source>
-        <target state="translated">Auto-publicar</target>
+        <target state="translated">Auto-Publicar</target>
       </trans-unit>
       <trans-unit id="autoPublishTo" xml:space="preserve">
         <source>Auto-Publish to {0}</source>
@@ -21,7 +21,7 @@
       </trans-unit>
       <trans-unit id="applyChanges" xml:space="preserve">
         <source>Apply changes</source>
-        <target state="translated">Aplicar alterações</target>
+        <target state="translated">Aplicar mudanças</target>
       </trans-unit>
       <trans-unit id="cancel" xml:space="preserve">
         <source>Cancel</source>
@@ -73,7 +73,7 @@
       </trans-unit>
       <trans-unit id="delete" xml:space="preserve">
         <source>Delete</source>
-        <target state="translated">Excluir</target>
+        <target state="translated">Deletar</target>
       </trans-unit>
       <trans-unit id="deleteElement" xml:space="preserve">
         <source>Yes, delete the element</source>
@@ -81,7 +81,7 @@
       </trans-unit>
       <trans-unit id="deleteElementTitle" xml:space="preserve">
         <source>Delete the element</source>
-        <target state="translated">Excluir o elemento</target>
+        <target state="translated">Sim, excluir o elemento</target>
       </trans-unit>
       <trans-unit id="discard" xml:space="preserve">
         <source>Discard</source>
@@ -1045,6 +1045,18 @@
       <trans-unit id="relativePathCaption" xml:space="preserve">
         <source>Relative Path</source>
         <target state="needs-translation">Caminho relativo</target>
+      </trans-unit>
+      <trans-unit id="impersonate.error.restoreUser" xml:space="preserve" approved="no">
+        <source>Could not switch back to the original user.</source>
+        <target state="translated">Não pode voltar para o usuário original.</target>
+      </trans-unit>
+      <trans-unit id="impersonate.tooltip.impersonateUserButton" xml:space="preserve" approved="no">
+        <source>Login as user</source>
+        <target state="translated">Login como usuário</target>
+      </trans-unit>
+      <trans-unit id="impersonate.error.impersonateUser" xml:space="preserve" approved="no">
+        <source>Could not switch to the selected user.</source>
+        <target state="translated">Não foi possível mudar para o usuário selecionado.</target>
       </trans-unit>
     </body>
   </file>

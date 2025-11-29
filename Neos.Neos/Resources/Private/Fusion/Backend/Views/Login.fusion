@@ -106,6 +106,8 @@ prototype(Neos.Neos:Component.Login.Form) < prototype(Neos.Fusion:Component) {
                     attributes.id="username"
                     attributes.placeholder={I18n.id('username').value('Username').package('Neos.Neos').source('Main')}
                     attributes.class="neos-span12"
+                    attributes.autofocus="autofocus"
+                    attributes.autofocus.@if.usernameNotSet={!props.username}
                     attributes.aria-label={I18n.id('username').value('Username').package('Neos.Neos').source('Main')}
                 />
             </div>

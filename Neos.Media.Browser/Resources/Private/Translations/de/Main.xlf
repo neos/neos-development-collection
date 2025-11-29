@@ -576,6 +576,14 @@
         <source>Create missing variants</source>
         <target state="translated">Fehlende Varianten erstellen</target>
       </trans-unit>
+      <trans-unit id="assetImport.importInfo" xml:space="preserve">
+        <source>Asset is being imported. Please wait.</source>
+        <target state="translated">Die Datei wird importiert. Bitte warten.</target>
+      </trans-unit>
+      <trans-unit id="assetImport.importInProcess" xml:space="preserve">
+        <source>Import still in process. Please wait.</source>
+        <target state="translated">Der Import ist noch nicht abgeschlossen. Bitte warten.</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

@@ -767,6 +767,8 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
             ),
             ExpectedVersion::ANY()
         );
+
+        yield $this->removeContentStreamWithoutConstraintChecks($workspace->currentContentStreamId);
     }
 
     /**

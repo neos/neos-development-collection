@@ -53,6 +53,11 @@ class Lexer
         $this->characterPosition = 0;
     }
 
+    public function getCharacterPosition(): int
+    {
+        return $this->characterPosition;
+    }
+
     /**
      * Checks if the current character is whitespace
      *

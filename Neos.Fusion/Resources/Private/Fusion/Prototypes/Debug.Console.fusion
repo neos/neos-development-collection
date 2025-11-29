@@ -7,7 +7,7 @@
 #
 prototype(Neos.Fusion:Debug.Console) {
   @class = 'Neos\\Fusion\\FusionObjects\\DebugConsoleImplementation'
-  title = ${node ? node.label : (documentNode ? documentNode.label : '')}
+  title = ${node ? Neos.Node.label(node) : (documentNode ? Neos.Node.label(documentNode) : '')}
   method = 'log'
   value = ''
   content = ${value}

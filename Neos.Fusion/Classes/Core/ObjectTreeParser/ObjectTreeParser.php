@@ -55,7 +55,7 @@ class ObjectTreeParser
 
     protected ?string $contextPathAndFilename;
 
-    private function __construct(Lexer $lexer, ?string $contextPathAndFilename)
+    protected function __construct(Lexer $lexer, ?string $contextPathAndFilename)
     {
         $this->lexer = $lexer;
         $this->contextPathAndFilename = $contextPathAndFilename;

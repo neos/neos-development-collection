@@ -15,6 +15,7 @@
     "require": {
         "neos/flow": "~9.0.0",
         "neos/contentrepository-core": "self.version",
+        "neos/contentrepository-dbal": "self.version",
         "neos/contentrepositoryregistry-storageclient": "self.version",
         "neos/contentrepository-structureadjustment": "self.version",
         "neos/contentrepository-nodemigration": "self.version",

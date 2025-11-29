@@ -67,6 +67,11 @@ final class EventExportProcessor implements ProcessorInterface
      */
     private array $nodeReferencesWereSetEvents = [];
 
+    /**
+     * @var SubtreeWasTagged[]
+     */
+    private array $subtreeWasTaggedEvents = [];
+
     private int $numberOfExportedEvents = 0;
 
     /**
@@ -106,6 +111,10 @@ final class EventExportProcessor implements ProcessorInterface
                 }
             }
             $this->processNodeData($context, $nodeDataRow);
+        }
+        // Disable nodes, when the full import is done.
+        foreach ($this->subtreeWasTaggedEvents as $subtreeWasTaggedEvent) {
+            $this->exportEvent($subtreeWasTaggedEvent);
         }
         // Set References, now when the full import is done.
         foreach ($this->nodeReferencesWereSetEvents as $nodeReferencesWereSetEvent) {
@@ -274,7 +283,8 @@ final class EventExportProcessor implements ProcessorInterface
         }
         // nodes are hidden via SubtreeWasTagged event
         if ($this->isNodeHidden($nodeDataRow)) {
-            $this->exportEvent(new SubtreeWasTagged($this->workspaceName, $this->contentStreamId, $nodeAggregateId, $this->interDimensionalVariationGraph->getSpecializationSet($originDimensionSpacePoint->toDimensionSpacePoint(), true, $this->visitedNodes->alreadyVisitedOriginDimensionSpacePoints($nodeAggregateId)->toDimensionSpacePointSet()), NeosSubtreeTag::disabled()));
+            // Put event at the end of the export, so variants created after this node are not disabled on variation
+            $this->subtreeWasTaggedEvents[] = new SubtreeWasTagged($this->workspaceName, $this->contentStreamId, $nodeAggregateId, $this->interDimensionalVariationGraph->getSpecializationSet($originDimensionSpacePoint->toDimensionSpacePoint(), true, $this->visitedNodes->alreadyVisitedOriginDimensionSpacePoints($nodeAggregateId)->toDimensionSpacePointSet()), NeosSubtreeTag::disabled());
         }
 
         if (!$serializedPropertyValuesAndReferences->references->isEmpty()) {

@@ -2,9 +2,10 @@
 <xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
   <file original="" product-name="Neos.NodeTypes.ColumnLayouts" source-language="en" datatype="plaintext" target-language="nl">
     <body>
-      <trans-unit id="ui.label" xml:space="preserve" approved="yes">
-				<source>Four column content</source>
-			<target state="final">Vier koloms inhoud</target></trans-unit>
+      <trans-unit id="ui.label" xml:space="preserve" approved="no">
+        <source>Four column content</source>
+        <target state="translated">Vier kolommen</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

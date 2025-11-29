@@ -39,6 +39,7 @@ use Neos\Neos\FrontendRouting\Exception\InvalidShortcutException;
 use Neos\Neos\FrontendRouting\Exception\NodeNotFoundException;
 use Neos\Neos\FrontendRouting\Exception\ResolvedSiteNotFoundException;
 use Neos\Neos\FrontendRouting\Exception\TargetSiteNotFoundException;
+use Neos\Neos\FrontendRouting\Projection\DocumentNodeInfo;
 use Neos\Neos\FrontendRouting\Projection\DocumentUriPathFinder;
 use Neos\Neos\FrontendRouting\SiteDetection\SiteDetectionFailedException;
 use Neos\Neos\FrontendRouting\SiteDetection\SiteDetectionMiddleware;
@@ -141,8 +142,6 @@ use Psr\Http\Message\UriInterface;
  * if needed.
  *
  * Then, the {@see DimensionResolverInterface} of the target site is called for adjusting the URL.
- *
- * @Flow\Scope("singleton")
  */
 final class EventSourcedFrontendNodeRoutePartHandler extends AbstractRoutePart implements
     DynamicRoutePartInterface,
@@ -193,6 +192,11 @@ final class EventSourcedFrontendNodeRoutePartHandler extends AbstractRoutePart i
         $uriPathSuffix = $this->options['uriPathSuffix'] ?? $resolvedSite->getConfiguration()->uriPathSuffix;
         $remainingRequestPath = $this->truncateRequestPathAndReturnRemainder($requestPath, $uriPathSuffix);
 
+        if ($remainingRequestPath === false) {
+            // no split string found, so we cannot match this request path
+            return false;
+        }
+
         $dimensionResolvingResult = $this->delegatingResolver->fromRequestToDimensionSpacePoint(
             RequestToDimensionSpacePointContext::fromUriPathAndRouteParametersAndResolvedSite(
                 $requestPath,
@@ -214,6 +218,10 @@ final class EventSourcedFrontendNodeRoutePartHandler extends AbstractRoutePart i
                 $siteDetectionResult,
                 $contentRepository
             );
+
+            if ($matchResult === false) {
+                return false;
+            }
         } catch (NodeNotFoundException $exception) {
             // we silently swallow the Node Not Found case, as you'll see this in the server log if it interests you
             // (and other routes could still handle this).
@@ -228,7 +236,7 @@ final class EventSourcedFrontendNodeRoutePartHandler extends AbstractRoutePart i
     /**
      * @param string $uriPath
      * @param DimensionSpacePoint $dimensionSpacePoint
-     * @return MatchResult
+     * @return MatchResult|false returns the MatchResult that represents the node that matched the given $uriPath – or false if the found node does not match the constraints
      * @throws NodeNotFoundException
      */
     private function matchUriPath(
@@ -236,7 +244,7 @@ final class EventSourcedFrontendNodeRoutePartHandler extends AbstractRoutePart i
         DimensionSpacePoint $dimensionSpacePoint,
         SiteDetectionResult $siteDetectionResult,
         ContentRepository $contentRepository
-    ): MatchResult {
+    ): MatchResult|false {
         $uriPath = trim($uriPath, '/');
         $documentUriPathFinder = $contentRepository->projectionState(DocumentUriPathFinder::class);
         $nodeInfo = $documentUriPathFinder->getEnabledBySiteNodeNameUriPathAndDimensionSpacePointHash(
@@ -244,6 +252,9 @@ final class EventSourcedFrontendNodeRoutePartHandler extends AbstractRoutePart i
             $uriPath,
             $dimensionSpacePoint->hash
         );
+        if (!$this->nodeTypeIsAllowed($nodeInfo, $contentRepository)) {
+            return false;
+        }
         $nodeAddress = NodeAddress::create(
             $contentRepository->id,
             WorkspaceName::forLive(),
@@ -283,6 +294,10 @@ final class EventSourcedFrontendNodeRoutePartHandler extends AbstractRoutePart i
 
         try {
             $resolveResult = $this->resolveNodeAddress($nodeAddress, $currentRequestSiteDetectionResult->siteNodeName);
+
+            if ($resolveResult === false) {
+                return false;
+            }
         } catch (NodeNotFoundException | TargetSiteNotFoundException | InvalidShortcutException $exception) {
             // TODO log exception ... yes todo
             return false;
@@ -306,7 +321,7 @@ final class EventSourcedFrontendNodeRoutePartHandler extends AbstractRoutePart i
     private function resolveNodeAddress(
         NodeAddress $nodeAddress,
         SiteNodeName $currentRequestSiteNodeName
-    ): ResolveResult {
+    ): ResolveResult|false {
         $contentRepository = $this->contentRepositoryRegistry->get(
             $nodeAddress->contentRepositoryId
         );
@@ -315,6 +330,9 @@ final class EventSourcedFrontendNodeRoutePartHandler extends AbstractRoutePart i
             $nodeAddress->aggregateId,
             $nodeAddress->dimensionSpacePoint->hash
         );
+        if (!$this->nodeTypeIsAllowed($nodeInfo, $contentRepository)) {
+            return false;
+        }
         if ($nodeInfo->isRemoved()) {
             throw new NodeNotFoundException(sprintf(
                 'The resolved node for address %s in dimension %s is removed',
@@ -358,7 +376,10 @@ final class EventSourcedFrontendNodeRoutePartHandler extends AbstractRoutePart i
     }
 
 
-    private function truncateRequestPathAndReturnRemainder(string &$requestPath, string $uriPathSuffix): string
+    /**
+     * @return string|false the remaining request path or false if the splitString was not found in the $requestPath
+     */
+    private function truncateRequestPathAndReturnRemainder(string &$requestPath, string $uriPathSuffix): false|string
     {
         if ($uriPathSuffix !== '') {
             $suffixPosition = strpos($requestPath, $uriPathSuffix);
@@ -372,7 +393,7 @@ final class EventSourcedFrontendNodeRoutePartHandler extends AbstractRoutePart i
         }
         $splitStringPosition = strpos($requestPath, $this->splitString);
         if ($splitStringPosition === false) {
-            return '';
+            return false;
         }
         $fullRequestPath = $requestPath;
         $requestPath = substr($requestPath, 0, $splitStringPosition);
@@ -402,6 +423,35 @@ final class EventSourcedFrontendNodeRoutePartHandler extends AbstractRoutePart i
             $uriConstraints = $uriConstraints->withFragment($uri->getFragment());
         }
         return new ResolveResult($uri->getPath(), $uriConstraints);
+    }
+
+    /**
+     * Whether the given node is allowed according to the "nodeType" option and the "onlyMatchSiteNodes" option.
+     */
+    private function nodeTypeIsAllowed(
+        DocumentNodeInfo $nodeInfo,
+        ContentRepository $contentRepository,
+    ): bool {
+        $nodeTypeManager = $contentRepository->getNodeTypeManager();
+
+        $allowedNodeTypeName = $this->options['nodeType'] ?? null;
+        if (
+            $allowedNodeTypeName && !$nodeTypeManager
+            ->getNodeType($nodeInfo->getNodeTypeName())
+            ?->isOfType($allowedNodeTypeName)
+        ) {
+            return false;
+        }
+
+        $onlyMatchSiteNodes = $this->options['onlyMatchSiteNodes'] ?? false;
+        if (
+            $onlyMatchSiteNodes && !$nodeTypeManager
+                ->getNodeType($nodeInfo->getNodeTypeName())
+                ?->isOfType('Neos.Neos:Site')
+        ) {
+            return false;
+        }
+        return true;
     }
 
     public function setSplitString($splitString): void

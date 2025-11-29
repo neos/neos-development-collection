@@ -88,9 +88,9 @@
         <source>Private</source>
         <target state="final">ឯកជន</target>
       </trans-unit>
-      <trans-unit id="workspaces.workspace.visibility.private.help" xml:space="preserve" approved="yes">
-        <source>Only reviewers and administrators can access and modify this workspace</source>
-        <target state="final">មាន​តែអ្នក​ត្រួត​ពិនិត្យនិងអ្នកគ្រប់គ្រងអាចចូលដំណើរការនិងកែប្រែតំបន់ការងារនេះ</target>
+      <trans-unit id="workspaces.workspace.visibility.private.help" xml:space="preserve" approved="no">
+        <source>Only the workspace owner can access and modify this workspace</source>
+        <target state="needs-translation">មាន​តែអ្នក​ត្រួត​ពិនិត្យនិងអ្នកគ្រប់គ្រងអាចចូលដំណើរការនិងកែប្រែតំបន់ការងារនេះ</target>
       </trans-unit>
       <trans-unit id="workspaces.workspace.visibility.shared" xml:space="preserve" approved="yes">
         <source>Shared</source>

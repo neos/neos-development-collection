@@ -33,7 +33,7 @@
       </trans-unit>
       <trans-unit id="workspaces.deleteWorkspace" xml:space="preserve" approved="no">
         <source>Delete workspace "{0}"</source>
-        <target state="needs-translation">Удалить рабочую область</target>
+        <target state="translated">Удалить рабочее место "{0}"</target>
       </trans-unit>
       <trans-unit id="workspaces.editWorkspace" xml:space="preserve" approved="yes">
         <source>Edit workspace</source>
@@ -87,9 +87,9 @@
         <source>Private</source>
         <target state="final">Приватный</target>
       </trans-unit>
-      <trans-unit id="workspaces.workspace.visibility.private.help" xml:space="preserve" approved="yes">
-        <source>Only reviewers and administrators can access and modify this workspace</source>
-        <target state="final">Только рецензенты и администраторы имеют доступ к этой рабочей области и могут изменять её</target>
+      <trans-unit id="workspaces.workspace.visibility.private.help" xml:space="preserve" approved="no">
+        <source>Only the workspace owner can access and modify this workspace</source>
+        <target state="needs-translation">Только рецензенты и администраторы имеют доступ к этой рабочей области и могут изменять её</target>
       </trans-unit>
       <trans-unit id="workspaces.workspace.visibility.shared" xml:space="preserve" approved="yes">
         <source>Shared</source>
@@ -255,19 +255,19 @@
       </trans-unit>
       <trans-unit id="workspaces.reviewWorkspace.label" xml:space="preserve">
         <source>Review</source>
-        <target state="needs-translation">Проверить</target>
+        <target state="translated">Проверить</target>
       </trans-unit>
       <trans-unit id="applyChanges" xml:space="preserve">
         <source>Apply changes</source>
-        <target state="needs-translation">Применить изменения</target>
+        <target state="translated">Применить изменения</target>
       </trans-unit>
       <trans-unit id="workspaces.workspace.lastModified" xml:space="preserve">
         <source>Last modified</source>
-        <target state="needs-translation">Дата последнего изменения</target>
+        <target state="translated">Последний раз изменено</target>
       </trans-unit>
       <trans-unit id="workspaces.workspace.status" xml:space="preserve">
         <source>Status</source>
-        <target state="needs-translation">Статус</target>
+        <target state="translated">Состояние</target>
       </trans-unit>
       <trans-unit id="workspaces.dialog.rebase.node" xml:space="preserve">
         <source>Node</source>

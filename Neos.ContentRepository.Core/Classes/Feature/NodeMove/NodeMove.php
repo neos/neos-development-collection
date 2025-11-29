@@ -119,6 +119,7 @@ trait NodeMove
                 $contentGraph,
                 $nodeAggregate->nodeName,
                 $command->newParentNodeAggregateId,
+                $command->nodeAggregateId,
             );
             if ($nodeAggregate->nodeName) {
                 $this->requireNodeTypeNotToDeclareTetheredChildNodeName($newParentNodeAggregate->nodeTypeName, $nodeAggregate->nodeName);

@@ -259,7 +259,7 @@
     <f:if condition="!{activeAssetSource.readOnly}">
     <div id="dropzone" class="neos-upload-area">
         <div title="{neos:backend.translate(id: 'maxUploadSize', arguments: {0: humanReadableMaximumFileUploadSize}, package: 'Neos.Media.Browser')}" data-neos-toggle="tooltip">{neos:backend.translate(id: 'dropFiles', package: 'Neos.Media.Browser')}<i class="fas fa-arrow-down"></i><span> {neos:backend.translate(id: 'clickToUpload', package: 'Neos.Media.Browser')}</span></div>
-        <f:form method="post" action="create" addQueryString="true" object="{asset}" objectName="asset" enctype="multipart/form-data">
+        <f:form method="post" action="create" format="json" addQueryString="true" object="{asset}" objectName="asset" enctype="multipart/form-data">
             <f:form.upload id="resource" property="resource" additionalAttributes="{required: 'required', accept: constraints.mediaTypeAcceptAttribute}" />
             <f:render partial="ConstraintsHiddenFields" arguments="{constraints: constraints}" />
         </f:form>
@@ -325,7 +325,7 @@
     <script type="text/javascript" src="{f:uri.resource(package: 'Neos.Media.Browser', path: 'Libraries/jquery-ui/js/jquery-ui-1.10.3.custom.js')}"></script>
     <f:if condition="!{activeAssetSource.readOnly}">
     <script type="text/javascript">
-        var uploadUrl = "{f:uri.action(action: 'upload', addQueryString: true, additionalParams: {__csrfToken: '{f:security.csrfToken()}'}, absolute: true) -> f:format.raw()}";
+        var uploadUrl = "{f:uri.action(action: 'upload', format: 'json', addQueryString: true, additionalParams: {__csrfToken: '{f:security.csrfToken()}'}, absolute: true) -> f:format.raw()}";
         var maximumFileUploadSize = {maximumFileUploadSize};
 <![CDATA[
         if (window.parent !== window && window.parent.NeosMediaBrowserCallbacks && window.parent.NeosMediaBrowserCallbacks.refreshThumbnail) {

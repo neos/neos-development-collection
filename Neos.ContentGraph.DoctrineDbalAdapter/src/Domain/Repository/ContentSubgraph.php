@@ -147,24 +147,24 @@ final class ContentSubgraph implements ContentSubgraphInterface
 
     public function findReferences(NodeAggregateId $nodeAggregateId, FindReferencesFilter $filter): References
     {
-        $queryBuilder = $this->buildReferencesQuery(false, $nodeAggregateId, $filter);
+        $queryBuilder = $this->buildReferencesQuery($nodeAggregateId, $filter);
         return $this->fetchReferences($queryBuilder);
     }
 
     public function countReferences(NodeAggregateId $nodeAggregateId, CountReferencesFilter $filter): int
     {
-        return $this->fetchCount($this->buildReferencesQuery(false, $nodeAggregateId, $filter));
+        return $this->fetchCount($this->buildReferencesQuery($nodeAggregateId, $filter));
     }
 
     public function findBackReferences(NodeAggregateId $nodeAggregateId, FindBackReferencesFilter $filter): References
     {
-        $queryBuilder = $this->buildReferencesQuery(true, $nodeAggregateId, $filter);
+        $queryBuilder = $this->buildBackreferencesQuery($nodeAggregateId, $filter);
         return $this->fetchReferences($queryBuilder);
     }
 
     public function countBackReferences(NodeAggregateId $nodeAggregateId, CountBackReferencesFilter $filter): int
     {
-        return $this->fetchCount($this->buildReferencesQuery(true, $nodeAggregateId, $filter));
+        return $this->fetchCount($this->buildBackreferencesQuery($nodeAggregateId, $filter));
     }
 
     public function findNodeById(NodeAggregateId $nodeAggregateId): ?Node
@@ -497,32 +497,45 @@ final class ContentSubgraph implements ContentSubgraphInterface
         return $queryBuilder;
     }
 
-    private function buildReferencesQuery(bool $backReferences, NodeAggregateId $nodeAggregateId, FindReferencesFilter|FindBackReferencesFilter|CountReferencesFilter|CountBackReferencesFilter $filter): QueryBuilder
+    private function buildReferencesQuery(NodeAggregateId $nodeAggregateId, FindReferencesFilter|CountReferencesFilter $filter): QueryBuilder
     {
-        $sourceTablePrefix = $backReferences ? 'd' : 's';
-        $destinationTablePrefix = $backReferences ? 's' : 'd';
+        $subselectParameters = [
+            'nodeAggregateId' => $nodeAggregateId->value,
+            'contentStreamId' => $this->contentStreamId->value,
+            'dimensionSpacePointHash' => $this->dimensionSpacePoint->hash,
+        ];
+        $subtreeTagConstraints = '';
+        $i = 0;
+        foreach ($this->visibilityConstraints->excludedSubtreeTags as $excludedTag) {
+            $subtreeTagConstraints .= ' AND NOT JSON_CONTAINS_PATH(sh.subtreetags, \'one\', :sourceTagPath' . $i . ')';
+            $subselectParameters['sourceTagPath' . $i] = '$."' . $excludedTag->value . '"';
+            $i++;
+        }
+
         $queryBuilder = $this->createQueryBuilder()
-            ->select("{$destinationTablePrefix}n.*, {$destinationTablePrefix}h.subtreetags, r.name AS referencename, r.properties AS referenceproperties")
-            ->from($this->nodeQueryBuilder->tableNames->hierarchyRelation(), 'sh')
-            ->innerJoin('sh', $this->nodeQueryBuilder->tableNames->node(), 'sn', 'sn.relationanchorpoint = sh.childnodeanchor')
-            ->innerJoin('sh', $this->nodeQueryBuilder->tableNames->referenceRelation(), 'r', 'r.nodeanchorpoint = sn.relationanchorpoint')
-            ->innerJoin('sh', $this->nodeQueryBuilder->tableNames->node(), 'dn', 'dn.nodeaggregateid = r.destinationnodeaggregateid')
-            ->innerJoin('sh', $this->nodeQueryBuilder->tableNames->hierarchyRelation(), 'dh', 'dh.childnodeanchor = dn.relationanchorpoint')
-            ->where("{$sourceTablePrefix}n.nodeaggregateid = :nodeAggregateId")->setParameter('nodeAggregateId', $nodeAggregateId->value)
+            ->select("dn.*, dh.subtreetags, r.name AS referencename, r.properties AS referenceproperties")
+            ->from($this->nodeQueryBuilder->tableNames->hierarchyRelation(), 'dh')
+            ->innerJoin('dh', $this->nodeQueryBuilder->tableNames->node(), 'dn', 'dn.relationanchorpoint = dh.childnodeanchor')
+            ->innerJoin('dn', $this->nodeQueryBuilder->tableNames->referenceRelation(), 'r', 'r.destinationnodeaggregateid = dn.nodeaggregateid')
+            ->where('r.nodeanchorpoint = (
+                SELECT relationanchorpoint FROM ' . $this->nodeQueryBuilder->tableNames->node() . ' sn
+                JOIN ' . $this->nodeQueryBuilder->tableNames->hierarchyRelation() . ' sh ON sn.relationanchorpoint = sh.childnodeanchor
+                WHERE sn.nodeaggregateid = :nodeAggregateId
+                AND sh.contentstreamid = :contentStreamId
+                AND sh.dimensionspacepointhash = :dimensionSpacePointHash '
+                . $subtreeTagConstraints . '
+            )')->setParameters($subselectParameters)
             ->andWhere('dh.dimensionspacepointhash = :dimensionSpacePointHash')->setParameter('dimensionSpacePointHash', $this->dimensionSpacePoint->hash)
-            ->andWhere('sh.dimensionspacepointhash = :dimensionSpacePointHash')
-            ->andWhere('dh.contentstreamid = :contentStreamId')->setParameter('contentStreamId', $this->contentStreamId->value)
-            ->andWhere('sh.contentstreamid = :contentStreamId');
+            ->andWhere('dh.contentstreamid = :contentStreamId')->setParameter('contentStreamId', $this->contentStreamId->value);
         $this->addSubtreeTagConstraints($queryBuilder, 'dh');
-        $this->addSubtreeTagConstraints($queryBuilder, 'sh');
         if ($filter->nodeTypes !== null) {
-            $this->nodeQueryBuilder->addNodeTypeCriteria($queryBuilder, ExpandedNodeTypeCriteria::create($filter->nodeTypes, $this->nodeTypeManager), "{$destinationTablePrefix}n");
+            $this->nodeQueryBuilder->addNodeTypeCriteria($queryBuilder, ExpandedNodeTypeCriteria::create($filter->nodeTypes, $this->nodeTypeManager), "dn");
         }
         if ($filter->nodeSearchTerm !== null) {
-            $this->nodeQueryBuilder->addSearchTermConstraints($queryBuilder, $filter->nodeSearchTerm, "{$destinationTablePrefix}n");
+            $this->nodeQueryBuilder->addSearchTermConstraints($queryBuilder, $filter->nodeSearchTerm, "dn");
         }
         if ($filter->nodePropertyValue !== null) {
-            $this->nodeQueryBuilder->addPropertyValueConstraints($queryBuilder, $filter->nodePropertyValue, "{$destinationTablePrefix}n");
+            $this->nodeQueryBuilder->addPropertyValueConstraints($queryBuilder, $filter->nodePropertyValue, "dn");
         }
         if ($filter->referenceSearchTerm !== null) {
             $this->nodeQueryBuilder->addSearchTermConstraints($queryBuilder, $filter->referenceSearchTerm, 'r');
@@ -533,9 +546,73 @@ final class ContentSubgraph implements ContentSubgraphInterface
         if ($filter->referenceName !== null) {
             $queryBuilder->andWhere('r.name = :referenceName')->setParameter('referenceName', $filter->referenceName->value);
         }
-        if ($filter instanceof FindReferencesFilter || $filter instanceof FindBackReferencesFilter) {
+        if ($filter instanceof FindReferencesFilter) {
             if ($filter->ordering !== null) {
-                $this->applyOrdering($queryBuilder, $filter->ordering, "{$destinationTablePrefix}n");
+                $this->applyOrdering($queryBuilder, $filter->ordering, "dn");
+            } elseif ($filter->referenceName === null) {
+                $queryBuilder->addOrderBy('r.name');
+            }
+            $queryBuilder->addOrderBy('r.position');
+            $queryBuilder->addOrderBy('dn.nodeaggregateid');
+            if ($filter->pagination !== null) {
+                $this->applyPagination($queryBuilder, $filter->pagination);
+            }
+        }
+        return $queryBuilder;
+    }
+
+    private function buildBackreferencesQuery(NodeAggregateId $nodeAggregateId, FindBackReferencesFilter|CountBackReferencesFilter $filter): QueryBuilder
+    {
+        $subselectParameters = [
+            'nodeAggregateId' => $nodeAggregateId->value,
+            'contentStreamId' => $this->contentStreamId->value,
+            'dimensionSpacePointHash' => $this->dimensionSpacePoint->hash,
+        ];
+        $subtreeTagConstraints = '';
+        $i = 0;
+        foreach ($this->visibilityConstraints->excludedSubtreeTags as $excludedTag) {
+            $subtreeTagConstraints .= ' AND NOT JSON_CONTAINS_PATH(dh.subtreetags, \'one\', :destinationTagPath' . $i . ')';
+            $subselectParameters['destinationTagPath' . $i] = '$."' . $excludedTag->value . '"';
+            $i++;
+        }
+
+        $queryBuilder = $this->createQueryBuilder()
+            ->select("sn.*, sh.subtreetags, r.name AS referencename, r.properties AS referenceproperties")
+            ->from($this->nodeQueryBuilder->tableNames->hierarchyRelation(), 'sh')
+            ->innerJoin('sh', $this->nodeQueryBuilder->tableNames->node(), 'sn', 'sn.relationanchorpoint = sh.childnodeanchor')
+            ->innerJoin('sn', $this->nodeQueryBuilder->tableNames->referenceRelation(), 'r', 'r.nodeanchorpoint = sn.relationanchorpoint')
+            ->where('r.destinationnodeaggregateid = (
+                SELECT nodeaggregateid FROM ' . $this->nodeQueryBuilder->tableNames->node() . ' dn
+                JOIN ' . $this->nodeQueryBuilder->tableNames->hierarchyRelation() . ' dh ON dn.relationanchorpoint = dh.childnodeanchor
+                WHERE dn.nodeaggregateid = :nodeAggregateId
+                AND dh.contentstreamid = :contentStreamId
+                AND dh.dimensionspacepointhash = :dimensionSpacePointHash '
+                . $subtreeTagConstraints . '
+            )')->setParameters($subselectParameters)
+            ->andWhere('sh.dimensionspacepointhash = :dimensionSpacePointHash')->setParameter('dimensionSpacePointHash', $this->dimensionSpacePoint->hash)
+            ->andWhere('sh.contentstreamid = :contentStreamId')->setParameter('contentStreamId', $this->contentStreamId->value);
+        $this->addSubtreeTagConstraints($queryBuilder, 'sh');
+        if ($filter->nodeTypes !== null) {
+            $this->nodeQueryBuilder->addNodeTypeCriteria($queryBuilder, ExpandedNodeTypeCriteria::create($filter->nodeTypes, $this->nodeTypeManager), "sn");
+        }
+        if ($filter->nodeSearchTerm !== null) {
+            $this->nodeQueryBuilder->addSearchTermConstraints($queryBuilder, $filter->nodeSearchTerm, "sn");
+        }
+        if ($filter->nodePropertyValue !== null) {
+            $this->nodeQueryBuilder->addPropertyValueConstraints($queryBuilder, $filter->nodePropertyValue, "sn");
+        }
+        if ($filter->referenceSearchTerm !== null) {
+            $this->nodeQueryBuilder->addSearchTermConstraints($queryBuilder, $filter->referenceSearchTerm, 'r');
+        }
+        if ($filter->referencePropertyValue !== null) {
+            $this->nodeQueryBuilder->addPropertyValueConstraints($queryBuilder, $filter->referencePropertyValue, 'r');
+        }
+        if ($filter->referenceName !== null) {
+            $queryBuilder->andWhere('r.name = :referenceName')->setParameter('referenceName', $filter->referenceName->value);
+        }
+        if ($filter instanceof FindBackReferencesFilter) {
+            if ($filter->ordering !== null) {
+                $this->applyOrdering($queryBuilder, $filter->ordering, "sn");
             } elseif ($filter->referenceName === null) {
                 $queryBuilder->addOrderBy('r.name');
             }

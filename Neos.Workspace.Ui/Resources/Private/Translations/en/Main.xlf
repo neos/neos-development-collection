@@ -127,7 +127,7 @@
 				<source>Private</source>
 			</trans-unit>
       <trans-unit id="workspaces.workspace.visibility.private.help" xml:space="preserve">
-				<source>Only reviewers and administrators can access and modify this workspace</source>
+				<source>Only the workspace owner can access and modify this workspace</source>
 			</trans-unit>
       <trans-unit id="workspaces.workspace.visibility.shared" xml:space="preserve">
 				<source>Shared</source>

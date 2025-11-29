@@ -296,7 +296,7 @@ trait CRTestSuiteTrait
     {
         return PropertyValuesToWrite::fromArray(
             array_map(
-                static fn (mixed $value) => is_array($value) && isset($value['__type']) ? new $value['__type']($value['value']) : $value,
+                static fn (mixed $value) => is_array($value) && isset($value['__type']) ? (is_array($value['value']) ? $value['__type']::fromArray($value['value']) : new $value['__type']($value['value'])) : $value,
                 $properties
             )
         );
