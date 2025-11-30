@@ -88,7 +88,7 @@ Feature: Create node specialization
       | specializationSiblings | [{"dimensionSpacePoint":{"example":"source"},"nodeAggregateId":null},{"dimensionSpacePoint":{"example":"spec"},"nodeAggregateId":null}] |
       | parentNodeAggregateId  | null                                                                                                                                    |
 
-    Then I expect the graph projection to consist of exactly 14 nodes
+    And I expect the graph projection to consist of exactly 14 nodes
     And I expect a node identified by cs-identifier;lady-eleonode-rootford;{} to exist in the content graph
     And I expect a node identified by cs-identifier;nody-mc-nodeface;{"example":"general"} to exist in the content graph
     And I expect a node identified by cs-identifier;nody-mc-nodeface;{"example":"source"} to exist in the content graph
@@ -120,9 +120,10 @@ Feature: Create node specialization
     And I expect this node aggregate to occupy dimension space points [{"example":"general"}]
     And I expect this node aggregate to cover dimension space points [{"example":"general"},{"example":"source"},{"example":"spec"},{"example":"peer"}]
 
+
     When I am in workspace "live" and dimension space point {"example":"source"}
     Then I expect the subgraph projection to consist of exactly 11 nodes
-    Then I expect node aggregate identifier "lady-eleonode-rootford" to lead to node cs-identifier;lady-eleonode-rootford;{}
+    And I expect node aggregate identifier "lady-eleonode-rootford" to lead to node cs-identifier;lady-eleonode-rootford;{}
     And the subtree for node aggregate "lady-eleonode-rootford" with node types "" and 4 levels deep should be:
       | Level | nodeAggregateId            |
       | 0     | lady-eleonode-rootford     |
@@ -136,7 +137,8 @@ Feature: Create node specialization
       | 2     | younger-mc-nodeface        |
       | 2     | youngest-mc-nodeface       |
       | 1     | sir-nodeward-nodington-iii |
-    Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{"example":"general"}
+
+    And I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{"example":"general"}
     And I expect this node to have the following child nodes:
       | Name              | NodeDiscriminator                                        |
       | document          | cs-identifier;nody-mc-nodeface;{"example":"source"}      |
@@ -144,6 +146,7 @@ Feature: Create node specialization
       | elder-document    | cs-identifier;elder-mc-nodeface;{"example":"general"}    |
       | younger-document  | cs-identifier;younger-mc-nodeface;{"example":"general"}  |
       | youngest-document | cs-identifier;youngest-mc-nodeface;{"example":"general"} |
+
     And I expect node aggregate identifier "eldest-mc-nodeface" to lead to node cs-identifier;eldest-mc-nodeface;{"example":"general"}
     And I expect this node to have the following preceding siblings:
       | NodeDiscriminator                                   |
@@ -153,6 +156,7 @@ Feature: Create node specialization
       | cs-identifier;elder-mc-nodeface;{"example":"general"}    |
       | cs-identifier;younger-mc-nodeface;{"example":"general"}  |
       | cs-identifier;youngest-mc-nodeface;{"example":"general"} |
+
     And I expect node aggregate identifier "elder-mc-nodeface" to lead to node cs-identifier;elder-mc-nodeface;{"example":"general"}
     And I expect this node to have the following preceding siblings:
       | NodeDiscriminator                                      |
@@ -162,6 +166,7 @@ Feature: Create node specialization
       | NodeDiscriminator                                        |
       | cs-identifier;younger-mc-nodeface;{"example":"general"}  |
       | cs-identifier;youngest-mc-nodeface;{"example":"general"} |
+
     And I expect node aggregate identifier "nody-mc-nodeface" to lead to node cs-identifier;nody-mc-nodeface;{"example":"source"}
     And I expect this node to have the following child nodes:
       | Name          | NodeDiscriminator                                          |
@@ -180,6 +185,7 @@ Feature: Create node specialization
       | tethered-leaf | cs-identifier;nodimer-tetherton;{"example":"source"} |
     And I expect node aggregate identifier "nodimer-tetherton" to lead to node cs-identifier;nodimer-tetherton;{"example":"source"}
     And I expect node aggregate identifier "invariable-mc-nodeface" to lead to node cs-identifier;invariable-mc-nodeface;{"example":"general"}
+
     And I expect node aggregate identifier "younger-mc-nodeface" to lead to node cs-identifier;younger-mc-nodeface;{"example":"general"}
     And I expect this node to have the following preceding siblings:
       | NodeDiscriminator                                      |
@@ -189,6 +195,7 @@ Feature: Create node specialization
     And I expect this node to have the following succeeding siblings:
       | NodeDiscriminator                                        |
       | cs-identifier;youngest-mc-nodeface;{"example":"general"} |
+
     And I expect node aggregate identifier "youngest-mc-nodeface" to lead to node cs-identifier;youngest-mc-nodeface;{"example":"general"}
     And I expect this node to have the following preceding siblings:
       | NodeDiscriminator                                       |
@@ -197,10 +204,11 @@ Feature: Create node specialization
       | cs-identifier;eldest-mc-nodeface;{"example":"general"}  |
       | cs-identifier;nody-mc-nodeface;{"example":"source"}     |
     And I expect this node to have no succeeding siblings
+
 
     When I am in workspace "live" and dimension space point {"example":"general"}
     Then I expect the subgraph projection to consist of exactly 11 nodes
-    Then I expect node aggregate identifier "lady-eleonode-rootford" to lead to node cs-identifier;lady-eleonode-rootford;{}
+    And I expect node aggregate identifier "lady-eleonode-rootford" to lead to node cs-identifier;lady-eleonode-rootford;{}
     And the subtree for node aggregate "lady-eleonode-rootford" with node types "" and 4 levels deep should be:
       | Level | nodeAggregateId            |
       | 0     | lady-eleonode-rootford     |
@@ -214,13 +222,15 @@ Feature: Create node specialization
       | 3     | nodewyn-tetherton          |
       | 4     | nodimer-tetherton          |
       | 3     | invariable-mc-nodeface     |
-    Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{"example":"general"}
+
+    And I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{"example":"general"}
     And I expect this node to have the following child nodes:
       | Name              | NodeDiscriminator                                        |
       | eldest-document   | cs-identifier;eldest-mc-nodeface;{"example":"general"}   |
       | elder-document    | cs-identifier;elder-mc-nodeface;{"example":"general"}    |
       | younger-document  | cs-identifier;younger-mc-nodeface;{"example":"general"}  |
       | youngest-document | cs-identifier;youngest-mc-nodeface;{"example":"general"} |
+
     And I expect node aggregate identifier "eldest-mc-nodeface" to lead to node cs-identifier;eldest-mc-nodeface;{"example":"general"}
     And I expect this node to have no preceding siblings
     And I expect this node to have the following succeeding siblings:
@@ -228,6 +238,7 @@ Feature: Create node specialization
       | cs-identifier;elder-mc-nodeface;{"example":"general"}    |
       | cs-identifier;younger-mc-nodeface;{"example":"general"}  |
       | cs-identifier;youngest-mc-nodeface;{"example":"general"} |
+
     And I expect node aggregate identifier "elder-mc-nodeface" to lead to node cs-identifier;elder-mc-nodeface;{"example":"general"}
     And I expect this node to have the following preceding siblings:
       | NodeDiscriminator                                      |
@@ -236,6 +247,7 @@ Feature: Create node specialization
       | NodeDiscriminator                                        |
       | cs-identifier;younger-mc-nodeface;{"example":"general"}  |
       | cs-identifier;youngest-mc-nodeface;{"example":"general"} |
+
     And I expect node aggregate identifier "nody-mc-nodeface" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
     And I expect this node to have the following child nodes:
       | Name          | NodeDiscriminator                                          |
@@ -249,6 +261,7 @@ Feature: Create node specialization
       | tethered-leaf | cs-identifier;nodimer-tetherton;{"example":"general"} |
     And I expect node aggregate identifier "nodimer-tetherton" to lead to node cs-identifier;nodimer-tetherton;{"example":"general"}
     And I expect node aggregate identifier "invariable-mc-nodeface" to lead to node cs-identifier;invariable-mc-nodeface;{"example":"general"}
+
     And I expect node aggregate identifier "younger-mc-nodeface" to lead to node cs-identifier;younger-mc-nodeface;{"example":"general"}
     And I expect this node to have the following preceding siblings:
       | NodeDiscriminator                                      |
@@ -257,6 +270,7 @@ Feature: Create node specialization
     And I expect this node to have the following succeeding siblings:
       | NodeDiscriminator                                        |
       | cs-identifier;youngest-mc-nodeface;{"example":"general"} |
+
     And I expect node aggregate identifier "youngest-mc-nodeface" to lead to node cs-identifier;youngest-mc-nodeface;{"example":"general"}
     And I expect this node to have the following preceding siblings:
       | NodeDiscriminator                                       |
@@ -265,9 +279,10 @@ Feature: Create node specialization
       | cs-identifier;eldest-mc-nodeface;{"example":"general"}  |
     And I expect this node to have no succeeding siblings
 
+
     When I am in workspace "live" and dimension space point {"example":"spec"}
     Then I expect the subgraph projection to consist of exactly 11 nodes
-    Then I expect node aggregate identifier "lady-eleonode-rootford" to lead to node cs-identifier;lady-eleonode-rootford;{}
+    And I expect node aggregate identifier "lady-eleonode-rootford" to lead to node cs-identifier;lady-eleonode-rootford;{}
     And the subtree for node aggregate "lady-eleonode-rootford" with node types "" and 4 levels deep should be:
       | Level | nodeAggregateId            |
       | 0     | lady-eleonode-rootford     |
@@ -281,7 +296,8 @@ Feature: Create node specialization
       | 2     | younger-mc-nodeface        |
       | 2     | youngest-mc-nodeface       |
       | 1     | sir-nodeward-nodington-iii |
-    Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{"example":"general"}
+
+    And I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{"example":"general"}
     And I expect this node to have the following child nodes:
       | Name              | NodeDiscriminator                                        |
       | document          | cs-identifier;nody-mc-nodeface;{"example":"source"}      |
@@ -289,6 +305,7 @@ Feature: Create node specialization
       | elder-document    | cs-identifier;elder-mc-nodeface;{"example":"general"}    |
       | younger-document  | cs-identifier;younger-mc-nodeface;{"example":"general"}  |
       | youngest-document | cs-identifier;youngest-mc-nodeface;{"example":"general"} |
+
     And I expect node aggregate identifier "eldest-mc-nodeface" to lead to node cs-identifier;eldest-mc-nodeface;{"example":"general"}
     And I expect this node to have the following preceding siblings:
       | NodeDiscriminator                                   |
@@ -298,6 +315,7 @@ Feature: Create node specialization
       | cs-identifier;elder-mc-nodeface;{"example":"general"}    |
       | cs-identifier;younger-mc-nodeface;{"example":"general"}  |
       | cs-identifier;youngest-mc-nodeface;{"example":"general"} |
+
     And I expect node aggregate identifier "elder-mc-nodeface" to lead to node cs-identifier;elder-mc-nodeface;{"example":"general"}
     And I expect this node to have the following preceding siblings:
       | NodeDiscriminator                                      |
@@ -307,6 +325,7 @@ Feature: Create node specialization
       | NodeDiscriminator                                        |
       | cs-identifier;younger-mc-nodeface;{"example":"general"}  |
       | cs-identifier;youngest-mc-nodeface;{"example":"general"} |
+
     And I expect node aggregate identifier "nody-mc-nodeface" to lead to node cs-identifier;nody-mc-nodeface;{"example":"source"}
     And I expect this node to have the following child nodes:
       | Name          | NodeDiscriminator                                          |
@@ -325,6 +344,7 @@ Feature: Create node specialization
       | tethered-leaf | cs-identifier;nodimer-tetherton;{"example":"source"} |
     And I expect node aggregate identifier "nodimer-tetherton" to lead to node cs-identifier;nodimer-tetherton;{"example":"source"}
     And I expect node aggregate identifier "invariable-mc-nodeface" to lead to node cs-identifier;invariable-mc-nodeface;{"example":"general"}
+
     And I expect node aggregate identifier "younger-mc-nodeface" to lead to node cs-identifier;younger-mc-nodeface;{"example":"general"}
     And I expect this node to have the following preceding siblings:
       | NodeDiscriminator                                      |
@@ -334,6 +354,7 @@ Feature: Create node specialization
     And I expect this node to have the following succeeding siblings:
       | NodeDiscriminator                                        |
       | cs-identifier;youngest-mc-nodeface;{"example":"general"} |
+
     And I expect node aggregate identifier "youngest-mc-nodeface" to lead to node cs-identifier;youngest-mc-nodeface;{"example":"general"}
     And I expect this node to have the following preceding siblings:
       | NodeDiscriminator                                       |
@@ -343,9 +364,10 @@ Feature: Create node specialization
       | cs-identifier;nody-mc-nodeface;{"example":"source"}     |
     And I expect this node to have no succeeding siblings
 
+
     When I am in workspace "live" and dimension space point {"example":"peer"}
     Then I expect the subgraph projection to consist of exactly 11 nodes
-    Then I expect node aggregate identifier "lady-eleonode-rootford" to lead to node cs-identifier;lady-eleonode-rootford;{}
+    And I expect node aggregate identifier "lady-eleonode-rootford" to lead to node cs-identifier;lady-eleonode-rootford;{}
     And the subtree for node aggregate "lady-eleonode-rootford" with node types "" and 4 levels deep should be:
       | Level | nodeAggregateId            |
       | 0     | lady-eleonode-rootford     |
@@ -359,13 +381,15 @@ Feature: Create node specialization
       | 3     | nodewyn-tetherton          |
       | 4     | nodimer-tetherton          |
       | 3     | invariable-mc-nodeface     |
-    Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{"example":"general"}
+
+    And I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{"example":"general"}
     And I expect this node to have the following child nodes:
       | Name              | NodeDiscriminator                                        |
       | eldest-document   | cs-identifier;eldest-mc-nodeface;{"example":"general"}   |
       | elder-document    | cs-identifier;elder-mc-nodeface;{"example":"general"}    |
       | younger-document  | cs-identifier;younger-mc-nodeface;{"example":"general"}  |
       | youngest-document | cs-identifier;youngest-mc-nodeface;{"example":"general"} |
+
     And I expect node aggregate identifier "eldest-mc-nodeface" to lead to node cs-identifier;eldest-mc-nodeface;{"example":"general"}
     And I expect this node to have no preceding siblings
     And I expect this node to have the following succeeding siblings:
@@ -373,6 +397,7 @@ Feature: Create node specialization
       | cs-identifier;elder-mc-nodeface;{"example":"general"}    |
       | cs-identifier;younger-mc-nodeface;{"example":"general"}  |
       | cs-identifier;youngest-mc-nodeface;{"example":"general"} |
+
     And I expect node aggregate identifier "elder-mc-nodeface" to lead to node cs-identifier;elder-mc-nodeface;{"example":"general"}
     And I expect this node to have the following preceding siblings:
       | NodeDiscriminator                                      |
@@ -381,6 +406,7 @@ Feature: Create node specialization
       | NodeDiscriminator                                        |
       | cs-identifier;younger-mc-nodeface;{"example":"general"}  |
       | cs-identifier;youngest-mc-nodeface;{"example":"general"} |
+
     And I expect node aggregate identifier "nody-mc-nodeface" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
     And I expect this node to have the following child nodes:
       | Name          | NodeDiscriminator                                          |
@@ -394,6 +420,7 @@ Feature: Create node specialization
       | tethered-leaf | cs-identifier;nodimer-tetherton;{"example":"general"} |
     And I expect node aggregate identifier "nodimer-tetherton" to lead to node cs-identifier;nodimer-tetherton;{"example":"general"}
     And I expect node aggregate identifier "invariable-mc-nodeface" to lead to node cs-identifier;invariable-mc-nodeface;{"example":"general"}
+
     And I expect node aggregate identifier "younger-mc-nodeface" to lead to node cs-identifier;younger-mc-nodeface;{"example":"general"}
     And I expect this node to have the following preceding siblings:
       | NodeDiscriminator                                      |
@@ -402,6 +429,7 @@ Feature: Create node specialization
     And I expect this node to have the following succeeding siblings:
       | NodeDiscriminator                                        |
       | cs-identifier;youngest-mc-nodeface;{"example":"general"} |
+
     And I expect node aggregate identifier "youngest-mc-nodeface" to lead to node cs-identifier;youngest-mc-nodeface;{"example":"general"}
     And I expect this node to have the following preceding siblings:
       | NodeDiscriminator                                       |
@@ -450,7 +478,7 @@ Feature: Create node specialization
       | specializationSiblings | [{"dimensionSpacePoint":{"example":"source"},"nodeAggregateId":null},{"dimensionSpacePoint":{"example":"spec"},"nodeAggregateId":null}] |
       | parentNodeAggregateId  | null                                                                                                                                    |
 
-    Then I expect the graph projection to consist of exactly 14 nodes
+    And I expect the graph projection to consist of exactly 14 nodes
     And I expect a node identified by cs-identifier;lady-eleonode-rootford;{} to exist in the content graph
     And I expect a node identified by cs-identifier;nody-mc-nodeface;{"example":"general"} to exist in the content graph
     And I expect a node identified by cs-identifier;nody-mc-nodeface;{"example":"source"} to exist in the content graph
@@ -484,7 +512,7 @@ Feature: Create node specialization
 
     When I am in workspace "live" and dimension space point {"example":"source"}
     Then I expect the subgraph projection to consist of exactly 11 nodes
-    Then I expect node aggregate identifier "lady-eleonode-rootford" to lead to node cs-identifier;lady-eleonode-rootford;{}
+    And I expect node aggregate identifier "lady-eleonode-rootford" to lead to node cs-identifier;lady-eleonode-rootford;{}
     And the subtree for node aggregate "lady-eleonode-rootford" with node types "" and 4 levels deep should be:
       | Level | nodeAggregateId            |
       | 0     | lady-eleonode-rootford     |
@@ -498,7 +526,8 @@ Feature: Create node specialization
       | 2     | younger-mc-nodeface        |
       | 2     | youngest-mc-nodeface       |
       | 1     | sir-nodeward-nodington-iii |
-    Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{"example":"general"}
+
+    And I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{"example":"general"}
     And I expect this node to have the following child nodes:
       | Name              | NodeDiscriminator                                        |
       | eldest-document   | cs-identifier;eldest-mc-nodeface;{"example":"general"}   |
@@ -506,6 +535,7 @@ Feature: Create node specialization
       | elder-document    | cs-identifier;elder-mc-nodeface;{"example":"general"}    |
       | younger-document  | cs-identifier;younger-mc-nodeface;{"example":"general"}  |
       | youngest-document | cs-identifier;youngest-mc-nodeface;{"example":"general"} |
+
     And I expect node aggregate identifier "eldest-mc-nodeface" to lead to node cs-identifier;eldest-mc-nodeface;{"example":"general"}
     And I expect this node to have no preceding siblings
     And I expect this node to have the following succeeding siblings:
@@ -514,6 +544,7 @@ Feature: Create node specialization
       | cs-identifier;elder-mc-nodeface;{"example":"general"}    |
       | cs-identifier;younger-mc-nodeface;{"example":"general"}  |
       | cs-identifier;youngest-mc-nodeface;{"example":"general"} |
+
     And I expect node aggregate identifier "elder-mc-nodeface" to lead to node cs-identifier;elder-mc-nodeface;{"example":"general"}
     And I expect this node to have the following preceding siblings:
       | NodeDiscriminator                                      |
@@ -523,6 +554,7 @@ Feature: Create node specialization
       | NodeDiscriminator                                        |
       | cs-identifier;younger-mc-nodeface;{"example":"general"}  |
       | cs-identifier;youngest-mc-nodeface;{"example":"general"} |
+
     And I expect node aggregate identifier "nody-mc-nodeface" to lead to node cs-identifier;nody-mc-nodeface;{"example":"source"}
     And I expect this node to have the following child nodes:
       | Name          | NodeDiscriminator                                          |
@@ -542,6 +574,7 @@ Feature: Create node specialization
       | tethered-leaf | cs-identifier;nodimer-tetherton;{"example":"source"} |
     And I expect node aggregate identifier "nodimer-tetherton" to lead to node cs-identifier;nodimer-tetherton;{"example":"source"}
     And I expect node aggregate identifier "invariable-mc-nodeface" to lead to node cs-identifier;invariable-mc-nodeface;{"example":"general"}
+
     And I expect node aggregate identifier "younger-mc-nodeface" to lead to node cs-identifier;younger-mc-nodeface;{"example":"general"}
     And I expect this node to have the following preceding siblings:
       | NodeDiscriminator                                      |
@@ -551,6 +584,7 @@ Feature: Create node specialization
     And I expect this node to have the following succeeding siblings:
       | NodeDiscriminator                                        |
       | cs-identifier;youngest-mc-nodeface;{"example":"general"} |
+
     And I expect node aggregate identifier "youngest-mc-nodeface" to lead to node cs-identifier;youngest-mc-nodeface;{"example":"general"}
     And I expect this node to have the following preceding siblings:
       | NodeDiscriminator                                       |
@@ -559,10 +593,11 @@ Feature: Create node specialization
       | cs-identifier;nody-mc-nodeface;{"example":"source"}     |
       | cs-identifier;eldest-mc-nodeface;{"example":"general"}  |
     And I expect this node to have no succeeding siblings
+
 
     When I am in workspace "live" and dimension space point {"example":"general"}
     Then I expect the subgraph projection to consist of exactly 11 nodes
-    Then I expect node aggregate identifier "lady-eleonode-rootford" to lead to node cs-identifier;lady-eleonode-rootford;{}
+    And I expect node aggregate identifier "lady-eleonode-rootford" to lead to node cs-identifier;lady-eleonode-rootford;{}
     And the subtree for node aggregate "lady-eleonode-rootford" with node types "" and 4 levels deep should be:
       | Level | nodeAggregateId            |
       | 0     | lady-eleonode-rootford     |
@@ -576,13 +611,15 @@ Feature: Create node specialization
       | 3     | nodewyn-tetherton          |
       | 4     | nodimer-tetherton          |
       | 3     | invariable-mc-nodeface     |
-    Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{"example":"general"}
+
+    And I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{"example":"general"}
     And I expect this node to have the following child nodes:
       | Name              | NodeDiscriminator                                        |
       | eldest-document   | cs-identifier;eldest-mc-nodeface;{"example":"general"}   |
       | elder-document    | cs-identifier;elder-mc-nodeface;{"example":"general"}    |
       | younger-document  | cs-identifier;younger-mc-nodeface;{"example":"general"}  |
       | youngest-document | cs-identifier;youngest-mc-nodeface;{"example":"general"} |
+
     And I expect node aggregate identifier "eldest-mc-nodeface" to lead to node cs-identifier;eldest-mc-nodeface;{"example":"general"}
     And I expect this node to have no preceding siblings
     And I expect this node to have the following succeeding siblings:
@@ -590,6 +627,7 @@ Feature: Create node specialization
       | cs-identifier;elder-mc-nodeface;{"example":"general"}    |
       | cs-identifier;younger-mc-nodeface;{"example":"general"}  |
       | cs-identifier;youngest-mc-nodeface;{"example":"general"} |
+
     And I expect node aggregate identifier "elder-mc-nodeface" to lead to node cs-identifier;elder-mc-nodeface;{"example":"general"}
     And I expect this node to have the following preceding siblings:
       | NodeDiscriminator                                      |
@@ -598,6 +636,7 @@ Feature: Create node specialization
       | NodeDiscriminator                                        |
       | cs-identifier;younger-mc-nodeface;{"example":"general"}  |
       | cs-identifier;youngest-mc-nodeface;{"example":"general"} |
+
     And I expect node aggregate identifier "nody-mc-nodeface" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
     And I expect this node to have the following child nodes:
       | Name          | NodeDiscriminator                                          |
@@ -611,6 +650,7 @@ Feature: Create node specialization
       | tethered-leaf | cs-identifier;nodimer-tetherton;{"example":"general"} |
     And I expect node aggregate identifier "nodimer-tetherton" to lead to node cs-identifier;nodimer-tetherton;{"example":"general"}
     And I expect node aggregate identifier "invariable-mc-nodeface" to lead to node cs-identifier;invariable-mc-nodeface;{"example":"general"}
+
     And I expect node aggregate identifier "younger-mc-nodeface" to lead to node cs-identifier;younger-mc-nodeface;{"example":"general"}
     And I expect this node to have the following preceding siblings:
       | NodeDiscriminator                                      |
@@ -619,6 +659,7 @@ Feature: Create node specialization
     And I expect this node to have the following succeeding siblings:
       | NodeDiscriminator                                        |
       | cs-identifier;youngest-mc-nodeface;{"example":"general"} |
+
     And I expect node aggregate identifier "youngest-mc-nodeface" to lead to node cs-identifier;youngest-mc-nodeface;{"example":"general"}
     And I expect this node to have the following preceding siblings:
       | NodeDiscriminator                                       |
@@ -627,9 +668,10 @@ Feature: Create node specialization
       | cs-identifier;eldest-mc-nodeface;{"example":"general"}  |
     And I expect this node to have no succeeding siblings
 
+
     When I am in workspace "live" and dimension space point {"example":"spec"}
     Then I expect the subgraph projection to consist of exactly 11 nodes
-    Then I expect node aggregate identifier "lady-eleonode-rootford" to lead to node cs-identifier;lady-eleonode-rootford;{}
+    And I expect node aggregate identifier "lady-eleonode-rootford" to lead to node cs-identifier;lady-eleonode-rootford;{}
     And the subtree for node aggregate "lady-eleonode-rootford" with node types "" and 4 levels deep should be:
       | Level | nodeAggregateId            |
       | 0     | lady-eleonode-rootford     |
@@ -643,7 +685,8 @@ Feature: Create node specialization
       | 2     | younger-mc-nodeface        |
       | 2     | youngest-mc-nodeface       |
       | 1     | sir-nodeward-nodington-iii |
-    Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{"example":"general"}
+
+    And I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{"example":"general"}
     And I expect this node to have the following child nodes:
       | Name              | NodeDiscriminator                                        |
       | eldest-document   | cs-identifier;eldest-mc-nodeface;{"example":"general"}   |
@@ -705,9 +748,10 @@ Feature: Create node specialization
       | cs-identifier;eldest-mc-nodeface;{"example":"general"}  |
     And I expect this node to have no succeeding siblings
 
+
     When I am in workspace "live" and dimension space point {"example":"peer"}
     Then I expect the subgraph projection to consist of exactly 11 nodes
-    Then I expect node aggregate identifier "lady-eleonode-rootford" to lead to node cs-identifier;lady-eleonode-rootford;{}
+    And I expect node aggregate identifier "lady-eleonode-rootford" to lead to node cs-identifier;lady-eleonode-rootford;{}
     And the subtree for node aggregate "lady-eleonode-rootford" with node types "" and 4 levels deep should be:
       | Level | nodeAggregateId            |
       | 0     | lady-eleonode-rootford     |
@@ -721,13 +765,15 @@ Feature: Create node specialization
       | 3     | nodewyn-tetherton          |
       | 4     | nodimer-tetherton          |
       | 3     | invariable-mc-nodeface     |
-    Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{"example":"general"}
+
+    And I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{"example":"general"}
     And I expect this node to have the following child nodes:
       | Name              | NodeDiscriminator                                        |
       | eldest-document   | cs-identifier;eldest-mc-nodeface;{"example":"general"}   |
       | elder-document    | cs-identifier;elder-mc-nodeface;{"example":"general"}    |
       | younger-document  | cs-identifier;younger-mc-nodeface;{"example":"general"}  |
       | youngest-document | cs-identifier;youngest-mc-nodeface;{"example":"general"} |
+
     And I expect node aggregate identifier "eldest-mc-nodeface" to lead to node cs-identifier;eldest-mc-nodeface;{"example":"general"}
     And I expect this node to have no preceding siblings
     And I expect this node to have the following succeeding siblings:
@@ -735,6 +781,7 @@ Feature: Create node specialization
       | cs-identifier;elder-mc-nodeface;{"example":"general"}    |
       | cs-identifier;younger-mc-nodeface;{"example":"general"}  |
       | cs-identifier;youngest-mc-nodeface;{"example":"general"} |
+
     And I expect node aggregate identifier "elder-mc-nodeface" to lead to node cs-identifier;elder-mc-nodeface;{"example":"general"}
     And I expect this node to have the following preceding siblings:
       | NodeDiscriminator                                      |
@@ -743,6 +790,7 @@ Feature: Create node specialization
       | NodeDiscriminator                                        |
       | cs-identifier;younger-mc-nodeface;{"example":"general"}  |
       | cs-identifier;youngest-mc-nodeface;{"example":"general"} |
+
     And I expect node aggregate identifier "nody-mc-nodeface" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
     And I expect this node to have the following child nodes:
       | Name          | NodeDiscriminator                                          |
@@ -756,6 +804,7 @@ Feature: Create node specialization
       | tethered-leaf | cs-identifier;nodimer-tetherton;{"example":"general"} |
     And I expect node aggregate identifier "nodimer-tetherton" to lead to node cs-identifier;nodimer-tetherton;{"example":"general"}
     And I expect node aggregate identifier "invariable-mc-nodeface" to lead to node cs-identifier;invariable-mc-nodeface;{"example":"general"}
+
     And I expect node aggregate identifier "younger-mc-nodeface" to lead to node cs-identifier;younger-mc-nodeface;{"example":"general"}
     And I expect this node to have the following preceding siblings:
       | NodeDiscriminator                                      |
@@ -764,6 +813,7 @@ Feature: Create node specialization
     And I expect this node to have the following succeeding siblings:
       | NodeDiscriminator                                        |
       | cs-identifier;youngest-mc-nodeface;{"example":"general"} |
+
     And I expect node aggregate identifier "youngest-mc-nodeface" to lead to node cs-identifier;youngest-mc-nodeface;{"example":"general"}
     And I expect this node to have the following preceding siblings:
       | NodeDiscriminator                                       |
@@ -812,7 +862,7 @@ Feature: Create node specialization
       | specializationSiblings | [{"dimensionSpacePoint":{"example":"source"},"nodeAggregateId":null},{"dimensionSpacePoint":{"example":"spec"},"nodeAggregateId":null}] |
       | parentNodeAggregateId  | null                                                                                                                                    |
 
-    Then I expect the graph projection to consist of exactly 14 nodes
+    And I expect the graph projection to consist of exactly 14 nodes
     And I expect a node identified by cs-identifier;lady-eleonode-rootford;{} to exist in the content graph
     And I expect a node identified by cs-identifier;nody-mc-nodeface;{"example":"general"} to exist in the content graph
     And I expect a node identified by cs-identifier;nody-mc-nodeface;{"example":"source"} to exist in the content graph
@@ -844,9 +894,10 @@ Feature: Create node specialization
     And I expect this node aggregate to occupy dimension space points [{"example":"general"}]
     And I expect this node aggregate to cover dimension space points [{"example":"general"},{"example":"source"},{"example":"spec"},{"example":"peer"}]
 
+
     When I am in workspace "live" and dimension space point {"example":"source"}
     Then I expect the subgraph projection to consist of exactly 11 nodes
-    Then I expect node aggregate identifier "lady-eleonode-rootford" to lead to node cs-identifier;lady-eleonode-rootford;{}
+    And I expect node aggregate identifier "lady-eleonode-rootford" to lead to node cs-identifier;lady-eleonode-rootford;{}
     And the subtree for node aggregate "lady-eleonode-rootford" with node types "" and 4 levels deep should be:
       | Level | nodeAggregateId            |
       | 0     | lady-eleonode-rootford     |
@@ -860,7 +911,8 @@ Feature: Create node specialization
       | 3     | invariable-mc-nodeface     |
       | 2     | youngest-mc-nodeface       |
       | 1     | sir-nodeward-nodington-iii |
-    Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{"example":"general"}
+
+    And I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{"example":"general"}
     And I expect this node to have the following child nodes:
       | Name              | NodeDiscriminator                                        |
       | eldest-document   | cs-identifier;eldest-mc-nodeface;{"example":"general"}   |
@@ -868,6 +920,7 @@ Feature: Create node specialization
       | younger-document  | cs-identifier;younger-mc-nodeface;{"example":"general"}  |
       | document          | cs-identifier;nody-mc-nodeface;{"example":"source"}      |
       | youngest-document | cs-identifier;youngest-mc-nodeface;{"example":"general"} |
+
     And I expect node aggregate identifier "eldest-mc-nodeface" to lead to node cs-identifier;eldest-mc-nodeface;{"example":"general"}
     And I expect this node to have no preceding siblings
     And I expect this node to have the following succeeding siblings:
@@ -925,10 +978,11 @@ Feature: Create node specialization
       | cs-identifier;elder-mc-nodeface;{"example":"general"}   |
       | cs-identifier;eldest-mc-nodeface;{"example":"general"}  |
     And I expect this node to have no succeeding siblings
+
 
     When I am in workspace "live" and dimension space point {"example":"general"}
     Then I expect the subgraph projection to consist of exactly 11 nodes
-    Then I expect node aggregate identifier "lady-eleonode-rootford" to lead to node cs-identifier;lady-eleonode-rootford;{}
+    And I expect node aggregate identifier "lady-eleonode-rootford" to lead to node cs-identifier;lady-eleonode-rootford;{}
     And the subtree for node aggregate "lady-eleonode-rootford" with node types "" and 4 levels deep should be:
       | Level | nodeAggregateId            |
       | 0     | lady-eleonode-rootford     |
@@ -942,13 +996,15 @@ Feature: Create node specialization
       | 3     | nodewyn-tetherton          |
       | 4     | nodimer-tetherton          |
       | 3     | invariable-mc-nodeface     |
-    Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{"example":"general"}
+
+    And I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{"example":"general"}
     And I expect this node to have the following child nodes:
       | Name              | NodeDiscriminator                                        |
       | eldest-document   | cs-identifier;eldest-mc-nodeface;{"example":"general"}   |
       | elder-document    | cs-identifier;elder-mc-nodeface;{"example":"general"}    |
       | younger-document  | cs-identifier;younger-mc-nodeface;{"example":"general"}  |
       | youngest-document | cs-identifier;youngest-mc-nodeface;{"example":"general"} |
+
     And I expect node aggregate identifier "eldest-mc-nodeface" to lead to node cs-identifier;eldest-mc-nodeface;{"example":"general"}
     And I expect this node to have no preceding siblings
     And I expect this node to have the following succeeding siblings:
@@ -956,6 +1012,7 @@ Feature: Create node specialization
       | cs-identifier;elder-mc-nodeface;{"example":"general"}    |
       | cs-identifier;younger-mc-nodeface;{"example":"general"}  |
       | cs-identifier;youngest-mc-nodeface;{"example":"general"} |
+
     And I expect node aggregate identifier "elder-mc-nodeface" to lead to node cs-identifier;elder-mc-nodeface;{"example":"general"}
     And I expect this node to have the following preceding siblings:
       | NodeDiscriminator                                      |
@@ -964,6 +1021,7 @@ Feature: Create node specialization
       | NodeDiscriminator                                        |
       | cs-identifier;younger-mc-nodeface;{"example":"general"}  |
       | cs-identifier;youngest-mc-nodeface;{"example":"general"} |
+
     And I expect node aggregate identifier "nody-mc-nodeface" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
     And I expect this node to have the following child nodes:
       | Name          | NodeDiscriminator                                          |
@@ -977,6 +1035,7 @@ Feature: Create node specialization
       | tethered-leaf | cs-identifier;nodimer-tetherton;{"example":"general"} |
     And I expect node aggregate identifier "nodimer-tetherton" to lead to node cs-identifier;nodimer-tetherton;{"example":"general"}
     And I expect node aggregate identifier "invariable-mc-nodeface" to lead to node cs-identifier;invariable-mc-nodeface;{"example":"general"}
+
     And I expect node aggregate identifier "younger-mc-nodeface" to lead to node cs-identifier;younger-mc-nodeface;{"example":"general"}
     And I expect this node to have the following preceding siblings:
       | NodeDiscriminator                                      |
@@ -985,6 +1044,7 @@ Feature: Create node specialization
     And I expect this node to have the following succeeding siblings:
       | NodeDiscriminator                                        |
       | cs-identifier;youngest-mc-nodeface;{"example":"general"} |
+
     And I expect node aggregate identifier "youngest-mc-nodeface" to lead to node cs-identifier;youngest-mc-nodeface;{"example":"general"}
     And I expect this node to have the following preceding siblings:
       | NodeDiscriminator                                       |
@@ -993,9 +1053,10 @@ Feature: Create node specialization
       | cs-identifier;eldest-mc-nodeface;{"example":"general"}  |
     And I expect this node to have no succeeding siblings
 
+
     When I am in workspace "live" and dimension space point {"example":"spec"}
     Then I expect the subgraph projection to consist of exactly 11 nodes
-    Then I expect node aggregate identifier "lady-eleonode-rootford" to lead to node cs-identifier;lady-eleonode-rootford;{}
+    And I expect node aggregate identifier "lady-eleonode-rootford" to lead to node cs-identifier;lady-eleonode-rootford;{}
     And the subtree for node aggregate "lady-eleonode-rootford" with node types "" and 4 levels deep should be:
       | Level | nodeAggregateId            |
       | 0     | lady-eleonode-rootford     |
@@ -1009,7 +1070,8 @@ Feature: Create node specialization
       | 3     | invariable-mc-nodeface     |
       | 2     | youngest-mc-nodeface       |
       | 1     | sir-nodeward-nodington-iii |
-    Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{"example":"general"}
+
+    And I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{"example":"general"}
     And I expect this node to have the following child nodes:
       | Name              | NodeDiscriminator                                        |
       | eldest-document   | cs-identifier;eldest-mc-nodeface;{"example":"general"}   |
@@ -1076,9 +1138,10 @@ Feature: Create node specialization
       | cs-identifier;eldest-mc-nodeface;{"example":"general"}  |
     And I expect this node to have no succeeding siblings
 
+
     When I am in workspace "live" and dimension space point {"example":"peer"}
     Then I expect the subgraph projection to consist of exactly 11 nodes
-    Then I expect node aggregate identifier "lady-eleonode-rootford" to lead to node cs-identifier;lady-eleonode-rootford;{}
+    And I expect node aggregate identifier "lady-eleonode-rootford" to lead to node cs-identifier;lady-eleonode-rootford;{}
     And the subtree for node aggregate "lady-eleonode-rootford" with node types "" and 4 levels deep should be:
       | Level | nodeAggregateId            |
       | 0     | lady-eleonode-rootford     |
@@ -1092,13 +1155,15 @@ Feature: Create node specialization
       | 3     | nodewyn-tetherton          |
       | 4     | nodimer-tetherton          |
       | 3     | invariable-mc-nodeface     |
-    Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{"example":"general"}
+
+    And I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{"example":"general"}
     And I expect this node to have the following child nodes:
       | Name              | NodeDiscriminator                                        |
       | eldest-document   | cs-identifier;eldest-mc-nodeface;{"example":"general"}   |
       | elder-document    | cs-identifier;elder-mc-nodeface;{"example":"general"}    |
       | younger-document  | cs-identifier;younger-mc-nodeface;{"example":"general"}  |
       | youngest-document | cs-identifier;youngest-mc-nodeface;{"example":"general"} |
+
     And I expect node aggregate identifier "eldest-mc-nodeface" to lead to node cs-identifier;eldest-mc-nodeface;{"example":"general"}
     And I expect this node to have no preceding siblings
     And I expect this node to have the following succeeding siblings:
@@ -1106,6 +1171,7 @@ Feature: Create node specialization
       | cs-identifier;elder-mc-nodeface;{"example":"general"}    |
       | cs-identifier;younger-mc-nodeface;{"example":"general"}  |
       | cs-identifier;youngest-mc-nodeface;{"example":"general"} |
+
     And I expect node aggregate identifier "elder-mc-nodeface" to lead to node cs-identifier;elder-mc-nodeface;{"example":"general"}
     And I expect this node to have the following preceding siblings:
       | NodeDiscriminator                                      |
@@ -1114,6 +1180,7 @@ Feature: Create node specialization
       | NodeDiscriminator                                        |
       | cs-identifier;younger-mc-nodeface;{"example":"general"}  |
       | cs-identifier;youngest-mc-nodeface;{"example":"general"} |
+
     And I expect node aggregate identifier "nody-mc-nodeface" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
     And I expect this node to have the following child nodes:
       | Name          | NodeDiscriminator                                          |
@@ -1127,6 +1194,7 @@ Feature: Create node specialization
       | tethered-leaf | cs-identifier;nodimer-tetherton;{"example":"general"} |
     And I expect node aggregate identifier "nodimer-tetherton" to lead to node cs-identifier;nodimer-tetherton;{"example":"general"}
     And I expect node aggregate identifier "invariable-mc-nodeface" to lead to node cs-identifier;invariable-mc-nodeface;{"example":"general"}
+
     And I expect node aggregate identifier "younger-mc-nodeface" to lead to node cs-identifier;younger-mc-nodeface;{"example":"general"}
     And I expect this node to have the following preceding siblings:
       | NodeDiscriminator                                      |
@@ -1135,6 +1203,7 @@ Feature: Create node specialization
     And I expect this node to have the following succeeding siblings:
       | NodeDiscriminator                                        |
       | cs-identifier;youngest-mc-nodeface;{"example":"general"} |
+
     And I expect node aggregate identifier "youngest-mc-nodeface" to lead to node cs-identifier;youngest-mc-nodeface;{"example":"general"}
     And I expect this node to have the following preceding siblings:
       | NodeDiscriminator                                       |
@@ -1180,7 +1249,7 @@ Feature: Create node specialization
       | specializationSiblings | [{"dimensionSpacePoint":{"example":"source"},"nodeAggregateId":null},{"dimensionSpacePoint":{"example":"spec"},"nodeAggregateId":null}] |
       | parentNodeAggregateId  | null                                                                                                                                    |
 
-    Then I expect the graph projection to consist of exactly 14 nodes
+    And I expect the graph projection to consist of exactly 14 nodes
     And I expect a node identified by cs-identifier;lady-eleonode-rootford;{} to exist in the content graph
     And I expect a node identified by cs-identifier;nody-mc-nodeface;{"example":"general"} to exist in the content graph
     And I expect a node identified by cs-identifier;nody-mc-nodeface;{"example":"source"} to exist in the content graph
@@ -1212,9 +1281,10 @@ Feature: Create node specialization
     And I expect this node aggregate to occupy dimension space points [{"example":"general"}]
     And I expect this node aggregate to cover dimension space points [{"example":"general"},{"example":"source"},{"example":"spec"},{"example":"peer"}]
 
+
     When I am in workspace "live" and dimension space point {"example":"source"}
     Then I expect the subgraph projection to consist of exactly 11 nodes
-    Then I expect node aggregate identifier "lady-eleonode-rootford" to lead to node cs-identifier;lady-eleonode-rootford;{}
+    And I expect node aggregate identifier "lady-eleonode-rootford" to lead to node cs-identifier;lady-eleonode-rootford;{}
     And the subtree for node aggregate "lady-eleonode-rootford" with node types "" and 4 levels deep should be:
       | Level | nodeAggregateId            |
       | 0     | lady-eleonode-rootford     |
@@ -1228,7 +1298,8 @@ Feature: Create node specialization
       | 4     | nodimer-tetherton          |
       | 3     | invariable-mc-nodeface     |
       | 1     | sir-nodeward-nodington-iii |
-    Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{"example":"general"}
+
+    And I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{"example":"general"}
     And I expect this node to have the following child nodes:
       | Name              | NodeDiscriminator                                        |
       | eldest-document   | cs-identifier;eldest-mc-nodeface;{"example":"general"}   |
@@ -1236,6 +1307,7 @@ Feature: Create node specialization
       | younger-document  | cs-identifier;younger-mc-nodeface;{"example":"general"}  |
       | youngest-document | cs-identifier;youngest-mc-nodeface;{"example":"general"} |
       | document          | cs-identifier;nody-mc-nodeface;{"example":"source"}      |
+
     And I expect node aggregate identifier "eldest-mc-nodeface" to lead to node cs-identifier;eldest-mc-nodeface;{"example":"general"}
     And I expect this node to have no preceding siblings
     And I expect this node to have the following succeeding siblings:
@@ -1294,9 +1366,10 @@ Feature: Create node specialization
       | NodeDiscriminator                                   |
       | cs-identifier;nody-mc-nodeface;{"example":"source"} |
 
+
     When I am in workspace "live" and dimension space point {"example":"general"}
     Then I expect the subgraph projection to consist of exactly 11 nodes
-    Then I expect node aggregate identifier "lady-eleonode-rootford" to lead to node cs-identifier;lady-eleonode-rootford;{}
+    And I expect node aggregate identifier "lady-eleonode-rootford" to lead to node cs-identifier;lady-eleonode-rootford;{}
     And the subtree for node aggregate "lady-eleonode-rootford" with node types "" and 4 levels deep should be:
       | Level | nodeAggregateId            |
       | 0     | lady-eleonode-rootford     |
@@ -1310,13 +1383,15 @@ Feature: Create node specialization
       | 3     | nodewyn-tetherton          |
       | 4     | nodimer-tetherton          |
       | 3     | invariable-mc-nodeface     |
-    Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{"example":"general"}
+
+    And I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{"example":"general"}
     And I expect this node to have the following child nodes:
       | Name              | NodeDiscriminator                                        |
       | eldest-document   | cs-identifier;eldest-mc-nodeface;{"example":"general"}   |
       | elder-document    | cs-identifier;elder-mc-nodeface;{"example":"general"}    |
       | younger-document  | cs-identifier;younger-mc-nodeface;{"example":"general"}  |
       | youngest-document | cs-identifier;youngest-mc-nodeface;{"example":"general"} |
+
     And I expect node aggregate identifier "eldest-mc-nodeface" to lead to node cs-identifier;eldest-mc-nodeface;{"example":"general"}
     And I expect this node to have no preceding siblings
     And I expect this node to have the following succeeding siblings:
@@ -1324,6 +1399,7 @@ Feature: Create node specialization
       | cs-identifier;elder-mc-nodeface;{"example":"general"}    |
       | cs-identifier;younger-mc-nodeface;{"example":"general"}  |
       | cs-identifier;youngest-mc-nodeface;{"example":"general"} |
+
     And I expect node aggregate identifier "elder-mc-nodeface" to lead to node cs-identifier;elder-mc-nodeface;{"example":"general"}
     And I expect this node to have the following preceding siblings:
       | NodeDiscriminator                                      |
@@ -1332,6 +1408,7 @@ Feature: Create node specialization
       | NodeDiscriminator                                        |
       | cs-identifier;younger-mc-nodeface;{"example":"general"}  |
       | cs-identifier;youngest-mc-nodeface;{"example":"general"} |
+
     And I expect node aggregate identifier "nody-mc-nodeface" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
     And I expect this node to have the following child nodes:
       | Name          | NodeDiscriminator                                          |
@@ -1345,6 +1422,7 @@ Feature: Create node specialization
       | tethered-leaf | cs-identifier;nodimer-tetherton;{"example":"general"} |
     And I expect node aggregate identifier "nodimer-tetherton" to lead to node cs-identifier;nodimer-tetherton;{"example":"general"}
     And I expect node aggregate identifier "invariable-mc-nodeface" to lead to node cs-identifier;invariable-mc-nodeface;{"example":"general"}
+
     And I expect node aggregate identifier "younger-mc-nodeface" to lead to node cs-identifier;younger-mc-nodeface;{"example":"general"}
     And I expect this node to have the following preceding siblings:
       | NodeDiscriminator                                      |
@@ -1353,6 +1431,7 @@ Feature: Create node specialization
     And I expect this node to have the following succeeding siblings:
       | NodeDiscriminator                                        |
       | cs-identifier;youngest-mc-nodeface;{"example":"general"} |
+
     And I expect node aggregate identifier "youngest-mc-nodeface" to lead to node cs-identifier;youngest-mc-nodeface;{"example":"general"}
     And I expect this node to have the following preceding siblings:
       | NodeDiscriminator                                       |
@@ -1446,9 +1525,10 @@ Feature: Create node specialization
       | NodeDiscriminator                                   |
       | cs-identifier;nody-mc-nodeface;{"example":"source"} |
 
+
     When I am in workspace "live" and dimension space point {"example":"peer"}
     Then I expect the subgraph projection to consist of exactly 11 nodes
-    Then I expect node aggregate identifier "lady-eleonode-rootford" to lead to node cs-identifier;lady-eleonode-rootford;{}
+    And I expect node aggregate identifier "lady-eleonode-rootford" to lead to node cs-identifier;lady-eleonode-rootford;{}
     And the subtree for node aggregate "lady-eleonode-rootford" with node types "" and 4 levels deep should be:
       | Level | nodeAggregateId            |
       | 0     | lady-eleonode-rootford     |
@@ -1462,13 +1542,15 @@ Feature: Create node specialization
       | 3     | nodewyn-tetherton          |
       | 4     | nodimer-tetherton          |
       | 3     | invariable-mc-nodeface     |
-    Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{"example":"general"}
+
+    And I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{"example":"general"}
     And I expect this node to have the following child nodes:
       | Name              | NodeDiscriminator                                        |
       | eldest-document   | cs-identifier;eldest-mc-nodeface;{"example":"general"}   |
       | elder-document    | cs-identifier;elder-mc-nodeface;{"example":"general"}    |
       | younger-document  | cs-identifier;younger-mc-nodeface;{"example":"general"}  |
       | youngest-document | cs-identifier;youngest-mc-nodeface;{"example":"general"} |
+
     And I expect node aggregate identifier "eldest-mc-nodeface" to lead to node cs-identifier;eldest-mc-nodeface;{"example":"general"}
     And I expect this node to have no preceding siblings
     And I expect this node to have the following succeeding siblings:
@@ -1476,6 +1558,7 @@ Feature: Create node specialization
       | cs-identifier;elder-mc-nodeface;{"example":"general"}    |
       | cs-identifier;younger-mc-nodeface;{"example":"general"}  |
       | cs-identifier;youngest-mc-nodeface;{"example":"general"} |
+
     And I expect node aggregate identifier "elder-mc-nodeface" to lead to node cs-identifier;elder-mc-nodeface;{"example":"general"}
     And I expect this node to have the following preceding siblings:
       | NodeDiscriminator                                      |
@@ -1484,6 +1567,7 @@ Feature: Create node specialization
       | NodeDiscriminator                                        |
       | cs-identifier;younger-mc-nodeface;{"example":"general"}  |
       | cs-identifier;youngest-mc-nodeface;{"example":"general"} |
+
     And I expect node aggregate identifier "nody-mc-nodeface" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
     And I expect this node to have the following child nodes:
       | Name          | NodeDiscriminator                                          |
@@ -1497,6 +1581,7 @@ Feature: Create node specialization
       | tethered-leaf | cs-identifier;nodimer-tetherton;{"example":"general"} |
     And I expect node aggregate identifier "nodimer-tetherton" to lead to node cs-identifier;nodimer-tetherton;{"example":"general"}
     And I expect node aggregate identifier "invariable-mc-nodeface" to lead to node cs-identifier;invariable-mc-nodeface;{"example":"general"}
+
     And I expect node aggregate identifier "younger-mc-nodeface" to lead to node cs-identifier;younger-mc-nodeface;{"example":"general"}
     And I expect this node to have the following preceding siblings:
       | NodeDiscriminator                                      |
@@ -1505,6 +1590,7 @@ Feature: Create node specialization
     And I expect this node to have the following succeeding siblings:
       | NodeDiscriminator                                        |
       | cs-identifier;youngest-mc-nodeface;{"example":"general"} |
+
     And I expect node aggregate identifier "youngest-mc-nodeface" to lead to node cs-identifier;youngest-mc-nodeface;{"example":"general"}
     And I expect this node to have the following preceding siblings:
       | NodeDiscriminator                                       |
@@ -1512,3 +1598,6 @@ Feature: Create node specialization
       | cs-identifier;elder-mc-nodeface;{"example":"general"}   |
       | cs-identifier;eldest-mc-nodeface;{"example":"general"}  |
     And I expect this node to have no succeeding siblings
+
+  # Scenario: Create specialization variant to a new parent after the last of its new siblings, which does not exist in all variants
+  # As this is implemented via deletion of a specialization: @see ../07-NodeRemoval/07-CreateNodeSpecializationVariant-NewParent-AfterDeletion.feature
