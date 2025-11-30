@@ -141,7 +141,7 @@ trait NodeVariationInternals
             specializationOrigin: $targetOrigin,
             specializationSiblings: $this->resolveInterdimensionalSiblings(
                 contentGraph: $contentGraph,
-                selectedDimensionSpacePoint: $sourceOrigin->toDimensionSpacePoint(),
+                referenceDimensionSpacePoint: $targetOrigin->toDimensionSpacePoint(),
                 affectedDimensionSpacePoints: $specializationVisibility,
                 nodeAggregateId: $nodeAggregate->nodeAggregateId,
                 parentNodeAggregateId: $parentNodeAggregateId,

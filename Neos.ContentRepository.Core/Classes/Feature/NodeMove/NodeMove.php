@@ -191,7 +191,7 @@ trait NodeMove
                 newParentNodeAggregateId: $command->newParentNodeAggregateId,
                 succeedingSiblingsForCoverage: $this->resolveInterdimensionalSiblings(
                     contentGraph: $contentGraph,
-                    selectedDimensionSpacePoint: $command->dimensionSpacePoint,
+                    referenceDimensionSpacePoint: $command->dimensionSpacePoint,
                     affectedDimensionSpacePoints: $affectedDimensionSpacePoints,
                     nodeAggregateId: $command->nodeAggregateId,
                     parentNodeAggregateId: $command->newParentNodeAggregateId,

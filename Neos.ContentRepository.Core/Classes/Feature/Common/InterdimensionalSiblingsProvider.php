@@ -22,10 +22,13 @@ trait InterdimensionalSiblingsProvider
 {
     /**
      * Resolves the succeeding siblings for the given node at the given target in the given dimension space points
+     *
+     * @param DimensionSpacePoint $referenceDimensionSpacePoint
+     * The reference dimension space point for alternative sibling resolution
      */
     protected function resolveInterdimensionalSiblings(
         ContentGraphInterface $contentGraph,
-        DimensionSpacePoint $selectedDimensionSpacePoint,
+        DimensionSpacePoint $referenceDimensionSpacePoint,
         DimensionSpacePointSet $affectedDimensionSpacePoints,
         NodeAggregateId $nodeAggregateId,
         ?NodeAggregateId $parentNodeAggregateId,
@@ -34,7 +37,7 @@ trait InterdimensionalSiblingsProvider
         bool $completeSet,
     ): InterdimensionalSiblings {
         $selectedSubgraph = $contentGraph->getSubgraph(
-            $selectedDimensionSpacePoint,
+            $referenceDimensionSpacePoint,
             VisibilityConstraints::createEmpty()
         );
         $alternativeSucceedingSiblingIds = $succeedingSiblingNodeAggregateId
@@ -61,9 +64,6 @@ trait InterdimensionalSiblingsProvider
                 $variantSucceedingSibling = $variantSubgraph->findNodeById($succeedingSiblingNodeAggregateId);
                 $variantParentId = $parentNodeAggregateId ?: $variantSubgraph->findParentNode($nodeAggregateId)?->aggregateId;
                 $siblingParent = $variantSubgraph->findParentNode($succeedingSiblingNodeAggregateId);
-                \Neos\Flow\var_dump($variantSucceedingSibling?->aggregateId, 'succeeding variant');
-                \Neos\Flow\var_dump($siblingParent?->aggregateId, 'sibling parent');
-                \Neos\Flow\var_dump($variantParentId, 'variant parent');
                 if ($variantSucceedingSibling && $siblingParent && (!$variantParentId || $variantParentId->equals($siblingParent->aggregateId))) {
                     // a) happy path, the explicitly requested succeeding sibling also exists in this dimension space point
                     $interdimensionalSiblings[] = new InterdimensionalSibling(
