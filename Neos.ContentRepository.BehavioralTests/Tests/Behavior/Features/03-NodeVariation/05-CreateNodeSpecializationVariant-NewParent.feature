@@ -1142,3 +1142,373 @@ Feature: Create node specialization
       | cs-identifier;elder-mc-nodeface;{"example":"general"}   |
       | cs-identifier;eldest-mc-nodeface;{"example":"general"}  |
     And I expect this node to have no succeeding siblings
+
+  # Scenario: Create specialization variant to a new parent after one of its new siblings, which is partially the last
+  # As this is implemented via deletion of a specialization: @see ../07-NodeRemoval/07-CreateNodeSpecializationVariant-NewParent-AfterDeletion.feature
+
+  Scenario: Create specialization variant to a new parent after the last of its new siblings
+    When the command CreateNodeVariant is executed with payload:
+      | Key                             | Value                    |
+      | nodeAggregateId                 | "nody-mc-nodeface"       |
+      | sourceOrigin                    | {"example":"general"}    |
+      | targetOrigin                    | {"example":"source"}     |
+      | parentNodeAggregateId           | "sir-david-nodenborough" |
+      | precedingSiblingNodeAggregateId | "youngest-mc-nodeface"   |
+    Then I expect exactly 15 events to be published on stream "ContentStream:cs-identifier"
+    And event at index 12 is of type "NodeSpecializationVariantWasCreated" with payload:
+      | Key                    | Expected                                                                                                                                |
+      | contentStreamId        | "cs-identifier"                                                                                                                         |
+      | nodeAggregateId        | "nody-mc-nodeface"                                                                                                                      |
+      | sourceOrigin           | {"example":"general"}                                                                                                                   |
+      | specializationOrigin   | {"example":"source"}                                                                                                                    |
+      | specializationSiblings | [{"dimensionSpacePoint":{"example":"source"},"nodeAggregateId":null},{"dimensionSpacePoint":{"example":"spec"},"nodeAggregateId":null}] |
+      | parentNodeAggregateId  | "sir-david-nodenborough"                                                                                                                |
+    And event at index 13 is of type "NodeSpecializationVariantWasCreated" with payload:
+      | Key                    | Expected                                                                                                                                                                        |
+      | contentStreamId        | "cs-identifier"                                                                                                                                                                 |
+      | nodeAggregateId        | "nodewyn-tetherton"                                                                                                                                                             |
+      | sourceOrigin           | {"example":"general"}                                                                                                                                                           |
+      | specializationOrigin   | {"example":"source"}                                                                                                                                                            |
+      | specializationSiblings | [{"dimensionSpacePoint":{"example":"source"},"nodeAggregateId":"invariable-mc-nodeface"},{"dimensionSpacePoint":{"example":"spec"},"nodeAggregateId":"invariable-mc-nodeface"}] |
+      | parentNodeAggregateId  | null                                                                                                                                                                            |
+    And event at index 14 is of type "NodeSpecializationVariantWasCreated" with payload:
+      | Key                    | Expected                                                                                                                                |
+      | contentStreamId        | "cs-identifier"                                                                                                                         |
+      | nodeAggregateId        | "nodimer-tetherton"                                                                                                                     |
+      | sourceOrigin           | {"example":"general"}                                                                                                                   |
+      | specializationOrigin   | {"example":"source"}                                                                                                                    |
+      | specializationSiblings | [{"dimensionSpacePoint":{"example":"source"},"nodeAggregateId":null},{"dimensionSpacePoint":{"example":"spec"},"nodeAggregateId":null}] |
+      | parentNodeAggregateId  | null                                                                                                                                    |
+
+    Then I expect the graph projection to consist of exactly 14 nodes
+    And I expect a node identified by cs-identifier;lady-eleonode-rootford;{} to exist in the content graph
+    And I expect a node identified by cs-identifier;nody-mc-nodeface;{"example":"general"} to exist in the content graph
+    And I expect a node identified by cs-identifier;nody-mc-nodeface;{"example":"source"} to exist in the content graph
+    And I expect a node identified by cs-identifier;nodewyn-tetherton;{"example":"general"} to exist in the content graph
+    And I expect a node identified by cs-identifier;nodewyn-tetherton;{"example":"source"} to exist in the content graph
+    And I expect a node identified by cs-identifier;nodimer-tetherton;{"example":"general"} to exist in the content graph
+    And I expect a node identified by cs-identifier;nodimer-tetherton;{"example":"source"} to exist in the content graph
+    And I expect a node identified by cs-identifier;eldest-mc-nodeface;{"example":"general"} to exist in the content graph
+    And I expect a node identified by cs-identifier;elder-mc-nodeface;{"example":"general"} to exist in the content graph
+    And I expect a node identified by cs-identifier;younger-mc-nodeface;{"example":"general"} to exist in the content graph
+    And I expect a node identified by cs-identifier;youngest-mc-nodeface;{"example":"general"} to exist in the content graph
+    And I expect a node identified by cs-identifier;invariable-mc-nodeface;{"example":"general"} to exist in the content graph
+
+    When I am in workspace "live"
+
+    And I expect the node aggregate "nody-mc-nodeface" to exist
+    And I expect this node aggregate to occupy dimension space points [{"example":"general"},{"example":"source"}]
+    And I expect this node aggregate to cover dimension space points [{"example":"general"},{"example":"source"},{"example":"spec"},{"example":"peer"}]
+
+    And I expect the node aggregate "nodewyn-tetherton" to exist
+    And I expect this node aggregate to occupy dimension space points [{"example":"general"},{"example":"source"}]
+    And I expect this node aggregate to cover dimension space points [{"example":"general"},{"example":"source"},{"example":"spec"},{"example":"peer"}]
+
+    And I expect the node aggregate "nodimer-tetherton" to exist
+    And I expect this node aggregate to occupy dimension space points [{"example":"general"},{"example":"source"}]
+    And I expect this node aggregate to cover dimension space points [{"example":"general"},{"example":"source"},{"example":"spec"},{"example":"peer"}]
+
+    And I expect the node aggregate "invariable-mc-nodeface" to exist
+    And I expect this node aggregate to occupy dimension space points [{"example":"general"}]
+    And I expect this node aggregate to cover dimension space points [{"example":"general"},{"example":"source"},{"example":"spec"},{"example":"peer"}]
+
+    When I am in workspace "live" and dimension space point {"example":"source"}
+    Then I expect the subgraph projection to consist of exactly 11 nodes
+    Then I expect node aggregate identifier "lady-eleonode-rootford" to lead to node cs-identifier;lady-eleonode-rootford;{}
+    And the subtree for node aggregate "lady-eleonode-rootford" with node types "" and 4 levels deep should be:
+      | Level | nodeAggregateId            |
+      | 0     | lady-eleonode-rootford     |
+      | 1     | sir-david-nodenborough     |
+      | 2     | eldest-mc-nodeface         |
+      | 2     | elder-mc-nodeface          |
+      | 2     | younger-mc-nodeface        |
+      | 2     | youngest-mc-nodeface       |
+      | 2     | nody-mc-nodeface           |
+      | 3     | nodewyn-tetherton          |
+      | 4     | nodimer-tetherton          |
+      | 3     | invariable-mc-nodeface     |
+      | 1     | sir-nodeward-nodington-iii |
+    Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{"example":"general"}
+    And I expect this node to have the following child nodes:
+      | Name              | NodeDiscriminator                                        |
+      | eldest-document   | cs-identifier;eldest-mc-nodeface;{"example":"general"}   |
+      | elder-document    | cs-identifier;elder-mc-nodeface;{"example":"general"}    |
+      | younger-document  | cs-identifier;younger-mc-nodeface;{"example":"general"}  |
+      | youngest-document | cs-identifier;youngest-mc-nodeface;{"example":"general"} |
+      | document          | cs-identifier;nody-mc-nodeface;{"example":"source"}      |
+    And I expect node aggregate identifier "eldest-mc-nodeface" to lead to node cs-identifier;eldest-mc-nodeface;{"example":"general"}
+    And I expect this node to have no preceding siblings
+    And I expect this node to have the following succeeding siblings:
+      | NodeDiscriminator                                        |
+      | cs-identifier;elder-mc-nodeface;{"example":"general"}    |
+      | cs-identifier;younger-mc-nodeface;{"example":"general"}  |
+      | cs-identifier;youngest-mc-nodeface;{"example":"general"} |
+      | cs-identifier;nody-mc-nodeface;{"example":"source"}      |
+
+    And I expect node aggregate identifier "elder-mc-nodeface" to lead to node cs-identifier;elder-mc-nodeface;{"example":"general"}
+    And I expect this node to have the following preceding siblings:
+      | NodeDiscriminator                                      |
+      | cs-identifier;eldest-mc-nodeface;{"example":"general"} |
+    And I expect this node to have the following succeeding siblings:
+      | NodeDiscriminator                                        |
+      | cs-identifier;younger-mc-nodeface;{"example":"general"}  |
+      | cs-identifier;youngest-mc-nodeface;{"example":"general"} |
+      | cs-identifier;nody-mc-nodeface;{"example":"source"}      |
+
+    And I expect node aggregate identifier "nody-mc-nodeface" to lead to node cs-identifier;nody-mc-nodeface;{"example":"source"}
+    And I expect this node to have the following child nodes:
+      | Name          | NodeDiscriminator                                          |
+      | tethered-node | cs-identifier;nodewyn-tetherton;{"example":"source"}       |
+      | invariable    | cs-identifier;invariable-mc-nodeface;{"example":"general"} |
+    And I expect this node to have the following preceding siblings:
+      | NodeDiscriminator                                        |
+      | cs-identifier;youngest-mc-nodeface;{"example":"general"} |
+      | cs-identifier;younger-mc-nodeface;{"example":"general"}  |
+      | cs-identifier;elder-mc-nodeface;{"example":"general"}    |
+      | cs-identifier;eldest-mc-nodeface;{"example":"general"}   |
+    And I expect this node to have no succeeding siblings
+    And I expect node aggregate identifier "nodewyn-tetherton" to lead to node cs-identifier;nodewyn-tetherton;{"example":"source"}
+    And I expect this node to have the following child nodes:
+      | Name          | NodeDiscriminator                                    |
+      | tethered-leaf | cs-identifier;nodimer-tetherton;{"example":"source"} |
+    And I expect node aggregate identifier "nodimer-tetherton" to lead to node cs-identifier;nodimer-tetherton;{"example":"source"}
+    And I expect node aggregate identifier "invariable-mc-nodeface" to lead to node cs-identifier;invariable-mc-nodeface;{"example":"general"}
+
+    And I expect node aggregate identifier "younger-mc-nodeface" to lead to node cs-identifier;younger-mc-nodeface;{"example":"general"}
+    And I expect this node to have the following preceding siblings:
+      | NodeDiscriminator                                      |
+      | cs-identifier;elder-mc-nodeface;{"example":"general"}  |
+      | cs-identifier;eldest-mc-nodeface;{"example":"general"} |
+    And I expect this node to have the following succeeding siblings:
+      | NodeDiscriminator                                        |
+      | cs-identifier;youngest-mc-nodeface;{"example":"general"} |
+      | cs-identifier;nody-mc-nodeface;{"example":"source"}      |
+
+    And I expect node aggregate identifier "youngest-mc-nodeface" to lead to node cs-identifier;youngest-mc-nodeface;{"example":"general"}
+    And I expect this node to have the following preceding siblings:
+      | NodeDiscriminator                                       |
+      | cs-identifier;younger-mc-nodeface;{"example":"general"} |
+      | cs-identifier;elder-mc-nodeface;{"example":"general"}   |
+      | cs-identifier;eldest-mc-nodeface;{"example":"general"}  |
+    And I expect this node to have the following succeeding siblings:
+      | NodeDiscriminator                                   |
+      | cs-identifier;nody-mc-nodeface;{"example":"source"} |
+
+    When I am in workspace "live" and dimension space point {"example":"general"}
+    Then I expect the subgraph projection to consist of exactly 11 nodes
+    Then I expect node aggregate identifier "lady-eleonode-rootford" to lead to node cs-identifier;lady-eleonode-rootford;{}
+    And the subtree for node aggregate "lady-eleonode-rootford" with node types "" and 4 levels deep should be:
+      | Level | nodeAggregateId            |
+      | 0     | lady-eleonode-rootford     |
+      | 1     | sir-david-nodenborough     |
+      | 2     | eldest-mc-nodeface         |
+      | 2     | elder-mc-nodeface          |
+      | 2     | younger-mc-nodeface        |
+      | 2     | youngest-mc-nodeface       |
+      | 1     | sir-nodeward-nodington-iii |
+      | 2     | nody-mc-nodeface           |
+      | 3     | nodewyn-tetherton          |
+      | 4     | nodimer-tetherton          |
+      | 3     | invariable-mc-nodeface     |
+    Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{"example":"general"}
+    And I expect this node to have the following child nodes:
+      | Name              | NodeDiscriminator                                        |
+      | eldest-document   | cs-identifier;eldest-mc-nodeface;{"example":"general"}   |
+      | elder-document    | cs-identifier;elder-mc-nodeface;{"example":"general"}    |
+      | younger-document  | cs-identifier;younger-mc-nodeface;{"example":"general"}  |
+      | youngest-document | cs-identifier;youngest-mc-nodeface;{"example":"general"} |
+    And I expect node aggregate identifier "eldest-mc-nodeface" to lead to node cs-identifier;eldest-mc-nodeface;{"example":"general"}
+    And I expect this node to have no preceding siblings
+    And I expect this node to have the following succeeding siblings:
+      | NodeDiscriminator                                        |
+      | cs-identifier;elder-mc-nodeface;{"example":"general"}    |
+      | cs-identifier;younger-mc-nodeface;{"example":"general"}  |
+      | cs-identifier;youngest-mc-nodeface;{"example":"general"} |
+    And I expect node aggregate identifier "elder-mc-nodeface" to lead to node cs-identifier;elder-mc-nodeface;{"example":"general"}
+    And I expect this node to have the following preceding siblings:
+      | NodeDiscriminator                                      |
+      | cs-identifier;eldest-mc-nodeface;{"example":"general"} |
+    And I expect this node to have the following succeeding siblings:
+      | NodeDiscriminator                                        |
+      | cs-identifier;younger-mc-nodeface;{"example":"general"}  |
+      | cs-identifier;youngest-mc-nodeface;{"example":"general"} |
+    And I expect node aggregate identifier "nody-mc-nodeface" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
+    And I expect this node to have the following child nodes:
+      | Name          | NodeDiscriminator                                          |
+      | tethered-node | cs-identifier;nodewyn-tetherton;{"example":"general"}      |
+      | invariable    | cs-identifier;invariable-mc-nodeface;{"example":"general"} |
+    And I expect this node to have no preceding siblings
+    And I expect this node to have no succeeding siblings
+    And I expect node aggregate identifier "nodewyn-tetherton" to lead to node cs-identifier;nodewyn-tetherton;{"example":"general"}
+    And I expect this node to have the following child nodes:
+      | Name          | NodeDiscriminator                                     |
+      | tethered-leaf | cs-identifier;nodimer-tetherton;{"example":"general"} |
+    And I expect node aggregate identifier "nodimer-tetherton" to lead to node cs-identifier;nodimer-tetherton;{"example":"general"}
+    And I expect node aggregate identifier "invariable-mc-nodeface" to lead to node cs-identifier;invariable-mc-nodeface;{"example":"general"}
+    And I expect node aggregate identifier "younger-mc-nodeface" to lead to node cs-identifier;younger-mc-nodeface;{"example":"general"}
+    And I expect this node to have the following preceding siblings:
+      | NodeDiscriminator                                      |
+      | cs-identifier;elder-mc-nodeface;{"example":"general"}  |
+      | cs-identifier;eldest-mc-nodeface;{"example":"general"} |
+    And I expect this node to have the following succeeding siblings:
+      | NodeDiscriminator                                        |
+      | cs-identifier;youngest-mc-nodeface;{"example":"general"} |
+    And I expect node aggregate identifier "youngest-mc-nodeface" to lead to node cs-identifier;youngest-mc-nodeface;{"example":"general"}
+    And I expect this node to have the following preceding siblings:
+      | NodeDiscriminator                                       |
+      | cs-identifier;younger-mc-nodeface;{"example":"general"} |
+      | cs-identifier;elder-mc-nodeface;{"example":"general"}   |
+      | cs-identifier;eldest-mc-nodeface;{"example":"general"}  |
+    And I expect this node to have no succeeding siblings
+
+
+    When I am in workspace "live" and dimension space point {"example":"spec"}
+    Then I expect the subgraph projection to consist of exactly 11 nodes
+    And I expect node aggregate identifier "lady-eleonode-rootford" to lead to node cs-identifier;lady-eleonode-rootford;{}
+    And the subtree for node aggregate "lady-eleonode-rootford" with node types "" and 4 levels deep should be:
+      | Level | nodeAggregateId            |
+      | 0     | lady-eleonode-rootford     |
+      | 1     | sir-david-nodenborough     |
+      | 2     | eldest-mc-nodeface         |
+      | 2     | elder-mc-nodeface          |
+      | 2     | younger-mc-nodeface        |
+      | 2     | youngest-mc-nodeface       |
+      | 2     | nody-mc-nodeface           |
+      | 3     | nodewyn-tetherton          |
+      | 4     | nodimer-tetherton          |
+      | 3     | invariable-mc-nodeface     |
+      | 1     | sir-nodeward-nodington-iii |
+
+    And I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{"example":"general"}
+    And I expect this node to have the following child nodes:
+      | Name              | NodeDiscriminator                                        |
+      | eldest-document   | cs-identifier;eldest-mc-nodeface;{"example":"general"}   |
+      | elder-document    | cs-identifier;elder-mc-nodeface;{"example":"general"}    |
+      | younger-document  | cs-identifier;younger-mc-nodeface;{"example":"general"}  |
+      | youngest-document | cs-identifier;youngest-mc-nodeface;{"example":"general"} |
+      | document          | cs-identifier;nody-mc-nodeface;{"example":"source"}      |
+
+    And I expect node aggregate identifier "eldest-mc-nodeface" to lead to node cs-identifier;eldest-mc-nodeface;{"example":"general"}
+    And I expect this node to have no preceding siblings
+    And I expect this node to have the following succeeding siblings:
+      | NodeDiscriminator                                        |
+      | cs-identifier;elder-mc-nodeface;{"example":"general"}    |
+      | cs-identifier;younger-mc-nodeface;{"example":"general"}  |
+      | cs-identifier;youngest-mc-nodeface;{"example":"general"} |
+      | cs-identifier;nody-mc-nodeface;{"example":"source"}      |
+
+    And I expect node aggregate identifier "elder-mc-nodeface" to lead to node cs-identifier;elder-mc-nodeface;{"example":"general"}
+    And I expect this node to have the following preceding siblings:
+      | NodeDiscriminator                                      |
+      | cs-identifier;eldest-mc-nodeface;{"example":"general"} |
+    And I expect this node to have the following succeeding siblings:
+      | NodeDiscriminator                                        |
+      | cs-identifier;younger-mc-nodeface;{"example":"general"}  |
+      | cs-identifier;youngest-mc-nodeface;{"example":"general"} |
+      | cs-identifier;nody-mc-nodeface;{"example":"source"}      |
+
+    And I expect node aggregate identifier "nody-mc-nodeface" to lead to node cs-identifier;nody-mc-nodeface;{"example":"source"}
+    And I expect this node to have the following child nodes:
+      | Name          | NodeDiscriminator                                          |
+      | tethered-node | cs-identifier;nodewyn-tetherton;{"example":"source"}       |
+      | invariable    | cs-identifier;invariable-mc-nodeface;{"example":"general"} |
+    And I expect this node to have the following preceding siblings:
+      | NodeDiscriminator                                        |
+      | cs-identifier;youngest-mc-nodeface;{"example":"general"} |
+      | cs-identifier;younger-mc-nodeface;{"example":"general"}  |
+      | cs-identifier;elder-mc-nodeface;{"example":"general"}    |
+      | cs-identifier;eldest-mc-nodeface;{"example":"general"}   |
+    And I expect this node to have no succeeding siblings
+    And I expect node aggregate identifier "nodewyn-tetherton" to lead to node cs-identifier;nodewyn-tetherton;{"example":"source"}
+    And I expect this node to have the following child nodes:
+      | Name          | NodeDiscriminator                                    |
+      | tethered-leaf | cs-identifier;nodimer-tetherton;{"example":"source"} |
+    And I expect node aggregate identifier "nodimer-tetherton" to lead to node cs-identifier;nodimer-tetherton;{"example":"source"}
+    And I expect node aggregate identifier "invariable-mc-nodeface" to lead to node cs-identifier;invariable-mc-nodeface;{"example":"general"}
+
+    And I expect node aggregate identifier "younger-mc-nodeface" to lead to node cs-identifier;younger-mc-nodeface;{"example":"general"}
+    And I expect this node to have the following preceding siblings:
+      | NodeDiscriminator                                      |
+      | cs-identifier;elder-mc-nodeface;{"example":"general"}  |
+      | cs-identifier;eldest-mc-nodeface;{"example":"general"} |
+    And I expect this node to have the following succeeding siblings:
+      | NodeDiscriminator                                        |
+      | cs-identifier;youngest-mc-nodeface;{"example":"general"} |
+      | cs-identifier;nody-mc-nodeface;{"example":"source"}      |
+
+    And I expect node aggregate identifier "youngest-mc-nodeface" to lead to node cs-identifier;youngest-mc-nodeface;{"example":"general"}
+    And I expect this node to have the following preceding siblings:
+      | NodeDiscriminator                                       |
+      | cs-identifier;younger-mc-nodeface;{"example":"general"} |
+      | cs-identifier;elder-mc-nodeface;{"example":"general"}   |
+      | cs-identifier;eldest-mc-nodeface;{"example":"general"}  |
+    And I expect this node to have the following succeeding siblings:
+      | NodeDiscriminator                                   |
+      | cs-identifier;nody-mc-nodeface;{"example":"source"} |
+
+    When I am in workspace "live" and dimension space point {"example":"peer"}
+    Then I expect the subgraph projection to consist of exactly 11 nodes
+    Then I expect node aggregate identifier "lady-eleonode-rootford" to lead to node cs-identifier;lady-eleonode-rootford;{}
+    And the subtree for node aggregate "lady-eleonode-rootford" with node types "" and 4 levels deep should be:
+      | Level | nodeAggregateId            |
+      | 0     | lady-eleonode-rootford     |
+      | 1     | sir-david-nodenborough     |
+      | 2     | eldest-mc-nodeface         |
+      | 2     | elder-mc-nodeface          |
+      | 2     | younger-mc-nodeface        |
+      | 2     | youngest-mc-nodeface       |
+      | 1     | sir-nodeward-nodington-iii |
+      | 2     | nody-mc-nodeface           |
+      | 3     | nodewyn-tetherton          |
+      | 4     | nodimer-tetherton          |
+      | 3     | invariable-mc-nodeface     |
+    Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{"example":"general"}
+    And I expect this node to have the following child nodes:
+      | Name              | NodeDiscriminator                                        |
+      | eldest-document   | cs-identifier;eldest-mc-nodeface;{"example":"general"}   |
+      | elder-document    | cs-identifier;elder-mc-nodeface;{"example":"general"}    |
+      | younger-document  | cs-identifier;younger-mc-nodeface;{"example":"general"}  |
+      | youngest-document | cs-identifier;youngest-mc-nodeface;{"example":"general"} |
+    And I expect node aggregate identifier "eldest-mc-nodeface" to lead to node cs-identifier;eldest-mc-nodeface;{"example":"general"}
+    And I expect this node to have no preceding siblings
+    And I expect this node to have the following succeeding siblings:
+      | NodeDiscriminator                                        |
+      | cs-identifier;elder-mc-nodeface;{"example":"general"}    |
+      | cs-identifier;younger-mc-nodeface;{"example":"general"}  |
+      | cs-identifier;youngest-mc-nodeface;{"example":"general"} |
+    And I expect node aggregate identifier "elder-mc-nodeface" to lead to node cs-identifier;elder-mc-nodeface;{"example":"general"}
+    And I expect this node to have the following preceding siblings:
+      | NodeDiscriminator                                      |
+      | cs-identifier;eldest-mc-nodeface;{"example":"general"} |
+    And I expect this node to have the following succeeding siblings:
+      | NodeDiscriminator                                        |
+      | cs-identifier;younger-mc-nodeface;{"example":"general"}  |
+      | cs-identifier;youngest-mc-nodeface;{"example":"general"} |
+    And I expect node aggregate identifier "nody-mc-nodeface" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
+    And I expect this node to have the following child nodes:
+      | Name          | NodeDiscriminator                                          |
+      | tethered-node | cs-identifier;nodewyn-tetherton;{"example":"general"}      |
+      | invariable    | cs-identifier;invariable-mc-nodeface;{"example":"general"} |
+    And I expect this node to have no preceding siblings
+    And I expect this node to have no succeeding siblings
+    And I expect node aggregate identifier "nodewyn-tetherton" to lead to node cs-identifier;nodewyn-tetherton;{"example":"general"}
+    And I expect this node to have the following child nodes:
+      | Name          | NodeDiscriminator                                     |
+      | tethered-leaf | cs-identifier;nodimer-tetherton;{"example":"general"} |
+    And I expect node aggregate identifier "nodimer-tetherton" to lead to node cs-identifier;nodimer-tetherton;{"example":"general"}
+    And I expect node aggregate identifier "invariable-mc-nodeface" to lead to node cs-identifier;invariable-mc-nodeface;{"example":"general"}
+    And I expect node aggregate identifier "younger-mc-nodeface" to lead to node cs-identifier;younger-mc-nodeface;{"example":"general"}
+    And I expect this node to have the following preceding siblings:
+      | NodeDiscriminator                                      |
+      | cs-identifier;elder-mc-nodeface;{"example":"general"}  |
+      | cs-identifier;eldest-mc-nodeface;{"example":"general"} |
+    And I expect this node to have the following succeeding siblings:
+      | NodeDiscriminator                                        |
+      | cs-identifier;youngest-mc-nodeface;{"example":"general"} |
+    And I expect node aggregate identifier "youngest-mc-nodeface" to lead to node cs-identifier;youngest-mc-nodeface;{"example":"general"}
+    And I expect this node to have the following preceding siblings:
+      | NodeDiscriminator                                       |
+      | cs-identifier;younger-mc-nodeface;{"example":"general"} |
+      | cs-identifier;elder-mc-nodeface;{"example":"general"}   |
+      | cs-identifier;eldest-mc-nodeface;{"example":"general"}  |
+    And I expect this node to have no succeeding siblings
