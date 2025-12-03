@@ -35,6 +35,7 @@ use Neos\Media\Browser\Domain\Session\BrowserState;
 use Neos\Media\Domain\Model\Asset;
 use Neos\Media\Domain\Model\AssetCollection;
 use Neos\Media\Domain\Model\AssetInterface;
+use Neos\Media\Domain\Model\ImageVariant;
 use Neos\Media\Domain\Model\AssetSource\AssetNotFoundExceptionInterface;
 use Neos\Media\Domain\Model\AssetSource\AssetProxy\AssetProxyInterface;
 use Neos\Media\Domain\Model\AssetSource\AssetProxyRepositoryInterface;
@@ -591,6 +592,10 @@ class AssetController extends ActionController
      */
     public function uploadAction(Asset $asset): string
     {
+        if ($this->persistenceManager->isNewObject($asset) === false && $asset instanceof ImageVariant) {
+            $asset = $asset->getOriginalAsset();
+        }
+
         if (($tag = $this->browserState->get('activeTag')) !== null) {
             $asset->addTag($tag);
         }
