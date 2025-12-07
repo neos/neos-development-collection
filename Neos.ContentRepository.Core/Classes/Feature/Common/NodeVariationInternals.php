@@ -64,10 +64,13 @@ trait NodeVariationInternals
                 succeedingSiblingNodeAggregateId: $succeedingSiblingNodeAggregateId,
             ),
             DimensionSpace\VariantType::TYPE_GENERALIZATION => $this->handleCreateNodeGeneralizationVariant(
-                $contentGraph,
-                $sourceOrigin,
-                $targetOrigin,
-                $nodeAggregate
+                contentGraph: $contentGraph,
+                sourceOrigin: $sourceOrigin,
+                targetOrigin: $targetOrigin,
+                nodeAggregate: $nodeAggregate,
+                parentNodeAggregateId: $parentNodeAggregateId,
+                precedingSiblingNodeAggregateId: $precedingSiblingNodeAggregateId,
+                succeedingSiblingNodeAggregateId: $succeedingSiblingNodeAggregateId,
             ),
             default => $this->handleCreateNodePeerVariant(
                 $contentGraph,
@@ -189,16 +192,22 @@ trait NodeVariationInternals
         ContentGraphInterface $contentGraph,
         OriginDimensionSpacePoint $sourceOrigin,
         OriginDimensionSpacePoint $targetOrigin,
-        NodeAggregate $nodeAggregate
+        NodeAggregate $nodeAggregate,
+        ?NodeAggregateId $parentNodeAggregateId,
+        ?NodeAggregateId $precedingSiblingNodeAggregateId,
+        ?NodeAggregateId $succeedingSiblingNodeAggregateId,
     ): Events {
         $generalizationVisibility = $this->calculateEffectiveVisibility($targetOrigin, $nodeAggregate);
         $events = $this->collectNodeGeneralizationVariantsThatWillHaveBeenCreated(
-            $contentGraph,
-            $sourceOrigin,
-            $targetOrigin,
-            $nodeAggregate,
-            $generalizationVisibility,
-            []
+            contentGraph: $contentGraph,
+            sourceOrigin: $sourceOrigin,
+            targetOrigin: $targetOrigin,
+            nodeAggregate: $nodeAggregate,
+            generalizationVisibility: $generalizationVisibility,
+            parentNodeAggregateId: $parentNodeAggregateId,
+            precedingSiblingNodeAggregateId: $precedingSiblingNodeAggregateId,
+            succeedingSiblingNodeAggregateId: $succeedingSiblingNodeAggregateId,
+            events: [],
         );
 
         return Events::fromArray($events);
@@ -214,19 +223,41 @@ trait NodeVariationInternals
         OriginDimensionSpacePoint $targetOrigin,
         NodeAggregate $nodeAggregate,
         DimensionSpacePointSet $generalizationVisibility,
-        array $events
+        ?NodeAggregateId $parentNodeAggregateId,
+        ?NodeAggregateId $precedingSiblingNodeAggregateId,
+        ?NodeAggregateId $succeedingSiblingNodeAggregateId,
+        array $events,
     ): array {
+        if (!$parentNodeAggregateId && !$succeedingSiblingNodeAggregateId && !$precedingSiblingNodeAggregateId) {
+            // preserve legacy behavior: this means the variant is to be created in place
+            $originSubgraph = $contentGraph->getSubgraph(
+                $sourceOrigin->toDimensionSpacePoint(),
+                VisibilityConstraints::createEmpty()
+            );
+            $precedingSiblingNodeAggregateId = $originSubgraph->findPrecedingSiblingNodes(
+                siblingNodeAggregateId: $nodeAggregate->nodeAggregateId,
+                filter: FindPrecedingSiblingNodesFilter::create(pagination: Pagination::fromLimitAndOffset(1, 0))
+            )->first()?->aggregateId;
+            $succeedingSiblingNodeAggregateId = $originSubgraph->findSucceedingSiblingNodes(
+                siblingNodeAggregateId: $nodeAggregate->nodeAggregateId,
+                filter: FindSucceedingSiblingNodesFilter::create(pagination: Pagination::fromLimitAndOffset(1, 0))
+            )->first()?->aggregateId;
+        }
         $events[] = new NodeGeneralizationVariantWasCreated(
-            $contentGraph->getWorkspaceName(),
-            $contentGraph->getContentStreamId(),
-            $nodeAggregate->nodeAggregateId,
-            $sourceOrigin,
-            $targetOrigin,
-            $this->resolveInterdimensionalSiblingsForVariation(
-                $contentGraph,
-                $nodeAggregate->nodeAggregateId,
-                $sourceOrigin,
-                $generalizationVisibility
+            workspaceName: $contentGraph->getWorkspaceName(),
+            contentStreamId: $contentGraph->getContentStreamId(),
+            nodeAggregateId: $nodeAggregate->nodeAggregateId,
+            sourceOrigin: $sourceOrigin,
+            generalizationOrigin: $targetOrigin,
+            variantSucceedingSiblings: $this->resolveInterdimensionalSiblings(
+                contentGraph: $contentGraph,
+                referenceDimensionSpacePoint: $targetOrigin->toDimensionSpacePoint(),
+                affectedDimensionSpacePoints: $generalizationVisibility,
+                nodeAggregateId: $nodeAggregate->nodeAggregateId,
+                parentNodeAggregateId: $parentNodeAggregateId,
+                precedingSiblingNodeAggregateId: $precedingSiblingNodeAggregateId,
+                succeedingSiblingNodeAggregateId: $succeedingSiblingNodeAggregateId,
+                completeSet: true,
             )
         );
 
@@ -235,13 +266,28 @@ trait NodeVariationInternals
                 $nodeAggregate->nodeAggregateId
             ) as $tetheredChildNodeAggregate
         ) {
+            $originSubgraph = $contentGraph->getSubgraph(
+                $sourceOrigin->toDimensionSpacePoint(),
+                VisibilityConstraints::createEmpty()
+            );
+            $originChildPrecedingSibling = $originSubgraph->findPrecedingSiblingNodes(
+                siblingNodeAggregateId: $tetheredChildNodeAggregate->nodeAggregateId,
+                filter: FindPrecedingSiblingNodesFilter::create(pagination: Pagination::fromLimitAndOffset(1, 0))
+            )->first();
+            $originChildSucceedingSibling = $originSubgraph->findSucceedingSiblingNodes(
+                siblingNodeAggregateId: $tetheredChildNodeAggregate->nodeAggregateId,
+                filter: FindSucceedingSiblingNodesFilter::create(pagination: Pagination::fromLimitAndOffset(1, 0))
+            )->first();
             $events = $this->collectNodeGeneralizationVariantsThatWillHaveBeenCreated(
-                $contentGraph,
-                $sourceOrigin,
-                $targetOrigin,
-                $tetheredChildNodeAggregate,
-                $generalizationVisibility,
-                $events
+                contentGraph: $contentGraph,
+                sourceOrigin: $sourceOrigin,
+                targetOrigin: $targetOrigin,
+                nodeAggregate: $tetheredChildNodeAggregate,
+                generalizationVisibility: $generalizationVisibility,
+                parentNodeAggregateId: null,
+                precedingSiblingNodeAggregateId: $originChildPrecedingSibling?->aggregateId,
+                succeedingSiblingNodeAggregateId: $originChildSucceedingSibling?->aggregateId,
+                events: $events,
             );
         }
 

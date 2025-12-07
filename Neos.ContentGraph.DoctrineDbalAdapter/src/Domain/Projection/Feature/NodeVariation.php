@@ -170,7 +170,15 @@ trait NodeVariation
         );
     }
 
-    public function createNodeGeneralizationVariant(ContentStreamId $contentStreamId, NodeAggregateId $nodeAggregateId, OriginDimensionSpacePoint $sourceOrigin, OriginDimensionSpacePoint $generalizationOrigin, InterdimensionalSiblings $variantSucceedingSiblings, EventEnvelope $eventEnvelope): void
+    public function createNodeGeneralizationVariant(
+        ContentStreamId $contentStreamId,
+        NodeAggregateId $nodeAggregateId,
+        OriginDimensionSpacePoint $sourceOrigin,
+        OriginDimensionSpacePoint $generalizationOrigin,
+        ?NodeAggregateId $parentNodeAggregateId,
+        InterdimensionalSiblings $variantSucceedingSiblings,
+        EventEnvelope $eventEnvelope
+    ): void
     {
         // do the generalization
         $sourceNode = $this->projectionContentGraph->findNodeInAggregate(

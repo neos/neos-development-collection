@@ -464,7 +464,15 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
 
     private function whenNodeGeneralizationVariantWasCreated(NodeGeneralizationVariantWasCreated $event, EventEnvelope $eventEnvelope): void
     {
-        $this->createNodeGeneralizationVariant($event->contentStreamId, $event->nodeAggregateId, $event->sourceOrigin, $event->generalizationOrigin, $event->variantSucceedingSiblings, $eventEnvelope);
+        $this->createNodeGeneralizationVariant(
+            contentStreamId: $event->contentStreamId,
+            nodeAggregateId: $event->nodeAggregateId,
+            sourceOrigin: $event->sourceOrigin,
+            generalizationOrigin: $event->generalizationOrigin,
+            parentNodeAggregateId: $event->parentNodeAggregateId,
+            generalizationSiblings: $event->variantSucceedingSiblings,
+            eventEnvelope: $eventEnvelope,
+        );
     }
 
     private function whenNodePeerVariantWasCreated(NodePeerVariantWasCreated $event, EventEnvelope $eventEnvelope): void
