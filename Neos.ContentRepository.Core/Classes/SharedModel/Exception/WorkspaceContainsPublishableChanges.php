@@ -13,6 +13,11 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
  */
 final class WorkspaceContainsPublishableChanges extends \RuntimeException
 {
+    public static function butWasNotSupposedToForDeactivating(WorkspaceName $workspaceName): self
+    {
+        throw new self(sprintf('The workspace %s needs to be empty before being deactivated.', $workspaceName->value), 1765979146);
+    }
+
     public static function butWasNotSupposedToForBaseWorkspaceChange(WorkspaceName $workspaceName): self
     {
         throw new self(sprintf('The workspace %s needs to be empty before switching the base workspace.', $workspaceName->value), 1681455989);

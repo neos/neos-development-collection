@@ -51,6 +51,8 @@ use Neos\ContentRepository\Core\Feature\RootNodeCreation\Event\RootNodeAggregate
 use Neos\ContentRepository\Core\Feature\SubtreeTagging\Dto\SubtreeTags;
 use Neos\ContentRepository\Core\Feature\SubtreeTagging\Event\SubtreeWasTagged;
 use Neos\ContentRepository\Core\Feature\SubtreeTagging\Event\SubtreeWasUntagged;
+use Neos\ContentRepository\Core\Feature\WorkspaceActivation\Event\WorkspaceWasActivated;
+use Neos\ContentRepository\Core\Feature\WorkspaceActivation\Event\WorkspaceWasDeactivated;
 use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Event\RootWorkspaceWasCreated;
 use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Event\WorkspaceWasCreated;
 use Neos\ContentRepository\Core\Feature\WorkspaceModification\Event\WorkspaceBaseWorkspaceWasChanged;
@@ -167,9 +169,11 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
             WorkspaceBaseWorkspaceWasChanged::class => $this->whenWorkspaceBaseWorkspaceWasChanged($event),
             WorkspaceRebaseFailed::class => $this->whenWorkspaceRebaseFailed($event),
             WorkspaceWasCreated::class => $this->whenWorkspaceWasCreated($event),
+            WorkspaceWasActivated::class => $this->whenWorkspaceWasActivated($event),
             WorkspaceWasDiscarded::class => $this->whenWorkspaceWasDiscarded($event),
             WorkspaceWasPublished::class => $this->whenWorkspaceWasPublished($event),
             WorkspaceWasRebased::class => $this->whenWorkspaceWasRebased($event),
+            WorkspaceWasDeactivated::class => $this->whenWorkspaceWasDeactivated($event),
             WorkspaceWasRemoved::class => $this->whenWorkspaceWasRemoved($event),
             default => null,
         };
@@ -681,6 +685,16 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
     private function whenWorkspaceBaseWorkspaceWasChanged(WorkspaceBaseWorkspaceWasChanged $event): void
     {
         $this->updateBaseWorkspace($event->workspaceName, $event->baseWorkspaceName, $event->newContentStreamId);
+    }
+
+    private function whenWorkspaceWasActivated(WorkspaceWasActivated $event): void
+    {
+        $this->updateWorkspaceContentStreamId($event->workspaceName, $event->newContentStreamId);
+    }
+
+    private function whenWorkspaceWasDeactivated(WorkspaceWasDeactivated $event): void
+    {
+        $this->updateWorkspaceContentStreamId($event->workspaceName, null);
     }
 
     private function whenWorkspaceRebaseFailed(WorkspaceRebaseFailed $event): void

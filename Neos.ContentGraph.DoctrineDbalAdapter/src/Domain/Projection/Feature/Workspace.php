@@ -45,10 +45,10 @@ trait Workspace
 
     private function updateWorkspaceContentStreamId(
         WorkspaceName $workspaceName,
-        ContentStreamId $contentStreamId,
+        ?ContentStreamId $contentStreamId,
     ): void {
         $this->dbal->update($this->tableNames->workspace(), [
-            'currentContentStreamId' => $contentStreamId->value,
+            'currentContentStreamId' => $contentStreamId?->value,
         ], [
             'name' => $workspaceName->value
         ]);

@@ -15,6 +15,8 @@ declare(strict_types=1);
 namespace Neos\Neos\Domain\Service;
 
 use Neos\ContentRepository\Core\Feature\Security\Exception\AccessDenied;
+use Neos\ContentRepository\Core\Feature\WorkspaceActivation\Command\ActivateWorkspace;
+use Neos\ContentRepository\Core\Feature\WorkspaceActivation\Command\DeactivateWorkspace;
 use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Command\CreateRootWorkspace;
 use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Command\CreateWorkspace;
 use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Exception\WorkspaceAlreadyExists;
@@ -215,6 +217,44 @@ final readonly class WorkspaceService
             WorkspaceName::forLive(),
             $user->getId(),
         );
+    }
+
+    public function isWorkspaceActive(ContentRepositoryId $contentRepositoryId, WorkspaceName $workspaceName): bool
+    {
+        return $this->requireWorkspace($contentRepositoryId, $workspaceName)->isActive();
+    }
+
+    public function activatePersonalWorkspaceForUserIfDeactivated(ContentRepositoryId $contentRepositoryId, User $user): void
+    {
+        $existingWorkspaceName = $this->metadataAndRoleRepository->findWorkspaceNameByUser($contentRepositoryId, $user->getId());
+        if ($existingWorkspaceName === null) {
+            throw new \RuntimeException(sprintf('No workspace is assigned to the user with id "%s")', $user->getId()->value), 1766049866);
+        }
+
+        $workspaceIsActive = $this->isWorkspaceActive($contentRepositoryId, $existingWorkspaceName);
+        if ($workspaceIsActive) {
+            return;
+        }
+
+        $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryId);
+        $contentRepository->handle(ActivateWorkspace::create($existingWorkspaceName));
+    }
+
+    // TODO: required? If not remove
+    public function deactivatePersonalWorkspaceForUserIfActive(ContentRepositoryId $contentRepositoryId, User $user): void
+    {
+        $existingWorkspaceName = $this->metadataAndRoleRepository->findWorkspaceNameByUser($contentRepositoryId, $user->getId());
+        if ($existingWorkspaceName === null) {
+            throw new \RuntimeException(sprintf('No workspace is assigned to the user with id "%s")', $user->getId()->value), 1766049866);
+        }
+
+        $workspaceIsActive = $this->isWorkspaceActive($contentRepositoryId, $existingWorkspaceName);
+        if (!$workspaceIsActive) {
+            return;
+        }
+
+        $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryId);
+        $contentRepository->handle(DeactivateWorkspace::create($existingWorkspaceName));
     }
 
     /**

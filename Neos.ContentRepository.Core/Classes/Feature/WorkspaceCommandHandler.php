@@ -30,6 +30,10 @@ use Neos\ContentRepository\Core\Feature\ContentStreamClosing\Event\ContentStream
 use Neos\ContentRepository\Core\Feature\ContentStreamClosing\Event\ContentStreamWasReopened;
 use Neos\ContentRepository\Core\Feature\ContentStreamCreation\Event\ContentStreamWasCreated;
 use Neos\ContentRepository\Core\Feature\ContentStreamRemoval\Event\ContentStreamWasRemoved;
+use Neos\ContentRepository\Core\Feature\WorkspaceActivation\Command\ActivateWorkspace;
+use Neos\ContentRepository\Core\Feature\WorkspaceActivation\Command\DeactivateWorkspace;
+use Neos\ContentRepository\Core\Feature\WorkspaceActivation\Event\WorkspaceWasActivated;
+use Neos\ContentRepository\Core\Feature\WorkspaceActivation\Event\WorkspaceWasDeactivated;
 use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Command\CreateRootWorkspace;
 use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Command\CreateWorkspace;
 use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Event\RootWorkspaceWasCreated;
@@ -60,6 +64,7 @@ use Neos\ContentRepository\Core\SharedModel\Exception\ContentStreamIsClosed;
 use Neos\ContentRepository\Core\SharedModel\Exception\WorkspaceDoesNotExist;
 use Neos\ContentRepository\Core\SharedModel\Exception\WorkspaceHasNoBaseWorkspaceName;
 use Neos\ContentRepository\Core\SharedModel\Exception\WorkspaceContainsPublishableChanges;
+use Neos\ContentRepository\Core\SharedModel\Exception\WorkspaceIsActivated;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\Workspace;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
@@ -99,12 +104,14 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
         /** @phpstan-ignore-next-line */
         return match ($command::class) {
             CreateWorkspace::class => $this->handleCreateWorkspace($command, $commandHandlingDependencies),
+            ActivateWorkspace::class => $this->handleActivateWorkspace($command, $commandHandlingDependencies),
             CreateRootWorkspace::class => $this->handleCreateRootWorkspace($command, $commandHandlingDependencies),
             PublishWorkspace::class => $this->handlePublishWorkspace($command, $commandHandlingDependencies),
             RebaseWorkspace::class => $this->handleRebaseWorkspace($command, $commandHandlingDependencies),
             PublishIndividualNodesFromWorkspace::class => $this->handlePublishIndividualNodesFromWorkspace($command, $commandHandlingDependencies),
             DiscardIndividualNodesFromWorkspace::class => $this->handleDiscardIndividualNodesFromWorkspace($command, $commandHandlingDependencies),
             DiscardWorkspace::class => $this->handleDiscardWorkspace($command, $commandHandlingDependencies),
+            DeactivateWorkspace::class => $this->handleDeactivateWorkspace($command, $commandHandlingDependencies),
             DeleteWorkspace::class => $this->handleDeleteWorkspace($command, $commandHandlingDependencies),
             ChangeBaseWorkspace::class => $this->handleChangeBaseWorkspace($command, $commandHandlingDependencies),
         };
@@ -192,7 +199,7 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
         PublishWorkspace $command,
         CommandHandlingDependencies $commandHandlingDependencies,
     ): \Generator {
-        $workspace = $this->requireWorkspace($command->workspaceName, $commandHandlingDependencies);
+        $workspace = $this->requireActiveWorkspace($command->workspaceName, $commandHandlingDependencies);
         $baseWorkspace = $this->requireBaseWorkspace($workspace, $commandHandlingDependencies);
         if (!$workspace->hasPublishableChanges()) {
             throw WorkspaceCommandSkipped::becauseWorkspaceToPublishIsEmpty($command->workspaceName);
@@ -340,7 +347,7 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
         RebaseWorkspace $command,
         CommandHandlingDependencies $commandHandlingDependencies,
     ): \Generator {
-        $workspace = $this->requireWorkspace($command->workspaceName, $commandHandlingDependencies);
+        $workspace = $this->requireActiveWorkspace($command->workspaceName, $commandHandlingDependencies);
         $baseWorkspace = $this->requireBaseWorkspace($workspace, $commandHandlingDependencies);
 
         $workspaceContentStreamVersion = $this->requireOpenContentStreamAndVersion($workspace, $commandHandlingDependencies);
@@ -443,7 +450,7 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
         PublishIndividualNodesFromWorkspace $command,
         CommandHandlingDependencies $commandHandlingDependencies,
     ): \Generator {
-        $workspace = $this->requireWorkspace($command->workspaceName, $commandHandlingDependencies);
+        $workspace = $this->requireActiveWorkspace($command->workspaceName, $commandHandlingDependencies);
         $baseWorkspace = $this->requireBaseWorkspace($workspace, $commandHandlingDependencies);
 
         if (!$workspace->hasPublishableChanges()) {
@@ -567,7 +574,7 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
         DiscardIndividualNodesFromWorkspace $command,
         CommandHandlingDependencies $commandHandlingDependencies,
     ): \Generator {
-        $workspace = $this->requireWorkspace($command->workspaceName, $commandHandlingDependencies);
+        $workspace = $this->requireActiveWorkspace($command->workspaceName, $commandHandlingDependencies);
         $baseWorkspace = $this->requireBaseWorkspace($workspace, $commandHandlingDependencies);
 
         if (!$workspace->hasPublishableChanges()) {
@@ -669,7 +676,7 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
         DiscardWorkspace $command,
         CommandHandlingDependencies $commandHandlingDependencies,
     ): \Generator {
-        $workspace = $this->requireWorkspace($command->workspaceName, $commandHandlingDependencies);
+        $workspace = $this->requireActiveWorkspace($command->workspaceName, $commandHandlingDependencies);
         $baseWorkspace = $this->requireBaseWorkspace($workspace, $commandHandlingDependencies);
 
         if (!$workspace->hasPublishableChanges()) {
@@ -731,7 +738,7 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
         ChangeBaseWorkspace $command,
         CommandHandlingDependencies $commandHandlingDependencies,
     ): \Generator {
-        $workspace = $this->requireWorkspace($command->workspaceName, $commandHandlingDependencies);
+        $workspace = $this->requireActiveWorkspace($command->workspaceName, $commandHandlingDependencies);
         $currentBaseWorkspace = $this->requireBaseWorkspace($workspace, $commandHandlingDependencies);
 
         $this->requireContentStreamToNotBeClosed($workspace->currentContentStreamId, $commandHandlingDependencies);
@@ -744,7 +751,7 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
             throw WorkspaceContainsPublishableChanges::butWasNotSupposedToForBaseWorkspaceChange($workspace->workspaceName);
         }
 
-        $newBaseWorkspace = $this->requireWorkspace($command->baseWorkspaceName, $commandHandlingDependencies);
+        $newBaseWorkspace = $this->requireActiveWorkspace($command->baseWorkspaceName, $commandHandlingDependencies);
         $this->requireNonCircularRelationBetweenWorkspaces($workspace, $newBaseWorkspace, $commandHandlingDependencies);
 
         $newBaseWorkspaceContentStreamVersion = $this->requireOpenContentStreamAndVersion($newBaseWorkspace, $commandHandlingDependencies);
@@ -778,7 +785,7 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
         DeleteWorkspace $command,
         CommandHandlingDependencies $commandHandlingDependencies,
     ): \Generator {
-        $workspace = $this->requireWorkspace($command->workspaceName, $commandHandlingDependencies);
+        $workspace = $this->requireActiveWorkspace($command->workspaceName, $commandHandlingDependencies);
         $contentStreamVersion = $commandHandlingDependencies->getContentStreamVersion($workspace->currentContentStreamId);
 
         yield new EventsToPublish(
@@ -798,6 +805,83 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
                     $command->workspaceName,
                 )
             ),
+            ExpectedVersion::ANY()
+        );
+    }
+
+    /**
+     * @throws WorkspaceDoesNotExist
+     * @throws ContentStreamAlreadyExists
+     */
+    private function handleActivateWorkspace(
+        ActivateWorkspace $command,
+        CommandHandlingDependencies $commandHandlingDependencies,
+    ): \Generator {
+        $workspace = $commandHandlingDependencies->findWorkspaceByName($command->workspaceName);
+        if (is_null($workspace)) {
+            throw WorkspaceDoesNotExist::butWasSupposedTo($command->workspaceName);
+        }
+        if ($workspace->isActive()) {
+            throw WorkspaceIsActivated::butWasSupposedToBeDeactivated($command->workspaceName);
+        }
+        $baseWorkspace = $this->requireActiveWorkspace($workspace->baseWorkspaceName, $commandHandlingDependencies);
+        $contentStreamVersion = $commandHandlingDependencies->getContentStreamVersion($baseWorkspace->currentContentStreamId);
+
+        $this->requireContentStreamToNotExistYet($command->newContentStreamId, $commandHandlingDependencies);
+
+        yield $this->forkContentStream(
+            $command->newContentStreamId,
+            $baseWorkspace->currentContentStreamId,
+            $contentStreamVersion,
+            sprintf('Activate workspace %s based on %s', $workspace->workspaceName->value, $baseWorkspace->workspaceName->value)
+        );
+
+        yield new EventsToPublish(
+            WorkspaceEventStreamName::fromWorkspaceName($command->workspaceName)->getEventStreamName(),
+            Events::with(
+                new WorkspaceWasActivated(
+                    $command->workspaceName,
+                    $command->newContentStreamId,
+                )
+            ),
+            ExpectedVersion::ANY()
+        );
+    }
+
+    /**
+     * @throws WorkspaceDoesNotExist
+     * @throws WorkspaceContainsPublishableChanges
+     */
+    private function handleDeactivateWorkspace(
+        DeactivateWorkspace $command,
+        CommandHandlingDependencies $commandHandlingDependencies,
+    ): \Generator {
+        $workspace = $this->requireActiveWorkspace($command->workspaceName, $commandHandlingDependencies);
+        //$contentStreamVersion = $commandHandlingDependencies->getContentStreamVersion($workspace->currentContentStreamId);
+
+        if ($workspace->hasPublishableChanges()) {
+            throw WorkspaceContainsPublishableChanges::butWasNotSupposedToForDeactivating($workspace->workspaceName);
+        }
+        $this->requireWorkspaceToNotBeBaseForAnyOtherWorkspace($command->workspaceName, $commandHandlingDependencies);
+
+        // TODO: Discuss order of deletion/deactivation
+        yield new EventsToPublish(
+            WorkspaceEventStreamName::fromWorkspaceName($command->workspaceName)->getEventStreamName(),
+            Events::with(
+                new WorkspaceWasDeactivated($command->workspaceName)
+            ),
+            ExpectedVersion::ANY()
+        );
+
+        yield new EventsToPublish(
+            ContentStreamEventStreamName::fromContentStreamId($workspace->currentContentStreamId)->getEventStreamName(),
+            Events::with(
+                new ContentStreamWasRemoved(
+                    $workspace->currentContentStreamId,
+                ),
+            ),
+            // content stream is unused by now and deletion is idempotent. There is no possible gain from a version
+            // check at this point.
             ExpectedVersion::ANY()
         );
     }

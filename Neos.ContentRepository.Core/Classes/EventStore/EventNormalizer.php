@@ -27,6 +27,8 @@ use Neos\ContentRepository\Core\Feature\RootNodeCreation\Event\RootNodeAggregate
 use Neos\ContentRepository\Core\Feature\RootNodeCreation\Event\RootNodeAggregateWithNodeWasCreated;
 use Neos\ContentRepository\Core\Feature\SubtreeTagging\Event\SubtreeWasTagged;
 use Neos\ContentRepository\Core\Feature\SubtreeTagging\Event\SubtreeWasUntagged;
+use Neos\ContentRepository\Core\Feature\WorkspaceActivation\Event\WorkspaceWasActivated;
+use Neos\ContentRepository\Core\Feature\WorkspaceActivation\Event\WorkspaceWasDeactivated;
 use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Event\RootWorkspaceWasCreated;
 use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Event\WorkspaceWasCreated;
 use Neos\ContentRepository\Core\Feature\WorkspaceModification\Event\WorkspaceBaseWorkspaceWasChanged;
@@ -107,6 +109,8 @@ final readonly class EventNormalizer
             WorkspaceWasRemoved::class,
             WorkspaceOwnerWasChanged::class,
             WorkspaceBaseWorkspaceWasChanged::class,
+            WorkspaceWasActivated::class,
+            WorkspaceWasDeactivated::class,
         ];
 
         $fullClassNameToShortEventType = [];

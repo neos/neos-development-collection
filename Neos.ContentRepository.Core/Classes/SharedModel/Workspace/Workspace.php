@@ -24,18 +24,22 @@ final readonly class Workspace
     /**
      * @param WorkspaceName $workspaceName Workspace identifier, unique within one Content Repository instance
      * @param WorkspaceName|null $baseWorkspaceName Workspace identifier of the base workspace (i.e. the target when publishing changes) – if null this instance is considered a root (aka public) workspace
-     * @param ContentStreamId $currentContentStreamId The Content Stream this workspace currently points to – usually it is set to a new, empty content stream after publishing/rebasing the workspace
+     * @param ContentStreamId|null $currentContentStreamId The Content Stream this workspace currently points to if it is active – usually it is set to a new, empty content stream after publishing/rebasing the workspace
      * @param WorkspaceStatus $status The current status of this workspace
      */
     private function __construct(
         public WorkspaceName $workspaceName,
         public ?WorkspaceName $baseWorkspaceName,
-        public ContentStreamId $currentContentStreamId,
+        // TODO: ist allowing null here a problem? (strict phpstan?)
+        public ?ContentStreamId $currentContentStreamId,
         public WorkspaceStatus $status,
         private bool $hasPublishableChanges
     ) {
         if ($this->isRootWorkspace() && $this->hasPublishableChanges) {
             throw new \InvalidArgumentException('Root workspaces cannot have changes', 1730371566);
+        }
+        if ($this->isActive() && $this->currentContentStreamId === null) {
+            throw new \InvalidArgumentException('Active workspaces must have a non null content stream ID', 1730371566);
         }
     }
 
@@ -45,7 +49,7 @@ final readonly class Workspace
     public static function create(
         WorkspaceName $workspaceName,
         ?WorkspaceName $baseWorkspaceName,
-        ContentStreamId $currentContentStreamId,
+        ?ContentStreamId $currentContentStreamId,
         WorkspaceStatus $status,
         bool $hasPublishableChanges
     ): self {
@@ -58,6 +62,14 @@ final readonly class Workspace
     public function hasPublishableChanges(): bool
     {
         return $this->hasPublishableChanges;
+    }
+
+    /**
+     * Indicates if the workspace is active.
+     */
+    public function isActive(): bool
+    {
+        return $this->status !== WorkspaceStatus::DEACTIVATED;
     }
 
     /**

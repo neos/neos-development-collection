@@ -23,6 +23,7 @@ use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphReadModelInterface;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
 use Neos\ContentRepository\Core\SharedModel\Exception\WorkspaceDoesNotExist;
+use Neos\ContentRepository\Core\SharedModel\Exception\WorkspaceIsDeactivated;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStream;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\Workspace;
@@ -65,6 +66,9 @@ final readonly class ContentGraphReadModelAdapter implements ContentGraphReadMod
         }
         if ($row === false) {
             throw WorkspaceDoesNotExist::butWasSupposedTo($workspaceName);
+        }
+        if ($row['currentContentStreamId'] === null) {
+            throw WorkspaceIsDeactivated::butWasSupposedToBeActivated($workspaceName);
         }
         $currentContentStreamId = ContentStreamId::fromString($row['currentContentStreamId']);
         return new ContentGraph($this->dbal, $this->nodeFactory, $this->contentRepositoryId, $this->nodeTypeManager, $this->tableNames, $workspaceName, $currentContentStreamId);
@@ -144,7 +148,7 @@ final readonly class ContentGraphReadModelAdapter implements ContentGraphReadMod
         return $queryBuilder
             ->select('ws.name, ws.baseWorkspaceName, ws.currentContentStreamId, cs.hasChanges, cs.sourceContentStreamVersion = scs.version as upToDateWithBase')
             ->from($this->tableNames->workspace(), 'ws')
-            ->join('ws', $this->tableNames->contentStream(), 'cs', 'cs.id = ws.currentcontentstreamid')
+            ->leftJoin('ws', $this->tableNames->contentStream(), 'cs', 'cs.id = ws.currentcontentstreamid')
             ->leftJoin('cs', $this->tableNames->contentStream(), 'scs', 'scs.id = cs.sourceContentStreamId');
     }
 
@@ -153,9 +157,13 @@ final readonly class ContentGraphReadModelAdapter implements ContentGraphReadMod
      */
     private static function workspaceFromDatabaseRow(array $row): Workspace
     {
+        $workspaceName = WorkspaceName::fromString($row['name']);
         $baseWorkspaceName = $row['baseWorkspaceName'] !== null ? WorkspaceName::fromString($row['baseWorkspaceName']) : null;
 
-        if ($baseWorkspaceName === null) {
+        if ($row['currentContentStreamId'] === null) {
+            // no currentContentStreamId, workspace is deactivated
+            $status = WorkspaceStatus::DEACTIVATED;
+        } elseif ($baseWorkspaceName === null) {
             // no base workspace, a root is always up-to-date
             $status = WorkspaceStatus::UP_TO_DATE;
         } elseif ($row['upToDateWithBase'] === 1) {
@@ -167,9 +175,9 @@ final readonly class ContentGraphReadModelAdapter implements ContentGraphReadMod
         }
 
         return Workspace::create(
-            WorkspaceName::fromString($row['name']),
+            $workspaceName,
             $baseWorkspaceName,
-            ContentStreamId::fromString($row['currentContentStreamId']),
+            $row['currentContentStreamId'] ? ContentStreamId::fromString($row['currentContentStreamId']) : null,
             $status,
             $baseWorkspaceName === null
                 ? false

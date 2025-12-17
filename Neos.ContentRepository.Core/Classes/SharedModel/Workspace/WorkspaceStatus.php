@@ -47,6 +47,13 @@ enum WorkspaceStatus: string implements \JsonSerializable
      */
     case OUTDATED = 'OUTDATED';
 
+    /**
+     * A non-base workspace can be deactivated on purpose. A deactivated workspace has no current content stream.
+     * Before a deactivated workspace can be used it has to be activated again, which will result in its content stream
+     * to become a new fork of its base workspace content stream.
+     */
+    case DEACTIVATED = 'DEACTIVATED';
+
     public function equals(self $other): bool
     {
         return $this->value === $other->value;
