@@ -171,24 +171,18 @@ Do the following for setting up everything:
 3. Run Doctrine Migrations:
 
    ```shell
+   # fill the neos database (not strictly needed for the tests, only needed for a separate web UI)
    ./flow doctrine:migrate
+   # fill the neos_behat database with base tables
+   FLOW_CONTEXT=Testing ./flow doctrine:migrate
    FLOW_CONTEXT=Testing/Postgres ./flow doctrine:migrate
    ```
 
 4. Setup the Content Repository
 
    ```shell
+   # not strictly needed for the tests; this is done by the test setup automatically
    ./flow cr:setup
-   ```
-
-5. Set up Behat
-
-   ```shell
-   cp -R Packages/Neos/Neos.ContentRepository.BehavioralTests/DistributionBehatTemplate/ Build/Behat
-   pushd Build/Behat/
-   rm composer.lock
-   composer install
-   popd
    ```
 
 #### Running the Tests
@@ -200,7 +194,25 @@ we use the right versions etc).
 
 ```shell
  cd Packages/Neos
+ 
+ # run all tests:
  composer test:behavioral
+ 
+ # to run all tests of Neos.ContentRepository.BehavioralTests:
+ cd Neos.ContentRepository.BehavioralTests/Tests/Behavior
+ ../../../../../bin/behat -c behat.yml.dist
+ 
+ # to run only a single test:
+ ../../../../../bin/behat -c behat.yml.dist Features/01-RootNodeCreation/01-CreateRootNodeAggregateWithNode_ConstraintChecks.feature:72
+ 
+ cd ../../../
+ 
+ 
+ # to run all tests of Neos.Neos:
+ cd Neos.Neos/Tests/Behavior
+ ../../../../../bin/behat -c behat.yml.dist
+ cd ../../../
+ 
 ```
 
 Alternatively, if you want to reproduce errors as they happen inside the CI system, but you
