@@ -14,6 +14,10 @@ declare(strict_types=1);
 
 namespace Neos\Neos\Command;
 
+use DateInterval;
+use DateInvalidOperationException;
+use Neos\ContentRepository\Core\Feature\Security\Exception\AccessDenied;
+use Neos\ContentRepository\Core\Feature\WorkspaceActivation\Command\DeactivateWorkspace;
 use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Exception\WorkspaceAlreadyExists;
 use Neos\ContentRepository\Core\Feature\WorkspaceRebase\Dto\RebaseErrorHandlingStrategy;
 use Neos\ContentRepository\Core\Feature\WorkspaceRebase\Exception\WorkspaceRebaseFailed;
@@ -26,6 +30,10 @@ use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Cli\CommandController;
 use Neos\Flow\Cli\Exception\StopCommandException;
+use Neos\Flow\Security\Account;
+use Neos\Flow\Utility\Now;
+use Neos\Neos\Domain\Model\User;
+use Neos\Neos\Domain\Model\UserId;
 use Neos\Neos\Domain\Model\WorkspaceClassification;
 use Neos\Neos\Domain\Model\WorkspaceDescription;
 use Neos\Neos\Domain\Model\WorkspaceRole;
@@ -55,6 +63,9 @@ class WorkspaceCommandController extends CommandController
 
     #[Flow\Inject]
     protected WorkspaceService $workspaceService;
+
+    #[Flow\Inject]
+    protected Now $now;
 
     /**
      * Publish changes of a workspace
@@ -524,6 +535,92 @@ class WorkspaceCommandController extends CommandController
         ]);
     }
 
+    /**
+     * Deactivate a single workspace by name.
+     *
+     * A workspace can only be deactivated if it has no pending changes and no other workspace depends on it.
+     *
+     * @param string $workspace Name of the workspace to deactivate.
+     * @param string $contentRepository The name of the content repository. (Default: 'default')
+     * @throws StopCommandException
+     * @throws AccessDenied
+     */
+    public function deactivateCommand(string $workspace, string $contentRepository = 'default'): void
+    {
+        $contentRepositoryId = ContentRepositoryId::fromString($contentRepository);
+        $contentRepositoryInstance = $this->contentRepositoryRegistry->get($contentRepositoryId);
+
+        $workspaceName = WorkspaceName::fromString($workspace);
+        $workspaceInstance = $contentRepositoryInstance->findWorkspaceByName($workspaceName);
+        if ($workspaceInstance === null) {
+            $this->outputLine('Workspace "%s" not found.', [$workspaceName->value]);
+            $this->quit();
+        }
+        if ($workspaceInstance->hasPublishableChanges()) {
+            $this->outputLine('Workspace "%s" cannot be deactivated, it has publishable changes.', [$workspaceName->value]);
+            $this->quit();
+        }
+        $dependentWorkspaces = $contentRepositoryInstance->findWorkspaces()
+            ->filter(fn(Workspace $workspace) => $workspace->baseWorkspaceName === $workspaceName)
+            ->map(fn (Workspace $workspace) => $workspace->workspaceName->value);
+        if (count($dependentWorkspaces) > 0) {
+            $this->outputLine('Workspace "%s" cannot be deactivated, the following workspaces depend on it: "%s".', [
+                $workspaceName->value,
+                implode('", "', $dependentWorkspaces)
+            ]);
+            $this->quit();
+        }
+
+        $contentRepositoryInstance->handle(DeactivateWorkspace::create($workspaceName));
+    }
+
+    /**
+     * Deactivate all stale personal workspaces.
+     *
+     * A personal workspace is considered stale if it has no pending changes, no other workspace uses it as a base
+     * workspace and the owner of the workspace did not log in for the time specified.
+     *
+     * @param string $contentRepository The name of the content repository. (Default: 'default')
+     * @param string $dateInterval The time interval a user had to be inactive for its workspaces to be considered stale. (Default: '7 days')
+     * @throws AccessDenied
+     * @throws DateInvalidOperationException
+     */
+    public function deactivateStaleCommand(string $contentRepository = 'default', string $dateInterval = '7 days'): void
+    {
+        $contentRepositoryId = ContentRepositoryId::fromString($contentRepository);
+        $contentRepositoryInstance = $this->contentRepositoryRegistry->get($contentRepositoryId);
+
+        $interval = DateInterval::createFromDateString($dateInterval);
+
+        $workspaces = $contentRepositoryInstance->findWorkspaces();
+        $baseWorkspaces = $this->splObjectStoreFromIterable($workspaces->map(fn($workspace) => $workspace->baseWorkspaceName));
+
+        $probablyStaleWorkspaceNames = $this->splObjectStoreFromIterable(
+            $workspaces
+                ->filter(fn($workspace) => !$workspace->hasPublishableChanges() &&
+                    !$baseWorkspaces->contains($workspace->workspaceName))
+                ->map(fn($workspace) => $workspace->workspaceName)
+        );
+
+        $inactiveUserIds = $this->splObjectStoreFromIterable($this->userService->findUserIdsNotLoggedInBefore($this->now->sub($interval)));
+
+        $personalWorkspaces = $this->workspaceService->getPersonalWorkspaces($contentRepositoryId);
+        $workspacesToDeactivate = [];
+        foreach ($personalWorkspaces as $userId => $personalWorkspace) {
+            /**  @var UserId $userId */
+            if (
+                $probablyStaleWorkspaceNames->contains($personalWorkspace) &&
+                $inactiveUserIds->contains($userId)
+            ) {
+                $workspacesToDeactivate[] = $personalWorkspace;
+            }
+        }
+
+        foreach ($workspacesToDeactivate as $workspace) {
+            $contentRepositoryInstance->handle(DeactivateWorkspace::create($workspace));
+        }
+    }
+
     // -----------------------
 
     private function buildWorkspaceRoleSubject(WorkspaceRoleSubjectType $subjectType, string $usernameOrRoleIdentifier): WorkspaceRoleSubject
@@ -539,5 +636,14 @@ class WorkspaceCommandController extends CommandController
             $roleSubject = WorkspaceRoleSubject::createForGroup($usernameOrRoleIdentifier);
         }
         return $roleSubject;
+    }
+
+    private function splObjectStoreFromIterable(iterable $iterable): \SplObjectStorage
+    {
+        $result = new \SplObjectStorage();
+        foreach ($iterable as $workspace) {
+            $result->attach($workspace);
+        }
+        return $result;
     }
 }

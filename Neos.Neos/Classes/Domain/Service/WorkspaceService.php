@@ -341,6 +341,14 @@ final readonly class WorkspaceService
         throw new \RuntimeException(sprintf('Failed to find unique workspace name for "%s" after %d attempts.', $candidate, $attempt - 1), 1725975479);
     }
 
+    /**
+     * @return \Traversable<UserId,WorkspaceName>
+     */
+    public function getPersonalWorkspaces(ContentRepositoryId $contentRepository): \Traversable
+    {
+        return $this->metadataAndRoleRepository->findAllPersonalWorkspaceNamesByContentRepositoryId($contentRepository);
+    }
+
     // ------------------
 
     /**
