@@ -333,6 +333,9 @@ final class NodeFactory
             throw new \RuntimeException(sprintf('Failed to JSON-decode subtree tags from JSON string %s: %s', $subtreeTagsJson, $e->getMessage()), 1716476904, $e);
         }
         foreach ($subtreeTagsArray as $tagValue => $explicit) {
+            if (!is_string($tagValue)) {
+                throw new \RuntimeException(sprintf('Fatal: SubtreeTags are never purely numeric. Got %d', $tagValue), 1768047428);
+            }
             if ($explicit) {
                 $explicitTags[] = $tagValue;
             } else {
