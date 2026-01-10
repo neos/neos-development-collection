@@ -296,11 +296,10 @@ final class NodeFactory
         }
 
         foreach ($nodesByOccupiedDimensionSpacePointsByNodeAggregate as $rawNodeAggregateId => $nodes) {
-            /** @var string $rawNodeAggregateId */
             $nodeAggregates[] = NodeAggregate::create(
                 $this->contentRepositoryId,
                 $workspaceName,
-                NodeAggregateId::fromString($rawNodeAggregateId),
+                NodeAggregateId::fromString((string)$rawNodeAggregateId),
                 $classificationByNodeAggregate[$rawNodeAggregateId],
                 $nodeTypeNames[$rawNodeAggregateId],
                 $nodeNames[$rawNodeAggregateId],

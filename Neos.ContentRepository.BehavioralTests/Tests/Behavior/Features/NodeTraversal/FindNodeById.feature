@@ -76,6 +76,7 @@ Feature: Find nodes using the findNodeById query
       | a2a2            | a2a2     | Neos.ContentRepository.Testing:Page        | a2a                    | {"text": "a2a2"}      | {}                                       |
       | b               | b        | Neos.ContentRepository.Testing:Page        | home                   | {"text": "b"}         | {}                                       |
       | b1              | b1       | Neos.ContentRepository.Testing:Page        | b                      | {"text": "b1"}        | {}                                       |
+      | 123             | 123      | Neos.ContentRepository.Testing:Page        | home                   | {"text": "123"}       | {}                                       |
     And the command DisableNodeAggregate is executed with payload:
       | Key                          | Value         |
       | nodeAggregateId              | "a2a1"        |
@@ -94,6 +95,10 @@ Feature: Find nodes using the findNodeById query
 
     When I execute the findNodesByIds query for node aggregate id "home,a2a2,a2a1,non-existing" I expect the nodes "home,a2a2" to be returned
 
+    # special case numeric node ids
+    When I execute the findNodeById query for node aggregate id "123" I expect the node "123" to be returned
+    When I execute the findNodesByIds query for node aggregate id "123" I expect the nodes "123" to be returned
+
   Scenario:
     Contentgraph queries
     When I execute the findNodeAggregateById query for node aggregate id "a" I expect the following node aggregates to be returned:
@@ -106,3 +111,11 @@ Feature: Find nodes using the findNodeById query
       | a2a1            | Neos.ContentRepository.Testing:Page     | [{"language":"de"},{"language":"ch"}] | [{"language":"de"}]          | [{"language":"de"},{"language":"ch"}] |
       | a               | Neos.ContentRepository.Testing:Page     | [{"language":"de"},{"language":"ch"}] | [{"language":"de"}]          | []                                    |
       | home            | Neos.ContentRepository.Testing:Homepage | [{"language":"de"},{"language":"ch"}] | [{"language":"de"}]          | []                                    |
+
+    # special case numeric node ids
+    When I execute the findNodeAggregateById query for node aggregate id "123" I expect the following node aggregates to be returned:
+      | nodeAggregateId | nodeTypeName                        | coveredDimensionSpacePoints           | occupiedDimensionSpacePoints | explicitlyDisabledDimensions |
+      | 123             | Neos.ContentRepository.Testing:Page | [{"language":"de"},{"language":"ch"}] | [{"language":"de"}]          | []                           |
+    When I execute the findNodeAggregatesByIds query for node aggregate id "123" I expect the following node aggregates to be returned:
+      | nodeAggregateId | nodeTypeName                        | coveredDimensionSpacePoints           | occupiedDimensionSpacePoints | explicitlyDisabledDimensions |
+      | 123             | Neos.ContentRepository.Testing:Page | [{"language":"de"},{"language":"ch"}] | [{"language":"de"}]          | []                           |
