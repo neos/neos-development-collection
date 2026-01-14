@@ -1,4 +1,5 @@
-.workspace-table {
+/** Abstract table class for tables in the workspace module */
+.workspace-ui-table {
   --column-color: var(--grayMedium);
   --indent-level: 0;
 
@@ -463,33 +464,6 @@ tr.neos-change + tr.neos-change td.neos-content-change {
 }
 
 #nodes-table {
-  --column-color: var(--grayMedium);
-  --indent-level: 0;
-
-  margin-top: 1em;
-  border-spacing: 0;
-  position: relative;
-  width: 100%;
-
-  th {
-    padding: 0.5em;
-    position: sticky;
-    top: 40px;
-    user-select: none;
-    background: var(--grayDark);
-    border-bottom: 1px solid var(--grayDark);
-    z-index: 1;
-  }
-
-  td {
-    padding: 0 0.5em;
-    border-top: 1px solid var(--grayDark);
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    background-color: var(--column-color);
-    min-height: 40px;
-  }
   td.node-information {
     padding: 0.5em 0.5em;
   }

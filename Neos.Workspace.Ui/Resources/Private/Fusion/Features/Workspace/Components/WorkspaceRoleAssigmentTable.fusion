@@ -9,12 +9,10 @@ prototype(Neos.Workspace.Ui:Component.WorkspaceRoleAssignmentTable) < prototype(
 
   @private {
     i18n = ${I18n.id('').source('Main').package('Neos.Workspace.Ui')}
-    confirmDeleteWorkspaceRoleAssignmentPopoverId = 'confirm-delete-workspace-role-assignment-popover'
-
   }
 
   renderer = afx`
-    <table class="role-assignments-table workspace-table">
+    <table class="workspace-ui-table role-assignments-table">
       <thead>
       <tr>
         <th>{private.i18n.id('workspaces.workspace.workspaceRoleAssignment.subject')}</th>
