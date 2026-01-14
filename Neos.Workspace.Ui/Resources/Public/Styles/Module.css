@@ -164,9 +164,21 @@ button .icon:not(:last-child) {
     box-sizing: border-box;
   }
 
+  /* Adapted from Neos modal styles which had conflicts with the native popover styles */
+  .neos-header {
+    font-size: 16px;
+    line-height: calc(var(--unit) / 2);
+    box-sizing: border-box;
+    font-weight: normal;
+  }
+
   section {
     margin: var(--defaultMargin);
     color: var(--textSubtleLight);
+  }
+
+  table {
+    color: var(--textOnGray);
   }
 
   form {
@@ -489,14 +501,23 @@ tr.neos-change + tr.neos-change td.neos-content-change {
   }
 }
 
+/**
+ * Role assignment modal styles
+ */
 #workspace-edit-role-assignments-modal {
   min-width: 50vw;
+
+  label i {
+    margin-right: 7px;
+  }
+
+  h4 {
+    display: flex;
+    gap: 1ch;
+    color: var(--textOnGray);
+  }
 }
 
-#workspace-edit-role-assignments-modal .role-assignments-table {
+.role-assignments-table {
   width: 100%;
-}
-
-#workspace-edit-role-assignments-modal label i {
-  margin-right: 7px;
 }

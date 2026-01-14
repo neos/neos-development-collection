@@ -44,17 +44,20 @@ prototype(Neos.Workspace.Ui:Component.Modal.EditWorkspaceRoleAssignments) < prot
         >
           <Neos.Workspace.Ui:Component.Icon icon="times"/>
         </button>
-        <div class="neos-header">
+        <h3 class="neos-header">
           {private.i18n.id('workspaces.editWorkspaceRoleAssignments').arguments([props.workspaceTitle])}
-        </div>
+        </h3>
       </header>
       <section>
-        <label>
+        <h4>
           <Neos.Workspace.Ui:Component.Icon icon='users' />
-          Group permissions
-        </label>
-        <Neos.Workspace.Ui:Component.WorkspaceRoleAssignmentTable @if.hasGroupPermissions={props.groupRoleAssignments}
-          workspaceName={props.workspaceName} roleAssignments={props.groupRoleAssignments}/>
+          {private.i18n.id('workspace.permission.group.title')}
+        </h4>
+        <Neos.Workspace.Ui:Component.WorkspaceRoleAssignmentTable
+          @if.hasGroupPermissions={props.groupRoleAssignments}
+          workspaceName={props.workspaceName}
+          roleAssignments={props.groupRoleAssignments}
+        />
         <p @if.hasNoUserRolePermissions={!props.groupRoleAssignments}>
           {private.i18n.id('workspaces.permission.noGroupAssignmentsSet')}
         </p>
@@ -69,11 +72,15 @@ prototype(Neos.Workspace.Ui:Component.Modal.EditWorkspaceRoleAssignments) < prot
         />
       </section>
       <section>
-        <label>
+        <h4>
           <Neos.Workspace.Ui:Component.Icon icon='user' />
-          User permissions</label>
-        <Neos.Workspace.Ui:Component.WorkspaceRoleAssignmentTable @if.hasUserRolePermissions={props.userRoleAssignments}
-          workspaceName={props.workspaceName} roleAssignments={props.userRoleAssignments}/>
+          {private.i18n.id('workspace.permission.user.title')}
+        </h4>
+        <Neos.Workspace.Ui:Component.WorkspaceRoleAssignmentTable
+          @if.hasUserRolePermissions={props.userRoleAssignments}
+          workspaceName={props.workspaceName}
+          roleAssignments={props.userRoleAssignments}
+        />
         <p @if.hasNoUserRolePermissions={!props.userRoleAssignments}>
           {private.i18n.id('workspaces.permission.noUserAssignmentsSet')}
         </p>
