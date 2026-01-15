@@ -253,7 +253,7 @@ class WorkspaceController extends AbstractModuleController
                     $currentUser->getId()
                 )
             );
-        } catch (WorkspaceAlreadyExists $exception) {
+        } catch (WorkspaceAlreadyExists) {
             $this->addFlashMessage(
                 $this->getModuleLabel('workspaces.workspaceWithThisTitleAlreadyExists'),
                 '',
@@ -367,12 +367,6 @@ class WorkspaceController extends AbstractModuleController
             $description,
         );
 
-        $workspaceRoleAssignments = $this->workspaceService->getWorkspaceRoleAssignments($contentRepositoryId, $workspaceName);
-        $sharedRoleAssignment = WorkspaceRoleAssignment::createForGroup(
-            'Neos.Neos:AbstractEditor',
-            WorkspaceRole::COLLABORATOR,
-        );
-
         if ($baseWorkspace !== null && $workspace->baseWorkspaceName?->equals($baseWorkspace) === false) {
             // Update Base Workspace
             $this->workspacePublishingService->changeBaseWorkspace(
@@ -475,16 +469,31 @@ class WorkspaceController extends AbstractModuleController
         }
     }
 
-
     public function editWorkspaceRoleAssignmentsAction(WorkspaceName $workspaceName): void
     {
         $contentRepositoryId = SiteDetectionResult::fromRequest($this->request->getHttpRequest())->contentRepositoryId;
         $workspaceMetadata = $this->workspaceService->getWorkspaceMetadata($contentRepositoryId, $workspaceName);
 
-        // TODO: Render a form to edit role assignments
-        // TODO can current user see/edit role assignments?
-        $roleAssignmentsVisible = true;
-        $roleAssignmentsEditable = true;
+        // Show warning if user is not allowed to manage the role assignments in the workspace
+        $currentUser = $this->userService->getCurrentUser();
+
+        $permissions = $this->authorizationService->getWorkspacePermissions(
+            $contentRepositoryId,
+            $workspaceName,
+            $this->securityContext->getRoles(),
+            $currentUser?->getId()
+        );
+
+        $roleAssignmentsEditable = $permissions->manage;
+
+        if (!$roleAssignmentsEditable) {
+            $this->addFlashMessage(
+                $this->getModuleLabel('workspaces.noPermissionToManageRoleAssignments', ['workspace' => $workspaceMetadata->title->value]),
+                '',
+                Message::SEVERITY_ERROR
+            );
+            $this->throwStatus(403);
+        }
 
         /** @var array<RoleAssignmentListItem> $workspaceUserRoleAssignments */
         $workspaceUserRoleAssignments = [];

@@ -60,6 +60,9 @@
       <trans-unit id="workspaces.editWorkspaceRoleAssignments" xml:space="preserve">
 				<source>Edit workspace permissions for "{workspace}"</source>
 			</trans-unit>
+      <trans-unit id="workspaces.noPermissionToManageRoleAssignments" xml:space="preserve">
+				<source>You have no permission to edit the permissions of workspace "{workspace}".</source>
+			</trans-unit>
        <trans-unit id="workspaces.createWorkspaceGroupRoleAssignment" xml:space="preserve">
 				<source>Add group permission for workspace "{workspace}"</source>
 			</trans-unit>
