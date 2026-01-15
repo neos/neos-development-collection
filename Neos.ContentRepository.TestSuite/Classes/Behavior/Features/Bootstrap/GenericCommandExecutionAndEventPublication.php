@@ -44,6 +44,8 @@ use Neos\ContentRepository\Core\Feature\RootNodeCreation\Command\CreateRootNodeA
 use Neos\ContentRepository\Core\Feature\RootNodeCreation\Command\UpdateRootNodeAggregateDimensions;
 use Neos\ContentRepository\Core\Feature\SubtreeTagging\Command\TagSubtree;
 use Neos\ContentRepository\Core\Feature\SubtreeTagging\Command\UntagSubtree;
+use Neos\ContentRepository\Core\Feature\WorkspaceActivation\Command\ActivateWorkspace;
+use Neos\ContentRepository\Core\Feature\WorkspaceActivation\Command\DeactivateWorkspace;
 use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Command\CreateRootWorkspace;
 use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Command\CreateWorkspace;
 use Neos\ContentRepository\Core\Feature\WorkspaceModification\Command\ChangeBaseWorkspace;
@@ -313,6 +315,24 @@ trait GenericCommandExecutionAndEventPublication
     }
 
     /**
+     * @When the command DeactivateWorkspace is executed with payload:
+     */
+    public function theCommandDeactivateWorkspaceIsExecutedWithPayload(TableNode $payloadTable): void
+    {
+        $commandArguments = $this->readPayloadTable($payloadTable);
+        $this->handleCommand(DeactivateWorkspace::class, $commandArguments);
+    }
+
+    /**
+     * @When the command ActivateWorkspace is executed with payload:
+     */
+    public function theCommandActivateWorkspaceIsExecutedWithPayload(TableNode $payloadTable): void
+    {
+        $commandArguments = $this->readPayloadTable($payloadTable);
+        $this->handleCommand(ActivateWorkspace::class, $commandArguments);
+    }
+
+    /**
      * @When the command :shortCommandName is executed with payload and exceptions are caught:
      */
     public function theCommandIsExecutedWithPayloadAndExceptionsAreCaught(string $shortCommandName, TableNode $payloadTable): void
@@ -477,6 +497,8 @@ trait GenericCommandExecutionAndEventPublication
             CreateRootWorkspace::class,
             CreateWorkspace::class,
             DeleteWorkspace::class,
+            ActivateWorkspace::class,
+            DeactivateWorkspace::class,
             DisableNodeAggregate::class,
             DiscardIndividualNodesFromWorkspace::class,
             DiscardWorkspace::class,

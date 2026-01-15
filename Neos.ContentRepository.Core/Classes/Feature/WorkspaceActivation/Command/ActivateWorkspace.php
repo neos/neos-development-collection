@@ -44,7 +44,7 @@ final readonly class ActivateWorkspace implements CommandInterface
     {
         return new self(
             WorkspaceName::fromString($array['workspaceName']),
-            ContentStreamId::fromString($array['contentStreamId'])
+            ContentStreamId::fromString($array['newContentStreamId'])
         );
     }
 }
