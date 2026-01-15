@@ -43,11 +43,12 @@ prototype(Neos.Workspace.Ui:Component.Modal.EditWorkspaceRoleAssignments) < prot
       </header>
       <section>
         <h4>
-          <Neos.Workspace.Ui:Component.Icon icon='users' />
+          <Neos.Workspace.Ui:Component.Icon icon='users'/>
           {private.i18n.id('workspace.permission.group.title')}
         </h4>
         <Neos.Workspace.Ui:Component.WorkspaceRoleAssignmentTable
           @if.hasGroupPermissions={props.groupRoleAssignments}
+          workspaceTitle={props.workspaceTitle}
           workspaceName={props.workspaceName}
           roleAssignments={props.groupRoleAssignments}
         />
@@ -55,7 +56,7 @@ prototype(Neos.Workspace.Ui:Component.Modal.EditWorkspaceRoleAssignments) < prot
           {private.i18n.id('workspaces.permission.noGroupAssignmentsSet')}
         </p>
         <Neos.Workspace.Ui:Component.Button
-          title={private.i18n.id('workspaces.editWorkspace').arguments([props.workspaceTitle])}
+          title={private.i18n.id('workspaces.createWorkspaceGroupRoleAssignment').arguments({workspace: props.workspaceTitle})}
           icon="plus"
           attributes.hx-get={private.createGroupWorkspaceRoleAssignmentUri}
           attributes.hx-target={'#' + private.createGroupWorkspaceRoleAssignmentPopoverId}
@@ -66,11 +67,12 @@ prototype(Neos.Workspace.Ui:Component.Modal.EditWorkspaceRoleAssignments) < prot
       </section>
       <section>
         <h4>
-          <Neos.Workspace.Ui:Component.Icon icon='user' />
+          <Neos.Workspace.Ui:Component.Icon icon='user'/>
           {private.i18n.id('workspace.permission.user.title')}
         </h4>
         <Neos.Workspace.Ui:Component.WorkspaceRoleAssignmentTable
           @if.hasUserRolePermissions={props.userRoleAssignments}
+          workspaceTitle={props.workspaceTitle}
           workspaceName={props.workspaceName}
           roleAssignments={props.userRoleAssignments}
         />
@@ -78,7 +80,7 @@ prototype(Neos.Workspace.Ui:Component.Modal.EditWorkspaceRoleAssignments) < prot
           {private.i18n.id('workspaces.permission.noUserAssignmentsSet')}
         </p>
         <Neos.Workspace.Ui:Component.Button
-          title={private.i18n.id('workspaces.editWorkspace').arguments([props.workspaceTitle])}
+          title={private.i18n.id('workspaces.createWorkspaceUserRoleAssignment').arguments({workspace: props.workspaceTitle})}
           icon="plus"
           attributes.hx-get={private.createUserWorkspaceRoleAssignmentUri}
           attributes.hx-target={'#' + private.createUserWorkspaceRoleAssignmentPopoverId}

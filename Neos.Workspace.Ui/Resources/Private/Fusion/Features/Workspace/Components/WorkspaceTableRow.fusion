@@ -148,7 +148,7 @@ prototype(Neos.Workspace.Ui:Component.WorkspaceTableRow) < prototype(Neos.Fusion
           attributes.hx-on--after-request={'document.getElementById("' + private.editWorkspacePopoverId + '").showPopover()'}
         />
         <Neos.Workspace.Ui:Component.Button
-          title={private.i18n.id('workspaces.editWorkspaceRoleAssignments').arguments([props.workspaceListItem.title])}
+          title={private.i18n.id('workspaces.editWorkspaceRoleAssignments').arguments({workspace: props.workspaceListItem.title})}
           icon="user-lock"
           attributes.hx-get={private.editWorkspaceRoleAssignmentsUri}
           attributes.hx-target='#popover-container'

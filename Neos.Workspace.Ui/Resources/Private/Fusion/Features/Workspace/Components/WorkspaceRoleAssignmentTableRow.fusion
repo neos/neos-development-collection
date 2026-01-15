@@ -3,7 +3,9 @@
 #
 prototype(Neos.Workspace.Ui:Component.WorkspaceRoleAssignmentTableRow) < prototype(Neos.Fusion:Component) {
   /// string
-  workspaceName = null
+  workspaceTitle = ''
+  /// string
+  workspaceName = ''
   /// bool
   roleAssignmentsEditable = false
   /// Neos\Workspace\Ui\ViewModel\RoleAssignmentListItem
@@ -19,18 +21,25 @@ prototype(Neos.Workspace.Ui:Component.WorkspaceRoleAssignmentTableRow) < prototy
         workspaceName = ${props.workspaceName}
         subjectValue = ${props.roleAssignmentFormData.subjectValue}
         subjectType = ${props.roleAssignmentFormData.subjectType}
+        subjectLabel = ${props.roleAssignmentFormData.subjectLabel}
+        roleLabel = ${props.roleAssignmentFormData.roleLabel}
       }
     }
+    localisedRoleLabel = ${private.i18n.id('workspaces.workspace.workspaceRoleAssignment.role.label.' + props.roleAssignmentFormData.roleLabel).translate()}
   }
 
   renderer = afx`
     <tr>
       <td>{props.roleAssignmentFormData.subjectLabel}</td>
       <td>{private.i18n.id('workspaces.workspace.workspaceRoleAssignment.role.label.' + props.roleAssignmentFormData.roleLabel)}</td>
-      <td>
+      <td class="workspace-action-column">
         <Neos.Workspace.Ui:Component.Button
           isDanger
-          title="TODO title"
+          title={private.i18n.arguments({
+            workspace: props.workspaceTitle,
+            subject: props.roleAssignmentFormData.subjectLabel,
+            role: private.localisedRoleLabel
+          }).id('workspaces.deleteWorkspaceRoleAssignment.action')}
           icon="trash-alt icon-white"
           attributes.disabled={!props.roleAssignmentsEditable}
           attributes.hx-get={private.confirmDeleteWorkspaceRoleAssignmentUri}

@@ -3,7 +3,6 @@
   --column-color: var(--grayMedium);
   --indent-level: 0;
 
-  margin-top: 1em;
   border-spacing: 0;
   position: relative;
   width: 100%;
@@ -56,7 +55,7 @@ td.workspace-label-column .fas {
 
 td.workspace-action-column {
   background-color: var(--grayMedium);
-  width: 1%;
+  width: 1px;
   white-space: nowrap;
 }
 
@@ -156,10 +155,12 @@ button .icon:not(:last-child) {
   backdrop-filter: blur(3px);
 }
 
-[popover] {
+.neos.neos-module [popover] {
   header {
     font-size: calc(var(--generalFontSize) + 2px);
     margin: var(--defaultMargin);
+    /* Additional margin to have space for the close button */
+    margin-right: var(--wideMargin);
     line-height: calc(var(--generalFontSize) + 4px);
     box-sizing: border-box;
   }
@@ -175,6 +176,10 @@ button .icon:not(:last-child) {
   section {
     margin: var(--defaultMargin);
     color: var(--textSubtleLight);
+    display: flex;
+    flex-direction: column;
+    gap: 0.5em;
+    align-items: flex-start;
   }
 
   table {
@@ -182,8 +187,24 @@ button .icon:not(:last-child) {
   }
 
   form {
-    width: 400px;
+    display: block;
     max-width: 90vw;
+  }
+
+  .neos-radio {
+    color: var(--textOnGray);
+    cursor: pointer;
+  }
+
+  fieldset {
+    padding: 0;
+  }
+
+  legend {
+    font-size: var(--generalFontSize);
+    line-height: 100%;
+    padding: 0;
+    margin-bottom: var(--spacing-Half);
   }
 
   .neos-close {

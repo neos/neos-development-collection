@@ -8,6 +8,9 @@
       <trans-unit id="cancel" xml:space="preserve">
 				<source>Cancel</source>
 			</trans-unit>
+      <trans-unit id="close" xml:space="preserve">
+				<source>Close</source>
+			</trans-unit>
       <trans-unit id="applyChanges" xml:space="preserve">
 				<source>Apply changes</source>
 			</trans-unit>
@@ -51,14 +54,35 @@
       <trans-unit id="workspaces.editWorkspace" xml:space="preserve">
 				<source>Edit workspace "{0}"</source>
 			</trans-unit>
-      <trans-unit id="workspaces.editWorkspaceRoleAssignments" xml:space="preserve">
-				<source>Edit workspace permissions of "{0}"</source>
-			</trans-unit>
       <trans-unit id="workspaces.rebaseWorkspace" xml:space="preserve">
 				<source>Sync workspace "{0}" with its base workspace</source>
 			</trans-unit>
-       <trans-unit id="workspaces.createWorkspaceRoleAssignment" xml:space="preserve">
-				<source>Create Role Assignment for workspace "{0}"</source>
+      <trans-unit id="workspaces.editWorkspaceRoleAssignments" xml:space="preserve">
+				<source>Edit workspace permissions for "{workspace}"</source>
+			</trans-unit>
+       <trans-unit id="workspaces.createWorkspaceGroupRoleAssignment" xml:space="preserve">
+				<source>Add group permission for workspace "{workspace}"</source>
+			</trans-unit>
+       <trans-unit id="workspaces.createWorkspaceUserRoleAssignment" xml:space="preserve">
+				<source>Add user permission for workspace "{workspace}"</source>
+			</trans-unit>
+       <trans-unit id="workspaces.createWorkspaceRoleAssignment.confirm" xml:space="preserve">
+				<source>Add permission</source>
+			</trans-unit>
+       <trans-unit id="workspaces.deleteWorkspaceRoleAssignment.header" xml:space="preserve">
+				<source>Remove permission from workspace "{workspace}"</source>
+			</trans-unit>
+      <trans-unit id="workspaces.deleteWorkspaceRoleAssignment.action" xml:space="preserve">
+				<source>Remove the permission for "{subject}" with the role "{role}" from workspace "{workspace}"</source>
+			</trans-unit>
+      <trans-unit id="workspaces.deleteWorkspaceRoleAssignment.message" xml:space="preserve">
+				<source>Do you really want to remove the permission for "{subject}" with the role "{role}" from workspace "{workspace}"?</source>
+			</trans-unit>
+      <trans-unit id="workspaces.deleteWorkspaceRoleAssignment.cancel" xml:space="preserve">
+				<source>Cancel</source>
+			</trans-unit>
+      <trans-unit id="workspaces.deleteWorkspaceRoleAssignment.confirm" xml:space="preserve">
+				<source>Remove</source>
 			</trans-unit>
       <trans-unit id="workspaces.personalWorkspace" xml:space="preserve">
 				<source>Personal workspace</source>

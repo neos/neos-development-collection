@@ -3,7 +3,9 @@
 #
 prototype(Neos.Workspace.Ui:Component.WorkspaceRoleAssignmentTable) < prototype(Neos.Fusion:Component) {
   /// string
-  workspaceName = null
+  workspaceTitle = ''
+  /// string
+  workspaceName = ''
   /// array<Neos\Workspace\Ui\ViewModel\RoleAssignmentListItem>
   roleAssignments=${[]}
 
@@ -25,6 +27,7 @@ prototype(Neos.Workspace.Ui:Component.WorkspaceRoleAssignmentTable) < prototype(
       <tbody>
       <Neos.Fusion:Loop items={props.roleAssignments} itemName="roleAssignment">
         <Neos.Workspace.Ui:Component.WorkspaceRoleAssignmentTableRow
+          workspaceTitle={props.workspaceTitle}
           workspaceName={props.workspaceName}
           roleAssignmentsEditable={props.roleAssignmentsEditable}
           roleAssignmentFormData={roleAssignment}

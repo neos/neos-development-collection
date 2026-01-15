@@ -1,24 +1,20 @@
 prototype(Neos.Workspace.Ui:Component.Modal.ConfirmDeleteWorkspaceRoleAssignment) < prototype(Neos.Fusion:Component) {
-  workspaceName=''
-  workspaceTitle=''
-  subjectValue=''
-  subjectType=''
-
-  # TODO: maybe just use system confirm dialog...
+  /// \Neos\Workspace\Ui\ViewModel\ConfirmDeleteWorkspaceRoleAssignmentFormData
+  formData = ${confirmDeleteWorkspaceRoleAssignmentFormData}
 
   @private {
     i18n = ${I18n.id('').source('Main').package('Neos.Workspace.Ui')}
     popoverId = 'confirm-delete-workspace-role-assignment-popover'
-    editWorkspaceRoleAssignmentsPopoverId = 'workspace-edit-role-assignments-modal'
     deleteWorkspaceRoleAssignmentUri = Neos.Fusion:ActionUri {
       action = 'deleteWorkspaceRoleAssignment'
       format = 'htmx'
       arguments {
-        workspaceName = ${props.workspaceName}
-        subjectValue = ${props.subjectValue}
-        subjectType = ${props.subjectType}
+        workspaceName = ${props.formData.workspaceName.value}
+        subjectValue = ${props.formData.subjectValue}
+        subjectType = ${props.formData.subjectType}
       }
     }
+    localisedRoleLabel = ${private.i18n.id('workspaces.workspace.workspaceRoleAssignment.role.label.' + props.formData.roleLabel).translate()}
   }
 
   renderer = afx`
@@ -30,20 +26,29 @@ prototype(Neos.Workspace.Ui:Component.Modal.ConfirmDeleteWorkspaceRoleAssignment
         </h3>
       </header>
       <section>
+        <p>
+          {private.i18n.arguments({
+            workspace: props.formData.workspaceTitle.value,
+            subject: props.formData.subjectLabel,
+            role: private.localisedRoleLabel
+          }).id('workspaces.deleteWorkspaceRoleAssignment.message')}
+        </p>
+      </section>
+      <footer>
         <Neos.Workspace.Ui:Component.Button
-          label={"cancel"}
+          label={private.i18n.id('workspaces.deleteWorkspaceRoleAssignment.cancel')}
           attributes.popovertarget={private.popoverId}
           attributes.popovertargetaction="close"
         />
         <Neos.Workspace.Ui:Component.Button
           isDanger
-          label={"delete"}
+          label={private.i18n.id('workspaces.deleteWorkspaceRoleAssignment.confirm')}
           icon="trash-alt icon-white"
           attributes.hx-target={'#popover-container'}
           attributes.hx-swap='innerHTML'
           attributes.hx-get={private.deleteWorkspaceRoleAssignmentUri}
         />
-      </section>
+      </footer>
     </div>
   `
 }

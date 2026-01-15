@@ -4,10 +4,7 @@ Neos.Workspace.Ui.WorkspaceController.confirmDeleteWorkspaceRoleAssignment = Neo
 
   renderer = afx`
     <Neos.Workspace.Ui:Component.Modal.ConfirmDeleteWorkspaceRoleAssignment
-      workspaceName={props.confirmDeleteWorkspaceRoleAssignmentFormData.workspaceName.value}
-      workspaceTitle={props.confirmDeleteWorkspaceRoleAssignmentFormData.workspaceTitle.value}
-      subjectValue={props.confirmDeleteWorkspaceRoleAssignmentFormData.subjectValue}
-      subjectType={props.confirmDeleteWorkspaceRoleAssignmentFormData.subjectType}
+      formData={props.confirmDeleteWorkspaceRoleAssignmentFormData}
     />
   `
 }

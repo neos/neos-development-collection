@@ -26,6 +26,8 @@ final readonly class ConfirmDeleteWorkspaceRoleAssignmentFormData
         public WorkspaceTitle $workspaceTitle,
         public string $subjectValue,
         public string $subjectType,
+        public string $subjectLabel,
+        public string $roleLabel,
     ) {
     }
 }
