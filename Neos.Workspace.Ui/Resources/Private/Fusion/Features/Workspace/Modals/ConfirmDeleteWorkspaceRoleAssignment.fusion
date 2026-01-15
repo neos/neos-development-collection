@@ -24,17 +24,10 @@ prototype(Neos.Workspace.Ui:Component.Modal.ConfirmDeleteWorkspaceRoleAssignment
   renderer = afx`
     <div popover id={private.popoverId} hx-indicator="#indicator">
       <header>
-        <button
-          type="button"
-          class="neos-close neos-button"
-          popovertarget={private.popoverId}
-          popovertargetaction="close"
-        >
-          <Neos.Workspace.Ui:Component.Icon icon="times"/>
-        </button>
-        <div class="neos-header">
-          {private.i18n.id('workspaces.createWorkspaceRoleAssignment').arguments([props.workspaceTitle])}
-        </div>
+        <Neos.Workspace.Ui:Component.Popover.CloseButton id={private.popoverId}/>
+        <h3 class="neos-header">
+          {private.i18n.id('workspaces.deleteWorkspaceRoleAssignment.header').arguments({workspace: props.formData.workspaceTitle.value})}
+        </h3>
       </header>
       <section>
         <Neos.Workspace.Ui:Component.Button

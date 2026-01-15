@@ -33,14 +33,7 @@ prototype(Neos.Workspace.Ui:Component.Modal.Edit) < prototype(Neos.Fusion:Compon
   renderer = afx`
     <div popover id={private.popoverId}>
       <header>
-        <button
-          type="button"
-          class="neos-close neos-button"
-          popovertarget={private.popoverId}
-          popovertargetaction="close"
-        >
-          <Neos.Workspace.Ui:Component.Icon icon="times"/>
-        </button>
+        <Neos.Workspace.Ui:Component.Popover.CloseButton id={private.popoverId}/>
         <div class="neos-header">
           {private.i18n.id('workspaces.editWorkspace').arguments([props.workspaceTitle])}
         </div>

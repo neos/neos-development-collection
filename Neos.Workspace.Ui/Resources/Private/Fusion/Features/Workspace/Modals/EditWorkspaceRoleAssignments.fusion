@@ -36,16 +36,9 @@ prototype(Neos.Workspace.Ui:Component.Modal.EditWorkspaceRoleAssignments) < prot
   renderer = afx`
     <div popover id={private.popoverId} hx-on--load="this.showPopover();" hx-indicator="#indicator">
       <header>
-        <button
-          type="button"
-          class="neos-close neos-button"
-          popovertarget={private.popoverId}
-          popovertargetaction="close"
-        >
-          <Neos.Workspace.Ui:Component.Icon icon="times"/>
-        </button>
+        <Neos.Workspace.Ui:Component.Popover.CloseButton id={private.popoverId}/>
         <h3 class="neos-header">
-          {private.i18n.id('workspaces.editWorkspaceRoleAssignments').arguments([props.workspaceTitle])}
+          {private.i18n.id('workspaces.editWorkspaceRoleAssignments').arguments({workspace: props.workspaceTitle})}
         </h3>
       </header>
       <section>
@@ -94,6 +87,13 @@ prototype(Neos.Workspace.Ui:Component.Modal.EditWorkspaceRoleAssignments) < prot
           attributes.disabled={!props.roleAssignmentsEditable}
         />
       </section>
+      <footer>
+        <Neos.Workspace.Ui:Component.Button
+          label={private.i18n.id('cancel')}
+          attributes.popovertarget={private.popoverId}
+          attributes.popovertargetaction="close"
+        />
+      </footer>
       <div popover id={private.createGroupWorkspaceRoleAssignmentPopoverId}></div>
       <div popover id={private.createUserWorkspaceRoleAssignmentPopoverId}></div>
       <div popover id={private.confirmDeleteWorkspaceRoleAssignmentPopoverId}></div>

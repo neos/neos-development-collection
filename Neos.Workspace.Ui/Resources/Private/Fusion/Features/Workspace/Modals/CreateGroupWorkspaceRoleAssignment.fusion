@@ -26,17 +26,10 @@ prototype(Neos.Workspace.Ui:Component.Modal.CreateGroupWorkspaceRoleAssignment) 
   renderer = afx`
     <div popover id={private.popoverId}>
       <header>
-        <button
-          type="button"
-          class="neos-close neos-button"
-          popovertarget={private.popoverId}
-          popovertargetaction="close"
-        >
-          <Neos.Workspace.Ui:Component.Icon icon="times"/>
-        </button>
-        <div class="neos-header">
-          {private.i18n.id('workspaces.createWorkspaceRoleAssignment').arguments([props.workspaceTitle])}
-        </div>
+        <Neos.Workspace.Ui:Component.Popover.CloseButton id={private.popoverId}/>
+        <h3 class="neos-header">
+          {private.i18n.id('workspaces.createWorkspaceRoleAssignment').arguments({workspace: props.workspaceTitle})}
+        </h3>
       </header>
       <section>
         <Neos.Fusion.Form:Form
