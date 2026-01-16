@@ -59,6 +59,10 @@ final readonly class SiteExportService
         if ($liveWorkspace === null) {
             throw new \RuntimeException('Failed to find live workspace', 1716652280);
         }
+        if (!$liveWorkspace->isActive()) {
+            //TODO: should be impossible
+            throw new \RuntimeException('Live workspace was deactivated', 1768577266);
+        }
 
         $processors = Processors::fromArray([
             'Exporting events' => $this->contentRepositoryRegistry->buildService(

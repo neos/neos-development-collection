@@ -371,13 +371,17 @@ final class WorkspacePublishingService
     private function pendingWorkspaceChangesInternal(ContentRepository $contentRepository, WorkspaceName $workspaceName): Changes
     {
         $crWorkspace = $this->requireContentRepositoryWorkspace($contentRepository, $workspaceName);
-        return $contentRepository->projectionState(ChangeFinder::class)->findByContentStreamId($crWorkspace->currentContentStreamId);
+        return $crWorkspace->isActive()
+            ? $contentRepository->projectionState(ChangeFinder::class)->findByContentStreamId($crWorkspace->currentContentStreamId)
+            : Changes::fromArray([]);
     }
 
     private function countPendingWorkspaceChangesInternal(ContentRepository $contentRepository, WorkspaceName $workspaceName): int
     {
         $crWorkspace = $this->requireContentRepositoryWorkspace($contentRepository, $workspaceName);
-        return $contentRepository->projectionState(ChangeFinder::class)->countByContentStreamId($crWorkspace->currentContentStreamId);
+        return $crWorkspace->isActive()
+            ? $contentRepository->projectionState(ChangeFinder::class)->countByContentStreamId($crWorkspace->currentContentStreamId)
+            : 0;
     }
 
     private function isChangePublishableWithinAncestorScope(

@@ -478,7 +478,7 @@ class WorkspaceCommandController extends CommandController
                 $workspaceMetadata->title->value,
                 $workspaceMetadata->description->value,
                 $workspace->status->value,
-                $workspace->currentContentStreamId->value,
+                $workspace->currentContentStreamId?->value,
             ];
         }
         $this->output->outputTable($tableRows, $headerRow);
@@ -515,7 +515,7 @@ class WorkspaceCommandController extends CommandController
         $this->outputFormatted('Title: <b>%s</b>', [$workspaceMetadata->title->value]);
         $this->outputFormatted('Description: <b>%s</b>', [$workspaceMetadata->description->value]);
         $this->outputFormatted('Status: <b>%s</b>', [$workspacesInstance->status->value]);
-        $this->outputFormatted('Content Stream: <b>%s</b>', [$workspacesInstance->currentContentStreamId->value]);
+        $this->outputFormatted('Content Stream: <b>%s</b>', [$workspacesInstance->currentContentStreamId?->value]);
 
         $workspaceRoleAssignments = $this->workspaceService->getWorkspaceRoleAssignments($contentRepositoryId, $workspaceName);
         $this->outputLine();
@@ -582,8 +582,7 @@ class WorkspaceCommandController extends CommandController
      *
      * @param string $contentRepository The name of the content repository. (Default: 'default')
      * @param string $dateInterval The time interval a user had to be inactive for its workspaces to be considered stale. (Default: '7 days')
-     * @throws AccessDenied
-     * @throws DateInvalidOperationException
+     * @throws AccessDenied|DateInvalidOperationException
      */
     public function deactivateStaleCommand(string $contentRepository = 'default', string $dateInterval = '7 days'): void
     {
@@ -591,6 +590,10 @@ class WorkspaceCommandController extends CommandController
         $contentRepositoryInstance = $this->contentRepositoryRegistry->get($contentRepositoryId);
 
         $interval = DateInterval::createFromDateString($dateInterval);
+        if ($interval === false) {
+            $this->outputLine('Invalid date interval "%s".', [$dateInterval]);
+            return;
+        }
 
         $workspaces = $contentRepositoryInstance->findWorkspaces();
         $baseWorkspaces = $this->splObjectStoreFromIterable($workspaces->map(fn($workspace) => $workspace->baseWorkspaceName));
@@ -638,11 +641,19 @@ class WorkspaceCommandController extends CommandController
         return $roleSubject;
     }
 
+    /**
+     * @template TObject of object
+     * @param iterable<TObject|null> $iterable
+     * @return \SplObjectStorage<TObject,mixed>
+     */
     private function splObjectStoreFromIterable(iterable $iterable): \SplObjectStorage
     {
+        /** @var \SplObjectStorage<TObject,mixed> $result */
         $result = new \SplObjectStorage();
-        foreach ($iterable as $workspace) {
-            $result->attach($workspace);
+        foreach ($iterable as $value) {
+            if ($value !== null) {
+                $result->attach($value);
+            }
         }
         return $result;
     }

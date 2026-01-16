@@ -16,6 +16,7 @@ use Neos\ContentRepository\Core\SharedModel\Exception\WorkspaceDoesNotExist;
 use Neos\ContentRepository\Core\SharedModel\Exception\WorkspaceHasNoBaseWorkspaceName;
 use Neos\ContentRepository\Core\SharedModel\Exception\WorkspaceHasWorkspacesDependingOnIt;
 use Neos\ContentRepository\Core\SharedModel\Exception\WorkspaceIsDeactivated;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\Workspace;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepository\Core\SharedModel\Workspace\Workspaces;
@@ -25,13 +26,25 @@ trait WorkspaceConstraintChecks
 {
     /**
      * @throws WorkspaceDoesNotExist
+     * @phpstan-return Workspace
      */
-    private function requireActiveWorkspace(WorkspaceName $workspaceName, CommandHandlingDependencies $commandHandlingDependencies): Workspace
+    private function requireWorkspace(WorkspaceName $workspaceName, CommandHandlingDependencies $commandHandlingDependencies): Workspace
     {
         $workspace = $commandHandlingDependencies->findWorkspaceByName($workspaceName);
         if (is_null($workspace)) {
             throw WorkspaceDoesNotExist::butWasSupposedTo($workspaceName);
         }
+
+        return $workspace;
+    }
+
+    /**
+     * @throws WorkspaceDoesNotExist|WorkspaceIsDeactivated
+     * @phpstan-return object{ currentContentStreamId: ContentStreamId, status: WorkspaceStatus::UP_TO_DATE|WorkspaceStatus::OUTDATED } & Workspace
+     */
+    private function requireActiveWorkspace(WorkspaceName $workspaceName, CommandHandlingDependencies $commandHandlingDependencies): Workspace
+    {
+        $workspace = $this->requireWorkspace($workspaceName, $commandHandlingDependencies);
         if (!$workspace->isActive()) {
             throw WorkspaceIsDeactivated::butWasSupposedToBeActivated($workspaceName);
         }
@@ -42,6 +55,7 @@ trait WorkspaceConstraintChecks
     /**
      * @throws WorkspaceHasNoBaseWorkspaceName
      * @throws BaseWorkspaceDoesNotExist
+     * @phpstan-return object{ currentContentStreamId: ContentStreamId, status: WorkspaceStatus::UP_TO_DATE|WorkspaceStatus::OUTDATED } & Workspace
      */
     private function requireBaseWorkspace(Workspace $workspace, CommandHandlingDependencies $commandHandlingDependencies): Workspace
     {
@@ -51,6 +65,10 @@ trait WorkspaceConstraintChecks
         $baseWorkspace = $commandHandlingDependencies->findWorkspaceByName($workspace->baseWorkspaceName);
         if (is_null($baseWorkspace)) {
             throw BaseWorkspaceDoesNotExist::butWasSupposedTo($workspace->workspaceName);
+        } elseif (!$baseWorkspace->isActive()) {
+            // should never happen!
+            // TODO: if this happens, something is seriously wrong in the database, handle differently?
+            throw WorkspaceIsDeactivated::butWasSupposedToBeActivated($workspace->baseWorkspaceName);
         }
         return $baseWorkspace;
     }

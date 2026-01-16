@@ -65,6 +65,7 @@ use Neos\ContentRepository\Core\SharedModel\Exception\WorkspaceDoesNotExist;
 use Neos\ContentRepository\Core\SharedModel\Exception\WorkspaceHasNoBaseWorkspaceName;
 use Neos\ContentRepository\Core\SharedModel\Exception\WorkspaceContainsPublishableChanges;
 use Neos\ContentRepository\Core\SharedModel\Exception\WorkspaceIsActivated;
+use Neos\ContentRepository\Core\SharedModel\Exception\WorkspaceIsDeactivated;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\Workspace;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
@@ -135,6 +136,9 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
                 $command->baseWorkspaceName->value,
                 $command->workspaceName->value
             ), 1513890708);
+        }
+        if (!$baseWorkspace->isActive()) {
+            throw WorkspaceIsDeactivated::butWasSupposedToBeActivated($command->baseWorkspaceName);
         }
         $sourceContentStreamVersion = $commandHandlingDependencies->getContentStreamVersion($baseWorkspace->currentContentStreamId);
         $this->requireContentStreamToNotBeClosed($baseWorkspace->currentContentStreamId, $commandHandlingDependencies);
@@ -291,6 +295,13 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
         Version $baseWorkspaceContentStreamVersion,
         ContentStreamId $newContentStreamId
     ): \Generator {
+        if (!$baseWorkspace->isActive()) {
+            throw WorkspaceIsDeactivated::butWasSupposedToBeActivated($baseWorkspace->workspaceName);
+        }
+        if (!$workspace->isActive()) {
+            throw WorkspaceIsDeactivated::butWasSupposedToBeActivated($workspace->workspaceName);
+        }
+
         yield $this->forkContentStream(
             $newContentStreamId,
             $baseWorkspace->currentContentStreamId,
@@ -703,6 +714,13 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
         Version $baseWorkspaceContentStreamVersion,
         ContentStreamId $newContentStream
     ): \Generator {
+        if (!$baseWorkspace->isActive()) {
+            throw WorkspaceIsDeactivated::butWasSupposedToBeActivated($baseWorkspace->workspaceName);
+        }
+        if (!$workspace->isActive()) {
+            throw WorkspaceIsDeactivated::butWasSupposedToBeActivated($workspace->workspaceName);
+        }
+
         yield $this->forkContentStream(
             $newContentStream,
             $baseWorkspace->currentContentStreamId,
@@ -785,18 +803,21 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
         DeleteWorkspace $command,
         CommandHandlingDependencies $commandHandlingDependencies,
     ): \Generator {
-        $workspace = $this->requireActiveWorkspace($command->workspaceName, $commandHandlingDependencies);
-        $contentStreamVersion = $commandHandlingDependencies->getContentStreamVersion($workspace->currentContentStreamId);
+        $workspace = $this->requireWorkspace($command->workspaceName, $commandHandlingDependencies);
 
-        yield new EventsToPublish(
-            ContentStreamEventStreamName::fromContentStreamId($workspace->currentContentStreamId)->getEventStreamName(),
-            Events::with(
-                new ContentStreamWasRemoved(
-                    $workspace->currentContentStreamId,
+        if ($workspace->isActive()) {
+            $contentStreamVersion = $commandHandlingDependencies->getContentStreamVersion($workspace->currentContentStreamId);
+
+            yield new EventsToPublish(
+                ContentStreamEventStreamName::fromContentStreamId($workspace->currentContentStreamId)->getEventStreamName(),
+                Events::with(
+                    new ContentStreamWasRemoved(
+                        $workspace->currentContentStreamId,
+                    ),
                 ),
-            ),
-            ExpectedVersion::fromVersion($contentStreamVersion)
-        );
+                ExpectedVersion::fromVersion($contentStreamVersion)
+            );
+        }
 
         yield new EventsToPublish(
             WorkspaceEventStreamName::fromWorkspaceName($command->workspaceName)->getEventStreamName(),
@@ -932,6 +953,11 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
         ), 1715341085);
     }
 
+    /**
+     * @param Workspace&object{ currentContentStreamId: ContentStreamId } $workspace
+     * @param CommandHandlingDependencies $commandHandlingDependencies
+     * @return Version
+     */
     private function requireOpenContentStreamAndVersion(Workspace $workspace, CommandHandlingDependencies $commandHandlingDependencies): Version
     {
         if ($commandHandlingDependencies->isContentStreamClosed($workspace->currentContentStreamId)) {

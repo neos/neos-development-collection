@@ -466,10 +466,9 @@ class WorkspaceController extends AbstractModuleController
         $nodesCount = 0;
 
         try {
-            $nodesCount = $contentRepository->projectionState(ChangeFinder::class)
-                ->countByContentStreamId(
-                    $workspace->currentContentStreamId
-                );
+            $nodesCount = $workspace->currentContentStreamId === null ? 0 :
+                $contentRepository->projectionState(ChangeFinder::class)
+                    ->countByContentStreamId($workspace->currentContentStreamId);
         } catch (\Exception $exception) {
             $message = $this->getModuleLabel(
                 'workspaces.notDeletedErrorWhileFetchingUnpublishedNodes',
@@ -996,7 +995,7 @@ class WorkspaceController extends AbstractModuleController
         ContentRepository $contentRepository,
     ): ContentChangeItems {
         $currentWorkspace = $contentRepository->findWorkspaces()->find(
-            fn (Workspace $potentialWorkspace) => $potentialWorkspace->currentContentStreamId->equals($contentStreamIdOfOriginalNode)
+            fn (Workspace $potentialWorkspace) => $potentialWorkspace->currentContentStreamId?->equals($contentStreamIdOfOriginalNode) ?? false
         );
         $originalNode = null;
         if ($currentWorkspace !== null) {
@@ -1327,6 +1326,10 @@ class WorkspaceController extends AbstractModuleController
     }
 
     protected function getChangesFromWorkspace(Workspace $selectedWorkspace,ContentRepository $contentRepository ): Changes{
+        if (!$selectedWorkspace->isActive()) {
+            // since there is no content stream associated to them, inactive workspaces cannot contain changes
+            return Changes::fromArray([]);
+        }
         return $contentRepository->projectionState(ChangeFinder::class)
             ->findByContentStreamId(
                 $selectedWorkspace->currentContentStreamId

@@ -38,8 +38,11 @@ final readonly class Workspace
         if ($this->isRootWorkspace() && $this->hasPublishableChanges) {
             throw new \InvalidArgumentException('Root workspaces cannot have changes', 1730371566);
         }
-        if ($this->isActive() && $this->currentContentStreamId === null) {
+        if ($this->currentContentStreamId === null && $this->isActive()) {
             throw new \InvalidArgumentException('Active workspaces must have a non null content stream ID', 1730371566);
+        }
+        if ($this->isRootWorkspace() && !$this->isActive()) {
+            throw new \InvalidArgumentException('Root Workspaces cannot be deactivated', 1768571925);
         }
     }
 
@@ -66,6 +69,10 @@ final readonly class Workspace
 
     /**
      * Indicates if the workspace is active.
+     *
+     * @phpstan-assert-if-true ContentStreamId $this->currentContentStreamId
+     * @phpstan-assert-if-true WorkspaceStatus::UP_TO_DATE|WorkspaceStatus::OUTDATED $this->status
+     * @phpstan-assert-if-false WorkspaceName $this->baseWorkspaceName
      */
     public function isActive(): bool
     {
