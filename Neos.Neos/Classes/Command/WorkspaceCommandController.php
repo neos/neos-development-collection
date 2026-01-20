@@ -17,6 +17,7 @@ namespace Neos\Neos\Command;
 use DateInterval;
 use DateInvalidOperationException;
 use Neos\ContentRepository\Core\Feature\Security\Exception\AccessDenied;
+use Neos\ContentRepository\Core\Feature\WorkspaceActivation\Command\ActivateWorkspace;
 use Neos\ContentRepository\Core\Feature\WorkspaceActivation\Command\DeactivateWorkspace;
 use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Exception\WorkspaceAlreadyExists;
 use Neos\ContentRepository\Core\Feature\WorkspaceRebase\Dto\RebaseErrorHandlingStrategy;
@@ -630,6 +631,32 @@ class WorkspaceCommandController extends CommandController
         foreach ($workspacesToDeactivate as $workspace) {
             $contentRepositoryInstance->handle(DeactivateWorkspace::create($workspace));
         }
+    }
+    /**
+     * Activate a single - previously deactivated - workspace by name.
+     *
+     * @param string $workspace Name of the workspace to deactivate.
+     * @param string $contentRepository The name of the content repository. (Default: 'default')
+     * @throws StopCommandException
+     * @throws AccessDenied
+     */
+    public function activateCommand(string $workspace, string $contentRepository = 'default'): void
+    {
+        $contentRepositoryId = ContentRepositoryId::fromString($contentRepository);
+        $contentRepositoryInstance = $this->contentRepositoryRegistry->get($contentRepositoryId);
+
+        $workspaceName = WorkspaceName::fromString($workspace);
+        $workspaceInstance = $contentRepositoryInstance->findWorkspaceByName($workspaceName);
+        if ($workspaceInstance === null) {
+            $this->outputLine('Workspace "%s" not found.', [$workspaceName->value]);
+            $this->quit();
+        }
+        if ($workspaceInstance->isActive()) {
+            $this->outputLine('Workspace "%s" is already active.', [$workspaceName->value]);
+            $this->quit();
+        }
+
+        $contentRepositoryInstance->handle(ActivateWorkspace::create($workspaceName));
     }
 
     // -----------------------
