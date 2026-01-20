@@ -582,7 +582,7 @@ class WorkspaceCommandController extends CommandController
      *
      * @param string $contentRepository The name of the content repository. (Default: 'default')
      * @param string $dateInterval The time interval a user had to be inactive for its workspaces to be considered stale. (Default: '7 days')
-     * @throws AccessDenied|DateInvalidOperationException
+     * @throws AccessDenied
      */
     public function deactivateStaleCommand(string $contentRepository = 'default', string $dateInterval = '7 days'): void
     {
@@ -595,6 +595,15 @@ class WorkspaceCommandController extends CommandController
             return;
         }
 
+        try {
+            $cutoffTime = $this->now->sub($interval);
+            // DateInvalidOperationException is introduced in php 8.3, therefore phpstan can't find it and complains
+            // about the next line in php 8.2
+        } catch (\DateInvalidOperationException) { // @phpstan-ignore class.notFound,catch.neverThrown
+            $this->outputLine('Invalid date interval "%s".', [$interval]);
+            return;
+        }
+
         $workspaces = $contentRepositoryInstance->findWorkspaces();
         $baseWorkspaces = $this->splObjectStoreFromIterable($workspaces->map(fn($workspace) => $workspace->baseWorkspaceName));
 
@@ -604,8 +613,7 @@ class WorkspaceCommandController extends CommandController
                     !$baseWorkspaces->contains($workspace->workspaceName))
                 ->map(fn($workspace) => $workspace->workspaceName)
         );
-
-        $inactiveUserIds = $this->splObjectStoreFromIterable($this->userService->findUserIdsNotLoggedInBefore($this->now->sub($interval)));
+        $inactiveUserIds = $this->splObjectStoreFromIterable($this->userService->findUserIdsNotLoggedInBefore($cutoffTime));
 
         $personalWorkspaces = $this->workspaceService->getPersonalWorkspaces($contentRepositoryId);
         $workspacesToDeactivate = [];

@@ -49,7 +49,14 @@ trait WorkspaceConstraintChecks
             throw WorkspaceIsDeactivated::butWasSupposedToBeActivated($workspaceName);
         }
 
-        return $workspace;
+        // DANGEROUS error of type return.type ignored
+        // This is done due to phpstan being unable to deduce that the returned workspace actually fulfills all
+        // required conditions. This is guaranteed by `$workspace->isActive()` returning true:
+        // isActive() is annotated with
+        // @ phpstan-assert-if-true ContentStreamId $this->currentContentStreamId
+        // @ phpstan-assert-if-true WorkspaceStatus::UP_TO_DATE|WorkspaceStatus::OUTDATED $this->status
+        // which are the same guarantees this method makes, but in a syntactical different way.
+        return $workspace; // @phpstan-ignore return.type
     }
 
     /**
@@ -70,7 +77,9 @@ trait WorkspaceConstraintChecks
             // TODO: if this happens, something is seriously wrong in the database, handle differently?
             throw WorkspaceIsDeactivated::butWasSupposedToBeActivated($workspace->baseWorkspaceName);
         }
-        return $baseWorkspace;
+
+        // @phpstan-ignore-next-line
+        return $baseWorkspace; // @phpstan-ignore return.type
     }
 
     private function requireWorkspaceToBeRootOrRootBasedForDimensionAdjustment(WorkspaceName $workspaceName, CommandHandlingDependencies $commandHandlingDependencies): void
