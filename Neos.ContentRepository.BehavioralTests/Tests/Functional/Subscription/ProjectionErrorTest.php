@@ -25,6 +25,43 @@ use Neos\EventStore\Model\EventEnvelope;
 final class ProjectionErrorTest extends AbstractSubscriptionEngineTestCase
 {
     /** @test */
+    public function subscriptionErrorLogging()
+    {
+        $exception = new \RuntimeException('This projection is kaputt.', code: 1031);
+
+        $subscriptionError = SubscriptionError::fromPreviousStatusAndException(SubscriptionStatus::ACTIVE, $exception);
+
+        self::assertEquals('This projection is kaputt.', $subscriptionError->errorMessage);
+        self::assertStringStartsWith(<<<MSG
+            Class: RuntimeException
+            File: /Packages/Neos/Neos.ContentRepository.BehavioralTests/Tests/Functional/Subscription/ProjectionErrorTest.php
+            Line: 31
+            Code: 1031
+            
+            #0 /Packages/Libraries/phpunit/phpunit/src/Framework/TestCase.php(1617): Neos\ContentRepository\BehavioralTests\Tests\Functional\Subscription\ProjectionErrorTest->subscriptionErrorLogging()
+            #1
+            MSG,
+            str_replace(FLOW_PATH_ROOT, '/', $subscriptionError->errorTrace)
+        );
+
+        $exception = new \RuntimeException('This projection is kaputt.', previous: new \InvalidArgumentException('Infrastructure is kaputt (previous).', code: 1048));
+        $subscriptionError = SubscriptionError::fromPreviousStatusAndException(SubscriptionStatus::ACTIVE, $exception);
+        self::assertStringContainsString(<<<MSG
+            
+            Previous: Infrastructure is kaputt (previous).
+            Class: InvalidArgumentException
+            File: /Packages/Neos/Neos.ContentRepository.BehavioralTests/Tests/Functional/Subscription/ProjectionErrorTest.php
+            Line: 48
+            Code: 1048
+            
+            #0 /Packages/Libraries/phpunit/phpunit/src/Framework/TestCase.php(1617): Neos\ContentRepository\BehavioralTests\Tests\Functional\Subscription\ProjectionErrorTest->subscriptionErrorLogging()
+            #1
+            MSG,
+            str_replace(FLOW_PATH_ROOT, '/', $subscriptionError->errorTrace)
+        );
+    }
+
+    /** @test */
     public function projectionWithErrorCanBeReactivated()
     {
         $this->eventStore->setup();

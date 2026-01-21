@@ -18,6 +18,33 @@ final class SubscriptionError
 
     public static function fromPreviousStatusAndException(SubscriptionStatus $previousStatus, \Throwable $error): self
     {
-        return new self($error->getMessage(), $previousStatus, $error->getTraceAsString());
+        $class = get_class(...);
+        return new self(
+            $error->getMessage(),
+            $previousStatus,
+            <<<TEXT
+            Class: {$class($error)}
+            File: {$error->getFile()}
+            Line: {$error->getLine()}
+            Code: {$error->getCode()}
+            
+            
+            TEXT
+            . $error->getTraceAsString()
+            . ($error->getPrevious() ? (
+                <<<TEXT
+                
+                
+                Previous: {$error->getPrevious()->getMessage()}
+                Class: {$class($error->getPrevious())}
+                File: {$error->getPrevious()->getFile()}
+                Line: {$error->getPrevious()->getLine()}
+                Code: {$error->getPrevious()->getCode()}
+                
+                
+                TEXT
+                . $error->getTraceAsString()
+            ) : '')
+        );
     }
 }
