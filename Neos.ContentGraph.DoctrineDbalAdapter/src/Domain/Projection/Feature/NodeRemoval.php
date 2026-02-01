@@ -5,10 +5,10 @@ declare(strict_types=1);
 namespace Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\Feature;
 
 use Doctrine\DBAL\Exception as DBALException;
+use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\ContentStreamDbId;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\HierarchyRelation;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 
 /**
  * The NodeRemoval projection feature trait
@@ -17,12 +17,12 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
  */
 trait NodeRemoval
 {
-    private function removeNodeAggregate(ContentStreamId $contentStreamId, NodeAggregateId $nodeAggregateId, DimensionSpacePointSet $affectedCoveredDimensionSpacePoints): void
+    private function removeNodeAggregate(ContentStreamDbId $contentStreamDbId, NodeAggregateId $nodeAggregateId, DimensionSpacePointSet $affectedCoveredDimensionSpacePoints): void
     {
         // the focus here is to be correct; that's why the method is not overly performant (for now at least). We might
         // lateron find tricks to improve performance
         $ingoingRelations = $this->projectionContentGraph->findIngoingHierarchyRelationsForNodeAggregate(
-            $contentStreamId,
+            $contentStreamDbId,
             $nodeAggregateId,
             $affectedCoveredDimensionSpacePoints
         );
@@ -40,7 +40,7 @@ trait NodeRemoval
         foreach (
             $this->projectionContentGraph->findOutgoingHierarchyRelationsForNode(
                 $ingoingRelation->childNodeAnchor,
-                $ingoingRelation->contentStreamId,
+                $ingoingRelation->contentStreamDbId,
                 new DimensionSpacePointSet([$ingoingRelation->dimensionSpacePoint])
             ) as $outgoingRelation
         ) {
@@ -59,7 +59,7 @@ trait NodeRemoval
             WHERE
                 n.relationanchorpoint = :anchorPointForNode
                 -- the following line means "left join leads to NO MATCHING hierarchyrelation"
-                AND h.contentstreamid IS NULL
+                AND h.contentstreamdbid IS NULL
         SQL;
         try {
             $this->dbal->executeStatement($deleteRelationsStatement, [
