@@ -17,6 +17,7 @@ namespace Neos\ContentGraph\DoctrineDbalAdapter;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Exception;
 use Doctrine\DBAL\Query\QueryBuilder;
+use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\ContentStreamDbId;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\ContentGraph;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\NodeFactory;
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
@@ -49,11 +50,13 @@ final readonly class ContentGraphReadModelAdapter implements ContentGraphReadMod
     {
         $currentContentStreamIdStatement = <<<SQL
             SELECT
-                currentContentStreamId
+                ws.currentContentStreamId,
+                cs.dbId AS contentStreamDbId
             FROM
-                {$this->tableNames->workspace()}
+                {$this->tableNames->workspace()} ws
+                JOIN {$this->tableNames->contentStream()} cs ON cs.id = ws.currentContentStreamId
             WHERE
-                name = :workspaceName
+                ws.name = :workspaceName
             LIMIT 1
         SQL;
         try {
@@ -67,7 +70,8 @@ final readonly class ContentGraphReadModelAdapter implements ContentGraphReadMod
             throw WorkspaceDoesNotExist::butWasSupposedTo($workspaceName);
         }
         $currentContentStreamId = ContentStreamId::fromString($row['currentContentStreamId']);
-        return new ContentGraph($this->dbal, $this->nodeFactory, $this->contentRepositoryId, $this->nodeTypeManager, $this->tableNames, $workspaceName, $currentContentStreamId);
+        $contentStreamDbId = ContentStreamDbId::fromInt((int)$row['contentStreamDbId']);
+        return new ContentGraph($this->dbal, $this->nodeFactory, $this->contentRepositoryId, $this->nodeTypeManager, $this->tableNames, $workspaceName, $currentContentStreamId, $contentStreamDbId);
     }
 
     public function findWorkspaceByName(WorkspaceName $workspaceName): ?Workspace

@@ -17,10 +17,9 @@ namespace Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Exception as DBALException;
 use Neos\ContentGraph\DoctrineDbalAdapter\ContentGraphTableNames;
-use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\DimensionSpacePointsRepository;
+use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodeTags;
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 
 /**
  * The active record for reading and writing hierarchy relations from and to the database
@@ -32,7 +31,7 @@ final readonly class HierarchyRelation
     public function __construct(
         public NodeRelationAnchorPoint $parentNodeAnchor,
         public NodeRelationAnchorPoint $childNodeAnchor,
-        public ContentStreamId $contentStreamId,
+        public ContentStreamDbId $contentStreamDbId,
         public DimensionSpacePoint $dimensionSpacePoint,
         public string $dimensionSpacePointHash,
         public int $position,
@@ -54,7 +53,7 @@ final readonly class HierarchyRelation
             $databaseConnection->insert($tableNames->hierarchyRelation(), [
                 'parentnodeanchor' => $this->parentNodeAnchor->value,
                 'childnodeanchor' => $this->childNodeAnchor->value,
-                'contentstreamid' => $this->contentStreamId->value,
+                'contentstreamdbid' => $this->contentStreamDbId->value,
                 'dimensionspacepointhash' => $this->dimensionSpacePointHash,
                 'position' => $this->position,
                 'subtreetags' => $subtreeTagsJson,
@@ -131,13 +130,13 @@ final readonly class HierarchyRelation
 
     /**
      * @return array<string,mixed>
-     */
+     */ // todo rename? because ambiguous:
     public function getDatabaseId(): array
     {
         return [
             'parentnodeanchor' => $this->parentNodeAnchor->value,
             'childnodeanchor' => $this->childNodeAnchor->value,
-            'contentstreamid' => $this->contentStreamId->value,
+            'contentstreamdbid' => $this->contentStreamDbId->value,
             'dimensionspacepointhash' => $this->dimensionSpacePointHash
         ];
     }
