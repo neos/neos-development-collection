@@ -6,6 +6,7 @@ namespace Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\Feature;
 
 use Doctrine\DBAL\ArrayParameterType;
 use Doctrine\DBAL\Exception as DBALException;
+use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\ContentStreamDbId;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\NodeRelationAnchorPoint;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\NodeFactory;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
@@ -212,7 +213,7 @@ trait SubtreeTagging
         }
     }
 
-    private function subtreeTagsForHierarchyRelation(ContentStreamId $contentStreamId, NodeRelationAnchorPoint $parentNodeAnchorPoint, DimensionSpacePoint $dimensionSpacePoint): NodeTags
+    private function subtreeTagsForHierarchyRelation(ContentStreamDbId $contentStreamDbId, NodeRelationAnchorPoint $parentNodeAnchorPoint, DimensionSpacePoint $dimensionSpacePoint): NodeTags
     {
         if ($parentNodeAnchorPoint->equals(NodeRelationAnchorPoint::forRootEdge())) {
             return NodeTags::createEmpty();
@@ -222,11 +223,11 @@ trait SubtreeTagging
                     SELECT h.subtreetags FROM ' . $this->tableNames->hierarchyRelation() . ' h
                     WHERE
                       h.childnodeanchor = :parentNodeAnchorPoint
-                      AND h.contentstreamid = :contentStreamId
+                      AND h.contentstreamdbid = :contentStreamDbId
                       AND h.dimensionspacepointhash = :dimensionSpacePointHash
                 ', [
                 'parentNodeAnchorPoint' => $parentNodeAnchorPoint->value,
-                'contentStreamId' => $contentStreamId->value,
+                'contentStreamDbId' => $contentStreamDbId->value,
                 'dimensionSpacePointHash' => $dimensionSpacePoint->hash,
             ]);
         } catch (DBALException $e) {
