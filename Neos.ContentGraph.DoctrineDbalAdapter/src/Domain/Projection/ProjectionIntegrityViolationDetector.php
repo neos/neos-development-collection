@@ -22,7 +22,6 @@ use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ProjectionIntegrityViolationDetectorInterface;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateClassification;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\Error\Messages\Error;
 use Neos\Error\Messages\Result;
 
@@ -94,14 +93,14 @@ final class ProjectionIntegrityViolationDetector implements ProjectionIntegrityV
             SELECT
                 COUNT(*) as uniquenessCounter,
                 c.nodeaggregateid,
-                h.dimensionspacepointhash, h.contentstreamid FROM {$this->tableNames->hierarchyRelation()} h
+                h.dimensionspacepointhash, h.contentstreamdbid FROM {$this->tableNames->hierarchyRelation()} h
                 LEFT JOIN {$this->tableNames->node()} p ON h.parentnodeanchor = p.relationanchorpoint
                 LEFT JOIN {$this->tableNames->node()} c ON h.childnodeanchor = c.relationanchorpoint
             WHERE
                 h.parentnodeanchor != :rootNodeAnchor
             GROUP BY
                 p.nodeaggregateid, c.nodeaggregateid,
-                h.dimensionspacepointhash, h.contentstreamid
+                h.dimensionspacepointhash, h.contentstreamdbid
             HAVING uniquenessCounter > 1
         SQL;
         try {
@@ -128,14 +127,14 @@ final class ProjectionIntegrityViolationDetector implements ProjectionIntegrityV
 
         $ambiguouslySortedHierarchyRelationStatement = <<<SQL
             SELECT
-                contentstreamid, dimensionspacepointhash, parentnodeanchor,
+                contentstreamdbid, dimensionspacepointhash, parentnodeanchor,
                 COUNT(position)
             FROM
                 {$this->tableNames->hierarchyRelation()}
             GROUP BY
                 position,
                 parentnodeanchor,
-                contentstreamid,
+                contentstreamdbid,
                 dimensionspacepointhash
             HAVING
                 COUNT(position) > 1
@@ -169,7 +168,7 @@ final class ProjectionIntegrityViolationDetector implements ProjectionIntegrityV
 
             $result->addError(new Error(
                 'Siblings ' . implode(', ', array_map(static fn (array $record) => $record['nodeaggregateid'], $ambiguouslySortedNodeRecords))
-                . ' are ambiguously sorted in content stream ' . $hierarchyRelationRecord['contentstreamid']
+                . ' are ambiguously sorted in content stream ' . $hierarchyRelationRecord['contentstreamdbid']
                 . ' and dimension space point ' . $dimensionSpacePoints[$hierarchyRelationRecord['dimensionspacepointhash']]?->toJson(),
                 self::ERROR_CODE_SIBLINGS_ARE_AMBIGUOUSLY_SORTED
             ));
@@ -183,7 +182,7 @@ final class ProjectionIntegrityViolationDetector implements ProjectionIntegrityV
         $result = new Result();
         $unnamedTetheredNodesStatement = <<<SQL
             SELECT
-                n.nodeaggregateid, h.contentstreamid
+                n.nodeaggregateid, h.contentstreamdbid
             FROM
                 {$this->tableNames->node()} n
                 INNER JOIN {$this->tableNames->hierarchyRelation()} h ON h.childnodeanchor = n.relationanchorpoint
@@ -191,7 +190,7 @@ final class ProjectionIntegrityViolationDetector implements ProjectionIntegrityV
                 n.classification = :tethered
                 AND n.name IS NULL
             GROUP BY
-                n.nodeaggregateid, h.contentstreamid
+                n.nodeaggregateid, h.contentstreamdbid
         SQL;
         try {
             $unnamedTetheredNodeRecords = $this->dbal->fetchAllAssociative($unnamedTetheredNodesStatement, [
@@ -204,7 +203,7 @@ final class ProjectionIntegrityViolationDetector implements ProjectionIntegrityV
         foreach ($unnamedTetheredNodeRecords as $unnamedTetheredNodeRecord) {
             $result->addError(new Error(
                 'Node aggregate ' . $unnamedTetheredNodeRecord['nodeaggregateid']
-                . ' is unnamed in content stream ' . $unnamedTetheredNodeRecord['contentstreamid'] . '.',
+                . ' is unnamed in content stream ' . $unnamedTetheredNodeRecord['contentstreamdbid'] . '.',
                 self::ERROR_CODE_TETHERED_NODE_IS_UNNAMED
             ));
         }
@@ -226,7 +225,7 @@ final class ProjectionIntegrityViolationDetector implements ProjectionIntegrityV
                 {$this->tableNames->hierarchyRelation()} h
                 INNER JOIN {$this->tableNames->hierarchyRelation()} ph
                     ON ph.childnodeanchor = h.parentnodeanchor
-                    AND ph.contentstreamid = h.contentstreamid
+                    AND ph.contentstreamdbid = h.contentstreamdbid
                     AND ph.dimensionspacepointhash = h.dimensionspacepointhash
             WHERE
                 EXISTS (
@@ -280,7 +279,7 @@ final class ProjectionIntegrityViolationDetector implements ProjectionIntegrityV
 
         $referenceRelationRecordsWithInvalidTargetStatement = <<<SQL
             SELECT
-                sh.contentstreamid AS contentstreamId,
+                sh.contentstreamdbid,
                 s.nodeaggregateid AS sourceNodeAggregateId,
                 r.destinationnodeaggregateid AS destinationNodeAggregateId
             FROM
@@ -291,13 +290,13 @@ final class ProjectionIntegrityViolationDetector implements ProjectionIntegrityV
                     {$this->tableNames->node()} d
                     INNER JOIN {$this->tableNames->hierarchyRelation()} dh ON d.relationanchorpoint = dh.childnodeanchor
                 ) ON r.destinationnodeaggregateid = d.nodeaggregateid
-                  AND sh.contentstreamid = dh.contentstreamid
+                  AND sh.contentstreamdbid = dh.contentstreamdbid
                   AND sh.dimensionspacepointhash = dh.dimensionspacepointhash
                 WHERE
                     d.nodeaggregateid IS NULL
                 GROUP BY
                     s.nodeaggregateid,
-                    sh.contentstreamid,
+                    sh.contentstreamdbid,
                     r.destinationnodeaggregateid
         SQL;
         try {
@@ -331,7 +330,7 @@ final class ProjectionIntegrityViolationDetector implements ProjectionIntegrityV
             $result->addError(new Error(
                 'Destination node aggregate ' . $record['destinationNodeAggregateId']
                 . ' does not cover any dimension space points the source ' . $record['sourceNodeAggregateId']
-                . ' does in content stream ' . $record['contentstreamId'],
+                . ' does in content stream ' . $record['contentstreamdbid'],
                 self::ERROR_CODE_REFERENCE_INTEGRITY_IS_COMPROMISED
             ));
         }
@@ -361,7 +360,7 @@ final class ProjectionIntegrityViolationDetector implements ProjectionIntegrityV
                     {$this->tableNames->hierarchyRelation()} h
                 WHERE
                     h.parentnodeanchor = :rootAnchorPoint
-                    AND h.contentstreamid = :contentStreamId
+                    AND h.contentstreamdbid = :contentStreamDbId
                     AND h.dimensionspacepointhash = :dimensionSpacePointHash
                 UNION
                  -- --------------------------------
@@ -374,24 +373,24 @@ final class ProjectionIntegrityViolationDetector implements ProjectionIntegrityV
                  INNER JOIN {$this->tableNames->hierarchyRelation()} h
                     on h.parentnodeanchor = p.childnodeanchor
                  WHERE
-                    h.contentstreamid = :contentStreamId
+                    h.contentstreamdbid = :contentStreamDbId
                     AND h.dimensionspacepointhash = :dimensionSpacePointHash
             )
             SELECT nodeaggregateid FROM {$this->tableNames->node()} n
             INNER JOIN {$this->tableNames->hierarchyRelation()} h
                 ON h.childnodeanchor = n.relationanchorpoint
             WHERE
-                h.contentstreamid = :contentStreamId
+                h.contentstreamdbid = :contentStreamDbId
                 AND h.dimensionspacepointhash = :dimensionSpacePointHash
                 AND relationanchorpoint NOT IN (SELECT * FROM subgraph)
         SQL;
 
-        foreach ($this->findProjectedContentStreamIds() as $contentStreamId) {
+        foreach ($this->findProjectedContentStreamDbIds() as $contentStreamDbId) {
             foreach ($this->findProjectedDimensionSpacePoints() as $dimensionSpacePoint) {
                 try {
                     $nodeAggregateIdsInCycles = $this->dbal->fetchFirstColumn($nodeAggregateIdsInCyclesStatement, [
                         'rootAnchorPoint' => NodeRelationAnchorPoint::forRootEdge()->value,
-                        'contentStreamId' => $contentStreamId->value,
+                        'contentStreamDbId' => $contentStreamDbId->value,
                         'dimensionSpacePointHash' => $dimensionSpacePoint->hash
                     ]);
                 } catch (DBALException $e) {
@@ -400,7 +399,7 @@ final class ProjectionIntegrityViolationDetector implements ProjectionIntegrityV
 
                 if (!empty($nodeAggregateIdsInCycles)) {
                     $result->addError(new Error(
-                        'Subgraph defined by content stream ' . $contentStreamId->value
+                        'Subgraph defined by content stream ' . $contentStreamDbId->value
                         . ' and dimension space point ' . $dimensionSpacePoint->toJson()
                         . ' is cyclic for node aggregates '
                         . implode(',', $nodeAggregateIdsInCycles),
@@ -434,7 +433,7 @@ final class ProjectionIntegrityViolationDetector implements ProjectionIntegrityV
                 {$this->tableNames->node()} n
                 INNER JOIN {$this->tableNames->hierarchyRelation()} h ON h.childnodeanchor = n.relationanchorpoint
             WHERE
-                h.contentstreamid = :contentStreamId
+                h.contentstreamdbid = :contentStreamDbId
                 AND h.dimensionspacepointhash = :dimensionSpacePointHash
             GROUP BY
                 n.nodeaggregateid
@@ -442,11 +441,11 @@ final class ProjectionIntegrityViolationDetector implements ProjectionIntegrityV
                 COUNT(DISTINCT(n.relationanchorpoint)) > 1
         SQL;
 
-        foreach ($this->findProjectedContentStreamIds() as $contentStreamId) {
+        foreach ($this->findProjectedContentStreamDbIds() as $contentStreamDbId) {
             foreach ($this->findProjectedDimensionSpacePoints() as $dimensionSpacePoint) {
                 try {
                     $ambiguousNodeAggregateRecords = $this->dbal->fetchAllAssociative($ambiguousNodeAggregatesStatement, [
-                        'contentStreamId' => $contentStreamId->value,
+                        'contentStreamDbId' => $contentStreamDbId->value,
                         'dimensionSpacePointHash' => $dimensionSpacePoint->hash
                     ]);
                 } catch (DBALException $e) {
@@ -455,7 +454,7 @@ final class ProjectionIntegrityViolationDetector implements ProjectionIntegrityV
                 foreach ($ambiguousNodeAggregateRecords as $ambiguousRecord) {
                     $result->addError(new Error(
                         'Node aggregate ' . $ambiguousRecord['nodeaggregateid']
-                        . ' is ambiguous in content stream ' . $contentStreamId->value
+                        . ' is ambiguous in content stream ' . $contentStreamDbId->value
                         . ' and dimension space point ' . $dimensionSpacePoint->toJson(),
                         self::ERROR_CODE_AMBIGUOUS_NODE_AGGREGATE_IN_SUBGRAPH
                     ));
@@ -476,7 +475,7 @@ final class ProjectionIntegrityViolationDetector implements ProjectionIntegrityV
                 {$this->tableNames->node()} c
                 INNER JOIN {$this->tableNames->hierarchyRelation()} h ON h.childnodeanchor = c.relationanchorpoint
             WHERE
-                h.contentstreamid = :contentStreamId
+                h.contentstreamdbid = :contentStreamDbId
                 AND h.dimensionspacepointhash = :dimensionSpacePointHash
             GROUP BY
                 c.relationanchorpoint
@@ -484,11 +483,11 @@ final class ProjectionIntegrityViolationDetector implements ProjectionIntegrityV
                 COUNT(DISTINCT(h.parentnodeanchor)) > 1
         SQL;
 
-        foreach ($this->findProjectedContentStreamIds() as $contentStreamId) {
+        foreach ($this->findProjectedContentStreamDbIds() as $contentStreamDbId) {
             foreach ($this->findProjectedDimensionSpacePoints() as $dimensionSpacePoint) {
                 try {
                     $nodeRecordsWithMultipleParents = $this->dbal->fetchAllAssociative($nodeRecordsWithMultipleParentsStatement, [
-                        'contentStreamId' => $contentStreamId->value,
+                        'contentStreamDbId' => $contentStreamDbId->value,
                         'dimensionSpacePointHash' => $dimensionSpacePoint->hash
                     ]);
                 } catch (DBALException $e) {
@@ -498,7 +497,7 @@ final class ProjectionIntegrityViolationDetector implements ProjectionIntegrityV
                 foreach ($nodeRecordsWithMultipleParents as $record) {
                     $result->addError(new Error(
                         'Node aggregate ' . $record['nodeaggregateid']
-                        . ' has multiple parents in content stream ' . $contentStreamId->value
+                        . ' has multiple parents in content stream ' . $contentStreamDbId->value
                         . ' and dimension space point ' . $dimensionSpacePoint->toJson(),
                         self::ERROR_CODE_NODE_HAS_MULTIPLE_PARENTS
                     ));
@@ -519,18 +518,18 @@ final class ProjectionIntegrityViolationDetector implements ProjectionIntegrityV
                 {$this->tableNames->node()} n
                 INNER JOIN {$this->tableNames->hierarchyRelation()} h ON h.childnodeanchor = n.relationanchorpoint
             WHERE
-                h.contentstreamid = :contentStreamId
+                h.contentstreamdbid = :contentStreamDbId
                 AND n.nodeaggregateid = :nodeAggregateId
         SQL;
-        foreach ($this->findProjectedContentStreamIds() as $contentStreamId) {
+        foreach ($this->findProjectedContentStreamDbIds() as $contentStreamDbId) {
             foreach (
                 $this->findProjectedNodeAggregateIdsInContentStream(
-                    $contentStreamId
+                    $contentStreamDbId
                 ) as $nodeAggregateId
             ) {
                 try {
                     $nodeTypeNames = $this->dbal->fetchFirstColumn($nodeAggregatesStatement, [
-                        'contentStreamId' => $contentStreamId->value,
+                        'contentStreamDbId' => $contentStreamDbId->value,
                         'nodeAggregateId' => $nodeAggregateId->value
                     ]);
                 } catch (DBALException $e) {
@@ -540,7 +539,7 @@ final class ProjectionIntegrityViolationDetector implements ProjectionIntegrityV
                 if (count($nodeTypeNames) > 1) {
                     $result->addError(new Error(
                         'Node aggregate ' . $nodeAggregateId->value
-                        . ' in content stream ' . $contentStreamId->value
+                        . ' in content stream ' . $contentStreamDbId->value
                         . ' is of ambiguous type ("' . implode('","', $nodeTypeNames) . '")',
                         self::ERROR_CODE_NODE_AGGREGATE_IS_AMBIGUOUSLY_TYPED
                     ));
@@ -561,18 +560,18 @@ final class ProjectionIntegrityViolationDetector implements ProjectionIntegrityV
                 {$this->tableNames->node()} n
                 INNER JOIN {$this->tableNames->hierarchyRelation()} h ON h.childnodeanchor = n.relationanchorpoint
             WHERE
-                h.contentstreamid = :contentStreamId
+                h.contentstreamdbid = :contentStreamDbId
                 AND n.nodeaggregateid = :nodeAggregateId
         SQL;
-        foreach ($this->findProjectedContentStreamIds() as $contentStreamId) {
+        foreach ($this->findProjectedContentStreamDbIds() as $contentStreamDbId) {
             foreach (
                 $this->findProjectedNodeAggregateIdsInContentStream(
-                    $contentStreamId
+                    $contentStreamDbId
                 ) as $nodeAggregateId
             ) {
                 try {
                     $classifications = $this->dbal->fetchFirstColumn($nodeAggregatesStatement, [
-                        'contentStreamId' => $contentStreamId->value,
+                        'contentStreamDbId' => $contentStreamDbId->value,
                         'nodeAggregateId' => $nodeAggregateId->value
                     ]);
                 } catch (DBALException $e) {
@@ -582,7 +581,7 @@ final class ProjectionIntegrityViolationDetector implements ProjectionIntegrityV
                 if (count($classifications) > 1) {
                     $result->addError(new Error(
                         'Node aggregate ' . $nodeAggregateId->value
-                        . ' in content stream ' . $contentStreamId->value
+                        . ' in content stream ' . $contentStreamDbId->value
                         . ' is ambiguously classified ("' . implode('","', $classifications) . '")',
                         self::ERROR_CODE_NODE_AGGREGATE_IS_AMBIGUOUSLY_CLASSIFIED
                     ));
@@ -604,15 +603,15 @@ final class ProjectionIntegrityViolationDetector implements ProjectionIntegrityV
                 INNER JOIN {$this->tableNames->node()} n ON c.childnodeanchor = n.relationanchorpoint
                 LEFT JOIN {$this->tableNames->hierarchyRelation()} p ON c.parentnodeanchor = p.childnodeanchor
             WHERE
-                c.contentstreamid = :contentStreamId
-                AND p.contentstreamid = :contentStreamId
+                c.contentstreamdbid = :contentStreamDbId
+                AND p.contentstreamdbid = :contentStreamDbId
                 AND c.dimensionspacepointhash = p.dimensionspacepointhash
                 AND p.childnodeanchor IS NULL
         SQL;
-        foreach ($this->findProjectedContentStreamIds() as $contentStreamId) {
+        foreach ($this->findProjectedContentStreamDbIds() as $contentStreamDbId) {
             try {
                 $excessivelyCoveringNodeRecords = $this->dbal->fetchAllAssociative($excessivelyCoveringStatement, [
-                    'contentStreamId' => $contentStreamId->value
+                    'contentStreamDbId' => $contentStreamDbId->value
                 ]);
             } catch (DBALException $e) {
                 throw new \RuntimeException(sprintf('Failed to load excessively covering nodes: %s', $e->getMessage()), 1716494618, $e);
@@ -620,7 +619,7 @@ final class ProjectionIntegrityViolationDetector implements ProjectionIntegrityV
             foreach ($excessivelyCoveringNodeRecords as $excessivelyCoveringNodeRecord) {
                 $result->addError(new Error(
                     'Node aggregate ' . $excessivelyCoveringNodeRecord['nodeaggregateid']
-                    . ' in content stream ' . $contentStreamId->value
+                    . ' in content stream ' . $contentStreamDbId->value
                     . ' covers dimension space point hash ' . $excessivelyCoveringNodeRecord['dimensionspacepointhash']
                     . ' but its parent does not.',
                     self::ERROR_CODE_CHILD_NODE_COVERAGE_IS_NO_SUBSET_OF_PARENT_NODE_COVERAGE
@@ -641,7 +640,7 @@ final class ProjectionIntegrityViolationDetector implements ProjectionIntegrityV
                 {$this->tableNames->node()} n
                 INNER JOIN {$this->tableNames->hierarchyRelation()} h ON h.childnodeanchor = n.relationanchorpoint
             WHERE
-                h.contentstreamid = :contentStreamId
+                h.contentstreamdbid = :contentStreamDbId
                 AND nodeaggregateid NOT IN (
                     -- this query finds all nodes whose origin *IS COVERED* by an incoming hierarchy relation.
                     SELECT
@@ -652,14 +651,14 @@ final class ProjectionIntegrityViolationDetector implements ProjectionIntegrityV
                             p.childnodeanchor = n.relationanchorpoint
                             AND p.dimensionspacepointhash = n.origindimensionspacepointhash
                         WHERE
-                            p.contentstreamid = :contentStreamId
+                            p.contentstreamdbid = :contentStreamDbId
                     )
                     AND classification != :rootClassification
         SQL;
-        foreach ($this->findProjectedContentStreamIds() as $contentStreamId) {
+        foreach ($this->findProjectedContentStreamDbIds() as $contentStreamDbId) {
             try {
                 $nodeRecordsWithMissingOriginCoverage = $this->dbal->fetchAllAssociative($nodesWithMissingOriginCoverageStatement, [
-                    'contentStreamId' => $contentStreamId->value,
+                    'contentStreamDbId' => $contentStreamDbId->value,
                     'rootClassification' => NodeAggregateClassification::CLASSIFICATION_ROOT->value
                 ]);
             } catch (DBALException $e) {
@@ -669,7 +668,7 @@ final class ProjectionIntegrityViolationDetector implements ProjectionIntegrityV
             foreach ($nodeRecordsWithMissingOriginCoverage as $nodeRecord) {
                 $result->addError(new Error(
                     'Node aggregate ' . $nodeRecord['nodeaggregateid']
-                    . ' in content stream ' . $contentStreamId->value
+                    . ' in content stream ' . $contentStreamDbId->value
                     . ' does not cover its origin dimension space point hash ' . $nodeRecord['origindimensionspacepointhash']
                     . '.',
                     self::ERROR_CODE_NODE_DOES_NOT_COVER_ITS_ORIGIN
@@ -683,19 +682,19 @@ final class ProjectionIntegrityViolationDetector implements ProjectionIntegrityV
     /**
      * Returns all content stream ids
      *
-     * @return iterable<ContentStreamId>
+     * @return iterable<ContentStreamDbId>
      */
-    private function findProjectedContentStreamIds(): iterable
+    private function findProjectedContentStreamDbIds(): iterable
     {
-        $contentStreamIdsStatement = <<<SQL
-            SELECT DISTINCT contentstreamid FROM {$this->tableNames->hierarchyRelation()}
+        $contentStreamDbIdsStatement = <<<SQL
+            SELECT DISTINCT contentstreamdbid FROM {$this->tableNames->hierarchyRelation()}
         SQL;
         try {
-            $contentStreamIds = $this->dbal->fetchFirstColumn($contentStreamIdsStatement);
+            $contentStreamDbIds = $this->dbal->fetchFirstColumn($contentStreamDbIdsStatement);
         } catch (DBALException $e) {
             throw new \RuntimeException(sprintf('Failed to load content stream ids: %s', $e->getMessage()), 1716494814, $e);
         }
-        return array_map(ContentStreamId::fromString(...), $contentStreamIds);
+        return array_map(fn (string $value) => ContentStreamDbId::fromInt((int)$value), $contentStreamDbIds);
     }
 
     /**
@@ -718,7 +717,7 @@ final class ProjectionIntegrityViolationDetector implements ProjectionIntegrityV
      * @return array<NodeAggregateId>
      */
     protected function findProjectedNodeAggregateIdsInContentStream(
-        ContentStreamId $contentStreamId
+        ContentStreamDbId $contentStreamDbId
     ): array {
         $nodeAggregateIdsStatement = <<<SQL
             SELECT
@@ -727,11 +726,11 @@ final class ProjectionIntegrityViolationDetector implements ProjectionIntegrityV
                 {$this->tableNames->node()} n
                 INNER JOIN {$this->tableNames->hierarchyRelation()} h ON h.childnodeanchor = n.relationanchorpoint
             WHERE
-                h.contentstreamid = :contentStreamId
+                h.contentstreamdbid = :contentStreamDbId
         SQL;
         try {
             $nodeAggregateIds = $this->dbal->fetchFirstColumn($nodeAggregateIdsStatement, [
-                'contentStreamId' => $contentStreamId->value,
+                'contentStreamDbId' => $contentStreamDbId->value,
             ]);
         } catch (DBALException $e) {
             throw new \RuntimeException(sprintf('Failed to load node aggregate ids for content stream: %s', $e->getMessage()), 1716495988, $e);

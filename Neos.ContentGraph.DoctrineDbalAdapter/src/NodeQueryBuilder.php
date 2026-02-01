@@ -7,6 +7,7 @@ namespace Neos\ContentGraph\DoctrineDbalAdapter;
 use Doctrine\DBAL\ArrayParameterType;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Query\QueryBuilder;
+use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\ContentStreamDbId;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\NodeRelationAnchorPoint;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindRootNodeAggregatesFilter;
@@ -27,7 +28,6 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\SearchTerm\Search
 use Neos\ContentRepository\Core\SharedModel\Id\UuidFactory;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Node\PropertyName;
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Dbal\DbalSchemaFactory;
 
 /**
@@ -44,36 +44,36 @@ final readonly class NodeQueryBuilder
     public function buildBasicNodeAggregateQuery(): QueryBuilder
     {
         return $this->createQueryBuilder()
-            ->select('n.*, h.contentstreamid, h.subtreetags, dsp.dimensionspacepoint AS covereddimensionspacepoint')
+            ->select('n.*, h.contentstreamdbid, h.subtreetags, dsp.dimensionspacepoint AS covereddimensionspacepoint')
             ->from($this->tableNames->node(), 'n')
             ->innerJoin('n', $this->tableNames->hierarchyRelation(), 'h', 'h.childnodeanchor = n.relationanchorpoint')
             ->innerJoin('h', $this->tableNames->dimensionSpacePoints(), 'dsp', 'dsp.hash = h.dimensionspacepointhash')
-            ->where('h.contentstreamid = :contentStreamId');
+            ->where('h.contentstreamdbid = :contentStreamDbId');
     }
 
-    public function buildChildNodeAggregateQuery(NodeAggregateId $parentNodeAggregateId, ContentStreamId $contentStreamId): QueryBuilder
+    public function buildChildNodeAggregateQuery(NodeAggregateId $parentNodeAggregateId, ContentStreamDbId $contentStreamDbId): QueryBuilder
     {
         return $this->createQueryBuilder()
-            ->select('cn.*, ch.contentstreamid, ch.subtreetags, cdsp.dimensionspacepoint AS covereddimensionspacepoint')
+            ->select('cn.*, ch.contentstreamdbid, ch.subtreetags, cdsp.dimensionspacepoint AS covereddimensionspacepoint')
             ->from($this->tableNames->node(), 'pn')
             ->innerJoin('pn', $this->tableNames->hierarchyRelation(), 'ch', 'ch.parentnodeanchor = pn.relationanchorpoint')
             ->innerJoin('ch', $this->tableNames->dimensionSpacePoints(), 'cdsp', 'cdsp.hash = ch.dimensionspacepointhash')
             ->innerJoin('ch', $this->tableNames->node(), 'cn', 'cn.relationanchorpoint = ch.childnodeanchor')
             ->where('pn.nodeaggregateid = :parentNodeAggregateId')
-            ->andWhere('ch.contentstreamid = :contentStreamId')
+            ->andWhere('ch.contentstreamdbid = :contentStreamDbId')
             ->orderBy('ch.position')
             ->setParameters([
                 'parentNodeAggregateId' => $parentNodeAggregateId->value,
-                'contentStreamId' => $contentStreamId->value,
+                'contentStreamDbId' => $contentStreamDbId->value,
             ]);
     }
 
-    public function buildFindRootNodeAggregatesQuery(ContentStreamId $contentStreamId, FindRootNodeAggregatesFilter $filter): QueryBuilder
+    public function buildFindRootNodeAggregatesQuery(ContentStreamDbId $contentStreamDbId, FindRootNodeAggregatesFilter $filter): QueryBuilder
     {
         $queryBuilder = $this->buildBasicNodeAggregateQuery()
             ->andWhere('h.parentnodeanchor = :rootEdgeParentAnchorId')
             ->setParameters([
-                'contentStreamId' => $contentStreamId->value,
+                'contentStreamDbId' => $contentStreamDbId->value,
                 'rootEdgeParentAnchorId' => NodeRelationAnchorPoint::forRootEdge()->value,
             ]);
 
@@ -84,17 +84,17 @@ final readonly class NodeQueryBuilder
         return $queryBuilder;
     }
 
-    public function buildBasicNodeQuery(ContentStreamId $contentStreamId, DimensionSpacePoint $dimensionSpacePoint, string $nodeTableAlias = 'n', string $select = 'n.*, h.subtreetags'): QueryBuilder
+    public function buildBasicNodeQuery(ContentStreamDbId $contentStreamDbId, DimensionSpacePoint $dimensionSpacePoint, string $nodeTableAlias = 'n', string $select = 'n.*, h.subtreetags'): QueryBuilder
     {
         return $this->createQueryBuilder()
             ->select($select)
             ->from($this->tableNames->node(), $nodeTableAlias)
             ->innerJoin($nodeTableAlias, $this->tableNames->hierarchyRelation(), 'h', 'h.childnodeanchor = ' . $nodeTableAlias . '.relationanchorpoint')
-            ->where('h.contentstreamid = :contentStreamId')->setParameter('contentStreamId', $contentStreamId->value)
+            ->where('h.contentstreamdbid = :contentStreamDbId')->setParameter('contentStreamDbId', $contentStreamDbId->value)
             ->andWhere('h.dimensionspacepointhash = :dimensionSpacePointHash')->setParameter('dimensionSpacePointHash', $dimensionSpacePoint->hash);
     }
 
-    public function buildBasicChildNodesQuery(NodeAggregateId $parentNodeAggregateId, ContentStreamId $contentStreamId, DimensionSpacePoint $dimensionSpacePoint): QueryBuilder
+    public function buildBasicChildNodesQuery(NodeAggregateId $parentNodeAggregateId, ContentStreamDbId $contentStreamDbId, DimensionSpacePoint $dimensionSpacePoint): QueryBuilder
     {
         return $this->createQueryBuilder()
             ->select('n.*, h.subtreetags')
@@ -102,11 +102,11 @@ final readonly class NodeQueryBuilder
             ->innerJoin('pn', $this->tableNames->hierarchyRelation(), 'h', 'h.parentnodeanchor = pn.relationanchorpoint')
             ->innerJoin('pn', $this->tableNames->node(), 'n', 'h.childnodeanchor = n.relationanchorpoint')
             ->where('pn.nodeaggregateid = :parentNodeAggregateId')->setParameter('parentNodeAggregateId', $parentNodeAggregateId->value)
-            ->andWhere('h.contentstreamid = :contentStreamId')->setParameter('contentStreamId', $contentStreamId->value)
+            ->andWhere('h.contentstreamdbid = :contentStreamDbId')->setParameter('contentStreamDbId', $contentStreamDbId->value)
             ->andWhere('h.dimensionspacepointhash = :dimensionSpacePointHash')->setParameter('dimensionSpacePointHash', $dimensionSpacePoint->hash);
     }
 
-    public function buildBasicParentNodeQuery(NodeAggregateId $childNodeAggregateId, ContentStreamId $contentStreamId, DimensionSpacePoint $dimensionSpacePoint): QueryBuilder
+    public function buildBasicParentNodeQuery(NodeAggregateId $childNodeAggregateId, ContentStreamDbId $contentStreamDbId, DimensionSpacePoint $dimensionSpacePoint): QueryBuilder
     {
         return $this->createQueryBuilder()
             ->select('pn.*, ch.subtreetags')
@@ -115,37 +115,37 @@ final readonly class NodeQueryBuilder
             ->innerJoin('pn', $this->tableNames->node(), 'cn', 'cn.relationanchorpoint = ph.childnodeanchor')
             ->innerJoin('pn', $this->tableNames->hierarchyRelation(), 'ch', 'ch.childnodeanchor = pn.relationanchorpoint')
             ->where('cn.nodeaggregateid = :childNodeAggregateId')->setParameter('childNodeAggregateId', $childNodeAggregateId->value)
-            ->andWhere('ph.contentstreamid = :contentStreamId')->setParameter('contentStreamId', $contentStreamId->value)
-            ->andWhere('ch.contentstreamid = :contentStreamId')
+            ->andWhere('ph.contentstreamdbid = :contentStreamDbId')->setParameter('contentStreamDbId', $contentStreamDbId->value)
+            ->andWhere('ch.contentstreamdbid = :contentStreamDbId')
             ->andWhere('ph.dimensionspacepointhash = :dimensionSpacePointHash')->setParameter('dimensionSpacePointHash', $dimensionSpacePoint->hash)
             ->andWhere('ch.dimensionspacepointhash = :dimensionSpacePointHash');
     }
 
-    public function buildBasicNodeSiblingsQuery(bool $preceding, NodeAggregateId $siblingNodeAggregateId, ContentStreamId $contentStreamId, DimensionSpacePoint $dimensionSpacePoint): QueryBuilder
+    public function buildBasicNodeSiblingsQuery(bool $preceding, NodeAggregateId $siblingNodeAggregateId, ContentStreamDbId $contentStreamDbId, DimensionSpacePoint $dimensionSpacePoint): QueryBuilder
     {
         $sharedSubQuery = $this->createQueryBuilder()
             ->from($this->tableNames->hierarchyRelation(), 'sh')
             ->innerJoin('sh', $this->tableNames->node(), 'sn', 'sn.relationanchorpoint = sh.childnodeanchor')
             ->where('sn.nodeaggregateid = :siblingNodeAggregateId')
-            ->andWhere('sh.contentstreamid = :contentStreamId')
+            ->andWhere('sh.contentstreamdbid = :contentStreamDbId')
             ->andWhere('sh.dimensionspacepointhash = :dimensionSpacePointHash');
 
         $parentNodeAnchorSubQuery = (clone $sharedSubQuery)->select('sh.parentnodeanchor');
         $siblingPositionSubQuery = (clone $sharedSubQuery)->select('sh.position');
 
-        return $this->buildBasicNodeQuery($contentStreamId, $dimensionSpacePoint)
+        return $this->buildBasicNodeQuery($contentStreamDbId, $dimensionSpacePoint)
             ->andWhere('h.parentnodeanchor = (' . $parentNodeAnchorSubQuery->getSQL() . ')')
             ->andWhere('n.nodeaggregateid != :siblingNodeAggregateId')->setParameter('siblingNodeAggregateId', $siblingNodeAggregateId->value)
             ->andWhere('h.position ' . ($preceding ? '<' : '>') . ' (' . $siblingPositionSubQuery->getSQL() . ')')
             ->orderBy('h.position', $preceding ? 'DESC' : 'ASC');
     }
 
-    public function buildBasicNodesCteQuery(NodeAggregateId $entryNodeAggregateId, ContentStreamId $contentStreamId, DimensionSpacePoint $dimensionSpacePoint, string $cteName = 'ancestry', string $cteAlias = 'pn'): QueryBuilder
+    public function buildBasicNodesCteQuery(NodeAggregateId $entryNodeAggregateId, ContentStreamDbId $contentStreamDbId, DimensionSpacePoint $dimensionSpacePoint, string $cteName = 'ancestry', string $cteAlias = 'pn'): QueryBuilder
     {
         return $this->createQueryBuilder()
             ->select('*')
             ->from($cteName, $cteAlias)
-            ->setParameter('contentStreamId', $contentStreamId->value)
+            ->setParameter('contentStreamDbId', $contentStreamDbId->value)
             ->setParameter('dimensionSpacePointHash', $dimensionSpacePoint->hash)
             ->setParameter('entryNodeAggregateId', $entryNodeAggregateId->value);
     }

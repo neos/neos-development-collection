@@ -7,6 +7,7 @@ namespace Neos\ContentGraph\DoctrineDbalAdapter;
 use Doctrine\DBAL\ArrayParameterType;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Exception as DBALException;
+use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\ContentStreamDbId;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\Feature\ContentStream;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\Feature\NodeMove;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\Feature\NodeRemoval;
@@ -16,6 +17,7 @@ use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\Feature\Workspace;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\HierarchyRelation;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\NodeRecord;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\NodeRelationAnchorPoint;
+use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\ContentStreamDbIdFinder;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\DimensionSpacePointsRepository;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\ProjectionContentGraph;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
@@ -69,7 +71,6 @@ use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateClassification;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
 use Neos\ContentRepository\Core\SharedModel\Node\ReferenceName;
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Dbal\DbalSchemaDiff;
 use Neos\ContentRepository\Dbal\MysqlPlatformContentRepositoryLocker;
 use Neos\EventStore\Model\EventEnvelope;
@@ -95,6 +96,7 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
         private readonly ProjectionContentGraph $projectionContentGraph,
         private readonly ContentGraphTableNames $tableNames,
         private readonly DimensionSpacePointsRepository $dimensionSpacePointsRepository,
+        private readonly ContentStreamDbIdFinder $contentStreamDbIdFinder,
         private readonly ContentGraphReadModelInterface $contentGraphReadModel
     ) {
     }
@@ -218,6 +220,11 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
 
     private function whenContentStreamWasForked(ContentStreamWasForked $event): void
     {
+        $this->createContentStream($event->newContentStreamId, $event->sourceContentStreamId, $event->versionOfSourceContentStream);
+
+        $newContentStreamDbId = $this->contentStreamDbIdFinder->getContentStreamDbId($event->newContentStreamId);
+        $sourceContentStreamDbId = $this->contentStreamDbIdFinder->getContentStreamDbId($event->sourceContentStreamId);
+
         //
         // 1) Copy HIERARCHY RELATIONS (this is the MAIN OPERATION here)
         //
@@ -228,7 +235,7 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
               position,
               dimensionspacepointhash,
               subtreetags,
-              contentstreamid
+              contentstreamdbid
             )
             SELECT
               h.parentnodeanchor,
@@ -236,14 +243,15 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
               h.position,
               h.dimensionspacepointhash,
               h.subtreetags,
-              "{$event->newContentStreamId->value}" AS contentstreamid
+              :newContentStreamDbId AS contentstreamdbid
             FROM
                 {$this->tableNames->hierarchyRelation()} h
-                WHERE h.contentstreamid = :sourceContentStreamId
+                WHERE h.contentstreamdbid = :sourceContentStreamDbId
         SQL;
         try {
             $this->dbal->executeStatement($insertRelationStatement, [
-                'sourceContentStreamId' => $event->sourceContentStreamId->value
+                'newContentStreamDbId' => $newContentStreamDbId->value,
+                'sourceContentStreamDbId' => $sourceContentStreamDbId->value
             ]);
         } catch (DBALException $e) {
             throw new \RuntimeException(sprintf('Failed to insert hierarchy relation: %s', $e->getMessage()), 1716489211, $e);
@@ -251,19 +259,19 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
 
         // NOTE: as reference edges are attached to Relation Anchor Points (and they are lazily copy-on-written),
         // we do not need to copy reference edges here (but we need to do it during copy on write).
-
-        $this->createContentStream($event->newContentStreamId, $event->sourceContentStreamId, $event->versionOfSourceContentStream);
     }
 
     private function whenContentStreamWasRemoved(ContentStreamWasRemoved $event): void
     {
+        $contentStreamDbId = $this->contentStreamDbIdFinder->getContentStreamDbId($event->contentStreamId);
+
         // Drop hierarchy relations
         $deleteHierarchyRelationStatement = <<<SQL
-            DELETE FROM {$this->tableNames->hierarchyRelation()} WHERE contentstreamid = :contentStreamId
+            DELETE FROM {$this->tableNames->hierarchyRelation()} WHERE contentstreamdbid = :contentStreamDbId
         SQL;
         try {
             $this->dbal->executeStatement($deleteHierarchyRelationStatement, [
-                'contentStreamId' => $event->contentStreamId->value
+                'contentStreamDbId' => $contentStreamDbId->value
             ]);
         } catch (DBALException $e) {
             throw new \RuntimeException(sprintf('Failed to delete hierarchy relations: %s', $e->getMessage()), 1716489265, $e);
@@ -317,23 +325,23 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
               position,
               subtreetags,
               dimensionspacepointhash,
-              contentstreamid
+              contentstreamdbid
             )
             SELECT
               h.parentnodeanchor,
               h.childnodeanchor,
               h.position,
               h.subtreetags,
-             :newDimensionSpacePointHash AS dimensionspacepointhash,
-              h.contentstreamid
+              :newDimensionSpacePointHash AS dimensionspacepointhash,
+              h.contentstreamdbid
             FROM
                 {$this->tableNames->hierarchyRelation()} h
-                WHERE h.contentstreamid = :contentStreamId
+                WHERE h.contentstreamdbid = :contentStreamDbId
                 AND h.dimensionspacepointhash = :sourceDimensionSpacePointHash
         SQL;
         try {
             $this->dbal->executeStatement($insertHierarchyRelationsStatement, [
-                'contentStreamId' => $event->contentStreamId->value,
+                'contentStreamDbId' => $this->getContentStreamDbId($event)->value,
                 'sourceDimensionSpacePointHash' => $event->source->hash,
                 'newDimensionSpacePointHash' => $event->target->hash,
             ]);
@@ -355,7 +363,7 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
             FROM {$this->tableNames->node()} n
             INNER JOIN {$this->tableNames->hierarchyRelation()} h
                 ON h.childnodeanchor = n.relationanchorpoint
-                AND h.contentstreamid = :contentStreamId
+                AND h.contentstreamdbid = :contentStreamDbId
                 AND h.dimensionspacepointhash = :dimensionSpacePointHash
                 -- find only nodes which have their ORIGIN at the source DimensionSpacePoint,
                 -- as we need to rewrite these origins (using copy on write)
@@ -365,14 +373,14 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
         try {
             $relationAnchorPoints = $this->dbal->fetchFirstColumn($selectRelationsStatement, [
                 'dimensionSpacePointHash' => $event->source->hash,
-                'contentStreamId' => $event->contentStreamId->value
+                'contentStreamDbId' => $this->getContentStreamDbId($event)->value
             ]);
         } catch (DBALException $e) {
             throw new \RuntimeException(sprintf('Failed to load relation anchor points: %s', $e->getMessage()), 1716489628, $e);
         }
         foreach ($relationAnchorPoints as $relationAnchorPoint) {
             $this->updateNodeRecordWithCopyOnWrite(
-                $event->contentStreamId,
+                $this->getContentStreamDbId($event),
                 NodeRelationAnchorPoint::fromInteger($relationAnchorPoint),
                 function (NodeRecord $nodeRecord) use ($event) {
                     $nodeRecord->originDimensionSpacePoint = $event->target->coordinates;
@@ -388,13 +396,13 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
                 h.dimensionspacepointhash = :newDimensionSpacePointHash
             WHERE
               h.dimensionspacepointhash = :originalDimensionSpacePointHash
-              AND h.contentstreamid = :contentStreamId
+              AND h.contentstreamdbid = :contentStreamDbId
         SQL;
         try {
             $this->dbal->executeStatement($updateHierarchyRelationsStatement, [
                 'originalDimensionSpacePointHash' => $event->source->hash,
                 'newDimensionSpacePointHash' => $event->target->hash,
-                'contentStreamId' => $event->contentStreamId->value,
+                'contentStreamDbId' => $this->getContentStreamDbId($event)->value,
             ]);
         } catch (DBALException $e) {
             throw new \RuntimeException(sprintf('Failed to update hierarchy relations: %s', $e->getMessage()), 1716489951, $e);
@@ -406,11 +414,11 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
         foreach (
             $this->projectionContentGraph->getAnchorPointsForNodeAggregateInContentStream(
                 $event->nodeAggregateId,
-                $event->contentStreamId,
+                $this->getContentStreamDbId($event),
             ) as $anchorPoint
         ) {
             $this->updateNodeRecordWithCopyOnWrite(
-                $event->contentStreamId,
+                $this->getContentStreamDbId($event),
                 $anchorPoint,
                 function (NodeRecord $node) use ($event, $eventEnvelope) {
                     $node->nodeName = $event->newNodeName;
@@ -425,10 +433,10 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
 
     private function whenNodeAggregateTypeWasChanged(NodeAggregateTypeWasChanged $event, EventEnvelope $eventEnvelope): void
     {
-        $anchorPoints = $this->projectionContentGraph->getAnchorPointsForNodeAggregateInContentStream($event->nodeAggregateId, $event->contentStreamId);
+        $anchorPoints = $this->projectionContentGraph->getAnchorPointsForNodeAggregateInContentStream($event->nodeAggregateId, $this->getContentStreamDbId($event));
         foreach ($anchorPoints as $anchorPoint) {
             $this->updateNodeRecordWithCopyOnWrite(
-                $event->contentStreamId,
+                $this->getContentStreamDbId($event),
                 $anchorPoint,
                 function (NodeRecord $node) use ($event, $eventEnvelope) {
                     $node->nodeTypeName = $event->newNodeTypeName;
@@ -443,18 +451,18 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
 
     private function whenNodeAggregateWasMoved(NodeAggregateWasMoved $event): void
     {
-        $this->moveNodeAggregate($event->contentStreamId, $event->nodeAggregateId, $event->newParentNodeAggregateId, $event->succeedingSiblingsForCoverage);
+        $this->moveNodeAggregate($this->getContentStreamDbId($event), $event->nodeAggregateId, $event->newParentNodeAggregateId, $event->succeedingSiblingsForCoverage);
     }
 
     private function whenNodeAggregateWasRemoved(NodeAggregateWasRemoved $event): void
     {
-        $this->removeNodeAggregate($event->contentStreamId, $event->nodeAggregateId, $event->affectedCoveredDimensionSpacePoints);
+        $this->removeNodeAggregate($this->getContentStreamDbId($event), $event->nodeAggregateId, $event->affectedCoveredDimensionSpacePoints);
     }
 
     private function whenNodeAggregateWithNodeWasCreated(NodeAggregateWithNodeWasCreated $event, EventEnvelope $eventEnvelope): void
     {
         $this->createNodeWithHierarchy(
-            $event->contentStreamId,
+            $this->getContentStreamDbId($event),
             $event->nodeAggregateId,
             $event->nodeTypeName,
             $event->parentNodeAggregateId,
@@ -470,12 +478,12 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
 
     private function whenNodeGeneralizationVariantWasCreated(NodeGeneralizationVariantWasCreated $event, EventEnvelope $eventEnvelope): void
     {
-        $this->createNodeGeneralizationVariant($event->contentStreamId, $event->nodeAggregateId, $event->sourceOrigin, $event->generalizationOrigin, $event->variantSucceedingSiblings, $eventEnvelope);
+        $this->createNodeGeneralizationVariant($this->getContentStreamDbId($event), $event->nodeAggregateId, $event->sourceOrigin, $event->generalizationOrigin, $event->variantSucceedingSiblings, $eventEnvelope);
     }
 
     private function whenNodePeerVariantWasCreated(NodePeerVariantWasCreated $event, EventEnvelope $eventEnvelope): void
     {
-        $this->createNodePeerVariant($event->contentStreamId, $event->nodeAggregateId, $event->sourceOrigin, $event->peerOrigin, $event->peerSucceedingSiblings, $eventEnvelope);
+        $this->createNodePeerVariant($this->getContentStreamDbId($event), $event->nodeAggregateId, $event->sourceOrigin, $event->peerOrigin, $event->peerSucceedingSiblings, $eventEnvelope);
     }
 
     private function whenNodePropertiesWereSet(NodePropertiesWereSet $event, EventEnvelope $eventEnvelope): void
@@ -484,7 +492,7 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
             ->getAnchorPointForNodeAndOriginDimensionSpacePointAndContentStream(
                 $event->getNodeAggregateId(),
                 $event->getOriginDimensionSpacePoint(),
-                $event->getContentStreamId()
+                $this->getContentStreamDbId($event)
             );
         if (is_null($anchorPoint)) {
             throw new \InvalidArgumentException(
@@ -495,7 +503,7 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
             );
         }
         $this->updateNodeRecordWithCopyOnWrite(
-            $event->getContentStreamId(),
+            $this->getContentStreamDbId($event),
             $anchorPoint,
             function (NodeRecord $node) use ($event, $eventEnvelope) {
                 $node->properties = $node->properties
@@ -516,7 +524,7 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
                 ->getAnchorPointForNodeAndOriginDimensionSpacePointAndContentStream(
                     $event->nodeAggregateId,
                     $originDimensionSpacePoint,
-                    $event->contentStreamId
+                    $this->getContentStreamDbId($event)
                 );
 
             if (is_null($nodeAnchorPoint)) {
@@ -530,7 +538,7 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
             }
 
             $this->updateNodeRecordWithCopyOnWrite(
-                $event->contentStreamId,
+                $this->getContentStreamDbId($event),
                 $nodeAnchorPoint,
                 function (NodeRecord $node) use ($eventEnvelope) {
                     $node->timestamps = $node->timestamps->with(
@@ -544,7 +552,7 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
                 ->getAnchorPointForNodeAndOriginDimensionSpacePointAndContentStream(
                     $event->nodeAggregateId,
                     $originDimensionSpacePoint,
-                    $event->contentStreamId
+                    $this->getContentStreamDbId($event)
                 );
 
 
@@ -605,7 +613,7 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
 
     private function whenNodeSpecializationVariantWasCreated(NodeSpecializationVariantWasCreated $event, EventEnvelope $eventEnvelope): void
     {
-        $this->createNodeSpecializationVariant($event->contentStreamId, $event->nodeAggregateId, $event->sourceOrigin, $event->specializationOrigin, $event->specializationSiblings, $eventEnvelope);
+        $this->createNodeSpecializationVariant($this->getContentStreamDbId($event), $event->nodeAggregateId, $event->sourceOrigin, $event->specializationOrigin, $event->specializationSiblings, $eventEnvelope);
     }
 
     private function whenRootNodeAggregateDimensionsWereUpdated(RootNodeAggregateDimensionsWereUpdated $event): void
@@ -615,7 +623,7 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
                 $event->nodeAggregateId,
                 /** the origin DSP of the root node is always the empty dimension ({@see whenRootNodeAggregateWithNodeWasCreated}) */
                 OriginDimensionSpacePoint::createWithoutDimensions(),
-                $event->contentStreamId
+                $this->getContentStreamDbId($event)
             );
         if ($rootNodeAnchorPoint === null) {
             // should never happen.
@@ -624,7 +632,7 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
 
         $ingoingRelations = $this->projectionContentGraph->findIngoingHierarchyRelationsForNode(
             $rootNodeAnchorPoint,
-            $event->contentStreamId
+            $this->getContentStreamDbId($event)
         );
 
         $currentlyCoveredDimensionSpacePoints = [];
@@ -636,7 +644,7 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
 
         // add hierarchy edges for newly added dimensions
         $this->connectHierarchy(
-            $event->contentStreamId,
+            $this->getContentStreamDbId($event),
             NodeRelationAnchorPoint::forRootEdge(),
             $rootNodeAnchorPoint,
             $newlyCoveredDimensionSpacePoints,
@@ -661,7 +669,7 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
         );
 
         $this->connectHierarchy(
-            $event->contentStreamId,
+            $this->getContentStreamDbId($event),
             NodeRelationAnchorPoint::forRootEdge(),
             $node->relationAnchorPoint,
             $event->coveredDimensionSpacePoints,
@@ -676,12 +684,12 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
 
     private function whenSubtreeWasTagged(SubtreeWasTagged $event): void
     {
-        $this->addSubtreeTag($event->contentStreamId, $event->nodeAggregateId, $event->affectedDimensionSpacePoints, $event->tag);
+        $this->addSubtreeTag($this->getContentStreamDbId($event), $event->nodeAggregateId, $event->affectedDimensionSpacePoints, $event->tag);
     }
 
     private function whenSubtreeWasUntagged(SubtreeWasUntagged $event): void
     {
-        $this->removeSubtreeTag($event->contentStreamId, $event->nodeAggregateId, $event->affectedDimensionSpacePoints, $event->tag);
+        $this->removeSubtreeTag($this->getContentStreamDbId($event), $event->nodeAggregateId, $event->affectedDimensionSpacePoints, $event->tag);
     }
 
     private function whenWorkspaceBaseWorkspaceWasChanged(WorkspaceBaseWorkspaceWasChanged $event, EventEnvelope $eventEnvelope): void
@@ -725,6 +733,11 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
 
     /** --------------------------------- */
 
+    public function getContentStreamDbId(EmbedsContentStreamId $event): ContentStreamDbId
+    {
+        return $this->contentStreamDbIdFinder->getContentStreamDbId($event->getContentStreamId());
+    }
+
     /**
      * @return array<string>
      */
@@ -754,12 +767,12 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
      * @template T
      */
     private function updateNodeRecordWithCopyOnWrite(
-        ContentStreamId $contentStreamIdWhereWriteOccurs,
+        ContentStreamDbId $contentStreamDbIdWhereWriteOccurs,
         NodeRelationAnchorPoint $anchorPoint,
         callable $operations
     ): mixed {
-        $contentStreamIds = $this->projectionContentGraph->getAllContentStreamIdsAnchorPointIsContainedIn($anchorPoint);
-        if (count($contentStreamIds) > 1) {
+        $contentStreamDbIds = $this->projectionContentGraph->getAllContentStreamDbIdsAnchorPointIsContainedIn($anchorPoint);
+        if (count($contentStreamDbIds) > 1) {
             // Copy on Write needed!
             // Copy on Write is a purely "Content Stream" related concept;
             // thus we do not care about different DimensionSpacePoints here (but we copy all edges)
@@ -783,13 +796,13 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
                     h.parentnodeanchor = IF(h.parentnodeanchor = :originalNodeAnchor, :newNodeAnchor, h.parentnodeanchor)
                 WHERE
                   :originalNodeAnchor IN (h.childnodeanchor, h.parentnodeanchor)
-                  AND h.contentstreamid = :contentStreamId
+                  AND h.contentstreamdbid = :contentStreamDbId
             SQL;
             try {
                 $this->dbal->executeStatement($updateHierarchyRelationStatement, [
                     'newNodeAnchor' => $copiedNode->relationAnchorPoint->value,
                     'originalNodeAnchor' => $anchorPoint->value,
-                    'contentStreamId' => $contentStreamIdWhereWriteOccurs->value,
+                    'contentStreamDbId' => $contentStreamDbIdWhereWriteOccurs->value,
                 ]);
             } catch (DBALException $e) {
                 throw new \RuntimeException(sprintf('Failed to update hierarchy relation: %s', $e->getMessage()), 1716486444, $e);
@@ -856,7 +869,7 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
     }
 
     private function createNodeWithHierarchy(
-        ContentStreamId $contentStreamId,
+        ContentStreamDbId $contentStreamDbId,
         NodeAggregateId $nodeAggregateId,
         NodeTypeName $nodeTypeName,
         NodeAggregateId $parentNodeAggregateId,
@@ -894,7 +907,7 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
 
             foreach ($missingParentRelations as $dimensionSpacePoint) {
                 $parentNode = $this->projectionContentGraph->findNodeInAggregate(
-                    $contentStreamId,
+                    $contentStreamDbId,
                     $parentNodeAggregateId,
                     $dimensionSpacePoint
                 );
@@ -902,7 +915,7 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
                 $succeedingSiblingNodeAggregateId = $coverageSucceedingSiblings->getSucceedingSiblingIdForDimensionSpacePoint($dimensionSpacePoint);
                 $succeedingSibling = $succeedingSiblingNodeAggregateId
                     ? $this->projectionContentGraph->findNodeInAggregate(
-                        $contentStreamId,
+                        $contentStreamDbId,
                         $succeedingSiblingNodeAggregateId,
                         $dimensionSpacePoint
                     )
@@ -910,7 +923,7 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
 
                 if ($parentNode) {
                     $this->connectHierarchy(
-                        $contentStreamId,
+                        $contentStreamDbId,
                         $parentNode->relationAnchorPoint,
                         $node->relationAnchorPoint,
                         new DimensionSpacePointSet([$dimensionSpacePoint]),
@@ -924,7 +937,7 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
     }
 
     private function connectHierarchy(
-        ContentStreamId $contentStreamId,
+        ContentStreamDbId $contentStreamDbId,
         NodeRelationAnchorPoint $parentNodeAnchorPoint,
         NodeRelationAnchorPoint $childNodeAnchorPoint,
         DimensionSpacePointSet $dimensionSpacePointSet,
@@ -935,17 +948,17 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
                 $parentNodeAnchorPoint,
                 null,
                 $succeedingSiblingNodeAnchorPoint,
-                $contentStreamId,
+                $contentStreamDbId,
                 $dimensionSpacePoint
             );
 
-            $parentSubtreeTags = $this->subtreeTagsForHierarchyRelation($contentStreamId, $parentNodeAnchorPoint, $dimensionSpacePoint);
+            $parentSubtreeTags = $this->subtreeTagsForHierarchyRelation($contentStreamDbId, $parentNodeAnchorPoint, $dimensionSpacePoint);
             $inheritedSubtreeTags = NodeTags::create(SubtreeTags::createEmpty(), $parentSubtreeTags->all());
 
             $hierarchyRelation = new HierarchyRelation(
                 $parentNodeAnchorPoint,
                 $childNodeAnchorPoint,
-                $contentStreamId,
+                $contentStreamDbId,
                 $dimensionSpacePoint,
                 $dimensionSpacePoint->hash,
                 $position,
@@ -960,14 +973,14 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
         ?NodeRelationAnchorPoint $parentAnchorPoint,
         ?NodeRelationAnchorPoint $childAnchorPoint,
         ?NodeRelationAnchorPoint $succeedingSiblingAnchorPoint,
-        ContentStreamId $contentStreamId,
+        ContentStreamDbId $contentStreamDbId,
         DimensionSpacePoint $dimensionSpacePoint
     ): int {
         $position = $this->projectionContentGraph->determineHierarchyRelationPosition(
             $parentAnchorPoint,
             $childAnchorPoint,
             $succeedingSiblingAnchorPoint,
-            $contentStreamId,
+            $contentStreamDbId,
             $dimensionSpacePoint
         );
 
@@ -976,7 +989,7 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
                 $parentAnchorPoint,
                 $childAnchorPoint,
                 $succeedingSiblingAnchorPoint,
-                $contentStreamId,
+                $contentStreamDbId,
                 $dimensionSpacePoint
             );
         }
@@ -988,7 +1001,7 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
         ?NodeRelationAnchorPoint $parentAnchorPoint,
         ?NodeRelationAnchorPoint $childAnchorPoint,
         ?NodeRelationAnchorPoint $succeedingSiblingAnchorPoint,
-        ContentStreamId $contentStreamId,
+        ContentStreamDbId $contentStreamDbId,
         DimensionSpacePoint $dimensionSpacePoint
     ): int {
         if (!$childAnchorPoint && !$parentAnchorPoint) {
@@ -1003,12 +1016,12 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
         $hierarchyRelations = $parentAnchorPoint
             ? $this->projectionContentGraph->getOutgoingHierarchyRelationsForNodeAndSubgraph(
                 $parentAnchorPoint,
-                $contentStreamId,
+                $contentStreamDbId,
                 $dimensionSpacePoint
             )
             : $this->projectionContentGraph->getIngoingHierarchyRelationsForNodeAndSubgraph(
                 $childAnchorPoint,
-                $contentStreamId,
+                $contentStreamDbId,
                 $dimensionSpacePoint
             );
 
@@ -1034,25 +1047,25 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
 
     private function copyHierarchyRelationToDimensionSpacePoint(
         HierarchyRelation $sourceHierarchyRelation,
-        ContentStreamId $contentStreamId,
+        ContentStreamDbId $contentStreamDbId,
         DimensionSpacePoint $dimensionSpacePoint,
         NodeRelationAnchorPoint $newParent,
         NodeRelationAnchorPoint $newChild,
         ?NodeRelationAnchorPoint $newSucceedingSibling = null,
     ): HierarchyRelation {
-        $parentSubtreeTags = $this->subtreeTagsForHierarchyRelation($contentStreamId, $newParent, $dimensionSpacePoint);
+        $parentSubtreeTags = $this->subtreeTagsForHierarchyRelation($contentStreamDbId, $newParent, $dimensionSpacePoint);
         $inheritedSubtreeTags = NodeTags::create($sourceHierarchyRelation->subtreeTags->withoutInherited()->all(), $parentSubtreeTags->withoutInherited()->all());
         $copy = new HierarchyRelation(
             $newParent,
             $newChild,
-            $contentStreamId,
+            $contentStreamDbId,
             $dimensionSpacePoint,
             $dimensionSpacePoint->hash,
             $this->getRelationPosition(
                 $newParent,
                 $newChild,
                 $newSucceedingSibling,
-                $contentStreamId,
+                $contentStreamDbId,
                 $dimensionSpacePoint
             ),
             $inheritedSubtreeTags,

@@ -62,7 +62,7 @@ class DoctrineDbalContentGraphSchemaBuilder
     {
         $table = self::createTable($this->tableNames->hierarchyRelation(), [
             (new Column('position', self::type(Types::INTEGER)))->setNotnull(true),
-            DbalSchemaFactory::columnForContentStreamId('contentstreamid', $platform)->setNotnull(true),
+            (new Column('contentstreamdbid', self::type(Types::INTEGER)))->setNotnull(true),
             DbalSchemaFactory::columnForDimensionSpacePointHash('dimensionspacepointhash', $platform)->setNotnull(true),
             DbalSchemaFactory::columnForNodeAnchorPoint('parentnodeanchor', $platform),
             DbalSchemaFactory::columnForNodeAnchorPoint('childnodeanchor', $platform),
@@ -71,11 +71,11 @@ class DoctrineDbalContentGraphSchemaBuilder
 
         return $table
             ->addIndex(['childnodeanchor'])
-            ->addIndex(['contentstreamid'])
+            ->addIndex(['contentstreamdbid'])
             ->addIndex(['parentnodeanchor'])
-            ->addIndex(['childnodeanchor', 'contentstreamid', 'dimensionspacepointhash', 'position'])
-            ->addIndex(['parentnodeanchor', 'contentstreamid', 'dimensionspacepointhash', 'position'])
-            ->addIndex(['contentstreamid', 'dimensionspacepointhash']);
+            ->addIndex(['childnodeanchor', 'contentstreamdbid', 'dimensionspacepointhash', 'position'])
+            ->addIndex(['parentnodeanchor', 'contentstreamdbid', 'dimensionspacepointhash', 'position'])
+            ->addIndex(['contentstreamdbid', 'dimensionspacepointhash']);
     }
 
     private function createDimensionSpacePointsTable(AbstractPlatform $platform): Table
@@ -121,6 +121,7 @@ class DoctrineDbalContentGraphSchemaBuilder
     private function createContentStreamTable(AbstractPlatform $platform): Table
     {
         $contentStreamTable = self::createTable($this->tableNames->contentStream(), [
+            (new Column('dbId', Type::getType(Types::INTEGER)))->setAutoincrement(true)->setNotnull(true),
             DbalSchemaFactory::columnForContentStreamId('id', $platform)->setNotnull(true),
             (new Column('version', Type::getType(Types::INTEGER)))->setNotnull(true),
             DbalSchemaFactory::columnForContentStreamId('sourceContentStreamId', $platform)->setNotnull(false),
@@ -129,7 +130,9 @@ class DoctrineDbalContentGraphSchemaBuilder
             (new Column('hasChanges', Type::getType(Types::BOOLEAN)))->setNotnull(true),
         ]);
 
-        return $contentStreamTable->setPrimaryKey(['id']);
+        return $contentStreamTable
+            ->addUniqueIndex(['id'])
+            ->setPrimaryKey(['dbId']);
     }
 
     /**
