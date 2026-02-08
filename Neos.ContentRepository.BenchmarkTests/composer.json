@@ -10,10 +10,11 @@
         "GPL-3.0-or-later"
     ],
     "require": {
-        "neos/contentrepository-core": "self.version"
+        "neos/contentrepository-core": "self.version",
+        "neos/contentrepository-testsuite": "self.version",
+        "neos/contentrepositoryregistry": "self.version"
     },
     "require-dev": {
-        "phpbench/phpbench": "^1.4"
     },
     "autoload": {
         "psr-4": {

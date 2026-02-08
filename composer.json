@@ -134,7 +134,7 @@
             "@test:behat-cli -vvv --stop-on-failure -c Neos.Neos/Tests/Behavior/behat.yml.dist"
         ],
         "test:benchmark": [
-
+            "../../bin/behat -c Neos.ContentRepository.BenchmarkTests/Tests/Benchmark/behat.yml.dist"
         ],
         "test": [
             "@test:unit",
