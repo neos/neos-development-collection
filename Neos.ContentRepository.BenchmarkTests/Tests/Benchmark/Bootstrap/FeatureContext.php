@@ -5,8 +5,6 @@ declare(strict_types=1);
 use Behat\Behat\Context\Context as BehatContext;
 use Behat\Behat\Hook\Scope\BeforeScenarioScope;
 use Neos\Behat\FlowBootstrapTrait;
-use Neos\ContentRepository\BenchmarkTests\Tests\Benchmark\Bootstrap\BenchmarkSampling;
-use Neos\ContentRepository\BenchmarkTests\Tests\Benchmark\Bootstrap\BulkNodeOperations;
 use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceFactoryInterface;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceInterface;
