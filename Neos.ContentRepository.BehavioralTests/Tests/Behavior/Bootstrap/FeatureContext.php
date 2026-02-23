@@ -170,14 +170,18 @@ class FeatureContext implements BehatContext
 
     protected function registerCustomDoctrineTypes(Connection $databaseConnection): void
     {
-        if (getenv('FLOW_CONTEXT') === 'Development/Docker/Postgres') {
+        // TODO FIXME
+        var_dump("aaaa");
+        die();
+        if (getenv('FLOW_CONTEXT') === 'Testing/Postgres') {
             HypergraphSchemaBuilder::registerTypes($databaseConnection);
         }
     }
 
     protected function cleanupViews(Connection $databaseConnection, ContentRepositoryId $contentRepositoryId): void
     {
-        if (getenv('FLOW_CONTEXT') === 'Development/Docker/Postgres') {
+        // TODO FIXME
+        if (getenv('FLOW_CONTEXT') === 'Testing/Postgres') {
             HypergraphSchemaBuilder::cleanupViews($databaseConnection, $contentRepositoryId);
         }
     }

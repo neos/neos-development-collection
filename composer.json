@@ -114,7 +114,7 @@
         "test:parallel": [
             "for f in Neos.ContentRepository.BehavioralTests/Tests/Parallel/**/*Test.php; do composer test:paratest-cli $f || exit 1; done"
         ],
-        "test:behat-cli": "../../bin/behat -f progress --strict --no-interaction",
+        "test:behat-cli": "FLOW_CONTEXT=${FLOW_CONTEXT:-Testing} ../../bin/behat -f progress --strict --no-interaction",
         "test:behavioral": [
             "@test:behat-cli -c Neos.ContentRepository.BehavioralTests/Tests/Behavior/behat.yml.dist",
             "@test:behat-cli -c Neos.ContentGraph.DoctrineDbalAdapter/Tests/Behavior/behat.yml.dist",

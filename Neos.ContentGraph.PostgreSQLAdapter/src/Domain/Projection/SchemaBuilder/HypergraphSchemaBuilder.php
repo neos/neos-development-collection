@@ -42,8 +42,10 @@ final readonly class HypergraphSchemaBuilder
         */
     }
 
-    public function buildSchema(): Schema
+    public function buildSchema(Connection $databaseConnection): Schema
     {
+
+        self::registerTypes($databaseConnection);
         $schema = new Schema();
 
         $this->createNodeTable($schema);
@@ -59,11 +61,11 @@ final readonly class HypergraphSchemaBuilder
 
     public static function registerTypes(Connection $databaseConnection): void
     {
-        self::registerTypeIfNotPresent($databaseConnection, 'jsonb', JsonbType::class);
-        self::registerTypeIfNotPresent($databaseConnection, 'text_array', TextArrayType::class);
+        self::registerTypeIfNotPresent($databaseConnection, 'hypergraphjsonb', JsonbType::class);
+        // self::registerTypeIfNotPresent($databaseConnection, 'text_array', TextArrayType::class);
         self::registerTypeIfNotPresent($databaseConnection, 'varchar64_array', Varchar64ArrayType::class);
         self::registerTypeIfNotPresent($databaseConnection, 'varchar36_array', Varchar36ArrayType::class);
-        self::registerTypeIfNotPresent($databaseConnection, 'int_array', IntArrayType::class);
+        // self::registerTypeIfNotPresent($databaseConnection, 'int_array', IntArrayType::class);
         self::registerTypeIfNotPresent($databaseConnection, 'bigint_array', BigintArrayType::class);
         // do NOT RELY ON THESE TYPES BEING PRESENT - we only load them to build the schema.
         // TODO comment why we need type wrappers and the whole doctrine schema mechanics
@@ -97,7 +99,7 @@ final readonly class HypergraphSchemaBuilder
         $table->addColumn('nodeaggregateid', Types::STRING)
             ->setLength(64)
             ->setNotnull(true);
-        $table->addColumn('origindimensionspacepoint', 'jsonb')
+        $table->addColumn('origindimensionspacepoint', 'hypergraphjsonb')
             ->setNotnull(true);
         $table->addColumn('origindimensionspacepointhash', Types::STRING)
             ->setLength(255)
@@ -105,7 +107,7 @@ final readonly class HypergraphSchemaBuilder
         $table->addColumn('nodetypename', Types::STRING)
             ->setLength(255)
             ->setNotnull(true);
-        $table->addColumn('properties', 'jsonb')
+        $table->addColumn('properties', 'hypergraphjsonb')
             ->setNotnull(true);
         $table->addColumn('classification', Types::STRING)
             ->setLength(255)
@@ -129,7 +131,7 @@ final readonly class HypergraphSchemaBuilder
             ->setNotnull(true);
         $table->addColumn('parentnodeanchor', Types::BIGINT)
             ->setNotnull(true);
-        $table->addColumn('dimensionspacepoint', 'jsonb')
+        $table->addColumn('dimensionspacepoint', 'hypergraphjsonb')
             ->setNotnull(true);
         $table->addColumn('dimensionspacepointhash', Types::STRING)
             ->setLength(255)
@@ -157,7 +159,7 @@ final readonly class HypergraphSchemaBuilder
         $table->addColumn('position', Types::INTEGER)
             // TODO: SMALLINT?
             ->setNotnull(true);
-        $table->addColumn('properties', 'jsonb')
+        $table->addColumn('properties', 'hypergraphjsonb')
             ->setNotnull(false);
         $table->addColumn('targetnodeaggregateid', Types::STRING)
             ->setLength(64)
@@ -220,13 +222,13 @@ final readonly class HypergraphSchemaBuilder
             ->setLength(64)
             ->setNotnull(true);
         // data columns
-        $table->addColumn('dimensionspacepoint', 'jsonb')
+        $table->addColumn('dimensionspacepoint', 'hypergraphjsonb')
             ->setNotnull(true);
         $table->addColumn('affected_nodeaggregateids', 'varchar64_array')
             ->setNotnull(true);
         $table->addColumn('affected_relationanchorpoints', 'bigint_array')
             ->setNotnull(true);
-        $table->addColumn('subtree_structure', 'jsonb')
+        $table->addColumn('subtree_structure', 'hypergraphjsonb')
             ->setNotnull(true);
         $table->addColumn('subtreetags', 'varchar36_array')
             ->setNotnull(true);
@@ -249,7 +251,7 @@ final readonly class HypergraphSchemaBuilder
         $table->addColumn('hash', Types::STRING)
             ->setLength(255)
             ->setNotnull(true);
-        $table->addColumn('dimensionspacepoint', 'jsonb')
+        $table->addColumn('dimensionspacepoint', 'hypergraphjsonb')
             ->setNotnull(true);
         $table
             ->setPrimaryKey(['hash']);
