@@ -357,7 +357,7 @@ final readonly class PostgresContentGraphProjection implements ContentGraphProje
                       h.ordinality
                     from cr_default_p_graph_node n
                            inner join (
-                              select *
+                              select h.*, childnodeanchor, ordinality
                               from cr_default_p_graph_hierarchyrelation h,
                                    -- this creates a new generated column "ordinality" which contains the sorting
                                    -- order of the childnodeanchor entries. We use this on the top level query to
@@ -380,12 +380,12 @@ final readonly class PostgresContentGraphProjection implements ContentGraphProje
                       ch.ordinality
                     from subtree p
                            inner join (
-                      select *
+                      select h.*, childnodeanchor, ordinality
                       from cr_default_p_graph_hierarchyrelation h,
                            -- this creates a new generated column "ordinality" which contains the sorting
                            -- order of the childnodeanchor entries. We use this on the top level query to
                            -- ensure that we preserve sorting of child nodes.
-                           unnest(childnodeanchors) with ordinality childnodeanchor
+                           unnest(h.childnodeanchors) with ordinality childnodeanchor
                     ) ch on ch.parentnodeanchor = p.relationanchorpoint
                            inner join cr_default_p_graph_node cn on cn.relationanchorpoint = ch.childnodeanchor
                     where ch.contentstreamid = {$this->tableNames->functionCalculateSubtree()}.contentstreamid

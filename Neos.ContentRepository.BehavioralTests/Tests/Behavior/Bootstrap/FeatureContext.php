@@ -171,8 +171,6 @@ class FeatureContext implements BehatContext
     protected function registerCustomDoctrineTypes(Connection $databaseConnection): void
     {
         // TODO FIXME
-        var_dump("aaaa");
-        die();
         if (getenv('FLOW_CONTEXT') === 'Testing/Postgres') {
             HypergraphSchemaBuilder::registerTypes($databaseConnection);
         }

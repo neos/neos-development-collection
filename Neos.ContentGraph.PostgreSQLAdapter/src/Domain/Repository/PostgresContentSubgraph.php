@@ -137,6 +137,23 @@ final readonly class PostgresContentSubgraph implements ContentSubgraphInterface
 
     public function findNodeById(NodeAggregateId $nodeAggregateId): ?Node
     {
+        $query = HypergraphQuery::create($this->contentStreamId, $this->tableNames);
+        $query = $query->withDimensionSpacePoint($this->dimensionSpacePoint)
+            ->withNodeAggregateId($nodeAggregateId)
+            ->withRestriction($this->visibilityConstraints);
+
+        $nodeRow = $query->execute($this->dbal)->fetchAssociative();
+
+        return $nodeRow ? $this->nodeFactory->mapNodeRowToNode(
+            $nodeRow,
+            $this->workspaceName,
+            $this->visibilityConstraints,
+            $this->dimensionSpacePoint
+        ) : null;
+    }
+    /*
+    public function findNodeById(NodeAggregateId $nodeAggregateId): ?Node
+    {
         $parameters = [
             // from ContentSubgraph
             'contentstreamid' => $this->contentStreamId->value,
@@ -241,6 +258,7 @@ final readonly class PostgresContentSubgraph implements ContentSubgraphInterface
             $this->visibilityConstraints,
         );
     }
+    */
 
     public function findNodesByIds(NodeAggregateIds $nodeAggregateIds): Nodes
     {
@@ -638,7 +656,7 @@ final readonly class PostgresContentSubgraph implements ContentSubgraphInterface
             $this->dimensionSpacePoint
         ) : null;
     }
-
+    /*
     public function findNodeByPath(NodePath|NodeName $path, NodeAggregateId $startingNodeAggregateId): ?Node
     {
         $path = $path instanceof NodeName ? NodePath::fromNodeNames($path) : $path;
@@ -777,8 +795,8 @@ final readonly class PostgresContentSubgraph implements ContentSubgraphInterface
             ),
             $this->visibilityConstraints,
         );
-    }
-
+    }*/
+    /*
     public function findNodeByAbsolutePath(AbsoluteNodePath $path): ?Node
     {
         // TODO validate if this is correct
@@ -911,6 +929,26 @@ final readonly class PostgresContentSubgraph implements ContentSubgraphInterface
             $this->visibilityConstraints,
         );
 
+    }*/
+
+    public function findNodeByPath(NodePath|NodeName $path, NodeAggregateId $startingNodeAggregateId): ?Node
+    {
+        $path = $path instanceof NodeName ? NodePath::fromNodeNames($path) : $path;
+
+        $startingNode = $this->findNodeById($startingNodeAggregateId);
+
+        return $startingNode
+            ? $this->findNodeByPathFromStartingNode($path, $startingNode)
+            : null;
+    }
+
+    public function findNodeByAbsolutePath(AbsoluteNodePath $path): ?Node
+    {
+        $startingNode = $this->findRootNodeByType($path->rootNodeTypeName);
+
+        return $startingNode
+            ? $this->findNodeByPathFromStartingNode($path->path, $startingNode)
+            : null;
     }
 
     private function findChildNodeConnectedThroughEdgeName(
