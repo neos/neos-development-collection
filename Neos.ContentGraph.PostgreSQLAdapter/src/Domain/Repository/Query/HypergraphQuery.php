@@ -117,8 +117,10 @@ final class HypergraphQuery implements HypergraphQueryInterface
 
     public function withRestriction(VisibilityConstraints $visibilityConstraints): self
     {
-        $query = $this->query . QueryUtility::getRestrictionClause($visibilityConstraints, $this->tableNames, '');
+        $parameters = $this->parameters;
+        $types = $this->types;
+        $query = $this->query . QueryUtility::getRestrictionClause($visibilityConstraints, $this->tableNames, '', $parameters, $types);
 
-        return new self($query, $this->parameters, $this->tableNames, $this->types);
+        return new self($query, $parameters, $this->tableNames, $types);
     }
 }

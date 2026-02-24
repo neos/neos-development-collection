@@ -57,9 +57,11 @@ final class HypergraphSiblingQuery implements HypergraphQueryInterface
 
     public function withRestriction(VisibilityConstraints $visibilityConstraints): self
     {
-        $query = $this->query . QueryUtility::getRestrictionClause($visibilityConstraints, $this->tableNames, 's');
+        $parameters = $this->parameters;
+        $types = $this->types;
+        $query = $this->query . QueryUtility::getRestrictionClause($visibilityConstraints, $this->tableNames, 's', $parameters, $types);
 
-        return new self($query, $this->parameters, $this->tableNames, $this->types);
+        return new self($query, $parameters, $this->tableNames, $types);
     }
 
     public function withOrdinalityOrdering(bool $reverse): self

@@ -37,15 +37,39 @@ final class QueryUtility
     }
 
 
+    /**
+     * @param array<string,mixed> $parameters
+     * @param array<string,int|string> $types
+     */
     public static function getRestrictionClause(
         VisibilityConstraints $visibilityConstraints,
         ContentGraphTableNames $tableNames,
-        string $tableAlias = ''
+        string $tableAlias = '',
+        array &$parameters = [],
+        array &$types = [],
     ): string {
-        // TODO evaluate $visibilityConstraints->tagConstraints {@see Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\ContentSubgraph::addSubtreeTagConstraints}
+        $excludedSubtreeTags = $visibilityConstraints->excludedSubtreeTags->toStringArray();
+        if (count($excludedSubtreeTags) === 0) {
+            return '';
+        }
 
-        //
-        return '';
+        $nodeAlias = $tableAlias . 'n';
+        $hierarchyAlias = $tableAlias . 'h';
+        $stAlias = 'st_restriction' . ($tableAlias !== '' ? '_' . $tableAlias : '');
+        $paramName = 'excludedSubtreeTags' . ($tableAlias !== '' ? '_' . $tableAlias : '');
+
+        $parameters[$paramName] = $excludedSubtreeTags;
+        $types[$paramName] = Connection::PARAM_STR_ARRAY;
+
+        return '
+            AND NOT EXISTS(
+                SELECT 1
+                FROM ' . $tableNames->subTreeRelation() . ' ' . $stAlias . '
+                WHERE ' . $nodeAlias . '.nodeaggregateid = ANY(' . $stAlias . '.affected_nodeaggregateids)
+                  AND ' . $stAlias . '.dimensionspacepointhash = ' . $hierarchyAlias . '.dimensionspacepointhash
+                  AND ' . $stAlias . '.contentstreamid = ' . $hierarchyAlias . '.contentstreamid
+                  AND ' . $stAlias . '.subtreetags && ARRAY[:' . $paramName . ']::varchar(36)[]
+            )';
     }
 
     /**
