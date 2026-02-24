@@ -138,8 +138,9 @@ final readonly class HypergraphSchemaBuilder
             ->setNotnull(true);
         $table->addColumn('childnodeanchors', 'bigint_array')
             ->setNotnull(true);
-        $table->addColumn('parent_nodepath_absolute', Types::TEXT)
-            ->setNotnull(true);
+        // TODO remove this column?
+        // $table->addColumn('parent_nodepath_absolute', Types::TEXT)
+        //    ->setNotnull(true);
         $table
             ->setPrimaryKey(['contentstreamid', 'parentnodeanchor', 'dimensionspacepointhash'])
             ->addIndex(['contentstreamid'])

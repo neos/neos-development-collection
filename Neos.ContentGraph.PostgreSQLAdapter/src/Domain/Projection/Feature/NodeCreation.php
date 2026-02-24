@@ -92,15 +92,13 @@ if (is_null($parentNode)) {
             created_hierarchy_relations as (
                 insert
                 into {$this->tableNames->hierarchyRelation()}
-                (contentstreamid, parentnodeanchor, dimensionspacepointhash, dimensionspacepoint, childnodeanchors,
-                 parent_nodepath_absolute)
+                (contentstreamid, parentnodeanchor, dimensionspacepointhash, dimensionspacepoint, childnodeanchors)
                 -- contentstream and root edge is passed via parameter
                 select :contentstreamid        as contentstreamid,
                        :rootedgeanchor         as parentnodeanchor,
                        dim.dimensionhash       as dimensionspacepointhash,
                        dim.dimensionspacepoint as dimensionspacepoint,
-                       array [cn.relationanchorpoint],
-                       '/' -- we are the root, so the absolute path is /
+                       array [cn.relationanchorpoint]
                 -- here we access the created node ID
                 from created_node cn
                        -- we pass in the target dimensions via JSON object parameter
@@ -220,24 +218,13 @@ if (is_null($parentNode)) {
                 -- ### initial case (INSERT) - this node is the first child node of its parent
                 insert
                 into {$this->tableNames->hierarchyRelation()}
-                (contentstreamid, parentnodeanchor, dimensionspacepointhash, dimensionspacepoint, childnodeanchors,
-                 parent_nodepath_absolute)
+                (contentstreamid, parentnodeanchor, dimensionspacepointhash, dimensionspacepoint, childnodeanchors)
                 -- contentstream and parent ID is passed via parameter
                 select :contentstreamid        as contentstreamid,
                        pn.relationanchorpoint  as parentnodeanchor,
                        sibl.dimensionhash      as dimensionspacepointhash,
                        dsp.dimensionspacepoint as dimensionspacepoint,
-                       array [cn.relationanchorpoint],
-                       -- calculate absolute path
-                       (
-                            select ph.parent_nodepath_absolute || case when ph.parentnodeanchor != 0 then '/' else '' end || :nodename
-                            from cr_default_p_graph_hierarchyrelation ph
-                              left join cr_default_p_graph_node pn
-                                on pn.relationanchorpoint = any(ph.childnodeanchors)
-                            where ph.contentstreamid = :contentstreamid
-                              and ph.dimensionspacepointhash = sibl.dimensionhash
-                              and pn.nodeaggregateid = :parentnodeaggregateid
-                       )
+                       array [cn.relationanchorpoint]
                 -- here we access the created node ID
                 from created_node cn
                        left join dimensions_and_successor sibl
