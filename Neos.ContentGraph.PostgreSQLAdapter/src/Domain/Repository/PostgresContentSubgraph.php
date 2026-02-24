@@ -485,102 +485,45 @@ final readonly class PostgresContentSubgraph implements ContentSubgraphInterface
         NodeAggregateId $nodeAggregateId,
         FindReferencesFilter $filter
     ): References {
-        $parameters = [
-            // filters from ContentSubgraph
-            'contentstreamid' => $this->contentStreamId->value,
-            'dimensionspacepointhash' => $this->dimensionSpacePoint->hash,
-            'subtreetag_filter_active' => $this->excludedSubtreeTagsFilterActive,
-            'excluded_subtreetags' => $this->excludedSubtreeTags,
-            // filters from parameter input
-            'nodeaggregateid' => $nodeAggregateId->value
-        ];
-        $parameterTypes = [
-            'excluded_subtreetags' => Connection::PARAM_STR_ARRAY
-        ];
+        $query = HypergraphReferenceQuery::create(
+            $this->contentStreamId,
+            'tarn.*, tarh.contentstreamid, tarh.dimensionspacepoint',
+            $this->tableNames
+        );
+        $query = $query->withDimensionSpacePoint($this->dimensionSpacePoint)
+            ->withSourceNodeAggregateId($nodeAggregateId)
+            ->withSourceRestriction($this->visibilityConstraints)
+            ->withTargetRestriction($this->visibilityConstraints);
 
-        $query = <<<SQL
-            with source_anchor as (
-                select {$this->tableNames->functionGetRelationAnchorPoint()}(
-                    :nodeaggregateid,
-                    :contentstreamid,
-                    :dimensionspacepointhash
-                ) as relationanchorpoint
-            )
-            select
-                rr.name as reference_name,
-                rr.properties as reference_properties,
-                target_n.nodeaggregateid as target_nodeaggregateid,
-                target_n.origindimensionspacepoint as target_origindimensionspacepoint,
-                target_n.classification as target_classification,
-                target_n.nodetypename as target_nodetypename,
-                target_n.nodename as target_nodename,
-                target_n.properties as target_properties
-            from source_anchor source, {$this->tableNames->referenceRelation()} rr
-                left join {$this->tableNames->node()} target_n
-                    on target_n.nodeaggregateid = rr.targetnodeaggregateid
-                left join {$this->tableNames->hierarchyRelation()} target_h
-                    on target_n.relationanchorpoint = ANY(target_h.childnodeanchors)
-                   and target_h.contentstreamid = :contentstreamid
-                   and target_h.dimensionspacepointhash = :dimensionspacepointhash
-            where rr.sourcenodeanchor = source.relationanchorpoint
-                -- subtree tag filter
-            and (
-                -- deactivate filter when no values are set
-                not :subtreetag_filter_active
-                  or
-                not exists(
-                  select 1
-                  from {$this->tableNames->subTreeRelation()} st
-                  where target_n.relationanchorpoint = any(st.affected_relationanchorpoints)
-                    and st.dimensionspacepointhash = :dimensionspacepointhash
-                    and st.contentstreamid = :contentstreamid
-                    and st.subtreetags && array[:excluded_subtreetags]::varchar(36)[]
-                )
-            )
-        SQL;
-
-        $result = $this->dbal->executeQuery($query, $parameters, $parameterTypes);
-        $rows = $result->fetchAllAssociative();
-
-        $references = [];
-        foreach ($rows as $referenceRow) {
-            $referenceProperties = $referenceRow['reference_properties'];
-            $references[] = new Reference(
-                Node::create(
-                    $this->contentRepositoryId,
-                    $this->workspaceName,
-                    $this->dimensionSpacePoint,
-                    NodeAggregateId::fromString($referenceRow['target_nodeaggregateid']),
-                    OriginDimensionSpacePoint::fromJsonString($referenceRow['target_origindimensionspacepoint']),
-                    NodeAggregateClassification::from($referenceRow['target_classification']),
-                    NodeTypeName::fromString($referenceRow['target_nodetypename']),
-                    new PropertyCollection(
-                        SerializedPropertyValues::fromJsonString($referenceRow['target_properties']),
-                        $this->propertyConverter
-                    ),
-                    $referenceRow['target_nodename'] ? NodeName::fromString($referenceRow['target_nodename']) : null,
-                    // TODO implement {@see \Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\NodeFactory::mapNodeRowToNode()}
-                    NodeTags::createEmpty(),
-                    Timestamps::create(
-                    // TODO replace with $nodeRow['created'] and $nodeRow['originalcreated'] once projection has implemented support
-                        QueryUtility::parseDateTimeString('2023-03-17 12:00:00'),
-                        QueryUtility::parseDateTimeString('2023-03-17 12:00:00'),
-                        null,
-                        null,
-                    ),
-                    $this->visibilityConstraints,
-                ),
-                ReferenceName::fromString($referenceRow['reference_name']),
-                $referenceProperties
-                    ? new PropertyCollection(
-                        SerializedPropertyValues::fromJsonString($referenceProperties),
-                        $this->propertyConverter
-                    )
-                    : null
+        if ($filter->nodeTypes) {
+            $expandedNodeTypeCriteria = ExpandedNodeTypeCriteria::create(
+                $filter->nodeTypes,
+                $this->nodeTypeManager
             );
+            $query = $query->withNodeTypeCriteria($expandedNodeTypeCriteria, 'tarn');
+        }
+        $orderings = [];
+        if ($filter->referenceName) {
+            $query = $query->withReferenceName($filter->referenceName);
+        } else {
+            $orderings[] = 'r.name';
+        }
+        $orderings[] = 'r.position';
+        $orderings[] = 'tarn.nodeaggregateid';
+        $query = $query->orderedBy($orderings);
+        if (!is_null($filter->pagination)) {
+            $query = $query
+                ->withLimit($filter->pagination->limit)
+                ->withOffset($filter->pagination->offset);
         }
 
-        return References::fromArray($references);
+        $referenceRows = $query->execute($this->dbal)->fetchAllAssociative();
+
+        return $this->nodeFactory->mapReferenceRowsToReferences(
+            $referenceRows,
+            $this->workspaceName,
+            $this->visibilityConstraints
+        );
     }
 
     public function countReferences(NodeAggregateId $nodeAggregateId, Filter\CountReferencesFilter $filter): int
