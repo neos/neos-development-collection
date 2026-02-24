@@ -994,9 +994,9 @@ final readonly class PostgresContentSubgraph implements ContentSubgraphInterface
         ];
 
         $parameterTypes = [
-            'excluded_subtreetags' => Connection::PARAM_STR_ARRAY
+            'excluded_subtreetags' => Connection::PARAM_STR_ARRAY,
+            'subtreetag_filter_active' => \PDO::PARAM_BOOL
         ];
-
         $query = <<<SQL
             with relation_anchor as (
                 select {$this->tableNames->functionGetRelationAnchorPoint()}(
