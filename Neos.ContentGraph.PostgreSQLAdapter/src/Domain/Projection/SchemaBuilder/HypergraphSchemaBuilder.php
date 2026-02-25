@@ -141,6 +141,8 @@ final readonly class HypergraphSchemaBuilder
         // TODO remove this column?
         // $table->addColumn('parent_nodepath_absolute', Types::TEXT)
         //    ->setNotnull(true);
+        $table->addColumn('subtreetags', 'hypergraphjsonb')
+            ->setNotnull(false);
         $table
             ->setPrimaryKey(['contentstreamid', 'parentnodeanchor', 'dimensionspacepointhash'])
             ->addIndex(['contentstreamid'])
