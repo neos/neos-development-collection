@@ -51,7 +51,6 @@ final readonly class HypergraphSchemaBuilder
         $this->createNodeTable($schema);
         $this->createHierarchyRelationTable($schema);
         $this->createReferenceRelationTable($schema);
-        $this->createSubTreeTable($schema);
         $this->createContentStreamTable($schema);
         $this->createWorkspaceTable($schema);
         $this->createDimensionSpacePointsTable($schema);
@@ -209,43 +208,6 @@ final readonly class HypergraphSchemaBuilder
 
         $table
             ->setPrimaryKey(['id']);
-    }
-
-    private function createSubTreeTable(Schema $schema): void
-    {
-        $table = $schema->createTable($this->tableNames->subTreeRelation());
-        // ID columns
-        $table->addColumn('contentstreamid', Types::STRING)
-            ->setLength(40)
-            ->setNotnull(true);
-        $table->addColumn('dimensionspacepointhash', Types::STRING)
-            ->setLength(255)
-            ->setNotnull(true);
-        $table->addColumn('nodeaggregateid', Types::STRING)
-            ->setLength(64)
-            ->setNotnull(true);
-        // data columns
-        $table->addColumn('dimensionspacepoint', 'hypergraphjsonb')
-            ->setNotnull(true);
-        $table->addColumn('affected_nodeaggregateids', 'varchar64_array')
-            ->setNotnull(true);
-        $table->addColumn('affected_relationanchorpoints', 'bigint_array')
-            ->setNotnull(true);
-        $table->addColumn('subtree_structure', 'hypergraphjsonb')
-            ->setNotnull(true);
-        $table->addColumn('subtreetags', 'varchar36_array')
-            ->setNotnull(true);
-
-        $table
-            ->setPrimaryKey([
-                'contentstreamid',
-                'dimensionspacepointhash',
-                'nodeaggregateid'
-            ])
-            ->addIndex(['contentstreamid'])
-            ->addIndex(['dimensionspacepointhash'])
-            ->addIndex(['nodeaggregateid']);
-        /** TODO: use GIN index on affected_.... in {@see PostgresContentGraphProjection::setupTables()} */
     }
 
     private function createDimensionSpacePointsTable(Schema $schema): void

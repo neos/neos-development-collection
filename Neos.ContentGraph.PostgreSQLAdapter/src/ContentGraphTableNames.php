@@ -46,11 +46,6 @@ final readonly class ContentGraphTableNames
         return $this->tableNamePrefix . '_referencerelation';
     }
 
-    public function subTreeRelation(): string
-    {
-        return $this->tableNamePrefix . '_subtree';
-    }
-
     public function workspace(): string
     {
         return $this->tableNamePrefix . '_workspace';
@@ -99,11 +94,6 @@ final readonly class ContentGraphTableNames
     public function functionFindOutgoingHierarchy(): string
     {
         return $this->functionNamePrefix . '_find_outgoing_hierarchy';
-    }
-
-    public function functionCalculateSubtree(): string
-    {
-        return $this->functionNamePrefix . '_calculate_subtree';
     }
 
 }
