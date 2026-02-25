@@ -64,7 +64,7 @@ trait NodeRemoval
                 $this->getTableNames()
             );
 
-            $affectedRelationAnchorPoints[] = $nodeRecord->relationAnchorPoint;
+            $affectedRelationAnchorPoints[] = $nodeRecord->relationAnchorPoint->value;
 
             $this->cascadeHierarchy(
                 $event->getContentStreamId(),
@@ -77,28 +77,20 @@ trait NodeRemoval
         // second step: remove orphaned nodes
         $this->getDatabaseConnection()->executeStatement(
             /** @lang PostgreSQL */
-            '
-            WITH deletedNodes AS (
-                DELETE FROM ' . $this->tableNamePrefix . '_node n
-                WHERE n.relationanchorpoint IN (
-                    SELECT relationanchorpoint FROM ' . $this->tableNamePrefix . '_node
-                        LEFT JOIN ' . $this->tableNamePrefix . '_hierarchyrelation h
-                            ON n.relationanchorpoint = ANY(h.childnodeanchors)
-                    WHERE n.relationanchorpoint IN (:affectedRelationAnchorPoints)
-                        AND h.contentstreamid IS NULL
-                )
-                RETURNING relationanchorpoint
-            )
-            DELETE FROM ' . $this->tableNamePrefix . '_referencerelation r
-                WHERE sourcenodeanchor IN (SELECT relationanchorpoint FROM deletedNodes)
-            ',
-            [
-                'affectedRelationAnchorPoints' => $affectedRelationAnchorPoints
-            ],
-            [
-                'affectedRelationAnchorPoints' => Connection::PARAM_STR_ARRAY
-            ]
+            "
+                DELETE FROM {$this->tableNames->node()} n
+                WHERE
+                    NOT EXISTS (
+                        SELECT 1
+                        FROM {$this->tableNames->hierarchyRelation()} h
+                        WHERE n.relationanchorpoint = ANY(h.childnodeanchors)
+                    )
+            ",
         );
+
+        // TODO
+        // DELETE FROM ' . $this->getTableNames()->referenceRelation() . ' r
+        //                WHERE sourcenodeanchor IN (SELECT relationanchorpoint FROM deletedNodes)
     }
 
     /**
