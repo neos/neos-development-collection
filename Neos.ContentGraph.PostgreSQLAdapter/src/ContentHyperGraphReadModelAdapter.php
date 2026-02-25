@@ -182,7 +182,7 @@ final readonly class ContentHyperGraphReadModelAdapter implements ContentGraphRe
     {
         return ContentStream::create(
             ContentStreamId::fromString($row['id']),
-            isset($row['sourcecontentstreamid']) ? ContentStreamId::fromString($row['sourceContentStreamId']) : null,
+            isset($row['sourcecontentstreamid']) ? ContentStreamId::fromString($row['sourcecontentstreamid']) : null,
             Version::fromInteger((int)$row['version']),
             (bool)$row['isclosed'],
         );
