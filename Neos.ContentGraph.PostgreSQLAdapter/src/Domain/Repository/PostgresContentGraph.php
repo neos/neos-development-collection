@@ -138,7 +138,8 @@ final readonly class PostgresContentGraph implements ContentGraphInterface
                 select
                     n.*,
                     h.contentstreamid,
-                    dsp.dimensionspacepoint
+                    dsp.dimensionspacepoint,
+                    h.subtreetags->(n.relationanchorpoint::text) as subtreetags
                 from {$this->tableNames->node()} n
                     inner join {$this->tableNames->hierarchyRelation()} h
                         on n.relationanchorpoint = any(h.childnodeanchors)
@@ -195,7 +196,8 @@ final readonly class PostgresContentGraph implements ContentGraphInterface
         $query = /** @lang PostgreSQL */
             '
             SELECT n.origindimensionspacepoint, n.nodeaggregateid, n.nodetypename,
-                   n.classification, n.properties, n.nodename, ph.contentstreamid, ph.dimensionspacepoint
+                   n.classification, n.properties, n.nodename, ph.contentstreamid, ph.dimensionspacepoint,
+                   ph.subtreetags->(n.relationanchorpoint::text) as subtreetags
                 FROM ' . $this->tableNames->hierarchyRelation() . ' ph
                 JOIN ' . $this->tableNames->node() . ' n ON n.relationanchorpoint = ANY(ph.childnodeanchors)
             WHERE ph.contentstreamid = :contentStreamId

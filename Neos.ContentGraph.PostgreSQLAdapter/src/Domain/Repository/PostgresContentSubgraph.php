@@ -334,8 +334,6 @@ final readonly class PostgresContentSubgraph implements ContentSubgraphInterface
             'mode_only_disallowed' => Types::BOOLEAN,
         ];
 
-        // TODO hier weiter (filter)
-
         $query = <<<SQL
             with parent as (
                 select {$this->tableNames->functionGetRelationAnchorPoint()}(
@@ -348,7 +346,8 @@ final readonly class PostgresContentSubgraph implements ContentSubgraphInterface
                 select
                     cna.*,
                     ph.dimensionspacepoint,
-                    ph.dimensionspacepointhash
+                    ph.dimensionspacepointhash,
+                    ph.subtreetags
                 from {$this->tableNames->hierarchyRelation()} ph, parent pna
                     -- with this join, we keep the order of the child nodes from inside the array
                     left join lateral (
@@ -368,51 +367,18 @@ final readonly class PostgresContentSubgraph implements ContentSubgraphInterface
                 cn.nodename,
                 cn.properties,
                 cn.classification,
-                -- subtreetags
-                subtree_tags.tags
+                -- subtree tags from per-anchor-keyed JSONB on hierarchy relation
+                cna.subtreetags->(cn.relationanchorpoint::text) as subtreetags
             from child_node_anchors cna
                 left join {$this->tableNames->node()} cn
                     on cn.relationanchorpoint = cna.childnodeanchor
-                left join lateral (
-                    with all_affected_subtrees as (
-                        select *
-                        from {$this->tableNames->subTreeRelation()} st
-                        where cn.nodeaggregateid = any (st.affected_nodeaggregateids)
-                          and st.contentstreamid = :contentstreamid
-                          and st.dimensionspacepointhash = cna.dimensionspacepointhash
-                    )
-                    select
-                      -- Since there is no removal of tags down the inheritance chain,
-                      -- we can simply add together all parent tags without having to look at the
-                      -- inheritance chain order.
-                      jsonb_build_object(
-                        'explicit_tags', (select jsonb_agg(t.tag)
-                                           from (select distinct unnest(expl_st.subtreetags)
-                                                 from all_affected_subtrees expl_st
-                                                 -- include only explicitly set tags
-                                                 where expl_st.nodeaggregateid = cn.nodeaggregateid) t(tag)
-                             ),
-                        'only_inherited', (select jsonb_agg(t.tag)
-                                           from (select distinct unnest(expl_st.subtreetags)
-                                                 from all_affected_subtrees expl_st
-                                                 -- exclude explicitly set tags
-                                                 where expl_st.nodeaggregateid != cn.nodeaggregateid) t(tag))
-                      ) as tags
-                ) subtree_tags on true
             where
-              -- subtree tag filtering
+              -- subtree tag filtering (using hierarchy relation JSONB)
               (
                   -- deactivate filter when no values are set
                   not :subtreetag_filter_active
                     or
-                  not exists(
-                    select 1
-                    from {$this->tableNames->subTreeRelation()} st
-                    where cn.nodeaggregateid = any(st.affected_nodeaggregateids)
-                      and st.dimensionspacepointhash = :dimensionspacepointhash
-                      and st.contentstreamid = :contentstreamid
-                      and st.subtreetags && array[:excluded_subtreetags]::varchar(36)[]
-                  )
+                  not jsonb_exists_any(COALESCE(cna.subtreetags->(cn.relationanchorpoint::text), '{}'), array[:excluded_subtreetags]::text[])
               )
               -- node type filtering
               and
@@ -441,10 +407,8 @@ final readonly class PostgresContentSubgraph implements ContentSubgraphInterface
         $result = $this->dbal->executeQuery($query, $parameters, $parameterTypes);
         $rows = $result->fetchAllAssociative();
 
-
         $nodesDeserialized = [];
         foreach ($rows as $nodeRow) {
-            $subtreeTags = json_decode($nodeRow['tags'], true);
             $nodesDeserialized[] = Node::create(
                 $this->contentRepositoryId,
                 $this->workspaceName,
@@ -458,10 +422,7 @@ final readonly class PostgresContentSubgraph implements ContentSubgraphInterface
                     $this->propertyConverter
                 ),
                 !empty($nodeRow['nodename']) ? NodeName::fromString($nodeRow['nodename']) : null,
-                NodeTags::create(
-                    SubtreeTags::fromStrings(...($subtreeTags['explicit_tags'] ?? [])),
-                    SubtreeTags::fromStrings(...($subtreeTags['only_inherited'] ?? [])),
-                ),
+                NodeFactory::extractNodeTagsFromJson($nodeRow['subtreetags'] ?? null),
                 Timestamps::create(
                 // TODO replace with $nodeRow['created'] and $nodeRow['originalcreated'] once projection has implemented support
                     QueryUtility::parseDateTimeString('2023-03-17 12:00:00'),
@@ -487,7 +448,7 @@ final readonly class PostgresContentSubgraph implements ContentSubgraphInterface
     ): References {
         $query = HypergraphReferenceQuery::create(
             $this->contentStreamId,
-            'tarn.*, tarh.contentstreamid, tarh.dimensionspacepoint',
+            'tarn.*, tarh.contentstreamid, tarh.dimensionspacepoint, tarh.subtreetags->(tarn.relationanchorpoint::text) as subtreetags',
             $this->tableNames
         );
         $query = $query->withDimensionSpacePoint($this->dimensionSpacePoint)
@@ -538,7 +499,7 @@ final readonly class PostgresContentSubgraph implements ContentSubgraphInterface
     ): References {
         $query = HypergraphReferenceQuery::create(
             $this->contentStreamId,
-            'srcn.*, srch.contentstreamid, srch.dimensionspacepoint',
+            'srcn.*, srch.contentstreamid, srch.dimensionspacepoint, srch.subtreetags->(srcn.relationanchorpoint::text) as subtreetags',
             $this->tableNames
         );
         $query = $query->withDimensionSpacePoint($this->dimensionSpacePoint)
@@ -980,18 +941,7 @@ final readonly class PostgresContentSubgraph implements ContentSubgraphInterface
     }
 
     /**
-     * Finds the Subtree for a given node aggregate ID.
-     *
-     * This operation is scalable, since we **always** lookup subtrees with the
-     * primary key. The recursive calculation of the sub-tree itself happens purely on the write-side.
-     *
-     * @see NodeCreation (write-side)
-     *
-     * @param NodeAggregateId $entryNodeAggregateId the root node of the sub-tree to fetch
-     * @param FindSubtreeFilter $filter the filter for excluding nodes from the subtree
-     * @return Subtree|null the created {@link Subtree} instance or null, if there is no such a node in this Subgraph.
-     *
-     * @throws \Doctrine\DBAL\Exception on any database error
+     * @throws \Doctrine\DBAL\Exception
      */
     public function findSubtree(
         NodeAggregateId $entryNodeAggregateId,
@@ -1001,115 +951,107 @@ final readonly class PostgresContentSubgraph implements ContentSubgraphInterface
             'nodeaggregateid' => $entryNodeAggregateId->value,
             'contentstreamid' => $this->contentStreamId->value,
             'dimensionspacepointhash' => $this->dimensionSpacePoint->hash,
-            'maximum_levels' => $filter->maximumLevels,
-            'subtreetag_filter_active' => $this->excludedSubtreeTagsFilterActive,
-            'excluded_subtreetags' => $this->excludedSubtreeTags,
         ];
 
         $parameterTypes = [
             'excluded_subtreetags' => Connection::PARAM_STR_ARRAY,
         ];
 
-        // TODO nodetypes filter
-        if ($filter->nodeTypes !== null) {
-            $expandedNodeTypeCriteria = ExpandedNodeTypeCriteria::create(
-                $filter->nodeTypes,
-                $this->nodeTypeManager
-            );
-        } else {
+        $maximumLevelsClause = '';
+        if ($filter->maximumLevels !== null) {
+            $maximumLevelsClause = 'AND p.level < :maximumLevels';
+            $parameters['maximumLevels'] = $filter->maximumLevels;
+        }
+
+        // subtree tag visibility filter
+        $visibilityClause = '';
+        if ($this->excludedSubtreeTagsFilterActive) {
+            $visibilityClause = "AND NOT jsonb_exists_any(COALESCE(h.subtreetags->(n.relationanchorpoint::text), '{}'), array[:excluded_subtreetags]::text[])";
+            $parameters['excluded_subtreetags'] = $this->excludedSubtreeTags;
+        }
+
+        $childVisibilityClause = '';
+        if ($this->excludedSubtreeTagsFilterActive) {
+            $childVisibilityClause = "AND NOT jsonb_exists_any(COALESCE(ch.subtreetags->(c.relationanchorpoint::text), '{}'), array[:excluded_subtreetags]::text[])";
         }
 
         $query = <<<SQL
-            with subtree_entry as (
-                select
-                    st.affected_relationanchorpoints,
-                    st.dimensionspacepoint,
-                    st.subtree_structure
-                from {$this->tableNames->subTreeRelation()} st
-                where st.nodeaggregateid = :nodeaggregateid
-                  and st.contentstreamid = :contentstreamid
-                  and st.dimensionspacepointhash = :dimensionspacepointhash
+            WITH RECURSIVE tree(
+                nodeaggregateid, relationanchorpoint, origindimensionspacepoint,
+                origindimensionspacepointhash, nodetypename, properties, classification,
+                nodename, parentnodeaggregateid, level, position, subtreetags
+            ) AS (
+                -- Initial: entry node
+                SELECT
+                    n.nodeaggregateid, n.relationanchorpoint, n.origindimensionspacepoint,
+                    n.origindimensionspacepointhash, n.nodetypename, n.properties, n.classification,
+                    n.nodename,
+                    'ROOT'::varchar AS parentnodeaggregateid,
+                    0 AS level,
+                    0 AS position,
+                    h.subtreetags->(n.relationanchorpoint::text) AS subtreetags
+                FROM {$this->tableNames->node()} n
+                INNER JOIN {$this->tableNames->hierarchyRelation()} h
+                    ON n.relationanchorpoint = ANY(h.childnodeanchors)
+                WHERE n.nodeaggregateid = :nodeaggregateid
+                    AND h.contentstreamid = :contentstreamid
+                    AND h.dimensionspacepointhash = :dimensionspacepointhash
+                    {$visibilityClause}
+
+                UNION ALL
+
+                -- Recursive: children
+                SELECT
+                    c.nodeaggregateid, c.relationanchorpoint, c.origindimensionspacepoint,
+                    c.origindimensionspacepointhash, c.nodetypename, c.properties, c.classification,
+                    c.nodename,
+                    p.nodeaggregateid AS parentnodeaggregateid,
+                    p.level + 1 AS level,
+                    child_ord.ordinality::int AS position,
+                    ch.subtreetags->(c.relationanchorpoint::text) AS subtreetags
+                FROM tree p
+                INNER JOIN {$this->tableNames->hierarchyRelation()} ch
+                    ON ch.parentnodeanchor = p.relationanchorpoint
+                    AND ch.contentstreamid = :contentstreamid
+                    AND ch.dimensionspacepointhash = :dimensionspacepointhash
+                CROSS JOIN LATERAL unnest(ch.childnodeanchors) WITH ORDINALITY AS child_ord(anchor, ordinality)
+                INNER JOIN {$this->tableNames->node()} c
+                    ON c.relationanchorpoint = child_ord.anchor
+                WHERE true
+                    {$maximumLevelsClause}
+                    {$childVisibilityClause}
             )
-            select
-                st.dimensionspacepoint,
-                subtree_nodes.nodes
-            from subtree_entry st
-                left join lateral (
-                    with nodes_of_subtree as (
-                        select n.*,
-                            st.subtree_structure -> n.nodeaggregateid ->> 'depth' as depth,
-                            st.subtree_structure -> n.nodeaggregateid ->> 'parent' as parent
-                        from unnest(st.affected_relationanchorpoints) affected_anchors(relationanchorpoint)
-                            left join {$this->tableNames->node()} n
-                                on n.relationanchorpoint = affected_anchors.relationanchorpoint
-                        where
-                            -- subtree tag filtering
-                            (
-                              -- deactivate filter when no values are set
-                              not :subtreetag_filter_active
-                                or
-                              not exists(
-                                select 1
-                                from {$this->tableNames->subTreeRelation()} st
-                                where n.nodeaggregateid = any(st.affected_nodeaggregateids)
-                                  and st.dimensionspacepointhash = :dimensionspacepointhash
-                                  and st.contentstreamid = :contentstreamid
-                                  and st.subtreetags && array[:excluded_subtreetags]::varchar(36)[]
-                              )
-                          )
-                        order by st.subtree_structure -> n.nodeaggregateid ->> 'depth' desc,
-                                     st.subtree_structure -> n.nodeaggregateid ->> 'ordinality'
-                    )
-                    select
-                        jsonb_agg(jsonb_build_object(
-                            -- 'relationanchorpoint', n.relationanchorpoint,
-                            'nodeaggregateid', n.nodeaggregateid,
-                            'parentnodeaggregateid', n.parent,
-                            'origindimensionspacepoint', n.origindimensionspacepoint,
-                            'nodetypename', n.nodetypename,
-                            'nodename', n.nodename,
-                            'properties', n.properties,
-                            'classification', n.classification,
-                            'depth', n.depth
-                        )) as nodes
-                    from nodes_of_subtree n
-                ) subtree_nodes on true
+            SELECT * FROM tree
+            ORDER BY level, position
         SQL;
 
         $result = $this->dbal->executeQuery($query, $parameters, $parameterTypes);
-        $resultRow = $result->fetchAssociative();
-        if ($resultRow === false) {
+        $rows = $result->fetchAllAssociative();
+        if (empty($rows)) {
             return null;
         }
-        $nodesArray = json_decode($resultRow['nodes'], true);
-        if (!is_array($nodesArray) || empty($nodesArray)) {
-            return null;
-        }
-
-        // we have results
-        $dimensionSpacePoint = DimensionSpacePoint::fromJsonString($resultRow['dimensionspacepoint']);
 
         /** @var array<string, Subtree[]> $subtreesByParentNodeId */
         $subtreesByParentNodeId = [];
-        foreach ($nodesArray as $nodeJson) {
-            $parentNodeAggregateId = $nodeJson['parentnodeaggregateid'];
+        foreach (array_reverse($rows) as $nodeRow) {
+            $nodeAggregateId = $nodeRow['nodeaggregateid'];
+            $parentNodeAggregateId = $nodeRow['parentnodeaggregateid'];
             $node = Node::create(
                 $this->contentRepositoryId,
                 $this->workspaceName,
-                $dimensionSpacePoint,
-                NodeAggregateId::fromString($nodeJson['nodeaggregateid']),
-                OriginDimensionSpacePoint::fromArray($nodeJson['origindimensionspacepoint']),
-                NodeAggregateClassification::from($nodeJson['classification']),
-                NodeTypeName::fromString($nodeJson['nodetypename']),
+                $this->dimensionSpacePoint,
+                NodeAggregateId::fromString($nodeAggregateId),
+                OriginDimensionSpacePoint::fromJsonString($nodeRow['origindimensionspacepoint']),
+                NodeAggregateClassification::from($nodeRow['classification']),
+                NodeTypeName::fromString($nodeRow['nodetypename']),
                 new PropertyCollection(
-                    SerializedPropertyValues::fromArray($nodeJson['properties']),
+                    SerializedPropertyValues::fromJsonString($nodeRow['properties']),
                     $this->propertyConverter
                 ),
-                $nodeJson['nodename'] ? NodeName::fromString($nodeJson['nodename']) : null,
-                // TODO implement {@see \Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\NodeFactory::mapNodeRowToNode()}
-                NodeTags::createEmpty(),
+                !empty($nodeRow['nodename']) ? NodeName::fromString($nodeRow['nodename']) : null,
+                NodeFactory::extractNodeTagsFromJson($nodeRow['subtreetags'] ?? null),
                 Timestamps::create(
-                // TODO replace with $nodeRow['created'] and $nodeRow['originalcreated'] once projection has implemented support
+                    // TODO replace with $nodeRow['created'] and $nodeRow['originalcreated'] once projection has implemented support
                     QueryUtility::parseDateTimeString('2023-03-17 12:00:00'),
                     QueryUtility::parseDateTimeString('2023-03-17 12:00:00'),
                     null,
@@ -1117,13 +1059,12 @@ final readonly class PostgresContentSubgraph implements ContentSubgraphInterface
                 ),
                 $this->visibilityConstraints,
             );
-            $nodeAggregateId = $node->aggregateId->value;
-            $level = (int)$nodeJson['depth'];
+            $level = (int)$nodeRow['level'];
             $subtree = Subtree::create(
                 $level,
                 $node,
                 array_key_exists($nodeAggregateId, $subtreesByParentNodeId) ?
-                    Subtrees::fromArray($subtreesByParentNodeId[$nodeAggregateId]) :
+                    Subtrees::fromArray(array_reverse($subtreesByParentNodeId[$nodeAggregateId])) :
                     Subtrees::createEmpty()
             );
             if ($subtree->level === 0) {

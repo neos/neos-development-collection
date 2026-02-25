@@ -335,79 +335,6 @@ final readonly class PostgresContentGraphProjection implements ContentGraphProje
             $$ language plpgsql;
         SQL);
 
-        $this->dbal->executeStatement(<<<SQL
-            create or replace function {$this->tableNames->functionCalculateSubtree()}(
-                    nodeaggregateid varchar(64),
-                    contentstreamid varchar(40),
-                    dimensionhash varchar(255),
-                    out affected_anchors bigint[],
-                    out affected_aggregateids varchar(64)[],
-                    out subtree_structure jsonb
-                )
-            as
-            $$
-            begin
-                with recursive subtree as (
-                    select
-                      n.*,
-                      h.contentstreamid,
-                      h.dimensionspacepoint,
-                      null::varchar AS parent_node,
-                      0 as depth,
-                      h.ordinality
-                    from cr_default_p_graph_node n
-                           inner join (
-                              select h.*, childnodeanchor, ordinality
-                              from cr_default_p_graph_hierarchyrelation h,
-                                   -- this creates a new generated column "ordinality" which contains the sorting
-                                   -- order of the childnodeanchor entries. We use this on the top level query to
-                                   -- ensure that we preserve sorting of child nodes.
-                                   unnest(h.childnodeanchors) with ordinality childnodeanchor
-                          ) h on n.relationanchorpoint = h.childnodeanchor
-                    where n.nodeaggregateid = {$this->tableNames->functionCalculateSubtree()}.nodeaggregateid
-                      and h.contentstreamid = {$this->tableNames->functionCalculateSubtree()}.contentstreamid
-                      and h.dimensionspacepointhash = {$this->tableNames->functionCalculateSubtree()}.dimensionhash
-                    union all
-                    -- --------------------------------
-                    -- RECURSIVE query: do one "child" query step, taking into account the depth and node type constraints
-                    -- --------------------------------
-                    select
-                      cn.*,
-                      ch.contentstreamid,
-                      ch.dimensionspacepoint,
-                      p.nodeaggregateid as parent_node,
-                      p.depth + 1 as depth,
-                      ch.ordinality
-                    from subtree p
-                           inner join (
-                      select h.*, childnodeanchor, ordinality
-                      from cr_default_p_graph_hierarchyrelation h,
-                           -- this creates a new generated column "ordinality" which contains the sorting
-                           -- order of the childnodeanchor entries. We use this on the top level query to
-                           -- ensure that we preserve sorting of child nodes.
-                           unnest(h.childnodeanchors) with ordinality childnodeanchor
-                    ) ch on ch.parentnodeanchor = p.relationanchorpoint
-                           inner join cr_default_p_graph_node cn on cn.relationanchorpoint = ch.childnodeanchor
-                    where ch.contentstreamid = {$this->tableNames->functionCalculateSubtree()}.contentstreamid
-                      and ch.dimensionspacepointhash = {$this->tableNames->functionCalculateSubtree()}.dimensionhash
-                )
-                select
-                  array_agg(st.relationanchorpoint) affected_anchors,
-                  array_agg(st.nodeaggregateid) affected_aggregateids,
-                  jsonb_object_agg(st.nodeaggregateid, jsonb_build_object(
-                    'parent', st.parent_node,
-                    'depth', st.depth,
-                    'ordinality', st.ordinality
-                  )) as subtree_structure
-                into
-                    {$this->tableNames->functionCalculateSubtree()}.affected_anchors,
-                    {$this->tableNames->functionCalculateSubtree()}.affected_aggregateids,
-                    {$this->tableNames->functionCalculateSubtree()}.subtree_structure
-                from subtree st;
-            end;
-            $$ language plpgsql;
-        SQL);
-
         // TODO remove this - only for development
         $this->dbal->executeStatement(<<<SQL
             alter sequence cr_default_p_graph_node_relationanchorpoint_seq restart with 1;
@@ -461,7 +388,6 @@ final readonly class PostgresContentGraphProjection implements ContentGraphProje
         $this->dbal->executeQuery('TRUNCATE table ' . $this->tableNames->workspace());
         $this->dbal->executeQuery('TRUNCATE table ' . $this->tableNames->contentStream());
         $this->dbal->executeQuery('TRUNCATE table ' . $this->tableNames->dimensionSpacePoints());
-        $this->dbal->executeQuery('TRUNCATE table ' . $this->tableNames->subTreeRelation());
     }
 
     public function apply(EventInterface $event, EventEnvelope $eventEnvelope): void
