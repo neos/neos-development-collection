@@ -107,6 +107,7 @@ trait NodeVariation
                             END
                             from old_covering_node o, specialized_node_copy s
                             where o.relationanchorpoint = any (childnodeanchors)
+                              and {$this->tableNames->hierarchyRelation()}.contentstreamid = :contentstreamid
                               -- only affected dimensions
                               and exists(select 1 from specialized_dimensions d
                                          where {$this->tableNames->hierarchyRelation()}.dimensionspacepointhash = d.specializeddimensionhash)
@@ -119,6 +120,7 @@ trait NodeVariation
                             set parentnodeanchor = s.relationanchorpoint
                             from old_covering_node o, specialized_node_copy s
                             where parentnodeanchor = o.relationanchorpoint
+                              and {$this->tableNames->hierarchyRelation()}.contentstreamid = :contentstreamid
                               -- only affected dimensions
                               and exists(select 1 from specialized_dimensions d
                                          where {$this->tableNames->hierarchyRelation()}.dimensionspacepointhash = d.specializeddimensionhash)
