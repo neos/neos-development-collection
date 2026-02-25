@@ -30,6 +30,7 @@ trait ContentStreamForking
      */
     private function whenContentStreamWasForked(ContentStreamWasForked $event): void
     {
+
         $parameters = [
             'sourceContentStreamId' => $event->sourceContentStreamId->value,
             'targetContentStreamId' => $event->newContentStreamId->value
@@ -46,6 +47,8 @@ trait ContentStreamForking
             WHERE source.contentstreamid = :sourceContentStreamId',
             $parameters
         );
+
+        $this->createContentStream($event->newContentStreamId, $event->sourceContentStreamId, $event->versionOfSourceContentStream);
     }
 
     abstract protected function getDatabaseConnection(): Connection;
