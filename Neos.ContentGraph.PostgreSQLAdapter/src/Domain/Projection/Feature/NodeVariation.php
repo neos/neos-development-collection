@@ -291,11 +291,24 @@ trait NodeVariation
                    from affected_dimensions ad
                    where not exists(select 1 from update_ingoing_hierarchy cs where ad.specializeddimensionhash = cs.dimensionspacepointhash)
                  ),
+                 -- get the subtree tags of the source node (e.g. disabled state)
+                 -- so they can be carried over to the new hierarchy relations
+                 source_subtree_tags as (
+                   select (
+                     select h.subtreetags -> (sn.relationanchorpoint::text)
+                     from {$this->tableNames->hierarchyRelation()} h
+                     where sn.relationanchorpoint = any(h.childnodeanchors)
+                       and h.contentstreamid = :contentstreamid
+                       and h.dimensionspacepointhash = :sourceorigindimensionhash
+                     limit 1
+                   ) as tags
+                   from source_node sn
+                 ),
                  -- now add the missing hierarchy relations
                  missing_hierarchy_relations as (
                    insert into cr_default_p_graph_hierarchyrelation
                      (contentstreamid, parentnodeanchor, dimensionspacepointhash,
-                      dimensionspacepoint, childnodeanchors)
+                      dimensionspacepoint, childnodeanchors, subtreetags)
                    select
                      :contentstreamid,
                      neoscr_default_get_parent_relationanchorpoint_in_dim(
@@ -306,8 +319,12 @@ trait NodeVariation
                      ),
                      mc.specializeddimensionhash,
                      mc.dimensionspacepoint,
-                     array[gnc.relationanchorpoint]
-                   from missing_coverage_relationpoints mc, generalized_node_copy gnc
+                     array[gnc.relationanchorpoint],
+                     CASE WHEN sst.tags IS NOT NULL
+                          THEN jsonb_build_object(gnc.relationanchorpoint::text, sst.tags)
+                          ELSE '{}'::jsonb
+                     END
+                   from missing_coverage_relationpoints mc, generalized_node_copy gnc, source_subtree_tags sst
                    on conflict on constraint cr_default_p_graph_hierarchyrelation_pkey
                      do update
                           set childnodeanchors = insert_into_array_before_successor(
@@ -319,7 +336,14 @@ trait NodeVariation
                                 excluded.dimensionspacepointhash
                                 ) from affected_dimensions ad
                              where ad.specializeddimensionhash = excluded.dimensionspacepointhash)
-                          )
+                          ),
+                          subtreetags = CASE
+                            WHEN (select tags from source_subtree_tags) IS NOT NULL
+                            THEN COALESCE({$this->tableNames->hierarchyRelation()}.subtreetags, '{}'::jsonb)
+                                 || jsonb_build_object(excluded.childnodeanchors[1]::text,
+                                      (select tags from source_subtree_tags))
+                            ELSE {$this->tableNames->hierarchyRelation()}.subtreetags
+                          END
                  )
             -- finally, copy the reference relations
             insert into {$this->tableNames->referenceRelation()}
