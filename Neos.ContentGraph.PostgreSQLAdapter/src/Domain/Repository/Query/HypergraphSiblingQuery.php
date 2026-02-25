@@ -52,7 +52,7 @@ final class HypergraphSiblingQuery implements HypergraphQueryInterface
             'nodeAggregateId' => $nodeAggregateId->value
         ];
 
-        return new self($query, $parameters, $tableNames);
+        return new self($query, $parameters, $tableNames, []);
     }
 
     public function withRestriction(VisibilityConstraints $visibilityConstraints): self

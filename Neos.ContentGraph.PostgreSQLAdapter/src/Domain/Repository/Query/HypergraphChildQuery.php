@@ -61,7 +61,7 @@ final class HypergraphChildQuery implements HypergraphQueryInterface
             'parentNodeAggregateId' => $parentNodeAggregateId->value
         ];
 
-        return new self($query, $parameters, $tableNames);
+        return new self($query, $parameters, $tableNames, []);
     }
 
     public function withOriginDimensionSpacePoint(OriginDimensionSpacePoint $originDimensionSpacePoint): self
@@ -72,7 +72,7 @@ final class HypergraphChildQuery implements HypergraphQueryInterface
         $parameters = $this->parameters;
         $parameters['originDimensionSpacePointHash'] = $originDimensionSpacePoint->hash;
 
-        return new self($query, $parameters, $this->tableNames);
+        return new self($query, $parameters, $this->tableNames, $this->types);
     }
 
     public function withDimensionSpacePoint(DimensionSpacePoint $dimensionSpacePoint): self
@@ -83,7 +83,7 @@ final class HypergraphChildQuery implements HypergraphQueryInterface
         $parameters = $this->parameters;
         $parameters['dimensionSpacePointHash'] = $dimensionSpacePoint->hash;
 
-        return new self($query, $parameters, $this->tableNames);
+        return new self($query, $parameters, $this->tableNames, $this->types);
     }
 
     public function withDimensionSpacePoints(DimensionSpacePointSet $dimensionSpacePoints): self

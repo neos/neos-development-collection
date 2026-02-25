@@ -44,7 +44,7 @@ trait CommonGraphQueryOperations
         string $query,
         array $parameters,
         private readonly ContentGraphTableNames $tableNames,
-        array $types = []
+        array $types,
     ) {
         $this->query = $query;
         $this->parameters = $parameters;

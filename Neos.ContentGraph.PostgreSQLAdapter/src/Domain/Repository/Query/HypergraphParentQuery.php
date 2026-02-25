@@ -52,7 +52,7 @@ final class HypergraphParentQuery implements HypergraphQueryInterface
             'contentStreamId' => $contentStreamId->value
         ];
 
-        return new self($query, $parameters, $tableNames);
+        return new self($query, $parameters, $tableNames, []);
     }
 
     public function withChildNodeAggregateId(NodeAggregateId $nodeAggregateId): self
@@ -63,7 +63,7 @@ final class HypergraphParentQuery implements HypergraphQueryInterface
         $parameters = $this->parameters;
         $parameters['nodeAggregateId'] = $nodeAggregateId->value;
 
-        return new self($query, $parameters, $this->tableNames);
+        return new self($query, $parameters, $this->tableNames, $this->types);
     }
 
     public function withDimensionSpacePoint(DimensionSpacePoint $dimensionSpacePoint): self
@@ -75,7 +75,7 @@ final class HypergraphParentQuery implements HypergraphQueryInterface
         $parameters = $this->parameters;
         $parameters['dimensionSpacePointHash'] = $dimensionSpacePoint->hash;
 
-        return new self($query, $parameters, $this->tableNames);
+        return new self($query, $parameters, $this->tableNames, $this->types);
     }
 
     public function withRestriction(VisibilityConstraints $visibilityConstraints): self

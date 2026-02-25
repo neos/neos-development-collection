@@ -53,7 +53,8 @@ final class HypergraphReferenceQuery implements HypergraphQueryInterface
         return new self(
             $query,
             $parameters,
-            $tableNames
+            $tableNames,
+            [],
         );
     }
 
