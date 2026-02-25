@@ -96,7 +96,15 @@ trait NodeVariation
                             set childnodeanchors = array_replace(
                               {$this->tableNames->hierarchyRelation()}.childnodeanchors,
                               o.relationanchorpoint,
-                              s.relationanchorpoint)
+                              s.relationanchorpoint),
+                            -- Rename the old anchor key to new anchor key in subtreetags JSONB
+                            subtreetags = CASE
+                              WHEN jsonb_exists({$this->tableNames->hierarchyRelation()}.subtreetags, o.relationanchorpoint::text)
+                              THEN ({$this->tableNames->hierarchyRelation()}.subtreetags - o.relationanchorpoint::text)
+                                   || jsonb_build_object(s.relationanchorpoint::text,
+                                        {$this->tableNames->hierarchyRelation()}.subtreetags->(o.relationanchorpoint::text))
+                              ELSE {$this->tableNames->hierarchyRelation()}.subtreetags
+                            END
                             from old_covering_node o, specialized_node_copy s
                             where o.relationanchorpoint = any (childnodeanchors)
                               -- only affected dimensions
@@ -235,7 +243,14 @@ trait NodeVariation
                      set childnodeanchors = array_replace(
                        {$this->tableNames->hierarchyRelation()}.childnodeanchors,
                        o.relationanchorpoint,
-                       g.relationanchorpoint)
+                       g.relationanchorpoint),
+                     subtreetags = CASE
+                       WHEN jsonb_exists({$this->tableNames->hierarchyRelation()}.subtreetags, o.relationanchorpoint::text)
+                       THEN ({$this->tableNames->hierarchyRelation()}.subtreetags - o.relationanchorpoint::text)
+                            || jsonb_build_object(g.relationanchorpoint::text,
+                                 {$this->tableNames->hierarchyRelation()}.subtreetags->(o.relationanchorpoint::text))
+                       ELSE {$this->tableNames->hierarchyRelation()}.subtreetags
+                     END
                      from old_ingoing_hierarchy o, generalized_node_copy g
                      where {$this->tableNames->hierarchyRelation()}.parentnodeanchor = o.parentnodeanchor
                        and {$this->tableNames->hierarchyRelation()}.contentstreamid = o.contentstreamid
@@ -390,7 +405,14 @@ trait NodeVariation
                      set childnodeanchors = array_replace(
                        {$this->tableNames->hierarchyRelation()}.childnodeanchors,
                        o.relationanchorpoint,
-                       p.relationanchorpoint)
+                       p.relationanchorpoint),
+                     subtreetags = CASE
+                       WHEN jsonb_exists({$this->tableNames->hierarchyRelation()}.subtreetags, o.relationanchorpoint::text)
+                       THEN ({$this->tableNames->hierarchyRelation()}.subtreetags - o.relationanchorpoint::text)
+                            || jsonb_build_object(p.relationanchorpoint::text,
+                                 {$this->tableNames->hierarchyRelation()}.subtreetags->(o.relationanchorpoint::text))
+                       ELSE {$this->tableNames->hierarchyRelation()}.subtreetags
+                     END
                      from old_ingoing_hierarchy o, peer_node_copy p
                      where {$this->tableNames->hierarchyRelation()}.parentnodeanchor = o.parentnodeanchor
                        and {$this->tableNames->hierarchyRelation()}.contentstreamid = o.contentstreamid

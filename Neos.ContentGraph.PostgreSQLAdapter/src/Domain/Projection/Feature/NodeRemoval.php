@@ -15,13 +15,13 @@ declare(strict_types=1);
 namespace Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\Feature;
 
 use Doctrine\DBAL\Connection;
+use Neos\ContentGraph\PostgreSQLAdapter\ContentGraphTableNames;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\EventCouldNotBeAppliedToContentGraph;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\HierarchyRelationRecord;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\NodeRecord;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\NodeRelationAnchorPoint;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\ProjectionReadQueries;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\ProjectionWriteQueries;
-use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\ReferenceRelationRecord;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\Feature\NodeRemoval\Event\NodeAggregateWasRemoved;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
@@ -63,11 +63,6 @@ trait NodeRemoval
                 $this->getDatabaseConnection(),
                 $this->tableNamePrefix
             );
-            $this->removeFromRestrictions(
-                $event->getContentStreamId(),
-                $dimensionSpacePoint,
-                $event->getNodeAggregateId()
-            );
 
             $affectedRelationAnchorPoints[] = $nodeRecord->relationAnchorPoint;
 
@@ -87,7 +82,7 @@ trait NodeRemoval
                 DELETE FROM ' . $this->tableNamePrefix . '_node n
                 WHERE n.relationanchorpoint IN (
                     SELECT relationanchorpoint FROM ' . $this->tableNamePrefix . '_node
-                        LEFT JOIN ' . $this->tableNamePrefix . '_hierarchyhyperrelation h
+                        LEFT JOIN ' . $this->tableNamePrefix . '_hierarchyrelation h
                             ON n.relationanchorpoint = ANY(h.childnodeanchors)
                     WHERE n.relationanchorpoint IN (:affectedRelationAnchorPoints)
                         AND h.contentstreamid IS NULL
@@ -138,11 +133,6 @@ trait NodeRemoval
                     );
                     $affectedRelationAnchorPoints[] = $nodeRecord->relationAnchorPoint;
                 }
-                $this->removeFromRestrictions(
-                    $contentStreamId,
-                    $dimensionSpacePoint,
-                    $nodeRecord->nodeAggregateId
-                );
                 $this->cascadeHierarchy(
                     $contentStreamId,
                     $dimensionSpacePoint,
@@ -153,35 +143,9 @@ trait NodeRemoval
         }
     }
 
-    /**
-     * @param ContentStreamId $contentStreamId
-     * @param DimensionSpacePoint $dimensionSpacePoint
-     * @param NodeAggregateId $nodeAggregateId
-     * @throws \Doctrine\DBAL\Driver\Exception
-     * @throws \Doctrine\DBAL\Exception
-     */
-    private function removeFromRestrictions(
-        ContentStreamId $contentStreamId,
-        DimensionSpacePoint $dimensionSpacePoint,
-        NodeAggregateId $nodeAggregateId
-    ): void {
-        foreach (
-            $this->getReadQueries()->findIngoingRestrictionRelations(
-                $contentStreamId,
-                $dimensionSpacePoint,
-                $nodeAggregateId
-            ) as $restrictionRelation
-        ) {
-            $restrictionRelation->removeAffectedNodeAggregateId(
-                $nodeAggregateId,
-                $this->getDatabaseConnection(),
-                $this->tableNamePrefix
-            );
-        }
-    }
-
     abstract protected function getReadQueries(): ProjectionReadQueries;
     abstract protected function getWriteQueries(): ProjectionWriteQueries;
 
     abstract protected function getDatabaseConnection(): Connection;
+    abstract protected function getTableNames(): ContentGraphTableNames;
 }
