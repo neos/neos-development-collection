@@ -35,22 +35,16 @@ final class HypergraphQuery implements HypergraphQueryInterface
         ContentGraphTableNames $tableNames,
         bool $joinSubTreeTags = false
     ): self {
-        // TODO hier weiter
         $query = /** @lang PostgreSQL */
             'SELECT n.origindimensionspacepoint, n.nodeaggregateid,
                 n.nodetypename, n.classification, n.properties, n.nodename,
-                h.contentstreamid, h.dimensionspacepoint' . ($joinSubTreeTags ? ',
-                r.dimensionspacepointhash AS disabledDimensionSpacePointHash' : '') . '
+                h.contentstreamid, h.dimensionspacepoint,
+                h.subtreetags->(n.relationanchorpoint::text) as subtreetags'
+            . ($joinSubTreeTags ? ',
+                CASE WHEN COALESCE(h.subtreetags->(n.relationanchorpoint::text), \'{}\') != \'{}\'::jsonb
+                     THEN h.dimensionspacepointhash ELSE NULL END AS disableddimensionspacepointhash' : '') . '
             FROM ' . $tableNames->hierarchyRelation() . ' h
-            JOIN ' . $tableNames->node() . ' n ON n.relationanchorpoint = ANY(h.childnodeanchors)'
-            . ($joinSubTreeTags
-                ? '
-            LEFT JOIN ' . $tableNames->subTreeRelation() . ' r
-                ON n.nodeaggregateid = r.nodeaggregateid
-                AND r.contentstreamid = h.contentstreamid
-                AND r.dimensionspacepointhash = h.dimensionspacepointhash'
-                : '')
-            . '
+            JOIN ' . $tableNames->node() . ' n ON n.relationanchorpoint = ANY(h.childnodeanchors)
             WHERE h.contentstreamid = :contentStreamId';
 
         $parameters = [

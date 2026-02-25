@@ -46,7 +46,8 @@ final class HypergraphChildQuery implements HypergraphQueryInterface
                 ? implode(', ', $fieldsToFetch)
                 : 'cn.origindimensionspacepoint, cn.nodeaggregateid, cn.nodetypename,
                     cn.classification, cn.properties, cn.nodename,
-                    ch.contentstreamid, ch.dimensionspacepoint') . '
+                    ch.contentstreamid, ch.dimensionspacepoint,
+                    ch.subtreetags->(cn.relationanchorpoint::text) as subtreetags') . '
             FROM ' . $tableNames->node() . ' pn
             JOIN (
                 SELECT *, unnest(childnodeanchors) AS childnodeanchor

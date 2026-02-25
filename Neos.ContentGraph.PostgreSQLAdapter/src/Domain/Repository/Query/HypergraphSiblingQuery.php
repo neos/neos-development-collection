@@ -35,7 +35,8 @@ final class HypergraphSiblingQuery implements HypergraphQueryInterface
         ContentGraphTableNames $tableNames
     ): self {
         $query = /** @lang PostgreSQL */
-            'SELECT sn.*, sh.contentstreamid, sh.dimensionspacepoint, ordinality, childnodeanchor
+            'SELECT sn.*, sh.contentstreamid, sh.dimensionspacepoint, ordinality, childnodeanchor,
+                sh.subtreetags->(sn.relationanchorpoint::text) as subtreetags
     FROM ' . $tableNames->node() . ' n
         JOIN ' . $tableNames->hierarchyRelation() . ' sh ON n.relationanchorpoint = ANY(sh.childnodeanchors),
             unnest(sh.childnodeanchors) WITH ORDINALITY childnodeanchor
