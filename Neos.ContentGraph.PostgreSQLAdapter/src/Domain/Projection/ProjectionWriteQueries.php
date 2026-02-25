@@ -242,7 +242,7 @@ final readonly class ProjectionWriteQueries
                 'parentnodeanchor' => $hierarchyRelationRecord->parentNodeAnchor->value,
                 'dimensionspacepoint' => $hierarchyRelationRecord->dimensionSpacePoint->toJson(),
                 'dimensionspacepointhash' => $hierarchyRelationRecord->dimensionSpacePoint->hash,
-                'childnodeanchors' => $hierarchyRelationRecord->childNodeAnchorPoints->toDatabaseString()
+                'childnodeanchors' => $hierarchyRelationRecord->childNodeAnchors->toDatabaseString()
             ]
         );
     }

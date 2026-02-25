@@ -40,7 +40,7 @@ final readonly class ReferenceRelationRecord
     public static function fromDatabaseRow(array $databaseRow): self
     {
         return new self(
-            NodeRelationAnchorPoint::fromString($databaseRow['sourcenodeanchor']),
+            NodeRelationAnchorPoint::fromInteger($databaseRow['sourcenodeanchor']),
             ReferenceName::fromString($databaseRow['name']),
             $databaseRow['position'],
             $databaseRow['properties']

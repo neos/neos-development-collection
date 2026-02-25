@@ -61,7 +61,7 @@ trait NodeRemoval
             $ingoingHierarchyRelation->removeChildNodeAnchor(
                 $nodeRecord->relationAnchorPoint,
                 $this->getDatabaseConnection(),
-                $this->tableNamePrefix
+                $this->getTableNames()
             );
 
             $affectedRelationAnchorPoints[] = $nodeRecord->relationAnchorPoint;
@@ -118,7 +118,7 @@ trait NodeRemoval
             $nodeRelationAnchorPoint
         );
         if ($childHierarchyRelation) {
-            $childHierarchyRelation->removeFromDatabase($this->getDatabaseConnection(), $this->tableNamePrefix);
+            $childHierarchyRelation->removeFromDatabase($this->getDatabaseConnection(), $this->getTableNames());
 
             foreach ($childHierarchyRelation->childNodeAnchors as $childNodeAnchor) {
                 /** @var NodeRecord $nodeRecord */
