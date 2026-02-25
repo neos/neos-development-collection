@@ -120,7 +120,7 @@ trait SubtreeTagging
                                 SELECT dc.child_anchor FROM desc_children dc
                                 WHERE dc.dimensionspacepointhash = h.dimensionspacepointhash
                             )
-                            THEN COALESCE(h.subtreetags->(anchor::text), '{}') || jsonb_build_object(:tagName, null)
+                            THEN COALESCE(h.subtreetags->(anchor::text), '{}') || jsonb_build_object(:tagName::text, null)
                             ELSE h.subtreetags->(anchor::text)
                         END
                     ) FILTER (WHERE h.subtreetags->(anchor::text) IS NOT NULL
@@ -155,7 +155,7 @@ trait SubtreeTagging
             SET subtreetags = jsonb_set(
                 COALESCE(h.subtreetags, '{}'),
                 ARRAY[n.relationanchorpoint::text],
-                COALESCE(h.subtreetags->(n.relationanchorpoint::text), '{}') || jsonb_build_object(:tagName, true)
+                COALESCE(h.subtreetags->(n.relationanchorpoint::text), '{}') || jsonb_build_object(:tagName::text, true)
             )
             FROM {$tableNode} n
             WHERE n.nodeaggregateid = :nodeAggregateId
@@ -283,7 +283,7 @@ trait SubtreeTagging
                     THEN jsonb_set(
                         COALESCE(h.subtreetags, '{}'),
                         ARRAY[n.relationanchorpoint::text],
-                        (COALESCE(h.subtreetags->(n.relationanchorpoint::text), '{}') - :tagName) || jsonb_build_object(:tagName, null)
+                        (COALESCE(h.subtreetags->(n.relationanchorpoint::text), '{}') - :tagName) || jsonb_build_object(:tagName::text, null)
                     )
                     ELSE jsonb_set(
                         COALESCE(h.subtreetags, '{}'),
