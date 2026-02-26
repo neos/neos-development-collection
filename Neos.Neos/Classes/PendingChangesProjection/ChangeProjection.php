@@ -100,22 +100,22 @@ class ChangeProjection implements ProjectionInterface
         $platform = $this->dbal->getDatabasePlatform();
 
         $changeTable = new Table($this->tableNamePrefix, [
-            DbalSchemaFactory::columnForContentStreamId('contentStreamId', $platform)->setNotNull(true),
+            DbalSchemaFactory::columnForContentStreamId('`contentStreamId`', $platform)->setNotNull(true),
             (new Column('created', Type::getType(Types::BOOLEAN)))->setNotnull(true),
             (new Column('changed', Type::getType(Types::BOOLEAN)))->setNotnull(true),
             (new Column('moved', Type::getType(Types::BOOLEAN)))->setNotnull(true),
-            DbalSchemaFactory::columnForNodeAggregateId('nodeAggregateId', $platform)->setNotnull(true),
-            DbalSchemaFactory::columnForDimensionSpacePoint('originDimensionSpacePoint', $platform)->setNotnull(false),
-            DbalSchemaFactory::columnForDimensionSpacePointHash('originDimensionSpacePointHash', $platform)->setNotnull(true),
+            DbalSchemaFactory::columnForNodeAggregateId('`nodeAggregateId`', $platform)->setNotnull(true),
+            DbalSchemaFactory::columnForDimensionSpacePoint('`originDimensionSpacePoint`', $platform)->setNotnull(false),
+            DbalSchemaFactory::columnForDimensionSpacePointHash('`originDimensionSpacePointHash`', $platform)->setNotnull(true),
             (new Column('deleted', Type::getType(Types::BOOLEAN)))->setNotnull(true),
             // Despite the name suggesting this might be an anchor point of sorts, this is a nodeAggregateId type
-            DbalSchemaFactory::columnForNodeAggregateId('removalAttachmentPoint', $platform)->setNotnull(false)
+            DbalSchemaFactory::columnForNodeAggregateId('`removalAttachmentPoint`', $platform)->setNotnull(false)
         ]);
 
         $changeTable->setPrimaryKey([
-            'contentStreamId',
-            'nodeAggregateId',
-            'originDimensionSpacePointHash'
+            '`contentStreamId`',
+            '`nodeAggregateId`',
+            '`originDimensionSpacePointHash`'
         ]);
 
         $schema = DbalSchemaFactory::createSchemaWithTables($connection, [$changeTable]);
@@ -269,9 +269,9 @@ class ChangeProjection implements ProjectionInterface
         $this->dbal->executeStatement(
             'DELETE FROM ' . $this->tableNamePrefix . '
                 WHERE
-                    contentStreamId = :contentStreamId
-                    AND nodeAggregateId = :nodeAggregateId
-                    AND originDimensionSpacePointHash IN (:affectedDimensionSpacePointHashes)
+                    "contentStreamId" = :contentStreamId
+                    AND "nodeAggregateId" = :nodeAggregateId
+                    AND "originDimensionSpacePointHash" IN (:affectedDimensionSpacePointHashes)
                 ',
             [
                 'contentStreamId' => $event->contentStreamId->value,
@@ -463,15 +463,15 @@ class ChangeProjection implements ProjectionInterface
     ): ?Change {
         $changeRow = $this->dbal->executeQuery(
             'SELECT n.* FROM ' . $this->tableNamePrefix . ' n
-WHERE n.contentStreamId = :contentStreamId
-AND n.nodeAggregateId = :nodeAggregateId
-AND n.originDimensionSpacePointHash = :originDimensionSpacePointHash',
+                    WHERE n."contentStreamId" = :contentStreamId
+                    AND n."nodeAggregateId" = :nodeAggregateId
+                    AND n."originDimensionSpacePointHash" = :originDimensionSpacePointHash',
             [
                 'contentStreamId' => $contentStreamId->value,
                 'nodeAggregateId' => $nodeAggregateId->value,
                 'originDimensionSpacePointHash' => $originDimensionSpacePoint->hash
             ]
-        )->fetch();
+        )->fetchAssociative();
 
         // We always allow root nodes
         return $changeRow ? Change::fromDatabaseRow($changeRow) : null;
@@ -483,9 +483,9 @@ AND n.originDimensionSpacePointHash = :originDimensionSpacePointHash',
     ): ?Change {
         $changeRow = $this->dbal->executeQuery(
             'SELECT n.* FROM ' . $this->tableNamePrefix . ' n
-WHERE n.contentStreamId = :contentStreamId
-AND n.nodeAggregateId = :nodeAggregateId
-AND n.origindimensionspacepointhash = :origindimensionspacepointhash',
+WHERE n."contentStreamId" = :contentStreamId
+AND n."nodeAggregateId" = :nodeAggregateId
+AND n."origindimensionspacepointhash" = :origindimensionspacepointhash',
             [
                 'contentStreamId' => $contentStreamId->value,
                 'nodeAggregateId' => $nodeAggregateId->value,
@@ -501,7 +501,7 @@ AND n.origindimensionspacepointhash = :origindimensionspacepointhash',
         $statement = <<<SQL
             DELETE FROM {$this->tableNamePrefix}
             WHERE
-                contentStreamId = :contentStreamId
+                "contentStreamId" = :contentStreamId
         SQL;
         $this->dbal->executeStatement(
             $statement,
