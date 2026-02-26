@@ -126,7 +126,7 @@ final class DocumentNodeInfo
 
     public function getDimensionSpacePointHash(): string
     {
-        return $this->source['dimensionspacepointhash'];
+        return self::binaryToString($this->source['dimensionspacepointhash']);
     }
 
     /**
@@ -250,5 +250,13 @@ final class DocumentNodeInfo
     {
         return ($this->source['nodeaggregateid'] ?? '<unknown nodeAggregateId>')
             . '@' . ($this->source['dimensionspacepointhash'] ?? '<unkown dimensionSpacePointHash>');
+    }
+
+    /**
+     * PostgreSQL returns bytea columns as stream resources, while MariaDB/MySQL returns strings.
+     */
+    private static function binaryToString(mixed $value): string
+    {
+        return is_resource($value) ? stream_get_contents($value) : (string)$value;
     }
 }
