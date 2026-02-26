@@ -143,9 +143,9 @@ final readonly class PostgresContentGraphProjection implements ContentGraphProje
             $$
             begin
                 return (
-                    select pn.relationanchorpoint
+                    select distinct pn.relationanchorpoint
                     from {$this->tableNames->node()} pn
-                           left join {$this->tableNames->hierarchyRelation()} ph
+                           inner join {$this->tableNames->hierarchyRelation()} ph
                                      on pn.relationanchorpoint = any (ph.childnodeanchors)
                     where ph.contentstreamid = {$this->tableNames->functionGetRelationAnchorPoint()}.contentstreamid
                       and ph.dimensionspacepointhash = {$this->tableNames->functionGetRelationAnchorPoint()}.dimensionhash

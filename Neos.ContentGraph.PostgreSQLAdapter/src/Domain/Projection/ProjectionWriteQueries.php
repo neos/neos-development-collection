@@ -58,9 +58,9 @@ final readonly class ProjectionWriteQueries
                 'origindimensionspacepoint' => $originDimensionSpacePoint->toJson(),
                 'origindimensionspacepointhash' => $originDimensionSpacePoint->hash,
                 'nodetypename' => $nodeTypeName->value,
-                'properties' => $properties->jsonSerialize(),
+                'properties' => \json_encode($properties),
                 'classification' => $classification->value,
-                'nodename' => $nodeName?->value
+                'nodename' => $nodeName?->value ?? ''
             ]
         );
 

@@ -102,6 +102,44 @@ final readonly class HierarchyRelationRecord
         }
     }
 
+    public function replaceChildNodeAnchor(
+        NodeRelationAnchorPoint $oldChildNodeAnchor,
+        NodeRelationAnchorPoint $newChildNodeAnchor,
+        Connection $databaseConnection,
+        ContentGraphTableNames $tableNames
+    ): void {
+        $tableName = $tableNames->hierarchyRelation();
+        $id = $this->getDatabaseIdentifier();
+        try {
+            $databaseConnection->executeStatement(
+                <<<SQL
+                    UPDATE {$tableName}
+                    SET childnodeanchors = array_replace(childnodeanchors, :old_anchor::bigint, :new_anchor::bigint),
+                        subtreetags = CASE
+                            WHEN jsonb_exists(subtreetags, :old_anchor_text)
+                            THEN (subtreetags - :old_anchor_text)
+                                 || jsonb_build_object(:new_anchor_text::text, subtreetags->(:old_anchor_text::text))
+                            ELSE subtreetags
+                        END
+                    WHERE contentstreamid = :contentstreamid
+                      AND parentnodeanchor = :parentnodeanchor
+                      AND dimensionspacepointhash = :dimensionspacepointhash
+                SQL,
+                [
+                    'contentstreamid' => $id['contentstreamid'],
+                    'parentnodeanchor' => $id['parentnodeanchor'],
+                    'dimensionspacepointhash' => $id['dimensionspacepointhash'],
+                    'old_anchor' => $oldChildNodeAnchor->value,
+                    'new_anchor' => $newChildNodeAnchor->value,
+                    'old_anchor_text' => (string)$oldChildNodeAnchor->value,
+                    'new_anchor_text' => (string)$newChildNodeAnchor->value,
+                ]
+            );
+        } catch (DBALException $e) {
+            throw new \RuntimeException(sprintf('Failed to replace child node anchor in hierarchy relation: %s', $e->getMessage()), 1716484950, $e);
+        }
+    }
+
     public function removeFromDatabase(Connection $databaseConnection, ContentGraphTableNames $tableNames): void
     {
         try {

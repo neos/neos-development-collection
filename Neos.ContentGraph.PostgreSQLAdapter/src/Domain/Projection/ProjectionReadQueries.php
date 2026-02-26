@@ -241,6 +241,98 @@ final readonly class ProjectionReadQueries
     }
 
     /**
+     * Find ingoing hierarchy relations for any node in a given node aggregate,
+     * optionally filtered by dimension space points.
+     * Unlike findIngoingHierarchyHyperrelationRecords, this searches by node aggregate ID
+     * and returns both the hierarchy relation and the matched child anchor point.
+     *
+     * @return array<int, array{relation: HierarchyRelationRecord, childNodeAnchor: NodeRelationAnchorPoint}>
+     * @throws DBALException
+     */
+    public function findIngoingHierarchyHyperrelationRecordsForNodeAggregate(
+        ContentStreamId $contentStreamId,
+        NodeAggregateId $nodeAggregateId,
+        ?DimensionSpacePointSet $affectedDimensionSpacePoints = null
+    ): array {
+        $query = /** @lang PostgreSQL */
+            'SELECT h.*, n.relationanchorpoint AS matched_child_anchor
+            FROM ' . $this->tableNames->hierarchyRelation() . ' h
+            JOIN ' . $this->tableNames->node() . ' n
+                ON n.relationanchorpoint = ANY(h.childnodeanchors)
+            WHERE h.contentstreamid = :contentStreamId
+            AND n.nodeaggregateid = :nodeAggregateId';
+        $parameters = [
+            'contentStreamId' => $contentStreamId->value,
+            'nodeAggregateId' => $nodeAggregateId->value,
+        ];
+        $types = [];
+
+        if ($affectedDimensionSpacePoints) {
+            $query .= '
+            AND h.dimensionspacepointhash IN (:affectedDimensionSpacePointHashes)';
+            $parameters['affectedDimensionSpacePointHashes'] = $affectedDimensionSpacePoints->getPointHashes();
+            $types['affectedDimensionSpacePointHashes'] = Connection::PARAM_STR_ARRAY;
+        }
+
+        $results = [];
+        foreach ($this->dbal->executeQuery($query, $parameters, $types)->iterateAssociative() as $row) {
+            $matchedChildAnchor = NodeRelationAnchorPoint::fromInteger($row['matched_child_anchor']);
+            unset($row['matched_child_anchor']);
+            $results[] = [
+                'relation' => HierarchyRelationRecord::fromDatabaseRow($row),
+                'childNodeAnchor' => $matchedChildAnchor,
+            ];
+        }
+
+        return $results;
+    }
+
+    /**
+     * Find outgoing hierarchy relations for any node in a given node aggregate,
+     * optionally filtered by dimension space points.
+     *
+     * @return array<int, array{relation: HierarchyRelationRecord, parentNodeAnchor: NodeRelationAnchorPoint}>
+     * @throws DBALException
+     */
+    public function findOutgoingHierarchyHyperrelationRecordsForNodeAggregate(
+        ContentStreamId $contentStreamId,
+        NodeAggregateId $nodeAggregateId,
+        ?DimensionSpacePointSet $affectedDimensionSpacePoints = null
+    ): array {
+        $query = /** @lang PostgreSQL */
+            'SELECT h.*, n.relationanchorpoint AS matched_parent_anchor
+            FROM ' . $this->tableNames->hierarchyRelation() . ' h
+            JOIN ' . $this->tableNames->node() . ' n
+                ON n.relationanchorpoint = h.parentnodeanchor
+            WHERE h.contentstreamid = :contentStreamId
+            AND n.nodeaggregateid = :nodeAggregateId';
+        $parameters = [
+            'contentStreamId' => $contentStreamId->value,
+            'nodeAggregateId' => $nodeAggregateId->value,
+        ];
+        $types = [];
+
+        if ($affectedDimensionSpacePoints) {
+            $query .= '
+            AND h.dimensionspacepointhash IN (:affectedDimensionSpacePointHashes)';
+            $parameters['affectedDimensionSpacePointHashes'] = $affectedDimensionSpacePoints->getPointHashes();
+            $types['affectedDimensionSpacePointHashes'] = Connection::PARAM_STR_ARRAY;
+        }
+
+        $results = [];
+        foreach ($this->dbal->executeQuery($query, $parameters, $types)->iterateAssociative() as $row) {
+            $matchedParentAnchor = NodeRelationAnchorPoint::fromInteger($row['matched_parent_anchor']);
+            unset($row['matched_parent_anchor']);
+            $results[] = [
+                'relation' => HierarchyRelationRecord::fromDatabaseRow($row),
+                'parentNodeAnchor' => $matchedParentAnchor,
+            ];
+        }
+
+        return $results;
+    }
+
+    /**
      * @return array|HierarchyRelationRecord[]
      * @throws DBALException
      */
