@@ -75,6 +75,20 @@ trait NodeRemoval
         }
 
         // second step: remove orphaned nodes
+
+        // remove reference relation on orphans first
+        $this->getDatabaseConnection()->executeStatement(
+            "
+                DELETE FROM {$this->tableNames->referenceRelation()} r
+                WHERE sourcenodeanchor IN (
+                SELECT relationanchorpoint FROM {$this->tableNames->node()} n WHERE
+                    NOT EXISTS (
+                        SELECT 1
+                        FROM {$this->tableNames->hierarchyRelation()} h
+                        WHERE n.relationanchorpoint = ANY(h.childnodeanchors)
+                    ))"
+        );
+
         $this->getDatabaseConnection()->executeStatement(
             /** @lang PostgreSQL */
             "
@@ -88,9 +102,6 @@ trait NodeRemoval
             ",
         );
 
-        // TODO
-        // DELETE FROM ' . $this->getTableNames()->referenceRelation() . ' r
-        //                WHERE sourcenodeanchor IN (SELECT relationanchorpoint FROM deletedNodes)
     }
 
     /**
