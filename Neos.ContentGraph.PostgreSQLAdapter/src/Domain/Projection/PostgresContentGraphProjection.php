@@ -18,6 +18,7 @@ use Doctrine\DBAL\Connection;
 use Neos\ContentGraph\PostgreSQLAdapter\ContentGraphTableNames;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\Feature\ContentStream;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\Feature\ContentStreamForking;
+use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\Feature\DimensionSpaceAdjustment;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\Feature\NodeCreation;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\Feature\NodeModification;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\Feature\NodeReferencing;
@@ -38,6 +39,8 @@ use Neos\ContentRepository\Core\Feature\ContentStreamCreation\Event\ContentStrea
 use Neos\ContentRepository\Core\Feature\ContentStreamEventStreamName;
 use Neos\ContentRepository\Core\Feature\ContentStreamForking\Event\ContentStreamWasForked;
 use Neos\ContentRepository\Core\Feature\ContentStreamRemoval\Event\ContentStreamWasRemoved;
+use Neos\ContentRepository\Core\Feature\DimensionSpaceAdjustment\Event\DimensionShineThroughWasAdded;
+use Neos\ContentRepository\Core\Feature\DimensionSpaceAdjustment\Event\DimensionSpacePointWasMoved;
 use Neos\ContentRepository\Core\Feature\NodeCreation\Event\NodeAggregateWithNodeWasCreated;
 use Neos\ContentRepository\Core\Feature\NodeModification\Event\NodePropertiesWereSet;
 use Neos\ContentRepository\Core\Feature\NodeMove\Event\NodeAggregateWasMoved;
@@ -48,6 +51,7 @@ use Neos\ContentRepository\Core\Feature\NodeTypeChange\Event\NodeAggregateTypeWa
 use Neos\ContentRepository\Core\Feature\NodeVariation\Event\NodeGeneralizationVariantWasCreated;
 use Neos\ContentRepository\Core\Feature\NodeVariation\Event\NodePeerVariantWasCreated;
 use Neos\ContentRepository\Core\Feature\NodeVariation\Event\NodeSpecializationVariantWasCreated;
+use Neos\ContentRepository\Core\Feature\RootNodeCreation\Event\RootNodeAggregateDimensionsWereUpdated;
 use Neos\ContentRepository\Core\Feature\RootNodeCreation\Event\RootNodeAggregateWithNodeWasCreated;
 use Neos\ContentRepository\Core\Feature\SubtreeTagging\Event\SubtreeWasTagged;
 use Neos\ContentRepository\Core\Feature\SubtreeTagging\Event\SubtreeWasUntagged;
@@ -80,6 +84,7 @@ use Neos\EventStore\Model\EventEnvelope;
 final readonly class PostgresContentGraphProjection implements ContentGraphProjectionInterface
 {
     use ContentStreamForking;
+    use DimensionSpaceAdjustment;
     use NodeCreation;
     use SubtreeTagging;
     use NodeModification;
@@ -398,6 +403,7 @@ final readonly class PostgresContentGraphProjection implements ContentGraphProje
         match ($event::class) {
             // NodeCreation
             RootNodeAggregateWithNodeWasCreated::class => $this->whenRootNodeAggregateWithNodeWasCreated($event),
+            RootNodeAggregateDimensionsWereUpdated::class => $this->whenRootNodeAggregateDimensionsWereUpdated($event),
             NodeAggregateWithNodeWasCreated::class => $this->whenNodeAggregateWithNodeWasCreated($event),
             // SubtreeTagging
             SubtreeWasTagged::class => $this->whenSubtreeWasTagged($event),
@@ -430,6 +436,9 @@ final readonly class PostgresContentGraphProjection implements ContentGraphProje
             ContentStreamWasReopened::class => $this->whenContentStreamWasReopened($event),
             // ContentStreamForking
             ContentStreamWasForked::class => $this->whenContentStreamWasForked($event),
+            // Dimensions
+            DimensionShineThroughWasAdded::class => $this->whenDimensionShineThroughWasAdded($event),
+            DimensionSpacePointWasMoved::class => $this->whenDimensionSpacePointWasMoved($event),
             default => null,
         };
         if (

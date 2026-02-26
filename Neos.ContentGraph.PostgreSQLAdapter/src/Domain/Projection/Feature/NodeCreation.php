@@ -20,6 +20,7 @@ use Neos\ContentGraph\PostgreSQLAdapter\ContentGraphTableNames;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\NodeRelationAnchorPoint;
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
 use Neos\ContentRepository\Core\Feature\NodeCreation\Event\NodeAggregateWithNodeWasCreated;
+use Neos\ContentRepository\Core\Feature\RootNodeCreation\Event\RootNodeAggregateDimensionsWereUpdated;
 use Neos\ContentRepository\Core\Feature\RootNodeCreation\Event\RootNodeAggregateWithNodeWasCreated;
 
 /**
@@ -120,6 +121,67 @@ if (is_null($parentNode)) {
                 excluded.childnodeanchors[1],
                 -- There is no order of the root nodes.
                 -- Root nodes live in the childnodes array of a single root node edge row.
+                null)
+        SQL;
+
+        $this->getDatabaseConnection()->executeQuery($query, $parameters);
+    }
+
+    /**
+     * @throws \Throwable
+     */
+    private function whenRootNodeAggregateDimensionsWereUpdated(RootNodeAggregateDimensionsWereUpdated $event): void
+    {
+        // The root node already exists. We need to add hierarchy relations for newly covered
+        // dimension space points, connecting the root edge to the existing root node anchor.
+
+        $parameters = [
+            'nodeaggregateid' => $event->nodeAggregateId->value,
+            'contentstreamid' => $event->contentStreamId->value,
+            'dimensions' => json_encode($event->coveredDimensionSpacePoints->points),
+            'rootedgeanchor' => NodeRelationAnchorPoint::forRootEdge(),
+        ];
+
+        $query = <<<SQL
+            with created_dsps as (
+              insert into {$this->getTableNames()->dimensionSpacePoints()}
+                (hash, dimensionspacepoint)
+              select
+                dim.dimensionhash,
+                dim.dimensionvalues
+              from jsonb_each(:dimensions) dim(dimensionhash, dimensionvalues)
+              on conflict do nothing
+            ),
+            root_node as (
+              select n.relationanchorpoint
+              from {$this->getTableNames()->node()} n
+              where n.nodeaggregateid = :nodeaggregateid
+                and n.classification = 'root'
+              limit 1
+            )
+            insert
+            into {$this->getTableNames()->hierarchyRelation()}
+            (contentstreamid, parentnodeanchor, dimensionspacepointhash, dimensionspacepoint, childnodeanchors)
+            select :contentstreamid        as contentstreamid,
+                   :rootedgeanchor         as parentnodeanchor,
+                   dim.dimensionhash       as dimensionspacepointhash,
+                   dim.dimensionspacepoint as dimensionspacepoint,
+                   array [rn.relationanchorpoint]
+            from root_node rn
+                   left join jsonb_each(:dimensions) dim(dimensionhash, dimensionspacepoint)
+                             on true
+            -- only insert for dimensions not already covered
+            where not exists (
+                select 1 from {$this->getTableNames()->hierarchyRelation()} h
+                where h.contentstreamid = :contentstreamid
+                  and h.dimensionspacepointhash = dim.dimensionhash
+                  and rn.relationanchorpoint = any(h.childnodeanchors)
+            )
+            on conflict on constraint cr_default_p_graph_hierarchyrelation_pkey
+              do update
+              set childnodeanchors = insert_into_array_before_successor(
+                {$this->getTableNames()->hierarchyRelation()}.childnodeanchors,
+                excluded.childnodeanchors[1],
                 null)
         SQL;
 
