@@ -22,6 +22,7 @@ use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\Feature\NodeCreation;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\Feature\NodeModification;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\Feature\NodeReferencing;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\Feature\NodeRemoval;
+use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\Feature\NodeMove;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\Feature\NodeRenaming;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\Feature\NodeTypeChange;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\Feature\NodeVariation;
@@ -39,6 +40,7 @@ use Neos\ContentRepository\Core\Feature\ContentStreamForking\Event\ContentStream
 use Neos\ContentRepository\Core\Feature\ContentStreamRemoval\Event\ContentStreamWasRemoved;
 use Neos\ContentRepository\Core\Feature\NodeCreation\Event\NodeAggregateWithNodeWasCreated;
 use Neos\ContentRepository\Core\Feature\NodeModification\Event\NodePropertiesWereSet;
+use Neos\ContentRepository\Core\Feature\NodeMove\Event\NodeAggregateWasMoved;
 use Neos\ContentRepository\Core\Feature\NodeReferencing\Event\NodeReferencesWereSet;
 use Neos\ContentRepository\Core\Feature\NodeRemoval\Event\NodeAggregateWasRemoved;
 use Neos\ContentRepository\Core\Feature\NodeRenaming\Event\NodeAggregateNameWasChanged;
@@ -81,6 +83,7 @@ final readonly class PostgresContentGraphProjection implements ContentGraphProje
     use NodeCreation;
     use SubtreeTagging;
     use NodeModification;
+    use NodeMove;
     use NodeReferencing;
     use NodeRemoval;
     use NodeRenaming;
@@ -407,6 +410,7 @@ final readonly class PostgresContentGraphProjection implements ContentGraphProje
             NodeAggregateWasRemoved::class => $this->whenNodeAggregateWasRemoved($event),
             // NodeRenaming
             NodeAggregateNameWasChanged::class => $this->whenNodeAggregateNameWasChanged($event),
+            NodeAggregateWasMoved::class => $this->whenNodeAggregateWasMoved($event),
             // NodeTypeChange
             NodeAggregateTypeWasChanged::class => $this->whenNodeAggregateTypeWasChanged($event),
             // NodeVariation
