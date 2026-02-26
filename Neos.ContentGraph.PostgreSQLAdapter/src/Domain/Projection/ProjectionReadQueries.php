@@ -16,6 +16,7 @@ namespace Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection;
 
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Exception as DBALException;
+use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\ProjectionContentGraph;
 use Neos\ContentGraph\PostgreSQLAdapter\ContentGraphTableNames;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\Query\ProjectionHypergraphQuery;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
@@ -28,7 +29,7 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 /**
  * FIXME ether rename this class or the ContentGraphProjection, since both names are confusing
  * The alternate reality-aware projection-time hypergraph for the PostgreSQL backend via Doctrine DBAL
- *
+ * CORRESPONDS TO {@see ProjectionContentGraph}
  * @internal
  */
 final readonly class ProjectionReadQueries

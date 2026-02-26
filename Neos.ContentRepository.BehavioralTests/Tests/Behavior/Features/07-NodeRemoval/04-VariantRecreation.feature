@@ -70,6 +70,13 @@ Feature: Recreate a node variant
       | coveredDimensionSpacePoint   | {"language":"de"}        |
       | nodeVariantSelectionStrategy | "allSpecializations"     |
 
+    When I am in workspace "user-ws" and dimension space point {"language": "de"}
+    Then I expect node aggregate identifier "sir-david-nodenborough" to lead to no node
+    Then I expect node aggregate identifier "nody-mc-nodeface" to lead to no node
+    When I am in workspace "user-ws" and dimension space point {"language": "gsw"}
+    Then I expect node aggregate identifier "sir-david-nodenborough" to lead to no node
+    Then I expect node aggregate identifier "nody-mc-nodeface" to lead to no node
+
     And the command CreateNodeVariant is executed with payload:
       | Key             | Value                    |
       | workspaceName   | "user-ws"                |
