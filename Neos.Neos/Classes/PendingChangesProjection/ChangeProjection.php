@@ -485,7 +485,7 @@ class ChangeProjection implements ProjectionInterface
             'SELECT n.* FROM ' . $this->tableNamePrefix . ' n
 WHERE n."contentStreamId" = :contentStreamId
 AND n."nodeAggregateId" = :nodeAggregateId
-AND n."origindimensionspacepointhash" = :origindimensionspacepointhash',
+AND n."originDimensionSpacePointHash" = :origindimensionspacepointhash',
             [
                 'contentStreamId' => $contentStreamId->value,
                 'nodeAggregateId' => $nodeAggregateId->value,
