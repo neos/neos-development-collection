@@ -829,7 +829,25 @@ final readonly class PostgresContentSubgraph implements ContentSubgraphInterface
 
     public function retrieveNodePath(NodeAggregateId $nodeAggregateId): AbsoluteNodePath
     {
-        return AbsoluteNodePath::fromString('/<Neos.ContentRepository:Root>');
+        $leafNode = $this->findNodeById($nodeAggregateId);
+        if (!$leafNode) {
+            throw new \InvalidArgumentException(
+                'Failed to retrieve node path for node "' . $nodeAggregateId->value . '"',
+                1687513836
+            );
+        }
+        $ancestors = $this->findAncestorNodes($leafNode->aggregateId, Filter\FindAncestorNodesFilter::create())
+            ->reverse();
+
+        try {
+            return AbsoluteNodePath::fromLeafNodeAndAncestors($leafNode, $ancestors);
+        } catch (\InvalidArgumentException $exception) {
+            throw new \InvalidArgumentException(
+                'Failed to retrieve node path for node "' . $nodeAggregateId->value . '"',
+                1687513836,
+                $exception
+            );
+        }
     }
 
     /**
@@ -975,34 +993,450 @@ final readonly class PostgresContentSubgraph implements ContentSubgraphInterface
         NodeAggregateId $entryNodeAggregateId,
         Filter\FindAncestorNodesFilter $filter
     ): Nodes {
-        return Nodes::createEmpty();
+        $parameters = [
+            'nodeaggregateid' => $entryNodeAggregateId->value,
+            'contentstreamid' => $this->contentStreamId->value,
+            'dimensionspacepointhash' => $this->dimensionSpacePoint->hash,
+        ];
+        $parameterTypes = [];
+
+        $initialVisibilityClause = QueryUtility::getRestrictionClause(
+            $this->visibilityConstraints, $this->tableNames, 'p', $parameters, $parameterTypes
+        );
+        $childVisibilityClause = QueryUtility::getRestrictionClause(
+            $this->visibilityConstraints, $this->tableNames, 'c', $parameters, $parameterTypes
+        );
+        $recursiveVisibilityClause = QueryUtility::getRestrictionClause(
+            $this->visibilityConstraints, $this->tableNames, '', $parameters, $parameterTypes
+        );
+
+        $nodeTypeCriteria = '';
+        if ($filter->nodeTypes !== null) {
+            $expandedNodeTypeCriteria = ExpandedNodeTypeCriteria::create(
+                $filter->nodeTypes,
+                $this->nodeTypeManager
+            );
+            $nodeTypeCriteria = QueryUtility::getNodeTypeCriteriaClause(
+                $expandedNodeTypeCriteria, 'a', $parameters, $parameterTypes
+            );
+        }
+
+        $query = /** @lang PostgreSQL */ <<<SQL
+            WITH RECURSIVE ancestry(
+                nodeaggregateid, relationanchorpoint, origindimensionspacepoint,
+                origindimensionspacepointhash, nodetypename, properties, classification,
+                nodename, subtreetags, parentnodeanchor, dimensionspacepoint, level
+            ) AS (
+                -- Initial: find the direct parent of the entry node
+                SELECT
+                    pn.nodeaggregateid, pn.relationanchorpoint, pn.origindimensionspacepoint,
+                    pn.origindimensionspacepointhash, pn.nodetypename, pn.properties, pn.classification,
+                    pn.nodename,
+                    ph.subtreetags->(pn.relationanchorpoint::text) AS subtreetags,
+                    ph.parentnodeanchor,
+                    ph.dimensionspacepoint,
+                    0 AS level
+                FROM {$this->tableNames->node()} cn
+                INNER JOIN {$this->tableNames->hierarchyRelation()} ch
+                    ON cn.relationanchorpoint = ANY(ch.childnodeanchors)
+                    AND ch.contentstreamid = :contentstreamid
+                    AND ch.dimensionspacepointhash = :dimensionspacepointhash
+                INNER JOIN {$this->tableNames->node()} pn
+                    ON pn.relationanchorpoint = ch.parentnodeanchor
+                INNER JOIN {$this->tableNames->hierarchyRelation()} ph
+                    ON pn.relationanchorpoint = ANY(ph.childnodeanchors)
+                    AND ph.contentstreamid = :contentstreamid
+                    AND ph.dimensionspacepointhash = :dimensionspacepointhash
+                WHERE cn.nodeaggregateid = :nodeaggregateid
+                    {$initialVisibilityClause}
+                    {$childVisibilityClause}
+
+                UNION ALL
+
+                -- Recursive: walk up via parentnodeanchor
+                SELECT
+                    n.nodeaggregateid, n.relationanchorpoint, n.origindimensionspacepoint,
+                    n.origindimensionspacepointhash, n.nodetypename, n.properties, n.classification,
+                    n.nodename,
+                    h.subtreetags->(n.relationanchorpoint::text) AS subtreetags,
+                    h.parentnodeanchor,
+                    h.dimensionspacepoint,
+                    prev.level + 1 AS level
+                FROM ancestry prev
+                INNER JOIN {$this->tableNames->node()} n
+                    ON n.relationanchorpoint = prev.parentnodeanchor
+                INNER JOIN {$this->tableNames->hierarchyRelation()} h
+                    ON n.relationanchorpoint = ANY(h.childnodeanchors)
+                    AND h.contentstreamid = :contentstreamid
+                    AND h.dimensionspacepointhash = :dimensionspacepointhash
+                WHERE true
+                    {$recursiveVisibilityClause}
+            )
+            SELECT * FROM ancestry a
+            WHERE true {$nodeTypeCriteria}
+            ORDER BY level
+        SQL;
+
+        $result = $this->dbal->executeQuery($query, $parameters, $parameterTypes);
+        $rows = $result->fetchAllAssociative();
+
+        return $this->nodeFactory->mapNodeRowsToNodes(
+            $rows,
+            $this->workspaceName,
+            $this->visibilityConstraints
+        );
     }
 
     public function countAncestorNodes(
         NodeAggregateId $entryNodeAggregateId,
         Filter\CountAncestorNodesFilter $filter
     ): int {
-        return 0;
+        $parameters = [
+            'nodeaggregateid' => $entryNodeAggregateId->value,
+            'contentstreamid' => $this->contentStreamId->value,
+            'dimensionspacepointhash' => $this->dimensionSpacePoint->hash,
+        ];
+        $parameterTypes = [];
+
+        $initialVisibilityClause = QueryUtility::getRestrictionClause(
+            $this->visibilityConstraints, $this->tableNames, 'p', $parameters, $parameterTypes
+        );
+        $childVisibilityClause = QueryUtility::getRestrictionClause(
+            $this->visibilityConstraints, $this->tableNames, 'c', $parameters, $parameterTypes
+        );
+        $recursiveVisibilityClause = QueryUtility::getRestrictionClause(
+            $this->visibilityConstraints, $this->tableNames, '', $parameters, $parameterTypes
+        );
+
+        $nodeTypeCriteria = '';
+        if ($filter->nodeTypes !== null) {
+            $expandedNodeTypeCriteria = ExpandedNodeTypeCriteria::create(
+                $filter->nodeTypes,
+                $this->nodeTypeManager
+            );
+            $nodeTypeCriteria = QueryUtility::getNodeTypeCriteriaClause(
+                $expandedNodeTypeCriteria, 'a', $parameters, $parameterTypes
+            );
+        }
+
+        $query = /** @lang PostgreSQL */ <<<SQL
+            WITH RECURSIVE ancestry(
+                nodeaggregateid, relationanchorpoint, origindimensionspacepoint,
+                origindimensionspacepointhash, nodetypename, properties, classification,
+                nodename, subtreetags, parentnodeanchor, dimensionspacepoint, level
+            ) AS (
+                SELECT
+                    pn.nodeaggregateid, pn.relationanchorpoint, pn.origindimensionspacepoint,
+                    pn.origindimensionspacepointhash, pn.nodetypename, pn.properties, pn.classification,
+                    pn.nodename,
+                    ph.subtreetags->(pn.relationanchorpoint::text) AS subtreetags,
+                    ph.parentnodeanchor,
+                    ph.dimensionspacepoint,
+                    0 AS level
+                FROM {$this->tableNames->node()} cn
+                INNER JOIN {$this->tableNames->hierarchyRelation()} ch
+                    ON cn.relationanchorpoint = ANY(ch.childnodeanchors)
+                    AND ch.contentstreamid = :contentstreamid
+                    AND ch.dimensionspacepointhash = :dimensionspacepointhash
+                INNER JOIN {$this->tableNames->node()} pn
+                    ON pn.relationanchorpoint = ch.parentnodeanchor
+                INNER JOIN {$this->tableNames->hierarchyRelation()} ph
+                    ON pn.relationanchorpoint = ANY(ph.childnodeanchors)
+                    AND ph.contentstreamid = :contentstreamid
+                    AND ph.dimensionspacepointhash = :dimensionspacepointhash
+                WHERE cn.nodeaggregateid = :nodeaggregateid
+                    {$initialVisibilityClause}
+                    {$childVisibilityClause}
+
+                UNION ALL
+
+                SELECT
+                    n.nodeaggregateid, n.relationanchorpoint, n.origindimensionspacepoint,
+                    n.origindimensionspacepointhash, n.nodetypename, n.properties, n.classification,
+                    n.nodename,
+                    h.subtreetags->(n.relationanchorpoint::text) AS subtreetags,
+                    h.parentnodeanchor,
+                    h.dimensionspacepoint,
+                    prev.level + 1 AS level
+                FROM ancestry prev
+                INNER JOIN {$this->tableNames->node()} n
+                    ON n.relationanchorpoint = prev.parentnodeanchor
+                INNER JOIN {$this->tableNames->hierarchyRelation()} h
+                    ON n.relationanchorpoint = ANY(h.childnodeanchors)
+                    AND h.contentstreamid = :contentstreamid
+                    AND h.dimensionspacepointhash = :dimensionspacepointhash
+                WHERE true
+                    {$recursiveVisibilityClause}
+            )
+            SELECT COUNT(*) FROM ancestry a
+            WHERE true {$nodeTypeCriteria}
+        SQL;
+
+        $result = $this->dbal->executeQuery($query, $parameters, $parameterTypes);
+        return (int)$result->fetchOne();
     }
 
     public function findClosestNode(
         NodeAggregateId $entryNodeAggregateId,
         FindClosestNodeFilter $filter
     ): ?Node {
-        return null;
+        $parameters = [
+            'nodeaggregateid' => $entryNodeAggregateId->value,
+            'contentstreamid' => $this->contentStreamId->value,
+            'dimensionspacepointhash' => $this->dimensionSpacePoint->hash,
+        ];
+        $parameterTypes = [];
+
+        $visibilityClause = QueryUtility::getRestrictionClause(
+            $this->visibilityConstraints, $this->tableNames, '', $parameters, $parameterTypes
+        );
+
+        $expandedNodeTypeCriteria = ExpandedNodeTypeCriteria::create(
+            $filter->nodeTypes,
+            $this->nodeTypeManager
+        );
+        $nodeTypeCriteria = QueryUtility::getNodeTypeCriteriaClause(
+            $expandedNodeTypeCriteria, 'a', $parameters, $parameterTypes
+        );
+
+        $query = /** @lang PostgreSQL */ <<<SQL
+            WITH RECURSIVE ancestry(
+                nodeaggregateid, relationanchorpoint, origindimensionspacepoint,
+                origindimensionspacepointhash, nodetypename, properties, classification,
+                nodename, subtreetags, parentnodeanchor, dimensionspacepoint, level
+            ) AS (
+                -- Initial: the entry node itself
+                SELECT
+                    n.nodeaggregateid, n.relationanchorpoint, n.origindimensionspacepoint,
+                    n.origindimensionspacepointhash, n.nodetypename, n.properties, n.classification,
+                    n.nodename,
+                    h.subtreetags->(n.relationanchorpoint::text) AS subtreetags,
+                    h.parentnodeanchor,
+                    h.dimensionspacepoint,
+                    0 AS level
+                FROM {$this->tableNames->node()} n
+                INNER JOIN {$this->tableNames->hierarchyRelation()} h
+                    ON n.relationanchorpoint = ANY(h.childnodeanchors)
+                    AND h.contentstreamid = :contentstreamid
+                    AND h.dimensionspacepointhash = :dimensionspacepointhash
+                WHERE n.nodeaggregateid = :nodeaggregateid
+                    {$visibilityClause}
+
+                UNION ALL
+
+                -- Recursive: walk up via parentnodeanchor
+                SELECT
+                    n.nodeaggregateid, n.relationanchorpoint, n.origindimensionspacepoint,
+                    n.origindimensionspacepointhash, n.nodetypename, n.properties, n.classification,
+                    n.nodename,
+                    h.subtreetags->(n.relationanchorpoint::text) AS subtreetags,
+                    h.parentnodeanchor,
+                    h.dimensionspacepoint,
+                    prev.level + 1 AS level
+                FROM ancestry prev
+                INNER JOIN {$this->tableNames->node()} n
+                    ON n.relationanchorpoint = prev.parentnodeanchor
+                INNER JOIN {$this->tableNames->hierarchyRelation()} h
+                    ON n.relationanchorpoint = ANY(h.childnodeanchors)
+                    AND h.contentstreamid = :contentstreamid
+                    AND h.dimensionspacepointhash = :dimensionspacepointhash
+                WHERE true
+                    {$visibilityClause}
+            )
+            SELECT * FROM ancestry a
+            WHERE true {$nodeTypeCriteria}
+            ORDER BY level
+            LIMIT 1
+        SQL;
+
+        $result = $this->dbal->executeQuery($query, $parameters, $parameterTypes);
+        $nodeRow = $result->fetchAssociative();
+
+        return $nodeRow ? $this->nodeFactory->mapNodeRowToNode(
+            $nodeRow,
+            $this->workspaceName,
+            $this->visibilityConstraints,
+            $this->dimensionSpacePoint,
+        ) : null;
     }
 
     public function findDescendantNodes(
         NodeAggregateId $entryNodeAggregateId,
         FindDescendantNodesFilter $filter
     ): Nodes {
-        return Nodes::createEmpty();
+        $parameters = [
+            'nodeaggregateid' => $entryNodeAggregateId->value,
+            'contentstreamid' => $this->contentStreamId->value,
+            'dimensionspacepointhash' => $this->dimensionSpacePoint->hash,
+        ];
+        $parameterTypes = [];
+
+        $childVisibilityClause = '';
+        if ($this->excludedSubtreeTagsFilterActive) {
+            $childVisibilityClause = "AND NOT jsonb_exists_any(COALESCE(ch.subtreetags->(c.relationanchorpoint::text), '{}'), ARRAY[:excludedSubtreeTags]::text[])";
+            $parameters['excludedSubtreeTags'] = $this->excludedSubtreeTags;
+            $parameterTypes['excludedSubtreeTags'] = Connection::PARAM_STR_ARRAY;
+        }
+
+        $nodeTypeCriteria = '';
+        if ($filter->nodeTypes !== null) {
+            $expandedNodeTypeCriteria = ExpandedNodeTypeCriteria::create(
+                $filter->nodeTypes,
+                $this->nodeTypeManager
+            );
+            $nodeTypeCriteria = QueryUtility::getNodeTypeCriteriaClause(
+                $expandedNodeTypeCriteria, 't', $parameters, $parameterTypes
+            );
+        }
+
+        $paginationClause = '';
+        if ($filter->pagination !== null) {
+            $paginationClause = 'LIMIT ' . $filter->pagination->limit . ' OFFSET ' . $filter->pagination->offset;
+        }
+
+        $query = /** @lang PostgreSQL */ <<<SQL
+            WITH RECURSIVE tree(
+                nodeaggregateid, relationanchorpoint, origindimensionspacepoint,
+                origindimensionspacepointhash, nodetypename, properties, classification,
+                nodename, subtreetags, dimensionspacepoint, level, position
+            ) AS (
+                -- Initial: direct children of the entry node
+                SELECT
+                    c.nodeaggregateid, c.relationanchorpoint, c.origindimensionspacepoint,
+                    c.origindimensionspacepointhash, c.nodetypename, c.properties, c.classification,
+                    c.nodename,
+                    ch.subtreetags->(c.relationanchorpoint::text) AS subtreetags,
+                    ch.dimensionspacepoint,
+                    0 AS level,
+                    child_ord.ordinality::int AS position
+                FROM {$this->tableNames->node()} p
+                INNER JOIN {$this->tableNames->hierarchyRelation()} ch
+                    ON ch.parentnodeanchor = p.relationanchorpoint
+                    AND ch.contentstreamid = :contentstreamid
+                    AND ch.dimensionspacepointhash = :dimensionspacepointhash
+                CROSS JOIN LATERAL unnest(ch.childnodeanchors) WITH ORDINALITY AS child_ord(anchor, ordinality)
+                INNER JOIN {$this->tableNames->node()} c
+                    ON c.relationanchorpoint = child_ord.anchor
+                WHERE p.nodeaggregateid = :nodeaggregateid
+                    {$childVisibilityClause}
+
+                UNION ALL
+
+                -- Recursive: children of children
+                SELECT
+                    c.nodeaggregateid, c.relationanchorpoint, c.origindimensionspacepoint,
+                    c.origindimensionspacepointhash, c.nodetypename, c.properties, c.classification,
+                    c.nodename,
+                    ch.subtreetags->(c.relationanchorpoint::text) AS subtreetags,
+                    ch.dimensionspacepoint,
+                    prev.level + 1 AS level,
+                    child_ord.ordinality::int AS position
+                FROM tree prev
+                INNER JOIN {$this->tableNames->hierarchyRelation()} ch
+                    ON ch.parentnodeanchor = prev.relationanchorpoint
+                    AND ch.contentstreamid = :contentstreamid
+                    AND ch.dimensionspacepointhash = :dimensionspacepointhash
+                CROSS JOIN LATERAL unnest(ch.childnodeanchors) WITH ORDINALITY AS child_ord(anchor, ordinality)
+                INNER JOIN {$this->tableNames->node()} c
+                    ON c.relationanchorpoint = child_ord.anchor
+                WHERE true
+                    {$childVisibilityClause}
+            )
+            SELECT * FROM tree t
+            WHERE true {$nodeTypeCriteria}
+            ORDER BY level, position
+            {$paginationClause}
+        SQL;
+
+        $result = $this->dbal->executeQuery($query, $parameters, $parameterTypes);
+        $rows = $result->fetchAllAssociative();
+
+        return $this->nodeFactory->mapNodeRowsToNodes(
+            $rows,
+            $this->workspaceName,
+            $this->visibilityConstraints
+        );
     }
 
     public function countDescendantNodes(NodeAggregateId $entryNodeAggregateId, Filter\CountDescendantNodesFilter $filter): int
     {
-        // TODO: Implement countDescendantNodes() method.
-        return 0;
+        $parameters = [
+            'nodeaggregateid' => $entryNodeAggregateId->value,
+            'contentstreamid' => $this->contentStreamId->value,
+            'dimensionspacepointhash' => $this->dimensionSpacePoint->hash,
+        ];
+        $parameterTypes = [];
+
+        $childVisibilityClause = '';
+        if ($this->excludedSubtreeTagsFilterActive) {
+            $childVisibilityClause = "AND NOT jsonb_exists_any(COALESCE(ch.subtreetags->(c.relationanchorpoint::text), '{}'), ARRAY[:excludedSubtreeTags]::text[])";
+            $parameters['excludedSubtreeTags'] = $this->excludedSubtreeTags;
+            $parameterTypes['excludedSubtreeTags'] = Connection::PARAM_STR_ARRAY;
+        }
+
+        $nodeTypeCriteria = '';
+        if ($filter->nodeTypes !== null) {
+            $expandedNodeTypeCriteria = ExpandedNodeTypeCriteria::create(
+                $filter->nodeTypes,
+                $this->nodeTypeManager
+            );
+            $nodeTypeCriteria = QueryUtility::getNodeTypeCriteriaClause(
+                $expandedNodeTypeCriteria, 't', $parameters, $parameterTypes
+            );
+        }
+
+        $query = /** @lang PostgreSQL */ <<<SQL
+            WITH RECURSIVE tree(
+                nodeaggregateid, relationanchorpoint, origindimensionspacepoint,
+                origindimensionspacepointhash, nodetypename, properties, classification,
+                nodename, subtreetags, dimensionspacepoint, level, position
+            ) AS (
+                SELECT
+                    c.nodeaggregateid, c.relationanchorpoint, c.origindimensionspacepoint,
+                    c.origindimensionspacepointhash, c.nodetypename, c.properties, c.classification,
+                    c.nodename,
+                    ch.subtreetags->(c.relationanchorpoint::text) AS subtreetags,
+                    ch.dimensionspacepoint,
+                    0 AS level,
+                    child_ord.ordinality::int AS position
+                FROM {$this->tableNames->node()} p
+                INNER JOIN {$this->tableNames->hierarchyRelation()} ch
+                    ON ch.parentnodeanchor = p.relationanchorpoint
+                    AND ch.contentstreamid = :contentstreamid
+                    AND ch.dimensionspacepointhash = :dimensionspacepointhash
+                CROSS JOIN LATERAL unnest(ch.childnodeanchors) WITH ORDINALITY AS child_ord(anchor, ordinality)
+                INNER JOIN {$this->tableNames->node()} c
+                    ON c.relationanchorpoint = child_ord.anchor
+                WHERE p.nodeaggregateid = :nodeaggregateid
+                    {$childVisibilityClause}
+
+                UNION ALL
+
+                SELECT
+                    c.nodeaggregateid, c.relationanchorpoint, c.origindimensionspacepoint,
+                    c.origindimensionspacepointhash, c.nodetypename, c.properties, c.classification,
+                    c.nodename,
+                    ch.subtreetags->(c.relationanchorpoint::text) AS subtreetags,
+                    ch.dimensionspacepoint,
+                    prev.level + 1 AS level,
+                    child_ord.ordinality::int AS position
+                FROM tree prev
+                INNER JOIN {$this->tableNames->hierarchyRelation()} ch
+                    ON ch.parentnodeanchor = prev.relationanchorpoint
+                    AND ch.contentstreamid = :contentstreamid
+                    AND ch.dimensionspacepointhash = :dimensionspacepointhash
+                CROSS JOIN LATERAL unnest(ch.childnodeanchors) WITH ORDINALITY AS child_ord(anchor, ordinality)
+                INNER JOIN {$this->tableNames->node()} c
+                    ON c.relationanchorpoint = child_ord.anchor
+                WHERE true
+                    {$childVisibilityClause}
+            )
+            SELECT COUNT(*) FROM tree t
+            WHERE true {$nodeTypeCriteria}
+        SQL;
+
+        $result = $this->dbal->executeQuery($query, $parameters, $parameterTypes);
+        return (int)$result->fetchOne();
     }
 
     /**
