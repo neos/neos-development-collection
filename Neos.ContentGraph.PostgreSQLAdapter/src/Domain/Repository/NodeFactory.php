@@ -241,6 +241,9 @@ final class NodeFactory
             }
         }
 
+        ksort($occupiedDimensionSpacePoints);
+        ksort($coveredDimensionSpacePoints);
+
         return NodeAggregate::create(
             $this->contentRepositoryId,
             $workspaceName,

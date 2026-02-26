@@ -15,7 +15,6 @@ declare(strict_types=1);
 namespace Neos\ContentGraph\PostgreSQLAdapter\Domain\Repository;
 
 use Doctrine\DBAL\Connection;
-use Doctrine\DBAL\Types\Types;
 use Neos\ContentGraph\PostgreSQLAdapter\ContentGraphTableNames;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Repository\Query\HypergraphChildQuery;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Repository\Query\HypergraphParentQuery;
@@ -26,7 +25,6 @@ use Neos\ContentGraph\PostgreSQLAdapter\Domain\Repository\Query\HypergraphSiblin
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Repository\Query\QueryUtility;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
-use Neos\ContentRepository\Core\Feature\NodeCreation\NodeCreation;
 use Neos\ContentRepository\Core\Feature\NodeModification\Dto\SerializedPropertyValues;
 use Neos\ContentRepository\Core\Feature\SubtreeTagging\Dto\SubtreeTags;
 use Neos\ContentRepository\Core\Infrastructure\Property\PropertyConverter;
@@ -87,7 +85,6 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 final readonly class PostgresContentSubgraph implements ContentSubgraphInterface
 {
 
-    private const DEFAULT_CHILD_NODE_LIMIT = 100000;
     private const DEFAULT_SIBLING_NODE_LIMIT = 100000;
 
     private array $excludedSubtreeTags;
@@ -287,159 +284,54 @@ final readonly class PostgresContentSubgraph implements ContentSubgraphInterface
         NodeAggregateId $parentNodeAggregateId,
         FindChildNodesFilter $filter
     ): Nodes {
-        // FIXME lets think about adding all inherited node types as column to the DB, this would move
-        //       the calculation heavy part to the write side (which I assume happens a lot less than actual reading)
+        $query = $this->buildChildNodesQuery($parentNodeAggregateId, $filter);
+        $query = $query->withPositionOrdering();
+        if ($filter->pagination !== null) {
+            $query = $query
+                ->withLimit($filter->pagination->limit)
+                ->withOffset($filter->pagination->offset);
+        }
+
+        $childNodeRows = $query->execute($this->dbal)->fetchAllAssociative();
+
+        return $this->nodeFactory->mapNodeRowsToNodes(
+            $childNodeRows,
+            $this->workspaceName,
+            $this->visibilityConstraints
+        );
+    }
+
+    public function countChildNodes(NodeAggregateId $parentNodeAggregateId, Filter\CountChildNodesFilter $filter): int
+    {
+        $query = $this->buildChildNodesQuery($parentNodeAggregateId, $filter);
+
+        $countSql = 'SELECT COUNT(*) FROM (' . $query->getQuery() . ') AS countquery';
+        $result = $this->dbal->executeQuery($countSql, $query->getParameters(), $query->getTypes());
+
+        return (int)$result->fetchOne();
+    }
+
+    private function buildChildNodesQuery(
+        NodeAggregateId $parentNodeAggregateId,
+        FindChildNodesFilter|Filter\CountChildNodesFilter $filter
+    ): HypergraphChildQuery {
+        $query = HypergraphChildQuery::create(
+            $this->contentStreamId,
+            $parentNodeAggregateId,
+            $this->tableNames,
+        );
+        $query = $query->withDimensionSpacePoint($this->dimensionSpacePoint)
+            ->withRestriction($this->visibilityConstraints);
+
         if ($filter->nodeTypes !== null) {
             $expandedNodeTypeCriteria = ExpandedNodeTypeCriteria::create(
                 $filter->nodeTypes,
                 $this->nodeTypeManager
             );
-        } else {
-            $expandedNodeTypeCriteria = null;
+            $query = $query->withNodeTypeCriteria($expandedNodeTypeCriteria, 'cn');
         }
 
-        $nonEmptyNodeTypeFilter = $expandedNodeTypeCriteria !== null &&
-            (!$expandedNodeTypeCriteria->explicitlyAllowedNodeTypeNames->isEmpty()
-                || !$expandedNodeTypeCriteria->explicitlyDisallowedNodeTypeNames->isEmpty());
-
-        $parameters = [
-            'parentnodeaggregateid' => $parentNodeAggregateId->value,
-            'contentstreamid' => $this->contentStreamId->value,
-            'dimensionspacepointhash' => $this->dimensionSpacePoint->hash,
-            'result_offset' => $filter->pagination?->offset ?? 0,
-            'result_limit' => $filter->pagination?->limit ?? self::DEFAULT_CHILD_NODE_LIMIT,
-            'subtreetag_filter_active' => $this->excludedSubtreeTagsFilterActive,
-            'excluded_subtreetags' => $this->excludedSubtreeTags,
-            'mode_wildcard_both' => $nonEmptyNodeTypeFilter && $expandedNodeTypeCriteria->isWildCardAllowed
-                && !$expandedNodeTypeCriteria->explicitlyAllowedNodeTypeNames->isEmpty()
-                && !$expandedNodeTypeCriteria->explicitlyDisallowedNodeTypeNames->isEmpty(),
-            'mode_no_wildcard_both' => $nonEmptyNodeTypeFilter && !$expandedNodeTypeCriteria->isWildCardAllowed
-                && !$expandedNodeTypeCriteria->explicitlyAllowedNodeTypeNames->isEmpty()
-                && !$expandedNodeTypeCriteria->explicitlyDisallowedNodeTypeNames->isEmpty(),
-            'mode_no_wildcard_only_allowed' => $nonEmptyNodeTypeFilter && !$expandedNodeTypeCriteria->isWildCardAllowed
-                && $expandedNodeTypeCriteria->explicitlyDisallowedNodeTypeNames->isEmpty(),
-            'mode_only_disallowed' => $nonEmptyNodeTypeFilter
-                && $expandedNodeTypeCriteria->explicitlyAllowedNodeTypeNames->isEmpty(),
-            'nodetype_allowed' => $expandedNodeTypeCriteria?->explicitlyAllowedNodeTypeNames ?? [],
-            'nodetype_disallowed' => $expandedNodeTypeCriteria?->explicitlyDisallowedNodeTypeNames ?? [],
-        ];
-
-        $parameterTypes = [
-            'excluded_subtreetags' => Connection::PARAM_STR_ARRAY,
-            'nodetype_allowed' => Connection::PARAM_STR_ARRAY,
-            'nodetype_disallowed' => Connection::PARAM_STR_ARRAY,
-            'mode_wildcard_both' => Types::BOOLEAN,
-            'mode_no_wildcard_both' => Types::BOOLEAN,
-            'mode_no_wildcard_only_allowed' => Types::BOOLEAN,
-            'mode_only_disallowed' => Types::BOOLEAN,
-        ];
-
-        $query = <<<SQL
-            with parent as (
-                select {$this->tableNames->functionGetRelationAnchorPoint()}(
-                        :parentnodeaggregateid,
-                        :contentstreamid,
-                        :dimensionspacepointhash
-                    ) as parentnodeanchor
-            ),
-            child_node_anchors as (
-                select
-                    cna.*,
-                    ph.dimensionspacepoint,
-                    ph.dimensionspacepointhash,
-                    ph.subtreetags
-                from {$this->tableNames->hierarchyRelation()} ph, parent pna
-                    -- with this join, we keep the order of the child nodes from inside the array
-                    left join lateral (
-                        select
-                            *
-                        from unnest(ph.childnodeanchors) with ordinality as children(childnodeanchor, position)
-                    ) cna on true
-                -- parent node anchor == null means root node
-                where ph.parentnodeanchor = coalesce(pna.parentnodeanchor, 0)
-                  and ph.contentstreamid = :contentstreamid
-                  and ph.dimensionspacepointhash = :dimensionspacepointhash
-            )
-            select
-                cn.nodeaggregateid,
-                cn.origindimensionspacepoint,
-                cn.nodetypename,
-                cn.nodename,
-                cn.properties,
-                cn.classification,
-                -- subtree tags from per-anchor-keyed JSONB on hierarchy relation
-                cna.subtreetags->(cn.relationanchorpoint::text) as subtreetags
-            from child_node_anchors cna
-                left join {$this->tableNames->node()} cn
-                    on cn.relationanchorpoint = cna.childnodeanchor
-            where
-              -- subtree tag filtering (using hierarchy relation JSONB)
-              (
-                  -- deactivate filter when no values are set
-                  not :subtreetag_filter_active
-                    or
-                  not jsonb_exists_any(COALESCE(cna.subtreetags->(cn.relationanchorpoint::text), '{}'), array[:excluded_subtreetags]::text[])
-              )
-              -- node type filtering
-              and
-                ( not :mode_wildcard_both or
-                  (cn.nodetypename not in (:nodetype_disallowed)
-                      or cn.nodetypename in (:nodetype_allowed))
-                )
-                and
-                ( not :mode_no_wildcard_both or
-                  (cn.nodetypename not in (:nodetype_disallowed)
-                      and cn.nodetypename in (:nodetype_allowed))
-                )
-                and
-                ( not :mode_no_wildcard_only_allowed or
-                  cn.nodetypename in (:nodetype_allowed)
-                )
-                and
-                ( not :mode_only_disallowed or
-                  cn.nodetypename not in (:nodetype_disallowed)
-                )
-            order by cna.position
-            limit :result_limit
-            offset :result_offset
-        SQL;
-
-        $result = $this->dbal->executeQuery($query, $parameters, $parameterTypes);
-        $rows = $result->fetchAllAssociative();
-
-        $nodesDeserialized = [];
-        foreach ($rows as $nodeRow) {
-            $nodesDeserialized[] = Node::create(
-                $this->contentRepositoryId,
-                $this->workspaceName,
-                $this->dimensionSpacePoint,
-                NodeAggregateId::fromString($nodeRow['nodeaggregateid']),
-                OriginDimensionSpacePoint::fromJsonString($nodeRow['origindimensionspacepoint']),
-                NodeAggregateClassification::from($nodeRow['classification']),
-                NodeTypeName::fromString($nodeRow['nodetypename']),
-                new PropertyCollection(
-                    SerializedPropertyValues::fromJsonString($nodeRow['properties']),
-                    $this->propertyConverter
-                ),
-                !empty($nodeRow['nodename']) ? NodeName::fromString($nodeRow['nodename']) : null,
-                NodeFactory::extractNodeTagsFromJson($nodeRow['subtreetags'] ?? null),
-                Timestamps::create(
-                // TODO replace with $nodeRow['created'] and $nodeRow['originalcreated'] once projection has implemented support
-                    QueryUtility::parseDateTimeString('2023-03-17 12:00:00'),
-                    QueryUtility::parseDateTimeString('2023-03-17 12:00:00'),
-                    null,
-                    null,
-                ),
-                $this->visibilityConstraints,
-            );
-        }
-        return Nodes::fromArray($nodesDeserialized);
-    }
-
-    public function countChildNodes(NodeAggregateId $parentNodeAggregateId, Filter\CountChildNodesFilter $filter): int
-    {
-        // TODO: Implement countChildNodes() method.
-        return 0;
+        return $query;
     }
 
     public function findReferences(

@@ -49,11 +49,9 @@ final class HypergraphChildQuery implements HypergraphQueryInterface
                     ch.contentstreamid, ch.dimensionspacepoint,
                     ch.subtreetags->(cn.relationanchorpoint::text) as subtreetags') . '
             FROM ' . $tableNames->node() . ' pn
-            JOIN (
-                SELECT *, unnest(childnodeanchors) AS childnodeanchor
-                FROM ' . $tableNames->hierarchyRelation() . '
-            ) ch ON ch.parentnodeanchor = pn.relationanchorpoint
-            JOIN ' . $tableNames->node() . ' cn ON cn.relationanchorpoint = ch.childnodeanchor
+            JOIN ' . $tableNames->hierarchyRelation() . ' ch ON ch.parentnodeanchor = pn.relationanchorpoint
+            CROSS JOIN LATERAL unnest(ch.childnodeanchors) WITH ORDINALITY AS child_ord(anchor, position)
+            JOIN ' . $tableNames->node() . ' cn ON cn.relationanchorpoint = child_ord.anchor
             WHERE ch.contentstreamid = :contentStreamId
                 AND pn.nodeaggregateid = :parentNodeAggregateId';
 
@@ -118,6 +116,14 @@ final class HypergraphChildQuery implements HypergraphQueryInterface
         $query = $this->query . QueryUtility::getRestrictionClause($visibilityConstraints, $this->tableNames, 'c', $parameters, $types);
 
         return new self($query, $parameters, $this->tableNames, $types);
+    }
+
+    public function withPositionOrdering(): self
+    {
+        $query = $this->query . '
+            ORDER BY child_ord.position';
+
+        return new self($query, $this->parameters, $this->tableNames, $this->types);
     }
 
     public function withOnlyTethered(): self
