@@ -17,7 +17,6 @@ namespace Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\Feature;
 use Doctrine\DBAL\Connection;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\NodeRecord;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\NodeRelationAnchorPoint;
-use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\ProjectionReadQueries;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\ProjectionWriteQueries;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 
@@ -40,34 +39,33 @@ trait CopyOnWrite
             ->countContentStreamCoverage($originNode->relationAnchorPoint);
 
         if ($numberOfContentStreamsNodeDoesCover > 1) {
-            $copiedNodeRelationAnchorPoint = NodeRelationAnchorPoint::create();
             $copiedNode = clone $originNode;
-            $copiedNode->relationAnchorPoint = $copiedNodeRelationAnchorPoint;
+            $copiedNode->relationAnchorPoint = null;
             $preprocessor($copiedNode);
-            $copiedNode->addToDatabase($this->getDatabaseConnection(), $this->tableNamePrefix);
+            $copiedNode->addToDatabase($this->getDatabaseConnection(), $this->getTableNames());
 
             $this->reassignIngoingHierarchyRelations(
                 $originContentStreamId,
                 $originNode->relationAnchorPoint,
-                $copiedNodeRelationAnchorPoint
+                $copiedNode->relationAnchorPoint
             );
 
             $this->reassignOutgoingHierarchyRelations(
                 $originContentStreamId,
                 $originNode->relationAnchorPoint,
-                $copiedNodeRelationAnchorPoint
+                $copiedNode->relationAnchorPoint
             );
 
             $this->copyOutgoingReferenceRelations(
                 $originNode->relationAnchorPoint,
-                $copiedNodeRelationAnchorPoint
+                $copiedNode->relationAnchorPoint
             );
 
-            return $copiedNodeRelationAnchorPoint;
+            return $copiedNode->relationAnchorPoint;
         } else {
             // no reason to create a copy
             $preprocessor($originNode);
-            $originNode->updateToDatabase($this->getDatabaseConnection(), $this->tableNamePrefix);
+            $originNode->updateToDatabase($this->getDatabaseConnection(), $this->getTableNames());
 
             return $originNode->relationAnchorPoint;
         }
@@ -91,7 +89,7 @@ trait CopyOnWrite
                 $originRelationAnchorPoint,
                 $targetRelationAnchorPoint,
                 $this->getDatabaseConnection(),
-                $this->tableNamePrefix
+                $this->getTableNames()
             );
         }
     }

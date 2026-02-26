@@ -31,7 +31,7 @@ use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
  */
 final class NodeRecord
 {
-    public NodeRelationAnchorPoint $relationAnchorPoint;
+    public ?NodeRelationAnchorPoint $relationAnchorPoint = null;
 
     public NodeAggregateId $nodeAggregateId;
 
@@ -65,6 +65,69 @@ final class NodeRecord
         $this->nodeTypeName = $nodeTypeName;
         $this->classification = $classification;
         $this->nodeName = $nodeName;
+    }
+
+    /**
+     * @throws DBALException
+     */
+    public function addToDatabase(Connection $databaseConnection, ContentGraphTableNames $tableNames): void
+    {
+        $result = $databaseConnection->executeQuery(
+            'INSERT INTO ' . $tableNames->node() . ' (
+                nodeaggregateid,
+                origindimensionspacepoint,
+                origindimensionspacepointhash,
+                nodetypename,
+                properties,
+                classification,
+                nodename
+            ) VALUES (
+                :nodeaggregateid,
+                :origindimensionspacepoint,
+                :origindimensionspacepointhash,
+                :nodetypename,
+                :properties,
+                :classification,
+                :nodename
+            )
+            RETURNING relationanchorpoint',
+            [
+                'nodeaggregateid' => $this->nodeAggregateId->value,
+                'origindimensionspacepoint' => $this->originDimensionSpacePoint->toJson(),
+                'origindimensionspacepointhash' => $this->originDimensionSpacePointHash,
+                'nodetypename' => $this->nodeTypeName->value,
+                'properties' => json_encode($this->properties),
+                'classification' => $this->classification->value,
+                'nodename' => $this->nodeName?->value ?? '',
+            ]
+        );
+
+        $row = $result->fetchAssociative();
+        if ($row !== false) {
+            $this->relationAnchorPoint = NodeRelationAnchorPoint::fromInteger($row['relationanchorpoint']);
+        }
+    }
+
+    /**
+     * @throws DBALException
+     */
+    public function updateToDatabase(Connection $databaseConnection, ContentGraphTableNames $tableNames): void
+    {
+        $databaseConnection->update(
+            $tableNames->node(),
+            [
+                'nodeaggregateid' => $this->nodeAggregateId->value,
+                'origindimensionspacepoint' => $this->originDimensionSpacePoint->toJson(),
+                'origindimensionspacepointhash' => $this->originDimensionSpacePointHash,
+                'properties' => json_encode($this->properties),
+                'nodetypename' => $this->nodeTypeName->value,
+                'classification' => $this->classification->value,
+                'nodename' => $this->nodeName?->value ?? '',
+            ],
+            [
+                'relationanchorpoint' => $this->relationAnchorPoint->value,
+            ]
+        );
     }
 
     /**

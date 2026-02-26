@@ -334,7 +334,9 @@ trait NodeMove
     ): void {
         $tableHierarchy = $this->getTableNames()->hierarchyRelation();
 
-        // Read current tags for this node from its incoming hierarchy relation
+        // Read current tags for this node from its incoming hierarchy relation.
+        // Following the established pattern in SubtreeTagging.php: a single :nodeAnchor parameter
+        // with PostgreSQL casts (::text for JSONB key, ::bigint for array membership).
         $currentTagsJson = $this->getDatabaseConnection()->fetchOne(
             <<<SQL
                 SELECT h.subtreetags->(:nodeAnchor::text)
@@ -379,11 +381,7 @@ trait NodeMove
             $this->getDatabaseConnection()->executeStatement(
                 <<<SQL
                     UPDATE {$tableHierarchy}
-                    SET subtreetags = jsonb_set(
-                        COALESCE(subtreetags, '{}'::jsonb),
-                        ARRAY[:nodeAnchor::text],
-                        :newTags::jsonb
-                    )
+                    SET subtreetags = COALESCE(subtreetags, '{}'::jsonb) || jsonb_build_object(:nodeAnchor::text, :newTags::jsonb)
                     WHERE :nodeAnchor::bigint = ANY(childnodeanchors)
                       AND contentstreamid = :contentStreamId
                       AND dimensionspacepointhash = :dimensionSpacePointHash

@@ -140,6 +140,24 @@ final readonly class HierarchyRelationRecord
         }
     }
 
+    public function replaceParentNodeAnchor(
+        NodeRelationAnchorPoint $newParentNodeAnchor,
+        Connection $databaseConnection,
+        ContentGraphTableNames $tableNames
+    ): void {
+        try {
+            $databaseConnection->update(
+                $tableNames->hierarchyRelation(),
+                [
+                    'parentnodeanchor' => $newParentNodeAnchor->value,
+                ],
+                $this->getDatabaseIdentifier()
+            );
+        } catch (DBALException $e) {
+            throw new \RuntimeException(sprintf('Failed to replace parent node anchor in hierarchy relation: %s', $e->getMessage()), 1716484960, $e);
+        }
+    }
+
     public function removeFromDatabase(Connection $databaseConnection, ContentGraphTableNames $tableNames): void
     {
         try {
