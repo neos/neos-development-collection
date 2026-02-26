@@ -73,21 +73,12 @@ final readonly class HierarchyRelationRecord
         try {
             $databaseConnection->executeStatement(
                 <<<SQL
-                    WITH updated AS (
-                        UPDATE {$tableName}
-                        SET childnodeanchors = array_remove(childnodeanchors, :childnodeanchor_to_remove),
-                            subtreetags = subtreetags - :childnodeanchor_to_remove_text
-                        WHERE contentstreamid = :contentstreamid
-                          AND parentnodeanchor = :parentnodeanchor
-                          AND dimensionspacepointhash = :dimensionspacepointhash
-                        RETURNING contentstreamid, parentnodeanchor, dimensionspacepointhash, childnodeanchors
-                    )
-                    DELETE FROM {$tableName} h
-                    USING updated AS u
-                    WHERE h.contentstreamid = u.contentstreamid
-                      AND h.parentnodeanchor = u.parentnodeanchor
-                      AND h.dimensionspacepointhash = u.dimensionspacepointhash
-                      AND array_length(u.childnodeanchors, 1) IS NULL
+                    UPDATE {$tableName}
+                    SET childnodeanchors = array_remove(childnodeanchors, :childnodeanchor_to_remove),
+                        subtreetags = subtreetags - :childnodeanchor_to_remove_text
+                    WHERE contentstreamid = :contentstreamid
+                      AND parentnodeanchor = :parentnodeanchor
+                      AND dimensionspacepointhash = :dimensionspacepointhash
                 SQL,
                 [
                     'contentstreamid' => $id['contentstreamid'],
@@ -95,6 +86,21 @@ final readonly class HierarchyRelationRecord
                     'dimensionspacepointhash' => $id['dimensionspacepointhash'],
                     'childnodeanchor_to_remove' => $childNodeAnchor->value,
                     'childnodeanchor_to_remove_text' => (string)$childNodeAnchor->value,
+                ]
+            );
+
+            $databaseConnection->executeStatement(
+                <<<SQL
+                    DELETE FROM {$tableName}
+                    WHERE contentstreamid = :contentstreamid
+                      AND parentnodeanchor = :parentnodeanchor
+                      AND dimensionspacepointhash = :dimensionspacepointhash
+                      AND childnodeanchors = '{}'
+                SQL,
+                [
+                    'contentstreamid' => $id['contentstreamid'],
+                    'parentnodeanchor' => $id['parentnodeanchor'],
+                    'dimensionspacepointhash' => $id['dimensionspacepointhash'],
                 ]
             );
         } catch (DBALException $e) {

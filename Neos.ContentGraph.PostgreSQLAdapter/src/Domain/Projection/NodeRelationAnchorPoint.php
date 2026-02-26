@@ -34,8 +34,11 @@ final readonly class NodeRelationAnchorPoint implements \JsonSerializable
         return new self(0);
     }
 
-    public static function fromInteger(int $value): self
+    public static function fromInteger(int|string $value): self
     {
+        if (is_string($value)) {
+            $value = intval($value);
+        }
         return new self($value);
     }
 

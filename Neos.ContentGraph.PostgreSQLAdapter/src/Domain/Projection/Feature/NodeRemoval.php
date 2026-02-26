@@ -16,15 +16,12 @@ namespace Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\Feature;
 
 use Doctrine\DBAL\Connection;
 use Neos\ContentGraph\PostgreSQLAdapter\ContentGraphTableNames;
-use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\EventCouldNotBeAppliedToContentGraph;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\HierarchyRelationRecord;
-use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\NodeRecord;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\NodeRelationAnchorPoint;
+use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\ProjectionReadQueries;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\ProjectionWriteQueries;
-use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\Feature\NodeRemoval\Event\NodeAggregateWasRemoved;
-use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 
 /**
@@ -39,18 +36,38 @@ trait NodeRemoval
      */
     private function whenNodeAggregateWasRemoved(NodeAggregateWasRemoved $event): void
     {
-        $affectedRelationAnchorPoints = [];
-        // first step: remove hierarchy relations
-        foreach ($event->affectedCoveredDimensionSpacePoints as $dimensionSpacePoint) {
-            // TODO: find parent node anchor for $event->nodeAggregateId in CS + Dim $dimensionSpacePoint
-            $parentHierarchyRelationRecord = HierarchyRelationRecord::fromDatabaseRow(TODO);
+        // first step: find ingoing hierarchy relations for the node aggregate and remove the node from them,
+        // then recursively remove all descendant hierarchy relations
+        $ingoingRelations = $this->getReadQueries()->findIngoingHierarchyHyperrelationRecordsForNodeAggregate(
+            $event->contentStreamId,
+            $event->nodeAggregateId,
+            $event->affectedCoveredDimensionSpacePoints
+        );
 
-            $this->removeEdgeFromHyperrelationRecursively($parentHierarchyRelationRecord);
+        foreach ($ingoingRelations as $ingoingRelationData) {
+            /** @var HierarchyRelationRecord $parentRelation */
+            $parentRelation = $ingoingRelationData['relation'];
+            /** @var NodeRelationAnchorPoint $childNodeAnchor */
+            $childNodeAnchor = $ingoingRelationData['childNodeAnchor'];
+
+            // recursively remove all outgoing (descendant) hierarchy relations
+            $this->removeDescendantHierarchyRelationsRecursively(
+                $event->contentStreamId,
+                $childNodeAnchor,
+                $parentRelation->dimensionSpacePoint
+            );
+
+            // remove the node from its parent's child list (or delete the relation if it becomes empty)
+            $parentRelation->removeChildNodeAnchor(
+                $childNodeAnchor,
+                $this->getDatabaseConnection(),
+                $this->getTableNames()
+            );
         }
 
         // second step: remove orphaned nodes
 
-        // remove reference relation on orphans first
+        // remove reference relations on orphans first
         $this->getDatabaseConnection()->executeStatement(
             "
                 DELETE FROM {$this->tableNames->referenceRelation()} r
@@ -75,16 +92,29 @@ trait NodeRemoval
                     )
             ",
         );
-
     }
 
-    private function removeEdgeFromHyperrelationRecursively(HierarchyRelationRecord $parentHierarchyRelationRecord) {
-        foreach ($parentHierarchyRelationRecord->childNodeAnchors as $childNodeAnchor) {
+    private function removeDescendantHierarchyRelationsRecursively(
+        ContentStreamId $contentStreamId,
+        NodeRelationAnchorPoint $nodeAnchor,
+        DimensionSpacePoint $dimensionSpacePoint
+    ): void {
+        $outgoingRelation = $this->getReadQueries()->findHierarchyHyperrelationRecordByParentNodeAnchor(
+            $contentStreamId,
+            $dimensionSpacePoint,
+            $nodeAnchor
+        );
 
-            $childRecord = // TODO: LOAD THE RECORD
-            $this->removeEdgeFromHyperrelationRecursively($childRecord);
+        if ($outgoingRelation) {
+            foreach ($outgoingRelation->childNodeAnchors as $childNodeAnchor) {
+                $this->removeDescendantHierarchyRelationsRecursively(
+                    $contentStreamId,
+                    $childNodeAnchor,
+                    $dimensionSpacePoint
+                );
+            }
+            $outgoingRelation->removeFromDatabase($this->getDatabaseConnection(), $this->getTableNames());
         }
-        $parentHierarchyRelationRecord->removeFromDatabase($this->getDatabaseConnection());
     }
 
 

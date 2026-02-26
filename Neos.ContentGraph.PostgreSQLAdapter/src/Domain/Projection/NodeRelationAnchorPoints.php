@@ -39,10 +39,12 @@ final readonly class NodeRelationAnchorPoints implements \IteratorAggregate, \Co
     {
         $values = [];
         foreach ($array as $item) {
-            if (is_int($item)) {
+            if (is_numeric($item)) {
                 $values[] = NodeRelationAnchorPoint::fromInteger($item);
             } elseif ($item instanceof NodeRelationAnchorPoint) {
                 $values[] = $item;
+            } else {
+                throw new \RuntimeException('Unexpected type: ' . gettype($item) . ' - value: ' . $item);
             }
         }
         return new self(...$values);
@@ -50,7 +52,11 @@ final readonly class NodeRelationAnchorPoints implements \IteratorAggregate, \Co
 
     public static function fromDatabaseString(string $databaseString): self
     {
-        return self::fromArray(\explode(',', \trim($databaseString, '{}')));
+        $trimmed = \trim($databaseString, '{}');
+        if (empty($trimmed)) {
+            throw new \RuntimeException('Empty NodeRelationAnchorPoints do not make sense (because the parent HierarchyRelation should not exist)');
+        }
+        return self::fromArray(\explode(',', $trimmed));
     }
 
     public function toDatabaseString(): string
