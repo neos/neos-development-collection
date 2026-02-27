@@ -14,6 +14,7 @@ declare(strict_types=1);
 
 namespace Neos\ContentGraph\PostgreSQLAdapter\Domain\Repository\Query;
 
+use Doctrine\DBAL\Connection;
 use Neos\ContentGraph\PostgreSQLAdapter\ContentGraphTableNames;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
@@ -21,6 +22,7 @@ use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateClassification;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateIds;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 
 /**
@@ -85,6 +87,20 @@ final class HypergraphQuery implements HypergraphQueryInterface
         $parameters['nodeAggregateId'] = $nodeAggregateId->value;
 
         return new self($query, $parameters, $this->tableNames, $this->types);
+    }
+
+    public function withNodeAggregateIds(NodeAggregateIds $nodeAggregateIds): self
+    {
+        $query = $this->query .= '
+            AND n.nodeaggregateid IN (:nodeAggregateIds)';
+
+        $parameters = $this->parameters;
+        $parameters['nodeAggregateIds'] = $nodeAggregateIds->toStringArray();
+
+        $types = $this->types;
+        $types['nodeAggregateIds'] = Connection::PARAM_STR_ARRAY;
+
+        return new self($query, $parameters, $this->tableNames, $types);
     }
 
     public function withNodeTypeName(NodeTypeName $nodeTypeName): self

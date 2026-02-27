@@ -195,7 +195,16 @@ final readonly class PostgresContentGraph implements ContentGraphInterface
     public function findNodeAggregatesByIds(
         NodeAggregateIds $nodeAggregateIds
     ): NodeAggregates {
-        throw new \BadMethodCallException(sprintf('Not implemented'), 1740572440);
+        $query = HypergraphQuery::create($this->contentStreamId, $this->tableNames, false);
+        $query = $query->withNodeAggregateIds($nodeAggregateIds);
+
+        $nodeRows = $query->execute($this->dbal)->fetchAllAssociative();
+
+        return $this->nodeFactory->mapNodeRowsToNodeAggregates(
+            $nodeRows,
+            $this->workspaceName,
+            VisibilityConstraints::createEmpty()
+        );
     }
 
     public function findParentNodeAggregateByChildOriginDimensionSpacePoint(

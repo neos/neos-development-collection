@@ -259,7 +259,18 @@ final readonly class PostgresContentSubgraph implements ContentSubgraphInterface
 
     public function findNodesByIds(NodeAggregateIds $nodeAggregateIds): Nodes
     {
-        throw new \BadMethodCallException(sprintf('Not implemented'), 1740572440);
+        $query = HypergraphQuery::create($this->contentStreamId, $this->tableNames);
+        $query = $query->withDimensionSpacePoint($this->dimensionSpacePoint)
+            ->withNodeAggregateIds($nodeAggregateIds)
+            ->withRestriction($this->visibilityConstraints);
+
+        $nodeRows = $query->execute($this->dbal)->fetchAllAssociative();
+
+        return $this->nodeFactory->mapNodeRowsToNodes(
+            $nodeRows,
+            $this->workspaceName,
+            $this->visibilityConstraints
+        );
     }
 
     public function findRootNodeByType(NodeTypeName $nodeTypeName): ?Node
