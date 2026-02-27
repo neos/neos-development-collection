@@ -57,8 +57,11 @@ use Neos\ContentRepository\Core\Feature\SubtreeTagging\Event\SubtreeWasTagged;
 use Neos\ContentRepository\Core\Feature\SubtreeTagging\Event\SubtreeWasUntagged;
 use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Event\RootWorkspaceWasCreated;
 use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Event\WorkspaceWasCreated;
+use Neos\ContentRepository\Core\Feature\WorkspaceModification\Event\WorkspaceBaseWorkspaceWasChanged;
+use Neos\ContentRepository\Core\Feature\WorkspaceModification\Event\WorkspaceWasRemoved;
 use Neos\ContentRepository\Core\Feature\WorkspacePublication\Event\WorkspaceWasDiscarded;
 use Neos\ContentRepository\Core\Feature\WorkspacePublication\Event\WorkspaceWasPublished;
+use Neos\ContentRepository\Core\Feature\WorkspaceRebase\Event\WorkspaceRebaseFailed;
 use Neos\ContentRepository\Core\Feature\WorkspaceRebase\Event\WorkspaceWasRebased;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphProjectionInterface;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphReadModelInterface;
@@ -401,44 +404,35 @@ final readonly class PostgresContentGraphProjection implements ContentGraphProje
     public function apply(EventInterface $event, EventEnvelope $eventEnvelope): void
     {
         match ($event::class) {
-            // NodeCreation
-            RootNodeAggregateWithNodeWasCreated::class => $this->whenRootNodeAggregateWithNodeWasCreated($event),
-            RootNodeAggregateDimensionsWereUpdated::class => $this->whenRootNodeAggregateDimensionsWereUpdated($event),
-            NodeAggregateWithNodeWasCreated::class => $this->whenNodeAggregateWithNodeWasCreated($event),
-            // SubtreeTagging
-            SubtreeWasTagged::class => $this->whenSubtreeWasTagged($event),
-            SubtreeWasUntagged::class => $this->whenSubtreeWasUntagged($event),
-            // NodeModification
-            NodePropertiesWereSet::class => $this->whenNodePropertiesWereSet($event),
-            // NodeReferencing
-            NodeReferencesWereSet::class => $this->whenNodeReferencesWereSet($event),
-            // NodeRemoval
-            NodeAggregateWasRemoved::class => $this->whenNodeAggregateWasRemoved($event),
-            // NodeRenaming
+            ContentStreamWasClosed::class => $this->whenContentStreamWasClosed($event),
+            ContentStreamWasCreated::class => $this->whenContentStreamWasCreated($event),
+            ContentStreamWasForked::class => $this->whenContentStreamWasForked($event),
+            ContentStreamWasRemoved::class => $this->whenContentStreamWasRemoved($event),
+            ContentStreamWasReopened::class => $this->whenContentStreamWasReopened($event),
+            DimensionShineThroughWasAdded::class => $this->whenDimensionShineThroughWasAdded($event),
+            DimensionSpacePointWasMoved::class => $this->whenDimensionSpacePointWasMoved($event),
             NodeAggregateNameWasChanged::class => $this->whenNodeAggregateNameWasChanged($event),
-            NodeAggregateWasMoved::class => $this->whenNodeAggregateWasMoved($event),
-            // NodeTypeChange
             NodeAggregateTypeWasChanged::class => $this->whenNodeAggregateTypeWasChanged($event),
-            // NodeVariation
-            NodeSpecializationVariantWasCreated::class => $this->whenNodeSpecializationVariantWasCreated($event),
+            NodeAggregateWasMoved::class => $this->whenNodeAggregateWasMoved($event),
+            NodeAggregateWasRemoved::class => $this->whenNodeAggregateWasRemoved($event),
+            NodeAggregateWithNodeWasCreated::class => $this->whenNodeAggregateWithNodeWasCreated($event),
             NodeGeneralizationVariantWasCreated::class => $this->whenNodeGeneralizationVariantWasCreated($event),
             NodePeerVariantWasCreated::class => $this->whenNodePeerVariantWasCreated($event),
-            // Workspaces
+            NodePropertiesWereSet::class => $this->whenNodePropertiesWereSet($event),
+            NodeReferencesWereSet::class => $this->whenNodeReferencesWereSet($event),
+            NodeSpecializationVariantWasCreated::class => $this->whenNodeSpecializationVariantWasCreated($event),
+            RootNodeAggregateDimensionsWereUpdated::class => $this->whenRootNodeAggregateDimensionsWereUpdated($event),
+            RootNodeAggregateWithNodeWasCreated::class => $this->whenRootNodeAggregateWithNodeWasCreated($event),
             RootWorkspaceWasCreated::class => $this->whenRootWorkspaceWasCreated($event),
+            SubtreeWasTagged::class => $this->whenSubtreeWasTagged($event),
+            SubtreeWasUntagged::class => $this->whenSubtreeWasUntagged($event),
+            WorkspaceBaseWorkspaceWasChanged::class => $this->whenWorkspaceBaseWorkspaceWasChanged($event),
+            WorkspaceRebaseFailed::class => $this->whenWorkspaceRebaseFailed($event),
             WorkspaceWasCreated::class => $this->whenWorkspaceWasCreated($event),
             WorkspaceWasDiscarded::class => $this->whenWorkspaceWasDiscarded($event),
             WorkspaceWasPublished::class => $this->whenWorkspaceWasPublished($event),
             WorkspaceWasRebased::class => $this->whenWorkspaceWasRebased($event),
-            // ContentStream
-            ContentStreamWasClosed::class => $this->whenContentStreamWasClosed($event),
-            ContentStreamWasCreated::class => $this->whenContentStreamWasCreated($event),
-            ContentStreamWasRemoved::class => $this->whenContentStreamWasRemoved($event),
-            ContentStreamWasReopened::class => $this->whenContentStreamWasReopened($event),
-            // ContentStreamForking
-            ContentStreamWasForked::class => $this->whenContentStreamWasForked($event),
-            // Dimensions
-            DimensionShineThroughWasAdded::class => $this->whenDimensionShineThroughWasAdded($event),
-            DimensionSpacePointWasMoved::class => $this->whenDimensionSpacePointWasMoved($event),
+            WorkspaceWasRemoved::class => $this->whenWorkspaceWasRemoved($event),
             default => null,
         };
         if (
