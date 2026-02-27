@@ -16,6 +16,10 @@ namespace Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\Feature;
 
 use Doctrine\DBAL\Connection;
 use Neos\ContentGraph\PostgreSQLAdapter\ContentGraphTableNames;
+use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\NodeRecord;
+use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\ProjectionReadQueries;
+use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\ProjectionWriteQueries;
+use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
 use Neos\ContentRepository\Core\Feature\DimensionSpaceAdjustment\Event\DimensionShineThroughWasAdded;
 use Neos\ContentRepository\Core\Feature\DimensionSpaceAdjustment\Event\DimensionSpacePointWasMoved;
 
@@ -26,6 +30,7 @@ use Neos\ContentRepository\Core\Feature\DimensionSpaceAdjustment\Event\Dimension
  */
 trait DimensionSpaceAdjustment
 {
+    use CopyOnWrite;
     private function whenDimensionShineThroughWasAdded(DimensionShineThroughWasAdded $event): void
     {
         $parameters = [
@@ -84,18 +89,33 @@ trait DimensionSpaceAdjustment
         );
 
         // 1) Update origin dimension space point on nodes that originate in the source DSP
-        $this->getDatabaseConnection()->executeQuery(/** @lang PostgreSQL */
-            'UPDATE ' . $this->getTableNames()->node() . ' n
-             SET origindimensionspacepoint = :targetDimensionSpacePoint,
-                 origindimensionspacepointhash = :targetDimensionSpacePointHash
-             FROM ' . $this->getTableNames()->hierarchyRelation() . ' h
-             WHERE n.relationanchorpoint = ANY(h.childnodeanchors)
-               AND h.contentstreamid = :contentStreamId
+        //    using copy-on-write to avoid mutating nodes shared with other content streams
+        $affectedNodeRecords = $this->getDatabaseConnection()->fetchAllAssociative(/** @lang PostgreSQL */
+            'SELECT n.*
+             FROM ' . $this->getTableNames()->node() . ' n
+             INNER JOIN ' . $this->getTableNames()->hierarchyRelation() . ' h
+                ON n.relationanchorpoint = ANY(h.childnodeanchors)
+             WHERE h.contentstreamid = :contentStreamId
                AND h.dimensionspacepointhash = :sourceDimensionSpacePointHash
                AND n.origindimensionspacepointhash = :sourceDimensionSpacePointHash
                AND n.classification != \'root\'',
-            $parameters
+            [
+                'contentStreamId' => $event->contentStreamId->value,
+                'sourceDimensionSpacePointHash' => $event->source->hash,
+            ]
         );
+
+        foreach ($affectedNodeRecords as $row) {
+            $nodeRecord = NodeRecord::fromDatabaseRow($row);
+            $this->copyOnWrite(
+                $event->contentStreamId,
+                $nodeRecord,
+                function (NodeRecord $node) use ($event) {
+                    $node->originDimensionSpacePoint = OriginDimensionSpacePoint::fromDimensionSpacePoint($event->target);
+                    $node->originDimensionSpacePointHash = $event->target->hash;
+                }
+            );
+        }
 
         // 2) Update hierarchy relations to point to the new dimension space point
         $this->getDatabaseConnection()->executeQuery(/** @lang PostgreSQL */
@@ -110,4 +130,6 @@ trait DimensionSpaceAdjustment
 
     abstract protected function getDatabaseConnection(): Connection;
     abstract protected function getTableNames(): ContentGraphTableNames;
+    abstract protected function getReadQueries(): ProjectionReadQueries;
+    abstract protected function getWriteQueries(): ProjectionWriteQueries;
 }

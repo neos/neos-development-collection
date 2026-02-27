@@ -15,8 +15,10 @@ declare(strict_types=1);
 namespace Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\Feature;
 
 use Doctrine\DBAL\Connection;
+use Neos\ContentGraph\PostgreSQLAdapter\ContentGraphTableNames;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\NodeRecord;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\NodeRelationAnchorPoint;
+use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\ProjectionReadQueries;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\ProjectionWriteQueries;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 
@@ -111,7 +113,7 @@ trait CopyOnWrite
             $outgoingHierarchyRelation->replaceParentNodeAnchor(
                 $targetRelationAnchorPoint,
                 $this->getDatabaseConnection(),
-                $this->tableNamePrefix
+                $this->getTableNames()
             );
         }
     }
@@ -134,6 +136,8 @@ trait CopyOnWrite
     }
 
     abstract protected function getDatabaseConnection(): Connection;
+    abstract protected function getTableNames(): ContentGraphTableNames;
+    abstract protected function getReadQueries(): ProjectionReadQueries;
     abstract protected function getWriteQueries(): ProjectionWriteQueries;
 
 }
