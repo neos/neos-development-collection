@@ -67,7 +67,13 @@ final class HypergraphSiblingQuery implements HypergraphQueryInterface
 
     public function withOrdinalityOrdering(bool $reverse): self
     {
-        $query = $this->query . ' ORDER BY ordinality ' . ($reverse ? 'DESC' : 'ASC');
+        $direction = $reverse ? 'DESC' : 'ASC';
+        // If an ORDER BY already exists (from withOrdering), append ordinality as secondary sort
+        if (stripos($this->query, 'ORDER BY') !== false) {
+            $query = $this->query . ', ordinality ' . $direction;
+        } else {
+            $query = $this->query . ' ORDER BY ordinality ' . $direction;
+        }
 
         return new self($query, $this->parameters, $this->tableNames, $this->types);
     }

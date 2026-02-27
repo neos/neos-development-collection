@@ -41,9 +41,12 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindPrecedingSibl
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindReferencesFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindSubtreeFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindSucceedingSiblingNodesFilter;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\Ordering\Ordering;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\NodeType\ExpandedNodeTypeCriteria;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\NodeType\NodeTypeCriteria;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\Pagination\Pagination;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\PropertyValue\Criteria\PropertyValueCriteriaInterface;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\SearchTerm\SearchTerm;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodePath;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Nodes;
@@ -418,6 +421,9 @@ final readonly class PostgresContentSubgraph implements ContentSubgraphInterface
             $siblingNodeAggregateId,
             HypergraphSiblingQueryMode::MODE_ONLY_SUCCEEDING,
             $filter->nodeTypes,
+            $filter->searchTerm,
+            $filter->propertyValue,
+            $filter->ordering,
             $filter->pagination,
         );
     }
@@ -430,6 +436,9 @@ final readonly class PostgresContentSubgraph implements ContentSubgraphInterface
             $siblingNodeAggregateId,
             HypergraphSiblingQueryMode::MODE_ONLY_PRECEDING,
             $filter->nodeTypes,
+            $filter->searchTerm,
+            $filter->propertyValue,
+            $filter->ordering,
             $filter->pagination,
         );
     }
@@ -438,6 +447,9 @@ final readonly class PostgresContentSubgraph implements ContentSubgraphInterface
         NodeAggregateId $sibling,
         HypergraphSiblingQueryMode $mode,
         ?NodeTypeCriteria $nodeTypeCriteria = null,
+        ?SearchTerm $searchTerm = null,
+        ?PropertyValueCriteriaInterface $propertyValue = null,
+        ?Ordering $ordering = null,
         ?Pagination $pagination = null,
     ): Nodes {
         $query = HypergraphSiblingQuery::create(
@@ -454,6 +466,15 @@ final readonly class PostgresContentSubgraph implements ContentSubgraphInterface
                 $this->nodeTypeManager
             );
             $query = $query->withNodeTypeCriteria($expandedNodeTypeCriteria, 'sn');
+        }
+        if ($searchTerm !== null) {
+            $query = $query->withSearchTerm($searchTerm, 'sn');
+        }
+        if ($propertyValue !== null) {
+            $query = $query->withPropertyValueConstraints($propertyValue, 'sn');
+        }
+        if ($ordering !== null) {
+            $query = $query->withOrdering($ordering, 'sn');
         }
         $query = $query->withOrdinalityOrdering($mode->isOrderingToBeReversed());
         if (!is_null($pagination)) {
@@ -935,6 +956,25 @@ final readonly class PostgresContentSubgraph implements ContentSubgraphInterface
             );
         }
 
+        $searchTermClause = '';
+        if ($filter->searchTerm !== null) {
+            $searchTermClause = QueryUtility::getSearchTermConstraintClause(
+                $filter->searchTerm, 't', $parameters
+            );
+        }
+
+        $propertyValueClause = '';
+        if ($filter->propertyValue !== null) {
+            $propertyValueClause = QueryUtility::getPropertyValueConstraintClause(
+                $filter->propertyValue, 't', $parameters
+            );
+        }
+
+        $orderingClause = '';
+        if ($filter->ordering !== null) {
+            $orderingClause = QueryUtility::getOrderingFields($filter->ordering, 't') . ',';
+        }
+
         $paginationClause = '';
         if ($filter->pagination !== null) {
             $paginationClause = 'LIMIT ' . $filter->pagination->limit . ' OFFSET ' . $filter->pagination->offset;
@@ -990,8 +1030,8 @@ final readonly class PostgresContentSubgraph implements ContentSubgraphInterface
                     {$childVisibilityClause}
             )
             SELECT * FROM tree t
-            WHERE true {$nodeTypeCriteria}
-            ORDER BY level, position
+            WHERE true {$nodeTypeCriteria} {$searchTermClause} {$propertyValueClause}
+            ORDER BY {$orderingClause} level, position, nodeaggregateid
             {$paginationClause}
         SQL;
 
@@ -1029,6 +1069,20 @@ final readonly class PostgresContentSubgraph implements ContentSubgraphInterface
             );
             $nodeTypeCriteria = QueryUtility::getNodeTypeCriteriaClause(
                 $expandedNodeTypeCriteria, 't', $parameters, $parameterTypes
+            );
+        }
+
+        $searchTermClause = '';
+        if ($filter->searchTerm !== null) {
+            $searchTermClause = QueryUtility::getSearchTermConstraintClause(
+                $filter->searchTerm, 't', $parameters
+            );
+        }
+
+        $propertyValueClause = '';
+        if ($filter->propertyValue !== null) {
+            $propertyValueClause = QueryUtility::getPropertyValueConstraintClause(
+                $filter->propertyValue, 't', $parameters
             );
         }
 
@@ -1080,7 +1134,7 @@ final readonly class PostgresContentSubgraph implements ContentSubgraphInterface
                     {$childVisibilityClause}
             )
             SELECT COUNT(*) FROM tree t
-            WHERE true {$nodeTypeCriteria}
+            WHERE true {$nodeTypeCriteria} {$searchTermClause} {$propertyValueClause}
         SQL;
 
         $result = $this->dbal->executeQuery($query, $parameters, $parameterTypes);

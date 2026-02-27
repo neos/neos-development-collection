@@ -127,7 +127,10 @@ final class QueryUtility
         return $query;
     }
 
-    public static function getOrderingClause(Ordering $ordering, string $nodeTableAlias): string
+    /**
+     * Returns comma-separated ordering expressions without the ORDER BY keyword.
+     */
+    public static function getOrderingFields(Ordering $ordering, string $nodeTableAlias): string
     {
         $orderings = [];
         foreach ($ordering as $orderingField) {
@@ -149,8 +152,13 @@ final class QueryUtility
                 $orderings[] = $nodeTableAlias . '.' . $columnName . ' ' . $directionWithNulls;
             }
         }
+        return implode(', ', $orderings);
+    }
+
+    public static function getOrderingClause(Ordering $ordering, string $nodeTableAlias): string
+    {
         return '
-            ORDER BY ' . implode(', ', $orderings);
+            ORDER BY ' . self::getOrderingFields($ordering, $nodeTableAlias);
     }
 
     private static int $uniqueParameterCounter = 0;
