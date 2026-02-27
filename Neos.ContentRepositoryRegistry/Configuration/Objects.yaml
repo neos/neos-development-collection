@@ -9,6 +9,17 @@ Neos\ContentGraph\DoctrineDbalAdapter\DoctrineDbalContentGraphProjectionFactory:
     2:
       object: 'Doctrine\DBAL\Connection'
 
+# This adds a soft-dependency to the neos/contentgraph-doctrinedbaladapter package
+Neos\ContentGraph\DoctrineDbalAdapter\DoctrineDbalProjectionIntegrityViolationDetectionRunnerFactory:
+  scope: singleton
+  factoryObjectName: 'Neos\ContentRepositoryRegistry\Infrastructure\GenericObjectFactory'
+  arguments:
+    1:
+      value: 'Neos\ContentGraph\DoctrineDbalAdapter\DoctrineDbalProjectionIntegrityViolationDetectionRunnerFactory'
+    2:
+      object: 'Doctrine\DBAL\Connection'
+
+
 # This adds a soft-dependency to the neos/contentgraph-postgresadapter package
 Neos\ContentGraph\PostgreSQLAdapter\PostgresContentGraphProjectionFactory:
   scope: singleton
@@ -16,6 +27,16 @@ Neos\ContentGraph\PostgreSQLAdapter\PostgresContentGraphProjectionFactory:
   arguments:
     1:
       value: 'Neos\ContentGraph\PostgreSQLAdapter\PostgresContentGraphProjectionFactory'
+    2:
+      object: 'Doctrine\DBAL\Connection'
+
+# This adds a soft-dependency to the neos/contentgraph-postgresadapter package
+Neos\ContentGraph\PostgreSQLAdapter\PostgresProjectionIntegrityViolationDetectionRunnerFactory:
+  scope: singleton
+  factoryObjectName: 'Neos\ContentRepositoryRegistry\Infrastructure\GenericObjectFactory'
+  arguments:
+    1:
+      value: 'Neos\ContentGraph\PostgreSQLAdapter\PostgresProjectionIntegrityViolationDetectionRunnerFactory'
     2:
       object: 'Doctrine\DBAL\Connection'
 
@@ -27,3 +48,5 @@ Neos\ContentGraph\PostgreSQLAdapter\PostgresContentGraphProjectionFactory:
   arguments:
     1:
       value: contentRepositoryLogger
+
+

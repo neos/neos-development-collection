@@ -114,6 +114,9 @@ Neos:
         #     # how long should a mark be at least, to be logged? if 0, everything is shown.
         #     minimumMarkDurationMs: 1
 
+        projectionIntegrityViolationDetector:
+          factoryObjectName: Neos\ContentGraph\DoctrineDbalAdapter\DoctrineDbalProjectionIntegrityViolationDetectionRunnerFactory
+
     nodeMigration:
       filterFactories:
         DimensionSpacePoints: Neos\ContentRepository\NodeMigration\Filter\DimensionSpacePointsFilterFactory

@@ -24,12 +24,15 @@ use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\NodeFactory;
 use Neos\ContentGraph\DoctrineDbalAdapter\Tests\Behavior\Features\Bootstrap\Helpers\TestingNodeAggregateId;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
+use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceFactoryInterface;
 use Neos\ContentRepository\Core\Feature\SubtreeTagging\Dto\SubtreeTag;
+use Neos\ContentRepository\Core\Projection\ContentGraph\ProjectionIntegrityViolationDetectionRunner;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\CRTestSuiteRuntimeVariables;
 use Neos\Error\Messages\Error;
 use Neos\Error\Messages\Result;
+use Neos\Flow\Configuration\ConfigurationManager;
 use PHPUnit\Framework\Assert;
 
 /**
@@ -343,7 +346,18 @@ trait ProjectionIntegrityViolationDetectionTrait
      */
     public function iRunIntegrityViolationDetection(): void
     {
-        $projectionIntegrityViolationDetectionRunner = $this->getContentRepositoryService(new DoctrineDbalProjectionIntegrityViolationDetectionRunnerFactory($this->dbal));
+        $configurationManager = $this->getObject(ConfigurationManager::class);
+        $settings = $configurationManager->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, 'Neos.ContentRepositoryRegistry');
+        $presetName = $settings['contentRepositories'][$this->currentContentRepository->id->value]['preset'];
+        $factoryObjectName = $settings['presets'][$presetName]['projectionIntegrityViolationDetector']['factoryObjectName'];
+        $factory = $this->getObject($factoryObjectName);
+        assert($factory instanceof ContentRepositoryServiceFactoryInterface);
+        $projectionIntegrityViolationDetectionRunner = $this->contentRepositoryRegistry->buildService(
+            $this->currentContentRepository->id,
+            $factory
+        );
+        assert($projectionIntegrityViolationDetectionRunner instanceof ProjectionIntegrityViolationDetectionRunner);
+
         $this->lastIntegrityViolationDetectionResult = $projectionIntegrityViolationDetectionRunner->run();
     }
 

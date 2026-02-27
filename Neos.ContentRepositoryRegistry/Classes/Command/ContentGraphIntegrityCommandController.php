@@ -12,7 +12,7 @@ namespace Neos\ContentRepositoryRegistry\Command;
  */
 
 use Doctrine\DBAL\Connection;
-use Neos\ContentGraph\DoctrineDbalAdapter\DoctrineDbalProjectionIntegrityViolationDetectionRunnerFactory;
+use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceFactoryInterface;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Error\Messages\Result;
@@ -30,11 +30,19 @@ final class ContentGraphIntegrityCommandController extends CommandController
     #[Flow\Inject()]
     protected ContentRepositoryRegistry $contentRepositoryRegistry;
 
+
+    #[Flow\InjectConfiguration]
+    protected array $settings;
+
     public function runViolationDetectionCommand(string $contentRepository = 'default', ?string $outputMode = null): void
     {
+        $presetName = $this->settings['contentRepositories'][$contentRepository]['preset'];
+        $factoryObjectName = $this->settings['presets'][$presetName]['projectionIntegrityViolationDetector']['factoryObjectName'];
+        $factory = $this->objectManager->get($factoryObjectName);
+        assert($factory instanceof ContentRepositoryServiceFactoryInterface);
         $detectionRunner = $this->contentRepositoryRegistry->buildService(
             ContentRepositoryId::fromString($contentRepository),
-            new DoctrineDbalProjectionIntegrityViolationDetectionRunnerFactory($this->dbal)
+            $factory
         );
 
         $outputMode = $this->resolveOutputMode($outputMode);
