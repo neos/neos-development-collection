@@ -84,6 +84,13 @@ trait CommonGraphQueryOperations
         return new self($query, $this->parameters, $this->tableNames, $this->types);
     }
 
+    public function withRawOrderBy(string $orderByExpression): self
+    {
+        $query = $this->query . '
+            ORDER BY ' . $orderByExpression;
+        return new self($query, $this->parameters, $this->tableNames, $this->types);
+    }
+
     public function withLimit(int $limit): self
     {
         $query = $this->query . '

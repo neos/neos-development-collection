@@ -606,6 +606,15 @@ final readonly class PostgresContentSubgraph implements ContentSubgraphInterface
             $childVisibilityClause = "AND NOT jsonb_exists_any(COALESCE(ch.subtreetags->(c.relationanchorpoint::text), '{}'), array[:excluded_subtreetags]::text[])";
         }
 
+        $nodeTypeCriteriaClause = '';
+        if ($filter->nodeTypes !== null) {
+            $expandedNodeTypeCriteria = ExpandedNodeTypeCriteria::create(
+                $filter->nodeTypes,
+                $this->nodeTypeManager
+            );
+            $nodeTypeCriteriaClause = QueryUtility::getNodeTypeCriteriaClause($expandedNodeTypeCriteria, 'c', $parameters, $parameterTypes);
+        }
+
         $query = <<<SQL
             WITH RECURSIVE tree(
                 nodeaggregateid, relationanchorpoint, origindimensionspacepoint,
@@ -652,6 +661,7 @@ final readonly class PostgresContentSubgraph implements ContentSubgraphInterface
                 WHERE true
                     {$maximumLevelsClause}
                     {$childVisibilityClause}
+                    {$nodeTypeCriteriaClause}
             )
             SELECT * FROM tree
             ORDER BY level, position

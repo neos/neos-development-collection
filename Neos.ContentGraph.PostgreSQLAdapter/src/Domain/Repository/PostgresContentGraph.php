@@ -196,7 +196,9 @@ final readonly class PostgresContentGraph implements ContentGraphInterface
         NodeAggregateIds $nodeAggregateIds
     ): NodeAggregates {
         $query = HypergraphQuery::create($this->contentStreamId, $this->tableNames, false);
-        $query = $query->withNodeAggregateIds($nodeAggregateIds);
+        $query = $query
+            ->withNodeAggregateIds($nodeAggregateIds)
+            ->withRawOrderBy('n.relationanchorpoint DESC');
 
         $nodeRows = $query->execute($this->dbal)->fetchAllAssociative();
 
