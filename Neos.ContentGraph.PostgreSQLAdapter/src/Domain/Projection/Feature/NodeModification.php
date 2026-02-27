@@ -19,6 +19,7 @@ use Neos\ContentGraph\PostgreSQLAdapter\ContentGraphTableNames;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\ProjectionReadQueries;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\ProjectionWriteQueries;
 use Neos\ContentRepository\Core\Feature\NodeModification\Event\NodePropertiesWereSet;
+use Neos\EventStore\Model\EventEnvelope;
 
 /**
  * The node modification feature set for the hypergraph projector
@@ -30,7 +31,7 @@ trait NodeModification
     /**
      * @throws \Throwable
      */
-    private function whenNodePropertiesWereSet(NodePropertiesWereSet $event): void
+    private function whenNodePropertiesWereSet(NodePropertiesWereSet $event, EventEnvelope $eventEnvelope): void
     {
         // 1. Find the existing node by origin
         $sourceNode = $this->getReadQueries()->findNodeRecordByOrigin(
@@ -62,6 +63,10 @@ trait NodeModification
         if ($numberOfContentStreams <= 1) {
             // No copy needed — update the node record directly
             $sourceNode->properties = $updatedProperties;
+            $sourceNode->timestamps = $sourceNode->timestamps->with(
+                lastModified: $eventEnvelope->recordedAt,
+                originalLastModified: self::initiatingDateTime($eventEnvelope),
+            );
             $this->getWriteQueries()->updateNodeRecord(
                 $this->getDatabaseConnection(),
                 $sourceNode
@@ -75,7 +80,11 @@ trait NodeModification
                 $updatedProperties,
                 $sourceNode->nodeTypeName,
                 $sourceNode->classification,
-                $sourceNode->nodeName
+                $sourceNode->nodeName,
+                $sourceNode->timestamps->with(
+                    lastModified: $eventEnvelope->recordedAt,
+                    originalLastModified: self::initiatingDateTime($eventEnvelope),
+                ),
             );
 
             // Reassign ingoing hierarchy relations for this content stream

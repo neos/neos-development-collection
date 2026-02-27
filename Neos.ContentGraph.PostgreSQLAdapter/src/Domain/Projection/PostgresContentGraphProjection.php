@@ -31,6 +31,7 @@ use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\Feature\SubtreeTagging
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\Feature\Workspace;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\SchemaBuilder\HypergraphSchemaBuilder;
 use Neos\ContentRepository\Core\EventStore\EventInterface;
+use Neos\ContentRepository\Core\EventStore\InitiatingEventMetadata;
 use Neos\ContentRepository\Core\Feature\Common\EmbedsContentStreamId;
 use Neos\ContentRepository\Core\Feature\Common\PublishableToWorkspaceInterface;
 use Neos\ContentRepository\Core\Feature\ContentStreamClosing\Event\ContentStreamWasClosed;
@@ -411,18 +412,18 @@ final readonly class PostgresContentGraphProjection implements ContentGraphProje
             ContentStreamWasReopened::class => $this->whenContentStreamWasReopened($event),
             DimensionShineThroughWasAdded::class => $this->whenDimensionShineThroughWasAdded($event),
             DimensionSpacePointWasMoved::class => $this->whenDimensionSpacePointWasMoved($event),
-            NodeAggregateNameWasChanged::class => $this->whenNodeAggregateNameWasChanged($event),
-            NodeAggregateTypeWasChanged::class => $this->whenNodeAggregateTypeWasChanged($event),
+            NodeAggregateNameWasChanged::class => $this->whenNodeAggregateNameWasChanged($event, $eventEnvelope),
+            NodeAggregateTypeWasChanged::class => $this->whenNodeAggregateTypeWasChanged($event, $eventEnvelope),
             NodeAggregateWasMoved::class => $this->whenNodeAggregateWasMoved($event),
             NodeAggregateWasRemoved::class => $this->whenNodeAggregateWasRemoved($event),
-            NodeAggregateWithNodeWasCreated::class => $this->whenNodeAggregateWithNodeWasCreated($event),
-            NodeGeneralizationVariantWasCreated::class => $this->whenNodeGeneralizationVariantWasCreated($event),
-            NodePeerVariantWasCreated::class => $this->whenNodePeerVariantWasCreated($event),
-            NodePropertiesWereSet::class => $this->whenNodePropertiesWereSet($event),
-            NodeReferencesWereSet::class => $this->whenNodeReferencesWereSet($event),
-            NodeSpecializationVariantWasCreated::class => $this->whenNodeSpecializationVariantWasCreated($event),
+            NodeAggregateWithNodeWasCreated::class => $this->whenNodeAggregateWithNodeWasCreated($event, $eventEnvelope),
+            NodeGeneralizationVariantWasCreated::class => $this->whenNodeGeneralizationVariantWasCreated($event, $eventEnvelope),
+            NodePeerVariantWasCreated::class => $this->whenNodePeerVariantWasCreated($event, $eventEnvelope),
+            NodePropertiesWereSet::class => $this->whenNodePropertiesWereSet($event, $eventEnvelope),
+            NodeReferencesWereSet::class => $this->whenNodeReferencesWereSet($event, $eventEnvelope),
+            NodeSpecializationVariantWasCreated::class => $this->whenNodeSpecializationVariantWasCreated($event, $eventEnvelope),
             RootNodeAggregateDimensionsWereUpdated::class => $this->whenRootNodeAggregateDimensionsWereUpdated($event),
-            RootNodeAggregateWithNodeWasCreated::class => $this->whenRootNodeAggregateWithNodeWasCreated($event),
+            RootNodeAggregateWithNodeWasCreated::class => $this->whenRootNodeAggregateWithNodeWasCreated($event, $eventEnvelope),
             RootWorkspaceWasCreated::class => $this->whenRootWorkspaceWasCreated($event),
             SubtreeWasTagged::class => $this->whenSubtreeWasTagged($event),
             SubtreeWasUntagged::class => $this->whenSubtreeWasUntagged($event),
@@ -486,6 +487,18 @@ final readonly class PostgresContentGraphProjection implements ContentGraphProje
     protected function getTableNames(): ContentGraphTableNames
     {
         return $this->tableNames;
+    }
+
+    protected static function initiatingDateTime(EventEnvelope $eventEnvelope): \DateTimeImmutable
+    {
+        if ($eventEnvelope->event->metadata?->has(InitiatingEventMetadata::INITIATING_TIMESTAMP) !== true) {
+            return $eventEnvelope->recordedAt;
+        }
+        $initiatingTimestamp = InitiatingEventMetadata::getInitiatingTimestamp($eventEnvelope->event->metadata);
+        if ($initiatingTimestamp === null) {
+            throw new \RuntimeException(sprintf('Failed to extract initiating timestamp from event "%s"', $eventEnvelope->event->id->value), 1678902291);
+        }
+        return $initiatingTimestamp;
     }
 
 }

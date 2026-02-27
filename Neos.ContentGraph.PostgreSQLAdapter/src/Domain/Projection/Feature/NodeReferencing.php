@@ -22,6 +22,7 @@ use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\ProjectionWriteQueries
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\ReferenceRelationRecord;
 use Neos\ContentRepository\Core\Feature\NodeReferencing\Event\NodeReferencesWereSet;
 use Neos\ContentRepository\Core\SharedModel\Node\ReferenceName;
+use Neos\EventStore\Model\EventEnvelope;
 
 /**
  * The node referencing feature set for the hypergraph projector
@@ -33,7 +34,7 @@ trait NodeReferencing
     /**
      * @throws \Throwable
      */
-    private function whenNodeReferencesWereSet(NodeReferencesWereSet $event): void
+    private function whenNodeReferencesWereSet(NodeReferencesWereSet $event, EventEnvelope $eventEnvelope): void
     {
         foreach ($event->affectedSourceOriginDimensionSpacePoints as $originDimensionSpacePoint) {
             // 1. Find the node by origin
@@ -67,7 +68,11 @@ trait NodeReferencing
                     $sourceNode->properties,
                     $sourceNode->nodeTypeName,
                     $sourceNode->classification,
-                    $sourceNode->nodeName
+                    $sourceNode->nodeName,
+                    $sourceNode->timestamps->with(
+                        lastModified: $eventEnvelope->recordedAt,
+                        originalLastModified: self::initiatingDateTime($eventEnvelope),
+                    ),
                 );
 
                 // Reassign ingoing hierarchy relations for this content stream
@@ -114,6 +119,15 @@ trait NodeReferencing
 
                 $activeAnchor = $newAnchor;
             } else {
+                // Update timestamps on the existing node
+                $sourceNode->timestamps = $sourceNode->timestamps->with(
+                    lastModified: $eventEnvelope->recordedAt,
+                    originalLastModified: self::initiatingDateTime($eventEnvelope),
+                );
+                $this->getWriteQueries()->updateNodeRecord(
+                    $this->getDatabaseConnection(),
+                    $sourceNode
+                );
                 $activeAnchor = $sourceNode->relationAnchorPoint;
             }
 

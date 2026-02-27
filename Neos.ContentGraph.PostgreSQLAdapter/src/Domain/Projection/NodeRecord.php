@@ -20,6 +20,7 @@ use Neos\ContentGraph\PostgreSQLAdapter\ContentGraphTableNames;
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
 use Neos\ContentRepository\Core\Feature\NodeModification\Dto\SerializedPropertyValues;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Timestamps;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateClassification;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
@@ -47,6 +48,8 @@ final class NodeRecord
 
     public ?NodeName $nodeName;
 
+    public Timestamps $timestamps;
+
     public function __construct(
         NodeRelationAnchorPoint $relationAnchorPoint,
         NodeAggregateId $nodeAggregateId,
@@ -55,7 +58,8 @@ final class NodeRecord
         SerializedPropertyValues $properties,
         NodeTypeName $nodeTypeName,
         NodeAggregateClassification $classification,
-        ?NodeName $nodeName = null
+        ?NodeName $nodeName = null,
+        ?Timestamps $timestamps = null,
     ) {
         $this->relationAnchorPoint = $relationAnchorPoint;
         $this->nodeAggregateId = $nodeAggregateId;
@@ -65,6 +69,12 @@ final class NodeRecord
         $this->nodeTypeName = $nodeTypeName;
         $this->classification = $classification;
         $this->nodeName = $nodeName;
+        $this->timestamps = $timestamps ?? Timestamps::create(
+            new \DateTimeImmutable(),
+            new \DateTimeImmutable(),
+            null,
+            null,
+        );
     }
 
     /**
@@ -80,7 +90,11 @@ final class NodeRecord
                 nodetypename,
                 properties,
                 classification,
-                nodename
+                nodename,
+                created,
+                originalcreated,
+                lastmodified,
+                originallastmodified
             ) VALUES (
                 :nodeaggregateid,
                 :origindimensionspacepoint,
@@ -88,7 +102,11 @@ final class NodeRecord
                 :nodetypename,
                 :properties,
                 :classification,
-                :nodename
+                :nodename,
+                :created,
+                :originalcreated,
+                :lastmodified,
+                :originallastmodified
             )
             RETURNING relationanchorpoint',
             [
@@ -99,6 +117,16 @@ final class NodeRecord
                 'properties' => json_encode($this->properties),
                 'classification' => $this->classification->value,
                 'nodename' => $this->nodeName?->value ?? '',
+                'created' => $this->timestamps->created,
+                'originalcreated' => $this->timestamps->originalCreated,
+                'lastmodified' => $this->timestamps->lastModified,
+                'originallastmodified' => $this->timestamps->originalLastModified,
+            ],
+            [
+                'created' => 'datetime_immutable',
+                'originalcreated' => 'datetime_immutable',
+                'lastmodified' => 'datetime_immutable',
+                'originallastmodified' => 'datetime_immutable',
             ]
         );
 
@@ -123,9 +151,15 @@ final class NodeRecord
                 'nodetypename' => $this->nodeTypeName->value,
                 'classification' => $this->classification->value,
                 'nodename' => $this->nodeName?->value ?? '',
+                'lastmodified' => $this->timestamps->lastModified,
+                'originallastmodified' => $this->timestamps->originalLastModified,
             ],
             [
                 'relationanchorpoint' => $this->relationAnchorPoint->value,
+            ],
+            [
+                'lastmodified' => 'datetime_immutable',
+                'originallastmodified' => 'datetime_immutable',
             ]
         );
     }
@@ -144,8 +178,26 @@ final class NodeRecord
             SerializedPropertyValues::fromJsonString($databaseRow['properties']),
             NodeTypeName::fromString($databaseRow['nodetypename']),
             NodeAggregateClassification::from($databaseRow['classification']),
-            $databaseRow['nodename'] ? NodeName::fromString($databaseRow['nodename']) : null
+            $databaseRow['nodename'] ? NodeName::fromString($databaseRow['nodename']) : null,
+            Timestamps::create(
+                self::parseDateTimeString($databaseRow['created'] ?? null),
+                self::parseDateTimeString($databaseRow['originalcreated'] ?? null),
+                isset($databaseRow['lastmodified']) ? self::parseDateTimeString($databaseRow['lastmodified']) : null,
+                isset($databaseRow['originallastmodified']) ? self::parseDateTimeString($databaseRow['originallastmodified']) : null,
+            ),
         );
+    }
+
+    private static function parseDateTimeString(?string $dateTimeString): \DateTimeImmutable
+    {
+        if ($dateTimeString === null) {
+            return new \DateTimeImmutable();
+        }
+        $result = \DateTimeImmutable::createFromFormat('Y-m-d H:i:s', $dateTimeString);
+        if ($result === false) {
+            $result = new \DateTimeImmutable($dateTimeString);
+        }
+        return $result;
     }
 
 }

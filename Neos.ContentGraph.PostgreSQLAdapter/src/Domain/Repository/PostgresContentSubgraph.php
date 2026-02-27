@@ -900,13 +900,14 @@ final readonly class PostgresContentSubgraph implements ContentSubgraphInterface
             WITH RECURSIVE tree(
                 nodeaggregateid, relationanchorpoint, origindimensionspacepoint,
                 origindimensionspacepointhash, nodetypename, properties, classification,
-                nodename, parentnodeaggregateid, level, position, subtreetags
+                nodename, created, originalcreated, lastmodified, originallastmodified,
+                parentnodeaggregateid, level, position, subtreetags
             ) AS (
                 -- Initial: entry node
                 SELECT
                     n.nodeaggregateid, n.relationanchorpoint, n.origindimensionspacepoint,
                     n.origindimensionspacepointhash, n.nodetypename, n.properties, n.classification,
-                    n.nodename,
+                    n.nodename, n.created, n.originalcreated, n.lastmodified, n.originallastmodified,
                     'ROOT'::varchar AS parentnodeaggregateid,
                     0 AS level,
                     0 AS position,
@@ -925,7 +926,7 @@ final readonly class PostgresContentSubgraph implements ContentSubgraphInterface
                 SELECT
                     c.nodeaggregateid, c.relationanchorpoint, c.origindimensionspacepoint,
                     c.origindimensionspacepointhash, c.nodetypename, c.properties, c.classification,
-                    c.nodename,
+                    c.nodename, c.created, c.originalcreated, c.lastmodified, c.originallastmodified,
                     p.nodeaggregateid AS parentnodeaggregateid,
                     p.level + 1 AS level,
                     child_ord.ordinality::int AS position,
@@ -972,11 +973,10 @@ final readonly class PostgresContentSubgraph implements ContentSubgraphInterface
                 !empty($nodeRow['nodename']) ? NodeName::fromString($nodeRow['nodename']) : null,
                 NodeFactory::extractNodeTagsFromJson($nodeRow['subtreetags'] ?? null),
                 Timestamps::create(
-                    // TODO replace with $nodeRow['created'] and $nodeRow['originalcreated'] once projection has implemented support
-                    QueryUtility::parseDateTimeString('2023-03-17 12:00:00'),
-                    QueryUtility::parseDateTimeString('2023-03-17 12:00:00'),
-                    null,
-                    null,
+                    QueryUtility::parseDateTimeString($nodeRow['created']),
+                    QueryUtility::parseDateTimeString($nodeRow['originalcreated']),
+                    isset($nodeRow['lastmodified']) ? QueryUtility::parseDateTimeString($nodeRow['lastmodified']) : null,
+                    isset($nodeRow['originallastmodified']) ? QueryUtility::parseDateTimeString($nodeRow['originallastmodified']) : null,
                 ),
                 $this->visibilityConstraints,
             );
@@ -1309,13 +1309,14 @@ final readonly class PostgresContentSubgraph implements ContentSubgraphInterface
             WITH RECURSIVE tree(
                 nodeaggregateid, relationanchorpoint, origindimensionspacepoint,
                 origindimensionspacepointhash, nodetypename, properties, classification,
-                nodename, subtreetags, dimensionspacepoint, level, position
+                nodename, created, originalcreated, lastmodified, originallastmodified,
+                subtreetags, dimensionspacepoint, level, position
             ) AS (
                 -- Initial: direct children of the entry node
                 SELECT
                     c.nodeaggregateid, c.relationanchorpoint, c.origindimensionspacepoint,
                     c.origindimensionspacepointhash, c.nodetypename, c.properties, c.classification,
-                    c.nodename,
+                    c.nodename, c.created, c.originalcreated, c.lastmodified, c.originallastmodified,
                     ch.subtreetags->(c.relationanchorpoint::text) AS subtreetags,
                     ch.dimensionspacepoint,
                     0 AS level,
@@ -1337,7 +1338,7 @@ final readonly class PostgresContentSubgraph implements ContentSubgraphInterface
                 SELECT
                     c.nodeaggregateid, c.relationanchorpoint, c.origindimensionspacepoint,
                     c.origindimensionspacepointhash, c.nodetypename, c.properties, c.classification,
-                    c.nodename,
+                    c.nodename, c.created, c.originalcreated, c.lastmodified, c.originallastmodified,
                     ch.subtreetags->(c.relationanchorpoint::text) AS subtreetags,
                     ch.dimensionspacepoint,
                     prev.level + 1 AS level,
@@ -1400,12 +1401,13 @@ final readonly class PostgresContentSubgraph implements ContentSubgraphInterface
             WITH RECURSIVE tree(
                 nodeaggregateid, relationanchorpoint, origindimensionspacepoint,
                 origindimensionspacepointhash, nodetypename, properties, classification,
-                nodename, subtreetags, dimensionspacepoint, level, position
+                nodename, created, originalcreated, lastmodified, originallastmodified,
+                subtreetags, dimensionspacepoint, level, position
             ) AS (
                 SELECT
                     c.nodeaggregateid, c.relationanchorpoint, c.origindimensionspacepoint,
                     c.origindimensionspacepointhash, c.nodetypename, c.properties, c.classification,
-                    c.nodename,
+                    c.nodename, c.created, c.originalcreated, c.lastmodified, c.originallastmodified,
                     ch.subtreetags->(c.relationanchorpoint::text) AS subtreetags,
                     ch.dimensionspacepoint,
                     0 AS level,
@@ -1426,7 +1428,7 @@ final readonly class PostgresContentSubgraph implements ContentSubgraphInterface
                 SELECT
                     c.nodeaggregateid, c.relationanchorpoint, c.origindimensionspacepoint,
                     c.origindimensionspacepointhash, c.nodetypename, c.properties, c.classification,
-                    c.nodename,
+                    c.nodename, c.created, c.originalcreated, c.lastmodified, c.originallastmodified,
                     ch.subtreetags->(c.relationanchorpoint::text) AS subtreetags,
                     ch.dimensionspacepoint,
                     prev.level + 1 AS level,

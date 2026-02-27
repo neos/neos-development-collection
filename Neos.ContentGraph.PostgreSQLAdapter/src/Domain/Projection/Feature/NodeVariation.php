@@ -24,6 +24,8 @@ use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\ProjectionWriteQueries
 use Neos\ContentRepository\Core\Feature\NodeVariation\Event\NodeGeneralizationVariantWasCreated;
 use Neos\ContentRepository\Core\Feature\NodeVariation\Event\NodePeerVariantWasCreated;
 use Neos\ContentRepository\Core\Feature\NodeVariation\Event\NodeSpecializationVariantWasCreated;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Timestamps;
+use Neos\EventStore\Model\EventEnvelope;
 
 /**
  * The node disabling feature set for the hypergraph projector
@@ -41,7 +43,7 @@ trait NodeVariation
     /**
      * @throws \Throwable
      */
-    private function whenNodeSpecializationVariantWasCreated(NodeSpecializationVariantWasCreated $event): void
+    private function whenNodeSpecializationVariantWasCreated(NodeSpecializationVariantWasCreated $event, EventEnvelope $eventEnvelope): void
     {
         $contentStreamId = $event->contentStreamId;
 
@@ -71,7 +73,13 @@ trait NodeVariation
             $sourceNode->properties,
             $sourceNode->nodeTypeName,
             $sourceNode->classification,
-            $sourceNode->nodeName
+            $sourceNode->nodeName,
+            Timestamps::create(
+                $eventEnvelope->recordedAt,
+                self::initiatingDateTime($eventEnvelope),
+                null,
+                null,
+            ),
         );
 
         // 3. Determine affected dimension space points
@@ -213,7 +221,7 @@ trait NodeVariation
         }
     }
 
-    private function whenNodeGeneralizationVariantWasCreated(NodeGeneralizationVariantWasCreated $event): void
+    private function whenNodeGeneralizationVariantWasCreated(NodeGeneralizationVariantWasCreated $event, EventEnvelope $eventEnvelope): void
     {
         $siblings = [];
         foreach ($event->variantSucceedingSiblings->items as $sibling) {
@@ -223,13 +231,22 @@ trait NodeVariation
             ];
         }
 
+        $timestamps = Timestamps::create(
+            $eventEnvelope->recordedAt,
+            self::initiatingDateTime($eventEnvelope),
+            null,
+            null,
+        );
+
         $parameters = [
             'nodeaggregateid' => $event->nodeAggregateId->value,
             'contentstreamid' => $event->contentStreamId->value,
             'sourceorigindimensionhash' => $event->sourceOrigin->hash,
             'generalizationorigin' => $event->generalizationOrigin->toJson(),
             'generalizationoriginhash' => $event->generalizationOrigin->hash,
-            'affecteddimensionsandsiblings' => json_encode($siblings)
+            'affecteddimensionsandsiblings' => json_encode($siblings),
+            'created' => $timestamps->created->format('Y-m-d H:i:s'),
+            'originalcreated' => $timestamps->originalCreated->format('Y-m-d H:i:s'),
         ];
 
         $query = <<<SQL
@@ -249,14 +266,16 @@ trait NodeVariation
                  generalized_node_copy as (
                    insert into cr_default_p_graph_node
                      (nodeaggregateid, origindimensionspacepoint, origindimensionspacepointhash,
-                      nodetypename, properties, classification, nodename)
+                      nodetypename, properties, classification, nodename, created, originalcreated)
                      select sn.nodeaggregateid,
                             :generalizationorigin,
                             :generalizationoriginhash,
                             sn.nodetypename,
                             sn.properties,
                             sn.classification,
-                            sn.nodename
+                            sn.nodename,
+                            :created::timestamp,
+                            :originalcreated::timestamp
                    from source_node sn
                    returning *),
                  old_ingoing_hierarchy as (
@@ -394,7 +413,7 @@ trait NodeVariation
         $this->getDatabaseConnection()->executeQuery($query, $parameters);
     }
 
-    private function whenNodePeerVariantWasCreated(NodePeerVariantWasCreated $event): void
+    private function whenNodePeerVariantWasCreated(NodePeerVariantWasCreated $event, EventEnvelope $eventEnvelope): void
     {
         $siblings = [];
         foreach ($event->peerSucceedingSiblings->items as $sibling) {
@@ -404,7 +423,12 @@ trait NodeVariation
             ];
         }
 
-        // TODO timestamps from event envelope
+        $timestamps = Timestamps::create(
+            $eventEnvelope->recordedAt,
+            self::initiatingDateTime($eventEnvelope),
+            null,
+            null,
+        );
 
         $parameters = [
             'nodeaggregateid' => $event->nodeAggregateId->value,
@@ -412,7 +436,9 @@ trait NodeVariation
             'sourceorigindimensionhash' => $event->sourceOrigin->hash,
             'peerorigin' => $event->peerOrigin->toJson(),
             'peeroriginhash' => $event->peerOrigin->hash,
-            'affecteddimensionsandsiblings' => json_encode($siblings)
+            'affecteddimensionsandsiblings' => json_encode($siblings),
+            'created' => $timestamps->created->format('Y-m-d H:i:s'),
+            'originalcreated' => $timestamps->originalCreated->format('Y-m-d H:i:s'),
         ];
 
         $query = <<<SQL
@@ -432,14 +458,16 @@ trait NodeVariation
                  peer_node_copy as (
                    insert into cr_default_p_graph_node
                      (nodeaggregateid, origindimensionspacepoint, origindimensionspacepointhash,
-                      nodetypename, properties, classification, nodename)
+                      nodetypename, properties, classification, nodename, created, originalcreated)
                      select sn.nodeaggregateid,
                             :peerorigin,
                             :peeroriginhash,
                             sn.nodetypename,
                             sn.properties,
                             sn.classification,
-                            sn.nodename
+                            sn.nodename,
+                            :created::timestamp,
+                            :originalcreated::timestamp
                    from source_node sn
                    returning *),
                  -- ### TODO comment update ingoing hierarchy

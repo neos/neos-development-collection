@@ -40,6 +40,7 @@ final class HypergraphParentQuery implements HypergraphQueryInterface
                 ? implode(', ', $fieldsToFetch)
                 : 'pn.origindimensionspacepoint, pn.nodeaggregateid, pn.nodetypename,
                     pn.classification, pn.properties, pn.nodename,
+                    pn.created, pn.originalcreated, pn.lastmodified, pn.originallastmodified,
                     ph.contentstreamid, ph.dimensionspacepoint,
                     ph.subtreetags->(pn.relationanchorpoint::text) as subtreetags') . '
             FROM ' . $tableNames->hierarchyRelation() . ' ph

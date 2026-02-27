@@ -22,6 +22,8 @@ use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
 use Neos\ContentRepository\Core\Feature\NodeCreation\Event\NodeAggregateWithNodeWasCreated;
 use Neos\ContentRepository\Core\Feature\RootNodeCreation\Event\RootNodeAggregateDimensionsWereUpdated;
 use Neos\ContentRepository\Core\Feature\RootNodeCreation\Event\RootNodeAggregateWithNodeWasCreated;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Timestamps;
+use Neos\EventStore\Model\EventEnvelope;
 
 /**
  * The node creation feature set for the hypergraph projector
@@ -46,13 +48,20 @@ if (is_null($parentNode)) {
     /**
      * @throws \Throwable
      */
-    private function whenRootNodeAggregateWithNodeWasCreated(RootNodeAggregateWithNodeWasCreated $event): void
+    private function whenRootNodeAggregateWithNodeWasCreated(RootNodeAggregateWithNodeWasCreated $event, EventEnvelope $eventEnvelope): void
     {
         //  1. Create the given Dimension Space Point entries
         //  2. Create a Node entry
         //  3. Connect the Hierarchy to the root edge (add the node as child-node in each content dimension)
 
         $originDimensionSpacePoint = OriginDimensionSpacePoint::createWithoutDimensions();
+        $timestamps = Timestamps::create(
+            $eventEnvelope->recordedAt,
+            self::initiatingDateTime($eventEnvelope),
+            null,
+            null,
+        );
+
         $parameters = [
             'nodeaggregateid' => $event->nodeAggregateId->value,
             'origindimensionspacepoint' => $originDimensionSpacePoint->toJson(),
@@ -65,7 +74,9 @@ if (is_null($parentNode)) {
             'dimensions' => json_encode($event->coveredDimensionSpacePoints->points),
             // this could be done directly in the query (value 0), but I leave it here for verbosity
             // and code usage navigation
-            'rootedgeanchor' => NodeRelationAnchorPoint::forRootEdge()
+            'rootedgeanchor' => NodeRelationAnchorPoint::forRootEdge(),
+            'created' => $timestamps->created->format('Y-m-d H:i:s'),
+            'originalcreated' => $timestamps->originalCreated->format('Y-m-d H:i:s'),
         ];
 
         $query = <<<SQL
@@ -82,12 +93,14 @@ if (is_null($parentNode)) {
               -- then, we create the node record
               insert into {$this->getTableNames()->node()}
                 (nodeaggregateid, origindimensionspacepoint, origindimensionspacepointhash, nodetypename,
-                 properties, classification, nodename)
+                 properties, classification, nodename, created, originalcreated)
                 -- all values are passed via parameter
                 values (:nodeaggregateid, :origindimensionspacepoint, :origindimensionspacepointhash, :nodetypename,
                         '{}', -- empty properties
                         :classification,
-                        '' -- no node name
+                        '', -- no node name
+                        :created::timestamp,
+                        :originalcreated::timestamp
                         )
                 -- we want to keep track of the created ID (it is auto-increment)
                 returning relationanchorpoint)
@@ -192,7 +205,7 @@ if (is_null($parentNode)) {
      * @param NodeAggregateWithNodeWasCreated $event
      * @throws \Throwable
      */
-    public function whenNodeAggregateWithNodeWasCreated(NodeAggregateWithNodeWasCreated $event): void
+    public function whenNodeAggregateWithNodeWasCreated(NodeAggregateWithNodeWasCreated $event, EventEnvelope $eventEnvelope): void
     {
         // This event handler performs the following actions:
         //  1. Create a node entry
@@ -204,6 +217,13 @@ if (is_null($parentNode)) {
         foreach ($event->succeedingSiblingsForCoverage->items as $sibling) {
             $siblings[$sibling->dimensionSpacePoint->hash] = $sibling->nodeAggregateId?->value;
         }
+
+        $timestamps = Timestamps::create(
+            $eventEnvelope->recordedAt,
+            self::initiatingDateTime($eventEnvelope),
+            null,
+            null,
+        );
 
         $parameters = [
             'nodeaggregateid' => $event->nodeAggregateId->value,
@@ -218,7 +238,9 @@ if (is_null($parentNode)) {
             'parentnodeaggregateid' => $event->parentNodeAggregateId->value,
             // This is an JSON object where the keys are the dimension hash
             // and the values are the successors (optional, null value means -> append child to end)
-            'interdimensionalsiblings' => json_encode($siblings)
+            'interdimensionalsiblings' => json_encode($siblings),
+            'created' => $timestamps->created->format('Y-m-d H:i:s'),
+            'originalcreated' => $timestamps->originalCreated->format('Y-m-d H:i:s'),
         ];
 
         $query = <<<SQL
@@ -240,10 +262,10 @@ if (is_null($parentNode)) {
               -- first, we create the node record
               insert into {$this->getTableNames()->node()}
                 (nodeaggregateid, origindimensionspacepoint, origindimensionspacepointhash, nodetypename,
-                 properties, classification, nodename)
+                 properties, classification, nodename, created, originalcreated)
                 -- all values are passed via parameter
                 values (:nodeaggregateid, :origindimensionspacepoint, :origindimensionspacepointhash, :nodetypename, :properties,
-                        :classification, :nodename)
+                        :classification, :nodename, :created::timestamp, :originalcreated::timestamp)
                 -- we want to keep track of the created ID (it is auto-increment)
                 returning relationanchorpoint)
             -- now we connect the hierarchy for each content dimension (this node needs to be placed below its parent)

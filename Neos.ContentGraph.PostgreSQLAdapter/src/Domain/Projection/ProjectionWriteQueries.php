@@ -11,6 +11,7 @@ use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
 use Neos\ContentRepository\Core\Feature\NodeModification\Dto\SerializedPropertyValues;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Timestamps;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateClassification;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
@@ -34,9 +35,17 @@ final readonly class ProjectionWriteQueries
         SerializedPropertyValues $properties,
         NodeTypeName $nodeTypeName,
         NodeAggregateClassification $classification,
-        ?NodeName $nodeName = null
+        ?NodeName $nodeName = null,
+        ?Timestamps $timestamps = null,
     ): NodeRelationAnchorPoint
     {
+        $timestamps ??= Timestamps::create(
+            new \DateTimeImmutable(),
+            new \DateTimeImmutable(),
+            null,
+            null,
+        );
+
         $result = $databaseConnection->executeQuery(
             <<<SQL
                 insert into {$this->tableNames->node()} (
@@ -46,10 +55,14 @@ final readonly class ProjectionWriteQueries
                                     nodetypename,
                                     properties,
                                     classification,
-                                    nodename
+                                    nodename,
+                                    created,
+                                    originalcreated,
+                                    lastmodified,
+                                    originallastmodified
                 )
                 values
-                (:nodeaggregateid, :origindimensionspacepoint, :origindimensionspacepointhash, :nodetypename, :properties, :classification, :nodename)
+                (:nodeaggregateid, :origindimensionspacepoint, :origindimensionspacepointhash, :nodetypename, :properties, :classification, :nodename, :created, :originalcreated, :lastmodified, :originallastmodified)
                 -- auto-increment
                 returning relationanchorpoint
             SQL,
@@ -60,7 +73,17 @@ final readonly class ProjectionWriteQueries
                 'nodetypename' => $nodeTypeName->value,
                 'properties' => \json_encode($properties),
                 'classification' => $classification->value,
-                'nodename' => $nodeName?->value ?? ''
+                'nodename' => $nodeName?->value ?? '',
+                'created' => $timestamps->created,
+                'originalcreated' => $timestamps->originalCreated,
+                'lastmodified' => $timestamps->lastModified,
+                'originallastmodified' => $timestamps->originalLastModified,
+            ],
+            [
+                'created' => 'datetime_immutable',
+                'originalcreated' => 'datetime_immutable',
+                'lastmodified' => 'datetime_immutable',
+                'originallastmodified' => 'datetime_immutable',
             ]
         );
 
@@ -87,9 +110,15 @@ final readonly class ProjectionWriteQueries
                 'classification' => $nodeRecord->classification->value,
                 'properties' => json_encode($nodeRecord->properties),
                 'nodename' => $nodeRecord->nodeName?->value ?? '',
+                'lastmodified' => $nodeRecord->timestamps->lastModified,
+                'originallastmodified' => $nodeRecord->timestamps->originalLastModified,
             ],
             [
                 'relationanchorpoint' => $nodeRecord->relationAnchorPoint
+            ],
+            [
+                'lastmodified' => 'datetime_immutable',
+                'originallastmodified' => 'datetime_immutable',
             ]
         );
     }

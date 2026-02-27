@@ -113,6 +113,18 @@ final readonly class HypergraphSchemaBuilder
             ->setNotnull(true);
         $table->addColumn('nodename', Types::STRING)
             ->setLength(255);
+        $table->addColumn('created', Types::DATETIME_IMMUTABLE)
+            ->setDefault('CURRENT_TIMESTAMP')
+            ->setNotnull(true);
+        $table->addColumn('originalcreated', Types::DATETIME_IMMUTABLE)
+            ->setDefault('CURRENT_TIMESTAMP')
+            ->setNotnull(true);
+        $table->addColumn('lastmodified', Types::DATETIME_IMMUTABLE)
+            ->setNotnull(false)
+            ->setDefault(null);
+        $table->addColumn('originallastmodified', Types::DATETIME_IMMUTABLE)
+            ->setNotnull(false)
+            ->setDefault(null);
 
         $table
             ->setPrimaryKey(['relationanchorpoint'])

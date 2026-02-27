@@ -84,9 +84,8 @@ final class NodeFactory
             $nodeRow['nodename'] ? NodeName::fromString($nodeRow['nodename']) : null,
             self::extractNodeTagsFromJson($nodeRow['subtreetags'] ?? null),
             Timestamps::create(
-                // TODO replace with $nodeRow['created'] and $nodeRow['originalcreated'] once projection has implemented support
-                self::parseDateTimeString('2023-03-17 12:00:00'),
-                self::parseDateTimeString('2023-03-17 12:00:00'),
+                self::parseDateTimeString($nodeRow['created']),
+                self::parseDateTimeString($nodeRow['originalcreated']),
                 isset($nodeRow['lastmodified']) ? self::parseDateTimeString($nodeRow['lastmodified']) : null,
                 isset($nodeRow['originallastmodified']) ? self::parseDateTimeString($nodeRow['originallastmodified']) : null,
             ),

@@ -40,6 +40,7 @@ final class HypergraphQuery implements HypergraphQueryInterface
         $query = /** @lang PostgreSQL */
             'SELECT n.origindimensionspacepoint, n.nodeaggregateid,
                 n.nodetypename, n.classification, n.properties, n.nodename,
+                n.created, n.originalcreated, n.lastmodified, n.originallastmodified,
                 h.contentstreamid, h.dimensionspacepoint,
                 h.subtreetags->(n.relationanchorpoint::text) as subtreetags'
             . ($joinSubTreeTags ? ',

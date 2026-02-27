@@ -213,7 +213,7 @@ final readonly class PostgresContentGraph implements ContentGraphInterface
     ): ?NodeAggregate {
         $query = /** @lang PostgreSQL */
             '
-            SELECT n.origindimensionspacepoint, n.nodeaggregateid, n.nodetypename,
+            SELECT n.origindimensionspacepoint, n.nodeaggregateid, n.nodetypename, n.created, n.originalcreated, n.lastmodified, n.originallastmodified,
                    n.classification, n.properties, n.nodename, ph.contentstreamid, ph.dimensionspacepoint,
                    ph.subtreetags->(n.relationanchorpoint::text) as subtreetags
                 FROM ' . $this->tableNames->hierarchyRelation() . ' ph
