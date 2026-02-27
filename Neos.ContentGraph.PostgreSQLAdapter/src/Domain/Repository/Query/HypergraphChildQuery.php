@@ -121,8 +121,13 @@ final class HypergraphChildQuery implements HypergraphQueryInterface
 
     public function withPositionOrdering(): self
     {
-        $query = $this->query . '
+        // If an ORDER BY already exists (from withOrdering), append position as secondary sort
+        if (stripos($this->query, 'ORDER BY') !== false) {
+            $query = $this->query . ', child_ord.position';
+        } else {
+            $query = $this->query . '
             ORDER BY child_ord.position';
+        }
 
         return new self($query, $this->parameters, $this->tableNames, $this->types);
     }

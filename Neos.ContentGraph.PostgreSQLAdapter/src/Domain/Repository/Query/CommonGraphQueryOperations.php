@@ -18,6 +18,9 @@ use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Result as QueryResult;
 use Neos\ContentGraph\PostgreSQLAdapter\ContentGraphTableNames;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\NodeType\ExpandedNodeTypeCriteria;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\Ordering\Ordering;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\PropertyValue\Criteria\PropertyValueCriteriaInterface;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\SearchTerm\SearchTerm;
 
 /**
  * @internal
@@ -59,6 +62,26 @@ trait CommonGraphQueryOperations
         $types = $this->types;
         $query = $this->query . QueryUtility::getNodeTypeCriteriaClause($nodeTypeCriteria, $prefix, $parameters, $types);
         return new self($query, $parameters, $this->tableNames, $types);
+    }
+
+    public function withSearchTerm(SearchTerm $searchTerm, string $nodeTableAlias = 'n'): self
+    {
+        $parameters = $this->parameters;
+        $query = $this->query . QueryUtility::getSearchTermConstraintClause($searchTerm, $nodeTableAlias, $parameters);
+        return new self($query, $parameters, $this->tableNames, $this->types);
+    }
+
+    public function withPropertyValueConstraints(PropertyValueCriteriaInterface $propertyValue, string $nodeTableAlias = 'n'): self
+    {
+        $parameters = $this->parameters;
+        $query = $this->query . QueryUtility::getPropertyValueConstraintClause($propertyValue, $nodeTableAlias, $parameters);
+        return new self($query, $parameters, $this->tableNames, $this->types);
+    }
+
+    public function withOrdering(Ordering $ordering, string $nodeTableAlias = 'n'): self
+    {
+        $query = $this->query . QueryUtility::getOrderingClause($ordering, $nodeTableAlias);
+        return new self($query, $this->parameters, $this->tableNames, $this->types);
     }
 
     public function withLimit(int $limit): self

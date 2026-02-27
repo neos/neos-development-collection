@@ -188,6 +188,9 @@ final readonly class PostgresContentSubgraph implements ContentSubgraphInterface
         FindChildNodesFilter $filter
     ): Nodes {
         $query = $this->buildChildNodesQuery($parentNodeAggregateId, $filter);
+        if ($filter->ordering !== null) {
+            $query = $query->withOrdering($filter->ordering, 'cn');
+        }
         $query = $query->withPositionOrdering();
         if ($filter->pagination !== null) {
             $query = $query
@@ -232,6 +235,14 @@ final readonly class PostgresContentSubgraph implements ContentSubgraphInterface
                 $this->nodeTypeManager
             );
             $query = $query->withNodeTypeCriteria($expandedNodeTypeCriteria, 'cn');
+        }
+
+        if ($filter->searchTerm !== null) {
+            $query = $query->withSearchTerm($filter->searchTerm, 'cn');
+        }
+
+        if ($filter->propertyValue !== null) {
+            $query = $query->withPropertyValueConstraints($filter->propertyValue, 'cn');
         }
 
         return $query;
