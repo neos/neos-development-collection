@@ -163,7 +163,16 @@ final readonly class PostgresContentGraph implements ContentGraphInterface
     public function findNodeAggregatesByType(
         NodeTypeName $nodeTypeName
     ): NodeAggregates {
-        return NodeAggregates::createEmpty();
+        $query = HypergraphQuery::create($this->contentStreamId, $this->tableNames, false);
+        $query = $query->withNodeTypeName($nodeTypeName);
+
+        $nodeRows = $query->execute($this->dbal)->fetchAllAssociative();
+
+        return $this->nodeFactory->mapNodeRowsToNodeAggregates(
+            $nodeRows,
+            $this->workspaceName,
+            VisibilityConstraints::createEmpty()
+        );
     }
 
     public function findNodeAggregateById(
@@ -342,12 +351,47 @@ final readonly class PostgresContentGraph implements ContentGraphInterface
 
     public function findNodeAggregatesTaggedBy(SubtreeTag $subtreeTag): NodeAggregates
     {
-        throw new \BadMethodCallException('Not implemented.', 1740574672);
+        // In the hypergraph model, subtree tags are stored as:
+        // {"<childAnchor>": {"<tagName>": true/null}, ...}
+        // We need to find nodes where their anchor has the tag set to true (explicitly tagged)
+        $query = /** @lang PostgreSQL */
+            'SELECT n.origindimensionspacepoint, n.nodeaggregateid,
+                n.nodetypename, n.classification, n.properties, n.nodename,
+                h.contentstreamid, h.dimensionspacepoint,
+                h.subtreetags->(n.relationanchorpoint::text) as subtreetags
+            FROM ' . $this->tableNames->hierarchyRelation() . ' th
+            JOIN ' . $this->tableNames->node() . ' tn ON tn.relationanchorpoint = ANY(th.childnodeanchors)
+            JOIN ' . $this->tableNames->hierarchyRelation() . ' h
+                ON h.contentstreamid = th.contentstreamid
+            JOIN ' . $this->tableNames->node() . ' n ON n.relationanchorpoint = ANY(h.childnodeanchors)
+                AND n.nodeaggregateid = tn.nodeaggregateid
+            WHERE th.contentstreamid = :contentStreamId
+              AND h.contentstreamid = :contentStreamId
+              AND (th.subtreetags->(tn.relationanchorpoint::text)->>:tagName) = \'true\'
+            ORDER BY n.relationanchorpoint DESC';
+
+        $nodeRows = $this->dbal->executeQuery($query, [
+            'contentStreamId' => $this->contentStreamId->value,
+            'tagName' => $subtreeTag->value,
+        ])->fetchAllAssociative();
+
+        return $this->nodeFactory->mapNodeRowsToNodeAggregates(
+            $nodeRows,
+            $this->workspaceName,
+            VisibilityConstraints::createEmpty()
+        );
     }
 
     public function findUsedNodeTypeNames(): NodeTypeNames
     {
-        return NodeTypeNames::createEmpty();
+        $rows = $this->dbal->executeQuery(
+            'SELECT DISTINCT nodetypename FROM ' . $this->tableNames->node()
+        )->fetchAllAssociative();
+
+        return NodeTypeNames::fromArray(array_map(
+            static fn (array $row) => NodeTypeName::fromString($row['nodetypename']),
+            $rows
+        ));
     }
 
     public function getContentStreamId(): ContentStreamId
