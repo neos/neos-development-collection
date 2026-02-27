@@ -30,11 +30,10 @@ final class HypergraphReferenceQuery implements HypergraphQueryInterface
 
     public static function create(
         ContentStreamId $contentStreamId,
-        string $nodeFieldsToFetch,
+        string $fieldsToFetch,
         ContentGraphTableNames $tableNames
     ): self {
-        $query = /** @lang PostgreSQL */'SELECT ' . $nodeFieldsToFetch
-            . ', r.name as referencename, r.properties AS referenceproperties
+        $query = /** @lang PostgreSQL */'SELECT ' . $fieldsToFetch . '
      FROM ' . $tableNames->referenceRelation() . ' r
         JOIN ' . $tableNames->node() . ' srcn
             ON srcn.relationanchorpoint = r.sourcenodeanchor

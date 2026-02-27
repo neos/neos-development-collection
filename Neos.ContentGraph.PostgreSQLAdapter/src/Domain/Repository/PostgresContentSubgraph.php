@@ -255,9 +255,56 @@ final readonly class PostgresContentSubgraph implements ContentSubgraphInterface
         NodeAggregateId $nodeAggregateId,
         FindReferencesFilter $filter
     ): References {
+        $query = $this->buildReferencesQuery($nodeAggregateId, $filter);
+
+        $referenceRows = $query->execute($this->dbal)->fetchAllAssociative();
+
+        return $this->nodeFactory->mapReferenceRowsToReferences(
+            $referenceRows,
+            $this->workspaceName,
+            $this->visibilityConstraints
+        );
+    }
+
+    public function countReferences(NodeAggregateId $nodeAggregateId, Filter\CountReferencesFilter $filter): int
+    {
+        $query = $this->buildReferencesQuery($nodeAggregateId, $filter);
+
+        return (int)$query->execute($this->dbal)->fetchOne();
+    }
+
+    public function findBackReferences(
+        NodeAggregateId $nodeAggregateId,
+        FindBackReferencesFilter $filter
+    ): References {
+        $query = $this->buildBackReferencesQuery($nodeAggregateId, $filter);
+
+        $referenceRows = $query->execute($this->dbal)->fetchAllAssociative();
+
+        return $this->nodeFactory->mapReferenceRowsToReferences(
+            $referenceRows,
+            $this->workspaceName,
+            $this->visibilityConstraints
+        );
+    }
+
+    public function countBackReferences(NodeAggregateId $nodeAggregateId, Filter\CountBackReferencesFilter $filter): int
+    {
+        $query = $this->buildBackReferencesQuery($nodeAggregateId, $filter);
+
+        return (int)$query->execute($this->dbal)->fetchOne();
+    }
+
+    private function buildReferencesQuery(
+        NodeAggregateId $nodeAggregateId,
+        FindReferencesFilter|Filter\CountReferencesFilter $filter,
+    ): HypergraphReferenceQuery {
+        $isCounting = $filter instanceof Filter\CountReferencesFilter;
         $query = HypergraphReferenceQuery::create(
             $this->contentStreamId,
-            'tarn.*, tarh.contentstreamid, tarh.dimensionspacepoint, tarh.subtreetags->(tarn.relationanchorpoint::text) as subtreetags',
+            $isCounting
+                ? 'COUNT(*)'
+                : 'tarn.*, tarh.contentstreamid, tarh.dimensionspacepoint, tarh.subtreetags->(tarn.relationanchorpoint::text) as subtreetags, r.name as referencename, r.properties AS referenceproperties',
             $this->tableNames
         );
         $query = $query->withDimensionSpacePoint($this->dimensionSpacePoint)
@@ -272,43 +319,51 @@ final readonly class PostgresContentSubgraph implements ContentSubgraphInterface
             );
             $query = $query->withNodeTypeCriteria($expandedNodeTypeCriteria, 'tarn');
         }
-        $orderings = [];
-        if ($filter->referenceName) {
+        if ($filter->nodeSearchTerm !== null) {
+            $query = $query->withSearchTerm($filter->nodeSearchTerm, 'tarn');
+        }
+        if ($filter->nodePropertyValue !== null) {
+            $query = $query->withPropertyValueConstraints($filter->nodePropertyValue, 'tarn');
+        }
+        if ($filter->referenceSearchTerm !== null) {
+            $query = $query->withSearchTerm($filter->referenceSearchTerm, 'r');
+        }
+        if ($filter->referencePropertyValue !== null) {
+            $query = $query->withPropertyValueConstraints($filter->referencePropertyValue, 'r');
+        }
+        if ($filter->referenceName !== null) {
             $query = $query->withReferenceName($filter->referenceName);
-        } else {
+        }
+        if ($filter instanceof FindReferencesFilter) {
+            $orderings = [];
+            if ($filter->ordering !== null) {
+                $orderings[] = QueryUtility::getOrderingFields($filter->ordering, 'tarn');
+            } elseif ($filter->referenceName === null) {
+                $orderings[] = 'r.name';
+            }
+            $orderings[] = 'r.position';
+            $orderings[] = 'tarn.nodeaggregateid';
             $orderings[] = 'r.name';
+            $query = $query->orderedBy($orderings);
+            if ($filter->pagination !== null) {
+                $query = $query
+                    ->withLimit($filter->pagination->limit)
+                    ->withOffset($filter->pagination->offset);
+            }
         }
-        $orderings[] = 'r.position';
-        $orderings[] = 'tarn.nodeaggregateid';
-        $query = $query->orderedBy($orderings);
-        if (!is_null($filter->pagination)) {
-            $query = $query
-                ->withLimit($filter->pagination->limit)
-                ->withOffset($filter->pagination->offset);
-        }
-
-        $referenceRows = $query->execute($this->dbal)->fetchAllAssociative();
-
-        return $this->nodeFactory->mapReferenceRowsToReferences(
-            $referenceRows,
-            $this->workspaceName,
-            $this->visibilityConstraints
-        );
+        return $query;
     }
 
-    public function countReferences(NodeAggregateId $nodeAggregateId, Filter\CountReferencesFilter $filter): int
-    {
-        // TODO: Implement countReferences() method.
-        return 0;
-    }
-
-    public function findBackReferences(
+    private function buildBackReferencesQuery(
         NodeAggregateId $nodeAggregateId,
-        FindBackReferencesFilter $filter
-    ): References {
+        FindBackReferencesFilter|Filter\CountBackReferencesFilter $filter,
+    ): HypergraphReferenceQuery {
+        $isCounting = $filter instanceof Filter\CountBackReferencesFilter;
         $query = HypergraphReferenceQuery::create(
             $this->contentStreamId,
-            'srcn.*, srch.contentstreamid, srch.dimensionspacepoint, srch.subtreetags->(srcn.relationanchorpoint::text) as subtreetags',
+            $isCounting
+                ? 'COUNT(*)'
+                : 'srcn.*, srch.contentstreamid, srch.dimensionspacepoint, srch.subtreetags->(srcn.relationanchorpoint::text) as subtreetags, r.name as referencename, r.properties AS referenceproperties',
             $this->tableNames
         );
         $query = $query->withDimensionSpacePoint($this->dimensionSpacePoint)
@@ -323,34 +378,39 @@ final readonly class PostgresContentSubgraph implements ContentSubgraphInterface
             );
             $query = $query->withNodeTypeCriteria($expandedNodeTypeCriteria, 'srcn');
         }
-        $orderings = [];
-        if ($filter->referenceName) {
+        if ($filter->nodeSearchTerm !== null) {
+            $query = $query->withSearchTerm($filter->nodeSearchTerm, 'srcn');
+        }
+        if ($filter->nodePropertyValue !== null) {
+            $query = $query->withPropertyValueConstraints($filter->nodePropertyValue, 'srcn');
+        }
+        if ($filter->referenceSearchTerm !== null) {
+            $query = $query->withSearchTerm($filter->referenceSearchTerm, 'r');
+        }
+        if ($filter->referencePropertyValue !== null) {
+            $query = $query->withPropertyValueConstraints($filter->referencePropertyValue, 'r');
+        }
+        if ($filter->referenceName !== null) {
             $query = $query->withReferenceName($filter->referenceName);
-        } else {
+        }
+        if ($filter instanceof FindBackReferencesFilter) {
+            $orderings = [];
+            if ($filter->ordering !== null) {
+                $orderings[] = QueryUtility::getOrderingFields($filter->ordering, 'srcn');
+            } elseif ($filter->referenceName === null) {
+                $orderings[] = 'r.name';
+            }
+            $orderings[] = 'r.position';
+            $orderings[] = 'srcn.nodeaggregateid';
             $orderings[] = 'r.name';
+            $query = $query->orderedBy($orderings);
+            if ($filter->pagination !== null) {
+                $query = $query
+                    ->withLimit($filter->pagination->limit)
+                    ->withOffset($filter->pagination->offset);
+            }
         }
-        $orderings[] = 'r.position';
-        $orderings[] = 'srcn.nodeaggregateid';
-        $query = $query->orderedBy($orderings);
-        if (!is_null($filter->pagination)) {
-            $query = $query
-                ->withLimit($filter->pagination->limit)
-                ->withOffset($filter->pagination->offset);
-        }
-
-        $referenceRows = $query->execute($this->dbal)->fetchAllAssociative();
-
-        return $this->nodeFactory->mapReferenceRowsToReferences(
-            $referenceRows,
-            $this->workspaceName,
-            $this->visibilityConstraints
-        );
-    }
-
-    public function countBackReferences(NodeAggregateId $nodeAggregateId, Filter\CountBackReferencesFilter $filter): int
-    {
-        // TODO: Implement countBackReferences() method.
-        return 0;
+        return $query;
     }
 
     public function findParentNode(NodeAggregateId $childNodeAggregateId): ?Node
