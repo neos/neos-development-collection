@@ -653,12 +653,14 @@ final readonly class PostgresContentSubgraph implements ContentSubgraphInterface
         $query = /** @lang PostgreSQL */ <<<SQL
             WITH RECURSIVE ancestry(
                 nodeaggregateid, relationanchorpoint, origindimensionspacepoint,
+                created, originalcreated, lastmodified, originallastmodified,
                 origindimensionspacepointhash, nodetypename, properties, classification,
                 nodename, subtreetags, parentnodeanchor, dimensionspacepoint, level
             ) AS (
                 -- Initial: find the direct parent of the entry node
                 SELECT
                     pn.nodeaggregateid, pn.relationanchorpoint, pn.origindimensionspacepoint,
+                    pn.created, pn.originalcreated, pn.lastmodified, pn.originallastmodified,
                     pn.origindimensionspacepointhash, pn.nodetypename, pn.properties, pn.classification,
                     pn.nodename,
                     ph.subtreetags->(pn.relationanchorpoint::text) AS subtreetags,
@@ -685,6 +687,7 @@ final readonly class PostgresContentSubgraph implements ContentSubgraphInterface
                 -- Recursive: walk up via parentnodeanchor
                 SELECT
                     n.nodeaggregateid, n.relationanchorpoint, n.origindimensionspacepoint,
+                    n.created, n.originalcreated, n.lastmodified, n.originallastmodified,
                     n.origindimensionspacepointhash, n.nodetypename, n.properties, n.classification,
                     n.nodename,
                     h.subtreetags->(n.relationanchorpoint::text) AS subtreetags,
@@ -831,12 +834,14 @@ final readonly class PostgresContentSubgraph implements ContentSubgraphInterface
         $query = /** @lang PostgreSQL */ <<<SQL
             WITH RECURSIVE ancestry(
                 nodeaggregateid, relationanchorpoint, origindimensionspacepoint,
+                created, originalcreated, lastmodified, originallastmodified,
                 origindimensionspacepointhash, nodetypename, properties, classification,
                 nodename, subtreetags, parentnodeanchor, dimensionspacepoint, level
             ) AS (
                 -- Initial: the entry node itself
                 SELECT
                     n.nodeaggregateid, n.relationanchorpoint, n.origindimensionspacepoint,
+                    n.created, n.originalcreated, n.lastmodified, n.originallastmodified,
                     n.origindimensionspacepointhash, n.nodetypename, n.properties, n.classification,
                     n.nodename,
                     h.subtreetags->(n.relationanchorpoint::text) AS subtreetags,
@@ -856,6 +861,7 @@ final readonly class PostgresContentSubgraph implements ContentSubgraphInterface
                 -- Recursive: walk up via parentnodeanchor
                 SELECT
                     n.nodeaggregateid, n.relationanchorpoint, n.origindimensionspacepoint,
+                    n.created, n.originalcreated, n.lastmodified, n.originallastmodified,
                     n.origindimensionspacepointhash, n.nodetypename, n.properties, n.classification,
                     n.nodename,
                     h.subtreetags->(n.relationanchorpoint::text) AS subtreetags,
