@@ -134,6 +134,13 @@ final class Change
      */
     private static function binaryToString(mixed $value): string
     {
-        return is_resource($value) ? stream_get_contents($value) : (string)$value;
+        if (is_resource($value)) {
+            $contents = stream_get_contents($value);
+            if ($contents === false) {
+                throw new \RuntimeException('Failed to read stream resource for binary database column', 1740000001);
+            }
+            return $contents;
+        }
+        return (string)$value;
     }
 }
