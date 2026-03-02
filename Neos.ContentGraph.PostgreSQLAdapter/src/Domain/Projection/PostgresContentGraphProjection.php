@@ -348,11 +348,6 @@ final readonly class PostgresContentGraphProjection implements ContentGraphProje
             end;
             $$ language plpgsql;
         SQL);
-
-        // TODO remove this - only for development
-        $this->dbal->executeStatement(<<<SQL
-            alter sequence cr_default_p_graph_node_relationanchorpoint_seq restart with 1;
-        SQL);
     }
 
     public function status(): ProjectionStatus
