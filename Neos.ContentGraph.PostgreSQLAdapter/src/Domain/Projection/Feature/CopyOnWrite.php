@@ -139,5 +139,4 @@ trait CopyOnWrite
     abstract protected function getTableNames(): ContentGraphTableNames;
     abstract protected function getReadQueries(): ProjectionReadQueries;
     abstract protected function getWriteQueries(): ProjectionWriteQueries;
-
 }

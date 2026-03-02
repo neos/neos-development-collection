@@ -199,5 +199,4 @@ final class NodeRecord
         }
         return $result;
     }
-
 }

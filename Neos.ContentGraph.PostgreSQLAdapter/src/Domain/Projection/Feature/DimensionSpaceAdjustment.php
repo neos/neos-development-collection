@@ -31,6 +31,7 @@ use Neos\ContentRepository\Core\Feature\DimensionSpaceAdjustment\Event\Dimension
 trait DimensionSpaceAdjustment
 {
     use CopyOnWrite;
+
     private function whenDimensionShineThroughWasAdded(DimensionShineThroughWasAdded $event): void
     {
         $parameters = [

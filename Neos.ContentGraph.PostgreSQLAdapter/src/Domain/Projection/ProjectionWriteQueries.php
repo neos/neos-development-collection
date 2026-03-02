@@ -37,8 +37,7 @@ final readonly class ProjectionWriteQueries
         NodeAggregateClassification $classification,
         ?NodeName $nodeName = null,
         ?Timestamps $timestamps = null,
-    ): NodeRelationAnchorPoint
-    {
+    ): NodeRelationAnchorPoint {
         $timestamps ??= Timestamps::create(
             new \DateTimeImmutable(),
             new \DateTimeImmutable(),
@@ -148,8 +147,7 @@ final readonly class ProjectionWriteQueries
     public function addReferenceToDatabase(
         Connection $databaseConnection,
         ReferenceRelationRecord $relationRecord
-    ): void
-    {
+    ): void {
         $databaseConnection->insert($this->tableNames->referenceRelation(), [
             'sourcenodeanchor' => $relationRecord->sourceNodeAnchor->value,
             'name' => $relationRecord->name->value,
@@ -262,8 +260,7 @@ final readonly class ProjectionWriteQueries
     public function addHierarchyRelationRecordToDatabase(
         Connection $databaseConnection,
         HierarchyRelationRecord $hierarchyRelationRecord
-    ): void
-    {
+    ): void {
         $databaseConnection->insert(
             $this->tableNames->hierarchyRelation(),
             [
@@ -282,9 +279,7 @@ final readonly class ProjectionWriteQueries
     public function removeHierarchyRelationFromDatabase(
         Connection $databaseConnection,
         array $hierarchyRelationId
-    ): void
-    {
+    ): void {
         $databaseConnection->delete($this->tableNames->hierarchyRelation(), $hierarchyRelationId);
     }
-
 }

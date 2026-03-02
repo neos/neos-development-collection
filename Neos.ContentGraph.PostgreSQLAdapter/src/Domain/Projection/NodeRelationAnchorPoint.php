@@ -56,5 +56,4 @@ final readonly class NodeRelationAnchorPoint implements \JsonSerializable
     {
         return $other->value === $this->value;
     }
-
 }

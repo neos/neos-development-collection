@@ -118,8 +118,7 @@ trait ContentStream
         ]);
     }
 
-    protected abstract function getDatabaseConnection(): Connection;
+    abstract protected function getDatabaseConnection(): Connection;
 
-    protected abstract function getTableNames(): ContentGraphTableNames;
-
+    abstract protected function getTableNames(): ContentGraphTableNames;
 }

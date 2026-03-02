@@ -87,7 +87,6 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
  */
 final readonly class PostgresContentSubgraph implements ContentSubgraphInterface
 {
-
     private const DEFAULT_SIBLING_NODE_LIMIT = 100000;
 
     private array $excludedSubtreeTags;
@@ -732,13 +731,25 @@ final readonly class PostgresContentSubgraph implements ContentSubgraphInterface
         $parameterTypes = [];
 
         $initialVisibilityClause = QueryUtility::getRestrictionClause(
-            $this->visibilityConstraints, $this->tableNames, 'p', $parameters, $parameterTypes
+            $this->visibilityConstraints,
+            $this->tableNames,
+            'p',
+            $parameters,
+            $parameterTypes
         );
         $childVisibilityClause = QueryUtility::getRestrictionClause(
-            $this->visibilityConstraints, $this->tableNames, 'c', $parameters, $parameterTypes
+            $this->visibilityConstraints,
+            $this->tableNames,
+            'c',
+            $parameters,
+            $parameterTypes
         );
         $recursiveVisibilityClause = QueryUtility::getRestrictionClause(
-            $this->visibilityConstraints, $this->tableNames, '', $parameters, $parameterTypes
+            $this->visibilityConstraints,
+            $this->tableNames,
+            '',
+            $parameters,
+            $parameterTypes
         );
 
         $nodeTypeCriteria = '';
@@ -748,7 +759,10 @@ final readonly class PostgresContentSubgraph implements ContentSubgraphInterface
                 $this->nodeTypeManager
             );
             $nodeTypeCriteria = QueryUtility::getNodeTypeCriteriaClause(
-                $expandedNodeTypeCriteria, 'a', $parameters, $parameterTypes
+                $expandedNodeTypeCriteria,
+                'a',
+                $parameters,
+                $parameterTypes
             );
         }
 
@@ -833,13 +847,25 @@ final readonly class PostgresContentSubgraph implements ContentSubgraphInterface
         $parameterTypes = [];
 
         $initialVisibilityClause = QueryUtility::getRestrictionClause(
-            $this->visibilityConstraints, $this->tableNames, 'p', $parameters, $parameterTypes
+            $this->visibilityConstraints,
+            $this->tableNames,
+            'p',
+            $parameters,
+            $parameterTypes
         );
         $childVisibilityClause = QueryUtility::getRestrictionClause(
-            $this->visibilityConstraints, $this->tableNames, 'c', $parameters, $parameterTypes
+            $this->visibilityConstraints,
+            $this->tableNames,
+            'c',
+            $parameters,
+            $parameterTypes
         );
         $recursiveVisibilityClause = QueryUtility::getRestrictionClause(
-            $this->visibilityConstraints, $this->tableNames, '', $parameters, $parameterTypes
+            $this->visibilityConstraints,
+            $this->tableNames,
+            '',
+            $parameters,
+            $parameterTypes
         );
 
         $nodeTypeCriteria = '';
@@ -849,7 +875,10 @@ final readonly class PostgresContentSubgraph implements ContentSubgraphInterface
                 $this->nodeTypeManager
             );
             $nodeTypeCriteria = QueryUtility::getNodeTypeCriteriaClause(
-                $expandedNodeTypeCriteria, 'a', $parameters, $parameterTypes
+                $expandedNodeTypeCriteria,
+                'a',
+                $parameters,
+                $parameterTypes
             );
         }
 
@@ -922,7 +951,11 @@ final readonly class PostgresContentSubgraph implements ContentSubgraphInterface
         $parameterTypes = [];
 
         $visibilityClause = QueryUtility::getRestrictionClause(
-            $this->visibilityConstraints, $this->tableNames, '', $parameters, $parameterTypes
+            $this->visibilityConstraints,
+            $this->tableNames,
+            '',
+            $parameters,
+            $parameterTypes
         );
 
         $expandedNodeTypeCriteria = ExpandedNodeTypeCriteria::create(
@@ -930,7 +963,10 @@ final readonly class PostgresContentSubgraph implements ContentSubgraphInterface
             $this->nodeTypeManager
         );
         $nodeTypeCriteria = QueryUtility::getNodeTypeCriteriaClause(
-            $expandedNodeTypeCriteria, 'a', $parameters, $parameterTypes
+            $expandedNodeTypeCriteria,
+            'a',
+            $parameters,
+            $parameterTypes
         );
 
         $query = /** @lang PostgreSQL */ <<<SQL
@@ -1022,21 +1058,28 @@ final readonly class PostgresContentSubgraph implements ContentSubgraphInterface
                 $this->nodeTypeManager
             );
             $nodeTypeCriteria = QueryUtility::getNodeTypeCriteriaClause(
-                $expandedNodeTypeCriteria, 't', $parameters, $parameterTypes
+                $expandedNodeTypeCriteria,
+                't',
+                $parameters,
+                $parameterTypes
             );
         }
 
         $searchTermClause = '';
         if ($filter->searchTerm !== null) {
             $searchTermClause = QueryUtility::getSearchTermConstraintClause(
-                $filter->searchTerm, 't', $parameters
+                $filter->searchTerm,
+                't',
+                $parameters
             );
         }
 
         $propertyValueClause = '';
         if ($filter->propertyValue !== null) {
             $propertyValueClause = QueryUtility::getPropertyValueConstraintClause(
-                $filter->propertyValue, 't', $parameters
+                $filter->propertyValue,
+                't',
+                $parameters
             );
         }
 
@@ -1138,21 +1181,28 @@ final readonly class PostgresContentSubgraph implements ContentSubgraphInterface
                 $this->nodeTypeManager
             );
             $nodeTypeCriteria = QueryUtility::getNodeTypeCriteriaClause(
-                $expandedNodeTypeCriteria, 't', $parameters, $parameterTypes
+                $expandedNodeTypeCriteria,
+                't',
+                $parameters,
+                $parameterTypes
             );
         }
 
         $searchTermClause = '';
         if ($filter->searchTerm !== null) {
             $searchTermClause = QueryUtility::getSearchTermConstraintClause(
-                $filter->searchTerm, 't', $parameters
+                $filter->searchTerm,
+                't',
+                $parameters
             );
         }
 
         $propertyValueClause = '';
         if ($filter->propertyValue !== null) {
             $propertyValueClause = QueryUtility::getPropertyValueConstraintClause(
-                $filter->propertyValue, 't', $parameters
+                $filter->propertyValue,
+                't',
+                $parameters
             );
         }
 

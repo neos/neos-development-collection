@@ -19,7 +19,6 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 
 trait Workspace
 {
-
     // ### ----------- event dispatchers
     private function whenRootWorkspaceWasCreated(RootWorkspaceWasCreated $event): void
     {
@@ -110,8 +109,7 @@ trait Workspace
         ]);
     }
 
-    protected abstract function getDatabaseConnection(): Connection;
+    abstract protected function getDatabaseConnection(): Connection;
 
-    protected abstract function getTableNames(): ContentGraphTableNames;
-
+    abstract protected function getTableNames(): ContentGraphTableNames;
 }

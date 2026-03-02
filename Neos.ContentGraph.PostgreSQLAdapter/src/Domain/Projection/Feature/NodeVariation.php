@@ -34,7 +34,6 @@ use Neos\EventStore\Model\EventEnvelope;
  */
 trait NodeVariation
 {
-
     abstract protected function getDatabaseConnection(): Connection;
     abstract protected function getReadQueries(): ProjectionReadQueries;
     abstract protected function getWriteQueries(): ProjectionWriteQueries;
@@ -715,5 +714,4 @@ trait NodeVariation
 
         $this->getDatabaseConnection()->executeQuery($query, $parameters);
     }
-
 }

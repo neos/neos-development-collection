@@ -60,5 +60,4 @@ final readonly class ReferenceRelationRecord
             $this->targetNodeAggregateId
         );
     }
-
 }

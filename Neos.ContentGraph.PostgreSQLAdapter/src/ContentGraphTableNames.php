@@ -95,5 +95,4 @@ final readonly class ContentGraphTableNames
     {
         return $this->functionNamePrefix . '_find_outgoing_hierarchy';
     }
-
 }

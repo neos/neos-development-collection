@@ -19,7 +19,6 @@ use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\PostgresContentGraphPr
  */
 final readonly class HypergraphSchemaBuilder
 {
-
     public function __construct(
         private ContentGraphTableNames $tableNames
     ) {

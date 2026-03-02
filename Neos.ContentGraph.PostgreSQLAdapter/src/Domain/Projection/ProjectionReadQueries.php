@@ -32,7 +32,6 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
  */
 final readonly class ProjectionReadQueries
 {
-
     private ContentGraphTableNames $tableNames;
 
     public function __construct(

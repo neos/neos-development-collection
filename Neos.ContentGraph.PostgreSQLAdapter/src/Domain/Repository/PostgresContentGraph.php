@@ -63,7 +63,6 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
  */
 final readonly class PostgresContentGraph implements ContentGraphInterface
 {
-
     private ContentGraphTableNames $tableNames;
 
     public function __construct(

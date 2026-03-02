@@ -32,7 +32,6 @@ use Neos\EventStore\Model\EventEnvelope;
  */
 trait NodeCreation
 {
-
     abstract protected function getDatabaseConnection(): Connection;
     abstract protected function getTableNames(): ContentGraphTableNames;
 
@@ -369,5 +368,4 @@ if (is_null($parentNode)) {
             'dimensionspacepointhashes' => ArrayParameterType::STRING,
         ]);
     }
-
 }

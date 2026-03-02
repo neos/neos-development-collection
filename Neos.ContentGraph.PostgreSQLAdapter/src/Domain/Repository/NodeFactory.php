@@ -267,8 +267,7 @@ final class NodeFactory
         array $nodeRows,
         WorkspaceName $workspaceName,
         VisibilityConstraints $visibilityConstraints
-    ): NodeAggregates
-    {
+    ): NodeAggregates {
         if (empty($nodeRows)) {
             return NodeAggregates::createEmpty();
         }

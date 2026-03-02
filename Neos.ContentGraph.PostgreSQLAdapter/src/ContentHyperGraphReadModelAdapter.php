@@ -27,7 +27,6 @@ use Neos\EventStore\Model\Event\Version;
  */
 final readonly class ContentHyperGraphReadModelAdapter implements ContentGraphReadModelInterface
 {
-
     private ContentGraphTableNames $tableNames;
 
     public function __construct(
@@ -187,5 +186,4 @@ final readonly class ContentHyperGraphReadModelAdapter implements ContentGraphRe
             (bool)$row['isclosed'],
         );
     }
-
 }
