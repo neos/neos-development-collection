@@ -16,9 +16,7 @@ namespace Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection;
 
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Exception as DBALException;
-use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\ProjectionContentGraph;
 use Neos\ContentGraph\PostgreSQLAdapter\ContentGraphTableNames;
-use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\Query\ProjectionHypergraphQuery;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
@@ -45,67 +43,62 @@ final readonly class ProjectionReadQueries
     }
 
     /**
-     * @param NodeRelationAnchorPoint $relationAnchorPoint
-     * @return NodeRecord|null
+     * Find a node record by its coverage in a specific dimension space point.
+     *
      * @throws DBALException
-     * @throws \Doctrine\DBAL\Driver\Exception
-     */
-    public function findNodeRecordByRelationAnchorPoint(
-        NodeRelationAnchorPoint $relationAnchorPoint
-    ): ?NodeRecord {
-        $tableNode = $this->tableNames->node();
-        $parameters = [
-            'relationAnchorPoint' => $relationAnchorPoint->value
-        ];
-
-        $result = $this->dbal->executeQuery(
-            <<<SQL
-                select n.*
-                from $tableNode n
-                where n.relationanchorpoint = :relationAnchorPoint
-            SQL,
-            $parameters
-        )->fetchAssociative();
-
-        return $result ? NodeRecord::fromDatabaseRow($result) : null;
-    }
-
-    /**
-     * @throws \Exception
      */
     public function findNodeRecordByCoverage(
         ContentStreamId $contentStreamId,
         DimensionSpacePoint $dimensionSpacePoint,
         NodeAggregateId $nodeAggregateId
     ): ?NodeRecord {
-        $query = ProjectionHypergraphQuery::create($contentStreamId, $this->tableNames);
-        $query = $query->withDimensionSpacePoint($dimensionSpacePoint)
-            ->withNodeAggregateId($nodeAggregateId);
-        $result = $query->execute($this->dbal)->fetchAssociative();
+        $result = $this->dbal->executeQuery(
+            'SELECT DISTINCT n.*
+            FROM ' . $this->tableNames->hierarchyRelation() . ' h
+            JOIN ' . $this->tableNames->node() . ' n ON n.relationanchorpoint = ANY(h.childnodeanchors)
+            WHERE h.contentstreamid = :contentStreamId
+            AND h.dimensionspacepointhash = :dimensionSpacePointHash
+            AND n.nodeaggregateid = :nodeAggregateId',
+            [
+                'contentStreamId' => $contentStreamId->value,
+                'dimensionSpacePointHash' => $dimensionSpacePoint->hash,
+                'nodeAggregateId' => $nodeAggregateId->value,
+            ]
+        )->fetchAssociative();
 
         return $result ? NodeRecord::fromDatabaseRow($result) : null;
     }
 
     /**
-     * @throws \Exception
+     * Find a node record by its origin dimension space point.
+     *
+     * @throws DBALException
      */
     public function findNodeRecordByOrigin(
         ContentStreamId $contentStreamId,
         OriginDimensionSpacePoint $originDimensionSpacePoint,
         NodeAggregateId $nodeAggregateId
     ): ?NodeRecord {
-        $query = ProjectionHypergraphQuery::create($contentStreamId, $this->tableNames);
-        $query = $query->withOriginDimensionSpacePoint($originDimensionSpacePoint);
-        $query = $query->withNodeAggregateId($nodeAggregateId);
-
-        $result = $query->execute($this->dbal)->fetchAssociative();
+        $result = $this->dbal->executeQuery(
+            'SELECT DISTINCT n.*
+            FROM ' . $this->tableNames->hierarchyRelation() . ' h
+            JOIN ' . $this->tableNames->node() . ' n ON n.relationanchorpoint = ANY(h.childnodeanchors)
+            WHERE h.contentstreamid = :contentStreamId
+            AND n.origindimensionspacepointhash = :originDimensionSpacePointHash
+            AND h.dimensionspacepointhash = :originDimensionSpacePointHash
+            AND n.nodeaggregateid = :nodeAggregateId',
+            [
+                'contentStreamId' => $contentStreamId->value,
+                'originDimensionSpacePointHash' => $originDimensionSpacePoint->hash,
+                'nodeAggregateId' => $nodeAggregateId->value,
+            ]
+        )->fetchAssociative();
 
         return $result ? NodeRecord::fromDatabaseRow($result) : null;
     }
 
     /**
      * @throws DBALException
-     * @throws \Doctrine\DBAL\Driver\Exception
      */
     public function findParentNodeRecordByOrigin(
         ContentStreamId $contentStreamId,
@@ -135,79 +128,36 @@ final readonly class ProjectionReadQueries
         return $result ? NodeRecord::fromDatabaseRow($result) : null;
     }
 
-    public function findSucceedingSiblingNodeRecordByOrigin(): ?NodeRecord
-    {
-        //$query = /** @lang PostgreSQL */
-        /*    'SELECT * FROM neos_contentgraph_node sn,
-    (
-        SELECT n.relationanchorpoint, h.childnodeanchors, h.contentstreamid, h.dimensionspacepointhash
-            FROM neos_contentgraph_node n
-            JOIN neos_contentgraph_hierarchyhyperrelation h ON n.relationanchorpoint = ANY(h.childnodeanchors)
-            WHERE h.contentstreamid = :contentStreamId
-                AND h.dimensionspacepointhash = :dimensionSpacePointHash
-                AND n.nodeaggregateid = :nodeAggregateId
-    ) AS sh
-    WHERE sn.nodeaggregateid != :nodeAggregateId' . $queryMode->renderCondition();
-
-        $parameters = [
-            'contentStreamId' => (string)$contentStreamId,
-            'dimensionSpacePointHash' => $dimensionSpacePoint->hash,
-            'nodeAggregateId' => (string)$nodeAggregateId
-        ];*/
-        return null;
-    }
-
     /**
-     * @throws DBALException
-     * @throws \Doctrine\DBAL\Driver\Exception
-     */
-    public function findParentNodeRecordByCoverage(
-        ContentStreamId $contentStreamId,
-        DimensionSpacePoint $coveredDimensionSpacePoint,
-        NodeAggregateId $childNodeAggregateId
-    ): ?NodeRecord {
-        $query = /** @lang PostgreSQL */
-            'SELECT p.*
-            FROM ' . $this->tableNames->node() . '_node p
-            JOIN ' . $this->tableNames->hierarchyRelation() . '_hierarchyhyperrelation h ON h.parentnodeanchor = p.relationanchorpoint
-            JOIN ' . $this->tableNames->node() . ' n ON n.relationanchorpoint = ANY(h.childnodeanchors)
-            WHERE h.contentstreamid = :contentStreamId
-            AND h.dimensionspacepointhash = :coveredDimensionSpacePointHash
-            AND n.nodeaggregateid = :childNodeAggregateId';
-
-        $parameters = [
-            'contentStreamId' => $contentStreamId->value,
-            'coveredDimensionSpacePointHash' => $coveredDimensionSpacePoint->hash,
-            'childNodeAggregateId' => $childNodeAggregateId->value
-        ];
-
-        $result = $this->dbal
-            ->executeQuery($query, $parameters)
-            ->fetchAssociative();
-
-        return $result ? NodeRecord::fromDatabaseRow($result) : null;
-    }
-
-    /**
+     * Find all node records that belong to a node aggregate in any dimension.
+     *
      * @return array<int,NodeRecord>
-     * @throws \Exception
+     * @throws DBALException
      */
     public function findNodeRecordsForNodeAggregate(
         ContentStreamId $contentStreamId,
         NodeAggregateId $nodeAggregateId
     ): array {
-        $query = ProjectionHypergraphQuery::create($contentStreamId, $this->tableNames);
-        $query = $query->withNodeAggregateId($nodeAggregateId);
+        $rows = $this->dbal->executeQuery(
+            'SELECT DISTINCT n.*
+            FROM ' . $this->tableNames->hierarchyRelation() . ' h
+            JOIN ' . $this->tableNames->node() . ' n ON n.relationanchorpoint = ANY(h.childnodeanchors)
+            WHERE h.contentstreamid = :contentStreamId
+            AND n.nodeaggregateid = :nodeAggregateId',
+            [
+                'contentStreamId' => $contentStreamId->value,
+                'nodeAggregateId' => $nodeAggregateId->value,
+            ]
+        )->fetchAllAssociative();
 
-        $result = $query->execute($this->dbal)->fetchAllAssociative();
-
-        return array_map(function ($row) {
-            return NodeRecord::fromDatabaseRow($row);
-        }, $result);
+        return array_map(
+            static fn (array $row) => NodeRecord::fromDatabaseRow($row),
+            $rows
+        );
     }
 
     /**
-     * @return array|HierarchyRelationRecord[]
+     * @return array<int,HierarchyRelationRecord>
      * @throws DBALException
      */
     public function findIngoingHierarchyHyperrelationRecords(
@@ -334,7 +284,7 @@ final readonly class ProjectionReadQueries
     }
 
     /**
-     * @return array|HierarchyRelationRecord[]
+     * @return array<int,HierarchyRelationRecord>
      * @throws DBALException
      */
     public function findOutgoingHierarchyHyperrelationRecords(
@@ -369,7 +319,7 @@ final readonly class ProjectionReadQueries
     }
 
     /**
-     * @return array|ReferenceRelationRecord[]
+     * @return array<int,ReferenceRelationRecord>
      * @throws DBALException
      */
     public function findOutgoingReferenceHyperrelationRecords(
@@ -442,116 +392,6 @@ final readonly class ProjectionReadQueries
         $result = $this->dbal->executeQuery($query, $parameters)->fetchAssociative();
 
         return $result ? HierarchyRelationRecord::fromDatabaseRow($result) : null;
-    }
-
-    /**
-     * @return array|HierarchyRelationRecord[]
-     * @throws DBALException
-     */
-    public function findHierarchyHyperrelationRecordsByChildNodeAnchor(
-        NodeRelationAnchorPoint $childNodeAnchor
-    ): array {
-        $query = /** @lang PostgreSQL */
-            'SELECT h.*
-            FROM ' . $this->tableNames->hierarchyRelation() . ' h
-            WHERE :childNodeAnchor = ANY(h.childnodeanchors)';
-
-        $parameters = [
-            'childNodeAnchor' => $childNodeAnchor->value
-        ];
-
-        $hierarchyRelationRecords = [];
-        $result = $this->dbal->executeQuery($query, $parameters)->fetchAllAssociative();
-        foreach ($result as $row) {
-            $hierarchyRelationRecords[] = HierarchyRelationRecord::fromDatabaseRow($row);
-        }
-
-        return $hierarchyRelationRecords;
-    }
-
-    /**
-     * @throws DBALException
-     */
-    public function findChildHierarchyHyperrelationRecord(
-        ContentStreamId $contentStreamId,
-        DimensionSpacePoint $dimensionSpacePoint,
-        NodeAggregateId $nodeAggregateId
-    ): ?HierarchyRelationRecord {
-        $query = /** @lang PostgreSQL */
-            'SELECT h.*
-            FROM ' . $this->tableNames->hierarchyRelation() . ' h
-            JOIN ' . $this->tableNames->node() . ' n ON h.parentnodeanchor = n.relationanchorpoint
-            WHERE h.contentstreamid = :contentStreamId
-            AND n.nodeaggregateid = :nodeAggregateId
-            AND h.dimensionspacepointhash = :dimensionSpacePointHash';
-
-        $parameters = [
-            'contentStreamId' => $contentStreamId->value,
-            'nodeAggregateId' => $nodeAggregateId->value,
-            'dimensionSpacePointHash' => $dimensionSpacePoint->hash
-        ];
-
-        $result = $this->dbal->executeQuery($query, $parameters)->fetchAssociative();
-
-        return $result ? HierarchyRelationRecord::fromDatabaseRow($result) : null;
-    }
-
-    /**
-     * @param ContentStreamId $contentStreamId
-     * @param NodeRelationAnchorPoint $nodeRelationAnchorPoint
-     * @return DimensionSpacePointSet
-     * @throws DBALException
-     */
-    public function findCoverageByNodeRelationAnchorPoint(
-        ContentStreamId $contentStreamId,
-        NodeRelationAnchorPoint $nodeRelationAnchorPoint
-    ): DimensionSpacePointSet {
-        $query = /** @lang PostgreSQL */
-            'SELECT h.dimensionspacepoint
-            FROM ' . $this->tableNames->hierarchyRelation() . ' h
-            JOIN ' . $this->tableNames->node() . ' n ON h.parentnodeanchor = n.relationanchorpoint
-            WHERE h.contentstreamid = :contentStreamId
-            AND n.relationanchorpoint = :relationAnchorPoint';
-        $parameters = [
-            'contentStreamId' => $contentStreamId->value,
-            'relationanchorpoint' => $nodeRelationAnchorPoint->value
-        ];
-
-        $dimensionSpacePoints = [];
-        foreach ($this->dbal->executeQuery($query, $parameters)->fetchAllAssociative() as $row) {
-            $dimensionSpacePoints[] = DimensionSpacePoint::fromJsonString($row['dimensionspacepoint']);
-        }
-
-        return new DimensionSpacePointSet($dimensionSpacePoints);
-    }
-
-    /**
-     * @param ContentStreamId $contentStreamId
-     * @param NodeAggregateId $nodeAggregateId
-     * @return DimensionSpacePointSet
-     * @throws DBALException
-     */
-    public function findCoverageByNodeAggregateId(
-        ContentStreamId $contentStreamId,
-        NodeAggregateId $nodeAggregateId
-    ): DimensionSpacePointSet {
-        $query = /** @lang PostgreSQL */
-            'SELECT h.dimensionspacepoint
-            FROM ' . $this->tableNames->hierarchyRelation() . ' h
-            JOIN ' . $this->tableNames->node() . ' n ON h.parentnodeanchor = n.relationanchorpoint
-            WHERE h.contentstreamid = :contentStreamId
-            AND n.nodeaggregateid = :nodeAggregateId';
-        $parameters = [
-            'contentStreamId' => $contentStreamId->value,
-            'nodeAggregateId' => $nodeAggregateId->value
-        ];
-
-        $dimensionSpacePoints = [];
-        foreach ($this->dbal->executeQuery($query, $parameters)->fetchAllAssociative() as $row) {
-            $dimensionSpacePoints[] = DimensionSpacePoint::fromJsonString($row['dimensionspacepoint']);
-        }
-
-        return new DimensionSpacePointSet($dimensionSpacePoints);
     }
 
     public function countContentStreamCoverage(NodeRelationAnchorPoint $anchorPoint): int
