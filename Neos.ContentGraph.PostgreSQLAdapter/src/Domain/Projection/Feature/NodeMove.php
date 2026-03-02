@@ -63,6 +63,13 @@ trait NodeMove
             }
 
             if ($event->newParentNodeAggregateId) {
+                // Read the moved node's current tags BEFORE the move, because
+                // removeChildNodeAnchor strips them from the old parent's hierarchy relation.
+                $movedNodeTags = $this->readNodeSubtreeTagsFromIngoingHierarchy(
+                    $event->contentStreamId,
+                    $succeedingSiblingForCoverage->dimensionSpacePoint,
+                    $nodeToBeMoved->relationAnchorPoint
+                );
                 $this->moveNodeBeneathParent(
                     $event->contentStreamId,
                     $nodeToBeMoved,
@@ -73,7 +80,8 @@ trait NodeMove
                     $event->contentStreamId,
                     $event->newParentNodeAggregateId,
                     $succeedingSiblingForCoverage->dimensionSpacePoint,
-                    $nodeToBeMoved
+                    $nodeToBeMoved,
+                    $movedNodeTags
                 );
             } else {
                 $this->moveNodeBeforeSucceedingSibling(
@@ -266,6 +274,36 @@ trait NodeMove
     }
 
     /**
+     * Read the subtree tags for a node from its ingoing hierarchy relation.
+     *
+     * @return array<string, bool|null> tag name => true (explicit) or null (inherited)
+     */
+    private function readNodeSubtreeTagsFromIngoingHierarchy(
+        ContentStreamId $contentStreamId,
+        DimensionSpacePoint $dimensionSpacePoint,
+        NodeRelationAnchorPoint $nodeAnchor
+    ): array {
+        $tableHierarchy = $this->getTableNames()->hierarchyRelation();
+
+        $currentTagsJson = $this->getDatabaseConnection()->fetchOne(
+            <<<SQL
+                SELECT h.subtreetags->(:nodeAnchor::text)
+                FROM {$tableHierarchy} h
+                WHERE :nodeAnchor::bigint = ANY(h.childnodeanchors)
+                  AND h.contentstreamid = :contentStreamId
+                  AND h.dimensionspacepointhash = :dimensionSpacePointHash
+            SQL,
+            [
+                'nodeAnchor' => $nodeAnchor->value,
+                'contentStreamId' => $contentStreamId->value,
+                'dimensionSpacePointHash' => $dimensionSpacePoint->hash,
+            ]
+        );
+
+        return is_string($currentTagsJson) ? (json_decode($currentTagsJson, true) ?: []) : [];
+    }
+
+    /**
      * After moving a node to a new parent, recalculate inherited subtree tags.
      *
      * When a node moves to a new parent, its inherited tags change because the ancestry changed.
@@ -273,12 +311,16 @@ trait NodeMove
      * 1. Determines the new parent's tags (which become inherited for the moved node)
      * 2. Updates the moved node's tag entry in the new parent's hierarchy relation
      * 3. Recursively propagates tag changes to descendants
+     *
+     * @param array<string, bool|null> $movedNodeTags the moved node's tags read BEFORE the move
+     *        (because removeChildNodeAnchor strips them from the old parent's hierarchy relation)
      */
     private function moveSubtreeTags(
         ContentStreamId $contentStreamId,
         NodeAggregateId $newParentNodeAggregateId,
         DimensionSpacePoint $dimensionSpacePoint,
-        NodeRecord $movedNode
+        NodeRecord $movedNode,
+        array $movedNodeTags
     ): void {
         $tableHierarchy = $this->getTableNames()->hierarchyRelation();
         $tableNode = $this->getTableNames()->node();
@@ -312,12 +354,15 @@ trait NodeMove
             }
         }
 
-        // Step 2: Recursively update subtree tags starting from the moved node
+        // Step 2: Recursively update subtree tags starting from the moved node.
+        // Pass the pre-read tags for the moved node since they were removed from
+        // the database by removeChildNodeAnchor during the move.
         $this->updateSubtreeTagsRecursive(
             $contentStreamId,
             $dimensionSpacePoint,
             $movedNode->relationAnchorPoint,
-            $tagsToInherit
+            $tagsToInherit,
+            $movedNodeTags
         );
     }
 
@@ -325,35 +370,42 @@ trait NodeMove
      * Recursively update inherited subtree tags for a node and its descendants.
      *
      * @param array<string, true> $tagsToInherit tag names that should be inherited from ancestors
+     * @param array<string, bool|null>|null $preReadTags if provided, use these instead of reading
+     *        from the database (used for the moved node whose tags were removed during the move)
      */
     private function updateSubtreeTagsRecursive(
         ContentStreamId $contentStreamId,
         DimensionSpacePoint $dimensionSpacePoint,
         NodeRelationAnchorPoint $nodeAnchor,
-        array $tagsToInherit
+        array $tagsToInherit,
+        ?array $preReadTags = null
     ): void {
         $tableHierarchy = $this->getTableNames()->hierarchyRelation();
 
-        // Read current tags for this node from its incoming hierarchy relation.
-        // Following the established pattern in SubtreeTagging.php: a single :nodeAnchor parameter
-        // with PostgreSQL casts (::text for JSONB key, ::bigint for array membership).
-        $currentTagsJson = $this->getDatabaseConnection()->fetchOne(
-            <<<SQL
-                SELECT h.subtreetags->(:nodeAnchor::text)
-                FROM {$tableHierarchy} h
-                WHERE :nodeAnchor::bigint = ANY(h.childnodeanchors)
-                  AND h.contentstreamid = :contentStreamId
-                  AND h.dimensionspacepointhash = :dimensionSpacePointHash
-            SQL,
-            [
-                'nodeAnchor' => $nodeAnchor->value,
-                'contentStreamId' => $contentStreamId->value,
-                'dimensionSpacePointHash' => $dimensionSpacePoint->hash,
-            ]
-        );
+        if ($preReadTags !== null) {
+            $currentTags = $preReadTags;
+        } else {
+            // Read current tags for this node from its incoming hierarchy relation.
+            // Following the established pattern in SubtreeTagging.php: a single :nodeAnchor parameter
+            // with PostgreSQL casts (::text for JSONB key, ::bigint for array membership).
+            $currentTagsJson = $this->getDatabaseConnection()->fetchOne(
+                <<<SQL
+                    SELECT h.subtreetags->(:nodeAnchor::text)
+                    FROM {$tableHierarchy} h
+                    WHERE :nodeAnchor::bigint = ANY(h.childnodeanchors)
+                      AND h.contentstreamid = :contentStreamId
+                      AND h.dimensionspacepointhash = :dimensionSpacePointHash
+                SQL,
+                [
+                    'nodeAnchor' => $nodeAnchor->value,
+                    'contentStreamId' => $contentStreamId->value,
+                    'dimensionSpacePointHash' => $dimensionSpacePoint->hash,
+                ]
+            );
 
-        /** @var array<string, bool|null> $currentTags */
-        $currentTags = is_string($currentTagsJson) ? (json_decode($currentTagsJson, true) ?: []) : [];
+            /** @var array<string, bool|null> $currentTags */
+            $currentTags = is_string($currentTagsJson) ? (json_decode($currentTagsJson, true) ?: []) : [];
+        }
 
         // Build new tags: keep explicit tags (value=true), replace inherited with tagsToInherit
         $newTags = [];

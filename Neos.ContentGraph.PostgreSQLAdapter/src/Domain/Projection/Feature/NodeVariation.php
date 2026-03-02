@@ -166,6 +166,35 @@ trait NodeVariation
                     $succeedingSiblingAnchor = $succeedingSiblingNode?->relationAnchorPoint;
                 }
 
+                // Look up the parent's tags in this dimension so they can be inherited by the new child.
+                // We query the parent's ingoing hierarchy relation to get its subtree tags,
+                // then convert ALL tags (explicit + inherited) to inherited for the child.
+                $tableHierarchy = $this->getTableNames()->hierarchyRelation();
+                $parentTagsJson = $this->getDatabaseConnection()->fetchOne(
+                    'SELECT h.subtreetags->(:nodeAnchor::text)
+                     FROM ' . $tableHierarchy . ' h
+                     WHERE :nodeAnchor::bigint = ANY(h.childnodeanchors)
+                       AND h.contentstreamid = :contentStreamId
+                       AND h.dimensionspacepointhash = :dimensionSpacePointHash',
+                    [
+                        'nodeAnchor' => $parentNode->relationAnchorPoint->value,
+                        'contentStreamId' => $contentStreamId->value,
+                        'dimensionSpacePointHash' => $uncoveredDimensionSpacePoint->hash,
+                    ]
+                );
+                $inheritedTagsJson = '{}';
+                if (is_string($parentTagsJson)) {
+                    $parentTagsArray = json_decode($parentTagsJson, true, 512, JSON_THROW_ON_ERROR);
+                    if (!empty($parentTagsArray)) {
+                        // Convert all parent tags to inherited (null)
+                        $tagObj = [];
+                        foreach (array_keys($parentTagsArray) as $tagName) {
+                            $tagObj[$tagName] = null;
+                        }
+                        $inheritedTagsJson = json_encode($tagObj, JSON_THROW_ON_ERROR);
+                    }
+                }
+
                 $existingHierarchy = $this->getReadQueries()->findHierarchyHyperrelationRecordByParentNodeAnchor(
                     $contentStreamId,
                     $uncoveredDimensionSpacePoint,
@@ -187,6 +216,28 @@ trait NodeVariation
                             $uncoveredDimensionSpacePoint,
                             NodeRelationAnchorPoints::fromArray([$specializedNodeAnchor])
                         )
+                    );
+                }
+
+                // Set inherited subtree tags from parent on the new child's hierarchy entry
+                if ($inheritedTagsJson !== '{}') {
+                    $tableName = $this->getTableNames()->hierarchyRelation();
+                    $this->getDatabaseConnection()->executeStatement(
+                        <<<SQL
+                            UPDATE {$tableName}
+                            SET subtreetags = COALESCE(subtreetags, '{}'::jsonb)
+                                || jsonb_build_object(:childAnchorText::text, :inheritedTags::jsonb)
+                            WHERE contentstreamid = :contentstreamid
+                              AND parentnodeanchor = :parentnodeanchor
+                              AND dimensionspacepointhash = :dimensionspacepointhash
+                        SQL,
+                        [
+                            'childAnchorText' => (string)$specializedNodeAnchor->value,
+                            'inheritedTags' => $inheritedTagsJson,
+                            'contentstreamid' => $contentStreamId->value,
+                            'parentnodeanchor' => $parentNode->relationAnchorPoint->value,
+                            'dimensionspacepointhash' => $uncoveredDimensionSpacePoint->hash,
+                        ]
                     );
                 }
             }
@@ -343,11 +394,18 @@ trait NodeVariation
                    from affected_dimensions ad
                    where not exists(select 1 from update_ingoing_hierarchy cs where ad.specializeddimensionhash = cs.dimensionspacepointhash)
                  ),
-                 -- get the subtree tags of the source node (e.g. disabled state)
-                 -- so they can be carried over to the new hierarchy relations
+                 -- get only the EXPLICIT subtree tags of the source node (e.g. disabled state)
+                 -- so they can be carried over to the new hierarchy relations.
+                 -- Inherited tags (null) are NOT copied because they depend on the
+                 -- parent's tags in the TARGET dimension, not the source dimension.
                  source_subtree_tags as (
                    select (
-                     select h.subtreetags -> (sn.relationanchorpoint::text)
+                     select coalesce(
+                       (select jsonb_object_agg(key, value)
+                        from jsonb_each(h.subtreetags -> (sn.relationanchorpoint::text))
+                        where value = 'true'::jsonb),
+                       null
+                     )
                      from {$this->tableNames->hierarchyRelation()} h
                      where sn.relationanchorpoint = any(h.childnodeanchors)
                        and h.contentstreamid = :contentstreamid
@@ -363,20 +421,41 @@ trait NodeVariation
                       dimensionspacepoint, childnodeanchors, subtreetags)
                    select
                      :contentstreamid,
-                     neoscr_default_get_parent_relationanchorpoint_in_dim(
-                       :nodeaggregateid,
-                       :contentstreamid,
-                       :sourceorigindimensionhash,
-                       mc.specializeddimensionhash
-                     ),
+                     pa.anchor,
                      mc.specializeddimensionhash,
                      mc.dimensionspacepoint,
                      array[gnc.relationanchorpoint],
-                     CASE WHEN sst.tags IS NOT NULL
-                          THEN jsonb_build_object(gnc.relationanchorpoint::text, sst.tags)
-                          ELSE '{}'::jsonb
-                     END
-                   from missing_coverage_relationpoints mc, generalized_node_copy gnc, source_subtree_tags sst
+                     jsonb_build_object(
+                       gnc.relationanchorpoint::text,
+                       -- Effective tags: parent's explicit tags in target dim (as inherited/null)
+                       -- merged with source's explicit tags (true). The || operator
+                       -- lets source explicit tags take precedence over parent inherited.
+                       coalesce(
+                         (select jsonb_object_agg(key, null)
+                          from jsonb_each(coalesce(
+                            (select h_pt.subtreetags -> (pa.anchor::text)
+                             from {$this->tableNames->hierarchyRelation()} h_pt
+                             where pa.anchor = any(h_pt.childnodeanchors)
+                               and h_pt.contentstreamid = :contentstreamid
+                               and h_pt.dimensionspacepointhash = mc.specializeddimensionhash
+                             limit 1),
+                            '{}'::jsonb))
+                          where value = 'true'::jsonb),
+                         '{}'::jsonb
+                       )
+                       || coalesce(sst.tags, '{}'::jsonb)
+                     )
+                   from missing_coverage_relationpoints mc,
+                        generalized_node_copy gnc,
+                        source_subtree_tags sst,
+                        LATERAL (
+                          select neoscr_default_get_parent_relationanchorpoint_in_dim(
+                            :nodeaggregateid,
+                            :contentstreamid,
+                            :sourceorigindimensionhash,
+                            mc.specializeddimensionhash
+                          ) as anchor
+                        ) pa
                    on conflict on constraint cr_default_p_graph_hierarchyrelation_pkey
                      do update
                           set childnodeanchors = insert_into_array_before_successor(
@@ -389,13 +468,24 @@ trait NodeVariation
                                 ) from affected_dimensions ad
                              where ad.specializeddimensionhash = excluded.dimensionspacepointhash)
                           ),
-                          subtreetags = CASE
-                            WHEN (select tags from source_subtree_tags) IS NOT NULL
-                            THEN COALESCE({$this->tableNames->hierarchyRelation()}.subtreetags, '{}'::jsonb)
-                                 || jsonb_build_object(excluded.childnodeanchors[1]::text,
-                                      (select tags from source_subtree_tags))
-                            ELSE {$this->tableNames->hierarchyRelation()}.subtreetags
-                          END
+                          subtreetags = COALESCE(cr_default_p_graph_hierarchyrelation.subtreetags, '{}'::jsonb)
+                            || jsonb_build_object(
+                                 excluded.childnodeanchors[1]::text,
+                                 coalesce(
+                                   (select jsonb_object_agg(key, null)
+                                    from jsonb_each(coalesce(
+                                      (select h_pt2.subtreetags -> (cr_default_p_graph_hierarchyrelation.parentnodeanchor::text)
+                                       from {$this->tableNames->hierarchyRelation()} h_pt2
+                                       where cr_default_p_graph_hierarchyrelation.parentnodeanchor = any(h_pt2.childnodeanchors)
+                                         and h_pt2.contentstreamid = :contentstreamid
+                                         and h_pt2.dimensionspacepointhash = excluded.dimensionspacepointhash
+                                       limit 1),
+                                      '{}'::jsonb))
+                                    where value = 'true'::jsonb),
+                                   '{}'::jsonb
+                                 )
+                                 || coalesce((select tags from source_subtree_tags), '{}'::jsonb)
+                               )
                  )
             -- finally, copy the reference relations
             insert into {$this->tableNames->referenceRelation()}
@@ -541,22 +631,45 @@ trait NodeVariation
                                     where ad.specializeddimensionhash = ui.dimensionspacepointhash)
                  ),
                  -- now add the missing hierarchy relations
+                 -- For peer variants, only parent tags are inherited (no source tags),
+                 -- matching DoctrineDBAL's connectHierarchy behavior.
                  missing_hierarchy_relations as (
                    insert into cr_default_p_graph_hierarchyrelation
                      (contentstreamid, parentnodeanchor, dimensionspacepointhash,
-                      dimensionspacepoint, childnodeanchors)
+                      dimensionspacepoint, childnodeanchors, subtreetags)
                    select
                      :contentstreamid,
-                     {$this->tableNames->functionGetParentRelationAnchorPointInDimension()}(
-                        :nodeaggregateid,
-                        :contentstreamid,
-                        :sourceorigindimensionhash,
-                        mc.specializeddimensionhash
-                     ),
+                     pa.anchor,
                      mc.specializeddimensionhash,
                      mc.dimensionspacepoint,
-                     array[pnc.relationanchorpoint]
-                   from missing_coverage_relationpoints mc, peer_node_copy pnc
+                     array[pnc.relationanchorpoint],
+                     jsonb_build_object(
+                       pnc.relationanchorpoint::text,
+                       -- Only inherit parent's ALL tags (explicit+inherited) as inherited (null)
+                       coalesce(
+                         (select jsonb_object_agg(key, null)
+                          from jsonb_each(coalesce(
+                            (select h_pt.subtreetags -> (pa.anchor::text)
+                             from {$this->tableNames->hierarchyRelation()} h_pt
+                             where pa.anchor = any(h_pt.childnodeanchors)
+                               and h_pt.contentstreamid = :contentstreamid
+                               and h_pt.dimensionspacepointhash = mc.specializeddimensionhash
+                             limit 1),
+                            '{}'::jsonb))
+                         ),
+                         '{}'::jsonb
+                       )
+                     )
+                   from missing_coverage_relationpoints mc,
+                        peer_node_copy pnc,
+                        LATERAL (
+                          select {$this->tableNames->functionGetParentRelationAnchorPointInDimension()}(
+                            :nodeaggregateid,
+                            :contentstreamid,
+                            :sourceorigindimensionhash,
+                            mc.specializeddimensionhash
+                          ) as anchor
+                        ) pa
                    on conflict on constraint cr_default_p_graph_hierarchyrelation_pkey
                      do update
                           set childnodeanchors = insert_into_array_before_successor(
@@ -568,7 +681,24 @@ trait NodeVariation
                                 excluded.dimensionspacepointhash
                                 ) from affected_dimensions ad
                              where ad.specializeddimensionhash = excluded.dimensionspacepointhash)
-                          )
+                          ),
+                          subtreetags = COALESCE(cr_default_p_graph_hierarchyrelation.subtreetags, '{}'::jsonb)
+                            || jsonb_build_object(
+                                 excluded.childnodeanchors[1]::text,
+                                 coalesce(
+                                   (select jsonb_object_agg(key, null)
+                                    from jsonb_each(coalesce(
+                                      (select h_pt2.subtreetags -> (cr_default_p_graph_hierarchyrelation.parentnodeanchor::text)
+                                       from {$this->tableNames->hierarchyRelation()} h_pt2
+                                       where cr_default_p_graph_hierarchyrelation.parentnodeanchor = any(h_pt2.childnodeanchors)
+                                         and h_pt2.contentstreamid = :contentstreamid
+                                         and h_pt2.dimensionspacepointhash = excluded.dimensionspacepointhash
+                                       limit 1),
+                                      '{}'::jsonb))
+                                   ),
+                                   '{}'::jsonb
+                                 )
+                               )
                  )
             -- finally, copy the reference relations
             insert into {$this->tableNames->referenceRelation()}
