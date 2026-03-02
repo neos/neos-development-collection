@@ -56,7 +56,7 @@ final class ProjectionHypergraphQuery implements ProjectionHypergraphQueryInterf
     public static function create(ContentStreamId $contentStreamId, ContentGraphTableNames $tableNames): self
     {
         $query = /** @lang PostgreSQL */
-            'SELECT n.*
+            'SELECT DISTINCT n.*
             FROM ' . $tableNames->hierarchyRelation() . ' h
             JOIN ' . $tableNames->node() . ' n ON n.relationanchorpoint = ANY(h.childnodeanchors)
             WHERE h.contentstreamid = :contentStreamId';

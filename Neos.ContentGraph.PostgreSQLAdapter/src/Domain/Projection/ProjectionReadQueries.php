@@ -557,14 +557,16 @@ final readonly class ProjectionReadQueries
     public function countContentStreamCoverage(NodeRelationAnchorPoint $anchorPoint): int
     {
         $query = /** @lang PostgreSQL */
-            'SELECT DISTINCT contentstreamid
-            FROM ' . $this->tableNames->hierarchyRelation() . '
-            WHERE :anchorPoint = ANY(childnodeanchors)';
+            'SELECT COUNT(*) FROM (
+                SELECT DISTINCT contentstreamid
+                FROM ' . $this->tableNames->hierarchyRelation() . '
+                WHERE :anchorPoint = ANY(childnodeanchors)
+            ) sub';
 
         $parameters = [
             'anchorPoint' => $anchorPoint->value
         ];
 
-        return (int)$this->dbal->executeQuery($query, $parameters)->rowCount();
+        return (int)$this->dbal->executeQuery($query, $parameters)->fetchOne();
     }
 }
