@@ -76,6 +76,30 @@ trait ContentStream
 
     private function removeContentStream(ContentStreamId $contentStreamId): void
     {
+        // Drop hierarchy relations for the removed content stream
+        $this->getDatabaseConnection()->executeStatement(
+            'DELETE FROM ' . $this->getTableNames()->hierarchyRelation() . ' WHERE contentstreamid = :contentStreamId',
+            ['contentStreamId' => $contentStreamId->value]
+        );
+
+        // Drop orphaned node records (no longer referenced by any hierarchy relation)
+        $this->getDatabaseConnection()->executeStatement(
+            'DELETE FROM ' . $this->getTableNames()->node() . ' n
+            WHERE NOT EXISTS (
+                SELECT 1 FROM ' . $this->getTableNames()->hierarchyRelation() . ' h
+                WHERE n.relationanchorpoint = ANY(h.childnodeanchors)
+            )'
+        );
+
+        // Drop orphaned reference relations (source node no longer exists)
+        $this->getDatabaseConnection()->executeStatement(
+            'DELETE FROM ' . $this->getTableNames()->referenceRelation() . ' r
+            WHERE NOT EXISTS (
+                SELECT 1 FROM ' . $this->getTableNames()->node() . ' n
+                WHERE n.relationanchorpoint = r.sourcenodeanchor
+            )'
+        );
+
         $this->getDatabaseConnection()->delete($this->getTableNames()->contentStream(), [
             'id' => $contentStreamId->value
         ]);
