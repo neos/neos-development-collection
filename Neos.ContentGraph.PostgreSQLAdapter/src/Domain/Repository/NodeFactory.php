@@ -223,9 +223,10 @@ final class NodeFactory
             if (!empty($nodeRow['nodename']) && is_null($nodeName)) {
                 $nodeName = NodeName::fromString($nodeRow['nodename']);
             }
-            $occupiedDimensionSpacePoints[$node->originDimensionSpacePoint->hash]
-                = $node->originDimensionSpacePoint;
-            $nodesByOccupiedDimensionSpacePoint[$node->originDimensionSpacePoint->hash] = $node;
+            if (!isset($nodesByOccupiedDimensionSpacePoint[$node->originDimensionSpacePoint->hash])) {
+                $occupiedDimensionSpacePoints[] = $node->originDimensionSpacePoint;
+                $nodesByOccupiedDimensionSpacePoint[$node->originDimensionSpacePoint->hash] = $node;
+            }
 
             $coveredDimensionSpacePoint = DimensionSpacePoint::fromJsonString($nodeRow['dimensionspacepoint']);
             $coverageByOccupant[$node->originDimensionSpacePoint->hash][$coveredDimensionSpacePoint->hash]

@@ -183,7 +183,8 @@ final readonly class PostgresContentGraphProjection implements ContentGraphProje
                 where ph.contentstreamid = {$this->tableNames->functionFindNodeByOrigin()}.contentstreamid
                   and pn.origindimensionspacepointhash = {$this->tableNames->functionFindNodeByOrigin()}.dimensionhash
                   and ph.dimensionspacepointhash = {$this->tableNames->functionFindNodeByOrigin()}.dimensionhash
-                  and pn.nodeaggregateid = {$this->tableNames->functionFindNodeByOrigin()}.nodeaggregateid;
+                  and pn.nodeaggregateid = {$this->tableNames->functionFindNodeByOrigin()}.nodeaggregateid
+                limit 1;
             end;
             $$ language plpgsql;
         SQL);
@@ -203,7 +204,8 @@ final readonly class PostgresContentGraphProjection implements ContentGraphProje
                                  on pn.relationanchorpoint = any (ph.childnodeanchors)
                 where ph.contentstreamid = {$this->tableNames->functionFindNodeByCoverage()}.contentstreamid
                   and ph.dimensionspacepointhash = {$this->tableNames->functionFindNodeByCoverage()}.dimensionhash
-                  and pn.nodeaggregateid = {$this->tableNames->functionFindNodeByCoverage()}.nodeaggregateid;
+                  and pn.nodeaggregateid = {$this->tableNames->functionFindNodeByCoverage()}.nodeaggregateid
+                limit 1;
             end;
             $$ language plpgsql;
         SQL);
