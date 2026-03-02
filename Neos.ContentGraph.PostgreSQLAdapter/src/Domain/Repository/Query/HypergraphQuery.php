@@ -17,7 +17,6 @@ namespace Neos\ContentGraph\PostgreSQLAdapter\Domain\Repository\Query;
 use Doctrine\DBAL\Connection;
 use Neos\ContentGraph\PostgreSQLAdapter\ContentGraphTableNames;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
-use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateClassification;
@@ -64,17 +63,6 @@ final class HypergraphQuery implements HypergraphQueryInterface
 
         $parameters = $this->parameters;
         $parameters['dimensionSpacePointHash'] = $dimensionSpacePoint->hash;
-
-        return new self($query, $parameters, $this->tableNames, $this->types, $this->types);
-    }
-
-    public function withOriginDimensionSpacePoint(OriginDimensionSpacePoint $originDimensionSpacePoint): self
-    {
-        $query = $this->query .= '
-            AND n.origindimensionspacepointhash = :originDimensionSpacePointHash';
-
-        $parameters = $this->parameters;
-        $parameters['originDimensionSpacePointHash'] = $originDimensionSpacePoint->hash;
 
         return new self($query, $parameters, $this->tableNames, $this->types);
     }

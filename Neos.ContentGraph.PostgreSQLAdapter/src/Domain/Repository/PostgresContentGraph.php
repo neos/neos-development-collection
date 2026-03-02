@@ -413,7 +413,7 @@ final readonly class PostgresContentGraph implements ContentGraphInterface
     }
 
     /**
-     * @param QueryBuilder $queryBuilder
+     * @param Result $result
      * @return NodeAggregates
      */
     private function mapResultsToNodeAggregates(Result $result): NodeAggregates

@@ -32,7 +32,7 @@ use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
  */
 final class NodeRecord
 {
-    public ?NodeRelationAnchorPoint $relationAnchorPoint = null;
+    public NodeRelationAnchorPoint $relationAnchorPoint;
 
     public NodeAggregateId $nodeAggregateId;
 

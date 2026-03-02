@@ -87,8 +87,7 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
  */
 final readonly class PostgresContentSubgraph implements ContentSubgraphInterface
 {
-    private const DEFAULT_SIBLING_NODE_LIMIT = 100000;
-
+    /** @var string[] */
     private array $excludedSubtreeTags;
     private bool $excludedSubtreeTagsFilterActive;
 

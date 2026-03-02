@@ -42,7 +42,6 @@ trait CopyOnWrite
 
         if ($numberOfContentStreamsNodeDoesCover > 1) {
             $copiedNode = clone $originNode;
-            $copiedNode->relationAnchorPoint = null;
             $preprocessor($copiedNode);
             $copiedNode->addToDatabase($this->getDatabaseConnection(), $this->getTableNames());
 
