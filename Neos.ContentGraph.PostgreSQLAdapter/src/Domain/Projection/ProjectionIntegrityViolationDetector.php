@@ -327,9 +327,9 @@ final class ProjectionIntegrityViolationDetector implements ProjectionIntegrityV
         // Check references with invalid target
         $referenceRelationRecordsWithInvalidTargetStatement = <<<SQL
             SELECT
-                sh.contentstreamid AS contentstreamId,
-                s.nodeaggregateid AS sourceNodeAggregateId,
-                r.targetnodeaggregateid AS destinationNodeAggregateId
+                sh.contentstreamid AS "contentstreamId",
+                s.nodeaggregateid AS "sourceNodeAggregateId",
+                r.targetnodeaggregateid AS "destinationNodeAggregateId"
             FROM
                 {$this->tableNames->referenceRelation()} r
                 INNER JOIN {$this->tableNames->node()} s ON r.sourcenodeanchor = s.relationanchorpoint
