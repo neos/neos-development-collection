@@ -230,7 +230,6 @@ final class SubscriptionEngine
                 $subscription->position,
                 SubscriptionError::fromPreviousStatusAndException($subscription->status, $e)
             );
-            throw $e;
             return Error::create($subscription->id, $e->getMessage(), $e, null);
         }
 

@@ -54,11 +54,6 @@ final class WorkspaceName implements \JsonSerializable
         return self::instance($value);
     }
 
-    public static function fromOptionalString(?string $value): ?self
-    {
-        return $value !== null ? self::fromString($value) : null;
-    }
-
     public static function tryFromString(string $value): ?self
     {
         return self::hasValidFormat($value) ? self::instance($value) : null;

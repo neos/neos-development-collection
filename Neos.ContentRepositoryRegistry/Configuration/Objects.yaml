@@ -48,5 +48,3 @@ Neos\ContentGraph\PostgreSQLAdapter\PostgresProjectionIntegrityViolationDetectio
   arguments:
     1:
       value: contentRepositoryLogger
-
-

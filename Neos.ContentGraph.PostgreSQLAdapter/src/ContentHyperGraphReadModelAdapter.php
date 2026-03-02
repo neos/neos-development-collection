@@ -168,7 +168,7 @@ final readonly class ContentHyperGraphReadModelAdapter implements ContentGraphRe
     {
         return Workspace::create(
             WorkspaceName::fromString($row['name']),
-            WorkspaceName::fromOptionalString($row['baseworkspacename']),
+            $row['baseworkspacename'] !== null ? WorkspaceName::fromString($row['baseworkspacename']) : null,
             ContentStreamId::fromString($row['currentcontentstreamid']),
             ($row['uptodate'] === true) ? WorkspaceStatus::UP_TO_DATE : WorkspaceStatus::OUTDATED,
             $row['haspublishablechanges'] === true,
