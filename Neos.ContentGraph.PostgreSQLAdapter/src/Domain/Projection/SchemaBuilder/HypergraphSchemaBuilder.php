@@ -5,14 +5,11 @@ declare(strict_types=1);
 namespace Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\SchemaBuilder;
 
 use Doctrine\DBAL\Connection;
-use Doctrine\DBAL\PostgresTypes\IntArrayType;
-use Doctrine\DBAL\PostgresTypes\TextArrayType;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\DBAL\Types\Type;
 use Doctrine\DBAL\Types\Types;
 use Neos\ContentGraph\PostgreSQLAdapter\ContentGraphTableNames;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\PostgresContentGraphProjection;
-use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
 
 /**
  * Let's try to be as consistent as possible to the MariaDB/MySQL adapter.
@@ -26,20 +23,6 @@ final readonly class HypergraphSchemaBuilder
     public function __construct(
         private ContentGraphTableNames $tableNames
     ) {
-    }
-
-    // FIXME nasty race condition when setting up the schema, we need to drop the view
-    public static function cleanupViews(
-        Connection $databaseConnection,
-        ContentRepositoryId $contentRepositoryId
-    ) {
-        $tableNames = ContentGraphTableNames::create($contentRepositoryId);
-        /*
-        $databaseConnection->executeStatement(<<<SQL
-            -- no view anymore for now...
-            -- drop view if exists ...;
-        SQL);
-        */
     }
 
     public function buildSchema(Connection $databaseConnection): Schema
@@ -58,18 +41,19 @@ final readonly class HypergraphSchemaBuilder
         return $schema;
     }
 
+    /**
+     * Register custom Doctrine DBAL types required for the hypergraph schema.
+     *
+     * These types (JSONB, bigint arrays, etc.) are needed by Doctrine's schema
+     * comparison so it can interpret PostgreSQL-specific column types. Registration
+     * is idempotent and called early by {@see \Neos\ContentGraph\PostgreSQLAdapter\PostgresContentGraphProjectionFactory::build()}.
+     */
     public static function registerTypes(Connection $databaseConnection): void
     {
         self::registerTypeIfNotPresent($databaseConnection, 'hypergraphjsonb', JsonbType::class);
-        // self::registerTypeIfNotPresent($databaseConnection, 'text_array', TextArrayType::class);
         self::registerTypeIfNotPresent($databaseConnection, 'varchar64_array', Varchar64ArrayType::class);
         self::registerTypeIfNotPresent($databaseConnection, 'varchar36_array', Varchar36ArrayType::class);
-        // self::registerTypeIfNotPresent($databaseConnection, 'int_array', IntArrayType::class);
         self::registerTypeIfNotPresent($databaseConnection, 'bigint_array', BigintArrayType::class);
-        // do NOT RELY ON THESE TYPES BEING PRESENT - we only load them to build the schema.
-        // TODO comment why we need type wrappers and the whole doctrine schema mechanics
-        // FIXME this is currently a bit messy, other packages seem also require the types when comparing schemas
-        // FIXME document this behavior and remove the HOTFIX -> see callee of this function
     }
 
     private static function registerTypeIfNotPresent(
