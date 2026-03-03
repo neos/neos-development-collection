@@ -52,7 +52,7 @@ final readonly class HierarchyRelationRecord
     }
 
     /**
-     * @return array<string,string>
+     * @return array<string,string|int>
      */
     public function getDatabaseIdentifier(): array
     {

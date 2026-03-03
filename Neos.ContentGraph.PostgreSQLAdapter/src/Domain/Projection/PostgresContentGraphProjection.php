@@ -107,7 +107,7 @@ final readonly class PostgresContentGraphProjection implements ContentGraphProje
 
     public function __construct(
         private Connection $dbal,
-        private ContentRepositoryId $contentRepositoryId,
+        ContentRepositoryId $contentRepositoryId,
         private ContentGraphReadModelInterface $contentGraphReadModel
     ) {
         $this->tableNames = ContentGraphTableNames::create($contentRepositoryId);

@@ -344,13 +344,13 @@ trait NodeMove
             ]
         );
 
-        /** @var array<string, bool|null> $tagsToInherit tag name => true/null from the new parent */
+        /** @var array<string, true> $tagsToInherit tag name => true/null from the new parent */
         $tagsToInherit = [];
         if (is_string($newParentTagsJson)) {
             $parentTags = json_decode($newParentTagsJson, true) ?: [];
             // All of the parent's tags (explicit or inherited) become inherited for children
             foreach (array_keys($parentTags) as $tagName) {
-                $tagsToInherit[$tagName] = true;
+                $tagsToInherit[strval($tagName)] = true;
             }
         }
 

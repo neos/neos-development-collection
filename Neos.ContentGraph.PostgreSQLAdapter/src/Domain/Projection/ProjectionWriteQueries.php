@@ -16,6 +16,9 @@ use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateClassification;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
 
+/**
+ * @internal
+ */
 final readonly class ProjectionWriteQueries
 {
     private ContentGraphTableNames $tableNames;
@@ -88,7 +91,7 @@ final readonly class ProjectionWriteQueries
 
         $row = $result->fetchAssociative();
         if ($row === false) {
-            // TODO handle error, is that even possible?
+            throw new \RuntimeException('Failed to insert node record: no row returned from INSERT ... RETURNING', 1740000020);
         }
 
         return NodeRelationAnchorPoint::fromInteger($row['relationanchorpoint']);
@@ -159,6 +162,10 @@ final readonly class ProjectionWriteQueries
         ]);
     }
 
+    /**
+     * @param array<string,string|int> $hierarchyRelationId
+     * @throws DBALException
+     */
     public function replaceParentNodeAnchorOnHierarchyRecord(
         Connection $databaseConnection,
         array $hierarchyRelationId,
@@ -174,16 +181,10 @@ final readonly class ProjectionWriteQueries
         );
     }
 
-    public function replaceChildNodeAnchorOnHierarchyRecord(
-        NodeRelationAnchorPoint $oldChildNodeAnchor,
-        NodeRelationAnchorPoint $newChildNodeAnchor,
-        Connection $databaseConnection,
-        string $tableNamePrefix
-    ): void {
-        // TODO
-        //$this->updateChildNodeAnchors($childNodeAnchors, $databaseConnection, $tableNamePrefix);
-    }
-
+    /**
+     * @param array<string,string|int> $hierarchyRelationId
+     * @throws DBALException
+     */
     public function addChildNodeAnchorBeforeSuccessor(
         Connection $databaseConnection,
         array $hierarchyRelationId,
@@ -208,6 +209,10 @@ final readonly class ProjectionWriteQueries
         );
     }
 
+    /**
+     * @param array<string,string|int> $hierarchyRelationId
+     * @throws DBALException
+     */
     public function removeChildNodeAnchorFromHierarchyRecord(
         Connection $databaseConnection,
         array $hierarchyRelationId,
@@ -240,20 +245,6 @@ final readonly class ProjectionWriteQueries
         );
     }
 
-    private function updateChildNodeAnchors(
-        Connection $databaseConnection,
-        array $hierarchyRelationId,
-        NodeRelationAnchorPoints $newChildNodeAnchors
-    ): void {
-        $databaseConnection->update(
-            $this->tableNames->hierarchyRelation(),
-            [
-                'childnodeanchors' => $newChildNodeAnchors->toDatabaseString()
-            ],
-            $hierarchyRelationId
-        );
-    }
-
     /**
      * @throws DBALException
      */
@@ -271,15 +262,5 @@ final readonly class ProjectionWriteQueries
                 'childnodeanchors' => $hierarchyRelationRecord->childNodeAnchors->toDatabaseString()
             ]
         );
-    }
-
-    /**
-     * @throws DBALException
-     */
-    public function removeHierarchyRelationFromDatabase(
-        Connection $databaseConnection,
-        array $hierarchyRelationId
-    ): void {
-        $databaseConnection->delete($this->tableNames->hierarchyRelation(), $hierarchyRelationId);
     }
 }

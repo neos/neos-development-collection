@@ -13,9 +13,9 @@ namespace Neos\ContentRepositoryRegistry\Command;
 
 use Doctrine\DBAL\Connection;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceFactoryInterface;
+use Neos\ContentRepository\Core\Projection\ContentGraph\ProjectionIntegrityViolationDetectionRunner;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
-use Neos\Error\Messages\Result;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Cli\CommandController;
 
@@ -30,7 +30,9 @@ final class ContentGraphIntegrityCommandController extends CommandController
     #[Flow\Inject()]
     protected ContentRepositoryRegistry $contentRepositoryRegistry;
 
-
+    /**
+     * @var array<string, mixed>
+     */
     #[Flow\InjectConfiguration]
     protected array $settings;
 
@@ -44,9 +46,9 @@ final class ContentGraphIntegrityCommandController extends CommandController
             ContentRepositoryId::fromString($contentRepository),
             $factory
         );
+        assert($detectionRunner instanceof ProjectionIntegrityViolationDetectionRunner);
 
         $outputMode = $this->resolveOutputMode($outputMode);
-        /** @var Result $result */
         $result = $detectionRunner->run();
         switch ($outputMode) {
             case self::OUTPUT_MODE_CONSOLE:

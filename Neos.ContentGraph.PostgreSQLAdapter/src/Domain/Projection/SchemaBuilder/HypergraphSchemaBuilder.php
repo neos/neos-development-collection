@@ -55,6 +55,9 @@ final readonly class HypergraphSchemaBuilder
         self::registerTypeIfNotPresent($databaseConnection, 'bigint_array', BigintArrayType::class);
     }
 
+    /**
+     * @param class-string<Type> $typeClass
+     */
     private static function registerTypeIfNotPresent(
         Connection $databaseConnection,
         string $doctrineTypeName,

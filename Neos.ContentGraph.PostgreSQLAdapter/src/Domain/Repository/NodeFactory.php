@@ -244,6 +244,10 @@ final class NodeFactory
         ksort($occupiedDimensionSpacePoints);
         ksort($coveredDimensionSpacePoints);
 
+        if ($nodesByOccupiedDimensionSpacePoint === []) {
+            throw new \RuntimeException(sprintf('Node aggregate "%s" has no nodes or coverage, which should never happen.', $nodeAggregateId->value), 1740000010);
+        }
+
         return NodeAggregate::create(
             $this->contentRepositoryId,
             $workspaceName,
@@ -344,6 +348,8 @@ final class NodeFactory
         }
 
         foreach ($nodeAggregateIds as $key => $nodeAggregateId) {
+            assert($nodesByOccupiedDimensionSpacePoint[$key] !== []);
+            assert($nodeTagsByCoveredDspByNodeAggregate[$key] !== []);
             $nodeAggregates[] = NodeAggregate::create(
                 $this->contentRepositoryId,
                 $workspaceName,
@@ -356,7 +362,7 @@ final class NodeFactory
                 CoverageByOrigin::fromArray($coverageByOccupant[$key]),
                 new DimensionSpacePointSet($coveredDimensionSpacePoints[$key]),
                 OriginByCoverage::fromArray($occupationByCovered[$key]),
-                $nodeTagsByCoveredDspByNodeAggregate[$key] ?? [],
+                $nodeTagsByCoveredDspByNodeAggregate[$key],
             );
         }
 
