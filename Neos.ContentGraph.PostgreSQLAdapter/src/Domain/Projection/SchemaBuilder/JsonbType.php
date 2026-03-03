@@ -21,4 +21,9 @@ class JsonbType extends Type
     {
         return 'jsonb';
     }
+
+    public function getMappedDatabaseTypes(AbstractPlatform $platform)
+    {
+        return ['jsonb'];
+    }
 }

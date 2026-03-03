@@ -376,7 +376,11 @@ final readonly class PostgresContentGraphProjection implements ContentGraphProje
         try {
             $schema = (new HypergraphSchemaBuilder($this->tableNames))->buildSchema($this->dbal);
             $queries = DbalSchemaDiff::determineRequiredSqlStatements($this->dbal, $schema);
-            return $queries;
+            // Filter out DROP INDEX for GIN indexes that are managed outside the Doctrine schema
+            // (created in setUp() via raw SQL because Doctrine DBAL doesn't support GIN indexes)
+            return array_values(array_filter($queries, static fn(string $query) =>
+                !preg_match('/^DROP INDEX (node_properties|hierarchy_children)$/i', $query)
+            ));
         } catch (\Throwable $e) {
             // TODO error handling
             throw $e;

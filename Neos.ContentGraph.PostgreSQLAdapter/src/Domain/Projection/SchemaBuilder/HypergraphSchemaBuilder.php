@@ -69,9 +69,8 @@ final readonly class HypergraphSchemaBuilder
         }
         $type = Type::getType($doctrineTypeName);
         foreach ($type->getMappedDatabaseTypes($platform) as $dbType) {
-            if (!$platform->hasDoctrineTypeMappingFor($dbType)) {
-                $platform->registerDoctrineTypeMapping($dbType, $doctrineTypeName);
-            }
+            // Always register, overriding default platform mappings (e.g. PostgreSQL maps jsonb → json by default)
+            $platform->registerDoctrineTypeMapping($dbType, $doctrineTypeName);
         }
     }
 
