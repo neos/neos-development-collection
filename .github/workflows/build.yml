@@ -271,7 +271,7 @@ jobs:
           touch ${{ github.workspace }}/Data/DebugDatabaseDumps/keep
 
           ./flow package:list --loading-order
-          FLOW_CONTEXT=Testing/Behat ./flow doctrine:migrate --quiet
+          FLOW_CONTEXT=Testing/Behat ./flow doctrine:migrate
           cd Packages/Neos
 
           # composer test:behavioral
