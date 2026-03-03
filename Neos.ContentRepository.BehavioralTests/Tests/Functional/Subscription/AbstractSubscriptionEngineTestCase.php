@@ -155,10 +155,8 @@ abstract class AbstractSubscriptionEngineTestCase extends TestCase // we don't u
             $connection->prepare($preDeleteStatement)->executeStatement();
         }
 
-        $truncateOrDropStatement = match (true) {
-            $connection->getDatabasePlatform() instanceof PostgreSQLPlatform => '%s TABLE `%s` CASCADE',
-            default => '%s TABLE `%s`',
-        };
+        $cascade = $connection->getDatabasePlatform() instanceof PostgreSQLPlatform ? ' CASCADE' : '';
+        $action = $keepSchema ? 'TRUNCATE' : 'DROP';
 
         foreach ($connection->createSchemaManager()->listTableNames() as $tableName) {
             if (!str_starts_with($tableName, sprintf('cr_%s_', $contentRepositoryId->value))) {
@@ -166,7 +164,7 @@ abstract class AbstractSubscriptionEngineTestCase extends TestCase // we don't u
                 continue;
             }
             // truncate is faster
-            $sql = sprintf($truncateOrDropStatement, $keepSchema ? 'TRUNCATE' : 'DROP', $tableName);
+            $sql = $action . ' TABLE ' . $connection->quoteIdentifier($tableName) . $cascade;
             $connection->prepare($sql)->executeStatement();
         }
 
