@@ -359,7 +359,7 @@ class TrashBinProjection implements ProjectionInterface
                 affected_dimension_space_points
             )
             SELECT
-                "{$workspaceName->value}" AS workspace_name,
+                '{$workspaceName->value}' AS workspace_name,
                 i.node_aggregate_id,
                 i.affected_dimension_space_points_hash,
                 i.user_id,
