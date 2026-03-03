@@ -279,14 +279,13 @@ jobs:
             ContentRepositoryRegistry:
               presets:
                 'default':
-                  projection:
-                    factoryObjectName: Neos\ContentGraph\PostgreSQLAdapter\Domain\Repository\ContentGraphProjectionFactory
-                  projectionIntegrityViolationDetectionRunner:
-                    factoryObjectName: Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\Feature\PostgresProjectionIntegrityViolationDetectionRunnerFactory
                   contentGraphProjection:
+                    factoryObjectName: Neos\ContentGraph\PostgreSQLAdapter\PostgresContentGraphProjectionFactory
                     catchUpHooks:
                       'Neos.ContentRepository.BehavioralTests:RaceConditionTracker':
                         factoryObjectName: Neos\ContentRepository\BehavioralTests\ProjectionRaceConditionTester\RaceTrackerCatchUpHookFactory
+                  projectionIntegrityViolationDetector:
+                    factoryObjectName: Neos\ContentGraph\PostgreSQLAdapter\PostgresProjectionIntegrityViolationDetectionRunnerFactory
             ContentRepository:
               BehavioralTests:
                 raceConditionTracker:
