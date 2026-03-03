@@ -198,14 +198,14 @@ trait CRBehavioralTestsSubjectProvider
         /** @var Connection $databaseConnection */
         $databaseConnection = (new \ReflectionClass($eventStore))->getProperty('connection')->getValue($eventStore);
 
-        $result = $subscriptionEngine->reset();
-        Assert::assertNull($result->errors);
-
         if (!in_array($contentRepository->id, self::$alreadySetUpContentRepositories)) {
             $result = $contentRepositoryMaintainer->setUp();
             Assert::assertNull($result);
             self::$alreadySetUpContentRepositories[] = $contentRepository->id;
         }
+
+        $result = $subscriptionEngine->reset();
+        Assert::assertNull($result->errors);
         // We TRUNCATE here and do not want to use $contentRepositoryMaintainer->prune(); here as it would not reset the autoincrement sequence number making some assertions impossible
         $eventTableName = sprintf('cr_%s_events', $contentRepositoryId->value);
         if ($databaseConnection->getDatabasePlatform() instanceof PostgreSQLPlatform) {
