@@ -269,9 +269,9 @@ class ChangeProjection implements ProjectionInterface
         $this->dbal->executeStatement(
             'DELETE FROM ' . $this->tableNamePrefix . '
                 WHERE
-                    "contentStreamId" = :contentStreamId
-                    AND "nodeAggregateId" = :nodeAggregateId
-                    AND "originDimensionSpacePointHash" IN (:affectedDimensionSpacePointHashes)
+                    ' . $this->dbal->quoteIdentifier('contentStreamId') . ' = :contentStreamId
+                    AND ' . $this->dbal->quoteIdentifier('nodeAggregateId') . ' = :nodeAggregateId
+                    AND ' . $this->dbal->quoteIdentifier('originDimensionSpacePointHash') . ' IN (:affectedDimensionSpacePointHashes)
                 ',
             [
                 'contentStreamId' => $event->contentStreamId->value,
@@ -463,9 +463,9 @@ class ChangeProjection implements ProjectionInterface
     ): ?Change {
         $changeRow = $this->dbal->executeQuery(
             'SELECT n.* FROM ' . $this->tableNamePrefix . ' n
-                    WHERE n."contentStreamId" = :contentStreamId
-                    AND n."nodeAggregateId" = :nodeAggregateId
-                    AND n."originDimensionSpacePointHash" = :originDimensionSpacePointHash',
+                    WHERE n.' . $this->dbal->quoteIdentifier('contentStreamId') . ' = :contentStreamId
+                    AND n.' . $this->dbal->quoteIdentifier('nodeAggregateId') . ' = :nodeAggregateId
+                    AND n.' . $this->dbal->quoteIdentifier('originDimensionSpacePointHash') . ' = :originDimensionSpacePointHash',
             [
                 'contentStreamId' => $contentStreamId->value,
                 'nodeAggregateId' => $nodeAggregateId->value,
@@ -483,9 +483,9 @@ class ChangeProjection implements ProjectionInterface
     ): ?Change {
         $changeRow = $this->dbal->executeQuery(
             'SELECT n.* FROM ' . $this->tableNamePrefix . ' n
-WHERE n."contentStreamId" = :contentStreamId
-AND n."nodeAggregateId" = :nodeAggregateId
-AND n."originDimensionSpacePointHash" = :origindimensionspacepointhash',
+WHERE n.' . $this->dbal->quoteIdentifier('contentStreamId') . ' = :contentStreamId
+AND n.' . $this->dbal->quoteIdentifier('nodeAggregateId') . ' = :nodeAggregateId
+AND n.' . $this->dbal->quoteIdentifier('originDimensionSpacePointHash') . ' = :origindimensionspacepointhash',
             [
                 'contentStreamId' => $contentStreamId->value,
                 'nodeAggregateId' => $nodeAggregateId->value,
@@ -498,10 +498,11 @@ AND n."originDimensionSpacePointHash" = :origindimensionspacepointhash',
 
     private function removeChangesForContentStreamId(ContentStreamId $contentStreamId): void
     {
+        $contentStreamIdColumn = $this->dbal->quoteIdentifier('contentStreamId');
         $statement = <<<SQL
             DELETE FROM {$this->tableNamePrefix}
             WHERE
-                "contentStreamId" = :contentStreamId
+                {$contentStreamIdColumn} = :contentStreamId
         SQL;
         $this->dbal->executeStatement(
             $statement,
