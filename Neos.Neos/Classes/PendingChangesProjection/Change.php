@@ -69,16 +69,17 @@ final class Change
     public function addToDatabase(Connection $databaseConnection, string $tableName): void
     {
         try {
+            $qi = $databaseConnection->quoteIdentifier(...);
             $databaseConnection->insert($tableName, [
-                '"contentStreamId"' => $this->contentStreamId->value,
-                '"nodeAggregateId"' => $this->nodeAggregateId->value,
-                '"originDimensionSpacePoint"' => $this->originDimensionSpacePoint?->toJson(),
-                '"originDimensionSpacePointHash"' => $this->originDimensionSpacePoint?->hash ?: self::AGGREGATE_DIMENSIONSPACEPOINT_HASH_PLACEHOLDER,
+                $qi('contentStreamId') => $this->contentStreamId->value,
+                $qi('nodeAggregateId') => $this->nodeAggregateId->value,
+                $qi('originDimensionSpacePoint') => $this->originDimensionSpacePoint?->toJson(),
+                $qi('originDimensionSpacePointHash') => $this->originDimensionSpacePoint?->hash ?: self::AGGREGATE_DIMENSIONSPACEPOINT_HASH_PLACEHOLDER,
                 'created' => (int)$this->created,
                 'changed' => (int)$this->changed,
                 'moved' => (int)$this->moved,
                 'deleted' => (int)$this->deleted,
-                '"removalAttachmentPoint"' => $this->removalAttachmentPoint?->value
+                $qi('removalAttachmentPoint') => $this->removalAttachmentPoint?->value
             ]);
         } catch (DbalException $e) {
             throw new \RuntimeException(sprintf('Failed to insert Change to database: %s', $e->getMessage()), 1727272723, $e);
@@ -88,6 +89,7 @@ final class Change
     public function updateToDatabase(Connection $databaseConnection, string $tableName): void
     {
         try {
+            $qi = $databaseConnection->quoteIdentifier(...);
             $databaseConnection->update(
                 $tableName,
                 [
@@ -95,12 +97,12 @@ final class Change
                     'changed' => (int)$this->changed,
                     'moved' => (int)$this->moved,
                     'deleted' => (int)$this->deleted,
-                    '"removalAttachmentPoint"' => $this->removalAttachmentPoint?->value
+                    $qi('removalAttachmentPoint') => $this->removalAttachmentPoint?->value
                 ],
                 [
-                    '"contentStreamId"' => $this->contentStreamId->value,
-                    '"nodeAggregateId"' => $this->nodeAggregateId->value,
-                    '"originDimensionSpacePointHash"' => $this->originDimensionSpacePoint?->hash ?: self::AGGREGATE_DIMENSIONSPACEPOINT_HASH_PLACEHOLDER,
+                    $qi('contentStreamId') => $this->contentStreamId->value,
+                    $qi('nodeAggregateId') => $this->nodeAggregateId->value,
+                    $qi('originDimensionSpacePointHash') => $this->originDimensionSpacePoint?->hash ?: self::AGGREGATE_DIMENSIONSPACEPOINT_HASH_PLACEHOLDER,
                 ]
             );
         } catch (DbalException $e) {
