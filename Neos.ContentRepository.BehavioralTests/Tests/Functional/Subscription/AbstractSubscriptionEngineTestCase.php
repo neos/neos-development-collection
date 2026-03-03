@@ -155,7 +155,9 @@ abstract class AbstractSubscriptionEngineTestCase extends TestCase // we don't u
             $connection->prepare($preDeleteStatement)->executeStatement();
         }
 
-        $cascade = $connection->getDatabasePlatform() instanceof PostgreSQLPlatform ? ' CASCADE' : '';
+        $cascade = $connection->getDatabasePlatform() instanceof PostgreSQLPlatform
+            ? ($keepSchema ? ' RESTART IDENTITY CASCADE' : ' CASCADE')
+            : '';
         $action = $keepSchema ? 'TRUNCATE' : 'DROP';
 
         foreach ($connection->createSchemaManager()->listTableNames() as $tableName) {
