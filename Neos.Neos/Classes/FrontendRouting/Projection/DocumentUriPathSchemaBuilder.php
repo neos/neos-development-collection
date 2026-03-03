@@ -6,6 +6,7 @@ namespace Neos\Neos\FrontendRouting\Projection;
 
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Exception as DBALException;
+use Doctrine\DBAL\Platforms\AbstractMySQLPlatform;
 use Doctrine\DBAL\Platforms\AbstractPlatform;
 use Doctrine\DBAL\Schema\Column;
 use Doctrine\DBAL\Schema\Schema;
@@ -57,13 +58,21 @@ final class DocumentUriPathSchemaBuilder
             (new Column('isplaceholder', Type::getType(Types::INTEGER)))->setLength(4)->setUnsigned(true)->setDefault(0)->setNotnull(true),
         ]);
 
-        return $table
+        $table
             ->addUniqueIndex(['nodeaggregateid', 'dimensionspacepointhash'], 'variant')
             ->addIndex([
                 'parentnodeaggregateid',
                 'precedingnodeaggregateid',
                 'succeedingnodeaggregateid'
-            ], 'preceding_succeeding')
-            ->addIndex(['sitenodename', 'uripath'], null, [], ['lengths' => [null, 100]]);
+            ], 'preceding_succeeding');
+
+        // Index prefix lengths are only supported on MySQL; on PostgreSQL they cause persistent schema diffs
+        if ($platform instanceof AbstractMySQLPlatform) {
+            $table->addIndex(['sitenodename', 'uripath'], null, [], ['lengths' => [null, 100]]);
+        } else {
+            $table->addIndex(['sitenodename', 'uripath']);
+        }
+
+        return $table;
     }
 }

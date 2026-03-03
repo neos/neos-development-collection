@@ -6,6 +6,7 @@ namespace Neos\ContentRepository\Dbal;
 
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Exception;
+use Doctrine\DBAL\Platforms\AbstractMySQLPlatform;
 use Doctrine\DBAL\Schema\Comparator;
 use Doctrine\DBAL\Schema\Schema;
 
@@ -36,6 +37,14 @@ final class DbalSchemaDiff
         if ($platform === null) { // @phpstan-ignore-line This is not possible according to doc types, but there is no corresponding type hint in DBAL 2.x
             throw new \RuntimeException('Failed to retrieve Database platform', 1705679147);
         }
+
+        // PostgreSQL maps 'bytea' to 'blob' by default, but our schema uses Types::BINARY
+        // (which also generates BYTEA). Override the mapping so introspected columns match
+        // the desired schema and don't produce persistent diffs.
+        if (!$platform instanceof AbstractMySQLPlatform) {
+            $platform->registerDoctrineTypeMapping('bytea', 'binary');
+        }
+
         $fromTableSchemas = [];
         foreach ($schema->getTables() as $tableSchema) {
             if ($schemaManager->tablesExist([$tableSchema->getName()])) {
