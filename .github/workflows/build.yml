@@ -14,7 +14,7 @@ jobs:
       contents: read # to fetch code (actions/checkout)
 
     if: "!contains(github.event.head_commit.message, '[skip ci]') && !contains(github.event.head_commit.message, '[skip travis]')"
-    name: "PHP ${{ matrix.php-versions }} Test ${{ matrix.parallel-parts }} (deps: ${{ matrix.dependencies }}${{ matrix.db && format(', db: {0}', matrix.db) || '' }})"
+    name: "PHP ${{ matrix.php-versions }} Test ${{ matrix.parallel-parts }} (deps: ${{ matrix.dependencies }}"
 
     continue-on-error: ${{ matrix.experimental }}
 
@@ -26,7 +26,6 @@ jobs:
         # see services, this is mariadb
         mysqlport: [3306]
         composer-arguments: [''] # to run --ignore-platform-reqs in experimental builds
-        db: ['']
         include:
           - php-versions: '8.4'
             dependencies: 'highest'
@@ -34,28 +33,6 @@ jobs:
             # see services, this is mysql
             mysqlport: 3307
             experimental: false
-            db: mysql
-          # escr-behavioral with PostgreSQL for Flow persistence AND content graph projection
-          - php-versions: '8.2'
-            parallel-parts: escr-behavioral
-            dependencies: 'highest'
-            experimental: false
-            db: postgres
-          - php-versions: '8.3'
-            parallel-parts: escr-behavioral
-            dependencies: 'highest'
-            experimental: false
-            db: postgres
-          - php-versions: '8.4'
-            parallel-parts: escr-behavioral
-            dependencies: 'highest'
-            experimental: false
-            db: postgres
-          - php-versions: '8.5'
-            parallel-parts: escr-behavioral
-            dependencies: 'highest'
-            experimental: false
-            db: postgres
 
         # we want to parallelize quite some parts of the test suite; but these need similar setup steps.
         # that's why we parallelize via a Matrix; and not via different jobs.
@@ -65,6 +42,7 @@ jobs:
           - linting-unit-functionaltests-mysql
           - functionaltests-postgres
           - escr-behavioral
+          - escr-behavioral-postgres
         experimental: [false]
         #include:
           #- php-versions: '7.3'
@@ -112,7 +90,7 @@ jobs:
       postgres:
         # see https://www.postgresql.org/support/versioning/
         # this should be a current release
-        image: postgres:14.2
+        image: postgres:18.3
         env:
           POSTGRES_USER: neos
           POSTGRES_PASSWORD: neos
@@ -238,29 +216,11 @@ jobs:
                     port: 6379
 
           EOF
-          mkdir Configuration/Testing/Postgres
-          cat <<EOF >> Configuration/Testing/Postgres/Settings.yaml
-          Neos:
-            Flow:
-              persistence:
-                backendOptions:
-                  host: '127.0.0.1'
-                  port: 5432
-                  driver: pdo_pgsql
-                  charset: 'UTF8'
-                  user: 'neos'
-                  password: 'neos'
-                  dbname: 'flow_functional_testing'
-          EOF
-          echo "Running in context '$FLOW_CONTEXT'"
-          # Enable for debugging: ./flow configuration:show
-          # Enable for debugging: ./flow routing:list
 
-      - name: Setup Flow configuration (escr-behavioral with PostgreSQL)
-        if: matrix.parallel-parts == 'escr-behavioral' && matrix.db == 'postgres'
-        run: |
-          rm -f Configuration/Testing/Settings.yaml
-          cat <<EOF >> Configuration/Testing/Settings.yaml
+          # unfortunately Neos.Behat HARDCODES the Testing/Behat context during test runs -> so we put the Postgres config file into
+          # another folder and move it over before test run starts. Meh...
+          mkdir Configuration/Testing/_Behat_Postgres
+          cat <<EOF >> Configuration/Testing/_Behat_Postgres/Settings.yaml
           Neos:
             Flow:
               persistence:
@@ -268,32 +228,26 @@ jobs:
                   host: '127.0.0.1'
                   port: 5432
                   driver: pdo_pgsql
+                  charset: 'UTF8'
                   user: 'neos'
                   password: 'neos'
                   dbname: 'flow_functional_testing'
-                  charset: 'UTF8'
-              doctrine:
-                dbal:
-                  mappingTypes:
-                    _int8: bigint_array
+
             ContentRepositoryRegistry:
               presets:
                 'default':
                   contentGraphProjection:
                     factoryObjectName: Neos\ContentGraph\PostgreSQLAdapter\PostgresContentGraphProjectionFactory
-                    catchUpHooks:
-                      'Neos.ContentRepository.BehavioralTests:RaceConditionTracker':
-                        factoryObjectName: Neos\ContentRepository\BehavioralTests\ProjectionRaceConditionTester\RaceTrackerCatchUpHookFactory
+                    # catchUpHooks:
+                    #   'Neos.ContentRepository.BehavioralTests:RaceConditionTracker':
+                    #     factoryObjectName: Neos\ContentRepository\BehavioralTests\ProjectionRaceConditionTester\RaceTrackerCatchUpHookFactory
                   projectionIntegrityViolationDetector:
                     factoryObjectName: Neos\ContentGraph\PostgreSQLAdapter\PostgresProjectionIntegrityViolationDetectionRunnerFactory
-            ContentRepository:
-              BehavioralTests:
-                raceConditionTracker:
-                  enabled: true
-                  redis:
-                    host: 127.0.0.1
-                    port: 6379
           EOF
+
+          echo "Running in context '$FLOW_CONTEXT'"
+          # Enable for debugging: ./flow configuration:show
+          # Enable for debugging: ./flow routing:list
 
       - name: Run Linter
         if: matrix.parallel-parts == 'linting-unit-functionaltests-mysql'
@@ -311,8 +265,14 @@ jobs:
           FLOW_CONTEXT=Testing ./flow doctrine:migrate --quiet
           bin/phpunit --colors --stop-on-failure -c Build/BuildEssentials/PhpUnit/FunctionalTests.xml --testsuite "Neos tests" --verbose
 
+      - name: Postgres Config adjustment for ESCR
+        if: matrix.parallel-parts == 'escr-behavioral-postgres'
+        run: |
+          rm -Rf Configuration/Testing/Behat
+          mv Configuration/Testing/_Behat_Postgres/ Configuration/Testing
+
       - name: Run Parallel Tests for the ES CR
-        if: matrix.parallel-parts == 'escr-behavioral'
+        if: matrix.parallel-parts == 'escr-behavioral' || matrix.parallel-parts == 'escr-behavioral-postgres'
         run: |
           cd Packages/Neos
           hasFailure=0
@@ -321,7 +281,7 @@ jobs:
           exit $hasFailure
       - name: Run Behavioral Tests (ES CR && Neos.Neos)
         id: escrtests
-        if: matrix.parallel-parts == 'escr-behavioral'
+        if: matrix.parallel-parts == 'escr-behavioral' || matrix.parallel-parts == 'escr-behavioral-postgres
         # DEBUG MODE: comment-in the next line, because we want to reach the Upload Mysql/Postgres DB dump step.
         continue-on-error: true
         run: |
@@ -368,7 +328,7 @@ jobs:
             echo "starting pg_dump"
             pg_dump --file=${{ github.workspace }}/Data/DebugDatabaseDumps/pg_dump.sql --format=plain --no-owner --dbname=flow_functional_testing --host=127.0.0.1 --username=neos --no-password
             echo "pg_dump finished"
-            if [ "${{ matrix.db }}" != "postgres" ]; then
+            if [ "${{ matrix.parallel-parts }}" == "escr-behavioral" ]; then
               echo "starting mysqldump"
               mysqldump --force --host=127.0.0.1 -u neos -pneos flow_functional_testing > ${{ github.workspace }}/Data/DebugDatabaseDumps/mysqldump.sql
             fi
@@ -378,9 +338,9 @@ jobs:
 
       - name: Upload Postgres/Mysql DB dump
         uses: actions/upload-artifact@v4
-        if: matrix.parallel-parts == 'escr-behavioral'
+        if: matrix.parallel-parts == 'escr-behavioral' || matrix.parallel-parts == 'escr-behavioral-postgres
         with:
-          name: database-dumps-${{ matrix.php-versions }}-${{ matrix.dependencies }}-${{ matrix.parallel-parts }}-${{ matrix.mysqlport }}${{ matrix.db && format('-{0}', matrix.db) || '' }}
+          name: database-dumps-${{ matrix.php-versions }}-${{ matrix.dependencies }}-${{ matrix.parallel-parts }}-${{ matrix.mysqlport }}
           path: Data/DebugDatabaseDumps
 
       - name: Fail pipeline if ES CR tests broke (after uploading artifacts)
