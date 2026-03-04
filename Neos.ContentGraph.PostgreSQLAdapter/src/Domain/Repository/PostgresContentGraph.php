@@ -367,7 +367,8 @@ final readonly class PostgresContentGraph implements ContentGraphInterface
         // {"<childAnchor>": {"<tagName>": true/null}, ...}
         // We need to find nodes where their anchor has the tag set to true (explicitly tagged)
         $query = /** @lang PostgreSQL */
-            'SELECT n.origindimensionspacepoint, n.nodeaggregateid,
+            'SELECT DISTINCT ON (n.nodeaggregateid, h.dimensionspacepointhash)
+                n.origindimensionspacepoint, n.nodeaggregateid,
                 n.created, n.originalcreated, n.lastmodified, n.originallastmodified,
                 n.nodetypename, n.classification, n.properties, n.nodename,
                 h.contentstreamid, h.dimensionspacepoint,
@@ -381,7 +382,7 @@ final readonly class PostgresContentGraph implements ContentGraphInterface
             WHERE th.contentstreamid = :contentStreamId
               AND h.contentstreamid = :contentStreamId
               AND (th.subtreetags->(tn.relationanchorpoint::text)->>:tagName) = \'true\'
-            ORDER BY n.relationanchorpoint DESC';
+            ORDER BY n.nodeaggregateid, h.dimensionspacepointhash, n.relationanchorpoint DESC';
 
         $nodeRows = $this->dbal->executeQuery($query, [
             'contentStreamId' => $this->contentStreamId->value,
