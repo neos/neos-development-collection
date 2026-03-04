@@ -43,7 +43,7 @@ final class DocumentNodeInfo
     /**
      * @param array<string,mixed> $source
      */
-    public function __construct(array $source)
+    private function __construct(array $source)
     {
         $this->source = $source;
     }
@@ -53,6 +53,8 @@ final class DocumentNodeInfo
      */
     public static function fromDatabaseRow(array $row): self
     {
+        // Normalize stream resource to string (PostgreSQL returns BYTEA as streams)
+        $row['dimensionspacepointhash'] = self::binaryToString($row['dimensionspacepointhash']);
         return new self($row);
     }
 
@@ -126,7 +128,7 @@ final class DocumentNodeInfo
 
     public function getDimensionSpacePointHash(): string
     {
-        return self::binaryToString($this->source['dimensionspacepointhash']);
+        return (string)$this->source['dimensionspacepointhash'];
     }
 
     /**
