@@ -269,7 +269,7 @@ jobs:
         if: matrix.parallel-parts == 'escr-behavioral-postgres'
         run: |
           rm -Rf Configuration/Testing/Behat
-          mv Configuration/Testing/_Behat_Postgres Configuration/Testing
+          mv Configuration/Testing/_Behat_Postgres/Settings.yaml Configuration/Testing/Settings.yaml
 
       - name: Run Parallel Tests for the ES CR
         if: matrix.parallel-parts == 'escr-behavioral' || matrix.parallel-parts == 'escr-behavioral-postgres'
