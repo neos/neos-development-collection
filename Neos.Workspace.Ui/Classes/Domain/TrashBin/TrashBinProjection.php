@@ -108,7 +108,8 @@ class TrashBinProjection implements ProjectionInterface
             [
                 DbalSchemaFactory::columnForWorkspaceName('workspace_name', $platform)->setNotNull(true),
                 DbalSchemaFactory::columnForNodeAggregateId('node_aggregate_id', $platform)->setNotnull(true),
-                (new Column('user_id', Type::getType(Types::GUID)))->setNotnull(false),
+                // TODO review this -> postgres doesnt like "test-strings" as uuid, but are users uuids?
+                (new Column('user_id', Type::getType(Types::STRING)))->setLength(255)->setNotnull(false),
                 (new Column('delete_time', Type::getType(Types::DATETIME_IMMUTABLE)))->setNotnull(false),
                 (new Column('affected_dimension_space_points', Type::getType(Types::JSON)))->setNotnull(true),
                 DbalSchemaFactory::columnForDimensionSpacePointHash('affected_dimension_space_points_hash', $platform)->setNotnull(false),
