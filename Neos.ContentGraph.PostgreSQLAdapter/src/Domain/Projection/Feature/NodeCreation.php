@@ -18,6 +18,8 @@ use Doctrine\DBAL\ArrayParameterType;
 use Doctrine\DBAL\Connection;
 use Neos\ContentGraph\PostgreSQLAdapter\ContentGraphTableNames;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\NodeRelationAnchorPoint;
+use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\ProjectionWriteQueries;
+use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\ReferenceRelationRecord;
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
 use Neos\ContentRepository\Core\Feature\NodeCreation\Event\NodeAggregateWithNodeWasCreated;
 use Neos\ContentRepository\Core\Feature\RootNodeCreation\Event\RootNodeAggregateDimensionsWereUpdated;
@@ -34,6 +36,7 @@ trait NodeCreation
 {
     abstract protected function getDatabaseConnection(): Connection;
     abstract protected function getTableNames(): ContentGraphTableNames;
+    abstract protected function getWriteQueries(): ProjectionWriteQueries;
 
     /*
  * TODO error handling
@@ -367,5 +370,35 @@ if (is_null($parentNode)) {
         ], [
             'dimensionspacepointhashes' => ArrayParameterType::STRING,
         ]);
+
+        // ##### third step: write initial references (e.g. when copying nodes with references)
+        if ($event->nodeReferences->references !== []) {
+            $nodeAnchorPointValue = $this->getDatabaseConnection()->fetchOne(
+                'SELECT relationanchorpoint FROM ' . $this->getTableNames()->node()
+                . ' WHERE nodeaggregateid = :nodeAggregateId',
+                ['nodeAggregateId' => $event->nodeAggregateId->value]
+            );
+            if ($nodeAnchorPointValue !== false) {
+                $nodeAnchorPoint = NodeRelationAnchorPoint::fromInteger((int)$nodeAnchorPointValue);
+                $position = 0;
+                foreach ($event->nodeReferences as $referencesByProperty) {
+                    foreach ($referencesByProperty->references as $reference) {
+                        $this->getWriteQueries()->addReferenceToDatabase(
+                            $this->getDatabaseConnection(),
+                            new ReferenceRelationRecord(
+                                $nodeAnchorPoint,
+                                $referencesByProperty->referenceName,
+                                $position,
+                                $reference->properties !== null && $reference->properties->count() > 0
+                                    ? $reference->properties
+                                    : null,
+                                $reference->targetNodeAggregateId
+                            )
+                        );
+                        $position++;
+                    }
+                }
+            }
+        }
     }
 }
