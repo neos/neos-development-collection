@@ -281,7 +281,7 @@ jobs:
           exit $hasFailure
       - name: Run Behavioral Tests (ES CR && Neos.Neos)
         id: escrtests
-        if: matrix.parallel-parts == 'escr-behavioral' || matrix.parallel-parts == 'escr-behavioral-postgres
+        if: matrix.parallel-parts == 'escr-behavioral' || matrix.parallel-parts == 'escr-behavioral-postgres'
         # DEBUG MODE: comment-in the next line, because we want to reach the Upload Mysql/Postgres DB dump step.
         continue-on-error: true
         run: |
@@ -338,7 +338,7 @@ jobs:
 
       - name: Upload Postgres/Mysql DB dump
         uses: actions/upload-artifact@v4
-        if: matrix.parallel-parts == 'escr-behavioral' || matrix.parallel-parts == 'escr-behavioral-postgres
+        if: matrix.parallel-parts == 'escr-behavioral' || matrix.parallel-parts == 'escr-behavioral-postgres'
         with:
           name: database-dumps-${{ matrix.php-versions }}-${{ matrix.dependencies }}-${{ matrix.parallel-parts }}-${{ matrix.mysqlport }}
           path: Data/DebugDatabaseDumps
