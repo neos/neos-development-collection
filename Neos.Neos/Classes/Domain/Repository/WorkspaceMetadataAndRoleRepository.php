@@ -103,6 +103,8 @@ final readonly class WorkspaceMetadataAndRoleRepository
             WHERE
                 content_repository_id = :contentRepositoryId
                 AND workspace_name = :workspaceName
+            ORDER BY
+                subject_type, subject
         SQL;
         try {
             $rows = $this->dbal->fetchAllAssociative($query, [
