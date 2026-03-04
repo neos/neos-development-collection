@@ -566,8 +566,12 @@ final class DocumentUriPathProjection implements ProjectionInterface
             $uriPathSegments[array_key_last($uriPathSegments)] = ($newPropertyValues['uriPathSegment'] ?? '') ?: $event->nodeAggregateId->value;
             $newUriPath = implode('/', $uriPathSegments);
 
+            $concat = $this->dbal->getDatabasePlatform()->getConcatExpression(
+                ':newUriPath',
+                'SUBSTRING(uriPath, LENGTH(:oldUriPath) + 1)'
+            );
             $this->updateNodeQuery(
-                'SET uriPath = CONCAT(:newUriPath, SUBSTRING(uriPath, LENGTH(:oldUriPath) + 1))
+                'SET uriPath = ' . $concat . '
                 WHERE dimensionSpacePointHash = :dimensionSpacePointHash
                     AND (
                         nodeAggregateId = :nodeAggregateId
@@ -645,11 +649,22 @@ final class DocumentUriPathProjection implements ProjectionInterface
             $removedDelta++;
         }
 
+        $platform = $this->dbal->getDatabasePlatform();
+        $concatIdPath = $platform->getConcatExpression(
+            ':newParentNodeAggregateIdPath',
+            '"/"',
+            'TRIM(LEADING "/" FROM SUBSTRING(nodeAggregateIdPath, :sourceNodeAggregateIdPathOffset))'
+        );
+        $concatUriPath = $platform->getConcatExpression(
+            ':newParentUriPath',
+            '"/"',
+            'TRIM(LEADING "/" FROM SUBSTRING(uriPath, :sourceUriPathOffset))'
+        );
         $this->updateNodeQuery(
             /** @codingStandardsIgnoreStart */
             'SET
-                nodeAggregateIdPath = TRIM(TRAILING "/" FROM CONCAT(:newParentNodeAggregateIdPath, "/", TRIM(LEADING "/" FROM SUBSTRING(nodeAggregateIdPath, :sourceNodeAggregateIdPathOffset)))),
-                uriPath = TRIM("/" FROM CONCAT(:newParentUriPath, "/", TRIM(LEADING "/" FROM SUBSTRING(uriPath, :sourceUriPathOffset)))),
+                nodeAggregateIdPath = TRIM(TRAILING "/" FROM ' . $concatIdPath . '),
+                uriPath = TRIM("/" FROM ' . $concatUriPath . '),
                 disabled = disabled + ' . $disabledDelta . ',
                 removed = removed + ' . $removedDelta . '
             WHERE
