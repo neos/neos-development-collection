@@ -651,55 +651,38 @@ final class DocumentUriPathProjection implements ProjectionInterface
         }
 
         $platform = $this->dbal->getDatabasePlatform();
+        $slash = "'" . "/" . "'";
+        // Inline integer offsets directly into SQL to avoid PostgreSQL interpreting
+        // string-typed parameters as regex patterns in SUBSTRING(text, text) overload
+        $sourceNodeAggregateIdPathOffset = (int)strrpos($node->getNodeAggregateIdPath(), '/') + 1;
+        $sourceUriPathOffset = $newParentNode->isRoot() ? strlen($node->getUriPath()) + 1 : ((int)strrpos($node->getUriPath(), '/') + 1);
         $concatIdPath = $platform->getConcatExpression(
             ':newParentNodeAggregateIdPath',
-            '"/"',
-            'TRIM(LEADING "/" FROM SUBSTRING(nodeAggregateIdPath, :sourceNodeAggregateIdPathOffset))'
+            $slash,
+            "TRIM(LEADING '/' FROM SUBSTRING(nodeAggregateIdPath, " . $sourceNodeAggregateIdPathOffset . "))"
         );
         $concatUriPath = $platform->getConcatExpression(
             ':newParentUriPath',
-            '"/"',
-            'TRIM(LEADING "/" FROM SUBSTRING(uriPath, :sourceUriPathOffset))'
+            $slash,
+            "TRIM(LEADING '/' FROM SUBSTRING(uriPath, " . $sourceUriPathOffset . "))"
         );
         $this->updateNodeQuery(
             /** @codingStandardsIgnoreStart */
-            'SET
-                nodeAggregateIdPath = TRIM(TRAILING "/" FROM ' . $concatIdPath . '),
-                uriPath = TRIM("/" FROM ' . $concatUriPath . '),
-                disabled = disabled + ' . $disabledDelta . ',
-                removed = removed + ' . $removedDelta . '
+            "SET
+                nodeAggregateIdPath = TRIM(TRAILING '/' FROM " . $concatIdPath . "),
+                uriPath = TRIM('/' FROM " . $concatUriPath . "),
+                disabled = disabled + " . $disabledDelta . ",
+                removed = removed + " . $removedDelta . "
             WHERE
                 dimensionSpacePointHash = :dimensionSpacePointHash
                     AND (nodeAggregateId = :nodeAggregateId
                     OR nodeAggregateIdPath LIKE :childNodeAggregateIdPathPrefix)
-            ',
+            ",
             /** @codingStandardsIgnoreEnd */
             [
                 'nodeAggregateId' => $node->getNodeAggregateId()->value,
                 'newParentNodeAggregateIdPath' => $newParentNode->getNodeAggregateIdPath(),
-                'sourceNodeAggregateIdPathOffset'
-                    => (int)strrpos($node->getNodeAggregateIdPath(), '/') + 1,
                 'newParentUriPath' => $newParentNode->getUriPath(),
-                // we have to distinguish two cases here:
-                // - standard case: we want to move the nodes with URI /foo/bar into /target
-                //   -> we want to strip the common prefix of the node (and all descendants)
-                //      and then prepend the suffix with the new parent. Example:
-                //
-                //   /foo/bar     -> /target (+ /bar) => /target/bar
-                //   /foo/bar/baz => /target (+ /bar/baz) => /target/bar/baz
-                //
-                //
-                // - move directly underneath ROOT node of CR.
-                //   the 1st level underneath the root node (in Neos) is the Site node, which needs to have
-                //   an empty uriPath.
-                //
-                //   This is why we set the offset to the complete length, to create an empty string for the moved node
-                //   in the SQL query above. Example:
-                //
-                //   /foo/bar     -> / (+ /) => /
-                //   /foo/bar/baz => / (+ /baz) => /baz
-                //
-                'sourceUriPathOffset' => $newParentNode->isRoot() ? strlen($node->getUriPath()) + 1 : ((int)strrpos($node->getUriPath(), '/') + 1),
                 'dimensionSpacePointHash' => $node->getDimensionSpacePointHash(),
                 'childNodeAggregateIdPathPrefix' => $node->getNodeAggregateIdPath() . '/%',
             ]
