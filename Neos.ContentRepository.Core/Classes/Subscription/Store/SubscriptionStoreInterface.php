@@ -32,4 +32,10 @@ interface SubscriptionStoreInterface
     public function beginTransaction(): void;
 
     public function commit(): void;
+
+    public function createSavepoint(string $savepoint): void;
+
+    public function releaseSavepoint(string $savepoint): void;
+
+    public function rollbackSavepoint(string $savepoint): void;
 }

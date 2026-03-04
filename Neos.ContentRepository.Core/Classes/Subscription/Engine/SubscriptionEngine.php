@@ -363,10 +363,16 @@ final class SubscriptionEngine
                             $this->logCatchupHookError($error);
                         }
 
+                        $savepointName = 'proj_' . str_replace(['.', ':', '-'], '_', $subscription->id->value);
+                        $this->subscriptionStore->createSavepoint($savepointName);
                         try {
                             $subscriber->projection->apply($domainEvent, $eventEnvelope);
                             $this->performanceTracer?->mark('Projection::apply', ['subscription' => $subscription->id->value, 'event' => $eventEnvelope->event->type->value]);
+                            $this->subscriptionStore->releaseSavepoint($savepointName);
                         } catch (\Throwable $e) {
+                            // Rollback to savepoint to restore the transaction to a usable state (required for PostgreSQL)
+                            $this->subscriptionStore->rollbackSavepoint($savepointName);
+
                             // ERROR Case:
                             $errors[] = Error::create($subscription->id, $e->getMessage(), $errors === [] ? $e : null, $eventEnvelope->sequenceNumber);
                             $this->logger?->error(sprintf('Subscription Engine: Subscriber "%s" for "%s" could not process the event "%s" (sequence number: %d): %s', $subscriber::class, $subscription->id->value, $eventEnvelope->event->type->value, $eventEnvelope->sequenceNumber->value, $e->getMessage()));

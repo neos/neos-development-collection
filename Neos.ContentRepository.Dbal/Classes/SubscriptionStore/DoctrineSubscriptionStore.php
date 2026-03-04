@@ -177,4 +177,19 @@ final class DoctrineSubscriptionStore implements SubscriptionStoreInterface
     {
         $this->dbal->commit();
     }
+
+    public function createSavepoint(string $savepoint): void
+    {
+        $this->dbal->createSavepoint($savepoint);
+    }
+
+    public function releaseSavepoint(string $savepoint): void
+    {
+        $this->dbal->releaseSavepoint($savepoint);
+    }
+
+    public function rollbackSavepoint(string $savepoint): void
+    {
+        $this->dbal->rollbackSavepoint($savepoint);
+    }
 }
