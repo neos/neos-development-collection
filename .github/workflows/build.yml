@@ -189,16 +189,6 @@ jobs:
                   password: 'neos'
                   dbname: 'flow_functional_testing'
             ContentRepositoryRegistry:
-              postgres:
-                persistence:
-                  backendOptions:
-                    host: '127.0.0.1'
-                    port: 5432
-                    driver: pdo_pgsql
-                    dbname: 'flow_functional_testing'
-                    user: 'neos'
-                    password: 'neos'
-                    charset: 'UTF8'
 
               # We enable the race condition tracker
               presets:
@@ -272,7 +262,8 @@ jobs:
           mv Configuration/Testing/_Behat_Postgres/Settings.yaml Configuration/Testing/Settings.yaml
 
       - name: Run Parallel Tests for the ES CR
-        if: matrix.parallel-parts == 'escr-behavioral' || matrix.parallel-parts == 'escr-behavioral-postgres'
+        # TODO: enable parallel tests also for Postgres
+        if: matrix.parallel-parts == 'escr-behavioral'
         run: |
           cd Packages/Neos
           hasFailure=0
