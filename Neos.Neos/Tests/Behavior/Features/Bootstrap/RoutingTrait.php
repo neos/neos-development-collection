@@ -263,6 +263,10 @@ trait RoutingTrait
             $this->currentContentRepository->id
         );
         $actualResult = $dbal->fetchAllAssociative('SELECT ' . $columns . ' FROM ' . $tablePrefix . '_uri ORDER BY nodeaggregateidpath, dimensionspacepointhash');
+        // PostgreSQL PDO may return column values as stream resources instead of strings
+        $actualResult = array_map(static function (array $row) {
+            return array_map(static fn ($cell) => is_resource($cell) ? stream_get_contents($cell) : $cell, $row);
+        }, $actualResult);
         $expectedResult = array_map(static function (array $row) {
             return array_map(static function (string $cell) {
                 return json_decode($cell, true, 512, JSON_THROW_ON_ERROR);
