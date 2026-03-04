@@ -189,6 +189,7 @@ final class DocumentUriPathProjection implements ProjectionInterface
                 'uriPath' => '',
                 'nodeAggregateIdPath' => $event->nodeAggregateId->value,
                 'dimensionSpacePointHash' => $dimensionSpacePoint->hash,
+                'originDimensionSpacePointHash' => $dimensionSpacePoint->hash,
                 'nodeAggregateId' => $event->nodeAggregateId->value,
                 'nodeTypeName' => $nodeInSomeDimension->getNodeTypeName()->value,
             ]);
