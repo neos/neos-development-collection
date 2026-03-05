@@ -190,9 +190,10 @@ final class ProjectionErrorTest extends AbstractSubscriptionEngineTestCase
         self::assertEquals($expectedFailure, $this->subscriptionStatus('Vendor.Package:SecondFakeProjection'));
 
         // reactivation will attempt to retry fix this, but can only work if the projection is repaired and will lead to an error otherwise:
+        // with savepoints, the previously failed apply was rolled back so there is no duplicate key - the saboteur throws again
         $result = $this->subscriptionEngine->reactivate();
         self::assertEquals(1, $result->numberOfProcessedEvents);
-        self::assertEquals('Must not happen! Debug projection detected duplicate event 1 of type ContentStreamWasCreated', $result->errors->first()?->message);
+        self::assertEquals($exception->getMessage(), $result->errors->first()?->message);
 
         self::assertEquals(
             ProjectionSubscriptionStatus::create(
@@ -265,9 +266,9 @@ final class ProjectionErrorTest extends AbstractSubscriptionEngineTestCase
             $this->subscriptionStatus('Vendor.Package:SecondFakeProjection')
         );
 
-        // because the error is thrown after the even the state is commited
+        // with savepoints, the failed apply is rolled back so no events are persisted
         self::assertEquals(
-            [1],
+            [],
             $this->secondFakeProjection->getState()->findAppliedSequenceNumberValues()
         );
     }
@@ -315,9 +316,9 @@ final class ProjectionErrorTest extends AbstractSubscriptionEngineTestCase
             $this->subscriptionStatus('Vendor.Package:SecondFakeProjection')
         );
 
-        // the first successful event is applied and committet, but the second partially applied event is also applied:
+        // with savepoints, only the first successful event persists; the second failed apply is rolled back:
         self::assertEquals(
-            [SequenceNumber::fromInteger(1), SequenceNumber::fromInteger(2)],
+            [SequenceNumber::fromInteger(1)],
             $this->secondFakeProjection->getState()->findAppliedSequenceNumbers()
         );
     }
