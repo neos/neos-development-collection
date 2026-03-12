@@ -14,7 +14,11 @@ declare(strict_types=1);
 
 namespace Neos\Neos\Command;
 
+use DateInterval;
+use Neos\ContentRepository\Core\Feature\Security\Exception\AccessDenied;
+use Neos\ContentRepository\Core\Feature\WorkspaceActivation\Command\DeactivateWorkspace;
 use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Exception\WorkspaceAlreadyExists;
+use Neos\ContentRepository\Core\Feature\WorkspaceModification\Command\DeleteWorkspace;
 use Neos\ContentRepository\Core\Feature\WorkspaceRebase\Dto\RebaseErrorHandlingStrategy;
 use Neos\ContentRepository\Core\Feature\WorkspaceRebase\Exception\WorkspaceRebaseFailed;
 use Neos\ContentRepository\Core\Service\WorkspaceMaintenanceServiceFactory;
@@ -26,6 +30,8 @@ use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Cli\CommandController;
 use Neos\Flow\Cli\Exception\StopCommandException;
+use Neos\Flow\Utility\Now;
+use Neos\Neos\Domain\Model\UserId;
 use Neos\Neos\Domain\Model\WorkspaceClassification;
 use Neos\Neos\Domain\Model\WorkspaceDescription;
 use Neos\Neos\Domain\Model\WorkspaceRole;
@@ -37,6 +43,7 @@ use Neos\Neos\Domain\Model\WorkspaceTitle;
 use Neos\Neos\Domain\Service\UserService;
 use Neos\Neos\Domain\Service\WorkspacePublishingService;
 use Neos\Neos\Domain\Service\WorkspaceService;
+use SplObjectStorage;
 
 /**
  * The Workspace Command Controller
@@ -55,6 +62,9 @@ class WorkspaceCommandController extends CommandController
 
     #[Flow\Inject]
     protected WorkspaceService $workspaceService;
+
+    #[Flow\Inject]
+    protected Now $now;
 
     /**
      * Publish changes of a workspace
@@ -524,6 +534,57 @@ class WorkspaceCommandController extends CommandController
         ]);
     }
 
+    /**
+     * Removes all stale personal workspaces.
+     *
+     * A personal workspace is considered stale if it has no pending changes, no other workspace uses it as a base
+     * workspace and the owner of the workspace did not log in for the time specified.
+     *
+     * @param string $contentRepository The name of the content repository. (Default: 'default')
+     * @param string $dateInterval The time interval a user had to be inactive for its workspaces to be considered stale. (Default: '7 days')
+     * @throws AccessDenied
+     * @throws \DateInvalidOperationException
+     */
+    public function removeStaleCommand(string $contentRepository = 'default', string $dateInterval = '7 days'): void
+    {
+        $contentRepositoryId = ContentRepositoryId::fromString($contentRepository);
+        $contentRepositoryInstance = $this->contentRepositoryRegistry->get($contentRepositoryId);
+
+        $interval = DateInterval::createFromDateString($dateInterval);
+        if ($interval === false) {
+            $this->outputLine('Unable to parse date interval "%s".', [$dateInterval]);
+            $this->quit();
+        }
+
+        $workspaces = $contentRepositoryInstance->findWorkspaces();
+        $baseWorkspaceNames = $this->splObjectStoreFromIterable($workspaces->map(fn($workspace) => $workspace->baseWorkspaceName));
+
+        $probablyStaleWorkspaceNames = $this->splObjectStoreFromIterable(
+            $workspaces
+                ->filter(fn($workspace) => !$workspace->hasPublishableChanges() &&
+                    !$baseWorkspaceNames->contains($workspace->workspaceName))
+                ->map(fn($workspace) => $workspace->workspaceName)
+        );
+
+        $inactiveUserIds = $this->splObjectStoreFromIterable($this->userService->findUserIdsNotLoggedInAfter($this->now->sub($interval)));
+
+        $personalWorkspaces = $this->workspaceService->getPersonalWorkspaceNames($contentRepositoryId);
+        $workspacesToRemove = [];
+        foreach ($personalWorkspaces as $userId => $personalWorkspace) {
+            /**  @var UserId $userId */
+            if (
+                $probablyStaleWorkspaceNames->contains($personalWorkspace) &&
+                $inactiveUserIds->contains($userId)
+            ) {
+                $workspacesToRemove[] = $personalWorkspace;
+            }
+        }
+
+        foreach ($workspacesToRemove as $workspace) {
+            $contentRepositoryInstance->handle(DeleteWorkspace::create($workspace));
+        }
+    }
+
     // -----------------------
 
     private function buildWorkspaceRoleSubject(WorkspaceRoleSubjectType $subjectType, string $usernameOrRoleIdentifier): WorkspaceRoleSubject
@@ -539,5 +600,23 @@ class WorkspaceCommandController extends CommandController
             $roleSubject = WorkspaceRoleSubject::createForGroup($usernameOrRoleIdentifier);
         }
         return $roleSubject;
+    }
+
+    /**
+     * @template T of object
+     *
+     * @param iterable<T|null> $iterable
+     * @return SplObjectStorage<T, mixed>
+     */
+    private function splObjectStoreFromIterable(iterable $iterable): SplObjectStorage
+    {
+        /** @var SplObjectStorage<T, mixed> $result */
+        $result = new SplObjectStorage();
+        foreach ($iterable as $workspace) {
+            if ($workspace !== null) {
+                $result->attach($workspace);
+            }
+        }
+        return $result;
     }
 }

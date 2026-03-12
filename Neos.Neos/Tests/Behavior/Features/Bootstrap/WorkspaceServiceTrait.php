@@ -14,6 +14,7 @@ declare(strict_types=1);
 
 use Behat\Gherkin\Node\TableNode;
 use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Command\CreateRootWorkspace;
+use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
 use Neos\ContentRepository\Core\SharedModel\Exception\WorkspaceDoesNotExist;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
@@ -357,6 +358,34 @@ trait WorkspaceServiceTrait
         Assert::assertFalse($permissions->read);
         Assert::assertFalse($permissions->write);
         Assert::assertFalse($permissions->manage);
+    }
+
+    /**
+     * @Then the following personal workspaces exist in content repository :contentRepositoryId:
+     */
+    public function theFollowingPersonalWorkspacesExistInContentRepository(string $contentRepositoryId, TableNode $workspacesAndUsernames): void
+    {
+        $expectedWorkspaces = [];
+        foreach ($workspacesAndUsernames->getColumnsHash() as $workspaceAndUsername) {
+            $expectedWorkspaces[$workspaceAndUsername["Userid"]] = $workspaceAndUsername["WorkspaceName"];
+        }
+
+        $actualWorkspaces = $this->getObject(WorkspaceService::class)->getPersonalWorkspaceNames(
+            ContentRepositoryId::fromString($contentRepositoryId)
+        );
+
+        $count = 0;
+        foreach ($actualWorkspaces as $userId => $workspace) {
+            $count++;
+            $userIdString = $userId->value;
+            $workspaceString = $workspace->value;
+            Assert::assertTrue(array_key_exists($userIdString, $expectedWorkspaces), "Found unexpected workspace $workspaceString for UserId $userIdString");
+
+            $workspaceForId = $expectedWorkspaces[$userIdString];
+            Assert::assertEquals($workspaceForId, $workspace->value, "workspace for userId $workspaceForId is $workspaceString but was expected to be $workspaceForId");
+        }
+        $expectedCount = count($expectedWorkspaces);
+        Assert::assertEquals($expectedCount, $count, "Expected $expectedCount personal workspaces, but found $count");
     }
 
     private function userIdForUsername(string $username): UserId

@@ -214,3 +214,11 @@ parameters:
 			message: "#^Return type \\(void\\) of method Neos\\\\Neos\\\\ResourceManagement\\\\NodeTypesStreamWrapper\\:\\:removeDirectory\\(\\) should be compatible with return type \\(bool\\) of method Neos\\\\Flow\\\\ResourceManagement\\\\Streams\\\\StreamWrapperInterface\\:\\:removeDirectory\\(\\)$#"
 			count: 1
 			path: Neos.Neos/Classes/ResourceManagement/NodeTypesStreamWrapper.php
+
+		-
+		  # DateInvalidOperationException was introduced in PHP 8.3 - on PHP 8.2 the class does not exist and PHPStan reports throws.notThrowable
+			message: "#^PHPDoc tag @throws with type DateInvalidOperationException(\\|[^ ]+)? is not subtype of Throwable$#"
+			count: 1
+			path: Neos.Neos/Classes/Command/WorkspaceCommandController.php
+		  # on PHP 8.3 and newer this ignore is unmatched and therefore would be reported as such
+			reportUnmatched: false

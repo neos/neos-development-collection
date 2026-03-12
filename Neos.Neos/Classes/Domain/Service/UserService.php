@@ -14,6 +14,7 @@ declare(strict_types=1);
 
 namespace Neos\Neos\Domain\Service;
 
+use DateTimeInterface;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Persistence\Exception\IllegalObjectTypeException;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
@@ -773,6 +774,30 @@ class UserService
         }
 
         return $roles;
+    }
+
+    /**
+     * @param DateTimeInterface $dateTime
+     * @return \Traversable<UserId>
+     */
+    public function findUserIdsNotLoggedInAfter(DateTimeInterface $dateTime): \Traversable
+    {
+        /** @var User $user */
+        foreach ($this->getUsers() as $user) {
+            $accounts = $user->getAccounts();
+            $loggedIn = false;
+            foreach ($accounts as $account) {
+                $lastSuccessfulAuthenticationDate = $account->getLastSuccessfulAuthenticationDate();
+                if ($lastSuccessfulAuthenticationDate != null && $lastSuccessfulAuthenticationDate > $dateTime) {
+                    $loggedIn = true;
+                    break;
+                }
+            }
+
+            if (!$loggedIn) {
+                yield $user->getId();
+            }
+        }
     }
 
     /**

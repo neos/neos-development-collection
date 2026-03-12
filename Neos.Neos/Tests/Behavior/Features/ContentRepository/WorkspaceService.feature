@@ -285,6 +285,18 @@ Feature: Neos WorkspaceService related features
     When the role MANAGER is assigned to workspace "some-root-workspace" for user "editor"
     And the Neos user "editor" should have the permissions "read,write,manage" for workspace "some-root-workspace"
 
+  Scenario: List personal workspaces
+    When the root workspace "some-root-workspace" is created
+    Then the following personal workspaces exist in content repository "default":
+      | WorkspaceName          | Userid |
+
+    When the personal workspace "janedoe-user-workspace" is created with the target workspace "some-root-workspace" for user "jane.doe"
+    And the personal workspace "johndoe-user-workspace" is created with the target workspace "some-root-workspace" for user "john.doe"
+    Then the following personal workspaces exist in content repository "default":
+      | WorkspaceName            | Userid |
+      | janedoe-user-workspace   | janedoe |
+      | johndoe-user-workspace   | johndoe |
+
   Scenario: Permissions for workspace without metadata
     Given a root workspace "some-root-workspace" exists without metadata
     When the role COLLABORATOR is assigned to workspace "some-root-workspace" for user "jane.doe"
