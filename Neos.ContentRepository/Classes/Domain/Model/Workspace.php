@@ -486,7 +486,7 @@ class Workspace
             // At this point adjustShadowNodeDataForNodePublishing will not yield correct results as we cannot
             // find the _original_ state in the target workspace anymore and have a shadow node in memory already if
             // it was necessary. Therefore we will just delete any possibly existing shadow node in the source workspace.
-            $targetNodeData = $this->moveTargetNodeDataToNewPosition($targetNodeData, $sourceNode->getPath());
+            $targetNodeData = $targetNodeData->move($sourceNode->getPath(), $targetNodeData->getWorkspace());
             $sourceShadowNodeData = $this->nodeDataRepository->findOneByMovedTo($sourceNodeData);
             if ($sourceShadowNodeData !== null) {
                 $this->nodeDataRepository->remove($sourceShadowNodeData);
@@ -543,24 +543,6 @@ class Workspace
                 $nodeDataVariant->setPath($targetPath);
             }
         }
-    }
-
-    /**
-     * Moves an existing node in a target workspace to the place it should be in after publish,
-     * in order to move all children to the new position as well.
-     *
-     * @param NodeData $targetNodeData The (publish-) target node data to be moved
-     * @param string $destinationPath The destination path of the move
-     * @return NodeData Either the same object like $targetNodeData, or, if $targetNodeData was transformed into a shadow node, the new target node (see move())
-     */
-    protected function moveTargetNodeDataToNewPosition(NodeData $targetNodeData, $destinationPath)
-    {
-        if ($targetNodeData->getWorkspace()->getBaseWorkspace() === null) {
-            $targetNodeData->setPath($destinationPath);
-            return $targetNodeData;
-        }
-
-        return $targetNodeData->move($destinationPath, $targetNodeData->getWorkspace());
     }
 
     /**
