@@ -627,6 +627,12 @@
 			</trans-unit>
 
 			<!-- Login -->
+			<trans-unit id="login.contentRepositoryError.title" xml:space="preserve">
+				<source>Content Repository Error</source>
+			</trans-unit>
+			<trans-unit id="login.contentRepositoryError.message" xml:space="preserve">
+				<source>A critical error was detected in the content repository. Please contact your administrator. More details are available via ./flow cr:status.</source>
+			</trans-unit>
 			<trans-unit id="login.index.title" xml:space="preserve">
 				<source>Login to</source>
 			</trans-unit>

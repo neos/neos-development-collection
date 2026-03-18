@@ -144,6 +144,39 @@ body {
     min-height: 100vh;
   }
 
+  .neos-login-cr-error-banner {
+    width: $loginBoxWidth;
+    background-color: $warning;
+    color: #fff;
+    padding: $defaultMargin;
+    margin: $defaultMargin auto;
+    box-sizing: border-box;
+    @include font;
+
+    &-title {
+      font-weight: bold;
+      font-size: 14px;
+      margin-bottom: $defaultMargin / 2;
+    }
+
+    &-message {
+      font-size: 13px;
+      line-height: 1.4;
+      margin-bottom: $defaultMargin / 4;
+    }
+
+    &-hint {
+      font-size: 12px;
+      margin-top: $defaultMargin / 2;
+      opacity: 0.85;
+
+      code {
+        background-color: rgba(#000, 0.2);
+        padding: 1px 4px;
+      }
+    }
+  }
+
   .neos-login-main {
     @include flex();
     @include flex-align(center);

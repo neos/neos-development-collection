@@ -32,6 +32,12 @@ use Neos\Flow\Session\SessionInterface;
 use Neos\Flow\Session\SessionManagerInterface;
 use Neos\Fusion\View\FusionView;
 use Neos\Neos\Controller\TranslationTrait;
+use Neos\ContentRepository\Core\Projection\ProjectionStatusType;
+use Neos\ContentRepository\Core\Service\ContentRepositoryMaintainerFactory;
+use Neos\ContentRepository\Core\Subscription\ProjectionSubscriptionStatus;
+use Neos\ContentRepository\Core\Subscription\SubscriptionStatus;
+use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
+use Neos\EventStore\Model\EventStore\StatusType;
 use Neos\Neos\Domain\Repository\DomainRepository;
 use Neos\Neos\Domain\Repository\SiteRepository;
 use Neos\Neos\Service\BackendRedirectionService;
@@ -65,6 +71,9 @@ class LoginController extends AbstractAuthenticationController
 
     #[Flow\Inject]
     protected FlashMessageService $flashMessageService;
+
+    #[Flow\Inject]
+    protected ContentRepositoryRegistry $contentRepositoryRegistry;
 
     /**
      * @Flow\Inject
@@ -138,10 +147,46 @@ class LoginController extends AbstractAuthenticationController
         $currentDomain = $this->domainRepository->findOneByActiveRequest();
         $currentSite = $currentDomain !== null ? $currentDomain->getSite() : $this->siteRepository->findDefault();
 
+        /*
+         * Checks whether there is any error in any subscription status for any ContentRepository to
+         * show a message in the login form.
+         */
+        $hasContentRepositoryError = false;
+        foreach ($this->contentRepositoryRegistry->getContentRepositoryIds() as $contentRepositoryId) {
+            try {
+                $contentRepositoryMaintainer = $this->contentRepositoryRegistry->buildService(
+                    $contentRepositoryId,
+                    new ContentRepositoryMaintainerFactory()
+                );
+                $crStatus = $contentRepositoryMaintainer->status();
+            } catch (\Exception) {
+                $hasContentRepositoryError = true;
+                break;
+            }
+
+            if ($crStatus->eventStoreStatus->type === StatusType::ERROR) {
+                $hasContentRepositoryError = true;
+                break;
+            }
+            foreach ($crStatus->subscriptionStatus as $subscriptionStatus) {
+                if (!$subscriptionStatus instanceof ProjectionSubscriptionStatus) {
+                    continue;
+                }
+                if (
+                    $subscriptionStatus->setupStatus->type === ProjectionStatusType::ERROR
+                    || $subscriptionStatus->subscriptionStatus === SubscriptionStatus::ERROR
+                ) {
+                    $hasContentRepositoryError = true;
+                    break 2;
+                }
+            }
+        }
+
         $this->view->assignMultiple([
             'styles' => array_filter($this->settings['userInterface']['backendLoginForm']['stylesheets']),
             'username' => $username,
             'site' => $currentSite,
+            'hasContentRepositoryError' => $hasContentRepositoryError,
             'flashMessages' => $this->flashMessageService->getFlashMessageContainerForRequest($this->request)
                 ->getMessagesAndFlush(),
         ]);

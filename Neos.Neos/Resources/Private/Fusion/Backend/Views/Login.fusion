@@ -2,6 +2,7 @@ prototype(Neos.Neos:View.Login) < prototype(Neos.Fusion:Component) {
   site = null
   styles = ${[]}
   username = ''
+  hasContentRepositoryError = false
   flashMessages = ${[]}
 
   @private {
@@ -40,6 +41,12 @@ prototype(Neos.Neos:View.Login) < prototype(Neos.Fusion:Component) {
       <body class={["neos", private.backgroundImageSource ? 'neos--bg' : null]}>
         <img @if.set={private.backgroundImageSourceIsWebp} style="display: none" src="data:image/webp;base64,UklGRiIAAABXRUJQVlA4IBYAAAAwAQCdASoBAAEADsD+JaQAA3AAAAAA" onload="document.documentElement.classList.add('webp')" onerror="document.documentElement.classList.add('no-webp')"/>
         <div class="neos-modal-centered">
+          <Neos.Fusion:Fragment @if.hasErrors={props.hasContentRepositoryError}>
+            <div class="neos-login-cr-error-banner" role="alert">
+              <div class="neos-login-cr-error-banner-title">{I18n.id('login.contentRepositoryError.title').value('Content Repository Error').package('Neos.Neos').source('Main')}</div>
+              <div class="neos-login-cr-error-banner-message">{I18n.id('login.contentRepositoryError.message').value('A critical error was detected in the content repository. Please contact your administrator. More details are available via ./flow cr:status.').package('Neos.Neos').source('Main')}</div>
+            </div>
+          </Neos.Fusion:Fragment>
           <main class="neos-login-main">
             <div class={['neos-login-box', private.backgroundImageSource ? 'background-image-active' : null]}>
               <figure class="neos-login-box-logo">
