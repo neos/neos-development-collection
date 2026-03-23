@@ -428,6 +428,7 @@ class Workspace
         }
 
         $this->emitAfterNodePublishing($nodeToPublish, $targetWorkspace);
+        $this->nodeDataRepository->persistEntities();
     }
 
     /**
