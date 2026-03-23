@@ -147,6 +147,5 @@ class Package extends BasePackage
         $dispatcher->connect(Workspace::class, 'baseWorkspaceChanged', RouteCacheFlusher::class, 'registerBaseWorkspaceChange');
 
         $dispatcher->connect(PersistenceManager::class, 'allObjectsPersisted', ContentRepositoryIntegrationService::class, 'updateEventsAfterPublish');
-        $dispatcher->connect(NodeDataRepository::class, 'repositoryObjectsPersisted', ContentRepositoryIntegrationService::class, 'updateEventsAfterPublish');
     }
 }
