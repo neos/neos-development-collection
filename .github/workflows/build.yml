@@ -360,6 +360,17 @@ jobs:
                   charset: 'utf8'
                   defaultTableOptions:
                     charset: 'utf8'
+            ContentRepositoryRegistry:
+              contentRepositories:
+                t_extensibility:
+                  contentGraphProjection:
+                    factoryObjectName: Neos\ContentGraph\PostgreSQLAdapter\PostgresContentGraphProjectionFactory
+                t_subscription:
+                  contentGraphProjection:
+                    factoryObjectName: Neos\ContentGraph\PostgreSQLAdapter\PostgresContentGraphProjectionFactory
+                test_parallel:
+                  contentGraphProjection:
+                    factoryObjectName: Neos\ContentGraph\PostgreSQLAdapter\PostgresContentGraphProjectionFactory
           EOF
           mkdir Configuration/Testing/Behat
           cp Configuration/Testing/Settings.yaml Configuration/Testing/Behat/Settings.yaml
