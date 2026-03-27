@@ -167,44 +167,76 @@ final readonly class PostgresContentGraphProjection implements ContentGraphProje
             $$ language plpgsql;
         SQL);
         $this->dbal->executeStatement(<<<SQL
-            create or replace function {$this->tableNames->functionFindNodeByOrigin()}(
-                    nodeaggregateid varchar(64),
-                    contentstreamid varchar(40),
-                    dimensionhash varchar(255)
+            drop function if exists {$this->tableNames->functionFindNodeByOrigin()}(varchar, varchar, varchar);
+        SQL);
+        $this->dbal->executeStatement(<<<SQL
+            create function {$this->tableNames->functionFindNodeByOrigin()}(
+                    p_nodeaggregateid varchar(64),
+                    p_contentstreamid varchar(40),
+                    p_dimensionhash varchar(255)
                 )
-                returns {$this->tableNames->node()}
+                returns table(
+                    relationanchorpoint bigint,
+                    nodeaggregateid varchar(64),
+                    origindimensionspacepoint jsonb,
+                    origindimensionspacepointhash varchar(255),
+                    nodetypename varchar(255),
+                    properties jsonb,
+                    classification varchar(255),
+                    nodename varchar(255),
+                    created timestamp,
+                    originalcreated timestamp,
+                    lastmodified timestamp,
+                    originallastmodified timestamp
+                )
             as
             $$
             begin
-                return pn
+                return query select pn.*
                 from {$this->tableNames->node()} pn
                        left join {$this->tableNames->hierarchyRelation()} ph
                                  on pn.relationanchorpoint = any (ph.childnodeanchors)
-                where ph.contentstreamid = {$this->tableNames->functionFindNodeByOrigin()}.contentstreamid
-                  and pn.origindimensionspacepointhash = {$this->tableNames->functionFindNodeByOrigin()}.dimensionhash
-                  and ph.dimensionspacepointhash = {$this->tableNames->functionFindNodeByOrigin()}.dimensionhash
-                  and pn.nodeaggregateid = {$this->tableNames->functionFindNodeByOrigin()}.nodeaggregateid
+                where ph.contentstreamid = p_contentstreamid
+                  and pn.origindimensionspacepointhash = p_dimensionhash
+                  and ph.dimensionspacepointhash = p_dimensionhash
+                  and pn.nodeaggregateid = p_nodeaggregateid
                 limit 1;
             end;
             $$ language plpgsql;
         SQL);
         $this->dbal->executeStatement(<<<SQL
-            create or replace function {$this->tableNames->functionFindNodeByCoverage()}(
-                    nodeaggregateid varchar(64),
-                    contentstreamid varchar(40),
-                    dimensionhash varchar(255)
+            drop function if exists {$this->tableNames->functionFindNodeByCoverage()}(varchar, varchar, varchar);
+        SQL);
+        $this->dbal->executeStatement(<<<SQL
+            create function {$this->tableNames->functionFindNodeByCoverage()}(
+                    p_nodeaggregateid varchar(64),
+                    p_contentstreamid varchar(40),
+                    p_dimensionhash varchar(255)
                 )
-                returns {$this->tableNames->node()}
+                returns table(
+                    relationanchorpoint bigint,
+                    nodeaggregateid varchar(64),
+                    origindimensionspacepoint jsonb,
+                    origindimensionspacepointhash varchar(255),
+                    nodetypename varchar(255),
+                    properties jsonb,
+                    classification varchar(255),
+                    nodename varchar(255),
+                    created timestamp,
+                    originalcreated timestamp,
+                    lastmodified timestamp,
+                    originallastmodified timestamp
+                )
             as
             $$
             begin
-                return pn
+                return query select pn.*
                 from {$this->tableNames->node()} pn
                        left join {$this->tableNames->hierarchyRelation()} ph
                                  on pn.relationanchorpoint = any (ph.childnodeanchors)
-                where ph.contentstreamid = {$this->tableNames->functionFindNodeByCoverage()}.contentstreamid
-                  and ph.dimensionspacepointhash = {$this->tableNames->functionFindNodeByCoverage()}.dimensionhash
-                  and pn.nodeaggregateid = {$this->tableNames->functionFindNodeByCoverage()}.nodeaggregateid
+                where ph.contentstreamid = p_contentstreamid
+                  and ph.dimensionspacepointhash = p_dimensionhash
+                  and pn.nodeaggregateid = p_nodeaggregateid
                 limit 1;
             end;
             $$ language plpgsql;
