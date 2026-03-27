@@ -130,7 +130,7 @@ final readonly class ContentHyperGraphReadModelAdapter implements ContentGraphRe
                     cs.id,
                     cs.sourcecontentstreamid,
                     cs.version,
-                    cs.isclosed
+                    cs.closed
                 from {$this->tableNames->contentStream()} cs
                 where cs.id = :contentstream_id
                 limit 1;
@@ -183,7 +183,7 @@ final readonly class ContentHyperGraphReadModelAdapter implements ContentGraphRe
             ContentStreamId::fromString($row['id']),
             isset($row['sourcecontentstreamid']) ? ContentStreamId::fromString($row['sourcecontentstreamid']) : null,
             Version::fromInteger((int)$row['version']),
-            (bool)$row['isclosed'],
+            (bool)$row['closed'],
         );
     }
 }

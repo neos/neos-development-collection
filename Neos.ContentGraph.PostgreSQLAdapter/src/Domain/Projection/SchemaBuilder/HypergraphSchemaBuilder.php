@@ -198,7 +198,7 @@ final readonly class HypergraphSchemaBuilder
             ->setNotnull(false);
         $table->addColumn('sourcecontentstreamversion', Types::INTEGER)
             ->setNotnull(false);
-        $table->addColumn('isclosed', Types::BOOLEAN)
+        $table->addColumn('closed', Types::BOOLEAN)
             ->setNotnull(true);
         $table->addColumn('haschanges', Types::BOOLEAN)
             ->setNotnull(true);

@@ -51,7 +51,7 @@ trait ContentStream
             'version' => 0,
             'sourcecontentstreamid' => $sourceContentStreamId?->value,
             'sourcecontentstreamversion' => $sourceVersion?->value,
-            'isclosed' => 0,
+            'closed' => 0,
             'haschanges' => 0
         ]);
     }
@@ -59,7 +59,7 @@ trait ContentStream
     private function closeContentStream(ContentStreamId $contentStreamId): void
     {
         $this->getDatabaseConnection()->update($this->getTableNames()->contentStream(), [
-            'isclosed' => 1,
+            'closed' => 1,
         ], [
             'id' => $contentStreamId->value
         ]);
@@ -68,7 +68,7 @@ trait ContentStream
     private function reopenContentStream(ContentStreamId $contentStreamId): void
     {
         $this->getDatabaseConnection()->update($this->getTableNames()->contentStream(), [
-            'isclosed' => 0,
+            'closed' => 0,
         ], [
             'id' => $contentStreamId->value
         ]);
