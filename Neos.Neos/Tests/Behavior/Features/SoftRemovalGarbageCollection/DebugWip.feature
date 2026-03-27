@@ -105,11 +105,15 @@ Feature: Tests for soft removal garbage collection with impending conflicts caus
       | nodeAggregateId  | dimensionSpacePoints                            |
       | nodingers-cat    | [{"example":"general"},{"example":"peer"}] |
 
-    # we try catch the exception NodeAggregateDoesCurrentlyNotCoverDimensionSpacePoint because the child will already be removed:
-    # Node aggregate "nodingers-kitten" does currently not cover dimension space point {"example":"source"}
     When soft removal garbage collection is run for content repository default
-    Then I expect exactly 11 events to be published on stream "ContentStream:cs-identifier"
+    Then I expect exactly 12 events to be published on stream "ContentStream:cs-identifier"
     And event at index 10 is of type "NodeAggregateWasRemoved" with payload:
+      | Key                                  | Expected                                        |
+      | workspaceName                        | "live"                                          |
+      | contentStreamId                      | "cs-identifier"                                 |
+      | nodeAggregateId                      | "nodingers-kitten"                              |
+      | affectedCoveredDimensionSpacePoints  | [{"example": "source"}, {"example": "special"}] |
+    And event at index 11 is of type "NodeAggregateWasRemoved" with payload:
       | Key                                  | Expected                                        |
       | workspaceName                        | "live"                                          |
       | contentStreamId                      | "cs-identifier"                                 |
