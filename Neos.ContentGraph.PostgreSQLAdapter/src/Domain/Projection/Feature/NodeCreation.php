@@ -124,8 +124,7 @@ if (is_null($parentNode)) {
                              on true
             -- ### parent hierarchy entry already exists (UPDATE) - there are siblings for the new node
             -- the primary key is multi-column, so we check for the named constraint
-            -- fixme dynamic name
-            on conflict on constraint cr_default_p_graph_hierarchyrelation_pkey
+            on conflict on constraint {$this->getTableNames()->hierarchyRelation()}_pkey
               do update
               -- append the node in the child-node array
               set childnodeanchors = insert_into_array_before_successor(
@@ -192,7 +191,7 @@ if (is_null($parentNode)) {
                   and h.dimensionspacepointhash = dim.dimensionhash
                   and rn.relationanchorpoint = any(h.childnodeanchors)
             )
-            on conflict on constraint cr_default_p_graph_hierarchyrelation_pkey
+            on conflict on constraint {$this->getTableNames()->hierarchyRelation()}_pkey
               do update
               set childnodeanchors = insert_into_array_before_successor(
                 {$this->getTableNames()->hierarchyRelation()}.childnodeanchors,
@@ -298,8 +297,7 @@ if (is_null($parentNode)) {
                    ) pn on true
             -- ### parent hierarchy entry already exists (UPDATE) - there are siblings for the new node
             -- the primary key is multi-column, so we check for the named constraint
-            -- fixme dynamic name
-            on conflict on constraint cr_default_p_graph_hierarchyrelation_pkey
+            on conflict on constraint {$this->getTableNames()->hierarchyRelation()}_pkey
               do update
               -- sort in the node in the child-node array
               set childnodeanchors = insert_into_array_before_successor(

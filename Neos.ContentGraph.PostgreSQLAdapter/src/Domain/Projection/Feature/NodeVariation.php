@@ -307,14 +307,14 @@ trait NodeVariation
                                          from jsonb_each(:affecteddimensionsandsiblings) adim(specializeddimensionhash, sibling)),
                  -- get source node for copy operation
                  source_node as (select *
-                                 from neoscr_default_find_node_by_origin(
+                                 from {$this->tableNames->functionFindNodeByOrigin()}(
                                    :nodeaggregateid,
                                    :contentstreamid,
                                    :sourceorigindimensionhash
                                       )),
                  -- perform the copy to generalized dimension
                  generalized_node_copy as (
-                   insert into cr_default_p_graph_node
+                   insert into {$this->tableNames->node()}
                      (nodeaggregateid, origindimensionspacepoint, origindimensionspacepointhash,
                       nodetypename, properties, classification, nodename, created, originalcreated)
                      select sn.nodeaggregateid,
@@ -415,7 +415,7 @@ trait NodeVariation
                  ),
                  -- now add the missing hierarchy relations
                  missing_hierarchy_relations as (
-                   insert into cr_default_p_graph_hierarchyrelation
+                   insert into {$this->tableNames->hierarchyRelation()}
                      (contentstreamid, parentnodeanchor, dimensionspacepointhash,
                       dimensionspacepoint, childnodeanchors, subtreetags)
                    select
@@ -448,34 +448,34 @@ trait NodeVariation
                         generalized_node_copy gnc,
                         source_subtree_tags sst,
                         LATERAL (
-                          select neoscr_default_get_parent_relationanchorpoint_in_dim(
+                          select {$this->tableNames->functionGetParentRelationAnchorPointInDimension()}(
                             :nodeaggregateid,
                             :contentstreamid,
                             :sourceorigindimensionhash,
                             mc.specializeddimensionhash
                           ) as anchor
                         ) pa
-                   on conflict on constraint cr_default_p_graph_hierarchyrelation_pkey
+                   on conflict on constraint {$this->tableNames->hierarchyRelation()}_pkey
                      do update
                           set childnodeanchors = insert_into_array_before_successor(
-                            cr_default_p_graph_hierarchyrelation.childnodeanchors,
+                            {$this->tableNames->hierarchyRelation()}.childnodeanchors,
                             excluded.childnodeanchors[1],
-                            (select neoscr_default_get_relationanchorpoint(
+                            (select {$this->tableNames->functionGetRelationAnchorPoint()}(
                                 ad.siblingnodeaggregateid,
                                 :contentstreamid,
                                 excluded.dimensionspacepointhash
                                 ) from affected_dimensions ad
                              where ad.specializeddimensionhash = excluded.dimensionspacepointhash)
                           ),
-                          subtreetags = COALESCE(cr_default_p_graph_hierarchyrelation.subtreetags, '{}'::jsonb)
+                          subtreetags = COALESCE({$this->tableNames->hierarchyRelation()}.subtreetags, '{}'::jsonb)
                             || jsonb_build_object(
                                  excluded.childnodeanchors[1]::text,
                                  coalesce(
                                    (select jsonb_object_agg(key, null)
                                     from jsonb_each(coalesce(
-                                      (select h_pt2.subtreetags -> (cr_default_p_graph_hierarchyrelation.parentnodeanchor::text)
+                                      (select h_pt2.subtreetags -> ({$this->tableNames->hierarchyRelation()}.parentnodeanchor::text)
                                        from {$this->tableNames->hierarchyRelation()} h_pt2
-                                       where cr_default_p_graph_hierarchyrelation.parentnodeanchor = any(h_pt2.childnodeanchors)
+                                       where {$this->tableNames->hierarchyRelation()}.parentnodeanchor = any(h_pt2.childnodeanchors)
                                          and h_pt2.contentstreamid = :contentstreamid
                                          and h_pt2.dimensionspacepointhash = excluded.dimensionspacepointhash
                                        limit 1),
@@ -538,14 +538,14 @@ trait NodeVariation
                                          from jsonb_each(:affecteddimensionsandsiblings) adim(specializeddimensionhash, sibling)),
                  -- get source node for copy operation
                  source_node as (select *
-                                 from neoscr_default_find_node_by_origin(
+                                 from {$this->tableNames->functionFindNodeByOrigin()}(
                                    :nodeaggregateid,
                                    :contentstreamid,
                                    :sourceorigindimensionhash
                                       )),
                  -- perform the copy
                  peer_node_copy as (
-                   insert into cr_default_p_graph_node
+                   insert into {$this->tableNames->node()}
                      (nodeaggregateid, origindimensionspacepoint, origindimensionspacepointhash,
                       nodetypename, properties, classification, nodename, created, originalcreated)
                      select sn.nodeaggregateid,
@@ -633,7 +633,7 @@ trait NodeVariation
                  -- For peer variants, only parent tags are inherited (no source tags),
                  -- matching DoctrineDBAL's connectHierarchy behavior.
                  missing_hierarchy_relations as (
-                   insert into cr_default_p_graph_hierarchyrelation
+                   insert into {$this->tableNames->hierarchyRelation()}
                      (contentstreamid, parentnodeanchor, dimensionspacepointhash,
                       dimensionspacepoint, childnodeanchors, subtreetags)
                    select
@@ -669,27 +669,27 @@ trait NodeVariation
                             mc.specializeddimensionhash
                           ) as anchor
                         ) pa
-                   on conflict on constraint cr_default_p_graph_hierarchyrelation_pkey
+                   on conflict on constraint {$this->tableNames->hierarchyRelation()}_pkey
                      do update
                           set childnodeanchors = insert_into_array_before_successor(
-                            cr_default_p_graph_hierarchyrelation.childnodeanchors,
+                            {$this->tableNames->hierarchyRelation()}.childnodeanchors,
                             excluded.childnodeanchors[1],
-                            (select neoscr_default_get_relationanchorpoint(
+                            (select {$this->tableNames->functionGetRelationAnchorPoint()}(
                                 ad.siblingnodeaggregateid,
                                 :contentstreamid,
                                 excluded.dimensionspacepointhash
                                 ) from affected_dimensions ad
                              where ad.specializeddimensionhash = excluded.dimensionspacepointhash)
                           ),
-                          subtreetags = COALESCE(cr_default_p_graph_hierarchyrelation.subtreetags, '{}'::jsonb)
+                          subtreetags = COALESCE({$this->tableNames->hierarchyRelation()}.subtreetags, '{}'::jsonb)
                             || jsonb_build_object(
                                  excluded.childnodeanchors[1]::text,
                                  coalesce(
                                    (select jsonb_object_agg(key, null)
                                     from jsonb_each(coalesce(
-                                      (select h_pt2.subtreetags -> (cr_default_p_graph_hierarchyrelation.parentnodeanchor::text)
+                                      (select h_pt2.subtreetags -> ({$this->tableNames->hierarchyRelation()}.parentnodeanchor::text)
                                        from {$this->tableNames->hierarchyRelation()} h_pt2
-                                       where cr_default_p_graph_hierarchyrelation.parentnodeanchor = any(h_pt2.childnodeanchors)
+                                       where {$this->tableNames->hierarchyRelation()}.parentnodeanchor = any(h_pt2.childnodeanchors)
                                          and h_pt2.contentstreamid = :contentstreamid
                                          and h_pt2.dimensionspacepointhash = excluded.dimensionspacepointhash
                                        limit 1),
