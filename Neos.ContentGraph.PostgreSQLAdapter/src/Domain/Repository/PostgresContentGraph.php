@@ -374,7 +374,8 @@ final readonly class PostgresContentGraph implements ContentGraphInterface
                     n.nodetypename, n.classification, n.properties, n.nodename,
                     n.relationanchorpoint,
                     h.contentstreamid, h.dimensionspacepoint,
-                    h.subtreetags->(n.relationanchorpoint::text) as subtreetags
+                    h.subtreetags->(n.relationanchorpoint::text) as subtreetags,
+                    tn.relationanchorpoint as tagged_anchor
                 FROM ' . $this->tableNames->hierarchyRelation() . ' th
                 JOIN ' . $this->tableNames->node() . ' tn ON tn.relationanchorpoint = ANY(th.childnodeanchors)
                 JOIN ' . $this->tableNames->hierarchyRelation() . ' h
@@ -384,8 +385,8 @@ final readonly class PostgresContentGraph implements ContentGraphInterface
                 WHERE th.contentstreamid = :contentStreamId
                   AND h.contentstreamid = :contentStreamId
                   AND (th.subtreetags->(tn.relationanchorpoint::text)->>:tagName) = \'true\'
-                ORDER BY n.nodeaggregateid, h.dimensionspacepointhash, n.relationanchorpoint DESC
-            ) deduped ORDER BY relationanchorpoint DESC';
+                ORDER BY n.nodeaggregateid, h.dimensionspacepointhash, tn.relationanchorpoint DESC, n.relationanchorpoint DESC
+            ) deduped ORDER BY tagged_anchor DESC';
 
         $nodeRows = $this->dbal->executeQuery($query, [
             'contentStreamId' => $this->contentStreamId->value,
