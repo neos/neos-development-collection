@@ -14,7 +14,7 @@ jobs:
       contents: read # to fetch code (actions/checkout)
 
     if: "!contains(github.event.head_commit.message, '[skip ci]') && !contains(github.event.head_commit.message, '[skip travis]')"
-    name: "PHP ${{ matrix.php-versions }} Test ${{ matrix.parallel-parts }} (deps: ${{ matrix.dependencies }}"
+    name: "PHP ${{ matrix.php-versions }} Test ${{ matrix.parallel-parts  }} (deps: ${{ matrix.dependencies }})"
 
     continue-on-error: ${{ matrix.experimental }}
 
