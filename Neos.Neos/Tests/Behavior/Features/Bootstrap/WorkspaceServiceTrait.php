@@ -374,6 +374,18 @@ trait WorkspaceServiceTrait
         Assert::assertEquals(array_column($workspacesNames->getColumnsHash(), 'WorkspaceName'), $actualWorkspaceNames->toStringArray());
     }
 
+    /**
+     * @Then the stale workspaces are deleted in content repository :contentRepositoryId
+     */
+    public function theStaleWorkspacesAreDeletedInContentRepository(string $contentRepositoryId): void
+    {
+        $workspacesNames = $this->getObject(WorkspaceService::class)->getStalePersonalWorkspaceNames(
+            ContentRepositoryId::fromString($contentRepositoryId),
+            $this->getObject(Now::class)->sub(new DateInterval('P7D'))
+        );
+        $this->getObject(WorkspaceService::class)->deleteStalePersonalWorkspaces(ContentRepositoryId::fromString($contentRepositoryId), $workspacesNames);
+    }
+
     private function userIdForUsername(string $username): UserId
     {
         $user = $this->getObject(UserService::class)->getUser($username);

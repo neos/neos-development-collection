@@ -304,10 +304,33 @@ Feature: Neos WorkspaceService related features
     And Neos user "john.doe" last logged in 8 days ago
     And the personal workspace "editor-user-workspace" is created with the target workspace "some-root-workspace" for user "editor"
     And Neos user "editor" last logged in 5 days ago
+
+    And I expect the following workspaces to exist:
+      | name                     | base workspace        | status       | publishable changes |
+      | "editor-user-workspace"  | "some-root-workspace" | "UP_TO_DATE" | false               |
+      | "janedoe-user-workspace" | "some-root-workspace" | "UP_TO_DATE" | false               |
+      | "johndoe-user-workspace" | "some-root-workspace" | "UP_TO_DATE" | false               |
+      | "some-root-workspace"    | null                  | "UP_TO_DATE" | false               |
+
     Then the following stale workspaces exist in content repository "default":
       | WorkspaceName            |
       | janedoe-user-workspace   |
       | johndoe-user-workspace   |
+
+    And the stale workspaces are deleted in content repository "default"
+    Then I expect the workspace "janedoe-user-workspace" to not exist
+    Then I expect the workspace "johndoe-user-workspace" to not exist
+    And I expect the following workspaces to exist:
+      | name                     | base workspace        | status       | publishable changes |
+      | "editor-user-workspace"  | "some-root-workspace" | "UP_TO_DATE" | false               |
+      | "some-root-workspace"    | null                  | "UP_TO_DATE" | false               |
+
+    When a personal workspace for user "jane.doe" is created
+    And I expect the following workspaces to exist:
+      | name                     | base workspace        | status       | publishable changes |
+      | "editor-user-workspace"  | "some-root-workspace" | "UP_TO_DATE" | false               |
+      | "janedoe-user-workspace" | "some-root-workspace" | "UP_TO_DATE" | false               |
+      | "some-root-workspace"    | null                  | "UP_TO_DATE" | false               |
 
   Scenario: Workspaces with changes are not stale
     Given the root workspace "some-root-workspace" is created

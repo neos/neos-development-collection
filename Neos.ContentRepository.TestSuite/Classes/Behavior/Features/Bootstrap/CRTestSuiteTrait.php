@@ -136,13 +136,17 @@ trait CRTestSuiteTrait
     {
         $actualComparableHash = [];
         $workspaces = $this->currentContentRepository->findWorkspaces();
+
+        // if not specified, ignore
+        $compareContentStream = in_array('content stream', $payloadTable->getRow(0), true);
+
         foreach ($workspaces as $workspace) {
             $actualComparableHash[] = array_map(json_encode(...), [
                 'name' => $workspace->workspaceName,
                 'base workspace' => $workspace->baseWorkspaceName,
                 'status' => $workspace->status,
-                'content stream' => $workspace->currentContentStreamId,
-                'publishable changes' => $workspace->hasPublishableChanges()
+                ...($compareContentStream ? ['content stream' => $workspace->currentContentStreamId] : []),
+                ...['publishable changes' => $workspace->hasPublishableChanges()]
             ]);
         }
         Assert::assertSame($payloadTable->getHash(), $actualComparableHash);
