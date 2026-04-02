@@ -264,6 +264,29 @@ final readonly class WorkspaceService
     }
 
     /**
+     * Cleans up stale user workspaces - in combination with {@see getStalePersonalWorkspaceNames}.
+     * Any metadata and roles attached to the personal workspaces are kept.
+     * To recreate the cores workspace {@see createPersonalWorkspaceForUserIfMissing} must be used.
+     */
+    public function deleteStalePersonalWorkspaces(ContentRepositoryId $contentRepositoryId, WorkspaceNames $workspaceNames): void
+    {
+        $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryId);
+
+        foreach ($workspaceNames as $workspaceName) {
+            $this->requireWorkspace($contentRepositoryId, $workspaceName);
+
+            // We keep the Neos workspace metadata and roles for the time the workspace is recreated.
+            $contentRepository->handle(
+                DeleteWorkspace::create(
+                    $workspaceName
+                )
+            );
+        }
+
+        $this->softRemovalGarbageCollector->run($contentRepositoryId);
+    }
+
+    /**
      * Get all role assignments for the specified workspace
      *
      * NOTE: This should never be used to evaluate permissions, instead {@see ContentRepositoryAuthorizationService::getWorkspacePermissions()} should be used!
