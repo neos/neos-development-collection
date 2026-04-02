@@ -107,13 +107,9 @@ final class DbalSchemaFactory
      */
     public static function columnForDimensionSpacePointHash(string $columnName, AbstractPlatform $platform): Column
     {
-        $column = new Column($columnName, Type::getType(Types::BINARY));
-
-        if ($platform instanceof AbstractMySQLPlatform) {
-            $column->setLength(32)->setDefault('');
-        }
-
-        return $column;
+        return (new Column($columnName, Type::getType(Types::BINARY)))
+            ->setLength(32)
+            ->setDefault('');
     }
 
     /**
