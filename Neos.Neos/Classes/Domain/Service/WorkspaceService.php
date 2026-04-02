@@ -14,6 +14,7 @@ declare(strict_types=1);
 
 namespace Neos\Neos\Domain\Service;
 
+use DateInterval;
 use Neos\ContentRepository\Core\Feature\Security\Exception\AccessDenied;
 use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Command\CreateRootWorkspace;
 use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Command\CreateWorkspace;
@@ -27,6 +28,7 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Security\Context as SecurityContext;
+use Neos\Flow\Utility\Now;
 use Neos\Neos\Domain\Model\User;
 use Neos\Neos\Domain\Model\UserId;
 use Neos\Neos\Domain\Model\WorkspaceClassification;
@@ -40,6 +42,7 @@ use Neos\Neos\Domain\Model\WorkspaceTitle;
 use Neos\Neos\Domain\Repository\WorkspaceMetadataAndRoleRepository;
 use Neos\Neos\Domain\SubtreeTagging\SoftRemoval\SoftRemovalGarbageCollector;
 use Neos\Neos\Security\Authorization\ContentRepositoryAuthorizationService;
+use SplObjectStorage;
 
 /**
  * Central authority to interact with Content Repository Workspaces within Neos
@@ -56,6 +59,7 @@ final readonly class WorkspaceService
         private ContentRepositoryAuthorizationService $authorizationService,
         private SecurityContext $securityContext,
         private SoftRemovalGarbageCollector $softRemovalGarbageCollector,
+        private Now $now,
     ) {
     }
 
@@ -302,11 +306,42 @@ final readonly class WorkspaceService
     }
 
     /**
+     * @param ContentRepositoryId $contentRepositoryId
+     * @param DateInterval $interval
      * @return \Traversable<UserId,WorkspaceName>
+     * @throws \DateInvalidOperationException
      */
-    public function getPersonalWorkspaceNames(ContentRepositoryId $contentRepository): \Traversable
+    public function getStaleWorkspaceNames(ContentRepositoryId $contentRepositoryId, DateInterval $interval): \Traversable
     {
-        return $this->metadataAndRoleRepository->findAllPersonalWorkspaceNamesByContentRepositoryId($contentRepository);
+        $contentRepositoryInstance = $this->contentRepositoryRegistry->get($contentRepositoryId);
+
+        $workspaces = $contentRepositoryInstance->findWorkspaces();
+        $baseWorkspaceNames = array_flip(iterator_to_array($workspaces
+            ->filter(fn($workspace) => $workspace->baseWorkspaceName !== null)
+            ->map(fn($workspace) => $workspace->baseWorkspaceName->value)
+        ));
+
+        $probablyStaleWorkspaceNames = array_flip(iterator_to_array(
+            $workspaces
+                ->filter(fn($workspace) => !$workspace->hasPublishableChanges() &&
+                    !array_key_exists($workspace->workspaceName->value, $baseWorkspaceNames))
+                ->map(fn($workspace) => $workspace->workspaceName->value)
+        ));
+
+        $inactiveUserIds = array_flip(array_map(
+            fn($userId) => $userId->value,
+            iterator_to_array($this->userService->findUserIdsNotLoggedInAfter($this->now->sub($interval)))
+        ));
+
+        $personalWorkspaces = $this->metadataAndRoleRepository->findAllPersonalWorkspaceNamesByContentRepositoryId($contentRepositoryId);
+        foreach ($personalWorkspaces as $userId => $personalWorkspace) {
+            if (
+                array_key_exists($personalWorkspace->value, $probablyStaleWorkspaceNames) &&
+                array_key_exists($userId->value, $inactiveUserIds)
+            ) {
+                yield $userId => $personalWorkspace;
+            }
+        }
     }
 
     // ------------------

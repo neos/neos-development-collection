@@ -5,7 +5,7 @@ Feature: Neos WorkspaceService related features
     Given using no content dimensions
     And using the following node types:
     """yaml
-    'Neos.ContentRepository:Root': {}
+    'Neos.ContentRepository.Testing:Node': {}
     """
     And using identifier "default", I define a content repository
     And I am in content repository "default"
@@ -285,21 +285,43 @@ Feature: Neos WorkspaceService related features
     When the role MANAGER is assigned to workspace "some-root-workspace" for user "editor"
     And the Neos user "editor" should have the permissions "read,write,manage" for workspace "some-root-workspace"
 
-  Scenario: List personal workspaces
-    When the root workspace "some-root-workspace" is created
-    Then the following personal workspaces exist in content repository "default":
-      | WorkspaceName          | Userid |
-
-    When the personal workspace "janedoe-user-workspace" is created with the target workspace "some-root-workspace" for user "jane.doe"
-    And the personal workspace "johndoe-user-workspace" is created with the target workspace "some-root-workspace" for user "john.doe"
-    Then the following personal workspaces exist in content repository "default":
-      | WorkspaceName            | Userid |
-      | janedoe-user-workspace   | janedoe |
-      | johndoe-user-workspace   | johndoe |
-
   Scenario: Permissions for workspace without metadata
     Given a root workspace "some-root-workspace" exists without metadata
     When the role COLLABORATOR is assigned to workspace "some-root-workspace" for user "jane.doe"
     Then the Neos user "jane.doe" should have the permissions "read,write,manage" for workspace "some-root-workspace"
     And the Neos user "john.doe" should have no permissions for workspace "some-root-workspace"
     And the Neos user "editor" should have no permissions for workspace "some-root-workspace"
+
+  Scenario: Personal Workspaces without change and without user login within 7 days are stale
+    When the root workspace "some-root-workspace" is created
+    Then the following stale workspaces exist in content repository "default":
+      | WorkspaceName          | Userid |
+
+    When the personal workspace "janedoe-user-workspace" is created with the target workspace "some-root-workspace" for user "jane.doe"
+    And Neos user "jane.doe" last logged in 9 days ago
+    And the personal workspace "johndoe-user-workspace" is created with the target workspace "some-root-workspace" for user "john.doe"
+    And Neos user "john.doe" last logged in 8 days ago
+    And the personal workspace "editor-user-workspace" is created with the target workspace "some-root-workspace" for user "editor"
+    And Neos user "editor" last logged in 5 days ago
+    Then the following stale workspaces exist in content repository "default":
+      | WorkspaceName            | Userid |
+      | janedoe-user-workspace   | janedoe |
+      | johndoe-user-workspace   | johndoe |
+
+  Scenario: Workspaces with changes are not stale
+    Given the root workspace "some-root-workspace" is created
+    And I am in workspace "some-root-workspace"
+    And the command CreateRootNodeAggregateWithNode is executed with payload:
+      | Key             | Value                         |
+      | nodeAggregateId | "lady-eleonode-rootford"      |
+      | nodeTypeName    | "Neos.ContentRepository:Root" |
+
+    When the personal workspace "janedoe-user-workspace" is created with the target workspace "some-root-workspace" for user "jane.doe"
+    And I am in workspace "janedoe-user-workspace"
+    And the following CreateNodeAggregateWithNode commands are executed:
+      | nodeAggregateId            | nodeName   | parentNodeAggregateId  | nodeTypeName                        | initialPropertyValues |
+      | sir-david-nodenborough     | node       | lady-eleonode-rootford | Neos.ContentRepository.Testing:Node | {}                    |
+    And Neos user "jane.doe" last logged in 9 days ago
+
+    Then the following stale workspaces exist in content repository "default":
+      | WorkspaceName            | Userid |

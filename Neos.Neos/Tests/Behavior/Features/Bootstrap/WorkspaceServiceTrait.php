@@ -361,17 +361,18 @@ trait WorkspaceServiceTrait
     }
 
     /**
-     * @Then the following personal workspaces exist in content repository :contentRepositoryId:
+     * @Then the following stale workspaces exist in content repository :contentRepositoryId:
      */
-    public function theFollowingPersonalWorkspacesExistInContentRepository(string $contentRepositoryId, TableNode $workspacesAndUsernames): void
+    public function theFollowingStaleWorkspacesExistInContentRepository(string $contentRepositoryId, TableNode $workspacesAndUsernames): void
     {
         $expectedWorkspaces = [];
         foreach ($workspacesAndUsernames->getColumnsHash() as $workspaceAndUsername) {
             $expectedWorkspaces[$workspaceAndUsername["Userid"]] = $workspaceAndUsername["WorkspaceName"];
         }
 
-        $actualWorkspaces = $this->getObject(WorkspaceService::class)->getPersonalWorkspaceNames(
-            ContentRepositoryId::fromString($contentRepositoryId)
+        $actualWorkspaces = $this->getObject(WorkspaceService::class)->getStaleWorkspaceNames(
+            ContentRepositoryId::fromString($contentRepositoryId),
+            new DateInterval('P7D'),
         );
 
         $count = 0;
