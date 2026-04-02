@@ -6,7 +6,7 @@ namespace Neos\ContentRepository\Dbal;
 
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Exception;
-use Doctrine\DBAL\Platforms\AbstractMySQLPlatform;
+use Doctrine\DBAL\Platforms\PostgreSQLPlatform;
 use Doctrine\DBAL\Schema\Comparator;
 use Doctrine\DBAL\Schema\Schema;
 
@@ -41,7 +41,7 @@ final class DbalSchemaDiff
         // PostgreSQL maps 'bytea' to 'blob' by default, but our schema uses Types::BINARY
         // (which also generates BYTEA). Override the mapping so introspected columns match
         // the desired schema and don't produce persistent diffs.
-        if (!$platform instanceof AbstractMySQLPlatform) {
+        if ($platform instanceof PostgreSQLPlatform) {
             $platform->registerDoctrineTypeMapping('bytea', 'binary');
         }
 
