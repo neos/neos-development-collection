@@ -100,22 +100,22 @@ class ChangeProjection implements ProjectionInterface
         $platform = $this->dbal->getDatabasePlatform();
 
         $changeTable = new Table($this->tableNamePrefix, [
-            DbalSchemaFactory::columnForContentStreamId('`contentStreamId`', $platform)->setNotNull(true),
+            DbalSchemaFactory::columnForContentStreamId($connection->quoteIdentifier('contentStreamId'), $platform)->setNotNull(true),
             (new Column('created', Type::getType(Types::BOOLEAN)))->setNotnull(true),
             (new Column('changed', Type::getType(Types::BOOLEAN)))->setNotnull(true),
             (new Column('moved', Type::getType(Types::BOOLEAN)))->setNotnull(true),
-            DbalSchemaFactory::columnForNodeAggregateId('`nodeAggregateId`', $platform)->setNotnull(true),
-            DbalSchemaFactory::columnForDimensionSpacePoint('`originDimensionSpacePoint`', $platform)->setNotnull(false),
-            DbalSchemaFactory::columnForDimensionSpacePointHash('`originDimensionSpacePointHash`', $platform)->setNotnull(true),
+            DbalSchemaFactory::columnForNodeAggregateId($connection->quoteIdentifier('nodeAggregateId'), $platform)->setNotnull(true),
+            DbalSchemaFactory::columnForDimensionSpacePoint($connection->quoteIdentifier('originDimensionSpacePoint'), $platform)->setNotnull(false),
+            DbalSchemaFactory::columnForDimensionSpacePointHash($connection->quoteIdentifier('originDimensionSpacePointHash'), $platform)->setNotnull(true),
             (new Column('deleted', Type::getType(Types::BOOLEAN)))->setNotnull(true),
             // Despite the name suggesting this might be an anchor point of sorts, this is a nodeAggregateId type
-            DbalSchemaFactory::columnForNodeAggregateId('`removalAttachmentPoint`', $platform)->setNotnull(false)
+            DbalSchemaFactory::columnForNodeAggregateId($connection->quoteIdentifier('removalAttachmentPoint'), $platform)->setNotnull(false)
         ]);
 
         $changeTable->setPrimaryKey([
-            '`contentStreamId`',
-            '`nodeAggregateId`',
-            '`originDimensionSpacePointHash`'
+            $connection->quoteIdentifier('contentStreamId'),
+            $connection->quoteIdentifier('nodeAggregateId'),
+            $connection->quoteIdentifier('originDimensionSpacePointHash'),
         ]);
 
         $schema = DbalSchemaFactory::createSchemaWithTables($connection, [$changeTable]);
