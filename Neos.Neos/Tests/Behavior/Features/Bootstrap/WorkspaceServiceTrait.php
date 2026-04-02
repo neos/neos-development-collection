@@ -366,7 +366,7 @@ trait WorkspaceServiceTrait
      */
     public function theFollowingStaleWorkspacesExistInContentRepository(string $contentRepositoryId, TableNode $workspacesNames): void
     {
-        $actualWorkspaceNames = $this->getObject(WorkspaceService::class)->getStaleWorkspaceNames(
+        $actualWorkspaceNames = $this->getObject(WorkspaceService::class)->getStalePersonalWorkspaceNames(
             ContentRepositoryId::fromString($contentRepositoryId),
             $this->getObject(Now::class)->sub(new DateInterval('P7D'))
         );

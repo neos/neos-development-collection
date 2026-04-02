@@ -302,7 +302,7 @@ final readonly class WorkspaceService
         throw new \RuntimeException(sprintf('Failed to find unique workspace name for "%s" after %d attempts.', $candidate, $attempt - 1), 1725975479);
     }
 
-    public function getStaleWorkspaceNames(ContentRepositoryId $contentRepositoryId, \DateTimeImmutable $ownerUserNotLoggedInAfter): WorkspaceNames
+    public function getStalePersonalWorkspaceNames(ContentRepositoryId $contentRepositoryId, \DateTimeImmutable $ownerUserNotLoggedInAfter): WorkspaceNames
     {
         $contentRepositoryInstance = $this->contentRepositoryRegistry->get($contentRepositoryId);
 
