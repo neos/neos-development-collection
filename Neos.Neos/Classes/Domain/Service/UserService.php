@@ -39,6 +39,7 @@ use Neos\Flow\Utility\Now;
 use Neos\Neos\Domain\Exception;
 use Neos\Neos\Domain\Model\User;
 use Neos\Neos\Domain\Model\UserId;
+use Neos\Neos\Domain\Model\UserIds;
 use Neos\Neos\Domain\Repository\UserRepository;
 use Neos\Neos\Domain\Repository\WorkspaceMetadataAndRoleRepository;
 use Neos\Party\Domain\Model\AbstractParty;
@@ -775,12 +776,9 @@ class UserService
         return $roles;
     }
 
-    /**
-     * @param \DateTimeInterface $dateTime
-     * @return \Traversable<UserId>
-     */
-    public function findUserIdsNotLoggedInAfter(\DateTimeInterface $dateTime): \Traversable
+    public function findUserIdsNotLoggedInAfter(\DateTimeInterface $dateTime): UserIds
     {
+        $userIds = [];
         /** @var User $user */
         foreach ($this->getUsers() as $user) {
             $accounts = $user->getAccounts();
@@ -794,9 +792,10 @@ class UserService
             }
 
             if (!$loggedIn) {
-                yield $user->getId();
+                $userIds[] = $user->getId();
             }
         }
+        return UserIds::create(...$userIds);
     }
 
     /**

@@ -94,24 +94,11 @@ trait UserServiceTrait
      */
     public function theFollowingUsersDidNotLogInWithinXDays(int $days, TableNode $usersTable): void
     {
-        /**
-         * @var array<string> $expected
-         */
-        $expected = [];
-        foreach ($usersTable->getHash() as $userData) {
-            $expected[$userData['Id']] = true;
-        }
-
         $userService = $this->getObject(UserService::class);
         $cutoffDate = (new \DateTime())->sub(new \DateInterval('P' . $days . 'D'));
-        $actual = iterator_to_array($userService->findUserIdsNotLoggedInAfter($cutoffDate));
+        $userIds = $userService->findUserIdsNotLoggedInAfter($cutoffDate);
 
-        foreach ($actual as $userId) {
-            $userIdString = $userId->value;
-            Assert::assertTrue(isset($expected[$userIdString]), "User \"$userIdString\" did no login within $days days, but was expected to.");
-            unset($expected[$userIdString]);
-        }
-        Assert::assertEmpty($expected, "The following users were missing from user not logged in within $days days: " . join(', ', $expected));
+        Assert::assertEquals(array_column($usersTable->getColumnsHash(), 'Id'), $userIds->toStringArray());
     }
 
     private function createUser(string $username, ?string $firstName = null, ?string $lastName = null, ?array $roleIdentifiers = null, ?string $id = null): void

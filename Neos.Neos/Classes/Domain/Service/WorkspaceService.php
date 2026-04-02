@@ -24,6 +24,7 @@ use Neos\ContentRepository\Core\SharedModel\Exception\WorkspaceDoesNotExist;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\Workspace;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
+use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceNames;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Security\Context as SecurityContext;
@@ -301,35 +302,31 @@ final readonly class WorkspaceService
         throw new \RuntimeException(sprintf('Failed to find unique workspace name for "%s" after %d attempts.', $candidate, $attempt - 1), 1725975479);
     }
 
-    /**
-     * @return \Traversable<WorkspaceName>
-     */
-    public function getStaleWorkspaceNames(ContentRepositoryId $contentRepositoryId, \DateTimeImmutable $ownerUserNotLoggedInAfter): \Traversable
+    public function getStaleWorkspaceNames(ContentRepositoryId $contentRepositoryId, \DateTimeImmutable $ownerUserNotLoggedInAfter): WorkspaceNames
     {
         $contentRepositoryInstance = $this->contentRepositoryRegistry->get($contentRepositoryId);
 
         $workspaces = $contentRepositoryInstance->findWorkspaces();
-        $probablyStaleWorkspaceNames = array_flip(iterator_to_array(
-            $workspaces
-                ->filter(fn($workspace) => !$workspace->hasPublishableChanges() &&
-                    $workspaces->getDependantWorkspacesRecursively($workspace->workspaceName)->isEmpty())
-                ->map(fn($workspace) => $workspace->workspaceName->value)
-        ));
+        $probablyStaleWorkspaceNames = WorkspaceNames::fromWorkspaces(
+            $workspaces->filter(
+                fn($workspace) => !$workspace->hasPublishableChanges() &&
+                    $workspaces->getDependantWorkspacesRecursively($workspace->workspaceName)->isEmpty()
+            )
+        );
 
-        $inactiveUserIds = array_flip(array_map(
-            fn($userId) => $userId->value,
-            iterator_to_array($this->userService->findUserIdsNotLoggedInAfter($ownerUserNotLoggedInAfter))
-        ));
+        $inactiveUserIds = $this->userService->findUserIdsNotLoggedInAfter($ownerUserNotLoggedInAfter);
 
         $personalWorkspaces = $this->metadataAndRoleRepository->findAllPersonalWorkspaceNamesByContentRepositoryId($contentRepositoryId);
+        $staleWorkspaceNames = [];
         foreach ($personalWorkspaces as $userId => $personalWorkspace) {
             if (
-                array_key_exists($personalWorkspace->value, $probablyStaleWorkspaceNames) &&
-                array_key_exists($userId->value, $inactiveUserIds)
+                $probablyStaleWorkspaceNames->contain($personalWorkspace)
+                && $inactiveUserIds->contain($userId)
             ) {
-                yield $personalWorkspace;
+                $staleWorkspaceNames[] = $personalWorkspace;
             }
         }
+        return WorkspaceNames::create(...$staleWorkspaceNames);
     }
 
     // ------------------

@@ -366,12 +366,12 @@ trait WorkspaceServiceTrait
      */
     public function theFollowingStaleWorkspacesExistInContentRepository(string $contentRepositoryId, TableNode $workspacesNames): void
     {
-        $actualWorkspaces = iterator_to_array($this->getObject(WorkspaceService::class)->getStaleWorkspaceNames(
+        $actualWorkspaceNames = $this->getObject(WorkspaceService::class)->getStaleWorkspaceNames(
             ContentRepositoryId::fromString($contentRepositoryId),
             $this->getObject(Now::class)->sub(new DateInterval('P7D'))
-        ), false);
+        );
 
-        Assert::assertEquals(array_column($workspacesNames->getColumnsHash(), 'WorkspaceName'), array_map(fn (WorkspaceName $workspaceName) => $workspaceName->value, $actualWorkspaces));
+        Assert::assertEquals(array_column($workspacesNames->getColumnsHash(), 'WorkspaceName'), $actualWorkspaceNames->toStringArray());
     }
 
     private function userIdForUsername(string $username): UserId
