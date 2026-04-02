@@ -20,6 +20,7 @@ use Doctrine\DBAL\Exception as DBALException;
 use Doctrine\DBAL\Exception\InvalidArgumentException;
 use Neos\ContentGraph\DoctrineDbalAdapter\ContentGraphTableNames;
 use Neos\ContentGraph\DoctrineDbalAdapter\DoctrineDbalProjectionIntegrityViolationDetectionRunnerFactory;
+use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\ContentStreamDbId;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\NodeFactory;
 use Neos\ContentGraph\DoctrineDbalAdapter\Tests\Behavior\Features\Bootstrap\Helpers\TestingNodeAggregateId;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
@@ -118,7 +119,9 @@ trait ProjectionIntegrityViolationDetectionTrait
         unset($record['subtreetags']);
 
         $newParentHierarchyRelation = $this->findHierarchyRelationByIds(
-            ContentStreamId::fromString($dataset['contentStreamId']),
+            $this->getContentStreamDbId(
+                ContentStreamId::fromString($dataset['contentStreamId'])
+            ),
             DimensionSpacePoint::fromArray($dataset['dimensionSpacePoint']),
             NodeAggregateId::fromString($dataset['newParentNodeAggregateId'])
         );
@@ -162,14 +165,18 @@ trait ProjectionIntegrityViolationDetectionTrait
     {
         $dataset = $this->transformPayloadTableToDataset($payloadTable);
 
+        $contentStreamDbId = $this->getContentStreamDbId(
+            ContentStreamId::fromString($dataset['contentStreamId'])
+        );
+
         $relationAnchorPoint = $this->dbal->executeQuery(
             'SELECT n.relationanchorpoint FROM ' . $this->tableNames()->node() . ' n
                 JOIN ' . $this->tableNames()->hierarchyRelation() . ' h ON h.childnodeanchor = n.relationanchorpoint
-                WHERE h.contentstreamid = :contentStreamId
+                WHERE h.contentstreamdbid = :contentStreamDbId
                 AND n.nodeaggregateId = :nodeAggregateId
                 AND n.origindimensionspacepointhash = :originDimensionSpacePointHash',
             [
-                'contentStreamId' => $dataset['contentStreamId'],
+                'contentStreamDbId' => $contentStreamDbId->value,
                 'nodeAggregateId' => $dataset['nodeAggregateId'],
                 'originDimensionSpacePointHash' => OriginDimensionSpacePoint::fromArray($dataset['originDimensionSpacePoint'])->hash,
             ]
@@ -195,8 +202,13 @@ trait ProjectionIntegrityViolationDetectionTrait
     {
         $dataset = $this->transformPayloadTableToDataset($payloadTable);
         $dimensionSpacePoint = DimensionSpacePoint::fromArray($dataset['dimensionSpacePoint']);
+
+        $contentStreamDbId = $this->getContentStreamDbId(
+            ContentStreamId::fromString($dataset['contentStreamId'])
+        );
+
         $record = [
-            'contentstreamid' => $dataset['contentStreamId'],
+            'contentstreamdbid' => $contentStreamDbId->value,
             'dimensionspacepointhash' => $dimensionSpacePoint->hash,
             'childnodeanchor' => $this->findRelationAnchorPointByDataset($dataset)
         ];
@@ -251,7 +263,9 @@ trait ProjectionIntegrityViolationDetectionTrait
         return [
             'name' => $dataset['referenceName'],
             'nodeanchorpoint' => $this->findHierarchyRelationByIds(
-                ContentStreamId::fromString($dataset['contentStreamId']),
+                $this->getContentStreamDbId(
+                    ContentStreamId::fromString($dataset['contentStreamId'])
+                ),
                 DimensionSpacePoint::fromArray($dataset['dimensionSpacePoint']),
                 NodeAggregateId::fromString($dataset['sourceNodeAggregateId'])
             )['childnodeanchor'],
@@ -264,11 +278,14 @@ trait ProjectionIntegrityViolationDetectionTrait
         $dimensionSpacePoint = DimensionSpacePoint::fromArray($dataset['dimensionSpacePoint']);
         $parentNodeAggregateId = TestingNodeAggregateId::fromString($dataset['parentNodeAggregateId']);
         $childAggregateId = TestingNodeAggregateId::fromString($dataset['childNodeAggregateId']);
+        $contentStreamDbId = $this->getContentStreamDbId(
+            ContentStreamId::fromString($dataset['contentStreamId'])
+        );
 
         $parentHierarchyRelation = $parentNodeAggregateId->isNonExistent()
             ? null
             : $this->findHierarchyRelationByIds(
-                ContentStreamId::fromString($dataset['contentStreamId']),
+                $contentStreamDbId,
                 $dimensionSpacePoint,
                 NodeAggregateId::fromString($dataset['parentNodeAggregateId'])
             );
@@ -276,13 +293,13 @@ trait ProjectionIntegrityViolationDetectionTrait
         $childHierarchyRelation = $childAggregateId->isNonExistent()
             ? null
             : $this->findHierarchyRelationByIds(
-                ContentStreamId::fromString($dataset['contentStreamId']),
+                $contentStreamDbId,
                 $dimensionSpacePoint,
                 NodeAggregateId::fromString($dataset['childNodeAggregateId'])
             );
 
         return [
-            'contentstreamid' => $dataset['contentStreamId'],
+            'contentstreamdbid' => $contentStreamDbId->value,
             'dimensionspacepointhash' => $dimensionSpacePoint->hash,
             'parentnodeanchor' => $parentHierarchyRelation !== null ? $parentHierarchyRelation['childnodeanchor'] : 9999999,
             'childnodeanchor' => $childHierarchyRelation !== null ? $childHierarchyRelation['childnodeanchor'] : 8888888,
@@ -296,14 +313,16 @@ trait ProjectionIntegrityViolationDetectionTrait
         $dimensionSpacePoint = DimensionSpacePoint::fromArray($dataset['originDimensionSpacePoint'] ?? $dataset['dimensionSpacePoint']);
 
         return $this->findHierarchyRelationByIds(
-            ContentStreamId::fromString($dataset['contentStreamId']),
+            $this->getContentStreamDbId(
+                ContentStreamId::fromString($dataset['contentStreamId'])
+            ),
             $dimensionSpacePoint,
             NodeAggregateId::fromString($dataset['nodeAggregateId'] ?? $dataset['childNodeAggregateId'])
         )['childnodeanchor'];
     }
 
     private function findHierarchyRelationByIds(
-        ContentStreamId $contentStreamId,
+        ContentStreamDbId $contentStreamDbId,
         DimensionSpacePoint $dimensionSpacePoint,
         NodeAggregateId $nodeAggregateId
     ): array {
@@ -312,17 +331,17 @@ trait ProjectionIntegrityViolationDetectionTrait
                 FROM ' . $this->tableNames()->node() . ' n
                 INNER JOIN ' . $this->tableNames()->hierarchyRelation() . ' h
                 ON n.relationanchorpoint = h.childnodeanchor
-                WHERE n.nodeaggregateid = :nodeAggregateId
-                AND h.contentstreamid = :contentStreamId
+                WHERE h.contentstreamdbid = :contentStreamDbId
+                AND n.nodeaggregateid = :nodeAggregateId
                 AND h.dimensionspacepointhash = :dimensionSpacePointHash',
             [
-                'contentStreamId' => $contentStreamId->value,
+                'contentStreamDbId' => $contentStreamDbId->value,
                 'dimensionSpacePointHash' => $dimensionSpacePoint->hash,
                 'nodeAggregateId' => $nodeAggregateId->value
             ]
         )->fetchAssociative();
         if ($nodeRecord === false) {
-            throw new \InvalidArgumentException(sprintf('Failed to find hierarchy relation for content stream "%s", dimension space point "%s" and node aggregate id "%s"', $contentStreamId->value, $dimensionSpacePoint->hash, $nodeAggregateId->value), 1708617712);
+            throw new \InvalidArgumentException(sprintf('Failed to find hierarchy relation for content stream "%s", dimension space point "%s" and node aggregate id "%s"', $contentStreamDbId->value, $dimensionSpacePoint->hash, $nodeAggregateId->value), 1708617712);
         }
 
         return $nodeRecord;
@@ -336,6 +355,18 @@ trait ProjectionIntegrityViolationDetectionTrait
         }
 
         return $result;
+    }
+
+    private function getContentStreamDbId(ContentStreamId $contentStreamId): ContentStreamDbId
+    {
+        return ContentStreamDbId::fromInt(
+            $this->dbal->executeQuery(
+                'SELECT dbId FROM ' . $this->tableNames()->contentStream() . ' WHERE id = :contentStreamId',
+                [
+                    'contentStreamId' => $contentStreamId->value,
+                ]
+            )->fetchOne()
+        );
     }
 
     /**
