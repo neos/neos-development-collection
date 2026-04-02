@@ -364,30 +364,14 @@ trait WorkspaceServiceTrait
     /**
      * @Then the following stale workspaces exist in content repository :contentRepositoryId:
      */
-    public function theFollowingStaleWorkspacesExistInContentRepository(string $contentRepositoryId, TableNode $workspacesAndUsernames): void
+    public function theFollowingStaleWorkspacesExistInContentRepository(string $contentRepositoryId, TableNode $workspacesNames): void
     {
-        $expectedWorkspaces = [];
-        foreach ($workspacesAndUsernames->getColumnsHash() as $workspaceAndUsername) {
-            $expectedWorkspaces[$workspaceAndUsername["Userid"]] = $workspaceAndUsername["WorkspaceName"];
-        }
-
-        $actualWorkspaces = $this->getObject(WorkspaceService::class)->getStaleWorkspaceNames(
+        $actualWorkspaces = iterator_to_array($this->getObject(WorkspaceService::class)->getStaleWorkspaceNames(
             ContentRepositoryId::fromString($contentRepositoryId),
             $this->getObject(Now::class)->sub(new DateInterval('P7D'))
-        );
+        ), false);
 
-        $count = 0;
-        foreach ($actualWorkspaces as $userId => $workspace) {
-            $count++;
-            $userIdString = $userId->value;
-            $workspaceString = $workspace->value;
-            Assert::assertTrue(array_key_exists($userIdString, $expectedWorkspaces), "Found unexpected workspace $workspaceString for UserId $userIdString");
-
-            $workspaceForId = $expectedWorkspaces[$userIdString];
-            Assert::assertEquals($workspaceForId, $workspace->value, "workspace for userId $workspaceForId is $workspaceString but was expected to be $workspaceForId");
-        }
-        $expectedCount = count($expectedWorkspaces);
-        Assert::assertEquals($expectedCount, $count, "Expected $expectedCount personal workspaces, but found $count");
+        Assert::assertEquals(array_column($workspacesNames->getColumnsHash(), 'WorkspaceName'), array_map(fn (WorkspaceName $workspaceName) => $workspaceName->value, $actualWorkspaces));
     }
 
     private function userIdForUsername(string $username): UserId

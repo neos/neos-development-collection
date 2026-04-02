@@ -302,7 +302,7 @@ final readonly class WorkspaceService
     }
 
     /**
-     * @return \Traversable<UserId,WorkspaceName>
+     * @return \Traversable<WorkspaceName>
      */
     public function getStaleWorkspaceNames(ContentRepositoryId $contentRepositoryId, \DateTimeImmutable $ownerUserNotLoggedInAfter): \Traversable
     {
@@ -327,7 +327,7 @@ final readonly class WorkspaceService
                 array_key_exists($personalWorkspace->value, $probablyStaleWorkspaceNames) &&
                 array_key_exists($userId->value, $inactiveUserIds)
             ) {
-                yield $userId => $personalWorkspace;
+                yield $personalWorkspace;
             }
         }
     }

@@ -295,7 +295,7 @@ Feature: Neos WorkspaceService related features
   Scenario: Personal Workspaces without change and without user login within 7 days are stale
     When the root workspace "some-root-workspace" is created
     Then the following stale workspaces exist in content repository "default":
-      | WorkspaceName          | Userid |
+      | WorkspaceName          |
 
     When the personal workspace "janedoe-user-workspace" is created with the target workspace "some-root-workspace" for user "jane.doe"
     And Neos user "jane.doe" last logged in 9 days ago
@@ -304,9 +304,9 @@ Feature: Neos WorkspaceService related features
     And the personal workspace "editor-user-workspace" is created with the target workspace "some-root-workspace" for user "editor"
     And Neos user "editor" last logged in 5 days ago
     Then the following stale workspaces exist in content repository "default":
-      | WorkspaceName            | Userid |
-      | janedoe-user-workspace   | janedoe |
-      | johndoe-user-workspace   | johndoe |
+      | WorkspaceName            |
+      | janedoe-user-workspace   |
+      | johndoe-user-workspace   |
 
   Scenario: Workspaces with changes are not stale
     Given the root workspace "some-root-workspace" is created
@@ -324,4 +324,4 @@ Feature: Neos WorkspaceService related features
     And Neos user "jane.doe" last logged in 9 days ago
 
     Then the following stale workspaces exist in content repository "default":
-      | WorkspaceName            | Userid |
+      | WorkspaceName            |
