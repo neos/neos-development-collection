@@ -42,7 +42,6 @@ use Neos\Neos\Domain\Model\WorkspaceTitle;
 use Neos\Neos\Domain\Repository\WorkspaceMetadataAndRoleRepository;
 use Neos\Neos\Domain\SubtreeTagging\SoftRemoval\SoftRemovalGarbageCollector;
 use Neos\Neos\Security\Authorization\ContentRepositoryAuthorizationService;
-use SplObjectStorage;
 
 /**
  * Central authority to interact with Content Repository Workspaces within Neos
@@ -316,15 +315,10 @@ final readonly class WorkspaceService
         $contentRepositoryInstance = $this->contentRepositoryRegistry->get($contentRepositoryId);
 
         $workspaces = $contentRepositoryInstance->findWorkspaces();
-        $baseWorkspaceNames = array_flip(iterator_to_array($workspaces
-            ->filter(fn($workspace) => $workspace->baseWorkspaceName !== null)
-            ->map(fn($workspace) => $workspace->baseWorkspaceName->value)
-        ));
-
         $probablyStaleWorkspaceNames = array_flip(iterator_to_array(
             $workspaces
                 ->filter(fn($workspace) => !$workspace->hasPublishableChanges() &&
-                    !array_key_exists($workspace->workspaceName->value, $baseWorkspaceNames))
+                    $workspaces->getDependantWorkspacesRecursively($workspace->workspaceName)->isEmpty())
                 ->map(fn($workspace) => $workspace->workspaceName->value)
         ));
 
