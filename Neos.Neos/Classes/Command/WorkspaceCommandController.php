@@ -535,8 +535,6 @@ class WorkspaceCommandController extends CommandController
      *
      * @param string $contentRepository The name of the content repository. (Default: 'default')
      * @param string $dateInterval The time interval a user had to be inactive for its workspaces to be considered stale. (Default: '7 days')
-     * @throws AccessDenied
-     * @throws \DateInvalidOperationException
      */
     public function removeStaleCommand(string $contentRepository = 'default', string $dateInterval = '7 days'): void
     {
