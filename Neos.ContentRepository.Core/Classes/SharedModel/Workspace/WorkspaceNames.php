@@ -7,7 +7,7 @@ namespace Neos\ContentRepository\Core\SharedModel\Workspace;
  * @implements \IteratorAggregate<int,WorkspaceName>
  * @api
  */
-final readonly class WorkspaceNames implements \IteratorAggregate
+final readonly class WorkspaceNames implements \IteratorAggregate, \Countable
 {
     /** @param array<string,WorkspaceName> $items */
     private function __construct(
@@ -46,5 +46,10 @@ final readonly class WorkspaceNames implements \IteratorAggregate
     public function getIterator(): \Traversable
     {
         yield from array_values($this->items);
+    }
+
+    public function count(): int
+    {
+        return count($this->items);
     }
 }

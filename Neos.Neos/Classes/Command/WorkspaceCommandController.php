@@ -555,10 +555,10 @@ class WorkspaceCommandController extends CommandController
             $this->quit();
         }
 
-        $staleWorkspaces = iterator_to_array($this->workspaceService->getStalePersonalWorkspaceNames($contentRepositoryId, $ownerUserNotLoggedInAfter), false);
-        $this->outputLine('Found %d stale workspaces for users not logged in after %s.', [count($staleWorkspaces), $ownerUserNotLoggedInAfter->format('Y-m-d')]);
+        $staleWorkspaceNames = $this->workspaceService->getStalePersonalWorkspaceNames($contentRepositoryId, $ownerUserNotLoggedInAfter);
+        $this->outputLine('Found %d stale workspaces for users not logged in after %s.', [count($staleWorkspaceNames), $ownerUserNotLoggedInAfter->format('Y-m-d')]);
 
-        foreach ($staleWorkspaces as $workspace) {
+        foreach ($staleWorkspaceNames as $workspace) {
             $contentRepositoryInstance->handle(DeleteWorkspace::create($workspace));
         }
     }
