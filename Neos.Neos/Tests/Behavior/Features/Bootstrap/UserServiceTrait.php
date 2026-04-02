@@ -20,9 +20,7 @@ use Neos\Neos\Domain\Model\User;
 use Neos\Neos\Domain\Service\UserService;
 use Neos\Party\Domain\Model\PersonName;
 use Neos\Utility\ObjectAccess;
-use function PHPUnit\Framework\assertEmpty;
-use function PHPUnit\Framework\assertSameSize;
-use function PHPUnit\Framework\assertTrue;
+use PHPUnit\Framework\Assert;
 
 /**
  * Step implementations for UserService related tests inside Neos.Neos
@@ -110,10 +108,10 @@ trait UserServiceTrait
 
         foreach ($actual as $userId) {
             $userIdString = $userId->value;
-            assertTrue(isset($expected[$userIdString]), "User \"$userIdString\" did no login within $days days, but was expected to.");
+            Assert::assertTrue(isset($expected[$userIdString]), "User \"$userIdString\" did no login within $days days, but was expected to.");
             unset($expected[$userIdString]);
         }
-        assertEmpty($expected, "The following users were missing from user not logged in within $days days: " . join(', ', $expected));
+        Assert::assertEmpty($expected, "The following users were missing from user not logged in within $days days: " . join(', ', $expected));
     }
 
     private function createUser(string $username, ?string $firstName = null, ?string $lastName = null, ?array $roleIdentifiers = null, ?string $id = null): void
