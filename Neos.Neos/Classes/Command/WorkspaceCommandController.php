@@ -14,8 +14,6 @@ declare(strict_types=1);
 
 namespace Neos\Neos\Command;
 
-use DateInterval;
-use Neos\ContentRepository\Core\Feature\Security\Exception\AccessDenied;
 use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Exception\WorkspaceAlreadyExists;
 use Neos\ContentRepository\Core\Feature\WorkspaceModification\Command\DeleteWorkspace;
 use Neos\ContentRepository\Core\Feature\WorkspaceRebase\Dto\RebaseErrorHandlingStrategy;
@@ -29,6 +27,7 @@ use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Cli\CommandController;
 use Neos\Flow\Cli\Exception\StopCommandException;
+use Neos\Flow\Utility\Now;
 use Neos\Neos\Domain\Model\WorkspaceClassification;
 use Neos\Neos\Domain\Model\WorkspaceDescription;
 use Neos\Neos\Domain\Model\WorkspaceRole;
@@ -58,6 +57,9 @@ class WorkspaceCommandController extends CommandController
 
     #[Flow\Inject]
     protected WorkspaceService $workspaceService;
+
+    #[Flow\Inject]
+    protected Now $now;
 
     /**
      * Publish changes of a workspace
@@ -541,13 +543,20 @@ class WorkspaceCommandController extends CommandController
         $contentRepositoryId = ContentRepositoryId::fromString($contentRepository);
         $contentRepositoryInstance = $this->contentRepositoryRegistry->get($contentRepositoryId);
 
-        $interval = DateInterval::createFromDateString($dateInterval);
+        $interval = \DateInterval::createFromDateString($dateInterval);
         if ($interval === false) {
             $this->outputLine('Unable to parse date interval "%s".', [$dateInterval]);
             $this->quit();
         }
 
-        $staleWorkspaces = $this->workspaceService->getStaleWorkspaceNames($contentRepositoryId, $interval);
+        $ownerUserNotLoggedInAfter = $this->now->sub($interval);
+        if ($this->now <= $ownerUserNotLoggedInAfter) {
+            $this->outputLine('Date interval must not be negative or zero "%s".', [$dateInterval]);
+            $this->quit();
+        }
+
+        $staleWorkspaces = iterator_to_array($this->workspaceService->getStaleWorkspaceNames($contentRepositoryId, $ownerUserNotLoggedInAfter), false);
+        $this->outputLine('Found %d stale workspaces for users not logged in after %s.', [count($staleWorkspaces), $ownerUserNotLoggedInAfter->format('Y-m-d')]);
 
         foreach ($staleWorkspaces as $workspace) {
             $contentRepositoryInstance->handle(DeleteWorkspace::create($workspace));

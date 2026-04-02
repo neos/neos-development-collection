@@ -19,6 +19,7 @@ use Neos\ContentRepository\Core\SharedModel\Exception\WorkspaceDoesNotExist;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\CRBehavioralTestsSubjectProvider;
+use Neos\Flow\Utility\Now;
 use Neos\Neos\Domain\Model\UserId;
 use Neos\Neos\Domain\Model\WorkspaceDescription;
 use Neos\Neos\Domain\Model\WorkspaceRole;
@@ -372,7 +373,7 @@ trait WorkspaceServiceTrait
 
         $actualWorkspaces = $this->getObject(WorkspaceService::class)->getStaleWorkspaceNames(
             ContentRepositoryId::fromString($contentRepositoryId),
-            new DateInterval('P7D'),
+            $this->getObject(Now::class)->sub(new DateInterval('P7D'))
         );
 
         $count = 0;

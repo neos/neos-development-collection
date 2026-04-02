@@ -14,7 +14,6 @@ declare(strict_types=1);
 
 namespace Neos\Neos\Domain\Service;
 
-use DateInterval;
 use Neos\ContentRepository\Core\Feature\Security\Exception\AccessDenied;
 use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Command\CreateRootWorkspace;
 use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Command\CreateWorkspace;
@@ -28,7 +27,6 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Security\Context as SecurityContext;
-use Neos\Flow\Utility\Now;
 use Neos\Neos\Domain\Model\User;
 use Neos\Neos\Domain\Model\UserId;
 use Neos\Neos\Domain\Model\WorkspaceClassification;
@@ -58,7 +56,6 @@ final readonly class WorkspaceService
         private ContentRepositoryAuthorizationService $authorizationService,
         private SecurityContext $securityContext,
         private SoftRemovalGarbageCollector $softRemovalGarbageCollector,
-        private Now $now,
     ) {
     }
 
@@ -305,12 +302,9 @@ final readonly class WorkspaceService
     }
 
     /**
-     * @param ContentRepositoryId $contentRepositoryId
-     * @param DateInterval $interval
      * @return \Traversable<UserId,WorkspaceName>
-     * @throws \DateInvalidOperationException
      */
-    public function getStaleWorkspaceNames(ContentRepositoryId $contentRepositoryId, DateInterval $interval): \Traversable
+    public function getStaleWorkspaceNames(ContentRepositoryId $contentRepositoryId, \DateTimeImmutable $ownerUserNotLoggedInAfter): \Traversable
     {
         $contentRepositoryInstance = $this->contentRepositoryRegistry->get($contentRepositoryId);
 
@@ -324,7 +318,7 @@ final readonly class WorkspaceService
 
         $inactiveUserIds = array_flip(array_map(
             fn($userId) => $userId->value,
-            iterator_to_array($this->userService->findUserIdsNotLoggedInAfter($this->now->sub($interval)))
+            iterator_to_array($this->userService->findUserIdsNotLoggedInAfter($ownerUserNotLoggedInAfter))
         ));
 
         $personalWorkspaces = $this->metadataAndRoleRepository->findAllPersonalWorkspaceNamesByContentRepositoryId($contentRepositoryId);
