@@ -90,6 +90,7 @@ trait ContentStreamHandling
                         $newContentStreamId,
                         $sourceContentStreamId,
                         $sourceContentStreamVersion,
+                        fastForwardFromContentStreamId: null
                     ),
                     metadata: ['debug_reason' => $debugReason]
                 )

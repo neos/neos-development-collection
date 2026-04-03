@@ -31,6 +31,7 @@ final readonly class ContentStreamWasForked implements EventInterface, EmbedsCon
         public ContentStreamId $newContentStreamId,
         public ContentStreamId $sourceContentStreamId,
         public Version $versionOfSourceContentStream,
+        public ?ContentStreamId $fastForwardFromContentStreamId,
     ) {
     }
 
@@ -45,6 +46,7 @@ final readonly class ContentStreamWasForked implements EventInterface, EmbedsCon
             ContentStreamId::fromString($values['newContentStreamId']),
             ContentStreamId::fromString($values['sourceContentStreamId']),
             Version::fromInteger($values['versionOfSourceContentStream']),
+            isset($values['fastForwardFromContentStreamId']) ? ContentStreamId::fromString($values['fastForwardFromContentStreamId']) : null,
         );
     }
 
@@ -54,6 +56,7 @@ final readonly class ContentStreamWasForked implements EventInterface, EmbedsCon
             'newContentStreamId' => $this->newContentStreamId,
             'sourceContentStreamId' => $this->sourceContentStreamId,
             'versionOfSourceContentStream' => $this->versionOfSourceContentStream->value,
+            'fastForwardFromContentStreamId' => $this->fastForwardFromContentStreamId?->value
         ];
     }
 }

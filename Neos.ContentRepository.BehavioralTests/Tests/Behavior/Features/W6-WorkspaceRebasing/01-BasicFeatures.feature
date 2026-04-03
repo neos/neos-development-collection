@@ -76,9 +76,10 @@ Feature: Rebasing with no conflict
 
     Then I expect exactly 1 events to be published on stream with prefix "ContentStream:user-cs-rebased"
     And event at index 0 is of type "ContentStreamWasForked" with payload:
-      | Key                   | Expected          |
-      | newContentStreamId    | "user-cs-rebased" |
-      | sourceContentStreamId | "cs-identifier"   |
+      | Key                            | Expected             |
+      | newContentStreamId             | "user-cs-rebased"    |
+      | sourceContentStreamId          | "cs-identifier"      |
+      | fastForwardFromContentStreamId | "user-cs-identifier" |
 
     Then I expect exactly 3 events to be published on stream with prefix "ContentStream:user-cs-identifier"
     And event at index 2 is of type "ContentStreamWasRemoved" with payload:
@@ -122,9 +123,10 @@ Feature: Rebasing with no conflict
 
     Then I expect exactly 1 events to be published on stream with prefix "ContentStream:user-cs-rebased"
     And event at index 0 is of type "ContentStreamWasForked" with payload:
-      | Key                   | Expected          |
-      | newContentStreamId    | "user-cs-rebased" |
-      | sourceContentStreamId | "cs-identifier"   |
+      | Key                            | Expected             |
+      | newContentStreamId             | "user-cs-rebased"    |
+      | sourceContentStreamId          | "cs-identifier"      |
+      | fastForwardFromContentStreamId | "user-cs-identifier" |
 
     Then I expect exactly 3 events to be published on stream with prefix "ContentStream:user-cs-identifier"
     And event at index 2 is of type "ContentStreamWasRemoved" with payload:
@@ -171,9 +173,10 @@ Feature: Rebasing with no conflict
 
     Then I expect exactly 4 events to be published on stream with prefix "ContentStream:user-cs-rebased"
     And event at index 0 is of type "ContentStreamWasForked" with payload:
-      | Key                   | Expected          |
-      | newContentStreamId    | "user-cs-rebased" |
-      | sourceContentStreamId | "cs-identifier"   |
+      | Key                            | Expected          |
+      | newContentStreamId             | "user-cs-rebased" |
+      | sourceContentStreamId          | "cs-identifier"   |
+      | fastForwardFromContentStreamId | null              |
 
     Then I expect exactly 4 events to be published on stream with prefix "ContentStream:user-cs-identifier"
     And event at index 3 is of type "ContentStreamWasRemoved" with payload:

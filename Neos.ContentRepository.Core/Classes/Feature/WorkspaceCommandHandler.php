@@ -29,6 +29,7 @@ use Neos\ContentRepository\Core\Feature\Common\WorkspaceConstraintChecks;
 use Neos\ContentRepository\Core\Feature\ContentStreamClosing\Event\ContentStreamWasClosed;
 use Neos\ContentRepository\Core\Feature\ContentStreamClosing\Event\ContentStreamWasReopened;
 use Neos\ContentRepository\Core\Feature\ContentStreamCreation\Event\ContentStreamWasCreated;
+use Neos\ContentRepository\Core\Feature\ContentStreamForking\Event\ContentStreamWasForked;
 use Neos\ContentRepository\Core\Feature\ContentStreamRemoval\Event\ContentStreamWasRemoved;
 use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Command\CreateRootWorkspace;
 use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Command\CreateWorkspace;
@@ -284,11 +285,21 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
         Version $baseWorkspaceContentStreamVersion,
         ContentStreamId $newContentStreamId
     ): \Generator {
-        yield $this->forkContentStream(
-            $newContentStreamId,
-            $baseWorkspace->currentContentStreamId,
-            $baseWorkspaceContentStreamVersion,
-            sprintf('Rebase empty workspace %s and fork base %s', $workspace->workspaceName->value, $baseWorkspace->workspaceName->value)
+        yield new EventsToPublish(
+            ContentStreamEventStreamName::fromContentStreamId($newContentStreamId)->getEventStreamName(),
+            Events::with(
+                DecoratedEvent::create(
+                    event: new ContentStreamWasForked(
+                        $newContentStreamId,
+                        $baseWorkspace->currentContentStreamId,
+                        $baseWorkspaceContentStreamVersion,
+                        fastForwardFromContentStreamId: $workspace->currentContentStreamId
+                    ),
+                    metadata: ['debug_reason' => sprintf('Rebase empty workspace %s and fast-forward to base %s', $workspace->workspaceName->value, $baseWorkspace->workspaceName->value)]
+                )
+            ),
+            // NO_STREAM to ensure the "fork" happens as the first event of the new content stream
+            ExpectedVersion::NO_STREAM()
         );
 
         yield new EventsToPublish(
@@ -304,6 +315,7 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
             ExpectedVersion::ANY()
         );
 
+        // todo technically obsolete as we already fast-forward to a new cs stream
         yield $this->removeContentStreamWithoutConstraintChecks($workspace->currentContentStreamId);
     }
 
@@ -356,6 +368,7 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
 
         if (!$workspace->hasPublishableChanges()) {
             // if we have no changes in the workspace we can fork from the base directly
+            // todo we close here but the fast-forward must reopen it
             yield $this->closeContentStream(
                 $workspace->currentContentStreamId,
                 $workspaceContentStreamVersion

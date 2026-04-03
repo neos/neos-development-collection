@@ -9,6 +9,7 @@ use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Exception as DBALException;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\ContentStreamDbId;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\Feature\ContentStream;
+use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\Feature\ContentStreamForking;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\Feature\NodeMove;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\Feature\NodeRemoval;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\Feature\NodeVariation;
@@ -80,6 +81,7 @@ use Neos\EventStore\Model\EventEnvelope;
 final class DoctrineDbalContentGraphProjection implements ContentGraphProjectionInterface
 {
     use ContentStream;
+    use ContentStreamForking;
     use NodeMove;
     use NodeRemoval;
     use NodeVariation;
@@ -215,6 +217,27 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
 
     private function whenContentStreamWasForked(ContentStreamWasForked $event): void
     {
+        if ($event->fastForwardFromContentStreamId) {
+            $fastForwardFromContentStreamDbId = $this->contentStreamDbIdFinder->getContentStreamDbId($event->fastForwardFromContentStreamId);
+            $sourceContentStreamDbId = $this->contentStreamDbIdFinder->getContentStreamDbId($event->sourceContentStreamId);
+
+            // todo cleanup dangling old node records like in remove content stream!
+            $this->fastForwardHierarchyRelations($fastForwardFromContentStreamDbId, $sourceContentStreamDbId);
+
+            // todo this is mean and removes the old content stream!!!
+            $this->dbal->update($this->tableNames->contentStream(), [
+                'id' => $event->newContentStreamId->value,
+                'sourceContentStreamId' => $event->sourceContentStreamId->value, // todo this line needs further testing as we fast forward a content stream where its base stream was removed during its rebase
+                'sourceContentStreamVersion' => $event->versionOfSourceContentStream->value,
+                'closed' => 0
+            ], [
+                'dbId' => $fastForwardFromContentStreamDbId->value
+            ]);
+            // todo hack :O
+            $this->contentStreamDbIdFinder->clearRuntimeCacheEntry($event->fastForwardFromContentStreamId);
+            return;
+        }
+
         $this->createContentStream($event->newContentStreamId, $event->sourceContentStreamId, $event->versionOfSourceContentStream);
 
         $newContentStreamDbId = $this->contentStreamDbIdFinder->getContentStreamDbId($event->newContentStreamId);
@@ -258,7 +281,12 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
 
     private function whenContentStreamWasRemoved(ContentStreamWasRemoved $event): void
     {
-        $contentStreamDbId = $this->contentStreamDbIdFinder->getContentStreamDbId($event->contentStreamId);
+        try {
+            $contentStreamDbId = $this->contentStreamDbIdFinder->getContentStreamDbId($event->contentStreamId);
+        } catch (\RuntimeException) {
+            // not found, todo hacky
+            return;
+        }
 
         // Drop hierarchy relations
         $deleteHierarchyRelationStatement = <<<SQL

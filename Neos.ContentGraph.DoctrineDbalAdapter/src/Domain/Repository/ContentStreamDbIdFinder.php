@@ -59,6 +59,11 @@ final class ContentStreamDbIdFinder
         return $this->contentStreamIdRuntimeCache[$contentStreamId->value] ?? null;
     }
 
+    public function clearRuntimeCacheEntry(ContentStreamId $contentStreamId): void
+    {
+        unset($this->contentStreamIdRuntimeCache[$contentStreamId->value]);
+    }
+
     private function fillRuntimeCacheFromDatabase(): void
     {
         $allContentStreamIdsStatement = <<<SQL
