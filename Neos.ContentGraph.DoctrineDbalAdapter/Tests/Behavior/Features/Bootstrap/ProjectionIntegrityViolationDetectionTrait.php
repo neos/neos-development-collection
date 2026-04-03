@@ -12,8 +12,6 @@
 
 declare(strict_types=1);
 
-namespace Neos\ContentGraph\DoctrineDbalAdapter\Tests\Behavior\Features\Bootstrap;
-
 use Behat\Gherkin\Node\TableNode;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Exception as DBALException;
@@ -35,8 +33,6 @@ use PHPUnit\Framework\Assert;
 
 /**
  * Custom context trait for projection integrity violation detection specific to the Doctrine DBAL content graph adapter
- *
- * @todo move this class somewhere where its autoloaded
  */
 trait ProjectionIntegrityViolationDetectionTrait
 {

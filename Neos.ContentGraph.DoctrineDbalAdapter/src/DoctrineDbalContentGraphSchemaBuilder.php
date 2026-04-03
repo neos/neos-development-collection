@@ -121,7 +121,7 @@ class DoctrineDbalContentGraphSchemaBuilder
     {
         $contentStreamTable = self::createTable($this->tableNames->contentStream(), [
             (new Column('dbId', Type::getType(Types::INTEGER)))->setAutoincrement(true)->setNotnull(true),
-            DbalSchemaFactory::columnForContentStreamId('id', $platform)->setNotnull(true),
+            DbalSchemaFactory::columnForContentStreamId('id', $platform)->setNotnull(false),
             (new Column('version', Type::getType(Types::INTEGER)))->setNotnull(true),
             DbalSchemaFactory::columnForContentStreamId('sourceContentStreamId', $platform)->setNotnull(false),
             (new Column('sourceContentStreamVersion', Type::getType(Types::INTEGER)))->setNotnull(false),
@@ -130,7 +130,7 @@ class DoctrineDbalContentGraphSchemaBuilder
         ]);
 
         return $contentStreamTable
-            ->addUniqueIndex(['id'])
+            ->addIndex(['id']) // todo reintroduce unique index but now the field is nullable :O -> add new table?
             ->setPrimaryKey(['dbId']);
     }
 

@@ -9,6 +9,7 @@ use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Exception as DBALException;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\ContentStreamDbId;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\Feature\ContentStream;
+use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\Feature\ContentStreamForking;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\Feature\NodeMove;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\Feature\NodeRemoval;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\Feature\NodeVariation;
@@ -85,7 +86,7 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
     use NodeVariation;
     use SubtreeTagging;
     use Workspace;
-
+    use ContentStreamForking;
 
     public const RELATION_DEFAULT_OFFSET = 128;
 
@@ -215,45 +216,39 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
 
     private function whenContentStreamWasForked(ContentStreamWasForked $event): void
     {
+        $selectBufferedContentStreamStatement = <<<SQL
+            SELECT dbId
+                FROM {$this->tableNames->contentStream()}
+                WHERE sourceContentStreamId = :contentStreamId
+                AND id IS NULL
+                AND sourceContentStreamVersion = :version
+            LIMIT 1
+        SQL;
+        try {
+            $bufferedSourceContentStreamDbId = $this->dbal->fetchOne($selectBufferedContentStreamStatement, [
+                'contentStreamId' => $event->sourceContentStreamId,
+                'version' => $event->versionOfSourceContentStream->value,
+            ]);
+        } catch (DBALException $e) {
+            throw new \RuntimeException(sprintf('TODO: %s', $e->getMessage()), 1775201750, $e);
+        }
+        if ($bufferedSourceContentStreamDbId !== false) {
+            // optimized path
+            $this->dbal->update($this->tableNames->contentStream(), [
+                'id' => $event->newContentStreamId->value,
+                'sourceContentStreamId' => null,
+            ], [
+                'dbId' => $bufferedSourceContentStreamDbId
+            ]);
+            return;
+        }
+
         $this->createContentStream($event->newContentStreamId, $event->sourceContentStreamId, $event->versionOfSourceContentStream);
 
         $newContentStreamDbId = $this->contentStreamDbIdFinder->getContentStreamDbId($event->newContentStreamId);
         $sourceContentStreamDbId = $this->contentStreamDbIdFinder->getContentStreamDbId($event->sourceContentStreamId);
 
-        //
-        // 1) Copy HIERARCHY RELATIONS (this is the MAIN OPERATION here)
-        //
-        $insertRelationStatement = <<<SQL
-            INSERT INTO {$this->tableNames->hierarchyRelation()} (
-              parentnodeanchor,
-              childnodeanchor,
-              position,
-              dimensionspacepointhash,
-              subtreetags,
-              contentstreamdbid
-            )
-            SELECT
-              h.parentnodeanchor,
-              h.childnodeanchor,
-              h.position,
-              h.dimensionspacepointhash,
-              h.subtreetags,
-              :newContentStreamDbId AS contentstreamdbid
-            FROM
-                {$this->tableNames->hierarchyRelation()} h
-                WHERE h.contentstreamdbid = :sourceContentStreamDbId
-        SQL;
-        try {
-            $this->dbal->executeStatement($insertRelationStatement, [
-                'newContentStreamDbId' => $newContentStreamDbId->value,
-                'sourceContentStreamDbId' => $sourceContentStreamDbId->value
-            ]);
-        } catch (DBALException $e) {
-            throw new \RuntimeException(sprintf('Failed to insert hierarchy relation: %s', $e->getMessage()), 1716489211, $e);
-        }
-
-        // NOTE: as reference edges are attached to Relation Anchor Points (and they are lazily copy-on-written),
-        // we do not need to copy reference edges here (but we need to do it during copy on write).
+        $this->copyHierarchyRelations($newContentStreamDbId, $sourceContentStreamDbId);
     }
 
     private function whenContentStreamWasRemoved(ContentStreamWasRemoved $event): void
