@@ -11,6 +11,9 @@ use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\Feature\ContentStrea
 use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceInterface;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 
+/**
+ * @api
+ */
 final readonly class ContentStreamForkBufferService implements ContentRepositoryServiceInterface
 {
     use ContentStreamForking;
@@ -174,7 +177,7 @@ final readonly class ContentStreamForkBufferService implements ContentRepository
         $copyNewExclusiveEdges = <<<SQL
         INSERT INTO {$this->tableNames->hierarchyRelation()} (position, dimensionspacepointhash, parentnodeanchor, childnodeanchor, contentstreamdbid, subtreetags)
         SELECT
-              position, dimensionspacepointhash, parentnodeanchor, childnodeanchor, :sourceDbId AS contentstreamdbid, subtreetags
+              position, dimensionspacepointhash, parentnodeanchor, childnodeanchor, :bufferedDbId AS contentstreamdbid, subtreetags
             FROM
               {$this->tableNames->hierarchyRelation()} h_target
             WHERE

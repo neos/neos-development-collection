@@ -1,10 +1,15 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\Feature;
 
 use Doctrine\DBAL\Exception as DBALException;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\ContentStreamDbId;
 
+/**
+ * @internal
+ */
 trait ContentStreamForking
 {
     private function copyHierarchyRelations(ContentStreamDbId $newContentStreamDbId, ContentStreamDbId $sourceContentStreamDbId): void

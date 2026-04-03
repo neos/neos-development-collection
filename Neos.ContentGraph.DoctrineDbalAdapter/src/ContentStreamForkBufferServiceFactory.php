@@ -10,6 +10,7 @@ use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceFactoryInterface
 use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceInterface;
 
 /**
+ * @api
  * @implements ContentRepositoryServiceFactoryInterface<ContentStreamForkBufferService>
  */
 class ContentStreamForkBufferServiceFactory implements ContentRepositoryServiceFactoryInterface
