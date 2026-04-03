@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Neos\ContentGraph\DoctrineDbalAdapter;
 
 use Doctrine\DBAL\Connection;
-use Doctrine\DBAL\Exception;
+use Doctrine\DBAL\Exception as DBALException;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\ContentStreamDbId;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\Feature\ContentStreamForking;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceInterface;
@@ -35,7 +35,7 @@ final readonly class ContentStreamForkBufferService implements ContentRepository
             $row = $this->dbal->fetchOne($countBufferForksStatement, [
                 'contentStreamId' => $contentStreamId->value
             ]);
-        } catch (Exception $e) {
+        } catch (DBALException $e) {
             throw new \RuntimeException(sprintf('Failed to load number of pre forks from database: %s', $e->getMessage()), 1775201750, $e);
         }
         return (int)$row;
@@ -58,7 +58,7 @@ final readonly class ContentStreamForkBufferService implements ContentRepository
             $contentStreamRow = $this->dbal->fetchAssociative($selectContentStreamStatement, [
                 'contentStreamId' => $contentStreamId->value
             ]);
-        } catch (Exception $e) {
+        } catch (DBALException $e) {
             throw new \RuntimeException(sprintf('TODO: %s', $e->getMessage()), 1775201750, $e);
         }
         if ($contentStreamRow === false) {
@@ -75,7 +75,7 @@ final readonly class ContentStreamForkBufferService implements ContentRepository
             $existingDbIds = $this->dbal->fetchFirstColumn($selectBufferedDbIdsStatement, [
                 'contentStreamId' => $contentStreamId->value,
             ]);
-        } catch (Exception $e) {
+        } catch (DBALException $e) {
             throw new \RuntimeException(sprintf('TODO: %s', $e->getMessage()), 1775201750, $e);
         }
 
@@ -94,7 +94,7 @@ final readonly class ContentStreamForkBufferService implements ContentRepository
             $updatedDbIds = $this->dbal->fetchFirstColumn($selectBufferedDbIdsStatement, [
                 'contentStreamId' => $contentStreamId->value,
             ]);
-        } catch (Exception $e) {
+        } catch (DBALException $e) {
             throw new \RuntimeException(sprintf('TODO: %s', $e->getMessage()), 1775201750, $e);
         }
 
@@ -106,6 +106,116 @@ final readonly class ContentStreamForkBufferService implements ContentRepository
         // TODO Totally unsafe for parallel as we dont use transactions?
         foreach ($newDbIds as $dbId) {
             $this->copyHierarchyRelations(ContentStreamDbId::fromInt($dbId), ContentStreamDbId::fromInt($contentStreamRow['dbId']));
+        }
+    }
+
+    public function fastForwardForkedContentStreamId(ContentStreamId $contentStreamId): void
+    {
+        $selectContentStreamStatement = <<<SQL
+            SELECT dbId, version
+                FROM {$this->tableNames->contentStream()}
+                WHERE id = :contentStreamId
+            LIMIT 1
+        SQL;
+        try {
+            $contentStreamRow = $this->dbal->fetchAssociative($selectContentStreamStatement, [
+                'contentStreamId' => $contentStreamId->value
+            ]);
+        } catch (DBALException $e) {
+            throw new \RuntimeException(sprintf('TODO: %s', $e->getMessage()), 1775201750, $e);
+        }
+        if ($contentStreamRow === false) {
+            throw new \RuntimeException(sprintf('content stream %s does not exist', $contentStreamId->value), 1775203449);
+        }
+
+        $selectBehindBufferedDbIdsStatement = <<<SQL
+            SELECT dbId
+                FROM {$this->tableNames->contentStream()}
+                WHERE id IS NULL
+                    AND sourceContentStreamId = :contentStreamId
+                    AND sourceContentStreamVersion != :version
+        SQL;
+        try {
+            $behindBufferedDbIds = $this->dbal->fetchFirstColumn($selectBehindBufferedDbIdsStatement, [
+                'contentStreamId' => $contentStreamId->value,
+                'version' => $contentStreamRow['version']
+            ]);
+        } catch (DBALException $e) {
+            throw new \RuntimeException(sprintf('TODO: %s', $e->getMessage()), 1775201750, $e);
+        }
+
+        $removeStaleExclusiveEdges = <<<SQL
+        DELETE
+        FROM
+          {$this->tableNames->hierarchyRelation()}
+        WHERE
+          (dimensionspacepointhash, parentnodeanchor, childnodeanchor, contentstreamdbid)
+          IN (
+            SELECT
+              dimensionspacepointhash, parentnodeanchor, childnodeanchor, contentstreamdbid
+            FROM
+              {$this->tableNames->hierarchyRelation()} h_source
+            WHERE
+              h_source.contentstreamdbid = :bufferedDbId
+              AND NOT EXISTS (
+                SELECT
+                  h_target.*
+                FROM
+                  {$this->tableNames->hierarchyRelation()} h_target
+                WHERE
+                  h_target.contentstreamdbid = :sourceDbId
+                  AND h_target.dimensionspacepointhash = h_source.dimensionspacepointhash
+                  AND h_target.parentnodeanchor = h_source.parentnodeanchor
+                  AND h_target.childnodeanchor = h_source.childnodeanchor
+              )
+          );
+        SQL;
+
+        $copyNewExclusiveEdges = <<<SQL
+        INSERT INTO {$this->tableNames->hierarchyRelation()} (position, dimensionspacepointhash, parentnodeanchor, childnodeanchor, contentstreamdbid, subtreetags)
+        SELECT
+              position, dimensionspacepointhash, parentnodeanchor, childnodeanchor, :sourceDbId AS contentstreamdbid, subtreetags
+            FROM
+              {$this->tableNames->hierarchyRelation()} h_target
+            WHERE
+              h_target.contentstreamdbid = :sourceDbId
+              AND NOT EXISTS (
+                SELECT
+                  h_source.*
+                FROM
+                  {$this->tableNames->hierarchyRelation()} h_source
+                WHERE
+                  h_source.contentstreamdbid = :bufferedDbId
+                  AND h_source.dimensionspacepointhash = h_target.dimensionspacepointhash
+                  AND h_source.parentnodeanchor = h_target.parentnodeanchor
+                  AND h_source.childnodeanchor = h_target.childnodeanchor
+              );
+        SQL;
+
+        // todo cleanup old node records
+
+        foreach ($behindBufferedDbIds as $behindBufferedDbId) {
+            try {
+                $this->dbal->executeStatement($removeStaleExclusiveEdges, [
+                    'bufferedDbId' => $behindBufferedDbId,
+                    'sourceDbId' => $contentStreamRow['dbId']
+                ]);
+            } catch (DBALException $e) {
+                throw new \RuntimeException(sprintf('Todo: %s', $e->getMessage()), 1716489211, $e);
+            }
+            try {
+                $this->dbal->executeStatement($copyNewExclusiveEdges, [
+                    'bufferedDbId' => $behindBufferedDbId,
+                    'sourceDbId' => $contentStreamRow['dbId']
+                ]);
+            } catch (DBALException $e) {
+                throw new \RuntimeException(sprintf('Todo: %s', $e->getMessage()), 1716489211, $e);
+            }
+            $this->dbal->update($this->tableNames->contentStream(), [
+                'sourceContentStreamVersion' => $contentStreamRow['version'],
+            ], [
+                'dbId' => $behindBufferedDbId
+            ]);
         }
     }
 }

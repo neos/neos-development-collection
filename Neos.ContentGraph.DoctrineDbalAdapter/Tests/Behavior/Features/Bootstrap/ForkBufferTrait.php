@@ -51,4 +51,14 @@ trait ForkBufferTrait
             $number
         );
     }
+
+    /**
+     * @When I fast-forward buffered forks for content stream :contentStreamId
+     */
+    public function iFastForwardBufferedForksForContentStreamId(string $contentStreamId): void
+    {
+        $this->getContentStreamForkBufferService()->fastForwardForkedContentStreamId(
+            ContentStreamId::fromString($contentStreamId)
+        );
+    }
 }

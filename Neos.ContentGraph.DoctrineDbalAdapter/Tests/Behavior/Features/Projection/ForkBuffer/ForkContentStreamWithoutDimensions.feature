@@ -116,6 +116,7 @@ Feature:
     When I create 1 buffered forks for content stream "cs-identifier"
     Then I expect 1 buffered forks for content stream "cs-identifier"
 
+    # changes to live after buffered forks
     And the command SetNodeProperties is executed with payload:
       | Key                       | Value                      |
       | workspaceName             | "live"                     |
@@ -133,12 +134,22 @@ Feature:
       | workspaceName      | "user-test"          |
       | newContentStreamId | "user-cs-identifier" |
 
-    # buffer used for forking
+    # buffer NOT used for forking, as it is behind
+    Then I expect 1 buffered forks for content stream "cs-identifier"
+
+    # fast forward and use buffer
+    When I fast-forward buffered forks for content stream "cs-identifier"
+    # only if the force flag is used we enforce a fork:
+    When the command RebaseWorkspace is executed with payload:
+      | Key                         | Value                 |
+      | workspaceName               | "user-test"           |
+      | rebasedContentStreamId      | "user-cs-rebased"     |
+      | rebaseErrorHandlingStrategy | "force"               |
     Then I expect 0 buffered forks for content stream "cs-identifier"
 
     # forked content stream
     When I am in workspace "user-test" and dimension space point {}
-    Then I expect node aggregate identifier "nody-mc-nodeface" to lead to node user-cs-identifier;nody-mc-nodeface;{}
+    Then I expect node aggregate identifier "nody-mc-nodeface" to lead to node user-cs-rebased;nody-mc-nodeface;{}
     And I expect this node to have the following properties:
       | Key  | Value            |
       | text | "modified value" |
