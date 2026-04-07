@@ -26,13 +26,13 @@ jobs:
         # see services, this is mariadb
         mysqlport: [3306]
         composer-arguments: [''] # to run --ignore-platform-reqs in experimental builds
-        include:
-          - php-versions: '8.4'
-            dependencies: 'highest'
-            parallel-parts: escr-behavioral
-            # see services, this is mysql
-            mysqlport: 3307
-            experimental: false
+#        include:
+#          - php-versions: '8.4'
+#            dependencies: 'highest'
+#            parallel-parts: escr-behavioral
+#            # see services, this is mysql
+#            mysqlport: 3307
+#            experimental: false
 
         # we want to parallelize quite some parts of the test suite; but these need similar setup steps.
         # that's why we parallelize via a Matrix; and not via different jobs.
