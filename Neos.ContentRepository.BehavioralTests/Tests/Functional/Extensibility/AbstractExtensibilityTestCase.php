@@ -57,7 +57,6 @@ abstract class AbstractExtensibilityTestCase extends TestCase // we don't use Fl
 
         $this->getObject(ContentRepositoryRegistry::class)->resetFactoryInstance(static::$contentRepositoryId);
 
-
         /** @var ContentRepositoryMaintainer $contentRepositoryMaintainer */
         $contentRepositoryMaintainer = $this->getObject(ContentRepositoryRegistry::class)->buildService(static::$contentRepositoryId, new ContentRepositoryMaintainerFactory());
         $contentRepositoryMaintainer->setUp();
