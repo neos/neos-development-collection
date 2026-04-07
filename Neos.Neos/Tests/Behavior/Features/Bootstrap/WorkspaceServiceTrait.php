@@ -371,7 +371,7 @@ trait WorkspaceServiceTrait
             $this->getObject(Now::class)->sub(new DateInterval('P7D'))
         );
 
-        Assert::assertEquals(array_column($workspacesNames->getColumnsHash(), 'WorkspaceName'), $actualWorkspaceNames->toStringArray());
+        Assert::assertEqualsCanonicalizing(array_column($workspacesNames->getColumnsHash(), 'WorkspaceName'), $actualWorkspaceNames->toStringArray());
     }
 
     /**

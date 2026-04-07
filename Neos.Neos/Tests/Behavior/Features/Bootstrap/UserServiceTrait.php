@@ -98,7 +98,7 @@ trait UserServiceTrait
         $cutoffDate = (new \DateTime())->sub(new \DateInterval('P' . $days . 'D'));
         $userIds = $userService->findUserIdsNotLoggedInAfter($cutoffDate);
 
-        Assert::assertEquals(array_column($usersTable->getColumnsHash(), 'Id'), $userIds->toStringArray());
+        Assert::assertEqualsCanonicalizing(array_column($usersTable->getColumnsHash(), 'Id'), $userIds->toStringArray());
     }
 
     private function createUser(string $username, ?string $firstName = null, ?string $lastName = null, ?array $roleIdentifiers = null, ?string $id = null): void
