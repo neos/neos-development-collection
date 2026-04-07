@@ -14,7 +14,7 @@ jobs:
       contents: read # to fetch code (actions/checkout)
 
     if: "!contains(github.event.head_commit.message, '[skip ci]') && !contains(github.event.head_commit.message, '[skip travis]')"
-    name: "PHP ${{ matrix.php-versions }} Test ${{ matrix.parallel-parts  }} (deps: ${{ matrix.dependencies }}, db: ${{ matrix.db }})"
+    name: "PHP ${{ matrix.php-versions }} Test ${{ matrix.parallel-parts  }} (deps: ${{ matrix.dependencies }})"
 
     continue-on-error: ${{ matrix.experimental }}
 
@@ -25,15 +25,13 @@ jobs:
         dependencies: ['highest']
         # see services, this is mariadb
         mysqlport: [3306]
-        db: ['mariadb']
         composer-arguments: [''] # to run --ignore-platform-reqs in experimental builds
         include:
           - php-versions: '8.4'
             dependencies: 'highest'
-            parallel-parts: escr-behavioral
+            parallel-parts: escr-behavioral-mysql
             # see services, this is mysql
             mysqlport: 3307
-            db: 'mysql'
             experimental: false
 
         # we want to parallelize quite some parts of the test suite; but these need similar setup steps.
@@ -266,7 +264,7 @@ jobs:
 
       - name: Run Parallel Tests for the ES CR
         # TODO: enable parallel tests also for Postgres
-        if: matrix.parallel-parts == 'escr-behavioral'
+        if: matrix.parallel-parts == 'escr-behavioral' || matrix.parallel-parts == 'escr-behavioral-mysql'
         run: |
           cd Packages/Neos
           hasFailure=0
@@ -275,7 +273,7 @@ jobs:
           exit $hasFailure
       - name: Run Behavioral Tests (ES CR && Neos.Neos)
         id: escrtests
-        if: matrix.parallel-parts == 'escr-behavioral' || matrix.parallel-parts == 'escr-behavioral-postgres'
+        if: matrix.parallel-parts == 'escr-behavioral' || matrix.parallel-parts == 'escr-behavioral-mysql' || matrix.parallel-parts == 'escr-behavioral-postgres'
         # DEBUG MODE: comment-in the next line, because we want to reach the Upload Mysql/Postgres DB dump step.
         continue-on-error: true
         run: |
@@ -322,7 +320,7 @@ jobs:
             echo "starting pg_dump"
             pg_dump --file=${{ github.workspace }}/Data/DebugDatabaseDumps/pg_dump.sql --format=plain --no-owner --dbname=flow_functional_testing --host=127.0.0.1 --username=neos --no-password
             echo "pg_dump finished"
-            if [ "${{ matrix.parallel-parts }}" == "escr-behavioral" ]; then
+            if [ "${{ matrix.parallel-parts }}" == "escr-behavioral" ] || [ "${{ matrix.parallel-parts }}" == "escr-behavioral-mysql" ]; then
               echo "starting mysqldump"
               mysqldump --force --host=127.0.0.1 -u neos -pneos flow_functional_testing > ${{ github.workspace }}/Data/DebugDatabaseDumps/mysqldump.sql
             fi
@@ -332,13 +330,13 @@ jobs:
 
       - name: Upload Postgres/Mysql DB dump
         uses: actions/upload-artifact@v4
-        if: matrix.parallel-parts == 'escr-behavioral' || matrix.parallel-parts == 'escr-behavioral-postgres'
+        if: matrix.parallel-parts == 'escr-behavioral' || matrix.parallel-parts == 'escr-behavioral-mysql' || matrix.parallel-parts == 'escr-behavioral-postgres'
         with:
           name: database-dumps-${{ matrix.php-versions }}-${{ matrix.dependencies }}-${{ matrix.parallel-parts }}-${{ matrix.mysqlport }}
           path: Data/DebugDatabaseDumps
 
       - name: Fail pipeline if ES CR tests broke (after uploading artifacts)
-        if: matrix.parallel-parts == 'escr-behavioral' && steps.escrtests.outcome != 'success'
+        if: (matrix.parallel-parts == 'escr-behavioral' || matrix.parallel-parts == 'escr-behavioral-mysql') && steps.escrtests.outcome != 'success'
         # we want to reach the Upload Postgres/Mysql DB dump step.
         # Here we want to fail everything, as described in https://stackoverflow.com/a/58003436/4921449
         run: |
