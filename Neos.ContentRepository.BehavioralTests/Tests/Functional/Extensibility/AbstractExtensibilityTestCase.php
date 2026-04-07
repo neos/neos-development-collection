@@ -57,15 +57,6 @@ abstract class AbstractExtensibilityTestCase extends TestCase // we don't use Fl
 
         $this->getObject(ContentRepositoryRegistry::class)->resetFactoryInstance(static::$contentRepositoryId);
 
-        $connection = $this->getObject(Connection::class);
-        if ($connection->getDatabasePlatform() instanceof PostgreSQLPlatform) {
-            $tablePrefix = 'cr_' . static::$contentRepositoryId->value . '_p_graph_';
-            foreach ($connection->createSchemaManager()->listTableNames() as $tableName) {
-                if (str_starts_with($tableName, $tablePrefix)) {
-                    $connection->executeStatement('DROP TABLE IF EXISTS ' . $tableName . ' CASCADE');
-                }
-            }
-        }
 
         /** @var ContentRepositoryMaintainer $contentRepositoryMaintainer */
         $contentRepositoryMaintainer = $this->getObject(ContentRepositoryRegistry::class)->buildService(static::$contentRepositoryId, new ContentRepositoryMaintainerFactory());
