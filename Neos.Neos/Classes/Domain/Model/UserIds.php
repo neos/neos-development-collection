@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Neos\Neos\Domain\Model;
@@ -20,7 +21,7 @@ final readonly class UserIds implements \IteratorAggregate
         $indexed = [];
         foreach ($items as $item) {
             $indexed[$item->value] = $item;
-         }
+        }
         return new self(
             $indexed
         );

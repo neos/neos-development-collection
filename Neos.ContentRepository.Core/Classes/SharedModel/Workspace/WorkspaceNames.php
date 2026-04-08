@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Neos\ContentRepository\Core\SharedModel\Workspace;
@@ -21,7 +22,7 @@ final readonly class WorkspaceNames implements \IteratorAggregate, \Countable
         $indexed = [];
         foreach ($items as $item) {
             $indexed[$item->value] = $item;
-         }
+        }
         return new self(
             $indexed
         );
