@@ -108,7 +108,8 @@ final readonly class WorkspaceService
         if ($workspaceName === null) {
             throw new \RuntimeException(sprintf('No workspace is assigned to the user with id "%s")', $userId->value), 1718293801);
         }
-        return $this->requireWorkspace($contentRepositoryId, $workspaceName);
+
+        return $this->recreateStaleWorkspaceIfMissing($contentRepositoryId, $workspaceName);
     }
 
     /**
@@ -153,14 +154,7 @@ final readonly class WorkspaceService
         if ($existingUserWorkspace !== null) {
             throw new \RuntimeException(sprintf('Failed to create personal workspace "%s" for user with id "%s", because the workspace "%s" is already assigned to the user', $workspaceName->value, $ownerId->value, $existingUserWorkspace->value), 1733754904);
         }
-        $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryId);
-        $contentRepository->handle(
-            CreateWorkspace::create(
-                $workspaceName,
-                $baseWorkspaceName,
-                ContentStreamId::create()
-            )
-        );
+        $this->createPersonalWorkspaceWithoutMetadata($contentRepositoryId, $workspaceName, $baseWorkspaceName);
         $this->metadataAndRoleRepository->addWorkspaceMetadata($contentRepositoryId, $workspaceName, $title, $description, WorkspaceClassification::PERSONAL, $ownerId);
     }
 
@@ -204,7 +198,7 @@ final readonly class WorkspaceService
     {
         $existingWorkspaceName = $this->metadataAndRoleRepository->findWorkspaceNameByUser($contentRepositoryId, $user->getId());
         if ($existingWorkspaceName !== null) {
-            $this->requireWorkspace($contentRepositoryId, $existingWorkspaceName);
+            $this->recreateStaleWorkspaceIfMissing($contentRepositoryId, $existingWorkspaceName);
             return;
         }
         $workspaceName = $this->getUniqueWorkspaceName($contentRepositoryId, $user->getLabel());
@@ -353,6 +347,30 @@ final readonly class WorkspaceService
     }
 
     // ------------------
+    private function recreateStaleWorkspaceIfMissing(ContentRepositoryId $contentRepositoryId, WorkspaceName $workspaceName): Workspace
+    {
+        try {
+            return $this->requireWorkspace($contentRepositoryId, $workspaceName);
+        } catch (WorkspaceDoesNotExist $e) {
+            //TODO: how to restore the correct baseWorkspaceName? What if it does not exist anymore? Should it be restored at all?
+            $this->createPersonalWorkspaceWithoutMetadata($contentRepositoryId, $workspaceName, WorkspaceName::forLive());
+        }
+
+        // do not catch again, if it fails now something is definitely wrong
+        return $this->requireWorkspace($contentRepositoryId, $workspaceName);
+    }
+
+    private function createPersonalWorkspaceWithoutMetadata(ContentRepositoryId $contentRepositoryId, WorkspaceName $workspaceName, WorkspaceName $baseWorkspaceName): void
+    {
+        $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryId);
+        $contentRepository->handle(
+            CreateWorkspace::create(
+                $workspaceName,
+                $baseWorkspaceName,
+                ContentStreamId::create()
+            )
+        );
+    }
 
     /**
      * @throws WorkspaceDoesNotExist if the workspace does not exist
