@@ -52,9 +52,13 @@ trait WorkspaceServiceTrait
     abstract private function getObject(string $className): object;
 
     /**
-     * @BeforeScenario
+     * Cleanup _after_ scenario. If cleaned up with `BeforeScenario` the workspaces from the last scenario remain in the
+     * database. The next test run will not clean them up before the first scenario since no content repositories are
+     * already set up at that moment.
+     *
+     * @AfterScenario
      */
-    final public function pruneWorkspaceService(): void
+    final public function pruneWorkspaceService($param): void
     {
         foreach (static::$alreadySetUpContentRepositories as $contentRepositoryId) {
             $this->getObject(\Neos\Neos\Domain\Repository\WorkspaceMetadataAndRoleRepository::class)->pruneWorkspaceMetadata($contentRepositoryId);
