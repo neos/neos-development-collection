@@ -149,7 +149,11 @@ trait CRTestSuiteTrait
                 ...['publishable changes' => $workspace->hasPublishableChanges()]
             ]);
         }
-        Assert::assertSame($payloadTable->getHash(), $actualComparableHash);
+        // ensure the check result does not depend on the workspace ordering
+        $expected = $payloadTable->getHash();
+        usort($expected, fn($a, $b) => $a['name'] <=> $b['name']);
+        usort($actualComparableHash, fn($a, $b) => $a['name'] <=> $b['name']);
+        Assert::assertSame($expected, $actualComparableHash);
     }
 
     /**
