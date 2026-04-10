@@ -19,7 +19,7 @@ use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Exception as DBALException;
 use Doctrine\DBAL\Query\QueryBuilder;
 use Neos\ContentGraph\DoctrineDbalAdapter\ContentGraphTableNames;
-use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\ContentStreamDbId;
+use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\ContentStreamDbIds;
 use Neos\ContentGraph\DoctrineDbalAdapter\NodeQueryBuilder;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
@@ -76,7 +76,7 @@ final class ContentGraph implements ContentGraphInterface
         private readonly ContentGraphTableNames $tableNames,
         public readonly WorkspaceName $workspaceName,
         public readonly ContentStreamId $contentStreamId,
-        public readonly ContentStreamDbId $contentStreamDbId,
+        public readonly ContentStreamDbIds $contentStreamDbIds,
     ) {
         $this->nodeQueryBuilder = new NodeQueryBuilder($this->dbal, $this->tableNames);
     }
@@ -98,7 +98,7 @@ final class ContentGraph implements ContentGraphInterface
         return new ContentSubgraph(
             $this->contentRepositoryId,
             $this->workspaceName,
-            $this->contentStreamDbId,
+            $this->contentStreamDbIds,
             $dimensionSpacePoint,
             $visibilityConstraints,
             $this->dbal,
@@ -137,7 +137,7 @@ final class ContentGraph implements ContentGraphInterface
     public function findRootNodeAggregates(
         FindRootNodeAggregatesFilter $filter,
     ): NodeAggregates {
-        $rootNodeAggregateQueryBuilder = $this->nodeQueryBuilder->buildFindRootNodeAggregatesQuery($this->contentStreamDbId, $filter);
+        $rootNodeAggregateQueryBuilder = $this->nodeQueryBuilder->buildFindRootNodeAggregatesQuery($this->contentStreamDbIds, $filter);
         return $this->mapQueryBuilderToNodeAggregates($rootNodeAggregateQueryBuilder);
     }
 
@@ -148,8 +148,10 @@ final class ContentGraph implements ContentGraphInterface
         $queryBuilder
             ->andWhere('n.nodetypename = :nodeTypeName')
             ->setParameters([
-                'contentStreamDbId' => $this->contentStreamDbId->value,
+                'contentStreamDbIds' => $this->contentStreamDbIds->toIntArray(),
                 'nodeTypeName' => $nodeTypeName->value,
+            ], [
+                'contentStreamDbIds' => ArrayParameterType::INTEGER,
             ]);
         return $this->mapQueryBuilderToNodeAggregates($queryBuilder);
     }
@@ -162,7 +164,9 @@ final class ContentGraph implements ContentGraphInterface
             ->orderBy('n.relationanchorpoint', 'DESC')
             ->setParameters([
                 'nodeAggregateId' => $nodeAggregateId->value,
-                'contentStreamDbId' => $this->contentStreamDbId->value
+                'contentStreamDbIds' => $this->contentStreamDbIds->toIntArray()
+            ], [
+                'contentStreamDbIds' => ArrayParameterType::INTEGER
             ]);
 
         return $this->nodeFactory->mapNodeRowsToNodeAggregate(
@@ -180,9 +184,10 @@ final class ContentGraph implements ContentGraphInterface
             ->orderBy('n.relationanchorpoint', 'DESC')
             ->setParameters([
                 'nodeAggregateIds' => $nodeAggregateIds->toStringArray(),
-                'contentStreamDbId' => $this->contentStreamDbId->value
+                'contentStreamDbIds' => $this->contentStreamDbIds->toIntArray()
             ], [
-                'nodeAggregateIds' => ArrayParameterType::STRING
+                'nodeAggregateIds' => ArrayParameterType::STRING,
+                'contentStreamDbIds' => ArrayParameterType::INTEGER,
             ]);
 
         return $this->mapQueryBuilderToNodeAggregates($queryBuilder);
@@ -199,11 +204,13 @@ final class ContentGraph implements ContentGraphInterface
         $queryBuilder = $this->nodeQueryBuilder->buildBasicNodeAggregateQuery()
             ->innerJoin('n', $this->nodeQueryBuilder->tableNames->hierarchyRelation(), 'ch', 'ch.parentnodeanchor = n.relationanchorpoint')
             ->innerJoin('ch', $this->nodeQueryBuilder->tableNames->node(), 'cn', 'cn.relationanchorpoint = ch.childnodeanchor')
-            ->andWhere('ch.contentstreamdbid = :contentStreamDbId')
+            ->andWhere('ch.contentstreamdbid = :contentStreamDbIds')
             ->andWhere('cn.nodeaggregateid = :nodeAggregateId')
             ->setParameters([
                 'nodeAggregateId' => $childNodeAggregateId->value,
-                'contentStreamDbId' => $this->contentStreamDbId->value
+                'contentStreamDbIds' => $this->contentStreamDbIds->toIntArray()
+            ], [
+                'contentStreamDbIds' => ArrayParameterType::INTEGER,
             ]);
 
         return $this->mapQueryBuilderToNodeAggregates($queryBuilder);
@@ -215,20 +222,20 @@ final class ContentGraph implements ContentGraphInterface
             ->select('ch.parentnodeanchor')
             ->from($this->nodeQueryBuilder->tableNames->hierarchyRelation(), 'ch')
             ->innerJoin('ch', $this->nodeQueryBuilder->tableNames->node(), 'c', 'c.relationanchorpoint = ch.childnodeanchor')
-            ->where('ch.contentstreamdbid = :contentStreamDbId')
+            ->where('ch.contentstreamdbid = :contentStreamDbIds')
             ->andWhere('c.nodeaggregateid = :entryNodeAggregateId');
 
         $queryBuilderRecursive = $this->createQueryBuilder()
             ->select('ph.parentnodeanchor')
             ->from('ancestry', 'ch')
             ->innerJoin('ch', $this->nodeQueryBuilder->tableNames->hierarchyRelation(), 'ph', 'ph.childnodeanchor = ch.parentnodeanchor')
-            ->where('ph.contentstreamdbid = :contentStreamDbId');
+            ->where('ph.contentstreamdbid = :contentStreamDbIds');
 
         $queryBuilderCte = $this->createQueryBuilder()
             ->select('n.nodeAggregateId')
             ->from('ancestry', 'a')
             ->innerJoin('a', $this->nodeQueryBuilder->tableNames->node(), 'n', 'n.relationanchorpoint = a.parentnodeanchor')
-            ->setParameter('contentStreamDbId', $this->contentStreamDbId->value)
+            ->setParameter('contentStreamDbIds', $this->contentStreamDbIds->toIntArray(), ArrayParameterType::STRING)
             ->setParameter('entryNodeAggregateId', $entryNodeAggregateId->value);
 
         $nodeAggregateIdRows = $this->fetchCteResults(
@@ -244,7 +251,7 @@ final class ContentGraph implements ContentGraphInterface
     public function findChildNodeAggregates(
         NodeAggregateId $parentNodeAggregateId
     ): NodeAggregates {
-        $queryBuilder = $this->nodeQueryBuilder->buildChildNodeAggregateQuery($parentNodeAggregateId, $this->contentStreamDbId);
+        $queryBuilder = $this->nodeQueryBuilder->buildChildNodeAggregateQuery($parentNodeAggregateId, $this->contentStreamDbIds);
         return $this->mapQueryBuilderToNodeAggregates($queryBuilder);
     }
 
@@ -255,7 +262,7 @@ final class ContentGraph implements ContentGraphInterface
             ->from($this->nodeQueryBuilder->tableNames->node(), 'pn')
             ->innerJoin('pn', $this->nodeQueryBuilder->tableNames->hierarchyRelation(), 'ch', 'ch.parentnodeanchor = pn.relationanchorpoint')
             ->innerJoin('ch', $this->nodeQueryBuilder->tableNames->node(), 'cn', 'cn.relationanchorpoint = ch.childnodeanchor')
-            ->where('ch.contentstreamdbid = :contentStreamDbId')
+            ->where('ch.contentstreamdbid = :contentStreamDbIds')
             ->andWhere('ch.dimensionspacepointhash = :childOriginDimensionSpacePointHash')
             ->andWhere('cn.nodeaggregateid = :childNodeAggregateId')
             ->andWhere('cn.origindimensionspacepointhash = :childOriginDimensionSpacePointHash');
@@ -266,11 +273,13 @@ final class ContentGraph implements ContentGraphInterface
             ->innerJoin('n', $this->nodeQueryBuilder->tableNames->hierarchyRelation(), 'h', 'h.childnodeanchor = n.relationanchorpoint')
             ->innerJoin('h', $this->nodeQueryBuilder->tableNames->dimensionSpacePoints(), 'dsp', 'dsp.hash = h.dimensionspacepointhash')
             ->where('n.nodeaggregateid = (' . $subQueryBuilder->getSQL() . ')')
-            ->andWhere('h.contentstreamdbid = :contentStreamDbId')
+            ->andWhere('h.contentstreamdbid = :contentStreamDbIds')
             ->setParameters([
-                'contentStreamDbId' => $this->contentStreamDbId->value,
+                'contentStreamDbIds' => $this->contentStreamDbIds->toIntArray(),
                 'childNodeAggregateId' => $childNodeAggregateId->value,
                 'childOriginDimensionSpacePointHash' => $childOriginDimensionSpacePoint->hash,
+            ], [
+                'contentStreamDbIds' => ArrayParameterType::INTEGER,
             ]);
 
         return $this->nodeFactory->mapNodeRowsToNodeAggregate(
@@ -282,7 +291,7 @@ final class ContentGraph implements ContentGraphInterface
 
     public function findTetheredChildNodeAggregates(NodeAggregateId $parentNodeAggregateId): NodeAggregates
     {
-        $queryBuilder = $this->nodeQueryBuilder->buildChildNodeAggregateQuery($parentNodeAggregateId, $this->contentStreamDbId)
+        $queryBuilder = $this->nodeQueryBuilder->buildChildNodeAggregateQuery($parentNodeAggregateId, $this->contentStreamDbIds)
             ->andWhere('cn.classification = :tetheredClassification')
             ->setParameter('tetheredClassification', NodeAggregateClassification::CLASSIFICATION_TETHERED->value);
 
@@ -293,7 +302,7 @@ final class ContentGraph implements ContentGraphInterface
         NodeAggregateId $parentNodeAggregateId,
         NodeName $name
     ): ?NodeAggregate {
-        $queryBuilder = $this->nodeQueryBuilder->buildChildNodeAggregateQuery($parentNodeAggregateId, $this->contentStreamDbId)
+        $queryBuilder = $this->nodeQueryBuilder->buildChildNodeAggregateQuery($parentNodeAggregateId, $this->contentStreamDbIds)
             ->andWhere('cn.name = :relationName')
             ->setParameter('relationName', $name->value);
 
@@ -310,18 +319,19 @@ final class ContentGraph implements ContentGraphInterface
             ->innerJoin('n', $this->nodeQueryBuilder->tableNames->hierarchyRelation(), 'ph', 'ph.childnodeanchor = n.relationanchorpoint')
             ->where('n.nodeaggregateid = :parentNodeAggregateId')
             ->andWhere('n.origindimensionspacepointhash = :parentNodeOriginDimensionSpacePointHash')
-            ->andWhere('ph.contentstreamdbid = :contentStreamDbId')
-            ->andWhere('h.contentstreamdbid = :contentStreamDbId')
+            ->andWhere('ph.contentstreamdbid = :contentStreamDbIds')
+            ->andWhere('h.contentstreamdbid = :contentStreamDbIds')
             ->andWhere('h.dimensionspacepointhash IN (:dimensionSpacePointHashes)')
             ->andWhere('n.name = :nodeName')
             ->setParameters([
                 'parentNodeAggregateId' => $parentNodeAggregateId->value,
                 'parentNodeOriginDimensionSpacePointHash' => $parentNodeOriginDimensionSpacePoint->hash,
-                'contentStreamDbId' => $this->contentStreamDbId->value,
+                'contentStreamDbIds' => $this->contentStreamDbIds->toIntArray(),
                 'dimensionSpacePointHashes' => $dimensionSpacePointsToCheck->getPointHashes(),
                 'nodeName' => $nodeName->value
             ], [
                 'dimensionSpacePointHashes' => ArrayParameterType::STRING,
+                'contentStreamDbIds' => ArrayParameterType::INTEGER,
             ]);
         $dimensionSpacePoints = [];
         foreach ($this->fetchRows($queryBuilder) as $hierarchyRelationData) {
@@ -340,13 +350,15 @@ final class ContentGraph implements ContentGraphInterface
             ->innerJoin('th', $this->tableNames->hierarchyRelation(), 'h', 'th.childnodeanchor = h.childnodeanchor')
             ->innerJoin('h', $this->tableNames->node(), 'n', 'h.childnodeanchor = n.relationanchorpoint')
             ->innerJoin('h', $this->tableNames->dimensionSpacePoints(), 'dsp', 'dsp.hash = h.dimensionspacepointhash')
-            ->where('th.contentstreamdbid = :contentStreamDbId')
+            ->where('th.contentstreamdbid = :contentStreamDbIds')
             ->andWhere('JSON_EXTRACT(th.subtreetags, :tagPath) LIKE "true"')
-            ->andWhere('h.contentstreamdbid = :contentStreamDbId')
+            ->andWhere('h.contentstreamdbid = :contentStreamDbIds')
             ->orderBy('n.relationanchorpoint', 'DESC')
             ->setParameters([
                 'tagPath' => '$."' . $subtreeTag->value . '"',
-                'contentStreamDbId' => $this->contentStreamDbId->value
+                'contentStreamDbIds' => $this->contentStreamDbIds->toIntArray()
+            ], [
+                'contentStreamDbIds' => ArrayParameterType::INTEGER,
             ]);
 
         return $this->mapQueryBuilderToNodeAggregates($queryBuilder);
