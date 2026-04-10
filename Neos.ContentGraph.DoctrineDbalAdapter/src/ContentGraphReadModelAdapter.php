@@ -17,7 +17,7 @@ namespace Neos\ContentGraph\DoctrineDbalAdapter;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Exception;
 use Doctrine\DBAL\Query\QueryBuilder;
-use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\ContentStreamDbId;
+use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\ContentStreamDbIds;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\ContentGraph;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\NodeFactory;
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
@@ -51,27 +51,27 @@ final readonly class ContentGraphReadModelAdapter implements ContentGraphReadMod
         $currentContentStreamIdStatement = <<<SQL
             SELECT
                 ws.currentContentStreamId,
-                cs.dbId AS contentStreamDbId
+                csIds.dbId AS contentStreamDbId
             FROM
                 {$this->tableNames->workspace()} ws
-                JOIN {$this->tableNames->contentStream()} cs ON cs.id = ws.currentContentStreamId
+                JOIN {$this->tableNames->contentStreamId()} csIds ON csIds.id = ws.currentContentStreamId
             WHERE
                 ws.name = :workspaceName
-            LIMIT 1
         SQL;
         try {
-            $row = $this->dbal->fetchAssociative($currentContentStreamIdStatement, [
+            $rows = $this->dbal->fetchAllAssociative($currentContentStreamIdStatement, [
                 'workspaceName' => $workspaceName->value,
             ]);
         } catch (Exception $e) {
             throw new \RuntimeException(sprintf('Failed to load current content stream id from database: %s', $e->getMessage()), 1716903166, $e);
         }
-        if ($row === false) {
+        if ($rows === []) {
             throw WorkspaceDoesNotExist::butWasSupposedTo($workspaceName);
         }
-        $currentContentStreamId = ContentStreamId::fromString($row['currentContentStreamId']);
-        $contentStreamDbId = ContentStreamDbId::fromInt((int)$row['contentStreamDbId']);
-        return new ContentGraph($this->dbal, $this->nodeFactory, $this->contentRepositoryId, $this->nodeTypeManager, $this->tableNames, $workspaceName, $currentContentStreamId, $contentStreamDbId);
+        $firstRow = reset($rows);
+        $currentContentStreamId = ContentStreamId::fromString($firstRow['currentContentStreamId']);
+        $contentStreamDbIds = ContentStreamDbIds::fromArray(array_column($rows, 'contentStreamDbId'));
+        return new ContentGraph($this->dbal, $this->nodeFactory, $this->contentRepositoryId, $this->nodeTypeManager, $this->tableNames, $workspaceName, $currentContentStreamId, $contentStreamDbIds);
     }
 
     public function findWorkspaceByName(WorkspaceName $workspaceName): ?Workspace

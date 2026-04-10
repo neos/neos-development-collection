@@ -17,7 +17,7 @@ namespace Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Exception as DBALException;
 use Neos\ContentGraph\DoctrineDbalAdapter\ContentGraphTableNames;
-use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\ContentStreamDbId;
+use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\ContentStreamDbIds;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 
 /**
@@ -29,7 +29,7 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 final class ContentStreamDbIdFinder
 {
     /**
-     * @var array<string, ContentStreamDbId>
+     * @var array<string, ContentStreamDbIds>
      */
     private array $contentStreamIdRuntimeCache = [];
 
@@ -39,22 +39,23 @@ final class ContentStreamDbIdFinder
     ) {
     }
 
-    public function getContentStreamDbId(ContentStreamId $contentStreamId): ContentStreamDbId
+    // todo rename
+    public function getContentStreamDbId(ContentStreamId $contentStreamId): ContentStreamDbIds
     {
-        $contentStreamDbId = $this->getFromRuntimeCache($contentStreamId);
-        if ($contentStreamDbId === null) {
+        $contentStreamDbIds = $this->getFromRuntimeCache($contentStreamId);
+        if ($contentStreamDbIds === null) {
             $this->fillRuntimeCacheFromDatabase();
-            $contentStreamDbId = $this->getFromRuntimeCache($contentStreamId);
+            $contentStreamDbIds = $this->getFromRuntimeCache($contentStreamId);
         }
 
-        if ($contentStreamDbId === null) {
+        if ($contentStreamDbIds === null) {
             throw new \RuntimeException(sprintf('A ContentStream with id "%s" was not found in the projection, cannot determine ContentStreamDbId.', $contentStreamId->value), 1769945094);
         }
 
-        return $contentStreamDbId;
+        return $contentStreamDbIds;
     }
 
-    private function getFromRuntimeCache(ContentStreamId $contentStreamId): ?ContentStreamDbId
+    private function getFromRuntimeCache(ContentStreamId $contentStreamId): ?ContentStreamDbIds
     {
         return $this->contentStreamIdRuntimeCache[$contentStreamId->value] ?? null;
     }
@@ -62,15 +63,19 @@ final class ContentStreamDbIdFinder
     private function fillRuntimeCacheFromDatabase(): void
     {
         $allContentStreamIdsStatement = <<<SQL
-            SELECT dbId, id FROM {$this->tableNames->contentStream()}
+            SELECT dbId, id FROM {$this->tableNames->contentStreamId()}
         SQL;
         try {
             $allContentStreamIds = $this->dbal->fetchAllAssociative($allContentStreamIdsStatement);
         } catch (DBALException $e) {
             throw new \RuntimeException(sprintf('Failed to load content stream ids from database: %s', $e->getMessage()), 1769945050, $e);
         }
+        $ids = [];
         foreach ($allContentStreamIds as $contentStreamIdRow) {
-            $this->contentStreamIdRuntimeCache[(string)$contentStreamIdRow['id']] = ContentStreamDbId::fromInt($contentStreamIdRow['dbId']);
+            $ids[$contentStreamIdRow['id']][] = $contentStreamIdRow['dbId'];
+        }
+        foreach ($ids as $contentStreamId => $dbIds) {
+            $this->contentStreamIdRuntimeCache[$contentStreamId] = ContentStreamDbIds::fromArray($dbIds);
         }
     }
 }

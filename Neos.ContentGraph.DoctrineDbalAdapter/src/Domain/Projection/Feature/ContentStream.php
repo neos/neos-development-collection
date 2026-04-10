@@ -24,6 +24,9 @@ trait ContentStream
             'closed' => 0,
             'hasChanges' => 0
         ]);
+        $this->dbal->insert($this->tableNames->contentStreamId(), [
+            'id' => $contentStreamId->value,
+        ]);
     }
 
     private function closeContentStream(ContentStreamId $contentStreamId): void

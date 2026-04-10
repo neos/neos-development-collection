@@ -51,4 +51,9 @@ final readonly class ContentGraphTableNames
     {
         return $this->tableNamePrefix . '_contentstream';
     }
+
+    public function contentStreamId(): string
+    {
+        return $this->tableNamePrefix . '_contentstreamid';
+    }
 }

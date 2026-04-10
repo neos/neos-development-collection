@@ -33,6 +33,7 @@ class DoctrineDbalContentGraphSchemaBuilder
             $this->createDimensionSpacePointsTable($connection->getDatabasePlatform()),
             $this->createWorkspaceTable($connection->getDatabasePlatform()),
             $this->createContentStreamTable($connection->getDatabasePlatform()),
+            $this->createContentStreamIdTable($connection->getDatabasePlatform()),
         ]);
     }
 
@@ -120,7 +121,6 @@ class DoctrineDbalContentGraphSchemaBuilder
     private function createContentStreamTable(AbstractPlatform $platform): Table
     {
         $contentStreamTable = self::createTable($this->tableNames->contentStream(), [
-            (new Column('dbId', Type::getType(Types::INTEGER)))->setAutoincrement(true)->setNotnull(true),
             DbalSchemaFactory::columnForContentStreamId('id', $platform)->setNotnull(true),
             (new Column('version', Type::getType(Types::INTEGER)))->setNotnull(true),
             DbalSchemaFactory::columnForContentStreamId('sourceContentStreamId', $platform)->setNotnull(false),
@@ -130,8 +130,19 @@ class DoctrineDbalContentGraphSchemaBuilder
         ]);
 
         return $contentStreamTable
-            ->addUniqueIndex(['id'])
-            ->setPrimaryKey(['dbId']);
+            ->setPrimaryKey(['id']);
+    }
+
+    private function createContentStreamIdTable(AbstractPlatform $platform): Table
+    {
+        $contentStreamIdTable = self::createTable($this->tableNames->contentStreamId(), [
+            DbalSchemaFactory::columnForContentStreamId('id', $platform)->setNotnull(true),
+            (new Column('dbId', Type::getType(Types::INTEGER)))->setAutoincrement(true)->setNotnull(true),
+        ]);
+
+        return $contentStreamIdTable
+            ->addUniqueIndex(['dbId'])
+            ->setPrimaryKey(['id', 'dbId']);
     }
 
     /**
