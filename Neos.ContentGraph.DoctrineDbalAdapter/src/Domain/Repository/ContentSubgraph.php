@@ -20,7 +20,7 @@ use Doctrine\DBAL\Exception as DBALException;
 use Doctrine\DBAL\Query\QueryBuilder;
 use Doctrine\DBAL\Result;
 use Neos\ContentGraph\DoctrineDbalAdapter\ContentGraphTableNames;
-use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\ContentStreamDbId;
+use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\ContentStreamDbIds;
 use Neos\ContentGraph\DoctrineDbalAdapter\NodeQueryBuilder;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
@@ -95,7 +95,7 @@ final class ContentSubgraph implements ContentSubgraphInterface
     public function __construct(
         private readonly ContentRepositoryId $contentRepositoryId,
         private readonly WorkspaceName $workspaceName,
-        private readonly ContentStreamDbId $contentStreamDbId,
+        private readonly ContentStreamDbIds $contentStreamDbIds,
         private readonly DimensionSpacePoint $dimensionSpacePoint,
         private readonly VisibilityConstraints $visibilityConstraints,
         private readonly Connection $dbal,
@@ -169,7 +169,7 @@ final class ContentSubgraph implements ContentSubgraphInterface
 
     public function findNodeById(NodeAggregateId $nodeAggregateId): ?Node
     {
-        $queryBuilder = $this->nodeQueryBuilder->buildBasicNodeQuery($this->contentStreamDbId, $this->dimensionSpacePoint)
+        $queryBuilder = $this->nodeQueryBuilder->buildBasicNodeQuery($this->contentStreamDbIds, $this->dimensionSpacePoint)
             ->andWhere('n.nodeaggregateid = :nodeAggregateId')
             ->setParameter('nodeAggregateId', $nodeAggregateId->value);
         $this->addSubtreeTagConstraints($queryBuilder);
@@ -178,7 +178,7 @@ final class ContentSubgraph implements ContentSubgraphInterface
 
     public function findNodesByIds(NodeAggregateIds $nodeAggregateIds): Nodes
     {
-        $queryBuilder = $this->nodeQueryBuilder->buildBasicNodeQuery($this->contentStreamDbId, $this->dimensionSpacePoint)
+        $queryBuilder = $this->nodeQueryBuilder->buildBasicNodeQuery($this->contentStreamDbIds, $this->dimensionSpacePoint)
             ->andWhere('n.nodeaggregateid in (:nodeAggregateIds)')
             ->setParameter('nodeAggregateIds', $nodeAggregateIds->toStringArray(), ArrayParameterType::STRING);
         $this->addSubtreeTagConstraints($queryBuilder);
@@ -187,7 +187,7 @@ final class ContentSubgraph implements ContentSubgraphInterface
 
     public function findRootNodeByType(NodeTypeName $nodeTypeName): ?Node
     {
-        $queryBuilder = $this->nodeQueryBuilder->buildBasicNodeQuery($this->contentStreamDbId, $this->dimensionSpacePoint)
+        $queryBuilder = $this->nodeQueryBuilder->buildBasicNodeQuery($this->contentStreamDbIds, $this->dimensionSpacePoint)
             ->andWhere('n.nodetypename = :nodeTypeName')->setParameter('nodeTypeName', $nodeTypeName->value)
             ->andWhere('n.classification = :nodeAggregateClassification')->setParameter('nodeAggregateClassification', NodeAggregateClassification::CLASSIFICATION_ROOT->value);
         $this->addSubtreeTagConstraints($queryBuilder);
@@ -196,7 +196,7 @@ final class ContentSubgraph implements ContentSubgraphInterface
 
     public function findParentNode(NodeAggregateId $childNodeAggregateId): ?Node
     {
-        $queryBuilder = $this->nodeQueryBuilder->buildBasicParentNodeQuery($childNodeAggregateId, $this->contentStreamDbId, $this->dimensionSpacePoint);
+        $queryBuilder = $this->nodeQueryBuilder->buildBasicParentNodeQuery($childNodeAggregateId, $this->contentStreamDbIds, $this->dimensionSpacePoint);
         $this->addSubtreeTagConstraints($queryBuilder, 'ph');
         return $this->fetchNode($queryBuilder);
     }
@@ -228,7 +228,7 @@ final class ContentSubgraph implements ContentSubgraphInterface
      */
     private function findChildNodeConnectedThroughEdgeName(NodeAggregateId $parentNodeAggregateId, NodeName $nodeName): ?Node
     {
-        $queryBuilder = $this->nodeQueryBuilder->buildBasicChildNodesQuery($parentNodeAggregateId, $this->contentStreamDbId, $this->dimensionSpacePoint)
+        $queryBuilder = $this->nodeQueryBuilder->buildBasicChildNodesQuery($parentNodeAggregateId, $this->contentStreamDbIds, $this->dimensionSpacePoint)
             ->andWhere('n.name = :edgeName')->setParameter('edgeName', $nodeName->value);
         $this->addSubtreeTagConstraints($queryBuilder);
         return $this->fetchNode($queryBuilder);
@@ -276,7 +276,7 @@ final class ContentSubgraph implements ContentSubgraphInterface
             ->select('n.*, h.subtreetags, CAST("ROOT" AS CHAR(50)) AS parentNodeAggregateId, 0 AS level, 0 AS position')
             ->from($this->nodeQueryBuilder->tableNames->node(), 'n')
             ->innerJoin('n', $this->nodeQueryBuilder->tableNames->hierarchyRelation(), 'h', 'h.childnodeanchor = n.relationanchorpoint')
-            ->where('h.contentstreamdbid = :contentStreamDbId')
+            ->where('h.contentstreamdbid IN (:contentStreamDbIds)')
             ->andWhere('h.dimensionspacepointhash = :dimensionSpacePointHash')
             ->andWhere('n.nodeaggregateid = :entryNodeAggregateId');
         $this->addSubtreeTagConstraints($queryBuilderInitial);
@@ -286,7 +286,7 @@ final class ContentSubgraph implements ContentSubgraphInterface
             ->from('tree', 'p')
             ->innerJoin('p', $this->nodeQueryBuilder->tableNames->hierarchyRelation(), 'h', 'h.parentnodeanchor = p.relationanchorpoint')
             ->innerJoin('p', $this->nodeQueryBuilder->tableNames->node(), 'c', 'c.relationanchorpoint = h.childnodeanchor')
-            ->where('h.contentstreamdbid = :contentStreamDbId')
+            ->where('h.contentstreamdbid IN (:contentStreamDbIds)')
             ->andWhere('h.dimensionspacepointhash = :dimensionSpacePointHash');
         if ($filter->maximumLevels !== null) {
             $queryBuilderRecursive->andWhere('p.level < :maximumLevels')->setParameter('maximumLevels', $filter->maximumLevels);
@@ -301,7 +301,7 @@ final class ContentSubgraph implements ContentSubgraphInterface
             ->from('tree')
             ->orderBy('level')
             ->addOrderBy('position')
-            ->setParameter('contentStreamDbId', $this->contentStreamDbId->value)
+            ->setParameter('contentStreamDbIds', $this->contentStreamDbIds->toIntArray(), ArrayParameterType::INTEGER)
             ->setParameter('dimensionSpacePointHash', $this->dimensionSpacePoint->hash)
             ->setParameter('entryNodeAggregateId', $entryNodeAggregateId->value);
 
@@ -380,7 +380,7 @@ final class ContentSubgraph implements ContentSubgraphInterface
             ->from($this->nodeQueryBuilder->tableNames->node(), 'n')
             // we need to join with the hierarchy relation, because we need the node name.
             ->innerJoin('n', $this->nodeQueryBuilder->tableNames->hierarchyRelation(), 'ph', 'n.relationanchorpoint = ph.childnodeanchor')
-            ->andWhere('ph.contentstreamdbid = :contentStreamDbId')
+            ->andWhere('ph.contentstreamdbid IN (:contentStreamDbIds)')
             ->andWhere('ph.dimensionspacepointhash = :dimensionSpacePointHash')
             ->andWhere('n.nodeaggregateid = :entryNodeAggregateId');
         $this->addSubtreeTagConstraints($queryBuilderInitial, 'ph');
@@ -390,11 +390,11 @@ final class ContentSubgraph implements ContentSubgraphInterface
             ->from('ancestry', 'cn')
             ->innerJoin('cn', $this->nodeQueryBuilder->tableNames->node(), 'pn', 'pn.relationanchorpoint = cn.parentnodeanchor')
             ->innerJoin('pn', $this->nodeQueryBuilder->tableNames->hierarchyRelation(), 'h', 'h.childnodeanchor = pn.relationanchorpoint')
-            ->where('h.contentstreamdbid = :contentStreamDbId')
+            ->where('h.contentstreamdbid IN (:contentStreamDbIds)')
             ->andWhere('h.dimensionspacepointhash = :dimensionSpacePointHash');
         $this->addSubtreeTagConstraints($queryBuilderRecursive);
 
-        $queryBuilderCte = $this->nodeQueryBuilder->buildBasicNodesCteQuery($entryNodeAggregateId, $this->contentStreamDbId, $this->dimensionSpacePoint);
+        $queryBuilderCte = $this->nodeQueryBuilder->buildBasicNodesCteQuery($entryNodeAggregateId, $this->contentStreamDbIds, $this->dimensionSpacePoint);
         $this->nodeQueryBuilder->addNodeTypeCriteria($queryBuilderCte, ExpandedNodeTypeCriteria::create($filter->nodeTypes, $this->nodeTypeManager), 'pn');
         $nodeRows = $this->fetchCteResults(
             $queryBuilderInitial,
@@ -437,7 +437,7 @@ final class ContentSubgraph implements ContentSubgraphInterface
 
     public function countNodes(): int
     {
-        $queryBuilder = $this->nodeQueryBuilder->buildBasicNodeQuery($this->contentStreamDbId, $this->dimensionSpacePoint, 'n', 'COUNT(*)');
+        $queryBuilder = $this->nodeQueryBuilder->buildBasicNodeQuery($this->contentStreamDbIds, $this->dimensionSpacePoint, 'n', 'COUNT(*)');
         try {
             $result = $this->executeQuery($queryBuilder)->fetchOne();
         } catch (DBALException $e) {
@@ -483,7 +483,7 @@ final class ContentSubgraph implements ContentSubgraphInterface
 
     private function buildChildNodesQuery(NodeAggregateId $parentNodeAggregateId, FindChildNodesFilter|CountChildNodesFilter $filter): QueryBuilder
     {
-        $queryBuilder = $this->nodeQueryBuilder->buildBasicChildNodesQuery($parentNodeAggregateId, $this->contentStreamDbId, $this->dimensionSpacePoint);
+        $queryBuilder = $this->nodeQueryBuilder->buildBasicChildNodesQuery($parentNodeAggregateId, $this->contentStreamDbIds, $this->dimensionSpacePoint);
         if ($filter->nodeTypes !== null) {
             $this->nodeQueryBuilder->addNodeTypeCriteria($queryBuilder, ExpandedNodeTypeCriteria::create($filter->nodeTypes, $this->nodeTypeManager));
         }
@@ -501,8 +501,11 @@ final class ContentSubgraph implements ContentSubgraphInterface
     {
         $subselectParameters = [
             'nodeAggregateId' => $nodeAggregateId->value,
-            'contentStreamDbId' => $this->contentStreamDbId->value,
+            'contentStreamDbIds' => $this->contentStreamDbIds->toIntArray(),
             'dimensionSpacePointHash' => $this->dimensionSpacePoint->hash,
+        ];
+        $subselectTypes = [
+            'contentStreamDbIds' => ArrayParameterType::INTEGER,
         ];
         $subtreeTagConstraints = '';
         $i = 0;
@@ -521,12 +524,12 @@ final class ContentSubgraph implements ContentSubgraphInterface
                 SELECT relationanchorpoint FROM ' . $this->nodeQueryBuilder->tableNames->node() . ' sn
                 JOIN ' . $this->nodeQueryBuilder->tableNames->hierarchyRelation() . ' sh ON sn.relationanchorpoint = sh.childnodeanchor
                 WHERE sn.nodeaggregateid = :nodeAggregateId
-                AND sh.contentstreamdbid = :contentStreamDbId
+                AND sh.contentstreamdbid IN (:contentStreamDbIds)
                 AND sh.dimensionspacepointhash = :dimensionSpacePointHash '
                 . $subtreeTagConstraints . '
-            )')->setParameters($subselectParameters)
+            )')->setParameters($subselectParameters, $subselectTypes)
             ->andWhere('dh.dimensionspacepointhash = :dimensionSpacePointHash')->setParameter('dimensionSpacePointHash', $this->dimensionSpacePoint->hash)
-            ->andWhere('dh.contentstreamdbid = :contentStreamDbId')->setParameter('contentStreamDbId', $this->contentStreamDbId->value);
+            ->andWhere('dh.contentstreamdbid IN (:contentStreamDbIds)')->setParameter('contentStreamDbIds', $this->contentStreamDbIds->toIntArray(), ArrayParameterType::INTEGER);
         $this->addSubtreeTagConstraints($queryBuilder, 'dh');
         if ($filter->nodeTypes !== null) {
             $this->nodeQueryBuilder->addNodeTypeCriteria($queryBuilder, ExpandedNodeTypeCriteria::create($filter->nodeTypes, $this->nodeTypeManager), "dn");
@@ -565,8 +568,11 @@ final class ContentSubgraph implements ContentSubgraphInterface
     {
         $subselectParameters = [
             'nodeAggregateId' => $nodeAggregateId->value,
-            'contentStreamDbId' => $this->contentStreamDbId->value,
+            'contentStreamDbIds' => $this->contentStreamDbIds->toIntArray(),
             'dimensionSpacePointHash' => $this->dimensionSpacePoint->hash,
+        ];
+        $subselectTypes = [
+            'contentStreamDbIds' => ArrayParameterType::INTEGER,
         ];
         $subtreeTagConstraints = '';
         $i = 0;
@@ -585,12 +591,12 @@ final class ContentSubgraph implements ContentSubgraphInterface
                 SELECT nodeaggregateid FROM ' . $this->nodeQueryBuilder->tableNames->node() . ' dn
                 JOIN ' . $this->nodeQueryBuilder->tableNames->hierarchyRelation() . ' dh ON dn.relationanchorpoint = dh.childnodeanchor
                 WHERE dn.nodeaggregateid = :nodeAggregateId
-                AND dh.contentstreamdbid = :contentStreamDbId
+                AND dh.contentstreamdbid IN (:contentStreamDbIds)
                 AND dh.dimensionspacepointhash = :dimensionSpacePointHash '
                 . $subtreeTagConstraints . '
-            )')->setParameters($subselectParameters)
+            )')->setParameters($subselectParameters, $subselectTypes)
             ->andWhere('sh.dimensionspacepointhash = :dimensionSpacePointHash')->setParameter('dimensionSpacePointHash', $this->dimensionSpacePoint->hash)
-            ->andWhere('sh.contentstreamdbid = :contentStreamDbId')->setParameter('contentStreamDbId', $this->contentStreamDbId->value);
+            ->andWhere('sh.contentstreamdbid IN (:contentStreamDbIds)')->setParameter('contentStreamDbIds', $this->contentStreamDbIds->toIntArray(), ArrayParameterType::INTEGER);
         $this->addSubtreeTagConstraints($queryBuilder, 'sh');
         if ($filter->nodeTypes !== null) {
             $this->nodeQueryBuilder->addNodeTypeCriteria($queryBuilder, ExpandedNodeTypeCriteria::create($filter->nodeTypes, $this->nodeTypeManager), "sn");
@@ -627,7 +633,7 @@ final class ContentSubgraph implements ContentSubgraphInterface
 
     private function buildSiblingsQuery(bool $preceding, NodeAggregateId $siblingNodeAggregateId, FindPrecedingSiblingNodesFilter|FindSucceedingSiblingNodesFilter $filter): QueryBuilder
     {
-        $queryBuilder = $this->nodeQueryBuilder->buildBasicNodeSiblingsQuery($preceding, $siblingNodeAggregateId, $this->contentStreamDbId, $this->dimensionSpacePoint);
+        $queryBuilder = $this->nodeQueryBuilder->buildBasicNodeSiblingsQuery($preceding, $siblingNodeAggregateId, $this->contentStreamDbIds, $this->dimensionSpacePoint);
 
         $this->addSubtreeTagConstraints($queryBuilder);
         if ($filter->nodeTypes !== null) {
@@ -657,9 +663,9 @@ final class ContentSubgraph implements ContentSubgraphInterface
             ->innerJoin('n', $this->nodeQueryBuilder->tableNames->hierarchyRelation(), 'ch', 'ch.parentnodeanchor = n.relationanchorpoint')
             ->innerJoin('ch', $this->nodeQueryBuilder->tableNames->node(), 'c', 'c.relationanchorpoint = ch.childnodeanchor')
             ->innerJoin('n', $this->nodeQueryBuilder->tableNames->hierarchyRelation(), 'ph', 'n.relationanchorpoint = ph.childnodeanchor')
-            ->where('ch.contentstreamdbid = :contentStreamDbId')
+            ->where('ch.contentstreamdbid IN (:contentStreamDbIds)')
             ->andWhere('ch.dimensionspacepointhash = :dimensionSpacePointHash')
-            ->andWhere('ph.contentstreamdbid = :contentStreamDbId')
+            ->andWhere('ph.contentstreamdbid IN (:contentStreamDbIds)')
             ->andWhere('ph.dimensionspacepointhash = :dimensionSpacePointHash')
             ->andWhere('c.nodeaggregateid = :entryNodeAggregateId');
         $this->addSubtreeTagConstraints($queryBuilderInitial, 'ph');
@@ -670,11 +676,11 @@ final class ContentSubgraph implements ContentSubgraphInterface
             ->from('ancestry', 'ch')
             ->innerJoin('ch', $this->nodeQueryBuilder->tableNames->node(), 'pn', 'pn.relationanchorpoint = ch.parentnodeanchor')
             ->innerJoin('pn', $this->nodeQueryBuilder->tableNames->hierarchyRelation(), 'h', 'h.childnodeanchor = pn.relationanchorpoint')
-            ->where('h.contentstreamdbid = :contentStreamDbId')
+            ->where('h.contentstreamdbid IN (:contentStreamDbIds)')
             ->andWhere('h.dimensionspacepointhash = :dimensionSpacePointHash');
         $this->addSubtreeTagConstraints($queryBuilderRecursive);
 
-        $queryBuilderCte = $this->nodeQueryBuilder->buildBasicNodesCteQuery($entryNodeAggregateId, $this->contentStreamDbId, $this->dimensionSpacePoint);
+        $queryBuilderCte = $this->nodeQueryBuilder->buildBasicNodesCteQuery($entryNodeAggregateId, $this->contentStreamDbIds, $this->dimensionSpacePoint);
         if ($filter->nodeTypes !== null) {
             $this->nodeQueryBuilder->addNodeTypeCriteria($queryBuilderCte, ExpandedNodeTypeCriteria::create($filter->nodeTypes, $this->nodeTypeManager), 'pn');
         }
@@ -694,9 +700,9 @@ final class ContentSubgraph implements ContentSubgraphInterface
             ->innerJoin('n', $this->nodeQueryBuilder->tableNames->hierarchyRelation(), 'h', 'h.childnodeanchor = n.relationanchorpoint')
             ->innerJoin('n', $this->nodeQueryBuilder->tableNames->node(), 'p', 'p.relationanchorpoint = h.parentnodeanchor')
             ->innerJoin('n', $this->nodeQueryBuilder->tableNames->hierarchyRelation(), 'ph', 'ph.childnodeanchor = p.relationanchorpoint')
-            ->where('h.contentstreamdbid = :contentStreamDbId')
+            ->where('h.contentstreamdbid IN (:contentStreamDbIds)')
             ->andWhere('h.dimensionspacepointhash = :dimensionSpacePointHash')
-            ->andWhere('ph.contentstreamdbid = :contentStreamDbId')
+            ->andWhere('ph.contentstreamdbid IN (:contentStreamDbIds)')
             ->andWhere('ph.dimensionspacepointhash = :dimensionSpacePointHash')
             ->andWhere('p.nodeaggregateid = :entryNodeAggregateId');
         $this->addSubtreeTagConstraints($queryBuilderInitial);
@@ -706,11 +712,11 @@ final class ContentSubgraph implements ContentSubgraphInterface
             ->from('tree', 'pn')
             ->innerJoin('pn', $this->nodeQueryBuilder->tableNames->hierarchyRelation(), 'h', 'h.parentnodeanchor = pn.relationanchorpoint')
             ->innerJoin('pn', $this->nodeQueryBuilder->tableNames->node(), 'cn', 'cn.relationanchorpoint = h.childnodeanchor')
-            ->where('h.contentstreamdbid = :contentStreamDbId')
+            ->where('h.contentstreamdbid IN (:contentStreamDbIds)')
             ->andWhere('h.dimensionspacepointhash = :dimensionSpacePointHash');
         $this->addSubtreeTagConstraints($queryBuilderRecursive);
 
-        $queryBuilderCte = $this->nodeQueryBuilder->buildBasicNodesCteQuery($entryNodeAggregateId, $this->contentStreamDbId, $this->dimensionSpacePoint, 'tree', 'n');
+        $queryBuilderCte = $this->nodeQueryBuilder->buildBasicNodesCteQuery($entryNodeAggregateId, $this->contentStreamDbIds, $this->dimensionSpacePoint, 'tree', 'n');
         if ($filter->nodeTypes !== null) {
             $this->nodeQueryBuilder->addNodeTypeCriteria($queryBuilderCte, ExpandedNodeTypeCriteria::create($filter->nodeTypes, $this->nodeTypeManager));
         }

@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\Feature;
 
 use Doctrine\DBAL\Exception as DBALException;
-use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\ContentStreamDbId;
+use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\ContentStreamDbIds;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\HierarchyRelation;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
@@ -17,12 +17,12 @@ use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
  */
 trait NodeRemoval
 {
-    private function removeNodeAggregate(ContentStreamDbId $contentStreamDbId, NodeAggregateId $nodeAggregateId, DimensionSpacePointSet $affectedCoveredDimensionSpacePoints): void
+    private function removeNodeAggregate(ContentStreamDbIds $contentStreamDbIds, NodeAggregateId $nodeAggregateId, DimensionSpacePointSet $affectedCoveredDimensionSpacePoints): void
     {
         // the focus here is to be correct; that's why the method is not overly performant (for now at least). We might
         // lateron find tricks to improve performance
         $ingoingRelations = $this->projectionContentGraph->findIngoingHierarchyRelationsForNodeAggregate(
-            $contentStreamDbId,
+            $contentStreamDbIds,
             $nodeAggregateId,
             $affectedCoveredDimensionSpacePoints
         );

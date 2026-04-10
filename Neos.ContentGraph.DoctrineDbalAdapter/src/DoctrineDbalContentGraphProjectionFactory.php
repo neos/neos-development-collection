@@ -38,7 +38,7 @@ final class DoctrineDbalContentGraphProjectionFactory implements ContentGraphPro
         );
 
         $dimensionSpacePointsRepository = new DimensionSpacePointsRepository($this->dbal, $tableNames);
-        $contentStreamDbIdRepository = new ContentStreamDbIdFinder($this->dbal, $tableNames);
+        $contentStreamDbIdsRepository = new ContentStreamDbIdFinder($this->dbal, $tableNames);
 
         $nodeFactory = new NodeFactory(
             $projectionFactoryDependencies->contentRepositoryId,
@@ -66,7 +66,7 @@ final class DoctrineDbalContentGraphProjectionFactory implements ContentGraphPro
             ),
             $tableNames,
             $dimensionSpacePointsRepository,
-            $contentStreamDbIdRepository,
+            $contentStreamDbIdsRepository,
             $contentGraphReadModel
         );
     }
