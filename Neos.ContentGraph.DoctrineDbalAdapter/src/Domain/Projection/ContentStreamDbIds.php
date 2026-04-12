@@ -50,12 +50,22 @@ final readonly class ContentStreamDbIds
         return $this->max;
     }
 
+    public function equals(ContentStreamDbId $id): bool
+    {
+        return count($this->items) === 1 && array_key_exists($id->value, $this->items);
+    }
+
+    public function contain(ContentStreamDbId $id): bool
+    {
+        return array_key_exists($id->value, $this->items);
+    }
+
     /**
      * @return list<int>
      */
     public function toIntArray(): array
     {
-        return array_map(fn (ContentStreamDbId $id) => $id->value, $this->items);
+        return array_keys($this->items);
     }
 
     public function toDebugString(): string

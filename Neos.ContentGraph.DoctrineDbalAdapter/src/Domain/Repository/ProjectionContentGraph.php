@@ -24,6 +24,7 @@ use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\ContentStreamDbIds;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\HierarchyRelation;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\NodeRecord;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\NodeRelationAnchorPoint;
+use Neos\ContentGraph\DoctrineDbalAdapter\HierarchyRelationQueryBuilder;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
@@ -39,10 +40,13 @@ use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
  */
 class ProjectionContentGraph
 {
+    private HierarchyRelationQueryBuilder $hierarchyRelationQueryBuilder;
+
     public function __construct(
         private readonly Connection $dbal,
         private readonly ContentGraphTableNames $tableNames,
     ) {
+        $this->hierarchyRelationQueryBuilder = new HierarchyRelationQueryBuilder($this->tableNames);
     }
 
     /**
@@ -132,11 +136,10 @@ class ProjectionContentGraph
                 DISTINCT n.relationanchorpoint
             FROM
                 {$this->tableNames->node()} n
-                INNER JOIN {$this->tableNames->hierarchyRelation()} h ON h.childnodeanchor = n.relationanchorpoint
+                INNER JOIN {$this->hierarchyRelationQueryBuilder->selectHierarchyRowsForContentStream()} as h ON h.childnodeanchor = n.relationanchorpoint
             WHERE
                 n.nodeaggregateid = :nodeAggregateId
                 AND n.origindimensionspacepointhash = :originDimensionSpacePointHash
-                AND h.contentstreamdbid IN (:contentStreamDbIds)
         SQL;
         try {
             $relationAnchorPoints = $this->dbal->fetchFirstColumn($relationAnchorPointsStatement, [
@@ -468,10 +471,9 @@ class ProjectionContentGraph
             SELECT
                 h.*
             FROM
-                {$this->tableNames->hierarchyRelation()} h
+                {$this->hierarchyRelationQueryBuilder->selectHierarchyRowsForContentStream()} h
             WHERE
                 h.parentnodeanchor = :parentAnchorPoint
-                AND h.contentstreamdbid IN (:contentStreamDbIds)
         SQL;
         $parameters = [
             'parentAnchorPoint' => $parentAnchorPoint->value,
@@ -544,11 +546,10 @@ class ProjectionContentGraph
             SELECT
                 h.*
             FROM
-                {$this->tableNames->hierarchyRelation()} h
+                {$this->hierarchyRelationQueryBuilder->selectHierarchyRowsForContentStream()} h
                 INNER JOIN {$this->tableNames->node()} n ON h.childnodeanchor = n.relationanchorpoint
             WHERE
                 n.nodeaggregateid = :nodeAggregateId
-                AND h.contentstreamdbid IN (:contentStreamDbIds)
         SQL;
         $parameters = [
             'nodeAggregateId' => $nodeAggregateId->value,
@@ -570,12 +571,9 @@ class ProjectionContentGraph
         return array_map($this->mapRawDataToHierarchyRelation(...), $rows);
     }
 
-    /**
-     * @return array<ContentStreamDbId>
-     */
     public function getAllContentStreamDbIdsAnchorPointIsContainedIn(
         NodeRelationAnchorPoint $nodeRelationAnchorPoint
-    ): array {
+    ): ContentStreamDbIds {
         $contentStreamDbIdsStatement = <<<SQL
             SELECT
                 DISTINCT h.contentstreamdbid
@@ -591,7 +589,7 @@ class ProjectionContentGraph
         } catch (DBALException $e) {
             throw new \RuntimeException(sprintf('Failed to load content stream ids for relation anchor point %s from database: %s', $nodeRelationAnchorPoint->value, $e->getMessage()), 1716478504, $e);
         }
-        return array_map(ContentStreamDbId::fromInt(...), $contentStreamDbIds);
+        return ContentStreamDbIds::fromArray($contentStreamDbIds);
     }
 
     /**

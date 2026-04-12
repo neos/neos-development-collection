@@ -130,7 +130,7 @@ final readonly class HierarchyRelation
 
     /**
      * @return array<string,mixed>
-     */ // todo rename? because ambiguous:
+     */ // todo rename? because ambiguous: todo use actual db id now
     public function getDatabaseId(): array
     {
         return [
