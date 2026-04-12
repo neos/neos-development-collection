@@ -29,6 +29,7 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\NodeTags;
 final readonly class HierarchyRelation
 {
     public function __construct(
+        public HierarchyRelationDbId $hierarchyRelationDbId,
         public NodeRelationAnchorPoint $parentNodeAnchor,
         public NodeRelationAnchorPoint $childNodeAnchor,
         public ContentStreamDbId $contentStreamDbId,
@@ -37,6 +38,28 @@ final readonly class HierarchyRelation
         public int $position,
         public NodeTags $subtreeTags,
     ) {
+    }
+
+    public function with(
+        ?HierarchyRelationDbId $hierarchyRelationDId = null,
+        ?NodeRelationAnchorPoint $parentNodeAnchor = null,
+        ?NodeRelationAnchorPoint $childNodeAnchor = null,
+        ?ContentStreamDbId $contentStreamDbId = null,
+        ?DimensionSpacePoint $dimensionSpacePoint = null,
+        ?string $dimensionSpacePointHash = null,
+        ?int $position = null,
+        ?NodeTags $subtreeTags = null,
+    ): self {
+        return new self(
+            hierarchyRelationDbId: $hierarchyRelationDId ?? $this->hierarchyRelationDbId,
+            parentNodeAnchor: $parentNodeAnchor ?? $this->parentNodeAnchor,
+            childNodeAnchor: $childNodeAnchor ?? $this->childNodeAnchor,
+            contentStreamDbId: $contentStreamDbId ?? $this->contentStreamDbId,
+            dimensionSpacePoint: $dimensionSpacePoint ?? $this->dimensionSpacePoint,
+            dimensionSpacePointHash: $dimensionSpacePointHash ?? $this->dimensionSpacePointHash,
+            position: $position ?? $this->position,
+            subtreeTags: $subtreeTags ?? $this->subtreeTags,
+        );
     }
 
     public function addToDatabase(Connection $databaseConnection, ContentGraphTableNames $tableNames): void
@@ -51,6 +74,7 @@ final readonly class HierarchyRelation
 
         try {
             $databaseConnection->insert($tableNames->hierarchyRelation(), [
+                'id' => $this->hierarchyRelationDbId->value,
                 'parentnodeanchor' => $this->parentNodeAnchor->value,
                 'childnodeanchor' => $this->childNodeAnchor->value,
                 'contentstreamdbid' => $this->contentStreamDbId->value,
@@ -130,14 +154,20 @@ final readonly class HierarchyRelation
 
     /**
      * @return array<string,mixed>
-     */ // todo rename? because ambiguous: todo use actual db id now
+     */
     public function getDatabaseId(): array
     {
+        if (!$this->hierarchyRelationDbId->value) {
+            throw new \RuntimeException(sprintf('Hierarchy relation was not created in the database and does not have an id: %s', json_encode([
+                'parentnodeanchor' => $this->parentNodeAnchor->value,
+                'childnodeanchor' => $this->childNodeAnchor->value,
+                'contentstreamdbid' => $this->contentStreamDbId->value,
+                'dimensionspacepointhash' => $this->dimensionSpacePointHash
+            ])), 1775979706);
+        }
         return [
-            'parentnodeanchor' => $this->parentNodeAnchor->value,
-            'childnodeanchor' => $this->childNodeAnchor->value,
+            'id' => $this->hierarchyRelationDbId->value,
             'contentstreamdbid' => $this->contentStreamDbId->value,
-            'dimensionspacepointhash' => $this->dimensionSpacePointHash
         ];
     }
 }
