@@ -15,6 +15,7 @@ use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\Feature\NodeVariatio
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\Feature\SubtreeTagging;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\Feature\Workspace;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\HierarchyRelation;
+use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\HierarchyRelationDbId;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\NodeRecord;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\NodeRelationAnchorPoint;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\ContentStreamDbIdFinder;
@@ -992,6 +993,7 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
             $inheritedSubtreeTags = NodeTags::create(SubtreeTags::createEmpty(), $parentSubtreeTags->all());
 
             $hierarchyRelation = new HierarchyRelation(
+                HierarchyRelationDbId::createAutoIncremented(),
                 $parentNodeAnchorPoint,
                 $childNodeAnchorPoint,
                 $contentStreamDbIds->current(),
@@ -1092,6 +1094,7 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
         $parentSubtreeTags = $this->subtreeTagsForHierarchyRelation($contentStreamDbIds, $newParent, $dimensionSpacePoint);
         $inheritedSubtreeTags = NodeTags::create($sourceHierarchyRelation->subtreeTags->withoutInherited()->all(), $parentSubtreeTags->withoutInherited()->all());
         $copy = new HierarchyRelation(
+            HierarchyRelationDbId::createAutoIncremented(),
             $newParent,
             $newChild,
             $contentStreamDbIds->current(),
