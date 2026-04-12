@@ -86,6 +86,7 @@ trait NodeRemoval
                   h.id,
                   NULL as parentnodeanchor,
                   NULL as childnodeanchor,
+                  -- todo these fieds could be empty as well --
                   h.position,
                   h.subtreetags,
                   h.dimensionspacepointhash,
@@ -93,16 +94,15 @@ trait NodeRemoval
                 FROM
                     {$this->tableNames->hierarchyRelation()} h
                 WHERE 
-                    parentnodeanchor = :parentnodeanchor
-                    AND childnodeanchor = :childnodeanchor
-                    AND contentstreamdbid = :contentstreamdbid
-                    AND dimensionspacepointhash = :dimensionspacepointhash
+                    id = :id
+                    AND contentstreamdbid = :contentStreamDbId
             SQL;
 
             try {
                 $this->dbal->executeStatement($copyRemovedHierarchyRelationStatement, [
+                    'id' => $ingoingRelation->hierarchyRelationDbId->value,
+                    'contentStreamDbId' => $ingoingRelation->contentStreamDbId->value,
                     'targetContentStreamDbId' => $contentStreamDbIds->current()->value,
-                    ...$ingoingRelation->getDatabaseId(),
                 ]);
             } catch (DBALException $e) {
                 throw new \RuntimeException(sprintf('Failed to copy hierarchy relation: %s', $e->getMessage()), 1775978611, $e);
