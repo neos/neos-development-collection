@@ -513,12 +513,10 @@ class ProjectionContentGraph
             SELECT
                 h.*
             FROM
-                {$this->tableNames->hierarchyRelation()} h
+                {$this->hierarchyRelationQueryBuilder->selectHierarchyRowsForContentStream('WHERE h.dimensionspacepointhash IN (:dimensionSpacePointHashes)')} h
                 INNER JOIN {$this->tableNames->node()} n ON h.parentnodeanchor = n.relationanchorpoint
             WHERE
                 n.nodeaggregateid = :nodeAggregateId
-                AND h.contentstreamdbid IN (:contentStreamDbIds)
-                AND h.dimensionspacepointhash IN (:dimensionSpacePointHashes)
         SQL;
         try {
             $rows = $this->dbal->fetchAllAssociative($outgoingHierarchyRelationsStatement, [
@@ -547,7 +545,7 @@ class ProjectionContentGraph
             SELECT
                 h.*
             FROM
-                {$this->hierarchyRelationQueryBuilder->selectHierarchyRowsForContentStream()} h
+                {$this->hierarchyRelationQueryBuilder->selectHierarchyRowsForContentStream($dimensionSpacePointSet !== null ? 'WHERE h.dimensionspacepointhash IN (:dimensionSpacePointHashes)' : '')} h
                 INNER JOIN {$this->tableNames->node()} n ON h.childnodeanchor = n.relationanchorpoint
             WHERE
                 n.nodeaggregateid = :nodeAggregateId
@@ -555,15 +553,12 @@ class ProjectionContentGraph
         $parameters = [
             'nodeAggregateId' => $nodeAggregateId->value,
             'contentStreamDbIds' => $contentStreamDbIds->toIntArray(),
+            ...($dimensionSpacePointSet !== null ? ['dimensionSpacePointHashes' => $dimensionSpacePointSet->getPointHashes()] : []),
         ];
         $types = [
             'contentStreamDbIds' => ArrayParameterType::INTEGER,
+            ...($dimensionSpacePointSet !== null ? ['dimensionSpacePointHashes' => ArrayParameterType::STRING] : []),
         ];
-        if ($dimensionSpacePointSet !== null) {
-            $ingoingHierarchyRelationsStatement .= ' AND h.dimensionspacepointhash IN (:dimensionSpacePointHashes)';
-            $parameters['dimensionSpacePointHashes'] = $dimensionSpacePointSet->getPointHashes();
-            $types['dimensionSpacePointHashes'] = ArrayParameterType::STRING;
-        }
         try {
             $rows = $this->dbal->fetchAllAssociative($ingoingHierarchyRelationsStatement, $parameters, $types);
         } catch (DBALException $e) {
