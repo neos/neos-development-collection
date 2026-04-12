@@ -46,6 +46,8 @@ final class ContentStreamDbIdFinder
         if ($contentStreamDbIds === null) {
             $this->fillRuntimeCacheFromDatabase();
             $contentStreamDbIds = $this->getFromRuntimeCache($contentStreamId);
+            // todo reenable runtime cache
+            $this->contentStreamIdRuntimeCache = [];
         }
 
         if ($contentStreamDbIds === null) {

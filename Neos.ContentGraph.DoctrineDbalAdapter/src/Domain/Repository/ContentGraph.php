@@ -202,9 +202,8 @@ final class ContentGraph implements ContentGraphInterface
         NodeAggregateId $childNodeAggregateId
     ): NodeAggregates {
         $queryBuilder = $this->nodeQueryBuilder->buildBasicNodeAggregateQuery()
-            ->innerJoin('n', $this->nodeQueryBuilder->tableNames->hierarchyRelation(), 'ch', 'ch.parentnodeanchor = n.relationanchorpoint')
+            ->innerJoin('n', $this->nodeQueryBuilder->hierarchyRelationQueryBuilder->selectHierarchyRowsForContentStream(), 'ch', 'ch.parentnodeanchor = n.relationanchorpoint')
             ->innerJoin('ch', $this->nodeQueryBuilder->tableNames->node(), 'cn', 'cn.relationanchorpoint = ch.childnodeanchor')
-            ->andWhere('ch.contentstreamdbid = :contentStreamDbIds')
             ->andWhere('cn.nodeaggregateid = :nodeAggregateId')
             ->setParameters([
                 'nodeAggregateId' => $childNodeAggregateId->value,
@@ -260,20 +259,17 @@ final class ContentGraph implements ContentGraphInterface
         $subQueryBuilder = $this->createQueryBuilder()
             ->select('pn.nodeaggregateid')
             ->from($this->nodeQueryBuilder->tableNames->node(), 'pn')
-            ->innerJoin('pn', $this->nodeQueryBuilder->tableNames->hierarchyRelation(), 'ch', 'ch.parentnodeanchor = pn.relationanchorpoint')
+            ->innerJoin('pn', $this->nodeQueryBuilder->hierarchyRelationQueryBuilder->selectHierarchyRowsForContentStream('WHERE h.dimensionspacepointhash = :childOriginDimensionSpacePointHash'), 'ch', 'ch.parentnodeanchor = pn.relationanchorpoint')
             ->innerJoin('ch', $this->nodeQueryBuilder->tableNames->node(), 'cn', 'cn.relationanchorpoint = ch.childnodeanchor')
-            ->where('ch.contentstreamdbid = :contentStreamDbIds')
-            ->andWhere('ch.dimensionspacepointhash = :childOriginDimensionSpacePointHash')
-            ->andWhere('cn.nodeaggregateid = :childNodeAggregateId')
+            ->where('cn.nodeaggregateid = :childNodeAggregateId')
             ->andWhere('cn.origindimensionspacepointhash = :childOriginDimensionSpacePointHash');
 
         $queryBuilder = $this->createQueryBuilder()
             ->select('n.*, h.contentstreamdbid, h.subtreetags, dsp.dimensionspacepoint AS covereddimensionspacepoint')
             ->from($this->nodeQueryBuilder->tableNames->node(), 'n')
-            ->innerJoin('n', $this->nodeQueryBuilder->tableNames->hierarchyRelation(), 'h', 'h.childnodeanchor = n.relationanchorpoint')
+            ->innerJoin('n', $this->nodeQueryBuilder->hierarchyRelationQueryBuilder->selectHierarchyRowsForContentStream(), 'h', 'h.childnodeanchor = n.relationanchorpoint')
             ->innerJoin('h', $this->nodeQueryBuilder->tableNames->dimensionSpacePoints(), 'dsp', 'dsp.hash = h.dimensionspacepointhash')
             ->where('n.nodeaggregateid = (' . $subQueryBuilder->getSQL() . ')')
-            ->andWhere('h.contentstreamdbid = :contentStreamDbIds')
             ->setParameters([
                 'contentStreamDbIds' => $this->contentStreamDbIds->toIntArray(),
                 'childNodeAggregateId' => $childNodeAggregateId->value,

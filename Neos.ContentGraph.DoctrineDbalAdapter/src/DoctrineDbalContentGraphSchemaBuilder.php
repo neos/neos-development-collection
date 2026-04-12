@@ -62,15 +62,19 @@ class DoctrineDbalContentGraphSchemaBuilder
     private function createHierarchyRelationTable(AbstractPlatform $platform): Table
     {
         $table = self::createTable($this->tableNames->hierarchyRelation(), [
+            (new Column('id', Type::getType(Types::INTEGER)))->setAutoincrement(true)->setNotnull(true),
             (new Column('position', self::type(Types::INTEGER)))->setNotnull(true),
             (new Column('contentstreamdbid', self::type(Types::INTEGER)))->setNotnull(true),
             DbalSchemaFactory::columnForDimensionSpacePointHash('dimensionspacepointhash', $platform)->setNotnull(true),
-            DbalSchemaFactory::columnForNodeAnchorPoint('parentnodeanchor', $platform),
-            DbalSchemaFactory::columnForNodeAnchorPoint('childnodeanchor', $platform),
+            // todo nullable?
+            DbalSchemaFactory::columnForNodeAnchorPoint('parentnodeanchor', $platform)->setNotnull(false),
+            DbalSchemaFactory::columnForNodeAnchorPoint('childnodeanchor', $platform)->setNotnull(false),
             (new Column('subtreetags', self::type(Types::JSON))),
         ]);
 
         return $table
+            ->addIndex(['id'])
+            ->addUniqueIndex(['id', 'contentstreamdbid'])
             ->addIndex(['childnodeanchor'])
             ->addIndex(['contentstreamdbid'])
             ->addIndex(['parentnodeanchor'])
@@ -142,7 +146,7 @@ class DoctrineDbalContentGraphSchemaBuilder
         ]);
 
         return $contentStreamIdTable
-            ->addUniqueIndex(['dbId'])
+            ->addIndex(['dbId'])
             ->setPrimaryKey(['id', 'dbId']);
     }
 
