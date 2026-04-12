@@ -211,49 +211,31 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
     private function whenContentStreamWasCreated(ContentStreamWasCreated $event): void
     {
         $this->createContentStream($event->contentStreamId);
+        $this->dbal->insert($this->tableNames->contentStreamId(), [
+            'id' => $event->contentStreamId->value,
+        ]);
     }
 
     private function whenContentStreamWasForked(ContentStreamWasForked $event): void
     {
         $this->createContentStream($event->newContentStreamId, $event->sourceContentStreamId, $event->versionOfSourceContentStream);
 
-        $newContentStreamDbId = $this->contentStreamDbIdFinder->getContentStreamDbId($event->newContentStreamId);
         $sourceContentStreamDbId = $this->contentStreamDbIdFinder->getContentStreamDbId($event->sourceContentStreamId);
 
-        //
-        // 1) Copy HIERARCHY RELATIONS (this is the MAIN OPERATION here)
-        //
-        $insertRelationStatement = <<<SQL
-            INSERT INTO {$this->tableNames->hierarchyRelation()} (
-              parentnodeanchor,
-              childnodeanchor,
-              position,
-              dimensionspacepointhash,
-              subtreetags,
-              contentstreamdbid
-            )
-            SELECT
-              h.parentnodeanchor,
-              h.childnodeanchor,
-              h.position,
-              h.dimensionspacepointhash,
-              h.subtreetags,
-              :newContentStreamDbId AS contentstreamdbid
-            FROM
-                {$this->tableNames->hierarchyRelation()} h
-                WHERE h.contentstreamdbid = :sourceContentStreamDbId
-        SQL;
-        try {
-            $this->dbal->executeStatement($insertRelationStatement, [
-                'newContentStreamDbId' => $newContentStreamDbId->current()->value,
-                'sourceContentStreamDbId' => $sourceContentStreamDbId->current()->value
+        $this->dbal->insert($this->tableNames->contentStreamId(), [
+            'id' => $event->sourceContentStreamId,
+        ]);
+
+        foreach ($sourceContentStreamDbId->items as $sourceDbId) {
+            $this->dbal->insert($this->tableNames->contentStreamId(), [
+                'id' => $event->newContentStreamId,
+                'dbId' => $sourceDbId->value
             ]);
-        } catch (DBALException $e) {
-            throw new \RuntimeException(sprintf('Failed to insert hierarchy relation: %s', $e->getMessage()), 1716489211, $e);
         }
 
-        // NOTE: as reference edges are attached to Relation Anchor Points (and they are lazily copy-on-written),
-        // we do not need to copy reference edges here (but we need to do it during copy on write).
+        $this->dbal->insert($this->tableNames->contentStreamId(), [
+            'id' => $event->newContentStreamId,
+        ]);
     }
 
     private function whenContentStreamWasRemoved(ContentStreamWasRemoved $event): void
@@ -261,46 +243,55 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
         $contentStreamDbIds = $this->contentStreamDbIdFinder->getContentStreamDbId($event->contentStreamId);
 
         // Drop hierarchy relations
-        $deleteHierarchyRelationStatement = <<<SQL
-            DELETE FROM {$this->tableNames->hierarchyRelation()} WHERE contentstreamdbid IN (:contentStreamDbIds)
-        SQL;
-        try {
-            $this->dbal->executeStatement($deleteHierarchyRelationStatement, [
-                'contentStreamDbIds' => $contentStreamDbIds->toIntArray()
-            ]);
-        } catch (DBALException $e) {
-            throw new \RuntimeException(sprintf('Failed to delete hierarchy relations: %s', $e->getMessage()), 1716489265, $e);
-        }
+        // TODO reimplement
+        // $deleteHierarchyRelationStatement = <<<SQL
+        //     DELETE FROM {$this->tableNames->hierarchyRelation()} WHERE contentstreamdbid IN (:contentStreamDbIds)
+        // SQL;
+        // try {
+        //     $this->dbal->executeStatement($deleteHierarchyRelationStatement, [
+        //         'contentStreamDbIds' => $contentStreamDbIds->toIntArray()
+        //     ], [
+        //         'contentStreamDbIds' => ArrayParameterType::INTEGER,
+        //     ]);
+        // } catch (DBALException $e) {
+        //     throw new \RuntimeException(sprintf('Failed to delete hierarchy relations: %s', $e->getMessage()), 1716489265, $e);
+        // }
 
         // Drop non-referenced nodes (which do not have a hierarchy relation anymore)
-        $deleteNodesStatement = <<<SQL
-            DELETE FROM {$this->tableNames->node()}
-            WHERE NOT EXISTS (
-                SELECT 1 FROM {$this->tableNames->hierarchyRelation()}
-                WHERE {$this->tableNames->hierarchyRelation()}.childnodeanchor = {$this->tableNames->node()}.relationanchorpoint
-            )
-        SQL;
-        try {
-            $this->dbal->executeStatement($deleteNodesStatement);
-        } catch (DBALException $e) {
-            throw new \RuntimeException(sprintf('Failed to delete non-referenced nodes: %s', $e->getMessage()), 1716489294, $e);
-        }
+        // TODO reimplement
+        // $deleteNodesStatement = <<<SQL
+        //     DELETE FROM {$this->tableNames->node()}
+        //     WHERE NOT EXISTS (
+        //         SELECT 1 FROM {$this->tableNames->hierarchyRelation()}
+        //         WHERE {$this->tableNames->hierarchyRelation()}.childnodeanchor = {$this->tableNames->node()}.relationanchorpoint
+        //     )
+        // SQL;
+        // try {
+        //     $this->dbal->executeStatement($deleteNodesStatement);
+        // } catch (DBALException $e) {
+        //     throw new \RuntimeException(sprintf('Failed to delete non-referenced nodes: %s', $e->getMessage()), 1716489294, $e);
+        // }
 
         // Drop non-referenced reference relations (i.e. because the referenced nodes are gone by now)
-        $deleteReferenceRelationsStatement = <<<SQL
-            DELETE FROM {$this->tableNames->referenceRelation()}
-            WHERE NOT EXISTS (
-                SELECT 1 FROM {$this->tableNames->node()}
-                WHERE {$this->tableNames->node()}.relationanchorpoint = {$this->tableNames->referenceRelation()}.nodeanchorpoint
-            )
-        SQL;
-        try {
-            $this->dbal->executeStatement($deleteReferenceRelationsStatement);
-        } catch (DBALException $e) {
-            throw new \RuntimeException(sprintf('Failed to delete non-referenced reference relations: %s', $e->getMessage()), 1716489328, $e);
-        }
+        // TODO reimplement
+        // $deleteReferenceRelationsStatement = <<<SQL
+        //     DELETE FROM {$this->tableNames->referenceRelation()}
+        //     WHERE NOT EXISTS (
+        //         SELECT 1 FROM {$this->tableNames->node()}
+        //         WHERE {$this->tableNames->node()}.relationanchorpoint = {$this->tableNames->referenceRelation()}.nodeanchorpoint
+        //     )
+        // SQL;
+        // try {
+        //     $this->dbal->executeStatement($deleteReferenceRelationsStatement);
+        // } catch (DBALException $e) {
+        //     throw new \RuntimeException(sprintf('Failed to delete non-referenced reference relations: %s', $e->getMessage()), 1716489328, $e);
+        // }
 
         $this->removeContentStream($event->contentStreamId);
+
+        $this->dbal->delete($this->tableNames->contentStreamId(), [
+            'id' => $event->contentStreamId->value,
+        ]);
     }
 
     private function whenContentStreamWasReopened(ContentStreamWasReopened $event): void
@@ -768,7 +759,7 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
         callable $operations
     ): mixed {
         $contentStreamDbIds = $this->projectionContentGraph->getAllContentStreamDbIdsAnchorPointIsContainedIn($anchorPoint);
-        if (count($contentStreamDbIds) > 1) {
+        if (!$contentStreamDbIds->equals($contentStreamDbIdsWhereWriteOccurs->current())) {
             // Copy on Write needed!
             // Copy on Write is a purely "Content Stream" related concept;
             // thus we do not care about different DimensionSpacePoints here (but we copy all edges)
@@ -782,32 +773,81 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
 
             // 2) reconnect all edges belonging to this content stream to the new "copied node".
             // IMPORTANT: We need to reconnect BOTH the incoming and outgoing edges.
-            $updateHierarchyRelationStatement = <<<SQL
-                UPDATE {$this->tableNames->hierarchyRelation()} h
-                SET
-                    -- if our (copied) node is the child, we update h.childNodeAnchor
-                    h.childnodeanchor = IF(h.childnodeanchor = :originalNodeAnchor, :newNodeAnchor, h.childnodeanchor),
 
-                    -- if our (copied) node is the parent, we update h.parentNodeAnchor
-                    h.parentnodeanchor = IF(h.parentnodeanchor = :originalNodeAnchor, :newNodeAnchor, h.parentnodeanchor)
-                WHERE
-                  :originalNodeAnchor IN (h.childnodeanchor, h.parentnodeanchor)
-                  AND h.contentstreamdbid IN (:contentStreamDbIds)
-            SQL;
-            try {
-                $this->dbal->executeStatement($updateHierarchyRelationStatement, [
-                    'newNodeAnchor' => $copiedNode->relationAnchorPoint->value,
-                    'originalNodeAnchor' => $anchorPoint->value,
-                    'contentStreamDbId' => $contentStreamDbIdsWhereWriteOccurs->value,
-                ]);
-            } catch (DBALException $e) {
-                throw new \RuntimeException(sprintf('Failed to update hierarchy relation: %s', $e->getMessage()), 1716486444, $e);
+            if ($contentStreamDbIds->contain($contentStreamDbIdsWhereWriteOccurs->current())) {
+                $updateHierarchyRelationStatement = <<<SQL
+                    UPDATE {$this->tableNames->hierarchyRelation()} h
+                    SET
+                        -- if our (copied) node is the child, we update h.childNodeAnchor
+                        h.childnodeanchor = IF(h.childnodeanchor = :originalNodeAnchor, :newNodeAnchor, h.childnodeanchor),
+
+                        -- if our (copied) node is the parent, we update h.parentNodeAnchor
+                        h.parentnodeanchor = IF(h.parentnodeanchor = :originalNodeAnchor, :newNodeAnchor, h.parentnodeanchor)
+                    WHERE
+                      :originalNodeAnchor IN (h.childnodeanchor, h.parentnodeanchor)
+                      AND h.contentstreamdbid = :targetContentStreamDbId
+                SQL;
+
+                try {
+                    $this->dbal->executeStatement($updateHierarchyRelationStatement, [
+                        'newNodeAnchor' => $copiedNode->relationAnchorPoint->value,
+                        'originalNodeAnchor' => $anchorPoint->value,
+                        'targetContentStreamDbId' => $contentStreamDbIdsWhereWriteOccurs->current()->value,
+                    ]);
+                } catch (DBALException $e) {
+                    throw new \RuntimeException(sprintf('Failed to update hierarchy relation: %s', $e->getMessage()), 1716486444, $e);
+                }
+            } else {
+                // todo is this correct
+                $copyHierarchyRelationStatement = <<<SQL
+                    INSERT INTO {$this->tableNames->hierarchyRelation()} (
+                      id,
+                      parentnodeanchor,
+                      childnodeanchor,
+                      position,
+                      subtreetags,
+                      dimensionspacepointhash,
+                      contentstreamdbid
+                    )
+                    SELECT
+                      h.id,
+                      -- if our (copied) node is the parent, we update h.parentNodeAnchor
+                      IF(h.parentnodeanchor = :originalNodeAnchor, :newNodeAnchor, h.parentnodeanchor) as parentnodeanchor,
+                      -- if our (copied) node is the child, we update h.childNodeAnchor
+                      IF(h.childnodeanchor = :originalNodeAnchor, :newNodeAnchor, h.childnodeanchor) as childnodeanchor,
+                      h.position,
+                      h.subtreetags,
+                      h.dimensionspacepointhash,
+                      :targetContentStreamDbId as contentstreamdbid
+                    FROM
+                        {$this->tableNames->hierarchyRelation()} h
+                    WHERE 
+                        :originalNodeAnchor IN (h.childnodeanchor, h.parentnodeanchor)
+                        AND h.contentstreamdbid IN (:contentStreamDbIds)
+                SQL;
+
+                try {
+                    $this->dbal->executeStatement($copyHierarchyRelationStatement, [
+                        'newNodeAnchor' => $copiedNode->relationAnchorPoint->value,
+                        'originalNodeAnchor' => $anchorPoint->value,
+                        'contentStreamDbIds' => $contentStreamDbIdsWhereWriteOccurs->toIntArray(),
+                        'targetContentStreamDbId' => $contentStreamDbIdsWhereWriteOccurs->current()->value,
+                    ], [
+                        'contentStreamDbIds' => ArrayParameterType::INTEGER,
+                    ]);
+                } catch (DBALException $e) {
+                    throw new \RuntimeException(sprintf('Failed to update hierarchy relation: %s', $e->getMessage()), 1716486444, $e);
+                }
             }
+
+
+
             // reference relation rows need to be copied as well!
-            $this->copyReferenceRelations(
-                $anchorPoint,
-                $copiedNode->relationAnchorPoint
-            );
+            // todo
+            // $this->copyReferenceRelations(
+            //     $anchorPoint,
+            //     $copiedNode->relationAnchorPoint
+            // );
             return $result;
         }
 
