@@ -29,10 +29,10 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\NodeTags;
 final readonly class HierarchyRelation
 {
     public function __construct(
-        public HierarchyRelationDbId $hierarchyRelationDbId,
+        public HierarchyRelationId $hierarchyRelationId,
+        public ContentStreamLayer $contentStreamLayer,
         public NodeRelationAnchorPoint $parentNodeAnchor,
         public NodeRelationAnchorPoint $childNodeAnchor,
-        public ContentStreamDbId $contentStreamDbId,
         public DimensionSpacePoint $dimensionSpacePoint,
         public string $dimensionSpacePointHash,
         public int $position,
@@ -41,20 +41,20 @@ final readonly class HierarchyRelation
     }
 
     public function with(
-        ?HierarchyRelationDbId $hierarchyRelationDId = null,
+        ?HierarchyRelationId $hierarchyRelationDId = null,
         ?NodeRelationAnchorPoint $parentNodeAnchor = null,
         ?NodeRelationAnchorPoint $childNodeAnchor = null,
-        ?ContentStreamDbId $contentStreamDbId = null,
+        ?ContentStreamLayer $contentStreamLayer = null,
         ?DimensionSpacePoint $dimensionSpacePoint = null,
         ?string $dimensionSpacePointHash = null,
         ?int $position = null,
         ?NodeTags $subtreeTags = null,
     ): self {
         return new self(
-            hierarchyRelationDbId: $hierarchyRelationDId ?? $this->hierarchyRelationDbId,
+            hierarchyRelationId: $hierarchyRelationDId ?? $this->hierarchyRelationId,
+            contentStreamLayer: $contentStreamLayer ?? $this->contentStreamLayer,
             parentNodeAnchor: $parentNodeAnchor ?? $this->parentNodeAnchor,
             childNodeAnchor: $childNodeAnchor ?? $this->childNodeAnchor,
-            contentStreamDbId: $contentStreamDbId ?? $this->contentStreamDbId,
             dimensionSpacePoint: $dimensionSpacePoint ?? $this->dimensionSpacePoint,
             dimensionSpacePointHash: $dimensionSpacePointHash ?? $this->dimensionSpacePointHash,
             position: $position ?? $this->position,
@@ -74,10 +74,10 @@ final readonly class HierarchyRelation
 
         try {
             $databaseConnection->insert($tableNames->hierarchyRelation(), [
-                'id' => $this->hierarchyRelationDbId->value,
+                'id' => $this->hierarchyRelationId->value,
                 'parentnodeanchor' => $this->parentNodeAnchor->value,
                 'childnodeanchor' => $this->childNodeAnchor->value,
-                'contentstreamdbid' => $this->contentStreamDbId->value,
+                'contentstreamlayer' => $this->contentStreamLayer->value,
                 'dimensionspacepointhash' => $this->dimensionSpacePointHash,
                 'position' => $this->position,
                 'subtreetags' => $subtreeTagsJson,
@@ -157,17 +157,17 @@ final readonly class HierarchyRelation
      */
     public function getDatabaseId(): array
     {
-        if (!$this->hierarchyRelationDbId->value) {
+        if (!$this->hierarchyRelationId->value) {
             throw new \RuntimeException(sprintf('Hierarchy relation was not created in the database and does not have an id: %s', json_encode([
                 'parentnodeanchor' => $this->parentNodeAnchor->value,
                 'childnodeanchor' => $this->childNodeAnchor->value,
-                'contentstreamdbid' => $this->contentStreamDbId->value,
+                'contentstreamlayer' => $this->contentStreamLayer->value,
                 'dimensionspacepointhash' => $this->dimensionSpacePointHash
             ])), 1775979706);
         }
         return [
-            'id' => $this->hierarchyRelationDbId->value,
-            'contentstreamdbid' => $this->contentStreamDbId->value,
+            'id' => $this->hierarchyRelationId->value,
+            'contentstreamlayer' => $this->contentStreamLayer->value,
         ];
     }
 }

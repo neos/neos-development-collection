@@ -33,7 +33,7 @@ class DoctrineDbalContentGraphSchemaBuilder
             $this->createDimensionSpacePointsTable($connection->getDatabasePlatform()),
             $this->createWorkspaceTable($connection->getDatabasePlatform()),
             $this->createContentStreamTable($connection->getDatabasePlatform()),
-            $this->createContentStreamIdTable($connection->getDatabasePlatform()),
+            $this->createContentStreamLayerTable($connection->getDatabasePlatform()),
         ]);
     }
 
@@ -63,8 +63,8 @@ class DoctrineDbalContentGraphSchemaBuilder
     {
         $table = self::createTable($this->tableNames->hierarchyRelation(), [
             (new Column('id', Type::getType(Types::INTEGER)))->setAutoincrement(true)->setNotnull(true),
+            (new Column('contentstreamlayer', self::type(Types::INTEGER)))->setNotnull(true),
             (new Column('position', self::type(Types::INTEGER)))->setNotnull(true),
-            (new Column('contentstreamdbid', self::type(Types::INTEGER)))->setNotnull(true),
             DbalSchemaFactory::columnForDimensionSpacePointHash('dimensionspacepointhash', $platform)->setNotnull(true),
             // todo nullable?
             DbalSchemaFactory::columnForNodeAnchorPoint('parentnodeanchor', $platform)->setNotnull(false),
@@ -74,13 +74,13 @@ class DoctrineDbalContentGraphSchemaBuilder
 
         return $table
             ->addIndex(['id'])
-            ->addUniqueIndex(['id', 'contentstreamdbid'])
+            ->addUniqueIndex(['id', 'contentstreamlayer'])
             ->addIndex(['childnodeanchor'])
-            ->addIndex(['contentstreamdbid'])
+            ->addIndex(['contentstreamlayer'])
             ->addIndex(['parentnodeanchor'])
-            ->addIndex(['childnodeanchor', 'contentstreamdbid', 'dimensionspacepointhash', 'position'])
-            ->addIndex(['parentnodeanchor', 'contentstreamdbid', 'dimensionspacepointhash', 'position'])
-            ->addIndex(['contentstreamdbid', 'dimensionspacepointhash']);
+            ->addIndex(['childnodeanchor', 'contentstreamlayer', 'dimensionspacepointhash', 'position'])
+            ->addIndex(['parentnodeanchor', 'contentstreamlayer', 'dimensionspacepointhash', 'position'])
+            ->addIndex(['contentstreamlayer', 'dimensionspacepointhash']);
     }
 
     private function createDimensionSpacePointsTable(AbstractPlatform $platform): Table
@@ -138,16 +138,16 @@ class DoctrineDbalContentGraphSchemaBuilder
             ->setPrimaryKey(['id']);
     }
 
-    private function createContentStreamIdTable(AbstractPlatform $platform): Table
+    private function createContentStreamLayerTable(AbstractPlatform $platform): Table
     {
-        $contentStreamIdTable = self::createTable($this->tableNames->contentStreamId(), [
-            DbalSchemaFactory::columnForContentStreamId('id', $platform)->setNotnull(true),
-            (new Column('dbId', Type::getType(Types::INTEGER)))->setAutoincrement(true)->setNotnull(true),
+        $contentStreamLayerTable = self::createTable($this->tableNames->contentStreamLayer(), [
+            DbalSchemaFactory::columnForContentStreamId('contentStreamId', $platform)->setNotnull(true),
+            (new Column('contentStreamLayer', Type::getType(Types::INTEGER)))->setAutoincrement(true)->setNotnull(true),
         ]);
 
-        return $contentStreamIdTable
-            ->addIndex(['dbId'])
-            ->setPrimaryKey(['id', 'dbId']);
+        return $contentStreamLayerTable
+            ->addIndex(['contentStreamLayer'])
+            ->setPrimaryKey(['contentStreamId', 'contentStreamLayer']);
     }
 
     /**
