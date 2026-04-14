@@ -35,11 +35,13 @@ final readonly class HierarchyRelationStatement
         return <<<SQL
         (SELECT h.*
             FROM {$this->tableNames->hierarchyRelation()} as h
-            INNER JOIN (SELECT id, MAX(contentstreamlayer) as contentstreamlayer
-                FROM {$this->tableNames->hierarchyRelation()}
-                WHERE (contentstreamlayer IN (:contentStreamLayers))
+            INNER JOIN (
+                SELECT id, MAX(contentstreamlayer) as contentstreamlayer
+                    FROM {$this->tableNames->hierarchyRelation()}
+                    WHERE (contentstreamlayer IN (:contentStreamLayers))
                 GROUP BY id
-            ) AS activeLayer ON h.contentstreamlayer = activeLayer.contentstreamlayer AND h.id = activeLayer.id
+            ) AS activeLayer 
+                ON h.id = activeLayer.id AND h.contentstreamlayer = activeLayer.contentstreamlayer
         {$additionalWhereClauses})
         SQL;
     }
