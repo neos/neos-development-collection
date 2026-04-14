@@ -765,7 +765,7 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
         callable $operations
     ): mixed {
         $contentStreamLayers = $this->projectionContentGraph->getAllContentStreamLayersAnchorPointIsContainedIn($anchorPoint);
-        if (!$contentStreamLayers->equals($contentStreamLayersWhereWriteOccurs->current())) {
+        if (!$contentStreamLayers->equals($contentStreamLayersWhereWriteOccurs->getWriteLayer())) {
             // Copy on Write needed!
             // Copy on Write is a purely "Content Stream" related concept;
             // thus we do not care about different DimensionSpacePoints here (but we copy all edges)
@@ -780,7 +780,7 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
             // 2) reconnect all edges belonging to this content stream to the new "copied node".
             // IMPORTANT: We need to reconnect BOTH the incoming and outgoing edges.
 
-            if ($contentStreamLayers->contain($contentStreamLayersWhereWriteOccurs->current())) {
+            if ($contentStreamLayers->contain($contentStreamLayersWhereWriteOccurs->getWriteLayer())) {
                 $updateHierarchyRelationStatement = <<<SQL
                     UPDATE {$this->tableNames->hierarchyRelation()} h
                     SET
@@ -798,7 +798,7 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
                     $this->dbal->executeStatement($updateHierarchyRelationStatement, [
                         'newNodeAnchor' => $copiedNode->relationAnchorPoint->value,
                         'originalNodeAnchor' => $anchorPoint->value,
-                        'targetContentStreamLayer' => $contentStreamLayersWhereWriteOccurs->current()->value,
+                        'targetContentStreamLayer' => $contentStreamLayersWhereWriteOccurs->getWriteLayer()->value,
                     ]);
                 } catch (DBALException $e) {
                     throw new \RuntimeException(sprintf('Failed to update hierarchy relation: %s', $e->getMessage()), 1716486444, $e);
@@ -837,7 +837,7 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
                         'newNodeAnchor' => $copiedNode->relationAnchorPoint->value,
                         'originalNodeAnchor' => $anchorPoint->value,
                         'contentStreamLayers' => $contentStreamLayersWhereWriteOccurs->toIntArray(),
-                        'targetContentStreamLayer' => $contentStreamLayersWhereWriteOccurs->current()->value,
+                        'targetContentStreamLayer' => $contentStreamLayersWhereWriteOccurs->getWriteLayer()->value,
                     ], [
                         'contentStreamLayers' => ArrayParameterType::INTEGER,
                     ]);
@@ -999,7 +999,7 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
 
             $hierarchyRelation = new HierarchyRelation(
                 HierarchyRelationId::createAutoIncremented(),
-                $contentStreamLayers->current(),
+                $contentStreamLayers->getWriteLayer(),
                 $parentNodeAnchorPoint,
                 $childNodeAnchorPoint,
                 $dimensionSpacePoint,
@@ -1100,7 +1100,7 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
         $inheritedSubtreeTags = NodeTags::create($sourceHierarchyRelation->subtreeTags->withoutInherited()->all(), $parentSubtreeTags->withoutInherited()->all());
         $copy = new HierarchyRelation(
             HierarchyRelationId::createAutoIncremented(),
-            $contentStreamLayers->current(),
+            $contentStreamLayers->getWriteLayer(),
             $newParent,
             $newChild,
             $dimensionSpacePoint,

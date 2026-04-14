@@ -48,7 +48,7 @@ trait NodeVariation
                 $specializationSiblings->toDimensionSpacePointSet()
             ) as $hierarchyRelation
         ) {
-            if ($contentStreamLayers->current()->equals($hierarchyRelation->contentStreamLayer)) {
+            if ($contentStreamLayers->getWriteLayer()->equals($hierarchyRelation->contentStreamLayer)) {
                 $hierarchyRelation->assignNewChildNode(
                     $specializedNode->relationAnchorPoint,
                     $this->dbal,
@@ -57,7 +57,7 @@ trait NodeVariation
             } else {
                 $copiedHierarchyRelation = $hierarchyRelation->with(
                     childNodeAnchor: $specializedNode->relationAnchorPoint,
-                    contentStreamLayer: $contentStreamLayers->current(),
+                    contentStreamLayer: $contentStreamLayers->getWriteLayer(),
                 );
                 $copiedHierarchyRelation->addToDatabase(
                     $this->dbal,
@@ -98,7 +98,7 @@ trait NodeVariation
 
                 $hierarchyRelation = new HierarchyRelation(
                     HierarchyRelationId::createAutoIncremented(),
-                    $contentStreamLayers->current(),
+                    $contentStreamLayers->getWriteLayer(),
                     $parentNode->relationAnchorPoint,
                     $specializedNode->relationAnchorPoint,
                     $uncoveredDimensionSpacePoint,
@@ -123,7 +123,7 @@ trait NodeVariation
                 $specializationSiblings->toDimensionSpacePointSet()
             ) as $hierarchyRelation
         ) {
-            if ($contentStreamLayers->current()->equals($hierarchyRelation->contentStreamLayer)) {
+            if ($contentStreamLayers->getWriteLayer()->equals($hierarchyRelation->contentStreamLayer)) {
                 $hierarchyRelation->assignNewParentNode(
                     $specializedNode->relationAnchorPoint,
                     null,
@@ -133,7 +133,7 @@ trait NodeVariation
             } else {
                 $copiedHierarchyRelation = $hierarchyRelation->with(
                     parentNodeAnchor: $specializedNode->relationAnchorPoint,
-                    contentStreamLayer: $contentStreamLayers->current(),
+                    contentStreamLayer: $contentStreamLayers->getWriteLayer(),
                 );
                 $copiedHierarchyRelation->addToDatabase(
                     $this->dbal,
@@ -182,7 +182,7 @@ trait NodeVariation
                 $variantSucceedingSiblings->toDimensionSpacePointSet()
             ) as $existingIngoingHierarchyRelation
         ) {
-            if ($contentStreamLayers->current()->equals($existingIngoingHierarchyRelation->contentStreamLayer)) {
+            if ($contentStreamLayers->getWriteLayer()->equals($existingIngoingHierarchyRelation->contentStreamLayer)) {
                 $existingIngoingHierarchyRelation->assignNewChildNode(
                     $generalizedNode->relationAnchorPoint,
                     $this->dbal,
@@ -191,7 +191,7 @@ trait NodeVariation
             } else {
                 $copiedHierarchyRelation = $existingIngoingHierarchyRelation->with(
                     childNodeAnchor: $generalizedNode->relationAnchorPoint,
-                    contentStreamLayer: $contentStreamLayers->current(),
+                    contentStreamLayer: $contentStreamLayers->getWriteLayer(),
                 );
                 $copiedHierarchyRelation->addToDatabase(
                     $this->dbal,
@@ -212,7 +212,7 @@ trait NodeVariation
                 $variantSucceedingSiblings->toDimensionSpacePointSet()
             ) as $existingOutgoingHierarchyRelation
         ) {
-            if ($contentStreamLayers->current()->equals($existingOutgoingHierarchyRelation->contentStreamLayer)) {
+            if ($contentStreamLayers->getWriteLayer()->equals($existingOutgoingHierarchyRelation->contentStreamLayer)) {
                 $existingOutgoingHierarchyRelation->assignNewParentNode(
                     $generalizedNode->relationAnchorPoint,
                     null,
@@ -222,7 +222,7 @@ trait NodeVariation
             } else {
                 $copiedHierarchyRelation = $existingOutgoingHierarchyRelation->with(
                     parentNodeAnchor: $generalizedNode->relationAnchorPoint,
-                    contentStreamLayer: $contentStreamLayers->current(),
+                    contentStreamLayer: $contentStreamLayers->getWriteLayer(),
                 );
                 $copiedHierarchyRelation->addToDatabase(
                     $this->dbal,
@@ -313,7 +313,7 @@ trait NodeVariation
                 $peerSucceedingSiblings->toDimensionSpacePointSet()
             ) as $existingIngoingHierarchyRelation
         ) {
-            if ($contentStreamLayers->current()->equals($existingIngoingHierarchyRelation->contentStreamLayer)) {
+            if ($contentStreamLayers->getWriteLayer()->equals($existingIngoingHierarchyRelation->contentStreamLayer)) {
                 $existingIngoingHierarchyRelation->assignNewChildNode(
                     $peerNode->relationAnchorPoint,
                     $this->dbal,
@@ -322,7 +322,7 @@ trait NodeVariation
             } else {
                 $copiedHierarchyRelation = $existingIngoingHierarchyRelation->with(
                     childNodeAnchor: $peerNode->relationAnchorPoint,
-                    contentStreamLayer: $contentStreamLayers->current(),
+                    contentStreamLayer: $contentStreamLayers->getWriteLayer(),
                 );
                 $copiedHierarchyRelation->addToDatabase(
                     $this->dbal,
@@ -343,7 +343,7 @@ trait NodeVariation
                 $peerSucceedingSiblings->toDimensionSpacePointSet()
             ) as $existingOutgoingHierarchyRelation
         ) {
-            if ($contentStreamLayers->current()->equals($existingOutgoingHierarchyRelation->contentStreamLayer)) {
+            if ($contentStreamLayers->getWriteLayer()->equals($existingOutgoingHierarchyRelation->contentStreamLayer)) {
                 $existingOutgoingHierarchyRelation->assignNewParentNode(
                     $peerNode->relationAnchorPoint,
                     null,
@@ -353,7 +353,7 @@ trait NodeVariation
             } else {
                 $copiedHierarchyRelation = $existingOutgoingHierarchyRelation->with(
                     parentNodeAnchor: $peerNode->relationAnchorPoint,
-                    contentStreamLayer: $contentStreamLayers->current(),
+                    contentStreamLayer: $contentStreamLayers->getWriteLayer(),
                 );
                 $copiedHierarchyRelation->addToDatabase(
                     $this->dbal,

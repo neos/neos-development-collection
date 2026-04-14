@@ -15,7 +15,6 @@ final readonly class ContentStreamLayers
     private function __construct(
         // todo remove all usages
         // public int $value,
-        private ContentStreamLayer $max,
         public array $items
     ) {
     }
@@ -25,14 +24,11 @@ final readonly class ContentStreamLayers
         if ($items === []) {
             throw new \InvalidArgumentException('Db ids must not be empty', 1775819046);
         }
-        $max = [];
         $indexed = [];
         foreach ($items as $id) {
             $indexed[$id->value] = $id;
-            $max[] = $id->value;
         }
         return new self(
-            max: $indexed[max($max)],
             items: $indexed,
         );
     }
@@ -45,9 +41,9 @@ final readonly class ContentStreamLayers
         );
     }
 
-    public function current(): ContentStreamLayer
+    public function getWriteLayer(): ContentStreamLayer
     {
-        return $this->max;
+        return $this->items[max(array_keys($this->items))];
     }
 
     public function equals(ContentStreamLayer $id): bool
