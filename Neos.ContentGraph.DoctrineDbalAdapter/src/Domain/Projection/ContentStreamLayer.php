@@ -7,17 +7,17 @@ namespace Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection;
 /**
  * @internal
  */
-final readonly class ContentStreamDbId
+final readonly class ContentStreamLayer
 {
     private function __construct(
         public int $value
     ) {
         if ($value < 0) {
-            throw new \InvalidArgumentException('A ContentStreamDbId cannot be negative, got %d', $value);
+            throw new \InvalidArgumentException('A ContentStreamLayer cannot be negative, got %d', $value);
         }
     }
 
-    public function equals(ContentStreamDbId $id): bool
+    public function equals(ContentStreamLayer $id): bool
     {
         return $this->value === $id->value;
     }

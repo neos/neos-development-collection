@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\Feature;
 
 use Doctrine\DBAL\Exception as DBALException;
-use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\ContentStreamDbIds;
+use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\ContentStreamLayers;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\HierarchyRelation;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
@@ -17,38 +17,38 @@ use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
  */
 trait NodeRemoval
 {
-    private function removeNodeAggregate(ContentStreamDbIds $contentStreamDbIds, NodeAggregateId $nodeAggregateId, DimensionSpacePointSet $affectedCoveredDimensionSpacePoints): void
+    private function removeNodeAggregate(ContentStreamLayers $contentStreamLayers, NodeAggregateId $nodeAggregateId, DimensionSpacePointSet $affectedCoveredDimensionSpacePoints): void
     {
         // the focus here is to be correct; that's why the method is not overly performant (for now at least). We might
         // lateron find tricks to improve performance
         $ingoingRelations = $this->projectionContentGraph->findIngoingHierarchyRelationsForNodeAggregate(
-            $contentStreamDbIds,
+            $contentStreamLayers,
             $nodeAggregateId,
             $affectedCoveredDimensionSpacePoints
         );
 
         foreach ($ingoingRelations as $ingoingRelation) {
-            $this->removeRelationRecursivelyFromDatabaseIncludingNonReferencedNodes($ingoingRelation, $contentStreamDbIds);
+            $this->removeRelationRecursivelyFromDatabaseIncludingNonReferencedNodes($ingoingRelation, $contentStreamLayers);
         }
     }
 
     private function removeRelationRecursivelyFromDatabaseIncludingNonReferencedNodes(
         HierarchyRelation $ingoingRelation,
-        ContentStreamDbIds $contentStreamDbIds,
+        ContentStreamLayers $contentStreamLayers,
     ): void {
         // $ingoingRelation->removeFromDatabase($this->dbal, $this->tableNames);
 
         foreach (
             $this->projectionContentGraph->findOutgoingHierarchyRelationsForNode(
                 $ingoingRelation->childNodeAnchor,
-                $contentStreamDbIds,
+                $contentStreamLayers,
                 new DimensionSpacePointSet([$ingoingRelation->dimensionSpacePoint])
             ) as $outgoingRelation
         ) {
-            $this->removeRelationRecursivelyFromDatabaseIncludingNonReferencedNodes($outgoingRelation, $contentStreamDbIds);
+            $this->removeRelationRecursivelyFromDatabaseIncludingNonReferencedNodes($outgoingRelation, $contentStreamLayers);
         }
 
-        if ($contentStreamDbIds->current()->equals($ingoingRelation->contentStreamDbId)) {
+        if ($contentStreamLayers->current()->equals($ingoingRelation->contentStreamLayer)) {
             $ingoingRelation->removeFromDatabase($this->dbal, $this->tableNames);
             // remove node itself if it does not have any incoming hierarchy relations anymore
             // also remove outbound reference relations
@@ -62,7 +62,7 @@ trait NodeRemoval
                 WHERE
                     n.relationanchorpoint = :anchorPointForNode
                     -- the following line means "left join leads to NO MATCHING hierarchyrelation"
-                    AND h.contentstreamdbid IS NULL
+                    AND h.contentstreamlayer IS NULL
             SQL;
             try {
                 $this->dbal->executeStatement($deleteRelationsStatement, [
@@ -80,7 +80,7 @@ trait NodeRemoval
                   position,
                   subtreetags,
                   dimensionspacepointhash,
-                  contentstreamdbid
+                  contentstreamlayer
                 )
                 SELECT
                   h.id,
@@ -90,19 +90,19 @@ trait NodeRemoval
                   h.position,
                   h.subtreetags,
                   h.dimensionspacepointhash,
-                  :targetContentStreamDbId as contentstreamdbid
+                  :targetContentStreamLayer as contentstreamlayer
                 FROM
                     {$this->tableNames->hierarchyRelation()} h
                 WHERE 
                     id = :id
-                    AND contentstreamdbid = :contentStreamDbId
+                    AND contentstreamlayer = :contentStreamLayer
             SQL;
 
             try {
                 $this->dbal->executeStatement($copyRemovedHierarchyRelationStatement, [
-                    'id' => $ingoingRelation->hierarchyRelationDbId->value,
-                    'contentStreamDbId' => $ingoingRelation->contentStreamDbId->value,
-                    'targetContentStreamDbId' => $contentStreamDbIds->current()->value,
+                    'id' => $ingoingRelation->hierarchyRelationId->value,
+                    'contentStreamLayer' => $ingoingRelation->contentStreamLayer->value,
+                    'targetContentStreamLayer' => $contentStreamLayers->current()->value,
                 ]);
             } catch (DBALException $e) {
                 throw new \RuntimeException(sprintf('Failed to copy hierarchy relation: %s', $e->getMessage()), 1775978611, $e);

@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Neos\ContentGraph\DoctrineDbalAdapter;
 
 use Doctrine\DBAL\Connection;
-use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\ContentStreamDbIdFinder;
+use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\ContentStreamLayerFinder;
 use Doctrine\DBAL\Platforms\AbstractMySQLPlatform;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\DimensionSpacePointsRepository;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\NodeFactory;
@@ -38,7 +38,7 @@ final class DoctrineDbalContentGraphProjectionFactory implements ContentGraphPro
         );
 
         $dimensionSpacePointsRepository = new DimensionSpacePointsRepository($this->dbal, $tableNames);
-        $contentStreamDbIdsRepository = new ContentStreamDbIdFinder($this->dbal, $tableNames);
+        $contentStreamLayerFinder = new ContentStreamLayerFinder($this->dbal, $tableNames);
 
         $nodeFactory = new NodeFactory(
             $projectionFactoryDependencies->contentRepositoryId,
@@ -66,7 +66,7 @@ final class DoctrineDbalContentGraphProjectionFactory implements ContentGraphPro
             ),
             $tableNames,
             $dimensionSpacePointsRepository,
-            $contentStreamDbIdsRepository,
+            $contentStreamLayerFinder,
             $contentGraphReadModel
         );
     }

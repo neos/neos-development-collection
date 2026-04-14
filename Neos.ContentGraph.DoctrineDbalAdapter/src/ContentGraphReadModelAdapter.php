@@ -17,7 +17,7 @@ namespace Neos\ContentGraph\DoctrineDbalAdapter;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Exception;
 use Doctrine\DBAL\Query\QueryBuilder;
-use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\ContentStreamDbIds;
+use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\ContentStreamLayers;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\ContentGraph;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\NodeFactory;
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
@@ -51,10 +51,10 @@ final readonly class ContentGraphReadModelAdapter implements ContentGraphReadMod
         $currentContentStreamIdStatement = <<<SQL
             SELECT
                 ws.currentContentStreamId,
-                csIds.dbId AS contentStreamDbId
+                l.contentStreamLayer
             FROM
                 {$this->tableNames->workspace()} ws
-                JOIN {$this->tableNames->contentStreamId()} csIds ON csIds.id = ws.currentContentStreamId
+                JOIN {$this->tableNames->contentStreamLayer()} l ON l.contentStreamId = ws.currentContentStreamId
             WHERE
                 ws.name = :workspaceName
         SQL;
@@ -70,8 +70,8 @@ final readonly class ContentGraphReadModelAdapter implements ContentGraphReadMod
         }
         $firstRow = reset($rows);
         $currentContentStreamId = ContentStreamId::fromString($firstRow['currentContentStreamId']);
-        $contentStreamDbIds = ContentStreamDbIds::fromArray(array_column($rows, 'contentStreamDbId'));
-        return new ContentGraph($this->dbal, $this->nodeFactory, $this->contentRepositoryId, $this->nodeTypeManager, $this->tableNames, $workspaceName, $currentContentStreamId, $contentStreamDbIds);
+        $contentStreamLayers = ContentStreamLayers::fromArray(array_column($rows, 'contentStreamLayer'));
+        return new ContentGraph($this->dbal, $this->nodeFactory, $this->contentRepositoryId, $this->nodeTypeManager, $this->tableNames, $workspaceName, $currentContentStreamId, $contentStreamLayers);
     }
 
     public function findWorkspaceByName(WorkspaceName $workspaceName): ?Workspace

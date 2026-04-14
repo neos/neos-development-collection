@@ -7,13 +7,13 @@ namespace Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection;
 /**
  * @internal
  */
-class HierarchyRelationDbId
+class HierarchyRelationId
 {
     private function __construct(
         public ?int $value
     ) {
         if ($value !== null && $value < 0) {
-            throw new \InvalidArgumentException('A HierarchyRelationDbId cannot be negative, got %d', $value);
+            throw new \InvalidArgumentException('A HierarchyRelationId cannot be negative, got %d', $value);
         }
     }
 
@@ -22,7 +22,7 @@ class HierarchyRelationDbId
         return new self(null);
     }
 
-    public function equals(HierarchyRelationDbId $id): bool
+    public function equals(HierarchyRelationId $id): bool
     {
         return $this->value === $id->value;
     }
