@@ -417,12 +417,12 @@ Link Type Options Reference:
 ``position`` (string|integer)
 	Defines order of this link type. E.g. ``"before <id of link type>"``.
 
-Document (configuration ``linkTypes.Document``):
+Node (configuration ``linkTypes.Node``):
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-The `Document` Link Type handles internal links. The editor offers you a document tree from which you can select documents from within your site. It also offers a search and a node type filter similar to the main document tree in the left side bar of the Neos UI.
+The `Node` Link Type handles internal links. The editor offers you a document tree from which you can select documents from within your site. It also offers a search and a node type filter similar to the main document tree in the left side bar of the Neos UI.
 
-The `Document` Link Type can be configured as follows:
+The `Node` Link Type can be configured as follows:
 
 Link Type Options Reference:
 
