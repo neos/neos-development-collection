@@ -19,11 +19,13 @@ final readonly class HierarchyRelationQueryBuilder
         return <<<SQL
         (SELECT h.*
             FROM {$this->tableNames->hierarchyRelation()} as h
-            INNER JOIN (SELECT id, MAX(contentstreamdbid) as contentstreamdbid
+            INNER JOIN (SELECT id, MAX(contentstreamlayer) as contentstreamlayer
                 FROM {$this->tableNames->hierarchyRelation()}
-                WHERE (contentstreamdbid IN (:contentStreamDbIds))
+                WHERE (contentstreamlayer IN (:contentStreamLayers))
                 GROUP BY id
-            ) AS hIds ON h.contentstreamdbid = hIds.contentstreamdbid AND h.id = hIds.id
+            ) AS contentStreamLayers
+                ON h.id = contentStreamLayers.id
+                    AND h.contentstreamlayer = contentStreamLayers.contentstreamlayer
             {$whereClause}
         )
         SQL;

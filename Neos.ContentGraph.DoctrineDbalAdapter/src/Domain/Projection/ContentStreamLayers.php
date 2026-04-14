@@ -7,20 +7,20 @@ namespace Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection;
 /**
  * @internal
  */
-final readonly class ContentStreamDbIds
+final readonly class ContentStreamLayers
 {
     /**
-     * @param array<int,ContentStreamDbId> $items
+     * @param array<int,ContentStreamLayer> $items
      */
     private function __construct(
         // todo remove all usages
         // public int $value,
-        private ContentStreamDbId $max,
+        private ContentStreamLayer $max,
         public array $items
     ) {
     }
 
-    public static function from(ContentStreamDbId ...$items): self
+    public static function from(ContentStreamLayer ...$items): self
     {
         if ($items === []) {
             throw new \InvalidArgumentException('Db ids must not be empty', 1775819046);
@@ -41,21 +41,21 @@ final readonly class ContentStreamDbIds
     public static function fromArray(array $array): self
     {
         return self::from(
-            ...array_map(ContentStreamDbId::fromInt(...), $array),
+            ...array_map(ContentStreamLayer::fromInt(...), $array),
         );
     }
 
-    public function current(): ContentStreamDbId
+    public function current(): ContentStreamLayer
     {
         return $this->max;
     }
 
-    public function equals(ContentStreamDbId $id): bool
+    public function equals(ContentStreamLayer $id): bool
     {
         return count($this->items) === 1 && array_key_exists($id->value, $this->items);
     }
 
-    public function contain(ContentStreamDbId $id): bool
+    public function contain(ContentStreamLayer $id): bool
     {
         return array_key_exists($id->value, $this->items);
     }
