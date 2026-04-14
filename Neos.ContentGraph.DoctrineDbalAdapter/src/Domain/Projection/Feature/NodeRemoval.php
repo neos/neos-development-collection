@@ -48,7 +48,7 @@ trait NodeRemoval
             $this->removeRelationRecursivelyFromDatabaseIncludingNonReferencedNodes($outgoingRelation, $contentStreamLayers);
         }
 
-        if ($contentStreamLayers->current()->equals($ingoingRelation->contentStreamLayer)) {
+        if ($contentStreamLayers->getWriteLayer()->equals($ingoingRelation->contentStreamLayer)) {
             $ingoingRelation->removeFromDatabase($this->dbal, $this->tableNames);
             // remove node itself if it does not have any incoming hierarchy relations anymore
             // also remove outbound reference relations
@@ -102,7 +102,7 @@ trait NodeRemoval
                 $this->dbal->executeStatement($copyRemovedHierarchyRelationStatement, [
                     'id' => $ingoingRelation->hierarchyRelationId->value,
                     'contentStreamLayer' => $ingoingRelation->contentStreamLayer->value,
-                    'targetContentStreamLayer' => $contentStreamLayers->current()->value,
+                    'targetContentStreamLayer' => $contentStreamLayers->getWriteLayer()->value,
                 ]);
             } catch (DBALException $e) {
                 throw new \RuntimeException(sprintf('Failed to copy hierarchy relation: %s', $e->getMessage()), 1775978611, $e);
