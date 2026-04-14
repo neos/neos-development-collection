@@ -25,7 +25,7 @@ use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\HierarchyRelation;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\HierarchyRelationId;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\NodeRecord;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\NodeRelationAnchorPoint;
-use Neos\ContentGraph\DoctrineDbalAdapter\HierarchyRelationQueryBuilder;
+use Neos\ContentGraph\DoctrineDbalAdapter\HierarchyRelationStatement;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
@@ -41,13 +41,10 @@ use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
  */
 class ProjectionContentGraph
 {
-    private HierarchyRelationQueryBuilder $hierarchyRelationQueryBuilder;
-
     public function __construct(
         private readonly Connection $dbal,
         private readonly ContentGraphTableNames $tableNames,
     ) {
-        $this->hierarchyRelationQueryBuilder = new HierarchyRelationQueryBuilder($this->tableNames);
     }
 
     /**
@@ -132,12 +129,14 @@ class ProjectionContentGraph
         OriginDimensionSpacePoint $originDimensionSpacePoint,
         ContentStreamLayers $contentStreamLayers
     ): ?NodeRelationAnchorPoint {
+        $hierarchyRelationStatement = HierarchyRelationStatement::for($this->tableNames)->toSql();
+
         $relationAnchorPointsStatement = <<<SQL
             SELECT
                 DISTINCT n.relationanchorpoint
             FROM
                 {$this->tableNames->node()} n
-                INNER JOIN {$this->hierarchyRelationQueryBuilder->selectHierarchyRowsForContentStream()} as h ON h.childnodeanchor = n.relationanchorpoint
+                INNER JOIN {$hierarchyRelationStatement} as h ON h.childnodeanchor = n.relationanchorpoint
             WHERE
                 n.nodeaggregateid = :nodeAggregateId
                 AND n.origindimensionspacepointhash = :originDimensionSpacePointHash
@@ -468,11 +467,13 @@ class ProjectionContentGraph
         ContentStreamLayers $contentStreamLayers,
         ?DimensionSpacePointSet $restrictToSet = null
     ): array {
+        $hierarchyRelationStatement = HierarchyRelationStatement::for($this->tableNames)->toSql();
+
         $outgoingHierarchyRelationsStatement = <<<SQL
             SELECT
                 h.*
             FROM
-                {$this->hierarchyRelationQueryBuilder->selectHierarchyRowsForContentStream()} h
+                {$hierarchyRelationStatement} h
             WHERE
                 h.parentnodeanchor = :parentAnchorPoint
         SQL;
@@ -509,11 +510,15 @@ class ProjectionContentGraph
         NodeAggregateId $nodeAggregateId,
         DimensionSpacePointSet $dimensionSpacePointSet
     ): array {
+        $hierarchyRelationStatement = HierarchyRelationStatement::for($this->tableNames)
+            ->where('h.dimensionspacepointhash IN (:dimensionSpacePointHashes)')
+            ->toSql();
+
         $outgoingHierarchyRelationsStatement = <<<SQL
             SELECT
                 h.*
             FROM
-                {$this->hierarchyRelationQueryBuilder->selectHierarchyRowsForContentStream('WHERE h.dimensionspacepointhash IN (:dimensionSpacePointHashes)')} h
+                {$hierarchyRelationStatement} h
                 INNER JOIN {$this->tableNames->node()} n ON h.parentnodeanchor = n.relationanchorpoint
             WHERE
                 n.nodeaggregateid = :nodeAggregateId
@@ -541,11 +546,15 @@ class ProjectionContentGraph
         NodeAggregateId $nodeAggregateId,
         ?DimensionSpacePointSet $dimensionSpacePointSet = null
     ): array {
+        $hierarchyRelationStatement = HierarchyRelationStatement::for($this->tableNames)
+            ->where($dimensionSpacePointSet !== null ? 'h.dimensionspacepointhash IN (:dimensionSpacePointHashes)' : '')
+            ->toSql();
+
         $ingoingHierarchyRelationsStatement = <<<SQL
             SELECT
                 h.*
             FROM
-                {$this->hierarchyRelationQueryBuilder->selectHierarchyRowsForContentStream($dimensionSpacePointSet !== null ? 'WHERE h.dimensionspacepointhash IN (:dimensionSpacePointHashes)' : '')} h
+                {$hierarchyRelationStatement} h
                 INNER JOIN {$this->tableNames->node()} n ON h.childnodeanchor = n.relationanchorpoint
             WHERE
                 n.nodeaggregateid = :nodeAggregateId
