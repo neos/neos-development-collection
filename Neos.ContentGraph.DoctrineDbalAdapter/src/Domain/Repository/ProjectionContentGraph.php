@@ -131,7 +131,7 @@ class ProjectionContentGraph
                 DISTINCT n.relationanchorpoint
             FROM
                 {$this->tableNames->node()} n
-                INNER JOIN {$this->hierarchyRelationStatement->toSql()} ON h.childnodeanchor = n.relationanchorpoint
+                INNER JOIN {$this->hierarchyRelationStatement->toSql()} as h ON h.childnodeanchor = n.relationanchorpoint
             WHERE
                 n.nodeaggregateid = :nodeAggregateId
                 AND n.origindimensionspacepointhash = :originDimensionSpacePointHash
