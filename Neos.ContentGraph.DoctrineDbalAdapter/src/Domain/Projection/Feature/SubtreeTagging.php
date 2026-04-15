@@ -25,8 +25,6 @@ trait SubtreeTagging
 {
     private function addSubtreeTag(ContentStreamLayers $contentStreamLayers, NodeAggregateId $nodeAggregateId, DimensionSpacePointSet $affectedDimensionSpacePoints, SubtreeTag $tag): void
     {
-        $hierarchyRelationStatement = HierarchyRelationStatement::for($this->tableNames);
-
         $addTagToDescendantsStatement = <<<SQL
         INSERT INTO {$this->tableNames->hierarchyRelation()} (
             id,
@@ -50,7 +48,7 @@ trait SubtreeTagging
                 -- todo use new id?
                 WITH RECURSIVE cte (id, dsp) AS (
                     SELECT ch.childnodeanchor, ch.dimensionspacepointhash
-                    FROM {$hierarchyRelationStatement->where('h.dimensionspacepointhash in (:dimensionSpacePointHashes) AND NOT JSON_CONTAINS_PATH(h.subtreetags, \'one\', :tagPath)')->toSql()} ch
+                    FROM {$this->hierarchyRelationStatement->where('h.dimensionspacepointhash in (:dimensionSpacePointHashes)')->andWhere('NOT JSON_CONTAINS_PATH(h.subtreetags, \'one\', :tagPath)')->toSql()} ch
                     INNER JOIN {$this->tableNames->node()} n ON n.relationanchorpoint = ch.parentnodeanchor
                     WHERE
                       n.nodeaggregateid = :nodeAggregateId
@@ -59,7 +57,7 @@ trait SubtreeTagging
                       dh.childnodeanchor, dh.dimensionspacepointhash
                     FROM
                       cte
-                      JOIN {$hierarchyRelationStatement->toSql()} dh ON dh.parentnodeanchor = cte.id
+                      JOIN {$this->hierarchyRelationStatement->toSql()} dh ON dh.parentnodeanchor = cte.id
                             -- todo why not in where???? or why not to dimensionSpacePointHashes
                           AND dh.dimensionspacepointhash = cte.dsp
                     WHERE
@@ -106,7 +104,7 @@ trait SubtreeTagging
                 JSON_SET(h.subtreetags, :tagPath, true) as subtreetags,
                 h.dimensionspacepointhash,
                 :targetContentStreamLayer as contentstreamlayer
-            FROM {$hierarchyRelationStatement->where('h.dimensionspacepointhash in (:dimensionSpacePointHashes)')->toSql()} h        
+            FROM {$this->hierarchyRelationStatement->where('h.dimensionspacepointhash in (:dimensionSpacePointHashes)')->toSql()} h        
             INNER JOIN {$this->tableNames->node()} n ON n.relationanchorpoint = h.childnodeanchor
             WHERE
               n.nodeaggregateid = :nodeAggregateId
@@ -130,8 +128,6 @@ trait SubtreeTagging
 
     private function removeSubtreeTag(ContentStreamLayers $contentStreamLayers, NodeAggregateId $nodeAggregateId, DimensionSpacePointSet $affectedDimensionSpacePoints, SubtreeTag $tag): void
     {
-        $hierarchyRelationStatement = HierarchyRelationStatement::for($this->tableNames);
-
         $removeTagStatement = <<<SQL
         INSERT INTO {$this->tableNames->hierarchyRelation()} (
             id,
@@ -169,7 +165,7 @@ trait SubtreeTagging
                 -- todo use new actual id?
               WITH RECURSIVE cte (id, dsp) AS (
                 SELECT ph.childnodeanchor, ph.dimensionspacepointhash
-                FROM {$hierarchyRelationStatement->where('h.dimensionspacepointhash in (:dimensionSpacePointHashes)')->toSql()} ph
+                FROM {$this->hierarchyRelationStatement->where('h.dimensionspacepointhash in (:dimensionSpacePointHashes)')->toSql()} ph
                 INNER JOIN {$this->tableNames->node()} n ON n.relationanchorpoint = ph.childnodeanchor
                 WHERE
                   n.nodeaggregateid = :nodeAggregateId
@@ -179,7 +175,7 @@ trait SubtreeTagging
                   dh.dimensionspacepointhash
                 FROM
                   cte
-                  JOIN {$hierarchyRelationStatement->toSql()} dh ON dh.parentnodeanchor = cte.id
+                  JOIN {$this->hierarchyRelationStatement->toSql()} dh ON dh.parentnodeanchor = cte.id
                     AND dh.dimensionspacepointhash = cte.dsp
                 WHERE
                   JSON_EXTRACT(dh.subtreetags, :tagPath) != TRUE
@@ -293,12 +289,14 @@ trait SubtreeTagging
         if ($parentNodeAnchorPoint->equals(NodeRelationAnchorPoint::forRootEdge())) {
             return NodeTags::createEmpty();
         }
+
+        $subtreeTagsStatement = <<<SQL
+        SELECT h.subtreetags FROM {$this->hierarchyRelationStatement->where('h.dimensionspacepointhash = :dimensionSpacePointHash')->toSql()} h
+            WHERE h.childnodeanchor = :parentNodeAnchorPoint
+        SQL;
+
         try {
-            $subtreeTagsJson = $this->dbal->fetchOne('
-                    SELECT h.subtreetags FROM ' . HierarchyRelationStatement::for($this->tableNames)->where('h.dimensionspacepointhash = :dimensionSpacePointHash')->toSql() . ' h
-                    WHERE
-                      h.childnodeanchor = :parentNodeAnchorPoint
-                ', [
+            $subtreeTagsJson = $this->dbal->fetchOne($subtreeTagsStatement, [
                 'parentNodeAnchorPoint' => $parentNodeAnchorPoint->value,
                 'contentStreamLayers' => $contentStreamLayers->toIntArray(),
                 'dimensionSpacePointHash' => $dimensionSpacePoint->hash,

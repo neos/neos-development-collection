@@ -87,6 +87,7 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
     use SubtreeTagging;
     use Workspace;
 
+    private HierarchyRelationStatement $hierarchyRelationStatement;
 
     public const RELATION_DEFAULT_OFFSET = 128;
 
@@ -98,6 +99,7 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
         private readonly ContentStreamLayerFinder $contentStreamLayerFinder,
         private readonly ContentGraphReadModelInterface $contentGraphReadModel
     ) {
+        $this->hierarchyRelationStatement = HierarchyRelationStatement::for($this->tableNames);
     }
 
     public function setUp(): void
