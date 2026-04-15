@@ -41,10 +41,13 @@ use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
  */
 class ProjectionContentGraph
 {
+    private HierarchyRelationStatement $hierarchyRelationStatement;
+
     public function __construct(
         private readonly Connection $dbal,
         private readonly ContentGraphTableNames $tableNames,
     ) {
+        $this->hierarchyRelationStatement = HierarchyRelationStatement::for($this->tableNames);
     }
 
     /**
@@ -102,12 +105,10 @@ class ProjectionContentGraph
                 n.*, h.subtreetags, dsp.dimensionspacepoint AS origindimensionspacepoint
             FROM
                 {$this->tableNames->node()} n
-                INNER JOIN {$this->tableNames->hierarchyRelation()} h ON h.childnodeanchor = n.relationanchorpoint
+                INNER JOIN {$this->hierarchyRelationStatement->where('h.dimensionspacepointhash = :dimensionSpacePointHash')->toSql()} h ON h.childnodeanchor = n.relationanchorpoint
                 INNER JOIN {$this->tableNames->dimensionSpacePoints()} dsp ON n.origindimensionspacepointhash = dsp.hash
             WHERE
                 n.nodeaggregateid = :nodeAggregateId
-                AND h.contentstreamlayer IN (:contentStreamLayers)
-                AND h.dimensionspacepointhash = :dimensionSpacePointHash
         SQL;
         try {
             $nodeRow = $this->dbal->fetchAssociative($nodeInAggregateStatement, [
