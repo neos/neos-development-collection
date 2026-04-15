@@ -76,7 +76,7 @@ Feature: On forking a content stream, node references should be copied as well.
     And the command SetNodeProperties is executed with payload:
       | Key             | Value                                  |
       | nodeAggregateId | "source-nodandaise"                    |
-      | propertyValues  | {"text": "Modified in live workspace"} |
+      | propertyValues  | {"text": "Modified in user workspace"} |
     Then I expect node aggregate identifier "source-nodandaise" to lead to node user-cs-identifier;source-nodandaise;{"language": "de"}
     And I expect this node to have the following references:
       | Name              | Node                                                    | Properties |
