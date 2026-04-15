@@ -131,7 +131,7 @@ class ProjectionContentGraph
                 DISTINCT n.relationanchorpoint
             FROM
                 {$this->tableNames->node()} n
-                INNER JOIN {$this->hierarchyRelationStatement->toSql()} as h ON h.childnodeanchor = n.relationanchorpoint
+                INNER JOIN {$this->hierarchyRelationStatement->toSql()} AS h ON h.childnodeanchor = n.relationanchorpoint
             WHERE
                 n.nodeaggregateid = :nodeAggregateId
                 AND n.origindimensionspacepointhash = :originDimensionSpacePointHash
@@ -166,10 +166,9 @@ class ProjectionContentGraph
                 DISTINCT n.relationanchorpoint
             FROM
                 {$this->tableNames->node()} n
-                INNER JOIN {$this->tableNames->hierarchyRelation()} h ON h.childnodeanchor = n.relationanchorpoint
+                INNER JOIN {$this->hierarchyRelationStatement->toSql()} h ON h.childnodeanchor = n.relationanchorpoint
             WHERE
                 n.nodeaggregateid = :nodeAggregateId
-                AND h.contentstreamlayer IN (:contentStreamLayers)
         SQL;
         try {
             $relationAnchorPoints = $this->dbal->fetchFirstColumn($relationAnchorPointsStatement, [
@@ -225,11 +224,9 @@ class ProjectionContentGraph
                 SELECT
                     h.*
                 FROM
-                    {$this->tableNames->hierarchyRelation()} h
+                    {$this->hierarchyRelationStatement->where('h.dimensionspacepointhash = :dimensionSpacePointHash')->toSql()} h
                 WHERE
                     h.childnodeanchor = :succeedingSiblingAnchorPoint
-                    AND h.contentstreamlayer IN (:contentStreamLayers)
-                    AND h.dimensionspacepointhash = :dimensionSpacePointHash
             SQL;
             try {
                 /** @var array<string,mixed> $succeedingSiblingRelation */
@@ -258,11 +255,9 @@ class ProjectionContentGraph
                 SELECT
                     MAX(h.position) AS position
                 FROM
-                    {$this->tableNames->hierarchyRelation()} h
+                    {$this->hierarchyRelationStatement->where('h.dimensionspacepointhash = :dimensionSpacePointHash')->toSql()} h
                 WHERE
                     h.parentnodeanchor = :anchorPoint
-                    AND h.contentstreamlayer IN (:contentStreamLayers)
-                    AND h.dimensionspacepointhash = :dimensionSpacePointHash
                     AND h.position < :position
             SQL;
             try {
@@ -293,11 +288,9 @@ class ProjectionContentGraph
                     SELECT
                         h.parentnodeanchor
                     FROM
-                        {$this->tableNames->hierarchyRelation()} h
+                        {$this->hierarchyRelationStatement->where('h.dimensionspacepointhash = :dimensionSpacePointHash')->toSql()} h
                     WHERE
                         h.childnodeanchor = :childAnchorPoint
-                        AND h.contentstreamlayer IN (:contentStreamLayers)
-                        AND h.dimensionspacepointhash = :dimensionSpacePointHash
                 SQL;
                 try {
                     /** @var array<string,mixed> $childHierarchyRelationData */
@@ -319,11 +312,9 @@ class ProjectionContentGraph
                 SELECT
                     MAX(h.position) AS position
                 FROM
-                    {$this->tableNames->hierarchyRelation()} h
+                    {$this->hierarchyRelationStatement->where('h.dimensionspacepointhash = :dimensionSpacePointHash')->toSql()} h
                 WHERE
                     h.parentnodeanchor = :parentAnchorPoint
-                    AND h.contentstreamlayer IN (:contentStreamLayers)
-                    AND h.dimensionspacepointhash = :dimensionSpacePointHash
             SQL;
             try {
                 $rightmostSucceedingSiblingRelationData = $this->dbal->fetchAssociative($rightmostSucceedingSiblingRelationStatement, [
@@ -360,11 +351,9 @@ class ProjectionContentGraph
             SELECT
                 h.*
             FROM
-                {$this->tableNames->hierarchyRelation()} h
+                {$this->hierarchyRelationStatement->where('h.dimensionspacepointhash = :dimensionSpacePointHash')->toSql()} h
             WHERE
                 h.parentnodeanchor = :parentAnchorPoint
-                AND h.contentstreamlayer IN (:contentStreamLayers)
-                AND h.dimensionspacepointhash = :dimensionSpacePointHash
         SQL;
         try {
             $rows = $this->dbal->fetchAllAssociative($outgoingHierarchyRelationsStatement, [
@@ -392,11 +381,9 @@ class ProjectionContentGraph
             SELECT
                 h.*
             FROM
-                {$this->tableNames->hierarchyRelation()} h
+                {$this->hierarchyRelationStatement->where('h.dimensionspacepointhash = :dimensionSpacePointHash')->toSql()} h
             WHERE
                 h.childnodeanchor = :childAnchorPoint
-                AND h.contentstreamlayer IN (:contentStreamLayers)
-                AND h.dimensionspacepointhash = :dimensionSpacePointHash
         SQL;
         try {
             $rows = $this->dbal->fetchAllAssociative($ingoingHierarchyRelationsStatement, [
@@ -424,10 +411,9 @@ class ProjectionContentGraph
             SELECT
                 h.*
             FROM
-                {$this->tableNames->hierarchyRelation()} h
+                {$this->hierarchyRelationStatement->toSql()} h
             WHERE
                 h.childnodeanchor = :childAnchorPoint
-                AND h.contentstreamlayer IN (:contentStreamLayers)
         SQL;
         $parameters = [
             'childAnchorPoint' => $childAnchorPoint->value,
