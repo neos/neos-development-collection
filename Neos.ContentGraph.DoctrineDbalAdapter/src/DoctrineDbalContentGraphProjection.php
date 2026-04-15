@@ -314,30 +314,31 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
         // 1) hierarchy relations
         $insertHierarchyRelationsStatement = <<<SQL
             INSERT INTO {$this->tableNames->hierarchyRelation()} (
+              contentstreamlayer,
               parentnodeanchor,
               childnodeanchor,
               position,
               subtreetags,
-              dimensionspacepointhash,
-              contentstreamlayer
+              dimensionspacepointhash
             )
             SELECT
+              :targetContentStreamLayer as contentstreamlayer,
               h.parentnodeanchor,
               h.childnodeanchor,
               h.position,
               h.subtreetags,
-              :newDimensionSpacePointHash AS dimensionspacepointhash,
-              h.contentstreamlayer
+              :newDimensionSpacePointHash AS dimensionspacepointhash
             FROM
-                {$this->tableNames->hierarchyRelation()} h
-                WHERE h.contentstreamlayer IN (:contentStreamLayers)
-                AND h.dimensionspacepointhash = :sourceDimensionSpacePointHash
+                {$this->hierarchyRelationStatement->where('h.dimensionspacepointhash = :sourceDimensionSpacePointHash')->toSql()} h
         SQL;
         try {
             $this->dbal->executeStatement($insertHierarchyRelationsStatement, [
-                'contentStreamLayer' => $this->getContentStreamLayers($event)->value,
+                'contentStreamLayers' => $this->getContentStreamLayers($event)->toIntArray(),
                 'sourceDimensionSpacePointHash' => $event->source->hash,
                 'newDimensionSpacePointHash' => $event->target->hash,
+                'targetContentStreamLayer' => $this->getContentStreamLayers($event)->getWriteLayer()->value,
+            ], [
+                'contentStreamLayers' => ArrayParameterType::INTEGER,
             ]);
         } catch (DBALException $e) {
             throw new \RuntimeException(sprintf('Failed to insert hierarchy relations: %s', $e->getMessage()), 1716490758, $e);
@@ -355,10 +356,8 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
         $selectRelationsStatement = <<<SQL
             SELECT n.relationanchorpoint
             FROM {$this->tableNames->node()} n
-            INNER JOIN {$this->tableNames->hierarchyRelation()} h
+            INNER JOIN {$this->hierarchyRelationStatement->where('h.dimensionspacepointhash = :dimensionSpacePointHash')->toSql()} h
                 ON h.childnodeanchor = n.relationanchorpoint
-                AND h.contentstreamlayer IN (:contentStreamLayers)
-                AND h.dimensionspacepointhash = :dimensionSpacePointHash
                 -- find only nodes which have their ORIGIN at the source DimensionSpacePoint,
                 -- as we need to rewrite these origins (using copy on write)
                 AND n.origindimensionspacepointhash = :dimensionSpacePointHash
@@ -367,7 +366,9 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
         try {
             $relationAnchorPoints = $this->dbal->fetchFirstColumn($selectRelationsStatement, [
                 'dimensionSpacePointHash' => $event->source->hash,
-                'contentStreamLayer' => $this->getContentStreamLayers($event)->value
+                'contentStreamLayers' => $this->getContentStreamLayers($event)->toIntArray(),
+            ], [
+                'contentStreamLayers' => ArrayParameterType::INTEGER
             ]);
         } catch (DBALException $e) {
             throw new \RuntimeException(sprintf('Failed to load relation anchor points: %s', $e->getMessage()), 1716489628, $e);
@@ -385,18 +386,35 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
 
         // 2) hierarchy relations
         $updateHierarchyRelationsStatement = <<<SQL
-            UPDATE {$this->tableNames->hierarchyRelation()} h
-            SET
-                h.dimensionspacepointhash = :newDimensionSpacePointHash
-            WHERE
-              h.dimensionspacepointhash = :originalDimensionSpacePointHash
-              AND h.contentstreamlayer IN (:contentStreamLayers)
+            INSERT INTO {$this->tableNames->hierarchyRelation()}
+            (
+              id,
+              contentstreamlayer,
+              parentnodeanchor,
+              childnodeanchor,
+              position,
+              subtreetags,
+              dimensionspacepointhash
+            )
+            SELECT
+              h.id,
+              :targetContentStreamLayer as contentstreamlayer,
+              h.parentnodeanchor,
+              h.childnodeanchor,
+              h.position,
+              h.subtreetags,
+              :newDimensionSpacePointHash AS dimensionspacepointhash
+            FROM {$this->hierarchyRelationStatement->where('h.dimensionspacepointhash = :originalDimensionSpacePointHash')->toSql()} AS h
+            ON DUPLICATE KEY UPDATE dimensionspacepointhash = VALUES(dimensionspacepointhash)
         SQL;
         try {
             $this->dbal->executeStatement($updateHierarchyRelationsStatement, [
                 'originalDimensionSpacePointHash' => $event->source->hash,
                 'newDimensionSpacePointHash' => $event->target->hash,
-                'contentStreamLayer' => $this->getContentStreamLayers($event)->value,
+                'contentStreamLayers' => $this->getContentStreamLayers($event)->toIntArray(),
+                'targetContentStreamLayer' => $this->getContentStreamLayers($event)->getWriteLayer()->value,
+            ], [
+                'contentStreamLayers' => ArrayParameterType::INTEGER
             ]);
         } catch (DBALException $e) {
             throw new \RuntimeException(sprintf('Failed to update hierarchy relations: %s', $e->getMessage()), 1716489951, $e);
@@ -766,8 +784,8 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
         NodeRelationAnchorPoint $anchorPoint,
         callable $operations
     ): mixed {
-        $contentStreamLayers = $this->projectionContentGraph->getAllContentStreamLayersAnchorPointIsContainedIn($anchorPoint);
-        if (!$contentStreamLayers->equals($contentStreamLayersWhereWriteOccurs->getWriteLayer())) {
+        $contentStreamLayersWithMaterializedNode = $this->projectionContentGraph->getAllContentStreamLayersAnchorPointIsContainedIn($anchorPoint);
+        if (!$contentStreamLayersWithMaterializedNode->equals($contentStreamLayersWhereWriteOccurs->getWriteLayer())) {
             // Copy on Write needed!
             // Copy on Write is a purely "Content Stream" related concept;
             // thus we do not care about different DimensionSpacePoints here (but we copy all edges)
@@ -781,75 +799,46 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
 
             // 2) reconnect all edges belonging to this content stream to the new "copied node".
             // IMPORTANT: We need to reconnect BOTH the incoming and outgoing edges.
+            $copyHierarchyRelationStatement = <<<SQL
+                INSERT INTO {$this->tableNames->hierarchyRelation()} (
+                  id,
+                  parentnodeanchor,
+                  childnodeanchor,
+                  position,
+                  subtreetags,
+                  dimensionspacepointhash,
+                  contentstreamlayer
+                )
+                SELECT
+                  h.id,
+                  -- if our (copied) node is the parent, we update h.parentNodeAnchor
+                  IF(h.parentnodeanchor = :originalNodeAnchor, :newNodeAnchor, h.parentnodeanchor) as parentnodeanchor,
+                  -- if our (copied) node is the child, we update h.childNodeAnchor
+                  IF(h.childnodeanchor = :originalNodeAnchor, :newNodeAnchor, h.childnodeanchor) as childnodeanchor,
+                  h.position,
+                  h.subtreetags,
+                  h.dimensionspacepointhash,
+                  :targetContentStreamLayer as contentstreamlayer
+                FROM
+                    {$this->tableNames->hierarchyRelation()} h
+                WHERE 
+                    :originalNodeAnchor IN (h.childnodeanchor, h.parentnodeanchor)
+                    AND h.contentstreamlayer IN (:contentStreamLayers)
+                ON DUPLICATE KEY UPDATE parentnodeanchor = VALUES(parentnodeanchor), childnodeanchor = VALUES(childnodeanchor)
+            SQL;
 
-            if ($contentStreamLayers->contain($contentStreamLayersWhereWriteOccurs->getWriteLayer())) {
-                // todo make upsert
-                $updateHierarchyRelationStatement = <<<SQL
-                    UPDATE {$this->tableNames->hierarchyRelation()} h
-                    SET
-                        -- if our (copied) node is the child, we update h.childNodeAnchor
-                        h.childnodeanchor = IF(h.childnodeanchor = :originalNodeAnchor, :newNodeAnchor, h.childnodeanchor),
-
-                        -- if our (copied) node is the parent, we update h.parentNodeAnchor
-                        h.parentnodeanchor = IF(h.parentnodeanchor = :originalNodeAnchor, :newNodeAnchor, h.parentnodeanchor)
-                    WHERE
-                      :originalNodeAnchor IN (h.childnodeanchor, h.parentnodeanchor)
-                      AND h.contentstreamlayer = :targetContentStreamLayer
-                SQL;
-
-                try {
-                    $this->dbal->executeStatement($updateHierarchyRelationStatement, [
-                        'newNodeAnchor' => $copiedNode->relationAnchorPoint->value,
-                        'originalNodeAnchor' => $anchorPoint->value,
-                        'targetContentStreamLayer' => $contentStreamLayersWhereWriteOccurs->getWriteLayer()->value,
-                    ]);
-                } catch (DBALException $e) {
-                    throw new \RuntimeException(sprintf('Failed to update hierarchy relation: %s', $e->getMessage()), 1716486444, $e);
-                }
-            } else {
-                // todo is this correct
-                $copyHierarchyRelationStatement = <<<SQL
-                    INSERT INTO {$this->tableNames->hierarchyRelation()} (
-                      id,
-                      parentnodeanchor,
-                      childnodeanchor,
-                      position,
-                      subtreetags,
-                      dimensionspacepointhash,
-                      contentstreamlayer
-                    )
-                    SELECT
-                      h.id,
-                      -- if our (copied) node is the parent, we update h.parentNodeAnchor
-                      IF(h.parentnodeanchor = :originalNodeAnchor, :newNodeAnchor, h.parentnodeanchor) as parentnodeanchor,
-                      -- if our (copied) node is the child, we update h.childNodeAnchor
-                      IF(h.childnodeanchor = :originalNodeAnchor, :newNodeAnchor, h.childnodeanchor) as childnodeanchor,
-                      h.position,
-                      h.subtreetags,
-                      h.dimensionspacepointhash,
-                      :targetContentStreamLayer as contentstreamlayer
-                    FROM
-                        {$this->tableNames->hierarchyRelation()} h
-                    WHERE 
-                        :originalNodeAnchor IN (h.childnodeanchor, h.parentnodeanchor)
-                        AND h.contentstreamlayer IN (:contentStreamLayers)
-                SQL;
-
-                try {
-                    $this->dbal->executeStatement($copyHierarchyRelationStatement, [
-                        'newNodeAnchor' => $copiedNode->relationAnchorPoint->value,
-                        'originalNodeAnchor' => $anchorPoint->value,
-                        'contentStreamLayers' => $contentStreamLayersWhereWriteOccurs->toIntArray(),
-                        'targetContentStreamLayer' => $contentStreamLayersWhereWriteOccurs->getWriteLayer()->value,
-                    ], [
-                        'contentStreamLayers' => ArrayParameterType::INTEGER,
-                    ]);
-                } catch (DBALException $e) {
-                    throw new \RuntimeException(sprintf('Failed to update hierarchy relation: %s', $e->getMessage()), 1716486444, $e);
-                }
+            try {
+                $this->dbal->executeStatement($copyHierarchyRelationStatement, [
+                    'newNodeAnchor' => $copiedNode->relationAnchorPoint->value,
+                    'originalNodeAnchor' => $anchorPoint->value,
+                    'contentStreamLayers' => $contentStreamLayersWhereWriteOccurs->toIntArray(),
+                    'targetContentStreamLayer' => $contentStreamLayersWhereWriteOccurs->getWriteLayer()->value,
+                ], [
+                    'contentStreamLayers' => ArrayParameterType::INTEGER,
+                ]);
+            } catch (DBALException $e) {
+                throw new \RuntimeException(sprintf('Failed to update hierarchy relation: %s', $e->getMessage()), 1716486444, $e);
             }
-
-
 
             // reference relation rows need to be copied as well!
             $this->copyReferenceRelations(
