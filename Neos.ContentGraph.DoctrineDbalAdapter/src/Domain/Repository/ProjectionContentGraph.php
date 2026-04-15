@@ -67,17 +67,13 @@ class ProjectionContentGraph
                 p.*, ph.contentstreamlayer, ph.subtreetags, dsp.dimensionspacepoint AS origindimensionspacepoint
             FROM
                 {$this->tableNames->node()} p
-                INNER JOIN {$this->tableNames->hierarchyRelation()} ph ON ph.childnodeanchor = p.relationanchorpoint
-                INNER JOIN {$this->tableNames->hierarchyRelation()} ch ON ch.parentnodeanchor = p.relationanchorpoint
+                INNER JOIN {$this->hierarchyRelationStatement->where('h.dimensionspacepointhash = :coveredDimensionSpacePointHash')->toSql()} ph ON ph.childnodeanchor = p.relationanchorpoint
+                INNER JOIN {$this->hierarchyRelationStatement->where('h.dimensionspacepointhash = :coveredDimensionSpacePointHash')->toSql()} ch ON ch.parentnodeanchor = p.relationanchorpoint
                 INNER JOIN {$this->tableNames->node()} c ON ch.childnodeanchor = c.relationanchorpoint
                 INNER JOIN {$this->tableNames->dimensionSpacePoints()} dsp ON p.origindimensionspacepointhash = dsp.hash
             WHERE
                 c.nodeaggregateid = :childNodeAggregateId
                 AND c.origindimensionspacepointhash = :originDimensionSpacePointHash
-                AND ph.contentstreamlayer IN (:contentStreamLayers)
-                AND ch.contentstreamlayer IN (:contentStreamLayers)
-                AND ph.dimensionspacepointhash = :coveredDimensionSpacePointHash
-                AND ch.dimensionspacepointhash = :coveredDimensionSpacePointHash
         SQL;
         try {
             $nodeRow = $this->dbal->fetchAssociative($parentNodeStatement, [
@@ -130,14 +126,12 @@ class ProjectionContentGraph
         OriginDimensionSpacePoint $originDimensionSpacePoint,
         ContentStreamLayers $contentStreamLayers
     ): ?NodeRelationAnchorPoint {
-        $hierarchyRelationStatement = HierarchyRelationStatement::for($this->tableNames)->toSql();
-
         $relationAnchorPointsStatement = <<<SQL
             SELECT
                 DISTINCT n.relationanchorpoint
             FROM
                 {$this->tableNames->node()} n
-                INNER JOIN {$hierarchyRelationStatement} as h ON h.childnodeanchor = n.relationanchorpoint
+                INNER JOIN {$this->hierarchyRelationStatement->toSql()} ON h.childnodeanchor = n.relationanchorpoint
             WHERE
                 n.nodeaggregateid = :nodeAggregateId
                 AND n.origindimensionspacepointhash = :originDimensionSpacePointHash
@@ -468,13 +462,11 @@ class ProjectionContentGraph
         ContentStreamLayers $contentStreamLayers,
         ?DimensionSpacePointSet $restrictToSet = null
     ): array {
-        $hierarchyRelationStatement = HierarchyRelationStatement::for($this->tableNames)->toSql();
-
         $outgoingHierarchyRelationsStatement = <<<SQL
             SELECT
                 h.*
             FROM
-                {$hierarchyRelationStatement} h
+                {$this->hierarchyRelationStatement->toSql()} h
             WHERE
                 h.parentnodeanchor = :parentAnchorPoint
         SQL;
@@ -511,15 +503,11 @@ class ProjectionContentGraph
         NodeAggregateId $nodeAggregateId,
         DimensionSpacePointSet $dimensionSpacePointSet
     ): array {
-        $hierarchyRelationStatement = HierarchyRelationStatement::for($this->tableNames)
-            ->where('h.dimensionspacepointhash IN (:dimensionSpacePointHashes)')
-            ->toSql();
-
         $outgoingHierarchyRelationsStatement = <<<SQL
             SELECT
                 h.*
             FROM
-                {$hierarchyRelationStatement} h
+                {$this->hierarchyRelationStatement->where('h.dimensionspacepointhash IN (:dimensionSpacePointHashes)')->toSql()} h
                 INNER JOIN {$this->tableNames->node()} n ON h.parentnodeanchor = n.relationanchorpoint
             WHERE
                 n.nodeaggregateid = :nodeAggregateId
@@ -547,15 +535,11 @@ class ProjectionContentGraph
         NodeAggregateId $nodeAggregateId,
         ?DimensionSpacePointSet $dimensionSpacePointSet = null
     ): array {
-        $hierarchyRelationStatement = HierarchyRelationStatement::for($this->tableNames)
-            ->where($dimensionSpacePointSet !== null ? 'h.dimensionspacepointhash IN (:dimensionSpacePointHashes)' : '')
-            ->toSql();
-
         $ingoingHierarchyRelationsStatement = <<<SQL
             SELECT
                 h.*
             FROM
-                {$hierarchyRelationStatement} h
+                {$this->hierarchyRelationStatement->where($dimensionSpacePointSet !== null ? 'h.dimensionspacepointhash IN (:dimensionSpacePointHashes)' : '')->toSql()} h
                 INNER JOIN {$this->tableNames->node()} n ON h.childnodeanchor = n.relationanchorpoint
             WHERE
                 n.nodeaggregateid = :nodeAggregateId
