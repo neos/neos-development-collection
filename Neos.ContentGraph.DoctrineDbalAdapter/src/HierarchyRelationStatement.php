@@ -9,28 +9,39 @@ namespace Neos\ContentGraph\DoctrineDbalAdapter;
  */
 final readonly class HierarchyRelationStatement
 {
+    /**
+     * @param array<string> $whereClauses
+     */
     private function __construct(
         private ContentGraphTableNames $tableNames,
-        private string $where,
+        private array $whereClauses
     ) {
     }
 
     public static function for(ContentGraphTableNames $tableNames): self
     {
-        return new self($tableNames, '');
+        return new self($tableNames, []);
     }
 
     public function where(string $where): self
     {
         return new self(
             tableNames: $this->tableNames,
-            where: $where,
+            whereClauses: $where === '' ? [] : [$where],
+        );
+    }
+
+    public function andWhere(string $where): self
+    {
+        return new self(
+            tableNames: $this->tableNames,
+            whereClauses: [...$this->whereClauses, ...($where === '' ? [] : [$where])],
         );
     }
 
     public function toSql(): string
     {
-        $additionalWhereClauses = $this->where !== '' ? "    WHERE {$this->where}\n" : '';
+        $additionalWhereClauses = $this->whereClauses === [] ? '' : sprintf("    WHERE %s\n", join("\n    AND ", $this->whereClauses));
 
         return <<<SQL
         (SELECT h.*

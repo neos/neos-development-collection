@@ -35,10 +35,13 @@ use Neos\ContentRepository\Dbal\DbalSchemaFactory;
  */
 final readonly class NodeQueryBuilder
 {
+    private HierarchyRelationStatement $hierarchyRelationStatement;
+
     public function __construct(
         private Connection $connection,
         public ContentGraphTableNames $tableNames
     ) {
+        $this->hierarchyRelationStatement = HierarchyRelationStatement::for($this->tableNames);
     }
 
     public function buildBasicNodeAggregateQuery(): QueryBuilder
@@ -46,7 +49,7 @@ final readonly class NodeQueryBuilder
         return $this->createQueryBuilder()
             ->select('n.*, h.contentstreamlayer, h.subtreetags, dsp.dimensionspacepoint AS covereddimensionspacepoint')
             ->from($this->tableNames->node(), 'n')
-            ->innerJoin('n', HierarchyRelationStatement::for($this->tableNames)->toSql(), 'h', 'h.childnodeanchor = n.relationanchorpoint')
+            ->innerJoin('n', $this->hierarchyRelationStatement->toSql(), 'h', 'h.childnodeanchor = n.relationanchorpoint')
             ->innerJoin('h', $this->tableNames->dimensionSpacePoints(), 'dsp', 'dsp.hash = h.dimensionspacepointhash');
     }
 
@@ -55,7 +58,7 @@ final readonly class NodeQueryBuilder
         return $this->createQueryBuilder()
             ->select('cn.*, ch.contentstreamlayer, ch.subtreetags, cdsp.dimensionspacepoint AS covereddimensionspacepoint')
             ->from($this->tableNames->node(), 'pn')
-            ->innerJoin('pn', HierarchyRelationStatement::for($this->tableNames)->toSql(), 'ch', 'ch.parentnodeanchor = pn.relationanchorpoint')
+            ->innerJoin('pn', $this->hierarchyRelationStatement->toSql(), 'ch', 'ch.parentnodeanchor = pn.relationanchorpoint')
             ->innerJoin('ch', $this->tableNames->dimensionSpacePoints(), 'cdsp', 'cdsp.hash = ch.dimensionspacepointhash')
             ->innerJoin('ch', $this->tableNames->node(), 'cn', 'cn.relationanchorpoint = ch.childnodeanchor')
             ->where('pn.nodeaggregateid = :parentNodeAggregateId')
@@ -91,7 +94,7 @@ final readonly class NodeQueryBuilder
         return $this->createQueryBuilder()
             ->select($select)
             ->from($this->tableNames->node(), $nodeTableAlias)
-            ->innerJoin($nodeTableAlias, HierarchyRelationStatement::for($this->tableNames)->where('h.dimensionspacepointhash = :dimensionSpacePointHash')->toSql(), 'h', 'h.childnodeanchor = ' . $nodeTableAlias . '.relationanchorpoint')
+            ->innerJoin($nodeTableAlias, $this->hierarchyRelationStatement->where('h.dimensionspacepointhash = :dimensionSpacePointHash')->toSql(), 'h', 'h.childnodeanchor = ' . $nodeTableAlias . '.relationanchorpoint')
             ->setParameter('contentStreamLayers', $contentStreamLayers->toIntArray(), ArrayParameterType::INTEGER)
             ->setParameter('dimensionSpacePointHash', $dimensionSpacePoint->hash);
     }
@@ -101,7 +104,7 @@ final readonly class NodeQueryBuilder
         return $this->createQueryBuilder()
             ->select('n.*, h.subtreetags')
             ->from($this->tableNames->node(), 'pn')
-            ->innerJoin('pn', HierarchyRelationStatement::for($this->tableNames)->where('h.dimensionspacepointhash = :dimensionSpacePointHash')->toSql(), 'h', 'h.parentnodeanchor = pn.relationanchorpoint')
+            ->innerJoin('pn', $this->hierarchyRelationStatement->where('h.dimensionspacepointhash = :dimensionSpacePointHash')->toSql(), 'h', 'h.parentnodeanchor = pn.relationanchorpoint')
             ->innerJoin('pn', $this->tableNames->node(), 'n', 'h.childnodeanchor = n.relationanchorpoint')
             ->where('pn.nodeaggregateid = :parentNodeAggregateId')->setParameter('parentNodeAggregateId', $parentNodeAggregateId->value)
             ->setParameter('contentStreamLayers', $contentStreamLayers->toIntArray(), ArrayParameterType::INTEGER)
@@ -114,9 +117,9 @@ final readonly class NodeQueryBuilder
             ->select('pn.*, ch.subtreetags')
             ->from($this->tableNames->node(), 'pn')
             // todo we calculate hierarchy rows twice -> optimise
-            ->innerJoin('pn', HierarchyRelationStatement::for($this->tableNames)->where('h.dimensionspacepointhash = :dimensionSpacePointHash')->toSql(), 'ph', 'ph.parentnodeanchor = pn.relationanchorpoint')
+            ->innerJoin('pn', $this->hierarchyRelationStatement->where('h.dimensionspacepointhash = :dimensionSpacePointHash')->toSql(), 'ph', 'ph.parentnodeanchor = pn.relationanchorpoint')
             ->innerJoin('pn', $this->tableNames->node(), 'cn', 'cn.relationanchorpoint = ph.childnodeanchor')
-            ->innerJoin('pn', HierarchyRelationStatement::for($this->tableNames)->where('h.dimensionspacepointhash = :dimensionSpacePointHash')->toSql(), 'ch', 'ch.childnodeanchor = pn.relationanchorpoint')
+            ->innerJoin('pn', $this->hierarchyRelationStatement->where('h.dimensionspacepointhash = :dimensionSpacePointHash')->toSql(), 'ch', 'ch.childnodeanchor = pn.relationanchorpoint')
             ->where('cn.nodeaggregateid = :childNodeAggregateId')->setParameter('childNodeAggregateId', $childNodeAggregateId->value)
             ->setParameter('contentStreamLayers', $contentStreamLayers->toIntArray(), ArrayParameterType::INTEGER)
             ->setParameter('dimensionSpacePointHash', $dimensionSpacePoint->hash);
@@ -125,7 +128,7 @@ final readonly class NodeQueryBuilder
     public function buildBasicNodeSiblingsQuery(bool $preceding, NodeAggregateId $siblingNodeAggregateId, ContentStreamLayers $contentStreamLayers, DimensionSpacePoint $dimensionSpacePoint): QueryBuilder
     {
         $sharedSubQuery = $this->createQueryBuilder()
-            ->from(HierarchyRelationStatement::for($this->tableNames)->where('h.dimensionspacepointhash = :dimensionSpacePointHash')->toSql(), 'sh')
+            ->from($this->hierarchyRelationStatement->where('h.dimensionspacepointhash = :dimensionSpacePointHash')->toSql(), 'sh')
             ->innerJoin('sh', $this->tableNames->node(), 'sn', 'sn.relationanchorpoint = sh.childnodeanchor')
             ->where('sn.nodeaggregateid = :siblingNodeAggregateId');
 
