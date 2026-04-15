@@ -341,7 +341,7 @@ final class ContentGraph implements ContentGraphInterface
         $queryBuilder =  $this->createQueryBuilder()
             ->select('n.*, h.contentstreamlayer, h.subtreetags, dsp.dimensionspacepoint AS covereddimensionspacepoint')
             // select the subtree tags from tagged (t) h and then join h again to fetch all node rows in that aggregate
-            ->from($this->hierarchyRelationStatement->where('JSON_EXTRACT(th.subtreetags, :tagPath) LIKE "true"')->toSql(), 'th')
+            ->from($this->hierarchyRelationStatement->where('JSON_EXTRACT(h.subtreetags, :tagPath) LIKE "true"')->toSql(), 'th')
             ->innerJoin('th', $this->hierarchyRelationStatement->toSql(), 'h', 'th.childnodeanchor = h.childnodeanchor')
             ->innerJoin('h', $this->tableNames->node(), 'n', 'h.childnodeanchor = n.relationanchorpoint')
             ->innerJoin('h', $this->tableNames->dimensionSpacePoints(), 'dsp', 'dsp.hash = h.dimensionspacepointhash')
