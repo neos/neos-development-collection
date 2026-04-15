@@ -783,6 +783,7 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
             // IMPORTANT: We need to reconnect BOTH the incoming and outgoing edges.
 
             if ($contentStreamLayers->contain($contentStreamLayersWhereWriteOccurs->getWriteLayer())) {
+                // todo make upsert
                 $updateHierarchyRelationStatement = <<<SQL
                     UPDATE {$this->tableNames->hierarchyRelation()} h
                     SET
@@ -851,11 +852,10 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
 
 
             // reference relation rows need to be copied as well!
-            // todo
-            // $this->copyReferenceRelations(
-            //     $anchorPoint,
-            //     $copiedNode->relationAnchorPoint
-            // );
+            $this->copyReferenceRelations(
+                $anchorPoint,
+                $copiedNode->relationAnchorPoint
+            );
             return $result;
         }
 
