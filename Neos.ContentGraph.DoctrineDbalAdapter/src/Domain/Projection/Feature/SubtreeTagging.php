@@ -275,7 +275,7 @@ trait SubtreeTagging
                 'contentStreamLayers' => $contentStreamLayers->toIntArray(),
                 'newParentNodeAggregateId' => $newParentNodeAggregateId->value,
                 'dimensionSpacePointHash' => $coveredDimensionSpacePoint->hash,
-                'targetContentStreamLayer' => $contentStreamLayers->getWriteLayer(),
+                'targetContentStreamLayer' => $contentStreamLayers->getWriteLayer()->value,
             ], [
                 'contentStreamLayers' => ArrayParameterType::INTEGER,
             ]);
