@@ -86,7 +86,7 @@ trait NodeMove
                 $succeedingSiblingForCoverage->dimensionSpacePoint
             );
             if ($newSucceedingSibling === null) {
-                throw new \RuntimeException(sprintf('Failed to move node "%s" in sub graph %s@%s because target succeeding sibling node "%s" is missing', $nodeToBeMoved->nodeAggregateId->value, $succeedingSiblingForCoverage->dimensionSpacePoint->toJson(), $contentStreamLayers->value, $succeedingSiblingForCoverage->nodeAggregateId->value), 1716471881);
+                throw new \RuntimeException(sprintf('Failed to move node "%s" in sub graph %s@%s because target succeeding sibling node "%s" is missing', $nodeToBeMoved->nodeAggregateId->value, $succeedingSiblingForCoverage->dimensionSpacePoint->toJson(), $contentStreamLayers->toDebugString(), $succeedingSiblingForCoverage->nodeAggregateId->value), 1716471881);
             }
         }
 
@@ -146,7 +146,7 @@ trait NodeMove
             $succeedingSiblingForCoverage->dimensionSpacePoint
         );
         if ($newParent === null) {
-            throw new \RuntimeException(sprintf('Failed to move node "%s" in sub graph %s@%s because target parent node is missing', $nodeToBeMoved->nodeAggregateId->value, $succeedingSiblingForCoverage->dimensionSpacePoint->toJson(), $contentStreamLayers->value), 1716471955);
+            throw new \RuntimeException(sprintf('Failed to move node "%s" in sub graph %s@%s because target parent node is missing', $nodeToBeMoved->nodeAggregateId->value, $succeedingSiblingForCoverage->dimensionSpacePoint->toJson(), $contentStreamLayers->toDebugString()), 1716471955);
         }
 
         $newSucceedingSibling = null;
@@ -158,7 +158,7 @@ trait NodeMove
                 $succeedingSiblingForCoverage->dimensionSpacePoint
             );
             if ($newSucceedingSibling === null) {
-                throw new \RuntimeException(sprintf('Failed to move node "%s" in sub graph %s@%s because target succeeding sibling node is missing', $nodeToBeMoved->nodeAggregateId->value, $succeedingSiblingForCoverage->dimensionSpacePoint->toJson(), $contentStreamLayers->value), 1716471995);
+                throw new \RuntimeException(sprintf('Failed to move node "%s" in sub graph %s@%s because target succeeding sibling node is missing', $nodeToBeMoved->nodeAggregateId->value, $succeedingSiblingForCoverage->dimensionSpacePoint->toJson(), $contentStreamLayers->toDebugString()), 1716471995);
             }
         }
 
@@ -209,7 +209,7 @@ trait NodeMove
         if (count($ingoingHierarchyRelations) !== 1) {
             // there should always be exactly one incoming relation in the given DimensionSpacePoint; everything
             // else would be a totally wrong behavior of findIngoingHierarchyRelationsForNode().
-            throw new \RuntimeException(sprintf('Failed move node "%s" in sub graph %s@%s because ingoing source hierarchy relation is missing', $nodeToBeMoved->nodeAggregateId->value, $restrictToSet->toJson(), $contentStreamLayers->value), 1716472138);
+            throw new \RuntimeException(sprintf('Failed move node "%s" in sub graph %s@%s because ingoing source hierarchy relation is missing', $nodeToBeMoved->nodeAggregateId->value, $restrictToSet->toJson(), $contentStreamLayers->toDebugString()), 1716472138);
         }
         return reset($ingoingHierarchyRelations);
     }
