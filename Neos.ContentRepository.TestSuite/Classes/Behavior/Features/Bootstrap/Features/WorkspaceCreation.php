@@ -15,8 +15,8 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\Features;
 
 use Behat\Gherkin\Node\TableNode;
-use Neos\ContentRepository\Core\Feature\ContentStreamEventStreamName;
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
+use Neos\ContentRepository\Core\Feature\WorkspaceEventStreamName;
+use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\CRTestSuiteRuntimeVariables;
 use Neos\EventStore\Model\Event\StreamName;
 
@@ -32,15 +32,15 @@ trait WorkspaceCreation
     abstract protected function publishEvent(string $eventType, StreamName $streamName, array $eventPayload): void;
 
     /**
-     * @Given /^the event RootWorkspaceWasCreated was published with payload:$/
+     * @Given /^the event WorkspaceWasRemoved was published with payload:$/
      * @param TableNode $payloadTable
      * @throws \Exception
      */
-    public function theEventRootWorkspaceWasCreatedWasPublishedToStreamWithPayload(TableNode $payloadTable)
+    public function theEventWorkspaceWasRemovedWasPublishedToStreamWithPayload(TableNode $payloadTable)
     {
         $eventPayload = $this->readPayloadTable($payloadTable);
-        $newContentStreamId = ContentStreamId::fromString($eventPayload['newContentStreamId']);
-        $streamName = ContentStreamEventStreamName::fromContentStreamId($newContentStreamId);
-        $this->publishEvent('RootWorkspaceWasCreated', $streamName->getEventStreamName(), $eventPayload);
+        $workspaceName = WorkspaceName::fromString($eventPayload['workspaceName']);
+        $streamName = WorkspaceEventStreamName::fromWorkspaceName($workspaceName);
+        $this->publishEvent('WorkspaceWasRemoved', $streamName->getEventStreamName(), $eventPayload);
     }
 }
