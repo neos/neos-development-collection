@@ -128,6 +128,39 @@ final class ProjectionIntegrityViolationDetector implements ProjectionIntegrityV
             ));
         }
 
+        $result->merge(
+            $this->contentStreamLayersIntegrityIsProvided()
+        );
+
+        return $result;
+    }
+
+    public function contentStreamLayersIntegrityIsProvided(): Result
+    {
+        $contentStreamIdsWithRedundantLayersStatement = <<<SQL
+            SELECT subquery.contentStreamIds, MIN(subquery.contentStreamLayer) AS minContentStreamLayer, MAX(subquery.contentStreamLayer) as maxContentStreamLayer
+            FROM (
+                SELECT
+                    contentStreamLayer,
+                    GROUP_CONCAT(contentStreamId ORDER BY contentStreamId) as contentStreamIds FROM {$this->tableNames->contentStreamLayer()}
+                GROUP BY contentStreamLayer
+                ORDER BY contentStreamLayer
+            ) AS subquery GROUP BY subquery.contentStreamIds
+            HAVING COUNT(*) > 1
+        SQL;
+
+        try {
+            $contentStreamIdsWithRedundantLayers = $this->dbal->fetchAllAssociative($contentStreamIdsWithRedundantLayersStatement);
+        } catch (DBALException $e) {
+            throw new \RuntimeException(sprintf('Failed to load redundant content stream layers: %s', $e->getMessage()), 1776339670, $e);
+        }
+
+        $result = new Result();
+
+        foreach ($contentStreamIdsWithRedundantLayers as $row) {
+            $result->addError(new Error('Redundant layer %2$s to %3$s found for content streams %1$s', self::ERROR_CODE_HIERARCHY_INTEGRITY_IS_COMPROMISED, [$row['contentStreamIds'], $row['minContentStreamLayer'], $row['maxContentStreamLayer']]));
+        }
+
         return $result;
     }
 
