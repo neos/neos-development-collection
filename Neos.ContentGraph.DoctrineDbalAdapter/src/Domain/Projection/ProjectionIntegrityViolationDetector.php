@@ -176,7 +176,7 @@ final class ProjectionIntegrityViolationDetector implements ProjectionIntegrityV
         }
 
         foreach ($hierarchiesForMissingContentStreamLayers as $row) {
-            $result->addError(new Error('Hierarchies exist in layer %s but not content stream references that layer.', self::ERROR_CODE_HIERARCHY_INTEGRITY_IS_COMPROMISED, [$row]));
+            $result->addError(new Error('Hierarchies exist in layer %s but no content stream references that layer.', self::ERROR_CODE_HIERARCHY_INTEGRITY_IS_COMPROMISED, [$row]));
         }
 
         return $result;

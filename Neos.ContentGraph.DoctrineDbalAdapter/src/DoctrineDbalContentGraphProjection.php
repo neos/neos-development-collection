@@ -319,6 +319,14 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
             }
 
             try {
+                $this->dbal->delete($this->tableNames->hierarchyRelation(), [
+                    'contentstreamlayer' => $contentStreamLayerToMergeFrom->value,
+                ]);
+            } catch (DBALException $e) {
+                throw new \RuntimeException(sprintf('Failed to delete merged content stream hierarchies: %s', $e->getMessage()), 1776345059, $e);
+            }
+
+            try {
                 $this->dbal->delete($this->tableNames->contentStreamLayer(), [
                     'contentstreamlayer' => $contentStreamLayerToMergeFrom->value,
                 ]);
