@@ -229,16 +229,16 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
     {
         $this->createContentStream($event->newContentStreamId, $event->sourceContentStreamId, $event->versionOfSourceContentStream);
 
-        $sourceContentStreamLayer = $this->contentStreamLayerFinder->getContentStreamLayers($event->sourceContentStreamId);
+        $sourceContentStreamLayers = $this->contentStreamLayerFinder->getContentStreamLayers($event->sourceContentStreamId);
 
         $this->dbal->insert($this->tableNames->contentStreamLayer(), [
             'contentStreamId' => $event->sourceContentStreamId,
         ]);
 
-        foreach ($sourceContentStreamLayer->items as $sourceDbId) {
+        foreach ($sourceContentStreamLayers->items as $sourceContentStreamLayer) {
             $this->dbal->insert($this->tableNames->contentStreamLayer(), [
                 'contentStreamId' => $event->newContentStreamId,
-                'contentStreamLayer' => $sourceDbId->value
+                'contentStreamLayer' => $sourceContentStreamLayer->value
             ]);
         }
 
