@@ -13,8 +13,6 @@ final readonly class ContentStreamLayers
      * @param array<int,ContentStreamLayer> $items
      */
     private function __construct(
-        // todo remove all usages
-        // public int $value,
         public array $items
     ) {
     }
@@ -47,6 +45,11 @@ final readonly class ContentStreamLayers
         return $this->items[array_key_last($this->items)];
     }
 
+    public function getRootLayer(): ContentStreamLayer
+    {
+        return $this->items[array_key_first($this->items)];
+    }
+
     public function getParentReadLayer(): ?ContentStreamLayer
     {
         $items = $this->items;
@@ -56,6 +59,16 @@ final readonly class ContentStreamLayers
             return null;
         }
         return $items[$secondLast];
+    }
+
+    public function getParentReadLayers(): ?self
+    {
+        $items = $this->items;
+        unset($items[array_key_last($items)]);
+        if ($items === []) {
+            return null;
+        }
+        return new self($items);
     }
 
     public function equals(ContentStreamLayer $id): bool

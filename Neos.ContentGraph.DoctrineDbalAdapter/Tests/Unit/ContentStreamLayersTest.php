@@ -11,6 +11,16 @@ use PHPUnit\Framework\TestCase;
 class ContentStreamLayersTest extends TestCase
 {
     /** @test */
+    public function getRootLayer()
+    {
+        $layers = ContentStreamLayers::fromArray([3, 6, 1, 5]);
+        self::assertSame(1, $layers->getRootLayer()->value);
+
+        $layers2 = ContentStreamLayers::fromArray([1]);
+        self::assertSame(1, $layers2->getRootLayer()->value);
+    }
+
+    /** @test */
     public function getWriteLayer()
     {
         $layers = ContentStreamLayers::fromArray([3, 6, 1, 5]);
@@ -28,6 +38,16 @@ class ContentStreamLayersTest extends TestCase
 
         $layers2 = ContentStreamLayers::fromArray([1]);
         self::assertNull($layers2->getParentReadLayer());
+    }
+
+    /** @test */
+    public function getParentReadLayers()
+    {
+        $layers = ContentStreamLayers::fromArray([3, 6, 1, 5]);
+        self::assertSame([1, 3, 5], $layers->getParentReadLayers()->toIntArray());
+
+        $layers2 = ContentStreamLayers::fromArray([1]);
+        self::assertNull($layers2->getParentReadLayers());
     }
 
     /** @test */
