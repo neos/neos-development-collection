@@ -655,7 +655,7 @@ final class ProjectionIntegrityViolationDetector implements ProjectionIntegrityV
                         n.nodeaggregateid
                     FROM
                         {$this->tableNames->node()} n
-                        LEFT JOIN {$this->hierarchyRelationStatement->toSql()} p ON
+                        INNER JOIN {$this->hierarchyRelationStatement->toSql()} p ON
                             p.childnodeanchor = n.relationanchorpoint
                             AND p.dimensionspacepointhash = n.origindimensionspacepointhash
                 )
