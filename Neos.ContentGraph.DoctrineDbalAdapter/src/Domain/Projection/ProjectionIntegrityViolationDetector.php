@@ -161,6 +161,24 @@ final class ProjectionIntegrityViolationDetector implements ProjectionIntegrityV
             $result->addError(new Error('Redundant layer %2$s to %3$s found for content streams %1$s', self::ERROR_CODE_HIERARCHY_INTEGRITY_IS_COMPROMISED, [$row['contentStreamIds'], $row['minContentStreamLayer'], $row['maxContentStreamLayer']]));
         }
 
+        $hierarchiesForMissingContentStreamLayersStatement = <<<SQL
+            SELECT DISTINCT h.contentstreamlayer
+            FROM {$this->tableNames->hierarchyRelation()} AS h
+                    LEFT JOIN {$this->tableNames->contentStreamLayer()} as l
+            ON h.contentstreamlayer = l.contentstreamlayer
+            WHERE l.contentstreamlayer IS NULL        
+        SQL;
+
+        try {
+            $hierarchiesForMissingContentStreamLayers = $this->dbal->fetchFirstColumn($hierarchiesForMissingContentStreamLayersStatement);
+        } catch (DBALException $e) {
+            throw new \RuntimeException(sprintf('Failed to load redundant content stream layers: %s', $e->getMessage()), 1776339670, $e);
+        }
+
+        foreach ($hierarchiesForMissingContentStreamLayers as $row) {
+            $result->addError(new Error('Hierarchies exist in layer %s but not content stream references that layer.', self::ERROR_CODE_HIERARCHY_INTEGRITY_IS_COMPROMISED, [$row]));
+        }
+
         return $result;
     }
 

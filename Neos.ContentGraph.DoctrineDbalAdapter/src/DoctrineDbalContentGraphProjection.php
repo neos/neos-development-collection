@@ -277,72 +277,64 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
             throw new \RuntimeException(sprintf('Failed to load other content stream layer to merge: %s', $e->getMessage()), 1776339670, $e);
         }
 
-        if ($contentStreamLayerToMergeFromResult === false) {
-            // no layer merging
-            return;
-        }
-        $contentStreamLayerToMergeFrom = ContentStreamLayer::fromInt((int)$contentStreamLayerToMergeFromResult);
+        if ($contentStreamLayerToMergeFromResult !== false) {
+            $contentStreamLayerToMergeFrom = ContentStreamLayer::fromInt((int)$contentStreamLayerToMergeFromResult);
 
-        $mergeHierarchyRelationsStatement = <<<SQL
-            INSERT INTO {$this->tableNames->hierarchyRelation()}
-            (
-                id,
-                contentstreamlayer,
-                parentnodeanchor,
-                childnodeanchor,
-                position,
-                subtreetags,
-                dimensionspacepointhash
-            )
-            SELECT
-                h.id,
-                :contentStreamLayerToMergeInto AS contentstreamlayer,
-                h.parentnodeanchor,
-                h.childnodeanchor,
-                h.position,
-                h.subtreetags,
-                h.dimensionspacepointhash
-            FROM {$this->tableNames->hierarchyRelation()} AS h
-            WHERE h.contentstreamlayer = :contentStreamLayerToMergeFrom
-            ON DUPLICATE KEY UPDATE
-                parentnodeanchor = VALUES(parentnodeanchor),
-                childnodeanchor = VALUES(childnodeanchor),
-                position = VALUES(position),
-                subtreetags = VALUES(subtreetags),
-                dimensionspacepointhash = VALUES(dimensionspacepointhash);
-        SQL;
+            $mergeHierarchyRelationsStatement = <<<SQL
+                INSERT INTO {$this->tableNames->hierarchyRelation()}
+                (
+                    id,
+                    contentstreamlayer,
+                    parentnodeanchor,
+                    childnodeanchor,
+                    position,
+                    subtreetags,
+                    dimensionspacepointhash
+                )
+                SELECT
+                    h.id,
+                    :contentStreamLayerToMergeInto AS contentstreamlayer,
+                    h.parentnodeanchor,
+                    h.childnodeanchor,
+                    h.position,
+                    h.subtreetags,
+                    h.dimensionspacepointhash
+                FROM {$this->tableNames->hierarchyRelation()} AS h
+                WHERE h.contentstreamlayer = :contentStreamLayerToMergeFrom
+                ON DUPLICATE KEY UPDATE
+                    parentnodeanchor = VALUES(parentnodeanchor),
+                    childnodeanchor = VALUES(childnodeanchor),
+                    position = VALUES(position),
+                    subtreetags = VALUES(subtreetags),
+                    dimensionspacepointhash = VALUES(dimensionspacepointhash);
+            SQL;
 
-        try {
-            $this->dbal->executeStatement($mergeHierarchyRelationsStatement, [
-                'contentStreamLayerToMergeInto' => $contentStreamLayerToMergeInto->value,
-                'contentStreamLayerToMergeFrom' => $contentStreamLayerToMergeFrom->value,
-            ]);
-        } catch (DBALException $e) {
-            throw new \RuntimeException(sprintf('Failed to merge hierarchy relations: %s', $e->getMessage()), 1776345058, $e);
-        }
+            try {
+                $this->dbal->executeStatement($mergeHierarchyRelationsStatement, [
+                    'contentStreamLayerToMergeInto' => $contentStreamLayerToMergeInto->value,
+                    'contentStreamLayerToMergeFrom' => $contentStreamLayerToMergeFrom->value,
+                ]);
+            } catch (DBALException $e) {
+                throw new \RuntimeException(sprintf('Failed to merge hierarchy relations: %s', $e->getMessage()), 1776345058, $e);
+            }
 
-        try {
-            $this->dbal->delete($this->tableNames->contentStreamLayer(), [
-                'contentstreamlayer' => $contentStreamLayerToMergeFrom->value,
-            ]);
-        } catch (DBALException $e) {
-            throw new \RuntimeException(sprintf('Failed to delete merged content stream layer: %s', $e->getMessage()), 1776345059, $e);
+            try {
+                $this->dbal->delete($this->tableNames->contentStreamLayer(), [
+                    'contentstreamlayer' => $contentStreamLayerToMergeFrom->value,
+                ]);
+            } catch (DBALException $e) {
+                throw new \RuntimeException(sprintf('Failed to delete merged content stream layer: %s', $e->getMessage()), 1776345059, $e);
+            }
         }
 
         // Drop hierarchy relations
-        // TODO reimplement
-        // $deleteHierarchyRelationStatement = <<<SQL
-        //     DELETE FROM {$this->tableNames->hierarchyRelation()} WHERE contentstreamlayer IN (:contentStreamLayers)
-        // SQL;
-        // try {
-        //     $this->dbal->executeStatement($deleteHierarchyRelationStatement, [
-        //         'contentStreamLayers' => $contentStreamLayers->toIntArray()
-        //     ], [
-        //         'contentStreamLayers' => ArrayParameterType::INTEGER,
-        //     ]);
-        // } catch (DBALException $e) {
-        //     throw new \RuntimeException(sprintf('Failed to delete hierarchy relations: %s', $e->getMessage()), 1716489265, $e);
-        // }
+        try {
+            $this->dbal->delete($this->tableNames->hierarchyRelation(), [
+                'contentstreamlayer' => $contentStreamLayers->getWriteLayer()->value,
+            ]);
+        } catch (DBALException $e) {
+            throw new \RuntimeException(sprintf('Failed to delete hierarchy relations: %s', $e->getMessage()), 1716489265, $e);
+        }
 
         // Drop non-referenced nodes (which do not have a hierarchy relation anymore)
         // TODO reimplement
