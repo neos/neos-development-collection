@@ -50,7 +50,7 @@ abstract class AbstractParallelTestCase extends TestCase // we don't use Flows f
     {
         if ($this->hasFailed()) {
             try {
-                $this->log('Error. Logging last 100 events from "test_parallel"');
+                $this->log(sprintf('Error: %s. Logging last 100 events from "test_parallel"', $this->getStatusMessage()));
                 /** @var ContentRepositoryMaintainer $contentRepositoryMaintainer */
                 $contentRepositoryMaintainer = $this->contentRepositoryRegistry->buildService(ContentRepositoryId::fromString('test_parallel'), new ContentRepositoryMaintainerFactory());
                 /** @var EventStoreInterface $eventStore */

@@ -42,6 +42,8 @@ Neos:
             factoryObjectName: Neos\ContentRepository\TestSuite\Fakes\FakeProjectionFactory
             options:
               instanceId: debug
+          'Neos.Neos:DocumentUriPathProjection':
+            factoryObjectName: Neos\Neos\FrontendRouting\Projection\DocumentUriPathProjectionFactory
 
       t_extensibility:
         eventStore:
