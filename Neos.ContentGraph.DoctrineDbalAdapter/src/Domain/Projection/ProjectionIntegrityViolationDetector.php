@@ -210,6 +210,24 @@ final class ProjectionIntegrityViolationDetector implements ProjectionIntegrityV
             $result->addError(new Error('Parent layer %s of content stream %s does not contain hierarchies and is obsolete.', self::ERROR_CODE_HIERARCHY_INTEGRITY_IS_COMPROMISED, [$row['parentContentStreamLayer'], $row['contentStreamId']]));
         }
 
+        $nodesForMissingHierarchiesStatement = <<<SQL
+            SELECT relationanchorpoint
+            FROM {$this->tableNames->node()} n
+            LEFT JOIN {$this->tableNames->hierarchyRelation()} h
+                ON h.childnodeanchor = n.relationanchorpoint
+            WHERE h.childnodeanchor IS NULL    
+        SQL;
+
+        try {
+            $nodesForMissingHierarchies = $this->dbal->fetchFirstColumn($nodesForMissingHierarchiesStatement);
+        } catch (DBALException $e) {
+            throw new \RuntimeException(sprintf('Failed to load nodes for missing hierarchies: %s', $e->getMessage()), 1776353433, $e);
+        }
+
+        foreach ($nodesForMissingHierarchies as $row) {
+            $result->addError(new Error('Node (relationanchorpoint %d) found but no hierarchy references that node.', self::ERROR_CODE_HIERARCHY_INTEGRITY_IS_COMPROMISED, [$row]));
+        }
+
         return $result;
     }
 
