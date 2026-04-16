@@ -231,24 +231,20 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
 
         $sourceContentStreamLayers = $this->contentStreamLayerFinder->getContentStreamLayers($event->sourceContentStreamId);
 
-        if ($sourceContentStreamLayers->getParentReadLayers() !== null) {
-            $sourceWriteLayerWasWrittenStatement = <<<SQL
-                SELECT 1 FROM {$this->tableNames->hierarchyRelation()} AS h
-                    WHERE h.contentStreamLayer = :sourceContentStreamWriteLayer
-                LIMIT 1
-            SQL;
-            try {
-                $addNewWriteLayerToSourceContentStream = (bool)$this->dbal->fetchOne(
-                    $sourceWriteLayerWasWrittenStatement,
-                    [
-                        'sourceContentStreamWriteLayer' => $sourceContentStreamLayers->getWriteLayer()->value
-                    ]
-                );
-            } catch (DBALException $e) {
-                throw new \RuntimeException(sprintf('Failed to determine if source content stream layer has changes: %s', $e->getMessage()), 1776339670, $e);
-            }
-        } else {
-            $addNewWriteLayerToSourceContentStream = true;
+        $sourceWriteLayerWasWrittenStatement = <<<SQL
+            SELECT 1 FROM {$this->tableNames->hierarchyRelation()} AS h
+                WHERE h.contentStreamLayer = :sourceContentStreamWriteLayer
+            LIMIT 1
+        SQL;
+        try {
+            $addNewWriteLayerToSourceContentStream = (bool)$this->dbal->fetchOne(
+                $sourceWriteLayerWasWrittenStatement,
+                [
+                    'sourceContentStreamWriteLayer' => $sourceContentStreamLayers->getWriteLayer()->value
+                ]
+            );
+        } catch (DBALException $e) {
+            throw new \RuntimeException(sprintf('Failed to determine if source content stream layer has changes: %s', $e->getMessage()), 1776339670, $e);
         }
 
         if ($addNewWriteLayerToSourceContentStream) {
@@ -260,7 +256,7 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
             $forkParentReadLayers = $sourceContentStreamLayers->getParentReadLayers();
         }
 
-        foreach ($forkParentReadLayers->items as $sourceContentStreamLayer) {
+        foreach ($forkParentReadLayers?->items ?? [] as $sourceContentStreamLayer) {
             $this->dbal->insert($this->tableNames->contentStreamLayer(), [
                 'contentStreamId' => $event->newContentStreamId,
                 'contentStreamLayer' => $sourceContentStreamLayer->value
