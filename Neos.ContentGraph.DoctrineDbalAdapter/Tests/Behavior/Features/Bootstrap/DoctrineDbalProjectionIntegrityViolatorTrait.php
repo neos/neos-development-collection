@@ -12,6 +12,7 @@
 
 declare(strict_types=1);
 
+use Behat\Gherkin\Node\PyStringNode;
 use Behat\Gherkin\Node\TableNode;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Exception as DBALException;
@@ -26,6 +27,8 @@ use Neos\ContentRepository\Core\Feature\SubtreeTagging\Dto\SubtreeTag;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\CRTestSuiteRuntimeVariables;
+use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\ProjectionIntegrityViolationDetectionTrait;
+use PHPUnit\Framework\Assert;
 
 /**
  * @internal custom illegal mutations for the Doctrine DBAL content graph adapter to make the projection integrity violation fail
@@ -54,6 +57,21 @@ trait DoctrineDbalProjectionIntegrityViolatorTrait
     public function setupDbalGraphAdapterIntegrityViolationTrait()
     {
         $this->dbal = $this->getObject(Connection::class);
+    }
+
+    /**
+     * @When the content stream :contentStreamId was removed without layer cleanup
+     * @throws DBALException
+     */
+    public function theContentStreamWasRemovedWithoutLayerCleanup(string $contentStreamId): void
+    {
+        $this->dbal->delete($this->tableNames()->contentStream(), [
+            'id' => $contentStreamId
+        ]);
+
+        $this->dbal->delete($this->tableNames()->contentStreamLayer(), [
+            'contentStreamId' => $contentStreamId,
+        ]);
     }
 
     /**
@@ -356,6 +374,29 @@ trait DoctrineDbalProjectionIntegrityViolatorTrait
                     'contentStreamId' => $contentStreamId->value,
                 ]
             )->fetchOne()
+        );
+    }
+
+    /**
+     * DBAL Adapter specific assertion. The Error message strongly varies from adapter to adapter. Thus, we extend
+     *
+     * {@see ProjectionIntegrityViolationDetectionTrait::iExpectIntegrityViolationDetectionResultErrorNumberNToHaveCodeX} here.
+     *
+     * @Then I expect integrity violation detection result error number :errorNumber to have code :expectedErrorCode and message:
+     * @param int $errorNumber
+     * @param int $expectedErrorCode
+     */
+    public function iExpectIntegrityViolationDetectionResultErrorNumberNToHaveCodeXAndDbalAdapterMessage(int $errorNumber, int $expectedErrorCode, PyStringNode $message): void
+    {
+        $this->iExpectIntegrityViolationDetectionResultErrorNumberNToHaveCodeX($errorNumber, $expectedErrorCode);
+
+        /** @var \Neos\Error\Messages\Error $error */
+        $error = $this->lastIntegrityViolationDetectionResult->getErrors()[$errorNumber-1];
+
+        Assert::assertSame(
+            $message->getRaw(),
+            $error->render(),
+            "[{$error->getCode()}] " . $error->render()
         );
     }
 }
