@@ -28,8 +28,9 @@ final readonly class ContentStreamLayers
         foreach ($items as $id) {
             $indexed[$id->value] = $id;
         }
+        ksort($indexed, SORT_NUMERIC);
         return new self(
-            items: $indexed,
+            $indexed,
         );
     }
 
@@ -43,7 +44,18 @@ final readonly class ContentStreamLayers
 
     public function getWriteLayer(): ContentStreamLayer
     {
-        return $this->items[max(array_keys($this->items))];
+        return $this->items[array_key_last($this->items)];
+    }
+
+    public function getParentReadLayer(): ?ContentStreamLayer
+    {
+        $items = $this->items;
+        unset($items[array_key_last($items)]);
+        $secondLast = array_key_last($items);
+        if ($secondLast === null) {
+            return null;
+        }
+        return $items[$secondLast];
     }
 
     public function equals(ContentStreamLayer $id): bool
