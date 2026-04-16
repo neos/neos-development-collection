@@ -152,7 +152,7 @@ final class ProjectionIntegrityViolationDetector implements ProjectionIntegrityV
         try {
             $contentStreamIdsWithRedundantLayers = $this->dbal->fetchAllAssociative($contentStreamIdsWithRedundantLayersStatement);
         } catch (DBALException $e) {
-            throw new \RuntimeException(sprintf('Failed to load redundant content stream layers: %s', $e->getMessage()), 1776339670, $e);
+            throw new \RuntimeException(sprintf('Failed to load redundant content stream layers: %s', $e->getMessage()), 1776353441, $e);
         }
 
         $result = new Result();
@@ -172,11 +172,42 @@ final class ProjectionIntegrityViolationDetector implements ProjectionIntegrityV
         try {
             $hierarchiesForMissingContentStreamLayers = $this->dbal->fetchFirstColumn($hierarchiesForMissingContentStreamLayersStatement);
         } catch (DBALException $e) {
-            throw new \RuntimeException(sprintf('Failed to load redundant content stream layers: %s', $e->getMessage()), 1776339670, $e);
+            throw new \RuntimeException(sprintf('Failed to load hierarchies for missing content stream layers: %s', $e->getMessage()), 1776339670, $e);
         }
 
         foreach ($hierarchiesForMissingContentStreamLayers as $row) {
-            $result->addError(new Error('Hierarchies exist in layer %s but no content stream references that layer.', self::ERROR_CODE_HIERARCHY_INTEGRITY_IS_COMPROMISED, [$row]));
+            $result->addError(
+                new Error(
+                    'Hierarchies exist in layer %s but no content stream references that layer.',
+                    self::ERROR_CODE_HIERARCHY_INTEGRITY_IS_COMPROMISED,
+                    [$row]
+                )
+            );
+        }
+
+        $parentLayersWithoutHierarchiesStatement = <<<SQL
+        SELECT l.contentStreamId, l.parentContentStreamLayer
+            FROM {$this->tableNames->hierarchyRelation()} AS h
+            RIGHT JOIN (
+                -- query to select all parent layers per content stream if exist
+                SELECT l.contentStreamId, MAX(l.contentStreamLayer) AS parentContentStreamLayer FROM {$this->tableNames->contentStreamLayer()} AS l
+                  INNER JOIN (
+                    SELECT MAX(l.contentStreamLayer) AS contentStreamWriteLayer, l.contentStreamId FROM {$this->tableNames->contentStreamLayer()} AS l
+                    GROUP BY l.contentStreamId
+                  ) AS subquery ON l.contentStreamId = subquery.contentStreamId AND l.contentStreamLayer < subquery.contentStreamWriteLayer
+                GROUP BY l.contentStreamId
+            ) AS l ON h.contentStreamLayer = l.parentContentStreamLayer
+        WHERE h.contentStreamLayer IS NULL
+        SQL;
+
+        try {
+            $parentLayersWithoutHierarchies = $this->dbal->fetchAllAssociative($parentLayersWithoutHierarchiesStatement);
+        } catch (DBALException $e) {
+            throw new \RuntimeException(sprintf('Failed to find obsolete parent layers: %s', $e->getMessage()), 1776353433, $e);
+        }
+
+        foreach ($parentLayersWithoutHierarchies as $row) {
+            $result->addError(new Error('Parent layer %s of content stream %s does not contain hierarchies and is obsolete.', self::ERROR_CODE_HIERARCHY_INTEGRITY_IS_COMPROMISED, [$row['parentContentStreamLayer'], $row['contentStreamId']]));
         }
 
         return $result;
