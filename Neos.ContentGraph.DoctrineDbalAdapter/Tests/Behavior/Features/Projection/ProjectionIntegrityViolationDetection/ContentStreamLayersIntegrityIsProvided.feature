@@ -39,7 +39,7 @@ Feature: Run integrity violation detection regarding hierarchy relations and nod
       | parentNodeAggregateId     | "lady-eleonode-rootford"                  |
 
     # Basically a DeleteWorkspace without the event ContentStreamWasRemoved as we avoid the internal cleanup
-    When the content stream "cs-identifier" was removed without layer cleanup
+    When the content stream "user-cs-identifier" was removed without layer cleanup
     When the event WorkspaceWasRemoved was published with payload:
       | Key           | Value       |
       | workspaceName | "user-test" |
@@ -48,5 +48,5 @@ Feature: Run integrity violation detection regarding hierarchy relations and nod
     Then I expect the integrity violation detection result to contain exactly 1 error
     And I expect integrity violation detection result error number 1 to have code 1597909228 and message:
     """
-    Böse böse böse
+    Redundant layer 1 to 2 found for content streams cs-identifier
     """
