@@ -231,11 +231,36 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
 
         $sourceContentStreamLayers = $this->contentStreamLayerFinder->getContentStreamLayers($event->sourceContentStreamId);
 
-        $this->dbal->insert($this->tableNames->contentStreamLayer(), [
-            'contentStreamId' => $event->sourceContentStreamId,
-        ]);
+        if ($sourceContentStreamLayers->getParentReadLayers() !== null) {
+            $sourceWriteLayerWasWrittenStatement = <<<SQL
+                SELECT 1 FROM {$this->tableNames->hierarchyRelation()} AS h
+                    WHERE h.contentStreamLayer = :sourceContentStreamWriteLayer
+                LIMIT 1
+            SQL;
+            try {
+                $addNewWriteLayerToSourceContentStream = (bool)$this->dbal->fetchOne(
+                    $sourceWriteLayerWasWrittenStatement,
+                    [
+                        'sourceContentStreamWriteLayer' => $sourceContentStreamLayers->getWriteLayer()->value
+                    ]
+                );
+            } catch (DBALException $e) {
+                throw new \RuntimeException(sprintf('Failed to determine if source content stream layer has changes: %s', $e->getMessage()), 1776339670, $e);
+            }
+        } else {
+            $addNewWriteLayerToSourceContentStream = true;
+        }
 
-        foreach ($sourceContentStreamLayers->items as $sourceContentStreamLayer) {
+        if ($addNewWriteLayerToSourceContentStream) {
+            $this->dbal->insert($this->tableNames->contentStreamLayer(), [
+                'contentStreamId' => $event->sourceContentStreamId,
+            ]);
+            $forkParentReadLayers = $sourceContentStreamLayers;
+        } else {
+            $forkParentReadLayers = $sourceContentStreamLayers->getParentReadLayers();
+        }
+
+        foreach ($forkParentReadLayers->items as $sourceContentStreamLayer) {
             $this->dbal->insert($this->tableNames->contentStreamLayer(), [
                 'contentStreamId' => $event->newContentStreamId,
                 'contentStreamLayer' => $sourceContentStreamLayer->value
@@ -258,23 +283,27 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
         ]);
 
         $contentStreamLayerToMergeInto = $contentStreamLayers->getParentReadLayer();
-        $contentStreamLayerToMergeFromStatement = <<<SQL
-            SELECT MIN(b.contentStreamLayer) FROM cr_default_p_graph_contentstreamlayer AS a
-                LEFT JOIN cr_default_p_graph_contentstreamlayer AS b
-                    ON a.contentStreamId = b.contentStreamId
-                WHERE a.contentStreamLayer = :contentStreamLayerCandidate
-            AND b.contentStreamLayer > :contentStreamLayerCandidate
-        SQL;
+        if ($contentStreamLayerToMergeInto !== null) {
+            $contentStreamLayerToMergeFromStatement = <<<SQL
+                SELECT MIN(b.contentStreamLayer) FROM {$this->tableNames->contentStreamLayer()} AS a
+                    LEFT JOIN {$this->tableNames->contentStreamLayer()} AS b
+                        ON a.contentStreamId = b.contentStreamId
+                    WHERE a.contentStreamLayer = :contentStreamLayerCandidate
+                AND b.contentStreamLayer > :contentStreamLayerCandidate
+            SQL;
 
-        try {
-            $contentStreamLayerToMergeFromResult = $this->dbal->fetchOne(
-                $contentStreamLayerToMergeFromStatement,
-                [
-                    'contentStreamLayerCandidate' => $contentStreamLayerToMergeInto->value
-                ]
-            );
-        } catch (DBALException $e) {
-            throw new \RuntimeException(sprintf('Failed to load other content stream layer to merge: %s', $e->getMessage()), 1776339670, $e);
+            try {
+                $contentStreamLayerToMergeFromResult = $this->dbal->fetchOne(
+                    $contentStreamLayerToMergeFromStatement,
+                    [
+                        'contentStreamLayerCandidate' => $contentStreamLayerToMergeInto->value
+                    ]
+                );
+            } catch (DBALException $e) {
+                throw new \RuntimeException(sprintf('Failed to load other content stream layer to merge: %s', $e->getMessage()), 1776339670, $e);
+            }
+        } else {
+            $contentStreamLayerToMergeFromResult = false;
         }
 
         if ($contentStreamLayerToMergeFromResult !== false) {
