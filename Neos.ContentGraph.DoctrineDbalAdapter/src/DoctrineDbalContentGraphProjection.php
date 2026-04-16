@@ -359,6 +359,22 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
             }
         }
 
+        // Drop non-referenced nodes (which do not have a hierarchy relation anymore)
+        $deleteNodesStatement = <<<SQL
+            DELETE n FROM {$this->tableNames->node()} n
+            LEFT JOIN {$this->tableNames->hierarchyRelation()} h
+                ON h.childnodeanchor = n.relationanchorpoint
+                    AND h.contentstreamlayer != :targetContentStreamLayer
+            WHERE h.childnodeanchor IS NULL
+        SQL;
+        try {
+            $this->dbal->executeStatement($deleteNodesStatement, [
+                'targetContentStreamLayer' => $contentStreamLayers->getWriteLayer()->value,
+            ]);
+        } catch (DBALException $e) {
+            throw new \RuntimeException(sprintf('Failed to delete non-referenced nodes: %s', $e->getMessage()), 1716489294, $e);
+        }
+
         // Drop hierarchy relations
         try {
             $this->dbal->delete($this->tableNames->hierarchyRelation(), [
@@ -367,36 +383,6 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
         } catch (DBALException $e) {
             throw new \RuntimeException(sprintf('Failed to delete hierarchy relations: %s', $e->getMessage()), 1716489265, $e);
         }
-
-        // Drop non-referenced nodes (which do not have a hierarchy relation anymore)
-        // TODO reimplement
-        // $deleteNodesStatement = <<<SQL
-        //     DELETE FROM {$this->tableNames->node()}
-        //     WHERE NOT EXISTS (
-        //         SELECT 1 FROM {$this->tableNames->hierarchyRelation()}
-        //         WHERE {$this->tableNames->hierarchyRelation()}.childnodeanchor = {$this->tableNames->node()}.relationanchorpoint
-        //     )
-        // SQL;
-        // try {
-        //     $this->dbal->executeStatement($deleteNodesStatement);
-        // } catch (DBALException $e) {
-        //     throw new \RuntimeException(sprintf('Failed to delete non-referenced nodes: %s', $e->getMessage()), 1716489294, $e);
-        // }
-
-        // Drop non-referenced reference relations (i.e. because the referenced nodes are gone by now)
-        // TODO reimplement
-        // $deleteReferenceRelationsStatement = <<<SQL
-        //     DELETE FROM {$this->tableNames->referenceRelation()}
-        //     WHERE NOT EXISTS (
-        //         SELECT 1 FROM {$this->tableNames->node()}
-        //         WHERE {$this->tableNames->node()}.relationanchorpoint = {$this->tableNames->referenceRelation()}.nodeanchorpoint
-        //     )
-        // SQL;
-        // try {
-        //     $this->dbal->executeStatement($deleteReferenceRelationsStatement);
-        // } catch (DBALException $e) {
-        //     throw new \RuntimeException(sprintf('Failed to delete non-referenced reference relations: %s', $e->getMessage()), 1716489328, $e);
-        // }
     }
 
     private function whenContentStreamWasReopened(ContentStreamWasReopened $event): void
