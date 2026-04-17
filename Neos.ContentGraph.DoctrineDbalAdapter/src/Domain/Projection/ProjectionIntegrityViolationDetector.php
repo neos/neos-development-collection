@@ -236,20 +236,19 @@ final class ProjectionIntegrityViolationDetector implements ProjectionIntegrityV
     {
         $result = new Result();
 
-        // FIXME the violation does not consider multiple layers
         $ambiguouslySortedHierarchyRelationStatement = <<<SQL
             SELECT
-                contentstreamlayer,
-                dimensionspacepointhash,
-                parentnodeanchor,
-                COUNT(position)
+                h.contentstreamlayer,
+                h.dimensionspacepointhash,
+                h.parentnodeanchor,
+                COUNT(h.position)
             FROM
-                {$this->tableNames->hierarchyRelation()}
+                {$this->hierarchyRelationStatement->allContentStreams()->toSql()} AS h
             GROUP BY
-                contentstreamlayer,
-                position,
-                parentnodeanchor,
-                dimensionspacepointhash
+                h.contentstreamlayer,
+                h.position,
+                h.parentnodeanchor,
+                h.dimensionspacepointhash
             HAVING
                 COUNT(position) > 1
         SQL;
@@ -267,7 +266,7 @@ final class ProjectionIntegrityViolationDetector implements ProjectionIntegrityV
         $ambiguouslySortedNodesStatement = <<<SQL
             SELECT nodeaggregateid
             FROM {$this->tableNames->node()} n
-            LEFT JOIN {$this->tableNames->hierarchyRelation()} ph
+            LEFT JOIN {$this->hierarchyRelationStatement->allContentStreams()->toSql()} ph
             ON ph.childnodeanchor = n.relationanchorpoint
             WHERE ph.parentnodeanchor = :relationAnchorPoint
         SQL;
@@ -399,10 +398,10 @@ final class ProjectionIntegrityViolationDetector implements ProjectionIntegrityV
             FROM
                 {$this->tableNames->referenceRelation()} r
                 INNER JOIN {$this->tableNames->node()} s ON r.nodeanchorpoint = s.relationanchorpoint
-                INNER JOIN {$this->tableNames->hierarchyRelation()} sh ON r.nodeanchorpoint = sh.childnodeanchor
+                INNER JOIN {$this->hierarchyRelationStatement->allContentStreams()->toSql()} sh ON r.nodeanchorpoint = sh.childnodeanchor
                 LEFT JOIN (
                     {$this->tableNames->node()} d
-                    INNER JOIN {$this->tableNames->hierarchyRelation()} dh ON d.relationanchorpoint = dh.childnodeanchor
+                    INNER JOIN {$this->hierarchyRelationStatement->allContentStreams()->toSql()} dh ON d.relationanchorpoint = dh.childnodeanchor
                 ) ON r.destinationnodeaggregateid = d.nodeaggregateid
                   AND sh.contentstreamlayer = dh.contentstreamlayer
                   AND sh.dimensionspacepointhash = dh.dimensionspacepointhash
