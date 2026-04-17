@@ -36,8 +36,6 @@ trait NodeRemoval
         HierarchyRelation $ingoingRelation,
         ContentStreamLayers $contentStreamLayers,
     ): void {
-        // $ingoingRelation->removeFromDatabase($this->dbal, $this->tableNames);
-
         foreach (
             $this->projectionContentGraph->findOutgoingHierarchyRelationsForNode(
                 $ingoingRelation->childNodeAnchor,
@@ -86,10 +84,9 @@ trait NodeRemoval
                   h.id,
                   NULL as parentnodeanchor,
                   NULL as childnodeanchor,
-                  -- todo these fieds could be empty as well --
-                  h.position,
-                  h.subtreetags,
-                  h.dimensionspacepointhash,
+                  NULL as position,
+                  NULL as subtreetags,
+                  NULL as dimensionspacepointhash,
                   :targetContentStreamLayer as contentstreamlayer
                 FROM
                     {$this->tableNames->hierarchyRelation()} h
