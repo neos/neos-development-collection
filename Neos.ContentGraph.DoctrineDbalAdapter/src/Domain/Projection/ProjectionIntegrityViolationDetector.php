@@ -79,6 +79,7 @@ final class ProjectionIntegrityViolationDetector implements ProjectionIntegrityV
             LEFT JOIN {$this->tableNames->dimensionSpacePoints()} dsp
                 ON dsp.hash = h.dimensionspacepointhash
             WHERE dsp.dimensionspacepoint IS NULL
+                AND h.dimensionspacepointhash IS NOT NULL
         SQL;
         try {
             $invalidlyHashedHierarchyRelationRecords = $this->dbal->fetchAllAssociative($invalidlyHashedHierarchyRelationStatement);

@@ -64,12 +64,11 @@ class DoctrineDbalContentGraphSchemaBuilder
         $table = self::createTable($this->tableNames->hierarchyRelation(), [
             (new Column('id', Type::getType(Types::INTEGER)))->setAutoincrement(true)->setNotnull(true),
             (new Column('contentstreamlayer', self::type(Types::INTEGER)))->setNotnull(true),
-            (new Column('position', self::type(Types::INTEGER)))->setNotnull(true),
-            DbalSchemaFactory::columnForDimensionSpacePointHash('dimensionspacepointhash', $platform)->setNotnull(true),
-            // todo nullable?
+            (new Column('position', self::type(Types::INTEGER)))->setNotnull(false),
+            DbalSchemaFactory::columnForDimensionSpacePointHash('dimensionspacepointhash', $platform)->setNotnull(false),
             DbalSchemaFactory::columnForNodeAnchorPoint('parentnodeanchor', $platform)->setNotnull(false),
             DbalSchemaFactory::columnForNodeAnchorPoint('childnodeanchor', $platform)->setNotnull(false),
-            (new Column('subtreetags', self::type(Types::JSON))),
+            (new Column('subtreetags', self::type(Types::JSON)))->setNotnull(false),
         ]);
 
         return $table
