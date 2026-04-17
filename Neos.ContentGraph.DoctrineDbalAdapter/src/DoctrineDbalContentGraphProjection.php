@@ -280,12 +280,17 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
 
         $contentStreamLayerToMergeInto = $contentStreamLayers->getParentReadLayer();
         if ($contentStreamLayerToMergeInto !== null) {
+            // todo optimise query without subselect?
             $contentStreamLayerToMergeFromStatement = <<<SQL
-                SELECT MIN(b.contentStreamLayer) FROM {$this->tableNames->contentStreamLayer()} AS a
+            SELECT MIN(subquery.parentLayer) FROM (
+                SELECT DISTINCT MIN(b.contentStreamLayer) AS parentLayer FROM {$this->tableNames->contentStreamLayer()} AS a
                     LEFT JOIN {$this->tableNames->contentStreamLayer()} AS b
                         ON a.contentStreamId = b.contentStreamId
-                    WHERE a.contentStreamLayer = :contentStreamLayerCandidate
-                AND b.contentStreamLayer > :contentStreamLayerCandidate
+                WHERE a.contentStreamLayer = :contentStreamLayerCandidate
+                  AND b.contentStreamLayer > :contentStreamLayerCandidate
+                GROUP BY b.contentStreamId
+            ) AS subquery
+            HAVING COUNT(*) = 1
             SQL;
 
             try {
