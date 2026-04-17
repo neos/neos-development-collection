@@ -14,19 +14,21 @@ final readonly class HierarchyRelationStatement
      */
     private function __construct(
         private ContentGraphTableNames $tableNames,
-        private array $whereClauses
+        private bool $restrictContentStreamLayers,
+        private array $whereClauses,
     ) {
     }
 
     public static function for(ContentGraphTableNames $tableNames): self
     {
-        return new self($tableNames, []);
+        return new self($tableNames, true, []);
     }
 
     public function where(string $where): self
     {
         return new self(
             tableNames: $this->tableNames,
+            restrictContentStreamLayers: $this->restrictContentStreamLayers,
             whereClauses: $where === '' ? [] : [$where],
         );
     }
@@ -35,12 +37,24 @@ final readonly class HierarchyRelationStatement
     {
         return new self(
             tableNames: $this->tableNames,
+            restrictContentStreamLayers: $this->restrictContentStreamLayers,
             whereClauses: [...$this->whereClauses, ...($where === '' ? [] : [$where])],
+        );
+    }
+
+    public function allContentStreams(): self
+    {
+        return new self(
+            tableNames: $this->tableNames,
+            restrictContentStreamLayers: false,
+            whereClauses: $this->whereClauses,
         );
     }
 
     public function toSql(): string
     {
+        $whereClause = $this->restrictContentStreamLayers ? "            WHERE (contentstreamlayer IN (:contentStreamLayers))\n" : '';
+
         $additionalWhereClauses = $this->whereClauses === [] ? '' : sprintf("    WHERE %s\n", join("\n    AND ", $this->whereClauses));
 
         return <<<SQL
@@ -49,11 +63,12 @@ final readonly class HierarchyRelationStatement
             INNER JOIN (
                 SELECT id, MAX(contentstreamlayer) as contentstreamlayer
                     FROM {$this->tableNames->hierarchyRelation()}
-                    WHERE (contentstreamlayer IN (:contentStreamLayers))
-                GROUP BY id
-            ) AS activeLayer 
+        {$whereClause
+        }        GROUP BY id
+            ) AS activeLayer
                 ON h.id = activeLayer.id AND h.contentstreamlayer = activeLayer.contentstreamlayer
-        {$additionalWhereClauses})
+        {$additionalWhereClauses
+        })
         SQL;
     }
 }
