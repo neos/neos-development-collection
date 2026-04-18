@@ -227,12 +227,49 @@ jobs:
               presets:
                 'default':
                   contentGraphProjection:
-                    factoryObjectName: Neos\ContentGraph\PostgreSQLAdapter\PostgresContentGraphProjectionFactory
-                    # catchUpHooks:
-                    #   'Neos.ContentRepository.BehavioralTests:RaceConditionTracker':
-                    #     factoryObjectName: Neos\ContentRepository\BehavioralTests\ProjectionRaceConditionTester\RaceTrackerCatchUpHookFactory
-                  projectionIntegrityViolationDetector:
-                    factoryObjectName: Neos\ContentGraph\PostgreSQLAdapter\PostgresProjectionIntegrityViolationDetectionRunnerFactory
+                    # Note we use the doctrine content graph until postgres is finished
+                    factoryObjectName: Neos\ContentGraph\DoctrineDbalAdapter\DoctrineDbalContentGraphProjectionFactory
+          EOF
+          
+          cat <<EOF >> Configuration/Testing/_Behat_Postgres/Objects.yaml
+          # Note we configure the dbal adapter to run in a maria db 
+          Neos\ContentGraph\DoctrineDbalAdapter\DoctrineDbalContentGraphProjectionFactory:
+            scope: singleton
+            factoryObjectName: 'Neos\ContentRepositoryRegistry\Infrastructure\GenericObjectFactory'
+            arguments:
+              1:
+                value: 'Neos\ContentGraph\DoctrineDbalAdapter\DoctrineDbalContentGraphProjectionFactory'
+              2:
+                object:
+                  factoryObjectName: 'Neos\ContentRepository\BehavioralTests\DBALConnectionFactory'
+                  arguments:
+                    1:
+                      value:
+                        host: '127.0.0.1'
+                        port: 3306
+                        dbname: 'flow_functional_testing'
+                        driver: pdo_mysql
+                        user: 'neos'
+                        password: 'neos'
+          
+          Neos\ContentRepository\Core\Projection\ContentGraph\ProjectionIntegrityViolationDetectionRunnerFactoryInterface:
+            scope: singleton
+            factoryObjectName: 'Neos\ContentRepositoryRegistry\Infrastructure\GenericObjectFactory'
+            arguments:
+              1:
+                value: 'Neos\ContentGraph\DoctrineDbalAdapter\DoctrineDbalProjectionIntegrityViolationDetectionRunnerFactory'
+              2:
+                object:
+                  factoryObjectName: 'Neos\ContentRepository\BehavioralTests\DBALConnectionFactory'
+                  arguments:
+                    1:
+                      value:
+                        host: '127.0.0.1'
+                        port: 3306
+                        dbname: 'flow_functional_testing'
+                        driver: pdo_mysql
+                        user: 'neos'
+                        password: 'neos'
           EOF
 
           echo "Running in context '$FLOW_CONTEXT'"
@@ -259,7 +296,8 @@ jobs:
         if: matrix.parallel-parts == 'escr-behavioral-postgres'
         run: |
           rm -Rf Configuration/Testing/Behat
-          mv Configuration/Testing/_Behat_Postgres/ Configuration/Testing
+          mv Configuration/Testing/_Behat_Postgres/Settings.yaml Configuration/Testing/Settings.yaml
+          mv Configuration/Testing/_Behat_Postgres/Objects.yaml Configuration/Testing/Objects.yaml
 
       - name: Run Parallel Tests for the ES CR
         # TODO: enable parallel tests also for Postgres
@@ -294,7 +332,15 @@ jobs:
           # DEBUG MODE: ALTERNATIVELY, comment in the following lines to dump the DB.
           # do not exit the script if the tests break; as we want to upload the database dumps afterwards.
           set +e
-          composer test:behavioral:stop-on-failure
+
+          # todo introduce dedicated composer scripts to run adapter specific tests
+          # todo like this the retVal does not work correctly and the test pass event if they fail
+          ${{ case(
+            matrix.parallel-parts == 'escr-behavioral-postgres', 'composer test:behat-cli -- -c Neos.ContentRepository.BehavioralTests/Tests/Behavior/behat.yml.dist
+          composer test:behat-cli -- -c Neos.Neos/Tests/Behavior/behat.yml.dist',
+            'composer test:behavioral:stop-on-failure'
+          ) }}
+  
           retVal=$?
 
           # automatically search for race conditions
@@ -337,7 +383,7 @@ jobs:
           path: Data/DebugDatabaseDumps
 
       - name: Fail pipeline if ES CR tests broke (after uploading artifacts)
-        if: (matrix.parallel-parts == 'escr-behavioral' || matrix.parallel-parts == 'escr-behavioral-mysql') && steps.escrtests.outcome != 'success'
+        if: (matrix.parallel-parts == 'escr-behavioral' || matrix.parallel-parts == 'escr-behavioral-mysql' || matrix.parallel-parts == 'escr-behavioral-postgres') && steps.escrtests.outcome != 'success'
         # we want to reach the Upload Postgres/Mysql DB dump step.
         # Here we want to fail everything, as described in https://stackoverflow.com/a/58003436/4921449
         run: |
@@ -362,6 +408,18 @@ jobs:
                   charset: 'utf8'
                   defaultTableOptions:
                     charset: 'utf8'
+            # Note we use the doctrine content graph until postgres is finished
+            # ContentRepositoryRegistry:
+            #   contentRepositories:
+            #     t_extensibility:
+            #       contentGraphProjection:
+            #         factoryObjectName: Neos\ContentGraph\PostgreSQLAdapter\PostgresContentGraphProjectionFactory
+            #     t_subscription:
+            #       contentGraphProjection:
+            #         factoryObjectName: Neos\ContentGraph\PostgreSQLAdapter\PostgresContentGraphProjectionFactory
+            #     test_parallel:
+            #       contentGraphProjection:
+            #         factoryObjectName: Neos\ContentGraph\PostgreSQLAdapter\PostgresContentGraphProjectionFactory
           EOF
           mkdir Configuration/Testing/Behat
           cp Configuration/Testing/Settings.yaml Configuration/Testing/Behat/Settings.yaml
