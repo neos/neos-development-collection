@@ -69,7 +69,7 @@ abstract class AbstractSubscriptionEngineTestCase extends TestCase // we don't u
 
     public function setUp(): void
     {
-        if ($this->getObject(Connection::class)->getDatabasePlatform() instanceof PostgreSQLPlatform) {
+        if (getenv('SKIP_CR_POSTGRESQL_TESTS')) {
             $this->markTestSkipped('TODO: The content graph is not available in postgres currently: https://github.com/neos/neos-development-collection/issues/3855');
         }
 

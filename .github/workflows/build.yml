@@ -427,7 +427,7 @@ jobs:
 
       - name: Run functional tests (PGSQL)
         if: matrix.parallel-parts == 'functionaltests-postgres'
-        run: bin/phpunit --colors --stop-on-failure -c Build/BuildEssentials/PhpUnit/FunctionalTests.xml --testsuite "Neos tests" --verbose
+        run: SKIP_CR_POSTGRESQL_TESTS=1 bin/phpunit --colors --stop-on-failure -c Build/BuildEssentials/PhpUnit/FunctionalTests.xml --testsuite "Neos tests" --verbose
 
   buildall:
     if: "!contains(github.event.head_commit.message, '[skip ci]') && !contains(github.event.head_commit.message, '[skip travis]')"
