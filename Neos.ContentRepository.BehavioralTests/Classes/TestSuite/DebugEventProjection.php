@@ -95,15 +95,18 @@ final class DebugEventProjection implements ProjectionInterface
 
     public function apply(EventInterface $event, EventEnvelope $eventEnvelope): void
     {
-        try {
-            $this->dbal->insert($this->tableNamePrefix, [
-               'sequencenumber' => $eventEnvelope->sequenceNumber->value,
-               'stream' => $eventEnvelope->streamName->value,
-               'type' => $eventEnvelope->event->type->value,
-            ]);
-        } catch (\Doctrine\DBAL\Exception\UniqueConstraintViolationException $exception) {
-            throw new \RuntimeException(sprintf('Must not happen! Debug projection detected duplicate event %s of type %s', $eventEnvelope->sequenceNumber->value, $eventEnvelope->event->type->value), 1732360282, $exception);
+        $alreadyApplied = $this->dbal->fetchOne(
+            "SELECT 1 FROM {$this->tableNamePrefix} WHERE sequencenumber = ?",
+            [$eventEnvelope->sequenceNumber->value]
+        );
+        if ($alreadyApplied !== false) {
+            throw new \RuntimeException(sprintf('Must not happen! Debug projection detected duplicate event %s of type %s', $eventEnvelope->sequenceNumber->value, $eventEnvelope->event->type->value), 1732360282);
         }
+        $this->dbal->insert($this->tableNamePrefix, [
+           'sequencenumber' => $eventEnvelope->sequenceNumber->value,
+           'stream' => $eventEnvelope->streamName->value,
+           'type' => $eventEnvelope->event->type->value,
+        ]);
         if ($this->saboteur) {
             ($this->saboteur)($eventEnvelope);
         }
