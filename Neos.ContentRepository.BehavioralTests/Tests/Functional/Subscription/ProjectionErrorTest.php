@@ -315,7 +315,7 @@ final class ProjectionErrorTest extends AbstractSubscriptionEngineTestCase
             $this->subscriptionStatus('Vendor.Package:SecondFakeProjection')
         );
 
-        // the first successful event is applied and committet, but the second partially applied event is also applied
+        // the first successful event is applied and committet, but the second partially applied event is also applied:
         self::assertEquals(
             [SequenceNumber::fromInteger(1), SequenceNumber::fromInteger(2)],
             $this->secondFakeProjection->getState()->findAppliedSequenceNumbers()
