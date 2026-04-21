@@ -18,7 +18,8 @@ use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Exception as DBALException;
 use Doctrine\DBAL\Exception\InvalidArgumentException;
 use Neos\ContentGraph\DoctrineDbalAdapter\ContentGraphTableNames;
-use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\ContentStreamDbId;
+use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\ContentStreamLayer;
+use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\ContentStreamLayers;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\NodeFactory;
 use Neos\ContentGraph\DoctrineDbalAdapter\Tests\Behavior\Features\Bootstrap\Helpers\TestingNodeAggregateId;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
@@ -127,7 +128,7 @@ trait DoctrineDbalProjectionIntegrityViolatorTrait
         unset($record['subtreetags']);
 
         $newParentHierarchyRelation = $this->findHierarchyRelationByIds(
-            $this->getContentStreamDbId(
+            $this->requireSingleWriteLayer(
                 ContentStreamId::fromString($dataset['contentStreamId'])
             ),
             DimensionSpacePoint::fromArray($dataset['dimensionSpacePoint']),
@@ -173,18 +174,18 @@ trait DoctrineDbalProjectionIntegrityViolatorTrait
     {
         $dataset = $this->transformPayloadTableToDataset($payloadTable);
 
-        $contentStreamDbId = $this->getContentStreamDbId(
+        $contentStreamLayer = $this->requireSingleWriteLayer(
             ContentStreamId::fromString($dataset['contentStreamId'])
         );
 
         $relationAnchorPoint = $this->dbal->executeQuery(
             'SELECT n.relationanchorpoint FROM ' . $this->tableNames()->node() . ' n
                 JOIN ' . $this->tableNames()->hierarchyRelation() . ' h ON h.childnodeanchor = n.relationanchorpoint
-                WHERE h.contentstreamdbid = :contentStreamDbId
+                WHERE h.contentstreamlayer = :contentStreamLayer
                 AND n.nodeaggregateId = :nodeAggregateId
                 AND n.origindimensionspacepointhash = :originDimensionSpacePointHash',
             [
-                'contentStreamDbId' => $contentStreamDbId->value,
+                'contentStreamLayer' => $contentStreamLayer->value,
                 'nodeAggregateId' => $dataset['nodeAggregateId'],
                 'originDimensionSpacePointHash' => OriginDimensionSpacePoint::fromArray($dataset['originDimensionSpacePoint'])->hash,
             ]
@@ -211,12 +212,12 @@ trait DoctrineDbalProjectionIntegrityViolatorTrait
         $dataset = $this->transformPayloadTableToDataset($payloadTable);
         $dimensionSpacePoint = DimensionSpacePoint::fromArray($dataset['dimensionSpacePoint']);
 
-        $contentStreamDbId = $this->getContentStreamDbId(
+        $contentStreamLayer = $this->requireSingleWriteLayer(
             ContentStreamId::fromString($dataset['contentStreamId'])
         );
 
         $record = [
-            'contentstreamdbid' => $contentStreamDbId->value,
+            'contentstreamlayer' => $contentStreamLayer->value,
             'dimensionspacepointhash' => $dimensionSpacePoint->hash,
             'childnodeanchor' => $this->findRelationAnchorPointByDataset($dataset)
         ];
@@ -271,7 +272,7 @@ trait DoctrineDbalProjectionIntegrityViolatorTrait
         return [
             'name' => $dataset['referenceName'],
             'nodeanchorpoint' => $this->findHierarchyRelationByIds(
-                $this->getContentStreamDbId(
+                $this->requireSingleWriteLayer(
                     ContentStreamId::fromString($dataset['contentStreamId'])
                 ),
                 DimensionSpacePoint::fromArray($dataset['dimensionSpacePoint']),
@@ -286,14 +287,14 @@ trait DoctrineDbalProjectionIntegrityViolatorTrait
         $dimensionSpacePoint = DimensionSpacePoint::fromArray($dataset['dimensionSpacePoint']);
         $parentNodeAggregateId = TestingNodeAggregateId::fromString($dataset['parentNodeAggregateId']);
         $childAggregateId = TestingNodeAggregateId::fromString($dataset['childNodeAggregateId']);
-        $contentStreamDbId = $this->getContentStreamDbId(
+        $contentStreamLayer = $this->requireSingleWriteLayer(
             ContentStreamId::fromString($dataset['contentStreamId'])
         );
 
         $parentHierarchyRelation = $parentNodeAggregateId->isNonExistent()
             ? null
             : $this->findHierarchyRelationByIds(
-                $contentStreamDbId,
+                $contentStreamLayer,
                 $dimensionSpacePoint,
                 NodeAggregateId::fromString($dataset['parentNodeAggregateId'])
             );
@@ -301,13 +302,13 @@ trait DoctrineDbalProjectionIntegrityViolatorTrait
         $childHierarchyRelation = $childAggregateId->isNonExistent()
             ? null
             : $this->findHierarchyRelationByIds(
-                $contentStreamDbId,
+                $contentStreamLayer,
                 $dimensionSpacePoint,
                 NodeAggregateId::fromString($dataset['childNodeAggregateId'])
             );
 
         return [
-            'contentstreamdbid' => $contentStreamDbId->value,
+            'contentstreamlayer' => $contentStreamLayer->value,
             'dimensionspacepointhash' => $dimensionSpacePoint->hash,
             'parentnodeanchor' => $parentHierarchyRelation !== null ? $parentHierarchyRelation['childnodeanchor'] : 9999999,
             'childnodeanchor' => $childHierarchyRelation !== null ? $childHierarchyRelation['childnodeanchor'] : 8888888,
@@ -321,7 +322,7 @@ trait DoctrineDbalProjectionIntegrityViolatorTrait
         $dimensionSpacePoint = DimensionSpacePoint::fromArray($dataset['originDimensionSpacePoint'] ?? $dataset['dimensionSpacePoint']);
 
         return $this->findHierarchyRelationByIds(
-            $this->getContentStreamDbId(
+            $this->requireSingleWriteLayer(
                 ContentStreamId::fromString($dataset['contentStreamId'])
             ),
             $dimensionSpacePoint,
@@ -330,7 +331,7 @@ trait DoctrineDbalProjectionIntegrityViolatorTrait
     }
 
     private function findHierarchyRelationByIds(
-        ContentStreamDbId $contentStreamDbId,
+        ContentStreamLayer $contentStreamLayer,
         DimensionSpacePoint $dimensionSpacePoint,
         NodeAggregateId $nodeAggregateId
     ): array {
@@ -339,17 +340,17 @@ trait DoctrineDbalProjectionIntegrityViolatorTrait
                 FROM ' . $this->tableNames()->node() . ' n
                 INNER JOIN ' . $this->tableNames()->hierarchyRelation() . ' h
                 ON n.relationanchorpoint = h.childnodeanchor
-                WHERE h.contentstreamdbid = :contentStreamDbId
+                WHERE h.contentstreamlayer = :contentStreamLayer
                 AND n.nodeaggregateid = :nodeAggregateId
                 AND h.dimensionspacepointhash = :dimensionSpacePointHash',
             [
-                'contentStreamDbId' => $contentStreamDbId->value,
+                'contentStreamLayer' => $contentStreamLayer->value,
                 'dimensionSpacePointHash' => $dimensionSpacePoint->hash,
                 'nodeAggregateId' => $nodeAggregateId->value
             ]
         )->fetchAssociative();
         if ($nodeRecord === false) {
-            throw new \InvalidArgumentException(sprintf('Failed to find hierarchy relation for content stream "%s", dimension space point "%s" and node aggregate id "%s"', $contentStreamDbId->value, $dimensionSpacePoint->hash, $nodeAggregateId->value), 1708617712);
+            throw new \InvalidArgumentException(sprintf('Failed to find hierarchy relation for content stream "%s", dimension space point "%s" and node aggregate id "%s"', $contentStreamLayer->value, $dimensionSpacePoint->hash, $nodeAggregateId->value), 1708617712);
         }
 
         return $nodeRecord;
@@ -365,16 +366,27 @@ trait DoctrineDbalProjectionIntegrityViolatorTrait
         return $result;
     }
 
-    private function getContentStreamDbId(ContentStreamId $contentStreamId): ContentStreamDbId
+    private function getContentStreamLayers(ContentStreamId $contentStreamId): ContentStreamLayers
     {
-        return ContentStreamDbId::fromInt(
+        return ContentStreamLayers::fromArray(
             $this->dbal->executeQuery(
-                'SELECT dbId FROM ' . $this->tableNames()->contentStream() . ' WHERE id = :contentStreamId',
+                'SELECT contentstreamlayer FROM ' . $this->tableNames()->contentStreamLayer() . ' WHERE contentstreamid = :contentStreamId',
                 [
                     'contentStreamId' => $contentStreamId->value,
                 ]
-            )->fetchOne()
+            )->fetchFirstColumn()
         );
+    }
+
+    private function requireSingleWriteLayer(ContentStreamId $contentStreamId): ContentStreamLayer
+    {
+        $contentStreamLayers = $this->getContentStreamLayers($contentStreamId);
+
+        if (!$contentStreamLayers->getWriteLayer()->equals($contentStreamLayers->getRootLayer())) {
+            throw new \RuntimeException(sprintf('For testing a single write layer is currently only supported for modification. Got %s for content stream %s.', $contentStreamLayers->toDebugString(), $contentStreamId->value), 1776786186);
+        }
+
+        return $contentStreamLayers->getWriteLayer();
     }
 
     /**
