@@ -26,14 +26,14 @@ class HierarchyRelationStatementTest extends TestCase
         self::assertEquals(
             <<<SQL
             (SELECT h.*
-                FROM cr_testing_p_graph_hierarchyrelation as h
+                FROM cr_testing_p_graph_hierarchyrelation AS h
                 INNER JOIN (
-                    SELECT id, MAX(contentstreamlayer) as contentstreamlayer
+                    SELECT id, MAX(contentstreamlayer) AS contentstreamlayer
                         FROM cr_testing_p_graph_hierarchyrelation
-                        WHERE (contentstreamlayer IN (:contentStreamLayers))
+                            WHERE (contentstreamlayer IN (:contentStreamLayers))
                     GROUP BY id
-                ) AS activeLayer
-                    ON h.id = activeLayer.id AND h.contentstreamlayer = activeLayer.contentstreamlayer
+                ) AS readHierarchy
+                    ON h.id = readHierarchy.id AND h.contentstreamlayer = readHierarchy.contentstreamlayer
             )
             SQL,
             $hierarchyRelationStatement->toSql()
@@ -49,14 +49,14 @@ class HierarchyRelationStatementTest extends TestCase
         self::assertEquals(
             <<<SQL
             (SELECT h.*
-                FROM cr_testing_p_graph_hierarchyrelation as h
+                FROM cr_testing_p_graph_hierarchyrelation AS h
                 INNER JOIN (
-                    SELECT id, MAX(contentstreamlayer) as contentstreamlayer
+                    SELECT id, MAX(contentstreamlayer) AS contentstreamlayer
                         FROM cr_testing_p_graph_hierarchyrelation
-                        WHERE (contentstreamlayer IN (:contentStreamLayers))
+                            WHERE (contentstreamlayer IN (:contentStreamLayers))
                     GROUP BY id
-                ) AS activeLayer
-                    ON h.id = activeLayer.id AND h.contentstreamlayer = activeLayer.contentstreamlayer
+                ) AS readHierarchy
+                    ON h.id = readHierarchy.id AND h.contentstreamlayer = readHierarchy.contentstreamlayer
                 WHERE h.dimensionspacepointhash in (:dimensionSpacePointHashes)
             )
             SQL,
@@ -74,38 +74,16 @@ class HierarchyRelationStatementTest extends TestCase
         self::assertEquals(
             <<<SQL
             (SELECT h.*
-                FROM cr_testing_p_graph_hierarchyrelation as h
+                FROM cr_testing_p_graph_hierarchyrelation AS h
                 INNER JOIN (
-                    SELECT id, MAX(contentstreamlayer) as contentstreamlayer
+                    SELECT id, MAX(contentstreamlayer) AS contentstreamlayer
                         FROM cr_testing_p_graph_hierarchyrelation
-                        WHERE (contentstreamlayer IN (:contentStreamLayers))
+                            WHERE (contentstreamlayer IN (:contentStreamLayers))
                     GROUP BY id
-                ) AS activeLayer
-                    ON h.id = activeLayer.id AND h.contentstreamlayer = activeLayer.contentstreamlayer
+                ) AS readHierarchy
+                    ON h.id = readHierarchy.id AND h.contentstreamlayer = readHierarchy.contentstreamlayer
                 WHERE h.dimensionspacepointhash in (:dimensionSpacePointHashes)
                 AND h.childnodeanchor = :anchor
-            )
-            SQL,
-            $hierarchyRelationStatement->toSql()
-        );
-    }
-
-    /** @test */
-    public function allContentStreamsGetSql()
-    {
-        $hierarchyRelationStatement = HierarchyRelationStatement::for($this->tableNames)
-            ->allContentStreams();
-
-        self::assertEquals(
-            <<<SQL
-            (SELECT h.*
-                FROM cr_testing_p_graph_hierarchyrelation as h
-                INNER JOIN (
-                    SELECT id, MAX(contentstreamlayer) as contentstreamlayer
-                        FROM cr_testing_p_graph_hierarchyrelation
-                    GROUP BY id
-                ) AS activeLayer
-                    ON h.id = activeLayer.id AND h.contentstreamlayer = activeLayer.contentstreamlayer
             )
             SQL,
             $hierarchyRelationStatement->toSql()
