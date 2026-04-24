@@ -27,6 +27,10 @@ Feature: Create node aggregate with node
             iDoNotExist: 'whatever'
     'Neos.ContentRepository.Testing:AbstractNode':
       abstract: true
+    'Neos.ContentRepository.Testing:WithTetheredChildNode':
+      childNodes:
+        child-node:
+          type: 'Neos.ContentRepository.Testing:Node'
     """
     And using identifier "default", I define a content repository
     And I am in content repository "default"
@@ -183,3 +187,12 @@ Feature: Create node aggregate with node
       | nodeTypeName          | "Neos.ContentRepository.Testing:NodeWithInvalidDefaultValue" |
       | parentNodeAggregateId | "lady-eleonode-rootford"                                     |
     Then the last command should have thrown an exception of type "InvalidArgumentException"
+
+  Scenario: Try to create a root node aggregate with tethered children and specify a tethered descendant id which is already occupied
+    When the command CreateNodeAggregateWithNode is executed with payload and exceptions are caught:
+      | Key                                | Value                                                  |
+      | nodeAggregateId                    | "nody-mc-nodeface"                                     |
+      | parentNodeAggregateId              | "lady-eleonode-rootford"                               |
+      | nodeTypeName                       | "Neos.ContentRepository.Testing:WithTetheredChildNode" |
+      | tetheredDescendantNodeAggregateIds | {"child-node": "lady-eleonode-rootford"}               |
+    Then the last command should have thrown an exception of type "NodeAggregateCurrentlyExists"

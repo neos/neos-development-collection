@@ -205,3 +205,25 @@ Feature: Change node aggregate type - basic error cases
       | newNodeTypeName | "Neos.ContentRepository.Testing:GrandParentNodeType" |
       | strategy        | "happypath"                                          |
     Then the last command should have thrown an exception of type "NodeAggregateIsUntethered"
+
+  Scenario: Try to change a node to a type with a descendant tethered node declaration and specify a tethered descendant id which is already occupied
+    When the following CreateNodeAggregateWithNode commands are executed:
+      | nodeAggregateId   | parentNodeAggregateId  | nodeTypeName                          |
+      | oddnode-tetherton | lady-eleonode-rootford | Neos.ContentRepository.Testing:Simple |
+
+    And the command ChangeNodeAggregateType is executed with payload and exceptions are caught:
+      | Key                                | Value                                                |
+      | nodeAggregateId                    | "sir-david-nodenborough"                             |
+      | newNodeTypeName                    | "Neos.ContentRepository.Testing:GrandParentNodeType" |
+      | strategy                           | "happypath"                                          |
+      | tetheredDescendantNodeAggregateIds | { "child-of-type-b": "oddnode-tetherton"}             |
+    Then the last command should have thrown an exception of type "NodeAggregateCurrentlyExists"
+
+    # "nodewyn-tetherton" is already occupied by its current tethered node
+    And the command ChangeNodeAggregateType is executed with payload and exceptions are caught:
+      | Key                                | Value                                                                                      |
+      | nodeAggregateId                    | "sir-david-nodenborough"                                                                   |
+      | newNodeTypeName                    | "Neos.ContentRepository.Testing:GrandParentNodeType"                                       |
+      | strategy                           | "happypath"                                                                                |
+      | tetheredDescendantNodeAggregateIds | { "child-of-type-b": "nodimer-tetherton", "child-of-type-b/tethered": "nodewyn-tetherton"} |
+    Then the last command should have thrown an exception of type "NodeAggregateCurrentlyExists"
