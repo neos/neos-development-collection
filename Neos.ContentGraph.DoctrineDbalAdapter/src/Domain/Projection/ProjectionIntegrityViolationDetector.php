@@ -212,7 +212,7 @@ final class ProjectionIntegrityViolationDetector implements ProjectionIntegrityV
         }
 
         $nodesForMissingHierarchiesStatement = <<<SQL
-            SELECT relationanchorpoint
+            SELECT nodeaggregateid, relationanchorpoint
             FROM {$this->tableNames->node()} n
             LEFT JOIN {$this->tableNames->hierarchyRelation()} h
                 ON h.childnodeanchor = n.relationanchorpoint
@@ -220,13 +220,13 @@ final class ProjectionIntegrityViolationDetector implements ProjectionIntegrityV
         SQL;
 
         try {
-            $nodesForMissingHierarchies = $this->dbal->fetchFirstColumn($nodesForMissingHierarchiesStatement);
+            $nodesForMissingHierarchies = $this->dbal->fetchAllAssociative($nodesForMissingHierarchiesStatement);
         } catch (DBALException $e) {
             throw new \RuntimeException(sprintf('Failed to load nodes for missing hierarchies: %s', $e->getMessage()), 1776353433, $e);
         }
 
         foreach ($nodesForMissingHierarchies as $row) {
-            $result->addError(new Error('Node (relationanchorpoint %d) found but no hierarchy references that node.', self::ERROR_CODE_HIERARCHY_INTEGRITY_IS_COMPROMISED, [$row]));
+            $result->addError(new Error('Node %s (relationanchorpoint %d) found but no hierarchy references that node.', self::ERROR_CODE_HIERARCHY_INTEGRITY_IS_COMPROMISED, [$row['nodeaggregateid'], $row['relationanchorpoint']]));
         }
 
         return $result;
