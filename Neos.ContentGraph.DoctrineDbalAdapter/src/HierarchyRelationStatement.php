@@ -42,31 +42,20 @@ final readonly class HierarchyRelationStatement
         );
     }
 
-    public function allContentStreams(): self
-    {
-        return new self(
-            tableNames: $this->tableNames,
-            restrictContentStreamLayers: false,
-            whereClauses: $this->whereClauses,
-        );
-    }
-
     public function toSql(): string
     {
-        $whereClause = $this->restrictContentStreamLayers ? "            WHERE (contentstreamlayer IN (:contentStreamLayers))\n" : '';
-
         $additionalWhereClauses = $this->whereClauses === [] ? '' : sprintf("    WHERE %s\n", join("\n    AND ", $this->whereClauses));
 
         return <<<SQL
         (SELECT h.*
-            FROM {$this->tableNames->hierarchyRelation()} as h
+            FROM {$this->tableNames->hierarchyRelation()} AS h
             INNER JOIN (
-                SELECT id, MAX(contentstreamlayer) as contentstreamlayer
+                SELECT id, MAX(contentstreamlayer) AS contentstreamlayer
                     FROM {$this->tableNames->hierarchyRelation()}
-        {$whereClause
-        }        GROUP BY id
-            ) AS activeLayer
-                ON h.id = activeLayer.id AND h.contentstreamlayer = activeLayer.contentstreamlayer
+                        WHERE (contentstreamlayer IN (:contentStreamLayers))
+                GROUP BY id
+            ) AS readHierarchy
+                ON h.id = readHierarchy.id AND h.contentstreamlayer = readHierarchy.contentstreamlayer
         {$additionalWhereClauses
         })
         SQL;

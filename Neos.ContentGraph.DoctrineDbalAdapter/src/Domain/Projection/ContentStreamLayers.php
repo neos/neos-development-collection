@@ -91,6 +91,6 @@ final readonly class ContentStreamLayers
 
     public function toDebugString(): string
     {
-        return sprintf('DbIds[%s]', join(',', $this->toIntArray()));
+        return sprintf('Layers[%s]', join(',', $this->toIntArray()));
     }
 }
