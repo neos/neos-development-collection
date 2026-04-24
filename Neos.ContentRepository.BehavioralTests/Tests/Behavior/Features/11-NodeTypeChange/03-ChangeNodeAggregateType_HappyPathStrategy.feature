@@ -229,11 +229,11 @@ Feature: Change node aggregate type - behavior of HAPPYPATH strategy
       | targetOrigin    | {"language":"gsw"} |
 
     When the command ChangeNodeAggregateType is executed with payload:
-      | Key                                | Value                                                                                      |
-      | nodeAggregateId                    | "nody-mc-nodeface"                                                                         |
-      | newNodeTypeName                    | "Neos.ContentRepository.Testing:NodeTypeB"                                                 |
-      | strategy                           | "happypath"                                                                                |
-      | tetheredDescendantNodeAggregateIds | { "child-of-type-b": "nodimer-tetherton", "child-of-type-b/tethered": "nodewyn-tetherton"} |
+      | Key                                | Value                                                                                       |
+      | nodeAggregateId                    | "nody-mc-nodeface"                                                                          |
+      | newNodeTypeName                    | "Neos.ContentRepository.Testing:NodeTypeB"                                                  |
+      | strategy                           | "happypath"                                                                                 |
+      | tetheredDescendantNodeAggregateIds | { "child-of-type-b": "nodimer-tetherton", "child-of-type-b/tethered": "nodimer-tether-son"} |
 
     Then I expect exactly 15 events to be published on stream "ContentStream:cs-identifier"
     And event at index 8 is of type "NodeAggregateTypeWasChanged" with payload:
@@ -284,7 +284,7 @@ Feature: Change node aggregate type - behavior of HAPPYPATH strategy
       | Key                           | Expected                                                            |
       | workspaceName                 | "live"                                                              |
       | contentStreamId               | "cs-identifier"                                                     |
-      | nodeAggregateId               | "nodewyn-tetherton"                                                 |
+      | nodeAggregateId               | "nodimer-tether-son"                                                |
       | nodeTypeName                  | "Neos.ContentRepository.Testing:Tethered"                           |
       | originDimensionSpacePoint     | {"language":"gsw"}                                                  |
       | succeedingSiblingsForCoverage | [{"dimensionSpacePoint":{"language":"gsw"},"nodeAggregateId":null}] |
@@ -296,7 +296,7 @@ Feature: Change node aggregate type - behavior of HAPPYPATH strategy
       | Key                       | Expected                                                           |
       | workspaceName             | "live"                                                             |
       | contentStreamId           | "cs-identifier"                                                    |
-      | nodeAggregateId           | "nodewyn-tetherton"                                                |
+      | nodeAggregateId           | "nodimer-tether-son"                                               |
       | sourceOrigin              | {"language":"gsw"}                                                 |
       | generalizationOrigin      | {"language":"de"}                                                  |
       | variantSucceedingSiblings | [{"dimensionSpacePoint":{"language":"de"},"nodeAggregateId":null}] |
@@ -319,16 +319,28 @@ Feature: Change node aggregate type - behavior of HAPPYPATH strategy
       | child-of-type-b | cs-identifier;nodimer-tetherton;{"language":"de"} |
 
     And I expect node aggregate identifier "nodewyn-tetherton" to lead to node cs-identifier;nodewyn-tetherton;{"language":"de"}
+    And I expect this node to be classified as "tethered"
+    And I expect this node to be of type "Neos.ContentRepository.Testing:ChildOfNodeTypeA"
+    And I expect this node to be named "child-of-type-a"
     And I expect this node to have the following properties:
       | Key               | Value                |
       | commonDefaultText | "commonDefaultTextA" |
       | defaultTextA      | "defaultTextA"       |
 
     And I expect node aggregate identifier "nodimer-tetherton" to lead to node cs-identifier;nodimer-tetherton;{"language":"de"}
+    And I expect this node to be classified as "tethered"
+    And I expect this node to be of type "Neos.ContentRepository.Testing:ChildOfNodeTypeB"
+    And I expect this node to be named "child-of-type-b"
     And I expect this node to have the following properties:
       | Key               | Value                |
       | commonDefaultText | "commonDefaultTextB" |
       | defaultTextB      | "defaultTextB"       |
+
+    And I expect node aggregate identifier "nodimer-tether-son" to lead to node cs-identifier;nodimer-tether-son;{"language":"de"}
+    And I expect this node to be classified as "tethered"
+    And I expect this node to be of type "Neos.ContentRepository.Testing:Tethered"
+    And I expect this node to be named "tethered"
+    And I expect this node to have no properties
 
     When I am in workspace "live" and dimension space point {"language":"gsw"}
     Then I expect node aggregate identifier "nody-mc-nodeface" to lead to node cs-identifier;nody-mc-nodeface;{"language":"gsw"}
