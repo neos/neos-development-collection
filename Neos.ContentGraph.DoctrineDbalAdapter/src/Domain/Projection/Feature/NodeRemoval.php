@@ -47,6 +47,32 @@ trait NodeRemoval
             $this->removeRelationRecursivelyFromDatabaseIncludingNonReferencedNodes($outgoingRelation);
         }
 
+        // TODO Write tests that we only remove in the correct dimension with copy on write before or without
+        // TODO Only remove back references if no other hierarchy uses that node row (no copy on write happened)
+        //  -> Or trigger copy on write as if we still keep the back reference because that node row is shared the back references can silently become valid again and the projection integrity violator complains
+        $deleteBackReferencesStatement = <<<SQL
+            DELETE
+                r
+            FROM
+                {$this->tableNames->node()} n
+                LEFT JOIN {$this->tableNames->referenceRelation()} r ON r.destinationnodeaggregateid = n.nodeaggregateid
+                LEFT JOIN {$this->tableNames->hierarchyRelation()} h
+                    ON h.contentstreamid = :contentStreamId
+                    AND h.dimensionspacepointhash = :dimensionSpacePointHash
+                    AND h.childnodeanchor = r.nodeanchorpoint
+            WHERE
+                n.relationanchorpoint = :anchorPointForNode
+        SQL;
+        try {
+            $this->dbal->executeStatement($deleteBackReferencesStatement, [
+                'anchorPointForNode' => $ingoingRelation->childNodeAnchor->value,
+                'contentStreamId' => $ingoingRelation->contentStreamId->value,
+                'dimensionSpacePointHash' => $ingoingRelation->dimensionSpacePoint->hash,
+            ]);
+        } catch (DBALException $e) {
+            throw new \RuntimeException(sprintf('Failed to remove backreferences from database: %s', $e->getMessage()), 1777050925, $e);
+        }
+
         // remove node itself if it does not have any incoming hierarchy relations anymore
         // also remove outbound reference relations
         $deleteRelationsStatement = <<<SQL
