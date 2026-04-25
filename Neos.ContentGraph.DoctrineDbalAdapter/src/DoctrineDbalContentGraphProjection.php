@@ -348,6 +348,19 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
                 throw new \RuntimeException(sprintf('Failed to merge hierarchy relations: %s', $e->getMessage()), 1776345058, $e);
             }
 
+            if ($contentStreamLayerToMergeInto->equals($contentStreamLayers->getRootLayer())) {
+                // when merging into the root layer we remove hierarchies which acted with NULL values as removal marker
+                try {
+                    $this->dbal->delete($this->tableNames->hierarchyRelation(), [
+                        'contentstreamlayer' => $contentStreamLayerToMergeInto->value,
+                        'childnodeanchor' => null,
+                        'dimensionspacepointhash' => null,
+                    ]);
+                } catch (DBALException $e) {
+                    throw new \RuntimeException(sprintf('Failed to cleanup hierarchy rows with NULL values in root layer after merge: %s', $e->getMessage()), 1776345059, $e);
+                }
+            }
+
             try {
                 $this->dbal->delete($this->tableNames->hierarchyRelation(), [
                     'contentstreamlayer' => $contentStreamLayerToMergeFrom->value,

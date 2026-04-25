@@ -229,6 +229,27 @@ final class ProjectionIntegrityViolationDetector implements ProjectionIntegrityV
             $result->addError(new Error('Node %s (relationanchorpoint %d) found but no hierarchy references that node.', self::ERROR_CODE_HIERARCHY_INTEGRITY_IS_COMPROMISED, [$row['nodeaggregateid'], $row['relationanchorpoint']]));
         }
 
+        $rootLayerHierarchyDeletionsStatement = <<<SQL
+            SELECT h.id, h.contentStreamLayer, l.contentStreamId
+                FROM {$this->tableNames->hierarchyRelation()} h
+                INNER JOIN (
+                    -- root layers
+                    SELECT DISTINCT MIN(l.contentStreamLayer) as rootContentStreamLayer, l.contentStreamId FROM {$this->tableNames->contentStreamLayer()} AS l
+                        GROUP BY l.contentStreamId
+                ) AS l ON h.contentStreamLayer = l.rootContentStreamLayer 
+            WHERE h.childnodeanchor IS NULL OR h.dimensionspacepointhash IS NULL   
+        SQL;
+
+        try {
+            $rootLayerHierarchyDeletions = $this->dbal->fetchAllAssociative($rootLayerHierarchyDeletionsStatement);
+        } catch (DBALException $e) {
+            throw new \RuntimeException(sprintf('Failed to load nodes for missing hierarchies: %s', $e->getMessage()), 1776353433, $e);
+        }
+
+        foreach ($rootLayerHierarchyDeletions as $row) {
+            $result->addError(new Error('Hierarchy (id %d) with null values found in root layer %d of content stream %s. Expect row to be removed.', self::ERROR_CODE_HIERARCHY_INTEGRITY_IS_COMPROMISED, [$row['id'], $row['contentStreamLayer'], $row['contentStreamId']]));
+        }
+
         return $result;
     }
 
