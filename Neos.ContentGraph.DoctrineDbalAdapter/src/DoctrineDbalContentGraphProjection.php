@@ -273,9 +273,11 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
             'contentStreamId' => $event->contentStreamId->value,
         ]);
 
+        $contentStreamLayerToMergeFrom = null;
         $contentStreamLayerToMergeInto = $contentStreamLayers->getParentReadLayer();
         if ($contentStreamLayerToMergeInto !== null) {
-            // todo optimise query without subselect?
+            // Cleanup, due to the removal of the current write layer we possibly free the immediate parent layer if no other content stream forks from it directly
+            // If all content streams use the layer and all their next parent layers are equal we close the gap in the layers
             $contentStreamLayerToMergeFromStatement = <<<SQL
             SELECT MIN(subquery.parentLayer) FROM (
                 SELECT DISTINCT MIN(b.contentStreamLayer) AS parentLayer FROM {$this->tableNames->contentStreamLayer()} AS a
@@ -285,7 +287,8 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
                   AND b.contentStreamLayer > :contentStreamLayerCandidate
                 GROUP BY b.contentStreamId
             ) AS subquery
-            HAVING COUNT(*) = 1
+            -- return only if there is a single distict result
+            HAVING COUNT(parentLayer) = 1
             SQL;
 
             try {
@@ -298,13 +301,12 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
             } catch (DBALException $e) {
                 throw new \RuntimeException(sprintf('Failed to load other content stream layer to merge: %s', $e->getMessage()), 1776339670, $e);
             }
-        } else {
-            $contentStreamLayerToMergeFromResult = false;
+            if ($contentStreamLayerToMergeFromResult !== false) {
+                $contentStreamLayerToMergeFrom = ContentStreamLayer::fromInt((int)$contentStreamLayerToMergeFromResult);
+            }
         }
 
-        if ($contentStreamLayerToMergeFromResult !== false) {
-            $contentStreamLayerToMergeFrom = ContentStreamLayer::fromInt((int)$contentStreamLayerToMergeFromResult);
-
+        if ($contentStreamLayerToMergeFrom !== null && $contentStreamLayerToMergeInto !== null) {
             $mergeHierarchyRelationsStatement = <<<SQL
                 INSERT INTO {$this->tableNames->hierarchyRelation()}
                 (
