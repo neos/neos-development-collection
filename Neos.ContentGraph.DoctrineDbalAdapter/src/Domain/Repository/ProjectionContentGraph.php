@@ -253,12 +253,15 @@ class ProjectionContentGraph
 
             $precedingSiblingStatement = <<<SQL
                 SELECT
-                    MAX(h.position) AS position
+                    h.position
                 FROM
                     {$this->hierarchyRelationStatement->where('h.dimensionspacepointhash = :dimensionSpacePointHash')->toSql()} h
                 WHERE
                     h.parentnodeanchor = :anchorPoint
                     AND h.position < :position
+                -- select the MAX position
+                ORDER BY h.position DESC
+                LIMIT 1
             SQL;
             try {
                 $precedingSiblingData = $this->dbal->fetchAssociative($precedingSiblingStatement, [
@@ -310,11 +313,14 @@ class ProjectionContentGraph
             }
             $rightmostSucceedingSiblingRelationStatement = <<<SQL
                 SELECT
-                    MAX(h.position) AS position
+                    h.position
                 FROM
                     {$this->hierarchyRelationStatement->where('h.dimensionspacepointhash = :dimensionSpacePointHash')->toSql()} h
                 WHERE
                     h.parentnodeanchor = :parentAnchorPoint
+                -- select the MAX position
+                ORDER BY h.position DESC
+                LIMIT 1
             SQL;
             try {
                 $rightmostSucceedingSiblingRelationData = $this->dbal->fetchAssociative($rightmostSucceedingSiblingRelationStatement, [
