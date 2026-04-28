@@ -307,10 +307,5 @@
         "squizlabs/php_codesniffer": "^3.6",
         "neos/behat": "*",
         "league/flysystem-memory": "^3"
-    },
-    "config": {
-        "allow-plugins": {
-            "neos/composer-plugin": false
-        }
     }
 }
