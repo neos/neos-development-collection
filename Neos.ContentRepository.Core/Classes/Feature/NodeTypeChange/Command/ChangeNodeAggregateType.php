@@ -17,6 +17,7 @@ namespace Neos\ContentRepository\Core\Feature\NodeTypeChange\Command;
 use Neos\ContentRepository\Core\CommandHandler\CommandInterface;
 use Neos\ContentRepository\Core\Feature\Common\RebasableToOtherWorkspaceInterface;
 use Neos\ContentRepository\Core\Feature\NodeCreation\Dto\NodeAggregateIdsByNodePaths;
+use Neos\ContentRepository\Core\Feature\NodeTypeChange\Dto\NodeAggregateTypeChangeChildConstraintConflictResolutionMarkWithTagStrategy;
 use Neos\ContentRepository\Core\Feature\NodeTypeChange\Dto\NodeAggregateTypeChangeChildConstraintConflictResolutionStrategy;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
@@ -36,14 +37,14 @@ final readonly class ChangeNodeAggregateType implements
      * @param WorkspaceName $workspaceName The workspace in which the operation is to be performed
      * @param NodeAggregateId $nodeAggregateId The unique identifier of the node aggregate to change
      * @param NodeTypeName $newNodeTypeName Name of the new node type
-     * @param NodeAggregateTypeChangeChildConstraintConflictResolutionStrategy $strategy Strategy for conflicts on affected child nodes ({@see NodeAggregateTypeChangeChildConstraintConflictResolutionStrategy})
+     * @param NodeAggregateTypeChangeChildConstraintConflictResolutionStrategy|NodeAggregateTypeChangeChildConstraintConflictResolutionMarkWithTagStrategy $strategy Strategy for conflicts on affected child nodes ({@see NodeAggregateTypeChangeChildConstraintConflictResolutionStrategy})
      * @param NodeAggregateIdsByNodePaths $tetheredDescendantNodeAggregateIds Predefined aggregate ids of any tethered child nodes for the new node type per path. For any tethered node that has no matching entry in this set, the node aggregate id is generated randomly. Since tethered nodes may have tethered child nodes themselves, this works for multiple levels ({@see self::withTetheredDescendantNodeAggregateIds()})
      */
     private function __construct(
         public WorkspaceName $workspaceName,
         public NodeAggregateId $nodeAggregateId,
         public NodeTypeName $newNodeTypeName,
-        public NodeAggregateTypeChangeChildConstraintConflictResolutionStrategy $strategy,
+        public NodeAggregateTypeChangeChildConstraintConflictResolutionStrategy|NodeAggregateTypeChangeChildConstraintConflictResolutionMarkWithTagStrategy $strategy,
         public NodeAggregateIdsByNodePaths $tetheredDescendantNodeAggregateIds,
     ) {
     }
@@ -52,9 +53,9 @@ final readonly class ChangeNodeAggregateType implements
      * @param WorkspaceName $workspaceName The workspace in which the operation is to be performed
      * @param NodeAggregateId $nodeAggregateId The unique identifier of the node aggregate to change
      * @param NodeTypeName $newNodeTypeName Name of the new node type
-     * @param NodeAggregateTypeChangeChildConstraintConflictResolutionStrategy $strategy Strategy for conflicts on affected child nodes ({@see NodeAggregateTypeChangeChildConstraintConflictResolutionStrategy})
+     * @param NodeAggregateTypeChangeChildConstraintConflictResolutionStrategy|NodeAggregateTypeChangeChildConstraintConflictResolutionMarkWithTagStrategy $strategy Strategy for conflicts on affected child nodes ({@see NodeAggregateTypeChangeChildConstraintConflictResolutionStrategy})
      */
-    public static function create(WorkspaceName $workspaceName, NodeAggregateId $nodeAggregateId, NodeTypeName $newNodeTypeName, NodeAggregateTypeChangeChildConstraintConflictResolutionStrategy $strategy): self
+    public static function create(WorkspaceName $workspaceName, NodeAggregateId $nodeAggregateId, NodeTypeName $newNodeTypeName, NodeAggregateTypeChangeChildConstraintConflictResolutionStrategy|NodeAggregateTypeChangeChildConstraintConflictResolutionMarkWithTagStrategy $strategy): self
     {
         return new self($workspaceName, $nodeAggregateId, $newNodeTypeName, $strategy, NodeAggregateIdsByNodePaths::createEmpty());
     }
@@ -65,7 +66,7 @@ final readonly class ChangeNodeAggregateType implements
             WorkspaceName::fromString($array['workspaceName']),
             NodeAggregateId::fromString($array['nodeAggregateId']),
             NodeTypeName::fromString($array['newNodeTypeName']),
-            NodeAggregateTypeChangeChildConstraintConflictResolutionStrategy::from($array['strategy']),
+            NodeAggregateTypeChangeChildConstraintConflictResolutionStrategy::fromString($array['strategy']),
             isset($array['tetheredDescendantNodeAggregateIds'])
                 ? NodeAggregateIdsByNodePaths::fromArray($array['tetheredDescendantNodeAggregateIds'])
                 : NodeAggregateIdsByNodePaths::createEmpty()

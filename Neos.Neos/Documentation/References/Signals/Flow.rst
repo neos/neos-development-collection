@@ -3,7 +3,7 @@
 Flow Signals Reference
 ======================
 
-This reference was automatically generated from code on 2025-02-11
+This reference was automatically generated from code on 2026-04-24
 
 
 .. _`Flow Signals Reference: AbstractAdvice (``Neos\Flow\Aop\Advice\AbstractAdvice``)`:
@@ -227,23 +227,6 @@ Signals that caches should be warmed up.
 
 Other application parts may subscribe to this signal and execute additional
 tasks for preparing the application for the first request.
-
-
-
-
-
-
-.. _`Flow Signals Reference: Compiler (``Neos\Flow\ObjectManagement\Proxy\Compiler``)`:
-
-Compiler (``Neos\Flow\ObjectManagement\Proxy\Compiler``)
---------------------------------------------------------
-
-This class contains the following signals.
-
-compiledClasses
-^^^^^^^^^^^^^^^
-
-
 
 
 

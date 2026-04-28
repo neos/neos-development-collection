@@ -15,9 +15,7 @@ namespace Neos\ContentRepository\Core\Feature\Common;
  */
 
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
-use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePointSet;
 use Neos\ContentRepository\Core\EventStore\EventInterface;
-use Neos\ContentRepository\Core\Feature\NodeRemoval\Event\NodeAggregateWasRemoved;
 use Neos\ContentRepository\Core\NodeType\NodeType;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphInterface;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate;
@@ -32,16 +30,18 @@ trait NodeTypeChangeInternals
     use ConstraintChecks;
 
     /**
-     * NOTE: when changing this method, {@see NodeTypeChange::requireConstraintsImposedByHappyPathStrategyAreMet}
-     * needs to be modified as well (as they are structurally the same)
+     * NOTE: when changing this method, also check {@see NodeTypeChange::requireConstraintsImposedByHappyPathStrategyAreMet}
+     * which traverses children/grandchildren similarly for validation purposes.
      *
+     * @param \Closure(NodeAggregate, DimensionSpacePointSet): EventInterface $handleNodeFn
      * @return array<EventInterface>
      */
-    private function deleteDisallowedNodesWhenChangingNodeType(
+    private function handleDisallowedNodesWhenChangingNodeType(
         ContentGraphInterface $contentGraph,
         NodeAggregate $nodeAggregate,
         NodeType $newNodeType,
         NodeAggregateIds &$alreadyRemovedNodeAggregateIds,
+        \Closure $handleNodeFn,
     ): array {
         $events = [];
         // if we have children, we need to check whether they are still allowed
@@ -59,22 +59,18 @@ trait NodeTypeChangeInternals
                     $newNodeType,
                     $this->requireNodeType($childNodeAggregate->nodeTypeName)
                 )
-                // descendants might be disallowed by both parent and grandparent after NodeTypeChange, but must be deleted only once
+                // descendants might be disallowed by both parent and grandparent after NodeTypeChange, but must be handled only once
                 && !$alreadyRemovedNodeAggregateIds->contain($childNodeAggregate->nodeAggregateId)
             ) {
                 // this aggregate (or parts thereof) are DISALLOWED according to constraints.
-                // We now need to find out which edges we need to remove,
-                $dimensionSpacePointsToBeRemoved = $this->findDimensionSpacePointsConnectingParentAndChildAggregate(
+                // We now need to find out which edges we need to handle,
+                $dimensionSpacePoints = $this->findDimensionSpacePointsConnectingParentAndChildAggregate(
                     $contentGraph,
                     $nodeAggregate,
                     $childNodeAggregate
                 );
-                // AND REMOVE THEM
-                $events[] = $this->removeNodeInDimensionSpacePointSet(
-                    $contentGraph,
-                    $childNodeAggregate,
-                    $dimensionSpacePointsToBeRemoved,
-                );
+                // AND HANDLE THEM (e.g. remove or tag)
+                $events[] = $handleNodeFn($childNodeAggregate, $dimensionSpacePoints);
                 $alreadyRemovedNodeAggregateIds = $alreadyRemovedNodeAggregateIds->merge(
                     NodeAggregateIds::create($childNodeAggregate->nodeAggregateId)
                 );
@@ -96,22 +92,18 @@ trait NodeTypeChangeInternals
                         $childNodeAggregate->nodeName,
                         $this->requireNodeType($grandchildNodeAggregate->nodeTypeName)
                     )
-                    // descendants might be disallowed by both parent and grandparent after NodeTypeChange, but must be deleted only once
+                    // descendants might be disallowed by both parent and grandparent after NodeTypeChange, but must be handled only once
                     && !$alreadyRemovedNodeAggregateIds->contain($grandchildNodeAggregate->nodeAggregateId)
                 ) {
                     // this aggregate (or parts thereof) are DISALLOWED according to constraints.
-                    // We now need to find out which edges we need to remove,
-                    $dimensionSpacePointsToBeRemoved = $this->findDimensionSpacePointsConnectingParentAndChildAggregate(
+                    // We now need to find out which edges we need to handle,
+                    $dimensionSpacePoints = $this->findDimensionSpacePointsConnectingParentAndChildAggregate(
                         $contentGraph,
                         $childNodeAggregate,
                         $grandchildNodeAggregate
                     );
-                    // AND REMOVE THEM
-                    $events[] = $this->removeNodeInDimensionSpacePointSet(
-                        $contentGraph,
-                        $grandchildNodeAggregate,
-                        $dimensionSpacePointsToBeRemoved,
-                    );
+                    // AND HANDLE THEM (e.g. remove or tag)
+                    $events[] = $handleNodeFn($grandchildNodeAggregate, $dimensionSpacePoints);
                     $alreadyRemovedNodeAggregateIds = $alreadyRemovedNodeAggregateIds->merge(
                         NodeAggregateIds::create($grandchildNodeAggregate->nodeAggregateId)
                     );
@@ -123,13 +115,15 @@ trait NodeTypeChangeInternals
     }
 
     /**
+     * @param \Closure(NodeAggregate, DimensionSpacePointSet): EventInterface $handleNodeFn
      * @return array<EventInterface>
      */
-    private function deleteObsoleteTetheredNodesWhenChangingNodeType(
+    private function handleObsoleteTetheredNodesWhenChangingNodeType(
         ContentGraphInterface $contentGraph,
         NodeAggregate $nodeAggregate,
         NodeType $newNodeType,
         NodeAggregateIds &$alreadyRemovedNodeAggregateIds,
+        \Closure $handleNodeFn,
     ): array {
         $events = [];
         // find disallowed tethered nodes
@@ -143,18 +137,14 @@ trait NodeTypeChangeInternals
                 && !$alreadyRemovedNodeAggregateIds->contain($tetheredNodeAggregate->nodeAggregateId)
             ) {
                 // this aggregate (or parts thereof) are DISALLOWED according to constraints.
-                // We now need to find out which edges we need to remove,
-                $dimensionSpacePointsToBeRemoved = $this->findDimensionSpacePointsConnectingParentAndChildAggregate(
+                // We now need to find out which edges we need to handle,
+                $dimensionSpacePoints = $this->findDimensionSpacePointsConnectingParentAndChildAggregate(
                     $contentGraph,
                     $nodeAggregate,
                     $tetheredNodeAggregate
                 );
-                // AND REMOVE THEM
-                $events[] = $this->removeNodeInDimensionSpacePointSet(
-                    $contentGraph,
-                    $tetheredNodeAggregate,
-                    $dimensionSpacePointsToBeRemoved,
-                );
+                // AND HANDLE THEM (e.g. remove or tag)
+                $events[] = $handleNodeFn($tetheredNodeAggregate, $dimensionSpacePoints);
                 $alreadyRemovedNodeAggregateIds = $alreadyRemovedNodeAggregateIds->merge(
                     NodeAggregateIds::create($tetheredNodeAggregate->nodeAggregateId)
                 );
@@ -206,18 +196,5 @@ trait NodeTypeChangeInternals
         }
 
         return new DimensionSpacePointSet($points);
-    }
-
-    private function removeNodeInDimensionSpacePointSet(
-        ContentGraphInterface $contentGraph,
-        NodeAggregate $nodeAggregate,
-        DimensionSpacePointSet $coveredDimensionSpacePointsToBeRemoved,
-    ): NodeAggregateWasRemoved {
-        return new NodeAggregateWasRemoved(
-            $contentGraph->getWorkspaceName(),
-            $contentGraph->getContentStreamId(),
-            $nodeAggregate->nodeAggregateId,
-            $coveredDimensionSpacePointsToBeRemoved,
-        );
     }
 }

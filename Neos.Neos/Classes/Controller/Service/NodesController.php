@@ -172,6 +172,14 @@ class NodesController extends ActionController
                     // include the starting node if it matches
                     $nodes = $nodes->prepend($entryNode);
                 }
+                $nodeAggregateIdOrNull = NodeAggregateId::tryFromString($searchTerm->term);
+                if ($nodeAggregateIdOrNull !== null) {
+                    $nodeByAggregateId = $subgraph->findNodeById($nodeAggregateIdOrNull);
+                    if ($nodeByAggregateId !== null) {
+                        // include node by aggregate id if it matches the search term
+                        $nodes = $nodes->prepend($nodeByAggregateId);
+                    }
+                }
             }
         } else {
             if ($searchTerm->term !== '') {

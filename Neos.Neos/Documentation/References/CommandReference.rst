@@ -19,7 +19,7 @@ commands that may be available, use::
 
   ./flow help
 
-The following reference was automatically generated from code on 2025-02-11
+The following reference was automatically generated from code on 2026-04-24
 
 
 .. _`Neos Command Reference: NEOS.FLOW`:
@@ -68,9 +68,6 @@ If fatal errors caused by a package prevent the compile time bootstrap
 from running, the removal of any temporary data can be forced by specifying
 the option **--force**.
 
-This command does not remove the precompiled data provided by frozen
-packages unless the **--force** option is used.
-
 
 
 Options
@@ -86,10 +83,6 @@ Related commands
 
 ``neos.flow:cache:warmup``
   Warm up caches
-``neos.flow:package:freeze``
-  Freeze a package
-``neos.flow:package:refreeze``
-  Refreeze a package
 
 
 
@@ -339,6 +332,8 @@ Options
   Configuration type to show, defaults to Settings
 ``--path``
   path to subconfiguration separated by "." like "Neos.Flow
+``--depth``
+  Truncate the configuration at this depth and show '...'
 
 
 
@@ -947,46 +942,6 @@ Related commands
 
 
 
-.. _`Neos Command Reference: NEOS.FLOW neos.flow:package:freeze`:
-
-``neos.flow:package:freeze``
-****************************
-
-**Freeze a package**
-
-This function marks a package as **frozen** in order to improve performance
-in a development context. While a package is frozen, any modification of files
-within that package won't be tracked and can lead to unexpected behavior.
-
-File monitoring won't consider the given package. Further more, reflection
-data for classes contained in the package is cached persistently and loaded
-directly on the first request after caches have been flushed. The precompiled
-reflection data is stored in the **Configuration** directory of the
-respective package.
-
-By specifying **all** as a package key, all currently frozen packages are
-frozen (the default).
-
-
-
-Options
-^^^^^^^
-
-``--package-key``
-  Key of the package to freeze
-
-
-
-Related commands
-^^^^^^^^^^^^^^^^
-
-``neos.flow:package:unfreeze``
-  Unfreeze a package
-``neos.flow:package:refreeze``
-  Refreeze a package
-
-
-
 .. _`Neos Command Reference: NEOS.FLOW neos.flow:package:list`:
 
 ``neos.flow:package:list``
@@ -1009,41 +964,6 @@ Options
 
 
 
-.. _`Neos Command Reference: NEOS.FLOW neos.flow:package:refreeze`:
-
-``neos.flow:package:refreeze``
-******************************
-
-**Refreeze a package**
-
-Refreezes a currently frozen package: all precompiled information is removed
-and file monitoring will consider the package exactly once, on the next
-request. After that request, the package remains frozen again, just with the
-updated data.
-
-By specifying **all** as a package key, all currently frozen packages are
-refrozen (the default).
-
-
-
-Options
-^^^^^^^
-
-``--package-key``
-  Key of the package to refreeze, or 'all'
-
-
-
-Related commands
-^^^^^^^^^^^^^^^^
-
-``neos.flow:package:freeze``
-  Freeze a package
-``neos.flow:cache:flush``
-  Flush all caches
-
-
-
 .. _`Neos Command Reference: NEOS.FLOW neos.flow:package:rescan`:
 
 ``neos.flow:package:rescan``
@@ -1056,40 +976,6 @@ Related commands
 
 
 
-
-
-
-.. _`Neos Command Reference: NEOS.FLOW neos.flow:package:unfreeze`:
-
-``neos.flow:package:unfreeze``
-******************************
-
-**Unfreeze a package**
-
-Unfreezes a previously frozen package. On the next request, this package will
-be considered again by the file monitoring and related services – if they are
-enabled in the current context.
-
-By specifying **all** as a package key, all currently frozen packages are
-unfrozen (the default).
-
-
-
-Options
-^^^^^^^
-
-``--package-key``
-  Key of the package to unfreeze, or 'all'
-
-
-
-Related commands
-^^^^^^^^^^^^^^^^
-
-``neos.flow:package:freeze``
-  Freeze a package
-``neos.flow:cache:flush``
-  Flush all caches
 
 
 

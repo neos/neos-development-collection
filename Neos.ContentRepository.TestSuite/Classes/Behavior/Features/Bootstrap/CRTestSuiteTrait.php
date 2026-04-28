@@ -70,6 +70,8 @@ trait CRTestSuiteTrait
 
     use WorkspaceCreation;
 
+    use ProjectionIntegrityViolationDetectionTrait;
+
     /**
      * @BeforeScenario
      * @throws \Exception

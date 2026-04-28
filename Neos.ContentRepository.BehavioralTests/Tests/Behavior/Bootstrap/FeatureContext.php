@@ -11,15 +11,10 @@ declare(strict_types=1);
  * source code.
  */
 
-// @todo remove this require statement
-require_once(__DIR__ . '/../../../../Neos.ContentGraph.DoctrineDbalAdapter/Tests/Behavior/Features/Bootstrap/ProjectionIntegrityViolationDetectionTrait.php');
-
 use Behat\Behat\Context\Context as BehatContext;
 use Behat\Behat\Hook\Scope\BeforeScenarioScope;
-use Doctrine\DBAL\Connection;
 use GuzzleHttp\Psr7\Uri;
 use Neos\Behat\FlowBootstrapTrait;
-use Neos\ContentGraph\DoctrineDbalAdapter\Tests\Behavior\Features\Bootstrap\ProjectionIntegrityViolationDetectionTrait;
 use Neos\ContentRepository\BehavioralTests\ProjectionRaceConditionTester\Dto\TraceEntryType;
 use Neos\ContentRepository\BehavioralTests\ProjectionRaceConditionTester\RedisInterleavingLogger;
 use Neos\ContentRepository\Core\ContentRepository;
@@ -47,7 +42,6 @@ class FeatureContext implements BehatContext
     use FlowBootstrapTrait;
     use CRTestSuiteTrait;
     use CRBehavioralTestsSubjectProvider;
-    use ProjectionIntegrityViolationDetectionTrait;
     use StructureAdjustmentsTrait;
     use MigrationsTrait;
 
@@ -59,7 +53,6 @@ class FeatureContext implements BehatContext
     {
         self::bootstrapFlow();
 
-        $this->dbal = $this->getObject(Connection::class);
         $this->setUpInterleavingLogger();
         $this->contentRepositoryRegistry = $this->getObject(ContentRepositoryRegistry::class);
     }

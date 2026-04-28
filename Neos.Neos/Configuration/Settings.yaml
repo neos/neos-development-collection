@@ -516,6 +516,7 @@ Neos:
             'neos_asset_usage': true
             'neos_neos_workspace_metadata': true
             'neos_neos_workspace_role': true
+            'neos_neos_impending_hard_removal_conflict': true
 
   Fusion:
     rendering:

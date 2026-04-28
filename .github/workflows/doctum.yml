@@ -3,19 +3,16 @@ name: Build API documentation
 on:
   workflow_dispatch:
   push:
-    # Error right now, so we need to disable this:
-    # PHP Fatal error:  Uncaught Error: Call to undefined method PhpParser\Node\IntersectionType::__toString() in phar:///bin/doctum/src/Parser/NodeVisitor.php:196
-    branches: [ '___DISABLED_BECAUSE_IT_IS_ERROR_FOR_90___[0-9]+.[0-9]' ]
+    branches: [ '[0-9]+.[0-9]' ]
 
 jobs:
   build-api-docs:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: Build API documentation
-        # we need this fix: https://github.com/code-lts/doctum/issues/59 so we need to run @dev
-        uses: sudo-bot/action-doctum@dev
+        uses: sudo-bot/action-doctum@v5
         with:
           config-file: .doctum.php
           method: "update"
@@ -23,10 +20,12 @@ jobs:
           cli-args: "--output-format=github --no-ansi --no-progress --ignore-parse-errors --only-version=${{ github.ref_name }}"
 
       - name: Check out documentation site
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           repository: neos/neos.github.io
           path: docs-site
+          fetch-depth: 0
+          token: ${{ secrets.NEOS_BOT_TOKEN }}
 
       - name: Move rendered docs to site
         run: |
@@ -37,7 +36,6 @@ jobs:
       - name: Commit update
         run: |
           cd docs-site
-          git config --local --unset-all "http.https://github.com/.extraheader"
           git config --global user.email "ops@neos.io"
           git config --global user.name "Neos Bot"
           if [ -z "$(git status --porcelain)" ]; then
@@ -48,7 +46,7 @@ jobs:
           git commit -m "TASK: Update API docs from ${{ github.ref_name }}"
 
       - name: Push to git
-        uses: ad-m/github-push-action@v0.6.0
+        uses: ad-m/github-push-action@v1
         with:
           github_token: ${{ secrets.NEOS_BOT_TOKEN }}
           repository: neos/neos.github.io

@@ -3,7 +3,7 @@
 ContentRepository Command Reference
 ===================================
 
-This reference was automatically generated from code on 2025-02-11
+This reference was automatically generated from code on 2026-04-24
 
 
 .. _`ContentRepository Command Reference: AddDimensionShineThrough`:
@@ -83,7 +83,7 @@ create(workspaceName, nodeAggregateId, newNodeTypeName, strategy)
 * ``workspaceName`` (WorkspaceName) The workspace in which the operation is to be performed
 * ``nodeAggregateId`` (NodeAggregateId) The unique identifier of the node aggregate to change
 * ``newNodeTypeName`` (NodeTypeName) Name of the new node type
-* ``strategy`` (NodeAggregateTypeChangeChildConstraintConflictResolutionStrategy) Strategy for conflicts on affected child nodes ({@see NodeAggregateTypeChangeChildConstraintConflictResolutionStrategy})
+* ``strategy`` (NodeAggregateTypeChangeChildConstraintConflictResolutionStrategy|NodeAggregateTypeChangeChildConstraintConflictResolutionMarkWithTagStrategy) Strategy for conflicts on affected child nodes ({@see NodeAggregateTypeChangeChildConstraintConflictResolutionStrategy})
 
 
 
@@ -203,24 +203,6 @@ create(workspaceName)
 
 
 
-.. _`ContentRepository Command Reference: DisableNodeAggregate`:
-
-DisableNodeAggregate
---------------------
-
-Disable the given node aggregate in the given content stream in a dimension space point using a given strategy
-
-create(workspaceName, nodeAggregateId, coveredDimensionSpacePoint, nodeVariantSelectionStrategy)
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-* ``workspaceName`` (WorkspaceName) The workspace in which the disable operation is to be performed
-* ``nodeAggregateId`` (NodeAggregateId) The identifier of the node aggregate to disable
-* ``coveredDimensionSpacePoint`` (DimensionSpacePoint) The covered dimension space point of the node aggregate in which the user intends to disable it
-* ``nodeVariantSelectionStrategy`` (NodeVariantSelectionStrategy) The strategy the user chose to determine which specialization variants will also be disabled
-
-
-
-
 .. _`ContentRepository Command Reference: DiscardIndividualNodesFromWorkspace`:
 
 DiscardIndividualNodesFromWorkspace
@@ -248,24 +230,6 @@ create(workspaceName)
 ^^^^^^^^^^^^^^^^^^^^^
 
 * ``workspaceName`` (WorkspaceName) Name of the affected workspace
-
-
-
-
-.. _`ContentRepository Command Reference: EnableNodeAggregate`:
-
-EnableNodeAggregate
--------------------
-
-Enable the given node aggregate in the given content stream in a dimension space point using a given strategy
-
-create(workspaceName, nodeAggregateId, coveredDimensionSpacePoint, nodeVariantSelectionStrategy)
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-* ``workspaceName`` (WorkspaceName) The content stream in which the enable operation is to be performed
-* ``nodeAggregateId`` (NodeAggregateId) The identifier of the node aggregate to enable
-* ``coveredDimensionSpacePoint`` (DimensionSpacePoint) The covered dimension space point of the node aggregate in which the user intends to enable it
-* ``nodeVariantSelectionStrategy`` (NodeVariantSelectionStrategy) The strategy the user chose to determine which specialization variants will also be enabled
 
 
 

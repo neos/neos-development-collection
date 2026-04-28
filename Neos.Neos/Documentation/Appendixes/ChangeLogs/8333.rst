@@ -1,0 +1,64 @@
+`8.3.33 (2026-03-20) <https://github.com/neos/neos-development-collection/releases/tag/8.3.33>`_
+================================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`BUGFIX: Add missing content type header to create-image-variant endpoint <https://github.com/neos/neos-development-collection/pull/5762>`_
+-------------------------------------------------------------------------------------------------------------------------------------------
+
+### Upgrade instructions
+
+Currently, the enpoint ``/neos/content/create-image-variant`` does not set a ``Content-Type`` header and therefore uses the default ``text/html`` content type. This can lead to issues, if any of the used middlewares require a correct content type to be set. One example could be that you have a middleware that will add an attribute to all ``<script>``-Tags if the returned content type is ``text/html``. When using the php `DOMDocument <https://www.php.net/manual/en/class.domdocument.php>``_ or sth. similar to parse and update the content, this will result in the response being wrapped by a ``<p>`-Tag and therefore returns an error.
+
+### Review instructions
+
+To test this behaviour:
+
+- Add a new middleware.
+- Add sth. like the following to this middleware:
+  ```php
+  use GuzzleHttp\\Psr7\\Utils;
+  
+  // ...
+  
+  public function process(ServerRequestInterface $request, RequestHandlerInterface $next): ResponseInterface
+  {
+      $response = $next->handle($request);
+      
+      if (str_contains($response->getHeaderLine('Content-Type'), 'text/html')) {
+          $content = $response->getBody()->getContents();
+          
+          // This is one case, that could result in an issue with the current state.
+          $dom = new \\DOMDocument();
+          libxml_use_internal_errors(true);
+          $dom->loadHTML($content, LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD);
+          libxml_use_internal_errors(false);
+          
+          $scripts = $dom->getElementsByTagName('script');
+          foreach ($scripts as $script) {
+              $script->setAttribute('x-custom-attribute', 'some-value');
+          }
+
+          $newContent = $dom->saveHtml();
+          
+          $response = $response->withBody(Utils::streamFor($newContent));
+      }
+      
+      return $response;
+  }
+  ```
+
+### Checklist
+
+- [x] Code follows the PSR-2 coding style
+- [ ] Tests have been created, run and adjusted as needed
+- [x] The PR is created against the correct branch
+- [ ] Reviewer - PR Title is brief but complete and starts with ``FEATURE|TASK|BUGFIX``
+- [ ] Reviewer - The first section explains the change briefly for change-logs
+- [ ] Reviewer - Breaking Changes are marked with ``!!!`` and have upgrade-instructions
+
+* Packages: ``NodeTypes.ColumnLayouts`` ``Neos``
+
+`Detailed log <https://github.com/neos/neos-development-collection/compare/8.3.32...8.3.33>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

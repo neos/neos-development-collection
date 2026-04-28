@@ -3,7 +3,7 @@
 Eel Helpers Reference
 =====================
 
-This reference was automatically generated from code on 2025-02-11
+This reference was automatically generated from code on 2026-03-20
 
 
 .. _`Eel Helpers Reference: Array`:
@@ -495,6 +495,39 @@ Format a date to a string with a given cldr format
 * ``date`` (integer|string|\DateTime)
 * ``cldrFormat`` (string) Format string in CLDR format (see http://cldr.unicode.org/translation/date-time)
 * ``locale`` (null|string, *optional*) String locale - example (de|en|ru_RU)
+
+**Return** (string)
+
+Date.formatCldrDate(dateTime, formatLength, locale)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Format a date to a string with a given cldr formatLength
+
+* ``dateTime`` (\DateTimeInterface)
+* ``formatLength`` (string, *optional*) FormatLength in CLDR format ("Full", "Long", "Medium", "Short") (see https://cldr.unicode.org/translation/date-time/date-time-patterns#basic-date-formats)
+* ``locale`` (null|string, *optional*) String locale - example (de|en|en_US). If not provided the current locale of I18nService is used.
+
+**Return** (string)
+
+Date.formatCldrDateTime(dateTime, formatLength, locale)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Format a datetime to a string with a given cldr formatLength
+
+* ``dateTime`` (\DateTimeInterface)
+* ``formatLength`` (string, *optional*) FormatLength in CLDR format ("Full", "Long", "Medium", "Short") (see https://cldr.unicode.org/translation/date-time/date-time-patterns#basic-date-formats and https://cldr.unicode.org/translation/date-time/date-time-patterns#basic-date-formats)
+* ``locale`` (null|string, *optional*) String locale - example (de|en|en_US). If not provided the current locale of I18nService is used.
+
+**Return** (string)
+
+Date.formatCldrTime(dateTime, formatLength, locale)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Format a time to a string with a given cldr formatLength
+
+* ``dateTime`` (\DateTimeInterface)
+* ``formatLength`` (string, *optional*) FormatLength in CLDR format ("Full", "Long", "Medium", "Short") (see https://cldr.unicode.org/translation/date-time/date-time-patterns#basic-time-formats)
+* ``locale`` (null|string, *optional*) String locale - example (de|en|en_US). If not provided the current locale of I18nService is used.
 
 **Return** (string)
 
@@ -1171,6 +1204,15 @@ Sorts the input array by the $positionProperty of each element.
 
 **Return** (array<mixed>)
 
+Neos.Array.toHtmlAttributesString(attributes)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Converts an array into an HTML attributes string like 'class="foo" id="bar"'
+
+* ``attributes`` (array<string>)
+
+**Return** (string)
+
 
 
 
@@ -1231,13 +1273,6 @@ Generate a `@cache` entry identifier for a given node:
     entryIdentifier {
       documentNode = ${Neos.Caching.entryIdentifierForNode(documentNode)}
     }
-
-Neos.Caching.getWorkspaceChain(node)
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-* ``node`` (Node|null)
-
-**Return** (array<string,Workspace>)
 
 Neos.Caching.nodeTag(nodes)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -1414,6 +1449,36 @@ Neos.Media.Assets.search(searchTerm, tags, collection)
 * ``tags`` (Tag[]|string[], *optional*)
 
 **Return** (QueryResultInterface<AssetInterface>) | null
+
+
+
+
+
+
+.. _`Eel Helpers Reference: Neos.Media.Image`:
+
+Neos.Media.Image
+----------------
+
+
+
+Implemented in: ``Neos\Media\Eel\ImageHelper``
+
+Neos.Media.Image.createThumbnail(asset, preset, width, maximumWidth, height, maximumHeight, allowCropping, allowUpScaling, async, quality, format)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Returns a thumbnail of the given asset, allowing integrators to access the thumbnail size and other metadata.
+
+* ``preset`` (string|null, *optional*) Name of the preset that should be used as basis for the configuration
+* ``width`` (integer|null, *optional*) Desired width of the image
+* ``maximumWidth`` (integer|null, *optional*) Desired maximum width of the image
+* ``height`` (integer|null, *optional*) Desired height of the image
+* ``maximumHeight`` (integer|null, *optional*) Desired maximum height of the image
+* ``allowCropping`` (boolean, *optional*) Whether the image should be cropped if the given sizes would hurt the aspect ratio
+* ``allowUpScaling`` (boolean, *optional*) Whether the resulting image size might exceed the size of the original image
+* ``async`` (boolean, *optional*) Whether the thumbnail can be generated asynchronously
+* ``quality`` (integer|null, *optional*) Quality of the processed image
+* ``format`` (string|null, *optional*) Format for the image, only jpg, jpeg, gif, png, wbmp, xbm, webp and bmp are supported.
 
 
 

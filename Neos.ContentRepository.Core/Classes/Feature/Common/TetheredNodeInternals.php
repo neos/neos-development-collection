@@ -25,11 +25,14 @@ use Neos\ContentRepository\Core\Feature\NodeCreation\Event\NodeAggregateWithNode
 use Neos\ContentRepository\Core\Feature\NodeModification\Dto\SerializedPropertyValues;
 use Neos\ContentRepository\Core\Feature\NodeReferencing\Dto\SerializedNodeReferences;
 use Neos\ContentRepository\Core\Feature\NodeModification\Event\NodePropertiesWereSet;
+use Neos\ContentRepository\Core\Feature\NodeRemoval\Event\NodeAggregateWasRemoved;
+use Neos\ContentRepository\Core\Feature\NodeTypeChange\Dto\NodeAggregateTypeChangeChildConstraintConflictResolutionMarkWithTagStrategy;
 use Neos\ContentRepository\Core\Feature\NodeTypeChange\Dto\NodeAggregateTypeChangeChildConstraintConflictResolutionStrategy;
 use Neos\ContentRepository\Core\Feature\NodeTypeChange\Event\NodeAggregateTypeWasChanged;
 use Neos\ContentRepository\Core\Feature\NodeVariation\Event\NodeGeneralizationVariantWasCreated;
 use Neos\ContentRepository\Core\Feature\NodeVariation\Event\NodePeerVariantWasCreated;
 use Neos\ContentRepository\Core\Feature\NodeVariation\Event\NodeSpecializationVariantWasCreated;
+use Neos\ContentRepository\Core\Feature\SubtreeTagging\Event\SubtreeWasTagged;
 use Neos\ContentRepository\Core\Infrastructure\Property\PropertyConverter;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\NodeType\TetheredNodeTypeDefinition;
@@ -286,7 +289,7 @@ trait TetheredNodeInternals
         NodeTypeName $newNodeTypeName,
         NodeAggregateIdsByNodePaths $nodeAggregateIdsByNodePaths,
         NodePath $currentNodePath,
-        NodeAggregateTypeChangeChildConstraintConflictResolutionStrategy $conflictResolutionStrategy,
+        NodeAggregateTypeChangeChildConstraintConflictResolutionStrategy|NodeAggregateTypeChangeChildConstraintConflictResolutionMarkWithTagStrategy $conflictResolutionStrategy,
         NodeAggregateIds $alreadyRemovedNodeAggregateIds,
     ): Events {
         $events = [];
@@ -328,20 +331,27 @@ trait TetheredNodeInternals
             }
         }
 
-        // remove disallowed nodes
+        // remove or tag disallowed nodes
         if ($conflictResolutionStrategy === NodeAggregateTypeChangeChildConstraintConflictResolutionStrategy::STRATEGY_DELETE) {
-            array_push($events, ...$this->deleteDisallowedNodesWhenChangingNodeType(
-                $contentGraph,
-                $nodeAggregate,
-                $tetheredNodeType,
-                $alreadyRemovedNodeAggregateIds
-            ));
-            array_push($events, ...$this->deleteObsoleteTetheredNodesWhenChangingNodeType(
-                $contentGraph,
-                $nodeAggregate,
-                $tetheredNodeType,
-                $alreadyRemovedNodeAggregateIds
-            ));
+            $handleNode = fn(NodeAggregate $nodeAggregateToDelete, DimensionSpacePointSet $points) => new NodeAggregateWasRemoved(
+                $contentGraph->getWorkspaceName(),
+                $contentGraph->getContentStreamId(),
+                $nodeAggregateToDelete->nodeAggregateId,
+                $points,
+            );
+
+            array_push($events, ...$this->handleDisallowedNodesWhenChangingNodeType($contentGraph, $nodeAggregate, $tetheredNodeType, $alreadyRemovedNodeAggregateIds, $handleNode));
+            array_push($events, ...$this->handleObsoleteTetheredNodesWhenChangingNodeType($contentGraph, $nodeAggregate, $tetheredNodeType, $alreadyRemovedNodeAggregateIds, $handleNode));
+        } elseif ($conflictResolutionStrategy instanceof NodeAggregateTypeChangeChildConstraintConflictResolutionMarkWithTagStrategy) {
+            $handleNode = fn(NodeAggregate $nodeAggregateToTag, DimensionSpacePointSet $points) => new SubtreeWasTagged(
+                $contentGraph->getWorkspaceName(),
+                $contentGraph->getContentStreamId(),
+                $nodeAggregateToTag->nodeAggregateId,
+                $points,
+                $conflictResolutionStrategy->subtreeTag,
+            );
+            array_push($events, ...$this->handleDisallowedNodesWhenChangingNodeType($contentGraph, $nodeAggregate, $tetheredNodeType, $alreadyRemovedNodeAggregateIds, $handleNode));
+            array_push($events, ...$this->handleObsoleteTetheredNodesWhenChangingNodeType($contentGraph, $nodeAggregate, $tetheredNodeType, $alreadyRemovedNodeAggregateIds, $handleNode));
         }
 
         # Handle descendant nodes

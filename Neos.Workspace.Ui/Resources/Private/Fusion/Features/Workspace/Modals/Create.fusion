@@ -91,7 +91,7 @@ prototype(Neos.Workspace.Ui:Component.Modal.Create) < prototype(Neos.Fusion:Comp
                 field.name="visibility"
                 field.value="shared"
               >
-                {private.i18n.id('workspaces.workspace.visibility.shared')}
+                {private.i18n.id('workspaces.workspace.visibility.shared').translate()}
               </Neos.Fusion.Form:Radio>
               <p>
                 {private.i18n.id('workspaces.workspace.visibility.shared.help')}
@@ -101,7 +101,7 @@ prototype(Neos.Workspace.Ui:Component.Modal.Create) < prototype(Neos.Fusion:Comp
                 field.name="visibility"
                 field.value="private"
               >
-                {private.i18n.id('workspaces.workspace.visibility.private')}
+                {private.i18n.id('workspaces.workspace.visibility.private').translate()}
               </Neos.Fusion.Form:Radio>
               <p>
                 {private.i18n.id('workspaces.workspace.visibility.private.help')}
@@ -119,7 +119,7 @@ prototype(Neos.Workspace.Ui:Component.Modal.Create) < prototype(Neos.Fusion:Comp
             {private.i18n.id('cancel')}
           </button>
           <Neos.Fusion.Form:Button attributes.class="neos-button neos-button-primary">
-            {private.i18n.id('workspaces.createWorkspace')}
+            {private.i18n.id('workspaces.createWorkspace').translate()}
           </Neos.Fusion.Form:Button>
         </footer>
       </Neos.Fusion.Form:Form>

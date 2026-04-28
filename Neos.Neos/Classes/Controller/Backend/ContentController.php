@@ -199,6 +199,7 @@ class ContentController extends ActionController
      */
     public function createImageVariantAction(ImageVariant $asset)
     {
+        $this->response->setContentType('application/json');
         if ($this->persistenceManager->isNewObject($asset)) {
             $this->assetRepository->add($asset);
         }

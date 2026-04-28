@@ -1,0 +1,139 @@
+`9.1.4 (2026-03-20) <https://github.com/neos/neos-development-collection/releases/tag/9.1.4>`_
+==============================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`BUGFIX: Resolve proptype errors in Workspace.Ui <https://github.com/neos/neos-development-collection/pull/5758>`_
+------------------------------------------------------------------------------------------------------------------
+
+TranslationParameterToken are not valid as FormElement content and throw Exceptions when the PropTypes package is installed.
+
+* Resolves: `#5757 <https://github.com/neos/neos-development-collection/issues/5757>`_
+
+* Packages: ``Neos`` ``Workspace.Ui``
+
+`BUGFIX: Add missing content type header to create-image-variant endpoint <https://github.com/neos/neos-development-collection/pull/5762>`_
+-------------------------------------------------------------------------------------------------------------------------------------------
+
+### Upgrade instructions
+
+Currently, the enpoint ``/neos/content/create-image-variant`` does not set a ``Content-Type`` header and therefore uses the default ``text/html`` content type. This can lead to issues, if any of the used middlewares require a correct content type to be set. One example could be that you have a middleware that will add an attribute to all ``<script>``-Tags if the returned content type is ``text/html``. When using the php `DOMDocument <https://www.php.net/manual/en/class.domdocument.php>``_ or sth. similar to parse and update the content, this will result in the response being wrapped by a ``<p>`-Tag and therefore returns an error.
+
+### Review instructions
+
+To test this behaviour:
+
+- Add a new middleware.
+- Add sth. like the following to this middleware:
+  ```php
+  use GuzzleHttp\\Psr7\\Utils;
+  
+  // ...
+  
+  public function process(ServerRequestInterface $request, RequestHandlerInterface $next): ResponseInterface
+  {
+      $response = $next->handle($request);
+      
+      if (str_contains($response->getHeaderLine('Content-Type'), 'text/html')) {
+          $content = $response->getBody()->getContents();
+          
+          // This is one case, that could result in an issue with the current state.
+          $dom = new \\DOMDocument();
+          libxml_use_internal_errors(true);
+          $dom->loadHTML($content, LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD);
+          libxml_use_internal_errors(false);
+          
+          $scripts = $dom->getElementsByTagName('script');
+          foreach ($scripts as $script) {
+              $script->setAttribute('x-custom-attribute', 'some-value');
+          }
+
+          $newContent = $dom->saveHtml();
+          
+          $response = $response->withBody(Utils::streamFor($newContent));
+      }
+      
+      return $response;
+  }
+  ```
+
+### Checklist
+
+- [x] Code follows the PSR-2 coding style
+- [ ] Tests have been created, run and adjusted as needed
+- [x] The PR is created against the correct branch
+- [ ] Reviewer - PR Title is brief but complete and starts with ``FEATURE|TASK|BUGFIX``
+- [ ] Reviewer - The first section explains the change briefly for change-logs
+- [ ] Reviewer - Breaking Changes are marked with ``!!!`` and have upgrade-instructions
+
+* Packages: ``NodeTypes.ColumnLayouts`` ``Neos``
+
+`BUGFIX: Variadic argument in SubtreeTags::with() <https://github.com/neos/neos-development-collection/pull/5749>`_
+-------------------------------------------------------------------------------------------------------------------
+
+This fixes https://github.com/neos/neos-development-collection/issues/5748 by unwrapping the existing subtreeTags and the subtreeTagsToAdd in a different manner.
+
+Resolves ``PHP Fatal error: Cannot use positional argument after argument unpacking`` when using the FlowQuery ContextOperation with ``{invisibleContentShown: false}``
+
+* Packages: ``ContentRepository.Core``
+
+`BUGFIX: Ignore impending hard removal conflict table in migrations <https://github.com/neos/neos-development-collection/pull/5747>`_
+-------------------------------------------------------------------------------------------------------------------------------------
+
+* Fixes: `#5746 <https://github.com/neos/neos-development-collection/issues/5746>`_ 
+
+* Packages: ``NodeTypes.ColumnLayouts`` ``Neos``
+
+`TASK: allow aop to extend `AssetUsageIndexingService::extractAssetIds` <https://github.com/neos/neos-development-collection/pull/5753>`_
+-----------------------------------------------------------------------------------------------------------------------------------------
+
+Because the method is private aop is not applicable which is unfortunate, as a simple extension here does no harm if done correctly and deterministic:
+
+```php
+#[Flow\\Aspect()]
+class AssetUsageExtractionAspect
+{
+    #[Flow\\Around('method(Neos\\Neos\\AssetUsage\\Service\\AssetUsageIndexingService->extractAssetIds())')]
+    public function extractAssetIdsFromValueObjects(JoinPointInterface $joinPoint): array
+    {
+        $nodePropertyValue = $joinPoint->getMethodArgument('value');
+        if ($nodePropertyValue instanceof MyValueObject) {
+            return [$nodePropertyValue->myAssetId];
+        }
+        return $joinPoint->getAdviceChain()->proceed($joinPoint);
+    }
+}
+```
+
+We discussed already a proper official extension point for this but AOP should be enough while we figure out what we need.
+
+Related: https://github.com/neos/neos-development-collection/pull/5683
+Related: https://github.com/neos/neos-development-collection/pull/5682
+
+Demonstration of current plugins which would profit from working asset usage:
+
+Asset ids from Value objects and collections:
+- https://github.com/sitegeist/Sitegeist.Kaleidoscope.ValueObjects
+- https://github.com/CarbonPackages/Carbon.VideoPlatformEditor/blob/`b99ee76443f4354b0fca2e7215eb50ab6b14580d <https://github.com/neos/neos-development-collection/commit/b99ee76443f4354b0fca2e7215eb50ab6b14580d>`_/Classes/Infrastructure/AssetUsageExtractionAspect.php
+
+Asset ids encoded into the body as data attribute for inline images
+- https://codeberg.org/PackageFactory/PackageFactory.CkInlineImages
+
+For this reason this PR targets Neos 9.0 deliberately and is intended to be released as patch. Our modern code style often destroys older features like Flows AOP. Unplanned extensibility is a feature we have and promote and we should not stand its way.
+
+**Upgrade instructions**
+
+**Review instructions**
+
+  - If it's a bugfix, use the `lowest maintained branch which has the bug <https://www.neos.io/features/release-roadmap.html>`_
+  - If it's a non-breaking feature, use the branch of the next version (might be either minor or major)
+  - If it's a breaking feature it should typically go into the next major version
+- [ ] Reviewer - PR Title is brief but complete and starts with ``FEATURE|TASK|BUGFIX``
+- [ ] Reviewer - The first section explains the change briefly for change-logs
+- [ ] Reviewer - Breaking Changes are marked with ``!!!`` and have upgrade-instructions
+
+* Packages: ``Neos``
+
+`Detailed log <https://github.com/neos/neos-development-collection/compare/9.1.3...9.1.4>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

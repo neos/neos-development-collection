@@ -11,11 +11,10 @@ namespace Neos\ContentRepositoryRegistry\Command;
  * source code.
  */
 
-use Doctrine\DBAL\Connection;
-use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceFactoryInterface;
-use Neos\ContentRepository\Core\Projection\ContentGraph\ProjectionIntegrityViolationDetectionRunner;
+use Neos\ContentRepository\Core\Projection\ContentGraph\ProjectionIntegrityViolationDetectionRunnerFactoryInterface;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
+use Neos\Error\Messages\Result;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Cli\CommandController;
 
@@ -25,30 +24,20 @@ final class ContentGraphIntegrityCommandController extends CommandController
     private const OUTPUT_MODE_LOG = 'log';
 
     #[Flow\Inject()]
-    protected Connection $dbal;
+    protected ProjectionIntegrityViolationDetectionRunnerFactoryInterface $projectionIntegrityViolationDetectionRunnerFactory;
 
     #[Flow\Inject()]
     protected ContentRepositoryRegistry $contentRepositoryRegistry;
 
-    /**
-     * @var array<string, mixed>
-     */
-    #[Flow\InjectConfiguration]
-    protected array $settings;
-
     public function runViolationDetectionCommand(string $contentRepository = 'default', ?string $outputMode = null): void
     {
-        $presetName = $this->settings['contentRepositories'][$contentRepository]['preset'];
-        $factoryObjectName = $this->settings['presets'][$presetName]['projectionIntegrityViolationDetector']['factoryObjectName'];
-        $factory = $this->objectManager->get($factoryObjectName);
-        assert($factory instanceof ContentRepositoryServiceFactoryInterface);
         $detectionRunner = $this->contentRepositoryRegistry->buildService(
             ContentRepositoryId::fromString($contentRepository),
-            $factory
+            $this->projectionIntegrityViolationDetectionRunnerFactory
         );
-        assert($detectionRunner instanceof ProjectionIntegrityViolationDetectionRunner);
 
         $outputMode = $this->resolveOutputMode($outputMode);
+        /** @var Result $result */
         $result = $detectionRunner->run();
         switch ($outputMode) {
             case self::OUTPUT_MODE_CONSOLE:

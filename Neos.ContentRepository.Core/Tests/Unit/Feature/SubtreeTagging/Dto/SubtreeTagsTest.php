@@ -27,6 +27,24 @@ class SubtreeTagsTest extends TestCase
     /**
      * @test
      */
+    public function withReturnsSameInstanceIfSpecifiedTagIsContained(): void
+    {
+        $tags = SubtreeTags::fromStrings('foo', 'bar');
+        self::assertSame($tags, $tags->with(SubtreeTag::fromString('foo')));
+    }
+
+    /**
+     * @test
+     */
+    public function withReturnsNewInstanceForAddedTag(): void
+    {
+        $tags = SubtreeTags::fromStrings('foo', 'bar');
+        self::assertSame(['foo', 'bar', 'baz'], $tags->with(SubtreeTag::fromString('baz'))->toStringArray());
+    }
+
+    /**
+     * @test
+     */
     public function withoutReturnsSameInstanceIfSpecifiedTagIsNotContained(): void
     {
         $tags = SubtreeTags::fromStrings('foo', 'bar');

@@ -110,12 +110,13 @@ trait CRTestSuiteRuntimeVariables
     }
 
     /**
-     * @When /^VisibilityConstraints are set to "(withoutRestrictions|default)"$/
+     * @When /^VisibilityConstraints are set to "(withoutRestrictions|empty|default)"$/
      */
     public function visibilityConstraintsAreSetTo(string $restrictionType): void
     {
         $this->currentVisibilityConstraints = match ($restrictionType) {
             'withoutRestrictions' => VisibilityConstraints::withoutRestrictions(),
+            'empty' => VisibilityConstraints::createEmpty(),
             'default' => VisibilityConstraints::default(),
             default => throw new \InvalidArgumentException('Visibility constraint "' . $restrictionType . '" not supported.'),
         };

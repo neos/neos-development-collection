@@ -15,10 +15,15 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\BehavioralTests\Tests\Parallel;
 
 use Neos\ContentRepository\Core\ContentRepository;
+use Neos\ContentRepository\Core\Feature\Security\Dto\UserId;
 use Neos\ContentRepository\Core\Service\ContentRepositoryMaintainer;
 use Neos\ContentRepository\Core\Service\ContentRepositoryMaintainerFactory;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
+use Neos\ContentRepository\TestSuite\Fakes\FakeAuthProvider;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
+use Neos\EventStore\EventStoreInterface;
+use Neos\EventStore\Model\EventEnvelope;
+use Neos\EventStore\Model\EventStream\VirtualStreamName;
 use Neos\Flow\Core\Bootstrap;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use PHPUnit\Framework\TestCase;
@@ -36,8 +41,34 @@ abstract class AbstractParallelTestCase extends TestCase // we don't use Flows f
 
     public function setUp(): void
     {
+        FakeAuthProvider::setDefaultUserId(UserId::fromString(sprintf('Testing [pid %s]', getmypid())));
         $this->objectManager = Bootstrap::$staticObjectManager;
         $this->contentRepositoryRegistry = $this->objectManager->get(ContentRepositoryRegistry::class);
+    }
+
+    public function tearDown(): void
+    {
+        if ($this->hasFailed()) {
+            try {
+                $this->log('Error. Logging last 100 events from "test_parallel"');
+                /** @var ContentRepositoryMaintainer $contentRepositoryMaintainer */
+                $contentRepositoryMaintainer = $this->contentRepositoryRegistry->buildService(ContentRepositoryId::fromString('test_parallel'), new ContentRepositoryMaintainerFactory());
+                /** @var EventStoreInterface $eventStore */
+                $eventStore = (new \ReflectionClass($contentRepositoryMaintainer))->getProperty('eventStore')->getValue($contentRepositoryMaintainer);
+
+                /** @var EventEnvelope[] $lastEvents */
+                $lastEvents = array_reverse(iterator_to_array($eventStore->load(VirtualStreamName::all())->limit(100)->backwards(), false));
+                file_put_contents(self::LOGGING_PATH, '| sequence | version | stream | type | data | metadata | causationId | correlationId |' . PHP_EOL, FILE_APPEND);
+                file_put_contents(self::LOGGING_PATH, '| --- | --- | --- | --- | --- | --- | --- | --- |' . PHP_EOL, FILE_APPEND);
+                foreach ($lastEvents as $eventEnvelope) {
+                    $event = $eventEnvelope->event;
+                    file_put_contents(self::LOGGING_PATH, sprintf('| %s | %s | %s | %s | %s | %s | %s | %s |', $eventEnvelope->sequenceNumber->value, $eventEnvelope->version->value, $eventEnvelope->streamName->value, $event->type->value, $event->data->value, json_encode($event->metadata?->value), $event->causationId?->value, $event->correlationId?->value) . PHP_EOL, FILE_APPEND);
+                }
+                $this->log('Fished event logging');
+            } catch (\Throwable $throwable) {
+                $this->log(sprintf('Failed logging events [%s (%d)]: %s', $throwable::class, $throwable->getCode(), $throwable->getMessage()));
+            }
+        }
     }
 
     final protected function awaitFile(string $filename): void
