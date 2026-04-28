@@ -3,5 +3,5 @@ Neos:
     presets:
       'default':
         contentGraphProjection:
-          factoryObjectName: Neos\ContentGraph\PostgreSQLAdapter\HypergraphProjectionFactory
+          factoryObjectName: Neos\ContentGraph\PostgreSQLAdapter\PostgresContentGraphProjectionFactory
 

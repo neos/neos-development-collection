@@ -19,6 +19,11 @@ class JsonbType extends Type
 
     public function getName()
     {
-        return 'hypergraphjsonb';
+        return 'jsonb';
+    }
+
+    public function getMappedDatabaseTypes(AbstractPlatform $platform)
+    {
+        return ['jsonb'];
     }
 }

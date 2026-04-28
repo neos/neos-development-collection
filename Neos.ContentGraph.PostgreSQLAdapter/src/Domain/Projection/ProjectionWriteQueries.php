@@ -1,0 +1,266 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection;
+
+use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\Exception as DBALException;
+use Neos\ContentGraph\PostgreSQLAdapter\ContentGraphTableNames;
+use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
+use Neos\ContentRepository\Core\Feature\NodeModification\Dto\SerializedPropertyValues;
+use Neos\ContentRepository\Core\NodeType\NodeTypeName;
+use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Timestamps;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateClassification;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
+
+/**
+ * @internal
+ */
+final readonly class ProjectionWriteQueries
+{
+    private ContentGraphTableNames $tableNames;
+
+    public function __construct(ContentRepositoryId $contentRepositoryId)
+    {
+        $this->tableNames = ContentGraphTableNames::create($contentRepositoryId);
+    }
+
+    /**
+     * @throws DBALException
+     */
+    public function insertNodeRecord(
+        Connection $databaseConnection,
+        NodeAggregateId $nodeAggregateId,
+        OriginDimensionSpacePoint $originDimensionSpacePoint,
+        SerializedPropertyValues $properties,
+        NodeTypeName $nodeTypeName,
+        NodeAggregateClassification $classification,
+        ?NodeName $nodeName = null,
+        ?Timestamps $timestamps = null,
+    ): NodeRelationAnchorPoint {
+        $timestamps ??= Timestamps::create(
+            new \DateTimeImmutable(),
+            new \DateTimeImmutable(),
+            null,
+            null,
+        );
+
+        $result = $databaseConnection->executeQuery(
+            <<<SQL
+                insert into {$this->tableNames->node()} (
+                                    nodeaggregateid,
+                                    origindimensionspacepoint,
+                                    origindimensionspacepointhash,
+                                    nodetypename,
+                                    properties,
+                                    classification,
+                                    nodename,
+                                    created,
+                                    originalcreated,
+                                    lastmodified,
+                                    originallastmodified
+                )
+                values
+                (:nodeaggregateid, :origindimensionspacepoint, :origindimensionspacepointhash, :nodetypename, :properties, :classification, :nodename, :created, :originalcreated, :lastmodified, :originallastmodified)
+                -- auto-increment
+                returning relationanchorpoint
+            SQL,
+            [
+                'nodeaggregateid' => $nodeAggregateId->value,
+                'origindimensionspacepoint' => $originDimensionSpacePoint->toJson(),
+                'origindimensionspacepointhash' => $originDimensionSpacePoint->hash,
+                'nodetypename' => $nodeTypeName->value,
+                'properties' => \json_encode($properties),
+                'classification' => $classification->value,
+                'nodename' => $nodeName?->value ?? '',
+                'created' => $timestamps->created,
+                'originalcreated' => $timestamps->originalCreated,
+                'lastmodified' => $timestamps->lastModified,
+                'originallastmodified' => $timestamps->originalLastModified,
+            ],
+            [
+                'created' => 'datetime_immutable',
+                'originalcreated' => 'datetime_immutable',
+                'lastmodified' => 'datetime_immutable',
+                'originallastmodified' => 'datetime_immutable',
+            ]
+        );
+
+        $row = $result->fetchAssociative();
+        if ($row === false) {
+            throw new \RuntimeException('Failed to insert node record: no row returned from INSERT ... RETURNING', 1740000020);
+        }
+
+        return NodeRelationAnchorPoint::fromInteger($row['relationanchorpoint']);
+    }
+
+    /**
+     * @throws DBALException
+     */
+    public function updateNodeRecord(Connection $databaseConnection, NodeRecord $nodeRecord): void
+    {
+        $databaseConnection->update(
+            $this->tableNames->node(),
+            [
+                'origindimensionspacepoint' => $nodeRecord->originDimensionSpacePoint->toJson(),
+                'origindimensionspacepointhash' => $nodeRecord->originDimensionSpacePoint->hash,
+                'nodeaggregateid' => $nodeRecord->nodeAggregateId->value,
+                'nodetypename' => $nodeRecord->nodeTypeName->value,
+                'classification' => $nodeRecord->classification->value,
+                'properties' => json_encode($nodeRecord->properties),
+                'nodename' => $nodeRecord->nodeName?->value ?? '',
+                'lastmodified' => $nodeRecord->timestamps->lastModified,
+                'originallastmodified' => $nodeRecord->timestamps->originalLastModified,
+            ],
+            [
+                'relationanchorpoint' => $nodeRecord->relationAnchorPoint
+            ],
+            [
+                'lastmodified' => 'datetime_immutable',
+                'originallastmodified' => 'datetime_immutable',
+            ]
+        );
+    }
+
+    /**
+     * @throws DBALException
+     */
+    public function removeNodeRecord(Connection $databaseConnection, NodeRecord $nodeRecord): void
+    {
+        $databaseConnection->delete($this->tableNames->node(), [
+            'relationanchorpoint' => $nodeRecord->relationAnchorPoint->value
+        ]);
+    }
+
+    public function removeReferenceFromDatabaseForSource(
+        Connection $databaseConnection,
+        NodeRelationAnchorPoint $sourceNodeAnchor
+    ): void {
+        $databaseConnection->delete($this->tableNames->referenceRelation(), [
+            'sourcenodeanchor' => $sourceNodeAnchor->value
+        ]);
+    }
+
+    /**
+     * @throws DBALException
+     */
+    public function addReferenceToDatabase(
+        Connection $databaseConnection,
+        ReferenceRelationRecord $relationRecord
+    ): void {
+        $databaseConnection->insert($this->tableNames->referenceRelation(), [
+            'sourcenodeanchor' => $relationRecord->sourceNodeAnchor->value,
+            'name' => $relationRecord->name->value,
+            'position' => $relationRecord->position,
+            'properties' => $relationRecord->properties
+                ? \json_encode($relationRecord->properties)
+                : null,
+            'targetnodeaggregateid' => $relationRecord->targetNodeAggregateId->value
+        ]);
+    }
+
+    /**
+     * @param array<string,string|int> $hierarchyRelationId
+     * @throws DBALException
+     */
+    public function replaceParentNodeAnchorOnHierarchyRecord(
+        Connection $databaseConnection,
+        array $hierarchyRelationId,
+        NodeRelationAnchorPoint $newParentNodeAnchor
+    ): void {
+        /** @todo do this directly in the database */
+        $databaseConnection->update(
+            $this->tableNames->hierarchyRelation(),
+            [
+                'parentnodeanchor' => $newParentNodeAnchor->value
+            ],
+            $hierarchyRelationId
+        );
+    }
+
+    /**
+     * @param array<string,string|int> $hierarchyRelationId
+     * @throws DBALException
+     */
+    public function addChildNodeAnchorBeforeSuccessor(
+        Connection $databaseConnection,
+        array $hierarchyRelationId,
+        NodeRelationAnchorPoint $newChildNodeAnchor,
+        ?NodeRelationAnchorPoint $successor
+    ): void {
+        $databaseConnection->executeQuery(
+            <<<SQL
+                update {$this->tableNames->hierarchyRelation()}
+                set childnodeanchors = insert_into_array_before_successor(childnodeanchors, :new_anchor, :successor::bigint)
+                where contentstreamid = :contentstreamid
+                  and parentnodeanchor = :parentnodeanchor
+                  and dimensionspacepointhash = :dimensionspacepointhash
+            SQL,
+            [
+                'contentstreamid' => $hierarchyRelationId['contentstreamid'],
+                'parentnodeanchor' => $hierarchyRelationId['parentnodeanchor'],
+                'dimensionspacepointhash' => $hierarchyRelationId['dimensionspacepointhash'],
+                'new_anchor' => $newChildNodeAnchor->value,
+                'successor' => $successor?->value
+            ]
+        );
+    }
+
+    /**
+     * @param array<string,string|int> $hierarchyRelationId
+     * @throws DBALException
+     */
+    public function removeChildNodeAnchorFromHierarchyRecord(
+        Connection $databaseConnection,
+        array $hierarchyRelationId,
+        NodeRelationAnchorPoint $childNodeAnchor,
+    ): void {
+        $databaseConnection->executeQuery(
+            <<<SQL
+                with updated as (
+                    update {$this->tableNames->hierarchyRelation()}
+                    set childnodeanchors = array_remove(childnodeanchors, :childnodeanchor_to_remove)
+                    where contentstreamid = :contentstreamid
+                      and parentnodeanchor = :parentnodeanchor
+                      and dimensionspacepointhash = :dimensionspacepointhash
+                    returning contentstreamid, parentnodeanchor, dimensionspacepointhash, childnodeanchors
+                )
+                delete from {$this->tableNames->hierarchyRelation()} h
+                using updated as u
+                where h.contentstreamid = u.contentstreamid
+                  and h.parentnodeanchor = u.parentnodeanchor
+                  and h.dimensionspacepointhash = u.dimensionspacepointhash
+                  -- we only delete the record, if there are no more child nodes
+                  and array_length(u.childnodeanchors, 1) = 0
+            SQL,
+            [
+                'contentstreamid' => $hierarchyRelationId['contentstreamid'],
+                'parentnodeanchor' => $hierarchyRelationId['parentnodeanchor'],
+                'dimensionspacepointhash' => $hierarchyRelationId['dimensionspacepointhash'],
+                'childnodeanchor_to_remove' => $childNodeAnchor->value
+            ]
+        );
+    }
+
+    /**
+     * @throws DBALException
+     */
+    public function addHierarchyRelationRecordToDatabase(
+        Connection $databaseConnection,
+        HierarchyRelationRecord $hierarchyRelationRecord
+    ): void {
+        $databaseConnection->insert(
+            $this->tableNames->hierarchyRelation(),
+            [
+                'contentstreamid' => $hierarchyRelationRecord->contentStreamId->value,
+                'parentnodeanchor' => $hierarchyRelationRecord->parentNodeAnchor->value,
+                'dimensionspacepoint' => $hierarchyRelationRecord->dimensionSpacePoint->toJson(),
+                'dimensionspacepointhash' => $hierarchyRelationRecord->dimensionSpacePoint->hash,
+                'childnodeanchors' => $hierarchyRelationRecord->childNodeAnchors->toDatabaseString()
+            ]
+        );
+    }
+}

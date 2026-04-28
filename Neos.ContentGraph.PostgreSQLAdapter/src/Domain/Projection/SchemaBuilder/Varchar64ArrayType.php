@@ -10,15 +10,15 @@ use Doctrine\DBAL\Types\Type;
 /**
  * @internal
  */
-class UuidArrayType extends Type
+class Varchar64ArrayType extends Type
 {
     public function getSQLDeclaration(array $fieldDeclaration, AbstractPlatform $platform)
     {
-        return 'uuid[]';
+        return 'varchar(64)[]';
     }
 
     public function getName()
     {
-        return 'hypergraphuuids';
+        return 'varchar64_array';
     }
 }

@@ -16,7 +16,11 @@ namespace Neos\ContentGraph\PostgreSQLAdapter\Domain\Repository\Query;
 
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Result as QueryResult;
+use Neos\ContentGraph\PostgreSQLAdapter\ContentGraphTableNames;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\NodeType\ExpandedNodeTypeCriteria;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\Ordering\Ordering;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\PropertyValue\Criteria\PropertyValueCriteriaInterface;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\SearchTerm\SearchTerm;
 
 /**
  * @internal
@@ -42,8 +46,8 @@ trait CommonGraphQueryOperations
     final protected function __construct(
         string $query,
         array $parameters,
-        private readonly string $tableNamePrefix,
-        array $types = []
+        private readonly ContentGraphTableNames $tableNames,
+        array $types,
     ) {
         $this->query = $query;
         $this->parameters = $parameters;
@@ -57,7 +61,34 @@ trait CommonGraphQueryOperations
         $parameters = $this->parameters;
         $types = $this->types;
         $query = $this->query . QueryUtility::getNodeTypeCriteriaClause($nodeTypeCriteria, $prefix, $parameters, $types);
-        return new self($query, $parameters, $this->tableNamePrefix, $types);
+        return new self($query, $parameters, $this->tableNames, $types);
+    }
+
+    public function withSearchTerm(SearchTerm $searchTerm, string $nodeTableAlias = 'n'): self
+    {
+        $parameters = $this->parameters;
+        $query = $this->query . QueryUtility::getSearchTermConstraintClause($searchTerm, $nodeTableAlias, $parameters);
+        return new self($query, $parameters, $this->tableNames, $this->types);
+    }
+
+    public function withPropertyValueConstraints(PropertyValueCriteriaInterface $propertyValue, string $nodeTableAlias = 'n'): self
+    {
+        $parameters = $this->parameters;
+        $query = $this->query . QueryUtility::getPropertyValueConstraintClause($propertyValue, $nodeTableAlias, $parameters);
+        return new self($query, $parameters, $this->tableNames, $this->types);
+    }
+
+    public function withOrdering(Ordering $ordering, string $nodeTableAlias = 'n'): self
+    {
+        $query = $this->query . QueryUtility::getOrderingClause($ordering, $nodeTableAlias);
+        return new self($query, $this->parameters, $this->tableNames, $this->types);
+    }
+
+    public function withRawOrderBy(string $orderByExpression): self
+    {
+        $query = $this->query . '
+            ORDER BY ' . $orderByExpression;
+        return new self($query, $this->parameters, $this->tableNames, $this->types);
     }
 
     public function withLimit(int $limit): self
@@ -65,7 +96,7 @@ trait CommonGraphQueryOperations
         $query = $this->query . '
             LIMIT ' . $limit;
 
-        return new self($query, $this->parameters, $this->tableNamePrefix, $this->types);
+        return new self($query, $this->parameters, $this->tableNames, $this->types);
     }
 
     public function withOffset(int $offset): self
@@ -73,7 +104,7 @@ trait CommonGraphQueryOperations
         $query = $this->query . '
             OFFSET ' . $offset;
 
-        return new self($query, $this->parameters, $this->tableNamePrefix, $this->types);
+        return new self($query, $this->parameters, $this->tableNames, $this->types);
     }
 
     public function getQuery(): string

@@ -17,6 +17,7 @@ namespace Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap;
 use Behat\Gherkin\Node\PyStringNode;
 use Behat\Gherkin\Node\TableNode;
 use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\Platforms\PostgreSQLPlatform;
 use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\Service\ContentRepositoryMaintainer;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
@@ -194,20 +195,25 @@ trait CRBehavioralTestsSubjectProvider
             $subscriptionEngine
         );
 
+        /** @var Connection $databaseConnection */
+        $databaseConnection = (new \ReflectionClass($eventStore))->getProperty('connection')->getValue($eventStore);
+
         if (!in_array($contentRepository->id, self::$alreadySetUpContentRepositories)) {
             $result = $contentRepositoryMaintainer->setUp();
             Assert::assertNull($result);
             self::$alreadySetUpContentRepositories[] = $contentRepository->id;
         }
-        // todo we TRUNCATE here and do not want to use $contentRepositoryMaintainer->prune(); here as it would not reset the autoincrement sequence number making some assertions impossible
-
-        /** @var Connection $databaseConnection */
-        $databaseConnection = (new \ReflectionClass($eventStore))->getProperty('connection')->getValue($eventStore);
-        $eventTableName = sprintf('cr_%s_events', $contentRepositoryId->value);
-        $databaseConnection->executeStatement('TRUNCATE ' . $eventTableName);
 
         $result = $subscriptionEngine->reset();
         Assert::assertNull($result->errors);
+        // We TRUNCATE here and do not want to use $contentRepositoryMaintainer->prune(); here as it would not reset the autoincrement sequence number making some assertions impossible
+        $eventTableName = sprintf('cr_%s_events', $contentRepositoryId->value);
+        if ($databaseConnection->getDatabasePlatform() instanceof PostgreSQLPlatform) {
+            $databaseConnection->executeStatement('TRUNCATE ' . $eventTableName . ' RESTART IDENTITY');
+        } else {
+            $databaseConnection->executeStatement('TRUNCATE ' . $eventTableName);
+        }
+
         $result = $subscriptionEngine->boot();
         Assert::assertNull($result->errors);
 

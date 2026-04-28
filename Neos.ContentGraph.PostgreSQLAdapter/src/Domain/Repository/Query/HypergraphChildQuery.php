@@ -15,6 +15,7 @@ declare(strict_types=1);
 namespace Neos\ContentGraph\PostgreSQLAdapter\Domain\Repository\Query;
 
 use Doctrine\DBAL\Connection;
+use Neos\ContentGraph\PostgreSQLAdapter\ContentGraphTableNames;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
@@ -37,7 +38,7 @@ final class HypergraphChildQuery implements HypergraphQueryInterface
     public static function create(
         ContentStreamId $contentStreamId,
         NodeAggregateId $parentNodeAggregateId,
-        string $tableNamePrefix,
+        ContentGraphTableNames $tableNames,
         ?array $fieldsToFetch = null
     ): self {
         $query = /** @lang PostgreSQL */
@@ -45,13 +46,13 @@ final class HypergraphChildQuery implements HypergraphQueryInterface
                 ? implode(', ', $fieldsToFetch)
                 : 'cn.origindimensionspacepoint, cn.nodeaggregateid, cn.nodetypename,
                     cn.classification, cn.properties, cn.nodename,
-                    ch.contentstreamid, ch.dimensionspacepoint') . '
-            FROM ' . $tableNamePrefix . '_node pn
-            JOIN (
-                SELECT *, unnest(childnodeanchors) AS childnodeanchor
-                FROM ' . $tableNamePrefix . '_hierarchyhyperrelation
-            ) ch ON ch.parentnodeanchor = pn.relationanchorpoint
-            JOIN ' . $tableNamePrefix . '_node cn ON cn.relationanchorpoint = ch.childnodeanchor
+                    cn.created, cn.originalcreated, cn.lastmodified, cn.originallastmodified,
+                    ch.contentstreamid, ch.dimensionspacepoint,
+                    ch.subtreetags->(cn.relationanchorpoint::text) as subtreetags') . '
+            FROM ' . $tableNames->node() . ' pn
+            JOIN ' . $tableNames->hierarchyRelation() . ' ch ON ch.parentnodeanchor = pn.relationanchorpoint
+            CROSS JOIN LATERAL unnest(ch.childnodeanchors) WITH ORDINALITY AS child_ord(anchor, position)
+            JOIN ' . $tableNames->node() . ' cn ON cn.relationanchorpoint = child_ord.anchor
             WHERE ch.contentstreamid = :contentStreamId
                 AND pn.nodeaggregateid = :parentNodeAggregateId';
 
@@ -60,7 +61,7 @@ final class HypergraphChildQuery implements HypergraphQueryInterface
             'parentNodeAggregateId' => $parentNodeAggregateId->value
         ];
 
-        return new self($query, $parameters, $tableNamePrefix);
+        return new self($query, $parameters, $tableNames, []);
     }
 
     public function withOriginDimensionSpacePoint(OriginDimensionSpacePoint $originDimensionSpacePoint): self
@@ -71,7 +72,7 @@ final class HypergraphChildQuery implements HypergraphQueryInterface
         $parameters = $this->parameters;
         $parameters['originDimensionSpacePointHash'] = $originDimensionSpacePoint->hash;
 
-        return new self($query, $parameters, $this->tableNamePrefix);
+        return new self($query, $parameters, $this->tableNames, $this->types);
     }
 
     public function withDimensionSpacePoint(DimensionSpacePoint $dimensionSpacePoint): self
@@ -82,7 +83,7 @@ final class HypergraphChildQuery implements HypergraphQueryInterface
         $parameters = $this->parameters;
         $parameters['dimensionSpacePointHash'] = $dimensionSpacePoint->hash;
 
-        return new self($query, $parameters, $this->tableNamePrefix);
+        return new self($query, $parameters, $this->tableNames, $this->types);
     }
 
     public function withDimensionSpacePoints(DimensionSpacePointSet $dimensionSpacePoints): self
@@ -95,7 +96,7 @@ final class HypergraphChildQuery implements HypergraphQueryInterface
         $types = $this->types;
         $types['dimensionSpacePointHashes'] = Connection::PARAM_STR_ARRAY;
 
-        return new self($query, $parameters, $this->tableNamePrefix, $types);
+        return new self($query, $parameters, $this->tableNames, $types);
     }
 
     public function withChildNodeName(NodeName $childNodeName): self
@@ -106,14 +107,29 @@ final class HypergraphChildQuery implements HypergraphQueryInterface
         $parameters = $this->parameters;
         $parameters['childNodeName'] = $childNodeName->value;
 
-        return new self($query, $parameters, $this->tableNamePrefix, $this->types);
+        return new self($query, $parameters, $this->tableNames, $this->types);
     }
 
     public function withRestriction(VisibilityConstraints $visibilityConstraints): self
     {
-        $query = $this->query . QueryUtility::getRestrictionClause($visibilityConstraints, $this->tableNamePrefix, 'c');
+        $parameters = $this->parameters;
+        $types = $this->types;
+        $query = $this->query . QueryUtility::getRestrictionClause($visibilityConstraints, $this->tableNames, 'c', $parameters, $types);
 
-        return new self($query, $this->parameters, $this->tableNamePrefix, $this->types);
+        return new self($query, $parameters, $this->tableNames, $types);
+    }
+
+    public function withPositionOrdering(): self
+    {
+        // If an ORDER BY already exists (from withOrdering), append position as secondary sort
+        if (stripos($this->query, 'ORDER BY') !== false) {
+            $query = $this->query . ', child_ord.position';
+        } else {
+            $query = $this->query . '
+            ORDER BY child_ord.position';
+        }
+
+        return new self($query, $this->parameters, $this->tableNames, $this->types);
     }
 
     public function withOnlyTethered(): self
@@ -124,6 +140,6 @@ final class HypergraphChildQuery implements HypergraphQueryInterface
         $parameters = $this->parameters;
         $parameters['classification'] = NodeAggregateClassification::CLASSIFICATION_TETHERED->value;
 
-        return new self($query, $parameters, $this->tableNamePrefix, $this->types);
+        return new self($query, $parameters, $this->tableNames, $this->types);
     }
 }

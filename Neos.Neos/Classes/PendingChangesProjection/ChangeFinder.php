@@ -35,10 +35,11 @@ final class ChangeFinder implements ProjectionStateInterface
 
     public function findByContentStreamId(ContentStreamId $contentStreamId): Changes
     {
+        $contentStreamIdColumn = $this->dbal->quoteIdentifier('contentStreamId');
         $changeRows = $this->dbal->executeQuery(
             <<<SQL
                 SELECT * FROM {$this->tableName}
-                WHERE contentStreamId = :contentStreamId
+                WHERE {$contentStreamIdColumn} = :contentStreamId
             SQL,
             [
                 'contentStreamId' => $contentStreamId->value
@@ -49,10 +50,11 @@ final class ChangeFinder implements ProjectionStateInterface
 
     public function countByContentStreamId(ContentStreamId $contentStreamId): int
     {
+        $contentStreamIdColumn = $this->dbal->quoteIdentifier('contentStreamId');
         return (int)$this->dbal->fetchOne(
             <<<SQL
                 SELECT COUNT(*) FROM {$this->tableName}
-                WHERE contentStreamId = :contentStreamId
+                WHERE {$contentStreamIdColumn} = :contentStreamId
             SQL,
             [
                 'contentStreamId' => $contentStreamId->value

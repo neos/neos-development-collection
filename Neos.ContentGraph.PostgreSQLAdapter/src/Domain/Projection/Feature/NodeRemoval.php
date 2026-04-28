@@ -15,15 +15,13 @@ declare(strict_types=1);
 namespace Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\Feature;
 
 use Doctrine\DBAL\Connection;
-use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\EventCouldNotBeAppliedToContentGraph;
-use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\HierarchyHyperrelationRecord;
-use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\NodeRecord;
+use Neos\ContentGraph\PostgreSQLAdapter\ContentGraphTableNames;
+use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\HierarchyRelationRecord;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\NodeRelationAnchorPoint;
-use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\ProjectionHypergraph;
-use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\ReferenceRelationRecord;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
+use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\ProjectionReadQueries;
+use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\ProjectionWriteQueries;
 use Neos\ContentRepository\Core\Feature\NodeRemoval\Event\NodeAggregateWasRemoved;
-use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 
 /**
@@ -38,149 +36,91 @@ trait NodeRemoval
      */
     private function whenNodeAggregateWasRemoved(NodeAggregateWasRemoved $event): void
     {
-        $affectedRelationAnchorPoints = [];
-        // first step: remove hierarchy relations
-        foreach ($event->affectedCoveredDimensionSpacePoints as $dimensionSpacePoint) {
-            $nodeRecord = $this->getProjectionHypergraph()->findNodeRecordByCoverage(
-                $event->getContentStreamId(),
-                $dimensionSpacePoint,
-                $event->getNodeAggregateId()
-            );
-            if (is_null($nodeRecord)) {
-                throw EventCouldNotBeAppliedToContentGraph::becauseTheSourceNodeIsMissing(get_class($event));
-            }
+        // first step: find ingoing hierarchy relations for the node aggregate and remove the node from them,
+        // then recursively remove all descendant hierarchy relations
+        $ingoingRelations = $this->getReadQueries()->findIngoingHierarchyHyperrelationRecordsForNodeAggregate(
+            $event->contentStreamId,
+            $event->nodeAggregateId,
+            $event->affectedCoveredDimensionSpacePoints
+        );
 
-            /** @var HierarchyHyperrelationRecord $ingoingHierarchyRelation */
-            $ingoingHierarchyRelation = $this->getProjectionHypergraph()
-                ->findHierarchyHyperrelationRecordByChildNodeAnchor(
-                    $event->getContentStreamId(),
-                    $dimensionSpacePoint,
-                    $nodeRecord->relationAnchorPoint
-                );
-            $ingoingHierarchyRelation->removeChildNodeAnchor(
-                $nodeRecord->relationAnchorPoint,
+        foreach ($ingoingRelations as $ingoingRelationData) {
+            /** @var HierarchyRelationRecord $parentRelation */
+            $parentRelation = $ingoingRelationData['relation'];
+            /** @var NodeRelationAnchorPoint $childNodeAnchor */
+            $childNodeAnchor = $ingoingRelationData['childNodeAnchor'];
+
+            // recursively remove all outgoing (descendant) hierarchy relations
+            $this->removeDescendantHierarchyRelationsRecursively(
+                $event->contentStreamId,
+                $childNodeAnchor,
+                $parentRelation->dimensionSpacePoint
+            );
+
+            // remove the node from its parent's child list (or delete the relation if it becomes empty)
+            $parentRelation->removeChildNodeAnchor(
+                $childNodeAnchor,
                 $this->getDatabaseConnection(),
-                $this->tableNamePrefix
-            );
-            $this->removeFromRestrictions(
-                $event->getContentStreamId(),
-                $dimensionSpacePoint,
-                $event->getNodeAggregateId()
-            );
-
-            $affectedRelationAnchorPoints[] = $nodeRecord->relationAnchorPoint;
-
-            $this->cascadeHierarchy(
-                $event->getContentStreamId(),
-                $dimensionSpacePoint,
-                $nodeRecord->relationAnchorPoint,
-                $affectedRelationAnchorPoints
+                $this->getTableNames()
             );
         }
 
         // second step: remove orphaned nodes
+
+        // remove reference relations on orphans first
+        $this->getDatabaseConnection()->executeStatement(
+            "
+                DELETE FROM {$this->tableNames->referenceRelation()} r
+                WHERE sourcenodeanchor IN (
+                SELECT relationanchorpoint FROM {$this->tableNames->node()} n WHERE
+                    NOT EXISTS (
+                        SELECT 1
+                        FROM {$this->tableNames->hierarchyRelation()} h
+                        WHERE n.relationanchorpoint = ANY(h.childnodeanchors)
+                    ))"
+        );
+
         $this->getDatabaseConnection()->executeStatement(
             /** @lang PostgreSQL */
-            '
-            WITH deletedNodes AS (
-                DELETE FROM ' . $this->tableNamePrefix . '_node n
-                WHERE n.relationanchorpoint IN (
-                    SELECT relationanchorpoint FROM ' . $this->tableNamePrefix . '_node
-                        LEFT JOIN ' . $this->tableNamePrefix . '_hierarchyhyperrelation h
-                            ON n.relationanchorpoint = ANY(h.childnodeanchors)
-                    WHERE n.relationanchorpoint IN (:affectedRelationAnchorPoints)
-                        AND h.contentstreamid IS NULL
-                )
-                RETURNING relationanchorpoint
-            )
-            DELETE FROM ' . $this->tableNamePrefix . '_referencerelation r
-                WHERE sourcenodeanchor IN (SELECT relationanchorpoint FROM deletedNodes)
-            ',
-            [
-                'affectedRelationAnchorPoints' => $affectedRelationAnchorPoints
-            ],
-            [
-                'affectedRelationAnchorPoints' => Connection::PARAM_STR_ARRAY
-            ]
+            "
+                DELETE FROM {$this->tableNames->node()} n
+                WHERE
+                    NOT EXISTS (
+                        SELECT 1
+                        FROM {$this->tableNames->hierarchyRelation()} h
+                        WHERE n.relationanchorpoint = ANY(h.childnodeanchors)
+                    )
+            ",
         );
     }
 
-    /**
-     * @throws \Doctrine\DBAL\Driver\Exception
-     * @throws \Doctrine\DBAL\Exception
-     * @param array<int,NodeRelationAnchorPoint> &$affectedRelationAnchorPoints
-     */
-    private function cascadeHierarchy(
+    private function removeDescendantHierarchyRelationsRecursively(
         ContentStreamId $contentStreamId,
-        DimensionSpacePoint $dimensionSpacePoint,
-        NodeRelationAnchorPoint $nodeRelationAnchorPoint,
-        array &$affectedRelationAnchorPoints
+        NodeRelationAnchorPoint $nodeAnchor,
+        DimensionSpacePoint $dimensionSpacePoint
     ): void {
-        $childHierarchyRelation = $this->getProjectionHypergraph()->findHierarchyHyperrelationRecordByParentNodeAnchor(
+        $outgoingRelation = $this->getReadQueries()->findHierarchyHyperrelationRecordByParentNodeAnchor(
             $contentStreamId,
             $dimensionSpacePoint,
-            $nodeRelationAnchorPoint
+            $nodeAnchor
         );
-        if ($childHierarchyRelation) {
-            $childHierarchyRelation->removeFromDatabase($this->getDatabaseConnection(), $this->tableNamePrefix);
 
-            foreach ($childHierarchyRelation->childNodeAnchors as $childNodeAnchor) {
-                /** @var NodeRecord $nodeRecord */
-                $nodeRecord = $this->getProjectionHypergraph()
-                    ->findNodeRecordByRelationAnchorPoint($childNodeAnchor);
-                $ingoingHierarchyRelations = $this->getProjectionHypergraph()
-                    ->findHierarchyHyperrelationRecordsByChildNodeAnchor($childNodeAnchor);
-                if (empty($ingoingHierarchyRelations)) {
-                    ReferenceRelationRecord::removeFromDatabaseForSource(
-                        $nodeRecord->relationAnchorPoint,
-                        $this->getDatabaseConnection(),
-                        $this->tableNamePrefix
-                    );
-                    $affectedRelationAnchorPoints[] = $nodeRecord->relationAnchorPoint;
-                }
-                $this->removeFromRestrictions(
+        if ($outgoingRelation) {
+            foreach ($outgoingRelation->childNodeAnchors as $childNodeAnchor) {
+                $this->removeDescendantHierarchyRelationsRecursively(
                     $contentStreamId,
-                    $dimensionSpacePoint,
-                    $nodeRecord->nodeAggregateId
-                );
-                $this->cascadeHierarchy(
-                    $contentStreamId,
-                    $dimensionSpacePoint,
-                    $nodeRecord->relationAnchorPoint,
-                    $affectedRelationAnchorPoints
+                    $childNodeAnchor,
+                    $dimensionSpacePoint
                 );
             }
+            $outgoingRelation->removeFromDatabase($this->getDatabaseConnection(), $this->getTableNames());
         }
     }
 
-    /**
-     * @param ContentStreamId $contentStreamId
-     * @param DimensionSpacePoint $dimensionSpacePoint
-     * @param NodeAggregateId $nodeAggregateId
-     * @throws \Doctrine\DBAL\Driver\Exception
-     * @throws \Doctrine\DBAL\Exception
-     */
-    private function removeFromRestrictions(
-        ContentStreamId $contentStreamId,
-        DimensionSpacePoint $dimensionSpacePoint,
-        NodeAggregateId $nodeAggregateId
-    ): void {
-        foreach (
-            $this->getProjectionHypergraph()->findIngoingRestrictionRelations(
-                $contentStreamId,
-                $dimensionSpacePoint,
-                $nodeAggregateId
-            ) as $restrictionRelation
-        ) {
-            $restrictionRelation->removeAffectedNodeAggregateId(
-                $nodeAggregateId,
-                $this->getDatabaseConnection(),
-                $this->tableNamePrefix
-            );
-        }
-    }
 
-    abstract protected function getProjectionHypergraph(): ProjectionHypergraph;
+    abstract protected function getReadQueries(): ProjectionReadQueries;
+    abstract protected function getWriteQueries(): ProjectionWriteQueries;
 
     abstract protected function getDatabaseConnection(): Connection;
+    abstract protected function getTableNames(): ContentGraphTableNames;
 }

@@ -1,0 +1,534 @@
+<?php
+
+/*
+ * This file is part of the Neos.ContentGraph.PostgreSQLAdapter package.
+ *
+ * (c) Contributors of the Neos Project - www.neos.io
+ *
+ * This package is Open Source Software. For the full copyright and license
+ * information, please view the LICENSE file which was distributed with this
+ * source code.
+ */
+
+declare(strict_types=1);
+
+namespace Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection;
+
+use Doctrine\DBAL\Connection;
+use Neos\ContentGraph\PostgreSQLAdapter\ContentGraphTableNames;
+use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\Feature\ContentStream;
+use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\Feature\ContentStreamForking;
+use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\Feature\DimensionSpaceAdjustment;
+use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\Feature\NodeCreation;
+use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\Feature\NodeModification;
+use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\Feature\NodeReferencing;
+use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\Feature\NodeRemoval;
+use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\Feature\NodeMove;
+use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\Feature\NodeRenaming;
+use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\Feature\NodeTypeChange;
+use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\Feature\NodeVariation;
+use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\Feature\SubtreeTagging;
+use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\Feature\Workspace;
+use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\SchemaBuilder\HypergraphSchemaBuilder;
+use Neos\ContentRepository\Core\EventStore\EventInterface;
+use Neos\ContentRepository\Core\EventStore\InitiatingEventMetadata;
+use Neos\ContentRepository\Core\Feature\Common\EmbedsContentStreamId;
+use Neos\ContentRepository\Core\Feature\Common\PublishableToWorkspaceInterface;
+use Neos\ContentRepository\Core\Feature\ContentStreamClosing\Event\ContentStreamWasClosed;
+use Neos\ContentRepository\Core\Feature\ContentStreamClosing\Event\ContentStreamWasReopened;
+use Neos\ContentRepository\Core\Feature\ContentStreamCreation\Event\ContentStreamWasCreated;
+use Neos\ContentRepository\Core\Feature\ContentStreamEventStreamName;
+use Neos\ContentRepository\Core\Feature\ContentStreamForking\Event\ContentStreamWasForked;
+use Neos\ContentRepository\Core\Feature\ContentStreamRemoval\Event\ContentStreamWasRemoved;
+use Neos\ContentRepository\Core\Feature\DimensionSpaceAdjustment\Event\DimensionShineThroughWasAdded;
+use Neos\ContentRepository\Core\Feature\DimensionSpaceAdjustment\Event\DimensionSpacePointWasMoved;
+use Neos\ContentRepository\Core\Feature\NodeCreation\Event\NodeAggregateWithNodeWasCreated;
+use Neos\ContentRepository\Core\Feature\NodeModification\Event\NodePropertiesWereSet;
+use Neos\ContentRepository\Core\Feature\NodeMove\Event\NodeAggregateWasMoved;
+use Neos\ContentRepository\Core\Feature\NodeReferencing\Event\NodeReferencesWereSet;
+use Neos\ContentRepository\Core\Feature\NodeRemoval\Event\NodeAggregateWasRemoved;
+use Neos\ContentRepository\Core\Feature\NodeRenaming\Event\NodeAggregateNameWasChanged;
+use Neos\ContentRepository\Core\Feature\NodeTypeChange\Event\NodeAggregateTypeWasChanged;
+use Neos\ContentRepository\Core\Feature\NodeVariation\Event\NodeGeneralizationVariantWasCreated;
+use Neos\ContentRepository\Core\Feature\NodeVariation\Event\NodePeerVariantWasCreated;
+use Neos\ContentRepository\Core\Feature\NodeVariation\Event\NodeSpecializationVariantWasCreated;
+use Neos\ContentRepository\Core\Feature\RootNodeCreation\Event\RootNodeAggregateDimensionsWereUpdated;
+use Neos\ContentRepository\Core\Feature\RootNodeCreation\Event\RootNodeAggregateWithNodeWasCreated;
+use Neos\ContentRepository\Core\Feature\SubtreeTagging\Event\SubtreeWasTagged;
+use Neos\ContentRepository\Core\Feature\SubtreeTagging\Event\SubtreeWasUntagged;
+use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Event\RootWorkspaceWasCreated;
+use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Event\WorkspaceWasCreated;
+use Neos\ContentRepository\Core\Feature\WorkspaceModification\Event\WorkspaceBaseWorkspaceWasChanged;
+use Neos\ContentRepository\Core\Feature\WorkspaceModification\Event\WorkspaceWasRemoved;
+use Neos\ContentRepository\Core\Feature\WorkspacePublication\Event\WorkspaceWasDiscarded;
+use Neos\ContentRepository\Core\Feature\WorkspacePublication\Event\WorkspaceWasPublished;
+use Neos\ContentRepository\Core\Feature\WorkspaceRebase\Event\WorkspaceRebaseFailed;
+use Neos\ContentRepository\Core\Feature\WorkspaceRebase\Event\WorkspaceWasRebased;
+use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphProjectionInterface;
+use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphReadModelInterface;
+use Neos\ContentRepository\Core\Projection\ProjectionStatus;
+use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
+use Neos\ContentRepository\Dbal\DbalSchemaDiff;
+use Neos\EventStore\Model\EventEnvelope;
+
+/**
+ * Postgres implementation for the {@link ContentGraphProjectionInterface}.
+ *
+ * This class has three responsibilities:
+ * <ol>
+ * <li>It provides DB schema creation and reset queries to initialize the content repository.</li>
+ * <li>It implements the WRITE side of the content repository by reacting to emitted events.</li>
+ * <li>It provides access to the READ side by exposing the {@link ContentGraphReadModelInterface}.</li>
+ * </ol>
+ *
+ *
+ *
+ * @internal the parent Content Graph is public
+ */
+final readonly class PostgresContentGraphProjection implements ContentGraphProjectionInterface
+{
+    use ContentStreamForking;
+    use DimensionSpaceAdjustment;
+    use NodeCreation;
+    use SubtreeTagging;
+    use NodeModification;
+    use NodeMove;
+    use NodeReferencing;
+    use NodeRemoval;
+    use NodeRenaming;
+    use NodeTypeChange;
+    use NodeVariation;
+    use Workspace;
+    use ContentStream;
+
+    private ProjectionReadQueries $readQueries;
+    private ProjectionWriteQueries $writeQueries;
+    private ContentGraphTableNames $tableNames;
+
+    public function __construct(
+        private Connection $dbal,
+        ContentRepositoryId $contentRepositoryId,
+        private ContentGraphReadModelInterface $contentGraphReadModel
+    ) {
+        $this->tableNames = ContentGraphTableNames::create($contentRepositoryId);
+        $this->readQueries = new ProjectionReadQueries($this->dbal, $contentRepositoryId);
+        $this->writeQueries = new ProjectionWriteQueries($contentRepositoryId);
+    }
+
+
+    public function setUp(): void
+    {
+        foreach ($this->determineRequiredSqlStatements() as $statement) {
+            $this->dbal->executeStatement($statement);
+        }
+        $tableNode = $this->tableNames->node();
+        $tableHierarchyRelation = $this->tableNames->hierarchyRelation();
+        $this->dbal->executeStatement(<<<SQL
+            create index if not exists node_properties on $tableNode using gin(properties);
+            create index if not exists hierarchy_children on $tableHierarchyRelation using gin(childnodeanchors);
+        SQL);
+        $this->dbal->executeStatement(<<<SQL
+            create or replace function insert_into_array_before_successor(ids bigint[], value bigint, successor bigint)
+                returns bigint[]
+            as
+            $$
+            declare
+                successor_idx integer := array_position(ids, successor);
+            begin
+                return case when successor is null or successor_idx is null then
+                    (select ids || value)
+                else
+                    (select ids[:successor_idx - 1] || value || ids[successor_idx:])
+                end;
+            end;
+            $$ language plpgsql;
+        SQL);
+        // TODO discuss, wdyt about this approach
+        $this->dbal->executeStatement(<<<SQL
+            create or replace function {$this->tableNames->functionGetRelationAnchorPoint()}(
+                    nodeaggregateid varchar(64),
+                    contentstreamid varchar(40),
+                    dimensionhash varchar(255)
+                )
+                returns bigint
+            as
+            $$
+            begin
+                return (
+                    select distinct pn.relationanchorpoint
+                    from {$this->tableNames->node()} pn
+                           inner join {$this->tableNames->hierarchyRelation()} ph
+                                     on pn.relationanchorpoint = any (ph.childnodeanchors)
+                    where ph.contentstreamid = {$this->tableNames->functionGetRelationAnchorPoint()}.contentstreamid
+                      and ph.dimensionspacepointhash = {$this->tableNames->functionGetRelationAnchorPoint()}.dimensionhash
+                      and pn.nodeaggregateid = {$this->tableNames->functionGetRelationAnchorPoint()}.nodeaggregateid
+                );
+            end;
+            $$ language plpgsql;
+        SQL);
+        $this->dbal->executeStatement(<<<SQL
+            drop function if exists {$this->tableNames->functionFindNodeByOrigin()}(varchar, varchar, varchar);
+        SQL);
+        $this->dbal->executeStatement(<<<SQL
+            create function {$this->tableNames->functionFindNodeByOrigin()}(
+                    p_nodeaggregateid varchar(64),
+                    p_contentstreamid varchar(40),
+                    p_dimensionhash varchar(255)
+                )
+                returns table(
+                    relationanchorpoint bigint,
+                    nodeaggregateid varchar(64),
+                    origindimensionspacepoint jsonb,
+                    origindimensionspacepointhash varchar(255),
+                    nodetypename varchar(255),
+                    properties jsonb,
+                    classification varchar(255),
+                    nodename varchar(255),
+                    created timestamp,
+                    originalcreated timestamp,
+                    lastmodified timestamp,
+                    originallastmodified timestamp
+                )
+            as
+            $$
+            begin
+                return query select pn.*
+                from {$this->tableNames->node()} pn
+                       left join {$this->tableNames->hierarchyRelation()} ph
+                                 on pn.relationanchorpoint = any (ph.childnodeanchors)
+                where ph.contentstreamid = p_contentstreamid
+                  and pn.origindimensionspacepointhash = p_dimensionhash
+                  and ph.dimensionspacepointhash = p_dimensionhash
+                  and pn.nodeaggregateid = p_nodeaggregateid
+                limit 1;
+            end;
+            $$ language plpgsql;
+        SQL);
+        $this->dbal->executeStatement(<<<SQL
+            drop function if exists {$this->tableNames->functionFindNodeByCoverage()}(varchar, varchar, varchar);
+        SQL);
+        $this->dbal->executeStatement(<<<SQL
+            create function {$this->tableNames->functionFindNodeByCoverage()}(
+                    p_nodeaggregateid varchar(64),
+                    p_contentstreamid varchar(40),
+                    p_dimensionhash varchar(255)
+                )
+                returns table(
+                    relationanchorpoint bigint,
+                    nodeaggregateid varchar(64),
+                    origindimensionspacepoint jsonb,
+                    origindimensionspacepointhash varchar(255),
+                    nodetypename varchar(255),
+                    properties jsonb,
+                    classification varchar(255),
+                    nodename varchar(255),
+                    created timestamp,
+                    originalcreated timestamp,
+                    lastmodified timestamp,
+                    originallastmodified timestamp
+                )
+            as
+            $$
+            begin
+                return query select pn.*
+                from {$this->tableNames->node()} pn
+                       left join {$this->tableNames->hierarchyRelation()} ph
+                                 on pn.relationanchorpoint = any (ph.childnodeanchors)
+                where ph.contentstreamid = p_contentstreamid
+                  and ph.dimensionspacepointhash = p_dimensionhash
+                  and pn.nodeaggregateid = p_nodeaggregateid
+                limit 1;
+            end;
+            $$ language plpgsql;
+        SQL);
+        $this->dbal->executeStatement(<<<SQL
+            create or replace function {$this->tableNames->functionGetParentRelationAnchorPoint()}(
+                    nodeaggregateid varchar(64),
+                    contentstreamid varchar(40),
+                    dimensionhash varchar(255)
+                )
+                returns bigint
+            as
+            $$
+            begin
+                return (
+                    select pn.relationanchorpoint
+                    from {$this->tableNames->node()} pn
+                           left join {$this->tableNames->hierarchyRelation()} h
+                                     on h.parentnodeanchor = pn.relationanchorpoint
+                           left join {$this->tableNames->node()} cn
+                                     on cn.relationanchorpoint = any (h.childnodeanchors)
+                    where h.contentstreamid = {$this->tableNames->functionGetParentRelationAnchorPoint()}.contentstreamid
+                      and h.dimensionspacepointhash = {$this->tableNames->functionGetParentRelationAnchorPoint()}.dimensionhash
+                      and cn.nodeaggregateid = {$this->tableNames->functionGetParentRelationAnchorPoint()}.nodeaggregateid
+                );
+            end;
+            $$ language plpgsql;
+        SQL);
+        $this->dbal->executeStatement(<<<SQL
+            create or replace function {$this->tableNames->functionFindCoverageByNodeAggregateId()}(
+                    nodeaggregateid varchar(64),
+                    contentstreamid varchar(40)
+                )
+                returns table(dimensionspacepoint json, hash varchar(255))
+            as
+            $$
+            begin
+                return query select h.dimensionspacepoint, h.dimensionspacepointhash
+                from {$this->tableNames->hierarchyRelation()} h
+                    left join {$this->tableNames->node()} n
+                        on h.parentnodeanchor = n.relationanchorpoint
+                where h.contentstreamid = {$this->tableNames->functionFindCoverageByNodeAggregateId()}.contentstreamid
+                  and n.nodeaggregateid = {$this->tableNames->functionFindCoverageByNodeAggregateId()}.nodeaggregateid;
+            end;
+            $$ language plpgsql;
+        SQL);
+        $this->dbal->executeStatement(<<<SQL
+            create or replace function {$this->tableNames->functionFindIngoingHierarchy()}(
+                    nodeaggregateid varchar(64),
+                    contentstreamid varchar(40),
+                    dimensionspacepointhashes varchar(255)[]
+                )
+                returns table(
+                    relationanchorpoint bigint,
+                    parentnodeanchor bigint,
+                    dimensionspacepointhash varchar(255),
+                    contentstream varchar(40)
+                )
+            as
+            $$
+            begin
+                return query select
+                    n.relationanchorpoint,
+                    h.parentnodeanchor,
+                    h.dimensionspacepointhash,
+                    h.contentstreamid
+                from {$this->tableNames->hierarchyRelation()} h
+                    left join {$this->tableNames->node()} n
+                        on n.relationanchorpoint = any (h.childnodeanchors)
+                where h.contentstreamid = {$this->tableNames->functionFindIngoingHierarchy()}.contentstreamid
+                  and n.nodeaggregateid = {$this->tableNames->functionFindIngoingHierarchy()}.nodeaggregateid
+                  and (
+                    {$this->tableNames->functionFindIngoingHierarchy()}.dimensionspacepointhashes is null
+                    or
+                    h.dimensionspacepointhash = any({$this->tableNames->functionFindIngoingHierarchy()}.dimensionspacepointhashes)
+                  );
+            end;
+            $$ language plpgsql;
+        SQL);
+        $this->dbal->executeStatement(<<<SQL
+            create or replace function {$this->tableNames->functionFindOutgoingHierarchy()}(
+                    nodeaggregateid varchar(64),
+                    contentstreamid varchar(40),
+                    dimensionspacepointhashes varchar(255)[]
+                )
+                returns table(
+                    relationanchorpoint bigint,
+                    parentnodeanchor bigint,
+                    dimensionspacepointhash varchar(255),
+                    contentstream varchar(40)
+                )
+            as
+            $$
+            begin
+                return query select
+                    n.relationanchorpoint,
+                    h.parentnodeanchor,
+                    h.dimensionspacepointhash,
+                    h.contentstreamid
+                from {$this->tableNames->hierarchyRelation()} h
+                    left join {$this->tableNames->node()} n
+                        on n.relationanchorpoint = h.parentnodeanchor
+                where h.contentstreamid = {$this->tableNames->functionFindOutgoingHierarchy()}.contentstreamid
+                  and n.nodeaggregateid = {$this->tableNames->functionFindOutgoingHierarchy()}.nodeaggregateid
+                  and (
+                    {$this->tableNames->functionFindOutgoingHierarchy()}.dimensionspacepointhashes is null
+                    or
+                    h.dimensionspacepointhash = any({$this->tableNames->functionFindOutgoingHierarchy()}.dimensionspacepointhashes)
+                  );
+            end;
+            $$ language plpgsql;
+        SQL);
+        $this->dbal->executeStatement(<<<SQL
+            create or replace function {$this->tableNames->functionGetParentRelationAnchorPointInDimension()}(
+                    nodeaggregateid varchar(64),
+                    contentstreamid varchar(40),
+                    dimensionhash varchar(255),
+                    parentdimensionhash varchar(255)
+                )
+                returns bigint
+            as
+            $$
+            begin
+                return (
+                    select distinct pds.relationanchorpoint
+                    from {$this->tableNames->node()} cn
+                           left join {$this->tableNames->hierarchyRelation()} h
+                                    on cn.relationanchorpoint = any (h.childnodeanchors)
+                           left join {$this->tableNames->node()} pn
+                                    on pn.relationanchorpoint = h.parentnodeanchor
+                           left join {$this->tableNames->node()} pds
+                                    on pds.nodeaggregateid = pn.nodeaggregateid
+                           left join {$this->tableNames->hierarchyRelation()} hi
+                                    on pds.relationanchorpoint = any (hi.childnodeanchors)
+                    where h.contentstreamid = {$this->tableNames->functionGetParentRelationAnchorPointInDimension()}.contentstreamid
+                      and hi.contentstreamid = {$this->tableNames->functionGetParentRelationAnchorPointInDimension()}.contentstreamid
+                      and cn.nodeaggregateid = {$this->tableNames->functionGetParentRelationAnchorPointInDimension()}.nodeaggregateid
+                      and cn.origindimensionspacepointhash = {$this->tableNames->functionGetParentRelationAnchorPointInDimension()}.dimensionhash
+                      and hi.dimensionspacepointhash = {$this->tableNames->functionGetParentRelationAnchorPointInDimension()}.parentdimensionhash
+                );
+            end;
+            $$ language plpgsql;
+        SQL);
+    }
+
+    public function status(): ProjectionStatus
+    {
+        try {
+            $this->getDatabaseConnection()->connect();
+        } catch (\Throwable $e) {
+            return ProjectionStatus::error(sprintf('Failed to connect to database: %s', $e->getMessage()));
+        }
+        try {
+            $requiredSqlStatements = $this->determineRequiredSqlStatements();
+        } catch (\Throwable $e) {
+            return ProjectionStatus::error(sprintf('Failed to determine required SQL statements: %s', $e->getMessage()));
+        }
+        if ($requiredSqlStatements !== []) {
+            return ProjectionStatus::setupRequired(sprintf('The following SQL statement%s required: %s', count($requiredSqlStatements) !== 1 ? 's are' : ' is', implode(chr(10), $requiredSqlStatements)));
+        }
+        return ProjectionStatus::ok();
+    }
+
+    /**
+     * @return array<string>
+     */
+    private function determineRequiredSqlStatements(): array
+    {
+        try {
+            $schema = (new HypergraphSchemaBuilder($this->tableNames))->buildSchema($this->dbal);
+            $queries = DbalSchemaDiff::determineRequiredSqlStatements($this->dbal, $schema);
+            // Filter out DROP INDEX for GIN indexes that are managed outside the Doctrine schema
+            // (created in setUp() via raw SQL because Doctrine DBAL doesn't support GIN indexes)
+            return array_values(array_filter($queries, static fn(string $query) =>
+                !preg_match('/^DROP INDEX (node_properties|hierarchy_children)$/i', $query)));
+        } catch (\Throwable $e) {
+            // TODO error handling
+            throw $e;
+        }
+    }
+
+    public function resetState(): void
+    {
+        $this->truncateDatabaseTables();
+    }
+
+    private function truncateDatabaseTables(): void
+    {
+        $this->dbal->executeQuery('TRUNCATE table ' . $this->tableNames->node());
+        $this->dbal->executeQuery('TRUNCATE table ' . $this->tableNames->hierarchyRelation());
+        $this->dbal->executeQuery('TRUNCATE table ' . $this->tableNames->referenceRelation());
+        $this->dbal->executeQuery('TRUNCATE table ' . $this->tableNames->workspace());
+        $this->dbal->executeQuery('TRUNCATE table ' . $this->tableNames->contentStream());
+        $this->dbal->executeQuery('TRUNCATE table ' . $this->tableNames->dimensionSpacePoints());
+    }
+
+    public function apply(EventInterface $event, EventEnvelope $eventEnvelope): void
+    {
+        match ($event::class) {
+            ContentStreamWasClosed::class => $this->whenContentStreamWasClosed($event),
+            ContentStreamWasCreated::class => $this->whenContentStreamWasCreated($event),
+            ContentStreamWasForked::class => $this->whenContentStreamWasForked($event),
+            ContentStreamWasRemoved::class => $this->whenContentStreamWasRemoved($event),
+            ContentStreamWasReopened::class => $this->whenContentStreamWasReopened($event),
+            DimensionShineThroughWasAdded::class => $this->whenDimensionShineThroughWasAdded($event),
+            DimensionSpacePointWasMoved::class => $this->whenDimensionSpacePointWasMoved($event),
+            NodeAggregateNameWasChanged::class => $this->whenNodeAggregateNameWasChanged($event, $eventEnvelope),
+            NodeAggregateTypeWasChanged::class => $this->whenNodeAggregateTypeWasChanged($event, $eventEnvelope),
+            NodeAggregateWasMoved::class => $this->whenNodeAggregateWasMoved($event),
+            NodeAggregateWasRemoved::class => $this->whenNodeAggregateWasRemoved($event),
+            NodeAggregateWithNodeWasCreated::class => $this->whenNodeAggregateWithNodeWasCreated($event, $eventEnvelope),
+            NodeGeneralizationVariantWasCreated::class => $this->whenNodeGeneralizationVariantWasCreated($event, $eventEnvelope),
+            NodePeerVariantWasCreated::class => $this->whenNodePeerVariantWasCreated($event, $eventEnvelope),
+            NodePropertiesWereSet::class => $this->whenNodePropertiesWereSet($event, $eventEnvelope),
+            NodeReferencesWereSet::class => $this->whenNodeReferencesWereSet($event, $eventEnvelope),
+            NodeSpecializationVariantWasCreated::class => $this->whenNodeSpecializationVariantWasCreated($event, $eventEnvelope),
+            RootNodeAggregateDimensionsWereUpdated::class => $this->whenRootNodeAggregateDimensionsWereUpdated($event),
+            RootNodeAggregateWithNodeWasCreated::class => $this->whenRootNodeAggregateWithNodeWasCreated($event, $eventEnvelope),
+            RootWorkspaceWasCreated::class => $this->whenRootWorkspaceWasCreated($event),
+            SubtreeWasTagged::class => $this->whenSubtreeWasTagged($event),
+            SubtreeWasUntagged::class => $this->whenSubtreeWasUntagged($event),
+            WorkspaceBaseWorkspaceWasChanged::class => $this->whenWorkspaceBaseWorkspaceWasChanged($event),
+            WorkspaceRebaseFailed::class => $this->whenWorkspaceRebaseFailed($event),
+            WorkspaceWasCreated::class => $this->whenWorkspaceWasCreated($event),
+            WorkspaceWasDiscarded::class => $this->whenWorkspaceWasDiscarded($event),
+            WorkspaceWasPublished::class => $this->whenWorkspaceWasPublished($event),
+            WorkspaceWasRebased::class => $this->whenWorkspaceWasRebased($event),
+            WorkspaceWasRemoved::class => $this->whenWorkspaceWasRemoved($event),
+            default => null,
+        };
+        if (
+            $event instanceof EmbedsContentStreamId
+            && ContentStreamEventStreamName::isContentStreamStreamName($eventEnvelope->streamName)
+            && !(
+                // special case as we dont need to update anything. The handling above takes care of setting the version to 0
+                $event instanceof ContentStreamWasForked
+                || $event instanceof ContentStreamWasCreated
+            )
+        ) {
+            $this->updateContentStreamVersion($event->getContentStreamId(), $eventEnvelope->version, $event instanceof PublishableToWorkspaceInterface);
+        }
+    }
+
+    public function inSimulation(\Closure $fn): mixed
+    {
+        if ($this->dbal->isTransactionActive()) {
+            throw new \RuntimeException(sprintf('Invoking %s is not allowed to be invoked recursively. Current transaction nesting %d.', __FUNCTION__, $this->dbal->getTransactionNestingLevel()));
+        }
+        $this->dbal->beginTransaction();
+        $this->dbal->setRollbackOnly();
+        try {
+            return $fn();
+        } finally {
+            // unsets rollback only flag and allows the connection to work regular again
+            $this->dbal->rollBack();
+        }
+    }
+
+    public function getState(): ContentGraphReadModelInterface
+    {
+        return $this->contentGraphReadModel;
+    }
+
+    protected function getReadQueries(): ProjectionReadQueries
+    {
+        return $this->readQueries;
+    }
+
+    protected function getDatabaseConnection(): Connection
+    {
+        return $this->dbal;
+    }
+
+    protected function getWriteQueries(): ProjectionWriteQueries
+    {
+        return $this->writeQueries;
+    }
+
+    protected function getTableNames(): ContentGraphTableNames
+    {
+        return $this->tableNames;
+    }
+
+    protected static function initiatingDateTime(EventEnvelope $eventEnvelope): \DateTimeImmutable
+    {
+        if ($eventEnvelope->event->metadata?->has(InitiatingEventMetadata::INITIATING_TIMESTAMP) !== true) {
+            return $eventEnvelope->recordedAt;
+        }
+        $initiatingTimestamp = InitiatingEventMetadata::getInitiatingTimestamp($eventEnvelope->event->metadata);
+        if ($initiatingTimestamp === null) {
+            throw new \RuntimeException(sprintf('Failed to extract initiating timestamp from event "%s"', $eventEnvelope->event->id->value), 1678902291);
+        }
+        return $initiatingTimestamp;
+    }
+}

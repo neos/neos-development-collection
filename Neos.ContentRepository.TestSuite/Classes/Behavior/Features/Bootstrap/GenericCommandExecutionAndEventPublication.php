@@ -671,7 +671,7 @@ trait GenericCommandExecutionAndEventPublication
             $key = $assertionTableRow['Key'];
             $actualValue = Arrays::getValueByPath($actualEventPayload, $key);
 
-            if ($key === 'affectedDimensionSpacePoints') {
+            if ($key === 'affectedDimensionSpacePoints' || $key === 'affectedCoveredDimensionSpacePoints') {
                 $expected = DimensionSpacePointSet::fromJsonString($assertionTableRow['Expected']);
                 $actual = DimensionSpacePointSet::fromArray($actualValue);
                 Assert::assertTrue($expected->equals($actual), 'Actual Dimension Space Point set "' . json_encode($actualValue) . '" does not match expected Dimension Space Point set "' . $assertionTableRow['Expected'] . '"');

@@ -15,9 +15,11 @@ declare(strict_types=1);
 namespace Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\Feature;
 
 use Doctrine\DBAL\Connection;
+use Neos\ContentGraph\PostgreSQLAdapter\ContentGraphTableNames;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\NodeRecord;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\NodeRelationAnchorPoint;
-use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\ProjectionHypergraph;
+use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\ProjectionReadQueries;
+use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\ProjectionWriteQueries;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 
 /**
@@ -35,38 +37,36 @@ trait CopyOnWrite
         NodeRecord $originNode,
         callable $preprocessor
     ): NodeRelationAnchorPoint {
-        $numberOfContentStreamsNodeDoesCover = $this->getProjectionHypergraph()
+        $numberOfContentStreamsNodeDoesCover = $this->getReadQueries()
             ->countContentStreamCoverage($originNode->relationAnchorPoint);
 
         if ($numberOfContentStreamsNodeDoesCover > 1) {
-            $copiedNodeRelationAnchorPoint = NodeRelationAnchorPoint::create();
             $copiedNode = clone $originNode;
-            $copiedNode->relationAnchorPoint = $copiedNodeRelationAnchorPoint;
             $preprocessor($copiedNode);
-            $copiedNode->addToDatabase($this->getDatabaseConnection(), $this->tableNamePrefix);
+            $copiedNode->addToDatabase($this->getDatabaseConnection(), $this->getTableNames());
 
             $this->reassignIngoingHierarchyRelations(
                 $originContentStreamId,
                 $originNode->relationAnchorPoint,
-                $copiedNodeRelationAnchorPoint
+                $copiedNode->relationAnchorPoint
             );
 
             $this->reassignOutgoingHierarchyRelations(
                 $originContentStreamId,
                 $originNode->relationAnchorPoint,
-                $copiedNodeRelationAnchorPoint
+                $copiedNode->relationAnchorPoint
             );
 
             $this->copyOutgoingReferenceRelations(
                 $originNode->relationAnchorPoint,
-                $copiedNodeRelationAnchorPoint
+                $copiedNode->relationAnchorPoint
             );
 
-            return $copiedNodeRelationAnchorPoint;
+            return $copiedNode->relationAnchorPoint;
         } else {
             // no reason to create a copy
             $preprocessor($originNode);
-            $originNode->updateToDatabase($this->getDatabaseConnection(), $this->tableNamePrefix);
+            $originNode->updateToDatabase($this->getDatabaseConnection(), $this->getTableNames());
 
             return $originNode->relationAnchorPoint;
         }
@@ -81,7 +81,7 @@ trait CopyOnWrite
         NodeRelationAnchorPoint $targetRelationAnchorPoint
     ): void {
         foreach (
-            $this->getProjectionHypergraph()->findIngoingHierarchyHyperrelationRecords(
+            $this->getReadQueries()->findIngoingHierarchyHyperrelationRecords(
                 $originContentStreamId,
                 $originRelationAnchorPoint
             ) as $ingoingHierarchyRelation
@@ -90,7 +90,7 @@ trait CopyOnWrite
                 $originRelationAnchorPoint,
                 $targetRelationAnchorPoint,
                 $this->getDatabaseConnection(),
-                $this->tableNamePrefix
+                $this->getTableNames()
             );
         }
     }
@@ -104,7 +104,7 @@ trait CopyOnWrite
         NodeRelationAnchorPoint $targetRelationAnchorPoint
     ): void {
         foreach (
-            $this->getProjectionHypergraph()->findOutgoingHierarchyHyperrelationRecords(
+            $this->getReadQueries()->findOutgoingHierarchyHyperrelationRecords(
                 $originContentStreamId,
                 $originRelationAnchorPoint
             ) as $outgoingHierarchyRelation
@@ -112,7 +112,7 @@ trait CopyOnWrite
             $outgoingHierarchyRelation->replaceParentNodeAnchor(
                 $targetRelationAnchorPoint,
                 $this->getDatabaseConnection(),
-                $this->tableNamePrefix
+                $this->getTableNames()
             );
         }
     }
@@ -125,16 +125,17 @@ trait CopyOnWrite
         NodeRelationAnchorPoint $newSourceNodeAnchor
     ): void {
         foreach (
-            $this->getProjectionHypergraph()->findOutgoingReferenceHyperrelationRecords(
+            $this->getReadQueries()->findOutgoingReferenceHyperrelationRecords(
                 $sourceNodeAnchor
             ) as $outgoingReferenceRelation
         ) {
             $copiedReferenceRelation = $outgoingReferenceRelation->withSourceNodeAnchor($newSourceNodeAnchor);
-            $copiedReferenceRelation->addToDatabase($this->getDatabaseConnection(), $this->tableNamePrefix);
+            $this->getWriteQueries()->addReferenceToDatabase($this->getDatabaseConnection(), $copiedReferenceRelation);
         }
     }
 
-    abstract protected function getProjectionHypergraph(): ProjectionHypergraph;
-
     abstract protected function getDatabaseConnection(): Connection;
+    abstract protected function getTableNames(): ContentGraphTableNames;
+    abstract protected function getReadQueries(): ProjectionReadQueries;
+    abstract protected function getWriteQueries(): ProjectionWriteQueries;
 }

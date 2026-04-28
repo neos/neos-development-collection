@@ -29,7 +29,7 @@ jobs:
         include:
           - php-versions: '8.4'
             dependencies: 'highest'
-            parallel-parts: escr-behavioral
+            parallel-parts: escr-behavioral-mysql
             # see services, this is mysql
             mysqlport: 3307
             experimental: false
@@ -42,6 +42,7 @@ jobs:
           - linting-unit-functionaltests-mysql
           - functionaltests-postgres
           - escr-behavioral
+          - escr-behavioral-postgres
         experimental: [false]
         #include:
           #- php-versions: '7.3'
@@ -89,7 +90,7 @@ jobs:
       postgres:
         # see https://www.postgresql.org/support/versioning/
         # this should be a current release
-        image: postgres:14.2
+        image: postgres:18.3
         env:
           POSTGRES_USER: neos
           POSTGRES_PASSWORD: neos
@@ -188,16 +189,6 @@ jobs:
                   password: 'neos'
                   dbname: 'flow_functional_testing'
             ContentRepositoryRegistry:
-              postgres:
-                persistence:
-                  backendOptions:
-                    host: '127.0.0.1'
-                    port: 5432
-                    driver: pdo_pgsql
-                    dbname: 'flow_functional_testing'
-                    user: 'neos'
-                    password: 'neos'
-                    charset: 'UTF8'
 
               # We enable the race condition tracker
               presets:
@@ -215,8 +206,11 @@ jobs:
                     port: 6379
 
           EOF
-          mkdir Configuration/Testing/Postgres
-          cat <<EOF >> Configuration/Testing/Postgres/Settings.yaml
+
+          # unfortunately Neos.Behat HARDCODES the Testing/Behat context during test runs -> so we put the Postgres config file into
+          # another folder and move it over before test run starts. Meh...
+          mkdir Configuration/Testing/_Behat_Postgres
+          cat <<EOF >> Configuration/Testing/_Behat_Postgres/Settings.yaml
           Neos:
             Flow:
               persistence:
@@ -228,7 +222,20 @@ jobs:
                   user: 'neos'
                   password: 'neos'
                   dbname: 'flow_functional_testing'
+
+            ContentRepositoryRegistry:
+              presets:
+                'default':
+                  contentGraphProjection:
+                    factoryObjectName: Neos\ContentGraph\PostgreSQLAdapter\PostgresContentGraphProjectionFactory
+                    # catchUpHooks:
+                    #   'Neos.ContentRepository.BehavioralTests:RaceConditionTracker':
+                    #     factoryObjectName: Neos\ContentRepository\BehavioralTests\ProjectionRaceConditionTester\RaceTrackerCatchUpHookFactory
+                  projectionIntegrityViolationDetector:
+                    factoryObjectName: Neos\ContentGraph\PostgreSQLAdapter\PostgresProjectionIntegrityViolationDetectionRunnerFactory
           EOF
+
+
           echo "Running in context '$FLOW_CONTEXT'"
           # Enable for debugging: ./flow configuration:show
           # Enable for debugging: ./flow routing:list
@@ -249,8 +256,15 @@ jobs:
           FLOW_CONTEXT=Testing ./flow doctrine:migrate --quiet
           bin/phpunit --colors --stop-on-failure -c Build/BuildEssentials/PhpUnit/FunctionalTests.xml --testsuite "Neos tests" --verbose
 
+      - name: Postgres Config adjustment for ESCR
+        if: matrix.parallel-parts == 'escr-behavioral-postgres'
+        run: |
+          rm -Rf Configuration/Testing/Behat
+          mv Configuration/Testing/_Behat_Postgres/Settings.yaml Configuration/Testing/Settings.yaml
+
       - name: Run Parallel Tests for the ES CR
-        if: matrix.parallel-parts == 'escr-behavioral'
+        # TODO: enable parallel tests also for Postgres
+        if: matrix.parallel-parts == 'escr-behavioral' || matrix.parallel-parts == 'escr-behavioral-mysql'
         run: |
           cd Packages/Neos
           hasFailure=0
@@ -259,7 +273,7 @@ jobs:
           exit $hasFailure
       - name: Run Behavioral Tests (ES CR && Neos.Neos)
         id: escrtests
-        if: matrix.parallel-parts == 'escr-behavioral'
+        if: matrix.parallel-parts == 'escr-behavioral' || matrix.parallel-parts == 'escr-behavioral-mysql' || matrix.parallel-parts == 'escr-behavioral-postgres'
         # DEBUG MODE: comment-in the next line, because we want to reach the Upload Mysql/Postgres DB dump step.
         continue-on-error: true
         run: |
@@ -305,21 +319,24 @@ jobs:
 
             echo "starting pg_dump"
             pg_dump --file=${{ github.workspace }}/Data/DebugDatabaseDumps/pg_dump.sql --format=plain --no-owner --dbname=flow_functional_testing --host=127.0.0.1 --username=neos --no-password
-            echo "pg_dump finished, starting mysqldump"
-            mysqldump --force --host=127.0.0.1 -u neos -pneos flow_functional_testing > ${{ github.workspace }}/Data/DebugDatabaseDumps/mysqldump.sql
+            echo "pg_dump finished"
+            if [ "${{ matrix.parallel-parts }}" == "escr-behavioral" ] || [ "${{ matrix.parallel-parts }}" == "escr-behavioral-mysql" ]; then
+              echo "starting mysqldump"
+              mysqldump --force --host=127.0.0.1 -u neos -pneos flow_functional_testing > ${{ github.workspace }}/Data/DebugDatabaseDumps/mysqldump.sql
+            fi
           fi
           exit $retVal
           # END OF DEBUG SCRIPT
 
       - name: Upload Postgres/Mysql DB dump
         uses: actions/upload-artifact@v4
-        if: matrix.parallel-parts == 'escr-behavioral'
+        if: matrix.parallel-parts == 'escr-behavioral' || matrix.parallel-parts == 'escr-behavioral-mysql' || matrix.parallel-parts == 'escr-behavioral-postgres'
         with:
           name: database-dumps-${{ matrix.php-versions }}-${{ matrix.dependencies }}-${{ matrix.parallel-parts }}-${{ matrix.mysqlport }}
           path: Data/DebugDatabaseDumps
 
       - name: Fail pipeline if ES CR tests broke (after uploading artifacts)
-        if: matrix.parallel-parts == 'escr-behavioral' && steps.escrtests.outcome != 'success'
+        if: (matrix.parallel-parts == 'escr-behavioral' || matrix.parallel-parts == 'escr-behavioral-mysql') && steps.escrtests.outcome != 'success'
         # we want to reach the Upload Postgres/Mysql DB dump step.
         # Here we want to fail everything, as described in https://stackoverflow.com/a/58003436/4921449
         run: |
@@ -344,6 +361,17 @@ jobs:
                   charset: 'utf8'
                   defaultTableOptions:
                     charset: 'utf8'
+            ContentRepositoryRegistry:
+              contentRepositories:
+                t_extensibility:
+                  contentGraphProjection:
+                    factoryObjectName: Neos\ContentGraph\PostgreSQLAdapter\PostgresContentGraphProjectionFactory
+                t_subscription:
+                  contentGraphProjection:
+                    factoryObjectName: Neos\ContentGraph\PostgreSQLAdapter\PostgresContentGraphProjectionFactory
+                test_parallel:
+                  contentGraphProjection:
+                    factoryObjectName: Neos\ContentGraph\PostgreSQLAdapter\PostgresContentGraphProjectionFactory
           EOF
           mkdir Configuration/Testing/Behat
           cp Configuration/Testing/Settings.yaml Configuration/Testing/Behat/Settings.yaml

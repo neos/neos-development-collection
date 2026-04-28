@@ -15,6 +15,7 @@ declare(strict_types=1);
 namespace Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\Feature;
 
 use Doctrine\DBAL\Connection;
+use Neos\ContentGraph\PostgreSQLAdapter\ContentGraphTableNames;
 use Neos\ContentRepository\Core\Feature\ContentStreamForking\Event\ContentStreamWasForked;
 
 /**
@@ -29,33 +30,27 @@ trait ContentStreamForking
      */
     private function whenContentStreamWasForked(ContentStreamWasForked $event): void
     {
+
         $parameters = [
             'sourceContentStreamId' => $event->sourceContentStreamId->value,
             'targetContentStreamId' => $event->newContentStreamId->value
         ];
 
+        // Copy hierarchy relations (including subtreetags JSONB)
         $this->getDatabaseConnection()->executeQuery(/** @lang PostgreSQL */
-            'INSERT INTO ' . $this->tableNamePrefix . '_hierarchyhyperrelation
+            'INSERT INTO ' . $this->getTableNames()->hierarchyRelation() . '
                 (contentstreamid, parentnodeanchor,
-                 dimensionspacepoint, dimensionspacepointhash, childnodeanchors)
+                 dimensionspacepoint, dimensionspacepointhash, childnodeanchors, subtreetags)
             SELECT :targetContentStreamId, parentnodeanchor,
-                dimensionspacepoint, dimensionspacepointhash, childnodeanchors
-            FROM ' . $this->tableNamePrefix . '_hierarchyhyperrelation source
+                dimensionspacepoint, dimensionspacepointhash, childnodeanchors, subtreetags
+            FROM ' . $this->getTableNames()->hierarchyRelation() . ' source
             WHERE source.contentstreamid = :sourceContentStreamId',
             $parameters
         );
 
-        $this->getDatabaseConnection()->executeQuery(/** @lang PostgreSQL */
-            'INSERT INTO ' . $this->tableNamePrefix . '_restrictionhyperrelation
-                (contentstreamid, dimensionspacepointhash,
-                 originnodeaggregateid, affectednodeaggregateids)
-            SELECT :targetContentStreamId, dimensionspacepointhash,
-                originnodeaggregateid, affectednodeaggregateids
-            FROM ' . $this->tableNamePrefix . '_restrictionhyperrelation source
-            WHERE source.contentstreamid = :sourceContentStreamId',
-            $parameters
-        );
+        $this->createContentStream($event->newContentStreamId, $event->sourceContentStreamId, $event->versionOfSourceContentStream);
     }
 
     abstract protected function getDatabaseConnection(): Connection;
+    abstract protected function getTableNames(): ContentGraphTableNames;
 }

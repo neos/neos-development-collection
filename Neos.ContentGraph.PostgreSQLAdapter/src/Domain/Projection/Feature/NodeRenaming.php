@@ -16,8 +16,9 @@ namespace Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\Feature;
 
 use Doctrine\DBAL\Connection;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\NodeRecord;
-use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\ProjectionHypergraph;
+use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\ProjectionReadQueries;
 use Neos\ContentRepository\Core\Feature\NodeRenaming\Event\NodeAggregateNameWasChanged;
+use Neos\EventStore\Model\EventEnvelope;
 
 /**
  * The node disabling feature set for the hypergraph projector
@@ -31,10 +32,10 @@ trait NodeRenaming
     /**
      * @throws \Throwable
      */
-    private function whenNodeAggregateNameWasChanged(NodeAggregateNameWasChanged $event): void
+    private function whenNodeAggregateNameWasChanged(NodeAggregateNameWasChanged $event, EventEnvelope $eventEnvelope): void
     {
         foreach (
-            $this->getProjectionHyperGraph()->findNodeRecordsForNodeAggregate(
+            $this->getReadQueries()->findNodeRecordsForNodeAggregate(
                 $event->contentStreamId,
                 $event->nodeAggregateId
             ) as $originNode
@@ -42,14 +43,18 @@ trait NodeRenaming
             $this->copyOnWrite(
                 $event->contentStreamId,
                 $originNode,
-                function (NodeRecord $nodeRecord) use ($event) {
+                function (NodeRecord $nodeRecord) use ($event, $eventEnvelope) {
                     $nodeRecord->nodeName = $event->newNodeName;
+                    $nodeRecord->timestamps = $nodeRecord->timestamps->with(
+                        lastModified: $eventEnvelope->recordedAt,
+                        originalLastModified: self::initiatingDateTime($eventEnvelope),
+                    );
                 }
             );
         }
     }
 
-    abstract protected function getProjectionHyperGraph(): ProjectionHypergraph;
+    abstract protected function getReadQueries(): ProjectionReadQueries;
 
     abstract protected function getDatabaseConnection(): Connection;
 }
