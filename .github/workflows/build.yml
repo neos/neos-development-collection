@@ -207,10 +207,8 @@ jobs:
 
           EOF
 
-          # unfortunately Neos.Behat HARDCODES the Testing/Behat context during test runs -> so we put the Postgres config file into
-          # another folder and move it over before test run starts. Meh...
-          mkdir Configuration/Testing/_Behat_Postgres
-          cat <<EOF >> Configuration/Testing/_Behat_Postgres/Settings.yaml
+          mkdir -p Configuration/Testing/Behat/Postgres
+          cat <<EOF >> Configuration/Testing/Behat/Postgres/Settings.yaml
           Neos:
             Flow:
               persistence:
@@ -231,7 +229,7 @@ jobs:
                     factoryObjectName: Neos\ContentGraph\DoctrineDbalAdapter\DoctrineDbalContentGraphProjectionFactory
           EOF
           
-          cat <<EOF >> Configuration/Testing/_Behat_Postgres/Objects.yaml
+          cat <<EOF >> Configuration/Testing/Behat/Postgres/Objects.yaml
           # Note we configure the dbal adapter to run in a maria db 
           Neos\ContentGraph\DoctrineDbalAdapter\DoctrineDbalContentGraphProjectionFactory:
             scope: singleton
@@ -292,13 +290,6 @@ jobs:
           FLOW_CONTEXT=Testing ./flow doctrine:migrate --quiet
           bin/phpunit --colors --stop-on-failure -c Build/BuildEssentials/PhpUnit/FunctionalTests.xml --testsuite "Neos tests" --verbose
 
-      - name: Postgres Config adjustment for ESCR
-        if: matrix.parallel-parts == 'escr-behavioral-postgres'
-        run: |
-          rm -Rf Configuration/Testing/Behat
-          mv Configuration/Testing/_Behat_Postgres/Settings.yaml Configuration/Testing/Settings.yaml
-          mv Configuration/Testing/_Behat_Postgres/Objects.yaml Configuration/Testing/Objects.yaml
-
       - name: Run Parallel Tests for the ES CR
         # TODO: enable parallel tests also for Postgres
         if: matrix.parallel-parts == 'escr-behavioral' || matrix.parallel-parts == 'escr-behavioral-mysql'
@@ -321,7 +312,10 @@ jobs:
           mkdir -p ${{ github.workspace }}/Data/DebugDatabaseDumps
           touch ${{ github.workspace }}/Data/DebugDatabaseDumps/keep
 
-          export FLOW_CONTEXT=Testing/Behat
+          export ${{ case(
+            matrix.parallel-parts == 'escr-behavioral-postgres', 'FLOW_CONTEXT=Testing/Behat/Postgres',
+            'FLOW_CONTEXT=Testing/Behat'
+          ) }}
 
           ./flow package:list --loading-order
           ./flow doctrine:migrate --quiet
