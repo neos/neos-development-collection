@@ -12,6 +12,7 @@ use Neos\ContentRepository\Core\NodeType\NodeTypeNames;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindDescendantNodesFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\NodeType\NodeTypeCriteria;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\PropertyValue\Criteria\OrCriteria;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\PropertyValue\Criteria\PropertyValueGreaterThanOrEqual;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\PropertyValue\Criteria\PropertyValueLessThanOrEqual;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
@@ -107,7 +108,7 @@ class TimeableNodeVisibilityService
                 FindDescendantNodesFilter::create(
                     nodeTypes: NodeTypeCriteria::createWithAllowedNodeTypeNames(NodeTypeNames::fromStringArray(['Neos.TimeableNodeVisibility:Timeable'])),
                     propertyValue: OrCriteria::create(
-                        PropertyValueLessThanOrEqual::create(PropertyName::fromString('enableAfterDateTime'), $now->format(\DateTime::RFC3339)),
+                        PropertyValueGreaterThanOrEqual::create(PropertyName::fromString('enableAfterDateTime'), $now->format(\DateTime::RFC3339)),
                         PropertyValueLessThanOrEqual::create(PropertyName::fromString('disableAfterDateTime'), $now->format(\DateTime::RFC3339)),
                     )
 
@@ -128,27 +129,27 @@ class TimeableNodeVisibilityService
 
     private function needsEnabling(Node $node, \DateTimeImmutable $now): bool
     {
-        return $node->hasProperty('enableAfterDateTime')
-            && $node->getProperty('enableAfterDateTime') != null
+        return (
+            $node->hasProperty('enableAfterDateTime')
+            && $node->getProperty('enableAfterDateTime') !== null
             && $node->getProperty('enableAfterDateTime') < $now
-            && (
-                !$node->hasProperty('disableAfterDateTime')
-                || $node->getProperty('disableAfterDateTime') == null
-                || $node->getProperty('disableAfterDateTime') > $now
-                || $node->getProperty('disableAfterDateTime') < $node->getProperty('enableAfterDateTime')
+            ) || (
+                $node->hasProperty('disableAfterDateTime')
+                && $node->getProperty('disableAfterDateTime') !== null
+                && $node->getProperty('disableAfterDateTime') > $now
             );
     }
 
     private function needsDisabling(Node $node, \DateTimeImmutable $now): bool
     {
-        return $node->hasProperty('disableAfterDateTime')
-            && $node->getProperty('disableAfterDateTime') != null
-            && $node->getProperty('disableAfterDateTime') < $now
-            && (
-                !$node->hasProperty('enableAfterDateTime')
-                || $node->getProperty('enableAfterDateTime') == null
-                || $node->getProperty('enableAfterDateTime') > $now
-                || $node->getProperty('enableAfterDateTime') <= $node->getProperty('disableAfterDateTime')
+        return (
+                $node->hasProperty('disableAfterDateTime')
+                && $node->getProperty('disableAfterDateTime') !== null
+                && $node->getProperty('disableAfterDateTime') < $now
+            ) || (
+                $node->hasProperty('enableAfterDateTime')
+                && $node->getProperty('enableAfterDateTime') !== null
+                && $node->getProperty('enableAfterDateTime') > $now
             );
     }
 
