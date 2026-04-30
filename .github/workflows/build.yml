@@ -415,9 +415,6 @@ jobs:
             #       contentGraphProjection:
             #         factoryObjectName: Neos\ContentGraph\PostgreSQLAdapter\PostgresContentGraphProjectionFactory
           EOF
-          mkdir Configuration/Testing/Behat
-          cp Configuration/Testing/Settings.yaml Configuration/Testing/Behat/Settings.yaml
-          rm -Rf Data/Temporary
 
       - name: Run functional tests (PGSQL)
         if: matrix.parallel-parts == 'functionaltests-postgres'
