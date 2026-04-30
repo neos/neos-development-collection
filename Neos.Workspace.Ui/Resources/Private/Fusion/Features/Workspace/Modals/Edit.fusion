@@ -105,26 +105,6 @@ prototype(Neos.Workspace.Ui:Component.Modal.Edit) < prototype(Neos.Fusion:Compon
                 {private.i18n.id('workspaces.cantChangeBaseWorkspaceBecauseWorkspaceContainsChanges')}
               </p>
             </Neos.Fusion.Form:Neos.BackendModule.FieldContainer>
-
-            <Neos.Fusion.Form:Neos.BackendModule.FieldContainer
-              label="workspaces.workspace.visibility"
-              class="neos-control-group"
-              field.name="visibility"
-            >
-              <Neos.Fusion.Form:Radio field.value="shared">
-                {private.i18n.id('workspaces.workspace.visibility.shared').translate()}
-              </Neos.Fusion.Form:Radio>
-              <p>
-                {private.i18n.id('workspaces.workspace.visibility.shared.help')}
-              </p>
-              <br/>
-              <Neos.Fusion.Form:Radio field.value="private">
-                {private.i18n.id('workspaces.workspace.visibility.private').translate()}
-              </Neos.Fusion.Form:Radio>
-              <p>
-                {private.i18n.id('workspaces.workspace.visibility.private.help')}
-              </p>
-            </Neos.Fusion.Form:Neos.BackendModule.FieldContainer>
           </fieldset>
         </section>
         <footer>
