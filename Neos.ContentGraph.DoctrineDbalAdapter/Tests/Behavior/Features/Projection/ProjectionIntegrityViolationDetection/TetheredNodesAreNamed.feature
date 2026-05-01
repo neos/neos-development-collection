@@ -1,4 +1,3 @@
-@contentrepository @adapters=DoctrineDBAL
 Feature: Run projection integrity violation detection regarding naming of tethered nodes
 
   As a user of the CR I want to be able to detect whether there are unnamed tethered events

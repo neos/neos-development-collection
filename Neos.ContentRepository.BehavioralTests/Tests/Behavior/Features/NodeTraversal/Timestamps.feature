@@ -1,4 +1,3 @@
-@contentrepository @adapters=DoctrineDBAL
 Feature: Behavior of Node timestamp properties "created", "originalCreated", "lastModified" and "originalLastModified"
 
   Background:

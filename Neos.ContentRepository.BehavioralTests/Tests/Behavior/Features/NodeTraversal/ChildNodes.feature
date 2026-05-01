@@ -1,4 +1,3 @@
-@contentrepository @adapters=DoctrineDBAL
 Feature: Find and count nodes using the findChildNodes and countChildNodes queries
 
   Background:

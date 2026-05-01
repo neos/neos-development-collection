@@ -1,4 +1,3 @@
-@contentrepository @adapters=DoctrineDBAL
 Feature: Missing Tethered Nodes integrity violations
 
   As a user of the CR I want to be able to detect and fix tethered nodes that are missing

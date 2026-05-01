@@ -1,4 +1,3 @@
-@contentrepository @adapters=DoctrineDBAL,Postgres
 Feature: Find root nodes by type
 
   Background:

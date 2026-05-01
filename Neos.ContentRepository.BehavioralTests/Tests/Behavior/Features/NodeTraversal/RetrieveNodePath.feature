@@ -1,4 +1,3 @@
-@contentrepository @adapters=DoctrineDBAL
 Feature: Find nodes using the retrieveNodePath query
 
   Background:

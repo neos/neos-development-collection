@@ -1,4 +1,3 @@
-@contentrepository @adapters=DoctrineDBAL
 @flowEntities
 Feature: Hard remove node aggregate with node
   Nodes in non-live workspace must be soft removed to be properly publishable via the neos ui

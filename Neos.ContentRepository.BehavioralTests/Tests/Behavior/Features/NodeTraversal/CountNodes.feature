@@ -1,4 +1,3 @@
-@contentrepository @adapters=DoctrineDBAL,Postgres
 Feature: Find nodes using the countNodes query
 
   Background:

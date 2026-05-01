@@ -1,4 +1,3 @@
-@contentrepository @adapters=DoctrineDBAL
 Feature: Find sibling nodes using the findPrecedingSiblingNodes and findSucceedingSiblingNodes queries
 
   Background:

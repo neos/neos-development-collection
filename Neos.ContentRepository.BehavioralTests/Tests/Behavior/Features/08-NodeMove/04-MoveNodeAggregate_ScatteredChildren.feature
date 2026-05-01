@@ -1,4 +1,3 @@
-@contentrepository @adapters=DoctrineDBAL
 Feature: Move a node with content dimensions
 
   As a user of the CR, when I move a node to a new parent, where that parent or requested siblings have been scattered,

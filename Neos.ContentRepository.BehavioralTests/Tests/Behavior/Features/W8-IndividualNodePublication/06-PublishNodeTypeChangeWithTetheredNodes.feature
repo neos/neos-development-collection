@@ -1,4 +1,3 @@
-@contentrepository @adapters=DoctrineDBAL
 Feature: Partial publish after node type change tagging tethered children
 
   Publishing a node type change (Document→Shortcut) that tags tethered children

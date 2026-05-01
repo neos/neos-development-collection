@@ -1,4 +1,3 @@
-@contentrepository @adapters=DoctrineDBAL
 Feature: Update Root Node aggregate dimensions
 
   I want to update a root node aggregate's dimensions when the dimension config changes.

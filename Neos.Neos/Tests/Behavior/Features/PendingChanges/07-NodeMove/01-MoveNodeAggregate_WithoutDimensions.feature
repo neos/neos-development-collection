@@ -1,4 +1,3 @@
-@contentrepository @adapters=DoctrineDBAL
 @flowEntities
 Feature: Move node aggregate without dimensions
 

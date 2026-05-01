@@ -1,4 +1,3 @@
-@contentrepository @adapters=DoctrineDBAL
 Feature: ForkContentStream Without Dimensions
 
   We have only one node underneath the root node: /foo.

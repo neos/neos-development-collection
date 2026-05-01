@@ -1,4 +1,3 @@
-@contentrepository @adapters=DoctrineDBAL
 Feature: Move node to a new parent / within the current parent before a sibling / to the end of the sibling list
 
   As a user of the CR I want to move a node to a new parent / within the current parent before a sibling / to the end of the sibling list,
