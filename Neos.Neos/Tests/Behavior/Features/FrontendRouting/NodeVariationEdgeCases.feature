@@ -1,4 +1,4 @@
-@flowEntities @contentrepository
+@flowEntities
 Feature: Test cases for node variation edge cases
 
   Scenario: Create peer variant of node to dimension space point with specializations

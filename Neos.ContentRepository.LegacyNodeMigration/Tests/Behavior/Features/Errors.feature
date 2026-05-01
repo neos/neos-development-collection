@@ -1,4 +1,3 @@
-@contentrepository
 Feature: Exceptional cases during migrations
 
   Background:

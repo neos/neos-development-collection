@@ -1,4 +1,3 @@
-@contentrepository
 Feature: Run integrity violation detection regarding subtree tag inheritance
 
   As a user of the CR I want to know whether there are nodes with subtree tags that are not inherited from its ancestors

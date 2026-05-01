@@ -1,4 +1,4 @@
-@flowEntities @contentrepository
+@flowEntities
 Feature: Tests for the "Neos.Neos:Menu" and related Fusion prototypes
 
   Background:

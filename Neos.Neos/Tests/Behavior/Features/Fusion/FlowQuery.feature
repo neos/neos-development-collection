@@ -1,4 +1,4 @@
-@flowEntities @contentrepository
+@flowEntities
 Feature: Tests for the "Neos.ContentRepository" Flow Query methods.
 
   Background:

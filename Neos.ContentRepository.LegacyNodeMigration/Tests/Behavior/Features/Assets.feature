@@ -1,4 +1,3 @@
-@contentrepository
 Feature: Export of used Assets, Image Variants and Persistent Resources
 
   Background:

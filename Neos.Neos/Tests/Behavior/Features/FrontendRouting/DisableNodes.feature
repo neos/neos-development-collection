@@ -1,4 +1,4 @@
-@flowEntities @contentrepository
+@flowEntities
 Feature: Routing behavior of removed, disabled and re-enabled nodes
 
   Background:

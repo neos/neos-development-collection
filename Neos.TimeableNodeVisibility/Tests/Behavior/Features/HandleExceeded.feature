@@ -1,4 +1,3 @@
-@contentrepository
 Feature: Simple handling of nodes with exceeded enableAfter and disableAfter datetime properties
 
   Background:
