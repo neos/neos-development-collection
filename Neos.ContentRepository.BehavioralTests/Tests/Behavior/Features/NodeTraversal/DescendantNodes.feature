@@ -1,5 +1,4 @@
 @contentrepository @adapters=DoctrineDBAL
-  # TODO implement for Postgres
 Feature: Find and count nodes using the findDescendantNodes and countDescendantNodes queries
 
   Background:

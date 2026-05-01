@@ -1,5 +1,4 @@
 @contentrepository @adapters=DoctrineDBAL
- # TODO implement for Postgres
 Feature: Behavior of Node timestamp properties "created", "originalCreated", "lastModified" and "originalLastModified"
 
   Background:
