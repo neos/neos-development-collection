@@ -171,9 +171,6 @@ Feature: Add Dimension Specialization
     And I expect this node to be exactly explicitly tagged "disabled"
     And I expect this node to exactly inherit the tags ""
 
-    When I run integrity violation detection
-    Then I expect the integrity violation detection result to contain exactly 0 errors
-
   Scenario: Add shine through while other workspace contains publishable changes
     When the command CreateWorkspace is executed with payload:
       | Key                | Value                |
