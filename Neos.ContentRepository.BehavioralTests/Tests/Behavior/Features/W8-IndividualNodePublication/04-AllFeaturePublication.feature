@@ -7,7 +7,7 @@ Feature: Publishing hide/show scenario of nodes
   -- sir-nodeward-nodington-iii (name=image) <== this one is modified
 
   The setup is always as follows:
-  - we modify two nodes using a certain command (e.g. DisableNode) in the USER workspace
+  - we modify two nodes using a certain command (e.g. TagSubtree) in the USER workspace
   - we publish one of them
   - we check that the user workspace still sees both nodes as hidden; and the live workspace only sees one of the changes.
 
@@ -69,7 +69,7 @@ Feature: Publishing hide/show scenario of nodes
       | parentNodeAggregateId     | "lady-eleonode-rootford"               |
       | initialPropertyValues     | {"image": "Initial image"}             |
 
-  Scenario: (DisableNode) It is possible to publish hiding of a node.
+  Scenario: (TagSubtree) It is possible to publish hiding of a node.
     Given the command CreateWorkspace is executed with payload:
       | Key                | Value                |
       | workspaceName      | "user-test"          |
@@ -108,18 +108,20 @@ Feature: Publishing hide/show scenario of nodes
     And I expect node aggregate identifier "nody-mc-nodeface" to lead to no node
     And I expect node aggregate identifier "sir-nodeward-nodington-iii" to lead to no node
 
-  Scenario: (ShowNode) It is possible to publish showing of a node.
+  Scenario: (UntagSubtree) It is possible to publish showing of a node.
     # BEFORE: ensure two nodes are hidden in live (and user WS)
-    Given the command DisableNodeAggregate is executed with payload:
+    Given the command TagSubtree is executed with payload:
       | Key                          | Value                    |
       | nodeAggregateId              | "sir-david-nodenborough" |
       | coveredDimensionSpacePoint   | {}                       |
       | nodeVariantSelectionStrategy | "allVariants"            |
-    Given the command DisableNodeAggregate is executed with payload:
+      | tag                          | "disabled"               |
+    Given the command TagSubtree is executed with payload:
       | Key                          | Value                        |
       | nodeAggregateId              | "sir-nodeward-nodington-iii" |
       | coveredDimensionSpacePoint   | {}                           |
       | nodeVariantSelectionStrategy | "allVariants"                |
+      | tag                          | "disabled"                   |
     Given the command CreateWorkspace is executed with payload:
       | Key                | Value                |
       | workspaceName      | "user-test"          |
@@ -127,24 +129,26 @@ Feature: Publishing hide/show scenario of nodes
       | newContentStreamId | "user-cs-identifier" |
 
     # SETUP: enable two nodes in USER workspace
-    Given the command EnableNodeAggregate is executed with payload:
+    Given the command UntagSubtree is executed with payload:
       | Key                          | Value                    |
       | workspaceName                | "user-test"              |
       | nodeAggregateId              | "sir-david-nodenborough" |
       | coveredDimensionSpacePoint   | {}                       |
       | nodeVariantSelectionStrategy | "allVariants"            |
-    Given the command EnableNodeAggregate is executed with payload:
+      | tag                          | "disabled"               |
+    Given the command UntagSubtree is executed with payload:
       | Key                          | Value                        |
       | workspaceName                | "user-test"                  |
       | nodeAggregateId              | "sir-nodeward-nodington-iii" |
       | coveredDimensionSpacePoint   | {}                           |
       | nodeVariantSelectionStrategy | "allVariants"                |
+      | tag                          | "disabled"                   |
 
     When the command PublishIndividualNodesFromWorkspace is executed with payload:
-      | Key                             | Value                                                                                                    |
-      | workspaceName                   | "user-test"                                                                                              |
-      | nodesToPublish                  | ["sir-david-nodenborough"] |
-      | contentStreamIdForRemainingPart | "user-cs-identifier-modified"                                                                            |
+      | Key                             | Value                         |
+      | workspaceName                   | "user-test"                   |
+      | nodesToPublish                  | ["sir-david-nodenborough"]    |
+      | contentStreamIdForRemainingPart | "user-cs-identifier-modified" |
 
     When I am in workspace "live" and dimension space point {}
     Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{}
