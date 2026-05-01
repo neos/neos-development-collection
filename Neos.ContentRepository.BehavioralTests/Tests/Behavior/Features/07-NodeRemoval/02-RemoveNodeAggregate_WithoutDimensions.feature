@@ -36,6 +36,10 @@ Feature: Remove NodeAggregate
       | Key                   | Value                                  |
       | sourceNodeAggregateId | "nodingers-cat"                        |
       | references            | [{"referenceName": "references", "references": [{"target": "sir-david-nodenborough"}]}] |
+    And the command SetNodeReferences is executed with payload:
+      | Key                   | Value                                                                          |
+      | sourceNodeAggregateId | "nody-mc-nodeface"                                                             |
+      | references            | [{"referenceName": "references", "references": [{"target": "nodingers-cat"}]}] |
 
   Scenario: Remove a node aggregate
     When the command RemoveNodeAggregate is executed with payload:
@@ -62,8 +66,12 @@ Feature: Remove NodeAggregate
     And I expect node aggregate identifier "sir-david-nodenborough" and node path "document" to lead to node cs-identifier;sir-david-nodenborough;{}
     And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
     And I expect this node to have no references
+    And I expect this node to not be referenced
     And I expect the node aggregate "nodingers-cat" to not exist
     And I expect the node aggregate "nodingers-kitten" to not exist
+
+    And I expect node aggregate identifier "nody-mc-nodeface" to lead to node cs-identifier;nody-mc-nodeface;{}
+    And I expect this node to have no references
 
   Scenario: Disable a node aggregate, remove it, recreate it and expect it to be enabled
     When the command DisableNodeAggregate is executed with payload:
@@ -120,6 +128,10 @@ Feature: Remove NodeAggregate
     And I expect node aggregate identifier "nodingers-cat" and node path "pet" to lead to node cs-identifier;nodingers-cat;{}
     And I expect this node to have no references
     And I expect node aggregate identifier "nodingers-kitten" and node path "pet/kitten" to lead to no node
+
+    # TODO After recreating the node the backreferences are magically reinstated (https://github.com/neos/neos-development-collection/pull/5797)
+    # And I expect node aggregate identifier "nody-mc-nodeface" to lead to node cs-identifier;nody-mc-nodeface;{}
+    # And I expect this node to have no references
 
   Scenario: Remove a node aggregate with descendants and expect all of them to be gone
     When the command RemoveNodeAggregate is executed with payload:
