@@ -129,7 +129,8 @@ Feature: Remove NodeAggregate
     And I expect this node to have no references
     And I expect node aggregate identifier "nodingers-kitten" and node path "pet/kitten" to lead to no node
 
-    # TODO After recreating the node the backreferences are magically reinstated (https://github.com/neos/neos-development-collection/pull/5797)
+    # Neos 9.0 intentionally treats references like symlinks, which means that when recreating the destination node the reference still exists.
+    # See https://github.com/neos/neos-development-collection/issues/5809
     # And I expect node aggregate identifier "nody-mc-nodeface" to lead to node cs-identifier;nody-mc-nodeface;{}
     # And I expect this node to have no references
 

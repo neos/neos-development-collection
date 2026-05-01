@@ -42,8 +42,11 @@ Feature: Run integrity violation detection regarding reference relations
       | affectedSourceOriginDimensionSpacePoints | [{"language":"de"}]                                                |
       | references                               | [{"referenceName": "referenceProperty", "references": [{"target":"anthony-destinode", "properties":null}]}] |
     And I run integrity violation detection
-    Then I expect the integrity violation detection result to contain exactly 1 error
-    And I expect integrity violation detection result error number 1 to have code 1597919585
+    # Neos 9.0 intentionally treats references like symlinks, which means the state can be reproduced by deleting the destination node aggregate
+    # Thus, we do not expect and error. See https://github.com/neos/neos-development-collection/issues/5809
+    # Then I expect the integrity violation detection result to contain exactly 1 error
+    # And I expect integrity violation detection result error number 1 to have code 1597919585
+    Then I expect the integrity violation detection result to contain exactly 0 error
 
   Scenario: Reference a node aggregate not covering any of the DSPs the source does
     When the event NodeAggregateWithNodeWasCreated was published with payload:

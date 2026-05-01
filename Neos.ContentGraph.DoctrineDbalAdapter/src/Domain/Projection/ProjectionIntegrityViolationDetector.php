@@ -323,17 +323,17 @@ final class ProjectionIntegrityViolationDetector implements ProjectionIntegrityV
                 throw new \RuntimeException(sprintf('Failed to check if node aggregate exists: %s', $e->getMessage()), 1777651107, $e);
             }
 
-            // Neos 9.0 intentionally treats references rather like symlinks, which means that when removing the destination node the reference edge is not removed
-            // in a later stage this still can be implemented: https://github.com/neos/neos-development-collection/pull/5797
-            // but for now, we do not log an error but accept the state as is.
-            if ($destinationNodeAggregateExist !== false) {
-                $result->addError(new Error(
-                    'Destination node aggregate ' . $record['destinationNodeAggregateId']
-                    . ' does not cover any dimension space points the source ' . $record['sourceNodeAggregateId']
-                    . ' does in content stream ' . $record['contentstreamId'],
-                    self::ERROR_CODE_REFERENCE_INTEGRITY_IS_COMPROMISED
-                ));
+            if ($destinationNodeAggregateExist === false) {
+                // Neos 9.0 intentionally treats references like symlinks, which means that when removing the destination node the reference edge is not removed.
+                // Thus, we do not yield an error. See https://github.com/neos/neos-development-collection/issues/5809
+                continue;
             }
+            $result->addError(new Error(
+                'Destination node aggregate ' . $record['destinationNodeAggregateId']
+                . ' does not cover any dimension space points the source ' . $record['sourceNodeAggregateId']
+                . ' does in content stream ' . $record['contentstreamId'],
+                self::ERROR_CODE_REFERENCE_INTEGRITY_IS_COMPROMISED
+            ));
         }
 
         return $result;
