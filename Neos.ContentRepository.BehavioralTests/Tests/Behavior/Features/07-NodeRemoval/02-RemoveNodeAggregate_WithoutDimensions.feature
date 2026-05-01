@@ -133,6 +133,33 @@ Feature: Remove NodeAggregate
     # And I expect node aggregate identifier "nody-mc-nodeface" to lead to node cs-identifier;nody-mc-nodeface;{}
     # And I expect this node to have no references
 
+  Scenario: Remove a node aggregate in root workspace and expect to be still existing with references and backreferences in another workspace
+    When the command CreateWorkspace is executed with payload:
+      | Key                | Value                |
+      | workspaceName      | "user"               |
+      | baseWorkspaceName  | "live"               |
+      | newContentStreamId | "user-cs-identifier" |
+
+    When the command RemoveNodeAggregate is executed with payload:
+      | Key                          | Value           |
+      | workspaceName                | "live"          |
+      | nodeAggregateId              | "nodingers-cat" |
+      | nodeVariantSelectionStrategy | "allVariants"   |
+
+    When I am in workspace "live"
+    And I expect node aggregate identifier "nodingers-cat" to lead to no node
+
+    When I am in workspace "user"
+    And I expect node aggregate identifier "nodingers-cat" to lead to node user-cs-identifier;nodingers-cat;{}
+    And I expect this node to have the following references:
+      | Name       | Node                                         | Properties |
+      | references | user-cs-identifier;sir-david-nodenborough;{} | null       |
+
+    And I expect node aggregate identifier "nody-mc-nodeface" to lead to node user-cs-identifier;nody-mc-nodeface;{}
+    And I expect this node to have the following references:
+      | Name       | Node                                | Properties |
+      | references | user-cs-identifier;nodingers-cat;{} | null       |
+
   Scenario: Remove a node aggregate with descendants and expect all of them to be gone
     When the command RemoveNodeAggregate is executed with payload:
       | Key                          | Value           |
