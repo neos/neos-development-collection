@@ -10,9 +10,8 @@ Feature: Remove NodeAggregate
     And using the following node types:
     """yaml
     'Neos.ContentRepository.Testing:Document':
-      properties:
-        references:
-          type: references
+      references:
+        references: {}
     """
     And using identifier "default", I define a content repository
     And I am in content repository "default"
@@ -28,9 +27,11 @@ Feature: Remove NodeAggregate
       | nodeTypeName    | "Neos.ContentRepository:Root" |
     And the following CreateNodeAggregateWithNode commands are executed:
       | nodeAggregateId        | nodeTypeName                            | parentNodeAggregateId  | nodeName |
-      | sir-david-nodenborough | Neos.ContentRepository.Testing:Document | lady-eleonode-rootford | document |
-      | nodingers-cat          | Neos.ContentRepository.Testing:Document | lady-eleonode-rootford | pet      |
-      | nodingers-kitten       | Neos.ContentRepository.Testing:Document | nodingers-cat          | kitten   |
+      | sir-david-nodenborough | Neos.ContentRepository.Testing:Document | lady-eleonode-rootford | document      |
+      | nody-mc-nodeface       | Neos.ContentRepository.Testing:Document | sir-david-nodenborough | child         |
+      | younger-mc-nodeface    | Neos.ContentRepository.Testing:Document | sir-david-nodenborough | younger-child |
+      | nodingers-cat          | Neos.ContentRepository.Testing:Document | lady-eleonode-rootford | pet           |
+      | nodingers-kitten       | Neos.ContentRepository.Testing:Document | nodingers-cat          | kitten        |
     And the command SetNodeReferences is executed with payload:
       | Key                   | Value                                  |
       | sourceNodeAggregateId | "nodingers-cat"                        |
@@ -41,13 +42,13 @@ Feature: Remove NodeAggregate
       | Key                          | Value           |
       | nodeAggregateId              | "nodingers-cat" |
       | nodeVariantSelectionStrategy | "allVariants"   |
-    Then I expect exactly 7 events to be published on stream with prefix "ContentStream:cs-identifier"
-    And event at index 6 is of type "NodeAggregateWasRemoved" with payload:
+    Then I expect exactly 10 events to be published on stream with prefix "ContentStream:cs-identifier"
+    And event at index 9 is of type "NodeAggregateWasRemoved" with payload:
       | Key                                  | Expected        |
       | contentStreamId                      | "cs-identifier" |
       | nodeAggregateId                      | "nodingers-cat" |
       | affectedCoveredDimensionSpacePoints  | [[]]            |
-    Then I expect the graph projection to consist of exactly 2 nodes
+    Then I expect the graph projection to consist of exactly 4 nodes
     And I expect a node identified by cs-identifier;lady-eleonode-rootford;{} to exist in the content graph
     And I expect a node identified by cs-identifier;sir-david-nodenborough;{} to exist in the content graph
     And I expect node aggregate identifier "lady-eleonode-rootford" to lead to node cs-identifier;lady-eleonode-rootford;{}
@@ -82,7 +83,7 @@ Feature: Remove NodeAggregate
 
     Then I expect the node aggregate "nodingers-cat" to exist
     And I expect this node aggregate to disable dimension space points []
-    And I expect the graph projection to consist of exactly 3 nodes
+    And I expect the graph projection to consist of exactly 5 nodes
     And I expect a node identified by cs-identifier;lady-eleonode-rootford;{} to exist in the content graph
     And I expect a node identified by cs-identifier;sir-david-nodenborough;{} to exist in the content graph
     And I expect a node identified by cs-identifier;nodingers-cat;{} to exist in the content graph
@@ -121,10 +122,6 @@ Feature: Remove NodeAggregate
     And I expect node aggregate identifier "nodingers-kitten" and node path "pet/kitten" to lead to no node
 
   Scenario: Remove a node aggregate with descendants and expect all of them to be gone
-    When the following CreateNodeAggregateWithNode commands are executed:
-      | nodeAggregateId        | nodeTypeName                            | parentNodeAggregateId  | nodeName |
-      | nody-mc-nodeface | Neos.ContentRepository.Testing:Document | sir-david-nodenborough | child |
-      | younger-mc-nodeface | Neos.ContentRepository.Testing:Document | sir-david-nodenborough | younger-child |
     When the command RemoveNodeAggregate is executed with payload:
       | Key                          | Value           |
       | nodeAggregateId              | "sir-david-nodenborough" |
