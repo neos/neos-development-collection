@@ -206,7 +206,6 @@ Feature: Publishing hide/show scenario of nodes
       | text1mod | sir-david-nodenborough     |
       | imagemod | sir-nodeward-nodington-iii |
 
-
   Scenario: (RemoveNodeAggregate) It is possible to publish a node removal
     Given the command CreateWorkspace is executed with payload:
       | Key                | Value                |
@@ -244,44 +243,6 @@ Feature: Publishing hide/show scenario of nodes
     Then I expect node aggregate identifier "sir-david-nodenborough" to lead to no node
     Then I expect node aggregate identifier "nody-mc-nodeface" to lead to no node
     Then I expect node aggregate identifier "sir-nodeward-nodington-iii" to lead to no node
-
-
-  Scenario: (RemoveNodeAggregate) It is possible to publish a node removal
-    Given the command CreateWorkspace is executed with payload:
-      | Key                | Value                |
-      | workspaceName      | "user-test"          |
-      | baseWorkspaceName  | "live"               |
-      | newContentStreamId | "user-cs-identifier" |
-
-    # SETUP: remove two nodes in USER workspace
-    When the command RemoveNodeAggregate is executed with payload:
-      | Key                          | Value                    |
-      | workspaceName                | "user-test"              |
-      | nodeAggregateId              | "sir-david-nodenborough" |
-      | coveredDimensionSpacePoint   | {}                       |
-      | nodeVariantSelectionStrategy | "allVariants"            |
-    When the command RemoveNodeAggregate is executed with payload:
-      | Key                          | Value                        |
-      | workspaceName                | "user-test"                  |
-      | nodeAggregateId              | "sir-nodeward-nodington-iii" |
-      | coveredDimensionSpacePoint   | {}                           |
-      | nodeVariantSelectionStrategy | "allVariants"                |
-
-    When the command PublishIndividualNodesFromWorkspace is executed with payload:
-      | Key            | Value                                                                                                    |
-      | workspaceName  | "user-test"                                                                                              |
-      | nodesToPublish | ["sir-david-nodenborough"] |
-
-    When I am in workspace "live" and dimension space point {}
-    Then I expect node aggregate identifier "sir-david-nodenborough" to lead to no node
-    Then I expect node aggregate identifier "nody-mc-nodeface" to lead to no node
-    Then I expect node aggregate identifier "sir-nodeward-nodington-iii" to lead to node cs-identifier;sir-nodeward-nodington-iii;{}
-
-    When I am in workspace "user-test" and dimension space point {}
-    Then I expect node aggregate identifier "sir-david-nodenborough" to lead to no node
-    Then I expect node aggregate identifier "nody-mc-nodeface" to lead to no node
-    Then I expect node aggregate identifier "sir-nodeward-nodington-iii" to lead to no node
-
 
   Scenario: (SetNodeReferences) It is possible to publish setting node references
     Given the command CreateWorkspace is executed with payload:
