@@ -47,6 +47,7 @@ Feature: Publishing hide/show scenario of nodes
       | workspaceName             | "live"                                   |
       | nodeAggregateId           | "sir-david-nodenborough"                 |
       | nodeTypeName              | "Neos.ContentRepository.Testing:Content" |
+      | nodeName                    | "text1"                                             |
       | originDimensionSpacePoint | {}                                       |
       | parentNodeAggregateId     | "lady-eleonode-rootford"                 |
       | initialPropertyValues     | {"text": "Initial t1"}                   |
@@ -63,6 +64,7 @@ Feature: Publishing hide/show scenario of nodes
       | workspaceName             | "live"                                 |
       | nodeAggregateId           | "sir-nodeward-nodington-iii"           |
       | nodeTypeName              | "Neos.ContentRepository.Testing:Image" |
+      | nodeName                    | "image"                                                |
       | originDimensionSpacePoint | {}                                     |
       | parentNodeAggregateId     | "lady-eleonode-rootford"               |
       | initialPropertyValues     | {"image": "Initial image"}             |
@@ -154,47 +156,51 @@ Feature: Publishing hide/show scenario of nodes
     And I expect node aggregate identifier "nody-mc-nodeface" to lead to node user-cs-identifier-modified;nody-mc-nodeface;{}
     And I expect node aggregate identifier "sir-nodeward-nodington-iii" to lead to node user-cs-identifier-modified;sir-nodeward-nodington-iii;{}
 
-
-    # @todo check why these won't run
-
-  #Scenario: (ChangeNodeAggregateName) It is possible to publish changing the node name.
-  #  Given the command CreateWorkspace is executed with payload:
-  #    | Key                        | Value                |
-   ##   | workspaceName              | "user-test"          |
-   #   | baseWorkspaceName          | "live"               |
-   #   | newContentStreamId | "user-cs-identifier" |
-   # And the graph projection is fully up to date
+  Scenario: (ChangeNodeAggregateName) It is possible to publish changing the node name.
+    Given the command CreateWorkspace is executed with payload:
+      | Key                | Value                |
+      | workspaceName      | "user-test"          |
+      | baseWorkspaceName  | "live"               |
+      | newContentStreamId | "user-cs-identifier" |
 
     # SETUP: change two node names in USER workspace
-    #Given the command "ChangeNodeAggregateName" is executed with payload:
-    #  | Key                     | Value                    |
-    #  | contentStreamId | "user-cs-identifier"     |
-    #  | nodeAggregateId | "sir-david-nodenborough" |
-    #  | newNodeName             | "text1mod"               |
-    #Given the command "ChangeNodeAggregateName" is executed with payload:
-    #  | Key                     | Value                        |
-    #  | contentStreamId | "user-cs-identifier"         |
-    #  | nodeAggregateId | "sir-nodeward-nodington-iii" |
-     # | newNodeName             | "imagemod"                   |
-   # And the graph projection is fully up to date
+    Given the command ChangeNodeAggregateName is executed with payload:
+      | Key             | Value                    |
+      | workspaceName   | "user-test"              |
+      | nodeAggregateId | "sir-david-nodenborough" |
+      | newNodeName     | "text1mod"               |
+    Given the command ChangeNodeAggregateName is executed with payload:
+      | Key             | Value                        |
+      | workspaceName   | "user-test"                  |
+      | nodeAggregateId | "sir-nodeward-nodington-iii" |
+      | newNodeName     | "imagemod"                   |
 
-   # When the command PublishIndividualNodesFromWorkspace is executed with payload:
-   #   | Key           | Value                                                                                                                               |
-   #   | workspaceName | "user-test"                                                                                                                         |
-    #  | nodesToPublish | ["sir-david-nodenborough"] |
-    #And the graph projection is fully up to date
+    When I am in workspace "live" and dimension space point {}
+    And I expect node aggregate identifier "lady-eleonode-rootford" to lead to node cs-identifier;lady-eleonode-rootford;{}
+    Then I expect this node to have the following child nodes:
+      | Name     | nodeAggregateId            |
+      | text1    | sir-david-nodenborough     |
+      | image    | sir-nodeward-nodington-iii |
 
-   # When I am in workspace "live" and dimension space point {}
-   ## Then I expect the node aggregate "lady-eleonode-rootford" to have the following child nodes:
-    #  | Name     | nodeAggregateId    |
-    #  | text1mod | sir-david-nodenborough     |
-     # | image    | sir-nodeward-nodington-iii |
+    When the command PublishIndividualNodesFromWorkspace is executed with payload:
+      | Key                             | Value                          |
+      | workspaceName                   | "user-test"                    |
+      | nodesToPublish                  | ["sir-david-nodenborough"]     |
+      | contentStreamIdForRemainingPart | "user-cs-identifier-remaining" |
 
-   # When I am in workspace "user-test" and dimension space point {}
-   # Then I expect the node aggregate "lady-eleonode-rootford" to have the following child nodes:
-   #   | Name     | nodeAggregateId    |
-   #   | text1mod | sir-david-nodenborough     |
-   #   | imagemod | sir-nodeward-nodington-iii |
+    When I am in workspace "live" and dimension space point {}
+    And I expect node aggregate identifier "lady-eleonode-rootford" to lead to node cs-identifier;lady-eleonode-rootford;{}
+    Then I expect this node to have the following child nodes:
+      | Name     | nodeAggregateId            |
+      | text1mod | sir-david-nodenborough     |
+      | image    | sir-nodeward-nodington-iii |
+
+    When I am in workspace "user-test" and dimension space point {}
+    And I expect node aggregate identifier "lady-eleonode-rootford" to lead to node user-cs-identifier-remaining;lady-eleonode-rootford;{}
+    Then I expect this node to have the following child nodes:
+      | Name     | nodeAggregateId            |
+      | text1mod | sir-david-nodenborough     |
+      | imagemod | sir-nodeward-nodington-iii |
 
 
   Scenario: (RemoveNodeAggregate) It is possible to publish a node removal
