@@ -48,11 +48,6 @@ trait CRTestSuiteRuntimeVariables
     protected ?NodeAggregate $currentNodeAggregate = null;
 
     /**
-     * @var array<string,NodeAggregateId>
-     */
-    protected array $rememberedNodeAggregateIds = [];
-
-    /**
      * @Given /^I am in content repository "([^"]*)"$/
      */
     public function iAmInContentRepository(string $contentRepositoryId): void
@@ -126,17 +121,6 @@ trait CRTestSuiteRuntimeVariables
             $this->currentDimensionSpacePoint,
             $this->currentVisibilityConstraints
         );
-    }
-
-    /**
-     * @Given /^I remember NodeAggregateId of node "([^"]*)"s child "([^"]*)" as "([^"]*)"$/
-     */
-    public function iRememberNodeAggregateIdOfNodesChildAs(string $parentNodeAggregateId, string $childNodeName, string $indexName): void
-    {
-        $this->rememberedNodeAggregateIds[$indexName] = $this->getCurrentSubgraph()->findNodeByPath(
-            NodePath::fromString($childNodeName),
-            NodeAggregateId::fromString($parentNodeAggregateId),
-        )->aggregateId;
     }
 
     protected function getCurrentNodeAggregateId(): ?NodeAggregateId
