@@ -25,26 +25,20 @@ Feature: Run integrity violation detection regarding reference relations
       | Key             | Value                         |
       | nodeAggregateId | "lady-eleonode-rootford"      |
       | nodeTypeName    | "Neos.ContentRepository:Root" |
-    And the event NodeAggregateWithNodeWasCreated was published with payload:
+    And the command CreateNodeAggregateWithNode is executed with payload:
       | Key                         | Value                                                    |
       | workspaceName               | "live"                                                   |
-      | contentStreamId             | "cs-identifier"                                          |
       | nodeAggregateId             | "source-nodandaise"                                      |
       | nodeTypeName                | "Neos.ContentRepository.Testing:Document"                |
       | originDimensionSpacePoint   | {"language":"de"}                                        |
-      | coveredDimensionSpacePoints | [{"language":"de"},{"language":"gsw"},{"language":"fr"}] |
       | parentNodeAggregateId       | "lady-eleonode-rootford"                                 |
-      | nodeAggregateClassification | "regular"                                                |
-    And the event NodeAggregateWithNodeWasCreated was published with payload:
+    And the command CreateNodeAggregateWithNode is executed with payload:
       | Key                         | Value                                                    |
       | workspaceName               | "live"                                                   |
-      | contentStreamId             | "cs-identifier"                                          |
       | nodeAggregateId             | "anthony-destinode"                                      |
       | nodeTypeName                | "Neos.ContentRepository.Testing:Document"                |
       | originDimensionSpacePoint   | {"language":"de"}                                        |
-      | coveredDimensionSpacePoints | [{"language":"de"},{"language":"gsw"},{"language":"fr"}] |
       | parentNodeAggregateId       | "lady-eleonode-rootford"                                 |
-      | nodeAggregateClassification | "regular"                                                |
 
   Scenario: Detach a reference relation from its source
     When the command SetNodeReferences is executed with payload:

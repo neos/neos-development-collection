@@ -9,7 +9,11 @@ Feature: Run projection integrity violation detection regarding naming of tether
       | language   | de, gsw | gsw->de         |
     And using the following node types:
     """yaml
-    'Neos.ContentRepository.Testing:Document': []
+    'Neos.ContentRepository.Testing:Document':
+      childNodes:
+        'tethered-node':
+          type: 'Neos.ContentRepository.Testing:Tethered'
+    'Neos.ContentRepository.Testing:Tethered': []
     """
     And using identifier "default", I define a content repository
     And I am in content repository "default"
@@ -22,30 +26,17 @@ Feature: Run projection integrity violation detection regarding naming of tether
       | Key             | Value                         |
       | nodeAggregateId | "lady-eleonode-rootford"      |
       | nodeTypeName    | "Neos.ContentRepository:Root" |
-    And the event NodeAggregateWithNodeWasCreated was published with payload:
-      | Key                         | Value                                     |
-      | workspaceName               | "live"                                    |
-      | contentStreamId             | "cs-identifier"                           |
-      | nodeAggregateId             | "sir-david-nodenborough"                  |
-      | nodeTypeName                | "Neos.ContentRepository.Testing:Document" |
-      | originDimensionSpacePoint   | {"language":"de"}                         |
-      | coveredDimensionSpacePoints | [{"language":"de"}]                       |
-      | parentNodeAggregateId       | "lady-eleonode-rootford"                  |
-      | nodeName                    | "document"                                |
-      | nodeAggregateClassification | "regular"                                 |
+    And the command CreateNodeAggregateWithNode is executed with payload:
+      | Key                                | Value                                     |
+      | workspaceName                      | "live"                                    |
+      | nodeAggregateId                    | "sir-david-nodenborough"                  |
+      | nodeTypeName                       | "Neos.ContentRepository.Testing:Document" |
+      | originDimensionSpacePoint          | {"language":"de"}                         |
+      | parentNodeAggregateId              | "lady-eleonode-rootford"                  |
+      | nodeName                           | "document"                                |
+      | tetheredDescendantNodeAggregateIds | {"tethered-node": "nodewyn-tetherton"}    |
 
   Scenario: Remove tethered node's name
-    When the event NodeAggregateWithNodeWasCreated was published with payload:
-      | Key                         | Value                                     |
-      | workspaceName               | "live"                                    |
-      | contentStreamId             | "cs-identifier"                           |
-      | nodeAggregateId             | "nodewyn-tetherton"                       |
-      | nodeTypeName                | "Neos.ContentRepository.Testing:Document" |
-      | originDimensionSpacePoint   | {"language":"de"}                         |
-      | coveredDimensionSpacePoints | [{"language":"de"}]                       |
-      | parentNodeAggregateId       | "sir-david-nodenborough"                  |
-      | nodeName                    | "to-be-hacked-to-null"                    |
-      | nodeAggregateClassification | "tethered"                                |
     And I change the following node's name:
       | Key                       | Value               |
       | contentStreamId           | "cs-identifier"     |
