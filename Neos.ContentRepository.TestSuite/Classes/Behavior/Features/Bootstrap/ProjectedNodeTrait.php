@@ -134,7 +134,6 @@ trait ProjectedNodeTrait
     }
 
     /**
-     * @Then /^I expect path "([^"]*)" to lead to node (.*)$/
      * @param string $serializedNodePath
      * @param string $serializedNodeDiscriminator
      * @throws \Exception
@@ -156,7 +155,6 @@ trait ProjectedNodeTrait
     }
 
     /**
-     * @Then /^I expect path "([^"]*)" to lead to no node$/
      * @param string $serializedNodePath
      * @throws \Exception
      */

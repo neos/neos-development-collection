@@ -209,7 +209,8 @@ Feature: Tethered Nodes integrity violations
     When I am in workspace "live" and dimension space point {"market":"CH", "language":"gsw"}
     Then I expect node aggregate identifier "nodewyn-tetherton" to lead to no node
     Then I expect node aggregate identifier "nodimer-tetherton" to lead to no node
-    And  I expect path "tethered-node" to lead to no node
+    Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{"market":"CH", "language":"gsw"}
+    And I expect this node to have no child nodes
 
   Scenario: Adjusting the schema changing the type of a tethered node leads to a InvalidTetheredNodeType integrity violation
     Given I change the node types in content repository "default" to:
