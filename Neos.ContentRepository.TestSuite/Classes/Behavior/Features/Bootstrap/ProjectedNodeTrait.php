@@ -25,8 +25,10 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindBackReference
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindChildNodesFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindPrecedingSiblingNodesFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindReferencesFilter;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindRootNodeAggregatesFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindSucceedingSiblingNodesFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
+use Neos\ContentRepository\Core\Projection\ContentGraph\NodePath;
 use Neos\ContentRepository\Core\Projection\ContentGraph\References;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateClassification;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
@@ -644,14 +646,29 @@ trait ProjectedNodeTrait
         $this->assertOnCurrentNode(function (Node $currentNode) use ($serializedPath) {
             $subgraph = $this->getCurrentSubgraph();
 
-            $actualNode = $subgraph->findNodeByPath(NodePath::fromString($serializedPath), $this->getRootNodeAggregateId());
-            Assert::assertTrue($actualNode->equals($currentNode));
+            $ancestors = $subgraph->findAncestorNodes($currentNode->aggregateId, FindAncestorNodesFilter::create())
+                ->reverse();
+            $actualAbsolutePath = AbsoluteNodePath::fromLeafNodeAndAncestors($currentNode, $ancestors);
 
-            // Todo remove getRootNodeAggregateId() hack and use real absolute paths
-            // $ancestors = $subgraph->findAncestorNodes($currentNode->aggregateId, FindAncestorNodesFilter::create())
-            //     ->reverse();
-            // $actualPath = AbsoluteNodePath::fromLeafNodeAndAncestors($currentNode, $ancestors);
-            // Assert::assertEquals($serializedPath, $actualPath->serializeToString());
+            $expectedAbsolutePath = AbsoluteNodePath::tryFromString($serializedPath);
+
+            if ($expectedAbsolutePath === null) {
+                // relative path assertion if non-ambiguous, reduces verbosity in test
+                $expectedRelativePath = NodePath::fromString($serializedPath);
+
+                $contentGraph = $this->currentContentRepository->getContentGraph($this->currentWorkspaceName);
+                $rootNodeAggregates = $contentGraph->findRootNodeAggregates(FindRootNodeAggregatesFilter::create());
+                if ($rootNodeAggregates->count() > 1) {
+                    throw new \RuntimeException(sprintf('Relative path assertion of %s with %s is not possible because multiple root node aggregates exist. Use absolute comparison instead.', $expectedRelativePath->serializeToString(), $actualAbsolutePath->serializeToString()), 1777744498);
+                }
+
+                $expectedAbsolutePath = AbsoluteNodePath::fromRootNodeTypeNameAndRelativePath(
+                    $rootNodeAggregates->first()->nodeTypeName,
+                    $expectedRelativePath
+                );
+            }
+
+            Assert::assertTrue($expectedAbsolutePath->equals($actualAbsolutePath), sprintf('Absolute node path "%s" does not equal expected "%s"', $actualAbsolutePath->serializeToString(), $expectedAbsolutePath->serializeToString()));
         });
     }
 
