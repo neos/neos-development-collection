@@ -9,7 +9,9 @@ Feature: Create an intact content graph and run integrity violation detection
       | language   | de, gsw | gsw->de         |
     And using the following node types:
     """yaml
-    'Neos.ContentRepository.Testing:Document': []
+    'Neos.ContentRepository.Testing:Document':
+      references:
+        myReferences: {}
     """
     And using identifier "default", I define a content repository
     And I am in content repository "default"
@@ -55,8 +57,8 @@ Feature: Create an intact content graph and run integrity violation detection
     And the command SetNodeReferences is executed with payload:
       | Key                             | Value                                                                                    |
       | workspaceName                   | "live"                                                                                   |
-      | sourceNodeAggregateId           | "source-nodandaise"                                                                      |
+      | sourceNodeAggregateId           | "nody-mc-nodeface"                                                                       |
       | sourceOriginDimensionSpacePoint | {"language":"de"}                                                                        |
-      | references                      | [{"referenceName": "referenceProperty", "references": [{"target":"anthony-destinode"}]}] |
+      | references                      | [{"referenceName": "myReferences", "references": [{"target":"sir-david-nodenborough"}]}] |
     And I run integrity violation detection
     Then I expect the integrity violation detection result to contain exactly 0 errors
