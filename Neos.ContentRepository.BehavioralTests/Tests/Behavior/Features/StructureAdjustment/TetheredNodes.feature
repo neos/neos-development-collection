@@ -144,15 +144,17 @@ Feature: Tethered Nodes integrity violations
     Then I expect no needed structure adjustments for type "Neos.ContentRepository:Root"
 
     When I am in workspace "live" and dimension space point {"market":"CH", "language":"gsw"}
-    And I get the node at path "document/some-new-child"
+
+    # TODO StructureAdjustments do not have the option for tethered deterministic node ids
+    And I get the node at path "/<Neos.ContentRepository:Root>/document/some-new-child"
     Then I expect this node to have the following properties:
       | Key | Value                |
       | foo | "my default applied" |
 
-    When I get the node at path "document/some-new-child/tethered-leaf"
+    When I get the node at path "/<Neos.ContentRepository:Root>/document/some-new-child/tethered-leaf"
     Then I expect this node to be of type "Neos.ContentRepository.Testing:TetheredLeaf"
 
-    When I get the node at path "tethered-node"
+    When I get the node at path "/<Neos.ContentRepository:Root>/tethered-node"
     Then I expect this node to have the following properties:
       | Key | Value                |
       | foo | "my default applied" |

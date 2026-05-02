@@ -55,11 +55,9 @@ trait NodeCreation
     {
         $eventPayload = $this->readPayloadTable($payloadTable);
         $contentStreamId = ContentStreamId::fromString($eventPayload['contentStreamId']);
-        $nodeAggregateId = NodeAggregateId::fromString($eventPayload['nodeAggregateId']);
         $streamName = ContentStreamEventStreamName::fromContentStreamId($contentStreamId);
 
         $this->publishEvent('RootNodeAggregateWithNodeWasCreated', $streamName->getEventStreamName(), $eventPayload);
-        $this->currentRootNodeAggregateId = $nodeAggregateId;
     }
 
     /**

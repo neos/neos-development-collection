@@ -41,8 +41,6 @@ trait CRTestSuiteRuntimeVariables
 
     protected ?VisibilityConstraints $currentVisibilityConstraints = null;
 
-    protected ?NodeAggregateId $currentRootNodeAggregateId = null;
-
     protected ?\Exception $lastCommandException = null;
 
     protected ?Node $currentNode = null;

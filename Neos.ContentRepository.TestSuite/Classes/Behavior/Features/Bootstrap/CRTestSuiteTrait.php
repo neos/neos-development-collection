@@ -84,7 +84,6 @@ trait CRTestSuiteTrait
         $this->currentContentRepository = null;
         $this->currentVisibilityConstraints = VisibilityConstraints::default();
         $this->currentDimensionSpacePoint = null;
-        $this->currentRootNodeAggregateId = null;
         $this->currentWorkspaceName = null;
         $this->currentNodeAggregate = null;
         $this->currentNode = null;
@@ -239,17 +238,6 @@ trait CRTestSuiteTrait
 
         return $reflectedContentRepository->getProperty('eventStore')
             ->getValue($this->currentContentRepository);
-    }
-
-    protected function getRootNodeAggregateId(): ?NodeAggregateId
-    {
-        if ($this->currentRootNodeAggregateId) {
-            return $this->currentRootNodeAggregateId;
-        }
-
-        return $this->currentContentRepository->getContentGraph($this->currentWorkspaceName)->findRootNodeAggregateByType(
-            NodeTypeName::fromString('Neos.Neos:Sites')
-        )->nodeAggregateId;
     }
 
     /**

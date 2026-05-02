@@ -18,14 +18,15 @@ use Behat\Gherkin\Node\TableNode;
 use GuzzleHttp\Psr7\Uri;
 use Neos\ContentRepository\Core\Feature\SubtreeTagging\Dto\SubtreeTag;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
+use Neos\ContentRepository\Core\Projection\ContentGraph\AbsoluteNodePath;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentSubgraphInterface;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindAncestorNodesFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindBackReferencesFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindChildNodesFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindPrecedingSiblingNodesFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindReferencesFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindSucceedingSiblingNodesFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
-use Neos\ContentRepository\Core\Projection\ContentGraph\NodePath;
 use Neos\ContentRepository\Core\Projection\ContentGraph\References;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateClassification;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
@@ -46,8 +47,6 @@ trait ProjectedNodeTrait
 {
     use CRTestSuiteRuntimeVariables;
 
-    abstract protected function getRootNodeAggregateId(): ?NodeAggregateId;
-
     /**
      * @When /^I go to the parent node of node aggregate "([^"]*)"$/
      * @param string $serializedNodeAggregateId
@@ -63,13 +62,13 @@ trait ProjectedNodeTrait
     /**
      * @Then /^I get the node at path "([^"]*)"$/
      * @param string $serializedNodePath
-     * @throws \Exception
+     * @deprecated use node-id based assertions and deterministic ids {@see iExpectANodeIdentifiedByXToExistInTheContentGraph}
      */
-    public function iGetTheNodeAtPath(string $serializedNodePath): void
+    public function iGetTheNodeAtPath(string $serializedAbsoluteNodePath): void
     {
-        $nodePath = NodePath::fromString($serializedNodePath);
-        $this->initializeCurrentNodeFromContentSubgraph(function (ContentSubgraphInterface $subgraph) use ($nodePath) {
-            return $subgraph->findNodeByPath($nodePath, $this->getRootNodeAggregateId());
+        $absoluteNodePath = AbsoluteNodePath::fromString($serializedAbsoluteNodePath);
+        $this->initializeCurrentNodeFromContentSubgraph(function (ContentSubgraphInterface $subgraph) use ($absoluteNodePath) {
+            return $subgraph->findNodeByAbsolutePath($absoluteNodePath);
         });
     }
 

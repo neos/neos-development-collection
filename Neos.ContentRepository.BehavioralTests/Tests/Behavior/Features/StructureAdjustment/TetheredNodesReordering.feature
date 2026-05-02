@@ -39,7 +39,7 @@ Feature: Tethered Nodes Reordering Structure changes
 
     Then I expect no needed structure adjustments for type "Neos.ContentRepository.Testing:Document"
 
-    And I get the node at path "document/tethered-node"
+    And I expect node aggregate identifier "tethered-node-agg" to lead to node cs-identifier;tethered-node-agg;{}
     And I expect this node to have no preceding siblings
     And I expect this node to have the following succeeding siblings:
       | NodeDiscriminator                        |
@@ -67,7 +67,7 @@ Feature: Tethered Nodes Reordering Structure changes
     Then I expect no needed structure adjustments for type "Neos.ContentRepository.Testing:Document"
 
     When I am in workspace "live" and dimension space point {}
-    And I get the node at path "document/tethered-node"
+    And I expect node aggregate identifier "tethered-node-agg" to lead to node cs-identifier;tethered-node-agg;{}
     And I expect this node to have the following preceding siblings:
       | NodeDiscriminator                        |
       | cs-identifier;other-tethered-node-agg;{} |

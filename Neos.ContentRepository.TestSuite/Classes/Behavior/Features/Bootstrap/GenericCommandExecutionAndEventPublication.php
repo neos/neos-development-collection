@@ -364,9 +364,6 @@ trait GenericCommandExecutionAndEventPublication
     {
         $commandArguments = $this->addDefaultCommandArgumentValues($commandClassName, $commandArguments);
         $command = $commandClassName::fromArray($commandArguments);
-        if ($command instanceof CreateRootNodeAggregateWithNode) {
-            $this->currentRootNodeAggregateId = $command->nodeAggregateId;
-        }
         $this->currentContentRepository->handle($command);
     }
 
