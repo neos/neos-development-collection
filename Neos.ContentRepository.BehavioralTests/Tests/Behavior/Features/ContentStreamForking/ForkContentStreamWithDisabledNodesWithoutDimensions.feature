@@ -25,28 +25,22 @@ Feature: On forking a content stream, hidden nodes should be correctly copied as
       | Key             | Value                         |
       | nodeAggregateId | "lady-eleonode-rootford"      |
       | nodeTypeName    | "Neos.ContentRepository:Root" |
-    And the event NodeAggregateWithNodeWasCreated was published with payload:
+    And the command CreateNodeAggregateWithNode is executed with payload:
       | Key                         | Value                                    |
       | workspaceName               | "live"                                   |
-      | contentStreamId             | "cs-identifier"                          |
       | nodeAggregateId             | "the-great-nodini"                       |
       | nodeTypeName                | "Neos.ContentRepository.Testing:Content" |
       | originDimensionSpacePoint   | {}                                       |
-      | coveredDimensionSpacePoints | [{}]                                     |
       | parentNodeAggregateId       | "lady-eleonode-rootford"                 |
       | nodeName                    | "court-magician"                         |
-      | nodeAggregateClassification | "regular"                                |
-    And the event NodeAggregateWithNodeWasCreated was published with payload:
+    And the command CreateNodeAggregateWithNode is executed with payload:
       | Key                         | Value                                    |
       | workspaceName               | "live"                                   |
-      | contentStreamId             | "cs-identifier"                          |
       | nodeAggregateId             | "nodingers-cat"                          |
       | nodeTypeName                | "Neos.ContentRepository.Testing:Content" |
       | originDimensionSpacePoint   | {}                                       |
-      | coveredDimensionSpacePoints | [{}]                                     |
       | parentNodeAggregateId       | "the-great-nodini"                       |
       | nodeName                    | "pet"                                    |
-      | nodeAggregateClassification | "regular"                                |
     And the command DisableNodeAggregate is executed with payload:
       | Key                          | Value              |
       | nodeAggregateId              | "the-great-nodini" |
