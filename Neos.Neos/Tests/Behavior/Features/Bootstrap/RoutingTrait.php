@@ -265,9 +265,7 @@ trait RoutingTrait
             $this->currentContentRepository->id,
             WorkspaceName::forLive(),
             DimensionSpacePoint::fromJsonString($dimensionSpacePoint),
-            \str_starts_with($nodeAggregateId, '$')
-                ? $this->rememberedNodeAggregateIds[\mb_substr($nodeAggregateId, 1)]
-                : NodeAggregateId::fromString($nodeAggregateId)
+            NodeAggregateId::fromString($nodeAggregateId)
         );
         $httpRequest = $this->getObject(ServerRequestFactoryInterface::class)->createServerRequest('GET', $this->requestUrl);
         $httpRequest = $this->addRoutingParameters($httpRequest);
