@@ -1,4 +1,3 @@
-@contentrepository
 Feature: Migrations that contain nodes with "reference" or "references properties
 
   Background:

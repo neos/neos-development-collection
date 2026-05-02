@@ -1,4 +1,3 @@
-@contentrepository @adapters=DoctrineDBAL
 Feature: On forking a content stream, hidden nodes should be correctly copied as well.
 
   Because we store hidden node information in an extra DB table, this needs to be copied correctly on ForkContentStream

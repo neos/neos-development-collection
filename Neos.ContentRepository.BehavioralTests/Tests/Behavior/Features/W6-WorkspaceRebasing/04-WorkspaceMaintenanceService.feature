@@ -1,4 +1,3 @@
-@contentrepository @adapters=DoctrineDBAL
 Feature: Workspace rebasing - via workspace maintenance service
 
   These are the test cases for the workspace maintenance service to properly do its job

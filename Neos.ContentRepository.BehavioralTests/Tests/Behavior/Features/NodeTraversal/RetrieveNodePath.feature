@@ -1,5 +1,3 @@
-@contentrepository @adapters=DoctrineDBAL
-  # TODO implement for Postgres
 Feature: Find nodes using the retrieveNodePath query
 
   Background:

@@ -1,4 +1,3 @@
-@contentrepository @adapters=DoctrineDBAL
 Feature: Publishing moved nodes without dimensions
 
   As a user of the CR I want to move a node

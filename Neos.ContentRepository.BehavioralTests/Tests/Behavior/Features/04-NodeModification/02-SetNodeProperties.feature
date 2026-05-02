@@ -1,4 +1,3 @@
-@contentrepository @adapters=DoctrineDBAL,Postgres
 Feature: Set properties
 
   As a user of the CR I want to modify node properties.

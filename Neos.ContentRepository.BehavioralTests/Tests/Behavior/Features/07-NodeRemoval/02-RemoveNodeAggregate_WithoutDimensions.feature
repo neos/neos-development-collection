@@ -1,4 +1,3 @@
-@contentrepository @adapters=DoctrineDBAL,Postgres
 Feature: Remove NodeAggregate
 
   As a user of the CR I want to be able to remove a NodeAggregate or parts of it.

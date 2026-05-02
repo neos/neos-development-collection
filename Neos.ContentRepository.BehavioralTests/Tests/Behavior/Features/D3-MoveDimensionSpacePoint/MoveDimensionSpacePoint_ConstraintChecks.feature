@@ -1,4 +1,3 @@
-@contentrepository @adapters=DoctrineDBAL
 Feature: Move dimension space point
 
   These are the constraint check tests to prevent damage to the content repository state

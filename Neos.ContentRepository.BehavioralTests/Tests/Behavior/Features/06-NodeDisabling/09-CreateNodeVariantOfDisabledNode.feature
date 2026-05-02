@@ -1,4 +1,3 @@
-@contentrepository @adapters=DoctrineDBAL,Postgres
 Feature: Variation of hidden nodes
 
   If we create variants of nodes hidden in the respective dimension space point(s),

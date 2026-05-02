@@ -1,4 +1,3 @@
-@contentrepository @adapters=DoctrineDBAL
 Feature: Tag subtree with dimensions
 
   As a user of the CR I want to tag a node and expect its descendants to also be tagged.

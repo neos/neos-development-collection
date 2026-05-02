@@ -1,4 +1,3 @@
-@contentrepository
 Feature: UriPathResolver works as expected
 
   We model the following examples:

@@ -1,4 +1,3 @@
-@contentrepository @adapters=DoctrineDBAL,Postgres
 Feature: Creation of nodes underneath disabled nodes
 
   If we create new nodes underneath of disabled nodes, they must be marked as disabled as well;

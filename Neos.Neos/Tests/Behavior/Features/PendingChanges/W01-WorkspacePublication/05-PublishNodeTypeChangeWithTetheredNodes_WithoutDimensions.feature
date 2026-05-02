@@ -1,4 +1,3 @@
-@contentrepository @adapters=DoctrineDBAL
 @flowEntities
 Feature: Partial publish after node type change tagging tethered nodes (without dimensions)
 

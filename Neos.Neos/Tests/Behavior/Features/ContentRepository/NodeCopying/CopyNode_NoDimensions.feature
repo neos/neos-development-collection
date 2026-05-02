@@ -1,4 +1,3 @@
-@contentrepository @adapters=DoctrineDBAL
 Feature: Copy nodes (without dimensions)
 
   Background:

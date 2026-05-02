@@ -1,4 +1,3 @@
-@contentrepository @adapters=DoctrineDBAL
 Feature: Tag subtree without dimensions
 
   As a user of the CR I want to tag a node aggregate and expect its descendants to also be tagged.

@@ -1,4 +1,3 @@
-@contentrepository @adapters=DoctrineDBAL
 Feature: Single Node operations on live workspace
 
   As a user of the CR I want to execute operations on a node in live workspace.

@@ -1,4 +1,3 @@
-@contentrepository @adapters=DoctrineDBAL
 Feature: Additional constraint checks after move node capabilities are introduced
 
   Background:

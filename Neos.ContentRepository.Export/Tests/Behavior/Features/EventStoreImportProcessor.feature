@@ -1,4 +1,3 @@
-@contentrepository
 Feature: As a user of the CR I want to import events using the EventStoreImportProcessor
 
   Background:

@@ -1,4 +1,3 @@
-@contentrepository @adapters=DoctrineDBAL
 Feature: Find and count references and their target nodes using the findReferences, findBackReferences, countReferences and countBackReferences queries
 
   Background:

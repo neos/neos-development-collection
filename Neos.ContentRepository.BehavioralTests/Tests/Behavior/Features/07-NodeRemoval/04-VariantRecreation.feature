@@ -1,4 +1,3 @@
-@contentrepository @adapters=DoctrineDBAL,Postgres
 Feature: Recreate a node variant
 
   As a user of the CR I want to be able to recreate a variant after I deleted and published it
