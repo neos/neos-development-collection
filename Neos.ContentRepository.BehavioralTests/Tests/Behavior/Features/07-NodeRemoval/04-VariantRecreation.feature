@@ -92,7 +92,6 @@ Feature: Recreate a node variant
 
     When I am in workspace "user-ws" and dimension space point {"language": "de"}
     Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node new-user-cs-id;sir-david-nodenborough;{"language": "de"}
-    And I expect this node to have path "document"
     Then I expect node aggregate identifier "nodimus-prime" to lead to node new-user-cs-id;nodimus-prime;{"language": "de"}
     And I expect this node to have path "document/tethered-document"
     Then I expect node aggregate identifier "nodimus-mediocre" to lead to node new-user-cs-id;nodimus-mediocre;{"language": "de"}

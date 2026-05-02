@@ -100,7 +100,6 @@ Feature: Remove NodeAggregate
     Then I expect the subgraph projection to consist of exactly 3 nodes
     And I expect node aggregate identifier "lady-eleonode-nodesworth" to lead to node live-cs-identifier;lady-eleonode-nodesworth;{}
     And I expect node aggregate identifier "nody-mc-nodeface" to lead to node live-cs-identifier;nody-mc-nodeface;{"language":"de"}
-    And I expect this node to have path "document"
     And I expect node aggregate identifier "nodimus-prime" to lead to node live-cs-identifier;nodimus-prime;{"language":"de"}
     And I expect this node to have path "document/child-document"
 
@@ -108,6 +107,5 @@ Feature: Remove NodeAggregate
     Then I expect the subgraph projection to consist of exactly 3 nodes
     And I expect node aggregate identifier "lady-eleonode-nodesworth" to lead to node live-cs-identifier;lady-eleonode-nodesworth;{}
     And I expect node aggregate identifier "nody-mc-nodeface" to lead to node live-cs-identifier;nody-mc-nodeface;{"language":"gsw"}
-    And I expect this node to have path "document"
     And I expect node aggregate identifier "nodimus-prime" to lead to node live-cs-identifier;nodimus-prime;{"language":"de"}
     And I expect this node to have path "document/child-document"

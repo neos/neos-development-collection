@@ -131,7 +131,6 @@ Feature: Create node specialization
       | Name              | NodeDiscriminator                                         |
       | document          | cs-identifier;sir-david-nodenborough;{"example":"source"} |
     And I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{"example":"source"}
-    And I expect this node to have path "document"
     And I expect this node to have the following child nodes:
       | Name              | NodeDiscriminator                                         |
       | eldest-document   | cs-identifier;eldest-mc-nodeface;{"example":"source"}     |

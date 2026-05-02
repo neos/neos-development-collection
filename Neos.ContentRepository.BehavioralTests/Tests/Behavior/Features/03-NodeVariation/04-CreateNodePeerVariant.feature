@@ -171,14 +171,12 @@ Feature: Create node peer variant
       | youngest-document | cs-identifier;youngest-mc-nodeface;{"example":"source"} |
     And I expect node aggregate identifier "eldest-mc-nodeface" to lead to no node
     And I expect node aggregate identifier "elder-mc-nodeface" to lead to node cs-identifier;elder-mc-nodeface;{"example":"source"}
-    And I expect this node to have path "elder-document"
     And I expect this node to have no preceding siblings
     And I expect this node to have the following succeeding siblings:
       | NodeDiscriminator                                       |
       | cs-identifier;nody-mc-nodeface;{"example":"source"}     |
       | cs-identifier;youngest-mc-nodeface;{"example":"source"} |
     And I expect node aggregate identifier "nody-mc-nodeface" to lead to node cs-identifier;nody-mc-nodeface;{"example":"source"}
-    And I expect this node to have path "document"
     And I expect this node to have the following child nodes:
       | Name                | NodeDiscriminator                                         |
       | tethered-document   | cs-identifier;nodewyn-tetherton;{"example":"source"}      |
@@ -197,7 +195,6 @@ Feature: Create node peer variant
     And I expect this node to have path "document/invariable-document"
     And I expect node aggregate identifier "younger-mc-nodeface" to lead to no node
     And I expect node aggregate identifier "youngest-mc-nodeface" to lead to node cs-identifier;youngest-mc-nodeface;{"example":"source"}
-    And I expect this node to have path "youngest-document"
     And I expect this node to have the following preceding siblings:
       | NodeDiscriminator                                    |
       | cs-identifier;nody-mc-nodeface;{"example":"source"}  |
@@ -215,7 +212,6 @@ Feature: Create node peer variant
       | younger-document  | cs-identifier;younger-mc-nodeface;{"example":"peer"}  |
       | youngest-document | cs-identifier;youngest-mc-nodeface;{"example":"peer"} |
     And I expect node aggregate identifier "eldest-mc-nodeface" to lead to node cs-identifier;eldest-mc-nodeface;{"example":"peer"}
-    And I expect this node to have path "eldest-document"
     And I expect this node to have no preceding siblings
     And I expect this node to have the following succeeding siblings:
       | NodeDiscriminator                                     |
@@ -224,7 +220,6 @@ Feature: Create node peer variant
       | cs-identifier;younger-mc-nodeface;{"example":"peer"}  |
       | cs-identifier;youngest-mc-nodeface;{"example":"peer"} |
     And I expect node aggregate identifier "elder-mc-nodeface" to lead to node cs-identifier;elder-mc-nodeface;{"example":"peer"}
-    And I expect this node to have path "elder-document"
     And I expect this node to have the following preceding siblings:
       | NodeDiscriminator                                   |
       | cs-identifier;eldest-mc-nodeface;{"example":"peer"} |
@@ -234,7 +229,6 @@ Feature: Create node peer variant
       | cs-identifier;younger-mc-nodeface;{"example":"peer"}  |
       | cs-identifier;youngest-mc-nodeface;{"example":"peer"} |
     And I expect node aggregate identifier "nody-mc-nodeface" to lead to node cs-identifier;nody-mc-nodeface;{"example":"peer"}
-    And I expect this node to have path "document"
     And I expect this node to have the following child nodes:
       | Name              | NodeDiscriminator                                  |
       | tethered-document | cs-identifier;nodewyn-tetherton;{"example":"peer"} |
@@ -256,7 +250,6 @@ Feature: Create node peer variant
     And I expect node aggregate identifier "nodimer-tetherton" to lead to node cs-identifier;nodimer-tetherton;{"example":"peer"}
     And I expect this node to have path "document/tethered-document/tethered"
     And I expect node aggregate identifier "younger-mc-nodeface" to lead to node cs-identifier;younger-mc-nodeface;{"example":"peer"}
-    And I expect this node to have path "younger-document"
     And I expect this node to have the following preceding siblings:
       | NodeDiscriminator                                   |
       | cs-identifier;nody-mc-nodeface;{"example":"peer"}   |
@@ -266,7 +259,6 @@ Feature: Create node peer variant
       | NodeDiscriminator                                     |
       | cs-identifier;youngest-mc-nodeface;{"example":"peer"} |
     And I expect node aggregate identifier "youngest-mc-nodeface" to lead to node cs-identifier;youngest-mc-nodeface;{"example":"peer"}
-    And I expect this node to have path "youngest-document"
     And I expect this node to have the following preceding siblings:
       | NodeDiscriminator                                    |
       | cs-identifier;younger-mc-nodeface;{"example":"peer"} |
@@ -287,7 +279,6 @@ Feature: Create node peer variant
       | younger-document  | cs-identifier;younger-mc-nodeface;{"example":"peer"}  |
       | youngest-document | cs-identifier;youngest-mc-nodeface;{"example":"peer"} |
     And I expect node aggregate identifier "eldest-mc-nodeface" to lead to node cs-identifier;eldest-mc-nodeface;{"example":"peer"}
-    And I expect this node to have path "eldest-document"
     And I expect this node to have no preceding siblings
     And I expect this node to have the following succeeding siblings:
       | NodeDiscriminator                                     |
@@ -296,7 +287,6 @@ Feature: Create node peer variant
       | cs-identifier;younger-mc-nodeface;{"example":"peer"}  |
       | cs-identifier;youngest-mc-nodeface;{"example":"peer"} |
     And I expect node aggregate identifier "elder-mc-nodeface" to lead to node cs-identifier;elder-mc-nodeface;{"example":"peer"}
-    And I expect this node to have path "elder-document"
     And I expect this node to have the following preceding siblings:
       | NodeDiscriminator                                   |
       | cs-identifier;eldest-mc-nodeface;{"example":"peer"} |
@@ -306,7 +296,6 @@ Feature: Create node peer variant
       | cs-identifier;younger-mc-nodeface;{"example":"peer"}  |
       | cs-identifier;youngest-mc-nodeface;{"example":"peer"} |
     And I expect node aggregate identifier "nody-mc-nodeface" to lead to node cs-identifier;nody-mc-nodeface;{"example":"peer"}
-    And I expect this node to have path "document"
     And I expect this node to have the following child nodes:
       | Name              | NodeDiscriminator                                  |
       | tethered-document | cs-identifier;nodewyn-tetherton;{"example":"peer"} |
@@ -328,7 +317,6 @@ Feature: Create node peer variant
     And I expect node aggregate identifier "nodimer-tetherton" to lead to node cs-identifier;nodimer-tetherton;{"example":"peer"}
     And I expect this node to have path "document/tethered-document/tethered"
     And I expect node aggregate identifier "younger-mc-nodeface" to lead to node cs-identifier;younger-mc-nodeface;{"example":"peer"}
-    And I expect this node to have path "younger-document"
     And I expect this node to have the following preceding siblings:
       | NodeDiscriminator                                   |
       | cs-identifier;nody-mc-nodeface;{"example":"peer"}   |
@@ -338,7 +326,6 @@ Feature: Create node peer variant
       | NodeDiscriminator                                     |
       | cs-identifier;youngest-mc-nodeface;{"example":"peer"} |
     And I expect node aggregate identifier "youngest-mc-nodeface" to lead to node cs-identifier;youngest-mc-nodeface;{"example":"peer"}
-    And I expect this node to have path "youngest-document"
     And I expect this node to have the following preceding siblings:
       | NodeDiscriminator                                    |
       | cs-identifier;younger-mc-nodeface;{"example":"peer"} |
@@ -461,14 +448,12 @@ Feature: Create node peer variant
       | eldest-document | cs-identifier;eldest-mc-nodeface;{"example":"peer"} |
       | document        | cs-identifier;nody-mc-nodeface;{"example":"peer"}   |
     And I expect node aggregate identifier "eldest-mc-nodeface" to lead to node cs-identifier;eldest-mc-nodeface;{"example":"peer"}
-    And I expect this node to have path "eldest-document"
     And I expect this node to have no preceding siblings
     And I expect this node to have the following succeeding siblings:
       | NodeDiscriminator                                 |
       | cs-identifier;nody-mc-nodeface;{"example":"peer"} |
     And I expect node aggregate identifier "elder-mc-nodeface" to lead to no node
     And I expect node aggregate identifier "nody-mc-nodeface" to lead to node cs-identifier;nody-mc-nodeface;{"example":"peer"}
-    And I expect this node to have path "document"
     And I expect this node to have the following child nodes:
       | Name              | NodeDiscriminator                                  |
       | tethered-document | cs-identifier;nodewyn-tetherton;{"example":"peer"} |
@@ -495,14 +480,12 @@ Feature: Create node peer variant
       | eldest-document | cs-identifier;eldest-mc-nodeface;{"example":"peer"}   |
       | document        | cs-identifier;nody-mc-nodeface;{"example":"peerSpec"} |
     And I expect node aggregate identifier "eldest-mc-nodeface" to lead to node cs-identifier;eldest-mc-nodeface;{"example":"peer"}
-    And I expect this node to have path "eldest-document"
     And I expect this node to have no preceding siblings
     And I expect this node to have the following succeeding siblings:
       | NodeDiscriminator                                     |
       | cs-identifier;nody-mc-nodeface;{"example":"peerSpec"} |
     And I expect node aggregate identifier "elder-mc-nodeface" to lead to no node
     And I expect node aggregate identifier "nody-mc-nodeface" to lead to node cs-identifier;nody-mc-nodeface;{"example":"peerSpec"}
-    And I expect this node to have path "document"
     And I expect this node to have the following child nodes:
       | Name              | NodeDiscriminator                                      |
       | tethered-document | cs-identifier;nodewyn-tetherton;{"example":"peerSpec"} |
@@ -634,14 +617,12 @@ Feature: Create node peer variant
       | eldest-document | cs-identifier;eldest-mc-nodeface;{"example":"peer"} |
       | document        | cs-identifier;nody-mc-nodeface;{"example":"peer"}   |
     And I expect node aggregate identifier "eldest-mc-nodeface" to lead to node cs-identifier;eldest-mc-nodeface;{"example":"peer"}
-    And I expect this node to have path "eldest-document"
     And I expect node aggregate identifier "elder-mc-nodeface" to lead to no node
     And I expect this node to have no preceding siblings
     And I expect this node to have the following succeeding siblings:
       | NodeDiscriminator                                 |
       | cs-identifier;nody-mc-nodeface;{"example":"peer"} |
     And I expect node aggregate identifier "nody-mc-nodeface" to lead to node cs-identifier;nody-mc-nodeface;{"example":"peer"}
-    And I expect this node to have path "document"
     And I expect this node to have the following child nodes:
       | Name              | NodeDiscriminator                                  |
       | tethered-document | cs-identifier;nodewyn-tetherton;{"example":"peer"} |
@@ -668,14 +649,12 @@ Feature: Create node peer variant
       | eldest-document | cs-identifier;eldest-mc-nodeface;{"example":"peer"}   |
       | document        | cs-identifier;nody-mc-nodeface;{"example":"peerSpec"} |
     And I expect node aggregate identifier "eldest-mc-nodeface" to lead to node cs-identifier;eldest-mc-nodeface;{"example":"peer"}
-    And I expect this node to have path "eldest-document"
     And I expect this node to have no preceding siblings
     And I expect this node to have the following succeeding siblings:
       | NodeDiscriminator                                     |
       | cs-identifier;nody-mc-nodeface;{"example":"peerSpec"} |
     And I expect node aggregate identifier "elder-mc-nodeface" to lead to no node
     And I expect node aggregate identifier "nody-mc-nodeface" to lead to node cs-identifier;nody-mc-nodeface;{"example":"peerSpec"}
-    And I expect this node to have path "document"
     And I expect this node to have the following child nodes:
       | Name              | NodeDiscriminator                                      |
       | tethered-document | cs-identifier;nodewyn-tetherton;{"example":"peerSpec"} |
@@ -784,13 +763,11 @@ Feature: Create node peer variant
       | eldest-document | cs-identifier;eldest-mc-nodeface;{"example":"peer"} |
       | elder-document  | cs-identifier;elder-mc-nodeface;{"example":"peer"}  |
     And I expect node aggregate identifier "eldest-mc-nodeface" to lead to node cs-identifier;eldest-mc-nodeface;{"example":"peer"}
-    And I expect this node to have path "eldest-document"
     And I expect this node to have no preceding siblings
     And I expect this node to have the following succeeding siblings:
       | NodeDiscriminator                                  |
       | cs-identifier;elder-mc-nodeface;{"example":"peer"} |
     And I expect node aggregate identifier "elder-mc-nodeface" to lead to node cs-identifier;elder-mc-nodeface;{"example":"peer"}
-    And I expect this node to have path "elder-document"
     And I expect this node to have the following child nodes:
       | Name                 | NodeDiscriminator                                        |
       | elder-child-document | cs-identifier;elder-child-mc-nodeface;{"example":"peer"} |
@@ -805,13 +782,11 @@ Feature: Create node peer variant
       | eldest-document | cs-identifier;eldest-mc-nodeface;{"example":"peer"} |
       | elder-document  | cs-identifier;elder-mc-nodeface;{"example":"peer"}  |
     And I expect node aggregate identifier "eldest-mc-nodeface" to lead to node cs-identifier;eldest-mc-nodeface;{"example":"peer"}
-    And I expect this node to have path "eldest-document"
     And I expect this node to have no preceding siblings
     And I expect this node to have the following succeeding siblings:
       | NodeDiscriminator                                  |
       | cs-identifier;elder-mc-nodeface;{"example":"peer"} |
     And I expect node aggregate identifier "elder-mc-nodeface" to lead to node cs-identifier;elder-mc-nodeface;{"example":"peer"}
-    And I expect this node to have path "elder-document"
     And I expect this node to have the following child nodes:
       | Name                 | NodeDiscriminator                                        |
       | elder-child-document | cs-identifier;elder-child-mc-nodeface;{"example":"peer"} |

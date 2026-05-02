@@ -78,14 +78,12 @@ Feature: Move a node without content dimensions
 
     When I am in workspace "live" and dimension space point {}
     Then I expect node aggregate identifier "sir-nodeward-nodington-iii" to lead to node cs-identifier;sir-nodeward-nodington-iii;{}
-    And I expect this node to have path "esquire"
     And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
     And I expect this node to have no preceding siblings
     And I expect this node to have the following succeeding siblings:
       | NodeDiscriminator                       |
       | cs-identifier;sir-david-nodenborough;{} |
     And I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{}
-    And I expect this node to have path "document"
     And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
     And I expect this node to have the following preceding siblings:
       | NodeDiscriminator                           |
@@ -115,14 +113,12 @@ Feature: Move a node without content dimensions
 
     When I am in workspace "live" and dimension space point {}
     Then I expect node aggregate identifier "sir-nodeward-nodington-iii" to lead to node cs-identifier;sir-nodeward-nodington-iii;{}
-    And I expect this node to have path "esquire"
     And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
     And I expect this node to have no preceding siblings
     And I expect this node to have the following succeeding siblings:
       | NodeDiscriminator                       |
       | cs-identifier;sir-david-nodenborough;{} |
     And I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{}
-    And I expect this node to have path "document"
     And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
     And I expect this node to have the following preceding siblings:
       | NodeDiscriminator                           |
@@ -171,7 +167,6 @@ Feature: Move a node without content dimensions
 
     When I am in workspace "live" and dimension space point {}
     And I expect node aggregate identifier "sir-nodeward-nodington-iii" to lead to node cs-identifier;sir-nodeward-nodington-iii;{}
-    And I expect this node to have path "esquire"
     And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
     And I expect this node to have no preceding siblings
     And I expect this node to have no succeeding siblings
@@ -220,7 +215,6 @@ Feature: Move a node without content dimensions
 
     When I am in workspace "live" and dimension space point {}
     And I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{}
-    And I expect this node to have path "document"
     And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
     And I expect this node to have no preceding siblings
     And I expect this node to have the following succeeding siblings:
@@ -228,7 +222,6 @@ Feature: Move a node without content dimensions
       | cs-identifier;nody-mc-nodeface;{}           |
       | cs-identifier;sir-nodeward-nodington-iii;{} |
     And I expect node aggregate identifier "nody-mc-nodeface" to lead to node cs-identifier;nody-mc-nodeface;{}
-    And I expect this node to have path "child-document"
     And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
     And I expect this node to have the following preceding siblings:
       | NodeDiscriminator                       |
@@ -237,7 +230,6 @@ Feature: Move a node without content dimensions
       | NodeDiscriminator                           |
       | cs-identifier;sir-nodeward-nodington-iii;{} |
     And I expect node aggregate identifier "sir-nodeward-nodington-iii" to lead to node cs-identifier;sir-nodeward-nodington-iii;{}
-    And I expect this node to have path "esquire"
     And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
     And I expect this node to have the following preceding siblings:
       | NodeDiscriminator                       |

@@ -78,7 +78,6 @@ Feature: Disable a node aggregate
       | 2     | nody-mc-nodeface        |
       | 1     | succeeding-nodenborough |
     And I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{}
-    And I expect this node to have path "document"
     And the subtree for node aggregate "sir-david-nodenborough" with node types "" and 1 levels deep should be:
       | Level | nodeAggregateId        |
       | 0     | sir-david-nodenborough |

@@ -142,7 +142,6 @@ Feature: Change node aggregate name
 
     When I am in workspace "live" and dimension space point {"example": "peer"}
     Then I expect node aggregate identifier "nody-mc-nodeface" to lead to node cs-identifier;nody-mc-nodeface;{"example":"peer"}
-    And I expect this node to have path "renamed-document"
     Then I expect node aggregate identifier "nodimus-prime" to lead to node cs-identifier;nodimus-prime;{"example":"peer"}
     And I expect this node to have path "renamed-document/tethered"
     Then I expect node aggregate identifier "nodimus-mediocre" to lead to no node

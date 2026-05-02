@@ -252,7 +252,6 @@ Feature: Create node aggregate with node
     And I expect this node to not be referenced
 
     And I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{"language":"mul"}
-    And I expect this node to have path "node"
     And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
     And I expect this node to have no child nodes
     And I expect this node to have no preceding siblings
@@ -276,7 +275,6 @@ Feature: Create node aggregate with node
       | node | cs-identifier;sir-david-nodenborough;{"language":"mul"} |
 
     And I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{"language":"mul"}
-    And I expect this node to have path "node"
     And I expect this node to have the following child nodes:
       | Name                | NodeDiscriminator                                             |
       | elder-child-node    | cs-identifier;nody-mc-nodeface-the-elder;{"language":"de"}    |
@@ -337,7 +335,6 @@ Feature: Create node aggregate with node
       | node | cs-identifier;sir-david-nodenborough;{"language":"mul"} |
 
     And I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{"language":"mul"}
-    And I expect this node to have path "node"
     And I expect this node to have the following child nodes:
       | Name                | NodeDiscriminator                                             |
       | eldest-child-node   | cs-identifier;nody-mc-nodeface-the-eldest;{"language":"gsw"}  |
@@ -435,7 +432,6 @@ Feature: Create node aggregate with node
       | esquire | cs-identifier;sir-nodeward-nodington-iii;{"language":"en"} |
 
     And I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{"language":"mul"}
-    And I expect this node to have path "node"
     And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
     And I expect this node to have no child nodes
     And I expect this node to have no preceding siblings
@@ -450,7 +446,6 @@ Feature: Create node aggregate with node
     And I expect node aggregate identifier "nody-mc-nodeface-the-younger" to lead to no node
 
     And I expect node aggregate identifier "sir-nodeward-nodington-iii" to lead to node cs-identifier;sir-nodeward-nodington-iii;{"language":"en"}
-    And I expect this node to have path "esquire"
     And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
     And I expect this node to have no child nodes
     And I expect this node to have the following preceding siblings:

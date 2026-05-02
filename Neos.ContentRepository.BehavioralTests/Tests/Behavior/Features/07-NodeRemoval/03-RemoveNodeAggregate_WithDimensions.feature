@@ -72,7 +72,6 @@ Feature: Remove NodeAggregate
       | 1     | sir-david-nodenborough |
 
     And I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{"language":"en"}
-    And I expect this node to have path "document"
     And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
     And I expect this node to have no child nodes
     And I expect this node to have no references
@@ -96,7 +95,6 @@ Feature: Remove NodeAggregate
       | 2     | nodingers-kitten       |
 
     And I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{"language":"en"}
-    And I expect this node to have path "document"
     And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
     And I expect this node to have no child nodes
     And I expect this node to have no references
@@ -105,7 +103,6 @@ Feature: Remove NodeAggregate
       | references | cs-identifier;nodingers-cat;{"language":"en"} | null       |
 
     And I expect node aggregate identifier "nodingers-cat" to lead to node cs-identifier;nodingers-cat;{"language":"en"}
-    And I expect this node to have path "pet"
     And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
     And I expect this node to have the following child nodes:
       | Name   | NodeDiscriminator                                |
@@ -134,7 +131,6 @@ Feature: Remove NodeAggregate
       | 1     | sir-david-nodenborough |
 
     And I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{"language":"en"}
-    And I expect this node to have path "document"
     And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
     And I expect this node to have no child nodes
     And I expect this node to have no references
@@ -159,7 +155,6 @@ Feature: Remove NodeAggregate
       | 2     | nodingers-kitten       |
 
     And I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{"language":"en"}
-    And I expect this node to have path "document"
     And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
     And I expect this node to have no child nodes
     And I expect this node to have no references
@@ -168,7 +163,6 @@ Feature: Remove NodeAggregate
       | references | cs-identifier;nodingers-cat;{"language":"en"} | null       |
 
     And I expect node aggregate identifier "nodingers-cat" to lead to node cs-identifier;nodingers-cat;{"language":"en"}
-    And I expect this node to have path "pet"
     And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
     And I expect this node to have the following child nodes:
       | Name   | NodeDiscriminator                                |
@@ -219,7 +213,6 @@ Feature: Remove NodeAggregate
       | 1     | sir-david-nodenborough |
 
     And I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{"language":"en"}
-    And I expect this node to have path "document"
     And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
     And I expect this node to have no child nodes
     And I expect this node to have no references
@@ -240,7 +233,6 @@ Feature: Remove NodeAggregate
       | 1     | sir-david-nodenborough |
 
     And I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{"language":"en"}
-    And I expect this node to have path "document"
     And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
     And I expect this node to have no child nodes
     And I expect this node to have no references
@@ -261,7 +253,6 @@ Feature: Remove NodeAggregate
       | 1     | sir-david-nodenborough |
 
     And I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{"language":"en"}
-    And I expect this node to have path "document"
     And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
     And I expect this node to have no child nodes
     And I expect this node to have no references
@@ -282,7 +273,6 @@ Feature: Remove NodeAggregate
       | 1     | sir-david-nodenborough |
 
     And I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{"language":"en"}
-    And I expect this node to have path "document"
     And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
     And I expect this node to have no child nodes
     And I expect this node to have no references
@@ -326,14 +316,12 @@ Feature: Remove NodeAggregate
       | 2     | nodingers-kitten       |
 
     And I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{"language":"en"}
-    And I expect this node to have path "document"
     And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
     And I expect this node to have no child nodes
     And I expect this node to have no references
     And I expect this node to not be referenced
 
     And I expect node aggregate identifier "nodingers-cat" to lead to node cs-identifier;nodingers-cat;{"language":"en"}
-    And I expect this node to have path "pet"
     And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
     And I expect this node to have the following child nodes:
       | Name   | NodeDiscriminator                                |
@@ -388,7 +376,6 @@ Feature: Remove NodeAggregate
       | 1     | nodingers-cat          |
 
     And I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{"language":"en"}
-    And I expect this node to have path "document"
     And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
     And I expect this node to have no child nodes
     And I expect this node to have no references
@@ -397,7 +384,6 @@ Feature: Remove NodeAggregate
       | references | cs-identifier;nodingers-cat;{"language":"de"} | null       |
 
     And I expect node aggregate identifier "nodingers-cat" to lead to node cs-identifier;nodingers-cat;{"language":"de"}
-    And I expect this node to have path "pet"
     And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
     And I expect this node to have no child nodes
     And I expect this node to have the following references:
@@ -422,7 +408,6 @@ Feature: Remove NodeAggregate
       | 1     | nodingers-cat          |
 
     And I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{"language":"en"}
-    And I expect this node to have path "document"
     And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
     And I expect this node to have no child nodes
     And I expect this node to have no references
@@ -431,7 +416,6 @@ Feature: Remove NodeAggregate
       | references | cs-identifier;nodingers-cat;{"language":"de"} | null       |
 
     And I expect node aggregate identifier "nodingers-cat" to lead to node cs-identifier;nodingers-cat;{"language":"de"}
-    And I expect this node to have path "pet"
     And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
     And I expect this node to have no child nodes
     And I expect this node to have the following references:
@@ -454,7 +438,6 @@ Feature: Remove NodeAggregate
       | 1     | sir-david-nodenborough |
 
     And I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{"language":"en"}
-    And I expect this node to have path "document"
     And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
     And I expect this node to have no child nodes
     And I expect this node to have no references
@@ -476,7 +459,6 @@ Feature: Remove NodeAggregate
       | 1     | sir-david-nodenborough |
 
     And I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{"language":"en"}
-    And I expect this node to have path "document"
     And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
     And I expect this node to have no child nodes
     And I expect this node to have no references

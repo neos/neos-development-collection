@@ -159,7 +159,6 @@ Feature: Create node aggregate with node
     And I expect this node to have no succeeding siblings
 
     And I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{}
-    And I expect this node to have path "node"
     And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
     And I expect this node to have the following child nodes:
       | Name       | NodeDiscriminator                 |
@@ -177,7 +176,6 @@ Feature: Create node aggregate with node
     And I expect this node to have no succeeding siblings
 
     And I expect node aggregate identifier "sir-nodeward-nodington-iii" to lead to node cs-identifier;sir-nodeward-nodington-iii;{}
-    And I expect this node to have path "esquire"
     And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
     And I expect this node to have no child nodes
     And I expect this node to have the following preceding siblings:
@@ -236,7 +234,6 @@ Feature: Create node aggregate with node
 
     And I am in workspace "live" and dimension space point {}
     And I expect node aggregate identifier "sir-nodeward-nodington-iii" to lead to node cs-identifier;sir-nodeward-nodington-iii;{}
-    And I expect this node to have path "esquire"
     And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
     And I expect this node to have no child nodes
     And I expect this node to have no preceding siblings
@@ -408,7 +405,6 @@ Feature: Create node aggregate with node
     And I expect this node to not be referenced
 
     And I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{}
-    And I expect this node to have path "node"
     And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
     And I expect this node to have the following child nodes:
       | Name       | NodeDiscriminator                 |

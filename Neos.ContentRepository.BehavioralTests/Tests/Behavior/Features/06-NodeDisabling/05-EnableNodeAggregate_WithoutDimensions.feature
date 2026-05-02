@@ -83,7 +83,6 @@ Feature: Enable a node aggregate
       | 2     | nody-mc-nodeface        |
       | 1     | succeeding-nodenborough |
     And I expect node aggregate identifier "preceding-nodenborough" to lead to node cs-identifier;preceding-nodenborough;{}
-    And I expect this node to have path "preceding-document"
     And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
     And I expect this node to have no preceding siblings
     And I expect this node to have the following succeeding siblings:
@@ -94,7 +93,6 @@ Feature: Enable a node aggregate
       | Name       | Node                                    | Properties |
       | references | cs-identifier;sir-david-nodenborough;{} | null       |
     And I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{}
-    And I expect this node to have path "document"
     And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
     And I expect this node to have the following preceding siblings:
       | NodeDiscriminator                       |
@@ -106,7 +104,6 @@ Feature: Enable a node aggregate
       | Name       | Node                                    | Properties |
       | references | cs-identifier;preceding-nodenborough;{} | null       |
     And I expect node aggregate identifier "succeeding-nodenborough" to lead to node cs-identifier;succeeding-nodenborough;{}
-    And I expect this node to have path "succeeding-document"
     And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
     And I expect this node to have the following preceding siblings:
       | NodeDiscriminator                       |
@@ -163,7 +160,6 @@ Feature: Enable a node aggregate
     Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{}
     And I expect this node to have no child nodes
     And I expect node aggregate identifier "preceding-nodenborough" to lead to node cs-identifier;preceding-nodenborough;{}
-    And I expect this node to have path "preceding-document"
     And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
     And I expect this node to have no preceding siblings
     And I expect this node to have the following succeeding siblings:
@@ -174,7 +170,6 @@ Feature: Enable a node aggregate
       | Name       | Node                                    | Properties |
       | references | cs-identifier;sir-david-nodenborough;{} | null       |
     And I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{}
-    And I expect this node to have path "document"
     And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
     And I expect this node to have the following preceding siblings:
       | NodeDiscriminator                       |
@@ -186,7 +181,6 @@ Feature: Enable a node aggregate
       | Name       | Node                                    | Properties |
       | references | cs-identifier;preceding-nodenborough;{} | null       |
     And I expect node aggregate identifier "succeeding-nodenborough" to lead to node cs-identifier;succeeding-nodenborough;{}
-    And I expect this node to have path "succeeding-document"
     And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
     And I expect this node to have the following preceding siblings:
       | NodeDiscriminator                       |

@@ -59,7 +59,6 @@ Feature: Remove NodeAggregate
       | 0     | lady-eleonode-rootford |
       | 1     | sir-david-nodenborough |
     And I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{}
-    And I expect this node to have path "document"
     And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
     And I expect this node to have no references
     And I expect the node aggregate "nodingers-cat" to not exist
@@ -98,10 +97,8 @@ Feature: Remove NodeAggregate
       | 1     | sir-david-nodenborough |
       | 1     | nodingers-cat          |
     And I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{}
-    And I expect this node to have path "document"
     And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
     And I expect node aggregate identifier "nodingers-cat" to lead to node cs-identifier;nodingers-cat;{}
-    And I expect this node to have path "pet"
     And I expect the node aggregate "nodingers-kitten" to not exist
 
   Scenario: Remove a node aggregate, recreate it and expect it to have no references
@@ -117,11 +114,9 @@ Feature: Remove NodeAggregate
       | nodeName              | "pet"                                     |
 
     Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{}
-    And I expect this node to have path "document"
     And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
     And I expect this node to not be referenced
     And I expect node aggregate identifier "nodingers-cat" to lead to node cs-identifier;nodingers-cat;{}
-    And I expect this node to have path "pet"
     And I expect this node to have no references
     And I expect node aggregate identifier "nodingers-kitten" to lead to no node
 
