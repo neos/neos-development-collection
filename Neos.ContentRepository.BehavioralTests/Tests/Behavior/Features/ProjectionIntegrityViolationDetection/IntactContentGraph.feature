@@ -19,14 +19,11 @@ Feature: Create an intact content graph and run integrity violation detection
       | newContentStreamId   | "cs-identifier"      |
 
   Scenario: Create an intact content graph
-    When the event RootNodeAggregateWithNodeWasCreated was published with payload:
+    When the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key                         | Value                                  |
       | workspaceName               | "live"                                 |
-      | contentStreamId             | "cs-identifier"                        |
       | nodeAggregateId             | "lady-eleonode-rootford"               |
       | nodeTypeName                | "Neos.ContentRepository:Root"          |
-      | coveredDimensionSpacePoints | [{"language":"de"},{"language":"gsw"}] |
-      | nodeAggregateClassification | "root"                                 |
     And the command CreateNodeAggregateWithNode is executed with payload:
       | Key                         | Value                                     |
       | workspaceName               | "live"                                    |
@@ -55,12 +52,11 @@ Feature: Create an intact content graph and run integrity violation detection
       | parentNodeAggregateId       | "lady-eleonode-rootford"                  |
       | nodeName                    | "esquire"                                 |
       | nodeAggregateClassification | "tethered"                                |
-    And the event NodeReferencesWereSet was published with payload:
-      | Key                                      | Value                                                                   |
-      | workspaceName                            | "live"                                                                  |
-      | contentStreamId                          | "cs-identifier"                                                         |
-      | sourceNodeAggregateId                    | "nody-mc-nodeface"                                                      |
-      | affectedSourceOriginDimensionSpacePoints | [{"language":"de"}]                                                     |
-      | references                               | [{"referenceName": "referenceProperty", "references": [{"target":"sir-david-nodenborough", "properties":null}]}] |
+    And the command SetNodeReferences is executed with payload:
+      | Key                             | Value                                                                                    |
+      | workspaceName                   | "live"                                                                                   |
+      | sourceNodeAggregateId           | "source-nodandaise"                                                                      |
+      | sourceOriginDimensionSpacePoint | {"language":"de"}                                                                        |
+      | references                      | [{"referenceName": "referenceProperty", "references": [{"target":"anthony-destinode"}]}] |
     And I run integrity violation detection
     Then I expect the integrity violation detection result to contain exactly 0 errors
