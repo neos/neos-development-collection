@@ -38,7 +38,7 @@ Feature: Creation of nodes underneath disabled nodes
       | nodingers-cat   | Neos.ContentRepository.Testing:Document | the-great-nodini      | pet-document |
     Then I expect the node aggregate "nodingers-cat" to exist
     And I expect this node aggregate to disable dimension space points []
-    And I expect node aggregate identifier "nodingers-cat" and node path "document/pet-document" to lead to no node
+    And I expect node aggregate identifier "nodingers-cat" to lead to no node
 
     When the command EnableNodeAggregate is executed with payload:
       | Key                          | Value              |

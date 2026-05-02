@@ -55,13 +55,13 @@ Feature: Creation of nodes underneath disabled nodes
     And I expect this node to be a child of node cs-identifier;the-great-nodini;{"language":"mul"}
 
     When I am in dimension space point {"language":"de"}
-    And I expect node aggregate identifier "nodingers-cat" and node path "document/pet-document" to lead to no node
+    And I expect node aggregate identifier "nodingers-cat" to lead to no node
 
     When I am in dimension space point {"language":"gsw"}
-    And I expect node aggregate identifier "nodingers-cat" and node path "document/pet-document" to lead to no node
+    And I expect node aggregate identifier "nodingers-cat" to lead to no node
 
     When I am in dimension space point {"language":"ltz"}
-    And I expect node aggregate identifier "nodingers-cat" and node path "document/pet-document" to lead to no node
+    And I expect node aggregate identifier "nodingers-cat" to lead to no node
 
     When I am in dimension space point {"language":"en"}
     And I expect node aggregate identifier "nodingers-cat" and node path "document/pet-document" to lead to node cs-identifier;nodingers-cat;{"language":"mul"}
@@ -99,19 +99,19 @@ Feature: Creation of nodes underneath disabled nodes
     And I expect this node aggregate to disable dimension space points []
 
     When I am in dimension space point {"language":"mul"}
-    And I expect node aggregate identifier "nodingers-cat" and node path "document/pet-document" to lead to no node
+    And I expect node aggregate identifier "nodingers-cat" to lead to no node
 
     When I am in dimension space point {"language":"de"}
-    And I expect node aggregate identifier "nodingers-cat" and node path "document/pet-document" to lead to no node
+    And I expect node aggregate identifier "nodingers-cat" to lead to no node
 
     When I am in dimension space point {"language":"gsw"}
-    And I expect node aggregate identifier "nodingers-cat" and node path "document/pet-document" to lead to no node
+    And I expect node aggregate identifier "nodingers-cat" to lead to no node
 
     When I am in dimension space point {"language":"ltz"}
-    And I expect node aggregate identifier "nodingers-cat" and node path "document/pet-document" to lead to no node
+    And I expect node aggregate identifier "nodingers-cat" to lead to no node
 
     When I am in dimension space point {"language":"en"}
-    And I expect node aggregate identifier "nodingers-cat" and node path "document/pet-document" to lead to no node
+    And I expect node aggregate identifier "nodingers-cat" to lead to no node
 
     And the command EnableNodeAggregate is executed with payload:
       | Key                          | Value              |

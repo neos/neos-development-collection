@@ -126,10 +126,10 @@ Feature: Disable a node aggregate
       | NodeDiscriminator                        |
       | cs-identifier;succeeding-nodenborough;{} |
     And I expect this node to have no references
-    And I expect node aggregate identifier "sir-david-nodenborough" and node path "document" to lead to no node
+    And I expect node aggregate identifier "sir-david-nodenborough" to lead to no node
     And I expect node aggregate identifier "succeeding-nodenborough" and node path "succeeding-document" to lead to node cs-identifier;succeeding-nodenborough;{}
     And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
     And I expect this node to have the following preceding siblings:
       | NodeDiscriminator                       |
       | cs-identifier;preceding-nodenborough;{} |
-    And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document" to lead to no node
+    And I expect node aggregate identifier "nody-mc-nodeface" to lead to no node

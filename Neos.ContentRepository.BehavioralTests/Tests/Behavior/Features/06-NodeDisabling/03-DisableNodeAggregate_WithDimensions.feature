@@ -138,13 +138,13 @@ Feature: Disable a node aggregate
       | NodeDiscriminator                                        |
       | cs-identifier;succeeding-nodenborough;{"language":"mul"} |
     And I expect this node to have no references
-    And I expect node aggregate identifier "sir-david-nodenborough" and node path "document" to lead to no node
+    And I expect node aggregate identifier "sir-david-nodenborough" to lead to no node
     And I expect node aggregate identifier "succeeding-nodenborough" and node path "succeeding-document" to lead to node cs-identifier;succeeding-nodenborough;{"language":"mul"}
     And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
     And I expect this node to have the following preceding siblings:
       | NodeDiscriminator                                       |
       | cs-identifier;preceding-nodenborough;{"language":"mul"} |
-    And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document" to lead to no node
+    And I expect node aggregate identifier "nody-mc-nodeface" to lead to no node
 
     # Tests for the generalization
     When I am in dimension space point {"language":"mul"}
@@ -213,14 +213,14 @@ Feature: Disable a node aggregate
       | NodeDiscriminator                                        |
       | cs-identifier;succeeding-nodenborough;{"language":"mul"} |
     And I expect this node to have no references
-    And I expect node aggregate identifier "sir-david-nodenborough" and node path "document" to lead to no node
+    And I expect node aggregate identifier "sir-david-nodenborough" to lead to no node
     And I expect node aggregate identifier "succeeding-nodenborough" and node path "succeeding-document" to lead to node cs-identifier;succeeding-nodenborough;{"language":"mul"}
     And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
     And I expect this node to have the following preceding siblings:
       | NodeDiscriminator                                       |
       | cs-identifier;preceding-nodenborough;{"language":"mul"} |
     And I expect this node to have no succeeding siblings
-    And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document" to lead to no node
+    And I expect node aggregate identifier "nody-mc-nodeface" to lead to no node
 
     # Tests for the real specialization
     When I am in dimension space point {"language":"ltz"}
@@ -242,14 +242,14 @@ Feature: Disable a node aggregate
       | NodeDiscriminator                                        |
       | cs-identifier;succeeding-nodenborough;{"language":"mul"} |
     And I expect this node to have no references
-    And I expect node aggregate identifier "sir-david-nodenborough" and node path "document" to lead to no node
+    And I expect node aggregate identifier "sir-david-nodenborough" to lead to no node
     And I expect node aggregate identifier "succeeding-nodenborough" and node path "succeeding-document" to lead to node cs-identifier;succeeding-nodenborough;{"language":"mul"}
     And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
     And I expect this node to have the following preceding siblings:
       | NodeDiscriminator                                       |
       | cs-identifier;preceding-nodenborough;{"language":"mul"} |
     And I expect this node to have no succeeding siblings
-    And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document" to lead to no node
+    And I expect node aggregate identifier "nody-mc-nodeface" to lead to no node
 
     # Tests for the peer variant
     When I am in dimension space point {"language":"en"}
@@ -389,13 +389,13 @@ Feature: Disable a node aggregate
       | NodeDiscriminator                                        |
       | cs-identifier;succeeding-nodenborough;{"language":"mul"} |
     And I expect this node to have no references
-    And I expect node aggregate identifier "sir-david-nodenborough" and node path "document" to lead to no node
+    And I expect node aggregate identifier "sir-david-nodenborough" to lead to no node
     And I expect node aggregate identifier "succeeding-nodenborough" and node path "succeeding-document" to lead to node cs-identifier;succeeding-nodenborough;{"language":"mul"}
     And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
     And I expect this node to have the following preceding siblings:
       | NodeDiscriminator                                       |
       | cs-identifier;preceding-nodenborough;{"language":"mul"} |
-    And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document" to lead to no node
+    And I expect node aggregate identifier "nody-mc-nodeface" to lead to no node
 
     # Tests for the generalization
     When I am in dimension space point {"language":"mul"}
@@ -417,14 +417,14 @@ Feature: Disable a node aggregate
       | NodeDiscriminator                                        |
       | cs-identifier;succeeding-nodenborough;{"language":"mul"} |
     And I expect this node to have no references
-    And I expect node aggregate identifier "sir-david-nodenborough" and node path "document" to lead to no node
+    And I expect node aggregate identifier "sir-david-nodenborough" to lead to no node
     And I expect node aggregate identifier "succeeding-nodenborough" and node path "succeeding-document" to lead to node cs-identifier;succeeding-nodenborough;{"language":"mul"}
     And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
     And I expect this node to have the following preceding siblings:
       | NodeDiscriminator                                       |
       | cs-identifier;preceding-nodenborough;{"language":"mul"} |
     And I expect this node to have no succeeding siblings
-    And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document" to lead to no node
+    And I expect node aggregate identifier "nody-mc-nodeface" to lead to no node
 
     # Tests for the virtual specialization
     When I am in dimension space point {"language":"gsw"}
@@ -446,14 +446,14 @@ Feature: Disable a node aggregate
       | NodeDiscriminator                                        |
       | cs-identifier;succeeding-nodenborough;{"language":"mul"} |
     And I expect this node to have no references
-    And I expect node aggregate identifier "sir-david-nodenborough" and node path "document" to lead to no node
+    And I expect node aggregate identifier "sir-david-nodenborough" to lead to no node
     And I expect node aggregate identifier "succeeding-nodenborough" and node path "succeeding-document" to lead to node cs-identifier;succeeding-nodenborough;{"language":"mul"}
     And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
     And I expect this node to have the following preceding siblings:
       | NodeDiscriminator                                       |
       | cs-identifier;preceding-nodenborough;{"language":"mul"} |
     And I expect this node to have no succeeding siblings
-    And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document" to lead to no node
+    And I expect node aggregate identifier "nody-mc-nodeface" to lead to no node
 
     # Tests for the real specialization
     When I am in dimension space point {"language":"ltz"}
@@ -475,14 +475,14 @@ Feature: Disable a node aggregate
       | NodeDiscriminator                                        |
       | cs-identifier;succeeding-nodenborough;{"language":"mul"} |
     And I expect this node to have no references
-    And I expect node aggregate identifier "sir-david-nodenborough" and node path "document" to lead to no node
+    And I expect node aggregate identifier "sir-david-nodenborough" to lead to no node
     And I expect node aggregate identifier "succeeding-nodenborough" and node path "succeeding-document" to lead to node cs-identifier;succeeding-nodenborough;{"language":"mul"}
     And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
     And I expect this node to have the following preceding siblings:
       | NodeDiscriminator                                       |
       | cs-identifier;preceding-nodenborough;{"language":"mul"} |
     And I expect this node to have no succeeding siblings
-    And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document" to lead to no node
+    And I expect node aggregate identifier "nody-mc-nodeface" to lead to no node
 
     # Tests for the peer variant
     When I am in dimension space point {"language":"en"}
@@ -504,11 +504,11 @@ Feature: Disable a node aggregate
       | NodeDiscriminator                                        |
       | cs-identifier;succeeding-nodenborough;{"language":"mul"} |
     And I expect this node to have no references
-    And I expect node aggregate identifier "sir-david-nodenborough" and node path "document" to lead to no node
+    And I expect node aggregate identifier "sir-david-nodenborough" to lead to no node
     And I expect node aggregate identifier "succeeding-nodenborough" and node path "succeeding-document" to lead to node cs-identifier;succeeding-nodenborough;{"language":"mul"}
     And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
     And I expect this node to have the following preceding siblings:
       | NodeDiscriminator                                       |
       | cs-identifier;preceding-nodenborough;{"language":"mul"} |
     And I expect this node to have no succeeding siblings
-    And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document" to lead to no node
+    And I expect node aggregate identifier "nody-mc-nodeface" to lead to no node

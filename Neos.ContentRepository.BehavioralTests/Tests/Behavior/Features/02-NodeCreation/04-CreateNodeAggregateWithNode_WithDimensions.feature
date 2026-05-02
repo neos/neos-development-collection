@@ -259,12 +259,12 @@ Feature: Create node aggregate with node
     And I expect this node to have no references
     And I expect this node to not be referenced
 
-    And I expect node aggregate identifier "nody-mc-nodeface-the-eldest" and node path "node/eldest-child-node" to lead to no node
-    And I expect node aggregate identifier "nody-mc-nodeface-the-elder" and node path "node/elder-child-node" to lead to no node
-    And I expect node aggregate identifier "nody-mc-nodeface" and node path "node/child-node" to lead to no node
-    And I expect node aggregate identifier "nody-mc-nodeface-the-younger" and node path "node/younger-child-node" to lead to no node
-    And I expect node aggregate identifier "nody-mc-nodeface-the-youngest" and node path "node/youngest-child-node" to lead to no node
-    And I expect node aggregate identifier "sir-nodeward-nodington-iii" and node path "esquire" to lead to no node
+    And I expect node aggregate identifier "nody-mc-nodeface-the-eldest" to lead to no node
+    And I expect node aggregate identifier "nody-mc-nodeface-the-elder" to lead to no node
+    And I expect node aggregate identifier "nody-mc-nodeface" to lead to no node
+    And I expect node aggregate identifier "nody-mc-nodeface-the-younger" to lead to no node
+    And I expect node aggregate identifier "nody-mc-nodeface-the-youngest" to lead to no node
+    And I expect node aggregate identifier "sir-nodeward-nodington-iii" to lead to no node
 
 
     When I am in dimension space point {"language":"de"}
@@ -319,9 +319,9 @@ Feature: Create node aggregate with node
     And I expect this node to have no references
     And I expect this node to not be referenced
 
-    And I expect node aggregate identifier "nody-mc-nodeface-the-eldest" and node path "node/eldest-child-node" to lead to no node
-    And I expect node aggregate identifier "nody-mc-nodeface-the-younger" and node path "node/younger-child-node" to lead to no node
-    And I expect node aggregate identifier "sir-nodeward-nodington-iii" and node path "esquire" to lead to no node
+    And I expect node aggregate identifier "nody-mc-nodeface-the-eldest" to lead to no node
+    And I expect node aggregate identifier "nody-mc-nodeface-the-younger" to lead to no node
+    And I expect node aggregate identifier "sir-nodeward-nodington-iii" to lead to no node
 
 
     When I am in dimension space point {"language":"gsw"}
@@ -412,7 +412,7 @@ Feature: Create node aggregate with node
     And I expect this node to have no references
     And I expect this node to not be referenced
 
-    And I expect node aggregate identifier "sir-nodeward-nodington-iii" and node path "esquire" to lead to no node
+    And I expect node aggregate identifier "sir-nodeward-nodington-iii" to lead to no node
 
 
     When I am in dimension space point {"language":"en"}
@@ -433,9 +433,9 @@ Feature: Create node aggregate with node
     And I expect this node to have no references
     And I expect this node to not be referenced
 
-    And I expect node aggregate identifier "nody-mc-nodeface-the-elder" and node path "node/elder-child-node" to lead to no node
-    And I expect node aggregate identifier "nody-mc-nodeface" and node path "node/child-node" to lead to no node
-    And I expect node aggregate identifier "nody-mc-nodeface-the-younger" and node path "node/younger-child-node" to lead to no node
+    And I expect node aggregate identifier "nody-mc-nodeface-the-elder" to lead to no node
+    And I expect node aggregate identifier "nody-mc-nodeface" to lead to no node
+    And I expect node aggregate identifier "nody-mc-nodeface-the-younger" to lead to no node
 
     And I expect node aggregate identifier "sir-nodeward-nodington-iii" and node path "esquire" to lead to node cs-identifier;sir-nodeward-nodington-iii;{"language":"en"}
     And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}

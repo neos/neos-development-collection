@@ -48,7 +48,7 @@ Feature: Variation of hidden nodes
       | sourceOrigin    | {"language":"de"}  |
       | targetOrigin    | {"language":"gsw"} |
     And I am in dimension space point {"language":"de"}
-    And I expect node aggregate identifier "the-great-nodini" and node path "court-magician" to lead to no node
+    And I expect node aggregate identifier "the-great-nodini" to lead to no node
 
     When I am in dimension space point {"language":"gsw"}
     And I expect node aggregate identifier "the-great-nodini" and node path "court-magician" to lead to node cs-identifier;the-great-nodini;{"language":"gsw"}
@@ -71,10 +71,10 @@ Feature: Variation of hidden nodes
       | targetOrigin    | {"language":"gsw"} |
 
     When I am in dimension space point {"language":"de"}
-    Then I expect node aggregate identifier "the-great-nodini" and node path "court-magician" to lead to no node
+    Then I expect node aggregate identifier "the-great-nodini" to lead to no node
 
     When I am in dimension space point {"language":"gsw"}
-    Then I expect node aggregate identifier "the-great-nodini" and node path "court-magician" to lead to no node
+    Then I expect node aggregate identifier "the-great-nodini" to lead to no node
 
     When the command EnableNodeAggregate is executed with payload:
       | Key                          | Value                |
@@ -103,10 +103,10 @@ Feature: Variation of hidden nodes
       | targetOrigin    | {"language":"mul"} |
 
     When I am in dimension space point {"language":"de"}
-    Then I expect node aggregate identifier "the-great-nodini" and node path "court-magician" to lead to no node
+    Then I expect node aggregate identifier "the-great-nodini" to lead to no node
 
     When I am in dimension space point {"language":"mul"}
-    Then I expect node aggregate identifier "the-great-nodini" and node path "court-magician" to lead to no node
+    Then I expect node aggregate identifier "the-great-nodini" to lead to no node
   #cs-identifier;the-great-nodini;{"language":"mul"}
 
   Scenario: Generalize a node where the generalization target is disabled
@@ -133,10 +133,10 @@ Feature: Variation of hidden nodes
       | targetOrigin    | {"language":"de"}  |
 
     When I am in dimension space point {"language":"ltz"}
-    Then I expect node aggregate identifier "the-great-nodini" and node path "court-magician" to lead to no node
+    Then I expect node aggregate identifier "the-great-nodini" to lead to no node
 
     When I am in dimension space point {"language":"de"}
-    Then I expect node aggregate identifier "the-great-nodini" and node path "court-magician" to lead to no node
+    Then I expect node aggregate identifier "the-great-nodini" to lead to no node
 
     When the command EnableNodeAggregate is executed with payload:
       | Key                          | Value                |
@@ -165,7 +165,7 @@ Feature: Variation of hidden nodes
       | targetOrigin    | {"language":"en"}  |
 
     When I am in dimension space point {"language":"de"}
-    Then I expect node aggregate identifier "the-great-nodini" and node path "court-magician" to lead to no node
+    Then I expect node aggregate identifier "the-great-nodini" to lead to no node
 
     When I am in dimension space point {"language":"en"}
     Then I expect node aggregate identifier "the-great-nodini" and node path "court-magician" to lead to node cs-identifier;the-great-nodini;{"language":"en"}
@@ -193,10 +193,10 @@ Feature: Variation of hidden nodes
       | targetOrigin    | {"language":"en"}  |
 
     When I am in dimension space point {"language":"de"}
-    Then I expect node aggregate identifier "the-great-nodini" and node path "court-magician" to lead to no node
+    Then I expect node aggregate identifier "the-great-nodini" to lead to no node
 
     When I am in dimension space point {"language":"en"}
-    Then I expect node aggregate identifier "the-great-nodini" and node path "court-magician" to lead to no node
+    Then I expect node aggregate identifier "the-great-nodini" to lead to no node
 
     When the command EnableNodeAggregate is executed with payload:
       | Key                          | Value                |

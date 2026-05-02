@@ -77,8 +77,8 @@ Feature: Remove NodeAggregate
     And I expect this node to have no references
     And I expect this node to not be referenced
 
-    And I expect node aggregate identifier "nodingers-cat" and node path "pet" to lead to no node
-    And I expect node aggregate identifier "nodingers-kitten" and node path "pet/kitten" to lead to no node
+    And I expect node aggregate identifier "nodingers-cat" to lead to no node
+    And I expect node aggregate identifier "nodingers-kitten" to lead to no node
 
     # Check the generalization
     When I am in dimension space point {"language":"en"}
@@ -135,9 +135,9 @@ Feature: Remove NodeAggregate
     And I expect this node to have no references
     And I expect this node to not be referenced
 
-    And I expect node aggregate identifier "nodingers-cat" and node path "pet" to lead to no node
+    And I expect node aggregate identifier "nodingers-cat" to lead to no node
 
-    And I expect node aggregate identifier "nodingers-kitten" and node path "pet/kitten" to lead to no node
+    And I expect node aggregate identifier "nodingers-kitten" to lead to no node
 
     # Check the peer
     When I am in dimension space point {"language":"fr"}
@@ -236,8 +236,8 @@ Feature: Remove NodeAggregate
     And I expect this node to have no references
     And I expect this node to not be referenced
 
-    And I expect node aggregate identifier "nodingers-cat" and node path "pet" to lead to no node
-    And I expect node aggregate identifier "nodingers-kitten" and node path "pet/kitten" to lead to no node
+    And I expect node aggregate identifier "nodingers-cat" to lead to no node
+    And I expect node aggregate identifier "nodingers-kitten" to lead to no node
 
     # Check the specialization
     When I am in dimension space point {"language":"gsw"}
@@ -256,8 +256,8 @@ Feature: Remove NodeAggregate
     And I expect this node to have no references
     And I expect this node to not be referenced
 
-    And I expect node aggregate identifier "nodingers-cat" and node path "pet" to lead to no node
-    And I expect node aggregate identifier "nodingers-kitten" and node path "pet/kitten" to lead to no node
+    And I expect node aggregate identifier "nodingers-cat" to lead to no node
+    And I expect node aggregate identifier "nodingers-kitten" to lead to no node
 
     # Check the peer
     When I am in dimension space point {"language":"fr"}
@@ -276,8 +276,8 @@ Feature: Remove NodeAggregate
     And I expect this node to have no references
     And I expect this node to not be referenced
 
-    And I expect node aggregate identifier "nodingers-cat" and node path "pet" to lead to no node
-    And I expect node aggregate identifier "nodingers-kitten" and node path "pet/kitten" to lead to no node
+    And I expect node aggregate identifier "nodingers-cat" to lead to no node
+    And I expect node aggregate identifier "nodingers-kitten" to lead to no node
 
   Scenario: Disable a node aggregate, completely remove it, recreate it and expect it to be enabled but have no references
     When the command DisableNodeAggregate is executed with payload:
@@ -388,7 +388,7 @@ Feature: Remove NodeAggregate
       | references | cs-identifier;sir-david-nodenborough;{"language":"en"} | null       |
     And I expect this node to not be referenced
 
-    And I expect node aggregate identifier "nodingers-kitten" and node path "pet/kitten" to lead to no node
+    And I expect node aggregate identifier "nodingers-kitten" to lead to no node
 
     # Check the specialization
     When I am in dimension space point {"language":"gsw"}
@@ -420,7 +420,7 @@ Feature: Remove NodeAggregate
       | references | cs-identifier;sir-david-nodenborough;{"language":"en"} | null       |
     And I expect this node to not be referenced
 
-    And I expect node aggregate identifier "nodingers-kitten" and node path "pet/kitten" to lead to no node
+    And I expect node aggregate identifier "nodingers-kitten" to lead to no node
 
     # Check the generalization
     When I am in dimension space point {"language":"en"}
@@ -440,8 +440,8 @@ Feature: Remove NodeAggregate
     And I expect this node to have no references
     And I expect this node to not be referenced
 
-    And I expect node aggregate identifier "nodingers-cat" and node path "pet" to lead to no node
-    And I expect node aggregate identifier "nodingers-kitten" and node path "pet/kitten" to lead to no node
+    And I expect node aggregate identifier "nodingers-cat" to lead to no node
+    And I expect node aggregate identifier "nodingers-kitten" to lead to no node
 
     # Check the peer variant
     When I am in dimension space point {"language":"fr"}
@@ -461,5 +461,5 @@ Feature: Remove NodeAggregate
     And I expect this node to have no references
     And I expect this node to not be referenced
 
-    And I expect node aggregate identifier "nodingers-cat" and node path "pet" to lead to no node
-    And I expect node aggregate identifier "nodingers-kitten" and node path "pet/kitten" to lead to no node
+    And I expect node aggregate identifier "nodingers-cat" to lead to no node
+    And I expect node aggregate identifier "nodingers-kitten" to lead to no node

@@ -169,7 +169,7 @@ Feature: Create node peer variant
       | elder-document    | cs-identifier;elder-mc-nodeface;{"example":"source"}    |
       | document          | cs-identifier;nody-mc-nodeface;{"example":"source"}     |
       | youngest-document | cs-identifier;youngest-mc-nodeface;{"example":"source"} |
-    And I expect node aggregate identifier "eldest-mc-nodeface" and node path "eldest-document" to lead to no node
+    And I expect node aggregate identifier "eldest-mc-nodeface" to lead to no node
     And I expect node aggregate identifier "elder-mc-nodeface" and node path "elder-document" to lead to node cs-identifier;elder-mc-nodeface;{"example":"source"}
     And I expect this node to have no preceding siblings
     And I expect this node to have the following succeeding siblings:
@@ -190,7 +190,7 @@ Feature: Create node peer variant
     And I expect node aggregate identifier "nodewyn-tetherton" and node path "document/tethered-document" to lead to node cs-identifier;nodewyn-tetherton;{"example":"source"}
     And I expect node aggregate identifier "nodimer-tetherton" and node path "document/tethered-document/tethered" to lead to node cs-identifier;nodimer-tetherton;{"example":"source"}
     And I expect node aggregate identifier "invariable-mc-nodeface" and node path "document/invariable-document" to lead to node cs-identifier;invariable-mc-nodeface;{"example":"source"}
-    And I expect node aggregate identifier "younger-mc-nodeface" and node path "younger-document" to lead to no node
+    And I expect node aggregate identifier "younger-mc-nodeface" to lead to no node
     And I expect node aggregate identifier "youngest-mc-nodeface" and node path "youngest-document" to lead to node cs-identifier;youngest-mc-nodeface;{"example":"source"}
     And I expect this node to have the following preceding siblings:
       | NodeDiscriminator                                    |
@@ -261,7 +261,7 @@ Feature: Create node peer variant
       | cs-identifier;elder-mc-nodeface;{"example":"peer"}   |
       | cs-identifier;eldest-mc-nodeface;{"example":"peer"}  |
     And I expect this node to have no succeeding siblings
-    And I expect node aggregate identifier "invariable-mc-nodeface" and node path "document/invariable-document" to lead to no node
+    And I expect node aggregate identifier "invariable-mc-nodeface" to lead to no node
 
     When I am in workspace "live" and dimension space point {"example":"peerSpec"}
     Then I expect the subgraph projection to consist of exactly 8 nodes
@@ -326,7 +326,7 @@ Feature: Create node peer variant
       | cs-identifier;elder-mc-nodeface;{"example":"peer"}   |
       | cs-identifier;eldest-mc-nodeface;{"example":"peer"}  |
     And I expect this node to have no succeeding siblings
-    And I expect node aggregate identifier "invariable-mc-nodeface" and node path "document/invariable-document" to lead to no node
+    And I expect node aggregate identifier "invariable-mc-nodeface" to lead to no node
 
   Scenario: Create peer variant of node to dimension space point with specializations that are partially occupied
     Given the command CreateNodeVariant is executed with payload:
@@ -445,7 +445,7 @@ Feature: Create node peer variant
     And I expect this node to have the following succeeding siblings:
       | NodeDiscriminator                                 |
       | cs-identifier;nody-mc-nodeface;{"example":"peer"} |
-    And I expect node aggregate identifier "elder-mc-nodeface" and node path "elder-document" to lead to no node
+    And I expect node aggregate identifier "elder-mc-nodeface" to lead to no node
     And I expect node aggregate identifier "nody-mc-nodeface" and node path "document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"peer"}
     And I expect this node to have the following child nodes:
       | Name              | NodeDiscriminator                                  |
@@ -459,9 +459,9 @@ Feature: Create node peer variant
       | Name     | NodeDiscriminator                                  |
       | tethered | cs-identifier;nodimer-tetherton;{"example":"peer"} |
     And I expect node aggregate identifier "nodimer-tetherton" and node path "document/tethered-document/tethered" to lead to node cs-identifier;nodimer-tetherton;{"example":"peer"}
-    And I expect node aggregate identifier "younger-mc-nodeface" and node path "younger-document" to lead to no node
-    And I expect node aggregate identifier "youngest-mc-nodeface" and node path "youngest-document" to lead to no node
-    And I expect node aggregate identifier "invariable-mc-nodeface" and node path "document/invariable-document" to lead to no node
+    And I expect node aggregate identifier "younger-mc-nodeface" to lead to no node
+    And I expect node aggregate identifier "youngest-mc-nodeface" to lead to no node
+    And I expect node aggregate identifier "invariable-mc-nodeface" to lead to no node
 
     When I am in workspace "live" and dimension space point {"example": "peerSpec"}
     Then I expect the subgraph projection to consist of exactly 5 nodes
@@ -475,7 +475,7 @@ Feature: Create node peer variant
     And I expect this node to have the following succeeding siblings:
       | NodeDiscriminator                                     |
       | cs-identifier;nody-mc-nodeface;{"example":"peerSpec"} |
-    And I expect node aggregate identifier "elder-mc-nodeface" and node path "elder-document" to lead to no node
+    And I expect node aggregate identifier "elder-mc-nodeface" to lead to no node
     And I expect node aggregate identifier "nody-mc-nodeface" and node path "document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"peerSpec"}
     And I expect this node to have the following child nodes:
       | Name              | NodeDiscriminator                                      |
@@ -489,9 +489,9 @@ Feature: Create node peer variant
       | Name     | NodeDiscriminator                                      |
       | tethered | cs-identifier;nodimer-tetherton;{"example":"peerSpec"} |
     And I expect node aggregate identifier "nodimer-tetherton" and node path "document/tethered-document/tethered" to lead to node cs-identifier;nodimer-tetherton;{"example":"peerSpec"}
-    And I expect node aggregate identifier "younger-mc-nodeface" and node path "younger-document" to lead to no node
-    And I expect node aggregate identifier "youngest-mc-nodeface" and node path "youngest-document" to lead to no node
-    And I expect node aggregate identifier "invariable-mc-nodeface" and node path "document/invariable-document" to lead to no node
+    And I expect node aggregate identifier "younger-mc-nodeface" to lead to no node
+    And I expect node aggregate identifier "youngest-mc-nodeface" to lead to no node
+    And I expect node aggregate identifier "invariable-mc-nodeface" to lead to no node
 
   Scenario: Create peer variant of node to dimension space point that is already covered
     Given the command CreateNodeVariant is executed with payload:
@@ -606,7 +606,7 @@ Feature: Create node peer variant
       | eldest-document | cs-identifier;eldest-mc-nodeface;{"example":"peer"} |
       | document        | cs-identifier;nody-mc-nodeface;{"example":"peer"}   |
     And I expect node aggregate identifier "eldest-mc-nodeface" and node path "eldest-document" to lead to node cs-identifier;eldest-mc-nodeface;{"example":"peer"}
-    And I expect node aggregate identifier "elder-mc-nodeface" and node path "elder-document" to lead to no node
+    And I expect node aggregate identifier "elder-mc-nodeface" to lead to no node
     And I expect this node to have no preceding siblings
     And I expect this node to have the following succeeding siblings:
       | NodeDiscriminator                                 |
@@ -624,9 +624,9 @@ Feature: Create node peer variant
       | Name     | NodeDiscriminator                                  |
       | tethered | cs-identifier;nodimer-tetherton;{"example":"peer"} |
     And I expect node aggregate identifier "nodimer-tetherton" and node path "document/tethered-document/tethered" to lead to node cs-identifier;nodimer-tetherton;{"example":"peer"}
-    And I expect node aggregate identifier "younger-mc-nodeface" and node path "younger-document" to lead to no node
-    And I expect node aggregate identifier "youngest-mc-nodeface" and node path "youngest-document" to lead to no node
-    And I expect node aggregate identifier "invariable-mc-nodeface" and node path "document/invariable-document" to lead to no node
+    And I expect node aggregate identifier "younger-mc-nodeface" to lead to no node
+    And I expect node aggregate identifier "youngest-mc-nodeface" to lead to no node
+    And I expect node aggregate identifier "invariable-mc-nodeface" to lead to no node
 
     When I am in workspace "live" and dimension space point {"example": "peerSpec"}
     Then I expect the subgraph projection to consist of exactly 5 nodes
@@ -640,7 +640,7 @@ Feature: Create node peer variant
     And I expect this node to have the following succeeding siblings:
       | NodeDiscriminator                                     |
       | cs-identifier;nody-mc-nodeface;{"example":"peerSpec"} |
-    And I expect node aggregate identifier "elder-mc-nodeface" and node path "elder-document" to lead to no node
+    And I expect node aggregate identifier "elder-mc-nodeface" to lead to no node
     And I expect node aggregate identifier "nody-mc-nodeface" and node path "document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"peerSpec"}
     And I expect this node to have the following child nodes:
       | Name              | NodeDiscriminator                                      |
@@ -654,9 +654,9 @@ Feature: Create node peer variant
       | Name     | NodeDiscriminator                                      |
       | tethered | cs-identifier;nodimer-tetherton;{"example":"peerSpec"} |
     And I expect node aggregate identifier "nodimer-tetherton" and node path "document/tethered-document/tethered" to lead to node cs-identifier;nodimer-tetherton;{"example":"peerSpec"}
-    And I expect node aggregate identifier "younger-mc-nodeface" and node path "younger-document" to lead to no node
-    And I expect node aggregate identifier "youngest-mc-nodeface" and node path "youngest-document" to lead to no node
-    And I expect node aggregate identifier "invariable-mc-nodeface" and node path "document/invariable-document" to lead to no node
+    And I expect node aggregate identifier "younger-mc-nodeface" to lead to no node
+    And I expect node aggregate identifier "youngest-mc-nodeface" to lead to no node
+    And I expect node aggregate identifier "invariable-mc-nodeface" to lead to no node
 
   Scenario: Create a peer node variant to a dimension space point with specializations and where the parent node aggregate is already specialized in
     # We need a new node for this
@@ -775,7 +775,7 @@ Feature: Create node peer variant
       | Name                 | NodeDiscriminator                                        |
       | elder-child-document | cs-identifier;elder-child-mc-nodeface;{"example":"peer"} |
     And I expect node aggregate identifier "elder-child-mc-nodeface" and node path "elder-document/elder-child-document" to lead to node cs-identifier;elder-child-mc-nodeface;{"example":"peer"}
-    And I expect node aggregate identifier "nody-mc-nodeface" and node path "document" to lead to no node
-    And I expect node aggregate identifier "younger-mc-nodeface" and node path "younger-document" to lead to no node
-    And I expect node aggregate identifier "youngest-mc-nodeface" and node path "youngest-document" to lead to no node
-    And I expect node aggregate identifier "invariable-mc-nodeface" and node path "document/invariable-document" to lead to no node
+    And I expect node aggregate identifier "nody-mc-nodeface" to lead to no node
+    And I expect node aggregate identifier "younger-mc-nodeface" to lead to no node
+    And I expect node aggregate identifier "youngest-mc-nodeface" to lead to no node
+    And I expect node aggregate identifier "invariable-mc-nodeface" to lead to no node

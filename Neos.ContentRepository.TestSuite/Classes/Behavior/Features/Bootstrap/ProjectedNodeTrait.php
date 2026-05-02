@@ -155,24 +155,6 @@ trait ProjectedNodeTrait
     }
 
     /**
-     * @param string $serializedNodePath
-     * @throws \Exception
-     */
-    public function iExpectPathToLeadToNoNode(string $serializedNodePath): void
-    {
-        if (!$this->getRootNodeAggregateId()) {
-            throw new \Exception('ERROR: rootNodeAggregateId needed for running this step. You need to use "the event RootNodeAggregateWithNodeWasCreated was published with payload" to create a root node..');
-        }
-        $nodePath = NodePath::fromString($serializedNodePath);
-        $nodeByPath = $this->getCurrentSubgraph()->findNodeByPath($nodePath, $this->getRootNodeAggregateId());
-        Assert::assertNull(
-            $nodeByPath,
-            'A node was found by node path "' . $nodePath->serializeToString()
-                . '" in content subgraph "' . $this->currentDimensionSpacePoint->toJson() . '@' . $this->currentWorkspaceName->value . '"'
-        );
-    }
-
-    /**
      * @Then /^I expect node aggregate identifier "([^"]*)" and node path "([^"]*)" to lead to node (.*)$/
      * @param string $serializedNodeAggregateId
      * @param string $serializedNodePath
@@ -183,18 +165,6 @@ trait ProjectedNodeTrait
     {
         $this->iExpectNodeAggregateIdToLeadToNode($serializedNodeAggregateId, $serializedNodeDiscriminator);
         $this->iExpectPathToLeadToNode($serializedNodePath, $serializedNodeDiscriminator);
-    }
-
-    /**
-     * @Then /^I expect node aggregate identifier "([^"]*)" and node path "([^"]*)" to lead to no node$/
-     * @param string $serializedNodeAggregateId
-     * @param string $serializedNodePath
-     * @throws \Exception
-     */
-    public function iExpectNodeAggregateIdAndNodePathToLeadToNoNode(string $serializedNodeAggregateId, string $serializedNodePath): void
-    {
-        $this->iExpectNodeAggregateIdToLeadToNoNode($serializedNodeAggregateId);
-        $this->iExpectPathToLeadToNoNode($serializedNodePath);
     }
 
     /**

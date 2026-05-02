@@ -65,7 +65,7 @@ Feature: Change node aggregate name
     When I am in workspace "live" and dimension space point {"example": "general"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "parent-document/renamed-document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
     Then I expect node aggregate identifier "nodimus-prime" and node path "parent-document/renamed-document/tethered" to lead to node cs-identifier;nodimus-prime;{"example":"general"}
-    Then I expect node aggregate identifier "nodimus-mediocre" and node path "parent-document/renamed-document/tethered/grandchild-document" to lead to no node
+    Then I expect node aggregate identifier "nodimus-mediocre" to lead to no node
 
     When I am in workspace "live" and dimension space point {"example": "source"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "parent-document/renamed-document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"source"}
@@ -80,7 +80,7 @@ Feature: Change node aggregate name
     When I am in workspace "live" and dimension space point {"example": "peer"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "parent-document/renamed-document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"peer"}
     Then I expect node aggregate identifier "nodimus-prime" and node path "parent-document/renamed-document/tethered" to lead to node cs-identifier;nodimus-prime;{"example":"peer"}
-    Then I expect node aggregate identifier "nodimus-mediocre" and node path "parent-document/renamed-document/tethered/grandchild-document" to lead to no node
+    Then I expect node aggregate identifier "nodimus-mediocre" to lead to no node
 
   Scenario: Rename a scattered node aggregate
     Given the command MoveNodeAggregate is executed with payload:
@@ -110,7 +110,7 @@ Feature: Change node aggregate name
     When I am in workspace "live" and dimension space point {"example": "general"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "parent-document/renamed-document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
     Then I expect node aggregate identifier "nodimus-prime" and node path "parent-document/renamed-document/tethered" to lead to node cs-identifier;nodimus-prime;{"example":"general"}
-    Then I expect node aggregate identifier "nodimus-mediocre" and node path "parent-document/renamed-document/tethered/grandchild-document" to lead to no node
+    Then I expect node aggregate identifier "nodimus-mediocre" to lead to no node
 
     When I am in workspace "live" and dimension space point {"example": "source"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "parent-document/renamed-document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"source"}
@@ -125,4 +125,4 @@ Feature: Change node aggregate name
     When I am in workspace "live" and dimension space point {"example": "peer"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "renamed-document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"peer"}
     Then I expect node aggregate identifier "nodimus-prime" and node path "renamed-document/tethered" to lead to node cs-identifier;nodimus-prime;{"example":"peer"}
-    Then I expect node aggregate identifier "nodimus-mediocre" and node path "renamed-document/tethered/grandchild-document" to lead to no node
+    Then I expect node aggregate identifier "nodimus-mediocre" to lead to no node

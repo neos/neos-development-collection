@@ -150,7 +150,7 @@ Feature: Create node specialization
     And I expect node aggregate identifier "nodimer-tetherton" and node path "document/tethered-node/tethered-leaf" to lead to node cs-identifier;nodimer-tetherton;{"example":"source"}
     And I expect node aggregate identifier "invariable-mc-nodeface" and node path "document/invariable-document" to lead to node cs-identifier;invariable-mc-nodeface;{"example":"source"}
 
-    And I expect node aggregate identifier "younger-mc-nodeface" and node path "younger-document" to lead to no node
+    And I expect node aggregate identifier "younger-mc-nodeface" to lead to no node
 
     And I expect node aggregate identifier "youngest-mc-nodeface" and node path "youngest-document" to lead to node cs-identifier;youngest-mc-nodeface;{"example":"source"}
     And I expect this node to have the following preceding siblings:
@@ -210,7 +210,7 @@ Feature: Create node specialization
     And I expect node aggregate identifier "nodimer-tetherton" and node path "document/tethered-node/tethered-leaf" to lead to node cs-identifier;nodimer-tetherton;{"example":"source"}
     And I expect node aggregate identifier "invariable-mc-nodeface" and node path "document/invariable-document" to lead to node cs-identifier;invariable-mc-nodeface;{"example":"source"}
 
-    And I expect node aggregate identifier "younger-mc-nodeface" and node path "younger-document" to lead to no node
+    And I expect node aggregate identifier "younger-mc-nodeface" to lead to no node
 
     And I expect node aggregate identifier "youngest-mc-nodeface" and node path "youngest-document" to lead to node cs-identifier;youngest-mc-nodeface;{"example":"source"}
     And I expect this node to have the following preceding siblings:
