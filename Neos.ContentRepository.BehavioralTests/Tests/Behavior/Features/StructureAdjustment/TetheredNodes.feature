@@ -144,15 +144,17 @@ Feature: Tethered Nodes integrity violations
     Then I expect no needed structure adjustments for type "Neos.ContentRepository:Root"
 
     When I am in workspace "live" and dimension space point {"market":"CH", "language":"gsw"}
-    And I get the node at path "document/some-new-child"
+
+    # TODO StructureAdjustments do not have the option for tethered deterministic node ids
+    And I get the node at path "/<Neos.ContentRepository:Root>/document/some-new-child"
     Then I expect this node to have the following properties:
       | Key | Value                |
       | foo | "my default applied" |
 
-    When I get the node at path "document/some-new-child/tethered-leaf"
+    When I get the node at path "/<Neos.ContentRepository:Root>/document/some-new-child/tethered-leaf"
     Then I expect this node to be of type "Neos.ContentRepository.Testing:TetheredLeaf"
 
-    When I get the node at path "tethered-node"
+    When I get the node at path "/<Neos.ContentRepository:Root>/tethered-node"
     Then I expect this node to have the following properties:
       | Key | Value                |
       | foo | "my default applied" |
@@ -209,7 +211,8 @@ Feature: Tethered Nodes integrity violations
     When I am in workspace "live" and dimension space point {"market":"CH", "language":"gsw"}
     Then I expect node aggregate identifier "nodewyn-tetherton" to lead to no node
     Then I expect node aggregate identifier "nodimer-tetherton" to lead to no node
-    And  I expect path "tethered-node" to lead to no node
+    Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{"market":"CH", "language":"gsw"}
+    And I expect this node to have no child nodes
 
   Scenario: Adjusting the schema changing the type of a tethered node leads to a InvalidTetheredNodeType integrity violation
     Given I change the node types in content repository "default" to:

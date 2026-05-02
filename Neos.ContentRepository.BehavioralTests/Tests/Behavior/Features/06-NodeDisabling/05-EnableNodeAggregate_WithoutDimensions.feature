@@ -82,7 +82,7 @@ Feature: Enable a node aggregate
       | 1     | sir-david-nodenborough  |
       | 2     | nody-mc-nodeface        |
       | 1     | succeeding-nodenborough |
-    And I expect node aggregate identifier "preceding-nodenborough" and node path "preceding-document" to lead to node cs-identifier;preceding-nodenborough;{}
+    And I expect node aggregate identifier "preceding-nodenborough" to lead to node cs-identifier;preceding-nodenborough;{}
     And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
     And I expect this node to have no preceding siblings
     And I expect this node to have the following succeeding siblings:
@@ -92,7 +92,7 @@ Feature: Enable a node aggregate
     And I expect this node to have the following references:
       | Name       | Node                                    | Properties |
       | references | cs-identifier;sir-david-nodenborough;{} | null       |
-    And I expect node aggregate identifier "sir-david-nodenborough" and node path "document" to lead to node cs-identifier;sir-david-nodenborough;{}
+    And I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{}
     And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
     And I expect this node to have the following preceding siblings:
       | NodeDiscriminator                       |
@@ -103,14 +103,15 @@ Feature: Enable a node aggregate
     And I expect this node to be referenced by:
       | Name       | Node                                    | Properties |
       | references | cs-identifier;preceding-nodenborough;{} | null       |
-    And I expect node aggregate identifier "succeeding-nodenborough" and node path "succeeding-document" to lead to node cs-identifier;succeeding-nodenborough;{}
+    And I expect node aggregate identifier "succeeding-nodenborough" to lead to node cs-identifier;succeeding-nodenborough;{}
     And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
     And I expect this node to have the following preceding siblings:
       | NodeDiscriminator                       |
       | cs-identifier;sir-david-nodenborough;{} |
       | cs-identifier;preceding-nodenborough;{} |
     And I expect this node to have no succeeding siblings
-    And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document" to lead to node cs-identifier;nody-mc-nodeface;{}
+    And I expect node aggregate identifier "nody-mc-nodeface" to lead to node cs-identifier;nody-mc-nodeface;{}
+    And I expect this node to have path "document/child-document"
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{}
 
   Scenario: Enable a previously disabled node with explicitly disabled child nodes with arbitrary strategy since dimensions are not involved
@@ -158,7 +159,7 @@ Feature: Enable a node aggregate
       | 1     | succeeding-nodenborough |
     Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{}
     And I expect this node to have no child nodes
-    And I expect node aggregate identifier "preceding-nodenborough" and node path "preceding-document" to lead to node cs-identifier;preceding-nodenborough;{}
+    And I expect node aggregate identifier "preceding-nodenborough" to lead to node cs-identifier;preceding-nodenborough;{}
     And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
     And I expect this node to have no preceding siblings
     And I expect this node to have the following succeeding siblings:
@@ -168,7 +169,7 @@ Feature: Enable a node aggregate
     And I expect this node to have the following references:
       | Name       | Node                                    | Properties |
       | references | cs-identifier;sir-david-nodenborough;{} | null       |
-    And I expect node aggregate identifier "sir-david-nodenborough" and node path "document" to lead to node cs-identifier;sir-david-nodenborough;{}
+    And I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{}
     And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
     And I expect this node to have the following preceding siblings:
       | NodeDiscriminator                       |
@@ -179,14 +180,14 @@ Feature: Enable a node aggregate
     And I expect this node to be referenced by:
       | Name       | Node                                    | Properties |
       | references | cs-identifier;preceding-nodenborough;{} | null       |
-    And I expect node aggregate identifier "succeeding-nodenborough" and node path "succeeding-document" to lead to node cs-identifier;succeeding-nodenborough;{}
+    And I expect node aggregate identifier "succeeding-nodenborough" to lead to node cs-identifier;succeeding-nodenborough;{}
     And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
     And I expect this node to have the following preceding siblings:
       | NodeDiscriminator                       |
       | cs-identifier;sir-david-nodenborough;{} |
       | cs-identifier;preceding-nodenborough;{} |
     And I expect this node to have no succeeding siblings
-    And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document" to lead to no node
+    And I expect node aggregate identifier "nody-mc-nodeface" to lead to no node
 
   Scenario: Enable a previously disabled node with explicitly disabled parent node with arbitrary strategy since dimensions are not involved
     Given the command DisableNodeAggregate is executed with payload:
@@ -229,5 +230,5 @@ Feature: Enable a node aggregate
       | 0     | lady-eleonode-rootford  |
       | 1     | preceding-nodenborough  |
       | 1     | succeeding-nodenborough |
-    And I expect node aggregate identifier "sir-david-nodenborough" and node path "document" to lead to no node
-    And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document" to lead to no node
+    And I expect node aggregate identifier "sir-david-nodenborough" to lead to no node
+    And I expect node aggregate identifier "nody-mc-nodeface" to lead to no node

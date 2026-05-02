@@ -364,9 +364,6 @@ trait GenericCommandExecutionAndEventPublication
     {
         $commandArguments = $this->addDefaultCommandArgumentValues($commandClassName, $commandArguments);
         $command = $commandClassName::fromArray($commandArguments);
-        if ($command instanceof CreateRootNodeAggregateWithNode) {
-            $this->currentRootNodeAggregateId = $command->nodeAggregateId;
-        }
         $this->currentContentRepository->handle($command);
     }
 
@@ -381,9 +378,7 @@ trait GenericCommandExecutionAndEventPublication
             $commandArguments['coveredDimensionSpacePoint'] = \json_decode($commandArguments['coveredDimensionSpacePoint'], true, 512, JSON_THROW_ON_ERROR);
         }
         $commandArguments['dimensionSpacePoint'] = $commandArguments['dimensionSpacePoint'] ?? $this->currentDimensionSpacePoint?->coordinates;
-        if (is_string($commandArguments['nodeAggregateId'] ?? null) && str_starts_with($commandArguments['nodeAggregateId'], '$')) {
-            $commandArguments['nodeAggregateId'] = $this->rememberedNodeAggregateIds[substr($commandArguments['nodeAggregateId'], 1)]?->value;
-        } elseif (!isset($commandArguments['nodeAggregateId'])) {
+        if (!isset($commandArguments['nodeAggregateId'])) {
             $commandArguments['nodeAggregateId'] = $this->getCurrentNodeAggregateId()?->value;
         }
         if ($commandClassName === CreateNodeAggregateWithNode::class) {
@@ -394,9 +389,6 @@ trait GenericCommandExecutionAndEventPublication
             }
             if (isset($commandArguments['succeedingSiblingNodeAggregateId']) && $commandArguments['succeedingSiblingNodeAggregateId'] === '') {
                 unset($commandArguments['succeedingSiblingNodeAggregateId']);
-            }
-            if (is_string($commandArguments['parentNodeAggregateId'] ?? null) && str_starts_with($commandArguments['parentNodeAggregateId'], '$')) {
-                $commandArguments['parentNodeAggregateId'] = $this->rememberedNodeAggregateIds[substr($commandArguments['parentNodeAggregateId'], 1)]?->value;
             }
             if (empty($commandArguments['nodeName'])) {
                 unset($commandArguments['nodeName']);
@@ -429,9 +421,7 @@ trait GenericCommandExecutionAndEventPublication
             } elseif (!isset($commandArguments['sourceOriginDimensionSpacePoint'])) {
                 $commandArguments['sourceOriginDimensionSpacePoint'] = $this->currentDimensionSpacePoint?->coordinates;
             }
-            if (is_string($commandArguments['sourceNodeAggregateId'] ?? null) && str_starts_with($commandArguments['sourceNodeAggregateId'], '$')) {
-                $commandArguments['sourceNodeAggregateId'] = $this->rememberedNodeAggregateIds[substr($commandArguments['sourceNodeAggregateId'], 1)]?->value;
-            } elseif (!isset($commandArguments['sourceNodeAggregateId'])) {
+            if (!isset($commandArguments['sourceNodeAggregateId'])) {
                 $commandArguments['sourceNodeAggregateId'] = $this->currentNodeAggregate?->nodeAggregateId->value;
             }
         }

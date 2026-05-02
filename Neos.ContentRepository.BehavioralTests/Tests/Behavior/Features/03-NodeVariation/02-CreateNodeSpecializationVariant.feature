@@ -159,7 +159,7 @@ Feature: Create node specialization
       | document          | cs-identifier;nody-mc-nodeface;{"example":"spec"}       |
       | younger-document  | cs-identifier;younger-mc-nodeface;{"example":"source"}  |
       | youngest-document | cs-identifier;youngest-mc-nodeface;{"example":"source"} |
-    And I expect node aggregate identifier "eldest-mc-nodeface" and node path "eldest-document" to lead to node cs-identifier;eldest-mc-nodeface;{"example":"source"}
+    And I expect node aggregate identifier "eldest-mc-nodeface" to lead to node cs-identifier;eldest-mc-nodeface;{"example":"source"}
     And I expect this node to have no preceding siblings
     And I expect this node to have the following succeeding siblings:
       | NodeDiscriminator                                       |
@@ -167,7 +167,7 @@ Feature: Create node specialization
       | cs-identifier;nody-mc-nodeface;{"example":"spec"}       |
       | cs-identifier;younger-mc-nodeface;{"example":"source"}  |
       | cs-identifier;youngest-mc-nodeface;{"example":"source"} |
-    And I expect node aggregate identifier "elder-mc-nodeface" and node path "elder-document" to lead to node cs-identifier;elder-mc-nodeface;{"example":"source"}
+    And I expect node aggregate identifier "elder-mc-nodeface" to lead to node cs-identifier;elder-mc-nodeface;{"example":"source"}
     And I expect this node to have the following preceding siblings:
       | NodeDiscriminator                                     |
       | cs-identifier;eldest-mc-nodeface;{"example":"source"} |
@@ -176,7 +176,7 @@ Feature: Create node specialization
       | cs-identifier;nody-mc-nodeface;{"example":"spec"}       |
       | cs-identifier;younger-mc-nodeface;{"example":"source"}  |
       | cs-identifier;youngest-mc-nodeface;{"example":"source"} |
-    And I expect node aggregate identifier "nody-mc-nodeface" and node path "document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"spec"}
+    And I expect node aggregate identifier "nody-mc-nodeface" to lead to node cs-identifier;nody-mc-nodeface;{"example":"spec"}
     And I expect this node to have the following child nodes:
       | Name                | NodeDiscriminator                                         |
       | tethered-node       | cs-identifier;nodewyn-tetherton;{"example":"spec"}        |
@@ -189,13 +189,16 @@ Feature: Create node specialization
       | NodeDiscriminator                                       |
       | cs-identifier;younger-mc-nodeface;{"example":"source"}  |
       | cs-identifier;youngest-mc-nodeface;{"example":"source"} |
-    And I expect node aggregate identifier "nodewyn-tetherton" and node path "document/tethered-node" to lead to node cs-identifier;nodewyn-tetherton;{"example":"spec"}
+    And I expect node aggregate identifier "nodewyn-tetherton" to lead to node cs-identifier;nodewyn-tetherton;{"example":"spec"}
+    And I expect this node to have path "document/tethered-node"
     And I expect this node to have the following child nodes:
       | Name          | NodeDiscriminator                                  |
       | tethered-leaf | cs-identifier;nodimer-tetherton;{"example":"spec"} |
-    And I expect node aggregate identifier "nodimer-tetherton" and node path "document/tethered-node/tethered-leaf" to lead to node cs-identifier;nodimer-tetherton;{"example":"spec"}
-    And I expect node aggregate identifier "invariable-mc-nodeface" and node path "document/invariable-document" to lead to node cs-identifier;invariable-mc-nodeface;{"example":"source"}
-    And I expect node aggregate identifier "younger-mc-nodeface" and node path "younger-document" to lead to node cs-identifier;younger-mc-nodeface;{"example":"source"}
+    And I expect node aggregate identifier "nodimer-tetherton" to lead to node cs-identifier;nodimer-tetherton;{"example":"spec"}
+    And I expect this node to have path "document/tethered-node/tethered-leaf"
+    And I expect node aggregate identifier "invariable-mc-nodeface" to lead to node cs-identifier;invariable-mc-nodeface;{"example":"source"}
+    And I expect this node to have path "document/invariable-document"
+    And I expect node aggregate identifier "younger-mc-nodeface" to lead to node cs-identifier;younger-mc-nodeface;{"example":"source"}
     And I expect this node to have the following preceding siblings:
       | NodeDiscriminator                                     |
       | cs-identifier;nody-mc-nodeface;{"example":"spec"}     |
@@ -204,7 +207,7 @@ Feature: Create node specialization
     And I expect this node to have the following succeeding siblings:
       | NodeDiscriminator                                       |
       | cs-identifier;youngest-mc-nodeface;{"example":"source"} |
-    And I expect node aggregate identifier "youngest-mc-nodeface" and node path "youngest-document" to lead to node cs-identifier;youngest-mc-nodeface;{"example":"source"}
+    And I expect node aggregate identifier "youngest-mc-nodeface" to lead to node cs-identifier;youngest-mc-nodeface;{"example":"source"}
     And I expect this node to have the following preceding siblings:
       | NodeDiscriminator                                      |
       | cs-identifier;younger-mc-nodeface;{"example":"source"} |
@@ -223,7 +226,7 @@ Feature: Create node specialization
       | document          | cs-identifier;nody-mc-nodeface;{"example":"spec"}       |
       | younger-document  | cs-identifier;younger-mc-nodeface;{"example":"source"}  |
       | youngest-document | cs-identifier;youngest-mc-nodeface;{"example":"source"} |
-    And I expect node aggregate identifier "eldest-mc-nodeface" and node path "eldest-document" to lead to node cs-identifier;eldest-mc-nodeface;{"example":"source"}
+    And I expect node aggregate identifier "eldest-mc-nodeface" to lead to node cs-identifier;eldest-mc-nodeface;{"example":"source"}
     And I expect this node to have no preceding siblings
     And I expect this node to have the following succeeding siblings:
       | NodeDiscriminator                                       |
@@ -231,7 +234,7 @@ Feature: Create node specialization
       | cs-identifier;nody-mc-nodeface;{"example":"spec"}       |
       | cs-identifier;younger-mc-nodeface;{"example":"source"}  |
       | cs-identifier;youngest-mc-nodeface;{"example":"source"} |
-    And I expect node aggregate identifier "elder-mc-nodeface" and node path "elder-document" to lead to node cs-identifier;elder-mc-nodeface;{"example":"source"}
+    And I expect node aggregate identifier "elder-mc-nodeface" to lead to node cs-identifier;elder-mc-nodeface;{"example":"source"}
     And I expect this node to have the following preceding siblings:
       | NodeDiscriminator                                     |
       | cs-identifier;eldest-mc-nodeface;{"example":"source"} |
@@ -240,7 +243,7 @@ Feature: Create node specialization
       | cs-identifier;nody-mc-nodeface;{"example":"spec"}       |
       | cs-identifier;younger-mc-nodeface;{"example":"source"}  |
       | cs-identifier;youngest-mc-nodeface;{"example":"source"} |
-    And I expect node aggregate identifier "nody-mc-nodeface" and node path "document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"spec"}
+    And I expect node aggregate identifier "nody-mc-nodeface" to lead to node cs-identifier;nody-mc-nodeface;{"example":"spec"}
     And I expect this node to have the following child nodes:
       | Name                | NodeDiscriminator                                         |
       | tethered-node       | cs-identifier;nodewyn-tetherton;{"example":"spec"}        |
@@ -253,13 +256,16 @@ Feature: Create node specialization
       | NodeDiscriminator                                       |
       | cs-identifier;younger-mc-nodeface;{"example":"source"}  |
       | cs-identifier;youngest-mc-nodeface;{"example":"source"} |
-    And I expect node aggregate identifier "nodewyn-tetherton" and node path "document/tethered-node" to lead to node cs-identifier;nodewyn-tetherton;{"example":"spec"}
+    And I expect node aggregate identifier "nodewyn-tetherton" to lead to node cs-identifier;nodewyn-tetherton;{"example":"spec"}
+    And I expect this node to have path "document/tethered-node"
     And I expect this node to have the following child nodes:
       | Name          | NodeDiscriminator                                  |
       | tethered-leaf | cs-identifier;nodimer-tetherton;{"example":"spec"} |
-    And I expect node aggregate identifier "nodimer-tetherton" and node path "document/tethered-node/tethered-leaf" to lead to node cs-identifier;nodimer-tetherton;{"example":"spec"}
-    And I expect node aggregate identifier "invariable-mc-nodeface" and node path "document/invariable-document" to lead to node cs-identifier;invariable-mc-nodeface;{"example":"source"}
-    And I expect node aggregate identifier "younger-mc-nodeface" and node path "younger-document" to lead to node cs-identifier;younger-mc-nodeface;{"example":"source"}
+    And I expect node aggregate identifier "nodimer-tetherton" to lead to node cs-identifier;nodimer-tetherton;{"example":"spec"}
+    And I expect this node to have path "document/tethered-node/tethered-leaf"
+    And I expect node aggregate identifier "invariable-mc-nodeface" to lead to node cs-identifier;invariable-mc-nodeface;{"example":"source"}
+    And I expect this node to have path "document/invariable-document"
+    And I expect node aggregate identifier "younger-mc-nodeface" to lead to node cs-identifier;younger-mc-nodeface;{"example":"source"}
     And I expect this node to have the following preceding siblings:
       | NodeDiscriminator                                     |
       | cs-identifier;nody-mc-nodeface;{"example":"spec"}     |
@@ -268,7 +274,7 @@ Feature: Create node specialization
     And I expect this node to have the following succeeding siblings:
       | NodeDiscriminator                                       |
       | cs-identifier;youngest-mc-nodeface;{"example":"source"} |
-    And I expect node aggregate identifier "youngest-mc-nodeface" and node path "youngest-document" to lead to node cs-identifier;youngest-mc-nodeface;{"example":"source"}
+    And I expect node aggregate identifier "youngest-mc-nodeface" to lead to node cs-identifier;youngest-mc-nodeface;{"example":"source"}
     And I expect this node to have the following preceding siblings:
       | NodeDiscriminator                                      |
       | cs-identifier;younger-mc-nodeface;{"example":"source"} |
@@ -375,7 +381,7 @@ Feature: Create node specialization
       | document          | cs-identifier;nody-mc-nodeface;{"example":"spec"}       |
       | younger-document  | cs-identifier;younger-mc-nodeface;{"example":"source"}  |
       | youngest-document | cs-identifier;youngest-mc-nodeface;{"example":"source"} |
-    And I expect node aggregate identifier "eldest-mc-nodeface" and node path "eldest-document" to lead to node cs-identifier;eldest-mc-nodeface;{"example":"source"}
+    And I expect node aggregate identifier "eldest-mc-nodeface" to lead to node cs-identifier;eldest-mc-nodeface;{"example":"source"}
     And I expect this node to have no preceding siblings
     And I expect this node to have the following succeeding siblings:
       | NodeDiscriminator                                       |
@@ -383,7 +389,7 @@ Feature: Create node specialization
       | cs-identifier;nody-mc-nodeface;{"example":"spec"}       |
       | cs-identifier;younger-mc-nodeface;{"example":"source"}  |
       | cs-identifier;youngest-mc-nodeface;{"example":"source"} |
-    And I expect node aggregate identifier "elder-mc-nodeface" and node path "elder-document" to lead to node cs-identifier;elder-mc-nodeface;{"example":"source"}
+    And I expect node aggregate identifier "elder-mc-nodeface" to lead to node cs-identifier;elder-mc-nodeface;{"example":"source"}
     And I expect this node to have the following preceding siblings:
       | NodeDiscriminator                                     |
       | cs-identifier;eldest-mc-nodeface;{"example":"source"} |
@@ -392,7 +398,7 @@ Feature: Create node specialization
       | cs-identifier;nody-mc-nodeface;{"example":"spec"}       |
       | cs-identifier;younger-mc-nodeface;{"example":"source"}  |
       | cs-identifier;youngest-mc-nodeface;{"example":"source"} |
-    And I expect node aggregate identifier "nody-mc-nodeface" and node path "document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"spec"}
+    And I expect node aggregate identifier "nody-mc-nodeface" to lead to node cs-identifier;nody-mc-nodeface;{"example":"spec"}
     And I expect this node to have the following child nodes:
       | Name                | NodeDiscriminator                                         |
       | tethered-node       | cs-identifier;nodewyn-tetherton;{"example":"spec"}        |
@@ -405,13 +411,16 @@ Feature: Create node specialization
       | NodeDiscriminator                                       |
       | cs-identifier;younger-mc-nodeface;{"example":"source"}  |
       | cs-identifier;youngest-mc-nodeface;{"example":"source"} |
-    And I expect node aggregate identifier "nodewyn-tetherton" and node path "document/tethered-node" to lead to node cs-identifier;nodewyn-tetherton;{"example":"spec"}
+    And I expect node aggregate identifier "nodewyn-tetherton" to lead to node cs-identifier;nodewyn-tetherton;{"example":"spec"}
+    And I expect this node to have path "document/tethered-node"
     And I expect this node to have the following child nodes:
       | Name          | NodeDiscriminator                                  |
       | tethered-leaf | cs-identifier;nodimer-tetherton;{"example":"spec"} |
-    And I expect node aggregate identifier "nodimer-tetherton" and node path "document/tethered-node/tethered-leaf" to lead to node cs-identifier;nodimer-tetherton;{"example":"spec"}
-    And I expect node aggregate identifier "invariable-mc-nodeface" and node path "document/invariable-document" to lead to node cs-identifier;invariable-mc-nodeface;{"example":"source"}
-    And I expect node aggregate identifier "younger-mc-nodeface" and node path "younger-document" to lead to node cs-identifier;younger-mc-nodeface;{"example":"source"}
+    And I expect node aggregate identifier "nodimer-tetherton" to lead to node cs-identifier;nodimer-tetherton;{"example":"spec"}
+    And I expect this node to have path "document/tethered-node/tethered-leaf"
+    And I expect node aggregate identifier "invariable-mc-nodeface" to lead to node cs-identifier;invariable-mc-nodeface;{"example":"source"}
+    And I expect this node to have path "document/invariable-document"
+    And I expect node aggregate identifier "younger-mc-nodeface" to lead to node cs-identifier;younger-mc-nodeface;{"example":"source"}
     And I expect this node to have the following preceding siblings:
       | NodeDiscriminator                                     |
       | cs-identifier;nody-mc-nodeface;{"example":"spec"}     |
@@ -420,7 +429,7 @@ Feature: Create node specialization
     And I expect this node to have the following succeeding siblings:
       | NodeDiscriminator                                       |
       | cs-identifier;youngest-mc-nodeface;{"example":"source"} |
-    And I expect node aggregate identifier "youngest-mc-nodeface" and node path "youngest-document" to lead to node cs-identifier;youngest-mc-nodeface;{"example":"source"}
+    And I expect node aggregate identifier "youngest-mc-nodeface" to lead to node cs-identifier;youngest-mc-nodeface;{"example":"source"}
     And I expect this node to have the following preceding siblings:
       | NodeDiscriminator                                      |
       | cs-identifier;younger-mc-nodeface;{"example":"source"} |
@@ -439,7 +448,7 @@ Feature: Create node specialization
       | document          | cs-identifier;nody-mc-nodeface;{"example":"leafSpec"}   |
       | younger-document  | cs-identifier;younger-mc-nodeface;{"example":"source"}  |
       | youngest-document | cs-identifier;youngest-mc-nodeface;{"example":"source"} |
-    And I expect node aggregate identifier "eldest-mc-nodeface" and node path "eldest-document" to lead to node cs-identifier;eldest-mc-nodeface;{"example":"source"}
+    And I expect node aggregate identifier "eldest-mc-nodeface" to lead to node cs-identifier;eldest-mc-nodeface;{"example":"source"}
     And I expect this node to have no preceding siblings
     And I expect this node to have the following succeeding siblings:
       | NodeDiscriminator                                       |
@@ -447,7 +456,7 @@ Feature: Create node specialization
       | cs-identifier;nody-mc-nodeface;{"example":"leafSpec"}   |
       | cs-identifier;younger-mc-nodeface;{"example":"source"}  |
       | cs-identifier;youngest-mc-nodeface;{"example":"source"} |
-    And I expect node aggregate identifier "elder-mc-nodeface" and node path "elder-document" to lead to node cs-identifier;elder-mc-nodeface;{"example":"source"}
+    And I expect node aggregate identifier "elder-mc-nodeface" to lead to node cs-identifier;elder-mc-nodeface;{"example":"source"}
     And I expect this node to have the following preceding siblings:
       | NodeDiscriminator                                     |
       | cs-identifier;eldest-mc-nodeface;{"example":"source"} |
@@ -456,7 +465,7 @@ Feature: Create node specialization
       | cs-identifier;nody-mc-nodeface;{"example":"leafSpec"}   |
       | cs-identifier;younger-mc-nodeface;{"example":"source"}  |
       | cs-identifier;youngest-mc-nodeface;{"example":"source"} |
-    And I expect node aggregate identifier "nody-mc-nodeface" and node path "document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"leafSpec"}
+    And I expect node aggregate identifier "nody-mc-nodeface" to lead to node cs-identifier;nody-mc-nodeface;{"example":"leafSpec"}
     And I expect this node to have the following child nodes:
       | Name                | NodeDiscriminator                                         |
       | tethered-node       | cs-identifier;nodewyn-tetherton;{"example":"leafSpec"}    |
@@ -469,13 +478,16 @@ Feature: Create node specialization
       | NodeDiscriminator                                       |
       | cs-identifier;younger-mc-nodeface;{"example":"source"}  |
       | cs-identifier;youngest-mc-nodeface;{"example":"source"} |
-    And I expect node aggregate identifier "nodewyn-tetherton" and node path "document/tethered-node" to lead to node cs-identifier;nodewyn-tetherton;{"example":"leafSpec"}
+    And I expect node aggregate identifier "nodewyn-tetherton" to lead to node cs-identifier;nodewyn-tetherton;{"example":"leafSpec"}
+    And I expect this node to have path "document/tethered-node"
     And I expect this node to have the following child nodes:
       | Name          | NodeDiscriminator                                      |
       | tethered-leaf | cs-identifier;nodimer-tetherton;{"example":"leafSpec"} |
-    And I expect node aggregate identifier "nodimer-tetherton" and node path "document/tethered-node/tethered-leaf" to lead to node cs-identifier;nodimer-tetherton;{"example":"leafSpec"}
-    And I expect node aggregate identifier "invariable-mc-nodeface" and node path "document/invariable-document" to lead to node cs-identifier;invariable-mc-nodeface;{"example":"source"}
-    And I expect node aggregate identifier "younger-mc-nodeface" and node path "younger-document" to lead to node cs-identifier;younger-mc-nodeface;{"example":"source"}
+    And I expect node aggregate identifier "nodimer-tetherton" to lead to node cs-identifier;nodimer-tetherton;{"example":"leafSpec"}
+    And I expect this node to have path "document/tethered-node/tethered-leaf"
+    And I expect node aggregate identifier "invariable-mc-nodeface" to lead to node cs-identifier;invariable-mc-nodeface;{"example":"source"}
+    And I expect this node to have path "document/invariable-document"
+    And I expect node aggregate identifier "younger-mc-nodeface" to lead to node cs-identifier;younger-mc-nodeface;{"example":"source"}
     And I expect this node to have the following preceding siblings:
       | NodeDiscriminator                                     |
       | cs-identifier;nody-mc-nodeface;{"example":"leafSpec"} |
@@ -484,7 +496,7 @@ Feature: Create node specialization
     And I expect this node to have the following succeeding siblings:
       | NodeDiscriminator                                       |
       | cs-identifier;youngest-mc-nodeface;{"example":"source"} |
-    And I expect node aggregate identifier "youngest-mc-nodeface" and node path "youngest-document" to lead to node cs-identifier;youngest-mc-nodeface;{"example":"source"}
+    And I expect node aggregate identifier "youngest-mc-nodeface" to lead to node cs-identifier;youngest-mc-nodeface;{"example":"source"}
     And I expect this node to have the following preceding siblings:
       | NodeDiscriminator                                      |
       | cs-identifier;younger-mc-nodeface;{"example":"source"} |

@@ -91,8 +91,11 @@ Feature: Recreate a node variant
       | targetOrigin    | {"language":"de"}  |
 
     When I am in workspace "user-ws" and dimension space point {"language": "de"}
-    Then I expect node aggregate identifier "sir-david-nodenborough" and node path "document" to lead to node new-user-cs-id;sir-david-nodenborough;{"language": "de"}
-    Then I expect node aggregate identifier "nodimus-prime" and node path "document/tethered-document" to lead to node new-user-cs-id;nodimus-prime;{"language": "de"}
-    Then I expect node aggregate identifier "nodimus-mediocre" and node path "document/tethered-document/tethered" to lead to node new-user-cs-id;nodimus-mediocre;{"language": "de"}
-    Then I expect node aggregate identifier "nody-mc-nodeface" and node path "document/tethered-document/grandchild-document" to lead to node new-user-cs-id;nody-mc-nodeface;{"language": "de"}
+    Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node new-user-cs-id;sir-david-nodenborough;{"language": "de"}
+    Then I expect node aggregate identifier "nodimus-prime" to lead to node new-user-cs-id;nodimus-prime;{"language": "de"}
+    And I expect this node to have path "document/tethered-document"
+    Then I expect node aggregate identifier "nodimus-mediocre" to lead to node new-user-cs-id;nodimus-mediocre;{"language": "de"}
+    And I expect this node to have path "document/tethered-document/tethered"
+    Then I expect node aggregate identifier "nody-mc-nodeface" to lead to node new-user-cs-id;nody-mc-nodeface;{"language": "de"}
+    And I expect this node to have path "document/tethered-document/grandchild-document"
 

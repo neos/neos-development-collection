@@ -18,11 +18,14 @@ use Behat\Gherkin\Node\TableNode;
 use GuzzleHttp\Psr7\Uri;
 use Neos\ContentRepository\Core\Feature\SubtreeTagging\Dto\SubtreeTag;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
+use Neos\ContentRepository\Core\Projection\ContentGraph\AbsoluteNodePath;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentSubgraphInterface;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindAncestorNodesFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindBackReferencesFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindChildNodesFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindPrecedingSiblingNodesFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindReferencesFilter;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindRootNodeAggregatesFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindSucceedingSiblingNodesFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodePath;
@@ -46,8 +49,6 @@ trait ProjectedNodeTrait
 {
     use CRTestSuiteRuntimeVariables;
 
-    abstract protected function getRootNodeAggregateId(): ?NodeAggregateId;
-
     /**
      * @When /^I go to the parent node of node aggregate "([^"]*)"$/
      * @param string $serializedNodeAggregateId
@@ -63,13 +64,13 @@ trait ProjectedNodeTrait
     /**
      * @Then /^I get the node at path "([^"]*)"$/
      * @param string $serializedNodePath
-     * @throws \Exception
+     * @deprecated use node-id based assertions and deterministic ids {@see iExpectANodeIdentifiedByXToExistInTheContentGraph}
      */
-    public function iGetTheNodeAtPath(string $serializedNodePath): void
+    public function iGetTheNodeAtPath(string $serializedAbsoluteNodePath): void
     {
-        $nodePath = NodePath::fromString($serializedNodePath);
-        $this->initializeCurrentNodeFromContentSubgraph(function (ContentSubgraphInterface $subgraph) use ($nodePath) {
-            return $subgraph->findNodeByPath($nodePath, $this->getRootNodeAggregateId());
+        $absoluteNodePath = AbsoluteNodePath::fromString($serializedAbsoluteNodePath);
+        $this->initializeCurrentNodeFromContentSubgraph(function (ContentSubgraphInterface $subgraph) use ($absoluteNodePath) {
+            return $subgraph->findNodeByAbsolutePath($absoluteNodePath);
         });
     }
 
@@ -131,72 +132,6 @@ trait ProjectedNodeTrait
                 . '" in content subgraph {' . $this->currentDimensionSpacePoint->toJson() . ',' . $this->currentWorkspaceName->value . '}'
             );
         }
-    }
-
-    /**
-     * @Then /^I expect path "([^"]*)" to lead to node (.*)$/
-     * @param string $serializedNodePath
-     * @param string $serializedNodeDiscriminator
-     * @throws \Exception
-     */
-    public function iExpectPathToLeadToNode(string $serializedNodePath, string $serializedNodeDiscriminator): void
-    {
-        if (!$this->getRootNodeAggregateId()) {
-            throw new \Exception('ERROR: rootNodeAggregateId needed for running this step. You need to use "the event RootNodeAggregateWithNodeWasCreated was published with payload" to create a root node..');
-        }
-        $nodePath = NodePath::fromString($serializedNodePath);
-        $expectedDiscriminator = NodeDiscriminator::fromShorthand($serializedNodeDiscriminator);
-        $this->initializeCurrentNodeFromContentSubgraph(function (ContentSubgraphInterface $subgraph) use ($nodePath, $expectedDiscriminator) {
-            $currentNode = $subgraph->findNodeByPath($nodePath, $this->getRootNodeAggregateId());
-            Assert::assertNotNull($currentNode, 'No node could be found by node path "' . $nodePath->serializeToString() . '" in content subgraph "' . $this->currentDimensionSpacePoint->toJson() . '@' . $this->currentWorkspaceName->value . '"');
-            $actualDiscriminator = NodeDiscriminator::fromNode($currentNode, $this->currentContentRepository);
-            Assert::assertTrue($expectedDiscriminator->equals($actualDiscriminator), 'Node discriminators do not match. Expected was ' . json_encode($expectedDiscriminator) . ' , given was ' . json_encode($actualDiscriminator));
-            return $currentNode;
-        });
-    }
-
-    /**
-     * @Then /^I expect path "([^"]*)" to lead to no node$/
-     * @param string $serializedNodePath
-     * @throws \Exception
-     */
-    public function iExpectPathToLeadToNoNode(string $serializedNodePath): void
-    {
-        if (!$this->getRootNodeAggregateId()) {
-            throw new \Exception('ERROR: rootNodeAggregateId needed for running this step. You need to use "the event RootNodeAggregateWithNodeWasCreated was published with payload" to create a root node..');
-        }
-        $nodePath = NodePath::fromString($serializedNodePath);
-        $nodeByPath = $this->getCurrentSubgraph()->findNodeByPath($nodePath, $this->getRootNodeAggregateId());
-        Assert::assertNull(
-            $nodeByPath,
-            'A node was found by node path "' . $nodePath->serializeToString()
-                . '" in content subgraph "' . $this->currentDimensionSpacePoint->toJson() . '@' . $this->currentWorkspaceName->value . '"'
-        );
-    }
-
-    /**
-     * @Then /^I expect node aggregate identifier "([^"]*)" and node path "([^"]*)" to lead to node (.*)$/
-     * @param string $serializedNodeAggregateId
-     * @param string $serializedNodePath
-     * @param string $serializedNodeDiscriminator
-     * @throws \Exception
-     */
-    public function iExpectNodeAggregateIdAndNodePathToLeadToNode(string $serializedNodeAggregateId, string $serializedNodePath, string $serializedNodeDiscriminator): void
-    {
-        $this->iExpectNodeAggregateIdToLeadToNode($serializedNodeAggregateId, $serializedNodeDiscriminator);
-        $this->iExpectPathToLeadToNode($serializedNodePath, $serializedNodeDiscriminator);
-    }
-
-    /**
-     * @Then /^I expect node aggregate identifier "([^"]*)" and node path "([^"]*)" to lead to no node$/
-     * @param string $serializedNodeAggregateId
-     * @param string $serializedNodePath
-     * @throws \Exception
-     */
-    public function iExpectNodeAggregateIdAndNodePathToLeadToNoNode(string $serializedNodeAggregateId, string $serializedNodePath): void
-    {
-        $this->iExpectNodeAggregateIdToLeadToNoNode($serializedNodeAggregateId);
-        $this->iExpectPathToLeadToNoNode($serializedNodePath);
     }
 
     /**
@@ -699,6 +634,41 @@ trait ProjectedNodeTrait
             $actualSiblings = $this->getCurrentSubgraph()
                 ->findSucceedingSiblingNodes($currentNode->aggregateId, FindSucceedingSiblingNodesFilter::create());
             Assert::assertCount(0, $actualSiblings, 'ContentSubgraph::findSucceedingSiblingNodes: No siblings were expected');
+        });
+    }
+
+    /**
+     * @Then /^I expect this node to have path "([^"]+)"/
+     * @deprecated path based assertions are deprecated {@see ContentSubgraphInterface::retrieveNodePath}
+     */
+    public function iExpectThisNodeToHavePath(string $serializedPath): void
+    {
+        $this->assertOnCurrentNode(function (Node $currentNode) use ($serializedPath) {
+            $subgraph = $this->getCurrentSubgraph();
+
+            $ancestors = $subgraph->findAncestorNodes($currentNode->aggregateId, FindAncestorNodesFilter::create())
+                ->reverse();
+            $actualAbsolutePath = AbsoluteNodePath::fromLeafNodeAndAncestors($currentNode, $ancestors);
+
+            $expectedAbsolutePath = AbsoluteNodePath::tryFromString($serializedPath);
+
+            if ($expectedAbsolutePath === null) {
+                // relative path assertion if non-ambiguous, reduces verbosity in test
+                $expectedRelativePath = NodePath::fromString($serializedPath);
+
+                $contentGraph = $this->currentContentRepository->getContentGraph($this->currentWorkspaceName);
+                $rootNodeAggregates = $contentGraph->findRootNodeAggregates(FindRootNodeAggregatesFilter::create());
+                if ($rootNodeAggregates->count() > 1) {
+                    throw new \RuntimeException(sprintf('Relative path assertion of %s with %s is not possible because multiple root node aggregates exist. Use absolute comparison instead.', $expectedRelativePath->serializeToString(), $actualAbsolutePath->serializeToString()), 1777744498);
+                }
+
+                $expectedAbsolutePath = AbsoluteNodePath::fromRootNodeTypeNameAndRelativePath(
+                    $rootNodeAggregates->first()->nodeTypeName,
+                    $expectedRelativePath
+                );
+            }
+
+            Assert::assertTrue($expectedAbsolutePath->equals($actualAbsolutePath), sprintf('Absolute node path "%s" does not equal expected "%s"', $actualAbsolutePath->serializeToString(), $expectedAbsolutePath->serializeToString()));
         });
     }
 

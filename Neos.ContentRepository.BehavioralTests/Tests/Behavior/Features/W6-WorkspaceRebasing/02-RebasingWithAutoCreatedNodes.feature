@@ -48,16 +48,18 @@ Feature: Rebasing auto-created nodes works
   Scenario: complex scenario (to reproduce the bug) -- see the feature description
     # USER workspace: create a new node with auto-created child nodes
     When the command CreateNodeAggregateWithNode is executed with payload:
-      | Key                       | Value                                    |
-      | workspaceName             | "user-test"                              |
-      | nodeAggregateId           | "nody-mc-nodeface"                       |
-      | nodeTypeName              | "Neos.ContentRepository.Testing:Content" |
-      | nodeName                  | "mcnodeface"                             |
-      | originDimensionSpacePoint | {}                                       |
-      | parentNodeAggregateId     | "lady-eleonode-rootford"                 |
+      | Key                                | Value                                    |
+      | workspaceName                      | "user-test"                              |
+      | nodeAggregateId                    | "nody-mc-nodeface"                       |
+      | nodeTypeName                       | "Neos.ContentRepository.Testing:Content" |
+      | nodeName                           | "mcnodeface"                             |
+      | originDimensionSpacePoint          | {}                                       |
+      | parentNodeAggregateId              | "lady-eleonode-rootford"                 |
+      | tetheredDescendantNodeAggregateIds | {"foo": "nodewyn-tetherton"}             |
     And I am in workspace "user-test" and dimension space point {}
     Then I expect node aggregate identifier "nody-mc-nodeface" to lead to node user-cs-identifier;nody-mc-nodeface;{}
-    When I get the node at path "mcnodeface/foo"
+    Then I expect node aggregate identifier "nodewyn-tetherton" to lead to node user-cs-identifier;nodewyn-tetherton;{}
+    When I expect this node to have path "mcnodeface/foo"
     And I expect this node to be a child of node user-cs-identifier;nody-mc-nodeface;{}
 
     # - then, for the auto-created child node, set a property.

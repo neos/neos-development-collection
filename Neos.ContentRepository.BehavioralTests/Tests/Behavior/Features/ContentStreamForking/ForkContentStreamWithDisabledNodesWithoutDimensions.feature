@@ -81,5 +81,5 @@ Feature: On forking a content stream, hidden nodes should be correctly copied as
     And the subtree for node aggregate "lady-eleonode-rootford" with node types "" and 2 levels deep should be:
       | Level | nodeAggregateId        |
       | 0     | lady-eleonode-rootford |
-    And I expect node aggregate identifier "the-great-nodini" and node path "court-magician" to lead to no node
-    And I expect node aggregate identifier "nodingers-cat" and node path "court-magician/pet" to lead to no node
+    And I expect node aggregate identifier "the-great-nodini" to lead to no node
+    And I expect node aggregate identifier "nodingers-cat" to lead to no node

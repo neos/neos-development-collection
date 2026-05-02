@@ -47,11 +47,10 @@ Feature: Individual node publication
     And I am in dimension space point {}
     And the following CreateNodeAggregateWithNode commands are executed:
       | nodeAggregateId        | nodeTypeName                            | parentNodeAggregateId  | nodeName | tetheredDescendantNodeAggregateIds |
-      | sir-david-nodenborough | Neos.ContentRepository.Testing:Document | lady-eleonode-rootford | document | {}                                 |
-    And I remember NodeAggregateId of node "sir-david-nodenborough"s child "child2" as "child2Id"
+      | sir-david-nodenborough | Neos.ContentRepository.Testing:Document | lady-eleonode-rootford | document | {"child2": "child2-agg"}           |
     And the following CreateNodeAggregateWithNode commands are executed:
       | nodeAggregateId  | nodeTypeName                           | parentNodeAggregateId | nodeName | tetheredDescendantNodeAggregateIds |
-      | nody-mc-nodeface | Neos.ContentRepository.Testing:Content | $child2Id             | nody     | {}                                 |
+      | nody-mc-nodeface | Neos.ContentRepository.Testing:Content | child2-agg            | nody     | {}                                 |
     When the command PublishIndividualNodesFromWorkspace is executed with payload:
       | Key                             | Value                                                                                                    |
       | nodesToPublish                  | ["sir-david-nodenborough"] |

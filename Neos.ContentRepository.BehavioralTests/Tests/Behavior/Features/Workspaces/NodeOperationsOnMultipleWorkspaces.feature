@@ -83,14 +83,16 @@ Feature: Single Node operations on multiple workspaces/content streams; e.g. cop
       | text | "Changed" |
 
     When I am in workspace "live" and dimension space point {}
-    Then I expect node aggregate identifier "nodingers-cat" and node path "child/pet" to lead to node cs-identifier;nodingers-cat;{}
+    Then I expect node aggregate identifier "nodingers-cat" to lead to node cs-identifier;nodingers-cat;{}
+    And I expect this node to have path "child/pet"
     When I go to the parent node of node aggregate "nodingers-cat"
     Then I expect this node to have the following properties:
       | Key  | Value      |
       | text | "Original" |
 
     When I am in workspace "user-test" and dimension space point {}
-    Then I expect node aggregate identifier "nodingers-cat" and node path "child/pet" to lead to node user-cs-identifier;nodingers-cat;{}
+    Then I expect node aggregate identifier "nodingers-cat" to lead to node user-cs-identifier;nodingers-cat;{}
+    And I expect this node to have path "child/pet"
     When I go to the parent node of node aggregate "nodingers-cat"
     Then I expect this node to have the following properties:
       | Key  | Value     |

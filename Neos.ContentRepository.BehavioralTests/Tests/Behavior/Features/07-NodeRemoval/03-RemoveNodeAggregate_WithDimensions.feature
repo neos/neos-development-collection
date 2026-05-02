@@ -71,14 +71,14 @@ Feature: Remove NodeAggregate
       | 0     | lady-eleonode-rootford |
       | 1     | sir-david-nodenborough |
 
-    And I expect node aggregate identifier "sir-david-nodenborough" and node path "document" to lead to node cs-identifier;sir-david-nodenborough;{"language":"en"}
+    And I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{"language":"en"}
     And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
     And I expect this node to have no child nodes
     And I expect this node to have no references
     And I expect this node to not be referenced
 
-    And I expect node aggregate identifier "nodingers-cat" and node path "pet" to lead to no node
-    And I expect node aggregate identifier "nodingers-kitten" and node path "pet/kitten" to lead to no node
+    And I expect node aggregate identifier "nodingers-cat" to lead to no node
+    And I expect node aggregate identifier "nodingers-kitten" to lead to no node
 
     # Check the generalization
     When I am in dimension space point {"language":"en"}
@@ -94,7 +94,7 @@ Feature: Remove NodeAggregate
       | 1     | nodingers-cat          |
       | 2     | nodingers-kitten       |
 
-    And I expect node aggregate identifier "sir-david-nodenborough" and node path "document" to lead to node cs-identifier;sir-david-nodenborough;{"language":"en"}
+    And I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{"language":"en"}
     And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
     And I expect this node to have no child nodes
     And I expect this node to have no references
@@ -102,7 +102,7 @@ Feature: Remove NodeAggregate
       | Name       | Node                                          | Properties |
       | references | cs-identifier;nodingers-cat;{"language":"en"} | null       |
 
-    And I expect node aggregate identifier "nodingers-cat" and node path "pet" to lead to node cs-identifier;nodingers-cat;{"language":"en"}
+    And I expect node aggregate identifier "nodingers-cat" to lead to node cs-identifier;nodingers-cat;{"language":"en"}
     And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
     And I expect this node to have the following child nodes:
       | Name   | NodeDiscriminator                                |
@@ -112,7 +112,8 @@ Feature: Remove NodeAggregate
       | references | cs-identifier;sir-david-nodenborough;{"language":"en"} | null       |
     And I expect this node to not be referenced
 
-    And I expect node aggregate identifier "nodingers-kitten" and node path "pet/kitten" to lead to node cs-identifier;nodingers-kitten;{"language":"en"}
+    And I expect node aggregate identifier "nodingers-kitten" to lead to node cs-identifier;nodingers-kitten;{"language":"en"}
+    And I expect this node to have path "pet/kitten"
     And I expect this node to be a child of node cs-identifier;nodingers-cat;{"language":"en"}
     And I expect this node to have no child nodes
     And I expect this node to have no references
@@ -129,15 +130,15 @@ Feature: Remove NodeAggregate
       | 0     | lady-eleonode-rootford |
       | 1     | sir-david-nodenborough |
 
-    And I expect node aggregate identifier "sir-david-nodenborough" and node path "document" to lead to node cs-identifier;sir-david-nodenborough;{"language":"en"}
+    And I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{"language":"en"}
     And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
     And I expect this node to have no child nodes
     And I expect this node to have no references
     And I expect this node to not be referenced
 
-    And I expect node aggregate identifier "nodingers-cat" and node path "pet" to lead to no node
+    And I expect node aggregate identifier "nodingers-cat" to lead to no node
 
-    And I expect node aggregate identifier "nodingers-kitten" and node path "pet/kitten" to lead to no node
+    And I expect node aggregate identifier "nodingers-kitten" to lead to no node
 
     # Check the peer
     When I am in dimension space point {"language":"fr"}
@@ -153,7 +154,7 @@ Feature: Remove NodeAggregate
       | 1     | nodingers-cat          |
       | 2     | nodingers-kitten       |
 
-    And I expect node aggregate identifier "sir-david-nodenborough" and node path "document" to lead to node cs-identifier;sir-david-nodenborough;{"language":"en"}
+    And I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{"language":"en"}
     And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
     And I expect this node to have no child nodes
     And I expect this node to have no references
@@ -161,7 +162,7 @@ Feature: Remove NodeAggregate
       | Name       | Node                                          | Properties |
       | references | cs-identifier;nodingers-cat;{"language":"en"} | null       |
 
-    And I expect node aggregate identifier "nodingers-cat" and node path "pet" to lead to node cs-identifier;nodingers-cat;{"language":"en"}
+    And I expect node aggregate identifier "nodingers-cat" to lead to node cs-identifier;nodingers-cat;{"language":"en"}
     And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
     And I expect this node to have the following child nodes:
       | Name   | NodeDiscriminator                                |
@@ -171,7 +172,8 @@ Feature: Remove NodeAggregate
       | references | cs-identifier;sir-david-nodenborough;{"language":"en"} | null       |
     And I expect this node to not be referenced
 
-    And I expect node aggregate identifier "nodingers-kitten" and node path "pet/kitten" to lead to node cs-identifier;nodingers-kitten;{"language":"en"}
+    And I expect node aggregate identifier "nodingers-kitten" to lead to node cs-identifier;nodingers-kitten;{"language":"en"}
+    And I expect this node to have path "pet/kitten"
     And I expect this node to be a child of node cs-identifier;nodingers-cat;{"language":"en"}
     And I expect this node to have no child nodes
     And I expect this node to have no references
@@ -210,7 +212,7 @@ Feature: Remove NodeAggregate
       | 0     | lady-eleonode-rootford |
       | 1     | sir-david-nodenborough |
 
-    And I expect node aggregate identifier "sir-david-nodenborough" and node path "document" to lead to node cs-identifier;sir-david-nodenborough;{"language":"en"}
+    And I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{"language":"en"}
     And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
     And I expect this node to have no child nodes
     And I expect this node to have no references
@@ -230,14 +232,14 @@ Feature: Remove NodeAggregate
       | 0     | lady-eleonode-rootford |
       | 1     | sir-david-nodenborough |
 
-    And I expect node aggregate identifier "sir-david-nodenborough" and node path "document" to lead to node cs-identifier;sir-david-nodenborough;{"language":"en"}
+    And I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{"language":"en"}
     And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
     And I expect this node to have no child nodes
     And I expect this node to have no references
     And I expect this node to not be referenced
 
-    And I expect node aggregate identifier "nodingers-cat" and node path "pet" to lead to no node
-    And I expect node aggregate identifier "nodingers-kitten" and node path "pet/kitten" to lead to no node
+    And I expect node aggregate identifier "nodingers-cat" to lead to no node
+    And I expect node aggregate identifier "nodingers-kitten" to lead to no node
 
     # Check the specialization
     When I am in dimension space point {"language":"gsw"}
@@ -250,14 +252,14 @@ Feature: Remove NodeAggregate
       | 0     | lady-eleonode-rootford |
       | 1     | sir-david-nodenborough |
 
-    And I expect node aggregate identifier "sir-david-nodenborough" and node path "document" to lead to node cs-identifier;sir-david-nodenborough;{"language":"en"}
+    And I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{"language":"en"}
     And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
     And I expect this node to have no child nodes
     And I expect this node to have no references
     And I expect this node to not be referenced
 
-    And I expect node aggregate identifier "nodingers-cat" and node path "pet" to lead to no node
-    And I expect node aggregate identifier "nodingers-kitten" and node path "pet/kitten" to lead to no node
+    And I expect node aggregate identifier "nodingers-cat" to lead to no node
+    And I expect node aggregate identifier "nodingers-kitten" to lead to no node
 
     # Check the peer
     When I am in dimension space point {"language":"fr"}
@@ -270,14 +272,14 @@ Feature: Remove NodeAggregate
       | 0     | lady-eleonode-rootford |
       | 1     | sir-david-nodenborough |
 
-    And I expect node aggregate identifier "sir-david-nodenborough" and node path "document" to lead to node cs-identifier;sir-david-nodenborough;{"language":"en"}
+    And I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{"language":"en"}
     And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
     And I expect this node to have no child nodes
     And I expect this node to have no references
     And I expect this node to not be referenced
 
-    And I expect node aggregate identifier "nodingers-cat" and node path "pet" to lead to no node
-    And I expect node aggregate identifier "nodingers-kitten" and node path "pet/kitten" to lead to no node
+    And I expect node aggregate identifier "nodingers-cat" to lead to no node
+    And I expect node aggregate identifier "nodingers-kitten" to lead to no node
 
   Scenario: Disable a node aggregate, completely remove it, recreate it and expect it to be enabled but have no references
     When the command DisableNodeAggregate is executed with payload:
@@ -313,13 +315,13 @@ Feature: Remove NodeAggregate
       | 1     | nodingers-cat          |
       | 2     | nodingers-kitten       |
 
-    And I expect node aggregate identifier "sir-david-nodenborough" and node path "document" to lead to node cs-identifier;sir-david-nodenborough;{"language":"en"}
+    And I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{"language":"en"}
     And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
     And I expect this node to have no child nodes
     And I expect this node to have no references
     And I expect this node to not be referenced
 
-    And I expect node aggregate identifier "nodingers-cat" and node path "pet" to lead to node cs-identifier;nodingers-cat;{"language":"en"}
+    And I expect node aggregate identifier "nodingers-cat" to lead to node cs-identifier;nodingers-cat;{"language":"en"}
     And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
     And I expect this node to have the following child nodes:
       | Name   | NodeDiscriminator                                |
@@ -327,7 +329,8 @@ Feature: Remove NodeAggregate
     And I expect this node to have no references
     And I expect this node to not be referenced
 
-    And I expect node aggregate identifier "nodingers-kitten" and node path "pet/kitten" to lead to node cs-identifier;nodingers-kitten;{"language":"en"}
+    And I expect node aggregate identifier "nodingers-kitten" to lead to node cs-identifier;nodingers-kitten;{"language":"en"}
+    And I expect this node to have path "pet/kitten"
     And I expect this node to be a child of node cs-identifier;nodingers-cat;{"language":"en"}
     And I expect this node to have no child nodes
     And I expect this node to have no references
@@ -372,7 +375,7 @@ Feature: Remove NodeAggregate
       | 1     | sir-david-nodenborough |
       | 1     | nodingers-cat          |
 
-    And I expect node aggregate identifier "sir-david-nodenborough" and node path "document" to lead to node cs-identifier;sir-david-nodenborough;{"language":"en"}
+    And I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{"language":"en"}
     And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
     And I expect this node to have no child nodes
     And I expect this node to have no references
@@ -380,7 +383,7 @@ Feature: Remove NodeAggregate
       | Name       | Node                                          | Properties |
       | references | cs-identifier;nodingers-cat;{"language":"de"} | null       |
 
-    And I expect node aggregate identifier "nodingers-cat" and node path "pet" to lead to node cs-identifier;nodingers-cat;{"language":"de"}
+    And I expect node aggregate identifier "nodingers-cat" to lead to node cs-identifier;nodingers-cat;{"language":"de"}
     And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
     And I expect this node to have no child nodes
     And I expect this node to have the following references:
@@ -388,7 +391,7 @@ Feature: Remove NodeAggregate
       | references | cs-identifier;sir-david-nodenborough;{"language":"en"} | null       |
     And I expect this node to not be referenced
 
-    And I expect node aggregate identifier "nodingers-kitten" and node path "pet/kitten" to lead to no node
+    And I expect node aggregate identifier "nodingers-kitten" to lead to no node
 
     # Check the specialization
     When I am in dimension space point {"language":"gsw"}
@@ -404,7 +407,7 @@ Feature: Remove NodeAggregate
       | 1     | sir-david-nodenborough |
       | 1     | nodingers-cat          |
 
-    And I expect node aggregate identifier "sir-david-nodenborough" and node path "document" to lead to node cs-identifier;sir-david-nodenborough;{"language":"en"}
+    And I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{"language":"en"}
     And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
     And I expect this node to have no child nodes
     And I expect this node to have no references
@@ -412,7 +415,7 @@ Feature: Remove NodeAggregate
       | Name       | Node                                          | Properties |
       | references | cs-identifier;nodingers-cat;{"language":"de"} | null       |
 
-    And I expect node aggregate identifier "nodingers-cat" and node path "pet" to lead to node cs-identifier;nodingers-cat;{"language":"de"}
+    And I expect node aggregate identifier "nodingers-cat" to lead to node cs-identifier;nodingers-cat;{"language":"de"}
     And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
     And I expect this node to have no child nodes
     And I expect this node to have the following references:
@@ -420,7 +423,7 @@ Feature: Remove NodeAggregate
       | references | cs-identifier;sir-david-nodenborough;{"language":"en"} | null       |
     And I expect this node to not be referenced
 
-    And I expect node aggregate identifier "nodingers-kitten" and node path "pet/kitten" to lead to no node
+    And I expect node aggregate identifier "nodingers-kitten" to lead to no node
 
     # Check the generalization
     When I am in dimension space point {"language":"en"}
@@ -434,14 +437,14 @@ Feature: Remove NodeAggregate
       | 0     | lady-eleonode-rootford |
       | 1     | sir-david-nodenborough |
 
-    And I expect node aggregate identifier "sir-david-nodenborough" and node path "document" to lead to node cs-identifier;sir-david-nodenborough;{"language":"en"}
+    And I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{"language":"en"}
     And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
     And I expect this node to have no child nodes
     And I expect this node to have no references
     And I expect this node to not be referenced
 
-    And I expect node aggregate identifier "nodingers-cat" and node path "pet" to lead to no node
-    And I expect node aggregate identifier "nodingers-kitten" and node path "pet/kitten" to lead to no node
+    And I expect node aggregate identifier "nodingers-cat" to lead to no node
+    And I expect node aggregate identifier "nodingers-kitten" to lead to no node
 
     # Check the peer variant
     When I am in dimension space point {"language":"fr"}
@@ -455,11 +458,11 @@ Feature: Remove NodeAggregate
       | 0     | lady-eleonode-rootford |
       | 1     | sir-david-nodenborough |
 
-    And I expect node aggregate identifier "sir-david-nodenborough" and node path "document" to lead to node cs-identifier;sir-david-nodenborough;{"language":"en"}
+    And I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{"language":"en"}
     And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
     And I expect this node to have no child nodes
     And I expect this node to have no references
     And I expect this node to not be referenced
 
-    And I expect node aggregate identifier "nodingers-cat" and node path "pet" to lead to no node
-    And I expect node aggregate identifier "nodingers-kitten" and node path "pet/kitten" to lead to no node
+    And I expect node aggregate identifier "nodingers-cat" to lead to no node
+    And I expect node aggregate identifier "nodingers-kitten" to lead to no node

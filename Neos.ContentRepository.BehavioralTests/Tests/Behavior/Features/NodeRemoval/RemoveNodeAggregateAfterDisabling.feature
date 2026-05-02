@@ -77,10 +77,11 @@ Feature: Disable a node aggregate
       | 1     | sir-david-nodenborough  |
       | 2     | nody-mc-nodeface        |
       | 1     | succeeding-nodenborough |
-    And I expect node aggregate identifier "sir-david-nodenborough" and node path "document" to lead to node cs-identifier;sir-david-nodenborough;{}
+    And I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{}
     And the subtree for node aggregate "sir-david-nodenborough" with node types "" and 1 levels deep should be:
       | Level | nodeAggregateId        |
       | 0     | sir-david-nodenborough |
       | 1     | nody-mc-nodeface       |
-    And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document" to lead to node cs-identifier;nody-mc-nodeface;{}
+    And I expect node aggregate identifier "nody-mc-nodeface" to lead to node cs-identifier;nody-mc-nodeface;{}
+    And I expect this node to have path "document/child-document"
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{}
