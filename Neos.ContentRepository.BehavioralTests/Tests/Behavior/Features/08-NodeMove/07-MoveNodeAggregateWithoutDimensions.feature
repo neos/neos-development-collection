@@ -77,19 +77,22 @@ Feature: Move a node without content dimensions
     # node aggregate occupation and coverage is not relevant without dimensions and thus not tested
 
     When I am in workspace "live" and dimension space point {}
-    Then I expect node aggregate identifier "sir-nodeward-nodington-iii" and node path "esquire" to lead to node cs-identifier;sir-nodeward-nodington-iii;{}
+    Then I expect node aggregate identifier "sir-nodeward-nodington-iii" to lead to node cs-identifier;sir-nodeward-nodington-iii;{}
+    And I expect this node to have path "esquire"
     And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
     And I expect this node to have no preceding siblings
     And I expect this node to have the following succeeding siblings:
       | NodeDiscriminator                       |
       | cs-identifier;sir-david-nodenborough;{} |
-    And I expect node aggregate identifier "sir-david-nodenborough" and node path "document" to lead to node cs-identifier;sir-david-nodenborough;{}
+    And I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{}
+    And I expect this node to have path "document"
     And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
     And I expect this node to have the following preceding siblings:
       | NodeDiscriminator                           |
       | cs-identifier;sir-nodeward-nodington-iii;{} |
     And I expect this node to have no succeeding siblings
-    And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document" to lead to node cs-identifier;nody-mc-nodeface;{}
+    And I expect node aggregate identifier "nody-mc-nodeface" to lead to node cs-identifier;nody-mc-nodeface;{}
+    And I expect this node to have path "document/child-document"
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{}
     And I expect this node to have no preceding siblings
     And I expect this node to have no succeeding siblings
@@ -111,19 +114,22 @@ Feature: Move a node without content dimensions
     # node aggregate occupation and coverage is not relevant without dimensions and thus not tested
 
     When I am in workspace "live" and dimension space point {}
-    Then I expect node aggregate identifier "sir-nodeward-nodington-iii" and node path "esquire" to lead to node cs-identifier;sir-nodeward-nodington-iii;{}
+    Then I expect node aggregate identifier "sir-nodeward-nodington-iii" to lead to node cs-identifier;sir-nodeward-nodington-iii;{}
+    And I expect this node to have path "esquire"
     And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
     And I expect this node to have no preceding siblings
     And I expect this node to have the following succeeding siblings:
       | NodeDiscriminator                       |
       | cs-identifier;sir-david-nodenborough;{} |
-    And I expect node aggregate identifier "sir-david-nodenborough" and node path "document" to lead to node cs-identifier;sir-david-nodenborough;{}
+    And I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{}
+    And I expect this node to have path "document"
     And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
     And I expect this node to have the following preceding siblings:
       | NodeDiscriminator                           |
       | cs-identifier;sir-nodeward-nodington-iii;{} |
     And I expect this node to have no succeeding siblings
-    And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document" to lead to node cs-identifier;nody-mc-nodeface;{}
+    And I expect node aggregate identifier "nody-mc-nodeface" to lead to node cs-identifier;nody-mc-nodeface;{}
+    And I expect this node to have path "document/child-document"
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{}
     And I expect this node to have no preceding siblings
     And I expect this node to have no succeeding siblings
@@ -164,23 +170,27 @@ Feature: Move a node without content dimensions
     # node aggregate occupation and coverage is not relevant without dimensions and thus not tested
 
     When I am in workspace "live" and dimension space point {}
-    And I expect node aggregate identifier "sir-nodeward-nodington-iii" and node path "esquire" to lead to node cs-identifier;sir-nodeward-nodington-iii;{}
+    And I expect node aggregate identifier "sir-nodeward-nodington-iii" to lead to node cs-identifier;sir-nodeward-nodington-iii;{}
+    And I expect this node to have path "esquire"
     And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
     And I expect this node to have no preceding siblings
     And I expect this node to have no succeeding siblings
-    And I expect node aggregate identifier "lady-abigail-nodenborough" and node path "esquire/other-document" to lead to node cs-identifier;lady-abigail-nodenborough;{}
+    And I expect node aggregate identifier "lady-abigail-nodenborough" to lead to node cs-identifier;lady-abigail-nodenborough;{}
+    And I expect this node to have path "esquire/other-document"
     And I expect this node to be a child of node cs-identifier;sir-nodeward-nodington-iii;{}
     And I expect this node to have no preceding siblings
     And I expect this node to have the following succeeding siblings:
       | NodeDiscriminator                       |
       | cs-identifier;sir-david-nodenborough;{} |
-    And I expect node aggregate identifier "sir-david-nodenborough" and node path "esquire/document" to lead to node cs-identifier;sir-david-nodenborough;{}
+    And I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{}
+    And I expect this node to have path "esquire/document"
     And I expect this node to be a child of node cs-identifier;sir-nodeward-nodington-iii;{}
     And I expect this node to have the following preceding siblings:
       | NodeDiscriminator                          |
       | cs-identifier;lady-abigail-nodenborough;{} |
     And I expect this node to have no succeeding siblings
-    And I expect node aggregate identifier "nody-mc-nodeface" and node path "esquire/document/child-document" to lead to node cs-identifier;nody-mc-nodeface;{}
+    And I expect node aggregate identifier "nody-mc-nodeface" to lead to node cs-identifier;nody-mc-nodeface;{}
+    And I expect this node to have path "esquire/document/child-document"
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{}
     And I expect this node to have no preceding siblings
     And I expect this node to have no succeeding siblings
@@ -209,14 +219,16 @@ Feature: Move a node without content dimensions
     # node aggregate occupation and coverage is not relevant without dimensions and thus not tested
 
     When I am in workspace "live" and dimension space point {}
-    And I expect node aggregate identifier "sir-david-nodenborough" and node path "document" to lead to node cs-identifier;sir-david-nodenborough;{}
+    And I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{}
+    And I expect this node to have path "document"
     And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
     And I expect this node to have no preceding siblings
     And I expect this node to have the following succeeding siblings:
       | NodeDiscriminator                           |
       | cs-identifier;nody-mc-nodeface;{}           |
       | cs-identifier;sir-nodeward-nodington-iii;{} |
-    And I expect node aggregate identifier "nody-mc-nodeface" and node path "child-document" to lead to node cs-identifier;nody-mc-nodeface;{}
+    And I expect node aggregate identifier "nody-mc-nodeface" to lead to node cs-identifier;nody-mc-nodeface;{}
+    And I expect this node to have path "child-document"
     And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
     And I expect this node to have the following preceding siblings:
       | NodeDiscriminator                       |
@@ -224,7 +236,8 @@ Feature: Move a node without content dimensions
     And I expect this node to have the following succeeding siblings:
       | NodeDiscriminator                           |
       | cs-identifier;sir-nodeward-nodington-iii;{} |
-    And I expect node aggregate identifier "sir-nodeward-nodington-iii" and node path "esquire" to lead to node cs-identifier;sir-nodeward-nodington-iii;{}
+    And I expect node aggregate identifier "sir-nodeward-nodington-iii" to lead to node cs-identifier;sir-nodeward-nodington-iii;{}
+    And I expect this node to have path "esquire"
     And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
     And I expect this node to have the following preceding siblings:
       | NodeDiscriminator                       |

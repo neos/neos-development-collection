@@ -180,7 +180,8 @@ Feature: Create a root node aggregate with tethered children
     And I expect this node to have no references
     And I expect this node to not be referenced
 
-    And I expect node aggregate identifier "nody-mc-nodeface" and node path "child-node" to lead to node cs-identifier;nody-mc-nodeface;{"language": "de"}
+    And I expect node aggregate identifier "nody-mc-nodeface" to lead to node cs-identifier;nody-mc-nodeface;{"language": "de"}
+    And I expect this node to have path "child-node"
     And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
     And I expect this node to have the following child nodes:
       | Name            | NodeDiscriminator                              |
@@ -190,7 +191,8 @@ Feature: Create a root node aggregate with tethered children
     And I expect this node to have no references
     And I expect this node to not be referenced
 
-    And I expect node aggregate identifier "nodimus-prime" and node path "child-node/grandchild-node" to lead to node cs-identifier;nodimus-prime;{"language": "de"}
+    And I expect node aggregate identifier "nodimus-prime" to lead to node cs-identifier;nodimus-prime;{"language": "de"}
+    And I expect this node to have path "child-node/grandchild-node"
     And I expect this node to be a child of node cs-identifier;nody-mc-nodeface;{"language": "de"}
     And I expect this node to have no child nodes
     And I expect this node to have no preceding siblings
@@ -209,7 +211,8 @@ Feature: Create a root node aggregate with tethered children
     And I expect this node to have no references
     And I expect this node to not be referenced
 
-    And I expect node aggregate identifier "nody-mc-nodeface" and node path "child-node" to lead to node cs-identifier;nody-mc-nodeface;{"language": "de"}
+    And I expect node aggregate identifier "nody-mc-nodeface" to lead to node cs-identifier;nody-mc-nodeface;{"language": "de"}
+    And I expect this node to have path "child-node"
     And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
     And I expect this node to have the following child nodes:
       | Name            | NodeDiscriminator                              |
@@ -219,7 +222,8 @@ Feature: Create a root node aggregate with tethered children
     And I expect this node to have no references
     And I expect this node to not be referenced
 
-    And I expect node aggregate identifier "nodimus-prime" and node path "child-node/grandchild-node" to lead to node cs-identifier;nodimus-prime;{"language": "de"}
+    And I expect node aggregate identifier "nodimus-prime" to lead to node cs-identifier;nodimus-prime;{"language": "de"}
+    And I expect this node to have path "child-node/grandchild-node"
     And I expect this node to be a child of node cs-identifier;nody-mc-nodeface;{"language": "de"}
     And I expect this node to have no child nodes
     And I expect this node to have no preceding siblings
@@ -239,7 +243,8 @@ Feature: Create a root node aggregate with tethered children
     And I expect this node to have no references
     And I expect this node to not be referenced
 
-    And I expect node aggregate identifier "nody-mc-nodeface" and node path "child-node" to lead to node cs-identifier;nody-mc-nodeface;{"language": "en"}
+    And I expect node aggregate identifier "nody-mc-nodeface" to lead to node cs-identifier;nody-mc-nodeface;{"language": "en"}
+    And I expect this node to have path "child-node"
     And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
     And I expect this node to have the following child nodes:
       | Name            | NodeDiscriminator                              |
@@ -249,7 +254,8 @@ Feature: Create a root node aggregate with tethered children
     And I expect this node to have no references
     And I expect this node to not be referenced
 
-    And I expect node aggregate identifier "nodimus-prime" and node path "child-node/grandchild-node" to lead to node cs-identifier;nodimus-prime;{"language": "en"}
+    And I expect node aggregate identifier "nodimus-prime" to lead to node cs-identifier;nodimus-prime;{"language": "en"}
+    And I expect this node to have path "child-node/grandchild-node"
     And I expect this node to be a child of node cs-identifier;nody-mc-nodeface;{"language": "en"}
     And I expect this node to have no child nodes
     And I expect this node to have no preceding siblings
@@ -269,7 +275,8 @@ Feature: Create a root node aggregate with tethered children
     And I expect this node to have no references
     And I expect this node to not be referenced
 
-    And I expect node aggregate identifier "nody-mc-nodeface" and node path "child-node" to lead to node cs-identifier;nody-mc-nodeface;{"language": "en"}
+    And I expect node aggregate identifier "nody-mc-nodeface" to lead to node cs-identifier;nody-mc-nodeface;{"language": "en"}
+    And I expect this node to have path "child-node"
     And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
     And I expect this node to have the following child nodes:
       | Name            | NodeDiscriminator                              |
@@ -279,7 +286,8 @@ Feature: Create a root node aggregate with tethered children
     And I expect this node to have no references
     And I expect this node to not be referenced
 
-    And I expect node aggregate identifier "nodimus-prime" and node path "child-node/grandchild-node" to lead to node cs-identifier;nodimus-prime;{"language": "en"}
+    And I expect node aggregate identifier "nodimus-prime" to lead to node cs-identifier;nodimus-prime;{"language": "en"}
+    And I expect this node to have path "child-node/grandchild-node"
     And I expect this node to be a child of node cs-identifier;nody-mc-nodeface;{"language": "en"}
     And I expect this node to have no child nodes
     And I expect this node to have no preceding siblings

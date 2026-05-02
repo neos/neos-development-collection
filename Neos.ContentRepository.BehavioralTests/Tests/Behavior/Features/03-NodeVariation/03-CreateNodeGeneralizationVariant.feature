@@ -163,7 +163,8 @@ Feature: Create node generalization
       | document          | cs-identifier;nody-mc-nodeface;{"example":"source"}     |
       | younger-document  | cs-identifier;younger-mc-nodeface;{"example":"general"} |
       | youngest-document | cs-identifier;youngest-mc-nodeface;{"example":"source"} |
-    And I expect node aggregate identifier "eldest-mc-nodeface" and node path "eldest-document" to lead to node cs-identifier;eldest-mc-nodeface;{"example":"general"}
+    And I expect node aggregate identifier "eldest-mc-nodeface" to lead to node cs-identifier;eldest-mc-nodeface;{"example":"general"}
+    And I expect this node to have path "eldest-document"
     And I expect this node to have no preceding siblings
     And I expect this node to have the following succeeding siblings:
       | NodeDiscriminator                                       |
@@ -171,7 +172,8 @@ Feature: Create node generalization
       | cs-identifier;nody-mc-nodeface;{"example":"source"}     |
       | cs-identifier;younger-mc-nodeface;{"example":"general"} |
       | cs-identifier;youngest-mc-nodeface;{"example":"source"} |
-    And I expect node aggregate identifier "elder-mc-nodeface" and node path "elder-document" to lead to node cs-identifier;elder-mc-nodeface;{"example":"source"}
+    And I expect node aggregate identifier "elder-mc-nodeface" to lead to node cs-identifier;elder-mc-nodeface;{"example":"source"}
+    And I expect this node to have path "elder-document"
     And I expect this node to have the following preceding siblings:
       | NodeDiscriminator                                      |
       | cs-identifier;eldest-mc-nodeface;{"example":"general"} |
@@ -180,7 +182,8 @@ Feature: Create node generalization
       | cs-identifier;nody-mc-nodeface;{"example":"source"}     |
       | cs-identifier;younger-mc-nodeface;{"example":"general"} |
       | cs-identifier;youngest-mc-nodeface;{"example":"source"} |
-    And I expect node aggregate identifier "nody-mc-nodeface" and node path "document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"source"}
+    And I expect node aggregate identifier "nody-mc-nodeface" to lead to node cs-identifier;nody-mc-nodeface;{"example":"source"}
+    And I expect this node to have path "document"
     And I expect this node to have the following child nodes:
       | Name                | NodeDiscriminator                                         |
       | tethered-document   | cs-identifier;nodewyn-tetherton;{"example":"source"}      |
@@ -193,10 +196,14 @@ Feature: Create node generalization
       | NodeDiscriminator                                       |
       | cs-identifier;younger-mc-nodeface;{"example":"general"} |
       | cs-identifier;youngest-mc-nodeface;{"example":"source"} |
-    And I expect node aggregate identifier "nodewyn-tetherton" and node path "document/tethered-document" to lead to node cs-identifier;nodewyn-tetherton;{"example":"source"}
-    And I expect node aggregate identifier "nodimer-tetherton" and node path "document/tethered-document/tethered" to lead to node cs-identifier;nodimer-tetherton;{"example":"source"}
-    And I expect node aggregate identifier "invariable-mc-nodeface" and node path "document/invariable-document" to lead to node cs-identifier;invariable-mc-nodeface;{"example":"source"}
-    And I expect node aggregate identifier "younger-mc-nodeface" and node path "younger-document" to lead to node cs-identifier;younger-mc-nodeface;{"example":"general"}
+    And I expect node aggregate identifier "nodewyn-tetherton" to lead to node cs-identifier;nodewyn-tetherton;{"example":"source"}
+    And I expect this node to have path "document/tethered-document"
+    And I expect node aggregate identifier "nodimer-tetherton" to lead to node cs-identifier;nodimer-tetherton;{"example":"source"}
+    And I expect this node to have path "document/tethered-document/tethered"
+    And I expect node aggregate identifier "invariable-mc-nodeface" to lead to node cs-identifier;invariable-mc-nodeface;{"example":"source"}
+    And I expect this node to have path "document/invariable-document"
+    And I expect node aggregate identifier "younger-mc-nodeface" to lead to node cs-identifier;younger-mc-nodeface;{"example":"general"}
+    And I expect this node to have path "younger-document"
     And I expect this node to have the following preceding siblings:
       | NodeDiscriminator                                      |
       | cs-identifier;nody-mc-nodeface;{"example":"source"}    |
@@ -205,7 +212,8 @@ Feature: Create node generalization
     And I expect this node to have the following succeeding siblings:
       | NodeDiscriminator                                       |
       | cs-identifier;youngest-mc-nodeface;{"example":"source"} |
-    And I expect node aggregate identifier "youngest-mc-nodeface" and node path "youngest-document" to lead to node cs-identifier;youngest-mc-nodeface;{"example":"source"}
+    And I expect node aggregate identifier "youngest-mc-nodeface" to lead to node cs-identifier;youngest-mc-nodeface;{"example":"source"}
+    And I expect this node to have path "youngest-document"
     And I expect this node to have the following preceding siblings:
       | NodeDiscriminator                                       |
       | cs-identifier;younger-mc-nodeface;{"example":"general"} |
@@ -224,7 +232,8 @@ Feature: Create node generalization
       | document          | cs-identifier;nody-mc-nodeface;{"example":"general"}     |
       | younger-document  | cs-identifier;younger-mc-nodeface;{"example":"general"}  |
       | youngest-document | cs-identifier;youngest-mc-nodeface;{"example":"general"} |
-    And I expect node aggregate identifier "eldest-mc-nodeface" and node path "eldest-document" to lead to node cs-identifier;eldest-mc-nodeface;{"example":"general"}
+    And I expect node aggregate identifier "eldest-mc-nodeface" to lead to node cs-identifier;eldest-mc-nodeface;{"example":"general"}
+    And I expect this node to have path "eldest-document"
     And I expect this node to have no preceding siblings
     And I expect this node to have the following succeeding siblings:
       | NodeDiscriminator                                        |
@@ -232,7 +241,8 @@ Feature: Create node generalization
       | cs-identifier;nody-mc-nodeface;{"example":"general"}     |
       | cs-identifier;younger-mc-nodeface;{"example":"general"}  |
       | cs-identifier;youngest-mc-nodeface;{"example":"general"} |
-    And I expect node aggregate identifier "elder-mc-nodeface" and node path "elder-document" to lead to node cs-identifier;elder-mc-nodeface;{"example":"general"}
+    And I expect node aggregate identifier "elder-mc-nodeface" to lead to node cs-identifier;elder-mc-nodeface;{"example":"general"}
+    And I expect this node to have path "elder-document"
     And I expect this node to have the following preceding siblings:
       | NodeDiscriminator                                      |
       | cs-identifier;eldest-mc-nodeface;{"example":"general"} |
@@ -241,7 +251,8 @@ Feature: Create node generalization
       | cs-identifier;nody-mc-nodeface;{"example":"general"}     |
       | cs-identifier;younger-mc-nodeface;{"example":"general"}  |
       | cs-identifier;youngest-mc-nodeface;{"example":"general"} |
-    And I expect node aggregate identifier "nody-mc-nodeface" and node path "document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
+    And I expect node aggregate identifier "nody-mc-nodeface" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
+    And I expect this node to have path "document"
     And I expect this node to have the following child nodes:
       | Name              | NodeDiscriminator                                     |
       | tethered-document | cs-identifier;nodewyn-tetherton;{"example":"general"} |
@@ -253,14 +264,17 @@ Feature: Create node generalization
       | NodeDiscriminator                                        |
       | cs-identifier;younger-mc-nodeface;{"example":"general"}  |
       | cs-identifier;youngest-mc-nodeface;{"example":"general"} |
-    And I expect node aggregate identifier "nodewyn-tetherton" and node path "document/tethered-document" to lead to node cs-identifier;nodewyn-tetherton;{"example":"general"}
+    And I expect node aggregate identifier "nodewyn-tetherton" to lead to node cs-identifier;nodewyn-tetherton;{"example":"general"}
+    And I expect this node to have path "document/tethered-document"
     And I expect this node to have the following child nodes:
       | Name     | NodeDiscriminator                                     |
       | tethered | cs-identifier;nodimer-tetherton;{"example":"general"} |
     And I expect this node to have no preceding siblings
     And I expect this node to have no succeeding siblings
-    And I expect node aggregate identifier "nodimer-tetherton" and node path "document/tethered-document/tethered" to lead to node cs-identifier;nodimer-tetherton;{"example":"general"}
-    And I expect node aggregate identifier "younger-mc-nodeface" and node path "younger-document" to lead to node cs-identifier;younger-mc-nodeface;{"example":"general"}
+    And I expect node aggregate identifier "nodimer-tetherton" to lead to node cs-identifier;nodimer-tetherton;{"example":"general"}
+    And I expect this node to have path "document/tethered-document/tethered"
+    And I expect node aggregate identifier "younger-mc-nodeface" to lead to node cs-identifier;younger-mc-nodeface;{"example":"general"}
+    And I expect this node to have path "younger-document"
     And I expect this node to have the following preceding siblings:
       | NodeDiscriminator                                      |
       | cs-identifier;nody-mc-nodeface;{"example":"general"}   |
@@ -269,7 +283,8 @@ Feature: Create node generalization
     And I expect this node to have the following succeeding siblings:
       | NodeDiscriminator                                        |
       | cs-identifier;youngest-mc-nodeface;{"example":"general"} |
-    And I expect node aggregate identifier "youngest-mc-nodeface" and node path "youngest-document" to lead to node cs-identifier;youngest-mc-nodeface;{"example":"general"}
+    And I expect node aggregate identifier "youngest-mc-nodeface" to lead to node cs-identifier;youngest-mc-nodeface;{"example":"general"}
+    And I expect this node to have path "youngest-document"
     And I expect this node to have the following preceding siblings:
       | NodeDiscriminator                                       |
       | cs-identifier;younger-mc-nodeface;{"example":"general"} |
@@ -302,7 +317,8 @@ Feature: Create node generalization
       | document          | cs-identifier;nody-mc-nodeface;{"example":"general"}     |
       | younger-document  | cs-identifier;younger-mc-nodeface;{"example":"general"}  |
       | youngest-document | cs-identifier;youngest-mc-nodeface;{"example":"general"} |
-    And I expect node aggregate identifier "eldest-mc-nodeface" and node path "eldest-document" to lead to node cs-identifier;eldest-mc-nodeface;{"example":"general"}
+    And I expect node aggregate identifier "eldest-mc-nodeface" to lead to node cs-identifier;eldest-mc-nodeface;{"example":"general"}
+    And I expect this node to have path "eldest-document"
     And I expect this node to have no preceding siblings
     And I expect this node to have the following succeeding siblings:
       | NodeDiscriminator                                        |
@@ -310,7 +326,8 @@ Feature: Create node generalization
       | cs-identifier;nody-mc-nodeface;{"example":"general"}     |
       | cs-identifier;younger-mc-nodeface;{"example":"general"}  |
       | cs-identifier;youngest-mc-nodeface;{"example":"general"} |
-    And I expect node aggregate identifier "elder-mc-nodeface" and node path "elder-document" to lead to node cs-identifier;elder-mc-nodeface;{"example":"general"}
+    And I expect node aggregate identifier "elder-mc-nodeface" to lead to node cs-identifier;elder-mc-nodeface;{"example":"general"}
+    And I expect this node to have path "elder-document"
     And I expect this node to have the following preceding siblings:
       | NodeDiscriminator                                      |
       | cs-identifier;eldest-mc-nodeface;{"example":"general"} |
@@ -319,7 +336,8 @@ Feature: Create node generalization
       | cs-identifier;nody-mc-nodeface;{"example":"general"}     |
       | cs-identifier;younger-mc-nodeface;{"example":"general"}  |
       | cs-identifier;youngest-mc-nodeface;{"example":"general"} |
-    And I expect node aggregate identifier "nody-mc-nodeface" and node path "document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
+    And I expect node aggregate identifier "nody-mc-nodeface" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
+    And I expect this node to have path "document"
     And I expect this node to have the following child nodes:
       | Name              | NodeDiscriminator                                     |
       | tethered-document | cs-identifier;nodewyn-tetherton;{"example":"general"} |
@@ -331,14 +349,17 @@ Feature: Create node generalization
       | NodeDiscriminator                                        |
       | cs-identifier;younger-mc-nodeface;{"example":"general"}  |
       | cs-identifier;youngest-mc-nodeface;{"example":"general"} |
-    And I expect node aggregate identifier "nodewyn-tetherton" and node path "document/tethered-document" to lead to node cs-identifier;nodewyn-tetherton;{"example":"general"}
+    And I expect node aggregate identifier "nodewyn-tetherton" to lead to node cs-identifier;nodewyn-tetherton;{"example":"general"}
+    And I expect this node to have path "document/tethered-document"
     And I expect this node to have the following child nodes:
       | Name     | NodeDiscriminator                                     |
       | tethered | cs-identifier;nodimer-tetherton;{"example":"general"} |
     And I expect this node to have no preceding siblings
     And I expect this node to have no succeeding siblings
-    And I expect node aggregate identifier "nodimer-tetherton" and node path "document/tethered-document/tethered" to lead to node cs-identifier;nodimer-tetherton;{"example":"general"}
-    And I expect node aggregate identifier "younger-mc-nodeface" and node path "younger-document" to lead to node cs-identifier;younger-mc-nodeface;{"example":"general"}
+    And I expect node aggregate identifier "nodimer-tetherton" to lead to node cs-identifier;nodimer-tetherton;{"example":"general"}
+    And I expect this node to have path "document/tethered-document/tethered"
+    And I expect node aggregate identifier "younger-mc-nodeface" to lead to node cs-identifier;younger-mc-nodeface;{"example":"general"}
+    And I expect this node to have path "younger-document"
     And I expect this node to have the following preceding siblings:
       | NodeDiscriminator                                      |
       | cs-identifier;nody-mc-nodeface;{"example":"general"}   |
@@ -347,7 +368,8 @@ Feature: Create node generalization
     And I expect this node to have the following succeeding siblings:
       | NodeDiscriminator                                        |
       | cs-identifier;youngest-mc-nodeface;{"example":"general"} |
-    And I expect node aggregate identifier "youngest-mc-nodeface" and node path "youngest-document" to lead to node cs-identifier;youngest-mc-nodeface;{"example":"general"}
+    And I expect node aggregate identifier "youngest-mc-nodeface" to lead to node cs-identifier;youngest-mc-nodeface;{"example":"general"}
+    And I expect this node to have path "youngest-document"
     And I expect this node to have the following preceding siblings:
       | NodeDiscriminator                                       |
       | cs-identifier;younger-mc-nodeface;{"example":"general"} |
@@ -471,14 +493,16 @@ Feature: Create node generalization
       | eldest-document  | cs-identifier;eldest-mc-nodeface;{"example":"general"}  |
       | document         | cs-identifier;nody-mc-nodeface;{"example":"general"}    |
       | younger-document | cs-identifier;younger-mc-nodeface;{"example":"general"} |
-    And I expect node aggregate identifier "eldest-mc-nodeface" and node path "eldest-document" to lead to node cs-identifier;eldest-mc-nodeface;{"example":"general"}
+    And I expect node aggregate identifier "eldest-mc-nodeface" to lead to node cs-identifier;eldest-mc-nodeface;{"example":"general"}
+    And I expect this node to have path "eldest-document"
     And I expect this node to have no preceding siblings
     And I expect this node to have the following succeeding siblings:
       | NodeDiscriminator                                       |
       | cs-identifier;nody-mc-nodeface;{"example":"general"}    |
       | cs-identifier;younger-mc-nodeface;{"example":"general"} |
     And I expect node aggregate identifier "elder-mc-nodeface" to lead to no node
-    And I expect node aggregate identifier "nody-mc-nodeface" and node path "document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
+    And I expect node aggregate identifier "nody-mc-nodeface" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
+    And I expect this node to have path "document"
     And I expect this node to have the following child nodes:
       | Name              | NodeDiscriminator                                     |
       | tethered-document | cs-identifier;nodewyn-tetherton;{"example":"general"} |
@@ -488,12 +512,15 @@ Feature: Create node generalization
     And I expect this node to have the following succeeding siblings:
       | NodeDiscriminator                                       |
       | cs-identifier;younger-mc-nodeface;{"example":"general"} |
-    And I expect node aggregate identifier "nodewyn-tetherton" and node path "document/tethered-document" to lead to node cs-identifier;nodewyn-tetherton;{"example":"general"}
+    And I expect node aggregate identifier "nodewyn-tetherton" to lead to node cs-identifier;nodewyn-tetherton;{"example":"general"}
+    And I expect this node to have path "document/tethered-document"
     And I expect this node to have the following child nodes:
       | Name     | NodeDiscriminator                                     |
       | tethered | cs-identifier;nodimer-tetherton;{"example":"general"} |
-    And I expect node aggregate identifier "nodimer-tetherton" and node path "document/tethered-document/tethered" to lead to node cs-identifier;nodimer-tetherton;{"example":"general"}
-    And I expect node aggregate identifier "younger-mc-nodeface" and node path "younger-document" to lead to node cs-identifier;younger-mc-nodeface;{"example":"general"}
+    And I expect node aggregate identifier "nodimer-tetherton" to lead to node cs-identifier;nodimer-tetherton;{"example":"general"}
+    And I expect this node to have path "document/tethered-document/tethered"
+    And I expect node aggregate identifier "younger-mc-nodeface" to lead to node cs-identifier;younger-mc-nodeface;{"example":"general"}
+    And I expect this node to have path "younger-document"
     And I expect this node to have the following preceding siblings:
       | NodeDiscriminator                                      |
       | cs-identifier;nody-mc-nodeface;{"example":"general"}   |
@@ -510,14 +537,16 @@ Feature: Create node generalization
       | eldest-document  | cs-identifier;eldest-mc-nodeface;{"example":"general"}  |
       | document         | cs-identifier;nody-mc-nodeface;{"example":"specB"}      |
       | younger-document | cs-identifier;younger-mc-nodeface;{"example":"general"} |
-    And I expect node aggregate identifier "eldest-mc-nodeface" and node path "eldest-document" to lead to node cs-identifier;eldest-mc-nodeface;{"example":"general"}
+    And I expect node aggregate identifier "eldest-mc-nodeface" to lead to node cs-identifier;eldest-mc-nodeface;{"example":"general"}
+    And I expect this node to have path "eldest-document"
     And I expect this node to have no preceding siblings
     And I expect this node to have the following succeeding siblings:
       | NodeDiscriminator                                       |
       | cs-identifier;nody-mc-nodeface;{"example":"specB"}      |
       | cs-identifier;younger-mc-nodeface;{"example":"general"} |
     And I expect node aggregate identifier "elder-mc-nodeface" to lead to no node
-    And I expect node aggregate identifier "nody-mc-nodeface" and node path "document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"specB"}
+    And I expect node aggregate identifier "nody-mc-nodeface" to lead to node cs-identifier;nody-mc-nodeface;{"example":"specB"}
+    And I expect this node to have path "document"
     And I expect this node to have the following child nodes:
       | Name              | NodeDiscriminator                                   |
       | tethered-document | cs-identifier;nodewyn-tetherton;{"example":"specB"} |
@@ -527,12 +556,15 @@ Feature: Create node generalization
     And I expect this node to have the following succeeding siblings:
       | NodeDiscriminator                                       |
       | cs-identifier;younger-mc-nodeface;{"example":"general"} |
-    And I expect node aggregate identifier "nodewyn-tetherton" and node path "document/tethered-document" to lead to node cs-identifier;nodewyn-tetherton;{"example":"specB"}
+    And I expect node aggregate identifier "nodewyn-tetherton" to lead to node cs-identifier;nodewyn-tetherton;{"example":"specB"}
+    And I expect this node to have path "document/tethered-document"
     And I expect this node to have the following child nodes:
       | Name     | NodeDiscriminator                                   |
       | tethered | cs-identifier;nodimer-tetherton;{"example":"specB"} |
-    And I expect node aggregate identifier "nodimer-tetherton" and node path "document/tethered-document/tethered" to lead to node cs-identifier;nodimer-tetherton;{"example":"specB"}
-    And I expect node aggregate identifier "younger-mc-nodeface" and node path "younger-document" to lead to node cs-identifier;younger-mc-nodeface;{"example":"general"}
+    And I expect node aggregate identifier "nodimer-tetherton" to lead to node cs-identifier;nodimer-tetherton;{"example":"specB"}
+    And I expect this node to have path "document/tethered-document/tethered"
+    And I expect node aggregate identifier "younger-mc-nodeface" to lead to node cs-identifier;younger-mc-nodeface;{"example":"general"}
+    And I expect this node to have path "younger-document"
     And I expect this node to have the following preceding siblings:
       | NodeDiscriminator                                      |
       | cs-identifier;nody-mc-nodeface;{"example":"specB"}     |
@@ -655,14 +687,16 @@ Feature: Create node generalization
       | eldest-document  | cs-identifier;eldest-mc-nodeface;{"example":"general"}  |
       | document         | cs-identifier;nody-mc-nodeface;{"example":"general"}    |
       | younger-document | cs-identifier;younger-mc-nodeface;{"example":"general"} |
-    And I expect node aggregate identifier "eldest-mc-nodeface" and node path "eldest-document" to lead to node cs-identifier;eldest-mc-nodeface;{"example":"general"}
+    And I expect node aggregate identifier "eldest-mc-nodeface" to lead to node cs-identifier;eldest-mc-nodeface;{"example":"general"}
+    And I expect this node to have path "eldest-document"
     And I expect this node to have no preceding siblings
     And I expect this node to have the following succeeding siblings:
       | NodeDiscriminator                                       |
       | cs-identifier;nody-mc-nodeface;{"example":"general"}    |
       | cs-identifier;younger-mc-nodeface;{"example":"general"} |
     And I expect node aggregate identifier "elder-mc-nodeface" to lead to no node
-    And I expect node aggregate identifier "nody-mc-nodeface" and node path "document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
+    And I expect node aggregate identifier "nody-mc-nodeface" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
+    And I expect this node to have path "document"
     And I expect this node to have the following child nodes:
       | Name              | NodeDiscriminator                                     |
       | tethered-document | cs-identifier;nodewyn-tetherton;{"example":"general"} |
@@ -672,12 +706,15 @@ Feature: Create node generalization
     And I expect this node to have the following succeeding siblings:
       | NodeDiscriminator                                       |
       | cs-identifier;younger-mc-nodeface;{"example":"general"} |
-    And I expect node aggregate identifier "nodewyn-tetherton" and node path "document/tethered-document" to lead to node cs-identifier;nodewyn-tetherton;{"example":"general"}
+    And I expect node aggregate identifier "nodewyn-tetherton" to lead to node cs-identifier;nodewyn-tetherton;{"example":"general"}
+    And I expect this node to have path "document/tethered-document"
     And I expect this node to have the following child nodes:
       | Name     | NodeDiscriminator                                     |
       | tethered | cs-identifier;nodimer-tetherton;{"example":"general"} |
-    And I expect node aggregate identifier "nodimer-tetherton" and node path "document/tethered-document/tethered" to lead to node cs-identifier;nodimer-tetherton;{"example":"general"}
-    And I expect node aggregate identifier "younger-mc-nodeface" and node path "younger-document" to lead to node cs-identifier;younger-mc-nodeface;{"example":"general"}
+    And I expect node aggregate identifier "nodimer-tetherton" to lead to node cs-identifier;nodimer-tetherton;{"example":"general"}
+    And I expect this node to have path "document/tethered-document/tethered"
+    And I expect node aggregate identifier "younger-mc-nodeface" to lead to node cs-identifier;younger-mc-nodeface;{"example":"general"}
+    And I expect this node to have path "younger-document"
     And I expect this node to have the following preceding siblings:
       | NodeDiscriminator                                      |
       | cs-identifier;nody-mc-nodeface;{"example":"general"}   |
@@ -694,14 +731,16 @@ Feature: Create node generalization
       | eldest-document  | cs-identifier;eldest-mc-nodeface;{"example":"general"}  |
       | document         | cs-identifier;nody-mc-nodeface;{"example":"specB"}      |
       | younger-document | cs-identifier;younger-mc-nodeface;{"example":"general"} |
-    And I expect node aggregate identifier "eldest-mc-nodeface" and node path "eldest-document" to lead to node cs-identifier;eldest-mc-nodeface;{"example":"general"}
+    And I expect node aggregate identifier "eldest-mc-nodeface" to lead to node cs-identifier;eldest-mc-nodeface;{"example":"general"}
+    And I expect this node to have path "eldest-document"
     And I expect this node to have no preceding siblings
     And I expect this node to have the following succeeding siblings:
       | NodeDiscriminator                                       |
       | cs-identifier;nody-mc-nodeface;{"example":"specB"}      |
       | cs-identifier;younger-mc-nodeface;{"example":"general"} |
     And I expect node aggregate identifier "elder-mc-nodeface" to lead to no node
-    And I expect node aggregate identifier "nody-mc-nodeface" and node path "document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"specB"}
+    And I expect node aggregate identifier "nody-mc-nodeface" to lead to node cs-identifier;nody-mc-nodeface;{"example":"specB"}
+    And I expect this node to have path "document"
     And I expect this node to have the following child nodes:
       | Name              | NodeDiscriminator                                   |
       | tethered-document | cs-identifier;nodewyn-tetherton;{"example":"specB"} |
@@ -711,12 +750,15 @@ Feature: Create node generalization
     And I expect this node to have the following succeeding siblings:
       | NodeDiscriminator                                       |
       | cs-identifier;younger-mc-nodeface;{"example":"general"} |
-    And I expect node aggregate identifier "nodewyn-tetherton" and node path "document/tethered-document" to lead to node cs-identifier;nodewyn-tetherton;{"example":"specB"}
+    And I expect node aggregate identifier "nodewyn-tetherton" to lead to node cs-identifier;nodewyn-tetherton;{"example":"specB"}
+    And I expect this node to have path "document/tethered-document"
     And I expect this node to have the following child nodes:
       | Name     | NodeDiscriminator                                   |
       | tethered | cs-identifier;nodimer-tetherton;{"example":"specB"} |
-    And I expect node aggregate identifier "nodimer-tetherton" and node path "document/tethered-document/tethered" to lead to node cs-identifier;nodimer-tetherton;{"example":"specB"}
-    And I expect node aggregate identifier "younger-mc-nodeface" and node path "younger-document" to lead to node cs-identifier;younger-mc-nodeface;{"example":"general"}
+    And I expect node aggregate identifier "nodimer-tetherton" to lead to node cs-identifier;nodimer-tetherton;{"example":"specB"}
+    And I expect this node to have path "document/tethered-document/tethered"
+    And I expect node aggregate identifier "younger-mc-nodeface" to lead to node cs-identifier;younger-mc-nodeface;{"example":"general"}
+    And I expect this node to have path "younger-document"
     And I expect this node to have the following preceding siblings:
       | NodeDiscriminator                                      |
       | cs-identifier;nody-mc-nodeface;{"example":"specB"}     |
@@ -839,17 +881,20 @@ Feature: Create node generalization
       | document | cs-identifier;nody-mc-nodeface;{"example":"rootGeneral"} |
     And I expect node aggregate identifier "eldest-mc-nodeface" to lead to no node
     And I expect node aggregate identifier "elder-mc-nodeface" to lead to no node
-    And I expect node aggregate identifier "nody-mc-nodeface" and node path "document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"rootGeneral"}
+    And I expect node aggregate identifier "nody-mc-nodeface" to lead to node cs-identifier;nody-mc-nodeface;{"example":"rootGeneral"}
+    And I expect this node to have path "document"
     And I expect this node to have the following child nodes:
       | Name              | NodeDiscriminator                                         |
       | tethered-document | cs-identifier;nodewyn-tetherton;{"example":"rootGeneral"} |
     And I expect this node to have no preceding siblings
     And I expect this node to have no succeeding siblings
-    And I expect node aggregate identifier "nodewyn-tetherton" and node path "document/tethered-document" to lead to node cs-identifier;nodewyn-tetherton;{"example":"rootGeneral"}
+    And I expect node aggregate identifier "nodewyn-tetherton" to lead to node cs-identifier;nodewyn-tetherton;{"example":"rootGeneral"}
+    And I expect this node to have path "document/tethered-document"
     And I expect this node to have the following child nodes:
       | Name     | NodeDiscriminator                                         |
       | tethered | cs-identifier;nodimer-tetherton;{"example":"rootGeneral"} |
-    And I expect node aggregate identifier "nodimer-tetherton" and node path "document/tethered-document/tethered" to lead to node cs-identifier;nodimer-tetherton;{"example":"rootGeneral"}
+    And I expect node aggregate identifier "nodimer-tetherton" to lead to node cs-identifier;nodimer-tetherton;{"example":"rootGeneral"}
+    And I expect this node to have path "document/tethered-document/tethered"
     And I expect node aggregate identifier "younger-mc-nodeface" to lead to no node
     And I expect node aggregate identifier "youngest-mc-nodeface" to lead to no node
     And I expect node aggregate identifier "invariable-mc-nodeface" to lead to no node
@@ -862,14 +907,16 @@ Feature: Create node generalization
       | eldest-document  | cs-identifier;eldest-mc-nodeface;{"example":"general"}  |
       | document         | cs-identifier;nody-mc-nodeface;{"example":"general"}    |
       | younger-document | cs-identifier;younger-mc-nodeface;{"example":"general"} |
-    And I expect node aggregate identifier "eldest-mc-nodeface" and node path "eldest-document" to lead to node cs-identifier;eldest-mc-nodeface;{"example":"general"}
+    And I expect node aggregate identifier "eldest-mc-nodeface" to lead to node cs-identifier;eldest-mc-nodeface;{"example":"general"}
+    And I expect this node to have path "eldest-document"
     And I expect this node to have no preceding siblings
     And I expect this node to have the following succeeding siblings:
       | NodeDiscriminator                                       |
       | cs-identifier;nody-mc-nodeface;{"example":"general"}    |
       | cs-identifier;younger-mc-nodeface;{"example":"general"} |
     And I expect node aggregate identifier "elder-mc-nodeface" to lead to no node
-    And I expect node aggregate identifier "nody-mc-nodeface" and node path "document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
+    And I expect node aggregate identifier "nody-mc-nodeface" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
+    And I expect this node to have path "document"
     And I expect this node to have the following child nodes:
       | Name              | NodeDiscriminator                                     |
       | tethered-document | cs-identifier;nodewyn-tetherton;{"example":"general"} |
@@ -879,12 +926,15 @@ Feature: Create node generalization
     And I expect this node to have the following succeeding siblings:
       | NodeDiscriminator                                       |
       | cs-identifier;younger-mc-nodeface;{"example":"general"} |
-    And I expect node aggregate identifier "nodewyn-tetherton" and node path "document/tethered-document" to lead to node cs-identifier;nodewyn-tetherton;{"example":"general"}
+    And I expect node aggregate identifier "nodewyn-tetherton" to lead to node cs-identifier;nodewyn-tetherton;{"example":"general"}
+    And I expect this node to have path "document/tethered-document"
     And I expect this node to have the following child nodes:
       | Name     | NodeDiscriminator                                     |
       | tethered | cs-identifier;nodimer-tetherton;{"example":"general"} |
-    And I expect node aggregate identifier "nodimer-tetherton" and node path "document/tethered-document/tethered" to lead to node cs-identifier;nodimer-tetherton;{"example":"general"}
-    And I expect node aggregate identifier "younger-mc-nodeface" and node path "younger-document" to lead to node cs-identifier;younger-mc-nodeface;{"example":"general"}
+    And I expect node aggregate identifier "nodimer-tetherton" to lead to node cs-identifier;nodimer-tetherton;{"example":"general"}
+    And I expect this node to have path "document/tethered-document/tethered"
+    And I expect node aggregate identifier "younger-mc-nodeface" to lead to node cs-identifier;younger-mc-nodeface;{"example":"general"}
+    And I expect this node to have path "younger-document"
     And I expect this node to have the following preceding siblings:
       | NodeDiscriminator                                      |
       | cs-identifier;nody-mc-nodeface;{"example":"general"}   |
@@ -901,14 +951,16 @@ Feature: Create node generalization
       | eldest-document  | cs-identifier;eldest-mc-nodeface;{"example":"general"}  |
       | document         | cs-identifier;nody-mc-nodeface;{"example":"general"}    |
       | younger-document | cs-identifier;younger-mc-nodeface;{"example":"general"} |
-    And I expect node aggregate identifier "eldest-mc-nodeface" and node path "eldest-document" to lead to node cs-identifier;eldest-mc-nodeface;{"example":"general"}
+    And I expect node aggregate identifier "eldest-mc-nodeface" to lead to node cs-identifier;eldest-mc-nodeface;{"example":"general"}
+    And I expect this node to have path "eldest-document"
     And I expect this node to have no preceding siblings
     And I expect this node to have the following succeeding siblings:
       | NodeDiscriminator                                       |
       | cs-identifier;nody-mc-nodeface;{"example":"general"}    |
       | cs-identifier;younger-mc-nodeface;{"example":"general"} |
     And I expect node aggregate identifier "elder-mc-nodeface" to lead to no node
-    And I expect node aggregate identifier "nody-mc-nodeface" and node path "document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
+    And I expect node aggregate identifier "nody-mc-nodeface" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
+    And I expect this node to have path "document"
     And I expect this node to have the following child nodes:
       | Name              | NodeDiscriminator                                     |
       | tethered-document | cs-identifier;nodewyn-tetherton;{"example":"general"} |
@@ -918,12 +970,15 @@ Feature: Create node generalization
     And I expect this node to have the following succeeding siblings:
       | NodeDiscriminator                                       |
       | cs-identifier;younger-mc-nodeface;{"example":"general"} |
-    And I expect node aggregate identifier "nodewyn-tetherton" and node path "document/tethered-document" to lead to node cs-identifier;nodewyn-tetherton;{"example":"general"}
+    And I expect node aggregate identifier "nodewyn-tetherton" to lead to node cs-identifier;nodewyn-tetherton;{"example":"general"}
+    And I expect this node to have path "document/tethered-document"
     And I expect this node to have the following child nodes:
       | Name     | NodeDiscriminator                                     |
       | tethered | cs-identifier;nodimer-tetherton;{"example":"general"} |
-    And I expect node aggregate identifier "nodimer-tetherton" and node path "document/tethered-document/tethered" to lead to node cs-identifier;nodimer-tetherton;{"example":"general"}
-    And I expect node aggregate identifier "younger-mc-nodeface" and node path "younger-document" to lead to node cs-identifier;younger-mc-nodeface;{"example":"general"}
+    And I expect node aggregate identifier "nodimer-tetherton" to lead to node cs-identifier;nodimer-tetherton;{"example":"general"}
+    And I expect this node to have path "document/tethered-document/tethered"
+    And I expect node aggregate identifier "younger-mc-nodeface" to lead to node cs-identifier;younger-mc-nodeface;{"example":"general"}
+    And I expect this node to have path "younger-document"
     And I expect this node to have the following preceding siblings:
       | NodeDiscriminator                                      |
       | cs-identifier;nody-mc-nodeface;{"example":"general"}   |

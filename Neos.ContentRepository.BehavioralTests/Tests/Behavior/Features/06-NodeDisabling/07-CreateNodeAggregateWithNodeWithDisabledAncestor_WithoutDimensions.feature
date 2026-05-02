@@ -44,5 +44,6 @@ Feature: Creation of nodes underneath disabled nodes
       | Key                          | Value              |
       | nodeAggregateId              | "the-great-nodini" |
       | nodeVariantSelectionStrategy | "allVariants"      |
-    Then I expect node aggregate identifier "nodingers-cat" and node path "document/pet-document" to lead to node cs-identifier;nodingers-cat;{}
+    Then I expect node aggregate identifier "nodingers-cat" to lead to node cs-identifier;nodingers-cat;{}
+    And I expect this node to have path "document/pet-document"
     And I expect this node to be a child of node cs-identifier;the-great-nodini;{}

@@ -251,7 +251,8 @@ Feature: Create node aggregate with node
     And I expect this node to have no references
     And I expect this node to not be referenced
 
-    And I expect node aggregate identifier "sir-david-nodenborough" and node path "node" to lead to node cs-identifier;sir-david-nodenborough;{"language":"mul"}
+    And I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{"language":"mul"}
+    And I expect this node to have path "node"
     And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
     And I expect this node to have no child nodes
     And I expect this node to have no preceding siblings
@@ -274,7 +275,8 @@ Feature: Create node aggregate with node
       | Name | NodeDiscriminator                                       |
       | node | cs-identifier;sir-david-nodenborough;{"language":"mul"} |
 
-    And I expect node aggregate identifier "sir-david-nodenborough" and node path "node" to lead to node cs-identifier;sir-david-nodenborough;{"language":"mul"}
+    And I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{"language":"mul"}
+    And I expect this node to have path "node"
     And I expect this node to have the following child nodes:
       | Name                | NodeDiscriminator                                             |
       | elder-child-node    | cs-identifier;nody-mc-nodeface-the-elder;{"language":"de"}    |
@@ -285,7 +287,8 @@ Feature: Create node aggregate with node
     And I expect this node to have no references
     And I expect this node to not be referenced
 
-    And I expect node aggregate identifier "nody-mc-nodeface-the-elder" and node path "node/elder-child-node" to lead to node cs-identifier;nody-mc-nodeface-the-elder;{"language":"de"}
+    And I expect node aggregate identifier "nody-mc-nodeface-the-elder" to lead to node cs-identifier;nody-mc-nodeface-the-elder;{"language":"de"}
+    And I expect this node to have path "node/elder-child-node"
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"language":"mul"}
     And I expect this node to have no child nodes
     And I expect this node to have no preceding siblings
@@ -296,7 +299,8 @@ Feature: Create node aggregate with node
     And I expect this node to have no references
     And I expect this node to not be referenced
 
-    And I expect node aggregate identifier "nody-mc-nodeface" and node path "node/child-node" to lead to node cs-identifier;nody-mc-nodeface;{"language":"de"}
+    And I expect node aggregate identifier "nody-mc-nodeface" to lead to node cs-identifier;nody-mc-nodeface;{"language":"de"}
+    And I expect this node to have path "node/child-node"
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"language":"mul"}
     And I expect this node to have no child nodes
     And I expect this node to have the following preceding siblings:
@@ -308,7 +312,8 @@ Feature: Create node aggregate with node
     And I expect this node to have no references
     And I expect this node to not be referenced
 
-    And I expect node aggregate identifier "nody-mc-nodeface-the-youngest" and node path "node/youngest-child-node" to lead to node cs-identifier;nody-mc-nodeface-the-youngest;{"language":"de"}
+    And I expect node aggregate identifier "nody-mc-nodeface-the-youngest" to lead to node cs-identifier;nody-mc-nodeface-the-youngest;{"language":"de"}
+    And I expect this node to have path "node/youngest-child-node"
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"language":"mul"}
     And I expect this node to have no child nodes
     And I expect this node to have the following preceding siblings:
@@ -331,7 +336,8 @@ Feature: Create node aggregate with node
       | Name | NodeDiscriminator                                       |
       | node | cs-identifier;sir-david-nodenborough;{"language":"mul"} |
 
-    And I expect node aggregate identifier "sir-david-nodenborough" and node path "node" to lead to node cs-identifier;sir-david-nodenborough;{"language":"mul"}
+    And I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{"language":"mul"}
+    And I expect this node to have path "node"
     And I expect this node to have the following child nodes:
       | Name                | NodeDiscriminator                                             |
       | eldest-child-node   | cs-identifier;nody-mc-nodeface-the-eldest;{"language":"gsw"}  |
@@ -344,7 +350,8 @@ Feature: Create node aggregate with node
     And I expect this node to have no references
     And I expect this node to not be referenced
 
-    And I expect node aggregate identifier "nody-mc-nodeface-the-eldest" and node path "node/eldest-child-node" to lead to node cs-identifier;nody-mc-nodeface-the-eldest;{"language":"gsw"}
+    And I expect node aggregate identifier "nody-mc-nodeface-the-eldest" to lead to node cs-identifier;nody-mc-nodeface-the-eldest;{"language":"gsw"}
+    And I expect this node to have path "node/eldest-child-node"
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"language":"mul"}
     And I expect this node to have no child nodes
     And I expect this node to have no preceding siblings
@@ -357,7 +364,8 @@ Feature: Create node aggregate with node
     And I expect this node to have no references
     And I expect this node to not be referenced
 
-    And I expect node aggregate identifier "nody-mc-nodeface-the-elder" and node path "node/elder-child-node" to lead to node cs-identifier;nody-mc-nodeface-the-elder;{"language":"de"}
+    And I expect node aggregate identifier "nody-mc-nodeface-the-elder" to lead to node cs-identifier;nody-mc-nodeface-the-elder;{"language":"de"}
+    And I expect this node to have path "node/elder-child-node"
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"language":"mul"}
     And I expect this node to have no child nodes
     And I expect this node to have the following preceding siblings:
@@ -371,7 +379,8 @@ Feature: Create node aggregate with node
     And I expect this node to have no references
     And I expect this node to not be referenced
 
-    And I expect node aggregate identifier "nody-mc-nodeface" and node path "node/child-node" to lead to node cs-identifier;nody-mc-nodeface;{"language":"de"}
+    And I expect node aggregate identifier "nody-mc-nodeface" to lead to node cs-identifier;nody-mc-nodeface;{"language":"de"}
+    And I expect this node to have path "node/child-node"
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"language":"mul"}
     And I expect this node to have no child nodes
     And I expect this node to have the following preceding siblings:
@@ -385,7 +394,8 @@ Feature: Create node aggregate with node
     And I expect this node to have no references
     And I expect this node to not be referenced
 
-    And I expect node aggregate identifier "nody-mc-nodeface-the-younger" and node path "node/younger-child-node" to lead to node cs-identifier;nody-mc-nodeface-the-younger;{"language":"gsw"}
+    And I expect node aggregate identifier "nody-mc-nodeface-the-younger" to lead to node cs-identifier;nody-mc-nodeface-the-younger;{"language":"gsw"}
+    And I expect this node to have path "node/younger-child-node"
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"language":"mul"}
     And I expect this node to have no child nodes
     And I expect this node to have the following preceding siblings:
@@ -399,7 +409,8 @@ Feature: Create node aggregate with node
     And I expect this node to have no references
     And I expect this node to not be referenced
 
-    And I expect node aggregate identifier "nody-mc-nodeface-the-youngest" and node path "node/youngest-child-node" to lead to node cs-identifier;nody-mc-nodeface-the-youngest;{"language":"de"}
+    And I expect node aggregate identifier "nody-mc-nodeface-the-youngest" to lead to node cs-identifier;nody-mc-nodeface-the-youngest;{"language":"de"}
+    And I expect this node to have path "node/youngest-child-node"
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"language":"mul"}
     And I expect this node to have no child nodes
     And I expect this node to have the following preceding siblings:
@@ -423,7 +434,8 @@ Feature: Create node aggregate with node
       | node    | cs-identifier;sir-david-nodenborough;{"language":"mul"}    |
       | esquire | cs-identifier;sir-nodeward-nodington-iii;{"language":"en"} |
 
-    And I expect node aggregate identifier "sir-david-nodenborough" and node path "node" to lead to node cs-identifier;sir-david-nodenborough;{"language":"mul"}
+    And I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{"language":"mul"}
+    And I expect this node to have path "node"
     And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
     And I expect this node to have no child nodes
     And I expect this node to have no preceding siblings
@@ -437,7 +449,8 @@ Feature: Create node aggregate with node
     And I expect node aggregate identifier "nody-mc-nodeface" to lead to no node
     And I expect node aggregate identifier "nody-mc-nodeface-the-younger" to lead to no node
 
-    And I expect node aggregate identifier "sir-nodeward-nodington-iii" and node path "esquire" to lead to node cs-identifier;sir-nodeward-nodington-iii;{"language":"en"}
+    And I expect node aggregate identifier "sir-nodeward-nodington-iii" to lead to node cs-identifier;sir-nodeward-nodington-iii;{"language":"en"}
+    And I expect this node to have path "esquire"
     And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
     And I expect this node to have no child nodes
     And I expect this node to have the following preceding siblings:

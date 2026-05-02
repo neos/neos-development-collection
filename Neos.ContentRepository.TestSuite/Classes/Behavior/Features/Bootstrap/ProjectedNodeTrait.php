@@ -134,40 +134,6 @@ trait ProjectedNodeTrait
     }
 
     /**
-     * @param string $serializedNodePath
-     * @param string $serializedNodeDiscriminator
-     * @throws \Exception
-     */
-    public function iExpectPathToLeadToNode(string $serializedNodePath, string $serializedNodeDiscriminator): void
-    {
-        if (!$this->getRootNodeAggregateId()) {
-            throw new \Exception('ERROR: rootNodeAggregateId needed for running this step. You need to use "the event RootNodeAggregateWithNodeWasCreated was published with payload" to create a root node..');
-        }
-        $nodePath = NodePath::fromString($serializedNodePath);
-        $expectedDiscriminator = NodeDiscriminator::fromShorthand($serializedNodeDiscriminator);
-        $this->initializeCurrentNodeFromContentSubgraph(function (ContentSubgraphInterface $subgraph) use ($nodePath, $expectedDiscriminator) {
-            $currentNode = $subgraph->findNodeByPath($nodePath, $this->getRootNodeAggregateId());
-            Assert::assertNotNull($currentNode, 'No node could be found by node path "' . $nodePath->serializeToString() . '" in content subgraph "' . $this->currentDimensionSpacePoint->toJson() . '@' . $this->currentWorkspaceName->value . '"');
-            $actualDiscriminator = NodeDiscriminator::fromNode($currentNode, $this->currentContentRepository);
-            Assert::assertTrue($expectedDiscriminator->equals($actualDiscriminator), 'Node discriminators do not match. Expected was ' . json_encode($expectedDiscriminator) . ' , given was ' . json_encode($actualDiscriminator));
-            return $currentNode;
-        });
-    }
-
-    /**
-     * @Then /^I expect node aggregate identifier "([^"]*)" and node path "([^"]*)" to lead to node (.*)$/
-     * @param string $serializedNodeAggregateId
-     * @param string $serializedNodePath
-     * @param string $serializedNodeDiscriminator
-     * @throws \Exception
-     */
-    public function iExpectNodeAggregateIdAndNodePathToLeadToNode(string $serializedNodeAggregateId, string $serializedNodePath, string $serializedNodeDiscriminator): void
-    {
-        $this->iExpectNodeAggregateIdToLeadToNode($serializedNodeAggregateId, $serializedNodeDiscriminator);
-        $this->iExpectPathToLeadToNode($serializedNodePath, $serializedNodeDiscriminator);
-    }
-
-    /**
      * @Then /^I expect the node with aggregate identifier "([^"]*)" to be explicitly tagged "([^"]*)"$/
      */
     public function iExpectTheNodeWithAggregateIdentifierToBeExplicitlyTagged(string $serializedNodeAggregateId, string $serializedTag): void
@@ -667,6 +633,26 @@ trait ProjectedNodeTrait
             $actualSiblings = $this->getCurrentSubgraph()
                 ->findSucceedingSiblingNodes($currentNode->aggregateId, FindSucceedingSiblingNodesFilter::create());
             Assert::assertCount(0, $actualSiblings, 'ContentSubgraph::findSucceedingSiblingNodes: No siblings were expected');
+        });
+    }
+
+    /**
+     * @Then /^I expect this node to have path "([^"]+)"/
+     * @deprecated path based assertions are deprecated {@see ContentSubgraphInterface::retrieveNodePath}
+     */
+    public function iExpectThisNodeToHavePath(string $serializedPath): void
+    {
+        $this->assertOnCurrentNode(function (Node $currentNode) use ($serializedPath) {
+            $subgraph = $this->getCurrentSubgraph();
+
+            $actualNode = $subgraph->findNodeByPath(NodePath::fromString($serializedPath), $this->getRootNodeAggregateId());
+            Assert::assertTrue($actualNode->equals($currentNode));
+
+            // Todo remove getRootNodeAggregateId() hack and use real absolute paths
+            // $ancestors = $subgraph->findAncestorNodes($currentNode->aggregateId, FindAncestorNodesFilter::create())
+            //     ->reverse();
+            // $actualPath = AbsoluteNodePath::fromLeafNodeAndAncestors($currentNode, $ancestors);
+            // Assert::assertEquals($serializedPath, $actualPath->serializeToString());
         });
     }
 

@@ -56,7 +56,8 @@ Feature: Move a node with content dimensions
       | succeedingSiblingsForCoverage | [{"dimensionSpacePoint":{"example":"general"},"nodeAggregateId": "eldest-mc-nodeface"},{"dimensionSpacePoint":{"example":"source"},"nodeAggregateId": "eldest-mc-nodeface"},{"dimensionSpacePoint":{"example":"spec"},"nodeAggregateId": "eldest-mc-nodeface"},{"dimensionSpacePoint":{"example":"peer"},"nodeAggregateId": "eldest-mc-nodeface"}] |
 
     When I am in workspace "live" and dimension space point {"example": "general"}
-    And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document-n" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
+    And I expect node aggregate identifier "nody-mc-nodeface" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
+    And I expect this node to have path "document/child-document-n"
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example": "general"}
     And I expect this node to have no preceding siblings
     And I expect this node to have the following succeeding siblings:
@@ -67,7 +68,8 @@ Feature: Move a node with content dimensions
       | cs-identifier;youngest-mc-nodeface;{"example": "general"} |
 
     When I am in workspace "live" and dimension space point {"example": "source"}
-    And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document-n" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
+    And I expect node aggregate identifier "nody-mc-nodeface" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
+    And I expect this node to have path "document/child-document-n"
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example": "general"}
     And I expect this node to have no preceding siblings
     And I expect this node to have the following succeeding siblings:
@@ -78,7 +80,8 @@ Feature: Move a node with content dimensions
       | cs-identifier;youngest-mc-nodeface;{"example": "general"} |
 
     When I am in workspace "live" and dimension space point {"example": "spec"}
-    And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document-n" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
+    And I expect node aggregate identifier "nody-mc-nodeface" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
+    And I expect this node to have path "document/child-document-n"
     And I expect this node to have no preceding siblings
     And I expect this node to have the following succeeding siblings:
       | NodeDiscriminator                                         |
@@ -88,7 +91,8 @@ Feature: Move a node with content dimensions
       | cs-identifier;youngest-mc-nodeface;{"example": "general"} |
 
     When I am in workspace "live" and dimension space point {"example": "peer"}
-    And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document-n" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
+    And I expect node aggregate identifier "nody-mc-nodeface" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
+    And I expect this node to have path "document/child-document-n"
     And I expect this node to have no preceding siblings
     And I expect this node to have the following succeeding siblings:
       | NodeDiscriminator                                         |
@@ -121,7 +125,8 @@ Feature: Move a node with content dimensions
       | succeedingSiblingsForCoverage | [{"dimensionSpacePoint":{"example":"general"},"nodeAggregateId": "eldest-mc-nodeface"},{"dimensionSpacePoint":{"example":"source"},"nodeAggregateId": "eldest-mc-nodeface"},{"dimensionSpacePoint":{"example":"spec"},"nodeAggregateId": "elder-mc-nodeface"},{"dimensionSpacePoint":{"example":"peer"},"nodeAggregateId": "eldest-mc-nodeface"}] |
 
     When I am in workspace "live" and dimension space point {"example": "general"}
-    And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document-n" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
+    And I expect node aggregate identifier "nody-mc-nodeface" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
+    And I expect this node to have path "document/child-document-n"
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example": "general"}
     And I expect this node to have no preceding siblings
     And I expect this node to have the following succeeding siblings:
@@ -132,7 +137,8 @@ Feature: Move a node with content dimensions
       | cs-identifier;youngest-mc-nodeface;{"example": "general"} |
 
     When I am in workspace "live" and dimension space point {"example": "source"}
-    And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document-n" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
+    And I expect node aggregate identifier "nody-mc-nodeface" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
+    And I expect this node to have path "document/child-document-n"
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example": "general"}
     And I expect this node to have no preceding siblings
     And I expect this node to have the following succeeding siblings:
@@ -143,7 +149,8 @@ Feature: Move a node with content dimensions
       | cs-identifier;youngest-mc-nodeface;{"example": "general"} |
 
     When I am in workspace "live" and dimension space point {"example": "spec"}
-    And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document-n" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
+    And I expect node aggregate identifier "nody-mc-nodeface" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
+    And I expect this node to have path "document/child-document-n"
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example": "general"}
     And I expect this node to have no preceding siblings
     And I expect this node to have the following succeeding siblings:
@@ -153,7 +160,8 @@ Feature: Move a node with content dimensions
       | cs-identifier;youngest-mc-nodeface;{"example": "general"} |
 
     When I am in workspace "live" and dimension space point {"example": "peer"}
-    And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document-n" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
+    And I expect node aggregate identifier "nody-mc-nodeface" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
+    And I expect this node to have path "document/child-document-n"
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example": "general"}
     And I expect this node to have no preceding siblings
     And I expect this node to have the following succeeding siblings:
@@ -187,7 +195,8 @@ Feature: Move a node with content dimensions
       | succeedingSiblingsForCoverage | [{"dimensionSpacePoint":{"example":"general"},"nodeAggregateId": "elder-mc-nodeface"},{"dimensionSpacePoint":{"example":"source"},"nodeAggregateId": "elder-mc-nodeface"},{"dimensionSpacePoint":{"example":"spec"},"nodeAggregateId": "elder-mc-nodeface"},{"dimensionSpacePoint":{"example":"peer"},"nodeAggregateId": "elder-mc-nodeface"}] |
 
     When I am in workspace "live" and dimension space point {"example": "general"}
-    And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document-n" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
+    And I expect node aggregate identifier "nody-mc-nodeface" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
+    And I expect this node to have path "document/child-document-n"
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example": "general"}
     And I expect this node to have the following preceding siblings:
       | NodeDiscriminator                                       |
@@ -199,7 +208,8 @@ Feature: Move a node with content dimensions
       | cs-identifier;youngest-mc-nodeface;{"example": "general"} |
 
     When I am in workspace "live" and dimension space point {"example": "source"}
-    And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document-n" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
+    And I expect node aggregate identifier "nody-mc-nodeface" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
+    And I expect this node to have path "document/child-document-n"
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example": "general"}
     And I expect this node to have the following preceding siblings:
       | NodeDiscriminator                                       |
@@ -211,7 +221,8 @@ Feature: Move a node with content dimensions
       | cs-identifier;youngest-mc-nodeface;{"example": "general"} |
 
     When I am in workspace "live" and dimension space point {"example": "spec"}
-    And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document-n" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
+    And I expect node aggregate identifier "nody-mc-nodeface" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
+    And I expect this node to have path "document/child-document-n"
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example": "general"}
     And I expect this node to have no preceding siblings
     And I expect this node to have the following succeeding siblings:
@@ -221,7 +232,8 @@ Feature: Move a node with content dimensions
       | cs-identifier;youngest-mc-nodeface;{"example": "general"} |
 
     When I am in workspace "live" and dimension space point {"example": "peer"}
-    And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document-n" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
+    And I expect node aggregate identifier "nody-mc-nodeface" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
+    And I expect this node to have path "document/child-document-n"
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example": "general"}
     And I expect this node to have the following preceding siblings:
       | NodeDiscriminator                                       |
@@ -250,7 +262,8 @@ Feature: Move a node with content dimensions
       | succeedingSiblingsForCoverage | [{"dimensionSpacePoint":{"example":"general"},"nodeAggregateId": "elder-mc-nodeface"},{"dimensionSpacePoint":{"example":"source"},"nodeAggregateId": "elder-mc-nodeface"},{"dimensionSpacePoint":{"example":"spec"},"nodeAggregateId": "elder-mc-nodeface"},{"dimensionSpacePoint":{"example":"peer"},"nodeAggregateId": "elder-mc-nodeface"}] |
 
     When I am in workspace "live" and dimension space point {"example": "general"}
-    And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document-n" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
+    And I expect node aggregate identifier "nody-mc-nodeface" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
+    And I expect this node to have path "document/child-document-n"
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example": "general"}
     And I expect this node to have the following preceding siblings:
       | NodeDiscriminator                                       |
@@ -262,7 +275,8 @@ Feature: Move a node with content dimensions
       | cs-identifier;youngest-mc-nodeface;{"example": "general"} |
 
     When I am in workspace "live" and dimension space point {"example": "source"}
-    And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document-n" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
+    And I expect node aggregate identifier "nody-mc-nodeface" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
+    And I expect this node to have path "document/child-document-n"
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example": "general"}
     And I expect this node to have the following preceding siblings:
       | NodeDiscriminator                                       |
@@ -274,7 +288,8 @@ Feature: Move a node with content dimensions
       | cs-identifier;youngest-mc-nodeface;{"example": "general"} |
 
     When I am in workspace "live" and dimension space point {"example": "spec"}
-    And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document-n" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
+    And I expect node aggregate identifier "nody-mc-nodeface" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
+    And I expect this node to have path "document/child-document-n"
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example": "general"}
     And I expect this node to have the following preceding siblings:
       | NodeDiscriminator                                       |
@@ -286,7 +301,8 @@ Feature: Move a node with content dimensions
       | cs-identifier;youngest-mc-nodeface;{"example": "general"} |
 
     When I am in workspace "live" and dimension space point {"example": "peer"}
-    And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document-n" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
+    And I expect node aggregate identifier "nody-mc-nodeface" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
+    And I expect this node to have path "document/child-document-n"
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example": "general"}
     And I expect this node to have the following preceding siblings:
       | NodeDiscriminator                                       |
@@ -321,7 +337,8 @@ Feature: Move a node with content dimensions
       | succeedingSiblingsForCoverage | [{"dimensionSpacePoint":{"example":"general"},"nodeAggregateId": "elder-mc-nodeface"},{"dimensionSpacePoint":{"example":"source"},"nodeAggregateId": "elder-mc-nodeface"},{"dimensionSpacePoint":{"example":"spec"},"nodeAggregateId": "younger-mc-nodeface"},{"dimensionSpacePoint":{"example":"peer"},"nodeAggregateId": "elder-mc-nodeface"}] |
 
     When I am in workspace "live" and dimension space point {"example": "general"}
-    And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document-n" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
+    And I expect node aggregate identifier "nody-mc-nodeface" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
+    And I expect this node to have path "document/child-document-n"
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example": "general"}
     And I expect this node to have the following preceding siblings:
       | NodeDiscriminator                                       |
@@ -333,7 +350,8 @@ Feature: Move a node with content dimensions
       | cs-identifier;youngest-mc-nodeface;{"example": "general"} |
 
     When I am in workspace "live" and dimension space point {"example": "source"}
-    And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document-n" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
+    And I expect node aggregate identifier "nody-mc-nodeface" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
+    And I expect this node to have path "document/child-document-n"
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example": "general"}
     And I expect this node to have the following preceding siblings:
       | NodeDiscriminator                                       |
@@ -345,7 +363,8 @@ Feature: Move a node with content dimensions
       | cs-identifier;youngest-mc-nodeface;{"example": "general"} |
 
     When I am in workspace "live" and dimension space point {"example": "spec"}
-    And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document-n" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
+    And I expect node aggregate identifier "nody-mc-nodeface" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
+    And I expect this node to have path "document/child-document-n"
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example": "general"}
     And I expect this node to have the following preceding siblings:
       | NodeDiscriminator                                       |
@@ -356,7 +375,8 @@ Feature: Move a node with content dimensions
       | cs-identifier;youngest-mc-nodeface;{"example": "general"} |
 
     When I am in workspace "live" and dimension space point {"example": "peer"}
-    And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document-n" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
+    And I expect node aggregate identifier "nody-mc-nodeface" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
+    And I expect this node to have path "document/child-document-n"
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example": "general"}
     And I expect this node to have the following preceding siblings:
       | NodeDiscriminator                                       |
@@ -391,7 +411,8 @@ Feature: Move a node with content dimensions
       | succeedingSiblingsForCoverage | [{"dimensionSpacePoint":{"example":"general"},"nodeAggregateId": "youngest-mc-nodeface"},{"dimensionSpacePoint":{"example":"source"},"nodeAggregateId": "youngest-mc-nodeface"},{"dimensionSpacePoint":{"example":"peer"},"nodeAggregateId": "youngest-mc-nodeface"}] |
 
     When I am in workspace "live" and dimension space point {"example": "general"}
-    And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document-n" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
+    And I expect node aggregate identifier "nody-mc-nodeface" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
+    And I expect this node to have path "document/child-document-n"
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example": "general"}
     And I expect this node to have the following preceding siblings:
       | NodeDiscriminator                                        |
@@ -403,7 +424,8 @@ Feature: Move a node with content dimensions
       | cs-identifier;youngest-mc-nodeface;{"example": "general"} |
 
     When I am in workspace "live" and dimension space point {"example": "source"}
-    And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document-n" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
+    And I expect node aggregate identifier "nody-mc-nodeface" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
+    And I expect this node to have path "document/child-document-n"
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example": "general"}
     And I expect this node to have the following preceding siblings:
       | NodeDiscriminator                                        |
@@ -415,7 +437,8 @@ Feature: Move a node with content dimensions
       | cs-identifier;youngest-mc-nodeface;{"example": "general"} |
 
     When I am in workspace "live" and dimension space point {"example": "spec"}
-    And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document-n" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
+    And I expect node aggregate identifier "nody-mc-nodeface" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
+    And I expect this node to have path "document/child-document-n"
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example": "general"}
     And I expect this node to have the following preceding siblings:
       | NodeDiscriminator                                       |
@@ -427,7 +450,8 @@ Feature: Move a node with content dimensions
       | cs-identifier;younger-mc-nodeface;{"example": "general"} |
 
     When I am in workspace "live" and dimension space point {"example": "peer"}
-    And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document-n" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
+    And I expect node aggregate identifier "nody-mc-nodeface" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
+    And I expect this node to have path "document/child-document-n"
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example": "general"}
     And I expect this node to have the following preceding siblings:
       | NodeDiscriminator                                        |
@@ -456,7 +480,8 @@ Feature: Move a node with content dimensions
       | succeedingSiblingsForCoverage | [{"dimensionSpacePoint":{"example":"general"},"nodeAggregateId": null},{"dimensionSpacePoint":{"example":"source"},"nodeAggregateId": null},{"dimensionSpacePoint":{"example":"spec"},"nodeAggregateId": null},{"dimensionSpacePoint":{"example":"peer"},"nodeAggregateId": null}] |
 
     When I am in workspace "live" and dimension space point {"example": "general"}
-    And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document-n" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
+    And I expect node aggregate identifier "nody-mc-nodeface" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
+    And I expect this node to have path "document/child-document-n"
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example": "general"}
     And I expect this node to have the following preceding siblings:
       | NodeDiscriminator                                         |
@@ -467,7 +492,8 @@ Feature: Move a node with content dimensions
     And I expect this node to have no succeeding siblings
 
     When I am in workspace "live" and dimension space point {"example": "source"}
-    And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document-n" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
+    And I expect node aggregate identifier "nody-mc-nodeface" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
+    And I expect this node to have path "document/child-document-n"
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example": "general"}
     And I expect this node to have the following preceding siblings:
       | NodeDiscriminator                                         |
@@ -478,7 +504,8 @@ Feature: Move a node with content dimensions
     And I expect this node to have no succeeding siblings
 
     When I am in workspace "live" and dimension space point {"example": "spec"}
-    And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document-n" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
+    And I expect node aggregate identifier "nody-mc-nodeface" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
+    And I expect this node to have path "document/child-document-n"
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example": "general"}
     And I expect this node to have the following preceding siblings:
       | NodeDiscriminator                                         |
@@ -489,7 +516,8 @@ Feature: Move a node with content dimensions
     And I expect this node to have no succeeding siblings
 
     When I am in workspace "live" and dimension space point {"example": "peer"}
-    And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document-n" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
+    And I expect node aggregate identifier "nody-mc-nodeface" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
+    And I expect this node to have path "document/child-document-n"
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example": "general"}
     And I expect this node to have the following preceding siblings:
       | NodeDiscriminator                                         |
@@ -523,7 +551,8 @@ Feature: Move a node with content dimensions
       | succeedingSiblingsForCoverage | [{"dimensionSpacePoint":{"example":"general"},"nodeAggregateId": null},{"dimensionSpacePoint":{"example":"source"},"nodeAggregateId": null},{"dimensionSpacePoint":{"example":"spec"},"nodeAggregateId": null},{"dimensionSpacePoint":{"example":"peer"},"nodeAggregateId": null}] |
 
     When I am in workspace "live" and dimension space point {"example": "general"}
-    And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document-n" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
+    And I expect node aggregate identifier "nody-mc-nodeface" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
+    And I expect this node to have path "document/child-document-n"
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example": "general"}
     And I expect this node to have the following preceding siblings:
       | NodeDiscriminator                                         |
@@ -534,7 +563,8 @@ Feature: Move a node with content dimensions
     And I expect this node to have no succeeding siblings
 
     When I am in workspace "live" and dimension space point {"example": "source"}
-    And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document-n" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
+    And I expect node aggregate identifier "nody-mc-nodeface" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
+    And I expect this node to have path "document/child-document-n"
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example": "general"}
     And I expect this node to have the following preceding siblings:
       | NodeDiscriminator                                         |
@@ -545,7 +575,8 @@ Feature: Move a node with content dimensions
     And I expect this node to have no succeeding siblings
 
     When I am in workspace "live" and dimension space point {"example": "spec"}
-    And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document-n" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
+    And I expect node aggregate identifier "nody-mc-nodeface" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
+    And I expect this node to have path "document/child-document-n"
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example": "general"}
     And I expect this node to have the following preceding siblings:
       | NodeDiscriminator                                        |
@@ -555,7 +586,8 @@ Feature: Move a node with content dimensions
     And I expect this node to have no succeeding siblings
 
     When I am in workspace "live" and dimension space point {"example": "peer"}
-    And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document-n" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
+    And I expect node aggregate identifier "nody-mc-nodeface" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
+    And I expect this node to have path "document/child-document-n"
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example": "general"}
     And I expect this node to have the following preceding siblings:
       | NodeDiscriminator                                         |
@@ -589,7 +621,8 @@ Feature: Move a node with content dimensions
       | succeedingSiblingsForCoverage | [{"dimensionSpacePoint":{"example":"general"},"nodeAggregateId": "youngest-mc-nodeface"},{"dimensionSpacePoint":{"example":"source"},"nodeAggregateId": "youngest-mc-nodeface"},{"dimensionSpacePoint":{"example":"spec"},"nodeAggregateId": null},{"dimensionSpacePoint":{"example":"peer"},"nodeAggregateId": "youngest-mc-nodeface"}] |
 
     When I am in workspace "live" and dimension space point {"example": "general"}
-    And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document-n" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
+    And I expect node aggregate identifier "nody-mc-nodeface" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
+    And I expect this node to have path "document/child-document-n"
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example": "general"}
     And I expect this node to have the following preceding siblings:
       | NodeDiscriminator                                        |
@@ -601,7 +634,8 @@ Feature: Move a node with content dimensions
       | cs-identifier;youngest-mc-nodeface;{"example": "general"} |
 
     When I am in workspace "live" and dimension space point {"example": "source"}
-    And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document-n" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
+    And I expect node aggregate identifier "nody-mc-nodeface" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
+    And I expect this node to have path "document/child-document-n"
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example": "general"}
     And I expect this node to have the following preceding siblings:
       | NodeDiscriminator                                        |
@@ -613,7 +647,8 @@ Feature: Move a node with content dimensions
       | cs-identifier;youngest-mc-nodeface;{"example": "general"} |
 
     When I am in workspace "live" and dimension space point {"example": "spec"}
-    And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document-n" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
+    And I expect node aggregate identifier "nody-mc-nodeface" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
+    And I expect this node to have path "document/child-document-n"
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example": "general"}
     And I expect this node to have the following preceding siblings:
       | NodeDiscriminator                                        |
@@ -623,7 +658,8 @@ Feature: Move a node with content dimensions
     And I expect this node to have no succeeding siblings
 
     When I am in workspace "live" and dimension space point {"example": "peer"}
-    And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document-n" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
+    And I expect node aggregate identifier "nody-mc-nodeface" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
+    And I expect this node to have path "document/child-document-n"
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example": "general"}
     And I expect this node to have the following preceding siblings:
       | NodeDiscriminator                                        |
@@ -652,7 +688,8 @@ Feature: Move a node with content dimensions
       | succeedingSiblingsForCoverage | [{"dimensionSpacePoint":{"example":"general"},"nodeAggregateId": "youngest-mc-nodeface"},{"dimensionSpacePoint":{"example":"source"},"nodeAggregateId": "youngest-mc-nodeface"},{"dimensionSpacePoint":{"example":"spec"},"nodeAggregateId": "youngest-mc-nodeface"},{"dimensionSpacePoint":{"example":"peer"},"nodeAggregateId": "youngest-mc-nodeface"}] |
 
     When I am in workspace "live" and dimension space point {"example": "general"}
-    And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document-n" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
+    And I expect node aggregate identifier "nody-mc-nodeface" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
+    And I expect this node to have path "document/child-document-n"
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example": "general"}
     And I expect this node to have the following preceding siblings:
       | NodeDiscriminator                                        |
@@ -664,7 +701,8 @@ Feature: Move a node with content dimensions
       | cs-identifier;youngest-mc-nodeface;{"example": "general"} |
 
     When I am in workspace "live" and dimension space point {"example": "source"}
-    And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document-n" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
+    And I expect node aggregate identifier "nody-mc-nodeface" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
+    And I expect this node to have path "document/child-document-n"
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example": "general"}
     And I expect this node to have the following preceding siblings:
       | NodeDiscriminator                                        |
@@ -676,7 +714,8 @@ Feature: Move a node with content dimensions
       | cs-identifier;youngest-mc-nodeface;{"example": "general"} |
 
     When I am in workspace "live" and dimension space point {"example": "spec"}
-    And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document-n" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
+    And I expect node aggregate identifier "nody-mc-nodeface" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
+    And I expect this node to have path "document/child-document-n"
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example": "general"}
     And I expect this node to have the following preceding siblings:
       | NodeDiscriminator                                        |
@@ -688,7 +727,8 @@ Feature: Move a node with content dimensions
       | cs-identifier;youngest-mc-nodeface;{"example": "general"} |
 
     When I am in workspace "live" and dimension space point {"example": "peer"}
-    And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document-n" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
+    And I expect node aggregate identifier "nody-mc-nodeface" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
+    And I expect this node to have path "document/child-document-n"
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example": "general"}
     And I expect this node to have the following preceding siblings:
       | NodeDiscriminator                                        |
@@ -723,7 +763,8 @@ Feature: Move a node with content dimensions
       | succeedingSiblingsForCoverage | [{"dimensionSpacePoint":{"example":"general"},"nodeAggregateId": "youngest-mc-nodeface"},{"dimensionSpacePoint":{"example":"source"},"nodeAggregateId": "youngest-mc-nodeface"},{"dimensionSpacePoint":{"example":"spec"},"nodeAggregateId": "youngest-mc-nodeface"},{"dimensionSpacePoint":{"example":"peer"},"nodeAggregateId": "youngest-mc-nodeface"}] |
 
     When I am in workspace "live" and dimension space point {"example": "general"}
-    And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document-n" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
+    And I expect node aggregate identifier "nody-mc-nodeface" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
+    And I expect this node to have path "document/child-document-n"
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example": "general"}
     And I expect this node to have the following preceding siblings:
       | NodeDiscriminator                                        |
@@ -735,7 +776,8 @@ Feature: Move a node with content dimensions
       | cs-identifier;youngest-mc-nodeface;{"example": "general"} |
 
     When I am in workspace "live" and dimension space point {"example": "source"}
-    And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document-n" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
+    And I expect node aggregate identifier "nody-mc-nodeface" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
+    And I expect this node to have path "document/child-document-n"
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example": "general"}
     And I expect this node to have the following preceding siblings:
       | NodeDiscriminator                                        |
@@ -747,7 +789,8 @@ Feature: Move a node with content dimensions
       | cs-identifier;youngest-mc-nodeface;{"example": "general"} |
 
     When I am in workspace "live" and dimension space point {"example": "spec"}
-    And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document-n" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
+    And I expect node aggregate identifier "nody-mc-nodeface" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
+    And I expect this node to have path "document/child-document-n"
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example": "general"}
     And I expect this node to have the following preceding siblings:
       | NodeDiscriminator                                       |
@@ -758,7 +801,8 @@ Feature: Move a node with content dimensions
       | cs-identifier;youngest-mc-nodeface;{"example": "general"} |
 
     When I am in workspace "live" and dimension space point {"example": "peer"}
-    And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document-n" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
+    And I expect node aggregate identifier "nody-mc-nodeface" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
+    And I expect this node to have path "document/child-document-n"
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example": "general"}
     And I expect this node to have the following preceding siblings:
       | NodeDiscriminator                                        |
@@ -793,7 +837,8 @@ Feature: Move a node with content dimensions
       | succeedingSiblingsForCoverage | [{"dimensionSpacePoint":{"example":"general"},"nodeAggregateId": "elder-mc-nodeface"},{"dimensionSpacePoint":{"example":"source"},"nodeAggregateId": "elder-mc-nodeface"},{"dimensionSpacePoint":{"example":"peer"},"nodeAggregateId": "elder-mc-nodeface"}] |
 
     When I am in workspace "live" and dimension space point {"example": "general"}
-    And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document-n" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
+    And I expect node aggregate identifier "nody-mc-nodeface" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
+    And I expect this node to have path "document/child-document-n"
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example": "general"}
     And I expect this node to have the following preceding siblings:
       | NodeDiscriminator                                       |
@@ -805,7 +850,8 @@ Feature: Move a node with content dimensions
       | cs-identifier;youngest-mc-nodeface;{"example": "general"} |
 
     When I am in workspace "live" and dimension space point {"example": "source"}
-    And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document-n" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
+    And I expect node aggregate identifier "nody-mc-nodeface" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
+    And I expect this node to have path "document/child-document-n"
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example": "general"}
     And I expect this node to have the following preceding siblings:
       | NodeDiscriminator                                       |
@@ -817,7 +863,8 @@ Feature: Move a node with content dimensions
       | cs-identifier;youngest-mc-nodeface;{"example": "general"} |
 
     When I am in workspace "live" and dimension space point {"example": "spec"}
-    And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document-n" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
+    And I expect node aggregate identifier "nody-mc-nodeface" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
+    And I expect this node to have path "document/child-document-n"
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example": "general"}
     And I expect this node to have the following preceding siblings:
     # The given preceding sibling cannot be resolved and since elder-mc-nodeface isn't given as a succeeding sibling, nothing is done
@@ -829,7 +876,8 @@ Feature: Move a node with content dimensions
       | cs-identifier;youngest-mc-nodeface;{"example": "general"} |
 
     When I am in workspace "live" and dimension space point {"example": "peer"}
-    And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document-n" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
+    And I expect node aggregate identifier "nody-mc-nodeface" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
+    And I expect this node to have path "document/child-document-n"
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example": "general"}
     And I expect this node to have the following preceding siblings:
       | NodeDiscriminator                                       |
@@ -860,7 +908,8 @@ Feature: Move a node with content dimensions
       | succeedingSiblingsForCoverage | [{"dimensionSpacePoint":{"example":"source"},"nodeAggregateId": "eldest-mc-nodeface"},{"dimensionSpacePoint":{"example":"spec"},"nodeAggregateId": "eldest-mc-nodeface"}] |
 
     When I am in workspace "live" and dimension space point {"example": "general"}
-    And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document-n" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
+    And I expect node aggregate identifier "nody-mc-nodeface" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
+    And I expect this node to have path "document/child-document-n"
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example": "general"}
     And I expect this node to have the following preceding siblings:
       | NodeDiscriminator                                       |
@@ -872,7 +921,8 @@ Feature: Move a node with content dimensions
       | cs-identifier;youngest-mc-nodeface;{"example": "general"} |
 
     When I am in workspace "live" and dimension space point {"example": "source"}
-    And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document-n" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
+    And I expect node aggregate identifier "nody-mc-nodeface" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
+    And I expect this node to have path "document/child-document-n"
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example": "general"}
     And I expect this node to have no preceding siblings
     And I expect this node to have the following succeeding siblings:
@@ -883,7 +933,8 @@ Feature: Move a node with content dimensions
       | cs-identifier;youngest-mc-nodeface;{"example": "general"} |
 
     When I am in workspace "live" and dimension space point {"example": "spec"}
-    And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document-n" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
+    And I expect node aggregate identifier "nody-mc-nodeface" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
+    And I expect this node to have path "document/child-document-n"
     And I expect this node to have no preceding siblings
     And I expect this node to have the following succeeding siblings:
       | NodeDiscriminator                                         |
@@ -893,7 +944,8 @@ Feature: Move a node with content dimensions
       | cs-identifier;youngest-mc-nodeface;{"example": "general"} |
 
     When I am in workspace "live" and dimension space point {"example": "peer"}
-    And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document-n" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
+    And I expect node aggregate identifier "nody-mc-nodeface" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
+    And I expect this node to have path "document/child-document-n"
     And I expect this node to have the following preceding siblings:
       | NodeDiscriminator                                       |
       | cs-identifier;elder-mc-nodeface;{"example": "general"}  |
@@ -927,7 +979,8 @@ Feature: Move a node with content dimensions
       | succeedingSiblingsForCoverage | [{"dimensionSpacePoint":{"example":"source"},"nodeAggregateId": "eldest-mc-nodeface"},{"dimensionSpacePoint":{"example":"spec"},"nodeAggregateId": "elder-mc-nodeface"}] |
 
     When I am in workspace "live" and dimension space point {"example": "general"}
-    And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document-n" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
+    And I expect node aggregate identifier "nody-mc-nodeface" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
+    And I expect this node to have path "document/child-document-n"
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example": "general"}
     And I expect this node to have the following preceding siblings:
       | NodeDiscriminator                                       |
@@ -939,7 +992,8 @@ Feature: Move a node with content dimensions
       | cs-identifier;youngest-mc-nodeface;{"example": "general"} |
 
     When I am in workspace "live" and dimension space point {"example": "source"}
-    And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document-n" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
+    And I expect node aggregate identifier "nody-mc-nodeface" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
+    And I expect this node to have path "document/child-document-n"
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example": "general"}
     And I expect this node to have no preceding siblings
     And I expect this node to have the following succeeding siblings:
@@ -950,7 +1004,8 @@ Feature: Move a node with content dimensions
       | cs-identifier;youngest-mc-nodeface;{"example": "general"} |
 
     When I am in workspace "live" and dimension space point {"example": "spec"}
-    And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document-n" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
+    And I expect node aggregate identifier "nody-mc-nodeface" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
+    And I expect this node to have path "document/child-document-n"
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example": "general"}
     And I expect this node to have no preceding siblings
     And I expect this node to have the following succeeding siblings:
@@ -960,7 +1015,8 @@ Feature: Move a node with content dimensions
       | cs-identifier;youngest-mc-nodeface;{"example": "general"} |
 
     When I am in workspace "live" and dimension space point {"example": "peer"}
-    And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document-n" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
+    And I expect node aggregate identifier "nody-mc-nodeface" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
+    And I expect this node to have path "document/child-document-n"
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example": "general"}
     And I expect this node to have the following preceding siblings:
       | NodeDiscriminator                                       |
@@ -995,7 +1051,8 @@ Feature: Move a node with content dimensions
       | succeedingSiblingsForCoverage | [{"dimensionSpacePoint":{"example":"source"},"nodeAggregateId": "elder-mc-nodeface"},{"dimensionSpacePoint":{"example":"spec"},"nodeAggregateId": "elder-mc-nodeface"}] |
 
     When I am in workspace "live" and dimension space point {"example": "general"}
-    And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document-n" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
+    And I expect node aggregate identifier "nody-mc-nodeface" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
+    And I expect this node to have path "document/child-document-n"
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example": "general"}
     And I expect this node to have the following preceding siblings:
       | NodeDiscriminator                                       |
@@ -1007,7 +1064,8 @@ Feature: Move a node with content dimensions
       | cs-identifier;youngest-mc-nodeface;{"example": "general"} |
 
     When I am in workspace "live" and dimension space point {"example": "source"}
-    And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document-n" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
+    And I expect node aggregate identifier "nody-mc-nodeface" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
+    And I expect this node to have path "document/child-document-n"
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example": "general"}
     And I expect this node to have the following preceding siblings:
       | NodeDiscriminator                                       |
@@ -1019,7 +1077,8 @@ Feature: Move a node with content dimensions
       | cs-identifier;youngest-mc-nodeface;{"example": "general"} |
 
     When I am in workspace "live" and dimension space point {"example": "spec"}
-    And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document-n" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
+    And I expect node aggregate identifier "nody-mc-nodeface" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
+    And I expect this node to have path "document/child-document-n"
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example": "general"}
     And I expect this node to have no preceding siblings
     And I expect this node to have the following succeeding siblings:
@@ -1029,7 +1088,8 @@ Feature: Move a node with content dimensions
       | cs-identifier;youngest-mc-nodeface;{"example": "general"} |
 
     When I am in workspace "live" and dimension space point {"example": "peer"}
-    And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document-n" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
+    And I expect node aggregate identifier "nody-mc-nodeface" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
+    And I expect this node to have path "document/child-document-n"
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example": "general"}
     And I expect this node to have the following preceding siblings:
       | NodeDiscriminator                                       |
@@ -1058,7 +1118,8 @@ Feature: Move a node with content dimensions
       | succeedingSiblingsForCoverage | [{"dimensionSpacePoint":{"example":"source"},"nodeAggregateId": "elder-mc-nodeface"},{"dimensionSpacePoint":{"example":"spec"},"nodeAggregateId": "elder-mc-nodeface"}] |
 
     When I am in workspace "live" and dimension space point {"example": "general"}
-    And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document-n" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
+    And I expect node aggregate identifier "nody-mc-nodeface" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
+    And I expect this node to have path "document/child-document-n"
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example": "general"}
     And I expect this node to have the following preceding siblings:
       | NodeDiscriminator                                       |
@@ -1070,7 +1131,8 @@ Feature: Move a node with content dimensions
       | cs-identifier;youngest-mc-nodeface;{"example": "general"} |
 
     When I am in workspace "live" and dimension space point {"example": "source"}
-    And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document-n" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
+    And I expect node aggregate identifier "nody-mc-nodeface" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
+    And I expect this node to have path "document/child-document-n"
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example": "general"}
     And I expect this node to have the following preceding siblings:
       | NodeDiscriminator                                       |
@@ -1082,7 +1144,8 @@ Feature: Move a node with content dimensions
       | cs-identifier;youngest-mc-nodeface;{"example": "general"} |
 
     When I am in workspace "live" and dimension space point {"example": "spec"}
-    And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document-n" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
+    And I expect node aggregate identifier "nody-mc-nodeface" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
+    And I expect this node to have path "document/child-document-n"
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example": "general"}
     And I expect this node to have the following preceding siblings:
       | NodeDiscriminator                                       |
@@ -1094,7 +1157,8 @@ Feature: Move a node with content dimensions
       | cs-identifier;youngest-mc-nodeface;{"example": "general"} |
 
     When I am in workspace "live" and dimension space point {"example": "peer"}
-    And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document-n" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
+    And I expect node aggregate identifier "nody-mc-nodeface" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
+    And I expect this node to have path "document/child-document-n"
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example": "general"}
     And I expect this node to have the following preceding siblings:
       | NodeDiscriminator                                       |
@@ -1129,7 +1193,8 @@ Feature: Move a node with content dimensions
       | succeedingSiblingsForCoverage | [{"dimensionSpacePoint":{"example":"source"},"nodeAggregateId": "elder-mc-nodeface"},{"dimensionSpacePoint":{"example":"spec"},"nodeAggregateId": "younger-mc-nodeface"}] |
 
     When I am in workspace "live" and dimension space point {"example": "general"}
-    And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document-n" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
+    And I expect node aggregate identifier "nody-mc-nodeface" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
+    And I expect this node to have path "document/child-document-n"
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example": "general"}
     And I expect this node to have the following preceding siblings:
       | NodeDiscriminator                                       |
@@ -1141,7 +1206,8 @@ Feature: Move a node with content dimensions
       | cs-identifier;youngest-mc-nodeface;{"example": "general"} |
 
     When I am in workspace "live" and dimension space point {"example": "source"}
-    And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document-n" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
+    And I expect node aggregate identifier "nody-mc-nodeface" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
+    And I expect this node to have path "document/child-document-n"
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example": "general"}
     And I expect this node to have the following preceding siblings:
       | NodeDiscriminator                                       |
@@ -1153,7 +1219,8 @@ Feature: Move a node with content dimensions
       | cs-identifier;youngest-mc-nodeface;{"example": "general"} |
 
     When I am in workspace "live" and dimension space point {"example": "spec"}
-    And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document-n" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
+    And I expect node aggregate identifier "nody-mc-nodeface" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
+    And I expect this node to have path "document/child-document-n"
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example": "general"}
     And I expect this node to have the following preceding siblings:
       | NodeDiscriminator                                       |
@@ -1164,7 +1231,8 @@ Feature: Move a node with content dimensions
       | cs-identifier;youngest-mc-nodeface;{"example": "general"} |
 
     When I am in workspace "live" and dimension space point {"example": "peer"}
-    And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document-n" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
+    And I expect node aggregate identifier "nody-mc-nodeface" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
+    And I expect this node to have path "document/child-document-n"
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example": "general"}
     And I expect this node to have the following preceding siblings:
       | NodeDiscriminator                                       |
@@ -1199,7 +1267,8 @@ Feature: Move a node with content dimensions
       | succeedingSiblingsForCoverage | [{"dimensionSpacePoint":{"example":"source"},"nodeAggregateId": "youngest-mc-nodeface"}] |
 
     When I am in workspace "live" and dimension space point {"example": "general"}
-    And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document-n" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
+    And I expect node aggregate identifier "nody-mc-nodeface" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
+    And I expect this node to have path "document/child-document-n"
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example": "general"}
     And I expect this node to have the following preceding siblings:
       | NodeDiscriminator                                       |
@@ -1211,7 +1280,8 @@ Feature: Move a node with content dimensions
       | cs-identifier;youngest-mc-nodeface;{"example": "general"} |
 
     When I am in workspace "live" and dimension space point {"example": "source"}
-    And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document-n" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
+    And I expect node aggregate identifier "nody-mc-nodeface" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
+    And I expect this node to have path "document/child-document-n"
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example": "general"}
     And I expect this node to have the following preceding siblings:
       | NodeDiscriminator                                        |
@@ -1223,7 +1293,8 @@ Feature: Move a node with content dimensions
       | cs-identifier;youngest-mc-nodeface;{"example": "general"} |
 
     When I am in workspace "live" and dimension space point {"example": "spec"}
-    And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document-n" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
+    And I expect node aggregate identifier "nody-mc-nodeface" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
+    And I expect this node to have path "document/child-document-n"
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example": "general"}
     And I expect this node to have the following preceding siblings:
     # The given succeeding sibling cannot be resolved and since elder-mc-nodeface isn't given as a preceding sibling, nothing is done
@@ -1235,7 +1306,8 @@ Feature: Move a node with content dimensions
       | cs-identifier;younger-mc-nodeface;{"example": "general"} |
 
     When I am in workspace "live" and dimension space point {"example": "peer"}
-    And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document-n" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
+    And I expect node aggregate identifier "nody-mc-nodeface" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
+    And I expect this node to have path "document/child-document-n"
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example": "general"}
     And I expect this node to have the following preceding siblings:
       | NodeDiscriminator                                       |
@@ -1264,7 +1336,8 @@ Feature: Move a node with content dimensions
       | succeedingSiblingsForCoverage | [{"dimensionSpacePoint":{"example":"source"},"nodeAggregateId": null},{"dimensionSpacePoint":{"example":"spec"},"nodeAggregateId": null}] |
 
     When I am in workspace "live" and dimension space point {"example": "general"}
-    And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document-n" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
+    And I expect node aggregate identifier "nody-mc-nodeface" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
+    And I expect this node to have path "document/child-document-n"
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example": "general"}
     And I expect this node to have the following preceding siblings:
       | NodeDiscriminator                                       |
@@ -1276,7 +1349,8 @@ Feature: Move a node with content dimensions
       | cs-identifier;youngest-mc-nodeface;{"example": "general"} |
 
     When I am in workspace "live" and dimension space point {"example": "source"}
-    And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document-n" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
+    And I expect node aggregate identifier "nody-mc-nodeface" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
+    And I expect this node to have path "document/child-document-n"
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example": "general"}
     And I expect this node to have the following preceding siblings:
       | NodeDiscriminator                                         |
@@ -1287,7 +1361,8 @@ Feature: Move a node with content dimensions
     And I expect this node to have no succeeding siblings
 
     When I am in workspace "live" and dimension space point {"example": "spec"}
-    And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document-n" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
+    And I expect node aggregate identifier "nody-mc-nodeface" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
+    And I expect this node to have path "document/child-document-n"
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example": "general"}
     And I expect this node to have the following preceding siblings:
       | NodeDiscriminator                                         |
@@ -1298,7 +1373,8 @@ Feature: Move a node with content dimensions
     And I expect this node to have no succeeding siblings
 
     When I am in workspace "live" and dimension space point {"example": "peer"}
-    And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document-n" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
+    And I expect node aggregate identifier "nody-mc-nodeface" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
+    And I expect this node to have path "document/child-document-n"
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example": "general"}
     And I expect this node to have the following preceding siblings:
       | NodeDiscriminator                                       |
@@ -1333,7 +1409,8 @@ Feature: Move a node with content dimensions
       | succeedingSiblingsForCoverage | [{"dimensionSpacePoint":{"example":"source"},"nodeAggregateId": null},{"dimensionSpacePoint":{"example":"spec"},"nodeAggregateId": null}] |
 
     When I am in workspace "live" and dimension space point {"example": "general"}
-    And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document-n" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
+    And I expect node aggregate identifier "nody-mc-nodeface" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
+    And I expect this node to have path "document/child-document-n"
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example": "general"}
     And I expect this node to have the following preceding siblings:
       | NodeDiscriminator                                       |
@@ -1345,7 +1422,8 @@ Feature: Move a node with content dimensions
       | cs-identifier;youngest-mc-nodeface;{"example": "general"} |
 
     When I am in workspace "live" and dimension space point {"example": "source"}
-    And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document-n" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
+    And I expect node aggregate identifier "nody-mc-nodeface" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
+    And I expect this node to have path "document/child-document-n"
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example": "general"}
     And I expect this node to have the following preceding siblings:
       | NodeDiscriminator                                         |
@@ -1356,7 +1434,8 @@ Feature: Move a node with content dimensions
     And I expect this node to have no succeeding siblings
 
     When I am in workspace "live" and dimension space point {"example": "spec"}
-    And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document-n" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
+    And I expect node aggregate identifier "nody-mc-nodeface" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
+    And I expect this node to have path "document/child-document-n"
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example": "general"}
     And I expect this node to have the following preceding siblings:
       | NodeDiscriminator                                        |
@@ -1366,7 +1445,8 @@ Feature: Move a node with content dimensions
     And I expect this node to have no succeeding siblings
 
     When I am in workspace "live" and dimension space point {"example": "peer"}
-    And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document-n" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
+    And I expect node aggregate identifier "nody-mc-nodeface" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
+    And I expect this node to have path "document/child-document-n"
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example": "general"}
     And I expect this node to have the following preceding siblings:
       | NodeDiscriminator                                       |
@@ -1401,7 +1481,8 @@ Feature: Move a node with content dimensions
       | succeedingSiblingsForCoverage | [{"dimensionSpacePoint":{"example":"source"},"nodeAggregateId": "youngest-mc-nodeface"},{"dimensionSpacePoint":{"example":"spec"},"nodeAggregateId": null}] |
 
     When I am in workspace "live" and dimension space point {"example": "general"}
-    And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document-n" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
+    And I expect node aggregate identifier "nody-mc-nodeface" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
+    And I expect this node to have path "document/child-document-n"
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example": "general"}
     And I expect this node to have the following preceding siblings:
       | NodeDiscriminator                                       |
@@ -1413,7 +1494,8 @@ Feature: Move a node with content dimensions
       | cs-identifier;youngest-mc-nodeface;{"example": "general"} |
 
     When I am in workspace "live" and dimension space point {"example": "source"}
-    And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document-n" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
+    And I expect node aggregate identifier "nody-mc-nodeface" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
+    And I expect this node to have path "document/child-document-n"
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example": "general"}
     And I expect this node to have the following preceding siblings:
       | NodeDiscriminator                                        |
@@ -1425,7 +1507,8 @@ Feature: Move a node with content dimensions
       | cs-identifier;youngest-mc-nodeface;{"example": "general"} |
 
     When I am in workspace "live" and dimension space point {"example": "spec"}
-    And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document-n" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
+    And I expect node aggregate identifier "nody-mc-nodeface" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
+    And I expect this node to have path "document/child-document-n"
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example": "general"}
     And I expect this node to have the following preceding siblings:
       | NodeDiscriminator                                        |
@@ -1435,7 +1518,8 @@ Feature: Move a node with content dimensions
     And I expect this node to have no succeeding siblings
 
     When I am in workspace "live" and dimension space point {"example": "peer"}
-    And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document-n" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
+    And I expect node aggregate identifier "nody-mc-nodeface" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
+    And I expect this node to have path "document/child-document-n"
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example": "general"}
     And I expect this node to have the following preceding siblings:
       | NodeDiscriminator                                       |
@@ -1464,7 +1548,8 @@ Feature: Move a node with content dimensions
       | succeedingSiblingsForCoverage | [{"dimensionSpacePoint":{"example":"source"},"nodeAggregateId": "youngest-mc-nodeface"},{"dimensionSpacePoint":{"example":"spec"},"nodeAggregateId": "youngest-mc-nodeface"}] |
 
     When I am in workspace "live" and dimension space point {"example": "general"}
-    And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document-n" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
+    And I expect node aggregate identifier "nody-mc-nodeface" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
+    And I expect this node to have path "document/child-document-n"
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example": "general"}
     And I expect this node to have the following preceding siblings:
       | NodeDiscriminator                                       |
@@ -1476,7 +1561,8 @@ Feature: Move a node with content dimensions
       | cs-identifier;youngest-mc-nodeface;{"example": "general"} |
 
     When I am in workspace "live" and dimension space point {"example": "source"}
-    And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document-n" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
+    And I expect node aggregate identifier "nody-mc-nodeface" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
+    And I expect this node to have path "document/child-document-n"
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example": "general"}
     And I expect this node to have the following preceding siblings:
       | NodeDiscriminator                                        |
@@ -1488,7 +1574,8 @@ Feature: Move a node with content dimensions
       | cs-identifier;youngest-mc-nodeface;{"example": "general"} |
 
     When I am in workspace "live" and dimension space point {"example": "spec"}
-    And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document-n" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
+    And I expect node aggregate identifier "nody-mc-nodeface" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
+    And I expect this node to have path "document/child-document-n"
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example": "general"}
     And I expect this node to have the following preceding siblings:
       | NodeDiscriminator                                        |
@@ -1500,7 +1587,8 @@ Feature: Move a node with content dimensions
       | cs-identifier;youngest-mc-nodeface;{"example": "general"} |
 
     When I am in workspace "live" and dimension space point {"example": "peer"}
-    And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document-n" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
+    And I expect node aggregate identifier "nody-mc-nodeface" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
+    And I expect this node to have path "document/child-document-n"
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example": "general"}
     And I expect this node to have the following preceding siblings:
       | NodeDiscriminator                                       |
@@ -1535,7 +1623,8 @@ Feature: Move a node with content dimensions
       | succeedingSiblingsForCoverage | [{"dimensionSpacePoint":{"example":"source"},"nodeAggregateId": "youngest-mc-nodeface"},{"dimensionSpacePoint":{"example":"spec"},"nodeAggregateId": "youngest-mc-nodeface"}] |
 
     When I am in workspace "live" and dimension space point {"example": "general"}
-    And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document-n" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
+    And I expect node aggregate identifier "nody-mc-nodeface" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
+    And I expect this node to have path "document/child-document-n"
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example": "general"}
     And I expect this node to have the following preceding siblings:
       | NodeDiscriminator                                       |
@@ -1547,7 +1636,8 @@ Feature: Move a node with content dimensions
       | cs-identifier;youngest-mc-nodeface;{"example": "general"} |
 
     When I am in workspace "live" and dimension space point {"example": "source"}
-    And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document-n" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
+    And I expect node aggregate identifier "nody-mc-nodeface" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
+    And I expect this node to have path "document/child-document-n"
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example": "general"}
     And I expect this node to have the following preceding siblings:
       | NodeDiscriminator                                        |
@@ -1559,7 +1649,8 @@ Feature: Move a node with content dimensions
       | cs-identifier;youngest-mc-nodeface;{"example": "general"} |
 
     When I am in workspace "live" and dimension space point {"example": "spec"}
-    And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document-n" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
+    And I expect node aggregate identifier "nody-mc-nodeface" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
+    And I expect this node to have path "document/child-document-n"
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example": "general"}
     And I expect this node to have the following preceding siblings:
       | NodeDiscriminator                                       |
@@ -1570,7 +1661,8 @@ Feature: Move a node with content dimensions
       | cs-identifier;youngest-mc-nodeface;{"example": "general"} |
 
     When I am in workspace "live" and dimension space point {"example": "peer"}
-    And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document-n" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
+    And I expect node aggregate identifier "nody-mc-nodeface" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
+    And I expect this node to have path "document/child-document-n"
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example": "general"}
     And I expect this node to have the following preceding siblings:
       | NodeDiscriminator                                       |
@@ -1605,7 +1697,8 @@ Feature: Move a node with content dimensions
       | succeedingSiblingsForCoverage | [{"dimensionSpacePoint":{"example":"source"},"nodeAggregateId": "elder-mc-nodeface"}] |
 
     When I am in workspace "live" and dimension space point {"example": "general"}
-    And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document-n" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
+    And I expect node aggregate identifier "nody-mc-nodeface" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
+    And I expect this node to have path "document/child-document-n"
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example": "general"}
     And I expect this node to have the following preceding siblings:
       | NodeDiscriminator                                       |
@@ -1617,7 +1710,8 @@ Feature: Move a node with content dimensions
       | cs-identifier;youngest-mc-nodeface;{"example": "general"} |
 
     When I am in workspace "live" and dimension space point {"example": "source"}
-    And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document-n" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
+    And I expect node aggregate identifier "nody-mc-nodeface" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
+    And I expect this node to have path "document/child-document-n"
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example": "general"}
     And I expect this node to have the following preceding siblings:
       | NodeDiscriminator                                       |
@@ -1629,7 +1723,8 @@ Feature: Move a node with content dimensions
       | cs-identifier;youngest-mc-nodeface;{"example": "general"} |
 
     When I am in workspace "live" and dimension space point {"example": "spec"}
-    And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document-n" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
+    And I expect node aggregate identifier "nody-mc-nodeface" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
+    And I expect this node to have path "document/child-document-n"
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example": "general"}
     And I expect this node to have the following preceding siblings:
     # The given preceding sibling cannot be resolved and since elder-mc-nodeface isn't given as a succeeding sibling, nothing is done
@@ -1641,7 +1736,8 @@ Feature: Move a node with content dimensions
       | cs-identifier;youngest-mc-nodeface;{"example": "general"} |
 
     When I am in workspace "live" and dimension space point {"example": "peer"}
-    And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document-n" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
+    And I expect node aggregate identifier "nody-mc-nodeface" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
+    And I expect this node to have path "document/child-document-n"
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example": "general"}
     And I expect this node to have the following preceding siblings:
       | NodeDiscriminator                                       |
@@ -1672,7 +1768,8 @@ Feature: Move a node with content dimensions
       | succeedingSiblingsForCoverage | [{"dimensionSpacePoint":{"example":"source"},"nodeAggregateId": "eldest-mc-nodeface"}] |
 
     When I am in workspace "live" and dimension space point {"example": "general"}
-    And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document-n" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
+    And I expect node aggregate identifier "nody-mc-nodeface" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
+    And I expect this node to have path "document/child-document-n"
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example": "general"}
     And I expect this node to have the following preceding siblings:
       | NodeDiscriminator                                       |
@@ -1684,7 +1781,8 @@ Feature: Move a node with content dimensions
       | cs-identifier;youngest-mc-nodeface;{"example": "general"} |
 
     When I am in workspace "live" and dimension space point {"example": "source"}
-    And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document-n" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
+    And I expect node aggregate identifier "nody-mc-nodeface" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
+    And I expect this node to have path "document/child-document-n"
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example": "general"}
     And I expect this node to have no preceding siblings
     And I expect this node to have the following succeeding siblings:
@@ -1695,7 +1793,8 @@ Feature: Move a node with content dimensions
       | cs-identifier;youngest-mc-nodeface;{"example": "general"} |
 
     When I am in workspace "live" and dimension space point {"example": "spec"}
-    And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document-n" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
+    And I expect node aggregate identifier "nody-mc-nodeface" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
+    And I expect this node to have path "document/child-document-n"
     And I expect this node to have the following preceding siblings:
       | NodeDiscriminator                                       |
       | cs-identifier;elder-mc-nodeface;{"example": "general"}  |
@@ -1706,7 +1805,8 @@ Feature: Move a node with content dimensions
       | cs-identifier;youngest-mc-nodeface;{"example": "general"} |
 
     When I am in workspace "live" and dimension space point {"example": "peer"}
-    And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document-n" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
+    And I expect node aggregate identifier "nody-mc-nodeface" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
+    And I expect this node to have path "document/child-document-n"
     And I expect this node to have the following preceding siblings:
       | NodeDiscriminator                                       |
       | cs-identifier;elder-mc-nodeface;{"example": "general"}  |
@@ -1744,7 +1844,8 @@ Feature: Move a node with content dimensions
       | succeedingSiblingsForCoverage | [{"dimensionSpacePoint":{"example":"source"},"nodeAggregateId": "elder-mc-nodeface"}] |
 
     When I am in workspace "live" and dimension space point {"example": "general"}
-    And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document-n" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
+    And I expect node aggregate identifier "nody-mc-nodeface" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
+    And I expect this node to have path "document/child-document-n"
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example": "general"}
     And I expect this node to have the following preceding siblings:
       | NodeDiscriminator                                       |
@@ -1756,7 +1857,8 @@ Feature: Move a node with content dimensions
       | cs-identifier;youngest-mc-nodeface;{"example": "general"} |
 
     When I am in workspace "live" and dimension space point {"example": "source"}
-    And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document-n" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
+    And I expect node aggregate identifier "nody-mc-nodeface" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
+    And I expect this node to have path "document/child-document-n"
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example": "general"}
     And I expect this node to have no preceding siblings
     And I expect this node to have the following succeeding siblings:
@@ -1766,7 +1868,8 @@ Feature: Move a node with content dimensions
       | cs-identifier;youngest-mc-nodeface;{"example": "general"} |
 
     When I am in workspace "live" and dimension space point {"example": "spec"}
-    And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document-n" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
+    And I expect node aggregate identifier "nody-mc-nodeface" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
+    And I expect this node to have path "document/child-document-n"
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example": "general"}
     And I expect this node to have the following preceding siblings:
       | NodeDiscriminator                                      |
@@ -1777,7 +1880,8 @@ Feature: Move a node with content dimensions
       | cs-identifier;youngest-mc-nodeface;{"example": "general"} |
 
     When I am in workspace "live" and dimension space point {"example": "peer"}
-    And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document-n" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
+    And I expect node aggregate identifier "nody-mc-nodeface" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
+    And I expect this node to have path "document/child-document-n"
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example": "general"}
     And I expect this node to have the following preceding siblings:
       | NodeDiscriminator                                       |
@@ -1806,7 +1910,8 @@ Feature: Move a node with content dimensions
       | succeedingSiblingsForCoverage | [{"dimensionSpacePoint":{"example":"source"},"nodeAggregateId": "elder-mc-nodeface"}] |
 
     When I am in workspace "live" and dimension space point {"example": "general"}
-    And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document-n" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
+    And I expect node aggregate identifier "nody-mc-nodeface" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
+    And I expect this node to have path "document/child-document-n"
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example": "general"}
     And I expect this node to have the following preceding siblings:
       | NodeDiscriminator                                       |
@@ -1818,7 +1923,8 @@ Feature: Move a node with content dimensions
       | cs-identifier;youngest-mc-nodeface;{"example": "general"} |
 
     When I am in workspace "live" and dimension space point {"example": "source"}
-    And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document-n" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
+    And I expect node aggregate identifier "nody-mc-nodeface" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
+    And I expect this node to have path "document/child-document-n"
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example": "general"}
     And I expect this node to have the following preceding siblings:
       | NodeDiscriminator                                       |
@@ -1830,7 +1936,8 @@ Feature: Move a node with content dimensions
       | cs-identifier;youngest-mc-nodeface;{"example": "general"} |
 
     When I am in workspace "live" and dimension space point {"example": "spec"}
-    And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document-n" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
+    And I expect node aggregate identifier "nody-mc-nodeface" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
+    And I expect this node to have path "document/child-document-n"
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example": "general"}
     And I expect this node to have the following preceding siblings:
       | NodeDiscriminator                                       |
@@ -1842,7 +1949,8 @@ Feature: Move a node with content dimensions
       | cs-identifier;youngest-mc-nodeface;{"example": "general"} |
 
     When I am in workspace "live" and dimension space point {"example": "peer"}
-    And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document-n" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
+    And I expect node aggregate identifier "nody-mc-nodeface" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
+    And I expect this node to have path "document/child-document-n"
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example": "general"}
     And I expect this node to have the following preceding siblings:
       | NodeDiscriminator                                       |
@@ -1879,7 +1987,8 @@ Feature: Move a node with content dimensions
       | succeedingSiblingsForCoverage | [{"dimensionSpacePoint":{"example":"source"},"nodeAggregateId": null}] |
 
     When I am in workspace "live" and dimension space point {"example": "general"}
-    And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document-n" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
+    And I expect node aggregate identifier "nody-mc-nodeface" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
+    And I expect this node to have path "document/child-document-n"
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example": "general"}
     And I expect this node to have the following preceding siblings:
       | NodeDiscriminator                                       |
@@ -1891,7 +2000,8 @@ Feature: Move a node with content dimensions
       | cs-identifier;youngest-mc-nodeface;{"example": "general"} |
 
     When I am in workspace "live" and dimension space point {"example": "source"}
-    And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document-n" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
+    And I expect node aggregate identifier "nody-mc-nodeface" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
+    And I expect this node to have path "document/child-document-n"
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example": "general"}
     And I expect this node to have the following preceding siblings:
       | NodeDiscriminator                                         |
@@ -1902,7 +2012,8 @@ Feature: Move a node with content dimensions
     And I expect this node to have no succeeding siblings
 
     When I am in workspace "live" and dimension space point {"example": "spec"}
-    And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document-n" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
+    And I expect node aggregate identifier "nody-mc-nodeface" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
+    And I expect this node to have path "document/child-document-n"
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example": "general"}
     And I expect this node to have the following preceding siblings:
       | NodeDiscriminator                                       |
@@ -1914,7 +2025,8 @@ Feature: Move a node with content dimensions
       | cs-identifier;youngest-mc-nodeface;{"example": "general"} |
 
     When I am in workspace "live" and dimension space point {"example": "peer"}
-    And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document-n" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
+    And I expect node aggregate identifier "nody-mc-nodeface" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
+    And I expect this node to have path "document/child-document-n"
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example": "general"}
     And I expect this node to have the following preceding siblings:
       | NodeDiscriminator                                       |
@@ -1949,7 +2061,8 @@ Feature: Move a node with content dimensions
       | succeedingSiblingsForCoverage | [{"dimensionSpacePoint":{"example":"source"},"nodeAggregateId": null}] |
 
     When I am in workspace "live" and dimension space point {"example": "general"}
-    And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document-n" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
+    And I expect node aggregate identifier "nody-mc-nodeface" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
+    And I expect this node to have path "document/child-document-n"
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example": "general"}
     And I expect this node to have the following preceding siblings:
       | NodeDiscriminator                                       |
@@ -1961,7 +2074,8 @@ Feature: Move a node with content dimensions
       | cs-identifier;youngest-mc-nodeface;{"example": "general"} |
 
     When I am in workspace "live" and dimension space point {"example": "source"}
-    And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document-n" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
+    And I expect node aggregate identifier "nody-mc-nodeface" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
+    And I expect this node to have path "document/child-document-n"
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example": "general"}
     And I expect this node to have the following preceding siblings:
       | NodeDiscriminator                                        |
@@ -1971,7 +2085,8 @@ Feature: Move a node with content dimensions
     And I expect this node to have no succeeding siblings
 
     When I am in workspace "live" and dimension space point {"example": "spec"}
-    And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document-n" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
+    And I expect node aggregate identifier "nody-mc-nodeface" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
+    And I expect this node to have path "document/child-document-n"
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example": "general"}
     And I expect this node to have the following preceding siblings:
       | NodeDiscriminator                                       |
@@ -1982,7 +2097,8 @@ Feature: Move a node with content dimensions
       | cs-identifier;younger-mc-nodeface;{"example": "general"} |
 
     When I am in workspace "live" and dimension space point {"example": "peer"}
-    And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document-n" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
+    And I expect node aggregate identifier "nody-mc-nodeface" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
+    And I expect this node to have path "document/child-document-n"
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example": "general"}
     And I expect this node to have the following preceding siblings:
       | NodeDiscriminator                                       |
@@ -2017,7 +2133,8 @@ Feature: Move a node with content dimensions
       | succeedingSiblingsForCoverage | [{"dimensionSpacePoint":{"example":"source"},"nodeAggregateId": null}] |
 
     When I am in workspace "live" and dimension space point {"example": "general"}
-    And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document-n" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
+    And I expect node aggregate identifier "nody-mc-nodeface" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
+    And I expect this node to have path "document/child-document-n"
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example": "general"}
     And I expect this node to have the following preceding siblings:
       | NodeDiscriminator                                       |
@@ -2029,7 +2146,8 @@ Feature: Move a node with content dimensions
       | cs-identifier;youngest-mc-nodeface;{"example": "general"} |
 
     When I am in workspace "live" and dimension space point {"example": "source"}
-    And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document-n" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
+    And I expect node aggregate identifier "nody-mc-nodeface" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
+    And I expect this node to have path "document/child-document-n"
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example": "general"}
     And I expect this node to have the following preceding siblings:
       | NodeDiscriminator                                        |
@@ -2039,7 +2157,8 @@ Feature: Move a node with content dimensions
     And I expect this node to have no succeeding siblings
 
     When I am in workspace "live" and dimension space point {"example": "spec"}
-    And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document-n" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
+    And I expect node aggregate identifier "nody-mc-nodeface" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
+    And I expect this node to have path "document/child-document-n"
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example": "general"}
     And I expect this node to have the following preceding siblings:
       | NodeDiscriminator                                       |
@@ -2050,7 +2169,8 @@ Feature: Move a node with content dimensions
       | cs-identifier;younger-mc-nodeface;{"example": "general"} |
 
     When I am in workspace "live" and dimension space point {"example": "peer"}
-    And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document-n" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
+    And I expect node aggregate identifier "nody-mc-nodeface" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
+    And I expect this node to have path "document/child-document-n"
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example": "general"}
     And I expect this node to have the following preceding siblings:
       | NodeDiscriminator                                       |
@@ -2079,7 +2199,8 @@ Feature: Move a node with content dimensions
       | succeedingSiblingsForCoverage | [{"dimensionSpacePoint":{"example":"source"},"nodeAggregateId": "youngest-mc-nodeface"}] |
 
     When I am in workspace "live" and dimension space point {"example": "general"}
-    And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document-n" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
+    And I expect node aggregate identifier "nody-mc-nodeface" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
+    And I expect this node to have path "document/child-document-n"
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example": "general"}
     And I expect this node to have the following preceding siblings:
       | NodeDiscriminator                                       |
@@ -2091,7 +2212,8 @@ Feature: Move a node with content dimensions
       | cs-identifier;youngest-mc-nodeface;{"example": "general"} |
 
     When I am in workspace "live" and dimension space point {"example": "source"}
-    And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document-n" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
+    And I expect node aggregate identifier "nody-mc-nodeface" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
+    And I expect this node to have path "document/child-document-n"
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example": "general"}
     And I expect this node to have the following preceding siblings:
       | NodeDiscriminator                                        |
@@ -2103,7 +2225,8 @@ Feature: Move a node with content dimensions
       | cs-identifier;youngest-mc-nodeface;{"example": "general"} |
 
     When I am in workspace "live" and dimension space point {"example": "spec"}
-    And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document-n" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
+    And I expect node aggregate identifier "nody-mc-nodeface" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
+    And I expect this node to have path "document/child-document-n"
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example": "general"}
     And I expect this node to have the following preceding siblings:
       | NodeDiscriminator                                       |
@@ -2115,7 +2238,8 @@ Feature: Move a node with content dimensions
       | cs-identifier;youngest-mc-nodeface;{"example": "general"} |
 
     When I am in workspace "live" and dimension space point {"example": "peer"}
-    And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document-n" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
+    And I expect node aggregate identifier "nody-mc-nodeface" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
+    And I expect this node to have path "document/child-document-n"
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example": "general"}
     And I expect this node to have the following preceding siblings:
       | NodeDiscriminator                                       |

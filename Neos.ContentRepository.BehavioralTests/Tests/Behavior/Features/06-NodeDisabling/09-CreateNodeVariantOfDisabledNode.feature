@@ -51,7 +51,8 @@ Feature: Variation of hidden nodes
     And I expect node aggregate identifier "the-great-nodini" to lead to no node
 
     When I am in dimension space point {"language":"gsw"}
-    And I expect node aggregate identifier "the-great-nodini" and node path "court-magician" to lead to node cs-identifier;the-great-nodini;{"language":"gsw"}
+    And I expect node aggregate identifier "the-great-nodini" to lead to node cs-identifier;the-great-nodini;{"language":"gsw"}
+    And I expect this node to have path "court-magician"
 
   Scenario: Specialize a node where the specialization target is disabled
     Given I am in dimension space point {"language":"de"}
@@ -83,7 +84,8 @@ Feature: Variation of hidden nodes
       | nodeVariantSelectionStrategy | "allSpecializations" |
 
     When I am in dimension space point {"language":"gsw"}
-    Then I expect node aggregate identifier "the-great-nodini" and node path "court-magician" to lead to node cs-identifier;the-great-nodini;{"language":"gsw"}
+    Then I expect node aggregate identifier "the-great-nodini" to lead to node cs-identifier;the-great-nodini;{"language":"gsw"}
+    And I expect this node to have path "court-magician"
 
   Scenario: Generalize a node where the generalization target is enabled
     Given I am in dimension space point {"language":"de"}
@@ -145,7 +147,8 @@ Feature: Variation of hidden nodes
       | nodeVariantSelectionStrategy | "allSpecializations" |
 
     When I am in dimension space point {"language":"de"}
-    Then I expect node aggregate identifier "the-great-nodini" and node path "court-magician" to lead to node cs-identifier;the-great-nodini;{"language":"de"}
+    Then I expect node aggregate identifier "the-great-nodini" to lead to node cs-identifier;the-great-nodini;{"language":"de"}
+    And I expect this node to have path "court-magician"
 
   Scenario: Peer vary a node where the peer target is enabled
     Given I am in dimension space point {"language":"de"}
@@ -168,7 +171,8 @@ Feature: Variation of hidden nodes
     Then I expect node aggregate identifier "the-great-nodini" to lead to no node
 
     When I am in dimension space point {"language":"en"}
-    Then I expect node aggregate identifier "the-great-nodini" and node path "court-magician" to lead to node cs-identifier;the-great-nodini;{"language":"en"}
+    Then I expect node aggregate identifier "the-great-nodini" to lead to node cs-identifier;the-great-nodini;{"language":"en"}
+    And I expect this node to have path "court-magician"
 
   Scenario: Peer vary a node where the peer target is disabled
     Given I am in dimension space point {"language":"de"}
@@ -205,4 +209,5 @@ Feature: Variation of hidden nodes
       | nodeVariantSelectionStrategy | "allSpecializations" |
 
     When I am in dimension space point {"language":"en"}
-    Then I expect node aggregate identifier "the-great-nodini" and node path "court-magician" to lead to node cs-identifier;the-great-nodini;{"language":"en"}
+    Then I expect node aggregate identifier "the-great-nodini" to lead to node cs-identifier;the-great-nodini;{"language":"en"}
+    And I expect this node to have path "court-magician"
