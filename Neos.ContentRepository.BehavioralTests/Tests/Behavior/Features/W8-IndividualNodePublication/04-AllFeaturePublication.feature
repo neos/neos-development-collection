@@ -54,8 +54,8 @@ Feature: Publishing hide/show scenario of nodes
       | Key                       | Value                                    |
       | workspaceName             | "live"                                   |
       | nodeAggregateId           | "sir-david-nodenborough"                 |
+      | nodeName                  | "text1"                                  |
       | nodeTypeName              | "Neos.ContentRepository.Testing:Content" |
-      | nodeName                    | "text1"                                             |
       | originDimensionSpacePoint | {}                                       |
       | parentNodeAggregateId     | "lady-eleonode-rootford"                 |
       | initialPropertyValues     | {"text": "Initial t1"}                   |
@@ -71,8 +71,8 @@ Feature: Publishing hide/show scenario of nodes
       | Key                       | Value                                  |
       | workspaceName             | "live"                                 |
       | nodeAggregateId           | "sir-nodeward-nodington-iii"           |
+      | nodeName                  | "image"                                |
       | nodeTypeName              | "Neos.ContentRepository.Testing:Image" |
-      | nodeName                    | "image"                                                |
       | originDimensionSpacePoint | {}                                     |
       | parentNodeAggregateId     | "lady-eleonode-rootford"               |
       | initialPropertyValues     | {"image": "Initial image"}             |
