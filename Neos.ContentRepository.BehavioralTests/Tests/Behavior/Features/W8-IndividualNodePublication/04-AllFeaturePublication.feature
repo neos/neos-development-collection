@@ -558,6 +558,77 @@ Feature: Publishing hide/show scenario of nodes
     Then I expect node aggregate identifier "new1-agg" to lead to node user-cs-identifier-modified;new1-agg;{}
     Then I expect node aggregate identifier "new2-agg" to lead to node user-cs-identifier-modified;new2-agg;{}
 
+  Scenario: (MoveNodeAggregate) It is possible to publish moving nodes
+    Given the command CreateWorkspace is executed with payload:
+      | Key                | Value                |
+      | workspaceName      | "user-test"          |
+      | baseWorkspaceName  | "live"               |
+      | newContentStreamId | "user-cs-identifier" |
 
-  # TODO: implement MoveNodeAggregate testcase
+    # SETUP: move two new nodes in USER workspace
+    When the command MoveNodeAggregate is executed with payload:
+      | Key                          | Value                        |
+      | workspaceName                | "user-test"                  |
+      | dimensionSpacePoint          | {}                           |
+      | relationDistributionStrategy | "gatherAll"                  |
+      | nodeAggregateId              | "sir-david-nodenborough"     |
+      | newParentNodeAggregateId     | "sir-nodeward-nodington-iii" |
+    When the command MoveNodeAggregate is executed with payload:
+      | Key                          | Value                    |
+      | workspaceName                | "user-test"              |
+      | dimensionSpacePoint          | {}                       |
+      | relationDistributionStrategy | "gatherAll"              |
+      | nodeAggregateId              | "nody-mc-nodeface"       |
+      | newParentNodeAggregateId     | "lady-eleonode-rootford" |
+
+    When I am in workspace "live" and dimension space point {}
+    Then I expect the node aggregate "sir-david-nodenborough" to exist
+    And I expect this node aggregate to have the parent node aggregates ["lady-eleonode-rootford"]
+    And I expect this node aggregate to have the child node aggregates ["nody-mc-nodeface"]
+    Then I expect the node aggregate "nody-mc-nodeface" to exist
+    And I expect this node aggregate to have the parent node aggregates ["sir-david-nodenborough"]
+    And I expect this node aggregate to have no child node aggregates
+    Then I expect the node aggregate "sir-nodeward-nodington-iii" to exist
+    And I expect this node aggregate to have the parent node aggregates ["lady-eleonode-rootford"]
+    And I expect this node aggregate to have no child node aggregates
+
+    When I am in workspace "user-test" and dimension space point {}
+    Then I expect the node aggregate "sir-david-nodenborough" to exist
+    And I expect this node aggregate to have the parent node aggregates ["sir-nodeward-nodington-iii"]
+    And I expect this node aggregate to have no child node aggregates
+    Then I expect the node aggregate "nody-mc-nodeface" to exist
+    And I expect this node aggregate to have the parent node aggregates ["lady-eleonode-rootford"]
+    And I expect this node aggregate to have no child node aggregates
+    Then I expect the node aggregate "sir-nodeward-nodington-iii" to exist
+    And I expect this node aggregate to have the parent node aggregates ["lady-eleonode-rootford"]
+    And I expect this node aggregate to have the child node aggregates ["sir-david-nodenborough"]
+
+    When the command PublishIndividualNodesFromWorkspace is executed with payload:
+      | Key                             | Value                         |
+      | workspaceName                   | "user-test"                   |
+      | nodesToPublish                  | ["sir-david-nodenborough"]    |
+      | contentStreamIdForRemainingPart | "user-cs-identifier-modified" |
+
+    When I am in workspace "live" and dimension space point {}
+    Then I expect the node aggregate "sir-david-nodenborough" to exist
+    And I expect this node aggregate to have the parent node aggregates ["sir-nodeward-nodington-iii"]
+    And I expect this node aggregate to have the child node aggregates ["nody-mc-nodeface"]
+    Then I expect the node aggregate "nody-mc-nodeface" to exist
+    And I expect this node aggregate to have the parent node aggregates ["sir-david-nodenborough"]
+    And I expect this node aggregate to have no child node aggregates
+    Then I expect the node aggregate "sir-nodeward-nodington-iii" to exist
+    And I expect this node aggregate to have the parent node aggregates ["lady-eleonode-rootford"]
+    And I expect this node aggregate to have the child node aggregates ["sir-david-nodenborough"]
+
+    When I am in workspace "user-test" and dimension space point {}
+    Then I expect the node aggregate "sir-david-nodenborough" to exist
+    And I expect this node aggregate to have the parent node aggregates ["sir-nodeward-nodington-iii"]
+    And I expect this node aggregate to have no child node aggregates
+    Then I expect the node aggregate "nody-mc-nodeface" to exist
+    And I expect this node aggregate to have the parent node aggregates ["lady-eleonode-rootford"]
+    And I expect this node aggregate to have no child node aggregates
+    Then I expect the node aggregate "sir-nodeward-nodington-iii" to exist
+    And I expect this node aggregate to have the parent node aggregates ["lady-eleonode-rootford"]
+    And I expect this node aggregate to have the child node aggregates ["sir-david-nodenborough"]
+
   # TODO: implement CreateNodeVariant testcase
