@@ -328,9 +328,8 @@ trait NodeTraversalTrait
      * @When I execute the findSubtree query for entry node aggregate id :entryNodeIdSerialized I expect no results
      * @When I execute the findSubtree query for entry node aggregate id :entryNodeIdSerialized and filter :filterSerialized I expect the following tree:
      * @When I execute the findSubtree query for entry node aggregate id :entryNodeIdSerialized and filter :filterSerialized I expect no results
-     * @When /^I execute the findSubtree query for entry node aggregate id "(?<entryNodeIdSerialized>[^"]*)" I expect the following tree (?<withTags>with tags):$/
      */
-    public function iExecuteTheFindSubtreeQueryIExpectTheFollowingTrees(string $entryNodeIdSerialized, ?string $filterSerialized = null, ?PyStringNode $expectedTree = null, ?string $withTags = null): void
+    public function iExecuteTheFindSubtreeQueryIExpectTheFollowingTrees(string $entryNodeIdSerialized, ?string $filterSerialized = null, ?PyStringNode $expectedTree = null): void
     {
         $entryNodeAggregateId = NodeAggregateId::fromString($entryNodeIdSerialized);
         $filterValues = !empty($filterSerialized) ? json_decode($filterSerialized, true, 512, JSON_THROW_ON_ERROR) : [];
@@ -345,15 +344,7 @@ trait NodeTraversalTrait
         while ($subtreeStack !== []) {
             /** @var Subtree $subtree */
             $subtree = array_shift($subtreeStack);
-            $tags = [];
-            if ($withTags !== null) {
-                $explicitTags = $subtree->node->tags->withoutInherited()->toStringArray();
-                sort($explicitTags);
-                $inheritedTags = $subtree->node->tags->onlyInherited()->toStringArray();
-                sort($inheritedTags);
-                $tags = [...array_map(static fn(string $tag) => $tag . '*', $explicitTags), ...$inheritedTags];
-            }
-            $result[] = str_repeat(' ', $subtree->level) . $subtree->node->aggregateId->value . ($tags !== [] ? ' (' . implode(',', $tags) . ')' : '');
+            $result[] = str_repeat(' ', $subtree->level) . $subtree->node->aggregateId->value;
             $subtreeStack = [...$subtree->children, ...$subtreeStack];
         }
         Assert::assertSame($expectedTree?->getRaw() ?? '', implode(chr(10), $result));
