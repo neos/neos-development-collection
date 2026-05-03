@@ -129,6 +129,7 @@ Feature: Find and count references and their target nodes using the findReferenc
       | Key                          | Value         |
       | nodeAggregateId              | "a2a3"        |
       | nodeVariantSelectionStrategy | "allVariants" |
+    And I restrict the visibility of nodes tagged "disabled" in subgraph queries
 
   Scenario: Check consistency of findReferences results
     # findReferences queries without results

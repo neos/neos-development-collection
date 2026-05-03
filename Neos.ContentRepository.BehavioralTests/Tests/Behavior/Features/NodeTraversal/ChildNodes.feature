@@ -91,6 +91,7 @@ Feature: Find and count nodes using the findChildNodes and countChildNodes queri
       | Key                          | Value           |
       | nodeAggregateId              | "a2a3-disabled" |
       | nodeVariantSelectionStrategy | "allVariants"   |
+    And I restrict the visibility of nodes tagged "disabled" in subgraph queries
 
   Scenario:
       # Child nodes without filter
