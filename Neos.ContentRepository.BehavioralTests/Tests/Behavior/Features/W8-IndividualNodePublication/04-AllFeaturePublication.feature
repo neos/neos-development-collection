@@ -581,6 +581,70 @@ Feature: Publishing hide/show scenario of nodes
     Then I expect node aggregate identifier "new1-root-agg" to lead to node user-cs-identifier-modified;new1-root-agg;{}
     Then I expect node aggregate identifier "new2-root-agg" to lead to node user-cs-identifier-modified;new2-root-agg;{}
 
+  Scenario: (UpdateRootNodeAggregateDimensions) It is possible to publish updating root nodes
+    Given the command CreateRootNodeAggregateWithNode is executed with payload:
+      | Key             | Value                          |
+      | workspaceName   | "live"                         |
+      | nodeAggregateId | "sire-frode-rootford"          |
+      | nodeTypeName    | "Neos.ContentRepository:Root1" |
+    And the command CreateWorkspace is executed with payload:
+      | Key                | Value                |
+      | workspaceName      | "user-test"          |
+      | baseWorkspaceName  | "live"               |
+      | newContentStreamId | "user-cs-identifier" |
+    And I change the content dimensions in content repository "default" to:
+      | Identifier | Values          | Generalizations |
+      | language   | gsw, de, fr, dk | gsw->de         |
+
+    # SETUP: update two root nodes in USER workspace
+    And the command UpdateRootNodeAggregateDimensions is executed with payload:
+      | Key             | Value                    |
+      | workspaceName   | "user-test"              |
+      | nodeAggregateId | "lady-eleonode-rootford" |
+    # TODO its not possible to publish updating of two root nodes (see https://github.com/neos/neos-development-collection/pull/5814)
+    # And the command UpdateRootNodeAggregateDimensions is executed with payload:
+    #   | Key             | Value                 |
+    #   | workspaceName   | "user-test"           |
+    #   | nodeAggregateId | "sire-frode-rootford" |
+
+    When I am in workspace "live" and dimension space point {"language":"de"}
+    Then I expect the node aggregate "lady-eleonode-rootford" to exist
+    And I expect this node aggregate to occupy dimension space points [{}]
+    And I expect this node aggregate to cover dimension space points [{"language":"de"}, {"language":"gsw"}, {"language":"fr"}]
+    Then I expect the node aggregate "sire-frode-rootford" to exist
+    And I expect this node aggregate to occupy dimension space points [{}]
+    And I expect this node aggregate to cover dimension space points [{"language":"de"}, {"language":"gsw"}, {"language":"fr"}]
+
+    When I am in workspace "user-test" and dimension space point {"language":"de"}
+    Then I expect the node aggregate "lady-eleonode-rootford" to exist
+    And I expect this node aggregate to occupy dimension space points [{}]
+    And I expect this node aggregate to cover dimension space points [{"language":"de"}, {"language":"gsw"}, {"language":"fr"}, {"language":"dk"}]
+    # Then I expect the node aggregate "sire-frode-rootford" to exist
+    # And I expect this node aggregate to occupy dimension space points [{}]
+    # And I expect this node aggregate to cover dimension space points [{"language":"de"}, {"language":"gsw"}, {"language":"fr"}, {"language":"dk"}]
+
+    When the command PublishIndividualNodesFromWorkspace is executed with payload:
+      | Key                             | Value                         |
+      | workspaceName                   | "user-test"                   |
+      | nodesToPublish                  | ["lady-eleonode-rootford"]    |
+      | contentStreamIdForRemainingPart | "user-cs-identifier-modified" |
+
+    When I am in workspace "live" and dimension space point {"language":"de"}
+    Then I expect the node aggregate "lady-eleonode-rootford" to exist
+    And I expect this node aggregate to occupy dimension space points [{}]
+    And I expect this node aggregate to cover dimension space points [{"language":"de"}, {"language":"gsw"}, {"language":"fr"}, {"language":"dk"}]
+    Then I expect the node aggregate "sire-frode-rootford" to exist
+    And I expect this node aggregate to occupy dimension space points [{}]
+    And I expect this node aggregate to cover dimension space points [{"language":"de"}, {"language":"gsw"}, {"language":"fr"}]
+
+    When I am in workspace "user-test" and dimension space point {"language":"de"}
+    Then I expect the node aggregate "lady-eleonode-rootford" to exist
+    And I expect this node aggregate to occupy dimension space points [{}]
+    And I expect this node aggregate to cover dimension space points [{"language":"de"}, {"language":"gsw"}, {"language":"fr"}, {"language":"dk"}]
+    # Then I expect the node aggregate "sire-frode-rootford" to exist
+    # And I expect this node aggregate to occupy dimension space points [{}]
+    # And I expect this node aggregate to cover dimension space points [{"language":"de"}, {"language":"gsw"}, {"language":"fr"}, {"language":"dk"}]
+
   Scenario: (CreateNodeAggregateWithNode) It is possible to publish new nodes
     Given the command CreateWorkspace is executed with payload:
       | Key                | Value                |
