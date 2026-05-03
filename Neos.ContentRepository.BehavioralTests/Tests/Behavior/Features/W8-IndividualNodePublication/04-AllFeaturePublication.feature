@@ -21,6 +21,12 @@ Feature: Publishing hide/show scenario of nodes
     And using the following node types:
     """yaml
     Neos.ContentRepository:Root: {}
+    Neos.ContentRepository:Root1:
+      superTypes:
+        Neos.ContentRepository:Root: true
+    Neos.ContentRepository:Root2:
+      superTypes:
+        Neos.ContentRepository:Root: true
     'Neos.ContentRepository.Testing:Content':
       properties:
         text:
@@ -320,6 +326,73 @@ Feature: Publishing hide/show scenario of nodes
     Then I expect node aggregate identifier "nody-mc-nodeface" to lead to no node
     Then I expect node aggregate identifier "sir-nodeward-nodington-iii" to lead to no node
 
+  Scenario: (SetNodeProperties) It is possible to publish setting node references
+    Given the command CreateWorkspace is executed with payload:
+      | Key                | Value                |
+      | workspaceName      | "user-test"          |
+      | baseWorkspaceName  | "live"               |
+      | newContentStreamId | "user-cs-identifier" |
+
+    # SETUP: set two node properties in USER workspace
+    When the command SetNodeProperties is executed with payload:
+      | Key                       | Value                    |
+      | workspaceName             | "user-test"              |
+      | nodeAggregateId           | "sir-david-nodenborough" |
+      | originDimensionSpacePoint | {}                       |
+      | propertyValues            | {"text": "Modified t1"}  |
+    And the command SetNodeProperties is executed with payload:
+      | Key                       | Value                   |
+      | workspaceName             | "user-test"             |
+      | nodeAggregateId           | "nody-mc-nodeface"      |
+      | originDimensionSpacePoint | {}                      |
+      | propertyValues            | {"text": "Modified t2"} |
+
+    When I am in workspace "live" and dimension space point {}
+    Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{}
+    And I expect this node to have the following properties:
+      | Key  | Value        |
+      | text | "Initial t1" |
+    Then I expect node aggregate identifier "nody-mc-nodeface" to lead to node cs-identifier;nody-mc-nodeface;{}
+    And I expect this node to have the following properties:
+      | Key  | Value        |
+      | text | "Initial t2" |
+
+    When I am in workspace "user-test" and dimension space point {}
+    Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node user-cs-identifier;sir-david-nodenborough;{}
+    And I expect this node to have the following properties:
+      | Key  | Value         |
+      | text | "Modified t1" |
+    Then I expect node aggregate identifier "nody-mc-nodeface" to lead to node user-cs-identifier;nody-mc-nodeface;{}
+    And I expect this node to have the following properties:
+      | Key  | Value         |
+      | text | "Modified t2" |
+
+    When the command PublishIndividualNodesFromWorkspace is executed with payload:
+      | Key                             | Value                                                                                                    |
+      | workspaceName                   | "user-test"                                                                                              |
+      | nodesToPublish                  | ["sir-david-nodenborough"] |
+      | contentStreamIdForRemainingPart | "user-cs-identifier-modified"                                                                            |
+
+    When I am in workspace "live" and dimension space point {}
+    Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{}
+    And I expect this node to have the following properties:
+      | Key  | Value        |
+      | text | "Modified t1" |
+    Then I expect node aggregate identifier "nody-mc-nodeface" to lead to node cs-identifier;nody-mc-nodeface;{}
+    And I expect this node to have the following properties:
+      | Key  | Value        |
+      | text | "Initial t2" |
+
+    When I am in workspace "user-test" and dimension space point {}
+    Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node user-cs-identifier-modified;sir-david-nodenborough;{}
+    And I expect this node to have the following properties:
+      | Key  | Value         |
+      | text | "Modified t1" |
+    Then I expect node aggregate identifier "nody-mc-nodeface" to lead to node user-cs-identifier-modified;nody-mc-nodeface;{}
+    And I expect this node to have the following properties:
+      | Key  | Value         |
+      | text | "Modified t2" |
+
   Scenario: (SetNodeReferences) It is possible to publish setting node references
     Given the command CreateWorkspace is executed with payload:
       | Key                | Value                |
@@ -395,6 +468,48 @@ Feature: Publishing hide/show scenario of nodes
       | Name              | Node                                                  | Properties |
       | referenceProperty | user-cs-identifier-modified;nody-mc-nodeface;{}       | null       |
       | referenceProperty | user-cs-identifier-modified;sir-david-nodenborough;{} | null       |
+
+  Scenario: (CreateRootNodeAggregateWithNode) It is possible to publish new root nodes
+    Given the command CreateWorkspace is executed with payload:
+      | Key                | Value                |
+      | workspaceName      | "user-test"          |
+      | baseWorkspaceName  | "live"               |
+      | newContentStreamId | "user-cs-identifier" |
+
+    # SETUP: set two new root nodes in USER workspace
+    When the command CreateRootNodeAggregateWithNode is executed with payload:
+      | Key             | Value                          |
+      | workspaceName   | "user-test"                    |
+      | nodeAggregateId | "new1-root-agg"                |
+      | nodeTypeName    | "Neos.ContentRepository:Root1" |
+    When the command CreateRootNodeAggregateWithNode is executed with payload:
+      | Key                       | Value                          |
+      | workspaceName             | "user-test"                    |
+      | nodeAggregateId           | "new2-root-agg"                |
+      | nodeTypeName              | "Neos.ContentRepository:Root2" |
+      | originDimensionSpacePoint | {}                             |
+
+    When I am in workspace "live" and dimension space point {}
+    Then I expect node aggregate identifier "new1-root-agg" to lead to no node
+    Then I expect node aggregate identifier "new2-root-agg" to lead to no node
+
+    When I am in workspace "user-test" and dimension space point {}
+    Then I expect node aggregate identifier "new1-root-agg" to lead to node user-cs-identifier;new1-root-agg;{}
+    Then I expect node aggregate identifier "new2-root-agg" to lead to node user-cs-identifier;new2-root-agg;{}
+
+    When the command PublishIndividualNodesFromWorkspace is executed with payload:
+      | Key                             | Value                                                                                      |
+      | workspaceName                   | "user-test"                                                                                |
+      | nodesToPublish                  | ["new1-root-agg"] |
+      | contentStreamIdForRemainingPart | "user-cs-identifier-modified"                                                              |
+
+    When I am in workspace "live" and dimension space point {}
+    Then I expect node aggregate identifier "new1-root-agg" to lead to node cs-identifier;new1-root-agg;{}
+    Then I expect node aggregate identifier "new2-root-agg" to lead to no node
+
+    When I am in workspace "user-test" and dimension space point {}
+    Then I expect node aggregate identifier "new1-root-agg" to lead to node user-cs-identifier-modified;new1-root-agg;{}
+    Then I expect node aggregate identifier "new2-root-agg" to lead to node user-cs-identifier-modified;new2-root-agg;{}
 
   Scenario: (CreateNodeAggregateWithNode) It is possible to publish new nodes
     Given the command CreateWorkspace is executed with payload:
