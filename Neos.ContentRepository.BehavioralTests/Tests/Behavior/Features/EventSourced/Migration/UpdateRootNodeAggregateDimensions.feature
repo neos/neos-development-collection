@@ -11,6 +11,10 @@ Feature: Update root node aggregate dimensions
       | language   | mul, de, en, ch | ch->de->mul, en->mul |
     And using the following node types:
     """yaml
+    Neos.ContentRepository:Root: {}
+    Neos.ContentRepository:SecondRoot:
+      superTypes:
+        Neos.ContentRepository:Root: true
     'Neos.ContentRepository.Testing:Document':
       properties:
         title:
@@ -125,7 +129,7 @@ Feature: Update root node aggregate dimensions
     1 warnings: commands UpdateRootNodeAggregateDimensions require confirmation: Updating the dimensions of root node lady-eleonode-rootford will remove all its descendants in dimensions [{"language":"en"}]
     """
 
-    When I run the following node migration for workspace "live", creating target workspace "migration-workspace" on contentStreamId "migration-cs", with force and publishing on success:
+    When I run the following node migration for workspace "live", creating target workspace "migration-workspace" on contentStreamId "migration-cs", with force and without publishing on success:
     """yaml
     migration:
       -
@@ -150,3 +154,39 @@ Feature: Update root node aggregate dimensions
 
     When I run integrity violation detection
     Then I expect the integrity violation detection result to contain exactly 0 errors
+
+  Scenario: Run migration on two root nodes after adding a new dimension value and publish
+    # add a root node
+    Given the command CreateRootNodeAggregateWithNode is executed with payload:
+      | Key             | Value                          |
+      | workspaceName   | "live"                         |
+      | nodeAggregateId | "sire-frode-rootford"          |
+      | nodeTypeName    | "Neos.ContentRepository:SecondRoot" |
+
+    # we change the dimension configuration
+    Given I change the content dimensions in content repository "default" to:
+      | Identifier | Values              | Generalizations      |
+      | language   | mul, de, en, ch, fr | ch->de->mul, en->mul |
+
+    When I run the following node migration for workspace "live", creating target workspace "migration-workspace" on contentStreamId "migration-cs", with publishing on success:
+    """yaml
+    migration:
+      -
+        transformations:
+          -
+            type: 'UpdateRootNodeAggregateDimensions'
+            settings:
+              nodeType: 'Neos.ContentRepository:Root'
+          -
+            type: 'UpdateRootNodeAggregateDimensions'
+            settings:
+              nodeType: 'Neos.ContentRepository:SecondRoot'
+    """
+
+    When I am in workspace "live"
+    Then I expect the node aggregate "lady-eleonode-rootford" to exist
+    And I expect this node aggregate to occupy dimension space points [{}]
+    And I expect this node aggregate to cover dimension space points [{"language":"mul"},{"language":"de"},{"language":"en"},{"language":"ch"},{"language":"fr"}]
+    Then I expect the node aggregate "sire-frode-rootford" to exist
+    And I expect this node aggregate to occupy dimension space points [{}]
+    And I expect this node aggregate to cover dimension space points [{"language":"mul"},{"language":"de"},{"language":"en"},{"language":"ch"},{"language":"fr"}]
