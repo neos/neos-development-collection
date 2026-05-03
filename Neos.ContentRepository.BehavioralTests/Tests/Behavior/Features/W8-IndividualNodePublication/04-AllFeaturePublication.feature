@@ -47,7 +47,6 @@ Feature: Publishing hide/show scenario of nodes
       | workspaceName      | "live"          |
       | newContentStreamId | "cs-identifier" |
     And I am in workspace "live" and dimension space point {"language":"de"}
-    And VisibilityConstraints are set to "empty"
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key             | Value                         |
       | nodeAggregateId | "lady-eleonode-rootford"      |
@@ -102,7 +101,8 @@ Feature: Publishing hide/show scenario of nodes
       | tag                          | "disabled"                   |
 
     When I am in workspace "live" and dimension space point {"language":"de"}
-    When I execute the findSubtree query for entry node aggregate id "lady-eleonode-rootford" I expect the following tree with tags:
+    Then I expect node aggregate identifier "lady-eleonode-rootford" to lead to node cs-identifier;lady-eleonode-rootford;{}
+    When I expect this node to have the following subtree with tags:
     """
     lady-eleonode-rootford
      sir-david-nodenborough
@@ -112,7 +112,8 @@ Feature: Publishing hide/show scenario of nodes
 
     When I am in workspace "user-test" and dimension space point {"language":"de"}
     Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node user-cs-identifier;sir-david-nodenborough;{"language":"de"}
-    When I execute the findSubtree query for entry node aggregate id "lady-eleonode-rootford" I expect the following tree with tags:
+    Then I expect node aggregate identifier "lady-eleonode-rootford" to lead to node user-cs-identifier;lady-eleonode-rootford;{}
+    When I expect this node to have the following subtree with tags:
     """
     lady-eleonode-rootford
      sir-david-nodenborough (disabled*)
@@ -127,7 +128,8 @@ Feature: Publishing hide/show scenario of nodes
       | contentStreamIdForRemainingPart | "remaining-cs-id"          |
 
     When I am in workspace "live" and dimension space point {"language":"de"}
-    When I execute the findSubtree query for entry node aggregate id "lady-eleonode-rootford" I expect the following tree with tags:
+    Then I expect node aggregate identifier "lady-eleonode-rootford" to lead to node cs-identifier;lady-eleonode-rootford;{}
+    When I expect this node to have the following subtree with tags:
     """
     lady-eleonode-rootford
      sir-david-nodenborough (disabled*)
@@ -138,7 +140,8 @@ Feature: Publishing hide/show scenario of nodes
     When I am in workspace "user-test" and dimension space point {"language":"de"}
     # Ensure that we are in content stream remaining-cs-id
     Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node remaining-cs-id;sir-david-nodenborough;{"language":"de"}
-    When I execute the findSubtree query for entry node aggregate id "lady-eleonode-rootford" I expect the following tree with tags:
+    Then I expect node aggregate identifier "lady-eleonode-rootford" to lead to node remaining-cs-id;lady-eleonode-rootford;{}
+    When I expect this node to have the following subtree with tags:
     """
     lady-eleonode-rootford
      sir-david-nodenborough (disabled*)
@@ -183,7 +186,8 @@ Feature: Publishing hide/show scenario of nodes
       | tag                          | "disabled"                   |
 
     When I am in workspace "live" and dimension space point {"language":"de"}
-    When I execute the findSubtree query for entry node aggregate id "lady-eleonode-rootford" I expect the following tree with tags:
+    Then I expect node aggregate identifier "lady-eleonode-rootford" to lead to node cs-identifier;lady-eleonode-rootford;{}
+    When I expect this node to have the following subtree with tags:
     """
     lady-eleonode-rootford
      sir-david-nodenborough (disabled*)
@@ -193,7 +197,8 @@ Feature: Publishing hide/show scenario of nodes
 
     When I am in workspace "user-test" and dimension space point {"language":"de"}
     Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node user-cs-identifier;sir-david-nodenborough;{"language":"de"}
-    When I execute the findSubtree query for entry node aggregate id "lady-eleonode-rootford" I expect the following tree with tags:
+    Then I expect node aggregate identifier "lady-eleonode-rootford" to lead to node user-cs-identifier;lady-eleonode-rootford;{}
+    When I expect this node to have the following subtree with tags:
     """
     lady-eleonode-rootford
      sir-david-nodenborough
@@ -209,7 +214,8 @@ Feature: Publishing hide/show scenario of nodes
 
     When I am in workspace "live" and dimension space point {"language":"de"}
     Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{"language":"de"}
-    When I execute the findSubtree query for entry node aggregate id "lady-eleonode-rootford" I expect the following tree with tags:
+    Then I expect node aggregate identifier "lady-eleonode-rootford" to lead to node cs-identifier;lady-eleonode-rootford;{}
+    When I expect this node to have the following subtree with tags:
     """
     lady-eleonode-rootford
      sir-david-nodenborough
@@ -219,7 +225,8 @@ Feature: Publishing hide/show scenario of nodes
 
     When I am in workspace "user-test" and dimension space point {"language":"de"}
     Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node user-cs-identifier-modified;sir-david-nodenborough;{"language":"de"}
-    When I execute the findSubtree query for entry node aggregate id "lady-eleonode-rootford" I expect the following tree with tags:
+    Then I expect node aggregate identifier "lady-eleonode-rootford" to lead to node user-cs-identifier-modified;lady-eleonode-rootford;{}
+    When I expect this node to have the following subtree with tags:
     """
     lady-eleonode-rootford
      sir-david-nodenborough

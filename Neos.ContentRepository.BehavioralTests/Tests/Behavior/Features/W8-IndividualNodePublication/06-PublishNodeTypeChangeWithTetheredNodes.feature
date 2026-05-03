@@ -76,14 +76,12 @@ Feature: Partial publish after node type change tagging tethered children
     # Step 5: Assert the publish succeeded — page exists in live as Shortcut, tethered child is tagged (not removed)
     # nody-mc-nodeface was only created in user-test and was not in nodesToPublish, so it does not exist in live
     Then I am in workspace "live" and dimension space point {}
-    When VisibilityConstraints are set to "empty"
     And I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{}
     And I expect this node to be of type "Neos.ContentRepository.Testing:Shortcut"
     And I expect the node with aggregate identifier "main-collection-id" to be explicitly tagged "removed"
 
     # User workspace remaining — nody-mc-nodeface still exists (was not published) and inherits the "removed" tag
     And I am in workspace "user-test" and dimension space point {}
-    When VisibilityConstraints are set to "empty"
     And I expect node aggregate identifier "sir-david-nodenborough" to lead to node user-cs-identifier-remaining;sir-david-nodenborough;{}
     And I expect this node to be of type "Neos.ContentRepository.Testing:Shortcut"
     And I expect the node with aggregate identifier "main-collection-id" to be explicitly tagged "removed"

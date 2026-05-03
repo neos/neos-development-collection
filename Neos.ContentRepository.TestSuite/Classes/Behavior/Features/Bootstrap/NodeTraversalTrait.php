@@ -66,17 +66,12 @@ trait NodeTraversalTrait
     }
 
     /**
-     * TODO REMOVE
      * @When /^VisibilityConstraints are set to "(withoutRestrictions|empty|default)"$/
+     * @deprecated remove with Neos 10
      */
     public function visibilityConstraintsAreSetTo(string $restrictionType): void
     {
-        $this->currentSubgraphQueryVisibilityConstraints = match ($restrictionType) {
-            'withoutRestrictions' => VisibilityConstraints::withoutRestrictions(),
-            'empty' => VisibilityConstraints::createEmpty(),
-            'default' => VisibilityConstraints::default(),
-            default => throw new \InvalidArgumentException('Visibility constraint "' . $restrictionType . '" not supported.'),
-        };
+        throw new \RuntimeException('Testing of visibility constraints and node disabling was simplified. Please use steps `And I expect this node to be exactly explicitly tagged "disabled"` or `I expect this node to exactly inherit the tags "disabled" instead`', 1777837694);
     }
 
     /**

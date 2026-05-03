@@ -125,8 +125,6 @@ Feature: Copy nodes (without dimensions)
       | nodeVariantSelectionStrategy | "allVariants"     |
       | tag                          | "parent-tag"      |
 
-    And VisibilityConstraints are set to "withoutRestrictions"
-
     # we inherit the tag here but DONT copy it!
     Then I expect the node with aggregate identifier "sir-nodeward-nodington-iii" to inherit the tag "parent-tag"
 
