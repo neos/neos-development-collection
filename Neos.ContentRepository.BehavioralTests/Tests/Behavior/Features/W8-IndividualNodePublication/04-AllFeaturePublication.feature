@@ -247,6 +247,10 @@ Feature: Publishing hide/show scenario of nodes
       | newNodeName     | "imagemod"                   |
 
     When I am in workspace "live" and dimension space point {"language":"de"}
+    Then I expect the node aggregate "sir-david-nodenborough" to exist
+    And I expect this node aggregate to be named "text1"
+    Then I expect the node aggregate "sir-nodeward-nodington-iii" to exist
+    And I expect this node aggregate to be named "image"
     And I expect node aggregate identifier "lady-eleonode-rootford" to lead to node cs-identifier;lady-eleonode-rootford;{}
     Then I expect this node to have the following child nodes:
       | Name  | nodeAggregateId            |
@@ -254,6 +258,10 @@ Feature: Publishing hide/show scenario of nodes
       | image | sir-nodeward-nodington-iii |
 
     When I am in workspace "user-test" and dimension space point {"language":"de"}
+    Then I expect the node aggregate "sir-david-nodenborough" to exist
+    And I expect this node aggregate to be named "text1mod"
+    Then I expect the node aggregate "sir-nodeward-nodington-iii" to exist
+    And I expect this node aggregate to be named "imagemod"
     And I expect node aggregate identifier "lady-eleonode-rootford" to lead to node user-cs-identifier;lady-eleonode-rootford;{}
     Then I expect this node to have the following child nodes:
       | Name     | nodeAggregateId            |
@@ -267,6 +275,10 @@ Feature: Publishing hide/show scenario of nodes
       | contentStreamIdForRemainingPart | "user-cs-identifier-remaining" |
 
     When I am in workspace "live" and dimension space point {"language":"de"}
+    Then I expect the node aggregate "sir-david-nodenborough" to exist
+    And I expect this node aggregate to be named "text1mod"
+    Then I expect the node aggregate "sir-nodeward-nodington-iii" to exist
+    And I expect this node aggregate to be named "image"
     And I expect node aggregate identifier "lady-eleonode-rootford" to lead to node cs-identifier;lady-eleonode-rootford;{}
     Then I expect this node to have the following child nodes:
       | Name     | nodeAggregateId            |
@@ -274,11 +286,67 @@ Feature: Publishing hide/show scenario of nodes
       | image    | sir-nodeward-nodington-iii |
 
     When I am in workspace "user-test" and dimension space point {"language":"de"}
+    Then I expect the node aggregate "sir-david-nodenborough" to exist
+    And I expect this node aggregate to be named "text1mod"
+    Then I expect the node aggregate "sir-nodeward-nodington-iii" to exist
+    And I expect this node aggregate to be named "imagemod"
     And I expect node aggregate identifier "lady-eleonode-rootford" to lead to node user-cs-identifier-remaining;lady-eleonode-rootford;{}
     Then I expect this node to have the following child nodes:
       | Name     | nodeAggregateId            |
       | text1mod | sir-david-nodenborough     |
       | imagemod | sir-nodeward-nodington-iii |
+
+  Scenario: (ChangeNodeAggregateType) It is possible to publish changing the node type name.
+    Given the command CreateWorkspace is executed with payload:
+      | Key                | Value                |
+      | workspaceName      | "user-test"          |
+      | baseWorkspaceName  | "live"               |
+      | newContentStreamId | "user-cs-identifier" |
+
+    # SETUP: change two node types in USER workspace
+    Given the command ChangeNodeAggregateType is executed with payload:
+      | Key             | Value                                  |
+      | workspaceName   | "user-test"                            |
+      | nodeAggregateId | "sir-david-nodenborough"               |
+      | newNodeTypeName | "Neos.ContentRepository.Testing:Image" |
+      | strategy        | "delete"                               |
+
+    Given the command ChangeNodeAggregateType is executed with payload:
+      | Key             | Value                                    |
+      | workspaceName   | "user-test"                              |
+      | nodeAggregateId | "sir-nodeward-nodington-iii"             |
+      | newNodeTypeName | "Neos.ContentRepository.Testing:Content" |
+      | strategy        | "delete"                                 |
+
+    When I am in workspace "live" and dimension space point {"language":"de"}
+    Then I expect the node aggregate "sir-david-nodenborough" to exist
+    And I expect this node aggregate to be of type "Neos.ContentRepository.Testing:Content"
+    Then I expect the node aggregate "sir-nodeward-nodington-iii" to exist
+    And I expect this node aggregate to be of type "Neos.ContentRepository.Testing:Image"
+
+    When I am in workspace "user-test" and dimension space point {"language":"de"}
+    Then I expect the node aggregate "sir-david-nodenborough" to exist
+    And I expect this node aggregate to be of type "Neos.ContentRepository.Testing:Image"
+    Then I expect the node aggregate "sir-nodeward-nodington-iii" to exist
+    And I expect this node aggregate to be of type "Neos.ContentRepository.Testing:Content"
+
+    When the command PublishIndividualNodesFromWorkspace is executed with payload:
+      | Key                             | Value                          |
+      | workspaceName                   | "user-test"                    |
+      | nodesToPublish                  | ["sir-david-nodenborough"]     |
+      | contentStreamIdForRemainingPart | "user-cs-identifier-remaining" |
+
+    When I am in workspace "live" and dimension space point {"language":"de"}
+    Then I expect the node aggregate "sir-david-nodenborough" to exist
+    And I expect this node aggregate to be of type "Neos.ContentRepository.Testing:Image"
+    Then I expect the node aggregate "sir-nodeward-nodington-iii" to exist
+    And I expect this node aggregate to be of type "Neos.ContentRepository.Testing:Image"
+
+    When I am in workspace "user-test" and dimension space point {"language":"de"}
+    Then I expect the node aggregate "sir-david-nodenborough" to exist
+    And I expect this node aggregate to be of type "Neos.ContentRepository.Testing:Image"
+    Then I expect the node aggregate "sir-nodeward-nodington-iii" to exist
+    And I expect this node aggregate to be of type "Neos.ContentRepository.Testing:Content"
 
   Scenario: (RemoveNodeAggregate) It is possible to publish a node removal
     Given the command CreateWorkspace is executed with payload:
