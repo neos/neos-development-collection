@@ -8,11 +8,12 @@ Feature: Publishing hide/show scenario of nodes
 
   The setup is always as follows:
   - we modify two nodes using a certain command (e.g. TagSubtree) in the USER workspace
+  - assert the change only affected the USER workspace
   - we publish one of them
   - we check that the user workspace still sees both nodes as hidden; and the live workspace only sees one of the changes.
 
   We do the same for other commands. This way, we ensure that both the command works generally;
-  and the matchesNodeAddress() address of the command is actually implemented somehow properly.
+  and the separation of nodes to publish and keep is actually implemented somehow properly.
 
 
   Background:
@@ -38,6 +39,7 @@ Feature: Publishing hide/show scenario of nodes
       | workspaceName      | "live"          |
       | newContentStreamId | "cs-identifier" |
     And I am in workspace "live" and dimension space point {}
+    And VisibilityConstraints are set to "empty"
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key             | Value                         |
       | nodeAggregateId | "lady-eleonode-rootford"      |
@@ -78,16 +80,37 @@ Feature: Publishing hide/show scenario of nodes
     And I am in workspace "user-test"
 
     # SETUP: hide two nodes in USER workspace
-    Given the command DisableNodeAggregate is executed with payload:
+    Given the command TagSubtree is executed with payload:
       | Key                          | Value                    |
       | nodeAggregateId              | "sir-david-nodenborough" |
       | coveredDimensionSpacePoint   | {}                       |
       | nodeVariantSelectionStrategy | "allVariants"            |
-    And the command DisableNodeAggregate is executed with payload:
+      | tag                          | "disabled"               |
+    And the command TagSubtree is executed with payload:
       | Key                          | Value                        |
       | nodeAggregateId              | "sir-nodeward-nodington-iii" |
       | coveredDimensionSpacePoint   | {}                           |
       | nodeVariantSelectionStrategy | "allVariants"                |
+      | tag                          | "disabled"                   |
+
+    When I am in workspace "live" and dimension space point {}
+    When I execute the findSubtree query for entry node aggregate id "lady-eleonode-rootford" I expect the following tree with tags:
+    """
+    lady-eleonode-rootford
+     sir-david-nodenborough
+      nody-mc-nodeface
+     sir-nodeward-nodington-iii
+    """
+
+    When I am in workspace "user-test" and dimension space point {}
+    Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node user-cs-identifier;sir-david-nodenborough;{}
+    When I execute the findSubtree query for entry node aggregate id "lady-eleonode-rootford" I expect the following tree with tags:
+    """
+    lady-eleonode-rootford
+     sir-david-nodenborough (disabled*)
+      nody-mc-nodeface (disabled)
+     sir-nodeward-nodington-iii (disabled*)
+    """
 
     When the command PublishIndividualNodesFromWorkspace is executed with payload:
       | Key                             | Value                                                                                                    |
@@ -95,18 +118,25 @@ Feature: Publishing hide/show scenario of nodes
       | nodesToPublish                  | ["sir-david-nodenborough"] |
       | contentStreamIdForRemainingPart | "remaining-cs-id"                                                                                        |
 
-    When I am in workspace "live"
-    Then I expect node aggregate identifier "sir-david-nodenborough" to lead to no node
-    And I expect node aggregate identifier "nody-mc-nodeface" to lead to no node
-    And I expect node aggregate identifier "sir-nodeward-nodington-iii" to lead to node cs-identifier;sir-nodeward-nodington-iii;{}
+    When I am in workspace "live" and dimension space point {}
+    When I execute the findSubtree query for entry node aggregate id "lady-eleonode-rootford" I expect the following tree with tags:
+    """
+    lady-eleonode-rootford
+     sir-david-nodenborough (disabled*)
+      nody-mc-nodeface (disabled)
+     sir-nodeward-nodington-iii
+    """
 
-    When I am in workspace "user-test"
+    When I am in workspace "user-test" and dimension space point {}
     # Ensure that we are in content stream remaining-cs-id
-    Then I expect node aggregate identifier "lady-eleonode-rootford" to lead to node remaining-cs-id;lady-eleonode-rootford;{}
-
-    And I expect node aggregate identifier "sir-david-nodenborough" to lead to no node
-    And I expect node aggregate identifier "nody-mc-nodeface" to lead to no node
-    And I expect node aggregate identifier "sir-nodeward-nodington-iii" to lead to no node
+    Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node remaining-cs-id;sir-david-nodenborough;{}
+    When I execute the findSubtree query for entry node aggregate id "lady-eleonode-rootford" I expect the following tree with tags:
+    """
+    lady-eleonode-rootford
+     sir-david-nodenborough (disabled*)
+      nody-mc-nodeface (disabled)
+     sir-nodeward-nodington-iii (disabled*)
+    """
 
   Scenario: (UntagSubtree) It is possible to publish showing of a node.
     # BEFORE: ensure two nodes are hidden in live (and user WS)
@@ -144,6 +174,25 @@ Feature: Publishing hide/show scenario of nodes
       | nodeVariantSelectionStrategy | "allVariants"                |
       | tag                          | "disabled"                   |
 
+    When I am in workspace "live" and dimension space point {}
+    When I execute the findSubtree query for entry node aggregate id "lady-eleonode-rootford" I expect the following tree with tags:
+    """
+    lady-eleonode-rootford
+     sir-david-nodenborough (disabled*)
+      nody-mc-nodeface (disabled)
+     sir-nodeward-nodington-iii (disabled*)
+    """
+
+    When I am in workspace "user-test" and dimension space point {}
+    Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node user-cs-identifier;sir-david-nodenborough;{}
+    When I execute the findSubtree query for entry node aggregate id "lady-eleonode-rootford" I expect the following tree with tags:
+    """
+    lady-eleonode-rootford
+     sir-david-nodenborough
+      nody-mc-nodeface
+     sir-nodeward-nodington-iii
+    """
+
     When the command PublishIndividualNodesFromWorkspace is executed with payload:
       | Key                             | Value                         |
       | workspaceName                   | "user-test"                   |
@@ -152,13 +201,23 @@ Feature: Publishing hide/show scenario of nodes
 
     When I am in workspace "live" and dimension space point {}
     Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{}
-    And I expect node aggregate identifier "nody-mc-nodeface" to lead to node cs-identifier;nody-mc-nodeface;{}
-    And I expect node aggregate identifier "sir-nodeward-nodington-iii" to lead to no node
+    When I execute the findSubtree query for entry node aggregate id "lady-eleonode-rootford" I expect the following tree with tags:
+    """
+    lady-eleonode-rootford
+     sir-david-nodenborough
+      nody-mc-nodeface
+     sir-nodeward-nodington-iii (disabled*)
+    """
 
     When I am in workspace "user-test" and dimension space point {}
     Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node user-cs-identifier-modified;sir-david-nodenborough;{}
-    And I expect node aggregate identifier "nody-mc-nodeface" to lead to node user-cs-identifier-modified;nody-mc-nodeface;{}
-    And I expect node aggregate identifier "sir-nodeward-nodington-iii" to lead to node user-cs-identifier-modified;sir-nodeward-nodington-iii;{}
+    When I execute the findSubtree query for entry node aggregate id "lady-eleonode-rootford" I expect the following tree with tags:
+    """
+    lady-eleonode-rootford
+     sir-david-nodenborough
+      nody-mc-nodeface
+     sir-nodeward-nodington-iii
+    """
 
   Scenario: (ChangeNodeAggregateName) It is possible to publish changing the node name.
     Given the command CreateWorkspace is executed with payload:
@@ -185,6 +244,13 @@ Feature: Publishing hide/show scenario of nodes
       | Name     | nodeAggregateId            |
       | text1    | sir-david-nodenborough     |
       | image    | sir-nodeward-nodington-iii |
+
+    When I am in workspace "user-test" and dimension space point {}
+    And I expect node aggregate identifier "lady-eleonode-rootford" to lead to node user-cs-identifier;lady-eleonode-rootford;{}
+    Then I expect this node to have the following child nodes:
+      | Name     | nodeAggregateId            |
+      | text1mod | sir-david-nodenborough     |
+      | imagemod | sir-nodeward-nodington-iii |
 
     When the command PublishIndividualNodesFromWorkspace is executed with payload:
       | Key                             | Value                          |
@@ -228,11 +294,21 @@ Feature: Publishing hide/show scenario of nodes
       | coveredDimensionSpacePoint   | {}                           |
       | nodeVariantSelectionStrategy | "allVariants"                |
 
+    When I am in workspace "live" and dimension space point {}
+    Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{}
+    Then I expect node aggregate identifier "nody-mc-nodeface" to lead to node cs-identifier;nody-mc-nodeface;{}
+    Then I expect node aggregate identifier "sir-nodeward-nodington-iii" to lead to node cs-identifier;sir-nodeward-nodington-iii;{}
+
+    When I am in workspace "user-test" and dimension space point {}
+    Then I expect node aggregate identifier "sir-david-nodenborough" to lead to no node
+    Then I expect node aggregate identifier "nody-mc-nodeface" to lead to no node
+    Then I expect node aggregate identifier "sir-nodeward-nodington-iii" to lead to no node
+
     When the command PublishIndividualNodesFromWorkspace is executed with payload:
-      | Key                             | Value                                                                                                    |
-      | workspaceName                   | "user-test"                                                                                              |
-      | nodesToPublish                  | ["sir-david-nodenborough"] |
-      | contentStreamIdForRemainingPart | "user-cs-identifier-modified"                                                                            |
+      | Key                             | Value                         |
+      | workspaceName                   | "user-test"                   |
+      | nodesToPublish                  | ["sir-david-nodenborough"]    |
+      | contentStreamIdForRemainingPart | "user-cs-identifier-modified" |
 
     When I am in workspace "live" and dimension space point {}
     Then I expect node aggregate identifier "sir-david-nodenborough" to lead to no node
@@ -265,6 +341,26 @@ Feature: Publishing hide/show scenario of nodes
       | sourceOriginDimensionSpacePoint | {}                                        |
       | references                      | [{"referenceName": "referenceProperty", "references": [{"target":"sir-nodeward-nodington-iii"}]}] |
 
+    When I am in workspace "live" and dimension space point {}
+    Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{}
+    And I expect this node to have no references
+    Then I expect node aggregate identifier "nody-mc-nodeface" to lead to node cs-identifier;nody-mc-nodeface;{}
+    And I expect this node to have no references
+    Then I expect node aggregate identifier "sir-nodeward-nodington-iii" to lead to node cs-identifier;sir-nodeward-nodington-iii;{}
+    And I expect this node to have no references
+
+    When I am in workspace "user-test" and dimension space point {}
+    Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node user-cs-identifier;sir-david-nodenborough;{}
+    And I expect this node to have the following references:
+      | Name              | Node                                             | Properties |
+      | referenceProperty | user-cs-identifier;sir-nodeward-nodington-iii;{} | null       |
+    Then I expect node aggregate identifier "nody-mc-nodeface" to lead to node user-cs-identifier;nody-mc-nodeface;{}
+    And I expect this node to have the following references:
+      | Name              | Node                                             | Properties |
+      | referenceProperty | user-cs-identifier;sir-nodeward-nodington-iii;{} | null       |
+    Then I expect node aggregate identifier "sir-nodeward-nodington-iii" to lead to node user-cs-identifier;sir-nodeward-nodington-iii;{}
+    And I expect this node to have no references
+
     When the command PublishIndividualNodesFromWorkspace is executed with payload:
       | Key                             | Value                                                                                                    |
       | workspaceName                   | "user-test"                                                                                              |
@@ -294,6 +390,7 @@ Feature: Publishing hide/show scenario of nodes
       | Name              | Node                                                      | Properties |
       | referenceProperty | user-cs-identifier-modified;sir-nodeward-nodington-iii;{} | null       |
     Then I expect node aggregate identifier "sir-nodeward-nodington-iii" to lead to node user-cs-identifier-modified;sir-nodeward-nodington-iii;{}
+    And I expect this node to have no references
     And I expect this node to be referenced by:
       | Name              | Node                                                  | Properties |
       | referenceProperty | user-cs-identifier-modified;nody-mc-nodeface;{}       | null       |
@@ -323,6 +420,14 @@ Feature: Publishing hide/show scenario of nodes
       | originDimensionSpacePoint | {}                                       |
       | parentNodeAggregateId     | "lady-eleonode-rootford"                 |
       | nodeName                  | "foo2"                                   |
+
+    When I am in workspace "live" and dimension space point {}
+    Then I expect node aggregate identifier "new1-agg" to lead to no node
+    Then I expect node aggregate identifier "new2-agg" to lead to no node
+
+    When I am in workspace "user-test" and dimension space point {}
+    Then I expect node aggregate identifier "new1-agg" to lead to node user-cs-identifier;new1-agg;{}
+    Then I expect node aggregate identifier "new2-agg" to lead to node user-cs-identifier;new2-agg;{}
 
     When the command PublishIndividualNodesFromWorkspace is executed with payload:
       | Key                             | Value                                                                                      |
