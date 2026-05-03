@@ -633,4 +633,73 @@ Feature: Publishing hide/show scenario of nodes
     And I expect this node aggregate to have the parent node aggregates ["lady-eleonode-rootford"]
     And I expect this node aggregate to have the child node aggregates ["sir-david-nodenborough"]
 
-  # TODO: implement CreateNodeVariant testcase
+  Scenario: (CreateNodeVariant) It is possible to varying nodes
+    Given the command CreateWorkspace is executed with payload:
+      | Key                | Value                |
+      | workspaceName      | "user-test"          |
+      | baseWorkspaceName  | "live"               |
+      | newContentStreamId | "user-cs-identifier" |
+
+    # SETUP: vary two new nodes in USER workspace
+    When the command CreateNodeVariant is executed with payload:
+      | Key             | Value                    |
+      | workspaceName   | "user-test"              |
+      | nodeAggregateId | "sir-david-nodenborough" |
+      | sourceOrigin    | {"language":"de"}        |
+      | targetOrigin    | {"language":"fr"}        |
+    When the command CreateNodeVariant is executed with payload:
+      | Key             | Value              |
+      | workspaceName   | "user-test"        |
+      | nodeAggregateId | "nody-mc-nodeface" |
+      | sourceOrigin    | {"language":"de"}  |
+      | targetOrigin    | {"language":"fr"}  |
+
+    When I am in workspace "live" and dimension space point {"language":"de"}
+    Then I expect the node aggregate "sir-david-nodenborough" to exist
+    And I expect this node aggregate to occupy dimension space points [{"language":"de"}]
+    And I expect this node aggregate to cover dimension space points [{"language":"de"}, {"language":"gsw"}]
+    Then I expect the node aggregate "nody-mc-nodeface" to exist
+    And I expect this node aggregate to occupy dimension space points [{"language":"de"}]
+    And I expect this node aggregate to cover dimension space points [{"language":"de"}, {"language":"gsw"}]
+    Then I expect the node aggregate "sir-nodeward-nodington-iii" to exist
+    And I expect this node aggregate to occupy dimension space points [{"language":"de"}]
+    And I expect this node aggregate to cover dimension space points [{"language":"de"}, {"language":"gsw"}]
+
+    When I am in workspace "user-test" and dimension space point {"language":"de"}
+    Then I expect the node aggregate "sir-david-nodenborough" to exist
+    And I expect this node aggregate to occupy dimension space points [{"language":"de"}, {"language":"fr"}]
+    And I expect this node aggregate to cover dimension space points [{"language":"de"}, {"language":"gsw"}, {"language":"fr"}]
+    Then I expect the node aggregate "nody-mc-nodeface" to exist
+    And I expect this node aggregate to occupy dimension space points [{"language":"de"}, {"language":"fr"}]
+    And I expect this node aggregate to cover dimension space points [{"language":"de"}, {"language":"gsw"}, {"language":"fr"}]
+    Then I expect the node aggregate "sir-nodeward-nodington-iii" to exist
+    And I expect this node aggregate to occupy dimension space points [{"language":"de"}]
+    And I expect this node aggregate to cover dimension space points [{"language":"de"}, {"language":"gsw"}]
+
+    When the command PublishIndividualNodesFromWorkspace is executed with payload:
+      | Key                             | Value                         |
+      | workspaceName                   | "user-test"                   |
+      | nodesToPublish                  | ["sir-david-nodenborough"]    |
+      | contentStreamIdForRemainingPart | "user-cs-identifier-modified" |
+
+    When I am in workspace "live" and dimension space point {"language":"de"}
+    Then I expect the node aggregate "sir-david-nodenborough" to exist
+    And I expect this node aggregate to occupy dimension space points [{"language":"de"}, {"language":"fr"}]
+    And I expect this node aggregate to cover dimension space points [{"language":"de"}, {"language":"gsw"}, {"language":"fr"}]
+    Then I expect the node aggregate "nody-mc-nodeface" to exist
+    And I expect this node aggregate to occupy dimension space points [{"language":"de"}]
+    And I expect this node aggregate to cover dimension space points [{"language":"de"}, {"language":"gsw"}]
+    Then I expect the node aggregate "sir-nodeward-nodington-iii" to exist
+    And I expect this node aggregate to occupy dimension space points [{"language":"de"}]
+    And I expect this node aggregate to cover dimension space points [{"language":"de"}, {"language":"gsw"}]
+
+    When I am in workspace "user-test" and dimension space point {"language":"de"}
+    Then I expect the node aggregate "sir-david-nodenborough" to exist
+    And I expect this node aggregate to occupy dimension space points [{"language":"de"}, {"language":"fr"}]
+    And I expect this node aggregate to cover dimension space points [{"language":"de"}, {"language":"gsw"}, {"language":"fr"}]
+    Then I expect the node aggregate "nody-mc-nodeface" to exist
+    And I expect this node aggregate to occupy dimension space points [{"language":"de"}, {"language":"fr"}]
+    And I expect this node aggregate to cover dimension space points [{"language":"de"}, {"language":"gsw"}, {"language":"fr"}]
+    Then I expect the node aggregate "sir-nodeward-nodington-iii" to exist
+    And I expect this node aggregate to occupy dimension space points [{"language":"de"}]
+    And I expect this node aggregate to cover dimension space points [{"language":"de"}, {"language":"gsw"}]
