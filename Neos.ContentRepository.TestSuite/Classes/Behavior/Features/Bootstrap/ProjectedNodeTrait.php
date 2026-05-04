@@ -257,7 +257,8 @@ trait ProjectedNodeTrait
             sort($actualTags);
             Assert::assertSame(
                 ($expectedTagList === '') ? [] : explode(',', $expectedTagList),
-                $actualTags
+                $actualTags,
+                sprintf('Node "%s" in workspace "%s" and dsp %s is tagged with {%s}', $currentNode->aggregateId->value, $currentNode->workspaceName->value, $currentNode->dimensionSpacePoint->toJson(), join(',', $currentNode->tags->map(fn (SubtreeTag $tag, bool $inherited) => sprintf('%s%s', $tag->value, $inherited ? '' : '*'))))
             );
         });
     }
@@ -274,6 +275,7 @@ trait ProjectedNodeTrait
             Assert::assertSame(
                 ($expectedTagList === '') ? [] : explode(',', $expectedTagList),
                 $actualTags,
+                sprintf('Node "%s" in workspace "%s" and dsp %s is tagged with {%s}', $currentNode->aggregateId->value, $currentNode->workspaceName->value, $currentNode->dimensionSpacePoint->toJson(), join(',', $currentNode->tags->map(fn (SubtreeTag $tag, bool $inherited) => sprintf('%s%s', $tag->value, $inherited ? '' : '*'))))
             );
         });
     }
