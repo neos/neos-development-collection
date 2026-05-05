@@ -52,7 +52,6 @@
         "typo3/neos-nodetypes": "self.version",
         "typo3/neos-kickstarter": "self.version",
         "neos/contentgraph-doctrinedbaladapter": "self.version",
-        "neos/contentgraph-postgresqladapter": "self.version",
         "neos/contentrepository-behavioraltests": "self.version",
         "neos/contentrepository-core": "self.version",
         "neos/contentrepository-dbal": "self.version",
@@ -141,9 +140,6 @@
         "psr-4": {
             "Neos\\ContentGraph\\DoctrineDbalAdapter\\": [
                 "Neos.ContentGraph.DoctrineDbalAdapter/src"
-            ],
-            "Neos\\ContentGraph\\PostgreSQLAdapter\\": [
-                "Neos.ContentGraph.PostgreSQLAdapter/src"
             ],
             "Neos\\ContentRepository\\BehavioralTests\\": [
                 "Neos.ContentRepository.BehavioralTests/Classes"
@@ -248,9 +244,6 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "Neos\\ContentGraph\\PostgreSQLAdapter\\Tests\\": [
-                "Neos.ContentGraph.PostgreSQLAdapter/Tests"
-            ],
             "Neos\\ContentRepository\\BehavioralTests\\Tests\\": [
                 "Neos.ContentRepository.BehavioralTests/Tests"
             ],
