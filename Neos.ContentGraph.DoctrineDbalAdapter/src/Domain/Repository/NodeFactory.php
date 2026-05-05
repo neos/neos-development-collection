@@ -167,8 +167,11 @@ final class NodeFactory
 
         foreach ($nodeRows as $nodeRow) {
             // A node can occupy exactly one DSP and cover multiple ones...
+            $coveredDimensionSpacePoint = DimensionSpacePoint::fromJsonString(
+                $nodeRow['covereddimensionspacepoint']
+            );
             $occupiedDimensionSpacePoint = $this->dimensionSpacePointRepository->getOriginDimensionSpacePointByHash($nodeRow['origindimensionspacepointhash']);
-            if (!isset($nodesByOccupiedDimensionSpacePoint[$occupiedDimensionSpacePoint->hash])) {
+            if ($coveredDimensionSpacePoint->hash === $occupiedDimensionSpacePoint->hash || $nodeRow['classification'] === 'root') {
                 // ... so we handle occupation exactly once ...
                 $nodesByOccupiedDimensionSpacePoint[$occupiedDimensionSpacePoint->hash] = $this->mapNodeRowToNode(
                     $nodeRow,
@@ -183,9 +186,6 @@ final class NodeFactory
                 $rawNodeAggregateClassification = $rawNodeAggregateClassification ?: $nodeRow['classification'];
             }
             // ... and coverage always ...
-            $coveredDimensionSpacePoint = DimensionSpacePoint::fromJsonString(
-                $nodeRow['covereddimensionspacepoint']
-            );
             $coveredDimensionSpacePoints[$coveredDimensionSpacePoint->hash] = $coveredDimensionSpacePoint;
 
             $coverageByOccupants[$occupiedDimensionSpacePoint->hash][$coveredDimensionSpacePoint->hash]
