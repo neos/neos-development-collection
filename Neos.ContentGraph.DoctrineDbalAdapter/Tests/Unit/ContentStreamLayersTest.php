@@ -26,8 +26,11 @@ class ContentStreamLayersTest extends TestCase
         $layers = ContentStreamLayers::fromArray([3, 6, 1, 5]);
         self::assertSame(6, $layers->getWriteLayer()->value);
 
-        $layers2 = ContentStreamLayers::fromArray([1]);
-        self::assertSame(1, $layers2->getWriteLayer()->value);
+        $layer2 = ContentStreamLayers::fromArray([1, 2]);
+        self::assertSame(2, $layer2->getWriteLayer()->value);
+
+        $layers3 = ContentStreamLayers::fromArray([1]);
+        self::assertSame(1, $layers3->getWriteLayer()->value);
     }
 
     /** @test */
