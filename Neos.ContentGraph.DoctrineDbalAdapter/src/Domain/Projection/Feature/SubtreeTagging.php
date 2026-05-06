@@ -215,57 +215,72 @@ trait SubtreeTagging
             contentstreamlayer
         )
         SELECT
-            h.id,
-            h.parentnodeanchor,
-            h.childnodeanchor,
-            h.position,
-            (
-              SELECT
-                JSON_MERGE_PATCH(
-                    IFNULL(JSON_OBJECTAGG(htk.k, null), '{}'),
-                    JSON_MERGE_PATCH('{}', h.subtreetags)
-                )
-              FROM
-                JSON_TABLE(r.subtreeTagsToInherit, '\$[*]' COLUMNS (k VARCHAR(36) PATH '\$')) htk
-            ) as subtreetags,
-            h.dimensionspacepointhash,
-            :targetContentStreamLayer as contentstreamlayer
-        FROM {$this->tableNames->hierarchyRelation()} h  
-            JOIN (
-              WITH RECURSIVE cte AS (
-                SELECT
-                  JSON_KEYS(th.subtreetags) subtreeTagsToInherit, th.childnodeanchor
-                FROM
-                  {$this->tableNames->hierarchyRelation()} th
-                  INNER JOIN {$this->tableNames->node()} tn ON tn.relationanchorpoint = th.childnodeanchor
+            h2.id,
+            h2.parentnodeanchor,
+            h2.childnodeanchor,
+            h2.position,
+            h2.subtreetags,
+            h2.dimensionspacepointhash,
+            h2.contentstreamlayer
+        FROM (
+            SELECT
+                h.id,
+                h.parentnodeanchor,
+                h.childnodeanchor,
+                h.position,
+                h.dimensionspacepointhash,
+                (
+                  SELECT
+                    JSON_MERGE_PATCH(
+                        IFNULL(JSON_OBJECTAGG(htk.k, null), '{}'),
+                        JSON_MERGE_PATCH('{}', h.subtreetags)
+                    )
+                  FROM
+                    JSON_TABLE(r.subtreeTagsToInherit, '\$[*]' COLUMNS (k VARCHAR(36) PATH '\$')) htk
+                ) as subtreetags,
+                h.subtreetags as currentsubtreetags,
+                :targetContentStreamLayer as contentstreamlayer
+            FROM {$this->tableNames->hierarchyRelation()} h  
+                JOIN (
+                  WITH RECURSIVE cte AS (
+                    SELECT
+                      JSON_KEYS(th.subtreetags) subtreeTagsToInherit, th.childnodeanchor
+                    FROM
+                      {$this->tableNames->hierarchyRelation()} th
+                      INNER JOIN {$this->tableNames->node()} tn ON tn.relationanchorpoint = th.childnodeanchor
+                    WHERE
+                      tn.nodeaggregateid = :newParentNodeAggregateId
+                      AND th.contentstreamlayer IN (:contentStreamLayers)
+                      AND th.dimensionspacepointhash = :dimensionSpacePointHash
+                    UNION
+                    SELECT
+                        JSON_MERGE_PRESERVE(
+                            cte.subtreeTagsToInherit,
+                            JSON_KEYS(JSON_MERGE_PATCH(
+                                '{}',
+                                dh.subtreetags
+                            ))
+                        ) AS subtreeTagsToInherit,
+                        dh.childnodeanchor
+                    FROM
+                      cte
+                    JOIN {$this->tableNames->hierarchyRelation()} dh
+                        ON
+                            dh.parentnodeanchor = cte.childnodeanchor
+                            AND dh.contentstreamlayer IN (:contentStreamLayers)
+                            AND dh.dimensionspacepointhash = :dimensionSpacePointHash
+                  )
+                  SELECT * FROM cte
+                ) AS r
                 WHERE
-                  tn.nodeaggregateid = :newParentNodeAggregateId
-                  AND th.contentstreamlayer IN (:contentStreamLayers)
-                  AND th.dimensionspacepointhash = :dimensionSpacePointHash
-                UNION
-                SELECT
-                    JSON_MERGE_PRESERVE(
-                        cte.subtreeTagsToInherit,
-                        JSON_KEYS(JSON_MERGE_PATCH(
-                            '{}',
-                            dh.subtreetags
-                        ))
-                    ) AS subtreeTagsToInherit,
-                    dh.childnodeanchor
-                FROM
-                  cte
-                JOIN {$this->tableNames->hierarchyRelation()} dh
-                    ON
-                        dh.parentnodeanchor = cte.childnodeanchor
-                        AND dh.contentstreamlayer IN (:contentStreamLayers)
-                        AND dh.dimensionspacepointhash = :dimensionSpacePointHash
-              )
-              SELECT * FROM cte
-            ) AS r
-            WHERE
-              h.childnodeanchor = r.childnodeanchor
-              AND h.contentstreamlayer IN (:contentStreamLayers)
-              AND h.dimensionspacepointhash = :dimensionSpacePointHash
+                  h.childnodeanchor = r.childnodeanchor
+                  AND h.contentstreamlayer IN (:contentStreamLayers)
+                  AND h.dimensionspacepointhash = :dimensionSpacePointHash
+        ) AS h2
+        WHERE NOT JSON_EQUALS(
+            h2.subtreetags,
+            h2.currentsubtreetags
+        )
         ON DUPLICATE KEY UPDATE subtreetags = VALUES(subtreetags)
         SQL;
         try {
