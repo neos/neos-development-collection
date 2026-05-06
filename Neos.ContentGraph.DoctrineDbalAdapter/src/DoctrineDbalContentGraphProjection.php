@@ -331,6 +331,7 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
                     h.position,
                     h.subtreetags,
                     h.dimensionspacepointhash
+                -- using table instead of HierarchyRelationStatement because merging is a low level operation and combines exactly two layers without taking any other layers into account 
                 FROM {$this->tableNames->hierarchyRelation()} AS h
                 WHERE h.contentstreamlayer = :contentStreamLayerToMergeFrom
                 ON DUPLICATE KEY UPDATE
@@ -383,6 +384,7 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
         // Drop non-referenced nodes (which will not have a hierarchy relation anymore)
         $deleteNodesStatement = <<<SQL
             DELETE n FROM {$this->tableNames->node()} n
+            -- using table instead of HierarchyRelationStatement because node rows can be shared for all layers 
             LEFT JOIN {$this->tableNames->hierarchyRelation()} h
                 ON h.childnodeanchor = n.relationanchorpoint
                     AND h.contentstreamlayer != :targetContentStreamLayer
@@ -399,6 +401,7 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
         // Drop non-referenced reference relations (i.e. because the referenced nodes will be gone)
         $deleteReferencesStatement = <<<SQL
             DELETE r FROM {$this->tableNames->referenceRelation()} r
+            -- using table instead of HierarchyRelationStatement because node rows can be shared for all layers 
             LEFT JOIN {$this->tableNames->hierarchyRelation()} h
                 ON h.childnodeanchor = r.nodeanchorpoint
                     AND h.contentstreamlayer != :targetContentStreamLayer
@@ -905,7 +908,7 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
         callable $operations
     ): mixed {
         $contentStreamLayersWithMaterializedNode = $this->projectionContentGraph->getAllContentStreamLayersAnchorPointIsContainedIn($anchorPoint);
-        if (!$contentStreamLayersWithMaterializedNode->equals($contentStreamLayersWhereWriteOccurs->getWriteLayer())) {
+        if (!$contentStreamLayersWithMaterializedNode->equalsSingle($contentStreamLayersWhereWriteOccurs->getWriteLayer())) {
             // Copy on Write needed!
             // Copy on Write is a purely "Content Stream" related concept;
             // thus we do not care about different DimensionSpacePoints here (but we copy all edges)
@@ -940,7 +943,7 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
                   h.dimensionspacepointhash,
                   :targetContentStreamLayer as contentstreamlayer
                 FROM
-                    {$this->tableNames->hierarchyRelation()} h
+                    {$this->hierarchyRelationStatement->toSql()} h
                 WHERE 
                     :originalNodeAnchor IN (h.childnodeanchor, h.parentnodeanchor)
                     AND h.contentstreamlayer IN (:contentStreamLayers)

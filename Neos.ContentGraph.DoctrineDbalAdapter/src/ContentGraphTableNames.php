@@ -27,6 +27,10 @@ final readonly class ContentGraphTableNames
         return $this->tableNamePrefix . '_node';
     }
 
+    /**
+     * Warning, for reading any hierarchy information the {@see HierarchyRelationStatement} musts always be used to take layers into account.
+     * Using the pure table in any queries must be done with exact care!
+     */
     public function hierarchyRelation(): string
     {
         return $this->tableNamePrefix . '_hierarchyrelation';

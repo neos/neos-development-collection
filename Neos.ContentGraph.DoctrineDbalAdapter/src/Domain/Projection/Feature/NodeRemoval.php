@@ -56,6 +56,7 @@ trait NodeRemoval
                 FROM
                     {$this->tableNames->node()} n
                     LEFT JOIN {$this->tableNames->referenceRelation()} r ON r.nodeanchorpoint = n.relationanchorpoint
+                    -- using table instead of HierarchyRelationStatement because if any layer still uses this node we cannot remove it
                     LEFT JOIN {$this->tableNames->hierarchyRelation()} h ON h.childnodeanchor = n.relationanchorpoint
                 WHERE
                     n.relationanchorpoint = :anchorPointForNode
@@ -89,6 +90,7 @@ trait NodeRemoval
                   NULL as dimensionspacepointhash,
                   :targetContentStreamLayer as contentstreamlayer
                 FROM
+                    -- using table instead of HierarchyRelationStatement because we are interested in a previously correctly read hierarchy row by id 
                     {$this->tableNames->hierarchyRelation()} h
                 WHERE 
                     id = :id
