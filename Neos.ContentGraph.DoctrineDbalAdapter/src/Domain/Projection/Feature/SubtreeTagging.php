@@ -240,18 +240,16 @@ trait SubtreeTagging
                 ) as subtreetags,
                 h.subtreetags as currentsubtreetags,
                 :targetContentStreamLayer as contentstreamlayer
-            FROM {$this->tableNames->hierarchyRelation()} h  
+            FROM {$this->hierarchyRelationStatement->where('h.dimensionspacepointhash = :dimensionSpacePointHash')->toSql()} h
                 JOIN (
                   WITH RECURSIVE cte AS (
                     SELECT
                       JSON_KEYS(th.subtreetags) subtreeTagsToInherit, th.childnodeanchor
                     FROM
-                      {$this->tableNames->hierarchyRelation()} th
+                      {$this->hierarchyRelationStatement->where('h.dimensionspacepointhash = :dimensionSpacePointHash')->toSql()} th
                       INNER JOIN {$this->tableNames->node()} tn ON tn.relationanchorpoint = th.childnodeanchor
                     WHERE
                       tn.nodeaggregateid = :newParentNodeAggregateId
-                      AND th.contentstreamlayer IN (:contentStreamLayers)
-                      AND th.dimensionspacepointhash = :dimensionSpacePointHash
                     UNION
                     SELECT
                         JSON_MERGE_PRESERVE(
@@ -264,18 +262,13 @@ trait SubtreeTagging
                         dh.childnodeanchor
                     FROM
                       cte
-                    JOIN {$this->tableNames->hierarchyRelation()} dh
-                        ON
-                            dh.parentnodeanchor = cte.childnodeanchor
-                            AND dh.contentstreamlayer IN (:contentStreamLayers)
-                            AND dh.dimensionspacepointhash = :dimensionSpacePointHash
+                    JOIN {$this->hierarchyRelationStatement->where('h.dimensionspacepointhash = :dimensionSpacePointHash')->toSql()} dh
+                        ON dh.parentnodeanchor = cte.childnodeanchor
                   )
                   SELECT * FROM cte
                 ) AS r
                 WHERE
                   h.childnodeanchor = r.childnodeanchor
-                  AND h.contentstreamlayer IN (:contentStreamLayers)
-                  AND h.dimensionspacepointhash = :dimensionSpacePointHash
         ) AS h2
         WHERE NOT JSON_EQUALS(
             h2.subtreetags,
