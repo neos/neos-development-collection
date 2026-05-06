@@ -71,7 +71,7 @@ final readonly class ContentStreamLayers
         return new self($items);
     }
 
-    public function equals(ContentStreamLayer $id): bool
+    public function equalsSingle(ContentStreamLayer $id): bool
     {
         return count($this->items) === 1 && array_key_exists($id->value, $this->items);
     }
