@@ -560,6 +560,7 @@ class ProjectionContentGraph
             SELECT
                 DISTINCT h.contentstreamlayer
             FROM
+                -- using table instead of HierarchyRelationStatement because node rows can be shared for all layers 
                 {$this->tableNames->hierarchyRelation()} h
             WHERE
                 h.childnodeanchor = :nodeRelationAnchorPoint

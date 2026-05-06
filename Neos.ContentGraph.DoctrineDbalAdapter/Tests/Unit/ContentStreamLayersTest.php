@@ -57,12 +57,12 @@ class ContentStreamLayersTest extends TestCase
     public function equals()
     {
         $layers = ContentStreamLayers::fromArray([3, 6, 1, 5]);
-        self::assertFalse($layers->equals(ContentStreamLayer::fromInt(1)));
-        self::assertFalse($layers->equals(ContentStreamLayer::fromInt(6)));
+        self::assertFalse($layers->equalsSingle(ContentStreamLayer::fromInt(1)));
+        self::assertFalse($layers->equalsSingle(ContentStreamLayer::fromInt(6)));
 
         $layers2 = ContentStreamLayers::fromArray([1]);
-        self::assertTrue($layers2->equals(ContentStreamLayer::fromInt(1)));
-        self::assertFalse($layers2->equals(ContentStreamLayer::fromInt(2)));
+        self::assertTrue($layers2->equalsSingle(ContentStreamLayer::fromInt(1)));
+        self::assertFalse($layers2->equalsSingle(ContentStreamLayer::fromInt(2)));
     }
 
     /** @test */

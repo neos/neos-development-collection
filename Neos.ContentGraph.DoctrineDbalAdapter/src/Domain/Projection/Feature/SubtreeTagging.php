@@ -43,7 +43,7 @@ trait SubtreeTagging
             JSON_INSERT(h.subtreetags, :tagPath, null) as subtreetags,
             h.dimensionspacepointhash,
             :targetContentStreamLayer as contentstreamlayer
-        FROM {$this->tableNames->hierarchyRelation()} h
+        FROM {$this->hierarchyRelationStatement->toSql()} h
             JOIN (
                 -- todo use new id?
                 WITH RECURSIVE cte (id, dsp) AS (
@@ -67,7 +67,6 @@ trait SubtreeTagging
             ) subquery
                 ON h.dimensionspacepointhash = subquery.dsp
                 AND h.childnodeanchor = subquery.id
-            WHERE h.contentstreamlayer IN (:contentStreamLayers)
             ON DUPLICATE KEY UPDATE subtreetags = VALUES(subtreetags)
         SQL;
 
@@ -148,19 +147,18 @@ trait SubtreeTagging
                   SELECT containsTag FROM (SELECT
                     JSON_CONTAINS_PATH(gph.subtreetags, 'one', :tagPath) as containsTag
                   FROM
-                    {$this->tableNames->hierarchyRelation()} gph
-                    INNER JOIN {$this->tableNames->hierarchyRelation()} ph ON ph.parentnodeanchor = gph.childnodeanchor
+                    {$this->hierarchyRelationStatement->toSql()} gph
+                    INNER JOIN {$this->hierarchyRelationStatement->toSql()} ph ON ph.parentnodeanchor = gph.childnodeanchor
                     INNER JOIN {$this->tableNames->node()} n ON n.relationanchorpoint = ph.childnodeanchor
                   WHERE
                     ph.parentnodeanchor = gph.childnodeanchor
                     AND n.nodeaggregateid = :nodeAggregateId
-                    AND gph.contentstreamlayer IN (:contentStreamLayers)
                   LIMIT 1) as containsTagSubQuery
                 ), JSON_SET(subtreetags, :tagPath, null), JSON_REMOVE(subtreetags, :tagPath)
             ) as subtreetags,
             h.dimensionspacepointhash,
             :targetContentStreamLayer as contentstreamlayer
-        FROM {$this->tableNames->hierarchyRelation()} h
+        FROM {$this->hierarchyRelationStatement->toSql()} h
             JOIN (
                 -- todo use new actual id?
               WITH RECURSIVE cte (id, dsp) AS (
@@ -183,7 +181,6 @@ trait SubtreeTagging
               SELECT * FROM cte
             ) subquery ON h.dimensionspacepointhash = subquery.dsp
                 AND h.childnodeanchor = subquery.id
-              WHERE contentstreamlayer IN (:contentStreamLayers)
           ON DUPLICATE KEY UPDATE subtreetags = VALUES(subtreetags)
         SQL;
         try {
