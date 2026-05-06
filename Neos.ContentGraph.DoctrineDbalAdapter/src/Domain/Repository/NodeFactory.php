@@ -171,7 +171,11 @@ final class NodeFactory
                 $nodeRow['covereddimensionspacepoint']
             );
             $occupiedDimensionSpacePoint = $this->dimensionSpacePointRepository->getOriginDimensionSpacePointByHash($nodeRow['origindimensionspacepointhash']);
-            if ($coveredDimensionSpacePoint->hash === $occupiedDimensionSpacePoint->hash || $nodeRow['classification'] === 'root') {
+            if (
+                $coveredDimensionSpacePoint->hash === $occupiedDimensionSpacePoint->hash
+                // Todo hack, support for partial NodeAggregates by picking an arbitrary node row for occupation. See https://github.com/neos/neos-development-collection/pull/5489
+                || !isset($nodesByOccupiedDimensionSpacePoint[$occupiedDimensionSpacePoint->hash])
+            ) {
                 // ... so we handle occupation exactly once ...
                 $nodesByOccupiedDimensionSpacePoint[$occupiedDimensionSpacePoint->hash] = $this->mapNodeRowToNode(
                     $nodeRow,
