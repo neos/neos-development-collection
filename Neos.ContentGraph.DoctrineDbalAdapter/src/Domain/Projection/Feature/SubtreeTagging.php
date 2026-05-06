@@ -6,10 +6,11 @@ namespace Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\Feature;
 
 use Doctrine\DBAL\ArrayParameterType;
 use Doctrine\DBAL\Exception as DBALException;
+use Doctrine\DBAL\Platforms\MariaDBPlatform;
+use Doctrine\DBAL\Platforms\MySQLPlatform;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\ContentStreamLayers;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\NodeRelationAnchorPoint;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\NodeFactory;
-use Neos\ContentGraph\DoctrineDbalAdapter\HierarchyRelationStatement;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Core\Feature\SubtreeTagging\Dto\SubtreeTag;
@@ -201,6 +202,12 @@ trait SubtreeTagging
 
     private function moveSubtreeTags(ContentStreamLayers $contentStreamLayers, NodeAggregateId $newParentNodeAggregateId, DimensionSpacePoint $coveredDimensionSpacePoint): void
     {
+        if ($this->dbal->getDatabasePlatform() instanceof MariaDBPlatform) {
+            $jsonEqualsSql = static fn (string $sqlExpressionA, string $sqlExpressionB) => sprintf('JSON_EQUALS(%s, %s)', $sqlExpressionA, $sqlExpressionB);
+        } else {
+            $jsonEqualsSql = static fn (string $sqlExpressionA, string $sqlExpressionB) => sprintf('(CAST(%s AS JSON) = CAST(%s AS JSON))', $sqlExpressionA, $sqlExpressionB);
+        }
+
         $moveSubtreeTagsStatement = <<<SQL
         INSERT INTO {$this->tableNames->hierarchyRelation()} (
             id,
@@ -267,10 +274,7 @@ trait SubtreeTagging
                 WHERE
                   h.childnodeanchor = r.childnodeanchor
         ) AS h2
-        WHERE NOT JSON_EQUALS(
-            h2.subtreetags,
-            h2.currentsubtreetags
-        )
+        WHERE NOT {$jsonEqualsSql('h2.subtreetags', 'h2.currentsubtreetags')}
         ON DUPLICATE KEY UPDATE subtreetags = VALUES(subtreetags)
         SQL;
         try {
