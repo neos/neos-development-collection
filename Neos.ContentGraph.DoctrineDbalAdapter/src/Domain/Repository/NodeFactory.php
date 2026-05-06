@@ -198,7 +198,9 @@ final class NodeFactory
         ksort($coveredDimensionSpacePoints);
 
         // a nodeAggregate only exists if it at least contains one node
-        assert($nodesByOccupiedDimensionSpacePoint !== []);
+        if ($nodesByOccupiedDimensionSpacePoint === []) {
+            throw new \RuntimeException(sprintf('Fatal, no occupation found in fetched node rows for aggregate "%s"', $nodeRows[0]['nodeaggregateid'] ?? ''), 1778049288);
+        }
 
         return NodeAggregate::create(
             $this->contentRepositoryId,
