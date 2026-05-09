@@ -42,39 +42,30 @@ Feature: Publishing hide/show scenario of nodes
       | Key             | Value                         |
       | nodeAggregateId | "lady-eleonode-rootford"      |
       | nodeTypeName    | "Neos.ContentRepository:Root" |
-    And the event NodeAggregateWithNodeWasCreated was published with payload:
-      | Key                         | Value                                               |
-      | workspaceName               | "live"                                              |
-      | contentStreamId             | "cs-identifier"                                     |
-      | nodeAggregateId             | "sir-david-nodenborough"                            |
-      | nodeTypeName                | "Neos.ContentRepository.Testing:Content"            |
-      | originDimensionSpacePoint   | {}                                                  |
-      | coveredDimensionSpacePoints | [{}]                                                |
-      | parentNodeAggregateId       | "lady-eleonode-rootford"                            |
-      | initialPropertyValues       | {"text": {"type": "string", "value": "Initial t1"}} |
-      | nodeAggregateClassification | "regular"                                           |
-    And the event NodeAggregateWithNodeWasCreated was published with payload:
-      | Key                         | Value                                               |
-      | workspaceName               | "live"                                              |
-      | contentStreamId             | "cs-identifier"                                     |
-      | nodeAggregateId             | "nody-mc-nodeface"                                  |
-      | nodeTypeName                | "Neos.ContentRepository.Testing:Content"            |
-      | originDimensionSpacePoint   | {}                                                  |
-      | coveredDimensionSpacePoints | [{}]                                                |
-      | parentNodeAggregateId       | "sir-david-nodenborough"                            |
-      | initialPropertyValues       | {"text": {"type": "string", "value": "Initial t2"}} |
-      | nodeAggregateClassification | "regular"                                           |
-    And the event NodeAggregateWithNodeWasCreated was published with payload:
-      | Key                         | Value                                                  |
-      | workspaceName               | "live"                                                 |
-      | contentStreamId             | "cs-identifier"                                        |
-      | nodeAggregateId             | "sir-nodeward-nodington-iii"                           |
-      | nodeTypeName                | "Neos.ContentRepository.Testing:Image"                 |
-      | originDimensionSpacePoint   | {}                                                     |
-      | coveredDimensionSpacePoints | [{}]                                                   |
-      | parentNodeAggregateId       | "lady-eleonode-rootford"                               |
-      | initialPropertyValues       | {"image": {"type": "image", "value": "Initial image"}} |
-      | nodeAggregateClassification | "regular"                                              |
+    And the command CreateNodeAggregateWithNode is executed with payload:
+      | Key                       | Value                                    |
+      | workspaceName             | "live"                                   |
+      | nodeAggregateId           | "sir-david-nodenborough"                 |
+      | nodeTypeName              | "Neos.ContentRepository.Testing:Content" |
+      | originDimensionSpacePoint | {}                                       |
+      | parentNodeAggregateId     | "lady-eleonode-rootford"                 |
+      | initialPropertyValues     | {"text": "Initial t1"}                   |
+    And the command CreateNodeAggregateWithNode is executed with payload:
+      | Key                       | Value                                    |
+      | workspaceName             | "live"                                   |
+      | nodeAggregateId           | "nody-mc-nodeface"                       |
+      | nodeTypeName              | "Neos.ContentRepository.Testing:Content" |
+      | originDimensionSpacePoint | {}                                       |
+      | parentNodeAggregateId     | "sir-david-nodenborough"                 |
+      | initialPropertyValues     | {"text": "Initial t2"}                   |
+    And the command CreateNodeAggregateWithNode is executed with payload:
+      | Key                       | Value                                  |
+      | workspaceName             | "live"                                 |
+      | nodeAggregateId           | "sir-nodeward-nodington-iii"           |
+      | nodeTypeName              | "Neos.ContentRepository.Testing:Image" |
+      | originDimensionSpacePoint | {}                                     |
+      | parentNodeAggregateId     | "lady-eleonode-rootford"               |
+      | initialPropertyValues     | {"image": "Initial image"}             |
 
   Scenario: (DisableNode) It is possible to publish hiding of a node.
     Given the command CreateWorkspace is executed with payload:

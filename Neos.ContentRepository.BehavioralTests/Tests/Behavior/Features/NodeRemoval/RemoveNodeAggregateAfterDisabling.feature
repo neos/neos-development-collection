@@ -41,12 +41,11 @@ Feature: Disable a node aggregate
       | Key                          | Value              |
       | nodeAggregateId              | "nody-mc-nodeface" |
       | nodeVariantSelectionStrategy | "allVariants"      |
-    And the event NodeAggregateWasRemoved was published with payload:
-      | Key                                  | Value              |
-      | workspaceName                        | "live"             |
-      | contentStreamId                      | "cs-identifier"    |
-      | nodeAggregateId                      | "nody-mc-nodeface" |
-      | affectedCoveredDimensionSpacePoints  | [{}]               |
+    And the command RemoveNodeAggregate is executed with payload:
+      | Key                          | Value                |
+      | nodeAggregateId              | "nody-mc-nodeface"   |
+      | coveredDimensionSpacePoint   | {}                   |
+      | nodeVariantSelectionStrategy | "allSpecializations" |
 
     When the command CreateNodeAggregateWithNode is executed with payload:
       | Key                       | Value                                     |

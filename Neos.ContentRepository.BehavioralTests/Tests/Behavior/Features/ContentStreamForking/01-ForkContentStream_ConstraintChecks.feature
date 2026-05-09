@@ -27,26 +27,20 @@ Feature: ForkContentStream Without Dimensions
       | Key             | Value                         |
       | nodeAggregateId | "lady-eleonode-rootford"      |
       | nodeTypeName    | "Neos.ContentRepository:Root" |
-    And the event NodeAggregateWithNodeWasCreated was published with payload:
+    And the command CreateNodeAggregateWithNode is executed with payload:
       | Key                         | Value                                    |
       | workspaceName               | "live"                                   |
-      | contentStreamId             | "cs-identifier"                          |
       | nodeAggregateId             | "nody-mc-nodeface"                       |
       | nodeTypeName                | "Neos.ContentRepository.Testing:Content" |
       | originDimensionSpacePoint   | {}                                       |
-      | coveredDimensionSpacePoints | [{}]                                     |
       | parentNodeAggregateId       | "lady-eleonode-rootford"                 |
-      | nodeName                    | "child"                                  |
-      | nodeAggregateClassification | "regular"                                |
-    And the event NodePropertiesWereSet was published with payload:
-      | Key                          | Value                                                   |
-      | workspaceName                | "live"                                                  |
-      | contentStreamId              | "cs-identifier"                                         |
-      | nodeAggregateId              | "nody-mc-nodeface"                                      |
-      | originDimensionSpacePoint    | {}                                                      |
-      | affectedDimensionSpacePoints | [{}]                                                    |
-      | propertyValues               | {"text": {"value": "original value", "type": "string"}} |
-      | propertiesToUnset            | {}                                                      |
+      | nodeName                  | "child"                                  |
+    And the command SetNodeProperties is executed with payload:
+      | Key                       | Value                      |
+      | workspaceName             | "live"                     |
+      | nodeAggregateId           | "nody-mc-nodeface"         |
+      | originDimensionSpacePoint | {}                         |
+      | propertyValues            | {"text": "original value"} |
 
   Scenario: Try to create a workspace with the base workspace referring to a closed content stream
     When the event ContentStreamWasClosed was published with payload:

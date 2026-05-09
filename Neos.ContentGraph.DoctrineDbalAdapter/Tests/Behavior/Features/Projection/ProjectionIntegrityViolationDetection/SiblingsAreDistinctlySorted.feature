@@ -23,26 +23,20 @@ Feature: Run integrity violation detection regarding sibling sorting
       | nodeTypeName    | "Neos.ContentRepository:Root" |
 
   Scenario: Create two siblings and set the sorting to the same value
-    When the event NodeAggregateWithNodeWasCreated was published with payload:
+    When the command CreateNodeAggregateWithNode is executed with payload:
       | Key                         | Value                                                    |
       | workspaceName               | "live"                                                   |
-      | contentStreamId             | "cs-identifier"                                          |
       | nodeAggregateId             | "nody-mc-nodeface"                                       |
       | nodeTypeName                | "Neos.ContentRepository.Testing:Document"                |
       | originDimensionSpacePoint   | {"language":"de"}                                        |
-      | coveredDimensionSpacePoints | [{"language":"de"},{"language":"gsw"},{"language":"fr"}] |
       | parentNodeAggregateId       | "lady-eleonode-rootford"                                 |
-      | nodeAggregateClassification | "regular"                                                |
-    And the event NodeAggregateWithNodeWasCreated was published with payload:
+    And the command CreateNodeAggregateWithNode is executed with payload:
       | Key                         | Value                                                    |
       | workspaceName               | "live"                                                   |
-      | contentStreamId             | "cs-identifier"                                          |
       | nodeAggregateId             | "noderella-mc-nodeface"                                  |
       | nodeTypeName                | "Neos.ContentRepository.Testing:Document"                |
       | originDimensionSpacePoint   | {"language":"de"}                                        |
-      | coveredDimensionSpacePoints | [{"language":"de"},{"language":"gsw"},{"language":"fr"}] |
       | parentNodeAggregateId       | "lady-eleonode-rootford"                                 |
-      | nodeAggregateClassification | "regular"                                                |
     And I set the following position:
       | Key                  | Value              |
       | contentStreamId      | "cs-identifier"    |

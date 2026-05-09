@@ -21,16 +21,14 @@ Feature: Run integrity violation detection regarding reference relations
       | Key             | Value                         |
       | nodeAggregateId | "lady-eleonode-rootford"      |
       | nodeTypeName    | "Neos.ContentRepository:Root" |
-    And the event NodeAggregateWithNodeWasCreated was published with payload:
+    And the command CreateNodeAggregateWithNode is executed with payload:
       | Key                         | Value                                     |
       | workspaceName               | "live"                                    |
-      | contentStreamId             | "cs-identifier"                           |
       | nodeAggregateId             | "source-nodandaise"                       |
       | nodeTypeName                | "Neos.ContentRepository.Testing:Document" |
       | originDimensionSpacePoint   | {"language":"de"}                         |
       | coveredDimensionSpacePoints | [{"language":"de"}]                       |
       | parentNodeAggregateId       | "lady-eleonode-rootford"                  |
-      | nodeAggregateClassification | "regular"                                 |
 
   Scenario: Reference a non-existing node aggregate
     When the event NodeReferencesWereSet was published with payload:
@@ -45,16 +43,14 @@ Feature: Run integrity violation detection regarding reference relations
     And I expect integrity violation detection result error number 1 to have code 1597919585
 
   Scenario: Reference a node aggregate not covering any of the DSPs the source does
-    When the event NodeAggregateWithNodeWasCreated was published with payload:
+    When the command CreateNodeAggregateWithNode is executed with payload:
       | Key                         | Value                                     |
       | workspaceName               | "live"                                    |
-      | contentStreamId             | "cs-identifier"                           |
       | nodeAggregateId             | "anthony-destinode"                       |
       | nodeTypeName                | "Neos.ContentRepository.Testing:Document" |
       | originDimensionSpacePoint   | {"language":"fr"}                         |
       | coveredDimensionSpacePoints | [{"language":"fr"}]                       |
       | parentNodeAggregateId       | "lady-eleonode-rootford"                  |
-      | nodeAggregateClassification | "regular"                                 |
     And the event NodeReferencesWereSet was published with payload:
       | Key                                      | Value                                                              |
       | workspaceName                            | "live"                                                             |

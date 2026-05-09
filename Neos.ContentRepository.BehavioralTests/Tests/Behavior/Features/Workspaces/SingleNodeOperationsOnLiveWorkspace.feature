@@ -22,17 +22,14 @@ Feature: Single Node operations on live workspace
       | Key             | Value                         |
       | nodeAggregateId | "lady-eleonode-rootford"      |
       | nodeTypeName    | "Neos.ContentRepository:Root" |
-    And the event NodeAggregateWithNodeWasCreated was published with payload:
+    And the command CreateNodeAggregateWithNode is executed with payload:
       | Key                         | Value                                    |
       | workspaceName               | "live"                                   |
-      | contentStreamId             | "cs-identifier"                          |
       | nodeAggregateId             | "nody-mc-nodeface"                       |
       | nodeTypeName                | "Neos.ContentRepository.Testing:Content" |
       | originDimensionSpacePoint   | {}                                       |
-      | coveredDimensionSpacePoints | [{}]                                     |
       | parentNodeAggregateId       | "lady-eleonode-rootford"                 |
       | nodeName                    | "child"                                  |
-      | nodeAggregateClassification | "regular"                                |
 
   Scenario: Set property of a node
     Given the command SetNodeProperties is executed with payload:

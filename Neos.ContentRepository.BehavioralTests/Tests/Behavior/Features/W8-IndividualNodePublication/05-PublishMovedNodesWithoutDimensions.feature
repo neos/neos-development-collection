@@ -26,39 +26,30 @@ Feature: Publishing moved nodes without dimensions
       | Key             | Value                         |
       | nodeAggregateId | "lady-eleonode-rootford"      |
       | nodeTypeName    | "Neos.ContentRepository:Root" |
-    And the event NodeAggregateWithNodeWasCreated was published with payload:
+    And the command CreateNodeAggregateWithNode is executed with payload:
       | Key                         | Value                                     |
       | workspaceName               | "live"                                    |
-      | contentStreamId             | "cs-identifier"                           |
       | nodeAggregateId             | "sir-david-nodenborough"                  |
       | nodeTypeName                | "Neos.ContentRepository.Testing:Document" |
       | originDimensionSpacePoint   | {}                                        |
-      | coveredDimensionSpacePoints | [{}]                                      |
       | parentNodeAggregateId       | "lady-eleonode-rootford"                  |
       | nodeName                    | "document"                                |
-      | nodeAggregateClassification | "regular"                                 |
-    And the event NodeAggregateWithNodeWasCreated was published with payload:
+    And the command CreateNodeAggregateWithNode is executed with payload:
       | Key                         | Value                                     |
       | workspaceName               | "live"                                    |
-      | contentStreamId             | "cs-identifier"                           |
       | nodeAggregateId             | "nody-mc-nodeface"                        |
       | nodeTypeName                | "Neos.ContentRepository.Testing:Document" |
       | originDimensionSpacePoint   | {}                                        |
-      | coveredDimensionSpacePoints | [{}]                                      |
       | parentNodeAggregateId       | "sir-david-nodenborough"                  |
       | nodeName                    | "child-document"                          |
-      | nodeAggregateClassification | "regular"                                 |
-    And the event NodeAggregateWithNodeWasCreated was published with payload:
+    And the command CreateNodeAggregateWithNode is executed with payload:
       | Key                         | Value                                     |
       | workspaceName               | "live"                                    |
-      | contentStreamId             | "cs-identifier"                           |
       | nodeAggregateId             | "sir-nodeward-nodington-iii"              |
       | nodeTypeName                | "Neos.ContentRepository.Testing:Document" |
       | originDimensionSpacePoint   | {}                                        |
-      | coveredDimensionSpacePoints | [{}]                                      |
       | parentNodeAggregateId       | "lady-eleonode-rootford"                  |
       | nodeName                    | "esquire"                                 |
-      | nodeAggregateClassification | "regular"                                 |
 
     And the command CreateWorkspace is executed with payload:
       | Key                | Value                |
@@ -145,17 +136,14 @@ Feature: Publishing moved nodes without dimensions
     And I expect this node to have no succeeding siblings
 
   Scenario: Publish the move of a node to a new parent and the end of its children
-    Given the event NodeAggregateWithNodeWasCreated was published with payload:
+    Given the command CreateNodeAggregateWithNode is executed with payload:
       | Key                         | Value                                     |
       | workspaceName               | "live"                                    |
-      | contentStreamId             | "cs-identifier"                           |
       | nodeAggregateId             | "lady-abigail-nodenborough"               |
       | nodeTypeName                | "Neos.ContentRepository.Testing:Document" |
       | originDimensionSpacePoint   | {}                                        |
-      | coveredDimensionSpacePoints | [{}]                                      |
       | parentNodeAggregateId       | "sir-nodeward-nodington-iii"              |
       | nodeName                    | "other-document"                          |
-      | nodeAggregateClassification | "regular"                                 |
     When the command MoveNodeAggregate is executed with payload:
       | Key                      | Value                        |
       | workspaceName            | "user"                       |
