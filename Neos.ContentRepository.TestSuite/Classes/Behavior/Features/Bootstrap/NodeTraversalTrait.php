@@ -71,6 +71,18 @@ trait NodeTraversalTrait
     }
 
     /**
+     * @When I execute the findChildNodeAggregates query for node aggregate id :entryNodeIdSerialized I expect the following node aggregates to be returned:
+     */
+    public function iExecuteTheFindChildNodeAggregatesQueryIExpectTheFollowingNodes(string $entryNodeIdSerialized, TableNode $expectedNodes): void
+    {
+        $entryNodeAggregateId = NodeAggregateId::fromString($entryNodeIdSerialized);
+        $contentGraph = $this->currentContentRepository->getContentGraph($this->currentWorkspaceName);
+        $actualNodeAggregates = $contentGraph->findChildNodeAggregates($entryNodeAggregateId);
+
+        self::assertNodeAggregatesEqualTable($expectedNodes->getHash(), $actualNodeAggregates, 'findChildNodeAggregates returned an unexpected result');
+    }
+
+    /**
      * @When /^I execute the findReferences query for node aggregate id "(?<nodeIdSerialized>[^"]*)"(?: and filter '(?<filterSerialized>[^']*)')? I expect (?:the references '(?<referencesSerialized>[^']*)'|no references) to be returned( and the total count to be (?<expectedTotalCount>\d+))?$/
      */
     public function iExecuteTheFindReferencesQueryIExpectTheFollowingReferences(string $nodeIdSerialized, ?string $filterSerialized = null, ?string $referencesSerialized = null, ?int $expectedTotalCount = null): void

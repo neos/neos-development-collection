@@ -167,8 +167,13 @@ final class NodeFactory
 
         foreach ($nodeRows as $nodeRow) {
             // A node can occupy exactly one DSP and cover multiple ones...
+            $coveredDimensionSpacePoint = DimensionSpacePoint::fromJsonString(
+                $nodeRow['covereddimensionspacepoint']
+            );
             $occupiedDimensionSpacePoint = $this->dimensionSpacePointRepository->getOriginDimensionSpacePointByHash($nodeRow['origindimensionspacepointhash']);
-            if (!isset($nodesByOccupiedDimensionSpacePoint[$occupiedDimensionSpacePoint->hash])) {
+            if ($coveredDimensionSpacePoint->hash === $occupiedDimensionSpacePoint->hash
+                || (!isset($nodesByOccupiedDimensionSpacePoint[$occupiedDimensionSpacePoint->hash]) && $nodeRow['classification'] === 'root')
+            ) {
                 // ... so we handle occupation exactly once ...
                 $nodesByOccupiedDimensionSpacePoint[$occupiedDimensionSpacePoint->hash] = $this->mapNodeRowToNode(
                     $nodeRow,
@@ -183,9 +188,6 @@ final class NodeFactory
                 $rawNodeAggregateClassification = $rawNodeAggregateClassification ?: $nodeRow['classification'];
             }
             // ... and coverage always ...
-            $coveredDimensionSpacePoint = DimensionSpacePoint::fromJsonString(
-                $nodeRow['covereddimensionspacepoint']
-            );
             $coveredDimensionSpacePoints[$coveredDimensionSpacePoint->hash] = $coveredDimensionSpacePoint;
 
             $coverageByOccupants[$occupiedDimensionSpacePoint->hash][$coveredDimensionSpacePoint->hash]
@@ -198,7 +200,9 @@ final class NodeFactory
         ksort($coveredDimensionSpacePoints);
 
         // a nodeAggregate only exists if it at least contains one node
-        assert($nodesByOccupiedDimensionSpacePoint !== []);
+        if ($nodesByOccupiedDimensionSpacePoint === []) {
+            throw new \RuntimeException(sprintf('Fatal, no occupation found in fetched node rows for aggregate "%s"', $nodeRows[0]['nodeaggregateid'] ?? ''), 1778049288);
+        }
 
         return NodeAggregate::create(
             $this->contentRepositoryId,
