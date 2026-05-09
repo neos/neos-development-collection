@@ -167,8 +167,20 @@ final class NodeFactory
 
         foreach ($nodeRows as $nodeRow) {
             // A node can occupy exactly one DSP and cover multiple ones...
+            $coveredDimensionSpacePoint = DimensionSpacePoint::fromJsonString(
+                $nodeRow['covereddimensionspacepoint']
+            );
             $occupiedDimensionSpacePoint = $this->dimensionSpacePointRepository->getOriginDimensionSpacePointByHash($nodeRow['origindimensionspacepointhash']);
-            if (!isset($nodesByOccupiedDimensionSpacePoint[$occupiedDimensionSpacePoint->hash])) {
+            if (
+                // FIXME This condition should be exactly ONCE given for every occupation in a node aggregate
+                $coveredDimensionSpacePoint->hash === $occupiedDimensionSpacePoint->hash
+                // FIXME ... but, if poorly fetched a node aggregate does not include its occupation rows.
+                // as hack we support partial node aggregates by picking the first node row for an occupation which might not be the actual occupation
+                // The reason this is hacky is that edge information like subtree tags are not deterministic but dependent on the database returning rows.
+                // See https://github.com/neos/neos-development-collection/pull/5489
+                // This unfortunate hack condition means that the if-body is executed at most 2 times for regular cases.
+                || !isset($nodesByOccupiedDimensionSpacePoint[$occupiedDimensionSpacePoint->hash])
+            ) {
                 // ... so we handle occupation exactly once ...
                 $nodesByOccupiedDimensionSpacePoint[$occupiedDimensionSpacePoint->hash] = $this->mapNodeRowToNode(
                     $nodeRow,
@@ -176,6 +188,7 @@ final class NodeFactory
                     $occupiedDimensionSpacePoint->toDimensionSpacePoint(),
                     $visibilityConstraints
                 );
+                // FIXME, sort and index by $occupiedDimensionSpacePoint->hash
                 $occupiedDimensionSpacePoints[] = $occupiedDimensionSpacePoint;
                 $rawNodeAggregateId = $rawNodeAggregateId ?: $nodeRow['nodeaggregateid'];
                 $rawNodeTypeName = $rawNodeTypeName ?: $nodeRow['nodetypename'];
@@ -183,9 +196,6 @@ final class NodeFactory
                 $rawNodeAggregateClassification = $rawNodeAggregateClassification ?: $nodeRow['classification'];
             }
             // ... and coverage always ...
-            $coveredDimensionSpacePoint = DimensionSpacePoint::fromJsonString(
-                $nodeRow['covereddimensionspacepoint']
-            );
             $coveredDimensionSpacePoints[$coveredDimensionSpacePoint->hash] = $coveredDimensionSpacePoint;
 
             $coverageByOccupants[$occupiedDimensionSpacePoint->hash][$coveredDimensionSpacePoint->hash]
@@ -198,7 +208,9 @@ final class NodeFactory
         ksort($coveredDimensionSpacePoints);
 
         // a nodeAggregate only exists if it at least contains one node
-        assert($nodesByOccupiedDimensionSpacePoint !== []);
+        if ($nodesByOccupiedDimensionSpacePoint === []) {
+            throw new \RuntimeException(sprintf('Fatal, no occupation found in fetched node rows for aggregate "%s"', $nodeRows[0]['nodeaggregateid'] ?? ''), 1778049288);
+        }
 
         return NodeAggregate::create(
             $this->contentRepositoryId,
