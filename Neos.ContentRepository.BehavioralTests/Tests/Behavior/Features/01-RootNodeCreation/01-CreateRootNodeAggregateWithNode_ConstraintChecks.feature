@@ -15,6 +15,12 @@ Feature: Create a root node aggregate
     'Neos.ContentRepository.Testing:OtherRoot':
       superTypes:
         'Neos.ContentRepository:Root': true
+    'Neos.ContentRepository.Testing:RootWithTetheredChildNode':
+      superTypes:
+        'Neos.ContentRepository:Root': true
+      childNodes:
+        child-node:
+          type: 'Neos.ContentRepository.Testing:NonRoot'
     """
     And using identifier "default", I define a content repository
     And I am in content repository "default"
@@ -74,3 +80,11 @@ Feature: Create a root node aggregate
       | nodeAggregateId | "nody-mc-nodeface"                       |
       | nodeTypeName    | "Neos.ContentRepository.Testing:NonRoot" |
     Then the last command should have thrown an exception of type "NodeTypeIsNotOfTypeRoot"
+
+  Scenario: Try to create a root node aggregate with tethered children and specify a tethered descendant id which is already occupied
+    When the command CreateRootNodeAggregateWithNode is executed with payload and exceptions are caught:
+      | Key                                | Value                                                      |
+      | nodeAggregateId                    | "other-rootford"                                           |
+      | nodeTypeName                       | "Neos.ContentRepository.Testing:RootWithTetheredChildNode" |
+      | tetheredDescendantNodeAggregateIds | {"child-node": "lady-eleonode-rootford"}                   |
+    Then the last command should have thrown an exception of type "NodeAggregateCurrentlyExists"
