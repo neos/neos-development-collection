@@ -67,11 +67,11 @@ trait NodeTraversalTrait
 
     /**
      * @When /^VisibilityConstraints are set to "(withoutRestrictions|empty|default)"$/
-     * @deprecated remove with Neos 10
+     * @deprecated remove with Neos 9.2
      */
     public function visibilityConstraintsAreSetTo(string $restrictionType): void
     {
-        throw new \RuntimeException('Testing of visibility constraints and node disabling was simplified. Please use steps `And I expect this node to be exactly explicitly tagged "disabled"` or `I expect this node to exactly inherit the tags "disabled" instead`', 1777837694);
+        throw new \RuntimeException('Testing of legacy visibility constraints (node disabling) was simplified. Please use steps `And I expect this node to be exactly explicitly tagged "disabled"` or `inherit the tags` instead. To revert to the old behaviour apply this snippet: https://github.com/neos/neos-development-collection/pull/5815#issuecomment-4412441003', 1777837694);
     }
 
     /**
