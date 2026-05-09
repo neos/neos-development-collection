@@ -172,8 +172,13 @@ final class NodeFactory
             );
             $occupiedDimensionSpacePoint = $this->dimensionSpacePointRepository->getOriginDimensionSpacePointByHash($nodeRow['origindimensionspacepointhash']);
             if (
+                // FIXME This condition should be exactly ONCE given for every occupation in a node aggregate
                 $coveredDimensionSpacePoint->hash === $occupiedDimensionSpacePoint->hash
-                // Todo hack, support for partial NodeAggregates by picking an arbitrary node row for occupation. See https://github.com/neos/neos-development-collection/pull/5489
+                // FIXME ... but, if poorly fetched a node aggregate does not include its occupation rows.
+                // as hack we support partial node aggregates by picking the first node row for an occupation which might not be the actual occupation
+                // The reason this is hacky is that edge information like subtree tags are not deterministic but dependent on the database returning rows.
+                // See https://github.com/neos/neos-development-collection/pull/5489
+                // This unfortunate hack condition means that the if-body is executed at most 2 times for regular cases.
                 || !isset($nodesByOccupiedDimensionSpacePoint[$occupiedDimensionSpacePoint->hash])
             ) {
                 // ... so we handle occupation exactly once ...
@@ -183,6 +188,7 @@ final class NodeFactory
                     $occupiedDimensionSpacePoint->toDimensionSpacePoint(),
                     $visibilityConstraints
                 );
+                // FIXME, sort and index by $occupiedDimensionSpacePoint->hash
                 $occupiedDimensionSpacePoints[] = $occupiedDimensionSpacePoint;
                 $rawNodeAggregateId = $rawNodeAggregateId ?: $nodeRow['nodeaggregateid'];
                 $rawNodeTypeName = $rawNodeTypeName ?: $nodeRow['nodetypename'];
