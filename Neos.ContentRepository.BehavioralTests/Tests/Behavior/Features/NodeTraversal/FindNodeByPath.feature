@@ -84,6 +84,7 @@ Feature: Find nodes using the findNodeByPath query
       | Key                          | Value         |
       | nodeAggregateId              | "a2a2"        |
       | nodeVariantSelectionStrategy | "allVariants" |
+    And I restrict the visibility of nodes tagged "disabled" in subgraph queries
 
   Scenario:
     # absolute paths without result

@@ -73,6 +73,7 @@ Feature: Find nodes using the findClosestNode query
       | Key                          | Value         |
       | nodeAggregateId              | "a2b"         |
       | nodeVariantSelectionStrategy | "allVariants" |
+    And I restrict the visibility of nodes tagged "disabled" in subgraph queries
 
   Scenario:
     # findClosestNode queries without results

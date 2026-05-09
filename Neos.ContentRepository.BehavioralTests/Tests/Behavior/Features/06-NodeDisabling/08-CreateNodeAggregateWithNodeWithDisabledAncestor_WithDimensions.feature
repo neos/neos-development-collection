@@ -34,7 +34,6 @@ Feature: Creation of nodes underneath disabled nodes
       | nodeAggregateId | "the-great-nodini" |
       | sourceOrigin    | {"language":"mul"} |
       | targetOrigin    | {"language":"ltz"} |
-    And VisibilityConstraints are set to "default"
 
   Scenario: Create a new node with parent disabled with strategy allSpecializations
     Given the command DisableNodeAggregate is executed with payload:
@@ -50,20 +49,30 @@ Feature: Creation of nodes underneath disabled nodes
     And I expect this node aggregate to disable dimension space points []
 
     When I am in dimension space point {"language":"mul"}
-    And I expect node aggregate identifier "nodingers-cat" and node path "document/pet-document" to lead to node cs-identifier;nodingers-cat;{"language":"mul"}
+    Then I expect node aggregate identifier "nodingers-cat" to lead to node cs-identifier;nodingers-cat;{"language":"mul"}
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags ""
     And I expect this node to be a child of node cs-identifier;the-great-nodini;{"language":"mul"}
 
     When I am in dimension space point {"language":"de"}
-    And I expect node aggregate identifier "nodingers-cat" and node path "document/pet-document" to lead to no node
+    Then I expect node aggregate identifier "nodingers-cat" to lead to node cs-identifier;nodingers-cat;{"language":"mul"}
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags "disabled"
 
     When I am in dimension space point {"language":"gsw"}
-    And I expect node aggregate identifier "nodingers-cat" and node path "document/pet-document" to lead to no node
+    Then I expect node aggregate identifier "nodingers-cat" to lead to node cs-identifier;nodingers-cat;{"language":"mul"}
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags "disabled"
 
     When I am in dimension space point {"language":"ltz"}
-    And I expect node aggregate identifier "nodingers-cat" and node path "document/pet-document" to lead to no node
+    Then I expect node aggregate identifier "nodingers-cat" to lead to node cs-identifier;nodingers-cat;{"language":"mul"}
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags "disabled"
 
     When I am in dimension space point {"language":"en"}
-    And I expect node aggregate identifier "nodingers-cat" and node path "document/pet-document" to lead to node cs-identifier;nodingers-cat;{"language":"mul"}
+    Then I expect node aggregate identifier "nodingers-cat" to lead to node cs-identifier;nodingers-cat;{"language":"mul"}
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags ""
     And I expect this node to be a child of node cs-identifier;the-great-nodini;{"language":"mul"}
 
     And the command EnableNodeAggregate is executed with payload:
@@ -73,15 +82,21 @@ Feature: Creation of nodes underneath disabled nodes
       | nodeVariantSelectionStrategy | "allSpecializations" |
 
     When I am in dimension space point {"language":"de"}
-    And I expect node aggregate identifier "nodingers-cat" and node path "document/pet-document" to lead to node cs-identifier;nodingers-cat;{"language":"mul"}
+    And I expect node aggregate identifier "nodingers-cat" to lead to node cs-identifier;nodingers-cat;{"language":"mul"}
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags ""
     And I expect this node to be a child of node cs-identifier;the-great-nodini;{"language":"mul"}
 
     When I am in dimension space point {"language":"gsw"}
-    And I expect node aggregate identifier "nodingers-cat" and node path "document/pet-document" to lead to node cs-identifier;nodingers-cat;{"language":"mul"}
+    And I expect node aggregate identifier "nodingers-cat" to lead to node cs-identifier;nodingers-cat;{"language":"mul"}
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags ""
     And I expect this node to be a child of node cs-identifier;the-great-nodini;{"language":"mul"}
 
     When I am in dimension space point {"language":"ltz"}
-    And I expect node aggregate identifier "nodingers-cat" and node path "document/pet-document" to lead to node cs-identifier;nodingers-cat;{"language":"mul"}
+    And I expect node aggregate identifier "nodingers-cat" to lead to node cs-identifier;nodingers-cat;{"language":"mul"}
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags ""
     And I expect this node to be a child of node cs-identifier;the-great-nodini;{"language":"ltz"}
 
   Scenario: Create a new node with parent disabled with strategy allVariants
@@ -98,19 +113,29 @@ Feature: Creation of nodes underneath disabled nodes
     And I expect this node aggregate to disable dimension space points []
 
     When I am in dimension space point {"language":"mul"}
-    And I expect node aggregate identifier "nodingers-cat" and node path "document/pet-document" to lead to no node
+    Then I expect node aggregate identifier "nodingers-cat" to lead to node cs-identifier;nodingers-cat;{"language":"mul"}
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags "disabled"
 
     When I am in dimension space point {"language":"de"}
-    And I expect node aggregate identifier "nodingers-cat" and node path "document/pet-document" to lead to no node
+    Then I expect node aggregate identifier "nodingers-cat" to lead to node cs-identifier;nodingers-cat;{"language":"mul"}
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags "disabled"
 
     When I am in dimension space point {"language":"gsw"}
-    And I expect node aggregate identifier "nodingers-cat" and node path "document/pet-document" to lead to no node
+    Then I expect node aggregate identifier "nodingers-cat" to lead to node cs-identifier;nodingers-cat;{"language":"mul"}
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags "disabled"
 
     When I am in dimension space point {"language":"ltz"}
-    And I expect node aggregate identifier "nodingers-cat" and node path "document/pet-document" to lead to no node
+    Then I expect node aggregate identifier "nodingers-cat" to lead to node cs-identifier;nodingers-cat;{"language":"mul"}
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags "disabled"
 
     When I am in dimension space point {"language":"en"}
-    And I expect node aggregate identifier "nodingers-cat" and node path "document/pet-document" to lead to no node
+    Then I expect node aggregate identifier "nodingers-cat" to lead to node cs-identifier;nodingers-cat;{"language":"mul"}
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags "disabled"
 
     And the command EnableNodeAggregate is executed with payload:
       | Key                          | Value              |
@@ -119,21 +144,31 @@ Feature: Creation of nodes underneath disabled nodes
       | nodeVariantSelectionStrategy | "allVariants"      |
 
     When I am in dimension space point {"language":"mul"}
-    And I expect node aggregate identifier "nodingers-cat" and node path "document/pet-document" to lead to node cs-identifier;nodingers-cat;{"language":"mul"}
+    And I expect node aggregate identifier "nodingers-cat" to lead to node cs-identifier;nodingers-cat;{"language":"mul"}
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags ""
     And I expect this node to be a child of node cs-identifier;the-great-nodini;{"language":"mul"}
 
     When I am in dimension space point {"language":"de"}
-    And I expect node aggregate identifier "nodingers-cat" and node path "document/pet-document" to lead to node cs-identifier;nodingers-cat;{"language":"mul"}
+    And I expect node aggregate identifier "nodingers-cat" to lead to node cs-identifier;nodingers-cat;{"language":"mul"}
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags ""
     And I expect this node to be a child of node cs-identifier;the-great-nodini;{"language":"mul"}
 
     When I am in dimension space point {"language":"gsw"}
-    And I expect node aggregate identifier "nodingers-cat" and node path "document/pet-document" to lead to node cs-identifier;nodingers-cat;{"language":"mul"}
+    And I expect node aggregate identifier "nodingers-cat" to lead to node cs-identifier;nodingers-cat;{"language":"mul"}
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags ""
     And I expect this node to be a child of node cs-identifier;the-great-nodini;{"language":"mul"}
 
     When I am in dimension space point {"language":"ltz"}
-    And I expect node aggregate identifier "nodingers-cat" and node path "document/pet-document" to lead to node cs-identifier;nodingers-cat;{"language":"mul"}
+    And I expect node aggregate identifier "nodingers-cat" to lead to node cs-identifier;nodingers-cat;{"language":"mul"}
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags ""
     And I expect this node to be a child of node cs-identifier;the-great-nodini;{"language":"ltz"}
 
     When I am in dimension space point {"language":"en"}
-    And I expect node aggregate identifier "nodingers-cat" and node path "document/pet-document" to lead to node cs-identifier;nodingers-cat;{"language":"mul"}
+    And I expect node aggregate identifier "nodingers-cat" to lead to node cs-identifier;nodingers-cat;{"language":"mul"}
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags ""
     And I expect this node to be a child of node cs-identifier;the-great-nodini;{"language":"mul"}

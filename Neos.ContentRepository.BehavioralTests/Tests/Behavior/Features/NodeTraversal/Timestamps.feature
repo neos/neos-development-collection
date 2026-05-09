@@ -300,7 +300,6 @@ Feature: Behavior of Node timestamp properties "created", "originalCreated", "la
       | nodeAggregateId              | "a"                  |
       | nodeVariantSelectionStrategy | "allSpecializations" |
     And I am in workspace "user-test" and dimension space point {"language":"de"}
-    And VisibilityConstraints are set to "withoutRestrictions"
     Then I expect the node "a" to have the following timestamps:
       | created             | originalCreated     | lastModified | originalLastModified |
       | 2023-03-16 12:00:00 | 2023-03-16 12:00:00 |              |                      |

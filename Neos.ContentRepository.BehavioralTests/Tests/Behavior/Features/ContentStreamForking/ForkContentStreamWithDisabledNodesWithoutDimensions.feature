@@ -57,22 +57,24 @@ Feature: On forking a content stream, hidden nodes should be correctly copied as
     # node aggregate occupation and coverage is not relevant without dimensions and thus not tested
 
     When I am in workspace "user-test" and dimension space point {}
-    And VisibilityConstraints are set to "withoutRestrictions"
-    Then I expect node aggregate identifier "lady-eleonode-rootford" to lead to node user-cs-identifier;lady-eleonode-rootford;{}
-    And I expect this node to have the following child nodes:
-      | Name           | NodeDiscriminator                      |
-      | court-magician | user-cs-identifier;the-great-nodini;{} |
-    And the subtree for node aggregate "lady-eleonode-rootford" with node types "" and 2 levels deep should be:
-      | Level | nodeAggregateId        |
-      | 0     | lady-eleonode-rootford |
-      | 1     | the-great-nodini       |
-      | 2     | nodingers-cat          |
 
-    And VisibilityConstraints are set to "default"
+    And I expect a node identified by cs-identifier;lady-eleonode-rootford;{} to exist in the content graph
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags ""
+    And I expect a node identified by cs-identifier;the-great-nodini;{} to exist in the content graph
+    And I expect this node to be exactly explicitly tagged "disabled"
+    And I expect this node to exactly inherit the tags ""
+    And I expect a node identified by cs-identifier;nodingers-cat;{} to exist in the content graph
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags "disabled"
+
+    And I expect the node aggregate "the-great-nodini" to exist
+    And I expect this node aggregate to disable dimension space points [{}]
+
     Then I expect node aggregate identifier "lady-eleonode-rootford" to lead to node user-cs-identifier;lady-eleonode-rootford;{}
-    And I expect this node to have no child nodes
-    And the subtree for node aggregate "lady-eleonode-rootford" with node types "" and 2 levels deep should be:
-      | Level | nodeAggregateId        |
-      | 0     | lady-eleonode-rootford |
-    And I expect node aggregate identifier "the-great-nodini" and node path "court-magician" to lead to no node
-    And I expect node aggregate identifier "nodingers-cat" and node path "court-magician/pet" to lead to no node
+    And I expect this node to have the following subtree with tags:
+    """
+    lady-eleonode-rootford
+     the-great-nodini (disabled*)
+      nodingers-cat (disabled)
+    """

@@ -88,6 +88,7 @@ Feature: Find and count nodes using the findDescendantNodes and countDescendantN
       | Key                          | Value         |
       | nodeAggregateId              | "a2a2a"       |
       | nodeVariantSelectionStrategy | "allVariants" |
+    And I restrict the visibility of nodes tagged "disabled" in subgraph queries
 
   Scenario:
 

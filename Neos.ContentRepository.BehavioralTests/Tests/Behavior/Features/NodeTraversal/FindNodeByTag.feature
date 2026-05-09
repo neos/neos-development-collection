@@ -102,6 +102,7 @@ Feature: Find nodes using the findNodeById query
       | nodeAggregateId              | "b"           |
       | nodeVariantSelectionStrategy | "allVariants" |
       | tag                          | "tag1"        |
+    And I restrict the visibility of nodes tagged "disabled" in subgraph queries
 
   Scenario:
   ContentGraph queries
