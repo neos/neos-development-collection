@@ -40,10 +40,6 @@ class DimensionSpacePointsRepository
 
     public function insertDimensionSpacePoint(AbstractDimensionSpacePoint $dimensionSpacePoint): void
     {
-        if ($this->getCoordinatesByHashFromRuntimeCache($dimensionSpacePoint->hash) !== null) {
-            return;
-        }
-
         $this->dimensionSpacePointsRuntimeCache[$dimensionSpacePoint->hash] = $dimensionSpacePoint->toJson();
         $this->writeDimensionSpacePoint($dimensionSpacePoint->hash, $dimensionSpacePoint->toJson());
     }
@@ -53,10 +49,6 @@ class DimensionSpacePointsRepository
      */
     public function insertDimensionSpacePointByHashAndCoordinates(string $hash, array $dimensionSpacePointCoordinates): void
     {
-        if ($this->getCoordinatesByHashFromRuntimeCache($hash) !== null) {
-            return;
-        }
-
         try {
             $dimensionSpacePointCoordinatesJson = json_encode($dimensionSpacePointCoordinates, JSON_THROW_ON_ERROR);
         } catch (\JsonException $e) {
