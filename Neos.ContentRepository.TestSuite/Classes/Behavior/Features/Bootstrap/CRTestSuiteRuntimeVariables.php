@@ -14,6 +14,8 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap;
 
+use Behat\Behat\Hook\Scope\BeforeScenarioScope;
+use Behat\Hook\BeforeScenario;
 use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\Feature\Security\Dto\UserId;
@@ -47,10 +49,20 @@ trait CRTestSuiteRuntimeVariables
 
     protected ?NodeAggregate $currentNodeAggregate = null;
 
+    protected ?string $currentFeatureFile = null;
+    protected ?string $currentScenarioTitle = null;
+
     /**
      * @var array<string,NodeAggregateId>
      */
     protected array $rememberedNodeAggregateIds = [];
+
+    #[BeforeScenario]
+    public function memoriseFeatureFileAndScenario(BeforeScenarioScope $scope): void
+    {
+        $this->currentFeatureFile = $scope->getFeature()->getFile();
+        $this->currentScenarioTitle = $scope->getScenario()->getTitle();
+    }
 
     /**
      * @Given /^I am in content repository "([^"]*)"$/

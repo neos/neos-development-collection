@@ -14,8 +14,8 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap;
 
-use Behat\Gherkin\Node\PyStringNode;
-use Behat\Gherkin\Node\TableNode;
+use Behat\Behat\Hook\Scope\BeforeScenarioScope;
+use Behat\Hook\BeforeScenario;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphInterface;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindRootNodeAggregatesFilter;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
@@ -35,7 +35,13 @@ trait GraphStateTrait
     /**
      * @var array<string,GraphState> indexed by workspace
      */
-    protected array $memorisedGraphStates;
+    protected array $memorisedGraphStates = [];
+
+    #[BeforeScenario]
+    public function resetMemorisedGraphStates(BeforeScenarioScope $scope): void
+    {
+        $this->memorisedGraphStates = [];
+    }
 
     /**
      * @When /^I memorise the local graph state for node aggregate "([^"]*)" in workspace "([^"]*)"$/
@@ -114,12 +120,25 @@ trait GraphStateTrait
     }
 
     /**
-     * @Then /^I expect the graph state for workspace "([^"]*)" to have changed as follows:$/
+     * @Then /^I expect the graph state for workspace "([^"]*)" to have changed as declared in the snapshot$/
      */
-    public function iExpectTheGraphStateForWorkspaceToHaveChangedAsFollows(string $serializedWorkspaceName, PyStringNode $expectedChange): void
+    public function iExpectTheGraphStateForWorkspaceToHaveChangedAsDeclaredInTheSnapshot(string $serializedWorkspaceName): void
     {
+        if ($this->currentFeatureFile === null) {
+            throw new \RuntimeException('Current feature file is not set');
+        }
+        if ($this->currentScenarioTitle === null) {
+            throw new \RuntimeException('Current scenario title is not set');
+        }
+        $snapshotFilePath = \str_replace('.feature', '', $this->currentFeatureFile);
+        $snapshotFilePath .= '_' . \str_replace(' ', '_', $this->currentScenarioTitle);
+        $snapshotFilePath .= '.json';
+        if (!file_exists($snapshotFilePath)) {
+            throw new \RuntimeException('No snapshot file found at path ' . $snapshotFilePath);
+        }
+
         Assert::assertSame(
-            $expectedChange->getRaw(),
+            trim(file_get_contents($snapshotFilePath)),
             \json_encode(
                 $this->memorisedGraphStates[$serializedWorkspaceName]->diff(
                     $this->fetchGraphState(WorkspaceName::fromString($serializedWorkspaceName)),
