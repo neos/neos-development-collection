@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Neos\ContentGraph\DoctrineDbalAdapter;
 
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
+use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 
 /**
  * Encapsulates table name generation for content graph tables
@@ -34,6 +35,11 @@ final readonly class ContentGraphTableNames
     public function hierarchyRelation(): string
     {
         return $this->tableNamePrefix . '_hierarchyrelation';
+    }
+
+    public function hierarchyRelationForWorkspace(WorkspaceName $workspaceName): string
+    {
+        return $this->hierarchyRelation() . '_' . $workspaceName->value;
     }
 
     public function dimensionSpacePoints(): string

@@ -73,6 +73,7 @@ use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateClassification;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
 use Neos\ContentRepository\Core\SharedModel\Node\ReferenceName;
+use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepository\Dbal\DbalSchemaDiff;
 use Neos\ContentRepository\Dbal\MysqlPlatformContentRepositoryLocker;
 use Neos\EventStore\Model\EventEnvelope;
@@ -116,6 +117,31 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
                 throw new \RuntimeException(sprintf('Failed to setup projection %s: %s', self::class, $e->getMessage()), 1716478255, $e);
             }
         }
+
+        $databaseNameEscaped = $this->dbal->quoteIdentifier($this->dbal->getDatabase());
+
+        // TODO Delete trigger
+        // TODO Try catch and abstract properly?
+        $this->dbal->executeStatement(<<<SQL
+        DROP TRIGGER IF EXISTS $databaseNameEscaped.hierarchy_live_updater;
+        
+        CREATE TRIGGER $databaseNameEscaped.hierarchy_live_updater AFTER INSERT
+            ON {$this->tableNames->hierarchyRelation()} FOR EACH ROW
+            BEGIN
+                IF NEW.contentstreamlayer = (
+                    SELECT l.contentstreamlayer FROM cr_default_p_graph_contentstreamlayer AS l
+                        INNER JOIN cr_default_p_graph_workspace AS w
+                        ON l.contentStreamId = w.currentContentStreamId
+                    WHERE w.name = 'live'
+                    ORDER BY l.contentStreamLayer DESC
+                    LIMIT 1
+                ) THEN
+                    INSERT INTO {$this->tableNames->hierarchyRelationForWorkspace(WorkspaceName::forLive())}
+                        SET id = NEW.id, contentstreamlayer = NEW.contentstreamlayer
+                    ON DUPLICATE KEY UPDATE contentstreamlayer = NEW.contentstreamlayer;
+                END IF;
+            END;
+        SQL);
     }
 
     public function status(): ProjectionStatus
@@ -272,12 +298,6 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
     {
         $contentStreamLayers = $this->contentStreamLayerFinder->getContentStreamLayers($event->contentStreamId);
 
-        $this->removeContentStream($event->contentStreamId);
-
-        $this->dbal->delete($this->tableNames->contentStreamLayer(), [
-            'contentStreamId' => $event->contentStreamId->value,
-        ]);
-
         $contentStreamLayerToMergeFrom = null;
         $contentStreamLayerToMergeInto = $contentStreamLayers->getParentReadLayer();
         if ($contentStreamLayerToMergeInto !== null) {
@@ -352,6 +372,28 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
                 throw new \RuntimeException(sprintf('Failed to merge hierarchy relations: %s', $e->getMessage()), 1776345058, $e);
             }
 
+            $mergeHierarchyRelationsStatement = <<<SQL
+                INSERT IGNORE INTO {$this->tableNames->hierarchyRelationForWorkspace(WorkspaceName::forLive())}
+                (
+                    id,
+                    contentstreamlayer
+                )
+                SELECT
+                    h.id,
+                    :contentStreamLayerToMergeInto AS contentstreamlayer
+                FROM {$this->tableNames->hierarchyRelationForWorkspace(WorkspaceName::forLive())} AS h
+                WHERE h.contentstreamlayer = :contentStreamLayerToMergeFrom
+            SQL;
+
+            try {
+                $this->dbal->executeStatement($mergeHierarchyRelationsStatement, [
+                    'contentStreamLayerToMergeInto' => $contentStreamLayerToMergeInto->value,
+                    'contentStreamLayerToMergeFrom' => $contentStreamLayerToMergeFrom->value,
+                ]);
+            } catch (DBALException $e) {
+                throw new \RuntimeException(sprintf('Failed to merge hierarchy relations: %s', $e->getMessage()), 1776345058, $e);
+            }
+
             if ($contentStreamLayerToMergeInto->equals($contentStreamLayers->getRootLayer())) {
                 // when merging into the root layer we remove hierarchies which acted with NULL values as removal marker
                 try {
@@ -363,10 +405,34 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
                 } catch (DBALException $e) {
                     throw new \RuntimeException(sprintf('Failed to cleanup hierarchy rows with NULL values in root layer after merge: %s', $e->getMessage()), 1776345059, $e);
                 }
+
+                $deleteNodesStatement = <<<SQL
+                DELETE hw FROM {$this->tableNames->hierarchyRelationForWorkspace(WorkspaceName::forLive())} hw
+                    LEFT JOIN {$this->tableNames->hierarchyRelation()} h
+                        ON h.id = hw.id
+                            AND h.contentstreamlayer != :targetContentStreamLayer
+                    WHERE h.id IS NULL
+                SQL;
+                try {
+                    $this->dbal->executeStatement($deleteNodesStatement, [
+                        'targetContentStreamLayer' => $contentStreamLayers->getWriteLayer()->value,
+                    ]);
+                } catch (DBALException $e) {
+                    throw new \RuntimeException(sprintf('Failed to delete non-referenced nodes: %s', $e->getMessage()), 1716489294, $e);
+                }
+
             }
 
             try {
                 $this->dbal->delete($this->tableNames->hierarchyRelation(), [
+                    'contentstreamlayer' => $contentStreamLayerToMergeFrom->value,
+                ]);
+            } catch (DBALException $e) {
+                throw new \RuntimeException(sprintf('Failed to delete merged content stream hierarchies: %s', $e->getMessage()), 1776345059, $e);
+            }
+
+            try {
+                $this->dbal->delete($this->tableNames->hierarchyRelationForWorkspace(WorkspaceName::forLive()), [
                     'contentstreamlayer' => $contentStreamLayerToMergeFrom->value,
                 ]);
             } catch (DBALException $e) {
@@ -381,6 +447,12 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
                 throw new \RuntimeException(sprintf('Failed to delete merged content stream layer: %s', $e->getMessage()), 1776345059, $e);
             }
         }
+
+        $this->removeContentStream($event->contentStreamId);
+
+        $this->dbal->delete($this->tableNames->contentStreamLayer(), [
+            'contentStreamId' => $event->contentStreamId->value,
+        ]);
 
         // Drop non-referenced nodes (which will not have a hierarchy relation anymore)
         $deleteNodesStatement = <<<SQL
@@ -894,6 +966,7 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
         try {
             $this->dbal->executeQuery('TRUNCATE table ' . $this->tableNames->node());
             $this->dbal->executeQuery('TRUNCATE table ' . $this->tableNames->hierarchyRelation());
+            $this->dbal->executeQuery('TRUNCATE table ' . $this->tableNames->hierarchyRelationForWorkspace(WorkspaceName::forLive()));
             $this->dbal->executeQuery('TRUNCATE table ' . $this->tableNames->referenceRelation());
             $this->dbal->executeQuery('TRUNCATE table ' . $this->tableNames->dimensionSpacePoints());
             $this->dbal->executeQuery('TRUNCATE table ' . $this->tableNames->workspace());

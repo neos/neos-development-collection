@@ -12,6 +12,7 @@ use Doctrine\DBAL\Schema\Schema;
 use Doctrine\DBAL\Schema\Table;
 use Doctrine\DBAL\Types\Type;
 use Doctrine\DBAL\Types\Types;
+use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepository\Dbal\DbalSchemaFactory;
 
 /**
@@ -29,6 +30,7 @@ class DoctrineDbalContentGraphSchemaBuilder
         return DbalSchemaFactory::createSchemaWithTables($connection, [
             $this->createNodeTable($connection->getDatabasePlatform()),
             $this->createHierarchyRelationTable($connection->getDatabasePlatform()),
+            $this->createHierarchyRelationForWorkspaceTable($connection->getDatabasePlatform()),
             $this->createReferenceRelationTable($connection->getDatabasePlatform()),
             $this->createDimensionSpacePointsTable($connection->getDatabasePlatform()),
             $this->createWorkspaceTable($connection->getDatabasePlatform()),
@@ -84,6 +86,18 @@ class DoctrineDbalContentGraphSchemaBuilder
             ->addIndex(['childnodeanchor', 'contentstreamlayer', 'dimensionspacepointhash', 'position'])
             ->addIndex(['parentnodeanchor', 'contentstreamlayer', 'dimensionspacepointhash', 'position'])
             ->addIndex(['contentstreamlayer', 'dimensionspacepointhash']);
+    }
+
+    private function createHierarchyRelationForWorkspaceTable(AbstractPlatform $platform): Table
+    {
+        $table = self::createTable($this->tableNames->hierarchyRelationForWorkspace(WorkspaceName::forLive()), [
+            (new Column('id', Type::getType(Types::INTEGER)))->setNotnull(true),
+            (new Column('contentstreamlayer', self::type(Types::INTEGER)))->setNotnull(true),
+        ]);
+
+        return $table
+            ->setPrimaryKey(['id'])
+            ->addIndex(['contentstreamlayer']);
     }
 
     private function createDimensionSpacePointsTable(AbstractPlatform $platform): Table

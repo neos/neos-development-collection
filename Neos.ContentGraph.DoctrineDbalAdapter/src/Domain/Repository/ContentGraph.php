@@ -21,6 +21,7 @@ use Doctrine\DBAL\Query\QueryBuilder;
 use Neos\ContentGraph\DoctrineDbalAdapter\ContentGraphTableNames;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\ContentStreamLayers;
 use Neos\ContentGraph\DoctrineDbalAdapter\HierarchyRelationStatement;
+use Neos\ContentGraph\DoctrineDbalAdapter\HierarchyRelationViewStatement;
 use Neos\ContentGraph\DoctrineDbalAdapter\NodeQueryBuilder;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
@@ -69,7 +70,7 @@ final class ContentGraph implements ContentGraphInterface
 {
     private readonly NodeQueryBuilder $nodeQueryBuilder;
 
-    private readonly HierarchyRelationStatement $hierarchyRelationStatement;
+    private readonly HierarchyRelationStatement|HierarchyRelationViewStatement $hierarchyRelationStatement;
 
     public function __construct(
         private readonly Connection $dbal,
@@ -81,8 +82,11 @@ final class ContentGraph implements ContentGraphInterface
         public readonly ContentStreamId $contentStreamId,
         public readonly ContentStreamLayers $contentStreamLayers,
     ) {
-        $this->nodeQueryBuilder = new NodeQueryBuilder($this->dbal, $this->tableNames);
-        $this->hierarchyRelationStatement = HierarchyRelationStatement::for($this->tableNames);
+        $this->hierarchyRelationStatement = match ($this->workspaceName) {
+            WorkspaceName::forLive() => HierarchyRelationViewStatement::for($this->workspaceName, $this->tableNames),
+            default => HierarchyRelationStatement::for($this->tableNames),
+        };
+        $this->nodeQueryBuilder = new NodeQueryBuilder($this->dbal, $this->tableNames, $this->hierarchyRelationStatement);
     }
 
     public function getContentRepositoryId(): ContentRepositoryId
@@ -108,7 +112,8 @@ final class ContentGraph implements ContentGraphInterface
             $this->dbal,
             $this->nodeFactory,
             $this->nodeTypeManager,
-            $this->tableNames
+            $this->tableNames,
+            $this->hierarchyRelationStatement,
         );
     }
 

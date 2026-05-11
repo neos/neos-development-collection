@@ -35,13 +35,11 @@ use Neos\ContentRepository\Dbal\DbalSchemaFactory;
  */
 final readonly class NodeQueryBuilder
 {
-    private HierarchyRelationStatement $hierarchyRelationStatement;
-
     public function __construct(
         private Connection $connection,
-        public ContentGraphTableNames $tableNames
+        public ContentGraphTableNames $tableNames, // TODO why is this public???
+        private HierarchyRelationStatement|HierarchyRelationViewStatement $hierarchyRelationStatement
     ) {
-        $this->hierarchyRelationStatement = HierarchyRelationStatement::for($this->tableNames);
     }
 
     public function buildBasicNodeAggregateQuery(): QueryBuilder

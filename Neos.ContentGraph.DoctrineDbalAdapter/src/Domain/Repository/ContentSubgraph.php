@@ -22,6 +22,7 @@ use Doctrine\DBAL\Result;
 use Neos\ContentGraph\DoctrineDbalAdapter\ContentGraphTableNames;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\ContentStreamLayers;
 use Neos\ContentGraph\DoctrineDbalAdapter\HierarchyRelationStatement;
+use Neos\ContentGraph\DoctrineDbalAdapter\HierarchyRelationViewStatement;
 use Neos\ContentGraph\DoctrineDbalAdapter\NodeQueryBuilder;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
@@ -93,8 +94,6 @@ final class ContentSubgraph implements ContentSubgraphInterface
 {
     private readonly NodeQueryBuilder $nodeQueryBuilder;
 
-    private readonly HierarchyRelationStatement $hierarchyRelationStatement;
-
     public function __construct(
         private readonly ContentRepositoryId $contentRepositoryId,
         private readonly WorkspaceName $workspaceName,
@@ -104,10 +103,10 @@ final class ContentSubgraph implements ContentSubgraphInterface
         private readonly Connection $dbal,
         private readonly NodeFactory $nodeFactory,
         private readonly NodeTypeManager $nodeTypeManager,
-        ContentGraphTableNames $tableNames
+        ContentGraphTableNames $tableNames,
+        private HierarchyRelationStatement|HierarchyRelationViewStatement $hierarchyRelationStatement,
     ) {
-        $this->nodeQueryBuilder = new NodeQueryBuilder($this->dbal, $tableNames);
-        $this->hierarchyRelationStatement = HierarchyRelationStatement::for($tableNames);
+        $this->nodeQueryBuilder = new NodeQueryBuilder($this->dbal, $tableNames, $this->hierarchyRelationStatement);
     }
 
     public function getContentRepositoryId(): ContentRepositoryId
