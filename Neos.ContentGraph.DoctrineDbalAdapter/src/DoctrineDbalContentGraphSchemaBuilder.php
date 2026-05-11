@@ -97,7 +97,7 @@ class DoctrineDbalContentGraphSchemaBuilder
 
         return $table
             ->setPrimaryKey(['id'])
-            ->addIndex(['contentstreamlayer']);
+            ->addUniqueIndex(['id', 'contentstreamlayer']);
     }
 
     private function createDimensionSpacePointsTable(AbstractPlatform $platform): Table
