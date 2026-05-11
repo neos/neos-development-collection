@@ -53,8 +53,6 @@ final class DocumentNodeInfo
      */
     public static function fromDatabaseRow(array $row): self
     {
-        // Normalize stream resource to string (PostgreSQL returns BYTEA as streams)
-        $row['dimensionspacepointhash'] = self::binaryToString($row['dimensionspacepointhash']);
         return new self($row);
     }
 
@@ -254,18 +252,4 @@ final class DocumentNodeInfo
             . '@' . ($this->source['dimensionspacepointhash'] ?? '<unkown dimensionSpacePointHash>');
     }
 
-    /**
-     * PostgreSQL returns bytea columns as stream resources, while MariaDB/MySQL returns strings.
-     */
-    private static function binaryToString(mixed $value): string
-    {
-        if (is_resource($value)) {
-            $contents = stream_get_contents($value);
-            if ($contents === false) {
-                throw new \RuntimeException('Failed to read stream resource for binary database column', 1740000002);
-            }
-            return $contents;
-        }
-        return (string)$value;
-    }
 }
