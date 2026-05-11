@@ -16,7 +16,10 @@ namespace Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\Features;
 
 use Behat\Gherkin\Node\TableNode;
 use Neos\ContentRepository\Core\Feature\ContentStreamEventStreamName;
+use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Command\CreateRootWorkspace;
+use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Command\CreateWorkspace;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
+use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\CRTestSuiteRuntimeVariables;
 use Neos\EventStore\Model\Event\StreamName;
 
@@ -42,5 +45,38 @@ trait WorkspaceCreation
         $newContentStreamId = ContentStreamId::fromString($eventPayload['newContentStreamId']);
         $streamName = ContentStreamEventStreamName::fromContentStreamId($newContentStreamId);
         $this->publishEvent('RootWorkspaceWasCreated', $streamName->getEventStreamName(), $eventPayload);
+    }
+
+    /**
+     * @Given /^I set up the edge case workspace tree$/
+     */
+    public function ISetUpTheEdgeCaseWorkspaceTree(): void
+    {
+        if (!$this->currentContentRepository->findWorkspaceByName(WorkspaceName::forLive())) {
+            $this->currentContentRepository->handle(CreateRootWorkspace::create(
+                workspaceName: WorkspaceName::forLive(),
+                newContentStreamId: ContentStreamId::fromString('live-cs-id'),
+            ));
+        }
+        $this->currentContentRepository->handle(CreateWorkspace::create(
+            workspaceName: WorkspaceName::fromString('intermediate'),
+            baseWorkspaceName: WorkspaceName::forLive(),
+            newContentStreamId: ContentStreamId::fromString('intermediate-cs-id'),
+        ));
+        $this->currentContentRepository->handle(CreateWorkspace::create(
+            workspaceName: WorkspaceName::fromString('local'),
+            baseWorkspaceName: WorkspaceName::fromString('intermediate'),
+            newContentStreamId: ContentStreamId::fromString('local-cs-id'),
+        ));
+        $this->currentContentRepository->handle(CreateWorkspace::create(
+            workspaceName: WorkspaceName::fromString('local-2'),
+            baseWorkspaceName: WorkspaceName::forLive(),
+            newContentStreamId: ContentStreamId::fromString('local-2-cs-id'),
+        ));
+        $this->currentContentRepository->handle(CreateWorkspace::create(
+            workspaceName: WorkspaceName::fromString('local-3'),
+            baseWorkspaceName: WorkspaceName::forLive(),
+            newContentStreamId: ContentStreamId::fromString('local-3-cs-id'),
+        ));
     }
 }
