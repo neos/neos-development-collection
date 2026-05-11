@@ -34,7 +34,8 @@ final readonly class InitiatingEventMetadata
         UserId $initiatingUserId,
         \DateTimeImmutable $initiatingTimestamp,
     ): Events {
-        $initiatingTimestampFormatted = $initiatingTimestamp->format(\DateTimeInterface::ATOM);
+        $initiatingTimestampFormatted = $initiatingTimestamp->setTimezone(new \DateTimeZone('UTC'))
+            ->format(\DateTimeInterface::ATOM);
 
         return Events::fromArray(
             $events->map(function (EventInterface|DecoratedEvent $event) use (
@@ -56,7 +57,8 @@ final readonly class InitiatingEventMetadata
         if ($rawTimestamp === null) {
             return null;
         }
-        return \DateTimeImmutable::createFromFormat(\DateTimeInterface::ATOM, $rawTimestamp) ?: null;
+        return \DateTimeImmutable::createFromFormat(\DateTimeInterface::ATOM, $rawTimestamp)
+            ->setTimezone(new \DateTimeZone('UTC')) ?: null;
     }
 
     public static function extractInitiatingMetadata(EventMetadata $eventMetadata): EventMetadata
