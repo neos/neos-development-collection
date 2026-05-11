@@ -75,7 +75,7 @@ trait MigrationsTrait
     }
 
     /**
-     * @When I run the following node migration for workspace :sourceWorkspaceName, creating target workspace :targetWorkspaceName on contentStreamId :contentStreamId, with force and publishing on success:
+     * @When I run the following node migration for workspace :sourceWorkspaceName, creating target workspace :targetWorkspaceName on contentStreamId :contentStreamId, with force and without publishing on success:
      */
     public function iRunTheFollowingNodeMigrationWithForceWithPublishingOnSuccess(string $sourceWorkspaceName, string $targetWorkspaceName, string $contentStreamId, PyStringNode $string): void
     {
