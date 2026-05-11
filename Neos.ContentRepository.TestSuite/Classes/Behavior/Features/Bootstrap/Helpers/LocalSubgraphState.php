@@ -157,11 +157,74 @@ final readonly class LocalSubgraphState implements \JsonSerializable
         return null;
     }
 
+    private function serializeNode(Node $node): array
+    {
+        return [
+            'contentRepositoryId' => $node->contentRepositoryId,
+            'workspaceName' => $node->workspaceName,
+            'dimensionSpacePoint' => $node->dimensionSpacePoint,
+            'aggregateId' => $node->aggregateId,
+            'originDimensionSpacePoint' => $node->originDimensionSpacePoint,
+            'classification' => $node->classification,
+            'nodeTypeName' => $node->nodeTypeName,
+            'properties' => $node->properties->serialized()->values,
+            'name' => $node->name,
+            'tags' => $node->tags,
+            'timestamps' => [
+                'created' => $node->timestamps->created->format(DATE_ATOM),
+                'originalCreated' => $node->timestamps->originalCreated->format(DATE_ATOM),
+                'lastModified' => $node->timestamps->lastModified?->format(DATE_ATOM),
+                'originalLastModified' => $node->timestamps->originalLastModified?->format(DATE_ATOM),
+            ],
+        ];
+    }
+
+    /**
+     * @return array<int,array<string,mixed>>
+     */
+    private function serializeNodes(Nodes $nodes): array
+    {
+        return $nodes->map(
+            fn (Node $node): array => $this->serializeNode($node)
+        );
+    }
+
+    /**
+     * @return array<string,mixed>
+     */
+    private function serializeReference(Reference $reference): array
+    {
+        return [
+            'node' => $this->serializeNode($reference->node),
+            'name' => $reference->name,
+            'properties' => $reference->properties?->serialized()->values,
+        ];
+    }
+
+    /**
+     * @return array<int,array<string,mixed>>
+     */
+    private function serializeReferences(References $references): array
+    {
+        return array_map(
+            fn (Reference $reference): array => $this->serializeReference($reference),
+            iterator_to_array($references),
+        );
+    }
+
     /**
      * @return array<string,mixed>
      */
     public function jsonSerialize(): array
     {
-        return get_object_vars($this);
+        return [
+            'node' => $this->serializeNode($this->node),
+            'parent' => $this->parent ? $this->serializeNode($this->parent) : null,
+            'children' => $this->serializeNodes($this->children),
+            'precedingSiblings' => $this->serializeNodes($this->precedingSiblings),
+            'succeedingSiblings' => $this->serializeNodes($this->succeedingSiblings),
+            'references' => $this->serializeReferences($this->references),
+            'backReferences' => $this->serializeReferences($this->backReferences),
+        ];
     }
 }

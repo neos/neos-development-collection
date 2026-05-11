@@ -198,7 +198,7 @@ Feature: Create a root node aggregate
                       "originDimensionSpacePoint": [],
                       "classification": "root",
                       "nodeTypeName": "Neos.ContentRepository:Root",
-                      "properties": {},
+                      "properties": [],
                       "name": null,
                       "tags": [],
                       "timestamps": {
