@@ -36,7 +36,20 @@ jobs:
 
           - php-versions: '8.4'
             dependencies: 'highest'
+            parallel-parts: linting-unit-functionaltests-mysql
+            # see services, this is mysql
+            mysqlport: 3307
+            experimental: false
+
+          - php-versions: '8.4'
+            dependencies: 'highest'
             parallel-parts: escr-behavioral-postgres
+            mysqlport: 3306
+            experimental: false
+
+          - php-versions: '8.4'
+            dependencies: 'highest'
+            parallel-parts: functionaltests-postgres
             mysqlport: 3306
             experimental: false
 
@@ -46,7 +59,6 @@ jobs:
         # all the other parts in parallel.
         parallel-parts:
           - linting-unit-functionaltests-mysql
-          - functionaltests-postgres
           - escr-behavioral
         experimental: [false]
         #include:
