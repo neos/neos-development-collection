@@ -14,21 +14,19 @@ final readonly class HierarchyRelationStatement
      */
     private function __construct(
         private ContentGraphTableNames $tableNames,
-        private bool $restrictContentStreamLayers,
         private array $whereClauses,
     ) {
     }
 
     public static function for(ContentGraphTableNames $tableNames): self
     {
-        return new self($tableNames, true, []);
+        return new self($tableNames, []);
     }
 
     public function where(string $where): self
     {
         return new self(
             tableNames: $this->tableNames,
-            restrictContentStreamLayers: $this->restrictContentStreamLayers,
             whereClauses: $where === '' ? [] : [$where],
         );
     }
@@ -37,7 +35,6 @@ final readonly class HierarchyRelationStatement
     {
         return new self(
             tableNames: $this->tableNames,
-            restrictContentStreamLayers: $this->restrictContentStreamLayers,
             whereClauses: [...$this->whereClauses, ...($where === '' ? [] : [$where])],
         );
     }
