@@ -46,6 +46,10 @@ trait ProjectionIntegrityViolationDetectionTrait
                 throw new \RuntimeException(sprintf('Integrity violation result "%s" was not asserted', $this->lastIntegrityViolationDetectionResult->getFirstError()), 1777650586);
             }
         } else {
+            if ($this->currentContentRepository === null) {
+                // CR Has not been used.
+                return;
+            }
             $this->iRunIntegrityViolationDetection();
             $this->iExpectTheIntegrityViolationDetectionResultToContainExactlyNErrors(0);
         }
