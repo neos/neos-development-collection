@@ -322,19 +322,22 @@ jobs:
           cd Packages/Neos
 
           # composer test:behavioral
+          # composer run test:behavioral-maria-mysql
 
           # DEBUG MODE: ALTERNATIVELY, comment in the following lines to dump the DB.
           # do not exit the script if the tests break; as we want to upload the database dumps afterwards.
           set +e
 
-          # todo introduce dedicated composer scripts to run adapter specific tests
-          # todo like this the retVal does not work correctly and the test pass event if they fail
-          ${{ case(
-            matrix.parallel-parts == 'escr-behavioral-postgres', 'composer test:behat-cli -- -c Neos.ContentRepository.BehavioralTests/Tests/Behavior/behat.yml.dist
-          composer test:behat-cli -- -c Neos.Neos/Tests/Behavior/behat.yml.dist',
-            'composer test:behavioral -- -vvv --stop-on-failure'
-          ) }}
-  
+          (
+            set -e
+            composer test:behavioral -- -vvv --stop-on-failure
+            ${{ case(
+              matrix.parallel-parts == 'escr-behavioral' || matrix.parallel-parts == 'escr-behavioral-mysql',
+                'composer run test:behavioral-maria-mysql -- -vvv --stop-on-failure',
+              ''
+            ) }}
+          )
+
           retVal=$?
 
           # automatically search for race conditions
