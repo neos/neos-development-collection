@@ -332,7 +332,7 @@ jobs:
           ${{ case(
             matrix.parallel-parts == 'escr-behavioral-postgres', 'composer test:behat-cli -- -c Neos.ContentRepository.BehavioralTests/Tests/Behavior/behat.yml.dist
           composer test:behat-cli -- -c Neos.Neos/Tests/Behavior/behat.yml.dist',
-            'composer test:behavioral:stop-on-failure'
+            'composer test:behavioral -- -vvv --stop-on-failure'
           ) }}
   
           retVal=$?
