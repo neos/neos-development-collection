@@ -101,13 +101,20 @@ final class DbalSchemaFactory
      * The hash for a given dimension space point for better query performance. As this is a hash, the size and type of
      * content is deterministic, a binary type can be used as the actual content is not so important.
      *
-     * We could imrpove by actually storing the hash in binary form and shortening and fixing the length.
+     * PostgreSQL maps BINARY to BYTEA (a binary stream), which requires special read handling. Since the hash is
+     * plain ASCII hex, STRING is used on PostgreSQL to keep read/write handling uniform across platforms.
      *
      * @see DimensionSpacePoint
      */
     public static function columnForDimensionSpacePointHash(string $columnName, AbstractPlatform $platform): Column
     {
-        return (new Column($columnName, Type::getType(Types::BINARY)))
+        if ($platform instanceof AbstractMySQLPlatform) {
+            return (new Column($columnName, Type::getType(Types::BINARY)))
+                ->setLength(32)
+                ->setDefault('');
+        }
+
+        return (new Column($columnName, Type::getType(Types::STRING)))
             ->setLength(32)
             ->setDefault('');
     }
