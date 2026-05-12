@@ -49,14 +49,14 @@ final readonly class ContentGraphReadModelAdapter implements ContentGraphReadMod
     public function getContentGraph(WorkspaceName $workspaceName): ContentGraph
     {
         $currentContentStreamIdStatement = <<<SQL
-            SELECT
-                ws.currentContentStreamId,
-                l.contentStreamLayer
-            FROM
-                {$this->tableNames->workspace()} ws
-                JOIN {$this->tableNames->contentStreamLayer()} l ON l.contentStreamId = ws.currentContentStreamId
-            WHERE
-                ws.name = :workspaceName
+            SELECT cs.currentContentStreamId, l.contentStreamLayer
+            FROM (
+                SELECT ws.currentContentStreamId
+                FROM {$this->tableNames->workspace()} AS ws
+                WHERE ws.name = :workspaceName
+                LIMIT 1
+            ) AS cs
+                 JOIN {$this->tableNames->contentStreamLayer()} l ON l.contentStreamId = cs.currentContentStreamId
         SQL;
         try {
             $rows = $this->dbal->fetchAllAssociative($currentContentStreamIdStatement, [
