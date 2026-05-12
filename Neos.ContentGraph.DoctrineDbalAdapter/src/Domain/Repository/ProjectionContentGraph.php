@@ -64,7 +64,7 @@ class ProjectionContentGraph
     ): ?NodeRecord {
         $parentNodeStatement = <<<SQL
             SELECT
-                p.*, ph.contentstreamlayer, ph.subtreetags, dsp.dimensionspacepoint AS origindimensionspacepoint
+                p.*, ph.subtreetags, dsp.dimensionspacepoint AS origindimensionspacepoint
             FROM
                 {$this->tableNames->node()} p
                 INNER JOIN {$this->hierarchyRelationStatement->where('h.dimensionspacepointhash = :coveredDimensionSpacePointHash')->toSql()} ph ON ph.childnodeanchor = p.relationanchorpoint
