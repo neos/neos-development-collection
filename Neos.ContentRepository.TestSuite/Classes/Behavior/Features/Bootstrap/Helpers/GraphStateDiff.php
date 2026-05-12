@@ -4,11 +4,14 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\Helpers;
 
+use Neos\Flow\Annotations as Flow;
+
 /**
  * The difference between two graph states, indexed by node aggregate id
  *
  * @implements \IteratorAggregate<string,LocalGraphStateDiff>
  */
+#[Flow\Proxy(false)]
 final readonly class GraphStateDiff implements \IteratorAggregate, \JsonSerializable
 {
     /**

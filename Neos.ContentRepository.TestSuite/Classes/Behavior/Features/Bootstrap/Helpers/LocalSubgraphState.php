@@ -12,15 +12,16 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindReferencesFil
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindSucceedingSiblingNodesFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Nodes;
-use Neos\ContentRepository\Core\Projection\ContentGraph\Reference;
 use Neos\ContentRepository\Core\Projection\ContentGraph\References;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
+use Neos\Flow\Annotations as Flow;
 
 /**
  * The local subgraph state describing a node and its direct connections
  * Comparison is done on complete node state as node identity may not be guaranteed by graph adapters
  */
+#[Flow\Proxy(false)]
 final readonly class LocalSubgraphState
 {
     private function __construct(
@@ -63,97 +64,18 @@ final readonly class LocalSubgraphState
         }
 
         return LocalSubgraphStateDiff::tryCreate(
-            node: $this->diffNode($this->node, $other->node, $expectedWorkspaceName),
+            node: NodeDiff::tryFromNodeComparison($other->node, $this->node, $expectedWorkspaceName),
             parent: match (true) {
                 $this->parent === null && $other->parent === null => null,
                 $this->parent == null && $other->parent !== null => throw new \Exception('Cannot compare root node to node'),
                 $this->parent !== null && $other->parent === null => throw new \Exception('Cannot compare node to root node'),
-                default =>  $this->diffNode($this->parent, $other->parent, $expectedWorkspaceName),
+                default => NodeDiff::tryFromNodeComparison($other->parent, $this->parent, $expectedWorkspaceName),
             },
-            children: $this->diffNodes($this->children, $other->children, $expectedWorkspaceName),
-            precedingSiblings: $this->diffNodes($this->precedingSiblings, $other->precedingSiblings, $expectedWorkspaceName),
-            succeedingSiblings: $this->diffNodes($this->succeedingSiblings, $other->succeedingSiblings, $expectedWorkspaceName),
-            references: $this->diffReferences($this->references, $other->references, $expectedWorkspaceName),
-            backReferences: $this->diffReferences($this->backReferences, $other->backReferences, $expectedWorkspaceName),
+            children: NodesDiff::tryFromNodesComparison($other->children,$this->children,  $expectedWorkspaceName),
+            precedingSiblings: NodesDiff::tryFromNodesComparison($other->precedingSiblings, $this->precedingSiblings, $expectedWorkspaceName),
+            succeedingSiblings: NodesDiff::tryFromNodesComparison($other->succeedingSiblings, $this->succeedingSiblings, $expectedWorkspaceName),
+            references: ReferencesDiff::tryFromReferencesComparison($other->references, $this->references, $expectedWorkspaceName),
+            backReferences: ReferencesDiff::tryFromReferencesComparison($other->backReferences, $this->backReferences, $expectedWorkspaceName),
         );
-    }
-
-    private function diffNode(Node $node, Node $compared, ?WorkspaceName $expectedWorkspaceName): ?Node
-    {
-        return
-            $node->aggregateId->equals($compared->aggregateId)
-                && $compared->workspaceName->equals($expectedWorkspaceName ?: $node->workspaceName)
-                && $node->dimensionSpacePoint->equals($compared->dimensionSpacePoint)
-                && $node->originDimensionSpacePoint->equals($compared->originDimensionSpacePoint)
-                && $node->nodeTypeName->equals($compared->nodeTypeName)
-                && $node->tags->equals($compared->tags)
-                && match (true) {
-                    $node->name === null && $compared->name === null => true,
-                    $node->name === null && $compared->name !== null,
-                        $node->name !== null && $compared->name === null => false,
-                    $node->name !== null && $compared->name !== null => $node->name->equals($compared->name),
-                }
-                && $node->contentRepositoryId->equals($compared->contentRepositoryId)
-                && $node->timestamps->equals($compared->timestamps)
-                && $node->classification->equals($compared->classification)
-                && $node->properties->serialized()->values == $compared->properties->serialized()->values
-                    // we explicitly ignore visibility constraints as they have no meaning for the CR whatsoever
-                    ? null
-                    : $compared;
-    }
-
-    private function diffNodes(Nodes $nodes, Nodes $compared, ?WorkspaceName $expectedWorkspaceName): ?Nodes
-    {
-        if (count($nodes) !== count($compared)) {
-            // there is either an additional or a missing node
-            return $compared;
-        }
-        foreach ($nodes as $i => $node) {
-            $nodeToCompare = $compared[$i] ?? null;
-            if (!$nodeToCompare) {
-                // node is missing
-                return $compared;
-            }
-            if ($this->diffNode($node, $nodeToCompare, $expectedWorkspaceName)) {
-                // node is different
-                return $compared;
-            }
-        }
-
-        return null;
-    }
-
-    private function diffReferences(References $references, References $compared, ?WorkspaceName $expectedWorkspaceName): ?References
-    {
-        if (count($references) !== count($compared)) {
-            return $compared;
-        }
-
-        foreach ($references as $i => $reference) {
-            $referenceToCompare = $compared[$i] ?? null;
-            if (!$referenceToCompare) {
-                // reference is missing
-                return $compared;
-            }
-            if ($this->diffReference($reference, $referenceToCompare, $expectedWorkspaceName)) {
-                // reference is different
-                return $compared;
-            }
-        }
-
-        return null;
-    }
-
-    private function diffReference(Reference $reference, Reference $compared, ?WorkspaceName $expectedWorkspaceName): ?Reference
-    {
-        if (
-            $this->diffNode($reference->node, $compared->node, $expectedWorkspaceName)
-            || !$reference->name->equals($compared->name)
-            || $reference->properties?->serialized()->values != $compared->properties?->serialized()->values
-        ) {
-            return $compared;
-        }
-
-        return null;
     }
 }

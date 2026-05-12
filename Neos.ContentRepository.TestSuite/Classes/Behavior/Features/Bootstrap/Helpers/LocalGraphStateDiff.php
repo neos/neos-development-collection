@@ -3,12 +3,14 @@
 declare(strict_types=1);
 
 namespace Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\Helpers;
+use Neos\Flow\Annotations as Flow;
 
 /**
  * The difference between two local graph states, indexed by dimension space point hash
  *
  * @implements \IteratorAggregate<string,LocalSubgraphStateDiff>
  */
+#[Flow\Proxy(false)]
 final readonly class LocalGraphStateDiff implements \IteratorAggregate, \JsonSerializable
 {
     /**

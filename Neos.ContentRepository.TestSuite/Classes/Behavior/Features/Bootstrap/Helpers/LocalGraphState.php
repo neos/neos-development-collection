@@ -9,12 +9,14 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphInterface;
 use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
+use Neos\Flow\Annotations as Flow;
 
 /**
  * The local graph state describing a single node aggregate and its direct connections
  * Comparison is done on complete node state as node identity may not be guaranteed by graph adapters
  * @implements \IteratorAggregate<string,?LocalSubgraphState>
  */
+#[Flow\Proxy(false)]
 final readonly class LocalGraphState implements \IteratorAggregate, \JsonSerializable
 {
     /**

@@ -9,11 +9,13 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphInterface;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateIds;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
+use Neos\Flow\Annotations as Flow;
 
 /**
  * The graph state describing all node aggregates and their direct connections within a workspace
  * @implements \IteratorAggregate<string,LocalGraphState> indexed by node aggregate id
  */
+#[Flow\Proxy(false)]
 final class GraphState implements \IteratorAggregate, \JsonSerializable
 {
     /**

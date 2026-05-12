@@ -11,9 +11,6 @@
                 "originDimensionSpacePoint": [],
                 "classification": "root",
                 "nodeTypeName": "Neos.ContentRepository.Testing:RootWithTetheredChildNodes",
-                "properties": [],
-                "name": null,
-                "tags": [],
                 "timestamps": {
                     "created": "2026-05-11T14:19:00+01:00",
                     "originalCreated": "2026-05-11T14:19:00+01:00",
@@ -21,40 +18,38 @@
                     "originalLastModified": null
                 }
             },
-            "parent": null,
-            "children": [
-                {
-                    "contentRepositoryId": "default",
-                    "workspaceName": "intermediate",
-                    "dimensionSpacePoint": {
-                        "example": "source"
-                    },
-                    "aggregateId": "nody-mc-nodeface",
-                    "originDimensionSpacePoint": {
-                        "example": "source"
-                    },
-                    "classification": "tethered",
-                    "nodeTypeName": "Neos.ContentRepository.Testing:SubNode",
-                    "properties": {
-                        "text": {
-                            "value": "my sub default",
-                            "type": "string"
+            "children": {
+                "nodes": [
+                    {
+                        "contentRepositoryId": "default",
+                        "workspaceName": "intermediate",
+                        "dimensionSpacePoint": {
+                            "example": "source"
+                        },
+                        "aggregateId": "nody-mc-nodeface",
+                        "originDimensionSpacePoint": {
+                            "example": "source"
+                        },
+                        "classification": "tethered",
+                        "nodeTypeName": "Neos.ContentRepository.Testing:SubNode",
+                        "properties": {
+                            "addedProperties": {
+                                "text": {
+                                    "value": "my sub default",
+                                    "type": "string"
+                                }
+                            }
+                        },
+                        "name": "child-node",
+                        "timestamps": {
+                            "created": "2026-05-11T14:19:00+01:00",
+                            "originalCreated": "2026-05-11T14:19:00+01:00",
+                            "lastModified": null,
+                            "originalLastModified": null
                         }
-                    },
-                    "name": "child-node",
-                    "tags": [],
-                    "timestamps": {
-                        "created": "2026-05-11T14:19:00+01:00",
-                        "originalCreated": "2026-05-11T14:19:00+01:00",
-                        "lastModified": null,
-                        "originalLastModified": null
                     }
-                }
-            ],
-            "precedingSiblings": [],
-            "succeedingSiblings": [],
-            "references": [],
-            "backReferences": []
+                ]
+            }
         },
         "9a723c057afa02982dae9d0b541739be": {
             "node": {
@@ -67,9 +62,6 @@
                 "originDimensionSpacePoint": [],
                 "classification": "root",
                 "nodeTypeName": "Neos.ContentRepository.Testing:RootWithTetheredChildNodes",
-                "properties": [],
-                "name": null,
-                "tags": [],
                 "timestamps": {
                     "created": "2026-05-11T14:19:00+01:00",
                     "originalCreated": "2026-05-11T14:19:00+01:00",
@@ -77,40 +69,38 @@
                     "originalLastModified": null
                 }
             },
-            "parent": null,
-            "children": [
-                {
-                    "contentRepositoryId": "default",
-                    "workspaceName": "intermediate",
-                    "dimensionSpacePoint": {
-                        "example": "spec"
-                    },
-                    "aggregateId": "nody-mc-nodeface",
-                    "originDimensionSpacePoint": {
-                        "example": "source"
-                    },
-                    "classification": "tethered",
-                    "nodeTypeName": "Neos.ContentRepository.Testing:SubNode",
-                    "properties": {
-                        "text": {
-                            "value": "my sub default",
-                            "type": "string"
+            "children": {
+                "nodes": [
+                    {
+                        "contentRepositoryId": "default",
+                        "workspaceName": "intermediate",
+                        "dimensionSpacePoint": {
+                            "example": "spec"
+                        },
+                        "aggregateId": "nody-mc-nodeface",
+                        "originDimensionSpacePoint": {
+                            "example": "source"
+                        },
+                        "classification": "tethered",
+                        "nodeTypeName": "Neos.ContentRepository.Testing:SubNode",
+                        "properties": {
+                            "addedProperties": {
+                                "text": {
+                                    "value": "my sub default",
+                                    "type": "string"
+                                }
+                            }
+                        },
+                        "name": "child-node",
+                        "timestamps": {
+                            "created": "2026-05-11T14:19:00+01:00",
+                            "originalCreated": "2026-05-11T14:19:00+01:00",
+                            "lastModified": null,
+                            "originalLastModified": null
                         }
-                    },
-                    "name": "child-node",
-                    "tags": [],
-                    "timestamps": {
-                        "created": "2026-05-11T14:19:00+01:00",
-                        "originalCreated": "2026-05-11T14:19:00+01:00",
-                        "lastModified": null,
-                        "originalLastModified": null
                     }
-                }
-            ],
-            "precedingSiblings": [],
-            "succeedingSiblings": [],
-            "references": [],
-            "backReferences": []
+                ]
+            }
         },
         "fbe53ddc3305685fbb4dbf529f283a0e": {
             "node": {
@@ -123,9 +113,6 @@
                 "originDimensionSpacePoint": [],
                 "classification": "root",
                 "nodeTypeName": "Neos.ContentRepository.Testing:RootWithTetheredChildNodes",
-                "properties": [],
-                "name": null,
-                "tags": [],
                 "timestamps": {
                     "created": "2026-05-11T14:19:00+01:00",
                     "originalCreated": "2026-05-11T14:19:00+01:00",
@@ -133,40 +120,38 @@
                     "originalLastModified": null
                 }
             },
-            "parent": null,
-            "children": [
-                {
-                    "contentRepositoryId": "default",
-                    "workspaceName": "intermediate",
-                    "dimensionSpacePoint": {
-                        "example": "peer"
-                    },
-                    "aggregateId": "nody-mc-nodeface",
-                    "originDimensionSpacePoint": {
-                        "example": "peer"
-                    },
-                    "classification": "tethered",
-                    "nodeTypeName": "Neos.ContentRepository.Testing:SubNode",
-                    "properties": {
-                        "text": {
-                            "value": "my sub default",
-                            "type": "string"
+            "children": {
+                "nodes": [
+                    {
+                        "contentRepositoryId": "default",
+                        "workspaceName": "intermediate",
+                        "dimensionSpacePoint": {
+                            "example": "peer"
+                        },
+                        "aggregateId": "nody-mc-nodeface",
+                        "originDimensionSpacePoint": {
+                            "example": "peer"
+                        },
+                        "classification": "tethered",
+                        "nodeTypeName": "Neos.ContentRepository.Testing:SubNode",
+                        "properties": {
+                            "addedProperties": {
+                                "text": {
+                                    "value": "my sub default",
+                                    "type": "string"
+                                }
+                            }
+                        },
+                        "name": "child-node",
+                        "timestamps": {
+                            "created": "2026-05-11T14:19:00+01:00",
+                            "originalCreated": "2026-05-11T14:19:00+01:00",
+                            "lastModified": null,
+                            "originalLastModified": null
                         }
-                    },
-                    "name": "child-node",
-                    "tags": [],
-                    "timestamps": {
-                        "created": "2026-05-11T14:19:00+01:00",
-                        "originalCreated": "2026-05-11T14:19:00+01:00",
-                        "lastModified": null,
-                        "originalLastModified": null
                     }
-                }
-            ],
-            "precedingSiblings": [],
-            "succeedingSiblings": [],
-            "references": [],
-            "backReferences": []
+                ]
+            }
         },
         "2ca4fae2f65267c94c85602df0cbb728": {
             "node": {
@@ -179,9 +164,6 @@
                 "originDimensionSpacePoint": [],
                 "classification": "root",
                 "nodeTypeName": "Neos.ContentRepository.Testing:RootWithTetheredChildNodes",
-                "properties": [],
-                "name": null,
-                "tags": [],
                 "timestamps": {
                     "created": "2026-05-11T14:19:00+01:00",
                     "originalCreated": "2026-05-11T14:19:00+01:00",
@@ -189,40 +171,38 @@
                     "originalLastModified": null
                 }
             },
-            "parent": null,
-            "children": [
-                {
-                    "contentRepositoryId": "default",
-                    "workspaceName": "intermediate",
-                    "dimensionSpacePoint": {
-                        "example": "peerSpec"
-                    },
-                    "aggregateId": "nody-mc-nodeface",
-                    "originDimensionSpacePoint": {
-                        "example": "peer"
-                    },
-                    "classification": "tethered",
-                    "nodeTypeName": "Neos.ContentRepository.Testing:SubNode",
-                    "properties": {
-                        "text": {
-                            "value": "my sub default",
-                            "type": "string"
+            "children": {
+                "nodes": [
+                    {
+                        "contentRepositoryId": "default",
+                        "workspaceName": "intermediate",
+                        "dimensionSpacePoint": {
+                            "example": "peerSpec"
+                        },
+                        "aggregateId": "nody-mc-nodeface",
+                        "originDimensionSpacePoint": {
+                            "example": "peer"
+                        },
+                        "classification": "tethered",
+                        "nodeTypeName": "Neos.ContentRepository.Testing:SubNode",
+                        "properties": {
+                            "addedProperties": {
+                                "text": {
+                                    "value": "my sub default",
+                                    "type": "string"
+                                }
+                            }
+                        },
+                        "name": "child-node",
+                        "timestamps": {
+                            "created": "2026-05-11T14:19:00+01:00",
+                            "originalCreated": "2026-05-11T14:19:00+01:00",
+                            "lastModified": null,
+                            "originalLastModified": null
                         }
-                    },
-                    "name": "child-node",
-                    "tags": [],
-                    "timestamps": {
-                        "created": "2026-05-11T14:19:00+01:00",
-                        "originalCreated": "2026-05-11T14:19:00+01:00",
-                        "lastModified": null,
-                        "originalLastModified": null
                     }
-                }
-            ],
-            "precedingSiblings": [],
-            "succeedingSiblings": [],
-            "references": [],
-            "backReferences": []
+                ]
+            }
         }
     },
     "nody-mc-nodeface": {
@@ -240,13 +220,14 @@
                 "classification": "tethered",
                 "nodeTypeName": "Neos.ContentRepository.Testing:SubNode",
                 "properties": {
-                    "text": {
-                        "value": "my sub default",
-                        "type": "string"
+                    "addedProperties": {
+                        "text": {
+                            "value": "my sub default",
+                            "type": "string"
+                        }
                     }
                 },
                 "name": "child-node",
-                "tags": [],
                 "timestamps": {
                     "created": "2026-05-11T14:19:00+01:00",
                     "originalCreated": "2026-05-11T14:19:00+01:00",
@@ -264,9 +245,6 @@
                 "originDimensionSpacePoint": [],
                 "classification": "root",
                 "nodeTypeName": "Neos.ContentRepository.Testing:RootWithTetheredChildNodes",
-                "properties": [],
-                "name": null,
-                "tags": [],
                 "timestamps": {
                     "created": "2026-05-11T14:19:00+01:00",
                     "originalCreated": "2026-05-11T14:19:00+01:00",
@@ -274,39 +252,38 @@
                     "originalLastModified": null
                 }
             },
-            "children": [
-                {
-                    "contentRepositoryId": "default",
-                    "workspaceName": "intermediate",
-                    "dimensionSpacePoint": {
-                        "example": "source"
-                    },
-                    "aggregateId": "nodimus-prime",
-                    "originDimensionSpacePoint": {
-                        "example": "source"
-                    },
-                    "classification": "tethered",
-                    "nodeTypeName": "Neos.ContentRepository.Testing:SubSubNode",
-                    "properties": {
-                        "text": {
-                            "value": "my sub sub default",
-                            "type": "string"
+            "children": {
+                "nodes": [
+                    {
+                        "contentRepositoryId": "default",
+                        "workspaceName": "intermediate",
+                        "dimensionSpacePoint": {
+                            "example": "source"
+                        },
+                        "aggregateId": "nodimus-prime",
+                        "originDimensionSpacePoint": {
+                            "example": "source"
+                        },
+                        "classification": "tethered",
+                        "nodeTypeName": "Neos.ContentRepository.Testing:SubSubNode",
+                        "properties": {
+                            "addedProperties": {
+                                "text": {
+                                    "value": "my sub sub default",
+                                    "type": "string"
+                                }
+                            }
+                        },
+                        "name": "grandchild-node",
+                        "timestamps": {
+                            "created": "2026-05-11T14:19:00+01:00",
+                            "originalCreated": "2026-05-11T14:19:00+01:00",
+                            "lastModified": null,
+                            "originalLastModified": null
                         }
-                    },
-                    "name": "grandchild-node",
-                    "tags": [],
-                    "timestamps": {
-                        "created": "2026-05-11T14:19:00+01:00",
-                        "originalCreated": "2026-05-11T14:19:00+01:00",
-                        "lastModified": null,
-                        "originalLastModified": null
                     }
-                }
-            ],
-            "precedingSiblings": [],
-            "succeedingSiblings": [],
-            "references": [],
-            "backReferences": []
+                ]
+            }
         },
         "9a723c057afa02982dae9d0b541739be": {
             "node": {
@@ -322,13 +299,14 @@
                 "classification": "tethered",
                 "nodeTypeName": "Neos.ContentRepository.Testing:SubNode",
                 "properties": {
-                    "text": {
-                        "value": "my sub default",
-                        "type": "string"
+                    "addedProperties": {
+                        "text": {
+                            "value": "my sub default",
+                            "type": "string"
+                        }
                     }
                 },
                 "name": "child-node",
-                "tags": [],
                 "timestamps": {
                     "created": "2026-05-11T14:19:00+01:00",
                     "originalCreated": "2026-05-11T14:19:00+01:00",
@@ -346,9 +324,6 @@
                 "originDimensionSpacePoint": [],
                 "classification": "root",
                 "nodeTypeName": "Neos.ContentRepository.Testing:RootWithTetheredChildNodes",
-                "properties": [],
-                "name": null,
-                "tags": [],
                 "timestamps": {
                     "created": "2026-05-11T14:19:00+01:00",
                     "originalCreated": "2026-05-11T14:19:00+01:00",
@@ -356,39 +331,38 @@
                     "originalLastModified": null
                 }
             },
-            "children": [
-                {
-                    "contentRepositoryId": "default",
-                    "workspaceName": "intermediate",
-                    "dimensionSpacePoint": {
-                        "example": "spec"
-                    },
-                    "aggregateId": "nodimus-prime",
-                    "originDimensionSpacePoint": {
-                        "example": "source"
-                    },
-                    "classification": "tethered",
-                    "nodeTypeName": "Neos.ContentRepository.Testing:SubSubNode",
-                    "properties": {
-                        "text": {
-                            "value": "my sub sub default",
-                            "type": "string"
+            "children": {
+                "nodes": [
+                    {
+                        "contentRepositoryId": "default",
+                        "workspaceName": "intermediate",
+                        "dimensionSpacePoint": {
+                            "example": "spec"
+                        },
+                        "aggregateId": "nodimus-prime",
+                        "originDimensionSpacePoint": {
+                            "example": "source"
+                        },
+                        "classification": "tethered",
+                        "nodeTypeName": "Neos.ContentRepository.Testing:SubSubNode",
+                        "properties": {
+                            "addedProperties": {
+                                "text": {
+                                    "value": "my sub sub default",
+                                    "type": "string"
+                                }
+                            }
+                        },
+                        "name": "grandchild-node",
+                        "timestamps": {
+                            "created": "2026-05-11T14:19:00+01:00",
+                            "originalCreated": "2026-05-11T14:19:00+01:00",
+                            "lastModified": null,
+                            "originalLastModified": null
                         }
-                    },
-                    "name": "grandchild-node",
-                    "tags": [],
-                    "timestamps": {
-                        "created": "2026-05-11T14:19:00+01:00",
-                        "originalCreated": "2026-05-11T14:19:00+01:00",
-                        "lastModified": null,
-                        "originalLastModified": null
                     }
-                }
-            ],
-            "precedingSiblings": [],
-            "succeedingSiblings": [],
-            "references": [],
-            "backReferences": []
+                ]
+            }
         },
         "fbe53ddc3305685fbb4dbf529f283a0e": {
             "node": {
@@ -404,13 +378,14 @@
                 "classification": "tethered",
                 "nodeTypeName": "Neos.ContentRepository.Testing:SubNode",
                 "properties": {
-                    "text": {
-                        "value": "my sub default",
-                        "type": "string"
+                    "addedProperties": {
+                        "text": {
+                            "value": "my sub default",
+                            "type": "string"
+                        }
                     }
                 },
                 "name": "child-node",
-                "tags": [],
                 "timestamps": {
                     "created": "2026-05-11T14:19:00+01:00",
                     "originalCreated": "2026-05-11T14:19:00+01:00",
@@ -428,9 +403,6 @@
                 "originDimensionSpacePoint": [],
                 "classification": "root",
                 "nodeTypeName": "Neos.ContentRepository.Testing:RootWithTetheredChildNodes",
-                "properties": [],
-                "name": null,
-                "tags": [],
                 "timestamps": {
                     "created": "2026-05-11T14:19:00+01:00",
                     "originalCreated": "2026-05-11T14:19:00+01:00",
@@ -438,39 +410,38 @@
                     "originalLastModified": null
                 }
             },
-            "children": [
-                {
-                    "contentRepositoryId": "default",
-                    "workspaceName": "intermediate",
-                    "dimensionSpacePoint": {
-                        "example": "peer"
-                    },
-                    "aggregateId": "nodimus-prime",
-                    "originDimensionSpacePoint": {
-                        "example": "peer"
-                    },
-                    "classification": "tethered",
-                    "nodeTypeName": "Neos.ContentRepository.Testing:SubSubNode",
-                    "properties": {
-                        "text": {
-                            "value": "my sub sub default",
-                            "type": "string"
+            "children": {
+                "nodes": [
+                    {
+                        "contentRepositoryId": "default",
+                        "workspaceName": "intermediate",
+                        "dimensionSpacePoint": {
+                            "example": "peer"
+                        },
+                        "aggregateId": "nodimus-prime",
+                        "originDimensionSpacePoint": {
+                            "example": "peer"
+                        },
+                        "classification": "tethered",
+                        "nodeTypeName": "Neos.ContentRepository.Testing:SubSubNode",
+                        "properties": {
+                            "addedProperties": {
+                                "text": {
+                                    "value": "my sub sub default",
+                                    "type": "string"
+                                }
+                            }
+                        },
+                        "name": "grandchild-node",
+                        "timestamps": {
+                            "created": "2026-05-11T14:19:00+01:00",
+                            "originalCreated": "2026-05-11T14:19:00+01:00",
+                            "lastModified": null,
+                            "originalLastModified": null
                         }
-                    },
-                    "name": "grandchild-node",
-                    "tags": [],
-                    "timestamps": {
-                        "created": "2026-05-11T14:19:00+01:00",
-                        "originalCreated": "2026-05-11T14:19:00+01:00",
-                        "lastModified": null,
-                        "originalLastModified": null
                     }
-                }
-            ],
-            "precedingSiblings": [],
-            "succeedingSiblings": [],
-            "references": [],
-            "backReferences": []
+                ]
+            }
         },
         "2ca4fae2f65267c94c85602df0cbb728": {
             "node": {
@@ -486,13 +457,14 @@
                 "classification": "tethered",
                 "nodeTypeName": "Neos.ContentRepository.Testing:SubNode",
                 "properties": {
-                    "text": {
-                        "value": "my sub default",
-                        "type": "string"
+                    "addedProperties": {
+                        "text": {
+                            "value": "my sub default",
+                            "type": "string"
+                        }
                     }
                 },
                 "name": "child-node",
-                "tags": [],
                 "timestamps": {
                     "created": "2026-05-11T14:19:00+01:00",
                     "originalCreated": "2026-05-11T14:19:00+01:00",
@@ -510,9 +482,6 @@
                 "originDimensionSpacePoint": [],
                 "classification": "root",
                 "nodeTypeName": "Neos.ContentRepository.Testing:RootWithTetheredChildNodes",
-                "properties": [],
-                "name": null,
-                "tags": [],
                 "timestamps": {
                     "created": "2026-05-11T14:19:00+01:00",
                     "originalCreated": "2026-05-11T14:19:00+01:00",
@@ -520,39 +489,38 @@
                     "originalLastModified": null
                 }
             },
-            "children": [
-                {
-                    "contentRepositoryId": "default",
-                    "workspaceName": "intermediate",
-                    "dimensionSpacePoint": {
-                        "example": "peerSpec"
-                    },
-                    "aggregateId": "nodimus-prime",
-                    "originDimensionSpacePoint": {
-                        "example": "peer"
-                    },
-                    "classification": "tethered",
-                    "nodeTypeName": "Neos.ContentRepository.Testing:SubSubNode",
-                    "properties": {
-                        "text": {
-                            "value": "my sub sub default",
-                            "type": "string"
+            "children": {
+                "nodes": [
+                    {
+                        "contentRepositoryId": "default",
+                        "workspaceName": "intermediate",
+                        "dimensionSpacePoint": {
+                            "example": "peerSpec"
+                        },
+                        "aggregateId": "nodimus-prime",
+                        "originDimensionSpacePoint": {
+                            "example": "peer"
+                        },
+                        "classification": "tethered",
+                        "nodeTypeName": "Neos.ContentRepository.Testing:SubSubNode",
+                        "properties": {
+                            "addedProperties": {
+                                "text": {
+                                    "value": "my sub sub default",
+                                    "type": "string"
+                                }
+                            }
+                        },
+                        "name": "grandchild-node",
+                        "timestamps": {
+                            "created": "2026-05-11T14:19:00+01:00",
+                            "originalCreated": "2026-05-11T14:19:00+01:00",
+                            "lastModified": null,
+                            "originalLastModified": null
                         }
-                    },
-                    "name": "grandchild-node",
-                    "tags": [],
-                    "timestamps": {
-                        "created": "2026-05-11T14:19:00+01:00",
-                        "originalCreated": "2026-05-11T14:19:00+01:00",
-                        "lastModified": null,
-                        "originalLastModified": null
                     }
-                }
-            ],
-            "precedingSiblings": [],
-            "succeedingSiblings": [],
-            "references": [],
-            "backReferences": []
+                ]
+            }
         }
     },
     "nodimus-prime": {
@@ -570,13 +538,14 @@
                 "classification": "tethered",
                 "nodeTypeName": "Neos.ContentRepository.Testing:SubSubNode",
                 "properties": {
-                    "text": {
-                        "value": "my sub sub default",
-                        "type": "string"
+                    "addedProperties": {
+                        "text": {
+                            "value": "my sub sub default",
+                            "type": "string"
+                        }
                     }
                 },
                 "name": "grandchild-node",
-                "tags": [],
                 "timestamps": {
                     "created": "2026-05-11T14:19:00+01:00",
                     "originalCreated": "2026-05-11T14:19:00+01:00",
@@ -597,25 +566,21 @@
                 "classification": "tethered",
                 "nodeTypeName": "Neos.ContentRepository.Testing:SubNode",
                 "properties": {
-                    "text": {
-                        "value": "my sub default",
-                        "type": "string"
+                    "addedProperties": {
+                        "text": {
+                            "value": "my sub default",
+                            "type": "string"
+                        }
                     }
                 },
                 "name": "child-node",
-                "tags": [],
                 "timestamps": {
                     "created": "2026-05-11T14:19:00+01:00",
                     "originalCreated": "2026-05-11T14:19:00+01:00",
                     "lastModified": null,
                     "originalLastModified": null
                 }
-            },
-            "children": [],
-            "precedingSiblings": [],
-            "succeedingSiblings": [],
-            "references": [],
-            "backReferences": []
+            }
         },
         "9a723c057afa02982dae9d0b541739be": {
             "node": {
@@ -631,13 +596,14 @@
                 "classification": "tethered",
                 "nodeTypeName": "Neos.ContentRepository.Testing:SubSubNode",
                 "properties": {
-                    "text": {
-                        "value": "my sub sub default",
-                        "type": "string"
+                    "addedProperties": {
+                        "text": {
+                            "value": "my sub sub default",
+                            "type": "string"
+                        }
                     }
                 },
                 "name": "grandchild-node",
-                "tags": [],
                 "timestamps": {
                     "created": "2026-05-11T14:19:00+01:00",
                     "originalCreated": "2026-05-11T14:19:00+01:00",
@@ -658,25 +624,21 @@
                 "classification": "tethered",
                 "nodeTypeName": "Neos.ContentRepository.Testing:SubNode",
                 "properties": {
-                    "text": {
-                        "value": "my sub default",
-                        "type": "string"
+                    "addedProperties": {
+                        "text": {
+                            "value": "my sub default",
+                            "type": "string"
+                        }
                     }
                 },
                 "name": "child-node",
-                "tags": [],
                 "timestamps": {
                     "created": "2026-05-11T14:19:00+01:00",
                     "originalCreated": "2026-05-11T14:19:00+01:00",
                     "lastModified": null,
                     "originalLastModified": null
                 }
-            },
-            "children": [],
-            "precedingSiblings": [],
-            "succeedingSiblings": [],
-            "references": [],
-            "backReferences": []
+            }
         },
         "fbe53ddc3305685fbb4dbf529f283a0e": {
             "node": {
@@ -692,13 +654,14 @@
                 "classification": "tethered",
                 "nodeTypeName": "Neos.ContentRepository.Testing:SubSubNode",
                 "properties": {
-                    "text": {
-                        "value": "my sub sub default",
-                        "type": "string"
+                    "addedProperties": {
+                        "text": {
+                            "value": "my sub sub default",
+                            "type": "string"
+                        }
                     }
                 },
                 "name": "grandchild-node",
-                "tags": [],
                 "timestamps": {
                     "created": "2026-05-11T14:19:00+01:00",
                     "originalCreated": "2026-05-11T14:19:00+01:00",
@@ -719,25 +682,21 @@
                 "classification": "tethered",
                 "nodeTypeName": "Neos.ContentRepository.Testing:SubNode",
                 "properties": {
-                    "text": {
-                        "value": "my sub default",
-                        "type": "string"
+                    "addedProperties": {
+                        "text": {
+                            "value": "my sub default",
+                            "type": "string"
+                        }
                     }
                 },
                 "name": "child-node",
-                "tags": [],
                 "timestamps": {
                     "created": "2026-05-11T14:19:00+01:00",
                     "originalCreated": "2026-05-11T14:19:00+01:00",
                     "lastModified": null,
                     "originalLastModified": null
                 }
-            },
-            "children": [],
-            "precedingSiblings": [],
-            "succeedingSiblings": [],
-            "references": [],
-            "backReferences": []
+            }
         },
         "2ca4fae2f65267c94c85602df0cbb728": {
             "node": {
@@ -753,13 +712,14 @@
                 "classification": "tethered",
                 "nodeTypeName": "Neos.ContentRepository.Testing:SubSubNode",
                 "properties": {
-                    "text": {
-                        "value": "my sub sub default",
-                        "type": "string"
+                    "addedProperties": {
+                        "text": {
+                            "value": "my sub sub default",
+                            "type": "string"
+                        }
                     }
                 },
                 "name": "grandchild-node",
-                "tags": [],
                 "timestamps": {
                     "created": "2026-05-11T14:19:00+01:00",
                     "originalCreated": "2026-05-11T14:19:00+01:00",
@@ -780,25 +740,21 @@
                 "classification": "tethered",
                 "nodeTypeName": "Neos.ContentRepository.Testing:SubNode",
                 "properties": {
-                    "text": {
-                        "value": "my sub default",
-                        "type": "string"
+                    "addedProperties": {
+                        "text": {
+                            "value": "my sub default",
+                            "type": "string"
+                        }
                     }
                 },
                 "name": "child-node",
-                "tags": [],
                 "timestamps": {
                     "created": "2026-05-11T14:19:00+01:00",
                     "originalCreated": "2026-05-11T14:19:00+01:00",
                     "lastModified": null,
                     "originalLastModified": null
                 }
-            },
-            "children": [],
-            "precedingSiblings": [],
-            "succeedingSiblings": [],
-            "references": [],
-            "backReferences": []
+            }
         }
     }
 }
