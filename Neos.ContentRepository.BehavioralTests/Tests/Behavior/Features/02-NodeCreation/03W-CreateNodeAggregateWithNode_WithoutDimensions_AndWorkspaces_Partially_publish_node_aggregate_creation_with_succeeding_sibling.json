@@ -1,0 +1,132 @@
+{
+    "sir-nodeward-nodington-iii": {
+        "d751713988987e9331980363e24189ce": {
+            "node": {
+                "contentRepositoryId": "default",
+                "workspaceName": "intermediate",
+                "dimensionSpacePoint": [],
+                "aggregateId": "sir-nodeward-nodington-iii",
+                "originDimensionSpacePoint": [],
+                "classification": "regular",
+                "nodeTypeName": "Neos.ContentRepository.Testing:NodeWithoutTetheredChildNodes",
+                "properties": [],
+                "name": "esquire",
+                "tags": [],
+                "timestamps": {
+                    "created": "2026-05-11T14:19:00+00:00",
+                    "originalCreated": "2026-05-11T14:19:00+00:00",
+                    "lastModified": null,
+                    "originalLastModified": null
+                }
+            },
+            "parent": {
+                "contentRepositoryId": "default",
+                "workspaceName": "intermediate",
+                "dimensionSpacePoint": [],
+                "aggregateId": "lady-eleonode-rootford",
+                "originDimensionSpacePoint": [],
+                "classification": "root",
+                "nodeTypeName": "Neos.ContentRepository:Root",
+                "properties": [],
+                "name": null,
+                "tags": [],
+                "timestamps": {
+                    "created": "2026-05-11T14:19:00+00:00",
+                    "originalCreated": "2026-05-11T14:19:00+00:00",
+                    "lastModified": null,
+                    "originalLastModified": null
+                }
+            },
+            "children": [],
+            "precedingSiblings": [],
+            "succeedingSiblings": [
+                {
+                    "contentRepositoryId": "default",
+                    "workspaceName": "intermediate",
+                    "dimensionSpacePoint": [],
+                    "aggregateId": "sir-david-nodenborough",
+                    "originDimensionSpacePoint": [],
+                    "classification": "regular",
+                    "nodeTypeName": "Neos.ContentRepository.Testing:NodeWithoutTetheredChildNodes",
+                    "properties": [],
+                    "name": "node",
+                    "tags": [],
+                    "timestamps": {
+                        "created": "2026-05-11T14:19:00+00:00",
+                        "originalCreated": "2026-05-11T14:19:00+00:00",
+                        "lastModified": null,
+                        "originalLastModified": null
+                    }
+                }
+            ],
+            "references": [],
+            "backReferences": []
+        }
+    },
+    "lady-eleonode-rootford": {
+        "d751713988987e9331980363e24189ce": {
+            "children": [
+                {
+                    "contentRepositoryId": "default",
+                    "workspaceName": "intermediate",
+                    "dimensionSpacePoint": [],
+                    "aggregateId": "sir-nodeward-nodington-iii",
+                    "originDimensionSpacePoint": [],
+                    "classification": "regular",
+                    "nodeTypeName": "Neos.ContentRepository.Testing:NodeWithoutTetheredChildNodes",
+                    "properties": [],
+                    "name": "esquire",
+                    "tags": [],
+                    "timestamps": {
+                        "created": "2026-05-11T14:19:00+00:00",
+                        "originalCreated": "2026-05-11T14:19:00+00:00",
+                        "lastModified": null,
+                        "originalLastModified": null
+                    }
+                },
+                {
+                    "contentRepositoryId": "default",
+                    "workspaceName": "intermediate",
+                    "dimensionSpacePoint": [],
+                    "aggregateId": "sir-david-nodenborough",
+                    "originDimensionSpacePoint": [],
+                    "classification": "regular",
+                    "nodeTypeName": "Neos.ContentRepository.Testing:NodeWithoutTetheredChildNodes",
+                    "properties": [],
+                    "name": "node",
+                    "tags": [],
+                    "timestamps": {
+                        "created": "2026-05-11T14:19:00+00:00",
+                        "originalCreated": "2026-05-11T14:19:00+00:00",
+                        "lastModified": null,
+                        "originalLastModified": null
+                    }
+                }
+            ]
+        }
+    },
+    "sir-david-nodenborough": {
+        "d751713988987e9331980363e24189ce": {
+            "precedingSiblings": [
+                {
+                    "contentRepositoryId": "default",
+                    "workspaceName": "intermediate",
+                    "dimensionSpacePoint": [],
+                    "aggregateId": "sir-nodeward-nodington-iii",
+                    "originDimensionSpacePoint": [],
+                    "classification": "regular",
+                    "nodeTypeName": "Neos.ContentRepository.Testing:NodeWithoutTetheredChildNodes",
+                    "properties": [],
+                    "name": "esquire",
+                    "tags": [],
+                    "timestamps": {
+                        "created": "2026-05-11T14:19:00+00:00",
+                        "originalCreated": "2026-05-11T14:19:00+00:00",
+                        "lastModified": null,
+                        "originalLastModified": null
+                    }
+                }
+            ]
+        }
+    }
+}

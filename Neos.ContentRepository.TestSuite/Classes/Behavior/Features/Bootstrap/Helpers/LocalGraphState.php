@@ -44,25 +44,37 @@ final readonly class LocalGraphState implements \IteratorAggregate, \JsonSeriali
         return new self($items);
     }
 
-    public function diff(self $other, ?WorkspaceName $expectedWorkspaceName = null): ?self
+    public function diff(self $other, ?WorkspaceName $expectedWorkspaceName = null): ?LocalGraphStateDiff
     {
-        $difference = array_merge(
-            array_diff_key($this->items, $other->items), // missing items
-            array_diff_key($other->items, $this->items), // additional items
-            array_filter(
-                array_keys(array_intersect_key($this->items, $other->items)),
-                fn (string $key): bool => match (true) {
-                    $this->items[$key] === null && $other->items[$key] === null => false,
-                    $this->items[$key] === null && $other->items[$key] !== null => $other->items[$key]->diff($this->items[$key], $expectedWorkspaceName) !== null,
-                    $this->items[$key] !== null && $other->items[$key] === null,
-                        $this->items[$key] !== null && $other->items[$key] !== null => $this->items[$key]->diff($other->items[$key], $expectedWorkspaceName) !== null,
+        $missingItems = array_map(
+            fn (LocalSubgraphState $item): LocalSubgraphStateDiff => LocalSubgraphStateDiff::fromLocalSubgraphState($item),
+            array_diff_key($this->items, $other->items),
+        );
+        $additionalItems = array_map(
+            fn (LocalSubgraphState $item): LocalSubgraphStateDiff => LocalSubgraphStateDiff::fromLocalSubgraphState($item),
+            array_diff_key($other->items, $this->items),
+        );
+        $differingItems = [];
+        foreach (array_intersect_key($this->items, $other->items) as $key => $commonItem) {
+            if ($other->items[$key] !== null) {
+                $diff = $other->items[$key]->diff($this->items[$key], $expectedWorkspaceName);
+                if ($diff !== null) {
+                    $differingItems[$key] = $diff;
                 }
-            ), // differing items
+            } elseif ($this->items[$key] !== null) {
+                // this item was removed
+                $differingItems[$key] = null;
+            }
+        }
+        $difference = array_merge(
+            $missingItems,
+             $additionalItems,
+             $differingItems,
         );
 
         return $difference === []
             ? null
-            : new self($difference);
+            : LocalGraphStateDiff::create($difference);
     }
 
     public function getIterator(): \Traversable

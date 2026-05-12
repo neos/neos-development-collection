@@ -16,8 +16,11 @@ namespace Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\Features;
 
 use Behat\Gherkin\Node\TableNode;
 use Neos\ContentRepository\Core\Feature\ContentStreamEventStreamName;
+use Neos\ContentRepository\Core\Feature\RootNodeCreation\Command\CreateRootNodeAggregateWithNode;
 use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Command\CreateRootWorkspace;
 use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Command\CreateWorkspace;
+use Neos\ContentRepository\Core\NodeType\NodeTypeName;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\CRTestSuiteRuntimeVariables;
@@ -49,14 +52,18 @@ trait WorkspaceCreation
 
     /**
      * @Given /^I set up the edge case workspace tree$/
+     * @Given /^I set up the edge case workspace tree and the following additional commands:$/
      */
-    public function ISetUpTheEdgeCaseWorkspaceTree(): void
+    public function ISetUpTheEdgeCaseWorkspaceTree(?TableNode $commandData = null): void
     {
         if (!$this->currentContentRepository->findWorkspaceByName(WorkspaceName::forLive())) {
             $this->currentContentRepository->handle(CreateRootWorkspace::create(
                 workspaceName: WorkspaceName::forLive(),
                 newContentStreamId: ContentStreamId::fromString('live-cs-id'),
             ));
+            foreach ($commandData->getColumnsHash() as $commandRecord) {
+                $this->theCommandIsExecutedWithJsonPayload($commandRecord['shortName'], $commandRecord['payload']);
+            }
         }
         $this->currentContentRepository->handle(CreateWorkspace::create(
             workspaceName: WorkspaceName::fromString('intermediate'),

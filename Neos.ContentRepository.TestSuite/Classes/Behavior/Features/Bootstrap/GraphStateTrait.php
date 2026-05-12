@@ -98,11 +98,10 @@ trait GraphStateTrait
     {
         Assert::assertNotNull($this->memorisedGraphStates[$serializedWorkspaceName]);
 
-        Assert::assertNull(
-            $this->memorisedGraphStates[$serializedWorkspaceName]->diff(
-                $this->fetchGraphState(WorkspaceName::fromString($serializedWorkspaceName))
-            ),
+        $actualDiff = $this->memorisedGraphStates[$serializedWorkspaceName]->diff(
+            $this->fetchGraphState(WorkspaceName::fromString($serializedWorkspaceName))
         );
+        Assert::assertNull($actualDiff);
     }
 
     /**
@@ -133,18 +132,20 @@ trait GraphStateTrait
         $snapshotFilePath = \str_replace('.feature', '', $this->currentFeatureFile);
         $snapshotFilePath .= '_' . \str_replace(' ', '_', $this->currentScenarioTitle);
         $snapshotFilePath .= '.json';
+
+        $actualDiff = \json_encode(
+            $this->memorisedGraphStates[$serializedWorkspaceName]->diff(
+                $this->fetchGraphState(WorkspaceName::fromString($serializedWorkspaceName)),
+            ),
+            JSON_PRETTY_PRINT,
+        );
         if (!file_exists($snapshotFilePath)) {
-            throw new \RuntimeException('No snapshot file found at path ' . $snapshotFilePath);
+            file_put_contents($snapshotFilePath, $actualDiff);
         }
 
         Assert::assertSame(
             trim(file_get_contents($snapshotFilePath)),
-            \json_encode(
-                $this->memorisedGraphStates[$serializedWorkspaceName]->diff(
-                    $this->fetchGraphState(WorkspaceName::fromString($serializedWorkspaceName)),
-                ),
-                JSON_PRETTY_PRINT,
-            ),
+            $actualDiff,
         );
     }
 

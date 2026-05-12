@@ -48,25 +48,37 @@ final class GraphState implements \IteratorAggregate, \JsonSerializable
      * @param ?WorkspaceName $expectedWorkspaceName if the diff should expect a certain workspace name for evaluating the other state
      * @return ?self A graph state containing all differing elements or nothing if nothing is changed
      */
-    public function diff(?self $other, ?WorkspaceName $expectedWorkspaceName = null): ?self
+    public function diff(?self $other, ?WorkspaceName $expectedWorkspaceName = null): ?GraphStateDiff
     {
         if ($other === null) {
             // the whole state is the diff
             return $this;
         }
 
+        $missingItems = array_map(
+            fn (LocalGraphState $item): LocalGraphStateDiff => LocalGraphStateDiff::fromLocalGraphState($item),
+            array_diff_key($this->items, $other->items),
+        );
+        $additionalItems = array_map(
+            fn (LocalGraphState $item): LocalGraphStateDiff => LocalGraphStateDiff::fromLocalGraphState($item),
+            array_diff_key($other->items, $this->items),
+        );
+        $differingItems = [];
+        foreach (array_intersect_key($this->items, $other->items) as $key => $commonItem) {
+            $diff = $other->items[$key]->diff($this->items[$key], $expectedWorkspaceName);
+            if ($diff !== null) {
+                $differingItems[$key] = $diff;
+            }
+        }
         $difference = array_merge(
-            array_diff_key($this->items, $other->items), // missing items
-            array_diff_key($other->items, $this->items), // additional items
-            array_filter(
-                array_keys(array_intersect_key($this->items, $other->items)),
-                fn (string $key): bool => $this->items[$key]->diff($other->items[$key], $expectedWorkspaceName) !== null,
-            ), // differing items
+            $missingItems,
+            $additionalItems,
+            $differingItems,
         );
 
         return $difference === []
             ? null
-            : new self($difference);
+            : GraphStateDiff::create($difference);
     }
 
     public function getIterator(): \Traversable
