@@ -332,12 +332,14 @@ trait NodeVariationInternals
     /**
      * A node aggregate's order of {@see NodeAggregate::$occupiedDimensionSpacePoints} is undefined as returned from the database.
      * Before using this unorder to emit events we use the interdimensional variation graph to order them into a flattened tree according to configuration.
-     * FIXME: This method might make sense on the InterDimensionVariationGraph but for this an explicit distinctions of unordered Set and List value objects for dimension spaceports is required.
+     * FIXME: This method might make sense on the InterDimensionVariationGraph but for this an explicit distinctions of unordered Set and List value objects for dimension space points is required. Currently we have Set value objects that _still_ have sometimes an order with meaning.
      */
     protected function requireOrderedOriginDimensionSpacePoints(OriginDimensionSpacePointSet $affectedOriginDimensionSpacePoints): OriginDimensionSpacePointSet
     {
+        $allowedOrderedDimensionSpacePoints = $this->interDimensionalVariationGraph->getDimensionSpacePoints();
+
         $orderedAffectedOriginDimensionSpacePoints = OriginDimensionSpacePointSet::fromDimensionSpacePointSet(
-            $this->interDimensionalVariationGraph->getDimensionSpacePoints()->getIntersection(
+            $allowedOrderedDimensionSpacePoints->getIntersection(
                 $affectedOriginDimensionSpacePoints->toDimensionSpacePointSet()
             )
         );
