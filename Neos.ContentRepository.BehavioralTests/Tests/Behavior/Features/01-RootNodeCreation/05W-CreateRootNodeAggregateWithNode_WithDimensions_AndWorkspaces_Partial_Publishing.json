@@ -2,6 +2,7 @@
     "lady-eleonode-rootford": {
         "65901ded4f068dac14ad0dce4f459b29": {
             "node": {
+                "_discriminator": "lady-eleonode-rootford",
                 "contentRepositoryId": "default",
                 "workspaceName": "intermediate",
                 "dimensionSpacePoint": {
@@ -21,6 +22,7 @@
         },
         "9a723c057afa02982dae9d0b541739be": {
             "node": {
+                "_discriminator": "lady-eleonode-rootford",
                 "contentRepositoryId": "default",
                 "workspaceName": "intermediate",
                 "dimensionSpacePoint": {
@@ -40,6 +42,7 @@
         },
         "fbe53ddc3305685fbb4dbf529f283a0e": {
             "node": {
+                "_discriminator": "lady-eleonode-rootford",
                 "contentRepositoryId": "default",
                 "workspaceName": "intermediate",
                 "dimensionSpacePoint": {
@@ -59,6 +62,7 @@
         },
         "2ca4fae2f65267c94c85602df0cbb728": {
             "node": {
+                "_discriminator": "lady-eleonode-rootford",
                 "contentRepositoryId": "default",
                 "workspaceName": "intermediate",
                 "dimensionSpacePoint": {

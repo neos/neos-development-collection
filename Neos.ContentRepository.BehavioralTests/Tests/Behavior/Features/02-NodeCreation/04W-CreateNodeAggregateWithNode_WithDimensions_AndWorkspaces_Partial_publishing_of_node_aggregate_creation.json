@@ -2,6 +2,7 @@
     "sir-david-nodenborough": {
         "033e5de7b423f45bb4f5a09f73af839e": {
             "node": {
+                "_discriminator": "sir-david-nodenborough",
                 "contentRepositoryId": "default",
                 "workspaceName": "intermediate",
                 "dimensionSpacePoint": {
@@ -33,6 +34,7 @@
                 }
             },
             "parent": {
+                "_discriminator": "lady-eleonode-rootford",
                 "contentRepositoryId": "default",
                 "workspaceName": "intermediate",
                 "dimensionSpacePoint": {
@@ -60,6 +62,7 @@
         },
         "65901ded4f068dac14ad0dce4f459b29": {
             "node": {
+                "_discriminator": "sir-david-nodenborough",
                 "contentRepositoryId": "default",
                 "workspaceName": "intermediate",
                 "dimensionSpacePoint": {
@@ -91,6 +94,7 @@
                 }
             },
             "parent": {
+                "_discriminator": "lady-eleonode-rootford",
                 "contentRepositoryId": "default",
                 "workspaceName": "intermediate",
                 "dimensionSpacePoint": {
@@ -112,6 +116,7 @@
             },
             "children": [
                 {
+                    "_discriminator": "nody-mc-nodeface-the-elder",
                     "contentRepositoryId": "default",
                     "workspaceName": "intermediate",
                     "dimensionSpacePoint": {
@@ -139,6 +144,7 @@
                     }
                 },
                 {
+                    "_discriminator": "nody-mc-nodeface",
                     "contentRepositoryId": "default",
                     "workspaceName": "intermediate",
                     "dimensionSpacePoint": {
@@ -166,6 +172,7 @@
                     }
                 },
                 {
+                    "_discriminator": "nody-mc-nodeface-the-youngest",
                     "contentRepositoryId": "default",
                     "workspaceName": "intermediate",
                     "dimensionSpacePoint": {
@@ -200,6 +207,7 @@
         },
         "fbe53ddc3305685fbb4dbf529f283a0e": {
             "node": {
+                "_discriminator": "sir-david-nodenborough",
                 "contentRepositoryId": "default",
                 "workspaceName": "intermediate",
                 "dimensionSpacePoint": {
@@ -231,6 +239,7 @@
                 }
             },
             "parent": {
+                "_discriminator": "lady-eleonode-rootford",
                 "contentRepositoryId": "default",
                 "workspaceName": "intermediate",
                 "dimensionSpacePoint": {
@@ -258,6 +267,7 @@
         },
         "9a723c057afa02982dae9d0b541739be": {
             "node": {
+                "_discriminator": "sir-david-nodenborough",
                 "contentRepositoryId": "default",
                 "workspaceName": "intermediate",
                 "dimensionSpacePoint": {
@@ -289,6 +299,7 @@
                 }
             },
             "parent": {
+                "_discriminator": "lady-eleonode-rootford",
                 "contentRepositoryId": "default",
                 "workspaceName": "intermediate",
                 "dimensionSpacePoint": {
@@ -310,6 +321,7 @@
             },
             "children": [
                 {
+                    "_discriminator": "nody-mc-nodeface-the-eldest",
                     "contentRepositoryId": "default",
                     "workspaceName": "intermediate",
                     "dimensionSpacePoint": {
@@ -337,6 +349,7 @@
                     }
                 },
                 {
+                    "_discriminator": "nody-mc-nodeface-the-elder",
                     "contentRepositoryId": "default",
                     "workspaceName": "intermediate",
                     "dimensionSpacePoint": {
@@ -364,6 +377,7 @@
                     }
                 },
                 {
+                    "_discriminator": "nody-mc-nodeface",
                     "contentRepositoryId": "default",
                     "workspaceName": "intermediate",
                     "dimensionSpacePoint": {
@@ -391,6 +405,7 @@
                     }
                 },
                 {
+                    "_discriminator": "nody-mc-nodeface-the-younger",
                     "contentRepositoryId": "default",
                     "workspaceName": "intermediate",
                     "dimensionSpacePoint": {
@@ -418,6 +433,7 @@
                     }
                 },
                 {
+                    "_discriminator": "nody-mc-nodeface-the-youngest",
                     "contentRepositoryId": "default",
                     "workspaceName": "intermediate",
                     "dimensionSpacePoint": {
@@ -454,6 +470,7 @@
     "nody-mc-nodeface-the-eldest": {
         "9a723c057afa02982dae9d0b541739be": {
             "node": {
+                "_discriminator": "nody-mc-nodeface-the-eldest",
                 "contentRepositoryId": "default",
                 "workspaceName": "intermediate",
                 "dimensionSpacePoint": {
@@ -481,6 +498,7 @@
                 }
             },
             "parent": {
+                "_discriminator": "sir-david-nodenborough",
                 "contentRepositoryId": "default",
                 "workspaceName": "intermediate",
                 "dimensionSpacePoint": {
@@ -515,6 +533,7 @@
             "precedingSiblings": [],
             "succeedingSiblings": [
                 {
+                    "_discriminator": "nody-mc-nodeface-the-elder",
                     "contentRepositoryId": "default",
                     "workspaceName": "intermediate",
                     "dimensionSpacePoint": {
@@ -542,6 +561,7 @@
                     }
                 },
                 {
+                    "_discriminator": "nody-mc-nodeface",
                     "contentRepositoryId": "default",
                     "workspaceName": "intermediate",
                     "dimensionSpacePoint": {
@@ -569,6 +589,7 @@
                     }
                 },
                 {
+                    "_discriminator": "nody-mc-nodeface-the-younger",
                     "contentRepositoryId": "default",
                     "workspaceName": "intermediate",
                     "dimensionSpacePoint": {
@@ -596,6 +617,7 @@
                     }
                 },
                 {
+                    "_discriminator": "nody-mc-nodeface-the-youngest",
                     "contentRepositoryId": "default",
                     "workspaceName": "intermediate",
                     "dimensionSpacePoint": {
@@ -630,6 +652,7 @@
     "nody-mc-nodeface-the-elder": {
         "65901ded4f068dac14ad0dce4f459b29": {
             "node": {
+                "_discriminator": "nody-mc-nodeface-the-elder",
                 "contentRepositoryId": "default",
                 "workspaceName": "intermediate",
                 "dimensionSpacePoint": {
@@ -657,6 +680,7 @@
                 }
             },
             "parent": {
+                "_discriminator": "sir-david-nodenborough",
                 "contentRepositoryId": "default",
                 "workspaceName": "intermediate",
                 "dimensionSpacePoint": {
@@ -691,6 +715,7 @@
             "precedingSiblings": [],
             "succeedingSiblings": [
                 {
+                    "_discriminator": "nody-mc-nodeface",
                     "contentRepositoryId": "default",
                     "workspaceName": "intermediate",
                     "dimensionSpacePoint": {
@@ -718,6 +743,7 @@
                     }
                 },
                 {
+                    "_discriminator": "nody-mc-nodeface-the-youngest",
                     "contentRepositoryId": "default",
                     "workspaceName": "intermediate",
                     "dimensionSpacePoint": {
@@ -750,6 +776,7 @@
         },
         "9a723c057afa02982dae9d0b541739be": {
             "node": {
+                "_discriminator": "nody-mc-nodeface-the-elder",
                 "contentRepositoryId": "default",
                 "workspaceName": "intermediate",
                 "dimensionSpacePoint": {
@@ -777,6 +804,7 @@
                 }
             },
             "parent": {
+                "_discriminator": "sir-david-nodenborough",
                 "contentRepositoryId": "default",
                 "workspaceName": "intermediate",
                 "dimensionSpacePoint": {
@@ -810,6 +838,7 @@
             "children": [],
             "precedingSiblings": [
                 {
+                    "_discriminator": "nody-mc-nodeface-the-eldest",
                     "contentRepositoryId": "default",
                     "workspaceName": "intermediate",
                     "dimensionSpacePoint": {
@@ -839,6 +868,7 @@
             ],
             "succeedingSiblings": [
                 {
+                    "_discriminator": "nody-mc-nodeface",
                     "contentRepositoryId": "default",
                     "workspaceName": "intermediate",
                     "dimensionSpacePoint": {
@@ -866,6 +896,7 @@
                     }
                 },
                 {
+                    "_discriminator": "nody-mc-nodeface-the-younger",
                     "contentRepositoryId": "default",
                     "workspaceName": "intermediate",
                     "dimensionSpacePoint": {
@@ -893,6 +924,7 @@
                     }
                 },
                 {
+                    "_discriminator": "nody-mc-nodeface-the-youngest",
                     "contentRepositoryId": "default",
                     "workspaceName": "intermediate",
                     "dimensionSpacePoint": {
@@ -927,6 +959,7 @@
     "nody-mc-nodeface": {
         "65901ded4f068dac14ad0dce4f459b29": {
             "node": {
+                "_discriminator": "nody-mc-nodeface",
                 "contentRepositoryId": "default",
                 "workspaceName": "intermediate",
                 "dimensionSpacePoint": {
@@ -954,6 +987,7 @@
                 }
             },
             "parent": {
+                "_discriminator": "sir-david-nodenborough",
                 "contentRepositoryId": "default",
                 "workspaceName": "intermediate",
                 "dimensionSpacePoint": {
@@ -987,6 +1021,7 @@
             "children": [],
             "precedingSiblings": [
                 {
+                    "_discriminator": "nody-mc-nodeface-the-elder",
                     "contentRepositoryId": "default",
                     "workspaceName": "intermediate",
                     "dimensionSpacePoint": {
@@ -1016,6 +1051,7 @@
             ],
             "succeedingSiblings": [
                 {
+                    "_discriminator": "nody-mc-nodeface-the-youngest",
                     "contentRepositoryId": "default",
                     "workspaceName": "intermediate",
                     "dimensionSpacePoint": {
@@ -1048,6 +1084,7 @@
         },
         "9a723c057afa02982dae9d0b541739be": {
             "node": {
+                "_discriminator": "nody-mc-nodeface",
                 "contentRepositoryId": "default",
                 "workspaceName": "intermediate",
                 "dimensionSpacePoint": {
@@ -1075,6 +1112,7 @@
                 }
             },
             "parent": {
+                "_discriminator": "sir-david-nodenborough",
                 "contentRepositoryId": "default",
                 "workspaceName": "intermediate",
                 "dimensionSpacePoint": {
@@ -1108,6 +1146,7 @@
             "children": [],
             "precedingSiblings": [
                 {
+                    "_discriminator": "nody-mc-nodeface-the-elder",
                     "contentRepositoryId": "default",
                     "workspaceName": "intermediate",
                     "dimensionSpacePoint": {
@@ -1135,6 +1174,7 @@
                     }
                 },
                 {
+                    "_discriminator": "nody-mc-nodeface-the-eldest",
                     "contentRepositoryId": "default",
                     "workspaceName": "intermediate",
                     "dimensionSpacePoint": {
@@ -1164,6 +1204,7 @@
             ],
             "succeedingSiblings": [
                 {
+                    "_discriminator": "nody-mc-nodeface-the-younger",
                     "contentRepositoryId": "default",
                     "workspaceName": "intermediate",
                     "dimensionSpacePoint": {
@@ -1191,6 +1232,7 @@
                     }
                 },
                 {
+                    "_discriminator": "nody-mc-nodeface-the-youngest",
                     "contentRepositoryId": "default",
                     "workspaceName": "intermediate",
                     "dimensionSpacePoint": {
@@ -1225,6 +1267,7 @@
     "nody-mc-nodeface-the-younger": {
         "9a723c057afa02982dae9d0b541739be": {
             "node": {
+                "_discriminator": "nody-mc-nodeface-the-younger",
                 "contentRepositoryId": "default",
                 "workspaceName": "intermediate",
                 "dimensionSpacePoint": {
@@ -1252,6 +1295,7 @@
                 }
             },
             "parent": {
+                "_discriminator": "sir-david-nodenborough",
                 "contentRepositoryId": "default",
                 "workspaceName": "intermediate",
                 "dimensionSpacePoint": {
@@ -1285,6 +1329,7 @@
             "children": [],
             "precedingSiblings": [
                 {
+                    "_discriminator": "nody-mc-nodeface",
                     "contentRepositoryId": "default",
                     "workspaceName": "intermediate",
                     "dimensionSpacePoint": {
@@ -1312,6 +1357,7 @@
                     }
                 },
                 {
+                    "_discriminator": "nody-mc-nodeface-the-elder",
                     "contentRepositoryId": "default",
                     "workspaceName": "intermediate",
                     "dimensionSpacePoint": {
@@ -1339,6 +1385,7 @@
                     }
                 },
                 {
+                    "_discriminator": "nody-mc-nodeface-the-eldest",
                     "contentRepositoryId": "default",
                     "workspaceName": "intermediate",
                     "dimensionSpacePoint": {
@@ -1368,6 +1415,7 @@
             ],
             "succeedingSiblings": [
                 {
+                    "_discriminator": "nody-mc-nodeface-the-youngest",
                     "contentRepositoryId": "default",
                     "workspaceName": "intermediate",
                     "dimensionSpacePoint": {
@@ -1402,6 +1450,7 @@
     "nody-mc-nodeface-the-youngest": {
         "65901ded4f068dac14ad0dce4f459b29": {
             "node": {
+                "_discriminator": "nody-mc-nodeface-the-youngest",
                 "contentRepositoryId": "default",
                 "workspaceName": "intermediate",
                 "dimensionSpacePoint": {
@@ -1429,6 +1478,7 @@
                 }
             },
             "parent": {
+                "_discriminator": "sir-david-nodenborough",
                 "contentRepositoryId": "default",
                 "workspaceName": "intermediate",
                 "dimensionSpacePoint": {
@@ -1462,6 +1512,7 @@
             "children": [],
             "precedingSiblings": [
                 {
+                    "_discriminator": "nody-mc-nodeface",
                     "contentRepositoryId": "default",
                     "workspaceName": "intermediate",
                     "dimensionSpacePoint": {
@@ -1489,6 +1540,7 @@
                     }
                 },
                 {
+                    "_discriminator": "nody-mc-nodeface-the-elder",
                     "contentRepositoryId": "default",
                     "workspaceName": "intermediate",
                     "dimensionSpacePoint": {
@@ -1522,6 +1574,7 @@
         },
         "9a723c057afa02982dae9d0b541739be": {
             "node": {
+                "_discriminator": "nody-mc-nodeface-the-youngest",
                 "contentRepositoryId": "default",
                 "workspaceName": "intermediate",
                 "dimensionSpacePoint": {
@@ -1549,6 +1602,7 @@
                 }
             },
             "parent": {
+                "_discriminator": "sir-david-nodenborough",
                 "contentRepositoryId": "default",
                 "workspaceName": "intermediate",
                 "dimensionSpacePoint": {
@@ -1582,6 +1636,7 @@
             "children": [],
             "precedingSiblings": [
                 {
+                    "_discriminator": "nody-mc-nodeface-the-younger",
                     "contentRepositoryId": "default",
                     "workspaceName": "intermediate",
                     "dimensionSpacePoint": {
@@ -1609,6 +1664,7 @@
                     }
                 },
                 {
+                    "_discriminator": "nody-mc-nodeface",
                     "contentRepositoryId": "default",
                     "workspaceName": "intermediate",
                     "dimensionSpacePoint": {
@@ -1636,6 +1692,7 @@
                     }
                 },
                 {
+                    "_discriminator": "nody-mc-nodeface-the-elder",
                     "contentRepositoryId": "default",
                     "workspaceName": "intermediate",
                     "dimensionSpacePoint": {
@@ -1663,6 +1720,7 @@
                     }
                 },
                 {
+                    "_discriminator": "nody-mc-nodeface-the-eldest",
                     "contentRepositoryId": "default",
                     "workspaceName": "intermediate",
                     "dimensionSpacePoint": {
@@ -1699,6 +1757,7 @@
         "033e5de7b423f45bb4f5a09f73af839e": {
             "children": [
                 {
+                    "_discriminator": "sir-david-nodenborough",
                     "contentRepositoryId": "default",
                     "workspaceName": "intermediate",
                     "dimensionSpacePoint": {
@@ -1734,6 +1793,7 @@
         "65901ded4f068dac14ad0dce4f459b29": {
             "children": [
                 {
+                    "_discriminator": "sir-david-nodenborough",
                     "contentRepositoryId": "default",
                     "workspaceName": "intermediate",
                     "dimensionSpacePoint": {
@@ -1769,6 +1829,7 @@
         "fbe53ddc3305685fbb4dbf529f283a0e": {
             "children": [
                 {
+                    "_discriminator": "sir-david-nodenborough",
                     "contentRepositoryId": "default",
                     "workspaceName": "intermediate",
                     "dimensionSpacePoint": {
@@ -1804,6 +1865,7 @@
         "9a723c057afa02982dae9d0b541739be": {
             "children": [
                 {
+                    "_discriminator": "sir-david-nodenborough",
                     "contentRepositoryId": "default",
                     "workspaceName": "intermediate",
                     "dimensionSpacePoint": {

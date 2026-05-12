@@ -2,6 +2,7 @@
     "lady-eleonode-rootford": {
         "d751713988987e9331980363e24189ce": {
             "node": {
+                "_discriminator": "lady-eleonode-rootford",
                 "contentRepositoryId": "default",
                 "workspaceName": "intermediate",
                 "dimensionSpacePoint": [],

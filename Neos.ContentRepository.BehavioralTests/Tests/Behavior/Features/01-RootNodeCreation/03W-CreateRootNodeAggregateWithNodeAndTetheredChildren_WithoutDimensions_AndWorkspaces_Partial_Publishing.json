@@ -2,6 +2,7 @@
     "lady-eleonode-rootford": {
         "d751713988987e9331980363e24189ce": {
             "node": {
+                "_discriminator": "lady-eleonode-rootford",
                 "contentRepositoryId": "default",
                 "workspaceName": "intermediate",
                 "dimensionSpacePoint": [],
@@ -19,6 +20,7 @@
             "children": {
                 "nodes": [
                     {
+                        "_discriminator": "nody-mc-nodeface",
                         "contentRepositoryId": "default",
                         "workspaceName": "intermediate",
                         "dimensionSpacePoint": [],
@@ -49,6 +51,7 @@
     "nody-mc-nodeface": {
         "d751713988987e9331980363e24189ce": {
             "node": {
+                "_discriminator": "nody-mc-nodeface",
                 "contentRepositoryId": "default",
                 "workspaceName": "intermediate",
                 "dimensionSpacePoint": [],
@@ -73,6 +76,7 @@
                 }
             },
             "parent": {
+                "_discriminator": "lady-eleonode-rootford",
                 "contentRepositoryId": "default",
                 "workspaceName": "intermediate",
                 "dimensionSpacePoint": [],
@@ -90,6 +94,7 @@
             "children": {
                 "nodes": [
                     {
+                        "_discriminator": "nodimus-prime",
                         "contentRepositoryId": "default",
                         "workspaceName": "intermediate",
                         "dimensionSpacePoint": [],
@@ -120,6 +125,7 @@
     "nodimus-prime": {
         "d751713988987e9331980363e24189ce": {
             "node": {
+                "_discriminator": "nodimus-prime",
                 "contentRepositoryId": "default",
                 "workspaceName": "intermediate",
                 "dimensionSpacePoint": [],
@@ -144,6 +150,7 @@
                 }
             },
             "parent": {
+                "_discriminator": "nody-mc-nodeface",
                 "contentRepositoryId": "default",
                 "workspaceName": "intermediate",
                 "dimensionSpacePoint": [],

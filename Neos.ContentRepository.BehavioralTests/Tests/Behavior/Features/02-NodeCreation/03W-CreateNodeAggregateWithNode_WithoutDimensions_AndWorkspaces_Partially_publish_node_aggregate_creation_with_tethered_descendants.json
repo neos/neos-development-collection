@@ -2,6 +2,7 @@
     "sir-david-nodenborough": {
         "d751713988987e9331980363e24189ce": {
             "node": {
+                "_discriminator": "sir-david-nodenborough",
                 "contentRepositoryId": "default",
                 "workspaceName": "intermediate",
                 "dimensionSpacePoint": [],
@@ -25,6 +26,7 @@
                 }
             },
             "parent": {
+                "_discriminator": "lady-eleonode-rootford",
                 "contentRepositoryId": "default",
                 "workspaceName": "intermediate",
                 "dimensionSpacePoint": [],
@@ -44,6 +46,7 @@
             },
             "children": [
                 {
+                    "_discriminator": "nodewyn-tetherton",
                     "contentRepositoryId": "default",
                     "workspaceName": "intermediate",
                     "dimensionSpacePoint": [],
@@ -76,6 +79,7 @@
     "nodewyn-tetherton": {
         "d751713988987e9331980363e24189ce": {
             "node": {
+                "_discriminator": "nodewyn-tetherton",
                 "contentRepositoryId": "default",
                 "workspaceName": "intermediate",
                 "dimensionSpacePoint": [],
@@ -99,6 +103,7 @@
                 }
             },
             "parent": {
+                "_discriminator": "sir-david-nodenborough",
                 "contentRepositoryId": "default",
                 "workspaceName": "intermediate",
                 "dimensionSpacePoint": [],
@@ -123,6 +128,7 @@
             },
             "children": [
                 {
+                    "_discriminator": "nodimus-prime",
                     "contentRepositoryId": "default",
                     "workspaceName": "intermediate",
                     "dimensionSpacePoint": [],
@@ -155,6 +161,7 @@
     "nodimus-prime": {
         "d751713988987e9331980363e24189ce": {
             "node": {
+                "_discriminator": "nodimus-prime",
                 "contentRepositoryId": "default",
                 "workspaceName": "intermediate",
                 "dimensionSpacePoint": [],
@@ -178,6 +185,7 @@
                 }
             },
             "parent": {
+                "_discriminator": "nodewyn-tetherton",
                 "contentRepositoryId": "default",
                 "workspaceName": "intermediate",
                 "dimensionSpacePoint": [],
@@ -211,6 +219,7 @@
         "d751713988987e9331980363e24189ce": {
             "children": [
                 {
+                    "_discriminator": "sir-david-nodenborough",
                     "contentRepositoryId": "default",
                     "workspaceName": "intermediate",
                     "dimensionSpacePoint": [],

@@ -2,6 +2,7 @@
     "sir-nodeward-nodington-iii": {
         "d751713988987e9331980363e24189ce": {
             "node": {
+                "_discriminator": "sir-nodeward-nodington-iii",
                 "contentRepositoryId": "default",
                 "workspaceName": "intermediate",
                 "dimensionSpacePoint": [],
@@ -20,6 +21,7 @@
                 }
             },
             "parent": {
+                "_discriminator": "lady-eleonode-rootford",
                 "contentRepositoryId": "default",
                 "workspaceName": "intermediate",
                 "dimensionSpacePoint": [],
@@ -41,6 +43,7 @@
             "precedingSiblings": [],
             "succeedingSiblings": [
                 {
+                    "_discriminator": "sir-david-nodenborough",
                     "contentRepositoryId": "default",
                     "workspaceName": "intermediate",
                     "dimensionSpacePoint": [],
@@ -67,6 +70,7 @@
         "d751713988987e9331980363e24189ce": {
             "children": [
                 {
+                    "_discriminator": "sir-nodeward-nodington-iii",
                     "contentRepositoryId": "default",
                     "workspaceName": "intermediate",
                     "dimensionSpacePoint": [],
@@ -85,6 +89,7 @@
                     }
                 },
                 {
+                    "_discriminator": "sir-david-nodenborough",
                     "contentRepositoryId": "default",
                     "workspaceName": "intermediate",
                     "dimensionSpacePoint": [],
@@ -109,6 +114,7 @@
         "d751713988987e9331980363e24189ce": {
             "precedingSiblings": [
                 {
+                    "_discriminator": "sir-nodeward-nodington-iii",
                     "contentRepositoryId": "default",
                     "workspaceName": "intermediate",
                     "dimensionSpacePoint": [],
