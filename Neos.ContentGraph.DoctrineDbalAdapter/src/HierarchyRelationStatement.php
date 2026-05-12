@@ -48,7 +48,7 @@ final readonly class HierarchyRelationStatement
             FROM {$this->tableNames->hierarchyRelation()} AS h
             INNER JOIN (
                 SELECT id, MAX(contentstreamlayer) AS contentstreamlayer
-                    FROM {$this->tableNames->hierarchyRelation()}
+                    FROM {$this->tableNames->hierarchyRelation()} FORCE INDEX (UNIQ_id_layer)
                         WHERE (contentstreamlayer IN (:contentStreamLayers))
                 GROUP BY id
             ) AS readHierarchy
