@@ -17,6 +17,7 @@ namespace Neos\ContentRepository\Core\Feature\Common;
 use Neos\ContentRepository\Core\DimensionSpace;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
+use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePointSet;
 use Neos\ContentRepository\Core\EventStore\EventInterface;
 use Neos\ContentRepository\Core\EventStore\Events;
 use Neos\ContentRepository\Core\Feature\NodeVariation\Event\NodeGeneralizationVariantWasCreated;
@@ -348,5 +349,31 @@ trait NodeVariationInternals
             true,
             $excludedSet
         );
+    }
+
+    /**
+     * A node aggregate's order of {@see NodeAggregate::$occupiedDimensionSpacePoints} is undefined as returned from the database.
+     * Before using this unorder to emit events we use the interdimensional variation graph to order them into a flattened tree according to configuration.
+     * FIXME: This method might make sense on the InterDimensionVariationGraph but for this an explicit distinctions of unordered Set and List value objects for dimension spaceports is required.
+     */
+    protected function requireOrderedOriginDimensionSpacePoints(OriginDimensionSpacePointSet $affectedOriginDimensionSpacePoints): OriginDimensionSpacePointSet
+    {
+        $orderedAffectedOriginDimensionSpacePoints = OriginDimensionSpacePointSet::fromDimensionSpacePointSet(
+            $this->interDimensionalVariationGraph->getDimensionSpacePoints()->getIntersection(
+                $affectedOriginDimensionSpacePoints->toDimensionSpacePointSet()
+            )
+        );
+
+        //
+        // TODO Features/D3-MoveDimensionSpacePoint/MoveDimensionSpacePoint.feature
+        // TODO Neos\ContentRepository\Core\DimensionSpace\Exception\DimensionSpacePointNotFound: [{"language":"ch"}] was not found in the allowed dimension subspace
+        //
+        // if (!$orderedAffectedOriginDimensionSpacePoints->equals($affectedOriginDimensionSpacePoints)) {
+        //     throw new DimensionSpacePointNotFound(
+        //         sprintf('%s was not found in the allowed dimension subspace', $affectedOriginDimensionSpacePoints->getDifference($orderedAffectedOriginDimensionSpacePoints)->toJson()),
+        //         1778587626
+        //     );
+        // }
+        return $orderedAffectedOriginDimensionSpacePoints;
     }
 }

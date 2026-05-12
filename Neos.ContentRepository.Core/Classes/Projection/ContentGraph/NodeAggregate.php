@@ -56,10 +56,10 @@ final readonly class NodeAggregate
      * @param NodeAggregateClassification $classification whether this node aggregate represents a root, regular or tethered node
      * @param NodeTypeName $nodeTypeName name of the node type of this node aggregate
      * @param NodeName|null $nodeName optional name of this node aggregate
-     * @param OriginDimensionSpacePointSet $occupiedDimensionSpacePoints dimension space points this node aggregate occupies
+     * @param OriginDimensionSpacePointSet $occupiedDimensionSpacePoints dimension space points this node aggregate occupies (Unordered)
      * @param non-empty-array<string,Node> $nodesByOccupiedDimensionSpacePoint At least one node will be occupied.
      * @param CoverageByOrigin $coverageByOccupant
-     * @param DimensionSpacePointSet $coveredDimensionSpacePoints This node aggregate will cover at least one dimension space.
+     * @param DimensionSpacePointSet $coveredDimensionSpacePoints This node aggregate will cover at least one dimension space. (Unordered)
      * @param OriginByCoverage $occupationByCovered
      * @param non-empty-array<string,NodeTags> $nodeTagsByCoveredDimensionSpacePoint node tags by every covered dimension space point
      */
@@ -209,7 +209,7 @@ final readonly class NodeAggregate
     /**
      * Returns the nodes belonging to this aggregate, i.e. the "real materialized" node rows.
      *
-     * @internal Using this method to access all occupied nodes or possibly extract a single arbitrary node is not intended for use outside the core.
+     * @internal Using this method to access all occupied nodes or possibly extract a single arbitrary node is not intended for use outside the core. The order is undefined.
      * @return iterable<int,Node>
      */
     public function getNodes(): iterable
