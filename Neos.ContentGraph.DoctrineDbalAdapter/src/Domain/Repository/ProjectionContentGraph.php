@@ -227,6 +227,7 @@ class ProjectionContentGraph
                     {$this->hierarchyRelationStatement->where('h.dimensionspacepointhash = :dimensionSpacePointHash')->toSql()} h
                 WHERE
                     h.childnodeanchor = :succeedingSiblingAnchorPoint
+                LIMIT 1
             SQL;
             try {
                 /** @var array<string,mixed> $succeedingSiblingRelation */
@@ -294,6 +295,7 @@ class ProjectionContentGraph
                         {$this->hierarchyRelationStatement->where('h.dimensionspacepointhash = :dimensionSpacePointHash')->toSql()} h
                     WHERE
                         h.childnodeanchor = :childAnchorPoint
+                    LIMIT 1
                 SQL;
                 try {
                     /** @var array<string,mixed> $childHierarchyRelationData */
