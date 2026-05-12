@@ -246,8 +246,8 @@ Feature: Change node aggregate type - behavior of HAPPYPATH strategy
       | workspaceName                | "live"                                                    |
       | contentStreamId              | "cs-identifier"                                           |
       | nodeAggregateId              | "nody-mc-nodeface"                                        |
-      | originDimensionSpacePoint    | {"language":"gsw"}                                        |
-      | affectedDimensionSpacePoints | [{"language":"gsw"}]                                      |
+      | originDimensionSpacePoint    | {"language":"de"}                                         |
+      | affectedDimensionSpacePoints | [{"language":"de"}]                                       |
       | propertyValues               | {"defaultTextB":{"value":"defaultTextB","type":"string"}} |
       | propertiesToUnset            | ["defaultTextA"]                                          |
     And event at index 10 is of type "NodePropertiesWereSet" with payload:
@@ -255,8 +255,8 @@ Feature: Change node aggregate type - behavior of HAPPYPATH strategy
       | workspaceName                | "live"                                                    |
       | contentStreamId              | "cs-identifier"                                           |
       | nodeAggregateId              | "nody-mc-nodeface"                                        |
-      | originDimensionSpacePoint    | {"language":"de"}                                         |
-      | affectedDimensionSpacePoints | [{"language":"de"}]                                       |
+      | originDimensionSpacePoint    | {"language":"gsw"}                                        |
+      | affectedDimensionSpacePoints | [{"language":"gsw"}]                                      |
       | propertyValues               | {"defaultTextB":{"value":"defaultTextB","type":"string"}} |
       | propertiesToUnset            | ["defaultTextA"]                                          |
     And event at index 11 is of type "NodeAggregateWithNodeWasCreated" with payload:
@@ -265,40 +265,40 @@ Feature: Change node aggregate type - behavior of HAPPYPATH strategy
       | contentStreamId               | "cs-identifier"                                                                                                              |
       | nodeAggregateId               | "nodimer-tetherton"                                                                                                          |
       | nodeTypeName                  | "Neos.ContentRepository.Testing:ChildOfNodeTypeB"                                                                            |
-      | originDimensionSpacePoint     | {"language":"gsw"}                                                                                                           |
-      | succeedingSiblingsForCoverage | [{"dimensionSpacePoint":{"language":"gsw"},"nodeAggregateId":null}]                                                          |
+      | originDimensionSpacePoint     | {"language":"de"}                                                                                                            |
+      | succeedingSiblingsForCoverage | [{"dimensionSpacePoint":{"language":"de"},"nodeAggregateId":null}]                                                           |
       | parentNodeAggregateId         | "nody-mc-nodeface"                                                                                                           |
       | nodeName                      | "child-of-type-b"                                                                                                            |
       | initialPropertyValues         | {"defaultTextB":{"value":"defaultTextB","type":"string"},"commonDefaultText":{"value":"commonDefaultTextB","type":"string"}} |
       | nodeAggregateClassification   | "tethered"                                                                                                                   |
-    And event at index 12 is of type "NodeGeneralizationVariantWasCreated" with payload:
-      | Key                       | Expected                                                           |
-      | workspaceName             | "live"                                                             |
-      | contentStreamId           | "cs-identifier"                                                    |
-      | nodeAggregateId           | "nodimer-tetherton"                                                |
-      | sourceOrigin              | {"language":"gsw"}                                                 |
-      | generalizationOrigin      | {"language":"de"}                                                  |
-      | variantSucceedingSiblings | [{"dimensionSpacePoint":{"language":"de"},"nodeAggregateId":null}] |
+    And event at index 12 is of type "NodeSpecializationVariantWasCreated" with payload:
+      | Key                    | Expected                                                            |
+      | workspaceName          | "live"                                                              |
+      | contentStreamId        | "cs-identifier"                                                     |
+      | nodeAggregateId        | "nodimer-tetherton"                                                 |
+      | sourceOrigin           | {"language":"de"}                                                   |
+      | specializationOrigin   | {"language":"gsw"}                                                  |
+      | specializationSiblings | [{"dimensionSpacePoint":{"language":"gsw"},"nodeAggregateId":null}] |
     And event at index 13 is of type "NodeAggregateWithNodeWasCreated" with payload:
-      | Key                           | Expected                                                            |
-      | workspaceName                 | "live"                                                              |
-      | contentStreamId               | "cs-identifier"                                                     |
-      | nodeAggregateId               | "nodimer-tether-son"                                                |
-      | nodeTypeName                  | "Neos.ContentRepository.Testing:Tethered"                           |
-      | originDimensionSpacePoint     | {"language":"gsw"}                                                  |
-      | succeedingSiblingsForCoverage | [{"dimensionSpacePoint":{"language":"gsw"},"nodeAggregateId":null}] |
-      | parentNodeAggregateId         | "nodimer-tetherton"                                                 |
-      | nodeName                      | "tethered"                                                          |
-      | initialPropertyValues         | []                                                                  |
-      | nodeAggregateClassification   | "tethered"                                                          |
-    And event at index 14 is of type "NodeGeneralizationVariantWasCreated" with payload:
-      | Key                       | Expected                                                           |
-      | workspaceName             | "live"                                                             |
-      | contentStreamId           | "cs-identifier"                                                    |
-      | nodeAggregateId           | "nodimer-tether-son"                                               |
-      | sourceOrigin              | {"language":"gsw"}                                                 |
-      | generalizationOrigin      | {"language":"de"}                                                  |
-      | variantSucceedingSiblings | [{"dimensionSpacePoint":{"language":"de"},"nodeAggregateId":null}] |
+      | Key                           | Expected                                                           |
+      | workspaceName                 | "live"                                                             |
+      | contentStreamId               | "cs-identifier"                                                    |
+      | nodeAggregateId               | "nodimer-tether-son"                                               |
+      | nodeTypeName                  | "Neos.ContentRepository.Testing:Tethered"                          |
+      | originDimensionSpacePoint     | {"language":"de"}                                                  |
+      | succeedingSiblingsForCoverage | [{"dimensionSpacePoint":{"language":"de"},"nodeAggregateId":null}] |
+      | parentNodeAggregateId         | "nodimer-tetherton"                                                |
+      | nodeName                      | "tethered"                                                         |
+      | initialPropertyValues         | []                                                                 |
+      | nodeAggregateClassification   | "tethered"                                                         |
+    And event at index 14 is of type "NodeSpecializationVariantWasCreated" with payload:
+      | Key                    | Expected                                                            |
+      | workspaceName          | "live"                                                              |
+      | contentStreamId        | "cs-identifier"                                                     |
+      | nodeAggregateId        | "nodimer-tether-son"                                                |
+      | sourceOrigin           | {"language":"de"}                                                   |
+      | specializationOrigin   | {"language":"gsw"}                                                  |
+      | specializationSiblings | [{"dimensionSpacePoint":{"language":"gsw"},"nodeAggregateId":null}] |
 
     # the type has changed
     When I am in workspace "live" and dimension space point {"language":"de"}
@@ -514,8 +514,8 @@ Feature: Change node aggregate type - behavior of HAPPYPATH strategy
       | workspaceName                | "live"                                                      |
       | contentStreamId              | "cs-identifier"                                             |
       | nodeAggregateId              | "nody-mc-nodeface"                                          |
-      | originDimensionSpacePoint    | {"language":"gsw"}                                          |
-      | affectedDimensionSpacePoints | [{"language":"gsw"}]                                        |
+      | originDimensionSpacePoint    | {"language":"de"}                                           |
+      | affectedDimensionSpacePoints | [{"language":"de"}]                                         |
       | propertyValues               | {"defaultTextB2":{"value":"defaultTextB2","type":"string"}} |
       | propertiesToUnset            | ["defaultTextB"]                                            |
     And event at index 12 is of type "NodePropertiesWereSet" with payload:
@@ -523,8 +523,8 @@ Feature: Change node aggregate type - behavior of HAPPYPATH strategy
       | workspaceName                | "live"                                                      |
       | contentStreamId              | "cs-identifier"                                             |
       | nodeAggregateId              | "nody-mc-nodeface"                                          |
-      | originDimensionSpacePoint    | {"language":"de"}                                           |
-      | affectedDimensionSpacePoints | [{"language":"de"}]                                         |
+      | originDimensionSpacePoint    | {"language":"gsw"}                                          |
+      | affectedDimensionSpacePoints | [{"language":"gsw"}]                                        |
       | propertyValues               | {"defaultTextB2":{"value":"defaultTextB2","type":"string"}} |
       | propertiesToUnset            | ["defaultTextB"]                                            |
 

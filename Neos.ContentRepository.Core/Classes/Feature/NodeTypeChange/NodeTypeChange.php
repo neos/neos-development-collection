@@ -213,7 +213,9 @@ trait NodeTypeChange
 
         # Handle property adjustments
         $newNodeType = $this->requireNodeType($command->newNodeTypeName);
-        foreach ($nodeAggregate->getNodes() as $node) {
+        foreach ($this->requireOrderedOriginDimensionSpacePoints($nodeAggregate->occupiedDimensionSpacePoints) as $originDimensionSpacePoint) {
+            $node = $nodeAggregate->getNodeByOccupiedDimensionSpacePoint($originDimensionSpacePoint);
+
             $presentPropertyKeys = array_keys(iterator_to_array($node->properties->serialized()));
             $complementaryPropertyValues = SerializedPropertyValues::defaultFromNodeType(
                 $newNodeType,
@@ -232,8 +234,8 @@ trait NodeTypeChange
                     $contentGraph->getWorkspaceName(),
                     $contentGraph->getContentStreamId(),
                     $nodeAggregate->nodeAggregateId,
-                    $node->originDimensionSpacePoint,
-                    $nodeAggregate->getCoverageByOccupant($node->originDimensionSpacePoint),
+                    $originDimensionSpacePoint,
+                    $nodeAggregate->getCoverageByOccupant($originDimensionSpacePoint),
                     $complementaryPropertyValues,
                     $obsoletePropertyNames
                 );
