@@ -157,7 +157,6 @@ final class ContentGraph implements ContentGraphInterface
     ): ?NodeAggregate {
         $queryBuilder = $this->nodeQueryBuilder->buildBasicNodeAggregateQuery()
             ->andWhere('n.nodeaggregateid = :nodeAggregateId')
-            ->orderBy('n.relationanchorpoint', 'DESC')
             ->setParameters([
                 'nodeAggregateId' => $nodeAggregateId->value,
                 'contentStreamId' => $this->contentStreamId->value
