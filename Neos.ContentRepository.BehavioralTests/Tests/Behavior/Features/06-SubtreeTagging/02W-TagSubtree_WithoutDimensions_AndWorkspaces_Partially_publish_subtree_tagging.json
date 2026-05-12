@@ -1,0 +1,268 @@
+{
+    "lady-eleonode-rootford": {
+        "d751713988987e9331980363e24189ce": {
+            "children": [
+                {
+                    "contentRepositoryId": "default",
+                    "workspaceName": "intermediate",
+                    "dimensionSpacePoint": [],
+                    "aggregateId": "preceding-nodenborough",
+                    "originDimensionSpacePoint": [],
+                    "classification": "regular",
+                    "nodeTypeName": "Neos.ContentRepository.Testing:Document",
+                    "properties": [],
+                    "name": "preceding-document",
+                    "tags": [],
+                    "timestamps": {
+                        "created": "2026-05-11T13:19:00-01:00",
+                        "originalCreated": "2026-05-11T14:19:00-01:00",
+                        "lastModified": "2026-05-11T13:19:00-01:00",
+                        "originalLastModified": "2026-05-11T14:19:00-01:00"
+                    }
+                },
+                {
+                    "contentRepositoryId": "default",
+                    "workspaceName": "intermediate",
+                    "dimensionSpacePoint": [],
+                    "aggregateId": "sir-david-nodenborough",
+                    "originDimensionSpacePoint": [],
+                    "classification": "regular",
+                    "nodeTypeName": "Neos.ContentRepository.Testing:Document",
+                    "properties": [],
+                    "name": "document",
+                    "tags": {
+                        "my-tag": true
+                    },
+                    "timestamps": {
+                        "created": "2026-05-11T13:19:00-01:00",
+                        "originalCreated": "2026-05-11T14:19:00-01:00",
+                        "lastModified": null,
+                        "originalLastModified": null
+                    }
+                },
+                {
+                    "contentRepositoryId": "default",
+                    "workspaceName": "intermediate",
+                    "dimensionSpacePoint": [],
+                    "aggregateId": "succeeding-nodenborough",
+                    "originDimensionSpacePoint": [],
+                    "classification": "regular",
+                    "nodeTypeName": "Neos.ContentRepository.Testing:Document",
+                    "properties": [],
+                    "name": "succeeding-document",
+                    "tags": [],
+                    "timestamps": {
+                        "created": "2026-05-11T13:19:00-01:00",
+                        "originalCreated": "2026-05-11T14:19:00-01:00",
+                        "lastModified": null,
+                        "originalLastModified": null
+                    }
+                }
+            ]
+        }
+    },
+    "preceding-nodenborough": {
+        "d751713988987e9331980363e24189ce": {
+            "succeedingSiblings": [
+                {
+                    "contentRepositoryId": "default",
+                    "workspaceName": "intermediate",
+                    "dimensionSpacePoint": [],
+                    "aggregateId": "sir-david-nodenborough",
+                    "originDimensionSpacePoint": [],
+                    "classification": "regular",
+                    "nodeTypeName": "Neos.ContentRepository.Testing:Document",
+                    "properties": [],
+                    "name": "document",
+                    "tags": {
+                        "my-tag": true
+                    },
+                    "timestamps": {
+                        "created": "2026-05-11T13:19:00-01:00",
+                        "originalCreated": "2026-05-11T14:19:00-01:00",
+                        "lastModified": null,
+                        "originalLastModified": null
+                    }
+                },
+                {
+                    "contentRepositoryId": "default",
+                    "workspaceName": "intermediate",
+                    "dimensionSpacePoint": [],
+                    "aggregateId": "succeeding-nodenborough",
+                    "originDimensionSpacePoint": [],
+                    "classification": "regular",
+                    "nodeTypeName": "Neos.ContentRepository.Testing:Document",
+                    "properties": [],
+                    "name": "succeeding-document",
+                    "tags": [],
+                    "timestamps": {
+                        "created": "2026-05-11T13:19:00-01:00",
+                        "originalCreated": "2026-05-11T14:19:00-01:00",
+                        "lastModified": null,
+                        "originalLastModified": null
+                    }
+                }
+            ],
+            "references": [
+                {
+                    "node": {
+                        "contentRepositoryId": "default",
+                        "workspaceName": "intermediate",
+                        "dimensionSpacePoint": [],
+                        "aggregateId": "sir-david-nodenborough",
+                        "originDimensionSpacePoint": [],
+                        "classification": "regular",
+                        "nodeTypeName": "Neos.ContentRepository.Testing:Document",
+                        "properties": [],
+                        "name": "document",
+                        "tags": {
+                            "my-tag": true
+                        },
+                        "timestamps": {
+                            "created": "2026-05-11T13:19:00-01:00",
+                            "originalCreated": "2026-05-11T14:19:00-01:00",
+                            "lastModified": null,
+                            "originalLastModified": null
+                        }
+                    },
+                    "name": "references",
+                    "properties": null
+                }
+            ]
+        }
+    },
+    "sir-david-nodenborough": {
+        "d751713988987e9331980363e24189ce": {
+            "node": {
+                "contentRepositoryId": "default",
+                "workspaceName": "intermediate",
+                "dimensionSpacePoint": [],
+                "aggregateId": "sir-david-nodenborough",
+                "originDimensionSpacePoint": [],
+                "classification": "regular",
+                "nodeTypeName": "Neos.ContentRepository.Testing:Document",
+                "properties": [],
+                "name": "document",
+                "tags": {
+                    "my-tag": true
+                },
+                "timestamps": {
+                    "created": "2026-05-11T13:19:00-01:00",
+                    "originalCreated": "2026-05-11T14:19:00-01:00",
+                    "lastModified": null,
+                    "originalLastModified": null
+                }
+            },
+            "children": [
+                {
+                    "contentRepositoryId": "default",
+                    "workspaceName": "intermediate",
+                    "dimensionSpacePoint": [],
+                    "aggregateId": "nody-mc-nodeface",
+                    "originDimensionSpacePoint": [],
+                    "classification": "regular",
+                    "nodeTypeName": "Neos.ContentRepository.Testing:Document",
+                    "properties": [],
+                    "name": "child-document",
+                    "tags": {
+                        "my-tag": null
+                    },
+                    "timestamps": {
+                        "created": "2026-05-11T13:19:00-01:00",
+                        "originalCreated": "2026-05-11T14:19:00-01:00",
+                        "lastModified": null,
+                        "originalLastModified": null
+                    }
+                }
+            ]
+        }
+    },
+    "nody-mc-nodeface": {
+        "d751713988987e9331980363e24189ce": {
+            "node": {
+                "contentRepositoryId": "default",
+                "workspaceName": "intermediate",
+                "dimensionSpacePoint": [],
+                "aggregateId": "nody-mc-nodeface",
+                "originDimensionSpacePoint": [],
+                "classification": "regular",
+                "nodeTypeName": "Neos.ContentRepository.Testing:Document",
+                "properties": [],
+                "name": "child-document",
+                "tags": {
+                    "my-tag": null
+                },
+                "timestamps": {
+                    "created": "2026-05-11T13:19:00-01:00",
+                    "originalCreated": "2026-05-11T14:19:00-01:00",
+                    "lastModified": null,
+                    "originalLastModified": null
+                }
+            },
+            "parent": {
+                "contentRepositoryId": "default",
+                "workspaceName": "intermediate",
+                "dimensionSpacePoint": [],
+                "aggregateId": "sir-david-nodenborough",
+                "originDimensionSpacePoint": [],
+                "classification": "regular",
+                "nodeTypeName": "Neos.ContentRepository.Testing:Document",
+                "properties": [],
+                "name": "document",
+                "tags": {
+                    "my-tag": true
+                },
+                "timestamps": {
+                    "created": "2026-05-11T13:19:00-01:00",
+                    "originalCreated": "2026-05-11T14:19:00-01:00",
+                    "lastModified": null,
+                    "originalLastModified": null
+                }
+            }
+        }
+    },
+    "succeeding-nodenborough": {
+        "d751713988987e9331980363e24189ce": {
+            "precedingSiblings": [
+                {
+                    "contentRepositoryId": "default",
+                    "workspaceName": "intermediate",
+                    "dimensionSpacePoint": [],
+                    "aggregateId": "sir-david-nodenborough",
+                    "originDimensionSpacePoint": [],
+                    "classification": "regular",
+                    "nodeTypeName": "Neos.ContentRepository.Testing:Document",
+                    "properties": [],
+                    "name": "document",
+                    "tags": {
+                        "my-tag": true
+                    },
+                    "timestamps": {
+                        "created": "2026-05-11T13:19:00-01:00",
+                        "originalCreated": "2026-05-11T14:19:00-01:00",
+                        "lastModified": null,
+                        "originalLastModified": null
+                    }
+                },
+                {
+                    "contentRepositoryId": "default",
+                    "workspaceName": "intermediate",
+                    "dimensionSpacePoint": [],
+                    "aggregateId": "preceding-nodenborough",
+                    "originDimensionSpacePoint": [],
+                    "classification": "regular",
+                    "nodeTypeName": "Neos.ContentRepository.Testing:Document",
+                    "properties": [],
+                    "name": "preceding-document",
+                    "tags": [],
+                    "timestamps": {
+                        "created": "2026-05-11T13:19:00-01:00",
+                        "originalCreated": "2026-05-11T14:19:00-01:00",
+                        "lastModified": "2026-05-11T13:19:00-01:00",
+                        "originalLastModified": "2026-05-11T14:19:00-01:00"
+                    }
+                }
+            ]
+        }
+    }
+}
