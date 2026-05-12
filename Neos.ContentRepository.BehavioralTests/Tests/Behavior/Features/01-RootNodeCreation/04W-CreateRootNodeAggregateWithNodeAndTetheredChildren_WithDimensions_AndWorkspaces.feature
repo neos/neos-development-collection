@@ -78,7 +78,7 @@ Feature: Create a root node aggregate with tethered children
     And I expect the graph state for workspace "intermediate" to equal that of workspace "local"
 
   Scenario: Partial Publishing
-    Given the current date and time is "2026-05-11T14:19:00+00:00"
+    Given the current date and time is "2026-05-11T14:19:00+01:00"
     Given I set up the edge case workspace tree
     When the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key                                | Value                                                                             |
