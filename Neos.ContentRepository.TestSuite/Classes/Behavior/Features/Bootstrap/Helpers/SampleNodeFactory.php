@@ -66,8 +66,10 @@ class SampleNodeFactory
             ),
             timestamps: Timestamps::create(
                 created: \DateTimeImmutable::createFromFormat('Y-m-d H:i:s', '2026-05-12 13:58:25')
+                    /** @phpstan-ignore method.nonObject (valid date) */
                     ->setTimezone(new \DateTimeZone('UTC')),
                 originalCreated: \DateTimeImmutable::createFromFormat('Y-m-d H:i:s', '2026-05-12 13:58:25')
+                    /** @phpstan-ignore method.nonObject (valid date) */
                     ->setTimezone(new \DateTimeZone('UTC')),
                 lastModified: null,
                 originalLastModified: null,

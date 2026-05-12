@@ -54,7 +54,7 @@ final readonly class LocalSubgraphState
     }
 
     /**
-     * @return ?self A local subgraph state containing all differing elements or null if nothing is changed
+     * @return ?LocalSubgraphStateDiff A local subgraph state diff containing all differing elements or null if nothing is changed
      */
     public function diff(?self $other, ?WorkspaceName $expectedWorkspaceName = null): ?LocalSubgraphStateDiff
     {
@@ -69,9 +69,10 @@ final readonly class LocalSubgraphState
                 $this->parent === null && $other->parent === null => null,
                 $this->parent == null && $other->parent !== null => throw new \Exception('Cannot compare root node to node'),
                 $this->parent !== null && $other->parent === null => throw new \Exception('Cannot compare node to root node'),
+                /** @phpstan-ignore argument.type (we alredy established that both are not null) */
                 default => NodeDiff::tryFromNodeComparison($other->parent, $this->parent, $expectedWorkspaceName),
             },
-            children: NodesDiff::tryFromNodesComparison($other->children,$this->children,  $expectedWorkspaceName),
+            children: NodesDiff::tryFromNodesComparison($other->children, $this->children, $expectedWorkspaceName),
             precedingSiblings: NodesDiff::tryFromNodesComparison($other->precedingSiblings, $this->precedingSiblings, $expectedWorkspaceName),
             succeedingSiblings: NodesDiff::tryFromNodesComparison($other->succeedingSiblings, $this->succeedingSiblings, $expectedWorkspaceName),
             references: ReferencesDiff::tryFromReferencesComparison($other->references, $this->references, $expectedWorkspaceName),

@@ -28,6 +28,7 @@ use PHPUnit\Framework\Assert;
 /**
  * The feature trait to test node aggregates
  */
+/** @phpstan-ignore trait.unused (as if) */
 trait GraphStateTrait
 {
     use CRTestSuiteRuntimeVariables;
@@ -174,8 +175,7 @@ trait GraphStateTrait
         foreach (
             $parentNodeAggregateId
                 ? $contentGraph->findChildNodeAggregates($parentNodeAggregateId)
-                : $contentGraph->findRootNodeAggregates(FindRootNodeAggregatesFilter::create())
-            as $childNodeAggregate
+                : $contentGraph->findRootNodeAggregates(FindRootNodeAggregatesFilter::create()) as $childNodeAggregate
         ) {
             $nodeAggregateIdsSoFar[$childNodeAggregate->nodeAggregateId->value] = $childNodeAggregate->nodeAggregateId;
             $nodeAggregateIdsSoFar = $this->findAllNodeAggregateIds(

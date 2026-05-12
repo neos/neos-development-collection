@@ -49,11 +49,11 @@ final readonly class LocalGraphState implements \IteratorAggregate, \JsonSeriali
     public function diff(self $other, ?WorkspaceName $expectedWorkspaceName = null): ?LocalGraphStateDiff
     {
         $missingItems = array_map(
-            fn (LocalSubgraphState $item): LocalSubgraphStateDiff => LocalSubgraphStateDiff::fromLocalSubgraphState($item),
+            fn (?LocalSubgraphState $item): LocalSubgraphStateDiff => $item ? LocalSubgraphStateDiff::fromLocalSubgraphState($item) : null,
             array_diff_key($this->items, $other->items),
         );
         $additionalItems = array_map(
-            fn (LocalSubgraphState $item): LocalSubgraphStateDiff => LocalSubgraphStateDiff::fromLocalSubgraphState($item),
+            fn (?LocalSubgraphState $item): LocalSubgraphStateDiff => $item ? LocalSubgraphStateDiff::fromLocalSubgraphState($item) : null,
             array_diff_key($other->items, $this->items),
         );
         $differingItems = [];
@@ -70,13 +70,13 @@ final readonly class LocalGraphState implements \IteratorAggregate, \JsonSeriali
         }
         $difference = array_merge(
             $missingItems,
-             $additionalItems,
-             $differingItems,
+            $additionalItems,
+            $differingItems,
         );
 
         return $difference === []
             ? null
-            : LocalGraphStateDiff::create($difference);
+            : LocalGraphStateDiff::create(array_filter($difference));
     }
 
     public function getIterator(): \Traversable

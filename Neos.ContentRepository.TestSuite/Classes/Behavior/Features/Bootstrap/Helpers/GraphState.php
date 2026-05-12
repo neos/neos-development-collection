@@ -48,13 +48,16 @@ final class GraphState implements \IteratorAggregate, \JsonSerializable
 
     /**
      * @param ?WorkspaceName $expectedWorkspaceName if the diff should expect a certain workspace name for evaluating the other state
-     * @return ?self A graph state containing all differing elements or nothing if nothing is changed
+     * @return ?GraphStateDiff A graph state containing all differing elements or nothing if nothing is changed
      */
     public function diff(?self $other, ?WorkspaceName $expectedWorkspaceName = null): ?GraphStateDiff
     {
         if ($other === null) {
             // the whole state is the diff
-            return $this;
+            return GraphStateDiff::create(array_map(
+                fn (LocalGraphState $item): LocalGraphStateDiff => LocalGraphStateDiff::fromLocalGraphState($item),
+                $this->items,
+            ));
         }
 
         $missingItems = array_map(

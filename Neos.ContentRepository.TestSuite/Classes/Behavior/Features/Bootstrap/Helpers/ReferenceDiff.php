@@ -52,7 +52,9 @@ final readonly class ReferenceDiff implements \JsonSerializable
         return new self(
             node: NodeDiff::forAnAdditionalNode($reference->node),
             name: $reference->name,
-            properties: PropertyDiff::tryForAnAdditionalNode($reference->properties->serialized()),
+            properties: $reference->properties
+                ? PropertyDiff::tryForAnAdditionalNode($reference->properties->serialized())
+                : null,
             propertiesWereUnset: false,
         );
     }
