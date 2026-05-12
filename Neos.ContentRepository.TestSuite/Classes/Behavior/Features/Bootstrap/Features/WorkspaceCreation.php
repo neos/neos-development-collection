@@ -61,7 +61,7 @@ trait WorkspaceCreation
                 workspaceName: WorkspaceName::forLive(),
                 newContentStreamId: ContentStreamId::fromString('live-cs-id'),
             ));
-            foreach ($commandData->getColumnsHash() as $commandRecord) {
+            foreach ($commandData?->getColumnsHash() ?: [] as $commandRecord) {
                 $this->theCommandIsExecutedWithJsonPayload($commandRecord['shortName'], $commandRecord['payload']);
             }
         }
