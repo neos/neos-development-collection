@@ -78,6 +78,8 @@ class DoctrineDbalContentGraphSchemaBuilder
             ->addIndex(['contentstreamlayer'])
             ->addIndex(['parentnodeanchor'])
             ->addIndex(['position'])
+            /** Optimize the $rightmostSucceedingSiblingRelationStatement in {@see \Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\ProjectionContentGraph::determineHierarchyRelationPosition()} */
+            ->addIndex(['parentnodeanchor', 'position'])
             ->addIndex(['childnodeanchor', 'contentstreamlayer', 'dimensionspacepointhash', 'position'])
             ->addIndex(['parentnodeanchor', 'contentstreamlayer', 'dimensionspacepointhash', 'position'])
             ->addIndex(['contentstreamlayer', 'dimensionspacepointhash']);
