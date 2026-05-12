@@ -267,7 +267,7 @@ final class ContentGraph implements ContentGraphInterface
             ->andWhere('cn.origindimensionspacepointhash = :childOriginDimensionSpacePointHash');
 
         $queryBuilder = $this->createQueryBuilder()
-            ->select('n.*, h.contentstreamlayer, h.subtreetags, dsp.dimensionspacepoint AS covereddimensionspacepoint')
+            ->select('n.*, h.subtreetags, dsp.dimensionspacepoint AS covereddimensionspacepoint')
             ->from($this->nodeQueryBuilder->tableNames->node(), 'n')
             ->innerJoin('n', $this->hierarchyRelationStatement->toSql(), 'h', 'h.childnodeanchor = n.relationanchorpoint')
             ->innerJoin('h', $this->nodeQueryBuilder->tableNames->dimensionSpacePoints(), 'dsp', 'dsp.hash = h.dimensionspacepointhash')
@@ -339,7 +339,7 @@ final class ContentGraph implements ContentGraphInterface
     public function findNodeAggregatesTaggedBy(SubtreeTag $subtreeTag): NodeAggregates
     {
         $queryBuilder =  $this->createQueryBuilder()
-            ->select('n.*, h.contentstreamlayer, h.subtreetags, dsp.dimensionspacepoint AS covereddimensionspacepoint')
+            ->select('n.*, h.subtreetags, dsp.dimensionspacepoint AS covereddimensionspacepoint')
             // select the subtree tags from tagged (t) h and then join h again to fetch all node rows in that aggregate
             ->from($this->hierarchyRelationStatement->where('JSON_EXTRACT(h.subtreetags, :tagPath) LIKE "true"')->toSql(), 'th')
             ->innerJoin('th', $this->hierarchyRelationStatement->toSql(), 'h', 'th.childnodeanchor = h.childnodeanchor')
