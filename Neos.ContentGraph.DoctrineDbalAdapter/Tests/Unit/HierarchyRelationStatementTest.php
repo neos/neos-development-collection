@@ -24,18 +24,18 @@ class HierarchyRelationStatementTest extends TestCase
         $hierarchyRelationStatement = HierarchyRelationStatement::for($this->tableNames);
 
         self::assertEquals(
-            <<<SQL
-            (SELECT h.*
-                FROM cr_testing_p_graph_hierarchyrelation AS h
-                INNER JOIN (
-                    SELECT id, MAX(contentstreamlayer) AS contentstreamlayer
-                        FROM cr_testing_p_graph_hierarchyrelation
-                            WHERE (contentstreamlayer IN (:contentStreamLayers))
-                    GROUP BY id
-                ) AS readHierarchy
-                    ON h.id = readHierarchy.id AND h.contentstreamlayer = readHierarchy.contentstreamlayer
-            )
-            SQL,
+        <<<SQL
+        (SELECT h.*
+          FROM cr_testing_p_graph_hierarchyrelation AS h
+          INNER JOIN (
+            SELECT id, MAX(contentstreamlayer) AS contentstreamlayer
+              FROM cr_testing_p_graph_hierarchyrelation FORCE INDEX (UNIQ_id_layer)
+                WHERE (contentstreamlayer IN (:contentStreamLayers))
+            GROUP BY id
+          ) AS readHierarchy
+            ON h.id = readHierarchy.id AND h.contentstreamlayer = readHierarchy.contentstreamlayer
+        )
+        SQL,
             $hierarchyRelationStatement->toSql()
         );
     }
@@ -49,15 +49,15 @@ class HierarchyRelationStatementTest extends TestCase
         self::assertEquals(
             <<<SQL
             (SELECT h.*
-                FROM cr_testing_p_graph_hierarchyrelation AS h
-                INNER JOIN (
-                    SELECT id, MAX(contentstreamlayer) AS contentstreamlayer
-                        FROM cr_testing_p_graph_hierarchyrelation
-                            WHERE (contentstreamlayer IN (:contentStreamLayers))
-                    GROUP BY id
-                ) AS readHierarchy
-                    ON h.id = readHierarchy.id AND h.contentstreamlayer = readHierarchy.contentstreamlayer
-                WHERE h.dimensionspacepointhash in (:dimensionSpacePointHashes)
+              FROM cr_testing_p_graph_hierarchyrelation AS h
+              INNER JOIN (
+                SELECT id, MAX(contentstreamlayer) AS contentstreamlayer
+                  FROM cr_testing_p_graph_hierarchyrelation FORCE INDEX (UNIQ_id_layer)
+                    WHERE (contentstreamlayer IN (:contentStreamLayers))
+                GROUP BY id
+              ) AS readHierarchy
+                ON h.id = readHierarchy.id AND h.contentstreamlayer = readHierarchy.contentstreamlayer
+              WHERE h.dimensionspacepointhash in (:dimensionSpacePointHashes)
             )
             SQL,
             $hierarchyRelationStatement->toSql()
@@ -72,21 +72,21 @@ class HierarchyRelationStatementTest extends TestCase
             ->andWhere('h.childnodeanchor = :anchor');
 
         self::assertEquals(
-            <<<SQL
-            (SELECT h.*
-                FROM cr_testing_p_graph_hierarchyrelation AS h
-                INNER JOIN (
-                    SELECT id, MAX(contentstreamlayer) AS contentstreamlayer
-                        FROM cr_testing_p_graph_hierarchyrelation
-                            WHERE (contentstreamlayer IN (:contentStreamLayers))
-                    GROUP BY id
-                ) AS readHierarchy
-                    ON h.id = readHierarchy.id AND h.contentstreamlayer = readHierarchy.contentstreamlayer
-                WHERE h.dimensionspacepointhash in (:dimensionSpacePointHashes)
-                AND h.childnodeanchor = :anchor
-            )
-            SQL,
-            $hierarchyRelationStatement->toSql()
+        <<<SQL
+        (SELECT h.*
+          FROM cr_testing_p_graph_hierarchyrelation AS h
+          INNER JOIN (
+            SELECT id, MAX(contentstreamlayer) AS contentstreamlayer
+              FROM cr_testing_p_graph_hierarchyrelation FORCE INDEX (UNIQ_id_layer)
+                WHERE (contentstreamlayer IN (:contentStreamLayers))
+            GROUP BY id
+          ) AS readHierarchy
+            ON h.id = readHierarchy.id AND h.contentstreamlayer = readHierarchy.contentstreamlayer
+          WHERE h.dimensionspacepointhash in (:dimensionSpacePointHashes)
+          AND h.childnodeanchor = :anchor
+        )
+        SQL,
+        $hierarchyRelationStatement->toSql()
         );
     }
 }

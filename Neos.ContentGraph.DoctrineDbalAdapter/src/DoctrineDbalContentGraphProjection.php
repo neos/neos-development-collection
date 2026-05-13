@@ -235,7 +235,7 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
             SELECT 1 FROM {$this->tableNames->hierarchyRelation()} AS h
                 WHERE h.contentStreamLayer = :sourceContentStreamWriteLayer
             LIMIT 1
-        SQL;
+            SQL;
         try {
             $addNewWriteLayerToSourceContentStream = (bool)$this->dbal->fetchOne(
                 $sourceWriteLayerWasWrittenStatement,
@@ -284,17 +284,17 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
             // Cleanup, due to the removal of the current write layer we possibly free the immediate parent layer if no other content stream forks from it directly
             // If all content streams use the layer and all their next parent layers are equal we close the gap in the layers
             $contentStreamLayerToMergeFromStatement = <<<SQL
-            SELECT MIN(subquery.parentLayer) FROM (
-                SELECT DISTINCT MIN(b.contentStreamLayer) AS parentLayer FROM {$this->tableNames->contentStreamLayer()} AS a
+                SELECT MIN(subquery.parentLayer) FROM (
+                  SELECT DISTINCT MIN(b.contentStreamLayer) AS parentLayer FROM {$this->tableNames->contentStreamLayer()} AS a
                     LEFT JOIN {$this->tableNames->contentStreamLayer()} AS b
-                        ON a.contentStreamId = b.contentStreamId
-                WHERE a.contentStreamLayer = :contentStreamLayerCandidate
-                  AND b.contentStreamLayer > :contentStreamLayerCandidate
-                GROUP BY b.contentStreamId
-            ) AS subquery
-            -- return only if there is a single distict result
-            HAVING COUNT(parentLayer) = 1
-            SQL;
+                      ON a.contentStreamId = b.contentStreamId
+                  WHERE a.contentStreamLayer = :contentStreamLayerCandidate
+                    AND b.contentStreamLayer > :contentStreamLayerCandidate
+                  GROUP BY b.contentStreamId
+                ) AS subquery
+                -- return only if there is a single distict result
+                HAVING COUNT(parentLayer) = 1
+                SQL;
 
             try {
                 $contentStreamLayerToMergeFromResult = $this->dbal->fetchOne(
@@ -313,34 +313,35 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
 
         if ($contentStreamLayerToMergeFrom !== null && $contentStreamLayerToMergeInto !== null) {
             $mergeHierarchyRelationsStatement = <<<SQL
-                INSERT INTO {$this->tableNames->hierarchyRelation()}
-                (
-                    id,
-                    contentstreamlayer,
-                    parentnodeanchor,
-                    childnodeanchor,
-                    position,
-                    subtreetags,
-                    dimensionspacepointhash
+                INSERT INTO {$this->tableNames->hierarchyRelation()} (
+                  id,
+                  contentstreamlayer,
+                  parentnodeanchor,
+                  childnodeanchor,
+                  position,
+                  subtreetags,
+                  dimensionspacepointhash
                 )
                 SELECT
-                    h.id,
-                    :contentStreamLayerToMergeInto AS contentstreamlayer,
-                    h.parentnodeanchor,
-                    h.childnodeanchor,
-                    h.position,
-                    h.subtreetags,
-                    h.dimensionspacepointhash
-                -- using table instead of HierarchyRelationStatement because merging is a low level operation and combines exactly two layers without taking any other layers into account 
-                FROM {$this->tableNames->hierarchyRelation()} AS h
-                WHERE h.contentstreamlayer = :contentStreamLayerToMergeFrom
+                  h.id,
+                  :contentStreamLayerToMergeInto AS contentstreamlayer,
+                  h.parentnodeanchor,
+                  h.childnodeanchor,
+                  h.position,
+                  h.subtreetags,
+                  h.dimensionspacepointhash
+                -- using table instead of HierarchyRelationStatement because merging is a low level operation and combines exactly two layers without taking any other layers into account
+                FROM
+                  {$this->tableNames->hierarchyRelation()} AS h
+                WHERE
+                  h.contentstreamlayer = :contentStreamLayerToMergeFrom
                 ON DUPLICATE KEY UPDATE
-                    parentnodeanchor = VALUES(parentnodeanchor),
-                    childnodeanchor = VALUES(childnodeanchor),
-                    position = VALUES(position),
-                    subtreetags = VALUES(subtreetags),
-                    dimensionspacepointhash = VALUES(dimensionspacepointhash);
-            SQL;
+                  parentnodeanchor = VALUES(parentnodeanchor),
+                  childnodeanchor = VALUES(childnodeanchor),
+                  position = VALUES(position),
+                  subtreetags = VALUES(subtreetags),
+                  dimensionspacepointhash = VALUES(dimensionspacepointhash)
+                SQL;
 
             try {
                 $this->dbal->executeStatement($mergeHierarchyRelationsStatement, [
@@ -386,10 +387,10 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
             DELETE n FROM {$this->tableNames->node()} n
             -- using table instead of HierarchyRelationStatement because node rows can be shared for all layers 
             LEFT JOIN {$this->tableNames->hierarchyRelation()} h
-                ON h.childnodeanchor = n.relationanchorpoint
-                    AND h.contentstreamlayer != :targetContentStreamLayer
+              ON h.childnodeanchor = n.relationanchorpoint
+                AND h.contentstreamlayer != :targetContentStreamLayer
             WHERE h.childnodeanchor IS NULL
-        SQL;
+            SQL;
         try {
             $this->dbal->executeStatement($deleteNodesStatement, [
                 'targetContentStreamLayer' => $contentStreamLayers->getWriteLayer()->value,
@@ -402,11 +403,11 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
         $deleteReferencesStatement = <<<SQL
             DELETE r FROM {$this->tableNames->referenceRelation()} r
             -- using table instead of HierarchyRelationStatement because node rows can be shared for all layers 
-            LEFT JOIN {$this->tableNames->hierarchyRelation()} h
+              LEFT JOIN {$this->tableNames->hierarchyRelation()} h
                 ON h.childnodeanchor = r.nodeanchorpoint
-                    AND h.contentstreamlayer != :targetContentStreamLayer
+                AND h.contentstreamlayer != :targetContentStreamLayer
             WHERE h.childnodeanchor IS NULL
-        SQL;
+            SQL;
         try {
             $this->dbal->executeStatement($deleteReferencesStatement, [
                 'targetContentStreamLayer' => $contentStreamLayers->getWriteLayer()->value,
@@ -452,8 +453,8 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
               h.subtreetags,
               :newDimensionSpacePointHash AS dimensionspacepointhash
             FROM
-                {$this->hierarchyRelationStatement->where('h.dimensionspacepointhash = :sourceDimensionSpacePointHash')->toSql()} h
-        SQL;
+              {$this->hierarchyRelationStatement->where('h.dimensionspacepointhash = :sourceDimensionSpacePointHash')->toSql()} h
+            SQL;
         try {
             $this->dbal->executeStatement($insertHierarchyRelationsStatement, [
                 'contentStreamLayers' => $this->getContentStreamLayers($event)->toIntArray(),
@@ -529,7 +530,7 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
               :newDimensionSpacePointHash AS dimensionspacepointhash
             FROM {$this->hierarchyRelationStatement->where('h.dimensionspacepointhash = :originalDimensionSpacePointHash')->toSql()} AS h
             ON DUPLICATE KEY UPDATE dimensionspacepointhash = VALUES(dimensionspacepointhash)
-        SQL;
+            SQL;
         try {
             $this->dbal->executeStatement($updateHierarchyRelationsStatement, [
                 'originalDimensionSpacePointHash' => $event->source->hash,
@@ -943,12 +944,12 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
                   h.dimensionspacepointhash,
                   :targetContentStreamLayer as contentstreamlayer
                 FROM
-                    {$this->hierarchyRelationStatement->toSql()} h
+                  {$this->hierarchyRelationStatement->toSql()} h
                 WHERE 
-                    :originalNodeAnchor IN (h.childnodeanchor, h.parentnodeanchor)
-                    AND h.contentstreamlayer IN (:contentStreamLayers)
+                  :originalNodeAnchor IN (h.childnodeanchor, h.parentnodeanchor)
+                  AND h.contentstreamlayer IN (:contentStreamLayers)
                 ON DUPLICATE KEY UPDATE parentnodeanchor = VALUES(parentnodeanchor), childnodeanchor = VALUES(childnodeanchor)
-            SQL;
+                SQL;
 
             try {
                 $this->dbal->executeStatement($copyHierarchyRelationStatement, [
