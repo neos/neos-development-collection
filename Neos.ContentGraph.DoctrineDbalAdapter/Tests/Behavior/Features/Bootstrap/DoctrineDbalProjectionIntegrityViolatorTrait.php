@@ -14,12 +14,9 @@ declare(strict_types=1);
 
 use Behat\Gherkin\Node\PyStringNode;
 use Behat\Gherkin\Node\TableNode;
-use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Exception as DBALException;
 use Doctrine\DBAL\Exception\InvalidArgumentException;
-use Neos\ContentGraph\DoctrineDbalAdapter\ContentGraphTableNames;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\ContentStreamLayer;
-use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\ContentStreamLayers;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\NodeFactory;
 use Neos\ContentGraph\DoctrineDbalAdapter\Tests\Behavior\Features\Bootstrap\Helpers\TestingNodeAggregateId;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
@@ -27,7 +24,6 @@ use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
 use Neos\ContentRepository\Core\Feature\SubtreeTagging\Dto\SubtreeTag;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
-use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\CRTestSuiteRuntimeVariables;
 use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\ProjectionIntegrityViolationDetectionTrait;
 use PHPUnit\Framework\Assert;
 
@@ -36,10 +32,6 @@ use PHPUnit\Framework\Assert;
  */
 trait DoctrineDbalProjectionIntegrityViolatorTrait
 {
-    use CRTestSuiteRuntimeVariables;
-
-    private Connection $dbal;
-
     /**
      * @template T of object
      * @param class-string<T> $className
@@ -47,18 +39,6 @@ trait DoctrineDbalProjectionIntegrityViolatorTrait
      * @return T
      */
     abstract private function getObject(string $className): object;
-
-    private function tableNames(): ContentGraphTableNames
-    {
-        return ContentGraphTableNames::create(
-            $this->currentContentRepository->id
-        );
-    }
-
-    public function setupDbalGraphAdapterIntegrityViolationTrait()
-    {
-        $this->dbal = $this->getObject(Connection::class);
-    }
 
     /**
      * @When the content stream :contentStreamId was removed without layer cleanup
@@ -364,18 +344,6 @@ trait DoctrineDbalProjectionIntegrityViolatorTrait
         }
 
         return $result;
-    }
-
-    private function getContentStreamLayers(ContentStreamId $contentStreamId): ContentStreamLayers
-    {
-        return ContentStreamLayers::fromArray(
-            $this->dbal->executeQuery(
-                'SELECT contentstreamlayer FROM ' . $this->tableNames()->contentStreamLayer() . ' WHERE contentstreamid = :contentStreamId',
-                [
-                    'contentStreamId' => $contentStreamId->value,
-                ]
-            )->fetchFirstColumn()
-        );
     }
 
     private function requireSingleWriteLayer(ContentStreamId $contentStreamId): ContentStreamLayer
