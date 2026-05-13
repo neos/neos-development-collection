@@ -110,11 +110,11 @@ Feature: Subtree tags are only inserted to the current write layer if differing 
 
   Scenario: Untag a node in user where its child node and descendants are still tagged via live
     When the command TagSubtree is executed with payload:
-      | Key                          | Value                        |
-      | workspaceName                | "live"                       |
-      | nodeAggregateId              | "sir-nodeward-nodington-iii" |
-      | nodeVariantSelectionStrategy | "allSpecializations"         |
-      | tag                          | "tag1"                       |
+      | Key                          | Value                       |
+      | workspaceName                | "live"                      |
+      | nodeAggregateId              | "lady-abigail-nodenborough" |
+      | nodeVariantSelectionStrategy | "allSpecializations"        |
+      | tag                          | "tag1"                      |
 
     When the command TagSubtree is executed with payload:
       | Key                          | Value                    |
@@ -132,11 +132,11 @@ Feature: Subtree tags are only inserted to the current write layer if differing 
       | baseWorkspaceName  | "live"       |
       | newContentStreamId | "user-cs-id" |
     When the command UntagSubtree is executed with payload:
-      | Key                          | Value                        |
-      | workspaceName                | "user"                       |
-      | nodeAggregateId              | "sir-nodeward-nodington-iii" |
-      | nodeVariantSelectionStrategy | "allSpecializations"         |
-      | tag                          | "tag1"                       |
+      | Key                          | Value                    |
+      | workspaceName                | "user"                   |
+      | nodeAggregateId              | "sir-david-nodenborough" |
+      | nodeVariantSelectionStrategy | "allSpecializations"     |
+      | tag                          | "tag1"                   |
 
     And I am in workspace "user"
     # All 4 covered DSPs of the single node
