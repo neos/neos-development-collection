@@ -68,6 +68,7 @@ use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphProjectionInterface;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphReadModelInterface;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodeTags;
+use Neos\ContentRepository\Core\Projection\ContentGraph\SimulationContentGraphProjectionInterface;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Timestamps;
 use Neos\ContentRepository\Core\Projection\ProjectionStatus;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateClassification;
@@ -80,7 +81,7 @@ use Neos\EventStore\Model\EventEnvelope;
 /**
  * @internal but the graph projection is api
  */
-final class DoctrineDbalContentGraphProjection implements ContentGraphProjectionInterface
+final class DoctrineDbalContentGraphProjection implements ContentGraphProjectionInterface, SimulationContentGraphProjectionInterface
 {
     use ContentStream;
     use NodeMove;
@@ -99,7 +100,8 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
         private readonly ContentGraphTableNames $tableNames,
         private readonly DimensionSpacePointsRepository $dimensionSpacePointsRepository,
         private readonly ContentStreamLayerFinder $contentStreamLayerFinder,
-        private readonly ContentGraphReadModelAdapter $contentGraphReadModel
+        private readonly ContentGraphReadModelAdapter $contentGraphReadModel,
+        private readonly bool $isInSimulation
     ) {
         $this->hierarchyRelationStatement = HierarchyRelationStatement::for($this->tableNames);
     }
@@ -188,18 +190,23 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
                 $event instanceof ContentStreamWasForked
                 || $event instanceof ContentStreamWasCreated
             )
+            && !$this->isInSimulation
         ) {
             $this->updateContentStreamVersion($event->getContentStreamId(), $eventEnvelope->version, $event instanceof PublishableToWorkspaceInterface);
         }
     }
 
-    public function close(): void
+    public function stopSimulation(): void
     {
         $this->dbal->close();
     }
 
-    public function withSimulation(): self
+    public function withSimulation(): SimulationContentGraphProjectionInterface
     {
+        if ($this->isInSimulation) {
+            throw new \RuntimeException(sprintf('Is in simulation already'), 1778705684);
+        }
+
         $newConnection = DriverManager::getConnection(
             $this->dbal->getParams()
         );
@@ -221,7 +228,8 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
                 $newConnection,
                 $this->tableNames
             ),
-            contentGraphReadModel: $this->contentGraphReadModel->withSimulation($newConnection)
+            contentGraphReadModel: $this->contentGraphReadModel->withSimulation($newConnection),
+            isInSimulation: true,
         );
         // todo close connection
     }

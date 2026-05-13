@@ -12,6 +12,7 @@ use Neos\ContentRepository\Core\Feature\RebaseableCommand;
 use Neos\ContentRepository\Core\Feature\WorkspaceRebase\ConflictingEvents;
 use Neos\ContentRepository\Core\Feature\WorkspaceRebase\ConflictingEvent;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphProjectionInterface;
+use Neos\ContentRepository\Core\Projection\ContentGraph\SimulationContentGraphProjectionInterface;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\EventStore\Helper\InMemoryEventStore;
 use Neos\EventStore\Model\Event\EventMetadata;
@@ -50,7 +51,7 @@ final class CommandSimulator
     private readonly InMemoryEventStore $inMemoryEventStore;
 
     public function __construct(
-        private readonly ContentGraphProjectionInterface $contentRepositoryProjection,
+        private readonly SimulationContentGraphProjectionInterface $contentRepositoryProjection,
         private readonly EventNormalizer $eventNormalizer,
         private readonly CommandBus $commandBus,
         private readonly WorkspaceName $workspaceNameToSimulateIn,
@@ -61,7 +62,7 @@ final class CommandSimulator
 
     public function free(): void
     {
-        $this->contentRepositoryProjection->close();
+        $this->contentRepositoryProjection->stopSimulation();
     }
 
     /**
