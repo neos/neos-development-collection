@@ -71,6 +71,9 @@ final readonly class ContentGraphReadModelAdapter implements ContentGraphReadMod
         $firstRow = reset($rows);
         $currentContentStreamId = ContentStreamId::fromString($firstRow['currentContentStreamId']);
         $contentStreamLayers = ContentStreamLayers::fromArray(array_column($rows, 'contentStreamLayer'));
+        if (HackyProjectionStates::isInSimulation() && $workspaceName->equals(HackyProjectionStates::$currentWorkspaceForPublication)) {
+            $contentStreamLayers =  ContentStreamLayers::from(HackyProjectionStates::$temporaryLayer, ...$contentStreamLayers->items);
+        }
         return new ContentGraph($this->dbal, $this->nodeFactory, $this->contentRepositoryId, $this->nodeTypeManager, $this->tableNames, $workspaceName, $currentContentStreamId, $contentStreamLayers);
     }
 

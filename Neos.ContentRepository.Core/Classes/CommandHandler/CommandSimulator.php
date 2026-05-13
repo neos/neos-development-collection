@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Core\CommandHandler;
 
+use Neos\ContentGraph\DoctrineDbalAdapter\HackyProjectionStates;
 use Neos\ContentRepository\Core\EventStore\DecoratedEvent;
 use Neos\ContentRepository\Core\EventStore\EventInterface;
 use Neos\ContentRepository\Core\EventStore\EventNormalizer;
@@ -68,6 +69,7 @@ final class CommandSimulator
      */
     public function run(callable $fn): mixed
     {
+        HackyProjectionStates::$currentWorkspaceForPublication = $this->workspaceNameToSimulateIn;
         return $this->contentRepositoryProjection->inSimulation(fn () => $fn($this->handle(...)));
     }
 

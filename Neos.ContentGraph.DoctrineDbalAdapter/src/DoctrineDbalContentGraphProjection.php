@@ -28,6 +28,7 @@ use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
 use Neos\ContentRepository\Core\EventStore\EventInterface;
 use Neos\ContentRepository\Core\EventStore\InitiatingEventMetadata;
 use Neos\ContentRepository\Core\Feature\Common\EmbedsContentStreamId;
+use Neos\ContentRepository\Core\Feature\Common\EmbedsWorkspaceName;
 use Neos\ContentRepository\Core\Feature\Common\InterdimensionalSiblings;
 use Neos\ContentRepository\Core\Feature\Common\PublishableToWorkspaceInterface;
 use Neos\ContentRepository\Core\Feature\ContentStreamClosing\Event\ContentStreamWasClosed;
@@ -147,6 +148,10 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
 
     public function apply(EventInterface $event, EventEnvelope $eventEnvelope): void
     {
+        if (HackyProjectionStates::isInSimulation()) {
+            $this->dbal->beginTransaction();
+        }
+
         match ($event::class) {
             ContentStreamWasClosed::class => $this->whenContentStreamWasClosed($event),
             ContentStreamWasCreated::class => $this->whenContentStreamWasCreated($event),
@@ -187,22 +192,41 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
                 $event instanceof ContentStreamWasForked
                 || $event instanceof ContentStreamWasCreated
             )
+            && !HackyProjectionStates::isInSimulation()
         ) {
             $this->updateContentStreamVersion($event->getContentStreamId(), $eventEnvelope->version, $event instanceof PublishableToWorkspaceInterface);
+        }
+
+        if (HackyProjectionStates::isInSimulation()) {
+            $this->dbal->commit();
         }
     }
 
     public function inSimulation(\Closure $fn): mixed
     {
-        if ($this->dbal->isTransactionActive()) {
-            throw new \RuntimeException(sprintf('Invoking %s is not allowed to be invoked recursively. Current transaction nesting %d.', __FUNCTION__, $this->dbal->getTransactionNestingLevel()));
-        }
         $this->dbal->beginTransaction();
+
+        $this->dbal->insert($this->tableNames->contentStreamLayer(), [
+            'contentStreamId' => 'not-existing-only-claim-layer-id',
+        ]);
+        $temporaryLayer = ContentStreamLayer::fromInt((int)$this->dbal->lastInsertId());
+        $this->dbal->delete($this->tableNames->contentStreamLayer(), [
+            'contentStreamId' => 'not-existing-only-claim-layer-id',
+        ]);
+        HackyProjectionStates::$temporaryLayer = $temporaryLayer;
+
+        $this->dbal->commit();
+
         try {
             return $fn();
         } finally {
-            // unsets rollback only flag and allows the connection to work regular again
-            $this->dbal->close();
+            $this->dbal->beginTransaction();
+            // TODO also cleanup node rows relation rows everything
+            // $this->dbal->delete($this->tableNames->hierarchyRelation(), [
+            //     'contentStreamLayer' => $temporaryLayer->value,
+            // ]);
+            $this->dbal->commit();
+            HackyProjectionStates::reset();
         }
     }
 
@@ -863,9 +887,13 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
 
     /** --------------------------------- */
 
-    public function getContentStreamLayers(EmbedsContentStreamId $event): ContentStreamLayers
+    public function getContentStreamLayers(EmbedsContentStreamId&EmbedsWorkspaceName $event): ContentStreamLayers
     {
-        return $this->contentStreamLayerFinder->getContentStreamLayers($event->getContentStreamId());
+        $layers = $this->contentStreamLayerFinder->getContentStreamLayers($event->getContentStreamId());
+        if (HackyProjectionStates::isInSimulation() && $event->getWorkspaceName()->equals(HackyProjectionStates::$currentWorkspaceForPublication)) {
+            return ContentStreamLayers::from(HackyProjectionStates::$temporaryLayer, ...$layers->items);
+        }
+        return $layers;
     }
 
     /**
