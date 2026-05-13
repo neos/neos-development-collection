@@ -46,6 +46,17 @@ final readonly class ContentGraphReadModelAdapter implements ContentGraphReadMod
     ) {
     }
 
+    public function withSimulation(Connection $connection): self
+    {
+        return new self(
+            dbal: $connection,
+            nodeFactory: $this->nodeFactory,
+            contentRepositoryId: $this->contentRepositoryId,
+            nodeTypeManager: $this->nodeTypeManager,
+            tableNames: $this->tableNames,
+        );
+    }
+
     public function getContentGraph(WorkspaceName $workspaceName): ContentGraph
     {
         $currentContentStreamIdStatement = <<<SQL

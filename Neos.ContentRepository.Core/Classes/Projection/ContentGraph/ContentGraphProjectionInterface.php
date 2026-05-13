@@ -15,7 +15,7 @@ interface ContentGraphProjectionInterface extends ProjectionInterface
     public function getState(): ContentGraphReadModelInterface;
 
     /**
-     * Dedicated method for simulated rebasing
+     * Dedicated method for simulated rebasing TODO
      *
      * The implementation must ensure that the function passed is invoked
      * and that any changes via {@see ContentGraphProjectionInterface::apply()}
@@ -27,10 +27,6 @@ interface ContentGraphProjectionInterface extends ProjectionInterface
      * This is generally done by leveraging a transaction and rollback.
      *
      * Used to simulate commands for publishing: {@see \Neos\ContentRepository\Core\CommandHandler\CommandSimulator}
-     *
-     * @template T
-     * @param \Closure(): T $fn
-     * @return T the return value of $fn
      */
-    public function inSimulation(\Closure $fn): mixed;
+    public function withSimulation(): self;
 }

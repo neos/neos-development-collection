@@ -59,16 +59,9 @@ final class CommandSimulator
         $this->conflictingEvents = new ConflictingEvents();
     }
 
-    /**
-     * Start the simulation for the passed function which receives as argument the {@see handle} function.
-     *
-     * @template T
-     * @param callable(callable(RebaseableCommand): void): T $fn
-     * @return T the return value of $fn
-     */
-    public function run(callable $fn): mixed
+    public function free(): void
     {
-        return $this->contentRepositoryProjection->inSimulation(fn () => $fn($this->handle(...)));
+        $this->contentRepositoryProjection->close();
     }
 
     /**
@@ -77,7 +70,7 @@ final class CommandSimulator
      * We will automatically copy given commands to the workspace this simulation
      * is running in to ensure consistency in the simulations constraint checks.
      */
-    private function handle(RebaseableCommand $rebaseableCommand): void
+    public function handle(RebaseableCommand $rebaseableCommand): void
     {
         // FIXME: Check if workspace already matches and skip this, e.g. $commandInWorkspace = $command->getWorkspaceName()->equals($this->workspaceNameToSimulateIn) ? $command : $command->createCopyForWorkspace($this->workspaceNameToSimulateIn);
         // when https://github.com/neos/neos-development-collection/pull/5298 is merged
