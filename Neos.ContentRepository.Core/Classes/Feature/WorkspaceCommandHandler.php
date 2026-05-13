@@ -214,13 +214,11 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
 
         $commandSimulator = $this->commandSimulatorFactory->createSimulatorForWorkspace($baseWorkspace->workspaceName);
 
-        $commandSimulator->run(
-            static function ($handle) use ($rebaseableCommands): void {
-                foreach ($rebaseableCommands as $rebaseableCommand) {
-                    $handle($rebaseableCommand);
-                }
-            }
-        );
+        foreach ($rebaseableCommands as $rebaseableCommand) {
+            $commandSimulator->handle($rebaseableCommand);
+        }
+
+        $commandSimulator->free();
 
         if ($commandSimulator->hasConflicts()) {
             $workspaceRebaseFailed = WorkspaceRebaseFailed::duringPublish($commandSimulator->getConflictingEvents());
@@ -384,13 +382,11 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
 
         $commandSimulator = $this->commandSimulatorFactory->createSimulatorForWorkspace($baseWorkspace->workspaceName);
 
-        $commandSimulator->run(
-            static function ($handle) use ($rebaseableCommands): void {
-                foreach ($rebaseableCommands as $rebaseableCommand) {
-                    $handle($rebaseableCommand);
-                }
-            }
-        );
+        foreach ($rebaseableCommands as $rebaseableCommand) {
+            $commandSimulator->handle($rebaseableCommand);
+        }
+
+        $commandSimulator->free();
 
         if (
             $command->rebaseErrorHandlingStrategy === RebaseErrorHandlingStrategy::STRATEGY_FAIL
@@ -473,18 +469,15 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
 
         $commandSimulator = $this->commandSimulatorFactory->createSimulatorForWorkspace($baseWorkspace->workspaceName);
 
-        $highestSequenceNumberForMatching = $commandSimulator->run(
-            static function ($handle) use ($commandSimulator, $matchingCommands, $remainingCommands): SequenceNumber {
-                foreach ($matchingCommands as $matchingCommand) {
-                    $handle($matchingCommand);
-                }
-                $highestSequenceNumberForMatching = $commandSimulator->currentSequenceNumber();
-                foreach ($remainingCommands as $remainingCommand) {
-                    $handle($remainingCommand);
-                }
-                return $highestSequenceNumberForMatching;
-            }
-        );
+        foreach ($matchingCommands as $matchingCommand) {
+            $commandSimulator->handle($matchingCommand);
+        }
+        $highestSequenceNumberForMatching = $commandSimulator->currentSequenceNumber();
+        foreach ($remainingCommands as $remainingCommand) {
+            $commandSimulator->handle($remainingCommand);
+        }
+
+        $commandSimulator->free();
 
         if ($commandSimulator->hasConflicts()) {
             $workspaceRebaseFailed = match ($workspace->status) {
@@ -609,13 +602,11 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
 
         $commandSimulator = $this->commandSimulatorFactory->createSimulatorForWorkspace($baseWorkspace->workspaceName);
 
-        $commandSimulator->run(
-            static function ($handle) use ($commandsToKeep): void {
-                foreach ($commandsToKeep as $matchingCommand) {
-                    $handle($matchingCommand);
-                }
-            }
-        );
+        foreach ($commandsToKeep as $matchingCommand) {
+            $commandSimulator->handle($matchingCommand);
+        }
+
+        $commandSimulator->free();
 
         if ($commandSimulator->hasConflicts()) {
             $workspaceRebaseFailed = match ($workspace->status) {

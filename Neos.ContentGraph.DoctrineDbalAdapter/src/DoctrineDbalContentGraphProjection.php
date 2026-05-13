@@ -6,6 +6,7 @@ namespace Neos\ContentGraph\DoctrineDbalAdapter;
 
 use Doctrine\DBAL\ArrayParameterType;
 use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\DriverManager;
 use Doctrine\DBAL\Exception as DBALException;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\ContentStreamLayer;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\ContentStreamLayers;
@@ -98,7 +99,7 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
         private readonly ContentGraphTableNames $tableNames,
         private readonly DimensionSpacePointsRepository $dimensionSpacePointsRepository,
         private readonly ContentStreamLayerFinder $contentStreamLayerFinder,
-        private readonly ContentGraphReadModelInterface $contentGraphReadModel
+        private readonly ContentGraphReadModelAdapter $contentGraphReadModel
     ) {
         $this->hierarchyRelationStatement = HierarchyRelationStatement::for($this->tableNames);
     }
@@ -192,19 +193,37 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
         }
     }
 
-    public function inSimulation(\Closure $fn): mixed
+    public function close(): void
     {
-        if ($this->dbal->isTransactionActive()) {
-            throw new \RuntimeException(sprintf('Invoking %s is not allowed to be invoked recursively. Current transaction nesting %d.', __FUNCTION__, $this->dbal->getTransactionNestingLevel()));
-        }
-        $this->dbal->beginTransaction();
-        $this->dbal->setRollbackOnly();
-        try {
-            return $fn();
-        } finally {
-            // unsets rollback only flag and allows the connection to work regular again
-            $this->dbal->rollBack();
-        }
+        $this->dbal->close();
+    }
+
+    public function withSimulation(): self
+    {
+        $newConnection = DriverManager::getConnection(
+            $this->dbal->getParams()
+        );
+        $newConnection->beginTransaction();
+        $newConnection->setRollbackOnly();
+
+        return new self(
+            dbal: $newConnection,
+            projectionContentGraph: new ProjectionContentGraph(
+                $newConnection,
+                $this->tableNames
+            ),
+            tableNames: $this->tableNames,
+            dimensionSpacePointsRepository: new DimensionSpacePointsRepository(
+                $newConnection,
+                $this->tableNames
+            ),
+            contentStreamLayerFinder: new ContentStreamLayerFinder(
+                $newConnection,
+                $this->tableNames
+            ),
+            contentGraphReadModel: $this->contentGraphReadModel->withSimulation($newConnection)
+        );
+        // todo close connection
     }
 
     private function whenContentStreamWasClosed(ContentStreamWasClosed $event): void
