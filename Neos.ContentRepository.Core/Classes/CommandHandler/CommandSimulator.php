@@ -116,6 +116,7 @@ final class CommandSimulator
         // because this is only used in memory during the partial publish or rebase operation; so it cannot be written to
         // concurrently.
         // HINT: We cannot use $eventsToPublish->expectedVersion, because this is based on the PERSISTENT event stream (having different numbers)
+        // Also as part of an optimization a graph adapter might choose to not update the content stream version as its irrelevant during simulation.
         $this->inMemoryEventStore->commit(
             $eventsToPublish->streamName,
             $normalizedEvents,

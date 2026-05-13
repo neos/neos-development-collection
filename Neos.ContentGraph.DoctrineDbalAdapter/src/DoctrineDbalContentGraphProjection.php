@@ -6,7 +6,6 @@ namespace Neos\ContentGraph\DoctrineDbalAdapter;
 
 use Doctrine\DBAL\ArrayParameterType;
 use Doctrine\DBAL\Connection;
-use Doctrine\DBAL\DriverManager;
 use Doctrine\DBAL\Exception as DBALException;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\ContentStreamLayer;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\ContentStreamLayers;
@@ -190,6 +189,8 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
                 $event instanceof ContentStreamWasForked
                 || $event instanceof ContentStreamWasCreated
             )
+            // optimises unnecessary write to the connection which has fatal consequences https://github.com/neos/neos-development-collection/issues/5713
+            // during command simulation we don't use the content stream version, and thus we can ignore updating this value in the transaction too.
             && !$this->isInSimulation
         ) {
             $this->updateContentStreamVersion($event->getContentStreamId(), $eventEnvelope->version, $event instanceof PublishableToWorkspaceInterface);
@@ -198,40 +199,27 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
 
     public function stopSimulation(): void
     {
-        $this->dbal->close();
+        $this->dbal->rollBack();
     }
 
     public function withSimulation(): SimulationContentGraphProjectionInterface
     {
         if ($this->isInSimulation) {
-            throw new \RuntimeException(sprintf('Is in simulation already'), 1778705684);
+            throw new \RuntimeException('DBAL ContentGraph Projection is in simulation already', 1778705684);
         }
 
-        $newConnection = DriverManager::getConnection(
-            $this->dbal->getParams()
-        );
-        $newConnection->beginTransaction();
-        $newConnection->setRollbackOnly();
+        $this->dbal->beginTransaction();
+        $this->dbal->setRollbackOnly();
 
         return new self(
-            dbal: $newConnection,
-            projectionContentGraph: new ProjectionContentGraph(
-                $newConnection,
-                $this->tableNames
-            ),
+            dbal: $this->dbal,
+            projectionContentGraph: $this->projectionContentGraph,
             tableNames: $this->tableNames,
-            dimensionSpacePointsRepository: new DimensionSpacePointsRepository(
-                $newConnection,
-                $this->tableNames
-            ),
-            contentStreamLayerFinder: new ContentStreamLayerFinder(
-                $newConnection,
-                $this->tableNames
-            ),
-            contentGraphReadModel: $this->contentGraphReadModel->withSimulation($newConnection),
+            dimensionSpacePointsRepository: $this->dimensionSpacePointsRepository,
+            contentStreamLayerFinder: $this->contentStreamLayerFinder,
+            contentGraphReadModel: $this->contentGraphReadModel,
             isInSimulation: true,
         );
-        // todo close connection
     }
 
     private function whenContentStreamWasClosed(ContentStreamWasClosed $event): void
