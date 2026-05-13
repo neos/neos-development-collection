@@ -8,13 +8,14 @@ use Neos\ContentRepository\Core\EventStore\DecoratedEvent;
 use Neos\ContentRepository\Core\EventStore\EventInterface;
 use Neos\ContentRepository\Core\EventStore\EventNormalizer;
 use Neos\ContentRepository\Core\EventStore\EventsToPublish;
+use Neos\ContentRepository\Core\Feature\Common\PublishableToWorkspaceInterface;
 use Neos\ContentRepository\Core\Feature\RebaseableCommand;
 use Neos\ContentRepository\Core\Feature\WorkspaceRebase\ConflictingEvents;
 use Neos\ContentRepository\Core\Feature\WorkspaceRebase\ConflictingEvent;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphProjectionInterface;
+use Neos\ContentRepository\Core\Projection\ContentGraph\SimulationContentGraphProjectionInterface;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\EventStore\Helper\InMemoryEventStore;
-use Neos\EventStore\Model\Event\EventMetadata;
 use Neos\EventStore\Model\Event\SequenceNumber;
 use Neos\EventStore\Model\Events;
 use Neos\EventStore\Model\EventStream\EventStreamInterface;
@@ -50,7 +51,7 @@ final class CommandSimulator
     private readonly InMemoryEventStore $inMemoryEventStore;
 
     public function __construct(
-        private readonly ContentGraphProjectionInterface $contentRepositoryProjection,
+        private readonly SimulationContentGraphProjectionInterface $simulatedContentGraphProjection,
         private readonly EventNormalizer $eventNormalizer,
         private readonly CommandBus $commandBus,
         private readonly WorkspaceName $workspaceNameToSimulateIn,
@@ -59,16 +60,9 @@ final class CommandSimulator
         $this->conflictingEvents = new ConflictingEvents();
     }
 
-    /**
-     * Start the simulation for the passed function which receives as argument the {@see handle} function.
-     *
-     * @template T
-     * @param callable(callable(RebaseableCommand): void): T $fn
-     * @return T the return value of $fn
-     */
-    public function run(callable $fn): mixed
+    public function close(): void
     {
-        return $this->contentRepositoryProjection->inSimulation(fn () => $fn($this->handle(...)));
+        $this->simulatedContentGraphProjection->stopSimulation();
     }
 
     /**
@@ -77,7 +71,7 @@ final class CommandSimulator
      * We will automatically copy given commands to the workspace this simulation
      * is running in to ensure consistency in the simulations constraint checks.
      */
-    private function handle(RebaseableCommand $rebaseableCommand): void
+    public function handle(RebaseableCommand $rebaseableCommand): void
     {
         // FIXME: Check if workspace already matches and skip this, e.g. $commandInWorkspace = $command->getWorkspaceName()->equals($this->workspaceNameToSimulateIn) ? $command : $command->createCopyForWorkspace($this->workspaceNameToSimulateIn);
         // when https://github.com/neos/neos-development-collection/pull/5298 is merged
@@ -122,6 +116,7 @@ final class CommandSimulator
         // because this is only used in memory during the partial publish or rebase operation; so it cannot be written to
         // concurrently.
         // HINT: We cannot use $eventsToPublish->expectedVersion, because this is based on the PERSISTENT event stream (having different numbers)
+        // Also as part of an optimization a graph adapter might choose to not update the content stream version as its irrelevant during simulation.
         $this->inMemoryEventStore->commit(
             $eventsToPublish->streamName,
             $normalizedEvents,
@@ -136,7 +131,10 @@ final class CommandSimulator
 
         foreach ($eventStream as $eventEnvelope) {
             $event = $this->eventNormalizer->denormalize($eventEnvelope->event);
-            $this->contentRepositoryProjection->apply($event, $eventEnvelope);
+            if (!$event instanceof PublishableToWorkspaceInterface) {
+                throw new \RuntimeException(sprintf('Fatal rebaseable command yielded non publishable event %s', $event::class), 1778750125);
+            }
+            $this->simulatedContentGraphProjection->apply($event, $eventEnvelope);
         }
     }
 
