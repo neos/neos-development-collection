@@ -116,7 +116,6 @@ final readonly class NodeQueryBuilder
         return $this->createQueryBuilder()
             ->select('pn.*, ch.subtreetags')
             ->from($this->tableNames->node(), 'pn')
-            // todo we calculate hierarchy rows twice -> optimise
             ->innerJoin('pn', $this->hierarchyRelationStatement->where('h.dimensionspacepointhash = :dimensionSpacePointHash')->toSql(), 'ph', 'ph.parentnodeanchor = pn.relationanchorpoint')
             ->innerJoin('pn', $this->tableNames->node(), 'cn', 'cn.relationanchorpoint = ph.childnodeanchor')
             ->innerJoin('pn', $this->hierarchyRelationStatement->where('h.dimensionspacepointhash = :dimensionSpacePointHash')->toSql(), 'ch', 'ch.childnodeanchor = pn.relationanchorpoint')
