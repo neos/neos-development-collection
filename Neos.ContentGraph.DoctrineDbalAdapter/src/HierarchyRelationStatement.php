@@ -41,20 +41,20 @@ final readonly class HierarchyRelationStatement
 
     public function toSql(): string
     {
-        $additionalWhereClauses = $this->whereClauses === [] ? '' : sprintf("    WHERE %s\n", join("\n    AND ", $this->whereClauses));
+        $additionalWhereClauses = $this->whereClauses === [] ? '' : sprintf("  WHERE %s\n", join("\n  AND ", $this->whereClauses));
 
         return <<<SQL
-        (SELECT h.*
-            FROM {$this->tableNames->hierarchyRelation()} AS h
-            INNER JOIN (
+            (SELECT h.*
+              FROM {$this->tableNames->hierarchyRelation()} AS h
+              INNER JOIN (
                 SELECT id, MAX(contentstreamlayer) AS contentstreamlayer
-                    FROM {$this->tableNames->hierarchyRelation()} FORCE INDEX (UNIQ_id_layer)
-                        WHERE (contentstreamlayer IN (:contentStreamLayers))
+                  FROM {$this->tableNames->hierarchyRelation()} FORCE INDEX (UNIQ_id_layer)
+                    WHERE (contentstreamlayer IN (:contentStreamLayers))
                 GROUP BY id
-            ) AS readHierarchy
+              ) AS readHierarchy
                 ON h.id = readHierarchy.id AND h.contentstreamlayer = readHierarchy.contentstreamlayer
-        {$additionalWhereClauses
-        })
-        SQL;
+            {$additionalWhereClauses
+            })
+            SQL;
     }
 }
