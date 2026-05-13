@@ -139,6 +139,15 @@ trait SubtreeTagging
             contentstreamlayer
         )
         SELECT
+            h2.id,
+            h2.parentnodeanchor,
+            h2.childnodeanchor,
+            h2.position,
+            h2.subtreetags,
+            h2.dimensionspacepointhash,
+            h2.contentstreamlayer
+        FROM (
+          SELECT
             h.id,
             h.parentnodeanchor,
             h.childnodeanchor,
@@ -157,9 +166,10 @@ trait SubtreeTagging
                   LIMIT 1) as containsTagSubQuery
                 ), JSON_SET(subtreetags, :tagPath, null), JSON_REMOVE(subtreetags, :tagPath)
             ) as subtreetags,
+            h.subtreetags as currentsubtreetags,
             h.dimensionspacepointhash,
             :targetContentStreamLayer as contentstreamlayer
-        FROM {$this->hierarchyRelationStatement->toSql()} h
+          FROM {$this->hierarchyRelationStatement->toSql()} h
             JOIN (
                 -- todo use new actual id?
               WITH RECURSIVE cte (id, dsp) AS (
@@ -182,7 +192,9 @@ trait SubtreeTagging
               SELECT * FROM cte
             ) subquery ON h.dimensionspacepointhash = subquery.dsp
                 AND h.childnodeanchor = subquery.id
-          ON DUPLICATE KEY UPDATE subtreetags = VALUES(subtreetags)
+        ) AS h2
+        WHERE NOT {$this->jsonEqualsSql('h2.subtreetags', 'h2.currentsubtreetags')}
+        ON DUPLICATE KEY UPDATE subtreetags = VALUES(subtreetags)
         SQL;
         try {
             $this->dbal->executeStatement($removeTagStatement, [
