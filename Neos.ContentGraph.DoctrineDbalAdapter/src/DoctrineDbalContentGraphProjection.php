@@ -198,12 +198,11 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
             throw new \RuntimeException(sprintf('Invoking %s is not allowed to be invoked recursively. Current transaction nesting %d.', __FUNCTION__, $this->dbal->getTransactionNestingLevel()));
         }
         $this->dbal->beginTransaction();
-        $this->dbal->setRollbackOnly();
         try {
             return $fn();
         } finally {
             // unsets rollback only flag and allows the connection to work regular again
-            $this->dbal->rollBack();
+            $this->dbal->close();
         }
     }
 
