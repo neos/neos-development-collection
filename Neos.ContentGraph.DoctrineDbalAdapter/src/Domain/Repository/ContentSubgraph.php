@@ -581,13 +581,16 @@ final class ContentSubgraph implements ContentSubgraphInterface
             ->from($this->hierarchyRelationStatement->where('h.dimensionspacepointhash = :dimensionSpacePointHash')->toSql(), 'sh')
             ->innerJoin('sh', $this->nodeQueryBuilder->tableNames->node(), 'sn', 'sn.relationanchorpoint = sh.childnodeanchor')
             ->innerJoin('sn', $this->nodeQueryBuilder->tableNames->referenceRelation(), 'r', 'r.nodeanchorpoint = sn.relationanchorpoint')
-            // todo use join to instead of query
-            ->where('r.destinationnodeaggregateid = (
-                SELECT nodeaggregateid FROM ' . $this->nodeQueryBuilder->tableNames->node() . ' dn
-                JOIN ' . $this->hierarchyRelationStatement->where('h.dimensionspacepointhash = :dimensionSpacePointHash')->toSql() . ' dh ON dn.relationanchorpoint = dh.childnodeanchor
-                WHERE dn.nodeaggregateid = :nodeAggregateId  '
-                . $subtreeTagConstraints . '
-            )')->setParameters($subselectParameters, $subselectTypes)
+            ->where(<<<SQL
+            r.destinationnodeaggregateid = (
+              SELECT nodeaggregateid FROM {$this->nodeQueryBuilder->tableNames->node()} dn
+                JOIN {$this->hierarchyRelationStatement->where('h.dimensionspacepointhash = :dimensionSpacePointHash')->toSql()} dh
+                  ON dn.relationanchorpoint = dh.childnodeanchor
+              WHERE dn.nodeaggregateid = :nodeAggregateId
+                {$subtreeTagConstraints}
+              LIMIT 1
+            )
+            SQL)->setParameters($subselectParameters, $subselectTypes)
             ->setParameter('dimensionSpacePointHash', $this->dimensionSpacePoint->hash)
             ->setParameter('contentStreamLayers', $this->contentStreamLayers->toIntArray(), ArrayParameterType::INTEGER);
         $this->addSubtreeTagConstraints($queryBuilder, 'sh');
@@ -657,7 +660,6 @@ final class ContentSubgraph implements ContentSubgraphInterface
             ->innerJoin('ch', $this->nodeQueryBuilder->tableNames->node(), 'c', 'c.relationanchorpoint = ch.childnodeanchor')
             ->innerJoin('n', $this->hierarchyRelationStatement->where('h.dimensionspacepointhash = :dimensionSpacePointHash')->toSql(), 'ph', 'n.relationanchorpoint = ph.childnodeanchor')
             ->andWhere('c.nodeaggregateid = :entryNodeAggregateId');
-        // TODO subtree tag constraints on hierarchyRelationStatement!!
         $this->addSubtreeTagConstraints($queryBuilderInitial, 'ph');
         $this->addSubtreeTagConstraints($queryBuilderInitial, 'ch');
 
