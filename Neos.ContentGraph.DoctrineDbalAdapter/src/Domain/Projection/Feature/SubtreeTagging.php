@@ -46,16 +46,15 @@ trait SubtreeTagging
         FROM
           {$this->hierarchyRelationStatement->toSql()} h
           JOIN (
-            -- todo use new id?
             WITH
-              RECURSIVE cte (id, dsp) AS (
+              RECURSIVE cte (childnodeanchor, dsp) AS (
                 SELECT
                   ch.childnodeanchor,
                   ch.dimensionspacepointhash
                 FROM
                   {$this->hierarchyRelationStatement
                     ->where('h.dimensionspacepointhash in (:dimensionSpacePointHashes)')
-                    ->andWhere('NOT JSON_CONTAINS_PATH(h.subtreetags, \'one\', :tagPath)')
+                    ->andWhere("NOT JSON_CONTAINS_PATH(h.subtreetags, 'one', :tagPath)")
                     ->toSql()} ch
                   INNER JOIN {$this->tableNames->node()} n ON n.relationanchorpoint = ch.parentnodeanchor
                 WHERE
@@ -66,7 +65,7 @@ trait SubtreeTagging
                   dh.dimensionspacepointhash
                 FROM
                   cte
-                  JOIN {$this->hierarchyRelationStatement->toSql()} dh ON dh.parentnodeanchor = cte.id -- todo why not in where???? or why not to dimensionSpacePointHashes
+                  JOIN {$this->hierarchyRelationStatement->toSql()} dh ON dh.parentnodeanchor = cte.childnodeanchor
                   AND dh.dimensionspacepointhash = cte.dsp
                 WHERE
                   NOT JSON_CONTAINS_PATH(dh.subtreetags, 'one', :tagPath)
@@ -76,7 +75,7 @@ trait SubtreeTagging
             FROM
               cte
           ) subquery ON h.dimensionspacepointhash = subquery.dsp
-          AND h.childnodeanchor = subquery.id
+          AND h.childnodeanchor = subquery.childnodeanchor
         ON DUPLICATE KEY UPDATE subtreetags = VALUES(subtreetags)
         SQL;
 
@@ -191,9 +190,8 @@ trait SubtreeTagging
             FROM
               {$this->hierarchyRelationStatement->toSql()} h
               JOIN (
-                -- todo use new actual id?
                 WITH
-                  RECURSIVE cte (id, dsp) AS (
+                  RECURSIVE cte (childnodeanchor, dsp) AS (
                     SELECT
                       ph.childnodeanchor,
                       ph.dimensionspacepointhash
@@ -208,7 +206,7 @@ trait SubtreeTagging
                       dh.dimensionspacepointhash
                     FROM
                       cte
-                      JOIN {$this->hierarchyRelationStatement->toSql()} dh ON dh.parentnodeanchor = cte.id
+                      JOIN {$this->hierarchyRelationStatement->toSql()} dh ON dh.parentnodeanchor = cte.childnodeanchor
                       AND dh.dimensionspacepointhash = cte.dsp
                     WHERE
                       JSON_EXTRACT(dh.subtreetags, :tagPath) != TRUE
@@ -218,7 +216,7 @@ trait SubtreeTagging
                 FROM
                   cte
               ) subquery ON h.dimensionspacepointhash = subquery.dsp
-              AND h.childnodeanchor = subquery.id
+              AND h.childnodeanchor = subquery.childnodeanchor
           ) AS h2
         WHERE
           NOT {$this->jsonEqualsSql('h2.subtreetags', 'h2.currentsubtreetags')}
