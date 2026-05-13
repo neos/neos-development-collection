@@ -202,12 +202,6 @@ trait SubtreeTagging
 
     private function moveSubtreeTags(ContentStreamLayers $contentStreamLayers, NodeAggregateId $newParentNodeAggregateId, DimensionSpacePoint $coveredDimensionSpacePoint): void
     {
-        if ($this->dbal->getDatabasePlatform() instanceof MariaDBPlatform) {
-            $jsonEqualsSql = static fn (string $sqlExpressionA, string $sqlExpressionB) => sprintf('JSON_EQUALS(%s, %s)', $sqlExpressionA, $sqlExpressionB);
-        } else {
-            $jsonEqualsSql = static fn (string $sqlExpressionA, string $sqlExpressionB) => sprintf('(CAST(%s AS JSON) = CAST(%s AS JSON))', $sqlExpressionA, $sqlExpressionB);
-        }
-
         $moveSubtreeTagsStatement = <<<SQL
         INSERT INTO {$this->tableNames->hierarchyRelation()} (
             id,
@@ -274,7 +268,7 @@ trait SubtreeTagging
                 WHERE
                   h.childnodeanchor = r.childnodeanchor
         ) AS h2
-        WHERE NOT {$jsonEqualsSql('h2.subtreetags', 'h2.currentsubtreetags')}
+        WHERE NOT {$this->jsonEqualsSql('h2.subtreetags', 'h2.currentsubtreetags')}
         ON DUPLICATE KEY UPDATE subtreetags = VALUES(subtreetags)
         SQL;
         try {
@@ -319,5 +313,14 @@ trait SubtreeTagging
             throw new \RuntimeException(sprintf('Failed to fetch subtree tags for hierarchy parent anchor point "%s" in content subgraph "%s@%s"', $parentNodeAnchorPoint->value, $dimensionSpacePoint->toJson(), $contentStreamLayers->toDebugString()), 1704199847);
         }
         return NodeFactory::extractNodeTagsFromJson($subtreeTagsJson);
+    }
+
+    private function jsonEqualsSql(string $sqlExpressionA, string $sqlExpressionB): string
+    {
+        if ($this->dbal->getDatabasePlatform() instanceof MariaDBPlatform) {
+            return sprintf('JSON_EQUALS(%s, %s)', $sqlExpressionA, $sqlExpressionB);
+        } else {
+            return sprintf('(CAST(%s AS JSON) = CAST(%s AS JSON))', $sqlExpressionA, $sqlExpressionB);
+        }
     }
 }
