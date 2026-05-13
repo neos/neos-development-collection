@@ -194,6 +194,7 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
 
     public function inSimulation(\Closure $fn): mixed
     {
+        $this->reconnectDatabaseConnection();
         if ($this->dbal->isTransactionActive()) {
             throw new \RuntimeException(sprintf('Invoking %s is not allowed to be invoked recursively. Current transaction nesting %d.', __FUNCTION__, $this->dbal->getTransactionNestingLevel()));
         }
@@ -203,6 +204,18 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
         } finally {
             // unsets rollback only flag and allows the connection to work regular again
             $this->dbal->close();
+        }
+        $this->reconnectDatabaseConnection();
+    }
+
+
+    private function reconnectDatabaseConnection(): void
+    {
+        try {
+            $this->dbal->fetchOne('SELECT 1');
+        } catch (\Exception $_) {
+            $this->dbal->close();
+            $this->dbal->connect();
         }
     }
 

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Core\Subscription\Engine;
 
+use Doctrine\DBAL\Connection;
 use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\EventStore\EventNormalizer;
 use Neos\ContentRepository\Core\Infrastructure\PerformanceTracing\PerformanceTracerInterface;
@@ -22,6 +23,7 @@ use Neos\ContentRepository\Core\Subscription\SubscriptionStatusFilter;
 use Neos\EventStore\EventStoreInterface;
 use Neos\EventStore\Model\Event\SequenceNumber;
 use Neos\EventStore\Model\EventStream\VirtualStreamName;
+use Neos\Flow\Core\Bootstrap;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -287,6 +289,7 @@ final class SubscriptionEngine
             /** @var array<Error> $errors */
             $errors = [];
 
+            $this->reconnectDatabaseConnection();
             $this->subscriptionStore->beginTransaction();
 
             $subscriptionsToCatchup = $this->subscriptionStore->findByCriteriaForUpdate($subscriptionCriteria);
@@ -433,6 +436,7 @@ final class SubscriptionEngine
 
                 if ($continueBatching === true && $errors === []) {
                     // start new batch
+                    $this->reconnectDatabaseConnection();
                     $this->subscriptionStore->beginTransaction();
                     $subscriptionsToCatchup = $this->subscriptionStore->findByCriteriaForUpdate($subscriptionCriteria);
                 } else {
@@ -477,6 +481,17 @@ final class SubscriptionEngine
             return $closure();
         } finally {
             $this->processing = false;
+        }
+    }
+
+
+    private function reconnectDatabaseConnection(): void
+    {
+        try {
+            Bootstrap::$staticObjectManager->get(Connection::class)->fetchOne('SELECT 1');
+        } catch (\Exception $_) {
+            Bootstrap::$staticObjectManager->get(Connection::class)->close();
+            Bootstrap::$staticObjectManager->get(Connection::class)->connect();
         }
     }
 }
