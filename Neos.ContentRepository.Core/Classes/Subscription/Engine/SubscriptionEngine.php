@@ -367,6 +367,7 @@ final class SubscriptionEngine
                             $subscriber->projection->apply($domainEvent, $eventEnvelope);
                             $this->performanceTracer?->mark('Projection::apply', ['subscription' => $subscription->id->value, 'event' => $eventEnvelope->event->type->value]);
                         } catch (\Throwable $e) {
+                            throw $e;
                             // ERROR Case:
                             $errors[] = Error::create($subscription->id, $e->getMessage(), $errors === [] ? $e : null, $eventEnvelope->sequenceNumber);
                             $this->logger?->error(sprintf('Subscription Engine: Subscriber "%s" for "%s" could not process the event "%s" (sequence number: %d): %s', $subscriber::class, $subscription->id->value, $eventEnvelope->event->type->value, $eventEnvelope->sequenceNumber->value, $e->getMessage()));
