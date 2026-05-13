@@ -11,8 +11,8 @@
                 "classification": "root",
                 "nodeTypeName": "Neos.ContentRepository:Root",
                 "timestamps": {
-                    "created": "2026-05-11T14:19:00+01:00",
-                    "originalCreated": "2026-05-11T14:19:00+01:00",
+                    "created": "2026-05-11T13:19:00+00:00",
+                    "originalCreated": "2026-05-11T13:19:00+00:00",
                     "lastModified": null,
                     "originalLastModified": null
                 }
