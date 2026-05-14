@@ -67,7 +67,7 @@ use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphProjectionInterface;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphReadModelInterface;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodeTags;
-use Neos\ContentRepository\Core\Projection\ContentGraph\SimulationContentGraphProjectionInterface;
+use Neos\ContentRepository\Core\Projection\ContentGraph\VirtualContentGraphProjectionInterface;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Timestamps;
 use Neos\ContentRepository\Core\Projection\ProjectionStatus;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateClassification;
@@ -80,7 +80,7 @@ use Neos\EventStore\Model\EventEnvelope;
 /**
  * @internal but the graph projection is api
  */
-final class DoctrineDbalContentGraphProjection implements ContentGraphProjectionInterface, SimulationContentGraphProjectionInterface
+final class DoctrineDbalContentGraphProjection implements ContentGraphProjectionInterface, VirtualContentGraphProjectionInterface
 {
     use ContentStream;
     use NodeMove;
@@ -197,12 +197,12 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
         }
     }
 
-    public function stopSimulation(): void
+    public function closeVirtualization(): void
     {
         $this->dbal->rollBack();
     }
 
-    public function withSimulation(): SimulationContentGraphProjectionInterface
+    public function withVirtualization(): VirtualContentGraphProjectionInterface
     {
         if ($this->isInSimulation) {
             throw new \RuntimeException('DBAL ContentGraph Projection is in simulation already', 1778705684);
