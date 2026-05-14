@@ -57,8 +57,7 @@ final class DoctrineDbalContentGraphProjectionFactory implements ContentGraphPro
             $tableNames,
             $dimensionSpacePointsRepository,
             $contentStreamLayerFinder,
-            $contentGraphReadModel,
-            isInSimulation: false
+            $contentGraphReadModel
         );
     }
 }

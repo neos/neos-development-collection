@@ -12,7 +12,6 @@ use Neos\ContentRepository\Core\Feature\RebaseableCommand;
 use Neos\ContentRepository\Core\Feature\WorkspaceRebase\ConflictingEvents;
 use Neos\ContentRepository\Core\Feature\WorkspaceRebase\ConflictingEvent;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphProjectionInterface;
-use Neos\ContentRepository\Core\Projection\ContentGraph\SimulationContentGraphProjectionInterface;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\EventStore\Helper\InMemoryEventStore;
 use Neos\EventStore\Model\Event\EventMetadata;
@@ -51,7 +50,7 @@ final class CommandSimulator
     private readonly InMemoryEventStore $inMemoryEventStore;
 
     public function __construct(
-        private readonly SimulationContentGraphProjectionInterface $contentRepositoryProjection,
+        private readonly ContentGraphProjectionInterface $contentRepositoryProjection,
         private readonly EventNormalizer $eventNormalizer,
         private readonly CommandBus $commandBus,
         private readonly WorkspaceName $workspaceNameToSimulateIn,
@@ -60,9 +59,16 @@ final class CommandSimulator
         $this->conflictingEvents = new ConflictingEvents();
     }
 
-    public function free(): void
+    /**
+     * Start the simulation for the passed function which receives as argument the {@see handle} function.
+     *
+     * @template T
+     * @param callable(callable(RebaseableCommand): void): T $fn
+     * @return T the return value of $fn
+     */
+    public function run(callable $fn): mixed
     {
-        $this->contentRepositoryProjection->stopSimulation();
+        return $this->contentRepositoryProjection->inSimulation(fn () => $fn($this->handle(...)));
     }
 
     /**
@@ -71,7 +77,7 @@ final class CommandSimulator
      * We will automatically copy given commands to the workspace this simulation
      * is running in to ensure consistency in the simulations constraint checks.
      */
-    public function handle(RebaseableCommand $rebaseableCommand): void
+    private function handle(RebaseableCommand $rebaseableCommand): void
     {
         // FIXME: Check if workspace already matches and skip this, e.g. $commandInWorkspace = $command->getWorkspaceName()->equals($this->workspaceNameToSimulateIn) ? $command : $command->createCopyForWorkspace($this->workspaceNameToSimulateIn);
         // when https://github.com/neos/neos-development-collection/pull/5298 is merged
@@ -116,7 +122,6 @@ final class CommandSimulator
         // because this is only used in memory during the partial publish or rebase operation; so it cannot be written to
         // concurrently.
         // HINT: We cannot use $eventsToPublish->expectedVersion, because this is based on the PERSISTENT event stream (having different numbers)
-        // Also as part of an optimization a graph adapter might choose to not update the content stream version as its irrelevant during simulation.
         $this->inMemoryEventStore->commit(
             $eventsToPublish->streamName,
             $normalizedEvents,

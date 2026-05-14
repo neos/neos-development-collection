@@ -67,7 +67,6 @@ use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphProjectionInterface;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphReadModelInterface;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodeTags;
-use Neos\ContentRepository\Core\Projection\ContentGraph\SimulationContentGraphProjectionInterface;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Timestamps;
 use Neos\ContentRepository\Core\Projection\ProjectionStatus;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateClassification;
@@ -80,7 +79,7 @@ use Neos\EventStore\Model\EventEnvelope;
 /**
  * @internal but the graph projection is api
  */
-final class DoctrineDbalContentGraphProjection implements ContentGraphProjectionInterface, SimulationContentGraphProjectionInterface
+final class DoctrineDbalContentGraphProjection implements ContentGraphProjectionInterface
 {
     use ContentStream;
     use NodeMove;
@@ -99,8 +98,7 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
         private readonly ContentGraphTableNames $tableNames,
         private readonly DimensionSpacePointsRepository $dimensionSpacePointsRepository,
         private readonly ContentStreamLayerFinder $contentStreamLayerFinder,
-        private readonly ContentGraphReadModelAdapter $contentGraphReadModel,
-        private readonly bool $isInSimulation
+        private readonly ContentGraphReadModelInterface $contentGraphReadModel
     ) {
         $this->hierarchyRelationStatement = HierarchyRelationStatement::for($this->tableNames);
     }
@@ -116,11 +114,6 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
                 throw new \RuntimeException(sprintf('Failed to setup projection %s: %s', self::class, $e->getMessage()), 1716478255, $e);
             }
         }
-
-        $test = $this->dbal->fetchAllAssociative("SHOW VARIABLES");
-        echo json_encode($test);
-        echo PHP_EOL;
-        die();
     }
 
     public function status(): ProjectionStatus
@@ -194,37 +187,24 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
                 $event instanceof ContentStreamWasForked
                 || $event instanceof ContentStreamWasCreated
             )
-            // optimises unnecessary write to the connection which has fatal consequences https://github.com/neos/neos-development-collection/issues/5713
-            // during command simulation we don't use the content stream version, and thus we can ignore updating this value in the transaction too.
-            && !$this->isInSimulation
         ) {
             $this->updateContentStreamVersion($event->getContentStreamId(), $eventEnvelope->version, $event instanceof PublishableToWorkspaceInterface);
         }
     }
 
-    public function stopSimulation(): void
+    public function inSimulation(\Closure $fn): mixed
     {
-        $this->dbal->close();
-    }
-
-    public function withSimulation(): SimulationContentGraphProjectionInterface
-    {
-        if ($this->isInSimulation) {
-            throw new \RuntimeException('DBAL ContentGraph Projection is in simulation already', 1778705684);
+        if ($this->dbal->isTransactionActive()) {
+            throw new \RuntimeException(sprintf('Invoking %s is not allowed to be invoked recursively. Current transaction nesting %d.', __FUNCTION__, $this->dbal->getTransactionNestingLevel()));
         }
-
         $this->dbal->beginTransaction();
         $this->dbal->setRollbackOnly();
-
-        return new self(
-            dbal: $this->dbal,
-            projectionContentGraph: $this->projectionContentGraph,
-            tableNames: $this->tableNames,
-            dimensionSpacePointsRepository: $this->dimensionSpacePointsRepository,
-            contentStreamLayerFinder: $this->contentStreamLayerFinder,
-            contentGraphReadModel: $this->contentGraphReadModel,
-            isInSimulation: true,
-        );
+        try {
+            return $fn();
+        } finally {
+            // unsets rollback only flag and allows the connection to work regular again
+            $this->dbal->rollBack();
+        }
     }
 
     private function whenContentStreamWasClosed(ContentStreamWasClosed $event): void

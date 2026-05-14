@@ -149,7 +149,6 @@ final class ContentRepositoryFactory
         $commandHandlingDependencies = new CommandHandlingDependencies($contentGraphReadModel);
 
         // we dont need full recursion in rebase - e.g apply workspace commands - and thus we can use this set for simulation
-        // todo
         $commandBusForRebaseableCommands = new CommandBus(
             $commandHandlingDependencies,
             new NodeAggregateCommandHandler(
@@ -167,10 +166,7 @@ final class ContentRepositoryFactory
         $commandSimulatorFactory = new CommandSimulatorFactory(
             $this->contentGraphProjection,
             $this->eventNormalizer,
-            $this->nodeTypeManager,
-            $this->contentDimensionZookeeper,
-            $this->interDimensionalVariationGraph,
-            $this->propertyConverter,
+            $commandBusForRebaseableCommands
         );
 
         $publicCommandBus = $commandBusForRebaseableCommands->withAdditionalHandlers(
