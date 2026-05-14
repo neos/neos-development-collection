@@ -116,6 +116,11 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
                 throw new \RuntimeException(sprintf('Failed to setup projection %s: %s', self::class, $e->getMessage()), 1716478255, $e);
             }
         }
+
+        $test = $this->dbal->fetchAllAssociative("SHOW VARIABLES");
+        echo json_encode($test);
+        echo PHP_EOL;
+        die();
     }
 
     public function status(): ProjectionStatus
