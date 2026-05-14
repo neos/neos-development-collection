@@ -261,15 +261,21 @@ Feature: Publishing individual nodes (basics)
       | nodesToPublish                  | ["sir-nodeward-nodington-iii", "sir-david-nodenborough"] |
       | contentStreamIdForRemainingPart | "user-cs-identifier-remaining"                                                                               |
 
-    Then I expect exactly 8 events to be published on stream "ContentStream:cs-identifier"
-    And event at index 6 is of type "NodePropertiesWereSet" with payload:
+    Then I expect exactly 10 events to be published on stream "ContentStream:cs-identifier"
+    And event at index 6 is of type "ContentStreamWasClosed" with payload:
       | Key                           | Expected                                                |
       | contentStreamId               | "cs-identifier"                                         |
-      | nodeAggregateId               | "sir-david-nodenborough"                                |
     And event at index 7 is of type "NodePropertiesWereSet" with payload:
       | Key                           | Expected                                                |
       | contentStreamId               | "cs-identifier"                                         |
+      | nodeAggregateId               | "sir-david-nodenborough"                                |
+    And event at index 8 is of type "NodePropertiesWereSet" with payload:
+      | Key                           | Expected                                                |
+      | contentStreamId               | "cs-identifier"                                         |
       | nodeAggregateId               | "sir-nodeward-nodington-iii"                            |
+    And event at index 9 is of type "ContentStreamWasReopened" with payload:
+      | Key                           | Expected                                                |
+      | contentStreamId               | "cs-identifier"                                         |
 
     Then I expect exactly 4 events to be published on stream "ContentStream:user-cs-identifier-remaining"
     And event at index 0 is of type "ContentStreamWasForked" with payload:
