@@ -218,7 +218,7 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
             $commandSimulator->handle($rebaseableCommand);
         }
 
-        $commandSimulator->free();
+        $commandSimulator->close();
 
         if ($commandSimulator->hasConflicts()) {
             $workspaceRebaseFailed = WorkspaceRebaseFailed::duringPublish($commandSimulator->getConflictingEvents());
@@ -386,7 +386,7 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
             $commandSimulator->handle($rebaseableCommand);
         }
 
-        $commandSimulator->free();
+        $commandSimulator->close();
 
         if (
             $command->rebaseErrorHandlingStrategy === RebaseErrorHandlingStrategy::STRATEGY_FAIL
@@ -477,7 +477,7 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
             $commandSimulator->handle($remainingCommand);
         }
 
-        $commandSimulator->free();
+        $commandSimulator->close();
 
         if ($commandSimulator->hasConflicts()) {
             $workspaceRebaseFailed = match ($workspace->status) {
@@ -606,7 +606,7 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
             $commandSimulator->handle($matchingCommand);
         }
 
-        $commandSimulator->free();
+        $commandSimulator->close();
 
         if ($commandSimulator->hasConflicts()) {
             $workspaceRebaseFailed = match ($workspace->status) {

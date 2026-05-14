@@ -8,11 +8,12 @@ use Neos\ContentRepository\Core\EventStore\DecoratedEvent;
 use Neos\ContentRepository\Core\EventStore\EventInterface;
 use Neos\ContentRepository\Core\EventStore\EventNormalizer;
 use Neos\ContentRepository\Core\EventStore\EventsToPublish;
+use Neos\ContentRepository\Core\Feature\Common\PublishableToWorkspaceInterface;
 use Neos\ContentRepository\Core\Feature\RebaseableCommand;
 use Neos\ContentRepository\Core\Feature\WorkspaceRebase\ConflictingEvents;
 use Neos\ContentRepository\Core\Feature\WorkspaceRebase\ConflictingEvent;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphProjectionInterface;
-use Neos\ContentRepository\Core\Projection\ContentGraph\SimulationContentGraphProjectionInterface;
+use Neos\ContentRepository\Core\Projection\ContentGraph\VirtualContentGraphProjectionInterface;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\EventStore\Helper\InMemoryEventStore;
 use Neos\EventStore\Model\Event\EventMetadata;
@@ -51,7 +52,7 @@ final class CommandSimulator
     private readonly InMemoryEventStore $inMemoryEventStore;
 
     public function __construct(
-        private readonly SimulationContentGraphProjectionInterface $contentRepositoryProjection,
+        private readonly VirtualContentGraphProjectionInterface $virtualContentGraphProjection,
         private readonly EventNormalizer $eventNormalizer,
         private readonly CommandBus $commandBus,
         private readonly WorkspaceName $workspaceNameToSimulateIn,
@@ -60,9 +61,9 @@ final class CommandSimulator
         $this->conflictingEvents = new ConflictingEvents();
     }
 
-    public function free(): void
+    public function close(): void
     {
-        $this->contentRepositoryProjection->stopSimulation();
+        $this->virtualContentGraphProjection->closeVirtualization();
     }
 
     /**
@@ -131,7 +132,10 @@ final class CommandSimulator
 
         foreach ($eventStream as $eventEnvelope) {
             $event = $this->eventNormalizer->denormalize($eventEnvelope->event);
-            $this->contentRepositoryProjection->apply($event, $eventEnvelope);
+            if (!$event instanceof PublishableToWorkspaceInterface) {
+                throw new \RuntimeException(sprintf('Fatal rebaseable command yielded non publishable event %s', $event::class), 1778750125);
+            }
+            $this->virtualContentGraphProjection->apply($event, $eventEnvelope);
         }
     }
 

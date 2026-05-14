@@ -28,5 +28,5 @@ interface ContentGraphProjectionInterface extends ProjectionInterface
      *
      * Used to simulate commands for publishing: {@see \Neos\ContentRepository\Core\CommandHandler\CommandSimulator}
      */
-    public function withSimulation(): SimulationContentGraphProjectionInterface;
+    public function withVirtualization(): VirtualContentGraphProjectionInterface;
 }
