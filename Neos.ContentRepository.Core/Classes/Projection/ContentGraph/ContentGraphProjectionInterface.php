@@ -16,7 +16,7 @@ interface ContentGraphProjectionInterface extends ProjectionInterface
     public function getState(): ContentGraphReadModelInterface;
 
     /**
-     * Dedicated method for simulated rebasing TODO
+     * Dedicated method for simulated rebasing TODO 1
      *
      * The implementation must ensure that the function passed is invoked
      * and that any changes via {@see ContentGraphProjectionInterface::apply()}
