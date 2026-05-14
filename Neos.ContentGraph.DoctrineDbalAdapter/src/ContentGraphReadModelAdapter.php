@@ -42,8 +42,21 @@ final readonly class ContentGraphReadModelAdapter implements ContentGraphReadMod
         private NodeFactory $nodeFactory,
         private ContentRepositoryId $contentRepositoryId,
         private NodeTypeManager $nodeTypeManager,
-        private ContentGraphTableNames $tableNames
+        private ContentGraphTableNames $tableNames,
+        private ?VirtualizationState $virtualizationState,
     ) {
+    }
+
+    public function withVirtualization(VirtualizationState $simulationState): self
+    {
+        return new self(
+            dbal: $this->dbal,
+            nodeFactory: $this->nodeFactory,
+            contentRepositoryId: $this->contentRepositoryId,
+            nodeTypeManager: $this->nodeTypeManager,
+            tableNames: $this->tableNames,
+            virtualizationState: $simulationState,
+        );
     }
 
     public function getContentGraph(WorkspaceName $workspaceName): ContentGraph
@@ -71,6 +84,9 @@ final readonly class ContentGraphReadModelAdapter implements ContentGraphReadMod
         $firstRow = reset($rows);
         $currentContentStreamId = ContentStreamId::fromString($firstRow['currentContentStreamId']);
         $contentStreamLayers = ContentStreamLayers::fromArray(array_column($rows, 'contentStreamLayer'));
+        if ($this->virtualizationState?->workspaceName->equals($workspaceName)) {
+            $contentStreamLayers = ContentStreamLayers::from($this->virtualizationState->temporaryContentStreamLayer, ...$contentStreamLayers->items);
+        }
         return new ContentGraph($this->dbal, $this->nodeFactory, $this->contentRepositoryId, $this->nodeTypeManager, $this->tableNames, $workspaceName, $currentContentStreamId, $contentStreamLayers);
     }
 

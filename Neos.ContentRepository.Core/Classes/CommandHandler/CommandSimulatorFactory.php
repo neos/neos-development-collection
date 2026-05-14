@@ -31,7 +31,7 @@ final readonly class CommandSimulatorFactory
 
     public function createSimulatorForWorkspace(WorkspaceName $workspaceNameToSimulateIn): CommandSimulator
     {
-        $virtualContentGraphProjection = $this->contentRepositoryProjection->withVirtualization();
+        $virtualContentGraphProjection = $this->contentRepositoryProjection->withVirtualization($workspaceNameToSimulateIn);
 
         $commandHandlingDependencies = new CommandHandlingDependencies($virtualContentGraphProjection->getState());
 

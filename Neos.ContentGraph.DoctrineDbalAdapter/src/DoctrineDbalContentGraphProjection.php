@@ -28,6 +28,7 @@ use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
 use Neos\ContentRepository\Core\EventStore\EventInterface;
 use Neos\ContentRepository\Core\EventStore\InitiatingEventMetadata;
 use Neos\ContentRepository\Core\Feature\Common\EmbedsContentStreamId;
+use Neos\ContentRepository\Core\Feature\Common\EmbedsWorkspaceName;
 use Neos\ContentRepository\Core\Feature\Common\InterdimensionalSiblings;
 use Neos\ContentRepository\Core\Feature\Common\PublishableToWorkspaceInterface;
 use Neos\ContentRepository\Core\Feature\ContentStreamClosing\Event\ContentStreamWasClosed;
@@ -74,6 +75,8 @@ use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateClassification;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
 use Neos\ContentRepository\Core\SharedModel\Node\ReferenceName;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
+use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepository\Dbal\DbalSchemaDiff;
 use Neos\EventStore\Model\EventEnvelope;
 
@@ -100,7 +103,7 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
         private readonly DimensionSpacePointsRepository $dimensionSpacePointsRepository,
         private readonly ContentStreamLayerFinder $contentStreamLayerFinder,
         private readonly ContentGraphReadModelAdapter $contentGraphReadModel,
-        private readonly bool $isInSimulation
+        private readonly ?VirtualizationState $virtualizationState
     ) {
         $this->hierarchyRelationStatement = HierarchyRelationStatement::for($this->tableNames);
     }
@@ -149,6 +152,10 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
 
     public function apply(EventInterface $event, EventEnvelope $eventEnvelope): void
     {
+        if ($this->virtualizationState) {
+            $this->dbal->beginTransaction();
+        }
+
         match ($event::class) {
             ContentStreamWasClosed::class => $this->whenContentStreamWasClosed($event),
             ContentStreamWasCreated::class => $this->whenContentStreamWasCreated($event),
@@ -191,25 +198,89 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
             )
             // optimises unnecessary write to the connection which has fatal consequences https://github.com/neos/neos-development-collection/issues/5713
             // during command simulation we don't use the content stream version, and thus we can ignore updating this value in the transaction too.
-            && !$this->isInSimulation
+            && !$this->virtualizationState
         ) {
             $this->updateContentStreamVersion($event->getContentStreamId(), $eventEnvelope->version, $event instanceof PublishableToWorkspaceInterface);
+        }
+
+        if ($this->virtualizationState) {
+            $this->dbal->commit();
         }
     }
 
     public function closeVirtualization(): void
     {
-        $this->dbal->rollBack();
-    }
-
-    public function withVirtualization(): VirtualContentGraphProjectionInterface
-    {
-        if ($this->isInSimulation) {
-            throw new \RuntimeException('DBAL ContentGraph Projection is in simulation already', 1778705684);
+        if (!$this->virtualizationState) {
+            throw new \RuntimeException('DBAL ContentGraph Projection is not in simulation already', 1778705684);
         }
 
         $this->dbal->beginTransaction();
-        $this->dbal->setRollbackOnly();
+
+        // Drop non-referenced nodes (which will not have a hierarchy relation anymore)
+        $deleteNodesStatement = <<<SQL
+            DELETE n FROM {$this->tableNames->node()} n
+            -- using table instead of HierarchyRelationStatement because node rows can be shared for all layers 
+            LEFT JOIN {$this->tableNames->hierarchyRelation()} h
+              ON h.childnodeanchor = n.relationanchorpoint
+                AND h.contentstreamlayer != :targetContentStreamLayer
+            WHERE h.childnodeanchor IS NULL
+            SQL;
+        try {
+            $this->dbal->executeStatement($deleteNodesStatement, [
+                'targetContentStreamLayer' => $this->virtualizationState->temporaryContentStreamLayer->value,
+            ]);
+        } catch (DBALException $e) {
+            throw new \RuntimeException(sprintf('Failed to delete non-referenced nodes: %s', $e->getMessage()), 1716489294, $e);
+        }
+
+        // Drop non-referenced reference relations (i.e. because the referenced nodes will be gone)
+        $deleteReferencesStatement = <<<SQL
+            DELETE r FROM {$this->tableNames->referenceRelation()} r
+            -- using table instead of HierarchyRelationStatement because node rows can be shared for all layers 
+              LEFT JOIN {$this->tableNames->hierarchyRelation()} h
+                ON h.childnodeanchor = r.nodeanchorpoint
+                AND h.contentstreamlayer != :targetContentStreamLayer
+            WHERE h.childnodeanchor IS NULL
+            SQL;
+        try {
+            $this->dbal->executeStatement($deleteReferencesStatement, [
+                'targetContentStreamLayer' => $this->virtualizationState->temporaryContentStreamLayer->value,
+            ]);
+        } catch (DBALException $e) {
+            throw new \RuntimeException(sprintf('Failed to delete non-referenced node-references: %s', $e->getMessage()), 1776787534, $e);
+        }
+
+        $this->dbal->delete($this->tableNames->hierarchyRelation(), [
+            'contentStreamLayer' => $this->virtualizationState->temporaryContentStreamLayer->value,
+        ]);
+
+        $this->dbal->commit();
+    }
+
+    public function withVirtualization(WorkspaceName $workspaceName): VirtualContentGraphProjectionInterface
+    {
+        if ($this->virtualizationState) {
+            throw new \RuntimeException('DBAL ContentGraph Projection is in simulation already', 1778705684);
+        }
+
+        $temporaryContentStreamToClaimLayer = ContentStreamId::create();
+
+        $this->dbal->beginTransaction();
+
+        $this->dbal->insert($this->tableNames->contentStreamLayer(), [
+            'contentStreamId' => $temporaryContentStreamToClaimLayer->value,
+        ]);
+        $temporaryLayer = ContentStreamLayer::fromInt((int)$this->dbal->lastInsertId());
+        $this->dbal->delete($this->tableNames->contentStreamLayer(), [
+            'contentStreamId' => $temporaryContentStreamToClaimLayer->value,
+        ]);
+
+        $this->dbal->commit();
+
+        $virtualizationState = new VirtualizationState(
+            workspaceName: $workspaceName,
+            temporaryContentStreamLayer: $temporaryLayer
+        );
 
         return new self(
             dbal: $this->dbal,
@@ -217,8 +288,8 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
             tableNames: $this->tableNames,
             dimensionSpacePointsRepository: $this->dimensionSpacePointsRepository,
             contentStreamLayerFinder: $this->contentStreamLayerFinder,
-            contentGraphReadModel: $this->contentGraphReadModel,
-            isInSimulation: true,
+            contentGraphReadModel: $this->contentGraphReadModel->withVirtualization($virtualizationState),
+            virtualizationState: $virtualizationState,
         );
     }
 
@@ -879,9 +950,13 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
 
     /** --------------------------------- */
 
-    public function getContentStreamLayers(EmbedsContentStreamId $event): ContentStreamLayers
+    public function getContentStreamLayers(EmbedsContentStreamId&EmbedsWorkspaceName $event): ContentStreamLayers
     {
-        return $this->contentStreamLayerFinder->getContentStreamLayers($event->getContentStreamId());
+        $contentStreamLayers = $this->contentStreamLayerFinder->getContentStreamLayers($event->getContentStreamId());
+        if ($this->virtualizationState?->workspaceName->equals($event->getWorkspaceName())) {
+            $contentStreamLayers = ContentStreamLayers::from($this->virtualizationState->temporaryContentStreamLayer, ...$contentStreamLayers->items);
+        }
+        return $contentStreamLayers;
     }
 
     /**

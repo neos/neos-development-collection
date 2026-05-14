@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\Core\Projection\ContentGraph;
 
 use Neos\ContentRepository\Core\Projection\ProjectionInterface;
+use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 
 /**
  * @extends ProjectionInterface<ContentGraphReadModelInterface>
@@ -28,5 +29,5 @@ interface ContentGraphProjectionInterface extends ProjectionInterface
      *
      * Used to simulate commands for publishing: {@see \Neos\ContentRepository\Core\CommandHandler\CommandSimulator}
      */
-    public function withVirtualization(): VirtualContentGraphProjectionInterface;
+    public function withVirtualization(WorkspaceName $workspaceName): VirtualContentGraphProjectionInterface;
 }

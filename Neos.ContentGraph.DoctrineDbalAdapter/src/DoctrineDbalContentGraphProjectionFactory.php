@@ -45,7 +45,8 @@ final class DoctrineDbalContentGraphProjectionFactory implements ContentGraphPro
             $nodeFactory,
             $projectionFactoryDependencies->contentRepositoryId,
             $projectionFactoryDependencies->nodeTypeManager,
-            $tableNames
+            $tableNames,
+            virtualizationState: null
         );
 
         return new DoctrineDbalContentGraphProjection(
@@ -58,7 +59,7 @@ final class DoctrineDbalContentGraphProjectionFactory implements ContentGraphPro
             $dimensionSpacePointsRepository,
             $contentStreamLayerFinder,
             $contentGraphReadModel,
-            isInSimulation: false
+            virtualizationState: null
         );
     }
 }
