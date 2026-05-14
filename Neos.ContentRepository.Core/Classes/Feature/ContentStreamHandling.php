@@ -37,9 +37,12 @@ trait ContentStreamHandling
         return new EventsToPublish(
             $streamName,
             Events::with(
-                new ContentStreamWasClosed(
-                    $contentStreamId,
-                ),
+                DecoratedEvent::create(
+                    new ContentStreamWasClosed(
+                        $contentStreamId,
+                    ),
+                    // todo add debug metadata: array_filter(['debug_reason' => ...])
+                )
             ),
             ExpectedVersion::fromVersion($contentStreamVersion)
         );

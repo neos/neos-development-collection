@@ -212,6 +212,19 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
             $workspaceContentStreamVersion
         );
 
+        try {
+            yield $this->closeContentStream(
+                $baseWorkspace->currentContentStreamId,
+                $baseWorkspaceContentStreamVersion
+            );
+            $baseWorkspaceContentStreamVersion = $baseWorkspaceContentStreamVersion->next();
+        } catch (ConcurrencyException $concurrencyException) {
+            yield $this->reopenContentStreamWithoutConstraintChecks(
+                $workspace->currentContentStreamId,
+                sprintf('concurrency %d: %s', $concurrencyException->getCode(), $concurrencyException->getMessage())
+            );
+        }
+
         $commandSimulator = $this->commandSimulatorFactory->createSimulatorForWorkspace($baseWorkspace->workspaceName);
 
         $commandSimulator->run(
@@ -226,6 +239,10 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
             $workspaceRebaseFailed = WorkspaceRebaseFailed::duringPublish($commandSimulator->getConflictingEvents());
             yield $this->reopenContentStreamWithoutConstraintChecks(
                 $workspace->currentContentStreamId,
+                sprintf('conflicts %d: %s', $workspaceRebaseFailed->getCode(), $workspaceRebaseFailed->getMessage())
+            );
+            yield $this->reopenContentStreamWithoutConstraintChecks(
+                $baseWorkspace->currentContentStreamId,
                 sprintf('conflicts %d: %s', $workspaceRebaseFailed->getCode(), $workspaceRebaseFailed->getMessage())
             );
             throw $workspaceRebaseFailed;
@@ -250,6 +267,10 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
                     $workspace->currentContentStreamId,
                     sprintf('concurrency %d: %s', $concurrencyException->getCode(), $concurrencyException->getMessage())
                 );
+                yield $this->reopenContentStreamWithoutConstraintChecks(
+                    $baseWorkspace->currentContentStreamId,
+                    sprintf('concurrency %d: %s', $concurrencyException->getCode(), $concurrencyException->getMessage())
+                );
                 throw $concurrencyException;
             }
         }
@@ -259,6 +280,11 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
             $baseWorkspace->currentContentStreamId,
             Version::fromInteger($baseWorkspaceContentStreamVersion->value + ($eventsOfWorkspaceToPublish?->count() ?? 0)),
             sprintf('Publish workspace %s and fork base %s', $workspace->workspaceName->value, $baseWorkspace->workspaceName->value)
+        );
+
+        yield $this->reopenContentStreamWithoutConstraintChecks(
+            $baseWorkspace->currentContentStreamId,
+            sprintf('publish finished')
         );
 
         yield new EventsToPublish(
@@ -471,6 +497,19 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
             $workspaceContentStreamVersion
         );
 
+        try {
+            yield $this->closeContentStream(
+                $baseWorkspace->currentContentStreamId,
+                $baseWorkspaceContentStreamVersion
+            );
+            $baseWorkspaceContentStreamVersion = $baseWorkspaceContentStreamVersion->next();
+        } catch (ConcurrencyException $concurrencyException) {
+            yield $this->reopenContentStreamWithoutConstraintChecks(
+                $workspace->currentContentStreamId,
+                sprintf('concurrency %d: %s', $concurrencyException->getCode(), $concurrencyException->getMessage())
+            );
+        }
+
         $commandSimulator = $this->commandSimulatorFactory->createSimulatorForWorkspace($baseWorkspace->workspaceName);
 
         $highestSequenceNumberForMatching = $commandSimulator->run(
@@ -499,6 +538,10 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
                 $workspace->currentContentStreamId,
                 sprintf('conflicts %d: %s', $workspaceRebaseFailed->getCode(), $workspaceRebaseFailed->getMessage())
             );
+            yield $this->reopenContentStreamWithoutConstraintChecks(
+                $baseWorkspace->currentContentStreamId,
+                sprintf('conflicts %d: %s', $workspaceRebaseFailed->getCode(), $workspaceRebaseFailed->getMessage())
+            );
             throw $workspaceRebaseFailed;
         }
 
@@ -519,6 +562,10 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
             } catch (ConcurrencyException $concurrencyException) {
                 yield $this->reopenContentStreamWithoutConstraintChecks(
                     $workspace->currentContentStreamId,
+                    sprintf('concurrency %d: %s', $concurrencyException->getCode(), $concurrencyException->getMessage())
+                );
+                yield $this->reopenContentStreamWithoutConstraintChecks(
+                    $baseWorkspace->currentContentStreamId,
                     sprintf('concurrency %d: %s', $concurrencyException->getCode(), $concurrencyException->getMessage())
                 );
                 throw $concurrencyException;
@@ -551,6 +598,11 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
         );
 
         yield $this->removeContentStreamWithoutConstraintChecks($workspace->currentContentStreamId);
+
+        yield $this->reopenContentStreamWithoutConstraintChecks(
+            $baseWorkspace->currentContentStreamId,
+            sprintf('publish finished')
+        );
     }
 
     /**
@@ -596,6 +648,19 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
             $workspaceContentStreamVersion
         );
 
+        try {
+            yield $this->closeContentStream(
+                $baseWorkspace->currentContentStreamId,
+                $baseWorkspaceContentStreamVersion
+            );
+            $baseWorkspaceContentStreamVersion = $baseWorkspaceContentStreamVersion->next();
+        } catch (ConcurrencyException $concurrencyException) {
+            yield $this->reopenContentStreamWithoutConstraintChecks(
+                $workspace->currentContentStreamId,
+                sprintf('concurrency %d: %s', $concurrencyException->getCode(), $concurrencyException->getMessage())
+            );
+        }
+
         if ($commandsToKeep->isEmpty()) {
             // quick path everything was discarded
             yield from $this->discardWorkspace(
@@ -630,6 +695,10 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
                 $workspace->currentContentStreamId,
                 sprintf('conflicts %d: %s', $workspaceRebaseFailed->getCode(), $workspaceRebaseFailed->getMessage())
             );
+            yield $this->reopenContentStreamWithoutConstraintChecks(
+                $baseWorkspace->currentContentStreamId,
+                sprintf('conflicts %d: %s', $workspaceRebaseFailed->getCode(), $workspaceRebaseFailed->getMessage())
+            );
             throw $workspaceRebaseFailed;
         }
 
@@ -658,6 +727,11 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
         );
 
         yield $this->removeContentStreamWithoutConstraintChecks($workspace->currentContentStreamId);
+
+        yield $this->reopenContentStreamWithoutConstraintChecks(
+            $baseWorkspace->currentContentStreamId,
+            sprintf('discard finished')
+        );
     }
 
     /**
