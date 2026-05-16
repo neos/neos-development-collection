@@ -142,7 +142,8 @@ final readonly class ContentGraphReadModelAdapter implements ContentGraphReadMod
         $queryBuilder = $this->dbal->createQueryBuilder();
 
         return $queryBuilder
-            ->select('ws.name, ws.baseWorkspaceName, ws.currentContentStreamId, cs.hasChanges, cs.sourceContentStreamVersion = scs.version as upToDateWithBase')
+            // TODO is >= correct or do we need to store the changesVersion of the source during fork??
+            ->select('ws.name, ws.baseWorkspaceName, ws.currentContentStreamId, cs.hasChanges, cs.sourceContentStreamVersion >= scs.changesVersion as upToDateWithBase')
             ->from($this->tableNames->workspace(), 'ws')
             ->join('ws', $this->tableNames->contentStream(), 'cs', 'cs.id = ws.currentcontentstreamid')
             ->leftJoin('cs', $this->tableNames->contentStream(), 'scs', 'scs.id = cs.sourceContentStreamId');

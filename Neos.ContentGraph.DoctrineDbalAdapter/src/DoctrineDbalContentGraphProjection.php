@@ -182,7 +182,7 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
                 || $event instanceof ContentStreamWasCreated
             )
         ) {
-            $this->updateContentStreamVersion($event->getContentStreamId(), $eventEnvelope->version, $event instanceof PublishableToWorkspaceInterface);
+            $this->updateContentStreamVersion($event->getContentStreamId(), $eventEnvelope->version, $event instanceof PublishableToWorkspaceInterface ? $eventEnvelope->version : null);
         }
     }
 
