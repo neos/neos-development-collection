@@ -15,9 +15,10 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\Core\SharedModel\Exception;
 
 /**
- * The exception to be thrown if a content stream is closed but was tried to be used
+ * The legacy exception stub if a content stream is closed but was tried to be used
  *
- * @api because exception is thrown during invariant checks on command execution
+ * @deprecated This exception will never be thrown. This implementation is just kept for backwards-compatibility. Remove with Neos 10.0
+ * @internal
  */
 final class ContentStreamIsClosed extends \DomainException
 {

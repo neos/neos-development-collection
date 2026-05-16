@@ -50,21 +50,6 @@ final readonly class CommandHandlingDependencies
         return $this->contentGraphReadModel->findContentStreamById($contentStreamId) !== null;
     }
 
-    /**
-     * @throws ContentStreamDoesNotExistYet if there is no matching content stream
-     */
-    public function isContentStreamClosed(ContentStreamId $contentStreamId): bool
-    {
-        $contentStream = $this->contentGraphReadModel->findContentStreamById($contentStreamId);
-        if ($contentStream === null) {
-            throw new ContentStreamDoesNotExistYet(
-                'Content stream "' . $contentStreamId->value . '" does not exist.',
-                1521386692
-            );
-        }
-        return $contentStream->isClosed;
-    }
-
     public function findWorkspaceByName(WorkspaceName $workspaceName): ?Workspace
     {
         return $this->contentGraphReadModel->findWorkspaceByName($workspaceName);

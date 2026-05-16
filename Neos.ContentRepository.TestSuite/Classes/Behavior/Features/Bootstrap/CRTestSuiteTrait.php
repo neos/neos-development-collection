@@ -56,8 +56,6 @@ trait CRTestSuiteTrait
     use ProjectedNodeTrait;
     use GenericCommandExecutionAndEventPublication;
 
-    use ContentStreamClosing;
-
     use NodeCreation;
     use SubtreeTagging;
     use NodeModification;

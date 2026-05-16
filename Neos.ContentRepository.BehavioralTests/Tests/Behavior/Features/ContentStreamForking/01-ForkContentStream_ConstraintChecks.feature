@@ -41,14 +41,3 @@ Feature: ForkContentStream Without Dimensions
       | nodeAggregateId           | "nody-mc-nodeface"         |
       | originDimensionSpacePoint | {}                         |
       | propertyValues            | {"text": "original value"} |
-
-  Scenario: Try to create a workspace with the base workspace referring to a closed content stream
-    When the event ContentStreamWasClosed was published with payload:
-      | Key             | Value           |
-      | contentStreamId | "cs-identifier" |
-    When the command CreateWorkspace is executed with payload and exceptions are caught:
-      | Key                | Value                |
-      | workspaceName      | "user-test"          |
-      | baseWorkspaceName  | "live"               |
-      | newContentStreamId | "user-cs-identifier" |
-    Then the last command should have thrown an exception of type "ContentStreamIsClosed"

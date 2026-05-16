@@ -30,7 +30,6 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindSucceedingSib
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate;
 use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
 use Neos\ContentRepository\Core\SharedModel\Exception\ContentStreamDoesNotExistYet;
-use Neos\ContentRepository\Core\SharedModel\Exception\ContentStreamIsClosed;
 use Neos\ContentRepository\Core\SharedModel\Exception\DimensionSpacePointIsNotYetOccupied;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeAggregateCurrentlyDoesNotExist;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeAggregateCurrentlyExists;
@@ -74,17 +73,7 @@ trait ConstraintChecks
     protected function requireContentStream(
         WorkspaceName $workspaceName,
     ): ContentStreamId {
-        $contentStreamId = $this->commandHandlingDependencies->getContentGraph($workspaceName)->getContentStreamId();
-        $isContentStreamClosed = $this->commandHandlingDependencies->isContentStreamClosed($contentStreamId);
-
-        if ($isContentStreamClosed) {
-            throw new ContentStreamIsClosed(
-                'Content stream "' . $contentStreamId->value . '" is closed.',
-                1710260081
-            );
-        }
-
-        return $contentStreamId;
+        return $this->commandHandlingDependencies->getContentGraph($workspaceName)->getContentStreamId();
     }
 
     /**

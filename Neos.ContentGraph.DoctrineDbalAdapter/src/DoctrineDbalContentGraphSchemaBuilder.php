@@ -132,7 +132,6 @@ class DoctrineDbalContentGraphSchemaBuilder
             (new Column('version', Type::getType(Types::INTEGER)))->setNotnull(true),
             DbalSchemaFactory::columnForContentStreamId('sourceContentStreamId', $platform)->setNotnull(false),
             (new Column('sourceContentStreamVersion', Type::getType(Types::INTEGER)))->setNotnull(false),
-            (new Column('closed', Type::getType(Types::BOOLEAN)))->setNotnull(true),
             (new Column('hasChanges', Type::getType(Types::BOOLEAN)))->setNotnull(true),
         ]);
 

@@ -31,7 +31,6 @@ use Neos\ContentRepository\Core\Feature\WorkspacePublication\Command\PublishWork
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
-use Neos\ContentRepository\Core\SharedModel\Exception\ContentStreamIsClosed;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
@@ -251,20 +250,16 @@ class WorkspacePublicationDuringWritingTest extends AbstractParallelTestCase
         $this->awaitFileRemoval(self::WRITING_IS_RUNNING_FLAG_PATH);
 
         // writing to user works!!!
-        try {
-            $this->contentRepository->handle(
-                SetNodeProperties::create(
-                    WorkspaceName::fromString('user-test'),
-                    NodeAggregateId::fromString('nody-mc-nodeface'),
-                    OriginDimensionSpacePoint::createWithoutDimensions(),
-                    PropertyValuesToWrite::fromArray([
-                        'title' => 'written-after-failed-publish'
-                    ])
-                )
-            );
-        } catch (ContentStreamIsClosed $exception) {
-            Assert::fail(sprintf('Workspace that failed to be publish cannot be written: %s', $exception->getMessage()));
-        }
+        $this->contentRepository->handle(
+            SetNodeProperties::create(
+                WorkspaceName::fromString('user-test'),
+                NodeAggregateId::fromString('nody-mc-nodeface'),
+                OriginDimensionSpacePoint::createWithoutDimensions(),
+                PropertyValuesToWrite::fromArray([
+                    'title' => 'written-after-failed-publish'
+                ])
+            )
+        );
 
         $node = $this->contentRepository->getContentGraph(WorkspaceName::fromString('user-test'))
             ->getSubgraph(DimensionSpacePoint::createWithoutDimensions(), VisibilityConstraints::createEmpty())

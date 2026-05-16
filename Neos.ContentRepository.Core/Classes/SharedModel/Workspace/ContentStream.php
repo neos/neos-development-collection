@@ -27,7 +27,6 @@ final readonly class ContentStream
         public ContentStreamId $id,
         public ?ContentStreamId $sourceContentStreamId,
         public Version $version,
-        public bool $isClosed
     ) {
     }
 
@@ -35,13 +34,11 @@ final readonly class ContentStream
         ContentStreamId $id,
         ?ContentStreamId $sourceContentStreamId,
         Version $version,
-        bool $isClosed
     ): self {
         return new self(
             $id,
             $sourceContentStreamId,
             $version,
-            $isClosed
         );
     }
 }
