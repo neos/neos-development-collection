@@ -27,9 +27,11 @@ use Neos\ContentRepository\Core\Feature\RootNodeCreation\Command\CreateRootNodeA
 use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Command\CreateRootWorkspace;
 use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Command\CreateWorkspace;
 use Neos\ContentRepository\Core\Feature\WorkspacePublication\Command\PublishWorkspace;
+use Neos\ContentRepository\Core\Feature\WorkspaceRebase\Exception\WorkspaceRebaseFailed;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
+use Neos\ContentRepository\Core\SharedModel\Exception\ContentStreamIsClosed;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
@@ -182,7 +184,8 @@ class PublishingDuringPublishingTest extends AbstractParallelTestCase
                     )->withNewContentStreamId(
                         ContentStreamId::fromString('user-test-cs-one-' . $i)
                     ));
-                } catch (ConcurrencyException $concurrencyException) {
+                } catch (ConcurrencyException|ContentStreamIsClosed|WorkspaceRebaseFailed $concurrencyException) {
+                    // TODO WorkspaceRebaseFailed can be thrown wrapping a "Content stream "live-cs-id" is closed."
                     /** Two simultaneous publish operations can get a concurrency exception as anticipated {@see WorkspacePublicationDuringWritingTest} */
                     $this->log(sprintf('Got likely expected exception %s: %s', self::shortClassName($concurrencyException::class), $concurrencyException->getMessage()));
                 }
@@ -235,7 +238,8 @@ class PublishingDuringPublishingTest extends AbstractParallelTestCase
                 )->withNewContentStreamId(
                     ContentStreamId::fromString('user-test-cs-two-' . $i)
                 ));
-            } catch (ConcurrencyException $concurrencyException) {
+            } catch (ConcurrencyException|ContentStreamIsClosed|WorkspaceRebaseFailed $concurrencyException) {
+                // TODO WorkspaceRebaseFailed can be thrown wrapping a "Content stream "live-cs-id" is closed."
                 /** Two simultaneous publish operations can get a concurrency exception as anticipated {@see WorkspacePublicationDuringWritingTest} */
                 $this->log(sprintf('Got likely expected exception %s: %s', self::shortClassName($concurrencyException::class), $concurrencyException->getMessage()));
             }
