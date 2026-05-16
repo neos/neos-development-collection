@@ -125,38 +125,25 @@ final class ContentRepository
             }
 
             // control-flow aware command handling via generator
+            $eventsToPublishToStreams = []; // TODO use eventBus
+            foreach ($toPublish as $eventsToPublish) {
+                $eventsToPublishToStreams[] = $eventsToPublish;
+            }
+
             $publishedEvents = PublishedEvents::createEmpty();
-            try {
-                foreach ($toPublish as $eventsToPublish) {
-                    try {
-                        $this->eventStore->commit($eventsToPublish->streamName, $this->enrichAndNormalizeEvents($eventsToPublish->events, $correlationId), $eventsToPublish->expectedVersion);
-                        $this->performanceTracer?->mark(TracePoint::EventStoreCommit, ['streamName' => $eventsToPublish->streamName->value, 'cnt' => $eventsToPublish->events->count()]);
-                        $publishedEvents = $publishedEvents->withAppendedEvents($eventsToPublish->events->toInnerEvents());
-                    } catch (ConcurrencyException $concurrencyException) {
-                        // we pass the exception into the generator (->throw), so it could be try-caught and reacted upon:
-                        //
-                        //   try {
-                        //      yield new EventsToPublish(...);
-                        //   } catch (ConcurrencyException $e) {
-                        //      yield $this->reopenContentStream();
-                        //      throw $e;
-                        //   }
-                        $yieldedErrorStrategy = $toPublish->throw($concurrencyException);
-                        if ($yieldedErrorStrategy instanceof EventsToPublish) {
-                            $this->eventStore->commit($yieldedErrorStrategy->streamName, $this->enrichAndNormalizeEvents($yieldedErrorStrategy->events, $correlationId), $yieldedErrorStrategy->expectedVersion);
-                            $this->performanceTracer?->mark(TracePoint::EventStoreCommit);
-                        }
-                        throw $concurrencyException;
-                    }
-                }
-            } finally {
-                // We always NEED to catchup even if there was an unexpected ConcurrencyException to make sure previous commits are handled.
-                // Technically it would be acceptable for the catchup to fail here (due to hook errors) because all the events are already persisted.
-                $fullCatchUpResult = $this->subscriptionEngine->catchUpActive(); // NOTE: we don't batch here, to ensure the catchup is run completely and any errors don't stop it.
-                $this->performanceTracer?->mark(TracePoint::SubscriptionEngineCatchUpActive);
-                if ($fullCatchUpResult->hadErrors()) {
-                    throw CatchUpHadErrors::createFromErrors($fullCatchUpResult->errors);
-                }
+            foreach ($eventsToPublishToStreams as $eventsToPublish) {
+                // TODO event store must reject and rollback if any excepted version of all the streams does not match
+                $this->eventStore->commit($eventsToPublish->streamName, $this->enrichAndNormalizeEvents($eventsToPublish->events, $correlationId), $eventsToPublish->expectedVersion);
+                $this->performanceTracer?->mark(TracePoint::EventStoreCommit, ['streamName' => $eventsToPublish->streamName->value, 'cnt' => $eventsToPublish->events->count()]);
+                $publishedEvents = $publishedEvents->withAppendedEvents($eventsToPublish->events->toInnerEvents());
+            }
+
+            // We always NEED to catchup even if there was an unexpected ConcurrencyException to make sure previous commits are handled.
+            // Technically it would be acceptable for the catchup to fail here (due to hook errors) because all the events are already persisted.
+            $fullCatchUpResult = $this->subscriptionEngine->catchUpActive(); // NOTE: we don't batch here, to ensure the catchup is run completely and any errors don't stop it.
+            $this->performanceTracer?->mark(TracePoint::SubscriptionEngineCatchUpActive);
+            if ($fullCatchUpResult->hadErrors()) {
+                throw CatchUpHadErrors::createFromErrors($fullCatchUpResult->errors);
             }
             $additionalCommands = $this->commandHook->onAfterHandle($command, $publishedEvents);
             foreach ($additionalCommands as $additionalCommand) {
