@@ -24,13 +24,4 @@ final readonly class EventsToPublish
         public ExpectedVersion $expectedVersion,
     ) {
     }
-
-    public function withAppendedEvents(Events $events): self
-    {
-        return new self(
-            $this->streamName,
-            $this->events->withAppendedEvents($events),
-            $this->expectedVersion
-        );
-    }
 }
