@@ -46,9 +46,9 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\Workspaces;
 use Neos\ContentRepository\Core\Subscription\Engine\SubscriptionEngine;
 use Neos\ContentRepository\Core\Subscription\Exception\CatchUpHadErrors;
 use Neos\EventStore\EventStoreInterface;
-use Neos\EventStore\Exception\ConcurrencyException;
 use Neos\EventStore\Model\Event\CorrelationId;
 use Neos\EventStore\Model\Events;
+use Neos\EventStore\Model\EventsForCommit;
 use Psr\Clock\ClockInterface;
 
 /**
@@ -125,18 +125,44 @@ final class ContentRepository
             }
 
             // control-flow aware command handling via generator
-            $eventsToPublishToStreams = []; // TODO use eventBus
+            $eventsToPublishToStreams = []; // TODO introduce eventBus?
             foreach ($toPublish as $eventsToPublish) {
                 $eventsToPublishToStreams[] = $eventsToPublish;
             }
 
-            $publishedEvents = PublishedEvents::createEmpty();
-            foreach ($eventsToPublishToStreams as $eventsToPublish) {
-                // TODO event store must reject and rollback if any excepted version of all the streams does not match
-                $this->eventStore->commit($eventsToPublish->streamName, $this->enrichAndNormalizeEvents($eventsToPublish->events, $correlationId), $eventsToPublish->expectedVersion);
-                $this->performanceTracer?->mark(TracePoint::EventStoreCommit, ['streamName' => $eventsToPublish->streamName->value, 'cnt' => $eventsToPublish->events->count()]);
-                $publishedEvents = $publishedEvents->withAppendedEvents($eventsToPublish->events->toInnerEvents());
+            $expectedVersionForStreamsMap = [];
+
+            $commit = array_reduce(
+                $eventsToPublishToStreams,
+                function (?EventsForCommit $commit, EventsToPublish $eventsToPublish) use ($correlationId, &$expectedVersionForStreamsMap): EventsForCommit {
+                    if (array_key_exists($eventsToPublish->streamName->value, $expectedVersionForStreamsMap)) {
+                        assert($commit !== null);
+                        return $commit->withEventsForStream(
+                            streamName: $eventsToPublish->streamName,
+                            events: $this->enrichAndNormalizeEvents($eventsToPublish->events, $correlationId),
+                        );
+                    }
+
+                    $expectedVersionForStreamsMap[$eventsToPublish->streamName->value] = true;
+
+                    return ($commit ? $commit->withEventsForStreamAndExpectedVersion(...) : EventsForCommit::createEventsForStreamAndExpectedVersion(...))(
+                        streamName: $eventsToPublish->streamName,
+                        events: $this->enrichAndNormalizeEvents($eventsToPublish->events, $correlationId),
+                        expectedVersion: $eventsToPublish->expectedVersion
+                    );
+                },
+            );
+
+            if ($eventsToPublishToStreams === [] || $commit === null) {
+                throw new \RuntimeException(sprintf('TODO Cannot publish nothing'), 1778939145);
             }
+
+            $this->eventStore->commitAll($commit);
+            $publishedEvents = PublishedEvents::merge(...array_map(
+                fn (EventsToPublish $eventsToPublish) => $eventsToPublish->events->toInnerEvents(),
+                $eventsToPublishToStreams
+            ));
+            $this->performanceTracer?->mark(TracePoint::EventStoreCommit, ['cnt' => $publishedEvents->count()]);
 
             // We always NEED to catchup even if there was an unexpected ConcurrencyException to make sure previous commits are handled.
             // Technically it would be acceptable for the catchup to fail here (due to hook errors) because all the events are already persisted.
