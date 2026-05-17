@@ -146,13 +146,21 @@ jobs:
       - name: Set alias branch name
         run: if [ "${NEOS_TARGET_VERSION}" == "master" ]; then echo "NEOS_BRANCH_ALIAS=dev-master"; else echo "NEOS_BRANCH_ALIAS=${NEOS_TARGET_VERSION}.x-dev"; fi >> $GITHUB_ENV
 
+      - name : Define dynamic CI_* variables via PR body
+        if: ${{ github.event.pull_request }}
+        env:
+          PR_BODY: ${{ github.event.pull_request.body }}
+        run: |
+          php -r 'echo preg_match_all("/^\s*((?:CI_FLOW|CI_EVENTSTORE|CI_EVENTSTORE_DBAL)=[a-zA-Z0-9\/\.-]++)\s*\$/m", getenv("PR_BODY"), $matches) ? join("\n", $matches[1]) : "";' >> $GITHUB_ENV
+
       - name: Update composer.json
         run: |
           git -C ../${{ env.NEOS_FOLDER }} checkout -b build
           composer config repositories.neos '{ "type": "path", "url": "../${{ env.NEOS_FOLDER }}", "options": { "symlink": false } }'
           composer require --no-update neos/neos-development-collection:"dev-build as ${{ env.NEOS_BRANCH_ALIAS }}"
-          # enable this line to require a specific flow version for testing
-          # composer require --no-update neos/flow-development-collection:"dev-your-flow-branch-name as ${{ env.NEOS_BRANCH_ALIAS }}"
+          ${{ env.CI_FLOW && 'composer require --no-update neos/flow-development-collection:"dev-$CI_FLOW as $NEOS_BRANCH_ALIAS"' }}
+          ${{ env.CI_EVENTSTORE && 'composer require --no-update "neos/eventstore:dev-$CI_EVENTSTORE as 1.0"' }}
+          ${{ env.CI_EVENTSTORE_DBAL && 'composer require --no-update "neos/eventstore-doctrineadapter:dev-$CI_EVENTSTORE_DBAL as 2.0"' }}
 
       - name: Cache Composer packages
         id: composer-cache
