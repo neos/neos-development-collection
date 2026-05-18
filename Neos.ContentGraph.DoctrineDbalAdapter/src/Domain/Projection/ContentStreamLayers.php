@@ -22,10 +22,7 @@ final readonly class ContentStreamLayers
         if ($items === []) {
             throw new \InvalidArgumentException('Db ids must not be empty', 1775819046);
         }
-        $indexed = [];
-        foreach ($items as $id) {
-            $indexed[$id->value] = $id;
-        }
+        $indexed = array_column($items, null, 'value');
         ksort($indexed, SORT_NUMERIC);
         return new self(
             $indexed,
@@ -52,23 +49,20 @@ final readonly class ContentStreamLayers
 
     public function getParentReadLayer(): ?ContentStreamLayer
     {
-        $items = $this->items;
-        unset($items[array_key_last($items)]);
-        $secondLast = array_key_last($items);
-        if ($secondLast === null) {
+        if (count($this->items) === 1) {
             return null;
         }
-        return $items[$secondLast];
+        $secondLastItem = array_slice($this->items, -2, 1);
+        return $secondLastItem[0];
     }
 
     public function getParentReadLayers(): ?self
     {
-        $items = $this->items;
-        unset($items[array_key_last($items)]);
-        if ($items === []) {
+        if (count($this->items) === 1) {
             return null;
         }
-        return new self($items);
+        $withoutLastEntry = array_slice($this->items, 0, -1, preserve_keys: true);
+        return new self($withoutLastEntry);
     }
 
     public function equalsSingle(ContentStreamLayer $id): bool

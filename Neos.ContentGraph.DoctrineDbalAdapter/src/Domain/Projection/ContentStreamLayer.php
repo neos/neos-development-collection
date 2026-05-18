@@ -12,8 +12,8 @@ final readonly class ContentStreamLayer
     private function __construct(
         public int $value
     ) {
-        if ($value < 0) {
-            throw new \InvalidArgumentException('A ContentStreamLayer cannot be negative, got %d', $value);
+        if ($value < 1) {
+            throw new \InvalidArgumentException('A ContentStreamLayer must be natural, got %d', $value);
         }
     }
 
