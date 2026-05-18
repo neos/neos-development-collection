@@ -52,6 +52,9 @@ final readonly class GherkinTableNodeBasedContentDimensionSource implements Cont
             $specializationDepths = [];
             $dimensionValues = [];
             $variationEdges = [];
+            $configuration = array_key_exists('Configuration', $row)
+                ? \json_decode($row['Configuration'], true, 512, JSON_THROW_ON_ERROR)
+                : [];
             foreach (Arrays::trimExplode(',', $row['Generalizations']) as $variationExpression) {
                 $currentGeneralization = null;
                 foreach (array_reverse(Arrays::trimExplode('->', $variationExpression)) as $specializationDepth => $rawDimensionValue) {
@@ -65,7 +68,7 @@ final readonly class GherkinTableNodeBasedContentDimensionSource implements Cont
 
             foreach (Arrays::trimExplode(',', $row['Values']) as $rawDimensionValue) {
                 /** @var string $rawDimensionValue */
-                $dimensionValueConfiguration = [];
+                $dimensionValueConfiguration = $configuration['values'][$rawDimensionValue] ?? [];
                 $dimensionValues[$rawDimensionValue] = new ContentDimensionValue(
                     $rawDimensionValue,
                     new ContentDimensionValueSpecializationDepth($specializationDepths[$rawDimensionValue] ?? 0),
@@ -78,7 +81,10 @@ final readonly class GherkinTableNodeBasedContentDimensionSource implements Cont
                 $variationEdges[] = new ContentDimensionValueVariationEdge($dimensionValues[$rawSpecializationValue], $dimensionValues[$rawGeneralizationValue]);
             }
 
-            $dimensionConfiguration = [];
+            $dimensionConfiguration = $configuration;
+            if (array_key_exists('values', $dimensionConfiguration)) {
+                unset($dimensionConfiguration['values']);
+            }
             /** @var string $dimensionId */
             $dimensionId = $row['Identifier'];
             $dimensions[$dimensionId] = new ContentDimension(

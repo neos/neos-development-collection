@@ -12,6 +12,7 @@ use Neos\ContentRepository\Core\Dimension\ContentDimensionValue;
 use Neos\ContentRepository\Core\Dimension\ContentDimensionValueSpecializationDepth;
 use Neos\ContentRepository\Core\Tests\Unit\Dimension\ConfigurationBasedContentDimensionSourceTest;
 use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\Helpers\GherkinTableNodeBasedContentDimensionSource;
+use PHPUnit\Framework\Assert;
 use PHPUnit\Framework\TestCase;
 
 class GherkinTableNodeBasedContentDimensionSourceTest extends TestCase
@@ -39,9 +40,9 @@ class GherkinTableNodeBasedContentDimensionSourceTest extends TestCase
          */
         // parsed gherkin table shape:
         $table = [
-            ['Identifier', 'Values'                   , 'Generalizations'   ],
-            ['dimensionA', 'valueA1,valueA1.1,valueA2', 'valueA1.1->valueA1'],
-            ['dimensionB', 'valueB1,valueB2,valueB3'  , ''                  ],
+            ['Identifier', 'Values'                   , 'Generalizations'   , 'Configuration'],
+            ['dimensionA', 'valueA1,valueA1.1,valueA2', 'valueA1.1->valueA1', '{"myDimensionAConfig": "valueA", "values": {"valueA1": {"myValueA1Config": "valueA1"}}}'],
+            ['dimensionB', 'valueB1,valueB2,valueB3'  , ''                  , '{"values": {"valueB2": {"myValueB2Config": "valueB2"}}}'],
         ];
         $this->subject = GherkinTableNodeBasedContentDimensionSource::fromGherkinTableNode(new TableNode($table));
     }
@@ -72,7 +73,9 @@ class GherkinTableNodeBasedContentDimensionSourceTest extends TestCase
                 'valueA1',
                 new ContentDimensionValueSpecializationDepth(0),
                 ContentDimensionConstraintSet::createEmpty(),
-                []
+                [
+                    'myValueA1Config' => 'valueA1'
+                ]
             ),
             $dimensionA->getValue('valueA1')
         );
@@ -103,7 +106,10 @@ class GherkinTableNodeBasedContentDimensionSourceTest extends TestCase
         $this->assertEquals(
             new ContentDimensionValue(
                 'valueB2',
-                new ContentDimensionValueSpecializationDepth(0)
+                new ContentDimensionValueSpecializationDepth(0),
+                configuration: [
+                    'myValueB2Config' => 'valueB2'
+                ]
             ),
             $dimensionB->getValue('valueB2')
         );
@@ -232,5 +238,16 @@ class GherkinTableNodeBasedContentDimensionSourceTest extends TestCase
             ContentDimensionConstraintSet::createEmpty(),
             $valueB3->constraints
         );
+    }
+
+    public function testConfigurationIsCorrectlyApplied(): void
+    {
+        $dimensionA = $this->subject->getDimension(new ContentDimensionId('dimensionA'));
+        $dimensionB = $this->subject->getDimension(new ContentDimensionId('dimensionB'));
+
+        Assert::assertSame(['myDimensionAConfig' => 'valueA'], $dimensionA->configuration);
+        Assert::assertSame(['myValueA1Config' => 'valueA1'], $dimensionA->getValue('valueA1')->configuration);
+        Assert::assertSame([], $dimensionB->configuration);
+        Assert::assertSame(['myValueB2Config' => 'valueB2'], $dimensionB->getValue('valueB2')->configuration);
     }
 }
