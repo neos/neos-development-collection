@@ -11,6 +11,34 @@ use PHPUnit\Framework\TestCase;
 class ContentStreamLayersTest extends TestCase
 {
     /** @test */
+    public function invalidLayer()
+    {
+        $this->expectException(\InvalidArgumentException::class);
+        ContentStreamLayer::fromInt(0);
+    }
+
+    /** @test */
+    public function invalidLayer2()
+    {
+        $this->expectException(\InvalidArgumentException::class);
+        ContentStreamLayer::fromInt(-1);
+    }
+
+    /** @test */
+    public function invalidEmptyLayers()
+    {
+        $this->expectException(\InvalidArgumentException::class);
+        ContentStreamLayers::fromArray([]);
+    }
+
+    /** @test */
+    public function invalidLayerNumbers()
+    {
+        $this->expectException(\InvalidArgumentException::class);
+        ContentStreamLayers::fromArray([0, -1]);
+    }
+
+    /** @test */
     public function getRootLayer()
     {
         $layers = ContentStreamLayers::fromArray([3, 6, 1, 5]);
@@ -36,25 +64,35 @@ class ContentStreamLayersTest extends TestCase
     /** @test */
     public function getParentReadLayer()
     {
-        $layers = ContentStreamLayers::fromArray([3, 6, 1, 5]);
-        self::assertSame(5, $layers->getParentReadLayer()->value);
+        $layers = ContentStreamLayers::fromArray([1]);
+        self::assertNull($layers->getParentReadLayer());
 
-        $layers2 = ContentStreamLayers::fromArray([1]);
-        self::assertNull($layers2->getParentReadLayer());
+        $layers1 = ContentStreamLayers::fromArray([1, 2]);
+        self::assertSame(1, $layers1->getParentReadLayer()->value);
+
+        $layers2 = ContentStreamLayers::fromArray([3, 6, 1, 5]);
+        self::assertSame(5, $layers2->getParentReadLayer()->value);
     }
 
     /** @test */
     public function getParentReadLayers()
     {
-        $layers = ContentStreamLayers::fromArray([3, 6, 1, 5]);
-        self::assertSame([1, 3, 5], $layers->getParentReadLayers()->toIntArray());
+        $layers = ContentStreamLayers::fromArray([1]);
+        self::assertNull($layers->getParentReadLayers());
 
-        $layers2 = ContentStreamLayers::fromArray([1]);
-        self::assertNull($layers2->getParentReadLayers());
+        $layers1 = ContentStreamLayers::fromArray([1, 2]);
+        // Array keys are preserved for indexing
+        self::assertTrue($layers1->contain(ContentStreamLayer::fromInt(1)));
+        self::assertSame([1], $layers1->getParentReadLayers()->toIntArray());
+
+        $layers2 = ContentStreamLayers::fromArray([3, 6, 1, 5]);
+        self::assertSame([1, 3, 5], $layers2->getParentReadLayers()->toIntArray());
+        self::assertSame([1, 3], $layers2->getParentReadLayers()->getParentReadLayers()->toIntArray());
+
     }
 
     /** @test */
-    public function equals()
+    public function equalsSingle()
     {
         $layers = ContentStreamLayers::fromArray([3, 6, 1, 5]);
         self::assertFalse($layers->equalsSingle(ContentStreamLayer::fromInt(1)));
@@ -83,5 +121,14 @@ class ContentStreamLayersTest extends TestCase
     {
         $layers = ContentStreamLayers::fromArray([3, 6, 1, 5]);
         self::assertSame([1, 3, 5, 6], $layers->toIntArray());
+    }
+
+    /** @test */
+    public function ignoresDuplicates()
+    {
+        $layers = ContentStreamLayers::fromArray([1, 3, 1, 3]);
+        self::assertSame([1, 3], $layers->toIntArray());
+        self::assertSame([1], $layers->getParentReadLayers()->toIntArray());
+        self::assertCount(2, $layers->items);
     }
 }
