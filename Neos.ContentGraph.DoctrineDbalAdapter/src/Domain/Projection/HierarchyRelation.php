@@ -41,7 +41,7 @@ final readonly class HierarchyRelation
     }
 
     public function with(
-        ?HierarchyRelationId $hierarchyRelationDId = null,
+        ?HierarchyRelationId $hierarchyRelationId = null,
         ?NodeRelationAnchorPoint $parentNodeAnchor = null,
         ?NodeRelationAnchorPoint $childNodeAnchor = null,
         ?ContentStreamLayer $contentStreamLayer = null,
@@ -51,7 +51,7 @@ final readonly class HierarchyRelation
         ?NodeTags $subtreeTags = null,
     ): self {
         return new self(
-            hierarchyRelationId: $hierarchyRelationDId ?? $this->hierarchyRelationId,
+            hierarchyRelationId: $hierarchyRelationId ?? $this->hierarchyRelationId,
             contentStreamLayer: $contentStreamLayer ?? $this->contentStreamLayer,
             parentNodeAnchor: $parentNodeAnchor ?? $this->parentNodeAnchor,
             childNodeAnchor: $childNodeAnchor ?? $this->childNodeAnchor,
