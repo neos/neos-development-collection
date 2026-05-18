@@ -19,6 +19,7 @@ use Behat\Gherkin\Node\TableNode;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Platforms\PostgreSQLPlatform;
 use Neos\ContentRepository\Core\ContentRepository;
+use Neos\ContentRepository\Core\Dimension\ConfigurationBasedContentDimensionSource;
 use Neos\ContentRepository\Core\Service\ContentRepositoryMaintainer;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
 use Neos\ContentRepository\Core\Subscription\Engine\SubscriptionEngine;
@@ -74,6 +75,18 @@ trait CRBehavioralTestsSubjectProvider
     {
         FakeContentDimensionSourceFactory::setContentDimensionSource(
             GherkinTableNodeBasedContentDimensionSource::fromGherkinTableNode($contentDimensions)
+        );
+    }
+
+    /**
+     * @Given /^using the following content dimensions yaml configuration:$/
+     */
+    public function usingTheFollowingContentDimensionsFromYAML(PyStringNode $pyStringNode): void
+    {
+        FakeContentDimensionSourceFactory::setContentDimensionSource(
+            new ConfigurationBasedContentDimensionSource(
+                Yaml::parse($pyStringNode->getRaw())
+            )
         );
     }
 
