@@ -1,4 +1,3 @@
-@contentrepository @adapters=DoctrineDBAL
 Feature: Rebasing with no conflict
 
   Background:
@@ -58,12 +57,33 @@ Feature: Rebasing with no conflict
     When I am in workspace "user-test" and dimension space point {}
     Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node user-cs-identifier;sir-david-nodenborough;{}
 
-    # only if the force flag is used we enforce a fork:
+  Scenario: Rebase via force creates new content stream even if there are no changes
+    # force flag used
     When the command RebaseWorkspace is executed with payload:
       | Key                         | Value                 |
       | workspaceName               | "user-test"           |
       | rebasedContentStreamId      | "user-cs-rebased"     |
       | rebaseErrorHandlingStrategy | "force"               |
+
+    Then I expect exactly 2 events to be published on stream with prefix "Workspace:user-test"
+    And event at index 1 is of type "WorkspaceWasRebased" with payload:
+      | Key                     | Expected             |
+      | workspaceName           | "user-test"          |
+      | newContentStreamId      | "user-cs-rebased"    |
+      | previousContentStreamId | "user-cs-identifier" |
+      | skippedEvents           | []                   |
+
+    Then I expect exactly 1 events to be published on stream with prefix "ContentStream:user-cs-rebased"
+    And event at index 0 is of type "ContentStreamWasForked" with payload:
+      | Key                   | Expected          |
+      | newContentStreamId    | "user-cs-rebased" |
+      | sourceContentStreamId | "cs-identifier"   |
+
+    Then I expect exactly 3 events to be published on stream with prefix "ContentStream:user-cs-identifier"
+    And event at index 2 is of type "ContentStreamWasRemoved" with payload:
+      | Key             | Expected             |
+      | contentStreamId | "user-cs-identifier" |
+
     Then I expect the content stream "user-cs-identifier" to not exist
 
     Then I expect exactly 2 events to be published on stream with prefix "Workspace:user-test"
@@ -90,6 +110,26 @@ Feature: Rebasing with no conflict
       | Key                         | Value                 |
       | workspaceName               | "user-test"           |
       | rebasedContentStreamId      | "user-cs-rebased"     |
+
+    Then I expect exactly 2 events to be published on stream with prefix "Workspace:user-test"
+    And event at index 1 is of type "WorkspaceWasRebased" with payload:
+      | Key                     | Expected             |
+      | workspaceName           | "user-test"          |
+      | newContentStreamId      | "user-cs-rebased"    |
+      | previousContentStreamId | "user-cs-identifier" |
+      | skippedEvents           | []                   |
+
+    Then I expect exactly 1 events to be published on stream with prefix "ContentStream:user-cs-rebased"
+    And event at index 0 is of type "ContentStreamWasForked" with payload:
+      | Key                   | Expected          |
+      | newContentStreamId    | "user-cs-rebased" |
+      | sourceContentStreamId | "cs-identifier"   |
+
+    Then I expect exactly 3 events to be published on stream with prefix "ContentStream:user-cs-identifier"
+    And event at index 2 is of type "ContentStreamWasRemoved" with payload:
+      | Key             | Expected             |
+      | contentStreamId | "user-cs-identifier" |
+
     Then I expect the content stream "user-cs-identifier" to not exist
     Then workspaces live,user-test have status UP_TO_DATE
 
@@ -119,6 +159,26 @@ Feature: Rebasing with no conflict
       | Key                         | Value                 |
       | workspaceName               | "user-test"           |
       | rebasedContentStreamId      | "user-cs-rebased"     |
+
+    Then I expect exactly 2 events to be published on stream with prefix "Workspace:user-test"
+    And event at index 1 is of type "WorkspaceWasRebased" with payload:
+      | Key                     | Expected             |
+      | workspaceName           | "user-test"          |
+      | newContentStreamId      | "user-cs-rebased"    |
+      | previousContentStreamId | "user-cs-identifier" |
+      | skippedEvents           | []                   |
+
+    Then I expect exactly 4 events to be published on stream with prefix "ContentStream:user-cs-rebased"
+    And event at index 0 is of type "ContentStreamWasForked" with payload:
+      | Key                   | Expected          |
+      | newContentStreamId    | "user-cs-rebased" |
+      | sourceContentStreamId | "cs-identifier"   |
+
+    Then I expect exactly 4 events to be published on stream with prefix "ContentStream:user-cs-identifier"
+    And event at index 3 is of type "ContentStreamWasRemoved" with payload:
+      | Key             | Expected             |
+      | contentStreamId | "user-cs-identifier" |
+
     Then I expect the content stream "user-cs-identifier" to not exist
 
     Then workspaces live,user-test have status UP_TO_DATE

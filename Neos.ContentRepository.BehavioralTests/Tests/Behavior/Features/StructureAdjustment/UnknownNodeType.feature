@@ -1,4 +1,3 @@
-@contentrepository @adapters=DoctrineDBAL
 Feature: Unknown node types
 
   As a user of the CR I want to be able to detect and remove unknown node types
@@ -21,17 +20,14 @@ Feature: Unknown node types
       | nodeAggregateId | "lady-eleonode-rootford"      |
       | nodeTypeName    | "Neos.ContentRepository:Root" |
     # Node /document
-    And the event NodeAggregateWithNodeWasCreated was published with payload:
+    And the command CreateNodeAggregateWithNode is executed with payload:
       | Key                         | Value                                     |
       | workspaceName               | "live"                                    |
-      | contentStreamId             | "cs-identifier"                           |
       | nodeAggregateId             | "sir-david-nodenborough"                  |
       | nodeTypeName                | "Neos.ContentRepository.Testing:Document" |
       | originDimensionSpacePoint   | {}                                        |
-      | coveredDimensionSpacePoints | [{}]                                      |
       | parentNodeAggregateId       | "lady-eleonode-rootford"                  |
       | nodeName                    | "document"                                |
-      | nodeAggregateClassification | "regular"                                 |
     Then I expect no needed structure adjustments for type "Neos.ContentRepository.Testing:Document"
 
   Scenario: When removing "Neos.ContentRepository.Testing:Document", we find a missing node type.

@@ -1,4 +1,4 @@
-@flowEntities @contentrepository
+@flowEntities
 Feature: Routing functionality with multiple content dimensions
 
   Background:

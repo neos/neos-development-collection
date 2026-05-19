@@ -1,5 +1,3 @@
-@contentrepository @adapters=DoctrineDBAL
-  # TODO implement for Postgres
 Feature: Find and count nodes using the findAncestorNodes, countAncestorNodes and findAncestorNodeAggregateIds queries
 
   Background:
@@ -83,6 +81,8 @@ Feature: Find and count nodes using the findAncestorNodes, countAncestorNodes an
       | relationDistributionStrategy | "scatter"               |
       | nodeAggregateId              | "a2a2c"                 |
       | newParentNodeAggregateId     | "b"                     |
+    And I restrict the visibility of nodes tagged "disabled" in subgraph queries
+
   Scenario:
     Subgraph queries
     # findAncestorNodes queries without results

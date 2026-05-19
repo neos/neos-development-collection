@@ -1,4 +1,3 @@
-@contentrepository @adapters=DoctrineDBAL
 Feature: Remove disallowed Child Nodes and grandchild nodes
 
   As a user of the CR I want to be able to keep tethered child nodes although their type is not allowed below their parent

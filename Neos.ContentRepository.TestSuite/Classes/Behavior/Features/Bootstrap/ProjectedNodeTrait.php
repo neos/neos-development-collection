@@ -14,6 +14,7 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap;
 
+use Behat\Gherkin\Node\PyStringNode;
 use Behat\Gherkin\Node\TableNode;
 use GuzzleHttp\Psr7\Uri;
 use Neos\ContentRepository\Core\Feature\SubtreeTagging\Dto\SubtreeTag;
@@ -23,10 +24,12 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindBackReference
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindChildNodesFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindPrecedingSiblingNodesFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindReferencesFilter;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindSubtreeFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindSucceedingSiblingNodesFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodePath;
 use Neos\ContentRepository\Core\Projection\ContentGraph\References;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Subtree;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateClassification;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
@@ -255,7 +258,8 @@ trait ProjectedNodeTrait
             sort($actualTags);
             Assert::assertSame(
                 ($expectedTagList === '') ? [] : explode(',', $expectedTagList),
-                $actualTags
+                $actualTags,
+                sprintf('Node "%s" in workspace "%s" and dsp %s is tagged with {%s}', $currentNode->aggregateId->value, $currentNode->workspaceName->value, $currentNode->dimensionSpacePoint->toJson(), join(',', $currentNode->tags->map(fn (SubtreeTag $tag, bool $inherited) => sprintf('%s%s', $tag->value, $inherited ? '' : '*'))))
             );
         });
     }
@@ -272,7 +276,35 @@ trait ProjectedNodeTrait
             Assert::assertSame(
                 ($expectedTagList === '') ? [] : explode(',', $expectedTagList),
                 $actualTags,
+                sprintf('Node "%s" in workspace "%s" and dsp %s is tagged with {%s}', $currentNode->aggregateId->value, $currentNode->workspaceName->value, $currentNode->dimensionSpacePoint->toJson(), join(',', $currentNode->tags->map(fn (SubtreeTag $tag, bool $inherited) => sprintf('%s%s', $tag->value, $inherited ? '' : '*'))))
             );
+        });
+    }
+
+    /**
+     * @Then /^I expect this node to have the following subtree with tags:$/
+     */
+    public function iExpectThisNodeToHaveTheFollowingSubtreeWithTags(PyStringNode $expectedTree): void
+    {
+        $this->assertOnCurrentNode(function (Node $currentNode) use ($expectedTree) {
+            $result = [];
+            $subtreeStack = [];
+            $subtree = $this->getCurrentSubgraph()->findSubtree($currentNode->aggregateId, FindSubtreeFilter::create());
+            if ($subtree !== null) {
+                $subtreeStack[] = $subtree;
+            }
+            while ($subtreeStack !== []) {
+                /** @var Subtree $subtree */
+                $subtree = array_shift($subtreeStack);
+                $explicitTags = $subtree->node->tags->withoutInherited()->toStringArray();
+                sort($explicitTags);
+                $inheritedTags = $subtree->node->tags->onlyInherited()->toStringArray();
+                sort($inheritedTags);
+                $tags = [...array_map(static fn(string $tag) => $tag . '*', $explicitTags), ...$inheritedTags];
+                $result[] = str_repeat(' ', $subtree->level) . $subtree->node->aggregateId->value . ($tags !== [] ? ' (' . implode(',', $tags) . ')' : '');
+                $subtreeStack = [...$subtree->children, ...$subtreeStack];
+            }
+            Assert::assertSame($expectedTree?->getRaw() ?? '', implode(chr(10), $result));
         });
     }
 
@@ -596,7 +628,7 @@ trait ProjectedNodeTrait
             foreach ($expectedChildNodesTable->getHash() as $index => $row) {
                 $expectedNodeName = NodeName::fromString($row['Name']);
                 $actualNodeName = $actualChildNodes[$index]->name;
-                Assert::assertTrue($expectedNodeName->equals($actualNodeName), 'ContentSubgraph::findChildNodes: Node name in index ' . $index . ' does not match. Expected: "' . $expectedNodeName->value . '" Actual: "' . $actualNodeName->value . '"');
+                Assert::assertTrue($actualNodeName?->equals($expectedNodeName), 'ContentSubgraph::findChildNodes: Node name in index ' . $index . ' does not match. Expected: "' . $expectedNodeName->value . '" Actual: "' . $actualNodeName?->value . '"');
                 if (isset($row['NodeDiscriminator'])) {
                     $expectedNodeDiscriminator = NodeDiscriminator::fromShorthand($row['NodeDiscriminator']);
                     $actualNodeDiscriminator = NodeDiscriminator::fromNode(

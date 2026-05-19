@@ -1,4 +1,3 @@
-@contentrepository @adapters=DoctrineDBAL
 Feature: Move dimension space point from / to the zero dimensional case
 
   basically "renames" a dimension space point; needed if:

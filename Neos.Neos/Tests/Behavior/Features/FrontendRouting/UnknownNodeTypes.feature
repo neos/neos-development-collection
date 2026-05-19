@@ -1,4 +1,4 @@
-@flowEntities @contentrepository
+@flowEntities
 Feature: Basic routing functionality (match & resolve nodes with unknown types)
 
   Background:

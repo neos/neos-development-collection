@@ -1,4 +1,3 @@
-@contentrepository @adapters=DoctrineDBAL,Postgres
 Feature: Enable a node aggregate
 
   As a user of the CR I want to enable a node aggregate and expect its descendants to also be enabled unless otherwise disabled.
@@ -56,62 +55,35 @@ Feature: Enable a node aggregate
       | affectedDimensionSpacePoints | [[]]                     |
       | tag                          | "disabled"               |
 
-    And I am in workspace "live"
     Then I expect the graph projection to consist of exactly 5 nodes
     And I expect a node identified by cs-identifier;lady-eleonode-rootford;{} to exist in the content graph
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags ""
     And I expect a node identified by cs-identifier;preceding-nodenborough;{} to exist in the content graph
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags ""
     And I expect a node identified by cs-identifier;sir-david-nodenborough;{} to exist in the content graph
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags ""
     And I expect a node identified by cs-identifier;succeeding-nodenborough;{} to exist in the content graph
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags ""
     And I expect a node identified by cs-identifier;nody-mc-nodeface;{} to exist in the content graph
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags ""
 
     And I expect the node aggregate "sir-david-nodenborough" to exist
     And I expect this node aggregate to disable dimension space points []
 
-    When I am in workspace "live" and dimension space point {}
-    And VisibilityConstraints are set to "default"
     Then I expect node aggregate identifier "lady-eleonode-rootford" to lead to node cs-identifier;lady-eleonode-rootford;{}
-    And I expect this node to have the following child nodes:
-      | Name                | NodeDiscriminator                        |
-      | preceding-document  | cs-identifier;preceding-nodenborough;{}  |
-      | document            | cs-identifier;sir-david-nodenborough;{}  |
-      | succeeding-document | cs-identifier;succeeding-nodenborough;{} |
-    And the subtree for node aggregate "lady-eleonode-rootford" with node types "" and 2 levels deep should be:
-      | Level | nodeAggregateId         |
-      | 0     | lady-eleonode-rootford  |
-      | 1     | preceding-nodenborough  |
-      | 1     | sir-david-nodenborough  |
-      | 2     | nody-mc-nodeface        |
-      | 1     | succeeding-nodenborough |
-    And I expect node aggregate identifier "preceding-nodenborough" and node path "preceding-document" to lead to node cs-identifier;preceding-nodenborough;{}
-    And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
-    And I expect this node to have no preceding siblings
-    And I expect this node to have the following succeeding siblings:
-      | NodeDiscriminator                        |
-      | cs-identifier;sir-david-nodenborough;{}  |
-      | cs-identifier;succeeding-nodenborough;{} |
-    And I expect this node to have the following references:
-      | Name       | Node                                    | Properties |
-      | references | cs-identifier;sir-david-nodenborough;{} | null       |
-    And I expect node aggregate identifier "sir-david-nodenborough" and node path "document" to lead to node cs-identifier;sir-david-nodenborough;{}
-    And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
-    And I expect this node to have the following preceding siblings:
-      | NodeDiscriminator                       |
-      | cs-identifier;preceding-nodenborough;{} |
-    And I expect this node to have the following succeeding siblings:
-      | NodeDiscriminator                        |
-      | cs-identifier;succeeding-nodenborough;{} |
-    And I expect this node to be referenced by:
-      | Name       | Node                                    | Properties |
-      | references | cs-identifier;preceding-nodenborough;{} | null       |
-    And I expect node aggregate identifier "succeeding-nodenborough" and node path "succeeding-document" to lead to node cs-identifier;succeeding-nodenborough;{}
-    And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
-    And I expect this node to have the following preceding siblings:
-      | NodeDiscriminator                       |
-      | cs-identifier;sir-david-nodenborough;{} |
-      | cs-identifier;preceding-nodenborough;{} |
-    And I expect this node to have no succeeding siblings
-    And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document" to lead to node cs-identifier;nody-mc-nodeface;{}
-    And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{}
+    And I expect this node to have the following subtree with tags:
+    """
+    lady-eleonode-rootford
+     preceding-nodenborough
+     sir-david-nodenborough
+      nody-mc-nodeface
+     succeeding-nodenborough
+    """
 
   Scenario: Enable a previously disabled node with explicitly disabled child nodes with arbitrary strategy since dimensions are not involved
     Given the command DisableNodeAggregate is executed with payload:
@@ -122,6 +94,23 @@ Feature: Enable a node aggregate
       | Key                          | Value              |
       | nodeAggregateId              | "nody-mc-nodeface" |
       | nodeVariantSelectionStrategy | "allVariants"      |
+
+    And I expect a node identified by cs-identifier;sir-david-nodenborough;{} to exist in the content graph
+    And I expect this node to be exactly explicitly tagged "disabled"
+    And I expect this node to exactly inherit the tags ""
+    And I expect a node identified by cs-identifier;nody-mc-nodeface;{} to exist in the content graph
+    And I expect this node to be exactly explicitly tagged "disabled"
+    And I expect this node to exactly inherit the tags ""
+
+    Then I expect node aggregate identifier "lady-eleonode-rootford" to lead to node cs-identifier;lady-eleonode-rootford;{}
+    And I expect this node to have the following subtree with tags:
+    """
+    lady-eleonode-rootford
+     preceding-nodenborough
+     sir-david-nodenborough (disabled*)
+      nody-mc-nodeface (disabled*)
+     succeeding-nodenborough
+    """
 
     When the command EnableNodeAggregate is executed with payload:
       | Key                          | Value                    |
@@ -135,58 +124,37 @@ Feature: Enable a node aggregate
       | affectedDimensionSpacePoints | [[]]                     |
       | tag                          | "disabled"               |
 
-    And I am in workspace "live"
+    Then I expect the graph projection to consist of exactly 5 nodes
+    And I expect a node identified by cs-identifier;lady-eleonode-rootford;{} to exist in the content graph
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags ""
+    And I expect a node identified by cs-identifier;preceding-nodenborough;{} to exist in the content graph
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags ""
+    And I expect a node identified by cs-identifier;sir-david-nodenborough;{} to exist in the content graph
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags ""
+    And I expect a node identified by cs-identifier;succeeding-nodenborough;{} to exist in the content graph
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags ""
+    And I expect a node identified by cs-identifier;nody-mc-nodeface;{} to exist in the content graph
+    And I expect this node to be exactly explicitly tagged "disabled"
+    And I expect this node to exactly inherit the tags ""
 
     Then I expect the node aggregate "sir-david-nodenborough" to exist
     And I expect this node aggregate to disable dimension space points []
     And I expect the node aggregate "nody-mc-nodeface" to exist
     And I expect this node aggregate to disable dimension space points [{}]
 
-    When I am in workspace "live" and dimension space point {}
-    And VisibilityConstraints are set to "default"
     Then I expect node aggregate identifier "lady-eleonode-rootford" to lead to node cs-identifier;lady-eleonode-rootford;{}
-    And I expect this node to have the following child nodes:
-      | Name                | NodeDiscriminator                        |
-      | preceding-document  | cs-identifier;preceding-nodenborough;{}  |
-      | document            | cs-identifier;sir-david-nodenborough;{}  |
-      | succeeding-document | cs-identifier;succeeding-nodenborough;{} |
-    And the subtree for node aggregate "lady-eleonode-rootford" with node types "" and 2 levels deep should be:
-      | Level | nodeAggregateId         |
-      | 0     | lady-eleonode-rootford  |
-      | 1     | preceding-nodenborough  |
-      | 1     | sir-david-nodenborough  |
-      | 1     | succeeding-nodenborough |
-    Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{}
-    And I expect this node to have no child nodes
-    And I expect node aggregate identifier "preceding-nodenborough" and node path "preceding-document" to lead to node cs-identifier;preceding-nodenborough;{}
-    And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
-    And I expect this node to have no preceding siblings
-    And I expect this node to have the following succeeding siblings:
-      | NodeDiscriminator                        |
-      | cs-identifier;sir-david-nodenborough;{}  |
-      | cs-identifier;succeeding-nodenborough;{} |
-    And I expect this node to have the following references:
-      | Name       | Node                                    | Properties |
-      | references | cs-identifier;sir-david-nodenborough;{} | null       |
-    And I expect node aggregate identifier "sir-david-nodenborough" and node path "document" to lead to node cs-identifier;sir-david-nodenborough;{}
-    And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
-    And I expect this node to have the following preceding siblings:
-      | NodeDiscriminator                       |
-      | cs-identifier;preceding-nodenborough;{} |
-    And I expect this node to have the following succeeding siblings:
-      | NodeDiscriminator                        |
-      | cs-identifier;succeeding-nodenborough;{} |
-    And I expect this node to be referenced by:
-      | Name       | Node                                    | Properties |
-      | references | cs-identifier;preceding-nodenborough;{} | null       |
-    And I expect node aggregate identifier "succeeding-nodenborough" and node path "succeeding-document" to lead to node cs-identifier;succeeding-nodenborough;{}
-    And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
-    And I expect this node to have the following preceding siblings:
-      | NodeDiscriminator                       |
-      | cs-identifier;sir-david-nodenborough;{} |
-      | cs-identifier;preceding-nodenborough;{} |
-    And I expect this node to have no succeeding siblings
-    And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document" to lead to no node
+    And I expect this node to have the following subtree with tags:
+    """
+    lady-eleonode-rootford
+     preceding-nodenborough
+     sir-david-nodenborough
+      nody-mc-nodeface (disabled*)
+     succeeding-nodenborough
+    """
 
   Scenario: Enable a previously disabled node with explicitly disabled parent node with arbitrary strategy since dimensions are not involved
     Given the command DisableNodeAggregate is executed with payload:
@@ -197,6 +165,13 @@ Feature: Enable a node aggregate
       | Key                          | Value              |
       | nodeAggregateId              | "nody-mc-nodeface" |
       | nodeVariantSelectionStrategy | "allVariants"      |
+
+    And I expect a node identified by cs-identifier;sir-david-nodenborough;{} to exist in the content graph
+    And I expect this node to be exactly explicitly tagged "disabled"
+    And I expect this node to exactly inherit the tags ""
+    And I expect a node identified by cs-identifier;nody-mc-nodeface;{} to exist in the content graph
+    And I expect this node to be exactly explicitly tagged "disabled"
+    And I expect this node to exactly inherit the tags ""
 
     When the command EnableNodeAggregate is executed with payload:
       | Key                          | Value              |
@@ -217,17 +192,19 @@ Feature: Enable a node aggregate
     And I expect the node aggregate "nody-mc-nodeface" to exist
     And I expect this node aggregate to disable dimension space points []
 
-    When I am in workspace "live" and dimension space point {}
-    And VisibilityConstraints are set to "default"
+    And I expect a node identified by cs-identifier;sir-david-nodenborough;{} to exist in the content graph
+    And I expect this node to be exactly explicitly tagged "disabled"
+    And I expect this node to exactly inherit the tags ""
+    And I expect a node identified by cs-identifier;nody-mc-nodeface;{} to exist in the content graph
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags "disabled"
+
     Then I expect node aggregate identifier "lady-eleonode-rootford" to lead to node cs-identifier;lady-eleonode-rootford;{}
-    And I expect this node to have the following child nodes:
-      | Name                | NodeDiscriminator                        |
-      | preceding-document  | cs-identifier;preceding-nodenborough;{}  |
-      | succeeding-document | cs-identifier;succeeding-nodenborough;{} |
-    And the subtree for node aggregate "lady-eleonode-rootford" with node types "" and 2 levels deep should be:
-      | Level | nodeAggregateId         |
-      | 0     | lady-eleonode-rootford  |
-      | 1     | preceding-nodenborough  |
-      | 1     | succeeding-nodenborough |
-    And I expect node aggregate identifier "sir-david-nodenborough" and node path "document" to lead to no node
-    And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document" to lead to no node
+    And I expect this node to have the following subtree with tags:
+    """
+    lady-eleonode-rootford
+     preceding-nodenborough
+     sir-david-nodenborough (disabled*)
+      nody-mc-nodeface (disabled)
+     succeeding-nodenborough
+    """

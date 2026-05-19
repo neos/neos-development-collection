@@ -307,6 +307,27 @@ final class ProjectionIntegrityViolationDetector implements ProjectionIntegrityV
         }
 
         foreach ($referenceRelationRecordsWithInvalidTarget as $record) {
+            $destinationNodeAggregateExistStatement = <<<SQL
+            SELECT 1 FROM {$this->tableNames->hierarchyRelation()} AS h
+                INNER JOIN {$this->tableNames->node()} AS n ON n.relationanchorpoint = h.childnodeanchor
+            WHERE n.nodeaggregateid = :destinationNodeAggregateId
+                AND h.contentstreamid = :contentStreamId
+            LIMIT 1
+            SQL;
+            try {
+                $destinationNodeAggregateExist = $this->dbal->fetchOne($destinationNodeAggregateExistStatement, [
+                    'destinationNodeAggregateId' => $record['destinationNodeAggregateId'],
+                    'contentStreamId' => $record['contentstreamId'],
+                ]);
+            } catch (DBALException $e) {
+                throw new \RuntimeException(sprintf('Failed to check if node aggregate exists: %s', $e->getMessage()), 1777651107, $e);
+            }
+
+            if ($destinationNodeAggregateExist === false) {
+                // Neos 9.0 intentionally treats references like symlinks, which means that when removing the destination node the reference edge is not removed.
+                // Thus, we do not yield an error. See https://github.com/neos/neos-development-collection/issues/5809
+                continue;
+            }
             $result->addError(new Error(
                 'Destination node aggregate ' . $record['destinationNodeAggregateId']
                 . ' does not cover any dimension space points the source ' . $record['sourceNodeAggregateId']

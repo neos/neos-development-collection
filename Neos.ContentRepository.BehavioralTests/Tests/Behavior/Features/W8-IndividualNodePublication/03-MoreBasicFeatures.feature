@@ -1,4 +1,3 @@
-@contentrepository @adapters=DoctrineDBAL
 Feature: Publishing individual nodes (basics)
 
   Publishing an individual node works

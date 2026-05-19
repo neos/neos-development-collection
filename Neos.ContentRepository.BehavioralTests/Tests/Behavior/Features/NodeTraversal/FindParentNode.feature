@@ -1,4 +1,3 @@
-@contentrepository @adapters=DoctrineDBAL,Postgres
 Feature: Find nodes using the findParentNodes query
 
   Background:
@@ -87,6 +86,7 @@ Feature: Find nodes using the findParentNodes query
       | dimensionSpacePoint          | {"language": "ch"} |
       | newParentNodeAggregateId     | "a"                |
       | relationDistributionStrategy | "scatter"          |
+    And I restrict the visibility of nodes tagged "disabled" in subgraph queries
 
   Scenario:
     Subgraph queries

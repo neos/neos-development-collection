@@ -1,4 +1,3 @@
-@contentrepository @adapters=DoctrineDBAL,Postgres
 Feature: Find nodes using the findSubtree query
 
   Background:
@@ -72,6 +71,7 @@ Feature: Find nodes using the findSubtree query
       | Key                          | Value         |
       | nodeAggregateId              | "a2a2a"       |
       | nodeVariantSelectionStrategy | "allVariants" |
+    And I restrict the visibility of nodes tagged "disabled" in subgraph queries
 
   Scenario:
     # findSubtree queries without results

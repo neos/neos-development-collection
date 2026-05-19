@@ -1,4 +1,3 @@
-@contentrepository @adapters=DoctrineDBAL
 Feature: Disable a node aggregate
 
   As a user of the CR I want to disable a node aggregate and expect its descendants to also be disabled.
@@ -42,12 +41,11 @@ Feature: Disable a node aggregate
       | Key                          | Value              |
       | nodeAggregateId              | "nody-mc-nodeface" |
       | nodeVariantSelectionStrategy | "allVariants"      |
-    And the event NodeAggregateWasRemoved was published with payload:
-      | Key                                  | Value              |
-      | workspaceName                        | "live"             |
-      | contentStreamId                      | "cs-identifier"    |
-      | nodeAggregateId                      | "nody-mc-nodeface" |
-      | affectedCoveredDimensionSpacePoints  | [{}]               |
+    And the command RemoveNodeAggregate is executed with payload:
+      | Key                          | Value                |
+      | nodeAggregateId              | "nody-mc-nodeface"   |
+      | coveredDimensionSpacePoint   | {}                   |
+      | nodeVariantSelectionStrategy | "allSpecializations" |
 
     When the command CreateNodeAggregateWithNode is executed with payload:
       | Key                       | Value                                     |
@@ -69,7 +67,6 @@ Feature: Disable a node aggregate
     And I expect this node aggregate to disable dimension space points []
 
     When I am in workspace "live" and dimension space point {}
-    And VisibilityConstraints are set to "default"
     Then the subtree for node aggregate "lady-eleonode-rootford" with node types "" and 2 levels deep should be:
       | Level | nodeAggregateId         |
       | 0     | lady-eleonode-rootford  |
