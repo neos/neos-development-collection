@@ -74,7 +74,6 @@ trait NodeRemoval
                     $nodeAggregate,
                     $this->getInterDimensionalVariationGraph()
                 ),
-                $command->removalAttachmentPoint
             )
         );
 
