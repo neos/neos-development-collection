@@ -39,8 +39,6 @@ trait CRTestSuiteRuntimeVariables
 
     protected ?DimensionSpacePoint $currentDimensionSpacePoint = null;
 
-    protected ?VisibilityConstraints $currentVisibilityConstraints = null;
-
     protected ?NodeAggregateId $currentRootNodeAggregateId = null;
 
     protected ?\Exception $lastCommandException = null;
@@ -109,24 +107,15 @@ trait CRTestSuiteRuntimeVariables
         $this->iAmInDimensionSpacePoint($dimensionSpacePoint);
     }
 
-    /**
-     * @When /^VisibilityConstraints are set to "(withoutRestrictions|empty|default)"$/
-     */
-    public function visibilityConstraintsAreSetTo(string $restrictionType): void
-    {
-        $this->currentVisibilityConstraints = match ($restrictionType) {
-            'withoutRestrictions' => VisibilityConstraints::withoutRestrictions(),
-            'empty' => VisibilityConstraints::createEmpty(),
-            'default' => VisibilityConstraints::default(),
-            default => throw new \InvalidArgumentException('Visibility constraint "' . $restrictionType . '" not supported.'),
-        };
-    }
-
     public function getCurrentSubgraph(): ContentSubgraphInterface
     {
         return $this->currentContentRepository->getContentGraph($this->currentWorkspaceName)->getSubgraph(
             $this->currentDimensionSpacePoint,
-            $this->currentVisibilityConstraints
+            /**
+             * We don't restrict visibility for most cases to simplify test assertions and reasoning. Visibility constraints are not relevant for command execution and general assertions. They are only tested during Node Querying / Traversal
+             * See {@see NodeTraversalTrait::getCurrentSubgraphForQueries()}
+             */
+            VisibilityConstraints::createEmpty(),
         );
     }
 

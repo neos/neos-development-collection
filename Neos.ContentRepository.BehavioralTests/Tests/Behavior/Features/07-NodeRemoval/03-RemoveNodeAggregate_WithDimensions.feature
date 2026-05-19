@@ -1,4 +1,3 @@
-@contentrepository @adapters=DoctrineDBAL,Postgres
 Feature: Remove NodeAggregate
 
   As a user of the CR I want to be able to remove a NodeAggregate or parts of it.
@@ -362,15 +361,12 @@ Feature: Remove NodeAggregate
     When I am in dimension space point {"language":"de"}
 
     And I expect node aggregate identifier "lady-eleonode-rootford" to lead to node cs-identifier;lady-eleonode-rootford;{}
-    And I expect this node to have the following child nodes:
-      | Name     | NodeDiscriminator                                      |
-      | document | cs-identifier;sir-david-nodenborough;{"language":"en"} |
-      | pet      | cs-identifier;nodingers-cat;{"language":"de"}          |
-    And the subtree for node aggregate "lady-eleonode-rootford" with node types "" and 2 levels deep should be:
-      | Level | nodeAggregateId        |
-      | 0     | lady-eleonode-rootford |
-      | 1     | sir-david-nodenborough |
-      | 1     | nodingers-cat          |
+    And I expect this node to have the following subtree with tags:
+    """
+    lady-eleonode-rootford
+     sir-david-nodenborough
+     nodingers-cat
+    """
 
     And I expect node aggregate identifier "sir-david-nodenborough" and node path "document" to lead to node cs-identifier;sir-david-nodenborough;{"language":"en"}
     And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
@@ -394,15 +390,12 @@ Feature: Remove NodeAggregate
     When I am in dimension space point {"language":"gsw"}
 
     And I expect node aggregate identifier "lady-eleonode-rootford" to lead to node cs-identifier;lady-eleonode-rootford;{}
-    And I expect this node to have the following child nodes:
-      | Name     | NodeDiscriminator                                      |
-      | document | cs-identifier;sir-david-nodenborough;{"language":"en"} |
-      | pet      | cs-identifier;nodingers-cat;{"language":"de"}          |
-    And the subtree for node aggregate "lady-eleonode-rootford" with node types "" and 2 levels deep should be:
-      | Level | nodeAggregateId        |
-      | 0     | lady-eleonode-rootford |
-      | 1     | sir-david-nodenborough |
-      | 1     | nodingers-cat          |
+    And I expect this node to have the following subtree with tags:
+    """
+    lady-eleonode-rootford
+     sir-david-nodenborough
+     nodingers-cat
+    """
 
     And I expect node aggregate identifier "sir-david-nodenborough" and node path "document" to lead to node cs-identifier;sir-david-nodenborough;{"language":"en"}
     And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
@@ -426,40 +419,47 @@ Feature: Remove NodeAggregate
     When I am in dimension space point {"language":"en"}
 
     And I expect node aggregate identifier "lady-eleonode-rootford" to lead to node cs-identifier;lady-eleonode-rootford;{}
-    And I expect this node to have the following child nodes:
-      | Name     | NodeDiscriminator                                      |
-      | document | cs-identifier;sir-david-nodenborough;{"language":"en"} |
-    And the subtree for node aggregate "lady-eleonode-rootford" with node types "" and 2 levels deep should be:
-      | Level | nodeAggregateId        |
-      | 0     | lady-eleonode-rootford |
-      | 1     | sir-david-nodenborough |
+    And I expect this node to have the following subtree with tags:
+    """
+    lady-eleonode-rootford
+     sir-david-nodenborough
+     nodingers-cat (disabled*)
+      nodingers-kitten (disabled)
+    """
 
     And I expect node aggregate identifier "sir-david-nodenborough" and node path "document" to lead to node cs-identifier;sir-david-nodenborough;{"language":"en"}
     And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
-    And I expect this node to have no child nodes
-    And I expect this node to have no references
-    And I expect this node to not be referenced
 
-    And I expect node aggregate identifier "nodingers-cat" and node path "pet" to lead to no node
-    And I expect node aggregate identifier "nodingers-kitten" and node path "pet/kitten" to lead to no node
+    And I expect node aggregate identifier "nodingers-cat" and node path "pet" to lead to node cs-identifier;nodingers-cat;{"language":"en"}
+    And I expect this node to be exactly explicitly tagged "disabled"
+    And I expect this node to exactly inherit the tags ""
+    And I expect node aggregate identifier "nodingers-kitten" and node path "pet/kitten" to lead to node cs-identifier;nodingers-kitten;{"language":"en"}
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags "disabled"
 
     # Check the peer variant
     When I am in dimension space point {"language":"fr"}
 
     And I expect node aggregate identifier "lady-eleonode-rootford" to lead to node cs-identifier;lady-eleonode-rootford;{}
-    And I expect this node to have the following child nodes:
-      | Name     | NodeDiscriminator                                      |
-      | document | cs-identifier;sir-david-nodenborough;{"language":"en"} |
-    And the subtree for node aggregate "lady-eleonode-rootford" with node types "" and 2 levels deep should be:
-      | Level | nodeAggregateId        |
-      | 0     | lady-eleonode-rootford |
-      | 1     | sir-david-nodenborough |
+    And I expect this node to have the following subtree with tags:
+    """
+    lady-eleonode-rootford
+     sir-david-nodenborough
+     nodingers-cat (disabled*)
+      nodingers-kitten (disabled)
+    """
 
     And I expect node aggregate identifier "sir-david-nodenborough" and node path "document" to lead to node cs-identifier;sir-david-nodenborough;{"language":"en"}
     And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
     And I expect this node to have no child nodes
     And I expect this node to have no references
-    And I expect this node to not be referenced
+    And I expect this node to be referenced by:
+      | Name       | Node                                          | Properties |
+      | references | cs-identifier;nodingers-cat;{"language":"en"} | null       |
 
-    And I expect node aggregate identifier "nodingers-cat" and node path "pet" to lead to no node
-    And I expect node aggregate identifier "nodingers-kitten" and node path "pet/kitten" to lead to no node
+    And I expect node aggregate identifier "nodingers-cat" and node path "pet" to lead to node cs-identifier;nodingers-cat;{"language":"en"}
+    And I expect this node to be exactly explicitly tagged "disabled"
+    And I expect this node to exactly inherit the tags ""
+    And I expect node aggregate identifier "nodingers-kitten" and node path "pet/kitten" to lead to node cs-identifier;nodingers-kitten;{"language":"en"}
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags "disabled"

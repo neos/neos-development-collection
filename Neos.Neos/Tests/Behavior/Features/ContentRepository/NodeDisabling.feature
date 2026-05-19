@@ -1,4 +1,3 @@
-@contentrepository @adapters=DoctrineDBAL
 Feature: Special invariant checks for neos node disabling
 
   Background:

@@ -1,4 +1,3 @@
-@contentrepository @adapters=DoctrineDBAL
 Feature: Remove disallowed Child Nodes and grandchild nodes
 
   As a user of the CR I want to be able to detect and remove disallowed child nodes according to the constraints
@@ -34,29 +33,23 @@ Feature: Remove disallowed Child Nodes and grandchild nodes
       | nodeAggregateId | "lady-eleonode-rootford"      |
       | nodeTypeName    | "Neos.ContentRepository:Root" |
     # Node /document
-    And the event NodeAggregateWithNodeWasCreated was published with payload:
+    And the command CreateNodeAggregateWithNode is executed with payload:
       | Key                         | Value                                     |
       | workspaceName               | "live"                                    |
-      | contentStreamId             | "cs-identifier"                           |
       | nodeAggregateId             | "sir-david-nodenborough"                  |
       | nodeTypeName                | "Neos.ContentRepository.Testing:Document" |
       | originDimensionSpacePoint   | {}                                        |
-      | coveredDimensionSpacePoints | [{}]                                      |
       | parentNodeAggregateId       | "lady-eleonode-rootford"                  |
       | nodeName                    | "document"                                |
-      | nodeAggregateClassification | "regular"                                 |
     # Node /document/sub
-    And the event NodeAggregateWithNodeWasCreated was published with payload:
+    And the command CreateNodeAggregateWithNode is executed with payload:
       | Key                         | Value                                        |
       | workspaceName               | "live"                                       |
-      | contentStreamId             | "cs-identifier"                              |
       | nodeAggregateId             | "subdoc"                                     |
       | nodeTypeName                | "Neos.ContentRepository.Testing:SubDocument" |
       | originDimensionSpacePoint   | {}                                           |
-      | coveredDimensionSpacePoints | [{}]                                         |
       | parentNodeAggregateId       | "sir-david-nodenborough"                     |
       | nodeName                    | "sub"                                        |
-      | nodeAggregateClassification | "regular"                                    |
 
     Then I expect no needed structure adjustments for type "Neos.ContentRepository:Root"
     Then I expect no needed structure adjustments for type "Neos.ContentRepository.Testing:Document"
@@ -117,34 +110,21 @@ Feature: Remove disallowed Child Nodes and grandchild nodes
       | workspaceName        | "live"               |
       | newContentStreamId   | "cs-identifier"      |
     And I am in workspace "live" and dimension space point {}
+    # Root with Node /document
     And the command CreateRootNodeAggregateWithNode is executed with payload:
-      | Key             | Value                         |
-      | nodeAggregateId | "lady-eleonode-rootford"      |
-      | nodeTypeName    | "Neos.ContentRepository:Root" |
-    # Node /document
-    And the event NodeAggregateWithNodeWasCreated was published with payload:
-      | Key                         | Value                                     |
-      | workspaceName               | "live"                                    |
-      | contentStreamId             | "cs-identifier"                           |
-      | nodeAggregateId             | "sir-david-nodenborough"                  |
-      | nodeTypeName                | "Neos.ContentRepository.Testing:Document" |
-      | originDimensionSpacePoint   | {}                                        |
-      | coveredDimensionSpacePoints | [{}]                                      |
-      | parentNodeAggregateId       | "lady-eleonode-rootford"                  |
-      | nodeName                    | "document"                                |
-      | nodeAggregateClassification | "tethered"                                |
+      | Key                                | Value                                  |
+      | nodeAggregateId                    | "lady-eleonode-rootford"               |
+      | nodeTypeName                       | "Neos.ContentRepository:Root"          |
+      | tetheredDescendantNodeAggregateIds | {"document": "sir-david-nodenborough"} |
     # Node /document/sub
-    And the event NodeAggregateWithNodeWasCreated was published with payload:
+    And the command CreateNodeAggregateWithNode is executed with payload:
       | Key                         | Value                                        |
       | workspaceName               | "live"                                       |
-      | contentStreamId             | "cs-identifier"                              |
       | nodeAggregateId             | "subdoc"                                     |
       | nodeTypeName                | "Neos.ContentRepository.Testing:SubDocument" |
       | originDimensionSpacePoint   | {}                                           |
-      | coveredDimensionSpacePoints | [{}]                                         |
       | parentNodeAggregateId       | "sir-david-nodenborough"                     |
       | nodeName                    | "sub"                                        |
-      | nodeAggregateClassification | "regular"                                    |
 
     Then I expect no needed structure adjustments for type "Neos.ContentRepository:Root"
     Then I expect no needed structure adjustments for type "Neos.ContentRepository.Testing:Document"

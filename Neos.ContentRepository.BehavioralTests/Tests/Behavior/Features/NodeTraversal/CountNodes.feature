@@ -1,4 +1,3 @@
-@contentrepository @adapters=DoctrineDBAL,Postgres
 Feature: Find nodes using the countNodes query
 
   Background:
@@ -66,6 +65,7 @@ Feature: Find nodes using the countNodes query
       | a3              | a3       | Neos.ContentRepository.Testing:Page        | a                      | {"text": "a3"}        | {}                                       |
       | b               | b        | Neos.ContentRepository.Testing:Page        | home                   | {"text": "b"}         | {}                                       |
       | b1              | b1       | Neos.ContentRepository.Testing:Page        | b                      | {"text": "b1"}        | {}                                       |
+    And I restrict the visibility of nodes tagged "disabled" in subgraph queries
 
   Scenario:
     # count all nodes

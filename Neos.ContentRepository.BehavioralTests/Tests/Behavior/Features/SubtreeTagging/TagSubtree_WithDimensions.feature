@@ -1,4 +1,3 @@
-@contentrepository @adapters=DoctrineDBAL
 Feature: Tag subtree with dimensions
 
   As a user of the CR I want to tag a node and expect its descendants to also be tagged.
@@ -59,7 +58,8 @@ Feature: Tag subtree with dimensions
       | targetOrigin    | {"language":"mul"} |
 
 
-    When I execute the findSubtree query for entry node aggregate id "a" I expect the following tree with tags:
+    Then I expect node aggregate identifier "a" to lead to node cs-identifier;a;{"language":"mul"}
+    And I expect this node to have the following subtree with tags:
     """
     a
      a1 (tag1*)
@@ -67,7 +67,8 @@ Feature: Tag subtree with dimensions
     """
 
     When I am in dimension space point {"language":"mul"}
-    And I execute the findSubtree query for entry node aggregate id "a" I expect the following tree with tags:
+    Then I expect node aggregate identifier "a" to lead to node cs-identifier;a;{"language":"mul"}
+    And I expect this node to have the following subtree with tags:
     """
     a
      a1
@@ -103,14 +104,16 @@ Feature: Tag subtree with dimensions
       | sourceOrigin    | {"language":"de"}  |
       | targetOrigin    | {"language":"mul"} |
 
-    When I execute the findSubtree query for entry node aggregate id "a" I expect the following tree with tags:
+    Then I expect node aggregate identifier "a" to lead to node cs-identifier;a;{"language":"mul"}
+    And I expect this node to have the following subtree with tags:
     """
     a (tag2*)
      a1 (tag2)
     """
 
     When I am in dimension space point {"language":"de"}
-    And I execute the findSubtree query for entry node aggregate id "a" I expect the following tree with tags:
+    Then I expect node aggregate identifier "a" to lead to node cs-identifier;a;{"language":"de"}
+    And I expect this node to have the following subtree with tags:
     """
     a (tag1*,tag2*)
      a1 (tag1,tag2)
@@ -168,7 +171,8 @@ Feature: Tag subtree with dimensions
       | sourceOrigin    | {"language":"de"}  |
       | targetOrigin    | {"language":"gsw"} |
     And I am in workspace "user-ws" and dimension space point {"language":"gsw"}
-    And I execute the findSubtree query for entry node aggregate id "a" I expect the following tree with tags:
+    Then I expect node aggregate identifier "a" to lead to node new-user-cs-id;a;{"language":"mul"}
+    And I expect this node to have the following subtree with tags:
     """
     a (tag1*)
      a1 (tag1)

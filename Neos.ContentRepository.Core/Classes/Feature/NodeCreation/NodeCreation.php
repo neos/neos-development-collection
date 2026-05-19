@@ -192,9 +192,7 @@ trait NodeCreation
         // so that when rebasing the command, it stays fully deterministic.
         $command = $command->withTetheredDescendantNodeAggregateIds($descendantNodeAggregateIds);
 
-        foreach (
-            $descendantNodeAggregateIds->getNodeAggregateIds() as $descendantNodeAggregateId
-        ) {
+        foreach ($descendantNodeAggregateIds->getNodeAggregateIds() as $descendantNodeAggregateId) {
             $this->requireProjectedNodeAggregateToNotExist(
                 $contentGraph,
                 $descendantNodeAggregateId

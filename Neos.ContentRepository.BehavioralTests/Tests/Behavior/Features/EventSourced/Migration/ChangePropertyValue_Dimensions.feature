@@ -1,4 +1,3 @@
-@contentrepository @adapters=DoctrineDBAL
 Feature: Change Property Value across dimensions; and test DimensionSpacePoints filter
 
   NOTE: ChangePropertyValue is tested exhaustively in ChangePropertyValues_NoDimensions.feature; here,

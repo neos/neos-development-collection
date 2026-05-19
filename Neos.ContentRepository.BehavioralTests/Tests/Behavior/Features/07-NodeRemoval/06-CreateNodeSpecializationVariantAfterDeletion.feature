@@ -1,4 +1,3 @@
-@contentrepository @adapters=DoctrineDBAL,Postgres
 Feature: Create node specialization
 
   As a user of the CR I want to create a copy of a node within an aggregate to a more specialized dimension space point.

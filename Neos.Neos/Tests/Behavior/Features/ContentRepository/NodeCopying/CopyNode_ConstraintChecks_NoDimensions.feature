@@ -1,4 +1,3 @@
-@contentrepository
 Feature: Copy nodes constraint checks
 
   Background:

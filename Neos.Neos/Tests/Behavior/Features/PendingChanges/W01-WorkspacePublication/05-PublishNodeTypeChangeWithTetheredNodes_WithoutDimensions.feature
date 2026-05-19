@@ -1,4 +1,3 @@
-@contentrepository @adapters=DoctrineDBAL
 @flowEntities
 Feature: Partial publish after node type change tagging tethered nodes (without dimensions)
 
@@ -88,7 +87,6 @@ Feature: Partial publish after node type change tagging tethered nodes (without 
     # Step 6: Assert page is Shortcut in live and tethered child is tagged (not hard-deleted)
     # nody-mc-nodeface was not in the published set so it does not exist in live
     Then I am in workspace "live" and dimension space point {}
-    When VisibilityConstraints are set to "empty"
     And I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{}
     And I expect this node to be of type "Neos.ContentRepository.Testing:Shortcut"
     And I expect the node with aggregate identifier "main-collection-id" to be explicitly tagged "removed"

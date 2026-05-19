@@ -1,4 +1,3 @@
-@contentrepository @adapters=DoctrineDBAL
 Feature: Update root node aggregate dimensions
 
   Creates empty root node aggregate dimensions for each allowed dimension combination and removes them for all non-configured ones.

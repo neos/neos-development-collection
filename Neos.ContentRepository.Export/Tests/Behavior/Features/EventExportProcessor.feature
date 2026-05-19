@@ -1,4 +1,3 @@
-@contentrepository
 Feature: As a user of the CR I want to export the event stream using the EventExportProcessor
 
   Background:

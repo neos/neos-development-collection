@@ -1,4 +1,4 @@
-@flowEntities @contentrepository
+@flowEntities
 Feature: Routing functionality if path segments are missing like during tethered node creation
 
   Background:

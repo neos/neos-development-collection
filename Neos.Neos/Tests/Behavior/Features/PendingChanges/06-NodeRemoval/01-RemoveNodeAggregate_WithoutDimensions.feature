@@ -1,4 +1,3 @@
-@contentrepository @adapters=DoctrineDBAL
 @flowEntities
 Feature: Remove node aggregate with node without dimensions
   Todo obsolete via 02-RemoveNodeAggregate_WithDimensions

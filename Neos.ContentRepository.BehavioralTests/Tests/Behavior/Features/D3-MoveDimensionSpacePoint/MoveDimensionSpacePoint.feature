@@ -1,4 +1,3 @@
-@contentrepository @adapters=DoctrineDBAL
 Feature: Move dimension space point
 
   basically "renames" a dimension space point; needed if:
@@ -167,10 +166,9 @@ Feature: Move dimension space point
 
     # ensure the node is disabled
     When I am in workspace "live" and dimension space point {"language": "de"}
-    Then I expect node aggregate identifier "sir-david-nodenborough" to lead to no node
-    When VisibilityConstraints are set to "withoutRestrictions"
-    Then I expect a node identified by cs-identifier;sir-david-nodenborough;{"language": "de"} to exist in the content graph
-    When VisibilityConstraints are set to "default"
+    Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{"language":"de"}
+    And I expect this node to be exactly explicitly tagged "disabled"
+    And I expect this node to exactly inherit the tags ""
 
     # we change the dimension configuration
     When I change the content dimensions in content repository "default" to:
@@ -191,17 +189,19 @@ Feature: Move dimension space point
 
     # the original content stream has not been touched
     When I am in workspace "live" and dimension space point {"language": "ch"}
+    Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{"language":"de"}
+    And I expect this node to be exactly explicitly tagged "disabled"
+    And I expect this node to exactly inherit the tags ""
+    When I am in dimension space point {"language": "gsw"}
     Then I expect node aggregate identifier "sir-david-nodenborough" to lead to no node
-    When VisibilityConstraints are set to "withoutRestrictions"
-    Then I expect a node identified by cs-identifier;sir-david-nodenborough;{"language": "de"} to exist in the content graph
-    When VisibilityConstraints are set to "default"
 
     # The subtree tags were modified
     When I am in workspace "migration-workspace" and dimension space point {"language": "gsw"}
+    Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node migration-cs;sir-david-nodenborough;{"language":"de"}
+    And I expect this node to be exactly explicitly tagged "disabled"
+    And I expect this node to exactly inherit the tags ""
+    When I am in dimension space point {"language": "ch"}
     Then I expect node aggregate identifier "sir-david-nodenborough" to lead to no node
-    When VisibilityConstraints are set to "withoutRestrictions"
-    Then I expect a node identified by migration-cs;sir-david-nodenborough;{"language": "de"} to exist in the content graph
-    When VisibilityConstraints are set to "default"
 
     When I run integrity violation detection
     Then I expect the integrity violation detection result to contain exactly 0 errors

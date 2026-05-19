@@ -1,5 +1,3 @@
-@contentrepository @adapters=DoctrineDBAL
-  # TODO implement for Postgres
 Feature: Find nodes using the retrieveNodePath query
 
   Background:
@@ -81,6 +79,7 @@ Feature: Find nodes using the retrieveNodePath query
       | Key                          | Value         |
       | nodeAggregateId              | "b1"          |
       | nodeVariantSelectionStrategy | "allVariants" |
+    And I restrict the visibility of nodes tagged "disabled" in subgraph queries
 
   Scenario:
     # retrieveNodePath queries without result

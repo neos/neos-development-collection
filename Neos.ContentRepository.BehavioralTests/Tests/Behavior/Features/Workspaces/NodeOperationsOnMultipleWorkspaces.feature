@@ -1,4 +1,3 @@
-@contentrepository @adapters=DoctrineDBAL
 Feature: Single Node operations on multiple workspaces/content streams; e.g. copy on write!
 
   Background:
@@ -21,28 +20,22 @@ Feature: Single Node operations on multiple workspaces/content streams; e.g. cop
       | Key             | Value                         |
       | nodeAggregateId | "lady-eleonode-rootford"      |
       | nodeTypeName    | "Neos.ContentRepository:Root" |
-    And the event NodeAggregateWithNodeWasCreated was published with payload:
+    And the command CreateNodeAggregateWithNode is executed with payload:
       | Key                         | Value                                    |
       | workspaceName               | "live"                                   |
-      | contentStreamId             | "cs-identifier"                          |
       | nodeAggregateId             | "nody-mc-nodeface"                       |
       | nodeTypeName                | "Neos.ContentRepository.Testing:Content" |
       | originDimensionSpacePoint   | {}                                       |
-      | coveredDimensionSpacePoints | [{}]                                     |
       | parentNodeAggregateId       | "lady-eleonode-rootford"                 |
       | nodeName                    | "child"                                  |
-      | nodeAggregateClassification | "regular"                                |
-    And the event NodeAggregateWithNodeWasCreated was published with payload:
+    And the command CreateNodeAggregateWithNode is executed with payload:
       | Key                         | Value                                    |
       | workspaceName               | "live"                                   |
-      | contentStreamId             | "cs-identifier"                          |
       | nodeAggregateId             | "nodingers-cat"                          |
       | nodeTypeName                | "Neos.ContentRepository.Testing:Content" |
       | originDimensionSpacePoint   | {}                                       |
-      | coveredDimensionSpacePoints | [{}]                                     |
       | parentNodeAggregateId       | "nody-mc-nodeface"                       |
       | nodeName                    | "pet"                                    |
-      | nodeAggregateClassification | "regular"                                |
     And the command SetNodeProperties is executed with payload:
       | Key                       | Value                |
       | nodeAggregateId           | "nody-mc-nodeface"   |

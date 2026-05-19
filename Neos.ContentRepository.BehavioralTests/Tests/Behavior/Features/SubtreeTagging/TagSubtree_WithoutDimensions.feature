@@ -1,4 +1,3 @@
-@contentrepository @adapters=DoctrineDBAL
 Feature: Tag subtree without dimensions
 
   As a user of the CR I want to tag a node aggregate and expect its descendants to also be tagged.
@@ -86,7 +85,8 @@ Feature: Tag subtree without dimensions
       | nodeVariantSelectionStrategy | "allVariants" |
       | tag                          | "tag4"        |
 
-    When I execute the findSubtree query for entry node aggregate id "a" I expect the following tree with tags:
+    Then I expect node aggregate identifier "a" to lead to node cs-identifier;a;{}
+    And I expect this node to have the following subtree with tags:
     """
     a
      a1 (tag1*)
@@ -98,7 +98,8 @@ Feature: Tag subtree without dimensions
       a1b (tag1)
      a2
     """
-    When I execute the findSubtree query for entry node aggregate id "b" I expect the following tree with tags:
+    Then I expect node aggregate identifier "b" to lead to node cs-identifier;b;{}
+    And I expect this node to have the following subtree with tags:
     """
     b (tag2*)
      b1 (tag3*,tag2)
@@ -108,14 +109,16 @@ Feature: Tag subtree without dimensions
       | Key                      | Value |
       | nodeAggregateId          | "a1a" |
       | newParentNodeAggregateId | "b1"  |
-    When I execute the findSubtree query for entry node aggregate id "a" I expect the following tree with tags:
+    Then I expect node aggregate identifier "a" to lead to node cs-identifier;a;{}
+    And I expect this node to have the following subtree with tags:
     """
     a
      a1 (tag1*)
       a1b (tag1)
      a2
     """
-    When I execute the findSubtree query for entry node aggregate id "b" I expect the following tree with tags:
+    Then I expect node aggregate identifier "b" to lead to node cs-identifier;b;{}
+    And I expect this node to have the following subtree with tags:
     """
     b (tag2*)
      b1 (tag3*,tag2)
@@ -131,7 +134,8 @@ Feature: Tag subtree without dimensions
       | nodeAggregateId       | "a1a3"                                    |
       | nodeTypeName          | "Neos.ContentRepository.Testing:Document" |
       | parentNodeAggregateId | "a1a"                                     |
-    When I execute the findSubtree query for entry node aggregate id "b" I expect the following tree with tags:
+    Then I expect node aggregate identifier "b" to lead to node cs-identifier;b;{}
+    And I expect this node to have the following subtree with tags:
     """
     b (tag2*)
      b1 (tag3*,tag2)
@@ -148,7 +152,8 @@ Feature: Tag subtree without dimensions
       | nodeAggregateId              | "a1a"         |
       | nodeVariantSelectionStrategy | "allVariants" |
       | tag                          | "tag4"        |
-    When I execute the findSubtree query for entry node aggregate id "b" I expect the following tree with tags:
+    Then I expect node aggregate identifier "b" to lead to node cs-identifier;b;{}
+    And I expect this node to have the following subtree with tags:
     """
     b (tag2*)
      b1 (tag3*,tag2)
@@ -166,7 +171,8 @@ Feature: Tag subtree without dimensions
       | nodeAggregateId              | "root"       |
       | nodeVariantSelectionStrategy | "allVariants" |
       | tag                          | "tag1"        |
-    When I execute the findSubtree query for entry node aggregate id "root" I expect the following tree with tags:
+    Then I expect node aggregate identifier "root" to lead to node cs-identifier;root;{}
+    And I expect this node to have the following subtree with tags:
     """
     root (tag1*)
      a (tag1)
@@ -188,7 +194,8 @@ Feature: Tag subtree without dimensions
       | nodeAggregateId              | "a1a1a"       |
       | nodeVariantSelectionStrategy | "allVariants" |
       | tag                          | "tag1"        |
-    When I execute the findSubtree query for entry node aggregate id "a1a1" I expect the following tree with tags:
+    Then I expect node aggregate identifier "a1a1" to lead to node cs-identifier;a1a1;{}
+    And I expect this node to have the following subtree with tags:
     """
     a1a1
      a1a1a (tag1*)

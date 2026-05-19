@@ -1,4 +1,3 @@
-@contentrepository
 Feature: Migrating nodes with content dimensions
 
   Background:

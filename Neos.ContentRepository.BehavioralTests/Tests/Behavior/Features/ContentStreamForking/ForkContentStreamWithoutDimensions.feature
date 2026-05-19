@@ -1,4 +1,3 @@
-@contentrepository @adapters=DoctrineDBAL
 Feature: ForkContentStream Without Dimensions
 
   We have only one node underneath the root node: /foo.
@@ -28,26 +27,20 @@ Feature: ForkContentStream Without Dimensions
       | Key             | Value                         |
       | nodeAggregateId | "lady-eleonode-rootford"      |
       | nodeTypeName    | "Neos.ContentRepository:Root" |
-    And the event NodeAggregateWithNodeWasCreated was published with payload:
+    And the command CreateNodeAggregateWithNode is executed with payload:
       | Key                         | Value                                    |
       | workspaceName               | "live"                                   |
-      | contentStreamId             | "cs-identifier"                          |
       | nodeAggregateId             | "nody-mc-nodeface"                       |
       | nodeTypeName                | "Neos.ContentRepository.Testing:Content" |
       | originDimensionSpacePoint   | {}                                       |
-      | coveredDimensionSpacePoints | [{}]                                     |
       | parentNodeAggregateId       | "lady-eleonode-rootford"                 |
       | nodeName                    | "child"                                  |
-      | nodeAggregateClassification | "regular"                                |
-    And the event NodePropertiesWereSet was published with payload:
-      | Key                          | Value                                                   |
-      | workspaceName                | "live"                                                  |
-      | contentStreamId              | "cs-identifier"                                         |
-      | nodeAggregateId              | "nody-mc-nodeface"                                      |
-      | originDimensionSpacePoint    | {}                                                      |
-      | affectedDimensionSpacePoints | [{}]                                                    |
-      | propertyValues               | {"text": {"value": "original value", "type": "string"}} |
-      | propertiesToUnset            | {}                                                      |
+    And the command SetNodeProperties is executed with payload:
+      | Key                       | Value                      |
+      | workspaceName             | "live"                     |
+      | nodeAggregateId           | "nody-mc-nodeface"         |
+      | originDimensionSpacePoint | {}                         |
+      | propertyValues            | {"text": "original value"} |
 
   Scenario: Ensure that the node is available in the forked content stream
     # Uses ForkContentStream implicitly
@@ -67,16 +60,12 @@ Feature: ForkContentStream Without Dimensions
       | baseWorkspaceName  | "live"               |
       | workspaceName      | "user-test"          |
       | newContentStreamId | "user-cs-identifier" |
-
-    And the event NodePropertiesWereSet was published with payload:
-      | Key                          | Value                                                   |
-      | workspaceName                | "user-test"                                             |
-      | contentStreamId              | "user-cs-identifier"                                    |
-      | nodeAggregateId              | "nody-mc-nodeface"                                      |
-      | originDimensionSpacePoint    | {}                                                      |
-      | affectedDimensionSpacePoints | [{}]                                                    |
-      | propertyValues               | {"text": {"value": "modified value", "type": "string"}} |
-      | propertiesToUnset            | {}                                                      |
+    And the command SetNodeProperties is executed with payload:
+      | Key                       | Value                      |
+      | workspaceName             | "user-test"                |
+      | nodeAggregateId           | "nody-mc-nodeface"         |
+      | originDimensionSpacePoint | {}                         |
+      | propertyValues            | {"text": "modified value"} |
 
     # live
     When I am in workspace "live" and dimension space point {}
@@ -100,15 +89,12 @@ Feature: ForkContentStream Without Dimensions
       | baseWorkspaceName  | "live"               |
       | workspaceName      | "user-test"          |
       | newContentStreamId | "user-cs-identifier" |
-    And the event NodePropertiesWereSet was published with payload:
-      | Key                          | Value                                                   |
-      | workspaceName                | "live"                                                  |
-      | contentStreamId              | "cs-identifier"                                         |
-      | nodeAggregateId              | "nody-mc-nodeface"                                      |
-      | originDimensionSpacePoint    | {}                                                      |
-      | affectedDimensionSpacePoints | [{}]                                                    |
-      | propertyValues               | {"text": {"value": "modified value", "type": "string"}} |
-      | propertiesToUnset            | {}                                                      |
+    And the command SetNodeProperties is executed with payload:
+      | Key                       | Value                      |
+      | workspaceName             | "live"                     |
+      | nodeAggregateId           | "nody-mc-nodeface"         |
+      | originDimensionSpacePoint | {}                         |
+      | propertyValues            | {"text": "modified value"} |
 
     # live
     When I am in workspace "live" and dimension space point {}

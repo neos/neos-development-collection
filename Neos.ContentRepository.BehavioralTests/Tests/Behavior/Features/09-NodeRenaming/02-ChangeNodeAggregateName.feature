@@ -1,4 +1,3 @@
-@contentrepository @adapters=DoctrineDBAL
 Feature: Change node aggregate name
 
   As a user of the CR I want to change the name of a node aggregate

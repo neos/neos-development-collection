@@ -1,4 +1,4 @@
-@flowEntities @contentrepository
+@flowEntities
 Feature: Routing behavior of soft removed nodes
 
   Background:

@@ -1,4 +1,3 @@
-@contentrepository
 Feature: Run integrity violation detection regarding parent relations
 
   As a user of the CR I want to know whether there are nodes that have multiple parents per subgraph
@@ -22,39 +21,30 @@ Feature: Run integrity violation detection regarding parent relations
       | Key             | Value                         |
       | nodeAggregateId | "lady-eleonode-rootford"      |
       | nodeTypeName    | "Neos.ContentRepository:Root" |
-    And the event NodeAggregateWithNodeWasCreated was published with payload:
+    And the command CreateNodeAggregateWithNode is executed with payload:
       | Key                         | Value                                                    |
       | workspaceName               | "live"                                                   |
-      | contentStreamId             | "cs-identifier"                                          |
       | nodeAggregateId             | "sir-david-nodenborough"                                 |
       | nodeTypeName                | "Neos.ContentRepository.Testing:Document"                |
       | originDimensionSpacePoint   | {"language":"de"}                                        |
-      | coveredDimensionSpacePoints | [{"language":"de"},{"language":"gsw"},{"language":"fr"}] |
       | parentNodeAggregateId       | "lady-eleonode-rootford"                                 |
       | nodeName                    | "document"                                               |
-      | nodeAggregateClassification | "regular"                                                |
-    And the event NodeAggregateWithNodeWasCreated was published with payload:
+    And the command CreateNodeAggregateWithNode is executed with payload:
       | Key                         | Value                                                    |
       | workspaceName               | "live"                                                   |
-      | contentStreamId             | "cs-identifier"                                          |
       | nodeAggregateId             | "sir-nodeward-nodington-iii"                             |
       | nodeTypeName                | "Neos.ContentRepository.Testing:Document"                |
       | originDimensionSpacePoint   | {"language":"de"}                                        |
-      | coveredDimensionSpacePoints | [{"language":"de"},{"language":"gsw"},{"language":"fr"}] |
       | parentNodeAggregateId       | "lady-eleonode-rootford"                                 |
       | nodeName                    | "esquire"                                                |
-      | nodeAggregateClassification | "regular"                                                |
-    And the event NodeAggregateWithNodeWasCreated was published with payload:
+    And the command CreateNodeAggregateWithNode is executed with payload:
       | Key                         | Value                                                    |
       | workspaceName               | "live"                                                   |
-      | contentStreamId             | "cs-identifier"                                          |
       | nodeAggregateId             | "nody-mc-nodeface"                                       |
       | nodeTypeName                | "Neos.ContentRepository.Testing:Document"                |
       | originDimensionSpacePoint   | {"language":"de"}                                        |
-      | coveredDimensionSpacePoints | [{"language":"de"},{"language":"gsw"},{"language":"fr"}] |
       | parentNodeAggregateId       | "sir-david-nodenborough"                                 |
       | nodeName                    | "child-document"                                         |
-      | nodeAggregateClassification | "regular"                                                |
 
   Scenario: Set a second parent for Nody McNodeface
     And I add the following hierarchy relation:
