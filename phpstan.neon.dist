@@ -6,7 +6,6 @@ parameters:
     level: 8
     paths:
         - Neos.ContentGraph.DoctrineDbalAdapter/src
-        - Neos.ContentGraph.PostgreSQLAdapter/src
         - Neos.ContentRepository.BehavioralTests/Classes
         - Neos.ContentRepository.Core/Classes
         - Neos.ContentRepository.Dbal/Classes
