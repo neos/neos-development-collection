@@ -251,5 +251,4 @@ final class DocumentNodeInfo
         return ($this->source['nodeaggregateid'] ?? '<unknown nodeAggregateId>')
             . '@' . ($this->source['dimensionspacepointhash'] ?? '<unkown dimensionSpacePointHash>');
     }
-
 }
