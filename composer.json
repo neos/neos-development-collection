@@ -244,6 +244,15 @@
     "provide": {
         "neos/contentrepositoryregistry-storageclient": "self.version"
     },
+    "require-dev": {
+        "phpunit/phpunit": "^9.6",
+        "brianium/paratest": "^6.11",
+        "roave/security-advisories": "dev-latest",
+        "phpstan/phpstan": "^1.11",
+        "squizlabs/php_codesniffer": "^3.6",
+        "neos/behat": "*",
+        "league/flysystem-memory": "^3"
+    },
     "autoload-dev": {
         "psr-4": {
             "Neos\\ContentRepository\\BehavioralTests\\Tests\\": [
@@ -289,14 +298,5 @@
                 "Neos.Workspace.Ui/Tests"
             ]
         }
-    },
-    "require-dev": {
-        "phpunit/phpunit": "^9.6",
-        "brianium/paratest": "^6.11",
-        "roave/security-advisories": "dev-latest",
-        "phpstan/phpstan": "^1.11",
-        "squizlabs/php_codesniffer": "^3.6",
-        "neos/behat": "*",
-        "league/flysystem-memory": "^3"
     }
 }
