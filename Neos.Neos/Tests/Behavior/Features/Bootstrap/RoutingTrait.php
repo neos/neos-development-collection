@@ -263,24 +263,6 @@ trait RoutingTrait
             $this->currentContentRepository->id
         );
         $actualResult = $dbal->fetchAllAssociative('SELECT ' . $columns . ' FROM ' . $tablePrefix . '_uri ORDER BY nodeaggregateidpath, dimensionspacepointhash');
-        $expectedColumnNames = array_keys($expectedRows->getHash()[0]);
-        $actualResult = array_map(static function (array $row) use ($expectedColumnNames) {
-            $normalized = [];
-            foreach ($expectedColumnNames as $columnName) {
-                // PostgreSQL lowercases unquoted identifiers
-                $value = $row[$columnName] ?? $row[strtolower($columnName)] ?? null;
-                // PostgreSQL PDO may return column values as stream resources instead of strings
-                if (is_resource($value)) {
-                    $value = stream_get_contents($value);
-                }
-                // PostgreSQL returns int (0/1) for boolean columns
-                if ($value === 0 || $value === 1) {
-                    $value = (bool)$value;
-                }
-                $normalized[$columnName] = $value;
-            }
-            return $normalized;
-        }, $actualResult);
         $expectedResult = array_map(static function (array $row) {
             return array_map(static function (string $cell) {
                 return json_decode($cell, true, 512, JSON_THROW_ON_ERROR);
