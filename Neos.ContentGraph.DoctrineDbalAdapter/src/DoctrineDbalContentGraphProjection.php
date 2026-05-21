@@ -437,10 +437,13 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
         $contentStreamLayers = $this->getContentStreamLayers($event);
         $this->dimensionSpacePointsRepository->insertDimensionSpacePoint($event->target);
 
+        $newHierarchyIdOffset = $this->determineNextHierarchyRelationId();
+
         // 1) hierarchy relations
         $hierarchyRelationQuery = $this->subqueries->forHierarchyRelation($contentStreamLayers)->withDimensionSpacePoint($event->source);
         $insertHierarchyRelationsStatement = <<<SQL
             INSERT INTO {$this->tableNames->hierarchyRelation()} (
+              id,
               contentstreamlayer,
               parentnodeanchor,
               childnodeanchor,
@@ -449,6 +452,8 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
               dimensionspacepointhash
             )
             SELECT
+              -- auto-increment the new hierarchy ids - order does not matter
+              ROW_NUMBER() OVER () + :newHierarchyIdOffset as id,
               :targetContentStreamLayer as contentstreamlayer,
               h.parentnodeanchor,
               h.childnodeanchor,
@@ -462,6 +467,7 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
             $this->dbal->executeStatement($insertHierarchyRelationsStatement, [
                 'newDimensionSpacePointHash' => $event->target->hash,
                 'targetContentStreamLayer' => $contentStreamLayers->getWriteLayer()->value,
+                'newHierarchyIdOffset' => $newHierarchyIdOffset->value,
                 ...$hierarchyRelationQuery->getParameters()->toDbalValues(),
             ], [
                 ...$hierarchyRelationQuery->getParameters()->toDbalTypes(),
@@ -1131,7 +1137,7 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
             $inheritedSubtreeTags = NodeTags::create(SubtreeTags::createEmpty(), $parentSubtreeTags->all());
 
             $hierarchyRelation = new HierarchyRelation(
-                HierarchyRelationId::createAutoIncremented(),
+                $this->determineNextHierarchyRelationId(),
                 $contentStreamLayers->getWriteLayer(),
                 $parentNodeAnchorPoint,
                 $childNodeAnchorPoint,
@@ -1232,7 +1238,7 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
         $parentSubtreeTags = $this->subtreeTagsForHierarchyRelation($contentStreamLayers, $newParent, $dimensionSpacePoint);
         $inheritedSubtreeTags = NodeTags::create($sourceHierarchyRelation->subtreeTags->withoutInherited()->all(), $parentSubtreeTags->withoutInherited()->all());
         $copy = new HierarchyRelation(
-            HierarchyRelationId::createAutoIncremented(),
+            $this->determineNextHierarchyRelationId(),
             $contentStreamLayers->getWriteLayer(),
             $newParent,
             $newChild,
@@ -1274,5 +1280,38 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
                 null,
             ),
         );
+    }
+
+    /**
+     * Each hierarchy relation must have a unique id within its live-cycle.
+     *
+     * During creation a global new id is assigned by selecting the previous highest and incrementing.
+     * When the hierarchy is modified - either in its originating layer or any child layer the id is preserved, only its layer may change.
+     * The full identity of a hierarchy for a content stream is assembled through both id _and_ layer {@see HierarchyRelation::getDatabaseId()}
+     *
+     * We are not using auto-incrementing columns as they put more load on the database during upserts and also inserts.
+     * As it's forbidden to invoke apply() concurrently and commit the transaction its safe and simple to increment in PHP.
+     *
+     * Also, during the simulation {@see DoctrineDbalContentGraphProjection::inSimulation} auto-increments will likely cause deadlocks on the transaction.
+     * This is because during simulation we _are_ allowed to use apply() concurrently but without ever commiting the transaction.
+     * The database has to ensure not to hand out the same new auto increment to multiple transactions and also locks heavily.
+     */
+    private function determineNextHierarchyRelationId(): HierarchyRelationId
+    {
+        // TODO cache value within apply()?
+        $highestHierarchyRelationIdStatement = <<<SQL
+            SELECT id FROM {$this->tableNames->hierarchyRelation()}
+            ORDER BY id DESC
+            LIMIT 1
+            SQL;
+        try {
+            $highestHierarchyRelationId = HierarchyrelationId::fromInt((int)$this->dbal->fetchOne(
+                $highestHierarchyRelationIdStatement
+            ));
+        } catch (DBALException $e) {
+            throw new \RuntimeException(sprintf('Failed to determine highest hierarchy relation id: %s', $e->getMessage()), 1779391601, $e);
+        }
+
+        return $highestHierarchyRelationId->next();
     }
 }

@@ -6,7 +6,6 @@ namespace Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\Feature;
 
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\ContentStreamLayers;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\HierarchyRelation;
-use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\HierarchyRelationId;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
 use Neos\ContentRepository\Core\Feature\Common\InterdimensionalSiblings;
@@ -97,7 +96,7 @@ trait NodeVariation
                     : null;
 
                 $hierarchyRelation = new HierarchyRelation(
-                    HierarchyRelationId::createAutoIncremented(),
+                    $this->determineNextHierarchyRelationId(),
                     $contentStreamLayers->getWriteLayer(),
                     $parentNode->relationAnchorPoint,
                     $specializedNode->relationAnchorPoint,

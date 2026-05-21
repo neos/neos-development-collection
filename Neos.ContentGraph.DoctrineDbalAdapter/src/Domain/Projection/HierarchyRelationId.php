@@ -10,21 +10,21 @@ namespace Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection;
 class HierarchyRelationId
 {
     private function __construct(
-        public ?int $value
+        public int $value
     ) {
-        if ($value !== null && $value < 0) {
+        if ($value < 0) {
             throw new \InvalidArgumentException('A HierarchyRelationId cannot be negative, got %d', $value);
         }
-    }
-
-    public static function createAutoIncremented(): self
-    {
-        return new self(null);
     }
 
     public function equals(HierarchyRelationId $id): bool
     {
         return $this->value === $id->value;
+    }
+
+    public function next(): self
+    {
+        return new self($this->value + 1);
     }
 
     public static function fromInt(int $value): self
