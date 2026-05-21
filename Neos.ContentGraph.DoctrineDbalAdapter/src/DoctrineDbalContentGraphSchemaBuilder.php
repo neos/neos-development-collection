@@ -62,7 +62,8 @@ class DoctrineDbalContentGraphSchemaBuilder
     private function createHierarchyRelationTable(AbstractPlatform $platform): Table
     {
         $table = self::createTable($this->tableNames->hierarchyRelation(), [
-            (new Column('id', Type::getType(Types::INTEGER)))->setAutoincrement(true)->setNotnull(true),
+            /** No auto-increment see {@see \Neos\ContentGraph\DoctrineDbalAdapter\DoctrineDbalContentGraphProjection::determineNextHierarchyRelationId()} */
+            (new Column('id', Type::getType(Types::INTEGER)))->setNotnull(true),
             (new Column('contentstreamlayer', self::type(Types::INTEGER)))->setNotnull(true),
             (new Column('position', self::type(Types::INTEGER)))->setNotnull(false),
             DbalSchemaFactory::columnForDimensionSpacePointHash('dimensionspacepointhash', $platform)->setNotnull(false),

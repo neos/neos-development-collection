@@ -157,14 +157,6 @@ final readonly class HierarchyRelation
      */
     public function getDatabaseId(): array
     {
-        if (!$this->hierarchyRelationId->value) {
-            throw new \RuntimeException(sprintf('Hierarchy relation was not created in the database and does not have an id: %s', json_encode([
-                'parentnodeanchor' => $this->parentNodeAnchor->value,
-                'childnodeanchor' => $this->childNodeAnchor->value,
-                'contentstreamlayer' => $this->contentStreamLayer->value,
-                'dimensionspacepointhash' => $this->dimensionSpacePointHash
-            ])), 1775979706);
-        }
         return [
             'id' => $this->hierarchyRelationId->value,
             'contentstreamlayer' => $this->contentStreamLayer->value,

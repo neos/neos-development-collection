@@ -92,7 +92,10 @@ trait DoctrineDbalProjectionIntegrityViolatorTrait
         $record = $this->transformDatasetToHierarchyRelationRecord($dataset);
         $this->dbal->insert(
             $this->tableNames()->hierarchyRelation(),
-            $record
+            [
+                'id' => 1000, // FIXME should not be hardcoded if two hierarchies are to be added for testing
+                ...$record
+            ]
         );
     }
 
