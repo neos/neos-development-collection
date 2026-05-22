@@ -63,6 +63,7 @@ use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphProjectionInterface;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphReadModelInterface;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodeTags;
+use Neos\ContentRepository\Core\Projection\ContentGraph\SimulationContentGraphProjectionInterface;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Timestamps;
 use Neos\ContentRepository\Core\Projection\ProjectionStatus;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateClassification;
@@ -76,7 +77,7 @@ use Neos\EventStore\Model\EventEnvelope;
 /**
  * @internal but the graph projection is api
  */
-final class DoctrineDbalContentGraphProjection implements ContentGraphProjectionInterface
+final class DoctrineDbalContentGraphProjection implements ContentGraphProjectionInterface, SimulationContentGraphProjectionInterface
 {
     use ContentStream;
     use NodeMove;
@@ -93,7 +94,8 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
         private readonly ProjectionContentGraph $projectionContentGraph,
         private readonly ContentGraphTableNames $tableNames,
         private readonly DimensionSpacePointsRepository $dimensionSpacePointsRepository,
-        private readonly ContentGraphReadModelInterface $contentGraphReadModel
+        private readonly ContentGraphReadModelAdapter $contentGraphReadModel,
+        private readonly bool $isInSimulation
     ) {
     }
 
@@ -186,19 +188,28 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
         }
     }
 
-    public function inSimulation(\Closure $fn): mixed
+    public function stopSimulation(): void
     {
-        if ($this->dbal->isTransactionActive()) {
-            throw new \RuntimeException(sprintf('Invoking %s is not allowed to be invoked recursively. Current transaction nesting %d.', __FUNCTION__, $this->dbal->getTransactionNestingLevel()));
+        $this->dbal->rollBack();
+    }
+
+    public function withSimulation(): SimulationContentGraphProjectionInterface
+    {
+        if ($this->isInSimulation) {
+            throw new \RuntimeException('DBAL ContentGraph Projection is in simulation already', 1778705684);
         }
+
         $this->dbal->beginTransaction();
         $this->dbal->setRollbackOnly();
-        try {
-            return $fn();
-        } finally {
-            // unsets rollback only flag and allows the connection to work regular again
-            $this->dbal->rollBack();
-        }
+
+        return new self(
+            dbal: $this->dbal,
+            projectionContentGraph: $this->projectionContentGraph,
+            tableNames: $this->tableNames,
+            dimensionSpacePointsRepository: $this->dimensionSpacePointsRepository,
+            contentGraphReadModel: $this->contentGraphReadModel,
+            isInSimulation: true,
+        );
     }
 
     private function whenContentStreamWasClosed(ContentStreamWasClosed $event): void
