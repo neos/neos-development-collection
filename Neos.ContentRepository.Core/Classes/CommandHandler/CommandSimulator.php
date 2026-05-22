@@ -73,8 +73,6 @@ final class CommandSimulator
      */
     public function handle(RebaseableCommand $rebaseableCommand): void
     {
-        // FIXME: Check if workspace already matches and skip this, e.g. $commandInWorkspace = $command->getWorkspaceName()->equals($this->workspaceNameToSimulateIn) ? $command : $command->createCopyForWorkspace($this->workspaceNameToSimulateIn);
-        // when https://github.com/neos/neos-development-collection/pull/5298 is merged
         $commandInWorkspace = $rebaseableCommand->originalCommand->createCopyForWorkspace($this->workspaceNameToSimulateIn);
 
         try {
