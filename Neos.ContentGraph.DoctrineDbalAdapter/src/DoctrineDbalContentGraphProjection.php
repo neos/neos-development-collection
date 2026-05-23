@@ -118,14 +118,15 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
             }
         }
 
+        // Todo necessary to specify?
         $databaseNameEscaped = $this->dbal->quoteIdentifier($this->dbal->getDatabase());
 
-        // TODO Delete trigger
         // TODO Try catch and abstract properly?
+        // We dont need to handle update as during update at no point the id or contentStreamLayer of a row must change
         $this->dbal->executeStatement(<<<SQL
-        DROP TRIGGER IF EXISTS $databaseNameEscaped.hierarchy_live_updater;
+        DROP TRIGGER IF EXISTS {$databaseNameEscaped}.{$this->tableNames->hierarchyRelationForWorkspaceInsertTrigger(WorkspaceName::forLive())};
         
-        CREATE TRIGGER $databaseNameEscaped.hierarchy_live_updater AFTER INSERT
+        CREATE TRIGGER {$databaseNameEscaped}.{$this->tableNames->hierarchyRelationForWorkspaceInsertTrigger(WorkspaceName::forLive())} BEFORE INSERT
             ON {$this->tableNames->hierarchyRelation()} FOR EACH ROW
             BEGIN
                 IF NEW.contentstreamlayer = (
@@ -139,6 +140,25 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
                     INSERT INTO {$this->tableNames->hierarchyRelationForWorkspace(WorkspaceName::forLive())}
                         SET id = NEW.id, contentstreamlayer = NEW.contentstreamlayer
                     ON DUPLICATE KEY UPDATE contentstreamlayer = NEW.contentstreamlayer;
+                END IF;
+            END;
+
+        DROP TRIGGER IF EXISTS {$databaseNameEscaped}.{$this->tableNames->hierarchyRelationForWorkspaceDeleteTrigger(WorkspaceName::forLive())};
+            
+        CREATE TRIGGER {$databaseNameEscaped}.{$this->tableNames->hierarchyRelationForWorkspaceDeleteTrigger(WorkspaceName::forLive())} BEFORE DELETE
+            ON {$this->tableNames->hierarchyRelation()} FOR EACH ROW
+            BEGIN
+                IF OLD.contentstreamlayer = (
+                    SELECT l.contentstreamlayer FROM cr_default_p_graph_contentstreamlayer AS l
+                        INNER JOIN cr_default_p_graph_workspace AS w
+                        ON l.contentStreamId = w.currentContentStreamId
+                    WHERE w.name = 'live'
+                    ORDER BY l.contentStreamLayer DESC
+                    LIMIT 1
+                ) THEN
+                    DELETE FROM {$this->tableNames->hierarchyRelationForWorkspace(WorkspaceName::forLive())}
+                        WHERE id = OLD.id
+                        AND contentstreamlayer = OLD.contentstreamlayer;
                 END IF;
             END;
         SQL);
