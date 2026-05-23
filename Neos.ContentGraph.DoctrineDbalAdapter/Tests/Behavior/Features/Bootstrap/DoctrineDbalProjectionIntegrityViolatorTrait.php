@@ -348,7 +348,7 @@ trait DoctrineDbalProjectionIntegrityViolatorTrait
 
     private function requireSingleWriteLayer(ContentStreamId $contentStreamId): ContentStreamLayer
     {
-        $contentStreamLayers = $this->getContentStreamLayers($contentStreamId);
+        $contentStreamLayers = $this->contentStreamLayerFinder()->getContentStreamLayers($contentStreamId);
 
         if (!$contentStreamLayers->getWriteLayer()->equals($contentStreamLayers->getRootLayer())) {
             throw new \RuntimeException(sprintf('For testing a single write layer is currently only supported for modification. Got %s for content stream %s.', $contentStreamLayers->toDebugString(), $contentStreamId->value), 1776786186);
