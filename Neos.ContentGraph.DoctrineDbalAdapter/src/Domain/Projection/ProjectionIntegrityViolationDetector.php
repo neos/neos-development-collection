@@ -18,12 +18,14 @@ use Doctrine\DBAL\ArrayParameterType;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Exception as DBALException;
 use Neos\ContentGraph\DoctrineDbalAdapter\ContentGraphTableNames;
+use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\ContentStreamLayerFinder;
 use Neos\ContentGraph\DoctrineDbalAdapter\HierarchyRelationStatement;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ProjectionIntegrityViolationDetectorInterface;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateClassification;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\Error\Messages\Error;
 use Neos\Error\Messages\Result;
 
@@ -36,11 +38,14 @@ final class ProjectionIntegrityViolationDetector implements ProjectionIntegrityV
 {
     private readonly HierarchyRelationStatement $hierarchyRelationStatement;
 
+    private readonly ContentStreamLayerFinder $contentStreamLayerFinder;
+
     public function __construct(
         private readonly Connection $dbal,
         private readonly ContentGraphTableNames $tableNames,
     ) {
         $this->hierarchyRelationStatement = HierarchyRelationStatement::for($this->tableNames);
+        $this->contentStreamLayerFinder = new ContentStreamLayerFinder($this->dbal, $tableNames);
     }
 
     public function hierarchyIntegrityIsProvided(): Result
@@ -441,16 +446,19 @@ final class ProjectionIntegrityViolationDetector implements ProjectionIntegrityV
 
         foreach ($referenceRelationRecordsWithInvalidTarget as $record) {
             $destinationNodeAggregateExistStatement = <<<SQL
-            SELECT 1 FROM {$this->tableNames->hierarchyRelation()} AS h
+            SELECT 1 FROM {$this->hierarchyRelationStatement->toSql()} h
                 INNER JOIN {$this->tableNames->node()} AS n ON n.relationanchorpoint = h.childnodeanchor
             WHERE n.nodeaggregateid = :destinationNodeAggregateId
-                AND h.contentstreamid = :contentStreamId
             LIMIT 1
             SQL;
             try {
                 $destinationNodeAggregateExist = $this->dbal->fetchOne($destinationNodeAggregateExistStatement, [
                     'destinationNodeAggregateId' => $record['destinationNodeAggregateId'],
-                    'contentStreamId' => $record['contentstreamId'],
+                    'contentStreamLayers' => $this->contentStreamLayerFinder->getContentStreamLayers(
+                        ContentStreamId::fromString($record['contentstreamid'])
+                    )->toIntArray(),
+                ], [
+                    'contentStreamLayers' => ArrayParameterType::INTEGER
                 ]);
             } catch (DBALException $e) {
                 throw new \RuntimeException(sprintf('Failed to check if node aggregate exists: %s', $e->getMessage()), 1777651107, $e);
