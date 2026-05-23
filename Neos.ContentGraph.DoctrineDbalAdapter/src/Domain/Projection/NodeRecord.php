@@ -64,8 +64,8 @@ final class NodeRecord
                     'nodetypename' => $this->nodeTypeName->value,
                     'name' => $this->nodeName?->value,
                     'classification' => $this->classification->value,
-                    'lastmodified' => $this->timestamps->lastModified?->setTimezone(new \DateTimeZone('UTC')),
-                    'originallastmodified' => $this->timestamps->originalLastModified?->setTimezone(new \DateTimeZone('UTC')),
+                    'lastmodified' => $this->timestamps->lastModified,
+                    'originallastmodified' => $this->timestamps->originalLastModified,
                 ],
                 [
                     'relationanchorpoint' => $this->relationAnchorPoint->value
@@ -147,10 +147,10 @@ final class NodeRecord
                 'nodetypename' => $nodeTypeName->value,
                 'name' => $nodeName?->value,
                 'classification' => $classification->value,
-                'created' => $timestamps->created->setTimezone(new \DateTimeZone('UTC')),
-                'originalcreated' => $timestamps->originalCreated->setTimezone(new \DateTimeZone('UTC')),
-                'lastmodified' => $timestamps->lastModified?->setTimezone(new \DateTimeZone('UTC')),
-                'originallastmodified' => $timestamps->originalLastModified?->setTimezone(new \DateTimeZone('UTC')),
+                'created' => $timestamps->created,
+                'originalcreated' => $timestamps->originalCreated,
+                'lastmodified' => $timestamps->lastModified,
+                'originallastmodified' => $timestamps->originalLastModified,
             ], [
                 'created' => Types::DATETIME_IMMUTABLE,
                 'originalcreated' => Types::DATETIME_IMMUTABLE,
