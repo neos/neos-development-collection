@@ -28,7 +28,6 @@ use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
 use Neos\ContentRepository\Core\EventStore\EventInterface;
 use Neos\ContentRepository\Core\EventStore\InitiatingEventMetadata;
 use Neos\ContentRepository\Core\Feature\Common\EmbedsContentStreamId;
-use Neos\ContentRepository\Core\Feature\Common\EmbedsWorkspaceName;
 use Neos\ContentRepository\Core\Feature\Common\InterdimensionalSiblings;
 use Neos\ContentRepository\Core\Feature\Common\PublishableToWorkspaceInterface;
 use Neos\ContentRepository\Core\Feature\ContentStreamClosing\Event\ContentStreamWasClosed;
@@ -118,6 +117,31 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
                 throw new \RuntimeException(sprintf('Failed to setup projection %s: %s', self::class, $e->getMessage()), 1716478255, $e);
             }
         }
+
+        $databaseNameEscaped = $this->dbal->quoteIdentifier($this->dbal->getDatabase());
+
+        // TODO Delete trigger
+        // TODO Try catch and abstract properly?
+        $this->dbal->executeStatement(<<<SQL
+        DROP TRIGGER IF EXISTS $databaseNameEscaped.hierarchy_live_updater;
+        
+        CREATE TRIGGER $databaseNameEscaped.hierarchy_live_updater AFTER INSERT
+            ON {$this->tableNames->hierarchyRelation()} FOR EACH ROW
+            BEGIN
+                IF NEW.contentstreamlayer = (
+                    SELECT l.contentstreamlayer FROM cr_default_p_graph_contentstreamlayer AS l
+                        INNER JOIN cr_default_p_graph_workspace AS w
+                        ON l.contentStreamId = w.currentContentStreamId
+                    WHERE w.name = 'live'
+                    ORDER BY l.contentStreamLayer DESC
+                    LIMIT 1
+                ) THEN
+                    INSERT INTO {$this->tableNames->hierarchyRelationForWorkspace(WorkspaceName::forLive())}
+                        SET id = NEW.id, contentstreamlayer = NEW.contentstreamlayer
+                    ON DUPLICATE KEY UPDATE contentstreamlayer = NEW.contentstreamlayer;
+                END IF;
+            END;
+        SQL);
     }
 
     public function status(): ProjectionStatus
@@ -193,35 +217,6 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
             )
         ) {
             $this->updateContentStreamVersion($event->getContentStreamId(), $eventEnvelope->version, $event instanceof PublishableToWorkspaceInterface);
-        }
-        if ($event instanceof EmbedsWorkspaceName && $event instanceof EmbedsContentStreamId && $event->getWorkspaceName()->isLive()) {
-            $contentStreamLayers = $this->getContentStreamLayers($event);
-
-            $mergeHierarchyRelationsStatement = <<<SQL
-                INSERT INTO {$this->tableNames->hierarchyRelationForWorkspace(WorkspaceName::forLive())}
-                (
-                    id,
-                    contentstreamlayer
-                )
-                SELECT
-                    h.id,
-                    h.contentstreamlayer
-                FROM {$this->tableNames->hierarchyRelation()} AS h
-                    LEFT JOIN {$this->tableNames->hierarchyRelationForWorkspace(WorkspaceName::forLive())} wh
-                        ON h.contentstreamlayer = wh.contentstreamlayer
-                        AND h.id = wh.id
-                    WHERE h.contentstreamlayer = :contentStreamWriteLayer
-                    AND wh.contentstreamlayer IS NULL
-                ON DUPLICATE KEY UPDATE contentstreamlayer = VALUES(contentstreamlayer);
-            SQL;
-
-            try {
-                $this->dbal->executeStatement($mergeHierarchyRelationsStatement, [
-                    'contentStreamWriteLayer' => $contentStreamLayers->getWriteLayer()->value,
-                ]);
-            } catch (DBALException $e) {
-                throw new \RuntimeException(sprintf('TODO: %s', $e->getMessage()), 1776345058, $e);
-            }
         }
     }
 
