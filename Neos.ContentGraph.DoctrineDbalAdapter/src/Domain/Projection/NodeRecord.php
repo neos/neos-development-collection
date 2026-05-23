@@ -64,8 +64,8 @@ final class NodeRecord
                     'nodetypename' => $this->nodeTypeName->value,
                     'name' => $this->nodeName?->value,
                     'classification' => $this->classification->value,
-                    'lastmodified' => $this->timestamps->lastModified,
-                    'originallastmodified' => $this->timestamps->originalLastModified,
+                    'lastmodified' => $this->timestamps->lastModified?->setTimezone(new \DateTimeZone('UTC')),
+                    'originallastmodified' => $this->timestamps->originalLastModified?->setTimezone(new \DateTimeZone('UTC')),
                 ],
                 [
                     'relationanchorpoint' => $this->relationAnchorPoint->value
