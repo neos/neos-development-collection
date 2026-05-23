@@ -14,7 +14,7 @@ trait DoctrineDbalProjectionSpyTrait
     {
         $contentGraph = $this->currentContentRepository->getContentGraph($this->currentWorkspaceName);
 
-        $layers = $this->getContentStreamLayers($contentGraph->getContentStreamId());
+        $layers = $this->contentStreamLayerFinder()->getContentStreamLayers($contentGraph->getContentStreamId());
 
         $count = $this->dbal->fetchOne(<<<SQL
         SELECT COUNT(*) FROM {$this->tableNames()->hierarchyRelation()} WHERE contentStreamLayer = :contentStreamLayer

@@ -16,6 +16,7 @@ use Behat\Behat\Hook\Scope\BeforeScenarioScope;
 use Doctrine\DBAL\Connection;
 use Neos\Behat\FlowBootstrapTrait;
 use Neos\ContentGraph\DoctrineDbalAdapter\ContentGraphTableNames;
+use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\ContentStreamLayerFinder;
 use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceFactoryInterface;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceInterface;
@@ -35,7 +36,6 @@ class FeatureContext implements BehatContext
     use FlowBootstrapTrait;
     use DoctrineDbalProjectionIntegrityViolatorTrait;
     use DoctrineDbalProjectionSpyTrait;
-    use ContentStreamLayerTrait;
     use CRTestSuiteTrait;
     use CRTestSuiteRuntimeVariables;
     use CRBehavioralTestsSubjectProvider;
@@ -55,6 +55,14 @@ class FeatureContext implements BehatContext
     {
         return ContentGraphTableNames::create(
             $this->currentContentRepository->id
+        );
+    }
+
+    private function contentStreamLayerFinder(): ContentStreamLayerFinder
+    {
+        return new ContentStreamLayerFinder(
+            $this->dbal,
+            $this->tableNames()
         );
     }
 
