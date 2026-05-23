@@ -419,28 +419,18 @@ trait NodeTraversalTrait
     public function iExpectTheNodeToHaveTheFollowingTimestamps(string $nodeIdSerialized, TableNode $expectedTimestampsTable): void
     {
         $nodeAggregateId = NodeAggregateId::fromString($nodeIdSerialized);
-        /** @var ClockInterface $clock */
-        $clock = (new \ReflectionClass(ContentRepository::class))
-            ->getProperty('clock')
-            ->getValue($this->currentContentRepository);
-        $usedTimeZone = $clock->now()->getTimezone();
 
-        $expectedTimestamps = array_map(
-            static fn (string $timestamp) => $timestamp === ''
-                ? null
-                : \DateTimeImmutable::createFromFormat('Y-m-d H:i:s', $timestamp)->setTimezone($usedTimeZone),
-            $expectedTimestampsTable->getHash()[0]
-        );
+        $expectedTimestamps = array_map(static fn (string $timestamp) => $timestamp === '' ? null : \DateTimeImmutable::createFromFormat('Y-m-d H:i:s', $timestamp, new \DateTimeZone('UTC')), $expectedTimestampsTable->getHash()[0]);
 
         $node = $this->getCurrentSubgraphForQueries()->findNodeById($nodeAggregateId);
         if ($node === null) {
             Assert::fail(sprintf('Failed to find node with aggregate id "%s"', $nodeAggregateId->value));
         }
         $actualTimestamps = [
-            'created' => $node->timestamps->created->setTimezone($usedTimeZone),
-            'originalCreated' => $node->timestamps->originalCreated->setTimezone($usedTimeZone),
-            'lastModified' => $node->timestamps->lastModified?->setTimezone($usedTimeZone),
-            'originalLastModified' => $node->timestamps->originalLastModified?->setTimezone($usedTimeZone),
+            'created' => $node->timestamps->created,
+            'originalCreated' => $node->timestamps->originalCreated,
+            'lastModified' => $node->timestamps->lastModified,
+            'originalLastModified' => $node->timestamps->originalLastModified,
         ];
         Assert::assertEquals($expectedTimestamps, $actualTimestamps);
     }
