@@ -57,8 +57,11 @@ final readonly class InitiatingEventMetadata
         if ($rawTimestamp === null) {
             return null;
         }
-        return \DateTimeImmutable::createFromFormat(\DateTimeInterface::ATOM, $rawTimestamp)
-            ->setTimezone(new \DateTimeZone('UTC')) ?: null;
+        $dateTime = \DateTimeImmutable::createFromFormat(\DateTimeInterface::ATOM, $rawTimestamp);
+        if ($dateTime === false) {
+            return null;
+        }
+        return $dateTime->setTimezone(new \DateTimeZone('UTC'));
     }
 
     public static function extractInitiatingMetadata(EventMetadata $eventMetadata): EventMetadata
