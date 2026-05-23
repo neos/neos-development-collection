@@ -244,7 +244,7 @@ class CachingHelperTest extends UnitTestCase
 
     private function createNode(NodeAggregateId $nodeAggregateId): Node
     {
-        $now = new \DateTimeImmutable();
+        $now = new \DateTimeImmutable('now', new \DateTimeZone('UTC'));
         return Node::create(
             ContentRepositoryId::fromString("default"),
             WorkspaceName::forLive(),
