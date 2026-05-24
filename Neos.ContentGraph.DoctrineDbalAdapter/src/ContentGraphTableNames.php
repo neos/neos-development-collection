@@ -47,6 +47,11 @@ final readonly class ContentGraphTableNames
         return $this->hierarchyRelation() . '_inserter_' . $workspaceName->value;
     }
 
+    public function hierarchyRelationForWorkspaceUpdateTrigger(WorkspaceName $workspaceName): string
+    {
+        return $this->hierarchyRelation() . '_updater_' . $workspaceName->value;
+    }
+
     public function hierarchyRelationForWorkspaceDeleteTrigger(WorkspaceName $workspaceName): string
     {
         return $this->hierarchyRelation() . '_deleter_' . $workspaceName->value;

@@ -122,7 +122,6 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
         $databaseNameEscaped = $this->dbal->quoteIdentifier($this->dbal->getDatabase());
 
         // TODO Try catch and abstract properly?
-        // We dont need to handle update as during update at no point the id or contentStreamLayer of a row must change
         $this->dbal->executeStatement(<<<SQL
         DROP TRIGGER IF EXISTS {$databaseNameEscaped}.{$this->tableNames->hierarchyRelationForWorkspaceInsertTrigger(WorkspaceName::forLive())};
         
@@ -358,6 +357,23 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
         }
 
         if ($contentStreamLayerToMergeFrom !== null && $contentStreamLayerToMergeInto !== null) {
+            // TODO only run if workspace = live?
+            // We also need to handle update for triggers. While during normal events at no point the id or contentStreamLayer of a row must change it is allowed during layer merging.
+            $mergeHierarchyRelationsWorkspaceStatement = <<<SQL
+                UPDATE {$this->tableNames->hierarchyRelationForWorkspace(WorkspaceName::forLive())}
+                  SET contentstreamlayer = :contentStreamLayerToMergeInto
+                WHERE contentstreamlayer = :contentStreamLayerToMergeFrom
+                SQL;
+
+            try {
+                $this->dbal->executeStatement($mergeHierarchyRelationsWorkspaceStatement, [
+                    'contentStreamLayerToMergeInto' => $contentStreamLayerToMergeInto->value,
+                    'contentStreamLayerToMergeFrom' => $contentStreamLayerToMergeFrom->value,
+                ]);
+            } catch (DBALException $e) {
+                throw new \RuntimeException(sprintf('Failed to merge hierarchy relations of "live" table: %s', $e->getMessage()), 1776345058, $e);
+            }
+
             $mergeHierarchyRelationsStatement = <<<SQL
                 INSERT INTO {$this->tableNames->hierarchyRelation()} (
                   id,
