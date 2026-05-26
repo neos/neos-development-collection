@@ -565,17 +565,15 @@ final class DocumentUriPathProjection implements ProjectionInterface
             $uriPathSegments[array_key_last($uriPathSegments)] = ($newPropertyValues['uriPathSegment'] ?? '') ?: $event->nodeAggregateId->value;
             $newUriPath = implode('/', $uriPathSegments);
 
-            $concat = $this->dbal->getDatabasePlatform()->getConcatExpression(
-                ':newUriPath',
-                'SUBSTRING(uriPath, LENGTH(:oldUriPath) + 1)'
-            );
             $this->updateNodeQuery(
-                'SET uriPath = ' . $concat . '
+                <<<SQL
+                SET uriPath = {$this->concatSql(':newUriPath', 'SUBSTRING(uriPath, LENGTH(:oldUriPath) + 1)')}
                 WHERE dimensionSpacePointHash = :dimensionSpacePointHash
                     AND (
                         nodeAggregateId = :nodeAggregateId
                         OR nodeAggregateIdPath LIKE :childNodeAggregateIdPathPrefix
-                    )',
+                    )
+                SQL,
                 [
                     'newUriPath' => $newUriPath,
                     'oldUriPath' => $oldUriPath,
@@ -648,7 +646,6 @@ final class DocumentUriPathProjection implements ProjectionInterface
             $removedDelta++;
         }
 
-        $platform = $this->dbal->getDatabasePlatform();
         $slash = "'" . "/" . "'";
         // Inline integer offsets directly into SQL to avoid PostgreSQL interpreting
         // string-typed parameters as regex patterns in SUBSTRING(text, text) overload
@@ -673,29 +670,26 @@ final class DocumentUriPathProjection implements ProjectionInterface
         //   /foo/bar/baz => / (+ /baz) => /baz
         //
         $sourceUriPathOffset = $newParentNode->isRoot() ? strlen($node->getUriPath()) + 1 : ((int)strrpos($node->getUriPath(), '/') + 1);
-        $concatIdPath = $platform->getConcatExpression(
-            ':newParentNodeAggregateIdPath',
-            $slash,
-            "TRIM(LEADING '/' FROM SUBSTRING(nodeAggregateIdPath, " . $sourceNodeAggregateIdPathOffset . "))"
-        );
-        $concatUriPath = $platform->getConcatExpression(
-            ':newParentUriPath',
-            $slash,
-            "TRIM(LEADING '/' FROM SUBSTRING(uriPath, " . $sourceUriPathOffset . "))"
-        );
         $this->updateNodeQuery(
-            /** @codingStandardsIgnoreStart */
-            "SET
-                nodeAggregateIdPath = TRIM(TRAILING '/' FROM " . $concatIdPath . "),
-                uriPath = TRIM('/' FROM " . $concatUriPath . "),
-                disabled = disabled + " . $disabledDelta . ",
-                removed = removed + " . $removedDelta . "
+            <<<SQL
+            SET
+                nodeAggregateIdPath = TRIM(TRAILING '/' FROM {$this->concatSql(
+                    ':newParentNodeAggregateIdPath',
+                    $slash,
+                    "TRIM(LEADING '/' FROM SUBSTRING(nodeAggregateIdPath, " . $sourceNodeAggregateIdPathOffset . "))"
+                )}),
+                uriPath = TRIM('/' FROM {$this->concatSql(
+                    ':newParentUriPath',
+                    $slash,
+                    "TRIM(LEADING '/' FROM SUBSTRING(uriPath, " . $sourceUriPathOffset . "))"   
+                )}),
+                disabled = disabled + {$disabledDelta},
+                removed = removed + {$removedDelta}
             WHERE
                 dimensionSpacePointHash = :dimensionSpacePointHash
                     AND (nodeAggregateId = :nodeAggregateId
                     OR nodeAggregateIdPath LIKE :childNodeAggregateIdPathPrefix)
-            ",
-            /** @codingStandardsIgnoreEnd */
+            SQL,
             [
                 'nodeAggregateId' => $node->getNodeAggregateId()->value,
                 'newParentNodeAggregateIdPath' => $newParentNode->getNodeAggregateIdPath(),
@@ -1008,5 +1002,10 @@ final class DocumentUriPathProjection implements ProjectionInterface
                 ), 1599646608, $e);
             }
         }
+    }
+
+    private function concatSql(string ...$sqlExpressions): string
+    {
+        return $this->dbal->getDatabasePlatform()->getConcatExpression(...$sqlExpressions);
     }
 }
