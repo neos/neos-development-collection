@@ -646,9 +646,6 @@ final class DocumentUriPathProjection implements ProjectionInterface
             $removedDelta++;
         }
 
-        $slash = "'" . "/" . "'";
-        // Inline integer offsets directly into SQL to avoid PostgreSQL interpreting
-        // string-typed parameters as regex patterns in SUBSTRING(text, text) overload
         $sourceNodeAggregateIdPathOffset = (int)strrpos($node->getNodeAggregateIdPath(), '/') + 1;
         // we have to distinguish two cases here:
         // - standard case: we want to move the nodes with URI /foo/bar into /target
@@ -675,13 +672,15 @@ final class DocumentUriPathProjection implements ProjectionInterface
             SET
                 nodeAggregateIdPath = TRIM(TRAILING '/' FROM {$this->concatSql(
                     ':newParentNodeAggregateIdPath',
-                    $slash,
-                    "TRIM(LEADING '/' FROM SUBSTRING(nodeAggregateIdPath, " . $sourceNodeAggregateIdPathOffset . "))"
+                    "'/'",
+                    // Inline integer offsets directly into SQL to avoid PostgreSQL interpreting
+                    // string-typed parameters as regex patterns in SUBSTRING(text, text) overload
+                    "TRIM(LEADING '/' FROM SUBSTRING(nodeAggregateIdPath, {$sourceNodeAggregateIdPathOffset}))"
                 )}),
                 uriPath = TRIM('/' FROM {$this->concatSql(
                     ':newParentUriPath',
-                    $slash,
-                    "TRIM(LEADING '/' FROM SUBSTRING(uriPath, " . $sourceUriPathOffset . "))"   
+                    "'/'",
+                    "TRIM(LEADING '/' FROM SUBSTRING(uriPath, {$sourceUriPathOffset}))"   
                 )}),
                 disabled = disabled + {$disabledDelta},
                 removed = removed + {$removedDelta}
