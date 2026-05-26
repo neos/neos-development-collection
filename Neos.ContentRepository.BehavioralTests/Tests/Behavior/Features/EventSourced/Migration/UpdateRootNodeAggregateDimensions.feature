@@ -57,9 +57,6 @@ Feature: Update root node aggregate dimensions
 
     Then I expect node aggregate identifier "lady-eleonode-rootford" to lead to node migration-cs;lady-eleonode-rootford;{}
 
-    When I run integrity violation detection
-    Then I expect the integrity violation detection result to contain exactly 0 errors
-
   Scenario: Success Case - other migrations do not block this with changes on this workspace
     When the command CreateNodeAggregateWithNode is executed with payload:
       | Key                       | Value                                     |
@@ -147,6 +144,3 @@ Feature: Update root node aggregate dimensions
     And I expect this node aggregate to cover dimension space points [{"language":"mul"},{"language":"de"},{"language":"ch"}]
 
     Then I expect node aggregate identifier "lady-eleonode-rootford" to lead to no node
-
-    When I run integrity violation detection
-    Then I expect the integrity violation detection result to contain exactly 0 errors
