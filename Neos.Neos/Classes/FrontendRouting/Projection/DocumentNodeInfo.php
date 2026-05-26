@@ -43,7 +43,7 @@ final class DocumentNodeInfo
     /**
      * @param array<string,mixed> $source
      */
-    private function __construct(array $source)
+    public function __construct(array $source)
     {
         $this->source = $source;
     }
@@ -126,7 +126,7 @@ final class DocumentNodeInfo
 
     public function getDimensionSpacePointHash(): string
     {
-        return (string)$this->source['dimensionspacepointhash'];
+        return $this->source['dimensionspacepointhash'];
     }
 
     /**
