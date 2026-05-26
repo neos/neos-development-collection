@@ -18,7 +18,7 @@
         "psr/clock": "^1",
         "behat/transliterator": "~1.0",
         "ramsey/uuid": "^3.0 || ^4.0",
-        "neos/eventstore-doctrineadapter": "^1 || ^2",
+        "neos/eventstore-doctrineadapter": "^2",
         "league/flysystem": "^3",
         "webmozart/assert": "^1.11",
         "neos/flow": "*",

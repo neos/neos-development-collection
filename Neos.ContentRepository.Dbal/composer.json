@@ -10,7 +10,7 @@
   "license": "GPL-3.0+",
   "require": {
     "neos/contentrepository-core": "self.version",
-    "neos/eventstore-doctrineadapter": "^1 || ^2",
+    "neos/eventstore-doctrineadapter": "^2",
     "doctrine/dbal": "^3.1.4"
   },
   "autoload": {
