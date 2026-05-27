@@ -35,11 +35,12 @@ final class ProjectionErrorTest extends AbstractSubscriptionEngineTestCase
         self::assertEquals('This projection is kaputt.', $subscriptionError->errorMessage);
         self::assertSame(<<<MSG
             Class: RuntimeException
+            Message: This projection is kaputt.
+            Code: 1031
             File: /Packages/Neos/Neos.ContentRepository.BehavioralTests/Tests/Functional/Subscription/ProjectionErrorTest.php
             Line: {$exception->getLine()}
-            Code: 1031
             
-            {$traceAsString}
+            Trace: {$traceAsString}
             MSG,
             str_replace(FLOW_PATH_ROOT, '/', $subscriptionError->errorTrace)
         );
@@ -49,13 +50,13 @@ final class ProjectionErrorTest extends AbstractSubscriptionEngineTestCase
         $subscriptionError = SubscriptionError::fromPreviousStatusAndException(SubscriptionStatus::ACTIVE, $exception);
         self::assertStringContainsString(<<<MSG
             
-            Previous: Infrastructure is kaputt (previous).
             Class: InvalidArgumentException
+            Message: Infrastructure is kaputt (previous).
+            Code: 1048
             File: /Packages/Neos/Neos.ContentRepository.BehavioralTests/Tests/Functional/Subscription/ProjectionErrorTest.php
             Line: {$exception->getPrevious()->getLine()}
-            Code: 1048
             
-            {$previousTraceAsString}
+            Trace: {$previousTraceAsString}
             MSG,
             str_replace(FLOW_PATH_ROOT, '/', $subscriptionError->errorTrace)
         );
