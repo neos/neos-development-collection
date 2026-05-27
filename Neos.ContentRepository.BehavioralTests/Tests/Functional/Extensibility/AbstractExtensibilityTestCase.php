@@ -37,7 +37,7 @@ abstract class AbstractExtensibilityTestCase extends TestCase // we don't use Fl
 
     public function setUp(): void
     {
-        if ($this->getObject(Connection::class)->getDatabasePlatform() instanceof PostgreSQLPlatform) {
+        if (getenv('SKIP_CR_POSTGRESQL_TESTS')) {
             $this->markTestSkipped('TODO: The content graph is not available in postgres currently: https://github.com/neos/neos-development-collection/issues/3855');
         }
 

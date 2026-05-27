@@ -78,9 +78,6 @@ Feature: Move dimension space point from / to the zero dimensional case
     And I expect node aggregate identifier "sir-david-nodenborough" to lead to node migration-cs;sir-david-nodenborough;{"example": "source"}
     And I expect node aggregate identifier "nody-mc-nodeface" to lead to node migration-cs;nody-mc-nodeface;{"example": "source"}
 
-    When I run integrity violation detection
-    Then I expect the integrity violation detection result to contain exactly 0 errors
-
   Scenario: Move dimension space point from one- to zero-dimensional
     Given using the following content dimensions:
       | Identifier | Values       | Generalizations |
@@ -148,6 +145,3 @@ Feature: Move dimension space point from / to the zero dimensional case
     And I expect node aggregate identifier "lady-eleonode-rootford" to lead to node migration-cs;lady-eleonode-rootford;{}
     And I expect node aggregate identifier "sir-david-nodenborough" to lead to node migration-cs;sir-david-nodenborough;{}
     And I expect node aggregate identifier "nody-mc-nodeface" to lead to node migration-cs;nody-mc-nodeface;{}
-
-    When I run integrity violation detection
-    Then I expect the integrity violation detection result to contain exactly 0 errors

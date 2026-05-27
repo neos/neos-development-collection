@@ -214,13 +214,21 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
 
         $commandSimulator = $this->commandSimulatorFactory->createSimulatorForWorkspace($baseWorkspace->workspaceName);
 
-        $commandSimulator->run(
-            static function ($handle) use ($rebaseableCommands): void {
-                foreach ($rebaseableCommands as $rebaseableCommand) {
-                    $handle($rebaseableCommand);
+        try {
+            $commandSimulator->run(
+                static function ($handle) use ($rebaseableCommands): void {
+                    foreach ($rebaseableCommands as $rebaseableCommand) {
+                        $handle($rebaseableCommand);
+                    }
                 }
-            }
-        );
+            );
+        } catch (\Throwable $unexpectedException) {
+            yield $this->reopenContentStreamWithoutConstraintChecks(
+                $workspace->currentContentStreamId,
+                sprintf('unexpected error %d: %s', $unexpectedException->getCode(), $unexpectedException->getMessage())
+            );
+            throw $unexpectedException;
+        }
 
         if ($commandSimulator->hasConflicts()) {
             $workspaceRebaseFailed = WorkspaceRebaseFailed::duringPublish($commandSimulator->getConflictingEvents());
@@ -384,13 +392,21 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
 
         $commandSimulator = $this->commandSimulatorFactory->createSimulatorForWorkspace($baseWorkspace->workspaceName);
 
-        $commandSimulator->run(
-            static function ($handle) use ($rebaseableCommands): void {
-                foreach ($rebaseableCommands as $rebaseableCommand) {
-                    $handle($rebaseableCommand);
+        try {
+            $commandSimulator->run(
+                static function ($handle) use ($rebaseableCommands): void {
+                    foreach ($rebaseableCommands as $rebaseableCommand) {
+                        $handle($rebaseableCommand);
+                    }
                 }
-            }
-        );
+            );
+        } catch (\Throwable $unexpectedException) {
+            yield $this->reopenContentStreamWithoutConstraintChecks(
+                $workspace->currentContentStreamId,
+                sprintf('unexpected error %d: %s', $unexpectedException->getCode(), $unexpectedException->getMessage())
+            );
+            throw $unexpectedException;
+        }
 
         if (
             $command->rebaseErrorHandlingStrategy === RebaseErrorHandlingStrategy::STRATEGY_FAIL
@@ -473,18 +489,26 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
 
         $commandSimulator = $this->commandSimulatorFactory->createSimulatorForWorkspace($baseWorkspace->workspaceName);
 
-        $highestSequenceNumberForMatching = $commandSimulator->run(
-            static function ($handle) use ($commandSimulator, $matchingCommands, $remainingCommands): SequenceNumber {
-                foreach ($matchingCommands as $matchingCommand) {
-                    $handle($matchingCommand);
+        try {
+            $highestSequenceNumberForMatching = $commandSimulator->run(
+                static function ($handle) use ($commandSimulator, $matchingCommands, $remainingCommands): SequenceNumber {
+                    foreach ($matchingCommands as $matchingCommand) {
+                        $handle($matchingCommand);
+                    }
+                    $highestSequenceNumberForMatching = $commandSimulator->currentSequenceNumber();
+                    foreach ($remainingCommands as $remainingCommand) {
+                        $handle($remainingCommand);
+                    }
+                    return $highestSequenceNumberForMatching;
                 }
-                $highestSequenceNumberForMatching = $commandSimulator->currentSequenceNumber();
-                foreach ($remainingCommands as $remainingCommand) {
-                    $handle($remainingCommand);
-                }
-                return $highestSequenceNumberForMatching;
-            }
-        );
+            );
+        } catch (\Throwable $unexpectedException) {
+            yield $this->reopenContentStreamWithoutConstraintChecks(
+                $workspace->currentContentStreamId,
+                sprintf('unexpected error %d: %s', $unexpectedException->getCode(), $unexpectedException->getMessage())
+            );
+            throw $unexpectedException;
+        }
 
         if ($commandSimulator->hasConflicts()) {
             $workspaceRebaseFailed = match ($workspace->status) {
@@ -609,13 +633,21 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
 
         $commandSimulator = $this->commandSimulatorFactory->createSimulatorForWorkspace($baseWorkspace->workspaceName);
 
-        $commandSimulator->run(
-            static function ($handle) use ($commandsToKeep): void {
-                foreach ($commandsToKeep as $matchingCommand) {
-                    $handle($matchingCommand);
+        try {
+            $commandSimulator->run(
+                static function ($handle) use ($commandsToKeep): void {
+                    foreach ($commandsToKeep as $matchingCommand) {
+                        $handle($matchingCommand);
+                    }
                 }
-            }
-        );
+            );
+        } catch (\Throwable $unexpectedException) {
+            yield $this->reopenContentStreamWithoutConstraintChecks(
+                $workspace->currentContentStreamId,
+                sprintf('unexpected error %d: %s', $unexpectedException->getCode(), $unexpectedException->getMessage())
+            );
+            throw $unexpectedException;
+        }
 
         if ($commandSimulator->hasConflicts()) {
             $workspaceRebaseFailed = match ($workspace->status) {

@@ -42,6 +42,8 @@ final readonly class ImpendingHardRemovalConflictRepository
                 {$table}
             WHERE
                 content_repository_id = :contentRepositoryId
+            ORDER BY
+                node_aggregate_id
         SQL;
 
         $rows = $this->dbal->fetchAllAssociative($query, [

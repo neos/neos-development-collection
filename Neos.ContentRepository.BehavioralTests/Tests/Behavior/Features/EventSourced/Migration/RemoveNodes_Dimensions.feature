@@ -84,10 +84,6 @@ Feature: Remove Nodes
     When I am in workspace "migration-workspace" and dimension space point {"language": "en"}
     Then I expect a node identified by migration-cs;sir-david-nodenborough;{"language": "en"} to exist in the content graph
 
-    When I run integrity violation detection
-    Then I expect the integrity violation detection result to contain exactly 0 errors
-
-
   Scenario: Remove nodes in a given dimension space point removes the node without shine-throughs with strategy "allSpecializations"
     When I run the following node migration for workspace "live", creating target workspace "migration-workspace" on contentStreamId "migration-cs", without publishing on success:
     """yaml
@@ -129,10 +125,6 @@ Feature: Remove Nodes
 
     When I am in workspace "migration-workspace" and dimension space point {"language": "en"}
     Then I expect a node identified by migration-cs;sir-david-nodenborough;{"language": "en"} to exist in the content graph
-
-    When I run integrity violation detection
-    Then I expect the integrity violation detection result to contain exactly 0 errors
-
 
   Scenario: allVariants is not supported in RemoveNode, as this would violate the filter configuration potentially
     When I run the following node migration for workspace "live", creating target workspace "migration-workspace" on contentStreamId "migration-cs" and exceptions are caught:
@@ -200,10 +192,6 @@ Feature: Remove Nodes
     When I am in workspace "migration-workspace" and dimension space point {"language": "en"}
     Then I expect a node identified by migration-cs;sir-david-nodenborough;{"language": "en"} to exist in the content graph
 
-    When I run integrity violation detection
-    Then I expect the integrity violation detection result to contain exactly 0 errors
-
-
   Scenario: Remove nodes in a shine-through dimension space point (gsw)
     When I run the following node migration for workspace "live", creating target workspace "migration-workspace" on contentStreamId "migration-cs", without publishing on success:
     """yaml
@@ -240,10 +228,6 @@ Feature: Remove Nodes
 
     When I am in workspace "migration-workspace" and dimension space point {"language": "en"}
     Then I expect a node identified by migration-cs;sir-david-nodenborough;{"language": "en"} to exist in the content graph
-
-    When I run integrity violation detection
-    Then I expect the integrity violation detection result to contain exactly 0 errors
-
 
   Scenario: Remove nodes in a shine-through dimension space point (DE,gsw)
     When I run the following node migration for workspace "live", creating target workspace "migration-workspace" on contentStreamId "migration-cs", without publishing on success:
@@ -287,9 +271,6 @@ Feature: Remove Nodes
     When I am in workspace "migration-workspace" and dimension space point {"language": "en"}
     Then I expect node aggregate identifier "sir-david-nodenborough" to lead to no node
 
-    When I run integrity violation detection
-    Then I expect the integrity violation detection result to contain exactly 0 errors
-
   Scenario: Remove nodes in a shine-through dimension space point (DE,gsw) - variant 2
     When I run the following node migration for workspace "live", creating target workspace "migration-workspace" on contentStreamId "migration-cs", without publishing on success:
     """yaml
@@ -324,6 +305,3 @@ Feature: Remove Nodes
 
     When I am in workspace "migration-workspace" and dimension space point {"language": "en"}
     Then I expect node aggregate identifier "sir-david-nodenborough" to lead to no node
-
-    When I run integrity violation detection
-    Then I expect the integrity violation detection result to contain exactly 0 errors

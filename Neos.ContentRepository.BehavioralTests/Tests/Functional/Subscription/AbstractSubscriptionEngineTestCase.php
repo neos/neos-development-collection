@@ -69,7 +69,7 @@ abstract class AbstractSubscriptionEngineTestCase extends TestCase // we don't u
 
     public function setUp(): void
     {
-        if ($this->getObject(Connection::class)->getDatabasePlatform() instanceof PostgreSQLPlatform) {
+        if (getenv('SKIP_CR_POSTGRESQL_TESTS')) {
             $this->markTestSkipped('TODO: The content graph is not available in postgres currently: https://github.com/neos/neos-development-collection/issues/3855');
         }
 
@@ -159,10 +159,17 @@ abstract class AbstractSubscriptionEngineTestCase extends TestCase // we don't u
             $connection->prepare($preDeleteStatement)->executeStatement();
         }
 
-        $truncateOrDropStatement = match (true) {
-            $connection->getDatabasePlatform() instanceof PostgreSQLPlatform => '%s TABLE `%s` CASCADE',
-            default => '%s TABLE `%s`',
-        };
+        if ($connection->getDatabasePlatform() instanceof PostgreSQLPlatform) {
+            if ($keepSchema) {
+                $cascade = ' RESTART IDENTITY CASCADE';
+            } else {
+                $cascade = ' CASCADE';
+            }
+        } else {
+            $cascade = '';
+        }
+
+        $action = $keepSchema ? 'TRUNCATE' : 'DROP';
 
         foreach ($connection->createSchemaManager()->listTableNames() as $tableName) {
             if (!str_starts_with($tableName, sprintf('cr_%s_', $contentRepositoryId->value))) {
@@ -170,7 +177,7 @@ abstract class AbstractSubscriptionEngineTestCase extends TestCase // we don't u
                 continue;
             }
             // truncate is faster
-            $sql = sprintf($truncateOrDropStatement, $keepSchema ? 'TRUNCATE' : 'DROP', $tableName);
+            $sql = $action . ' TABLE ' . $connection->quoteIdentifier($tableName) . $cascade;
             $connection->prepare($sql)->executeStatement();
         }
 

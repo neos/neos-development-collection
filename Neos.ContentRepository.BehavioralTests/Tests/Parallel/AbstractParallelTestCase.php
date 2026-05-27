@@ -46,18 +46,52 @@ abstract class AbstractParallelTestCase extends TestCase // we don't use Flows f
         $this->contentRepositoryRegistry = $this->objectManager->get(ContentRepositoryRegistry::class);
     }
 
+    protected function onNotSuccessfulTest(\Throwable $t): void
+    {
+        try {
+            $this->log('Start logging exception');
+            $messageLines = [];
+            $level = 0;
+            $exception = $t;
+            do {
+                $level++;
+                if ($level >= 8) {
+                    $messageLines[] = '...Recursion';
+                    break;
+                }
+
+                $exceptionFqn = $exception::class;
+
+                $messageLines[] = <<<MESSAGE
+                Class: {$exceptionFqn}
+                Message: {$exception->getMessage()}
+                Code: {$exception->getCode()}
+                File: {$exception->getFile()}
+                Line: {$exception->getLine()}
+
+                Trace: {$exception->getTraceAsString()}
+                MESSAGE;
+            } while ($exception = $exception->getPrevious());
+            file_put_contents(self::LOGGING_PATH, join("\n\n", $messageLines), FILE_APPEND);
+            $this->log('Fished exception logging');
+        } catch (\Throwable $throwable) {
+            $this->log(sprintf('Failed logging exception [%s (%d)]: %s', $throwable::class, $throwable->getCode(), $throwable->getMessage()));
+        }
+        parent::onNotSuccessfulTest($t);
+    }
+
     public function tearDown(): void
     {
         if ($this->hasFailed()) {
             try {
-                $this->log('Error. Logging last 100 events from "test_parallel"');
+                $this->log(sprintf('Error "%s". Logging last 100 events from "test_parallel"', $this->getStatusMessage()));
                 /** @var ContentRepositoryMaintainer $contentRepositoryMaintainer */
                 $contentRepositoryMaintainer = $this->contentRepositoryRegistry->buildService(ContentRepositoryId::fromString('test_parallel'), new ContentRepositoryMaintainerFactory());
                 /** @var EventStoreInterface $eventStore */
                 $eventStore = (new \ReflectionClass($contentRepositoryMaintainer))->getProperty('eventStore')->getValue($contentRepositoryMaintainer);
 
                 /** @var EventEnvelope[] $lastEvents */
-                $lastEvents = array_reverse(iterator_to_array($eventStore->load(VirtualStreamName::all())->limit(100)->backwards(), false));
+                $lastEvents = iterator_to_array($eventStore->load(VirtualStreamName::all())->limit(100)->backwards(), false);
                 file_put_contents(self::LOGGING_PATH, '| sequence | version | stream | type | data | metadata | causationId | correlationId |' . PHP_EOL, FILE_APPEND);
                 file_put_contents(self::LOGGING_PATH, '| --- | --- | --- | --- | --- | --- | --- | --- |' . PHP_EOL, FILE_APPEND);
                 foreach ($lastEvents as $eventEnvelope) {
