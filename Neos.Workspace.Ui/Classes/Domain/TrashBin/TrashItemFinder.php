@@ -70,8 +70,8 @@ class TrashItemFinder implements ProjectionStateInterface
         return TrashItems::list(...array_map(
             fn (array $record): TrashItem => new TrashItem(
                 nodeAggregateId: NodeAggregateId::fromString($record['node_aggregate_id']),
-                userId: UserId::fromString($record['user_id']),
-                deleteTime: \DateTimeImmutable::createFromFormat('Y-m-d H:i:s', $record['delete_time'], new \DateTimeZone('UTC')) ?: null,
+                userId: isset($record['user_id']) ? UserId::fromString($record['user_id']) : null,
+                deleteTime: isset($record['delete_time']) ? (\DateTimeImmutable::createFromFormat('Y-m-d H:i:s', $record['delete_time'], new \DateTimeZone('UTC')) ?: null) : null,
                 affectedDimensionSpacePoints: DimensionSpacePointSet::fromJsonString($record['affected_dimension_space_points']),
             ),
             $records,
