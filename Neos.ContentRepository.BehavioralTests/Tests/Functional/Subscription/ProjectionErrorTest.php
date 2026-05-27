@@ -28,34 +28,34 @@ final class ProjectionErrorTest extends AbstractSubscriptionEngineTestCase
     public function subscriptionErrorLogging()
     {
         $exception = new \RuntimeException('This projection is kaputt.', code: 1031);
+        $traceAsString = str_replace(FLOW_PATH_ROOT, '/', $exception->getTraceAsString());
 
         $subscriptionError = SubscriptionError::fromPreviousStatusAndException(SubscriptionStatus::ACTIVE, $exception);
 
         self::assertEquals('This projection is kaputt.', $subscriptionError->errorMessage);
-        self::assertStringStartsWith(<<<MSG
+        self::assertSame(<<<MSG
             Class: RuntimeException
             File: /Packages/Neos/Neos.ContentRepository.BehavioralTests/Tests/Functional/Subscription/ProjectionErrorTest.php
-            Line: 31
+            Line: {$exception->getLine()}
             Code: 1031
             
-            #0 /Packages/Libraries/phpunit/phpunit/src/Framework/TestCase.php(1617): Neos\ContentRepository\BehavioralTests\Tests\Functional\Subscription\ProjectionErrorTest->subscriptionErrorLogging()
-            #1
+            {$traceAsString}
             MSG,
             str_replace(FLOW_PATH_ROOT, '/', $subscriptionError->errorTrace)
         );
 
         $exception = new \RuntimeException('This projection is kaputt.', previous: new \InvalidArgumentException('Infrastructure is kaputt (previous).', code: 1048));
+        $previousTraceAsString = str_replace(FLOW_PATH_ROOT, '/', $exception->getPrevious()->getTraceAsString());
         $subscriptionError = SubscriptionError::fromPreviousStatusAndException(SubscriptionStatus::ACTIVE, $exception);
         self::assertStringContainsString(<<<MSG
             
             Previous: Infrastructure is kaputt (previous).
             Class: InvalidArgumentException
             File: /Packages/Neos/Neos.ContentRepository.BehavioralTests/Tests/Functional/Subscription/ProjectionErrorTest.php
-            Line: 48
+            Line: {$exception->getPrevious()->getLine()}
             Code: 1048
             
-            #0 /Packages/Libraries/phpunit/phpunit/src/Framework/TestCase.php(1617): Neos\ContentRepository\BehavioralTests\Tests\Functional\Subscription\ProjectionErrorTest->subscriptionErrorLogging()
-            #1
+            {$previousTraceAsString}
             MSG,
             str_replace(FLOW_PATH_ROOT, '/', $subscriptionError->errorTrace)
         );

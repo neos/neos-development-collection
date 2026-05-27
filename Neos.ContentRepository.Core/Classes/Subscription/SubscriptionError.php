@@ -43,7 +43,7 @@ final class SubscriptionError
                 
                 
                 TEXT
-                . $error->getTraceAsString()
+                . $error->getPrevious()->getTraceAsString()
             ) : '')
         );
     }
