@@ -12,6 +12,7 @@ class SubtreeTagTest extends TestCase
      */
     public function fromStringSupportsUUIDs(): void
     {
+        // leading and trailing digits are allowed!
         $uuid = '2281f529-d769-4084-9bdb-ea0f89356667';
         self::assertSame($uuid, SubtreeTag::fromString($uuid)->value);
     }
@@ -32,6 +33,24 @@ class SubtreeTagTest extends TestCase
     {
         $this->expectException(\InvalidArgumentException::class);
         SubtreeTag::fromString('invalidTag');
+    }
+
+    /**
+     * @test
+     */
+    public function fromStringFailsIfStringContainsOnlyNumericCharacters(): void
+    {
+        $this->expectException(\InvalidArgumentException::class);
+        SubtreeTag::fromString('12345');
+    }
+
+    /**
+     * @test
+     */
+    public function fromStringFailsIfStringContainsOnlyNumericWithLeadingZeroCharacters(): void
+    {
+        $this->expectException(\InvalidArgumentException::class);
+        SubtreeTag::fromString('007');
     }
 
     /**
