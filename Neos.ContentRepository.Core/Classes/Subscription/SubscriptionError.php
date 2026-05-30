@@ -44,7 +44,7 @@ final class SubscriptionError
         return new self(
             $error->getMessage(),
             $previousStatus,
-            join("\n\n", $messageLines)
+            implode(PHP_EOL . PHP_EOL, $messageLines)
         );
     }
 }
