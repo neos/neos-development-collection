@@ -40,6 +40,9 @@ final class SubtreeTag implements \JsonSerializable
         if (preg_match($regexPattern, $value) !== 1) {
             throw new \InvalidArgumentException(sprintf('The SubtreeTag value "%s" does not adhere to the regular expression "%s"', $value, $regexPattern), 1695467813);
         }
+        if (is_numeric($this->value)) {
+            throw new \InvalidArgumentException(sprintf('The SubtreeTag value "%s" must not be fully numeric', $value), 1779911018);
+        }
     }
 
     public static function fromString(string $value): self
