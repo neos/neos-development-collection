@@ -8,7 +8,7 @@
         "docs": "https://docs.neos.io/"
     },
     "require": {
-        "php": ">=8.2",
+        "php": "^8.4",
         "neos/contentrepository-core": "self.version",
         "league/flysystem": "^3",
         "webmozart/assert": "^1.11"
