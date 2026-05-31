@@ -5,6 +5,16 @@
 #
 root = Neos.Fusion:Case
 root {
+  documentNotVisibleInPreviewMode {
+    prototype(Neos.Neos:Page) {
+      body = Neos.Neos:Document.NotVisibleMessage
+    }
+
+    @position = 'before shortcut'
+    condition = ${documentNode.context.inBackend && documentNode.context.currentRenderingMode.preview && !documentNode.visible}
+    type = 'Neos.Neos:Page'
+  }
+
   shortcut {
     prototype(Neos.Neos:Page) {
       body = Neos.Neos:Shortcut

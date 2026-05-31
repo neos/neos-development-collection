@@ -1,0 +1,13 @@
+# Neos.Neos:Document.NotVisibleMessage renders an informational notice that is shown in the
+# backend preview when the previewed document itself is not visible (e.g. hidden), instead of
+# rendering its (hidden) content.
+#
+prototype(Neos.Neos:Document.NotVisibleMessage) < prototype(Neos.Fusion:Component) {
+  message = ${Translation.translate('notVisibleDocument.message', 'This page is currently hidden and is not visible on the live website.', [], 'Main', 'Neos.Neos')}
+
+  renderer = afx`
+    <div id="neos-not-visible-document">
+      <p>{props.message}</p>
+    </div>
+  `
+}
