@@ -12,7 +12,7 @@
     "packagefactory/atomicfusion-afx": "*"
   },
   "require": {
-    "php": "^8.2",
+    "php": "^8.4",
     "neos/fusion": "self.version"
   },
   "require-dev": {

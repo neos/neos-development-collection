@@ -10,7 +10,7 @@
         "doctrine/dbal": "^3.1.4",
         "doctrine/migrations": "*",
         "neos/eventstore": "^1",
-        "php": "^8.2",
+        "php": "^8.4",
         "neos/error-messages": "*",
         "neos/utility-objecthandling": "*",
         "neos/utility-arrays": "*",

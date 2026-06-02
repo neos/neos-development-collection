@@ -9,7 +9,7 @@
     "docs": "https://docs.neos.io/"
   },
   "require": {
-    "php": "^8.2"
+    "php": "^8.4"
   },
   "autoload": {
     "psr-4": {
