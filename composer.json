@@ -52,7 +52,6 @@
         "typo3/neos-nodetypes": "self.version",
         "typo3/neos-kickstarter": "self.version",
         "neos/contentgraph-doctrinedbaladapter": "self.version",
-        "neos/contentgraph-postgresqladapter": "self.version",
         "neos/contentrepository-behavioraltests": "self.version",
         "neos/contentrepository-core": "self.version",
         "neos/contentrepository-dbal": "self.version",
@@ -116,19 +115,13 @@
         "test:behat-cli": "../../bin/behat -f progress --strict --no-interaction",
         "test:behavioral": [
             "@test:behat-cli -c Neos.ContentRepository.BehavioralTests/Tests/Behavior/behat.yml.dist",
-            "@test:behat-cli -c Neos.ContentGraph.DoctrineDbalAdapter/Tests/Behavior/behat.yml.dist",
             "@test:behat-cli -c Neos.ContentRepository.LegacyNodeMigration/Tests/Behavior/behat.yml.dist",
             "@test:behat-cli -c Neos.ContentRepository.Export/Tests/Behavior/behat.yml.dist",
             "@test:behat-cli -c Neos.TimeableNodeVisibility/Tests/Behavior/behat.yml.dist",
             "@test:behat-cli -c Neos.Neos/Tests/Behavior/behat.yml.dist"
         ],
-        "test:behavioral:stop-on-failure": [
-            "@test:behat-cli -vvv --stop-on-failure -c Neos.ContentRepository.BehavioralTests/Tests/Behavior/behat.yml.dist",
-            "@test:behat-cli -vvv --stop-on-failure -c Neos.ContentGraph.DoctrineDbalAdapter/Tests/Behavior/behat.yml.dist",
-            "@test:behat-cli -vvv --stop-on-failure -c Neos.ContentRepository.LegacyNodeMigration/Tests/Behavior/behat.yml.dist",
-            "@test:behat-cli -vvv --stop-on-failure -c Neos.ContentRepository.Export/Tests/Behavior/behat.yml.dist",
-            "@test:behat-cli -vvv --stop-on-failure -c Neos.TimeableNodeVisibility/Tests/Behavior/behat.yml.dist",
-            "@test:behat-cli -vvv --stop-on-failure -c Neos.Neos/Tests/Behavior/behat.yml.dist"
+        "test:behavioral-maria-mysql": [
+            "@test:behat-cli -c Neos.ContentGraph.DoctrineDbalAdapter/Tests/Behavior/behat.yml.dist"
         ],
         "test": [
             "@test:unit",
@@ -141,9 +134,6 @@
         "psr-4": {
             "Neos\\ContentGraph\\DoctrineDbalAdapter\\": [
                 "Neos.ContentGraph.DoctrineDbalAdapter/src"
-            ],
-            "Neos\\ContentGraph\\PostgreSQLAdapter\\": [
-                "Neos.ContentGraph.PostgreSQLAdapter/src"
             ],
             "Neos\\ContentRepository\\BehavioralTests\\": [
                 "Neos.ContentRepository.BehavioralTests/Classes"
@@ -246,11 +236,17 @@
     "provide": {
         "neos/contentrepositoryregistry-storageclient": "self.version"
     },
+    "require-dev": {
+        "phpunit/phpunit": "^9.6",
+        "brianium/paratest": "^6.11",
+        "roave/security-advisories": "dev-latest",
+        "phpstan/phpstan": "^1.11",
+        "squizlabs/php_codesniffer": "^3.6",
+        "neos/behat": "*",
+        "league/flysystem-memory": "^3"
+    },
     "autoload-dev": {
         "psr-4": {
-            "Neos\\ContentGraph\\PostgreSQLAdapter\\Tests\\": [
-                "Neos.ContentGraph.PostgreSQLAdapter/Tests"
-            ],
             "Neos\\ContentRepository\\BehavioralTests\\Tests\\": [
                 "Neos.ContentRepository.BehavioralTests/Tests"
             ],
@@ -291,14 +287,5 @@
                 "Neos.TimeableNodeVisibility/Tests"
             ]
         }
-    },
-    "require-dev": {
-        "phpunit/phpunit": "^9.6",
-        "brianium/paratest": "^6.11",
-        "roave/security-advisories": "dev-latest",
-        "phpstan/phpstan": "^1.11",
-        "squizlabs/php_codesniffer": "^3.6",
-        "neos/behat": "*",
-        "league/flysystem-memory": "^3"
     }
 }

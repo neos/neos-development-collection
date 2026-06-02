@@ -1,9 +1,16 @@
 # Event Sourced Content Repository - Content Graph PostgreSQL Adapter
 
-### !!! The PostgreSQL Adapter is NOT finalised and NOT working, Please use the doctrine adapter instead.
+----------
 
-This means that Neos 9.0.0 does NOT support PostgreSQL - the doctrine adapter is only mariadb compatible.
-For progress please see https://github.com/neos/neos-development-collection/issues/3855
+### !!! The PostgreSQL Adapter is being finalized. And this code is stale and not to be touched.
+
+All development occurs independently in 
+
+https://github.com/neos/contentgraph-postgresqladapter
+
+Please open your PR and Issues there. When matured the code should be merged back into this collection repo. 
+
+----------
 
 This repository is a **read-only subsplit** of a package that is part of the [Neos Development Collection](https://github.com/neos/neos-development-collection)
 

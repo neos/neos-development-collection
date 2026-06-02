@@ -39,7 +39,7 @@ class GherkinTableNodeBasedContentDimensionSourceTest extends TestCase
          */
         // parsed gherkin table shape:
         $table = [
-            ['Identifier', 'Values'                   , 'Generalizations'   ],
+            ['Identifier', 'Values'                   , 'Generalizations'],
             ['dimensionA', 'valueA1,valueA1.1,valueA2', 'valueA1.1->valueA1'],
             ['dimensionB', 'valueB1,valueB2,valueB3'  , ''                  ],
         ];

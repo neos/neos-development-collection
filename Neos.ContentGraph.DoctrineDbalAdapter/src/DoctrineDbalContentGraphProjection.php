@@ -85,8 +85,13 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
     use SubtreeTagging;
     use Workspace;
 
-
     public const RELATION_DEFAULT_OFFSET = 128;
+
+    /**
+     * It's not particular pretty to add mutable state. A new api contract will allow a more elegant approach:
+     * {@see https://github.com/neos/neos-development-collection/pull/5837}
+     */
+    private bool $isInSimulation = false;
 
     public function __construct(
         private readonly Connection $dbal,
@@ -181,6 +186,10 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
                 $event instanceof ContentStreamWasForked
                 || $event instanceof ContentStreamWasCreated
             )
+            // Optimizes unnecessary writes to the connection which can cause problems when trying to acquire a lock.
+            // During command simulation we don't use the content stream version, and thus we can ignore updating this value in the transaction.
+            // See also https://github.com/neos/neos-development-collection/issues/5713
+            && !$this->isInSimulation
         ) {
             $this->updateContentStreamVersion($event->getContentStreamId(), $eventEnvelope->version, $event instanceof PublishableToWorkspaceInterface);
         }
@@ -193,9 +202,11 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
         }
         $this->dbal->beginTransaction();
         $this->dbal->setRollbackOnly();
+        $this->isInSimulation = true;
         try {
             return $fn();
         } finally {
+            $this->isInSimulation = false;
             // unsets rollback only flag and allows the connection to work regular again
             $this->dbal->rollBack();
         }
