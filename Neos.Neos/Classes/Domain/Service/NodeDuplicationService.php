@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Neos\Neos\Domain\Service;
 
 use Neos\ContentRepository\Core\CommandHandler\Commands;
+use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
 use Neos\ContentRepository\Core\Feature\NodeCreation\Command\CreateNodeAggregateWithNode;
@@ -19,6 +20,7 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\ContentSubgraphInterface
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindChildNodesFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindReferencesFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindSubtreeFilter;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\NodeType\NodeTypeCriteria;
 use Neos\ContentRepository\Core\Projection\ContentGraph\References;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Subtree;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
@@ -33,6 +35,7 @@ use Neos\Neos\Domain\Exception\TetheredNodesCannotBePartiallyCopied;
 use Neos\Neos\Domain\Service\NodeDuplication\NodeAggregateIdMapping;
 use Neos\Neos\Domain\Service\NodeDuplication\TransientNodeCopy;
 use Neos\Neos\Domain\SubtreeTagging\NeosVisibilityConstraints;
+use Neos\ContentRepository\Core\Feature\NodeVariation\Command\CreateNodeVariant;
 
 /**
  * Service to copy node recursively - as there is no equivalent content repository core command.
@@ -336,5 +339,137 @@ final class NodeDuplicationService
         }
 
         return NodeReferencesToWrite::fromArray($serializedReferences);
+    }
+
+    /**
+     * Adopt (translate) the given node and parents that are not yet visible to the given context
+     *
+     * @param WorkspaceName $workspaceName
+     * @param NodeAggregateId $nodeAggregateId
+     * @param ContentSubgraphInterface $sourceSubgraph
+     * @param ContentSubgraphInterface $targetSubgraph
+     * @param DimensionSpacePoint $targetDimensionSpacePoint
+     * @param ContentRepository $contentRepository
+     * @param boolean $copyContent true if the content from the nodes that are translated should be copied
+     * @return void
+     */
+    public function adoptNodeAndParents(
+        WorkspaceName $workspaceName,
+        NodeAggregateId $nodeAggregateId,
+        ContentSubgraphInterface $sourceSubgraph,
+        ContentSubgraphInterface $targetSubgraph,
+        DimensionSpacePoint $targetDimensionSpacePoint,
+        ContentRepository $contentRepository,
+        bool $copyContent
+    ): void {
+        $identifiersFromRootlineToTranslate = [];
+        while (
+            $nodeAggregateId
+            && $targetSubgraph->findNodeById($nodeAggregateId) === null
+        ) {
+            $identifiersFromRootlineToTranslate[] = $nodeAggregateId;
+            $nodeAggregateId = $sourceSubgraph->findParentNode($nodeAggregateId)
+                ?->aggregateId;
+        }
+        // $identifiersFromRootlineToTranslate is now bottom-to-top; so we need to reverse
+        // them to know what we need to create.
+        // TODO: TEST THAT AUTO CREATED CHILD NODES WORK (though this should not have influence)
+
+        foreach (array_reverse($identifiersFromRootlineToTranslate) as $identifier) {
+            assert($identifier instanceof NodeAggregateId);
+            // NOTE: for creating node variants, we need to find the ORIGIN DSP
+            // of the source node (in order to unambiguously identify it);
+            // so we need to load it from the source subgraph
+            $sourceNode = $sourceSubgraph->findNodeById($identifier);
+            if (!$sourceNode) {
+                throw new \RuntimeException('Source node for Node Aggregate ID ' . $identifier->value
+                    . ' not found. This should never happen.', 1660905374);
+            }
+            $contentRepository->handle(
+                CreateNodeVariant::create(
+                    $workspaceName,
+                    $identifier,
+                    $sourceNode->originDimensionSpacePoint,
+                    OriginDimensionSpacePoint::fromDimensionSpacePoint($targetDimensionSpacePoint),
+                )
+            );
+
+            foreach ($sourceNode->tags->withoutInherited() as $explicitTag) {
+                $contentRepository->handle(
+                    TagSubtree::create(
+                        $workspaceName,
+                        $identifier,
+                        $targetDimensionSpacePoint,
+                        NodeVariantSelectionStrategy::STRATEGY_ALL_VARIANTS,
+                        $explicitTag
+                    )
+                );
+            }
+
+            if ($copyContent === true) {
+                $contentNodeConstraint = NodeTypeCriteria::fromFilterString('!' . NodeTypeNameFactory::NAME_DOCUMENT);
+                $this->createNodeVariantsForChildNodes(
+                    $workspaceName,
+                    $identifier,
+                    $contentNodeConstraint,
+                    $sourceSubgraph,
+                    $targetSubgraph,
+                    $targetDimensionSpacePoint,
+                    $contentRepository
+                );
+            }
+        }
+    }
+
+    private function createNodeVariantsForChildNodes(
+        WorkspaceName $workspaceName,
+        NodeAggregateId $parentNodeId,
+        NodeTypeCriteria $constraints,
+        ContentSubgraphInterface $sourceSubgraph,
+        ContentSubgraphInterface $targetSubgraph,
+        DimensionSpacePoint $targetDimensionSpacePoint,
+        ContentRepository $contentRepository
+    ): void {
+        foreach (
+            $sourceSubgraph->findChildNodes(
+                $parentNodeId,
+                FindChildNodesFilter::create(nodeTypes: $constraints)
+            ) as $childNode
+        ) {
+            if ($childNode->classification->isRegular()) {
+                // Tethered nodes' variants are automatically created when the parent is translated.
+                // TODO: DOES THIS MAKE SENSE?
+                $contentRepository->handle(
+                    CreateNodeVariant::create(
+                        $workspaceName,
+                        $childNode->aggregateId,
+                        $childNode->originDimensionSpacePoint,
+                        OriginDimensionSpacePoint::fromDimensionSpacePoint($targetDimensionSpacePoint),
+                    )
+                );
+
+                foreach ($childNode->tags->withoutInherited() as $explicitTag) {
+                    $contentRepository->handle(
+                        TagSubtree::create(
+                            $workspaceName,
+                            $childNode->aggregateId,
+                            $targetDimensionSpacePoint,
+                            NodeVariantSelectionStrategy::STRATEGY_ALL_VARIANTS,
+                            $explicitTag
+                        )
+                    );
+                }
+            }
+
+            $this->createNodeVariantsForChildNodes(
+                $workspaceName,
+                $childNode->aggregateId,
+                $constraints,
+                $sourceSubgraph,
+                $targetSubgraph,
+                $targetDimensionSpacePoint,
+                $contentRepository
+            );
+        }
     }
 }
