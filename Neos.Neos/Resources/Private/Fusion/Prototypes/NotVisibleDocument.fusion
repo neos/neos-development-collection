@@ -1,0 +1,18 @@
+prototype(Neos.Neos:Page) {
+  head {
+    notVisibleDocumentCSS = Neos.Fusion:Tag {
+      @position = 'after guestFrameApplication'
+
+      tagName = 'style'
+      content = Neos.Fusion:Value {
+        value = '#neos-not-visible-document {position: fixed;top: 0;left: 0;width: 100%;height: 100%;background-color: #323232;z-index: 9999;font-family: "Noto Sans", sans-serif;-webkit-font-smoothing: antialiased;}#neos-not-visible-document p {position: relative;margin: 0 auto;width: 500px;height: 60px;top: 50%;margin-top: -30px;color: #fff;font-size: 22px;line-height: 1.4;text-align: center;}'
+      }
+
+      @if {
+        inBackend = ${documentNode.context.inBackend}
+        isPreview = ${documentNode.context.currentRenderingMode.preview}
+        isNotVisible = ${!documentNode.visible}
+      }
+    }
+  }
+}
