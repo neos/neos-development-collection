@@ -117,20 +117,7 @@ class ImageThumbnailGenerator extends AbstractThumbnailGenerator
                             ]
                         )
                     ],
-                    $adjustments,
-                    [
-                        // this is for debugging purposes only
-                        // @todo remove before merging
-                        new MarkPointAdjustment(
-                            [
-                                'x' => $preliminaryCropSpecification->focalPoint->getX(),
-                                'y' => $preliminaryCropSpecification->focalPoint->getY(),
-                                'radius' => 5,
-                                'color' => '#0f0',
-                                'thickness' => 4
-                            ]
-                        ),
-                    ]
+                    $adjustments
                 );
             }
 
