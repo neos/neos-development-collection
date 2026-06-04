@@ -121,7 +121,7 @@ class XliffService
                             $labels,
                             str_replace('.', '_', $packageKey)
                                 . '.' . str_replace('/', '_', $sourceName)
-                                . '.' . str_replace('.', '_', $key),
+                                . '.' . str_replace('.', '_', (string)$key),
                             $valueToStore
                         );
                     }
