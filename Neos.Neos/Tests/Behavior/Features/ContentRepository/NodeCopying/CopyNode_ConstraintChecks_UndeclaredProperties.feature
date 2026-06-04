@@ -1,4 +1,4 @@
-Feature: Copy nodes constraint checks
+Feature: Copy nodes constraint checks for Nodes with undeclared properties
 
   Background:
     Given using no content dimensions
