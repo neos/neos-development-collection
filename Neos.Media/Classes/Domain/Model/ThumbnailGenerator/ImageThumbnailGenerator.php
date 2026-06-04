@@ -14,7 +14,6 @@ namespace Neos\Media\Domain\Model\ThumbnailGenerator;
 use Neos\Flow\Annotations as Flow;
 use Neos\Media\Domain\Model\Adjustment\CropImageAdjustment;
 use Neos\Media\Domain\Model\Adjustment\ResizeDimensionCalculator;
-use Neos\Media\Domain\Model\Adjustment\MarkPointAdjustment;
 use Neos\Media\Domain\Model\Adjustment\QualityImageAdjustment;
 use Neos\Media\Domain\Model\Adjustment\ResizeImageAdjustment;
 use Neos\Media\Domain\Model\Dto\PreliminaryCropSpecification;
