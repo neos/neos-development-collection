@@ -164,7 +164,6 @@ final class NodeDuplicationService
             $targetDimensionSpacePoint,
             $targetParentNodeAggregateId,
             succeedingSiblingNodeAggregateId: $targetSucceedingSiblingNodeAggregateId,
-            // todo skip properties not in schema
             initialPropertyValues: $this->filterPropertiesToWrite($subgraph->getContentRepositoryId(), $subtreeToCopy->node),
             references: $this->serializeProjectedReferences(
                 $subgraph->findReferences($subtreeToCopy->node->aggregateId, FindReferencesFilter::create())
@@ -281,7 +280,6 @@ final class NodeDuplicationService
                 $transientParentNode->originDimensionSpacePoint,
                 $transientParentNode->aggregateId,
                 // todo succeedingSiblingNodeAggregateId
-                // todo skip properties not in schema
                 initialPropertyValues: $this->filterPropertiesToWrite($subgraph->getContentRepositoryId(), $subtree->node),
                 references: $this->serializeProjectedReferences(
                     $subgraph->findReferences($subtree->node->aggregateId, FindReferencesFilter::create())
@@ -340,9 +338,7 @@ final class NodeDuplicationService
     {
         $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryId);
 
-        $nodeTypeName = $node->nodeTypeName;
-
-        $nodeType = $contentRepository->getNodeTypeManager()->getNodeType($nodeTypeName);
+        $nodeType = $contentRepository->getNodeTypeManager()->getNodeType($node->nodeTypeName);
 
         assert($nodeType instanceof NodeType);
 
