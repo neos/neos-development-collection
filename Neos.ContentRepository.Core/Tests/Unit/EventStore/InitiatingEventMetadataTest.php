@@ -99,6 +99,14 @@ class InitiatingEventMetadataTest extends TestCase
         self::assertEquals('my-correlation', $first->correlationId?->value);
     }
 
+    public function getInitiatingTimestamp(): void
+    {
+        $extracted = InitiatingEventMetadata::getInitiatingTimestamp(EventMetadata::fromArray([
+            'initiatingTimestamp' => '2024-09-22T12:00:00+00:00'
+        ]));
+        self::assertEquals('2024-09-22T12:00:00+00:00', $extracted->format(\DateTimeImmutable::ATOM));
+    }
+
     /**
      * Legacy compatibility for old non UTC ATOM timestamps {@see https://github.com/neos/neos-development-collection/pull/5716}
      * @test

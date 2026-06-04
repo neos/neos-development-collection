@@ -61,7 +61,11 @@ final readonly class InitiatingEventMetadata
         if ($dateTime === false) {
             return null;
         }
-        return $dateTime->setTimezone(new \DateTimeZone('UTC'));
+        if ($dateTime->getOffset() !== 0) {
+            // legacy event handling
+            return $dateTime->setTimezone(new \DateTimeZone('UTC'));
+        }
+        return $dateTime;
     }
 
     public static function extractInitiatingMetadata(EventMetadata $eventMetadata): EventMetadata
