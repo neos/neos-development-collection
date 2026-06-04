@@ -20,16 +20,3 @@ Neos:
         password: db
 
         dbname: 'neos_behat'
-
-
-  ContentRepositoryRegistry:
-    postgres:
-      persistence:
-        backendOptions:
-          driver: pdo_pgsql
-          host: '127.0.0.1'
-          port: 15432
-          dbname: 'neos_behat'
-          user: 'root'
-          password: 'db'
-          charset: 'UTF8'

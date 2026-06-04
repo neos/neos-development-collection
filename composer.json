@@ -115,21 +115,14 @@
         "test:behat-cli": "../../bin/behat -f progress --strict --no-interaction",
         "test:behavioral": [
             "@test:behat-cli -c Neos.ContentRepository.BehavioralTests/Tests/Behavior/behat.yml.dist",
-            "@test:behat-cli -c Neos.ContentGraph.DoctrineDbalAdapter/Tests/Behavior/behat.yml.dist",
             "@test:behat-cli -c Neos.ContentRepository.LegacyNodeMigration/Tests/Behavior/behat.yml.dist",
             "@test:behat-cli -c Neos.ContentRepository.Export/Tests/Behavior/behat.yml.dist",
             "@test:behat-cli -c Neos.TimeableNodeVisibility/Tests/Behavior/behat.yml.dist",
             "@test:behat-cli -c Neos.Neos/Tests/Behavior/behat.yml.dist",
             "@test:behat-cli -c Neos.Workspace.Ui/Tests/Behavior/behat.yml.dist"
         ],
-        "test:behavioral:stop-on-failure": [
-            "@test:behat-cli -vvv --stop-on-failure -c Neos.ContentRepository.BehavioralTests/Tests/Behavior/behat.yml.dist",
-            "@test:behat-cli -vvv --stop-on-failure -c Neos.ContentGraph.DoctrineDbalAdapter/Tests/Behavior/behat.yml.dist",
-            "@test:behat-cli -vvv --stop-on-failure -c Neos.ContentRepository.LegacyNodeMigration/Tests/Behavior/behat.yml.dist",
-            "@test:behat-cli -vvv --stop-on-failure -c Neos.ContentRepository.Export/Tests/Behavior/behat.yml.dist",
-            "@test:behat-cli -vvv --stop-on-failure -c Neos.TimeableNodeVisibility/Tests/Behavior/behat.yml.dist",
-            "@test:behat-cli -vvv --stop-on-failure -c Neos.Neos/Tests/Behavior/behat.yml.dist",
-            "@test:behat-cli -vvv --stop-on-failure -c Neos.Workspace.Ui/Tests/Behavior/behat.yml.dist"
+        "test:behavioral-maria-mysql": [
+            "@test:behat-cli -c Neos.ContentGraph.DoctrineDbalAdapter/Tests/Behavior/behat.yml.dist"
         ],
         "test": [
             "@test:unit",
@@ -244,6 +237,15 @@
     "provide": {
         "neos/contentrepositoryregistry-storageclient": "self.version"
     },
+    "require-dev": {
+        "phpunit/phpunit": "^9.6",
+        "brianium/paratest": "^6.11",
+        "roave/security-advisories": "dev-latest",
+        "phpstan/phpstan": "^1.11",
+        "squizlabs/php_codesniffer": "^3.6",
+        "neos/behat": "*",
+        "league/flysystem-memory": "^3"
+    },
     "autoload-dev": {
         "psr-4": {
             "Neos\\ContentRepository\\BehavioralTests\\Tests\\": [
@@ -289,14 +291,5 @@
                 "Neos.Workspace.Ui/Tests"
             ]
         }
-    },
-    "require-dev": {
-        "phpunit/phpunit": "^9.6",
-        "brianium/paratest": "^6.11",
-        "roave/security-advisories": "dev-latest",
-        "phpstan/phpstan": "^1.11",
-        "squizlabs/php_codesniffer": "^3.6",
-        "neos/behat": "*",
-        "league/flysystem-memory": "^3"
     }
 }

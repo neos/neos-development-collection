@@ -20,25 +20,22 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\Nodes;
 /**
  * An immutable collection of NodeAggregateIds, indexed by their value
  *
- * @implements \IteratorAggregate<string,NodeAggregateId>
+ * @implements \IteratorAggregate<NodeAggregateId>
  * @api
  */
 final class NodeAggregateIds implements \IteratorAggregate, \Countable, \JsonSerializable
 {
     /**
-     * @var array<string,NodeAggregateId>
+     * @param array<string|int,NodeAggregateId> $nodeAggregateIds
      */
-    private array $nodeAggregateIds;
-
-    private function __construct(NodeAggregateId ...$nodeAggregateIds)
-    {
-        /** @var array<string,NodeAggregateId> $nodeAggregateIds */
-        $this->nodeAggregateIds = $nodeAggregateIds;
+    private function __construct(
+        private array $nodeAggregateIds
+    ) {
     }
 
     public static function createEmpty(): self
     {
-        return new self();
+        return new self([]);
     }
 
     public static function create(NodeAggregateId ...$nodeAggregateIds): self
@@ -60,7 +57,7 @@ final class NodeAggregateIds implements \IteratorAggregate, \Countable, \JsonSer
             }
         }
 
-        return new self(...$nodeAggregateIds);
+        return new self($nodeAggregateIds);
     }
 
     public static function fromJsonString(string $jsonString): self
@@ -77,7 +74,7 @@ final class NodeAggregateIds implements \IteratorAggregate, \Countable, \JsonSer
 
     public function merge(self $other): self
     {
-        return new self(...array_merge(
+        return new self(array_merge(
             $this->nodeAggregateIds,
             $other->nodeAggregateIds
         ));
@@ -89,7 +86,7 @@ final class NodeAggregateIds implements \IteratorAggregate, \Countable, \JsonSer
     }
 
     /**
-     * @return array<string,NodeAggregateId>
+     * @return array<NodeAggregateId>
      */
     public function jsonSerialize(): array
     {
@@ -106,12 +103,12 @@ final class NodeAggregateIds implements \IteratorAggregate, \Countable, \JsonSer
      */
     public function toStringArray(): array
     {
-        return array_keys($this->nodeAggregateIds);
+        return array_map(strval(...), array_keys($this->nodeAggregateIds));
     }
 
     public function getIterator(): \Traversable
     {
-        yield from $this->nodeAggregateIds;
+        yield from array_values($this->nodeAggregateIds);
     }
 
     /**

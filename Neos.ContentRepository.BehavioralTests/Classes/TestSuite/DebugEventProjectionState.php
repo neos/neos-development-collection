@@ -37,8 +37,8 @@ final class DebugEventProjectionState implements ProjectionStateInterface
     public function findAppliedSequenceNumberValues(): array
     {
         return array_map(
-            fn ($value) => (int)$value['sequenceNumber'],
-            $this->dbal->fetchAllAssociative("SELECT sequenceNumber from {$this->tableNamePrefix}")
+            fn ($value) => (int)$value['sequencenumber'],
+            $this->dbal->fetchAllAssociative("SELECT sequencenumber from {$this->tableNamePrefix}")
         );
     }
 }

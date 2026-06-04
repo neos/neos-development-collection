@@ -28,17 +28,17 @@ final class NodeAggregateIdMapping implements \JsonSerializable
      *
      * e.g. {main => my-main-node}
      *
-     * @var array<string,NodeAggregateId>
+     * @var array<string|int,NodeAggregateId>
      */
     private array $nodeAggregateIds = [];
 
     /**
-     * @param array<string,NodeAggregateId> $nodeAggregateIds
+     * @param array<string|int,NodeAggregateId> $nodeAggregateIds
      */
     private function __construct(array $nodeAggregateIds)
     {
         foreach ($nodeAggregateIds as $oldNodeAggregateId => $newNodeAggregateId) {
-            $oldNodeAggregateId = NodeAggregateId::fromString($oldNodeAggregateId);
+            $oldNodeAggregateId = NodeAggregateId::fromString((string)$oldNodeAggregateId);
             if (!$newNodeAggregateId instanceof NodeAggregateId) {
                 throw new \InvalidArgumentException(
                     'NodeAggregateIdMapping objects can only be composed of NodeAggregateId.',
@@ -82,7 +82,7 @@ final class NodeAggregateIdMapping implements \JsonSerializable
     }
 
     /**
-     * @return array<string,NodeAggregateId>
+     * @return array<string|int,NodeAggregateId>
      */
     public function jsonSerialize(): array
     {

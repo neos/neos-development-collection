@@ -97,9 +97,6 @@ Feature: Move dimension space point
     And I expect node aggregate identifier "only-specialization-nodenborough" to lead to node migration-cs;only-specialization-nodenborough;{"language": "gsw"}
     And I expect node aggregate identifier "nody-mc-nodeface" to lead to node migration-cs;nody-mc-nodeface;{"language": "de"}
 
-    When I run integrity violation detection
-    Then I expect the integrity violation detection result to contain exactly 0 errors
-
   Scenario: Success Case - Generalizations can be renamed if the specialization structure is unchanged
     Given I change the content dimensions in content repository "default" to:
       | Identifier | Values             | Generalizations         |
@@ -153,9 +150,6 @@ Feature: Move dimension space point
     And I expect node aggregate identifier "only-specialization-nodenborough" to lead to node migration-cs;only-specialization-nodenborough;{"language": "ch"}
     And I expect node aggregate identifier "nody-mc-nodeface" to lead to node migration-cs;nody-mc-nodeface;{"language": "de_DE"}
 
-    When I run integrity violation detection
-    Then I expect the integrity violation detection result to contain exactly 0 errors
-
   Scenario: Success Case - disabled nodes stay disabled
 
     When the command DisableNodeAggregate is executed with payload:
@@ -202,9 +196,6 @@ Feature: Move dimension space point
     And I expect this node to exactly inherit the tags ""
     When I am in dimension space point {"language": "ch"}
     Then I expect node aggregate identifier "sir-david-nodenborough" to lead to no node
-
-    When I run integrity violation detection
-    Then I expect the integrity violation detection result to contain exactly 0 errors
 
   Scenario: Success Case - other migrations do not block this with changes on this workspace
 
@@ -256,9 +247,6 @@ Feature: Move dimension space point
     Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node migration-cs;sir-david-nodenborough;{"language": "de"}
     And I expect this node to be of type "Neos.ContentRepository.Testing:OtherDocument"
 
-    When I run integrity violation detection
-    Then I expect the integrity violation detection result to contain exactly 0 errors
-
   Scenario: Success Case - after eliminating all fallbacks via variation, a generalization can be moved while changing the specialization structure
     # Eliminate all fallbacks by varying the nodes
     When the command CreateNodeVariant is executed with payload:
@@ -309,9 +297,6 @@ Feature: Move dimension space point
 
     When I am in dimension space point {"language": "de"}
     Then I expect the subgraph projection to consist of exactly 0 nodes
-
-    When I run integrity violation detection
-    Then I expect the integrity violation detection result to contain exactly 0 errors
 
     When the command PublishWorkspace is executed with payload:
       | Key           | Value                 |

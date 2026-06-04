@@ -108,7 +108,7 @@ class TrashBinProjection implements ProjectionInterface
             [
                 DbalSchemaFactory::columnForWorkspaceName('workspace_name', $platform)->setNotNull(true),
                 DbalSchemaFactory::columnForNodeAggregateId('node_aggregate_id', $platform)->setNotnull(true),
-                (new Column('user_id', Type::getType(Types::GUID)))->setNotnull(false),
+                (new Column('user_id', Type::getType(Types::STRING)))->setLength(36)->setNotnull(false),
                 (new Column('delete_time', Type::getType(Types::DATETIME_IMMUTABLE)))->setNotnull(false),
                 (new Column('affected_dimension_space_points', Type::getType(Types::JSON)))->setNotnull(true),
                 DbalSchemaFactory::columnForDimensionSpacePointHash('affected_dimension_space_points_hash', $platform)->setNotnull(false),
@@ -359,7 +359,7 @@ class TrashBinProjection implements ProjectionInterface
                 affected_dimension_space_points
             )
             SELECT
-                "{$workspaceName->value}" AS workspace_name,
+                :workspaceName AS workspace_name,
                 i.node_aggregate_id,
                 i.affected_dimension_space_points_hash,
                 i.user_id,
@@ -372,6 +372,7 @@ class TrashBinProjection implements ProjectionInterface
         $this->dbal->executeStatement(
             $copyStatement,
             [
+                'workspaceName' => $workspaceName->value,
                 'baseWorkspaceName' => $baseWorkspaceName->value,
             ]
         );
