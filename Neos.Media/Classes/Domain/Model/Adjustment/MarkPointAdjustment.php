@@ -30,9 +30,9 @@ class MarkPointAdjustment extends AbstractImageAdjustment
 {
     protected $position = 99;
 
-    protected int $x;
+    protected ?int $x = null;
 
-    protected int $y;
+    protected ?int $y = null;
 
     protected int $radius;
 
@@ -41,12 +41,12 @@ class MarkPointAdjustment extends AbstractImageAdjustment
     protected string $color = '#000';
 
 
-    public function setX(int $x): void
+    public function setX(?int $x): void
     {
         $this->x = $x;
     }
 
-    public function setY(int $y): void
+    public function setY(?int $y): void
     {
         $this->y = $y;
     }
@@ -69,17 +69,43 @@ class MarkPointAdjustment extends AbstractImageAdjustment
 
     public function applyToImage(ImagineImageInterface $image)
     {
+        if ($this->x === null && $this->y === null) {
+            return $image;
+        }
+
         $palette = new Palette\RGB();
         $color = $palette->color($this->color);
-        $image->draw()
-            ->circle(
-                new Point($this->x, $this->y),
-                $this->radius,
-                $color,
-                false,
-                $this->thickness
-            )
-        ;
+
+        if ($this->x !== null && $this->y !== null) {
+            $image->draw()
+                  ->circle(
+                      new Point($this->x, $this->y),
+                      $this->radius,
+                      $color,
+                      false,
+                      $this->thickness
+                  );
+        }
+
+        if ($this->x !== null) {
+            $image->draw()
+                  ->line(
+                      new Point($this->x, 0),
+                      new Point($this->x, $image->getSize()->getHeight()),
+                      $color,
+                      1
+                  );
+        }
+
+        if ($this->y !== null) {
+            $image->draw()
+                  ->line(
+                      new Point(0, $this->y),
+                      new Point($image->getSize()->getWidth(), $this->y),
+                      $color,
+                      1
+                  );
+        }
 
         return $image;
     }
