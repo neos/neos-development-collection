@@ -9,3 +9,6 @@
     nodeTypes:
       '*': false
       'Neos.Neos:Site': true
+  ui:
+    label: i18n
+    icon: 'globe'
