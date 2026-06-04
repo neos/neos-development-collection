@@ -24,7 +24,8 @@ final class Version20260604093117 extends AbstractMigration
             "Migration can only be executed safely on '\Doctrine\DBAL\Platforms\MysqlPlatform'."
         );
 
-
+        $this->addSql('ALTER TABLE neos_media_domain_model_imagevariant ADD focalpointx INT DEFAULT NULL, ADD focalpointy INT DEFAULT NULL');
+        $this->addSql('ALTER TABLE neos_media_domain_model_thumbnail ADD focalpointx INT DEFAULT NULL, ADD focalpointy INT DEFAULT NULL');
         $this->addSql('ALTER TABLE neos_media_domain_model_image ADD focalpointx INT DEFAULT NULL, ADD focalpointy INT DEFAULT NULL');
     }
 
@@ -35,6 +36,8 @@ final class Version20260604093117 extends AbstractMigration
             "Migration can only be executed safely on '\Doctrine\DBAL\Platforms\MysqlPlatform'."
         );
 
+        $this->addSql('ALTER TABLE neos_media_domain_model_imagevariant DROP focalpointx, DROP focalpointy');
+        $this->addSql('ALTER TABLE neos_media_domain_model_thumbnail DROP focalpointx, DROP focalpointy');
         $this->addSql('ALTER TABLE neos_media_domain_model_image DROP focalpointx, DROP focalpointy');
     }
 }
