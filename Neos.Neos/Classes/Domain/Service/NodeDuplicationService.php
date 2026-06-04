@@ -468,7 +468,7 @@ final class NodeDuplicationService
             );
         }
     }
-  
+
     private function filterPropertiesToWrite(ContentRepositoryId $contentRepositoryId, Node $node): PropertyValuesToWrite
     {
         $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryId);
