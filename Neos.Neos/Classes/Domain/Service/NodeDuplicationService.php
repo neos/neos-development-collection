@@ -15,10 +15,12 @@ use Neos\ContentRepository\Core\Feature\NodeReferencing\Dto\NodeReferencesForNam
 use Neos\ContentRepository\Core\Feature\NodeReferencing\Dto\NodeReferencesToWrite;
 use Neos\ContentRepository\Core\Feature\NodeReferencing\Dto\NodeReferenceToWrite;
 use Neos\ContentRepository\Core\Feature\SubtreeTagging\Command\TagSubtree;
+use Neos\ContentRepository\Core\NodeType\NodeType;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentSubgraphInterface;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindChildNodesFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindReferencesFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindSubtreeFilter;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Core\Projection\ContentGraph\References;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Subtree;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
@@ -162,10 +164,7 @@ final class NodeDuplicationService
             $targetDimensionSpacePoint,
             $targetParentNodeAggregateId,
             succeedingSiblingNodeAggregateId: $targetSucceedingSiblingNodeAggregateId,
-            // todo skip properties not in schema
-            initialPropertyValues: PropertyValuesToWrite::fromArray(
-                iterator_to_array($subtreeToCopy->node->properties)
-            ),
+            initialPropertyValues: $this->filterPropertiesToWrite($subgraph->getContentRepositoryId(), $subtreeToCopy->node),
             references: $this->serializeProjectedReferences(
                 $subgraph->findReferences($subtreeToCopy->node->aggregateId, FindReferencesFilter::create())
             )
@@ -281,10 +280,7 @@ final class NodeDuplicationService
                 $transientParentNode->originDimensionSpacePoint,
                 $transientParentNode->aggregateId,
                 // todo succeedingSiblingNodeAggregateId
-                // todo skip properties not in schema
-                initialPropertyValues: PropertyValuesToWrite::fromArray(
-                    iterator_to_array($subtree->node->properties)
-                ),
+                initialPropertyValues: $this->filterPropertiesToWrite($subgraph->getContentRepositoryId(), $subtree->node),
                 references: $this->serializeProjectedReferences(
                     $subgraph->findReferences($subtree->node->aggregateId, FindReferencesFilter::create())
                 )
@@ -336,5 +332,24 @@ final class NodeDuplicationService
         }
 
         return NodeReferencesToWrite::fromArray($serializedReferences);
+    }
+
+    private function filterPropertiesToWrite(ContentRepositoryId $contentRepositoryId, Node $node): PropertyValuesToWrite
+    {
+        $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryId);
+
+        $nodeType = $contentRepository->getNodeTypeManager()->getNodeType($node->nodeTypeName);
+
+        assert($nodeType instanceof NodeType);
+
+        $nodeProperties = [];
+
+        foreach ($node->properties as $propertyName => $propertyValue) {
+            if ($nodeType->hasProperty($propertyName)) {
+                $nodeProperties[$propertyName] = $propertyValue;
+            }
+        }
+
+        return PropertyValuesToWrite::fromArray($nodeProperties);
     }
 }
