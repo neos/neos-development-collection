@@ -7,6 +7,9 @@ root = Neos.Fusion:Case
 root {
   documentNotVisibleInPreviewMode {
     prototype(Neos.Neos:Page) {
+      head {
+        notVisibleDocumentCSS = Neos.Neos:Document.NotVisibleStyles
+      }
       body = Neos.Neos:Document.NotVisibleMessage
     }
 
