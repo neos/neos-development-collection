@@ -6,7 +6,6 @@ namespace Neos\ContentRepository\Dbal\SubscriptionStore;
 
 use Doctrine\DBAL\ArrayParameterType;
 use Doctrine\DBAL\Connection;
-use Doctrine\DBAL\Platforms\AbstractMySQLPlatform;
 use Doctrine\DBAL\Platforms\SqlitePlatform;
 use Doctrine\DBAL\Result;
 use Doctrine\DBAL\Schema\Column;
@@ -22,7 +21,7 @@ use Neos\ContentRepository\Core\Subscription\SubscriptionId;
 use Neos\ContentRepository\Core\Subscription\Subscriptions;
 use Neos\ContentRepository\Core\Subscription\SubscriptionStatus;
 use Neos\ContentRepository\Dbal\DbalSchemaDiff;
-use Neos\ContentRepository\Dbal\MysqlPlatformLockingUtility;
+use Neos\ContentRepository\Dbal\MysqlPlatformContentRepositoryLocker;
 use Neos\EventStore\Model\Event\SequenceNumber;
 use Psr\Clock\ClockInterface;
 
@@ -32,7 +31,8 @@ use Psr\Clock\ClockInterface;
 final class DoctrineSubscriptionStore implements SubscriptionStoreInterface
 {
     public function __construct(
-        private string $tableName,
+        private readonly string $tableName,
+        private readonly ?MysqlPlatformContentRepositoryLocker $contentRepositoryLocker,
         private readonly Connection $dbal,
         private readonly ClockInterface $clock,
     ) {
@@ -173,16 +173,12 @@ final class DoctrineSubscriptionStore implements SubscriptionStoreInterface
     public function beginTransaction(): void
     {
         $this->dbal->beginTransaction();
-        if ($this->dbal->getDatabasePlatform() instanceof AbstractMySQLPlatform) {
-            MysqlPlatformLockingUtility::acquireGlobalLock($this->dbal, 120);
-        }
+        $this->contentRepositoryLocker?->acquireLock(timeoutInSeconds: 120);
     }
 
     public function commit(): void
     {
         $this->dbal->commit();
-        if ($this->dbal->getDatabasePlatform() instanceof AbstractMySQLPlatform) {
-            MysqlPlatformLockingUtility::releaseGlobalLock($this->dbal);
-        }
+        $this->contentRepositoryLocker?->releaseLock();
     }
 }

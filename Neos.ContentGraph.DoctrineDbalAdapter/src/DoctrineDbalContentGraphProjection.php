@@ -7,7 +7,6 @@ namespace Neos\ContentGraph\DoctrineDbalAdapter;
 use Doctrine\DBAL\ArrayParameterType;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Exception as DBALException;
-use Doctrine\DBAL\Platforms\AbstractMySQLPlatform;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\Feature\ContentStream;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\Feature\NodeMove;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\Feature\NodeRemoval;
@@ -72,7 +71,7 @@ use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
 use Neos\ContentRepository\Core\SharedModel\Node\ReferenceName;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Dbal\DbalSchemaDiff;
-use Neos\ContentRepository\Dbal\MysqlPlatformLockingUtility;
+use Neos\ContentRepository\Dbal\MysqlPlatformContentRepositoryLocker;
 use Neos\EventStore\Model\EventEnvelope;
 
 /**
@@ -92,6 +91,7 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
 
     public function __construct(
         private readonly Connection $dbal,
+        private readonly MysqlPlatformContentRepositoryLocker $contentRepositoryLocker,
         private readonly ProjectionContentGraph $projectionContentGraph,
         private readonly ContentGraphTableNames $tableNames,
         private readonly DimensionSpacePointsRepository $dimensionSpacePointsRepository,
@@ -193,9 +193,8 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
         if ($this->dbal->isTransactionActive()) {
             throw new \RuntimeException(sprintf('Invoking %s is not allowed to be invoked recursively. Current transaction nesting %d.', __FUNCTION__, $this->dbal->getTransactionNestingLevel()));
         }
-        if ($this->dbal->getDatabasePlatform() instanceof AbstractMySQLPlatform) {
-            MysqlPlatformLockingUtility::acquireGlobalLock($this->dbal, 120);
-        }
+
+        $this->contentRepositoryLocker->acquireLock(timeoutInSeconds: 120);
         $this->dbal->beginTransaction();
         $this->dbal->setRollbackOnly();
         try {
@@ -203,9 +202,7 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
         } finally {
             // unsets rollback only flag and allows the connection to work regular again
             $this->dbal->rollBack();
-            if ($this->dbal->getDatabasePlatform() instanceof AbstractMySQLPlatform) {
-                MysqlPlatformLockingUtility::releaseGlobalLock($this->dbal);
-            }
+            $this->contentRepositoryLocker->releaseLock();
         }
     }
 
