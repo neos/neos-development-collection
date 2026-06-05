@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\Dbal;
 
 use Doctrine\DBAL\Connection;
-use Doctrine\DBAL\Platforms\AbstractMySQLPlatform;
 
 /**
  * Utility to acquire advisory locks from a mysql/mariadb database
@@ -23,7 +22,7 @@ final class MysqlPlatformLockingUtility
      * Acquire a lock with the given name, if no lock could be acquired within timeoutInSeconds an exception is thrown
      *
      * @throws \Doctrine\DBAL\Exception
-     * @throws LockingException
+     * @throws AcquiringLockFailed
      * @see releaseLock
      */
     public static function acquireLock(Connection $dbal, string $name, int $timeoutInSeconds): void
@@ -31,7 +30,7 @@ final class MysqlPlatformLockingUtility
         assert($dbal->getDatabasePlatform() instanceof AbstractMySQLPlatform);
         $result = $dbal->executeQuery('SELECT GET_LOCK(:name, :timeoutInSeconds)', ['name' => $name, 'timeoutInSeconds' => $timeoutInSeconds]);
         if ((bool)$result->fetchOne() === false) {
-            throw new LockingException('Could not acquire lock for ' . $name . ' within ' . $timeoutInSeconds . 'seconds.', 1780665466038);
+            throw AcquiringLockFailed::becauseTimeoutExceeded($name, $timeoutInSeconds);
         }
     }
 
@@ -51,7 +50,7 @@ final class MysqlPlatformLockingUtility
      * Acquire a global Neos lock from the database
      *
      * @throws \Doctrine\DBAL\Exception
-     * @throws LockingException
+     * @throws AcquiringLockFailed
      * @see acquireLock
      * @see releaseGlobalLock
      */
