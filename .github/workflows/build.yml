@@ -310,12 +310,20 @@ jobs:
       - name: Run Parallel Tests for the ES CR
         # TODO: enable parallel tests also for Postgres
         if: matrix.parallel-parts == 'escr-behavioral' || matrix.parallel-parts == 'escr-behavioral-mysql'
+        id: paralleltests
+        timeout-minutes: 30
+        continue-on-error: true
         run: |
           cd Packages/Neos
-          hasFailure=0
-          composer test:parallel || hasFailure=1
+          composer test:parallel
+      - name: Fail pipeline if Parallel Tests broke
+        if: (matrix.parallel-parts == 'escr-behavioral' || matrix.parallel-parts == 'escr-behavioral-mysql') && steps.paralleltests.outcome != 'success'
+        # we want to reach the Upload Postgres/Mysql DB dump step.
+        # Here we want to fail everything, as described in https://stackoverflow.com/a/58003436/4921449
+        run: |
+          cd Packages/Neos
           cat Neos.ContentRepository.BehavioralTests/Tests/Parallel/log.txt
-          exit $hasFailure
+          exit 1
       - name: Run Behavioral Tests (ES CR && Neos.Neos)
         id: escrtests
         if: matrix.parallel-parts == 'escr-behavioral' || matrix.parallel-parts == 'escr-behavioral-mysql' || matrix.parallel-parts == 'escr-behavioral-postgres'
