@@ -3,6 +3,7 @@
 # Any Neos Site node must be its direct child.
 #
 'Neos.Neos:Sites':
+  label: 'Sites'
   superTypes:
     'Neos.ContentRepository:Root': true
   constraints:
