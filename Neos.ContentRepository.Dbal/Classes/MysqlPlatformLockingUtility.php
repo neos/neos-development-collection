@@ -1,17 +1,23 @@
 <?php
+
+declare(strict_types=1);
+
 namespace Neos\ContentRepository\Dbal;
 
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Platforms\AbstractMySQLPlatform;
-use Doctrine\ORM\Cache\LockException;
 
 /**
  * Utility to acquire advisory locks from a mysql/mariadb database
  * @internal
  */
-class MysqlPlatformLockingUtility
+final class MysqlPlatformLockingUtility
 {
     private const GLOBAL_LOCK_NAME = 'NEOS_GLOBAL_LOCK';
+
+    private function __construct()
+    {
+    }
 
     /**
      * Acquire a lock with the given name, if no lock could be acquired within timeoutInSeconds an exception is thrown

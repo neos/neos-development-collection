@@ -1,12 +1,12 @@
 <?php
+
+declare(strict_types=1);
+
 namespace Neos\ContentRepository\Dbal;
 
-use \RuntimeException;
-
 /**
- *
+ * @internal
  */
-class LockingException extends RuntimeException
+class LockingException extends \RuntimeException
 {
-
 }
