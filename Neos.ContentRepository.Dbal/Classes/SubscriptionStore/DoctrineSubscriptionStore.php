@@ -32,7 +32,7 @@ final class DoctrineSubscriptionStore implements SubscriptionStoreInterface
 {
     public function __construct(
         private readonly string $tableName,
-        private readonly ?MysqlPlatformContentRepositoryLocker $contentRepositoryLocker,
+        private readonly MysqlPlatformContentRepositoryLocker|null $contentRepositoryLocker,
         private readonly Connection $dbal,
         private readonly ClockInterface $clock,
     ) {

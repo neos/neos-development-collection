@@ -25,13 +25,10 @@ final readonly class SubscriptionStoreFactory implements SubscriptionStoreFactor
     /** @param array<string, mixed> $options */
     public function build(ContentRepositoryId $contentRepositoryId, ClockInterface $clock, array $options): SubscriptionStoreInterface
     {
-        $contentRepositoryLocker = null;
-        if ($this->connection->getDatabasePlatform() instanceof AbstractMySQLPlatform) {
-            $contentRepositoryLocker = MysqlPlatformContentRepositoryLocker::forContentRepositoryAndConnection(
-                $contentRepositoryId,
-                $this->connection
-            );
-        }
+        $contentRepositoryLocker = match (true) {
+            $this->connection->getDatabasePlatform() instanceof AbstractMySQLPlatform => MysqlPlatformContentRepositoryLocker::forContentRepositoryAndConnection($contentRepositoryId, $this->connection),
+            default => null
+        };
 
         return new DoctrineSubscriptionStore(
             sprintf('cr_%s_subscriptions', $contentRepositoryId->value),

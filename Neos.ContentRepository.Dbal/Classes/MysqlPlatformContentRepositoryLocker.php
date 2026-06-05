@@ -53,13 +53,12 @@ final class MysqlPlatformContentRepositoryLocker
      *
      * @throws ReleasingLockFailed
      */
-    public function releaseLock(): bool
+    public function releaseLock(): void
     {
         try {
-            $result = $this->dbal->executeQuery('SELECT RELEASE_LOCK(:name)', ['name' => $this->crLockName]);
+            $this->dbal->executeStatement('RELEASE_LOCK(:name)', ['name' => $this->crLockName]);
         } catch (DBALException $exception) {
             throw ReleasingLockFailed::becauseConnectionException($this->crLockName, $exception);
         }
-        return (bool)$result->fetchOne();
     }
 }

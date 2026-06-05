@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 namespace Neos\ContentRepository\Dbal;
+
 use Doctrine\DBAL\Exception as DBALException;
 
 /**
