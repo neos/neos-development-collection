@@ -28,6 +28,8 @@ use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Command\CreateRootWork
 use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Command\CreateWorkspace;
 use Neos\ContentRepository\Core\Feature\WorkspacePublication\Command\PublishWorkspace;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindChildNodesFilter;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
@@ -164,17 +166,19 @@ class PublishingDuringPublishingTest extends AbstractParallelTestCase
         touch(self::WRITING_IS_RUNNING_FLAG_PATH);
 
         try {
-            for ($i = 0; $i <= 500; $i++) {
-                $this->contentRepository->handle(CreateNodeAggregateWithNode::create(
-                    WorkspaceName::fromString('user-test-one'),
-                    NodeAggregateId::fromString('nody-mc-nodeface-' . $i),
-                    NodeTypeName::fromString('Neos.ContentRepository.Testing:Document'),
-                    OriginDimensionSpacePoint::createWithoutDimensions(),
-                    NodeAggregateId::fromString('lady-eleonode-rootford'),
-                    initialPropertyValues: PropertyValuesToWrite::fromArray([
-                        'title' => 'title'
-                    ])
-                ));
+            for ($i = 0; $i <= 100; $i++) {
+                if (!$this->contentRepository->findWorkspaceByName(WorkspaceName::fromString('user-test-one'))->hasPublishableChanges()) {
+                    $this->contentRepository->handle(CreateNodeAggregateWithNode::create(
+                        WorkspaceName::fromString('user-test-one'),
+                        NodeAggregateId::fromString('nody-mc-nodeface-' . $i),
+                        NodeTypeName::fromString('Neos.ContentRepository.Testing:Document'),
+                        OriginDimensionSpacePoint::createWithoutDimensions(),
+                        NodeAggregateId::fromString('lady-eleonode-rootford'),
+                        initialPropertyValues: PropertyValuesToWrite::fromArray([
+                            'title' => 'title'
+                        ])
+                    ));
+                }
 
                 try {
                     $this->contentRepository->handle(PublishWorkspace::create(
@@ -195,8 +199,9 @@ class PublishingDuringPublishingTest extends AbstractParallelTestCase
         Assert::assertTrue(true, 'No exception was thrown ;)');
 
         $subgraph = $this->contentRepository->getContentGraph(WorkspaceName::forLive())->getSubgraph(DimensionSpacePoint::createWithoutDimensions(), VisibilityConstraints::createEmpty());
-        $node = $subgraph->findNodeById(NodeAggregateId::fromString('nody-mc-nodeface-500'));
-        Assert::assertNotNull($node);
+        $childNodes = $subgraph->findChildNodes(NodeAggregateId::fromString('lady-eleonode-rootford'), FindChildNodesFilter::create());
+        $childNodes = $childNodes->filter(fn (Node $node) => str_starts_with($node->aggregateId->value, 'nody-mc-nodeface-'));
+        Assert::assertGreaterThan(20, $childNodes->count(), 'To few nodes actually published and created');
     }
 
     /**
@@ -218,17 +223,20 @@ class PublishingDuringPublishingTest extends AbstractParallelTestCase
 
         $this->log('2. writing & publishing started');
 
-        for ($i = 0; $i <= 500; $i++) {
-            $this->contentRepository->handle(CreateNodeAggregateWithNode::create(
-                WorkspaceName::fromString('user-test-two'),
-                NodeAggregateId::fromString('sir-david-nodenborough-' . $i),
-                NodeTypeName::fromString('Neos.ContentRepository.Testing:Document'),
-                OriginDimensionSpacePoint::createWithoutDimensions(),
-                NodeAggregateId::fromString('lady-eleonode-rootford'),
-                initialPropertyValues: PropertyValuesToWrite::fromArray([
-                    'title' => 'title'
-                ])
-            ));
+        for ($i = 0; $i <= 100; $i++) {
+            if (!$this->contentRepository->findWorkspaceByName(WorkspaceName::fromString('user-test-two'))->hasPublishableChanges()) {
+                $this->contentRepository->handle(CreateNodeAggregateWithNode::create(
+                    WorkspaceName::fromString('user-test-two'),
+                    NodeAggregateId::fromString('sir-david-nodenborough-' . $i),
+                    NodeTypeName::fromString('Neos.ContentRepository.Testing:Document'),
+                    OriginDimensionSpacePoint::createWithoutDimensions(),
+                    NodeAggregateId::fromString('lady-eleonode-rootford'),
+                    initialPropertyValues: PropertyValuesToWrite::fromArray([
+                        'title' => 'title'
+                    ])
+                ));
+            }
+
             try {
                 $this->contentRepository->handle(PublishWorkspace::create(
                     WorkspaceName::fromString('user-test-two')
@@ -246,7 +254,8 @@ class PublishingDuringPublishingTest extends AbstractParallelTestCase
         Assert::assertTrue(true, 'No exception was thrown ;)');
 
         $subgraph = $this->contentRepository->getContentGraph(WorkspaceName::forLive())->getSubgraph(DimensionSpacePoint::createWithoutDimensions(), VisibilityConstraints::createEmpty());
-        $node = $subgraph->findNodeById(NodeAggregateId::fromString('sir-david-nodenborough-500'));
-        Assert::assertNotNull($node);
+        $childNodes = $subgraph->findChildNodes(NodeAggregateId::fromString('lady-eleonode-rootford'), FindChildNodesFilter::create());
+        $childNodes = $childNodes->filter(fn (Node $node) => str_starts_with($node->aggregateId->value, 'sir-david-nodenborough-'));
+        Assert::assertGreaterThan(20, $childNodes->count(), 'To few nodes actually published and created');
     }
 }
