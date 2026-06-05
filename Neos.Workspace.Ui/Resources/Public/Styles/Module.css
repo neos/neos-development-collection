@@ -83,6 +83,9 @@ td.workspace-action-column {
   cursor: pointer;
   outline: none;
   color: var(--textOnGray);
+  display: flex;
+  align-items: center;
+  gap: 1ch;
 }
 
 .icon--secondary {
