@@ -519,9 +519,9 @@
         <source>Pending changes</source>
         <target state="final">Modifications en attente</target>
       </trans-unit>
-      <trans-unit id="content.components.dirtyWorkspaceDialog.dirtyWorkspaceContainsChanges" xml:space="preserve" approved="yes">
+      <trans-unit id="content.components.dirtyWorkspaceDialog.dirtyWorkspaceContainsChanges" xml:space="preserve" approved="no">
         <source>Your personal workspace currently contains unpublished changes. In order to switch to a different target workspace you need to either publish or discard pending changes first.</source>
-        <target state="final">Votre espace de travail personnel contient actuellement des modifications non publiées. Afin de passer à un espace de travail cible différent, vous devrez avant tout publier ou rejeter  les changements en attente.</target>
+        <target state="translated">Votre espace de travail personnel contient actuellement des modifications non publiées. Afin de passer à un espace de travail cible différent, vous devrez avant tout publier ou rejeter les changements en attente.</target>
       </trans-unit>
       <trans-unit id="content.components.dirtyWorkspaceDialog.dirtyWorkspacePleaseReviewChanges" xml:space="preserve" approved="yes">
         <source>Please review your changes, publish or discard them, and then choose a new target workspace again.</source>
