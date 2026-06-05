@@ -17,8 +17,16 @@ class Version20131129110302 extends AbstractMigration
     {
         $this->abortIf($this->connection->getDatabasePlatform()->getName() != "mysql");
 
-        $this->addSql("ALTER TABLE typo3_typo3cr_domain_model_nodedata DROP FOREIGN KEY typo3_typo3cr_domain_model_nodedata_ibfk_1");
-        $this->addSql("ALTER TABLE typo3_typo3cr_domain_model_workspace DROP FOREIGN KEY FK_71DE9CFBE9BFE681");
+        foreach ($this->sm->listTableForeignKeys('typo3_typo3cr_domain_model_nodedata') as $foreignKey) {
+            if (in_array('workspace', array_map('strtolower', $foreignKey->getLocalColumns()), true)) {
+                $this->addSql("ALTER TABLE typo3_typo3cr_domain_model_nodedata DROP FOREIGN KEY " . $foreignKey->getName());
+            }
+        }
+        foreach ($this->sm->listTableForeignKeys('typo3_typo3cr_domain_model_workspace') as $foreignKey) {
+            if (in_array('baseworkspace', array_map('strtolower', $foreignKey->getLocalColumns()), true)) {
+                $this->addSql("ALTER TABLE typo3_typo3cr_domain_model_workspace DROP FOREIGN KEY " . $foreignKey->getName());
+            }
+        }
         $this->addSql("DROP INDEX flow3_identity_typo3_typo3cr_domain_model_workspace ON typo3_typo3cr_domain_model_workspace");
         $this->addSql("ALTER TABLE typo3_typo3cr_domain_model_workspace DROP PRIMARY KEY, ADD PRIMARY KEY (name)");
         $this->addSql("ALTER TABLE typo3_typo3cr_domain_model_nodedata CHANGE workspace workspace VARCHAR(255) DEFAULT NULL");
@@ -41,8 +49,16 @@ class Version20131129110302 extends AbstractMigration
     {
         $this->abortIf($this->connection->getDatabasePlatform()->getName() != "mysql");
 
-        $this->addSql("ALTER TABLE typo3_typo3cr_domain_model_workspace DROP FOREIGN KEY FK_71DE9CFBE9BFE681");
-        $this->addSql("ALTER TABLE typo3_typo3cr_domain_model_nodedata DROP FOREIGN KEY FK_60A956B98D940019");
+        foreach ($this->sm->listTableForeignKeys('typo3_typo3cr_domain_model_nodedata') as $foreignKey) {
+            if (in_array('workspace', array_map('strtolower', $foreignKey->getLocalColumns()), true)) {
+                $this->addSql("ALTER TABLE typo3_typo3cr_domain_model_nodedata DROP FOREIGN KEY " . $foreignKey->getName());
+            }
+        }
+        foreach ($this->sm->listTableForeignKeys('typo3_typo3cr_domain_model_workspace') as $foreignKey) {
+            if (in_array('baseworkspace', array_map('strtolower', $foreignKey->getLocalColumns()), true)) {
+                $this->addSql("ALTER TABLE typo3_typo3cr_domain_model_workspace DROP FOREIGN KEY " . $foreignKey->getName());
+            }
+        }
 
         $this->addSql("ALTER TABLE typo3_typo3cr_domain_model_workspace ADD persistence_object_identifier VARCHAR(40) NOT NULL");
 
