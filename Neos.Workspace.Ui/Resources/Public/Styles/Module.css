@@ -158,6 +158,27 @@ button .icon:not(:last-child) {
   backdrop-filter: blur(3px);
 }
 
+/**
+ * The flash message container uses popover="manual" to sit in the browser top layer
+ * so it renders above other popovers. Reset the generic popover visual defaults since
+ * the individual .neos-notification elements carry their own styling.
+ */
+#neos-notification-container[popover] {
+  background: transparent;
+  border: none;
+  padding: 0;
+  margin: 0;
+  inset: auto;
+  top: 0;
+  right: 0;
+  left: auto;
+  bottom: auto;
+}
+
+#neos-notification-container[popover]::backdrop {
+  display: none;
+}
+
 .neos.neos-module [popover] {
   header {
     font-size: calc(var(--generalFontSize) + 2px);
