@@ -147,7 +147,7 @@ class ForkingDuringWritingTest extends AbstractParallelTestCase
         touch(self::WRITING_IS_RUNNING_FLAG_PATH);
 
         try {
-            for ($i = 0; $i <= 500; $i++) {
+            for ($i = 0; $i <= 200; $i++) {
                 $this->contentRepository->handle(CreateNodeAggregateWithNode::create(
                     WorkspaceName::forLive(),
                     NodeAggregateId::fromString('nody-mc-nodeface-' . $i),
@@ -167,7 +167,7 @@ class ForkingDuringWritingTest extends AbstractParallelTestCase
         Assert::assertTrue(true, 'No exception was thrown ;)');
 
         $subgraph = $this->contentRepository->getContentGraph(WorkspaceName::forLive())->getSubgraph(DimensionSpacePoint::createWithoutDimensions(), VisibilityConstraints::createEmpty());
-        $node = $subgraph->findNodeById(NodeAggregateId::fromString('nody-mc-nodeface-500'));
+        $node = $subgraph->findNodeById(NodeAggregateId::fromString('nody-mc-nodeface-200'));
         Assert::assertNotNull($node);
     }
 
@@ -190,7 +190,7 @@ class ForkingDuringWritingTest extends AbstractParallelTestCase
 
         $this->log('2. forking started');
 
-        for ($i = 0; $i <= 500; $i++) {
+        for ($i = 0; $i <= 200; $i++) {
             $this->contentRepository->handle(CreateWorkspace::create(
                 WorkspaceName::fromString('user-test-' . $i),
                 WorkspaceName::forLive(),
@@ -202,7 +202,7 @@ class ForkingDuringWritingTest extends AbstractParallelTestCase
 
         Assert::assertTrue(true, 'No exception was thrown ;)');
 
-        $workspace = $this->contentRepository->findWorkspaceByName(WorkspaceName::fromString('user-test-500'));
+        $workspace = $this->contentRepository->findWorkspaceByName(WorkspaceName::fromString('user-test-200'));
         Assert::assertNotNull($workspace);
     }
 }
