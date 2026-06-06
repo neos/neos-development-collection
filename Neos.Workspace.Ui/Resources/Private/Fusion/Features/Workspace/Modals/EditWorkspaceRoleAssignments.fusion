@@ -91,7 +91,7 @@ prototype(Neos.Workspace.Ui:Component.Modal.EditWorkspaceRoleAssignments) < prot
       </section>
       <footer>
         <Neos.Workspace.Ui:Component.Button
-          label={private.i18n.id('cancel')}
+          label={private.i18n.id('close')}
           attributes.popovertarget={private.popoverId}
           attributes.popovertargetaction="close"
         />

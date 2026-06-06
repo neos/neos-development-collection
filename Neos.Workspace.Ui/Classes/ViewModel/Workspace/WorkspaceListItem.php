@@ -17,7 +17,6 @@ namespace Neos\Workspace\Ui\ViewModel\Workspace;
 use Neos\Flow\Annotations as Flow;
 use Neos\Neos\Domain\Model\WorkspaceClassification;
 use Neos\Neos\Domain\Model\WorkspacePermissions;
-use Neos\Neos\Domain\Model\WorkspaceRole;
 use Neos\Neos\Domain\Model\WorkspaceRoleAssignments;
 
 /**
@@ -45,27 +44,5 @@ final readonly class WorkspaceListItem
     public function isPersonal(): bool
     {
         return $this->classification === WorkspaceClassification::PERSONAL->value;
-    }
-
-    // todo remove this old shared vs private mapping!
-    public function isPrivate(): bool
-    {
-        foreach ($this->roleAssignments as $roleAssignment) {
-            if ($roleAssignment->role === WorkspaceRole::COLLABORATOR) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    // todo remove this old shared vs private mapping!
-    public function isShared(): bool
-    {
-        foreach ($this->roleAssignments as $roleAssignment) {
-            if ($roleAssignment->role === WorkspaceRole::COLLABORATOR) {
-                return true;
-            }
-        }
-        return false;
     }
 }

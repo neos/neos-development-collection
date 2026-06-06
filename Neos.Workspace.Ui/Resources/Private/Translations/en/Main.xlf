@@ -87,6 +87,9 @@
       <trans-unit id="workspaces.deleteWorkspaceRoleAssignment.confirm" xml:space="preserve">
 				<source>Remove</source>
 			</trans-unit>
+      <trans-unit id="workspaces.roleAssignmentCouldNotBeAdded" xml:space="preserve">
+        <source>The role could not be added.</source>
+      </trans-unit>
       <trans-unit id="workspaces.personalWorkspace" xml:space="preserve">
 				<source>Personal workspace</source>
 			</trans-unit>

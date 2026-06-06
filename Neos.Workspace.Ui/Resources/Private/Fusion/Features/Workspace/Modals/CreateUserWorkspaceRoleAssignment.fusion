@@ -60,7 +60,7 @@ prototype(Neos.Workspace.Ui:Component.Modal.CreateUserWorkspaceRoleAssignment) <
               label="workspaces.workspace.workspaceUserRoleAssignment.subject"
               class="neos-control-group"
             >
-              <Neos.Fusion.Form:Select>
+              <Neos.Fusion.Form:Select attributes.required="true">
                 <option value="">{private.i18n.id('workspaces.workspace.workspaceUserRoleAssignment.default')}</option>
                 <Neos.Fusion:Loop items={props.options} itemName="userName" itemKey="userId">
                   <Neos.Fusion.Form:Select.Option
@@ -86,7 +86,7 @@ prototype(Neos.Workspace.Ui:Component.Modal.CreateUserWorkspaceRoleAssignment) <
         </section>
         <footer>
           <Neos.Workspace.Ui:Component.Button
-            label={private.i18n.id('cancel')}
+            label={private.i18n.id('close')}
             attributes.popovertarget={private.popoverId}
             attributes.popovertargetaction="close"
           />

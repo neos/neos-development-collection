@@ -37,6 +37,7 @@ use Neos\Error\Messages\Message;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\I18n\EelHelper\TranslationHelper;
 use Neos\Flow\I18n\Translator;
+use Neos\Flow\Log\Utility\LogEnvironment;
 use Neos\Flow\Mvc\Exception\StopActionException;
 use Neos\Flow\Package\PackageManager;
 use Neos\Flow\Property\PropertyMapper;
@@ -601,16 +602,25 @@ class WorkspaceController extends AbstractModuleController
         string $role,
     ): void
     {
-        // TODO: Validate if user can add role assignment to workspace
+        $contentRepositoryId = SiteDetectionResult::fromRequest($this->request->getHttpRequest())->contentRepositoryId;
+        $userCanManageWorkspace = $this->authorizationService->getWorkspacePermissions(
+            $contentRepositoryId,
+            $workspaceName,
+            $this->securityContext->getRoles(),
+            $this->userService->getCurrentUser()?->getId()
+        )->manage;
+        if (!$userCanManageWorkspace) {
+            $this->throwStatus(403);
+        }
 
-        $subjectType = WorkspaceRoleSubjectType::from($subjectType);
-        $subject = WorkspaceRoleSubject::create($subjectType, $subject);
-        $role = WorkspaceRole::from($role);
+        $workspaceRoleSubjectType = WorkspaceRoleSubjectType::from($subjectType);
+        $workspaceRoleSubject = WorkspaceRoleSubject::create($workspaceRoleSubjectType, $subject);
+        $workspaceRole = WorkspaceRole::from($role);
 
-        if ($subjectType === WorkspaceRoleSubjectType::USER) {
-            $this->addUserRoleAssignment($workspaceName, $subject, $role);
-        } elseif ($subjectType === WorkspaceRoleSubjectType::GROUP) {
-            $this->addGroupRoleAssignment($workspaceName, $subject, $role);
+        if ($workspaceRoleSubjectType === WorkspaceRoleSubjectType::USER) {
+            $this->addUserRoleAssignment($workspaceName, $workspaceRoleSubject, $workspaceRole);
+        } elseif ($workspaceRoleSubjectType === WorkspaceRoleSubjectType::GROUP) {
+            $this->addGroupRoleAssignment($workspaceName, $workspaceRoleSubject, $workspaceRole);
         } else {
             $this->addFlashMessage(
                 $this->getModuleLabel('workspaces.roleAssignmentCouldNotBeAdded'),
@@ -648,6 +658,15 @@ class WorkspaceController extends AbstractModuleController
     public function deleteWorkspaceRoleAssignmentAction(WorkspaceName $workspaceName, string $subjectValue, string $subjectType): void
     {
         $contentRepositoryId = SiteDetectionResult::fromRequest($this->request->getHttpRequest())->contentRepositoryId;
+        $userCanManageWorkspace = $this->authorizationService->getWorkspacePermissions(
+            $contentRepositoryId,
+            $workspaceName,
+            $this->securityContext->getRoles(),
+            $this->userService->getCurrentUser()?->getId()
+        )->manage;
+        if (!$userCanManageWorkspace) {
+            $this->throwStatus(403);
+        }
         try {
             $this->workspaceService->unassignWorkspaceRole(
                 $contentRepositoryId,
@@ -658,7 +677,10 @@ class WorkspaceController extends AbstractModuleController
                 )
             );
         } catch (\Exception $e) {
-            // TODO: error handling
+            $this->logger->error(
+                sprintf('Error when deleting workspace role assignment: %s', $e->getMessage()),
+                LogEnvironment::fromMethodName(__METHOD__)
+            );
             $this->addFlashMessage(
                 $this->getModuleLabel('workspaces.roleAssignmentCouldNotBeDeleted'),
                 '',
@@ -675,12 +697,12 @@ class WorkspaceController extends AbstractModuleController
      */
     public function publishDocumentAction(string $nodeAddress, WorkspaceName $selectedWorkspace): void
     {
-        $nodeAddress = NodeAddress::fromJsonString($nodeAddress);
-        $contentRepositoryId = $nodeAddress->contentRepositoryId;
+        $nodeAddressInstance = NodeAddress::fromJsonString($nodeAddress);
+        $contentRepositoryId = $nodeAddressInstance->contentRepositoryId;
         $this->workspacePublishingService->publishChangesInDocument(
             $contentRepositoryId,
             $selectedWorkspace,
-            $nodeAddress->aggregateId
+            $nodeAddressInstance->aggregateId
         );
 
         $this->addFlashMessage($this->getModuleLabel('workspaces.selectedChangeHasBeenPublished'));
@@ -694,12 +716,12 @@ class WorkspaceController extends AbstractModuleController
      */
     public function discardDocumentAction(string $nodeAddress, WorkspaceName $selectedWorkspace): void
     {
-        $nodeAddress = NodeAddress::fromJsonString($nodeAddress);
-        $contentRepositoryId = $nodeAddress->contentRepositoryId;
+        $nodeAddressInstance = NodeAddress::fromJsonString($nodeAddress);
+        $contentRepositoryId = $nodeAddressInstance->contentRepositoryId;
         $this->workspacePublishingService->discardChangesInDocument(
             $contentRepositoryId,
             $selectedWorkspace,
-            $nodeAddress->aggregateId
+            $nodeAddressInstance->aggregateId
         );
 
         $this->addFlashMessage($this->getModuleLabel('workspaces.selectedChangeHasBeenDiscarded'));
