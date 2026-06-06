@@ -49,11 +49,11 @@ final readonly class LocalGraphState implements \IteratorAggregate, \JsonSeriali
     public function diff(self $other, ?WorkspaceName $expectedWorkspaceName = null): ?LocalGraphStateDiff
     {
         $missingItems = array_map(
-            fn (?LocalSubgraphState $item): LocalSubgraphStateDiff => $item ? LocalSubgraphStateDiff::fromLocalSubgraphState($item) : null,
+            fn (?LocalSubgraphState $item): ?LocalSubgraphStateDiff => $item ? LocalSubgraphStateDiff::fromLocalSubgraphState($item) : null,
             array_diff_key($this->items, $other->items),
         );
         $additionalItems = array_map(
-            fn (?LocalSubgraphState $item): LocalSubgraphStateDiff => $item ? LocalSubgraphStateDiff::fromLocalSubgraphState($item) : null,
+            fn (?LocalSubgraphState $item): ?LocalSubgraphStateDiff => $item ? LocalSubgraphStateDiff::fromLocalSubgraphState($item) : null,
             array_diff_key($other->items, $this->items),
         );
         $differingItems = [];

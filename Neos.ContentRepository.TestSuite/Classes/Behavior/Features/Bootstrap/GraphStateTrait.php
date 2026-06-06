@@ -19,7 +19,6 @@ use Behat\Hook\BeforeScenario;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphInterface;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindRootNodeAggregatesFilter;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
-use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateIds;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\Helpers\GraphState;
 use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\Helpers\LocalGraphState;
@@ -84,7 +83,7 @@ trait GraphStateTrait
         foreach ($this->currentContentRepository->findWorkspaces() as $workspace) {
             $contentGraph = $this->currentContentRepository->getContentGraph($workspace->workspaceName);
             $graphStates[$workspace->workspaceName->value] = GraphState::forNodeAggregateIdsWorkSpaceNameAndContentRepository(
-                nodeAggregateIds: NodeAggregateIds::fromArray($this->findAllNodeAggregateIds($contentGraph, null, [])),
+                nodeAggregateIds: $this->findAllNodeAggregateIds($contentGraph, null, []),
                 contentGraph: $contentGraph,
                 dimensionSpacePointSet: $this->currentContentRepository->getVariationGraph()->getDimensionSpacePoints(),
             );
@@ -136,7 +135,7 @@ trait GraphStateTrait
 
         $actualDiff = \json_encode(
             $this->memorisedGraphStates[$serializedWorkspaceName]->diff(
-                $this->fetchGraphState(WorkspaceName::fromString($serializedWorkspaceName)),
+                $this->fetchGraphState(workspaceName: WorkspaceName::fromString($serializedWorkspaceName)),
             ),
             JSON_PRETTY_PRINT,
         );
@@ -155,9 +154,7 @@ trait GraphStateTrait
         $contentGraph = $this->currentContentRepository->getContentGraph($workspaceName);
 
         return GraphState::forNodeAggregateIdsWorkSpaceNameAndContentRepository(
-            nodeAggregateIds: NodeAggregateIds::fromArray(
-                $this->findAllNodeAggregateIds($contentGraph, null, []),
-            ),
+            nodeAggregateIds: $this->findAllNodeAggregateIds($contentGraph, null, []),
             contentGraph: $contentGraph,
             dimensionSpacePointSet: $this->currentContentRepository->getVariationGraph()->getDimensionSpacePoints(),
         );

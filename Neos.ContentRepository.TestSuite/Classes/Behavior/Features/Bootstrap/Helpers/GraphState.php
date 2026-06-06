@@ -26,8 +26,11 @@ final class GraphState implements \IteratorAggregate, \JsonSerializable
     ) {
     }
 
+    /**
+     * @param array<string,NodeAggregateId> $nodeAggregateIds
+     */
     public static function forNodeAggregateIdsWorkSpaceNameAndContentRepository(
-        NodeAggregateIds $nodeAggregateIds,
+        array $nodeAggregateIds,
         ContentGraphInterface $contentGraph,
         DimensionSpacePointSet $dimensionSpacePointSet,
     ): self {
@@ -37,7 +40,7 @@ final class GraphState implements \IteratorAggregate, \JsonSerializable
                 $contentGraph,
                 $dimensionSpacePointSet,
             ),
-            iterator_to_array($nodeAggregateIds),
+            $nodeAggregateIds,
         ));
     }
 

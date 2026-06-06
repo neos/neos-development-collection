@@ -21,7 +21,7 @@ Feature: Move a node aggregate into and out of a tagged parent - with workspaces
       | CreateNodeAggregateWithNode     | {"workspaceName": "live", "originDimensionSpacePoint": {"example": "general"}, "nodeAggregateId": "sir-nodeward-nodington-iii", "parentNodeAggregateId": "lady-eleonode-rootford", "nodeTypeName": "Neos.ContentRepository.Testing:Document", "nodeName": "esquire"}     |
       | CreateNodeAggregateWithNode     | {"workspaceName": "live", "originDimensionSpacePoint": {"example": "general"}, "nodeAggregateId": "nodimus-prime", "parentNodeAggregateId": "sir-nodeward-nodington-iii", "nodeTypeName": "Neos.ContentRepository.Testing:Document", "nodeName": "esquire-child"}        |
 
-  Scenario: Publish Moving an untagged node to a new parent that tags itself
+  Scenario: Publish moving an untagged node to a new parent that tags itself
     Given the command TagSubtree is executed with payload:
       | Key                          | Value                        |
       | workspaceName                | "local"                      |

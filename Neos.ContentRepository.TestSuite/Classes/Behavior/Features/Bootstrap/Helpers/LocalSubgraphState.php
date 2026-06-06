@@ -62,16 +62,23 @@ final readonly class LocalSubgraphState
             // the whole state is the diff
             return LocalSubgraphStateDiff::fromLocalSubgraphState($this);
         }
+        if ($this->parent === null) {
+            if ($other->parent === null) {
+                $parent = null;
+            } else {
+                throw new \Exception('Cannot compare root node to node');
+            }
+        } else {
+            if ($other->parent === null) {
+                throw new \Exception('Cannot compare node to root node');
+            } else {
+                $parent = NodeDiff::tryFromNodeComparison($other->parent, $this->parent, $expectedWorkspaceName);
+            }
+        }
 
         return LocalSubgraphStateDiff::tryCreate(
             node: NodeDiff::tryFromNodeComparison($other->node, $this->node, $expectedWorkspaceName),
-            parent: match (true) {
-                $this->parent === null && $other->parent === null => null,
-                $this->parent == null && $other->parent !== null => throw new \Exception('Cannot compare root node to node'),
-                $this->parent !== null && $other->parent === null => throw new \Exception('Cannot compare node to root node'),
-                /** @phpstan-ignore argument.type (we alredy established that both are not null) */
-                default => NodeDiff::tryFromNodeComparison($other->parent, $this->parent, $expectedWorkspaceName),
-            },
+            parent: $parent,
             children: NodesDiff::tryFromNodesComparison($other->children, $this->children, $expectedWorkspaceName),
             precedingSiblings: NodesDiff::tryFromNodesComparison($other->precedingSiblings, $this->precedingSiblings, $expectedWorkspaceName),
             succeedingSiblings: NodesDiff::tryFromNodesComparison($other->succeedingSiblings, $this->succeedingSiblings, $expectedWorkspaceName),

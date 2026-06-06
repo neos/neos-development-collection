@@ -65,12 +65,8 @@ class SampleNodeFactory
                 )
             ),
             timestamps: Timestamps::create(
-                created: \DateTimeImmutable::createFromFormat('Y-m-d H:i:s', '2026-05-12 13:58:25')
-                    /** @phpstan-ignore method.nonObject (valid date) */
-                    ->setTimezone(new \DateTimeZone('UTC')),
-                originalCreated: \DateTimeImmutable::createFromFormat('Y-m-d H:i:s', '2026-05-12 13:58:25')
-                    /** @phpstan-ignore method.nonObject (valid date) */
-                    ->setTimezone(new \DateTimeZone('UTC')),
+                created: self::createUTCDate('2026-05-12 13:58:25'),
+                originalCreated: self::createUTCDate('2026-05-12 13:58:25'),
                 lastModified: null,
                 originalLastModified: null,
             ),
@@ -160,5 +156,16 @@ class SampleNodeFactory
                         : $reference->properties
                 ),
         );
+    }
+
+    private static function createUTCDate(string $dateString): \DateTimeImmutable
+    {
+        $date = \DateTimeImmutable::createFromFormat(
+            format: 'Y-m-d H:i:s',
+            datetime: $dateString,
+            timezone: new \DateTimeZone('UTC'),
+        );
+
+        return $date ?: throw new \RuntimeException('Invalid date ' . $dateString);
     }
 }
