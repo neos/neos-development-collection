@@ -5,14 +5,20 @@
 #
 root = Neos.Fusion:Case
 root {
-  shortcut {
-    prototype(Neos.Neos:Page) {
-      body = Neos.Neos:Shortcut
+  documentNotVisibleInPreviewMode {
+    @position = 'before shortcut'
+    condition = ${documentNode.context.inBackend && documentNode.context.currentRenderingMode.preview && !documentNode.visible}
+    renderer = Neos.Neos:Document.BackendInformation {
+      content = Neos.Neos:NotVisible
     }
+  }
 
+  shortcut {
     @position = 'start'
     condition = ${q(node).is('[instanceof Neos.Neos:Shortcut]')}
-    type = 'Neos.Neos:Page'
+    renderer = Neos.Neos:Document.BackendInformation {
+      content = Neos.Neos:Shortcut
+    }
   }
 
   editPreviewMode {
