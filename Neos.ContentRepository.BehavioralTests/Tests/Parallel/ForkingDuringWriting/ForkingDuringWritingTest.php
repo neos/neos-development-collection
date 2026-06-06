@@ -12,7 +12,7 @@
 
 declare(strict_types=1);
 
-namespace Neos\ContentRepository\BehavioralTests\Tests\Parallel\ParallelWritingInWorkspaces;
+namespace Neos\ContentRepository\BehavioralTests\Tests\Parallel\ForkingDuringWriting;
 
 use Doctrine\DBAL\Connection;
 use Neos\ContentRepository\BehavioralTests\Tests\Parallel\AbstractParallelTestCase;
@@ -37,13 +37,7 @@ use Neos\ContentRepository\TestSuite\Fakes\FakeProjectionFactory;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use PHPUnit\Framework\Assert;
 
-/**
- * This tests ensures that the subscribers are updated without any locking problems (and to test via {@see DebugEventProjection} that locking is used at all!)
- *
- * To test that we utilise two processes committing and catching up to a lot of events.
- * The is archived by creating nodes in a loop which have tethered nodes as this will lead to a lot of events being emitted in a fast way.
- */
-class ParallelWritingInWorkspacesTest extends AbstractParallelTestCase
+class ForkingDuringWritingTest extends AbstractParallelTestCase
 {
     private const SETUP_LOCK_PATH = __DIR__ . '/setup-lock';
     private const WRITING_IS_RUNNING_FLAG_PATH = __DIR__ . '/write-is-running-flag';
@@ -133,11 +127,6 @@ class ParallelWritingInWorkspacesTest extends AbstractParallelTestCase
                 'title' => 'title-original'
             ])
         ));
-        $contentRepository->handle(CreateWorkspace::create(
-            WorkspaceName::fromString('user-test'),
-            WorkspaceName::forLive(),
-            ContentStreamId::fromString('user-cs-id')
-        ));
 
         $this->contentRepository = $contentRepository;
 
@@ -158,7 +147,7 @@ class ParallelWritingInWorkspacesTest extends AbstractParallelTestCase
         touch(self::WRITING_IS_RUNNING_FLAG_PATH);
 
         try {
-            for ($i = 0; $i <= 100; $i++) {
+            for ($i = 0; $i <= 200; $i++) {
                 $this->contentRepository->handle(CreateNodeAggregateWithNode::create(
                     WorkspaceName::forLive(),
                     NodeAggregateId::fromString('nody-mc-nodeface-' . $i),
@@ -178,14 +167,14 @@ class ParallelWritingInWorkspacesTest extends AbstractParallelTestCase
         Assert::assertTrue(true, 'No exception was thrown ;)');
 
         $subgraph = $this->contentRepository->getContentGraph(WorkspaceName::forLive())->getSubgraph(DimensionSpacePoint::createWithoutDimensions(), VisibilityConstraints::createEmpty());
-        $node = $subgraph->findNodeById(NodeAggregateId::fromString('nody-mc-nodeface-100'));
+        $node = $subgraph->findNodeById(NodeAggregateId::fromString('nody-mc-nodeface-200'));
         Assert::assertNotNull($node);
     }
 
     /**
      * @test
      */
-    public function thenConcurrentlyWritingToAnotherWorkspaceWorks(): void
+    public function thenConcurrentForksAreNotDeadlocked(): void
     {
         if (!is_file(self::WRITING_IS_RUNNING_FLAG_PATH)) {
             $this->log('waiting for 2. writing');
@@ -199,27 +188,21 @@ class ParallelWritingInWorkspacesTest extends AbstractParallelTestCase
             usleep(10000);
         }
 
-        $this->log('2. writing started');
+        $this->log('2. forking started');
 
-        for ($i = 0; $i <= 100; $i++) {
-            $this->contentRepository->handle(CreateNodeAggregateWithNode::create(
-                WorkspaceName::fromString('user-test'),
-                NodeAggregateId::fromString('user-nody-mc-nodeface-' . $i),
-                NodeTypeName::fromString('Neos.ContentRepository.Testing:Document'),
-                OriginDimensionSpacePoint::createWithoutDimensions(),
-                NodeAggregateId::fromString('lady-eleonode-rootford'),
-                initialPropertyValues: PropertyValuesToWrite::fromArray([
-                    'title' => 'title'
-                ])
+        for ($i = 0; $i <= 200; $i++) {
+            $this->contentRepository->handle(CreateWorkspace::create(
+                WorkspaceName::fromString('user-test-' . $i),
+                WorkspaceName::forLive(),
+                ContentStreamId::fromString('user-test-cs-' . $i)
             ));
         }
 
-        $this->log('2. writing finished');
+        $this->log('2. forking finished');
 
         Assert::assertTrue(true, 'No exception was thrown ;)');
 
-        $subgraph = $this->contentRepository->getContentGraph(WorkspaceName::fromString('user-test'))->getSubgraph(DimensionSpacePoint::createWithoutDimensions(), VisibilityConstraints::createEmpty());
-        $node = $subgraph->findNodeById(NodeAggregateId::fromString('user-nody-mc-nodeface-100'));
-        Assert::assertNotNull($node);
+        $workspace = $this->contentRepository->findWorkspaceByName(WorkspaceName::fromString('user-test-200'));
+        Assert::assertNotNull($workspace);
     }
 }

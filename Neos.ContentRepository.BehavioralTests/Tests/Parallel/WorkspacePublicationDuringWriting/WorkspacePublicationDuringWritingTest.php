@@ -141,7 +141,6 @@ class WorkspacePublicationDuringWritingTest extends AbstractParallelTestCase
 
     /**
      * @test
-     * @group parallel
      */
     public function whileANodesArWrittenOnLive(): void
     {
@@ -177,7 +176,6 @@ class WorkspacePublicationDuringWritingTest extends AbstractParallelTestCase
 
     /**
      * @test
-     * @group parallel
      */
     public function thenConcurrentPublishLeadsToException(): void
     {
