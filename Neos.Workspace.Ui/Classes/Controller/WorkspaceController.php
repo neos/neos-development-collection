@@ -614,7 +614,20 @@ class WorkspaceController extends AbstractModuleController
         }
 
         $workspaceRoleSubjectType = WorkspaceRoleSubjectType::from($subjectType);
-        $workspaceRoleSubject = WorkspaceRoleSubject::create($workspaceRoleSubjectType, $subject);
+        try {
+            $workspaceRoleSubject = WorkspaceRoleSubject::create($workspaceRoleSubjectType, $subject);
+        } catch (\InvalidArgumentException $e) {
+            $this->logger->error(
+                sprintf('Error when adding workspace role assignment: %s', $e->getMessage()),
+                LogEnvironment::fromMethodName(__METHOD__)
+            );
+            $this->addFlashMessage(
+                $this->getModuleLabel('workspaces.roleAssignmentCouldNotBeAdded'),
+                '',
+                Message::SEVERITY_ERROR
+            );
+            $this->throwStatus(400, 'Invalid role');
+        }
         $workspaceRole = WorkspaceRole::from($role);
 
         if ($workspaceRoleSubjectType === WorkspaceRoleSubjectType::USER) {
