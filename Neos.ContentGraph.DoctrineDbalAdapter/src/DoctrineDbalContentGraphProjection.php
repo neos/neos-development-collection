@@ -71,6 +71,7 @@ use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
 use Neos\ContentRepository\Core\SharedModel\Node\ReferenceName;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Dbal\DbalSchemaDiff;
+use Neos\ContentRepository\Dbal\MysqlPlatformContentRepositoryLocker;
 use Neos\EventStore\Model\EventEnvelope;
 
 /**
@@ -90,6 +91,7 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
 
     public function __construct(
         private readonly Connection $dbal,
+        private readonly MysqlPlatformContentRepositoryLocker $contentRepositoryLocker,
         private readonly ProjectionContentGraph $projectionContentGraph,
         private readonly ContentGraphTableNames $tableNames,
         private readonly DimensionSpacePointsRepository $dimensionSpacePointsRepository,
@@ -191,6 +193,8 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
         if ($this->dbal->isTransactionActive()) {
             throw new \RuntimeException(sprintf('Invoking %s is not allowed to be invoked recursively. Current transaction nesting %d.', __FUNCTION__, $this->dbal->getTransactionNestingLevel()));
         }
+
+        $this->contentRepositoryLocker->acquireLock(timeoutInSeconds: 120);
         $this->dbal->beginTransaction();
         $this->dbal->setRollbackOnly();
         try {
@@ -198,6 +202,7 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
         } finally {
             // unsets rollback only flag and allows the connection to work regular again
             $this->dbal->rollBack();
+            $this->contentRepositoryLocker->releaseLock();
         }
     }
 
