@@ -21,6 +21,7 @@ use Neos\ContentRepository\Core\Subscription\SubscriptionId;
 use Neos\ContentRepository\Core\Subscription\Subscriptions;
 use Neos\ContentRepository\Core\Subscription\SubscriptionStatus;
 use Neos\ContentRepository\Dbal\DbalSchemaDiff;
+use Neos\ContentRepository\Dbal\MysqlPlatformContentRepositoryLocker;
 use Neos\EventStore\Model\Event\SequenceNumber;
 use Psr\Clock\ClockInterface;
 
@@ -30,7 +31,8 @@ use Psr\Clock\ClockInterface;
 final class DoctrineSubscriptionStore implements SubscriptionStoreInterface
 {
     public function __construct(
-        private string $tableName,
+        private readonly string $tableName,
+        private readonly MysqlPlatformContentRepositoryLocker|null $contentRepositoryLocker,
         private readonly Connection $dbal,
         private readonly ClockInterface $clock,
     ) {
@@ -171,10 +173,12 @@ final class DoctrineSubscriptionStore implements SubscriptionStoreInterface
     public function beginTransaction(): void
     {
         $this->dbal->beginTransaction();
+        $this->contentRepositoryLocker?->acquireLock(timeoutInSeconds: 120);
     }
 
     public function commit(): void
     {
         $this->dbal->commit();
+        $this->contentRepositoryLocker?->releaseLock();
     }
 }
