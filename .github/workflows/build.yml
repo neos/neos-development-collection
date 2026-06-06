@@ -310,12 +310,21 @@ jobs:
       - name: Run Parallel Tests for the ES CR
         # TODO: enable parallel tests also for Postgres
         if: matrix.parallel-parts == 'escr-behavioral' || matrix.parallel-parts == 'escr-behavioral-mysql'
+        id: paralleltests
+        timeout-minutes: 30
+        continue-on-error: true
         run: |
           cd Packages/Neos
-          hasFailure=0
-          composer test:parallel || hasFailure=1
+          composer test:parallel
+      - name: Fail pipeline if Parallel Tests broke
+        if: (matrix.parallel-parts == 'escr-behavioral' || matrix.parallel-parts == 'escr-behavioral-mysql') && steps.paralleltests.outcome != 'success'
+        shell: bash
+        run: |
+          cd Packages/Neos
           cat Neos.ContentRepository.BehavioralTests/Tests/Parallel/log.txt
-          exit $hasFailure
+          echo "\n\nDumping last 100 events\n\n"
+          mysql -u neos -pneos -h 127.0.0.1 -P ${{ matrix.mysqlport }} flow_functional_testing --table < <(echo "SELECT * FROM cr_test_parallel_events ORDER BY sequenceNumber DESC LIMIT 100")
+          exit 1
       - name: Run Behavioral Tests (ES CR && Neos.Neos)
         id: escrtests
         if: matrix.parallel-parts == 'escr-behavioral' || matrix.parallel-parts == 'escr-behavioral-mysql' || matrix.parallel-parts == 'escr-behavioral-postgres'

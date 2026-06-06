@@ -143,7 +143,6 @@ class WorkspaceWritingDuringRebaseTest extends AbstractParallelTestCase
 
     /**
      * @test
-     * @group parallel
      */
     public function whileAWorkspaceIsBeingRebased(): void
     {
@@ -167,7 +166,6 @@ class WorkspaceWritingDuringRebaseTest extends AbstractParallelTestCase
 
     /**
      * @test
-     * @group parallel
      */
     public function thenConcurrentCommandsLeadToAnException(): void
     {

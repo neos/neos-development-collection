@@ -20,7 +20,7 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\Nodes;
 /**
  * An immutable collection of NodeAggregateIds, indexed by their value
  *
- * @implements \IteratorAggregate<NodeAggregateId>
+ * @implements \IteratorAggregate<string|int,NodeAggregateId>
  * @api
  */
 final class NodeAggregateIds implements \IteratorAggregate, \Countable, \JsonSerializable
@@ -108,7 +108,8 @@ final class NodeAggregateIds implements \IteratorAggregate, \Countable, \JsonSer
 
     public function getIterator(): \Traversable
     {
-        yield from array_values($this->nodeAggregateIds);
+        // FIXME use array_values($this->nodeAggregateIds); with Neos 10.0 as exposing the internal int or string id representation is not reliable and internal
+        yield from $this->nodeAggregateIds;
     }
 
     /**
