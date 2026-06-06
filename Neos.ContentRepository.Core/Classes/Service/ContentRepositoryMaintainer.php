@@ -23,6 +23,7 @@ use Neos\EventStore\Model\Event\SequenceNumber;
 use Neos\EventStore\Model\Event\StreamName;
 use Neos\EventStore\Model\EventStream\EventStreamFilter;
 use Neos\EventStore\Model\EventStream\VirtualStreamName;
+use Neos\EventStore\WithResetInterface;
 
 /**
  * Set up and manage a content repository
@@ -181,6 +182,9 @@ final readonly class ContentRepositoryMaintainer implements ContentRepositorySer
      */
     public function prune(): Error|null
     {
+        if (!$this->eventStore instanceof WithResetInterface) {
+            return new Error(sprintf('Reset is not supported of the event-store: "%s".', $this->eventStore::class));
+        }
         // prune all streams:
         foreach ($this->findAllContentStreamStreamNames() as $contentStreamStreamName) {
             $this->eventStore->deleteStream($contentStreamStreamName);
