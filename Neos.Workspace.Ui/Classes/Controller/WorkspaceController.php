@@ -513,7 +513,6 @@ class WorkspaceController extends AbstractModuleController
                     $workspaceUserRoleAssignments[] = new RoleAssignmentListItem(
                         subjectValue: $workspaceRoleAssignment->subject->value,
                         subjectLabel: $subjectLabel,
-                        subjectTypeValue: $workspaceRoleAssignment->subject->type->value,
                         roleLabel: $roleLabel,
                         subjectType: $workspaceRoleAssignment->subject->type->value,
                     );
@@ -522,7 +521,6 @@ class WorkspaceController extends AbstractModuleController
                     $workspaceGroupRoleAssignments[] = new RoleAssignmentListItem(
                         subjectValue: $workspaceRoleAssignment->subject->value,
                         subjectLabel: $subjectLabel,
-                        subjectTypeValue: $workspaceRoleAssignment->subject->type->value,
                         roleLabel: $roleLabel,
                         subjectType: $workspaceRoleAssignment->subject->type->value,
                     );

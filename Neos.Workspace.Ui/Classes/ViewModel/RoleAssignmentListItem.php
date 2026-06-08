@@ -27,11 +27,9 @@ use Neos\Neos\Domain\Model\WorkspaceRoleSubjectType;
 #[Flow\Proxy(false)]
 final readonly class RoleAssignmentListItem
 {
-    // todo $subjectType and $subjectTypeValue are exact the same???
     public function __construct(
         public string $subjectValue,
         public string $subjectLabel,
-        public string $subjectTypeValue,
         public string $roleLabel,
         public string $subjectType,
     ) {
