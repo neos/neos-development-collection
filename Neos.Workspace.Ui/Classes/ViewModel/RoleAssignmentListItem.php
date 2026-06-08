@@ -32,6 +32,7 @@ final readonly class RoleAssignmentListItem
         public string $subjectLabel,
         public string $roleLabel,
         public string $subjectType,
+        public bool $deletable,
     ) {
     }
 }

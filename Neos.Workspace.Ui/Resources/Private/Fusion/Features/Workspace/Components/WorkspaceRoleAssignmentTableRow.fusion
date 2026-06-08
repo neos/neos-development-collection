@@ -41,7 +41,7 @@ prototype(Neos.Workspace.Ui:Component.WorkspaceRoleAssignmentTableRow) < prototy
             role: private.localisedRoleLabel
           }).id('workspaces.deleteWorkspaceRoleAssignment.action')}
           icon="trash-alt icon-white"
-          attributes.disabled={!props.roleAssignmentsEditable}
+          disabled={!props.roleAssignmentsEditable || !props.roleAssignmentFormData.deletable}
           attributes.hx-get={private.confirmDeleteWorkspaceRoleAssignmentUri}
           attributes.hx-target={'#' + private.confirmDeleteWorkspaceRoleAssignmentPopoverId}
           attributes.hx-swap='outerHTML'

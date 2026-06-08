@@ -8,6 +8,8 @@ prototype(Neos.Workspace.Ui:Component.WorkspaceRoleAssignmentTable) < prototype(
   workspaceName = ''
   /// array<Neos\Workspace\Ui\ViewModel\RoleAssignmentListItem>
   roleAssignments=${[]}
+  /// boolean
+  roleAssignmentsEditable = false
 
   @private {
     i18n = ${I18n.id('').source('Main').package('Neos.Workspace.Ui')}

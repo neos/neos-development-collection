@@ -1,12 +1,14 @@
 prototype(Neos.Workspace.Ui:Component.Modal.EditWorkspaceRoleAssignments) < prototype(Neos.Fusion:Component) {
-  workspaceName=''
-  workspaceTitle=''
-  roleAssignmentsEditable=false
-
+  /// string
+  workspaceName = ''
+  /// string
+  workspaceTitle = ''
+  /// boolean
+  roleAssignmentsEditable = false
   /// array<Neos\Workspace\Ui\ViewModel\RoleAssignmentListItem>
-  userRoleAssignments=${[]}
+  userRoleAssignments = ${[]}
   /// array<Neos\Workspace\Ui\ViewModel\RoleAssignmentListItem>
-  groupRoleAssignments=${[]}
+  groupRoleAssignments = ${[]}
 
   @private {
     i18n = ${I18n.id('').source('Main').package('Neos.Workspace.Ui')}
@@ -51,6 +53,7 @@ prototype(Neos.Workspace.Ui:Component.Modal.EditWorkspaceRoleAssignments) < prot
           workspaceTitle={props.workspaceTitle}
           workspaceName={props.workspaceName}
           roleAssignments={props.groupRoleAssignments}
+          roleAssignmentsEditable={props.roleAssignmentsEditable}
         />
         <p @if.hasNoUserRolePermissions={!props.groupRoleAssignments}>
           {private.i18n.id('workspaces.permission.noGroupAssignmentsSet')}
@@ -62,7 +65,7 @@ prototype(Neos.Workspace.Ui:Component.Modal.EditWorkspaceRoleAssignments) < prot
           attributes.hx-target={'#' + private.createGroupWorkspaceRoleAssignmentPopoverId}
           attributes.hx-swap='outerHTML'
           attributes.hx-on--after-request={'document.getElementById("' + private.createGroupWorkspaceRoleAssignmentPopoverId + '").showPopover()'}
-          attributes.disabled={!props.roleAssignmentsEditable}
+          disabled={!props.roleAssignmentsEditable}
         />
       </section>
       <section>
@@ -75,6 +78,7 @@ prototype(Neos.Workspace.Ui:Component.Modal.EditWorkspaceRoleAssignments) < prot
           workspaceTitle={props.workspaceTitle}
           workspaceName={props.workspaceName}
           roleAssignments={props.userRoleAssignments}
+          roleAssignmentsEditable={props.roleAssignmentsEditable}
         />
         <p @if.hasNoUserRolePermissions={!props.userRoleAssignments}>
           {private.i18n.id('workspaces.permission.noUserAssignmentsSet')}
@@ -86,7 +90,7 @@ prototype(Neos.Workspace.Ui:Component.Modal.EditWorkspaceRoleAssignments) < prot
           attributes.hx-target={'#' + private.createUserWorkspaceRoleAssignmentPopoverId}
           attributes.hx-swap='outerHTML'
           attributes.hx-on--after-request={'document.getElementById("' + private.createUserWorkspaceRoleAssignmentPopoverId + '").showPopover()'}
-          attributes.disabled={!props.roleAssignmentsEditable}
+          disabled={!props.roleAssignmentsEditable}
         />
       </section>
       <footer>

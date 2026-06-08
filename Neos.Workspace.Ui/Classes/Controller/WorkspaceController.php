@@ -520,6 +520,7 @@ class WorkspaceController extends AbstractModuleController
                         subjectLabel: $subjectLabel,
                         roleLabel: $roleLabel,
                         subjectType: $workspaceRoleAssignment->subject->type->value,
+                        deletable: $workspaceRoleAssignment->subject->value !== $currentUser?->getId()->value,
                     );
                     break;
                 case WorkspaceRoleSubjectType::GROUP:
@@ -528,6 +529,7 @@ class WorkspaceController extends AbstractModuleController
                         subjectLabel: $subjectLabel,
                         roleLabel: $roleLabel,
                         subjectType: $workspaceRoleAssignment->subject->type->value,
+                        deletable: true,
                     );
                     break;
             }
