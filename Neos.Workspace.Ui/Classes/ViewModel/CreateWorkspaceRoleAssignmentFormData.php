@@ -29,7 +29,6 @@ use Neos\Neos\Domain\Model\WorkspaceTitle;
 final readonly class CreateWorkspaceRoleAssignmentFormData
 {
     /**
-     * TODO: translate role labels?
      * Options for the workspaceManager selector where the key is the role identifier and the value is the role label.
      * @param array<string, string> $options
      * @param array<string, string> $roleOptions
