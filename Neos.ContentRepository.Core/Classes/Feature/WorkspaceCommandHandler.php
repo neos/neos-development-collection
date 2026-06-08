@@ -66,8 +66,11 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceStatus;
 use Neos\EventStore\EventStoreInterface;
 use Neos\EventStore\Exception\ConcurrencyException;
+use Neos\EventStore\Model\Event\EventType;
+use Neos\EventStore\Model\Event\EventTypes;
 use Neos\EventStore\Model\Event\SequenceNumber;
 use Neos\EventStore\Model\Event\Version;
+use Neos\EventStore\Model\EventStream\EventStreamFilter;
 use Neos\EventStore\Model\EventStream\EventStreamInterface;
 use Neos\EventStore\Model\EventStream\ExpectedVersion;
 
@@ -141,8 +144,18 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
             sprintf('Create workspace %s with base %s', $command->workspaceName->value, $baseWorkspace->workspaceName->value)
         );
 
+        $workspaceStreamName = WorkspaceEventStreamName::fromWorkspaceName($command->workspaceName)->getEventStreamName();
+        $workspaceStream = $this->eventStore->load(
+            $workspaceStreamName,
+            EventStreamFilter::create(eventTypes:EventTypes::create(EventType::fromString('WorkspaceWasRemoved')))
+        );
+        $expectedWorkspaceStreamVersion = ExpectedVersion::NO_STREAM();
+        foreach ($workspaceStream->backwards()->limit(1) as $eventEnvelope) {
+            $expectedWorkspaceStreamVersion = ExpectedVersion::fromVersion($eventEnvelope->version);
+            break;
+        }
         yield new EventsToPublish(
-            WorkspaceEventStreamName::fromWorkspaceName($command->workspaceName)->getEventStreamName(),
+            $workspaceStreamName,
             Events::with(
                 new WorkspaceWasCreated(
                     $command->workspaceName,
@@ -150,7 +163,7 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
                     $command->newContentStreamId,
                 )
             ),
-            ExpectedVersion::ANY(),
+            $expectedWorkspaceStreamVersion,
         );
     }
 
@@ -176,15 +189,26 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
             ExpectedVersion::NO_STREAM()
         );
 
+        $workspaceStreamName = WorkspaceEventStreamName::fromWorkspaceName($command->workspaceName)->getEventStreamName();
+        $workspaceStream = $this->eventStore->load(
+            $workspaceStreamName,
+            EventStreamFilter::create(eventTypes:EventTypes::create(EventType::fromString('WorkspaceWasRemoved')))
+        );
+        $expectedWorkspaceStreamVersion = ExpectedVersion::NO_STREAM();
+        foreach ($workspaceStream->backwards()->limit(1) as $eventEnvelope) {
+            $expectedWorkspaceStreamVersion = ExpectedVersion::fromVersion($eventEnvelope->version);
+            break;
+        }
+
         yield new EventsToPublish(
-            WorkspaceEventStreamName::fromWorkspaceName($command->workspaceName)->getEventStreamName(),
+            $workspaceStreamName,
             Events::with(
                 new RootWorkspaceWasCreated(
                     $command->workspaceName,
                     $command->newContentStreamId
                 )
             ),
-            ExpectedVersion::ANY()
+            $expectedWorkspaceStreamVersion,
         );
     }
 
