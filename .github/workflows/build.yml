@@ -248,6 +248,20 @@ jobs:
           
           cat <<EOF >> Configuration/Testing/Behat/Postgres/Objects.yaml
           # Note we configure the dbal adapter to run in a maria db 
+          'Neos.ContentGraph.DoctrineDbalAdapter:VirtualConnection':
+            scope: singleton
+            className: 'Doctrine\DBAL\Connection'
+            factoryObjectName: 'Neos\ContentRepository\BehavioralTests\DBALConnectionFactory'
+            arguments:
+              1:
+                value:
+                  host: '127.0.0.1'
+                  port: 3306
+                  dbname: 'flow_functional_testing'
+                  driver: pdo_mysql
+                  user: 'neos'
+                  password: 'neos'
+
           Neos\ContentGraph\DoctrineDbalAdapter\DoctrineDbalContentGraphProjectionFactory:
             scope: singleton
             factoryObjectName: 'Neos\ContentRepositoryRegistry\Infrastructure\GenericObjectFactory'
@@ -257,17 +271,7 @@ jobs:
               2:
                 object:
                   name: 'Neos.ContentGraph.DoctrineDbalAdapter:VirtualConnection'
-                  factoryObjectName: 'Neos\ContentRepository\BehavioralTests\DBALConnectionFactory'
-                  arguments:
-                    1:
-                      value:
-                        host: '127.0.0.1'
-                        port: 3306
-                        dbname: 'flow_functional_testing'
-                        driver: pdo_mysql
-                        user: 'neos'
-                        password: 'neos'
-          
+
           Neos\ContentRepository\Core\Projection\ContentGraph\ProjectionIntegrityViolationDetectionRunnerFactoryInterface:
             scope: singleton
             factoryObjectName: 'Neos\ContentRepositoryRegistry\Infrastructure\GenericObjectFactory'
@@ -277,16 +281,7 @@ jobs:
               2:
                 object:
                   name: 'Neos.ContentGraph.DoctrineDbalAdapter:VirtualConnection'
-                  factoryObjectName: 'Neos\ContentRepository\BehavioralTests\DBALConnectionFactory'
-                  arguments:
-                    1:
-                      value:
-                        host: '127.0.0.1'
-                        port: 3306
-                        dbname: 'flow_functional_testing'
-                        driver: pdo_mysql
-                        user: 'neos'
-                        password: 'neos'
+
           EOF
 
           echo "Running in context '$FLOW_CONTEXT'"
