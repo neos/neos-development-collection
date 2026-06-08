@@ -234,6 +234,7 @@ class WorkspaceController extends AbstractModuleController
         WorkspaceTitle $title,
         WorkspaceName $baseWorkspace,
         WorkspaceDescription $description,
+        string $visibility = 'shared',
     ): void {
         $currentUser = $this->userService->getCurrentUser();
         if ($currentUser === null) {
@@ -243,6 +244,12 @@ class WorkspaceController extends AbstractModuleController
         $contentRepositoryId = SiteDetectionResult::fromRequest($this->request->getHttpRequest())->contentRepositoryId;
         $workspaceName = $this->workspaceService->getUniqueWorkspaceName($contentRepositoryId, $title->value);
 
+        $assignments = match ($visibility) {
+            'shared' => WorkspaceRoleAssignments::createForSharedWorkspace($currentUser->getId()),
+            'private' => WorkspaceRoleAssignments::createForPrivateWorkspace($currentUser->getId()),
+            default => throw new \RuntimeException(sprintf('Invalid visibility %s given', $visibility), 1736343542)
+        };
+
         try {
             $this->workspaceService->createSharedWorkspace(
                 $contentRepositoryId,
@@ -250,9 +257,7 @@ class WorkspaceController extends AbstractModuleController
                 $title,
                 $description,
                 $baseWorkspace,
-                WorkspaceRoleAssignments::createForSharedWorkspace(
-                    $currentUser->getId()
-                )
+                $assignments
             );
         } catch (WorkspaceAlreadyExists) {
             $this->addFlashMessage(

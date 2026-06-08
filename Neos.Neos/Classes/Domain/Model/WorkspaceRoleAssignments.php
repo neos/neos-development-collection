@@ -82,6 +82,21 @@ final readonly class WorkspaceRoleAssignments implements \IteratorAggregate, \Co
         );
     }
 
+    /**
+     * Default role assignment to be specified at creation via {@see WorkspaceService::createSharedWorkspace()}
+     *
+     * The specified user is manager
+     */
+    public static function createForPrivateWorkspace(UserId $userId): self
+    {
+        return new self(
+            WorkspaceRoleAssignment::createForUser(
+                $userId,
+                WorkspaceRole::MANAGER,
+            )
+        );
+    }
+
     public function isEmpty(): bool
     {
         return $this->assignments === [];
