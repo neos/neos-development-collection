@@ -1481,6 +1481,8 @@ class WorkspaceController extends AbstractModuleController
     ): WorkspaceListItems {
         $workspaceListItems = [];
         $allWorkspaces = $contentRepository->findWorkspaces();
+        $currentUser = $this->userService->getCurrentUser();
+        $roles = $this->securityContext->getRoles();
 
         // add other, accessible workspaces
         foreach ($allWorkspaces as $workspace) {
@@ -1489,8 +1491,8 @@ class WorkspaceController extends AbstractModuleController
             $workspacesPermissions = $this->authorizationService->getWorkspacePermissions(
                 $contentRepository->id,
                 $workspace->workspaceName,
-                $this->securityContext->getRoles(),
-                $this->userService->getCurrentUser()?->getId()
+                $roles,
+                $currentUser?->getId()
             );
 
             // ignore root workspaces, because they will not be shown in the UI
@@ -1498,7 +1500,7 @@ class WorkspaceController extends AbstractModuleController
                 continue;
             }
 
-            if ($workspacesPermissions->read === false) {
+            if ($workspacesPermissions->read === false && (!$workspacesPermissions->manage || $workspaceMetadata->classification === WorkspaceClassification::PERSONAL)) {
                 continue;
             }
 
