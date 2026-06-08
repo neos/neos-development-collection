@@ -269,8 +269,7 @@ jobs:
               1:
                 value: 'Neos\ContentGraph\DoctrineDbalAdapter\DoctrineDbalContentGraphProjectionFactory'
               2:
-                object:
-                  name: 'Neos.ContentGraph.DoctrineDbalAdapter:VirtualConnection'
+                object: 'Neos.ContentGraph.DoctrineDbalAdapter:VirtualConnection'
 
           Neos\ContentRepository\Core\Projection\ContentGraph\ProjectionIntegrityViolationDetectionRunnerFactoryInterface:
             scope: singleton
@@ -279,8 +278,7 @@ jobs:
               1:
                 value: 'Neos\ContentGraph\DoctrineDbalAdapter\DoctrineDbalProjectionIntegrityViolationDetectionRunnerFactory'
               2:
-                object:
-                  name: 'Neos.ContentGraph.DoctrineDbalAdapter:VirtualConnection'
+                object: 'Neos.ContentGraph.DoctrineDbalAdapter:VirtualConnection'
 
           EOF
 
