@@ -256,6 +256,7 @@ jobs:
                 value: 'Neos\ContentGraph\DoctrineDbalAdapter\DoctrineDbalContentGraphProjectionFactory'
               2:
                 object:
+                  name: 'Neos.ContentGraph.DoctrineDbalAdapter:VirtualConnection'
                   factoryObjectName: 'Neos\ContentRepository\BehavioralTests\DBALConnectionFactory'
                   arguments:
                     1:
@@ -275,6 +276,7 @@ jobs:
                 value: 'Neos\ContentGraph\DoctrineDbalAdapter\DoctrineDbalProjectionIntegrityViolationDetectionRunnerFactory'
               2:
                 object:
+                  name: 'Neos.ContentGraph.DoctrineDbalAdapter:VirtualConnection'
                   factoryObjectName: 'Neos\ContentRepository\BehavioralTests\DBALConnectionFactory'
                   arguments:
                     1:
