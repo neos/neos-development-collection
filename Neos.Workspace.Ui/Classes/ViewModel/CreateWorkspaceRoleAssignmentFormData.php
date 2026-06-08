@@ -28,17 +28,17 @@ use Neos\Neos\Domain\Model\WorkspaceTitle;
 #[Flow\Proxy(false)]
 final readonly class CreateWorkspaceRoleAssignmentFormData
 {
+    /**
+     * TODO: translate role labels?
+     * Options for the workspaceManager selector where the key is the role identifier and the value is the role label.
+     * @param array<string, string> $options
+     * @param array<string, string> $roleOptions
+     */
     public function __construct(
         public WorkspaceName $workspaceName,
         public WorkspaceTitle $workspaceTitle,
         public array $options,
-        /**
-         * TODO: translate role labels?
-         * Options for the workspaceManager selector where the key is the role identifier and the value is the role label.
-         * @var array<string, string>
-         */
         public array $roleOptions
-    )
-    {
+    ) {
     }
 }

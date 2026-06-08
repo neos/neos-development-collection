@@ -29,7 +29,8 @@ use Neos\Neos\Domain\Model\WorkspaceTitle;
 final readonly class EditWorkspaceRoleAssignmentsFormData
 {
     /**
-     * @param array<RoleAssignmentListItem> $roleAssignments
+     * @param array<RoleAssignmentListItem> $userRoleAssignments
+     * @param array<RoleAssignmentListItem> $groupRoleAssignments
      */
     public function __construct(
         public WorkspaceName $workspaceName,

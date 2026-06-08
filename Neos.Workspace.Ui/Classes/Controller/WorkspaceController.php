@@ -504,7 +504,7 @@ class WorkspaceController extends AbstractModuleController
         foreach ($this->workspaceService->getWorkspaceRoleAssignments($contentRepositoryId, $workspaceName) as $workspaceRoleAssignment) {
             $subjectLabel = match ($workspaceRoleAssignment->subject->type) {
                 WorkspaceRoleSubjectType::USER => $this->userService->findUserById(UserId::fromString($workspaceRoleAssignment->subject->value))?->getLabel() ?? $workspaceRoleAssignment->subject->value,
-                WorkspaceRoleSubjectType::GROUP => $this->policyService->getRole($workspaceRoleAssignment->subject->value)->getLabel() ?? $workspaceRoleAssignment->subject->value,
+                WorkspaceRoleSubjectType::GROUP => $this->policyService->getRole($workspaceRoleAssignment->subject->value)->getLabel() ?: $workspaceRoleAssignment->subject->value,
             };
 
             $roleLabel = $workspaceRoleAssignment->role->value;
@@ -600,8 +600,7 @@ class WorkspaceController extends AbstractModuleController
         string $subject,
         string $subjectType,
         string $role,
-    ): void
-    {
+    ): void {
         $contentRepositoryId = SiteDetectionResult::fromRequest($this->request->getHttpRequest())->contentRepositoryId;
         $userCanManageWorkspace = $this->authorizationService->getWorkspacePermissions(
             $contentRepositoryId,
@@ -651,8 +650,7 @@ class WorkspaceController extends AbstractModuleController
         string $subjectType,
         string $subjectLabel,
         string $roleLabel,
-    ): void
-    {
+    ): void {
         $contentRepositoryId = SiteDetectionResult::fromRequest($this->request->getHttpRequest())->contentRepositoryId;
         $workspaceMetadata = $this->workspaceService->getWorkspaceMetadata($contentRepositoryId, $workspaceName);
 
