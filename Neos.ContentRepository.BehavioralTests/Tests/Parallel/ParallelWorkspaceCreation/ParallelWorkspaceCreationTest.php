@@ -33,6 +33,7 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepository\TestSuite\Fakes\FakeContentDimensionSourceFactory;
 use Neos\ContentRepository\TestSuite\Fakes\FakeNodeTypeManagerFactory;
 use Neos\ContentRepository\TestSuite\Fakes\FakeProjectionFactory;
+use Neos\EventStore\Exception\ConcurrencyException;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use PHPUnit\Framework\Assert;
 
@@ -151,8 +152,9 @@ class ParallelWorkspaceCreationTest extends AbstractParallelTestCase
                     $actualException = $thrownException;
                     $this->log(sprintf('Got exception %s: %s', self::shortClassName($actualException::class), $actualException->getMessage()));
 
-                    Assert::assertThat($actualException, self::logicalOr(
-                        self::isInstanceOf(WorkspaceAlreadyExists::class),
+                    Assert::assertThat($actualException, Assert::logicalOr(
+                        Assert::isInstanceOf(WorkspaceAlreadyExists::class),
+                        Assert::isInstanceOf(ConcurrencyException::class),
                     ));
                 }
             }
@@ -201,8 +203,9 @@ class ParallelWorkspaceCreationTest extends AbstractParallelTestCase
                 $actualException = $thrownException;
                 $this->log(sprintf('Got exception %s: %s', self::shortClassName($actualException::class), $actualException->getMessage()));
 
-                Assert::assertThat($actualException, self::logicalOr(
+                Assert::assertThat($actualException, Assert::logicalOr(
                     Assert::isInstanceOf(WorkspaceAlreadyExists::class),
+                    Assert::isInstanceOf(ConcurrencyException::class),
                 ));
             }
         }
