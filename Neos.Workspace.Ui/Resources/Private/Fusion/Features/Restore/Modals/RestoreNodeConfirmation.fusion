@@ -29,14 +29,7 @@ prototype(Neos.Workspace.Ui:Component.Modal.RestoreNodeConfirmation) < prototype
   renderer = afx`
     <div popover class="success" id={private.popoverId}>
       <header>
-        <button
-          type="button"
-          class="neos-close neos-button"
-          popovertarget={private.popoverId}
-          popovertargetaction="close"
-        >
-          <Neos.Workspace.Ui:Component.Icon icon="times"/>
-        </button>
+        <Neos.Workspace.Ui:Component.Popover.CloseButton id={private.popoverId}/>
         <div class="neos-header">
           <i class="fa-solid fa-circle-question"></i>
           <span> {private.i18n.id('restore.dialog.restore.title')}</span>

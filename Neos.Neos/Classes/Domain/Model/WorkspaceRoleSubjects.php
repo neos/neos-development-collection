@@ -16,13 +16,17 @@ use Neos\Flow\Annotations as Flow;
 final readonly class WorkspaceRoleSubjects implements \IteratorAggregate, \Countable
 {
     /**
-     * @var array<WorkspaceRoleSubject>
+     * @var array<string, WorkspaceRoleSubject>
      */
     private array $subjects;
 
     private function __construct(WorkspaceRoleSubject ...$subjects)
     {
-        $this->subjects = $subjects;
+        $newSubjects = [];
+        foreach ($subjects as $subject) {
+            $newSubjects[$subject->getHash()] = $subject;
+        }
+        $this->subjects = $newSubjects;
     }
 
     /**
@@ -40,11 +44,16 @@ final readonly class WorkspaceRoleSubjects implements \IteratorAggregate, \Count
 
     public function getIterator(): \Traversable
     {
-        yield from $this->subjects;
+        yield from array_values($this->subjects);
     }
 
     public function count(): int
     {
         return count($this->subjects);
+    }
+
+    public function difference(self $other): self
+    {
+        return self::fromArray(array_diff_key($this->subjects, $other->subjects));
     }
 }

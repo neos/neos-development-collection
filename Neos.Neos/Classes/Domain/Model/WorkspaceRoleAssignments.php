@@ -126,4 +126,14 @@ final readonly class WorkspaceRoleAssignments implements \IteratorAggregate, \Co
     {
         return new self(...[...$this->assignments, $assignment]);
     }
+
+    public function getSubjects(): WorkspaceRoleSubjects
+    {
+        return WorkspaceRoleSubjects::fromArray(
+            array_map(
+                static fn(WorkspaceRoleAssignment $assignment) => $assignment->subject,
+                $this->assignments
+            )
+        );
+    }
 }

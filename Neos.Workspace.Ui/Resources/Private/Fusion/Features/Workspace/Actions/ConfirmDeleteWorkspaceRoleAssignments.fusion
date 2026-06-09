@@ -1,0 +1,10 @@
+Neos.Workspace.Ui.WorkspaceController.confirmDeleteWorkspaceRoleAssignment = Neos.Fusion:Component {
+  /// \Neos\Workspace\Ui\ViewModel\ConfirmDeleteWorkspaceRoleAssignmentFormData
+  confirmDeleteWorkspaceRoleAssignmentFormData = ${confirmDeleteWorkspaceRoleAssignmentFormData}
+
+  renderer = afx`
+    <Neos.Workspace.Ui:Component.Modal.ConfirmDeleteWorkspaceRoleAssignment
+      formData={props.confirmDeleteWorkspaceRoleAssignmentFormData}
+    />
+  `
+}

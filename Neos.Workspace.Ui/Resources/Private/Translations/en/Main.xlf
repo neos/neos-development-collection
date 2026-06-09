@@ -8,6 +8,9 @@
       <trans-unit id="cancel" xml:space="preserve">
 				<source>Cancel</source>
 			</trans-unit>
+      <trans-unit id="close" xml:space="preserve">
+				<source>Close</source>
+			</trans-unit>
       <trans-unit id="applyChanges" xml:space="preserve">
 				<source>Apply changes</source>
 			</trans-unit>
@@ -54,6 +57,39 @@
       <trans-unit id="workspaces.rebaseWorkspace" xml:space="preserve">
 				<source>Sync workspace "{0}" with its base workspace</source>
 			</trans-unit>
+      <trans-unit id="workspaces.editWorkspaceRoleAssignments" xml:space="preserve">
+				<source>Edit workspace permissions for "{workspace}"</source>
+			</trans-unit>
+      <trans-unit id="workspaces.noPermissionToManageRoleAssignments" xml:space="preserve">
+				<source>You have no permission to edit the permissions of workspace "{workspace}".</source>
+			</trans-unit>
+       <trans-unit id="workspaces.createWorkspaceGroupRoleAssignment" xml:space="preserve">
+				<source>Add group permission for workspace "{workspace}"</source>
+			</trans-unit>
+       <trans-unit id="workspaces.createWorkspaceUserRoleAssignment" xml:space="preserve">
+				<source>Add user permission for workspace "{workspace}"</source>
+			</trans-unit>
+       <trans-unit id="workspaces.createWorkspaceRoleAssignment.confirm" xml:space="preserve">
+				<source>Add permission</source>
+			</trans-unit>
+       <trans-unit id="workspaces.deleteWorkspaceRoleAssignment.header" xml:space="preserve">
+				<source>Remove permission from workspace "{workspace}"</source>
+			</trans-unit>
+      <trans-unit id="workspaces.deleteWorkspaceRoleAssignment.action" xml:space="preserve">
+				<source>Remove the permission for "{subject}" with the role "{role}" from workspace "{workspace}"</source>
+			</trans-unit>
+      <trans-unit id="workspaces.deleteWorkspaceRoleAssignment.message" xml:space="preserve">
+				<source>Do you really want to remove the permission for "{subject}" with the role "{role}" from workspace "{workspace}"?</source>
+			</trans-unit>
+      <trans-unit id="workspaces.deleteWorkspaceRoleAssignment.cancel" xml:space="preserve">
+				<source>Cancel</source>
+			</trans-unit>
+      <trans-unit id="workspaces.deleteWorkspaceRoleAssignment.confirm" xml:space="preserve">
+				<source>Remove</source>
+			</trans-unit>
+      <trans-unit id="workspaces.roleAssignmentCouldNotBeAdded" xml:space="preserve">
+        <source>The role could not be added.</source>
+      </trans-unit>
       <trans-unit id="workspaces.personalWorkspace" xml:space="preserve">
 				<source>Personal workspace</source>
 			</trans-unit>
@@ -81,6 +117,21 @@
       <trans-unit id="workspaces.workspace.owner" xml:space="preserve">
 				<source>Owner</source>
 			</trans-unit>
+      <trans-unit id="workspaces.workspace.visibility" xml:space="preserve" approved="yes">
+        <source>Visibility</source>
+      </trans-unit>
+      <trans-unit id="workspaces.workspace.visibility.private" xml:space="preserve" approved="yes">
+        <source>Private</source>
+      </trans-unit>
+      <trans-unit id="workspaces.workspace.visibility.private.help" xml:space="preserve" approved="no">
+        <source>Only the workspace owner can access and modify this workspace</source>
+      </trans-unit>
+      <trans-unit id="workspaces.workspace.visibility.shared" xml:space="preserve" approved="yes">
+        <source>Shared</source>
+      </trans-unit>
+      <trans-unit id="workspaces.workspace.visibility.shared.help" xml:space="preserve" approved="yes">
+        <source>Any logged in editor can see and modify this workspace.</source>
+      </trans-unit>
       <trans-unit id="workspaces.workspace.lastModified" xml:space="preserve">
 				<source>Last modified</source>
 			</trans-unit>
@@ -95,6 +146,45 @@
 			</trans-unit>
       <trans-unit id="workspaces.workspaceDoesNotExist" xml:space="preserve">
 				<source>Workspace "{0}" does not exist</source>
+			</trans-unit>
+      <trans-unit id="workspaces.workspace.workspaceRoleAssignment.subjectType" xml:space="preserve">
+				<source>Type</source>
+			</trans-unit>
+			<trans-unit id="workspaces.workspace.workspaceRoleAssignment.subjectType.label.GROUP" xml:space="preserve">
+        <source>Group</source>
+      </trans-unit>
+      <trans-unit id="workspaces.workspace.workspaceRoleAssignment.subjectType.label.USER" xml:space="preserve">
+        <source>User</source>
+      </trans-unit>
+      <trans-unit id="workspaces.workspace.workspaceRoleAssignment.subject" xml:space="preserve">
+				<source>Name</source>
+			</trans-unit>
+      <trans-unit id="workspaces.workspace.workspaceGroupRoleAssignment.subject" xml:space="preserve">
+				<source>Group</source>
+			</trans-unit>
+      <trans-unit id="workspaces.workspace.workspaceGroupRoleAssignment.default" xml:space="preserve">
+				<source>Select user group</source>
+			</trans-unit>
+      <trans-unit id="workspaces.workspace.workspaceUserRoleAssignment.subject" xml:space="preserve">
+				<source>User name</source>
+			</trans-unit>
+      <trans-unit id="workspaces.workspace.workspaceUserRoleAssignment.default" xml:space="preserve">
+				<source>Select user</source>
+			</trans-unit>
+      <trans-unit id="workspaces.workspace.workspaceRoleAssignment.role" xml:space="preserve">
+				<source>Role</source>
+			</trans-unit>
+      <trans-unit id="workspaces.workspace.workspaceRoleAssignment.role.label.VIEWER" xml:space="preserve">
+        <source>Viewer</source>
+      </trans-unit>
+			<trans-unit id="workspaces.workspace.workspaceRoleAssignment.role.label.MANAGER" xml:space="preserve">
+        <source>Manager</source>
+      </trans-unit>
+      <trans-unit id="workspaces.workspace.workspaceRoleAssignment.role.label.COLLABORATOR" xml:space="preserve">
+        <source>Collaborator</source>
+      </trans-unit>
+      <trans-unit id="workspaces.workspace.workspaceRoleAssignment.actions" xml:space="preserve">
+				<source>Actions</source>
 			</trans-unit>
       <group id="workspaces.changes.new" restype="x-gettext-plurals">
         <trans-unit id="workspaces.changes.new[0]" xml:space="preserve">
@@ -120,21 +210,6 @@
           <source>{0} nodes were removed</source>
         </trans-unit>
       </group>
-      <trans-unit id="workspaces.workspace.visibility" xml:space="preserve">
-				<source>Visibility</source>
-			</trans-unit>
-      <trans-unit id="workspaces.workspace.visibility.private" xml:space="preserve">
-				<source>Private</source>
-			</trans-unit>
-      <trans-unit id="workspaces.workspace.visibility.private.help" xml:space="preserve">
-				<source>Only the workspace owner can access and modify this workspace</source>
-			</trans-unit>
-      <trans-unit id="workspaces.workspace.visibility.shared" xml:space="preserve">
-				<source>Shared</source>
-			</trans-unit>
-      <trans-unit id="workspaces.workspace.visibility.shared.help" xml:space="preserve">
-				<source>Any logged in editor can see and modify this workspace.</source>
-			</trans-unit>
       <trans-unit id="workspaces.workspace.status" xml:space="preserve">
 				<source>Status</source>
 			</trans-unit>
@@ -352,6 +427,18 @@
 			</trans-unit>
       <trans-unit id="workspaces.ForceRebaseWorkspaceFailed" xml:space="preserve">
 				<source>Forcing the sync has failed. Please try discarding your changes.</source>
+			</trans-unit>
+      <trans-unit id="workspace.permission.user.title" xml:space="preserve">
+				<source>User permissions</source>
+			</trans-unit>
+      <trans-unit id="workspaces.permission.noUserAssignmentsSet" xml:space="preserve">
+				<source>There are no user permissions for this workspace</source>
+			</trans-unit>
+      <trans-unit id="workspace.permission.group.title" xml:space="preserve">
+				<source>Group permissions</source>
+			</trans-unit>
+      <trans-unit id="workspaces.permission.noGroupAssignmentsSet" xml:space="preserve">
+				<source>There are no group permissions for this workspace</source>
 			</trans-unit>
       <trans-unit id="workspace.RestoreButtonTitle" xml:space="preserve">
 				<source>Show and restore deleted elements in workspace "{0}"</source>

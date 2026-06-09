@@ -1,0 +1,95 @@
+prototype(Neos.Workspace.Ui:Component.Modal.CreateGroupWorkspaceRoleAssignment) < prototype(Neos.Fusion:Component) {
+  workspaceName = ''
+  workspaceTitle = ''
+
+  options = ${[]}
+  roleOptions = ${[]}
+
+  @private {
+    i18n = ${I18n.id('').source('Main').package('Neos.Workspace.Ui')}
+    popoverId = 'create-workspace-group-role-assignment-popover'
+    assignmentPopoverId = 'workspace-edit-role-assignments-modal'
+  }
+
+  prototype(Neos.Fusion.Form:LabelRenderer) {
+    translationPackage = 'Neos.Workspace.Ui'
+    translationSource = 'Main'
+  }
+
+  prototype(Neos.Fusion.Form:Neos.BackendModule.FieldContainer) {
+    translation.label {
+      package = 'Neos.Workspace.Ui'
+      source = 'Main'
+    }
+  }
+  renderer = afx`
+    <div popover id={private.popoverId}>
+      <header>
+        <Neos.Workspace.Ui:Component.Popover.CloseButton id={private.popoverId}/>
+        <h3 class="neos-header">
+          {private.i18n.id('workspaces.createWorkspaceGroupRoleAssignment').arguments({workspace: props.workspaceTitle})}
+        </h3>
+      </header>
+      <Neos.Fusion.Form:Form
+        form.target.action="addWorkspaceRoleAssignment"
+        form.target.format="htmx"
+        attributes.hx-post={form.getTarget()}
+        attributes.hx-disabled-elt="find button"
+        attributes.hx-on--after-request={'document.getElementById("' + private.popoverId + '").hidePopover()'}
+        attributes.hx-select={"#"+ private.assignmentPopoverId}
+        attributes.hx-target={"#"+ private.assignmentPopoverId}
+        attributes.hx-swap="innerHTML"
+        attributes.class="neos-inline"
+      >
+        <section>
+          <fieldset>
+            <Neos.Fusion.Form:Hidden
+              field.name="workspaceName"
+              field.value={props.workspaceName}
+            />
+            <Neos.Fusion.Form:Hidden
+              field.name="subjectType"
+              field.value='GROUP'
+            />
+            <Neos.Fusion.Form:Neos.BackendModule.FieldContainer
+              field.name="subject"
+              field.value=""
+              label="workspaces.workspace.workspaceGroupRoleAssignment.subject"
+              class="neos-control-group"
+            >
+              <Neos.Fusion.Form:Select attributes.required="true">
+                <option value="">{private.i18n.id('workspaces.workspace.workspaceGroupRoleAssignment.default')}</option>
+                <Neos.Fusion:Loop items={props.options} itemName="name" itemKey="id">
+                  <Neos.Fusion.Form:Select.Option option.value={id}>
+                    {name}
+                  </Neos.Fusion.Form:Select.Option>
+                </Neos.Fusion:Loop>
+              </Neos.Fusion.Form:Select>
+            </Neos.Fusion.Form:Neos.BackendModule.FieldContainer>
+          </fieldset>
+          <fieldset>
+            <legend>{private.i18n.id('workspaces.workspace.workspaceRoleAssignment.role')}</legend>
+            <Neos.Fusion:Loop items={props.roleOptions} itemName="roleName" itemKey="roleIdentifier" iteratorName="iterator">
+              <Neos.Workspace.Ui:Component.Form.RadioInput
+                name="role"
+                value={roleIdentifier}
+                label={roleName}
+                checked={iterator.index == 0}
+              />
+            </Neos.Fusion:Loop>
+          </fieldset>
+        </section>
+        <footer>
+          <Neos.Workspace.Ui:Component.Button
+            label={private.i18n.id('close')}
+            attributes.popovertarget={private.popoverId}
+            attributes.popovertargetaction="close"
+          />
+          <Neos.Fusion.Form:Button attributes.class="neos-button neos-button-primary">
+            {private.i18n.id('workspaces.createWorkspaceRoleAssignment.confirm')}
+          </Neos.Fusion.Form:Button>
+        </footer>
+      </Neos.Fusion.Form:Form>
+    </div>
+  `
+}

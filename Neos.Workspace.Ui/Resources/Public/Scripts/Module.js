@@ -24,23 +24,30 @@ document.addEventListener('DOMContentLoaded', () => {
 	}
 
 	/**
-	 * Show flash messages after successful requests
+	 * Show flash messages after successful requests.
+	 * After notifying, ensure the notification container is shown in the browser top layer
+	 * so it remains visible above any open popovers. This must happen in afterRequest
+	 * (not afterSettle) because afterSettle fires before afterRequest — at settle time
+	 * NeosCMS.Notification hasn't added its elements to the container yet.
 	 */
 	htmx.on('htmx:afterRequest', /** @param {HtmxEvent} e */(e) => {
 		const flashMessagesJson = e.detail.xhr.getResponseHeader('X-Flow-FlashMessages');
-		if (!flashMessagesJson) {
-			return;
+		if (flashMessagesJson) {
+			/** @type Notification[] */
+			const flashMessages = JSON.parse(flashMessagesJson);
+			flashMessages.forEach(({severity, title, message}) => {
+				if (title) {
+					NeosCMS.Notification[severity.toLowerCase()](title, message);
+				} else {
+					NeosCMS.Notification[severity.toLowerCase()](message);
+				}
+			});
 		}
 
-		/** @type Notification[] */
-		const flashMessages = JSON.parse(flashMessagesJson);
-		flashMessages.forEach(({severity, title, message}) => {
-			if (title) {
-				NeosCMS.Notification[severity.toLowerCase()](title, message);
-			} else {
-				NeosCMS.Notification[severity.toLowerCase()](message);
-			}
-		});
+		const container = document.getElementById('neos-notification-container');
+		if (container && container.children.length > 0) {
+			try { container.showPopover(); } catch (e) { /* already open */ }
+		}
 	});
 
 	/**

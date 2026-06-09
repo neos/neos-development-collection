@@ -1,8 +1,8 @@
-.workspace-table {
+/** Abstract table class for tables in the workspace module */
+.workspace-ui-table {
   --column-color: var(--grayMedium);
   --indent-level: 0;
 
-  margin-top: 1em;
   border-spacing: 0;
   position: relative;
   width: 100%;
@@ -55,7 +55,7 @@ td.workspace-label-column .fas {
 
 td.workspace-action-column {
   background-color: var(--grayMedium);
-  width: 1%;
+  width: 1px;
   white-space: nowrap;
 }
 
@@ -83,6 +83,9 @@ td.workspace-action-column {
   cursor: pointer;
   outline: none;
   color: var(--textOnGray);
+  display: flex;
+  align-items: center;
+  gap: 1ch;
 }
 
 .icon--secondary {
@@ -155,22 +158,77 @@ button .icon:not(:last-child) {
   backdrop-filter: blur(3px);
 }
 
-[popover] {
+/**
+ * The flash message container uses popover="manual" to sit in the browser top layer
+ * so it renders above other popovers. Reset the generic popover visual defaults since
+ * the individual .neos-notification elements carry their own styling.
+ */
+#neos-notification-container[popover] {
+  background: transparent;
+  border: none;
+  padding: 0;
+  margin: 0;
+  inset: auto;
+  top: 0;
+  right: 0;
+  left: auto;
+  bottom: auto;
+}
+
+#neos-notification-container[popover]::backdrop {
+  display: none;
+}
+
+.neos.neos-module [popover] {
   header {
     font-size: calc(var(--generalFontSize) + 2px);
     margin: var(--defaultMargin);
+    /* Additional margin to have space for the close button */
+    margin-right: var(--wideMargin);
     line-height: calc(var(--generalFontSize) + 4px);
     box-sizing: border-box;
+  }
+
+  /* Adapted from Neos modal styles which had conflicts with the native popover styles */
+  .neos-header {
+    font-size: 16px;
+    line-height: calc(var(--unit) / 2);
+    box-sizing: border-box;
+    font-weight: normal;
   }
 
   section {
     margin: var(--defaultMargin);
     color: var(--textSubtleLight);
+    display: flex;
+    flex-direction: column;
+    gap: 0.5em;
+    align-items: flex-start;
+  }
+
+  table {
+    color: var(--textOnGray);
   }
 
   form {
-    width: 400px;
+    display: block;
     max-width: 90vw;
+  }
+
+  .neos-radio {
+    color: var(--textOnGray);
+    cursor: pointer;
+  }
+
+  fieldset {
+    padding: 0;
+  }
+
+  legend {
+    font-size: var(--generalFontSize);
+    line-height: 100%;
+    padding: 0;
+    margin-bottom: var(--spacing-Half);
   }
 
   .neos-close {
@@ -463,33 +521,6 @@ tr.neos-change + tr.neos-change td.neos-content-change {
 }
 
 #nodes-table {
-  --column-color: var(--grayMedium);
-  --indent-level: 0;
-
-  margin-top: 1em;
-  border-spacing: 0;
-  position: relative;
-  width: 100%;
-
-  th {
-    padding: 0.5em;
-    position: sticky;
-    top: 40px;
-    user-select: none;
-    background: var(--grayDark);
-    border-bottom: 1px solid var(--grayDark);
-    z-index: 1;
-  }
-
-  td {
-    padding: 0 0.5em;
-    border-top: 1px solid var(--grayDark);
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    background-color: var(--column-color);
-    min-height: 40px;
-  }
   td.node-information {
     padding: 0.5em 0.5em;
   }
@@ -513,4 +544,25 @@ tr.neos-change + tr.neos-change td.neos-content-change {
     margin-left: 20px;
     margin-bottom: 4px
   }
+}
+
+/**
+ * Role assignment modal styles
+ */
+#workspace-edit-role-assignments-modal {
+  min-width: 50vw;
+
+  label i {
+    margin-right: 7px;
+  }
+
+  h4 {
+    display: flex;
+    gap: 1ch;
+    color: var(--textOnGray);
+  }
+}
+
+.role-assignments-table {
+  width: 100%;
 }

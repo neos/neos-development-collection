@@ -11,8 +11,6 @@ prototype(Neos.Workspace.Ui:Component.Modal.Edit) < prototype(Neos.Fusion:Compon
   workspaceHasChanges = false
   /// array<workspaceName: string, workspaceTitle: string>
   baseWorkspaceOptions = ${[]}
-  /// boolean
-  isShared = false
 
   @private {
     i18n = ${I18n.id('').source('Main').package('Neos.Workspace.Ui')}
@@ -35,14 +33,7 @@ prototype(Neos.Workspace.Ui:Component.Modal.Edit) < prototype(Neos.Fusion:Compon
   renderer = afx`
     <div popover id={private.popoverId}>
       <header>
-        <button
-          type="button"
-          class="neos-close neos-button"
-          popovertarget={private.popoverId}
-          popovertargetaction="close"
-        >
-          <Neos.Workspace.Ui:Component.Icon icon="times"/>
-        </button>
+        <Neos.Workspace.Ui:Component.Popover.CloseButton id={private.popoverId}/>
         <div class="neos-header">
           {private.i18n.id('workspaces.editWorkspace').arguments([props.workspaceTitle])}
         </div>
@@ -50,7 +41,6 @@ prototype(Neos.Workspace.Ui:Component.Modal.Edit) < prototype(Neos.Fusion:Compon
       <Neos.Fusion.Form:Form
         form.target.action="update"
         form.target.format="htmx"
-        form.data.visibility={props.isShared ? 'shared' : 'private'}
         attributes.class="neos-inline"
         attributes.hx-post={form.getTarget()}
         attributes.hx-disabled-elt="find button"
@@ -113,26 +103,6 @@ prototype(Neos.Workspace.Ui:Component.Modal.Edit) < prototype(Neos.Fusion:Compon
                 <Neos.Workspace.Ui:Component.Icon icon="exclamation-triangle" style={{ color: 'var(--warningText)' }}/>
                 {' '}
                 {private.i18n.id('workspaces.cantChangeBaseWorkspaceBecauseWorkspaceContainsChanges')}
-              </p>
-            </Neos.Fusion.Form:Neos.BackendModule.FieldContainer>
-
-            <Neos.Fusion.Form:Neos.BackendModule.FieldContainer
-              label="workspaces.workspace.visibility"
-              class="neos-control-group"
-              field.name="visibility"
-            >
-              <Neos.Fusion.Form:Radio field.value="shared">
-                {private.i18n.id('workspaces.workspace.visibility.shared').translate()}
-              </Neos.Fusion.Form:Radio>
-              <p>
-                {private.i18n.id('workspaces.workspace.visibility.shared.help')}
-              </p>
-              <br/>
-              <Neos.Fusion.Form:Radio field.value="private">
-                {private.i18n.id('workspaces.workspace.visibility.private').translate()}
-              </Neos.Fusion.Form:Radio>
-              <p>
-                {private.i18n.id('workspaces.workspace.visibility.private.help')}
               </p>
             </Neos.Fusion.Form:Neos.BackendModule.FieldContainer>
           </fieldset>

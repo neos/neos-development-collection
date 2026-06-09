@@ -12,29 +12,22 @@
 
 declare(strict_types=1);
 
-namespace Neos\Workspace\Ui\ViewModel\Workspace;
+namespace Neos\Workspace\Ui\ViewModel;
 
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\Flow\Annotations as Flow;
-use Neos\Neos\Domain\Model\WorkspaceDescription;
 use Neos\Neos\Domain\Model\WorkspaceTitle;
 
-/**
- * @internal for communication within the Workspace UI only
- */
 #[Flow\Proxy(false)]
-final readonly class EditWorkspaceFormData
+final readonly class ConfirmDeleteWorkspaceRoleAssignmentFormData
 {
-    /**
-     * @param array<string, string> $baseWorkspaceOptions Options for the baseWorkspace selector where the key is the workspace name and the value is the workspace title.
-     */
     public function __construct(
         public WorkspaceName $workspaceName,
         public WorkspaceTitle $workspaceTitle,
-        public WorkspaceDescription $workspaceDescription,
-        public bool $workspaceHasChanges,
-        public WorkspaceName $baseWorkspaceName,
-        public array $baseWorkspaceOptions,
+        public string $subjectValue,
+        public string $subjectType,
+        public string $subjectLabel,
+        public string $roleLabel,
     ) {
     }
 }

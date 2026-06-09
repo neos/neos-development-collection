@@ -104,7 +104,7 @@ Neos.Workspace.Ui.RestoreController.show = Neos.Fusion:Component {
               hx-push-url="true"
             >
               <div class="neos-search-bar neos-pull-right">
-                <button type="submit"  class="neos-button"><i class="fas fa-search"></i></button>
+                <button type="submit" class="neos-button"><i class="fas fa-search"></i></button>
                 <input
                   type="search"
                   name="moduleArguments[searchTerm]"
@@ -127,23 +127,25 @@ Neos.Workspace.Ui.RestoreController.show = Neos.Fusion:Component {
               </div>
             </form>
           </div>
-          <Neos.Workspace.Ui:Component.NodesTable
-            @if.hasListItems={props.restoreListItems}
-            restoreListItems={props.restoreListItems}
-            workspaceName={props.workspaceName}
-            sorting={props.sorting}
-            workspaceIsOutdated={props.workspaceIsOutdated}
-            enableRestoreButtons={props.enableRestoreButtons}
-            currentPage={props.currentPage}
-            searchTerm={props.searchTerm}
-          />
-          <Neos.Workspace.Ui:Component.Pagination
-            workspaceName={props.workspaceName}
-            pagination={props.pagination}
-            searchTerm={props.searchTerm}
-            sorting={props.sorting}
-          />
         </div>
+
+        <Neos.Workspace.Ui:Component.NodesTable
+          @if.hasListItems={props.restoreListItems}
+          restoreListItems={props.restoreListItems}
+          workspaceName={props.workspaceName}
+          sorting={props.sorting}
+          workspaceIsOutdated={props.workspaceIsOutdated}
+          enableRestoreButtons={props.enableRestoreButtons}
+          currentPage={props.currentPage}
+          searchTerm={props.searchTerm}
+        />
+        <Neos.Workspace.Ui:Component.Pagination
+          workspaceName={props.workspaceName}
+          pagination={props.pagination}
+          searchTerm={props.searchTerm}
+          sorting={props.sorting}
+        />
+
         <div @if.hasNoListItems={!props.restoreListItems}>
           <p>
             {props.searchTerm ? props.i18n.id('restore.noDeletedElementsForThisSearch') : props.i18n.id('restore.noDeletedElements')}

@@ -22,14 +22,7 @@ prototype(Neos.Workspace.Ui:Component.Modal.Create) < prototype(Neos.Fusion:Comp
   renderer = afx`
     <div popover id={private.popoverId}>
       <header>
-        <button
-          type="button"
-          class="neos-close neos-button"
-          popovertarget={private.popoverId}
-          popovertargetaction="close"
-        >
-          <Neos.Workspace.Ui:Component.Icon icon="times"/>
-        </button>
+        <Neos.Workspace.Ui:Component.Popover.CloseButton id={private.popoverId}/>
         <div class="neos-header">
           {private.i18n.id('workspaces.createNewWorkspace')}
         </div>
@@ -94,7 +87,7 @@ prototype(Neos.Workspace.Ui:Component.Modal.Create) < prototype(Neos.Fusion:Comp
                 {private.i18n.id('workspaces.workspace.visibility.shared').translate()}
               </Neos.Fusion.Form:Radio>
               <p>
-                {private.i18n.id('workspaces.workspace.visibility.shared.help')}
+                {private.i18n.id('workspaces.workspace.visibility.shared.help').translate()}
               </p>
               <br/>
               <Neos.Fusion.Form:Radio
@@ -104,7 +97,7 @@ prototype(Neos.Workspace.Ui:Component.Modal.Create) < prototype(Neos.Fusion:Comp
                 {private.i18n.id('workspaces.workspace.visibility.private').translate()}
               </Neos.Fusion.Form:Radio>
               <p>
-                {private.i18n.id('workspaces.workspace.visibility.private.help')}
+                {private.i18n.id('workspaces.workspace.visibility.private.help').translate()}
               </p>
             </Neos.Fusion.Form:Neos.BackendModule.FieldContainer>
           </fieldset>

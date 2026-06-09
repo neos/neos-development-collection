@@ -38,7 +38,7 @@ prototype(Neos.Workspace.Ui:Component.NodesTable) < prototype(Neos.Fusion:Compon
   }
 
   renderer = afx`
-    <table id="nodes-table" hx-swap-oob="true">
+    <table id="nodes-table" class="workspace-ui-table" hx-swap-oob="true">
       <thead>
       <tr>
         <th></th>

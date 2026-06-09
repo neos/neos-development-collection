@@ -10,7 +10,6 @@ Neos.Workspace.Ui.WorkspaceController.edit = Neos.Fusion:Component {
       baseWorkspaceName={props.editWorkspaceFormData.baseWorkspaceName.value}
       workspaceHasChanges={props.editWorkspaceFormData.workspaceHasChanges}
       baseWorkspaceOptions={props.editWorkspaceFormData.baseWorkspaceOptions}
-      isShared={props.editWorkspaceFormData.isShared}
     />
   `
 }
