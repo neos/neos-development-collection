@@ -43,10 +43,12 @@ use Neos\Flow\Package\PackageManager;
 use Neos\Flow\Property\PropertyMapper;
 use Neos\Flow\Security\Context;
 use Neos\Flow\Security\Policy\PolicyService;
+use Neos\Flow\Security\Policy\Role;
 use Neos\Fusion\View\FusionView;
 use Neos\Media\Domain\Model\AssetInterface;
 use Neos\Media\Domain\Model\ImageInterface;
 use Neos\Neos\Controller\Module\AbstractModuleController;
+use Neos\Neos\Domain\Model\User;
 use Neos\Neos\Domain\Model\UserId;
 use Neos\Neos\Domain\Model\WorkspaceClassification;
 use Neos\Neos\Domain\Model\WorkspaceDescription;
@@ -54,6 +56,7 @@ use Neos\Neos\Domain\Model\WorkspaceRole;
 use Neos\Neos\Domain\Model\WorkspaceRoleAssignment;
 use Neos\Neos\Domain\Model\WorkspaceRoleAssignments;
 use Neos\Neos\Domain\Model\WorkspaceRoleSubject;
+use Neos\Neos\Domain\Model\WorkspaceRoleSubjects;
 use Neos\Neos\Domain\Model\WorkspaceRoleSubjectType;
 use Neos\Neos\Domain\Model\WorkspaceTitle;
 use Neos\Neos\Domain\NodeLabel\NodeLabelGeneratorInterface;
@@ -550,10 +553,24 @@ class WorkspaceController extends AbstractModuleController
     {
         $contentRepositoryId = SiteDetectionResult::fromRequest($this->request->getHttpRequest())->contentRepositoryId;
         $workspaceMetadata = $this->workspaceService->getWorkspaceMetadata($contentRepositoryId, $workspaceName);
+        $workspaceRoleAssignments = $this->workspaceService->getWorkspaceRoleAssignments($contentRepositoryId, $workspaceName);
+        $users = $this->userService->getUsers()->toArray();
+        $usersById = array_reduce($users, static function (array $carry, User $user) {
+            $carry[$user->getId()->value] = $user->getLabel();
+            return $carry;
+        }, []);
+
+        $existingSubjects = $workspaceRoleAssignments->getSubjects();
+        $possibleSubjects = WorkspaceRoleSubjects::fromArray(
+            array_map(
+                static fn(User $user) => WorkspaceRoleSubject::createForUser($user->getId()),
+                $users
+            )
+        )->difference($existingSubjects);
 
         $userOptions = [];
-        foreach ($this->userService->getUsers()->toArray() as $user) {
-            $userOptions[$user->getId()->value] = $user->getLabel();
+        foreach ($possibleSubjects as $subject) {
+            $userOptions[$subject->value] = $usersById[$subject->value];
         }
         asort($userOptions, SORT_NATURAL | SORT_FLAG_CASE);
 
@@ -576,11 +593,27 @@ class WorkspaceController extends AbstractModuleController
     {
         $contentRepositoryId = SiteDetectionResult::fromRequest($this->request->getHttpRequest())->contentRepositoryId;
         $workspaceMetadata = $this->workspaceService->getWorkspaceMetadata($contentRepositoryId, $workspaceName);
-
+        $workspaceRoleAssignments = $this->workspaceService->getWorkspaceRoleAssignments(
+            $contentRepositoryId,
+            $workspaceName
+        );
         $rolesInSystem = $this->policyService->getRoles();
+        $rolesByIdentifier = array_reduce($rolesInSystem, static function (array $carry, Role $role) {
+            $carry[$role->getIdentifier()] = $role->getLabel();
+            return $carry;
+        }, []);
+
+        $existingSubjects = $workspaceRoleAssignments->getSubjects();
+        $possibleSubjects = WorkspaceRoleSubjects::fromArray(
+            array_map(
+                static fn(Role $role) => WorkspaceRoleSubject::createForGroup($role->getIdentifier()),
+                $rolesInSystem
+            )
+        )->difference($existingSubjects);
+
         $groupOptions = [];
-        foreach ($rolesInSystem as $role) {
-            $groupOptions[$role->getIdentifier()] = $role->getLabel();
+        foreach ($possibleSubjects as $subject) {
+            $groupOptions[$subject->value] = $rolesByIdentifier[$subject->value];
         }
         asort($groupOptions, SORT_NATURAL | SORT_FLAG_CASE);
 
