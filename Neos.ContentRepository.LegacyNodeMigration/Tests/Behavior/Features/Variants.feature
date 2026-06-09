@@ -10,6 +10,11 @@ Feature: Migrating nodes with content dimensions
     'Some.Package:Homepage':
       superTypes:
         'Neos.Neos:Site': true
+      properties:
+        'text':
+          type: string
+        'title':
+          type: string
     'Some.Package:Thing': {}
     """
     And using identifier "default", I define a content repository
@@ -104,3 +109,35 @@ Feature: Migrating nodes with content dimensions
       | NodeAggregateWasMoved               | {"nodeAggregateId": "a", "newParentNodeAggregateId": "b", "succeedingSiblingsForCoverage": [{"dimensionSpacePoint":{"language":"ch"},"nodeAggregateId":null}]}                                                                                                                    |
       | NodeSpecializationVariantWasCreated | {"nodeAggregateId": "a1", "sourceOrigin": {"language": "de"}, "specializationOrigin": {"language": "ch"}, "specializationSiblings": [{"dimensionSpacePoint":{"language": "ch"},"nodeAggregateId":null}]}                                                                          |
 
+
+  Scenario: A property emptied in a variant is unset instead of keeping the copied source value
+    # the "en" peer variant is created as a copy of its "de" source, so it starts with text="hallo".
+    # an emptied "en" value must be exported as a property to unset, otherwise the copied value survives.
+    When I have the following node data rows:
+      | Identifier    | Path             | Node Type             | Dimension Values     | Properties        |
+      | sites-node-id | /sites           | unstructured          |                      |                   |
+      | site-node-id  | /sites/test-site | Some.Package:Homepage | {"language": ["de"]} | {"text": "hallo"} |
+      | site-node-id  | /sites/test-site | Some.Package:Homepage | {"language": ["en"]} | {"text": ""}      |
+    And I run the event migration
+    Then I expect the following events to be exported
+      | Type                                | Payload                                                                                                                          |
+      | RootNodeAggregateWithNodeWasCreated | {"nodeAggregateId": "sites-node-id"}                                                                                             |
+      | NodeAggregateWithNodeWasCreated     | {"nodeAggregateId": "site-node-id", "originDimensionSpacePoint": {"language": "de"}, "initialPropertyValues": {"text": {"value": "hallo", "type": "string"}}} |
+      | NodePeerVariantWasCreated           | {"nodeAggregateId": "site-node-id", "sourceOrigin": {"language": "de"}, "peerOrigin": {"language": "en"}}                         |
+      | NodePropertiesWereSet               | {"nodeAggregateId": "site-node-id", "originDimensionSpacePoint": {"language": "en"}, "propertiesToUnset": ["text"]}               |
+
+  Scenario: A property absent from a variant's row is unset instead of keeping the copied source value
+    # the "en" peer variant copies "text" and "title" from its "de" source. its row overrides "text" but does not
+    # carry "title" at all, so the copied "title" must be unset rather than left to surface in "en".
+    When I have the following node data rows:
+      | Identifier    | Path             | Node Type             | Dimension Values     | Properties                               |
+      | sites-node-id | /sites           | unstructured          |                      |                                          |
+      | site-node-id  | /sites/test-site | Some.Package:Homepage | {"language": ["de"]} | {"text": "hallo", "title": "Startseite"} |
+      | site-node-id  | /sites/test-site | Some.Package:Homepage | {"language": ["en"]} | {"text": "hello"}                        |
+    And I run the event migration
+    Then I expect the following events to be exported
+      | Type                                | Payload                                                                                                                                                                                                            |
+      | RootNodeAggregateWithNodeWasCreated | {"nodeAggregateId": "sites-node-id"}                                                                                                                                                                               |
+      | NodeAggregateWithNodeWasCreated     | {"nodeAggregateId": "site-node-id", "originDimensionSpacePoint": {"language": "de"}, "initialPropertyValues": {"text": {"value": "hallo", "type": "string"}, "title": {"value": "Startseite", "type": "string"}}}   |
+      | NodePeerVariantWasCreated           | {"nodeAggregateId": "site-node-id", "sourceOrigin": {"language": "de"}, "peerOrigin": {"language": "en"}}                                                                                                           |
+      | NodePropertiesWereSet               | {"nodeAggregateId": "site-node-id", "originDimensionSpacePoint": {"language": "en"}, "propertyValues": {"text": {"value": "hello", "type": "string"}}, "propertiesToUnset": ["title"]}                              |

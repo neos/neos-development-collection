@@ -18,6 +18,7 @@ use Neos\ContentRepository\Core\Feature\Common\InterdimensionalSibling;
 use Neos\ContentRepository\Core\Feature\Common\InterdimensionalSiblings;
 use Neos\ContentRepository\Core\Feature\NodeCreation\Event\NodeAggregateWithNodeWasCreated;
 use Neos\ContentRepository\Core\Feature\NodeModification\Dto\PropertyValuesToWrite;
+use Neos\ContentRepository\Core\Feature\NodeModification\Dto\SerializedPropertyValues;
 use Neos\ContentRepository\Core\Feature\NodeModification\Event\NodePropertiesWereSet;
 use Neos\ContentRepository\Core\Feature\NodeMove\Event\NodeAggregateWasMoved;
 use Neos\ContentRepository\Core\Feature\NodeReferencing\Dto\SerializedNodeReferences;
@@ -291,7 +292,12 @@ final class EventExportProcessor implements ProcessorInterface
             $this->nodeReferencesWereSetEvents[] = new NodeReferencesWereSet($this->workspaceName, $this->contentStreamId, $nodeAggregateId, new OriginDimensionSpacePointSet([$originDimensionSpacePoint]), $serializedPropertyValuesAndReferences->references);
         }
 
-        $this->visitedNodes->add($nodeAggregateId, new DimensionSpacePointSet([$originDimensionSpacePoint->toDimensionSpacePoint()]), $nodeTypeName, $nodePath, $parentNodeAggregate->nodeAggregateId);
+        $this->visitedNodes->add($nodeAggregateId, new DimensionSpacePointSet([$originDimensionSpacePoint->toDimensionSpacePoint()]), $nodeTypeName, $nodePath, $parentNodeAggregate->nodeAggregateId, self::propertyNamesOf($serializedPropertyValuesAndReferences->serializedPropertyValues));
+    }
+
+    private static function propertyNamesOf(SerializedPropertyValues $serializedPropertyValues): PropertyNames
+    {
+        return PropertyNames::fromArray(array_keys($serializedPropertyValues->getPlainValues()));
     }
 
     /**
@@ -425,7 +431,26 @@ final class EventExportProcessor implements ProcessorInterface
             throw new MigrationException(sprintf('Node "%s" for dimension %s was already created previously', $nodeAggregateId->value, $originDimensionSpacePoint->toJson()), 1656057201);
         }
         $this->exportEvent($variantCreatedEvent);
-        if ($serializedPropertyValuesAndReferences->serializedPropertyValues->count() > 0) {
+
+        $sourceVariant = $variantSourceOriginDimensionSpacePoint !== null
+            ? $this->visitedNodes->getByNodeAggregateId($nodeAggregateId)->getVariant($variantSourceOriginDimensionSpacePoint)
+            : null;
+
+        // the variant event copied the full property set of its source dimension. unset every property this
+        // dimension's node data row does not set, so a copied-over value does not surface where the row left
+        // the property empty or did not carry it at all.
+        $ownPropertyNames = array_keys($serializedPropertyValuesAndReferences->serializedPropertyValues->getPlainValues());
+        $copiedPropertyNames = $sourceVariant?->propertyNames ?? PropertyNames::createEmpty();
+        $propertyNamesToUnset = [];
+        foreach ($copiedPropertyNames as $copiedPropertyName) {
+            if (!in_array($copiedPropertyName->value, $ownPropertyNames, true)) {
+                $propertyNamesToUnset[] = $copiedPropertyName;
+            }
+        }
+        $propertiesToUnset = PropertyNames::fromArray($propertyNamesToUnset);
+        if ($serializedPropertyValuesAndReferences->serializedPropertyValues->count() > 0
+            || !$propertiesToUnset->isEmpty()
+        ) {
             $this->exportEvent(
                 new NodePropertiesWereSet(
                     $this->workspaceName,
@@ -434,7 +459,7 @@ final class EventExportProcessor implements ProcessorInterface
                     $originDimensionSpacePoint,
                     $coveredDimensionSpacePoints,
                     $serializedPropertyValuesAndReferences->serializedPropertyValues,
-                    PropertyNames::createEmpty()
+                    $propertiesToUnset
                 )
             );
         }
@@ -443,10 +468,9 @@ final class EventExportProcessor implements ProcessorInterface
 
         // When we specialize/generalize, we create a node variant at exactly the same tree location as the source node
         // If the parent node aggregate id differs, we need to move the just created variant to the new location
-        $nodeAggregate = $this->visitedNodes->getByNodeAggregateId($nodeAggregateId);
         if (
-            $variantSourceOriginDimensionSpacePoint &&
-            !$parentNodeAggregate->nodeAggregateId->equals($nodeAggregate->getVariant($variantSourceOriginDimensionSpacePoint)->parentNodeAggregateId)
+            $sourceVariant !== null &&
+            !$parentNodeAggregate->nodeAggregateId->equals($sourceVariant->parentNodeAggregateId)
         ) {
             $this->exportEvent(new NodeAggregateWasMoved(
                 $this->workspaceName,
