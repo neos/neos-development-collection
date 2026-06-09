@@ -4,9 +4,6 @@ namespace Neos\Flow\Persistence\Doctrine\Migrations;
 use Doctrine\Migrations\AbstractMigration;
 use Doctrine\DBAL\Schema\Schema;
 
-/**
- * Migrates TYPO3CR NodeData entries from using serialized data to json encoded data and changes the field type to JSONB afterwards.
- */
 class Version20200101000000 extends AbstractMigration
 {
     /**
