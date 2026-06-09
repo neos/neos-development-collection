@@ -632,12 +632,24 @@ class WorkspaceController extends AbstractModuleController
             );
             $this->throwStatus(400, 'Invalid role');
         }
-        $workspaceRole = WorkspaceRole::from($role);
 
+        $workspaceRole = WorkspaceRole::from($role);
+        $roleAdded = false;
         if ($workspaceRoleSubjectType === WorkspaceRoleSubjectType::USER) {
-            $this->addUserRoleAssignment($workspaceName, $workspaceRoleSubject, $workspaceRole);
+            $user = $this->userService->findUserById(UserId::fromString($workspaceRoleSubject->value));
+            if ($user !== null) {
+                $workspaceRoleAssignment = WorkspaceRoleAssignment::createForUser(
+                    UserId::fromString($workspaceRoleSubject->value),
+                    $workspaceRole
+                );
+                $roleAdded = $this->addWorkspaceRoleAssignment($workspaceName, $workspaceRoleAssignment);
+            }
         } elseif ($workspaceRoleSubjectType === WorkspaceRoleSubjectType::GROUP) {
-            $this->addGroupRoleAssignment($workspaceName, $workspaceRoleSubject, $workspaceRole);
+            $workspaceRoleAssignment = WorkspaceRoleAssignment::createForGroup(
+                $workspaceRoleSubject->value,
+                $workspaceRole
+            );
+            $roleAdded = $this->addWorkspaceRoleAssignment($workspaceName, $workspaceRoleAssignment);
         } else {
             $this->addFlashMessage(
                 $this->getModuleLabel('workspaces.roleAssignmentCouldNotBeAdded'),
@@ -645,6 +657,15 @@ class WorkspaceController extends AbstractModuleController
                 Message::SEVERITY_ERROR
             );
             $this->throwStatus(400, 'Invalid subject type');
+        }
+
+        if (!$roleAdded) {
+            $this->addFlashMessage(
+                $this->getModuleLabel('workspaces.roleAssignmentCouldNotBeAdded'),
+                '',
+                Message::SEVERITY_ERROR
+            );
+            $this->throwStatus(400, 'Could not add role');
         }
         $this->forward('editWorkspaceRoleAssignments', null, null, ['workspaceName' => $workspaceName->value]);
     }
@@ -1536,31 +1557,27 @@ class WorkspaceController extends AbstractModuleController
             );
     }
 
-    private function addUserRoleAssignment(WorkspaceName $workspaceName, WorkspaceRoleSubject $subject, WorkspaceRole $role): void
+    private function addWorkspaceRoleAssignment(WorkspaceName $workspaceName, WorkspaceRoleAssignment $workspaceRoleAssignment): bool
     {
-        if ($this->userService->findUserById(UserId::fromString($subject->value)) === null) {
-            $this->addFlashMessage(
-                $this->getModuleLabel('workspaces.roleAssignmentCouldNotBeAdded'),
-                '',
-                Message::SEVERITY_ERROR
+        try {
+            // The assignment can fail when an assignment with the same subject already exists for the workspace
+            $this->workspaceService->assignWorkspaceRole(
+                SiteDetectionResult::fromRequest($this->request->getHttpRequest())->contentRepositoryId,
+                $workspaceName,
+                $workspaceRoleAssignment
             );
-            $this->throwStatus(400, 'Invalid user');
+        } catch (\Exception $e) {
+            $this->logger->error(
+                sprintf(
+                    'Failed to assign role %s to %s in workspace %s: %s',
+                    $workspaceRoleAssignment->role->value,
+                    $workspaceRoleAssignment->subject->value,
+                    $workspaceName->value,
+                    $e->getMessage()
+                )
+            );
+            return false;
         }
-
-        $this->workspaceService->assignWorkspaceRole(
-            SiteDetectionResult::fromRequest($this->request->getHttpRequest())->contentRepositoryId,
-            $workspaceName,
-            WorkspaceRoleAssignment::createForUser(UserId::fromString($subject->value), $role)
-        );
-    }
-
-    private function addGroupRoleAssignment(WorkspaceName $workspaceName, WorkspaceRoleSubject $subject, WorkspaceRole $role): void
-    {
-        // TODO check if group exists?
-        $this->workspaceService->assignWorkspaceRole(
-            SiteDetectionResult::fromRequest($this->request->getHttpRequest())->contentRepositoryId,
-            $workspaceName,
-            WorkspaceRoleAssignment::createForGroup($subject->value, $role)
-        );
+        return true;
     }
 }
