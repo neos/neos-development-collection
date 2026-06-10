@@ -144,18 +144,10 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
             sprintf('Create workspace %s with base %s', $command->workspaceName->value, $baseWorkspace->workspaceName->value)
         );
 
-        $workspaceStreamName = WorkspaceEventStreamName::fromWorkspaceName($command->workspaceName)->getEventStreamName();
-        $workspaceStream = $this->eventStore->load(
-            $workspaceStreamName,
-            EventStreamFilter::create(eventTypes:EventTypes::create(EventType::fromString('WorkspaceWasRemoved')))
-        );
-        $expectedWorkspaceStreamVersion = ExpectedVersion::NO_STREAM();
-        foreach ($workspaceStream->backwards()->limit(1) as $eventEnvelope) {
-            $expectedWorkspaceStreamVersion = ExpectedVersion::fromVersion($eventEnvelope->version);
-            break;
-        }
+        $workspaceStreamName = WorkspaceEventStreamName::fromWorkspaceName($command->workspaceName);
+        $expectedWorkspaceStreamVersion = $this->requireWorkspaceStreamVersionForCreation($workspaceStreamName);
         yield new EventsToPublish(
-            $workspaceStreamName,
+            $workspaceStreamName->getEventStreamName(),
             Events::with(
                 new WorkspaceWasCreated(
                     $command->workspaceName,
@@ -189,19 +181,10 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
             ExpectedVersion::NO_STREAM()
         );
 
-        $workspaceStreamName = WorkspaceEventStreamName::fromWorkspaceName($command->workspaceName)->getEventStreamName();
-        $workspaceStream = $this->eventStore->load(
-            $workspaceStreamName,
-            EventStreamFilter::create(eventTypes:EventTypes::create(EventType::fromString('WorkspaceWasRemoved')))
-        );
-        $expectedWorkspaceStreamVersion = ExpectedVersion::NO_STREAM();
-        foreach ($workspaceStream->backwards()->limit(1) as $eventEnvelope) {
-            $expectedWorkspaceStreamVersion = ExpectedVersion::fromVersion($eventEnvelope->version);
-            break;
-        }
-
+        $workspaceStreamName = WorkspaceEventStreamName::fromWorkspaceName($command->workspaceName);
+        $expectedWorkspaceStreamVersion = $this->requireWorkspaceStreamVersionForCreation($workspaceStreamName);
         yield new EventsToPublish(
-            $workspaceStreamName,
+            $workspaceStreamName->getEventStreamName(),
             Events::with(
                 new RootWorkspaceWasCreated(
                     $command->workspaceName,
@@ -931,5 +914,21 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
             }
             $nextBaseWorkspace = $this->requireBaseWorkspace($nextBaseWorkspace, $commandHandlingDependencies);
         }
+    }
+
+    /**
+     * The workspace stream version from the even-store. We cannot use the constant NO_STREAM() as we allow recreation of workspaces.
+     */
+    private function requireWorkspaceStreamVersionForCreation(WorkspaceEventStreamName $workspaceStreamName): ExpectedVersion
+    {
+        // If an event exists, the only valid last event is a removal, otherwise we are not allowed to recreate the workspace.
+        $workspaceStream = $this->eventStore->load(
+            $workspaceStreamName->getEventStreamName(),
+            EventStreamFilter::create(eventTypes:EventTypes::create(EventType::fromString('WorkspaceWasRemoved')))
+        );
+        foreach ($workspaceStream->backwards()->limit(1) as $eventEnvelope) {
+            return ExpectedVersion::fromVersion($eventEnvelope->version);
+        }
+        return ExpectedVersion::NO_STREAM();
     }
 }
