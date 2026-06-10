@@ -15,6 +15,7 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\Core\Projection\ContentGraph;
 
 use DateTimeImmutable;
+use Neos\ContentRepository\Core\SharedModel\Exception\LocalDateTimeException;
 
 /**
  * Creation and modification timestamps of a node
@@ -67,6 +68,18 @@ final readonly class Timestamps
         public ?DateTimeImmutable $lastModified,
         public ?DateTimeImmutable $originalLastModified,
     ) {
+        if ($this->created->getOffset() !== 0) {
+            throw LocalDateTimeException::becauseDateTimeIsLocal($this->created);
+        }
+        if ($this->originalCreated->getOffset() !== 0) {
+            throw LocalDateTimeException::becauseDateTimeIsLocal($this->originalCreated);
+        }
+        if ($this->lastModified !== null && $this->lastModified->getOffset() !== 0) {
+            throw LocalDateTimeException::becauseDateTimeIsLocal($this->lastModified);
+        }
+        if ($this->originalLastModified !== null && $this->originalLastModified->getOffset() !== 0) {
+            throw LocalDateTimeException::becauseDateTimeIsLocal($this->originalLastModified);
+        }
     }
 
     public static function create(
