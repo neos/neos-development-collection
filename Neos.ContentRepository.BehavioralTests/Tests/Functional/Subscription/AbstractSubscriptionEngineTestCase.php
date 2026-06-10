@@ -150,6 +150,10 @@ abstract class AbstractSubscriptionEngineTestCase extends TestCase // we don't u
 
     final protected function resetDatabase(Connection $connection, ContentRepositoryId $contentRepositoryId, bool $keepSchema): void
     {
+        // TODO use php api to reset when $keepSchema=true, but the subscriptions are not deleted from the database and just set to 0 and BOOTING
+        // $this->eventStore->reset();
+        // $this->subscriptionEngine->reset();
+
         $preDeleteStatement = match (true) {
             $connection->getDatabasePlatform() instanceof AbstractMySQLPlatform => 'SET FOREIGN_KEY_CHECKS = 0;',
             default => '',
