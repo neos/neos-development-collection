@@ -5,7 +5,7 @@
 __This repository is a **read-only subsplit** of a package that is part of the Neos project (learn more on `www.neos.io <https://www.neos.io/>`_).__
 
 This package provides a fusion preprocessor that expands a compact xml-ish syntax to pure fusion code. This allows
-to write compact components that do'nt need a seperate template file and enables unplanned extensibility for the defined
+to write compact components that don't need a separate template file and enables unplanned extensibility for the defined
 prototypes because the generated fusion-code can be overwritten and controlled from the outside if needed.
 
 ## Installation
@@ -40,7 +40,7 @@ prototype(Vendor.Site:Example) < prototype(Neos.Fusion:Component) {
 }
 ```
 
-Will be transpiled, parsed and then cached and evaluated as beeing equivalent to the following fusion-code
+Will be transpiled, parsed and then cached and evaluated as being equivalent to the following fusion-code
 
 ```
 prototype(Vendor.Site:Example) < prototype(Neos.Fusion:Component) {
@@ -73,7 +73,7 @@ prototype(Vendor.Site:Example) < prototype(Neos.Fusion:Component) {
 
 ## AFX Language Rules
 
-All whitepaces around the outer elements are ignored. Whitepaces that are connected to a newline are considered irrelevant and are ignored.
+All whitespaces around the outer elements are ignored. Whitespaces that are connected to a newline are considered irrelevant and are ignored.
 
 ### HTML-Tags (Tags without Namespace)
 
@@ -209,8 +209,8 @@ Neos.Fusion:Tag {
 }
 ```
 
-The `@key`-property of tag-children inside alters the name of the fusion-attribute to recive render the array-child into.
-If no `@key`-property is given `index_x` is used starting by `x=1`.
+The `@key`-property of a tag-child sets the name of the fusion property the child is rendered into.
+If no `@key`-property is given `index_x` is used starting at `x=1`.
 
 ```
 <Vendor.Site:Prototype @children="text">
@@ -235,7 +235,7 @@ Vendor.Site:Prototype {
 ```
 
 The `@path`-property of tag-children can be used to render a specific afx-child into the given fusion path
-instead of beeing included into the `content`. This allows to render AFX children into different props and
+instead of being included into the `content`. This allows to render AFX children into different props and
 to assign Fusion-prototypes to props.
 
 ```
@@ -263,13 +263,13 @@ Vendor.Site:Prototype {
 In general all meta-attributes start with an @-sign.
 
 The `@path`-attribute can be used to render a child node directly into the given path below the parent Fusion:Object
-instead of beeing included into the `content` property.
+instead of being included into the `content` property.
 
 The `@children`-attribute defined the property that is used to render the content/children of the current tag into.
 The default property name for the children is `content`.
 
 The `@key`-attribute can be used to define the property name of an item among its siblings if an array is rendered.
-If no `@key` is defined `index_x` is used starting at `x=1.
+If no `@key` is defined `index_x` is used starting at `x=1`.
 
 Attention: `@path`, `@children` and `@key` only support string-values and no expressions.
 
@@ -339,7 +339,7 @@ Neos.Fusion:Tag {
 ```
 ### HTML Comments
 
-AFX accepts html comments but they are not transpiled to any fusion. However if you are converting html to afx it is allowed to have comments inside and you can use comments for disabeling parts of your afx during testing.
+AFX accepts html comments but they are not transpiled to fusion. However if you are converting html to afx it is allowed to have comments inside and you can use comments for disabling parts of your afx during testing.
 
 ```
 foo<!-- comment -->bar
@@ -356,7 +356,7 @@ Neos.Fusion:Join {
 
 ### Rendering of Collections with `Neos.Fusion:Collection`
 
-For rendering of lists or menus a presentational-component usually will recieve arrays of
+For rendering of lists or menus a presentational-component usually will receive arrays of
 preprocessed data as prop. To iterate over such an array the `Neos.Fusion:Collection`
 can be used in afx.
 
