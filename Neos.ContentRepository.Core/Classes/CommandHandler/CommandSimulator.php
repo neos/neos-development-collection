@@ -13,13 +13,13 @@ use Neos\ContentRepository\Core\Feature\WorkspaceRebase\ConflictingEvents;
 use Neos\ContentRepository\Core\Feature\WorkspaceRebase\ConflictingEvent;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphProjectionInterface;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
-use Neos\EventStore\Helper\InMemoryEventStore;
-use Neos\EventStore\Model\Event\EventMetadata;
+use Neos\EventStore\Adapter\InMemoryEventStore;
 use Neos\EventStore\Model\Event\SequenceNumber;
 use Neos\EventStore\Model\Events;
 use Neos\EventStore\Model\EventStream\EventStreamInterface;
 use Neos\EventStore\Model\EventStream\ExpectedVersion;
 use Neos\EventStore\Model\EventStream\VirtualStreamName;
+use Psr\Clock\ClockInterface;
 
 /**
  * The CommandSimulator is used during the publishing process, for partial publishing and workspace rebasing.
@@ -55,7 +55,7 @@ final class CommandSimulator
         private readonly CommandBus $commandBus,
         private readonly WorkspaceName $workspaceNameToSimulateIn,
     ) {
-        $this->inMemoryEventStore = new InMemoryEventStore();
+        $this->inMemoryEventStore = new InMemoryEventStore(self::getFakeZeroClock());
         $this->conflictingEvents = new ConflictingEvents();
     }
 
@@ -161,5 +161,20 @@ final class CommandSimulator
     public function getConflictingEvents(): ConflictingEvents
     {
         return $this->conflictingEvents;
+    }
+
+    /**
+     * The recordedAt times generated during the simulation are not used as we upcast the events to domain events and recommit them
+     * {@see \Neos\ContentRepository\Core\Feature\WorkspaceCommandHandler::getCopiedEventsOfEventStream}
+     */
+    private static function getFakeZeroClock(): ClockInterface
+    {
+        return new class implements ClockInterface
+        {
+            public function now(): \DateTimeImmutable
+            {
+                return new \DateTimeImmutable('@0');
+            }
+        };
     }
 }
