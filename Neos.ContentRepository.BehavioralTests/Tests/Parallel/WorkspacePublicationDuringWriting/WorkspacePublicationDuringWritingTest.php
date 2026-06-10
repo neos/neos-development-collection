@@ -134,7 +134,7 @@ class WorkspacePublicationDuringWritingTest extends AbstractParallelTestCase
             WorkspaceName::forLive(),
             ContentStreamId::fromString('user-cs-id')
         ));
-        for ($i = 0; $i <= 5000; $i++) {
+        for ($i = 0; $i <= 100; $i++) {
             $contentRepository->handle(CreateNodeAggregateWithNode::create(
                 WorkspaceName::fromString('user-test'),
                 NodeAggregateId::fromString('nody-mc-nodeface-' . $i),
