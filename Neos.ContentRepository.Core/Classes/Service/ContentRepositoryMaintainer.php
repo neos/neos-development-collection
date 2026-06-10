@@ -150,6 +150,23 @@ final readonly class ContentRepositoryMaintainer implements ContentRepositorySer
     }
 
     /**
+     * Catchup all active subscriptions
+     *
+     * Allows explicit manual invocation for recovery
+     * All modifications via {@see ContentRepository::handle()} already trigger a catchup internally
+     * It cannot be 100% guaranteed that the commited events are catchup as they are two transactions by design
+     * A lost database connection or killed PHP process can result in the event-store being ahead.
+     */
+    public function catchupAllSubscriptions(\Closure|null $progressCallback = null): Error|null
+    {
+        $catchupResult = $this->subscriptionEngine->catchUpActive(progressCallback: $progressCallback, batchSize: self::REPLAY_BATCH_SIZE);
+        if ($catchupResult->errors !== null) {
+            return self::createErrorForReason('Catchup failed:', $catchupResult->errors);
+        }
+        return null;
+    }
+
+    /**
      * Reactivate a subscription
      *
      * The explicit catchup is only needed for subscriptions in the error or detached status with an advanced position.
