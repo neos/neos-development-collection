@@ -14,6 +14,8 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Core\SharedModel\Workspace;
 
+use Neos\EventStore\Model\Event\Version;
+
 /**
  * Workspace Read Model
  *
@@ -32,7 +34,8 @@ final readonly class Workspace
         public ?WorkspaceName $baseWorkspaceName,
         public ContentStreamId $currentContentStreamId,
         public WorkspaceStatus $status,
-        private bool $hasPublishableChanges
+        private bool $hasPublishableChanges,
+        public Version $version,
     ) {
         if ($this->isRootWorkspace() && $this->hasPublishableChanges) {
             throw new \InvalidArgumentException('Root workspaces cannot have changes', 1730371566);
@@ -47,9 +50,10 @@ final readonly class Workspace
         ?WorkspaceName $baseWorkspaceName,
         ContentStreamId $currentContentStreamId,
         WorkspaceStatus $status,
-        bool $hasPublishableChanges
+        bool $hasPublishableChanges,
+        Version $version,
     ): self {
-        return new self($workspaceName, $baseWorkspaceName, $currentContentStreamId, $status, $hasPublishableChanges);
+        return new self($workspaceName, $baseWorkspaceName, $currentContentStreamId, $status, $hasPublishableChanges, $version);
     }
 
     /**

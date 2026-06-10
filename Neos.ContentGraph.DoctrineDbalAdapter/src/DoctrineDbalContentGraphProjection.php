@@ -163,15 +163,15 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
             NodeSpecializationVariantWasCreated::class => $this->whenNodeSpecializationVariantWasCreated($event, $eventEnvelope),
             RootNodeAggregateDimensionsWereUpdated::class => $this->whenRootNodeAggregateDimensionsWereUpdated($event),
             RootNodeAggregateWithNodeWasCreated::class => $this->whenRootNodeAggregateWithNodeWasCreated($event, $eventEnvelope),
-            RootWorkspaceWasCreated::class => $this->whenRootWorkspaceWasCreated($event),
+            RootWorkspaceWasCreated::class => $this->whenRootWorkspaceWasCreated($event, $eventEnvelope),
             SubtreeWasTagged::class => $this->whenSubtreeWasTagged($event),
             SubtreeWasUntagged::class => $this->whenSubtreeWasUntagged($event),
-            WorkspaceBaseWorkspaceWasChanged::class => $this->whenWorkspaceBaseWorkspaceWasChanged($event),
+            WorkspaceBaseWorkspaceWasChanged::class => $this->whenWorkspaceBaseWorkspaceWasChanged($event, $eventEnvelope),
             WorkspaceRebaseFailed::class => $this->whenWorkspaceRebaseFailed($event),
-            WorkspaceWasCreated::class => $this->whenWorkspaceWasCreated($event),
-            WorkspaceWasDiscarded::class => $this->whenWorkspaceWasDiscarded($event),
-            WorkspaceWasPublished::class => $this->whenWorkspaceWasPublished($event),
-            WorkspaceWasRebased::class => $this->whenWorkspaceWasRebased($event),
+            WorkspaceWasCreated::class => $this->whenWorkspaceWasCreated($event, $eventEnvelope),
+            WorkspaceWasDiscarded::class => $this->whenWorkspaceWasDiscarded($event, $eventEnvelope),
+            WorkspaceWasPublished::class => $this->whenWorkspaceWasPublished($event, $eventEnvelope),
+            WorkspaceWasRebased::class => $this->whenWorkspaceWasRebased($event, $eventEnvelope),
             WorkspaceWasRemoved::class => $this->whenWorkspaceWasRemoved($event),
             default => null,
         };
@@ -669,9 +669,9 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
         );
     }
 
-    private function whenRootWorkspaceWasCreated(RootWorkspaceWasCreated $event): void
+    private function whenRootWorkspaceWasCreated(RootWorkspaceWasCreated $event, EventEnvelope $eventEnvelope): void
     {
-        $this->createWorkspace($event->workspaceName, null, $event->newContentStreamId);
+        $this->createWorkspace($event->workspaceName, null, $event->newContentStreamId, $eventEnvelope->version);
     }
 
     private function whenSubtreeWasTagged(SubtreeWasTagged $event): void
@@ -684,9 +684,9 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
         $this->removeSubtreeTag($event->contentStreamId, $event->nodeAggregateId, $event->affectedDimensionSpacePoints, $event->tag);
     }
 
-    private function whenWorkspaceBaseWorkspaceWasChanged(WorkspaceBaseWorkspaceWasChanged $event): void
+    private function whenWorkspaceBaseWorkspaceWasChanged(WorkspaceBaseWorkspaceWasChanged $event, EventEnvelope $eventEnvelope): void
     {
-        $this->updateBaseWorkspace($event->workspaceName, $event->baseWorkspaceName, $event->newContentStreamId);
+        $this->updateBaseWorkspace($event->workspaceName, $event->baseWorkspaceName, $event->newContentStreamId, $eventEnvelope->version);
     }
 
     private function whenWorkspaceRebaseFailed(WorkspaceRebaseFailed $event): void
@@ -698,24 +698,24 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
         $this->reopenContentStream($event->sourceContentStreamId);
     }
 
-    private function whenWorkspaceWasCreated(WorkspaceWasCreated $event): void
+    private function whenWorkspaceWasCreated(WorkspaceWasCreated $event, EventEnvelope $eventEnvelope): void
     {
-        $this->createWorkspace($event->workspaceName, $event->baseWorkspaceName, $event->newContentStreamId);
+        $this->createWorkspace($event->workspaceName, $event->baseWorkspaceName, $event->newContentStreamId, $eventEnvelope->version);
     }
 
-    private function whenWorkspaceWasDiscarded(WorkspaceWasDiscarded $event): void
+    private function whenWorkspaceWasDiscarded(WorkspaceWasDiscarded $event, EventEnvelope $eventEnvelope): void
     {
-        $this->updateWorkspaceContentStreamId($event->workspaceName, $event->newContentStreamId);
+        $this->updateWorkspaceContentStreamId($event->workspaceName, $event->newContentStreamId, $eventEnvelope->version);
     }
 
-    private function whenWorkspaceWasPublished(WorkspaceWasPublished $event): void
+    private function whenWorkspaceWasPublished(WorkspaceWasPublished $event, EventEnvelope $eventEnvelope): void
     {
-        $this->updateWorkspaceContentStreamId($event->sourceWorkspaceName, $event->newSourceContentStreamId);
+        $this->updateWorkspaceContentStreamId($event->sourceWorkspaceName, $event->newSourceContentStreamId, $eventEnvelope->version);
     }
 
-    private function whenWorkspaceWasRebased(WorkspaceWasRebased $event): void
+    private function whenWorkspaceWasRebased(WorkspaceWasRebased $event, EventEnvelope $eventEnvelope): void
     {
-        $this->updateWorkspaceContentStreamId($event->workspaceName, $event->newContentStreamId);
+        $this->updateWorkspaceContentStreamId($event->workspaceName, $event->newContentStreamId, $eventEnvelope->version);
     }
 
     private function whenWorkspaceWasRemoved(WorkspaceWasRemoved $event): void
