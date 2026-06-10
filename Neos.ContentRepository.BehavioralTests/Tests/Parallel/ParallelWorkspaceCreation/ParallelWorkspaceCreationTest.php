@@ -26,6 +26,7 @@ use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Command\CreateRootWork
 use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Command\CreateWorkspace;
 use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Exception\WorkspaceAlreadyExists;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
+use Neos\ContentRepository\Core\Service\ContentStreamPrunerFactory;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
@@ -162,6 +163,8 @@ class ParallelWorkspaceCreationTest extends AbstractParallelTestCase
             unlink(self::WRITING_IS_RUNNING_FLAG_PATH);
         }
 
+        $this->assertNoDanglingContentStreams();
+
         Assert::assertNotNull($actualException, 'Expected race condition during workspace creation');
 
         $this->log('1. workspace creation finished');
@@ -210,11 +213,27 @@ class ParallelWorkspaceCreationTest extends AbstractParallelTestCase
             }
         }
 
+        $this->assertNoDanglingContentStreams();
+
         Assert::assertNotNull($actualException, 'Expected race condition during workspace creation');
 
         $this->log('2. workspace creation finished');
 
         $workspace = $this->contentRepository->findWorkspaceByName($lastWorkspaceName);
         Assert::assertNotNull($workspace);
+    }
+
+    private function assertNoDanglingContentStreams(): void
+    {
+        $contentStreamPruner = $this->contentRepositoryRegistry->buildService($this->contentRepository->id, new ContentStreamPrunerFactory());
+        $lines = [];
+        $contentStreamPruner->outputStatus(function ($line = '') use (&$lines) {
+            $lines[] = $line;
+        });
+        Assert::assertSame(<<<MESSAGE
+        Okay. No dangling streams found
+        
+        Okay. No pruneable streams in the event stream
+        MESSAGE, join("\n", $lines));
     }
 }
