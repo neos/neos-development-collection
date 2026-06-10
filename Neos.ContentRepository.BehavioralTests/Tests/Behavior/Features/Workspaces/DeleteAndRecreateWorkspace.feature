@@ -71,3 +71,18 @@ Feature: Test for delete and recreate workspace
 
     Given I am in workspace "user-test" and dimension space point {}
     Then I expect node aggregate identifier "nody-mc-nodeface" to lead to node user-cs-identifier-new;nody-mc-nodeface;{}
+
+    # workspace is writeable (version checks work)
+    When the command CreateNodeAggregateWithNode is executed with payload:
+      | Key                       | Value                                    |
+      | workspaceName             | "user-test"                              |
+      | nodeAggregateId           | "sir-david-nodenborough"                 |
+      | nodeTypeName              | "Neos.ContentRepository.Testing:Content" |
+      | originDimensionSpacePoint | {}                                       |
+      | parentNodeAggregateId     | "lady-eleonode-rootford"                 |
+      | initialPropertyValues     | {"text": "New node"}                     |
+    # publish events that _actually_ are written on the workspace stream
+    When the command DiscardWorkspace is executed with payload:
+      | Key                | Value                          |
+      | workspaceName      | "user-test"                    |
+      | newContentStreamId | "user-cs-identifier-discarded" |
