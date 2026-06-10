@@ -139,4 +139,27 @@ final class ContentRepositoryMaintenanceCommandControllerTest extends AbstractSu
 
         $this->expectOkayStatus('Vendor.Package:SecondFakeProjection', SubscriptionStatus::ACTIVE, SequenceNumber::fromInteger(2));
     }
+
+    /** @test */
+    public function catchupOnAdvancedModifiedEventStore(): void
+    {
+        $this->fakeProjection->expects(self::once())->method('setUp');
+        $this->fakeProjection->expects(self::once())->method('apply');
+        $this->fakeProjection->expects(self::never())->method('resetState');
+        $this->fakeProjection->expects(self::any())->method('status')->willReturn(ProjectionStatus::ok());
+
+        $this->crController->setupCommand(contentRepository: $this->contentRepository->id->value, quiet: true);
+        self::assertEmpty($this->bufferedOutput->fetch());
+        $this->expectOkayStatus('contentGraph', SubscriptionStatus::ACTIVE, SequenceNumber::none());
+        $this->expectOkayStatus('Vendor.Package:FakeProjection', SubscriptionStatus::ACTIVE, SequenceNumber::none());
+        $this->expectOkayStatus('Vendor.Package:SecondFakeProjection', SubscriptionStatus::ACTIVE, SequenceNumber::none());
+
+        $this->commitExampleContentStreamEvent();
+
+        $this->subscriptionController->catchUpActiveCommand(contentRepository: $this->contentRepository->id->value, quiet: true);
+        self::assertEmpty($this->bufferedOutput->fetch());
+        $this->expectOkayStatus('contentGraph', SubscriptionStatus::ACTIVE, SequenceNumber::fromInteger(1));
+        $this->expectOkayStatus('Vendor.Package:FakeProjection', SubscriptionStatus::ACTIVE, SequenceNumber::fromInteger(1));
+        $this->expectOkayStatus('Vendor.Package:SecondFakeProjection', SubscriptionStatus::ACTIVE, SequenceNumber::fromInteger(1));
+    }
 }
