@@ -146,17 +146,21 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
 
         $workspaceStreamName = WorkspaceEventStreamName::fromWorkspaceName($command->workspaceName);
         $expectedWorkspaceStreamVersion = $this->requireWorkspaceStreamVersionForCreation($workspaceStreamName);
-        yield new EventsToPublish(
-            $workspaceStreamName->getEventStreamName(),
-            Events::with(
-                new WorkspaceWasCreated(
-                    $command->workspaceName,
-                    $command->baseWorkspaceName,
-                    $command->newContentStreamId,
-                )
-            ),
-            $expectedWorkspaceStreamVersion,
-        );
+        try {
+            yield new EventsToPublish(
+                $workspaceStreamName->getEventStreamName(),
+                Events::with(
+                    new WorkspaceWasCreated(
+                        $command->workspaceName,
+                        $command->baseWorkspaceName,
+                        $command->newContentStreamId,
+                    )
+                ),
+                $expectedWorkspaceStreamVersion,
+            );
+        } catch (ConcurrencyException) {
+            yield $this->removeContentStreamWithoutConstraintChecks($command->newContentStreamId);
+        }
     }
 
     /**
@@ -183,16 +187,20 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
 
         $workspaceStreamName = WorkspaceEventStreamName::fromWorkspaceName($command->workspaceName);
         $expectedWorkspaceStreamVersion = $this->requireWorkspaceStreamVersionForCreation($workspaceStreamName);
-        yield new EventsToPublish(
-            $workspaceStreamName->getEventStreamName(),
-            Events::with(
-                new RootWorkspaceWasCreated(
-                    $command->workspaceName,
-                    $command->newContentStreamId
-                )
-            ),
-            $expectedWorkspaceStreamVersion,
-        );
+        try {
+            yield new EventsToPublish(
+                $workspaceStreamName->getEventStreamName(),
+                Events::with(
+                    new RootWorkspaceWasCreated(
+                        $command->workspaceName,
+                        $command->newContentStreamId
+                    )
+                ),
+                $expectedWorkspaceStreamVersion,
+            );
+        } catch (ConcurrencyException) {
+            yield $this->removeContentStreamWithoutConstraintChecks($command->newContentStreamId);
+        }
     }
 
     private function handlePublishWorkspace(
