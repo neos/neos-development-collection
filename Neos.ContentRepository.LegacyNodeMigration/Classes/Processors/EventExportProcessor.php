@@ -68,9 +68,9 @@ final class EventExportProcessor implements ProcessorInterface
     private array $nodeReferencesWereSetEvents = [];
 
     /**
-     * @var SubtreeWasTagged[]
+     * @var array<int, array{nodeAggregateId: NodeAggregateId, originDimensionSpacePoint: OriginDimensionSpacePoint}>
      */
-    private array $subtreeWasTaggedEvents = [];
+    private array $pendingSubtreeWasTaggedEvents = [];
 
     private int $numberOfExportedEvents = 0;
 
@@ -113,8 +113,16 @@ final class EventExportProcessor implements ProcessorInterface
             $this->processNodeData($context, $nodeDataRow);
         }
         // Disable nodes, when the full import is done.
-        foreach ($this->subtreeWasTaggedEvents as $subtreeWasTaggedEvent) {
-            $this->exportEvent($subtreeWasTaggedEvent);
+        // The affected dimension space points are resolved only now, when all variants of each node aggregate
+        // are known, so a hidden variant does not disable variants of other dimensions created after it.
+        foreach ($this->pendingSubtreeWasTaggedEvents as $pendingSubtreeWasTaggedEvent) {
+            $this->exportEvent(new SubtreeWasTagged(
+                $this->workspaceName,
+                $this->contentStreamId,
+                $pendingSubtreeWasTaggedEvent['nodeAggregateId'],
+                $this->resolveAffectedDimensionSpacePoints($pendingSubtreeWasTaggedEvent['nodeAggregateId'], $pendingSubtreeWasTaggedEvent['originDimensionSpacePoint']),
+                NeosSubtreeTag::disabled()
+            ));
         }
         // Set References, now when the full import is done.
         foreach ($this->nodeReferencesWereSetEvents as $nodeReferencesWereSetEvent) {
@@ -134,6 +142,7 @@ final class EventExportProcessor implements ProcessorInterface
     {
         $this->visitedNodes = new VisitedNodeAggregates();
         $this->nodeReferencesWereSetEvents = [];
+        $this->pendingSubtreeWasTaggedEvents = [];
         $this->numberOfExportedEvents = 0;
         $this->eventFileResource = fopen('php://temp/maxmemory:5242880', 'rb+') ?: null;
         Assert::resource($this->eventFileResource, null, 'Failed to create temporary event file resource');
@@ -283,8 +292,9 @@ final class EventExportProcessor implements ProcessorInterface
         }
         // nodes are hidden via SubtreeWasTagged event
         if ($this->isNodeHidden($nodeDataRow)) {
-            // Put event at the end of the export, so variants created after this node are not disabled on variation
-            $this->subtreeWasTaggedEvents[] = new SubtreeWasTagged($this->workspaceName, $this->contentStreamId, $nodeAggregateId, $this->interDimensionalVariationGraph->getSpecializationSet($originDimensionSpacePoint->toDimensionSpacePoint(), true, $this->visitedNodes->alreadyVisitedOriginDimensionSpacePoints($nodeAggregateId)->toDimensionSpacePointSet()), NeosSubtreeTag::disabled());
+            // The event is built and exported at the end of the export (see run()), when all variants of the node
+            // aggregate are known, so the tag only affects the dimension space points this variant still covers then
+            $this->pendingSubtreeWasTaggedEvents[] = ['nodeAggregateId' => $nodeAggregateId, 'originDimensionSpacePoint' => $originDimensionSpacePoint];
         }
 
         if (!$serializedPropertyValuesAndReferences->references->isEmpty()) {
@@ -527,6 +537,30 @@ final class EventExportProcessor implements ProcessorInterface
 
         return false;
 
+    }
+
+    /**
+     * Resolves the dimension space points a (hidden) node variant still covers after all variants of its node
+     * aggregate have been processed.
+     *
+     * Each creation/variation event claims coverage of the specialization set of its origin, excluding the origins
+     * visited before it, and later events take over the dimension space points they claim. The final coverage of the
+     * tagged origin is therefore its own claim minus everything that variants visited after it claimed for themselves.
+     */
+    private function resolveAffectedDimensionSpacePoints(NodeAggregateId $nodeAggregateId, OriginDimensionSpacePoint $taggedOriginDimensionSpacePoint): DimensionSpacePointSet
+    {
+        $affectedDimensionSpacePoints = new DimensionSpacePointSet([]);
+        $previouslyVisitedDimensionSpacePoints = new DimensionSpacePointSet([]);
+        foreach ($this->visitedNodes->alreadyVisitedOriginDimensionSpacePoints($nodeAggregateId) as $visitedOriginDimensionSpacePoint) {
+            $claimedDimensionSpacePoints = $this->interDimensionalVariationGraph->getSpecializationSet($visitedOriginDimensionSpacePoint->toDimensionSpacePoint(), true, $previouslyVisitedDimensionSpacePoints);
+            if ($visitedOriginDimensionSpacePoint->equals($taggedOriginDimensionSpacePoint)) {
+                $affectedDimensionSpacePoints = $claimedDimensionSpacePoints;
+            } else {
+                $affectedDimensionSpacePoints = $affectedDimensionSpacePoints->getDifference($claimedDimensionSpacePoints);
+            }
+            $previouslyVisitedDimensionSpacePoints = $previouslyVisitedDimensionSpacePoints->getUnion(new DimensionSpacePointSet([$visitedOriginDimensionSpacePoint->toDimensionSpacePoint()]));
+        }
+        return $affectedDimensionSpacePoints;
     }
 
     private function isRootNodePath(string $path): bool
