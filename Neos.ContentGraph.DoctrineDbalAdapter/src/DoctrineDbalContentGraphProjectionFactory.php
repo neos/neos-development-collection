@@ -60,10 +60,6 @@ final class DoctrineDbalContentGraphProjectionFactory implements ContentGraphPro
                 $projectionFactoryDependencies->contentRepositoryId,
                 $this->dbal
             ),
-            new ProjectionContentGraph(
-                $this->dbal,
-                $tableNames
-            ),
             $tableNames,
             $dimensionSpacePointsRepository,
             $contentStreamLayerFinder,

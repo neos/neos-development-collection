@@ -26,6 +26,7 @@ use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\HierarchyRelationId;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\NodeRecord;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\NodeRelationAnchorPoint;
 use Neos\ContentGraph\DoctrineDbalAdapter\HierarchyRelationStatement;
+use Neos\ContentGraph\DoctrineDbalAdapter\HierarchyRelationViewStatement;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
@@ -41,13 +42,11 @@ use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
  */
 class ProjectionContentGraph
 {
-    private HierarchyRelationStatement $hierarchyRelationStatement;
-
     public function __construct(
         private readonly Connection $dbal,
         private readonly ContentGraphTableNames $tableNames,
+        private readonly HierarchyRelationStatement|HierarchyRelationViewStatement $hierarchyRelationStatement,
     ) {
-        $this->hierarchyRelationStatement = HierarchyRelationStatement::for($this->tableNames);
     }
 
     /**

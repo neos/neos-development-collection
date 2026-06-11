@@ -28,6 +28,7 @@ use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
 use Neos\ContentRepository\Core\EventStore\EventInterface;
 use Neos\ContentRepository\Core\EventStore\InitiatingEventMetadata;
 use Neos\ContentRepository\Core\Feature\Common\EmbedsContentStreamId;
+use Neos\ContentRepository\Core\Feature\Common\EmbedsWorkspaceName;
 use Neos\ContentRepository\Core\Feature\Common\InterdimensionalSiblings;
 use Neos\ContentRepository\Core\Feature\Common\PublishableToWorkspaceInterface;
 use Neos\ContentRepository\Core\Feature\ContentStreamClosing\Event\ContentStreamWasClosed;
@@ -94,16 +95,19 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
 
     private HierarchyRelationStatement $hierarchyRelationStatement;
 
+    private ProjectionContentGraph $projectionContentGraph;
+
     public function __construct(
         private readonly Connection $dbal,
         private readonly MysqlPlatformContentRepositoryLocker $contentRepositoryLocker,
-        private readonly ProjectionContentGraph $projectionContentGraph,
         private readonly ContentGraphTableNames $tableNames,
         private readonly DimensionSpacePointsRepository $dimensionSpacePointsRepository,
         private readonly ContentStreamLayerFinder $contentStreamLayerFinder,
         private readonly ContentGraphReadModelInterface $contentGraphReadModel
     ) {
-        $this->hierarchyRelationStatement = HierarchyRelationStatement::for($this->tableNames);
+        $this->hierarchyRelationStatement = HierarchyRelationStatement::for(
+            $this->tableNames
+        );
     }
 
     public function setUp(): void
@@ -129,7 +133,7 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
             ON {$this->tableNames->hierarchyRelation()} FOR EACH ROW
             BEGIN
                 IF NEW.contentstreamlayer = (
-                    SELECT l.contentstreamlayer FROM cr_default_p_graph_contentstreamlayer AS l
+                    SELECT l.contentstreamlayer FROM {$this->tableNames->contentStreamLayer()} AS l
                         INNER JOIN cr_default_p_graph_workspace AS w
                         ON l.contentStreamId = w.currentContentStreamId
                     WHERE w.name = 'live'
@@ -148,7 +152,7 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
             ON {$this->tableNames->hierarchyRelation()} FOR EACH ROW
             BEGIN
                 IF OLD.contentstreamlayer = (
-                    SELECT l.contentstreamlayer FROM cr_default_p_graph_contentstreamlayer AS l
+                    SELECT l.contentstreamlayer FROM {$this->tableNames->contentStreamLayer()} AS l
                         INNER JOIN cr_default_p_graph_workspace AS w
                         ON l.contentStreamId = w.currentContentStreamId
                     WHERE w.name = 'live'
@@ -194,6 +198,16 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
 
     public function apply(EventInterface $event, EventEnvelope $eventEnvelope): void
     {
+        if ($event instanceof EmbedsContentStreamId && $event instanceof EmbedsWorkspaceName) {
+            // General error: 1442 Can't update table 'cr_default_p_graph_hierarchyrelation_live' in stored function/trigger because it is already used by statement which invoked this stored function/trigger
+            $this->projectionContentGraph = $this->projectionContentGraph($event);
+        } else {
+            $this->projectionContentGraph = new ProjectionContentGraph(
+                $this->dbal,
+                $this->tableNames,
+                $this->hierarchyRelationStatement,
+            );
+        }
         match ($event::class) {
             ContentStreamWasClosed::class => $this->whenContentStreamWasClosed($event),
             ContentStreamWasCreated::class => $this->whenContentStreamWasCreated($event),
@@ -1358,5 +1372,28 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
         }
 
         return $highestHierarchyRelationId->next();
+    }
+
+    private function hierarchyRelationStatement(EmbedsWorkspaceName&EmbedsContentStreamId $event): HierarchyRelationStatement|HierarchyRelationViewStatement
+    {
+        if ($event->getWorkspaceName()->equals(WorkspaceName::forLive())) {
+            return HierarchyRelationViewStatement::for(
+                WorkspaceName::forLive(),
+                $this->tableNames
+            );
+        }
+        return HierarchyRelationStatement::for(
+            $this->tableNames
+        );
+    }
+
+    private function projectionContentGraph(EmbedsWorkspaceName&EmbedsContentStreamId $event): ProjectionContentGraph
+    {
+        return new ProjectionContentGraph(
+            $this->dbal,
+            $this->tableNames,
+            // $this->hierarchyRelationStatement,
+            $this->hierarchyRelationStatement($event)
+        );
     }
 }
