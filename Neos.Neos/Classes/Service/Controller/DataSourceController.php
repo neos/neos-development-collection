@@ -58,7 +58,7 @@ class DataSourceController extends AbstractServiceController
         }
 
         /** @var DataSourceInterface $dataSource */
-        $dataSource = new $dataSources[$dataSourceIdentifier]();
+        $dataSource = $this->objectManager->get($dataSources[$dataSourceIdentifier]);
         if (ObjectAccess::isPropertySettable($dataSource, 'controllerContext')) {
             ObjectAccess::setProperty($dataSource, 'controllerContext', $this->controllerContext);
         }
