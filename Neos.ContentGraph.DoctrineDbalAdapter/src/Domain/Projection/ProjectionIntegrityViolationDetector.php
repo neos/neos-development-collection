@@ -100,14 +100,13 @@ final class ProjectionIntegrityViolationDetector implements ProjectionIntegrityV
             ));
         }
 
-        // FIXME the violation does not consider multiple layers
         $hierarchyRelationsAppearingMultipleTimesStatement = <<<SQL
             SELECT
                 COUNT(*) as uniquenessCounter,
                 c.nodeaggregateid,
                 h.dimensionspacepointhash,
-                h.contentstreamlayer
-            FROM {$this->tableNames->hierarchyRelation()} AS h
+                h.contentstreamid
+            FROM {$this->allContentStreamHierarchiesSql()} AS h
                 LEFT JOIN {$this->tableNames->node()} p ON h.parentnodeanchor = p.relationanchorpoint
                 LEFT JOIN {$this->tableNames->node()} c ON h.childnodeanchor = c.relationanchorpoint
             WHERE
@@ -116,7 +115,7 @@ final class ProjectionIntegrityViolationDetector implements ProjectionIntegrityV
                 p.nodeaggregateid,
                 c.nodeaggregateid,
                 h.dimensionspacepointhash,
-                h.contentstreamlayer
+                h.contentstreamid
             HAVING uniquenessCounter > 1
         SQL;
         try {
