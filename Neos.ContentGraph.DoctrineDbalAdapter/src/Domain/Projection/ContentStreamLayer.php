@@ -13,7 +13,7 @@ final readonly class ContentStreamLayer
         public int $value
     ) {
         if ($value < 1) {
-            throw new \InvalidArgumentException('A ContentStreamLayer must be natural, got %d', $value);
+            throw new \InvalidArgumentException('A ContentStreamLayer must be not be smaller than 1, got %d', $value);
         }
     }
 
