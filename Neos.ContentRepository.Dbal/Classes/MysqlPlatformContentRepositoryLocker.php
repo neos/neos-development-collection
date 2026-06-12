@@ -14,10 +14,24 @@ use Doctrine\DBAL\Exception as DBALException;
  */
 final class MysqlPlatformContentRepositoryLocker
 {
+    /**
+     * @var array<string,true>
+     */
+    private static array $enabledForContentRepositories = [];
+
     private function __construct(
+        private ContentRepositoryId $contentRepositoryId,
         private string $crLockName,
         private Connection $dbal,
     ) {
+    }
+
+    /**
+     * @internal
+     */
+    public static function enableForContentRepository(ContentRepositoryId $contentRepositoryId): void
+    {
+        self::$enabledForContentRepositories[$contentRepositoryId->value] = true;
     }
 
     public static function forContentRepositoryAndConnection(
@@ -25,6 +39,7 @@ final class MysqlPlatformContentRepositoryLocker
         Connection $connection,
     ): self {
         return new self(
+            contentRepositoryId: $contentRepositoryId,
             crLockName: sprintf('CR_%s', strtoupper($contentRepositoryId->value)),
             dbal: $connection,
         );
@@ -38,6 +53,9 @@ final class MysqlPlatformContentRepositoryLocker
      */
     public function acquireLock(int $timeoutInSeconds): void
     {
+        if (!isset(self::$enabledForContentRepositories[$this->contentRepositoryId->value])) {
+            return;
+        }
         try {
             $result = $this->dbal->executeQuery('SELECT GET_LOCK(:name, :timeoutInSeconds)', ['name' => $this->crLockName, 'timeoutInSeconds' => $timeoutInSeconds]);
         } catch (DBALException $exception) {
@@ -55,6 +73,9 @@ final class MysqlPlatformContentRepositoryLocker
      */
     public function releaseLock(): void
     {
+        if (!isset(self::$enabledForContentRepositories[$this->contentRepositoryId->value])) {
+            return;
+        }
         try {
             $this->dbal->executeStatement('SELECT RELEASE_LOCK(:name)', ['name' => $this->crLockName]);
         } catch (DBALException $exception) {
