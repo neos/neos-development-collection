@@ -163,7 +163,7 @@ final class ContentGraph implements ContentGraphInterface
     public function findNodeAggregateById(
         NodeAggregateId $nodeAggregateId
     ): ?NodeAggregate {
-        $queryBuilder = $this->nodeQueryBuilder->buildBasicNodeAggregateQuery()
+        $queryBuilder = $this->nodeQueryBuilder->buildBasicNodeAggregateQuery('nodeaggregateid = :nodeAggregateId')
             ->andWhere('n.nodeaggregateid = :nodeAggregateId')
             ->orderBy('n.relationanchorpoint', 'DESC')
             ->setParameters([
@@ -183,7 +183,7 @@ final class ContentGraph implements ContentGraphInterface
     public function findNodeAggregatesByIds(
         NodeAggregateIds $nodeAggregateIds
     ): NodeAggregates {
-        $queryBuilder = $this->nodeQueryBuilder->buildBasicNodeAggregateQuery()
+        $queryBuilder = $this->nodeQueryBuilder->buildBasicNodeAggregateQuery('nodeaggregateid IN (:nodeAggregateIds)')
             ->andWhere('n.nodeaggregateid in (:nodeAggregateIds)')
             ->orderBy('n.relationanchorpoint', 'DESC')
             ->setParameters([

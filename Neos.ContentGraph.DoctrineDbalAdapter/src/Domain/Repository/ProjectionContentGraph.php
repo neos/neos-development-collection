@@ -67,8 +67,8 @@ class ProjectionContentGraph
                 p.*, ph.subtreetags, dsp.dimensionspacepoint AS origindimensionspacepoint
             FROM
                 {$this->tableNames->node()} p
-                INNER JOIN {$this->hierarchyRelationStatement->where('h.dimensionspacepointhash = :coveredDimensionSpacePointHash')->toSql()} ph ON ph.childnodeanchor = p.relationanchorpoint
-                INNER JOIN {$this->hierarchyRelationStatement->where('h.dimensionspacepointhash = :coveredDimensionSpacePointHash')->toSql()} ch ON ch.parentnodeanchor = p.relationanchorpoint
+                INNER JOIN {$this->hierarchyRelationStatement->where('h.dimensionspacepointhash = :coveredDimensionSpacePointHash')->andInnerWhere('dimensionspacepointhash = :coveredDimensionSpacePointHash')->toSql()} ph ON ph.childnodeanchor = p.relationanchorpoint
+                INNER JOIN {$this->hierarchyRelationStatement->where('h.dimensionspacepointhash = :coveredDimensionSpacePointHash')->andInnerWhere('dimensionspacepointhash = :coveredDimensionSpacePointHash')->andInnerWhere('childnodeanchor IN (SELECT relationanchorpoint FROM ' . $this->tableNames->node() . ' WHERE nodeaggregateid = :childNodeAggregateId)')->toSql()} ch ON ch.parentnodeanchor = p.relationanchorpoint
                 INNER JOIN {$this->tableNames->node()} c ON ch.childnodeanchor = c.relationanchorpoint
                 INNER JOIN {$this->tableNames->dimensionSpacePoints()} dsp ON p.origindimensionspacepointhash = dsp.hash
             WHERE
@@ -101,7 +101,7 @@ class ProjectionContentGraph
                 n.*, h.subtreetags, dsp.dimensionspacepoint AS origindimensionspacepoint
             FROM
                 {$this->tableNames->node()} n
-                INNER JOIN {$this->hierarchyRelationStatement->where('h.dimensionspacepointhash = :dimensionSpacePointHash')->toSql()} h ON h.childnodeanchor = n.relationanchorpoint
+                INNER JOIN {$this->hierarchyRelationStatement->where('h.dimensionspacepointhash = :dimensionSpacePointHash')->andInnerWhere('childnodeanchor IN (SELECT relationanchorpoint FROM ' . $this->tableNames->node() . ' WHERE nodeaggregateid = :nodeAggregateId)')->toSql()} h ON h.childnodeanchor = n.relationanchorpoint
                 INNER JOIN {$this->tableNames->dimensionSpacePoints()} dsp ON n.origindimensionspacepointhash = dsp.hash
             WHERE
                 n.nodeaggregateid = :nodeAggregateId
@@ -131,7 +131,7 @@ class ProjectionContentGraph
                 DISTINCT n.relationanchorpoint
             FROM
                 {$this->tableNames->node()} n
-                INNER JOIN {$this->hierarchyRelationStatement->toSql()} AS h ON h.childnodeanchor = n.relationanchorpoint
+                INNER JOIN {$this->hierarchyRelationStatement->andInnerWhere('childnodeanchor IN (SELECT relationanchorpoint FROM ' . $this->tableNames->node() . ' WHERE nodeaggregateid = :nodeAggregateId)')->toSql()} AS h ON h.childnodeanchor = n.relationanchorpoint
             WHERE
                 n.nodeaggregateid = :nodeAggregateId
                 AND n.origindimensionspacepointhash = :originDimensionSpacePointHash
@@ -166,7 +166,7 @@ class ProjectionContentGraph
                 DISTINCT n.relationanchorpoint
             FROM
                 {$this->tableNames->node()} n
-                INNER JOIN {$this->hierarchyRelationStatement->toSql()} h ON h.childnodeanchor = n.relationanchorpoint
+                INNER JOIN {$this->hierarchyRelationStatement->andInnerWhere('childnodeanchor IN (SELECT relationanchorpoint FROM ' . $this->tableNames->node() . ' WHERE nodeaggregateid = :nodeAggregateId)')->toSql()} h ON h.childnodeanchor = n.relationanchorpoint
             WHERE
                 n.nodeaggregateid = :nodeAggregateId
         SQL;

@@ -173,7 +173,7 @@ final class ContentSubgraph implements ContentSubgraphInterface
 
     public function findNodeById(NodeAggregateId $nodeAggregateId): ?Node
     {
-        $queryBuilder = $this->nodeQueryBuilder->buildBasicNodeQuery($this->contentStreamLayers, $this->dimensionSpacePoint)
+        $queryBuilder = $this->nodeQueryBuilder->buildBasicNodeQuery($this->contentStreamLayers, $this->dimensionSpacePoint, 'n', 'n.*, h.subtreetags', 'nodeaggregateid = :nodeAggregateId')
             ->andWhere('n.nodeaggregateid = :nodeAggregateId')
             ->setParameter('nodeAggregateId', $nodeAggregateId->value);
         $this->addSubtreeTagConstraints($queryBuilder);
@@ -182,7 +182,7 @@ final class ContentSubgraph implements ContentSubgraphInterface
 
     public function findNodesByIds(NodeAggregateIds $nodeAggregateIds): Nodes
     {
-        $queryBuilder = $this->nodeQueryBuilder->buildBasicNodeQuery($this->contentStreamLayers, $this->dimensionSpacePoint)
+        $queryBuilder = $this->nodeQueryBuilder->buildBasicNodeQuery($this->contentStreamLayers, $this->dimensionSpacePoint, 'n', 'n.*, h.subtreetags', 'nodeaggregateid IN (:nodeAggregateIds)')
             ->andWhere('n.nodeaggregateid in (:nodeAggregateIds)')
             ->setParameter('nodeAggregateIds', $nodeAggregateIds->toStringArray(), ArrayParameterType::STRING);
         $this->addSubtreeTagConstraints($queryBuilder);

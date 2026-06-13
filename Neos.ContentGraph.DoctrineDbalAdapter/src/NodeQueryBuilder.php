@@ -44,13 +44,28 @@ final readonly class NodeQueryBuilder
         $this->hierarchyRelationStatement = HierarchyRelationStatement::for($this->tableNames);
     }
 
-    public function buildBasicNodeAggregateQuery(): QueryBuilder
+    /**
+     * @param string|null $childNodeAggregateAnchorPushdown an optional SQL predicate (referencing already-bound parameters)
+     *        that selects the node aggregate this query targets, e.g. 'nodeaggregateid = :nodeAggregateId'. When given, it is
+     *        pushed into the layer-resolution subquery as a childnodeanchor restriction so the GROUP BY only touches the
+     *        relations of that aggregate instead of the whole table. Safe because a relation always points at the same child
+     *        aggregate across all its layers (only the anchor value changes via copy-on-write, never the aggregate).
+     */
+    public function buildBasicNodeAggregateQuery(?string $childNodeAggregateAnchorPushdown = null): QueryBuilder
     {
         return $this->createQueryBuilder()
             ->select('n.*, h.subtreetags, dsp.dimensionspacepoint AS covereddimensionspacepoint')
             ->from($this->tableNames->node(), 'n')
-            ->innerJoin('n', $this->hierarchyRelationStatement->toSql(), 'h', 'h.childnodeanchor = n.relationanchorpoint')
+            ->innerJoin('n', $this->hierarchyRelationStatementWithChildAnchorPushdown($childNodeAggregateAnchorPushdown)->toSql(), 'h', 'h.childnodeanchor = n.relationanchorpoint')
             ->innerJoin('h', $this->tableNames->dimensionSpacePoints(), 'dsp', 'dsp.hash = h.dimensionspacepointhash');
+    }
+
+    private function hierarchyRelationStatementWithChildAnchorPushdown(?string $childNodeAggregateAnchorPushdown): HierarchyRelationStatement
+    {
+        if ($childNodeAggregateAnchorPushdown === null) {
+            return $this->hierarchyRelationStatement;
+        }
+        return $this->hierarchyRelationStatement->andInnerWhere('childnodeanchor IN (SELECT relationanchorpoint FROM ' . $this->tableNames->node() . ' WHERE ' . $childNodeAggregateAnchorPushdown . ')');
     }
 
     public function buildChildNodeAggregateQuery(NodeAggregateId $parentNodeAggregateId, ContentStreamLayers $contentStreamLayers): QueryBuilder
@@ -89,12 +104,12 @@ final readonly class NodeQueryBuilder
         return $queryBuilder;
     }
 
-    public function buildBasicNodeQuery(ContentStreamLayers $contentStreamLayers, DimensionSpacePoint $dimensionSpacePoint, string $nodeTableAlias = 'n', string $select = 'n.*, h.subtreetags'): QueryBuilder
+    public function buildBasicNodeQuery(ContentStreamLayers $contentStreamLayers, DimensionSpacePoint $dimensionSpacePoint, string $nodeTableAlias = 'n', string $select = 'n.*, h.subtreetags', ?string $childNodeAggregateAnchorPushdown = null): QueryBuilder
     {
         return $this->createQueryBuilder()
             ->select($select)
             ->from($this->tableNames->node(), $nodeTableAlias)
-            ->innerJoin($nodeTableAlias, $this->hierarchyRelationStatement->where('h.dimensionspacepointhash = :dimensionSpacePointHash')->toSql(), 'h', 'h.childnodeanchor = ' . $nodeTableAlias . '.relationanchorpoint')
+            ->innerJoin($nodeTableAlias, $this->hierarchyRelationStatementWithChildAnchorPushdown($childNodeAggregateAnchorPushdown)->where('h.dimensionspacepointhash = :dimensionSpacePointHash')->toSql(), 'h', 'h.childnodeanchor = ' . $nodeTableAlias . '.relationanchorpoint')
             ->setParameter('contentStreamLayers', $contentStreamLayers->toIntArray(), ArrayParameterType::INTEGER)
             ->setParameter('dimensionSpacePointHash', $dimensionSpacePoint->hash);
     }
