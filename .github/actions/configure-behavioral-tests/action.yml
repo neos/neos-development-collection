@@ -67,6 +67,20 @@ runs:
 
         cat <<EOF >> Configuration/Testing/Behat/Postgres/Objects.yaml
         # Note we configure the dbal adapter to run in a maria db
+        'Neos.ContentGraph.DoctrineDbalAdapter:VirtualConnection':
+          scope: singleton
+          className: 'Doctrine\DBAL\Connection'
+          factoryObjectName: 'Neos\ContentRepository\BehavioralTests\DBALConnectionFactory'
+          arguments:
+            1:
+              value:
+                host: '127.0.0.1'
+                port: 3306
+                dbname: 'flow_functional_testing'
+                driver: pdo_mysql
+                user: 'neos'
+                password: 'neos'
+
         Neos\ContentGraph\DoctrineDbalAdapter\DoctrineDbalContentGraphProjectionFactory:
           scope: singleton
           factoryObjectName: 'Neos\ContentRepositoryRegistry\Infrastructure\GenericObjectFactory'
@@ -74,17 +88,7 @@ runs:
             1:
               value: 'Neos\ContentGraph\DoctrineDbalAdapter\DoctrineDbalContentGraphProjectionFactory'
             2:
-              object:
-                factoryObjectName: 'Neos\ContentRepository\BehavioralTests\DBALConnectionFactory'
-                arguments:
-                  1:
-                    value:
-                      host: '127.0.0.1'
-                      port: 3306
-                      dbname: 'flow_functional_testing'
-                      driver: pdo_mysql
-                      user: 'neos'
-                      password: 'neos'
+              object: 'Neos.ContentGraph.DoctrineDbalAdapter:VirtualConnection'
 
         Neos\ContentRepository\Core\Projection\ContentGraph\ProjectionIntegrityViolationDetectionRunnerFactoryInterface:
           scope: singleton
@@ -93,15 +97,6 @@ runs:
             1:
               value: 'Neos\ContentGraph\DoctrineDbalAdapter\DoctrineDbalProjectionIntegrityViolationDetectionRunnerFactory'
             2:
-              object:
-                factoryObjectName: 'Neos\ContentRepository\BehavioralTests\DBALConnectionFactory'
-                arguments:
-                  1:
-                    value:
-                      host: '127.0.0.1'
-                      port: 3306
-                      dbname: 'flow_functional_testing'
-                      driver: pdo_mysql
-                      user: 'neos'
-                      password: 'neos'
+              object: 'Neos.ContentGraph.DoctrineDbalAdapter:VirtualConnection'
+
         EOF
