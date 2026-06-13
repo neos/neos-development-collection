@@ -75,7 +75,7 @@ runs:
             1:
               value:
                 host: '127.0.0.1'
-                port: 3306
+                port: 3307
                 dbname: 'flow_functional_testing'
                 driver: pdo_mysql
                 user: 'neos'
