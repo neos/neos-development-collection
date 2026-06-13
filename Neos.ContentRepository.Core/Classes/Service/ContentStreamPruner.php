@@ -30,6 +30,7 @@ use Neos\EventStore\Model\Event\EventTypes;
 use Neos\EventStore\Model\EventStream\EventStreamFilter;
 use Neos\EventStore\Model\EventStream\ExpectedVersion;
 use Neos\EventStore\Model\EventStream\VirtualStreamName;
+use Neos\EventStore\WithResetInterface;
 
 /**
  * For implementation details of the content stream states and removed state, see {@see ContentStreamForPruning}.
@@ -184,6 +185,10 @@ class ContentStreamPruner implements ContentRepositoryServiceInterface
      */
     public function pruneRemovedFromEventStream(\Closure $outputFn): void
     {
+        if (!$this->eventStore instanceof WithResetInterface) {
+            throw new \RuntimeException(sprintf('Reset is not supported of the event-store: "%s".', $this->eventStore::class), 1780779560);
+        }
+
         $allContentStreams = $this->findAllContentStreams();
 
         $pruneableContentStreams = $this->findRemovedContentStreamsThatAreUnused($allContentStreams);

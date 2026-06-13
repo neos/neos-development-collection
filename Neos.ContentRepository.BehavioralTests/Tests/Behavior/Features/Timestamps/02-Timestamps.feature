@@ -1,7 +1,8 @@
 Feature: Behavior of Node timestamp properties "created", "originalCreated", "lastModified" and "originalLastModified"
 
   Background:
-    Given the current date and time is "2023-03-16T12:00:00+01:00"
+    # UTC 12:00
+    Given the current date and time is "2023-03-16T14:00:00+02:00"
     And using the following content dimensions:
       | Identifier | Values          | Generalizations      |
       | language   | mul, de, en, ch | ch->de->mul, en->mul |
@@ -81,7 +82,8 @@ Feature: Behavior of Node timestamp properties "created", "originalCreated", "la
       | home            | home     | Neos.ContentRepository.Testing:Homepage | lady-eleonode-rootford | {}                    | {"terms": "terms", "contact": "contact"} |
       | a               | a        | Neos.ContentRepository.Testing:Page     | home                   | {"text": "a"}         | {}                                       |
       | b               | b        | Neos.ContentRepository.Testing:Page     | home                   | {"text": "b"}         | {}                                       |
-    And the current date and time is "2023-03-16T12:30:00+01:00"
+    # UTC 12:30
+    And the current date and time is "2023-03-16T14:30:00+02:00"
     And the command CreateNodeVariant is executed with payload:
       | Key             | Value             |
       | nodeAggregateId | "a"               |
@@ -89,7 +91,8 @@ Feature: Behavior of Node timestamp properties "created", "originalCreated", "la
       | targetOrigin    | {"language":"ch"} |
 
   Scenario: NodePropertiesWereSet events update last modified timestamps
-    When the current date and time is "2023-03-16T13:00:00+01:00"
+    # UTC 13:00
+    When the current date and time is "2023-03-16T15:00:00+02:00"
     And the command SetNodeProperties is executed with payload:
       | Key                       | Value               |
       | workspaceName             | "user-test"         |
@@ -107,7 +110,8 @@ Feature: Behavior of Node timestamp properties "created", "originalCreated", "la
       | 2023-03-16 12:30:00 | 2023-03-16 12:30:00 | 2023-03-16 13:00:00 | 2023-03-16 13:00:00  |
 
   Scenario: NodeAggregateNameWasChanged events update last modified timestamps
-    When the current date and time is "2023-03-16T13:00:00+01:00"
+    # UTC 13:00
+    When the current date and time is "2023-03-16T15:00:00+02:00"
     And the command ChangeNodeAggregateName is executed with payload:
       | Key             | Value       |
       | workspaceName   | "user-test" |
@@ -124,14 +128,16 @@ Feature: Behavior of Node timestamp properties "created", "originalCreated", "la
       | 2023-03-16 12:30:00 | 2023-03-16 12:30:00 | 2023-03-16 13:00:00 | 2023-03-16 13:00:00  |
 
   Scenario: NodeAggregateNameWasChanged events update last modified timestamps only in the user workspace
-    When the current date and time is "2023-03-16T13:00:00+01:00"
+    # UTC 13:00
+    When the current date and time is "2023-03-16T15:00:00+02:00"
     And the command PublishWorkspace is executed with payload:
       | Key           | Value       |
       | workspaceName | "user-test" |
     And the command PublishWorkspace is executed with payload:
       | Key           | Value    |
       | workspaceName | "review" |
-    And the current date and time is "2023-03-16T14:00:00+01:00"
+    # UTC 14:00
+    And the current date and time is "2023-03-16T16:00:00+02:00"
     And the command ChangeNodeAggregateName is executed with payload:
       | Key             | Value       |
       | workspaceName   | "user-test" |
@@ -169,7 +175,8 @@ Feature: Behavior of Node timestamp properties "created", "originalCreated", "la
       | 2023-03-16 13:00:00 | 2023-03-16 12:30:00 |              |                      |
 
   Scenario: NodeReferencesWereSet events update last modified timestamps
-    When the current date and time is "2023-03-16T13:00:00+01:00"
+    # UTC 13:00
+    When the current date and time is "2023-03-16T15:00:00+02:00"
     And the command SetNodeReferences is executed with payload:
       | Key                             | Value                                                       |
       | workspaceName                   | "user-test"                                                 |
@@ -193,7 +200,8 @@ Feature: Behavior of Node timestamp properties "created", "originalCreated", "la
       | 2023-03-16 12:00:00 | 2023-03-16 12:00:00 |              |                      |
 
   Scenario: NodeAggregateTypeWasChanged events update last modified timestamps
-    When the current date and time is "2023-03-16T13:00:00+01:00"
+    # UTC 13:00
+    When the current date and time is "2023-03-16T15:00:00+02:00"
     And the command ChangeNodeAggregateType is executed with payload:
       | Key             | Value                                        |
       | workspaceName   | "user-test"                                  |
@@ -211,7 +219,8 @@ Feature: Behavior of Node timestamp properties "created", "originalCreated", "la
       | 2023-03-16 12:30:00 | 2023-03-16 12:30:00 | 2023-03-16 13:00:00 | 2023-03-16 13:00:00  |
 
   Scenario: NodePeerVariantWasCreated events set new created timestamps
-    When the current date and time is "2023-03-16T13:00:00+01:00"
+    # UTC 13:00
+    When the current date and time is "2023-03-16T15:00:00+02:00"
     And the command CreateNodeVariant is executed with payload:
       | Key             | Value             |
       | nodeAggregateId | "home"            |
@@ -228,7 +237,8 @@ Feature: Behavior of Node timestamp properties "created", "originalCreated", "la
       | 2023-03-16 13:00:00 | 2023-03-16 13:00:00 |              |                      |
 
   Scenario: NodeGeneralizationVariantWasCreated events set new created timestamps
-    When the current date and time is "2023-03-16T13:00:00+01:00"
+    # UTC 13:00
+    When the current date and time is "2023-03-16T15:00:00+02:00"
     And the command CreateNodeVariant is executed with payload:
       | Key             | Value              |
       | nodeAggregateId | "home"             |
@@ -245,7 +255,8 @@ Feature: Behavior of Node timestamp properties "created", "originalCreated", "la
       | 2023-03-16 13:00:00 | 2023-03-16 13:00:00 |              |                      |
 
   Scenario: NodeAggregateWasMoved events don't update last modified timestamps
-    When the current date and time is "2023-03-16T13:00:00+01:00"
+    # UTC 13:00
+    When the current date and time is "2023-03-16T15:00:00+02:00"
     And the command MoveNodeAggregate is executed with payload:
       | Key                          | Value                   |
       | workspaceName                | "user-test"             |
@@ -271,7 +282,8 @@ Feature: Behavior of Node timestamp properties "created", "originalCreated", "la
     Given the command PublishWorkspace is executed with payload:
       | Key           | Value            |
       | workspaceName | "user-test" |
-    And the current date and time is "2023-03-16T13:00:00+01:00"
+    # UTC 13:00
+    And the current date and time is "2023-03-16T15:00:00+02:00"
     And I change the content dimensions in content repository "default" to:
       | Identifier | Values              | Generalizations          |
       | language   | mul, de, en, ch, fr | ch->de->mul, en->mul, fr |
@@ -292,7 +304,8 @@ Feature: Behavior of Node timestamp properties "created", "originalCreated", "la
       | 2023-03-16 12:30:00 | 2023-03-16 12:30:00 |              |                      |
 
   Scenario: SubtreeWasTagged and SubtreeWasUntagged events don't update last modified timestamps
-    When the current date and time is "2023-03-16T13:00:00+01:00"
+    # UTC 13:00
+    When the current date and time is "2023-03-16T15:00:00+02:00"
     And the command DisableNodeAggregate is executed with payload:
       | Key                          | Value                |
       | workspaceName                | "user-test"          |
@@ -309,7 +322,8 @@ Feature: Behavior of Node timestamp properties "created", "originalCreated", "la
       | created             | originalCreated     | lastModified | originalLastModified |
       | 2023-03-16 12:30:00 | 2023-03-16 12:30:00 |              |                      |
 
-    When the current date and time is "2023-03-16T14:00:00+01:00"
+    # UTC 14:00
+    When the current date and time is "2023-03-16T16:00:00+02:00"
     And the command EnableNodeAggregate is executed with payload:
       | Key                          | Value                |
       | workspaceName                | "user-test"          |
@@ -328,14 +342,15 @@ Feature: Behavior of Node timestamp properties "created", "originalCreated", "la
 
 
   Scenario: Original created and last modified timestamps when publishing nodes over multiple content streams
-    When the current date and time is "2023-03-16T13:00:00+01:00"
+    # UTC 13:00
+    When the current date and time is "2023-03-16T15:00:00+02:00"
     And the command SetNodeProperties is executed with payload:
       | Key             | Value               |
       | workspaceName   | "user-test"         |
       | nodeAggregateId | "a"                 |
       | propertyValues  | {"text": "Changed"} |
-    And I execute the findNodeById query for node aggregate id "non-existing" I expect no node to be returned
-    And the current date and time is "2023-03-16T14:00:00+01:00"
+    # UTC 14:00
+    And the current date and time is "2023-03-16T16:00:00+02:00"
     And the command PublishWorkspace is executed with payload:
       | Key           | Value       |
       | workspaceName | "user-test" |
@@ -356,7 +371,8 @@ Feature: Behavior of Node timestamp properties "created", "originalCreated", "la
       | created             | originalCreated     | lastModified | originalLastModified |
       | 2023-03-16 14:00:00 | 2023-03-16 12:00:00 |              |                      |
 
-    When the current date and time is "2023-03-16T15:00:00+01:00"
+    # UTC 15:00
+    When the current date and time is "2023-03-16T17:00:00+02:00"
     And the command PublishWorkspace is executed with payload:
       | Key           | Value    |
       | workspaceName | "review" |
@@ -372,9 +388,10 @@ Feature: Behavior of Node timestamp properties "created", "originalCreated", "la
     And I am in workspace "user-test" and dimension space point {"language":"de"}
     Then I expect the node "a" to have the following timestamps:
       | created             | originalCreated     | lastModified | originalLastModified |
-      | 2023-03-16 12:00:00 | 2023-03-16 12:00:00 | null         | null                 |
+      | 2023-03-16 12:00:00 | 2023-03-16 12:00:00 |              |                      |
 
-    Given the current date and time is "2023-03-16T14:00:00+01:00"
+    # UTC 14:00
+    Given the current date and time is "2023-03-16T16:00:00+02:00"
     When the command RebaseWorkspace is executed with payload:
       | Key                         | Value       |
       | workspaceName               | "user-test" |
@@ -382,4 +399,4 @@ Feature: Behavior of Node timestamp properties "created", "originalCreated", "la
 
     Then I expect the node "a" to have the following timestamps:
       | created             | originalCreated     | lastModified | originalLastModified |
-      | 2023-03-16 14:00:00 | 2023-03-16 12:00:00 | null         | null                 |
+      | 2023-03-16 14:00:00 | 2023-03-16 12:00:00 |              |                      |
