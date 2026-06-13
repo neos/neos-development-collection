@@ -45,25 +45,33 @@ final class EventMigrationService implements ContentRepositoryServiceInterface
     {
         $eventTableName = DoctrineEventStoreFactory::databaseTableName($this->contentRepositoryId);
 
-        // Ignore null values for events without metadata
-        $allOffsets = array_values(array_filter($this->dbal->fetchFirstColumn(<<<SQL
-        SELECT DISTINCT SUBSTR(JSON_UNQUOTE(JSON_EXTRACT(e.metadata, '$.initiatingTimestamp')), 20) FROM {$eventTableName} AS e
-        SQL)));
+        $offsetStartsWithSequenceNumber = $this->dbal->fetchAllAssociative(<<<SQL
+        SELECT sequenceNumber, tzoffset
+        FROM (
+          SELECT
+            sequenceNumber,
+            SUBSTR(JSON_UNQUOTE(JSON_EXTRACT(e.metadata, '$.initiatingTimestamp')), 20) as tzoffset,
+            LAG(SUBSTR(JSON_UNQUOTE(JSON_EXTRACT(e.metadata, '$.initiatingTimestamp')), 20)) OVER (ORDER BY sequenceNumber) AS prevTzoffset
+          FROM {$eventTableName} as e
+          WHERE JSON_EXTRACT(e.metadata, '$.initiatingTimestamp') IS NOT NULL
+        ) t
+        WHERE tzoffset != prevTzoffset
+           -- select first row where there is no previous
+           OR prevTzoffset IS NULL
+        ORDER BY sequenceNumber;
+        SQL);
 
-        if (count($allOffsets) > 1) {
-            $outputFn(sprintf('Migration could not apply. The event store contains events with different timezones [%s]. Nothing was changed.', join(', ', $allOffsets)));
-            return;
-        }
-
-        $singleOffset = $allOffsets[0];
-
-        if ($singleOffset === '+00:00') {
+        if (count($offsetStartsWithSequenceNumber) === 1 && $offsetStartsWithSequenceNumber[0]['tzoffset'] === '+00:00') {
             $outputFn('Migration was not necessary. All dates are UTC. Nothing was changed.');
             return;
         }
 
-        // Actual migration
+        $uniqueOffsets = array_unique(array_column($offsetStartsWithSequenceNumber, 'tzoffset'));
 
+        $outputFn(sprintf('Migration necessary. Found following non UTC offsets [%s]', join(', ', array_filter($uniqueOffsets, fn ($value) => $value !== '+00:00'))));
+        $outputFn(sprintf('    Debug: %s', json_encode($offsetStartsWithSequenceNumber)));
+
+        // Actual migration
         $backupEventTableName = DoctrineEventStoreFactory::databaseTableName($this->contentRepositoryId)
             . '_bkp_' . date('Y_m_d_H_i_s');
         $outputFn(sprintf('Backup: copying events table to %s', $backupEventTableName));
@@ -71,19 +79,36 @@ final class EventMigrationService implements ContentRepositoryServiceInterface
 
         $this->dbal->beginTransaction();
 
-        $affectedRows = $this->dbal->executeStatement(
+        $affectedRows = 0;
+        foreach ($offsetStartsWithSequenceNumber as $index => $offsetStart) {
+            if ($offsetStart['tzoffset'] === '+00:00') {
+                // nothing to do ;)
+                continue;
+            }
+
+            $offsetEnd = $offsetStartsWithSequenceNumber[$index + 1] ?? null;
+
+            $affectedRows += $this->dbal->executeStatement(
             <<<SQL
             UPDATE {$eventTableName} AS e
-            SET e.recordedat = CONVERT_TZ(e.recordedat, :fromOffset, '+00:00');
+            SET e.recordedat = CONVERT_TZ(e.recordedat, :fromOffset, '+00:00')
+            WHERE sequencenumber >= :start AND (:end IS NULL || sequencenumber < :end);
+            ;
             SQL,
-            [
-                'fromOffset' => '+01:00'
-            ]
-        );
+                [
+                    'fromOffset' => $offsetStart['tzoffset'],
+                    'start' => $offsetStart['sequenceNumber'],
+                    'end' => $offsetEnd['sequenceNumber'] ?? null,
+                ]
+            );
+
+        }
+
         $this->dbal->commit();
 
         $outputFn();
         $outputFn(sprintf('Migration applied to %s events. Please replay the projections `./flow subscription:replayall` to see the new adjusted UTC dates in the node timestamps', $affectedRows));
+        $outputFn('Done. Dont re-rerun the migration as it will shift all dates again ;)');
     }
 
     /** ------------------------ */
