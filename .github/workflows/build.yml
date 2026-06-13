@@ -190,7 +190,7 @@ jobs:
           MYSQL_DATABASE: flow_functional_testing
           MYSQL_ROOT_PASSWORD: neos
         ports:
-          - "3306:3306"
+          - "3307:3306"
         options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
       redis:
         image: redis:alpine
@@ -277,7 +277,7 @@ jobs:
           MYSQL_DATABASE: flow_functional_testing
           MYSQL_ROOT_PASSWORD: neos
         ports:
-          - "3306:3306"
+          - "3307:3306"
         options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
       redis:
         image: redis:alpine
