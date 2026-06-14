@@ -33,15 +33,22 @@ final class EventMigrationService implements ContentRepositoryServiceInterface
      *
      * https://github.com/neos/neos-development-collection/pull/5716
      *
-     * Detects if the ATOM stored "initiatingTimeStamp" has a uniform offset which is not UTC (0)
-     * Then all "recordedAt" times are assumed to be in that timezone and their timestamp adjusted to match UTC
+     * By storing "recordedAt" as datetime field we lost its original timezone information.
+     * But we can make the assumption that its timezone should be the same as the one encoded in the ATOM metadata field "initiatingTimeStamp"
+     *
+     * The migration first groups all events by the ATOM offset found in "initiatingTimeStamp".
+     * If all events are UTC "+00:00" the migration is not necessary. For all non UTC groups we convert the "recordedAt" datetime field
+     * to the datetime in the UTC timezone.
+     *
+     * The migration must not be executed multiple times as it would remove the offset to match UTC again for the "recordedAt" datetime even if they are already meant to be UTC.
+     * To prevent this from happening we compare the "recordedAt" and "initiatingTimeStamp" and if they are equal considering timezones we know the migration was run.
      *
      * Included in June 2026 - part of the bugfix 9.0.13, 9.1.6 and minor 9.2.0 release
      *
      * @param \Closure $outputFn
      * @return void
      */
-    public function migrateRecordedAtToUtc(\Closure $outputFn): void
+    public function migrateRecordedAtToUtc(\Closure $outputFn, bool $force): void
     {
         $eventTableName = DoctrineEventStoreFactory::databaseTableName($this->contentRepositoryId);
 
@@ -61,6 +68,11 @@ final class EventMigrationService implements ContentRepositoryServiceInterface
         ORDER BY sequenceNumber;
         SQL);
 
+        if ($offsetStartsWithSequenceNumber === []) {
+            $outputFn('Migration was not necessary. No events.');
+            return;
+        }
+
         if (count($offsetStartsWithSequenceNumber) === 1 && $offsetStartsWithSequenceNumber[0]['tzoffset'] === '+00:00') {
             $outputFn('Migration was not necessary. All dates are UTC. Nothing was changed.');
             return;
@@ -70,6 +82,43 @@ final class EventMigrationService implements ContentRepositoryServiceInterface
 
         $outputFn(sprintf('Migration necessary. Found following non UTC offsets [%s]', join(', ', array_filter($uniqueOffsets, fn ($value) => $value !== '+00:00'))));
         $outputFn(sprintf('    Debug: %s', json_encode($offsetStartsWithSequenceNumber)));
+
+        // Check to attempt to find out if migration was run.
+        // We find the first event not of type PublishableToWorkspaceInterface (all events on workspace streams)
+        // as these should have the same initiatingTimestamp and recordedAt dates.
+        // If the dates are not equal in UTC time the migration need to be run.
+        $sampleNonPublishableEventWithNonUTCTime = $this->dbal->fetchAssociative(<<<SQL
+            SELECT sequencenumber, recordedat, JSON_UNQUOTE(JSON_EXTRACT(metadata, '$.initiatingTimestamp')) AS initiatingtimestampatom
+            FROM {$eventTableName}
+            WHERE stream LIKE 'Workspace:%'
+              AND SUBSTR(JSON_UNQUOTE(JSON_EXTRACT(metadata, '$.initiatingTimestamp')), 20) != '+00:00'
+              LIMIT 1;
+            SQL
+        );
+
+        if ($sampleNonPublishableEventWithNonUTCTime === false) {
+            $outputFn('Could not find a single non publishable event with non UTC date to validate if migration was run before.');
+            if (!$force) {
+                $outputFn('Nothing was migrated. If you know what you are doing try again by using a bit more force.');
+                return;
+            }
+        }
+
+        $recordedAt = \DateTimeImmutable::createFromFormat('Y-m-d H:i:s', $sampleNonPublishableEventWithNonUTCTime['recordedat'], new \DateTimeZone('UTC'));
+        $initiatingTimestamp = \DateTimeImmutable::createFromFormat(\DateTimeImmutable::ATOM, $sampleNonPublishableEventWithNonUTCTime['initiatingtimestampatom'])->setTimezone(new \DateTimeZone('UTC'));
+
+        $absoluteDifference = (new \DateTimeImmutable('@0'))->add($recordedAt->diff($initiatingTimestamp));
+
+        if (abs($absoluteDifference->getTimestamp()) < 3) {
+            // Equal within 3 seconds, as we don't use the same date time instance
+            $outputFn(sprintf('Warning event %s already migrated', $sampleNonPublishableEventWithNonUTCTime['sequencenumber']));
+            $outputFn(sprintf('    Debug: RecordedAt %s, Initiating %s, Difference %s (s)', $recordedAt->format('Y-m-d H:i:s'), $initiatingTimestamp->format('Y-m-d H:i:s'), $absoluteDifference->getTimestamp()));
+            $outputFn(sprintf('    Debug: %s', json_encode($sampleNonPublishableEventWithNonUTCTime)));
+            if (!$force) {
+                $outputFn('Nothing was migrated. If you know what you are doing try again by using a bit more force.');
+                return;
+            }
+        }
 
         // Actual migration
         $backupEventTableName = DoctrineEventStoreFactory::databaseTableName($this->contentRepositoryId)
@@ -108,7 +157,7 @@ final class EventMigrationService implements ContentRepositoryServiceInterface
 
         $outputFn();
         $outputFn(sprintf('Migration applied to %s events. Please replay the projections `./flow subscription:replayall` to see the new adjusted UTC dates in the node timestamps', $affectedRows));
-        $outputFn('Done. Dont re-rerun the migration as it will shift all dates again ;)');
+        $outputFn('Done. Please dont re-rerun the migration.');
     }
 
     /** ------------------------ */
