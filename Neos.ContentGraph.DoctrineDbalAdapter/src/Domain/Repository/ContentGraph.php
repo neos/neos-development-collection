@@ -239,10 +239,11 @@ final class ContentGraph implements ContentGraphInterface
         $subQueryBuilder = $this->createQueryBuilder()
             ->select('pn.nodeaggregateid')
             ->from($this->nodeQueryBuilder->tableNames->node(), 'pn')
-            ->innerJoinWithStatement('pn', $this->statements->forHierarchyRelation($this->contentStreamLayers)->where('h.dimensionspacepointhash = :childOriginDimensionSpacePointHash'), 'ch', 'ch.parentnodeanchor = pn.relationanchorpoint')
+            ->innerJoinWithStatement('pn', $this->statements->forHierarchyRelation($this->contentStreamLayers)->withDimensionSpacePoint($childOriginDimensionSpacePoint->toDimensionSpacePoint()), 'ch', 'ch.parentnodeanchor = pn.relationanchorpoint')
             ->innerJoin('ch', $this->nodeQueryBuilder->tableNames->node(), 'cn', 'cn.relationanchorpoint = ch.childnodeanchor')
             ->where('cn.nodeaggregateid = :childNodeAggregateId')
-            ->andWhere('cn.origindimensionspacepointhash = :childOriginDimensionSpacePointHash');
+            ->andWhere('cn.origindimensionspacepointhash = :dimensionSpacePointHash')
+            ->setParameter('dimensionSpacePointHash', $childOriginDimensionSpacePoint->hash);
 
         // TODO merge parmaters
         $queryBuilder = $this->createQueryBuilder()
@@ -252,7 +253,7 @@ final class ContentGraph implements ContentGraphInterface
             ->innerJoin('h', $this->nodeQueryBuilder->tableNames->dimensionSpacePoints(), 'dsp', 'dsp.hash = h.dimensionspacepointhash')
             ->where('n.nodeaggregateid = (' . $subQueryBuilder->getSQL() . ')')
             ->setParameter('childNodeAggregateId', $childNodeAggregateId->value)
-            ->setParameter('childOriginDimensionSpacePointHash', $childOriginDimensionSpacePoint->hash);
+            ->mergeParametersFromBuilder($subQueryBuilder);
 
         return $this->nodeFactory->mapNodeRowsToNodeAggregate(
             $this->fetchRows($queryBuilder),

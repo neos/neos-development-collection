@@ -35,6 +35,18 @@ final class QueryBuilder extends DBALQueryBuilder
     }
 
     /**
+     * @return $this This QueryBuilder instance.
+     */
+    public function mergeParametersFromBuilder(QueryBuilder $queryBuilder): self
+    {
+        $this->setParameters(
+            array_merge($this->getParameters(), $queryBuilder->getParameters()),
+            array_merge($this->getParameterTypes(), $queryBuilder->getParameterTypes()),
+        );
+        return $this;
+    }
+
+    /**
      * Extends {@see DBALQueryBuilder::from()} to allow to specify parameters for the subquery
      *
      * @return $this This QueryBuilder instance.

@@ -436,7 +436,7 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
         $this->dimensionSpacePointsRepository->insertDimensionSpacePoint($event->target);
 
         // 1) hierarchy relations
-        $hierarchyStatement = $this->statements->forHierarchyRelation($this->getContentStreamLayers($event))->where('h.dimensionspacepointhash = :sourceDimensionSpacePointHash');
+        $hierarchyStatement = $this->statements->forHierarchyRelation($this->getContentStreamLayers($event))->withDimensionSpacePoint($event->source);
         $insertHierarchyRelationsStatement = <<<SQL
             INSERT INTO {$this->tableNames->hierarchyRelation()} (
               contentstreamlayer,
@@ -458,7 +458,6 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
             SQL;
         try {
             $this->dbal->executeStatement($insertHierarchyRelationsStatement, [
-                'sourceDimensionSpacePointHash' => $event->source->hash,
                 'newDimensionSpacePointHash' => $event->target->hash,
                 'targetContentStreamLayer' => $this->getContentStreamLayers($event)->getWriteLayer()->value,
                 ...$hierarchyStatement->getParameters()->toDbalParams(),
@@ -511,7 +510,7 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
 
         // 2) hierarchy relations
         // TODO dont refetch layers
-        $hierarchyStatement = $this->statements->forHierarchyRelation($this->getContentStreamLayers($event))->where('h.dimensionspacepointhash = :originalDimensionSpacePointHash');
+        $hierarchyStatement = $this->statements->forHierarchyRelation($this->getContentStreamLayers($event))->withDimensionSpacePoint($event->source);
         $updateHierarchyRelationsStatement = <<<SQL
             INSERT INTO {$this->tableNames->hierarchyRelation()}
             (
@@ -536,7 +535,6 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
             SQL;
         try {
             $this->dbal->executeStatement($updateHierarchyRelationsStatement, [
-                'originalDimensionSpacePointHash' => $event->source->hash,
                 'newDimensionSpacePointHash' => $event->target->hash,
                 'targetContentStreamLayer' => $this->getContentStreamLayers($event)->getWriteLayer()->value,
                 ...$hierarchyStatement->getParameters()->toDbalParams(),

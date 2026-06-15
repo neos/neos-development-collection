@@ -499,7 +499,7 @@ final class ProjectionIntegrityViolationDetector implements ProjectionIntegrityV
 
         foreach ($this->findProjectedContentStreamLayers() as $contentStreamLayers) {
             foreach ($this->findProjectedDimensionSpacePoints() as $dimensionSpacePoint) {
-                $hierarchyStatement = $this->statements->forHierarchyRelation($contentStreamLayers)->where('h.dimensionspacepointhash = :dimensionSpacePointHash');
+                $hierarchyStatement = $this->statements->forHierarchyRelation($contentStreamLayers)->withDimensionSpacePoint($dimensionSpacePoint);
                 $nodeAggregateIdsInCyclesStatement = <<<SQL
                     WITH RECURSIVE subgraph AS (
                         SELECT
@@ -529,7 +529,6 @@ final class ProjectionIntegrityViolationDetector implements ProjectionIntegrityV
                 try {
                     $nodeAggregateIdsInCycles = $this->dbal->fetchFirstColumn($nodeAggregateIdsInCyclesStatement, [
                         'rootAnchorPoint' => NodeRelationAnchorPoint::forRootEdge()->value,
-                        'dimensionSpacePointHash' => $dimensionSpacePoint->hash,
                         ...$hierarchyStatement->getParameters()->toDbalParams(),
                     ], [
                         ...$hierarchyStatement->getParameters()->toDbalTypes(),
@@ -570,7 +569,7 @@ final class ProjectionIntegrityViolationDetector implements ProjectionIntegrityV
 
         foreach ($this->findProjectedContentStreamLayers() as $contentStreamLayers) {
             foreach ($this->findProjectedDimensionSpacePoints() as $dimensionSpacePoint) {
-                $hierarchyStatement = $this->statements->forHierarchyRelation($contentStreamLayers)->where('h.dimensionspacepointhash = :dimensionSpacePointHash');
+                $hierarchyStatement = $this->statements->forHierarchyRelation($contentStreamLayers)->withDimensionSpacePoint($dimensionSpacePoint);
                 $ambiguousNodeAggregatesStatement = <<<SQL
                     SELECT
                         n.nodeaggregateid, COUNT(n.relationanchorpoint)
@@ -584,7 +583,6 @@ final class ProjectionIntegrityViolationDetector implements ProjectionIntegrityV
                 SQL;
                 try {
                     $ambiguousNodeAggregateRecords = $this->dbal->fetchAllAssociative($ambiguousNodeAggregatesStatement, [
-                        'dimensionSpacePointHash' => $dimensionSpacePoint->hash,
                         ...$hierarchyStatement->getParameters()->toDbalParams(),
                     ], [
                         ...$hierarchyStatement->getParameters()->toDbalTypes(),
@@ -612,7 +610,7 @@ final class ProjectionIntegrityViolationDetector implements ProjectionIntegrityV
 
         foreach ($this->findProjectedContentStreamLayers() as $contentStreamLayers) {
             foreach ($this->findProjectedDimensionSpacePoints() as $dimensionSpacePoint) {
-                $hierarchyStatement = $this->statements->forHierarchyRelation($contentStreamLayers)->where('h.dimensionspacepointhash = :dimensionSpacePointHash');
+                $hierarchyStatement = $this->statements->forHierarchyRelation($contentStreamLayers)->withDimensionSpacePoint($dimensionSpacePoint);
                 $nodeRecordsWithMultipleParentsStatement = <<<SQL
                     SELECT
                         c.nodeaggregateid
@@ -626,7 +624,6 @@ final class ProjectionIntegrityViolationDetector implements ProjectionIntegrityV
                 SQL;
                 try {
                     $nodeRecordsWithMultipleParents = $this->dbal->fetchAllAssociative($nodeRecordsWithMultipleParentsStatement, [
-                        'dimensionSpacePointHash' => $dimensionSpacePoint->hash,
                         ...$hierarchyStatement->getParameters()->toDbalParams(),
                     ], [
                         ...$hierarchyStatement->getParameters()->toDbalTypes(),

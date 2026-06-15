@@ -65,16 +65,6 @@ final readonly class HierarchyRelationStatement implements SqlStatementInterface
         );
     }
 
-    public function andWhere(string $where): self
-    {
-        return new self(
-            tableNames: $this->tableNames,
-            contentStreamLayers: $this->contentStreamLayers,
-            dimensionSpacePoints: $this->dimensionSpacePoints,
-            whereClauses: [...$this->whereClauses, ...($where === '' ? [] : [$where])],
-        );
-    }
-
     public function getParameters(): Parameters
     {
         return Parameters::create(...array_filter([

@@ -28,7 +28,7 @@ trait SubtreeTagging
         $allHierarchyStatement = $this->statements->forHierarchyRelation($contentStreamLayers);
         $hierarchyStatementNested = $this->statements->forHierarchyRelation($contentStreamLayers)
             ->withDimensionSpacePoints($affectedDimensionSpacePoints)
-            ->andWhere("NOT JSON_CONTAINS_PATH(h.subtreetags, 'one', :tagPath)");
+            ->where("NOT JSON_CONTAINS_PATH(h.subtreetags, 'one', :tagPath)");
 
         $addTagToDescendantsStatement = <<<SQL
             INSERT INTO {$this->tableNames->hierarchyRelation()} (
