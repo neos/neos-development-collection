@@ -304,7 +304,6 @@ class ProjectionContentGraph
                     /** @var array<string,mixed> $childHierarchyRelationData */
                     $childHierarchyRelationData = $this->dbal->fetchAssociative($childHierarchyRelationStatement, [
                         'childAnchorPoint' => $childAnchorPoint->value,
-                        'dimensionSpacePointHash' => $dimensionSpacePoint->hash,
                         ...$hierarchyStatement->getParameters()->toDbalParams(),
                     ], [
                         ...$hierarchyStatement->getParameters()->toDbalTypes(),
@@ -370,7 +369,6 @@ class ProjectionContentGraph
         try {
             $rows = $this->dbal->fetchAllAssociative($outgoingHierarchyRelationsStatement, [
                 'parentAnchorPoint' => $parentAnchorPoint->value,
-                'dimensionSpacePointHash' => $dimensionSpacePoint->hash,
                 ...$hierarchyStatement->getParameters()->toDbalParams(),
             ], [
                 ...$hierarchyStatement->getParameters()->toDbalTypes(),
@@ -401,7 +399,6 @@ class ProjectionContentGraph
         try {
             $rows = $this->dbal->fetchAllAssociative($ingoingHierarchyRelationsStatement, [
                 'childAnchorPoint' => $childAnchorPoint->value,
-                'dimensionSpacePointHash' => $dimensionSpacePoint->hash,
                 ...$hierarchyStatement->getParameters()->toDbalParams(),
             ], [
                 ...$hierarchyStatement->getParameters()->toDbalTypes(),
