@@ -148,30 +148,20 @@ final class ContentGraph implements ContentGraphInterface
     public function findNodeAggregatesByType(
         NodeTypeName $nodeTypeName
     ): NodeAggregates {
-        $queryBuilder = $this->nodeQueryBuilder->buildBasicNodeAggregateQuery();
+        $queryBuilder = $this->nodeQueryBuilder->buildBasicNodeAggregateQuery($this->contentStreamLayers);
         $queryBuilder
             ->andWhere('n.nodetypename = :nodeTypeName')
-            ->setParameters([
-                'contentStreamLayers' => $this->contentStreamLayers->toIntArray(),
-                'nodeTypeName' => $nodeTypeName->value,
-            ], [
-                'contentStreamLayers' => ArrayParameterType::INTEGER,
-            ]);
+            ->setParameter('nodeTypeName', $nodeTypeName->value);
         return $this->mapQueryBuilderToNodeAggregates($queryBuilder);
     }
 
     public function findNodeAggregateById(
         NodeAggregateId $nodeAggregateId
     ): ?NodeAggregate {
-        $queryBuilder = $this->nodeQueryBuilder->buildBasicNodeAggregateQuery()
+        $queryBuilder = $this->nodeQueryBuilder->buildBasicNodeAggregateQuery($this->contentStreamLayers)
             ->andWhere('n.nodeaggregateid = :nodeAggregateId')
             ->orderBy('n.relationanchorpoint', 'DESC')
-            ->setParameters([
-                'nodeAggregateId' => $nodeAggregateId->value,
-                'contentStreamLayers' => $this->contentStreamLayers->toIntArray()
-            ], [
-                'contentStreamLayers' => ArrayParameterType::INTEGER
-            ]);
+            ->setParameter('nodeAggregateId', $nodeAggregateId->value);
 
         return $this->nodeFactory->mapNodeRowsToNodeAggregate(
             $this->fetchRows($queryBuilder),
@@ -183,16 +173,10 @@ final class ContentGraph implements ContentGraphInterface
     public function findNodeAggregatesByIds(
         NodeAggregateIds $nodeAggregateIds
     ): NodeAggregates {
-        $queryBuilder = $this->nodeQueryBuilder->buildBasicNodeAggregateQuery()
+        $queryBuilder = $this->nodeQueryBuilder->buildBasicNodeAggregateQuery($this->contentStreamLayers)
             ->andWhere('n.nodeaggregateid in (:nodeAggregateIds)')
             ->orderBy('n.relationanchorpoint', 'DESC')
-            ->setParameters([
-                'nodeAggregateIds' => $nodeAggregateIds->toStringArray(),
-                'contentStreamLayers' => $this->contentStreamLayers->toIntArray()
-            ], [
-                'nodeAggregateIds' => ArrayParameterType::STRING,
-                'contentStreamLayers' => ArrayParameterType::INTEGER,
-            ]);
+            ->setParameter('nodeAggregateIds', $nodeAggregateIds->toStringArray(), ArrayParameterType::STRING);
 
         return $this->mapQueryBuilderToNodeAggregates($queryBuilder);
     }
@@ -205,16 +189,11 @@ final class ContentGraph implements ContentGraphInterface
     public function findParentNodeAggregates(
         NodeAggregateId $childNodeAggregateId
     ): NodeAggregates {
-        $queryBuilder = $this->nodeQueryBuilder->buildBasicNodeAggregateQuery()
+        $queryBuilder = $this->nodeQueryBuilder->buildBasicNodeAggregateQuery($this->contentStreamLayers)
             ->innerJoin('n', $this->hierarchyRelationStatement->toSql(), 'ch', 'ch.parentnodeanchor = n.relationanchorpoint')
             ->innerJoin('ch', $this->nodeQueryBuilder->tableNames->node(), 'cn', 'cn.relationanchorpoint = ch.childnodeanchor')
             ->andWhere('cn.nodeaggregateid = :nodeAggregateId')
-            ->setParameters([
-                'nodeAggregateId' => $childNodeAggregateId->value,
-                'contentStreamLayers' => $this->contentStreamLayers->toIntArray()
-            ], [
-                'contentStreamLayers' => ArrayParameterType::INTEGER,
-            ]);
+            ->setParameter('nodeAggregateId', $childNodeAggregateId->value);
 
         return $this->mapQueryBuilderToNodeAggregates($queryBuilder);
     }

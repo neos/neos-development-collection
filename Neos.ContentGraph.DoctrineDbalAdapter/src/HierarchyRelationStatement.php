@@ -4,29 +4,45 @@ declare(strict_types=1);
 
 namespace Neos\ContentGraph\DoctrineDbalAdapter;
 
+use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\ContentStreamLayers;
+use Neos\ContentRepository\Dbal\Query\Parameter;
+use Neos\ContentRepository\Dbal\Query\Parameters;
+use Neos\ContentRepository\Dbal\Query\SqlStatementInterface;
+
 /**
  * @internal
  */
-final readonly class HierarchyRelationStatement
+final readonly class HierarchyRelationStatement implements SqlStatementInterface
 {
     /**
      * @param array<string> $whereClauses
      */
     private function __construct(
         private ContentGraphTableNames $tableNames,
+        private ?ContentStreamLayers $contentStreamLayers,
         private array $whereClauses,
     ) {
     }
 
     public static function for(ContentGraphTableNames $tableNames): self
     {
-        return new self($tableNames, []);
+        return new self($tableNames, null, []);
+    }
+
+    public function withContentStreamLayers(ContentStreamLayers $contentStreamLayers): self
+    {
+        return new self(
+            tableNames: $this->tableNames,
+            contentStreamLayers: $contentStreamLayers,
+            whereClauses: $this->whereClauses,
+        );
     }
 
     public function where(string $where): self
     {
         return new self(
             tableNames: $this->tableNames,
+            contentStreamLayers: $this->contentStreamLayers,
             whereClauses: $where === '' ? [] : [$where],
         );
     }
@@ -35,7 +51,19 @@ final readonly class HierarchyRelationStatement
     {
         return new self(
             tableNames: $this->tableNames,
+            contentStreamLayers: $this->contentStreamLayers,
             whereClauses: [...$this->whereClauses, ...($where === '' ? [] : [$where])],
+        );
+    }
+
+    public function getParameters(): Parameters
+    {
+        if ($this->contentStreamLayers === null) {
+            throw new \RuntimeException(sprintf('TODO Must be set', ), 1781537152);
+        }
+
+        return Parameters::create(
+            Parameter::integerArray('contentStreamLayers', $this->contentStreamLayers->toIntArray())
         );
     }
 

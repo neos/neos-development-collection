@@ -17,7 +17,6 @@ namespace Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository;
 use Doctrine\DBAL\ArrayParameterType;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Exception as DBALException;
-use Doctrine\DBAL\Query\QueryBuilder;
 use Doctrine\DBAL\Result;
 use Neos\ContentGraph\DoctrineDbalAdapter\ContentGraphTableNames;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\ContentStreamLayers;
@@ -61,6 +60,7 @@ use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateIds;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
 use Neos\ContentRepository\Core\SharedModel\Node\PropertyName;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
+use Neos\ContentRepository\Dbal\Query\QueryBuilder;
 
 /**
  * The content subgraph application repository
@@ -464,7 +464,7 @@ final class ContentSubgraph implements ContentSubgraphInterface
 
     private function createQueryBuilder(): QueryBuilder
     {
-        return $this->dbal->createQueryBuilder();
+        return QueryBuilder::createForConnection($this->dbal);
     }
 
     private function addSubtreeTagConstraints(QueryBuilder $queryBuilder, string $hierarchyRelationTableAlias = 'h'): void
