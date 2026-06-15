@@ -79,7 +79,8 @@ final readonly class HierarchyRelationStatement implements SqlStatementInterface
 
     public function toSql(): string
     {
-        $whereClauses = $this->whereClauses;
+        $innerWhereClauses = [];
+        $outerWhereClauses = $this->whereClauses;
 
         $dimensionWhereClause = match (true) {
             $this->dimensionSpacePoints->isEmpty() => null,
@@ -88,22 +89,27 @@ final readonly class HierarchyRelationStatement implements SqlStatementInterface
         };
 
         if ($dimensionWhereClause) {
-            $whereClauses[] = $dimensionWhereClause;
+            $outerWhereClauses[] = $dimensionWhereClause;
+            // TODO Optimisation does not work with MoveDimensionSpacePoint because we would need to select the other dimension space point as well
+            // $innerWhereClauses[] = $dimensionWhereClause;
         }
 
-        $additionalWhereClauses = $whereClauses === [] ? '' : sprintf("  WHERE %s\n", join("\n  AND ", $whereClauses));
+        $innerWhereClauseSql = $innerWhereClauses === [] ? '' : sprintf("  AND ((%s) OR h.childnodeanchor IS NULL)\n", join("\n  AND ", $innerWhereClauses));
+        $outerWhereClauseSql = $outerWhereClauses === [] ? '' : sprintf("  WHERE %s\n", join("\n  AND ", $outerWhereClauses));
 
         return <<<SQL
             (SELECT h.*
               FROM {$this->tableNames->hierarchyRelation()} AS h
               INNER JOIN (
-                SELECT id, MAX(contentstreamlayer) AS contentstreamlayer
-                  FROM {$this->tableNames->hierarchyRelation()} FORCE INDEX (UNIQ_id_layer)
-                    WHERE (contentstreamlayer IN (:contentStreamLayers))
-                GROUP BY id
+                SELECT h.id, MAX(h.contentstreamlayer) AS contentstreamlayer
+                  FROM {$this->tableNames->hierarchyRelation()} AS h
+                    WHERE (h.contentstreamlayer IN (:contentStreamLayers))
+            {$innerWhereClauseSql
+            }
+                GROUP BY h.id
               ) AS readHierarchy
                 ON h.id = readHierarchy.id AND h.contentstreamlayer = readHierarchy.contentstreamlayer
-            {$additionalWhereClauses
+            {$outerWhereClauseSql
             })
             SQL;
     }
