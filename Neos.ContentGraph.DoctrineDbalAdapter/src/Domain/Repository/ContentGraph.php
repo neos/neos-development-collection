@@ -285,21 +285,16 @@ final class ContentGraph implements ContentGraphInterface
     {
         $queryBuilder = $this->createQueryBuilder()
             ->select('dsp.dimensionspacepoint, h.dimensionspacepointhash')
-            ->fromWithStatement($this->statements->forHierarchyRelation($this->contentStreamLayers)->where('h.dimensionspacepointhash IN (:dimensionSpacePointHashes)'), 'h')
+            ->fromWithStatement($this->statements->forHierarchyRelation($this->contentStreamLayers)->withDimensionSpacePoints($dimensionSpacePointsToCheck), 'h')
             ->innerJoin('h', $this->nodeQueryBuilder->tableNames->node(), 'n', 'n.relationanchorpoint = h.parentnodeanchor')
             ->innerJoin('h', $this->nodeQueryBuilder->tableNames->dimensionSpacePoints(), 'dsp', 'dsp.hash = h.dimensionspacepointhash')
             ->innerJoinWithStatement('n', $this->statements->forHierarchyRelation($this->contentStreamLayers), 'ph', 'ph.childnodeanchor = n.relationanchorpoint')
             ->where('n.nodeaggregateid = :parentNodeAggregateId')
             ->andWhere('n.origindimensionspacepointhash = :parentNodeOriginDimensionSpacePointHash')
             ->andWhere('n.name = :nodeName')
-            ->setParameters([
-                'parentNodeAggregateId' => $parentNodeAggregateId->value,
-                'parentNodeOriginDimensionSpacePointHash' => $parentNodeOriginDimensionSpacePoint->hash,
-                'dimensionSpacePointHashes' => $dimensionSpacePointsToCheck->getPointHashes(),
-                'nodeName' => $nodeName->value
-            ], [
-                'dimensionSpacePointHashes' => ArrayParameterType::STRING,
-            ]);
+            ->setParameter('parentNodeAggregateId', $parentNodeAggregateId->value)
+            ->setParameter('parentNodeOriginDimensionSpacePointHash', $parentNodeOriginDimensionSpacePoint->hash)
+            ->setParameter('nodeName', $nodeName->value);
         $dimensionSpacePoints = [];
         foreach ($this->fetchRows($queryBuilder) as $hierarchyRelationData) {
             $dimensionSpacePoints[$hierarchyRelationData['dimensionspacepointhash']] = DimensionSpacePoint::fromJsonString($hierarchyRelationData['dimensionspacepoint']);
