@@ -336,15 +336,13 @@ trait SubtreeTagging
             return NodeTags::createEmpty();
         }
 
-        $hierarchyStatement = $this->statements->forHierarchyRelation($contentStreamLayers)->withDimensionSpacePoint($dimensionSpacePoint);
+        $hierarchyStatement = $this->statements->forHierarchyRelation($contentStreamLayers)->withDimensionSpacePoint($dimensionSpacePoint)->withChildNodeRelationAnchor($parentNodeAnchorPoint);
         $subtreeTagsStatement = <<<SQL
             SELECT h.subtreetags FROM {$hierarchyStatement->toSql()} h
-              WHERE h.childnodeanchor = :parentNodeAnchorPoint
             SQL;
 
         try {
             $subtreeTagsJson = $this->dbal->fetchOne($subtreeTagsStatement, [
-                'parentNodeAnchorPoint' => $parentNodeAnchorPoint->value,
                 ...$hierarchyStatement->getParameters()->toDbalParams(),
             ], [
                 ...$hierarchyStatement->getParameters()->toDbalTypes(),
