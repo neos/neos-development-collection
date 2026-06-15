@@ -134,11 +134,14 @@ final readonly class HierarchyRelationStatement implements SqlStatementInterface
         };
 
         if ($this->childNodeRelationAnchorPoint !== null) {
-            $outerWhereClauses[] = 'h.childnodeanchor = :childNodeRelationAnchorPoint';
+            $outerWhereClauses[] = $childNodeRelationAnchorPointWhereClause = 'h.childnodeanchor = :childNodeRelationAnchorPoint';
+            $innerWhereClauses[] = $childNodeRelationAnchorPointWhereClause;
         }
 
         if ($this->parentNodeRelationAnchorPoint !== null) {
             $outerWhereClauses[] = 'h.parentnodeanchor = :parentNodeRelationAnchorPoint';
+            // TODO Illegal optimisation, fails test Features/W8-IndividualNodePublication/01-ConstraintChecks.feature:123
+            // $innerWhereClauses[] = $parentNodeRelationAnchorPointWhereClause;
         }
 
         if ($dimensionWhereClause) {
