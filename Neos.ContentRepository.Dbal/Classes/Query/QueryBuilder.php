@@ -18,18 +18,47 @@ final class QueryBuilder extends DBALQueryBuilder
     }
 
     /**
+     * Extends {@see DBALQueryBuilder::setParameter()} to allow merging
+     *
+     * @return $this This QueryBuilder instance.
+     */
+    public function mergeParameters(Parameters $parameters): self
+    {
+        // Todo throw if conflict, e.g same name different values or types!
+        if ($parameters->count() > 0) {
+            $this->setParameters(
+                array_merge($this->getParameters(), $parameters->toDbalParams()),
+                array_merge($this->getParameterTypes(), $parameters->toDbalTypes()),
+            );
+        }
+        return $this;
+    }
+
+    /**
+     * Extends {@see DBALQueryBuilder::from()} to allow to specify parameters for the subquery
+     *
+     * @return $this This QueryBuilder instance.
+     */
+    public function fromWithStatement(SqlStatementInterface $fromStatement, string $alias): self
+    {
+        $this->mergeParameters($fromStatement->getParameters());
+
+        $this->from(
+            $fromStatement->toSql(),
+            $alias
+        );
+
+        return $this;
+    }
+
+    /**
      * Extends {@see DBALQueryBuilder::innerJoin()} to allow to specify parameters for the subquery
      *
      * @return $this This QueryBuilder instance.
      */
     public function innerJoinWithStatement(string $fromAlias, SqlStatementInterface $joinStatement, string $alias, ?string $condition = null): self
     {
-        if ($joinStatement->getParameters()->count() > 0) {
-            $this->setParameters(
-                array_merge($this->getParameters(), $joinStatement->getParameters()->toDbalParams()),
-                array_merge($this->getParameterTypes(), $joinStatement->getParameters()->toDbalTypes()),
-            );
-        }
+        $this->mergeParameters($joinStatement->getParameters());
 
         $this->innerJoin(
             $fromAlias,
