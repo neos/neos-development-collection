@@ -84,8 +84,7 @@ final readonly class NodeQueryBuilder
         return $this->createQueryBuilder()
             ->select($select)
             ->from($this->tableNames->node(), $nodeTableAlias)
-            ->innerJoinWithStatement($nodeTableAlias, $this->statements->forHierarchyRelation($contentStreamLayers)->where('h.dimensionspacepointhash = :dimensionSpacePointHash'), 'h', 'h.childnodeanchor = ' . $nodeTableAlias . '.relationanchorpoint')
-            ->setParameter('dimensionSpacePointHash', $dimensionSpacePoint->hash);
+            ->innerJoinWithStatement($nodeTableAlias, $this->statements->forHierarchyRelation($contentStreamLayers)->withDimensionSpacePoint($dimensionSpacePoint), 'h', 'h.childnodeanchor = ' . $nodeTableAlias . '.relationanchorpoint');
     }
 
     public function buildBasicChildNodesQuery(NodeAggregateId $parentNodeAggregateId, ContentStreamLayers $contentStreamLayers, DimensionSpacePoint $dimensionSpacePoint): QueryBuilder
@@ -93,10 +92,9 @@ final readonly class NodeQueryBuilder
         return $this->createQueryBuilder()
             ->select('n.*, h.subtreetags')
             ->from($this->tableNames->node(), 'pn')
-            ->innerJoinWithStatement('pn', $this->statements->forHierarchyRelation($contentStreamLayers)->where('h.dimensionspacepointhash = :dimensionSpacePointHash'), 'h', 'h.parentnodeanchor = pn.relationanchorpoint')
+            ->innerJoinWithStatement('pn', $this->statements->forHierarchyRelation($contentStreamLayers)->withDimensionSpacePoint($dimensionSpacePoint), 'h', 'h.parentnodeanchor = pn.relationanchorpoint')
             ->innerJoin('pn', $this->tableNames->node(), 'n', 'h.childnodeanchor = n.relationanchorpoint')
-            ->where('pn.nodeaggregateid = :parentNodeAggregateId')->setParameter('parentNodeAggregateId', $parentNodeAggregateId->value)
-            ->setParameter('dimensionSpacePointHash', $dimensionSpacePoint->hash);
+            ->where('pn.nodeaggregateid = :parentNodeAggregateId')->setParameter('parentNodeAggregateId', $parentNodeAggregateId->value);
     }
 
     public function buildBasicParentNodeQuery(NodeAggregateId $childNodeAggregateId, ContentStreamLayers $contentStreamLayers, DimensionSpacePoint $dimensionSpacePoint): QueryBuilder
@@ -104,18 +102,17 @@ final readonly class NodeQueryBuilder
         return $this->createQueryBuilder()
             ->select('pn.*, ch.subtreetags')
             ->from($this->tableNames->node(), 'pn')
-            ->innerJoinWithStatement('pn', $this->statements->forHierarchyRelation($contentStreamLayers)->where('h.dimensionspacepointhash = :dimensionSpacePointHash'), 'ph', 'ph.parentnodeanchor = pn.relationanchorpoint')
+            ->innerJoinWithStatement('pn', $this->statements->forHierarchyRelation($contentStreamLayers)->withDimensionSpacePoint($dimensionSpacePoint), 'ph', 'ph.parentnodeanchor = pn.relationanchorpoint')
             ->innerJoin('pn', $this->tableNames->node(), 'cn', 'cn.relationanchorpoint = ph.childnodeanchor')
-            ->innerJoinWithStatement('pn', $this->statements->forHierarchyRelation($contentStreamLayers)->where('h.dimensionspacepointhash = :dimensionSpacePointHash'), 'ch', 'ch.childnodeanchor = pn.relationanchorpoint')
-            ->where('cn.nodeaggregateid = :childNodeAggregateId')->setParameter('childNodeAggregateId', $childNodeAggregateId->value)
-            ->setParameter('dimensionSpacePointHash', $dimensionSpacePoint->hash);
+            ->innerJoinWithStatement('pn', $this->statements->forHierarchyRelation($contentStreamLayers)->withDimensionSpacePoint($dimensionSpacePoint), 'ch', 'ch.childnodeanchor = pn.relationanchorpoint')
+            ->where('cn.nodeaggregateid = :childNodeAggregateId')->setParameter('childNodeAggregateId', $childNodeAggregateId->value);
     }
 
     public function buildBasicNodeSiblingsQuery(bool $preceding, NodeAggregateId $siblingNodeAggregateId, ContentStreamLayers $contentStreamLayers, DimensionSpacePoint $dimensionSpacePoint): QueryBuilder
     {
         // TODO Merge Parameters
         $sharedSubQuery = $this->createQueryBuilder()
-            ->from($this->statements->forHierarchyRelation($contentStreamLayers)->where('h.dimensionspacepointhash = :dimensionSpacePointHash')->toSql(), 'sh')
+            ->from($this->statements->forHierarchyRelation($contentStreamLayers)->withDimensionSpacePoint($dimensionSpacePoint)->toSql(), 'sh')
             ->innerJoin('sh', $this->tableNames->node(), 'sn', 'sn.relationanchorpoint = sh.childnodeanchor')
             ->where('sn.nodeaggregateid = :siblingNodeAggregateId');
 
@@ -136,7 +133,6 @@ final readonly class NodeQueryBuilder
             ->from($cteName, $cteAlias)
             // TODO cleanup
             ->setParameter('contentStreamLayers', $contentStreamLayers->toIntArray(), ArrayParameterType::INTEGER)
-            ->setParameter('dimensionSpacePointHash', $dimensionSpacePoint->hash)
             ->setParameter('entryNodeAggregateId', $entryNodeAggregateId->value);
     }
 

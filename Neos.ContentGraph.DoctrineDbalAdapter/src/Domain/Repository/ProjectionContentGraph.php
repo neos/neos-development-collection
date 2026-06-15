@@ -62,7 +62,7 @@ class ProjectionContentGraph
         OriginDimensionSpacePoint $originDimensionSpacePoint,
         ?DimensionSpacePoint $coveredDimensionSpacePoint = null
     ): ?NodeRecord {
-        $hierarchyStatement = $this->statements->forHierarchyRelation($contentStreamLayers)->where('h.dimensionspacepointhash = :coveredDimensionSpacePointHash');
+        $hierarchyStatement = $this->statements->forHierarchyRelation($contentStreamLayers)->withDimensionSpacePoint($coveredDimensionSpacePoint ?? $originDimensionSpacePoint->toDimensionSpacePoint());
         $parentNodeStatement = <<<SQL
             SELECT
                 p.*, ph.subtreetags, dsp.dimensionspacepoint AS origindimensionspacepoint
@@ -80,7 +80,6 @@ class ProjectionContentGraph
             $nodeRow = $this->dbal->fetchAssociative($parentNodeStatement, [
                 'childNodeAggregateId' => $childNodeAggregateId->value,
                 'originDimensionSpacePointHash' => $originDimensionSpacePoint->hash,
-                'coveredDimensionSpacePointHash' => $coveredDimensionSpacePoint->hash ?? $originDimensionSpacePoint->hash,
                 ...$hierarchyStatement->getParameters()->toDbalParams(),
             ], [
                 ...$hierarchyStatement->getParameters()->toDbalTypes(),
@@ -97,7 +96,7 @@ class ProjectionContentGraph
         NodeAggregateId $nodeAggregateId,
         DimensionSpacePoint $coveredDimensionSpacePoint
     ): ?NodeRecord {
-        $hierarchyStatement = $this->statements->forHierarchyRelation($contentStreamLayers)->where('h.dimensionspacepointhash = :dimensionSpacePointHash');
+        $hierarchyStatement = $this->statements->forHierarchyRelation($contentStreamLayers)->withDimensionSpacePoint($coveredDimensionSpacePoint);
         $nodeInAggregateStatement = <<<SQL
             SELECT
                 n.*, h.subtreetags, dsp.dimensionspacepoint AS origindimensionspacepoint
@@ -111,7 +110,6 @@ class ProjectionContentGraph
         try {
             $nodeRow = $this->dbal->fetchAssociative($nodeInAggregateStatement, [
                 'nodeAggregateId' => $nodeAggregateId->value,
-                'dimensionSpacePointHash' => $coveredDimensionSpacePoint->hash,
                 ...$hierarchyStatement->getParameters()->toDbalParams(),
             ], [
                 ...$hierarchyStatement->getParameters()->toDbalTypes(),
@@ -224,7 +222,7 @@ class ProjectionContentGraph
             );
         }
         if ($succeedingSiblingAnchorPoint) {
-            $hierarchyStatement = $this->statements->forHierarchyRelation($contentStreamLayers)->where('h.dimensionspacepointhash = :dimensionSpacePointHash');
+            $hierarchyStatement = $this->statements->forHierarchyRelation($contentStreamLayers)->withDimensionSpacePoint($dimensionSpacePoint);
             $succeedingSiblingRelationStatement = <<<SQL
                 SELECT
                     h.*
@@ -238,7 +236,6 @@ class ProjectionContentGraph
                 /** @var array<string,mixed> $succeedingSiblingRelation */
                 $succeedingSiblingRelation = $this->dbal->fetchAssociative($succeedingSiblingRelationStatement, [
                     'succeedingSiblingAnchorPoint' => $succeedingSiblingAnchorPoint->value,
-                    'dimensionSpacePointHash' => $dimensionSpacePoint->hash,
                     ...$hierarchyStatement->getParameters()->toDbalParams(),
                 ], [
                     ...$hierarchyStatement->getParameters()->toDbalTypes(),
@@ -257,7 +254,7 @@ class ProjectionContentGraph
             $succeedingSiblingPosition = (int)$succeedingSiblingRelation['position'];
             $parentAnchorPoint = NodeRelationAnchorPoint::fromInteger($succeedingSiblingRelation['parentnodeanchor']);
 
-            $hierarchyStatement = $this->statements->forHierarchyRelation($contentStreamLayers)->where('h.dimensionspacepointhash = :dimensionSpacePointHash');
+            $hierarchyStatement = $this->statements->forHierarchyRelation($contentStreamLayers)->withDimensionSpacePoint($dimensionSpacePoint);
             $precedingSiblingStatement = <<<SQL
                 SELECT
                     h.position
@@ -273,7 +270,6 @@ class ProjectionContentGraph
             try {
                 $precedingSiblingData = $this->dbal->fetchAssociative($precedingSiblingStatement, [
                     'anchorPoint' => $parentAnchorPoint->value,
-                    'dimensionSpacePointHash' => $dimensionSpacePoint->hash,
                     'position' => $succeedingSiblingPosition,
                     ...$hierarchyStatement->getParameters()->toDbalParams(),
                 ], [
@@ -294,7 +290,7 @@ class ProjectionContentGraph
             }
         } else {
             if (!$parentAnchorPoint) {
-                $hierarchyStatement = $this->statements->forHierarchyRelation($contentStreamLayers)->where('h.dimensionspacepointhash = :dimensionSpacePointHash');
+                $hierarchyStatement = $this->statements->forHierarchyRelation($contentStreamLayers)->withDimensionSpacePoint($dimensionSpacePoint);
                 $childHierarchyRelationStatement = <<<SQL
                     SELECT
                         h.parentnodeanchor
@@ -320,7 +316,7 @@ class ProjectionContentGraph
                     $childHierarchyRelationData['parentnodeanchor']
                 );
             }
-            $hierarchyStatement = $this->statements->forHierarchyRelation($contentStreamLayers)->where('h.dimensionspacepointhash = :dimensionSpacePointHash');
+            $hierarchyStatement = $this->statements->forHierarchyRelation($contentStreamLayers)->withDimensionSpacePoint($dimensionSpacePoint);
             $rightmostSucceedingSiblingRelationStatement = <<<SQL
                 SELECT
                     h.position
@@ -335,7 +331,6 @@ class ProjectionContentGraph
             try {
                 $rightmostSucceedingSiblingRelationData = $this->dbal->fetchAssociative($rightmostSucceedingSiblingRelationStatement, [
                     'parentAnchorPoint' => $parentAnchorPoint->value,
-                    'dimensionSpacePointHash' => $dimensionSpacePoint->hash,
                     ...$hierarchyStatement->getParameters()->toDbalParams(),
                 ], [
                     ...$hierarchyStatement->getParameters()->toDbalTypes(),
@@ -363,7 +358,7 @@ class ProjectionContentGraph
         ContentStreamLayers $contentStreamLayers,
         DimensionSpacePoint $dimensionSpacePoint
     ): array {
-        $hierarchyStatement = $this->statements->forHierarchyRelation($contentStreamLayers)->where('h.dimensionspacepointhash = :dimensionSpacePointHash');
+        $hierarchyStatement = $this->statements->forHierarchyRelation($contentStreamLayers)->withDimensionSpacePoint($dimensionSpacePoint);
         $outgoingHierarchyRelationsStatement = <<<SQL
             SELECT
                 h.*
@@ -394,7 +389,7 @@ class ProjectionContentGraph
         ContentStreamLayers $contentStreamLayers,
         DimensionSpacePoint $dimensionSpacePoint
     ): array {
-        $hierarchyStatement = $this->statements->forHierarchyRelation($contentStreamLayers)->where('h.dimensionspacepointhash = :dimensionSpacePointHash');
+        $hierarchyStatement = $this->statements->forHierarchyRelation($contentStreamLayers)->withDimensionSpacePoint($dimensionSpacePoint);
         $ingoingHierarchyRelationsStatement = <<<SQL
             SELECT
                 h.*
@@ -509,7 +504,7 @@ class ProjectionContentGraph
         NodeAggregateId $nodeAggregateId,
         DimensionSpacePointSet $dimensionSpacePointSet
     ): array {
-        $hierarchyStatement = $this->statements->forHierarchyRelation($contentStreamLayers)->where('h.dimensionspacepointhash IN (:dimensionSpacePointHashes)');
+        $hierarchyStatement = $this->statements->forHierarchyRelation($contentStreamLayers)->withDimensionSpacePoints($dimensionSpacePointSet);
         $outgoingHierarchyRelationsStatement = <<<SQL
             SELECT
                 h.*
@@ -522,10 +517,8 @@ class ProjectionContentGraph
         try {
             $rows = $this->dbal->fetchAllAssociative($outgoingHierarchyRelationsStatement, [
                 'nodeAggregateId' => $nodeAggregateId->value,
-                'dimensionSpacePointHashes' => $dimensionSpacePointSet->getPointHashes(),
                 ...$hierarchyStatement->getParameters()->toDbalParams(),
             ], [
-                'dimensionSpacePointHashes' => ArrayParameterType::STRING,
                 ...$hierarchyStatement->getParameters()->toDbalTypes(),
             ]);
         } catch (DBALException $e) {
@@ -542,7 +535,10 @@ class ProjectionContentGraph
         NodeAggregateId $nodeAggregateId,
         ?DimensionSpacePointSet $dimensionSpacePointSet = null
     ): array {
-        $hierarchyStatement = $this->statements->forHierarchyRelation($contentStreamLayers)->where($dimensionSpacePointSet !== null ? 'h.dimensionspacepointhash IN (:dimensionSpacePointHashes)' : '');
+        $hierarchyStatement = $this->statements->forHierarchyRelation($contentStreamLayers);
+        if ($dimensionSpacePointSet) {
+            $hierarchyStatement = $hierarchyStatement->withDimensionSpacePoints($dimensionSpacePointSet);
+        }
         $ingoingHierarchyRelationsStatement = <<<SQL
             SELECT
                 h.*
@@ -554,11 +550,9 @@ class ProjectionContentGraph
         SQL;
         $parameters = [
             'nodeAggregateId' => $nodeAggregateId->value,
-            ...($dimensionSpacePointSet !== null ? ['dimensionSpacePointHashes' => $dimensionSpacePointSet->getPointHashes()] : []),
             ...$hierarchyStatement->getParameters()->toDbalParams(),
         ];
         $types = [
-            ...($dimensionSpacePointSet !== null ? ['dimensionSpacePointHashes' => ArrayParameterType::STRING] : []),
             ...$hierarchyStatement->getParameters()->toDbalTypes(),
         ];
         try {

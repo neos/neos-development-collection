@@ -480,7 +480,7 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
         // hierarchy relations for this query. Then, we update the Hierarchy Relations.
 
         // 1) originDimensionSpacePoint on Node
-        $hierarchyStatement = $this->statements->forHierarchyRelation($contentStreamLayers)->where('h.dimensionspacepointhash = :dimensionSpacePointHash');
+        $hierarchyStatement = $this->statements->forHierarchyRelation($contentStreamLayers)->withDimensionSpacePoint($event->source);
         $selectRelationsStatement = <<<SQL
             SELECT n.relationanchorpoint
             FROM {$this->tableNames->node()} n
@@ -493,7 +493,6 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
         SQL;
         try {
             $relationAnchorPoints = $this->dbal->fetchFirstColumn($selectRelationsStatement, [
-                'dimensionSpacePointHash' => $event->source->hash,
                 ...$hierarchyStatement->getParameters()->toDbalParams(),
             ], [
                 ...$hierarchyStatement->getParameters()->toDbalTypes(),
