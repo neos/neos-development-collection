@@ -133,36 +133,39 @@ final readonly class HierarchyRelationStatement implements SqlStatementInterface
             default => 'h.dimensionspacepointhash IN (:dimensionSpacePointHashes)',
         };
 
+        if ($dimensionWhereClause) {
+            $outerWhereClauses[] = $dimensionWhereClause;
+            $innerWhereClauses[] = $dimensionWhereClause;
+        }
+
         if ($this->childNodeRelationAnchorPoint !== null) {
             $outerWhereClauses[] = $childNodeRelationAnchorPointWhereClause = 'h.childnodeanchor = :childNodeRelationAnchorPoint';
             $innerWhereClauses[] = $childNodeRelationAnchorPointWhereClause;
         }
 
         if ($this->parentNodeRelationAnchorPoint !== null) {
-            $outerWhereClauses[] = 'h.parentnodeanchor = :parentNodeRelationAnchorPoint';
-            // TODO Illegal optimisation, fails test Features/W8-IndividualNodePublication/01-ConstraintChecks.feature:123
-            // $innerWhereClauses[] = $parentNodeRelationAnchorPointWhereClause;
+            $outerWhereClauses[] = $parentNodeRelationAnchorPointWhereClause = 'h.parentnodeanchor = :parentNodeRelationAnchorPoint';
+            $innerWhereClauses[] = $parentNodeRelationAnchorPointWhereClause;
         }
 
-        if ($dimensionWhereClause) {
-            $outerWhereClauses[] = $dimensionWhereClause;
-            // TODO Optimisation does not work with MoveDimensionSpacePoint because we would need to select the other dimension space point as well
-            // $innerWhereClauses[] = $dimensionWhereClause;
-        }
-
-        $innerWhereClauseSql = $innerWhereClauses === [] ? '' : sprintf("  AND ((%s) OR h.childnodeanchor IS NULL)\n", join("\n  AND ", $innerWhereClauses));
+        $innerWhereClauseSql = $innerWhereClauses === [] ? '' : sprintf(
+            <<<SQL
+              AND id IN (SELECT id FROM {$this->tableNames->hierarchyRelation()} AS h WHERE %s)
+            SQL,
+            join("\n  AND ", $innerWhereClauses)
+        );
         $outerWhereClauseSql = $outerWhereClauses === [] ? '' : sprintf("  WHERE %s\n", join("\n  AND ", $outerWhereClauses));
 
         return <<<SQL
             (SELECT h.*
               FROM {$this->tableNames->hierarchyRelation()} AS h
               INNER JOIN (
-                SELECT h.id, MAX(h.contentstreamlayer) AS contentstreamlayer
-                  FROM {$this->tableNames->hierarchyRelation()} AS h
-                    WHERE (h.contentstreamlayer IN (:contentStreamLayers))
+                SELECT id, MAX(contentstreamlayer) AS contentstreamlayer
+                  FROM {$this->tableNames->hierarchyRelation()}
+                    WHERE (contentstreamlayer IN (:contentStreamLayers))
             {$innerWhereClauseSql
             }
-                GROUP BY h.id
+                GROUP BY id
               ) AS readHierarchy
                 ON h.id = readHierarchy.id AND h.contentstreamlayer = readHierarchy.contentstreamlayer
             {$outerWhereClauseSql
