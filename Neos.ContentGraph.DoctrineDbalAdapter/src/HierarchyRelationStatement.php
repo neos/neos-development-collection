@@ -19,23 +19,14 @@ final readonly class HierarchyRelationStatement implements SqlStatementInterface
      */
     private function __construct(
         private ContentGraphTableNames $tableNames,
-        private ?ContentStreamLayers $contentStreamLayers,
+        private ContentStreamLayers $contentStreamLayers,
         private array $whereClauses,
     ) {
     }
 
-    public static function for(ContentGraphTableNames $tableNames): self
+    public static function create(ContentGraphTableNames $tableNames, ContentStreamLayers $contentStreamLayers): self
     {
-        return new self($tableNames, null, []);
-    }
-
-    public function withContentStreamLayers(ContentStreamLayers $contentStreamLayers): self
-    {
-        return new self(
-            tableNames: $this->tableNames,
-            contentStreamLayers: $contentStreamLayers,
-            whereClauses: $this->whereClauses,
-        );
+        return new self($tableNames, $contentStreamLayers, []);
     }
 
     public function where(string $where): self
@@ -58,10 +49,6 @@ final readonly class HierarchyRelationStatement implements SqlStatementInterface
 
     public function getParameters(): Parameters
     {
-        if ($this->contentStreamLayers === null) {
-            throw new \RuntimeException(sprintf('TODO Must be set', ), 1781537152);
-        }
-
         return Parameters::create(
             Parameter::integerArray('contentStreamLayers', $this->contentStreamLayers->toIntArray())
         );

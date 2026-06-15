@@ -23,6 +23,6 @@ final readonly class StatementFactory
 
     public function forHierarchyRelation(ContentStreamLayers $contentStreamLayers): HierarchyRelationStatement
     {
-        return HierarchyRelationStatement::for($this->tableNames)->withContentStreamLayers($contentStreamLayers);
+        return HierarchyRelationStatement::create($this->tableNames, $contentStreamLayers);
     }
 }
