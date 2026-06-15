@@ -334,7 +334,7 @@ trait SubtreeTagging
         }
 
         $subtreeTagsStatement = <<<SQL
-            SELECT h.subtreetags FROM {$this->hierarchyRelationStatement->where('h.dimensionspacepointhash = :dimensionSpacePointHash')->toSql()} h
+            SELECT h.subtreetags FROM {$this->hierarchyRelationStatement->where('h.dimensionspacepointhash = :dimensionSpacePointHash')->andInnerWhereRelationIdMatches('childnodeanchor = :parentNodeAnchorPoint')->toSql()} h
               WHERE h.childnodeanchor = :parentNodeAnchorPoint
             SQL;
 

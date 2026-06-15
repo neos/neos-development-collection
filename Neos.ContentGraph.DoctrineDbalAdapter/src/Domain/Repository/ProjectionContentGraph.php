@@ -224,7 +224,7 @@ class ProjectionContentGraph
                 SELECT
                     h.*
                 FROM
-                    {$this->hierarchyRelationStatement->where('h.dimensionspacepointhash = :dimensionSpacePointHash')->toSql()} h
+                    {$this->hierarchyRelationStatement->where('h.dimensionspacepointhash = :dimensionSpacePointHash')->andInnerWhereRelationIdMatches('childnodeanchor = :succeedingSiblingAnchorPoint')->toSql()} h
                 WHERE
                     h.childnodeanchor = :succeedingSiblingAnchorPoint
                 LIMIT 1
@@ -256,7 +256,7 @@ class ProjectionContentGraph
                 SELECT
                     h.position
                 FROM
-                    {$this->hierarchyRelationStatement->where('h.dimensionspacepointhash = :dimensionSpacePointHash')->toSql()} h
+                    {$this->hierarchyRelationStatement->where('h.dimensionspacepointhash = :dimensionSpacePointHash')->andInnerWhereRelationIdMatches('parentnodeanchor = :anchorPoint')->toSql()} h
                 WHERE
                     h.parentnodeanchor = :anchorPoint
                     AND h.position < :position
@@ -292,7 +292,7 @@ class ProjectionContentGraph
                     SELECT
                         h.parentnodeanchor
                     FROM
-                        {$this->hierarchyRelationStatement->where('h.dimensionspacepointhash = :dimensionSpacePointHash')->toSql()} h
+                        {$this->hierarchyRelationStatement->where('h.dimensionspacepointhash = :dimensionSpacePointHash')->andInnerWhereRelationIdMatches('childnodeanchor = :childAnchorPoint')->toSql()} h
                     WHERE
                         h.childnodeanchor = :childAnchorPoint
                     LIMIT 1
@@ -317,7 +317,7 @@ class ProjectionContentGraph
                 SELECT
                     h.position
                 FROM
-                    {$this->hierarchyRelationStatement->where('h.dimensionspacepointhash = :dimensionSpacePointHash')->toSql()} h
+                    {$this->hierarchyRelationStatement->where('h.dimensionspacepointhash = :dimensionSpacePointHash')->andInnerWhereRelationIdMatches('parentnodeanchor = :parentAnchorPoint')->toSql()} h
                 WHERE
                     h.parentnodeanchor = :parentAnchorPoint
                 -- select the MAX position
@@ -359,7 +359,7 @@ class ProjectionContentGraph
             SELECT
                 h.*
             FROM
-                {$this->hierarchyRelationStatement->where('h.dimensionspacepointhash = :dimensionSpacePointHash')->toSql()} h
+                {$this->hierarchyRelationStatement->where('h.dimensionspacepointhash = :dimensionSpacePointHash')->andInnerWhereRelationIdMatches('parentnodeanchor = :parentAnchorPoint')->toSql()} h
             WHERE
                 h.parentnodeanchor = :parentAnchorPoint
         SQL;
@@ -389,7 +389,7 @@ class ProjectionContentGraph
             SELECT
                 h.*
             FROM
-                {$this->hierarchyRelationStatement->where('h.dimensionspacepointhash = :dimensionSpacePointHash')->toSql()} h
+                {$this->hierarchyRelationStatement->where('h.dimensionspacepointhash = :dimensionSpacePointHash')->andInnerWhereRelationIdMatches('childnodeanchor = :childAnchorPoint')->toSql()} h
             WHERE
                 h.childnodeanchor = :childAnchorPoint
         SQL;
@@ -419,7 +419,7 @@ class ProjectionContentGraph
             SELECT
                 h.*
             FROM
-                {$this->hierarchyRelationStatement->toSql()} h
+                {$this->hierarchyRelationStatement->andInnerWhereRelationIdMatches('childnodeanchor = :childAnchorPoint')->toSql()} h
             WHERE
                 h.childnodeanchor = :childAnchorPoint
         SQL;
@@ -460,7 +460,7 @@ class ProjectionContentGraph
             SELECT
                 h.*
             FROM
-                {$this->hierarchyRelationStatement->toSql()} h
+                {$this->hierarchyRelationStatement->andInnerWhereRelationIdMatches('parentnodeanchor = :parentAnchorPoint')->toSql()} h
             WHERE
                 h.parentnodeanchor = :parentAnchorPoint
         SQL;
@@ -501,7 +501,7 @@ class ProjectionContentGraph
             SELECT
                 h.*
             FROM
-                {$this->hierarchyRelationStatement->where('h.dimensionspacepointhash IN (:dimensionSpacePointHashes)')->toSql()} h
+                {$this->hierarchyRelationStatement->where('h.dimensionspacepointhash IN (:dimensionSpacePointHashes)')->andInnerWhereRelationIdMatches('parentnodeanchor IN (SELECT relationanchorpoint FROM ' . $this->tableNames->node() . ' WHERE nodeaggregateid = :nodeAggregateId)')->toSql()} h
                 INNER JOIN {$this->tableNames->node()} n ON h.parentnodeanchor = n.relationanchorpoint
             WHERE
                 n.nodeaggregateid = :nodeAggregateId
@@ -533,7 +533,7 @@ class ProjectionContentGraph
             SELECT
                 h.*
             FROM
-                {$this->hierarchyRelationStatement->where($dimensionSpacePointSet !== null ? 'h.dimensionspacepointhash IN (:dimensionSpacePointHashes)' : '')->toSql()} h
+                {$this->hierarchyRelationStatement->where($dimensionSpacePointSet !== null ? 'h.dimensionspacepointhash IN (:dimensionSpacePointHashes)' : '')->andInnerWhere('childnodeanchor IN (SELECT relationanchorpoint FROM ' . $this->tableNames->node() . ' WHERE nodeaggregateid = :nodeAggregateId)')->toSql()} h
                 INNER JOIN {$this->tableNames->node()} n ON h.childnodeanchor = n.relationanchorpoint
             WHERE
                 n.nodeaggregateid = :nodeAggregateId
