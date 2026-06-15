@@ -12,9 +12,11 @@ final readonly class HierarchyRelationStatement
     /**
      * @param array<string> $whereClauses applied to the outer (already layer-resolved) hierarchy relation `h`
      * @param array<string> $innerWhereClauses applied inside the derived "max layer per id" subquery, BEFORE the GROUP BY.
-     *        Only safe for predicates on columns that are layer-invariant for a given relation id (e.g. dimensionspacepointhash)
-     *        or that match across all layers (e.g. childnodeanchor restricted to a node aggregate, since node rows are shared
-     *        across layers). Pushing these down lets the optimizer use an index instead of grouping the whole relation table.
+     *        These MUST only ever reference the `id` column (see {@see andInnerWhereRelationIdMatches()}): node removal
+     *        writes a tombstone row (same id, highest contentstreamlayer, every other column NULL) that has to *win* the
+     *        MAX(contentstreamlayer) GROUP BY id resolution so the removed node drops out. A predicate filtering the inner
+     *        rows directly on a nullable column (childnodeanchor, parentnodeanchor, dimensionspacepointhash) would exclude
+     *        that tombstone, making MAX(layer) resolve to the pre-removal layer and resurrecting the deleted node.
      */
     private function __construct(
         private ContentGraphTableNames $tableNames,
@@ -47,10 +49,11 @@ final readonly class HierarchyRelationStatement
     }
 
     /**
-     * Adds a predicate applied INSIDE the derived "max layer per id" subquery (referencing the unaliased relation columns).
-     * See the constructor docblock for the correctness constraints.
+     * Adds a predicate applied INSIDE the derived "max layer per id" subquery, BEFORE the GROUP BY.
+     * Private on purpose: the only tombstone-safe inner predicate is one keyed on `id` (see the constructor docblock),
+     * so all inner pushdowns must go through {@see andInnerWhereRelationIdMatches()}.
      */
-    public function andInnerWhere(string $where): self
+    private function andInnerWhere(string $where): self
     {
         return new self(
             tableNames: $this->tableNames,
@@ -60,22 +63,26 @@ final readonly class HierarchyRelationStatement
     }
 
     /**
-     * Restricts the derived "max layer per id" subquery to the relation ids that satisfy the given anchor predicate in
-     * *some* layer. This is the move-safe way to push down an outer single-anchor filter (e.g. `h.childnodeanchor = :x`
-     * or `h.parentnodeanchor = :x`): a single anchor or a parent anchor is NOT layer-invariant for a relation id
-     * (copy-on-write reassigns the child anchor across layers, a move reassigns the parent), so filtering the inner rows
-     * directly by the anchor could drop the winning-layer row and elect a stale MAX(layer). Filtering by `id` instead
-     * keeps *all* layers of every candidate relation, so MAX(layer) stays exact; the resulting superset is then trimmed
-     * by the caller's outer WHERE on the same anchor. Selective because the anchor columns are indexed.
+     * Restricts the derived "max layer per id" subquery to the relation ids that satisfy the given predicate in *some*
+     * layer, by pushing down `id IN (SELECT id FROM hierarchyrelation WHERE $relationPredicate)`. This is the only
+     * tombstone-safe and move-safe way to push an outer filter into the subquery:
      *
-     * $anchorPredicate must reference unaliased relation columns, e.g. 'childnodeanchor = :x'.
+     * - Tombstone-safe: filtering by `id` keeps *all* layers of every candidate relation in the GROUP BY, including the
+     *   removal tombstone (NULL anchors/dsp but same id and highest layer), so MAX(layer) stays exact and removed nodes
+     *   correctly drop out. A direct predicate on a nullable column would exclude the tombstone and resurrect the node.
+     * - Move-safe: a single anchor or a parent anchor is not layer-invariant for a relation id (copy-on-write reassigns
+     *   the child anchor across layers, a move reassigns the parent); the id-based superset still keeps every layer of
+     *   the matching relations, and the caller's outer WHERE trims the extras.
+     *
+     * Selective because the filtered columns (childnodeanchor, parentnodeanchor, dimensionspacepointhash) are indexed.
+     * $relationPredicate must reference unaliased relation columns, e.g. 'childnodeanchor = :x'.
      */
-    public function andInnerWhereRelationIdMatches(string $anchorPredicate): self
+    public function andInnerWhereRelationIdMatches(string $relationPredicate): self
     {
         return $this->andInnerWhere(sprintf(
             'id IN (SELECT id FROM %s WHERE %s)',
             $this->tableNames->hierarchyRelation(),
-            $anchorPredicate
+            $relationPredicate
         ));
     }
 

@@ -65,7 +65,7 @@ final readonly class NodeQueryBuilder
         if ($childNodeAggregateAnchorPushdown === null) {
             return $this->hierarchyRelationStatement;
         }
-        return $this->hierarchyRelationStatement->andInnerWhere('childnodeanchor IN (SELECT relationanchorpoint FROM ' . $this->tableNames->node() . ' WHERE ' . $childNodeAggregateAnchorPushdown . ')');
+        return $this->hierarchyRelationStatement->andInnerWhereRelationIdMatches('childnodeanchor IN (SELECT relationanchorpoint FROM ' . $this->tableNames->node() . ' WHERE ' . $childNodeAggregateAnchorPushdown . ')');
     }
 
     public function buildChildNodeAggregateQuery(NodeAggregateId $parentNodeAggregateId, ContentStreamLayers $contentStreamLayers): QueryBuilder
