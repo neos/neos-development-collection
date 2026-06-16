@@ -209,7 +209,7 @@ final class ContentSubgraph implements ContentSubgraphInterface
 
     public function findParentNode(NodeAggregateId $childNodeAggregateId): ?Node
     {
-        $queryBuilder = $this->nodeQueryBuilder->buildBasicParentNodeQuery($childNodeAggregateId, $this->contentStreamLayers, $this->dimensionSpacePoint);
+        $queryBuilder = $this->nodeQueryBuilder->buildBasicParentNodeQuery($this->hierarchyStatement, $childNodeAggregateId);
         $this->addSubtreeTagConstraints($queryBuilder, 'ph');
         return $this->fetchNode($queryBuilder);
     }
@@ -241,7 +241,7 @@ final class ContentSubgraph implements ContentSubgraphInterface
      */
     private function findChildNodeConnectedThroughEdgeName(NodeAggregateId $parentNodeAggregateId, NodeName $nodeName): ?Node
     {
-        $queryBuilder = $this->nodeQueryBuilder->buildBasicChildNodesQuery($parentNodeAggregateId, $this->contentStreamLayers, $this->dimensionSpacePoint)
+        $queryBuilder = $this->nodeQueryBuilder->buildBasicChildNodesQuery($this->hierarchyStatement, $parentNodeAggregateId)
             ->andWhere('n.name = :edgeName')->setParameter('edgeName', $nodeName->value);
         $this->addSubtreeTagConstraints($queryBuilder);
         return $this->fetchNode($queryBuilder);
@@ -486,7 +486,7 @@ final class ContentSubgraph implements ContentSubgraphInterface
 
     private function buildChildNodesQuery(NodeAggregateId $parentNodeAggregateId, FindChildNodesFilter|CountChildNodesFilter $filter): QueryBuilder
     {
-        $queryBuilder = $this->nodeQueryBuilder->buildBasicChildNodesQuery($parentNodeAggregateId, $this->contentStreamLayers, $this->dimensionSpacePoint);
+        $queryBuilder = $this->nodeQueryBuilder->buildBasicChildNodesQuery($this->hierarchyStatement, $parentNodeAggregateId);
         if ($filter->nodeTypes !== null) {
             $this->nodeQueryBuilder->addNodeTypeCriteria($queryBuilder, ExpandedNodeTypeCriteria::create($filter->nodeTypes, $this->nodeTypeManager));
         }
