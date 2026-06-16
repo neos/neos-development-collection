@@ -137,13 +137,14 @@ final readonly class HierarchyRelationStatement implements SqlStatementInterface
                 $this->dimensionSpacePoints->count() === 1 => Parameter::string('dimensionSpacePointHash', $this->dimensionSpacePoints->getPointHashes()[0]),
                 default => Parameter::stringArray('dimensionSpacePointHashes', $this->dimensionSpacePoints->getPointHashes()),
             },
-            // TODO else
-            $this->childNodeAnchor instanceof NodeRelationAnchorPoint
-                ? Parameter::integer('childNodeRelationAnchorPoint', $this->childNodeAnchor->value)
-                : null,
-            $this->parentNodeAnchor instanceof NodeRelationAnchorPoint
-                ? Parameter::integer('parentNodeRelationAnchorPoint', $this->parentNodeAnchor->value)
-                : null
+            ...$this->childNodeAnchor ? match ($this->childNodeAnchor::class) {
+                NodeRelationAnchorPoint::class => [Parameter::integer('childNodeRelationAnchorPoint', $this->childNodeAnchor->value)],
+                NodeAggregateIdClause::class => iterator_to_array($this->childNodeAnchor->getParameters()),
+            } : [],
+            ...$this->parentNodeAnchor ? match ($this->parentNodeAnchor::class) {
+                NodeRelationAnchorPoint::class => [Parameter::integer('parentNodeRelationAnchorPoint', $this->parentNodeAnchor->value)],
+                NodeAggregateIdClause::class => iterator_to_array($this->parentNodeAnchor->getParameters()),
+            } : [],
         ]));
     }
 

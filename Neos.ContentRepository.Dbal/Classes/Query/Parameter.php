@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\Dbal\Query;
 
 use Doctrine\DBAL\ArrayParameterType;
+use Doctrine\DBAL\ParameterType;
 use Doctrine\DBAL\Types\Type;
 
 /**
@@ -22,7 +23,7 @@ final readonly class Parameter
     {
         return new self(
             name: $name,
-            type: null,
+            type: ParameterType::STRING,
             value: $value
         );
     }
@@ -43,7 +44,7 @@ final readonly class Parameter
     {
         return new self(
             name: $name,
-            type: null,
+            type: ParameterType::INTEGER,
             value: $value
         );
     }
