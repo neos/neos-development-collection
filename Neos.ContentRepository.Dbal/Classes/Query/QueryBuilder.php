@@ -19,20 +19,22 @@ final class QueryBuilder extends DBALQueryBuilder
     }
 
     /**
-     * Extends {@see DBALQueryBuilder::setParameter()} to allow merging
+     * Extends {@see DBALQueryBuilder::setParameters()} to allow merging
      *
      * @return $this This QueryBuilder instance.
      */
     public function mergeParameters(Parameters $parameters): self
     {
         $this->mergeDbalParameters(
-            $parameters->toDbalParams(),
+            $parameters->toDbalValues(),
             $parameters->toDbalTypes(),
         );
         return $this;
     }
 
     /**
+     * Extends {@see DBALQueryBuilder::setParameters()} to allow merging
+     *
      * @return $this This QueryBuilder instance.
      */
     public function mergeParametersFromBuilder(QueryBuilder $queryBuilder): self
@@ -81,16 +83,16 @@ final class QueryBuilder extends DBALQueryBuilder
     }
 
     /**
-     * @param array<string|int, mixed> $otherParams
+     * @param array<string|int, mixed> $otherValues
      * @param array<string|int, int|string|Type|null> $otherTypes
      */
-    private function mergeDbalParameters(array $otherParams, array $otherTypes): void
+    private function mergeDbalParameters(array $otherValues, array $otherTypes): void
     {
-        if ($otherParams === [] && $otherTypes === []) {
+        if ($otherValues === [] && $otherTypes === []) {
             return;
         }
 
-        $existingParams = $this->getParameters();
+        $existingValues = $this->getParameters();
         $existingTypes = $this->getParameterTypes();
 
         $intersectingExistingTypes = array_intersect_key($existingTypes, $otherTypes);
@@ -106,10 +108,10 @@ final class QueryBuilder extends DBALQueryBuilder
             }
         }
 
-        $intersectingExistingValues = array_intersect_key($existingParams, $otherParams);
+        $intersectingExistingValues = array_intersect_key($existingValues, $otherValues);
 
         foreach ($intersectingExistingValues as $existingKey => $existingValue) {
-            $otherValue = $otherParams[$existingKey];
+            $otherValue = $otherValues[$existingKey];
             if ($otherValue !== $existingValue) {
                 throw AmbiguousParametersGiven::becauseParameterIsAlreadyDefinedWithValue(
                     (string)$existingKey,
@@ -120,7 +122,7 @@ final class QueryBuilder extends DBALQueryBuilder
         }
 
         $this->setParameters(
-            array_merge($existingParams, $otherParams),
+            array_merge($existingValues, $otherValues),
             array_merge($existingTypes, $otherTypes),
         );
     }

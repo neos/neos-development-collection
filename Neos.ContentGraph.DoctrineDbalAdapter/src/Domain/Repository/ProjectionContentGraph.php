@@ -72,8 +72,8 @@ class ProjectionContentGraph
         SQL;
         try {
             $nodeRow = $this->dbal->fetchAssociative($parentNodeStatement, [
-                ...$hierarchyStatement->getParameters()->toDbalParams(),
-                ...$nodeAggregateIdClause->getParameters()->toDbalParams(),
+                ...$hierarchyStatement->getParameters()->toDbalValues(),
+                ...$nodeAggregateIdClause->getParameters()->toDbalValues(),
             ], [
                 ...$hierarchyStatement->getParameters()->toDbalTypes(),
                 ...$nodeAggregateIdClause->getParameters()->toDbalTypes(),
@@ -104,8 +104,8 @@ class ProjectionContentGraph
         SQL;
         try {
             $nodeRow = $this->dbal->fetchAssociative($nodeInAggregateStatement, [
-                ...$hierarchyStatement->getParameters()->toDbalParams(),
-                ...$nodeAggregateIdClause->getParameters()->toDbalParams(),
+                ...$hierarchyStatement->getParameters()->toDbalValues(),
+                ...$nodeAggregateIdClause->getParameters()->toDbalValues(),
             ], [
                 ...$hierarchyStatement->getParameters()->toDbalTypes(),
                 ...$nodeAggregateIdClause->getParameters()->toDbalTypes(),
@@ -137,8 +137,8 @@ class ProjectionContentGraph
         try {
             $relationAnchorPoints = $this->dbal->fetchFirstColumn($relationAnchorPointsStatement, [
                 'originDimensionSpacePointHash' => $originDimensionSpacePoint->hash,
-                ...$hierarchyStatement->getParameters()->toDbalParams(),
-                ...$nodeAggregateIdClause->getParameters()->toDbalParams(),
+                ...$hierarchyStatement->getParameters()->toDbalValues(),
+                ...$nodeAggregateIdClause->getParameters()->toDbalValues(),
             ], [
                 ...$hierarchyStatement->getParameters()->toDbalTypes(),
                 ...$nodeAggregateIdClause->getParameters()->toDbalTypes(),
@@ -173,8 +173,8 @@ class ProjectionContentGraph
         SQL;
         try {
             $relationAnchorPoints = $this->dbal->fetchFirstColumn($relationAnchorPointsStatement, [
-                ...$hierarchyStatement->getParameters()->toDbalParams(),
-                ...$nodeAggregateIdClause->getParameters()->toDbalParams(),
+                ...$hierarchyStatement->getParameters()->toDbalValues(),
+                ...$nodeAggregateIdClause->getParameters()->toDbalValues(),
             ], [
                 ...$hierarchyStatement->getParameters()->toDbalTypes(),
                 ...$nodeAggregateIdClause->getParameters()->toDbalTypes(),
@@ -234,7 +234,7 @@ class ProjectionContentGraph
             try {
                 /** @var array<string,mixed> $succeedingSiblingRelation */
                 $succeedingSiblingRelation = $this->dbal->fetchAssociative($succeedingSiblingRelationStatement, [
-                    ...$hierarchyStatement->getParameters()->toDbalParams(),
+                    ...$hierarchyStatement->getParameters()->toDbalValues(),
                 ], [
                     ...$hierarchyStatement->getParameters()->toDbalTypes(),
                 ]);
@@ -267,7 +267,7 @@ class ProjectionContentGraph
             try {
                 $precedingSiblingData = $this->dbal->fetchAssociative($precedingSiblingStatement, [
                     'position' => $succeedingSiblingPosition,
-                    ...$hierarchyStatement->getParameters()->toDbalParams(),
+                    ...$hierarchyStatement->getParameters()->toDbalValues(),
                 ], [
                     ...$hierarchyStatement->getParameters()->toDbalTypes(),
                 ]);
@@ -297,7 +297,7 @@ class ProjectionContentGraph
                 try {
                     /** @var array<string,mixed> $childHierarchyRelationData */
                     $childHierarchyRelationData = $this->dbal->fetchAssociative($childHierarchyRelationStatement, [
-                        ...$hierarchyStatement->getParameters()->toDbalParams(),
+                        ...$hierarchyStatement->getParameters()->toDbalValues(),
                     ], [
                         ...$hierarchyStatement->getParameters()->toDbalTypes(),
                     ]);
@@ -320,7 +320,7 @@ class ProjectionContentGraph
             SQL;
             try {
                 $rightmostSucceedingSiblingRelationData = $this->dbal->fetchAssociative($rightmostSucceedingSiblingRelationStatement, [
-                    ...$hierarchyStatement->getParameters()->toDbalParams(),
+                    ...$hierarchyStatement->getParameters()->toDbalValues(),
                 ], [
                     ...$hierarchyStatement->getParameters()->toDbalTypes(),
                 ]);
@@ -353,7 +353,7 @@ class ProjectionContentGraph
         SQL;
         try {
             $rows = $this->dbal->fetchAllAssociative($outgoingHierarchyRelationsStatement, [
-                ...$hierarchyStatement->getParameters()->toDbalParams(),
+                ...$hierarchyStatement->getParameters()->toDbalValues(),
             ], [
                 ...$hierarchyStatement->getParameters()->toDbalTypes(),
             ]);
@@ -377,7 +377,7 @@ class ProjectionContentGraph
         SQL;
         try {
             $rows = $this->dbal->fetchAllAssociative($ingoingHierarchyRelationsStatement, [
-                ...$hierarchyStatement->getParameters()->toDbalParams(),
+                ...$hierarchyStatement->getParameters()->toDbalValues(),
             ], [
                 ...$hierarchyStatement->getParameters()->toDbalTypes(),
             ]);
@@ -405,7 +405,7 @@ class ProjectionContentGraph
         try {
             $rows = $this->dbal->fetchAllAssociative(
                 $ingoingHierarchyRelationsStatement,
-                $hierarchyStatement->getParameters()->toDbalParams(),
+                $hierarchyStatement->getParameters()->toDbalValues(),
                 $hierarchyStatement->getParameters()->toDbalTypes()
             );
         } catch (DBALException $e) {
@@ -436,7 +436,7 @@ class ProjectionContentGraph
         try {
             $rows = $this->dbal->fetchAllAssociative(
                 $outgoingHierarchyRelationsStatement,
-                $hierarchyStatement->getParameters()->toDbalParams(),
+                $hierarchyStatement->getParameters()->toDbalValues(),
                 $hierarchyStatement->getParameters()->toDbalTypes(),
             );
         } catch (DBALException $e) {
@@ -470,8 +470,8 @@ class ProjectionContentGraph
         SQL;
         try {
             $rows = $this->dbal->fetchAllAssociative($outgoingHierarchyRelationsStatement, [
-                ...$hierarchyStatement->getParameters()->toDbalParams(),
-                ...$nodeAggregateIdClause->getParameters()->toDbalParams(),
+                ...$hierarchyStatement->getParameters()->toDbalValues(),
+                ...$nodeAggregateIdClause->getParameters()->toDbalValues(),
             ], [
                 ...$hierarchyStatement->getParameters()->toDbalTypes(),
                 ...$nodeAggregateIdClause->getParameters()->toDbalTypes(),
@@ -505,8 +505,8 @@ class ProjectionContentGraph
                 {$nodeAggregateIdClause->toWhereSql()}
         SQL;
         $parameters = [
-            ...$hierarchyStatement->getParameters()->toDbalParams(),
-            ...$nodeAggregateIdClause->getParameters()->toDbalParams(),
+            ...$hierarchyStatement->getParameters()->toDbalValues(),
+            ...$nodeAggregateIdClause->getParameters()->toDbalValues(),
         ];
         $types = [
             ...$hierarchyStatement->getParameters()->toDbalTypes(),

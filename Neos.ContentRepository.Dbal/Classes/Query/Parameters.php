@@ -67,7 +67,7 @@ final readonly class Parameters implements \IteratorAggregate, \Countable
     /**
      * @return array<string, mixed>
      */
-    public function toDbalParams(): array
+    public function toDbalValues(): array
     {
         return array_column($this->items, 'value', 'name');
     }

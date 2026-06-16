@@ -86,8 +86,8 @@ trait SubtreeTagging
                 'nodeAggregateId' => $nodeAggregateId->value,
                 'tagPath' => '$."' . $tag->value . '"',
                 'targetContentStreamLayer' => $contentStreamLayers->getWriteLayer()->value,
-                ...$allHierarchyStatement->getParameters()->toDbalParams(),
-                ...$hierarchyStatementNested->getParameters()->toDbalParams(),
+                ...$allHierarchyStatement->getParameters()->toDbalValues(),
+                ...$hierarchyStatementNested->getParameters()->toDbalValues(),
             ], [
                 ...$allHierarchyStatement->getParameters()->toDbalTypes(),
                 ...$hierarchyStatementNested->getParameters()->toDbalTypes(),
@@ -127,7 +127,7 @@ trait SubtreeTagging
                 'nodeAggregateId' => $nodeAggregateId->value,
                 'tagPath' => '$."' . $tag->value . '"',
                 'targetContentStreamLayer' => $contentStreamLayers->getWriteLayer()->value,
-                ...$hierarchyStatement->getParameters()->toDbalParams(),
+                ...$hierarchyStatement->getParameters()->toDbalValues(),
             ], [
                 ...$hierarchyStatement->getParameters()->toDbalTypes(),
             ]);
@@ -214,8 +214,8 @@ trait SubtreeTagging
                 'nodeAggregateId' => $nodeAggregateId->value,
                 'tagPath' => '$."' . $tag->value . '"',
                 'targetContentStreamLayer' => $contentStreamLayers->getWriteLayer()->value,
-                ...$allHierarchyStatement->getParameters()->toDbalParams(),
-                ...$nestedHierarchyStatement->getParameters()->toDbalParams(),
+                ...$allHierarchyStatement->getParameters()->toDbalValues(),
+                ...$nestedHierarchyStatement->getParameters()->toDbalValues(),
             ], [
                 ...$allHierarchyStatement->getParameters()->toDbalTypes(),
                 ...$nestedHierarchyStatement->getParameters()->toDbalTypes(),
@@ -305,7 +305,7 @@ trait SubtreeTagging
             $this->dbal->executeStatement($moveSubtreeTagsStatement, [
                 'newParentNodeAggregateId' => $newParentNodeAggregateId->value,
                 'targetContentStreamLayer' => $contentStreamLayers->getWriteLayer()->value,
-                ...$hierarchyStatement->getParameters()->toDbalParams(),
+                ...$hierarchyStatement->getParameters()->toDbalValues(),
             ], [
                 ...$hierarchyStatement->getParameters()->toDbalTypes(),
             ]);
@@ -327,7 +327,7 @@ trait SubtreeTagging
 
         try {
             $subtreeTagsJson = $this->dbal->fetchOne($subtreeTagsStatement, [
-                ...$hierarchyStatement->getParameters()->toDbalParams(),
+                ...$hierarchyStatement->getParameters()->toDbalValues(),
             ], [
                 ...$hierarchyStatement->getParameters()->toDbalTypes(),
             ]);
