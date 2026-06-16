@@ -6,7 +6,6 @@ namespace Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\Feature;
 
 use Doctrine\DBAL\ArrayParameterType;
 use Doctrine\DBAL\Exception as DBALException;
-use Doctrine\DBAL\Platforms\MariaDBPlatform;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\ContentStreamLayers;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\NodeRelationAnchorPoint;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\NodeFactory;
@@ -83,7 +82,7 @@ trait SubtreeTagging
                 'contentStreamLayers' => $contentStreamLayers->toIntArray(),
                 'nodeAggregateId' => $nodeAggregateId->value,
                 'dimensionSpacePointHashes' => $affectedDimensionSpacePoints->getPointHashes(),
-                'tagPath' => '$."' . $tag->value . '"',
+                'tagPath' => $tagPath,
                 'targetContentStreamLayer' => $contentStreamLayers->getWriteLayer()->value,
             ], [
                 'dimensionSpacePointHashes' => ArrayParameterType::STRING,
@@ -200,8 +199,9 @@ trait SubtreeTagging
      * Remove an explicit subtree tag from a node aggregate, ONE LEVEL AT A TIME driven from PHP - the same scoped
      * per-level walk as {@see addSubtreeTag()}, run in reverse.
      *
-     * Untagging the node has one of two global effects, decided once up front by whether the node still inherits the tag
-     * from an ancestor (i.e. its parent relation still carries the tag):
+     * Untagging the node has one of two effects, decided PER DIMENSION by whether the node still inherits the tag from
+     * an ancestor (i.e. its parent relation in that dimension still carries the tag) - a node's parent, and thus its
+     * inheritance, can differ per dimension:
      *  - still inherited -> the explicit `true` becomes an inherited `null` marker on the node; its descendants already
      *    carry the inherited `null` and stay unchanged.
      *  - no longer inherited -> the tag key is removed entirely from the node AND from every descendant that only
@@ -219,15 +219,17 @@ trait SubtreeTagging
         $tagKey = $tag->value;
         $tagPath = '$."' . $tag->value . '"';
         try {
-            // Decide once (as the original correlated subquery did): does the node still inherit the tag from a parent?
-            $parentNodeAnchors = $this->findParentNodeAnchorsOfNodeAggregate($contentStreamLayers, $nodeAggregateId);
-            $stillInherited = $this->anyRelationContainsTag($contentStreamLayers, $parentNodeAnchors, $tagPath);
-
             foreach ($affectedDimensionSpacePoints as $dimensionSpacePoint) {
                 $seed = $this->findWinningRelationOfNodeAggregate($contentStreamLayers, $nodeAggregateId, $dimensionSpacePoint);
                 if ($seed === null) {
                     continue;
                 }
+                // Decide PER DIMENSION whether the node still inherits the tag from an ancestor: a node's parent -
+                // and therefore whether it keeps the tag as an inherited `null` or loses it entirely - can differ per
+                // dimension. We check the node's parent relation IN THIS DIMENSION (the seed's parentnodeanchor is the
+                // parent's anchor in this dimension; the parent's incoming relation has childnodeanchor = that anchor).
+                $stillInherited = $this->relationContainsTag($contentStreamLayers, [(int)$seed['parentnodeanchor']], $dimensionSpacePoint, $tagPath);
+
                 $toProcess = [$seed];
                 $visited = [(int)$seed['childnodeanchor'] => true];
                 while ($toProcess !== []) {
@@ -280,39 +282,13 @@ trait SubtreeTagging
     }
 
     /**
-     * Resolve the distinct winning parent node anchors of a node aggregate across all dimensions - used by
-     * {@see removeSubtreeTag()} to find the relations that determine whether the node still inherits a tag.
-     *
-     * @return list<int>
-     */
-    private function findParentNodeAnchorsOfNodeAggregate(ContentStreamLayers $contentStreamLayers, NodeAggregateId $nodeAggregateId): array
-    {
-        $statement = <<<SQL
-            SELECT DISTINCT h.parentnodeanchor
-            FROM {$this->hierarchyRelationStatement
-                ->where('')
-                ->andInnerWhereRelationIdMatches('childnodeanchor IN (SELECT relationanchorpoint FROM ' . $this->tableNames->node() . ' WHERE nodeaggregateid = :nodeAggregateId)')
-                ->toSql()} h
-              INNER JOIN {$this->tableNames->node()} n ON n.relationanchorpoint = h.childnodeanchor
-            WHERE n.nodeaggregateid = :nodeAggregateId
-            SQL;
-        /** @var list<int> $anchors */
-        $anchors = array_map('intval', $this->dbal->fetchFirstColumn($statement, [
-            'contentStreamLayers' => $contentStreamLayers->toIntArray(),
-            'nodeAggregateId' => $nodeAggregateId->value,
-        ], [
-            'contentStreamLayers' => ArrayParameterType::INTEGER,
-        ]));
-        return $anchors;
-    }
-
-    /**
-     * Whether any winning relation among the given node anchors carries the tag (explicit or inherited) - i.e. whether a
-     * descendant of those nodes still inherits the tag.
+     * Whether any winning relation among the given node anchors carries the tag (explicit or inherited) in the given
+     * dimension - used by {@see removeSubtreeTag()} to decide, per dimension, whether the node still inherits the tag
+     * from its parent.
      *
      * @param list<int> $childNodeAnchors
      */
-    private function anyRelationContainsTag(ContentStreamLayers $contentStreamLayers, array $childNodeAnchors, string $tagPath): bool
+    private function relationContainsTag(ContentStreamLayers $contentStreamLayers, array $childNodeAnchors, DimensionSpacePoint $dimensionSpacePoint, string $tagPath): bool
     {
         if ($childNodeAnchors === []) {
             return false;
@@ -321,6 +297,7 @@ trait SubtreeTagging
             SELECT 1
             FROM {$this->hierarchyRelationStatement
                 ->where('h.childnodeanchor IN (:childNodeAnchors)')
+                ->andWhere('h.dimensionspacepointhash = :dimensionSpacePointHash')
                 ->andWhere("JSON_CONTAINS_PATH(h.subtreetags, 'one', :tagPath)")
                 ->andInnerWhereRelationIdMatches('childnodeanchor IN (:childNodeAnchors)')
                 ->toSql()} h
@@ -329,6 +306,7 @@ trait SubtreeTagging
         $result = $this->dbal->fetchOne($statement, [
             'contentStreamLayers' => $contentStreamLayers->toIntArray(),
             'childNodeAnchors' => $childNodeAnchors,
+            'dimensionSpacePointHash' => $dimensionSpacePoint->hash,
             'tagPath' => $tagPath,
         ], [
             'contentStreamLayers' => ArrayParameterType::INTEGER,
@@ -580,14 +558,5 @@ trait SubtreeTagging
             throw new \RuntimeException(sprintf('Failed to fetch subtree tags for hierarchy parent anchor point "%s" in content subgraph "%s@%s"', $parentNodeAnchorPoint->value, $dimensionSpacePoint->toJson(), $contentStreamLayers->toDebugString()), 1704199847);
         }
         return NodeFactory::extractNodeTagsFromJson($subtreeTagsJson);
-    }
-
-    private function jsonEqualsSql(string $sqlExpressionA, string $sqlExpressionB): string
-    {
-        if ($this->dbal->getDatabasePlatform() instanceof MariaDBPlatform) {
-            return sprintf('JSON_EQUALS(%s, %s)', $sqlExpressionA, $sqlExpressionB);
-        } else {
-            return sprintf('(CAST(%s AS JSON) = CAST(%s AS JSON))', $sqlExpressionA, $sqlExpressionB);
-        }
     }
 }
