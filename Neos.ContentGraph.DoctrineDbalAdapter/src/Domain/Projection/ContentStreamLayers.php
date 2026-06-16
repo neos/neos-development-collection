@@ -20,7 +20,7 @@ final readonly class ContentStreamLayers
     public static function from(ContentStreamLayer ...$items): self
     {
         if ($items === []) {
-            throw new \InvalidArgumentException('Db ids must not be empty', 1775819046);
+            throw new \InvalidArgumentException('Content stream layers must not be empty', 1775819046);
         }
         $indexed = array_column($items, null, 'value');
         ksort($indexed, SORT_NUMERIC);

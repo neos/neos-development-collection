@@ -296,9 +296,8 @@ trait SubtreeTagging
             return false;
         }
         $hierarchyStatement = $this->statements->forHierarchyRelation($contentStreamLayers)->withDimensionSpacePoint($dimensionSpacePoint)
-            ->andWhere("JSON_CONTAINS_PATH(h.subtreetags, 'one', :tagPath)")
-            ->andWhere('h.childnodeanchor IN (:childNodeAnchors)')
-            ->andInnerWhereRelationIdMatches('childnodeanchor IN (:childNodeAnchors)');
+            ->withChildNodeRelationAnchors($childNodeAnchors)
+            ->andWhere("JSON_CONTAINS_PATH(h.subtreetags, 'one', :tagPath)");
 
         $statement = <<<SQL
             SELECT 1
@@ -306,11 +305,9 @@ trait SubtreeTagging
             LIMIT 1
             SQL;
         $result = $this->dbal->fetchOne($statement, [
-            'childNodeAnchors' => $childNodeAnchors,
             'tagPath' => $tagPath,
             ...$hierarchyStatement->getParameters()->toDbalValues(),
         ], [
-            'childNodeAnchors' => ArrayParameterType::INTEGER,
             ...$hierarchyStatement->getParameters()->toDbalTypes(),
         ]);
         return $result !== false;
@@ -436,8 +433,7 @@ trait SubtreeTagging
         }
 
         $hierarchyStatement = $this->statements->forHierarchyRelation($contentStreamLayers)->withDimensionSpacePoint($dimensionSpacePoint)
-            ->andWhere('h.parentnodeanchor IN (:parentNodeAnchors)')
-            ->andInnerWhereRelationIdMatches('parentnodeanchor IN (:parentNodeAnchors)');
+            ->withParentNodeRelationAnchors($parentNodeAnchors);
 
         $statement = <<<SQL
             SELECT h.id, h.contentstreamlayer, h.parentnodeanchor, h.childnodeanchor, h.position, h.dimensionspacepointhash, h.subtreetags
@@ -445,10 +441,8 @@ trait SubtreeTagging
             SQL;
         /** @var list<array{id:int, contentstreamlayer:int, parentnodeanchor:int, childnodeanchor:int, position:int, dimensionspacepointhash:string, subtreetags:?string}> $rows */
         $rows = $this->dbal->fetchAllAssociative($statement, [
-            'parentNodeAnchors' => $parentNodeAnchors,
             ...$hierarchyStatement->getParameters()->toDbalValues(),
         ], [
-            'parentNodeAnchors' => ArrayParameterType::INTEGER,
             ...$hierarchyStatement->getParameters()->toDbalTypes(),
         ]);
         return $rows;
