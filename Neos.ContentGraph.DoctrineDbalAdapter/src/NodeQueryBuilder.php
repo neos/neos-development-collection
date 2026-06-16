@@ -123,16 +123,6 @@ final readonly class NodeQueryBuilder
             ->orderBy('h.position', $preceding ? 'DESC' : 'ASC');
     }
 
-    public function buildBasicNodesCteQuery(NodeAggregateId $entryNodeAggregateId, ContentStreamLayers $contentStreamLayers, DimensionSpacePoint $dimensionSpacePoint, string $cteName = 'ancestry', string $cteAlias = 'pn'): QueryBuilder
-    {
-        return $this->createQueryBuilder()
-            ->select('*')
-            ->from($cteName, $cteAlias)
-            // TODO cleanup
-            ->setParameter('contentStreamLayers', $contentStreamLayers->toIntArray(), ArrayParameterType::INTEGER)
-            ->setParameter('entryNodeAggregateId', $entryNodeAggregateId->value);
-    }
-
     public function addNodeTypeCriteria(QueryBuilder $queryBuilder, ExpandedNodeTypeCriteria $constraintsWithSubNodeTypes, string $nodeTableAlias = 'n'): void
     {
         $nodeTablePrefix = $nodeTableAlias === '' ? '' : $nodeTableAlias . '.';
