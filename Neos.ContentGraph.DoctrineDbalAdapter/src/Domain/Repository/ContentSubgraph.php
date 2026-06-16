@@ -14,12 +14,12 @@ declare(strict_types=1);
 
 namespace Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository;
 
-use Doctrine\DBAL\ArrayParameterType;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Exception as DBALException;
 use Doctrine\DBAL\Result;
 use Neos\ContentGraph\DoctrineDbalAdapter\ContentGraphTableNames;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\ContentStreamLayers;
+use Neos\ContentGraph\DoctrineDbalAdapter\HierarchyRelationStatement;
 use Neos\ContentGraph\DoctrineDbalAdapter\NodeAggregateIdClause;
 use Neos\ContentGraph\DoctrineDbalAdapter\NodeQueryBuilder;
 use Neos\ContentGraph\DoctrineDbalAdapter\StatementFactory;
@@ -96,7 +96,7 @@ final class ContentSubgraph implements ContentSubgraphInterface
 {
     private readonly NodeQueryBuilder $nodeQueryBuilder;
 
-    private readonly StatementFactory $statements;
+    private readonly HierarchyRelationStatement $hierarchyStatement;
 
     public function __construct(
         private readonly ContentRepositoryId $contentRepositoryId,
@@ -110,7 +110,9 @@ final class ContentSubgraph implements ContentSubgraphInterface
         ContentGraphTableNames $tableNames
     ) {
         $this->nodeQueryBuilder = new NodeQueryBuilder($this->dbal, $tableNames);
-        $this->statements = StatementFactory::for($tableNames);
+        $this->hierarchyStatement = StatementFactory::for($tableNames)
+            ->forHierarchyRelation($this->contentStreamLayers)
+            ->withDimensionSpacePoint($this->dimensionSpacePoint);
     }
 
     public function getContentRepositoryId(): ContentRepositoryId
@@ -278,14 +280,14 @@ final class ContentSubgraph implements ContentSubgraphInterface
             // @see https://mariadb.com/kb/en/library/recursive-common-table-expressions-overview/#cast-to-avoid-data-truncation
             ->select('n.*, h.subtreetags, CAST("ROOT" AS CHAR(50)) AS parentNodeAggregateId, 0 AS level, 0 AS position')
             ->from($this->nodeQueryBuilder->tableNames->node(), 'n')
-            ->innerJoinWithStatement('n', $this->statements->forHierarchyRelation($this->contentStreamLayers)->withDimensionSpacePoint($this->dimensionSpacePoint), 'h', 'h.childnodeanchor = n.relationanchorpoint')
+            ->innerJoinWithStatement('n', $this->hierarchyStatement, 'h', 'h.childnodeanchor = n.relationanchorpoint')
             ->where('n.nodeaggregateid = :entryNodeAggregateId');
         $this->addSubtreeTagConstraints($queryBuilderInitial);
 
         $queryBuilderRecursive = $this->createQueryBuilder()
             ->select('c.*, h.subtreetags, p.nodeaggregateid AS parentNodeAggregateId, p.level + 1 AS level, h.position')
             ->from('tree', 'p')
-            ->innerJoinWithStatement('p', $this->statements->forHierarchyRelation($this->contentStreamLayers)->withDimensionSpacePoint($this->dimensionSpacePoint), 'h', 'h.parentnodeanchor = p.relationanchorpoint')
+            ->innerJoinWithStatement('p', $this->hierarchyStatement, 'h', 'h.parentnodeanchor = p.relationanchorpoint')
             ->innerJoin('p', $this->nodeQueryBuilder->tableNames->node(), 'c', 'c.relationanchorpoint = h.childnodeanchor');
         if ($filter->maximumLevels !== null) {
             $queryBuilderRecursive->andWhere('p.level < :maximumLevels')->setParameter('maximumLevels', $filter->maximumLevels);
@@ -376,7 +378,7 @@ final class ContentSubgraph implements ContentSubgraphInterface
             ->select('n.*, ph.subtreetags, ph.parentnodeanchor')
             ->from($this->nodeQueryBuilder->tableNames->node(), 'n')
             // we need to join with the hierarchy relation, because we need the node name.
-            ->innerJoinWithStatement('n', $this->statements->forHierarchyRelation($this->contentStreamLayers)->withDimensionSpacePoint($this->dimensionSpacePoint), 'ph', 'n.relationanchorpoint = ph.childnodeanchor')
+            ->innerJoinWithStatement('n', $this->hierarchyStatement, 'ph', 'n.relationanchorpoint = ph.childnodeanchor')
             ->where('n.nodeaggregateid = :entryNodeAggregateId');
         $this->addSubtreeTagConstraints($queryBuilderInitial, 'ph');
 
@@ -384,7 +386,7 @@ final class ContentSubgraph implements ContentSubgraphInterface
             ->select('pn.*, h.subtreetags, h.parentnodeanchor')
             ->from('ancestry', 'cn')
             ->innerJoin('cn', $this->nodeQueryBuilder->tableNames->node(), 'pn', 'pn.relationanchorpoint = cn.parentnodeanchor')
-            ->innerJoinWithStatement('pn', $this->statements->forHierarchyRelation($this->contentStreamLayers)->withDimensionSpacePoint($this->dimensionSpacePoint), 'h', 'h.childnodeanchor = pn.relationanchorpoint');
+            ->innerJoinWithStatement('pn', $this->hierarchyStatement, 'h', 'h.childnodeanchor = pn.relationanchorpoint');
         $this->addSubtreeTagConstraints($queryBuilderRecursive);
 
         $queryBuilderCte = $this->nodeQueryBuilder->buildBasicNodesCteQuery($entryNodeAggregateId, $this->contentStreamLayers, $this->dimensionSpacePoint);
@@ -505,13 +507,13 @@ final class ContentSubgraph implements ContentSubgraphInterface
 
         $queryBuilder = $this->createQueryBuilder()
             ->select("dn.*, dh.subtreetags, r.name AS referencename, r.properties AS referenceproperties")
-            ->fromWithStatement($this->statements->forHierarchyRelation($this->contentStreamLayers)->withDimensionSpacePoint($this->dimensionSpacePoint), 'dh')
+            ->fromWithStatement($this->hierarchyStatement, 'dh')
             ->innerJoin('dh', $this->nodeQueryBuilder->tableNames->node(), 'dn', 'dn.relationanchorpoint = dh.childnodeanchor')
             ->innerJoin('dn', $this->nodeQueryBuilder->tableNames->referenceRelation(), 'r', 'r.destinationnodeaggregateid = dn.nodeaggregateid')
             // todo params lost
             ->where('r.nodeanchorpoint = (
                 SELECT relationanchorpoint FROM ' . $this->nodeQueryBuilder->tableNames->node() . ' sn
-                JOIN ' . $this->statements->forHierarchyRelation($this->contentStreamLayers)->withDimensionSpacePoint($this->dimensionSpacePoint)->toSql() . ' sh ON sn.relationanchorpoint = sh.childnodeanchor
+                JOIN ' . $this->hierarchyStatement->toSql() . ' sh ON sn.relationanchorpoint = sh.childnodeanchor
                 WHERE sn.nodeaggregateid = :nodeAggregateId  '
                 . $subtreeTagConstraints . '
             )')
@@ -566,14 +568,14 @@ final class ContentSubgraph implements ContentSubgraphInterface
 
         $queryBuilder = $this->createQueryBuilder()
             ->select("sn.*, sh.subtreetags, r.name AS referencename, r.properties AS referenceproperties")
-            ->fromWithStatement($this->statements->forHierarchyRelation($this->contentStreamLayers)->withDimensionSpacePoint($this->dimensionSpacePoint), 'sh')
+            ->fromWithStatement($this->hierarchyStatement, 'sh')
             ->innerJoin('sh', $this->nodeQueryBuilder->tableNames->node(), 'sn', 'sn.relationanchorpoint = sh.childnodeanchor')
             ->innerJoin('sn', $this->nodeQueryBuilder->tableNames->referenceRelation(), 'r', 'r.nodeanchorpoint = sn.relationanchorpoint')
             // todo params lost
             ->where(<<<SQL
             r.destinationnodeaggregateid = (
               SELECT nodeaggregateid FROM {$this->nodeQueryBuilder->tableNames->node()} dn
-                JOIN {$this->statements->forHierarchyRelation($this->contentStreamLayers)->withDimensionSpacePoint($this->dimensionSpacePoint)->toSql()} dh
+                JOIN {$this->hierarchyStatement->toSql()} dh
                   ON dn.relationanchorpoint = dh.childnodeanchor
               WHERE dn.nodeaggregateid = :nodeAggregateId
                 {$subtreeTagConstraints}
@@ -645,9 +647,9 @@ final class ContentSubgraph implements ContentSubgraphInterface
             ->select('n.*, ph.subtreetags, ph.parentnodeanchor, 0 AS level')
             ->from($this->nodeQueryBuilder->tableNames->node(), 'n')
             // we need to join with the hierarchy relation, because we need the node name.
-            ->innerJoinWithStatement('n', $this->statements->forHierarchyRelation($this->contentStreamLayers)->withDimensionSpacePoint($this->dimensionSpacePoint), 'ch', 'ch.parentnodeanchor = n.relationanchorpoint')
+            ->innerJoinWithStatement('n', $this->hierarchyStatement, 'ch', 'ch.parentnodeanchor = n.relationanchorpoint')
             ->innerJoin('ch', $this->nodeQueryBuilder->tableNames->node(), 'c', 'c.relationanchorpoint = ch.childnodeanchor')
-            ->innerJoinWithStatement('n', $this->statements->forHierarchyRelation($this->contentStreamLayers)->withDimensionSpacePoint($this->dimensionSpacePoint), 'ph', 'n.relationanchorpoint = ph.childnodeanchor')
+            ->innerJoinWithStatement('n', $this->hierarchyStatement, 'ph', 'n.relationanchorpoint = ph.childnodeanchor')
             ->andWhere('c.nodeaggregateid = :entryNodeAggregateId');
         $this->addSubtreeTagConstraints($queryBuilderInitial, 'ph');
         $this->addSubtreeTagConstraints($queryBuilderInitial, 'ch');
@@ -656,7 +658,7 @@ final class ContentSubgraph implements ContentSubgraphInterface
             ->select('pn.*, h.subtreetags, h.parentnodeanchor,  ch.level + 1 AS level')
             ->from('ancestry', 'ch')
             ->innerJoin('ch', $this->nodeQueryBuilder->tableNames->node(), 'pn', 'pn.relationanchorpoint = ch.parentnodeanchor')
-            ->innerJoinWithStatement('pn', $this->statements->forHierarchyRelation($this->contentStreamLayers)->withDimensionSpacePoint($this->dimensionSpacePoint), 'h', 'h.childnodeanchor = pn.relationanchorpoint');
+            ->innerJoinWithStatement('pn', $this->hierarchyStatement, 'h', 'h.childnodeanchor = pn.relationanchorpoint');
         $this->addSubtreeTagConstraints($queryBuilderRecursive);
 
         $queryBuilderCte = $this->nodeQueryBuilder->buildBasicNodesCteQuery($entryNodeAggregateId, $this->contentStreamLayers, $this->dimensionSpacePoint);
@@ -676,16 +678,16 @@ final class ContentSubgraph implements ContentSubgraphInterface
             ->select('n.*, h.subtreetags, CAST("ROOT" AS CHAR(50)) AS parentNodeAggregateId, 0 AS level, 0 AS position')
             ->from($this->nodeQueryBuilder->tableNames->node(), 'n')
             // we need to join with the hierarchy relation, because we need the node name.
-            ->innerJoinWithStatement('n', $this->statements->forHierarchyRelation($this->contentStreamLayers)->withDimensionSpacePoint($this->dimensionSpacePoint), 'h', 'h.childnodeanchor = n.relationanchorpoint')
+            ->innerJoinWithStatement('n', $this->hierarchyStatement, 'h', 'h.childnodeanchor = n.relationanchorpoint')
             ->innerJoin('n', $this->nodeQueryBuilder->tableNames->node(), 'p', 'p.relationanchorpoint = h.parentnodeanchor')
-            ->innerJoinWithStatement('n', $this->statements->forHierarchyRelation($this->contentStreamLayers)->withDimensionSpacePoint($this->dimensionSpacePoint), 'ph', 'ph.childnodeanchor = p.relationanchorpoint')
+            ->innerJoinWithStatement('n', $this->hierarchyStatement, 'ph', 'ph.childnodeanchor = p.relationanchorpoint')
             ->where('p.nodeaggregateid = :entryNodeAggregateId');
         $this->addSubtreeTagConstraints($queryBuilderInitial);
 
         $queryBuilderRecursive = $this->createQueryBuilder()
             ->select('cn.*, h.subtreetags, pn.nodeaggregateid AS parentNodeAggregateId, pn.level + 1 AS level, h.position')
             ->from('tree', 'pn')
-            ->innerJoinWithStatement('pn', $this->statements->forHierarchyRelation($this->contentStreamLayers)->withDimensionSpacePoint($this->dimensionSpacePoint), 'h', 'h.parentnodeanchor = pn.relationanchorpoint')
+            ->innerJoinWithStatement('pn', $this->hierarchyStatement, 'h', 'h.parentnodeanchor = pn.relationanchorpoint')
             ->innerJoin('pn', $this->nodeQueryBuilder->tableNames->node(), 'cn', 'cn.relationanchorpoint = h.childnodeanchor');
         $this->addSubtreeTagConstraints($queryBuilderRecursive);
 
