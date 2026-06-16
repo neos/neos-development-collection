@@ -11,7 +11,7 @@ use Doctrine\DBAL\Types\Type;
  */
 final readonly class Parameters implements \IteratorAggregate, \Countable
 {
-    /** @param list<Parameter> $items */
+    /** @param array<string,Parameter> $items */
     private function __construct(
         private array $items
     ) {
@@ -19,22 +19,49 @@ final readonly class Parameters implements \IteratorAggregate, \Countable
 
     public static function create(Parameter ...$items): self
     {
-        return new self(array_values($items));
+        /** @var array<string,Parameter> $indexed */
+        $indexed = [];
+        foreach ($items as $parameter) {
+            if (!array_key_exists($parameter->name, $indexed)) {
+                $indexed[$parameter->name] = $parameter;
+                continue;
+            }
+            $existing = $indexed[$parameter->name];
+
+            if ($existing->type !== $parameter->type) {
+                throw AmbiguousParametersGiven::becauseParameterIsAlreadyDefinedWithType(
+                    $existing->name,
+                    $existing->type,
+                    $parameter->type
+                );
+            }
+
+            if ($existing->value !== $parameter->value) {
+                throw AmbiguousParametersGiven::becauseParameterIsAlreadyDefinedWithValue(
+                    $existing->name,
+                    $existing->value,
+                    $parameter->value
+                );
+            }
+        }
+
+        return new self(
+            $indexed
+        );
     }
 
     public function getReference(string $name): string
     {
-        foreach ($this->items as $parameter) {
-            if ($parameter->name === $name) {
-                return ":$name";
-            }
+        $parameter = $this->items[$name] ?? null;
+        if ($parameter === null) {
+            throw new \RuntimeException(sprintf('No parameter exists for %s', $name), 1781593395);
         }
-        throw new \RuntimeException(sprintf('No parameter exists for %s', $name), 1781593395);
+        return ":{$parameter->name}";
     }
 
     public function get(string $name): ?Parameter
     {
-        return array_find($this->items, fn($parameter) => $parameter->name === $name);
+        return $this->items[$name] ?? null;
     }
 
     /**
@@ -42,11 +69,7 @@ final readonly class Parameters implements \IteratorAggregate, \Countable
      */
     public function toDbalParams(): array
     {
-        $values = [];
-        foreach ($this->items as $parameter) {
-            $values[$parameter->name] = $parameter->value;
-        }
-        return $values;
+        return array_column($this->items, 'value', 'name');
     }
 
     /**
@@ -54,16 +77,12 @@ final readonly class Parameters implements \IteratorAggregate, \Countable
      */
     public function toDbalTypes(): array
     {
-        $types = [];
-        foreach ($this->items as $parameter) {
-            $types[$parameter->name] = $parameter->type;
-        }
-        return $types;
+        return array_column($this->items, 'type', 'name');
     }
 
     public function getIterator(): \Traversable
     {
-        yield from $this->items;
+        yield from array_values($this->items);
     }
 
     public function count(): int
