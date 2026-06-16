@@ -24,8 +24,8 @@ final readonly class HierarchyRelationStatement implements SqlStatementInterface
         private ContentGraphTableNames $tableNames,
         private ContentStreamLayers $contentStreamLayers,
         private DimensionSpacePointSet $dimensionSpacePoints,
-        private ?NodeRelationAnchorPoint $childNodeRelationAnchorPoint,
-        private ?NodeRelationAnchorPoint $parentNodeRelationAnchorPoint,
+        private NodeRelationAnchorPoint|NodeAggregateIdClause|null $childNodeAnchor,
+        private NodeRelationAnchorPoint|NodeAggregateIdClause|null $parentNodeAnchor,
         private array $whereClauses,
     ) {
     }
@@ -47,8 +47,8 @@ final readonly class HierarchyRelationStatement implements SqlStatementInterface
             tableNames: $this->tableNames,
             contentStreamLayers: $this->contentStreamLayers,
             dimensionSpacePoints: DimensionSpacePointSet::fromArray([$dimensionSpacePoint]),
-            childNodeRelationAnchorPoint: $this->childNodeRelationAnchorPoint,
-            parentNodeRelationAnchorPoint: $this->parentNodeRelationAnchorPoint,
+            childNodeAnchor: $this->childNodeAnchor,
+            parentNodeAnchor: $this->parentNodeAnchor,
             whereClauses: $this->whereClauses,
         );
     }
@@ -56,14 +56,14 @@ final readonly class HierarchyRelationStatement implements SqlStatementInterface
     public function withDimensionSpacePoints(DimensionSpacePointSet $dimensionSpacePoints): self
     {
         if ($dimensionSpacePoints->isEmpty()) {
-            throw new \RuntimeException(sprintf('TODO Invalid'), 1781544419);
+            throw new \InvalidArgumentException('Dimension space points to filter must not be empty', 1781553616);
         }
         return new self(
             tableNames: $this->tableNames,
             contentStreamLayers: $this->contentStreamLayers,
             dimensionSpacePoints: $dimensionSpacePoints,
-            childNodeRelationAnchorPoint: $this->childNodeRelationAnchorPoint,
-            parentNodeRelationAnchorPoint: $this->parentNodeRelationAnchorPoint,
+            childNodeAnchor: $this->childNodeAnchor,
+            parentNodeAnchor: $this->parentNodeAnchor,
             whereClauses: $this->whereClauses,
         );
     }
@@ -74,8 +74,20 @@ final readonly class HierarchyRelationStatement implements SqlStatementInterface
             tableNames: $this->tableNames,
             contentStreamLayers: $this->contentStreamLayers,
             dimensionSpacePoints: $this->dimensionSpacePoints,
-            childNodeRelationAnchorPoint: $childNodeRelationAnchorPoint,
-            parentNodeRelationAnchorPoint: $this->parentNodeRelationAnchorPoint,
+            childNodeAnchor: $childNodeRelationAnchorPoint,
+            parentNodeAnchor: $this->parentNodeAnchor,
+            whereClauses: $this->whereClauses,
+        );
+    }
+
+    public function withChildNodeAggregateIdPrefilter(NodeAggregateIdClause $childNodeAggregateIdClause): self
+    {
+        return new self(
+            tableNames: $this->tableNames,
+            contentStreamLayers: $this->contentStreamLayers,
+            dimensionSpacePoints: $this->dimensionSpacePoints,
+            childNodeAnchor: $childNodeAggregateIdClause,
+            parentNodeAnchor: $this->parentNodeAnchor,
             whereClauses: $this->whereClauses,
         );
     }
@@ -86,8 +98,20 @@ final readonly class HierarchyRelationStatement implements SqlStatementInterface
             tableNames: $this->tableNames,
             contentStreamLayers: $this->contentStreamLayers,
             dimensionSpacePoints: $this->dimensionSpacePoints,
-            childNodeRelationAnchorPoint: $this->childNodeRelationAnchorPoint,
-            parentNodeRelationAnchorPoint: $parentNodeRelationAnchorPoint,
+            childNodeAnchor: $this->childNodeAnchor,
+            parentNodeAnchor: $parentNodeRelationAnchorPoint,
+            whereClauses: $this->whereClauses,
+        );
+    }
+
+    public function withParentNodeAggregateIdPrefilter(NodeAggregateIdClause $parentNodeAggregateIdClause): self
+    {
+        return new self(
+            tableNames: $this->tableNames,
+            contentStreamLayers: $this->contentStreamLayers,
+            dimensionSpacePoints: $this->dimensionSpacePoints,
+            childNodeAnchor: $this->childNodeAnchor,
+            parentNodeAnchor: $parentNodeAggregateIdClause,
             whereClauses: $this->whereClauses,
         );
     }
@@ -98,8 +122,8 @@ final readonly class HierarchyRelationStatement implements SqlStatementInterface
             tableNames: $this->tableNames,
             contentStreamLayers: $this->contentStreamLayers,
             dimensionSpacePoints: $this->dimensionSpacePoints,
-            childNodeRelationAnchorPoint: $this->childNodeRelationAnchorPoint,
-            parentNodeRelationAnchorPoint: $this->parentNodeRelationAnchorPoint,
+            childNodeAnchor: $this->childNodeAnchor,
+            parentNodeAnchor: $this->parentNodeAnchor,
             whereClauses: $where === '' ? [] : [$where],
         );
     }
@@ -113,11 +137,12 @@ final readonly class HierarchyRelationStatement implements SqlStatementInterface
                 $this->dimensionSpacePoints->count() === 1 => Parameter::string('dimensionSpacePointHash', $this->dimensionSpacePoints->getPointHashes()[0]),
                 default => Parameter::stringArray('dimensionSpacePointHashes', $this->dimensionSpacePoints->getPointHashes()),
             },
-            $this->childNodeRelationAnchorPoint !== null
-                ? Parameter::integer('childNodeRelationAnchorPoint', $this->childNodeRelationAnchorPoint->value)
+            // TODO else
+            $this->childNodeAnchor instanceof NodeRelationAnchorPoint
+                ? Parameter::integer('childNodeRelationAnchorPoint', $this->childNodeAnchor->value)
                 : null,
-            $this->parentNodeRelationAnchorPoint !== null
-                ? Parameter::integer('parentNodeRelationAnchorPoint', $this->parentNodeRelationAnchorPoint->value)
+            $this->parentNodeAnchor instanceof NodeRelationAnchorPoint
+                ? Parameter::integer('parentNodeRelationAnchorPoint', $this->parentNodeAnchor->value)
                 : null
         ]));
     }
@@ -138,14 +163,24 @@ final readonly class HierarchyRelationStatement implements SqlStatementInterface
             $innerWhereClauses[] = $dimensionWhereClause;
         }
 
-        if ($this->childNodeRelationAnchorPoint !== null) {
+        if ($this->childNodeAnchor instanceof NodeRelationAnchorPoint) {
             $outerWhereClauses[] = $childNodeRelationAnchorPointWhereClause = 'h.childnodeanchor = :childNodeRelationAnchorPoint';
             $innerWhereClauses[] = $childNodeRelationAnchorPointWhereClause;
         }
 
-        if ($this->parentNodeRelationAnchorPoint !== null) {
+        if ($this->childNodeAnchor instanceof NodeAggregateIdClause) {
+            $innerWhereClauses[] = "h.childnodeanchor IN {$this->childNodeAnchor->toRelationAnchorPointSubquerySql($this->tableNames)}";
+            // We don't actually ensure the outer result only contains hierarchies for this node
+        }
+
+        if ($this->parentNodeAnchor instanceof NodeRelationAnchorPoint) {
             $outerWhereClauses[] = $parentNodeRelationAnchorPointWhereClause = 'h.parentnodeanchor = :parentNodeRelationAnchorPoint';
             $innerWhereClauses[] = $parentNodeRelationAnchorPointWhereClause;
+        }
+
+        if ($this->parentNodeAnchor instanceof NodeAggregateIdClause) {
+            $innerWhereClauses[] = "h.parentnodeanchor IN {$this->parentNodeAnchor->toRelationAnchorPointSubquerySql($this->tableNames)}";
+            // We don't actually ensure the outer result only contains hierarchies for this node
         }
 
         $innerWhereClauseSql = $innerWhereClauses === [] ? '' : sprintf(
