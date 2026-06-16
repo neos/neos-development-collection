@@ -74,7 +74,7 @@ final class ReplayThroughputTracer implements PerformanceTracerInterface
 
     public function mark(string|TracePoint $name, array $params = []): void
     {
-        if ($name === TracePoint::ProjectionApply) {
+        if (TracePoint::ProjectionApply->equals($name)) {
             // Count events, not projection applies: the same event is applied to every subscription and thus fires
             // one mark per subscription. Those marks are consecutive and carry the same sequence number, so we only
             // count when the sequence number changes.
