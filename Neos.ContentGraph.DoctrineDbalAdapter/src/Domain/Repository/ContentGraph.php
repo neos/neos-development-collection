@@ -143,14 +143,14 @@ final class ContentGraph implements ContentGraphInterface
     public function findRootNodeAggregates(
         FindRootNodeAggregatesFilter $filter,
     ): NodeAggregates {
-        $rootNodeAggregateQueryBuilder = $this->nodeQueryBuilder->buildFindRootNodeAggregatesQuery($this->contentStreamLayers, $filter);
+        $rootNodeAggregateQueryBuilder = $this->nodeQueryBuilder->buildFindRootNodeAggregatesQuery($this->hierarchyStatement, $filter);
         return $this->mapQueryBuilderToNodeAggregates($rootNodeAggregateQueryBuilder);
     }
 
     public function findNodeAggregatesByType(
         NodeTypeName $nodeTypeName
     ): NodeAggregates {
-        $queryBuilder = $this->nodeQueryBuilder->buildBasicNodeAggregateQuery($this->contentStreamLayers);
+        $queryBuilder = $this->nodeQueryBuilder->buildBasicNodeAggregateQuery($this->hierarchyStatement);
         $queryBuilder
             ->andWhere('n.nodetypename = :nodeTypeName')
             ->setParameter('nodeTypeName', $nodeTypeName->value);
@@ -160,7 +160,10 @@ final class ContentGraph implements ContentGraphInterface
     public function findNodeAggregateById(
         NodeAggregateId $nodeAggregateId
     ): ?NodeAggregate {
-        $queryBuilder = $this->nodeQueryBuilder->buildBasicNodeAggregateQuery($this->contentStreamLayers, NodeAggregateIdClause::forNodeAggregateId($nodeAggregateId))
+        $nodeAggregateIdClause = NodeAggregateIdClause::forNodeAggregateId($nodeAggregateId);
+        $queryBuilder = $this->nodeQueryBuilder->buildBasicNodeAggregateQuery($this->hierarchyStatement->withChildNodeAggregateIdPrefilter($nodeAggregateIdClause))
+            ->where($nodeAggregateIdClause->toWhereSql())
+            ->mergeParameters($nodeAggregateIdClause->getParameters())
             ->orderBy('n.relationanchorpoint', 'DESC');
 
         return $this->nodeFactory->mapNodeRowsToNodeAggregate(
@@ -173,7 +176,10 @@ final class ContentGraph implements ContentGraphInterface
     public function findNodeAggregatesByIds(
         NodeAggregateIds $nodeAggregateIds
     ): NodeAggregates {
-        $queryBuilder = $this->nodeQueryBuilder->buildBasicNodeAggregateQuery($this->contentStreamLayers, NodeAggregateIdClause::forNodeAggregateIds($nodeAggregateIds))
+        $nodeAggregateIdClause = NodeAggregateIdClause::forNodeAggregateIds($nodeAggregateIds);
+        $queryBuilder = $this->nodeQueryBuilder->buildBasicNodeAggregateQuery($this->hierarchyStatement->withChildNodeAggregateIdPrefilter($nodeAggregateIdClause))
+            ->where($nodeAggregateIdClause->toWhereSql())
+            ->mergeParameters($nodeAggregateIdClause->getParameters())
             ->orderBy('n.relationanchorpoint', 'DESC');
 
         return $this->mapQueryBuilderToNodeAggregates($queryBuilder);
@@ -187,7 +193,7 @@ final class ContentGraph implements ContentGraphInterface
     public function findParentNodeAggregates(
         NodeAggregateId $childNodeAggregateId
     ): NodeAggregates {
-        $queryBuilder = $this->nodeQueryBuilder->buildBasicNodeAggregateQuery($this->contentStreamLayers)
+        $queryBuilder = $this->nodeQueryBuilder->buildBasicNodeAggregateQuery($this->hierarchyStatement)
             ->innerJoinWithStatement('n', $this->hierarchyStatement, 'ch', 'ch.parentnodeanchor = n.relationanchorpoint')
             ->innerJoin('ch', $this->nodeQueryBuilder->tableNames->node(), 'cn', 'cn.relationanchorpoint = ch.childnodeanchor')
             ->andWhere('cn.nodeaggregateid = :nodeAggregateId')

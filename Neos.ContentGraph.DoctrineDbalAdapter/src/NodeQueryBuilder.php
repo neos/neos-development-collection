@@ -44,23 +44,13 @@ final readonly class NodeQueryBuilder
         $this->statements = StatementFactory::for($this->tableNames);
     }
 
-    public function buildBasicNodeAggregateQuery(ContentStreamLayers $contentStreamLayers, ?NodeAggregateIdClause $nodeAggregateIdClause = null): QueryBuilder
+    public function buildBasicNodeAggregateQuery(HierarchyRelationStatement $hierarchyStatement): QueryBuilder
     {
-        $hierarchyStatement =  $this->statements->forHierarchyRelation($contentStreamLayers);
-        if ($nodeAggregateIdClause !== null) {
-            $hierarchyStatement = $hierarchyStatement->withChildNodeAggregateIdPrefilter($nodeAggregateIdClause);
-        }
-        $queryBuilder = $this->createQueryBuilder()
+        return $this->createQueryBuilder()
             ->select('n.*, h.subtreetags, dsp.dimensionspacepoint AS covereddimensionspacepoint')
             ->from($this->tableNames->node(), 'n')
             ->innerJoinWithStatement('n', $hierarchyStatement, 'h', 'h.childnodeanchor = n.relationanchorpoint')
             ->innerJoin('h', $this->tableNames->dimensionSpacePoints(), 'dsp', 'dsp.hash = h.dimensionspacepointhash');
-        if ($nodeAggregateIdClause !== null) {
-            $queryBuilder
-                ->where($nodeAggregateIdClause->toWhereSql('n'))
-                ->mergeParameters($nodeAggregateIdClause->getParameters());
-        }
-        return $queryBuilder;
     }
 
     public function buildChildNodeAggregateQuery(NodeAggregateId $parentNodeAggregateId, ContentStreamLayers $contentStreamLayers): QueryBuilder
@@ -76,12 +66,11 @@ final readonly class NodeQueryBuilder
             ->setParameter('parentNodeAggregateId', $parentNodeAggregateId->value);
     }
 
-    public function buildFindRootNodeAggregatesQuery(ContentStreamLayers $contentStreamLayers, FindRootNodeAggregatesFilter $filter): QueryBuilder
+    public function buildFindRootNodeAggregatesQuery(HierarchyRelationStatement $hierarchyStatement, FindRootNodeAggregatesFilter $filter): QueryBuilder
     {
-        // TODO also optimise root case?
-        $queryBuilder = $this->buildBasicNodeAggregateQuery($contentStreamLayers, null)
-            ->andWhere('h.parentnodeanchor = :rootEdgeParentAnchorId')
-            ->setParameter('rootEdgeParentAnchorId', NodeRelationAnchorPoint::forRootEdge()->value);
+        $queryBuilder = $this->buildBasicNodeAggregateQuery($hierarchyStatement->withParentNodeRelationAnchor(
+            NodeRelationAnchorPoint::forRootEdge()
+        ));
 
         if ($filter->nodeTypeName !== null) {
             $queryBuilder->andWhere('n.nodetypename = :nodeTypeName')->setParameter('nodeTypeName', $filter->nodeTypeName->value);
@@ -90,22 +79,12 @@ final readonly class NodeQueryBuilder
         return $queryBuilder;
     }
 
-    public function buildBasicNodeQuery(ContentStreamLayers $contentStreamLayers, DimensionSpacePoint $dimensionSpacePoint, string $nodeTableAlias = 'n', string $select = 'n.*, h.subtreetags', ?NodeAggregateIdClause $nodeAggregateIdClause = null): QueryBuilder
+    public function buildBasicNodeQuery(HierarchyRelationStatement $hierarchyStatement, string $nodeTableAlias = 'n', string $select = 'n.*, h.subtreetags'): QueryBuilder
     {
-        $hierarchyStatement =  $this->statements->forHierarchyRelation($contentStreamLayers)->withDimensionSpacePoint($dimensionSpacePoint);
-        if ($nodeAggregateIdClause !== null) {
-            $hierarchyStatement = $hierarchyStatement->withChildNodeAggregateIdPrefilter($nodeAggregateIdClause);
-        }
-        $queryBuilder = $this->createQueryBuilder()
+        return $this->createQueryBuilder()
             ->select($select)
             ->from($this->tableNames->node(), $nodeTableAlias)
             ->innerJoinWithStatement($nodeTableAlias, $hierarchyStatement, 'h', 'h.childnodeanchor = ' . $nodeTableAlias . '.relationanchorpoint');
-        if ($nodeAggregateIdClause !== null) {
-            $queryBuilder
-                ->where($nodeAggregateIdClause->toWhereSql('n'))
-                ->mergeParameters($nodeAggregateIdClause->getParameters());
-        }
-        return $queryBuilder;
     }
 
     public function buildBasicChildNodesQuery(NodeAggregateId $parentNodeAggregateId, ContentStreamLayers $contentStreamLayers, DimensionSpacePoint $dimensionSpacePoint): QueryBuilder
@@ -129,21 +108,21 @@ final readonly class NodeQueryBuilder
             ->where('cn.nodeaggregateid = :childNodeAggregateId')->setParameter('childNodeAggregateId', $childNodeAggregateId->value);
     }
 
-    public function buildBasicNodeSiblingsQuery(bool $preceding, NodeAggregateId $siblingNodeAggregateId, ContentStreamLayers $contentStreamLayers, DimensionSpacePoint $dimensionSpacePoint): QueryBuilder
+    public function buildBasicNodeSiblingsQuery(HierarchyRelationStatement $hierarchyStatement, bool $preceding, NodeAggregateId $siblingNodeAggregateId): QueryBuilder
     {
-        // TODO Merge Parameters
         $sharedSubQuery = $this->createQueryBuilder()
-            ->from($this->statements->forHierarchyRelation($contentStreamLayers)->withDimensionSpacePoint($dimensionSpacePoint)->toSql(), 'sh')
+            ->from($hierarchyStatement->toSql(), 'sh')
             ->innerJoin('sh', $this->tableNames->node(), 'sn', 'sn.relationanchorpoint = sh.childnodeanchor')
             ->where('sn.nodeaggregateid = :siblingNodeAggregateId');
 
         $parentNodeAnchorSubQuery = (clone $sharedSubQuery)->select('sh.parentnodeanchor');
         $siblingPositionSubQuery = (clone $sharedSubQuery)->select('sh.position');
 
-        return $this->buildBasicNodeQuery($contentStreamLayers, $dimensionSpacePoint)
+        return $this->buildBasicNodeQuery($hierarchyStatement)
             ->andWhere('h.parentnodeanchor = (' . $parentNodeAnchorSubQuery->getSQL() . ')')
             ->andWhere('n.nodeaggregateid != :siblingNodeAggregateId')->setParameter('siblingNodeAggregateId', $siblingNodeAggregateId->value)
             ->andWhere('h.position ' . ($preceding ? '<' : '>') . ' (' . $siblingPositionSubQuery->getSQL() . ')')
+            ->mergeParametersFromBuilder($sharedSubQuery)
             ->orderBy('h.position', $preceding ? 'DESC' : 'ASC');
     }
 
