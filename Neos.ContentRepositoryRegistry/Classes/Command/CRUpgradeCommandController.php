@@ -39,6 +39,12 @@ final class CRUpgradeCommandController extends CommandController
     public function eventsRecordedAtToUtcCommand(string $contentRepository = 'default', bool $force = false): void
     {
         $contentRepositoryId = ContentRepositoryId::fromString($contentRepository);
+
+        if (!$force && !$this->output->askConfirmation(sprintf('> This will rewrite events of content repository "%s" to use UTC dates consistently and backup the original events. This will take even on big sites less than 5 minutes. To have the UTC changes applied to the graph a replay needs to be done which will take quite some time. Are you sure to proceed? (y/n) ', $contentRepositoryId->value), false)) {
+            $this->outputLine('<comment>Abort.</comment>');
+            return;
+        }
+
         $eventMigrationService = $this->contentRepositoryRegistry->buildService($contentRepositoryId, $this->eventMigrationServiceFactory);
         $eventMigrationService->migrateRecordedAtToUtc($this->outputLine(...), $force);
     }
