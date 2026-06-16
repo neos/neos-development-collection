@@ -6,6 +6,7 @@ namespace Neos\ContentGraph\DoctrineDbalAdapter;
 
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\ContentStreamLayers;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\NodeRelationAnchorPoint;
+use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\NodeRelationAnchorPoints;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Dbal\Query\Parameter;
@@ -123,8 +124,8 @@ final readonly class HierarchyRelationSubquery implements SqlTableSubqueryInterf
         private ContentGraphTableNames $tableNames,
         private ContentStreamLayers $contentStreamLayers,
         private DimensionSpacePointSet $dimensionSpacePoints,
-        private NodeRelationAnchorPoint|NodeAggregateIdCondition|null $childNodeAnchor,
-        private NodeRelationAnchorPoint|NodeAggregateIdCondition|null $parentNodeAnchor,
+        private NodeRelationAnchorPoints|NodeAggregateIdCondition|null $childNodeAnchor,
+        private NodeRelationAnchorPoints|NodeAggregateIdCondition|null $parentNodeAnchor,
         private SqlWhereConditionInterface|null $whereCondition,
         private SqlWhereConditionInterface|null $possibleWhereCondition,
     ) {
@@ -177,7 +178,23 @@ final readonly class HierarchyRelationSubquery implements SqlTableSubqueryInterf
             tableNames: $this->tableNames,
             contentStreamLayers: $this->contentStreamLayers,
             dimensionSpacePoints: $this->dimensionSpacePoints,
-            childNodeAnchor: $childNodeRelationAnchorPoint,
+            childNodeAnchor: NodeRelationAnchorPoints::create($childNodeRelationAnchorPoint),
+            parentNodeAnchor: $this->parentNodeAnchor,
+            whereCondition: $this->whereCondition,
+            possibleWhereCondition: $this->possibleWhereCondition,
+        );
+    }
+
+    public function withChildNodeRelationAnchors(NodeRelationAnchorPoints $childNodeRelationAnchorPoints): self
+    {
+        if ($childNodeRelationAnchorPoints->isEmpty()) {
+            throw new \InvalidArgumentException('Child node relation anchor points to filter must not be empty', 1781630872);
+        }
+        return new self(
+            tableNames: $this->tableNames,
+            contentStreamLayers: $this->contentStreamLayers,
+            dimensionSpacePoints: $this->dimensionSpacePoints,
+            childNodeAnchor: $childNodeRelationAnchorPoints,
             parentNodeAnchor: $this->parentNodeAnchor,
             whereCondition: $this->whereCondition,
             possibleWhereCondition: $this->possibleWhereCondition,
@@ -210,7 +227,23 @@ final readonly class HierarchyRelationSubquery implements SqlTableSubqueryInterf
             contentStreamLayers: $this->contentStreamLayers,
             dimensionSpacePoints: $this->dimensionSpacePoints,
             childNodeAnchor: $this->childNodeAnchor,
-            parentNodeAnchor: $parentNodeRelationAnchorPoint,
+            parentNodeAnchor: NodeRelationAnchorPoints::create($parentNodeRelationAnchorPoint),
+            whereCondition: $this->whereCondition,
+            possibleWhereCondition: $this->possibleWhereCondition,
+        );
+    }
+
+    public function withParentNodeRelationAnchors(NodeRelationAnchorPoints $parentNodeRelationAnchorPoints): self
+    {
+        if ($parentNodeRelationAnchorPoints->isEmpty()) {
+            throw new \InvalidArgumentException('Parent node relation anchor points to filter must not be empty', 1781630882);
+        }
+        return new self(
+            tableNames: $this->tableNames,
+            contentStreamLayers: $this->contentStreamLayers,
+            dimensionSpacePoints: $this->dimensionSpacePoints,
+            childNodeAnchor: $this->childNodeAnchor,
+            parentNodeAnchor: $parentNodeRelationAnchorPoints,
             whereCondition: $this->whereCondition,
             possibleWhereCondition: $this->possibleWhereCondition,
         );
@@ -291,16 +324,20 @@ final readonly class HierarchyRelationSubquery implements SqlTableSubqueryInterf
             $parameters[] = $dimensionSpacePointsParameter;
         }
 
-        if ($this->childNodeAnchor instanceof NodeRelationAnchorPoint) {
-            $parameters[] = Parameter::integer('childNodeRelationAnchorPoint', $this->childNodeAnchor->value);
+        if ($this->childNodeAnchor instanceof NodeRelationAnchorPoints) {
+            $parameters[] = $this->childNodeAnchor->count() === 1
+                ? Parameter::integer('childNodeRelationAnchorPoint', $this->childNodeAnchor->toIntArray()[0])
+                : Parameter::integerArray('childNodeRelationAnchorPoints', $this->childNodeAnchor->toIntArray());
         }
 
         if ($this->childNodeAnchor instanceof NodeAggregateIdCondition) {
             $parameters = [...$parameters, ...iterator_to_array($this->childNodeAnchor->getParameters())];
         }
 
-        if ($this->parentNodeAnchor instanceof NodeRelationAnchorPoint) {
-            $parameters[] = Parameter::integer('parentNodeRelationAnchorPoint', $this->parentNodeAnchor->value);
+        if ($this->parentNodeAnchor instanceof NodeRelationAnchorPoints) {
+            $parameters[] = $this->parentNodeAnchor->count() === 1
+                ? Parameter::integer('parentNodeRelationAnchorPoint', $this->parentNodeAnchor->toIntArray()[0])
+                : Parameter::integerArray('parentNodeRelationAnchorPoints', $this->parentNodeAnchor->toIntArray());
         }
 
         if ($this->parentNodeAnchor instanceof NodeAggregateIdCondition) {
@@ -334,8 +371,11 @@ final readonly class HierarchyRelationSubquery implements SqlTableSubqueryInterf
             $possibleWhereConditions[] = $dimensionSpacePointsWhereCondition;
         }
 
-        if ($this->childNodeAnchor instanceof NodeRelationAnchorPoint) {
-            $whereConditions[] = $childNodeRelationAnchorPointWhereCondition = 'h.childnodeanchor = :childNodeRelationAnchorPoint';
+        if ($this->childNodeAnchor instanceof NodeRelationAnchorPoints) {
+            $childNodeRelationAnchorPointWhereCondition = $this->childNodeAnchor->count() === 1
+                ? 'h.childnodeanchor = :childNodeRelationAnchorPoint'
+                : 'h.childnodeanchor IN (:childNodeRelationAnchorPoints)';
+            $whereConditions[] = $childNodeRelationAnchorPointWhereCondition;
             $possibleWhereConditions[] = $childNodeRelationAnchorPointWhereCondition;
         }
 
@@ -344,8 +384,11 @@ final readonly class HierarchyRelationSubquery implements SqlTableSubqueryInterf
             // We don't actually ensure the final result only contains hierarchies for this node
         }
 
-        if ($this->parentNodeAnchor instanceof NodeRelationAnchorPoint) {
-            $whereConditions[] = $parentNodeRelationAnchorPointWhereCondition = 'h.parentnodeanchor = :parentNodeRelationAnchorPoint';
+        if ($this->parentNodeAnchor instanceof NodeRelationAnchorPoints) {
+            $parentNodeRelationAnchorPointWhereCondition = $this->parentNodeAnchor->count() === 1
+                ? 'h.parentnodeanchor = :parentNodeRelationAnchorPoint'
+                : 'h.parentnodeanchor IN (:parentNodeRelationAnchorPoints)';
+            $whereConditions[] = $parentNodeRelationAnchorPointWhereCondition;
             $possibleWhereConditions[] = $parentNodeRelationAnchorPointWhereCondition;
         }
 
