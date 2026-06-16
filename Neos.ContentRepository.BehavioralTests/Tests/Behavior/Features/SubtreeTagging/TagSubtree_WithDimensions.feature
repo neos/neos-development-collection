@@ -120,6 +120,65 @@ Feature: Tag subtree with dimensions
       a1a (tag1,tag2)
     """
 
+  # KNOWN BUG (expected to FAIL until removeSubtreeTag decides "still inherited?" per dimension):
+  # removeSubtreeTag computes ONCE, globally across all affected dimensions, whether the untagged node
+  # still inherits the tag from an ancestor, then applies that single decision to every dimension.
+  # When the ancestor carries the tag in some dimensions but not others, the node is untagged
+  # incorrectly in the dimension(s) where it does NOT actually inherit.
+  Scenario: Untagging is decided per dimension when an ancestor is tagged only in some dimensions
+    Given the following CreateNodeAggregateWithNode commands are executed:
+      | nodeAggregateId | nodeTypeName                            | parentNodeAggregateId | nodeName | originDimensionSpacePoint |
+      | b               | Neos.ContentRepository.Testing:Document | a                     | b        | {"language":"mul"}        |
+      | b1              | Neos.ContentRepository.Testing:Document | b                     | b1       | {"language":"mul"}        |
+
+    # ancestor "a" is tagged only in the "de" specialization branch (de, gsw, ltz) - NOT in mul or en
+    And the command TagSubtree is executed with payload:
+      | Key                          | Value                |
+      | nodeAggregateId              | "a"                  |
+      | coveredDimensionSpacePoint   | {"language":"de"}    |
+      | nodeVariantSelectionStrategy | "allSpecializations" |
+      | tag                          | "tag1"               |
+
+    # "b" is then tagged EXPLICITLY in every dimension
+    And the command TagSubtree is executed with payload:
+      | Key                          | Value                |
+      | nodeAggregateId              | "b"                  |
+      | coveredDimensionSpacePoint   | {"language":"mul"}   |
+      | nodeVariantSelectionStrategy | "allSpecializations" |
+      | tag                          | "tag1"               |
+
+    # untag "b" everywhere at once: in "de" it STILL inherits tag1 from "a" (explicit true -> inherited
+    # null), but in "en"/"mul" it does NOT inherit, so tag1 must be removed entirely from b and b1.
+    When the command UntagSubtree is executed with payload:
+      | Key                          | Value                |
+      | nodeAggregateId              | "b"                  |
+      | coveredDimensionSpacePoint   | {"language":"mul"}   |
+      | nodeVariantSelectionStrategy | "allSpecializations" |
+      | tag                          | "tag1"               |
+
+    # de: "a" is tagged, so "b" still inherits -> b keeps tag1 as inherited, b1 keeps it inherited.
+    # (a1/a1a from the Background are children of "a" in "de" too, so they also inherit tag1.)
+    When I am in dimension space point {"language":"de"}
+    Then I expect node aggregate identifier "a" to lead to node cs-identifier;a;{"language":"mul"}
+    And I expect this node to have the following subtree with tags:
+    """
+    a (tag1*)
+     a1 (tag1)
+      a1a (tag1)
+     b (tag1)
+      b1 (tag1)
+    """
+
+    # en: "a" is NOT tagged, so "b" no longer inherits -> tag1 removed entirely from b and b1
+    When I am in dimension space point {"language":"en"}
+    Then I expect node aggregate identifier "a" to lead to node cs-identifier;a;{"language":"mul"}
+    And I expect this node to have the following subtree with tags:
+    """
+    a
+     b
+      b1
+    """
+
   Scenario: Subtree tags are properly copied upon node variant recreation
     When the command CreateWorkspace is executed with payload:
       | Key                | Value        |
