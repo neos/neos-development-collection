@@ -23,6 +23,7 @@ use Neos\Flow\Annotations as Flow;
  *       fileName: '%FLOW_PATH_DATA%Logs/ContentRepositoryThroughput.svg'
  *       sampleIntervalSeconds: 2.0
  *       sqlProbes:
+ *         # or use cr_{contentRepository} _p_graph_hierarchyrelation to interpolate the cr id
  *         'nodes': 'SELECT COUNT(*) FROM cr_default_p_graph_node'
  *         'hierarchy relations': 'SELECT COUNT(*) FROM cr_default_p_graph_hierarchyrelation'
  *
@@ -40,7 +41,7 @@ final class ReplayThroughputTracerFactory implements PerformanceTracerFactoryInt
         $connection = $this->entityManager->getConnection();
         $probes = [];
         foreach ($options['sqlProbes'] ?? [] as $label => $sql) {
-            $probes[] = new SqlProbe((string)$label, $connection, (string)$sql);
+            $probes[] = new SqlProbe((string)$label, $connection, str_replace('{contentRepository}', $contentRepositoryId->value, (string)$sql));
         }
 
         return new ReplayThroughputTracer(
