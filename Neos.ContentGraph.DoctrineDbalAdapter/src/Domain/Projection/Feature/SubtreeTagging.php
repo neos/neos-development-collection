@@ -9,6 +9,7 @@ use Doctrine\DBAL\Exception as DBALException;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\ContentStreamLayers;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\NodeRelationAnchorPoint;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\NodeFactory;
+use Neos\ContentGraph\DoctrineDbalAdapter\NodeAggregateIdClause;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Core\Feature\SubtreeTagging\Dto\SubtreeTag;
@@ -52,6 +53,8 @@ trait SubtreeTagging
             throw new \RuntimeException(sprintf('1: Failed to add subtree tag %s for content stream %s, node aggregate id %s and dimension space points %s: %s', $tag->value, $contentStreamLayers->toDebugString(), $nodeAggregateId->value, $affectedDimensionSpacePoints->toJson(), $e->getMessage()), 1716479749, $e);
         }
 
+        $nodeAggregateIdClause = NodeAggregateIdClause::forNodeAggregateId($nodeAggregateId);
+        $hierarchyStatement = $this->statements->forHierarchyRelation($contentStreamLayers)->withDimensionSpacePoints($affectedDimensionSpacePoints)->withChildNodeAggregateIdPrefilter($nodeAggregateIdClause);
         $addTagToNodeStatement = <<<SQL
             INSERT INTO {$this->tableNames->hierarchyRelation()} (
               id,
@@ -71,22 +74,21 @@ trait SubtreeTagging
               h.dimensionspacepointhash,
               :targetContentStreamLayer as contentstreamlayer
             FROM
-              {$this->hierarchyRelationStatement->where('h.dimensionspacepointhash in (:dimensionSpacePointHashes)')->andInnerWhereRelationIdMatches('childnodeanchor IN (SELECT relationanchorpoint FROM ' . $this->tableNames->node() . ' WHERE nodeaggregateid = :nodeAggregateId)')->toSql()} h
+              {$hierarchyStatement->toSql()} h
               INNER JOIN {$this->tableNames->node()} n ON n.relationanchorpoint = h.childnodeanchor
             WHERE
-              n.nodeaggregateid = :nodeAggregateId
+              {$nodeAggregateIdClause->toWhereSql()}
             ON DUPLICATE KEY UPDATE subtreetags = VALUES(subtreetags)
             SQL;
         try {
             $this->dbal->executeStatement($addTagToNodeStatement, [
-                'contentStreamLayers' => $contentStreamLayers->toIntArray(),
-                'nodeAggregateId' => $nodeAggregateId->value,
-                'dimensionSpacePointHashes' => $affectedDimensionSpacePoints->getPointHashes(),
                 'tagPath' => $tagPath,
                 'targetContentStreamLayer' => $contentStreamLayers->getWriteLayer()->value,
+                ...$hierarchyStatement->getParameters()->toDbalValues(),
+                ...$nodeAggregateIdClause->getParameters()->toDbalValues(),
             ], [
-                'dimensionSpacePointHashes' => ArrayParameterType::STRING,
-                'contentStreamLayers' => ArrayParameterType::INTEGER,
+                ...$hierarchyStatement->getParameters()->toDbalTypes(),
+                ...$nodeAggregateIdClause->getParameters()->toDbalTypes(),
             ]);
         } catch (DBALException $e) {
             throw new \RuntimeException(sprintf('2: Failed to add subtree tag %s for content stream %s, node aggregate id %s and dimension space points %s: %s', $tag->value, $contentStreamLayers->toDebugString(), $nodeAggregateId->value, $affectedDimensionSpacePoints->toJson(), $e->getMessage()), 1716479840, $e);
@@ -102,24 +104,25 @@ trait SubtreeTagging
      */
     private function findUntaggedWinningChildRelationsOfNodeAggregate(ContentStreamLayers $contentStreamLayers, NodeAggregateId $parentNodeAggregateId, DimensionSpacePoint $dimensionSpacePoint, string $tagPath): array
     {
+        $nodeAggregateIdClause = NodeAggregateIdClause::forNodeAggregateId($parentNodeAggregateId);
+        $hierarchyStatement = $this->statements->forHierarchyRelation($contentStreamLayers)->withDimensionSpacePoint($dimensionSpacePoint)->withParentNodeAggregateIdPrefilter($nodeAggregateIdClause)
+            ->andWhere("NOT JSON_CONTAINS_PATH(h.subtreetags, 'one', :tagPath)");
+
         $statement = <<<SQL
             SELECT h.id, h.contentstreamlayer, h.childnodeanchor
-            FROM {$this->hierarchyRelationStatement
-                ->where('h.dimensionspacepointhash = :dimensionSpacePointHash')
-                ->andWhere("NOT JSON_CONTAINS_PATH(h.subtreetags, 'one', :tagPath)")
-                ->andInnerWhereRelationIdMatches('parentnodeanchor IN (SELECT relationanchorpoint FROM ' . $this->tableNames->node() . ' WHERE nodeaggregateid = :parentNodeAggregateId)')
-                ->toSql()} h
+            FROM {$hierarchyStatement->toSql()} h
               INNER JOIN {$this->tableNames->node()} n ON n.relationanchorpoint = h.parentnodeanchor
-            WHERE n.nodeaggregateid = :parentNodeAggregateId
+            WHERE
+              {$nodeAggregateIdClause->toWhereSql()}
             SQL;
         /** @var list<array{id:int, contentstreamlayer:int, childnodeanchor:int}> $rows */
         $rows = $this->dbal->fetchAllAssociative($statement, [
-            'contentStreamLayers' => $contentStreamLayers->toIntArray(),
-            'parentNodeAggregateId' => $parentNodeAggregateId->value,
-            'dimensionSpacePointHash' => $dimensionSpacePoint->hash,
             'tagPath' => $tagPath,
+            ...$hierarchyStatement->getParameters()->toDbalValues(),
+            ...$nodeAggregateIdClause->getParameters()->toDbalValues(),
         ], [
-            'contentStreamLayers' => ArrayParameterType::INTEGER,
+            ...$hierarchyStatement->getParameters()->toDbalTypes(),
+            ...$nodeAggregateIdClause->getParameters()->toDbalTypes(),
         ]);
         return $rows;
     }
@@ -136,24 +139,23 @@ trait SubtreeTagging
         if ($parentNodeAnchors === []) {
             return [];
         }
+        $hierarchyStatement = $this->statements->forHierarchyRelation($contentStreamLayers)->withDimensionSpacePoint($dimensionSpacePoint)
+            ->andWhere('h.parentnodeanchor IN (:parentNodeAnchors)')
+            ->andWhere("NOT JSON_CONTAINS_PATH(h.subtreetags, 'one', :tagPath)")
+            ->andInnerWhereRelationIdMatches('parentnodeanchor IN (:parentNodeAnchors)');
+
         $statement = <<<SQL
             SELECT h.id, h.contentstreamlayer, h.childnodeanchor
-            FROM {$this->hierarchyRelationStatement
-                ->where('h.dimensionspacepointhash = :dimensionSpacePointHash')
-                ->andWhere('h.parentnodeanchor IN (:parentNodeAnchors)')
-                ->andWhere("NOT JSON_CONTAINS_PATH(h.subtreetags, 'one', :tagPath)")
-                ->andInnerWhereRelationIdMatches('parentnodeanchor IN (:parentNodeAnchors)')
-                ->toSql()} h
+            FROM {$hierarchyStatement->toSql()} h
             SQL;
         /** @var list<array{id:int, contentstreamlayer:int, childnodeanchor:int}> $rows */
         $rows = $this->dbal->fetchAllAssociative($statement, [
-            'contentStreamLayers' => $contentStreamLayers->toIntArray(),
             'parentNodeAnchors' => $parentNodeAnchors,
-            'dimensionSpacePointHash' => $dimensionSpacePoint->hash,
             'tagPath' => $tagPath,
+            ...$hierarchyStatement->getParameters()->toDbalValues(),
         ], [
-            'contentStreamLayers' => ArrayParameterType::INTEGER,
             'parentNodeAnchors' => ArrayParameterType::INTEGER,
+            ...$hierarchyStatement->getParameters()->toDbalTypes(),
         ]);
         return $rows;
     }
@@ -293,24 +295,23 @@ trait SubtreeTagging
         if ($childNodeAnchors === []) {
             return false;
         }
+        $hierarchyStatement = $this->statements->forHierarchyRelation($contentStreamLayers)->withDimensionSpacePoint($dimensionSpacePoint)
+            ->andWhere("JSON_CONTAINS_PATH(h.subtreetags, 'one', :tagPath)")
+            ->andWhere('h.childnodeanchor IN (:childNodeAnchors)')
+            ->andInnerWhereRelationIdMatches('childnodeanchor IN (:childNodeAnchors)');
+
         $statement = <<<SQL
             SELECT 1
-            FROM {$this->hierarchyRelationStatement
-                ->where('h.childnodeanchor IN (:childNodeAnchors)')
-                ->andWhere('h.dimensionspacepointhash = :dimensionSpacePointHash')
-                ->andWhere("JSON_CONTAINS_PATH(h.subtreetags, 'one', :tagPath)")
-                ->andInnerWhereRelationIdMatches('childnodeanchor IN (:childNodeAnchors)')
-                ->toSql()} h
+            FROM {$hierarchyStatement->toSql()} h
             LIMIT 1
             SQL;
         $result = $this->dbal->fetchOne($statement, [
-            'contentStreamLayers' => $contentStreamLayers->toIntArray(),
             'childNodeAnchors' => $childNodeAnchors,
-            'dimensionSpacePointHash' => $dimensionSpacePoint->hash,
             'tagPath' => $tagPath,
+            ...$hierarchyStatement->getParameters()->toDbalValues(),
         ], [
-            'contentStreamLayers' => ArrayParameterType::INTEGER,
             'childNodeAnchors' => ArrayParameterType::INTEGER,
+            ...$hierarchyStatement->getParameters()->toDbalTypes(),
         ]);
         return $result !== false;
     }
@@ -399,22 +400,22 @@ trait SubtreeTagging
      */
     private function findWinningRelationOfNodeAggregate(ContentStreamLayers $contentStreamLayers, NodeAggregateId $nodeAggregateId, DimensionSpacePoint $dimensionSpacePoint): ?array
     {
+        $nodeAggregateIdClause = NodeAggregateIdClause::forNodeAggregateId($nodeAggregateId);
+        $hierarchyStatement = $this->statements->forHierarchyRelation($contentStreamLayers)->withDimensionSpacePoint($dimensionSpacePoint)->withChildNodeAggregateIdPrefilter($nodeAggregateIdClause);
         $statement = <<<SQL
             SELECT h.id, h.contentstreamlayer, h.parentnodeanchor, h.childnodeanchor, h.position, h.dimensionspacepointhash, h.subtreetags
-            FROM {$this->hierarchyRelationStatement
-                ->where('h.dimensionspacepointhash = :dimensionSpacePointHash')
-                ->andInnerWhereRelationIdMatches('childnodeanchor IN (SELECT relationanchorpoint FROM ' . $this->tableNames->node() . ' WHERE nodeaggregateid = :nodeAggregateId)')
-                ->toSql()} h
+            FROM {$hierarchyStatement->toSql()} h
               INNER JOIN {$this->tableNames->node()} n ON n.relationanchorpoint = h.childnodeanchor
-            WHERE n.nodeaggregateid = :nodeAggregateId
+            WHERE
+              {$nodeAggregateIdClause->toWhereSql()}
             SQL;
         /** @var array{id:int, contentstreamlayer:int, parentnodeanchor:int, childnodeanchor:int, position:int, dimensionspacepointhash:string, subtreetags:?string}|false $row */
         $row = $this->dbal->fetchAssociative($statement, [
-            'contentStreamLayers' => $contentStreamLayers->toIntArray(),
-            'nodeAggregateId' => $nodeAggregateId->value,
-            'dimensionSpacePointHash' => $dimensionSpacePoint->hash,
+            ...$hierarchyStatement->getParameters()->toDbalValues(),
+            ...$nodeAggregateIdClause->getParameters()->toDbalValues(),
         ], [
-            'contentStreamLayers' => ArrayParameterType::INTEGER,
+            ...$hierarchyStatement->getParameters()->toDbalTypes(),
+            ...$nodeAggregateIdClause->getParameters()->toDbalTypes(),
         ]);
         return $row === false ? null : $row;
     }
@@ -433,22 +434,22 @@ trait SubtreeTagging
         if ($parentNodeAnchors === []) {
             return [];
         }
+
+        $hierarchyStatement = $this->statements->forHierarchyRelation($contentStreamLayers)->withDimensionSpacePoint($dimensionSpacePoint)
+            ->andWhere('h.parentnodeanchor IN (:parentNodeAnchors)')
+            ->andInnerWhereRelationIdMatches('parentnodeanchor IN (:parentNodeAnchors)');
+
         $statement = <<<SQL
             SELECT h.id, h.contentstreamlayer, h.parentnodeanchor, h.childnodeanchor, h.position, h.dimensionspacepointhash, h.subtreetags
-            FROM {$this->hierarchyRelationStatement
-                ->where('h.dimensionspacepointhash = :dimensionSpacePointHash')
-                ->andWhere('h.parentnodeanchor IN (:parentNodeAnchors)')
-                ->andInnerWhereRelationIdMatches('parentnodeanchor IN (:parentNodeAnchors)')
-                ->toSql()} h
+            FROM {$hierarchyStatement->toSql()} h
             SQL;
         /** @var list<array{id:int, contentstreamlayer:int, parentnodeanchor:int, childnodeanchor:int, position:int, dimensionspacepointhash:string, subtreetags:?string}> $rows */
         $rows = $this->dbal->fetchAllAssociative($statement, [
-            'contentStreamLayers' => $contentStreamLayers->toIntArray(),
             'parentNodeAnchors' => $parentNodeAnchors,
-            'dimensionSpacePointHash' => $dimensionSpacePoint->hash,
+            ...$hierarchyStatement->getParameters()->toDbalValues(),
         ], [
-            'contentStreamLayers' => ArrayParameterType::INTEGER,
             'parentNodeAnchors' => ArrayParameterType::INTEGER,
+            ...$hierarchyStatement->getParameters()->toDbalTypes(),
         ]);
         return $rows;
     }
@@ -538,18 +539,17 @@ trait SubtreeTagging
             return NodeTags::createEmpty();
         }
 
+        $hierarchyStatement = $this->statements->forHierarchyRelation($contentStreamLayers)->withDimensionSpacePoint($dimensionSpacePoint)->withChildNodeRelationAnchor($parentNodeAnchorPoint);
+
         $subtreeTagsStatement = <<<SQL
-            SELECT h.subtreetags FROM {$this->hierarchyRelationStatement->where('h.dimensionspacepointhash = :dimensionSpacePointHash')->andInnerWhereRelationIdMatches('childnodeanchor = :parentNodeAnchorPoint')->toSql()} h
-              WHERE h.childnodeanchor = :parentNodeAnchorPoint
+            SELECT h.subtreetags FROM {$hierarchyStatement->toSql()} h
             SQL;
 
         try {
             $subtreeTagsJson = $this->dbal->fetchOne($subtreeTagsStatement, [
-                'parentNodeAnchorPoint' => $parentNodeAnchorPoint->value,
-                'contentStreamLayers' => $contentStreamLayers->toIntArray(),
-                'dimensionSpacePointHash' => $dimensionSpacePoint->hash,
+                ...$hierarchyStatement->getParameters()->toDbalValues(),
             ], [
-                'contentStreamLayers' => ArrayParameterType::INTEGER,
+                ...$hierarchyStatement->getParameters()->toDbalTypes(),
             ]);
         } catch (DBALException $e) {
             throw new \RuntimeException(sprintf('Failed to fetch subtree tags for hierarchy parent anchor point "%s" in content subgraph "%s@%s": %s', $parentNodeAnchorPoint->value, $dimensionSpacePoint->toJson(), $contentStreamLayers->toDebugString(), $e->getMessage()), 1716478760, $e);

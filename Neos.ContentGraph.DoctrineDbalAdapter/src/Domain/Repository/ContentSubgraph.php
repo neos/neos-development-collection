@@ -292,8 +292,7 @@ final class ContentSubgraph implements ContentSubgraphInterface
         // the recursion) via the (child|parent)nodeanchor index, so the walk scales with the SUBTREE size, not the
         // table size. With UNIQ(id, contentstreamlayer) the NOT EXISTS is exactly equivalent to the MAX(layer) join;
         // removed relations (tombstone wins with NULL anchors) simply fail the anchor join and drop out, as before.
-        $hierarchyRelation = $this->nodeQueryBuilder->tableNames->hierarchyRelation();
-        $winningLayer = "h.contentstreamlayer IN (:contentStreamLayers) AND NOT EXISTS (SELECT 1 FROM $hierarchyRelation w WHERE w.id = h.id AND w.contentstreamlayer IN (:contentStreamLayers) AND w.contentstreamlayer > h.contentstreamlayer)";
+        $winningLayer = "h.contentstreamlayer IN (:contentStreamLayers) AND NOT EXISTS (SELECT 1 FROM {$this->tableNames->hierarchyRelation()} w WHERE w.id = h.id AND w.contentstreamlayer IN (:contentStreamLayers) AND w.contentstreamlayer > h.contentstreamlayer)";
 
         $queryBuilderInitial = $this->createQueryBuilder()
             // @see https://mariadb.com/kb/en/library/recursive-common-table-expressions-overview/#cast-to-avoid-data-truncation

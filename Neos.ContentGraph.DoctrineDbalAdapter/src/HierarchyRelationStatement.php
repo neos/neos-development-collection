@@ -18,7 +18,8 @@ use Neos\ContentRepository\Dbal\Query\SqlStatementInterface;
 final readonly class HierarchyRelationStatement implements SqlStatementInterface
 {
     /**
-     * @param array<string> $whereClauses
+     * @param list<string> $whereClauses
+     * @param list<string> $innerWhereClauses
      */
     private function __construct(
         private ContentGraphTableNames $tableNames,
@@ -27,6 +28,7 @@ final readonly class HierarchyRelationStatement implements SqlStatementInterface
         private NodeRelationAnchorPoint|NodeAggregateIdClause|null $childNodeAnchor,
         private NodeRelationAnchorPoint|NodeAggregateIdClause|null $parentNodeAnchor,
         private array $whereClauses,
+        private array $innerWhereClauses,
     ) {
     }
 
@@ -37,6 +39,7 @@ final readonly class HierarchyRelationStatement implements SqlStatementInterface
             DimensionSpacePointSet::fromArray([]),
             null,
             null,
+            [],
             [],
         );
     }
@@ -50,6 +53,7 @@ final readonly class HierarchyRelationStatement implements SqlStatementInterface
             childNodeAnchor: $this->childNodeAnchor,
             parentNodeAnchor: $this->parentNodeAnchor,
             whereClauses: $this->whereClauses,
+            innerWhereClauses: $this->innerWhereClauses,
         );
     }
 
@@ -65,6 +69,7 @@ final readonly class HierarchyRelationStatement implements SqlStatementInterface
             childNodeAnchor: $this->childNodeAnchor,
             parentNodeAnchor: $this->parentNodeAnchor,
             whereClauses: $this->whereClauses,
+            innerWhereClauses: $this->innerWhereClauses,
         );
     }
 
@@ -77,6 +82,7 @@ final readonly class HierarchyRelationStatement implements SqlStatementInterface
             childNodeAnchor: $childNodeRelationAnchorPoint,
             parentNodeAnchor: $this->parentNodeAnchor,
             whereClauses: $this->whereClauses,
+            innerWhereClauses: $this->innerWhereClauses,
         );
     }
 
@@ -89,6 +95,7 @@ final readonly class HierarchyRelationStatement implements SqlStatementInterface
             childNodeAnchor: $childNodeAggregateIdClause,
             parentNodeAnchor: $this->parentNodeAnchor,
             whereClauses: $this->whereClauses,
+            innerWhereClauses: $this->innerWhereClauses,
         );
     }
 
@@ -101,6 +108,7 @@ final readonly class HierarchyRelationStatement implements SqlStatementInterface
             childNodeAnchor: $this->childNodeAnchor,
             parentNodeAnchor: $parentNodeRelationAnchorPoint,
             whereClauses: $this->whereClauses,
+            innerWhereClauses: $this->innerWhereClauses,
         );
     }
 
@@ -113,10 +121,11 @@ final readonly class HierarchyRelationStatement implements SqlStatementInterface
             childNodeAnchor: $this->childNodeAnchor,
             parentNodeAnchor: $parentNodeAggregateIdClause,
             whereClauses: $this->whereClauses,
+            innerWhereClauses: $this->innerWhereClauses,
         );
     }
 
-    public function where(string $where): self
+    public function andWhere(string $where): self
     {
         return new self(
             tableNames: $this->tableNames,
@@ -124,7 +133,21 @@ final readonly class HierarchyRelationStatement implements SqlStatementInterface
             dimensionSpacePoints: $this->dimensionSpacePoints,
             childNodeAnchor: $this->childNodeAnchor,
             parentNodeAnchor: $this->parentNodeAnchor,
-            whereClauses: $where === '' ? [] : [$where],
+            whereClauses: [...$this->whereClauses, ...($where === '' ? [] : [$where])],
+            innerWhereClauses: $this->innerWhereClauses,
+        );
+    }
+
+    public function andInnerWhereRelationIdMatches(string $innerWhere): self
+    {
+        return new self(
+            tableNames: $this->tableNames,
+            contentStreamLayers: $this->contentStreamLayers,
+            dimensionSpacePoints: $this->dimensionSpacePoints,
+            childNodeAnchor: $this->childNodeAnchor,
+            parentNodeAnchor: $this->parentNodeAnchor,
+            whereClauses: $this->whereClauses,
+            innerWhereClauses: [...$this->innerWhereClauses, ...($innerWhere === '' ? [] : [$innerWhere])],
         );
     }
 
@@ -150,7 +173,7 @@ final readonly class HierarchyRelationStatement implements SqlStatementInterface
 
     public function toSql(): string
     {
-        $innerWhereClauses = [];
+        $innerWhereClauses = $this->innerWhereClauses;
         $outerWhereClauses = $this->whereClauses;
 
         $dimensionWhereClause = match (true) {

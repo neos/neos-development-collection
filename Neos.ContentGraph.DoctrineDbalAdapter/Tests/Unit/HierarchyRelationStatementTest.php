@@ -152,7 +152,7 @@ class HierarchyRelationStatementTest extends TestCase
     public function withArbitraryWhereClause()
     {
         $hierarchyRelationStatement = HierarchyRelationStatement::create($this->tableNames, ContentStreamLayers::fromArray([1]))
-            ->where('h.subtreetag = :myOwnParameter');
+            ->andWhere('h.subtreetag = :myOwnParameter');
 
         self::assertSame(
             ['contentStreamLayers' => [1]],
