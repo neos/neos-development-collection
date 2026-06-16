@@ -87,11 +87,8 @@ final readonly class HierarchyRelationStatement implements SqlStatementInterface
         );
     }
 
-    public function withChildNodeRelationAnchors(NodeRelationAnchorPoints|array $childNodeRelationAnchorPoints): self
+    public function withChildNodeRelationAnchors(NodeRelationAnchorPoints $childNodeRelationAnchorPoints): self
     {
-        if (is_array($childNodeRelationAnchorPoints)) {
-            $childNodeRelationAnchorPoints = NodeRelationAnchorPoints::fromArray($childNodeRelationAnchorPoints);
-        }
         if ($childNodeRelationAnchorPoints->isEmpty()) {
             throw new \InvalidArgumentException('Child node relation anchor points to filter must not be empty', 1781630872);
         }
@@ -132,11 +129,8 @@ final readonly class HierarchyRelationStatement implements SqlStatementInterface
         );
     }
 
-    public function withParentNodeRelationAnchors(NodeRelationAnchorPoints|array $parentNodeRelationAnchorPoints): self
+    public function withParentNodeRelationAnchors(NodeRelationAnchorPoints $parentNodeRelationAnchorPoints): self
     {
-        if (is_array($parentNodeRelationAnchorPoints)) {
-            $parentNodeRelationAnchorPoints = NodeRelationAnchorPoints::fromArray($parentNodeRelationAnchorPoints);
-        }
         if ($parentNodeRelationAnchorPoints->isEmpty()) {
             throw new \InvalidArgumentException('Parent node relation anchor points to filter must not be empty', 1781630882);
         }
