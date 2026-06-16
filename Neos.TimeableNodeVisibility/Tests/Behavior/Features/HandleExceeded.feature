@@ -379,6 +379,30 @@ Feature: Simple handling of nodes with exceeded enableAfter and disableAfter dat
     And I expect exactly 5 events to be published on stream "ContentStream:cs-identifier"
 
 
+  Scenario: A node that only inherits the disabled tag, i.e. is not disabled itself, must be disabled explicitly when disableAfter is exceeded
+    When the following CreateNodeAggregateWithNode commands are executed:
+      | nodeAggregateId      | parentNodeAggregateId  | nodeTypeName          | initialPropertyValues                                                          |
+      | shernode-homes       | lady-eleonode-rootford | Some.Package:Homepage | {}                                                                             |
+      | duke-of-contentshire | shernode-homes         | Some.Package:Content  | {"disableAfterDateTime": {"__type": "DateTimeImmutable", "value": "-10 days"}} |
+    Then I expect node aggregate identifier "duke-of-contentshire" to lead to node cs-identifier;duke-of-contentshire;{}
+    And the command DisableNodeAggregate is executed with payload:
+      | Key                          | Value            |
+      | nodeAggregateId              | "shernode-homes" |
+      | nodeVariantSelectionStrategy | "allVariants"    |
+    And I expect exactly 5 events to be published on stream "ContentStream:cs-identifier"
+
+    And I expect node aggregate identifier "duke-of-contentshire" to lead to node cs-identifier;duke-of-contentshire;{}
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags "disabled"
+
+    Then I handle exceeded node dates
+
+    And I expect node aggregate identifier "duke-of-contentshire" to lead to node cs-identifier;duke-of-contentshire;{}
+    And I expect this node to be exactly explicitly tagged "disabled"
+    And I expect this node to exactly inherit the tags ""
+    And I expect exactly 6 events to be published on stream "ContentStream:cs-identifier"
+
+
   # <===========================|now|===========================>
   #  +++++++++++++++++++++++++++|---|+++|Disable|---------------
   Scenario: A disabled node with disableAfter in future must not be changed
