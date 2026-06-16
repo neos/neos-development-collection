@@ -234,7 +234,7 @@ final class ContentGraph implements ContentGraphInterface
     public function findChildNodeAggregates(
         NodeAggregateId $parentNodeAggregateId
     ): NodeAggregates {
-        $queryBuilder = $this->nodeQueryBuilder->buildChildNodeAggregateQuery($parentNodeAggregateId, $this->contentStreamLayers);
+        $queryBuilder = $this->nodeQueryBuilder->buildChildNodeAggregateQuery($this->hierarchyStatement, $parentNodeAggregateId);
         return $this->mapQueryBuilderToNodeAggregates($queryBuilder);
     }
 
@@ -266,7 +266,7 @@ final class ContentGraph implements ContentGraphInterface
 
     public function findTetheredChildNodeAggregates(NodeAggregateId $parentNodeAggregateId): NodeAggregates
     {
-        $queryBuilder = $this->nodeQueryBuilder->buildChildNodeAggregateQuery($parentNodeAggregateId, $this->contentStreamLayers)
+        $queryBuilder = $this->nodeQueryBuilder->buildChildNodeAggregateQuery($this->hierarchyStatement, $parentNodeAggregateId)
             ->andWhere('cn.classification = :tetheredClassification')
             ->setParameter('tetheredClassification', NodeAggregateClassification::CLASSIFICATION_TETHERED->value);
 
@@ -277,7 +277,7 @@ final class ContentGraph implements ContentGraphInterface
         NodeAggregateId $parentNodeAggregateId,
         NodeName $name
     ): ?NodeAggregate {
-        $queryBuilder = $this->nodeQueryBuilder->buildChildNodeAggregateQuery($parentNodeAggregateId, $this->contentStreamLayers)
+        $queryBuilder = $this->nodeQueryBuilder->buildChildNodeAggregateQuery($this->hierarchyStatement, $parentNodeAggregateId)
             ->andWhere('cn.name = :relationName')
             ->setParameter('relationName', $name->value);
 
