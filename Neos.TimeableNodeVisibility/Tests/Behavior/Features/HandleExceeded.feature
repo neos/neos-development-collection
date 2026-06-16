@@ -358,6 +358,26 @@ Feature: Simple handling of nodes with exceeded enableAfter and disableAfter dat
     And I expect this node to be enabled
     And I expect exactly 4 events to be published on stream "ContentStream:cs-identifier"
 
+  # The parent document is disabled, the child only INHERITS the "disabled"
+  # subtree tag (it is not explicitly tagged). With enableAfter in the past the
+  # service must not try to enable the child (which would attempt to remove a
+  # subtree tag the node aggregate does not explicitly carry, triggering an Exception).
+  Scenario: A node that only inherits the disabled tag, i.e. is not disabled itself, must not be enabled
+    When the following CreateNodeAggregateWithNode commands are executed:
+      | nodeAggregateId      | parentNodeAggregateId  | nodeTypeName          | initialPropertyValues                                                                    |
+      | shernode-homes       | lady-eleonode-rootford | Some.Package:Homepage | {}                                                                                       |
+      | duke-of-contentshire | shernode-homes         | Some.Package:Content  | {"enableAfterDateTime": {"__type": "DateTimeImmutable", "value": "-10 days"}} |
+    Then I expect node aggregate identifier "duke-of-contentshire" to lead to node cs-identifier;duke-of-contentshire;{}
+    And the command DisableNodeAggregate is executed with payload:
+      | Key                          | Value            |
+      | nodeAggregateId              | "shernode-homes" |
+      | nodeVariantSelectionStrategy | "allVariants"    |
+    And I expect exactly 5 events to be published on stream "ContentStream:cs-identifier"
+
+    Then I handle exceeded node dates
+    Then I expect this node to be disabled
+    And I expect exactly 5 events to be published on stream "ContentStream:cs-identifier"
+
 
   # <===========================|now|===========================>
   #  +++++++++++++++++++++++++++|---|+++|Disable|---------------
