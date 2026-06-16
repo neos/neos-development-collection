@@ -19,6 +19,7 @@ use Doctrine\DBAL\Exception as DBALException;
 use Doctrine\DBAL\Result;
 use Neos\ContentGraph\DoctrineDbalAdapter\ContentGraphTableNames;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\ContentStreamLayers;
+use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\NodeRelationAnchorPoint;
 use Neos\ContentGraph\DoctrineDbalAdapter\HierarchyRelationStatement;
 use Neos\ContentGraph\DoctrineDbalAdapter\NodeAggregateIdClause;
 use Neos\ContentGraph\DoctrineDbalAdapter\NodeQueryBuilder;
@@ -55,7 +56,6 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\Subtree;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Subtrees;
 use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
-use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateClassification;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateIds;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
@@ -200,9 +200,10 @@ final class ContentSubgraph implements ContentSubgraphInterface
 
     public function findRootNodeByType(NodeTypeName $nodeTypeName): ?Node
     {
-        $queryBuilder = $this->nodeQueryBuilder->buildBasicNodeQuery($this->hierarchyStatement)
-            ->andWhere('n.nodetypename = :nodeTypeName')->setParameter('nodeTypeName', $nodeTypeName->value)
-            ->andWhere('n.classification = :nodeAggregateClassification')->setParameter('nodeAggregateClassification', NodeAggregateClassification::CLASSIFICATION_ROOT->value);
+        $queryBuilder = $this->nodeQueryBuilder->buildBasicNodeQuery($this->hierarchyStatement->withParentNodeRelationAnchor(
+            NodeRelationAnchorPoint::forRootEdge()
+        ))
+            ->andWhere('n.nodetypename = :nodeTypeName')->setParameter('nodeTypeName', $nodeTypeName->value);
         $this->addSubtreeTagConstraints($queryBuilder);
         return $this->fetchNode($queryBuilder);
     }
