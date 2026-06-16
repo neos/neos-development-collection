@@ -239,13 +239,11 @@ final class ContentGraph implements ContentGraphInterface
         $subQueryBuilder = $this->createQueryBuilder()
             ->select('pn.nodeaggregateid')
             ->from($this->nodeQueryBuilder->tableNames->node(), 'pn')
-            ->innerJoinWithStatement('pn', $this->statements->forHierarchyRelation($this->contentStreamLayers)->withDimensionSpacePoint($childOriginDimensionSpacePoint->toDimensionSpacePoint()), 'ch', 'ch.parentnodeanchor = pn.relationanchorpoint')
+            ->innerJoinWithStatement('pn', $hierarchyStatement = $this->statements->forHierarchyRelation($this->contentStreamLayers)->withDimensionSpacePoint($childOriginDimensionSpacePoint->toDimensionSpacePoint()), 'ch', 'ch.parentnodeanchor = pn.relationanchorpoint')
             ->innerJoin('ch', $this->nodeQueryBuilder->tableNames->node(), 'cn', 'cn.relationanchorpoint = ch.childnodeanchor')
             ->where('cn.nodeaggregateid = :childNodeAggregateId')
-            ->andWhere('cn.origindimensionspacepointhash = :dimensionSpacePointHash')
-            ->setParameter('dimensionSpacePointHash', $childOriginDimensionSpacePoint->hash);
+            ->andWhere('cn.origindimensionspacepointhash = ' . $hierarchyStatement->getParameters()->getReference('dimensionSpacePointHash'));
 
-        // TODO merge parmaters
         $queryBuilder = $this->createQueryBuilder()
             ->select('n.*, h.subtreetags, dsp.dimensionspacepoint AS covereddimensionspacepoint')
             ->from($this->nodeQueryBuilder->tableNames->node(), 'n')

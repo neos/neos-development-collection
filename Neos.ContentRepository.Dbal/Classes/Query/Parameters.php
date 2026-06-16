@@ -22,6 +22,16 @@ final readonly class Parameters implements \IteratorAggregate, \Countable
         return new self(array_values($items));
     }
 
+    public function getReference(string $name): string
+    {
+        foreach ($this->items as $parameter) {
+            if ($parameter->name === $name) {
+                return ":$name";
+            }
+        }
+        throw new \RuntimeException(sprintf('No parameter exists for %s', $name), 1781593395);
+    }
+
     /**
      * @return array<string, mixed>
      */
