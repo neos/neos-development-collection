@@ -186,9 +186,13 @@ final readonly class HierarchyRelationStatement implements SqlStatementInterface
 
         $innerWhereClauseSql = $innerWhereClauses === [] ? '' : sprintf(
             <<<SQL
-              AND id IN (SELECT id FROM {$this->tableNames->hierarchyRelation()} AS h WHERE %s)
+                    AND id IN (
+                      SELECT id FROM {$this->tableNames->hierarchyRelation()} AS h
+                        WHERE %s
+                    )
+            
             SQL,
-            join("\n  AND ", $innerWhereClauses)
+            join("\n            AND ", $innerWhereClauses)
         );
         $outerWhereClauseSql = $outerWhereClauses === [] ? '' : sprintf("  WHERE %s\n", join("\n  AND ", $outerWhereClauses));
 
@@ -200,8 +204,7 @@ final readonly class HierarchyRelationStatement implements SqlStatementInterface
                   FROM {$this->tableNames->hierarchyRelation()}
                     WHERE (contentstreamlayer IN (:contentStreamLayers))
             {$innerWhereClauseSql
-            }
-                GROUP BY id
+            }    GROUP BY id
               ) AS readHierarchy
                 ON h.id = readHierarchy.id AND h.contentstreamlayer = readHierarchy.contentstreamlayer
             {$outerWhereClauseSql
