@@ -19,6 +19,7 @@ use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Exception as DBALException;
 use Neos\ContentGraph\DoctrineDbalAdapter\ContentGraphTableNames;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\ContentStreamLayers;
+use Neos\ContentGraph\DoctrineDbalAdapter\NodeAggregateIdClause;
 use Neos\ContentGraph\DoctrineDbalAdapter\NodeQueryBuilder;
 use Neos\ContentGraph\DoctrineDbalAdapter\StatementFactory;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
@@ -158,10 +159,8 @@ final class ContentGraph implements ContentGraphInterface
     public function findNodeAggregateById(
         NodeAggregateId $nodeAggregateId
     ): ?NodeAggregate {
-        $queryBuilder = $this->nodeQueryBuilder->buildBasicNodeAggregateQuery($this->contentStreamLayers)
-            ->andWhere('n.nodeaggregateid = :nodeAggregateId')
-            ->orderBy('n.relationanchorpoint', 'DESC')
-            ->setParameter('nodeAggregateId', $nodeAggregateId->value);
+        $queryBuilder = $this->nodeQueryBuilder->buildBasicNodeAggregateQuery($this->contentStreamLayers, NodeAggregateIdClause::forNodeAggregateId($nodeAggregateId))
+            ->orderBy('n.relationanchorpoint', 'DESC');
 
         return $this->nodeFactory->mapNodeRowsToNodeAggregate(
             $this->fetchRows($queryBuilder),
@@ -173,10 +172,8 @@ final class ContentGraph implements ContentGraphInterface
     public function findNodeAggregatesByIds(
         NodeAggregateIds $nodeAggregateIds
     ): NodeAggregates {
-        $queryBuilder = $this->nodeQueryBuilder->buildBasicNodeAggregateQuery($this->contentStreamLayers)
-            ->andWhere('n.nodeaggregateid in (:nodeAggregateIds)')
-            ->orderBy('n.relationanchorpoint', 'DESC')
-            ->setParameter('nodeAggregateIds', $nodeAggregateIds->toStringArray(), ArrayParameterType::STRING);
+        $queryBuilder = $this->nodeQueryBuilder->buildBasicNodeAggregateQuery($this->contentStreamLayers, NodeAggregateIdClause::forNodeAggregateIds($nodeAggregateIds))
+            ->orderBy('n.relationanchorpoint', 'DESC');
 
         return $this->mapQueryBuilderToNodeAggregates($queryBuilder);
     }

@@ -20,6 +20,7 @@ use Doctrine\DBAL\Exception as DBALException;
 use Doctrine\DBAL\Result;
 use Neos\ContentGraph\DoctrineDbalAdapter\ContentGraphTableNames;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\ContentStreamLayers;
+use Neos\ContentGraph\DoctrineDbalAdapter\NodeAggregateIdClause;
 use Neos\ContentGraph\DoctrineDbalAdapter\NodeQueryBuilder;
 use Neos\ContentGraph\DoctrineDbalAdapter\StatementFactory;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
@@ -175,18 +176,14 @@ final class ContentSubgraph implements ContentSubgraphInterface
 
     public function findNodeById(NodeAggregateId $nodeAggregateId): ?Node
     {
-        $queryBuilder = $this->nodeQueryBuilder->buildBasicNodeQuery($this->contentStreamLayers, $this->dimensionSpacePoint)
-            ->andWhere('n.nodeaggregateid = :nodeAggregateId')
-            ->setParameter('nodeAggregateId', $nodeAggregateId->value);
+        $queryBuilder = $this->nodeQueryBuilder->buildBasicNodeQuery($this->contentStreamLayers, $this->dimensionSpacePoint, nodeAggregateIdClause: NodeAggregateIdClause::forNodeAggregateId($nodeAggregateId));
         $this->addSubtreeTagConstraints($queryBuilder);
         return $this->fetchNode($queryBuilder);
     }
 
     public function findNodesByIds(NodeAggregateIds $nodeAggregateIds): Nodes
     {
-        $queryBuilder = $this->nodeQueryBuilder->buildBasicNodeQuery($this->contentStreamLayers, $this->dimensionSpacePoint)
-            ->andWhere('n.nodeaggregateid in (:nodeAggregateIds)')
-            ->setParameter('nodeAggregateIds', $nodeAggregateIds->toStringArray(), ArrayParameterType::STRING);
+        $queryBuilder = $this->nodeQueryBuilder->buildBasicNodeQuery($this->contentStreamLayers, $this->dimensionSpacePoint, nodeAggregateIdClause: NodeAggregateIdClause::forNodeAggregateIds($nodeAggregateIds));
         $this->addSubtreeTagConstraints($queryBuilder);
         return $this->fetchNodes($queryBuilder);
     }

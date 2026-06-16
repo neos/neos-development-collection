@@ -44,13 +44,23 @@ final readonly class NodeQueryBuilder
         $this->statements = StatementFactory::for($this->tableNames);
     }
 
-    public function buildBasicNodeAggregateQuery(ContentStreamLayers $contentStreamLayers): QueryBuilder
+    public function buildBasicNodeAggregateQuery(ContentStreamLayers $contentStreamLayers, ?NodeAggregateIdClause $nodeAggregateIdClause = null): QueryBuilder
     {
-        return $this->createQueryBuilder()
+        $hierarchyStatement =  $this->statements->forHierarchyRelation($contentStreamLayers);
+        if ($nodeAggregateIdClause !== null) {
+            $hierarchyStatement = $hierarchyStatement->withChildNodeAggregateIdPrefilter($nodeAggregateIdClause);
+        }
+        $queryBuilder = $this->createQueryBuilder()
             ->select('n.*, h.subtreetags, dsp.dimensionspacepoint AS covereddimensionspacepoint')
             ->from($this->tableNames->node(), 'n')
-            ->innerJoinWithStatement('n', $this->statements->forHierarchyRelation($contentStreamLayers), 'h', 'h.childnodeanchor = n.relationanchorpoint')
+            ->innerJoinWithStatement('n', $hierarchyStatement, 'h', 'h.childnodeanchor = n.relationanchorpoint')
             ->innerJoin('h', $this->tableNames->dimensionSpacePoints(), 'dsp', 'dsp.hash = h.dimensionspacepointhash');
+        if ($nodeAggregateIdClause !== null) {
+            $queryBuilder
+                ->where($nodeAggregateIdClause->toWhereSql('n'))
+                ->mergeParameters($nodeAggregateIdClause->getParameters());
+        }
+        return $queryBuilder;
     }
 
     public function buildChildNodeAggregateQuery(NodeAggregateId $parentNodeAggregateId, ContentStreamLayers $contentStreamLayers): QueryBuilder
@@ -68,7 +78,8 @@ final readonly class NodeQueryBuilder
 
     public function buildFindRootNodeAggregatesQuery(ContentStreamLayers $contentStreamLayers, FindRootNodeAggregatesFilter $filter): QueryBuilder
     {
-        $queryBuilder = $this->buildBasicNodeAggregateQuery($contentStreamLayers)
+        // TODO also optimise root case?
+        $queryBuilder = $this->buildBasicNodeAggregateQuery($contentStreamLayers, null)
             ->andWhere('h.parentnodeanchor = :rootEdgeParentAnchorId')
             ->setParameter('rootEdgeParentAnchorId', NodeRelationAnchorPoint::forRootEdge()->value);
 
@@ -79,12 +90,22 @@ final readonly class NodeQueryBuilder
         return $queryBuilder;
     }
 
-    public function buildBasicNodeQuery(ContentStreamLayers $contentStreamLayers, DimensionSpacePoint $dimensionSpacePoint, string $nodeTableAlias = 'n', string $select = 'n.*, h.subtreetags'): QueryBuilder
+    public function buildBasicNodeQuery(ContentStreamLayers $contentStreamLayers, DimensionSpacePoint $dimensionSpacePoint, string $nodeTableAlias = 'n', string $select = 'n.*, h.subtreetags', ?NodeAggregateIdClause $nodeAggregateIdClause = null): QueryBuilder
     {
-        return $this->createQueryBuilder()
+        $hierarchyStatement =  $this->statements->forHierarchyRelation($contentStreamLayers)->withDimensionSpacePoint($dimensionSpacePoint);
+        if ($nodeAggregateIdClause !== null) {
+            $hierarchyStatement = $hierarchyStatement->withChildNodeAggregateIdPrefilter($nodeAggregateIdClause);
+        }
+        $queryBuilder = $this->createQueryBuilder()
             ->select($select)
             ->from($this->tableNames->node(), $nodeTableAlias)
-            ->innerJoinWithStatement($nodeTableAlias, $this->statements->forHierarchyRelation($contentStreamLayers)->withDimensionSpacePoint($dimensionSpacePoint), 'h', 'h.childnodeanchor = ' . $nodeTableAlias . '.relationanchorpoint');
+            ->innerJoinWithStatement($nodeTableAlias, $hierarchyStatement, 'h', 'h.childnodeanchor = ' . $nodeTableAlias . '.relationanchorpoint');
+        if ($nodeAggregateIdClause !== null) {
+            $queryBuilder
+                ->where($nodeAggregateIdClause->toWhereSql('n'))
+                ->mergeParameters($nodeAggregateIdClause->getParameters());
+        }
+        return $queryBuilder;
     }
 
     public function buildBasicChildNodesQuery(NodeAggregateId $parentNodeAggregateId, ContentStreamLayers $contentStreamLayers, DimensionSpacePoint $dimensionSpacePoint): QueryBuilder
