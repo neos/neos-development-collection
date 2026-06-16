@@ -14,7 +14,6 @@ declare(strict_types=1);
 
 namespace Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository;
 
-use Doctrine\DBAL\ArrayParameterType;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Exception as DBALException;
 use Neos\ContentGraph\DoctrineDbalAdapter\ContentGraphTableNames;
@@ -50,36 +49,28 @@ class ProjectionContentGraph
         $this->statements = StatementFactory::for($this->tableNames);
     }
 
-    /**
-     * @param OriginDimensionSpacePoint $originDimensionSpacePoint of $childNodeAggregateId
-     * @param DimensionSpacePoint|null $coveredDimensionSpacePoint the dimension space point of which relation we want
-     *     to travel upwards. If not given, $originDimensionSpacePoint is used (though I am not fully sure if this is
-     *     correct)
-     */
     public function findParentNode(
         ContentStreamLayers $contentStreamLayers,
         NodeAggregateId $childNodeAggregateId,
-        OriginDimensionSpacePoint $originDimensionSpacePoint,
-        ?DimensionSpacePoint $coveredDimensionSpacePoint = null
+        OriginDimensionSpacePoint $originDimensionSpacePoint
     ): ?NodeRecord {
-        $hierarchyStatement = $this->statements->forHierarchyRelation($contentStreamLayers)->withDimensionSpacePoint($coveredDimensionSpacePoint ?? $originDimensionSpacePoint->toDimensionSpacePoint());
+        $hierarchyStatement = $this->statements->forHierarchyRelation($contentStreamLayers)->withDimensionSpacePoint($originDimensionSpacePoint->toDimensionSpacePoint());
         $parentNodeStatement = <<<SQL
             SELECT
-                p.*, ph.subtreetags, dsp.dimensionspacepoint AS origindimensionspacepoint
+                pn.*, ph.subtreetags, dsp.dimensionspacepoint AS origindimensionspacepoint
             FROM
-                {$this->tableNames->node()} p
-                INNER JOIN {$hierarchyStatement->toSql()} ph ON ph.childnodeanchor = p.relationanchorpoint
-                INNER JOIN {$hierarchyStatement->toSql()} ch ON ch.parentnodeanchor = p.relationanchorpoint
-                INNER JOIN {$this->tableNames->node()} c ON ch.childnodeanchor = c.relationanchorpoint
-                INNER JOIN {$this->tableNames->dimensionSpacePoints()} dsp ON p.origindimensionspacepointhash = dsp.hash
-            WHERE
-                c.nodeaggregateid = :childNodeAggregateId
-                AND c.origindimensionspacepointhash = :originDimensionSpacePointHash
+                {$hierarchyStatement->toSql()} AS ph
+                INNER JOIN {$this->tableNames->node()} pn ON ph.parentnodeanchor = pn.relationanchorpoint
+                INNER JOIN {$this->tableNames->dimensionSpacePoints()} dsp ON pn.origindimensionspacepointhash = dsp.hash
+            WHERE ph.childnodeanchor IN (
+                SELECT cn.relationanchorpoint FROM {$this->tableNames->node()} cn
+                    WHERE cn.nodeaggregateid = :childNodeAggregateId
+                      AND cn.origindimensionspacepointhash = {$hierarchyStatement->getParameters()->getReference('dimensionSpacePointHash')}
+            )
         SQL;
         try {
             $nodeRow = $this->dbal->fetchAssociative($parentNodeStatement, [
                 'childNodeAggregateId' => $childNodeAggregateId->value,
-                'originDimensionSpacePointHash' => $originDimensionSpacePoint->hash,
                 ...$hierarchyStatement->getParameters()->toDbalParams(),
             ], [
                 ...$hierarchyStatement->getParameters()->toDbalTypes(),
