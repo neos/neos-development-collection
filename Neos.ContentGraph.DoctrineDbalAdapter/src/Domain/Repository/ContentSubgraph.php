@@ -178,21 +178,29 @@ final class ContentSubgraph implements ContentSubgraphInterface
 
     public function findNodeById(NodeAggregateId $nodeAggregateId): ?Node
     {
-        $queryBuilder = $this->nodeQueryBuilder->buildBasicNodeQuery($this->contentStreamLayers, $this->dimensionSpacePoint, nodeAggregateIdClause: NodeAggregateIdClause::forNodeAggregateId($nodeAggregateId));
+        $nodeAggregateIdClause = NodeAggregateIdClause::forNodeAggregateId($nodeAggregateId);
+        $queryBuilder = $this->nodeQueryBuilder->buildBasicNodeQuery($this->hierarchyStatement->withChildNodeAggregateIdPrefilter($nodeAggregateIdClause))
+            ->where($nodeAggregateIdClause->toWhereSql())
+            ->mergeParameters($nodeAggregateIdClause->getParameters());
+
         $this->addSubtreeTagConstraints($queryBuilder);
         return $this->fetchNode($queryBuilder);
     }
 
     public function findNodesByIds(NodeAggregateIds $nodeAggregateIds): Nodes
     {
-        $queryBuilder = $this->nodeQueryBuilder->buildBasicNodeQuery($this->contentStreamLayers, $this->dimensionSpacePoint, nodeAggregateIdClause: NodeAggregateIdClause::forNodeAggregateIds($nodeAggregateIds));
+        $nodeAggregateIdClause = NodeAggregateIdClause::forNodeAggregateIds($nodeAggregateIds);
+        $queryBuilder = $this->nodeQueryBuilder->buildBasicNodeQuery($this->hierarchyStatement->withChildNodeAggregateIdPrefilter($nodeAggregateIdClause))
+            ->where($nodeAggregateIdClause->toWhereSql())
+            ->mergeParameters($nodeAggregateIdClause->getParameters());
+
         $this->addSubtreeTagConstraints($queryBuilder);
         return $this->fetchNodes($queryBuilder);
     }
 
     public function findRootNodeByType(NodeTypeName $nodeTypeName): ?Node
     {
-        $queryBuilder = $this->nodeQueryBuilder->buildBasicNodeQuery($this->contentStreamLayers, $this->dimensionSpacePoint)
+        $queryBuilder = $this->nodeQueryBuilder->buildBasicNodeQuery($this->hierarchyStatement)
             ->andWhere('n.nodetypename = :nodeTypeName')->setParameter('nodeTypeName', $nodeTypeName->value)
             ->andWhere('n.classification = :nodeAggregateClassification')->setParameter('nodeAggregateClassification', NodeAggregateClassification::CLASSIFICATION_ROOT->value);
         $this->addSubtreeTagConstraints($queryBuilder);
@@ -432,7 +440,7 @@ final class ContentSubgraph implements ContentSubgraphInterface
 
     public function countNodes(): int
     {
-        $queryBuilder = $this->nodeQueryBuilder->buildBasicNodeQuery($this->contentStreamLayers, $this->dimensionSpacePoint, 'n', 'COUNT(*)');
+        $queryBuilder = $this->nodeQueryBuilder->buildBasicNodeQuery($this->hierarchyStatement, 'n', 'COUNT(*)');
         try {
             $result = $this->executeQuery($queryBuilder)->fetchOne();
         } catch (DBALException $e) {
@@ -620,7 +628,7 @@ final class ContentSubgraph implements ContentSubgraphInterface
 
     private function buildSiblingsQuery(bool $preceding, NodeAggregateId $siblingNodeAggregateId, FindPrecedingSiblingNodesFilter|FindSucceedingSiblingNodesFilter $filter): QueryBuilder
     {
-        $queryBuilder = $this->nodeQueryBuilder->buildBasicNodeSiblingsQuery($preceding, $siblingNodeAggregateId, $this->contentStreamLayers, $this->dimensionSpacePoint);
+        $queryBuilder = $this->nodeQueryBuilder->buildBasicNodeSiblingsQuery($this->hierarchyStatement, $preceding, $siblingNodeAggregateId);
 
         $this->addSubtreeTagConstraints($queryBuilder);
         if ($filter->nodeTypes !== null) {
