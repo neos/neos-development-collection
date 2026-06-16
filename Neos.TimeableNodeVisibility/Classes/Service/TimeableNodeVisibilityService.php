@@ -48,8 +48,7 @@ class TimeableNodeVisibilityService
 
         /** @var Node $node */
         foreach ($nodes as $node) {
-            $nodeIsExplicitlyDisabled = $node->tags->withoutInherited()->contain(NeosSubtreeTag::disabled());
-            if ($this->needsEnabling($node, $now) && $nodeIsExplicitlyDisabled) {
+            if ($this->needsEnabling($node, $now)) {
                 $contentRepository->handle(
                     EnableNodeAggregate::create(
                         $workspaceName,
@@ -63,7 +62,7 @@ class TimeableNodeVisibilityService
                 $this->logResult($result);
 
             }
-            if ($this->needsDisabling($node, $now) && !$nodeIsExplicitlyDisabled) {
+            if ($this->needsDisabling($node, $now)) {
                 $contentRepository->handle(
                     DisableNodeAggregate::create(
                         $workspaceName,
@@ -128,7 +127,8 @@ class TimeableNodeVisibilityService
 
     private function needsEnabling(Node $node, \DateTimeImmutable $now): bool
     {
-        return $node->hasProperty('enableAfterDateTime')
+        return $node->tags->withoutInherited()->contain(NeosSubtreeTag::disabled())
+            && $node->hasProperty('enableAfterDateTime')
             && $node->getProperty('enableAfterDateTime') != null
             && $node->getProperty('enableAfterDateTime') < $now
             && (
@@ -141,7 +141,8 @@ class TimeableNodeVisibilityService
 
     private function needsDisabling(Node $node, \DateTimeImmutable $now): bool
     {
-        return $node->hasProperty('disableAfterDateTime')
+        return !$node->tags->withoutInherited()->contain(NeosSubtreeTag::disabled())
+            && $node->hasProperty('disableAfterDateTime')
             && $node->getProperty('disableAfterDateTime') != null
             && $node->getProperty('disableAfterDateTime') < $now
             && (
