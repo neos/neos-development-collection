@@ -7,7 +7,7 @@ root = Neos.Fusion:Case
 root {
   documentNotVisibleInPreviewMode {
     @position = 'before shortcut'
-    condition = ${documentNode.context.inBackend && documentNode.context.currentRenderingMode.preview && !documentNode.visible}
+    condition = ${renderingMode.isPreview && Neos.Node.isDisabled(documentNode)}
     renderer = Neos.Neos:Document.BackendInformation {
       content = Neos.Neos:NotVisible
     }
