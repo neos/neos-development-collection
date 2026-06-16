@@ -458,7 +458,7 @@ final class ProjectionIntegrityViolationDetector implements ProjectionIntegrityV
             try {
                 $destinationNodeAggregateExist = $this->dbal->fetchOne($destinationNodeAggregateExistStatement, [
                     'destinationNodeAggregateId' => $record['destinationNodeAggregateId'],
-                    ...$hierarchyStatement->getParameters()->toDbalParams(),
+                    ...$hierarchyStatement->getParameters()->toDbalValues(),
                 ], [
                     ...$hierarchyStatement->getParameters()->toDbalTypes(),
                 ]);
@@ -529,7 +529,7 @@ final class ProjectionIntegrityViolationDetector implements ProjectionIntegrityV
                 try {
                     $nodeAggregateIdsInCycles = $this->dbal->fetchFirstColumn($nodeAggregateIdsInCyclesStatement, [
                         'rootAnchorPoint' => NodeRelationAnchorPoint::forRootEdge()->value,
-                        ...$hierarchyStatement->getParameters()->toDbalParams(),
+                        ...$hierarchyStatement->getParameters()->toDbalValues(),
                     ], [
                         ...$hierarchyStatement->getParameters()->toDbalTypes(),
                     ]);
@@ -583,7 +583,7 @@ final class ProjectionIntegrityViolationDetector implements ProjectionIntegrityV
                 SQL;
                 try {
                     $ambiguousNodeAggregateRecords = $this->dbal->fetchAllAssociative($ambiguousNodeAggregatesStatement, [
-                        ...$hierarchyStatement->getParameters()->toDbalParams(),
+                        ...$hierarchyStatement->getParameters()->toDbalValues(),
                     ], [
                         ...$hierarchyStatement->getParameters()->toDbalTypes(),
                     ]);
@@ -624,7 +624,7 @@ final class ProjectionIntegrityViolationDetector implements ProjectionIntegrityV
                 SQL;
                 try {
                     $nodeRecordsWithMultipleParents = $this->dbal->fetchAllAssociative($nodeRecordsWithMultipleParentsStatement, [
-                        ...$hierarchyStatement->getParameters()->toDbalParams(),
+                        ...$hierarchyStatement->getParameters()->toDbalValues(),
                     ], [
                         ...$hierarchyStatement->getParameters()->toDbalTypes(),
                     ]);
@@ -668,7 +668,7 @@ final class ProjectionIntegrityViolationDetector implements ProjectionIntegrityV
                 try {
                     $nodeTypeNames = $this->dbal->fetchFirstColumn($nodeAggregatesStatement, [
                         'nodeAggregateId' => $nodeAggregateId->value,
-                        ...$allHierarchyStatement->getParameters()->toDbalParams(),
+                        ...$allHierarchyStatement->getParameters()->toDbalValues(),
                     ], [
                         ...$allHierarchyStatement->getParameters()->toDbalTypes(),
                     ]);
@@ -714,7 +714,7 @@ final class ProjectionIntegrityViolationDetector implements ProjectionIntegrityV
                 try {
                     $classifications = $this->dbal->fetchFirstColumn($nodeAggregatesStatement, [
                         'nodeAggregateId' => $nodeAggregateId->value,
-                        ...$allHierarchyStatement->getParameters()->toDbalParams(),
+                        ...$allHierarchyStatement->getParameters()->toDbalValues(),
                     ], [
                         ...$allHierarchyStatement->getParameters()->toDbalTypes(),
                     ]);
@@ -754,7 +754,7 @@ final class ProjectionIntegrityViolationDetector implements ProjectionIntegrityV
             SQL;
             try {
                 $excessivelyCoveringNodeRecords = $this->dbal->fetchAllAssociative($excessivelyCoveringStatement, [
-                    ...$allHierarchyStatement->getParameters()->toDbalParams()
+                    ...$allHierarchyStatement->getParameters()->toDbalValues()
                 ], [
                     ...$allHierarchyStatement->getParameters()->toDbalTypes(),
                 ]);
@@ -802,7 +802,7 @@ final class ProjectionIntegrityViolationDetector implements ProjectionIntegrityV
             try {
                 $nodeRecordsWithMissingOriginCoverage = $this->dbal->fetchAllAssociative($nodesWithMissingOriginCoverageStatement, [
                     'rootClassification' => NodeAggregateClassification::CLASSIFICATION_ROOT->value,
-                    ...$allHierarchyStatement->getParameters()->toDbalParams(),
+                    ...$allHierarchyStatement->getParameters()->toDbalValues(),
                 ], [
                     ...$allHierarchyStatement->getParameters()->toDbalTypes(),
                 ]);
@@ -881,7 +881,7 @@ final class ProjectionIntegrityViolationDetector implements ProjectionIntegrityV
         SQL;
         try {
             $nodeAggregateIds = $this->dbal->fetchFirstColumn($nodeAggregateIdsStatement, [
-                ...$allHierarchyStatement->getParameters()->toDbalParams(),
+                ...$allHierarchyStatement->getParameters()->toDbalValues(),
             ], [
                 ...$allHierarchyStatement->getParameters()->toDbalTypes(),
             ]);

@@ -460,7 +460,7 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
             $this->dbal->executeStatement($insertHierarchyRelationsStatement, [
                 'newDimensionSpacePointHash' => $event->target->hash,
                 'targetContentStreamLayer' => $this->getContentStreamLayers($event)->getWriteLayer()->value,
-                ...$hierarchyStatement->getParameters()->toDbalParams(),
+                ...$hierarchyStatement->getParameters()->toDbalValues(),
             ], [
                 ...$hierarchyStatement->getParameters()->toDbalTypes(),
             ]);
@@ -490,7 +490,7 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
         SQL;
         try {
             $relationAnchorPoints = $this->dbal->fetchFirstColumn($selectRelationsStatement, [
-                ...$hierarchyStatement->getParameters()->toDbalParams(),
+                ...$hierarchyStatement->getParameters()->toDbalValues(),
             ], [
                 ...$hierarchyStatement->getParameters()->toDbalTypes(),
             ]);
@@ -537,7 +537,7 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
             $this->dbal->executeStatement($updateHierarchyRelationsStatement, [
                 'newDimensionSpacePointHash' => $event->target->hash,
                 'targetContentStreamLayer' => $this->getContentStreamLayers($event)->getWriteLayer()->value,
-                ...$hierarchyStatement->getParameters()->toDbalParams(),
+                ...$hierarchyStatement->getParameters()->toDbalValues(),
             ], [
                 ...$hierarchyStatement->getParameters()->toDbalTypes(),
             ]);
@@ -958,7 +958,7 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
                     'newNodeAnchor' => $copiedNode->relationAnchorPoint->value,
                     'originalNodeAnchor' => $anchorPoint->value,
                     'targetContentStreamLayer' => $contentStreamLayersWhereWriteOccurs->getWriteLayer()->value,
-                    ...$hierarchyStatement->getParameters()->toDbalParams(),
+                    ...$hierarchyStatement->getParameters()->toDbalValues(),
                 ], [
                     ...$hierarchyStatement->getParameters()->toDbalTypes(),
                 ]);
