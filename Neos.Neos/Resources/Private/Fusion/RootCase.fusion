@@ -5,12 +5,20 @@
 #
 root = Neos.Fusion:Case
 root {
+  documentNotVisibleInPreviewMode {
+    @position = 'before shortcut'
+    condition = ${documentNode.context.inBackend && documentNode.context.currentRenderingMode.preview && !documentNode.visible}
+    renderer = Neos.Neos:Document.BackendInformation {
+      content = Neos.Neos:NotVisible
+    }
+  }
+
   shortcut {
-    # this code path will only be taken for backend views, as the node controller
-    # will take care of resolving the shortcut in the frontend
     @position = 'start'
     condition = ${q(node).is('[instanceof Neos.Neos:Shortcut]')}
-    renderer = Neos.Neos:Shortcut
+    renderer = Neos.Neos:Document.BackendInformation {
+      content = Neos.Neos:Shortcut
+    }
   }
 
   editPreviewMode {
