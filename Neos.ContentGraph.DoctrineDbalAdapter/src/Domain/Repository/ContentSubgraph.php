@@ -285,18 +285,28 @@ final class ContentSubgraph implements ContentSubgraphInterface
 
     public function findSubtree(NodeAggregateId $entryNodeAggregateId, FindSubtreeFilter $filter): ?Subtree
     {
+        // Resolve each candidate relation's winning layer PER ROW via a correlated NOT EXISTS (a higher visible layer
+        // for the same id) instead of {@see HierarchyRelationStatement::toSql()}'s full-table MAX(contentstreamlayer)
+        // GROUP BY id, which the recursive CTE would otherwise re-run for every tree level. The anchor join scopes the
+        // candidate rows to the current frontier (childnodeanchor = entry node for the seed, parentnodeanchor = p for
+        // the recursion) via the (child|parent)nodeanchor index, so the walk scales with the SUBTREE size, not the
+        // table size. With UNIQ(id, contentstreamlayer) the NOT EXISTS is exactly equivalent to the MAX(layer) join;
+        // removed relations (tombstone wins with NULL anchors) simply fail the anchor join and drop out, as before.
+        $hierarchyRelation = $this->nodeQueryBuilder->tableNames->hierarchyRelation();
+        $winningLayer = "h.contentstreamlayer IN (:contentStreamLayers) AND NOT EXISTS (SELECT 1 FROM $hierarchyRelation w WHERE w.id = h.id AND w.contentstreamlayer IN (:contentStreamLayers) AND w.contentstreamlayer > h.contentstreamlayer)";
+
         $queryBuilderInitial = $this->createQueryBuilder()
             // @see https://mariadb.com/kb/en/library/recursive-common-table-expressions-overview/#cast-to-avoid-data-truncation
             ->select('n.*, h.subtreetags, CAST("ROOT" AS CHAR(50)) AS parentNodeAggregateId, 0 AS level, 0 AS position')
             ->from($this->tableNames->node(), 'n')
-            ->innerJoinWithStatement('n', $this->hierarchyStatement, 'h', 'h.childnodeanchor = n.relationanchorpoint')
+            ->innerJoinWithStatement('n', $this->hierarchyStatement, 'h', "h.childnodeanchor = n.relationanchorpoint AND $winningLayer")
             ->where('n.nodeaggregateid = :entryNodeAggregateId');
         $this->addSubtreeTagConstraints($queryBuilderInitial);
 
         $queryBuilderRecursive = $this->createQueryBuilder()
             ->select('c.*, h.subtreetags, p.nodeaggregateid AS parentNodeAggregateId, p.level + 1 AS level, h.position')
             ->from('tree', 'p')
-            ->innerJoinWithStatement('p', $this->hierarchyStatement, 'h', 'h.parentnodeanchor = p.relationanchorpoint')
+            ->innerJoinWithStatement('p', $this->hierarchyStatement, 'h', "h.parentnodeanchor = p.relationanchorpoint AND $winningLayer")
             ->innerJoin('p', $this->tableNames->node(), 'c', 'c.relationanchorpoint = h.childnodeanchor');
         if ($filter->maximumLevels !== null) {
             $queryBuilderRecursive->andWhere('p.level < :maximumLevels')->setParameter('maximumLevels', $filter->maximumLevels);
