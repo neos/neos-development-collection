@@ -48,8 +48,8 @@ class TimeableNodeVisibilityService
 
         /** @var Node $node */
         foreach ($nodes as $node) {
-            $nodeIsDisabled = $node->tags->contain(NeosSubtreeTag::disabled());
-            if ($this->needsEnabling($node, $now) && $nodeIsDisabled) {
+            $nodeIsExplicitlyDisabled = $node->tags->withoutInherited()->contain(NeosSubtreeTag::disabled());
+            if ($this->needsEnabling($node, $now) && $nodeIsExplicitlyDisabled) {
                 $contentRepository->handle(
                     EnableNodeAggregate::create(
                         $workspaceName,
@@ -63,7 +63,7 @@ class TimeableNodeVisibilityService
                 $this->logResult($result);
 
             }
-            if ($this->needsDisabling($node, $now) && !$nodeIsDisabled) {
+            if ($this->needsDisabling($node, $now) && !$nodeIsExplicitlyDisabled) {
                 $contentRepository->handle(
                     DisableNodeAggregate::create(
                         $workspaceName,
