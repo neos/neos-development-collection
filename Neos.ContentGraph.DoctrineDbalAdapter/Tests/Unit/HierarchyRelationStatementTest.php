@@ -152,7 +152,7 @@ class HierarchyRelationStatementTest extends TestCase
     public function withArbitraryWhereClause()
     {
         $hierarchyRelationStatement = HierarchyRelationStatement::create($this->tableNames, ContentStreamLayers::fromArray([1]))
-            ->where('h.subtreetag = :myOwnParameter');
+            ->andWhere('h.subtreetag = :myOwnParameter');
 
         self::assertSame(
             ['contentStreamLayers' => [1]],
@@ -176,6 +176,43 @@ class HierarchyRelationStatementTest extends TestCase
           ) AS readHierarchy
             ON h.id = readHierarchy.id AND h.contentstreamlayer = readHierarchy.contentstreamlayer
           WHERE h.subtreetag = :myOwnParameter
+        )
+        SQL,
+            $hierarchyRelationStatement->toSql()
+        );
+    }
+
+    /** @test */
+    public function withArbitraryInnerWhereClause()
+    {
+        $hierarchyRelationStatement = HierarchyRelationStatement::create($this->tableNames, ContentStreamLayers::fromArray([1]))
+            ->andInnerWhereRelationIdMatches('h.childnodeanchor = :originalNodeAnchor OR h.parentnodeanchor = :originalNodeAnchor');
+
+        self::assertSame(
+            ['contentStreamLayers' => [1]],
+            $hierarchyRelationStatement->getParameters()->toDbalValues()
+        );
+
+        self::assertSame(
+            ['contentStreamLayers' => ArrayParameterType::INTEGER],
+            $hierarchyRelationStatement->getParameters()->toDbalTypes()
+        );
+
+        self::assertEquals(
+            <<<SQL
+        (SELECT h.*
+          FROM cr_testing_p_graph_hierarchyrelation AS h
+          INNER JOIN (
+            SELECT id, MAX(contentstreamlayer) AS contentstreamlayer
+              FROM cr_testing_p_graph_hierarchyrelation
+                WHERE (contentstreamlayer IN (:contentStreamLayers))
+                AND id IN (
+                  SELECT id FROM cr_testing_p_graph_hierarchyrelation AS h
+                    WHERE h.childnodeanchor = :originalNodeAnchor OR h.parentnodeanchor = :originalNodeAnchor
+                )
+            GROUP BY id
+          ) AS readHierarchy
+            ON h.id = readHierarchy.id AND h.contentstreamlayer = readHierarchy.contentstreamlayer
         )
         SQL,
             $hierarchyRelationStatement->toSql()
