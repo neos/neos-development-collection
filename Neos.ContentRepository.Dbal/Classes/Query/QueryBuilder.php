@@ -95,35 +95,19 @@ final class QueryBuilder extends DBALQueryBuilder
         $existingValues = $this->getParameters();
         $existingTypes = $this->getParameterTypes();
 
-        $intersectingExistingTypes = array_intersect_key($existingTypes, $otherTypes);
+        $mergedTypes = Parameters::mergeDbalTypes(
+            $existingTypes,
+            $otherTypes,
+        );
 
-        foreach ($intersectingExistingTypes as $existingKey => $existingType) {
-            $otherType = $otherTypes[$existingKey];
-            if ($otherType !== $existingType) {
-                throw AmbiguousParametersGiven::becauseParameterIsAlreadyDefinedWithType(
-                    (string)$existingKey,
-                    $existingType,
-                    $otherType
-                );
-            }
-        }
-
-        $intersectingExistingValues = array_intersect_key($existingValues, $otherValues);
-
-        foreach ($intersectingExistingValues as $existingKey => $existingValue) {
-            $otherValue = $otherValues[$existingKey];
-            if ($otherValue !== $existingValue) {
-                throw AmbiguousParametersGiven::becauseParameterIsAlreadyDefinedWithValue(
-                    (string)$existingKey,
-                    $existingValue,
-                    $otherValue
-                );
-            }
-        }
+        $mergedValues = Parameters::mergeDbalValues(
+            $existingValues,
+            $otherValues,
+        );
 
         $this->setParameters(
-            array_merge($existingValues, $otherValues),
-            array_merge($existingTypes, $otherTypes),
+            $mergedValues,
+            $mergedTypes,
         );
     }
 }

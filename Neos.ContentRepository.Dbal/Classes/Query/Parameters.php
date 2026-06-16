@@ -80,6 +80,52 @@ final readonly class Parameters implements \IteratorAggregate, \Countable
         return array_column($this->items, 'type', 'name');
     }
 
+    /**
+     * @param array<string|int, int|string|Type|null> $existingTypes
+     * @param array<string|int, int|string|Type|null> $otherTypes
+     * @return array<string|int, int|string|Type|null>
+     */
+    public static function mergeDbalTypes(array $existingTypes, array $otherTypes): array
+    {
+        $intersectingExistingTypes = array_intersect_key($existingTypes, $otherTypes);
+
+        foreach ($intersectingExistingTypes as $existingKey => $existingType) {
+            $otherType = $otherTypes[$existingKey];
+            if ($otherType !== $existingType) {
+                throw AmbiguousParametersGiven::becauseParameterIsAlreadyDefinedWithType(
+                    (string)$existingKey,
+                    $existingType,
+                    $otherType
+                );
+            }
+        }
+
+        return array_merge($existingTypes, $otherTypes);
+    }
+
+    /**
+     * @param array<string|int, mixed> $existingValues
+     * @param array<string|int, mixed> $otherValues
+     * @return array<string|int, mixed>
+     */
+    public static function mergeDbalValues(array $existingValues, array $otherValues): array
+    {
+        $intersectingExistingValues = array_intersect_key($existingValues, $otherValues);
+
+        foreach ($intersectingExistingValues as $existingKey => $existingValue) {
+            $otherValue = $otherValues[$existingKey];
+            if ($otherValue !== $existingValue) {
+                throw AmbiguousParametersGiven::becauseParameterIsAlreadyDefinedWithValue(
+                    (string)$existingKey,
+                    $existingValue,
+                    $otherValue
+                );
+            }
+        }
+
+        return array_merge($existingValues, $otherValues);
+    }
+
     public function getIterator(): \Traversable
     {
         yield from array_values($this->items);
