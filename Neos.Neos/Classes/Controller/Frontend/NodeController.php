@@ -141,8 +141,8 @@ class NodeController extends ActionController
             throw new NodeNotFoundException('The requested node does not exist or isn\'t accessible to the current user', 1430218623);
         }
 
-        // hide hidden and removed nodes in preview modes
-        if ($node->getContext()->getCurrentRenderingMode()->isPreview()) {
+        // hide hidden and removed child nodes in preview modes if node itself is visible
+        if ($node->isVisible() && $node->getContext()->getCurrentRenderingMode()->isPreview()) {
             $contextProperties = $node->getContext()->getProperties();
             $modifiedContext = $this->contextFactory->create(array_merge($contextProperties, ['invisibleContentShown' => false, 'removedContentShown' => false]));
             $node = $modifiedContext->getNodeByIdentifier($node->getIdentifier());
