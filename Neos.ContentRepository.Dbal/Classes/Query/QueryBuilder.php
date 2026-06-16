@@ -6,6 +6,7 @@ namespace Neos\ContentRepository\Dbal\Query;
 
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Query\QueryBuilder as DBALQueryBuilder;
+use Doctrine\DBAL\Types\Type;
 
 /**
  * @internal
@@ -24,13 +25,10 @@ final class QueryBuilder extends DBALQueryBuilder
      */
     public function mergeParameters(Parameters $parameters): self
     {
-        // Todo throw if conflict, e.g same name different values or types!
-        if ($parameters->count() > 0) {
-            $this->setParameters(
-                array_merge($this->getParameters(), $parameters->toDbalParams()),
-                array_merge($this->getParameterTypes(), $parameters->toDbalTypes()),
-            );
-        }
+        $this->mergeDbalParameters(
+            $parameters->toDbalParams(),
+            $parameters->toDbalTypes(),
+        );
         return $this;
     }
 
@@ -39,9 +37,9 @@ final class QueryBuilder extends DBALQueryBuilder
      */
     public function mergeParametersFromBuilder(QueryBuilder $queryBuilder): self
     {
-        $this->setParameters(
-            array_merge($this->getParameters(), $queryBuilder->getParameters()),
-            array_merge($this->getParameterTypes(), $queryBuilder->getParameterTypes()),
+        $this->mergeDbalParameters(
+            $queryBuilder->getParameters(),
+            $queryBuilder->getParameterTypes(),
         );
         return $this;
     }
@@ -80,5 +78,50 @@ final class QueryBuilder extends DBALQueryBuilder
         );
 
         return $this;
+    }
+
+    /**
+     * @param array<string|int, mixed> $otherParams
+     * @param array<string|int, int|string|Type|null> $otherTypes
+     */
+    private function mergeDbalParameters(array $otherParams, array $otherTypes): void
+    {
+        if ($otherParams === [] && $otherTypes === []) {
+            return;
+        }
+
+        $existingParams = $this->getParameters();
+        $existingTypes = $this->getParameterTypes();
+
+        $intersectingExistingTypes = array_intersect_key($existingTypes, $otherTypes);
+
+        foreach ($intersectingExistingTypes as $existingKey => $existingType) {
+            $otherType = $otherTypes[$existingKey];
+            if ($otherType !== $existingType) {
+                throw AmbiguousParametersGiven::becauseParameterIsAlreadyDefinedWithType(
+                    (string)$existingKey,
+                    $existingType,
+                    $otherType
+                );
+            }
+        }
+
+        $intersectingExistingValues = array_intersect_key($existingParams, $otherParams);
+
+        foreach ($intersectingExistingValues as $existingKey => $existingValue) {
+            $otherValue = $otherParams[$existingKey];
+            if ($otherValue !== $existingValue) {
+                throw AmbiguousParametersGiven::becauseParameterIsAlreadyDefinedWithValue(
+                    (string)$existingKey,
+                    $existingValue,
+                    $otherValue
+                );
+            }
+        }
+
+        $this->setParameters(
+            array_merge($existingParams, $otherParams),
+            array_merge($existingTypes, $otherTypes),
+        );
     }
 }

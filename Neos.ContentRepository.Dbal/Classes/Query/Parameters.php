@@ -32,6 +32,11 @@ final readonly class Parameters implements \IteratorAggregate, \Countable
         throw new \RuntimeException(sprintf('No parameter exists for %s', $name), 1781593395);
     }
 
+    public function get(string $name): ?Parameter
+    {
+        return array_find($this->items, fn($parameter) => $parameter->name === $name);
+    }
+
     /**
      * @return array<string, mixed>
      */
