@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\Feature\SubtreeTagging;
 
 /**
- * todo needs unit tests!
  * @internal
  */
 final readonly class SubtreeTagSerializer
@@ -55,9 +54,6 @@ final readonly class SubtreeTagSerializer
         if (count($a) !== count($b)) {
             return false;
         }
-        // todo use array_intersect_assoc($a, $b) === [];
-        ksort($a);
-        ksort($b);
-        return $a === $b;
+        return array_diff_assoc($a, $b) === [];
     }
 }
