@@ -7,18 +7,18 @@ use Doctrine\DBAL\Connection;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceFactoryDependencies;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceFactoryInterface;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceInterface;
-use Neos\ContentRepositoryRegistry\Command\MigrateEventsCommandController;
+use Neos\ContentRepositoryRegistry\Command\CRUpgradeCommandController;
 use Neos\EventStore\DoctrineAdapter\DoctrineEventStore;
 use Neos\Flow\Annotations as Flow;
 
 /**
- * Factory for the {@see EventMigrationService}
+ * Factory for the {@see CRUpgradeService}
  *
- * @implements ContentRepositoryServiceFactoryInterface<EventMigrationService>
- * @internal this is currently only used by the {@see MigrateEventsCommandController}
+ * @implements ContentRepositoryServiceFactoryInterface<CRUpgradeService>
+ * @internal this is currently only used by the {@see CRUpgradeCommandController}
  */
 #[Flow\Scope("singleton")]
-final class EventMigrationServiceFactory implements ContentRepositoryServiceFactoryInterface
+final class CRUpgradeServiceFactory implements ContentRepositoryServiceFactoryInterface
 {
     public function __construct(
         private readonly Connection $connection,
@@ -31,7 +31,7 @@ final class EventMigrationServiceFactory implements ContentRepositoryServiceFact
             throw new \RuntimeException('EventMigrationService only works with DoctrineEventStore, ' . get_class($serviceFactoryDependencies->eventStore) . ' given');
         }
 
-        return new EventMigrationService(
+        return new CRUpgradeService(
             $serviceFactoryDependencies->contentRepositoryId,
             $this->connection
         );

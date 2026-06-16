@@ -4,11 +4,10 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepositoryRegistry\Service;
 
-use Doctrine\DBAL\ArrayParameterType;
 use Doctrine\DBAL\Connection;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceInterface;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
-use Neos\ContentRepositoryRegistry\Command\MigrateEventsCommandController;
+use Neos\ContentRepositoryRegistry\Command\CRUpgradeCommandController;
 use Neos\ContentRepositoryRegistry\Factory\EventStore\DoctrineEventStoreFactory;
 use Neos\EventStore\Model\EventEnvelope;
 
@@ -18,9 +17,9 @@ use Neos\EventStore\Model\EventEnvelope;
  * Each function is used here for a specific migration. The migrations are only useful for production
  * workloads which have events prior to the code change.
  *
- * @internal this is currently only used by the {@see MigrateEventsCommandController}
+ * @internal this is currently only used by the {@see CRUpgradeCommandController}
  */
-final class EventMigrationService implements ContentRepositoryServiceInterface
+final class CRUpgradeService implements ContentRepositoryServiceInterface
 {
     public function __construct(
         private readonly ContentRepositoryId $contentRepositoryId,

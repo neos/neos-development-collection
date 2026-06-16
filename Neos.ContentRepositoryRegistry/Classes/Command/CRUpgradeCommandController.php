@@ -5,15 +5,14 @@ namespace Neos\ContentRepositoryRegistry\Command;
 
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
-use Neos\ContentRepositoryRegistry\Service\EventMigrationServiceFactory;
+use Neos\ContentRepositoryRegistry\Service\CRUpgradeServiceFactory;
 use Neos\Flow\Cli\CommandController;
 
-final class MigrateEventsCommandController extends CommandController
+final class CRUpgradeCommandController extends CommandController
 {
-
     public function __construct(
         private readonly ContentRepositoryRegistry $contentRepositoryRegistry,
-        private readonly EventMigrationServiceFactory $eventMigrationServiceFactory,
+        private readonly CRUpgradeServiceFactory $eventMigrationServiceFactory,
     ) {
         parent::__construct();
     }
@@ -37,7 +36,7 @@ final class MigrateEventsCommandController extends CommandController
      *
      * @param string $contentRepository Identifier of the Content Repository to migrate
      */
-    public function migrateRecordedAtToUtcCommand(string $contentRepository = 'default', bool $force = false): void
+    public function eventsRecordedAtToUtcCommand(string $contentRepository = 'default', bool $force = false): void
     {
         $contentRepositoryId = ContentRepositoryId::fromString($contentRepository);
         $eventMigrationService = $this->contentRepositoryRegistry->buildService($contentRepositoryId, $this->eventMigrationServiceFactory);
