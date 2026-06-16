@@ -99,6 +99,9 @@ class PublishingDuringPublishingTest extends AbstractParallelTestCase
             ]
         ]);
 
+        /** Hack until https://github.com/neos/neos-development-collection/issues/5869 is fixed */
+        \Neos\ContentRepository\Dbal\MysqlPlatformContentRepositoryLocker::enableForContentRepository(ContentRepositoryId::fromString('test_parallel'));
+
         $setupLockResource = fopen(self::SETUP_LOCK_PATH, 'w+');
 
         $exclusiveNonBlockingLockResult = flock($setupLockResource, LOCK_EX | LOCK_NB);
