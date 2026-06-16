@@ -37,7 +37,7 @@ final readonly class NodeQueryBuilder
 {
     public function __construct(
         private Connection $connection,
-        public ContentGraphTableNames $tableNames
+        private ContentGraphTableNames $tableNames
     ) {
     }
 
