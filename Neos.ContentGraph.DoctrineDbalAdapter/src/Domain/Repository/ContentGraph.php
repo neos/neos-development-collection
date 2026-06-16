@@ -121,22 +121,6 @@ final class ContentGraph implements ContentGraphInterface
             FindRootNodeAggregatesFilter::create(nodeTypeName: $nodeTypeName)
         );
 
-        if ($rootNodeAggregates->count() > 1) {
-            // todo drop this check as this is enforced by the write side? https://github.com/neos/neos-development-collection/pull/4339
-            $ids = [];
-            foreach ($rootNodeAggregates as $rootNodeAggregate) {
-                $ids[] = $rootNodeAggregate->nodeAggregateId->value;
-            }
-
-            // We throw if multiple root node aggregates of the given $nodeTypeName were found,
-            // as this would lead to nondeterministic results. Must not happen.
-            throw new \RuntimeException(sprintf(
-                'More than one root node aggregate of type "%s" found (IDs: %s).',
-                $nodeTypeName->value,
-                implode(', ', $ids)
-            ));
-        }
-
         return $rootNodeAggregates->first();
     }
 
