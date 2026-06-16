@@ -15,7 +15,6 @@ use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Core\Feature\SubtreeTagging\Dto\SubtreeTag;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodeTags;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
-use Neos\ContentRepository\Dbal\Query\StaticWhereCondition;
 
 /**
  * The subtree tagging projection feature trait
@@ -26,11 +25,37 @@ trait SubtreeTagging
 {
     private function addSubtreeTag(ContentStreamLayers $contentStreamLayers, NodeAggregateId $nodeAggregateId, DimensionSpacePointSet $affectedDimensionSpacePoints, SubtreeTag $tag): void
     {
-        $contentStreamHierarchyRelationQuery = $this->subqueries->forHierarchyRelation($contentStreamLayers);
-        $nestedContentStreamHierarchyRelationQuery = $this->subqueries->forHierarchyRelation($contentStreamLayers)
-            ->withDimensionSpacePoints($affectedDimensionSpacePoints)
-            ->withWhereCondition(StaticWhereCondition::fromString('h', "NOT JSON_CONTAINS_PATH(h.subtreetags, 'one', :tagPath)"));
-
+        // Performance: resolve the "winning layer per relation id" PER CANDIDATE ROW via a correlated NOT EXISTS,
+        // scoped by the recursion frontier (parentnodeanchor), instead of materialising the layer-resolved hierarchy
+        // for the whole affected dimension up front. {@see HierarchyRelationStatement::toSql()}'s inner
+        // MAX(contentstreamlayer) GROUP BY id is a full-table aggregation; reading it for every tag event (and, in the
+        // recursive walk, re-reading the materialised result once per tree level) costs O(table) regardless of how
+        // small the tagged subtree is.
+        //
+        // The recursive member is allowed to reference the base hierarchyrelation table inside a subquery (only the
+        // recursive CTE relation itself may not appear in a subquery), so each candidate row resolves its own winning
+        // layer with `NOT EXISTS (a higher visible layer for the same id)`. With UNIQ(id, contentstreamlayer) the max
+        // visible layer is the unique row with nothing above it, so this is exactly equivalent to the MAX(layer) join —
+        // but the candidate rows are first cut down to the frontier's children via the (parentnodeanchor, ...) index,
+        // so the whole statement scales with the SUBTREE size, not the table size. No GROUP BY, no materialised view.
+        //
+        // Tombstones (removal writes a row with the highest layer and NULL anchors) stay correct for free: a removed
+        // relation's winning row is the NULL-parent tombstone which never matches `parentnodeanchor = frontier`, and a
+        // still-pointing pre-removal row fails NOT EXISTS because the tombstone sits above it.
+        $isWinningLayer = fn (string $alias): string => <<<SQL
+            $alias.contentstreamlayer IN (:contentStreamLayers)
+              AND NOT EXISTS (
+                SELECT 1 FROM {$this->tableNames->hierarchyRelation()} w
+                WHERE w.id = $alias.id
+                  AND w.contentstreamlayer IN (:contentStreamLayers)
+                  AND w.contentstreamlayer > $alias.contentstreamlayer
+              )
+            SQL;
+        $chIsWinningLayer = $isWinningLayer('ch');
+        $dhIsWinningLayer = $isWinningLayer('dh');
+        // The recursion already resolves each row's winning layer, so it carries (id, contentstreamlayer) forward
+        // (both ints — no JSON travels through the recursive CTE). The outer SELECT then fetches the rows to rewrite
+        // with a plain UNIQ(id, contentstreamlayer) lookup instead of resolving the winning layer a second time.
         $addTagToDescendantsStatement = <<<SQL
             INSERT INTO {$this->tableNames->hierarchyRelation()} (
               id,
@@ -41,6 +66,34 @@ trait SubtreeTagging
               dimensionspacepointhash,
               contentstreamlayer
             )
+            WITH RECURSIVE cte (id, contentstreamlayer, childnodeanchor, dsp) AS (
+                SELECT
+                  ch.id,
+                  ch.contentstreamlayer,
+                  ch.childnodeanchor,
+                  ch.dimensionspacepointhash
+                FROM
+                  {$this->tableNames->hierarchyRelation()} ch
+                  INNER JOIN {$this->tableNames->node()} n ON n.relationanchorpoint = ch.parentnodeanchor
+                WHERE
+                  n.nodeaggregateid = :nodeAggregateId
+                  AND ch.dimensionspacepointhash IN (:dimensionSpacePointHashes)
+                  AND {$chIsWinningLayer}
+                  AND NOT JSON_CONTAINS_PATH(ch.subtreetags, 'one', :tagPath)
+                UNION ALL
+                SELECT
+                  dh.id,
+                  dh.contentstreamlayer,
+                  dh.childnodeanchor,
+                  dh.dimensionspacepointhash
+                FROM
+                  cte
+                  JOIN {$this->tableNames->hierarchyRelation()} dh ON dh.parentnodeanchor = cte.childnodeanchor
+                  AND dh.dimensionspacepointhash = cte.dsp
+                WHERE
+                  {$dhIsWinningLayer}
+                  AND NOT JSON_CONTAINS_PATH(dh.subtreetags, 'one', :tagPath)
+              )
             SELECT
               h.id,
               h.parentnodeanchor,
@@ -50,54 +103,26 @@ trait SubtreeTagging
               h.dimensionspacepointhash,
               :targetContentStreamLayer as contentstreamlayer
             FROM
-              {$contentStreamHierarchyRelationQuery->toSql()} h
-              JOIN (
-                WITH
-                  RECURSIVE cte (childnodeanchor, dsp) AS (
-                    SELECT
-                      ch.childnodeanchor,
-                      ch.dimensionspacepointhash
-                    FROM
-                      {$nestedContentStreamHierarchyRelationQuery->toSql()} ch
-                      INNER JOIN {$this->tableNames->node()} n ON n.relationanchorpoint = ch.parentnodeanchor
-                    WHERE
-                      n.nodeaggregateid = :nodeAggregateId
-                    UNION ALL
-                    SELECT
-                      dh.childnodeanchor,
-                      dh.dimensionspacepointhash
-                    FROM
-                      cte
-                      JOIN {$contentStreamHierarchyRelationQuery->toSql()} dh ON dh.parentnodeanchor = cte.childnodeanchor
-                      AND dh.dimensionspacepointhash = cte.dsp
-                    WHERE
-                      NOT JSON_CONTAINS_PATH(dh.subtreetags, 'one', :tagPath)
-                  )
-                SELECT
-                  *
-                FROM
-                  cte
-              ) subquery ON h.dimensionspacepointhash = subquery.dsp
-              AND h.childnodeanchor = subquery.childnodeanchor
+              {$this->tableNames->hierarchyRelation()} h
+              JOIN cte ON h.id = cte.id AND h.contentstreamlayer = cte.contentstreamlayer
             ON DUPLICATE KEY UPDATE subtreetags = VALUES(subtreetags)
             SQL;
 
         try {
             $this->dbal->executeStatement($addTagToDescendantsStatement, [
+                'contentStreamLayers' => $contentStreamLayers->toIntArray(),
                 'nodeAggregateId' => $nodeAggregateId->value,
+                'dimensionSpacePointHashes' => $affectedDimensionSpacePoints->getPointHashes(),
                 'tagPath' => '$."' . $tag->value . '"',
                 'targetContentStreamLayer' => $contentStreamLayers->getWriteLayer()->value,
-                ...$contentStreamHierarchyRelationQuery->getParameters()->toDbalValues(),
-                ...$nestedContentStreamHierarchyRelationQuery->getParameters()->toDbalValues(),
             ], [
-                ...$contentStreamHierarchyRelationQuery->getParameters()->toDbalTypes(),
-                ...$nestedContentStreamHierarchyRelationQuery->getParameters()->toDbalTypes(),
+                'dimensionSpacePointHashes' => ArrayParameterType::STRING,
+                'contentStreamLayers' => ArrayParameterType::INTEGER,
             ]);
         } catch (DBALException $e) {
             throw new \RuntimeException(sprintf('1: Failed to add subtree tag %s for content stream %s, node aggregate id %s and dimension space points %s: %s', $tag->value, $contentStreamLayers->toDebugString(), $nodeAggregateId->value, $affectedDimensionSpacePoints->toJson(), $e->getMessage()), 1716479749, $e);
         }
 
-        $hierarchyRelationQuery = $this->subqueries->forHierarchyRelation($contentStreamLayers)->withDimensionSpacePoints($affectedDimensionSpacePoints);
         $addTagToNodeStatement = <<<SQL
             INSERT INTO {$this->tableNames->hierarchyRelation()} (
               id,
@@ -117,7 +142,7 @@ trait SubtreeTagging
               h.dimensionspacepointhash,
               :targetContentStreamLayer as contentstreamlayer
             FROM
-              {$hierarchyRelationQuery->toSql()} h
+              {$this->hierarchyRelationStatement->where('h.dimensionspacepointhash in (:dimensionSpacePointHashes)')->andInnerWhereRelationIdMatches('childnodeanchor IN (SELECT relationanchorpoint FROM ' . $this->tableNames->node() . ' WHERE nodeaggregateid = :nodeAggregateId)')->toSql()} h
               INNER JOIN {$this->tableNames->node()} n ON n.relationanchorpoint = h.childnodeanchor
             WHERE
               n.nodeaggregateid = :nodeAggregateId
@@ -125,12 +150,14 @@ trait SubtreeTagging
             SQL;
         try {
             $this->dbal->executeStatement($addTagToNodeStatement, [
+                'contentStreamLayers' => $contentStreamLayers->toIntArray(),
                 'nodeAggregateId' => $nodeAggregateId->value,
+                'dimensionSpacePointHashes' => $affectedDimensionSpacePoints->getPointHashes(),
                 'tagPath' => '$."' . $tag->value . '"',
                 'targetContentStreamLayer' => $contentStreamLayers->getWriteLayer()->value,
-                ...$hierarchyRelationQuery->getParameters()->toDbalValues(),
             ], [
-                ...$hierarchyRelationQuery->getParameters()->toDbalTypes(),
+                'dimensionSpacePointHashes' => ArrayParameterType::STRING,
+                'contentStreamLayers' => ArrayParameterType::INTEGER,
             ]);
         } catch (DBALException $e) {
             throw new \RuntimeException(sprintf('2: Failed to add subtree tag %s for content stream %s, node aggregate id %s and dimension space points %s: %s', $tag->value, $contentStreamLayers->toDebugString(), $nodeAggregateId->value, $affectedDimensionSpacePoints->toJson(), $e->getMessage()), 1716479840, $e);
@@ -139,8 +166,6 @@ trait SubtreeTagging
 
     private function removeSubtreeTag(ContentStreamLayers $contentStreamLayers, NodeAggregateId $nodeAggregateId, DimensionSpacePointSet $affectedDimensionSpacePoints, SubtreeTag $tag): void
     {
-        $contentStreamHierarchyRelationQuery = $this->subqueries->forHierarchyRelation($contentStreamLayers);
-        $nestedContentStreamHierarchyRelationQuery = $this->subqueries->forHierarchyRelation($contentStreamLayers)->withDimensionSpacePoints($affectedDimensionSpacePoints);
         $removeTagStatement = <<<SQL
             INSERT INTO {$this->tableNames->hierarchyRelation()} (
               id,
@@ -166,35 +191,51 @@ trait SubtreeTagging
                   h.parentnodeanchor,
                   h.childnodeanchor,
                   h.position,
-                  IF(subquery.inheritsTag, JSON_SET(h.subtreetags, :tagPath, null), JSON_REMOVE(h.subtreetags, :tagPath)) as subtreetags,
+                  IF(
+                    (
+                      SELECT
+                        containsTag
+                      FROM
+                        (
+                          SELECT
+                            JSON_CONTAINS_PATH(gph.subtreetags, 'one', :tagPath) as containsTag
+                          FROM
+                            {$this->hierarchyRelationStatement->toSql()} gph
+                            INNER JOIN {$this->hierarchyRelationStatement->toSql()} ph ON ph.parentnodeanchor = gph.childnodeanchor
+                            INNER JOIN {$this->tableNames->node()} n ON n.relationanchorpoint = ph.childnodeanchor
+                          WHERE
+                            ph.parentnodeanchor = gph.childnodeanchor
+                            AND n.nodeaggregateid = :nodeAggregateId
+                          LIMIT
+                            1
+                        ) as containsTagSubQuery
+                    ),
+                    JSON_SET(subtreetags, :tagPath, null),
+                    JSON_REMOVE(subtreetags, :tagPath)
+                  ) as subtreetags,
                   h.subtreetags as currentsubtreetags,
                   h.dimensionspacepointhash,
                   :targetContentStreamLayer as contentstreamlayer
                 FROM
-                  {$contentStreamHierarchyRelationQuery->toSql()} h
+                  {$this->hierarchyRelationStatement->toSql()} h
                   JOIN (
                     WITH
-                      RECURSIVE cte (childnodeanchor, dsp, inheritsTag) AS (
+                      RECURSIVE cte (childnodeanchor, dsp) AS (
                         SELECT
                           ph.childnodeanchor,
-                          ph.dimensionspacepointhash,
-                          -- if the parent node of the affected node has the tag explicit or inherited we need to preserve its inheritance recursively when removing an explicit tag
-                          JSON_CONTAINS_PATH(gph.subtreetags, 'one', :tagPath) as inheritsTag
+                          ph.dimensionspacepointhash
                         FROM
-                          {$nestedContentStreamHierarchyRelationQuery->toSql()} ph
+                          {$this->hierarchyRelationStatement->where('h.dimensionspacepointhash in (:dimensionSpacePointHashes)')->toSql()} ph
                           INNER JOIN {$this->tableNames->node()} n ON n.relationanchorpoint = ph.childnodeanchor
-                          INNER JOIN {$contentStreamHierarchyRelationQuery->toSql()} gph ON gph.childnodeanchor = ph.parentnodeanchor AND gph.dimensionspacepointhash = ph.dimensionspacepointhash
                         WHERE
                           n.nodeaggregateid = :nodeAggregateId
                         UNION ALL
                         SELECT
                           dh.childnodeanchor,
-                          dh.dimensionspacepointhash,
-                          -- if the entry node should inherit the tag, all its herby selected descendants do as well
-                          cte.inheritsTag
+                          dh.dimensionspacepointhash
                         FROM
                           cte
-                          JOIN {$contentStreamHierarchyRelationQuery->toSql()} dh ON dh.parentnodeanchor = cte.childnodeanchor
+                          JOIN {$this->hierarchyRelationStatement->toSql()} dh ON dh.parentnodeanchor = cte.childnodeanchor
                           AND dh.dimensionspacepointhash = cte.dsp
                         WHERE
                           JSON_EXTRACT(dh.subtreetags, :tagPath) != TRUE
@@ -212,14 +253,14 @@ trait SubtreeTagging
             SQL;
         try {
             $this->dbal->executeStatement($removeTagStatement, [
+                'contentStreamLayers' => $contentStreamLayers->toIntArray(),
                 'nodeAggregateId' => $nodeAggregateId->value,
+                'dimensionSpacePointHashes' => $affectedDimensionSpacePoints->getPointHashes(),
                 'tagPath' => '$."' . $tag->value . '"',
                 'targetContentStreamLayer' => $contentStreamLayers->getWriteLayer()->value,
-                ...$contentStreamHierarchyRelationQuery->getParameters()->toDbalValues(),
-                ...$nestedContentStreamHierarchyRelationQuery->getParameters()->toDbalValues(),
             ], [
-                ...$contentStreamHierarchyRelationQuery->getParameters()->toDbalTypes(),
-                ...$nestedContentStreamHierarchyRelationQuery->getParameters()->toDbalTypes(),
+                'dimensionSpacePointHashes' => ArrayParameterType::STRING,
+                'contentStreamLayers' => ArrayParameterType::INTEGER,
             ]);
         } catch (DBALException $e) {
             throw new \RuntimeException(sprintf('Failed to remove subtree tag %s for content stream %s, node aggregate id %s and dimension space points %s: %s', $tag->value, $contentStreamLayers->toDebugString(), $nodeAggregateId->value, $affectedDimensionSpacePoints->toJson(), $e->getMessage()), 1716482293, $e);
@@ -228,7 +269,6 @@ trait SubtreeTagging
 
     private function moveSubtreeTags(ContentStreamLayers $contentStreamLayers, NodeAggregateId $newParentNodeAggregateId, DimensionSpacePoint $coveredDimensionSpacePoint): void
     {
-        $hierarchyRelationQuery = $this->subqueries->forHierarchyRelation($contentStreamLayers)->withDimensionSpacePoint($coveredDimensionSpacePoint);
         $moveSubtreeTagsStatement = <<<SQL
             INSERT INTO {$this->tableNames->hierarchyRelation()} (
               id, parentnodeanchor, childnodeanchor,
@@ -263,7 +303,7 @@ trait SubtreeTagging
                   h.subtreetags as currentsubtreetags,
                   :targetContentStreamLayer as contentstreamlayer
                 FROM
-                  {$hierarchyRelationQuery->toSql()} h
+                  {$this->hierarchyRelationStatement->where('h.dimensionspacepointhash = :dimensionSpacePointHash')->toSql()} h
                   JOIN (
                     WITH
                       RECURSIVE cte AS (
@@ -271,7 +311,7 @@ trait SubtreeTagging
                           JSON_KEYS(th.subtreetags) subtreeTagsToInherit,
                           th.childnodeanchor
                         FROM
-                          {$hierarchyRelationQuery->toSql()} th
+                          {$this->hierarchyRelationStatement->where('h.dimensionspacepointhash = :dimensionSpacePointHash')->toSql()} th
                           INNER JOIN {$this->tableNames->node()} tn ON tn.relationanchorpoint = th.childnodeanchor
                         WHERE
                           tn.nodeaggregateid = :newParentNodeAggregateId
@@ -286,7 +326,7 @@ trait SubtreeTagging
                           dh.childnodeanchor
                         FROM
                           cte
-                          JOIN {$hierarchyRelationQuery->toSql()} dh ON dh.parentnodeanchor = cte.childnodeanchor
+                          JOIN {$this->hierarchyRelationStatement->where('h.dimensionspacepointhash = :dimensionSpacePointHash')->toSql()} dh ON dh.parentnodeanchor = cte.childnodeanchor
                       )
                     SELECT
                       *
@@ -304,11 +344,12 @@ trait SubtreeTagging
             // Mysql hack, too eager to optimize https://dev.mysql.com/doc/refman/8.4/en/derived-table-optimization.html
             $this->dbal->executeQuery('set optimizer_switch="derived_merge=off"');
             $this->dbal->executeStatement($moveSubtreeTagsStatement, [
+                'contentStreamLayers' => $contentStreamLayers->toIntArray(),
                 'newParentNodeAggregateId' => $newParentNodeAggregateId->value,
+                'dimensionSpacePointHash' => $coveredDimensionSpacePoint->hash,
                 'targetContentStreamLayer' => $contentStreamLayers->getWriteLayer()->value,
-                ...$hierarchyRelationQuery->getParameters()->toDbalValues(),
             ], [
-                ...$hierarchyRelationQuery->getParameters()->toDbalTypes(),
+                'contentStreamLayers' => ArrayParameterType::INTEGER,
             ]);
         } catch (DBALException $e) {
             throw new \RuntimeException(sprintf('Failed to move subtree tags for content stream %s, new parent node aggregate id %s and dimension space point %s: %s', $contentStreamLayers->toDebugString(), $newParentNodeAggregateId->value, $coveredDimensionSpacePoint->toJson(), $e->getMessage()), 1716482574, $e);
@@ -321,16 +362,18 @@ trait SubtreeTagging
             return NodeTags::createEmpty();
         }
 
-        $hierarchyRelationQuery = $this->subqueries->forHierarchyRelation($contentStreamLayers)->withDimensionSpacePoint($dimensionSpacePoint)->withChildNodeRelationAnchor($parentNodeAnchorPoint);
         $subtreeTagsStatement = <<<SQL
-            SELECT h.subtreetags FROM {$hierarchyRelationQuery->toSql()} h
+            SELECT h.subtreetags FROM {$this->hierarchyRelationStatement->where('h.dimensionspacepointhash = :dimensionSpacePointHash')->andInnerWhereRelationIdMatches('childnodeanchor = :parentNodeAnchorPoint')->toSql()} h
+              WHERE h.childnodeanchor = :parentNodeAnchorPoint
             SQL;
 
         try {
             $subtreeTagsJson = $this->dbal->fetchOne($subtreeTagsStatement, [
-                ...$hierarchyRelationQuery->getParameters()->toDbalValues(),
+                'parentNodeAnchorPoint' => $parentNodeAnchorPoint->value,
+                'contentStreamLayers' => $contentStreamLayers->toIntArray(),
+                'dimensionSpacePointHash' => $dimensionSpacePoint->hash,
             ], [
-                ...$hierarchyRelationQuery->getParameters()->toDbalTypes(),
+                'contentStreamLayers' => ArrayParameterType::INTEGER,
             ]);
         } catch (DBALException $e) {
             throw new \RuntimeException(sprintf('Failed to fetch subtree tags for hierarchy parent anchor point "%s" in content subgraph "%s@%s": %s', $parentNodeAnchorPoint->value, $dimensionSpacePoint->toJson(), $contentStreamLayers->toDebugString(), $e->getMessage()), 1716478760, $e);
