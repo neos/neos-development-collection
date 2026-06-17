@@ -139,6 +139,19 @@ Feature: Rebasing with no conflict
     When I am in workspace "user-test" and dimension space point {}
     Then I expect node aggregate identifier "sir-nodeward-nodington-iii" to lead to node user-cs-rebased;sir-nodeward-nodington-iii;{}
 
+    # workspace is writeable (version checks work)
+    When the command CreateNodeAggregateWithNode is executed with payload:
+      | Key                       | Value                                    |
+      | workspaceName             | "user-test"                              |
+      | nodeAggregateId           | "nody-mc-nodeface"                       |
+      | nodeTypeName              | "Neos.ContentRepository.Testing:Content" |
+      | originDimensionSpacePoint | {}                                       |
+      | parentNodeAggregateId     | "lady-eleonode-rootford"                 |
+    # publish events that _actually_ are written on the workspace stream
+    When the command DiscardWorkspace is executed with payload:
+      | Key                | Value                          |
+      | workspaceName      | "user-test"                    |
+      | newContentStreamId | "user-cs-identifier-discarded" |
 
   Scenario: Rebase workspace and base contains changes
     And the command CreateNodeAggregateWithNode is executed with payload:

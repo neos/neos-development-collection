@@ -113,6 +113,26 @@ Neos:
         #     fileName: '%FLOW_PATH_DATA%Logs/ContentRepositoryProfile.log'
         #     # how long should a mark be at least, to be logged? if 0, everything is shown.
         #     minimumMarkDurationMs: 1
+        #
+        # Alternatively, to chart replay/catchup throughput (events/second over time) as an SVG – useful as a
+        # before/after measurement for "./flow subscription:replay" – use the ReplayThroughputTracer. The
+        # optional "sqlProbes" run arbitrary scalar SQL at the sampling interval and are drawn in a second panel
+        # (e.g. to correlate throughput with table growth):
+        # performanceTracer:
+        #   factoryObjectName: Neos\ContentRepositoryRegistry\Factory\PerformanceTracer\ReplayThroughputTracerFactory
+        #   options:
+        #     fileName: '%FLOW_PATH_DATA%Logs/ContentRepositoryThroughput.svg'
+        #     # minimum wall-time between samples; sub-second values (e.g. 0.1) are allowed
+        #     sampleIntervalSeconds: 2.0
+        #     sqlProbes:
+        #       'nodes-and-relations': |
+        #         SELECT 'nodes', COUNT(*) FROM cr_default_p_graph_node
+        #         UNION
+        #         SELECT 'hierarchy relations', COUNT(*) FROM cr_default_p_graph_hierarchyrelation
+        #       'contentstream-count': |
+        #         SELECT COUNT(*) FROM cr_default_p_graph_contentstream
+        #       'referencerelation-count': |
+        #         SELECT COUNT(*) FROM cr_default_p_graph_referencerelation
 
     nodeMigration:
       filterFactories:

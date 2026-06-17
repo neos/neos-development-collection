@@ -59,8 +59,8 @@ class PasswordValidator extends AbstractValidator
         $repeatPasswordNotEmptyValidatorResult = $repeatPasswordNotEmptyValidator->validate($repeatPassword);
 
         if (
-            ($passwordNotEmptyValidatorResult->hasErrors() === true)
-            && ($repeatPasswordNotEmptyValidatorResult->hasErrors() === true)
+            ($passwordNotEmptyValidatorResult?->hasErrors() === true)
+            && ($repeatPasswordNotEmptyValidatorResult?->hasErrors() === true)
         ) {
             if (
                 !isset($this->options['allowEmpty'])
@@ -82,7 +82,7 @@ class PasswordValidator extends AbstractValidator
         ]);
         $stringLengthValidatorResult = $stringLengthValidator->validate($password);
 
-        if ($stringLengthValidatorResult->hasErrors() === true) {
+        if ($stringLengthValidatorResult?->hasErrors() === true) {
             foreach ($stringLengthValidatorResult->getErrors() as $error) {
                 $this->addError($error->getMessage(), $error->getCode());
             }
