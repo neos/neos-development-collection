@@ -9,3 +9,15 @@ actionUri.foo = Neos.Fusion:ActionUri {
   controller = 'Foo'
   action = 'index'
 }
+
+actionUri.withQueryParameters = Neos.Fusion:ActionUri {
+  package = 'Neos.Flow'
+  controller = 'Foo'
+  action = 'index'
+  queryParameters = Neos.Fusion:DataStructure {
+    foo = 'bar'
+    bar = Neos.Fusion:DataStructure {
+      baz = 'foos'
+    }
+  }
+}

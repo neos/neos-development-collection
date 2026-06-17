@@ -6,7 +6,7 @@ Neos.Workspace.Ui.WorkspaceController.index = Neos.Fusion:Component {
   /// Neos\Workspace\Ui\ViewModel\Sorting
   sorting = ${sorting}
 
-  newAction = Neos.Fusion:UriBuilder {
+  newAction = Neos.Fusion:ActionUri {
     action = 'new'
     format = 'htmx'
   }

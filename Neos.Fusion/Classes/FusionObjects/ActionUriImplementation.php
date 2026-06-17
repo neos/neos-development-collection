@@ -25,6 +25,7 @@ use Neos\Flow\Mvc\Routing\UriBuilder;
  *  * controller
  *  * action
  *  * arguments
+ *  * queryParameters
  *  * format
  *  * section
  *  * additionalParams
@@ -92,6 +93,17 @@ class ActionUriImplementation extends AbstractFusionObject
     {
         $arguments = $this->fusionValue('arguments');
         return is_array($arguments) ? $arguments: [];
+    }
+
+    /**
+     * Query parameters to add as query string to the generated URL
+     *
+     * @return array
+     */
+    public function getQueryParameters(): array
+    {
+        $queryParameters = $this->fusionValue('queryParameters');
+        return is_array($queryParameters) ? $queryParameters : [];
     }
 
     /**
@@ -163,7 +175,7 @@ class ActionUriImplementation extends AbstractFusionObject
         }
 
         try {
-            return $uriBuilder->uriFor(
+            $uri = $uriBuilder->uriFor(
                 $this->getAction(),
                 $this->getArguments(),
                 $this->getController(),
@@ -173,5 +185,10 @@ class ActionUriImplementation extends AbstractFusionObject
         } catch (\Exception $exception) {
             return $this->runtime->handleRenderingException($this->path, $exception);
         }
+        $queryParameters = $this->getQueryParameters();
+        if ($queryParameters !== []) {
+            $uri .= '?' . http_build_query($queryParameters, arg_separator: '&');
+        }
+        return $uri;
     }
 }

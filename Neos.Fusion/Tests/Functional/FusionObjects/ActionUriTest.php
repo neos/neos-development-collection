@@ -37,4 +37,25 @@ class ActionUriTest extends AbstractFusionObjectTest
         $view->setFusionPath('actionUri/foo');
         self::assertStringContainsString('/neos/flow/test/http/foo', $view->render());
     }
+
+    /**
+     * @test
+     */
+    public function buildRelativeUriToActionWithQueryParameters()
+    {
+        $this->registerRoute(
+            'Fusion functional test',
+            'neos/flow/test/http/withQueryParameters',
+            [
+                '@package' => 'Neos.Flow',
+                '@controller' => 'Foo',
+                '@action' => 'index',
+                '@format' => 'html'
+            ]
+        );
+
+        $view = $this->buildView();
+        $view->setFusionPath('actionUri/withQueryParameters');
+        self::assertSame('/neos/flow/test/http/withqueryparameters?foo=bar&bar%5Bbaz%5D=foos', $view->render());
+    }
 }
