@@ -188,8 +188,7 @@ final class NodeFactory
                     $occupiedDimensionSpacePoint->toDimensionSpacePoint(),
                     $visibilityConstraints
                 );
-                // FIXME, sort and index by $occupiedDimensionSpacePoint->hash
-                $occupiedDimensionSpacePoints[] = $occupiedDimensionSpacePoint;
+                $occupiedDimensionSpacePoints[$occupiedDimensionSpacePoint->hash] = $occupiedDimensionSpacePoint;
                 $rawNodeAggregateId = $rawNodeAggregateId ?: $nodeRow['nodeaggregateid'];
                 $rawNodeTypeName = $rawNodeTypeName ?: $nodeRow['nodetypename'];
                 $rawNodeName = $rawNodeName ?: $nodeRow['name'];

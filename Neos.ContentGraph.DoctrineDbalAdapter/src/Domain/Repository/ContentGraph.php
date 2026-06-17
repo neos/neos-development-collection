@@ -147,8 +147,7 @@ final class ContentGraph implements ContentGraphInterface
         $nodeAggregateIdClause = NodeAggregateIdClause::forNodeAggregateId($nodeAggregateId);
         $queryBuilder = $this->nodeQueryBuilder->buildBasicNodeAggregateQuery($this->hierarchyStatement->withChildNodeAggregateIdPrefilter($nodeAggregateIdClause))
             ->where($nodeAggregateIdClause->toWhereSql())
-            ->mergeParameters($nodeAggregateIdClause->getParameters())
-            ->orderBy('n.relationanchorpoint', 'DESC');
+            ->mergeParameters($nodeAggregateIdClause->getParameters());
 
         return $this->nodeFactory->mapNodeRowsToNodeAggregate(
             $this->fetchRows($queryBuilder),
@@ -163,8 +162,7 @@ final class ContentGraph implements ContentGraphInterface
         $nodeAggregateIdClause = NodeAggregateIdClause::forNodeAggregateIds($nodeAggregateIds);
         $queryBuilder = $this->nodeQueryBuilder->buildBasicNodeAggregateQuery($this->hierarchyStatement->withChildNodeAggregateIdPrefilter($nodeAggregateIdClause))
             ->where($nodeAggregateIdClause->toWhereSql())
-            ->mergeParameters($nodeAggregateIdClause->getParameters())
-            ->orderBy('n.relationanchorpoint', 'DESC');
+            ->mergeParameters($nodeAggregateIdClause->getParameters());
 
         return $this->mapQueryBuilderToNodeAggregates($queryBuilder);
     }
@@ -306,7 +304,6 @@ final class ContentGraph implements ContentGraphInterface
             ->innerJoinWithStatement('th', $this->hierarchyStatement, 'h', 'th.childnodeanchor = h.childnodeanchor')
             ->innerJoin('h', $this->tableNames->node(), 'n', 'h.childnodeanchor = n.relationanchorpoint')
             ->innerJoin('h', $this->tableNames->dimensionSpacePoints(), 'dsp', 'dsp.hash = h.dimensionspacepointhash')
-            ->orderBy('n.relationanchorpoint', 'DESC')
             ->setParameter('tagPath', '$."' . $subtreeTag->value . '"');
 
         return $this->mapQueryBuilderToNodeAggregates($queryBuilder);
