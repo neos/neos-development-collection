@@ -12,10 +12,28 @@ use Neos\ContentRepositoryRegistry\Factory\EventStore\DoctrineEventStoreFactory;
 use Neos\EventStore\Model\EventEnvelope;
 
 /**
- * Content Repository service to perform migrations of events.
+ * Provides destructive tooling to upgrade the content repository database for a new Neos release.
  *
- * Each function is used here for a specific migration. The migrations are only useful for production
- * workloads which have events prior to the code change.
+ * While there is tooling for trivial schema adjustment see "cr:setup" the addition of new db columns without defaults
+ * requires adding values inferred by the event stream which is handled by these advanced upgrades.
+ *
+ * Also rewriting events of the DBAL event-store if deemed required is part of this upgrade tooling.
+ *
+ * Please do ensure you have a backup of your database at hand.
+ *
+ * --------
+ *
+ * Note regarding further event migrations
+ *
+ * Up until the last beta 9.0.0-beta20, many migrations were provided via the "migrateevents" Flow command.
+ * They can be used to draw inspiration how to write new migrations:
+ * {@link https://github.com/neos/neos-development-collection/blob/9.0.0-beta20/Neos.ContentRepositoryRegistry/Classes/Service/EventMigrationService.php}
+ *
+ * --------
+ *
+ * By convention each upgrade specifies its release date to allow developers to determine if an upgrade is relevant.
+ *
+ * --------
  *
  * @internal this is currently only used by the {@see CRUpgradeCommandController}
  */
@@ -47,7 +65,7 @@ final class CRUpgradeService implements ContentRepositoryServiceInterface
      * @param \Closure $outputFn
      * @return void
      */
-    public function migrateRecordedAtToUtc(\Closure $outputFn, bool $force): void
+    public function eventsRecordedAtToUtc(\Closure $outputFn, bool $force): void
     {
         $eventTableName = DoctrineEventStoreFactory::databaseTableName($this->contentRepositoryId);
 

@@ -8,6 +8,16 @@ use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\ContentRepositoryRegistry\Service\CRUpgradeServiceFactory;
 use Neos\Flow\Cli\CommandController;
 
+/**
+ * Provides destructive tooling to upgrade the content repository database for a new Neos release.
+ *
+ * While there is tooling for trivial schema adjustment see "cr:setup" the addition of new db columns without defaults
+ * requires adding values inferred by the event stream which is handled by these advanced upgrades.
+ *
+ * Also rewriting events of the DBAL event-store if deemed required is part of this upgrade tooling.
+ *
+ * Please do ensure you have a backup of your database at hand.
+ */
 final class CRUpgradeCommandController extends CommandController
 {
     public function __construct(
@@ -46,6 +56,6 @@ final class CRUpgradeCommandController extends CommandController
         }
 
         $eventMigrationService = $this->contentRepositoryRegistry->buildService($contentRepositoryId, $this->eventMigrationServiceFactory);
-        $eventMigrationService->migrateRecordedAtToUtc($this->outputLine(...), $force);
+        $eventMigrationService->eventsRecordedAtToUtc($this->outputLine(...), $force);
     }
 }
