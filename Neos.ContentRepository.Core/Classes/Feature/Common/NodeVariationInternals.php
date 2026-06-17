@@ -16,6 +16,7 @@ namespace Neos\ContentRepository\Core\Feature\Common;
 
 use Neos\ContentRepository\Core\DimensionSpace;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
+use Neos\ContentRepository\Core\DimensionSpace\Exception\DimensionSpacePointNotFound;
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePointSet;
 use Neos\ContentRepository\Core\EventStore\EventInterface;
@@ -344,16 +345,12 @@ trait NodeVariationInternals
             )
         );
 
-        //
-        // TODO Features/D3-MoveDimensionSpacePoint/MoveDimensionSpacePoint.feature
-        // TODO Neos\ContentRepository\Core\DimensionSpace\Exception\DimensionSpacePointNotFound: [{"language":"ch"}] was not found in the allowed dimension subspace
-        //
-        // if (!$orderedAffectedOriginDimensionSpacePoints->equals($affectedOriginDimensionSpacePoints)) {
-        //     throw new DimensionSpacePointNotFound(
-        //         sprintf('%s was not found in the allowed dimension subspace', $affectedOriginDimensionSpacePoints->getDifference($orderedAffectedOriginDimensionSpacePoints)->toJson()),
-        //         1778587626
-        //     );
-        // }
+        if (!$orderedAffectedOriginDimensionSpacePoints->equals($affectedOriginDimensionSpacePoints)) {
+            throw new DimensionSpacePointNotFound(
+                sprintf('The dimension space points %s were not found in the allowed dimension subspace %s', $affectedOriginDimensionSpacePoints->getDifference($orderedAffectedOriginDimensionSpacePoints)->toJson(), $allowedOrderedDimensionSpacePoints->toJson()),
+                1778587626
+            );
+        }
         return $orderedAffectedOriginDimensionSpacePoints;
     }
 }
