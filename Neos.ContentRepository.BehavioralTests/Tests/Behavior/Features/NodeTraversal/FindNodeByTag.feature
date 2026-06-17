@@ -109,9 +109,9 @@ Feature: Find nodes using the findNodeById query
 
     When I execute the findNodeAggregatesTaggedBy query for tag "disabled" I expect the following node aggregates to be returned:
       | nodeAggregateId | nodeTypeName                               | coveredDimensionSpacePoints           | occupiedDimensionSpacePoints | explicitlyDisabledDimensions          |
-      | b1              | Neos.ContentRepository.Testing:Page        | [{"language":"de"},{"language":"ch"}] | [{"language":"de"}]          | [{"language":"ch"}]                   |
-      | a2a1            | Neos.ContentRepository.Testing:Page        | [{"language":"de"},{"language":"ch"}] | [{"language":"de"}]          | [{"language":"de"},{"language":"ch"}] |
       | a2a             | Neos.ContentRepository.Testing:SpecialPage | [{"language":"de"},{"language":"ch"}] | [{"language":"de"}]          | [{"language":"de"},{"language":"ch"}] |
+      | a2a1            | Neos.ContentRepository.Testing:Page        | [{"language":"de"},{"language":"ch"}] | [{"language":"de"}]          | [{"language":"de"},{"language":"ch"}] |
+      | b1              | Neos.ContentRepository.Testing:Page        | [{"language":"de"},{"language":"ch"}] | [{"language":"de"}]          | [{"language":"ch"}]                   |
 
 
     When I execute the findNodeAggregatesTaggedBy query for tag "tag1" I expect the following node aggregates to be returned:
