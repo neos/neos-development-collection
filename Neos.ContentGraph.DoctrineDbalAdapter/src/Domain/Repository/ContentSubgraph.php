@@ -285,6 +285,8 @@ final class ContentSubgraph implements ContentSubgraphInterface
 
     public function findSubtree(NodeAggregateId $entryNodeAggregateId, FindSubtreeFilter $filter): ?Subtree
     {
+        $nodeAggregateIdClause = NodeAggregateIdClause::forNodeAggregateId($entryNodeAggregateId);
+
         // Resolve each candidate relation's winning layer PER ROW via a correlated NOT EXISTS (a higher visible layer
         // for the same id) instead of {@see HierarchyRelationStatement::toSql()}'s full-table MAX(contentstreamlayer)
         // GROUP BY id, which the recursive CTE would otherwise re-run for every tree level. The anchor join scopes the
@@ -298,8 +300,9 @@ final class ContentSubgraph implements ContentSubgraphInterface
             // @see https://mariadb.com/kb/en/library/recursive-common-table-expressions-overview/#cast-to-avoid-data-truncation
             ->select('n.*, h.subtreetags, CAST("ROOT" AS CHAR(50)) AS parentNodeAggregateId, 0 AS level, 0 AS position')
             ->from($this->tableNames->node(), 'n')
-            ->innerJoinWithStatement('n', $this->hierarchyStatement, 'h', "h.childnodeanchor = n.relationanchorpoint AND $winningLayer")
-            ->where('n.nodeaggregateid = :entryNodeAggregateId');
+            ->innerJoinWithStatement('n', $this->hierarchyStatement->withChildNodeAggregateIdPrefilter($nodeAggregateIdClause), 'h', "h.childnodeanchor = n.relationanchorpoint AND $winningLayer")
+            ->mergeParameters($nodeAggregateIdClause->getParameters())
+            ->where($nodeAggregateIdClause->toWhereSql('n'));
         $this->addSubtreeTagConstraints($queryBuilderInitial);
 
         $queryBuilderRecursive = $this->createQueryBuilder()
@@ -319,8 +322,7 @@ final class ContentSubgraph implements ContentSubgraphInterface
             ->select('*')
             ->from('tree')
             ->orderBy('level')
-            ->addOrderBy('position')
-            ->setParameter('entryNodeAggregateId', $entryNodeAggregateId->value);
+            ->addOrderBy('position');
 
         $result = $this->fetchCteResults($queryBuilderInitial, $queryBuilderRecursive, $queryBuilderCte, 'tree');
         /** @var array<string, Subtree[]> $subtreesByParentNodeId */
@@ -392,13 +394,15 @@ final class ContentSubgraph implements ContentSubgraphInterface
 
     public function findClosestNode(NodeAggregateId $entryNodeAggregateId, FindClosestNodeFilter $filter): ?Node
     {
+        $nodeAggregateIdClause = NodeAggregateIdClause::forNodeAggregateId($entryNodeAggregateId);
+
         $queryBuilderInitial = $this->createQueryBuilder()
             ->select('n.*, ph.subtreetags, ph.parentnodeanchor')
             ->from($this->tableNames->node(), 'n')
             // we need to join with the hierarchy relation, because we need the node name.
-            ->innerJoinWithStatement('n', $this->hierarchyStatement, 'ph', 'n.relationanchorpoint = ph.childnodeanchor')
-            ->where('n.nodeaggregateid = :entryNodeAggregateId')
-            ->setParameter('entryNodeAggregateId', $entryNodeAggregateId->value);
+            ->innerJoinWithStatement('n', $this->hierarchyStatement->withChildNodeAggregateIdPrefilter($nodeAggregateIdClause), 'ph', 'n.relationanchorpoint = ph.childnodeanchor')
+            ->where($nodeAggregateIdClause->toWhereSql('n'))
+            ->mergeParameters($nodeAggregateIdClause->getParameters());
         $this->addSubtreeTagConstraints($queryBuilderInitial, 'ph');
 
         $queryBuilderRecursive = $this->createQueryBuilder()
@@ -519,7 +523,7 @@ final class ContentSubgraph implements ContentSubgraphInterface
         $subselectParameters = [];
         $subtreeTagConstraints = '';
         $i = 0;
-        // TODO centralise logic in one point!!
+        // FIXME centralise subtree tag constraint building in a single point e.g ContentSubgraph::addSubtreeTagConstraints() - uses query builder
         foreach ($this->visibilityConstraints->excludedSubtreeTags as $excludedTag) {
             $subtreeTagConstraints .= ' AND NOT JSON_CONTAINS_PATH(sh.subtreetags, \'one\', :sourceTagPath' . $i . ')';
             $subselectParameters[] = Parameter::string('sourceTagPath' . $i, '$."' . $excludedTag->value . '"');
@@ -532,6 +536,7 @@ final class ContentSubgraph implements ContentSubgraphInterface
             ->fromWithStatement($this->hierarchyStatement, 'dh')
             ->innerJoin('dh', $this->tableNames->node(), 'dn', 'dn.relationanchorpoint = dh.childnodeanchor')
             ->innerJoin('dn', $this->tableNames->referenceRelation(), 'r', 'r.destinationnodeaggregateid = dn.nodeaggregateid')
+            // FIXME evaluate to use NodeAggregateIdClause prefiltering here as well? Possibly makes the subquery redundant because results will be prefiltered.
             ->where('r.nodeanchorpoint = (
                 SELECT relationanchorpoint FROM ' . $this->tableNames->node() . ' sn
                 JOIN ' . $this->hierarchyStatement->toSql() . ' sh ON sn.relationanchorpoint = sh.childnodeanchor
@@ -580,7 +585,7 @@ final class ContentSubgraph implements ContentSubgraphInterface
         $subselectParameters = [];
         $subtreeTagConstraints = '';
         $i = 0;
-        // TODO centralise logic in one point!!
+        // FIXME centralise subtree tag constraint building in a single point e.g ContentSubgraph::addSubtreeTagConstraints() - uses query builder
         foreach ($this->visibilityConstraints->excludedSubtreeTags as $excludedTag) {
             $subtreeTagConstraints .= ' AND NOT JSON_CONTAINS_PATH(dh.subtreetags, \'one\', :destinationTagPath' . $i . ')';
             $subselectParameters[] = Parameter::string('destinationTagPath' . $i, '$."' . $excludedTag->value . '"');
@@ -593,6 +598,7 @@ final class ContentSubgraph implements ContentSubgraphInterface
             ->fromWithStatement($this->hierarchyStatement, 'sh')
             ->innerJoin('sh', $this->tableNames->node(), 'sn', 'sn.relationanchorpoint = sh.childnodeanchor')
             ->innerJoin('sn', $this->tableNames->referenceRelation(), 'r', 'r.nodeanchorpoint = sn.relationanchorpoint')
+            // FIXME evaluate to use NodeAggregateIdClause prefiltering here as well? Possibly makes the subquery redundant because results will be prefiltered.
             ->where(<<<SQL
             r.destinationnodeaggregateid = (
               SELECT nodeaggregateid FROM {$this->tableNames->node()} dn
@@ -665,15 +671,17 @@ final class ContentSubgraph implements ContentSubgraphInterface
      */
     private function buildAncestorNodesQueries(NodeAggregateId $entryNodeAggregateId, FindAncestorNodesFilter|CountAncestorNodesFilter|FindClosestNodeFilter $filter): array
     {
+        $nodeAggregateIdClause = NodeAggregateIdClause::forNodeAggregateId($entryNodeAggregateId);
+
         $queryBuilderInitial = $this->createQueryBuilder()
             ->select('n.*, ph.subtreetags, ph.parentnodeanchor, 0 AS level')
             ->from($this->tableNames->node(), 'n')
             // we need to join with the hierarchy relation, because we need the node name.
-            ->innerJoinWithStatement('n', $this->hierarchyStatement, 'ch', 'ch.parentnodeanchor = n.relationanchorpoint')
+            ->innerJoinWithStatement('n', $this->hierarchyStatement->withChildNodeAggregateIdPrefilter($nodeAggregateIdClause), 'ch', 'ch.parentnodeanchor = n.relationanchorpoint')
             ->innerJoin('ch', $this->tableNames->node(), 'c', 'c.relationanchorpoint = ch.childnodeanchor')
             ->innerJoinWithStatement('n', $this->hierarchyStatement, 'ph', 'n.relationanchorpoint = ph.childnodeanchor')
-            ->andWhere('c.nodeaggregateid = :entryNodeAggregateId')
-            ->setParameter('entryNodeAggregateId', $entryNodeAggregateId->value);
+            ->andWhere($nodeAggregateIdClause->toWhereSql('c'))
+            ->mergeParameters($nodeAggregateIdClause->getParameters());
         $this->addSubtreeTagConstraints($queryBuilderInitial, 'ph');
         $this->addSubtreeTagConstraints($queryBuilderInitial, 'ch');
 
@@ -699,16 +707,18 @@ final class ContentSubgraph implements ContentSubgraphInterface
      */
     private function buildDescendantNodesQueries(NodeAggregateId $entryNodeAggregateId, FindDescendantNodesFilter|CountDescendantNodesFilter $filter): array
     {
+        $nodeAggregateIdClause = NodeAggregateIdClause::forNodeAggregateId($entryNodeAggregateId);
+
         $queryBuilderInitial = $this->createQueryBuilder()
             // @see https://mariadb.com/kb/en/library/recursive-common-table-expressions-overview/#cast-to-avoid-data-truncation
             ->select('n.*, h.subtreetags, CAST("ROOT" AS CHAR(50)) AS parentNodeAggregateId, 0 AS level, 0 AS position')
             ->from($this->tableNames->node(), 'n')
             // we need to join with the hierarchy relation, because we need the node name.
-            ->innerJoinWithStatement('n', $this->hierarchyStatement, 'h', 'h.childnodeanchor = n.relationanchorpoint')
+            ->innerJoinWithStatement('n', $this->hierarchyStatement->withParentNodeAggregateIdPrefilter($nodeAggregateIdClause), 'h', 'h.childnodeanchor = n.relationanchorpoint')
             ->innerJoin('n', $this->tableNames->node(), 'p', 'p.relationanchorpoint = h.parentnodeanchor')
             ->innerJoinWithStatement('n', $this->hierarchyStatement, 'ph', 'ph.childnodeanchor = p.relationanchorpoint')
-            ->where('p.nodeaggregateid = :entryNodeAggregateId')
-            ->setParameter('entryNodeAggregateId', $entryNodeAggregateId->value);
+            ->mergeParameters($nodeAggregateIdClause->getParameters())
+            ->where($nodeAggregateIdClause->toWhereSql('p'));
         $this->addSubtreeTagConstraints($queryBuilderInitial);
 
         $queryBuilderRecursive = $this->createQueryBuilder()
