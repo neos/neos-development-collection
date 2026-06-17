@@ -209,6 +209,7 @@ final readonly class NodeAggregate
     /**
      * Returns the nodes belonging to this aggregate, i.e. the "real materialized" node rows.
      *
+     * @deprecated Could already be moved but will definitely be moved with Neos 9.2
      * @internal Using this method to access all occupied nodes or possibly extract a single arbitrary node is not intended for use outside the core. The order is undefined.
      * @return iterable<int,Node>
      */
