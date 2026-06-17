@@ -5,6 +5,7 @@ namespace Neos\ContentRepositoryRegistry\Upgrade\Command;
 
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
+use Neos\ContentRepositoryRegistry\Upgrade\EventsDuplicateContentStreamRemoval\EventsDuplicateContentStreamRemovalUpgrade;
 use Neos\ContentRepositoryRegistry\Upgrade\EventsRecordedAtToUtc\EventsRecordedAtToUtcUpgrade;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Cli\CommandController;
@@ -81,5 +82,36 @@ final class CRUpgradeCommandController extends CommandController
         $upgrade->execute(
             force: $force
         );
+    }
+
+    /**
+     * Migration to deduplicate consecutive base workspace changes
+     *
+     * https://github.com/neos/neos-development-collection/issues/5877
+     *
+     * TODO
+     *
+     * Included in June 2026 - part of the minor 9.2.0 release
+     *
+     * @param string $contentRepository Identifier of the Content Repository to migrate
+     */
+    public function eventsDeduplicateBaseWorkspaceChangesCommand(string $contentRepository = 'default', bool $force = false): void
+    {
+        $context = $this->contentRepositoryRegistry->buildService(
+            ContentRepositoryId::fromString($contentRepository),
+            $this->upgradeContextFactory
+        );
+
+        if (!$force && !$this->output->askConfirmation(sprintf('> This will rewrite events of content repository "%s" to remove duplicated base workspace changes and backup the original events. This will take even on big sites less than 5 minutes. Are you sure to proceed? (y/n) ', $context->contentRepositoryId->value), false)) {
+            $this->outputLine('<comment>Abort.</comment>');
+            return;
+        }
+
+        $upgrade = new EventsDuplicateContentStreamRemovalUpgrade(
+            $context,
+            $this->output->outputLine(...)
+        );
+
+        $upgrade->execute();
     }
 }
