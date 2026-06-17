@@ -150,7 +150,6 @@ class ParallelWritingInWorkspacesTest extends AbstractParallelTestCase
 
     /**
      * @test
-     * @group parallel
      */
     public function whileANodesArWrittenOnLive(): void
     {
@@ -185,9 +184,8 @@ class ParallelWritingInWorkspacesTest extends AbstractParallelTestCase
 
     /**
      * @test
-     * @group parallel
      */
-    public function thenConcurrentPublishLeadsToException(): void
+    public function thenConcurrentlyWritingToAnotherWorkspaceWorks(): void
     {
         if (!is_file(self::WRITING_IS_RUNNING_FLAG_PATH)) {
             $this->log('waiting for 2. writing');
