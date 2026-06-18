@@ -34,6 +34,7 @@
       "@test:behat-cli -c Neos.ContentRepository.BehavioralTests/Tests/Behavior/behat.yml.dist",
       "@test:behat-cli -c Neos.ContentRepository.LegacyNodeMigration/Tests/Behavior/behat.yml.dist",
       "@test:behat-cli -c Neos.ContentRepository.Export/Tests/Behavior/behat.yml.dist",
+      "@test:behat-cli -c Neos.ContentRepositoryRegistry/Tests/Behavior/behat.yml.dist",
       "@test:behat-cli -c Neos.TimeableNodeVisibility/Tests/Behavior/behat.yml.dist",
       "@test:behat-cli -c Neos.Neos/Tests/Behavior/behat.yml.dist"
     ],
