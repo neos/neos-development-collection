@@ -946,7 +946,8 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
                   h.dimensionspacepointhash,
                   :targetContentStreamLayer as contentstreamlayer
                 FROM
-                  {$hierarchyStatement->andInnerWhereRelationIdMatches(':originalNodeAnchor IN (childnodeanchor, parentnodeanchor)')->toSql()} h
+                  -- prefilter via OR - using IN() is slower as more rows are examined
+                  {$hierarchyStatement->andInnerWhereRelationIdMatches('h.childnodeanchor = :originalNodeAnchor OR h.parentnodeanchor = :originalNodeAnchor')->toSql()} h
                 WHERE
                   :originalNodeAnchor IN (h.childnodeanchor, h.parentnodeanchor)
                 ON DUPLICATE KEY UPDATE parentnodeanchor = VALUES(parentnodeanchor), childnodeanchor = VALUES(childnodeanchor)

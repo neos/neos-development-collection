@@ -186,7 +186,7 @@ class HierarchyRelationStatementTest extends TestCase
     public function withArbitraryInnerWhereClause()
     {
         $hierarchyRelationStatement = HierarchyRelationStatement::create($this->tableNames, ContentStreamLayers::fromArray([1]))
-            ->andInnerWhereRelationIdMatches(':originalNodeAnchor IN (childnodeanchor, parentnodeanchor)');
+            ->andInnerWhereRelationIdMatches('h.childnodeanchor = :originalNodeAnchor OR h.parentnodeanchor = :originalNodeAnchor');
 
         self::assertSame(
             ['contentStreamLayers' => [1]],
@@ -208,7 +208,7 @@ class HierarchyRelationStatementTest extends TestCase
                 WHERE (contentstreamlayer IN (:contentStreamLayers))
                 AND id IN (
                   SELECT id FROM cr_testing_p_graph_hierarchyrelation AS h
-                    WHERE :originalNodeAnchor IN (childnodeanchor, parentnodeanchor)
+                    WHERE h.childnodeanchor = :originalNodeAnchor OR h.parentnodeanchor = :originalNodeAnchor
                 )
             GROUP BY id
           ) AS readHierarchy
