@@ -101,11 +101,12 @@ class EventsDuplicateContentStreamRemovalUpgrade
             // Correlation id as index
             $changeBaseWorkspaceSequenceMap = [];
 
-            $allSequenceNumbersMap = [];
-            $sequenceNumbersToKeep = [];
+            // Correlation id as index
+            $changeBaseWorkspaceSequenceNumbersByCorrelationMap = [];
 
             $newForkedContentStreamMap = [];
             $baseWorkspaceChangeCorrelationIdMap = array_fill_keys(array_column($correlationIds, 'value'), true);
+            $winningChangeBaseWorkspaceCorrelationId = null;
 
             foreach ($conflictingEvents as $conflictingEvent) {
                 if (!$conflictingEvent->event->correlationId || !array_key_exists($conflictingEvent->event->correlationId->value, $baseWorkspaceChangeCorrelationIdMap)) {
@@ -135,13 +136,8 @@ class EventsDuplicateContentStreamRemovalUpgrade
                     $newForkedContentStreamMap[$conflictingEvent->streamName->value] = true;
                 }
 
-                $allSequenceNumbersMap[$conflictingEvent->sequenceNumber->value] = true;
-
-                if ($currentChangeBaseWorkspaceSequence === ChangeBaseWorkspaceSequence::start()) {
-                    $sequenceNumbersToKeep = [];
-                }
-                $sequenceNumbersToKeep[$conflictingEvent->sequenceNumber->value] = true;
-
+                $winningChangeBaseWorkspaceCorrelationId = $conflictingEvent->event->correlationId;
+                $changeBaseWorkspaceSequenceNumbersByCorrelationMap[$conflictingEvent->event->correlationId->value][] = $conflictingEvent->sequenceNumber->value;
                 $changeBaseWorkspaceSequenceMap[$conflictingEvent->event->correlationId->value] = $currentChangeBaseWorkspaceSequence->next();
             }
 
@@ -153,9 +149,14 @@ class EventsDuplicateContentStreamRemovalUpgrade
                 }
             }
 
-            $sequenceNumbersMapToRemoveForStream = array_diff_key($allSequenceNumbersMap, $sequenceNumbersToKeep);
+            if (!$winningChangeBaseWorkspaceCorrelationId) {
+                throw new \RuntimeException(sprintf('Fatal error in upgrade. No winning ChangeBaseWorkspaceCorrelationId found'), 1781783151);
+            }
 
-            $sequenceNumbersToRemove = array_merge($sequenceNumbersToRemove, array_keys($sequenceNumbersMapToRemoveForStream));
+            // keep the last change base workspace sequence
+            unset($changeBaseWorkspaceSequenceNumbersByCorrelationMap[$winningChangeBaseWorkspaceCorrelationId->value]);
+
+            $sequenceNumbersToRemove = array_merge($sequenceNumbersToRemove, ...array_values($changeBaseWorkspaceSequenceNumbersByCorrelationMap));
         }
 
         if ($sequenceNumbersToRemove === []) {
