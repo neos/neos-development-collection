@@ -166,14 +166,19 @@ final class CRUpgradeCommandController extends CommandController
      *
      * @param string $contentRepository Identifier of the Content Repository to migrate
      */
-    public function eventsDeduplicateBaseWorkspaceChangesCommand(string $contentRepository = 'default', bool $force = false): void
+    public function eventsDeduplicateBaseWorkspaceChangesCommand(string $contentRepository = 'default', bool $dryRun = false, bool $force = false): void
     {
+        if ($dryRun && $force) {
+            $this->outputLine('<comment>Abort. Cannot force a dry run;)</comment>');
+            return;
+        }
+
         $context = $this->contentRepositoryRegistry->buildService(
             ContentRepositoryId::fromString($contentRepository),
             $this->upgradeContextFactory
         );
 
-        if (!$force && !$this->output->askConfirmation(sprintf('> This will rewrite events of content repository "%s" to remove duplicated base workspace changes and backup the original events. This will take even on big sites less than 5 minutes. Are you sure to proceed? (y/n) ', $context->contentRepositoryId->value), false)) {
+        if ((!$dryRun && !$force) && !$this->output->askConfirmation(sprintf('> This will rewrite events of content repository "%s" to remove duplicated base workspace changes and backup the original events. This will take even on big sites less than 5 minutes. Are you sure to proceed? (y/n) ', $context->contentRepositoryId->value), false)) {
             $this->outputLine('<comment>Abort.</comment>');
             return;
         }
@@ -183,6 +188,8 @@ final class CRUpgradeCommandController extends CommandController
             $this->output->outputLine(...)
         );
 
-        $upgrade->execute();
+        $upgrade->execute(
+            dryRun: $dryRun
+        );
     }
 }

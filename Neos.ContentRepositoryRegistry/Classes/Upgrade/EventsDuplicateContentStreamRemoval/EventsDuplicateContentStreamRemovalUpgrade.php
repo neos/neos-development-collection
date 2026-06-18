@@ -27,7 +27,7 @@ class EventsDuplicateContentStreamRemovalUpgrade
     ) {
     }
 
-    public function execute(): void
+    public function execute(bool $dryRun): void
     {
         $duplicateContentStreamRemovalWithStreams = $this->context->dbal->fetchAllAssociative(<<<SQL
         SELECT stream, GROUP_CONCAT(sequencenumber ORDER BY sequencenumber) sequenceNumbers, GROUP_CONCAT(correlationid ORDER BY sequencenumber) correlationIds, COUNT(*) removals
@@ -166,6 +166,10 @@ class EventsDuplicateContentStreamRemovalUpgrade
         $this->log(sprintf('Found %d events to be removed', count($sequenceNumbersToRemove)));
         $this->log(sprintf('    Debug: %s', join(',', $sequenceNumbersToRemove)));
 
+        if ($dryRun) {
+            $this->log('Didnt migrate anything because its a dry run.');
+            return;
+        }
         // Actual migration
         $this->backupEventTable();
 
