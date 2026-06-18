@@ -17,13 +17,10 @@ final readonly class EventsRecordedAtToUtcUpgrade
     use EventStoreBackupTrait;
     use OutputMessageTrait;
 
-    private string $eventTableName;
-
     public function __construct(
         private CRUpgradeContext $context,
         private \Closure $outputFn,
     ) {
-        $this->eventTableName = DoctrineEventStoreFactory::databaseTableName($this->context->contentRepositoryId);
     }
 
     /**
@@ -54,7 +51,7 @@ final readonly class EventsRecordedAtToUtcUpgrade
             sequenceNumber,
             SUBSTR(JSON_UNQUOTE(JSON_EXTRACT(e.metadata, '$.initiatingTimestamp')), 20) as tzoffset,
             LAG(SUBSTR(JSON_UNQUOTE(JSON_EXTRACT(e.metadata, '$.initiatingTimestamp')), 20)) OVER (ORDER BY sequenceNumber) AS prevTzoffset
-          FROM {$this->eventTableName} as e
+          FROM {$this->context->eventStoreTableName} as e
           WHERE JSON_EXTRACT(e.metadata, '$.initiatingTimestamp') IS NOT NULL
         ) t
         WHERE tzoffset != prevTzoffset
@@ -101,7 +98,7 @@ final readonly class EventsRecordedAtToUtcUpgrade
 
             $affectedRows += $this->context->dbal->executeStatement(
                 <<<SQL
-            UPDATE {$this->eventTableName} AS e
+            UPDATE {$this->context->eventStoreTableName} AS e
             SET e.recordedat = CONVERT_TZ(e.recordedat, :fromOffset, '+00:00')
             WHERE sequencenumber >= :start AND (:end IS NULL || sequencenumber < :end);
             ;
@@ -130,7 +127,7 @@ final readonly class EventsRecordedAtToUtcUpgrade
         // If the dates are not equal in UTC time the migration need to be run.
         $sampleNonPublishableEventWithNonUTCTime = $this->context->dbal->fetchAssociative(<<<SQL
             SELECT sequencenumber, recordedat, JSON_UNQUOTE(JSON_EXTRACT(metadata, '$.initiatingTimestamp')) AS initiatingtimestampatom
-            FROM {$this->eventTableName}
+            FROM {$this->context->eventStoreTableName}
             WHERE stream LIKE 'Workspace:%'
               AND SUBSTR(JSON_UNQUOTE(JSON_EXTRACT(metadata, '$.initiatingTimestamp')), 20) != '+00:00'
               LIMIT 1;

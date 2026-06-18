@@ -14,7 +14,7 @@ trait EventStoreBackupTrait
     final protected function backupEventTable(): void
     {
         $backupEventTableName = DoctrineEventStoreFactory::databaseTableName($this->context->contentRepositoryId)
-            . '_bkp_' . date('Y_m_d_H_i_s');
+            . '_bkp_' . $this->context->clock->now()->format('Y_m_d_H_i_s');
         $this->log(sprintf('Backup: copying events table to %s', $backupEventTableName));
         $this->copyEventTable($backupEventTableName);
     }
@@ -24,7 +24,7 @@ trait EventStoreBackupTrait
         $this->context->dbal->executeStatement(
             'CREATE TABLE ' . $backupEventTableName . ' AS
             SELECT *
-            FROM ' . $this->eventTableName
+            FROM ' . $this->context->eventStoreTableName
         );
     }
 }

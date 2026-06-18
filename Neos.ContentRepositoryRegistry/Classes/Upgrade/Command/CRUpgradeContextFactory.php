@@ -7,6 +7,7 @@ use Doctrine\DBAL\Connection;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceFactoryDependencies;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceFactoryInterface;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceInterface;
+use Neos\ContentRepositoryRegistry\Factory\EventStore\DoctrineEventStoreFactory;
 use Neos\ContentRepositoryRegistry\Upgrade\Shared\CRUpgradeContext;
 use Neos\EventStore\DoctrineAdapter\DoctrineEventStore;
 use Neos\Flow\Annotations as Flow;
@@ -32,7 +33,9 @@ final class CRUpgradeContextFactory implements ContentRepositoryServiceFactoryIn
         return new CRUpgradeContext(
             $serviceFactoryDependencies->contentRepositoryId,
             $serviceFactoryDependencies->eventStore,
-            $this->connection
+            $this->connection,
+            DoctrineEventStoreFactory::databaseTableName($serviceFactoryDependencies->contentRepositoryId),
+            $serviceFactoryDependencies->clock,
         );
     }
 }
