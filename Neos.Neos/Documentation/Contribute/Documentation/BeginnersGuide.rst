@@ -10,15 +10,15 @@ Contribute to the Neos-Documentation
 ====================================
 
 This Documentation aims to get you started quite from the ground up.
-A lot of explainations here can of cause be used to work on the whole repository, it just seems
+A lot of explanations here can of course be used to work on the whole repository, it just seems
 to be a good starting point to explain the workflow concerning the documentation first.
 
 Imagine you would like to contribute to the Documentation but you haven't worked with github yet,
-you don't know how a proper workflow looks like and you are not sure how to start contributing.
+you don't know what a proper workflow looks like and you are not sure how to start contributing.
 The problem is, that even while explaining some of the basic steps, there always is the need for
-some kind of basic setup you will have to take care of yourself. You can of cause commit by using
+some kind of basic setup you will have to take care of yourself. You can of course commit by using
 GitHub itself. The aim of this document is focusing on working with git locally.
-You need for eg. a Linux Console and git to get started. [#f1]_
+You need a Linux Console and git to get started. [#f1]_
 
 
 What are the goals?
@@ -94,7 +94,7 @@ Start with one of the following codes:
   Anything not covered by the above categories, e.g. coding style cleanup or documentation changes. Usually only used if there’s no corresponding ticket.
 
   SECURITY
-  A security related change. Those are only commited by active team members in the security community of practice.
+  A security related change. Those are only committed by active team members in the security community of practice.
 
   MERGE
   Used for a branch upmerges by the team (or CI server) not something you usually would need to use.
@@ -109,9 +109,9 @@ If there is more to say about a change add a new paragraph with background infor
 In case of breaking changes give a hint on what needs to be changed by the user.
 If corresponding tickets exist, mention the ticket number(s) using footer lines after another blank line and use the following actions:
 
-<issue number> #close Some additional info if needed If the change resolves a ticket by fixing a bug, implemeting a feature or doing a task.
+<issue number> #close Some additional info if needed If the change resolves a ticket by fixing a bug, implementing a feature or doing a task.
 <issue number> #comment Some info why this is related If the change relates to an issue but does not resolve or fix it.
-This follows Jiras smart commit footers, see more details in the Jira documentation3
+This follows Jira's smart commit footers, see more details in the Jira documentation.
 
 A commit messages following the rules...:
 
@@ -313,7 +313,7 @@ reStructuredText (rST)
 Now you can start improving the documentation. If you haven't worked with reStructuredText (rST)
 it's pretty simple and gives you quite some options. Just have a look at the Documentation files
 available, they give you a good understanding of what is possible. It has a lot of capabilities.
-Checkout their documentation for more informations `Sphinx docs`_.
+Check out their documentation for more information `Sphinx docs`_.
 
 .. _Sphinx docs: http://www.sphinx-doc.org/en/stable/rest.html
 
@@ -329,7 +329,7 @@ what still needs to be done...
 .. note::
   Every following line which is indented by two spaces now, is part of the note.
   If you would replace it with todo instead of (*.. note::* -> *.. todo::*), it wouldn't be
-  visible in the frontend/browser anymore, but just just visible for you and others, when editing these files.
+  visible in the frontend/browser anymore, but just visible for you and others, when editing these files.
 
   There is also the possibility to see all the todos with its positions by putting *.. todolist::* into the document.
   Both features (the todo itself and their collection) can be made visible in the browser
