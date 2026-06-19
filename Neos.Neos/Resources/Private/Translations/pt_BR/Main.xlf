@@ -842,7 +842,7 @@
       <!-- Edit / preview modes -->
       <trans-unit id="editPreviewModes.inPlace" xml:space="preserve">
         <source>In-Place</source>
-        <target state="translated">No local</target>
+        <target state="translated">No próprio local</target>
       </trans-unit>
       <trans-unit id="editPreviewModes.rawContent" xml:space="preserve">
         <source>Raw Content</source>
