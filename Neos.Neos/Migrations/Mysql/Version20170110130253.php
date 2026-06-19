@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Flow\Persistence\Doctrine\Migrations;
 
 use Doctrine\Migrations\AbstractMigration;
@@ -11,7 +12,7 @@ class Version20170110130253 extends AbstractMigration
     /**
      * @return string
      */
-    public function getDescription(): string 
+    public function getDescription(): string
     {
         return 'Adjust foreign key and index names to the renaming of TYPO3.Neos to Neos.Neos';
     }
@@ -20,7 +21,7 @@ class Version20170110130253 extends AbstractMigration
      * @param Schema $schema
      * @return void
      */
-    public function up(Schema $schema): void 
+    public function up(Schema $schema): void
     {
         $this->abortIf($this->connection->getDatabasePlatform()->getName() != 'mysql', 'Migration can only be executed safely on "mysql".');
 
@@ -35,7 +36,11 @@ class Version20170110130253 extends AbstractMigration
             $this->addSql('DROP INDEX documentnodeidentifier ON neos_neos_eventlog_domain_model_event');
             $this->addSql('ALTER TABLE neos_neos_eventlog_domain_model_event RENAME INDEX idx_30ab3a75b684c08 TO IDX_D6DBC30A5B684C08');
         } else {
-            $this->addSql('ALTER TABLE neos_neos_domain_model_domain DROP FOREIGN KEY neos_neos_domain_model_domain_ibfk_1');
+            foreach ($this->sm->listTableForeignKeys('neos_neos_domain_model_domain') as $foreignKey) {
+                if (in_array('site', array_map('strtolower', $foreignKey->getLocalColumns()), true)) {
+                    $this->addSql("ALTER TABLE neos_neos_domain_model_domain DROP FOREIGN KEY " . $foreignKey->getName());
+                }
+            }
             $this->addSql('DROP INDEX idx_8e49a537694309e4 ON neos_neos_domain_model_domain');
             $this->addSql('CREATE INDEX IDX_51265BE9694309E4 ON neos_neos_domain_model_domain (site)');
             $this->addSql('DROP INDEX flow_identity_typo3_neos_domain_model_domain ON neos_neos_domain_model_domain');
@@ -51,7 +56,11 @@ class Version20170110130253 extends AbstractMigration
             $this->addSql('CREATE UNIQUE INDEX flow_identity_neos_neos_domain_model_site ON neos_neos_domain_model_site (nodename)');
             $this->addSql('ALTER TABLE neos_neos_domain_model_site ADD CONSTRAINT FK_1854B2075CEB2C15 FOREIGN KEY (assetcollection) REFERENCES neos_media_domain_model_assetcollection (persistence_object_identifier)');
             $this->addSql('ALTER TABLE neos_neos_domain_model_site ADD CONSTRAINT FK_1854B207B8872B4A FOREIGN KEY (primarydomain) REFERENCES neos_neos_domain_model_domain (persistence_object_identifier)');
-            $this->addSql('ALTER TABLE neos_neos_domain_model_user DROP FOREIGN KEY neos_neos_domain_model_user_ibfk_1');
+            foreach ($this->sm->listTableForeignKeys('neos_neos_domain_model_user') as $foreignKey) {
+                if (in_array('preferences', array_map('strtolower', $foreignKey->getLocalColumns()), true)) {
+                    $this->addSql("ALTER TABLE neos_neos_domain_model_user DROP FOREIGN KEY " . $foreignKey->getName());
+                }
+            }
             $this->addSql('DROP INDEX uniq_fc846daae931a6f5 ON neos_neos_domain_model_user');
             $this->addSql('CREATE UNIQUE INDEX UNIQ_ED60F5E3E931A6F5 ON neos_neos_domain_model_user (preferences)');
             $this->addSql('ALTER TABLE neos_neos_domain_model_user ADD CONSTRAINT neos_neos_domain_model_user_ibfk_1 FOREIGN KEY (preferences) REFERENCES neos_neos_domain_model_userpreferences (persistence_object_identifier)');
@@ -67,7 +76,7 @@ class Version20170110130253 extends AbstractMigration
      * @param Schema $schema
      * @return void
      */
-    public function down(Schema $schema): void 
+    public function down(Schema $schema): void
     {
         $this->abortIf($this->connection->getDatabasePlatform()->getName() != 'mysql', 'Migration can only be executed safely on "mysql".');
 
