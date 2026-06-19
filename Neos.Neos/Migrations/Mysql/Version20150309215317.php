@@ -20,21 +20,31 @@ class Version20150309215317 extends AbstractMigration
     {
         $this->abortIf(!($this->connection->getDatabasePlatform() instanceof AbstractMySQLPlatform));
 
+        foreach ($this->sm->listTableForeignKeys('typo3_neos_domain_model_domain') as $foreignKey) {
+            if (in_array('site', array_map('strtolower', $foreignKey->getLocalColumns()), true)) {
+                $this->addSql("ALTER TABLE typo3_neos_domain_model_domain DROP FOREIGN KEY " . $foreignKey->getName());
+            }
+        }
         $indexes = $this->sm->listTableIndexes('typo3_neos_domain_model_domain');
         if (array_key_exists('idx_f227e8f6694309e4', $indexes)) {
-            $this->addSql("ALTER TABLE typo3_neos_domain_model_domain DROP FOREIGN KEY typo3_neos_domain_model_domain_ibfk_1");
             $this->addSql("DROP INDEX idx_f227e8f6694309e4 ON typo3_neos_domain_model_domain");
             $this->addSql("CREATE INDEX IDX_8E49A537694309E4 ON typo3_neos_domain_model_domain (site)");
             $this->addSql("ALTER TABLE typo3_neos_domain_model_domain ADD CONSTRAINT typo3_neos_domain_model_domain_ibfk_1 FOREIGN KEY (site) REFERENCES typo3_neos_domain_model_site (persistence_object_identifier)");
         }
+
         $indexes = $this->sm->listTableIndexes('typo3_neos_domain_model_site');
         if (array_key_exists('flow3_identity_typo3_typo3_domain_model_site', $indexes)) {
             $this->addSql("DROP INDEX flow3_identity_typo3_typo3_domain_model_site ON typo3_neos_domain_model_site");
             $this->addSql("CREATE UNIQUE INDEX flow_identity_typo3_neos_domain_model_site ON typo3_neos_domain_model_site (nodename)");
         }
+
+        foreach ($this->sm->listTableForeignKeys('typo3_neos_domain_model_user') as $foreignKey) {
+            if (in_array('preferences', array_map('strtolower', $foreignKey->getLocalColumns()), true)) {
+                $this->addSql("ALTER TABLE typo3_neos_domain_model_user DROP FOREIGN KEY " . $foreignKey->getName());
+            }
+        }
         $indexes = $this->sm->listTableIndexes('typo3_neos_domain_model_user');
         if (array_key_exists('uniq_e3f98b13e931a6f5', $indexes)) {
-            $this->addSql("ALTER TABLE typo3_neos_domain_model_user DROP FOREIGN KEY typo3_neos_domain_model_user_ibfk_1");
             $this->addSql("DROP INDEX uniq_e3f98b13e931a6f5 ON typo3_neos_domain_model_user");
             $this->addSql("CREATE UNIQUE INDEX UNIQ_FC846DAAE931A6F5 ON typo3_neos_domain_model_user (preferences)");
             $this->addSql("ALTER TABLE typo3_neos_domain_model_user ADD CONSTRAINT typo3_neos_domain_model_user_ibfk_1 FOREIGN KEY (preferences) REFERENCES typo3_neos_domain_model_userpreferences (persistence_object_identifier)");
@@ -53,11 +63,17 @@ class Version20150309215317 extends AbstractMigration
     {
         $this->abortIf(!($this->connection->getDatabasePlatform() instanceof AbstractMySQLPlatform));
 
-        $this->addSql("CREATE UNIQUE INDEX uid ON typo3_neos_eventlog_domain_model_event (uid)");
+        if ($this->connection->getDatabasePlatform() instanceof MariaDBPlatform) {
+            $this->addSql("CREATE UNIQUE INDEX uid ON typo3_neos_eventlog_domain_model_event (uid)");
+        }
 
+        foreach ($this->sm->listTableForeignKeys('typo3_neos_domain_model_domain') as $foreignKey) {
+            if (in_array('site', array_map('strtolower', $foreignKey->getLocalColumns()), true)) {
+                $this->addSql("ALTER TABLE typo3_neos_domain_model_domain DROP FOREIGN KEY " . $foreignKey->getName());
+            }
+        }
         $indexes = $this->sm->listTableIndexes('typo3_neos_domain_model_domain');
         if (array_key_exists('idx_8e49a537694309e4', $indexes)) {
-            $this->addSql("ALTER TABLE typo3_neos_domain_model_domain DROP FOREIGN KEY typo3_neos_domain_model_domain_ibfk_1");
             $this->addSql("DROP INDEX idx_8e49a537694309e4 ON typo3_neos_domain_model_domain");
             $this->addSql("CREATE INDEX IDX_F227E8F6694309E4 ON typo3_neos_domain_model_domain (site)");
             $this->addSql("ALTER TABLE typo3_neos_domain_model_domain ADD CONSTRAINT typo3_neos_domain_model_domain_ibfk_1 FOREIGN KEY (site) REFERENCES typo3_neos_domain_model_site (persistence_object_identifier)");
@@ -67,9 +83,14 @@ class Version20150309215317 extends AbstractMigration
             $this->addSql("DROP INDEX flow_identity_typo3_neos_domain_model_site ON typo3_neos_domain_model_site");
             $this->addSql("CREATE UNIQUE INDEX flow3_identity_typo3_typo3_domain_model_site ON typo3_neos_domain_model_site (nodename)");
         }
+
+        foreach ($this->sm->listTableForeignKeys('typo3_neos_domain_model_user') as $foreignKey) {
+            if (in_array('preferences', array_map('strtolower', $foreignKey->getLocalColumns()), true)) {
+                $this->addSql("ALTER TABLE typo3_neos_domain_model_user DROP FOREIGN KEY " . $foreignKey->getName());
+            }
+        }
         $indexes = $this->sm->listTableIndexes('typo3_neos_domain_model_user');
         if (array_key_exists('uniq_fc846daae931a6f5', $indexes)) {
-            $this->addSql("ALTER TABLE typo3_neos_domain_model_user DROP FOREIGN KEY typo3_neos_domain_model_user_ibfk_1");
             $this->addSql("DROP INDEX uniq_fc846daae931a6f5 ON typo3_neos_domain_model_user");
             $this->addSql("CREATE UNIQUE INDEX UNIQ_E3F98B13E931A6F5 ON typo3_neos_domain_model_user (preferences)");
             $this->addSql("ALTER TABLE typo3_neos_domain_model_user ADD CONSTRAINT typo3_neos_domain_model_user_ibfk_1 FOREIGN KEY (preferences) REFERENCES typo3_neos_domain_model_userpreferences (persistence_object_identifier)");
