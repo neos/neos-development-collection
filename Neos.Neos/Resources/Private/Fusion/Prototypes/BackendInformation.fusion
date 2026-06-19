@@ -6,16 +6,13 @@ prototype(Neos.Neos:Document.BackendInformation) < prototype(Neos.Fusion:Compone
       backend-information-css = Neos.Fusion:Tag {
         tagName = 'style'
         content = Neos.Fusion:Value {
-          value = '#neos-backend-informations {position: fixed;top: 0;left: 0;width: 100%;height: 100%;background-color: #323232;z-index: 9999;font-family: "Noto Sans", sans-serif;-webkit-font-smoothing: antialiased;}#neos-backend-informations p {position: relative;margin: 0 auto;width: 500px;height: 60px;top: 50%;margin-top: -30px;color: #fff;font-size: 22px;line-height: 1.4;text-align: center;}#neos-backend-informations p a {color: #00b5ff;text-decoration: none;}#neos-backend-informations p a:hover {color: #39c6ff;}'
+          value = '#neos-backend-information {position: fixed;top: 0;left: 0;width: 100%;height: 100%;background-color: #323232;z-index: 9999;font-family: "Noto Sans", sans-serif;-webkit-font-smoothing: antialiased;}#neos-backend-information p {position: relative;margin: 0 auto;width: 500px;height: 60px;top: 50%;margin-top: -30px;color: #fff;font-size: 22px;line-height: 1.4;text-align: center;}#neos-backend-information p a {color: #00b5ff;text-decoration: none;}#neos-backend-information p a:hover {color: #39c6ff;}'
         }
       }
     }
 
-    body >
-    body = Neos.Fusion:Tag {
-      tagName = 'div'
-      attributes.id = 'neos-backend-informations'
-      content = ${props.content}
-    }
+    body = afx`
+      <div id="neos-backend-information">{props.content}</div>
+    `
   }
 }
