@@ -36,9 +36,14 @@ class Version20170110130113 extends AbstractMigration
             $this->addSql('ALTER TABLE neos_contentrepository_domain_model_nodedimension RENAME INDEX idx_6c144d3693bdc8e2 TO IDX_C4713BFF93BDC8E2');
             $this->addSql('ALTER TABLE neos_contentrepository_domain_model_nodedimension RENAME INDEX uniq_6c144d3693bdc8e25e237e061d775834 TO UNIQ_C4713BFF93BDC8E25E237E061D775834');
         } else {
-            $this->addSql('ALTER TABLE neos_contentrepository_domain_model_nodedata DROP FOREIGN KEY FK_60A956B92D45FE4D');
-            $this->addSql('ALTER TABLE neos_contentrepository_domain_model_nodedata DROP FOREIGN KEY FK_60A956B98D940019');
-            $this->addSql('ALTER TABLE neos_contentrepository_domain_model_nodedata DROP FOREIGN KEY neos_contentrepository_domain_model_nodedata_ibfk_2');
+            foreach ($this->sm->listTableForeignKeys('neos_contentrepository_domain_model_nodedata') as $foreignKey) {
+                if (in_array('movedto', array_map('strtolower', $foreignKey->getLocalColumns()), true)
+                    || in_array('workspace', array_map('strtolower', $foreignKey->getLocalColumns()), true)
+                    || in_array('contentobjectproxy', array_map('strtolower', $foreignKey->getLocalColumns()), true)
+                ) {
+                    $this->addSql("ALTER TABLE neos_contentrepository_domain_model_nodedata DROP FOREIGN KEY " . $foreignKey->getName());
+                }
+            }
             $this->addSql('DROP INDEX idx_60a956b98d940019 ON neos_contentrepository_domain_model_nodedata');
             $this->addSql('CREATE INDEX IDX_CE6515698D940019 ON neos_contentrepository_domain_model_nodedata (workspace)');
             $this->addSql('DROP INDEX idx_60a956b94930c33c ON neos_contentrepository_domain_model_nodedata');
