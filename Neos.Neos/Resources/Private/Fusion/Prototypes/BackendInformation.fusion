@@ -8,11 +8,8 @@ prototype(Neos.Neos:Document.BackendInformation) < prototype(Neos.Fusion:Compone
       `
     }
 
-    body >
-    body = Neos.Fusion:Tag {
-      tagName = 'div'
-      attributes.id = 'neos-backend-information'
-      content = ${props.content}
-    }
+    body = afx`
+      <div id="neos-backend-information">{props.content}</div>
+    `
   }
 }
