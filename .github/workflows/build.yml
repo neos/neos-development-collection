@@ -3,95 +3,58 @@ name: build
 on:
   workflow_dispatch:
   push:
-    branches: [ master, '[0-9]+.[0-9]' ]
+    branches: [ '[0-9]+.[0-9]' ]
   pull_request:
-    branches: [ master, '[0-9]+.[0-9]' ]
+    branches: [ '[0-9]+.[0-9]' ]
 
 permissions: {}
+
+env:
+  FLOW_CONTEXT: Testing
+  NEOS_DIST_FOLDER: neos-development-distribution
+  NEOS_FOLDER: neos-development-collection
+
 jobs:
-  build:
+  static-analysis:
     permissions:
       contents: read # to fetch code (actions/checkout)
-
-    if: "!contains(github.event.head_commit.message, '[skip ci]') && !contains(github.event.head_commit.message, '[skip travis]')"
-    name: "PHP ${{ matrix.php-versions }} Test ${{ matrix.static-analysis != 'no' && 'static analysis ' || '' }} (deps: ${{ matrix.dependencies }}, mysqlport: ${{ matrix.mysqlport }})"
-
-    continue-on-error: ${{ matrix.experimental }}
-
+    if: "!contains(github.event.head_commit.message, '[skip ci]')"
+    name: "Static analysis (PHP ${{ matrix.php }})"
+    runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
-        php-versions: ['8.2', '8.3', '8.4', '8.5']
-        dependencies: ['highest']
-        composer-arguments: [''] # to run --ignore-platform-reqs in experimental builds
-        static-analysis: ['no']
-        experimental: [false]
-        mysqlport: [3306]
-        include:
-          - php-versions: '8.2'
-            static-analysis: 'yes'
-            experimental: false
-            dependencies: 'highest'
-          - php-versions: '8.4'
-            static-analysis: 'yes'
-            experimental: false
-            dependencies: 'highest'
-            mysqlport: 3306
-          - php-versions: '8.4'
-            static-analysis: 'no'
-            experimental: false
-            dependencies: 'highest'
-            mysqlport: 3307
-          - php-versions: '8.4'
-            static-analysis: 'no'
-            experimental: false
-            dependencies: 'highest'
-            mysqlport: 3308
+        php: ['8.2', '8.3', '8.4', '8.5']
+    defaults:
+      run:
+        working-directory: ${{ env.NEOS_DIST_FOLDER }}
+    steps:
+      # Local composite actions are resolved from the workspace root, so the
+      # workflow's own repository must be checked out before `prepare-neos` runs.
+      - name: Checkout workflow repository
+        uses: actions/checkout@v5
+
+      - uses: ./.github/actions/prepare-neos
+        with:
+          php-version: ${{ matrix.php }}
+          dependencies: ${{ matrix.dependencies || 'highest' }}
+          collection-path: ${{ env.NEOS_FOLDER }}
+          distribution-path: ${{ env.NEOS_DIST_FOLDER }}
+
+      - name: Static analysis
+        run: cd Packages/Neos && composer lint:phpstan
+
+  unit-tests:
+    permissions:
+      contents: read # to fetch code (actions/checkout)
+    if: "!contains(github.event.head_commit.message, '[skip ci]')"
+    name: "Unit tests (PHP ${{ matrix.php }}, deps: ${{ matrix.dependencies || 'highest' }})"
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        php: ['8.2', '8.3', '8.4', '8.5']
     services:
-      mariadb:
-        # see https://mariadb.com/kb/en/mariadb-server-release-dates/
-        # this should be a current release, e.g. the LTS version
-        image: mariadb:10.6
-        env:
-          MYSQL_USER: neos
-          MYSQL_PASSWORD: neos
-          MYSQL_DATABASE: flow_functional_testing
-          MYSQL_ROOT_PASSWORD: neos
-        ports:
-          - "3306:3306"
-        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
-      mysql80:
-        image: mysql:8.0
-        env:
-          MYSQL_USER: neos
-          MYSQL_PASSWORD: neos
-          MYSQL_DATABASE: flow_functional_testing
-          MYSQL_ROOT_PASSWORD: neos
-        ports:
-          - "3307:3306"
-        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
-      mysql84:
-        image: mysql:8.4
-        env:
-          MYSQL_USER: neos
-          MYSQL_PASSWORD: neos
-          MYSQL_DATABASE: flow_functional_testing
-          MYSQL_ROOT_PASSWORD: neos
-        ports:
-          - "3308:3306"
-        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
-      postgres:
-        # see https://www.postgresql.org/support/versioning/
-        # this should be a current release
-        image: postgres:14-alpine
-        env:
-          POSTGRES_USER: neos
-          POSTGRES_PASSWORD: neos
-          POSTGRES_DB: flow_functional_testing
-        ports:
-          - "5432:5432"
-        options:  --health-cmd=pg_isready --health-interval=10s --health-timeout=5s --health-retries=3
       redis:
         image: redis:alpine
         ports:
@@ -101,149 +64,165 @@ jobs:
         image: memcached:alpine
         ports:
           - "11211:11211"
-        # options: --health-cmd "timeout 5 bash -c 'cat < /dev/null > /dev/udp/127.0.0.1/11211'" --health-interval 10s --health-timeout 5s --health-retries 5
-
-    env:
-      FLOW_CONTEXT: Testing
-      NEOS_DIST_FOLDER: neos-development-distribution
-      NEOS_FOLDER: neos-development-collection
-
     defaults:
       run:
         working-directory: ${{ env.NEOS_DIST_FOLDER }}
-
     steps:
-      - name: Set Neos target branch name
-        run: echo "NEOS_TARGET_VERSION=${GITHUB_BASE_REF:-${GITHUB_REF#refs/heads/}}" >> $GITHUB_ENV
-        working-directory: .
+      # Local composite actions are resolved from the workspace root, so the
+      # workflow's own repository must be checked out before `prepare-neos` runs.
+      - name: Checkout workflow repository
+        uses: actions/checkout@v5
 
-      - name: Checkout
-        uses: actions/checkout@v4
+      - uses: ./.github/actions/prepare-neos
         with:
-          path: ${{ env.NEOS_FOLDER }}
-
-      - name: Setup PHP
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: ${{ matrix.php-versions }}
-          extensions: mbstring, xml, json, zlib, iconv, intl, pdo_sqlite, mysql, pgsql, redis, memcached, memcache, apcu
-          coverage: xdebug #optional
-          ini-values: date.timezone="Africa/Tunis", opcache.fast_shutdown=0, apc.enable_cli=on
-
-      - name: Checkout development distribution
-        uses: actions/checkout@v4
-        with:
-          repository: neos/neos-development-distribution
-          ref: ${{ env.NEOS_TARGET_VERSION }}
-          path: ${{ env.NEOS_DIST_FOLDER }}
-
-      - name: Set alias branch name
-        run: if [ "${NEOS_TARGET_VERSION}" == "master" ]; then echo "NEOS_BRANCH_ALIAS=dev-master"; else echo "NEOS_BRANCH_ALIAS=${NEOS_TARGET_VERSION}.x-dev"; fi >> $GITHUB_ENV
-
-      - name: Update composer.json
-        run: |
-          git -C ../${{ env.NEOS_FOLDER }} checkout -b build
-          composer config repositories.neos '{ "type": "path", "url": "../${{ env.NEOS_FOLDER }}", "options": { "symlink": false } }'
-          composer require --no-update neos/neos-development-collection:"dev-build as ${{ env.NEOS_BRANCH_ALIAS }}"
-
-      - name: Cache Composer packages
-        id: composer-cache
-        uses: actions/cache@v4
-        with:
-          path: |
-            ~/.cache/composer
-            ${{ env.NEOS_DIST_FOLDER }}/Packages
-          key: php-${{ matrix.php-versions }}-${{ matrix.dependencies }}${{ hashFiles('**/composer.json') }}
-          restore-keys: php-${{ matrix.php-versions }}-${{ matrix.dependencies }}
-
-      - name: Install dependencies
-        run: |
-          composer ${{ matrix.dependencies == 'locked' && 'install' || 'update' }} --no-progress --no-interaction ${{ matrix.dependencies == 'lowest' && '--prefer-lowest' || '' }} ${{ matrix.composer-arguments }}
-
-      - name: Set Flow Context
-        run: echo "FLOW_CONTEXT=${{ env.FLOW_CONTEXT }}" >> $GITHUB_ENV
-
-      - name: Setup Flow configuration
-        if: matrix.static-analysis == 'no'
-        run: |
-          rm -f Configuration/Routes.yaml
-          rm -f Configuration/Testing/Settings.yaml
-          cat <<EOF >> Configuration/Testing/Settings.yaml
-          Neos:
-            Flow:
-              persistence:
-                backendOptions:
-                  host: '127.0.0.1'
-                  port: ${{ matrix.mysqlport }}
-                  driver: pdo_mysql
-                  user: 'neos'
-                  password: 'neos'
-                  dbname: 'flow_functional_testing'
-              mvc:
-                routes:
-                  'Neos.Flow': TRUE
-          EOF
-          echo "Running in context '$FLOW_CONTEXT'"
-          ./flow configuration:show
-          ./flow routing:list
-
-      - name: Static analysis
-        if: matrix.static-analysis == 'yes'
-        run: cd Packages/Neos && composer lint:phpstan
+          php-version: ${{ matrix.php }}
+          dependencies: ${{ matrix.dependencies || 'highest' }}
+          collection-path: ${{ env.NEOS_FOLDER }}
+          distribution-path: ${{ env.NEOS_DIST_FOLDER }}
 
       - name: Run unit tests
-        if: matrix.static-analysis == 'no'
         run: bin/phpunit --colors -c Build/BuildEssentials/PhpUnit/UnitTests.xml --verbose
+
+  functional-tests:
+    permissions:
+      contents: read # to fetch code (actions/checkout)
+    if: "!contains(github.event.head_commit.message, '[skip ci]')"
+    name: "Functional tests (PHP ${{ matrix.php }}, ${{ matrix.db.image }})"
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        php: ['8.2', '8.3', '8.4', '8.5']
+        db:
+          - { engine: mysql, image: 'mariadb:10.6', port: 3306, options: '--health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3' }
+          - { engine: pgsql, image: 'postgres:14-alpine', port: 5432, options: '--health-cmd=pg_isready --health-interval=10s --health-timeout=5s --health-retries=3' }
+        include:
+          # Additional MySQL engines.
+          - { php: '8.4', db: { engine: mysql, image: 'mysql:8.0', port: 3306, options: '--health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3' } }
+          - { php: '8.4', db: { engine: mysql, image: 'mysql:8.4', port: 3306, options: '--health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3' } }
+          # Bleeding-edge engines.
+          # TODO: Enable MariaDB 12 after fixing migrations
+          # - { php: '8.5', db: { engine: mysql, image: 'mariadb:12.2', port: 3306, options: '--health-cmd="healthcheck.sh --connect --innodb_initialized" --health-interval=10s --health-timeout=5s --health-retries=3' } }
+          - { php: '8.5', db: { engine: pgsql, image: 'postgres:18-alpine', port: 5432, options: '--health-cmd=pg_isready --health-interval=10s --health-timeout=5s --health-retries=3' } }
+    services:
+      database:
+        image: ${{ matrix.db.image }}
+        env:
+          MYSQL_USER: neos
+          MYSQL_PASSWORD: neos
+          MYSQL_DATABASE: flow_functional_testing
+          MYSQL_ROOT_PASSWORD: neos
+          POSTGRES_USER: neos
+          POSTGRES_PASSWORD: neos
+          POSTGRES_DB: flow_functional_testing
+        ports:
+          - "${{ matrix.db.port }}:${{ matrix.db.port }}"
+        options: ${{ matrix.db.options }}
+      redis:
+        image: redis:alpine
+        ports:
+          - "6379:6379"
+        options: --health-cmd "redis-cli ping" --health-interval 10s --health-timeout 5s --health-retries 5
+      memcached:
+        image: memcached:alpine
+        ports:
+          - "11211:11211"
+    defaults:
+      run:
+        working-directory: ${{ env.NEOS_DIST_FOLDER }}
+    steps:
+      # Local composite actions are resolved from the workspace root, so the
+      # workflow's own repository must be checked out before `prepare-neos` runs.
+      - name: Checkout workflow repository
+        uses: actions/checkout@v5
+
+      - uses: ./.github/actions/prepare-neos
+        with:
+          php-version: ${{ matrix.php }}
+          dependencies: ${{ matrix.dependencies || 'highest' }}
+          collection-path: ${{ env.NEOS_FOLDER }}
+          distribution-path: ${{ env.NEOS_DIST_FOLDER }}
+
+      - uses: ./.github/actions/configure-neos
+        with:
+          db-engine: ${{ matrix.db.engine }}
+          db-port: ${{ matrix.db.port }}
+          working-directory: ${{ env.NEOS_DIST_FOLDER }}
+          flow-context: ${{ env.FLOW_CONTEXT }}
 
       - name: Run migrations to test if they work
         run: FLOW_CONTEXT=Testing ./flow doctrine:migrate
 
       - name: Run functional tests
-        if: matrix.static-analysis == 'no'
         run: bin/phpunit --colors --stop-on-failure -c Build/BuildEssentials/PhpUnit/FunctionalTests.xml --testsuite "Neos tests" --verbose
+
+  behavioral-tests:
+    permissions:
+      contents: read # to fetch code (actions/checkout)
+    if: "!contains(github.event.head_commit.message, '[skip ci]')"
+    name: "Behavioral tests (PHP ${{ matrix.php }}, ${{ matrix.db.image }})"
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        php: ['8.2', '8.3', '8.4', '8.5']
+        db:
+          - { engine: mysql, image: 'mariadb:10.6', port: 3306, options: '--health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3' }
+          - { engine: pgsql, image: 'postgres:14-alpine', port: 5432, options: '--health-cmd=pg_isready --health-interval=10s --health-timeout=5s --health-retries=3' }
+        include:
+          # Additional MySQL engines.
+          - { php: '8.4', db: { engine: mysql, image: 'mysql:8.0', port: 3306, options: '--health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3' } }
+          - { php: '8.4', db: { engine: mysql, image: 'mysql:8.4', port: 3306, options: '--health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3' } }
+          # Bleeding-edge engines.
+          - { php: '8.5', db: { engine: mysql, image: 'mariadb:12.2', port: 3306, options: '--health-cmd="healthcheck.sh --connect --innodb_initialized" --health-interval=10s --health-timeout=5s --health-retries=3' } }
+          - { php: '8.5', db: { engine: pgsql, image: 'postgres:18-alpine', port: 5432, options: '--health-cmd=pg_isready --health-interval=10s --health-timeout=5s --health-retries=3' } }
+    services:
+      database:
+        image: ${{ matrix.db.image }}
+        env:
+          MYSQL_USER: neos
+          MYSQL_PASSWORD: neos
+          MYSQL_DATABASE: flow_functional_testing
+          MYSQL_ROOT_PASSWORD: neos
+          POSTGRES_USER: neos
+          POSTGRES_PASSWORD: neos
+          POSTGRES_DB: flow_functional_testing
+        ports:
+          - "${{ matrix.db.port }}:${{ matrix.db.port }}"
+        options: ${{ matrix.db.options }}
+      redis:
+        image: redis:alpine
+        ports:
+          - "6379:6379"
+        options: --health-cmd "redis-cli ping" --health-interval 10s --health-timeout 5s --health-retries 5
+      memcached:
+        image: memcached:alpine
+        ports:
+          - "11211:11211"
+    defaults:
+      run:
+        working-directory: ${{ env.NEOS_DIST_FOLDER }}
+    steps:
+      # Local composite actions are resolved from the workspace root, so the
+      # workflow's own repository must be checked out before `prepare-neos` runs.
+      - name: Checkout workflow repository
+        uses: actions/checkout@v5
+
+      - uses: ./.github/actions/prepare-neos
+        with:
+          php-version: ${{ matrix.php }}
+          dependencies: ${{ matrix.dependencies || 'highest' }}
+          collection-path: ${{ env.NEOS_FOLDER }}
+          distribution-path: ${{ env.NEOS_DIST_FOLDER }}
+
+      - uses: ./.github/actions/configure-neos
+        with:
+          db-engine: ${{ matrix.db.engine }}
+          db-port: ${{ matrix.db.port }}
+          working-directory: ${{ env.NEOS_DIST_FOLDER }}
+          flow-context: ${{ env.FLOW_CONTEXT }}
 
       - name: Run behat tests
-        if: matrix.static-analysis == 'no'
-        #if: env.BEHAT == true
-        run: |
-          FLOW_CONTEXT=Testing/Behat ./flow doctrine:create
-          FLOW_CONTEXT=Testing/Behat ./flow doctrine:migrationversion --add --version all
-          bin/behat --stop-on-failure -f progress -c Packages/Neos/Neos.Neos/Tests/Behavior/behat.yml.dist --tags ~@browser
-          bin/behat --stop-on-failure -f progress -c Packages/Neos/Neos.ContentRepository/Tests/Behavior/behat.yml.dist
-
-      - name: Setup Flow configuration (PGSQL)
-        run: |
-          rm -f Configuration/Testing/Settings.yaml
-          cat <<EOF >> Configuration/Testing/Settings.yaml
-          Neos:
-            Flow:
-              persistence:
-                backendOptions:
-                  host: '127.0.0.1'
-                  port: 5432
-                  driver: pdo_pgsql
-                  user: 'neos'
-                  password: 'neos'
-                  dbname: 'flow_functional_testing'
-                  charset: 'utf8'
-                  defaultTableOptions:
-                    charset: 'utf8'
-              mvc:
-                routes:
-                  'Neos.Flow': TRUE
-          EOF
-
-      - name: Run unit tests (PGSQL)
-        if: matrix.static-analysis == 'no'
-        run: bin/phpunit --colors -c Build/BuildEssentials/PhpUnit/UnitTests.xml --verbose
-
-      - name: Run functional tests (PGSQL)
-        if: matrix.static-analysis == 'no'
-        run: bin/phpunit --colors --stop-on-failure -c Build/BuildEssentials/PhpUnit/FunctionalTests.xml --testsuite "Neos tests" --verbose
-
-      - name: Run behat tests (PGSQL)
-        if: matrix.static-analysis == 'no'
-        #if: env.BEHAT == true
         run: |
           FLOW_CONTEXT=Testing/Behat ./flow doctrine:create
           FLOW_CONTEXT=Testing/Behat ./flow doctrine:migrationversion --add --version all
@@ -251,11 +230,11 @@ jobs:
           bin/behat --stop-on-failure -f progress -c Packages/Neos/Neos.ContentRepository/Tests/Behavior/behat.yml.dist
 
   buildall:
-    if: "!contains(github.event.head_commit.message, '[skip ci]') && !contains(github.event.head_commit.message, '[skip travis]')"
+    if: "!contains(github.event.head_commit.message, '[skip ci]')"
     runs-on: ubuntu-latest
     name: CI build (matrix)
-    needs: build
+    needs: [static-analysis, unit-tests, functional-tests, behavioral-tests]
     steps:
-      - name: Check build matrix status
-        if: ${{ needs.build.result != 'success' }}
+      - name: Check matrix status
+        if: ${{ contains(needs.*.result, 'failure') || contains(needs.*.result, 'cancelled') }}
         run: exit 1
