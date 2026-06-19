@@ -169,7 +169,7 @@ This would prefix existing value and then apply search/replace on the result:
         search: 'something'
         replace: 'something else'
 
-And in case your value contains the magic string "{current}" and you need to leav it intact, this would prefix the existing
+And in case your value contains the magic string "{current}" and you need to leave it intact, this would prefix the existing
 value but use a different placeholder:
 
 .. code-block:: yaml
