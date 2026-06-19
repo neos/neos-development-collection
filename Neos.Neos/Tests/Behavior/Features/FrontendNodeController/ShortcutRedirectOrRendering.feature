@@ -167,7 +167,7 @@ Feature: Test the Fusion rendering for a request on a shortcut node
 
     More information and contribution opportunities at https://www.neos.io
     -->
-    <head><meta charset="UTF-8" /><title></title><link rel="stylesheet" href="http://localhost/_Resources/Testing/Static/Packages/Neos.Neos/Styles/Shortcut.css" /></head><body class><div id="neos-shortcut"><p>This is a shortcut to the first child page.<br />Click <a href="/neos/preview?node=%7B%22contentRepositoryId%22%3A%22default%22%2C%22workspaceName%22%3A%22user-workspace%22%2C%22dimensionSpacePoint%22%3A%5B%5D%2C%22aggregateId%22%3A%22first-child-node%22%7D">Node (first-child-node)</a> to continue to the page.</p></div></body></html>
+    <head><meta charset="UTF-8" /><title></title><link rel="stylesheet" href="http://localhost/_Resources/Testing/Static/Packages/Neos.Neos/Styles/BackendInformation.css" /></head><div id="neos-backend-information"><p>This is a shortcut to the first child page.<br />Click <a href="/neos/preview?node=%7B%22contentRepositoryId%22%3A%22default%22%2C%22workspaceName%22%3A%22user-workspace%22%2C%22dimensionSpacePoint%22%3A%5B%5D%2C%22aggregateId%22%3A%22first-child-node%22%7D">Node (first-child-node)</a> to continue to the page.</p></div><body class></body></html>
     """
 
     When I dispatch the following request "/neos/preview?node=%7B%22contentRepositoryId%22%3A%22default%22%2C%22workspaceName%22%3A%22user-workspace%22%2C%22dimensionSpacePoint%22%3A%7B%7D%2C%22aggregateId%22%3A%22shortcut-parent-node%22%7D"
