@@ -174,7 +174,7 @@ jobs:
           - { php: '8.4', db: { engine: mysql, image: 'mysql:8.0', port: 3306, options: '--health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3' } }
           - { php: '8.4', db: { engine: mysql, image: 'mysql:8.4', port: 3306, options: '--health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3' } }
           # Bleeding-edge engines.
-          - { php: '8.5', db: { engine: mysql, image: 'mariadb:12.2', port: 3306, options: '--health-cmd="healthcheck.sh --connect --innodb_initialized" --health-interval=10s --health-timeout=5s --health-retries=3' } }
+          - { php: '8.5', db: { engine: mysql, image: 'mariadb:12.2', port: 3306, options: '--health-cmd="healthcheck.sh --connect --innodb_initialized" --health-interval=10s --health-timeout=5s --health-retries=3' }, allowFailure: true }
     services:
       database:
         image: ${{ matrix.db.image }}
@@ -237,15 +237,21 @@ jobs:
           cd Packages/Neos
           composer test:parallel
 
-      - name: Fail pipeline if Parallel Tests broke
-        if: matrix.db.engine == 'mysql' && steps.paralleltests.outcome != 'success'
+      - name: Dump Parallel Test diagnostics
+        if: steps.paralleltests.outcome != 'success'
         shell: bash
         run: |
           cd Packages/Neos
-          cat Neos.ContentRepository.BehavioralTests/Tests/Parallel/log.txt
-          echo "\n\nDumping last 100 events\n\n"
-          mysql -u neos -pneos -h 127.0.0.1 -P ${{ matrix.db.port }} flow_functional_testing --table < <(echo "SELECT * FROM cr_test_parallel_events ORDER BY sequenceNumber DESC LIMIT 100")
-          exit 1
+          cat Neos.ContentRepository.BehavioralTests/Tests/Parallel/log.txt || true
+          if [ "${{ matrix.db.engine }}" = "mysql" ]; then
+            echo -e "\n\nDumping last 100 events\n\n"
+            mysql -u neos -pneos -h 127.0.0.1 -P ${{ matrix.db.port }} flow_functional_testing --table < <(echo "SELECT * FROM cr_test_parallel_events ORDER BY sequenceNumber DESC LIMIT 100")
+          fi
+
+      - name: Fail pipeline if Parallel Tests broke
+        if: steps.paralleltests.outcome != 'success' && matrix.allowFailure != true
+        shell: bash
+        run: exit 1
 
   behavioral-tests:
     permissions:
