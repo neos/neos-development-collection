@@ -1,0 +1,15 @@
+prototype(Neos.Neos:Document.BackendInformation) < prototype(Neos.Fusion:Component) {
+  content = null
+
+  renderer = Neos.Neos:Page {
+    head {
+      backend-information-css = afx`
+        <link rel="stylesheet" href={StaticResource.uri('Neos.Neos', 'Public/Styles/BackendInformation.css')} />
+      `
+    }
+
+    body = afx`
+      <div id="neos-backend-information">{props.content}</div>
+    `
+  }
+}
