@@ -3,9 +3,9 @@ name: build
 on:
   workflow_dispatch:
   push:
-    branches: [ master, '[0-9]+.[0-9]' ]
+    branches: [ '[0-9]+.[0-9]' ]
   pull_request:
-    branches: [ master, '[0-9]+.[0-9]' ]
+    branches: [ '[0-9]+.[0-9]' ]
 
 permissions: {}
 
@@ -165,6 +165,10 @@ jobs:
         db:
           - { engine: mysql, image: 'mariadb:10.8', port: 3306, options: '--health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3' }
           - { engine: pgsql, image: 'postgres:18.3', port: 5432, options: '--health-cmd=pg_isready --health-interval=10s --health-timeout=5s --health-retries=3' }
+        include:
+          # Additional MySQL engines on the most-supported PHP version.
+          - { php: '8.4', db: { engine: mysql, image: 'mysql:8.0', port: 3306, options: '--health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3' } }
+          - { php: '8.4', db: { engine: mysql, image: 'mysql:8.4', port: 3306, options: '--health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3' } }
     services:
       database:
         image: ${{ matrix.db.image }}
@@ -252,6 +256,10 @@ jobs:
         db:
           - { engine: mysql, image: 'mariadb:10.8', port: 3306, options: '--health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3' }
           - { engine: pgsql, image: 'postgres:18.3', port: 5432, options: '--health-cmd=pg_isready --health-interval=10s --health-timeout=5s --health-retries=3' }
+        include:
+          # Additional MySQL engines on the most-supported PHP version.
+          - { php: '8.4', db: { engine: mysql, image: 'mysql:8.0', port: 3306, options: '--health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3' } }
+          - { php: '8.4', db: { engine: mysql, image: 'mysql:8.4', port: 3306, options: '--health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3' } }
     services:
       database:
         image: ${{ matrix.db.image }}
