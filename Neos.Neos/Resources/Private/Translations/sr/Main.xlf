@@ -1040,7 +1040,7 @@
       </trans-unit>
       <trans-unit id="pathCaption" xml:space="preserve">
         <source>Path</source>
-        <target state="needs-translation">Путања</target>
+        <target state="needs-translation" state-qualifier="leveraged-mt">Путања</target>
       </trans-unit>
     </body>
   </file>
