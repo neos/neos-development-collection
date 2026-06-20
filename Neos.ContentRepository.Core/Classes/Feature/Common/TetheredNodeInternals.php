@@ -208,6 +208,7 @@ trait TetheredNodeInternals
             $this->getPropertyConverter()
         );
 
+        // NodeTypeChange is not allowed on root, thus we don't handle the empty dimension case
         $orderedAffectedOriginDimensionSpacePoints = $this->requireOrderedOriginDimensionSpacePoints($affectedOriginDimensionSpacePoints);
         $creationOrigin = null;
         foreach ($orderedAffectedOriginDimensionSpacePoints as $originDimensionSpacePoint) {
@@ -308,7 +309,8 @@ trait TetheredNodeInternals
         );
 
         # Handle property adjustments
-        foreach ($this->requireOrderedOriginDimensionSpacePoints($nodeAggregate->occupiedDimensionSpacePoints) as $originDimensionSpacePoint) {
+        $orderedOccupiedDimensionSpacePoints = $this->requireOrderedOccupiedDimensionSpacePoints($nodeAggregate);
+        foreach ($orderedOccupiedDimensionSpacePoints as $originDimensionSpacePoint) {
             $node = $nodeAggregate->getNodeByOccupiedDimensionSpacePoint($originDimensionSpacePoint);
 
             $presentPropertyKeys = array_keys(iterator_to_array($node->properties->serialized()));

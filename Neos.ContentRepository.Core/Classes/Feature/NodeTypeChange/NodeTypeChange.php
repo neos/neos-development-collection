@@ -213,7 +213,9 @@ trait NodeTypeChange
 
         # Handle property adjustments
         $newNodeType = $this->requireNodeType($command->newNodeTypeName);
-        foreach ($this->requireOrderedOriginDimensionSpacePoints($nodeAggregate->occupiedDimensionSpacePoints) as $originDimensionSpacePoint) {
+        // NodeTypeChange is not allowed on root, thus we don't handle the empty dimension case
+        $orderedOccupiedDimensionSpacePoints = $this->requireOrderedOriginDimensionSpacePoints($nodeAggregate->occupiedDimensionSpacePoints);
+        foreach ($orderedOccupiedDimensionSpacePoints as $originDimensionSpacePoint) {
             $node = $nodeAggregate->getNodeByOccupiedDimensionSpacePoint($originDimensionSpacePoint);
 
             $presentPropertyKeys = array_keys(iterator_to_array($node->properties->serialized()));

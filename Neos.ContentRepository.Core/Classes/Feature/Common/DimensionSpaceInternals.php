@@ -6,6 +6,7 @@ namespace Neos\ContentRepository\Core\Feature\Common;
 
 use Neos\ContentRepository\Core\DimensionSpace\Exception\DimensionSpacePointNotFound;
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePointSet;
+use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate;
 
 /**
  * @internal implementation details of command handlers
@@ -15,9 +16,20 @@ trait DimensionSpaceInternals
     /**
      * A node aggregate's order of {@see NodeAggregate::$occupiedDimensionSpacePoints} is undefined as returned from the database.
      * Before using this unorder to emit events we use the interdimensional variation graph to order them into a flattened tree according to configuration.
+     */
+    final protected function requireOrderedOccupiedDimensionSpacePoints(NodeAggregate $nodeAggregate): OriginDimensionSpacePointSet
+    {
+        if ($nodeAggregate->classification->isRoot()) {
+            /** Root nodes occupy @see OriginDimensionSpacePoint::createWithoutDimensions() which is not allowed in the subspace if other dimensions are defined */
+            return $nodeAggregate->occupiedDimensionSpacePoints;
+        }
+        return $this->requireOrderedOriginDimensionSpacePoints($nodeAggregate->occupiedDimensionSpacePoints);
+    }
+
+    /**
      * FIXME: This method might make sense on the InterDimensionVariationGraph but for this an explicit distinctions of unordered Set and List value objects for dimension space points is required. Currently we have Set value objects that _still_ have sometimes an order with meaning.
      */
-    protected function requireOrderedOriginDimensionSpacePoints(OriginDimensionSpacePointSet $affectedOriginDimensionSpacePoints): OriginDimensionSpacePointSet
+    final protected function requireOrderedOriginDimensionSpacePoints(OriginDimensionSpacePointSet $affectedOriginDimensionSpacePoints): OriginDimensionSpacePointSet
     {
         $allowedOrderedDimensionSpacePoints = $this->interDimensionalVariationGraph->getDimensionSpacePoints();
 

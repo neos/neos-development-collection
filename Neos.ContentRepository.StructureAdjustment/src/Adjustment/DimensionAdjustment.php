@@ -45,7 +45,7 @@ class DimensionAdjustment
             return [];
         }
         foreach ($this->contentGraph->findNodeAggregatesByType($nodeTypeName) as $nodeAggregate) {
-            $orderedOccupiedDimensionSpacePoints = $this->requireOrderedOriginDimensionSpacePoints($nodeAggregate->occupiedDimensionSpacePoints);
+            $orderedOccupiedDimensionSpacePoints = $this->requireOrderedOccupiedDimensionSpacePoints($nodeAggregate);
             foreach ($orderedOccupiedDimensionSpacePoints as $occupiedDimensionSpacePoint) {
                 foreach (
                     $nodeAggregate->getCoverageByOccupant(

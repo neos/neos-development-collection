@@ -45,7 +45,7 @@ class PropertyAdjustment
         $expectedPropertiesFromNodeType = array_filter($nodeType->getProperties(), fn ($value) => $value !== null);
 
         foreach ($this->contentGraph->findNodeAggregatesByType($nodeTypeName) as $nodeAggregate) {
-            $orderedOccupiedDimensionSpacePoints = $this->requireOrderedOriginDimensionSpacePoints($nodeAggregate->occupiedDimensionSpacePoints);
+            $orderedOccupiedDimensionSpacePoints = $this->requireOrderedOccupiedDimensionSpacePoints($nodeAggregate);
             foreach ($orderedOccupiedDimensionSpacePoints as $originDimensionSpacePoint) {
                 $node = $nodeAggregate->getNodeByOccupiedDimensionSpacePoint($originDimensionSpacePoint);
                 $propertyKeysInNode = [];
