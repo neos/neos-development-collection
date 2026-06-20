@@ -1,0 +1,74 @@
+name: 'Prepare Neos'
+description: 'Checkout Neos collection + distribution, set up PHP, install Composer dependencies'
+inputs:
+  php-version:
+    description: 'PHP version for shivammathur/setup-php'
+    required: true
+  dependencies:
+    description: 'Composer dependency strategy: highest | lowest | locked'
+    default: 'highest'
+  composer-arguments:
+    description: 'Extra composer arguments (e.g. --ignore-platform-reqs)'
+    default: ''
+  collection-path:
+    description: 'Directory the Neos development collection is checked out into'
+    default: 'neos-development-collection'
+  distribution-path:
+    description: 'Directory the Neos development distribution is checked out into'
+    default: 'neos-development-distribution'
+runs:
+  using: 'composite'
+  steps:
+    - name: Resolve Neos target branch name
+      id: neos
+      shell: bash
+      run: |
+        TARGET="${GITHUB_BASE_REF:-${GITHUB_REF#refs/heads/}}"
+        echo "target-version=${TARGET}" >> "$GITHUB_OUTPUT"
+        if [ "${TARGET}" == "master" ]; then
+          echo "branch-alias=dev-master" >> "$GITHUB_OUTPUT"
+        else
+          echo "branch-alias=${TARGET}.x-dev" >> "$GITHUB_OUTPUT"
+        fi
+
+    - name: Checkout collection
+      uses: actions/checkout@v5
+      with:
+        path: ${{ inputs.collection-path }}
+
+    - name: Setup PHP ${{ inputs.php-version }}
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: ${{ inputs.php-version }}
+        extensions: mbstring, xml, json, zlib, iconv, intl, pdo_sqlite, mysql, pgsql, redis, memcached, memcache, apcu
+        coverage: xdebug
+        ini-values: date.timezone="Africa/Tunis", opcache.fast_shutdown=0, apc.enable_cli=on
+
+    - name: Checkout development distribution
+      uses: actions/checkout@v5
+      with:
+        repository: neos/neos-development-distribution
+        ref: ${{ steps.neos.outputs.target-version }}
+        path: ${{ inputs.distribution-path }}
+
+    - name: Update composer.json
+      shell: bash
+      working-directory: ${{ inputs.distribution-path }}
+      run: |
+        git -C ../${{ inputs.collection-path }} checkout -b build
+        composer config repositories.neos '{ "type": "path", "url": "../${{ inputs.collection-path }}", "options": { "symlink": false } }'
+        composer require --no-update neos/neos-development-collection:"dev-build as ${{ steps.neos.outputs.branch-alias }}"
+
+    - name: Cache Composer packages
+      uses: actions/cache@v5
+      with:
+        path: |
+          ~/.cache/composer
+          ${{ inputs.distribution-path }}/Packages
+        key: php-${{ inputs.php-version }}-${{ inputs.dependencies }}${{ hashFiles('**/composer.json') }}
+        restore-keys: php-${{ inputs.php-version }}-${{ inputs.dependencies }}
+
+    - name: Install dependencies
+      shell: bash
+      working-directory: ${{ inputs.distribution-path }}
+      run: composer ${{ inputs.dependencies == 'locked' && 'install' || 'update' }} --no-progress --no-interaction ${{ inputs.dependencies == 'lowest' && '--prefer-lowest' || '' }} ${{ inputs.composer-arguments }}

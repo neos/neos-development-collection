@@ -18,7 +18,7 @@ use Neos\Media\Domain\Model\ImageInterface;
 /**
  * Validator that checks the orientation (square, portrait, landscape) of a given image.
  *
- * Supported validator options are (array)allowedOrientations with one or two out of 'square', 'landcape' or 'portrait'.
+ * Supported validator options are (array)allowedOrientations with one or two out of 'square', 'landscape' or 'portrait'.
  *
  * *Example*::
  *
@@ -33,7 +33,7 @@ class ImageOrientationValidator extends \Neos\Flow\Validation\Validator\Abstract
      * @var array
      */
     protected $supportedOptions = [
-        'allowedOrientations' => [[], 'Array of image orientations, one or two out of \'square\', \'landcape\' or \'portrait\'', 'array', true]
+        'allowedOrientations' => [[], 'Array of image orientations, one or two out of \'square\', \'landscape\' or \'portrait\'', 'array', true]
     ];
 
     /**
