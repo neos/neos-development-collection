@@ -16,6 +16,7 @@ use Behat\Gherkin\Node\PyStringNode;
 use Behat\Gherkin\Node\TableNode;
 use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\CRTestSuiteRuntimeVariables;
 use Neos\ContentRepositoryRegistry\Upgrade\Command\CRUpgradeContextFactory;
+use Neos\ContentRepositoryRegistry\Upgrade\EventsDuplicateContentStreamRemoval\EventsDuplicateContentStreamRemovalUpgrade;
 use Neos\ContentRepositoryRegistry\Upgrade\EventsRecordedAtToUtc\EventsRecordedAtToUtcUpgrade;
 use Neos\ContentRepositoryRegistry\Upgrade\Shared\CRUpgradeContext;
 use PHPUnit\Framework\Assert;
@@ -55,6 +56,21 @@ trait CrUpgradeTrait
     }
 
     /**
+     * @When I upgrade events duplicated content stream removals
+     */
+    public function iExecuteEventsDuplicateContentStreamRemovalUpgrade(): void
+    {
+        $upgrade = new EventsDuplicateContentStreamRemovalUpgrade(
+            $this->getCrUpgradeContext(),
+            $this->outputFn(...)
+        );
+
+        $upgrade->execute(
+            dryRun: false
+        );
+    }
+
+    /**
      * @AfterScenario
      */
     public function failIfUpgradeOutputNotAsserted(): void
@@ -88,6 +104,7 @@ trait CrUpgradeTrait
 
     /**
      * @Given I have the following raw events to upgrade:
+     * @Given I have the following additional raw events to upgrade:
      */
     public function iHaveTheFollowingRawEventsToUpgrade(TableNode $events)
     {
