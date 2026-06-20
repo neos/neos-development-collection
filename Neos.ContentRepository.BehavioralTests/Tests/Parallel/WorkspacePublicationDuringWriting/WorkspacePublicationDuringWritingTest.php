@@ -15,6 +15,7 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\BehavioralTests\Tests\Parallel\WorkspacePublicationDuringWriting;
 
 use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\Platforms\MariaDBPlatform;
 use Neos\ContentRepository\BehavioralTests\Tests\Parallel\AbstractParallelTestCase;
 use Neos\ContentRepository\BehavioralTests\TestSuite\DebugEventProjection;
 use Neos\ContentRepository\Core\ContentRepository;
@@ -75,6 +76,21 @@ class WorkspacePublicationDuringWritingTest extends AbstractParallelTestCase
                 ]
             ]
         ]);
+
+        $dbal = $this->objectManager->get(Connection::class);
+        if ($dbal->getDatabasePlatform() instanceof MariaDBPlatform) {
+            $version = $dbal->fetchOne('SELECT VERSION()');
+            if (str_starts_with($version, '12')) {
+                /**
+                 * Hack until https://github.com/neos/neos-development-collection/issues/5869 is fixed
+                 *
+                 * Mariadb 12 reports
+                 *
+                 * An exception occurred while executing a query: SQLSTATE[HY000]: General error: 1020 Record has changed since last read in table 'cr_test_parallel_p_graph_contentstream'
+                 */
+                \Neos\ContentRepository\Dbal\MysqlPlatformContentRepositoryLocker::enableForContentRepository(ContentRepositoryId::fromString('test_parallel'));
+            }
+        }
 
         $setupLockResource = fopen(self::SETUP_LOCK_PATH, 'w+');
 
