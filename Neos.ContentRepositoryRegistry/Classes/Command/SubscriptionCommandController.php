@@ -43,10 +43,11 @@ final class SubscriptionCommandController extends CommandController
      *
      * @param string $subscription Identifier of the subscription to replay like it was configured (e.g. "contentGraph", "Vendor.Package:YourProjection")
      * @param string $contentRepository Identifier of the Content Repository instance to operate on
+     * @param bool $skipCatchupHooks Replay the subscription without invoking any catchup hooks.
      * @param bool $force Replay the subscription without confirmation. This may take some time!
      * @param bool $quiet If set only fatal errors are rendered to the output (must be used with --force flag to avoid user input)
      */
-    public function replayCommand(string $subscription, string $contentRepository = 'default', bool $force = false, bool $quiet = false): void
+    public function replayCommand(string $subscription, string $contentRepository = 'default', bool $skipCatchupHooks = false, bool $force = false, bool $quiet = false): void
     {
         if ($quiet) {
             $this->output->getOutput()->setVerbosity(Output::VERBOSITY_QUIET);
@@ -56,7 +57,7 @@ final class SubscriptionCommandController extends CommandController
             $this->quit(1);
         }
 
-        if (!$force && !$this->output->askConfirmation(sprintf('> This will replay the subscription "%s" in "%s", which may take some time. Are you sure to proceed? (y/n) ', $subscription, $contentRepository), false)) {
+        if (!$force && !$this->output->askConfirmation(sprintf('> This will replay the subscription "%s"%s in "%s", which may take some time. Are you sure to proceed? (y/n) ', $subscription, $skipCatchupHooks ? ' - without invoking its catchup hooks -' : '', $contentRepository), false)) {
             $this->outputLine('<comment>Abort.</comment>');
             return;
         }
@@ -73,7 +74,7 @@ final class SubscriptionCommandController extends CommandController
             $progressCallback = fn () => $this->output->progressAdvance();
         }
 
-        $result = $contentRepositoryMaintainer->replaySubscription(SubscriptionId::fromString($subscription), progressCallback: $progressCallback);
+        $result = $contentRepositoryMaintainer->replaySubscription(SubscriptionId::fromString($subscription), progressCallback: $progressCallback, skipCatchupHooks: $skipCatchupHooks);
 
         if (!$quiet) {
             $this->output->progressFinish();
