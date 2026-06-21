@@ -52,8 +52,6 @@ Feature: Update Root Node aggregate dimensions
       | contentStreamId             | "cs-identifier"                                         |
       | nodeAggregateId             | "lady-eleonode-rootford"                                |
       | coveredDimensionSpacePoints | [{"language":"fr"},{"language":"de"},{"language":"en"}] |
-    And event metadata at index 1 is:
-      | Key | Expected |
 
     Then I expect the node aggregate "lady-eleonode-rootford" to exist
     And I expect this node aggregate to be classified as "root"
