@@ -19,39 +19,11 @@ final class QueryBuilder extends DBALQueryBuilder
     }
 
     /**
-     * Extends {@see DBALQueryBuilder::setParameters()} to allow merging
-     *
-     * @return $this This QueryBuilder instance.
-     */
-    public function mergeParameters(Parameters $parameters): self
-    {
-        $this->mergeDbalParameters(
-            $parameters->toDbalValues(),
-            $parameters->toDbalTypes(),
-        );
-        return $this;
-    }
-
-    /**
-     * Extends {@see DBALQueryBuilder::setParameters()} to allow merging
-     *
-     * @return $this This QueryBuilder instance.
-     */
-    public function mergeParametersFromBuilder(QueryBuilder $queryBuilder): self
-    {
-        $this->mergeDbalParameters(
-            $queryBuilder->getParameters(),
-            $queryBuilder->getParameterTypes(),
-        );
-        return $this;
-    }
-
-    /**
      * Extends {@see DBALQueryBuilder::from()} to allow to specify parameters for the subquery
      *
      * @return $this This QueryBuilder instance.
      */
-    public function fromWithStatement(SqlTableSubqueryInterface $fromStatement, string $alias): self
+    public function fromTableSubquery(SqlTableSubqueryInterface $fromStatement, string $alias): self
     {
         $this->mergeParameters($fromStatement->getParameters());
 
@@ -68,7 +40,7 @@ final class QueryBuilder extends DBALQueryBuilder
      *
      * @return $this This QueryBuilder instance.
      */
-    public function innerJoinWithStatement(string $fromAlias, SqlTableSubqueryInterface $joinStatement, string $alias, ?string $condition = null): self
+    public function innerJoinTableSubquery(string $fromAlias, SqlTableSubqueryInterface $joinStatement, string $alias, ?string $condition = null): self
     {
         $this->mergeParameters($joinStatement->getParameters());
 
@@ -112,6 +84,34 @@ final class QueryBuilder extends DBALQueryBuilder
             $whereCondition->toWhereSql($alias)
         );
 
+        return $this;
+    }
+
+    /**
+     * Extends {@see DBALQueryBuilder::setParameters()} to allow merging
+     *
+     * @return $this This QueryBuilder instance.
+     */
+    public function mergeParameters(Parameters $parameters): self
+    {
+        $this->mergeDbalParameters(
+            $parameters->toDbalValues(),
+            $parameters->toDbalTypes(),
+        );
+        return $this;
+    }
+
+    /**
+     * Extends {@see DBALQueryBuilder::setParameters()} to allow merging
+     *
+     * @return $this This QueryBuilder instance.
+     */
+    public function mergeParametersFromBuilder(QueryBuilder $queryBuilder): self
+    {
+        $this->mergeDbalParameters(
+            $queryBuilder->getParameters(),
+            $queryBuilder->getParameterTypes(),
+        );
         return $this;
     }
 
