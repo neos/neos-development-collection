@@ -9,12 +9,12 @@ use Doctrine\DBAL\ParameterType;
 use Neos\ContentGraph\DoctrineDbalAdapter\ContentGraphTableNames;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\ContentStreamLayers;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\NodeRelationAnchorPoint;
-use Neos\ContentGraph\DoctrineDbalAdapter\HierarchyRelationStatement;
+use Neos\ContentGraph\DoctrineDbalAdapter\HierarchyRelationSubquery;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
 use PHPUnit\Framework\TestCase;
 
-class HierarchyRelationStatementTest extends TestCase
+class HierarchyRelationSubqueryTest extends TestCase
 {
     private ContentGraphTableNames $tableNames;
 
@@ -26,7 +26,7 @@ class HierarchyRelationStatementTest extends TestCase
     /** @test */
     public function onlyWithSingleLayer()
     {
-        $hierarchyRelationStatement = HierarchyRelationStatement::create($this->tableNames, ContentStreamLayers::fromArray([1]));
+        $hierarchyRelationStatement = HierarchyRelationSubquery::create($this->tableNames, ContentStreamLayers::fromArray([1]));
 
         self::assertSame(
             ['contentStreamLayers' => [1]],
@@ -58,7 +58,7 @@ class HierarchyRelationStatementTest extends TestCase
     /** @test */
     public function withSingleDimensionSpacePoint()
     {
-        $hierarchyRelationStatement = HierarchyRelationStatement::create($this->tableNames, ContentStreamLayers::fromArray([1, 3]))
+        $hierarchyRelationStatement = HierarchyRelationSubquery::create($this->tableNames, ContentStreamLayers::fromArray([1, 3]))
             ->withDimensionSpacePoint(DimensionSpacePoint::createWithoutDimensions());
 
         self::assertSame(
@@ -102,7 +102,7 @@ class HierarchyRelationStatementTest extends TestCase
     /** @test */
     public function withSingleDimensionSpacePointAndChildNodeAnchor()
     {
-        $hierarchyRelationStatement = HierarchyRelationStatement::create($this->tableNames, ContentStreamLayers::fromArray([1, 3]))
+        $hierarchyRelationStatement = HierarchyRelationSubquery::create($this->tableNames, ContentStreamLayers::fromArray([1, 3]))
             ->withDimensionSpacePoint(DimensionSpacePoint::createWithoutDimensions())
             ->withChildNodeRelationAnchor(NodeRelationAnchorPoint::fromInteger(22));
 
@@ -151,7 +151,7 @@ class HierarchyRelationStatementTest extends TestCase
     /** @test */
     public function withArbitraryWhereClause()
     {
-        $hierarchyRelationStatement = HierarchyRelationStatement::create($this->tableNames, ContentStreamLayers::fromArray([1]))
+        $hierarchyRelationStatement = HierarchyRelationSubquery::create($this->tableNames, ContentStreamLayers::fromArray([1]))
             ->andWhere('h.subtreetag = :myOwnParameter');
 
         self::assertSame(
@@ -185,7 +185,7 @@ class HierarchyRelationStatementTest extends TestCase
     /** @test */
     public function withArbitraryInnerWhereClause()
     {
-        $hierarchyRelationStatement = HierarchyRelationStatement::create($this->tableNames, ContentStreamLayers::fromArray([1]))
+        $hierarchyRelationStatement = HierarchyRelationSubquery::create($this->tableNames, ContentStreamLayers::fromArray([1]))
             ->andInnerWhereRelationIdMatches('h.childnodeanchor = :originalNodeAnchor OR h.parentnodeanchor = :originalNodeAnchor');
 
         self::assertSame(

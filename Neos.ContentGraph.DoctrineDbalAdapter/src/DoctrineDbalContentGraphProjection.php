@@ -91,7 +91,7 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
 
     public const RELATION_DEFAULT_OFFSET = 128;
 
-    private StatementFactory $statements;
+    private SqlTableSubqueryFactory $subqueries;
 
     public function __construct(
         private readonly Connection $dbal,
@@ -102,7 +102,7 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
         private readonly ContentStreamLayerFinder $contentStreamLayerFinder,
         private readonly ContentGraphReadModelInterface $contentGraphReadModel
     ) {
-        $this->statements = StatementFactory::for($this->tableNames);
+        $this->subqueries = SqlTableSubqueryFactory::for($this->tableNames);
     }
 
     public function setUp(): void
@@ -437,7 +437,7 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
         $this->dimensionSpacePointsRepository->insertDimensionSpacePoint($event->target);
 
         // 1) hierarchy relations
-        $hierarchyStatement = $this->statements->forHierarchyRelation($contentStreamLayers)->withDimensionSpacePoint($event->source);
+        $hierarchyStatement = $this->subqueries->forHierarchyRelation($contentStreamLayers)->withDimensionSpacePoint($event->source);
         $insertHierarchyRelationsStatement = <<<SQL
             INSERT INTO {$this->tableNames->hierarchyRelation()} (
               contentstreamlayer,
@@ -479,7 +479,7 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
         // hierarchy relations for this query. Then, we update the Hierarchy Relations.
 
         // 1) originDimensionSpacePoint on Node
-        $hierarchyStatement = $this->statements->forHierarchyRelation($contentStreamLayers)->withDimensionSpacePoint($event->source);
+        $hierarchyStatement = $this->subqueries->forHierarchyRelation($contentStreamLayers)->withDimensionSpacePoint($event->source);
         $selectRelationsStatement = <<<SQL
             SELECT n.relationanchorpoint
             FROM {$this->tableNames->node()} n
@@ -511,7 +511,7 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
         }
 
         // 2) hierarchy relations
-        $hierarchyStatement = $this->statements->forHierarchyRelation($contentStreamLayers)->withDimensionSpacePoint($event->source);
+        $hierarchyStatement = $this->subqueries->forHierarchyRelation($contentStreamLayers)->withDimensionSpacePoint($event->source);
         $updateHierarchyRelationsStatement = <<<SQL
             INSERT INTO {$this->tableNames->hierarchyRelation()}
             (
@@ -937,7 +937,7 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
 
             // 2) reconnect all edges belonging to this content stream to the new "copied node".
             // IMPORTANT: We need to reconnect BOTH the incoming and outgoing edges.
-            $hierarchyStatement = $this->statements->forHierarchyRelation($contentStreamLayersWhereWriteOccurs);
+            $hierarchyStatement = $this->subqueries->forHierarchyRelation($contentStreamLayersWhereWriteOccurs);
             $copyHierarchyRelationStatement = <<<SQL
                 INSERT INTO {$this->tableNames->hierarchyRelation()} (
                   id,

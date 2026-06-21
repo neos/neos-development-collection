@@ -18,8 +18,8 @@ use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Exception as DBALException;
 use Neos\ContentGraph\DoctrineDbalAdapter\ContentGraphTableNames;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\ContentStreamLayerFinder;
-use Neos\ContentGraph\DoctrineDbalAdapter\HierarchyRelationStatement;
-use Neos\ContentGraph\DoctrineDbalAdapter\StatementFactory;
+use Neos\ContentGraph\DoctrineDbalAdapter\HierarchyRelationSubquery;
+use Neos\ContentGraph\DoctrineDbalAdapter\SqlTableSubqueryFactory;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ProjectionIntegrityViolationDetectorInterface;
@@ -36,7 +36,7 @@ use Neos\Error\Messages\Result;
  */
 final class ProjectionIntegrityViolationDetector implements ProjectionIntegrityViolationDetectorInterface
 {
-    private readonly StatementFactory $statements;
+    private readonly SqlTableSubqueryFactory $subqueries;
 
     private readonly ContentStreamLayerFinder $contentStreamLayerFinder;
 
@@ -44,7 +44,7 @@ final class ProjectionIntegrityViolationDetector implements ProjectionIntegrityV
         private readonly Connection $dbal,
         private readonly ContentGraphTableNames $tableNames,
     ) {
-        $this->statements = StatementFactory::for($this->tableNames);
+        $this->subqueries = SqlTableSubqueryFactory::for($this->tableNames);
         $this->contentStreamLayerFinder = new ContentStreamLayerFinder($this->dbal, $tableNames);
     }
 
@@ -444,7 +444,7 @@ final class ProjectionIntegrityViolationDetector implements ProjectionIntegrityV
         }
 
         foreach ($referenceRelationRecordsWithInvalidTarget as $record) {
-            $hierarchyStatement = $this->statements->forHierarchyRelation(
+            $hierarchyStatement = $this->subqueries->forHierarchyRelation(
                 $this->contentStreamLayerFinder->getContentStreamLayers(
                     ContentStreamId::fromString($record['contentstreamid'])
                 )
@@ -499,7 +499,7 @@ final class ProjectionIntegrityViolationDetector implements ProjectionIntegrityV
 
         foreach ($this->findProjectedContentStreamLayers() as $contentStreamLayers) {
             foreach ($this->findProjectedDimensionSpacePoints() as $dimensionSpacePoint) {
-                $hierarchyStatement = $this->statements->forHierarchyRelation($contentStreamLayers)->withDimensionSpacePoint($dimensionSpacePoint);
+                $hierarchyStatement = $this->subqueries->forHierarchyRelation($contentStreamLayers)->withDimensionSpacePoint($dimensionSpacePoint);
                 $nodeAggregateIdsInCyclesStatement = <<<SQL
                     WITH RECURSIVE subgraph AS (
                         SELECT
@@ -569,7 +569,7 @@ final class ProjectionIntegrityViolationDetector implements ProjectionIntegrityV
 
         foreach ($this->findProjectedContentStreamLayers() as $contentStreamLayers) {
             foreach ($this->findProjectedDimensionSpacePoints() as $dimensionSpacePoint) {
-                $hierarchyStatement = $this->statements->forHierarchyRelation($contentStreamLayers)->withDimensionSpacePoint($dimensionSpacePoint);
+                $hierarchyStatement = $this->subqueries->forHierarchyRelation($contentStreamLayers)->withDimensionSpacePoint($dimensionSpacePoint);
                 $ambiguousNodeAggregatesStatement = <<<SQL
                     SELECT
                         n.nodeaggregateid, COUNT(n.relationanchorpoint)
@@ -610,7 +610,7 @@ final class ProjectionIntegrityViolationDetector implements ProjectionIntegrityV
 
         foreach ($this->findProjectedContentStreamLayers() as $contentStreamLayers) {
             foreach ($this->findProjectedDimensionSpacePoints() as $dimensionSpacePoint) {
-                $hierarchyStatement = $this->statements->forHierarchyRelation($contentStreamLayers)->withDimensionSpacePoint($dimensionSpacePoint);
+                $hierarchyStatement = $this->subqueries->forHierarchyRelation($contentStreamLayers)->withDimensionSpacePoint($dimensionSpacePoint);
                 $nodeRecordsWithMultipleParentsStatement = <<<SQL
                     SELECT
                         c.nodeaggregateid
@@ -655,7 +655,7 @@ final class ProjectionIntegrityViolationDetector implements ProjectionIntegrityV
                     $contentStreamLayers
                 ) as $nodeAggregateId
             ) {
-                $allHierarchyStatement = $this->statements->forHierarchyRelation($contentStreamLayers);
+                $allHierarchyStatement = $this->subqueries->forHierarchyRelation($contentStreamLayers);
                 $nodeAggregatesStatement = <<<SQL
                     SELECT
                         DISTINCT n.nodetypename
@@ -700,7 +700,7 @@ final class ProjectionIntegrityViolationDetector implements ProjectionIntegrityV
                     $contentStreamLayers
                 ) as $nodeAggregateId
             ) {
-                $allHierarchyStatement = $this->statements->forHierarchyRelation($contentStreamLayers);
+                $allHierarchyStatement = $this->subqueries->forHierarchyRelation($contentStreamLayers);
                 $nodeAggregatesStatement = <<<SQL
                     SELECT
                         DISTINCT n.classification
@@ -740,7 +740,7 @@ final class ProjectionIntegrityViolationDetector implements ProjectionIntegrityV
     {
         $result = new Result();
         foreach ($this->findProjectedContentStreamLayers() as $contentStreamLayers) {
-            $allHierarchyStatement = $this->statements->forHierarchyRelation($contentStreamLayers);
+            $allHierarchyStatement = $this->subqueries->forHierarchyRelation($contentStreamLayers);
             $excessivelyCoveringStatement = <<<SQL
                 SELECT
                     n.nodeaggregateid, c.dimensionspacepointhash
@@ -779,7 +779,7 @@ final class ProjectionIntegrityViolationDetector implements ProjectionIntegrityV
     {
         $result = new Result();
         foreach ($this->findProjectedContentStreamLayers() as $contentStreamLayers) {
-            $allHierarchyStatement = $this->statements->forHierarchyRelation($contentStreamLayers);
+            $allHierarchyStatement = $this->subqueries->forHierarchyRelation($contentStreamLayers);
             $nodesWithMissingOriginCoverageStatement = <<<SQL
                 SELECT
                     nodeaggregateid, origindimensionspacepointhash
@@ -871,7 +871,7 @@ final class ProjectionIntegrityViolationDetector implements ProjectionIntegrityV
     protected function findProjectedNodeAggregateIdsInContentStream(
         ContentStreamLayers $contentStreamLayers
     ): array {
-        $allHierarchyStatement = $this->statements->forHierarchyRelation($contentStreamLayers);
+        $allHierarchyStatement = $this->subqueries->forHierarchyRelation($contentStreamLayers);
         $nodeAggregateIdsStatement = <<<SQL
             SELECT
                 DISTINCT n.nodeaggregateid
@@ -893,7 +893,7 @@ final class ProjectionIntegrityViolationDetector implements ProjectionIntegrityV
 
     private function allContentStreamHierarchiesSql(): string
     {
-        /** See also {@see HierarchyRelationStatement::toSql()} to select the hierarchies for a single content stream */
+        /** See also {@see HierarchyRelationSubquery::toSql()} to select the hierarchies for a single content stream */
         return <<<SQL
         (SELECT
             h.*,

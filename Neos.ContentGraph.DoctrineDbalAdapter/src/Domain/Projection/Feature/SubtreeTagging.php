@@ -25,8 +25,8 @@ trait SubtreeTagging
 {
     private function addSubtreeTag(ContentStreamLayers $contentStreamLayers, NodeAggregateId $nodeAggregateId, DimensionSpacePointSet $affectedDimensionSpacePoints, SubtreeTag $tag): void
     {
-        $allHierarchyStatement = $this->statements->forHierarchyRelation($contentStreamLayers);
-        $hierarchyStatementNested = $this->statements->forHierarchyRelation($contentStreamLayers)
+        $allHierarchyStatement = $this->subqueries->forHierarchyRelation($contentStreamLayers);
+        $hierarchyStatementNested = $this->subqueries->forHierarchyRelation($contentStreamLayers)
             ->withDimensionSpacePoints($affectedDimensionSpacePoints)
             ->andWhere("NOT JSON_CONTAINS_PATH(h.subtreetags, 'one', :tagPath)");
 
@@ -96,7 +96,7 @@ trait SubtreeTagging
             throw new \RuntimeException(sprintf('1: Failed to add subtree tag %s for content stream %s, node aggregate id %s and dimension space points %s: %s', $tag->value, $contentStreamLayers->toDebugString(), $nodeAggregateId->value, $affectedDimensionSpacePoints->toJson(), $e->getMessage()), 1716479749, $e);
         }
 
-        $hierarchyStatement = $this->statements->forHierarchyRelation($contentStreamLayers)->withDimensionSpacePoints($affectedDimensionSpacePoints);
+        $hierarchyStatement = $this->subqueries->forHierarchyRelation($contentStreamLayers)->withDimensionSpacePoints($affectedDimensionSpacePoints);
         $addTagToNodeStatement = <<<SQL
             INSERT INTO {$this->tableNames->hierarchyRelation()} (
               id,
@@ -138,8 +138,8 @@ trait SubtreeTagging
 
     private function removeSubtreeTag(ContentStreamLayers $contentStreamLayers, NodeAggregateId $nodeAggregateId, DimensionSpacePointSet $affectedDimensionSpacePoints, SubtreeTag $tag): void
     {
-        $allHierarchyStatement = $this->statements->forHierarchyRelation($contentStreamLayers);
-        $nestedHierarchyStatement = $this->statements->forHierarchyRelation($contentStreamLayers)->withDimensionSpacePoints($affectedDimensionSpacePoints);
+        $allHierarchyStatement = $this->subqueries->forHierarchyRelation($contentStreamLayers);
+        $nestedHierarchyStatement = $this->subqueries->forHierarchyRelation($contentStreamLayers)->withDimensionSpacePoints($affectedDimensionSpacePoints);
         $removeTagStatement = <<<SQL
             INSERT INTO {$this->tableNames->hierarchyRelation()} (
               id,
@@ -227,7 +227,7 @@ trait SubtreeTagging
 
     private function moveSubtreeTags(ContentStreamLayers $contentStreamLayers, NodeAggregateId $newParentNodeAggregateId, DimensionSpacePoint $coveredDimensionSpacePoint): void
     {
-        $hierarchyStatement = $this->statements->forHierarchyRelation($contentStreamLayers)->withDimensionSpacePoint($coveredDimensionSpacePoint);
+        $hierarchyStatement = $this->subqueries->forHierarchyRelation($contentStreamLayers)->withDimensionSpacePoint($coveredDimensionSpacePoint);
         $moveSubtreeTagsStatement = <<<SQL
             INSERT INTO {$this->tableNames->hierarchyRelation()} (
               id, parentnodeanchor, childnodeanchor,
@@ -320,7 +320,7 @@ trait SubtreeTagging
             return NodeTags::createEmpty();
         }
 
-        $hierarchyStatement = $this->statements->forHierarchyRelation($contentStreamLayers)->withDimensionSpacePoint($dimensionSpacePoint)->withChildNodeRelationAnchor($parentNodeAnchorPoint);
+        $hierarchyStatement = $this->subqueries->forHierarchyRelation($contentStreamLayers)->withDimensionSpacePoint($dimensionSpacePoint)->withChildNodeRelationAnchor($parentNodeAnchorPoint);
         $subtreeTagsStatement = <<<SQL
             SELECT h.subtreetags FROM {$hierarchyStatement->toSql()} h
             SQL;

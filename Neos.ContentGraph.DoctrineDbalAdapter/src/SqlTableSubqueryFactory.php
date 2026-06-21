@@ -9,7 +9,7 @@ use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\ContentStreamLayers;
 /**
  * @internal
  */
-final readonly class StatementFactory
+final readonly class SqlTableSubqueryFactory
 {
     private function __construct(
         private ContentGraphTableNames $tableNames,
@@ -21,8 +21,8 @@ final readonly class StatementFactory
         return new self($tableNames);
     }
 
-    public function forHierarchyRelation(ContentStreamLayers $contentStreamLayers): HierarchyRelationStatement
+    public function forHierarchyRelation(ContentStreamLayers $contentStreamLayers): HierarchyRelationSubquery
     {
-        return HierarchyRelationStatement::create($this->tableNames, $contentStreamLayers);
+        return HierarchyRelationSubquery::create($this->tableNames, $contentStreamLayers);
     }
 }

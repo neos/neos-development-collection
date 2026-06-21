@@ -15,7 +15,7 @@ use Neos\ContentRepository\Dbal\Query\SqlTableSubqueryInterface;
 /**
  * @internal
  */
-final readonly class HierarchyRelationStatement implements SqlTableSubqueryInterface
+final readonly class HierarchyRelationSubquery implements SqlTableSubqueryInterface
 {
     /**
      * @param list<string> $whereClauses

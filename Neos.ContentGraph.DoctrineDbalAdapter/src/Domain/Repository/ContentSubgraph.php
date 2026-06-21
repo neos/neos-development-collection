@@ -20,10 +20,10 @@ use Doctrine\DBAL\Result;
 use Neos\ContentGraph\DoctrineDbalAdapter\ContentGraphTableNames;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\ContentStreamLayers;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\NodeRelationAnchorPoint;
-use Neos\ContentGraph\DoctrineDbalAdapter\HierarchyRelationStatement;
+use Neos\ContentGraph\DoctrineDbalAdapter\HierarchyRelationSubquery;
 use Neos\ContentGraph\DoctrineDbalAdapter\NodeAggregateIdCondition;
 use Neos\ContentGraph\DoctrineDbalAdapter\NodeQueryBuilder;
-use Neos\ContentGraph\DoctrineDbalAdapter\StatementFactory;
+use Neos\ContentGraph\DoctrineDbalAdapter\SqlTableSubqueryFactory;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
@@ -96,7 +96,7 @@ final class ContentSubgraph implements ContentSubgraphInterface
 {
     private readonly NodeQueryBuilder $nodeQueryBuilder;
 
-    private readonly HierarchyRelationStatement $hierarchyStatement;
+    private readonly HierarchyRelationSubquery $hierarchyStatement;
 
     public function __construct(
         private readonly ContentRepositoryId $contentRepositoryId,
@@ -110,7 +110,7 @@ final class ContentSubgraph implements ContentSubgraphInterface
         private readonly ContentGraphTableNames $tableNames
     ) {
         $this->nodeQueryBuilder = new NodeQueryBuilder($this->dbal, $tableNames);
-        $this->hierarchyStatement = StatementFactory::for($tableNames)
+        $this->hierarchyStatement = SqlTableSubqueryFactory::for($tableNames)
             ->forHierarchyRelation($this->contentStreamLayers)
             ->withDimensionSpacePoint($this->dimensionSpacePoint);
     }
