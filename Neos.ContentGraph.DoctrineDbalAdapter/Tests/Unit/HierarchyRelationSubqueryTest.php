@@ -12,6 +12,7 @@ use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\NodeRelationAnchorPo
 use Neos\ContentGraph\DoctrineDbalAdapter\HierarchyRelationSubquery;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
+use Neos\ContentRepository\Dbal\Query\StaticWhereCondition;
 use PHPUnit\Framework\TestCase;
 
 class HierarchyRelationSubqueryTest extends TestCase
@@ -149,10 +150,10 @@ class HierarchyRelationSubqueryTest extends TestCase
     }
 
     /** @test */
-    public function withArbitraryWhereClause()
+    public function withArbitraryWhereCondition()
     {
         $hierarchyRelationStatement = HierarchyRelationSubquery::create($this->tableNames, ContentStreamLayers::fromArray([1]))
-            ->andWhere('h.subtreetag = :myOwnParameter');
+            ->withWhereCondition(StaticWhereCondition::fromString('h', 'h.subtreetag = :myOwnParameter'));
 
         self::assertSame(
             ['contentStreamLayers' => [1]],
@@ -183,10 +184,10 @@ class HierarchyRelationSubqueryTest extends TestCase
     }
 
     /** @test */
-    public function withArbitraryInnerWhereClause()
+    public function withArbitraryPossibleWhereCondition()
     {
         $hierarchyRelationStatement = HierarchyRelationSubquery::create($this->tableNames, ContentStreamLayers::fromArray([1]))
-            ->andInnerWhereRelationIdMatches('h.childnodeanchor = :originalNodeAnchor OR h.parentnodeanchor = :originalNodeAnchor');
+            ->withPossibleWhereCondition(StaticWhereCondition::fromString('h', 'h.childnodeanchor = :originalNodeAnchor OR h.parentnodeanchor = :originalNodeAnchor'));
 
         self::assertSame(
             ['contentStreamLayers' => [1]],

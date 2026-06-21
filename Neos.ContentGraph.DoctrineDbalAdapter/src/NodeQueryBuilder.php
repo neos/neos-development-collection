@@ -57,7 +57,7 @@ final readonly class NodeQueryBuilder
         return $this->createQueryBuilder()
             ->select('cn.*, ch.subtreetags, cdsp.dimensionspacepoint AS covereddimensionspacepoint')
             ->from($this->tableNames->node(), 'pn')
-            ->innerJoinTableSubquery('pn', $hierarchyRelationQuery->withParentNodeAggregateIdPrefilter($nodeAggregateIdCondition), 'ch', 'ch.parentnodeanchor = pn.relationanchorpoint')
+            ->innerJoinTableSubquery('pn', $hierarchyRelationQuery->withPossibleParentNodeAggregateId($nodeAggregateIdCondition), 'ch', 'ch.parentnodeanchor = pn.relationanchorpoint')
             ->innerJoin('ch', $this->tableNames->dimensionSpacePoints(), 'cdsp', 'cdsp.hash = ch.dimensionspacepointhash')
             ->innerJoin('ch', $this->tableNames->node(), 'cn', 'cn.relationanchorpoint = ch.childnodeanchor')
             ->whereCondition('pn', $nodeAggregateIdCondition)
@@ -92,7 +92,7 @@ final readonly class NodeQueryBuilder
         return $this->createQueryBuilder()
             ->select('n.*, h.subtreetags')
             ->from($this->tableNames->node(), 'pn')
-            ->innerJoinTableSubquery('pn', $hierarchyRelationQuery->withParentNodeAggregateIdPrefilter($nodeAggregateIdCondition), 'h', 'h.parentnodeanchor = pn.relationanchorpoint')
+            ->innerJoinTableSubquery('pn', $hierarchyRelationQuery->withPossibleParentNodeAggregateId($nodeAggregateIdCondition), 'h', 'h.parentnodeanchor = pn.relationanchorpoint')
             ->innerJoin('pn', $this->tableNames->node(), 'n', 'h.childnodeanchor = n.relationanchorpoint')
             ->whereCondition('pn', $nodeAggregateIdCondition);
     }
@@ -104,7 +104,7 @@ final readonly class NodeQueryBuilder
         return $this->createQueryBuilder()
             ->select('pn.*, ch.subtreetags')
             ->from($this->tableNames->node(), 'pn')
-            ->innerJoinTableSubquery('pn', $hierarchyRelationQuery->withChildNodeAggregateIdPrefilter($nodeAggregateIdCondition), 'ph', 'ph.parentnodeanchor = pn.relationanchorpoint')
+            ->innerJoinTableSubquery('pn', $hierarchyRelationQuery->withPossibleChildNodeAggregateId($nodeAggregateIdCondition), 'ph', 'ph.parentnodeanchor = pn.relationanchorpoint')
             ->innerJoin('pn', $this->tableNames->node(), 'cn', 'cn.relationanchorpoint = ph.childnodeanchor')
             ->innerJoinTableSubquery('pn', $hierarchyRelationQuery, 'ch', 'ch.childnodeanchor = pn.relationanchorpoint')
             ->whereCondition('cn', $nodeAggregateIdCondition);
@@ -115,7 +115,7 @@ final readonly class NodeQueryBuilder
         $nodeAggregateIdCondition = NodeAggregateIdCondition::forNodeAggregateId($siblingNodeAggregateId);
 
         $sharedSubQuery = $this->createQueryBuilder()
-            ->fromTableSubquery($hierarchyRelationQuery->withChildNodeAggregateIdPrefilter($nodeAggregateIdCondition), 'sh')
+            ->fromTableSubquery($hierarchyRelationQuery->withPossibleChildNodeAggregateId($nodeAggregateIdCondition), 'sh')
             ->innerJoin('sh', $this->tableNames->node(), 'sn', 'sn.relationanchorpoint = sh.childnodeanchor')
             ->whereCondition('sn', $nodeAggregateIdCondition);
 

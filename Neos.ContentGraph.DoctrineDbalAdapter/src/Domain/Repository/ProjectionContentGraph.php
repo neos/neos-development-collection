@@ -56,7 +56,7 @@ class ProjectionContentGraph
         OriginDimensionSpacePoint $originDimensionSpacePoint
     ): ?NodeRecord {
         $nodeAggregateIdCondition = NodeAggregateIdCondition::forNodeAggregateId($childNodeAggregateId);
-        $hierarchyRelationQuery = $this->subqueries->forHierarchyRelation($contentStreamLayers)->withDimensionSpacePoint($originDimensionSpacePoint->toDimensionSpacePoint())->withChildNodeAggregateIdPrefilter($nodeAggregateIdCondition);
+        $hierarchyRelationQuery = $this->subqueries->forHierarchyRelation($contentStreamLayers)->withDimensionSpacePoint($originDimensionSpacePoint->toDimensionSpacePoint())->withPossibleChildNodeAggregateId($nodeAggregateIdCondition);
         $parentNodeStatement = <<<SQL
             SELECT
                 pn.*, ph.subtreetags, dsp.dimensionspacepoint AS origindimensionspacepoint
@@ -91,7 +91,7 @@ class ProjectionContentGraph
         DimensionSpacePoint $coveredDimensionSpacePoint
     ): ?NodeRecord {
         $nodeAggregateIdCondition = NodeAggregateIdCondition::forNodeAggregateId($nodeAggregateId);
-        $hierarchyRelationQuery = $this->subqueries->forHierarchyRelation($contentStreamLayers)->withDimensionSpacePoint($coveredDimensionSpacePoint)->withChildNodeAggregateIdPrefilter($nodeAggregateIdCondition);
+        $hierarchyRelationQuery = $this->subqueries->forHierarchyRelation($contentStreamLayers)->withDimensionSpacePoint($coveredDimensionSpacePoint)->withPossibleChildNodeAggregateId($nodeAggregateIdCondition);
         $nodeInAggregateStatement = <<<SQL
             SELECT
                 n.*, h.subtreetags, dsp.dimensionspacepoint AS origindimensionspacepoint
@@ -123,7 +123,7 @@ class ProjectionContentGraph
         ContentStreamLayers $contentStreamLayers
     ): ?NodeRelationAnchorPoint {
         $nodeAggregateIdCondition = NodeAggregateIdCondition::forNodeAggregateId($nodeAggregateId);
-        $hierarchyRelationQuery = $this->subqueries->forHierarchyRelation($contentStreamLayers)->withChildNodeAggregateIdPrefilter($nodeAggregateIdCondition);
+        $hierarchyRelationQuery = $this->subqueries->forHierarchyRelation($contentStreamLayers)->withPossibleChildNodeAggregateId($nodeAggregateIdCondition);
         $relationAnchorPointsStatement = <<<SQL
             SELECT
                 DISTINCT n.relationanchorpoint
@@ -161,7 +161,7 @@ class ProjectionContentGraph
         ContentStreamLayers $contentStreamLayers
     ): iterable {
         $nodeAggregateIdCondition = NodeAggregateIdCondition::forNodeAggregateId($nodeAggregateId);
-        $hierarchyRelationQuery = $this->subqueries->forHierarchyRelation($contentStreamLayers)->withChildNodeAggregateIdPrefilter($nodeAggregateIdCondition);
+        $hierarchyRelationQuery = $this->subqueries->forHierarchyRelation($contentStreamLayers)->withPossibleChildNodeAggregateId($nodeAggregateIdCondition);
         $relationAnchorPointsStatement = <<<SQL
             SELECT
                 DISTINCT n.relationanchorpoint
@@ -457,7 +457,7 @@ class ProjectionContentGraph
         DimensionSpacePointSet $dimensionSpacePointSet
     ): array {
         $nodeAggregateIdCondition = NodeAggregateIdCondition::forNodeAggregateId($nodeAggregateId);
-        $hierarchyRelationQuery = $this->subqueries->forHierarchyRelation($contentStreamLayers)->withDimensionSpacePoints($dimensionSpacePointSet)->withParentNodeAggregateIdPrefilter($nodeAggregateIdCondition);
+        $hierarchyRelationQuery = $this->subqueries->forHierarchyRelation($contentStreamLayers)->withDimensionSpacePoints($dimensionSpacePointSet)->withPossibleParentNodeAggregateId($nodeAggregateIdCondition);
         $outgoingHierarchyRelationsStatement = <<<SQL
             SELECT
                 h.*
@@ -490,7 +490,7 @@ class ProjectionContentGraph
         ?DimensionSpacePointSet $dimensionSpacePointSet = null
     ): array {
         $nodeAggregateIdCondition = NodeAggregateIdCondition::forNodeAggregateId($nodeAggregateId);
-        $hierarchyRelationQuery = $this->subqueries->forHierarchyRelation($contentStreamLayers)->withChildNodeAggregateIdPrefilter($nodeAggregateIdCondition);
+        $hierarchyRelationQuery = $this->subqueries->forHierarchyRelation($contentStreamLayers)->withPossibleChildNodeAggregateId($nodeAggregateIdCondition);
         if ($dimensionSpacePointSet) {
             $hierarchyRelationQuery = $hierarchyRelationQuery->withDimensionSpacePoints($dimensionSpacePointSet);
         }

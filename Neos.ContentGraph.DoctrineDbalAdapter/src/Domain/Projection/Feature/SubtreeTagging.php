@@ -15,6 +15,7 @@ use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Core\Feature\SubtreeTagging\Dto\SubtreeTag;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodeTags;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
+use Neos\ContentRepository\Dbal\Query\StaticWhereCondition;
 
 /**
  * The subtree tagging projection feature trait
@@ -28,7 +29,7 @@ trait SubtreeTagging
         $contentStreamHierarchyRelationQuery = $this->subqueries->forHierarchyRelation($contentStreamLayers);
         $hierarchyStatementNested = $this->subqueries->forHierarchyRelation($contentStreamLayers)
             ->withDimensionSpacePoints($affectedDimensionSpacePoints)
-            ->andWhere("NOT JSON_CONTAINS_PATH(h.subtreetags, 'one', :tagPath)");
+            ->withWhereCondition(StaticWhereCondition::fromString('h', "NOT JSON_CONTAINS_PATH(h.subtreetags, 'one', :tagPath)"));
 
         $addTagToDescendantsStatement = <<<SQL
             INSERT INTO {$this->tableNames->hierarchyRelation()} (

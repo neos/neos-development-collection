@@ -75,6 +75,7 @@ use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
 use Neos\ContentRepository\Core\SharedModel\Node\ReferenceName;
 use Neos\ContentRepository\Dbal\DbalSchemaDiff;
 use Neos\ContentRepository\Dbal\MysqlPlatformContentRepositoryLocker;
+use Neos\ContentRepository\Dbal\Query\StaticWhereCondition;
 use Neos\EventStore\Model\EventEnvelope;
 
 /**
@@ -960,7 +961,9 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
                   :targetContentStreamLayer as contentstreamlayer
                 FROM
                   -- prefilter via OR - using IN() is slower as more rows are examined
-                  {$contentStreamHierarchyRelationQuery->andInnerWhereRelationIdMatches('h.childnodeanchor = :originalNodeAnchor OR h.parentnodeanchor = :originalNodeAnchor')->toSql()} h
+                  {$contentStreamHierarchyRelationQuery->withPossibleWhereCondition(
+                      StaticWhereCondition::fromString('h', 'h.childnodeanchor = :originalNodeAnchor OR h.parentnodeanchor = :originalNodeAnchor')
+                  )->toSql()} h
                 WHERE
                   :originalNodeAnchor IN (h.childnodeanchor, h.parentnodeanchor)
                 ON DUPLICATE KEY UPDATE parentnodeanchor = VALUES(parentnodeanchor), childnodeanchor = VALUES(childnodeanchor)
