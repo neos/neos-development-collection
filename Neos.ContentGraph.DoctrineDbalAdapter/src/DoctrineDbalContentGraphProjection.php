@@ -433,6 +433,7 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
 
     private function whenDimensionShineThroughWasAdded(DimensionShineThroughWasAdded $event): void
     {
+        $contentStreamLayers = $this->getContentStreamLayers($event);
         $this->dimensionSpacePointsRepository->insertDimensionSpacePoint($event->target);
 
         // 1) hierarchy relations
@@ -457,10 +458,10 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
             SQL;
         try {
             $this->dbal->executeStatement($insertHierarchyRelationsStatement, [
-                'contentStreamLayers' => $this->getContentStreamLayers($event)->toIntArray(),
+                'contentStreamLayers' => $contentStreamLayers->toIntArray(),
                 'sourceDimensionSpacePointHash' => $event->source->hash,
                 'newDimensionSpacePointHash' => $event->target->hash,
-                'targetContentStreamLayer' => $this->getContentStreamLayers($event)->getWriteLayer()->value,
+                'targetContentStreamLayer' => $contentStreamLayers->getWriteLayer()->value,
             ], [
                 'contentStreamLayers' => ArrayParameterType::INTEGER,
             ]);
@@ -471,6 +472,7 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
 
     private function whenDimensionSpacePointWasMoved(DimensionSpacePointWasMoved $event): void
     {
+        $contentStreamLayers = $this->getContentStreamLayers($event);
         $this->dimensionSpacePointsRepository->insertDimensionSpacePoint($event->target);
 
         // the ordering is important - we first update the OriginDimensionSpacePoints, as we need the
@@ -490,7 +492,7 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
         try {
             $relationAnchorPoints = $this->dbal->fetchFirstColumn($selectRelationsStatement, [
                 'dimensionSpacePointHash' => $event->source->hash,
-                'contentStreamLayers' => $this->getContentStreamLayers($event)->toIntArray(),
+                'contentStreamLayers' => $contentStreamLayers->toIntArray(),
             ], [
                 'contentStreamLayers' => ArrayParameterType::INTEGER
             ]);
@@ -499,7 +501,7 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
         }
         foreach ($relationAnchorPoints as $relationAnchorPoint) {
             $this->updateNodeRecordWithCopyOnWrite(
-                $this->getContentStreamLayers($event),
+                $contentStreamLayers,
                 NodeRelationAnchorPoint::fromInteger($relationAnchorPoint),
                 function (NodeRecord $nodeRecord) use ($event) {
                     $nodeRecord->originDimensionSpacePoint = $event->target->coordinates;
@@ -535,8 +537,8 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
             $this->dbal->executeStatement($updateHierarchyRelationsStatement, [
                 'originalDimensionSpacePointHash' => $event->source->hash,
                 'newDimensionSpacePointHash' => $event->target->hash,
-                'contentStreamLayers' => $this->getContentStreamLayers($event)->toIntArray(),
-                'targetContentStreamLayer' => $this->getContentStreamLayers($event)->getWriteLayer()->value,
+                'contentStreamLayers' => $contentStreamLayers->toIntArray(),
+                'targetContentStreamLayer' => $contentStreamLayers->getWriteLayer()->value,
             ], [
                 'contentStreamLayers' => ArrayParameterType::INTEGER
             ]);
@@ -547,14 +549,16 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
 
     private function whenNodeAggregateNameWasChanged(NodeAggregateNameWasChanged $event, EventEnvelope $eventEnvelope): void
     {
+        $contentStreamLayers = $this->getContentStreamLayers($event);
+
         foreach (
             $this->projectionContentGraph->getAnchorPointsForNodeAggregateInContentStream(
                 $event->nodeAggregateId,
-                $this->getContentStreamLayers($event),
+                $contentStreamLayers,
             ) as $anchorPoint
         ) {
             $this->updateNodeRecordWithCopyOnWrite(
-                $this->getContentStreamLayers($event),
+                $contentStreamLayers,
                 $anchorPoint,
                 function (NodeRecord $node) use ($event, $eventEnvelope) {
                     $node->nodeName = $event->newNodeName;
@@ -569,10 +573,12 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
 
     private function whenNodeAggregateTypeWasChanged(NodeAggregateTypeWasChanged $event, EventEnvelope $eventEnvelope): void
     {
-        $anchorPoints = $this->projectionContentGraph->getAnchorPointsForNodeAggregateInContentStream($event->nodeAggregateId, $this->getContentStreamLayers($event));
+        $contentStreamLayers = $this->getContentStreamLayers($event);
+
+        $anchorPoints = $this->projectionContentGraph->getAnchorPointsForNodeAggregateInContentStream($event->nodeAggregateId, $contentStreamLayers);
         foreach ($anchorPoints as $anchorPoint) {
             $this->updateNodeRecordWithCopyOnWrite(
-                $this->getContentStreamLayers($event),
+                $contentStreamLayers,
                 $anchorPoint,
                 function (NodeRecord $node) use ($event, $eventEnvelope) {
                     $node->nodeTypeName = $event->newNodeTypeName;
@@ -624,11 +630,13 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
 
     private function whenNodePropertiesWereSet(NodePropertiesWereSet $event, EventEnvelope $eventEnvelope): void
     {
+        $contentStreamLayers = $this->getContentStreamLayers($event);
+
         $anchorPoint = $this->projectionContentGraph
             ->getAnchorPointForNodeAndOriginDimensionSpacePointAndContentStream(
                 $event->getNodeAggregateId(),
                 $event->getOriginDimensionSpacePoint(),
-                $this->getContentStreamLayers($event)
+                $contentStreamLayers
             );
         if (is_null($anchorPoint)) {
             throw new \InvalidArgumentException(
@@ -639,7 +647,7 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
             );
         }
         $this->updateNodeRecordWithCopyOnWrite(
-            $this->getContentStreamLayers($event),
+            $contentStreamLayers,
             $anchorPoint,
             function (NodeRecord $node) use ($event, $eventEnvelope) {
                 $node->properties = $node->properties
@@ -655,12 +663,14 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
 
     private function whenNodeReferencesWereSet(NodeReferencesWereSet $event, EventEnvelope $eventEnvelope): void
     {
+        $contentStreamLayers = $this->getContentStreamLayers($event);
+
         foreach ($event->affectedSourceOriginDimensionSpacePoints as $originDimensionSpacePoint) {
             $nodeAnchorPoint = $this->projectionContentGraph
                 ->getAnchorPointForNodeAndOriginDimensionSpacePointAndContentStream(
                     $event->nodeAggregateId,
                     $originDimensionSpacePoint,
-                    $this->getContentStreamLayers($event)
+                    $contentStreamLayers
                 );
 
             if (is_null($nodeAnchorPoint)) {
@@ -674,7 +684,7 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
             }
 
             $this->updateNodeRecordWithCopyOnWrite(
-                $this->getContentStreamLayers($event),
+                $contentStreamLayers,
                 $nodeAnchorPoint,
                 function (NodeRecord $node) use ($eventEnvelope) {
                     $node->timestamps = $node->timestamps->with(
@@ -688,7 +698,7 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
                 ->getAnchorPointForNodeAndOriginDimensionSpacePointAndContentStream(
                     $event->nodeAggregateId,
                     $originDimensionSpacePoint,
-                    $this->getContentStreamLayers($event)
+                    $contentStreamLayers
                 );
 
 
@@ -754,12 +764,14 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
 
     private function whenRootNodeAggregateDimensionsWereUpdated(RootNodeAggregateDimensionsWereUpdated $event): void
     {
+        $contentStreamLayers = $this->getContentStreamLayers($event);
+
         $rootNodeAnchorPoint = $this->projectionContentGraph
             ->getAnchorPointForNodeAndOriginDimensionSpacePointAndContentStream(
                 $event->nodeAggregateId,
                 /** the origin DSP of the root node is always the empty dimension ({@see whenRootNodeAggregateWithNodeWasCreated}) */
                 OriginDimensionSpacePoint::createWithoutDimensions(),
-                $this->getContentStreamLayers($event)
+                $contentStreamLayers
             );
         if ($rootNodeAnchorPoint === null) {
             // should never happen.
@@ -768,7 +780,7 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
 
         $ingoingRelations = $this->projectionContentGraph->findIngoingHierarchyRelationsForNode(
             $rootNodeAnchorPoint,
-            $this->getContentStreamLayers($event)
+            $contentStreamLayers
         );
 
         $currentlyCoveredDimensionSpacePoints = [];
@@ -780,7 +792,7 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
 
         // add hierarchy edges for newly added dimensions
         $this->connectHierarchy(
-            $this->getContentStreamLayers($event),
+            $contentStreamLayers,
             NodeRelationAnchorPoint::forRootEdge(),
             $rootNodeAnchorPoint,
             $newlyCoveredDimensionSpacePoints,
@@ -790,6 +802,8 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
 
     private function whenRootNodeAggregateWithNodeWasCreated(RootNodeAggregateWithNodeWasCreated $event, EventEnvelope $eventEnvelope): void
     {
+        $contentStreamLayers = $this->getContentStreamLayers($event);
+
         $originDimensionSpacePoint = OriginDimensionSpacePoint::createWithoutDimensions();
         $node = NodeRecord::createNewInDatabase(
             $this->dbal,
@@ -805,7 +819,7 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
         );
 
         $this->connectHierarchy(
-            $this->getContentStreamLayers($event),
+            $contentStreamLayers,
             NodeRelationAnchorPoint::forRootEdge(),
             $node->relationAnchorPoint,
             $event->coveredDimensionSpacePoints,
