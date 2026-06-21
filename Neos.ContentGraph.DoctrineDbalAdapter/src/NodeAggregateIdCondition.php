@@ -13,7 +13,7 @@ use Neos\ContentRepository\Dbal\Query\SqlWhereConditionInterface;
 /**
  * @internal
  */
-final readonly class NodeAggregateIdClause implements SqlWhereConditionInterface
+final readonly class NodeAggregateIdCondition implements SqlWhereConditionInterface
 {
     private function __construct(
         private NodeAggregateIds $nodeAggregateIds

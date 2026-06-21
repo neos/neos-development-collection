@@ -25,8 +25,8 @@ final readonly class HierarchyRelationStatement implements SqlTableSubqueryInter
         private ContentGraphTableNames $tableNames,
         private ContentStreamLayers $contentStreamLayers,
         private DimensionSpacePointSet $dimensionSpacePoints,
-        private NodeRelationAnchorPoint|NodeAggregateIdClause|null $childNodeAnchor,
-        private NodeRelationAnchorPoint|NodeAggregateIdClause|null $parentNodeAnchor,
+        private NodeRelationAnchorPoint|NodeAggregateIdCondition|null $childNodeAnchor,
+        private NodeRelationAnchorPoint|NodeAggregateIdCondition|null $parentNodeAnchor,
         private array $whereClauses,
         private array $innerWhereClauses,
     ) {
@@ -86,7 +86,7 @@ final readonly class HierarchyRelationStatement implements SqlTableSubqueryInter
         );
     }
 
-    public function withChildNodeAggregateIdPrefilter(NodeAggregateIdClause $childNodeAggregateIdClause): self
+    public function withChildNodeAggregateIdPrefilter(NodeAggregateIdCondition $childNodeAggregateIdClause): self
     {
         return new self(
             tableNames: $this->tableNames,
@@ -112,7 +112,7 @@ final readonly class HierarchyRelationStatement implements SqlTableSubqueryInter
         );
     }
 
-    public function withParentNodeAggregateIdPrefilter(NodeAggregateIdClause $parentNodeAggregateIdClause): self
+    public function withParentNodeAggregateIdPrefilter(NodeAggregateIdCondition $parentNodeAggregateIdClause): self
     {
         return new self(
             tableNames: $this->tableNames,
@@ -162,11 +162,11 @@ final readonly class HierarchyRelationStatement implements SqlTableSubqueryInter
             },
             ...$this->childNodeAnchor ? match ($this->childNodeAnchor::class) {
                 NodeRelationAnchorPoint::class => [Parameter::integer('childNodeRelationAnchorPoint', $this->childNodeAnchor->value)],
-                NodeAggregateIdClause::class => iterator_to_array($this->childNodeAnchor->getParameters()),
+                NodeAggregateIdCondition::class => iterator_to_array($this->childNodeAnchor->getParameters()),
             } : [],
             ...$this->parentNodeAnchor ? match ($this->parentNodeAnchor::class) {
                 NodeRelationAnchorPoint::class => [Parameter::integer('parentNodeRelationAnchorPoint', $this->parentNodeAnchor->value)],
-                NodeAggregateIdClause::class => iterator_to_array($this->parentNodeAnchor->getParameters()),
+                NodeAggregateIdCondition::class => iterator_to_array($this->parentNodeAnchor->getParameters()),
             } : [],
         ]));
     }
@@ -192,7 +192,7 @@ final readonly class HierarchyRelationStatement implements SqlTableSubqueryInter
             $innerWhereClauses[] = $childNodeRelationAnchorPointWhereClause;
         }
 
-        if ($this->childNodeAnchor instanceof NodeAggregateIdClause) {
+        if ($this->childNodeAnchor instanceof NodeAggregateIdCondition) {
             $innerWhereClauses[] = "h.childnodeanchor IN {$this->childNodeAnchor->toRelationAnchorPointSubquerySql($this->tableNames)}";
             // We don't actually ensure the outer result only contains hierarchies for this node
         }
@@ -202,7 +202,7 @@ final readonly class HierarchyRelationStatement implements SqlTableSubqueryInter
             $innerWhereClauses[] = $parentNodeRelationAnchorPointWhereClause;
         }
 
-        if ($this->parentNodeAnchor instanceof NodeAggregateIdClause) {
+        if ($this->parentNodeAnchor instanceof NodeAggregateIdCondition) {
             $innerWhereClauses[] = "h.parentnodeanchor IN {$this->parentNodeAnchor->toRelationAnchorPointSubquerySql($this->tableNames)}";
             // We don't actually ensure the outer result only contains hierarchies for this node
         }

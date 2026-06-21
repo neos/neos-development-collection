@@ -19,7 +19,7 @@ use Doctrine\DBAL\Exception as DBALException;
 use Neos\ContentGraph\DoctrineDbalAdapter\ContentGraphTableNames;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\ContentStreamLayers;
 use Neos\ContentGraph\DoctrineDbalAdapter\HierarchyRelationStatement;
-use Neos\ContentGraph\DoctrineDbalAdapter\NodeAggregateIdClause;
+use Neos\ContentGraph\DoctrineDbalAdapter\NodeAggregateIdCondition;
 use Neos\ContentGraph\DoctrineDbalAdapter\NodeQueryBuilder;
 use Neos\ContentGraph\DoctrineDbalAdapter\StatementFactory;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
@@ -144,9 +144,9 @@ final class ContentGraph implements ContentGraphInterface
     public function findNodeAggregateById(
         NodeAggregateId $nodeAggregateId
     ): ?NodeAggregate {
-        $nodeAggregateIdClause = NodeAggregateIdClause::forNodeAggregateId($nodeAggregateId);
-        $queryBuilder = $this->nodeQueryBuilder->buildBasicNodeAggregateQuery($this->hierarchyStatement->withChildNodeAggregateIdPrefilter($nodeAggregateIdClause))
-            ->whereCondition('n', $nodeAggregateIdClause)
+        $nodeAggregateIdCondition = NodeAggregateIdCondition::forNodeAggregateId($nodeAggregateId);
+        $queryBuilder = $this->nodeQueryBuilder->buildBasicNodeAggregateQuery($this->hierarchyStatement->withChildNodeAggregateIdPrefilter($nodeAggregateIdCondition))
+            ->whereCondition('n', $nodeAggregateIdCondition)
             ->orderBy('n.relationanchorpoint', 'DESC');
 
         return $this->nodeFactory->mapNodeRowsToNodeAggregate(
@@ -159,9 +159,9 @@ final class ContentGraph implements ContentGraphInterface
     public function findNodeAggregatesByIds(
         NodeAggregateIds $nodeAggregateIds
     ): NodeAggregates {
-        $nodeAggregateIdClause = NodeAggregateIdClause::forNodeAggregateIds($nodeAggregateIds);
-        $queryBuilder = $this->nodeQueryBuilder->buildBasicNodeAggregateQuery($this->hierarchyStatement->withChildNodeAggregateIdPrefilter($nodeAggregateIdClause))
-            ->whereCondition('n', $nodeAggregateIdClause)
+        $nodeAggregateIdCondition = NodeAggregateIdCondition::forNodeAggregateIds($nodeAggregateIds);
+        $queryBuilder = $this->nodeQueryBuilder->buildBasicNodeAggregateQuery($this->hierarchyStatement->withChildNodeAggregateIdPrefilter($nodeAggregateIdCondition))
+            ->whereCondition('n', $nodeAggregateIdCondition)
             ->orderBy('n.relationanchorpoint', 'DESC');
 
         return $this->mapQueryBuilderToNodeAggregates($queryBuilder);
@@ -175,23 +175,23 @@ final class ContentGraph implements ContentGraphInterface
     public function findParentNodeAggregates(
         NodeAggregateId $childNodeAggregateId
     ): NodeAggregates {
-        $nodeAggregateIdClause = NodeAggregateIdClause::forNodeAggregateId($childNodeAggregateId);
+        $nodeAggregateIdCondition = NodeAggregateIdCondition::forNodeAggregateId($childNodeAggregateId);
         $queryBuilder = $this->nodeQueryBuilder->buildBasicNodeAggregateQuery($this->hierarchyStatement)
-            ->innerJoinWithStatement('n', $this->hierarchyStatement->withChildNodeAggregateIdPrefilter($nodeAggregateIdClause), 'ch', 'ch.parentnodeanchor = n.relationanchorpoint')
+            ->innerJoinWithStatement('n', $this->hierarchyStatement->withChildNodeAggregateIdPrefilter($nodeAggregateIdCondition), 'ch', 'ch.parentnodeanchor = n.relationanchorpoint')
             ->innerJoin('ch', $this->tableNames->node(), 'cn', 'cn.relationanchorpoint = ch.childnodeanchor')
-            ->andWhereCondition($nodeAggregateIdClause, 'cn');
+            ->andWhereCondition($nodeAggregateIdCondition, 'cn');
 
         return $this->mapQueryBuilderToNodeAggregates($queryBuilder);
     }
 
     public function findAncestorNodeAggregateIds(NodeAggregateId $entryNodeAggregateId): NodeAggregateIds
     {
-        $nodeAggregateIdClause = NodeAggregateIdClause::forNodeAggregateId($entryNodeAggregateId);
+        $nodeAggregateIdCondition = NodeAggregateIdCondition::forNodeAggregateId($entryNodeAggregateId);
         $queryBuilderInitial = $this->createQueryBuilder()
             ->select('ch.parentnodeanchor')
-            ->fromWithStatement($this->hierarchyStatement->withChildNodeAggregateIdPrefilter($nodeAggregateIdClause), 'ch')
+            ->fromWithStatement($this->hierarchyStatement->withChildNodeAggregateIdPrefilter($nodeAggregateIdCondition), 'ch')
             ->innerJoin('ch', $this->tableNames->node(), 'c', 'c.relationanchorpoint = ch.childnodeanchor')
-            ->andWhereCondition($nodeAggregateIdClause, 'c');
+            ->andWhereCondition($nodeAggregateIdCondition, 'c');
 
         $queryBuilderRecursive = $this->createQueryBuilder()
             ->select('ph.parentnodeanchor')
@@ -222,14 +222,14 @@ final class ContentGraph implements ContentGraphInterface
 
     public function findParentNodeAggregateByChildOriginDimensionSpacePoint(NodeAggregateId $childNodeAggregateId, OriginDimensionSpacePoint $childOriginDimensionSpacePoint): ?NodeAggregate
     {
-        $nodeAggregateIdClause = NodeAggregateIdClause::forNodeAggregateId($childNodeAggregateId);
+        $nodeAggregateIdCondition = NodeAggregateIdCondition::forNodeAggregateId($childNodeAggregateId);
 
         $subQueryBuilder = $this->createQueryBuilder()
             ->select('pn.nodeaggregateid')
             ->from($this->tableNames->node(), 'pn')
-            ->innerJoinWithStatement('pn', $hierarchyStatement = $this->hierarchyStatement->withDimensionSpacePoint($childOriginDimensionSpacePoint->toDimensionSpacePoint())->withChildNodeAggregateIdPrefilter($nodeAggregateIdClause), 'ch', 'ch.parentnodeanchor = pn.relationanchorpoint')
+            ->innerJoinWithStatement('pn', $hierarchyStatement = $this->hierarchyStatement->withDimensionSpacePoint($childOriginDimensionSpacePoint->toDimensionSpacePoint())->withChildNodeAggregateIdPrefilter($nodeAggregateIdCondition), 'ch', 'ch.parentnodeanchor = pn.relationanchorpoint')
             ->innerJoin('ch', $this->tableNames->node(), 'cn', 'cn.relationanchorpoint = ch.childnodeanchor')
-            ->whereCondition('cn', $nodeAggregateIdClause)
+            ->whereCondition('cn', $nodeAggregateIdCondition)
             ->andWhere('cn.origindimensionspacepointhash = ' . $hierarchyStatement->getParameters()->getReference('dimensionSpacePointHash'));
 
         $queryBuilder = $this->createQueryBuilder()
@@ -269,15 +269,15 @@ final class ContentGraph implements ContentGraphInterface
 
     public function getDimensionSpacePointsOccupiedByChildNodeName(NodeName $nodeName, NodeAggregateId $parentNodeAggregateId, OriginDimensionSpacePoint $parentNodeOriginDimensionSpacePoint, DimensionSpacePointSet $dimensionSpacePointsToCheck): DimensionSpacePointSet
     {
-        $nodeAggregateIdClause = NodeAggregateIdClause::forNodeAggregateId($parentNodeAggregateId);
+        $nodeAggregateIdCondition = NodeAggregateIdCondition::forNodeAggregateId($parentNodeAggregateId);
 
         $queryBuilder = $this->createQueryBuilder()
             ->select('dsp.dimensionspacepoint, h.dimensionspacepointhash')
             ->fromWithStatement($this->hierarchyStatement->withDimensionSpacePoints($dimensionSpacePointsToCheck), 'h')
             ->innerJoin('h', $this->tableNames->node(), 'n', 'n.relationanchorpoint = h.parentnodeanchor')
             ->innerJoin('h', $this->tableNames->dimensionSpacePoints(), 'dsp', 'dsp.hash = h.dimensionspacepointhash')
-            ->innerJoinWithStatement('n', $this->hierarchyStatement->withChildNodeAggregateIdPrefilter($nodeAggregateIdClause), 'ph', 'ph.childnodeanchor = n.relationanchorpoint')
-            ->whereCondition('n', $nodeAggregateIdClause)
+            ->innerJoinWithStatement('n', $this->hierarchyStatement->withChildNodeAggregateIdPrefilter($nodeAggregateIdCondition), 'ph', 'ph.childnodeanchor = n.relationanchorpoint')
+            ->whereCondition('n', $nodeAggregateIdCondition)
             ->andWhere('n.origindimensionspacepointhash = :parentNodeOriginDimensionSpacePointHash')
             ->andWhere('n.name = :nodeName')
             ->setParameter('parentNodeOriginDimensionSpacePointHash', $parentNodeOriginDimensionSpacePoint->hash)
