@@ -66,6 +66,7 @@ use Neos\EventStore\Model\Events;
 use Neos\EventStore\Model\EventStream\ExpectedVersion;
 use Neos\EventStore\Model\EventStream\VirtualStreamName;
 use Neos\Utility\Arrays;
+use Neos\Utility\ObjectAccess;
 use PHPUnit\Framework\Assert;
 
 /**
@@ -682,11 +683,11 @@ trait GenericCommandExecutionAndEventPublication
     }
 
     /**
-     * @Then /^event metadata at index (\d+) is:/
+     * @Then /^event data at index (\d+) is:/
      * @param int $eventNumber
-     * @param TableNode $metadataTable
+     * @param TableNode $eventData
      */
-    public function eventMetadataAtNumberIs(int $eventNumber, TableNode $metadataTable)
+    public function eventDataAtNumberIs(int $eventNumber, TableNode $eventData)
     {
         if ($this->currentEventStreamAsArray === null) {
             Assert::fail('Step \'I expect exactly ? events to be published on stream "?"\' was not executed');
@@ -699,11 +700,21 @@ trait GenericCommandExecutionAndEventPublication
 
         Assert::assertNotNull($actualEvent, sprintf('Event with number %d not found', $eventNumber));
 
-        $actualEventMetadata = $actualEvent->event->metadata->value;
-        foreach ($metadataTable->getHash() as $assertionTableRow) {
+        foreach ($eventData->getHash() as $assertionTableRow) {
             $key = $assertionTableRow['Key'];
-            $actualValue = Arrays::getValueByPath($actualEventMetadata, $key);
-            Assert::assertJsonStringEqualsJsonString($assertionTableRow['Expected'], json_encode($actualValue));
+            if ($key === 'recordedAt') {
+                Assert::assertJsonStringEqualsJsonString(
+                    $assertionTableRow['Expected'],
+                    json_encode($actualEvent->recordedAt->format(\DateTimeImmutable::ATOM))
+                );
+                continue;
+            }
+            if (str_starts_with($key, 'metadata.')) {
+                $actualValue = ObjectAccess::getPropertyPath(['metadata' => $actualEvent->event->metadata?->value], $key);
+                Assert::assertJsonStringEqualsJsonString($assertionTableRow['Expected'], json_encode($actualValue));
+                continue;
+            }
+            throw new \RuntimeException(sprintf('Not supported key %s', $key), 1781765557);
         }
     }
 }

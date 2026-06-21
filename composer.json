@@ -122,7 +122,8 @@
             "@test:behat-cli -c Neos.Workspace.Ui/Tests/Behavior/behat.yml.dist"
         ],
         "test:behavioral-maria-mysql": [
-            "@test:behat-cli -c Neos.ContentGraph.DoctrineDbalAdapter/Tests/Behavior/behat.yml.dist"
+            "@test:behat-cli -c Neos.ContentGraph.DoctrineDbalAdapter/Tests/Behavior/behat.yml.dist",
+            "@test:behat-cli -c Neos.ContentRepositoryRegistry/Tests/Behavior/behat.yml.dist"
         ],
         "test": [
             "@test:unit",
