@@ -1024,7 +1024,7 @@ MenuItems item properties:
 
 :node: (Node) A node instance (with resolved shortcuts) that should be used to link to the item
 :originalNode: (Node) Original node for the item
-:state: (string) Menu state of the item: ``'normal'``, ``'current'`` (the current node) or ``'active'`` (ancestor of current node)
+:state: (MenuItemState) Menu state of the item: ``normal``, ``current`` (the current node) or ``active`` (ancestor of current node). To retrieve the string value of the item state use ``item.state.value``.
 :label: (string) Full label of the node
 :menuLevel: (integer) Menu level the item is rendered on
 :uri: (string) Frontend URI of the node
@@ -1109,7 +1109,7 @@ If no node variant exists for the preset combination, a ``NULL`` node will be in
 Each ``item`` has the following properties:
 
 :node: (Node) The current node used to calculate the Menu. Defaults to ``documentNode`` from the fusion context
-:state: (string) Menu state of the item: ``normal``, ``current`` (the current node), ``absent``
+:state: (MenuItemState) Menu state of the item: ``normal``, ``current`` (the current node), ``absent``. To retrieve the string value of the item state use ``item.state.value``.
 :label: (string) Label of the item (the dimension preset label)
 :menuLevel: (integer) Menu level the item is rendered on
 :dimensions: (array) Dimension values of the node, indexed by dimension name
