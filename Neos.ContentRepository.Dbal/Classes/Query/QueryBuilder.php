@@ -51,7 +51,7 @@ final class QueryBuilder extends DBALQueryBuilder
      *
      * @return $this This QueryBuilder instance.
      */
-    public function fromWithStatement(SqlStatementInterface $fromStatement, string $alias): self
+    public function fromWithStatement(SqlTableSubqueryInterface $fromStatement, string $alias): self
     {
         $this->mergeParameters($fromStatement->getParameters());
 
@@ -68,7 +68,7 @@ final class QueryBuilder extends DBALQueryBuilder
      *
      * @return $this This QueryBuilder instance.
      */
-    public function innerJoinWithStatement(string $fromAlias, SqlStatementInterface $joinStatement, string $alias, ?string $condition = null): self
+    public function innerJoinWithStatement(string $fromAlias, SqlTableSubqueryInterface $joinStatement, string $alias, ?string $condition = null): self
     {
         $this->mergeParameters($joinStatement->getParameters());
 
@@ -77,6 +77,39 @@ final class QueryBuilder extends DBALQueryBuilder
             $joinStatement->toSql(),
             $alias,
             $condition
+        );
+
+        return $this;
+    }
+
+    /**
+     * Extends {@see DBALQueryBuilder::where()} to allow to specify parameters for the condition
+     *
+     * @return $this This QueryBuilder instance.
+     */
+    public function whereCondition(string $alias, SqlWhereConditionInterface $whereCondition): self
+    {
+        $this->mergeParameters($whereCondition->getParameters());
+
+        $this->where(
+            $whereCondition->toWhereSql($alias)
+        );
+
+        return $this;
+    }
+
+
+    /**
+     * Extends {@see DBALQueryBuilder::andWhere()} to allow to specify parameters for the condition
+     *
+     * @return $this This QueryBuilder instance.
+     */
+    public function andWhereCondition(SqlWhereConditionInterface $whereCondition, string $alias): self
+    {
+        $this->mergeParameters($whereCondition->getParameters());
+
+        $this->andWhere(
+            $whereCondition->toWhereSql($alias)
         );
 
         return $this;

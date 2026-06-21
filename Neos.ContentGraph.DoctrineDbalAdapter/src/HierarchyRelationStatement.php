@@ -10,12 +10,12 @@ use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Dbal\Query\Parameter;
 use Neos\ContentRepository\Dbal\Query\Parameters;
-use Neos\ContentRepository\Dbal\Query\SqlStatementInterface;
+use Neos\ContentRepository\Dbal\Query\SqlTableSubqueryInterface;
 
 /**
  * @internal
  */
-final readonly class HierarchyRelationStatement implements SqlStatementInterface
+final readonly class HierarchyRelationStatement implements SqlTableSubqueryInterface
 {
     /**
      * @param list<string> $whereClauses

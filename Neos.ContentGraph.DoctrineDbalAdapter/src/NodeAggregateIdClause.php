@@ -8,11 +8,12 @@ use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateIds;
 use Neos\ContentRepository\Dbal\Query\Parameter;
 use Neos\ContentRepository\Dbal\Query\Parameters;
+use Neos\ContentRepository\Dbal\Query\SqlWhereConditionInterface;
 
 /**
  * @internal
  */
-final readonly class NodeAggregateIdClause
+final readonly class NodeAggregateIdClause implements SqlWhereConditionInterface
 {
     private function __construct(
         private NodeAggregateIds $nodeAggregateIds
@@ -45,7 +46,7 @@ final readonly class NodeAggregateIdClause
         );
     }
 
-    public function toWhereSql(string $alias = 'n'): string
+    public function toWhereSql(string $alias): string
     {
         $prefix = $alias !== '' ? "$alias." : '';
 

@@ -100,7 +100,7 @@ class ProjectionContentGraph
                 INNER JOIN {$hierarchyStatement->toSql()} h ON h.childnodeanchor = n.relationanchorpoint
                 INNER JOIN {$this->tableNames->dimensionSpacePoints()} dsp ON n.origindimensionspacepointhash = dsp.hash
             WHERE
-                {$nodeAggregateIdClause->toWhereSql()}
+                {$nodeAggregateIdClause->toWhereSql('n')}
         SQL;
         try {
             $nodeRow = $this->dbal->fetchAssociative($nodeInAggregateStatement, [
@@ -131,7 +131,7 @@ class ProjectionContentGraph
                 {$this->tableNames->node()} n
                 INNER JOIN {$hierarchyStatement->toSql()} AS h ON h.childnodeanchor = n.relationanchorpoint
             WHERE
-                {$nodeAggregateIdClause->toWhereSql()}
+                {$nodeAggregateIdClause->toWhereSql('n')}
                 AND n.origindimensionspacepointhash = :originDimensionSpacePointHash
         SQL;
         try {
@@ -169,7 +169,7 @@ class ProjectionContentGraph
                 {$this->tableNames->node()} n
                 INNER JOIN {$hierarchyStatement->toSql()} h ON h.childnodeanchor = n.relationanchorpoint
             WHERE
-                {$nodeAggregateIdClause->toWhereSql()}
+                {$nodeAggregateIdClause->toWhereSql('n')}
         SQL;
         try {
             $relationAnchorPoints = $this->dbal->fetchFirstColumn($relationAnchorPointsStatement, [
@@ -466,7 +466,7 @@ class ProjectionContentGraph
                 {$hierarchyStatement->toSql()} h
                 INNER JOIN {$this->tableNames->node()} n ON h.parentnodeanchor = n.relationanchorpoint
             WHERE
-                {$nodeAggregateIdClause->toWhereSql()}
+                {$nodeAggregateIdClause->toWhereSql('n')}
         SQL;
         try {
             $rows = $this->dbal->fetchAllAssociative($outgoingHierarchyRelationsStatement, [
@@ -502,7 +502,7 @@ class ProjectionContentGraph
                 {$hierarchyStatement->toSql()} h
                 INNER JOIN {$this->tableNames->node()} n ON h.childnodeanchor = n.relationanchorpoint
             WHERE
-                {$nodeAggregateIdClause->toWhereSql()}
+                {$nodeAggregateIdClause->toWhereSql('n')}
         SQL;
         $parameters = [
             ...$hierarchyStatement->getParameters()->toDbalValues(),

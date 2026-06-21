@@ -146,8 +146,7 @@ final class ContentGraph implements ContentGraphInterface
     ): ?NodeAggregate {
         $nodeAggregateIdClause = NodeAggregateIdClause::forNodeAggregateId($nodeAggregateId);
         $queryBuilder = $this->nodeQueryBuilder->buildBasicNodeAggregateQuery($this->hierarchyStatement->withChildNodeAggregateIdPrefilter($nodeAggregateIdClause))
-            ->where($nodeAggregateIdClause->toWhereSql())
-            ->mergeParameters($nodeAggregateIdClause->getParameters())
+            ->whereCondition('n', $nodeAggregateIdClause)
             ->orderBy('n.relationanchorpoint', 'DESC');
 
         return $this->nodeFactory->mapNodeRowsToNodeAggregate(
@@ -162,8 +161,7 @@ final class ContentGraph implements ContentGraphInterface
     ): NodeAggregates {
         $nodeAggregateIdClause = NodeAggregateIdClause::forNodeAggregateIds($nodeAggregateIds);
         $queryBuilder = $this->nodeQueryBuilder->buildBasicNodeAggregateQuery($this->hierarchyStatement->withChildNodeAggregateIdPrefilter($nodeAggregateIdClause))
-            ->where($nodeAggregateIdClause->toWhereSql())
-            ->mergeParameters($nodeAggregateIdClause->getParameters())
+            ->whereCondition('n', $nodeAggregateIdClause)
             ->orderBy('n.relationanchorpoint', 'DESC');
 
         return $this->mapQueryBuilderToNodeAggregates($queryBuilder);
@@ -181,8 +179,7 @@ final class ContentGraph implements ContentGraphInterface
         $queryBuilder = $this->nodeQueryBuilder->buildBasicNodeAggregateQuery($this->hierarchyStatement)
             ->innerJoinWithStatement('n', $this->hierarchyStatement->withChildNodeAggregateIdPrefilter($nodeAggregateIdClause), 'ch', 'ch.parentnodeanchor = n.relationanchorpoint')
             ->innerJoin('ch', $this->tableNames->node(), 'cn', 'cn.relationanchorpoint = ch.childnodeanchor')
-            ->mergeParameters($nodeAggregateIdClause->getParameters())
-            ->andWhere($nodeAggregateIdClause->toWhereSql('cn'));
+            ->andWhereCondition($nodeAggregateIdClause, 'cn');
 
         return $this->mapQueryBuilderToNodeAggregates($queryBuilder);
     }
@@ -194,8 +191,7 @@ final class ContentGraph implements ContentGraphInterface
             ->select('ch.parentnodeanchor')
             ->fromWithStatement($this->hierarchyStatement->withChildNodeAggregateIdPrefilter($nodeAggregateIdClause), 'ch')
             ->innerJoin('ch', $this->tableNames->node(), 'c', 'c.relationanchorpoint = ch.childnodeanchor')
-            ->mergeParameters($nodeAggregateIdClause->getParameters())
-            ->andWhere($nodeAggregateIdClause->toWhereSql('c'));
+            ->andWhereCondition($nodeAggregateIdClause, 'c');
 
         $queryBuilderRecursive = $this->createQueryBuilder()
             ->select('ph.parentnodeanchor')
@@ -233,8 +229,7 @@ final class ContentGraph implements ContentGraphInterface
             ->from($this->tableNames->node(), 'pn')
             ->innerJoinWithStatement('pn', $hierarchyStatement = $this->hierarchyStatement->withDimensionSpacePoint($childOriginDimensionSpacePoint->toDimensionSpacePoint())->withChildNodeAggregateIdPrefilter($nodeAggregateIdClause), 'ch', 'ch.parentnodeanchor = pn.relationanchorpoint')
             ->innerJoin('ch', $this->tableNames->node(), 'cn', 'cn.relationanchorpoint = ch.childnodeanchor')
-            ->where($nodeAggregateIdClause->toWhereSql('cn'))
-            ->mergeParameters($nodeAggregateIdClause->getParameters())
+            ->whereCondition('cn', $nodeAggregateIdClause)
             ->andWhere('cn.origindimensionspacepointhash = ' . $hierarchyStatement->getParameters()->getReference('dimensionSpacePointHash'));
 
         $queryBuilder = $this->createQueryBuilder()
@@ -282,11 +277,9 @@ final class ContentGraph implements ContentGraphInterface
             ->innerJoin('h', $this->tableNames->node(), 'n', 'n.relationanchorpoint = h.parentnodeanchor')
             ->innerJoin('h', $this->tableNames->dimensionSpacePoints(), 'dsp', 'dsp.hash = h.dimensionspacepointhash')
             ->innerJoinWithStatement('n', $this->hierarchyStatement->withChildNodeAggregateIdPrefilter($nodeAggregateIdClause), 'ph', 'ph.childnodeanchor = n.relationanchorpoint')
-            ->where($nodeAggregateIdClause->toWhereSql('n'))
-            ->mergeParameters($nodeAggregateIdClause->getParameters())
+            ->whereCondition('n', $nodeAggregateIdClause)
             ->andWhere('n.origindimensionspacepointhash = :parentNodeOriginDimensionSpacePointHash')
             ->andWhere('n.name = :nodeName')
-            ->setParameter('parentNodeAggregateId', $parentNodeAggregateId->value)
             ->setParameter('parentNodeOriginDimensionSpacePointHash', $parentNodeOriginDimensionSpacePoint->hash)
             ->setParameter('nodeName', $nodeName->value);
         $dimensionSpacePoints = [];
