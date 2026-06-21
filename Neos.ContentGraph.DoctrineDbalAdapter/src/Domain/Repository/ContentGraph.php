@@ -70,7 +70,10 @@ final class ContentGraph implements ContentGraphInterface
 {
     private readonly NodeQueryBuilder $nodeQueryBuilder;
 
-    private readonly HierarchyRelationSubquery $hierarchyStatement;
+    /**
+     * Hierarchy relations for a subgraph - filtered by content stream
+     */
+    private readonly HierarchyRelationSubquery $hierarchyRelationQuery;
 
     public function __construct(
         private readonly Connection $dbal,
@@ -83,7 +86,7 @@ final class ContentGraph implements ContentGraphInterface
         public readonly ContentStreamLayers $contentStreamLayers,
     ) {
         $this->nodeQueryBuilder = new NodeQueryBuilder($this->dbal, $this->tableNames);
-        $this->hierarchyStatement = SqlTableSubqueryFactory::for($this->tableNames)
+        $this->hierarchyRelationQuery = SqlTableSubqueryFactory::for($this->tableNames)
             ->forHierarchyRelation($this->contentStreamLayers);
     }
 
@@ -127,14 +130,14 @@ final class ContentGraph implements ContentGraphInterface
     public function findRootNodeAggregates(
         FindRootNodeAggregatesFilter $filter,
     ): NodeAggregates {
-        $rootNodeAggregateQueryBuilder = $this->nodeQueryBuilder->buildFindRootNodeAggregatesQuery($this->hierarchyStatement, $filter);
+        $rootNodeAggregateQueryBuilder = $this->nodeQueryBuilder->buildFindRootNodeAggregatesQuery($this->hierarchyRelationQuery, $filter);
         return $this->mapQueryBuilderToNodeAggregates($rootNodeAggregateQueryBuilder);
     }
 
     public function findNodeAggregatesByType(
         NodeTypeName $nodeTypeName
     ): NodeAggregates {
-        $queryBuilder = $this->nodeQueryBuilder->buildBasicNodeAggregateQuery($this->hierarchyStatement);
+        $queryBuilder = $this->nodeQueryBuilder->buildBasicNodeAggregateQuery($this->hierarchyRelationQuery);
         $queryBuilder
             ->andWhere('n.nodetypename = :nodeTypeName')
             ->setParameter('nodeTypeName', $nodeTypeName->value);
@@ -145,7 +148,7 @@ final class ContentGraph implements ContentGraphInterface
         NodeAggregateId $nodeAggregateId
     ): ?NodeAggregate {
         $nodeAggregateIdCondition = NodeAggregateIdCondition::forNodeAggregateId($nodeAggregateId);
-        $queryBuilder = $this->nodeQueryBuilder->buildBasicNodeAggregateQuery($this->hierarchyStatement->withChildNodeAggregateIdPrefilter($nodeAggregateIdCondition))
+        $queryBuilder = $this->nodeQueryBuilder->buildBasicNodeAggregateQuery($this->hierarchyRelationQuery->withChildNodeAggregateIdPrefilter($nodeAggregateIdCondition))
             ->whereCondition('n', $nodeAggregateIdCondition)
             ->orderBy('n.relationanchorpoint', 'DESC');
 
@@ -160,7 +163,7 @@ final class ContentGraph implements ContentGraphInterface
         NodeAggregateIds $nodeAggregateIds
     ): NodeAggregates {
         $nodeAggregateIdCondition = NodeAggregateIdCondition::forNodeAggregateIds($nodeAggregateIds);
-        $queryBuilder = $this->nodeQueryBuilder->buildBasicNodeAggregateQuery($this->hierarchyStatement->withChildNodeAggregateIdPrefilter($nodeAggregateIdCondition))
+        $queryBuilder = $this->nodeQueryBuilder->buildBasicNodeAggregateQuery($this->hierarchyRelationQuery->withChildNodeAggregateIdPrefilter($nodeAggregateIdCondition))
             ->whereCondition('n', $nodeAggregateIdCondition)
             ->orderBy('n.relationanchorpoint', 'DESC');
 
@@ -176,8 +179,8 @@ final class ContentGraph implements ContentGraphInterface
         NodeAggregateId $childNodeAggregateId
     ): NodeAggregates {
         $nodeAggregateIdCondition = NodeAggregateIdCondition::forNodeAggregateId($childNodeAggregateId);
-        $queryBuilder = $this->nodeQueryBuilder->buildBasicNodeAggregateQuery($this->hierarchyStatement)
-            ->innerJoinTableSubquery('n', $this->hierarchyStatement->withChildNodeAggregateIdPrefilter($nodeAggregateIdCondition), 'ch', 'ch.parentnodeanchor = n.relationanchorpoint')
+        $queryBuilder = $this->nodeQueryBuilder->buildBasicNodeAggregateQuery($this->hierarchyRelationQuery)
+            ->innerJoinTableSubquery('n', $this->hierarchyRelationQuery->withChildNodeAggregateIdPrefilter($nodeAggregateIdCondition), 'ch', 'ch.parentnodeanchor = n.relationanchorpoint')
             ->innerJoin('ch', $this->tableNames->node(), 'cn', 'cn.relationanchorpoint = ch.childnodeanchor')
             ->andWhereCondition($nodeAggregateIdCondition, 'cn');
 
@@ -189,14 +192,14 @@ final class ContentGraph implements ContentGraphInterface
         $nodeAggregateIdCondition = NodeAggregateIdCondition::forNodeAggregateId($entryNodeAggregateId);
         $queryBuilderInitial = $this->createQueryBuilder()
             ->select('ch.parentnodeanchor')
-            ->fromTableSubquery($this->hierarchyStatement->withChildNodeAggregateIdPrefilter($nodeAggregateIdCondition), 'ch')
+            ->fromTableSubquery($this->hierarchyRelationQuery->withChildNodeAggregateIdPrefilter($nodeAggregateIdCondition), 'ch')
             ->innerJoin('ch', $this->tableNames->node(), 'c', 'c.relationanchorpoint = ch.childnodeanchor')
             ->andWhereCondition($nodeAggregateIdCondition, 'c');
 
         $queryBuilderRecursive = $this->createQueryBuilder()
             ->select('ph.parentnodeanchor')
             ->from('ancestry', 'ch')
-            ->innerJoinTableSubquery('ch', $this->hierarchyStatement, 'ph', 'ph.childnodeanchor = ch.parentnodeanchor');
+            ->innerJoinTableSubquery('ch', $this->hierarchyRelationQuery, 'ph', 'ph.childnodeanchor = ch.parentnodeanchor');
 
         $queryBuilderCte = $this->createQueryBuilder()
             ->select('n.nodeAggregateId')
@@ -216,7 +219,7 @@ final class ContentGraph implements ContentGraphInterface
     public function findChildNodeAggregates(
         NodeAggregateId $parentNodeAggregateId
     ): NodeAggregates {
-        $queryBuilder = $this->nodeQueryBuilder->buildChildNodeAggregateQuery($this->hierarchyStatement, $parentNodeAggregateId);
+        $queryBuilder = $this->nodeQueryBuilder->buildChildNodeAggregateQuery($this->hierarchyRelationQuery, $parentNodeAggregateId);
         return $this->mapQueryBuilderToNodeAggregates($queryBuilder);
     }
 
@@ -227,15 +230,15 @@ final class ContentGraph implements ContentGraphInterface
         $subQueryBuilder = $this->createQueryBuilder()
             ->select('pn.nodeaggregateid')
             ->from($this->tableNames->node(), 'pn')
-            ->innerJoinTableSubquery('pn', $hierarchyStatement = $this->hierarchyStatement->withDimensionSpacePoint($childOriginDimensionSpacePoint->toDimensionSpacePoint())->withChildNodeAggregateIdPrefilter($nodeAggregateIdCondition), 'ch', 'ch.parentnodeanchor = pn.relationanchorpoint')
+            ->innerJoinTableSubquery('pn', $hierarchyRelationQuery = $this->hierarchyRelationQuery->withDimensionSpacePoint($childOriginDimensionSpacePoint->toDimensionSpacePoint())->withChildNodeAggregateIdPrefilter($nodeAggregateIdCondition), 'ch', 'ch.parentnodeanchor = pn.relationanchorpoint')
             ->innerJoin('ch', $this->tableNames->node(), 'cn', 'cn.relationanchorpoint = ch.childnodeanchor')
             ->whereCondition('cn', $nodeAggregateIdCondition)
-            ->andWhere('cn.origindimensionspacepointhash = ' . $hierarchyStatement->getParameters()->getReference('dimensionSpacePointHash'));
+            ->andWhere('cn.origindimensionspacepointhash = ' . $hierarchyRelationQuery->getParameters()->getReference('dimensionSpacePointHash'));
 
         $queryBuilder = $this->createQueryBuilder()
             ->select('n.*, h.subtreetags, dsp.dimensionspacepoint AS covereddimensionspacepoint')
             ->from($this->tableNames->node(), 'n')
-            ->innerJoinTableSubquery('n', $this->hierarchyStatement, 'h', 'h.childnodeanchor = n.relationanchorpoint')
+            ->innerJoinTableSubquery('n', $this->hierarchyRelationQuery, 'h', 'h.childnodeanchor = n.relationanchorpoint')
             ->innerJoin('h', $this->tableNames->dimensionSpacePoints(), 'dsp', 'dsp.hash = h.dimensionspacepointhash')
             ->where('n.nodeaggregateid = (' . $subQueryBuilder->getSQL() . ')')
             ->mergeParametersFromBuilder($subQueryBuilder);
@@ -249,7 +252,7 @@ final class ContentGraph implements ContentGraphInterface
 
     public function findTetheredChildNodeAggregates(NodeAggregateId $parentNodeAggregateId): NodeAggregates
     {
-        $queryBuilder = $this->nodeQueryBuilder->buildChildNodeAggregateQuery($this->hierarchyStatement, $parentNodeAggregateId)
+        $queryBuilder = $this->nodeQueryBuilder->buildChildNodeAggregateQuery($this->hierarchyRelationQuery, $parentNodeAggregateId)
             ->andWhere('cn.classification = :tetheredClassification')
             ->setParameter('tetheredClassification', NodeAggregateClassification::CLASSIFICATION_TETHERED->value);
 
@@ -260,7 +263,7 @@ final class ContentGraph implements ContentGraphInterface
         NodeAggregateId $parentNodeAggregateId,
         NodeName $name
     ): ?NodeAggregate {
-        $queryBuilder = $this->nodeQueryBuilder->buildChildNodeAggregateQuery($this->hierarchyStatement, $parentNodeAggregateId)
+        $queryBuilder = $this->nodeQueryBuilder->buildChildNodeAggregateQuery($this->hierarchyRelationQuery, $parentNodeAggregateId)
             ->andWhere('cn.name = :relationName')
             ->setParameter('relationName', $name->value);
 
@@ -273,10 +276,10 @@ final class ContentGraph implements ContentGraphInterface
 
         $queryBuilder = $this->createQueryBuilder()
             ->select('dsp.dimensionspacepoint, h.dimensionspacepointhash')
-            ->fromTableSubquery($this->hierarchyStatement->withDimensionSpacePoints($dimensionSpacePointsToCheck), 'h')
+            ->fromTableSubquery($this->hierarchyRelationQuery->withDimensionSpacePoints($dimensionSpacePointsToCheck), 'h')
             ->innerJoin('h', $this->tableNames->node(), 'n', 'n.relationanchorpoint = h.parentnodeanchor')
             ->innerJoin('h', $this->tableNames->dimensionSpacePoints(), 'dsp', 'dsp.hash = h.dimensionspacepointhash')
-            ->innerJoinTableSubquery('n', $this->hierarchyStatement->withChildNodeAggregateIdPrefilter($nodeAggregateIdCondition), 'ph', 'ph.childnodeanchor = n.relationanchorpoint')
+            ->innerJoinTableSubquery('n', $this->hierarchyRelationQuery->withChildNodeAggregateIdPrefilter($nodeAggregateIdCondition), 'ph', 'ph.childnodeanchor = n.relationanchorpoint')
             ->whereCondition('n', $nodeAggregateIdCondition)
             ->andWhere('n.origindimensionspacepointhash = :parentNodeOriginDimensionSpacePointHash')
             ->andWhere('n.name = :nodeName')
@@ -295,8 +298,8 @@ final class ContentGraph implements ContentGraphInterface
         $queryBuilder =  $this->createQueryBuilder()
             ->select('n.*, h.subtreetags, dsp.dimensionspacepoint AS covereddimensionspacepoint')
             // select the subtree tags from tagged (t) h and then join h again to fetch all node rows in that aggregate
-            ->fromTableSubquery($this->hierarchyStatement->andWhere('JSON_EXTRACT(h.subtreetags, :tagPath) LIKE "true"'), 'th')
-            ->innerJoinTableSubquery('th', $this->hierarchyStatement, 'h', 'th.childnodeanchor = h.childnodeanchor')
+            ->fromTableSubquery($this->hierarchyRelationQuery->andWhere('JSON_EXTRACT(h.subtreetags, :tagPath) LIKE "true"'), 'th')
+            ->innerJoinTableSubquery('th', $this->hierarchyRelationQuery, 'h', 'th.childnodeanchor = h.childnodeanchor')
             ->innerJoin('h', $this->tableNames->node(), 'n', 'h.childnodeanchor = n.relationanchorpoint')
             ->innerJoin('h', $this->tableNames->dimensionSpacePoints(), 'dsp', 'dsp.hash = h.dimensionspacepointhash')
             ->orderBy('n.relationanchorpoint', 'DESC')

@@ -41,32 +41,32 @@ final readonly class NodeQueryBuilder
     ) {
     }
 
-    public function buildBasicNodeAggregateQuery(HierarchyRelationSubquery $hierarchyStatement): QueryBuilder
+    public function buildBasicNodeAggregateQuery(HierarchyRelationSubquery $hierarchyRelationQuery): QueryBuilder
     {
         return $this->createQueryBuilder()
             ->select('n.*, h.subtreetags, dsp.dimensionspacepoint AS covereddimensionspacepoint')
             ->from($this->tableNames->node(), 'n')
-            ->innerJoinTableSubquery('n', $hierarchyStatement, 'h', 'h.childnodeanchor = n.relationanchorpoint')
+            ->innerJoinTableSubquery('n', $hierarchyRelationQuery, 'h', 'h.childnodeanchor = n.relationanchorpoint')
             ->innerJoin('h', $this->tableNames->dimensionSpacePoints(), 'dsp', 'dsp.hash = h.dimensionspacepointhash');
     }
 
-    public function buildChildNodeAggregateQuery(HierarchyRelationSubquery $hierarchyStatement, NodeAggregateId $parentNodeAggregateId): QueryBuilder
+    public function buildChildNodeAggregateQuery(HierarchyRelationSubquery $hierarchyRelationQuery, NodeAggregateId $parentNodeAggregateId): QueryBuilder
     {
         $nodeAggregateIdCondition = NodeAggregateIdCondition::forNodeAggregateId($parentNodeAggregateId);
 
         return $this->createQueryBuilder()
             ->select('cn.*, ch.subtreetags, cdsp.dimensionspacepoint AS covereddimensionspacepoint')
             ->from($this->tableNames->node(), 'pn')
-            ->innerJoinTableSubquery('pn', $hierarchyStatement->withParentNodeAggregateIdPrefilter($nodeAggregateIdCondition), 'ch', 'ch.parentnodeanchor = pn.relationanchorpoint')
+            ->innerJoinTableSubquery('pn', $hierarchyRelationQuery->withParentNodeAggregateIdPrefilter($nodeAggregateIdCondition), 'ch', 'ch.parentnodeanchor = pn.relationanchorpoint')
             ->innerJoin('ch', $this->tableNames->dimensionSpacePoints(), 'cdsp', 'cdsp.hash = ch.dimensionspacepointhash')
             ->innerJoin('ch', $this->tableNames->node(), 'cn', 'cn.relationanchorpoint = ch.childnodeanchor')
             ->whereCondition('pn', $nodeAggregateIdCondition)
             ->orderBy('ch.position');
     }
 
-    public function buildFindRootNodeAggregatesQuery(HierarchyRelationSubquery $hierarchyStatement, FindRootNodeAggregatesFilter $filter): QueryBuilder
+    public function buildFindRootNodeAggregatesQuery(HierarchyRelationSubquery $hierarchyRelationQuery, FindRootNodeAggregatesFilter $filter): QueryBuilder
     {
-        $queryBuilder = $this->buildBasicNodeAggregateQuery($hierarchyStatement->withParentNodeRelationAnchor(
+        $queryBuilder = $this->buildBasicNodeAggregateQuery($hierarchyRelationQuery->withParentNodeRelationAnchor(
             NodeRelationAnchorPoint::forRootEdge()
         ));
 
@@ -77,52 +77,52 @@ final readonly class NodeQueryBuilder
         return $queryBuilder;
     }
 
-    public function buildBasicNodeQuery(HierarchyRelationSubquery $hierarchyStatement, string $nodeTableAlias = 'n', string $select = 'n.*, h.subtreetags'): QueryBuilder
+    public function buildBasicNodeQuery(HierarchyRelationSubquery $hierarchyRelationQuery, string $nodeTableAlias = 'n', string $select = 'n.*, h.subtreetags'): QueryBuilder
     {
         return $this->createQueryBuilder()
             ->select($select)
             ->from($this->tableNames->node(), $nodeTableAlias)
-            ->innerJoinTableSubquery($nodeTableAlias, $hierarchyStatement, 'h', 'h.childnodeanchor = ' . $nodeTableAlias . '.relationanchorpoint');
+            ->innerJoinTableSubquery($nodeTableAlias, $hierarchyRelationQuery, 'h', 'h.childnodeanchor = ' . $nodeTableAlias . '.relationanchorpoint');
     }
 
-    public function buildBasicChildNodesQuery(HierarchyRelationSubquery $hierarchyStatement, NodeAggregateId $parentNodeAggregateId): QueryBuilder
+    public function buildBasicChildNodesQuery(HierarchyRelationSubquery $hierarchyRelationQuery, NodeAggregateId $parentNodeAggregateId): QueryBuilder
     {
         $nodeAggregateIdCondition = NodeAggregateIdCondition::forNodeAggregateId($parentNodeAggregateId);
 
         return $this->createQueryBuilder()
             ->select('n.*, h.subtreetags')
             ->from($this->tableNames->node(), 'pn')
-            ->innerJoinTableSubquery('pn', $hierarchyStatement->withParentNodeAggregateIdPrefilter($nodeAggregateIdCondition), 'h', 'h.parentnodeanchor = pn.relationanchorpoint')
+            ->innerJoinTableSubquery('pn', $hierarchyRelationQuery->withParentNodeAggregateIdPrefilter($nodeAggregateIdCondition), 'h', 'h.parentnodeanchor = pn.relationanchorpoint')
             ->innerJoin('pn', $this->tableNames->node(), 'n', 'h.childnodeanchor = n.relationanchorpoint')
             ->whereCondition('pn', $nodeAggregateIdCondition);
     }
 
-    public function buildBasicParentNodeQuery(HierarchyRelationSubquery $hierarchyStatement, NodeAggregateId $childNodeAggregateId): QueryBuilder
+    public function buildBasicParentNodeQuery(HierarchyRelationSubquery $hierarchyRelationQuery, NodeAggregateId $childNodeAggregateId): QueryBuilder
     {
         $nodeAggregateIdCondition = NodeAggregateIdCondition::forNodeAggregateId($childNodeAggregateId);
 
         return $this->createQueryBuilder()
             ->select('pn.*, ch.subtreetags')
             ->from($this->tableNames->node(), 'pn')
-            ->innerJoinTableSubquery('pn', $hierarchyStatement->withChildNodeAggregateIdPrefilter($nodeAggregateIdCondition), 'ph', 'ph.parentnodeanchor = pn.relationanchorpoint')
+            ->innerJoinTableSubquery('pn', $hierarchyRelationQuery->withChildNodeAggregateIdPrefilter($nodeAggregateIdCondition), 'ph', 'ph.parentnodeanchor = pn.relationanchorpoint')
             ->innerJoin('pn', $this->tableNames->node(), 'cn', 'cn.relationanchorpoint = ph.childnodeanchor')
-            ->innerJoinTableSubquery('pn', $hierarchyStatement, 'ch', 'ch.childnodeanchor = pn.relationanchorpoint')
+            ->innerJoinTableSubquery('pn', $hierarchyRelationQuery, 'ch', 'ch.childnodeanchor = pn.relationanchorpoint')
             ->whereCondition('cn', $nodeAggregateIdCondition);
     }
 
-    public function buildBasicNodeSiblingsQuery(HierarchyRelationSubquery $hierarchyStatement, bool $preceding, NodeAggregateId $siblingNodeAggregateId): QueryBuilder
+    public function buildBasicNodeSiblingsQuery(HierarchyRelationSubquery $hierarchyRelationQuery, bool $preceding, NodeAggregateId $siblingNodeAggregateId): QueryBuilder
     {
         $nodeAggregateIdCondition = NodeAggregateIdCondition::forNodeAggregateId($siblingNodeAggregateId);
 
         $sharedSubQuery = $this->createQueryBuilder()
-            ->fromTableSubquery($hierarchyStatement->withChildNodeAggregateIdPrefilter($nodeAggregateIdCondition), 'sh')
+            ->fromTableSubquery($hierarchyRelationQuery->withChildNodeAggregateIdPrefilter($nodeAggregateIdCondition), 'sh')
             ->innerJoin('sh', $this->tableNames->node(), 'sn', 'sn.relationanchorpoint = sh.childnodeanchor')
             ->whereCondition('sn', $nodeAggregateIdCondition);
 
         $parentNodeAnchorSubQuery = (clone $sharedSubQuery)->select('sh.parentnodeanchor');
         $siblingPositionSubQuery = (clone $sharedSubQuery)->select('sh.position');
 
-        return $this->buildBasicNodeQuery($hierarchyStatement)
+        return $this->buildBasicNodeQuery($hierarchyRelationQuery)
             ->andWhere('h.parentnodeanchor = (' . $parentNodeAnchorSubQuery->getSQL() . ')')
             ->andWhere('n.nodeaggregateid != ' . $nodeAggregateIdCondition->getParameters()->getReference('nodeAggregateId'))
             ->andWhere('h.position ' . ($preceding ? '<' : '>') . ' (' . $siblingPositionSubQuery->getSQL() . ')')
