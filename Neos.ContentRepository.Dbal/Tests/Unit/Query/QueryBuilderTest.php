@@ -113,32 +113,19 @@ class QueryBuilderTest extends TestCase
     }
 
     /** @test */
-    public function mergeParametersWithSameNameAndDifferentValueWithinParameters(): void
+    public function parametersCreatedUseLastParameterForDuplicateNames(): void
     {
-        $this->expectExceptionObject(AmbiguousParametersGiven::becauseParameterIsAlreadyDefinedWithValue(
-            'myString',
-            'abc',
-            'another-value'
-        ));
-
-        $this->dbal->mergeParameters(Parameters::create(
+        // No errors during this deduplication as its more memory consuming and not of great help.
+        $parameters = Parameters::create(
             Parameter::string('myString', 'abc'),
             Parameter::string('myString', 'another-value')
-        ));
-    }
+        );
 
-    /** @test */
-    public function mergeParametersWithSameNameAndDifferentTypeWithinParameters(): void
-    {
-        $this->expectExceptionObject(AmbiguousParametersGiven::becauseParameterIsAlreadyDefinedWithType(
-            'stringOrInteger',
-            ParameterType::STRING,
-            ParameterType::INTEGER,
-        ));
+        self::assertEquals(
+            $parameters->get('myString')->value,
+            'another-value'
+        );
 
-        $this->dbal->mergeParameters(Parameters::create(
-            Parameter::string('stringOrInteger', '0'),
-            Parameter::integer('stringOrInteger', 0),
-        ));
+        self::assertEquals($parameters->count(), 1);
     }
 }

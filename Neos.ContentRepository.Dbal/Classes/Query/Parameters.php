@@ -19,34 +19,8 @@ final readonly class Parameters implements \IteratorAggregate, \Countable
 
     public static function create(Parameter ...$items): self
     {
-        /** @var array<string,Parameter> $indexed */
-        $indexed = [];
-        foreach ($items as $parameter) {
-            if (!array_key_exists($parameter->name, $indexed)) {
-                $indexed[$parameter->name] = $parameter;
-                continue;
-            }
-            $existing = $indexed[$parameter->name];
-
-            if ($existing->type !== $parameter->type) {
-                throw AmbiguousParametersGiven::becauseParameterIsAlreadyDefinedWithType(
-                    $existing->name,
-                    $existing->type,
-                    $parameter->type
-                );
-            }
-
-            if ($existing->value !== $parameter->value) {
-                throw AmbiguousParametersGiven::becauseParameterIsAlreadyDefinedWithValue(
-                    $existing->name,
-                    $existing->value,
-                    $parameter->value
-                );
-            }
-        }
-
         return new self(
-            $indexed
+            array_column($items, null, 'name')
         );
     }
 

@@ -168,22 +168,45 @@ final readonly class HierarchyRelationSubquery implements SqlTableSubqueryInterf
 
     public function getParameters(): Parameters
     {
-        return Parameters::create(...array_filter([
-            Parameter::integerArray('contentStreamLayers', $this->contentStreamLayers->toIntArray()),
-            match (true) {
-                $this->dimensionSpacePoints->isEmpty() => null,
-                $this->dimensionSpacePoints->count() === 1 => Parameter::string('dimensionSpacePointHash', $this->dimensionSpacePoints->getPointHashes()[0]),
-                default => Parameter::stringArray('dimensionSpacePointHashes', $this->dimensionSpacePoints->getPointHashes()),
-            },
-            ...$this->childNodeAnchor ? match ($this->childNodeAnchor::class) {
-                NodeRelationAnchorPoint::class => [Parameter::integer('childNodeRelationAnchorPoint', $this->childNodeAnchor->value)],
-                NodeAggregateIdCondition::class => iterator_to_array($this->childNodeAnchor->getParameters()),
-            } : [],
-            ...$this->parentNodeAnchor ? match ($this->parentNodeAnchor::class) {
-                NodeRelationAnchorPoint::class => [Parameter::integer('parentNodeRelationAnchorPoint', $this->parentNodeAnchor->value)],
-                NodeAggregateIdCondition::class => iterator_to_array($this->parentNodeAnchor->getParameters()),
-            } : [],
-        ]));
+        $parameters = [
+            Parameter::integerArray('contentStreamLayers', $this->contentStreamLayers->toIntArray())
+        ];
+
+        if ($this->whereCondition !== null) {
+            $parameters = [...$parameters, ...iterator_to_array($this->whereCondition->getParameters())];
+        }
+
+        if ($this->possibleWhereCondition !== null) {
+            $parameters = [...$parameters, ...iterator_to_array($this->possibleWhereCondition->getParameters())];
+        }
+
+        $dimensionSpacePointsParameter = match (true) {
+            $this->dimensionSpacePoints->isEmpty() => null,
+            $this->dimensionSpacePoints->count() === 1 => Parameter::string('dimensionSpacePointHash', $this->dimensionSpacePoints->getPointHashes()[0]),
+            default => Parameter::stringArray('dimensionSpacePointHashes', $this->dimensionSpacePoints->getPointHashes()),
+        };
+
+        if ($dimensionSpacePointsParameter !== null) {
+            $parameters[] = $dimensionSpacePointsParameter;
+        }
+
+        if ($this->childNodeAnchor instanceof NodeRelationAnchorPoint) {
+            $parameters[] = Parameter::integer('childNodeRelationAnchorPoint', $this->childNodeAnchor->value);
+        }
+
+        if ($this->childNodeAnchor instanceof NodeAggregateIdCondition) {
+            $parameters = [...$parameters, ...iterator_to_array($this->childNodeAnchor->getParameters())];
+        }
+
+        if ($this->parentNodeAnchor instanceof NodeRelationAnchorPoint) {
+            $parameters[] = Parameter::integer('parentNodeRelationAnchorPoint', $this->parentNodeAnchor->value);
+        }
+
+        if ($this->parentNodeAnchor instanceof NodeAggregateIdCondition) {
+            $parameters = [...$parameters, ...iterator_to_array($this->parentNodeAnchor->getParameters())];
+        }
+
+        return Parameters::create(...$parameters);
     }
 
     public function toSql(): string
@@ -217,7 +240,7 @@ final readonly class HierarchyRelationSubquery implements SqlTableSubqueryInterf
 
         if ($this->childNodeAnchor instanceof NodeAggregateIdCondition) {
             $possibleWhereConditions[] = "h.childnodeanchor IN {$this->childNodeAnchor->toRelationAnchorPointSubquerySql($this->tableNames)}";
-            // We don't actually ensure the outer result only contains hierarchies for this node
+            // We don't actually ensure the final result only contains hierarchies for this node
         }
 
         if ($this->parentNodeAnchor instanceof NodeRelationAnchorPoint) {
@@ -227,7 +250,7 @@ final readonly class HierarchyRelationSubquery implements SqlTableSubqueryInterf
 
         if ($this->parentNodeAnchor instanceof NodeAggregateIdCondition) {
             $possibleWhereConditions[] = "h.parentnodeanchor IN {$this->parentNodeAnchor->toRelationAnchorPointSubquerySql($this->tableNames)}";
-            // We don't actually ensure the outer result only contains hierarchies for this node
+            // We don't actually ensure the final result only contains hierarchies for this node
         }
 
         $possibleWhereConditionSql = $possibleWhereConditions === [] ? '' : sprintf(
