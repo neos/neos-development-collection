@@ -42,6 +42,9 @@ final class ContentStreamLayerFinder
         } catch (DBALException $e) {
             throw new \RuntimeException(sprintf('Failed to load content stream ids from database: %s', $e->getMessage()), 1769945050, $e);
         }
+        if ($contentStreamLayers === []) {
+            throw new \RuntimeException(sprintf('Content stream "%s" does not exist. No layers found.', $contentStreamId->value), 1782030038);
+        }
         return ContentStreamLayers::fromArray($contentStreamLayers);
     }
 }
