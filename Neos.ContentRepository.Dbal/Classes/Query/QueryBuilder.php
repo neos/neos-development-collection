@@ -23,12 +23,12 @@ final class QueryBuilder extends DBALQueryBuilder
      *
      * @return $this This QueryBuilder instance.
      */
-    public function fromTableSubquery(SqlTableSubqueryInterface $fromStatement, string $alias): self
+    public function fromTableSubquery(SqlTableSubqueryInterface $tableSubquery, string $alias): self
     {
-        $this->mergeParameters($fromStatement->getParameters());
+        $this->mergeParameters($tableSubquery->getParameters());
 
         $this->from(
-            $fromStatement->toSql(),
+            $tableSubquery->toSql(),
             $alias
         );
 
@@ -40,13 +40,13 @@ final class QueryBuilder extends DBALQueryBuilder
      *
      * @return $this This QueryBuilder instance.
      */
-    public function innerJoinTableSubquery(string $fromAlias, SqlTableSubqueryInterface $joinStatement, string $alias, ?string $condition = null): self
+    public function innerJoinTableSubquery(string $fromAlias, SqlTableSubqueryInterface $tableSubquery, string $alias, ?string $condition = null): self
     {
-        $this->mergeParameters($joinStatement->getParameters());
+        $this->mergeParameters($tableSubquery->getParameters());
 
         $this->innerJoin(
             $fromAlias,
-            $joinStatement->toSql(),
+            $tableSubquery->toSql(),
             $alias,
             $condition
         );
