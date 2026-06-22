@@ -96,18 +96,26 @@ trait SubtreeTagging
         $removeTagStatement = <<<SQL
             UPDATE {$this->tableNames->hierarchyRelation()} h
             JOIN (
-              WITH RECURSIVE cte (id, dsp) AS (
-                SELECT ph.childnodeanchor, ph.dimensionspacepointhash
+              WITH RECURSIVE cte (id, dsp, inheritsTag) AS (
+                SELECT
+                  ph.childnodeanchor,
+                  ph.dimensionspacepointhash,
+                  -- if the parent node of the affected node has the tag explicit or inherited we need to preserve its inheritance recursively when removing an explicit tag
+                  JSON_CONTAINS_PATH(gph.subtreetags, 'one', :tagPath) as inheritsTag
                 FROM {$this->tableNames->hierarchyRelation()} ph
                 INNER JOIN {$this->tableNames->node()} n ON n.relationanchorpoint = ph.childnodeanchor
+                INNER JOIN {$this->tableNames->hierarchyRelation()} gph ON gph.childnodeanchor = ph.parentnodeanchor AND gph.dimensionspacepointhash = ph.dimensionspacepointhash
                 WHERE
                   n.nodeaggregateid = :nodeAggregateId
                   AND ph.contentstreamid = :contentStreamId
+                  AND gph.contentstreamid = :contentStreamId
                   AND ph.dimensionspacepointhash in (:dimensionSpacePointHashes)
                 UNION ALL
                 SELECT
                   dh.childnodeanchor,
-                  dh.dimensionspacepointhash
+                  dh.dimensionspacepointhash,
+                  -- if the entry node should inherit the tag, all its herby selected descendants do as well
+                  cte.inheritsTag
                 FROM
                   cte
                   JOIN {$this->tableNames->hierarchyRelation()} dh ON dh.parentnodeanchor = cte.id
@@ -119,21 +127,7 @@ trait SubtreeTagging
               SELECT * FROM cte
             ) subquery ON h.dimensionspacepointhash = subquery.dsp
                 AND h.childnodeanchor = subquery.id
-                SET subtreetags = IF(
-                (
-                    SELECT containsTag FROM (SELECT
-                        JSON_CONTAINS_PATH(gph.subtreetags, 'one', :tagPath) as containsTag
-                  FROM
-                    {$this->tableNames->hierarchyRelation()} gph
-                    INNER JOIN {$this->tableNames->hierarchyRelation()} ph ON ph.parentnodeanchor = gph.childnodeanchor
-                    INNER JOIN {$this->tableNames->node()} n ON n.relationanchorpoint = ph.childnodeanchor
-                  WHERE
-                    ph.parentnodeanchor = gph.childnodeanchor
-                    AND n.nodeaggregateid = :nodeAggregateId
-                    AND gph.contentstreamid = :contentStreamId
-                  LIMIT 1) as containsTagSubQuery
-                ), JSON_SET(subtreetags, :tagPath, null), JSON_REMOVE(subtreetags, :tagPath)
-              )
+                SET subtreetags = IF(subquery.inheritsTag, JSON_SET(subtreetags, :tagPath, null), JSON_REMOVE(subtreetags, :tagPath))
               WHERE contentstreamid = :contentStreamId
         SQL;
         try {
