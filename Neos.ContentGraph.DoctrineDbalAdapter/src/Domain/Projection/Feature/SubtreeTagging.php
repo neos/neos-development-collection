@@ -162,28 +162,7 @@ trait SubtreeTagging
                   h.parentnodeanchor,
                   h.childnodeanchor,
                   h.position,
-                  IF(
-                    (
-                      SELECT
-                        containsTag
-                      FROM
-                        (
-                          SELECT
-                            JSON_CONTAINS_PATH(gph.subtreetags, 'one', :tagPath) as containsTag
-                          FROM
-                            {$this->hierarchyRelationStatement->toSql()} gph
-                            INNER JOIN {$this->hierarchyRelationStatement->toSql()} ph ON ph.parentnodeanchor = gph.childnodeanchor
-                            INNER JOIN {$this->tableNames->node()} n ON n.relationanchorpoint = ph.childnodeanchor
-                          WHERE
-                            ph.parentnodeanchor = gph.childnodeanchor
-                            AND n.nodeaggregateid = :nodeAggregateId
-                          LIMIT
-                            1
-                        ) as containsTagSubQuery
-                    ),
-                    JSON_SET(subtreetags, :tagPath, null),
-                    JSON_REMOVE(subtreetags, :tagPath)
-                  ) as subtreetags,
+                  IF(subquery.inheritsTag, JSON_SET(h.subtreetags, :tagPath, null), JSON_REMOVE(h.subtreetags, :tagPath)) as subtreetags,
                   h.subtreetags as currentsubtreetags,
                   h.dimensionspacepointhash,
                   :targetContentStreamLayer as contentstreamlayer
@@ -191,19 +170,24 @@ trait SubtreeTagging
                   {$this->hierarchyRelationStatement->toSql()} h
                   JOIN (
                     WITH
-                      RECURSIVE cte (childnodeanchor, dsp) AS (
+                      RECURSIVE cte (childnodeanchor, dsp, inheritsTag) AS (
                         SELECT
                           ph.childnodeanchor,
-                          ph.dimensionspacepointhash
+                          ph.dimensionspacepointhash,
+                          -- if the parent node of the affected node has the tag explicit or inherited we need to preserve its inheritance recursively when removing an explicit tag
+                          JSON_CONTAINS_PATH(gph.subtreetags, 'one', :tagPath) as inheritsTag
                         FROM
                           {$this->hierarchyRelationStatement->where('h.dimensionspacepointhash in (:dimensionSpacePointHashes)')->toSql()} ph
                           INNER JOIN {$this->tableNames->node()} n ON n.relationanchorpoint = ph.childnodeanchor
+                          INNER JOIN {$this->hierarchyRelationStatement->toSql()} gph ON gph.childnodeanchor = ph.parentnodeanchor AND gph.dimensionspacepointhash = ph.dimensionspacepointhash
                         WHERE
                           n.nodeaggregateid = :nodeAggregateId
                         UNION ALL
                         SELECT
                           dh.childnodeanchor,
-                          dh.dimensionspacepointhash
+                          dh.dimensionspacepointhash,
+                          -- if the entry node should inherit the tag, all its herby selected descendants do as well
+                          cte.inheritsTag
                         FROM
                           cte
                           JOIN {$this->hierarchyRelationStatement->toSql()} dh ON dh.parentnodeanchor = cte.childnodeanchor
