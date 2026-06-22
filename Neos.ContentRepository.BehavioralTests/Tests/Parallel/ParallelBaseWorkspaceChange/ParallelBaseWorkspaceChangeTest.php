@@ -35,6 +35,10 @@ use Neos\ContentRepository\TestSuite\Fakes\FakeContentDimensionSourceFactory;
 use Neos\ContentRepository\TestSuite\Fakes\FakeNodeTypeManagerFactory;
 use Neos\ContentRepository\TestSuite\Fakes\FakeProjectionFactory;
 use Neos\EventStore\Exception\ConcurrencyException;
+use Neos\EventStore\Model\Event\EventType;
+use Neos\EventStore\Model\Event\EventTypes;
+use Neos\EventStore\Model\EventStream\EventStreamFilter;
+use Neos\EventStore\Model\EventStream\VirtualStreamName;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use PHPUnit\Framework\Assert;
 
@@ -190,6 +194,8 @@ class ParallelBaseWorkspaceChangeTest extends AbstractParallelTestCase
 
         $this->log('1. base workspace change finished with: ' . $successFullChanged);
         Assert::assertGreaterThan(1, $successFullChanged, 'Base workspace was not changed');
+
+        $this->assertEventsAreValid();
     }
 
     /**
@@ -229,5 +235,28 @@ class ParallelBaseWorkspaceChangeTest extends AbstractParallelTestCase
 
         $this->log('2. base workspace change finished with: ' . $successFullChanged);
         Assert::assertGreaterThan(1, $successFullChanged, 'Base workspace was not changed');
+
+        $this->assertEventsAreValid();
+    }
+
+    private function assertEventsAreValid(): void
+    {
+        $eventStore = $this->getEventStore($this->contentRepository->id);
+
+        $contentStreamWasRemovedEvents = $eventStore->load(VirtualStreamName::forCategory('ContentStream:'), EventStreamFilter::create(
+            EventTypes::create(
+                EventType::fromString('ContentStreamWasRemoved')
+            )
+        ));
+
+        $removedContentStreamsMap = [];
+        foreach ($contentStreamWasRemovedEvents as $eventEnvelope) {
+            if (array_key_exists($eventEnvelope->streamName->value, $removedContentStreamsMap)) {
+                Assert::fail(sprintf('ContentStream %s was removed twice: %s', $eventEnvelope->streamName->value, json_encode($eventEnvelope)));
+            }
+            $removedContentStreamsMap[$eventEnvelope->streamName->value] = true;
+        }
+
+        Assert::assertNotEmpty($removedContentStreamsMap, 'No content streams were removed at all. Wrong query?');
     }
 }

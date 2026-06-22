@@ -15,10 +15,14 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\BehavioralTests\Tests\Parallel;
 
 use Neos\ContentRepository\Core\ContentRepository;
+use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceFactoryDependencies;
+use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceFactoryInterface;
+use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceInterface;
 use Neos\ContentRepository\Core\Feature\Security\Dto\UserId;
 use Neos\ContentRepository\Core\Service\ContentRepositoryMaintainer;
 use Neos\ContentRepository\Core\Service\ContentRepositoryMaintainerFactory;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
+use Neos\ContentRepository\Core\Subscription\Engine\SubscriptionEngine;
 use Neos\ContentRepository\TestSuite\Fakes\FakeAuthProvider;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\EventStore\EventStoreInterface;
@@ -116,6 +120,24 @@ abstract class AbstractParallelTestCase extends TestCase // we don't use Flows f
         // reset events and projections
         $contentRepositoryMaintainer->prune();
         return $contentRepository;
+    }
+
+    final protected function getEventStore(ContentRepositoryId $contentRepositoryId): EventStoreInterface
+    {
+        $eventStoreAccessor = new class implements ContentRepositoryServiceFactoryInterface {
+            public EventStoreInterface|null $eventStore;
+            public SubscriptionEngine|null $subscriptionEngine;
+            public function build(ContentRepositoryServiceFactoryDependencies $serviceFactoryDependencies): ContentRepositoryServiceInterface
+            {
+                $this->eventStore = $serviceFactoryDependencies->eventStore;
+                $this->subscriptionEngine = $serviceFactoryDependencies->subscriptionEngine;
+                return new class implements ContentRepositoryServiceInterface
+                {
+                };
+            }
+        };
+        $this->contentRepositoryRegistry->buildService($contentRepositoryId, $eventStoreAccessor);
+        return $eventStoreAccessor->eventStore;
     }
 
     final protected function log(string $message): void
