@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\Feature;
 
-use Doctrine\DBAL\ArrayParameterType;
 use Doctrine\DBAL\Exception as DBALException;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\ContentStreamLayers;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\Feature\SubtreeTagging\ChildHierarchyRelation;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\Feature\SubtreeTagging\HierarchyRelationRow;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\Feature\SubtreeTagging\HierarchyRelationRowWithoutLayer;
+use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\Feature\SubtreeTagging\SubtreeTagPath;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\Feature\SubtreeTagging\SubtreeTagSerializer;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\NodeRelationAnchorPoint;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\NodeRelationAnchorPoints;
@@ -29,7 +29,7 @@ use Neos\ContentRepository\Dbal\Query\StaticWhereCondition;
  */
 trait SubtreeTagging
 {
-    private function addSubtreeTag(ContentStreamLayers $contentStreamLayers, NodeAggregateId $nodeAggregateId, DimensionSpacePointSet $affectedDimensionSpacePoints, SubtreeTag $tag): void
+    private function addSubtreeTag(ContentStreamLayers $contentStreamLayers, NodeAggregateId $nodeAggregateId, DimensionSpacePointSet $affectedDimensionSpacePoints, SubtreeTag $subtreeTag): void
     {
         // Performance: walk the subtree ONE LEVEL AT A TIME, driven from PHP, instead of in a single recursive CTE.
         // A recursive CTE cannot scope its per-level layer resolution to the current frontier (the recursive relation
@@ -45,18 +45,17 @@ trait SubtreeTagging
         // Tombstones stay correct for free: a removed relation's winning row is the NULL-parent tombstone, which never
         // matches the outer `parentnodeanchor IN (frontier)`, so removed subtrees drop out (the id-based inner pushdown
         // keeps every layer, including the tombstone, in the resolution).
-        $tagPath = '$."' . $tag->value . '"';
         try {
             foreach ($affectedDimensionSpacePoints as $dimensionSpacePoint) {
-                $level = $this->findUntaggedWinningChildRelationsOfNodeAggregate($contentStreamLayers, $nodeAggregateId, $dimensionSpacePoint, $tagPath);
+                $level = $this->findUntaggedWinningChildRelationsOfNodeAggregate($contentStreamLayers, $nodeAggregateId, $dimensionSpacePoint, $subtreeTag);
                 while ($level !== []) {
-                    $this->writeInheritedSubtreeTag($contentStreamLayers, $level, $tagPath);
+                    $this->writeInheritedSubtreeTag($contentStreamLayers, $level, $subtreeTag);
                     $childNodeAnchors = NodeRelationAnchorPoints::create(...array_map(fn (ChildHierarchyRelation $child) => $child->childNodeAnchor, $level));
-                    $level = $this->findUntaggedWinningChildRelationsOfAnchors($contentStreamLayers, $childNodeAnchors, $dimensionSpacePoint, $tagPath);
+                    $level = $this->findUntaggedWinningChildRelationsOfAnchors($contentStreamLayers, $childNodeAnchors, $dimensionSpacePoint, $subtreeTag);
                 }
             }
         } catch (DBALException $e) {
-            throw new \RuntimeException(sprintf('1: Failed to add subtree tag %s for content stream %s, node aggregate id %s and dimension space points %s: %s', $tag->value, $contentStreamLayers->toDebugString(), $nodeAggregateId->value, $affectedDimensionSpacePoints->toJson(), $e->getMessage()), 1716479749, $e);
+            throw new \RuntimeException(sprintf('1: Failed to add subtree tag %s for content stream %s, node aggregate id %s and dimension space points %s: %s', $subtreeTag->value, $contentStreamLayers->toDebugString(), $nodeAggregateId->value, $affectedDimensionSpacePoints->toJson(), $e->getMessage()), 1716479749, $e);
         }
 
         $nodeAggregateIdCondition = NodeAggregateIdCondition::forNodeAggregateId($nodeAggregateId);
@@ -88,7 +87,7 @@ trait SubtreeTagging
             SQL;
         try {
             $this->dbal->executeStatement($addTagToNodeStatement, [
-                'tagPath' => $tagPath,
+                'tagPath' => SubtreeTagPath::create($subtreeTag),
                 'targetContentStreamLayer' => $contentStreamLayers->getWriteLayer()->value,
                 ...$hierarchyStatement->getParameters()->toDbalValues(),
                 ...$nodeAggregateIdCondition->getParameters()->toDbalValues(),
@@ -97,7 +96,7 @@ trait SubtreeTagging
                 ...$nodeAggregateIdCondition->getParameters()->toDbalTypes(),
             ]);
         } catch (DBALException $e) {
-            throw new \RuntimeException(sprintf('2: Failed to add subtree tag %s for content stream %s, node aggregate id %s and dimension space points %s: %s', $tag->value, $contentStreamLayers->toDebugString(), $nodeAggregateId->value, $affectedDimensionSpacePoints->toJson(), $e->getMessage()), 1716479840, $e);
+            throw new \RuntimeException(sprintf('2: Failed to add subtree tag %s for content stream %s, node aggregate id %s and dimension space points %s: %s', $subtreeTag->value, $contentStreamLayers->toDebugString(), $nodeAggregateId->value, $affectedDimensionSpacePoints->toJson(), $e->getMessage()), 1716479840, $e);
         }
     }
 
@@ -108,7 +107,7 @@ trait SubtreeTagging
      *
      * @return list<ChildHierarchyRelation>
      */
-    private function findUntaggedWinningChildRelationsOfNodeAggregate(ContentStreamLayers $contentStreamLayers, NodeAggregateId $parentNodeAggregateId, DimensionSpacePoint $dimensionSpacePoint, string $tagPath): array
+    private function findUntaggedWinningChildRelationsOfNodeAggregate(ContentStreamLayers $contentStreamLayers, NodeAggregateId $parentNodeAggregateId, DimensionSpacePoint $dimensionSpacePoint, SubtreeTag $subtreeTag): array
     {
         $nodeAggregateIdCondition = NodeAggregateIdCondition::forNodeAggregateId($parentNodeAggregateId);
         $hierarchyStatement = $this->subqueries->forHierarchyRelation($contentStreamLayers)->withDimensionSpacePoint($dimensionSpacePoint)->withPossibleParentNodeAggregateId($nodeAggregateIdCondition)
@@ -121,8 +120,9 @@ trait SubtreeTagging
             WHERE
               {$nodeAggregateIdCondition->toWhereSql('n')}
             SQL;
+        // Todo catch all DBALException
         $rows = $this->dbal->fetchAllAssociative($statement, [
-            'tagPath' => $tagPath,
+            'tagPath' => SubtreeTagPath::create($subtreeTag),
             ...$hierarchyStatement->getParameters()->toDbalValues(),
             ...$nodeAggregateIdCondition->getParameters()->toDbalValues(),
         ], [
@@ -141,7 +141,7 @@ trait SubtreeTagging
      *
      * @return list<ChildHierarchyRelation>
      */
-    private function findUntaggedWinningChildRelationsOfAnchors(ContentStreamLayers $contentStreamLayers, NodeRelationAnchorPoints $parentNodeAnchors, DimensionSpacePoint $dimensionSpacePoint, string $tagPath): array
+    private function findUntaggedWinningChildRelationsOfAnchors(ContentStreamLayers $contentStreamLayers, NodeRelationAnchorPoints $parentNodeAnchors, DimensionSpacePoint $dimensionSpacePoint, SubtreeTag $subtreeTag): array
     {
         if ($parentNodeAnchors->isEmpty()) {
             return [];
@@ -155,7 +155,7 @@ trait SubtreeTagging
             FROM {$hierarchyStatement->toSql()} h
             SQL;
         $rows = $this->dbal->fetchAllAssociative($statement, [
-            'tagPath' => $tagPath,
+            'tagPath' => SubtreeTagPath::create($subtreeTag),
             ...$hierarchyStatement->getParameters()->toDbalValues(),
         ], [
             ...$hierarchyStatement->getParameters()->toDbalTypes(),
@@ -172,7 +172,7 @@ trait SubtreeTagging
      *
      * @param list<ChildHierarchyRelation> $relations
      */
-    private function writeInheritedSubtreeTag(ContentStreamLayers $contentStreamLayers, array $relations, string $tagPath): void
+    private function writeInheritedSubtreeTag(ContentStreamLayers $contentStreamLayers, array $relations, SubtreeTag $subtreeTag): void
     {
         if ($relations === []) {
             return;
@@ -198,7 +198,7 @@ trait SubtreeTagging
             ON DUPLICATE KEY UPDATE subtreetags = VALUES(subtreetags)
             SQL;
         $this->dbal->executeStatement($statement, [
-            'tagPath' => $tagPath,
+            'tagPath' => SubtreeTagPath::create($subtreeTag),
             'targetContentStreamLayer' => $contentStreamLayers->getWriteLayer()->value,
         ]);
     }
@@ -222,10 +222,9 @@ trait SubtreeTagging
      *
      * Walked per dimension to keep the parent<->child dsp pairing exact. Tombstone-safe via the id-based inner pushdown.
      */
-    private function removeSubtreeTag(ContentStreamLayers $contentStreamLayers, NodeAggregateId $nodeAggregateId, DimensionSpacePointSet $affectedDimensionSpacePoints, SubtreeTag $tag): void
+    private function removeSubtreeTag(ContentStreamLayers $contentStreamLayers, NodeAggregateId $nodeAggregateId, DimensionSpacePointSet $affectedDimensionSpacePoints, SubtreeTag $subtreeTag): void
     {
-        $tagKey = $tag->value;
-        $tagPath = '$."' . $tag->value . '"';
+        $tagKey = $subtreeTag->value;
         try {
             foreach ($affectedDimensionSpacePoints as $dimensionSpacePoint) {
                 $seed = $this->findWinningRelationOfNodeAggregate($contentStreamLayers, $nodeAggregateId, $dimensionSpacePoint);
@@ -236,7 +235,7 @@ trait SubtreeTagging
                 // and therefore whether it keeps the tag as an inherited `null` or loses it entirely - can differ per
                 // dimension. We check the node's parent relation IN THIS DIMENSION (the seed's parentnodeanchor is the
                 // parent's anchor in this dimension; the parent's incoming relation has childnodeanchor = that anchor).
-                $stillInherited = $this->relationContainsTag($contentStreamLayers, NodeRelationAnchorPoints::fromArray([$seed->parentNodeAnchor->value]), $dimensionSpacePoint, $tagPath);
+                $stillInherited = $this->relationContainsTag($contentStreamLayers, NodeRelationAnchorPoints::fromArray([$seed->parentNodeAnchor->value]), $dimensionSpacePoint, $subtreeTag);
 
                 $toProcess = [$seed];
                 $visited = [$seed->childNodeAnchor->value => true];
@@ -285,7 +284,7 @@ trait SubtreeTagging
                 }
             }
         } catch (DBALException $e) {
-            throw new \RuntimeException(sprintf('Failed to remove subtree tag %s for content stream %s, node aggregate id %s and dimension space points %s: %s', $tag->value, $contentStreamLayers->toDebugString(), $nodeAggregateId->value, $affectedDimensionSpacePoints->toJson(), $e->getMessage()), 1716482293, $e);
+            throw new \RuntimeException(sprintf('Failed to remove subtree tag %s for content stream %s, node aggregate id %s and dimension space points %s: %s', $subtreeTag->value, $contentStreamLayers->toDebugString(), $nodeAggregateId->value, $affectedDimensionSpacePoints->toJson(), $e->getMessage()), 1716482293, $e);
         }
     }
 
@@ -295,7 +294,7 @@ trait SubtreeTagging
      * from its parent.
      *
      */
-    private function relationContainsTag(ContentStreamLayers $contentStreamLayers, NodeRelationAnchorPoints $childNodeAnchors, DimensionSpacePoint $dimensionSpacePoint, string $tagPath): bool
+    private function relationContainsTag(ContentStreamLayers $contentStreamLayers, NodeRelationAnchorPoints $childNodeAnchors, DimensionSpacePoint $dimensionSpacePoint, SubtreeTag $subtreeTag): bool
     {
         if ($childNodeAnchors->isEmpty()) {
             return false;
@@ -310,7 +309,7 @@ trait SubtreeTagging
             LIMIT 1
             SQL;
         $result = $this->dbal->fetchOne($statement, [
-            'tagPath' => $tagPath,
+            'tagPath' => SubtreeTagPath::create($subtreeTag),
             ...$hierarchyStatement->getParameters()->toDbalValues(),
         ], [
             ...$hierarchyStatement->getParameters()->toDbalTypes(),
