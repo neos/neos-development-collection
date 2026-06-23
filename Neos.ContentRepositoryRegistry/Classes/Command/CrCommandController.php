@@ -58,12 +58,53 @@ final class CrCommandController extends CommandController
         $contentRepositoryId = ContentRepositoryId::fromString($contentRepository);
         $contentRepositoryMaintainer = $this->contentRepositoryRegistry->buildService($contentRepositoryId, new ContentRepositoryMaintainerFactory());
 
+        $crStatus = $contentRepositoryMaintainer->status();
+
+        $hasSkippedProjections = false;
+        $outputHeaderForSkippedProjections = function () use (&$hasSkippedProjections) {
+            if (!$hasSkippedProjections) {
+                $hasSkippedProjections = true;
+                $this->outputLine('Skipped subscriptions:');
+            }
+        };
+
+        foreach ($crStatus->subscriptionStatus as $status) {
+            if ($status instanceof ProjectionSubscriptionStatus && $status->subscriptionStatus === SubscriptionStatus::ERROR) {
+                $outputHeaderForSkippedProjections();
+                $this->outputLine('  <b>%s</b>:', [$status->subscriptionId->value]);
+                $this->output('    Setup: ');
+                $this->outputLine(match ($status->setupStatus->type) {
+                    ProjectionStatusType::OK => '<success>OK</success>',
+                    ProjectionStatusType::SETUP_REQUIRED => '<comment>SETUP REQUIRED</comment>',
+                    ProjectionStatusType::ERROR => '<error>ERROR</error>',
+                });
+                $this->output('    Projection: ');
+                $this->outputLine('in <error>ERROR</error>');
+                if ($status->subscriptionError !== null) {
+                    $lines = explode(chr(10), $status->subscriptionError->errorMessage ?: '<comment>No details available.</comment>');
+                    foreach ($lines as $line) {
+                        $this->outputLine('<error>      %s</error>', [$line]);
+                    }
+                }
+            }
+            if ($status instanceof DetachedSubscriptionStatus) {
+                $outputHeaderForSkippedProjections();
+                $this->outputLine('  <b>%s</b>:', [$status->subscriptionId->value]);
+                $this->output('    Subscription: ');
+                $this->output('%s <comment>DETACHED</comment>', [$status->subscriptionId->value, $status->subscriptionStatus === SubscriptionStatus::DETACHED ? 'is' : 'will be']);
+            }
+        }
+
         $result = $contentRepositoryMaintainer->setUp();
         if ($result !== null) {
             $this->outputLine('<error>%s</error>', [$result->getMessage()]);
             $this->quit(1);
         }
-        $this->outputLine('<success>Content Repository "%s" was set up</success>', [$contentRepositoryId->value]);
+        if ($hasSkippedProjections) {
+            $this->outputLine('<comment>Content repository "%s" was set up. But some subscriptions were skipped.</comment>', [$contentRepositoryId->value]);
+        } else {
+            $this->outputLine('<success>Content repository "%s" was set up</success>', [$contentRepositoryId->value]);
+        }
     }
 
     /**
