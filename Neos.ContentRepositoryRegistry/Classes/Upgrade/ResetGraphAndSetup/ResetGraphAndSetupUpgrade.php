@@ -7,10 +7,14 @@ namespace Neos\ContentRepositoryRegistry\Upgrade\ResetGraphAndSetup;
 use Neos\ContentGraph\DoctrineDbalAdapter\ContentGraphTableNames;
 use Neos\ContentRepository\Core\Projection\ProjectionStatusType;
 use Neos\ContentRepository\Core\Service\ContentRepositoryMaintainer;
+use Neos\ContentRepository\Core\Subscription\Engine\SubscriptionEngine;
 use Neos\ContentRepository\Core\Subscription\ProjectionSubscriptionStatus;
+use Neos\ContentRepository\Core\Subscription\Store\SubscriptionStoreInterface;
 use Neos\ContentRepository\Core\Subscription\SubscriptionId;
+use Neos\ContentRepository\Core\Subscription\SubscriptionStatus;
 use Neos\ContentRepositoryRegistry\Upgrade\Shared\CRUpgradeContext;
 use Neos\ContentRepositoryRegistry\Upgrade\Shared\OutputMessageTrait;
+use Neos\EventStore\Model\Event\SequenceNumber;
 
 /**
  * Upgrade to allow to empty and set up the graph projection in one step
@@ -38,11 +42,17 @@ final readonly class ResetGraphAndSetupUpgrade
 {
     use OutputMessageTrait;
 
+    private SubscriptionStoreInterface $subscriptionStore;
+
     public function __construct(
         private CRUpgradeContext $context,
         private \Closure $outputFn,
         private ContentRepositoryMaintainer $contentRepositoryMaintainer,
     ) {
+        $subscriptionEngine = (new \ReflectionClass(ContentRepositoryMaintainer::class))->getProperty('subscriptionEngine')->getValue($this->contentRepositoryMaintainer);
+        $subscriptionStore = (new \ReflectionClass(SubscriptionEngine::class))->getProperty('subscriptionStore')->getValue($subscriptionEngine);
+
+        $this->subscriptionStore = $subscriptionStore;
     }
 
     public function execute(bool $force): void
@@ -74,6 +84,13 @@ final readonly class ResetGraphAndSetupUpgrade
         $this->log('Dropped all existing graph projection tables.');
         $this->log('Running schema setup ...');
 
+        /** @phpstan-ignore neos.cr.internal (architecture does not matter here *g - we have pure SQL muhaha) */
+        $this->subscriptionStore->update(
+            SubscriptionId::fromString('contentGraph'),
+            SubscriptionStatus::BOOTING,
+            SequenceNumber::none(),
+            null
+        );
         $result = $this->contentRepositoryMaintainer->setUp();
         if ($result !== null) {
             $this->log(sprintf('Unexpected error during setup: <error>%s</error>', $result->getMessage()));
