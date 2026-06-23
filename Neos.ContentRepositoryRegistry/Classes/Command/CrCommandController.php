@@ -10,6 +10,7 @@ use Neos\ContentRepository\Core\Subscription\DetachedSubscriptionStatus;
 use Neos\ContentRepository\Core\Subscription\ProjectionSubscriptionStatus;
 use Neos\ContentRepository\Core\Subscription\SubscriptionStatus;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
+use Neos\EventStore\Model\Event\SequenceNumber;
 use Neos\EventStore\Model\EventStore\StatusType;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Cli\CommandController;
@@ -71,27 +72,11 @@ final class CrCommandController extends CommandController
         foreach ($crStatus->subscriptionStatus as $status) {
             if ($status instanceof ProjectionSubscriptionStatus && $status->subscriptionStatus === SubscriptionStatus::ERROR) {
                 $outputHeaderForSkippedProjections();
-                $this->outputLine('  <b>%s</b>:', [$status->subscriptionId->value]);
-                $this->output('    Setup: ');
-                $this->outputLine(match ($status->setupStatus->type) {
-                    ProjectionStatusType::OK => '<success>OK</success>',
-                    ProjectionStatusType::SETUP_REQUIRED => '<comment>SETUP REQUIRED</comment>',
-                    ProjectionStatusType::ERROR => '<error>ERROR</error>',
-                });
-                $this->output('    Projection: ');
-                $this->outputLine('in <error>ERROR</error>');
-                if ($status->subscriptionError !== null) {
-                    $lines = explode(chr(10), $status->subscriptionError->errorMessage ?: '<comment>No details available.</comment>');
-                    foreach ($lines as $line) {
-                        $this->outputLine('<error>      %s</error>', [$line]);
-                    }
-                }
+                $this->outputProjectionSubscriptionStatus($status, $crStatus->eventStorePosition, verbose: true);
             }
             if ($status instanceof DetachedSubscriptionStatus) {
                 $outputHeaderForSkippedProjections();
-                $this->outputLine('  <b>%s</b>:', [$status->subscriptionId->value]);
-                $this->output('    Subscription: ');
-                $this->output('%s <comment>DETACHED</comment>', [$status->subscriptionId->value, $status->subscriptionStatus === SubscriptionStatus::DETACHED ? 'is' : 'will be']);
+                $this->outputDetachedSubscriptionStatus($status);
             }
         }
 
@@ -151,52 +136,18 @@ final class CrCommandController extends CommandController
         }
         foreach ($crStatus->subscriptionStatus as $status) {
             if ($status instanceof DetachedSubscriptionStatus) {
-                $this->outputLine('  <b>%s</b>:', [$status->subscriptionId->value]);
-                $this->output('    Subscription: ');
-                $this->output('%s <comment>DETACHED</comment>', [$status->subscriptionId->value, $status->subscriptionStatus === SubscriptionStatus::DETACHED ? 'is' : 'will be']);
-                $this->outputLine(' at position <b>%d</b>', [$status->subscriptionPosition->value]);
+                $this->outputDetachedSubscriptionStatus($status);
             }
             if ($status instanceof ProjectionSubscriptionStatus) {
-                $this->outputLine('  <b>%s</b>:', [$status->subscriptionId->value]);
-                $this->output('    Setup: ');
-                $this->outputLine(match ($status->setupStatus->type) {
-                    ProjectionStatusType::OK => '<success>OK</success>',
-                    ProjectionStatusType::SETUP_REQUIRED => '<comment>SETUP REQUIRED</comment>',
-                    ProjectionStatusType::ERROR => '<error>ERROR</error>',
-                });
+                $this->outputProjectionSubscriptionStatus($status, $crStatus->eventStorePosition, $verbose);
+
                 $hasErrors |= $status->setupStatus->type === ProjectionStatusType::ERROR;
                 $setupRequired |= $status->setupStatus->type === ProjectionStatusType::SETUP_REQUIRED;
-                if ($verbose && ($status->setupStatus->type !== ProjectionStatusType::OK || $status->setupStatus->details)) {
-                    $lines = explode(chr(10), $status->setupStatus->details ?: '<comment>No details available.</comment>');
-                    foreach ($lines as $line) {
-                        $this->outputLine('      ' . $line);
-                    }
-                    $this->outputLine();
-                }
-                $this->output('    Projection: ');
-                $this->output(match ($status->subscriptionStatus) {
-                    SubscriptionStatus::NEW => '<comment>NEW</comment>',
-                    SubscriptionStatus::BOOTING => '<comment>BOOTING</comment>',
-                    SubscriptionStatus::ACTIVE => '<success>ACTIVE</success>',
-                    SubscriptionStatus::DETACHED => '<comment>DETACHED</comment>',
-                    SubscriptionStatus::ERROR => '<error>ERROR</error>',
-                });
-                if ($crStatus->eventStorePosition?->value > $status->subscriptionPosition->value) {
-                    // projection is behind
-                    $this->outputLine(' at position <error>%d</error>', [$status->subscriptionPosition->value]);
-                } else {
-                    $this->outputLine(' at position <b>%d</b>', [$status->subscriptionPosition->value]);
-                }
+
                 $hasErrors |= $status->subscriptionStatus === SubscriptionStatus::ERROR;
                 $replayRequired |= $status->subscriptionStatus === SubscriptionStatus::ERROR;
                 $replayRequired |= $status->subscriptionStatus === SubscriptionStatus::BOOTING;
                 $replayRequired |= $status->subscriptionStatus === SubscriptionStatus::DETACHED;
-                if ($verbose && $status->subscriptionError !== null) {
-                    $lines = explode(chr(10), $status->subscriptionError->errorMessage ?: '<comment>No details available.</comment>');
-                    foreach ($lines as $line) {
-                        $this->outputLine('<error>      %s</error>', [$line]);
-                    }
-                }
             }
         }
         if ($verbose) {
@@ -210,6 +161,52 @@ final class CrCommandController extends CommandController
         }
         if ($hasErrors) {
             $this->quit(1);
+        }
+    }
+
+    private function outputDetachedSubscriptionStatus(DetachedSubscriptionStatus $status): void
+    {
+        $this->outputLine('  <b>%s</b>:', [$status->subscriptionId->value]);
+        $this->output('    Subscription: ');
+        $this->output('%s <comment>DETACHED</comment>', [$status->subscriptionId->value, $status->subscriptionStatus === SubscriptionStatus::DETACHED ? 'is' : 'will be']);
+        $this->outputLine(' at position <b>%d</b>', [$status->subscriptionPosition->value]);
+    }
+
+    private function outputProjectionSubscriptionStatus(ProjectionSubscriptionStatus $status, ?SequenceNumber $eventStorePosition, bool $verbose): void
+    {
+        $this->outputLine('  <b>%s</b>:', [$status->subscriptionId->value]);
+        $this->output('    Setup: ');
+        $this->outputLine(match ($status->setupStatus->type) {
+            ProjectionStatusType::OK => '<success>OK</success>',
+            ProjectionStatusType::SETUP_REQUIRED => '<comment>SETUP REQUIRED</comment>',
+            ProjectionStatusType::ERROR => '<error>ERROR</error>',
+        });
+        if ($verbose && ($status->setupStatus->type !== ProjectionStatusType::OK || $status->setupStatus->details)) {
+            $lines = explode(chr(10), $status->setupStatus->details ?: '<comment>No details available.</comment>');
+            foreach ($lines as $line) {
+                $this->outputLine('      ' . $line);
+            }
+        }
+        $this->output('    Projection: ');
+        $this->output(match ($status->subscriptionStatus) {
+            SubscriptionStatus::NEW => '<comment>NEW</comment>',
+            SubscriptionStatus::BOOTING => '<comment>BOOTING</comment>',
+            SubscriptionStatus::ACTIVE => '<success>ACTIVE</success>',
+            SubscriptionStatus::DETACHED => '<comment>DETACHED</comment>',
+            SubscriptionStatus::ERROR => '<error>ERROR</error>',
+        });
+        if ($eventStorePosition?->value > $status->subscriptionPosition->value) {
+            // projection is behind
+            $this->outputLine(' at position <error>%d</error>', [$status->subscriptionPosition->value]);
+        } else {
+            $this->outputLine(' at position <b>%d</b>', [$status->subscriptionPosition->value]);
+        }
+
+        if ($verbose && $status->subscriptionError !== null) {
+            $lines = explode(chr(10), $status->subscriptionError->errorMessage ?: '<comment>No details available.</comment>');
+            foreach ($lines as $line) {
+                $this->outputLine('<error>      %s</error>', [$line]);
+            }
         }
     }
 }
