@@ -3,8 +3,10 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepositoryRegistry\Upgrade\Command;
 
+use Neos\ContentRepository\Core\Service\ContentRepositoryMaintainerFactory;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
+use Neos\ContentRepositoryRegistry\Upgrade\ResetGraphAndSetup\ResetGraphAndSetupUpgrade;
 use Neos\ContentRepositoryRegistry\Upgrade\EventsRecordedAtToUtc\EventsRecordedAtToUtcUpgrade;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Cli\CommandController;
@@ -41,6 +43,67 @@ final class CRUpgradeCommandController extends CommandController
 
     #[Flow\Inject]
     protected CRUpgradeContextFactory $upgradeContextFactory;
+
+    /**
+     * Upgrade to allow to empty and set up the graph projection in one step
+     *
+     * The CR provides a simple setup tooling via "./flow cr:setup" it allows to create the database schemas in the beginning
+     * and also minor upgrades from one existing schema to the desired like index changes or small renames.
+     *
+     * Some Neos versions will include changes which go beyond this as they create columns on the current tables.
+     *
+     * - Neos 9.2.0 (June 2026)
+     *
+     *   - https://github.com/neos/neos-development-collection/pull/5488
+     *     - new column workspace.version
+     *
+     *   - https://github.com/neos/neos-development-collection/pull/5776
+     *     - new column hierarchrelation.contentstreamlayer and id
+     *     - new table contentstreamlayer
+     *
+     * - [future version X ...]
+     *
+     * The following upgrade path is required:
+     *
+     *  - 1. Reset (drop old tables),
+     *  - 2. Setup (create new empty tables)
+     *         both done with ./flow crupgrade:resetgraphandsetup
+     *
+     *  - 3. Replay (refill new tables)
+     *         ./flow subscription:replay contentGraph
+     *
+     * Attempting to upgrade with "./flow cr:setup" in step 2 without dropping the
+     * old content graph tables would fail as the columns cannot be added without any values.
+     *
+     * Included in June 2026 - part of the minor 9.2.0 release
+     *
+     * @param string $contentRepository Identifier of the Content Repository to upgrade
+     */
+    public function resetGraphAndSetupCommand(string $contentRepository = 'default', bool $force = false): void
+    {
+        $context = $this->contentRepositoryRegistry->buildService(
+            ContentRepositoryId::fromString($contentRepository),
+            $this->upgradeContextFactory
+        );
+
+        if (!$force && !$this->output->askConfirmation(sprintf('> This will completely empty the content graph of content repository "%s" and create the schema from scratch. Afterwards the graph projection must be replayed which will take quite some time. Are you sure to proceed? (y/n) ', $context->contentRepositoryId->value), false)) {
+            $this->outputLine('<comment>Abort.</comment>');
+            return;
+        }
+
+        $upgrade = new ResetGraphAndSetupUpgrade(
+            $context,
+            $this->output->outputLine(...),
+            $this->contentRepositoryRegistry->buildService(
+                $context->contentRepositoryId,
+                new ContentRepositoryMaintainerFactory()
+            )
+        );
+
+        $upgrade->execute(
+            force: $force
+        );
+    }
 
     /**
      * Optional upgrade to adjust event time stamps and node dates to UTC
