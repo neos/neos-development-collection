@@ -177,6 +177,10 @@ final class SubscriptionEngine
                 // this might be a NEW subscription but we dont return it as status is filtered.
                 continue;
             }
+            if ($criteria->status->isEmpty() === false && $criteria->status->contain(SubscriptionStatus::NEW) === false) {
+                // this might be a NEW subscription but we dont return it as status is filtered.
+                continue;
+            }
             // this NEW state is not persisted yet
             $statuses[] = ProjectionSubscriptionStatus::create(
                 subscriptionId: $subscriber->id,
