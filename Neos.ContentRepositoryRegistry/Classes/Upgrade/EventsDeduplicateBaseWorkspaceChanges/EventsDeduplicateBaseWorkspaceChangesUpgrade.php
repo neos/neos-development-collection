@@ -16,6 +16,32 @@ use Neos\EventStore\Model\Event\StreamName;
 use Neos\EventStore\Model\EventEnvelope;
 use Symfony\Component\Yaml\Yaml;
 
+/**
+ * Upgrade to deduplicate parallel base workspace changes
+ *
+ * https://github.com/neos/neos-development-collection/issues/5877
+ *
+ * Workspace operations, also ChangeBaseWorkspace were not thread safe before the addition of workspace versioning
+ * in the read model and thus safe soft constraint checks.
+ * That resulted in the possibility that a single workspace was changed two or more times in parallel by the same user.
+ * Because each ChangeBaseWorkspace can be slow and cleans up at the end the content stream via ContentStreamWasRemoved,
+ * that results in possibly multiple illegal ContentStreamWasRemoved events and in total a fully illegal ChangeBaseWorkspace.
+ *
+ * 1.) The upgrade first identifies any duplicate ContentStreamWasRemoved events on a single stream.
+ * 2.) If found we assume check via their unique prefixed correlation id that they belong to a ChangeBaseWorkspace sequence.
+ * 3.) Then we find all events of the ChangeBaseWorkspace sequences and that occurred during these the content stream removals.
+ * 4.) If there ar no other concurrent changes on our workspace - which would have been illegal as well - and it's truly
+ *     the race condition as understood with only the events a ChangeBaseWorkspace emits we continue.
+ * 5.) The ChangeBaseWorkspace sequences can even be interlaced due to the race condition but the correlation id identifies the last sequence to keep uniquely.
+ * 6.) The last and thus valid ChangeBaseWorkspace sequence will be preserved, and we delete all events from the previous illegal sequence(s).
+ *
+ * After the migration is applied the workspace will have the same new base workspace as without the migration,
+ * but we deduplicated any temporary changes that happened in a race condition. No content on the workspaces is affected.
+ *
+ * Included in June 2026 - part of the minor 9.2.0 release
+ *
+ * @internal
+ */
 class EventsDeduplicateBaseWorkspaceChangesUpgrade
 {
     use EventStoreBackupTrait;
@@ -29,6 +55,9 @@ class EventsDeduplicateBaseWorkspaceChangesUpgrade
 
     public function execute(bool $dryRun): void
     {
+        //
+        // 1.)
+        //
         $duplicateContentStreamRemovalWithStreams = $this->context->dbal->fetchAllAssociative(<<<SQL
         SELECT stream, GROUP_CONCAT(sequencenumber ORDER BY sequencenumber) sequenceNumbers, GROUP_CONCAT(correlationid ORDER BY sequencenumber) correlationIds, COUNT(*) removals
         FROM {$this->context->eventStoreTableName}
@@ -48,18 +77,6 @@ class EventsDeduplicateBaseWorkspaceChangesUpgrade
         $this->log(Yaml::dump($duplicateContentStreamRemovalWithStreams, 2));
         $this->log('');
 
-        foreach ($duplicateContentStreamRemovalWithStreams as $duplicateContentStreamRemovals) {
-            // We dont write "," into correlation ids
-            /** @var list<CorrelationId> $correlationIds */
-            $correlationIds = array_map(CorrelationId::fromString(...), explode(',', $duplicateContentStreamRemovals['correlationIds']));
-            foreach ($correlationIds as $correlationId) {
-                if (!str_starts_with($correlationId->value, 'ChangeBaseWorkspace_')) {
-                    $this->log(sprintf('Error resolve duplicate content stream removal of %s as it was not caused due to a ChangeBaseWorkspace', $duplicateContentStreamRemovals['stream']));
-                    return;
-                }
-            }
-        }
-
         $sequenceNumbersToRemove = [];
 
         foreach ($duplicateContentStreamRemovalWithStreams as $duplicateContentStreamRemovals) {
@@ -69,8 +86,12 @@ class EventsDeduplicateBaseWorkspaceChangesUpgrade
                 $this->log(sprintf('Error found illegal content stream removal event on non content stream %s', $stream->value));
             }
 
+            // We dont write "," into correlation ids
             /** @var list<CorrelationId> $correlationIds */
             $correlationIds = array_map(CorrelationId::fromString(...), explode(',', $duplicateContentStreamRemovals['correlationIds']));
+            //
+            // 2.)
+            //
             foreach ($correlationIds as $correlationId) {
                 if (!str_starts_with($correlationId->value, 'ChangeBaseWorkspace_')) {
                     $this->log(sprintf('Error resolve duplicate content stream removal of %s as it was not caused due to a ChangeBaseWorkspace', $duplicateContentStreamRemovals['stream']));
@@ -82,6 +103,9 @@ class EventsDeduplicateBaseWorkspaceChangesUpgrade
             $lowestSequenceNumber = SequenceNumber::fromInteger(min($sequenceNumbers));
             $highestSequenceNumber = SequenceNumber::fromInteger(max($sequenceNumbers));
 
+            //
+            // 3.)
+            //
             /** @var list<EventEnvelope> $conflictingEvents */
             $conflictingEvents = array_map(EventEnvelopeFactory::createFromArray(...), $this->context->dbal->fetchAllAssociative(<<<SQL
             SELECT *
@@ -109,6 +133,9 @@ class EventsDeduplicateBaseWorkspaceChangesUpgrade
             $winningChangeBaseWorkspaceCorrelationId = null;
 
             foreach ($conflictingEvents as $conflictingEvent) {
+                //
+                // 4.)
+                //
                 if (!$conflictingEvent->event->correlationId || !array_key_exists($conflictingEvent->event->correlationId->value, $baseWorkspaceChangeCorrelationIdMap)) {
                     if (array_key_exists($conflictingEvent->streamName->value, $newForkedContentStreamMap) || $stream->equals($conflictingEvent->streamName)) {
                         $this->log(sprintf('Stream %s: Concurrent change during change base workspace sequence affected stream %s at %s', $stream->value, $conflictingEvent->streamName->value, $conflictingEvent->sequenceNumber->value));
@@ -118,6 +145,9 @@ class EventsDeduplicateBaseWorkspaceChangesUpgrade
                     continue;
                 }
 
+                //
+                // 5.)
+                //
                 $currentChangeBaseWorkspaceSequence = $changeBaseWorkspaceSequenceMap[$conflictingEvent->event->correlationId->value] ??= ChangeBaseWorkspaceSequence::start();
 
                 if ($currentChangeBaseWorkspaceSequence === ChangeBaseWorkspaceSequence::ENDED) {
@@ -153,6 +183,9 @@ class EventsDeduplicateBaseWorkspaceChangesUpgrade
                 throw new \RuntimeException(sprintf('Fatal error in upgrade. No winning ChangeBaseWorkspaceCorrelationId found'), 1781783151);
             }
 
+            //
+            // 6.)
+            //
             // keep the last change base workspace sequence
             unset($changeBaseWorkspaceSequenceNumbersByCorrelationMap[$winningChangeBaseWorkspaceCorrelationId->value]);
 

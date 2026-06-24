@@ -156,11 +156,26 @@ final class CRUpgradeCommandController extends CommandController
     }
 
     /**
-     * Migration to deduplicate consecutive base workspace changes
+     * Upgrade to deduplicate parallel base workspace changes
      *
      * https://github.com/neos/neos-development-collection/issues/5877
      *
-     * TODO
+     * Workspace operations, also ChangeBaseWorkspace were not thread safe before the addition of workspace versioning
+     * in the read model and thus safe soft constraint checks.
+     * That resulted in the possibility that a single workspace was changed two or more times in parallel by the same user.
+     * Because each ChangeBaseWorkspace can be slow and cleans up at the end the content stream via ContentStreamWasRemoved,
+     * that results in possibly multiple illegal ContentStreamWasRemoved events and in total a fully illegal ChangeBaseWorkspace.
+     *
+     * The upgrade first identifies any duplicate ContentStreamWasRemoved events on a single stream.
+     * If found we assume check via their unique prefixed correlation id that they belong to a ChangeBaseWorkspace sequence.
+     * Then we find all events of the ChangeBaseWorkspace sequences and that occurred during these the content stream removals.
+     * If there ar no other concurrent changes on our workspace - which would have been illegal as well - and it's truly
+     * the race condition as understood with only the events a ChangeBaseWorkspace emits we continue.
+     * We identify the last and thus valid ChangeBaseWorkspace sequence and delete all events from the previous illegal sequence(s).
+     * The ChangeBaseWorkspace sequences can even be interlaced due to the race condition but the correlation id identifies the last sequence to keep uniquely.
+     *
+     * After the migration is applied the workspace will have the same new base workspace as without the migration,
+     * but we deduplicated any temporary changes that happened in a race condition. No content on the workspaces is affected.
      *
      * Included in June 2026 - part of the minor 9.2.0 release
      *
