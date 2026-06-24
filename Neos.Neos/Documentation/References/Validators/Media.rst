@@ -13,7 +13,7 @@ ImageOrientationValidator
 
 Validator that checks the orientation (square, portrait, landscape) of a given image.
 
-Supported validator options are (array)allowedOrientations with one or two out of 'square', 'landcape' or 'portrait'.
+Supported validator options are (array)allowedOrientations with one or two out of 'square', 'landscape' or 'portrait'.
 
 *Example*::
 
@@ -33,7 +33,7 @@ Note: a value of NULL or empty string ('') is considered valid
 Arguments
 *********
 
-* ``allowedOrientations`` (array): Array of image orientations, one or two out of 'square', 'landcape' or 'portrait'
+* ``allowedOrientations`` (array): Array of image orientations, one or two out of 'square', 'landscape' or 'portrait'
 
 
 

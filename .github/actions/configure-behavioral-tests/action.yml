@@ -1,0 +1,102 @@
+name: 'Configure behavioral tests'
+description: 'Write the elaborate Flow configuration the 9.0 ES CR behavioral & parallel tests need (race-condition tracker + postgres Behat context wired to a mariadb backend)'
+inputs:
+  working-directory:
+    description: 'Neos development distribution directory the configuration is written into'
+    required: true
+runs:
+  using: 'composite'
+  steps:
+    # 9.0's ES CR behavioral/parallel tests need a more elaborate Flow configuration
+    # (race-condition tracker, postgres-specific Behat context wired to a mariadb
+    # backend) than the shared `configure-neos` composite action provides.
+    - name: Setup Flow configuration for behavioral tests
+      shell: bash
+      working-directory: ${{ inputs.working-directory }}
+      run: |
+        rm -f Configuration/Routes.yaml
+        rm -f Configuration/Testing/Settings.yaml
+        cat <<EOF >> Configuration/Testing/Settings.yaml
+        Neos:
+          Flow:
+            persistence:
+              backendOptions:
+                host: '127.0.0.1'
+                port: 3306
+                driver: pdo_mysql
+                user: 'neos'
+                password: 'neos'
+                dbname: 'flow_functional_testing'
+          ContentRepositoryRegistry:
+            # We enable the race condition tracker
+            presets:
+              'default':
+                contentGraphProjection:
+                  catchUpHooks:
+                    'Neos.ContentRepository.BehavioralTests:RaceConditionTracker':
+                      factoryObjectName: Neos\ContentRepository\BehavioralTests\ProjectionRaceConditionTester\RaceTrackerCatchUpHookFactory
+          ContentRepository:
+            BehavioralTests:
+              raceConditionTracker:
+                enabled: true
+                redis:
+                  host: 127.0.0.1
+                  port: 6379
+        EOF
+
+        mkdir -p Configuration/Testing/Behat/Postgres
+        cat <<EOF >> Configuration/Testing/Behat/Postgres/Settings.yaml
+        Neos:
+          Flow:
+            persistence:
+              backendOptions:
+                host: '127.0.0.1'
+                port: 5432
+                driver: pdo_pgsql
+                charset: 'UTF8'
+                user: 'neos'
+                password: 'neos'
+                dbname: 'flow_functional_testing'
+          ContentRepositoryRegistry:
+            presets:
+              'default':
+                contentGraphProjection:
+                  # Note we use the doctrine content graph until postgres is finished
+                  factoryObjectName: Neos\ContentGraph\DoctrineDbalAdapter\DoctrineDbalContentGraphProjectionFactory
+        EOF
+
+        cat <<EOF >> Configuration/Testing/Behat/Postgres/Objects.yaml
+        # Note we configure the dbal adapter to run in a maria db
+        'Neos.ContentGraph.DoctrineDbalAdapter:VirtualConnection':
+          scope: singleton
+          className: 'Doctrine\DBAL\Connection'
+          factoryObjectName: 'Neos\ContentRepository\BehavioralTests\DBALConnectionFactory'
+          arguments:
+            1:
+              value:
+                host: '127.0.0.1'
+                port: 3307
+                dbname: 'flow_functional_testing'
+                driver: pdo_mysql
+                user: 'neos'
+                password: 'neos'
+
+        Neos\ContentGraph\DoctrineDbalAdapter\DoctrineDbalContentGraphProjectionFactory:
+          scope: singleton
+          factoryObjectName: 'Neos\ContentRepositoryRegistry\Infrastructure\GenericObjectFactory'
+          arguments:
+            1:
+              value: 'Neos\ContentGraph\DoctrineDbalAdapter\DoctrineDbalContentGraphProjectionFactory'
+            2:
+              object: 'Neos.ContentGraph.DoctrineDbalAdapter:VirtualConnection'
+
+        Neos\ContentRepository\Core\Projection\ContentGraph\ProjectionIntegrityViolationDetectionRunnerFactoryInterface:
+          scope: singleton
+          factoryObjectName: 'Neos\ContentRepositoryRegistry\Infrastructure\GenericObjectFactory'
+          arguments:
+            1:
+              value: 'Neos\ContentGraph\DoctrineDbalAdapter\DoctrineDbalProjectionIntegrityViolationDetectionRunnerFactory'
+            2:
+              object: 'Neos.ContentGraph.DoctrineDbalAdapter:VirtualConnection'
+
+        EOF

@@ -230,6 +230,7 @@ final class ContentRepositoryFactory
             $this->getOrBuild(),
             $this->contentGraphProjection->getState(),
             $this->subscriptionEngine,
+            $this->clock,
         );
         return $serviceFactory->build($serviceFactoryDependencies);
     }

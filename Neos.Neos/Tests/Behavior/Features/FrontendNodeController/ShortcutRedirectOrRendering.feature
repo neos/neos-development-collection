@@ -167,7 +167,7 @@ Feature: Test the Fusion rendering for a request on a shortcut node
 
     More information and contribution opportunities at https://www.neos.io
     -->
-    <head><meta charset="UTF-8" /><title></title><link rel="stylesheet" href="http://localhost/_Resources/Testing/Static/Packages/Neos.Neos/Styles/Shortcut.css" /></head><body class><div id="neos-shortcut"><p>This is a shortcut to the first child page.<br />Click <a href="/neos/preview?node=%7B%22contentRepositoryId%22%3A%22default%22%2C%22workspaceName%22%3A%22user-workspace%22%2C%22dimensionSpacePoint%22%3A%5B%5D%2C%22aggregateId%22%3A%22first-child-node%22%7D">Node (first-child-node)</a> to continue to the page.</p></div></body></html>
+    <head><meta charset="UTF-8" /><title></title><link rel="stylesheet" href="http://localhost/_Resources/Testing/Static/Packages/Neos.Neos/Styles/BackendInformation.css" /></head><body class><div id="neos-backend-information"><p>This is a shortcut to the first child page.<br />Click <a href="/neos/preview?node=%7B%22contentRepositoryId%22%3A%22default%22%2C%22workspaceName%22%3A%22user-workspace%22%2C%22dimensionSpacePoint%22%3A%5B%5D%2C%22aggregateId%22%3A%22first-child-node%22%7D">Node (first-child-node)</a> to continue to the page.</p></div></body></html>
     """
 
     When I dispatch the following request "/neos/preview?node=%7B%22contentRepositoryId%22%3A%22default%22%2C%22workspaceName%22%3A%22user-workspace%22%2C%22dimensionSpacePoint%22%3A%7B%7D%2C%22aggregateId%22%3A%22shortcut-parent-node%22%7D"
@@ -184,7 +184,7 @@ Feature: Test the Fusion rendering for a request on a shortcut node
 
     More information and contribution opportunities at https://www.neos.io
     -->
-    <head><meta charset="UTF-8" /><title></title><link rel="stylesheet" href="http://localhost/_Resources/Testing/Static/Packages/Neos.Neos/Styles/Shortcut.css" /></head><body class><div id="neos-shortcut"><p>This is a shortcut to the parent page.<br />Click <a href="/neos/preview?node=%7B%22contentRepositoryId%22%3A%22default%22%2C%22workspaceName%22%3A%22user-workspace%22%2C%22dimensionSpacePoint%22%3A%5B%5D%2C%22aggregateId%22%3A%22shortcuts%22%7D">Node (shortcuts)</a> to continue to the page.</p></div></body></html>
+    <head><meta charset="UTF-8" /><title></title><link rel="stylesheet" href="http://localhost/_Resources/Testing/Static/Packages/Neos.Neos/Styles/BackendInformation.css" /></head><body class><div id="neos-backend-information"><p>This is a shortcut to the parent page.<br />Click <a href="/neos/preview?node=%7B%22contentRepositoryId%22%3A%22default%22%2C%22workspaceName%22%3A%22user-workspace%22%2C%22dimensionSpacePoint%22%3A%5B%5D%2C%22aggregateId%22%3A%22shortcuts%22%7D">Node (shortcuts)</a> to continue to the page.</p></div></body></html>
     """
 
     When I dispatch the following request "/neos/preview?node=%7B%22contentRepositoryId%22%3A%22default%22%2C%22workspaceName%22%3A%22user-workspace%22%2C%22dimensionSpacePoint%22%3A%7B%7D%2C%22aggregateId%22%3A%22shortcut-selected-node%22%7D"
@@ -201,7 +201,7 @@ Feature: Test the Fusion rendering for a request on a shortcut node
 
     More information and contribution opportunities at https://www.neos.io
     -->
-    <head><meta charset="UTF-8" /><title></title><link rel="stylesheet" href="http://localhost/_Resources/Testing/Static/Packages/Neos.Neos/Styles/Shortcut.css" /></head><body class><div id="neos-shortcut"><p>This is a shortcut to a specific target:<br/>Click <a href="/neos/preview?node=%7B%22contentRepositoryId%22%3A%22default%22%2C%22workspaceName%22%3A%22user-workspace%22%2C%22dimensionSpacePoint%22%3A%5B%5D%2C%22aggregateId%22%3A%22sir-nodeward-nodington-iii%22%7D">Node (sir-nodeward-nodington-iii)</a> to continue to the page.</p></div></body></html>
+    <head><meta charset="UTF-8" /><title></title><link rel="stylesheet" href="http://localhost/_Resources/Testing/Static/Packages/Neos.Neos/Styles/BackendInformation.css" /></head><body class><div id="neos-backend-information"><p>This is a shortcut to a specific target:<br/>Click <a href="/neos/preview?node=%7B%22contentRepositoryId%22%3A%22default%22%2C%22workspaceName%22%3A%22user-workspace%22%2C%22dimensionSpacePoint%22%3A%5B%5D%2C%22aggregateId%22%3A%22sir-nodeward-nodington-iii%22%7D">Node (sir-nodeward-nodington-iii)</a> to continue to the page.</p></div></body></html>
     """
 
     When I dispatch the following request "/neos/preview?node=%7B%22contentRepositoryId%22%3A%22default%22%2C%22workspaceName%22%3A%22user-workspace%22%2C%22dimensionSpacePoint%22%3A%7B%7D%2C%22aggregateId%22%3A%22shortcut-selected-asset%22%7D"
@@ -218,7 +218,7 @@ Feature: Test the Fusion rendering for a request on a shortcut node
 
     More information and contribution opportunities at https://www.neos.io
     -->
-    <head><meta charset="UTF-8" /><title></title><link rel="stylesheet" href="http://localhost/_Resources/Testing/Static/Packages/Neos.Neos/Styles/Shortcut.css" /></head><body class><div id="neos-shortcut"><p>This is a shortcut to a specific target:<br/>Click <a target="_blank" href="http://localhost/_Resources/Testing/Persistent/23dae371d1664f1d9cc7dd029b299ea717298103/asset.txt">asset.txt</a> to see the file.</p></div></body></html>
+    <head><meta charset="UTF-8" /><title></title><link rel="stylesheet" href="http://localhost/_Resources/Testing/Static/Packages/Neos.Neos/Styles/BackendInformation.css" /></head><body class><div id="neos-backend-information"><p>This is a shortcut to a specific target:<br/>Click <a target="_blank" href="http://localhost/_Resources/Testing/Persistent/23dae371d1664f1d9cc7dd029b299ea717298103/asset.txt">asset.txt</a> to see the file.</p></div></body></html>
     """
 
     When I dispatch the following request "/neos/preview?node=%7B%22contentRepositoryId%22%3A%22default%22%2C%22workspaceName%22%3A%22user-workspace%22%2C%22dimensionSpacePoint%22%3A%7B%7D%2C%22aggregateId%22%3A%22shortcut-external-url%22%7D"
@@ -235,5 +235,5 @@ Feature: Test the Fusion rendering for a request on a shortcut node
 
     More information and contribution opportunities at https://www.neos.io
     -->
-    <head><meta charset="UTF-8" /><title></title><link rel="stylesheet" href="http://localhost/_Resources/Testing/Static/Packages/Neos.Neos/Styles/Shortcut.css" /></head><body class><div id="neos-shortcut"><p>This is a shortcut to a specific target:<br/>Click <a href="https://neos.io" target="_blank">https://neos.io</a> to open the link.</p></div></body></html>
+    <head><meta charset="UTF-8" /><title></title><link rel="stylesheet" href="http://localhost/_Resources/Testing/Static/Packages/Neos.Neos/Styles/BackendInformation.css" /></head><body class><div id="neos-backend-information"><p>This is a shortcut to a specific target:<br/>Click <a href="https://neos.io" target="_blank">https://neos.io</a> to open the link.</p></div></body></html>
     """

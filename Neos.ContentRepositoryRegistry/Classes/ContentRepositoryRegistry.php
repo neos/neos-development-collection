@@ -187,6 +187,12 @@ final class ContentRepositoryRegistry
             $contentRepositorySettings = Arrays::arrayMergeRecursiveOverrule($this->settings['presets'][$contentRepositorySettings['preset']], $contentRepositorySettings);
             unset($contentRepositorySettings['preset']);
         }
+
+        /** Hack until https://github.com/neos/neos-development-collection/issues/5869 is fixed */
+        if (($contentRepositorySettings['experimentalContentRepositoryLock'] ?? false) === true) {
+            \Neos\ContentRepository\Dbal\MysqlPlatformContentRepositoryLocker::enableForContentRepository($contentRepositoryId);
+        }
+
         try {
             /** @var CatchUpHookFactoryInterface<ContentGraphReadModelInterface>|null $contentGraphCatchUpHookFactory */
             $contentGraphCatchUpHookFactory = $this->buildCatchUpHookFactory($contentRepositoryId, 'contentGraph', $contentRepositorySettings['contentGraphProjection']);
