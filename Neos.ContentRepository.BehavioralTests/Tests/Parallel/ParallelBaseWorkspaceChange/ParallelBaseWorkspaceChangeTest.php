@@ -12,25 +12,21 @@
 
 declare(strict_types=1);
 
-namespace Neos\ContentRepository\BehavioralTests\Tests\Parallel\PublishingDuringPublishing;
+namespace Neos\ContentRepository\BehavioralTests\Tests\Parallel\ParallelBaseWorkspaceChange;
 
 use Doctrine\DBAL\Connection;
 use Neos\ContentRepository\BehavioralTests\Tests\Parallel\AbstractParallelTestCase;
-use Neos\ContentRepository\BehavioralTests\Tests\Parallel\WorkspacePublicationDuringWriting\WorkspacePublicationDuringWritingTest;
 use Neos\ContentRepository\BehavioralTests\TestSuite\DebugEventProjection;
 use Neos\ContentRepository\Core\ContentRepository;
-use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
 use Neos\ContentRepository\Core\Feature\NodeCreation\Command\CreateNodeAggregateWithNode;
 use Neos\ContentRepository\Core\Feature\NodeModification\Dto\PropertyValuesToWrite;
 use Neos\ContentRepository\Core\Feature\RootNodeCreation\Command\CreateRootNodeAggregateWithNode;
+use Neos\ContentRepository\Core\Feature\WorkspaceCommandSkipped;
 use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Command\CreateRootWorkspace;
 use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Command\CreateWorkspace;
-use Neos\ContentRepository\Core\Feature\WorkspacePublication\Command\PublishWorkspace;
+use Neos\ContentRepository\Core\Feature\WorkspaceModification\Command\ChangeBaseWorkspace;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
-use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindChildNodesFilter;
-use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
-use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
@@ -39,17 +35,24 @@ use Neos\ContentRepository\TestSuite\Fakes\FakeContentDimensionSourceFactory;
 use Neos\ContentRepository\TestSuite\Fakes\FakeNodeTypeManagerFactory;
 use Neos\ContentRepository\TestSuite\Fakes\FakeProjectionFactory;
 use Neos\EventStore\Exception\ConcurrencyException;
+use Neos\EventStore\Model\Event\EventType;
+use Neos\EventStore\Model\Event\EventTypes;
+use Neos\EventStore\Model\EventStream\EventStreamFilter;
+use Neos\EventStore\Model\EventStream\VirtualStreamName;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use PHPUnit\Framework\Assert;
 
 /**
- * Test that no DeadlockException like: An exception occurred while executing a query: SQLSTATE[40001]: Serialization failure: 1213 Deadlock found when trying to get lock; try restarting transaction
- * Is thrown during catchup as this would lead to projection failure which cannot be properly recovered from other than a replay.
+ * In Neos 9.0 it occurred that a base workspace change was done without locking and thus the previous content stream was removed twice which is illegal:
+ *
+ * https://github.com/neos/neos-development-collection/issues/5877
  */
-class PublishingDuringPublishingTest extends AbstractParallelTestCase
+class ParallelBaseWorkspaceChangeTest extends AbstractParallelTestCase
 {
     private const SETUP_LOCK_PATH = __DIR__ . '/setup-lock';
     private const WRITING_IS_RUNNING_FLAG_PATH = __DIR__ . '/write-is-running-flag';
+
+    private const VARIETY_SIZE = 5;
 
     private ContentRepository $contentRepository;
 
@@ -99,9 +102,6 @@ class PublishingDuringPublishingTest extends AbstractParallelTestCase
             ]
         ]);
 
-        /** Hack until https://github.com/neos/neos-development-collection/issues/5869 is fixed */
-        \Neos\ContentRepository\Dbal\MysqlPlatformContentRepositoryLocker::enableForContentRepository(ContentRepositoryId::fromString('test_parallel'));
-
         $setupLockResource = fopen(self::SETUP_LOCK_PATH, 'w+');
 
         $exclusiveNonBlockingLockResult = flock($setupLockResource, LOCK_EX | LOCK_NB);
@@ -139,15 +139,19 @@ class PublishingDuringPublishingTest extends AbstractParallelTestCase
                 'title' => 'title-original'
             ])
         ));
+
+        for ($i = 0; $i <= self::VARIETY_SIZE ; $i++) {
+            $contentRepository->handle(CreateWorkspace::create(
+                WorkspaceName::fromString('review-' . $i),
+                WorkspaceName::forLive(),
+                ContentStreamId::fromString('cs-review-' . $i)
+            ));
+        }
+
         $contentRepository->handle(CreateWorkspace::create(
-            WorkspaceName::fromString('user-test-one'),
+            WorkspaceName::fromString('user'),
             WorkspaceName::forLive(),
-            ContentStreamId::fromString('user-test-cs-one')
-        ));
-        $contentRepository->handle(CreateWorkspace::create(
-            WorkspaceName::fromString('user-test-two'),
-            WorkspaceName::forLive(),
-            ContentStreamId::fromString('user-test-cs-two')
+            ContentStreamId::fromString('user-cs-initial')
         ));
 
         $this->contentRepository = $contentRepository;
@@ -164,33 +168,23 @@ class PublishingDuringPublishingTest extends AbstractParallelTestCase
      */
     public function whileANodesArePublishedToLive(): void
     {
-        $this->log('1. writing & publishing started');
+        $this->log('1. change base started');
 
         touch(self::WRITING_IS_RUNNING_FLAG_PATH);
 
+        $successFullChanged = 0;
         try {
-            for ($i = 0; $i <= 100; $i++) {
-                if (!$this->contentRepository->findWorkspaceByName(WorkspaceName::fromString('user-test-one'))->hasPublishableChanges()) {
-                    $this->contentRepository->handle(CreateNodeAggregateWithNode::create(
-                        WorkspaceName::fromString('user-test-one'),
-                        NodeAggregateId::fromString('nody-mc-nodeface-' . $i),
-                        NodeTypeName::fromString('Neos.ContentRepository.Testing:Document'),
-                        OriginDimensionSpacePoint::createWithoutDimensions(),
-                        NodeAggregateId::fromString('lady-eleonode-rootford'),
-                        initialPropertyValues: PropertyValuesToWrite::fromArray([
-                            'title' => 'title'
-                        ])
-                    ));
-                }
-
+            for ($i = 0; $i <= 20; $i++) {
+                $randomTarget = WorkspaceName::fromString('review-' . random_int(0, self::VARIETY_SIZE));
                 try {
-                    $this->contentRepository->handle(PublishWorkspace::create(
-                        WorkspaceName::fromString('user-test-one')
+                    $this->contentRepository->handle(ChangeBaseWorkspace::create(
+                        WorkspaceName::fromString('user'),
+                        $randomTarget,
                     )->withNewContentStreamId(
-                        ContentStreamId::fromString('user-test-cs-one-' . $i)
+                        ContentStreamId::fromString(sprintf('%d-%d', getmypid(), $i))
                     ));
-                } catch (ConcurrencyException $concurrencyException) {
-                    /** Two simultaneous publish operations can get a concurrency exception as anticipated {@see WorkspacePublicationDuringWritingTest} */
+                    $successFullChanged++;
+                } catch (ConcurrencyException|WorkspaceCommandSkipped $concurrencyException) {
                     $this->log(sprintf('Got likely expected exception %s: %s', self::shortClassName($concurrencyException::class), $concurrencyException->getMessage()));
                 }
             }
@@ -198,13 +192,10 @@ class PublishingDuringPublishingTest extends AbstractParallelTestCase
             unlink(self::WRITING_IS_RUNNING_FLAG_PATH);
         }
 
-        $this->log('1. writing & publishing finished');
-        Assert::assertTrue(true, 'No exception was thrown ;)');
+        $this->log('1. base workspace change finished with: ' . $successFullChanged);
+        Assert::assertGreaterThan(1, $successFullChanged, 'Base workspace was not changed');
 
-        $subgraph = $this->contentRepository->getContentGraph(WorkspaceName::forLive())->getSubgraph(DimensionSpacePoint::createWithoutDimensions(), VisibilityConstraints::createEmpty());
-        $childNodes = $subgraph->findChildNodes(NodeAggregateId::fromString('lady-eleonode-rootford'), FindChildNodesFilter::create());
-        $childNodes = $childNodes->filter(fn (Node $node) => str_starts_with($node->aggregateId->value, 'nody-mc-nodeface-'));
-        Assert::assertGreaterThan(20, $childNodes->count(), 'To few nodes actually published and created');
+        $this->assertEventsAreValid();
     }
 
     /**
@@ -224,41 +215,48 @@ class PublishingDuringPublishingTest extends AbstractParallelTestCase
             usleep(10000);
         }
 
-        $this->log('2. writing & publishing started');
+        $this->log('2. base workspace change started');
 
-        for ($i = 0; $i <= 100; $i++) {
-            if (!$this->contentRepository->findWorkspaceByName(WorkspaceName::fromString('user-test-two'))->hasPublishableChanges()) {
-                $this->contentRepository->handle(CreateNodeAggregateWithNode::create(
-                    WorkspaceName::fromString('user-test-two'),
-                    NodeAggregateId::fromString('sir-david-nodenborough-' . $i),
-                    NodeTypeName::fromString('Neos.ContentRepository.Testing:Document'),
-                    OriginDimensionSpacePoint::createWithoutDimensions(),
-                    NodeAggregateId::fromString('lady-eleonode-rootford'),
-                    initialPropertyValues: PropertyValuesToWrite::fromArray([
-                        'title' => 'title'
-                    ])
-                ));
-            }
-
+        $successFullChanged = 0;
+        for ($i = 0; $i <= 20; $i++) {
+            $randomTarget = WorkspaceName::fromString('review-' . random_int(0, self::VARIETY_SIZE));
             try {
-                $this->contentRepository->handle(PublishWorkspace::create(
-                    WorkspaceName::fromString('user-test-two')
+                $this->contentRepository->handle(ChangeBaseWorkspace::create(
+                    WorkspaceName::fromString('user'),
+                    $randomTarget,
                 )->withNewContentStreamId(
-                    ContentStreamId::fromString('user-test-cs-two-' . $i)
+                    ContentStreamId::fromString(sprintf('%d-%d', getmypid(), $i))
                 ));
-            } catch (ConcurrencyException $concurrencyException) {
-                /** Two simultaneous publish operations can get a concurrency exception as anticipated {@see WorkspacePublicationDuringWritingTest} */
+                $successFullChanged++;
+            } catch (ConcurrencyException|WorkspaceCommandSkipped $concurrencyException) {
                 $this->log(sprintf('Got likely expected exception %s: %s', self::shortClassName($concurrencyException::class), $concurrencyException->getMessage()));
             }
         }
 
-        $this->log('2. writing & publishing finished');
+        $this->log('2. base workspace change finished with: ' . $successFullChanged);
+        Assert::assertGreaterThan(1, $successFullChanged, 'Base workspace was not changed');
 
-        Assert::assertTrue(true, 'No exception was thrown ;)');
+        $this->assertEventsAreValid();
+    }
 
-        $subgraph = $this->contentRepository->getContentGraph(WorkspaceName::forLive())->getSubgraph(DimensionSpacePoint::createWithoutDimensions(), VisibilityConstraints::createEmpty());
-        $childNodes = $subgraph->findChildNodes(NodeAggregateId::fromString('lady-eleonode-rootford'), FindChildNodesFilter::create());
-        $childNodes = $childNodes->filter(fn (Node $node) => str_starts_with($node->aggregateId->value, 'sir-david-nodenborough-'));
-        Assert::assertGreaterThan(20, $childNodes->count(), 'To few nodes actually published and created');
+    private function assertEventsAreValid(): void
+    {
+        $eventStore = $this->getEventStore($this->contentRepository->id);
+
+        $contentStreamWasRemovedEvents = $eventStore->load(VirtualStreamName::forCategory('ContentStream:'), EventStreamFilter::create(
+            EventTypes::create(
+                EventType::fromString('ContentStreamWasRemoved')
+            )
+        ));
+
+        $removedContentStreamsMap = [];
+        foreach ($contentStreamWasRemovedEvents as $eventEnvelope) {
+            if (array_key_exists($eventEnvelope->streamName->value, $removedContentStreamsMap)) {
+                Assert::fail(sprintf('ContentStream %s was removed twice: %s', $eventEnvelope->streamName->value, json_encode($eventEnvelope)));
+            }
+            $removedContentStreamsMap[$eventEnvelope->streamName->value] = true;
+        }
+
+        Assert::assertNotEmpty($removedContentStreamsMap, 'No content streams were removed at all. Wrong query?');
     }
 }
