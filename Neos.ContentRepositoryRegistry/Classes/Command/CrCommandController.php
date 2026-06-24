@@ -59,37 +59,13 @@ final class CrCommandController extends CommandController
         $contentRepositoryId = ContentRepositoryId::fromString($contentRepository);
         $contentRepositoryMaintainer = $this->contentRepositoryRegistry->buildService($contentRepositoryId, new ContentRepositoryMaintainerFactory());
 
-        $crStatus = $contentRepositoryMaintainer->status();
-
-        $hasSkippedProjections = false;
-        $outputHeaderForSkippedProjections = function () use (&$hasSkippedProjections) {
-            if (!$hasSkippedProjections) {
-                $hasSkippedProjections = true;
-                $this->outputLine('Skipped subscriptions:');
-            }
-        };
-
-        foreach ($crStatus->subscriptionStatus as $status) {
-            if ($status instanceof ProjectionSubscriptionStatus && $status->subscriptionStatus === SubscriptionStatus::ERROR) {
-                $outputHeaderForSkippedProjections();
-                $this->outputProjectionSubscriptionStatus($status, $crStatus->eventStorePosition, verbose: true);
-            }
-            if ($status instanceof DetachedSubscriptionStatus) {
-                $outputHeaderForSkippedProjections();
-                $this->outputDetachedSubscriptionStatus($status);
-            }
-        }
-
         $result = $contentRepositoryMaintainer->setUp();
         if ($result !== null) {
+            $this->outputLine('<comment>Failed to fully setup content repository "%s"</comment>', [$contentRepositoryId->value]);
             $this->outputLine('<error>%s</error>', [$result->getMessage()]);
             $this->quit(1);
         }
-        if ($hasSkippedProjections) {
-            $this->outputLine('<comment>Content repository "%s" was set up. But some subscriptions were skipped.</comment>', [$contentRepositoryId->value]);
-        } else {
-            $this->outputLine('<success>Content repository "%s" was set up</success>', [$contentRepositoryId->value]);
-        }
+        $this->outputLine('<success>Content repository "%s" was set up</success>', [$contentRepositoryId->value]);
     }
 
     /**
