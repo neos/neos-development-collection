@@ -16,7 +16,7 @@ use Behat\Gherkin\Node\PyStringNode;
 use Behat\Gherkin\Node\TableNode;
 use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\CRTestSuiteRuntimeVariables;
 use Neos\ContentRepositoryRegistry\Upgrade\Command\CRUpgradeContextFactory;
-use Neos\ContentRepositoryRegistry\Upgrade\EventsDuplicateContentStreamRemoval\EventsDuplicateContentStreamRemovalUpgrade;
+use Neos\ContentRepositoryRegistry\Upgrade\EventsDeduplicateBaseWorkspaceChanges\EventsDeduplicateBaseWorkspaceChangesUpgrade;
 use Neos\ContentRepositoryRegistry\Upgrade\EventsRecordedAtToUtc\EventsRecordedAtToUtcUpgrade;
 use Neos\ContentRepositoryRegistry\Upgrade\Shared\CRUpgradeContext;
 use PHPUnit\Framework\Assert;
@@ -56,11 +56,11 @@ trait CrUpgradeTrait
     }
 
     /**
-     * @When I upgrade events duplicated content stream removals
+     * @When I upgrade the events to deduplicate base-workspace-changes
      */
-    public function iExecuteEventsDuplicateContentStreamRemovalUpgrade(): void
+    public function iExecuteEventsDeduplicateBaseWorkspaceChangesUpgrade(): void
     {
-        $upgrade = new EventsDuplicateContentStreamRemovalUpgrade(
+        $upgrade = new EventsDeduplicateBaseWorkspaceChangesUpgrade(
             $this->getCrUpgradeContext(),
             $this->outputFn(...)
         );

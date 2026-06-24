@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Neos\ContentRepositoryRegistry\Upgrade\EventsDuplicateContentStreamRemoval;
+namespace Neos\ContentRepositoryRegistry\Upgrade\EventsDeduplicateBaseWorkspaceChanges;
 
 use Doctrine\DBAL\ArrayParameterType;
 use Neos\ContentRepository\Core\Feature\ContentStreamEventStreamName;
@@ -16,7 +16,7 @@ use Neos\EventStore\Model\Event\StreamName;
 use Neos\EventStore\Model\EventEnvelope;
 use Symfony\Component\Yaml\Yaml;
 
-class EventsDuplicateContentStreamRemovalUpgrade
+class EventsDeduplicateBaseWorkspaceChangesUpgrade
 {
     use EventStoreBackupTrait;
     use OutputMessageTrait;

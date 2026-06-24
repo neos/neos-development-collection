@@ -6,7 +6,7 @@ namespace Neos\ContentRepositoryRegistry\Upgrade\Command;
 use Neos\ContentRepository\Core\Service\ContentRepositoryMaintainerFactory;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
-use Neos\ContentRepositoryRegistry\Upgrade\EventsDuplicateContentStreamRemoval\EventsDuplicateContentStreamRemovalUpgrade;
+use Neos\ContentRepositoryRegistry\Upgrade\EventsDeduplicateBaseWorkspaceChanges\EventsDeduplicateBaseWorkspaceChangesUpgrade;
 use Neos\ContentRepositoryRegistry\Upgrade\EventsRecordedAtToUtc\EventsRecordedAtToUtcUpgrade;
 use Neos\ContentRepositoryRegistry\Upgrade\ResetupAndReplayContentGraph\ResetupAndReplayContentGraphUpgrade;
 use Neos\Flow\Annotations as Flow;
@@ -183,7 +183,7 @@ final class CRUpgradeCommandController extends CommandController
             return;
         }
 
-        $upgrade = new EventsDuplicateContentStreamRemovalUpgrade(
+        $upgrade = new EventsDeduplicateBaseWorkspaceChangesUpgrade(
             $context,
             $this->output->outputLine(...)
         );

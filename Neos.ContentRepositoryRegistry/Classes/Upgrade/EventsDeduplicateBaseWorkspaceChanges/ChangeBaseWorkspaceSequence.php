@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Neos\ContentRepositoryRegistry\Upgrade\EventsDuplicateContentStreamRemoval;
+namespace Neos\ContentRepositoryRegistry\Upgrade\EventsDeduplicateBaseWorkspaceChanges;
 
 enum ChangeBaseWorkspaceSequence: string
 {

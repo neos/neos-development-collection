@@ -48,7 +48,7 @@ Feature: As a user of the CR I want to upgrade my events
       | baseWorkspaceName  | "review"         |
       | newContentStreamId | "cs-user-second" |
 
-    When I upgrade events duplicated content stream removals
+    When I upgrade the events to deduplicate base-workspace-changes
     Then I expect the following upgrade output:
       """
       Migration was not necessary. No duplicate content stream removals.
@@ -111,7 +111,7 @@ Feature: As a user of the CR I want to upgrade my events
       | Key             | Expected        |
       | contentStreamId | "cs-user-first" |
 
-    And I upgrade events duplicated content stream removals
+    And I upgrade the events to deduplicate base-workspace-changes
     Then I expect the following upgrade output:
       """
       1 content streams were removed more than once:
@@ -185,7 +185,7 @@ Feature: As a user of the CR I want to upgrade my events
       # illegal second removal
       | 15             | ContentStream:cs-user-first  | 3       | ContentStreamWasRemoved             | {"contentStreamId":"cs-user-first"}                                                                                                                                                                                                    | {"initiatingUserId": "328b8e87-17d8-4c10-ad5a-91e8c0485077", "initiatingTimestamp": "2026-04-30T09:59:52+02:00"}                                                                      | 794bd543-4cb1-4dac-aa62-de5b280d88d9 | ChangeBaseWorkspace_2871e0770793478646  | 2026-04-30 09:59:52 |
 
-    And I upgrade events duplicated content stream removals
+    And I upgrade the events to deduplicate base-workspace-changes
     Then I expect the following upgrade output:
       """
       1 content streams were removed more than once:
@@ -242,7 +242,7 @@ Feature: As a user of the CR I want to upgrade my events
       # illegal second removal
       | 15             | ContentStream:cs-user-first  | 2       | ContentStreamWasRemoved             | {"contentStreamId":"cs-user-first"}                                                                                                                                                                                                    | {"initiatingUserId": "328b8e87-17d8-4c10-ad5a-91e8c0485077", "initiatingTimestamp": "2026-04-30T09:59:52+02:00"}                                                                      | 794bd543-4cb1-4dac-aa62-de5b280d88d9 | ChangeBaseWorkspace_2871e0770793478646  | 2026-04-30 09:59:52 |
 
-    And I upgrade events duplicated content stream removals
+    And I upgrade the events to deduplicate base-workspace-changes
     Then I expect the following upgrade output:
       """
       1 content streams were removed more than once:
@@ -299,7 +299,7 @@ Feature: As a user of the CR I want to upgrade my events
       # illegal second removal
       | 15             | ContentStream:cs-user-first  | 2       | ContentStreamWasRemoved             | {"contentStreamId":"cs-user-first"}                                                                                                                                                                                              | {"initiatingUserId": "328b8e87-17d8-4c10-ad5a-91e8c0485077", "initiatingTimestamp": "2026-04-30T09:59:52+02:00"}                                                                      | 794bd543-4cb1-4dac-aa62-de5b280d88d9 | ChangeBaseWorkspace_2871e0770793478646  | 2026-04-30 09:59:52 |
 
-    And I upgrade events duplicated content stream removals
+    And I upgrade the events to deduplicate base-workspace-changes
     Then I expect the following upgrade output:
       """
       1 content streams were removed more than once:
@@ -389,7 +389,7 @@ Feature: As a user of the CR I want to upgrade my events
       | Key             | Expected        |
       | contentStreamId | "cs-user-first" |
 
-    And I upgrade events duplicated content stream removals
+    And I upgrade the events to deduplicate base-workspace-changes
     Then I expect the following upgrade output:
       """
       1 content streams were removed more than once:
