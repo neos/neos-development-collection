@@ -15,6 +15,7 @@ namespace Neos\Fusion\FusionObjects;
 
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\Routing\UriBuilder;
+use Neos\Fusion\Exception as FusionException;
 
 /**
  * A Fusion ActionUri object
@@ -182,12 +183,19 @@ class ActionUriImplementation extends AbstractFusionObject
                 $this->getPackage(),
                 $this->getSubpackage()
             );
+            $queryParameters = $this->getQueryParameters();
+            if ($queryParameters !== []) {
+                if (parse_url($uri, PHP_URL_QUERY) !== null) {
+                    throw new FusionException('"queryParameters" must not be used for Routes with "appendExceedingArguments"', 1782317977);
+                }
+                [$uri, $segment] = array_pad(explode('#', $uri, 2), 2, null);
+                $uri .= '?' . http_build_query($queryParameters, arg_separator: '&');
+                if ($segment !== null) {
+                    $uri .= '#' . $segment;
+                }
+            }
         } catch (\Exception $exception) {
             return $this->runtime->handleRenderingException($this->path, $exception);
-        }
-        $queryParameters = $this->getQueryParameters();
-        if ($queryParameters !== []) {
-            $uri .= '?' . http_build_query($queryParameters, arg_separator: '&');
         }
         return $uri;
     }

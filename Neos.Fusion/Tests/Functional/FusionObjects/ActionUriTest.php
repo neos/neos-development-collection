@@ -1,6 +1,8 @@
 <?php
 namespace Neos\Fusion\Tests\Functional\FusionObjects;
 
+use Neos\Fusion\Exception as FusionException;
+
 /*
  * This file is part of the Neos.Fusion package.
  *
@@ -41,10 +43,10 @@ class ActionUriTest extends AbstractFusionObjectTest
     /**
      * @test
      */
-    public function buildRelativeUriToActionWithQueryParameters()
+    public function buildRelativeUriToActionWithQueryParameters(): void
     {
         $this->registerRoute(
-            'Fusion functional test',
+            'Fusion functional test: buildRelativeUriToActionWithQueryParameters',
             'neos/flow/test/http/withQueryParameters',
             [
                 '@package' => 'Neos.Flow',
@@ -57,5 +59,51 @@ class ActionUriTest extends AbstractFusionObjectTest
         $view = $this->buildView();
         $view->setFusionPath('actionUri/withQueryParameters');
         self::assertSame('/neos/flow/test/http/withqueryparameters?foo=bar&bar%5Bbaz%5D=foos', $view->render());
+    }
+
+    /**
+     * @test
+     */
+    public function buildRelativeUriToActionWithSectionAndQueryParameters(): void
+    {
+        $this->registerRoute(
+            'Fusion functional test: buildRelativeUriToActionWithSectionAndQueryParameters',
+            'neos/flow/test/http/withQueryParameters',
+            [
+                '@package' => 'Neos.Flow',
+                '@controller' => 'Foo',
+                '@action' => 'index',
+                '@format' => 'html'
+            ]
+        );
+
+        $view = $this->buildView();
+        $view->setFusionPath('actionUri/withSectionAndQueryParameters');
+        self::assertSame('/neos/flow/test/http/withqueryparameters?foo=bar#someSection', $view->render());
+    }
+
+    /**
+     * @test
+     */
+    public function buildRelativeUriToActionWithExceedingArgumentsAndQueryParameters(): void
+    {
+        $this->registerRoute(
+            'Fusion functional test: buildRelativeUriToActionWithExceedingArgumentsAndQueryParameters',
+            'neos/flow/test/http/withExceedingArgumentsAndQueryParameters',
+            [
+                '@package' => 'Neos.Flow',
+                '@controller' => 'Foo',
+                '@action' => 'index',
+                '@format' => 'html',
+            ],
+            appendExceedingArguments: true,
+        );
+
+        $view = $this->buildView();
+        $view->setFusionPath('actionUri/withExceedingArgumentsAndQueryParameters');
+
+        $this->expectException(FusionException::class);
+        $this->expectExceptionMessage('"queryParameters" must not be used for Routes with "appendExceedingArguments"');
+        $view->render();
     }
 }
