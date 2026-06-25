@@ -50,6 +50,18 @@ final class SubscriptionEngine
     ) {
     }
 
+    public function withoutProjectionSubscriberCatchupHooks(): self
+    {
+        return new self(
+            eventStore: $this->eventStore,
+            subscriptionStore: $this->subscriptionStore,
+            subscribers: $this->subscribers->withoutProjectionSubscriberCatchupHooks(),
+            eventNormalizer: $this->eventNormalizer,
+            performanceTracer: $this->performanceTracer,
+            logger: $this->logger,
+        );
+    }
+
     public function setup(SubscriptionEngineCriteria|null $criteria = null): Result
     {
         $criteria ??= SubscriptionEngineCriteria::noConstraints();

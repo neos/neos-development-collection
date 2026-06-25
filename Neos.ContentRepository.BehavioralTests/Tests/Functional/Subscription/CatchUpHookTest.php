@@ -301,4 +301,43 @@ final class CatchUpHookTest extends AbstractSubscriptionEngineTestCase
         $this->expectOkayStatus('Vendor.Package:SecondFakeProjection', SubscriptionStatus::ACTIVE, SequenceNumber::fromInteger(4));
         self::assertEquals([1,2,3,4], $this->secondFakeProjection->getState()->findAppliedSequenceNumberValues());
     }
+
+    /** @test */
+    public function catchUpAreNotRunIfExplicitlyDisabled()
+    {
+        $this->eventStore->setup();
+
+        $this->fakeProjection->expects(self::once())->method('setUp');
+        $this->subscriptionEngine->setup();
+
+        $this->commitExampleContentStreamEvent();
+
+        $this->fakeProjection->expects(self::once())->method('apply');
+
+        // first projection hooks
+        $this->catchupHookForFakeProjection->expects(self::never())->method('onBeforeCatchUp');
+        $this->catchupHookForFakeProjection->expects(self::never())->method('onBeforeEvent');
+        $this->catchupHookForFakeProjection->expects(self::never())->method('onAfterEvent');
+        $this->catchupHookForFakeProjection->expects(self::never())->method('onAfterBatchCompleted');
+        $this->catchupHookForFakeProjection->expects(self::never())->method('onAfterCatchUp');
+
+        // second projection hooks
+        $this->catchupHookForSecondFakeProjection->expects(self::never())->method('onBeforeCatchUp');
+        $this->catchupHookForSecondFakeProjection->expects(self::never())->method('onBeforeEvent');
+        $this->catchupHookForSecondFakeProjection->expects(self::never())->method('onAfterEvent');
+        $this->catchupHookForSecondFakeProjection->expects(self::never())->method('onAfterBatchCompleted');
+        $this->catchupHookForSecondFakeProjection->expects(self::never())->method('onAfterCatchUp');
+
+        $result = $this->subscriptionEngine->withoutProjectionSubscriberCatchupHooks()->boot();
+        self::assertNull($result->errors);
+        self::assertEquals(1, $result->numberOfProcessedEvents);
+
+        $this->expectOkayStatus('Vendor.Package:SecondFakeProjection', SubscriptionStatus::ACTIVE, SequenceNumber::fromInteger(1));
+        self::assertEquals(
+            [
+                SequenceNumber::fromInteger(1)
+            ],
+            $this->secondFakeProjection->getState()->findAppliedSequenceNumbers()
+        );
+    }
 }
