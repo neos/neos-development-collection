@@ -462,11 +462,9 @@ final class DocumentUriPathProjection implements ProjectionInterface
                     $parentTagLevel = $event->tag === NeosSubtreeTag::disabled() ? $parentNode->getDisableLevel() : $parentNode->getRemovedLevel();
                 }
                 if ($nodeTagLevel <= $parentTagLevel) {
-                    // Node was not explicitly tagged (its counter matches [or is below - should never happen] the parent's level).
-                    // Decrementing might cause an unsigned integer underflow. This can happen when
-                    // a duplicate SubtreeWasUntagged event reaches the live stream (e.g. due to
-                    // concurrent workspace publishes with stale projection state). See https://github.com/neos/neos-development-collection/issues/5778
-                    // for more details.
+                    // Node was not tagged (its counter matches [or is below - should never happen] the parent's level).
+                    // Decrementing an untagged node ($nodeTagLevel === 0) would cause an unsigned integer underflow.
+                    // A node might not have been tagged in the first place and just untagged with allVariants or the variant was already untagged.
                     continue;
                 }
             }
