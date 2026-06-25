@@ -110,7 +110,7 @@ final readonly class EventsRecordedAtToUtcUpgrade
         $this->context->dbal->commit();
 
         $this->log('');
-        $this->log(sprintf('Migration applied to %s events. Please replay the projections `./flow subscription:replayall` to see the new adjusted UTC dates in the node timestamps', $affectedRows));
+        $this->log(sprintf('Migration applied to %s events. Please replay the content graph via `./flow crupgrade:resetupandreplaycontentgraph` to see the new adjusted UTC dates in the node timestamps', $affectedRows));
         $this->log('Done. Please dont re-rerun the migration.');
     }
 
