@@ -54,6 +54,15 @@ final class Subscribers implements \IteratorAggregate, \Countable, \JsonSerializ
         return new self([...$this->subscribersById, $subscriber->id->value => $subscriber]);
     }
 
+    public function withoutProjectionSubscriberCatchupHooks(): self
+    {
+        $withoutProjectionSubscriberCatchupHooks = [];
+        foreach ($this->subscribersById as $subscriber) {
+            $withoutProjectionSubscriberCatchupHooks[$subscriber->id->value] = $subscriber->withoutCatchupHook();
+        }
+        return new self($withoutProjectionSubscriberCatchupHooks);
+    }
+
     public function get(SubscriptionId $id): ProjectionSubscriber
     {
         if (!$this->contain($id)) {

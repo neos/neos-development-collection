@@ -328,7 +328,7 @@ final class CatchUpHookTest extends AbstractSubscriptionEngineTestCase
         $this->catchupHookForSecondFakeProjection->expects(self::never())->method('onAfterBatchCompleted');
         $this->catchupHookForSecondFakeProjection->expects(self::never())->method('onAfterCatchUp');
 
-        $result = $this->subscriptionEngine->boot(skipCatchupHooks: true);
+        $result = $this->subscriptionEngine->withoutProjectionSubscriberCatchupHooks()->boot();
         self::assertNull($result->errors);
         self::assertEquals(1, $result->numberOfProcessedEvents);
 

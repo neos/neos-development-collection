@@ -50,6 +50,18 @@ final class SubscriptionEngine
     ) {
     }
 
+    public function withoutProjectionSubscriberCatchupHooks(): self
+    {
+        return new self(
+            eventStore: $this->eventStore,
+            subscriptionStore: $this->subscriptionStore,
+            subscribers: $this->subscribers->withoutProjectionSubscriberCatchupHooks(),
+            eventNormalizer: $this->eventNormalizer,
+            performanceTracer: $this->performanceTracer,
+            logger: $this->logger,
+        );
+    }
+
     public function setup(SubscriptionEngineCriteria|null $criteria = null): Result
     {
         $criteria ??= SubscriptionEngineCriteria::noConstraints();
@@ -78,11 +90,11 @@ final class SubscriptionEngine
         return $errors === [] ? Result::success() : Result::failed(Errors::fromArray($errors));
     }
 
-    public function boot(SubscriptionEngineCriteria|null $criteria = null, ?\Closure $progressCallback = null, ?int $batchSize = null, bool $skipCatchupHooks = false): ProcessedResult
+    public function boot(SubscriptionEngineCriteria|null $criteria = null, ?\Closure $progressCallback = null, ?int $batchSize = null): ProcessedResult
     {
         $criteria ??= SubscriptionEngineCriteria::noConstraints();
         return $this->processExclusively(
-            fn() => $this->catchUpSubscriptions($criteria, SubscriptionStatusFilter::fromArray([SubscriptionStatus::BOOTING]), $progressCallback, $batchSize, $skipCatchupHooks)
+            fn() => $this->catchUpSubscriptions($criteria, SubscriptionStatusFilter::fromArray([SubscriptionStatus::BOOTING]), $progressCallback, $batchSize)
         );
     }
 
@@ -90,7 +102,7 @@ final class SubscriptionEngine
     {
         $criteria ??= SubscriptionEngineCriteria::noConstraints();
         return $this->processExclusively(
-            fn() => $this->catchUpSubscriptions($criteria, SubscriptionStatusFilter::fromArray([SubscriptionStatus::ACTIVE]), $progressCallback, $batchSize, skipCatchupHooks: false)
+            fn() => $this->catchUpSubscriptions($criteria, SubscriptionStatusFilter::fromArray([SubscriptionStatus::ACTIVE]), $progressCallback, $batchSize)
         );
     }
 
@@ -98,7 +110,7 @@ final class SubscriptionEngine
     {
         $criteria ??= SubscriptionEngineCriteria::noConstraints();
         return $this->processExclusively(
-            fn() => $this->catchUpSubscriptions($criteria, SubscriptionStatusFilter::fromArray([SubscriptionStatus::ERROR, SubscriptionStatus::DETACHED]), $progressCallback, $batchSize, skipCatchupHooks: false)
+            fn() => $this->catchUpSubscriptions($criteria, SubscriptionStatusFilter::fromArray([SubscriptionStatus::ERROR, SubscriptionStatus::DETACHED]), $progressCallback, $batchSize)
         );
     }
 
@@ -272,7 +284,7 @@ final class SubscriptionEngine
      * @param \Closure|null $progressCallback The callback that is invoked for every {@see EventEnvelope} that is processed per subscriber
      * @param int|null $batchSize Number of events to process before the transaction is commited and reopened. (defaults to all events).
      */
-    private function catchUpSubscriptions(SubscriptionEngineCriteria $criteria, SubscriptionStatusFilter $status, \Closure|null $progressCallback, int|null $batchSize, bool $skipCatchupHooks): ProcessedResult
+    private function catchUpSubscriptions(SubscriptionEngineCriteria $criteria, SubscriptionStatusFilter $status, \Closure|null $progressCallback, int|null $batchSize): ProcessedResult
     {
         $this->performanceTracer?->openSpan(TracePoint::SubscriptionEngineCatchUpSubscriptions);
         try {
@@ -312,15 +324,13 @@ final class SubscriptionEngine
             }
 
             $subscriptionIdsToInvokeAroundCatchUpHooks = $subscriptionsToCatchup->getIds();
-            if (!$skipCatchupHooks) {
-                foreach ($subscriptionsToCatchup as $subscription) {
-                    $subscriber = $this->subscribers->get($subscription->id);
-                    try {
-                        $subscriber->catchUpHook?->onBeforeCatchUp($subscription->status);
-                    } catch (\Throwable $e) {
-                        $errors[] = $error = Error::create($subscription->id, $e->getMessage(), $errors === [] ? $e : null, position: null);
-                        $this->logCatchupHookError($error);
-                    }
+            foreach ($subscriptionsToCatchup as $subscription) {
+                $subscriber = $this->subscribers->get($subscription->id);
+                try {
+                    $subscriber->catchUpHook?->onBeforeCatchUp($subscription->status);
+                } catch (\Throwable $e) {
+                    $errors[] = $error = Error::create($subscription->id, $e->getMessage(), $errors === [] ? $e : null, position: null);
+                    $this->logCatchupHookError($error);
                 }
             }
             $this->performanceTracer?->mark(TracePoint::CatchUpHooksOnBeforeCatchUp);
@@ -359,13 +369,11 @@ final class SubscriptionEngine
                         }
                         $subscriber = $this->subscribers->get($subscription->id);
 
-                        if (!$skipCatchupHooks) {
-                            try {
-                                $subscriber->catchUpHook?->onBeforeEvent($domainEvent, $eventEnvelope);
-                            } catch (\Throwable $e) {
-                                $errors[] = $error = Error::create($subscription->id, $e->getMessage(), $errors === [] ? $e : null, $eventEnvelope->sequenceNumber);
-                                $this->logCatchupHookError($error);
-                            }
+                        try {
+                            $subscriber->catchUpHook?->onBeforeEvent($domainEvent, $eventEnvelope);
+                        } catch (\Throwable $e) {
+                            $errors[] = $error = Error::create($subscription->id, $e->getMessage(), $errors === [] ? $e : null, $eventEnvelope->sequenceNumber);
+                            $this->logCatchupHookError($error);
                         }
 
                         try {
@@ -395,13 +403,11 @@ final class SubscriptionEngine
                         $this->logger?->debug(sprintf('Subscription Engine: Subscriber "%s" for "%s" processed the event "%s" (sequence number: %d).', substr(strrchr($subscriber::class, '\\') ?: '', 1), $subscription->id->value, $eventEnvelope->event->type->value, $eventEnvelope->sequenceNumber->value));
                         $highestSequenceNumberForSubscriber[$subscription->id->value] = $eventEnvelope->sequenceNumber;
 
-                        if (!$skipCatchupHooks) {
-                            try {
-                                $subscriber->catchUpHook?->onAfterEvent($domainEvent, $eventEnvelope);
-                            } catch (\Throwable $e) {
-                                $errors[] = $error = Error::create($subscription->id, $e->getMessage(), $errors === [] ? $e : null, $eventEnvelope->sequenceNumber);
-                                $this->logCatchupHookError($error);
-                            }
+                        try {
+                            $subscriber->catchUpHook?->onAfterEvent($domainEvent, $eventEnvelope);
+                        } catch (\Throwable $e) {
+                            $errors[] = $error = Error::create($subscription->id, $e->getMessage(), $errors === [] ? $e : null, $eventEnvelope->sequenceNumber);
+                            $this->logCatchupHookError($error);
                         }
                     }
                     $numberOfProcessedEvents++;
@@ -428,14 +434,12 @@ final class SubscriptionEngine
 
                 $this->subscriptionStore->commit();
 
-                if (!$skipCatchupHooks) {
-                    foreach ($subscriptionIdsToInvokeAroundCatchUpHooks as $subscriptionId) {
-                        try {
-                            $this->subscribers->get($subscriptionId)->catchUpHook?->onAfterBatchCompleted();
-                        } catch (\Throwable $e) {
-                            $errors[] = $error = Error::create($subscriptionId, $e->getMessage(), $errors === [] ? $e : null, position: null);
-                            $this->logCatchupHookError($error);
-                        }
+                foreach ($subscriptionIdsToInvokeAroundCatchUpHooks as $subscriptionId) {
+                    try {
+                        $this->subscribers->get($subscriptionId)->catchUpHook?->onAfterBatchCompleted();
+                    } catch (\Throwable $e) {
+                        $errors[] = $error = Error::create($subscriptionId, $e->getMessage(), $errors === [] ? $e : null, position: null);
+                        $this->logCatchupHookError($error);
                     }
                 }
 
@@ -448,14 +452,12 @@ final class SubscriptionEngine
                 }
             }
 
-            if (!$skipCatchupHooks) {
-                foreach ($subscriptionIdsToInvokeAroundCatchUpHooks as $subscriptionId) {
-                    try {
-                        $this->subscribers->get($subscriptionId)->catchUpHook?->onAfterCatchUp();
-                    } catch (\Throwable $e) {
-                        $errors[] = $error = Error::create($subscriptionId, $e->getMessage(), $errors === [] ? $e : null, position: null);
-                        $this->logCatchupHookError($error);
-                    }
+            foreach ($subscriptionIdsToInvokeAroundCatchUpHooks as $subscriptionId) {
+                try {
+                    $this->subscribers->get($subscriptionId)->catchUpHook?->onAfterCatchUp();
+                } catch (\Throwable $e) {
+                    $errors[] = $error = Error::create($subscriptionId, $e->getMessage(), $errors === [] ? $e : null, position: null);
+                    $this->logCatchupHookError($error);
                 }
             }
 
