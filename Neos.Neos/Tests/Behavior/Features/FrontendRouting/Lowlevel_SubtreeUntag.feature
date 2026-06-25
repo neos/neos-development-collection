@@ -28,21 +28,21 @@ Feature:
       | a1              | Neos.ContentRepository.Testing:Document | a                     | a1       | {"example":"general"}     |
       | a1a             | Neos.ContentRepository.Testing:Document | a1                    | a1a      | {"example":"general"}     |
 
-  Scenario: Untag with greater variant selection (allVariants)
+  Scenario Outline: Untag "<subtreeTag>" with greater variant selection (allVariants)
     And the command TagSubtree is executed with payload:
       | Key                          | Value                |
       | nodeAggregateId              | "a"                  |
       | coveredDimensionSpacePoint   | {"example":"source"} |
       | nodeVariantSelectionStrategy | "allSpecializations" |
-      | tag                          | "disabled"           |
+      | tag                          | "<subtreeTag>"       |
 
     When I am in dimension space point {"example":"source"}
     Then I expect node aggregate identifier "a" to lead to node cs-identifier;a;{"example":"general"}
     And I expect this node to have the following subtree with tags:
     """
-    a (disabled*)
-     a1 (disabled)
-      a1a (disabled)
+    a (<subtreeTag>*)
+     a1 (<subtreeTag>)
+      a1a (<subtreeTag>)
     """
 
     When I am in dimension space point {"example":"peer"}
@@ -55,30 +55,30 @@ Feature:
     """
 
     Then I expect the documenturipath table to contain exactly:
-      | nodeaggregateid | dimensionspacepointhash   | disabled |
-      | "root"          | hash{"example":"general"} | 0        |
-      | "root"          | hash{"example":"source"}  | 0        |
-      | "root"          | hash{"example":"spec"}    | 0        |
-      | "root"          | hash{"example":"peer"}    | 0        |
-      | "a"             | hash{"example":"general"} | 0        |
-      | "a"             | hash{"example":"source"}  | 1        |
-      | "a"             | hash{"example":"spec"}    | 1        |
-      | "a"             | hash{"example":"peer"}    | 0        |
-      | "a1"            | hash{"example":"general"} | 0        |
-      | "a1"            | hash{"example":"source"}  | 1        |
-      | "a1"            | hash{"example":"spec"}    | 1        |
-      | "a1"            | hash{"example":"peer"}    | 0        |
-      | "a1a"           | hash{"example":"general"} | 0        |
-      | "a1a"           | hash{"example":"source"}  | 1        |
-      | "a1a"           | hash{"example":"spec"}    | 1        |
-      | "a1a"           | hash{"example":"peer"}    | 0        |
+      | nodeaggregateid | dimensionspacepointhash   | <subtreeTagColumn> |
+      | "root"          | hash{"example":"general"} | 0                  |
+      | "root"          | hash{"example":"source"}  | 0                  |
+      | "root"          | hash{"example":"spec"}    | 0                  |
+      | "root"          | hash{"example":"peer"}    | 0                  |
+      | "a"             | hash{"example":"general"} | 0                  |
+      | "a"             | hash{"example":"source"}  | 1                  |
+      | "a"             | hash{"example":"spec"}    | 1                  |
+      | "a"             | hash{"example":"peer"}    | 0                  |
+      | "a1"            | hash{"example":"general"} | 0                  |
+      | "a1"            | hash{"example":"source"}  | 1                  |
+      | "a1"            | hash{"example":"spec"}    | 1                  |
+      | "a1"            | hash{"example":"peer"}    | 0                  |
+      | "a1a"           | hash{"example":"general"} | 0                  |
+      | "a1a"           | hash{"example":"source"}  | 1                  |
+      | "a1a"           | hash{"example":"spec"}    | 1                  |
+      | "a1a"           | hash{"example":"peer"}    | 0                  |
 
     When the command UntagSubtree is executed with payload:
       | Key                          | Value                |
       | nodeAggregateId              | "a"                  |
       | coveredDimensionSpacePoint   | {"example":"source"} |
       | nodeVariantSelectionStrategy | "allVariants"        |
-      | tag                          | "disabled"           |
+      | tag                          | "<subtreeTag>"       |
 
     When I am in dimension space point {"example":"source"}
     Then I expect node aggregate identifier "a" to lead to node cs-identifier;a;{"example":"general"}
@@ -99,23 +99,28 @@ Feature:
     """
 
     Then I expect the documenturipath table to contain exactly:
-      | nodeaggregateid | dimensionspacepointhash   | disabled |
-      | "root"          | hash{"example":"general"} | 0        |
-      | "root"          | hash{"example":"source"}  | 0        |
-      | "root"          | hash{"example":"spec"}    | 0        |
-      | "root"          | hash{"example":"peer"}    | 0        |
-      | "a"             | hash{"example":"general"} | 0        |
-      | "a"             | hash{"example":"source"}  | 0        |
-      | "a"             | hash{"example":"spec"}    | 0        |
-      | "a"             | hash{"example":"peer"}    | 0        |
-      | "a1"            | hash{"example":"general"} | 0        |
-      | "a1"            | hash{"example":"source"}  | 0        |
-      | "a1"            | hash{"example":"spec"}    | 0        |
-      | "a1"            | hash{"example":"peer"}    | 0        |
-      | "a1a"           | hash{"example":"general"} | 0        |
-      | "a1a"           | hash{"example":"source"}  | 0        |
-      | "a1a"           | hash{"example":"spec"}    | 0        |
-      | "a1a"           | hash{"example":"peer"}    | 0        |
+      | nodeaggregateid | dimensionspacepointhash   | <subtreeTagColumn> |
+      | "root"          | hash{"example":"general"} | 0                  |
+      | "root"          | hash{"example":"source"}  | 0                  |
+      | "root"          | hash{"example":"spec"}    | 0                  |
+      | "root"          | hash{"example":"peer"}    | 0                  |
+      | "a"             | hash{"example":"general"} | 0                  |
+      | "a"             | hash{"example":"source"}  | 0                  |
+      | "a"             | hash{"example":"spec"}    | 0                  |
+      | "a"             | hash{"example":"peer"}    | 0                  |
+      | "a1"            | hash{"example":"general"} | 0                  |
+      | "a1"            | hash{"example":"source"}  | 0                  |
+      | "a1"            | hash{"example":"spec"}    | 0                  |
+      | "a1"            | hash{"example":"peer"}    | 0                  |
+      | "a1a"           | hash{"example":"general"} | 0                  |
+      | "a1a"           | hash{"example":"source"}  | 0                  |
+      | "a1a"           | hash{"example":"spec"}    | 0                  |
+      | "a1a"           | hash{"example":"peer"}    | 0                  |
+
+    Examples:
+      | subtreeTag | subtreeTagColumn |
+      | disabled   | disabled         |
+      | removed    | removed          |
 
   Scenario: Untag child node with greater variant selection (allVariants)
     And the command TagSubtree is executed with payload:
@@ -170,11 +175,11 @@ Feature:
       | "a1a"           | hash{"example":"peer"}    | 1        |
 
     When the command UntagSubtree is executed with payload:
-      | Key                          | Value                |
-      | nodeAggregateId              | "a1"                 |
-      | coveredDimensionSpacePoint   | {"example":"peer"}   |
-      | nodeVariantSelectionStrategy | "allVariants"        |
-      | tag                          | "disabled"           |
+      | Key                          | Value              |
+      | nodeAggregateId              | "a1"               |
+      | coveredDimensionSpacePoint   | {"example":"peer"} |
+      | nodeVariantSelectionStrategy | "allVariants"      |
+      | tag                          | "disabled"         |
 
     When I am in dimension space point {"example":"source"}
     Then I expect node aggregate identifier "a" to lead to node cs-identifier;a;{"example":"general"}
