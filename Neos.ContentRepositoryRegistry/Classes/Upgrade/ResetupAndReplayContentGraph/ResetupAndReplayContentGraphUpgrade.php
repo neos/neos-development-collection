@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Neos\ContentRepositoryRegistry\Upgrade\ResetGraphAndSetup;
+namespace Neos\ContentRepositoryRegistry\Upgrade\ResetupAndReplayContentGraph;
 
 use Neos\ContentGraph\DoctrineDbalAdapter\ContentGraphTableNames;
 use Neos\ContentRepository\Core\Projection\ProjectionStatusType;
@@ -18,7 +18,7 @@ use Neos\ContentRepositoryRegistry\Upgrade\Shared\OutputMessageTrait;
 use Neos\EventStore\Model\Event\SequenceNumber;
 
 /**
- * Upgrade to allow to empty and set up the graph projection in one step
+ * Upgrade to allow to empty, set up and replay the graph projection in one step
  *
  * The CR provides a simple setup tooling via "./flow cr:setup" it allows to create the database schemas in the beginning
  * and also minor upgrades from one existing schema to the desired like index changes or small renames.
@@ -35,7 +35,7 @@ use Neos\EventStore\Model\Event\SequenceNumber;
  *
  * Included in June 2026 - part of the minor 9.2.0 release
  */
-final readonly class ResetGraphAndSetupUpgrade
+final readonly class ResetupAndReplayContentGraphUpgrade
 {
     use OutputMessageTrait;
 

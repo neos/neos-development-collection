@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Neos\ContentRepositoryRegistry\Tests\Functional\Upgrade\ResetGraphAndSetup;
+namespace Neos\ContentRepositoryRegistry\Tests\Functional\Upgrade\ResetupAndReplayContentGraph;
 
 use Neos\ContentRepository\BehavioralTests\Tests\Functional\Subscription\AbstractSubscriptionEngineTestCase;
 use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Command\CreateRootWorkspace;
@@ -14,13 +14,13 @@ use Neos\ContentRepository\Core\Subscription\Engine\SubscriptionEngineCriteria;
 use Neos\ContentRepository\Core\Subscription\SubscriptionStatus;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\ContentRepositoryRegistry\Upgrade\Command\CRUpgradeContextFactory;
-use Neos\ContentRepositoryRegistry\Upgrade\ResetGraphAndSetup\ResetGraphAndSetupUpgrade;
+use Neos\ContentRepositoryRegistry\Upgrade\ResetupAndReplayContentGraph\ResetupAndReplayContentGraphUpgrade;
 use Neos\EventStore\Model\Event\SequenceNumber;
 use PHPUnit\Framework\Assert;
 
-class ResetGraphAndSetupUpgradeTest extends AbstractSubscriptionEngineTestCase
+class ResetupAndReplayContentGraphUpgradeTest extends AbstractSubscriptionEngineTestCase
 {
-    private ResetGraphAndSetupUpgrade $resetGraphAndSetupUpgrade;
+    private ResetupAndReplayContentGraphUpgrade $resetGraphAndSetupUpgrade;
 
     private array $outputLines = [];
 
@@ -96,7 +96,7 @@ class ResetGraphAndSetupUpgradeTest extends AbstractSubscriptionEngineTestCase
             $this->getObject(CRUpgradeContextFactory::class)
         );
 
-        $upgrade = new ResetGraphAndSetupUpgrade(
+        $upgrade = new ResetupAndReplayContentGraphUpgrade(
             $context,
             $this->outputFn(...),
             fn () => null,

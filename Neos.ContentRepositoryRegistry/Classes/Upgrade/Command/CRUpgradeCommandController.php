@@ -6,7 +6,7 @@ namespace Neos\ContentRepositoryRegistry\Upgrade\Command;
 use Neos\ContentRepository\Core\Service\ContentRepositoryMaintainerFactory;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
-use Neos\ContentRepositoryRegistry\Upgrade\ResetGraphAndSetup\ResetGraphAndSetupUpgrade;
+use Neos\ContentRepositoryRegistry\Upgrade\ResetupAndReplayContentGraph\ResetupAndReplayContentGraphUpgrade;
 use Neos\ContentRepositoryRegistry\Upgrade\EventsRecordedAtToUtc\EventsRecordedAtToUtcUpgrade;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Cli\CommandController;
@@ -45,7 +45,7 @@ final class CRUpgradeCommandController extends CommandController
     protected CRUpgradeContextFactory $upgradeContextFactory;
 
     /**
-     * Upgrade to allow to empty and set up the graph projection in one step
+     * Upgrade to allow to empty, set up and replay the graph projection in one step
      *
      * The CR provides a simple setup tooling via "./flow cr:setup" it allows to create the database schemas in the beginning
      * and also minor upgrades from one existing schema to the desired like index changes or small renames.
@@ -75,7 +75,7 @@ final class CRUpgradeCommandController extends CommandController
      *
      * @param string $contentRepository Identifier of the Content Repository to upgrade
      */
-    public function resetGraphAndSetupCommand(string $contentRepository = 'default', bool $force = false): void
+    public function resetupAndReplayContentGraphCommand(string $contentRepository = 'default', bool $force = false): void
     {
         $context = $this->contentRepositoryRegistry->buildService(
             ContentRepositoryId::fromString($contentRepository),
@@ -87,7 +87,7 @@ final class CRUpgradeCommandController extends CommandController
             return;
         }
 
-        $upgrade = new ResetGraphAndSetupUpgrade(
+        $upgrade = new ResetupAndReplayContentGraphUpgrade(
             $context,
             $this->output->outputLine(...),
             function () {
