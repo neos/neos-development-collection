@@ -27,7 +27,7 @@ trait SubtreeTagging
     private function addSubtreeTag(ContentStreamLayers $contentStreamLayers, NodeAggregateId $nodeAggregateId, DimensionSpacePointSet $affectedDimensionSpacePoints, SubtreeTag $tag): void
     {
         $contentStreamHierarchyRelationQuery = $this->subqueries->forHierarchyRelation($contentStreamLayers);
-        $hierarchyStatementNested = $this->subqueries->forHierarchyRelation($contentStreamLayers)
+        $nestedContentStreamHierarchyRelationQuery = $this->subqueries->forHierarchyRelation($contentStreamLayers)
             ->withDimensionSpacePoints($affectedDimensionSpacePoints)
             ->withWhereCondition(StaticWhereCondition::fromString('h', "NOT JSON_CONTAINS_PATH(h.subtreetags, 'one', :tagPath)"));
 
@@ -58,7 +58,7 @@ trait SubtreeTagging
                       ch.childnodeanchor,
                       ch.dimensionspacepointhash
                     FROM
-                      {$hierarchyStatementNested->toSql()} ch
+                      {$nestedContentStreamHierarchyRelationQuery->toSql()} ch
                       INNER JOIN {$this->tableNames->node()} n ON n.relationanchorpoint = ch.parentnodeanchor
                     WHERE
                       n.nodeaggregateid = :nodeAggregateId
@@ -88,10 +88,10 @@ trait SubtreeTagging
                 'tagPath' => '$."' . $tag->value . '"',
                 'targetContentStreamLayer' => $contentStreamLayers->getWriteLayer()->value,
                 ...$contentStreamHierarchyRelationQuery->getParameters()->toDbalValues(),
-                ...$hierarchyStatementNested->getParameters()->toDbalValues(),
+                ...$nestedContentStreamHierarchyRelationQuery->getParameters()->toDbalValues(),
             ], [
                 ...$contentStreamHierarchyRelationQuery->getParameters()->toDbalTypes(),
-                ...$hierarchyStatementNested->getParameters()->toDbalTypes(),
+                ...$nestedContentStreamHierarchyRelationQuery->getParameters()->toDbalTypes(),
             ]);
         } catch (DBALException $e) {
             throw new \RuntimeException(sprintf('1: Failed to add subtree tag %s for content stream %s, node aggregate id %s and dimension space points %s: %s', $tag->value, $contentStreamLayers->toDebugString(), $nodeAggregateId->value, $affectedDimensionSpacePoints->toJson(), $e->getMessage()), 1716479749, $e);
@@ -140,7 +140,7 @@ trait SubtreeTagging
     private function removeSubtreeTag(ContentStreamLayers $contentStreamLayers, NodeAggregateId $nodeAggregateId, DimensionSpacePointSet $affectedDimensionSpacePoints, SubtreeTag $tag): void
     {
         $contentStreamHierarchyRelationQuery = $this->subqueries->forHierarchyRelation($contentStreamLayers);
-        $nestedHierarchyStatement = $this->subqueries->forHierarchyRelation($contentStreamLayers)->withDimensionSpacePoints($affectedDimensionSpacePoints);
+        $nestedContentStreamHierarchyRelationQuery = $this->subqueries->forHierarchyRelation($contentStreamLayers)->withDimensionSpacePoints($affectedDimensionSpacePoints);
         $removeTagStatement = <<<SQL
             INSERT INTO {$this->tableNames->hierarchyRelation()} (
               id,
@@ -181,7 +181,7 @@ trait SubtreeTagging
                           -- if the parent node of the affected node has the tag explicit or inherited we need to preserve its inheritance recursively when removing an explicit tag
                           JSON_CONTAINS_PATH(gph.subtreetags, 'one', :tagPath) as inheritsTag
                         FROM
-                          {$nestedHierarchyStatement->toSql()} ph
+                          {$nestedContentStreamHierarchyRelationQuery->toSql()} ph
                           INNER JOIN {$this->tableNames->node()} n ON n.relationanchorpoint = ph.childnodeanchor
                           INNER JOIN {$contentStreamHierarchyRelationQuery->toSql()} gph ON gph.childnodeanchor = ph.parentnodeanchor AND gph.dimensionspacepointhash = ph.dimensionspacepointhash
                         WHERE
@@ -216,10 +216,10 @@ trait SubtreeTagging
                 'tagPath' => '$."' . $tag->value . '"',
                 'targetContentStreamLayer' => $contentStreamLayers->getWriteLayer()->value,
                 ...$contentStreamHierarchyRelationQuery->getParameters()->toDbalValues(),
-                ...$nestedHierarchyStatement->getParameters()->toDbalValues(),
+                ...$nestedContentStreamHierarchyRelationQuery->getParameters()->toDbalValues(),
             ], [
                 ...$contentStreamHierarchyRelationQuery->getParameters()->toDbalTypes(),
-                ...$nestedHierarchyStatement->getParameters()->toDbalTypes(),
+                ...$nestedContentStreamHierarchyRelationQuery->getParameters()->toDbalTypes(),
             ]);
         } catch (DBALException $e) {
             throw new \RuntimeException(sprintf('Failed to remove subtree tag %s for content stream %s, node aggregate id %s and dimension space points %s: %s', $tag->value, $contentStreamLayers->toDebugString(), $nodeAggregateId->value, $affectedDimensionSpacePoints->toJson(), $e->getMessage()), 1716482293, $e);
