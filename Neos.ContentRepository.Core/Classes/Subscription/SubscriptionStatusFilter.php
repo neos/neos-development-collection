@@ -44,6 +44,11 @@ final class SubscriptionStatusFilter implements \IteratorAggregate
         return new self([]);
     }
 
+    public function contain(SubscriptionStatus $status): bool
+    {
+        return array_key_exists($status->value, $this->statusByValue);
+    }
+
     public function getIterator(): \Traversable
     {
         yield from array_values($this->statusByValue);

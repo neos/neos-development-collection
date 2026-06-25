@@ -1,0 +1,548 @@
+`9.0.13 (2026-06-22) <https://github.com/neos/neos-development-collection/releases/tag/9.0.13>`_
+================================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`BUGFIX: UTC `recordedAt` optional event migration <https://github.com/neos/neos-development-collection/pull/5858>`_
+--------------------------------------------------------------------------------------------------------------------
+
+Optional migration to adjust event time stamps and node dates to UTC
+https://github.com/neos/neos-development-collection/pull/5716
+
+By storing "recordedAt" as datetime field we lost its original timezone information.
+But we can make the assumption that its timezone should be the same as the one encoded in the ATOM metadata field "initiatingTimeStamp"
+
+The migration first groups all events by the ATOM offset found in "initiatingTimeStamp".
+If all events are UTC "+00:00" the migration is not necessary. For all non UTC groups we convert the "recordedAt" datetime field
+to the datetime in the UTC timezone.
+
+The migration must not be executed multiple times as it would remove the offset to match UTC again for the "recordedAt" datetime even if they are already meant to be UTC.
+To prevent this from happening we compare the "recordedAt" and "initiatingTimeStamp" and if they are equal considering timezones we know the migration was run.
+
+* Packages: ``Neos`` ``ContentRepositoryRegistry``
+
+`BUGFIX: Fix timeable node visibility inheritance <https://github.com/neos/neos-development-collection/pull/5878>`_
+-------------------------------------------------------------------------------------------------------------------
+
+``./flow timeablenodevisibility:execute`` now does not try to enable disabled nodes that are only disabled because of inheritance.
+
+resolved: https://github.com/neos/neos-development-collection/issues/5876
+
+**Upgrade instructions**
+
+-
+
+**Review instructions**
+
+-
+
+  - x If it's a bugfix, use the `lowest maintained branch which has the bug <https://www.neos.io/features/release-roadmap.html>`_
+  - If it's a non-breaking feature, use the branch of the next version (might be either minor or major)
+  - If it's a breaking feature it should typically go into the next major version
+- [ ] Reviewer - PR Title is brief but complete and starts with ``FEATURE|TASK|BUGFIX``
+- [ ] Reviewer - The first section explains the change briefly for change-logs
+- [ ] Reviewer - Breaking Changes are marked with ``!!!`` and have upgrade-instructions
+
+* Packages: ``TimeableNodeVisibility``
+
+`BUGFIX: Provide `./flow subscription:catchUpActive` to invoke a manual catchup <https://github.com/neos/neos-development-collection/pull/5863>`_
+-------------------------------------------------------------------------------------------------------------------------------------------------
+
+In the past year i shared a snippet on slack a few times which allowed to trigger a manual catchup. This is not intended to be required to use but we cannot rule out the possibility:
+
+> Allows explicit manual invocation for recovery
+> All modifications via ``ContentRepository::handle()`` already trigger a catchup internally
+> It cannot be 100% guaranteed that the commited events are catchup as they are two transactions by design
+> A lost database connection or killed PHP process can result in the event-store being ahead.
+
+Now the introduction of the subscription engine `#5321 <https://github.com/neos/neos-development-collection/issues/5321>`_christian and me agreed on a simpler easier to use api instead of the technical _correct_ api. That turns out not to help though. So here it is. 
+
+Also with the new locking `#5852 <https://github.com/neos/neos-development-collection/issues/5852>`_we can run into the theoretical problem that a process wants to do an catchup but a simulated publishing might be blocking it for too long which means no catchup is done.
+
+The code people previously had to use ^^
+
+```php
+public function catchUpActiveCommand(string $contentRepository = 'default'): void
+{
+    $subscriptionEngineAccessor = new class implements ContentRepositoryServiceFactoryInterface {
+        public SubscriptionEngine|null $subscriptionEngine;
+        public function build(ContentRepositoryServiceFactoryDependencies $serviceFactoryDependencies): ContentRepositoryServiceInterface
+        {
+            $this->subscriptionEngine = $serviceFactoryDependencies->subscriptionEngine;
+            return new class implements ContentRepositoryServiceInterface
+            {
+            };
+        }
+    };
+    $this-contentRepositoryRegistry->buildService(ContentRepositoryId::fromString($contentRepository), $subscriptionEngineAccessor);
+    $subscriptionEngine = $subscriptionEngineAccessor->subscriptionEngine;
+    $subscriptionEngine->catchUpActive();
+}
+```
+
+**Upgrade instructions**
+
+**Review instructions**
+
+  - If it's a bugfix, use the `lowest maintained branch which has the bug <https://www.neos.io/features/release-roadmap.html>`_
+  - If it's a non-breaking feature, use the branch of the next version (might be either minor or major)
+  - If it's a breaking feature it should typically go into the next major version
+- [ ] Reviewer - PR Title is brief but complete and starts with ``FEATURE|TASK|BUGFIX``
+- [ ] Reviewer - The first section explains the change briefly for change-logs
+- [ ] Reviewer - Breaking Changes are marked with ``!!!`` and have upgrade-instructions
+
+* Packages: ``ContentRepository.BehavioralTests``
+
+`BUGFIX: Parallel workspace creation corrupts content graph <https://github.com/neos/neos-development-collection/pull/5860>`_
+-----------------------------------------------------------------------------------------------------------------------------
+
+Fixes: https://github.com/neos/neos-development-collection/issues/5591
+
+Introduce failing test for parallel workspace creation
+    
+> Integrity constraint violation: 1062 Duplicate entry 'w-1780989485' for key 'PRIMARY''
+
+related https://github.com/neos/neos-development-collection/issues/5058
+
+**Upgrade instructions**
+
+**Review instructions**
+
+  - If it's a bugfix, use the `lowest maintained branch which has the bug <https://www.neos.io/features/release-roadmap.html>`_
+  - If it's a non-breaking feature, use the branch of the next version (might be either minor or major)
+  - If it's a breaking feature it should typically go into the next major version
+- [ ] Reviewer - PR Title is brief but complete and starts with ``FEATURE|TASK|BUGFIX``
+- [ ] Reviewer - The first section explains the change briefly for change-logs
+- [ ] Reviewer - Breaking Changes are marked with ``!!!`` and have upgrade-instructions
+
+* Packages: ``ContentRepository.BehavioralTests`` ``ContentRepository.Core``
+
+`BUGFIX: Ensure `Node::$timestamps` uses `UTC` format consistently instead server timezone <https://github.com/neos/neos-development-collection/pull/5716>`_
+------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Requires https://github.com/neos/eventstore-doctrineadapter/pull/29
+
+In the database we cant persist the timezone but only the date. ~And DBAL seems to automatically store them in UTC which makes sense.~ In DBAL we use ``Doctrine\\DBAL\\Types\\DateTimeImmutableType::convertToDatabaseValue()`` which invokes only ``->format`` for the date as ``Y-m-d H:i:s``. 
+
+Now the date comes from https://github.com/neos/neos-development-collection/blob/`c1a329f3a3f9e6c36e83484cf3d90d345a8e2169 <https://github.com/neos/neos-development-collection/commit/c1a329f3a3f9e6c36e83484cf3d90d345a8e2169>`_/Neos.ContentRepositoryRegistry/Classes/Factory/Clock/SystemClock.php#L15 (or the FakeClock)
+
+And is written into the ``recordedat`` column of the event: https://github.com/neos/eventstore-doctrineadapter/blob/`e7d35402e05280be82794fbe507062d0e6cf48e0 <https://github.com/neos/neos-development-collection/commit/e7d35402e05280be82794fbe507062d0e6cf48e0>`_/src/DoctrineEventStore.php#L304
+
+Either we must ensure we use only UTC dates or we change the date to UTC in the event store.
+
+Then we can merge this change which ensures that during deserializing we always use ``UTC`` and never ask the system ``date_default_timezone_get ()`` as this should be irrelevant.
+
+
+**Upgrade instructions**
+
+With the change https://github.com/neos/neos-development-collection/pull/5858
+a new kind of migration tooling will be provided to upgrade Neos projects: Content repository upgrades.
+
+These upgrades are available via ``crupgrade`` and contain for example like in the Neos 9 beta phase tooling to adjust and correct your events.
+
+In the case of this UTC change if your server was previously configured in local PHP time and you consider the ``recordedAt`` dates really important for legal reasons in example, you can choose to fix these.
+
+This is a fully optimal migration and which can also be executed once your upgrading to a next minor version like 9.2 
+
+```
+./flow crupgrade:eventsrecordedattoutc
+```
+
+
+* Packages: ``ContentRepository.Core``
+
+`BUGFIX: Update to neos eventstore v2 (part 1) <https://github.com/neos/neos-development-collection/pull/5856>`_
+----------------------------------------------------------------------------------------------------------------
+
+
+
+- Adjust to new ``WithResetInterface``
+- Adjust to moved ``InMemoryEventStore`` and new mandatory argument
+
+The actual bugfix will be done in corporation with https://github.com/neos/neos-development-collection/pull/5716
+
+* Packages: ``Neos`` ``ContentRepository.Core``
+
+`BUGFIX: Add migration to fix json column types in neos_contentrepository_domain_model_nodedata <https://github.com/neos/neos-development-collection/pull/5861>`_
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Adds a missing migration for Neos 8.4 with PGSQL.
+
+Renames the doctrine type comments to ``flow_json_array``. I've choosen a random version number after latest migration in 8.4 but before any possible migration version of newer versions. This shall ensure the right order.
+
+We can discuss if we need this in 8.3 already. But I think 8.4 shoud be fine.
+
+Test will be provided via `#5611 <https://github.com/neos/neos-development-collection/issues/5611>`_
+
+* Packages: ``Neos``
+
+`BUGFIX: Add custom rendering for hidden document nodes in preview mode <https://github.com/neos/neos-development-collection/pull/5843>`_
+-----------------------------------------------------------------------------------------------------------------------------------------
+
+Renders a dedicted screen for a document which is hidden but requested in preview mode.
+
+* Fixes: `#5724 <https://github.com/neos/neos-development-collection/issues/5724>`_ 
+
+<img width="2054" height="1589" alt="image" src="https://github.com/user-attachments/assets/7d6295a1-e5ee-4a6d-90ea-8d34f33a9804" />
+
+* Packages: ``Neos``
+
+`BUGFIX: restore ugly int string `NodeAggregateIds` indexes <https://github.com/neos/neos-development-collection/pull/5854>`_
+-----------------------------------------------------------------------------------------------------------------------------
+
+unreleased regression from https://github.com/neos/neos-development-collection/pull/5727
+
+thanks bsc for spotting ;)
+
+see slack
+
+https://neos-project.slack.com/archives/C04PYL8H3/p1780681254601739
+
+**Upgrade instructions**
+
+**Review instructions**
+
+  - If it's a bugfix, use the `lowest maintained branch which has the bug <https://www.neos.io/features/release-roadmap.html>`_
+  - If it's a non-breaking feature, use the branch of the next version (might be either minor or major)
+  - If it's a breaking feature it should typically go into the next major version
+- [ ] Reviewer - PR Title is brief but complete and starts with ``FEATURE|TASK|BUGFIX``
+- [ ] Reviewer - The first section explains the change briefly for change-logs
+- [ ] Reviewer - Breaking Changes are marked with ``!!!`` and have upgrade-instructions
+
+* Packages: ``ContentRepository.Core``
+
+`BUGFIX: Neos.Neos:Site add label and icon <https://github.com/neos/neos-development-collection/pull/5848>`_
+------------------------------------------------------------------------------------------------------------
+
+Required for the ``Neos.Neos/Inspector/Editors/LinkEditor`` when specifying
+
+```
+linking:
+    linkTypes:
+      Node:
+        startingPoint: '/<Neos.Neos:Sites>'
+```
+
+instead of just ``/<Neos.Neos:Sites>/my-site``
+
+As this allows the sites node to be shown in the Ui then :)
+
+* Packages: ``Neos``
+
+`BUGFIX: Implement global advisory lock for CR <https://github.com/neos/neos-development-collection/pull/5852>`_
+----------------------------------------------------------------------------------------------------------------
+
+This avoid race conditions during simulation and subscription updates. We are locking a bit too much at this point, but it is at least safe this way. In theory simulations should be possible in parallel but for now we want to prevent this.
+
+* Packages: ``Neos`` ``ContentRepository.Dbal``
+
+`Revert "BUGFIX: Prevent unnecessary `updateContentStreamVersion()` updates within transaction simulation" <https://github.com/neos/neos-development-collection/pull/5851>`_
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Reverts `#5838 <https://github.com/neos/neos-development-collection/issues/5838>`_
+
+Superseded by a global lock `#5852 <https://github.com/neos/neos-development-collection/issues/5852>`_
+
+* Packages: ``TimeableNodeVisibility`` ``ContentGraph.DoctrineDbalAdapter`` ``ContentRepository.Core``
+
+`BUGFIX: NodeDuplication filters properties to write <https://github.com/neos/neos-development-collection/pull/5844>`_
+----------------------------------------------------------------------------------------------------------------------
+
+FIXES: `#5686 <https://github.com/neos/neos-development-collection/issues/5686>`_
+
+* Packages: ``Neos``
+
+`BUGFIX: Failed subscription does not contain full stack-trace logged in database <https://github.com/neos/neos-development-collection/pull/5733>`_
+---------------------------------------------------------------------------------------------------------------------------------------------------
+
+``$error->getTraceAsString()`` does not include the important line and file where the error actually happened now but only information of the lines and files before
+
+Also the previous error if any was not logged.
+
+**Upgrade instructions**
+
+
+* Packages: ``Neos`` ``ContentRepository.Core``
+
+`BUGFIX: Handle numeric node aggregate ids when building `NodeAggregates` <https://github.com/neos/neos-development-collection/pull/5727>`_
+-------------------------------------------------------------------------------------------------------------------------------------------
+
+Currently by not restricting numeric values like ``"132"`` in the NodeAggregateId validation we allow it. Yet the behaviour is utterly broken due to us being tricked by phps "feature" which converts numeric strings to integers when using it as array index. We often put node ids into a hashmap but get integers back and then fail recreating a node aggregate id and other funky cases. I hope i found all cases...
+
+Type error: Neos\\ContentRepository\\Core\\SharedModel\\Node\\NodeAggregateId::fromString(): Argument `#1 <https://github.com/neos/neos-development-collection/issues/1>`_($value) must be of type string, int given, called in Packages/Neos/Neos.ContentGraph.DoctrineDbalAdapter/src/Domain/Repository/NodeFactory.php on line 290
+
+A classic one thanks due to phps type casting for numeric array keys :)
+
+$array['123'] will be stored as int ``123`` and not accessible via ``"123"``
+
+Additionally the SubtreeTags - pained by a similar bug - are now restricted to be never fully numeric. See discussion in Slack: https://neos-project.slack.com/archives/C04PYL8H3/p1767965980113829
+
+At some point phpstan might be able to detect all cases for once and for all: https://phpstan.org/blog/why-array-string-keys-are-not-type-safe
+
+**Upgrade instructions**
+
+
+* Packages: ``Neos`` ``ContentRepository.Core``
+
+`BUGFIX: PostgreSQL compatibility for `Neos.Neos` - no graph <https://github.com/neos/neos-development-collection/pull/5790>`_
+------------------------------------------------------------------------------------------------------------------------------
+
+Carefully extracted from `#5751 <https://github.com/neos/neos-development-collection/issues/5751>`_and reduced to the essential changes to ease reviewing
+
+The CI tests now postgreSQL compatibility by running all tables in postgres except the content graph which runs in mariadb
+
+Needs followup change for 9.1 which turns the new `#5542 <https://github.com/neos/neos-development-collection/issues/5542>`_projection postgresql compatible -> https://github.com/neos/neos-development-collection/pull/5805
+
+TODO:
+- [x] add composer script to run m*sql vs postgresql tests, see ``match`` in github ci
+- [x] remove obsolete ``@contentrepository`` and ``@adapters=`` tags in behat -> `#5806 <https://github.com/neos/neos-development-collection/issues/5806>`_
+- [x] ~review ``AbstractSubscriptionEngineTestCase::resetDatabase`` -> simplify with https://github.com/neos/neos-development-collection/pull/5802~ -> not easy
+- [x] reduce ci runs to a sane default currently we test mysql / mariadb / postgresql version with different php version 8.2-8.5 but it might make more sense to rather test the minimum supported mysql with the lowest php and maximum mysql with newest php instead all combinations
+  - like with testing mysql 8.0 we want to run postgreSQL only with php 8.4 in the matrix.
+
+Later
+- [ ] document min postgresql version? 16 for ``any_value``?
+
+**Upgrade instructions**
+
+**Review instructions**
+
+  - If it's a bugfix, use the `lowest maintained branch which has the bug <https://www.neos.io/features/release-roadmap.html>`_
+  - If it's a non-breaking feature, use the branch of the next version (might be either minor or major)
+  - If it's a breaking feature it should typically go into the next major version
+- [x] Reviewer - PR Title is brief but complete and starts with ``FEATURE|TASK|BUGFIX``
+- [x] Reviewer - The first section explains the change briefly for change-logs
+- [x] Reviewer - Breaking Changes are marked with ``!!!`` and have upgrade-instructions
+
+* Packages: ``Neos``
+
+`BUGFIX: Recover from unexpected error during command simulation <https://github.com/neos/neos-development-collection/pull/5829>`_
+----------------------------------------------------------------------------------------------------------------------------------
+
+Adds automatic recovery for the problem described in https://github.com/neos/neos-development-collection/issues/5713 where content streams are left closed
+
+Invocations to ``$this->contentRepositoryProjection->apply()`` which are part of ``$commandSimulator->handle()`` and thus the ``$handle`` function might throw any DBAL exception if something went wrong. For example when the transaction died due to a lock. The actual transaction is rolled back via ``withSimulation()`` but we also need to commit a new event that undos the previous closing.
+
+You might think locking - e.g. closing and reopening - must not be done in this way as a fatal connection crash or the php process dying would still not recover from that but for this `#5827 <https://github.com/neos/neos-development-collection/issues/5827>`_solves it for the future.
+
+**Upgrade instructions**
+
+**Review instructions**
+
+  - If it's a bugfix, use the `lowest maintained branch which has the bug <https://www.neos.io/features/release-roadmap.html>`_
+  - If it's a non-breaking feature, use the branch of the next version (might be either minor or major)
+  - If it's a breaking feature it should typically go into the next major version
+- [ ] Reviewer - PR Title is brief but complete and starts with ``FEATURE|TASK|BUGFIX``
+- [ ] Reviewer - The first section explains the change briefly for change-logs
+- [ ] Reviewer - Breaking Changes are marked with ``!!!`` and have upgrade-instructions
+
+* Packages: ``ContentRepository.Core``
+
+`BUGFIX: Prevent unnecessary `updateContentStreamVersion()` updates within transaction simulation <https://github.com/neos/neos-development-collection/pull/5838>`_
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+... depending on the database setup this can cause conflicts.
+
+A local database with low latency does pass the parallel tests but mariadb docker-virtualised runs already slower and might fail - also in CI:
+
+```
+Class: Doctrine\\DBAL\\Exception\\LockWaitTimeoutException
+Message: An exception occurred while executing a query: SQLSTATE[HY000]: General error: 1205 Lock wait timeout exceeded; try restarting transaction
+Code: 1205
+File: Packages/Libraries/doctrine/dbal/src/Driver/API/MySQL/ExceptionConverter.php
+Line: 44
+
+...
+`#4 <https://github.com/neos/neos-development-collection/issues/4>`_Packages/Neos/Neos.ContentGraph.DoctrineDbalAdapter/src/Domain/Projection/Feature/ContentStream.php(62): Doctrine\\DBAL\\Connection->update('cr_test_paralle...', Array, Array)
+...
+```
+
+For a full description of the error see  https://github.com/neos/neos-development-collection/issues/5713#issuecomment-4519261505
+
+**Review instructions**
+
+This change was part of the experiments in https://github.com/neos/neos-development-collection/pull/5825
+
+And becomes especially relevant for 9.2 - the layers - where there is more load on this method - probably because forking will be too fast:)
+
+See https://github.com/neos/neos-development-collection/pull/5776 and ``WorkspacePublicationDuringWriting`` test
+
+Implementation detail: The new introduced state on the DoctrineDbalContentGraphProjection is not something i like to keep forever thus i have already prepared a refactoring - but this change is kept minimal to prevent it from being delayed: https://github.com/neos/neos-development-collection/pull/5837
+
+* Packages: ``Neos`` ``ContentGraph.DoctrineDbalAdapter`` ``ContentRepository.Core``
+
+`TASK: Enforce proper sequence during parallelism for MariaDB 12 <https://github.com/neos/neos-development-collection/pull/5887>`_
+----------------------------------------------------------------------------------------------------------------------------------
+
+Replaces https://github.com/neos/neos-development-collection/pull/5885
+
+With the new introduction of MariaDB 12 it reports for the test ``WorkspacePublicationDuringWritingTest``
+
+> Got exception DriverException: An exception occurred while executing a query: SQLSTATE[HY000]: General error: 1020 Record has changed since last read in table 'cr_test_parallel_p_graph_contentstream'
+
+which is true and probably a sane limitation from Maria. This seems to underline that `#5869 <https://github.com/neos/neos-development-collection/issues/5869>`_will be required.
+So as done for the ``PublishingDuringPublishingTest`` we can and should also limit the parallelism in CI and find out how we can also do this safely for production Neos' `#5870 <https://github.com/neos/neos-development-collection/issues/5870>`_
+
+* Packages: ``Neos`` ``ContentRepository.BehavioralTests``
+
+`TASK: Update Fusion documentation to reflect MenuItemState usage <https://github.com/neos/neos-development-collection/pull/5775>`_
+-----------------------------------------------------------------------------------------------------------------------------------
+
+* Fixes: `#5732 <https://github.com/neos/neos-development-collection/issues/5732>`_ 
+
+* Packages: ``.github`` ``Fusion.Afx`` ``Neos``
+
+`TASK: Fix migrations for MariaDB 12.x <https://github.com/neos/neos-development-collection/pull/5855>`_
+--------------------------------------------------------------------------------------------------------
+
+What I did
+
+Some old Flow migrations dropped foreign keys by their hardcoded auto-generated names (e.g. ..._ibfk_1). These names are no longer reliable: on MariaDB 12+, renaming a table no longer renames its auto-generated foreign key/index names along with it, so the constraint names the migrations expect may not exist and the migrations fail.
+
+Instead of relying on hardcoded constraint names, the affected migrations now look up the actual foreign keys on the table via the schema manager and drop the one defined on the relevant column. This works regardless of what the constraint is actually named, making the migrations compatible with MySQL, MariaDB < 12 and MariaDB ≥ 12 alike.
+
+Why the CI change
+
+Until now this breakage went unnoticed because the pipeline never executed the Doctrine migrations. The build workflow now runs ./flow doctrine:migrate before the functional tests, so the full migration chain is verified on every build.
+
+Depends on: `#5853 <https://github.com/neos/neos-development-collection/issues/5853>`_
+
+Also depending on: https://github.com/neos/flow-development-collection/pull/3571
+
+* Packages: ``Neos``
+
+`TASK: Fix typos and grammar mistakes in documentation <https://github.com/neos/neos-development-collection/pull/5846>`_
+------------------------------------------------------------------------------------------------------------------------
+
+Hi!
+
+I tried to fix as many typos and grammar mistakes as I could (within reasonable time). There are still many other mistakes but I needed to call it done. I used cspell, Claude and regular expressions (``\\b(\\w+)\\s\\1\\b``) to find them. Note that I did not use Claude to generate new text.
+
+**Upgrade instructions**
+
+n/a
+
+**Review instructions**
+
+I picked 9.2 as the base (not 8.3, as instructed) simply because that's where I started working before coming across that requirement. I also didn't generate the docs because I assume that is done by your pipeline. Please let me know if I should cherry-pick my changes to an 8.3 based branch.
+
+  - If it's a bugfix, use the `lowest maintained branch which has the bug <https://www.neos.io/features/release-roadmap.html>`_
+  - If it's a non-breaking feature, use the branch of the next version (might be either minor or major)
+  - If it's a breaking feature it should typically go into the next major version
+- [ ] Reviewer - PR Title is brief but complete and starts with ``FEATURE|TASK|BUGFIX``
+- [ ] Reviewer - The first section explains the change briefly for change-logs
+- [ ] Reviewer - Breaking Changes are marked with ``!!!`` and have upgrade-instructions
+
+* Packages: ``Fusion.Afx`` ``Media`` ``Neos``
+
+`TASK: Overhaul CI jobs to support multiple databases and parallel execution <https://github.com/neos/neos-development-collection/pull/5853>`_
+----------------------------------------------------------------------------------------------------------------------------------------------
+
+This refactors the CI pipeline and splits the jobs to allow them to run in parallel. Also it enables us to test more database servers and versions.
+
+* Packages: ``Neos`` ``.github``
+
+`TASK: Disable new global cr advisory lock by default <https://github.com/neos/neos-development-collection/pull/5870>`_
+-----------------------------------------------------------------------------------------------------------------------
+
+Followup to https://github.com/neos/neos-development-collection/pull/5852
+
+Adds ``experimentalContentRepositoryLock`` as configuration option - for us - it does not work fully yet.
+
+See
+
+https://github.com/neos/neos-development-collection/issues/5869
+
+**Upgrade instructions**
+
+**Review instructions**
+
+  - If it's a bugfix, use the `lowest maintained branch which has the bug <https://www.neos.io/features/release-roadmap.html>`_
+  - If it's a non-breaking feature, use the branch of the next version (might be either minor or major)
+  - If it's a breaking feature it should typically go into the next major version
+- [ ] Reviewer - PR Title is brief but complete and starts with ``FEATURE|TASK|BUGFIX``
+- [ ] Reviewer - The first section explains the change briefly for change-logs
+- [ ] Reviewer - Breaking Changes are marked with ``!!!`` and have upgrade-instructions
+
+* Packages: ``Neos`` ``ContentRepository.BehavioralTests`` ``ContentRepository.Dbal`` ``ContentRepositoryRegistry``
+
+`TASK: Correctly use virtual objects in yaml <https://github.com/neos/neos-development-collection/pull/5857>`_
+--------------------------------------------------------------------------------------------------------------
+
+
+
+Before https://github.com/neos/flow-development-collection/pull/3576 flow threw
+
+> Object configuration for argument "2" contains neither object name nor factory object or method name in configuration of package Neos.Http.Factories, definition for object "Neos\\ContentGraph\\DoctrineDbalAdapter\\DoctrineDbalContentGraphProjectionFactory"
+
+**Upgrade instructions**
+
+**Review instructions**
+
+  - If it's a bugfix, use the `lowest maintained branch which has the bug <https://www.neos.io/features/release-roadmap.html>`_
+  - If it's a non-breaking feature, use the branch of the next version (might be either minor or major)
+  - If it's a breaking feature it should typically go into the next major version
+- [ ] Reviewer - PR Title is brief but complete and starts with ``FEATURE|TASK|BUGFIX``
+- [ ] Reviewer - The first section explains the change briefly for change-logs
+- [ ] Reviewer - Breaking Changes are marked with ``!!!`` and have upgrade-instructions
+
+* Packages: ``.github``
+
+`TASK: Provide parallel tests attempting to replicate deadlocks <https://github.com/neos/neos-development-collection/pull/5513>`_
+---------------------------------------------------------------------------------------------------------------------------------
+
+In https://github.com/neos/neos-development-collection/pull/5510 i attempted to cause a locking problem manually and see how the subscription engine reacts.
+(see `slack <https://neos-project.slack.com/archives/C04PYL8H3/p1740562595001089?thread_ts=1740558048.229979&cid=C04PYL8H3>`_)
+Now these tests are actual parallel tests were we thought we could replicate the problem of a ``ContentStreamWasForked`` event failing. But instead it showed another problem,
+
+Adds a new test ``PublishingDuringPublishingTest`` which fails on 9.0
+
+> Doctrine\\DBAL\\Exception\\DeadlockException: An exception occurred while executing a query: SQLSTATE[40001]: Serialization failure: 1213 Deadlock found when trying to get lock; try restarting transaction
+
+
+**Upgrade instructions**
+
+
+* Packages: ``Neos`` ``ContentRepository.BehavioralTests``
+
+`TASK: Run projection integrity violation detection after every scenario to assert integrity <https://github.com/neos/neos-development-collection/pull/5808>`_
+--------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+solves: https://github.com/neos/neos-development-collection/issues/5795
+
+requires https://github.com/neos/neos-development-collection/pull/5807
+requires https://github.com/neos/neos-development-collection/pull/5798
+requires https://github.com/neos/neos-development-collection/pull/5820
+
+Now we run  the ``ProjectionIntegrityViolationDetection`` after every scenario to assert integrity
+
+This is done via Behat Hooks to avoid specifying the line every time which is verbose and can be forgotten.
+
+Before the integrity was only checked after dimension adjustments though as outlined in `#5795 <https://github.com/neos/neos-development-collection/issues/5795>`_two regular tests lead to a faulty integrity.
+
+Also this change becomes relevant with new adapters on rise postgresql `#5751 <https://github.com/neos/neos-development-collection/issues/5751>``_and for big m*sql graph refactoring like ``#5776 <https://github.com/neos/neos-development-collection/issues/5776>`_so that we are sure integrity is always provided.
+
+* Packages: ``Neos`` ``ContentRepository.TestSuite``
+
+`TASK: Extend 5790 <https://github.com/neos/neos-development-collection/pull/5835>`_
+------------------------------------------------------------------------------------
+
+- Rolls back some unnecessary test code handling
+- instead provides consistent column naming and types in feature file 
+- linting
+
+`#5790 <https://github.com/neos/neos-development-collection/issues/5790>`_
+
+  - If it's a bugfix, use the `lowest maintained branch which has the bug <https://www.neos.io/features/release-roadmap.html>`_
+  - If it's a non-breaking feature, use the branch of the next version (might be either minor or major)
+  - If it's a breaking feature it should typically go into the next major version
+- [ ] Reviewer - PR Title is brief but complete and starts with ``FEATURE|TASK|BUGFIX``
+- [ ] Reviewer - The first section explains the change briefly for change-logs
+- [ ] Reviewer - Breaking Changes are marked with ``!!!`` and have upgrade-instructions
+
+* Packages: ``ContentRepository.Dbal`` ``Neos``
+
+`Detailed log <https://github.com/neos/neos-development-collection/compare/9.0.12...9.0.13>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

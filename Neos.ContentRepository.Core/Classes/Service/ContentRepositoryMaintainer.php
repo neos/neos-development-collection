@@ -6,10 +6,13 @@ namespace Neos\ContentRepository\Core\Service;
 
 use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceInterface;
+use Neos\ContentRepository\Core\Projection\ProjectionStatusType;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryStatus;
+use Neos\ContentRepository\Core\Subscription\DetachedSubscriptionStatus;
 use Neos\ContentRepository\Core\Subscription\Engine\Errors;
 use Neos\ContentRepository\Core\Subscription\Engine\SubscriptionEngine;
 use Neos\ContentRepository\Core\Subscription\Engine\SubscriptionEngineCriteria;
+use Neos\ContentRepository\Core\Subscription\ProjectionSubscriptionStatus;
 use Neos\ContentRepository\Core\Subscription\SubscriptionId;
 use Neos\ContentRepository\Core\Subscription\SubscriptionStatus;
 use Neos\ContentRepository\Core\Subscription\SubscriptionStatusCollection;
@@ -77,11 +80,40 @@ final readonly class ContentRepositoryMaintainer implements ContentRepositorySer
     public function setUp(): Error|null
     {
         $this->eventStore->setup();
-        $eventStoreIsEmpty = iterator_count($this->eventStore->load(VirtualStreamName::all())->limit(1)) === 0;
         $setupResult = $this->subscriptionEngine->setup();
         if ($setupResult->errors !== null) {
             return self::createErrorForReason('Setup failed:', $setupResult->errors);
         }
+
+        $statusOfSkippedSubscriptions = $this->subscriptionEngine->subscriptionStatusOfSetupExcluded();
+        if (!$statusOfSkippedSubscriptions->isEmpty()) {
+            $message = ['Setup skipped subscriptions:'];
+            foreach ($statusOfSkippedSubscriptions as $status) {
+                $message[] = sprintf('  %s:', $status->subscriptionId->value);
+                if ($status instanceof DetachedSubscriptionStatus) {
+                    $message[] = sprintf('    Subscription: %s DETACHED at position %d', $status->subscriptionStatus === SubscriptionStatus::DETACHED ? 'is' : 'will be', $status->subscriptionPosition->value);
+                }
+                if ($status instanceof ProjectionSubscriptionStatus) {
+                    $message[] = sprintf('    Projection: in %s', $status->subscriptionStatus->value);
+                    if ($status->subscriptionError !== null) {
+                        $lines = explode(chr(10), $status->subscriptionError->errorMessage ?: 'No details available.');
+                        foreach ($lines as $line) {
+                            $message[] = sprintf('      %s', $line);
+                        }
+                    }
+                    $message[] = sprintf('    Setup: %s', $status->setupStatus->type->name);
+                    if ($status->setupStatus->type !== ProjectionStatusType::OK || $status->setupStatus->details) {
+                        $lines = explode(chr(10), $status->setupStatus->details);
+                        foreach ($lines as $line) {
+                            $message[] = '      ' . $line;
+                        }
+                    }
+                }
+            }
+            return new Error(join("\n", $message));
+        }
+
+        $eventStoreIsEmpty = iterator_count($this->eventStore->load(VirtualStreamName::all())->limit(1)) === 0;
         if ($eventStoreIsEmpty) {
             // note: possibly introduce $skipBooting flag instead
             // see https://github.com/patchlevel/event-sourcing/blob/b8591c56b21b049f46bead8e7ab424fd2afe9917/src/Subscription/Engine/DefaultSubscriptionEngine.php#L42

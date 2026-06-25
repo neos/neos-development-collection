@@ -24,7 +24,7 @@ class FakeContentDimensionSourceFactory implements ContentDimensionSourceFactory
     public function build(ContentRepositoryId $contentRepositoryId, array $options): ContentDimensionSourceInterface
     {
         if (!self::$contentDimensionSource) {
-            throw new \RuntimeException('Content dimension source not initialized.');
+            return self::getWithoutDimensions();
         }
         return self::$contentDimensionSource;
     }
@@ -39,7 +39,17 @@ class FakeContentDimensionSourceFactory implements ContentDimensionSourceFactory
      */
     public static function setWithoutDimensions(): void
     {
-        self::$contentDimensionSource = new class implements ContentDimensionSourceInterface
+        self::$contentDimensionSource = self::getWithoutDimensions();
+    }
+
+    public static function reset(): void
+    {
+        self::$contentDimensionSource = null;
+    }
+
+    private static function getWithoutDimensions(): ContentDimensionSourceInterface
+    {
+        return new class implements ContentDimensionSourceInterface
         {
             public function getDimension(ContentDimensionId $dimensionId): ?ContentDimension
             {
@@ -50,10 +60,5 @@ class FakeContentDimensionSourceFactory implements ContentDimensionSourceFactory
                 return [];
             }
         };
-    }
-
-    public static function reset(): void
-    {
-        self::$contentDimensionSource = null;
     }
 }
