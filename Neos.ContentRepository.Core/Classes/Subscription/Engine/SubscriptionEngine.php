@@ -130,9 +130,22 @@ final class SubscriptionEngine
 
     public function subscriptionStatus(SubscriptionEngineCriteria|null $criteria = null): SubscriptionStatusCollection
     {
+        return $this->subscriptionStatusForCriteria(SubscriptionCriteria::create(ids: $criteria?->ids));
+    }
+
+    public function subscriptionStatusOfSetupExcluded(): SubscriptionStatusCollection
+    {
+        return $this->subscriptionStatusForCriteria(SubscriptionCriteria::create(status: SubscriptionStatusFilter::fromArray([
+            SubscriptionStatus::ERROR,
+            SubscriptionStatus::DETACHED,
+        ])));
+    }
+
+    private function subscriptionStatusForCriteria(SubscriptionCriteria $criteria): SubscriptionStatusCollection
+    {
         $statuses = [];
         try {
-            $subscriptions = $this->subscriptionStore->findByCriteriaForUpdate(SubscriptionCriteria::create(ids: $criteria?->ids));
+            $subscriptions = $this->subscriptionStore->findByCriteriaForUpdate($criteria);
         } catch (\Doctrine\DBAL\Exception\TableNotFoundException) {
             // todo do not depend on the dbal exception as this is totally implementation specific and the core has no dependency to dbal!
             // the schema is not setup - thus there are no subscribers
@@ -160,7 +173,11 @@ final class SubscriptionEngine
             if ($subscriptions->contain($subscriber->id)) {
                 continue;
             }
-            if ($criteria?->ids?->contain($subscriber->id) === false) {
+            if ($criteria->ids?->contain($subscriber->id) === false) {
+                // this might be a NEW subscription but we dont return it as status is filtered.
+                continue;
+            }
+            if ($criteria->status->isEmpty() === false && $criteria->status->contain(SubscriptionStatus::NEW) === false) {
                 // this might be a NEW subscription but we dont return it as status is filtered.
                 continue;
             }
