@@ -31,7 +31,8 @@ final readonly class HierarchyRelationSubquery implements SqlTableSubqueryInterf
 
     public static function create(ContentGraphTableNames $tableNames, ContentStreamLayers $contentStreamLayers): self
     {
-        return new self($tableNames,
+        return new self(
+            $tableNames,
             $contentStreamLayers,
             DimensionSpacePointSet::fromArray([]),
             null,
