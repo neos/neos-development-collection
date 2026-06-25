@@ -454,19 +454,17 @@ final class DocumentUriPathProjection implements ProjectionInterface
             }
             $tagColumn = $event->tag->value;
 
-            if ($event->tag->equals(NeosSubtreeTag::disabled()) || $event->tag->equals(NeosSubtreeTag::removed())) {
-                $nodeTagLevel = $event->tag->equals(NeosSubtreeTag::disabled()) ? $node->getDisableLevel() : $node->getRemovedLevel();
-                $parentNode = $this->tryGetNode(fn () => $this->documentUriPathFinder->getParentNode($node));
-                $parentTagLevel = 0;
-                if ($parentNode !== null) {
-                    $parentTagLevel = $event->tag === NeosSubtreeTag::disabled() ? $parentNode->getDisableLevel() : $parentNode->getRemovedLevel();
-                }
-                if ($nodeTagLevel <= $parentTagLevel) {
-                    // Node was not tagged (its counter matches [or is below - should never happen] the parent's level).
-                    // Decrementing an untagged node ($nodeTagLevel === 0) would cause an unsigned integer underflow.
-                    // A node might not have been tagged in the first place and just untagged with allVariants or the variant was already untagged.
-                    continue;
-                }
+            $nodeTagLevel = $event->tag->equals(NeosSubtreeTag::disabled()) ? $node->getDisableLevel() : $node->getRemovedLevel();
+            $parentNode = $this->tryGetNode(fn () => $this->documentUriPathFinder->getParentNode($node));
+            $parentTagLevel = 0;
+            if ($parentNode !== null) {
+                $parentTagLevel = $event->tag === NeosSubtreeTag::disabled() ? $parentNode->getDisableLevel() : $parentNode->getRemovedLevel();
+            }
+            if ($nodeTagLevel <= $parentTagLevel) {
+                // Node was not tagged (its counter matches [or is below - should never happen] the parent's level).
+                // Decrementing an untagged node ($nodeTagLevel === 0) would cause an unsigned integer underflow.
+                // A node might not have been tagged in the first place and just untagged with allVariants or the variant was already untagged.
+                continue;
             }
 
             $this->updateNodeQuery('SET ' . $tagColumn . ' = ' . $tagColumn . ' - 1
