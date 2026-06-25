@@ -14,9 +14,12 @@ declare(strict_types=1);
 
 namespace Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection;
 
+use Doctrine\DBAL\ArrayParameterType;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Exception as DBALException;
 use Neos\ContentGraph\DoctrineDbalAdapter\ContentGraphTableNames;
+use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\ContentStreamLayerFinder;
+use Neos\ContentGraph\DoctrineDbalAdapter\HierarchyRelationStatement;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ProjectionIntegrityViolationDetectorInterface;
@@ -33,10 +36,16 @@ use Neos\Error\Messages\Result;
  */
 final class ProjectionIntegrityViolationDetector implements ProjectionIntegrityViolationDetectorInterface
 {
+    private readonly HierarchyRelationStatement $hierarchyRelationStatement;
+
+    private readonly ContentStreamLayerFinder $contentStreamLayerFinder;
+
     public function __construct(
         private readonly Connection $dbal,
         private readonly ContentGraphTableNames $tableNames,
     ) {
+        $this->hierarchyRelationStatement = HierarchyRelationStatement::for($this->tableNames);
+        $this->contentStreamLayerFinder = new ContentStreamLayerFinder($this->dbal, $tableNames);
     }
 
     public function hierarchyIntegrityIsProvided(): Result
@@ -75,6 +84,7 @@ final class ProjectionIntegrityViolationDetector implements ProjectionIntegrityV
             LEFT JOIN {$this->tableNames->dimensionSpacePoints()} dsp
                 ON dsp.hash = h.dimensionspacepointhash
             WHERE dsp.dimensionspacepoint IS NULL
+                AND h.dimensionspacepointhash IS NOT NULL
         SQL;
         try {
             $invalidlyHashedHierarchyRelationRecords = $this->dbal->fetchAllAssociative($invalidlyHashedHierarchyRelationStatement);
@@ -94,14 +104,18 @@ final class ProjectionIntegrityViolationDetector implements ProjectionIntegrityV
             SELECT
                 COUNT(*) as uniquenessCounter,
                 c.nodeaggregateid,
-                h.dimensionspacepointhash, h.contentstreamid FROM {$this->tableNames->hierarchyRelation()} h
+                h.dimensionspacepointhash,
+                h.contentstreamid
+            FROM {$this->allContentStreamHierarchiesSql()} AS h
                 LEFT JOIN {$this->tableNames->node()} p ON h.parentnodeanchor = p.relationanchorpoint
                 LEFT JOIN {$this->tableNames->node()} c ON h.childnodeanchor = c.relationanchorpoint
             WHERE
                 h.parentnodeanchor != :rootNodeAnchor
             GROUP BY
-                p.nodeaggregateid, c.nodeaggregateid,
-                h.dimensionspacepointhash, h.contentstreamid
+                p.nodeaggregateid,
+                c.nodeaggregateid,
+                h.dimensionspacepointhash,
+                h.contentstreamid
             HAVING uniquenessCounter > 1
         SQL;
         try {
@@ -119,6 +133,127 @@ final class ProjectionIntegrityViolationDetector implements ProjectionIntegrityV
             ));
         }
 
+        $result->merge(
+            $this->contentStreamLayersIntegrityIsProvided()
+        );
+
+        return $result;
+    }
+
+    public function contentStreamLayersIntegrityIsProvided(): Result
+    {
+        $contentStreamIdsWithRedundantLayersStatement = <<<SQL
+            SELECT subquery.contentStreamIds, MIN(subquery.contentStreamLayer) AS minContentStreamLayer, MAX(subquery.contentStreamLayer) as maxContentStreamLayer
+            FROM (
+                SELECT
+                    contentStreamLayer,
+                    GROUP_CONCAT(contentStreamId ORDER BY contentStreamId) as contentStreamIds FROM {$this->tableNames->contentStreamLayer()}
+                GROUP BY contentStreamLayer
+                ORDER BY contentStreamLayer
+            ) AS subquery GROUP BY subquery.contentStreamIds
+            HAVING COUNT(*) > 1
+        SQL;
+
+        try {
+            $contentStreamIdsWithRedundantLayers = $this->dbal->fetchAllAssociative($contentStreamIdsWithRedundantLayersStatement);
+        } catch (DBALException $e) {
+            throw new \RuntimeException(sprintf('Failed to load redundant content stream layers: %s', $e->getMessage()), 1776353441, $e);
+        }
+
+        $result = new Result();
+
+        foreach ($contentStreamIdsWithRedundantLayers as $row) {
+            $result->addError(new Error('Redundant layer %2$s to %3$s found for content streams %1$s', self::ERROR_CODE_HIERARCHY_INTEGRITY_IS_COMPROMISED, [$row['contentStreamIds'], $row['minContentStreamLayer'], $row['maxContentStreamLayer']]));
+        }
+
+        $hierarchiesForMissingContentStreamLayersStatement = <<<SQL
+            SELECT DISTINCT h.contentstreamlayer
+            FROM {$this->tableNames->hierarchyRelation()} AS h
+                    LEFT JOIN {$this->tableNames->contentStreamLayer()} as l
+            ON h.contentstreamlayer = l.contentstreamlayer
+            WHERE l.contentstreamlayer IS NULL        
+        SQL;
+
+        try {
+            $hierarchiesForMissingContentStreamLayers = $this->dbal->fetchFirstColumn($hierarchiesForMissingContentStreamLayersStatement);
+        } catch (DBALException $e) {
+            throw new \RuntimeException(sprintf('Failed to load hierarchies for missing content stream layers: %s', $e->getMessage()), 1776339670, $e);
+        }
+
+        foreach ($hierarchiesForMissingContentStreamLayers as $row) {
+            $result->addError(
+                new Error(
+                    'Hierarchies exist in layer %s but no content stream references that layer.',
+                    self::ERROR_CODE_HIERARCHY_INTEGRITY_IS_COMPROMISED,
+                    [$row]
+                )
+            );
+        }
+
+        $parentLayersWithoutHierarchiesStatement = <<<SQL
+        SELECT l.contentStreamId, l.parentContentStreamLayer
+            FROM {$this->tableNames->hierarchyRelation()} AS h
+            RIGHT JOIN (
+                -- query to select all parent layers per content stream if exist
+                SELECT l.contentStreamId, MAX(l.contentStreamLayer) AS parentContentStreamLayer FROM {$this->tableNames->contentStreamLayer()} AS l
+                  INNER JOIN (
+                    SELECT MAX(l.contentStreamLayer) AS contentStreamWriteLayer, l.contentStreamId FROM {$this->tableNames->contentStreamLayer()} AS l
+                    GROUP BY l.contentStreamId
+                  ) AS subquery ON l.contentStreamId = subquery.contentStreamId AND l.contentStreamLayer < subquery.contentStreamWriteLayer
+                GROUP BY l.contentStreamId
+            ) AS l ON h.contentStreamLayer = l.parentContentStreamLayer
+        WHERE h.contentStreamLayer IS NULL
+        SQL;
+
+        try {
+            $parentLayersWithoutHierarchies = $this->dbal->fetchAllAssociative($parentLayersWithoutHierarchiesStatement);
+        } catch (DBALException $e) {
+            throw new \RuntimeException(sprintf('Failed to find obsolete parent layers: %s', $e->getMessage()), 1776353433, $e);
+        }
+
+        foreach ($parentLayersWithoutHierarchies as $row) {
+            $result->addError(new Error('Parent layer %s of content stream %s does not contain hierarchies and is obsolete.', self::ERROR_CODE_HIERARCHY_INTEGRITY_IS_COMPROMISED, [$row['parentContentStreamLayer'], $row['contentStreamId']]));
+        }
+
+        $nodesForMissingHierarchiesStatement = <<<SQL
+            SELECT nodeaggregateid, relationanchorpoint
+            FROM {$this->tableNames->node()} n
+            LEFT JOIN {$this->tableNames->hierarchyRelation()} h
+                ON h.childnodeanchor = n.relationanchorpoint
+            WHERE h.childnodeanchor IS NULL    
+        SQL;
+
+        try {
+            $nodesForMissingHierarchies = $this->dbal->fetchAllAssociative($nodesForMissingHierarchiesStatement);
+        } catch (DBALException $e) {
+            throw new \RuntimeException(sprintf('Failed to load nodes for missing hierarchies: %s', $e->getMessage()), 1776353433, $e);
+        }
+
+        foreach ($nodesForMissingHierarchies as $row) {
+            $result->addError(new Error('Node %s (relationanchorpoint %d) found but no hierarchy references that node.', self::ERROR_CODE_HIERARCHY_INTEGRITY_IS_COMPROMISED, [$row['nodeaggregateid'], $row['relationanchorpoint']]));
+        }
+
+        $rootLayerHierarchyDeletionsStatement = <<<SQL
+            SELECT h.id, h.contentStreamLayer, l.contentStreamId
+                FROM {$this->tableNames->hierarchyRelation()} h
+                INNER JOIN (
+                    -- root layers
+                    SELECT DISTINCT MIN(l.contentStreamLayer) as rootContentStreamLayer, l.contentStreamId FROM {$this->tableNames->contentStreamLayer()} AS l
+                        GROUP BY l.contentStreamId
+                ) AS l ON h.contentStreamLayer = l.rootContentStreamLayer 
+            WHERE h.childnodeanchor IS NULL OR h.dimensionspacepointhash IS NULL   
+        SQL;
+
+        try {
+            $rootLayerHierarchyDeletions = $this->dbal->fetchAllAssociative($rootLayerHierarchyDeletionsStatement);
+        } catch (DBALException $e) {
+            throw new \RuntimeException(sprintf('Failed to load nodes for missing hierarchies: %s', $e->getMessage()), 1776353433, $e);
+        }
+
+        foreach ($rootLayerHierarchyDeletions as $row) {
+            $result->addError(new Error('Hierarchy (id %d) with null values found in root layer %d of content stream %s. Expect row to be removed.', self::ERROR_CODE_HIERARCHY_INTEGRITY_IS_COMPROMISED, [$row['id'], $row['contentStreamLayer'], $row['contentStreamId']]));
+        }
+
         return $result;
     }
 
@@ -128,15 +263,17 @@ final class ProjectionIntegrityViolationDetector implements ProjectionIntegrityV
 
         $ambiguouslySortedHierarchyRelationStatement = <<<SQL
             SELECT
-                contentstreamid, dimensionspacepointhash, parentnodeanchor,
-                COUNT(position)
+                h.contentstreamid,
+                h.dimensionspacepointhash,
+                h.parentnodeanchor,
+                COUNT(h.position)
             FROM
-                {$this->tableNames->hierarchyRelation()}
+                {$this->allContentStreamHierarchiesSql()} AS h
             GROUP BY
-                position,
-                parentnodeanchor,
-                contentstreamid,
-                dimensionspacepointhash
+                h.contentstreamid,
+                h.position,
+                h.parentnodeanchor,
+                h.dimensionspacepointhash
             HAVING
                 COUNT(position) > 1
         SQL;
@@ -154,7 +291,7 @@ final class ProjectionIntegrityViolationDetector implements ProjectionIntegrityV
         $ambiguouslySortedNodesStatement = <<<SQL
             SELECT nodeaggregateid
             FROM {$this->tableNames->node()} n
-            LEFT JOIN {$this->tableNames->hierarchyRelation()} ph
+            LEFT JOIN {$this->allContentStreamHierarchiesSql()} ph
             ON ph.childnodeanchor = n.relationanchorpoint
             WHERE ph.parentnodeanchor = :relationAnchorPoint
         SQL;
@@ -183,7 +320,7 @@ final class ProjectionIntegrityViolationDetector implements ProjectionIntegrityV
         $result = new Result();
         $unnamedTetheredNodesStatement = <<<SQL
             SELECT
-                n.nodeaggregateid, h.contentstreamid
+                n.nodeaggregateid, h.contentstreamlayer
             FROM
                 {$this->tableNames->node()} n
                 INNER JOIN {$this->tableNames->hierarchyRelation()} h ON h.childnodeanchor = n.relationanchorpoint
@@ -191,7 +328,7 @@ final class ProjectionIntegrityViolationDetector implements ProjectionIntegrityV
                 n.classification = :tethered
                 AND n.name IS NULL
             GROUP BY
-                n.nodeaggregateid, h.contentstreamid
+                n.nodeaggregateid, h.contentstreamlayer
         SQL;
         try {
             $unnamedTetheredNodeRecords = $this->dbal->fetchAllAssociative($unnamedTetheredNodesStatement, [
@@ -204,7 +341,7 @@ final class ProjectionIntegrityViolationDetector implements ProjectionIntegrityV
         foreach ($unnamedTetheredNodeRecords as $unnamedTetheredNodeRecord) {
             $result->addError(new Error(
                 'Node aggregate ' . $unnamedTetheredNodeRecord['nodeaggregateid']
-                . ' is unnamed in content stream ' . $unnamedTetheredNodeRecord['contentstreamid'] . '.',
+                . ' is unnamed in content stream ' . $unnamedTetheredNodeRecord['contentstreamlayer'] . '.',
                 self::ERROR_CODE_TETHERED_NODE_IS_UNNAMED
             ));
         }
@@ -226,7 +363,7 @@ final class ProjectionIntegrityViolationDetector implements ProjectionIntegrityV
                 {$this->tableNames->hierarchyRelation()} h
                 INNER JOIN {$this->tableNames->hierarchyRelation()} ph
                     ON ph.childnodeanchor = h.parentnodeanchor
-                    AND ph.contentstreamid = h.contentstreamid
+                    AND ph.contentstreamlayer = h.contentstreamlayer
                     AND ph.dimensionspacepointhash = h.dimensionspacepointhash
             WHERE
                 EXISTS (
@@ -280,16 +417,16 @@ final class ProjectionIntegrityViolationDetector implements ProjectionIntegrityV
 
         $referenceRelationRecordsWithInvalidTargetStatement = <<<SQL
             SELECT
-                sh.contentstreamid AS contentstreamId,
+                sh.contentstreamid,
                 s.nodeaggregateid AS sourceNodeAggregateId,
                 r.destinationnodeaggregateid AS destinationNodeAggregateId
             FROM
                 {$this->tableNames->referenceRelation()} r
                 INNER JOIN {$this->tableNames->node()} s ON r.nodeanchorpoint = s.relationanchorpoint
-                INNER JOIN {$this->tableNames->hierarchyRelation()} sh ON r.nodeanchorpoint = sh.childnodeanchor
+                INNER JOIN {$this->allContentStreamHierarchiesSql()} sh ON r.nodeanchorpoint = sh.childnodeanchor
                 LEFT JOIN (
                     {$this->tableNames->node()} d
-                    INNER JOIN {$this->tableNames->hierarchyRelation()} dh ON d.relationanchorpoint = dh.childnodeanchor
+                    INNER JOIN {$this->allContentStreamHierarchiesSql()} dh ON d.relationanchorpoint = dh.childnodeanchor
                 ) ON r.destinationnodeaggregateid = d.nodeaggregateid
                   AND sh.contentstreamid = dh.contentstreamid
                   AND sh.dimensionspacepointhash = dh.dimensionspacepointhash
@@ -308,16 +445,19 @@ final class ProjectionIntegrityViolationDetector implements ProjectionIntegrityV
 
         foreach ($referenceRelationRecordsWithInvalidTarget as $record) {
             $destinationNodeAggregateExistStatement = <<<SQL
-            SELECT 1 FROM {$this->tableNames->hierarchyRelation()} AS h
+            SELECT 1 FROM {$this->hierarchyRelationStatement->toSql()} h
                 INNER JOIN {$this->tableNames->node()} AS n ON n.relationanchorpoint = h.childnodeanchor
             WHERE n.nodeaggregateid = :destinationNodeAggregateId
-                AND h.contentstreamid = :contentStreamId
             LIMIT 1
             SQL;
             try {
                 $destinationNodeAggregateExist = $this->dbal->fetchOne($destinationNodeAggregateExistStatement, [
                     'destinationNodeAggregateId' => $record['destinationNodeAggregateId'],
-                    'contentStreamId' => $record['contentstreamId'],
+                    'contentStreamLayers' => $this->contentStreamLayerFinder->getContentStreamLayers(
+                        ContentStreamId::fromString($record['contentstreamid'])
+                    )->toIntArray(),
+                ], [
+                    'contentStreamLayers' => ArrayParameterType::INTEGER
                 ]);
             } catch (DBALException $e) {
                 throw new \RuntimeException(sprintf('Failed to check if node aggregate exists: %s', $e->getMessage()), 1777651107, $e);
@@ -331,7 +471,7 @@ final class ProjectionIntegrityViolationDetector implements ProjectionIntegrityV
             $result->addError(new Error(
                 'Destination node aggregate ' . $record['destinationNodeAggregateId']
                 . ' does not cover any dimension space points the source ' . $record['sourceNodeAggregateId']
-                . ' does in content stream ' . $record['contentstreamId'],
+                . ' does in content stream ' . $record['contentstreamid'],
                 self::ERROR_CODE_REFERENCE_INTEGRITY_IS_COMPROMISED
             ));
         }
@@ -358,11 +498,9 @@ final class ProjectionIntegrityViolationDetector implements ProjectionIntegrityV
                 SELECT
                     h.childnodeanchor
                 FROM
-                    {$this->tableNames->hierarchyRelation()} h
+                    {$this->hierarchyRelationStatement->where('h.dimensionspacepointhash = :dimensionSpacePointHash')->toSql()} h
                 WHERE
                     h.parentnodeanchor = :rootAnchorPoint
-                    AND h.contentstreamid = :contentStreamId
-                    AND h.dimensionspacepointhash = :dimensionSpacePointHash
                 UNION
                  -- --------------------------------
                  -- RECURSIVE query: do one "child" query step
@@ -371,28 +509,25 @@ final class ProjectionIntegrityViolationDetector implements ProjectionIntegrityV
                     h.childnodeanchor
                  FROM
                     subgraph p
-                 INNER JOIN {$this->tableNames->hierarchyRelation()} h
-                    on h.parentnodeanchor = p.childnodeanchor
-                 WHERE
-                    h.contentstreamid = :contentStreamId
-                    AND h.dimensionspacepointhash = :dimensionSpacePointHash
+                 INNER JOIN {$this->hierarchyRelationStatement->where('h.dimensionspacepointhash = :dimensionSpacePointHash')->toSql()} h
+                    ON h.parentnodeanchor = p.childnodeanchor
             )
             SELECT nodeaggregateid FROM {$this->tableNames->node()} n
-            INNER JOIN {$this->tableNames->hierarchyRelation()} h
+            INNER JOIN {$this->hierarchyRelationStatement->where('h.dimensionspacepointhash = :dimensionSpacePointHash')->toSql()} h
                 ON h.childnodeanchor = n.relationanchorpoint
             WHERE
-                h.contentstreamid = :contentStreamId
-                AND h.dimensionspacepointhash = :dimensionSpacePointHash
-                AND relationanchorpoint NOT IN (SELECT * FROM subgraph)
+                relationanchorpoint NOT IN (SELECT * FROM subgraph)
         SQL;
 
-        foreach ($this->findProjectedContentStreamIds() as $contentStreamId) {
+        foreach ($this->findProjectedContentStreamLayers() as $contentStreamLayers) {
             foreach ($this->findProjectedDimensionSpacePoints() as $dimensionSpacePoint) {
                 try {
                     $nodeAggregateIdsInCycles = $this->dbal->fetchFirstColumn($nodeAggregateIdsInCyclesStatement, [
                         'rootAnchorPoint' => NodeRelationAnchorPoint::forRootEdge()->value,
-                        'contentStreamId' => $contentStreamId->value,
+                        'contentStreamLayers' => $contentStreamLayers->toIntArray(),
                         'dimensionSpacePointHash' => $dimensionSpacePoint->hash
+                    ], [
+                        'contentStreamLayers' => ArrayParameterType::INTEGER
                     ]);
                 } catch (DBALException $e) {
                     throw new \RuntimeException(sprintf('Failed to load cyclic node relations: %s', $e->getMessage()), 1716493090, $e);
@@ -400,7 +535,7 @@ final class ProjectionIntegrityViolationDetector implements ProjectionIntegrityV
 
                 if (!empty($nodeAggregateIdsInCycles)) {
                     $result->addError(new Error(
-                        'Subgraph defined by content stream ' . $contentStreamId->value
+                        'Subgraph defined by content stream ' . $contentStreamLayers->toDebugString()
                         . ' and dimension space point ' . $dimensionSpacePoint->toJson()
                         . ' is cyclic for node aggregates '
                         . implode(',', $nodeAggregateIdsInCycles),
@@ -432,22 +567,21 @@ final class ProjectionIntegrityViolationDetector implements ProjectionIntegrityV
                 n.nodeaggregateid, COUNT(n.relationanchorpoint)
             FROM
                 {$this->tableNames->node()} n
-                INNER JOIN {$this->tableNames->hierarchyRelation()} h ON h.childnodeanchor = n.relationanchorpoint
-            WHERE
-                h.contentstreamid = :contentStreamId
-                AND h.dimensionspacepointhash = :dimensionSpacePointHash
+                INNER JOIN {$this->hierarchyRelationStatement->where('h.dimensionspacepointhash = :dimensionSpacePointHash')->toSql()} h ON h.childnodeanchor = n.relationanchorpoint
             GROUP BY
                 n.nodeaggregateid
             HAVING
                 COUNT(DISTINCT(n.relationanchorpoint)) > 1
         SQL;
 
-        foreach ($this->findProjectedContentStreamIds() as $contentStreamId) {
+        foreach ($this->findProjectedContentStreamLayers() as $contentStreamLayers) {
             foreach ($this->findProjectedDimensionSpacePoints() as $dimensionSpacePoint) {
                 try {
                     $ambiguousNodeAggregateRecords = $this->dbal->fetchAllAssociative($ambiguousNodeAggregatesStatement, [
-                        'contentStreamId' => $contentStreamId->value,
+                        'contentStreamLayers' => $contentStreamLayers->toIntArray(),
                         'dimensionSpacePointHash' => $dimensionSpacePoint->hash
+                    ], [
+                        'contentStreamLayers' => ArrayParameterType::INTEGER
                     ]);
                 } catch (DBALException $e) {
                     throw new \RuntimeException(sprintf('Failed to load ambiguous node aggregates: %s', $e->getMessage()), 1716494110, $e);
@@ -455,7 +589,7 @@ final class ProjectionIntegrityViolationDetector implements ProjectionIntegrityV
                 foreach ($ambiguousNodeAggregateRecords as $ambiguousRecord) {
                     $result->addError(new Error(
                         'Node aggregate ' . $ambiguousRecord['nodeaggregateid']
-                        . ' is ambiguous in content stream ' . $contentStreamId->value
+                        . ' is ambiguous in content stream ' . $contentStreamLayers->toDebugString()
                         . ' and dimension space point ' . $dimensionSpacePoint->toJson(),
                         self::ERROR_CODE_AMBIGUOUS_NODE_AGGREGATE_IN_SUBGRAPH
                     ));
@@ -474,22 +608,21 @@ final class ProjectionIntegrityViolationDetector implements ProjectionIntegrityV
                 c.nodeaggregateid
             FROM
                 {$this->tableNames->node()} c
-                INNER JOIN {$this->tableNames->hierarchyRelation()} h ON h.childnodeanchor = c.relationanchorpoint
-            WHERE
-                h.contentstreamid = :contentStreamId
-                AND h.dimensionspacepointhash = :dimensionSpacePointHash
+                INNER JOIN {$this->hierarchyRelationStatement->where('h.dimensionspacepointhash = :dimensionSpacePointHash')->toSql()} h ON h.childnodeanchor = c.relationanchorpoint
             GROUP BY
                 c.relationanchorpoint
             HAVING
                 COUNT(DISTINCT(h.parentnodeanchor)) > 1
         SQL;
 
-        foreach ($this->findProjectedContentStreamIds() as $contentStreamId) {
+        foreach ($this->findProjectedContentStreamLayers() as $contentStreamLayers) {
             foreach ($this->findProjectedDimensionSpacePoints() as $dimensionSpacePoint) {
                 try {
                     $nodeRecordsWithMultipleParents = $this->dbal->fetchAllAssociative($nodeRecordsWithMultipleParentsStatement, [
-                        'contentStreamId' => $contentStreamId->value,
+                        'contentStreamLayers' => $contentStreamLayers->toIntArray(),
                         'dimensionSpacePointHash' => $dimensionSpacePoint->hash
+                    ], [
+                        'contentStreamLayers' => ArrayParameterType::INTEGER
                     ]);
                 } catch (DBALException $e) {
                     throw new \RuntimeException(sprintf('Failed to load nodes with multiple parents: %s', $e->getMessage()), 1716494223, $e);
@@ -498,7 +631,7 @@ final class ProjectionIntegrityViolationDetector implements ProjectionIntegrityV
                 foreach ($nodeRecordsWithMultipleParents as $record) {
                     $result->addError(new Error(
                         'Node aggregate ' . $record['nodeaggregateid']
-                        . ' has multiple parents in content stream ' . $contentStreamId->value
+                        . ' has multiple parents in content stream ' . $contentStreamLayers->toDebugString()
                         . ' and dimension space point ' . $dimensionSpacePoint->toJson(),
                         self::ERROR_CODE_NODE_HAS_MULTIPLE_PARENTS
                     ));
@@ -517,21 +650,22 @@ final class ProjectionIntegrityViolationDetector implements ProjectionIntegrityV
                 DISTINCT n.nodetypename
             FROM
                 {$this->tableNames->node()} n
-                INNER JOIN {$this->tableNames->hierarchyRelation()} h ON h.childnodeanchor = n.relationanchorpoint
+                INNER JOIN {$this->hierarchyRelationStatement->toSql()} h ON h.childnodeanchor = n.relationanchorpoint
             WHERE
-                h.contentstreamid = :contentStreamId
-                AND n.nodeaggregateid = :nodeAggregateId
+                n.nodeaggregateid = :nodeAggregateId
         SQL;
-        foreach ($this->findProjectedContentStreamIds() as $contentStreamId) {
+        foreach ($this->findProjectedContentStreamLayers() as $contentStreamLayers) {
             foreach (
                 $this->findProjectedNodeAggregateIdsInContentStream(
-                    $contentStreamId
+                    $contentStreamLayers
                 ) as $nodeAggregateId
             ) {
                 try {
                     $nodeTypeNames = $this->dbal->fetchFirstColumn($nodeAggregatesStatement, [
-                        'contentStreamId' => $contentStreamId->value,
+                        'contentStreamLayers' => $contentStreamLayers->toIntArray(),
                         'nodeAggregateId' => $nodeAggregateId->value
+                    ], [
+                        'contentStreamLayers' => ArrayParameterType::INTEGER
                     ]);
                 } catch (DBALException $e) {
                     throw new \RuntimeException(sprintf('Failed to load node type names: %s', $e->getMessage()), 1716494446, $e);
@@ -540,7 +674,7 @@ final class ProjectionIntegrityViolationDetector implements ProjectionIntegrityV
                 if (count($nodeTypeNames) > 1) {
                     $result->addError(new Error(
                         'Node aggregate ' . $nodeAggregateId->value
-                        . ' in content stream ' . $contentStreamId->value
+                        . ' in content stream ' . $contentStreamLayers->toDebugString()
                         . ' is of ambiguous type ("' . implode('","', $nodeTypeNames) . '")',
                         self::ERROR_CODE_NODE_AGGREGATE_IS_AMBIGUOUSLY_TYPED
                     ));
@@ -559,21 +693,23 @@ final class ProjectionIntegrityViolationDetector implements ProjectionIntegrityV
                 DISTINCT n.classification
             FROM
                 {$this->tableNames->node()} n
-                INNER JOIN {$this->tableNames->hierarchyRelation()} h ON h.childnodeanchor = n.relationanchorpoint
+                INNER JOIN {$this->hierarchyRelationStatement->toSql()} h ON h.childnodeanchor = n.relationanchorpoint
             WHERE
-                h.contentstreamid = :contentStreamId
-                AND n.nodeaggregateid = :nodeAggregateId
+                n.nodeaggregateid = :nodeAggregateId
         SQL;
-        foreach ($this->findProjectedContentStreamIds() as $contentStreamId) {
+
+        foreach ($this->findProjectedContentStreamLayers() as $contentStreamLayers) {
             foreach (
                 $this->findProjectedNodeAggregateIdsInContentStream(
-                    $contentStreamId
+                    $contentStreamLayers
                 ) as $nodeAggregateId
             ) {
                 try {
                     $classifications = $this->dbal->fetchFirstColumn($nodeAggregatesStatement, [
-                        'contentStreamId' => $contentStreamId->value,
+                        'contentStreamLayers' => $contentStreamLayers->toIntArray(),
                         'nodeAggregateId' => $nodeAggregateId->value
+                    ], [
+                        'contentStreamLayers' => ArrayParameterType::INTEGER
                     ]);
                 } catch (DBALException $e) {
                     throw new \RuntimeException(sprintf('Failed to load node classifications: %s', $e->getMessage()), 1716494466, $e);
@@ -582,7 +718,7 @@ final class ProjectionIntegrityViolationDetector implements ProjectionIntegrityV
                 if (count($classifications) > 1) {
                     $result->addError(new Error(
                         'Node aggregate ' . $nodeAggregateId->value
-                        . ' in content stream ' . $contentStreamId->value
+                        . ' in content stream ' . $contentStreamLayers->toDebugString()
                         . ' is ambiguously classified ("' . implode('","', $classifications) . '")',
                         self::ERROR_CODE_NODE_AGGREGATE_IS_AMBIGUOUSLY_CLASSIFIED
                     ));
@@ -600,19 +736,19 @@ final class ProjectionIntegrityViolationDetector implements ProjectionIntegrityV
             SELECT
                 n.nodeaggregateid, c.dimensionspacepointhash
             FROM
-                {$this->tableNames->hierarchyRelation()} c
+                {$this->hierarchyRelationStatement->toSql()} c
                 INNER JOIN {$this->tableNames->node()} n ON c.childnodeanchor = n.relationanchorpoint
-                LEFT JOIN {$this->tableNames->hierarchyRelation()} p ON c.parentnodeanchor = p.childnodeanchor
+                LEFT JOIN {$this->hierarchyRelationStatement->toSql()} p ON c.parentnodeanchor = p.childnodeanchor
             WHERE
-                c.contentstreamid = :contentStreamId
-                AND p.contentstreamid = :contentStreamId
-                AND c.dimensionspacepointhash = p.dimensionspacepointhash
+                c.dimensionspacepointhash = p.dimensionspacepointhash
                 AND p.childnodeanchor IS NULL
         SQL;
-        foreach ($this->findProjectedContentStreamIds() as $contentStreamId) {
+        foreach ($this->findProjectedContentStreamLayers() as $contentStreamLayers) {
             try {
                 $excessivelyCoveringNodeRecords = $this->dbal->fetchAllAssociative($excessivelyCoveringStatement, [
-                    'contentStreamId' => $contentStreamId->value
+                    'contentStreamLayers' => $contentStreamLayers->toIntArray()
+                ], [
+                    'contentStreamLayers' => ArrayParameterType::INTEGER
                 ]);
             } catch (DBALException $e) {
                 throw new \RuntimeException(sprintf('Failed to load excessively covering nodes: %s', $e->getMessage()), 1716494618, $e);
@@ -620,7 +756,7 @@ final class ProjectionIntegrityViolationDetector implements ProjectionIntegrityV
             foreach ($excessivelyCoveringNodeRecords as $excessivelyCoveringNodeRecord) {
                 $result->addError(new Error(
                     'Node aggregate ' . $excessivelyCoveringNodeRecord['nodeaggregateid']
-                    . ' in content stream ' . $contentStreamId->value
+                    . ' in content stream ' . $contentStreamLayers->toDebugString()
                     . ' covers dimension space point hash ' . $excessivelyCoveringNodeRecord['dimensionspacepointhash']
                     . ' but its parent does not.',
                     self::ERROR_CODE_CHILD_NODE_COVERAGE_IS_NO_SUBSET_OF_PARENT_NODE_COVERAGE
@@ -639,28 +775,27 @@ final class ProjectionIntegrityViolationDetector implements ProjectionIntegrityV
                 nodeaggregateid, origindimensionspacepointhash
             FROM
                 {$this->tableNames->node()} n
-                INNER JOIN {$this->tableNames->hierarchyRelation()} h ON h.childnodeanchor = n.relationanchorpoint
+                INNER JOIN {$this->hierarchyRelationStatement->toSql()} h ON h.childnodeanchor = n.relationanchorpoint
             WHERE
-                h.contentstreamid = :contentStreamId
-                AND nodeaggregateid NOT IN (
+                nodeaggregateid NOT IN (
                     -- this query finds all nodes whose origin *IS COVERED* by an incoming hierarchy relation.
                     SELECT
                         n.nodeaggregateid
                     FROM
                         {$this->tableNames->node()} n
-                        LEFT JOIN {$this->tableNames->hierarchyRelation()} p ON
+                        INNER JOIN {$this->hierarchyRelationStatement->toSql()} p ON
                             p.childnodeanchor = n.relationanchorpoint
                             AND p.dimensionspacepointhash = n.origindimensionspacepointhash
-                        WHERE
-                            p.contentstreamid = :contentStreamId
-                    )
-                    AND classification != :rootClassification
+                )
+                AND classification != :rootClassification
         SQL;
-        foreach ($this->findProjectedContentStreamIds() as $contentStreamId) {
+        foreach ($this->findProjectedContentStreamLayers() as $contentStreamLayers) {
             try {
                 $nodeRecordsWithMissingOriginCoverage = $this->dbal->fetchAllAssociative($nodesWithMissingOriginCoverageStatement, [
-                    'contentStreamId' => $contentStreamId->value,
+                    'contentStreamLayers' => $contentStreamLayers->toIntArray(),
                     'rootClassification' => NodeAggregateClassification::CLASSIFICATION_ROOT->value
+                ], [
+                    'contentStreamLayers' => ArrayParameterType::INTEGER
                 ]);
             } catch (DBALException $e) {
                 throw new \RuntimeException(sprintf('Failed to load nodes with missing origin coverage: %s', $e->getMessage()), 1716494752, $e);
@@ -669,7 +804,7 @@ final class ProjectionIntegrityViolationDetector implements ProjectionIntegrityV
             foreach ($nodeRecordsWithMissingOriginCoverage as $nodeRecord) {
                 $result->addError(new Error(
                     'Node aggregate ' . $nodeRecord['nodeaggregateid']
-                    . ' in content stream ' . $contentStreamId->value
+                    . ' in content stream ' . $contentStreamLayers->toDebugString()
                     . ' does not cover its origin dimension space point hash ' . $nodeRecord['origindimensionspacepointhash']
                     . '.',
                     self::ERROR_CODE_NODE_DOES_NOT_COVER_ITS_ORIGIN
@@ -681,21 +816,28 @@ final class ProjectionIntegrityViolationDetector implements ProjectionIntegrityV
     }
 
     /**
-     * Returns all content stream ids
-     *
-     * @return iterable<ContentStreamId>
+     * @return iterable<ContentStreamLayers>
      */
-    private function findProjectedContentStreamIds(): iterable
+    private function findProjectedContentStreamLayers(): iterable
     {
-        $contentStreamIdsStatement = <<<SQL
-            SELECT DISTINCT contentstreamid FROM {$this->tableNames->hierarchyRelation()}
+        $contentStreamLayersStatement = <<<SQL
+            SELECT contentstreamid, contentstreamlayer FROM {$this->tableNames->contentStreamLayer()}
         SQL;
         try {
-            $contentStreamIds = $this->dbal->fetchFirstColumn($contentStreamIdsStatement);
+            $contentStreamLayers = $this->dbal->fetchAllAssociative($contentStreamLayersStatement);
         } catch (DBALException $e) {
             throw new \RuntimeException(sprintf('Failed to load content stream ids: %s', $e->getMessage()), 1716494814, $e);
         }
-        return array_map(ContentStreamId::fromString(...), $contentStreamIds);
+
+        foreach (array_unique(array_column($contentStreamLayers, 'contentstreamid')) as $contentStreamId) {
+            $items = [];
+            foreach ($contentStreamLayers as $row) {
+                if ($row['contentstreamid'] === $contentStreamId) {
+                    $items[] = $row['contentstreamlayer'];
+                }
+            }
+            yield ContentStreamLayers::fromArray($items);
+        }
     }
 
     /**
@@ -718,24 +860,49 @@ final class ProjectionIntegrityViolationDetector implements ProjectionIntegrityV
      * @return array<NodeAggregateId>
      */
     protected function findProjectedNodeAggregateIdsInContentStream(
-        ContentStreamId $contentStreamId
+        ContentStreamLayers $contentStreamLayers
     ): array {
         $nodeAggregateIdsStatement = <<<SQL
             SELECT
                 DISTINCT n.nodeaggregateid
             FROM
                 {$this->tableNames->node()} n
-                INNER JOIN {$this->tableNames->hierarchyRelation()} h ON h.childnodeanchor = n.relationanchorpoint
-            WHERE
-                h.contentstreamid = :contentStreamId
+                INNER JOIN {$this->hierarchyRelationStatement->toSql()} h ON h.childnodeanchor = n.relationanchorpoint
         SQL;
         try {
             $nodeAggregateIds = $this->dbal->fetchFirstColumn($nodeAggregateIdsStatement, [
-                'contentStreamId' => $contentStreamId->value,
+                'contentStreamLayers' => $contentStreamLayers->toIntArray(),
+            ], [
+                'contentStreamLayers' => ArrayParameterType::INTEGER
             ]);
         } catch (DBALException $e) {
             throw new \RuntimeException(sprintf('Failed to load node aggregate ids for content stream: %s', $e->getMessage()), 1716495988, $e);
         }
         return array_map(NodeAggregateId::fromString(...), $nodeAggregateIds);
+    }
+
+    private function allContentStreamHierarchiesSql(): string
+    {
+        /** See also {@see HierarchyRelationStatement::toSql()} to select the hierarchies for a single content stream */
+        return <<<SQL
+        (SELECT
+            h.*,
+            readHierarchy.contentstreamid
+        FROM {$this->tableNames->hierarchyRelation()} AS h
+            JOIN (
+                SELECT
+                    l.contentstreamid,
+                    hCandidates.id,
+                    MAX(hCandidates.contentstreamlayer) AS contentstreamlayer
+                FROM {$this->tableNames->contentStreamLayer()} AS l
+                    JOIN {$this->tableNames->hierarchyRelation()} AS hCandidates
+                        ON hCandidates.contentstreamlayer = l.contentstreamlayer
+                GROUP BY
+                    l.contentstreamid,
+                    hCandidates.id
+            ) readHierarchy
+                ON h.id = readHierarchy.id AND h.contentstreamlayer = readHierarchy.contentstreamlayer
+        )
+        SQL;
     }
 }

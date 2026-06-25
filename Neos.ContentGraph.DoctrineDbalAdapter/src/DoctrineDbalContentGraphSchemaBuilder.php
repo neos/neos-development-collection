@@ -33,6 +33,7 @@ class DoctrineDbalContentGraphSchemaBuilder
             $this->createDimensionSpacePointsTable($connection->getDatabasePlatform()),
             $this->createWorkspaceTable($connection->getDatabasePlatform()),
             $this->createContentStreamTable($connection->getDatabasePlatform()),
+            $this->createContentStreamLayerTable($connection->getDatabasePlatform()),
         ]);
     }
 
@@ -61,21 +62,27 @@ class DoctrineDbalContentGraphSchemaBuilder
     private function createHierarchyRelationTable(AbstractPlatform $platform): Table
     {
         $table = self::createTable($this->tableNames->hierarchyRelation(), [
-            (new Column('position', self::type(Types::INTEGER)))->setNotnull(true),
-            DbalSchemaFactory::columnForContentStreamId('contentstreamid', $platform)->setNotnull(true),
-            DbalSchemaFactory::columnForDimensionSpacePointHash('dimensionspacepointhash', $platform)->setNotnull(true),
-            DbalSchemaFactory::columnForNodeAnchorPoint('parentnodeanchor', $platform),
-            DbalSchemaFactory::columnForNodeAnchorPoint('childnodeanchor', $platform),
-            (new Column('subtreetags', self::type(Types::JSON))),
+            (new Column('id', Type::getType(Types::INTEGER)))->setAutoincrement(true)->setNotnull(true),
+            (new Column('contentstreamlayer', self::type(Types::INTEGER)))->setNotnull(true),
+            (new Column('position', self::type(Types::INTEGER)))->setNotnull(false),
+            DbalSchemaFactory::columnForDimensionSpacePointHash('dimensionspacepointhash', $platform)->setNotnull(false),
+            DbalSchemaFactory::columnForNodeAnchorPoint('parentnodeanchor', $platform)->setNotnull(false),
+            DbalSchemaFactory::columnForNodeAnchorPoint('childnodeanchor', $platform)->setNotnull(false),
+            (new Column('subtreetags', self::type(Types::JSON)))->setNotnull(false),
         ]);
 
         return $table
+            ->addIndex(['id'])
+            ->addUniqueIndex(['id', 'contentstreamlayer'], 'UNIQ_id_layer')
             ->addIndex(['childnodeanchor'])
-            ->addIndex(['contentstreamid'])
+            ->addIndex(['contentstreamlayer'])
             ->addIndex(['parentnodeanchor'])
-            ->addIndex(['childnodeanchor', 'contentstreamid', 'dimensionspacepointhash', 'position'])
-            ->addIndex(['parentnodeanchor', 'contentstreamid', 'dimensionspacepointhash', 'position'])
-            ->addIndex(['contentstreamid', 'dimensionspacepointhash']);
+            ->addIndex(['position'])
+            /** Optimize the $rightmostSucceedingSiblingRelationStatement in {@see \Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\ProjectionContentGraph::determineHierarchyRelationPosition()} */
+            ->addIndex(['parentnodeanchor', 'position'])
+            ->addIndex(['childnodeanchor', 'contentstreamlayer', 'dimensionspacepointhash', 'position'])
+            ->addIndex(['parentnodeanchor', 'contentstreamlayer', 'dimensionspacepointhash', 'position'])
+            ->addIndex(['contentstreamlayer', 'dimensionspacepointhash']);
     }
 
     private function createDimensionSpacePointsTable(AbstractPlatform $platform): Table
@@ -129,7 +136,20 @@ class DoctrineDbalContentGraphSchemaBuilder
             (new Column('hasChanges', Type::getType(Types::BOOLEAN)))->setNotnull(true),
         ]);
 
-        return $contentStreamTable->setPrimaryKey(['id']);
+        return $contentStreamTable
+            ->setPrimaryKey(['id']);
+    }
+
+    private function createContentStreamLayerTable(AbstractPlatform $platform): Table
+    {
+        $contentStreamLayerTable = self::createTable($this->tableNames->contentStreamLayer(), [
+            DbalSchemaFactory::columnForContentStreamId('contentStreamId', $platform)->setNotnull(true),
+            (new Column('contentStreamLayer', Type::getType(Types::INTEGER)))->setAutoincrement(true)->setNotnull(true),
+        ]);
+
+        return $contentStreamLayerTable
+            ->addIndex(['contentStreamLayer'])
+            ->setPrimaryKey(['contentStreamId', 'contentStreamLayer']);
     }
 
     /**

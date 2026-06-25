@@ -13,12 +13,16 @@ declare(strict_types=1);
 
 use Behat\Behat\Context\Context as BehatContext;
 use Behat\Behat\Hook\Scope\BeforeScenarioScope;
+use Doctrine\DBAL\Connection;
 use Neos\Behat\FlowBootstrapTrait;
+use Neos\ContentGraph\DoctrineDbalAdapter\ContentGraphTableNames;
+use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\ContentStreamLayerFinder;
 use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceFactoryInterface;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceInterface;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
 use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\CRBehavioralTestsSubjectProvider;
+use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\CRTestSuiteRuntimeVariables;
 use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\CRTestSuiteTrait;
 use Neos\ContentRepository\TestSuite\Fakes\FakeContentDimensionSourceFactory;
 use Neos\ContentRepository\TestSuite\Fakes\FakeNodeTypeManagerFactory;
@@ -31,17 +35,35 @@ class FeatureContext implements BehatContext
 {
     use FlowBootstrapTrait;
     use DoctrineDbalProjectionIntegrityViolatorTrait;
+    use DoctrineDbalProjectionSpyTrait;
     use CRTestSuiteTrait;
+    use CRTestSuiteRuntimeVariables;
     use CRBehavioralTestsSubjectProvider;
 
     protected ContentRepositoryRegistry $contentRepositoryRegistry;
+
+    protected Connection $dbal;
 
     public function __construct()
     {
         self::bootstrapFlow();
         $this->contentRepositoryRegistry = $this->getObject(ContentRepositoryRegistry::class);
+        $this->dbal = $this->getObject(Connection::class);
+    }
 
-        $this->setupDbalGraphAdapterIntegrityViolationTrait();
+    private function tableNames(): ContentGraphTableNames
+    {
+        return ContentGraphTableNames::create(
+            $this->currentContentRepository->id
+        );
+    }
+
+    private function contentStreamLayerFinder(): ContentStreamLayerFinder
+    {
+        return new ContentStreamLayerFinder(
+            $this->dbal,
+            $this->tableNames()
+        );
     }
 
     /**

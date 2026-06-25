@@ -96,7 +96,7 @@ final readonly class ResetupAndReplayContentGraphUpgrade
         $this->context->dbal->executeStatement('DROP TABLE IF EXISTS ' . $tableNames->workspace());
         $this->context->dbal->executeStatement('DROP TABLE IF EXISTS ' . $tableNames->contentStream());
         // New table introduced via Neos 9.2.0
-        // TODO enable once available $this->context->dbal->executeStatement('DROP TABLE IF EXISTS ' . $tableNames->contentStreamLayer());
+        $this->context->dbal->executeStatement('DROP TABLE IF EXISTS ' . $tableNames->contentStreamLayer());
 
         $this->log('Dropped all existing graph projection tables.');
         $this->log('Running schema setup ...');
