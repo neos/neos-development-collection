@@ -212,3 +212,166 @@ Feature:
       | "a1a"           | hash{"example":"source"}  | 1        |
       | "a1a"           | hash{"example":"spec"}    | 1        |
       | "a1a"           | hash{"example":"peer"}    | 0        |
+
+  Scenario: Untag a node first in spezialisation then in source
+    And the command TagSubtree is executed with payload:
+      | Key                          | Value                |
+      | nodeAggregateId              | "a"                  |
+      | coveredDimensionSpacePoint   | {"example":"source"} |
+      | nodeVariantSelectionStrategy | "allSpecializations" |
+      | tag                          | "disabled"           |
+
+    When I am in dimension space point {"example":"source"}
+    Then I expect node aggregate identifier "a" to lead to node cs-identifier;a;{"example":"general"}
+    And I expect this node to have the following subtree with tags:
+    """
+    a (disabled*)
+     a1 (disabled)
+      a1a (disabled)
+    """
+
+    When I am in dimension space point {"example":"spec"}
+    Then I expect node aggregate identifier "a" to lead to node cs-identifier;a;{"example":"general"}
+    And I expect this node to have the following subtree with tags:
+    """
+    a (disabled*)
+     a1 (disabled)
+      a1a (disabled)
+    """
+
+    When I am in dimension space point {"example":"peer"}
+    Then I expect node aggregate identifier "a" to lead to node cs-identifier;a;{"example":"general"}
+    And I expect this node to have the following subtree with tags:
+    """
+    a
+     a1
+      a1a
+    """
+
+    Then I expect the documenturipath table to contain exactly:
+      | nodeaggregateid | dimensionspacepointhash   | disabled |
+      | "root"          | hash{"example":"general"} | 0        |
+      | "root"          | hash{"example":"source"}  | 0        |
+      | "root"          | hash{"example":"spec"}    | 0        |
+      | "root"          | hash{"example":"peer"}    | 0        |
+      | "a"             | hash{"example":"general"} | 0        |
+      | "a"             | hash{"example":"source"}  | 1        |
+      | "a"             | hash{"example":"spec"}    | 1        |
+      | "a"             | hash{"example":"peer"}    | 0        |
+      | "a1"            | hash{"example":"general"} | 0        |
+      | "a1"            | hash{"example":"source"}  | 1        |
+      | "a1"            | hash{"example":"spec"}    | 1        |
+      | "a1"            | hash{"example":"peer"}    | 0        |
+      | "a1a"           | hash{"example":"general"} | 0        |
+      | "a1a"           | hash{"example":"source"}  | 1        |
+      | "a1a"           | hash{"example":"spec"}    | 1        |
+      | "a1a"           | hash{"example":"peer"}    | 0        |
+
+    When the command UntagSubtree is executed with payload:
+      | Key                          | Value                |
+      | nodeAggregateId              | "a"                  |
+      | coveredDimensionSpacePoint   | {"example":"spec"}   |
+      | nodeVariantSelectionStrategy | "allSpecializations" |
+      | tag                          | "disabled"           |
+
+    When I am in dimension space point {"example":"source"}
+    Then I expect node aggregate identifier "a" to lead to node cs-identifier;a;{"example":"general"}
+    And I expect this node to have the following subtree with tags:
+    """
+    a (disabled*)
+     a1 (disabled)
+      a1a (disabled)
+    """
+
+    When I am in dimension space point {"example":"spec"}
+    Then I expect node aggregate identifier "a" to lead to node cs-identifier;a;{"example":"general"}
+    And I expect this node to have the following subtree with tags:
+    """
+    a
+     a1
+      a1a
+    """
+
+    When I am in dimension space point {"example":"peer"}
+    Then I expect node aggregate identifier "a" to lead to node cs-identifier;a;{"example":"general"}
+    And I expect this node to have the following subtree with tags:
+    """
+    a
+     a1
+      a1a
+    """
+
+    Then I expect the documenturipath table to contain exactly:
+      | nodeaggregateid | dimensionspacepointhash   | disabled |
+      | "root"          | hash{"example":"general"} | 0        |
+      | "root"          | hash{"example":"source"}  | 0        |
+      | "root"          | hash{"example":"spec"}    | 0        |
+      | "root"          | hash{"example":"peer"}    | 0        |
+      | "a"             | hash{"example":"general"} | 0        |
+      | "a"             | hash{"example":"source"}  | 1        |
+      # untagged
+      | "a"             | hash{"example":"spec"}    | 0        |
+      | "a"             | hash{"example":"peer"}    | 0        |
+      | "a1"            | hash{"example":"general"} | 0        |
+      | "a1"            | hash{"example":"source"}  | 1        |
+      # untagged
+      | "a1"            | hash{"example":"spec"}    | 0        |
+      | "a1"            | hash{"example":"peer"}    | 0        |
+      | "a1a"           | hash{"example":"general"} | 0        |
+      | "a1a"           | hash{"example":"source"}  | 1        |
+      # untagged
+      | "a1a"           | hash{"example":"spec"}    | 0        |
+      | "a1a"           | hash{"example":"peer"}    | 0        |
+
+    When the command UntagSubtree is executed with payload:
+      | Key                          | Value                |
+      | nodeAggregateId              | "a"                  |
+      | coveredDimensionSpacePoint   | {"example":"source"} |
+      | nodeVariantSelectionStrategy | "allSpecializations" |
+      | tag                          | "disabled"           |
+
+    When I am in dimension space point {"example":"source"}
+    Then I expect node aggregate identifier "a" to lead to node cs-identifier;a;{"example":"general"}
+    And I expect this node to have the following subtree with tags:
+    """
+    a
+     a1
+      a1a
+    """
+
+    When I am in dimension space point {"example":"spec"}
+    Then I expect node aggregate identifier "a" to lead to node cs-identifier;a;{"example":"general"}
+    And I expect this node to have the following subtree with tags:
+    """
+    a
+     a1
+      a1a
+    """
+
+    When I am in dimension space point {"example":"peer"}
+    Then I expect node aggregate identifier "a" to lead to node cs-identifier;a;{"example":"general"}
+    And I expect this node to have the following subtree with tags:
+    """
+    a
+     a1
+      a1a
+    """
+
+    Then I expect the documenturipath table to contain exactly:
+      | nodeaggregateid | dimensionspacepointhash   | disabled |
+      | "root"          | hash{"example":"general"} | 0        |
+      | "root"          | hash{"example":"source"}  | 0        |
+      | "root"          | hash{"example":"spec"}    | 0        |
+      | "root"          | hash{"example":"peer"}    | 0        |
+      | "a"             | hash{"example":"general"} | 0        |
+      | "a"             | hash{"example":"source"}  | 0        |
+      | "a"             | hash{"example":"spec"}    | 0        |
+      | "a"             | hash{"example":"peer"}    | 0        |
+      | "a1"            | hash{"example":"general"} | 0        |
+      | "a1"            | hash{"example":"source"}  | 0        |
+      | "a1"            | hash{"example":"spec"}    | 0        |
+      | "a1"            | hash{"example":"peer"}    | 0        |
+      | "a1a"           | hash{"example":"general"} | 0        |
+      | "a1a"           | hash{"example":"source"}  | 0        |
+      | "a1a"           | hash{"example":"spec"}    | 0        |
+      | "a1a"           | hash{"example":"peer"}    | 0        |
