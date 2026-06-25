@@ -452,21 +452,25 @@ final class DocumentUriPathProjection implements ProjectionInterface
                 // Probably not a document node
                 continue;
             }
-            $tagColumn = $event->tag->value;
 
-            $nodeTagLevel = $event->tag->equals(NeosSubtreeTag::disabled()) ? $node->getDisableLevel() : $node->getRemovedLevel();
-            $parentNode = $this->tryGetNode(fn () => $this->documentUriPathFinder->getParentNode($node));
-            $parentTagLevel = 0;
-            if ($parentNode !== null) {
-                $parentTagLevel = $event->tag === NeosSubtreeTag::disabled() ? $parentNode->getDisableLevel() : $parentNode->getRemovedLevel();
-            }
-            if ($nodeTagLevel <= $parentTagLevel) {
-                // Node was not tagged (its counter matches [or is below - should never happen] the parent's level).
-                // Decrementing an untagged node ($nodeTagLevel === 0) would cause an unsigned integer underflow.
-                // A node might not have been tagged in the first place and just untagged with allVariants or the variant was already untagged.
+            $parentNode = $this->tryGetNode(fn () => $this->getState()->getByIdAndDimensionSpacePointHash(
+                $node->getParentNodeAggregateId(),
+                $node->getDimensionSpacePointHash()
+            ));
+
+            // If a node was not tagged, decrementing an untagged node ($nodeTagLevel === 0) would cause an unsigned integer underflow.
+            // A node might not have been tagged in the first place and just untagged with allVariants or the variant was already untagged.
+            /** @phpstan-ignore match.unhandled */
+            if (
+                match ($event->tag) {
+                    NeosSubtreeTag::disabled() => !$this->isNodeExplicitlyDisabled($node, $parentNode),
+                    NeosSubtreeTag::removed() => !$this->isNodeExplicitlyRemoved($node, $parentNode),
+                }
+            ) {
                 continue;
             }
 
+            $tagColumn = $event->tag->value;
             $this->updateNodeQuery('SET ' . $tagColumn . ' = ' . $tagColumn . ' - 1
                 WHERE dimensionSpacePointHash = :dimensionSpacePointHash
                     AND (
