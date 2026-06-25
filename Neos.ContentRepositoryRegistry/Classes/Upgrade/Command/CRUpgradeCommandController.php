@@ -50,7 +50,7 @@ final class CRUpgradeCommandController extends CommandController
      * The CR provides a simple setup tooling via "./flow cr:setup" it allows to create the database schemas in the beginning
      * and also minor upgrades from one existing schema to the desired like index changes or small renames.
      *
-     * Some Neos versions will include changes which go beyond this as they create columns on the current tables.
+     * Some Neos versions will include changes which go beyond this as they heavily adjust the schema.
      *
      * - Neos 9.2.0 (June 2026)
      *
@@ -63,17 +63,13 @@ final class CRUpgradeCommandController extends CommandController
      *
      * - [future version X ...]
      *
-     * The following upgrade path is required:
+     * The following upgrade is required
      *
      *  - 1. Reset (drop old tables),
      *  - 2. Setup (create new empty tables)
-     *         both done with ./flow crupgrade:resetgraphandsetup
-     *
      *  - 3. Replay (refill new tables)
-     *         ./flow subscription:replay contentGraph
      *
-     * Attempting to upgrade with "./flow cr:setup" in step 2 without dropping the
-     * old content graph tables would fail as the columns cannot be added without any values.
+     * Attempting to upgrade with "./flow cr:setup" in step 2 without dropping the old content graph tables would fail.
      *
      * Included in June 2026 - part of the minor 9.2.0 release
      *
@@ -86,7 +82,7 @@ final class CRUpgradeCommandController extends CommandController
             $this->upgradeContextFactory
         );
 
-        if (!$force && !$this->output->askConfirmation(sprintf('> This will completely empty the content graph of content repository "%s" and create the schema from scratch. Afterwards the graph projection must be replayed which will take quite some time. Are you sure to proceed? (y/n) ', $context->contentRepositoryId->value), false)) {
+        if (!$force && !$this->output->askConfirmation(sprintf('> This will completely empty the content graph of content repository "%s" and create the schema from scratch. Afterwards the graph projection will be replayed which will take quite some time. Are you sure to proceed? (y/n) ', $context->contentRepositoryId->value), false)) {
             $this->outputLine('<comment>Abort.</comment>');
             return;
         }
@@ -94,6 +90,13 @@ final class CRUpgradeCommandController extends CommandController
         $upgrade = new ResetGraphAndSetupUpgrade(
             $context,
             $this->output->outputLine(...),
+            function () {
+                if ($this->output->getProgressBar()->getProgress() === 0) {
+                    $this->output->getProgressBar()->setFormat('debug');
+                    $this->output->progressStart();
+                }
+                $this->output->progressAdvance();
+            },
             $this->contentRepositoryRegistry->buildService(
                 $context->contentRepositoryId,
                 new ContentRepositoryMaintainerFactory()
@@ -103,6 +106,12 @@ final class CRUpgradeCommandController extends CommandController
         $upgrade->execute(
             force: $force
         );
+
+        if ($this->output->getProgressBar()->getProgress() !== 0) {
+            $this->output->progressFinish();
+        }
+
+        $this->outputLine();
     }
 
     /**

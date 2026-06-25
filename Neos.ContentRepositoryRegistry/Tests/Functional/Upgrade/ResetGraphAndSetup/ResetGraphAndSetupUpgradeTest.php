@@ -63,22 +63,15 @@ class ResetGraphAndSetupUpgradeTest extends AbstractSubscriptionEngineTestCase
         Dropped all existing graph projection tables.
         Running schema setup ...
         Content repository "t_subscription" was set up
-        The graph projection now needs to be replayed: `./flow subscription:replay contentGraph`
+        Replaying the content graph projection (without invoking its catchup hooks) ...
         MESSAGE);
-        $this->expectOkayStatus('contentGraph', SubscriptionStatus::BOOTING, SequenceNumber::none());
-        // no workspace is found - tables are empty
-        self::assertNull($this->contentRepository->findWorkspaceByName(WorkspaceName::fromString('root')));
+        // graph is up to date again
+        $this->expectOkayStatus('contentGraph', SubscriptionStatus::ACTIVE, SequenceNumber::fromInteger(2));
+        self::assertNotNull($this->contentRepository->findWorkspaceByName(WorkspaceName::fromString('root')));
 
         // other subscriptions are not reset!
         self::assertSame([1, 2], $this->secondFakeProjection->getState()->findAppliedSequenceNumberValues());
         $this->expectOkayStatus('Vendor.Package:SecondFakeProjection', SubscriptionStatus::ACTIVE, SequenceNumber::fromInteger(2));
-
-        // replay again
-        $result = $this->subscriptionEngine->boot(SubscriptionEngineCriteria::create(['contentGraph']));
-        self::assertNull($result->errors);
-        // up to date graph
-        $this->expectOkayStatus('contentGraph', SubscriptionStatus::ACTIVE, SequenceNumber::fromInteger(2));
-        self::assertNotNull($this->contentRepository->findWorkspaceByName(WorkspaceName::fromString('root')));
     }
 
     protected function outputFn(string $message): void
@@ -106,6 +99,7 @@ class ResetGraphAndSetupUpgradeTest extends AbstractSubscriptionEngineTestCase
         $upgrade = new ResetGraphAndSetupUpgrade(
             $context,
             $this->outputFn(...),
+            fn () => null,
             $contentRepositoryRegistry->buildService(
                 $context->contentRepositoryId,
                 new ContentRepositoryMaintainerFactory()

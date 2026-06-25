@@ -8,6 +8,7 @@ use Neos\ContentGraph\DoctrineDbalAdapter\ContentGraphTableNames;
 use Neos\ContentRepository\Core\Projection\ProjectionStatusType;
 use Neos\ContentRepository\Core\Service\ContentRepositoryMaintainer;
 use Neos\ContentRepository\Core\Subscription\Engine\SubscriptionEngine;
+use Neos\ContentRepository\Core\Subscription\Engine\SubscriptionEngineCriteria;
 use Neos\ContentRepository\Core\Subscription\ProjectionSubscriptionStatus;
 use Neos\ContentRepository\Core\Subscription\Store\SubscriptionStoreInterface;
 use Neos\ContentRepository\Core\Subscription\SubscriptionId;
@@ -22,19 +23,15 @@ use Neos\EventStore\Model\Event\SequenceNumber;
  * The CR provides a simple setup tooling via "./flow cr:setup" it allows to create the database schemas in the beginning
  * and also minor upgrades from one existing schema to the desired like index changes or small renames.
  *
- * Some Neos versions will include changes which go beyond this as they create columns on the current tables.
+ * Some Neos versions will include changes which go beyond this as they heavily adjust the schema.
  *
- * The following upgrade path is required:
+ * The following upgrade is required:
  *
  *  - 1. Reset (drop old tables),
  *  - 2. Setup (create new empty tables)
- *         both done with ./flow crupgrade:resetgraphandsetup
- *
  *  - 3. Replay (refill new tables)
- *         ./flow subscription:replay contentGraph
  *
- * Attempting to upgrade with "./flow cr:setup" in step 2 without dropping the
- * old content graph tables would fail as the columns cannot be added without any values.
+ * Attempting to upgrade with "./flow cr:setup" in step 2 without dropping the old content graph tables would fail.
  *
  * Included in June 2026 - part of the minor 9.2.0 release
  */
@@ -42,16 +39,26 @@ final readonly class ResetGraphAndSetupUpgrade
 {
     use OutputMessageTrait;
 
+    private SubscriptionEngine $subscriptionEngine;
+
     private SubscriptionStoreInterface $subscriptionStore;
+
+    private SubscriptionId $contentGraphSubscriptionId;
+
+    /** Same setting as {@see ContentRepositoryMaintainer::REPLAY_BATCH_SIZE} */
+    private const REPLAY_BATCH_SIZE = 500;
 
     public function __construct(
         private CRUpgradeContext $context,
         private \Closure $outputFn,
+        private \Closure $replayProgressCallback,
         private ContentRepositoryMaintainer $contentRepositoryMaintainer,
     ) {
         $subscriptionEngine = (new \ReflectionClass(ContentRepositoryMaintainer::class))->getProperty('subscriptionEngine')->getValue($this->contentRepositoryMaintainer);
         $subscriptionStore = (new \ReflectionClass(SubscriptionEngine::class))->getProperty('subscriptionStore')->getValue($subscriptionEngine);
 
+        $this->contentGraphSubscriptionId = SubscriptionId::fromString('contentGraph');
+        $this->subscriptionEngine = $subscriptionEngine;
         $this->subscriptionStore = $subscriptionStore;
     }
 
@@ -84,9 +91,8 @@ final readonly class ResetGraphAndSetupUpgrade
         $this->log('Dropped all existing graph projection tables.');
         $this->log('Running schema setup ...');
 
-        /** @phpstan-ignore neos.cr.internal (architecture does not matter here *g - we have pure SQL muhaha) */
         $this->subscriptionStore->update(
-            SubscriptionId::fromString('contentGraph'),
+            $this->contentGraphSubscriptionId,
             SubscriptionStatus::BOOTING,
             SequenceNumber::none(),
             null
@@ -96,8 +102,11 @@ final readonly class ResetGraphAndSetupUpgrade
             $this->log(sprintf('Unexpected error during setup: <error>%s</error>', $result->getMessage()));
             return;
         }
+
         $this->log(sprintf('Content repository "%s" was set up', $this->context->contentRepositoryId->value));
-        $this->log('The graph projection now needs to be replayed: `./flow subscription:replay contentGraph`');
+        $this->log('Replaying the content graph projection (without invoking its catchup hooks) ...');
+
+        $this->subscriptionEngine->withoutProjectionSubscriberCatchupHooks()->boot(SubscriptionEngineCriteria::create(ids: [$this->contentGraphSubscriptionId]), progressCallback: $this->replayProgressCallback, batchSize: self::REPLAY_BATCH_SIZE);
     }
 
     private function getGraphProjectionStatus(): ProjectionSubscriptionStatus
@@ -105,7 +114,7 @@ final readonly class ResetGraphAndSetupUpgrade
         $status = $this->contentRepositoryMaintainer->status();
         foreach ($status->subscriptionStatus as $status) {
             if ($status instanceof ProjectionSubscriptionStatus) {
-                if ($status->subscriptionId->equals(SubscriptionId::fromString('contentGraph'))) {
+                if ($status->subscriptionId->equals($this->contentGraphSubscriptionId)) {
                     return $status;
                 }
             }
