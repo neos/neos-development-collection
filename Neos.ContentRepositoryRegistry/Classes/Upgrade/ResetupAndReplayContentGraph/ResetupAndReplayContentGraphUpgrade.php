@@ -16,6 +16,7 @@ use Neos\ContentRepository\Core\Subscription\SubscriptionStatus;
 use Neos\ContentRepositoryRegistry\Upgrade\Shared\CRUpgradeContext;
 use Neos\ContentRepositoryRegistry\Upgrade\Shared\OutputMessageTrait;
 use Neos\EventStore\Model\Event\SequenceNumber;
+use Neos\EventStore\Model\EventStream\VirtualStreamName;
 
 /**
  * Upgrade to allow to empty, set up and replay the graph projection in one step
@@ -65,10 +66,19 @@ final readonly class ResetupAndReplayContentGraphUpgrade
     public function execute(bool $force): void
     {
         if (!$force) {
+            $eventStorePosition = $this->getEventStorePosition();
             $graphProjectionStatus = $this->getGraphProjectionStatus();
             $this->log(
-                sprintf('    DEBUG: Content graph projection schema status "%s". Subscription was at sequence number %d with status "%s"' . PHP_EOL, $graphProjectionStatus->setupStatus->type->name, $graphProjectionStatus->subscriptionPosition->value, $graphProjectionStatus->subscriptionStatus->value)
+                sprintf('    DEBUG: Content graph projection schema status "%s". Subscription was at sequence %d of available %d with status "%s"' . PHP_EOL, $graphProjectionStatus->setupStatus->type->name, $graphProjectionStatus->subscriptionPosition->value, $eventStorePosition->value, $graphProjectionStatus->subscriptionStatus->value)
             );
+            if ($eventStorePosition->value > $graphProjectionStatus->subscriptionPosition->value) {
+                $this->log(sprintf(
+                    'Content graph projection is with position %1$d behind event-store position %2$d. See `flow cr:status`. Not continuing not replaying the projection as we will not invoke catchup hooks for the graph events after %1$d. If you know what you are doing try again by using a bit more force.',
+                    $graphProjectionStatus->subscriptionPosition->value,
+                    $eventStorePosition->value,
+                ));
+                return;
+            }
             if ($graphProjectionStatus->setupStatus->type === ProjectionStatusType::OK) {
                 $this->log(
                     'Content graph projection is fully set-up. See `flow cr:status`. Not continuing emptying the projection. If you know what you are doing try again by using a bit more force.'
@@ -107,6 +117,12 @@ final readonly class ResetupAndReplayContentGraphUpgrade
         $this->log('Replaying the content graph projection (without invoking its catchup hooks) ...');
 
         $this->subscriptionEngine->withoutProjectionSubscriberCatchupHooks()->boot(SubscriptionEngineCriteria::create(ids: [$this->contentGraphSubscriptionId]), progressCallback: $this->replayProgressCallback, batchSize: self::REPLAY_BATCH_SIZE);
+    }
+
+    private function getEventStorePosition(): SequenceNumber
+    {
+        $lastEventEnvelope = current(iterator_to_array($this->context->doctrineEventStore->load(VirtualStreamName::all())->backwards()->limit(1))) ?: null;
+        return $lastEventEnvelope?->sequenceNumber ?? SequenceNumber::none();
     }
 
     private function getGraphProjectionStatus(): ProjectionSubscriptionStatus

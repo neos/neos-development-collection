@@ -109,9 +109,8 @@ final class CRUpgradeCommandController extends CommandController
 
         if ($this->output->getProgressBar()->getProgress() !== 0) {
             $this->output->progressFinish();
+            $this->outputLine();
         }
-
-        $this->outputLine();
     }
 
     /**
