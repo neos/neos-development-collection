@@ -110,7 +110,7 @@ final readonly class ContentRepositoryMaintainer implements ContentRepositorySer
         );
     }
 
-    public function replaySubscription(SubscriptionId $subscriptionId, \Closure|null $progressCallback = null, bool $skipCatchupHooks = false): Error|null
+    public function replaySubscription(SubscriptionId $subscriptionId, \Closure|null $progressCallback = null): Error|null
     {
         $subscriptionStatus = $this->subscriptionEngine->subscriptionStatus(SubscriptionEngineCriteria::create([$subscriptionId]))->first();
         if ($subscriptionStatus === null) {
@@ -123,7 +123,7 @@ final readonly class ContentRepositoryMaintainer implements ContentRepositorySer
         if ($resetResult->errors !== null) {
             return self::createErrorForReason('Reset failed:', $resetResult->errors);
         }
-        $bootResult = $this->subscriptionEngine->boot(SubscriptionEngineCriteria::create([$subscriptionId]), progressCallback: $progressCallback, batchSize: self::REPLAY_BATCH_SIZE, skipCatchupHooks: $skipCatchupHooks);
+        $bootResult = $this->subscriptionEngine->boot(SubscriptionEngineCriteria::create([$subscriptionId]), progressCallback: $progressCallback, batchSize: self::REPLAY_BATCH_SIZE);
         if ($bootResult->errors !== null) {
             return self::createErrorForReason('Catchup failed:', $bootResult->errors);
         }
