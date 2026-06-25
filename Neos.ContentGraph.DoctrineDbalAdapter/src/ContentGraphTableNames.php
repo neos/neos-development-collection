@@ -28,7 +28,7 @@ final readonly class ContentGraphTableNames
     }
 
     /**
-     * Warning, for reading any hierarchy information the {@see HierarchyRelationStatement} musts always be used to take layers into account.
+     * Warning, for reading any hierarchy information the {@see HierarchyRelationSubquery} musts always be used to take layers into account.
      * Using the pure table in any queries must be done with exact care!
      */
     public function hierarchyRelation(): string
