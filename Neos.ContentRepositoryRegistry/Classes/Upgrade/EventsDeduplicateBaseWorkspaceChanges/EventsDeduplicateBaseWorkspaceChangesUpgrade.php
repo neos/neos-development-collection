@@ -224,7 +224,7 @@ class EventsDeduplicateBaseWorkspaceChangesUpgrade
         $this->context->dbal->commit();
 
         $this->log('');
-        $this->log(sprintf('Migration applied to %s events. Please replay the projections `./flow subscription:replayall`', $affectedRows));
+        $this->log(sprintf('Migration applied to %s events. Please replay the content graph via `./flow crupgrade:resetupandreplaycontentgraph`', $affectedRows));
         $this->log('Done.');
     }
 }

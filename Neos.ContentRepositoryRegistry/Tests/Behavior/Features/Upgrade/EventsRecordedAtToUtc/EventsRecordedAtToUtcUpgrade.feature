@@ -90,7 +90,7 @@ Feature: As a user of the CR I want to upgrade my events
       Could not find a single non publishable event with non UTC date to validate if migration was run before.
       Backup: copying events table to cr_default_events_bkp_2024_09_22_12_00_00
 
-      Migration applied to 1 events. Please replay the projections `./flow subscription:replayall` to see the new adjusted UTC dates in the node timestamps
+      Migration applied to 1 events. Please replay the content graph via `./flow crupgrade:resetupandreplaycontentgraph` to see the new adjusted UTC dates in the node timestamps
       Done. Please dont re-rerun the migration.
       """
 
@@ -126,7 +126,7 @@ Feature: As a user of the CR I want to upgrade my events
           Debug: [{"sequenceNumber":4,"tzoffset":"+02:00"}]
       Backup: copying events table to cr_default_events_bkp_2024_09_22_12_00_00
 
-      Migration applied to 3 events. Please replay the projections `./flow subscription:replayall` to see the new adjusted UTC dates in the node timestamps
+      Migration applied to 3 events. Please replay the content graph via `./flow crupgrade:resetupandreplaycontentgraph` to see the new adjusted UTC dates in the node timestamps
       Done. Please dont re-rerun the migration.
       """
 
@@ -164,7 +164,7 @@ Feature: As a user of the CR I want to upgrade my events
           Debug: [{"sequenceNumber":1,"tzoffset":"+02:00"}]
       Backup: copying events table to cr_default_events_bkp_2024_09_22_12_00_00
 
-      Migration applied to 3 events. Please replay the projections `./flow subscription:replayall` to see the new adjusted UTC dates in the node timestamps
+      Migration applied to 3 events. Please replay the content graph via `./flow crupgrade:resetupandreplaycontentgraph` to see the new adjusted UTC dates in the node timestamps
       Done. Please dont re-rerun the migration.
       """
 
@@ -220,7 +220,7 @@ Feature: As a user of the CR I want to upgrade my events
           Debug: [{"sequenceNumber":1,"tzoffset":"+02:00"},{"sequenceNumber":4,"tzoffset":"+00:00"},{"sequenceNumber":6,"tzoffset":"+01:00"}]
       Backup: copying events table to cr_default_events_bkp_2024_09_22_12_00_00
 
-      Migration applied to 6 events. Please replay the projections `./flow subscription:replayall` to see the new adjusted UTC dates in the node timestamps
+      Migration applied to 6 events. Please replay the content graph via `./flow crupgrade:resetupandreplaycontentgraph` to see the new adjusted UTC dates in the node timestamps
       Done. Please dont re-rerun the migration.
       """
 
@@ -273,7 +273,7 @@ Feature: As a user of the CR I want to upgrade my events
           Debug: [{"sequenceNumber":1,"tzoffset":"+02:00"},{"sequenceNumber":4,"tzoffset":"+00:00"},{"sequenceNumber":6,"tzoffset":"+01:00"}]
       Backup: copying events table to cr_default_events_bkp_2024_09_22_12_00_00
 
-      Migration applied to 6 events. Please replay the projections `./flow subscription:replayall` to see the new adjusted UTC dates in the node timestamps
+      Migration applied to 6 events. Please replay the content graph via `./flow crupgrade:resetupandreplaycontentgraph` to see the new adjusted UTC dates in the node timestamps
       Done. Please dont re-rerun the migration.
       """
 

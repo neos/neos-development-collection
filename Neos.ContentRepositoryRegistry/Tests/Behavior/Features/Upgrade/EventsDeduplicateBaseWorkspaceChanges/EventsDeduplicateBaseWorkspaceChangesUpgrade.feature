@@ -127,7 +127,7 @@ Feature: As a user of the CR I want to upgrade my events
           Debug: 9,10,11
       Backup: copying events table to cr_default_events_bkp_2024_09_22_12_00_00
 
-      Migration applied to 3 events. Please replay the projections `./flow subscription:replayall`
+      Migration applied to 3 events. Please replay the content graph via `./flow crupgrade:resetupandreplaycontentgraph`
       Done.
       """
 
@@ -228,7 +228,7 @@ Feature: As a user of the CR I want to upgrade my events
           Debug: 100,101,102,103,104,105
       Backup: copying events table to cr_default_events_bkp_2024_09_22_12_00_00
 
-      Migration applied to 6 events. Please replay the projections `./flow subscription:replayall`
+      Migration applied to 6 events. Please replay the content graph via `./flow crupgrade:resetupandreplaycontentgraph`
       Done.
       """
 
@@ -433,7 +433,7 @@ Feature: As a user of the CR I want to upgrade my events
           Debug: 9,10,11
       Backup: copying events table to cr_default_events_bkp_2024_09_22_12_00_00
 
-      Migration applied to 3 events. Please replay the projections `./flow subscription:replayall`
+      Migration applied to 3 events. Please replay the content graph via `./flow crupgrade:resetupandreplaycontentgraph`
       Done.
       """
 
@@ -523,7 +523,7 @@ Feature: As a user of the CR I want to upgrade my events
           Debug: 9,11,12
       Backup: copying events table to cr_default_events_bkp_2024_09_22_12_00_00
 
-      Migration applied to 3 events. Please replay the projections `./flow subscription:replayall`
+      Migration applied to 3 events. Please replay the content graph via `./flow crupgrade:resetupandreplaycontentgraph`
       Done.
       """
 
