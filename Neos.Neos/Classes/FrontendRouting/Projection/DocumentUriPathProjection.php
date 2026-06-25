@@ -460,8 +460,8 @@ final class DocumentUriPathProjection implements ProjectionInterface
 
             // If a node was not tagged, decrementing an untagged node ($nodeTagLevel === 0) would cause an unsigned integer underflow.
             // A node might not have been tagged in the first place and just untagged with allVariants or the variant was already untagged.
-            /** @phpstan-ignore match.unhandled */
             if (
+                /** @phpstan-ignore match.unhandled (phpstan does not understand flyweights) */
                 match ($event->tag) {
                     NeosSubtreeTag::disabled() => !$this->isNodeExplicitlyDisabled($node, $parentNode),
                     NeosSubtreeTag::removed() => !$this->isNodeExplicitlyRemoved($node, $parentNode),
@@ -754,7 +754,7 @@ final class DocumentUriPathProjection implements ProjectionInterface
         try {
             $this->dbal->insert($this->tableNamePrefix . '_uri', $data, self::COLUMN_TYPES_DOCUMENT_URIS);
         } catch (DBALException $e) {
-            throw new \RuntimeException(sprintf('Failed to insert node: %s', $e->getMessage()), 1599646694, $e);
+            throw new \RuntimeException(sprintf('Failed to insert node %s: %s', json_encode($data, JSON_PARTIAL_OUTPUT_ON_ERROR), $e->getMessage()), 1599646694, $e);
         }
     }
 
@@ -790,8 +790,9 @@ final class DocumentUriPathProjection implements ProjectionInterface
             );
         } catch (DBALException $e) {
             throw new \RuntimeException(sprintf(
-                'Failed to update node "%s": %s',
+                'Failed to update node "%s" in dimension %s: %s',
                 $nodeAggregateId->value,
+                $dimensionSpacePointHash,
                 $e->getMessage()
             ), 1599646777, $e);
         }
@@ -810,8 +811,9 @@ final class DocumentUriPathProjection implements ProjectionInterface
             );
         } catch (DBALException $e) {
             throw new \RuntimeException(sprintf(
-                'Failed to update node via custom query: %s',
-                $e->getMessage()
+                'Failed to update node via custom query: %s and parameters %s',
+                $e->getMessage(),
+                json_encode($parameters, JSON_PARTIAL_OUTPUT_ON_ERROR)
             ), 1599659170, $e);
         }
     }
@@ -831,8 +833,9 @@ final class DocumentUriPathProjection implements ProjectionInterface
             );
         } catch (DBALException $e) {
             throw new \RuntimeException(sprintf(
-                'Failed to delete node "%s": %s',
+                'Failed to delete node "%s" in dimension %s: %s',
                 $nodeAggregateId->value,
+                $dimensionSpacePointHash,
                 $e->getMessage()
             ), 1599655284, $e);
         }
@@ -851,8 +854,9 @@ final class DocumentUriPathProjection implements ProjectionInterface
             );
         } catch (DBALException $e) {
             throw new \RuntimeException(sprintf(
-                'Failed to delete node via custom query: %s',
-                $e->getMessage()
+                'Failed to delete node via custom query: %s and parameters %s',
+                $e->getMessage(),
+                json_encode($parameters, JSON_PARTIAL_OUTPUT_ON_ERROR)
             ), 1599659226, $e);
         }
     }
