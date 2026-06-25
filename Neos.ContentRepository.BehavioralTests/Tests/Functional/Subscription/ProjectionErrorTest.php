@@ -19,6 +19,7 @@ use Neos\ContentRepository\Core\Subscription\ProjectionSubscriptionStatus;
 use Neos\ContentRepository\Core\Subscription\SubscriptionError;
 use Neos\ContentRepository\Core\Subscription\SubscriptionId;
 use Neos\ContentRepository\Core\Subscription\SubscriptionStatus;
+use Neos\ContentRepository\Core\Subscription\SubscriptionStatusCollection;
 use Neos\EventStore\Model\Event\SequenceNumber;
 use Neos\EventStore\Model\EventEnvelope;
 
@@ -226,6 +227,9 @@ final class ProjectionErrorTest extends AbstractSubscriptionEngineTestCase
         $result = $this->subscriptionEngine->setup();
         self::assertEquals(Result::success(), $result);
         self::assertEquals($expectedFailure, $this->subscriptionStatus('Vendor.Package:SecondFakeProjection'));
+
+        // status with filter would show that setup would exclude it
+        self::assertEquals(SubscriptionStatusCollection::fromArray([$expectedFailure]), $this->subscriptionEngine->subscriptionStatusOfSetupExcluded());
 
         // reactivation will attempt to retry fix this, but can only work if the projection is repaired and will lead to an error otherwise:
         $result = $this->subscriptionEngine->reactivate();
