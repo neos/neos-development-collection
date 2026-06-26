@@ -1152,7 +1152,7 @@
       </trans-unit>
       <trans-unit id="notVisibleDocument.message" xml:space="preserve">
         <source>This page is currently hidden and is not visible in this workspace.</source>
-        <target state="needs-translation" state-qualifier="leveraged-mt">Deze pagina is op dit moment verborgen en niet zichtbaar in deze workspace.</target>
+        <target state="translated" state-qualifier="leveraged-mt">Deze pagina is op dit moment verborgen en niet zichtbaar in deze workspace.</target>
       </trans-unit>
     </body>
   </file>
