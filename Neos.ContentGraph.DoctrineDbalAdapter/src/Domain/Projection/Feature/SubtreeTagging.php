@@ -37,11 +37,15 @@ trait SubtreeTagging
         // have children in several covered dimensions).
         try {
             foreach ($affectedDimensionSpacePoints as $dimensionSpacePoint) {
-                $level = $this->findUntaggedWinningChildRelationsOfNodeAggregate($contentStreamLayers, $nodeAggregateId, $dimensionSpacePoint, $subtreeTag);
-                while ($level !== []) {
+                $seed = $this->findWinningRelationOfNodeAggregate($contentStreamLayers, $nodeAggregateId, $dimensionSpacePoint);
+                if ($seed === null) {
+                    // the node aggregate is not present in this dimension - nothing to cascade into
+                    continue;
+                }
+                $childNodeAnchors = NodeRelationAnchorPoints::create($seed->childNodeAnchor);
+                while (($level = $this->findUntaggedWinningChildRelationsOfAnchors($contentStreamLayers, $childNodeAnchors, $dimensionSpacePoint, $subtreeTag)) !== []) {
                     $this->writeInheritedSubtreeTag($contentStreamLayers, $level, $subtreeTag);
                     $childNodeAnchors = NodeRelationAnchorPoints::create(...array_map(fn (ChildHierarchyRelation $child) => $child->childNodeAnchor, $level));
-                    $level = $this->findUntaggedWinningChildRelationsOfAnchors($contentStreamLayers, $childNodeAnchors, $dimensionSpacePoint, $subtreeTag);
                 }
             }
         } catch (DBALException $e) {
@@ -88,41 +92,6 @@ trait SubtreeTagging
         } catch (DBALException $e) {
             throw new \RuntimeException(sprintf('2: Failed to add subtree tag %s for content stream %s, node aggregate id %s and dimension space points %s: %s', $subtreeTag->value, $contentStreamLayers->toDebugString(), $nodeAggregateId->value, $affectedDimensionSpacePoints->toJson(), $e->getMessage()), 1716479840, $e);
         }
-    }
-
-    /**
-     * Resolve the untagged winning child hierarchy relations directly beneath the given node aggregate (the seed level
-     * of the subtree walk), scoped to a single dimension space point. Index-driven via the new-parent aggregate's
-     * relation anchors; tombstone-safe via the id-based inner pushdown.
-     *
-     * @return list<ChildHierarchyRelation>
-     */
-    private function findUntaggedWinningChildRelationsOfNodeAggregate(ContentStreamLayers $contentStreamLayers, NodeAggregateId $parentNodeAggregateId, DimensionSpacePoint $dimensionSpacePoint, SubtreeTag $subtreeTag): array
-    {
-        $nodeAggregateIdCondition = NodeAggregateIdCondition::forNodeAggregateId($parentNodeAggregateId);
-        $hierarchyStatement = $this->subqueries->forHierarchyRelation($contentStreamLayers)->withDimensionSpacePoint($dimensionSpacePoint)->withPossibleParentNodeAggregateId($nodeAggregateIdCondition)
-            ->withWhereCondition(StaticWhereCondition::fromString('h', "NOT JSON_CONTAINS_PATH(h.subtreetags, 'one', :tagPath)"));
-
-        $statement = <<<SQL
-            SELECT h.id, h.contentstreamlayer, h.childnodeanchor
-            FROM {$hierarchyStatement->toSql()} h
-              INNER JOIN {$this->tableNames->node()} n ON n.relationanchorpoint = h.parentnodeanchor
-            WHERE
-              {$nodeAggregateIdCondition->toWhereSql('n')}
-            SQL;
-        // Todo catch all DBALException
-        $rows = $this->dbal->fetchAllAssociative($statement, [
-            'tagPath' => SubtreeTagPath::create($subtreeTag),
-            ...$hierarchyStatement->getParameters()->toDbalValues(),
-            ...$nodeAggregateIdCondition->getParameters()->toDbalValues(),
-        ], [
-            ...$hierarchyStatement->getParameters()->toDbalTypes(),
-            ...$nodeAggregateIdCondition->getParameters()->toDbalTypes(),
-        ]);
-        return array_map(
-            ChildHierarchyRelation::fromArray(...),
-            $rows
-        );
     }
 
     /**
