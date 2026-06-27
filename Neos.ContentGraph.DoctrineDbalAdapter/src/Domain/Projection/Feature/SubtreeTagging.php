@@ -6,7 +6,6 @@ namespace Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\Feature;
 
 use Doctrine\DBAL\Exception as DBALException;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\ContentStreamLayers;
-use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\Feature\SubtreeTagging\ChildHierarchyRelation;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\Feature\SubtreeTagging\SubtreeTagPath;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\HierarchyRelation;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\NodeRelationAnchorPoint;
@@ -48,83 +47,26 @@ trait SubtreeTagging
                 ]);
 
                 // cascade the tag INHERITED (null) onto every untagged descendant, one level at a time
-                $childNodeAnchors = NodeRelationAnchorPoints::create($seed->childNodeAnchor);
-                while (($level = $this->findUntaggedWinningChildRelationsOfAnchors($contentStreamLayers, $childNodeAnchors, $dimensionSpacePoint, $subtreeTag)) !== []) {
-                    $this->writeInheritedSubtreeTag($contentStreamLayers, $level, $subtreeTag);
-                    $childNodeAnchors = NodeRelationAnchorPoints::create(...array_map(fn(ChildHierarchyRelation $child) => $child->childNodeAnchor, $level));
+                $frontier = [$seed->childNodeAnchor];
+                while ($frontier !== []) {
+                    $children = $this->findWinningChildRelationsOfAnchors($contentStreamLayers, NodeRelationAnchorPoints::create(...$frontier), $dimensionSpacePoint);
+                    $writeBatch = [];
+                    $nextFrontier = [];
+                    foreach ($children as $child) {
+                        if ($child->subtreeTags->contain($subtreeTag)) {
+                            // already tagged (explicit or inherited) -> its subtree already carries the tag, stop here
+                            continue;
+                        }
+                        $writeBatch[] = $child->with(subtreeTags: $child->subtreeTags->withInherited($subtreeTag));
+                        $nextFrontier[] = $child->childNodeAnchor;
+                    }
+                    $this->writeRecomputedSubtreeTags($contentStreamLayers, $writeBatch);
+                    $frontier = $nextFrontier;
                 }
             }
         } catch (DBALException $e) {
             throw new \RuntimeException(sprintf('Failed to add subtree tag %s for content stream %s, node aggregate id %s and dimension space points %s: %s', $subtreeTag->value, $contentStreamLayers->toDebugString(), $nodeAggregateId->value, $affectedDimensionSpacePoints->toJson(), $e->getMessage()), 1716479749, $e);
         }
-    }
-
-    /**
-     * Resolve the untagged winning child hierarchy relations of a whole frontier of parent node anchors in one query,
-     * scoped to a single dimension space point. This is the per-level batch step of the subtree walk.
-     *
-     * @return list<ChildHierarchyRelation>
-     */
-    private function findUntaggedWinningChildRelationsOfAnchors(ContentStreamLayers $contentStreamLayers, NodeRelationAnchorPoints $parentNodeAnchors, DimensionSpacePoint $dimensionSpacePoint, SubtreeTag $subtreeTag): array
-    {
-        if ($parentNodeAnchors->isEmpty()) {
-            return [];
-        }
-        $hierarchyStatement = $this->subqueries->forHierarchyRelation($contentStreamLayers)->withDimensionSpacePoint($dimensionSpacePoint)
-            ->withParentNodeRelationAnchors($parentNodeAnchors)
-            ->withWhereCondition(StaticWhereCondition::fromString('h', "NOT JSON_CONTAINS_PATH(h.subtreetags, 'one', :tagPath)"));
-
-        $statement = <<<SQL
-            SELECT h.id, h.contentstreamlayer, h.childnodeanchor
-            FROM {$hierarchyStatement->toSql()} h
-            SQL;
-        $rows = $this->dbal->fetchAllAssociative($statement, [
-            'tagPath' => SubtreeTagPath::create($subtreeTag),
-            ...$hierarchyStatement->getParameters()->toDbalValues(),
-        ], [
-            ...$hierarchyStatement->getParameters()->toDbalTypes(),
-        ]);
-        return array_map(
-            ChildHierarchyRelation::fromArray(...),
-            $rows
-        );
-    }
-
-    /**
-     * Write the inherited subtree tag (null marker) onto the given winning relations, copying each into the write layer.
-     * The relations are addressed by their unique (id, contentstreamlayer) so no layer re-resolution is needed.
-     *
-     * @param list<ChildHierarchyRelation> $relations
-     */
-    private function writeInheritedSubtreeTag(ContentStreamLayers $contentStreamLayers, array $relations, SubtreeTag $subtreeTag): void
-    {
-        if ($relations === []) {
-            return;
-        }
-        $idLayerPairs = implode(',', array_map(
-            static fn(ChildHierarchyRelation $row) => '(' . $row->id->value . ',' . $row->contentStreamLayer->value . ')',
-            $relations
-        ));
-        $statement = <<<SQL
-            INSERT INTO {$this->tableNames->hierarchyRelation()} (
-              id, parentnodeanchor, childnodeanchor, position, subtreetags, dimensionspacepointhash, contentstreamlayer
-            )
-            SELECT
-              h.id,
-              h.parentnodeanchor,
-              h.childnodeanchor,
-              h.position,
-              JSON_INSERT(h.subtreetags, :tagPath, null) as subtreetags,
-              h.dimensionspacepointhash,
-              :targetContentStreamLayer as contentstreamlayer
-            FROM {$this->tableNames->hierarchyRelation()} h
-            WHERE (h.id, h.contentstreamlayer) IN ($idLayerPairs)
-            ON DUPLICATE KEY UPDATE subtreetags = VALUES(subtreetags)
-            SQL;
-        $this->dbal->executeStatement($statement, [
-            'tagPath' => SubtreeTagPath::create($subtreeTag),
-            'targetContentStreamLayer' => $contentStreamLayers->getWriteLayer()->value,
-        ]);
     }
 
     /**
@@ -166,6 +108,7 @@ trait SubtreeTagging
                     $writeBatch = [];
                     $frontierAnchors = [];
                     foreach ($toProcess as $relation) {
+                        assert($relation instanceof HierarchyRelation);
                         // still inherited -> explicit tag becomes an inherited marker; otherwise the tag is dropped entirely
                         $newTags = $stillInherited
                             ? $relation->subtreeTags->withInherited($subtreeTag)
