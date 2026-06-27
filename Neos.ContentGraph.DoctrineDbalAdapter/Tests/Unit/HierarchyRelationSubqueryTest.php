@@ -43,13 +43,14 @@ class HierarchyRelationSubqueryTest extends TestCase
         <<<SQL
         (SELECT h.*
           FROM cr_testing_p_graph_hierarchyrelation AS h
-          INNER JOIN (
-            SELECT id, MAX(contentstreamlayer) AS contentstreamlayer
-              FROM cr_testing_p_graph_hierarchyrelation
-                WHERE (contentstreamlayer IN (:contentStreamLayers))
-            GROUP BY id
-          ) AS readHierarchy
-            ON h.id = readHierarchy.id AND h.contentstreamlayer = readHierarchy.contentstreamlayer
+          WHERE (h.contentstreamlayer IN (:contentStreamLayers))
+            AND NOT EXISTS (
+              SELECT 1
+                FROM cr_testing_p_graph_hierarchyrelation hWin
+                WHERE hWin.id = h.id
+                  AND hWin.contentstreamlayer IN (:contentStreamLayers)
+                  AND hWin.contentstreamlayer > h.contentstreamlayer
+            )
         )
         SQL,
             $hierarchyRelationStatement->toSql()
@@ -82,18 +83,19 @@ class HierarchyRelationSubqueryTest extends TestCase
             <<<SQL
             (SELECT h.*
               FROM cr_testing_p_graph_hierarchyrelation AS h
-              INNER JOIN (
-                SELECT id, MAX(contentstreamlayer) AS contentstreamlayer
-                  FROM cr_testing_p_graph_hierarchyrelation
-                    WHERE (contentstreamlayer IN (:contentStreamLayers))
-                    AND id IN (
-                      SELECT id FROM cr_testing_p_graph_hierarchyrelation AS h
-                        WHERE h.dimensionspacepointhash = :dimensionSpacePointHash
-                    )
-                GROUP BY id
-              ) AS readHierarchy
-                ON h.id = readHierarchy.id AND h.contentstreamlayer = readHierarchy.contentstreamlayer
-              WHERE h.dimensionspacepointhash = :dimensionSpacePointHash
+              WHERE (h.contentstreamlayer IN (:contentStreamLayers))
+                AND id IN (
+                  SELECT id FROM cr_testing_p_graph_hierarchyrelation AS h
+                    WHERE h.dimensionspacepointhash = :dimensionSpacePointHash
+                )
+                AND NOT EXISTS (
+                  SELECT 1
+                    FROM cr_testing_p_graph_hierarchyrelation hWin
+                    WHERE hWin.id = h.id
+                      AND hWin.contentstreamlayer IN (:contentStreamLayers)
+                      AND hWin.contentstreamlayer > h.contentstreamlayer
+                )
+              AND h.dimensionspacepointhash = :dimensionSpacePointHash
             )
             SQL,
             $hierarchyRelationStatement->toSql()
@@ -129,19 +131,20 @@ class HierarchyRelationSubqueryTest extends TestCase
             <<<SQL
             (SELECT h.*
               FROM cr_testing_p_graph_hierarchyrelation AS h
-              INNER JOIN (
-                SELECT id, MAX(contentstreamlayer) AS contentstreamlayer
-                  FROM cr_testing_p_graph_hierarchyrelation
-                    WHERE (contentstreamlayer IN (:contentStreamLayers))
-                    AND id IN (
-                      SELECT id FROM cr_testing_p_graph_hierarchyrelation AS h
-                        WHERE h.dimensionspacepointhash = :dimensionSpacePointHash
-                        AND h.childnodeanchor = :childNodeRelationAnchorPoint
-                    )
-                GROUP BY id
-              ) AS readHierarchy
-                ON h.id = readHierarchy.id AND h.contentstreamlayer = readHierarchy.contentstreamlayer
-              WHERE h.dimensionspacepointhash = :dimensionSpacePointHash
+              WHERE (h.contentstreamlayer IN (:contentStreamLayers))
+                AND id IN (
+                  SELECT id FROM cr_testing_p_graph_hierarchyrelation AS h
+                    WHERE h.dimensionspacepointhash = :dimensionSpacePointHash
+                    AND h.childnodeanchor = :childNodeRelationAnchorPoint
+                )
+                AND NOT EXISTS (
+                  SELECT 1
+                    FROM cr_testing_p_graph_hierarchyrelation hWin
+                    WHERE hWin.id = h.id
+                      AND hWin.contentstreamlayer IN (:contentStreamLayers)
+                      AND hWin.contentstreamlayer > h.contentstreamlayer
+                )
+              AND h.dimensionspacepointhash = :dimensionSpacePointHash
               AND h.childnodeanchor = :childNodeRelationAnchorPoint
             )
             SQL,
@@ -169,14 +172,15 @@ class HierarchyRelationSubqueryTest extends TestCase
             <<<SQL
         (SELECT h.*
           FROM cr_testing_p_graph_hierarchyrelation AS h
-          INNER JOIN (
-            SELECT id, MAX(contentstreamlayer) AS contentstreamlayer
-              FROM cr_testing_p_graph_hierarchyrelation
-                WHERE (contentstreamlayer IN (:contentStreamLayers))
-            GROUP BY id
-          ) AS readHierarchy
-            ON h.id = readHierarchy.id AND h.contentstreamlayer = readHierarchy.contentstreamlayer
-          WHERE h.subtreetag = :myOwnParameter
+          WHERE (h.contentstreamlayer IN (:contentStreamLayers))
+            AND NOT EXISTS (
+              SELECT 1
+                FROM cr_testing_p_graph_hierarchyrelation hWin
+                WHERE hWin.id = h.id
+                  AND hWin.contentstreamlayer IN (:contentStreamLayers)
+                  AND hWin.contentstreamlayer > h.contentstreamlayer
+            )
+          AND h.subtreetag = :myOwnParameter
         )
         SQL,
             $hierarchyRelationStatement->toSql()
@@ -203,17 +207,18 @@ class HierarchyRelationSubqueryTest extends TestCase
             <<<SQL
         (SELECT h.*
           FROM cr_testing_p_graph_hierarchyrelation AS h
-          INNER JOIN (
-            SELECT id, MAX(contentstreamlayer) AS contentstreamlayer
-              FROM cr_testing_p_graph_hierarchyrelation
-                WHERE (contentstreamlayer IN (:contentStreamLayers))
-                AND id IN (
-                  SELECT id FROM cr_testing_p_graph_hierarchyrelation AS h
-                    WHERE h.childnodeanchor = :originalNodeAnchor OR h.parentnodeanchor = :originalNodeAnchor
-                )
-            GROUP BY id
-          ) AS readHierarchy
-            ON h.id = readHierarchy.id AND h.contentstreamlayer = readHierarchy.contentstreamlayer
+          WHERE (h.contentstreamlayer IN (:contentStreamLayers))
+            AND id IN (
+              SELECT id FROM cr_testing_p_graph_hierarchyrelation AS h
+                WHERE h.childnodeanchor = :originalNodeAnchor OR h.parentnodeanchor = :originalNodeAnchor
+            )
+            AND NOT EXISTS (
+              SELECT 1
+                FROM cr_testing_p_graph_hierarchyrelation hWin
+                WHERE hWin.id = h.id
+                  AND hWin.contentstreamlayer IN (:contentStreamLayers)
+                  AND hWin.contentstreamlayer > h.contentstreamlayer
+            )
         )
         SQL,
             $hierarchyRelationStatement->toSql()

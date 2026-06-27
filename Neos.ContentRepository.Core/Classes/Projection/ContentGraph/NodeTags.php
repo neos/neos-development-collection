@@ -60,6 +60,36 @@ final readonly class NodeTags implements \IteratorAggregate, \Countable, \JsonSe
         return new self($this->tags->without($subtreeTagToRemove), $this->inheritedTags->without($subtreeTagToRemove));
     }
 
+    /**
+     * Return a copy with the given tag set _explicitly_ (promoting it from inherited if it was only inherited before)
+     */
+    public function withExplicit(SubtreeTag $subtreeTag): self
+    {
+        if ($this->tags->contain($subtreeTag)) {
+            return $this;
+        }
+        return self::create($this->tags->with($subtreeTag), $this->inheritedTags->without($subtreeTag));
+    }
+
+    /**
+     * Return a copy with the given tag marked as _inherited_ (demoting it from explicit if it was set explicitly before)
+     */
+    public function withInherited(SubtreeTag $subtreeTag): self
+    {
+        if ($this->inheritedTags->contain($subtreeTag)) {
+            return $this;
+        }
+        return self::create($this->tags->without($subtreeTag), $this->inheritedTags->with($subtreeTag));
+    }
+
+    /**
+     * Whether the given tag is set _explicitly_ on this node (as opposed to only being inherited from an ancestor)
+     */
+    public function containsExplicitly(SubtreeTag $tag): bool
+    {
+        return $this->tags->contain($tag);
+    }
+
     public function withoutInherited(): self
     {
         if ($this->inheritedTags->isEmpty()) {
