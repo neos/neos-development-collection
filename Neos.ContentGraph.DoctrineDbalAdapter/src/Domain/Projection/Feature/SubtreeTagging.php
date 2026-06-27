@@ -31,20 +31,10 @@ trait SubtreeTagging
 {
     private function addSubtreeTag(ContentStreamLayers $contentStreamLayers, NodeAggregateId $nodeAggregateId, DimensionSpacePointSet $affectedDimensionSpacePoints, SubtreeTag $subtreeTag): void
     {
-        // Performance: walk the subtree ONE LEVEL AT A TIME, driven from PHP, instead of in a single recursive CTE.
-        // A recursive CTE cannot scope its per-level layer resolution to the current frontier (the recursive relation
-        // may not appear inside the derived MAX(contentstreamlayer) subquery), so it ends up resolving the whole
-        // content stream per level — O(table) regardless of how small the tagged subtree is. By holding the frontier
-        // in PHP, each level runs the proven, index-scoped resolution (`parentnodeanchor IN (frontier)` pushed into the
-        // {@see HierarchyRelationStatement} subquery), so the operation scales with the SUBTREE size, not the table.
+        // Performance: walk the subtree ONE LEVEL AT A TIME (more performant than recursive CTEs, as we've learned).
         //
         // We walk per dimension space point to keep the parent<->child dsp pairing exact (a single parent anchor may
-        // have children in several covered dimensions). Each level: resolve the untagged winning child relations of the
-        // current frontier (one query), write the inherited tag onto them (one query), then descend.
-        //
-        // Tombstones stay correct for free: a removed relation's winning row is the NULL-parent tombstone, which never
-        // matches the outer `parentnodeanchor IN (frontier)`, so removed subtrees drop out (the id-based inner pushdown
-        // keeps every layer, including the tombstone, in the resolution).
+        // have children in several covered dimensions).
         try {
             foreach ($affectedDimensionSpacePoints as $dimensionSpacePoint) {
                 $level = $this->findUntaggedWinningChildRelationsOfNodeAggregate($contentStreamLayers, $nodeAggregateId, $dimensionSpacePoint, $subtreeTag);
