@@ -7,6 +7,7 @@ namespace Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\Feature;
 use Doctrine\DBAL\Exception as DBALException;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\ContentStreamLayers;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\Feature\SubtreeTagging\SubtreeTagPath;
+use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\Feature\SubtreeTagging\SubtreeWalkStep;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\HierarchyRelation;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\NodeRelationAnchorPoint;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\NodeRelationAnchorPoints;
@@ -46,23 +47,14 @@ trait SubtreeTagging
                     $seed->with(subtreeTags: $seed->subtreeTags->withExplicit($subtreeTag)),
                 ]);
 
-                // cascade the tag INHERITED (null) onto every untagged descendant, one level at a time
-                $frontier = [$seed->childNodeAnchor];
-                while ($frontier !== []) {
-                    $children = $this->findWinningChildRelationsOfAnchors($contentStreamLayers, NodeRelationAnchorPoints::create(...$frontier), $dimensionSpacePoint);
-                    $writeBatch = [];
-                    $nextFrontier = [];
-                    foreach ($children as $child) {
-                        if ($child->subtreeTags->contain($subtreeTag)) {
-                            // already tagged (explicit or inherited) -> its subtree already carries the tag, stop here
-                            continue;
-                        }
-                        $writeBatch[] = $child->with(subtreeTags: $child->subtreeTags->withInherited($subtreeTag));
-                        $nextFrontier[] = $child->childNodeAnchor;
+                // cascade the tag INHERITED (null) onto every untagged descendant
+                $this->walkSubtreeDescendants($contentStreamLayers, $seed->childNodeAnchor, $dimensionSpacePoint, function (HierarchyRelation $child) use ($subtreeTag): HierarchyRelation|SubtreeWalkStep {
+                    if ($child->subtreeTags->contain($subtreeTag)) {
+                        // already tagged (explicit or inherited) -> its whole subtree already carries the tag, stop here
+                        return SubtreeWalkStep::StopHere;
                     }
-                    $this->writeRecomputedSubtreeTags($contentStreamLayers, $writeBatch);
-                    $frontier = $nextFrontier;
-                }
+                    return $child->with(subtreeTags: $child->subtreeTags->withInherited($subtreeTag));
+                });
             }
         } catch (DBALException $e) {
             throw new \RuntimeException(sprintf('Failed to add subtree tag %s for content stream %s, node aggregate id %s and dimension space points %s: %s', $subtreeTag->value, $contentStreamLayers->toDebugString(), $nodeAggregateId->value, $affectedDimensionSpacePoints->toJson(), $e->getMessage()), 1716479749, $e);
@@ -102,40 +94,24 @@ trait SubtreeTagging
                 // parent's anchor in this dimension; the parent's incoming relation has childnodeanchor = that anchor).
                 $stillInherited = $this->relationContainsTag($contentStreamLayers, NodeRelationAnchorPoints::fromArray([$seed->parentNodeAnchor->value]), $dimensionSpacePoint, $subtreeTag);
 
-                $toProcess = [$seed];
-                $visited = [$seed->childNodeAnchor->value => true];
-                while ($toProcess !== []) {
-                    $writeBatch = [];
-                    $frontierAnchors = [];
-                    foreach ($toProcess as $relation) {
-                        assert($relation instanceof HierarchyRelation);
-                        // still inherited -> explicit tag becomes an inherited marker; otherwise the tag is dropped entirely
-                        $newTags = $stillInherited
-                            ? $relation->subtreeTags->withInherited($subtreeTag)
-                            : $relation->subtreeTags->without($subtreeTag);
-                        if (!$newTags->equals($relation->subtreeTags)) {
-                            $writeBatch[] = $relation->with(subtreeTags: $newTags);
-                        }
-                        $frontierAnchors[] = $relation->childNodeAnchor;
-                    }
-                    $this->writeRecomputedSubtreeTags($contentStreamLayers, $writeBatch);
+                // untag the node itself: still inherited -> explicit becomes an inherited marker; otherwise the tag is dropped
+                $this->writeRecomputedSubtreeTags($contentStreamLayers, [
+                    $seed->with(subtreeTags: $stillInherited
+                        ? $seed->subtreeTags->withInherited($subtreeTag)
+                        : $seed->subtreeTags->without($subtreeTag)),
+                ]);
 
-                    // descend only into children that carry the tag as INHERITED (null); stop at explicit (true) or absent
-                    $children = $this->findWinningChildRelationsOfAnchors($contentStreamLayers, NodeRelationAnchorPoints::create(...$frontierAnchors), $dimensionSpacePoint);
-                    $toProcess = [];
-                    foreach ($children as $child) {
-                        $childAnchor = $child->childNodeAnchor->value;
-                        if (isset($visited[$childAnchor])) {
-                            continue;
-                        }
-                        // descend only if the child carries the tag as INHERITED; stop at explicit or absent
-                        if (!$child->subtreeTags->contain($subtreeTag) || $child->subtreeTags->containsExplicitly($subtreeTag)) {
-                            continue;
-                        }
-                        $visited[$childAnchor] = true;
-                        $toProcess[] = $child;
+                $this->walkSubtreeDescendants($contentStreamLayers, $seed->childNodeAnchor, $dimensionSpacePoint, function (HierarchyRelation $child) use ($subtreeTag, $stillInherited): HierarchyRelation|SubtreeWalkStep {
+                    // descend only into children that carry the tag as INHERITED (null)
+                    if (!$child->subtreeTags->contain($subtreeTag) || $child->subtreeTags->containsExplicitly($subtreeTag)) {
+                        // explicit (true) keeps its own independently-tagged subtree; absent is unaffected -> stop here
+                        return SubtreeWalkStep::StopHere;
                     }
-                }
+                    // still inherited -> keep the inherited marker (no-op); otherwise drop the tag entirely
+                    return $child->with(subtreeTags: $stillInherited
+                        ? $child->subtreeTags->withInherited($subtreeTag)
+                        : $child->subtreeTags->without($subtreeTag));
+                });
             }
         } catch (DBALException $e) {
             throw new \RuntimeException(sprintf('Failed to remove subtree tag %s for content stream %s, node aggregate id %s and dimension space points %s: %s', $subtreeTag->value, $contentStreamLayers->toDebugString(), $nodeAggregateId->value, $affectedDimensionSpacePoints->toJson(), $e->getMessage()), 1716482293, $e);
@@ -201,43 +177,65 @@ trait SubtreeTagging
             $effectiveTagsByAnchor = [
                 $seed->childNodeAnchor->value => $seed->subtreeTags->all(),
             ];
-            $visited = [$seed->childNodeAnchor->value => true];
-            $frontier = [$seed->childNodeAnchor];
 
-            while ($frontier !== []) {
-                $children = $this->findWinningChildRelationsOfAnchors($contentStreamLayers, NodeRelationAnchorPoints::create(...$frontier), $coveredDimensionSpacePoint);
-                $writeBatch = [];
-                $nextFrontier = [];
-                foreach ($children as $child) {
-                    $childAnchor = $child->childNodeAnchor;
-                    if (isset($visited[$childAnchor->value])) {
-                        // cycle guard (a content tree must not contain cycles, but never loop forever on malformed data)
-                        continue;
-                    }
-                    // the child keeps its OWN explicit tags and inherits the parent's accumulated set (minus its own explicit)
-                    $inheritedFromParent = $effectiveTagsByAnchor[$child->parentNodeAnchor->value] ?? SubtreeTags::createEmpty();
-                    $ownExplicitTags = $child->subtreeTags->withoutInherited()->all();
-                    $newTags = NodeTags::create($ownExplicitTags, $inheritedFromParent->difference($ownExplicitTags));
-                    $effectiveTagsByAnchor[$childAnchor->value] = $newTags->all();
-
-                    if (!$newTags->equals($child->subtreeTags)) {
-                        $writeBatch[] = $child->with(subtreeTags: $newTags);
-                    }
-                    $visited[$childAnchor->value] = true;
-                    $nextFrontier[] = $childAnchor;
-                }
-                $this->writeRecomputedSubtreeTags($contentStreamLayers, $writeBatch);
-                $frontier = $nextFrontier;
-            }
+            $this->walkSubtreeDescendants($contentStreamLayers, $seed->childNodeAnchor, $coveredDimensionSpacePoint, function (HierarchyRelation $child) use (&$effectiveTagsByAnchor): HierarchyRelation {
+                // the child keeps its OWN explicit tags and inherits the parent's accumulated set (minus its own explicit)
+                $inheritedFromParent = $effectiveTagsByAnchor[$child->parentNodeAnchor->value] ?? SubtreeTags::createEmpty();
+                $ownExplicitTags = $child->subtreeTags->withoutInherited()->all();
+                $newTags = NodeTags::create($ownExplicitTags, $inheritedFromParent->difference($ownExplicitTags));
+                // record this node's effective set so its own children inherit it (never stops -> recompute the whole subtree)
+                $effectiveTagsByAnchor[$child->childNodeAnchor->value] = $newTags->all();
+                return $child->with(subtreeTags: $newTags);
+            });
         } catch (DBALException $e) {
             throw new \RuntimeException(sprintf('Failed to move subtree tags for content stream %s, new parent node aggregate id %s and dimension space point %s: %s', $contentStreamLayers->toDebugString(), $newParentNodeAggregateId->value, $coveredDimensionSpacePoint->toJson(), $e->getMessage()), 1716482574, $e);
         }
     }
 
     /**
+     * Walk the subtree below $rootChildNodeAnchor ONE LEVEL AT A TIME (more performant than recursive CTEs), scoped to a
+     * single dimension. Shared by all three subtree-tag walks ({@see addSubtreeTag()}, {@see removeSubtreeTag()},
+     * {@see moveSubtreeTags()}); the seed node itself is handled by each caller, this walks only its descendants.
+     *
+     * For every winning child relation $visit decides what happens:
+     *  - return {@see SubtreeWalkStep::StopHere} to stop at this node (no write, no descent into its children), or
+     *  - return the (possibly retagged) relation to descend into; it is persisted only if its tags actually changed.
+     *
+     * A {@see $visited} guard makes the walk loop-safe even on (illegal) cyclic data.
+     *
+     * @param \Closure(HierarchyRelation): (HierarchyRelation|SubtreeWalkStep) $visit
+     */
+    private function walkSubtreeDescendants(ContentStreamLayers $contentStreamLayers, NodeRelationAnchorPoint $rootChildNodeAnchor, DimensionSpacePoint $dimensionSpacePoint, \Closure $visit): void
+    {
+        $frontier = [$rootChildNodeAnchor];
+        $visited = [$rootChildNodeAnchor->value => true];
+        while ($frontier !== []) {
+            $children = $this->findWinningChildRelationsOfAnchors($contentStreamLayers, NodeRelationAnchorPoints::create(...$frontier), $dimensionSpacePoint);
+            $writeBatch = [];
+            $nextFrontier = [];
+            foreach ($children as $child) {
+                if (isset($visited[$child->childNodeAnchor->value])) {
+                    continue;
+                }
+                $visited[$child->childNodeAnchor->value] = true;
+                $rewritten = $visit($child);
+                if ($rewritten === SubtreeWalkStep::StopHere) {
+                    continue;
+                }
+                if (!$rewritten->subtreeTags->equals($child->subtreeTags)) {
+                    $writeBatch[] = $rewritten;
+                }
+                $nextFrontier[] = $child->childNodeAnchor;
+            }
+            $this->writeRecomputedSubtreeTags($contentStreamLayers, $writeBatch);
+            $frontier = $nextFrontier;
+        }
+    }
+
+    /**
      * Resolve the winning incoming hierarchy relation of a single node aggregate in one dimension - the seed of the
-     * {@see moveSubtreeTags()} and {@see removeSubtreeTag()} walks. Returns every column needed to rebuild a write-layer
-     * row. Index-driven and tombstone-safe via the id-based inner pushdown.
+     * {@see addSubtreeTag()}, {@see removeSubtreeTag()} and {@see moveSubtreeTags()} walks. Returns every column needed to
+     * rebuild a write-layer row. Index-driven and tombstone-safe via the id-based inner pushdown.
      */
     private function findWinningRelationOfNodeAggregate(ContentStreamLayers $contentStreamLayers, NodeAggregateId $nodeAggregateId, DimensionSpacePoint $dimensionSpacePoint): ?HierarchyRelation
     {
@@ -262,9 +260,8 @@ trait SubtreeTagging
 
     /**
      * Resolve the winning child hierarchy relations of a whole frontier of parent node anchors in one query, scoped to a
-     * single dimension - the per-level batch step of the {@see moveSubtreeTags()} walk. Unlike the addSubtreeTag variant
-     * this has no "untagged" filter (a move recomputes the WHOLE subtree) and returns every column needed to rebuild a
-     * write-layer row.
+     * single dimension - the per-level batch step of {@see walkSubtreeDescendants()}. Returns every column needed to
+     * rebuild a write-layer row; filtering/retagging is left to the visitor.
      *
      * @return list<HierarchyRelation>
      */
