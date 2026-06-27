@@ -72,6 +72,17 @@ final readonly class NodeTags implements \IteratorAggregate, \Countable, \JsonSe
     }
 
     /**
+     * Return a copy with the given tag marked as _inherited_ (demoting it from explicit if it was set explicitly before)
+     */
+    public function withInherited(SubtreeTag $subtreeTag): self
+    {
+        if ($this->inheritedTags->contain($subtreeTag)) {
+            return $this;
+        }
+        return self::create($this->tags->without($subtreeTag), $this->inheritedTags->with($subtreeTag));
+    }
+
+    /**
      * Whether the given tag is set _explicitly_ on this node (as opposed to only being inherited from an ancestor)
      */
     public function containsExplicitly(SubtreeTag $tag): bool
