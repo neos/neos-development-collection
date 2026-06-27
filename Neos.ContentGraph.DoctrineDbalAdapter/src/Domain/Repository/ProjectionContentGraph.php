@@ -562,15 +562,6 @@ class ProjectionContentGraph
             throw new \RuntimeException(sprintf('Failed to load dimension space point for hash %s from database: %s', $rawData['dimensionspacepointhash'], $e->getMessage()), 1716476830, $e);
         }
 
-        return new HierarchyRelation(
-            HierarchyRelationId::fromInt((int)$rawData['id']),
-            ContentStreamLayer::fromInt((int)$rawData['contentstreamlayer']),
-            NodeRelationAnchorPoint::fromInteger((int)$rawData['parentnodeanchor']),
-            NodeRelationAnchorPoint::fromInteger((int)$rawData['childnodeanchor']),
-            DimensionSpacePoint::fromJsonString($dimensionSpacePointJson),
-            $rawData['dimensionspacepointhash'],
-            (int)$rawData['position'],
-            NodeFactory::extractNodeTagsFromJson($rawData['subtreetags']),
-        );
+        return HierarchyRelation::fromDatabaseRow($rawData, DimensionSpacePoint::fromJsonString($dimensionSpacePointJson));
     }
 }
