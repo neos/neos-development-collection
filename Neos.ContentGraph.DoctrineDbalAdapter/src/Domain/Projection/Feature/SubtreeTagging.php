@@ -7,10 +7,8 @@ namespace Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\Feature;
 use Doctrine\DBAL\Exception as DBALException;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\ContentStreamLayers;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\Feature\SubtreeTagging\ChildHierarchyRelation;
-use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\Feature\SubtreeTagging\HierarchyRelationRow;
-use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\Feature\SubtreeTagging\HierarchyRelationRowWithoutLayer;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\Feature\SubtreeTagging\SubtreeTagPath;
-use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\Feature\SubtreeTagging\SubtreeTagSerializer;
+use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\HierarchyRelation;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\NodeRelationAnchorPoint;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\NodeRelationAnchorPoints;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\NodeFactory;
@@ -18,6 +16,7 @@ use Neos\ContentGraph\DoctrineDbalAdapter\NodeAggregateIdCondition;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Core\Feature\SubtreeTagging\Dto\SubtreeTag;
+use Neos\ContentRepository\Core\Feature\SubtreeTagging\Dto\SubtreeTags;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodeTags;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Dbal\Query\StaticWhereCondition;
@@ -39,58 +38,24 @@ trait SubtreeTagging
             foreach ($affectedDimensionSpacePoints as $dimensionSpacePoint) {
                 $seed = $this->findWinningRelationOfNodeAggregate($contentStreamLayers, $nodeAggregateId, $dimensionSpacePoint);
                 if ($seed === null) {
-                    // the node aggregate is not present in this dimension - nothing to cascade into
+                    // the node aggregate is not present in this dimension - nothing to tag
                     continue;
                 }
+
+                // tag the node itself EXPLICITLY, overriding any inherited marker it might already carry
+                $this->writeRecomputedSubtreeTags($contentStreamLayers, [
+                    $seed->with(subtreeTags: $seed->subtreeTags->withExplicit($subtreeTag)),
+                ]);
+
+                // cascade the tag INHERITED (null) onto every untagged descendant, one level at a time
                 $childNodeAnchors = NodeRelationAnchorPoints::create($seed->childNodeAnchor);
                 while (($level = $this->findUntaggedWinningChildRelationsOfAnchors($contentStreamLayers, $childNodeAnchors, $dimensionSpacePoint, $subtreeTag)) !== []) {
                     $this->writeInheritedSubtreeTag($contentStreamLayers, $level, $subtreeTag);
-                    $childNodeAnchors = NodeRelationAnchorPoints::create(...array_map(fn (ChildHierarchyRelation $child) => $child->childNodeAnchor, $level));
+                    $childNodeAnchors = NodeRelationAnchorPoints::create(...array_map(fn(ChildHierarchyRelation $child) => $child->childNodeAnchor, $level));
                 }
             }
         } catch (DBALException $e) {
-            throw new \RuntimeException(sprintf('1: Failed to add subtree tag %s for content stream %s, node aggregate id %s and dimension space points %s: %s', $subtreeTag->value, $contentStreamLayers->toDebugString(), $nodeAggregateId->value, $affectedDimensionSpacePoints->toJson(), $e->getMessage()), 1716479749, $e);
-        }
-
-        $nodeAggregateIdCondition = NodeAggregateIdCondition::forNodeAggregateId($nodeAggregateId);
-        $hierarchyStatement = $this->subqueries->forHierarchyRelation($contentStreamLayers)->withDimensionSpacePoints($affectedDimensionSpacePoints)->withPossibleChildNodeAggregateId($nodeAggregateIdCondition);
-        $addTagToNodeStatement = <<<SQL
-            INSERT INTO {$this->tableNames->hierarchyRelation()} (
-              id,
-              parentnodeanchor,
-              childnodeanchor,
-              position,
-              subtreetags,
-              dimensionspacepointhash,
-              contentstreamlayer
-            )
-            SELECT
-              h.id,
-              h.parentnodeanchor,
-              h.childnodeanchor,
-              h.position,
-              JSON_SET(h.subtreetags, :tagPath, true) as subtreetags,
-              h.dimensionspacepointhash,
-              :targetContentStreamLayer as contentstreamlayer
-            FROM
-              {$hierarchyStatement->toSql()} h
-              INNER JOIN {$this->tableNames->node()} n ON n.relationanchorpoint = h.childnodeanchor
-            WHERE
-              {$nodeAggregateIdCondition->toWhereSql('n')}
-            ON DUPLICATE KEY UPDATE subtreetags = VALUES(subtreetags)
-            SQL;
-        try {
-            $this->dbal->executeStatement($addTagToNodeStatement, [
-                'tagPath' => SubtreeTagPath::create($subtreeTag),
-                'targetContentStreamLayer' => $contentStreamLayers->getWriteLayer()->value,
-                ...$hierarchyStatement->getParameters()->toDbalValues(),
-                ...$nodeAggregateIdCondition->getParameters()->toDbalValues(),
-            ], [
-                ...$hierarchyStatement->getParameters()->toDbalTypes(),
-                ...$nodeAggregateIdCondition->getParameters()->toDbalTypes(),
-            ]);
-        } catch (DBALException $e) {
-            throw new \RuntimeException(sprintf('2: Failed to add subtree tag %s for content stream %s, node aggregate id %s and dimension space points %s: %s', $subtreeTag->value, $contentStreamLayers->toDebugString(), $nodeAggregateId->value, $affectedDimensionSpacePoints->toJson(), $e->getMessage()), 1716479840, $e);
+            throw new \RuntimeException(sprintf('Failed to add subtree tag %s for content stream %s, node aggregate id %s and dimension space points %s: %s', $subtreeTag->value, $contentStreamLayers->toDebugString(), $nodeAggregateId->value, $affectedDimensionSpacePoints->toJson(), $e->getMessage()), 1716479749, $e);
         }
     }
 
@@ -137,7 +102,7 @@ trait SubtreeTagging
             return;
         }
         $idLayerPairs = implode(',', array_map(
-            static fn (ChildHierarchyRelation $row) => '(' . $row->id->value . ',' . $row->contentStreamLayer->value . ')',
+            static fn(ChildHierarchyRelation $row) => '(' . $row->id->value . ',' . $row->contentStreamLayer->value . ')',
             $relations
         ));
         $statement = <<<SQL
@@ -183,7 +148,6 @@ trait SubtreeTagging
      */
     private function removeSubtreeTag(ContentStreamLayers $contentStreamLayers, NodeAggregateId $nodeAggregateId, DimensionSpacePointSet $affectedDimensionSpacePoints, SubtreeTag $subtreeTag): void
     {
-        $tagKey = $subtreeTag->value;
         try {
             foreach ($affectedDimensionSpacePoints as $dimensionSpacePoint) {
                 $seed = $this->findWinningRelationOfNodeAggregate($contentStreamLayers, $nodeAggregateId, $dimensionSpacePoint);
@@ -202,24 +166,12 @@ trait SubtreeTagging
                     $writeBatch = [];
                     $frontierAnchors = [];
                     foreach ($toProcess as $relation) {
-                        $currentTags = SubtreeTagSerializer::decodeSubtreeTags($relation->subtreeTags);
-                        $newTags = $currentTags;
-                        if ($stillInherited) {
-                            // JSON_SET(subtreetags, :tagPath, null): explicit `true` becomes inherited `null`
-                            $newTags[$tagKey] = null;
-                        } else {
-                            // JSON_REMOVE(subtreetags, :tagPath): drop the tag entirely
-                            unset($newTags[$tagKey]);
-                        }
-                        if (!SubtreeTagSerializer::subtreeTagsEqual($newTags, $currentTags)) {
-                            $writeBatch[] = new HierarchyRelationRowWithoutLayer(
-                                id: $relation->id,
-                                parentNodeAnchor: $relation->parentNodeAnchor,
-                                childNodeAnchor: $relation->childNodeAnchor,
-                                position: $relation->position,
-                                dimensionSpacePointHash: $relation->dimensionSpacePointHash,
-                                subtreeTags: SubtreeTagSerializer::encodeSubtreeTags($newTags),
-                            );
+                        // still inherited -> explicit tag becomes an inherited marker; otherwise the tag is dropped entirely
+                        $newTags = $stillInherited
+                            ? $relation->subtreeTags->withInherited($subtreeTag)
+                            : $relation->subtreeTags->without($subtreeTag);
+                        if (!$newTags->equals($relation->subtreeTags)) {
+                            $writeBatch[] = $relation->with(subtreeTags: $newTags);
                         }
                         $frontierAnchors[] = $relation->childNodeAnchor;
                     }
@@ -233,8 +185,8 @@ trait SubtreeTagging
                         if (isset($visited[$childAnchor])) {
                             continue;
                         }
-                        $childTags = SubtreeTagSerializer::decodeSubtreeTags($child->subtreeTags);
-                        if (!array_key_exists($tagKey, $childTags) || $childTags[$tagKey] !== null) {
+                        // descend only if the child carries the tag as INHERITED; stop at explicit or absent
+                        if (!$child->subtreeTags->contain($subtreeTag) || $child->subtreeTags->containsExplicitly($subtreeTag)) {
                             continue;
                         }
                         $visited[$childAnchor] = true;
@@ -301,9 +253,10 @@ trait SubtreeTagging
                 // the new parent is not present in this dimension - nothing to recompute
                 return;
             }
-            // accumulated inherited tag-key set per (child)node anchor; seeded with ALL of the new parent's keys
-            $accumulatedSetByAnchor = [
-                $seed->childNodeAnchor->value => array_keys(SubtreeTagSerializer::decodeSubtreeTags($seed->subtreeTags)),
+            // accumulated effective tag set per (child)node anchor that cascades down as inherited; seeded with ALL of
+            // the new parent's tags (explicit and inherited alike all cascade down as inherited)
+            $effectiveTagsByAnchor = [
+                $seed->childNodeAnchor->value => $seed->subtreeTags->all(),
             ];
             $visited = [$seed->childNodeAnchor->value => true];
             $frontier = [$seed->childNodeAnchor];
@@ -318,27 +271,14 @@ trait SubtreeTagging
                         // cycle guard (a content tree must not contain cycles, but never loop forever on malformed data)
                         continue;
                     }
-                    $parentAccumulatedSet = $accumulatedSetByAnchor[$child->parentNodeAnchor->value] ?? [];
-                    $currentTags = SubtreeTagSerializer::decodeSubtreeTags($child->subtreeTags);
+                    // the child keeps its OWN explicit tags and inherits the parent's accumulated set (minus its own explicit)
+                    $inheritedFromParent = $effectiveTagsByAnchor[$child->parentNodeAnchor->value] ?? SubtreeTags::createEmpty();
+                    $ownExplicitTags = $child->subtreeTags->withoutInherited()->all();
+                    $newTags = NodeTags::create($ownExplicitTags, $inheritedFromParent->difference($ownExplicitTags));
+                    $effectiveTagsByAnchor[$childAnchor->value] = $newTags->all();
 
-                    // {accumulated set => null} overlaid with {own explicit keys => true}
-                    $newTags = array_fill_keys($parentAccumulatedSet, null);
-                    foreach ($currentTags as $key => $value) {
-                        if ($value === true) {
-                            $newTags[$key] = true;
-                        }
-                    }
-                    $accumulatedSetByAnchor[$childAnchor->value] = array_keys($newTags);
-
-                    if (!SubtreeTagSerializer::subtreeTagsEqual($newTags, $currentTags)) {
-                        $writeBatch[] = new HierarchyRelationRowWithoutLayer(
-                            id: $child->id,
-                            parentNodeAnchor: $child->parentNodeAnchor,
-                            childNodeAnchor: $childAnchor,
-                            position: $child->position,
-                            dimensionSpacePointHash: $child->dimensionSpacePointHash,
-                            subtreeTags: SubtreeTagSerializer::encodeSubtreeTags($newTags),
-                        );
+                    if (!$newTags->equals($child->subtreeTags)) {
+                        $writeBatch[] = $child->with(subtreeTags: $newTags);
                     }
                     $visited[$childAnchor->value] = true;
                     $nextFrontier[] = $childAnchor;
@@ -356,7 +296,7 @@ trait SubtreeTagging
      * {@see moveSubtreeTags()} and {@see removeSubtreeTag()} walks. Returns every column needed to rebuild a write-layer
      * row. Index-driven and tombstone-safe via the id-based inner pushdown.
      */
-    private function findWinningRelationOfNodeAggregate(ContentStreamLayers $contentStreamLayers, NodeAggregateId $nodeAggregateId, DimensionSpacePoint $dimensionSpacePoint): ?HierarchyRelationRow
+    private function findWinningRelationOfNodeAggregate(ContentStreamLayers $contentStreamLayers, NodeAggregateId $nodeAggregateId, DimensionSpacePoint $dimensionSpacePoint): ?HierarchyRelation
     {
         $nodeAggregateIdCondition = NodeAggregateIdCondition::forNodeAggregateId($nodeAggregateId);
         $hierarchyStatement = $this->subqueries->forHierarchyRelation($contentStreamLayers)->withDimensionSpacePoint($dimensionSpacePoint)->withPossibleChildNodeAggregateId($nodeAggregateIdCondition);
@@ -374,7 +314,7 @@ trait SubtreeTagging
             ...$hierarchyStatement->getParameters()->toDbalTypes(),
             ...$nodeAggregateIdCondition->getParameters()->toDbalTypes(),
         ]);
-        return $row === false ? null : HierarchyRelationRow::fromArray($row);
+        return $row === false ? null : HierarchyRelation::fromDatabaseRow($row, $dimensionSpacePoint);
     }
 
     /**
@@ -383,7 +323,7 @@ trait SubtreeTagging
      * this has no "untagged" filter (a move recomputes the WHOLE subtree) and returns every column needed to rebuild a
      * write-layer row.
      *
-     * @return list<HierarchyRelationRow>
+     * @return list<HierarchyRelation>
      */
     private function findWinningChildRelationsOfAnchors(ContentStreamLayers $contentStreamLayers, NodeRelationAnchorPoints $parentNodeAnchors, DimensionSpacePoint $dimensionSpacePoint): array
     {
@@ -404,7 +344,7 @@ trait SubtreeTagging
             ...$hierarchyStatement->getParameters()->toDbalTypes(),
         ]);
         return array_map(
-            HierarchyRelationRow::fromArray(...),
+            static fn(array $row) => HierarchyRelation::fromDatabaseRow($row, $dimensionSpacePoint),
             $rows
         );
     }
@@ -413,7 +353,7 @@ trait SubtreeTagging
      * Write the PHP-recomputed subtree tags onto the given relations, copying each into the write layer. Every column is
      * supplied from the already-fetched winning row, so no layer re-resolution is needed.
      *
-     * @param list<HierarchyRelationRowWithoutLayer> $relations
+     * @param list<HierarchyRelation> $relations
      */
     private function writeRecomputedSubtreeTags(ContentStreamLayers $contentStreamLayers, array $relations): void
     {
@@ -424,11 +364,11 @@ trait SubtreeTagging
         $parameters = ['targetContentStreamLayer' => $contentStreamLayers->getWriteLayer()->value];
         foreach ($relations as $i => $relation) {
             $rowPlaceholders[] = "(:id$i, :parentnodeanchor$i, :childnodeanchor$i, :position$i, :subtreetags$i, :dimensionspacepointhash$i, :targetContentStreamLayer)";
-            $parameters["id$i"] = $relation->id->value;
+            $parameters["id$i"] = $relation->hierarchyRelationId->value;
             $parameters["parentnodeanchor$i"] = $relation->parentNodeAnchor->value;
             $parameters["childnodeanchor$i"] = $relation->childNodeAnchor->value;
             $parameters["position$i"] = $relation->position;
-            $parameters["subtreetags$i"] = $relation->subtreeTags;
+            $parameters["subtreetags$i"] = json_encode($relation->subtreeTags, JSON_THROW_ON_ERROR | JSON_FORCE_OBJECT);
             // Todo deduplicate same dimensionspacepointhash from payload
             $parameters["dimensionspacepointhash$i"] = $relation->dimensionSpacePointHash;
         }
