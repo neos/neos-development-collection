@@ -18,6 +18,7 @@ use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Exception as DBALException;
 use Neos\ContentGraph\DoctrineDbalAdapter\ContentGraphTableNames;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\DimensionSpacePointsRepository;
+use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\NodeFactory;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodeTags;
 
@@ -38,6 +39,29 @@ final readonly class HierarchyRelation
         public int $position,
         public NodeTags $subtreeTags,
     ) {
+    }
+
+    /**
+     * Build a relation from a raw hierarchy-relation row. The dimension space point cannot be reconstructed from the row
+     * alone (it only carries the hash), so it must be passed in by the caller - which always knows it (it scopes the
+     * query that produced the row), avoiding a per-row lookup.
+     *
+     * @param array<int|string,mixed> $row
+     */
+    public static function fromDatabaseRow(array $row, DimensionSpacePoint $dimensionSpacePoint): self
+    {
+        assert((string)$row['dimensionspacepointhash'] === $dimensionSpacePoint->hash, 'DimensionSpacePoint must match hash');
+
+        return new self(
+            hierarchyRelationId: HierarchyRelationId::fromInt((int)$row['id']),
+            contentStreamLayer: ContentStreamLayer::fromInt((int)$row['contentstreamlayer']),
+            parentNodeAnchor: NodeRelationAnchorPoint::fromInteger((int)$row['parentnodeanchor']),
+            childNodeAnchor: NodeRelationAnchorPoint::fromInteger((int)$row['childnodeanchor']),
+            dimensionSpacePoint: $dimensionSpacePoint,
+            dimensionSpacePointHash: (string)$row['dimensionspacepointhash'],
+            position: (int)$row['position'],
+            subtreeTags: NodeFactory::extractNodeTagsFromJson((string)$row['subtreetags']),
+        );
     }
 
     public function with(
