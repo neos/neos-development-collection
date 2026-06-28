@@ -36,9 +36,6 @@ final readonly class ProjectionStates
             if (!$state instanceof ProjectionStateInterface) {
                 throw new \InvalidArgumentException(sprintf('Expected instance of %s, got: %s', ProjectionStateInterface::class, get_debug_type($state)), 1729687661);
             }
-            if ($state instanceof ContentGraphReadModelInterface) {
-                throw new \InvalidArgumentException(sprintf('The content graph state (%s) must not be part of the additional projection states', ContentGraphReadModelInterface::class), 1732390657);
-            }
             if (array_key_exists($state::class, $statesByClassName)) {
                 throw new \InvalidArgumentException(sprintf('An instance of %s is already part of the set', $state::class), 1729687716);
             }
