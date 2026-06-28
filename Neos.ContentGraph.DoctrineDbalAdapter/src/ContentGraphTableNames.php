@@ -19,7 +19,7 @@ final readonly class ContentGraphTableNames
 
     public static function create(ContentRepositoryId $contentRepositoryId): self
     {
-        return new self(sprintf('cr_%s_p_graph', $contentRepositoryId->value));
+        return new self(sprintf('cr_%s_p_v1_graph', $contentRepositoryId->value));
     }
 
     public function node(): string
