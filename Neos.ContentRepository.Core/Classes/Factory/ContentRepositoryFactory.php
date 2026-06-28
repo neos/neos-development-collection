@@ -109,14 +109,14 @@ final class ContentRepositoryFactory
         }
         $this->additionalProjectionStates = ProjectionStates::fromArray($additionalProjectionStates);
         $this->contentGraphProjection = $contentGraphProjectionFactory->build($subscriberFactoryDependencies);
-        $subscribers[] = $this->buildContentGraphSubscriber();
+        $subscribers[] = $this->buildContentGraphSubscriber($contentGraphProjectionFactory->getSubscriptionId());
         $this->subscriptionEngine = new SubscriptionEngine($this->eventStore, $subscriptionStore, Subscribers::fromArray($subscribers), $this->eventNormalizer, $this->performanceTracer, $logger);
     }
 
-    private function buildContentGraphSubscriber(): ProjectionSubscriber
+    private function buildContentGraphSubscriber(SubscriptionId $subscriptionId): ProjectionSubscriber
     {
         return new ProjectionSubscriber(
-            SubscriptionId::fromString('contentGraph'),
+            $subscriptionId,
             $this->contentGraphProjection,
             $this->contentGraphCatchUpHookFactory?->build(CatchUpHookFactoryDependencies::create(
                 $this->contentRepositoryId,

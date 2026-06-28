@@ -12,6 +12,7 @@ use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\NodeFactory;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\ProjectionContentGraph;
 use Neos\ContentRepository\Core\Factory\SubscriberFactoryDependencies;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphProjectionFactoryInterface;
+use Neos\ContentRepository\Core\Subscription\SubscriptionId;
 use Neos\ContentRepository\Dbal\MysqlPlatformContentRepositoryLocker;
 
 /**
@@ -24,6 +25,11 @@ final class DoctrineDbalContentGraphProjectionFactory implements ContentGraphPro
     public function __construct(
         private readonly Connection $dbal,
     ) {
+    }
+
+    public function getSubscriptionId(): SubscriptionId
+    {
+        return SubscriptionId::fromString('contentGraph_v1');
     }
 
     public function build(
