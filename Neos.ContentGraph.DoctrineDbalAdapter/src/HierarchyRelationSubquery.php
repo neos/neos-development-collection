@@ -14,28 +14,20 @@ use Neos\ContentRepository\Dbal\Query\SqlTableSubqueryInterface;
 use Neos\ContentRepository\Dbal\Query\SqlWhereConditionInterface;
 
 /**
- * SQL builder that resolves the correct `graph_hierarchyrelation` rows from a set of content stream layers.
- *
- * NOTE: the generated SQL only works when the caller binds a prepared statement parameter `:contentStreamLayers`
- * holding the content stream layers of the current content stream (read from `..._graph_contentstreamlayer`).
- *
+ * SQL builder that resolves the correct hierarchy-relation rows for a set of content stream layers, and further conditions.
  *
  * CONCEPT
  * =======
  *
- * Starting with Neos 9.2, each Content Stream consists of (hierarchy relation) *layers*: the topmost layer is
- * (usually) mutable, the layers below are immutable. To read a hierarchy relation we must take the TOP-MOST
- * ContentStreamLayer that exists for a given Hierarchy Relation ID. Layers use an auto-increment, so "top-most"
- * means the highest `contentstreamlayer` for that hierarchy-relation-edge.
+ * Starting with Neos 9.2, each Content Stream consists of (hierarchy relation) *layers* {@see ContentStreamLayers}:
+ * To read a hierarchy relation we must take the TOP-MOST ContentStreamLayer that exists for a given Hierarchy Relation ID.
+ * Layers use an auto-increment, so "top-most" means the highest `contentstreamlayer` for that hierarchy-relation-edge.
  *
  * Conceptually, for every hierarchy relation we need:
  *
  *     SELECT MAX(contentstreamlayer) WHERE id = ... AND contentstreamlayer IN (:contentStreamLayers)
  *
- * Tombstones: node removal writes a tombstone row (same id, highest contentstreamlayer, every other column NULL).
- * Because the tombstone has the highest layer it WINS the MAX resolution, so the removed node correctly drops out
- * (the caller's outer WHERE then discards the NULL row). Any change to the layer resolution must preserve this.
- *
+ * Documentation visualized with graphs {@link https://github.com/neos/neos-development-collection/pull/5776}
  *
  * ATTEMPT 1 (replaced): MAX(...) GROUP BY id in a derived table
  * =============================================================
@@ -48,24 +40,20 @@ use Neos\ContentRepository\Dbal\Query\SqlWhereConditionInterface;
  *    once per id, but more efficiently. To resolve a whole set of ids in one query, we turn the per-id MAX into a grouped one:
  *
  *        SELECT id, MAX(contentstreamlayer) AS contentstreamlayer
- *          FROM ..._graph_hierarchyrelation
+ *          FROM {hierarchyRelation()}
  *          WHERE contentstreamlayer IN (:contentStreamLayers)
  *          GROUP BY id
  *
  *    This yields one (id, winning-layer) pair per id.
  *
- * 2) That pair only tells us which layer wins (for a given id); we still need the full row `h.*`. So we treat the
- *    grouped result as a derived table `readHierarchy` and INNER JOIN the original table back onto it, matching on
- *    (id, winning-layer). The INNER JOIN also drops any id that had no row in the allowed layers.
- *
- * 3) Finally we add pre-filters as performance improvements for MariaDB: an inner WHERE inside the derived table
- *    (so MariaDB groups far fewer records, pushed down via {@see withPossibleWhereCondition()}) and an outer WHERE
- *    on the joined result for the caller's own conditions (via {@see withWhereCondition()}).
+ * 2) That pair only tells us which layer wins (for a given id); we still need the full row `h.*`. Selecting any other columns
+ *    is undefined behavior and forbidden in strict mode via only_full_group_by. Thus treat the grouped result as a derived table
+ *    `readHierarchy` and INNER JOIN the original table back onto it, matching on (id, winning-layer).
+ *    The INNER JOIN also drops any id that had no row in the allowed layers.
  *
  * WHY IT WAS REPLACED: MySQL cannot optimize this. The derived table `readHierarchy` has `GROUP BY id`, and MySQL
  * has no way to push the outer join key (id) into a grouped derived table, so it materializes the full grouped
- * result for every lookup. MariaDB has the `split_materialized` optimization, which pushes the wanted id INTO the
- * grouped derived table and thus computes MAX only for the wanted ids via index — MySQL has no equivalent.
+ * result for every lookup.
  *
  *
  * ATTEMPT 2 (current): anti-join via NOT EXISTS
@@ -83,37 +71,56 @@ use Neos\ContentRepository\Dbal\Query\SqlWhereConditionInterface;
  * which is exactly an anti-join (NOT EXISTS):
  *
  *     SELECT h.* FROM hr h
- *      WHERE h.layer IN L [AND id-pushdown]
+ *      WHERE h.layer IN L [AND id-prefilter]
  *        AND NOT EXISTS (
  *            -- exists a row with same id and bigger layer? -> then the current row is NOT the highest
  *            -- layer and we DISCARD it.
  *            SELECT 1 FROM hr hWin
  *            WHERE hWin.id = h.id AND hWin.layer IN L AND hWin.layer > h.layer)
  *
- * NOTE: both forms are equivalent regardless of indexing. The unique index UNIQ_id_layer(id, layer) just guarantees
- * one winning row per id (without it both forms return all rows tied at the winning layer) and makes the anti-join fast.
- *
  * The NOT EXISTS form stays flat and mergeable, lets the optimizer push predicates and use the
  * `UNIQ_id_layer (id, contentstreamlayer)` index, and avoids materialization on both MySQL and MariaDB.
  *
  *
- * TOMBSTONE / MOVE SAFETY OF THE PUSHDOWN
- * =======================================
+ * Optimisation: Pre-filtering
+ * ===========================
  *
- * The "possible" where condition ({@see withPossibleWhereCondition()}, {@see withPossibleChildNodeAggregateId()},
- * {@see withPossibleParentNodeAggregateId()}) is pushed into the layer resolution as `id IN (SELECT id FROM hr WHERE ...)`.
- * Filtering by `id` (not directly on the candidate rows) is the only tombstone-safe and move-safe way to prefilter:
+ * To reduce the amount of hierarchy rows to consider in subsequent joins and also before applying the NOT EXIST anti-join,
+ * we pre-filter the whole hierarchy table via cheaper conditions.
  *
- * - Tombstone-safe: it keeps *all* layers of every candidate relation in the layer resolution, including the removal
- *   tombstone (NULL anchors/dsp but same id and highest layer), so the winning layer stays exact and removed nodes
- *   correctly drop out. A predicate filtering the candidate rows directly on a nullable column (childnodeanchor,
- *   parentnodeanchor, dimensionspacepointhash) would exclude the tombstone and resurrect the deleted node.
- * - Move-safe: a single anchor is not layer-invariant for a relation id (copy-on-write reassigns the child anchor
- *   across layers, a move reassigns the parent); the id-based superset still keeps every layer of the matching
- *   relations, and the caller's outer WHERE ({@see withWhereCondition()}) trims the extras.
+ * These "possible" where condition are in effect when using all regular conditions like {@see withDimensionSpacePoint()}
+ * and {@see withChildNodeRelationAnchor()} or other variations.
  *
- * This is purely a prefilter (like a bloom filter): it MAY keep more rows than the caller ultimately wants, but it must
- * NEVER keep fewer.
+ * To explicitly force a prefiltering which cannot be inferred from the regular conditions given, {@see withPossibleChildNodeAggregateId()},
+ * {@see withPossibleParentNodeAggregateId()}) as well as {@see withPossibleWhereCondition()} can be used.
+ *
+ * **We MUST only pre-filter by the `id` column (not directly on the candidate rows)**
+ *
+ * Using any other columns would result in undefined behavior, because they are not layer invariant:
+ *
+ * - `parentnodeanchor` see move node
+ * - `childnodeanchor` see copy on write (set properties)
+ *   - in theory its safe to access the nodes' node aggregate id which MUST be invariant across all layers
+ * - `dimensionspacepointhash` see move dimension space point
+ * - `subtreetags` see subtree tagging
+ * - `position` see move node
+ *
+ * Additionally, all of these columns can be set to `NULL` signaling a node removal.
+ * Filtering on these candidates would exclude the NULL values and resurrect the node.
+ *
+ * The pre-filtering leverages a sub-select on the hierarchy relation table to find all possible hierarchy ids:
+ *
+ *     AND id IN (
+ *       SELECT id FROM {hierarchyRelation()} h
+ *         WHERE h.dimensionspacepointhash = :dimensionSpacePointHash
+ *         AND h.childNodeAnchor = :childNodeAnchor
+ *         [...further prefilter]
+ *     )
+ *
+ * The id-based superset still keeps every layer of a possibly matching relations. The outer WHERE is responsible to trim the extras.
+ *
+ * This is purely a prefilter (like a bloom filter): it MAY keep more rows than needed,
+ * but it must NEVER keep fewer.
  *
  * @internal
  */
@@ -189,6 +196,9 @@ final readonly class HierarchyRelationSubquery implements SqlTableSubqueryInterf
      *
      * As with a bloom filter, false positive matches are possible, but false negatives are not.
      * The matching hierarchy relations still must be filtered again.
+     *
+     * See documentation: "Optimisation: Pre-filtering"
+     *
      */
     public function withPossibleChildNodeAggregateId(NodeAggregateIdCondition|ReferenceDestinationNodeAggregateIdCondition $possibleChildNodeAggregateIdCondition): self
     {
@@ -221,6 +231,9 @@ final readonly class HierarchyRelationSubquery implements SqlTableSubqueryInterf
      *
      * As with a bloom filter, false positive matches are possible, but false negatives are not.
      * The matching hierarchy relations still must be filtered again.
+     *
+     * See documentation: "Optimisation: Pre-filtering"
+     *
      */
     public function withPossibleParentNodeAggregateId(NodeAggregateIdCondition $possibleParentNodeAggregateIdCondition): self
     {
@@ -253,6 +266,9 @@ final readonly class HierarchyRelationSubquery implements SqlTableSubqueryInterf
      *
      * As with a bloom filter, false positive matches are possible, but false negatives are not.
      * The matching hierarchy relations still must be filtered again.
+     *
+     * See documentation: "Optimisation: Pre-filtering"
+     *
      */
     public function withPossibleWhereCondition(SqlWhereConditionInterface $possibleWhereCondition): self
     {
@@ -354,13 +370,13 @@ final readonly class HierarchyRelationSubquery implements SqlTableSubqueryInterf
             // We don't actually ensure the final result only contains hierarchies for this node
         }
 
-        // pushed into the layer resolution as `id IN (...)` so the prefilter stays tombstone-safe (see class docblock)
+        // pushed into the layer resolution as `id IN (...)` so the prefilter only relies on the layer invariant id column
         $possibleWhereConditionSql = $possibleWhereConditions === [] ? '' : sprintf(
             "\n    AND id IN (\n      SELECT id FROM %s AS h\n        WHERE %s\n    )",
             $this->tableNames->hierarchyRelation(),
             join("\n        AND ", $possibleWhereConditions)
         );
-        // applied to the already layer-resolved hierarchy relation `h`
+        // applied to the already layer-resolved hierarchy relation
         $whereConditionSql = $whereConditions === [] ? '' : sprintf("\n  AND %s", join("\n  AND ", $whereConditions));
 
         return <<<SQL
