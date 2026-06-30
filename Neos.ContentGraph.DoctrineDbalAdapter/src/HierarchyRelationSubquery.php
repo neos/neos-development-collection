@@ -130,7 +130,7 @@ final readonly class HierarchyRelationSubquery implements SqlTableSubqueryInterf
         private ContentGraphTableNames $tableNames,
         private ContentStreamLayers $contentStreamLayers,
         private DimensionSpacePointSet $dimensionSpacePoints,
-        private NodeRelationAnchorPoint|NodeAggregateIdCondition|ReferenceDestinationNodeAggregateIdCondition|ReferenceSourceNodeAggregateIdCondition|null $childNodeAnchor,
+        private NodeRelationAnchorPoint|NodeAggregateIdCondition|ReferenceDestinationNodeAggregateIdCondition|ReferenceSourceNodeAggregateIdCondition|ParentNodeAggregateIdCondition|null $childNodeAnchor,
         private NodeRelationAnchorPoint|NodeAggregateIdCondition|null $parentNodeAnchor,
         private SqlWhereConditionInterface|null $whereCondition,
         private SqlWhereConditionInterface|null $possibleWhereCondition,
@@ -201,7 +201,7 @@ final readonly class HierarchyRelationSubquery implements SqlTableSubqueryInterf
      * See documentation: "Optimisation: Pre-filtering"
      *
      */
-    public function withPossibleChildNodeAggregateId(NodeAggregateIdCondition|ReferenceDestinationNodeAggregateIdCondition|ReferenceSourceNodeAggregateIdCondition $possibleChildNodeAggregateIdCondition): self
+    public function withPossibleChildNodeAggregateId(NodeAggregateIdCondition|ReferenceDestinationNodeAggregateIdCondition|ReferenceSourceNodeAggregateIdCondition|ParentNodeAggregateIdCondition $possibleChildNodeAggregateIdCondition): self
     {
         return new self(
             tableNames: $this->tableNames,
@@ -312,7 +312,7 @@ final readonly class HierarchyRelationSubquery implements SqlTableSubqueryInterf
             $parameters[] = Parameter::integer('childNodeRelationAnchorPoint', $this->childNodeAnchor->value);
         }
 
-        if ($this->childNodeAnchor instanceof NodeAggregateIdCondition || $this->childNodeAnchor instanceof ReferenceDestinationNodeAggregateIdCondition || $this->childNodeAnchor instanceof ReferenceSourceNodeAggregateIdCondition) {
+        if ($this->childNodeAnchor instanceof NodeAggregateIdCondition || $this->childNodeAnchor instanceof ReferenceDestinationNodeAggregateIdCondition || $this->childNodeAnchor instanceof ReferenceSourceNodeAggregateIdCondition || $this->childNodeAnchor instanceof ParentNodeAggregateIdCondition) {
             $parameters = [...$parameters, ...iterator_to_array($this->childNodeAnchor->getParameters())];
         }
 
@@ -356,7 +356,7 @@ final readonly class HierarchyRelationSubquery implements SqlTableSubqueryInterf
             $possibleWhereConditions[] = $childNodeRelationAnchorPointWhereCondition;
         }
 
-        if ($this->childNodeAnchor instanceof NodeAggregateIdCondition || $this->childNodeAnchor instanceof ReferenceDestinationNodeAggregateIdCondition || $this->childNodeAnchor instanceof ReferenceSourceNodeAggregateIdCondition) {
+        if ($this->childNodeAnchor instanceof NodeAggregateIdCondition || $this->childNodeAnchor instanceof ReferenceDestinationNodeAggregateIdCondition || $this->childNodeAnchor instanceof ReferenceSourceNodeAggregateIdCondition || $this->childNodeAnchor instanceof ParentNodeAggregateIdCondition) {
             $possibleWhereConditions[] = "h.childnodeanchor IN {$this->childNodeAnchor->toRelationAnchorPointSubquerySql($this->tableNames)}";
             // We don't actually ensure the final result only contains hierarchies for this node
         }

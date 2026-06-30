@@ -25,6 +25,7 @@ use Neos\ContentGraph\DoctrineDbalAdapter\NodeAggregateIdCondition;
 use Neos\ContentGraph\DoctrineDbalAdapter\NodeQueryBuilder;
 use Neos\ContentGraph\DoctrineDbalAdapter\ReferenceDestinationNodeAggregateIdCondition;
 use Neos\ContentGraph\DoctrineDbalAdapter\ReferenceSourceNodeAggregateIdCondition;
+use Neos\ContentGraph\DoctrineDbalAdapter\ParentNodeAggregateIdCondition;
 use Neos\ContentGraph\DoctrineDbalAdapter\SqlTableSubqueryFactory;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
@@ -674,7 +675,9 @@ final class ContentSubgraph implements ContentSubgraphInterface
             // we need to join with the hierarchy relation, because we need the node name.
             ->innerJoinTableSubquery('n', $this->hierarchyRelationQuery->withPossibleChildNodeAggregateId($nodeAggregateIdCondition), 'ch', 'ch.parentnodeanchor = n.relationanchorpoint')
             ->innerJoin('ch', $this->tableNames->node(), 'c', 'c.relationanchorpoint = ch.childnodeanchor')
-            ->innerJoinTableSubquery('n', $this->hierarchyRelationQuery, 'ph', 'n.relationanchorpoint = ph.childnodeanchor')
+            ->innerJoinTableSubquery('n', $this->hierarchyRelationQuery->withPossibleChildNodeAggregateId(
+                ParentNodeAggregateIdCondition::forNodeAggregateId($entryNodeAggregateId)
+            ), 'ph', 'n.relationanchorpoint = ph.childnodeanchor')
             ->andWhereCondition($nodeAggregateIdCondition, 'c');
         $this->addSubtreeTagConstraints($queryBuilderInitial, 'ph');
         $this->addSubtreeTagConstraints($queryBuilderInitial, 'ch');
