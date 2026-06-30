@@ -5,6 +5,16 @@ declare(strict_types=1);
 namespace Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection;
 
 /**
+ * Abstraction for content streams
+ *
+ * Content stream layers allow to share in common hierarchy relations for content streams.
+ *
+ * Content stream layer are auto incrementing. Only the highest layer is to be written and exclusive for a
+ * single content stream. All other layers are shared and must not be mutated.
+ * If the highest layer does not contain a hierarchy row to modify we leverage copy on write.
+ *
+ * Documentation visualized with graphs {@link https://github.com/neos/neos-development-collection/pull/5776}
+ *
  * @internal
  */
 final readonly class ContentStreamLayers

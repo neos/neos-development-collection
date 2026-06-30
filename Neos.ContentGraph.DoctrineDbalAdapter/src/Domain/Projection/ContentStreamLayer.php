@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection;
 
 /**
+ * Forms as a set of {@see ContentStreamLayers} an abstraction for a content stream
+ *
  * @internal
  */
 final readonly class ContentStreamLayer
