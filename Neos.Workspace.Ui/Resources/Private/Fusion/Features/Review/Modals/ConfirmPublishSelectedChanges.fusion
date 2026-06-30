@@ -46,7 +46,7 @@ prototype(Neos.Workspace.Ui:Component.Modal.ConfirmPublishSelectedChanges) < pro
             attributes.name="moduleArguments[action]"
             attributes.value="publish"
             attributes.type="submit"
-            attributes.hx-target='table'
+            attributes.hx-target='#workspace-module-content'
             attributes.hx-include="#publishOrDiscardNodesForm"
             attributes.hx-swap='outerHTML'
             attributes.hx-on--after-request={'document.getElementById("' + private.popoverId + '").hidePopover()'}
