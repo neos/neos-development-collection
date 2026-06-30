@@ -7,12 +7,11 @@ namespace Neos\ContentGraph\DoctrineDbalAdapter;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Dbal\Query\Parameter;
 use Neos\ContentRepository\Dbal\Query\Parameters;
-use Neos\ContentRepository\Dbal\Query\SqlWhereConditionInterface;
 
 /**
  * @internal
  */
-final readonly class ReferenceDestinationNodeAggregateIdCondition implements SqlWhereConditionInterface
+final readonly class ReferenceDestinationNodeAggregateIdCondition
 {
     private function __construct(
         private NodeAggregateId $nodeAggregateId
@@ -33,15 +32,8 @@ final readonly class ReferenceDestinationNodeAggregateIdCondition implements Sql
         );
     }
 
-    public function toWhereSql(string $alias): string
-    {
-        $prefix = $alias !== '' ? "$alias." : '';
-
-        return "{$prefix}destinationnodeaggregateid = :nodeAggregateId";
-    }
-
     public function toRelationAnchorPointSubquerySql(ContentGraphTableNames $tableNames): string
     {
-        return "(SELECT nodeanchorpoint FROM {$tableNames->referenceRelation()} WHERE {$this->toWhereSql('')})";
+        return "(SELECT nodeanchorpoint FROM {$tableNames->referenceRelation()} WHERE destinationnodeaggregateid = :nodeAggregateId)";
     }
 }
