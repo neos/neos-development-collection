@@ -24,6 +24,7 @@ use Neos\ContentGraph\DoctrineDbalAdapter\HierarchyRelationSubquery;
 use Neos\ContentGraph\DoctrineDbalAdapter\NodeAggregateIdCondition;
 use Neos\ContentGraph\DoctrineDbalAdapter\NodeQueryBuilder;
 use Neos\ContentGraph\DoctrineDbalAdapter\ReferenceDestinationNodeAggregateIdCondition;
+use Neos\ContentGraph\DoctrineDbalAdapter\ReferenceSourceNodeAggregateIdCondition;
 use Neos\ContentGraph\DoctrineDbalAdapter\SqlTableSubqueryFactory;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
@@ -524,13 +525,14 @@ final class ContentSubgraph implements ContentSubgraphInterface
 
         $queryBuilder = $this->createQueryBuilder()
             ->select("dn.*, dh.subtreetags, r.name AS referencename, r.properties AS referenceproperties")
-            ->fromTableSubquery($this->hierarchyRelationQuery, 'dh')
+            ->fromTableSubquery($this->hierarchyRelationQuery->withPossibleChildNodeAggregateId(
+                ReferenceSourceNodeAggregateIdCondition::forNodeAggregateId($nodeAggregateId)
+            ), 'dh')
             ->innerJoin('dh', $this->tableNames->node(), 'dn', 'dn.relationanchorpoint = dh.childnodeanchor')
             ->innerJoin('dn', $this->tableNames->referenceRelation(), 'r', 'r.destinationnodeaggregateid = dn.nodeaggregateid')
-            // FIXME evaluate to use NodeAggregateIdClause prefiltering here as well? Possibly makes the subquery redundant because results will be prefiltered.
             ->where('r.nodeanchorpoint = (
                 SELECT relationanchorpoint FROM ' . $this->tableNames->node() . ' sn
-                JOIN ' . $this->hierarchyRelationQuery->toSql() . ' sh ON sn.relationanchorpoint = sh.childnodeanchor
+                JOIN ' . $this->hierarchyRelationQuery->withPossibleChildNodeAggregateId(NodeAggregateIdCondition::forNodeAggregateId($nodeAggregateId))->toSql() . ' sh ON sn.relationanchorpoint = sh.childnodeanchor
                 WHERE sn.nodeaggregateid = :nodeAggregateId  '
                 . $subtreeTagConstraints . '
             )')
