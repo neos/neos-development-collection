@@ -123,7 +123,7 @@ final readonly class HierarchyRelationSubquery implements SqlTableSubqueryInterf
         private ContentGraphTableNames $tableNames,
         private ContentStreamLayers $contentStreamLayers,
         private DimensionSpacePointSet $dimensionSpacePoints,
-        private NodeRelationAnchorPoint|NodeAggregateIdCondition|null $childNodeAnchor,
+        private NodeRelationAnchorPoint|NodeAggregateIdCondition|ReferenceDestinationNodeAggregateIdCondition|null $childNodeAnchor,
         private NodeRelationAnchorPoint|NodeAggregateIdCondition|null $parentNodeAnchor,
         private SqlWhereConditionInterface|null $whereCondition,
         private SqlWhereConditionInterface|null $possibleWhereCondition,
@@ -190,7 +190,7 @@ final readonly class HierarchyRelationSubquery implements SqlTableSubqueryInterf
      * As with a bloom filter, false positive matches are possible, but false negatives are not.
      * The matching hierarchy relations still must be filtered again.
      */
-    public function withPossibleChildNodeAggregateId(NodeAggregateIdCondition $possibleChildNodeAggregateIdCondition): self
+    public function withPossibleChildNodeAggregateId(NodeAggregateIdCondition|ReferenceDestinationNodeAggregateIdCondition $possibleChildNodeAggregateIdCondition): self
     {
         return new self(
             tableNames: $this->tableNames,
@@ -295,7 +295,7 @@ final readonly class HierarchyRelationSubquery implements SqlTableSubqueryInterf
             $parameters[] = Parameter::integer('childNodeRelationAnchorPoint', $this->childNodeAnchor->value);
         }
 
-        if ($this->childNodeAnchor instanceof NodeAggregateIdCondition) {
+        if ($this->childNodeAnchor instanceof NodeAggregateIdCondition || $this->childNodeAnchor instanceof ReferenceDestinationNodeAggregateIdCondition) {
             $parameters = [...$parameters, ...iterator_to_array($this->childNodeAnchor->getParameters())];
         }
 
@@ -339,7 +339,7 @@ final readonly class HierarchyRelationSubquery implements SqlTableSubqueryInterf
             $possibleWhereConditions[] = $childNodeRelationAnchorPointWhereCondition;
         }
 
-        if ($this->childNodeAnchor instanceof NodeAggregateIdCondition) {
+        if ($this->childNodeAnchor instanceof NodeAggregateIdCondition || $this->childNodeAnchor instanceof ReferenceDestinationNodeAggregateIdCondition) {
             $possibleWhereConditions[] = "h.childnodeanchor IN {$this->childNodeAnchor->toRelationAnchorPointSubquerySql($this->tableNames)}";
             // We don't actually ensure the final result only contains hierarchies for this node
         }
