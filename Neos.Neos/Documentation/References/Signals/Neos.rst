@@ -3,7 +3,7 @@
 Neos Signals Reference
 ======================
 
-This reference was automatically generated from code on 2026-06-19
+This reference was automatically generated from code on 2026-07-01
 
 
 .. _`Neos Signals Reference: AbstractCreate (``Neos\Neos\Ui\Domain\Model\Changes\AbstractCreate``)`:
