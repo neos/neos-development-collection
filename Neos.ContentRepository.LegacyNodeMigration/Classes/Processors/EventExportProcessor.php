@@ -46,6 +46,7 @@ use Neos\ContentRepository\Export\ProcessingContext;
 use Neos\ContentRepository\Export\ProcessorInterface;
 use Neos\ContentRepository\Export\Severity;
 use Neos\ContentRepository\LegacyNodeMigration\Exception\MigrationException;
+use Neos\ContentRepository\LegacyNodeMigration\Helpers\HiddenNodeVariant;
 use Neos\ContentRepository\LegacyNodeMigration\Helpers\SerializedPropertyValuesAndReferences;
 use Neos\ContentRepository\LegacyNodeMigration\Helpers\VisitedNodeAggregate;
 use Neos\ContentRepository\LegacyNodeMigration\Helpers\VisitedNodeAggregates;
@@ -68,9 +69,9 @@ final class EventExportProcessor implements ProcessorInterface
     private array $nodeReferencesWereSetEvents = [];
 
     /**
-     * @var array<int, array{nodeAggregateId: NodeAggregateId, originDimensionSpacePoint: OriginDimensionSpacePoint}>
+     * @var array<int, HiddenNodeVariant>
      */
-    private array $pendingSubtreeWasTaggedEvents = [];
+    private array $hiddenNodeVariants = [];
 
     private int $numberOfExportedEvents = 0;
 
@@ -115,12 +116,12 @@ final class EventExportProcessor implements ProcessorInterface
         // Disable nodes, when the full import is done.
         // The affected dimension space points are resolved only now, when all variants of each node aggregate
         // are known, so a hidden variant does not disable variants of other dimensions created after it.
-        foreach ($this->pendingSubtreeWasTaggedEvents as $pendingSubtreeWasTaggedEvent) {
+        foreach ($this->hiddenNodeVariants as $hiddenNodeVariant) {
             $this->exportEvent(new SubtreeWasTagged(
                 $this->workspaceName,
                 $this->contentStreamId,
-                $pendingSubtreeWasTaggedEvent['nodeAggregateId'],
-                $this->resolveAffectedDimensionSpacePoints($pendingSubtreeWasTaggedEvent['nodeAggregateId'], $pendingSubtreeWasTaggedEvent['originDimensionSpacePoint']),
+                $hiddenNodeVariant->nodeAggregateId,
+                $this->resolveAffectedDimensionSpacePoints($hiddenNodeVariant->nodeAggregateId, $hiddenNodeVariant->originDimensionSpacePoint),
                 NeosSubtreeTag::disabled()
             ));
         }
@@ -142,7 +143,7 @@ final class EventExportProcessor implements ProcessorInterface
     {
         $this->visitedNodes = new VisitedNodeAggregates();
         $this->nodeReferencesWereSetEvents = [];
-        $this->pendingSubtreeWasTaggedEvents = [];
+        $this->hiddenNodeVariants = [];
         $this->numberOfExportedEvents = 0;
         $this->eventFileResource = fopen('php://temp/maxmemory:5242880', 'rb+') ?: null;
         Assert::resource($this->eventFileResource, null, 'Failed to create temporary event file resource');
@@ -294,7 +295,7 @@ final class EventExportProcessor implements ProcessorInterface
         if ($this->isNodeHidden($nodeDataRow)) {
             // The event is built and exported at the end of the export (see run()), when all variants of the node
             // aggregate are known, so the tag only affects the dimension space points this variant still covers then
-            $this->pendingSubtreeWasTaggedEvents[] = ['nodeAggregateId' => $nodeAggregateId, 'originDimensionSpacePoint' => $originDimensionSpacePoint];
+            $this->hiddenNodeVariants[] = new HiddenNodeVariant($nodeAggregateId, $originDimensionSpacePoint);
         }
 
         if (!$serializedPropertyValuesAndReferences->references->isEmpty()) {
