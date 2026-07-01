@@ -121,7 +121,7 @@ final class EventExportProcessor implements ProcessorInterface
                 $this->workspaceName,
                 $this->contentStreamId,
                 $hiddenNodeVariant->nodeAggregateId,
-                $this->resolveAffectedDimensionSpacePoints($hiddenNodeVariant->nodeAggregateId, $hiddenNodeVariant->originDimensionSpacePoint),
+                $this->visitedNodes->getByNodeAggregateId($hiddenNodeVariant->nodeAggregateId)->getCoverageByOccupant($hiddenNodeVariant->originDimensionSpacePoint, $this->interDimensionalVariationGraph),
                 NeosSubtreeTag::disabled()
             ));
         }
@@ -538,30 +538,6 @@ final class EventExportProcessor implements ProcessorInterface
 
         return false;
 
-    }
-
-    /**
-     * Resolves the dimension space points a (hidden) node variant still covers after all variants of its node
-     * aggregate have been processed.
-     *
-     * Each creation/variation event claims coverage of the specialization set of its origin, excluding the origins
-     * visited before it, and later events take over the dimension space points they claim. The final coverage of the
-     * tagged origin is therefore its own claim minus everything that variants visited after it claimed for themselves.
-     */
-    private function resolveAffectedDimensionSpacePoints(NodeAggregateId $nodeAggregateId, OriginDimensionSpacePoint $taggedOriginDimensionSpacePoint): DimensionSpacePointSet
-    {
-        $affectedDimensionSpacePoints = new DimensionSpacePointSet([]);
-        $previouslyVisitedDimensionSpacePoints = new DimensionSpacePointSet([]);
-        foreach ($this->visitedNodes->alreadyVisitedOriginDimensionSpacePoints($nodeAggregateId) as $visitedOriginDimensionSpacePoint) {
-            $claimedDimensionSpacePoints = $this->interDimensionalVariationGraph->getSpecializationSet($visitedOriginDimensionSpacePoint->toDimensionSpacePoint(), true, $previouslyVisitedDimensionSpacePoints);
-            if ($visitedOriginDimensionSpacePoint->equals($taggedOriginDimensionSpacePoint)) {
-                $affectedDimensionSpacePoints = $claimedDimensionSpacePoints;
-            } else {
-                $affectedDimensionSpacePoints = $affectedDimensionSpacePoints->getDifference($claimedDimensionSpacePoints);
-            }
-            $previouslyVisitedDimensionSpacePoints = $previouslyVisitedDimensionSpacePoints->getUnion(new DimensionSpacePointSet([$visitedOriginDimensionSpacePoint->toDimensionSpacePoint()]));
-        }
-        return $affectedDimensionSpacePoints;
     }
 
     private function isRootNodePath(string $path): bool
