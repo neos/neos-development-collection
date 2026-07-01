@@ -46,6 +46,21 @@ final readonly class PropertyNames implements \IteratorAggregate, \Countable, \J
         return new self(...$this->values, ...$other->values);
     }
 
+    public function getDifference(self $other): self
+    {
+        $otherPropertyNames = [];
+        foreach ($other->values as $propertyName) {
+            $otherPropertyNames[$propertyName->value] = true;
+        }
+        $difference = [];
+        foreach ($this->values as $propertyName) {
+            if (!isset($otherPropertyNames[$propertyName->value])) {
+                $difference[] = $propertyName;
+            }
+        }
+        return new self(...$difference);
+    }
+
     public function jsonSerialize(): mixed
     {
         return $this->values;

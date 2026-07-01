@@ -433,15 +433,9 @@ final class EventExportProcessor implements ProcessorInterface
         // the variant event copied the full property set of its source dimension. unset every property this
         // dimension's node data row does not set, so a copied-over value does not surface where the row left
         // the property empty or did not carry it at all.
-        $ownPropertyNames = array_keys($serializedPropertyValuesAndReferences->serializedPropertyValues->getPlainValues());
+        $ownPropertyNames = $serializedPropertyValuesAndReferences->serializedPropertyValues->getPropertyNames();
         $copiedPropertyNames = $sourceVariant?->propertyNames ?? PropertyNames::createEmpty();
-        $propertyNamesToUnset = [];
-        foreach ($copiedPropertyNames as $copiedPropertyName) {
-            if (!in_array($copiedPropertyName->value, $ownPropertyNames, true)) {
-                $propertyNamesToUnset[] = $copiedPropertyName;
-            }
-        }
-        $propertiesToUnset = PropertyNames::fromArray($propertyNamesToUnset);
+        $propertiesToUnset = $copiedPropertyNames->getDifference($ownPropertyNames);
         if ($serializedPropertyValuesAndReferences->serializedPropertyValues->count() > 0
             || !$propertiesToUnset->isEmpty()
         ) {
