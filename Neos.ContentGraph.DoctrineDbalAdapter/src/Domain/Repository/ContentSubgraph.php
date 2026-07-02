@@ -17,7 +17,7 @@ namespace Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Exception as DBALException;
 use Doctrine\DBAL\Result;
-use Flowpack\QueryObjectBuilder\MySQL\Builder\Target;
+use Flowpack\QueryObjectBuilder\MySQL\Builder\SelectBuilder;
 use Flowpack\QueryObjectBuilder\MySQL\Q;
 use Neos\ContentGraph\DoctrineDbalAdapter\ContentGraphTableNames;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\ContentStreamLayers;
@@ -27,6 +27,8 @@ use Neos\ContentGraph\DoctrineDbalAdapter\NewContentGraphTableNames;
 use Neos\ContentGraph\DoctrineDbalAdapter\NewHierarchyRelationSubquery;
 use Neos\ContentGraph\DoctrineDbalAdapter\NodeAggregateIdCondition;
 use Neos\ContentGraph\DoctrineDbalAdapter\NodeQueryBuilder;
+use Neos\ContentGraph\DoctrineDbalAdapter\Query\TargetFactory;
+use Neos\ContentGraph\DoctrineDbalAdapter\Query\VisibilityConstraintsCondition;
 use Neos\ContentGraph\DoctrineDbalAdapter\ReferenceDestinationNodeAggregateIdCondition;
 use Neos\ContentGraph\DoctrineDbalAdapter\SqlTableSubqueryFactory;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
@@ -188,10 +190,6 @@ final class ContentSubgraph implements ContentSubgraphInterface
 
     public function findNodeById(NodeAggregateId $nodeAggregateId): ?Node
     {
-        // todo use ->as()->as() ???
-        // as() is not validated!!
-        // todo hide writeSql and writeInnerSql!!
-
         $q = Q::select(Q::n('n.*'), Q::n('h.subtreetags'))
             ->from($this->tableNames_->node())->as('n')
             ->join(
@@ -205,25 +203,9 @@ final class ContentSubgraph implements ContentSubgraphInterface
             )
             ->where(Q::n('n.nodeaggregateid')->eq(Q::arg($nodeAggregateId->value)));
 
-        $target = Target::mariaDb();
+        $q = $this->applyVisibilityConstraints($q);
 
-        [$sql, $arguments] = Q::build($q)->withValidateTarget($target)->toSql();
-
-        $nodeRow = $this->dbal->fetchAssociative(
-            $sql,
-            $arguments
-        );
-
-        if ($nodeRow === false) {
-            return null;
-        }
-
-        return $this->nodeFactory->mapNodeRowToNode(
-            $nodeRow,
-            $this->workspaceName,
-            $this->dimensionSpacePoint,
-            $this->visibilityConstraints
-        );
+        return $this->fetchNode_($q);
     }
 
     public function findNodesByIds(NodeAggregateIds $nodeAggregateIds): Nodes
@@ -795,6 +777,57 @@ final class ContentSubgraph implements ContentSubgraphInterface
     private function applyPagination(QueryBuilder $queryBuilder, Pagination $pagination): void
     {
         $queryBuilder->setMaxResults($pagination->limit)->setFirstResult($pagination->offset);
+    }
+
+    private function applyVisibilityConstraints(SelectBuilder $selectBuilder, string $alias = 'h'): SelectBuilder
+    {
+        if ($this->visibilityConstraints->excludedSubtreeTags->isEmpty()) {
+            return $selectBuilder;
+        }
+        return $selectBuilder->where(
+            VisibilityConstraintsCondition::from($this->visibilityConstraints)->hierarchyAlias($alias)
+        );
+    }
+
+    private function fetchNode_(SelectBuilder $selectBuilder): ?Node
+    {
+        [$sql, $arguments] = Q::build($selectBuilder)
+            ->withValidateTarget(TargetFactory::forDbalPlatform($this->dbal->getDatabasePlatform()))
+            ->toSql();
+
+        try {
+            $nodeRow = $this->dbal->fetchAssociative($sql, $arguments);
+        } catch (DBALException $e) {
+            throw new \RuntimeException(sprintf('Failed to fetch node: %s', $e->getMessage()), 1678286030, $e);
+        }
+        if ($nodeRow === false) {
+            return null;
+        }
+        return $this->nodeFactory->mapNodeRowToNode(
+            $nodeRow,
+            $this->workspaceName,
+            $this->dimensionSpacePoint,
+            $this->visibilityConstraints
+        );
+    }
+
+    private function fetchNodes_(SelectBuilder $selectBuilder): Nodes
+    {
+        [$sql, $arguments] = Q::build($selectBuilder)
+            ->withValidateTarget(TargetFactory::forDbalPlatform($this->dbal->getDatabasePlatform()))
+            ->toSql();
+
+        try {
+            $nodeRows = $this->dbal->fetchAssociative($sql, $arguments);
+        } catch (DBALException $e) {
+            throw new \RuntimeException(sprintf('Failed to fetch nodes: %s', $e->getMessage()), 1678292896, $e);
+        }
+        return $this->nodeFactory->mapNodeRowsToNodes(
+            $nodeRows,
+            $this->workspaceName,
+            $this->dimensionSpacePoint,
+            $this->visibilityConstraints
+        );
     }
 
     /**
