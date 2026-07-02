@@ -30,12 +30,12 @@ final class VisitedNodeAggregate
 
     ) {}
 
-    public function addVariant(OriginDimensionSpacePoint $originDimensionSpacePoint, NodeAggregateId $parentNodeAggregateId, PropertyNames $propertyNames): void
+    public function addVariant(OriginDimensionSpacePoint $originDimensionSpacePoint, NodeAggregateId $parentNodeAggregateId, PropertyNames $propertyNames, DimensionSpacePointSet $claimedDimensionSpacePoints): void
     {
         if (isset($this->variants[$originDimensionSpacePoint->hash])) {
             throw new MigrationException(sprintf('Node "%s" with dimension space point "%s" was already visited before', $this->nodeAggregateId->value, $originDimensionSpacePoint->toJson()), 1653050442);
         }
-        $this->variants[$originDimensionSpacePoint->hash] = new VisitedNodeVariant($originDimensionSpacePoint, $parentNodeAggregateId, $propertyNames);
+        $this->variants[$originDimensionSpacePoint->hash] = new VisitedNodeVariant($originDimensionSpacePoint, $parentNodeAggregateId, $propertyNames, $claimedDimensionSpacePoints);
     }
 
     public function getOriginDimensionSpacePoints(): OriginDimensionSpacePointSet
@@ -56,9 +56,9 @@ final class VisitedNodeAggregate
      * disable tag for the occupant must affect after all variants of its node aggregate have been processed.
      *
      * These are, on the one hand, the dimension space points the occupant still covers in the exported structure:
-     * each creation/variation event claims coverage of the specialization set of its origin, excluding the origins
-     * visited before it, and later events take over the dimension space points they claim. The occupant keeps its
-     * own claim minus everything that variants visited after it claimed for themselves.
+     * each creation/variation event claims coverage (recorded on the visited variant), and later events take over
+     * the dimension space points they claim. The occupant keeps its own claim minus everything that variants
+     * visited after it claimed for themselves.
      *
      * On the other hand, these are the dimension space points that resolved to the occupant in the legacy content
      * repository: a dimension without an own node data row inherited the nearest variant in its fallback chain,
@@ -67,19 +67,18 @@ final class VisitedNodeAggregate
      */
     public function resolveAffectedDimensionSpacePoints(OriginDimensionSpacePoint $occupant, InterDimensionalVariationGraph $interDimensionalVariationGraph): DimensionSpacePointSet
     {
-        $affectedDimensionSpacePoints = new DimensionSpacePointSet([]);
-        $previouslyVisitedDimensionSpacePoints = new DimensionSpacePointSet([]);
+        $affectedDimensionSpacePoints = $this->getVariant($occupant)->claimedDimensionSpacePoints;
+        $occupantWasVisited = false;
         foreach ($this->variants as $variant) {
-            $claimedDimensionSpacePoints = $interDimensionalVariationGraph->getSpecializationSet($variant->originDimensionSpacePoint->toDimensionSpacePoint(), true, $previouslyVisitedDimensionSpacePoints);
             if ($variant->originDimensionSpacePoint->equals($occupant)) {
-                $affectedDimensionSpacePoints = $claimedDimensionSpacePoints;
-            } else {
-                $affectedDimensionSpacePoints = $affectedDimensionSpacePoints->getDifference($claimedDimensionSpacePoints);
+                $occupantWasVisited = true;
+            } elseif ($occupantWasVisited) {
+                $affectedDimensionSpacePoints = $affectedDimensionSpacePoints->getDifference($variant->claimedDimensionSpacePoints);
             }
-            $previouslyVisitedDimensionSpacePoints = $previouslyVisitedDimensionSpacePoints->getUnion(new DimensionSpacePointSet([$variant->originDimensionSpacePoint->toDimensionSpacePoint()]));
         }
+        $visitedOrigins = $this->getOriginDimensionSpacePoints()->toDimensionSpacePointSet();
         foreach ($interDimensionalVariationGraph->getSpecializationSet($occupant->toDimensionSpacePoint(), true) as $specialization) {
-            if ($this->fallbackResolvesToOccupant($specialization, $occupant, $interDimensionalVariationGraph)) {
+            if ($this->fallbackResolvesToOccupant($specialization, $occupant, $visitedOrigins, $interDimensionalVariationGraph)) {
                 $affectedDimensionSpacePoints = $affectedDimensionSpacePoints->getUnion(new DimensionSpacePointSet([$specialization]));
             }
         }
@@ -91,9 +90,8 @@ final class VisitedNodeAggregate
      * is the nearest visited origin in its fallback chain, so the legacy content repository presented the occupant's
      * variant (and visibility) in this dimension space point.
      */
-    private function fallbackResolvesToOccupant(DimensionSpacePoint $dimensionSpacePoint, OriginDimensionSpacePoint $occupant, InterDimensionalVariationGraph $interDimensionalVariationGraph): bool
+    private function fallbackResolvesToOccupant(DimensionSpacePoint $dimensionSpacePoint, OriginDimensionSpacePoint $occupant, DimensionSpacePointSet $visitedOrigins, InterDimensionalVariationGraph $interDimensionalVariationGraph): bool
     {
-        $visitedOrigins = $this->getOriginDimensionSpacePoints()->toDimensionSpacePointSet();
         foreach ([$dimensionSpacePoint, ...$interDimensionalVariationGraph->getWeightedGeneralizations($dimensionSpacePoint)] as $fallback) {
             if ($visitedOrigins->contains($fallback)) {
                 return $fallback->equals($occupant->toDimensionSpacePoint());
