@@ -69,6 +69,34 @@ Feature: Migrating hidden nodes with content dimensions
       | NodeGeneralizationVariantWasCreated | {"nodeAggregateId": "site-node-id", "sourceOrigin": {"language": "de"}, "generalizationOrigin": {"language": "en"}}             |
       | SubtreeWasTagged                    | {"nodeAggregateId": "site-node-id", "affectedDimensionSpacePoints": [{"language": "en"},{"language": "ch"}], "tag": "disabled"} |
 
+  Scenario: A hidden node variant processed before a visible generalization variant must stay hidden in the dimensions it shines through to
+    When I have the following node data rows:
+      | Identifier    | Path             | Node Type             | Dimension Values     | Hidden |
+      | sites-node-id | /sites           | unstructured          |                      | 0      |
+      | site-node-id  | /sites/test-site | Some.Package:Homepage | {"language": ["de"]} | 1      |
+      | site-node-id  | /sites/test-site | Some.Package:Homepage | {"language": ["en"]} | 0      |
+    And I run the event migration
+    Then I expect the following events to be exported
+      | Type                                | Payload                                                                                                                         |
+      | RootNodeAggregateWithNodeWasCreated | {"nodeAggregateId": "sites-node-id"}                                                                                            |
+      | NodeAggregateWithNodeWasCreated     | {"nodeAggregateId": "site-node-id", "originDimensionSpacePoint": {"language": "de"}}                                            |
+      | NodeGeneralizationVariantWasCreated | {"nodeAggregateId": "site-node-id", "sourceOrigin": {"language": "de"}, "generalizationOrigin": {"language": "en"}}             |
+      | SubtreeWasTagged                    | {"nodeAggregateId": "site-node-id", "affectedDimensionSpacePoints": [{"language": "de"},{"language": "ch"}], "tag": "disabled"} |
+
+  Scenario: A hidden node variant processed after a visible generalization variant must stay hidden in the dimensions it shines through to
+    When I have the following node data rows:
+      | Identifier    | Path             | Node Type             | Dimension Values     | Hidden |
+      | sites-node-id | /sites           | unstructured          |                      | 0      |
+      | site-node-id  | /sites/test-site | Some.Package:Homepage | {"language": ["en"]} | 0      |
+      | site-node-id  | /sites/test-site | Some.Package:Homepage | {"language": ["de"]} | 1      |
+    And I run the event migration
+    Then I expect the following events to be exported
+      | Type                                | Payload                                                                                                                         |
+      | RootNodeAggregateWithNodeWasCreated | {"nodeAggregateId": "sites-node-id"}                                                                                            |
+      | NodeAggregateWithNodeWasCreated     | {"nodeAggregateId": "site-node-id", "originDimensionSpacePoint": {"language": "en"}}                                            |
+      | NodeSpecializationVariantWasCreated | {"nodeAggregateId": "site-node-id", "sourceOrigin": {"language": "en"}, "specializationOrigin": {"language": "de"}}             |
+      | SubtreeWasTagged                    | {"nodeAggregateId": "site-node-id", "affectedDimensionSpacePoints": [{"language": "de"},{"language": "ch"}], "tag": "disabled"} |
+
   Scenario: A hidden node without dimension values must be disabled in every dimension it was created in
     When I have the following node data rows:
       | Identifier    | Path             | Node Type             | Dimension Values | Hidden |

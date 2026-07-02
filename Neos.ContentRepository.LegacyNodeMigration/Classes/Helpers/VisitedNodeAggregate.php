@@ -2,6 +2,7 @@
 declare(strict_types=1);
 namespace Neos\ContentRepository\LegacyNodeMigration\Helpers;
 
+use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Core\DimensionSpace\InterDimensionalVariationGraph;
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
@@ -51,26 +52,53 @@ final class VisitedNodeAggregate
     }
 
     /**
-     * Resolves the dimension space points the given occupant still covers after all variants of its node aggregate
-     * have been processed.
+     * Resolves the dimension space points whose visibility follows the given (hidden) occupant, i.e. the points a
+     * disable tag for the occupant must affect after all variants of its node aggregate have been processed.
      *
-     * Each creation/variation event claims coverage of the specialization set of its origin, excluding the origins
-     * visited before it, and later events take over the dimension space points they claim. The final coverage of the
-     * given occupant is therefore its own claim minus everything that variants visited after it claimed for themselves.
+     * These are, on the one hand, the dimension space points the occupant still covers in the exported structure:
+     * each creation/variation event claims coverage of the specialization set of its origin, excluding the origins
+     * visited before it, and later events take over the dimension space points they claim. The occupant keeps its
+     * own claim minus everything that variants visited after it claimed for themselves.
+     *
+     * On the other hand, these are the dimension space points that resolved to the occupant in the legacy content
+     * repository: a dimension without an own node data row inherited the nearest variant in its fallback chain,
+     * including its hidden state, no matter in which order the rows were processed. Such points must stay disabled
+     * even if a variant visited after the occupant claimed them for the exported structure.
      */
-    public function getCoverageByOccupant(OriginDimensionSpacePoint $occupant, InterDimensionalVariationGraph $interDimensionalVariationGraph): DimensionSpacePointSet
+    public function resolveAffectedDimensionSpacePoints(OriginDimensionSpacePoint $occupant, InterDimensionalVariationGraph $interDimensionalVariationGraph): DimensionSpacePointSet
     {
-        $coverage = new DimensionSpacePointSet([]);
+        $affectedDimensionSpacePoints = new DimensionSpacePointSet([]);
         $previouslyVisitedDimensionSpacePoints = new DimensionSpacePointSet([]);
         foreach ($this->variants as $variant) {
             $claimedDimensionSpacePoints = $interDimensionalVariationGraph->getSpecializationSet($variant->originDimensionSpacePoint->toDimensionSpacePoint(), true, $previouslyVisitedDimensionSpacePoints);
             if ($variant->originDimensionSpacePoint->equals($occupant)) {
-                $coverage = $claimedDimensionSpacePoints;
+                $affectedDimensionSpacePoints = $claimedDimensionSpacePoints;
             } else {
-                $coverage = $coverage->getDifference($claimedDimensionSpacePoints);
+                $affectedDimensionSpacePoints = $affectedDimensionSpacePoints->getDifference($claimedDimensionSpacePoints);
             }
             $previouslyVisitedDimensionSpacePoints = $previouslyVisitedDimensionSpacePoints->getUnion(new DimensionSpacePointSet([$variant->originDimensionSpacePoint->toDimensionSpacePoint()]));
         }
-        return $coverage;
+        foreach ($interDimensionalVariationGraph->getSpecializationSet($occupant->toDimensionSpacePoint(), true) as $specialization) {
+            if ($this->fallbackResolvesToOccupant($specialization, $occupant, $interDimensionalVariationGraph)) {
+                $affectedDimensionSpacePoints = $affectedDimensionSpacePoints->getUnion(new DimensionSpacePointSet([$specialization]));
+            }
+        }
+        return $affectedDimensionSpacePoints;
+    }
+
+    /**
+     * Whether the given dimension space point resolves to the occupant via the fallback mechanism, i.e. the occupant
+     * is the nearest visited origin in its fallback chain, so the legacy content repository presented the occupant's
+     * variant (and visibility) in this dimension space point.
+     */
+    private function fallbackResolvesToOccupant(DimensionSpacePoint $dimensionSpacePoint, OriginDimensionSpacePoint $occupant, InterDimensionalVariationGraph $interDimensionalVariationGraph): bool
+    {
+        $visitedOrigins = $this->getOriginDimensionSpacePoints()->toDimensionSpacePointSet();
+        foreach ([$dimensionSpacePoint, ...$interDimensionalVariationGraph->getWeightedGeneralizations($dimensionSpacePoint)] as $fallback) {
+            if ($visitedOrigins->contains($fallback)) {
+                return $fallback->equals($occupant->toDimensionSpacePoint());
+            }
+        }
+        return false;
     }
 }

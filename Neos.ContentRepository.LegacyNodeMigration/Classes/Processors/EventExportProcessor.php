@@ -121,7 +121,7 @@ final class EventExportProcessor implements ProcessorInterface
                 $this->workspaceName,
                 $this->contentStreamId,
                 $hiddenNodeVariant->nodeAggregateId,
-                $this->visitedNodes->getByNodeAggregateId($hiddenNodeVariant->nodeAggregateId)->getCoverageByOccupant($hiddenNodeVariant->originDimensionSpacePoint, $this->interDimensionalVariationGraph),
+                $this->visitedNodes->getByNodeAggregateId($hiddenNodeVariant->nodeAggregateId)->resolveAffectedDimensionSpacePoints($hiddenNodeVariant->originDimensionSpacePoint, $this->interDimensionalVariationGraph),
                 NeosSubtreeTag::disabled()
             ));
         }
