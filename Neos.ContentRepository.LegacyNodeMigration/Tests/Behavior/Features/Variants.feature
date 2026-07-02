@@ -15,6 +15,8 @@ Feature: Migrating nodes with content dimensions
           type: string
         'title':
           type: string
+        'hiddenInMenu':
+          type: boolean
     'Some.Package:Thing': {}
     """
     And using identifier "default", I define a content repository
@@ -141,3 +143,20 @@ Feature: Migrating nodes with content dimensions
       | NodeAggregateWithNodeWasCreated     | {"nodeAggregateId": "site-node-id", "originDimensionSpacePoint": {"language": "de"}, "initialPropertyValues": {"text": {"value": "hallo", "type": "string"}, "title": {"value": "Startseite", "type": "string"}}}   |
       | NodePeerVariantWasCreated           | {"nodeAggregateId": "site-node-id", "sourceOrigin": {"language": "de"}, "peerOrigin": {"language": "en"}}                                                                                                           |
       | NodePropertiesWereSet               | {"nodeAggregateId": "site-node-id", "originDimensionSpacePoint": {"language": "en"}, "propertyValues": {"text": {"value": "hello", "type": "string"}}, "propertiesToUnset": ["title"]}                              |
+
+  Scenario: A "hidden in menu" flag not set on a variant's row is unset instead of keeping the copied source value
+    # "hiddeninindex" is a per-row column in the legacy content repository, migrated to the "hiddenInMenu" property.
+    # the "en" peer variant copies hiddenInMenu=true from its "de" source, but its own row is not hidden in menus,
+    # so the copied property must be unset to match what the legacy site rendered in "en".
+    When I have the following node data rows:
+      | Identifier    | Path             | Node Type             | Dimension Values     | Hidden in index |
+      | sites-node-id | /sites           | unstructured          |                      |                 |
+      | site-node-id  | /sites/test-site | Some.Package:Homepage | {"language": ["de"]} | 1               |
+      | site-node-id  | /sites/test-site | Some.Package:Homepage | {"language": ["en"]} | 0               |
+    And I run the event migration
+    Then I expect the following events to be exported
+      | Type                                | Payload                                                                                                                                                             |
+      | RootNodeAggregateWithNodeWasCreated | {"nodeAggregateId": "sites-node-id"}                                                                                                                                |
+      | NodeAggregateWithNodeWasCreated     | {"nodeAggregateId": "site-node-id", "originDimensionSpacePoint": {"language": "de"}, "initialPropertyValues": {"hiddenInMenu": {"value": true, "type": "boolean"}}} |
+      | NodePeerVariantWasCreated           | {"nodeAggregateId": "site-node-id", "sourceOrigin": {"language": "de"}, "peerOrigin": {"language": "en"}}                                                           |
+      | NodePropertiesWereSet               | {"nodeAggregateId": "site-node-id", "originDimensionSpacePoint": {"language": "en"}, "propertiesToUnset": ["hiddenInMenu"]}                                         |
