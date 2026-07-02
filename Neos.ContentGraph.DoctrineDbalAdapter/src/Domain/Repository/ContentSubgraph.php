@@ -17,10 +17,14 @@ namespace Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Exception as DBALException;
 use Doctrine\DBAL\Result;
+use Flowpack\QueryObjectBuilder\MySQL\Builder\Target;
+use Flowpack\QueryObjectBuilder\MySQL\Q;
 use Neos\ContentGraph\DoctrineDbalAdapter\ContentGraphTableNames;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\ContentStreamLayers;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\NodeRelationAnchorPoint;
 use Neos\ContentGraph\DoctrineDbalAdapter\HierarchyRelationSubquery;
+use Neos\ContentGraph\DoctrineDbalAdapter\NewContentGraphTableNames;
+use Neos\ContentGraph\DoctrineDbalAdapter\NewHierarchyRelationSubquery;
 use Neos\ContentGraph\DoctrineDbalAdapter\NodeAggregateIdCondition;
 use Neos\ContentGraph\DoctrineDbalAdapter\NodeQueryBuilder;
 use Neos\ContentGraph\DoctrineDbalAdapter\ReferenceDestinationNodeAggregateIdCondition;
@@ -96,6 +100,7 @@ use Neos\ContentRepository\Dbal\Query\QueryBuilder;
 final class ContentSubgraph implements ContentSubgraphInterface
 {
     private readonly NodeQueryBuilder $nodeQueryBuilder;
+    private readonly NewContentGraphTableNames $tableNames_;
 
     /**
      * Hierarchy relations for a subgraph - filtered by content stream and dimension space point
@@ -113,6 +118,7 @@ final class ContentSubgraph implements ContentSubgraphInterface
         private readonly NodeTypeManager $nodeTypeManager,
         private readonly ContentGraphTableNames $tableNames
     ) {
+        $this->tableNames_ = NewContentGraphTableNames::create($this->contentRepositoryId);
         $this->nodeQueryBuilder = new NodeQueryBuilder($this->dbal, $tableNames);
         $this->hierarchyRelationQuery = SqlTableSubqueryFactory::for($tableNames)
             ->forHierarchyRelation($this->contentStreamLayers)
@@ -182,12 +188,42 @@ final class ContentSubgraph implements ContentSubgraphInterface
 
     public function findNodeById(NodeAggregateId $nodeAggregateId): ?Node
     {
-        $nodeAggregateIdCondition = NodeAggregateIdCondition::forNodeAggregateId($nodeAggregateId);
-        $queryBuilder = $this->nodeQueryBuilder->buildBasicNodeQuery($this->hierarchyRelationQuery->withPossibleChildNodeAggregateId($nodeAggregateIdCondition))
-            ->whereCondition('n', $nodeAggregateIdCondition);
+        // todo use ->as()->as() ???
+        // as() is not validated!!
+        // todo hide writeSql and writeInnerSql!!
 
-        $this->addSubtreeTagConstraints($queryBuilder);
-        return $this->fetchNode($queryBuilder);
+        $q = Q::select(Q::n('n.*'), Q::n('h.subtreetags'))
+            ->from($this->tableNames_->node())->as('n')
+            ->join(
+                NewHierarchyRelationSubquery::create(
+                    $this->tableNames_,
+                    $this->contentStreamLayers
+                )->withDimensionSpacePoint($this->dimensionSpacePoint)
+            )->as('h')
+            ->on(
+                Q::n('h.childnodeanchor')->eq(Q::n('n.relationanchorpoint'))
+            )
+            ->where(Q::n('n.nodeaggregateid')->eq(Q::arg($nodeAggregateId->value)));
+
+        $target = Target::mariaDb();
+
+        [$sql, $arguments] = Q::build($q)->withValidateTarget($target)->toSql();
+
+        $nodeRow = $this->dbal->fetchAssociative(
+            $sql,
+            $arguments
+        );
+
+        if ($nodeRow === false) {
+            return null;
+        }
+
+        return $this->nodeFactory->mapNodeRowToNode(
+            $nodeRow,
+            $this->workspaceName,
+            $this->dimensionSpacePoint,
+            $this->visibilityConstraints
+        );
     }
 
     public function findNodesByIds(NodeAggregateIds $nodeAggregateIds): Nodes
