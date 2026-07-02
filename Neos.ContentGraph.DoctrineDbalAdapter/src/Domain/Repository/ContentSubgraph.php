@@ -27,6 +27,7 @@ use Neos\ContentGraph\DoctrineDbalAdapter\NewContentGraphTableNames;
 use Neos\ContentGraph\DoctrineDbalAdapter\NewHierarchyRelationSubquery;
 use Neos\ContentGraph\DoctrineDbalAdapter\NodeAggregateIdCondition;
 use Neos\ContentGraph\DoctrineDbalAdapter\NodeQueryBuilder;
+use Neos\ContentGraph\DoctrineDbalAdapter\Query\ColumnAlias as C;
 use Neos\ContentGraph\DoctrineDbalAdapter\Query\TargetFactory;
 use Neos\ContentGraph\DoctrineDbalAdapter\Query\VisibilityConstraintsCondition;
 use Neos\ContentGraph\DoctrineDbalAdapter\ReferenceDestinationNodeAggregateIdCondition;
@@ -109,6 +110,8 @@ final class ContentSubgraph implements ContentSubgraphInterface
      */
     private readonly HierarchyRelationSubquery $hierarchyRelationQuery;
 
+    private readonly NewHierarchyRelationSubquery $hierarchyRelationQuery_;
+
     public function __construct(
         private readonly ContentRepositoryId $contentRepositoryId,
         private readonly WorkspaceName $workspaceName,
@@ -122,6 +125,9 @@ final class ContentSubgraph implements ContentSubgraphInterface
     ) {
         $this->tableNames_ = NewContentGraphTableNames::create($this->contentRepositoryId);
         $this->nodeQueryBuilder = new NodeQueryBuilder($this->dbal, $tableNames);
+
+        $this->hierarchyRelationQuery_ = NewHierarchyRelationSubquery::create($this->tableNames_, $this->contentStreamLayers);
+
         $this->hierarchyRelationQuery = SqlTableSubqueryFactory::for($tableNames)
             ->forHierarchyRelation($this->contentStreamLayers)
             ->withDimensionSpacePoint($this->dimensionSpacePoint);
@@ -192,12 +198,7 @@ final class ContentSubgraph implements ContentSubgraphInterface
     {
         $q = Q::select(Q::n('n.*'), Q::n('h.subtreetags'))
             ->from($this->tableNames_->node())->as('n')
-            ->join(
-                NewHierarchyRelationSubquery::create(
-                    $this->tableNames_,
-                    $this->contentStreamLayers
-                )->withDimensionSpacePoint($this->dimensionSpacePoint)
-            )->as('h')
+            ->join($this->hierarchyRelationQuery_)->as('h')
             ->on(
                 Q::n('h.childnodeanchor')->eq(Q::n('n.relationanchorpoint'))
             )
@@ -442,27 +443,25 @@ final class ContentSubgraph implements ContentSubgraphInterface
 
     public function findDescendantNodes(NodeAggregateId $entryNodeAggregateId, FindDescendantNodesFilter $filter): Nodes
     {
-        ['queryBuilderInitial' => $queryBuilderInitial, 'queryBuilderRecursive' => $queryBuilderRecursive, 'queryBuilderCte' => $queryBuilderCte] = $this->buildDescendantNodesQueries($entryNodeAggregateId, $filter);
-        if ($filter->ordering !== null) {
-            $this->applyOrdering($queryBuilderCte, $filter->ordering);
-        }
-        if ($filter->pagination !== null) {
-            $this->applyPagination($queryBuilderCte, $filter->pagination);
-        }
-        $queryBuilderCte->addOrderBy('level')->addOrderBy('position');
-        $nodeRows = $this->fetchCteResults($queryBuilderInitial, $queryBuilderRecursive, $queryBuilderCte, 'tree');
-        return $this->nodeFactory->mapNodeRowsToNodes(
-            $nodeRows,
-            $this->workspaceName,
-            $this->dimensionSpacePoint,
-            $this->visibilityConstraints
-        );
+        $q = $this->buildDescendantNodesQueries($entryNodeAggregateId, $filter);
+
+        // if ($filter->ordering !== null) {
+        //     $q = $this->applyOrdering_($q, $filter->ordering);
+        // }
+        // if ($filter->pagination !== null) {
+        //     $q = $this->applyPagination_($q, $filter->pagination);
+        // }
+
+//        $queryBuilderCte->addOrderBy('level')->addOrderBy('position');
+
+        return $this->fetchNodes_($q);
     }
 
     public function countDescendantNodes(NodeAggregateId $entryNodeAggregateId, CountDescendantNodesFilter $filter): int
     {
-        ['queryBuilderInitial' => $queryBuilderInitial, 'queryBuilderRecursive' => $queryBuilderRecursive, 'queryBuilderCte' => $queryBuilderCte] = $this->buildDescendantNodesQueries($entryNodeAggregateId, $filter);
-        return $this->fetchCteCountResult($queryBuilderInitial, $queryBuilderRecursive, $queryBuilderCte, 'tree');
+        $q = $this->buildDescendantNodesQueries($entryNodeAggregateId, $filter);
+
+        return $this->fetchCount_($q);
     }
 
     public function countNodes(): int
@@ -712,45 +711,57 @@ final class ContentSubgraph implements ContentSubgraphInterface
         return compact('queryBuilderInitial', 'queryBuilderRecursive', 'queryBuilderCte');
     }
 
-    /**
-     * @return array{queryBuilderInitial: QueryBuilder, queryBuilderRecursive: QueryBuilder, queryBuilderCte: QueryBuilder}
-     */
-    private function buildDescendantNodesQueries(NodeAggregateId $entryNodeAggregateId, FindDescendantNodesFilter|CountDescendantNodesFilter $filter): array
+    private function buildDescendantNodesQueries(NodeAggregateId $entryNodeAggregateId, FindDescendantNodesFilter|CountDescendantNodesFilter $filter): SelectBuilder
     {
         $nodeAggregateIdCondition = NodeAggregateIdCondition::forNodeAggregateId($entryNodeAggregateId);
+        // TODO union()->select() is allowed but should not, its union()->query()
 
-        $queryBuilderInitial = $this->createQueryBuilder()
-            // @see https://mariadb.com/kb/en/library/recursive-common-table-expressions-overview/#cast-to-avoid-data-truncation
-            ->select('n.*, h.subtreetags, CAST("ROOT" AS CHAR(50)) AS parentNodeAggregateId, 0 AS level, 0 AS position')
-            ->from($this->tableNames->node(), 'n')
-            // we need to join with the hierarchy relation, because we need the node name.
-            ->innerJoinTableSubquery('n', $this->hierarchyRelationQuery->withPossibleParentNodeAggregateId($nodeAggregateIdCondition), 'h', 'h.childnodeanchor = n.relationanchorpoint')
-            ->innerJoin('n', $this->tableNames->node(), 'p', 'p.relationanchorpoint = h.parentnodeanchor')
-            ->innerJoinTableSubquery('n', $this->hierarchyRelationQuery, 'ph', 'ph.childnodeanchor = p.relationanchorpoint')
-            ->whereCondition('p', $nodeAggregateIdCondition);
-        $this->addSubtreeTagConstraints($queryBuilderInitial);
+        $q = Q::withRecursive('tree')->as(
+            $this->applyVisibilityConstraints(
+                Q::select(
+                    // @see https://mariadb.com/kb/en/library/recursive-common-table-expressions-overview/#cast-to-avoid-data-truncation
+                    Q::n('n.*'), Q::n('h.subtreetags'), C::alias(Q::cast(Q::string('ROOT'), 'CHAR(50)'), 'parentNodeAggregateId'), C::alias(Q::int(0), 'level'), C::alias(Q::int(0), 'position')
+                )
+                    ->from($this->tableNames_->node())->as('n')
+                    ->join($this->hierarchyRelationQuery_)->as('h')->on(
+                        Q::n('h.childnodeanchor')->eq(Q::n('n.relationanchorpoint'))
+                    )
+                    ->join($this->tableNames_->node())->as('p')->on(
+                        Q::n('h.childnodeanchor')->eq(Q::n('p.relationanchorpoint'))
+                    )
+                    ->where(
+                        Q::n('n.nodeaggregateid')->eq(Q::arg($entryNodeAggregateId->value))
+                    )
+            )->union()->query(
+                $this->applyVisibilityConstraints(
+                    Q::select(
+                        Q::n('cn.*'), Q::n('h.subtreetags'), C::alias(Q::n('pn.nodeaggregateid'), 'parentNodeAggregateId'), C::alias(Q::n('pn.level')->plus(Q::int(1)), 'level'), Q::n('h.position')
+                    )
+                        ->from(Q::n('tree'))->as('pn')
+                        ->join($this->hierarchyRelationQuery_)->as('h')->on(
+                            Q::n('h.parentnodeanchor')->eq(Q::n('pn.relationanchorpoint'))
+                        )
+                        ->join($this->tableNames_->node())->as('cn')->on(
+                            Q::n('cn.relationanchorpoint')->eq(Q::n('h.childnodeanchor'))
+                        )
+                )
+            )
+        )
+            ->select(Q::n('*'))
+            ->from(Q::n('tree'))->as('n');
 
-        $queryBuilderRecursive = $this->createQueryBuilder()
-            ->select('cn.*, h.subtreetags, pn.nodeaggregateid AS parentNodeAggregateId, pn.level + 1 AS level, h.position')
-            ->from('tree', 'pn')
-            ->innerJoinTableSubquery('pn', $this->hierarchyRelationQuery, 'h', 'h.parentnodeanchor = pn.relationanchorpoint')
-            ->innerJoin('pn', $this->tableNames->node(), 'cn', 'cn.relationanchorpoint = h.childnodeanchor');
-        $this->addSubtreeTagConstraints($queryBuilderRecursive);
+        // if ($filter->nodeTypes !== null) {
+        //     $q = $this->nodeQueryBuilder->addNodeTypeCriteria_($q, ExpandedNodeTypeCriteria::create($filter->nodeTypes, $this->nodeTypeManager));
+        // }
+        // if ($filter->searchTerm !== null) {
+        //     $q = $this->nodeQueryBuilder->addSearchTermConstraints_($q, $filter->searchTerm);
+        // }
+        // if ($filter->propertyValue !== null) {
+        //     $q = $this->nodeQueryBuilder->addPropertyValueConstraints_($q, $filter->propertyValue);
+        // }
 
-        $queryBuilderCte = $this->createQueryBuilder()
-            ->select('*')
-            ->from('tree', 'n');
-
-        if ($filter->nodeTypes !== null) {
-            $this->nodeQueryBuilder->addNodeTypeCriteria($queryBuilderCte, ExpandedNodeTypeCriteria::create($filter->nodeTypes, $this->nodeTypeManager));
-        }
-        if ($filter->searchTerm !== null) {
-            $this->nodeQueryBuilder->addSearchTermConstraints($queryBuilderCte, $filter->searchTerm);
-        }
-        if ($filter->propertyValue !== null) {
-            $this->nodeQueryBuilder->addPropertyValueConstraints($queryBuilderCte, $filter->propertyValue);
-        }
-        return compact('queryBuilderInitial', 'queryBuilderRecursive', 'queryBuilderCte');
+        return $q;
+        // return compact('queryBuilderInitial', 'queryBuilderRecursive', 'queryBuilderCte');
     }
 
     private function applyOrdering(QueryBuilder $queryBuilder, Ordering $ordering, string $nodeTableAlias = 'n'): void
@@ -818,7 +829,7 @@ final class ContentSubgraph implements ContentSubgraphInterface
             ->toSql();
 
         try {
-            $nodeRows = $this->dbal->fetchAssociative($sql, $arguments);
+            $nodeRows = $this->dbal->fetchAllAssociative($sql, $arguments);
         } catch (DBALException $e) {
             throw new \RuntimeException(sprintf('Failed to fetch nodes: %s', $e->getMessage()), 1678292896, $e);
         }
@@ -877,6 +888,24 @@ final class ContentSubgraph implements ContentSubgraphInterface
     {
         try {
             return (int)$this->executeQuery($queryBuilder->select('COUNT(*)')->resetOrderBy()->setFirstResult(0)->setMaxResults(1))->fetchOne();
+        } catch (DBALException $e) {
+            throw new \RuntimeException(sprintf('Failed to fetch count: %s', $e->getMessage()), 1679048349, $e);
+        }
+    }
+
+    private function fetchCount_(SelectBuilder $selectBuilder): int
+    {
+        // TODO replace other select clauses so far!
+        // currently emits SELECT *,COUNT(*) FROM tree AS n LIMIT 1
+
+        $selectBuilder = $selectBuilder->select(Q\Func::count(Q::n('*')))->limit(Q::int(1));
+
+        [$sql, $arguments] = Q::build($selectBuilder)
+            ->withValidateTarget(TargetFactory::forDbalPlatform($this->dbal->getDatabasePlatform()))
+            ->toSql();
+
+        try {
+            return (int)$this->dbal->fetchOne($sql, $arguments);
         } catch (DBALException $e) {
             throw new \RuntimeException(sprintf('Failed to fetch count: %s', $e->getMessage()), 1679048349, $e);
         }
