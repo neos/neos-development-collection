@@ -62,8 +62,9 @@ final class VisitedNodeAggregate
      *
      * On the other hand, these are the dimension space points that resolved to the occupant in the legacy content
      * repository: a dimension without an own node data row inherited the nearest variant in its fallback chain,
-     * including its hidden state, no matter in which order the rows were processed. Such points must stay disabled
-     * even if a variant visited after the occupant claimed them for the exported structure.
+     * including its hidden state. With the coverage claims following the fallback order this is normally already
+     * part of the coverage above; it remains as a safety net for constellations where claims stay order-dependent
+     * (incomparable origins in multi-dimensional setups), so previously hidden content can never become visible.
      */
     public function resolveAffectedDimensionSpacePoints(OriginDimensionSpacePoint $occupant, InterDimensionalVariationGraph $interDimensionalVariationGraph): DimensionSpacePointSet
     {

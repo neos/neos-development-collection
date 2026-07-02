@@ -484,15 +484,27 @@ final class EventExportProcessor implements ProcessorInterface
 
     /**
      * Resolves the dimension space points a new variant of the node aggregate in the given origin claims for
-     * itself, i.e. the coverage of the exported creation/variation event: the specialization set of the origin,
-     * excluding the origins of previously visited variants.
+     * itself, i.e. the coverage of the exported creation/variation event.
+     *
+     * This replicates {@see \Neos\ContentRepository\Core\Feature\Common\NodeVariationInternals::calculateEffectiveVisibility()}: the variant covers the
+     * specialization set of its origin, except dimension space points already covered by a nearer variant, i.e.
+     * by a previously visited origin that is itself a specialization of the new origin (including that origin's
+     * own specializations). Dimension space points that fall back to a nearer origin therefore stay with it, no
+     * matter in which order the node data rows are processed.
      */
     private function resolveCoverageClaim(NodeAggregateId $nodeAggregateId, OriginDimensionSpacePoint $originDimensionSpacePoint): DimensionSpacePointSet
     {
+        $specializations = $this->interDimensionalVariationGraph->getIndexedSpecializations($originDimensionSpacePoint->toDimensionSpacePoint());
+        $excludedSet = new DimensionSpacePointSet([]);
+        foreach ($this->visitedNodes->alreadyVisitedOriginDimensionSpacePoints($nodeAggregateId) as $alreadyVisitedOrigin) {
+            if ($specializations->contains($alreadyVisitedOrigin->toDimensionSpacePoint())) {
+                $excludedSet = $excludedSet->getUnion($this->interDimensionalVariationGraph->getSpecializationSet($alreadyVisitedOrigin->toDimensionSpacePoint()));
+            }
+        }
         return $this->interDimensionalVariationGraph->getSpecializationSet(
             $originDimensionSpacePoint->toDimensionSpacePoint(),
             true,
-            $this->visitedNodes->alreadyVisitedOriginDimensionSpacePoints($nodeAggregateId)->toDimensionSpacePointSet()
+            $excludedSet
         );
     }
 

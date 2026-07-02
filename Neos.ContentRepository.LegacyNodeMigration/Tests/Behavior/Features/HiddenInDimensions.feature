@@ -67,7 +67,7 @@ Feature: Migrating hidden nodes with content dimensions
       | RootNodeAggregateWithNodeWasCreated | {"nodeAggregateId": "sites-node-id"}                                                                                            |
       | NodeAggregateWithNodeWasCreated     | {"nodeAggregateId": "site-node-id", "originDimensionSpacePoint": {"language": "de"}}                                            |
       | NodeGeneralizationVariantWasCreated | {"nodeAggregateId": "site-node-id", "sourceOrigin": {"language": "de"}, "generalizationOrigin": {"language": "en"}}             |
-      | SubtreeWasTagged                    | {"nodeAggregateId": "site-node-id", "affectedDimensionSpacePoints": [{"language": "en"},{"language": "ch"}], "tag": "disabled"} |
+      | SubtreeWasTagged                    | {"nodeAggregateId": "site-node-id", "affectedDimensionSpacePoints": [{"language": "en"}], "tag": "disabled"}                    |
 
   Scenario: A hidden node variant processed before a visible generalization variant must stay hidden in the dimensions it shines through to
     When I have the following node data rows:
