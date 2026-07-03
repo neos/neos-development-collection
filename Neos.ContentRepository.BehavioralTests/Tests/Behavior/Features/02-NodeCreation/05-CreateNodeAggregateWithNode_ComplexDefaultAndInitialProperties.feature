@@ -37,17 +37,11 @@ Feature: Create a node aggregate with complex default values
           defaultValue:
             price: 13.37
             priceCurrency: 'EUR'
-
-    'Neos.ContentRepository.Testing:FaultyDateNode':
-      properties:
-        date:
-          type: DateTimeImmutable
-          defaultValue: 'not a date'
     """
     And using identifier "default", I define a content repository
     And I am in content repository "default"
     And I am user identified by "initiating-user-identifier"
-    And the current date and time is "2024-09-22T12:00:00+00:00"
+      And the current date and time is "2024-09-22T12:00:00+00:00"
     And the command CreateRootWorkspace is executed with payload:
       | Key                  | Value                |
       | workspaceName        | "live"               |
@@ -109,6 +103,74 @@ Feature: Create a node aggregate with complex default values
       | price         | PriceSpecification:anotherDummy                 |
 
   Scenario: Create a node aggregate with faulty date time defaultValue fails
+    And I change the node types in content repository "default" to:
+      """yaml
+      'Neos.ContentRepository.Testing:FaultyDateNode':
+        properties:
+          date:
+            type: DateTimeImmutable
+            defaultValue: { object: true }
+      """
+    When the command CreateNodeAggregateWithNode is executed with payload and exceptions are caught:
+      | Key                   | Value                                           |
+      | nodeAggregateId       | "nody-mc-nodeface"                              |
+      | nodeTypeName          | "Neos.ContentRepository.Testing:FaultyDateNode" |
+      | parentNodeAggregateId | "lady-eleonode-rootford"                        |
+    And the last command should have thrown an exception of type "RuntimeException" with code 1783085240
+
+    And I change the node types in content repository "default" to:
+      """yaml
+      'Neos.ContentRepository.Testing:FaultyDateNode':
+        properties:
+          date:
+            type: DateTimeImmutable
+            defaultValue: false
+      """
+    When the command CreateNodeAggregateWithNode is executed with payload and exceptions are caught:
+      | Key                   | Value                                           |
+      | nodeAggregateId       | "nody-mc-nodeface"                              |
+      | nodeTypeName          | "Neos.ContentRepository.Testing:FaultyDateNode" |
+      | parentNodeAggregateId | "lady-eleonode-rootford"                        |
+    And the last command should have thrown an exception of type "RuntimeException" with code 1783085240
+
+    And I change the node types in content repository "default" to:
+      """yaml
+      'Neos.ContentRepository.Testing:FaultyDateNode':
+        properties:
+          date:
+            type: DateTimeImmutable
+            defaultValue: 1783086342
+      """
+    When the command CreateNodeAggregateWithNode is executed with payload and exceptions are caught:
+      | Key                   | Value                                           |
+      | nodeAggregateId       | "nody-mc-nodeface"                              |
+      | nodeTypeName          | "Neos.ContentRepository.Testing:FaultyDateNode" |
+      | parentNodeAggregateId | "lady-eleonode-rootford"                        |
+    And the last command should have thrown an exception of type "RuntimeException" with code 1783085240
+
+    And I change the node types in content repository "default" to:
+      """yaml
+      'Neos.ContentRepository.Testing:FaultyDateNode':
+        properties:
+          date:
+            type: DateTimeImmutable
+            defaultValue: ''
+      """
+    When the command CreateNodeAggregateWithNode is executed with payload and exceptions are caught:
+      | Key                   | Value                                           |
+      | nodeAggregateId       | "nody-mc-nodeface"                              |
+      | nodeTypeName          | "Neos.ContentRepository.Testing:FaultyDateNode" |
+      | parentNodeAggregateId | "lady-eleonode-rootford"                        |
+    And the last command should have thrown an exception of type "RuntimeException" with code 1783085627
+
+    And I change the node types in content repository "default" to:
+      """yaml
+      'Neos.ContentRepository.Testing:FaultyDateNode':
+        properties:
+          date:
+            type: DateTimeImmutable
+            defaultValue: 'not a date'
+      """
     When the command CreateNodeAggregateWithNode is executed with payload and exceptions are caught:
       | Key                   | Value                                           |
       | nodeAggregateId       | "nody-mc-nodeface"                              |
