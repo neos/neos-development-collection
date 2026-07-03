@@ -9,7 +9,10 @@ use Flowpack\QueryObjectBuilder\MySQL\Builder\IdentExp;
 final readonly class NodeColumnNames
 {
     private function __construct(
+        // todo not actual columns start
         public IdentExp $star,
+        public IdentExp $level,
+        // todo not actual columns end
         public IdentExp $relationAnchorPoint,
         public IdentExp $nodeAggregateId,
         public IdentExp $originDimensionSpacePointHash,
@@ -28,6 +31,7 @@ final readonly class NodeColumnNames
     {
         return new self(
             IdentExp::n($prefix . '*'),
+            IdentExp::n($prefix . 'level'),
             IdentExp::n($prefix . 'relationanchorpoint'),
             IdentExp::n($prefix . 'nodeaggregateid'),
             IdentExp::n($prefix . 'origindimensionspacepointhash'),

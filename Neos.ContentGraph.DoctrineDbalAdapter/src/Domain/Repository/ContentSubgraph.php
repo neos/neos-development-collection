@@ -721,33 +721,39 @@ final class ContentSubgraph implements ContentSubgraphInterface
         $nodeAggregateIdCondition = NodeAggregateIdCondition::forNodeAggregateId($entryNodeAggregateId);
         // TODO union()->select() is allowed but should not, its union()->query()
 
+        $h = HierarchyRelationColumnNames::alias('h');
+        $n = NodeColumnNames::alias('n');
+        $p = NodeColumnNames::alias('p');
+        $pn = NodeColumnNames::alias('pn');
+        $cn = NodeColumnNames::alias('cn');
+
         $q = Q::withRecursive('tree')->as(
             $this->applyVisibilityConstraints(
                 Q::select(
                     // @see https://mariadb.com/kb/en/library/recursive-common-table-expressions-overview/#cast-to-avoid-data-truncation
-                    Q::n('n.*'), Q::n('h.subtreetags'), C::alias(Q::cast(Q::string('ROOT'), 'CHAR(50)'), 'parentNodeAggregateId'), C::alias(Q::int(0), 'level'), C::alias(Q::int(0), 'position')
+                    $n->star, $h->subtreeTags, C::alias(Q::cast(Q::string('ROOT'), 'CHAR(50)'), 'parentNodeAggregateId'), C::alias(Q::int(0), 'level'), C::alias(Q::int(0), 'position')
                 )
-                    ->from($this->tableNames_->node())->as('n')
+                    ->from($this->tableNames_->node())->as('n') // TODO Allow to use $n here ->as($n) or write ->from($n) as $n could determine column name and alias
                     ->join($this->hierarchyRelationQuery_)->as('h')->on(
-                        Q::n('h.childnodeanchor')->eq(Q::n('n.relationanchorpoint'))
+                        $h->childNodeAnchor->eq($n->relationAnchorPoint)
                     )
                     ->join($this->tableNames_->node())->as('p')->on(
-                        Q::n('h.childnodeanchor')->eq(Q::n('p.relationanchorpoint'))
+                        $h->childNodeAnchor->eq($p->relationAnchorPoint)
                     )
                     ->where(
-                        Q::n('n.nodeaggregateid')->eq(Q::arg($entryNodeAggregateId->value))
+                        $n->nodeAggregateId->eq(Q::arg($entryNodeAggregateId->value))
                     )
             )->union()->query(
                 $this->applyVisibilityConstraints(
                     Q::select(
-                        Q::n('cn.*'), Q::n('h.subtreetags'), C::alias(Q::n('pn.nodeaggregateid'), 'parentNodeAggregateId'), C::alias(Q::n('pn.level')->plus(Q::int(1)), 'level'), Q::n('h.position')
+                        $cn->star, $h->subtreeTags, C::alias($pn->nodeAggregateId, 'parentNodeAggregateId'), C::alias($pn->level->plus(Q::int(1)), 'level'), $h->position
                     )
                         ->from(Q::n('tree'))->as('pn')
                         ->join($this->hierarchyRelationQuery_)->as('h')->on(
-                            Q::n('h.parentnodeanchor')->eq(Q::n('pn.relationanchorpoint'))
+                            $h->parentNodeAnchor->eq($pn->relationAnchorPoint)
                         )
                         ->join($this->tableNames_->node())->as('cn')->on(
-                            Q::n('cn.relationanchorpoint')->eq(Q::n('h.childnodeanchor'))
+                            $cn->relationAnchorPoint->eq($h->childNodeAnchor)
                         )
                 )
             )
