@@ -19,6 +19,12 @@ Feature: Create a node aggregate with complex default values
         now:
           type: DateTime
           defaultValue: 'now'
+        tomorrow:
+          type: DateTimeImmutable
+          defaultValue: 'tomorrow'
+        lastMonth:
+          type: DateTimeImmutable
+          defaultValue: '-1 month'
         date:
           type: DateTimeImmutable
           defaultValue: '2020-08-20T18:56:15+00:00'
@@ -60,7 +66,7 @@ Feature: Create a node aggregate with complex default values
     And using identifier "default", I define a content repository
     And I am in content repository "default"
     And I am user identified by "initiating-user-identifier"
-      And the current date and time is "2024-09-22T12:00:00+00:00"
+    And the current date and time is "2024-09-22T12:00:00+00:00"
     And the command CreateRootWorkspace is executed with payload:
       | Key                  | Value                |
       | workspaceName        | "live"               |
@@ -88,6 +94,8 @@ Feature: Create a node aggregate with complex default values
       # DateTime must always be treated as immutable see DateTimeImmutable.
       # And the default value "now" must not be serialized as string "now" but as its actual value of the time of the command:
       | now           | DateTimeImmutable                                                      | "2024-09-22T12:00:00+00:00"                                                                                           |
+      | tomorrow      | DateTimeImmutable                                                      | "2024-09-23T00:00:00+00:00"                                                                                           |
+      | lastMonth     | DateTimeImmutable                                                      | "2024-08-22T12:00:00+00:00"                                                                                           |
       | date          | DateTimeImmutable                                                      | "2020-08-20T18:56:15+00:00"                                                                                           |
       | uri           | GuzzleHttp\Psr7\Uri                                                    | "https://neos.io"                                                                                                     |
       # Defaults while deserializing value objects will be manifested at the time of the command: (valueAddedTaxIncluded was not explicitly declared above)
@@ -99,9 +107,28 @@ Feature: Create a node aggregate with complex default values
       | dayOfWeek     | DayOfWeek:https://schema.org/Wednesday          |
       | postalAddress | PostalAddress:dummy                             |
       | now           | Date:2024-09-22T12:00:00+00:00                  |
+      | tomorrow      | Date:2024-09-23T00:00:00+00:00                  |
+      | lastMonth     | Date:2024-08-22T12:00:00+00:00                  |
       | date          | Date:2020-08-20T18:56:15+00:00                  |
       | uri           | URI:https://neos.io                             |
       | price         | PriceSpecification:dummy                        |
+
+  Scenario: Create a node aggregate with complex default values respecting time zone
+    And the current date and time is "2024-09-22T12:00:00+02:00"
+    When the command CreateNodeAggregateWithNode is executed with payload:
+      | Key                   | Value                                 |
+      | nodeAggregateId       | "nody-mc-nodeface"                    |
+      | nodeTypeName          | "Neos.ContentRepository.Testing:Node" |
+      | parentNodeAggregateId | "lady-eleonode-rootford"              |
+    Then I expect a node identified by cs-identifier;nody-mc-nodeface;{} to exist in the content graph
+
+    And I expect this node to have the following properties:
+      | Key           | Value                                           |
+      | now           | Date:2024-09-22T12:00:00+02:00                  |
+      | tomorrow      | Date:2024-09-23T00:00:00+02:00                  |
+      | lastMonth     | Date:2024-08-22T12:00:00+02:00                  |
+      # Even though we specified the timestamp as ATOM with timezone in the defaults, PHPs date->modify() keeps the original time zone.
+      | date          | Date:2020-08-20T18:56:15+02:00                  |
 
   Scenario: Create a node aggregate with complex initial and default values
     When the command CreateNodeAggregateWithNode is executed with payload:
