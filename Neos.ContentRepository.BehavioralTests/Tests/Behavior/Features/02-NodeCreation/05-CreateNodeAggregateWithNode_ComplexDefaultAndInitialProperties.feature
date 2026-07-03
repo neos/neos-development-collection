@@ -37,6 +37,25 @@ Feature: Create a node aggregate with complex default values
           defaultValue:
             price: 13.37
             priceCurrency: 'EUR'
+
+    'Neos.ContentRepository.Testing:UnsetDefaultsNode':
+      properties:
+        array:
+          type: array
+          # usually unset in inheritance
+          defaultValue: null
+        dayOfWeek:
+          type: Neos\ContentRepository\Core\Tests\Behavior\Fixtures\DayOfWeek
+          defaultValue: null
+        date:
+          type: DateTimeImmutable
+          defaultValue: null
+        uri:
+          type: GuzzleHttp\Psr7\Uri
+          defaultValue: null
+        postalAddress:
+          type: Neos\ContentRepository\Core\Tests\Behavior\Fixtures\PostalAddress
+          defaultValue: null
     """
     And using identifier "default", I define a content repository
     And I am in content repository "default"
@@ -101,6 +120,31 @@ Feature: Create a node aggregate with complex default values
       | date          | Date:2021-03-13T17:33:17+00:00                  |
       | uri           | URI:https://www.neos.io                         |
       | price         | PriceSpecification:anotherDummy                 |
+
+  Scenario: Create a node aggregate with unset default values
+    When the command CreateNodeAggregateWithNode is executed with payload:
+      | Key                   | Value                                              |
+      | nodeAggregateId       | "nody-mc-nodeface"                                 |
+      | nodeTypeName          | "Neos.ContentRepository.Testing:UnsetDefaultsNode" |
+      | parentNodeAggregateId | "lady-eleonode-rootford"                           |
+      | initialPropertyValues | {}                                                 |
+    Then I expect a node identified by cs-identifier;nody-mc-nodeface;{} to exist in the content graph
+    And I expect this node to have no properties
+
+  Scenario: Create a node aggregate with unset default values but defined creation values
+    When the command CreateNodeAggregateWithNode is executed with payload:
+      | Key                   | Value                                                                                                                                                                      |
+      | nodeAggregateId       | "nody-mc-nodeface"                                                                                                                                                         |
+      | nodeTypeName          | "Neos.ContentRepository.Testing:UnsetDefaultsNode"                                                                                                                         |
+      | parentNodeAggregateId | "lady-eleonode-rootford"                                                                                                                                                   |
+      | initialPropertyValues | {"dayOfWeek":"DayOfWeek:https://schema.org/Friday","postalAddress":"PostalAddress:anotherDummy", "date":"Date:2021-03-13T17:33:17+00:00", "uri":"URI:https://www.neos.io"} |
+    Then I expect a node identified by cs-identifier;nody-mc-nodeface;{} to exist in the content graph
+    And I expect this node to have the following properties:
+      | Key           | Value                                           |
+      | dayOfWeek     | DayOfWeek:https://schema.org/Friday             |
+      | postalAddress | PostalAddress:anotherDummy                      |
+      | date          | Date:2021-03-13T17:33:17+00:00                  |
+      | uri           | URI:https://www.neos.io                         |
 
   Scenario: Create a node aggregate with faulty date time defaultValue fails
     And I change the node types in content repository "default" to:
