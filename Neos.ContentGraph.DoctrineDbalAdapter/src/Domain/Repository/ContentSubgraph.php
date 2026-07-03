@@ -23,6 +23,8 @@ use Neos\ContentGraph\DoctrineDbalAdapter\ContentGraphTableNames;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\ContentStreamLayers;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\NodeRelationAnchorPoint;
 use Neos\ContentGraph\DoctrineDbalAdapter\HierarchyRelationSubquery;
+use Neos\ContentGraph\DoctrineDbalAdapter\Query\HierarchyRelationColumnNames;
+use Neos\ContentGraph\DoctrineDbalAdapter\Query\NodeColumnNames;
 use Neos\ContentGraph\DoctrineDbalAdapter\NewContentGraphTableNames;
 use Neos\ContentGraph\DoctrineDbalAdapter\NewHierarchyRelationSubquery;
 use Neos\ContentGraph\DoctrineDbalAdapter\NodeAggregateIdCondition;
@@ -196,13 +198,16 @@ final class ContentSubgraph implements ContentSubgraphInterface
 
     public function findNodeById(NodeAggregateId $nodeAggregateId): ?Node
     {
-        $q = Q::select(Q::n('n.*'), Q::n('h.subtreetags'))
+        $h = HierarchyRelationColumnNames::alias('h');
+        $n = NodeColumnNames::alias('n');
+
+        $q = Q::select($n->star, $h->subtreeTags)
             ->from($this->tableNames_->node())->as('n')
             ->join($this->hierarchyRelationQuery_)->as('h')
             ->on(
-                Q::n('h.childnodeanchor')->eq(Q::n('n.relationanchorpoint'))
+                $h->childNodeAnchor->eq($n->relationAnchorPoint)
             )
-            ->where(Q::n('n.nodeaggregateid')->eq(Q::arg($nodeAggregateId->value)));
+            ->where($n->nodeAggregateId->eq(Q::arg($nodeAggregateId->value)));
 
         $q = $this->applyVisibilityConstraints($q);
 
