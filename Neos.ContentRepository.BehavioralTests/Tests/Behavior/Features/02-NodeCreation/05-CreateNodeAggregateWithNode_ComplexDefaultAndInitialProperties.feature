@@ -122,13 +122,13 @@ Feature: Create a node aggregate with complex default values
       | parentNodeAggregateId | "lady-eleonode-rootford"              |
     Then I expect a node identified by cs-identifier;nody-mc-nodeface;{} to exist in the content graph
 
-    And I expect this node to have the following properties:
-      | Key           | Value                                           |
-      | now           | Date:2024-09-22T12:00:00+02:00                  |
-      | tomorrow      | Date:2024-09-23T00:00:00+02:00                  |
-      | lastMonth     | Date:2024-08-22T12:00:00+02:00                  |
+    And I expect this node to have the following serialized properties:
+      | Key       | Type              | Value                       |
+      | now       | DateTimeImmutable | "2024-09-22T12:00:00+02:00" |
+      | tomorrow  | DateTimeImmutable | "2024-09-23T00:00:00+02:00" |
+      | lastMonth | DateTimeImmutable | "2024-08-22T12:00:00+02:00" |
       # Even though we specified the timestamp as ATOM with timezone in the defaults, PHPs date->modify() keeps the original time zone.
-      | date          | Date:2020-08-20T18:56:15+02:00                  |
+      | date      | DateTimeImmutable | "2020-08-20T18:56:15+02:00" |
 
   Scenario: Create a node aggregate with complex initial and default values
     When the command CreateNodeAggregateWithNode is executed with payload:
