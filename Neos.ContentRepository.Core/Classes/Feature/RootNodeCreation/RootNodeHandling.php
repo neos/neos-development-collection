@@ -269,7 +269,7 @@ trait RootNodeHandling
                 : NodePath::fromNodeNames($tetheredNodeTypeDefinition->name);
             $childNodeAggregateId = $nodeAggregateIdsByNodePath->getNodeAggregateId($childNodePath)
                 ?? NodeAggregateId::create();
-            $initialPropertyValues = SerializedPropertyValues::defaultFromNodeType($childNodeType, $this->getPropertyConverter());
+            $initialPropertyValues = SerializedPropertyValues::defaultFromNodeType($childNodeType, $this->getPropertyConverter(), $this->clock);
 
             $events[] = $this->createTetheredWithNodeForRoot(
                 $workspaceName,

@@ -199,7 +199,7 @@ trait NodeCreation
             );
         }
 
-        $defaultPropertyValues = SerializedPropertyValues::defaultFromNodeType($nodeType, $this->getPropertyConverter());
+        $defaultPropertyValues = SerializedPropertyValues::defaultFromNodeType($nodeType, $this->getPropertyConverter(), $this->clock);
         $initialPropertyValues = $defaultPropertyValues->merge($command->initialPropertyValues);
 
         $events = [
@@ -281,7 +281,8 @@ trait NodeCreation
                 ?? NodeAggregateId::create();
             $initialPropertyValues = SerializedPropertyValues::defaultFromNodeType(
                 $childNodeType,
-                $this->getPropertyConverter()
+                $this->getPropertyConverter(),
+                $this->clock
             );
 
             $events[] = new NodeAggregateWithNodeWasCreated(

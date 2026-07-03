@@ -88,7 +88,7 @@ trait TetheredNodeInternals
 
         $expectedTetheredNodeType = $this->nodeTypeManager->getNodeType($tetheredNodeTypeDefinition->nodeTypeName);
         $defaultProperties = $expectedTetheredNodeType
-            ? SerializedPropertyValues::defaultFromNodeType($expectedTetheredNodeType, $this->getPropertyConverter())
+            ? SerializedPropertyValues::defaultFromNodeType($expectedTetheredNodeType, $this->getPropertyConverter(), $this->clock)
             : SerializedPropertyValues::createEmpty();
 
         if ($childNodeAggregate === null) {
@@ -205,7 +205,8 @@ trait TetheredNodeInternals
         $nodeAggregateId = $nodeAggregateIdsByNodePaths->getNodeAggregateId($currentNodePath) ?? NodeAggregateId::create();
         $defaultValues = SerializedPropertyValues::defaultFromNodeType(
             $tetheredNodeType,
-            $this->getPropertyConverter()
+            $this->getPropertyConverter(),
+            $this->clock
         );
 
         // NodeTypeChange is not allowed on root, thus we don't handle the empty dimension case
@@ -316,7 +317,8 @@ trait TetheredNodeInternals
             $presentPropertyKeys = array_keys(iterator_to_array($node->properties->serialized()));
             $complementaryPropertyValues = SerializedPropertyValues::defaultFromNodeType(
                 $tetheredNodeType,
-                $this->propertyConverter
+                $this->propertyConverter,
+                $this->clock
             )
                 ->unsetProperties(PropertyNames::fromArray($presentPropertyKeys));
             $obsoletePropertyNames = PropertyNames::fromArray(

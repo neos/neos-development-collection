@@ -28,6 +28,7 @@ use Neos\ContentRepository\Core\SharedModel\Exception\NodeTypeNotFound;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\EventStore\Model\EventStream\ExpectedVersion;
+use Psr\Clock\ClockInterface;
 
 class TetheredNodeAdjustments
 {
@@ -40,7 +41,8 @@ class TetheredNodeAdjustments
         private readonly ContentGraphInterface $contentGraph,
         private readonly NodeTypeManager $nodeTypeManager,
         private readonly DimensionSpace\InterDimensionalVariationGraph $interDimensionalVariationGraph,
-        private readonly PropertyConverter $propertyConverter
+        private readonly PropertyConverter $propertyConverter,
+        private readonly ClockInterface $clock,
     ) {
     }
 

@@ -26,6 +26,7 @@ use Neos\ContentRepository\StructureAdjustment\Adjustment\UnknownNodeTypeAdjustm
 use Neos\EventStore\EventStoreInterface;
 use Neos\EventStore\Model\Event\CorrelationId;
 use Neos\EventStore\Model\Events;
+use Psr\Clock\ClockInterface;
 
 class StructureAdjustmentService implements ContentRepositoryServiceInterface
 {
@@ -51,6 +52,7 @@ class StructureAdjustmentService implements ContentRepositoryServiceInterface
         NodeTypeManager $nodeTypeManager,
         InterDimensionalVariationGraph $interDimensionalVariationGraph,
         PropertyConverter $propertyConverter,
+        ClockInterface $clock,
     ) {
 
         $this->liveContentGraph = $contentRepository->getContentGraph(WorkspaceName::forLive());
@@ -60,6 +62,7 @@ class StructureAdjustmentService implements ContentRepositoryServiceInterface
             $nodeTypeManager,
             $interDimensionalVariationGraph,
             $propertyConverter,
+            $clock,
         );
 
         $this->unknownNodeTypeAdjustment = new UnknownNodeTypeAdjustment(

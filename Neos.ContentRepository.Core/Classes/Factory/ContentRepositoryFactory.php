@@ -156,6 +156,7 @@ final class ContentRepositoryFactory
                 $this->contentDimensionZookeeper,
                 $this->interDimensionalVariationGraph,
                 $this->propertyConverter,
+                $this->clock,
             ),
             new DimensionSpaceCommandHandler(
                 $this->interDimensionalVariationGraph,

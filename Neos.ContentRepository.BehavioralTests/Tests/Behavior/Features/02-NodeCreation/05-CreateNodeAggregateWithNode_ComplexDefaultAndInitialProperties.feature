@@ -47,6 +47,7 @@ Feature: Create a node aggregate with complex default values
     And using identifier "default", I define a content repository
     And I am in content repository "default"
     And I am user identified by "initiating-user-identifier"
+    And the current date and time is "2024-09-22T12:00:00+00:00"
     And the command CreateRootWorkspace is executed with payload:
       | Key                  | Value                |
       | workspaceName        | "live"               |
@@ -73,7 +74,7 @@ Feature: Create a node aggregate with complex default values
       | postalAddress | Neos\ContentRepository\Core\Tests\Behavior\Fixtures\PostalAddress      | {"streetAddress":"28 31st of February Street","postalCode":12345,"addressLocality":"City","addressCountry":"Country"} |
       # DateTime must always be treated as immutable see DateTimeImmutable.
       # And the default value "now" must not be serialized as string "now" but as its actual value of the time of the command:
-      | now           | DateTimeImmutable                                                      | NOT:"now"                                                                                                             |
+      | now           | DateTimeImmutable                                                      | "2024-09-22T12:00:00+00:00"                                                                                           |
       | date          | DateTimeImmutable                                                      | "2020-08-20T18:56:15+00:00"                                                                                           |
       | uri           | GuzzleHttp\Psr7\Uri                                                    | "https://neos.io"                                                                                                     |
       # Defaults while deserializing value objects will be manifested at the time of the command: (valueAddedTaxIncluded was not explicitly declared above)
@@ -84,7 +85,7 @@ Feature: Create a node aggregate with complex default values
       | array         | {"givenName":"Nody", "familyName":"McNodeface"} |
       | dayOfWeek     | DayOfWeek:https://schema.org/Wednesday          |
       | postalAddress | PostalAddress:dummy                             |
-      | now           | Date:now                                        |
+      | now           | Date:2024-09-22T12:00:00+00:00                  |
       | date          | Date:2020-08-20T18:56:15+00:00                  |
       | uri           | URI:https://neos.io                             |
       | price         | PriceSpecification:dummy                        |
@@ -102,7 +103,7 @@ Feature: Create a node aggregate with complex default values
       | dayOfWeek     | DayOfWeek:https://schema.org/Friday             |
       | array         | {"givenName":"Nody", "familyName":"McNodeface"} |
       | postalAddress | PostalAddress:anotherDummy                      |
-      | now           | Date:now                                        |
+      | now           | Date:2024-09-22T12:00:00+00:00                  |
       | date          | Date:2021-03-13T17:33:17+00:00                  |
       | uri           | URI:https://www.neos.io                         |
       | price         | PriceSpecification:anotherDummy                 |
@@ -113,4 +114,4 @@ Feature: Create a node aggregate with complex default values
       | nodeAggregateId       | "nody-mc-nodeface"                              |
       | nodeTypeName          | "Neos.ContentRepository.Testing:FaultyDateNode" |
       | parentNodeAggregateId | "lady-eleonode-rootford"                        |
-    And the last command should have thrown an exception of type "RuntimeException" with code 1708416598
+    And the last command should have thrown an exception of type "RuntimeException" with code 1783085627

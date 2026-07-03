@@ -220,7 +220,8 @@ trait NodeTypeChange
             $presentPropertyKeys = array_keys(iterator_to_array($node->properties->serialized()));
             $complementaryPropertyValues = SerializedPropertyValues::defaultFromNodeType(
                 $newNodeType,
-                $this->propertyConverter
+                $this->propertyConverter,
+                $this->clock
             )
                 ->unsetProperties(PropertyNames::fromArray($presentPropertyKeys));
             $obsoletePropertyNames = PropertyNames::fromArray(
