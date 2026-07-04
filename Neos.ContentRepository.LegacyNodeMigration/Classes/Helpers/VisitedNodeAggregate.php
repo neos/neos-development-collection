@@ -6,6 +6,7 @@ use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePointSet;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
+use Neos\ContentRepository\Core\SharedModel\Node\PropertyNames;
 use Neos\ContentRepository\LegacyNodeMigration\Exception\MigrationException;
 use Neos\Flow\Annotations as Flow;
 
@@ -26,12 +27,12 @@ final class VisitedNodeAggregate
 
     ) {}
 
-    public function addVariant(OriginDimensionSpacePoint $originDimensionSpacePoint, NodeAggregateId $parentNodeAggregateId): void
+    public function addVariant(OriginDimensionSpacePoint $originDimensionSpacePoint, NodeAggregateId $parentNodeAggregateId, PropertyNames $propertyNames): void
     {
         if (isset($this->variants[$originDimensionSpacePoint->hash])) {
             throw new MigrationException(sprintf('Node "%s" with dimension space point "%s" was already visited before', $this->nodeAggregateId->value, $originDimensionSpacePoint->toJson()), 1653050442);
         }
-        $this->variants[$originDimensionSpacePoint->hash] = new VisitedNodeVariant($originDimensionSpacePoint, $parentNodeAggregateId);
+        $this->variants[$originDimensionSpacePoint->hash] = new VisitedNodeVariant($originDimensionSpacePoint, $parentNodeAggregateId, $propertyNames);
     }
 
     public function getOriginDimensionSpacePoints(): OriginDimensionSpacePointSet
