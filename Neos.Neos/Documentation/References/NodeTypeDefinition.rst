@@ -100,7 +100,7 @@ The following options are allowed for defining a NodeType:
 
       If ``options.fusion.prototypeGenerator`` is set to ``null`` no prototype is created for this type.
 
-      By default Neos has generators for all nodes of type ``Neos.Neos:Node`` and creates protoypes based on
+      By default Neos has generators for all nodes of type ``Neos.Neos:Node`` and creates prototypes based on
       ``Neos.Fusion:Template``. A template path is assumed based on the package-prefix and the nodetype-name. All properties
       of the node are passed to the template. For the nodeTypes of type ``Neos.Neos:Document``, ``Neos.Neos:Content`` and
       ``Neos.Neos:Plugin`` the corresponding prototype is used as base-prototype.
@@ -241,7 +241,7 @@ The following options are allowed for defining a NodeType:
         The human-readable label for this view
 
       ``group``
-        Identifier of the *inspector group* this view is categorized into in the content editing user interface. If none is given, the view is not visibile in the property inspector of the user interface.
+        Identifier of the *inspector group* this view is categorized into in the content editing user interface. If none is given, the view is not visible in the property inspector of the user interface.
 
         The value here must reference a group configured in the ``ui.inspector.groups`` element of the node type this view belongs to.
 

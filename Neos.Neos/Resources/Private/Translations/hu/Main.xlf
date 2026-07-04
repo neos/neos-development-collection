@@ -1040,11 +1040,11 @@
       </trans-unit>
       <trans-unit id="pathCaption" xml:space="preserve">
         <source>Path</source>
-        <target state="needs-translation">Elérési út</target>
+        <target state="needs-translation" state-qualifier="leveraged-mt">Elérési út</target>
       </trans-unit>
       <trans-unit id="relativePathCaption" xml:space="preserve">
         <source>Relative Path</source>
-        <target state="needs-translation">Relatív elérési út</target>
+        <target state="needs-translation" state-qualifier="leveraged-mt">Relatív elérési út</target>
       </trans-unit>
     </body>
   </file>

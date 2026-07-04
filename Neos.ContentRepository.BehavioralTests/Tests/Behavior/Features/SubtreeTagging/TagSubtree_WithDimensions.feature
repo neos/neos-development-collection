@@ -178,3 +178,53 @@ Feature: Tag subtree with dimensions
      a1 (tag1)
       a1a (tag1)
     """
+
+  Scenario: Untagging preserves inherited tags for each dimension space point
+    Given the following CreateNodeAggregateWithNode commands are executed:
+      | nodeAggregateId | nodeTypeName                            | parentNodeAggregateId | nodeName | originDimensionSpacePoint |
+      | a2              | Neos.ContentRepository.Testing:Document | a                     | a2       | {"language":"mul"}        |
+      | a2a             | Neos.ContentRepository.Testing:Document | a2                    | a2a      | {"language":"mul"}        |
+
+    And the command TagSubtree is executed with payload:
+      | Key                          | Value                |
+      | nodeAggregateId              | "a"                  |
+      | coveredDimensionSpacePoint   | {"language":"de"}    |
+      | nodeVariantSelectionStrategy | "allSpecializations" |
+      | tag                          | "tag1"               |
+
+    And the command TagSubtree is executed with payload:
+      | Key                          | Value              |
+      | nodeAggregateId              | "a2"               |
+      | coveredDimensionSpacePoint   | {"language":"mul"} |
+      | nodeVariantSelectionStrategy | "allVariants"      |
+      | tag                          | "tag1"             |
+
+    # untag the explicit tag on "a2" in all dimensions ...
+    When the command UntagSubtree is executed with payload:
+      | Key                          | Value              |
+      | nodeAggregateId              | "a2"               |
+      | coveredDimensionSpacePoint   | {"language":"mul"} |
+      | nodeVariantSelectionStrategy | "allVariants"      |
+      | tag                          | "tag1"             |
+
+    # ... only in "de" it STILL inherits tag1 from "a"
+    When I am in dimension space point {"language":"de"}
+    Then I expect node aggregate identifier "a" to lead to node cs-identifier;a;{"language":"mul"}
+    And I expect this node to have the following subtree with tags:
+    """
+    a (tag1*)
+     a1 (tag1)
+      a1a (tag1)
+     a2 (tag1)
+      a2a (tag1)
+    """
+
+    # ... while in "en" there are no tags anymore
+    When I am in dimension space point {"language":"en"}
+    Then I expect node aggregate identifier "a" to lead to node cs-identifier;a;{"language":"mul"}
+    And I expect this node to have the following subtree with tags:
+    """
+    a
+     a2
+      a2a
+    """

@@ -47,7 +47,7 @@ other named element, using ``before`` and ``after`` syntax as follows:
   ``after [namedElement]`` statements exist. Statements without ``[optionalPriority]``
   are added farthest after the element.
 
-  If ``[namedElement]`` does not exist, the element is added before all all ``end`` positions.
+  If ``[namedElement]`` does not exist, the element is added before all ``end`` positions.
 
 Example Ordering::
 
@@ -561,7 +561,7 @@ Neos.Fusion:ActionUri
 
 Built a URI to a controller action
 
-:request: (ActionRequest, defaults to the the current ``request``) The action request the uri is build from.
+:request: (ActionRequest, defaults to the current ``request``) The action request the uri is build from.
 :package: (string) The package key (e.g. ``'My.Package'``)
 :subpackage: (string) The subpackage, empty by default
 :controller: (string) The controller name (e.g. ``'Registration'``)
@@ -963,7 +963,7 @@ Example::
 	breadcrumb = Neos.Neos:BreadcrumbMenu
 
 .. note:: The ``items`` of the ``BreadcrumbMenu`` are internally calculated with the prototype :ref:`Neos_Neos__MenuItems` which
-   you can use directly aswell.
+   you can use directly as well.
 
 .. note:: The ``rendering`` of the ``BreadcrumbMenu`` is performed with the prototype :ref:`Neos_Neos__MenuItemListRenderer`.
    If the rendering does not suit your useCase it we recommended to create your own variants of the menu and renderer prototype.
@@ -988,7 +988,7 @@ The following fusion properties are passed over to :ref:`Neos_Neos__DimensionsMe
 :calculateItemStates: (boolean) activate the *expensive* calculation of item states defaults to ``false``
 
 .. note:: The ``items`` of the ``DimensionsMenu`` are internally calculated with the prototype :ref:`Neos_Neos__DimensionsMenuItems` which
-   you can use directly aswell.
+   you can use directly as well.
 
 .. note:: The ``rendering`` of the ``DimensionsMenu`` is performed with the prototype :ref:`Neos_Neos__MenuItemListRenderer`.
    If the rendering does not suit your useCase it we recommended to create your own variants of the menu and renderer prototype.
@@ -1024,7 +1024,7 @@ MenuItems item properties:
 
 :node: (Node) A node instance (with resolved shortcuts) that should be used to link to the item
 :originalNode: (Node) Original node for the item
-:state: (string) Menu state of the item: ``'normal'``, ``'current'`` (the current node) or ``'active'`` (ancestor of current node)
+:state: (MenuItemState) Menu state of the item: ``normal``, ``current`` (the current node) or ``active`` (ancestor of current node). To retrieve the string value of the item state use ``item.state.value``.
 :label: (string) Full label of the node
 :menuLevel: (integer) Menu level the item is rendered on
 :uri: (string) Frontend URI of the node
@@ -1103,13 +1103,13 @@ If no node variant exists for the preset combination, a ``NULL`` node will be in
 :dimension: (optional, string): name of the dimension which this menu should be based on. Example: "language".
 :presets: (optional, array): If set, the presets rendered will be taken from this list of preset identifiers
 :includeAllPresets: (boolean, default **false**) If TRUE, include all presets, not only allowed combinations
-:renderHiddenInMenu: (boolean, default **true**) If TRUE, render nodes which are marked as "hidded-in-menu"
+:renderHiddenInMenu: (boolean, default **true**) If TRUE, render nodes which are marked as "hidden-in-menu"
 :calculateItemStates: (boolean) activate the *expensive* calculation of item states defaults to ``false``
 
 Each ``item`` has the following properties:
 
 :node: (Node) The current node used to calculate the Menu. Defaults to ``documentNode`` from the fusion context
-:state: (string) Menu state of the item: ``normal``, ``current`` (the current node), ``absent``
+:state: (MenuItemState) Menu state of the item: ``normal``, ``current`` (the current node), ``absent``. To retrieve the string value of the item state use ``item.state.value``.
 :label: (string) Label of the item (the dimension preset label)
 :menuLevel: (integer) Menu level the item is rendered on
 :dimensions: (array) Dimension values of the node, indexed by dimension name
@@ -1313,7 +1313,7 @@ Neos.Neos:ContentElementEditable
 
 Processor to augment an HTML tag with metadata for inline editing to make a rendered representation of a property editable.
 
-The processor expects beeing applied to an HTML tag with the content of the edited property.
+The processor expects being applied to an HTML tag with the content of the edited property.
 
 :node: (Node) The node of the content element. Optional, will use the Fusion context variable ``node`` by default.
 :property: (string) Node property that should be editable
