@@ -232,14 +232,14 @@ Feature: Tag and untag nodes after moving their children in or out
       | workspaceName                | "local"                      |
       | dimensionSpacePoint          | {"example": "source"}        |
       | nodeAggregateId              | "nody-mc-nodeface"           |
-      | relationDistributionStrategy | "gatherSpecializations"                    |
+      | relationDistributionStrategy | "gatherSpecializations"      |
       | newParentNodeAggregateId     | "sir-nodeward-nodington-iii" |
     And the command MoveNodeAggregate is executed with payload:
       | Key                          | Value                        |
       | workspaceName                | "local-3"                    |
       | dimensionSpacePoint          | {"example": "source"}        |
       | nodeAggregateId              | "nody-mc-nodeface"           |
-      | relationDistributionStrategy | "gatherSpecializations"                    |
+      | relationDistributionStrategy | "gatherSpecializations"      |
       | newParentNodeAggregateId     | "sir-nodeward-nodington-iii" |
     And the command TagSubtree is executed with payload:
       | Key                          | Value                    |
@@ -272,21 +272,21 @@ Feature: Tag and untag nodes after moving their children in or out
       | workspaceName                | "local"                      |
       | dimensionSpacePoint          | {"example": "source"}        |
       | nodeAggregateId              | "nody-mc-nodeface"           |
-      | relationDistributionStrategy | "gatherSpecializations"                    |
+      | relationDistributionStrategy | "gatherSpecializations"      |
       | newParentNodeAggregateId     | "sir-nodeward-nodington-iii" |
     And the command MoveNodeAggregate is executed with payload:
       | Key                          | Value                        |
       | workspaceName                | "local-3"                    |
       | dimensionSpacePoint          | {"example": "source"}        |
       | nodeAggregateId              | "nody-mc-nodeface"           |
-      | relationDistributionStrategy | "gatherSpecializations"                    |
+      | relationDistributionStrategy | "gatherSpecializations"      |
       | newParentNodeAggregateId     | "sir-nodeward-nodington-iii" |
     And the command MoveNodeAggregate is executed with payload:
       | Key                          | Value                        |
       | workspaceName                | "local"                      |
       | dimensionSpacePoint          | {"example": "source"}        |
       | nodeAggregateId              | "nody-o-nodeface"            |
-      | relationDistributionStrategy | "gatherSpecializations"                    |
+      | relationDistributionStrategy | "gatherSpecializations"      |
       | newParentNodeAggregateId     | "sir-nodeward-nodington-iii" |
     And the command TagSubtree is executed with payload:
       | Key                          | Value                    |
@@ -320,14 +320,14 @@ Feature: Tag and untag nodes after moving their children in or out
       | workspaceName                | "local"                      |
       | dimensionSpacePoint          | {"example": "source"}        |
       | nodeAggregateId              | "nody-mc-nodeface"           |
-      | relationDistributionStrategy | "gatherSpecializations"                    |
+      | relationDistributionStrategy | "gatherSpecializations"      |
       | newParentNodeAggregateId     | "sir-nodeward-nodington-iii" |
     And the command MoveNodeAggregate is executed with payload:
       | Key                          | Value                        |
       | workspaceName                | "local-3"                    |
       | dimensionSpacePoint          | {"example": "source"}        |
       | nodeAggregateId              | "nody-mc-nodeface"           |
-      | relationDistributionStrategy | "gatherSpecializations"                    |
+      | relationDistributionStrategy | "gatherSpecializations"      |
       | newParentNodeAggregateId     | "sir-nodeward-nodington-iii" |
     And the command TagSubtree is executed with payload:
       | Key                          | Value                    |
@@ -360,21 +360,21 @@ Feature: Tag and untag nodes after moving their children in or out
       | workspaceName                | "local"                      |
       | dimensionSpacePoint          | {"example": "source"}        |
       | nodeAggregateId              | "nody-mc-nodeface"           |
-      | relationDistributionStrategy | "gatherSpecializations"                    |
+      | relationDistributionStrategy | "gatherSpecializations"      |
       | newParentNodeAggregateId     | "sir-nodeward-nodington-iii" |
     And the command MoveNodeAggregate is executed with payload:
       | Key                          | Value                        |
       | workspaceName                | "local-3"                    |
       | dimensionSpacePoint          | {"example": "source"}        |
       | nodeAggregateId              | "nody-mc-nodeface"           |
-      | relationDistributionStrategy | "gatherSpecializations"                    |
+      | relationDistributionStrategy | "gatherSpecializations"      |
       | newParentNodeAggregateId     | "sir-nodeward-nodington-iii" |
     And the command MoveNodeAggregate is executed with payload:
       | Key                          | Value                        |
       | workspaceName                | "local"                      |
       | dimensionSpacePoint          | {"example": "source"}        |
       | nodeAggregateId              | "nody-o-nodeface"            |
-      | relationDistributionStrategy | "gatherSpecializations"                    |
+      | relationDistributionStrategy | "gatherSpecializations"      |
       | newParentNodeAggregateId     | "sir-nodeward-nodington-iii" |
     And the command TagSubtree is executed with payload:
       | Key                          | Value                    |
@@ -408,14 +408,14 @@ Feature: Tag and untag nodes after moving their children in or out
       | workspaceName                | "local"                      |
       | dimensionSpacePoint          | {"example": "source"}        |
       | nodeAggregateId              | "nody-mc-nodeface"           |
-      | relationDistributionStrategy | "gatherAll"                    |
+      | relationDistributionStrategy | "gatherAll"                  |
       | newParentNodeAggregateId     | "sir-nodeward-nodington-iii" |
     And the command MoveNodeAggregate is executed with payload:
       | Key                          | Value                        |
       | workspaceName                | "local-3"                    |
       | dimensionSpacePoint          | {"example": "source"}        |
       | nodeAggregateId              | "nody-mc-nodeface"           |
-      | relationDistributionStrategy | "gatherAll"                    |
+      | relationDistributionStrategy | "gatherAll"                  |
       | newParentNodeAggregateId     | "sir-nodeward-nodington-iii" |
     And the command TagSubtree is executed with payload:
       | Key                          | Value                    |
@@ -448,21 +448,21 @@ Feature: Tag and untag nodes after moving their children in or out
       | workspaceName                | "local"                      |
       | dimensionSpacePoint          | {"example": "source"}        |
       | nodeAggregateId              | "nody-mc-nodeface"           |
-      | relationDistributionStrategy | "gatherAll"                    |
+      | relationDistributionStrategy | "gatherAll"                  |
       | newParentNodeAggregateId     | "sir-nodeward-nodington-iii" |
     And the command MoveNodeAggregate is executed with payload:
       | Key                          | Value                        |
       | workspaceName                | "local-3"                    |
       | dimensionSpacePoint          | {"example": "source"}        |
       | nodeAggregateId              | "nody-mc-nodeface"           |
-      | relationDistributionStrategy | "gatherAll"                    |
+      | relationDistributionStrategy | "gatherAll"                  |
       | newParentNodeAggregateId     | "sir-nodeward-nodington-iii" |
     And the command MoveNodeAggregate is executed with payload:
       | Key                          | Value                        |
       | workspaceName                | "local"                      |
       | dimensionSpacePoint          | {"example": "source"}        |
       | nodeAggregateId              | "nody-o-nodeface"            |
-      | relationDistributionStrategy | "gatherAll"                    |
+      | relationDistributionStrategy | "gatherAll"                  |
       | newParentNodeAggregateId     | "sir-nodeward-nodington-iii" |
     And the command TagSubtree is executed with payload:
       | Key                          | Value                    |
@@ -496,14 +496,14 @@ Feature: Tag and untag nodes after moving their children in or out
       | workspaceName                | "local"                      |
       | dimensionSpacePoint          | {"example": "source"}        |
       | nodeAggregateId              | "nody-mc-nodeface"           |
-      | relationDistributionStrategy | "gatherAll"                    |
+      | relationDistributionStrategy | "gatherAll"                  |
       | newParentNodeAggregateId     | "sir-nodeward-nodington-iii" |
     And the command MoveNodeAggregate is executed with payload:
       | Key                          | Value                        |
       | workspaceName                | "local-3"                    |
       | dimensionSpacePoint          | {"example": "source"}        |
       | nodeAggregateId              | "nody-mc-nodeface"           |
-      | relationDistributionStrategy | "gatherAll"                    |
+      | relationDistributionStrategy | "gatherAll"                  |
       | newParentNodeAggregateId     | "sir-nodeward-nodington-iii" |
     And the command TagSubtree is executed with payload:
       | Key                          | Value                    |
@@ -536,21 +536,21 @@ Feature: Tag and untag nodes after moving their children in or out
       | workspaceName                | "local"                      |
       | dimensionSpacePoint          | {"example": "source"}        |
       | nodeAggregateId              | "nody-mc-nodeface"           |
-      | relationDistributionStrategy | "gatherAll"                    |
+      | relationDistributionStrategy | "gatherAll"                  |
       | newParentNodeAggregateId     | "sir-nodeward-nodington-iii" |
     And the command MoveNodeAggregate is executed with payload:
       | Key                          | Value                        |
       | workspaceName                | "local-3"                    |
       | dimensionSpacePoint          | {"example": "source"}        |
       | nodeAggregateId              | "nody-mc-nodeface"           |
-      | relationDistributionStrategy | "gatherAll"                    |
+      | relationDistributionStrategy | "gatherAll"                  |
       | newParentNodeAggregateId     | "sir-nodeward-nodington-iii" |
     And the command MoveNodeAggregate is executed with payload:
       | Key                          | Value                        |
       | workspaceName                | "local"                      |
       | dimensionSpacePoint          | {"example": "source"}        |
       | nodeAggregateId              | "nody-o-nodeface"            |
-      | relationDistributionStrategy | "gatherAll"                    |
+      | relationDistributionStrategy | "gatherAll"                  |
       | newParentNodeAggregateId     | "sir-nodeward-nodington-iii" |
     And the command TagSubtree is executed with payload:
       | Key                          | Value                    |
@@ -572,6 +572,534 @@ Feature: Tag and untag nodes after moving their children in or out
       | workspaceName                   | "local"                                        |
       | nodesToPublish                  | ["sir-david-nodenborough", "nody-mc-nodeface"] |
       | contentStreamIdForRemainingPart | "remaining-local-cs-id"                        |
+    And I expect the graph state for workspace "local" to be unchanged
+    Then I expect the graph state for workspace "live" to be unchanged
+    And I expect the graph state for workspace "local-2" to be unchanged
+    And I expect the graph state for workspace "local-3" to be unchanged
+    And I expect the graph state for workspace "intermediate" to have changed as declared in the snapshot
+
+  Scenario: Publish moving a child node in via scatter strategy, and tagging the parent and all its specializations
+    When the command MoveNodeAggregate is executed with payload:
+      | Key                          | Value                        |
+      | workspaceName                | "local"                      |
+      | dimensionSpacePoint          | {"example": "source"}        |
+      | nodeAggregateId              | "nody-mc-nodeface"           |
+      | relationDistributionStrategy | "scatter"                    |
+      | newParentNodeAggregateId     | "sir-nodeward-nodington-iii" |
+    And the command MoveNodeAggregate is executed with payload:
+      | Key                          | Value                        |
+      | workspaceName                | "local-3"                    |
+      | dimensionSpacePoint          | {"example": "source"}        |
+      | nodeAggregateId              | "nody-mc-nodeface"           |
+      | relationDistributionStrategy | "scatter"                    |
+      | newParentNodeAggregateId     | "sir-nodeward-nodington-iii" |
+    And the command TagSubtree is executed with payload:
+      | Key                          | Value                        |
+      | workspaceName                | "local"                      |
+      | nodeAggregateId              | "sir-nodeward-nodington-iii" |
+      | coveredDimensionSpacePoint   | {"example": "source"}        |
+      | nodeVariantSelectionStrategy | "allSpecializations"         |
+      | tag                          | "my-tag"                     |
+    And the command TagSubtree is executed with payload:
+      | Key                          | Value                        |
+      | workspaceName                | "local-3"                    |
+      | nodeAggregateId              | "sir-nodeward-nodington-iii" |
+      | coveredDimensionSpacePoint   | {"example": "source"}        |
+      | nodeVariantSelectionStrategy | "allSpecializations"         |
+      | tag                          | "my-tag"                     |
+    And I memorise the global graph state
+    And the command PublishWorkspace is executed with payload:
+      | Key                | Value             |
+      | workspaceName      | "local"           |
+      | newContentStreamId | "new-local-cs-id" |
+    Then I expect the graph state for workspace "local" to be unchanged
+    And I expect the graph state for workspace "live" to be unchanged
+    And I expect the graph state for workspace "local-2" to be unchanged
+    And I expect the graph state for workspace "local-3" to be unchanged
+    And I expect the graph state for workspace "intermediate" to equal that of workspace "local"
+
+  Scenario: Partially publish moving a child node in via scatter strategy and tagging the parent and all its specializations
+    When the command MoveNodeAggregate is executed with payload:
+      | Key                          | Value                        |
+      | workspaceName                | "local"                      |
+      | dimensionSpacePoint          | {"example": "source"}        |
+      | nodeAggregateId              | "nody-mc-nodeface"           |
+      | relationDistributionStrategy | "scatter"                    |
+      | newParentNodeAggregateId     | "sir-nodeward-nodington-iii" |
+    And the command MoveNodeAggregate is executed with payload:
+      | Key                          | Value                        |
+      | workspaceName                | "local-3"                    |
+      | dimensionSpacePoint          | {"example": "source"}        |
+      | nodeAggregateId              | "nody-mc-nodeface"           |
+      | relationDistributionStrategy | "scatter"                    |
+      | newParentNodeAggregateId     | "sir-nodeward-nodington-iii" |
+    And the command MoveNodeAggregate is executed with payload:
+      | Key                          | Value                        |
+      | workspaceName                | "local"                      |
+      | dimensionSpacePoint          | {"example": "source"}        |
+      | nodeAggregateId              | "nody-o-nodeface"            |
+      | relationDistributionStrategy | "scatter"                    |
+      | newParentNodeAggregateId     | "sir-nodeward-nodington-iii" |
+    And the command TagSubtree is executed with payload:
+      | Key                          | Value                        |
+      | workspaceName                | "local"                      |
+      | nodeAggregateId              | "sir-nodeward-nodington-iii" |
+      | coveredDimensionSpacePoint   | {"example": "source"}        |
+      | nodeVariantSelectionStrategy | "allSpecializations"         |
+      | tag                          | "my-tag"                     |
+    And the command TagSubtree is executed with payload:
+      | Key                          | Value                        |
+      | workspaceName                | "local-3"                    |
+      | nodeAggregateId              | "sir-nodeward-nodington-iii" |
+      | coveredDimensionSpacePoint   | {"example": "source"}        |
+      | nodeVariantSelectionStrategy | "allSpecializations"         |
+      | tag                          | "my-tag"                     |
+    And I memorise the global graph state
+    And the command PublishIndividualNodesFromWorkspace is executed with payload:
+      | Key                             | Value                                              |
+      | workspaceName                   | "local"                                            |
+      | nodesToPublish                  | ["sir-nodeward-nodington-iii", "nody-mc-nodeface"] |
+      | contentStreamIdForRemainingPart | "remaining-local-cs-id"                            |
+    And I expect the graph state for workspace "local" to be unchanged
+    Then I expect the graph state for workspace "live" to be unchanged
+    And I expect the graph state for workspace "local-2" to be unchanged
+    And I expect the graph state for workspace "local-3" to be unchanged
+    And I expect the graph state for workspace "intermediate" to have changed as declared in the snapshot
+
+  Scenario: Publish moving a child node in via scatter strategy and tagging the parent and all its variants
+    When the command MoveNodeAggregate is executed with payload:
+      | Key                          | Value                        |
+      | workspaceName                | "local"                      |
+      | dimensionSpacePoint          | {"example": "source"}        |
+      | nodeAggregateId              | "nody-mc-nodeface"           |
+      | relationDistributionStrategy | "scatter"                    |
+      | newParentNodeAggregateId     | "sir-nodeward-nodington-iii" |
+    And the command MoveNodeAggregate is executed with payload:
+      | Key                          | Value                        |
+      | workspaceName                | "local-3"                    |
+      | dimensionSpacePoint          | {"example": "source"}        |
+      | nodeAggregateId              | "nody-mc-nodeface"           |
+      | relationDistributionStrategy | "scatter"                    |
+      | newParentNodeAggregateId     | "sir-nodeward-nodington-iii" |
+    And the command TagSubtree is executed with payload:
+      | Key                          | Value                        |
+      | workspaceName                | "local"                      |
+      | nodeAggregateId              | "sir-nodeward-nodington-iii" |
+      | coveredDimensionSpacePoint   | {"example": "source"}        |
+      | nodeVariantSelectionStrategy | "allVariants"                |
+      | tag                          | "my-tag"                     |
+    And the command TagSubtree is executed with payload:
+      | Key                          | Value                        |
+      | workspaceName                | "local-3"                    |
+      | nodeAggregateId              | "sir-nodeward-nodington-iii" |
+      | coveredDimensionSpacePoint   | {"example": "source"}        |
+      | nodeVariantSelectionStrategy | "allVariants"                |
+      | tag                          | "my-tag"                     |
+    And I memorise the global graph state
+    And the command PublishWorkspace is executed with payload:
+      | Key                | Value             |
+      | workspaceName      | "local"           |
+      | newContentStreamId | "new-local-cs-id" |
+    Then I expect the graph state for workspace "local" to be unchanged
+    And I expect the graph state for workspace "live" to be unchanged
+    And I expect the graph state for workspace "local-2" to be unchanged
+    And I expect the graph state for workspace "local-3" to be unchanged
+    And I expect the graph state for workspace "intermediate" to equal that of workspace "local"
+
+  Scenario: Partially publish moving a child node in via scatter strategy and tagging the parent and all its variants
+    When the command MoveNodeAggregate is executed with payload:
+      | Key                          | Value                        |
+      | workspaceName                | "local"                      |
+      | dimensionSpacePoint          | {"example": "source"}        |
+      | nodeAggregateId              | "nody-mc-nodeface"           |
+      | relationDistributionStrategy | "scatter"                    |
+      | newParentNodeAggregateId     | "sir-nodeward-nodington-iii" |
+    And the command MoveNodeAggregate is executed with payload:
+      | Key                          | Value                        |
+      | workspaceName                | "local-3"                    |
+      | dimensionSpacePoint          | {"example": "source"}        |
+      | nodeAggregateId              | "nody-mc-nodeface"           |
+      | relationDistributionStrategy | "scatter"                    |
+      | newParentNodeAggregateId     | "sir-nodeward-nodington-iii" |
+    And the command MoveNodeAggregate is executed with payload:
+      | Key                          | Value                        |
+      | workspaceName                | "local"                      |
+      | dimensionSpacePoint          | {"example": "source"}        |
+      | nodeAggregateId              | "nody-o-nodeface"            |
+      | relationDistributionStrategy | "scatter"                    |
+      | newParentNodeAggregateId     | "sir-nodeward-nodington-iii" |
+    And the command TagSubtree is executed with payload:
+      | Key                          | Value                        |
+      | workspaceName                | "local"                      |
+      | nodeAggregateId              | "sir-nodeward-nodington-iii" |
+      | coveredDimensionSpacePoint   | {"example": "source"}        |
+      | nodeVariantSelectionStrategy | "allVariants"                |
+      | tag                          | "my-tag"                     |
+    And the command TagSubtree is executed with payload:
+      | Key                          | Value                        |
+      | workspaceName                | "local-3"                    |
+      | nodeAggregateId              | "sir-nodeward-nodington-iii" |
+      | coveredDimensionSpacePoint   | {"example": "source"}        |
+      | nodeVariantSelectionStrategy | "allVariants"                |
+      | tag                          | "my-tag"                     |
+    And I memorise the global graph state
+    And the command PublishIndividualNodesFromWorkspace is executed with payload:
+      | Key                             | Value                                              |
+      | workspaceName                   | "local"                                            |
+      | nodesToPublish                  | ["sir-nodeward-nodington-iii", "nody-mc-nodeface"] |
+      | contentStreamIdForRemainingPart | "remaining-local-cs-id"                            |
+    And I expect the graph state for workspace "local" to be unchanged
+    Then I expect the graph state for workspace "live" to be unchanged
+    And I expect the graph state for workspace "local-2" to be unchanged
+    And I expect the graph state for workspace "local-3" to be unchanged
+    And I expect the graph state for workspace "intermediate" to have changed as declared in the snapshot
+
+  Scenario: Publish moving a child node in via gatherSpecializations strategy, and tagging the parent and all its specializations
+    When the command MoveNodeAggregate is executed with payload:
+      | Key                          | Value                        |
+      | workspaceName                | "local"                      |
+      | dimensionSpacePoint          | {"example": "source"}        |
+      | nodeAggregateId              | "nody-mc-nodeface"           |
+      | relationDistributionStrategy | "gatherSpecializations"      |
+      | newParentNodeAggregateId     | "sir-nodeward-nodington-iii" |
+    And the command MoveNodeAggregate is executed with payload:
+      | Key                          | Value                        |
+      | workspaceName                | "local-3"                    |
+      | dimensionSpacePoint          | {"example": "source"}        |
+      | nodeAggregateId              | "nody-mc-nodeface"           |
+      | relationDistributionStrategy | "gatherSpecializations"      |
+      | newParentNodeAggregateId     | "sir-nodeward-nodington-iii" |
+    And the command TagSubtree is executed with payload:
+      | Key                          | Value                        |
+      | workspaceName                | "local"                      |
+      | nodeAggregateId              | "sir-nodeward-nodington-iii" |
+      | coveredDimensionSpacePoint   | {"example": "source"}        |
+      | nodeVariantSelectionStrategy | "allSpecializations"         |
+      | tag                          | "my-tag"                     |
+    And the command TagSubtree is executed with payload:
+      | Key                          | Value                        |
+      | workspaceName                | "local-3"                    |
+      | nodeAggregateId              | "sir-nodeward-nodington-iii" |
+      | coveredDimensionSpacePoint   | {"example": "source"}        |
+      | nodeVariantSelectionStrategy | "allSpecializations"         |
+      | tag                          | "my-tag"                     |
+    And I memorise the global graph state
+    And the command PublishWorkspace is executed with payload:
+      | Key                | Value             |
+      | workspaceName      | "local"           |
+      | newContentStreamId | "new-local-cs-id" |
+    Then I expect the graph state for workspace "local" to be unchanged
+    And I expect the graph state for workspace "live" to be unchanged
+    And I expect the graph state for workspace "local-2" to be unchanged
+    And I expect the graph state for workspace "local-3" to be unchanged
+    And I expect the graph state for workspace "intermediate" to equal that of workspace "local"
+
+  Scenario: Partially publish moving a child node in via gatherSpecializations strategy and tagging the parent and all its specializations
+    When the command MoveNodeAggregate is executed with payload:
+      | Key                          | Value                        |
+      | workspaceName                | "local"                      |
+      | dimensionSpacePoint          | {"example": "source"}        |
+      | nodeAggregateId              | "nody-mc-nodeface"           |
+      | relationDistributionStrategy | "gatherSpecializations"      |
+      | newParentNodeAggregateId     | "sir-nodeward-nodington-iii" |
+    And the command MoveNodeAggregate is executed with payload:
+      | Key                          | Value                        |
+      | workspaceName                | "local-3"                    |
+      | dimensionSpacePoint          | {"example": "source"}        |
+      | nodeAggregateId              | "nody-mc-nodeface"           |
+      | relationDistributionStrategy | "gatherSpecializations"      |
+      | newParentNodeAggregateId     | "sir-nodeward-nodington-iii" |
+    And the command MoveNodeAggregate is executed with payload:
+      | Key                          | Value                        |
+      | workspaceName                | "local"                      |
+      | dimensionSpacePoint          | {"example": "source"}        |
+      | nodeAggregateId              | "nody-o-nodeface"            |
+      | relationDistributionStrategy | "gatherSpecializations"      |
+      | newParentNodeAggregateId     | "sir-nodeward-nodington-iii" |
+    And the command TagSubtree is executed with payload:
+      | Key                          | Value                        |
+      | workspaceName                | "local"                      |
+      | nodeAggregateId              | "sir-nodeward-nodington-iii" |
+      | coveredDimensionSpacePoint   | {"example": "source"}        |
+      | nodeVariantSelectionStrategy | "allSpecializations"         |
+      | tag                          | "my-tag"                     |
+    And the command TagSubtree is executed with payload:
+      | Key                          | Value                        |
+      | workspaceName                | "local-3"                    |
+      | nodeAggregateId              | "sir-nodeward-nodington-iii" |
+      | coveredDimensionSpacePoint   | {"example": "source"}        |
+      | nodeVariantSelectionStrategy | "allSpecializations"         |
+      | tag                          | "my-tag"                     |
+    And I memorise the global graph state
+    And the command PublishIndividualNodesFromWorkspace is executed with payload:
+      | Key                             | Value                                              |
+      | workspaceName                   | "local"                                            |
+      | nodesToPublish                  | ["sir-nodeward-nodington-iii", "nody-mc-nodeface"] |
+      | contentStreamIdForRemainingPart | "remaining-local-cs-id"                            |
+    And I expect the graph state for workspace "local" to be unchanged
+    Then I expect the graph state for workspace "live" to be unchanged
+    And I expect the graph state for workspace "local-2" to be unchanged
+    And I expect the graph state for workspace "local-3" to be unchanged
+    And I expect the graph state for workspace "intermediate" to have changed as declared in the snapshot
+
+  Scenario: Publish moving a child node in via gatherSpecializations strategy and tagging the parent and all its variants
+    When the command MoveNodeAggregate is executed with payload:
+      | Key                          | Value                        |
+      | workspaceName                | "local"                      |
+      | dimensionSpacePoint          | {"example": "source"}        |
+      | nodeAggregateId              | "nody-mc-nodeface"           |
+      | relationDistributionStrategy | "gatherSpecializations"      |
+      | newParentNodeAggregateId     | "sir-nodeward-nodington-iii" |
+    And the command MoveNodeAggregate is executed with payload:
+      | Key                          | Value                        |
+      | workspaceName                | "local-3"                    |
+      | dimensionSpacePoint          | {"example": "source"}        |
+      | nodeAggregateId              | "nody-mc-nodeface"           |
+      | relationDistributionStrategy | "gatherSpecializations"      |
+      | newParentNodeAggregateId     | "sir-nodeward-nodington-iii" |
+    And the command TagSubtree is executed with payload:
+      | Key                          | Value                        |
+      | workspaceName                | "local"                      |
+      | nodeAggregateId              | "sir-nodeward-nodington-iii" |
+      | coveredDimensionSpacePoint   | {"example": "source"}        |
+      | nodeVariantSelectionStrategy | "allVariants"                |
+      | tag                          | "my-tag"                     |
+    And the command TagSubtree is executed with payload:
+      | Key                          | Value                        |
+      | workspaceName                | "local-3"                    |
+      | nodeAggregateId              | "sir-nodeward-nodington-iii" |
+      | coveredDimensionSpacePoint   | {"example": "source"}        |
+      | nodeVariantSelectionStrategy | "allVariants"                |
+      | tag                          | "my-tag"                     |
+    And I memorise the global graph state
+    And the command PublishWorkspace is executed with payload:
+      | Key                | Value             |
+      | workspaceName      | "local"           |
+      | newContentStreamId | "new-local-cs-id" |
+    Then I expect the graph state for workspace "local" to be unchanged
+    And I expect the graph state for workspace "live" to be unchanged
+    And I expect the graph state for workspace "local-2" to be unchanged
+    And I expect the graph state for workspace "local-3" to be unchanged
+    And I expect the graph state for workspace "intermediate" to equal that of workspace "local"
+
+  Scenario: Partially publish moving a child node in via gatherSpecializations strategy and tagging the parent and all its variants
+    When the command MoveNodeAggregate is executed with payload:
+      | Key                          | Value                        |
+      | workspaceName                | "local"                      |
+      | dimensionSpacePoint          | {"example": "source"}        |
+      | nodeAggregateId              | "nody-mc-nodeface"           |
+      | relationDistributionStrategy | "gatherSpecializations"      |
+      | newParentNodeAggregateId     | "sir-nodeward-nodington-iii" |
+    And the command MoveNodeAggregate is executed with payload:
+      | Key                          | Value                        |
+      | workspaceName                | "local-3"                    |
+      | dimensionSpacePoint          | {"example": "source"}        |
+      | nodeAggregateId              | "nody-mc-nodeface"           |
+      | relationDistributionStrategy | "gatherSpecializations"      |
+      | newParentNodeAggregateId     | "sir-nodeward-nodington-iii" |
+    And the command MoveNodeAggregate is executed with payload:
+      | Key                          | Value                        |
+      | workspaceName                | "local"                      |
+      | dimensionSpacePoint          | {"example": "source"}        |
+      | nodeAggregateId              | "nody-o-nodeface"            |
+      | relationDistributionStrategy | "gatherSpecializations"      |
+      | newParentNodeAggregateId     | "sir-nodeward-nodington-iii" |
+    And the command TagSubtree is executed with payload:
+      | Key                          | Value                        |
+      | workspaceName                | "local"                      |
+      | nodeAggregateId              | "sir-nodeward-nodington-iii" |
+      | coveredDimensionSpacePoint   | {"example": "source"}        |
+      | nodeVariantSelectionStrategy | "allVariants"                |
+      | tag                          | "my-tag"                     |
+    And the command TagSubtree is executed with payload:
+      | Key                          | Value                        |
+      | workspaceName                | "local-3"                    |
+      | nodeAggregateId              | "sir-nodeward-nodington-iii" |
+      | coveredDimensionSpacePoint   | {"example": "source"}        |
+      | nodeVariantSelectionStrategy | "allVariants"                |
+      | tag                          | "my-tag"                     |
+    And I memorise the global graph state
+    And the command PublishIndividualNodesFromWorkspace is executed with payload:
+      | Key                             | Value                                              |
+      | workspaceName                   | "local"                                            |
+      | nodesToPublish                  | ["sir-nodeward-nodington-iii", "nody-mc-nodeface"] |
+      | contentStreamIdForRemainingPart | "remaining-local-cs-id"                            |
+    And I expect the graph state for workspace "local" to be unchanged
+    Then I expect the graph state for workspace "live" to be unchanged
+    And I expect the graph state for workspace "local-2" to be unchanged
+    And I expect the graph state for workspace "local-3" to be unchanged
+    And I expect the graph state for workspace "intermediate" to have changed as declared in the snapshot
+
+  Scenario: Publish moving a child node in via gatherAll strategy, and tagging the parent and all its specializations
+    When the command MoveNodeAggregate is executed with payload:
+      | Key                          | Value                        |
+      | workspaceName                | "local"                      |
+      | dimensionSpacePoint          | {"example": "source"}        |
+      | nodeAggregateId              | "nody-mc-nodeface"           |
+      | relationDistributionStrategy | "gatherAll"                  |
+      | newParentNodeAggregateId     | "sir-nodeward-nodington-iii" |
+    And the command MoveNodeAggregate is executed with payload:
+      | Key                          | Value                        |
+      | workspaceName                | "local-3"                    |
+      | dimensionSpacePoint          | {"example": "source"}        |
+      | nodeAggregateId              | "nody-mc-nodeface"           |
+      | relationDistributionStrategy | "gatherAll"                  |
+      | newParentNodeAggregateId     | "sir-nodeward-nodington-iii" |
+    And the command TagSubtree is executed with payload:
+      | Key                          | Value                    |
+      | workspaceName                | "local"                  |
+      | nodeAggregateId              | "sir-nodeward-nodington-iii" |
+      | coveredDimensionSpacePoint   | {"example": "source"}    |
+      | nodeVariantSelectionStrategy | "allSpecializations"     |
+      | tag                          | "my-tag"                 |
+    And the command TagSubtree is executed with payload:
+      | Key                          | Value                    |
+      | workspaceName                | "local-3"                |
+      | nodeAggregateId              | "sir-nodeward-nodington-iii" |
+      | coveredDimensionSpacePoint   | {"example": "source"}    |
+      | nodeVariantSelectionStrategy | "allSpecializations"     |
+      | tag                          | "my-tag"                 |
+    And I memorise the global graph state
+    And the command PublishWorkspace is executed with payload:
+      | Key                | Value             |
+      | workspaceName      | "local"           |
+      | newContentStreamId | "new-local-cs-id" |
+    Then I expect the graph state for workspace "local" to be unchanged
+    And I expect the graph state for workspace "live" to be unchanged
+    And I expect the graph state for workspace "local-2" to be unchanged
+    And I expect the graph state for workspace "local-3" to be unchanged
+    And I expect the graph state for workspace "intermediate" to equal that of workspace "local"
+
+  Scenario: Partially publish moving a child node in via gatherAll strategy and tagging the parent and all its specializations
+    When the command MoveNodeAggregate is executed with payload:
+      | Key                          | Value                        |
+      | workspaceName                | "local"                      |
+      | dimensionSpacePoint          | {"example": "source"}        |
+      | nodeAggregateId              | "nody-mc-nodeface"           |
+      | relationDistributionStrategy | "gatherAll"                  |
+      | newParentNodeAggregateId     | "sir-nodeward-nodington-iii" |
+    And the command MoveNodeAggregate is executed with payload:
+      | Key                          | Value                        |
+      | workspaceName                | "local-3"                    |
+      | dimensionSpacePoint          | {"example": "source"}        |
+      | nodeAggregateId              | "nody-mc-nodeface"           |
+      | relationDistributionStrategy | "gatherAll"                  |
+      | newParentNodeAggregateId     | "sir-nodeward-nodington-iii" |
+    And the command MoveNodeAggregate is executed with payload:
+      | Key                          | Value                        |
+      | workspaceName                | "local"                      |
+      | dimensionSpacePoint          | {"example": "source"}        |
+      | nodeAggregateId              | "nody-o-nodeface"            |
+      | relationDistributionStrategy | "gatherAll"                  |
+      | newParentNodeAggregateId     | "sir-nodeward-nodington-iii" |
+    And the command TagSubtree is executed with payload:
+      | Key                          | Value                    |
+      | workspaceName                | "local"                  |
+      | nodeAggregateId              | "sir-nodeward-nodington-iii" |
+      | coveredDimensionSpacePoint   | {"example": "source"}    |
+      | nodeVariantSelectionStrategy | "allSpecializations"     |
+      | tag                          | "my-tag"                 |
+    And the command TagSubtree is executed with payload:
+      | Key                          | Value                    |
+      | workspaceName                | "local-3"                |
+      | nodeAggregateId              | "sir-nodeward-nodington-iii" |
+      | coveredDimensionSpacePoint   | {"example": "source"}    |
+      | nodeVariantSelectionStrategy | "allSpecializations"     |
+      | tag                          | "my-tag"                 |
+    And I memorise the global graph state
+    And the command PublishIndividualNodesFromWorkspace is executed with payload:
+      | Key                             | Value                                              |
+      | workspaceName                   | "local"                                            |
+      | nodesToPublish                  | ["sir-nodeward-nodington-iii", "nody-mc-nodeface"] |
+      | contentStreamIdForRemainingPart | "remaining-local-cs-id"                            |
+    And I expect the graph state for workspace "local" to be unchanged
+    Then I expect the graph state for workspace "live" to be unchanged
+    And I expect the graph state for workspace "local-2" to be unchanged
+    And I expect the graph state for workspace "local-3" to be unchanged
+    And I expect the graph state for workspace "intermediate" to have changed as declared in the snapshot
+
+  Scenario: Publish moving a child node in via gatherAll strategy and tagging the parent and all its variants
+    When the command MoveNodeAggregate is executed with payload:
+      | Key                          | Value                        |
+      | workspaceName                | "local"                      |
+      | dimensionSpacePoint          | {"example": "source"}        |
+      | nodeAggregateId              | "nody-mc-nodeface"           |
+      | relationDistributionStrategy | "gatherAll"                  |
+      | newParentNodeAggregateId     | "sir-nodeward-nodington-iii" |
+    And the command MoveNodeAggregate is executed with payload:
+      | Key                          | Value                        |
+      | workspaceName                | "local-3"                    |
+      | dimensionSpacePoint          | {"example": "source"}        |
+      | nodeAggregateId              | "nody-mc-nodeface"           |
+      | relationDistributionStrategy | "gatherAll"                  |
+      | newParentNodeAggregateId     | "sir-nodeward-nodington-iii" |
+    And the command TagSubtree is executed with payload:
+      | Key                          | Value                        |
+      | workspaceName                | "local"                      |
+      | nodeAggregateId              | "sir-nodeward-nodington-iii" |
+      | coveredDimensionSpacePoint   | {"example": "source"}        |
+      | nodeVariantSelectionStrategy | "allVariants"                |
+      | tag                          | "my-tag"                     |
+    And the command TagSubtree is executed with payload:
+      | Key                          | Value                        |
+      | workspaceName                | "local-3"                    |
+      | nodeAggregateId              | "sir-nodeward-nodington-iii" |
+      | coveredDimensionSpacePoint   | {"example": "source"}        |
+      | nodeVariantSelectionStrategy | "allVariants"                |
+      | tag                          | "my-tag"                     |
+    And I memorise the global graph state
+    And the command PublishWorkspace is executed with payload:
+      | Key                | Value             |
+      | workspaceName      | "local"           |
+      | newContentStreamId | "new-local-cs-id" |
+    Then I expect the graph state for workspace "local" to be unchanged
+    And I expect the graph state for workspace "live" to be unchanged
+    And I expect the graph state for workspace "local-2" to be unchanged
+    And I expect the graph state for workspace "local-3" to be unchanged
+    And I expect the graph state for workspace "intermediate" to equal that of workspace "local"
+
+  Scenario: Partially publish moving a child node in via gatherAll strategy and tagging the parent and all its variants
+    When the command MoveNodeAggregate is executed with payload:
+      | Key                          | Value                        |
+      | workspaceName                | "local"                      |
+      | dimensionSpacePoint          | {"example": "source"}        |
+      | nodeAggregateId              | "nody-mc-nodeface"           |
+      | relationDistributionStrategy | "gatherAll"                  |
+      | newParentNodeAggregateId     | "sir-nodeward-nodington-iii" |
+    And the command MoveNodeAggregate is executed with payload:
+      | Key                          | Value                        |
+      | workspaceName                | "local-3"                    |
+      | dimensionSpacePoint          | {"example": "source"}        |
+      | nodeAggregateId              | "nody-mc-nodeface"           |
+      | relationDistributionStrategy | "gatherAll"                  |
+      | newParentNodeAggregateId     | "sir-nodeward-nodington-iii" |
+    And the command MoveNodeAggregate is executed with payload:
+      | Key                          | Value                        |
+      | workspaceName                | "local"                      |
+      | dimensionSpacePoint          | {"example": "source"}        |
+      | nodeAggregateId              | "nody-o-nodeface"            |
+      | relationDistributionStrategy | "gatherAll"                  |
+      | newParentNodeAggregateId     | "sir-nodeward-nodington-iii" |
+    And the command TagSubtree is executed with payload:
+      | Key                          | Value                        |
+      | workspaceName                | "local"                      |
+      | nodeAggregateId              | "sir-nodeward-nodington-iii" |
+      | coveredDimensionSpacePoint   | {"example": "source"}        |
+      | nodeVariantSelectionStrategy | "allVariants"                |
+      | tag                          | "my-tag"                     |
+    And the command TagSubtree is executed with payload:
+      | Key                          | Value                        |
+      | workspaceName                | "local-3"                    |
+      | nodeAggregateId              | "sir-nodeward-nodington-iii" |
+      | coveredDimensionSpacePoint   | {"example": "source"}        |
+      | nodeVariantSelectionStrategy | "allVariants"                |
+      | tag                          | "my-tag"                     |
+    And I memorise the global graph state
+    And the command PublishIndividualNodesFromWorkspace is executed with payload:
+      | Key                             | Value                                              |
+      | workspaceName                   | "local"                                            |
+      | nodesToPublish                  | ["sir-nodeward-nodington-iii", "nody-mc-nodeface"] |
+      | contentStreamIdForRemainingPart | "remaining-local-cs-id"                            |
     And I expect the graph state for workspace "local" to be unchanged
     Then I expect the graph state for workspace "live" to be unchanged
     And I expect the graph state for workspace "local-2" to be unchanged
