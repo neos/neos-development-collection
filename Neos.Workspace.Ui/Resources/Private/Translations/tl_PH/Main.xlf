@@ -255,11 +255,19 @@
       </trans-unit>
       <trans-unit id="applyChanges" xml:space="preserve">
         <source>Apply changes</source>
-        <target state="needs-translation">Ilapat ang mga pagbabago</target>
+        <target state="needs-translation" state-qualifier="leveraged-mt">Ilapat ang mga pagbabago</target>
       </trans-unit>
       <trans-unit id="workspaces.dialog.rebase.node" xml:space="preserve">
         <source>Node</source>
-        <target state="needs-translation">Node</target>
+        <target state="needs-translation" state-qualifier="leveraged-mt">Node</target>
+      </trans-unit>
+      <trans-unit id="workspaces.publishChanges" xml:space="preserve">
+        <source>Publish</source>
+        <target state="needs-translation" state-qualifier="leveraged-mt">Ilathala</target>
+      </trans-unit>
+      <trans-unit id="workspaces.discardChanges" xml:space="preserve">
+        <source>Discard</source>
+        <target state="needs-translation" state-qualifier="leveraged-mt">Itapon</target>
       </trans-unit>
     </body>
   </file>

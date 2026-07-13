@@ -255,23 +255,31 @@
       </trans-unit>
       <trans-unit id="applyChanges" xml:space="preserve">
         <source>Apply changes</source>
-        <target state="needs-translation">Változtatások alkalmazása</target>
+        <target state="needs-translation" state-qualifier="leveraged-mt">Változtatások alkalmazása</target>
       </trans-unit>
       <trans-unit id="workspaces.reviewWorkspace.label" xml:space="preserve">
         <source>Review</source>
-        <target state="needs-translation">Áttekintés</target>
+        <target state="needs-translation" state-qualifier="leveraged-mt">Áttekintés</target>
       </trans-unit>
       <trans-unit id="workspaces.workspace.lastModified" xml:space="preserve">
         <source>Last modified</source>
-        <target state="needs-translation">Utoljára szerkesztve</target>
+        <target state="needs-translation" state-qualifier="leveraged-mt">Utoljára szerkesztve</target>
       </trans-unit>
       <trans-unit id="workspaces.workspace.status" xml:space="preserve">
         <source>Status</source>
-        <target state="needs-translation">Állapot</target>
+        <target state="needs-translation" state-qualifier="leveraged-mt">Állapot</target>
       </trans-unit>
       <trans-unit id="workspaces.dialog.rebase.node" xml:space="preserve">
         <source>Node</source>
-        <target state="needs-translation">Csomópont</target>
+        <target state="needs-translation" state-qualifier="leveraged-mt">Csomópont</target>
+      </trans-unit>
+      <trans-unit id="workspaces.publishChanges" xml:space="preserve">
+        <source>Publish</source>
+        <target state="needs-translation" state-qualifier="leveraged-mt">Publikálás</target>
+      </trans-unit>
+      <trans-unit id="workspaces.discardChanges" xml:space="preserve">
+        <source>Discard</source>
+        <target state="needs-translation" state-qualifier="leveraged-mt">Elvet</target>
       </trans-unit>
     </body>
   </file>

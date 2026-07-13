@@ -251,19 +251,27 @@
       </trans-unit>
       <trans-unit id="workspaces.reviewWorkspace.label" xml:space="preserve">
         <source>Review</source>
-        <target state="needs-translation">見直し</target>
+        <target state="needs-translation" state-qualifier="leveraged-mt">見直し</target>
       </trans-unit>
       <trans-unit id="workspaces.workspace.status" xml:space="preserve">
         <source>Status</source>
-        <target state="needs-translation">状態</target>
+        <target state="needs-translation" state-qualifier="leveraged-mt">状態</target>
       </trans-unit>
       <trans-unit id="applyChanges" xml:space="preserve">
         <source>Apply changes</source>
-        <target state="needs-translation">変更を適用</target>
+        <target state="needs-translation" state-qualifier="leveraged-mt">変更を適用</target>
       </trans-unit>
       <trans-unit id="workspaces.dialog.rebase.node" xml:space="preserve">
         <source>Node</source>
-        <target state="needs-translation">ノード</target>
+        <target state="needs-translation" state-qualifier="leveraged-mt">ノード</target>
+      </trans-unit>
+      <trans-unit id="workspaces.publishChanges" xml:space="preserve">
+        <source>Publish</source>
+        <target state="needs-translation" state-qualifier="leveraged-mt">公開</target>
+      </trans-unit>
+      <trans-unit id="workspaces.discardChanges" xml:space="preserve">
+        <source>Discard</source>
+        <target state="needs-translation" state-qualifier="leveraged-mt">破棄</target>
       </trans-unit>
     </body>
   </file>

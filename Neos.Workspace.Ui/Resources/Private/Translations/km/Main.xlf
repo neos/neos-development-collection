@@ -252,19 +252,27 @@
       </trans-unit>
       <trans-unit id="workspaces.reviewWorkspace.label" xml:space="preserve">
         <source>Review</source>
-        <target state="needs-translation">ពិនិត្យឡើងវិញ</target>
+        <target state="needs-translation" state-qualifier="leveraged-mt">ពិនិត្យឡើងវិញ</target>
       </trans-unit>
       <trans-unit id="workspaces.workspace.lastModified" xml:space="preserve">
         <source>Last modified</source>
-        <target state="needs-translation">ការកែប្រែចុងក្រោយ</target>
+        <target state="needs-translation" state-qualifier="leveraged-mt">ការកែប្រែចុងក្រោយ</target>
       </trans-unit>
       <trans-unit id="applyChanges" xml:space="preserve">
         <source>Apply changes</source>
-        <target state="needs-translation">អនុវត្តការផ្លាស់ប្តូរ</target>
+        <target state="needs-translation" state-qualifier="leveraged-mt">អនុវត្តការផ្លាស់ប្តូរ</target>
       </trans-unit>
       <trans-unit id="workspaces.dialog.rebase.node" xml:space="preserve">
         <source>Node</source>
-        <target state="needs-translation">ថ្នាំង</target>
+        <target state="needs-translation" state-qualifier="leveraged-mt">ថ្នាំង</target>
+      </trans-unit>
+      <trans-unit id="workspaces.publishChanges" xml:space="preserve">
+        <source>Publish</source>
+        <target state="needs-translation" state-qualifier="leveraged-mt">ដាក់ផ្សាយ</target>
+      </trans-unit>
+      <trans-unit id="workspaces.discardChanges" xml:space="preserve">
+        <source>Discard</source>
+        <target state="needs-translation" state-qualifier="leveraged-mt">បោះបង់</target>
       </trans-unit>
     </body>
   </file>

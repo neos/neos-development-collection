@@ -465,6 +465,14 @@
         <source>Event details</source>
         <target state="translated">Evenementdetails</target>
       </trans-unit>
+      <trans-unit id="workspaces.publishChanges" xml:space="preserve">
+        <source>Publish</source>
+        <target state="translated">Publiceren</target>
+      </trans-unit>
+      <trans-unit id="workspaces.discardChanges" xml:space="preserve">
+        <source>Discard</source>
+        <target state="translated">Verwerpen</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

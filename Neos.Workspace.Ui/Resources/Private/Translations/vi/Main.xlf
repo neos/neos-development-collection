@@ -251,15 +251,23 @@
       </trans-unit>
       <trans-unit id="applyChanges" xml:space="preserve">
         <source>Apply changes</source>
-        <target state="needs-translation">Đồng ý thay đổi</target>
+        <target state="needs-translation" state-qualifier="leveraged-mt">Đồng ý thay đổi</target>
       </trans-unit>
       <trans-unit id="workspaces.reviewWorkspace.label" xml:space="preserve">
         <source>Review</source>
-        <target state="needs-translation">Đánh giá</target>
+        <target state="needs-translation" state-qualifier="leveraged-mt">Đánh giá</target>
       </trans-unit>
       <trans-unit id="workspaces.dialog.rebase.node" xml:space="preserve">
         <source>Node</source>
-        <target state="needs-translation">Nút</target>
+        <target state="needs-translation" state-qualifier="leveraged-mt">Nút</target>
+      </trans-unit>
+      <trans-unit id="workspaces.publishChanges" xml:space="preserve">
+        <source>Publish</source>
+        <target state="needs-translation" state-qualifier="leveraged-mt">Công khai</target>
+      </trans-unit>
+      <trans-unit id="workspaces.discardChanges" xml:space="preserve">
+        <source>Discard</source>
+        <target state="needs-translation" state-qualifier="leveraged-mt">Hủy bỏ</target>
       </trans-unit>
     </body>
   </file>
