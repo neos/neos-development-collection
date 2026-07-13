@@ -85,20 +85,20 @@ prototype(Neos.Workspace.Ui:Component.Modal.Create) < prototype(Neos.Fusion:Comp
                 field.value="shared"
               >
                 {private.i18n.id('workspaces.workspace.visibility.shared').translate()}
+                <p class="radio-extended-label">
+                  {private.i18n.id('workspaces.workspace.visibility.shared.help').translate()}
+                </p>
               </Neos.Fusion.Form:Radio>
-              <p>
-                {private.i18n.id('workspaces.workspace.visibility.shared.help').translate()}
-              </p>
               <br/>
               <Neos.Fusion.Form:Radio
                 field.name="visibility"
                 field.value="private"
               >
                 {private.i18n.id('workspaces.workspace.visibility.private').translate()}
+                <p class="radio-extended-label">
+                  {private.i18n.id('workspaces.workspace.visibility.private.help').translate()}
+                </p>
               </Neos.Fusion.Form:Radio>
-              <p>
-                {private.i18n.id('workspaces.workspace.visibility.private.help').translate()}
-              </p>
             </Neos.Fusion.Form:Neos.BackendModule.FieldContainer>
           </fieldset>
         </section>
