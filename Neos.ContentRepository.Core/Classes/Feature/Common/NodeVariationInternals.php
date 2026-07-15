@@ -331,7 +331,9 @@ trait NodeVariationInternals
     ): DimensionSpacePointSet {
         $specializations = $this->getInterDimensionalVariationGraph()
             ->getIndexedSpecializations($targetOrigin->toDimensionSpacePoint());
-        $excludedSet = $specializations->getDifference($parentNodeAggregateForCoverageFilter?->coveredDimensionSpacePoints ?: DimensionSpacePointSet::fromArray([]));
+        $excludedSet = $parentNodeAggregateForCoverageFilter
+            ? $specializations->getDifference($parentNodeAggregateForCoverageFilter->coveredDimensionSpacePoints)
+            : DimensionSpacePointSet::fromArray([]);
         foreach (
             $specializations->getIntersection(
                 $nodeAggregate->occupiedDimensionSpacePoints->toDimensionSpacePointSet()
