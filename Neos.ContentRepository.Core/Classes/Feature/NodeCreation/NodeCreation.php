@@ -21,8 +21,8 @@ use Neos\ContentRepository\Core\EventStore\EventInterface;
 use Neos\ContentRepository\Core\EventStore\Events;
 use Neos\ContentRepository\Core\EventStore\EventsToPublish;
 use Neos\ContentRepository\Core\Feature\Common\InterdimensionalSiblings;
+use Neos\ContentRepository\Core\Feature\Common\InterdimensionalSiblingsProvider;
 use Neos\ContentRepository\Core\Feature\RebaseableCommand;
-use Neos\ContentRepository\Core\Feature\Common\NodeCreationInternals;
 use Neos\ContentRepository\Core\Feature\Common\NodeReferencingInternals;
 use Neos\ContentRepository\Core\Feature\ContentStreamEventStreamName;
 use Neos\ContentRepository\Core\Feature\NodeCreation\Command\CreateNodeAggregateWithNode;
@@ -52,7 +52,7 @@ use Neos\ContentRepository\Core\SharedModel\Node\PropertyName;
  */
 trait NodeCreation
 {
-    use NodeCreationInternals;
+    use InterdimensionalSiblingsProvider;
     use NodeReferencingInternals;
 
     abstract protected function getInterDimensionalVariationGraph(): DimensionSpace\InterDimensionalVariationGraph;

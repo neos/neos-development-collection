@@ -45,6 +45,7 @@ final readonly class NodeGeneralizationVariantWasCreated implements
         public OriginDimensionSpacePoint $sourceOrigin,
         public OriginDimensionSpacePoint $generalizationOrigin,
         public InterdimensionalSiblings $variantSucceedingSiblings,
+        public ?NodeAggregateId $parentNodeAggregateId,
     ) {
     }
 
@@ -65,29 +66,33 @@ final readonly class NodeGeneralizationVariantWasCreated implements
 
     public function withWorkspaceNameAndContentStreamId(WorkspaceName $targetWorkspaceName, ContentStreamId $contentStreamId): self
     {
-        return new NodeGeneralizationVariantWasCreated(
-            $targetWorkspaceName,
-            $contentStreamId,
-            $this->nodeAggregateId,
-            $this->sourceOrigin,
-            $this->generalizationOrigin,
-            $this->variantSucceedingSiblings,
+        return new self(
+            workspaceName: $targetWorkspaceName,
+            contentStreamId: $contentStreamId,
+            nodeAggregateId: $this->nodeAggregateId,
+            sourceOrigin: $this->sourceOrigin,
+            generalizationOrigin: $this->generalizationOrigin,
+            variantSucceedingSiblings: $this->variantSucceedingSiblings,
+            parentNodeAggregateId: $this->parentNodeAggregateId,
         );
     }
 
     public static function fromArray(array $values): self
     {
         return new self(
-            WorkspaceName::fromString($values['workspaceName']),
-            ContentStreamId::fromString($values['contentStreamId']),
-            NodeAggregateId::fromString($values['nodeAggregateId']),
-            OriginDimensionSpacePoint::fromArray($values['sourceOrigin']),
-            OriginDimensionSpacePoint::fromArray($values['generalizationOrigin']),
-            array_key_exists('variantSucceedingSiblings', $values)
+            workspaceName: WorkspaceName::fromString($values['workspaceName']),
+            contentStreamId: ContentStreamId::fromString($values['contentStreamId']),
+            nodeAggregateId: NodeAggregateId::fromString($values['nodeAggregateId']),
+            sourceOrigin: OriginDimensionSpacePoint::fromArray($values['sourceOrigin']),
+            generalizationOrigin: OriginDimensionSpacePoint::fromArray($values['generalizationOrigin']),
+            variantSucceedingSiblings: array_key_exists('variantSucceedingSiblings', $values)
                 ? InterdimensionalSiblings::fromArray($values['variantSucceedingSiblings'])
                 : InterdimensionalSiblings::fromDimensionSpacePointSetWithoutSucceedingSiblings(
                     DimensionSpacePointSet::fromArray($values['generalizationCoverage']),
                 ),
+            parentNodeAggregateId: is_string($parentNodeAggregateId = ($values['parentNodeAggregateId'] ?? null))
+                ? NodeAggregateId::fromString($parentNodeAggregateId)
+                : null,
         );
     }
 

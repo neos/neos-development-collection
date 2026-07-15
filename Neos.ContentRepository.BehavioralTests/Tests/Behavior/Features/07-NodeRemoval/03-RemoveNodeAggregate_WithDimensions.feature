@@ -19,9 +19,9 @@ Feature: Remove NodeAggregate
     And I am in content repository "default"
     And I am user identified by "initiating-user-identifier"
     And the command CreateRootWorkspace is executed with payload:
-      | Key                  | Value                |
-      | workspaceName        | "live"               |
-      | newContentStreamId   | "cs-identifier"      |
+      | Key                | Value           |
+      | workspaceName      | "live"          |
+      | newContentStreamId | "cs-identifier" |
     And I am in workspace "live" and dimension space point {"language":"en"}
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key             | Value                         |
@@ -33,8 +33,8 @@ Feature: Remove NodeAggregate
       | nodingers-cat          | Neos.ContentRepository.Testing:Document | lady-eleonode-rootford | pet      |
       | nodingers-kitten       | Neos.ContentRepository.Testing:Document | nodingers-cat          | kitten   |
     And the command SetNodeReferences is executed with payload:
-      | Key                   | Value                                  |
-      | sourceNodeAggregateId | "nodingers-cat"                        |
+      | Key                   | Value                                                                                   |
+      | sourceNodeAggregateId | "nodingers-cat"                                                                         |
       | references            | [{"referenceName": "references", "references": [{"target": "sir-david-nodenborough"}]}] |
 
   Scenario: Remove a node aggregate with strategy allSpecializations
@@ -45,10 +45,10 @@ Feature: Remove NodeAggregate
       | nodeVariantSelectionStrategy | "allSpecializations" |
     Then I expect exactly 7 events to be published on stream with prefix "ContentStream:cs-identifier"
     And event at index 6 is of type "NodeAggregateWasRemoved" with payload:
-      | Key                                  | Expected                               |
-      | contentStreamId                      | "cs-identifier"                        |
-      | nodeAggregateId                      | "nodingers-cat"                        |
-      | affectedCoveredDimensionSpacePoints  | [{"language":"de"},{"language":"gsw"}] |
+      | Key                                 | Expected                               |
+      | contentStreamId                     | "cs-identifier"                        |
+      | nodeAggregateId                     | "nodingers-cat"                        |
+      | affectedCoveredDimensionSpacePoints | [{"language":"de"},{"language":"gsw"}] |
     Then I expect the graph projection to consist of exactly 4 nodes
     And I expect a node identified by cs-identifier;lady-eleonode-rootford;{} to exist in the content graph
     And I expect a node identified by cs-identifier;sir-david-nodenborough;{"language":"en"} to exist in the content graph
@@ -190,10 +190,10 @@ Feature: Remove NodeAggregate
       | nodeVariantSelectionStrategy | "allVariants"     |
     Then I expect exactly 8 events to be published on stream with prefix "ContentStream:cs-identifier"
     And event at index 7 is of type "NodeAggregateWasRemoved" with payload:
-      | Key                                  | Expected                                                                   |
-      | contentStreamId                      | "cs-identifier"                                                            |
-      | nodeAggregateId                      | "nodingers-cat"                                                            |
-      | affectedCoveredDimensionSpacePoints  | [{"language":"de"},{"language":"en"},{"language":"gsw"},{"language":"fr"}] |
+      | Key                                 | Expected                                                                   |
+      | contentStreamId                     | "cs-identifier"                                                            |
+      | nodeAggregateId                     | "nodingers-cat"                                                            |
+      | affectedCoveredDimensionSpacePoints | [{"language":"de"},{"language":"en"},{"language":"gsw"},{"language":"fr"}] |
     Then I expect the graph projection to consist of exactly 2 nodes
     And I expect a node identified by cs-identifier;lady-eleonode-rootford;{} to exist in the content graph
     And I expect a node identified by cs-identifier;sir-david-nodenborough;{"language":"en"} to exist in the content graph
@@ -348,7 +348,18 @@ Feature: Remove NodeAggregate
       | sourceOrigin    | {"language":"en"} |
       | targetOrigin    | {"language":"de"} |
 
+    Then I expect exactly 9 events to be published on stream "ContentStream:cs-identifier"
+    And event at index 8 is of type "NodeSpecializationVariantWasCreated" with payload:
+      | Key                    | Expected                                                           |
+      | contentStreamId        | "cs-identifier"                                                    |
+      | nodeAggregateId        | "nodingers-cat"                                                    |
+      | sourceOrigin           | {"language":"en"}                                                  |
+      | specializationOrigin   | {"language":"de"}                                                  |
+      | specializationSiblings | [{"dimensionSpacePoint":{"language":"de"},"nodeAggregateId":null},{"dimensionSpacePoint":{"language":"gsw"},"nodeAggregateId":null}] |
+      | parentNodeAggregateId  | null                                                               |
+
     Then I expect the node aggregate "nodingers-cat" to exist
+    And I expect this node aggregate to occupy dimension space points [{"language":"en"},{"language":"de"}]
     And I expect this node aggregate to disable dimension space points [{"language":"en"},{"language":"fr"}]
     And I expect the graph projection to consist of exactly 5 nodes
     And I expect a node identified by cs-identifier;lady-eleonode-rootford;{} to exist in the content graph

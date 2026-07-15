@@ -470,7 +470,15 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
 
     private function whenNodeGeneralizationVariantWasCreated(NodeGeneralizationVariantWasCreated $event, EventEnvelope $eventEnvelope): void
     {
-        $this->createNodeGeneralizationVariant($event->contentStreamId, $event->nodeAggregateId, $event->sourceOrigin, $event->generalizationOrigin, $event->variantSucceedingSiblings, $eventEnvelope);
+        $this->createNodeGeneralizationVariant(
+            contentStreamId: $event->contentStreamId,
+            nodeAggregateId: $event->nodeAggregateId,
+            sourceOrigin: $event->sourceOrigin,
+            generalizationOrigin: $event->generalizationOrigin,
+            parentNodeAggregateId: $event->parentNodeAggregateId,
+            generalizationSiblings: $event->variantSucceedingSiblings,
+            eventEnvelope: $eventEnvelope,
+        );
     }
 
     private function whenNodePeerVariantWasCreated(NodePeerVariantWasCreated $event, EventEnvelope $eventEnvelope): void
@@ -605,7 +613,15 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
 
     private function whenNodeSpecializationVariantWasCreated(NodeSpecializationVariantWasCreated $event, EventEnvelope $eventEnvelope): void
     {
-        $this->createNodeSpecializationVariant($event->contentStreamId, $event->nodeAggregateId, $event->sourceOrigin, $event->specializationOrigin, $event->specializationSiblings, $eventEnvelope);
+        $this->createNodeSpecializationVariant(
+            contentStreamId: $event->contentStreamId,
+            nodeAggregateId: $event->nodeAggregateId,
+            sourceOrigin: $event->sourceOrigin,
+            specializationOrigin: $event->specializationOrigin,
+            parentNodeAggregateId: $event->parentNodeAggregateId,
+            specializationSiblings: $event->specializationSiblings,
+            eventEnvelope: $eventEnvelope,
+        );
     }
 
     private function whenRootNodeAggregateDimensionsWereUpdated(RootNodeAggregateDimensionsWereUpdated $event): void

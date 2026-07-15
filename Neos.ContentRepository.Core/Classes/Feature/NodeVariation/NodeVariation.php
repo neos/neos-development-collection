@@ -75,21 +75,58 @@ trait NodeVariation
         }
         $this->requireNodeAggregateToOccupyDimensionSpacePoint($nodeAggregate, $command->sourceOrigin);
         $this->requireNodeAggregateToNotOccupyDimensionSpacePoint($nodeAggregate, $command->targetOrigin);
-        $parentNodeAggregate = $this->requireProjectedParentNodeAggregate(
-            $contentGraph,
-            $command->nodeAggregateId,
-            $command->sourceOrigin
-        );
+
+        if ($command->succeedingSiblingNodeAggregateId) {
+            $this->requireProjectedNodeAggregate($contentGraph, $command->succeedingSiblingNodeAggregateId);
+        }
+        if ($command->parentNodeAggregateId) {
+            $parentNodeAggregate = $this->requireProjectedNodeAggregate($contentGraph, $command->parentNodeAggregateId);
+            if ($command->succeedingSiblingNodeAggregateId) {
+                $this->requireNodeAggregateToBeChild(
+                    $contentGraph,
+                    $command->succeedingSiblingNodeAggregateId,
+                    $command->parentNodeAggregateId,
+                    $command->targetOrigin->toDimensionSpacePoint(),
+                );
+            }
+            if ($nodeAggregate->nodeName) {
+                $this->requireNodeNameToBeUncovered($contentGraph, $nodeAggregate->nodeName, $command->parentNodeAggregateId);
+                $this->requireNodeTypeNotToDeclareTetheredChildNodeName($parentNodeAggregate->nodeTypeName, $nodeAggregate->nodeName);
+            }
+            $this->requireConstraintsImposedByAncestorsAreMet(
+                $contentGraph,
+                $this->requireNodeType($nodeAggregate->nodeTypeName),
+                [$command->parentNodeAggregateId],
+            );
+        } else {
+            $parentNodeAggregate = $this->requireProjectedParentNodeAggregate(
+                $contentGraph,
+                $command->nodeAggregateId,
+                $command->sourceOrigin
+            );
+            if ($command->succeedingSiblingNodeAggregateId) {
+                $this->requireNodeAggregateToBeSibling(
+                    $contentGraph,
+                    $command->nodeAggregateId,
+                    $command->succeedingSiblingNodeAggregateId,
+                    $command->targetOrigin->toDimensionSpacePoint(),
+                );
+            }
+        }
+
         $this->requireNodeAggregateToCoverDimensionSpacePoint(
             $parentNodeAggregate,
             $command->targetOrigin->toDimensionSpacePoint()
         );
 
         $events = $this->createEventsForVariations(
-            $contentGraph,
-            $command->sourceOrigin,
-            $command->targetOrigin,
-            $nodeAggregate
+            contentGraph: $contentGraph,
+            sourceOrigin: $command->sourceOrigin,
+            targetOrigin: $command->targetOrigin,
+            nodeAggregate: $nodeAggregate,
+            parentNodeAggregateId: $command->parentNodeAggregateId,
+            precedingSiblingNodeAggregateId: $command->precedingSiblingNodeAggregateId,
+            succeedingSiblingNodeAggregateId: $command->succeedingSiblingNodeAggregateId,
         );
 
         return new EventsToPublish(
