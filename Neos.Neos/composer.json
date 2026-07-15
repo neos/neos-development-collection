@@ -12,7 +12,7 @@
     },
     "require": {
         "php": "^8.4",
-        "neos/flow": "~9.1.0",
+        "neos/flow": "~9.2.0",
         "neos/media-browser": "self.version",
         "neos/party": "~7.0.3",
         "neos/contentrepository-core": "self.version",
@@ -22,7 +22,7 @@
         "neos/fusion": "self.version",
         "neos/fusion-afx": "self.version",
         "neos/fusion-form": "^2.1 || ^3.0",
-        "neos/fluid-adaptor": "~9.1.0",
+        "neos/fluid-adaptor": "~9.2.0",
         "neos/media": "self.version",
         "neos/workspace-ui": "self.version",
         "behat/transliterator": "~1.0"
