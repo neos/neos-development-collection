@@ -23,7 +23,7 @@
         "webmozart/assert": "^1.11",
         "neos/flow": "*",
         "behat/behat": "^3.5",
-        "neos/behat": "^9.2",
+        "neos/behat": "~9.2.0",
         "neos/contentrepositoryregistry-storageclient": "self.version",
         "symfony/property-access": "^5.4|^6.0",
         "neos/fluid-adaptor": "*",
