@@ -207,8 +207,11 @@ trait TetheredNodeInternals
             $tetheredNodeType,
             $this->getPropertyConverter()
         );
+
+        // NodeTypeChange is not allowed on root, thus we don't handle the empty dimension case
+        $orderedAffectedOriginDimensionSpacePoints = $this->requireOrderedOriginDimensionSpacePoints($affectedOriginDimensionSpacePoints);
         $creationOrigin = null;
-        foreach ($affectedOriginDimensionSpacePoints as $originDimensionSpacePoint) {
+        foreach ($orderedAffectedOriginDimensionSpacePoints as $originDimensionSpacePoint) {
             $coverage = $coverageByOrigin->getCoverage($originDimensionSpacePoint);
             if (!$coverage) {
                 throw new \RuntimeException('Missing coverage for origin dimension space point ' . \json_encode($originDimensionSpacePoint));
@@ -306,7 +309,10 @@ trait TetheredNodeInternals
         );
 
         # Handle property adjustments
-        foreach ($nodeAggregate->getNodes() as $node) {
+        $orderedOccupiedDimensionSpacePoints = $this->requireOrderedOccupiedDimensionSpacePoints($nodeAggregate);
+        foreach ($orderedOccupiedDimensionSpacePoints as $originDimensionSpacePoint) {
+            $node = $nodeAggregate->getNodeByOccupiedDimensionSpacePoint($originDimensionSpacePoint);
+
             $presentPropertyKeys = array_keys(iterator_to_array($node->properties->serialized()));
             $complementaryPropertyValues = SerializedPropertyValues::defaultFromNodeType(
                 $tetheredNodeType,
@@ -325,8 +331,8 @@ trait TetheredNodeInternals
                     $contentGraph->getWorkspaceName(),
                     $contentGraph->getContentStreamId(),
                     $nodeAggregate->nodeAggregateId,
-                    $node->originDimensionSpacePoint,
-                    $nodeAggregate->getCoverageByOccupant($node->originDimensionSpacePoint),
+                    $originDimensionSpacePoint,
+                    $nodeAggregate->getCoverageByOccupant($originDimensionSpacePoint),
                     $complementaryPropertyValues,
                     $obsoletePropertyNames
                 );

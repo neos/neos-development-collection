@@ -33,6 +33,8 @@ use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
  */
 trait NodeVariationInternals
 {
+    use DimensionSpaceInternals;
+
     abstract protected function getInterDimensionalVariationGraph(): DimensionSpace\InterDimensionalVariationGraph;
 
     protected function createEventsForVariations(

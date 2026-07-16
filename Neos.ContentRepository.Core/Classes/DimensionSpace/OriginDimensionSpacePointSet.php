@@ -181,4 +181,9 @@ final class OriginDimensionSpacePointSet implements \JsonSerializable, \Iterator
     {
         return new OriginDimensionSpacePointSet(array_diff_key($this->points, $other->getPoints()));
     }
+
+    public function equals(OriginDimensionSpacePointSet $other): bool
+    {
+        return count($this->points) === count($other->points) && array_diff_key($this->points, $other->points) === [];
+    }
 }
