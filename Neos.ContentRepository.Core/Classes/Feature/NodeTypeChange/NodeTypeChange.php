@@ -214,6 +214,7 @@ trait NodeTypeChange
         # Handle property adjustments
         $newNodeType = $this->requireNodeType($command->newNodeTypeName);
         foreach ($nodeAggregate->getNodes() as $node) {
+            $this->requireDimensionSpacePointToExist($node->originDimensionSpacePoint->toDimensionSpacePoint());
             $presentPropertyKeys = array_keys(iterator_to_array($node->properties->serialized()));
             $complementaryPropertyValues = SerializedPropertyValues::defaultFromNodeType(
                 $newNodeType,
