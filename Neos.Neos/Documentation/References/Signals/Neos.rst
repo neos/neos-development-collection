@@ -3,13 +3,32 @@
 Neos Signals Reference
 ======================
 
-This reference was automatically generated from code on 2026-07-12
+This reference was automatically generated from code on 2026-07-16
 
 
 .. _`Neos Signals Reference: AbstractModuleController (``Neos\Neos\Controller\Module\AbstractModuleController``)`:
 
 AbstractModuleController (``Neos\Neos\Controller\Module\AbstractModuleController``)
 -----------------------------------------------------------------------------------
+
+This class contains the following signals.
+
+viewResolved
+^^^^^^^^^^^^
+
+Emit that the view is resolved. The passed ViewInterface reference,
+gives the possibility to add variables to the view,
+before passing it on to further rendering
+
+
+
+
+
+
+.. _`Neos Signals Reference: AbstractQueryController (``Neos\Neos\Ui\Infrastructure\MVC\AbstractQueryController``)`:
+
+AbstractQueryController (``Neos\Neos\Ui\Infrastructure\MVC\AbstractQueryController``)
+-------------------------------------------------------------------------------------
 
 This class contains the following signals.
 
@@ -260,6 +279,82 @@ before passing it on to further rendering
 
 DimensionController (``Neos\Neos\Controller\Module\Administration\DimensionController``)
 ----------------------------------------------------------------------------------------
+
+This class contains the following signals.
+
+viewResolved
+^^^^^^^^^^^^
+
+Emit that the view is resolved. The passed ViewInterface reference,
+gives the possibility to add variables to the view,
+before passing it on to further rendering
+
+
+
+
+
+
+.. _`Neos Signals Reference: GetChildrenForTreeNodeController (``Neos\Neos\Ui\LinkEditor\Application\GetChildrenForTreeNode\Controller\GetChildrenForTreeNodeController``)`:
+
+GetChildrenForTreeNodeController (``Neos\Neos\Ui\LinkEditor\Application\GetChildrenForTreeNode\Controller\GetChildrenForTreeNodeController``)
+---------------------------------------------------------------------------------------------------------------------------------------------
+
+This class contains the following signals.
+
+viewResolved
+^^^^^^^^^^^^
+
+Emit that the view is resolved. The passed ViewInterface reference,
+gives the possibility to add variables to the view,
+before passing it on to further rendering
+
+
+
+
+
+
+.. _`Neos Signals Reference: GetNodeSummaryController (``Neos\Neos\Ui\LinkEditor\Application\GetNodeSummary\Controller\GetNodeSummaryController``)`:
+
+GetNodeSummaryController (``Neos\Neos\Ui\LinkEditor\Application\GetNodeSummary\Controller\GetNodeSummaryController``)
+---------------------------------------------------------------------------------------------------------------------
+
+This class contains the following signals.
+
+viewResolved
+^^^^^^^^^^^^
+
+Emit that the view is resolved. The passed ViewInterface reference,
+gives the possibility to add variables to the view,
+before passing it on to further rendering
+
+
+
+
+
+
+.. _`Neos Signals Reference: GetNodeTypeFilterOptionsController (``Neos\Neos\Ui\LinkEditor\Application\GetNodeTypeFilterOptions\Controller\GetNodeTypeFilterOptionsController``)`:
+
+GetNodeTypeFilterOptionsController (``Neos\Neos\Ui\LinkEditor\Application\GetNodeTypeFilterOptions\Controller\GetNodeTypeFilterOptionsController``)
+---------------------------------------------------------------------------------------------------------------------------------------------------
+
+This class contains the following signals.
+
+viewResolved
+^^^^^^^^^^^^
+
+Emit that the view is resolved. The passed ViewInterface reference,
+gives the possibility to add variables to the view,
+before passing it on to further rendering
+
+
+
+
+
+
+.. _`Neos Signals Reference: GetTreeController (``Neos\Neos\Ui\LinkEditor\Application\GetTree\Controller\GetTreeController``)`:
+
+GetTreeController (``Neos\Neos\Ui\LinkEditor\Application\GetTree\Controller\GetTreeController``)
+------------------------------------------------------------------------------------------------
 
 This class contains the following signals.
 
