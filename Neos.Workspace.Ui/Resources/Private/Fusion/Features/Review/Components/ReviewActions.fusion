@@ -104,7 +104,7 @@ prototype(Neos.Workspace.Ui:Component.ReviewActions) < prototype(Neos.Fusion:Com
               disabled={!props.canPublishToBaseWorkspace}
               attributes.hx-target={'#popover-container'}
               attributes.hx-swap='innerHTML'
-              attributes.hx-post={private.confirmPublishSelectedChanges}
+              attributes.hx-get={private.confirmPublishSelectedChanges}
               attributes.hx-on--after-request={'document.getElementById("' + private.publishSelectedChangesPopoverId + '").showPopover()'}
             />
           </div>

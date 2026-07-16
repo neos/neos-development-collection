@@ -456,9 +456,9 @@
         <target state="translated">Priekšskats</target>
       </trans-unit>
       <!-- node types -->
-      <trans-unit id="nodeTypes.groups.general" xml:space="preserve" approved="yes">
+      <trans-unit id="nodeTypes.groups.general" xml:space="preserve" approved="no">
         <source>General</source>
-        <target state="final">Galvenais</target>
+        <target state="translated">Vispārīga</target>
       </trans-unit>
       <trans-unit id="nodeTypes.groups.structure" xml:space="preserve" approved="yes">
         <source>Structure</source>

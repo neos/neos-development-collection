@@ -213,7 +213,11 @@ trait NodeTypeChange
 
         # Handle property adjustments
         $newNodeType = $this->requireNodeType($command->newNodeTypeName);
-        foreach ($nodeAggregate->getNodes() as $node) {
+        // NodeTypeChange is not allowed on root, thus we don't handle the empty dimension case
+        $orderedOccupiedDimensionSpacePoints = $this->requireOrderedOriginDimensionSpacePoints($nodeAggregate->occupiedDimensionSpacePoints);
+        foreach ($orderedOccupiedDimensionSpacePoints as $originDimensionSpacePoint) {
+            $node = $nodeAggregate->getNodeByOccupiedDimensionSpacePoint($originDimensionSpacePoint);
+
             $presentPropertyKeys = array_keys(iterator_to_array($node->properties->serialized()));
             $complementaryPropertyValues = SerializedPropertyValues::defaultFromNodeType(
                 $newNodeType,
@@ -232,8 +236,8 @@ trait NodeTypeChange
                     $contentGraph->getWorkspaceName(),
                     $contentGraph->getContentStreamId(),
                     $nodeAggregate->nodeAggregateId,
-                    $node->originDimensionSpacePoint,
-                    $nodeAggregate->getCoverageByOccupant($node->originDimensionSpacePoint),
+                    $originDimensionSpacePoint,
+                    $nodeAggregate->getCoverageByOccupant($originDimensionSpacePoint),
                     $complementaryPropertyValues,
                     $obsoletePropertyNames
                 );

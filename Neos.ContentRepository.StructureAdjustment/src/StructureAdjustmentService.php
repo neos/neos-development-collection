@@ -73,6 +73,7 @@ class StructureAdjustmentService implements ContentRepositoryServiceInterface
         );
         $this->propertyAdjustment = new PropertyAdjustment(
             $this->liveContentGraph,
+            $interDimensionalVariationGraph,
             $nodeTypeManager
         );
         $this->dimensionAdjustment = new DimensionAdjustment(

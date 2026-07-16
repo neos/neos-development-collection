@@ -303,6 +303,12 @@
       <trans-unit id="workspaces.publishSelectedChangesTo" xml:space="preserve">
 				<source>Publish selected changes to {0}</source>
 			</trans-unit>
+      <trans-unit id="workspaces.publishChanges" xml:space="preserve">
+				<source>Publish</source>
+			</trans-unit>
+      <trans-unit id="workspaces.discardChanges" xml:space="preserve">
+        <source>Discard</source>
+      </trans-unit>
       <trans-unit id="workspaces.discardAllChanges" xml:space="preserve">
 				<source>Discard all changes</source>
 			</trans-unit>
