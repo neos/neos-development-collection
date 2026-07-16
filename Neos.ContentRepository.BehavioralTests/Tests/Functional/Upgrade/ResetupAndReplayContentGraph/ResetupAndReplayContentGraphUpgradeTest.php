@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Neos\ContentRepositoryRegistry\Tests\Functional\Upgrade\ResetupAndReplayContentGraph;
+namespace Neos\ContentRepository\BehavioralTests\Tests\Functional\Upgrade\ResetupAndReplayContentGraph;
 
 use Neos\ContentRepository\BehavioralTests\Tests\Functional\Subscription\AbstractSubscriptionEngineTestCase;
 use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Command\CreateRootWorkspace;
@@ -10,7 +10,6 @@ use Neos\ContentRepository\Core\Projection\ProjectionStatus;
 use Neos\ContentRepository\Core\Service\ContentRepositoryMaintainerFactory;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
-use Neos\ContentRepository\Core\Subscription\Engine\SubscriptionEngineCriteria;
 use Neos\ContentRepository\Core\Subscription\SubscriptionStatus;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\ContentRepositoryRegistry\Upgrade\Command\CRUpgradeContextFactory;
@@ -18,6 +17,7 @@ use Neos\ContentRepositoryRegistry\Upgrade\ResetupAndReplayContentGraph\ResetupA
 use Neos\EventStore\Model\Event\SequenceNumber;
 use PHPUnit\Framework\Assert;
 
+// FIXME, this test should reside in Neos.ContentRepositoryRegistry, but requires the "AbstractSubscriptionEngineTestCase" which we dont want to depend on when distributing the package, its a dev dependency
 class ResetupAndReplayContentGraphUpgradeTest extends AbstractSubscriptionEngineTestCase
 {
     private ResetupAndReplayContentGraphUpgrade $resetGraphAndSetupUpgrade;
