@@ -76,7 +76,15 @@ final class OriginDimensionSpacePointSet implements \JsonSerializable, \Iterator
 
     public static function fromJsonString(string $jsonString): self
     {
-        return self::fromArray(json_decode($jsonString, true));
+        try {
+            return self::fromArray(json_decode($jsonString, true, 512, JSON_THROW_ON_ERROR));
+        } catch (\JsonException $e) {
+            throw new \RuntimeException(
+                sprintf('Failed to JSON-decode "%s": %s', $jsonString, $e->getMessage()),
+                1782715563,
+                $e
+            );
+        }
     }
 
     public function toDimensionSpacePointSet(): DimensionSpacePointSet
@@ -172,5 +180,10 @@ final class OriginDimensionSpacePointSet implements \JsonSerializable, \Iterator
     public function getDifference(OriginDimensionSpacePointSet $other): OriginDimensionSpacePointSet
     {
         return new OriginDimensionSpacePointSet(array_diff_key($this->points, $other->getPoints()));
+    }
+
+    public function equals(OriginDimensionSpacePointSet $other): bool
+    {
+        return count($this->points) === count($other->points) && array_diff_key($this->points, $other->points) === [];
     }
 }

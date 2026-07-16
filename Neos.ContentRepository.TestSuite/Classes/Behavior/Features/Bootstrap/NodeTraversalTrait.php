@@ -196,7 +196,7 @@ trait NodeTraversalTrait
         $contentGraph = $this->currentContentRepository->getContentGraph($this->currentWorkspaceName);
         $actualNodeAggregates = $contentGraph->findNodeAggregatesByIds($entryNodeAggregateIds);
 
-        self::assertNodeAggregatesEqualTable($expectedNodes->getHash(), $actualNodeAggregates, 'findNodeAggregatesByIds returned an unexpected result');
+        self::assertNodeAggregatesEqualTable($expectedNodes->getHash(), self::sortNodeAggregatesById($actualNodeAggregates), 'findNodeAggregatesByIds returned an unexpected result');
     }
 
 
@@ -443,7 +443,7 @@ trait NodeTraversalTrait
         $contentGraph = $this->currentContentRepository->getContentGraph($this->currentWorkspaceName);
         $actualNodeAggregates = $contentGraph->findNodeAggregatesTaggedBy(SubtreeTag::fromString($subtreeTag));
 
-        self::assertNodeAggregatesEqualTable($expectedNodes->getHash(), $actualNodeAggregates, 'findNodeAggregatesTaggedBy returned an unexpected result');
+        self::assertNodeAggregatesEqualTable($expectedNodes->getHash(), self::sortNodeAggregatesById($actualNodeAggregates), 'findNodeAggregatesTaggedBy returned an unexpected result');
     }
 
     /**
@@ -458,6 +458,14 @@ trait NodeTraversalTrait
 
         $actualNode = $this->getCurrentSubgraphForQueries()->findRootNodeByType(NodeTypeName::fromString($serializedNodeTypeName));
         Assert::assertSame($actualNode?->aggregateId->value, $expectedNodeAggregateId?->value);
+    }
+
+    /** Do not apply to all query results, as some have a defined order! */
+    private static function sortNodeAggregatesById(NodeAggregates $nodeAggregates): NodeAggregates
+    {
+        $nodeAggregatesSorted = iterator_to_array($nodeAggregates);
+        usort($nodeAggregatesSorted, fn (NodeAggregate $a, NodeAggregate $b) => $a->nodeAggregateId->value <=> $b->nodeAggregateId->value);
+        return NodeAggregates::fromArray($nodeAggregatesSorted);
     }
 
     private static function assertNodeAggregatesEqualTable(array $expectedNodeAggregates, NodeAggregates $actualNodeAggregates, string $message): void

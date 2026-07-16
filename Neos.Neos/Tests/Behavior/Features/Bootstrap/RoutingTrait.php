@@ -265,6 +265,9 @@ trait RoutingTrait
         $actualResult = $dbal->fetchAllAssociative('SELECT ' . $columns . ' FROM ' . $tablePrefix . '_uri ORDER BY nodeaggregateidpath, dimensionspacepointhash');
         $expectedResult = array_map(static function (array $row) {
             return array_map(static function (string $cell) {
+                if (str_starts_with($cell, 'hash')) {
+                    return DimensionSpacePoint::fromJsonString(substr($cell, strlen('hash')))->hash;
+                }
                 return json_decode($cell, true, 512, JSON_THROW_ON_ERROR);
             }, $row);
         }, $expectedRows->getHash());
