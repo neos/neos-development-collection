@@ -18,5 +18,5 @@
     "esbuild-sass-plugin": "^3.3.1",
     "sass": "^1.80.7"
   },
-  "packageManager": "yarn@1.22.21"
+  "packageManager": "yarn@4.17.1"
 }

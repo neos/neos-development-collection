@@ -45,7 +45,7 @@ const jsConfig = {
 	platform: "browser",
 	target: ["es2018"],
 	sourcemap: true,
-	minify: true,
+	minify: !isWatch,
 	loader: {
 		".js": "jsx",
 		".vanilla-css": "css",
@@ -60,7 +60,7 @@ const cssConfig = {
 	platform: "browser",
 	target: ["es2018"],
 	sourcemap: false,
-	minify: true,
+	minify: !isWatch,
 	external: [
 		"../Fonts/*",
 		"../../Neos.Neos/*",
