@@ -200,7 +200,6 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@neos-project/media-browser@workspace:."
   dependencies:
-    compass-mixins: "npm:^0.12.12"
     esbuild: "npm:^0.28.1"
     esbuild-sass-plugin: "npm:^3.3.1"
     react: "npm:^16.14.0"
@@ -374,13 +373,6 @@ __metadata:
   version: 3.0.0
   resolution: "chownr@npm:3.0.0"
   checksum: 10c0/43925b87700f7e3893296c8e9c56cc58f926411cce3a6e5898136daaf08f08b9a8eb76d37d3267e707d0dcc17aed2e2ebdf5848c0c3ce95cf910a919935c1b10
-  languageName: node
-  linkType: hard
-
-"compass-mixins@npm:^0.12.12":
-  version: 0.12.12
-  resolution: "compass-mixins@npm:0.12.12"
-  checksum: 10c0/86fea73ae8990e98e5b00dc4f13b5f448bd03d1fa68cb3f09c4c5f62b61ba359cb14d83cd10972a3bf4f4493a963c4858a347d9400a04abecc1ad3b9e41997b2
   languageName: node
   linkType: hard
 

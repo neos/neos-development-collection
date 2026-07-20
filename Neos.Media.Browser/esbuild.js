@@ -73,10 +73,7 @@ const cssConfig = {
 	],
 	plugins: [
 		sassPlugin({
-			loadPaths: [
-				path.join(projectRoot, "node_modules"),
-				path.join(projectRoot, "node_modules/compass-mixins/lib"),
-			],
+			loadPaths: [path.join(projectRoot, "node_modules")],
 		}),
 	],
 };
