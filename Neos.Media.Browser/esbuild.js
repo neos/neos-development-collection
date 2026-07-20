@@ -43,7 +43,7 @@ const jsConfig = {
 	outfile: path.join(projectRoot, "Resources/Public/JavaScript/Main.js"),
 	format: "iife",
 	platform: "browser",
-	target: ["es2018"],
+	target: ["es2020"],
 	sourcemap: true,
 	minify: !isWatch,
 	loader: {
@@ -58,7 +58,7 @@ const cssConfig = {
 	bundle: true,
 	outfile: path.join(projectRoot, "Resources/Public/Styles/MediaBrowser.css"),
 	platform: "browser",
-	target: ["es2018"],
+	target: ["es2020"],
 	sourcemap: false,
 	minify: !isWatch,
 	external: [
