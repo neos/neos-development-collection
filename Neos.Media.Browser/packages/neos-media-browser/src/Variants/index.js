@@ -39,6 +39,7 @@ export default class VariantsApp extends Component {
 			crop: true,
 			cropVariantPersistenceIdentifier: variantPersistenceIdentifier,
 			cropConfiguration: {
+				unit: "%",
 				aspect: aspectRatio,
 				width: widthPercentage,
 				x: x

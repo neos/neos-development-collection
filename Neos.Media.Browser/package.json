@@ -8,9 +8,9 @@
     "watch": "node esbuild.js --watch"
   },
   "dependencies": {
-    "react": "^16.14.0",
-    "react-dom": "^16.14.0",
-    "react-image-crop": "^2.0.5"
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "react-image-crop": "^11.1.2"
   },
   "devDependencies": {
     "esbuild": "^0.28.1",

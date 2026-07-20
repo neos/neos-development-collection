@@ -1,5 +1,5 @@
 import React from "react";
-import ReactDOM from "react-dom";
+import { createRoot } from "react-dom/client";
 import VariantsApp from "./Variants/index";
 
 const variantsInformation = JSON.parse(
@@ -9,10 +9,12 @@ const originalInformation = JSON.parse(
 	document.getElementById("original-information").innerHTML,
 );
 
-ReactDOM.render(
+const rootElement = document.getElementById("variants-app");
+const root = createRoot(rootElement);
+
+root.render(
 	<VariantsApp
 		variantsInformation={variantsInformation}
 		originalInformation={originalInformation}
 	/>,
-	document.getElementById("variants-app"),
 );
