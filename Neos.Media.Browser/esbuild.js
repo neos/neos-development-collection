@@ -5,61 +5,49 @@ const { sassPlugin } = require("esbuild-sass-plugin");
 
 const projectRoot = __dirname;
 const isWatch = process.argv.includes("--watch");
+const tempOutDir = path.join(projectRoot, "Resources/Public/.esbuild-tmp");
 
-const moveMainCssPlugin = {
-	name: "move-main-css",
+function getAdjustedOutputPath(fileName) {
+	if (fileName.endsWith(".css") || fileName.endsWith(".css.map")) {
+		return path.join(projectRoot, "Resources/Public/Styles", fileName);
+	}
+
+	return path.join(projectRoot, "Resources/Public/JavaScript", fileName);
+}
+
+const writeOutputPlugin = {
+	name: "write-output",
 	setup(build) {
-		build.onEnd(() => {
-			const fromPath = path.join(
-				projectRoot,
-				"Resources/Public/JavaScript/Main.css",
-			);
-			const fromMapPath = path.join(
-				projectRoot,
-				"Resources/Public/JavaScript/Main.css.map",
-			);
-			const toPath = path.join(projectRoot, "Resources/Public/Styles/Main.css");
-			const toMapPath = path.join(
-				projectRoot,
-				"Resources/Public/Styles/Main.css.map",
-			);
+		build.initialOptions.write = false;
 
-			if (fs.existsSync(fromPath)) {
-				fs.mkdirSync(path.dirname(toPath), { recursive: true });
-				fs.renameSync(fromPath, toPath);
+		build.onEnd((result) => {
+			if (!result.outputFiles) {
+				return;
 			}
 
-			if (fs.existsSync(fromMapPath)) {
-				fs.mkdirSync(path.dirname(toMapPath), { recursive: true });
-				fs.renameSync(fromMapPath, toMapPath);
+			for (const outputFile of result.outputFiles) {
+				const fileName = path.basename(outputFile.path);
+				const outputPath = getAdjustedOutputPath(fileName);
+
+				fs.mkdirSync(path.dirname(outputPath), { recursive: true });
+				fs.writeFileSync(outputPath, outputFile.contents);
 			}
 		});
 	},
 };
 
-const jsConfig = {
-	entryPoints: ["packages/neos-media-browser/src/index.js"],
+const buildConfig = {
+	entryPoints: {
+		Main: "packages/neos-media-browser/src/index.js",
+		MediaBrowser: "Resources/Private/Styles/MediaBrowser.scss",
+	},
 	bundle: true,
-	outfile: path.join(projectRoot, "Resources/Public/JavaScript/Main.js"),
+	outdir: tempOutDir,
+	entryNames: "[name]",
 	format: "iife",
 	platform: "browser",
 	target: ["es2020"],
 	sourcemap: true,
-	minify: !isWatch,
-	loader: {
-		".js": "jsx",
-		".vanilla-css": "css",
-	},
-	plugins: [moveMainCssPlugin],
-};
-
-const cssConfig = {
-	entryPoints: ["Resources/Private/Styles/MediaBrowser.scss"],
-	bundle: true,
-	outfile: path.join(projectRoot, "Resources/Public/Styles/MediaBrowser.css"),
-	platform: "browser",
-	target: ["es2020"],
-	sourcemap: false,
 	minify: !isWatch,
 	external: [
 		"../Fonts/*",
@@ -71,27 +59,27 @@ const cssConfig = {
 		"*.svg",
 		"*.gif",
 	],
+	loader: {
+		".js": "jsx",
+	},
 	plugins: [
 		sassPlugin({
 			loadPaths: [path.join(projectRoot, "node_modules")],
 		}),
+		writeOutputPlugin,
 	],
 };
 
 async function build() {
 	if (isWatch) {
-		const [jsContext, cssContext] = await Promise.all([
-			esbuild.context(jsConfig),
-			esbuild.context(cssConfig),
-		]);
+		const context = await esbuild.context(buildConfig);
+		await context.watch();
 
-		await Promise.all([jsContext.watch(), cssContext.watch()]);
-
-		console.log("Watching JS and SCSS assets with esbuild...");
+		console.log("Watching JS and SCSS assets with a single esbuild context...");
 		return;
 	}
 
-	await Promise.all([esbuild.build(jsConfig), esbuild.build(cssConfig)]);
+	await esbuild.build(buildConfig);
 }
 
 build().catch((error) => {
