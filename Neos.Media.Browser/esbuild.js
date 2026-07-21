@@ -5,7 +5,6 @@ const { sassPlugin } = require("esbuild-sass-plugin");
 
 const projectRoot = __dirname;
 const isWatch = process.argv.includes("--watch");
-const tempOutDir = path.join(projectRoot, "Resources/Public/.esbuild-tmp");
 
 function getAdjustedOutputPath(fileName) {
 	if (fileName.endsWith(".css") || fileName.endsWith(".css.map")) {
@@ -36,14 +35,13 @@ const writeOutputPlugin = {
 	},
 };
 
-const buildConfig = {
+const options = {
 	entryPoints: {
 		Main: "packages/neos-media-browser/src/index.js",
 		MediaBrowser: "Resources/Private/Styles/MediaBrowser.scss",
 	},
 	bundle: true,
-	outdir: tempOutDir,
-	entryNames: "[name]",
+	outdir: "Resources/Public",
 	format: "iife",
 	platform: "browser",
 	target: ["es2020"],
@@ -70,19 +68,8 @@ const buildConfig = {
 	],
 };
 
-async function build() {
-	if (isWatch) {
-		const context = await esbuild.context(buildConfig);
-		await context.watch();
-
-		console.log("Watching JS and SCSS assets with a single esbuild context...");
-		return;
-	}
-
-	await esbuild.build(buildConfig);
+if (isWatch) {
+	esbuild.context(options).then((ctx) => ctx.watch())
+} else {
+	esbuild.build(options)
 }
-
-build().catch((error) => {
-	console.error(error);
-	process.exit(1);
-});
