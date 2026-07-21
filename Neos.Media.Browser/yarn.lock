@@ -196,15 +196,23 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@neos-project/media-browser-variants@workspace:*, @neos-project/media-browser-variants@workspace:packages/neos-media-browser":
+  version: 0.0.0-use.local
+  resolution: "@neos-project/media-browser-variants@workspace:packages/neos-media-browser"
+  dependencies:
+    react: "npm:^19.0.0"
+    react-dom: "npm:^19.0.0"
+    react-image-crop: "npm:^11.1.2"
+  languageName: unknown
+  linkType: soft
+
 "@neos-project/media-browser@workspace:.":
   version: 0.0.0-use.local
   resolution: "@neos-project/media-browser@workspace:."
   dependencies:
+    "@neos-project/media-browser-variants": "workspace:*"
     esbuild: "npm:^0.28.1"
     esbuild-sass-plugin: "npm:^3.3.1"
-    react: "npm:^19.0.0"
-    react-dom: "npm:^19.0.0"
-    react-image-crop: "npm:^11.1.2"
     sass: "npm:^1.80.7"
   languageName: unknown
   linkType: soft

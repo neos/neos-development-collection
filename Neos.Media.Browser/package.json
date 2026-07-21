@@ -1,16 +1,16 @@
 {
   "name": "@neos-project/media-browser",
-  "version": "0.0.1",
   "private": true,
   "description": "Build dependencies for Neos.Media.Browser frontend assets",
   "scripts": {
     "build": "node esbuild.js",
     "watch": "node esbuild.js --watch"
   },
+  "workspaces": [
+    "packages/*"
+  ],
   "dependencies": {
-    "react": "^19.0.0",
-    "react-dom": "^19.0.0",
-    "react-image-crop": "^11.1.2"
+    "@neos-project/media-browser-variants": "workspace:*"
   },
   "devDependencies": {
     "esbuild": "^0.28.1",
