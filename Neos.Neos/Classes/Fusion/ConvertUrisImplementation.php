@@ -157,18 +157,27 @@ class ConvertUrisImplementation extends AbstractFusionObject
             $nodeUriBuilder = $this->nodeUriBuilderFactory->forActionRequest(ActionRequest::fromHttpRequest(ServerRequest::fromGlobals()));
         }
 
-        $processedContent = preg_replace_callback(self::PATTERN_SUPPORTED_URIS, function (array $matches) use ($nodeAddress, &$unresolvedUris, $nodeUriBuilder, $options) {
+        $subgraph = $this->contentRepositoryRegistry->subgraphForNode($node);
+
+        $processedContent = preg_replace_callback(self::PATTERN_SUPPORTED_URIS, function (array $matches) use ($nodeAddress, &$unresolvedUris, $nodeUriBuilder, $options, $subgraph) {
             $resolvedUri = null;
             switch ($matches[1]) {
                 case 'node':
-                    $nodeAddress = $nodeAddress->withAggregateId(
-                        NodeAggregateId::fromString($matches[2])
-                    );
-                    try {
-                        $resolvedUri = (string)$nodeUriBuilder->uriFor($nodeAddress, $options);
-                    } catch (NoMatchingRouteException) {
-                        // todo log also arguments?
-                        $this->systemLogger->warning(sprintf('Could not resolve "%s" to a node uri.', $matches[0]), LogEnvironment::fromMethodName(__METHOD__));
+                    $targetNodeAggregateId = NodeAggregateId::fromString($matches[2]);
+                    $nodeAddress = $nodeAddress->withAggregateId($targetNodeAggregateId);
+
+                    // Note that routing intentionally builds uris for disabled nodes as well
+                    // (see https://github.com/neos/neos-development-collection/pull/4363).
+                    // So we need to check whether the node uri is resolvable in the subgraph of the current node.
+                    if ($subgraph->findNodeById($targetNodeAggregateId) === null) {
+                        $this->systemLogger->info(sprintf('Could not resolve "%s" because the target node is not accessible in the subgraph of the current node.', $matches[0]), LogEnvironment::fromMethodName(__METHOD__));
+                    } else {
+                        try {
+                            $resolvedUri = (string)$nodeUriBuilder->uriFor($nodeAddress, $options);
+                        } catch (NoMatchingRouteException) {
+                            // todo log also arguments?
+                            $this->systemLogger->warning(sprintf('Could not resolve "%s" to a node uri.', $matches[0]), LogEnvironment::fromMethodName(__METHOD__));
+                        }
                     }
                     $this->runtime->addCacheTag(
                         CacheTag::forDynamicNodeAggregate($nodeAddress->contentRepositoryId, $nodeAddress->workspaceName, $nodeAddress->aggregateId)->value
