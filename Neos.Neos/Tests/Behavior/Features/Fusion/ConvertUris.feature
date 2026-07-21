@@ -113,6 +113,26 @@ Feature: Tests for the "Neos.Neos:ConvertUris" Fusion prototype
     Some value with node URI: /a1.
     """
 
+  Scenario: URI to disabled node
+    When the command DisableNodeAggregate is executed with payload:
+      | Key                          | Value         |
+      | nodeAggregateId              | "a1"          |
+      | coveredDimensionSpacePoint   | {}            |
+      | nodeVariantSelectionStrategy | "allVariants" |
+    And I execute the following Fusion code:
+    """fusion
+    include: resource://Neos.Fusion/Private/Fusion/Root.fusion
+    include: resource://Neos.Neos/Private/Fusion/Root.fusion
+
+    test = Neos.Neos:ConvertUris {
+      value = 'Some value with node URI to disabled node: node://a1.'
+    }
+    """
+    Then I expect the following Fusion rendering result:
+    """
+    Some value with node URI to disabled node: .
+    """
+
   Scenario: URI preserved in edit mode
     Given the Fusion renderingMode is "inPlace"
     When I execute the following Fusion code:
@@ -161,6 +181,48 @@ Feature: Tests for the "Neos.Neos:ConvertUris" Fusion prototype
 
   Scenario: Anchor tag with URI to existing node
     When I execute the following Fusion code:
+    """fusion
+    include: resource://Neos.Fusion/Private/Fusion/Root.fusion
+    include: resource://Neos.Neos/Private/Fusion/Root.fusion
+
+    test = Neos.Neos:ConvertUris {
+      value = 'some <a href="node://a1">Link</a>'
+    }
+    """
+    Then I expect the following Fusion rendering result:
+    """
+    some <a href="/a1">Link</a>
+    """
+
+  Scenario: Anchor tag with node URI to disabled node
+    When the command DisableNodeAggregate is executed with payload:
+      | Key                          | Value         |
+      | nodeAggregateId              | "a1"          |
+      | coveredDimensionSpacePoint   | {}            |
+      | nodeVariantSelectionStrategy | "allVariants" |
+    And I execute the following Fusion code:
+    """fusion
+    include: resource://Neos.Fusion/Private/Fusion/Root.fusion
+    include: resource://Neos.Neos/Private/Fusion/Root.fusion
+
+    test = Neos.Neos:ConvertUris {
+      value = 'some <a href="node://a1">Link</a>'
+    }
+    """
+    Then I expect the following Fusion rendering result:
+    """
+    some Link
+    """
+
+  Scenario: Anchor tag with node URI to disabled node is still resolved if disabled nodes are not excluded
+    When the command DisableNodeAggregate is executed with payload:
+      | Key                          | Value         |
+      | nodeAggregateId              | "a1"          |
+      | coveredDimensionSpacePoint   | {}            |
+      | nodeVariantSelectionStrategy | "allVariants" |
+    # Note that the following excludes _less_ than the default constraints, which are "removed" and "disabled".
+    And the Fusion context node is "a" with visibility constraints "removed"
+    And I execute the following Fusion code:
     """fusion
     include: resource://Neos.Fusion/Private/Fusion/Root.fusion
     include: resource://Neos.Neos/Private/Fusion/Root.fusion
