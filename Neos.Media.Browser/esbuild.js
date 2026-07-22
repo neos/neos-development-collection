@@ -14,6 +14,23 @@ function getAdjustedOutputPath(fileName) {
 	return path.join(projectRoot, "Resources/Public/JavaScript", fileName);
 }
 
+/**
+ * @todo: This will copy all NotoSans fonts from Neos.Neos to the public folder of the Media.Browser package.
+ * This is a temporary solution until we have a better way to handle font files in Neos packages.
+ * @fixme
+ */
+function copyFonts() {
+	const fontsSrc = path.join(
+		projectRoot,
+		"../Neos.Neos/Resources/Private/Fonts/NotoSans",
+	);
+	const fontsDest = path.join(projectRoot, "Resources/Public/Fonts/NotoSans");
+	fs.mkdirSync(fontsDest, { recursive: true });
+	for (const file of fs.readdirSync(fontsSrc)) {
+		fs.copyFileSync(path.join(fontsSrc, file), path.join(fontsDest, file));
+	}
+}
+
 const writeOutputPlugin = {
 	name: "write-output",
 	setup(build) {
@@ -31,6 +48,8 @@ const writeOutputPlugin = {
 				fs.mkdirSync(path.dirname(outputPath), { recursive: true });
 				fs.writeFileSync(outputPath, outputFile.contents);
 			}
+
+			copyFonts();
 		});
 	},
 };
@@ -69,7 +88,7 @@ const options = {
 };
 
 if (isWatch) {
-	esbuild.context(options).then((ctx) => ctx.watch())
+	esbuild.context(options).then((ctx) => ctx.watch());
 } else {
-	esbuild.build(options)
+	esbuild.build(options);
 }
