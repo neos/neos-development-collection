@@ -43,8 +43,8 @@ use Psr\Log\LoggerInterface;
  *
  *   someTextProperty.@process.1 = Neos.Neos:ConvertUris
  *
- * The optional property ``forceConversion`` can be used to have the links converted even when not
- * rendering the live workspace. This is used for links that are not inline editable (for
+ * The optional property ``forceConversion`` can be used to have the links converted even when
+ * rendering in edit mode. This is used for links that are not inline editable (for
  * example links on images)::
  *
  *   someTextProperty.@process.1 = Neos.Neos:ConvertUris {
@@ -102,8 +102,8 @@ class ConvertUrisImplementation extends AbstractFusionObject
     /**
      * Convert URIs matching a supported scheme with generated URIs
      *
-     * If the workspace of the current node context is not live, no replacement will be done unless forceConversion is
-     * set. This is needed to show the editable links with metadata in the content module.
+     * When rendering in edit mode, no replacement will be done unless forceConversion is set.
+     * This is needed to show the editable links with metadata in the content module.
      *
      * @return string
      * @throws NeosException
