@@ -35,31 +35,38 @@ use Neos\Neos\Fusion\Cache\CacheTag;
 use Psr\Log\LoggerInterface;
 
 /**
- * A Fusion Object that converts link references in the format "<type>://<UUID>" to proper URIs
+ * A Fusion object that converts URIs in the format "<type>://<identifier>" to URLs
  *
- * Right now node://<UUID> and asset://<UUID> are supported URI schemes.
+ * Currently, node://<identifier> and asset://<identifier> are supported URI schemes.
+ *
+ * Anchor tags with an unresolvable URI in their href attribute (for example because the target
+ * node is disabled) are replaced by their inner content. Unresolvable URIs
+ * outside of anchor tags are removed entirely.
  *
  * Usage::
  *
  *   someTextProperty.@process.1 = Neos.Neos:ConvertUris
  *
- * The optional property ``forceConversion`` can be used to have the links converted even when
- * rendering in edit mode. This is used for links that are not inline editable (for
- * example links on images)::
+ * The optional property ``forceConversion`` can be used to have the URIs converted even when
+ * rendering in edit mode. This is used for properties that are not inline editable (for
+ * example the link property of an image element, managed in the inspector)::
  *
  *   someTextProperty.@process.1 = Neos.Neos:ConvertUris {
  *     forceConversion = true
  *   }
  *
  * The optional property ``externalLinkTarget`` can be modified to disable or change the target attribute of the
- * link tag for links to external targets::
+ * anchor tag for links to external targets::
  *
  *   prototype(Neos.Neos:ConvertUris) {
  *     externalLinkTarget = '_blank'
  *     resourceLinkTarget = '_blank'
  *   }
  *
- * The optional property ``absolute`` can be used to convert node uris to absolute links::
+ * Anchor tags pointing to an external host additionally get ``rel="noopener external"``, which can
+ * be disabled with the ``setNoOpener`` and ``setExternal`` options.
+ *
+ * The optional property ``absolute`` can be used to resolve URIs to absolute URLs::
  *
  *   someTextProperty.@process.1 = Neos.Neos:ConvertUris {
  *     absolute = true
@@ -100,7 +107,10 @@ class ConvertUrisImplementation extends AbstractFusionObject
     protected $nodeUriBuilderFactory;
 
     /**
-     * Convert URIs matching a supported scheme with generated URIs
+     * Convert URIs matching a supported scheme to their respective URLs and
+     * replace anchor tags whose URI cannot be resolved by their inner content.
+     * Additionally, the target and rel attributes of anchor tags are adjusted
+     * for external and resource links.
      *
      * When rendering in edit mode, no replacement will be done unless forceConversion is set.
      * This is needed to show the editable links with metadata in the content module.
@@ -141,14 +151,14 @@ class ConvertUrisImplementation extends AbstractFusionObject
         $nodeAddress = NodeAddress::fromNode($node);
 
         $unresolvedUris = [];
-        $options = $this->fusionValue('absolute') ? Options::createForceAbsolute() : Options::createEmpty();
+        $frontendRoutingOptions = $this->fusionValue('absolute') ? Options::createForceAbsolute() : Options::createEmpty();
 
         $possibleRequest = $this->runtime->fusionGlobals->get('request');
         if ($possibleRequest instanceof ActionRequest) {
             $nodeUriBuilder = $this->nodeUriBuilderFactory->forActionRequest($possibleRequest);
             $format = $possibleRequest->getFormat();
             if ($format && $format !== 'html') {
-                $options = $options->withCustomFormat($format);
+                $frontendRoutingOptions = $frontendRoutingOptions->withCustomFormat($format);
             }
         } else {
             // unfortunately, the uri-builder always needs a request at hand and cannot build uris without it
@@ -159,9 +169,9 @@ class ConvertUrisImplementation extends AbstractFusionObject
 
         $subgraph = $this->contentRepositoryRegistry->subgraphForNode($node);
 
-        $processedContent = preg_replace_callback(self::PATTERN_SUPPORTED_URIS, function (array $uriMatches) use ($nodeAddress, &$unresolvedUris, $nodeUriBuilder, $options, $subgraph) {
+        $processedContent = preg_replace_callback(self::PATTERN_SUPPORTED_URIS, function (array $uriMatches) use ($nodeAddress, &$unresolvedUris, $nodeUriBuilder, $frontendRoutingOptions, $subgraph) {
             [$matchedUri, $matchedUriScheme, $matchedUriIdentifier] = $uriMatches;
-            $resolvedUri = null;
+            $resolvedUrl = null;
             switch ($matchedUriScheme) {
                 case 'node':
                     $targetNodeAggregateId = NodeAggregateId::tryFromString($matchedUriIdentifier);
@@ -173,17 +183,17 @@ class ConvertUrisImplementation extends AbstractFusionObject
 
                     $nodeAddress = $nodeAddress->withAggregateId($targetNodeAggregateId);
 
-                    // Note that routing intentionally builds uris for disabled nodes as well
+                    // Note that routing intentionally builds URLs for disabled nodes as well
                     // (see https://github.com/neos/neos-development-collection/pull/4363).
-                    // So we need to check whether the node uri is resolvable in the subgraph of the current node.
+                    // So we need to check whether the target node is accessible in the subgraph of the current node.
                     if ($subgraph->findNodeById($targetNodeAggregateId) === null) {
                         $this->systemLogger->info(sprintf('Could not resolve "%s" because the target node is not accessible in the subgraph of the current node.', $matchedUri), LogEnvironment::fromMethodName(__METHOD__));
                     } else {
                         try {
-                            $resolvedUri = (string)$nodeUriBuilder->uriFor($nodeAddress, $options);
+                            $resolvedUrl = (string)$nodeUriBuilder->uriFor($nodeAddress, $frontendRoutingOptions);
                         } catch (NoMatchingRouteException) {
                             // todo log also arguments?
-                            $this->systemLogger->warning(sprintf('Could not resolve "%s" to a node uri.', $matchedUri), LogEnvironment::fromMethodName(__METHOD__));
+                            $this->systemLogger->warning(sprintf('Could not resolve "%s" to a URL.', $matchedUri), LogEnvironment::fromMethodName(__METHOD__));
                         }
                     }
                     $this->runtime->addCacheTag(
@@ -193,19 +203,19 @@ class ConvertUrisImplementation extends AbstractFusionObject
                 case 'asset':
                     $asset = $this->assetRepository->findByIdentifier($matchedUriIdentifier);
                     if ($asset instanceof AssetInterface) {
-                        $resolvedUri = $this->resourceManager->getPublicPersistentResourceUri(
+                        $resolvedUrl = $this->resourceManager->getPublicPersistentResourceUri(
                             $asset->getResource()
                         );
                     }
                     break;
             }
 
-            if ($resolvedUri === null) {
+            if ($resolvedUrl === null) {
                 $unresolvedUris[] = $matchedUri;
                 return $matchedUri;
             }
 
-            return (string)$resolvedUri;
+            return (string)$resolvedUrl;
         }, $text);
         assert($processedContent !== null, 'preg_* error');
 
@@ -222,7 +232,7 @@ class ConvertUrisImplementation extends AbstractFusionObject
     }
 
     /**
-     * Replace the target attribute of link tags in processedContent with the target
+     * Replace the target attribute of anchor tags in processedContent with the target
      * specified by externalLinkTarget and resourceLinkTarget options.
      * Additionally set rel="noopener external" for external links.
      *

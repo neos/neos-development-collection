@@ -1263,8 +1263,12 @@ Example::
 Neos.Neos:ConvertUris
 ---------------------
 
-Convert internal node and asset URIs (``node://...`` or ``asset://...``) in a string to public URIs and allows for
+Converts internal node and asset URIs (``node://...`` or ``asset://...``) in a string to URLs and allows
 overriding the target attribute for external links and resource links.
+
+Anchor tags with an unresolvable URI in their href attribute (for example because the target node is
+disabled) are replaced by their inner content. Unresolvable URIs outside of anchor
+tags are removed entirely.
 
 :value: (string) The string value, defaults to the ``value`` context variable to work as a processor by default
 :node: (Node) The current node as a reference, defaults to the ``node`` context variable
