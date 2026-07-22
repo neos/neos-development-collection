@@ -309,7 +309,7 @@ Neos:
 
       backendLoginForm:
         backgroundImage: 'resource://Neos.Neos/Public/Images/Login/Wallpaper.webp'
-        backgroundImageAttribution: 'Login background photo of Laghi di Fusine Inferiore / Italy by Johannes Nusko.'
+        backgroundImageAttribution: 'Login background photo of a Seagull, Cap de ses Salines by Lukas Neugebauer.'
         logoImage: 'resource://Neos.Neos/Public/Images/Login/Logo.svg'
         stylesheets:
           'Neos.Neos:DefaultStyles': 'resource://Neos.Neos/Public/Styles/Login.css'

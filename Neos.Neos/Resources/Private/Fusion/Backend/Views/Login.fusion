@@ -13,7 +13,6 @@ prototype(Neos.Neos:View.Login) < prototype(Neos.Fusion:Component) {
       path = ${Configuration.setting('Neos.Neos.userInterface.backendLoginForm.backgroundImage')}
     }
     backgroundImageAttribution = ${Configuration.setting('Neos.Neos.userInterface.backendLoginForm.backgroundImageAttribution')}
-    backgroundImageSourceIsWebp = ${private.backgroundImageSource ? String.endsWith(private.backgroundImageSource, '.webp') : null}
 
     additionalStyles = Neos.Fusion:Loop {
       items = ${props.styles}
@@ -30,16 +29,11 @@ prototype(Neos.Neos:View.Login) < prototype(Neos.Fusion:Component) {
   renderer = afx`
     <Neos.Neos:Core.BackendPage title={I18n.translate('login.index.title', 'Login to') + ' ' + props.site.name} additionalResources.styles={private.additionalStyles}>
       <Neos.Fusion:Fragment @path='additionalResources.inlineStyles'>
-        <style type="text/css" @if.set={private.backgroundImageSource && !private.backgroundImageSourceIsWebp}>
+        <style type="text/css" @if.set={private.backgroundImageSource}>
           {'body.neos--bg,.neos-login-box:before{background-image:url(' + private.backgroundImageSource + ')}'}
-        </style>
-        <style type="text/css" @if.set={private.backgroundImageSource && private.backgroundImageSourceIsWebp}>
-          {'.webp body.neos--bg,.webp .neos-login-box:before {background-image: url(' + private.backgroundImageSource + ')}'}
-          {'.no-webp body.neos--bg,.no-webp .neos-login-box:before {background-image: url(' + String.substr(private.backgroundImageSource, 0, String.length(private.backgroundImageSource) - 4) + 'jpg)}'}
         </style>
       </Neos.Fusion:Fragment>
       <body class={["neos", private.backgroundImageSource ? 'neos--bg' : null]}>
-        <img @if.set={private.backgroundImageSourceIsWebp} style="display: none" src="data:image/webp;base64,UklGRiIAAABXRUJQVlA4IBYAAAAwAQCdASoBAAEADsD+JaQAA3AAAAAA" onload="document.documentElement.classList.add('webp')" onerror="document.documentElement.classList.add('no-webp')"/>
         <div class="neos-modal-centered">
           <Neos.Fusion:Fragment @if.hasErrors={props.hasContentRepositoryError}>
             <div class="neos-login-cr-error-banner" role="alert">
