@@ -164,7 +164,13 @@ class ConvertUrisImplementation extends AbstractFusionObject
             $resolvedUri = null;
             switch ($matchedUriScheme) {
                 case 'node':
-                    $targetNodeAggregateId = NodeAggregateId::fromString($matchedUriIdentifier);
+                    $targetNodeAggregateId = NodeAggregateId::tryFromString($matchedUriIdentifier);
+
+                    if ($targetNodeAggregateId === null) {
+                        $this->systemLogger->info(sprintf('Could not resolve "%s" because the identifier is not a valid node aggregate id.', $matchedUri), LogEnvironment::fromMethodName(__METHOD__));
+                        break;
+                    }
+
                     $nodeAddress = $nodeAddress->withAggregateId($targetNodeAggregateId);
 
                     // Note that routing intentionally builds uris for disabled nodes as well

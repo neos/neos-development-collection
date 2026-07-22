@@ -98,6 +98,21 @@ Feature: Tests for the "Neos.Neos:ConvertUris" Fusion prototype
     Some value with node URI to non-existing node: .
     """
 
+  Scenario: URI with an invalid node identifier
+    When I execute the following Fusion code:
+    """fusion
+    include: resource://Neos.Fusion/Private/Fusion/Root.fusion
+    include: resource://Neos.Neos/Private/Fusion/Root.fusion
+
+    test = Neos.Neos:ConvertUris {
+      value = 'Some value with an invalid node identifier: node://aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.'
+    }
+    """
+    Then I expect the following Fusion rendering result:
+    """
+    Some value with an invalid node identifier: .
+    """
+
   Scenario: URI to existing node
     When I execute the following Fusion code:
     """fusion
