@@ -16,6 +16,7 @@ use Behat\Gherkin\Node\PyStringNode;
 use Behat\Gherkin\Node\TableNode;
 use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\CRTestSuiteRuntimeVariables;
 use Neos\ContentRepositoryRegistry\Upgrade\Command\CRUpgradeContextFactory;
+use Neos\ContentRepositoryRegistry\Upgrade\EventsConcurrentWorkspaceRebases\EventsConcurrentWorkspaceRebasesUpgrade;
 use Neos\ContentRepositoryRegistry\Upgrade\EventsDeduplicateBaseWorkspaceChanges\EventsDeduplicateBaseWorkspaceChangesUpgrade;
 use Neos\ContentRepositoryRegistry\Upgrade\EventsRecordedAtToUtc\EventsRecordedAtToUtcUpgrade;
 use Neos\ContentRepositoryRegistry\Upgrade\Shared\CRUpgradeContext;
@@ -104,6 +105,21 @@ trait CrUpgradeTrait
         );
 
         Assert::assertTrue($upgrade->isAvailable(), 'Upgrade is not available but was expected to.');
+
+        $upgrade->execute(
+            dryRun: false
+        );
+    }
+
+    /**
+     * @When I upgrade the events to concurrent workspace-rebases
+     */
+    public function iExecuteEventsConcurrentWorkspaceRebasesUpgrade(): void
+    {
+        $upgrade = new EventsConcurrentWorkspaceRebasesUpgrade(
+            $this->getCrUpgradeContext(),
+            $this->outputFn(...)
+        );
 
         $upgrade->execute(
             dryRun: false
