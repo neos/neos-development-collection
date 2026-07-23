@@ -4,6 +4,9 @@ import Variants from "./Variants";
 import Original from "./Original";
 
 const calculatePercentageFromPixel = (hundredPercentValue, pixelValue) => {
+	if (hundredPercentValue === 0) {
+		return 0;
+	}
 	return Math.min((pixelValue / hundredPercentValue) * 100, 100);
 };
 
@@ -20,6 +23,9 @@ export default class VariantsApp extends Component {
 		// technically we don't need the props afterwards, this would be solved by using a state container in the future.
 		super(props);
 
+		originalInformation.aspect =
+			originalInformation.width / originalInformation.height;
+
 		this.state = {
 			originalInformation,
 			variantsInformation,
@@ -28,32 +34,35 @@ export default class VariantsApp extends Component {
 			crop: false,
 			cropConfiguration: {},
 			cropVariantPersistenceIdentifier: null,
-			cropPendingState: {},
 		};
 	}
 
-	requestCrop = (variantPersistenceIdentifier, aspectRatio, x, y, width) => {
-		const widthPercentage =
-			(width / this.state.originalInformation.width) * 100;
+	requestCrop = (
+		cropVariantPersistenceIdentifier,
+		aspect,
+		x,
+		y,
+		variantWidth,
+		variantHeight,
+	) => {
+		const { originalInformation } = this.state;
+
 		this.setState({
 			crop: true,
-			cropVariantPersistenceIdentifier: variantPersistenceIdentifier,
+			cropVariantPersistenceIdentifier,
 			cropConfiguration: {
 				unit: "%",
-				aspect: aspectRatio,
-				width: widthPercentage,
-				x: x
-					? calculatePercentageFromPixel(
-							this.state.originalInformation.width,
-							x,
-						)
-					: 0,
-				y: y
-					? calculatePercentageFromPixel(
-							this.state.originalInformation.height,
-							y,
-						)
-					: 0,
+				aspect,
+				width: calculatePercentageFromPixel(
+					originalInformation.width,
+					variantWidth || 0,
+				),
+				height: calculatePercentageFromPixel(
+					originalInformation.height,
+					variantHeight || 0,
+				),
+				x: calculatePercentageFromPixel(originalInformation.width, x || 0),
+				y: calculatePercentageFromPixel(originalInformation.height, y || 0),
 			},
 		});
 	};
@@ -62,49 +71,53 @@ export default class VariantsApp extends Component {
 		this.setState({
 			error: false,
 			crop: false,
-			cropVariantPersistenceIdentifier: {},
-			cropPendingState: {},
+			cropVariantPersistenceIdentifier: null,
 			cropConfiguration: {},
 		});
 	};
 
-	changedCrop = (cropPendingState) => this.setState({ cropPendingState });
+	changedCrop = (cropConfiguration) =>
+		this.setState({
+			cropConfiguration,
+		});
 
 	saveCrop = () => {
+		const {
+			originalInformation,
+			cropConfiguration,
+			cropVariantPersistenceIdentifier,
+		} = this.state;
 		const form = document.getElementById("postHelper");
 		const data = new FormData(form);
 		const cropAdjustmentArgument =
 			"imageVariant[adjustments][\\Neos\\Media\\Domain\\Model\\Adjustment\\CropImageAdjustment]";
-		data.append(
-			"imageVariant[__identity]",
-			this.state.cropVariantPersistenceIdentifier,
-		);
+		data.append("imageVariant[__identity]", cropVariantPersistenceIdentifier);
 		data.append(
 			cropAdjustmentArgument + "[width]",
 			calculatePixelFromPercentage(
-				this.state.originalInformation.width,
-				this.state.cropPendingState.width,
+				originalInformation.width,
+				cropConfiguration.width,
 			),
 		);
 		data.append(
 			cropAdjustmentArgument + "[height]",
 			calculatePixelFromPercentage(
-				this.state.originalInformation.height,
-				this.state.cropPendingState.height,
+				originalInformation.height,
+				cropConfiguration.height,
 			),
 		);
 		data.append(
 			cropAdjustmentArgument + "[x]",
 			calculatePixelFromPercentage(
-				this.state.originalInformation.width,
-				this.state.cropPendingState.x,
+				originalInformation.width,
+				cropConfiguration.x,
 			),
 		);
 		data.append(
 			cropAdjustmentArgument + "[y]",
 			calculatePixelFromPercentage(
-				this.state.originalInformation.height,
-				this.state.cropPendingState.y,
+				originalInformation.height,
+				cropConfiguration.y,
 			),
 		);
 

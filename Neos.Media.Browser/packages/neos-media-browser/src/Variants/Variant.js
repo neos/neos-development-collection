@@ -21,6 +21,7 @@ export default class Variant extends React.PureComponent {
 				cropInformation.x,
 				cropInformation.y,
 				cropInformation.width,
+				cropInformation.height,
 			);
 
 		return (
