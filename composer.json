@@ -94,13 +94,12 @@
         "neos/redirecthandler-neosadapter": "Adds automatic redirects for moved/renamed pages"
     },
     "scripts": {
-        "lint:phpcs": "../../bin/phpcs --colors",
-        "lint:phpcs:fix": "../../bin/phpcbf --colors",
+        "lint:php-cs-fixer": "../../bin/php-cs-fixer check",
         "lint:phpstan": "../../bin/phpstan analyse -v",
         "lint:phpstan-generate-baseline": "../../bin/phpstan analyse --generate-baseline",
         "lint:distributionintegrity": "[ -d 'Neos.ContentRepository' ] && { echo 'Package Neos.ContentRepository should not exist.' 1>&2; exit 1; } || exit 0;",
         "lint": [
-            "@lint:phpcs",
+            "@lint:php-cs-fixer",
             "@lint:phpstan",
             "@lint:distributionintegrity"
         ],
@@ -129,6 +128,10 @@
             "@test:unit",
             "@test:behavioral",
             "@test:parallel"
+        ],
+        "fix:php-cs-fixer": "../../bin/php-cs-fixer fix",
+        "fix": [
+            "@fix:php-cs-fixer"
         ],
         "build:composer-json": "php ../../Build/BuildEssentials/ComposerManifestMerger.php"
     },
