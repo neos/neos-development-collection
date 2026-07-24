@@ -246,7 +246,7 @@ trait NodeTypeChange
         // remove or tag disallowed nodes
         $alreadyRemovedNodeAggregateIds = NodeAggregateIds::createEmpty();
         if ($command->strategy === NodeAggregateTypeChangeChildConstraintConflictResolutionStrategy::STRATEGY_DELETE) {
-            $handleNode = fn(NodeAggregate $nodeAggregateToDelete, DimensionSpacePointSet $points) => new NodeAggregateWasRemoved(
+            $handleNode = fn (NodeAggregate $nodeAggregateToDelete, DimensionSpacePointSet $points) => new NodeAggregateWasRemoved(
                 $contentGraph->getWorkspaceName(),
                 $contentGraph->getContentStreamId(),
                 $nodeAggregateToDelete->nodeAggregateId,
@@ -256,7 +256,7 @@ trait NodeTypeChange
             array_push($events, ...$this->handleDisallowedNodesWhenChangingNodeType($contentGraph, $nodeAggregate, $newNodeType, $alreadyRemovedNodeAggregateIds, $handleNode));
             array_push($events, ...$this->handleObsoleteTetheredNodesWhenChangingNodeType($contentGraph, $nodeAggregate, $newNodeType, $alreadyRemovedNodeAggregateIds, $handleNode));
         } elseif ($command->strategy instanceof NodeAggregateTypeChangeChildConstraintConflictResolutionMarkWithTagStrategy) {
-            $handleNode = fn(NodeAggregate $aggregateToTag, DimensionSpacePointSet $points) => new SubtreeWasTagged(
+            $handleNode = fn (NodeAggregate $aggregateToTag, DimensionSpacePointSet $points) => new SubtreeWasTagged(
                 $contentGraph->getWorkspaceName(),
                 $contentGraph->getContentStreamId(),
                 $aggregateToTag->nodeAggregateId,

@@ -563,7 +563,7 @@ class WorkspaceController extends AbstractModuleController
         $existingSubjects = $workspaceRoleAssignments->getSubjects();
         $possibleSubjects = WorkspaceRoleSubjects::fromArray(
             array_map(
-                static fn(User $user) => WorkspaceRoleSubject::createForUser($user->getId()),
+                static fn (User $user) => WorkspaceRoleSubject::createForUser($user->getId()),
                 $users
             )
         )->difference($existingSubjects);
@@ -606,7 +606,7 @@ class WorkspaceController extends AbstractModuleController
         $existingSubjects = $workspaceRoleAssignments->getSubjects();
         $possibleSubjects = WorkspaceRoleSubjects::fromArray(
             array_map(
-                static fn(Role $role) => WorkspaceRoleSubject::createForGroup($role->getIdentifier()),
+                static fn (Role $role) => WorkspaceRoleSubject::createForGroup($role->getIdentifier()),
                 $rolesInSystem
             )
         )->difference($existingSubjects);
@@ -1141,7 +1141,7 @@ class WorkspaceController extends AbstractModuleController
                         '/',
                         array_reverse(
                             array_map(
-                                fn(NodeName $nodeName): string => $nodeName->value,
+                                fn (NodeName $nodeName): string => $nodeName->value,
                                 $documentPathSegments
                             )
                         )
@@ -1152,7 +1152,7 @@ class WorkspaceController extends AbstractModuleController
                         '/',
                         array_reverse(
                             array_map(
-                                fn(NodeName $nodeName): string => $nodeName->value,
+                                fn (NodeName $nodeName): string => $nodeName->value,
                                 $nodePathSegments
                             )
                         )

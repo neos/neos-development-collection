@@ -519,7 +519,7 @@ final class DocumentUriPathProjection implements ProjectionInterface
             return;
         }
         $newPropertyValues = $event->propertyValues->getPlainValues();
-        $unsetPropertyNames = array_map(fn(PropertyName $propertyName) => $propertyName->value, iterator_to_array($event->propertiesToUnset->getIterator()));
+        $unsetPropertyNames = array_map(fn (PropertyName $propertyName) => $propertyName->value, iterator_to_array($event->propertiesToUnset->getIterator()));
         if (
             !isset($newPropertyValues['uriPathSegment'])
             && !in_array('uriPathSegment', $unsetPropertyNames)

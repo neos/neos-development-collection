@@ -176,7 +176,7 @@ final class RaceConditionTrackerCommandController extends CommandController
 
             $table = new Table($this->output->getOutput());
             $table
-                ->setHeaders(['Line', 'ID', ...array_map(fn(string $pid) => 'PID ' . $pid, $pids)])
+                ->setHeaders(['Line', 'ID', ...array_map(fn (string $pid) => 'PID ' . $pid, $pids)])
                 ->setRows($tableRows);
             $table->render();
         }

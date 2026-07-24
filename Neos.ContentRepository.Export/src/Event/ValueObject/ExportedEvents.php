@@ -26,7 +26,7 @@ final class ExportedEvents implements \IteratorAggregate
     public static function fromJsonl(string $jsonl): self
     {
         return new self(
-            function() use ($jsonl) {
+            function () use ($jsonl) {
                 foreach (explode("\n", $jsonl) as $json) {
                     if ($json === '') {
                         continue;

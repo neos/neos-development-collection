@@ -212,7 +212,7 @@ final class ContentGraph implements ContentGraphInterface
             'ancestry'
         );
 
-        return NodeAggregateIds::fromArray(array_map(fn(array $row) => NodeAggregateId::fromString($row['nodeAggregateId']), $nodeAggregateIdRows));
+        return NodeAggregateIds::fromArray(array_map(fn (array $row) => NodeAggregateId::fromString($row['nodeAggregateId']), $nodeAggregateIdRows));
     }
 
     public function findChildNodeAggregates(

@@ -61,7 +61,7 @@ class PropertyAdjustment
                             StructureAdjustment::OBSOLETE_PROPERTY,
                             'The property "' . $propertyKey
                                 . '" is not defined anymore in the current NodeType schema. Suggesting to remove it.',
-                            fn() => $this->removeProperty($nodeAggregate, $node, $propertyKey)
+                            fn () => $this->removeProperty($nodeAggregate, $node, $propertyKey)
                         );
                     }
 
@@ -79,7 +79,7 @@ class PropertyAdjustment
                             $node,
                             StructureAdjustment::NON_DESERIALIZABLE_PROPERTY,
                             $message,
-                            fn() => $this->removeProperty($nodeAggregate, $node, $propertyKey)
+                            fn () => $this->removeProperty($nodeAggregate, $node, $propertyKey)
                         );
                     }
                 }
@@ -91,7 +91,7 @@ class PropertyAdjustment
                             $node,
                             StructureAdjustment::MISSING_DEFAULT_VALUE,
                             'The property "' . $propertyKey . '" is is missing in the node. Suggesting to add it.',
-                            fn() => $this->addProperty($nodeAggregate, $node, $propertyKey, $defaultValue)
+                            fn () => $this->addProperty($nodeAggregate, $node, $propertyKey, $defaultValue)
                         );
                     }
                 }

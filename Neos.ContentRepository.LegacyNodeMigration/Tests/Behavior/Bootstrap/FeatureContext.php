@@ -223,7 +223,7 @@ class FeatureContext implements Context
     {
         $this->siteDataRows = array_map(
             fn (array $row) => array_map(
-                fn(string $value) => json_decode($value, true),
+                fn (string $value) => json_decode($value, true),
                 $row
             ),
             $siteDataRows->getHash()
@@ -237,7 +237,7 @@ class FeatureContext implements Context
     {
         $this->domainDataRows = array_map(static function (array $row) {
             return array_map(
-                fn(string $value) => json_decode($value, true),
+                fn (string $value) => json_decode($value, true),
                 $row
             );
         }, $domainDataRows->getHash());

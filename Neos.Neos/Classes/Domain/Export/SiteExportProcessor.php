@@ -62,7 +62,7 @@ final readonly class SiteExportProcessor implements ProcessorInterface
                 "siteResourcesPackageKey" => $site->getSiteResourcesPackageKey(),
                 "online" => $site->isOnline(),
                 "domains" => array_map(
-                    fn(Domain $domain) => [
+                    fn (Domain $domain) => [
                         'hostname' => $domain->getHostname(),
                         'scheme' => $domain->getScheme(),
                         'port' => $domain->getPort(),

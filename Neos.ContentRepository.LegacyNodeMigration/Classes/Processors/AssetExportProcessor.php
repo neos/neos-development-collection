@@ -88,7 +88,7 @@ final class AssetExportProcessor implements ProcessorInterface
     {
         if (($type === 'string' || is_subclass_of($type, \Stringable::class, true)) && is_string($value)) {
             preg_match_all('/asset:\/\/(?<assetId>[\w-]*)/i', (string)$value, $matches, PREG_SET_ORDER);
-            return array_map(static fn(array $match) => $match['assetId'], $matches);
+            return array_map(static fn (array $match) => $match['assetId'], $matches);
         }
         if (is_subclass_of($type, ResourceBasedInterface::class, true)) {
             return isset($value['__identifier']) ? [$value['__identifier']] : [];

@@ -33,7 +33,7 @@ trait TrashBinTrait
                 searchTerm: null,
             );
 
-        $actualItemsTable = array_map(static fn(TrashItem $trashItem): array => [
+        $actualItemsTable = array_map(static fn (TrashItem $trashItem): array => [
             'nodeAggregateId' => $trashItem->nodeAggregateId->value,
             'userId' => $trashItem->userId?->value,
             'deleteTime' => $trashItem->deleteTime?->format(\DateTimeInterface::ATOM),
@@ -60,7 +60,7 @@ trait TrashBinTrait
                 searchTerm: $parameters['searchTerm'] ? SearchTerm::fulltext($parameters['searchTerm']) : null,
             );
 
-        $actualItemsTable = array_map(static fn(TrashItem $trashItem): array => [
+        $actualItemsTable = array_map(static fn (TrashItem $trashItem): array => [
             'nodeAggregateId' => $trashItem->nodeAggregateId->value,
             'userId' => $trashItem->userId?->value,
             'deleteTime' => $trashItem->deleteTime?->format(\DateTimeInterface::ATOM),

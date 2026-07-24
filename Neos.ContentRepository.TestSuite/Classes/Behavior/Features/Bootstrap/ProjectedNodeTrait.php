@@ -300,7 +300,7 @@ trait ProjectedNodeTrait
                 sort($explicitTags);
                 $inheritedTags = $subtree->node->tags->onlyInherited()->toStringArray();
                 sort($inheritedTags);
-                $tags = [...array_map(static fn(string $tag) => $tag . '*', $explicitTags), ...$inheritedTags];
+                $tags = [...array_map(static fn (string $tag) => $tag . '*', $explicitTags), ...$inheritedTags];
                 $result[] = str_repeat(' ', $subtree->level) . $subtree->node->aggregateId->value . ($tags !== [] ? ' (' . implode(',', $tags) . ')' : '');
                 $subtreeStack = [...$subtree->children, ...$subtreeStack];
             }

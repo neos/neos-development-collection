@@ -103,7 +103,7 @@ trait NodeTraversalTrait
         $filter = FindChildNodesFilter::create(...$filterValues);
         $subgraph = $this->getCurrentSubgraphForQueries();
 
-        $actualNodeIds = array_map(static fn(Node $node) => $node->aggregateId->value, iterator_to_array($subgraph->findChildNodes($parentNodeAggregateId, $filter)));
+        $actualNodeIds = array_map(static fn (Node $node) => $node->aggregateId->value, iterator_to_array($subgraph->findChildNodes($parentNodeAggregateId, $filter)));
         Assert::assertSame($expectedNodeIds, $actualNodeIds, 'findChildNodes returned an unexpected result');
         $actualCount = $subgraph->countChildNodes($parentNodeAggregateId, CountChildNodesFilter::fromFindChildNodesFilter($filter));
         Assert::assertSame($expectedTotalCount ?? count($expectedNodeIds), $actualCount, 'countChildNodes returned an unexpected result');
@@ -120,7 +120,7 @@ trait NodeTraversalTrait
         $filter = FindReferencesFilter::create(...$filterValues);
         $subgraph = $this->getCurrentSubgraphForQueries();
 
-        $actualReferences = array_map(static fn(Reference $reference) => [
+        $actualReferences = array_map(static fn (Reference $reference) => [
             'nodeAggregateId' => $reference->node->aggregateId->value,
             'name' => $reference->name->value,
             'properties' => json_decode(json_encode($reference->properties?->serialized(), JSON_THROW_ON_ERROR), true, 512, JSON_THROW_ON_ERROR)
@@ -139,7 +139,7 @@ trait NodeTraversalTrait
         $filterValues = !empty($filterSerialized) ? json_decode($filterSerialized, true, 512, JSON_THROW_ON_ERROR) : [];
         $filter = FindBackReferencesFilter::create(...$filterValues);
         $subgraph = $this->getCurrentSubgraphForQueries();
-        $actualReferences = array_map(static fn(Reference $reference) => [
+        $actualReferences = array_map(static fn (Reference $reference) => [
             'nodeAggregateId' => $reference->node->aggregateId->value,
             'name' => $reference->name->value,
             'properties' => json_decode(json_encode($reference->properties?->serialized(), JSON_THROW_ON_ERROR), true, 512, JSON_THROW_ON_ERROR)
@@ -275,7 +275,7 @@ trait NodeTraversalTrait
         $filter = FindSucceedingSiblingNodesFilter::create(...$filterValues);
 
         $actualNodeIds = array_map(
-            static fn(Node $node) => $node->aggregateId->value,
+            static fn (Node $node) => $node->aggregateId->value,
             iterator_to_array($this->getCurrentSubgraphForQueries()->findSucceedingSiblingNodes($siblingNodeAggregateId, $filter))
         );
         Assert::assertSame($expectedNodeIds, $actualNodeIds);
@@ -292,7 +292,7 @@ trait NodeTraversalTrait
         $filter = FindPrecedingSiblingNodesFilter::create(...$filterValues);
 
         $actualNodeIds = array_map(
-            static fn(Node $node) => $node->aggregateId->value,
+            static fn (Node $node) => $node->aggregateId->value,
             iterator_to_array($this->getCurrentSubgraphForQueries()->findPrecedingSiblingNodes($siblingNodeAggregateId, $filter))
         );
         Assert::assertSame($expectedNodeIds, $actualNodeIds);
@@ -356,7 +356,7 @@ trait NodeTraversalTrait
         $filter = FindDescendantNodesFilter::create(...$filterValues);
         $subgraph = $this->getCurrentSubgraphForQueries();
 
-        $actualNodeIds = array_map(static fn(Node $node) => $node->aggregateId->value, iterator_to_array($subgraph->findDescendantNodes($entryNodeAggregateId, $filter)));
+        $actualNodeIds = array_map(static fn (Node $node) => $node->aggregateId->value, iterator_to_array($subgraph->findDescendantNodes($entryNodeAggregateId, $filter)));
         Assert::assertSame($expectedNodeIds, $actualNodeIds, 'findDescendantNodes returned an unexpected result');
         $actualCount = $subgraph->countDescendantNodes($entryNodeAggregateId, CountDescendantNodesFilter::fromFindDescendantNodesFilter($filter));
         Assert::assertSame($expectedTotalCount ?? count($expectedNodeIds), $actualCount, 'countDescendantNodes returned an unexpected result');
@@ -372,7 +372,7 @@ trait NodeTraversalTrait
         $filterValues = !empty($filterSerialized) ? json_decode($filterSerialized, true, 512, JSON_THROW_ON_ERROR) : [];
         $filter = FindAncestorNodesFilter::create(...$filterValues);
         $subgraph = $this->getCurrentSubgraphForQueries();
-        $actualNodeIds = array_map(static fn(Node $node) => $node->aggregateId->value, iterator_to_array($subgraph->findAncestorNodes($entryNodeAggregateId, $filter)));
+        $actualNodeIds = array_map(static fn (Node $node) => $node->aggregateId->value, iterator_to_array($subgraph->findAncestorNodes($entryNodeAggregateId, $filter)));
         Assert::assertSame($expectedNodeIds, $actualNodeIds, 'findAncestorNodes returned an unexpected result');
         $actualCount = $subgraph->countAncestorNodes($entryNodeAggregateId, CountAncestorNodesFilter::fromFindAncestorNodesFilter($filter));
         Assert::assertSame($expectedTotalCount ?? count($expectedNodeIds), $actualCount, 'countAncestorNodes returned an unexpected result');
