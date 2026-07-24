@@ -94,7 +94,7 @@
         "neos/redirecthandler-neosadapter": "Adds automatic redirects for moved/renamed pages"
     },
     "scripts": {
-        "lint:php-cs-fixer": "../../bin/php-cs-fixer check",
+        "lint:php-cs-fixer": "../../bin/php-cs-fixer check -v",
         "lint:phpstan": "../../bin/phpstan analyse -v",
         "lint:phpstan-generate-baseline": "../../bin/phpstan analyse --generate-baseline",
         "lint:distributionintegrity": "[ -d 'Neos.ContentRepository' ] && { echo 'Package Neos.ContentRepository should not exist.' 1>&2; exit 1; } || exit 0;",
