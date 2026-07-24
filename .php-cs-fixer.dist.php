@@ -3,6 +3,7 @@
 $finder = (new PhpCsFixer\Finder())
     ->in([
         './Neos.ContentGraph.DoctrineDbalAdapter/src',
+        './Neos.ContentGraph.DoctrineDbalAdapter/Tests',
         './Neos.ContentRepository.BehavioralTests/Classes',
         './Neos.ContentRepository.BehavioralTests/Tests',
         './Neos.ContentRepository.Core/Classes',
@@ -10,6 +11,7 @@ $finder = (new PhpCsFixer\Finder())
         './Neos.ContentRepository.Dbal/Classes',
         './Neos.ContentRepository.Dbal/Tests',
         './Neos.ContentRepository.Export/src',
+        './Neos.ContentRepository.Export/Tests',
         './Neos.ContentRepository.LegacyNodeMigration/Classes',
         './Neos.ContentRepository.LegacyNodeMigration/Tests',
         './Neos.ContentRepository.NodeAccess/Classes',
