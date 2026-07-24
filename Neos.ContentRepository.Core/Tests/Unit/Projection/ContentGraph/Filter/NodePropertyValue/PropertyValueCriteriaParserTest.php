@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\ContentRepository\Core\Tests\Unit\Projection\ContentGraph\Filter\NodePropertyValue;
 
 /*

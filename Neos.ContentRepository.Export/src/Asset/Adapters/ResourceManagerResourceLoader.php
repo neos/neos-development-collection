@@ -1,5 +1,7 @@
 <?php
+
 declare(strict_types=1);
+
 namespace Neos\ContentRepository\Export\Asset\Adapters;
 
 use Neos\ContentRepository\Export\Asset\ResourceLoaderInterface;

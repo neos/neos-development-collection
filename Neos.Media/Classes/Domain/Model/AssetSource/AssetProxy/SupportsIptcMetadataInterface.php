@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Media\Domain\Model\AssetSource\AssetProxy;
 
 /*

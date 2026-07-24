@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Fusion\Eel;
 
 use Neos\Eel\ProtectedContextAwareInterface;

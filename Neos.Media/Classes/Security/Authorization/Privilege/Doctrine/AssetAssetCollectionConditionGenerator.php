@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Media\Security\Authorization\Privilege\Doctrine;
 
 /*

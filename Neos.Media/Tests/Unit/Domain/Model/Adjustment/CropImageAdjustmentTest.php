@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Media\Tests\Unit\Domain\Model\Adjustment;
 
 /*

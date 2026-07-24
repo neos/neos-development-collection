@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 // @todo remove this require statement

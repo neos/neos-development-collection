@@ -19,7 +19,6 @@ use Behat\Gherkin\Node\TableNode;
 use League\Flysystem\FileAttributes;
 use League\Flysystem\Filesystem;
 use League\Flysystem\InMemory\InMemoryFilesystemAdapter;
-use Neos\ContentRepository\Core\EventStore\InitiatingEventMetadata;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepository\Export\Asset\ValueObject\SerializedImageVariant;
 use Neos\ContentRepository\Export\Event\ValueObject\ExportedEvents;

@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\ContentRepository\Core\Tests\Unit\Feature\SubtreeTagging\Dto;
 
 use Neos\ContentRepository\Core\Feature\SubtreeTagging\Dto\SubtreeTag;

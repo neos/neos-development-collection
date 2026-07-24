@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Neos\Tests\Unit\Domain\Service;
 
 /*
