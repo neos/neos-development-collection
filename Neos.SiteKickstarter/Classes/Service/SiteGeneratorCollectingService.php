@@ -13,8 +13,8 @@ namespace Neos\SiteKickstarter\Service;
  * source code.
  */
 
-use Neos\Flow\Reflection\ReflectionService;
 use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Reflection\ReflectionService;
 use Neos\SiteKickstarter\Generator\SitePackageGeneratorInterface;
 
 /**

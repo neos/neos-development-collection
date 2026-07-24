@@ -13,8 +13,8 @@ namespace Neos\Media\Domain\Model;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
-use Neos\Flow\Annotations as Flow;
 use Doctrine\ORM\Mapping as ORM;
+use Neos\Flow\Annotations as Flow;
 
 /**
  * Class AssetCollection

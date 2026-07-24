@@ -11,18 +11,18 @@ namespace Neos\Neos\Tests\Unit\View;
  * source code.
  */
 
+use Neos\ContentRepository\Domain\Model\Node;
+use Neos\ContentRepository\Domain\Model\NodeData;
 use Neos\ContentRepository\Domain\Projection\Content\TraversableNode;
 use Neos\Flow\Mvc\ActionResponse;
 use Neos\Flow\Mvc\Controller\ControllerContext;
 use Neos\Flow\Security\Context;
 use Neos\Flow\Tests\UnitTestCase;
+use Neos\Fusion\Core\Runtime;
 use Neos\Neos\Domain\Service\ContentContext;
 use Neos\Neos\Domain\Service\FusionService;
 use Neos\Neos\Exception;
 use Neos\Neos\View\FusionView;
-use Neos\ContentRepository\Domain\Model\Node;
-use Neos\ContentRepository\Domain\Model\NodeData;
-use Neos\Fusion\Core\Runtime;
 use Psr\Http\Message\ResponseInterface;
 
 /**

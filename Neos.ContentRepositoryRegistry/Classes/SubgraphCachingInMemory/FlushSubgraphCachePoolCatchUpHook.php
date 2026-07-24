@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepositoryRegistry\SubgraphCachingInMemory;
 
-use Neos\ContentRepository\Core\Subscription\SubscriptionStatus;
-use Neos\Flow\Annotations as Flow;
 use Neos\ContentRepository\Core\EventStore\EventInterface;
 use Neos\ContentRepository\Core\Projection\CatchUpHook\CatchUpHookInterface;
+use Neos\ContentRepository\Core\Subscription\SubscriptionStatus;
 use Neos\EventStore\Model\EventEnvelope;
+use Neos\Flow\Annotations as Flow;
 
 /**
  * Ensures that the {@see SubgraphCachePool} is flushed always when content changes. This CatchUpHook

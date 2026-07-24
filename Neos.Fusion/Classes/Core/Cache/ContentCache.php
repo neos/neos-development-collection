@@ -14,9 +14,9 @@ namespace Neos\Fusion\Core\Cache;
  * source code.
  */
 
-use Neos\Flow\Annotations as Flow;
 use Neos\Cache\CacheAwareInterface;
 use Neos\Cache\Frontend\StringFrontend;
+use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Security\Context;
 use Neos\Flow\Utility\Algorithms;
 use Neos\Fusion\Exception;

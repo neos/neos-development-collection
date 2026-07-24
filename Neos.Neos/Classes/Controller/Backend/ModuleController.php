@@ -19,12 +19,12 @@ use Neos\Flow\Mvc\Controller\ActionController;
 use Neos\Flow\Mvc\Dispatcher;
 use Neos\Flow\Security\Account;
 use Neos\Flow\Security\Context;
-use Neos\Neos\Service\BackendRedirectionService;
-use Neos\Utility\Arrays;
-use Neos\Utility\MediaTypes;
 use Neos\Neos\Controller\BackendUserTranslationTrait;
 use Neos\Neos\Controller\Exception\DisabledModuleException;
+use Neos\Neos\Service\BackendRedirectionService;
 use Neos\Party\Domain\Service\PartyService;
+use Neos\Utility\Arrays;
+use Neos\Utility\MediaTypes;
 
 #[Flow\Scope('singleton')]
 class ModuleController extends ActionController

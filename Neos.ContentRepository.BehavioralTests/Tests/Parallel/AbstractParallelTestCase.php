@@ -26,8 +26,6 @@ use Neos\ContentRepository\Core\Subscription\Engine\SubscriptionEngine;
 use Neos\ContentRepository\TestSuite\Fakes\FakeAuthProvider;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\EventStore\EventStoreInterface;
-use Neos\EventStore\Model\EventEnvelope;
-use Neos\EventStore\Model\EventStream\VirtualStreamName;
 use Neos\Flow\Core\Bootstrap;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use PHPUnit\Framework\TestCase;

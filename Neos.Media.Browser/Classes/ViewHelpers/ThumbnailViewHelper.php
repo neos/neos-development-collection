@@ -11,8 +11,8 @@ namespace Neos\Media\Browser\ViewHelpers;
  * source code.
  */
 
-use Neos\Media\Domain\Model\AssetSource\AssetProxy\AssetProxyInterface;
 use Neos\FluidAdaptor\Core\ViewHelper\AbstractTagBasedViewHelper;
+use Neos\Media\Domain\Model\AssetSource\AssetProxy\AssetProxyInterface;
 
 /**
  * Renders an <img> HTML tag from a given Asset Proxy instance

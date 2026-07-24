@@ -15,11 +15,11 @@ use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Flow\Property\PropertyMappingConfigurationInterface;
 use Neos\Flow\Property\TypeConverter\AbstractTypeConverter;
-use Neos\Utility\ObjectAccess;
-use Neos\Utility\TypeHandling;
 use Neos\Flow\Validation\Error;
 use Neos\Media\Domain\Model\ImageInterface;
 use Neos\Media\Domain\Model\ImageVariant;
+use Neos\Utility\ObjectAccess;
+use Neos\Utility\TypeHandling;
 
 /**
  * This converter transforms \Neos\Media\Domain\Model\ImageInterface (Image or ImageVariant) objects to array representations.

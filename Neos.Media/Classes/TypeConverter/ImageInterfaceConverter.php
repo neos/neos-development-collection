@@ -14,10 +14,10 @@ namespace Neos\Media\TypeConverter;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Property\PropertyMapper;
 use Neos\Flow\Property\PropertyMappingConfigurationInterface;
-use Neos\Utility\ObjectAccess;
 use Neos\Media\Domain\Model\Image;
 use Neos\Media\Domain\Model\ImageInterface;
 use Neos\Media\Domain\Model\ImageVariant;
+use Neos\Utility\ObjectAccess;
 
 /**
  * This converter transforms to \Neos\Media\Domain\Model\ImageInterface (Image or ImageVariant) objects.

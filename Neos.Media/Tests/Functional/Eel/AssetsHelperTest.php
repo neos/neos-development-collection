@@ -13,15 +13,15 @@ namespace Neos\Media\Tests\Functional\Eel;
  */
 
 use Neos\Flow\Persistence\Doctrine\PersistenceManager;
-use Neos\Media\Domain\Model\AssetCollection;
-use Neos\Media\Domain\Repository\AssetCollectionRepository;
-use Neos\Media\Eel\AssetsHelper;
-use Neos\Utility\Files;
 use Neos\Media\Domain\Model\Asset;
+use Neos\Media\Domain\Model\AssetCollection;
 use Neos\Media\Domain\Model\Tag;
+use Neos\Media\Domain\Repository\AssetCollectionRepository;
 use Neos\Media\Domain\Repository\AssetRepository;
 use Neos\Media\Domain\Repository\TagRepository;
+use Neos\Media\Eel\AssetsHelper;
 use Neos\Media\Tests\Functional\AbstractTest;
+use Neos\Utility\Files;
 
 /**
  * Testcase for the asset helper

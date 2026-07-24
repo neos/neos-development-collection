@@ -9,10 +9,10 @@ use Neos\ContentRepository\Core\Subscription\Engine\Error;
 use Neos\ContentRepository\Core\Subscription\Engine\Errors;
 use Neos\ContentRepository\Core\Subscription\Engine\SubscriptionEngineCriteria;
 use Neos\ContentRepository\Core\Subscription\ProjectionSubscriptionStatus;
-use Neos\ContentRepository\Core\Subscription\SubscriptionStatusCollection;
 use Neos\ContentRepository\Core\Subscription\SubscriptionError;
 use Neos\ContentRepository\Core\Subscription\SubscriptionId;
 use Neos\ContentRepository\Core\Subscription\SubscriptionStatus;
+use Neos\ContentRepository\Core\Subscription\SubscriptionStatusCollection;
 use Neos\EventStore\Model\Event\SequenceNumber;
 
 final class SubscriptionSetupTest extends AbstractSubscriptionEngineTestCase

@@ -14,11 +14,11 @@ namespace Neos\Media\Domain\Model\ThumbnailGenerator;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\ResourceManagement\PersistentResource;
 use Neos\Flow\Utility\Algorithms;
-use Neos\Utility\Files;
 use Neos\Media\Domain\Model\Adjustment\ResizeImageAdjustment;
 use Neos\Media\Domain\Model\Thumbnail;
 use Neos\Media\Domain\Service\ImageService;
 use Neos\Media\Exception;
+use Neos\Utility\Files;
 
 /**
  * A system-generated preview version of a font document.

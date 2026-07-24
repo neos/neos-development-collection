@@ -17,21 +17,21 @@ use Imagine\Image\Palette\CMYK;
 use Imagine\Image\Palette\RGB;
 use Imagine\Imagick\Imagine;
 use Neos\Cache\Frontend\VariableFrontend;
+use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Configuration\Exception\InvalidConfigurationException;
 use Neos\Flow\ResourceManagement\Exception;
+use Neos\Flow\ResourceManagement\PersistentResource;
 use Neos\Flow\ResourceManagement\ResourceManager;
 use Neos\Flow\Utility\Algorithms;
 use Neos\Flow\Utility\Environment;
+use Neos\Media\Domain\Model\Adjustment\ImageAdjustmentInterface;
 use Neos\Media\Domain\Model\Adjustment\QualityImageAdjustment;
 use Neos\Media\Domain\Repository\AssetRepository;
-use Neos\Media\Imagine\Box;
-use Neos\Flow\Annotations as Flow;
-use Neos\Flow\Configuration\Exception\InvalidConfigurationException;
-use Neos\Flow\ResourceManagement\PersistentResource;
-use Neos\Utility\Arrays;
-use Neos\Utility\Unicode\Functions as UnicodeFunctions;
-use Neos\Media\Domain\Model\Adjustment\ImageAdjustmentInterface;
 use Neos\Media\Exception\ImageFileException;
 use Neos\Media\Exception\ImageServiceException;
+use Neos\Media\Imagine\Box;
+use Neos\Utility\Arrays;
+use Neos\Utility\Unicode\Functions as UnicodeFunctions;
 
 /**
  * An image service that acts as abstraction for the Imagine library

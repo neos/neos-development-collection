@@ -12,9 +12,9 @@ namespace Neos\Fusion\FusionObjects\Helpers;
  */
 
 use Neos\FluidAdaptor\Core\Parser\SyntaxTree\TemplateObjectAccessInterface;
+use Neos\Fusion\Exception as FusionException;
 use Neos\Fusion\Exception\UnsupportedProxyMethodException;
 use Neos\Fusion\FusionObjects\TemplateImplementation;
-use Neos\Fusion\Exception as FusionException;
 
 /**
  * A proxy object representing a Fusion path inside a Fluid Template. It allows

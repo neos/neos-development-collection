@@ -11,8 +11,8 @@ namespace Neos\Fusion\Tests\Functional\FusionObjects;
  * source code.
  */
 
-use Neos\Flow\Cache\CacheManager;
 use Neos\Cache\Frontend\FrontendInterface;
+use Neos\Flow\Cache\CacheManager;
 use Neos\Fusion\Core\Cache\ContentCache;
 use Neos\Fusion\Tests\Functional\FusionObjects\Fixtures\Model\TestModel;
 

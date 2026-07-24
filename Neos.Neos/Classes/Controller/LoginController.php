@@ -14,9 +14,15 @@ namespace Neos\Neos\Controller;
  * source code.
  */
 
-use Neos\Flow\Annotations as Flow;
 use Neos\Cache\Frontend\StringFrontend;
+use Neos\ContentRepository\Core\Projection\ProjectionStatusType;
+use Neos\ContentRepository\Core\Service\ContentRepositoryMaintainerFactory;
+use Neos\ContentRepository\Core\Subscription\ProjectionSubscriptionStatus;
+use Neos\ContentRepository\Core\Subscription\SubscriptionStatus;
+use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Error\Messages\Message;
+use Neos\EventStore\Model\EventStore\StatusType;
+use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Http\Cookie;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\Exception\InvalidFlashMessageConfigurationException;
@@ -31,13 +37,6 @@ use Neos\Flow\Session\Exception\SessionNotStartedException;
 use Neos\Flow\Session\SessionInterface;
 use Neos\Flow\Session\SessionManagerInterface;
 use Neos\Fusion\View\FusionView;
-use Neos\Neos\Controller\TranslationTrait;
-use Neos\ContentRepository\Core\Projection\ProjectionStatusType;
-use Neos\ContentRepository\Core\Service\ContentRepositoryMaintainerFactory;
-use Neos\ContentRepository\Core\Subscription\ProjectionSubscriptionStatus;
-use Neos\ContentRepository\Core\Subscription\SubscriptionStatus;
-use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
-use Neos\EventStore\Model\EventStore\StatusType;
 use Neos\Neos\Domain\Repository\DomainRepository;
 use Neos\Neos\Domain\Repository\SiteRepository;
 use Neos\Neos\Service\BackendRedirectionService;

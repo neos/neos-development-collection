@@ -14,10 +14,10 @@ declare(strict_types=1);
 
 namespace Neos\Neos\Domain\Model;
 
-use Neos\Flow\Security\Account;
-use Neos\Party\Domain\Model\Person;
 use Doctrine\ORM\Mapping as ORM;
 use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Security\Account;
+use Neos\Party\Domain\Model\Person;
 
 /**
  * Domain Model of a User

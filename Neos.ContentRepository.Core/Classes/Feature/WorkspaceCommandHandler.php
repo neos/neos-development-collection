@@ -57,9 +57,9 @@ use Neos\ContentRepository\Core\Feature\WorkspaceRebase\Exception\WorkspaceRebas
 use Neos\ContentRepository\Core\SharedModel\Exception\ContentStreamAlreadyExists;
 use Neos\ContentRepository\Core\SharedModel\Exception\ContentStreamDoesNotExistYet;
 use Neos\ContentRepository\Core\SharedModel\Exception\ContentStreamIsClosed;
+use Neos\ContentRepository\Core\SharedModel\Exception\WorkspaceContainsPublishableChanges;
 use Neos\ContentRepository\Core\SharedModel\Exception\WorkspaceDoesNotExist;
 use Neos\ContentRepository\Core\SharedModel\Exception\WorkspaceHasNoBaseWorkspaceName;
-use Neos\ContentRepository\Core\SharedModel\Exception\WorkspaceContainsPublishableChanges;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\Workspace;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;

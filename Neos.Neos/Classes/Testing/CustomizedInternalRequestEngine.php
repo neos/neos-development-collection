@@ -15,12 +15,12 @@ declare(strict_types=1);
 namespace Neos\Neos\Testing;
 
 use GuzzleHttp\Psr7\Response;
+use Neos\Flow\Http;
 use Neos\Flow\Http\Client\InternalRequestEngine;
 use Neos\Flow\Mvc\FlashMessage\FlashMessageService;
 use Neos\Flow\Session\SessionInterface;
 use Neos\Flow\Session\SessionManager;
 use Neos\Flow\Tests\FunctionalTestRequestHandler;
-use Neos\Flow\Http;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 

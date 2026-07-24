@@ -13,6 +13,7 @@ namespace Neos\Fusion\Core;
  * source code.
  */
 
+use Neos\Flow\Annotations as Flow;
 use Neos\Fusion;
 use Neos\Fusion\Core\Cache\ParserCache;
 use Neos\Fusion\Core\ObjectTreeParser\Ast\FusionFile;
@@ -20,7 +21,6 @@ use Neos\Fusion\Core\ObjectTreeParser\FilePatternResolver;
 use Neos\Fusion\Core\ObjectTreeParser\MergedArrayTree;
 use Neos\Fusion\Core\ObjectTreeParser\MergedArrayTreeVisitor;
 use Neos\Fusion\Core\ObjectTreeParser\ObjectTreeParser;
-use Neos\Flow\Annotations as Flow;
 
 /**
  * The Fusion Parser

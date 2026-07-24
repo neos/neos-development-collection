@@ -13,8 +13,8 @@ namespace Neos\SiteKickstarter\Service;
  * source code.
  */
 
-use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Annotations as Flow;
+use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\SiteKickstarter\Generator\SitePackageGeneratorInterface;
 
 /**

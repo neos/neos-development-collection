@@ -12,8 +12,8 @@ namespace Neos\Fusion\Tests\Functional\Parser;
  */
 
 use Neos\Flow\Tests\FunctionalTestCase;
-use Neos\Fusion\Core\Parser;
 use Neos\Fusion;
+use Neos\Fusion\Core\Parser;
 
 /**
  * Testcase for the Fusion Parser

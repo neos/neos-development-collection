@@ -12,10 +12,10 @@ namespace Neos\Fusion\Tests\Unit\Core;
  */
 
 use Neos\Flow\Tests\UnitTestCase;
+use Neos\Fusion\Core\Cache\ParserCache;
 use Neos\Fusion\Core\FusionSourceCode;
 use Neos\Fusion\Core\FusionSourceCodeCollection;
 use Neos\Fusion\Core\Parser;
-use Neos\Fusion\Core\Cache\ParserCache;
 use Neos\Fusion\Exception;
 
 /**

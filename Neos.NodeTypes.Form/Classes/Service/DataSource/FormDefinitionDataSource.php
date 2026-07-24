@@ -15,9 +15,9 @@ namespace Neos\NodeTypes\Form\Service\DataSource;
  */
 
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
+use Neos\Flow\Annotations as Flow;
 use Neos\Form\Persistence\YamlPersistenceManager;
 use Neos\Neos\Service\DataSource\AbstractDataSource;
-use Neos\Flow\Annotations as Flow;
 
 class FormDefinitionDataSource extends AbstractDataSource
 {

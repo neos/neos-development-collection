@@ -2,8 +2,8 @@
 declare(strict_types=1);
 namespace Neos\Fusion\Core;
 
-use Neos\Fusion\Exception;
 use Neos\Flow\Annotations as Flow;
+use Neos\Fusion\Exception;
 use Neos\Utility\Arrays;
 
 /**

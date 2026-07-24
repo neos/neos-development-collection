@@ -11,9 +11,9 @@ namespace Neos\Fusion\Aspects;
  * source code.
  */
 
+use Neos\Cache\Frontend\VariableFrontend;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Aop\JoinPointInterface;
-use Neos\Cache\Frontend\VariableFrontend;
 use Neos\Fusion\View\FusionView;
 
 /**

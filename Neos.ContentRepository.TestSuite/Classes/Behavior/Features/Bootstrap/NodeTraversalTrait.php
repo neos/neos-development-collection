@@ -16,7 +16,6 @@ namespace Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap;
 
 use Behat\Gherkin\Node\PyStringNode;
 use Behat\Gherkin\Node\TableNode;
-use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\Feature\SubtreeTagging\Dto\SubtreeTag;
 use Neos\ContentRepository\Core\Feature\SubtreeTagging\Dto\SubtreeTags;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
@@ -48,7 +47,6 @@ use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateIds;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
 use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\Helpers\DimensionSpacePointSetSorter;
 use PHPUnit\Framework\Assert;
-use Psr\Clock\ClockInterface;
 
 /**
  * The feature trait to test the subgraph traversal API

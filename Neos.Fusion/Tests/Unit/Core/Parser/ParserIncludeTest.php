@@ -14,8 +14,8 @@ namespace Neos\Fusion\Tests\Unit\Core\Parser;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\Fusion;
 use Neos\Fusion\Core\Cache\ParserCache;
-use org\bovigo\vfs\vfsStream;
 use Neos\Fusion\Core\Parser;
+use org\bovigo\vfs\vfsStream;
 use org\bovigo\vfs\vfsStreamContent;
 use org\bovigo\vfs\vfsStreamDirectory;
 

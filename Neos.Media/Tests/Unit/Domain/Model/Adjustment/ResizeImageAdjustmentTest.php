@@ -11,10 +11,10 @@ namespace Neos\Media\Tests\Unit\Domain\Model\Adjustment;
  * source code.
  */
 
-use Neos\Media\Imagine\Box;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\Media\Domain\Model\Adjustment\ResizeImageAdjustment;
 use Neos\Media\Domain\Model\ImageInterface;
+use Neos\Media\Imagine\Box;
 
 /**
  * Test case for the Resize Image Adjustment

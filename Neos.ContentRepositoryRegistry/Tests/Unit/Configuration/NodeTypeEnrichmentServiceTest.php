@@ -13,10 +13,7 @@ namespace Neos\ContentRepositoryRegistry\Tests\Unit\Configuration;
  */
 
 use Neos\ContentRepositoryRegistry\Configuration\NodeTypeEnrichmentService;
-use Neos\Flow\Core\ApplicationContext;
-use Neos\Flow\Package\FlowPackageInterface;
 use Neos\Flow\Tests\UnitTestCase;
-use Neos\Utility\Files;
 use Symfony\Component\Yaml\Yaml;
 
 class NodeTypeEnrichmentServiceTest extends UnitTestCase

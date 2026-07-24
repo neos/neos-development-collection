@@ -11,11 +11,11 @@ namespace Neos\Fusion\Tests\Unit\Core\Parser;
  * source code.
  */
 
-use Neos\Fusion\Core\ObjectTreeParser\ExceptionMessage\MessageLinePart;
-use Neos\Fusion\Core\Parser;
+use Neos\Flow\Tests\UnitTestCase;
 use Neos\Fusion\Core\Cache\ParserCache;
 use Neos\Fusion\Core\ObjectTreeParser\Exception\ParserException;
-use Neos\Flow\Tests\UnitTestCase;
+use Neos\Fusion\Core\ObjectTreeParser\ExceptionMessage\MessageLinePart;
+use Neos\Fusion\Core\Parser;
 
 class ParserExceptionTest extends UnitTestCase
 {

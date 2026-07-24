@@ -11,12 +11,12 @@ namespace Neos\Media\Domain\Model\AssetSource\Neos;
  * source code.
  */
 
-use Neos\Media\Domain\Model\AssetSource\AssetProxy\AssetProxyInterface;
-use Neos\Media\Domain\Model\AssetSource\AssetProxyQueryInterface;
-use Neos\Media\Domain\Model\AssetSource\AssetProxyQueryResultInterface;
 use Neos\Flow\Annotations\Proxy;
 use Neos\Flow\Persistence\QueryResultInterface;
 use Neos\Media\Domain\Model\AssetInterface;
+use Neos\Media\Domain\Model\AssetSource\AssetProxy\AssetProxyInterface;
+use Neos\Media\Domain\Model\AssetSource\AssetProxyQueryInterface;
+use Neos\Media\Domain\Model\AssetSource\AssetProxyQueryResultInterface;
 
 /**
  * @Proxy(false)

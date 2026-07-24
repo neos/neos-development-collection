@@ -2,9 +2,9 @@
 
 namespace Neos\Fusion\Migrations\EelExpression;
 
-use Neos\Fusion\Core\ObjectTreeParser\Ast\EelExpressionValue;
-
 use Neos\Flow\Annotations as Flow;
+
+use Neos\Fusion\Core\ObjectTreeParser\Ast\EelExpressionValue;
 
 /**
  * @Flow\Proxy(false)

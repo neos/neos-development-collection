@@ -11,13 +11,13 @@ namespace Neos\Media\Domain\Model;
  * source code.
  */
 
-use Neos\Flow\Annotations as Flow;
 use Doctrine\ORM\Mapping as ORM;
+use Neos\Flow\Annotations as Flow;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\ResourceManagement\PersistentResource;
 use Neos\Media\Domain\Service\ThumbnailService;
-use Neos\Utility\Arrays;
 use Neos\Media\Domain\Strategy\ThumbnailGeneratorStrategy;
+use Neos\Utility\Arrays;
 
 /**
  * A system-generated preview version of an Asset

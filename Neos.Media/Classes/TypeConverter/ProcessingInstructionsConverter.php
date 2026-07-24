@@ -13,9 +13,9 @@ namespace Neos\Media\TypeConverter;
 use Neos\Flow\Property\Exception\TypeConverterException;
 use Neos\Flow\Property\PropertyMappingConfigurationInterface;
 use Neos\Flow\Property\TypeConverter\AbstractTypeConverter;
-use Neos\Utility\ObjectAccess;
 use Neos\Media\Domain\Model\Adjustment\CropImageAdjustment;
 use Neos\Media\Domain\Model\Adjustment\ResizeImageAdjustment;
+use Neos\Utility\ObjectAccess;
 
 /**
  * Converts an array of processing instructions to matching adjustments
