@@ -961,9 +961,9 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
                   :targetContentStreamLayer as contentstreamlayer
                 FROM
                   -- prefilter via OR - using IN() is slower as more rows are examined
-                  {$contentStreamHierarchyRelationQuery->withPossibleWhereCondition(
-                      StaticWhereCondition::fromString('h', 'h.childnodeanchor = :originalNodeAnchor OR h.parentnodeanchor = :originalNodeAnchor')
-                  )->toSql()} h
+                  {$contentStreamHierarchyRelationQuery
+                    ->withPossibleWhereCondition(StaticWhereCondition::fromString('h', 'h.childnodeanchor = :originalNodeAnchor OR h.parentnodeanchor = :originalNodeAnchor'))
+                    ->toSql()} h
                 WHERE
                   :originalNodeAnchor IN (h.childnodeanchor, h.parentnodeanchor)
                 ON DUPLICATE KEY UPDATE parentnodeanchor = VALUES(parentnodeanchor), childnodeanchor = VALUES(childnodeanchor)
