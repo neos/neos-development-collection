@@ -40,19 +40,19 @@ class HierarchyRelationSubqueryTest extends TestCase
         );
 
         self::assertEquals(
-        <<<SQL
-        (SELECT h.*
-          FROM cr_testing_p_graph_hierarchyrelation AS h
-          WHERE (h.contentstreamlayer IN (:contentStreamLayers))
-            AND NOT EXISTS (
-              SELECT 1
-                FROM cr_testing_p_graph_hierarchyrelation hWin
-                WHERE hWin.id = h.id
-                  AND hWin.contentstreamlayer IN (:contentStreamLayers)
-                  AND hWin.contentstreamlayer > h.contentstreamlayer
+            <<<SQL
+            (SELECT h.*
+              FROM cr_testing_p_graph_hierarchyrelation AS h
+              WHERE (h.contentstreamlayer IN (:contentStreamLayers))
+                AND NOT EXISTS (
+                  SELECT 1
+                    FROM cr_testing_p_graph_hierarchyrelation hWin
+                    WHERE hWin.id = h.id
+                      AND hWin.contentstreamlayer IN (:contentStreamLayers)
+                      AND hWin.contentstreamlayer > h.contentstreamlayer
+                )
             )
-        )
-        SQL,
+            SQL,
             $hierarchyRelationStatement->toSql()
         );
     }
