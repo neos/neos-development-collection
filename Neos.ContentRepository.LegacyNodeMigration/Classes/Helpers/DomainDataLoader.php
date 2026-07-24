@@ -30,5 +30,3 @@ final class DomainDataLoader implements \IteratorAggregate
         return $query->iterateAssociative();
     }
 }
-
-

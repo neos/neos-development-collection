@@ -169,8 +169,7 @@ final class CommandSimulator
      */
     private static function getFakeZeroClock(): ClockInterface
     {
-        return new class implements ClockInterface
-        {
+        return new class () implements ClockInterface {
             public function now(): \DateTimeImmutable
             {
                 return new \DateTimeImmutable('@0');

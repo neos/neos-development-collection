@@ -23,7 +23,7 @@ class MatcherImplementation extends RendererImplementation
      */
     public function getCondition()
     {
-        return (boolean)$this->fusionValue('condition');
+        return (bool)$this->fusionValue('condition');
     }
 
     /**

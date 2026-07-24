@@ -19,7 +19,6 @@ use PHPUnit\Framework\TestCase;
 
 class NodeTagsTest extends TestCase
 {
-
     /**
      * @test
      */

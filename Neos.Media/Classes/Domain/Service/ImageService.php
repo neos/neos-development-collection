@@ -229,7 +229,7 @@ class ImageService
         if ($additionalOptions !== []) {
             $defaultOptions = Arrays::arrayMergeRecursiveOverrule($defaultOptions, $additionalOptions);
         }
-        $quality = isset($defaultOptions['quality']) ? (integer)$defaultOptions['quality'] : 90;
+        $quality = isset($defaultOptions['quality']) ? (int)$defaultOptions['quality'] : 90;
         if ($quality < 0 || $quality > 100) {
             throw new InvalidConfigurationException(
                 sprintf('Setting "Neos.Media.image.defaultOptions.quality" allow only value between 0 and 100, current value: %s', $quality),

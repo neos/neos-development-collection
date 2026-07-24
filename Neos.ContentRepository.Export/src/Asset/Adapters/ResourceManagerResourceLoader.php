@@ -9,10 +9,10 @@ use Neos\Flow\ResourceManagement\ResourceManager;
 
 final class ResourceManagerResourceLoader implements ResourceLoaderInterface
 {
-
     public function __construct(
         private readonly ResourceManager $resourceManager,
-    ) {}
+    ) {
+    }
 
     public function getStreamBySha1(string $sha1)
     {

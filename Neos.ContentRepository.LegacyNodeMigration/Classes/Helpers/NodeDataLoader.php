@@ -37,5 +37,3 @@ final class NodeDataLoader implements \IteratorAggregate
         return $query->iterateAssociative();
     }
 }
-
-

@@ -10,7 +10,7 @@ namespace Neos\Neos\Domain\Model;
  *
  * @api
  */
-enum WorkspaceRole : string
+enum WorkspaceRole: string
 {
     /**
      * Can read from the workspace

@@ -23,7 +23,6 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use PHPUnit\Framework\TestCase;
 
-
 class NodeAggregateWasMovedTest extends TestCase
 {
     /**

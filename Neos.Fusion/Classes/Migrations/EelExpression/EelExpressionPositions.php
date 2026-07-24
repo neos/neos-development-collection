@@ -3,7 +3,6 @@
 namespace Neos\Fusion\Migrations\EelExpression;
 
 use Neos\Flow\Annotations as Flow;
-
 use Neos\Fusion\Core\ObjectTreeParser\Ast\EelExpressionValue;
 
 /**

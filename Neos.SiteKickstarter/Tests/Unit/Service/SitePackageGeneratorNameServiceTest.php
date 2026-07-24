@@ -37,7 +37,7 @@ class SitePackageGeneratorNameServiceTest extends UnitTestCase
     {
         $this->mockObjectManager = $this->getMockBuilder(ObjectManagerInterface::class)->disableOriginalConstructor()->getMock();
 
-        $this->sitePackageGeneratorNameService = new  SitePackageGeneratorNameService();
+        $this->sitePackageGeneratorNameService = new SitePackageGeneratorNameService();
         $this->inject($this->sitePackageGeneratorNameService, 'objectManager', $this->mockObjectManager);
     }
 

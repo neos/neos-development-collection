@@ -80,7 +80,7 @@ abstract class AbstractSubscriptionEngineTestCase extends TestCase // we don't u
         );
 
         $this->fakeProjection = $this->getMockBuilder(ProjectionInterface::class)->disableAutoReturnValueGeneration()->getMock();
-        $this->fakeProjection->method('getState')->willReturn(new class implements ProjectionStateInterface {});
+        $this->fakeProjection->method('getState')->willReturn(new class () implements ProjectionStateInterface {});
 
         FakeProjectionFactory::setProjection(
             'default',
@@ -131,15 +131,14 @@ abstract class AbstractSubscriptionEngineTestCase extends TestCase // we don't u
             $contentRepositoryId
         );
 
-        $subscriptionEngineAndEventStoreAccessor = new class implements ContentRepositoryServiceFactoryInterface {
+        $subscriptionEngineAndEventStoreAccessor = new class () implements ContentRepositoryServiceFactoryInterface {
             public EventStoreInterface|null $eventStore;
             public SubscriptionEngine|null $subscriptionEngine;
             public function build(ContentRepositoryServiceFactoryDependencies $serviceFactoryDependencies): ContentRepositoryServiceInterface
             {
                 $this->eventStore = $serviceFactoryDependencies->eventStore;
                 $this->subscriptionEngine = $serviceFactoryDependencies->subscriptionEngine;
-                return new class implements ContentRepositoryServiceInterface
-                {
+                return new class () implements ContentRepositoryServiceInterface {
                 };
             }
         };

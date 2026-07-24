@@ -15,7 +15,6 @@ namespace Neos\Fusion\Core\ObjectTreeParser\Ast;
  */
 
 use Neos\Flow\Annotations as Flow;
-
 use Neos\Fusion\Core\ObjectTreeParser\AstNodeVisitorInterface;
 
 /** @internal */

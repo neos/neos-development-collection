@@ -55,7 +55,7 @@ class AfxTemplateGenerator extends GeneratorService implements SitePackageGenera
      * @throws \Neos\FluidAdaptor\Core\Exception
      * @throws \Neos\Utility\Exception\FilesException
      */
-    public function generateSitePackage(string $packageKey) : array
+    public function generateSitePackage(string $packageKey): array
     {
         $package = $this->packageManager->createPackage($packageKey, [
             'type' => 'neos-site',
@@ -78,7 +78,7 @@ class AfxTemplateGenerator extends GeneratorService implements SitePackageGenera
     /**
      * Render the whole directory of the fusion part
      */
-    protected function generateSitesFusionDirectory(FlowPackageInterface $package) : void
+    protected function generateSitesFusionDirectory(FlowPackageInterface $package): void
     {
         $contextVariables = [
             'packageKey' => $package->getPackageKey(),
@@ -95,7 +95,7 @@ class AfxTemplateGenerator extends GeneratorService implements SitePackageGenera
     /**
      * Generate a example NodeTypes.yaml
      */
-    protected function generateNodeTypesConfiguration(FlowPackageInterface $package) : void
+    protected function generateNodeTypesConfiguration(FlowPackageInterface $package): void
     {
         $templateFolder = $this->getTemplateFolder() . 'NodeTypes';
         $targetFolder = $package->getPackagePath() . 'NodeTypes';
@@ -116,7 +116,7 @@ class AfxTemplateGenerator extends GeneratorService implements SitePackageGenera
     /**
      * Generate additional folders for site packages.
      */
-    protected function generateAdditionalFolders(FlowPackageInterface $package) : void
+    protected function generateAdditionalFolders(FlowPackageInterface $package): void
     {
         $resourcesPath = $package->getResourcesPath();
         $publicResourcesPath = Files::concatenatePaths([$resourcesPath, 'Public']);

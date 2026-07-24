@@ -87,7 +87,7 @@ trait UserServiceTrait
 
         /** @var HashService $originalHashService */
         $originalHashService = ObjectAccess::getProperty($accountFactory, 'hashService', true);
-        $hashServiceMock = new class extends HashService {
+        $hashServiceMock = new class () extends HashService {
             public function hashPassword($password, $strategyIdentifier = 'default'): string
             {
                 return 'hashed-password';

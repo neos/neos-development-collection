@@ -17,7 +17,6 @@ use Neos\Flow\Annotations as Flow;
  */
 final class VisitedNodeAggregate
 {
-
     /**
      * @var array<VisitedNodeVariant>
      */
@@ -26,8 +25,8 @@ final class VisitedNodeAggregate
     public function __construct(
         public readonly NodeAggregateId $nodeAggregateId,
         public readonly NodeTypeName $nodeTypeName,
-
-    ) {}
+    ) {
+    }
 
     public function addVariant(OriginDimensionSpacePoint $originDimensionSpacePoint, NodeAggregateId $parentNodeAggregateId, PropertyNames $propertyNames): void
     {

@@ -17,7 +17,8 @@ final readonly class SerializedImageVariant implements \JsonSerializable
         public ?string $presetIdentifier,
         public ?string $presetVariantName,
         public SerializedImageAdjustments $imageAdjustments,
-    ) {}
+    ) {
+    }
 
     public static function fromImageVariant(ImageVariant $imageVariant): self
     {

@@ -17,7 +17,8 @@ final readonly class SerializedImageAdjustment implements \JsonSerializable
     private function __construct(
         public ImageAdjustmentType $type,
         public array $properties,
-    ) {}
+    ) {
+    }
 
     public static function fromImageAdjustment(ImageAdjustmentInterface $adjustment): self
     {

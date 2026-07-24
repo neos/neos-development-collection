@@ -40,7 +40,7 @@ class DomainTest extends UnitTestCase
         /** @var Site $mockSite */
         $mockSite = $this->getMockBuilder(Site::class)->disableOriginalConstructor()->getMock();
 
-        $domain = new Domain;
+        $domain = new Domain();
         $domain->setSite($mockSite);
         self::assertSame($mockSite, $domain->getSite());
     }

@@ -19,7 +19,8 @@ final class AssetExtractor
 
     public function __construct(
         private readonly \Closure $findAssetByIdentifier,
-    ) {}
+    ) {
+    }
 
     /**
      * @param iterable<int, array<string, mixed>> $nodeDataRows

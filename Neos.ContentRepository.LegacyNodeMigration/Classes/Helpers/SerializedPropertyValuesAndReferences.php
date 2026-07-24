@@ -16,5 +16,6 @@ final readonly class SerializedPropertyValuesAndReferences
     public function __construct(
         public SerializedPropertyValues $serializedPropertyValues,
         public SerializedNodeReferences $references,
-    ) {}
+    ) {
+    }
 }

@@ -15,7 +15,6 @@ namespace Neos\Fusion\Core\ObjectTreeParser;
  */
 
 use Neos\Fusion;
-
 use Neos\Fusion\Core\FusionSourceCode;
 use Neos\Fusion\Core\ObjectTreeParser\Ast\AbstractPathSegment;
 use Neos\Fusion\Core\ObjectTreeParser\Ast\AbstractPathValue;

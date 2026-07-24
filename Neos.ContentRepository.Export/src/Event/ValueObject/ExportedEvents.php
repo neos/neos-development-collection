@@ -9,7 +9,6 @@ namespace Neos\ContentRepository\Export\Event\ValueObject;
  */
 final class ExportedEvents implements \IteratorAggregate
 {
-
     private function __construct(
         private readonly \Closure $generator,
     ) {

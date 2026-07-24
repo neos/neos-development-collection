@@ -15,7 +15,8 @@ final class AssetRepositoryAssetLoader implements AssetLoaderInterface
 {
     public function __construct(
         private readonly AssetRepository $assetRepository,
-    ) {}
+    ) {
+    }
 
     public function findAssetById(string $assetId): SerializedAsset|SerializedImageVariant
     {

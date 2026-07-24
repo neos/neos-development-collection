@@ -515,15 +515,14 @@ trait GenericCommandExecutionAndEventPublication
         );
 
         // HACK can be replaced, once https://github.com/neos/neos-development-collection/pull/5341 is merged
-        $eventStoreAndSubscriptionEngine = new class implements ContentRepositoryServiceFactoryInterface {
+        $eventStoreAndSubscriptionEngine = new class () implements ContentRepositoryServiceFactoryInterface {
             public EventStoreInterface|null $eventStore;
             public SubscriptionEngine|null $subscriptionEngine;
             public function build(ContentRepositoryServiceFactoryDependencies $serviceFactoryDependencies): ContentRepositoryServiceInterface
             {
                 $this->eventStore = $serviceFactoryDependencies->eventStore;
                 $this->subscriptionEngine = $serviceFactoryDependencies->subscriptionEngine;
-                return new class implements ContentRepositoryServiceInterface
-                {
+                return new class () implements ContentRepositoryServiceInterface {
                 };
             }
         };

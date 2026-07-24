@@ -14,7 +14,6 @@ use Neos\EventStore\Model\Event\SequenceNumber;
 
 final class SubscriptionBootingStatusTest extends AbstractSubscriptionEngineTestCase
 {
-
     /** @test */
     public function existingEventStoreEventsAreCaughtUpOnBoot()
     {

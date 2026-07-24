@@ -80,14 +80,14 @@ class ThumbnailConfiguration
      */
     public function __construct($width = null, $maximumWidth = null, $height = null, $maximumHeight = null, $allowCropping = false, $allowUpScaling = false, $async = false, $quality = null, $format = null)
     {
-        $this->width = $width ? (integer)$width : null;
-        $this->maximumWidth = $maximumWidth ? (integer)$maximumWidth : null;
-        $this->height = $height ? (integer)$height : null;
-        $this->maximumHeight = $maximumHeight ? (integer)$maximumHeight : null;
-        $this->allowCropping = $allowCropping ? (boolean)$allowCropping : false;
-        $this->allowUpScaling = $allowUpScaling ? (boolean)$allowUpScaling : false;
-        $this->async = $async ? (boolean)$async : false;
-        $this->quality = $quality ? (integer)$quality : null;
+        $this->width = $width ? (int)$width : null;
+        $this->maximumWidth = $maximumWidth ? (int)$maximumWidth : null;
+        $this->height = $height ? (int)$height : null;
+        $this->maximumHeight = $maximumHeight ? (int)$maximumHeight : null;
+        $this->allowCropping = $allowCropping ? (bool)$allowCropping : false;
+        $this->allowUpScaling = $allowUpScaling ? (bool)$allowUpScaling : false;
+        $this->async = $async ? (bool)$async : false;
+        $this->quality = $quality ? (int)$quality : null;
         $this->format = $format ? (string)$format : null;
     }
 

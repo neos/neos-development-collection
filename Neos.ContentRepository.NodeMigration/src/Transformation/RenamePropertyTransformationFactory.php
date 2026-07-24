@@ -32,8 +32,7 @@ class RenamePropertyTransformationFactory implements TransformationFactoryInterf
     public function build(
         array $settings,
         ContentRepository $contentRepository,
-    ): GlobalTransformationInterface|NodeAggregateBasedTransformationInterface|NodeBasedTransformationInterface
-    {
+    ): GlobalTransformationInterface|NodeAggregateBasedTransformationInterface|NodeBasedTransformationInterface {
         return new class (
             $settings['from'],
             $settings['to'],
@@ -47,16 +46,14 @@ class RenamePropertyTransformationFactory implements TransformationFactoryInterf
                  * New name of property
                  */
                 private readonly string $to,
-            )
-            {
+            ) {
             }
 
             public function execute(
                 Node $node,
                 DimensionSpacePointSet $coveredDimensionSpacePoints,
                 WorkspaceName $workspaceNameForWriting
-            ): TransformationStep
-            {
+            ): TransformationStep {
                 $propertyValue = $node->properties[$this->from];
                 if ($propertyValue === null) {
                     return TransformationStep::createEmpty();

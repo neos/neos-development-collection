@@ -165,13 +165,15 @@ class NodeTypeTest extends TestCase
                 ]
             ]
         ]);
-        $nodeType = new NodeType(NodeTypeName::fromString('ContentRepository:Invalid'),
+        $nodeType = new NodeType(
+            NodeTypeName::fromString('ContentRepository:Invalid'),
             ['ContentRepository:Super' => $superNodeType],
             [
                 'references' => [
                     'foo' => []
                 ]
-            ]);
+            ]
+        );
         $this->expectException(NodeConfigurationException::class);
         $this->expectExceptionCode(1708022344);
         // initialize the node type
@@ -187,7 +189,8 @@ class NodeTypeTest extends TestCase
 
         $timeableNodeType = new NodeType(
             NodeTypeName::fromString('Neos.ContentRepository.Testing:TimeableContent'),
-            [], []
+            [],
+            []
         );
         $documentType = new NodeType(
             NodeTypeName::fromString('Neos.ContentRepository.Testing:Document'),
@@ -200,7 +203,8 @@ class NodeTypeTest extends TestCase
 
         $hideableNodeType = new NodeType(
             NodeTypeName::fromString('Neos.ContentRepository.Testing:HideableContent'),
-            [], []
+            [],
+            []
         );
         $pageType = new NodeType(
             NodeTypeName::fromString('Neos.ContentRepository.Testing:Page'),

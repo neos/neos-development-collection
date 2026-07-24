@@ -11,7 +11,7 @@ use Neos\Neos\Domain\Service\WorkspaceService;
  *
  * @api
  */
-enum WorkspaceClassification : string
+enum WorkspaceClassification: string
 {
     /**
      * The personal workspace of a Neos user

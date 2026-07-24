@@ -371,7 +371,7 @@ trait DoctrineDbalProjectionIntegrityViolatorTrait
         $this->iExpectIntegrityViolationDetectionResultErrorNumberNToHaveCodeX($errorNumber, $expectedErrorCode);
 
         /** @var \Neos\Error\Messages\Error $error */
-        $error = $this->lastIntegrityViolationDetectionResult->getErrors()[$errorNumber-1];
+        $error = $this->lastIntegrityViolationDetectionResult->getErrors()[$errorNumber - 1];
 
         Assert::assertSame(
             $message->getRaw(),

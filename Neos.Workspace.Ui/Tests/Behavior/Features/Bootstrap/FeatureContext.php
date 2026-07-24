@@ -51,8 +51,7 @@ class FeatureContext implements BehatContext
 
     protected function getContentRepositoryService(
         ContentRepositoryServiceFactoryInterface $factory
-    ): ContentRepositoryServiceInterface
-    {
+    ): ContentRepositoryServiceInterface {
         return $this->contentRepositoryRegistry->buildService(
             $this->currentContentRepository->id,
             $factory
@@ -61,8 +60,7 @@ class FeatureContext implements BehatContext
 
     protected function createContentRepository(
         ContentRepositoryId $contentRepositoryId
-    ): ContentRepository
-    {
+    ): ContentRepository {
         $this->contentRepositoryRegistry->resetFactoryInstance($contentRepositoryId);
         $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryId);
         FakeContentDimensionSourceFactory::reset();

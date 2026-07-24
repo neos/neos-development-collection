@@ -7,7 +7,6 @@ use PHPUnit\Framework\TestCase;
 
 class SubtreeTagTest extends TestCase
 {
-
     /**
      * @test
      */

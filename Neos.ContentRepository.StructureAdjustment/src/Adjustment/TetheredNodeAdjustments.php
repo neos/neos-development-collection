@@ -101,7 +101,7 @@ class TetheredNodeAdjustments
                                 return new EventsToPublish(
                                     $streamName->getEventStreamName(),
                                     $events,
-                                        ExpectedVersion::ANY()
+                                    ExpectedVersion::ANY()
                                 );
                             }
                         );

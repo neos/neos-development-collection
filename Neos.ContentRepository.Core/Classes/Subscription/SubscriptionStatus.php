@@ -7,7 +7,7 @@ namespace Neos\ContentRepository\Core\Subscription;
 /**
  * @api part of the subscription status
  */
-enum SubscriptionStatus : string
+enum SubscriptionStatus: string
 {
     /**
      * New subscribers e.g a newly installed package: will not be run on catchup active as it doesn't have its schema setup

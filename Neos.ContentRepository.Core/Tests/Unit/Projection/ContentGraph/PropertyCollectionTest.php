@@ -21,7 +21,6 @@ use Symfony\Component\Serializer\Serializer;
 
 class PropertyCollectionTest extends TestCase
 {
-
     private Serializer|MockObject $mockSerializer;
     private PropertyConverter|MockObject $mockPropertyConverter;
 

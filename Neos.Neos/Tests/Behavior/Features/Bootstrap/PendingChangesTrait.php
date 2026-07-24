@@ -193,8 +193,8 @@ trait PendingChangesTrait
     public function iExpectThePublicationOfTheDocumentFromWorkspaceToFail(string $workspace, ?string $documentNodeAggregateId = null, ?string $siteNodeAggregateId = null): void
     {
         $workspacePublishingService = $this->getObject(WorkspacePublishingService::class);
-        $this->tryCatchingExceptions(fn () =>
-            match(true) {
+        $this->tryCatchingExceptions(
+            fn () => match(true) {
                 $siteNodeAggregateId !== null => $workspacePublishingService->publishChangesInSite($this->currentContentRepository->id, WorkspaceName::fromString($workspace), NodeAggregateId::fromString($siteNodeAggregateId)),
                 $documentNodeAggregateId !== null => $workspacePublishingService->publishChangesInDocument($this->currentContentRepository->id, WorkspaceName::fromString($workspace), NodeAggregateId::fromString($documentNodeAggregateId))
             }

@@ -6,10 +6,10 @@ namespace Neos\ContentRepository\Export\Event\ValueObject;
 
 final readonly class EventStoreIdentifier
 {
-
     private function __construct(
         public string $value,
-    ) {}
+    ) {
+    }
 
     public static function fromString(string $value): self
     {

@@ -191,7 +191,7 @@ trait CrImportExportTrait
         foreach ($expectedSites as $key => $expectedSiteData) {
             $actualSiteData = $actualSiteRows[$key] ?? [];
             $expectedSiteData = array_map(
-                fn(string $value) => json_decode($value, true, 512, JSON_THROW_ON_ERROR),
+                fn (string $value) => json_decode($value, true, 512, JSON_THROW_ON_ERROR),
                 $expectedSiteData
             );
             Assert::assertEquals($expectedSiteData, $actualSiteData, 'Actual site: ' . json_encode($actualSiteData, JSON_THROW_ON_ERROR));

@@ -195,7 +195,7 @@ class Thumbnail implements ImageInterface
      */
     public function setWidth($width)
     {
-        $this->width = (integer)$width;
+        $this->width = (int)$width;
     }
 
     /**
@@ -204,7 +204,7 @@ class Thumbnail implements ImageInterface
      */
     public function setHeight($height)
     {
-        $this->height = (integer)$height;
+        $this->height = (int)$height;
     }
 
     /**
@@ -213,7 +213,7 @@ class Thumbnail implements ImageInterface
      */
     public function setQuality($quality)
     {
-        $this->quality = (integer)$quality;
+        $this->quality = (int)$quality;
     }
 
     /**

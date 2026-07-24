@@ -48,7 +48,7 @@ class AugmenterImplementation extends AbstractArrayFusionObject
         if ($allowEmpty === null) {
             return true;
         } else {
-            return (boolean)$allowEmpty;
+            return (bool)$allowEmpty;
         }
     }
 

@@ -122,15 +122,14 @@ abstract class AbstractParallelTestCase extends TestCase // we don't use Flows f
 
     final protected function getEventStore(ContentRepositoryId $contentRepositoryId): EventStoreInterface
     {
-        $eventStoreAccessor = new class implements ContentRepositoryServiceFactoryInterface {
+        $eventStoreAccessor = new class () implements ContentRepositoryServiceFactoryInterface {
             public EventStoreInterface|null $eventStore;
             public SubscriptionEngine|null $subscriptionEngine;
             public function build(ContentRepositoryServiceFactoryDependencies $serviceFactoryDependencies): ContentRepositoryServiceInterface
             {
                 $this->eventStore = $serviceFactoryDependencies->eventStore;
                 $this->subscriptionEngine = $serviceFactoryDependencies->subscriptionEngine;
-                return new class implements ContentRepositoryServiceInterface
-                {
+                return new class () implements ContentRepositoryServiceInterface {
                 };
             }
         };

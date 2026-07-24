@@ -64,8 +64,8 @@ class ThumbnailViewHelper extends AbstractTagBasedViewHelper
     {
         /** @var AssetProxyInterface $assetProxy */
         $assetProxy = $this->arguments['assetProxy'];
-        $width= $this->arguments['width'];
-        $height= $this->arguments['height'];
+        $width = $this->arguments['width'];
+        $height = $this->arguments['height'];
 
         if ($width === null || $height === null) {
             $width = 250;

@@ -57,8 +57,7 @@ class TransformationsFactory
      */
     protected function buildTransformationObject(
         array $transformationConfiguration
-    ): GlobalTransformationInterface|NodeAggregateBasedTransformationInterface|NodeBasedTransformationInterface
-    {
+    ): GlobalTransformationInterface|NodeAggregateBasedTransformationInterface|NodeBasedTransformationInterface {
         $transformationFactory = $this->resolveTransformationFactory($transformationConfiguration['type']);
         if ($transformationFactory instanceof PropertyConverterAwareTransformationFactoryInterface) {
             return $transformationFactory->build($transformationConfiguration['settings'] ?? [], $this->contentRepository, $this->propertyConverter);

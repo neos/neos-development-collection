@@ -221,7 +221,7 @@ class RuntimeTest extends UnitTestCase
         $this->expectExceptionMessage('Overriding Fusion global variable "request" via @context is not allowed.');
         $runtime = new Runtime(FusionConfiguration::fromArray([]), FusionGlobals::fromArray(['request' => 'fixed']));
 
-        $runtime->renderEntryPathWithContext('foo', ['request' =>'anything']);
+        $runtime->renderEntryPathWithContext('foo', ['request' => 'anything']);
     }
 
     /**
@@ -248,7 +248,7 @@ class RuntimeTest extends UnitTestCase
         ];
 
         yield 'string cast object (\Stringable)' => [
-            'rawValue' => new class implements \Stringable {
+            'rawValue' => new class () implements \Stringable {
                 public function __toString()
                 {
                     return 'my string karsten';
@@ -345,7 +345,7 @@ class RuntimeTest extends UnitTestCase
         ];
 
         yield '\JsonSerializable' => [
-            'rawValue' => new class implements \JsonSerializable {
+            'rawValue' => new class () implements \JsonSerializable {
                 public function jsonSerialize(): mixed
                 {
                     return 123;
@@ -354,7 +354,7 @@ class RuntimeTest extends UnitTestCase
         ];
 
         yield 'any class' => [
-            'rawValue' => new class {
+            'rawValue' => new class () {
             }
         ];
 

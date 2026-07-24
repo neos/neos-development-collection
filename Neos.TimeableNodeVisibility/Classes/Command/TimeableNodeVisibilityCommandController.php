@@ -29,7 +29,8 @@ class TimeableNodeVisibilityCommandController extends CommandController
         if (!$quiet) {
             $this->output->outputLine(sprintf('Enabled %d nodes with exceeded timed dates.', $handlingResult->countByType(ChangedVisibilityType::NODE_WAS_ENABLED)));
             foreach ($handlingResult->getByType(ChangedVisibilityType::NODE_WAS_ENABLED) as $result) {
-                $this->output->outputLine(sprintf(
+                $this->output->outputLine(
+                    sprintf(
                         '- NodeAggregateId: %s, DimensionSpacePoint: %s',
                         $result->node->aggregateId->value,
                         join(',', $result->node->originDimensionSpacePoint->coordinates)
@@ -39,7 +40,8 @@ class TimeableNodeVisibilityCommandController extends CommandController
 
             $this->output->outputLine(sprintf('Disabled %d nodes with exceeded timed dates.', $handlingResult->countByType(ChangedVisibilityType::NODE_WAS_DISABLED)));
             foreach ($handlingResult->getByType(ChangedVisibilityType::NODE_WAS_DISABLED) as $result) {
-                $this->output->outputLine(sprintf(
+                $this->output->outputLine(
+                    sprintf(
                         '- NodeAggregateId: %s, DimensionSpacePoint: %s',
                         $result->node->aggregateId->value,
                         join(',', $result->node->originDimensionSpacePoint->coordinates)

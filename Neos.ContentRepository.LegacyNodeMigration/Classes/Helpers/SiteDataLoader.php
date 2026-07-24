@@ -30,5 +30,3 @@ final class SiteDataLoader implements \IteratorAggregate
         return $query->iterateAssociative();
     }
 }
-
-

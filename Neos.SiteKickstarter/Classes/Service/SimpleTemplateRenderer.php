@@ -27,7 +27,7 @@ class SimpleTemplateRenderer
      * @param array<string, string> $contextVariables
      * @return string
      */
-    public function render(string $templatePathAndFilename, array $contextVariables) : string
+    public function render(string $templatePathAndFilename, array $contextVariables): string
     {
         $content = file_get_contents($templatePathAndFilename);
         if ($content === false) {

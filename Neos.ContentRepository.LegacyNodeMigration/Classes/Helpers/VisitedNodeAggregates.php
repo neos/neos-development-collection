@@ -20,7 +20,6 @@ use Neos\Flow\Annotations as Flow;
  */
 final class VisitedNodeAggregates
 {
-
     /**
      * @var array<string, VisitedNodeAggregate>
      */

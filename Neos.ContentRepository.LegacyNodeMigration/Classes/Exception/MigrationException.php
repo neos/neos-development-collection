@@ -6,5 +6,4 @@ namespace Neos\ContentRepository\LegacyNodeMigration\Exception;
 
 class MigrationException extends \RuntimeException
 {
-
 }

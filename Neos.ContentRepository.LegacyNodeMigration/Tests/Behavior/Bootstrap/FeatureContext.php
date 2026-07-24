@@ -104,15 +104,14 @@ class FeatureContext implements Context
         $propertyMapper = $this->getObject(PropertyMapper::class);
 
         // HACK to access the property converter
-        $crInternalsAccess = new class implements ContentRepositoryServiceFactoryInterface {
+        $crInternalsAccess = new class () implements ContentRepositoryServiceFactoryInterface {
             public PropertyConverter|null $propertyConverter;
             public EventNormalizer|null $eventNormalizer;
             public function build(ContentRepositoryServiceFactoryDependencies $serviceFactoryDependencies): ContentRepositoryServiceInterface
             {
                 $this->propertyConverter = $serviceFactoryDependencies->propertyConverter;
                 $this->eventNormalizer = $serviceFactoryDependencies->eventNormalizer;
-                return new class implements ContentRepositoryServiceInterface
-                {
+                return new class () implements ContentRepositoryServiceInterface {
                 };
             }
         };
@@ -175,8 +174,7 @@ class FeatureContext implements Context
     public function iRunTheAssetMigration(): void
     {
         $nodeTypeManager = $this->currentContentRepository->getNodeTypeManager();
-        $mockResourceLoader = new class ($this->mockResources) implements ResourceLoaderInterface
-        {
+        $mockResourceLoader = new class ($this->mockResources) implements ResourceLoaderInterface {
             /**
              * @param array<PersistentResource> $mockResources
              */

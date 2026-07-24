@@ -23,7 +23,8 @@ final readonly class SerializedAsset implements \JsonSerializable
         public string $caption,
         public string $assetSourceIdentifier,
         public SerializedResource $resource,
-    ) {}
+    ) {
+    }
 
     public static function fromAsset(Asset $asset): self
     {

@@ -23,7 +23,6 @@ use Neos\Flow\Annotations as Flow;
 #[Flow\Proxy(false)]
 final class FlushSubgraphCachePoolCatchUpHook implements CatchUpHookInterface
 {
-
     public function __construct(private readonly SubgraphCachePool $subgraphCachePool)
     {
     }

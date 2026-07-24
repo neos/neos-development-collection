@@ -13,7 +13,8 @@ final readonly class SerializedResource implements \JsonSerializable
         public string $collectionName,
         public string $mediaType,
         public string $sha1,
-    ) {}
+    ) {
+    }
 
     public static function fromResource(PersistentResource $resource): self
     {

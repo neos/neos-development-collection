@@ -56,7 +56,7 @@ class ResponseHeadImplementation extends AbstractFusionObject
         if (ResponseInformationHelper::getStatusMessageByCode($statusCode) === 'Unknown Status') {
             throw new \InvalidArgumentException('Unknown HTTP status code', 1412085703);
         }
-        return (integer)$statusCode;
+        return (int)$statusCode;
     }
 
     /**

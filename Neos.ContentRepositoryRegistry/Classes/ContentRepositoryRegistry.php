@@ -413,4 +413,3 @@ final class ContentRepositoryRegistry
         return $tracerFactory->build($contentRepositoryId, $contentRepositorySettings['performanceTracer']['options'] ?? []);
     }
 }
-

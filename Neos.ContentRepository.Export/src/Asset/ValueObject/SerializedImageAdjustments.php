@@ -16,7 +16,8 @@ final readonly class SerializedImageAdjustments implements \IteratorAggregate, \
      */
     private function __construct(
         private array $serializedAdjustments,
-    ) {}
+    ) {
+    }
 
     /**
      * @param \Traversable<ImageAdjustmentInterface> $adjustments

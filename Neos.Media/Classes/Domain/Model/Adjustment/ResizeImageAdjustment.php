@@ -267,7 +267,7 @@ class ResizeImageAdjustment extends AbstractImageAdjustment
      */
     public function getAllowUpScaling(): bool
     {
-        return (boolean)$this->allowUpScaling;
+        return (bool)$this->allowUpScaling;
     }
 
     /**

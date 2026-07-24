@@ -276,7 +276,7 @@ class AssetService
         $resourceMediaType = $resource->getMediaType();
         $asset->setResource($resource);
 
-        if (isset($options['keepOriginalFilename']) && (boolean)$options['keepOriginalFilename'] === true) {
+        if (isset($options['keepOriginalFilename']) && (bool)$options['keepOriginalFilename'] === true) {
             $originalFilename = $originalAssetResource->getFilename();
             if (MediaTypes::getMediaTypeFromFilename($originalFilename) !== $resourceMediaType) {
                 $originalFileExtension = $originalAssetResource->getFileExtension();
@@ -289,7 +289,7 @@ class AssetService
         }
 
         $uriMapping = [];
-        $redirectHandlerEnabled = isset($options['generateRedirects']) && (boolean)$options['generateRedirects'] === true && $this->packageManager->isPackageAvailable('Neos.RedirectHandler');
+        $redirectHandlerEnabled = isset($options['generateRedirects']) && (bool)$options['generateRedirects'] === true && $this->packageManager->isPackageAvailable('Neos.RedirectHandler');
         if ($redirectHandlerEnabled) {
             $originalAssetResourceUri = new Uri($this->resourceManager->getPublicPersistentResourceUri($originalAssetResource));
             $newAssetResourceUri = new Uri($this->resourceManager->getPublicPersistentResourceUri($asset->getResource()));

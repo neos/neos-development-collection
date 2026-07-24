@@ -21,7 +21,6 @@ use Neos\Neos\Service\DataSource\AbstractDataSource;
 
 class FormDefinitionDataSource extends AbstractDataSource
 {
-
     /**
      * @var string
      */

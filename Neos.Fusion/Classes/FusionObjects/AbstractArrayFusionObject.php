@@ -61,7 +61,7 @@ abstract class AbstractArrayFusionObject extends AbstractFusionObject implements
     {
         $sortProperties = $this->fusionValue('__meta/sortProperties');
         if ($sortProperties !== null) {
-            return (boolean)$sortProperties;
+            return (bool)$sortProperties;
         }
 
         return true;

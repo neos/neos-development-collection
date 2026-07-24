@@ -106,7 +106,7 @@ final class NeosAssetProxyRepository implements AssetProxyRepositoryInterface, S
      * @return void
      * @api
      */
-    public function orderBy(array $orderings):void
+    public function orderBy(array $orderings): void
     {
         $this->assetRepository->setDefaultOrderings($orderings);
     }

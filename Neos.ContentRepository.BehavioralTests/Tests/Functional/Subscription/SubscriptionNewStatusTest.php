@@ -42,7 +42,7 @@ final class SubscriptionNewStatusTest extends AbstractSubscriptionEngineTestCase
         $this->expectOkayStatus('Vendor.Package:FakeProjection', SubscriptionStatus::ACTIVE, SequenceNumber::none());
 
         $newFakeProjection = $this->getMockBuilder(ProjectionInterface::class)->disableAutoReturnValueGeneration()->getMock();
-        $newFakeProjection->method('getState')->willReturn(new class implements ProjectionStateInterface {});
+        $newFakeProjection->method('getState')->willReturn(new class () implements ProjectionStateInterface {});
         $newFakeProjection->expects(self::exactly(5))->method('status')->willReturnOnConsecutiveCalls(
             ProjectionStatus::setupRequired('Set me up'),
             ProjectionStatus::setupRequired('Set me up'),

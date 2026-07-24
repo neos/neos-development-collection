@@ -84,7 +84,7 @@ class UriBuilderImplementation extends AbstractFusionObject
     public function getArguments()
     {
         $arguments = $this->fusionValue('arguments');
-        return is_array($arguments) ? $arguments: [];
+        return is_array($arguments) ? $arguments : [];
     }
 
     /**
@@ -124,7 +124,7 @@ class UriBuilderImplementation extends AbstractFusionObject
      */
     public function isAbsolute()
     {
-        return (boolean)$this->fusionValue('absolute');
+        return (bool)$this->fusionValue('absolute');
     }
 
     /**

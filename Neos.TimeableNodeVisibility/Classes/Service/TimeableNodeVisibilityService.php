@@ -109,7 +109,6 @@ class TimeableNodeVisibilityService
                         PropertyValueLessThanOrEqual::create(PropertyName::fromString('enableAfterDateTime'), $now->format(\DateTime::RFC3339)),
                         PropertyValueLessThanOrEqual::create(PropertyName::fromString('disableAfterDateTime'), $now->format(\DateTime::RFC3339)),
                     )
-
                 )
             );
 
@@ -156,7 +155,8 @@ class TimeableNodeVisibilityService
     private function logResult(ChangedVisibility $result): void
     {
         $this->logger->info(
-            sprintf('Timed node visibility: %s node [NodeAggregateId: %s, DimensionSpacePoints: %s]',
+            sprintf(
+                'Timed node visibility: %s node [NodeAggregateId: %s, DimensionSpacePoints: %s]',
                 $result->type->value,
                 $result->node->aggregateId->value,
                 implode(',', $result->node->originDimensionSpacePoint->coordinates)

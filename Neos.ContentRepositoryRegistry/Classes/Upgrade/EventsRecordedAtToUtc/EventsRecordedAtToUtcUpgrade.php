@@ -120,7 +120,8 @@ final readonly class EventsRecordedAtToUtcUpgrade
         // We find the first event not of type PublishableToWorkspaceInterface (all events on workspace streams)
         // as these should have the same initiatingTimestamp and recordedAt dates.
         // If the dates are not equal in UTC time the migration need to be run.
-        $sampleNonPublishableEventWithNonUTCTime = $this->context->dbal->fetchAssociative(<<<SQL
+        $sampleNonPublishableEventWithNonUTCTime = $this->context->dbal->fetchAssociative(
+            <<<SQL
             SELECT sequencenumber, recordedat, JSON_UNQUOTE(JSON_EXTRACT(metadata, '$.initiatingTimestamp')) AS initiatingtimestampatom
             FROM {$this->context->eventStoreTableName}
             WHERE stream LIKE 'Workspace:%'

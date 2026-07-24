@@ -118,11 +118,13 @@ class StructureAdjustmentService implements ContentRepositoryServiceInterface
         $correlationId = CorrelationId::fromString(sprintf('StructureAdjustment_%s', bin2hex(random_bytes(9))));
         $isFirstEvent = true;
         $normalizedEvents = Events::fromArray($eventsToPublish->events->map(function (EventInterface|DecoratedEvent $event) use (
-            &$isFirstEvent, $correlationId, $adjustment
+            &$isFirstEvent,
+            $correlationId,
+            $adjustment
         ) {
             $metadata = $event instanceof DecoratedEvent ? $event->eventMetadata?->value ?? [] : [];
             if ($isFirstEvent) {
-                $metadata['debug_reason'] = mb_strimwidth($adjustment->render() , 0, 250, '…');
+                $metadata['debug_reason'] = mb_strimwidth($adjustment->render(), 0, 250, '…');
                 $isFirstEvent = false;
             }
             $decoratedEvent = DecoratedEvent::create(

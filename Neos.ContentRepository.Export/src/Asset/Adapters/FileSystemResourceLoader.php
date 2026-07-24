@@ -9,10 +9,10 @@ use Neos\Utility\Files;
 
 final class FileSystemResourceLoader implements ResourceLoaderInterface
 {
-
     public function __construct(
         private readonly string $path,
-    ) {}
+    ) {
+    }
 
     public function getStreamBySha1(string $sha1)
     {

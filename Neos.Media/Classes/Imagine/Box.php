@@ -49,8 +49,8 @@ class Box implements BoxInterface
             ), 1465382619);
         }
 
-        $this->width = (integer)$width;
-        $this->height = (integer)$height;
+        $this->width = (int)$width;
+        $this->height = (int)$height;
     }
 
     /**
@@ -82,7 +82,7 @@ class Box implements BoxInterface
      */
     public function increase($size)
     {
-        return new static((integer)$size + $this->width, (integer)$size + $this->height);
+        return new static((int)$size + $this->width, (int)$size + $this->height);
     }
 
     /**

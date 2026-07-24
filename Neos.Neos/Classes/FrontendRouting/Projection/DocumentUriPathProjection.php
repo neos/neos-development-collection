@@ -671,17 +671,17 @@ final class DocumentUriPathProjection implements ProjectionInterface
             <<<SQL
             SET
                 nodeAggregateIdPath = TRIM(TRAILING '/' FROM {$this->concatSql(
-                    ':newParentNodeAggregateIdPath',
-                    "'/'",
-                    // Inline integer offsets directly into SQL to avoid PostgreSQL interpreting
-                    // string-typed parameters as regex patterns in SUBSTRING(text, text) overload
-                    "TRIM(LEADING '/' FROM SUBSTRING(nodeAggregateIdPath, {$sourceNodeAggregateIdPathOffset}))"
-                )}),
+                ':newParentNodeAggregateIdPath',
+                "'/'",
+                // Inline integer offsets directly into SQL to avoid PostgreSQL interpreting
+                // string-typed parameters as regex patterns in SUBSTRING(text, text) overload
+                "TRIM(LEADING '/' FROM SUBSTRING(nodeAggregateIdPath, {$sourceNodeAggregateIdPathOffset}))"
+            )}),
                 uriPath = TRIM('/' FROM {$this->concatSql(
-                    ':newParentUriPath',
-                    "'/'",
-                    "TRIM(LEADING '/' FROM SUBSTRING(uriPath, {$sourceUriPathOffset}))"   
-                )}),
+                ':newParentUriPath',
+                "'/'",
+                "TRIM(LEADING '/' FROM SUBSTRING(uriPath, {$sourceUriPathOffset}))"
+            )}),
                 disabled = disabled + {$disabledDelta},
                 removed = removed + {$removedDelta}
             WHERE

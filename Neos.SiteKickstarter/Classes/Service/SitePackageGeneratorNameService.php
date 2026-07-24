@@ -32,7 +32,7 @@ class SitePackageGeneratorNameService
     /**
      * @param class-string<SitePackageGeneratorInterface> $generatorClass fully qualified namespace
      */
-    public function getNameOfSitePackageGenerator(string $generatorClass) : string
+    public function getNameOfSitePackageGenerator(string $generatorClass): string
     {
         $generator = $this->objectManager->get($generatorClass);
 

@@ -33,8 +33,7 @@ class ChangePropertyTypeFromScalarToBackedEnumTransformationFactory implements T
     public function build(
         array $settings,
         ContentRepository $contentRepository,
-    ): GlobalTransformationInterface|NodeAggregateBasedTransformationInterface|NodeBasedTransformationInterface
-    {
+    ): GlobalTransformationInterface|NodeAggregateBasedTransformationInterface|NodeBasedTransformationInterface {
         return new class (
             $settings['property'],
             $contentRepository->getNodeTypeManager(),
@@ -44,10 +43,8 @@ class ChangePropertyTypeFromScalarToBackedEnumTransformationFactory implements T
                  * Name of the property to be transformed
                  */
                 private readonly string $property,
-
                 private readonly NodeTypeManager $nodeTypeManager,
-            )
-            {
+            ) {
             }
 
             public function execute(
