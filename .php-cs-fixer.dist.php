@@ -3,7 +3,6 @@
 $finder = (new PhpCsFixer\Finder())
     ->in([
         './Neos.ContentGraph.DoctrineDbalAdapter/src',
-        './Neos.ContentGraph.PostgreSQLAdapter/src',
         './Neos.ContentRepository.BehavioralTests/Classes',
         './Neos.ContentRepository.BehavioralTests/Tests',
         './Neos.ContentRepository.Core/Classes',
