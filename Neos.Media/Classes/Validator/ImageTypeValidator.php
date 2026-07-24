@@ -12,7 +12,6 @@ namespace Neos\Media\Validator;
  * source code.
  */
 
-use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Validation\Exception\InvalidValidationOptionsException;
 use Neos\Flow\Validation\Validator\AbstractValidator;
 use Neos\Media\Domain\Model\Image;
