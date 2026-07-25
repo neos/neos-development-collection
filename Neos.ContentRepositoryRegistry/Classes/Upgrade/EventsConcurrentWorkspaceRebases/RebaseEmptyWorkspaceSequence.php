@@ -4,12 +4,13 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepositoryRegistry\Upgrade\EventsConcurrentWorkspaceRebases;
 
-enum RebaseWorkspaceSequence: string
+enum RebaseEmptyWorkspaceSequence: string
 {
     // Order defines sequence
     case ContentStreamWasClosed = 'ContentStreamWasClosed';
     case ContentStreamWasForked = 'ContentStreamWasForked';
     case WorkspaceWasRebased = 'WorkspaceWasRebased';
+    case ContentStreamWasRemoved = 'ContentStreamWasRemoved';
 
     case ENDED = '[ENDED]';
 

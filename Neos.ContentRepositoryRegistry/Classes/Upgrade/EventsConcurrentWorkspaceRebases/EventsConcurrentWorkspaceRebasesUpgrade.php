@@ -75,7 +75,7 @@ class EventsConcurrentWorkspaceRebasesUpgrade
             ]));
 
             $rebasedWorkspaceName = null;
-            $rebaseWorkspaceSequence = RebaseWorkspaceSequence::start();
+            $rebaseWorkspaceSequence = RebaseEmptyWorkspaceSequence::start();
             foreach ($rebaseWorkspaceEvents as $rebaseWorkspaceEvent) {
                 if ($rebaseWorkspaceEvent->event->type->value !== $rebaseWorkspaceSequence->value) {
                     $this->log(sprintf('Stream %s: Invalid rebase workspace sequence, expected %s got %s at %s', $rebaseWorkspaceEvent->streamName->value, $rebaseWorkspaceSequence->value, $rebaseWorkspaceEvent->event->type->value, $rebaseWorkspaceEvent->sequenceNumber->value));
@@ -83,13 +83,13 @@ class EventsConcurrentWorkspaceRebasesUpgrade
                     return;
                 }
 
-                if ($rebaseWorkspaceSequence === RebaseWorkspaceSequence::WorkspaceWasRebased) {
+                if ($rebaseWorkspaceSequence === RebaseEmptyWorkspaceSequence::WorkspaceWasRebased) {
                     $rebasedWorkspaceName = WorkspaceName::fromString(
                         json_decode($rebaseWorkspaceEvent->event->data->value, true, flags: JSON_THROW_ON_ERROR)['workspaceName']
                     );
                 }
 
-                if ($rebaseWorkspaceSequence === RebaseWorkspaceSequence::ContentStreamWasForked) {
+                if ($rebaseWorkspaceSequence === RebaseEmptyWorkspaceSequence::ContentStreamWasForked) {
                     if (!$rebaseWorkspaceEvent->streamName->equals(ContentStreamEventStreamName::fromContentStreamId($newContentStreamId)->getEventStreamName())) {
                         $this->log(sprintf('Stream %s: Invalid stream, expected %s as %s', $rebaseWorkspaceEvent->streamName->value, $newContentStreamId->value, $rebaseWorkspaceEvent->sequenceNumber->value));
                         $this->log(sprintf('    Debug: %s', json_encode($rebaseWorkspaceEvents)));
@@ -99,8 +99,8 @@ class EventsConcurrentWorkspaceRebasesUpgrade
                 $rebaseWorkspaceSequence = $rebaseWorkspaceSequence->next();
                 $sequenceNumbersToRemove[] = $rebaseWorkspaceEvent->sequenceNumber->value;
             }
-            if ($rebaseWorkspaceSequence !== RebaseWorkspaceSequence::ENDED || $rebasedWorkspaceName === null) {
-                $this->log(sprintf('Invalid end of rebase workspace sequence %s, got %s', $forkCorrelationId->value, $rebaseWorkspaceSequence->value));
+            if ($rebaseWorkspaceSequence !== RebaseEmptyWorkspaceSequence::ENDED || $rebasedWorkspaceName === null) {
+                $this->log(sprintf('Invalid end of rebase workspace sequence %s expected %s', $forkCorrelationId->value, $rebaseWorkspaceSequence->value));
                 $this->log(sprintf('    Debug: %s', json_encode($rebaseWorkspaceEvents)));
                 return;
             }
