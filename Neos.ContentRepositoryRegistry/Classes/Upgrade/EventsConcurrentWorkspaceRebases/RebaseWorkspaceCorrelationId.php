@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Neos\ContentRepositoryRegistry\Upgrade\EventsConcurrentWorkspaceRebases;
 
 use Neos\EventStore\Model\Event\CorrelationId;
+use Neos\EventStore\Model\EventEnvelope;
 
 final readonly class RebaseWorkspaceCorrelationId
 {
@@ -12,6 +13,9 @@ final readonly class RebaseWorkspaceCorrelationId
     {
     }
 
+    /**
+     * @param array<EventEnvelope> $events
+     */
     public static function fromEvents(array $events): CorrelationId
     {
         if ($events === []) {

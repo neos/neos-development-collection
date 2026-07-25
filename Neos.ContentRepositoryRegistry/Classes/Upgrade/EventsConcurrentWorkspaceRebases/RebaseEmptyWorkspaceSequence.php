@@ -38,7 +38,7 @@ final readonly class RebaseEmptyWorkspaceSequence
         $sequenceType = RebaseEmptyWorkspaceSequenceType::start();
         foreach ($events as $rebaseWorkspaceEvent) {
             if ($sequenceType === null) {
-                throw new \RuntimeException(sprintf('Expected end of rebase workspace sequence %s. Got at %d type %s with %s', $correlationId?->value, $rebaseWorkspaceEvent->sequenceNumber->value, $rebaseWorkspaceEvent->event->type->value, $rebaseWorkspaceEvent->event->correlationId?->value));
+                throw new \RuntimeException(sprintf('Expected end of rebase workspace sequence %s. Got at %d type %s with %s', $correlationId->value, $rebaseWorkspaceEvent->sequenceNumber->value, $rebaseWorkspaceEvent->event->type->value, $rebaseWorkspaceEvent->event->correlationId?->value));
             }
 
             if ($rebaseWorkspaceEvent->event->type->value !== $sequenceType->value) {
@@ -73,8 +73,8 @@ final readonly class RebaseEmptyWorkspaceSequence
 
             if ($sequenceType === RebaseEmptyWorkspaceSequenceType::ContentStreamWasRemoved) {
                 // sanity check, if events were already modified
-                if (!$rebaseWorkspaceEvent->streamName->equals(ContentStreamEventStreamName::fromContentStreamId($previousContentStreamId)->getEventStreamName())) {
-                    throw new \RuntimeException(sprintf('Illegal ContentStreamWasClosed event on stream %s: Expected %s at %s', $rebaseWorkspaceEvent->streamName->value, $previousContentStreamId->value, $rebaseWorkspaceEvent->sequenceNumber->value));
+                if (!$previousContentStreamId || !$rebaseWorkspaceEvent->streamName->equals(ContentStreamEventStreamName::fromContentStreamId($previousContentStreamId)->getEventStreamName())) {
+                    throw new \RuntimeException(sprintf('Illegal ContentStreamWasClosed event on stream %s: Expected %s at %s', $rebaseWorkspaceEvent->streamName->value, $previousContentStreamId?->value, $rebaseWorkspaceEvent->sequenceNumber->value));
                 }
             }
 
@@ -82,8 +82,8 @@ final readonly class RebaseEmptyWorkspaceSequence
 
             $sequenceType = $sequenceType->next();
         }
-        if ($sequenceType !== null || $workspaceName === null || $correlationId === null || $newContentStreamId === null) {
-            throw new \RuntimeException(sprintf('Invalid end of rebase workspace sequence %s expected %s', $correlationId->value, $sequenceType->value));
+        if ($sequenceType !== null || $workspaceName === null || $newContentStreamId === null || $previousContentStreamId === null) {
+            throw new \RuntimeException(sprintf('Invalid end of rebase workspace sequence %s expected %s', $correlationId->value, $sequenceType?->value));
         }
 
         return new self(
