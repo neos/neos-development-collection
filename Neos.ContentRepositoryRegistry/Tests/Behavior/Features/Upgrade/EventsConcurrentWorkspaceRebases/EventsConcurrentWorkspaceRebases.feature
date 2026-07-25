@@ -129,11 +129,26 @@ Feature: As a user of the CR I want to upgrade my events
     When I upgrade the events to concurrent workspace-rebases
     Then I expect the following upgrade output:
       """
-      Migration was not necessary. No forks on already removed content streams.
+      Found 3 events to be removed
+          Debug: 100,101,102
+      Backup: copying events table to cr_default_events_bkp_2026_04_30_09_00_00
+
+      Migration applied to 3 events. Please replay the content graph via `./flow crupgrade:resetupandreplaycontentgraph`
+      Done.
       """
 
-    # todo assert which events are remaining
-    # Then I expect exactly 2 events to be published on stream with prefix "ContentStream:cs-user-first"
+    Then I expect exactly 1 events to be published on stream with prefix "ContentStream:cs-user-first"
+    And event at index 0 is of type "ContentStreamWasForked" with payload:
+      | Key                   | Expected          |
+      | newContentStreamId    | "cs-user-first"   |
+      | sourceContentStreamId | "cs-review-first" |
+    Then I expect exactly 0 events to be published on stream with prefix "ContentStream:cs-user-second"
+    Then I expect exactly 1 events to be published on stream with prefix "Workspace:user"
+    And event at index 0 is of type "WorkspaceWasCreated" with payload:
+      | Key                | Expected        |
+      | workspaceName      | "user"          |
+      | baseWorkspaceName  | "review"        |
+      | newContentStreamId | "cs-user-first" |
 
     # replay works
     When I replay the contentGraph projection
@@ -141,7 +156,7 @@ Feature: As a user of the CR I want to upgrade my events
       | name     | base workspace | status       | content stream     | publishable changes |
       | "live"   | null           | "UP_TO_DATE" | "cs-identifier"    | false               |
       | "review" | "live"         | "UP_TO_DATE" | "cs-review-second" | false               |
-      | "user"   | "review"       | "UP_TO_DATE" | "cs-user-second"   | false               |
+      | "user"   | "review"       | "OUTDATED"   | "cs-user-first"    | false               |
 
   Scenario: Duplicate workspace rebase during publishing only second attempt correct
     And the command CreateRootWorkspace is executed with payload:
