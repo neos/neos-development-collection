@@ -75,7 +75,7 @@ Feature: As a user of the CR I want to upgrade my events
       | "review" | "live"         | "UP_TO_DATE" | "cs-review-second" | false               |
       | "user"   | "review"       | "UP_TO_DATE" | "cs-user-second"   | false               |
 
-  Scenario: Constraint Invalid workspace rebase sequence
+  Scenario: Constraint Invalid workspace rebase sequence because of wrong correlation ids
     And the command CreateRootWorkspace is executed with payload:
       | Key                | Value           |
       | workspaceName      | "live"          |
@@ -131,8 +131,68 @@ Feature: As a user of the CR I want to upgrade my events
     When I upgrade the events to concurrent workspace-rebases
     Then I expect the following upgrade output:
       """
-      Invalid end of rebase workspace sequence RebaseWorkspace_123 expected ContentStreamWasRemoved
+      Error: Invalid end of rebase workspace sequence RebaseWorkspace_123 expected ContentStreamWasRemoved
           Debug: [{"event":{"id":{"value":"19d9edb6-bb47-464e-ace9-64e3d80dbe92"},"type":{"value":"ContentStreamWasClosed"},"data":{"value":"{\"contentStreamId\":\"cs-user-first\"}"},"metadata":{"value":{"initiatingUserId":"user","initiatingTimestamp":"2026-04-30T10:00:00+00:00"}},"causationId":null,"correlationId":{"value":"RebaseWorkspace_123"}},"streamName":{"value":"ContentStream:cs-user-first"},"version":{"value":4},"sequenceNumber":{"value":100},"recordedAt":{"date":"2026-04-30 10:00:00.000000","timezone_type":3,"timezone":"UTC"}},{"event":{"id":{"value":"0e27354f-2bd8-47fe-bfe3-2ab6e7ace856"},"type":{"value":"ContentStreamWasForked"},"data":{"value":"{\"newContentStreamId\":\"cs-user-second\",\"sourceContentStreamId\":\"cs-review-first\",\"versionOfSourceContentStream\":1}"},"metadata":{"value":{"initiatingUserId":"user","initiatingTimestamp":"2026-04-30T10:00:00+00:00"}},"causationId":null,"correlationId":{"value":"RebaseWorkspace_123"}},"streamName":{"value":"ContentStream:cs-user-second"},"version":{"value":0},"sequenceNumber":{"value":101},"recordedAt":{"date":"2026-04-30 10:00:00.000000","timezone_type":3,"timezone":"UTC"}},{"event":{"id":{"value":"01df0edb-6412-4144-92a3-013ef5ec1af4"},"type":{"value":"WorkspaceWasRebased"},"data":{"value":"{\"workspaceName\":\"user\",\"previousContentStreamId\": \"cs-user-first\", \"newContentStreamId\":\"cs-user-second\"}"},"metadata":{"value":{"initiatingUserId":"user","initiatingTimestamp":"2026-04-30T10:00:00+00:00"}},"causationId":null,"correlationId":{"value":"RebaseWorkspace_123"}},"streamName":{"value":"Workspace:user"},"version":{"value":2},"sequenceNumber":{"value":102},"recordedAt":{"date":"2026-04-30 10:00:00.000000","timezone_type":3,"timezone":"UTC"}}]
+      """
+
+  Scenario: Constraint Invalid workspace rebase sequence because new content stream event
+    And the command CreateRootWorkspace is executed with payload:
+      | Key                | Value           |
+      | workspaceName      | "live"          |
+      | newContentStreamId | "cs-identifier" |
+    And the command CreateRootNodeAggregateWithNode is executed with payload:
+      | Key             | Value                         |
+      | workspaceName   | "live"                        |
+      | nodeAggregateId | "lady-eleonode-rootford"      |
+      | nodeTypeName    | "Neos.ContentRepository:Root" |
+
+    And the command CreateWorkspace is executed with payload:
+      | Key                | Value           |
+      | workspaceName      | "review"          |
+      | baseWorkspaceName  | "live"          |
+      | newContentStreamId | "cs-review-first" |
+
+    And the command CreateWorkspace is executed with payload:
+      | Key                | Value           |
+      | workspaceName      | "user"          |
+      | baseWorkspaceName  | "review"          |
+      | newContentStreamId | "cs-user-first" |
+
+    And the command CreateNodeAggregateWithNode is executed with payload:
+      | Key                       | Value                                 |
+      | workspaceName             | "live"                                |
+      | originDimensionSpacePoint | {"language": "de"}                    |
+      | nodeAggregateId           | "nody-mc-nodeface"                    |
+      | nodeTypeName              | "Neos.ContentRepository.Testing:Node" |
+      | parentNodeAggregateId     | "lady-eleonode-rootford"              |
+
+    And the command CreateNodeAggregateWithNode is executed with payload:
+      | Key                       | Value                                 |
+      | workspaceName             | "review"                                |
+      | originDimensionSpacePoint | {"language": "de"}                    |
+      | nodeAggregateId           | "sir-david-nodenborough"              |
+      | nodeTypeName              | "Neos.ContentRepository.Testing:Node" |
+      | parentNodeAggregateId     | "lady-eleonode-rootford"              |
+
+    And the command PublishWorkspace is executed with payload:
+      | Key                | Value              |
+      | workspaceName      | "review"           |
+      | newContentStreamId | "cs-review-second" |
+
+    Given I have the following additional raw events to upgrade:
+      | sequencenumber | stream                       | version | type                                | payload                                                                                                                                                                                                                                | metadata                                                                         | id                                   | correlationid                           | recordedat          |
+      # illegal rebase workspace on already removed content stream (should be cs-review-second)
+      | 100            | ContentStream:cs-user-first  | 4       | ContentStreamWasClosed              | {"contentStreamId":"cs-user-first"}                                                                                                                                                                                                    | {"initiatingUserId": "user", "initiatingTimestamp": "2026-04-30T10:00:00+00:00"} | 19d9edb6-bb47-464e-ace9-64e3d80dbe92 | RebaseWorkspace_123                     | 2026-04-30 10:00:00 |
+      | 101            | ContentStream:cs-user-second | 0       | ContentStreamWasForked              | {"newContentStreamId":"cs-user-second","sourceContentStreamId":"cs-review-first","versionOfSourceContentStream":1}                                                                                                                     | {"initiatingUserId": "user", "initiatingTimestamp": "2026-04-30T10:00:00+00:00"} | 0e27354f-2bd8-47fe-bfe3-2ab6e7ace856 | RebaseWorkspace_123                     | 2026-04-30 10:00:00 |
+      | 102            | Workspace:user               | 2       | WorkspaceWasRebased                 | {"workspaceName":"user","previousContentStreamId": "cs-user-first", "newContentStreamId":"cs-user-second"}                                                                                                                             | {"initiatingUserId": "user", "initiatingTimestamp": "2026-04-30T10:00:00+00:00"} | 01df0edb-6412-4144-92a3-013ef5ec1af4 | RebaseWorkspace_123                     | 2026-04-30 10:00:00 |
+      | 103            | ContentStream:cs-user-first  | 5       | ContentStreamWasRemoved             | {"contentStreamId": "cs-user-first"}                                                                                                                                                                                                   | {"initiatingUserId": "user", "initiatingTimestamp": "2026-04-30T10:00:00+00:00"} | a49edee3-6022-4834-b9d2-59bde62be391 | RebaseWorkspace_123                     | 2026-04-30 10:00:00 |
+      | 104            | ContentStream:cs-user-second | 1       | RootNodeAggregateWithNodeWasCreated | {"workspaceName":"user","contentStreamId":"cs-user-second","nodeAggregateId":"illegal-node","nodeTypeName":"Neos.Neos:Sites","coveredDimensionSpacePoints":[{"language":"en"},{"language":"de"}],"nodeAggregateClassification":"root"} | []                                                                               | 2c8b9d29-c3fd-44e0-b275-15d336dc38ab | CreateNodeAggregateW_e00b8ac2a08c7fbb9b | 2026-04-30 11:00:00 |
+
+    When I upgrade the events to concurrent workspace-rebases
+    Then I expect the following upgrade output:
+      """
+      Error: Expected no events or another RebaseWorkspace sequence. Got at 104 type RootNodeAggregateWithNodeWasCreated with CreateNodeAggregateW_e00b8ac2a08c7fbb9b
+          Debug: [{"event":{"id":{"value":"2c8b9d29-c3fd-44e0-b275-15d336dc38ab"},"type":{"value":"RootNodeAggregateWithNodeWasCreated"},"data":{"value":"{\"workspaceName\":\"user\",\"contentStreamId\":\"cs-user-second\",\"nodeAggregateId\":\"illegal-node\",\"nodeTypeName\":\"Neos.Neos:Sites\",\"coveredDimensionSpacePoints\":[{\"language\":\"en\"},{\"language\":\"de\"}],\"nodeAggregateClassification\":\"root\"}"},"metadata":{"value":[]},"causationId":null,"correlationId":{"value":"CreateNodeAggregateW_e00b8ac2a08c7fbb9b"}},"streamName":{"value":"ContentStream:cs-user-second"},"version":{"value":1},"sequenceNumber":{"value":104},"recordedAt":{"date":"2026-04-30 11:00:00.000000","timezone_type":3,"timezone":"UTC"}}]
       """
 
   Scenario: Workspace rebase during publishing
@@ -280,11 +340,44 @@ Feature: As a user of the CR I want to upgrade my events
     When I upgrade the events to concurrent workspace-rebases
     Then I expect the following upgrade output:
       """
-      Migration was not necessary. No forks on already removed content streams.
+      Found 4 events to be removed
+          Debug: 100,101,102,103
+      Found 1 remaining workspace rebases to be adjusted after the deletion
+          Debug: RebaseWorkspace_456
+      Backup: copying events table to cr_default_events_bkp_2026_04_30_09_00_00
+
+      Migration applied to 7 events. Please replay the content graph via `./flow crupgrade:resetupandreplaycontentgraph`
+      Done.
       """
 
-    # todo assert which events are remaining
-    # Then I expect exactly 2 events to be published on stream with prefix "ContentStream:cs-user-first"
+    Then I expect exactly 0 events to be published on stream with prefix "ContentStream:cs-user-second"
+
+    Then I expect exactly 3 events to be published on stream with prefix "ContentStream:cs-user-first"
+    And event at index 0 is of type "ContentStreamWasForked" with payload:
+      | Key                   | Expected          |
+      | newContentStreamId    | "cs-user-first"   |
+      | sourceContentStreamId | "cs-review-first" |
+    And event at index 1 is of type "ContentStreamWasClosed" with payload:
+      | Key             | Expected        |
+      | contentStreamId | "cs-user-first" |
+    And event at index 2 is of type "ContentStreamWasRemoved" with payload:
+      | Key             | Expected        |
+      | contentStreamId | "cs-user-first" |
+    Then I expect exactly 1 events to be published on stream with prefix "ContentStream:cs-user-third"
+    And event at index 0 is of type "ContentStreamWasForked" with payload:
+      | Key                   | Expected           |
+      | newContentStreamId    | "cs-user-third"    |
+      | sourceContentStreamId | "cs-review-second" |
+    Then I expect exactly 2 events to be published on stream with prefix "Workspace:user"
+    And event at index 0 is of type "WorkspaceWasCreated" with payload:
+      | Key                | Expected        |
+      | workspaceName      | "user"          |
+      | baseWorkspaceName  | "review"        |
+      | newContentStreamId | "cs-user-first" |
+    And event at index 1 is of type "WorkspaceWasRebased" with payload:
+      | Key                | Expected        |
+      | workspaceName      | "user"          |
+      | newContentStreamId | "cs-user-third" |
 
     # replay works
     When I replay the contentGraph projection

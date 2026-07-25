@@ -7,7 +7,6 @@ namespace Neos\ContentRepositoryRegistry\Upgrade\EventsConcurrentWorkspaceRebase
 use Doctrine\DBAL\ArrayParameterType;
 use Neos\ContentRepository\Core\Feature\ContentStreamEventStreamName;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
-use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepositoryRegistry\Upgrade\Shared\CRUpgradeContext;
 use Neos\ContentRepositoryRegistry\Upgrade\Shared\EventEnvelopeFactory;
 use Neos\ContentRepositoryRegistry\Upgrade\Shared\EventStoreBackupTrait;
@@ -32,9 +31,6 @@ class EventsConcurrentWorkspaceRebasesUpgrade
 
     public function execute(bool $dryRun): void
     {
-        //
-        // 1.)
-        //
         $forkedContentStreamsWithAlreadyRemovedSourceContentStream = $this->context->dbal->fetchAllAssociative(<<<SQL
         SELECT forked.sequencenumber AS sourceForkedAtPosition, forked.correlationId AS forkCorrelationId, forked.newContentStreamId, removals.sequencenumber AS removedAtPosition, removals.contentstreamid AS sourceContentStreamId FROM (
           SELECT JSON_UNQUOTE(JSON_EXTRACT(payload, '$.contentStreamId')) AS contentStreamId, sequencenumber FROM {$this->context->eventStoreTableName}
@@ -50,10 +46,9 @@ class EventsConcurrentWorkspaceRebasesUpgrade
             return;
         }
 
-        # todo
-        # assert that there are no new events on that stream except its next rebase
-
         $sequenceNumbersToRemove = [];
+        /** @var list<RebaseSequenceContentStreamPatch> $rebaseSequencesToPatchContentStream */
+        $rebaseSequencesToPatchContentStream = [];
 
         foreach ($forkedContentStreamsWithAlreadyRemovedSourceContentStream as $forkedContentStreamWithAlreadyRemovedSourceContentStream) {
             $forkCorrelationId = CorrelationId::fromString($forkedContentStreamWithAlreadyRemovedSourceContentStream['forkCorrelationId']);
@@ -74,38 +69,23 @@ class EventsConcurrentWorkspaceRebasesUpgrade
                 'correlationId' => $forkCorrelationId->value
             ]));
 
-            $rebasedWorkspaceName = null;
-            $rebaseWorkspaceSequence = RebaseEmptyWorkspaceSequence::start();
-            foreach ($rebaseWorkspaceEvents as $rebaseWorkspaceEvent) {
-                if ($rebaseWorkspaceEvent->event->type->value !== $rebaseWorkspaceSequence->value) {
-                    $this->log(sprintf('Stream %s: Invalid rebase workspace sequence, expected %s got %s at %s', $rebaseWorkspaceEvent->streamName->value, $rebaseWorkspaceSequence->value, $rebaseWorkspaceEvent->event->type->value, $rebaseWorkspaceEvent->sequenceNumber->value));
-                    $this->log(sprintf('    Debug: %s', json_encode($rebaseWorkspaceEvents)));
-                    return;
-                }
 
-                if ($rebaseWorkspaceSequence === RebaseEmptyWorkspaceSequence::WorkspaceWasRebased) {
-                    $rebasedWorkspaceName = WorkspaceName::fromString(
-                        json_decode($rebaseWorkspaceEvent->event->data->value, true, flags: JSON_THROW_ON_ERROR)['workspaceName']
-                    );
-                }
-
-                if ($rebaseWorkspaceSequence === RebaseEmptyWorkspaceSequence::ContentStreamWasForked) {
-                    if (!$rebaseWorkspaceEvent->streamName->equals(ContentStreamEventStreamName::fromContentStreamId($newContentStreamId)->getEventStreamName())) {
-                        $this->log(sprintf('Stream %s: Invalid stream, expected %s as %s', $rebaseWorkspaceEvent->streamName->value, $newContentStreamId->value, $rebaseWorkspaceEvent->sequenceNumber->value));
-                        $this->log(sprintf('    Debug: %s', json_encode($rebaseWorkspaceEvents)));
-                    }
-                }
-
-                $rebaseWorkspaceSequence = $rebaseWorkspaceSequence->next();
-                $sequenceNumbersToRemove[] = $rebaseWorkspaceEvent->sequenceNumber->value;
-            }
-            if ($rebaseWorkspaceSequence !== RebaseEmptyWorkspaceSequence::ENDED || $rebasedWorkspaceName === null) {
-                $this->log(sprintf('Invalid end of rebase workspace sequence %s expected %s', $forkCorrelationId->value, $rebaseWorkspaceSequence->value));
+            try {
+                $rebaseWorkspaceSequence = RebaseEmptyWorkspaceSequence::fromEvents($rebaseWorkspaceEvents);
+            } catch (\Exception $exception) {
+                $this->log(sprintf('Error: %s', $exception->getMessage()));
                 $this->log(sprintf('    Debug: %s', json_encode($rebaseWorkspaceEvents)));
                 return;
             }
 
-            /** @var list<EventEnvelope> $rebaseWorkspaceEvents */
+            if (!$rebaseWorkspaceSequence->newContentStreamId->equals($newContentStreamId)) {
+                $this->log(sprintf('Error: Expected rebase of %s got %s', $newContentStreamId->value, $rebaseWorkspaceSequence->newContentStreamId->value));
+                $this->log(sprintf('    Debug: %s', json_encode($rebaseWorkspaceEvents)));
+            }
+
+            $sequenceNumbersToRemove = [...$sequenceNumbersToRemove, ...$rebaseWorkspaceSequence->getSequenceNumbers()];
+
+            /** @var list<EventEnvelope> $remainingContentStreamEvents */
             $remainingContentStreamEvents = array_map(EventEnvelopeFactory::createFromArray(...), $this->context->dbal->fetchAllAssociative(<<<SQL
             SELECT *
             FROM {$this->context->eventStoreTableName}
@@ -119,8 +99,37 @@ class EventsConcurrentWorkspaceRebasesUpgrade
             ]));
 
             if ($remainingContentStreamEvents !== []) {
-                $this->log(sprintf('TODO', json_encode($rebaseWorkspaceEvents)));
-                return;
+                try {
+                    $nextRebaseCorrelationId = RebaseWorkspaceCorrelationId::fromEvents($remainingContentStreamEvents);
+                } catch (\Exception $exception) {
+                    $this->log(sprintf('Error: %s', $exception->getMessage()));
+                    $this->log(sprintf('    Debug: %s', json_encode($remainingContentStreamEvents)));
+                    return;
+                }
+
+                /** @var list<EventEnvelope> $nextRebaseWorkspaceEvents */
+                $nextRebaseWorkspaceEvents = array_map(EventEnvelopeFactory::createFromArray(...), $this->context->dbal->fetchAllAssociative(<<<SQL
+                SELECT *
+                FROM {$this->context->eventStoreTableName}
+                  WHERE
+                    correlationId = :correlationId
+                ORDER BY sequencenumber
+                SQL, [
+                    'correlationId' => $nextRebaseCorrelationId->value
+                ]));
+
+                try {
+                    $nextRebaseWorkspaceSequence = RebaseEmptyWorkspaceSequence::fromEvents($nextRebaseWorkspaceEvents);
+                } catch (\Exception $exception) {
+                    $this->log(sprintf('Error: %s', $exception->getMessage()));
+                    $this->log(sprintf('    Debug: %s', json_encode($nextRebaseWorkspaceEvents)));
+                    return;
+                }
+
+                $rebaseSequencesToPatchContentStream[] = new RebaseSequenceContentStreamPatch(
+                    rebaseSequence: $nextRebaseWorkspaceSequence,
+                    previousContentStreamIdPatch: $rebaseWorkspaceSequence->previousContentStreamId
+                );
             }
         }
 
@@ -130,7 +139,17 @@ class EventsConcurrentWorkspaceRebasesUpgrade
         }
 
         $this->log(sprintf('Found %d events to be removed', count($sequenceNumbersToRemove)));
-        $this->log(sprintf('    Debug: %s', join(',', $sequenceNumbersToRemove)));
+        $this->log(sprintf('    Debug: %s', join(',', array_column($sequenceNumbersToRemove, 'value'))));
+
+        if ($rebaseSequencesToPatchContentStream !== []) {
+            $this->log(sprintf('Found %d remaining workspace rebases to be adjusted after the deletion', count($rebaseSequencesToPatchContentStream)));
+            $this->log(sprintf('    Debug: %s', join(',', array_map(fn (RebaseSequenceContentStreamPatch $patch) => $patch->rebaseSequence->correlationId->value, $rebaseSequencesToPatchContentStream))));
+        }
+
+        if ($dryRun) {
+            $this->log('Didnt migrate anything because its a dry run.');
+            return;
+        }
 
         // Actual migration
         $this->backupEventTable();
@@ -142,12 +161,55 @@ class EventsConcurrentWorkspaceRebasesUpgrade
             DELETE FROM {$this->context->eventStoreTableName} WHERE sequencenumber IN (:sequenceNumbersToRemove);
             SQL,
             [
-                'sequenceNumbersToRemove' => $sequenceNumbersToRemove,
+                'sequenceNumbersToRemove' => array_column($sequenceNumbersToRemove, 'value'),
             ],
             [
                 'sequenceNumbersToRemove' => ArrayParameterType::INTEGER
             ]
         );
+
+        foreach ($rebaseSequencesToPatchContentStream as $rebaseSequenceContentStreamPatch) {
+            // Update "ContentStreamWasClosed" to previous content stream
+            $affectedRows += $this->context->dbal->executeStatement(
+                <<<SQL
+                UPDATE {$this->context->eventStoreTableName}
+                SET stream = :stream, payload = JSON_SET(payload, '$.contentStreamId', :contentStreamId)
+                WHERE sequencenumber = :sequenceNumber
+                SQL,
+                [
+                    'sequenceNumber' => $rebaseSequenceContentStreamPatch->rebaseSequence->get(RebaseEmptyWorkspaceSequenceType::ContentStreamWasClosed)->sequenceNumber->value,
+                    'contentStreamId' => $rebaseSequenceContentStreamPatch->previousContentStreamIdPatch->value,
+                    'stream' => ContentStreamEventStreamName::fromContentStreamId($rebaseSequenceContentStreamPatch->previousContentStreamIdPatch)->value,
+                ],
+            );
+
+            // Update "WorkspaceWasRebased" to previous content stream
+            $affectedRows += $this->context->dbal->executeStatement(
+                <<<SQL
+                UPDATE {$this->context->eventStoreTableName}
+                SET payload = JSON_SET(payload, '$.contentStreamId', :contentStreamId)
+                WHERE sequencenumber = :sequenceNumber
+                SQL,
+                [
+                    'sequenceNumber' => $rebaseSequenceContentStreamPatch->rebaseSequence->get(RebaseEmptyWorkspaceSequenceType::WorkspaceWasRebased)->sequenceNumber->value,
+                    'contentStreamId' => $rebaseSequenceContentStreamPatch->previousContentStreamIdPatch->value,
+                ],
+            );
+
+            // Update "ContentStreamWasRemoved" to previous content stream
+            $affectedRows += $this->context->dbal->executeStatement(
+                <<<SQL
+                UPDATE {$this->context->eventStoreTableName}
+                SET stream = :stream, payload = JSON_SET(payload, '$.contentStreamId', :contentStreamId)
+                WHERE sequencenumber = :sequenceNumber
+                SQL,
+                [
+                    'sequenceNumber' => $rebaseSequenceContentStreamPatch->rebaseSequence->get(RebaseEmptyWorkspaceSequenceType::ContentStreamWasRemoved)->sequenceNumber->value,
+                    'contentStreamId' => $rebaseSequenceContentStreamPatch->previousContentStreamIdPatch->value,
+                    'stream' => ContentStreamEventStreamName::fromContentStreamId($rebaseSequenceContentStreamPatch->previousContentStreamIdPatch)->value,
+                ],
+            );
+        }
 
         $this->context->dbal->commit();
 
