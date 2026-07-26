@@ -46,7 +46,7 @@ Feature: As a user of the CR I want to upgrade my events
       | recordedAt                   | "2024-09-22T12:00:00+00:00" |
       | metadata.initiatingTimestamp | "2024-09-22T12:00:00+00:00" |
 
-    And I upgrade events recordedAt to utc
+    And I attempt to upgrade events recordedAt to utc which I expect not to be available
     Then I expect the following upgrade output:
       """
       Migration was not necessary. All dates are UTC. Nothing was changed.

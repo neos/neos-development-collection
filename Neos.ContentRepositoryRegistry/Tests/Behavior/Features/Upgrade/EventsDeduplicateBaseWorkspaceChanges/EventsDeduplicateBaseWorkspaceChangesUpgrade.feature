@@ -48,7 +48,7 @@ Feature: As a user of the CR I want to upgrade my events
       | baseWorkspaceName  | "review"         |
       | newContentStreamId | "cs-user-second" |
 
-    When I upgrade the events to deduplicate base-workspace-changes
+    When I attempt to upgrade the events to deduplicate base-workspace-changes which I expect not to be available
     Then I expect the following upgrade output:
       """
       Migration was not necessary. No duplicate content stream removals.
