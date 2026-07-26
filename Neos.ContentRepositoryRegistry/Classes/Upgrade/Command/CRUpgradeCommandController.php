@@ -7,6 +7,7 @@ namespace Neos\ContentRepositoryRegistry\Upgrade\Command;
 use Neos\ContentRepository\Core\Service\ContentRepositoryMaintainerFactory;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
+use Neos\ContentRepositoryRegistry\Upgrade\EventsConcurrentWorkspaceRebases\EventsConcurrentWorkspaceRebasesUpgrade;
 use Neos\ContentRepositoryRegistry\Upgrade\EventsDeduplicateBaseWorkspaceChanges\EventsDeduplicateBaseWorkspaceChangesUpgrade;
 use Neos\ContentRepositoryRegistry\Upgrade\EventsRecordedAtToUtc\EventsRecordedAtToUtcUpgrade;
 use Neos\ContentRepositoryRegistry\Upgrade\ResetupAndReplayContentGraph\ResetupAndReplayContentGraphUpgrade;
@@ -279,6 +280,36 @@ final class CRUpgradeCommandController extends CommandController
         }
 
         $upgrade = new EventsDeduplicateBaseWorkspaceChangesUpgrade(
+            $context,
+            $this->output->outputLine(...)
+        );
+
+        $upgrade->execute(
+            dryRun: $dryRun
+        );
+    }
+
+    /**
+     * @param string $contentRepository Identifier of the Content Repository to migrate
+     */
+    public function eventsConcurrentWorkspaceRebasesCommand(string $contentRepository = 'default', bool $dryRun = false, bool $force = false): void
+    {
+        if ($dryRun && $force) {
+            $this->outputLine('<comment>Abort. Cannot force a dry run;)</comment>');
+            return;
+        }
+
+        $context = $this->contentRepositoryRegistry->buildService(
+            ContentRepositoryId::fromString($contentRepository),
+            $this->upgradeContextFactory
+        );
+
+        if ((!$dryRun && !$force) && !$this->output->askConfirmation(sprintf('> This will rewrite events of content repository "%s" to remove duplicated rebase workspaces and backup the original events. This will take even on big sites less than 5 minutes. Are you sure to proceed? (y/n) ', $context->contentRepositoryId->value), false)) {
+            $this->outputLine('<comment>Abort.</comment>');
+            return;
+        }
+
+        $upgrade = new EventsConcurrentWorkspaceRebasesUpgrade(
             $context,
             $this->output->outputLine(...)
         );
