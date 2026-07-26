@@ -80,10 +80,17 @@ class EventsConcurrentWorkspaceRebasesUpgrade
                 array_map(ContentStreamId::fromString(...), explode(',', $forkedContentStreamWithAlreadyRemovedSourceContentStream['newContentStreamIds'])),
             );
 
-            foreach ($allContentStreamForks as [$forkSequenceNumber, $forkCorrelationId, $newContentStreamId]) {
-                if ($removalSequenceNumber > $forkSequenceNumber) {
-                    continue;
+            $illegalContentStreamForks = array_filter(
+                $allContentStreamForks,
+                function (array $_) use ($removalSequenceNumber) {
+                    [$forkSequenceNumber] = $_;
+                    return $removalSequenceNumber < $forkSequenceNumber;
                 }
+            );
+
+            $this->log(sprintf('Content stream "%s" was forked %d times after removal at %d', $sourceContentStreamId, count($illegalContentStreamForks), $removalSequenceNumber->value));
+            foreach ($illegalContentStreamForks as [$forkSequenceNumber, $forkCorrelationId, $newContentStreamId]) {
+                $this->log(sprintf('    Debug: Fork "%s" of "%s" at %d (%s)', $newContentStreamId->value, $sourceContentStreamId->value, $forkSequenceNumber->value, $forkCorrelationId->value));
 
                 if (!str_starts_with($forkCorrelationId->value, 'RebaseWorkspace_')) {
                     $this->log(sprintf('Error fork content stream %s from removed source was not caused due to a RebaseWorkspace and cannot be migrated', $newContentStreamId->value));

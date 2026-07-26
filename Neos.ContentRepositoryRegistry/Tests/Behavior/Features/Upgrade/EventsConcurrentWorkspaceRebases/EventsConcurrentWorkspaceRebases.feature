@@ -131,6 +131,8 @@ Feature: As a user of the CR I want to upgrade my events
     When I upgrade the events to concurrent workspace-rebases
     Then I expect the following upgrade output:
       """
+      Content stream "cs-review-first" was forked 1 times after removal at 14
+          Debug: Fork "cs-user-second" of "cs-review-first" at 101 (RebaseWorkspace_123)
       Error: Invalid end of rebase workspace sequence RebaseWorkspace_123 expected ContentStreamWasRemoved
           Debug: [{"event":{"id":{"value":"19d9edb6-bb47-464e-ace9-64e3d80dbe92"},"type":{"value":"ContentStreamWasClosed"},"data":{"value":"{\"contentStreamId\":\"cs-user-first\"}"},"metadata":{"value":{"initiatingUserId":"user","initiatingTimestamp":"2026-04-30T10:00:00+00:00"}},"causationId":null,"correlationId":{"value":"RebaseWorkspace_123"}},"streamName":{"value":"ContentStream:cs-user-first"},"version":{"value":4},"sequenceNumber":{"value":100},"recordedAt":{"date":"2026-04-30 10:00:00.000000","timezone_type":3,"timezone":"UTC"}},{"event":{"id":{"value":"0e27354f-2bd8-47fe-bfe3-2ab6e7ace856"},"type":{"value":"ContentStreamWasForked"},"data":{"value":"{\"newContentStreamId\":\"cs-user-second\",\"sourceContentStreamId\":\"cs-review-first\",\"versionOfSourceContentStream\":1}"},"metadata":{"value":{"initiatingUserId":"user","initiatingTimestamp":"2026-04-30T10:00:00+00:00"}},"causationId":null,"correlationId":{"value":"RebaseWorkspace_123"}},"streamName":{"value":"ContentStream:cs-user-second"},"version":{"value":0},"sequenceNumber":{"value":101},"recordedAt":{"date":"2026-04-30 10:00:00.000000","timezone_type":3,"timezone":"UTC"}},{"event":{"id":{"value":"01df0edb-6412-4144-92a3-013ef5ec1af4"},"type":{"value":"WorkspaceWasRebased"},"data":{"value":"{\"workspaceName\":\"user\",\"previousContentStreamId\": \"cs-user-first\", \"newContentStreamId\":\"cs-user-second\"}"},"metadata":{"value":{"initiatingUserId":"user","initiatingTimestamp":"2026-04-30T10:00:00+00:00"}},"causationId":null,"correlationId":{"value":"RebaseWorkspace_123"}},"streamName":{"value":"Workspace:user"},"version":{"value":2},"sequenceNumber":{"value":102},"recordedAt":{"date":"2026-04-30 10:00:00.000000","timezone_type":3,"timezone":"UTC"}}]
       """
@@ -191,6 +193,8 @@ Feature: As a user of the CR I want to upgrade my events
     When I upgrade the events to concurrent workspace-rebases
     Then I expect the following upgrade output:
       """
+      Content stream "cs-review-first" was forked 1 times after removal at 14
+          Debug: Fork "cs-user-second" of "cs-review-first" at 101 (RebaseWorkspace_123)
       Error: Expected no events or another RebaseWorkspace sequence. Got at 104 type RootNodeAggregateWithNodeWasCreated with CreateNodeAggregateW_e00b8ac2a08c7fbb9b
           Debug: [{"event":{"id":{"value":"2c8b9d29-c3fd-44e0-b275-15d336dc38ab"},"type":{"value":"RootNodeAggregateWithNodeWasCreated"},"data":{"value":"{\"workspaceName\":\"user\",\"contentStreamId\":\"cs-user-second\",\"nodeAggregateId\":\"illegal-node\",\"nodeTypeName\":\"Neos.Neos:Sites\",\"coveredDimensionSpacePoints\":[{\"language\":\"en\"},{\"language\":\"de\"}],\"nodeAggregateClassification\":\"root\"}"},"metadata":{"value":[]},"causationId":null,"correlationId":{"value":"CreateNodeAggregateW_e00b8ac2a08c7fbb9b"}},"streamName":{"value":"ContentStream:cs-user-second"},"version":{"value":1},"sequenceNumber":{"value":104},"recordedAt":{"date":"2026-04-30 11:00:00.000000","timezone_type":3,"timezone":"UTC"}}]
       """
@@ -250,6 +254,8 @@ Feature: As a user of the CR I want to upgrade my events
     When I upgrade the events to concurrent workspace-rebases
     Then I expect the following upgrade output:
       """
+      Content stream "cs-review-first" was forked 1 times after removal at 14
+          Debug: Fork "cs-user-second" of "cs-review-first" at 101 (RebaseWorkspace_123)
       Found 4 events to be removed
           Debug: 100,101,102,103
       Backup: copying events table to cr_default_events_bkp_2026_04_30_09_00_00
@@ -340,6 +346,9 @@ Feature: As a user of the CR I want to upgrade my events
     When I upgrade the events to concurrent workspace-rebases
     Then I expect the following upgrade output:
       """
+      Content stream "cs-review-first" was forked 2 times after removal at 14
+          Debug: Fork "cs-user-second" of "cs-review-first" at 101 (RebaseWorkspace_123)
+          Debug: Fork "cs-user-third" of "cs-review-first" at 105 (RebaseWorkspace_456)
       Found 8 events to be removed
           Debug: 100,101,102,103,104,105,106,107
       Backup: copying events table to cr_default_events_bkp_2026_04_30_09_00_00
@@ -431,6 +440,8 @@ Feature: As a user of the CR I want to upgrade my events
     When I upgrade the events to concurrent workspace-rebases
     Then I expect the following upgrade output:
       """
+      Content stream "cs-review-first" was forked 1 times after removal at 14
+          Debug: Fork "cs-user-second" of "cs-review-first" at 101 (RebaseWorkspace_123)
       Found 4 events to be removed
           Debug: 100,101,102,103
       Found 1 remaining workspace rebases to be adjusted after the deletion
@@ -551,6 +562,9 @@ Feature: As a user of the CR I want to upgrade my events
     When I upgrade the events to concurrent workspace-rebases
     Then I expect the following upgrade output:
       """
+      Content stream "cs-review-first" was forked 2 times after removal at 16
+          Debug: Fork "cs-user-second" of "cs-review-first" at 101 (RebaseWorkspace_123)
+          Debug: Fork "cs-user2-second" of "cs-review-first" at 201 (RebaseWorkspace_456)
       Found 8 events to be removed
           Debug: 100,101,102,103,200,201,202,203
       Found 1 remaining workspace rebases to be adjusted after the deletion
@@ -679,6 +693,9 @@ Feature: As a user of the CR I want to upgrade my events
     When I upgrade the events to concurrent workspace-rebases
     Then I expect the following upgrade output:
       """
+      Content stream "cs-review-first" was forked 2 times after removal at 14
+          Debug: Fork "cs-user-second" of "cs-review-first" at 101 (RebaseWorkspace_123)
+          Debug: Fork "cs-user-third" of "cs-review-first" at 201 (RebaseWorkspace_456)
       Found 8 events to be removed
           Debug: 100,101,102,103,200,201,202,203
       Found 1 remaining workspace rebases to be adjusted after the deletion
@@ -796,6 +813,8 @@ Feature: As a user of the CR I want to upgrade my events
     When I upgrade the events to concurrent workspace-rebases
     Then I expect the following upgrade output:
       """
+      Content stream "cs-review-first" was forked 1 times after removal at 14
+          Debug: Fork "cs-user-second" of "cs-review-first" at 102 (RebaseWorkspace_123)
       Found 4 events to be removed
           Debug: 100,102,103,104
       Found 1 remaining workspace rebases to be adjusted after the deletion
