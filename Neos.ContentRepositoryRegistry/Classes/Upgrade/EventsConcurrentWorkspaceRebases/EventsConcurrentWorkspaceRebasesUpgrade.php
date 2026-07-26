@@ -47,7 +47,7 @@ class EventsConcurrentWorkspaceRebasesUpgrade
         }
 
         $sequenceNumbersToRemove = [];
-        /** @var list<RebaseSequenceContentStreamPatch> $rebaseSequencesToPatchContentStream */
+        /** @var array<string,RebaseSequenceContentStreamPatch> $rebaseSequencesToPatchContentStream */
         $rebaseSequencesToPatchContentStream = [];
 
         foreach ($forkedContentStreamsWithAlreadyRemovedSourceContentStream as $forkedContentStreamWithAlreadyRemovedSourceContentStream) {
@@ -68,7 +68,6 @@ class EventsConcurrentWorkspaceRebasesUpgrade
             SQL, [
                 'correlationId' => $forkCorrelationId->value
             ]));
-
 
             try {
                 $rebaseWorkspaceSequence = RebaseEmptyWorkspaceSequence::fromEvents($rebaseWorkspaceEvents);
@@ -98,6 +97,12 @@ class EventsConcurrentWorkspaceRebasesUpgrade
                 'stream' => ContentStreamEventStreamName::fromContentStreamId($newContentStreamId)->getEventStreamName()->value,
             ]));
 
+            $previousContentStreamIdPatch = $rebaseWorkspaceSequence->previousContentStreamId;
+            if (isset($rebaseSequencesToPatchContentStream[$forkCorrelationId->value])) {
+                $previousContentStreamIdPatch = $rebaseSequencesToPatchContentStream[$forkCorrelationId->value]->previousContentStreamIdPatch;
+                unset($rebaseSequencesToPatchContentStream[$forkCorrelationId->value]);
+            }
+
             if ($remainingContentStreamEvents !== []) {
                 try {
                     $nextRebaseCorrelationId = RebaseWorkspaceCorrelationId::fromEvents($remainingContentStreamEvents);
@@ -126,9 +131,9 @@ class EventsConcurrentWorkspaceRebasesUpgrade
                     return;
                 }
 
-                $rebaseSequencesToPatchContentStream[] = new RebaseSequenceContentStreamPatch(
+                $rebaseSequencesToPatchContentStream[$nextRebaseWorkspaceSequence->correlationId->value] = new RebaseSequenceContentStreamPatch(
                     rebaseSequence: $nextRebaseWorkspaceSequence,
-                    previousContentStreamIdPatch: $rebaseWorkspaceSequence->previousContentStreamId
+                    previousContentStreamIdPatch: $previousContentStreamIdPatch
                 );
             }
         }
