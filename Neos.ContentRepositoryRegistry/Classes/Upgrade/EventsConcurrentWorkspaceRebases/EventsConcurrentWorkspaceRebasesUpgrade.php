@@ -89,9 +89,10 @@ class EventsConcurrentWorkspaceRebasesUpgrade
                     'stream' => ContentStreamEventStreamName::fromContentStreamId($newContentStreamId)->getEventStreamName()->value,
                 ]));
 
-                $previousContentStreamIdPatch = $rebaseWorkspaceSequence->previousContentStreamId;
+                /** @var RebaseEmptyWorkspaceSequence|RebaseSequenceContentStreamPatch $previousContentStreamPatch */
+                $previousContentStreamPatch = $rebaseWorkspaceSequence;
                 if (isset($rebaseSequencesToPatchContentStream[$forkCorrelationId->value])) {
-                    $previousContentStreamIdPatch = $rebaseSequencesToPatchContentStream[$forkCorrelationId->value]->previousContentStreamIdPatch;
+                    $previousContentStreamPatch = $rebaseSequencesToPatchContentStream[$forkCorrelationId->value];
                     unset($rebaseSequencesToPatchContentStream[$forkCorrelationId->value]);
                 }
 
@@ -125,7 +126,9 @@ class EventsConcurrentWorkspaceRebasesUpgrade
 
                     $rebaseSequencesToPatchContentStream[$nextRebaseWorkspaceSequence->correlationId->value] = new RebaseSequenceContentStreamPatch(
                         rebaseSequence: $nextRebaseWorkspaceSequence,
-                        previousContentStreamIdPatch: $previousContentStreamIdPatch
+                        initialPreviousContentStreamId: $previousContentStreamPatch instanceof RebaseEmptyWorkspaceSequence ? $previousContentStreamPatch->previousContentStreamId : $previousContentStreamPatch->initialPreviousContentStreamId,
+                        initialContentStreamWasClosedVersion: $previousContentStreamPatch instanceof RebaseEmptyWorkspaceSequence ? $previousContentStreamPatch->get(RebaseEmptyWorkspaceSequenceType::ContentStreamWasClosed)->version : $previousContentStreamPatch->initialContentStreamWasClosedVersion,
+                        initialContentStreamWasRemovedVersion: $previousContentStreamPatch instanceof RebaseEmptyWorkspaceSequence ? $previousContentStreamPatch->get(RebaseEmptyWorkspaceSequenceType::ContentStreamWasRemoved)->version : $previousContentStreamPatch->initialContentStreamWasRemovedVersion,
                     );
                 }
             }
@@ -141,7 +144,7 @@ class EventsConcurrentWorkspaceRebasesUpgrade
 
         if ($rebaseSequencesToPatchContentStream !== []) {
             $this->log(sprintf('Found %d remaining workspace rebases to be adjusted after the deletion', count($rebaseSequencesToPatchContentStream)));
-            $this->log(sprintf('    Debug: %s', join("\n           ", array_map(fn (RebaseSequenceContentStreamPatch $patch) => sprintf('Previous stream "%s" instead "%s" (%s)', $patch->previousContentStreamIdPatch->value, $patch->rebaseSequence->previousContentStreamId->value, $patch->rebaseSequence->correlationId->value, ), $rebaseSequencesToPatchContentStream))));
+            $this->log(sprintf('    Debug: %s', join("\n           ", array_map(fn (RebaseSequenceContentStreamPatch $patch) => sprintf('Previous stream "%s" instead "%s" (%s)', $patch->initialPreviousContentStreamId->value, $patch->rebaseSequence->previousContentStreamId->value, $patch->rebaseSequence->correlationId->value, ), $rebaseSequencesToPatchContentStream))));
         }
 
         if ($dryRun) {
@@ -171,13 +174,14 @@ class EventsConcurrentWorkspaceRebasesUpgrade
             $affectedRows += $this->context->dbal->executeStatement(
                 <<<SQL
                 UPDATE {$this->context->eventStoreTableName}
-                SET stream = :stream, payload = JSON_SET(payload, '$.contentStreamId', :contentStreamId)
+                SET stream = :stream, version = :version, payload = JSON_SET(payload, '$.contentStreamId', :contentStreamId)
                 WHERE sequencenumber = :sequenceNumber
                 SQL,
                 [
                     'sequenceNumber' => $rebaseSequenceContentStreamPatch->rebaseSequence->get(RebaseEmptyWorkspaceSequenceType::ContentStreamWasClosed)->sequenceNumber->value,
-                    'contentStreamId' => $rebaseSequenceContentStreamPatch->previousContentStreamIdPatch->value,
-                    'stream' => ContentStreamEventStreamName::fromContentStreamId($rebaseSequenceContentStreamPatch->previousContentStreamIdPatch)->value,
+                    'contentStreamId' => $rebaseSequenceContentStreamPatch->initialPreviousContentStreamId->value,
+                    'stream' => ContentStreamEventStreamName::fromContentStreamId($rebaseSequenceContentStreamPatch->initialPreviousContentStreamId)->value,
+                    'version' => $rebaseSequenceContentStreamPatch->initialContentStreamWasClosedVersion->value,
                 ],
             );
 
@@ -190,7 +194,7 @@ class EventsConcurrentWorkspaceRebasesUpgrade
                 SQL,
                 [
                     'sequenceNumber' => $rebaseSequenceContentStreamPatch->rebaseSequence->get(RebaseEmptyWorkspaceSequenceType::WorkspaceWasRebased)->sequenceNumber->value,
-                    'contentStreamId' => $rebaseSequenceContentStreamPatch->previousContentStreamIdPatch->value,
+                    'contentStreamId' => $rebaseSequenceContentStreamPatch->initialPreviousContentStreamId->value,
                 ],
             );
 
@@ -198,13 +202,14 @@ class EventsConcurrentWorkspaceRebasesUpgrade
             $affectedRows += $this->context->dbal->executeStatement(
                 <<<SQL
                 UPDATE {$this->context->eventStoreTableName}
-                SET stream = :stream, payload = JSON_SET(payload, '$.contentStreamId', :contentStreamId)
+                SET stream = :stream, version = :version, payload = JSON_SET(payload, '$.contentStreamId', :contentStreamId)
                 WHERE sequencenumber = :sequenceNumber
                 SQL,
                 [
                     'sequenceNumber' => $rebaseSequenceContentStreamPatch->rebaseSequence->get(RebaseEmptyWorkspaceSequenceType::ContentStreamWasRemoved)->sequenceNumber->value,
-                    'contentStreamId' => $rebaseSequenceContentStreamPatch->previousContentStreamIdPatch->value,
-                    'stream' => ContentStreamEventStreamName::fromContentStreamId($rebaseSequenceContentStreamPatch->previousContentStreamIdPatch)->value,
+                    'contentStreamId' => $rebaseSequenceContentStreamPatch->initialPreviousContentStreamId->value,
+                    'stream' => ContentStreamEventStreamName::fromContentStreamId($rebaseSequenceContentStreamPatch->initialPreviousContentStreamId)->value,
+                    'version' => $rebaseSequenceContentStreamPatch->initialContentStreamWasRemovedVersion->value,
                 ],
             );
         }

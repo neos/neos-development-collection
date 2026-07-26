@@ -122,11 +122,11 @@ Feature: As a user of the CR I want to upgrade my events
     Given I have the following additional raw events to upgrade:
       | sequencenumber | stream                       | version | type                    | payload                                                                                                            | metadata                                                                         | id                                   | correlationid       | recordedat          |
       # illegal rebase workspace on already removed content stream (should be cs-review-second)
-      | 100            | ContentStream:cs-user-first  | 4       | ContentStreamWasClosed  | {"contentStreamId":"cs-user-first"}                                                                                | {"initiatingUserId": "user", "initiatingTimestamp": "2026-04-30T10:00:00+00:00"} | 19d9edb6-bb47-464e-ace9-64e3d80dbe92 | RebaseWorkspace_123 | 2026-04-30 10:00:00 |
+      | 100            | ContentStream:cs-user-first  | 1       | ContentStreamWasClosed  | {"contentStreamId":"cs-user-first"}                                                                                | {"initiatingUserId": "user", "initiatingTimestamp": "2026-04-30T10:00:00+00:00"} | 19d9edb6-bb47-464e-ace9-64e3d80dbe92 | RebaseWorkspace_123 | 2026-04-30 10:00:00 |
       | 101            | ContentStream:cs-user-second | 0       | ContentStreamWasForked  | {"newContentStreamId":"cs-user-second","sourceContentStreamId":"cs-review-first","versionOfSourceContentStream":1} | {"initiatingUserId": "user", "initiatingTimestamp": "2026-04-30T10:00:00+00:00"} | 0e27354f-2bd8-47fe-bfe3-2ab6e7ace856 | RebaseWorkspace_123 | 2026-04-30 10:00:00 |
       | 102            | Workspace:user               | 2       | WorkspaceWasRebased     | {"workspaceName":"user","previousContentStreamId": "cs-user-first", "newContentStreamId":"cs-user-second"}         | {"initiatingUserId": "user", "initiatingTimestamp": "2026-04-30T10:00:00+00:00"} | 01df0edb-6412-4144-92a3-013ef5ec1af4 | RebaseWorkspace_123 | 2026-04-30 10:00:00 |
       # wrong correlation id, must be _123
-      | 103            | ContentStream:cs-user-first  | 5       | ContentStreamWasRemoved | {"contentStreamId": "cs-user-first"}                                                                               | {"initiatingUserId": "user", "initiatingTimestamp": "2026-04-30T10:00:00+00:00"} | a49edee3-6022-4834-b9d2-59bde62be391 | RebaseWorkspace_456 | 2026-04-30 10:00:00 |
+      | 103            | ContentStream:cs-user-first  | 2       | ContentStreamWasRemoved | {"contentStreamId": "cs-user-first"}                                                                               | {"initiatingUserId": "user", "initiatingTimestamp": "2026-04-30T10:00:00+00:00"} | a49edee3-6022-4834-b9d2-59bde62be391 | RebaseWorkspace_456 | 2026-04-30 10:00:00 |
 
     When I upgrade the events to concurrent workspace-rebases
     Then I expect the following upgrade output:
@@ -134,7 +134,7 @@ Feature: As a user of the CR I want to upgrade my events
       Content stream "cs-review-first" was forked 1 times after removal at 14
           Debug: Fork "cs-user-second" of "cs-review-first" at 101 (RebaseWorkspace_123)
       Error: Invalid end of rebase workspace sequence RebaseWorkspace_123 expected ContentStreamWasRemoved
-          Debug: [{"event":{"id":{"value":"19d9edb6-bb47-464e-ace9-64e3d80dbe92"},"type":{"value":"ContentStreamWasClosed"},"data":{"value":"{\"contentStreamId\":\"cs-user-first\"}"},"metadata":{"value":{"initiatingUserId":"user","initiatingTimestamp":"2026-04-30T10:00:00+00:00"}},"causationId":null,"correlationId":{"value":"RebaseWorkspace_123"}},"streamName":{"value":"ContentStream:cs-user-first"},"version":{"value":4},"sequenceNumber":{"value":100},"recordedAt":{"date":"2026-04-30 10:00:00.000000","timezone_type":3,"timezone":"UTC"}},{"event":{"id":{"value":"0e27354f-2bd8-47fe-bfe3-2ab6e7ace856"},"type":{"value":"ContentStreamWasForked"},"data":{"value":"{\"newContentStreamId\":\"cs-user-second\",\"sourceContentStreamId\":\"cs-review-first\",\"versionOfSourceContentStream\":1}"},"metadata":{"value":{"initiatingUserId":"user","initiatingTimestamp":"2026-04-30T10:00:00+00:00"}},"causationId":null,"correlationId":{"value":"RebaseWorkspace_123"}},"streamName":{"value":"ContentStream:cs-user-second"},"version":{"value":0},"sequenceNumber":{"value":101},"recordedAt":{"date":"2026-04-30 10:00:00.000000","timezone_type":3,"timezone":"UTC"}},{"event":{"id":{"value":"01df0edb-6412-4144-92a3-013ef5ec1af4"},"type":{"value":"WorkspaceWasRebased"},"data":{"value":"{\"workspaceName\":\"user\",\"previousContentStreamId\": \"cs-user-first\", \"newContentStreamId\":\"cs-user-second\"}"},"metadata":{"value":{"initiatingUserId":"user","initiatingTimestamp":"2026-04-30T10:00:00+00:00"}},"causationId":null,"correlationId":{"value":"RebaseWorkspace_123"}},"streamName":{"value":"Workspace:user"},"version":{"value":2},"sequenceNumber":{"value":102},"recordedAt":{"date":"2026-04-30 10:00:00.000000","timezone_type":3,"timezone":"UTC"}}]
+          Debug: [{"event":{"id":{"value":"19d9edb6-bb47-464e-ace9-64e3d80dbe92"},"type":{"value":"ContentStreamWasClosed"},"data":{"value":"{\"contentStreamId\":\"cs-user-first\"}"},"metadata":{"value":{"initiatingUserId":"user","initiatingTimestamp":"2026-04-30T10:00:00+00:00"}},"causationId":null,"correlationId":{"value":"RebaseWorkspace_123"}},"streamName":{"value":"ContentStream:cs-user-first"},"version":{"value":1},"sequenceNumber":{"value":100},"recordedAt":{"date":"2026-04-30 10:00:00.000000","timezone_type":3,"timezone":"UTC"}},{"event":{"id":{"value":"0e27354f-2bd8-47fe-bfe3-2ab6e7ace856"},"type":{"value":"ContentStreamWasForked"},"data":{"value":"{\"newContentStreamId\":\"cs-user-second\",\"sourceContentStreamId\":\"cs-review-first\",\"versionOfSourceContentStream\":1}"},"metadata":{"value":{"initiatingUserId":"user","initiatingTimestamp":"2026-04-30T10:00:00+00:00"}},"causationId":null,"correlationId":{"value":"RebaseWorkspace_123"}},"streamName":{"value":"ContentStream:cs-user-second"},"version":{"value":0},"sequenceNumber":{"value":101},"recordedAt":{"date":"2026-04-30 10:00:00.000000","timezone_type":3,"timezone":"UTC"}},{"event":{"id":{"value":"01df0edb-6412-4144-92a3-013ef5ec1af4"},"type":{"value":"WorkspaceWasRebased"},"data":{"value":"{\"workspaceName\":\"user\",\"previousContentStreamId\": \"cs-user-first\", \"newContentStreamId\":\"cs-user-second\"}"},"metadata":{"value":{"initiatingUserId":"user","initiatingTimestamp":"2026-04-30T10:00:00+00:00"}},"causationId":null,"correlationId":{"value":"RebaseWorkspace_123"}},"streamName":{"value":"Workspace:user"},"version":{"value":2},"sequenceNumber":{"value":102},"recordedAt":{"date":"2026-04-30 10:00:00.000000","timezone_type":3,"timezone":"UTC"}}]
       """
 
   Scenario: Constraint Invalid workspace rebase sequence because new content stream event
@@ -184,10 +184,10 @@ Feature: As a user of the CR I want to upgrade my events
     Given I have the following additional raw events to upgrade:
       | sequencenumber | stream                       | version | type                                | payload                                                                                                                                                                                                                                | metadata                                                                         | id                                   | correlationid                           | recordedat          |
       # illegal rebase workspace on already removed content stream (should be cs-review-second)
-      | 100            | ContentStream:cs-user-first  | 4       | ContentStreamWasClosed              | {"contentStreamId":"cs-user-first"}                                                                                                                                                                                                    | {"initiatingUserId": "user", "initiatingTimestamp": "2026-04-30T10:00:00+00:00"} | 19d9edb6-bb47-464e-ace9-64e3d80dbe92 | RebaseWorkspace_123                     | 2026-04-30 10:00:00 |
+      | 100            | ContentStream:cs-user-first  | 1       | ContentStreamWasClosed              | {"contentStreamId":"cs-user-first"}                                                                                                                                                                                                    | {"initiatingUserId": "user", "initiatingTimestamp": "2026-04-30T10:00:00+00:00"} | 19d9edb6-bb47-464e-ace9-64e3d80dbe92 | RebaseWorkspace_123                     | 2026-04-30 10:00:00 |
       | 101            | ContentStream:cs-user-second | 0       | ContentStreamWasForked              | {"newContentStreamId":"cs-user-second","sourceContentStreamId":"cs-review-first","versionOfSourceContentStream":1}                                                                                                                     | {"initiatingUserId": "user", "initiatingTimestamp": "2026-04-30T10:00:00+00:00"} | 0e27354f-2bd8-47fe-bfe3-2ab6e7ace856 | RebaseWorkspace_123                     | 2026-04-30 10:00:00 |
       | 102            | Workspace:user               | 2       | WorkspaceWasRebased                 | {"workspaceName":"user","previousContentStreamId": "cs-user-first", "newContentStreamId":"cs-user-second"}                                                                                                                             | {"initiatingUserId": "user", "initiatingTimestamp": "2026-04-30T10:00:00+00:00"} | 01df0edb-6412-4144-92a3-013ef5ec1af4 | RebaseWorkspace_123                     | 2026-04-30 10:00:00 |
-      | 103            | ContentStream:cs-user-first  | 5       | ContentStreamWasRemoved             | {"contentStreamId": "cs-user-first"}                                                                                                                                                                                                   | {"initiatingUserId": "user", "initiatingTimestamp": "2026-04-30T10:00:00+00:00"} | a49edee3-6022-4834-b9d2-59bde62be391 | RebaseWorkspace_123                     | 2026-04-30 10:00:00 |
+      | 103            | ContentStream:cs-user-first  | 2       | ContentStreamWasRemoved             | {"contentStreamId": "cs-user-first"}                                                                                                                                                                                                   | {"initiatingUserId": "user", "initiatingTimestamp": "2026-04-30T10:00:00+00:00"} | a49edee3-6022-4834-b9d2-59bde62be391 | RebaseWorkspace_123                     | 2026-04-30 10:00:00 |
       | 104            | ContentStream:cs-user-second | 1       | RootNodeAggregateWithNodeWasCreated | {"workspaceName":"user","contentStreamId":"cs-user-second","nodeAggregateId":"illegal-node","nodeTypeName":"Neos.Neos:Sites","coveredDimensionSpacePoints":[{"language":"en"},{"language":"de"}],"nodeAggregateClassification":"root"} | []                                                                               | 2c8b9d29-c3fd-44e0-b275-15d336dc38ab | CreateNodeAggregateW_e00b8ac2a08c7fbb9b | 2026-04-30 11:00:00 |
 
     When I upgrade the events to concurrent workspace-rebases
@@ -246,10 +246,10 @@ Feature: As a user of the CR I want to upgrade my events
     Given I have the following additional raw events to upgrade:
       | sequencenumber | stream                       | version | type                    | payload                                                                                                            | metadata                                                                         | id                                   | correlationid       | recordedat          |
       # illegal rebase workspace on already removed content stream (should be cs-review-second)
-      | 100            | ContentStream:cs-user-first  | 4       | ContentStreamWasClosed  | {"contentStreamId":"cs-user-first"}                                                                                | {"initiatingUserId": "user", "initiatingTimestamp": "2026-04-30T10:00:00+00:00"} | 19d9edb6-bb47-464e-ace9-64e3d80dbe92 | RebaseWorkspace_123 | 2026-04-30 10:00:00 |
+      | 100            | ContentStream:cs-user-first  | 1       | ContentStreamWasClosed  | {"contentStreamId":"cs-user-first"}                                                                                | {"initiatingUserId": "user", "initiatingTimestamp": "2026-04-30T10:00:00+00:00"} | 19d9edb6-bb47-464e-ace9-64e3d80dbe92 | RebaseWorkspace_123 | 2026-04-30 10:00:00 |
       | 101            | ContentStream:cs-user-second | 0       | ContentStreamWasForked  | {"newContentStreamId":"cs-user-second","sourceContentStreamId":"cs-review-first","versionOfSourceContentStream":1} | {"initiatingUserId": "user", "initiatingTimestamp": "2026-04-30T10:00:00+00:00"} | 0e27354f-2bd8-47fe-bfe3-2ab6e7ace856 | RebaseWorkspace_123 | 2026-04-30 10:00:00 |
       | 102            | Workspace:user               | 2       | WorkspaceWasRebased     | {"workspaceName":"user","previousContentStreamId": "cs-user-first", "newContentStreamId":"cs-user-second"}         | {"initiatingUserId": "user", "initiatingTimestamp": "2026-04-30T10:00:00+00:00"} | 01df0edb-6412-4144-92a3-013ef5ec1af4 | RebaseWorkspace_123 | 2026-04-30 10:00:00 |
-      | 103            | ContentStream:cs-user-first  | 5       | ContentStreamWasRemoved | {"contentStreamId": "cs-user-first"}                                                                               | {"initiatingUserId": "user", "initiatingTimestamp": "2026-04-30T10:00:00+00:00"} | a49edee3-6022-4834-b9d2-59bde62be391 | RebaseWorkspace_123 | 2026-04-30 10:00:00 |
+      | 103            | ContentStream:cs-user-first  | 2       | ContentStreamWasRemoved | {"contentStreamId": "cs-user-first"}                                                                               | {"initiatingUserId": "user", "initiatingTimestamp": "2026-04-30T10:00:00+00:00"} | a49edee3-6022-4834-b9d2-59bde62be391 | RebaseWorkspace_123 | 2026-04-30 10:00:00 |
 
     When I upgrade the events to concurrent workspace-rebases
     Then I expect the following upgrade output:
@@ -332,10 +332,10 @@ Feature: As a user of the CR I want to upgrade my events
     Given I have the following additional raw events to upgrade:
       | sequencenumber | stream                       | version | type                    | payload                                                                                                            | metadata                                                                         | id                                   | correlationid       | recordedat          |
       # illegal rebase workspace on already removed content stream (should be cs-review-second)
-      | 100            | ContentStream:cs-user-first  | 4       | ContentStreamWasClosed  | {"contentStreamId":"cs-user-first"}                                                                                | {"initiatingUserId": "user", "initiatingTimestamp": "2026-04-30T10:00:00+00:00"} | 19d9edb6-bb47-464e-ace9-64e3d80dbe92 | RebaseWorkspace_123 | 2026-04-30 10:00:00 |
+      | 100            | ContentStream:cs-user-first  | 1       | ContentStreamWasClosed  | {"contentStreamId":"cs-user-first"}                                                                                | {"initiatingUserId": "user", "initiatingTimestamp": "2026-04-30T10:00:00+00:00"} | 19d9edb6-bb47-464e-ace9-64e3d80dbe92 | RebaseWorkspace_123 | 2026-04-30 10:00:00 |
       | 101            | ContentStream:cs-user-second | 0       | ContentStreamWasForked  | {"newContentStreamId":"cs-user-second","sourceContentStreamId":"cs-review-first","versionOfSourceContentStream":1} | {"initiatingUserId": "user", "initiatingTimestamp": "2026-04-30T10:00:00+00:00"} | 0e27354f-2bd8-47fe-bfe3-2ab6e7ace856 | RebaseWorkspace_123 | 2026-04-30 10:00:00 |
       | 102            | Workspace:user               | 2       | WorkspaceWasRebased     | {"workspaceName":"user","previousContentStreamId": "cs-user-first", "newContentStreamId":"cs-user-second"}         | {"initiatingUserId": "user", "initiatingTimestamp": "2026-04-30T10:00:00+00:00"} | 01df0edb-6412-4144-92a3-013ef5ec1af4 | RebaseWorkspace_123 | 2026-04-30 10:00:00 |
-      | 103            | ContentStream:cs-user-first  | 5       | ContentStreamWasRemoved | {"contentStreamId": "cs-user-first"}                                                                               | {"initiatingUserId": "user", "initiatingTimestamp": "2026-04-30T10:00:00+00:00"} | a49edee3-6022-4834-b9d2-59bde62be391 | RebaseWorkspace_123 | 2026-04-30 10:00:00 |
+      | 103            | ContentStream:cs-user-first  | 2       | ContentStreamWasRemoved | {"contentStreamId": "cs-user-first"}                                                                               | {"initiatingUserId": "user", "initiatingTimestamp": "2026-04-30T10:00:00+00:00"} | a49edee3-6022-4834-b9d2-59bde62be391 | RebaseWorkspace_123 | 2026-04-30 10:00:00 |
 
       # second correct rebase on already removed content stream (should be cs-review-second)
       | 104            | ContentStream:cs-user-second | 1       | ContentStreamWasClosed  | {"contentStreamId":"cs-user-second"}                                                                               | {"initiatingUserId": "user", "initiatingTimestamp": "2026-04-30T11:00:00+00:00"} | 2f89545a-7464-47a6-97cf-767fe403987a | RebaseWorkspace_456 | 2026-04-30 11:00:00 |
@@ -426,10 +426,10 @@ Feature: As a user of the CR I want to upgrade my events
     Given I have the following additional raw events to upgrade:
       | sequencenumber | stream                       | version | type                    | payload                                                                                                            | metadata                                                                         | id                                   | correlationid       | recordedat          |
       # illegal rebase workspace on already removed content stream (should be cs-review-second)
-      | 100            | ContentStream:cs-user-first  | 4       | ContentStreamWasClosed  | {"contentStreamId":"cs-user-first"}                                                                                | {"initiatingUserId": "user", "initiatingTimestamp": "2026-04-30T10:00:00+00:00"} | 19d9edb6-bb47-464e-ace9-64e3d80dbe92 | RebaseWorkspace_123 | 2026-04-30 10:00:00 |
+      | 100            | ContentStream:cs-user-first  | 1       | ContentStreamWasClosed  | {"contentStreamId":"cs-user-first"}                                                                                | {"initiatingUserId": "user", "initiatingTimestamp": "2026-04-30T10:00:00+00:00"} | 19d9edb6-bb47-464e-ace9-64e3d80dbe92 | RebaseWorkspace_123 | 2026-04-30 10:00:00 |
       | 101            | ContentStream:cs-user-second | 0       | ContentStreamWasForked  | {"newContentStreamId":"cs-user-second","sourceContentStreamId":"cs-review-first","versionOfSourceContentStream":1} | {"initiatingUserId": "user", "initiatingTimestamp": "2026-04-30T10:00:00+00:00"} | 0e27354f-2bd8-47fe-bfe3-2ab6e7ace856 | RebaseWorkspace_123 | 2026-04-30 10:00:00 |
       | 102            | Workspace:user               | 2       | WorkspaceWasRebased     | {"workspaceName":"user","previousContentStreamId": "cs-user-first", "newContentStreamId":"cs-user-second"}         | {"initiatingUserId": "user", "initiatingTimestamp": "2026-04-30T10:00:00+00:00"} | 01df0edb-6412-4144-92a3-013ef5ec1af4 | RebaseWorkspace_123 | 2026-04-30 10:00:00 |
-      | 103            | ContentStream:cs-user-first  | 5       | ContentStreamWasRemoved | {"contentStreamId": "cs-user-first"}                                                                               | {"initiatingUserId": "user", "initiatingTimestamp": "2026-04-30T10:00:00+00:00"} | a49edee3-6022-4834-b9d2-59bde62be391 | RebaseWorkspace_123 | 2026-04-30 10:00:00 |
+      | 103            | ContentStream:cs-user-first  | 2       | ContentStreamWasRemoved | {"contentStreamId": "cs-user-first"}                                                                               | {"initiatingUserId": "user", "initiatingTimestamp": "2026-04-30T10:00:00+00:00"} | a49edee3-6022-4834-b9d2-59bde62be391 | RebaseWorkspace_123 | 2026-04-30 10:00:00 |
 
       # second correct rebase, but it refers to illegal forked content stream "cs-user-second"
       | 104            | ContentStream:cs-user-second | 1       | ContentStreamWasClosed  | {"contentStreamId":"cs-user-second"}                                                                               | {"initiatingUserId": "user", "initiatingTimestamp": "2026-04-30T11:00:00+00:00"} | 2f89545a-7464-47a6-97cf-767fe403987a | RebaseWorkspace_456 | 2026-04-30 11:00:00 |
@@ -542,10 +542,10 @@ Feature: As a user of the CR I want to upgrade my events
     Given I have the following additional raw events to upgrade:
       | sequencenumber | stream                        | version | type                    | payload                                                                                                             | metadata                                                                          | id                                   | correlationid       | recordedat          |
       # illegal rebase workspace on already removed content stream (should be cs-review-second)
-      | 100            | ContentStream:cs-user-first   | 4       | ContentStreamWasClosed  | {"contentStreamId":"cs-user-first"}                                                                                 | {"initiatingUserId": "user", "initiatingTimestamp": "2026-04-30T10:00:00+00:00"}  | 19d9edb6-bb47-464e-ace9-64e3d80dbe92 | RebaseWorkspace_123 | 2026-04-30 10:00:00 |
+      | 100            | ContentStream:cs-user-first   | 1       | ContentStreamWasClosed  | {"contentStreamId":"cs-user-first"}                                                                                 | {"initiatingUserId": "user", "initiatingTimestamp": "2026-04-30T10:00:00+00:00"}  | 19d9edb6-bb47-464e-ace9-64e3d80dbe92 | RebaseWorkspace_123 | 2026-04-30 10:00:00 |
       | 101            | ContentStream:cs-user-second  | 0       | ContentStreamWasForked  | {"newContentStreamId":"cs-user-second","sourceContentStreamId":"cs-review-first","versionOfSourceContentStream":1}  | {"initiatingUserId": "user", "initiatingTimestamp": "2026-04-30T10:00:00+00:00"}  | 0e27354f-2bd8-47fe-bfe3-2ab6e7ace856 | RebaseWorkspace_123 | 2026-04-30 10:00:00 |
       | 102            | Workspace:user                | 2       | WorkspaceWasRebased     | {"workspaceName":"user","previousContentStreamId": "cs-user-first", "newContentStreamId":"cs-user-second"}          | {"initiatingUserId": "user", "initiatingTimestamp": "2026-04-30T10:00:00+00:00"}  | 01df0edb-6412-4144-92a3-013ef5ec1af4 | RebaseWorkspace_123 | 2026-04-30 10:00:00 |
-      | 103            | ContentStream:cs-user-first   | 5       | ContentStreamWasRemoved | {"contentStreamId": "cs-user-first"}                                                                                | {"initiatingUserId": "user", "initiatingTimestamp": "2026-04-30T10:00:00+00:00"}  | a49edee3-6022-4834-b9d2-59bde62be391 | RebaseWorkspace_123 | 2026-04-30 10:00:00 |
+      | 103            | ContentStream:cs-user-first   | 2       | ContentStreamWasRemoved | {"contentStreamId": "cs-user-first"}                                                                                | {"initiatingUserId": "user", "initiatingTimestamp": "2026-04-30T10:00:00+00:00"}  | a49edee3-6022-4834-b9d2-59bde62be391 | RebaseWorkspace_123 | 2026-04-30 10:00:00 |
 
       # second illegal rebase from user2 workspace on already removed content stream (should be cs-review-second)
       | 200            | ContentStream:cs-user2-first  | 4       | ContentStreamWasClosed  | {"contentStreamId":"cs-user2-first"}                                                                                | {"initiatingUserId": "user2", "initiatingTimestamp": "2026-04-30T11:00:00+00:00"} | 2f89545a-7464-47a6-97cf-767fe403987a | RebaseWorkspace_456 | 2026-04-30 11:00:00 |
@@ -673,10 +673,10 @@ Feature: As a user of the CR I want to upgrade my events
     Given I have the following additional raw events to upgrade:
       | sequencenumber | stream                       | version | type                    | payload                                                                                                            | metadata                                                                         | id                                   | correlationid       | recordedat          |
       # illegal rebase workspace on already removed content stream (should be cs-review-second)
-      | 100            | ContentStream:cs-user-first  | 4       | ContentStreamWasClosed  | {"contentStreamId":"cs-user-first"}                                                                                | {"initiatingUserId": "user", "initiatingTimestamp": "2026-04-30T10:00:00+00:00"} | 19d9edb6-bb47-464e-ace9-64e3d80dbe92 | RebaseWorkspace_123 | 2026-04-30 10:00:00 |
+      | 100            | ContentStream:cs-user-first  | 1       | ContentStreamWasClosed  | {"contentStreamId":"cs-user-first"}                                                                                | {"initiatingUserId": "user", "initiatingTimestamp": "2026-04-30T10:00:00+00:00"} | 19d9edb6-bb47-464e-ace9-64e3d80dbe92 | RebaseWorkspace_123 | 2026-04-30 10:00:00 |
       | 101            | ContentStream:cs-user-second | 0       | ContentStreamWasForked  | {"newContentStreamId":"cs-user-second","sourceContentStreamId":"cs-review-first","versionOfSourceContentStream":1} | {"initiatingUserId": "user", "initiatingTimestamp": "2026-04-30T10:00:00+00:00"} | 0e27354f-2bd8-47fe-bfe3-2ab6e7ace856 | RebaseWorkspace_123 | 2026-04-30 10:00:00 |
       | 102            | Workspace:user               | 2       | WorkspaceWasRebased     | {"workspaceName":"user","previousContentStreamId": "cs-user-first", "newContentStreamId":"cs-user-second"}         | {"initiatingUserId": "user", "initiatingTimestamp": "2026-04-30T10:00:00+00:00"} | 01df0edb-6412-4144-92a3-013ef5ec1af4 | RebaseWorkspace_123 | 2026-04-30 10:00:00 |
-      | 103            | ContentStream:cs-user-first  | 5       | ContentStreamWasRemoved | {"contentStreamId": "cs-user-first"}                                                                               | {"initiatingUserId": "user", "initiatingTimestamp": "2026-04-30T10:00:00+00:00"} | a49edee3-6022-4834-b9d2-59bde62be391 | RebaseWorkspace_123 | 2026-04-30 10:00:00 |
+      | 103            | ContentStream:cs-user-first  | 2       | ContentStreamWasRemoved | {"contentStreamId": "cs-user-first"}                                                                               | {"initiatingUserId": "user", "initiatingTimestamp": "2026-04-30T10:00:00+00:00"} | a49edee3-6022-4834-b9d2-59bde62be391 | RebaseWorkspace_123 | 2026-04-30 10:00:00 |
 
       # second illegal rebase workspace on already removed content stream (should be cs-review-second)
       | 200            | ContentStream:cs-user-second | 1       | ContentStreamWasClosed  | {"contentStreamId":"cs-user-second"}                                                                               | {"initiatingUserId": "user", "initiatingTimestamp": "2026-04-30T11:00:00+00:00"} | 2f89545a-7464-47a6-97cf-767fe403987a | RebaseWorkspace_456 | 2026-04-30 11:00:00 |
@@ -756,28 +756,38 @@ Feature: As a user of the CR I want to upgrade my events
       | nodeTypeName    | "Neos.ContentRepository:Root" |
 
     And the command CreateWorkspace is executed with payload:
-      | Key                | Value           |
+      | Key                | Value             |
       | workspaceName      | "review"          |
-      | baseWorkspaceName  | "live"          |
-      | newContentStreamId | "cs-review-first" |
+      | baseWorkspaceName  | "live"            |
+      | newContentStreamId | "cs-review-zero"  |
 
     And the command CreateWorkspace is executed with payload:
       | Key                | Value           |
       | workspaceName      | "user"          |
-      | baseWorkspaceName  | "review"          |
-      | newContentStreamId | "cs-user-first" |
+      | baseWorkspaceName  | "review"        |
+      | newContentStreamId | "cs-user-zero"  |
 
     And the command CreateNodeAggregateWithNode is executed with payload:
       | Key                       | Value                                 |
-      | workspaceName             | "live"                                |
+      | workspaceName             | "user"                                |
       | originDimensionSpacePoint | {"language": "de"}                    |
       | nodeAggregateId           | "nody-mc-nodeface"                    |
       | nodeTypeName              | "Neos.ContentRepository.Testing:Node" |
       | parentNodeAggregateId     | "lady-eleonode-rootford"              |
 
+    And the command PublishWorkspace is executed with payload:
+      | Key                | Value           |
+      | workspaceName      | "user"          |
+      | newContentStreamId | "cs-user-first" |
+
+    And the command PublishWorkspace is executed with payload:
+      | Key                | Value             |
+      | workspaceName      | "review"          |
+      | newContentStreamId | "cs-review-first" |
+
     And the command CreateNodeAggregateWithNode is executed with payload:
       | Key                       | Value                                 |
-      | workspaceName             | "review"                                |
+      | workspaceName             | "review"                              |
       | originDimensionSpacePoint | {"language": "de"}                    |
       | nodeAggregateId           | "sir-david-nodenborough"              |
       | nodeTypeName              | "Neos.ContentRepository.Testing:Node" |
@@ -790,13 +800,17 @@ Feature: As a user of the CR I want to upgrade my events
 
     Given I have the following additional raw events to upgrade:
       | sequencenumber | stream                         | version | type                                | payload                                                                                                                                                                                                                                        | metadata                                                                         | id                                   | correlationid                           | recordedat          |
+      # some noop events raising the content stream version
+      | 50             | ContentStream:cs-user-first    | 1       | ContentStreamWasClosed              | {"contentStreamId":"cs-user-first"}                                                                                                                                                                                                            | {"initiatingUserId": "user", "initiatingTimestamp": "2026-04-30T09:00:00+00:00"} | 0f111a85-ccb1-4442-b9ab-27b980e59040 | PublishIndividual_123                   | 2026-04-30 09:00:00 |
+      | 51             | ContentStream:cs-user-first    | 2       | ContentStreamWasReopened            | {"contentStreamId":"cs-user-first"}                                                                                                                                                                                                            | {"initiatingUserId": "user", "initiatingTimestamp": "2026-04-30T09:00:00+00:00"} | 30398779-a2f8-4f38-bc05-d4fee74672d7 | PublishIndividual_123                   | 2026-04-30 09:00:00 |
+
       # illegal rebase workspace on already removed content stream (should be cs-review-second)
-      | 100            | ContentStream:cs-user-first    | 4       | ContentStreamWasClosed              | {"contentStreamId":"cs-user-first"}                                                                                                                                                                                                            | {"initiatingUserId": "user", "initiatingTimestamp": "2026-04-30T10:00:00+00:00"} | 19d9edb6-bb47-464e-ace9-64e3d80dbe92 | RebaseWorkspace_123                     | 2026-04-30 10:00:00 |
+      | 100            | ContentStream:cs-user-first    | 3       | ContentStreamWasClosed              | {"contentStreamId":"cs-user-first"}                                                                                                                                                                                                            | {"initiatingUserId": "user", "initiatingTimestamp": "2026-04-30T10:00:00+00:00"} | 19d9edb6-bb47-464e-ace9-64e3d80dbe92 | RebaseWorkspace_123                     | 2026-04-30 10:00:00 |
       # some other stream
       | 101            | ContentStream:cs-review-second | 1       | RootNodeAggregateWithNodeWasCreated | {"workspaceName":"review","contentStreamId":"cs-review-second","nodeAggregateId":"unrelated-node-1","nodeTypeName":"Neos.Neos:Sites","coveredDimensionSpacePoints":[{"language":"en"},{"language":"de"}],"nodeAggregateClassification":"root"} | []                                                                               | 2c8b9d29-c3fd-44e0-b275-15d336dc38ab | CreateNodeAggregateW_e00b8ac2a08c7fbb9b | 2026-04-30 11:00:00 |
       | 102            | ContentStream:cs-user-second   | 0       | ContentStreamWasForked              | {"newContentStreamId":"cs-user-second","sourceContentStreamId":"cs-review-first","versionOfSourceContentStream":1}                                                                                                                             | {"initiatingUserId": "user", "initiatingTimestamp": "2026-04-30T10:00:00+00:00"} | 0e27354f-2bd8-47fe-bfe3-2ab6e7ace856 | RebaseWorkspace_123                     | 2026-04-30 10:00:00 |
       | 103            | Workspace:user                 | 2       | WorkspaceWasRebased                 | {"workspaceName":"user","previousContentStreamId": "cs-user-first", "newContentStreamId":"cs-user-second"}                                                                                                                                     | {"initiatingUserId": "user", "initiatingTimestamp": "2026-04-30T10:00:00+00:00"} | 01df0edb-6412-4144-92a3-013ef5ec1af4 | RebaseWorkspace_123                     | 2026-04-30 10:00:00 |
-      | 104            | ContentStream:cs-user-first    | 5       | ContentStreamWasRemoved             | {"contentStreamId": "cs-user-first"}                                                                                                                                                                                                           | {"initiatingUserId": "user", "initiatingTimestamp": "2026-04-30T10:00:00+00:00"} | a49edee3-6022-4834-b9d2-59bde62be391 | RebaseWorkspace_123                     | 2026-04-30 10:00:00 |
+      | 104            | ContentStream:cs-user-first    | 4       | ContentStreamWasRemoved             | {"contentStreamId": "cs-user-first"}                                                                                                                                                                                                           | {"initiatingUserId": "user", "initiatingTimestamp": "2026-04-30T10:00:00+00:00"} | a49edee3-6022-4834-b9d2-59bde62be391 | RebaseWorkspace_123                     | 2026-04-30 10:00:00 |
 
       # some other stream
       | 200            | ContentStream:cs-identifier    | 4       | RootNodeAggregateWithNodeWasCreated | {"workspaceName":"live","contentStreamId":"cs-identifier","nodeAggregateId":"unrelated-node-2","nodeTypeName":"Neos.Neos:Sites","coveredDimensionSpacePoints":[{"language":"en"},{"language":"de"}],"nodeAggregateClassification":"root"}      | []                                                                               | 57b715a1-3bec-409f-8253-88c9b5e5b7db | CreateNodeAggregateW_57b715a13bec       | 2026-04-30 11:00:00 |
@@ -813,7 +827,7 @@ Feature: As a user of the CR I want to upgrade my events
     When I upgrade the events to concurrent workspace-rebases
     Then I expect the following upgrade output:
       """
-      Content stream "cs-review-first" was forked 1 times after removal at 14
+      Content stream "cs-review-first" was forked 1 times after removal at 24
           Debug: Fork "cs-user-second" of "cs-review-first" at 102 (RebaseWorkspace_123)
       Found 4 events to be removed
           Debug: 100,102,103,104
@@ -827,15 +841,21 @@ Feature: As a user of the CR I want to upgrade my events
 
     Then I expect exactly 0 events to be published on stream with prefix "ContentStream:cs-user-second"
 
-    Then I expect exactly 3 events to be published on stream with prefix "ContentStream:cs-user-first"
+    Then I expect exactly 5 events to be published on stream with prefix "ContentStream:cs-user-first"
     And event at index 0 is of type "ContentStreamWasForked" with payload:
       | Key                   | Expected          |
       | newContentStreamId    | "cs-user-first"   |
-      | sourceContentStreamId | "cs-review-first" |
+      | sourceContentStreamId | "cs-review-zero"  |
     And event at index 1 is of type "ContentStreamWasClosed" with payload:
       | Key             | Expected        |
       | contentStreamId | "cs-user-first" |
-    And event at index 2 is of type "ContentStreamWasRemoved" with payload:
+    And event at index 2 is of type "ContentStreamWasReopened" with payload:
+      | Key             | Expected        |
+      | contentStreamId | "cs-user-first" |
+    And event at index 3 is of type "ContentStreamWasClosed" with payload:
+      | Key             | Expected        |
+      | contentStreamId | "cs-user-first" |
+    And event at index 4 is of type "ContentStreamWasRemoved" with payload:
       | Key             | Expected        |
       | contentStreamId | "cs-user-first" |
     Then I expect exactly 2 events to be published on stream with prefix "ContentStream:cs-user-third"
@@ -848,13 +868,17 @@ Feature: As a user of the CR I want to upgrade my events
       | contentStreamId | "cs-user-third" |
       | nodeAggregateId | "new-node"      |
 
-    Then I expect exactly 2 events to be published on stream with prefix "Workspace:user"
+    Then I expect exactly 3 events to be published on stream with prefix "Workspace:user"
     And event at index 0 is of type "WorkspaceWasCreated" with payload:
-      | Key                | Expected        |
-      | workspaceName      | "user"          |
-      | baseWorkspaceName  | "review"        |
-      | newContentStreamId | "cs-user-first" |
-    And event at index 1 is of type "WorkspaceWasRebased" with payload:
+      | Key                | Expected       |
+      | workspaceName      | "user"         |
+      | baseWorkspaceName  | "review"       |
+      | newContentStreamId | "cs-user-zero" |
+    And event at index 1 is of type "WorkspaceWasPublished" with payload:
+      | Key                      | Expected        |
+      | sourceWorkspaceName      | "user"          |
+      | newSourceContentStreamId | "cs-user-first" |
+    And event at index 2 is of type "WorkspaceWasRebased" with payload:
       | Key                | Expected        |
       | workspaceName      | "user"          |
       | newContentStreamId | "cs-user-third" |
