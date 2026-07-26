@@ -38,7 +38,7 @@ final readonly class EventsRecordedAtToUtcUpgrade
     ) {
     }
 
-    public function execute(bool $force): void
+    public function execute(bool $force, bool $dryRun): void
     {
         $offsetStartsWithSequenceNumber = $this->context->dbal->fetchAllAssociative(<<<SQL
         SELECT sequenceNumber, tzoffset
@@ -76,6 +76,11 @@ final readonly class EventsRecordedAtToUtcUpgrade
                 $this->log('Nothing was migrated. If you know what you are doing try again by using a bit more force.');
                 return;
             }
+        }
+
+        if ($dryRun) {
+            $this->log('Didnt migrate anything because its a dry run.');
+            return;
         }
 
         // Actual migration

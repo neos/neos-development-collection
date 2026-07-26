@@ -51,7 +51,8 @@ trait CrUpgradeTrait
         );
 
         $upgrade->execute(
-            force: $force
+            force: $force,
+            dryRun: false
         );
     }
 

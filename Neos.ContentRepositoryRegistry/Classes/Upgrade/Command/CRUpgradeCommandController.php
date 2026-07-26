@@ -133,14 +133,19 @@ final class CRUpgradeCommandController extends CommandController
      *
      * @param string $contentRepository Identifier of the Content Repository to upgrade
      */
-    public function eventsRecordedAtToUtcCommand(string $contentRepository = 'default', bool $force = false): void
+    public function eventsRecordedAtToUtcCommand(string $contentRepository = 'default', bool $dryRun = false, bool $force = false): void
     {
+        if ($dryRun && $force) {
+            $this->outputLine('<comment>Abort. Cannot force a dry run;)</comment>');
+            return;
+        }
+
         $context = $this->contentRepositoryRegistry->buildService(
             ContentRepositoryId::fromString($contentRepository),
             $this->upgradeContextFactory
         );
 
-        if (!$force && !$this->output->askConfirmation(sprintf('> This will rewrite events of content repository "%s" to use UTC dates consistently and backup the original events. This will take even on big sites less than 5 minutes. To have the UTC changes applied to the graph a replay needs to be done which will take quite some time. Are you sure to proceed? (y/n) ', $context->contentRepositoryId->value), false)) {
+        if ((!$dryRun && !$force) && !$this->output->askConfirmation(sprintf('> This will rewrite events of content repository "%s" to use UTC dates consistently and backup the original events. This will take even on big sites less than 5 minutes. To have the UTC changes applied to the graph a replay needs to be done which will take quite some time. Are you sure to proceed? (y/n) ', $context->contentRepositoryId->value), false)) {
             $this->outputLine('<comment>Abort.</comment>');
             return;
         }
@@ -151,7 +156,8 @@ final class CRUpgradeCommandController extends CommandController
         );
 
         $upgrade->execute(
-            force: $force
+            force: $force,
+            dryRun: $dryRun,
         );
     }
 
