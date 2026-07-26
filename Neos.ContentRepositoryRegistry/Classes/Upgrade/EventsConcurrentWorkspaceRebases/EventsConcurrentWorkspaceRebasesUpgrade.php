@@ -229,20 +229,22 @@ class EventsConcurrentWorkspaceRebasesUpgrade
         $rows = $this->context->dbal->fetchAllAssociative(<<<SQL
         SELECT
           -- invariant: single entry as content stream can only be removed once 
-          MIN(IF (type = 'ContentStreamWasRemoved', sequencenumber, null)) as removalSequenceNumber,
-          GROUP_CONCAT(IF (type = 'ContentStreamWasRemoved', SUBSTR(stream, LENGTH('ContentStream:') + 1), null)) as sourceContentStreamId,
+          MIN(IF(type = 'ContentStreamWasRemoved', sequencenumber, null)) as removalSequenceNumber,
+          GROUP_CONCAT(IF(type = 'ContentStreamWasRemoved', SUBSTR(stream, LENGTH('ContentStream:') + 1), null)) as sourceContentStreamId,
           -- multiple forks of source content stream
-          MAX(IF (type = 'ContentStreamWasForked', sequencenumber, null)) as maxForkSequenceNumber,
-          GROUP_CONCAT(IF (type = 'ContentStreamWasForked', sequencenumber, null)) as forkSequenceNumbers,
-          GROUP_CONCAT(IF (type = 'ContentStreamWasForked', correlationid, null)) as forkCorrelationIds,
-          GROUP_CONCAT(IF (type = 'ContentStreamWasForked', SUBSTR(stream, LENGTH('ContentStream:') + 1), null)) as newContentStreamIds
+          MAX(IF(type = 'ContentStreamWasForked', sequencenumber, null)) as maxForkSequenceNumber,
+          GROUP_CONCAT(IF(type = 'ContentStreamWasForked', sequencenumber, null)) as forkSequenceNumbers,
+          GROUP_CONCAT(IF(type = 'ContentStreamWasForked', correlationid, null)) as forkCorrelationIds,
+          GROUP_CONCAT(IF(type = 'ContentStreamWasForked', SUBSTR(stream, LENGTH('ContentStream:') + 1), null)) as newContentStreamIds
         FROM
           {$this->context->eventStoreTableName}
         WHERE type = 'ContentStreamWasForked' OR type = 'ContentStreamWasRemoved'
-        GROUP BY CASE type
-          WHEN 'ContentStreamWasForked' THEN JSON_UNQUOTE(JSON_EXTRACT(payload, '$.sourceContentStreamId'))
-          WHEN 'ContentStreamWasRemoved' THEN SUBSTR(stream, LENGTH('ContentStream:') + 1)
-        END
+        GROUP BY IF(
+          type = 'ContentStreamWasForked',
+          JSON_UNQUOTE(JSON_EXTRACT(payload, '$.sourceContentStreamId')),
+          -- else, ContentStreamWasRemoved
+          SUBSTR(stream, LENGTH('ContentStream:') + 1)
+        )
         HAVING removalSequenceNumber < maxForkSequenceNumber
         ORDER BY sequencenumber;        
         SQL);
