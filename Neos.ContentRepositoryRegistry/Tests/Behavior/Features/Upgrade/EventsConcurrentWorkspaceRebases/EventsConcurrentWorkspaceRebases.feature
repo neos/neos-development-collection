@@ -445,7 +445,7 @@ Feature: As a user of the CR I want to upgrade my events
       Found 4 events to be removed
           Debug: 100,101,102,103
       Found 1 remaining workspace rebases to be adjusted after the deletion
-          Debug: RebaseWorkspace_456
+          Debug: Previous stream "cs-user-first" instead "cs-user-second" (RebaseWorkspace_456)
       Backup: copying events table to cr_default_events_bkp_2026_04_30_09_00_00
 
       Migration applied to 7 events. Please replay the content graph via `./flow crupgrade:resetupandreplaycontentgraph`
@@ -568,7 +568,7 @@ Feature: As a user of the CR I want to upgrade my events
       Found 8 events to be removed
           Debug: 100,101,102,103,200,201,202,203
       Found 1 remaining workspace rebases to be adjusted after the deletion
-          Debug: RebaseWorkspace_789
+          Debug: Previous stream "cs-user-first" instead "cs-user-second" (RebaseWorkspace_789)
       Backup: copying events table to cr_default_events_bkp_2026_04_30_09_00_00
 
       Migration applied to 11 events. Please replay the content graph via `./flow crupgrade:resetupandreplaycontentgraph`
@@ -699,7 +699,7 @@ Feature: As a user of the CR I want to upgrade my events
       Found 8 events to be removed
           Debug: 100,101,102,103,200,201,202,203
       Found 1 remaining workspace rebases to be adjusted after the deletion
-          Debug: RebaseWorkspace_789
+          Debug: Previous stream "cs-user-first" instead "cs-user-third" (RebaseWorkspace_789)
       Backup: copying events table to cr_default_events_bkp_2026_04_30_09_00_00
 
       Migration applied to 11 events. Please replay the content graph via `./flow crupgrade:resetupandreplaycontentgraph`
@@ -818,7 +818,7 @@ Feature: As a user of the CR I want to upgrade my events
       Found 4 events to be removed
           Debug: 100,102,103,104
       Found 1 remaining workspace rebases to be adjusted after the deletion
-          Debug: RebaseWorkspace_456
+          Debug: Previous stream "cs-user-first" instead "cs-user-second" (RebaseWorkspace_456)
       Backup: copying events table to cr_default_events_bkp_2026_04_30_09_00_00
 
       Migration applied to 7 events. Please replay the content graph via `./flow crupgrade:resetupandreplaycontentgraph`

@@ -141,7 +141,7 @@ class EventsConcurrentWorkspaceRebasesUpgrade
 
         if ($rebaseSequencesToPatchContentStream !== []) {
             $this->log(sprintf('Found %d remaining workspace rebases to be adjusted after the deletion', count($rebaseSequencesToPatchContentStream)));
-            $this->log(sprintf('    Debug: %s', join(',', array_map(fn (RebaseSequenceContentStreamPatch $patch) => $patch->rebaseSequence->correlationId->value, $rebaseSequencesToPatchContentStream))));
+            $this->log(sprintf('    Debug: %s', join("\n           ", array_map(fn (RebaseSequenceContentStreamPatch $patch) => sprintf('Previous stream "%s" instead "%s" (%s)', $patch->previousContentStreamIdPatch->value, $patch->rebaseSequence->previousContentStreamId->value, $patch->rebaseSequence->correlationId->value, ), $rebaseSequencesToPatchContentStream))));
         }
 
         if ($dryRun) {
