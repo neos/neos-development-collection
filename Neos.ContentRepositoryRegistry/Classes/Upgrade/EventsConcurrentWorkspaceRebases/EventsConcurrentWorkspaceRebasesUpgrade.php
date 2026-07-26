@@ -6,13 +6,10 @@ namespace Neos\ContentRepositoryRegistry\Upgrade\EventsConcurrentWorkspaceRebase
 
 use Doctrine\DBAL\ArrayParameterType;
 use Neos\ContentRepository\Core\Feature\ContentStreamEventStreamName;
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepositoryRegistry\Upgrade\Shared\CRUpgradeContext;
 use Neos\ContentRepositoryRegistry\Upgrade\Shared\EventEnvelopeFactory;
 use Neos\ContentRepositoryRegistry\Upgrade\Shared\EventStoreBackupTrait;
 use Neos\ContentRepositoryRegistry\Upgrade\Shared\OutputMessageTrait;
-use Neos\EventStore\Model\Event\CorrelationId;
-use Neos\EventStore\Model\Event\SequenceNumber;
 use Neos\EventStore\Model\EventEnvelope;
 
 /**
@@ -32,26 +29,7 @@ class EventsConcurrentWorkspaceRebasesUpgrade
 
     public function execute(bool $dryRun): void
     {
-        $forkedContentStreamsWithAlreadyRemovedSourceContentStream = $this->context->dbal->fetchAllAssociative(<<<SQL
-        SELECT
-          -- invariant: single entry as content stream can only be removed once 
-          MIN(IF (type = 'ContentStreamWasRemoved', sequencenumber, null)) as removalSequenceNumber,
-          GROUP_CONCAT(IF (type = 'ContentStreamWasRemoved', SUBSTR(stream, LENGTH('ContentStream:') + 1), null)) as sourceContentStreamId,
-          -- multiple forks of source content stream
-          MAX(IF (type = 'ContentStreamWasForked', sequencenumber, null)) as maxForkSequenceNumber,
-          GROUP_CONCAT(IF (type = 'ContentStreamWasForked', sequencenumber, null)) as forkSequenceNumbers,
-          GROUP_CONCAT(IF (type = 'ContentStreamWasForked', correlationid, null)) as forkCorrelationIds,
-          GROUP_CONCAT(IF (type = 'ContentStreamWasForked', SUBSTR(stream, LENGTH('ContentStream:') + 1), null)) as newContentStreamIds
-        FROM
-          {$this->context->eventStoreTableName}
-        WHERE type = 'ContentStreamWasForked' OR type = 'ContentStreamWasRemoved'
-        GROUP BY CASE type
-          WHEN 'ContentStreamWasForked' THEN JSON_UNQUOTE(JSON_EXTRACT(payload, '$.sourceContentStreamId'))
-          WHEN 'ContentStreamWasRemoved' THEN SUBSTR(stream, LENGTH('ContentStream:') + 1)
-        END
-        HAVING removalSequenceNumber < maxForkSequenceNumber
-        ORDER BY sequencenumber;        
-        SQL);
+        $forkedContentStreamsWithAlreadyRemovedSourceContentStream = $this->findForkedContentStreamsWithAlreadyRemovedSourceContentStream();
 
         if ($forkedContentStreamsWithAlreadyRemovedSourceContentStream === []) {
             $this->log('Migration was not necessary. No forks on already removed content streams.');
@@ -62,35 +40,10 @@ class EventsConcurrentWorkspaceRebasesUpgrade
         /** @var array<string,RebaseSequenceContentStreamPatch> $rebaseSequencesToPatchContentStream */
         $rebaseSequencesToPatchContentStream = [];
 
-        foreach ($forkedContentStreamsWithAlreadyRemovedSourceContentStream as $forkedContentStreamWithAlreadyRemovedSourceContentStream) {
-
-            if (str_contains($forkedContentStreamWithAlreadyRemovedSourceContentStream['sourceContentStreamId'], ',')) {
-                $this->log(sprintf('Error: Expected content stream to be removed only once got %s', $forkedContentStreamWithAlreadyRemovedSourceContentStream['sourceContentStreamId']));
-                $this->log(sprintf('    Debug: %s', json_encode($forkedContentStreamWithAlreadyRemovedSourceContentStream)));
-                return;
-            }
-            $sourceContentStreamId = ContentStreamId::fromString($forkedContentStreamWithAlreadyRemovedSourceContentStream['sourceContentStreamId']);
-            $removalSequenceNumber = SequenceNumber::fromInteger($forkedContentStreamWithAlreadyRemovedSourceContentStream['removalSequenceNumber']);
-
-            /** @var list<array{SequenceNumber,CorrelationId,ContentStreamId}> $allContentStreamForks */
-            $allContentStreamForks = array_map(
-                null,
-                array_map(SequenceNumber::fromInteger(...), array_map(intval(...), explode(',', $forkedContentStreamWithAlreadyRemovedSourceContentStream['forkSequenceNumbers']))),
-                array_map(CorrelationId::fromString(...), explode(',', $forkedContentStreamWithAlreadyRemovedSourceContentStream['forkCorrelationIds'])),
-                array_map(ContentStreamId::fromString(...), explode(',', $forkedContentStreamWithAlreadyRemovedSourceContentStream['newContentStreamIds'])),
-            );
-
-            $illegalContentStreamForks = array_filter(
-                $allContentStreamForks,
-                function (array $_) use ($removalSequenceNumber) {
-                    [$forkSequenceNumber] = $_;
-                    return $removalSequenceNumber < $forkSequenceNumber;
-                }
-            );
-
-            $this->log(sprintf('Content stream "%s" was forked %d times after removal at %d', $sourceContentStreamId, count($illegalContentStreamForks), $removalSequenceNumber->value));
-            foreach ($illegalContentStreamForks as [$forkSequenceNumber, $forkCorrelationId, $newContentStreamId]) {
-                $this->log(sprintf('    Debug: Fork "%s" of "%s" at %d (%s)', $newContentStreamId->value, $sourceContentStreamId->value, $forkSequenceNumber->value, $forkCorrelationId->value));
+        foreach ($forkedContentStreamsWithAlreadyRemovedSourceContentStream as $illegalForksEnvelope) {
+            $this->log(sprintf('Content stream "%s" was forked %d times after removal at %d', $illegalForksEnvelope->sourceContentStreamId->value, count($illegalForksEnvelope->illegalForks), $illegalForksEnvelope->removalSequenceNumber->value));
+            foreach ($illegalForksEnvelope->illegalForks as [$forkSequenceNumber, $forkCorrelationId, $newContentStreamId]) {
+                $this->log(sprintf('    Debug: Fork "%s" of "%s" at %d (%s)', $newContentStreamId->value, $illegalForksEnvelope->sourceContentStreamId->value, $forkSequenceNumber->value, $forkCorrelationId->value));
 
                 if (!str_starts_with($forkCorrelationId->value, 'RebaseWorkspace_')) {
                     $this->log(sprintf('Error fork content stream %s from removed source was not caused due to a RebaseWorkspace and cannot be migrated', $newContentStreamId->value));
@@ -261,5 +214,34 @@ class EventsConcurrentWorkspaceRebasesUpgrade
         $this->log('');
         $this->log(sprintf('Migration applied to %s events. Please replay the content graph via `./flow crupgrade:resetupandreplaycontentgraph`', $affectedRows));
         $this->log('Done.');
+    }
+
+    /**
+     * @return list<IllegalContentStreamForks>
+     */
+    private function findForkedContentStreamsWithAlreadyRemovedSourceContentStream(): array
+    {
+        $rows = $this->context->dbal->fetchAllAssociative(<<<SQL
+        SELECT
+          -- invariant: single entry as content stream can only be removed once 
+          MIN(IF (type = 'ContentStreamWasRemoved', sequencenumber, null)) as removalSequenceNumber,
+          GROUP_CONCAT(IF (type = 'ContentStreamWasRemoved', SUBSTR(stream, LENGTH('ContentStream:') + 1), null)) as sourceContentStreamId,
+          -- multiple forks of source content stream
+          MAX(IF (type = 'ContentStreamWasForked', sequencenumber, null)) as maxForkSequenceNumber,
+          GROUP_CONCAT(IF (type = 'ContentStreamWasForked', sequencenumber, null)) as forkSequenceNumbers,
+          GROUP_CONCAT(IF (type = 'ContentStreamWasForked', correlationid, null)) as forkCorrelationIds,
+          GROUP_CONCAT(IF (type = 'ContentStreamWasForked', SUBSTR(stream, LENGTH('ContentStream:') + 1), null)) as newContentStreamIds
+        FROM
+          {$this->context->eventStoreTableName}
+        WHERE type = 'ContentStreamWasForked' OR type = 'ContentStreamWasRemoved'
+        GROUP BY CASE type
+          WHEN 'ContentStreamWasForked' THEN JSON_UNQUOTE(JSON_EXTRACT(payload, '$.sourceContentStreamId'))
+          WHEN 'ContentStreamWasRemoved' THEN SUBSTR(stream, LENGTH('ContentStream:') + 1)
+        END
+        HAVING removalSequenceNumber < maxForkSequenceNumber
+        ORDER BY sequencenumber;        
+        SQL);
+
+        return array_map(IllegalContentStreamForks::fromRow(...), $rows);
     }
 }
