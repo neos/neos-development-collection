@@ -38,6 +38,11 @@ final readonly class EventsRecordedAtToUtcUpgrade
     ) {
     }
 
+    public static function getShortDescription(): string
+    {
+        return 'Adjust event time stamps and node dates to UTC';
+    }
+
     public function isAvailable(): bool
     {
         $offsetStartsWithSequenceNumber = $this->findOffsetStartsWithSequenceNumber();

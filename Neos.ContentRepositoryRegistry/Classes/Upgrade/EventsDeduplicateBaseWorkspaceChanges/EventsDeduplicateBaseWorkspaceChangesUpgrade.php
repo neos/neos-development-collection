@@ -48,6 +48,11 @@ class EventsDeduplicateBaseWorkspaceChangesUpgrade
     ) {
     }
 
+    public static function getShortDescription(): string
+    {
+        return 'Deduplicate parallel base workspace changes';
+    }
+
     public function isAvailable(): bool
     {
         $duplicateContentStreamRemovalWithStreams = $this->findDuplicateContentStreamRemovalWithStreams();
