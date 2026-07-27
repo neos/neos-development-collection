@@ -12,7 +12,7 @@ export default class ImageCropper extends PureComponent {
 	};
 
 	render() {
-		const { src, cropConfiguration, keepSelection } = this.props;
+		const { src, cropConfiguration, keepSelection, aspect } = this.props;
 
 		return (
 			<ReactCrop
@@ -20,7 +20,7 @@ export default class ImageCropper extends PureComponent {
 				onChange={this.handleChange}
 				onComplete={this.handleComplete}
 				keepSelection={keepSelection}
-				aspect={cropConfiguration.aspect}
+				aspect={aspect}
 			>
 				<img src={src} alt="" />
 			</ReactCrop>

@@ -31,6 +31,7 @@ export default class VariantsApp extends Component {
 			crop: false,
 			cropConfiguration: {},
 			cropVariantPersistenceIdentifier: null,
+			aspect: null,
 		};
 	}
 
@@ -45,6 +46,7 @@ export default class VariantsApp extends Component {
 		const { originalInformation } = this.state;
 
 		this.setState({
+			aspect,
 			crop: true,
 			cropVariantPersistenceIdentifier,
 			cropConfiguration: {
@@ -66,6 +68,7 @@ export default class VariantsApp extends Component {
 
 	closeCrop = () => {
 		this.setState({
+			aspect: null,
 			error: false,
 			crop: false,
 			cropVariantPersistenceIdentifier: null,
@@ -180,6 +183,7 @@ export default class VariantsApp extends Component {
 						keepSelection={true}
 						onComplete={this.changedCrop}
 						cropConfiguration={this.state.cropConfiguration}
+						aspect={this.state.aspect}
 					/>
 				</div>
 				<div className="neos-modal-footer">
