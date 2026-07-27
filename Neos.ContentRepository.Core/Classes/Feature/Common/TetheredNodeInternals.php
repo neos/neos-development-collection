@@ -52,8 +52,6 @@ trait TetheredNodeInternals
 {
     use NodeVariationInternals;
 
-    abstract protected function getPropertyConverter(): PropertyConverter;
-
     abstract protected function createEventsForVariations(
         ContentGraphInterface $contentGraph,
         OriginDimensionSpacePoint $sourceOrigin,

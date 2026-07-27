@@ -146,11 +146,6 @@ final class NodeAggregateCommandHandler implements CommandHandlerInterface
         return $this->ancestorNodeTypeConstraintChecksEnabled;
     }
 
-    public function getPropertyConverter(): PropertyConverter
-    {
-        return $this->propertyConverter;
-    }
-
     /**
      * Use this closure to run code with the Ancestor Node Type Checks disabled; e.g.
      * during imports.

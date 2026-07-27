@@ -48,7 +48,7 @@ class TetheredNodeAdjustments
         ClockInterface $clock,
     ) {
         $this->nodeTypeDefaultPropertySerializer = new NodeTypeDefaultPropertySerializer(
-            $this->propertyConverter,
+            $propertyConverter,
             $clock
         );
     }
@@ -221,11 +221,6 @@ class TetheredNodeAdjustments
     protected function getInterDimensionalVariationGraph(): DimensionSpace\InterDimensionalVariationGraph
     {
         return $this->interDimensionalVariationGraph;
-    }
-
-    protected function getPropertyConverter(): PropertyConverter
-    {
-        return $this->propertyConverter;
     }
 
     /**

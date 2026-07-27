@@ -27,8 +27,6 @@ use Neos\ContentRepository\Core\NodeType\NodeTypeName;
  */
 trait NodeReferencingInternals
 {
-    abstract protected function getPropertyConverter(): PropertyConverter;
-
     abstract protected function requireNodeType(NodeTypeName $nodeTypeName): NodeType;
 
     private function mapNodeReferencesToSerializedNodeReferences(NodeReferencesToWrite $references, NodeTypeName $nodeTypeName): SerializedNodeReferences
@@ -39,7 +37,7 @@ trait NodeReferencingInternals
             foreach ($referencesByProperty->references as $reference) {
                 $serializedReferences[] = SerializedNodeReference::fromTargetAndProperties(
                     $reference->targetNodeAggregateId,
-                    $this->getPropertyConverter()->serializeReferencePropertyValues(
+                    $this->propertyConverter->serializeReferencePropertyValues(
                         $reference->properties,
                         $this->requireNodeType($nodeTypeName),
                         $referencesByProperty->referenceName

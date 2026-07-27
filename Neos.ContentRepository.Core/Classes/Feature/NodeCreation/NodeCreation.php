@@ -69,8 +69,6 @@ trait NodeCreation
 
     abstract protected function requireNodeTypeNotToDeclareTetheredChildNodeName(NodeTypeName $nodeTypeName, NodeName $nodeName): void;
 
-    abstract protected function getPropertyConverter(): PropertyConverter;
-
     abstract protected function getNodeTypeManager(): NodeTypeManager;
 
     private function handleCreateNodeAggregateWithNode(
@@ -87,7 +85,7 @@ trait NodeCreation
             $command->originDimensionSpacePoint,
             $command->parentNodeAggregateId,
             $command->succeedingSiblingNodeAggregateId,
-            $this->getPropertyConverter()->serializePropertyValues(
+            $this->propertyConverter->serializePropertyValues(
                 $command->initialPropertyValues->withoutUnsets(),
                 $this->requireNodeType($command->nodeTypeName)
             ),
