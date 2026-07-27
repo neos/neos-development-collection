@@ -30,7 +30,12 @@ final readonly class WorkspaceNames implements \IteratorAggregate, \Countable
 
     public static function fromWorkspaces(Workspaces $workspaces): self
     {
-        return WorkspaceNames::create(...$workspaces->map(fn (Workspace $workspace) => $workspace->workspaceName));
+        return self::create(...$workspaces->map(fn (Workspace $workspace) => $workspace->workspaceName));
+    }
+
+    public function merge(self $other): self
+    {
+        return new self(array_merge($this->items, $other->items));
     }
 
     public function contain(WorkspaceName $workspaceName): bool
