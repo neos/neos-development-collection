@@ -1,0 +1,114 @@
+`8.3.34 (2026-06-22) <https://github.com/neos/neos-development-collection/releases/tag/8.3.34>`_
+================================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`BUGFIX: Add custom rendering for hidden document nodes in preview mode <https://github.com/neos/neos-development-collection/pull/5843>`_
+-----------------------------------------------------------------------------------------------------------------------------------------
+
+Renders a dedicted screen for a document which is hidden but requested in preview mode.
+
+* Fixes: `#5724 <https://github.com/neos/neos-development-collection/issues/5724>`_ 
+
+<img width="2054" height="1589" alt="image" src="https://github.com/user-attachments/assets/7d6295a1-e5ee-4a6d-90ea-8d34f33a9804" />
+
+* Packages: ``Neos``
+
+`BUGFIX:  Add missing neos link styles in Minimal css <https://github.com/neos/neos-development-collection/pull/5780>`_
+-----------------------------------------------------------------------------------------------------------------------
+
+When a package uses the ``Minimal`` option as the main stylesheet, some link styles were missing, and the underlines in the side navigation and the breadcrumbs were rendered while the package was active. A prominent example is ``Flowpack/Media/Ui``.
+
+This fix adds styles to specific CSS selectors to avoid breaking changes in unexpected places.
+
+Before:
+
+<img width="1460" height="767" alt="Bildschirmfoto 2026-04-14 um 11 54 44" src="https://github.com/user-attachments/assets/771efdb8-f53e-44ed-bdca-5c745083fb01" />
+
+After:
+
+<img width="1469" height="773" alt="Bildschirmfoto 2026-04-14 um 11 43 29" src="https://github.com/user-attachments/assets/2ed0da6d-a554-40a7-91da-983a42da3583" />
+
+related: Bug in `Flowpack/media-ui <https://github.com/Flowpack/media-ui/issues/272#event-24442655361>`_
+
+* Packages: ``Neos``
+
+`BUGFIX: Stabilize Workspace preview for broken assets <https://github.com/neos/neos-development-collection/pull/5755>`_
+------------------------------------------------------------------------------------------------------------------------
+
+Prevents missing assets from throwing an exception when trying to review workspace changes:
+
+### Before
+
+<img width="978" height="340" alt="image" src="https://github.com/user-attachments/assets/5d06b99a-ccbe-43df-b71f-9e05b1783dc6" />
+
+### With fix
+
+<img width="1842" height="1127" alt="image" src="https://github.com/user-attachments/assets/e33818ad-5d0e-4653-9c51-d753f44ec078" />
+
+* Fixes: `#5754 <https://github.com/neos/neos-development-collection/issues/5754>`_
+
+* Packages: ``Neos``
+
+`BUGFIX: Log `fusionPath` when absorbing exceptions during Fusion rendering <https://github.com/neos/neos-development-collection/pull/5760>`_
+---------------------------------------------------------------------------------------------------------------------------------------------
+
+The ``AbsorbingHandler`` is active by default and will log the current ``fusionPath`` and ``referenceCode`` to the System Log. But it is not logged with the exception itself and there is no way to correlate the two (apart from the timestamp).
+
+This fix adds ``fusionPath`` and ``referenceCode`` to the ``additionalData`` array, making them appear in the exception log, too.
+
+* Packages: ``Neos`` ``Fusion``
+
+`TASK: Fix migrations for MariaDB 12.x <https://github.com/neos/neos-development-collection/pull/5855>`_
+--------------------------------------------------------------------------------------------------------
+
+What I did
+
+Some old Flow migrations dropped foreign keys by their hardcoded auto-generated names (e.g. ..._ibfk_1). These names are no longer reliable: on MariaDB 12+, renaming a table no longer renames its auto-generated foreign key/index names along with it, so the constraint names the migrations expect may not exist and the migrations fail.
+
+Instead of relying on hardcoded constraint names, the affected migrations now look up the actual foreign keys on the table via the schema manager and drop the one defined on the relevant column. This works regardless of what the constraint is actually named, making the migrations compatible with MySQL, MariaDB < 12 and MariaDB ≥ 12 alike.
+
+Why the CI change
+
+Until now this breakage went unnoticed because the pipeline never executed the Doctrine migrations. The build workflow now runs ./flow doctrine:migrate before the functional tests, so the full migration chain is verified on every build.
+
+Depends on: `#5853 <https://github.com/neos/neos-development-collection/issues/5853>`_
+
+Also depending on: https://github.com/neos/flow-development-collection/pull/3571
+
+* Packages: ``Neos``
+
+`TASK: Fix typos and grammar mistakes in documentation <https://github.com/neos/neos-development-collection/pull/5846>`_
+------------------------------------------------------------------------------------------------------------------------
+
+Hi!
+
+I tried to fix as many typos and grammar mistakes as I could (within reasonable time). There are still many other mistakes but I needed to call it done. I used cspell, Claude and regular expressions (``\\b(\\w+)\\s\\1\\b``) to find them. Note that I did not use Claude to generate new text.
+
+**Upgrade instructions**
+
+n/a
+
+**Review instructions**
+
+I picked 9.2 as the base (not 8.3, as instructed) simply because that's where I started working before coming across that requirement. I also didn't generate the docs because I assume that is done by your pipeline. Please let me know if I should cherry-pick my changes to an 8.3 based branch.
+
+  - If it's a bugfix, use the `lowest maintained branch which has the bug <https://www.neos.io/features/release-roadmap.html>`_
+  - If it's a non-breaking feature, use the branch of the next version (might be either minor or major)
+  - If it's a breaking feature it should typically go into the next major version
+- [ ] Reviewer - PR Title is brief but complete and starts with ``FEATURE|TASK|BUGFIX``
+- [ ] Reviewer - The first section explains the change briefly for change-logs
+- [ ] Reviewer - Breaking Changes are marked with ``!!!`` and have upgrade-instructions
+
+* Packages: ``Fusion.Afx`` ``Media`` ``Neos``
+
+`TASK: Overhaul CI jobs to support multiple databases and parallel execution <https://github.com/neos/neos-development-collection/pull/5853>`_
+----------------------------------------------------------------------------------------------------------------------------------------------
+
+This refactors the CI pipeline and splits the jobs to allow them to run in parallel. Also it enables us to test more database servers and versions.
+
+* Packages: ``Neos`` ``.github``
+
+`Detailed log <https://github.com/neos/neos-development-collection/compare/8.3.33...8.3.34>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
