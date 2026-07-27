@@ -115,7 +115,7 @@ Render each item in ``collection`` using ``itemRenderer``.
 :collection: (array/Iterable, **required**) The array or iterable to iterate over
 :itemName: (string, defaults to ``item``) Context variable name for each item
 :itemKey: (string, defaults to ``itemKey``) Context variable name for each item key, when working with array
-:iterationName: (string, defaults to ``iterator``) A context variable with iteration information will be available under the given name: ``index`` (zero-based), ``cycle`` (1-based), ``isFirst``, ``isLast``
+:iterationName: (string, defaults to ``iterator``) A context variable with iteration information will be available under the given name: ``index`` (zero-based), ``cycle`` (1-based), ``isFirst``, ``isLast``, ``isOdd``, ``isEven``
 :itemRenderer: (string, **required**) The renderer definition (simple value, expression or object) will be called once for every collection element, and its results will be concatenated (if ``itemRenderer`` cannot be rendered the path ``content`` is used as fallback for convenience in afx)
 
 .. note:: The Neos.Fusion:Collection object is DEPRECATED use Neos.Fusion:Loop instead.
@@ -150,7 +150,7 @@ Render each item in ``collection`` using ``itemRenderer`` and return the result 
 :collection: (array/Iterable, **required**) The array or iterable to iterate over
 :itemName: (string, defaults to ``item``) Context variable name for each item
 :itemKey: (string, defaults to ``itemKey``) Context variable name for each item key, when working with array
-:iterationName: (string, defaults to ``iterator``) A context variable with iteration information will be available under the given name: ``index`` (zero-based), ``cycle`` (1-based), ``isFirst``, ``isLast``
+:iterationName: (string, defaults to ``iterator``) A context variable with iteration information will be available under the given name: ``index`` (zero-based), ``cycle`` (1-based), ``isFirst``, ``isLast``, ``isOdd``, ``isEven``
 :itemRenderer: (mixed, **required**) The renderer definition (simple value, expression or object) will be called once for every collection element (if ``itemRenderer`` cannot be rendered the path ``content`` is used as fallback for convenience in afx)
 
 .. note:: The Neos.Fusion:RawCollection object is DEPRECATED use Neos.Fusion:Map instead.**
@@ -165,7 +165,7 @@ Render each item in ``items`` using ``itemRenderer``.
 :items: (array/Iterable, **required**) The array or iterable to iterate over (to calculate ``iterator.isLast`` items have to be ``countable``)
 :itemName: (string, defaults to ``item``) Context variable name for each item
 :itemKey: (string, defaults to ``itemKey``) Context variable name for each item key, when working with array
-:iterationName: (string, defaults to ``iterator``) A context variable with iteration information will be available under the given name: ``index`` (zero-based), ``cycle`` (1-based), ``isFirst``, ``isLast``
+:iterationName: (string, defaults to ``iterator``) A context variable with iteration information will be available under the given name: ``index`` (zero-based), ``cycle`` (1-based), ``isFirst``, ``isLast``, ``isOdd``, ``isEven``
 :itemRenderer: (string, **required**) The renderer definition (simple value, expression or object) will be called once for every collection element, and its results will be concatenated (if ``itemRenderer`` cannot be rendered the path ``content`` is used as fallback for convenience in afx)
 :@glue: (string) The glue used to join the items together (default = '').
 
@@ -199,7 +199,7 @@ Render each item in ``items`` using ``itemRenderer`` and return the result as an
 :items: (array/Iterable, **required**) The array or iterable to iterate over (to calculate ``iterator.isLast`` items have to be ``countable``)
 :itemName: (string, defaults to ``item``) Context variable name for each item
 :itemKey: (string, defaults to ``itemKey``) Context variable name for each item key, when working with array
-:iterationName: (string, defaults to ``iterator``) A context variable with iteration information will be available under the given name: ``index`` (zero-based), ``cycle`` (1-based), ``isFirst``, ``isLast``
+:iterationName: (string, defaults to ``iterator``) A context variable with iteration information will be available under the given name: ``index`` (zero-based), ``cycle`` (1-based), ``isFirst``, ``isLast``, ``isOdd``, ``isEven``
 :itemRenderer: (mixed, **required**) The renderer definition (simple value, expression or object) will be called once for every collection element to render the item (if ``itemRenderer`` cannot be rendered the path ``content`` is used as fallback for convenience in afx)
 :keyRenderer: (mixed, **optional**) The renderer definition (simple value, expression or object) will be called once for every collection element to render the key in the result collection.
 
@@ -214,7 +214,7 @@ Reduce the given items to a single value by using ``itemReducer``.
 :itemName: (string, defaults to ``item``) Context variable name for each item
 :itemKey: (string, defaults to ``itemKey``) Context variable name for each item key, when working with array
 :carryName: (string, defaults to ``carry``) Context variable that contains the result of the last iteration
-:iterationName: (string, defaults to ``iterator``) A context variable with iteration information will be available under the given name: ``index`` (zero-based), ``cycle`` (1-based), ``isFirst``, ``isLast``
+:iterationName: (string, defaults to ``iterator``) A context variable with iteration information will be available under the given name: ``index`` (zero-based), ``cycle`` (1-based), ``isFirst``, ``isLast``, ``isOdd``, ``isEven``
 :itemReducer: (mixed, **required**) The reducer definition (simple value, expression or object) that will be applied for every item.
 :initialValue: (mixed, defaults to ``null``) The value that is passed to the first iteration or returned if the items are empty
 
