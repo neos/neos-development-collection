@@ -1,5 +1,7 @@
 <?php
+
 declare(strict_types=1);
+
 namespace Neos\ContentRepository\LegacyNodeMigration\Helpers;
 
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
@@ -18,7 +20,6 @@ use Neos\Flow\Annotations as Flow;
  */
 final class VisitedNodeAggregates
 {
-
     /**
      * @var array<string, VisitedNodeAggregate>
      */

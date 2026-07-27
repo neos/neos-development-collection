@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Media\Domain\Model\AssetSource\Neos;
 
 /*
@@ -11,8 +12,8 @@ namespace Neos\Media\Domain\Model\AssetSource\Neos;
  * source code.
  */
 
-use Neos\Flow\Annotations as Flow;
 use GuzzleHttp\Psr7\Uri;
+use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Flow\ResourceManagement\ResourceManager;
 use Neos\Media\Domain\Model\Asset;

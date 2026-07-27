@@ -80,7 +80,7 @@ class PropertyValueCriteriaMatcherTest extends TestCase
 
     public function negateCriteriaDataProvider(): \Generator
     {
-        $trueCriterium = PropertyValueEquals::create(PropertyName::fromString('stringProperty'), 'foo',true);
+        $trueCriterium = PropertyValueEquals::create(PropertyName::fromString('stringProperty'), 'foo', true);
         $falseCriterium = PropertyValueEquals::create(PropertyName::fromString('stringProperty'), 'other', true);
 
         yield 'criterium is true' => [$trueCriterium, false];

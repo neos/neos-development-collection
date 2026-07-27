@@ -19,7 +19,6 @@ use Behat\Gherkin\Node\TableNode;
 use League\Flysystem\FileAttributes;
 use League\Flysystem\Filesystem;
 use League\Flysystem\InMemory\InMemoryFilesystemAdapter;
-use Neos\ContentRepository\Core\EventStore\InitiatingEventMetadata;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepository\Export\Asset\ValueObject\SerializedImageVariant;
 use Neos\ContentRepository\Export\Event\ValueObject\ExportedEvents;
@@ -192,7 +191,7 @@ trait CrImportExportTrait
         foreach ($expectedSites as $key => $expectedSiteData) {
             $actualSiteData = $actualSiteRows[$key] ?? [];
             $expectedSiteData = array_map(
-                fn(string $value) => json_decode($value, true, 512, JSON_THROW_ON_ERROR),
+                fn (string $value) => json_decode($value, true, 512, JSON_THROW_ON_ERROR),
                 $expectedSiteData
             );
             Assert::assertEquals($expectedSiteData, $actualSiteData, 'Actual site: ' . json_encode($actualSiteData, JSON_THROW_ON_ERROR));

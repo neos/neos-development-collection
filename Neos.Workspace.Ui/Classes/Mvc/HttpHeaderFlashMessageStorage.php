@@ -37,7 +37,7 @@ final class HttpHeaderFlashMessageStorage implements FlashMessageStorageInterfac
 
     public function persist(HttpResponseInterface $response): HttpResponseInterface
     {
-        $messages = array_map(static fn(Message $message) => [
+        $messages = array_map(static fn (Message $message) => [
             'title' => $message->getTitle(),
             'message' => $message->render(),
             'severity' => $message->getSeverity(),

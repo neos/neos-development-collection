@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Neos\Tests\Unit\Service;
 
 /*
@@ -11,18 +12,17 @@ namespace Neos\Neos\Tests\Unit\Service;
  * source code.
  */
 
+use Neos\ContentRepository\Domain\Repository\WorkspaceRepository;
+use Neos\Flow\Persistence\PersistenceManagerInterface;
+use Neos\Flow\Security\Account;
+use Neos\Flow\Security\AccountRepository;
 use Neos\Flow\Security\Context;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\Neos\Domain\Model\User;
 use Neos\Neos\Domain\Service\UserService as UserDomainService;
-use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Neos\Service\UserService;
 use Neos\Party\Domain\Repository\PartyRepository;
-use Neos\ContentRepository\Domain\Model\Workspace;
-use Neos\ContentRepository\Domain\Repository\WorkspaceRepository;
-use Neos\Flow\Security\AccountRepository;
 use Neos\Party\Domain\Service\PartyService;
-use Neos\Flow\Security\Account;
 
 /**
  * Test case for the UserService

@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Neos\Fusion\FusionObjects;
@@ -91,7 +92,7 @@ class ActionUriImplementation extends AbstractFusionObject
     public function getArguments(): ?array
     {
         $arguments = $this->fusionValue('arguments');
-        return is_array($arguments) ? $arguments: [];
+        return is_array($arguments) ? $arguments : [];
     }
 
     /**
@@ -131,7 +132,7 @@ class ActionUriImplementation extends AbstractFusionObject
      */
     public function isAbsolute(): bool
     {
-        return (boolean)$this->fusionValue('absolute');
+        return (bool)$this->fusionValue('absolute');
     }
 
     /**

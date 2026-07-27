@@ -22,7 +22,6 @@ use Neos\Flow\I18n\Locale;
  */
 trait BackendUserTranslationTrait
 {
-    // phpcs:disable
     /**
      * @Flow\Inject
      * @var \Neos\Flow\I18n\Service
@@ -34,7 +33,6 @@ trait BackendUserTranslationTrait
      * @var \Neos\Neos\Service\UserService
      */
     protected $_userService;
-    // phpcs:enable
 
     /**
      * Set the locale according to the user settings

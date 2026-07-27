@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Neos\Tests\Unit\Service;
 
 /*
@@ -11,12 +12,12 @@ namespace Neos\Neos\Tests\Unit\Service;
  * source code.
  */
 
+use Neos\ContentRepository\Core\NodeType\NodeType;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\Flow\Security\Authorization\PrivilegeManagerInterface;
 use Neos\Flow\Tests\UnitTestCase;
-use Neos\Fusion\Service\HtmlAugmenter;
-use Neos\ContentRepository\Core\NodeType\NodeType;
 use Neos\Fusion\Core\Runtime;
+use Neos\Fusion\Service\HtmlAugmenter;
 use Neos\Neos\Service\ContentElementEditableService;
 
 /**

@@ -23,7 +23,7 @@ use Neos\EventStore\Model\Event\SequenceNumber;
  */
 final class ExternalProjectionErrorTest extends AbstractSubscriptionEngineTestCase
 {
-    static Connection $secondConnection;
+    public static Connection $secondConnection;
 
     /** @before */
     public function injectExternalFakeProjection(): void

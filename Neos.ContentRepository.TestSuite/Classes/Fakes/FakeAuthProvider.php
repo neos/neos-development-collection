@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\TestSuite\Fakes;
 
 use Neos\ContentRepository\Core\CommandHandler\CommandInterface;
+use Neos\ContentRepository\Core\Feature\Security\AuthProviderInterface;
 use Neos\ContentRepository\Core\Feature\Security\Dto\Privilege;
 use Neos\ContentRepository\Core\Feature\Security\Dto\UserId;
-use Neos\ContentRepository\Core\Feature\Security\AuthProviderInterface;
 use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\Neos\Security\ContentRepositoryAuthProvider\ContentRepositoryAuthProvider;

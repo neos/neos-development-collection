@@ -94,7 +94,7 @@ final class SubscriptionEngine
     {
         $criteria ??= SubscriptionEngineCriteria::noConstraints();
         return $this->processExclusively(
-            fn() => $this->catchUpSubscriptions($criteria, SubscriptionStatusFilter::fromArray([SubscriptionStatus::BOOTING]), $progressCallback, $batchSize)
+            fn () => $this->catchUpSubscriptions($criteria, SubscriptionStatusFilter::fromArray([SubscriptionStatus::BOOTING]), $progressCallback, $batchSize)
         );
     }
 
@@ -102,7 +102,7 @@ final class SubscriptionEngine
     {
         $criteria ??= SubscriptionEngineCriteria::noConstraints();
         return $this->processExclusively(
-            fn() => $this->catchUpSubscriptions($criteria, SubscriptionStatusFilter::fromArray([SubscriptionStatus::ACTIVE]), $progressCallback, $batchSize)
+            fn () => $this->catchUpSubscriptions($criteria, SubscriptionStatusFilter::fromArray([SubscriptionStatus::ACTIVE]), $progressCallback, $batchSize)
         );
     }
 
@@ -110,7 +110,7 @@ final class SubscriptionEngine
     {
         $criteria ??= SubscriptionEngineCriteria::noConstraints();
         return $this->processExclusively(
-            fn() => $this->catchUpSubscriptions($criteria, SubscriptionStatusFilter::fromArray([SubscriptionStatus::ERROR, SubscriptionStatus::DETACHED]), $progressCallback, $batchSize)
+            fn () => $this->catchUpSubscriptions($criteria, SubscriptionStatusFilter::fromArray([SubscriptionStatus::ERROR, SubscriptionStatus::DETACHED]), $progressCallback, $batchSize)
         );
     }
 

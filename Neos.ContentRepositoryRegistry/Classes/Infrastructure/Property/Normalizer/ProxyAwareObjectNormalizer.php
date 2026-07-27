@@ -1,5 +1,7 @@
 <?php
+
 declare(strict_types=1);
+
 namespace Neos\ContentRepositoryRegistry\Infrastructure\Property\Normalizer;
 
 use Neos\Flow\ObjectManagement\Proxy\ProxyInterface;

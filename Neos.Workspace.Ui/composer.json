@@ -11,7 +11,7 @@
         "GPL-3.0-or-later"
     ],
     "require": {
-        "php": "^8.2",
+        "php": "^8.4",
         "neos/neos": "self.version",
         "neos/diff": "self.version"
     },

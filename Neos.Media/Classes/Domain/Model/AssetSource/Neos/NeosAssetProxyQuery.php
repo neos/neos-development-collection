@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Media\Domain\Model\AssetSource\Neos;
 
 /*
@@ -11,9 +12,9 @@ namespace Neos\Media\Domain\Model\AssetSource\Neos;
  * source code.
  */
 
+use Neos\Flow\Persistence\QueryInterface;
 use Neos\Media\Domain\Model\AssetSource\AssetProxyQueryInterface;
 use Neos\Media\Domain\Model\AssetSource\AssetProxyQueryResultInterface;
-use Neos\Flow\Persistence\QueryInterface;
 
 final class NeosAssetProxyQuery implements AssetProxyQueryInterface
 {

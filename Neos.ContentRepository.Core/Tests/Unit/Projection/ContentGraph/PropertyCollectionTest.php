@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\ContentRepository\Core\Tests\Unit\Projection\ContentGraph;
 
 /*
@@ -20,7 +21,6 @@ use Symfony\Component\Serializer\Serializer;
 
 class PropertyCollectionTest extends TestCase
 {
-
     private Serializer|MockObject $mockSerializer;
     private PropertyConverter|MockObject $mockPropertyConverter;
 

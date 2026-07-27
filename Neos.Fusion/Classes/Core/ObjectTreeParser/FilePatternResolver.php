@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Neos\Fusion\Core\ObjectTreeParser;
@@ -112,13 +113,13 @@ class FilePatternResolver
 
             // Match recursive wildcard globbing '<base>/**/*<end>?'
             preg_match(self::RECURSIVE_GLOB_PATTERN, $filePattern, $matches) => static function (string $dir): \Iterator {
-                $recursiveDirectoryIterator = new \RecursiveDirectoryIterator($dir, \FilesystemIterator::SKIP_DOTS|\FilesystemIterator::UNIX_PATHS);
+                $recursiveDirectoryIterator = new \RecursiveDirectoryIterator($dir, \FilesystemIterator::SKIP_DOTS | \FilesystemIterator::UNIX_PATHS);
                 return new \RecursiveIteratorIterator($recursiveDirectoryIterator);
             },
 
             // Match simple wildcard globbing '<base>/*<end>?'
             preg_match(self::SIMPLE_GLOB_PATTERN, $filePattern, $matches) => static function (string $dir): \Iterator {
-                return new \FilesystemIterator($dir, \FilesystemIterator::SKIP_DOTS|\FilesystemIterator::UNIX_PATHS);
+                return new \FilesystemIterator($dir, \FilesystemIterator::SKIP_DOTS | \FilesystemIterator::UNIX_PATHS);
             },
 
             default => throw new Fusion\Exception("The include glob pattern '$filePattern' is invalid. Only globbing with /**/* or /* is supported.", 1636144713),

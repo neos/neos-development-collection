@@ -461,7 +461,7 @@ class WorkspaceController extends AbstractModuleController
             );
             $this->addFlashMessage($message, '', Message::SEVERITY_WARNING);
             $this->throwStatus(403, 'Workspace has unpublished nodes');
-        // delete workspace on POST -> TODO: Split this into 2 actions like the create or edit workflows
+            // delete workspace on POST -> TODO: Split this into 2 actions like the create or edit workflows
         } elseif ($this->request->getHttpRequest()->getMethod() === 'POST') {
             $this->workspaceService->deleteWorkspace($contentRepositoryId, $workspaceName);
 
@@ -471,7 +471,7 @@ class WorkspaceController extends AbstractModuleController
                     [$workspaceMetadata->title->value],
                 )
             );
-        // Render a confirmation form if the request is not a POST request
+            // Render a confirmation form if the request is not a POST request
         } else {
             $this->view->assign('workspaceName', $workspace->workspaceName->value);
             $this->view->assign('workspaceTitle', $workspaceMetadata->title->value);
@@ -563,7 +563,7 @@ class WorkspaceController extends AbstractModuleController
         $existingSubjects = $workspaceRoleAssignments->getSubjects();
         $possibleSubjects = WorkspaceRoleSubjects::fromArray(
             array_map(
-                static fn(User $user) => WorkspaceRoleSubject::createForUser($user->getId()),
+                static fn (User $user) => WorkspaceRoleSubject::createForUser($user->getId()),
                 $users
             )
         )->difference($existingSubjects);
@@ -606,7 +606,7 @@ class WorkspaceController extends AbstractModuleController
         $existingSubjects = $workspaceRoleAssignments->getSubjects();
         $possibleSubjects = WorkspaceRoleSubjects::fromArray(
             array_map(
-                static fn(Role $role) => WorkspaceRoleSubject::createForGroup($role->getIdentifier()),
+                static fn (Role $role) => WorkspaceRoleSubject::createForGroup($role->getIdentifier()),
                 $rolesInSystem
             )
         )->difference($existingSubjects);
@@ -1141,7 +1141,7 @@ class WorkspaceController extends AbstractModuleController
                         '/',
                         array_reverse(
                             array_map(
-                                fn(NodeName $nodeName): string => $nodeName->value,
+                                fn (NodeName $nodeName): string => $nodeName->value,
                                 $documentPathSegments
                             )
                         )
@@ -1152,7 +1152,7 @@ class WorkspaceController extends AbstractModuleController
                         '/',
                         array_reverse(
                             array_map(
-                                fn(NodeName $nodeName): string => $nodeName->value,
+                                fn (NodeName $nodeName): string => $nodeName->value,
                                 $nodePathSegments
                             )
                         )

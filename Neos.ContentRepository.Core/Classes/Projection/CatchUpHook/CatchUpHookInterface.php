@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\Core\Projection\CatchUpHook;
 
 use Neos\ContentRepository\Core\EventStore\EventInterface;
-use Neos\ContentRepository\Core\Projection\ProjectionInterface;
 use Neos\ContentRepository\Core\Subscription\SubscriptionStatus;
 use Neos\EventStore\Model\EventEnvelope;
 

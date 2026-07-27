@@ -277,7 +277,7 @@ trait CRTestSuiteTrait
 
     final protected function getContentGraphReadModel(): ContentGraphReadModelInterface
     {
-        return $this->getContentRepositoryService(new class implements ContentRepositoryServiceFactoryInterface {
+        return $this->getContentRepositoryService(new class () implements ContentRepositoryServiceFactoryInterface {
             public function build(ContentRepositoryServiceFactoryDependencies $serviceFactoryDependencies): ContentRepositoryServiceInterface
             {
                 $contentGraphReadModel = $serviceFactoryDependencies->contentGraphReadModel;

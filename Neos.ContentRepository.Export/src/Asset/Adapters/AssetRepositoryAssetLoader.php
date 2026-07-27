@@ -1,5 +1,7 @@
 <?php
+
 declare(strict_types=1);
+
 namespace Neos\ContentRepository\Export\Asset\Adapters;
 
 use Neos\ContentRepository\Export\Asset\AssetLoaderInterface;
@@ -13,7 +15,8 @@ final class AssetRepositoryAssetLoader implements AssetLoaderInterface
 {
     public function __construct(
         private readonly AssetRepository $assetRepository,
-    ) {}
+    ) {
+    }
 
     public function findAssetById(string $assetId): SerializedAsset|SerializedImageVariant
     {

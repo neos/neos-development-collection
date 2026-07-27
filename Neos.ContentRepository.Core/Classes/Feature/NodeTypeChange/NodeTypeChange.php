@@ -16,23 +16,22 @@ namespace Neos\ContentRepository\Core\Feature\NodeTypeChange;
 
 use Neos\ContentRepository\Core\CommandHandler\CommandHandlingDependencies;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
-use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePointSet;
 use Neos\ContentRepository\Core\EventStore\EventInterface;
 use Neos\ContentRepository\Core\EventStore\Events;
 use Neos\ContentRepository\Core\EventStore\EventsToPublish;
-use Neos\ContentRepository\Core\Feature\NodeRemoval\Event\NodeAggregateWasRemoved;
-use Neos\ContentRepository\Core\Feature\RebaseableCommand;
 use Neos\ContentRepository\Core\Feature\Common\NodeTypeChangeInternals;
 use Neos\ContentRepository\Core\Feature\Common\TetheredNodeInternals;
 use Neos\ContentRepository\Core\Feature\ContentStreamEventStreamName;
 use Neos\ContentRepository\Core\Feature\NodeCreation\Dto\NodeAggregateIdsByNodePaths;
 use Neos\ContentRepository\Core\Feature\NodeModification\Dto\SerializedPropertyValues;
 use Neos\ContentRepository\Core\Feature\NodeModification\Event\NodePropertiesWereSet;
+use Neos\ContentRepository\Core\Feature\NodeRemoval\Event\NodeAggregateWasRemoved;
 use Neos\ContentRepository\Core\Feature\NodeTypeChange\Command\ChangeNodeAggregateType;
 use Neos\ContentRepository\Core\Feature\NodeTypeChange\Dto\NodeAggregateTypeChangeChildConstraintConflictResolutionMarkWithTagStrategy;
 use Neos\ContentRepository\Core\Feature\NodeTypeChange\Dto\NodeAggregateTypeChangeChildConstraintConflictResolutionStrategy;
 use Neos\ContentRepository\Core\Feature\NodeTypeChange\Event\NodeAggregateTypeWasChanged;
+use Neos\ContentRepository\Core\Feature\RebaseableCommand;
 use Neos\ContentRepository\Core\Feature\SubtreeTagging\Event\SubtreeWasTagged;
 use Neos\ContentRepository\Core\NodeType\NodeType;
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
@@ -247,7 +246,7 @@ trait NodeTypeChange
         // remove or tag disallowed nodes
         $alreadyRemovedNodeAggregateIds = NodeAggregateIds::createEmpty();
         if ($command->strategy === NodeAggregateTypeChangeChildConstraintConflictResolutionStrategy::STRATEGY_DELETE) {
-            $handleNode = fn(NodeAggregate $nodeAggregateToDelete, DimensionSpacePointSet $points) => new NodeAggregateWasRemoved(
+            $handleNode = fn (NodeAggregate $nodeAggregateToDelete, DimensionSpacePointSet $points) => new NodeAggregateWasRemoved(
                 $contentGraph->getWorkspaceName(),
                 $contentGraph->getContentStreamId(),
                 $nodeAggregateToDelete->nodeAggregateId,
@@ -257,7 +256,7 @@ trait NodeTypeChange
             array_push($events, ...$this->handleDisallowedNodesWhenChangingNodeType($contentGraph, $nodeAggregate, $newNodeType, $alreadyRemovedNodeAggregateIds, $handleNode));
             array_push($events, ...$this->handleObsoleteTetheredNodesWhenChangingNodeType($contentGraph, $nodeAggregate, $newNodeType, $alreadyRemovedNodeAggregateIds, $handleNode));
         } elseif ($command->strategy instanceof NodeAggregateTypeChangeChildConstraintConflictResolutionMarkWithTagStrategy) {
-            $handleNode = fn(NodeAggregate $aggregateToTag, DimensionSpacePointSet $points) => new SubtreeWasTagged(
+            $handleNode = fn (NodeAggregate $aggregateToTag, DimensionSpacePointSet $points) => new SubtreeWasTagged(
                 $contentGraph->getWorkspaceName(),
                 $contentGraph->getContentStreamId(),
                 $aggregateToTag->nodeAggregateId,

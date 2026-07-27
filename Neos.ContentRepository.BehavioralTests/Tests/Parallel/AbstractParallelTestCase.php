@@ -26,8 +26,6 @@ use Neos\ContentRepository\Core\Subscription\Engine\SubscriptionEngine;
 use Neos\ContentRepository\TestSuite\Fakes\FakeAuthProvider;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\EventStore\EventStoreInterface;
-use Neos\EventStore\Model\EventEnvelope;
-use Neos\EventStore\Model\EventStream\VirtualStreamName;
 use Neos\Flow\Core\Bootstrap;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use PHPUnit\Framework\TestCase;
@@ -124,15 +122,14 @@ abstract class AbstractParallelTestCase extends TestCase // we don't use Flows f
 
     final protected function getEventStore(ContentRepositoryId $contentRepositoryId): EventStoreInterface
     {
-        $eventStoreAccessor = new class implements ContentRepositoryServiceFactoryInterface {
+        $eventStoreAccessor = new class () implements ContentRepositoryServiceFactoryInterface {
             public EventStoreInterface|null $eventStore;
             public SubscriptionEngine|null $subscriptionEngine;
             public function build(ContentRepositoryServiceFactoryDependencies $serviceFactoryDependencies): ContentRepositoryServiceInterface
             {
                 $this->eventStore = $serviceFactoryDependencies->eventStore;
                 $this->subscriptionEngine = $serviceFactoryDependencies->subscriptionEngine;
-                return new class implements ContentRepositoryServiceInterface
-                {
+                return new class () implements ContentRepositoryServiceInterface {
                 };
             }
         };

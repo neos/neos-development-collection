@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Neos\Fusion\Core\Cache;
@@ -13,13 +14,13 @@ namespace Neos\Fusion\Core\Cache;
  * source code.
  */
 
-use Neos\Flow\Annotations as Flow;
 use Neos\Cache\Frontend\VariableFrontend;
+use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Package\FlowPackageInterface;
 use Neos\Flow\Package\PackageManager;
 use Neos\Fusion\Core\ObjectTreeParser\Ast\FusionFile;
-use Neos\Utility\Unicode\Functions as UnicodeFunctions;
 use Neos\Utility\Files;
+use Neos\Utility\Unicode\Functions as UnicodeFunctions;
 
 /**
  * Helper around the ParsePartials Cache.

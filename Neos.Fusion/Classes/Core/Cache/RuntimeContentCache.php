@@ -15,9 +15,9 @@ namespace Neos\Fusion\Core\Cache;
  */
 
 use Neos\Flow\Annotations as Flow;
-use Neos\Utility\TypeHandling;
 use Neos\Fusion\Core\Runtime;
 use Neos\Fusion\Exception;
+use Neos\Utility\TypeHandling;
 use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 

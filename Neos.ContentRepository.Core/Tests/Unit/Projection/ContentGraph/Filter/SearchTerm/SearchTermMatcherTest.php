@@ -87,7 +87,7 @@ class SearchTermMatcherTest extends TestCase
         yield 'inside array: string found inside string' => ['foo', self::value(['foo'])];
         yield 'inside array-object: string found inside string' => ['foo', self::value(new \ArrayObject(['foo']))];
 
-        foreach([
+        foreach ([
             ...iterator_to_array(self::matchingStringComparisonExamples()),
             ...iterator_to_array(self::matchingNumberLikeComparisonExamples()),
             ...iterator_to_array(self::matchingBooleanLikeComparisonExamples()),

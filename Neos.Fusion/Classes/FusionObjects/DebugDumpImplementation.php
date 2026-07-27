@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Fusion\FusionObjects;
 
 /*
@@ -29,7 +30,7 @@ class DebugDumpImplementation extends AbstractFusionObject
      */
     protected $stack;
 
-    public function isEnabled() : bool
+    public function isEnabled(): bool
     {
         return $this->fusionValue('enabled') ?: false;
     }

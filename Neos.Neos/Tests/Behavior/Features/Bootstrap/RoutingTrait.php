@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 /*
@@ -120,7 +121,7 @@ trait RoutingTrait
         }
 
         $config = Yaml::parse($configYaml->getRaw());
-        $this->routingTraitSiteConfigurationPostLoadHook = new class($config) {
+        $this->routingTraitSiteConfigurationPostLoadHook = new class ($config) {
             public function __construct(
                 private readonly array $config
             ) {

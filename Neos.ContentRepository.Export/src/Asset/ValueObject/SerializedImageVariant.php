@@ -1,5 +1,7 @@
 <?php
+
 declare(strict_types=1);
+
 namespace Neos\ContentRepository\Export\Asset\ValueObject;
 
 use Neos\Media\Domain\Model\ImageVariant;
@@ -15,7 +17,8 @@ final readonly class SerializedImageVariant implements \JsonSerializable
         public ?string $presetIdentifier,
         public ?string $presetVariantName,
         public SerializedImageAdjustments $imageAdjustments,
-    ) {}
+    ) {
+    }
 
     public static function fromImageVariant(ImageVariant $imageVariant): self
     {

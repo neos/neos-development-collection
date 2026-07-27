@@ -38,11 +38,13 @@ final class CatchUpHookTest extends AbstractSubscriptionEngineTestCase
         );
 
         $expectNoTransactionActive = fn () => self::assertFalse(
-            $this->getObject(Connection::class)->isTransactionActive(), 'Expected no transaction to be active'
+            $this->getObject(Connection::class)->isTransactionActive(),
+            'Expected no transaction to be active'
         );
 
         $expectTransactionActive = fn () => self::assertTrue(
-            $this->getObject(Connection::class)->isTransactionActive(), 'Expected transaction to be active'
+            $this->getObject(Connection::class)->isTransactionActive(),
+            'Expected transaction to be active'
         );
 
         // first projection hooks

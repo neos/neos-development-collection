@@ -1,5 +1,7 @@
 <?php
+
 declare(strict_types=1);
+
 namespace Neos\ContentRepository\Export\Asset\ValueObject;
 
 use Neos\Flow\ResourceManagement\PersistentResource;
@@ -21,7 +23,8 @@ final readonly class SerializedAsset implements \JsonSerializable
         public string $caption,
         public string $assetSourceIdentifier,
         public SerializedResource $resource,
-    ) {}
+    ) {
+    }
 
     public static function fromAsset(Asset $asset): self
     {

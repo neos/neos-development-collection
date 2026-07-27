@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\ContentRepository\NodeAccess\Tests\Unit\FlowQueryOperations;
 
 /*
@@ -19,7 +20,6 @@ use Neos\Eel\FlowQuery\FlowQuery;
  */
 class UniqueOperationTest extends AbstractQueryOperationsTest
 {
-
     public function setUp(): void
     {
         $this->markTestSkipped('fix and re-enable for Neos 9.0');

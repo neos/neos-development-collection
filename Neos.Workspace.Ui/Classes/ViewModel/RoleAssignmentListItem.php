@@ -15,7 +15,6 @@ declare(strict_types=1);
 namespace Neos\Workspace\Ui\ViewModel;
 
 use Neos\Flow\Annotations as Flow;
-use Neos\Neos\Domain\Model\WorkspaceRoleSubjectType;
 
 /**
  * Derived from Neos\Neos\Domain\Model\WorkspaceRoleAssignment

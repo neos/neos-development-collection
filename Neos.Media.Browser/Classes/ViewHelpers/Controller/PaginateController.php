@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Media\Browser\ViewHelpers\Controller;
 
 /*
@@ -11,8 +12,8 @@ namespace Neos\Media\Browser\ViewHelpers\Controller;
  * source code.
  */
 
-use Neos\Media\Domain\Model\AssetSource\AssetProxyQueryResultInterface;
 use Neos\FluidAdaptor\Core\Widget\AbstractWidgetController;
+use Neos\Media\Domain\Model\AssetSource\AssetProxyQueryResultInterface;
 use Neos\Media\Domain\Model\AssetSource\AssetSourceConnectionExceptionInterface;
 use Neos\Utility\Arrays;
 

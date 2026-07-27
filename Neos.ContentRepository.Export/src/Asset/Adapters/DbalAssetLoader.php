@@ -1,5 +1,7 @@
 <?php
+
 declare(strict_types=1);
+
 namespace Neos\ContentRepository\Export\Asset\Adapters;
 
 use Doctrine\DBAL\Connection;
@@ -9,16 +11,17 @@ use Neos\ContentRepository\Export\Asset\ValueObject\ImageAdjustmentType;
 use Neos\ContentRepository\Export\Asset\ValueObject\SerializedAsset;
 use Neos\ContentRepository\Export\Asset\ValueObject\SerializedImageVariant;
 
-
 final class DbalAssetLoader implements AssetLoaderInterface
 {
     public function __construct(
         private readonly Connection $connection,
-    ) {}
+    ) {
+    }
 
     public function findAssetById(string $assetId): SerializedAsset|SerializedImageVariant
     {
-        $row = $this->connection->fetchAssociative('
+        $row = $this->connection->fetchAssociative(
+            '
             SELECT
                 a.persistence_object_identifier identifier,
                 a.dtype type,

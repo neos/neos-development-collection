@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Fusion\Tests\Unit\Core\Parser;
 
 /*
@@ -11,10 +12,10 @@ namespace Neos\Fusion\Tests\Unit\Core\Parser;
  * source code.
  */
 
-use Neos\Fusion\Core\Parser;
-use Neos\Fusion\Core\Cache\ParserCache;
-use Neos\Fusion;
 use Neos\Flow\Tests\UnitTestCase;
+use Neos\Fusion;
+use Neos\Fusion\Core\Cache\ParserCache;
+use Neos\Fusion\Core\Parser;
 
 class ParserTest extends UnitTestCase
 {

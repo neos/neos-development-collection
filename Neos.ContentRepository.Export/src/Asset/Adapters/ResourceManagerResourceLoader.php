@@ -1,5 +1,7 @@
 <?php
+
 declare(strict_types=1);
+
 namespace Neos\ContentRepository\Export\Asset\Adapters;
 
 use Neos\ContentRepository\Export\Asset\ResourceLoaderInterface;
@@ -7,10 +9,10 @@ use Neos\Flow\ResourceManagement\ResourceManager;
 
 final class ResourceManagerResourceLoader implements ResourceLoaderInterface
 {
-
     public function __construct(
         private readonly ResourceManager $resourceManager,
-    ) {}
+    ) {
+    }
 
     public function getStreamBySha1(string $sha1)
     {

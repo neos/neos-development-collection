@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Neos\ContentGraph\DoctrineDbalAdapter;
 
 use Doctrine\DBAL\Connection;
-use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\ContentStreamLayerFinder;
 use Doctrine\DBAL\Platforms\AbstractMySQLPlatform;
+use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\ContentStreamLayerFinder;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\DimensionSpacePointsRepository;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\NodeFactory;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\ProjectionContentGraph;

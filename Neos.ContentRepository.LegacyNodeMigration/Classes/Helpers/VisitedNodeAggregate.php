@@ -1,5 +1,7 @@
 <?php
+
 declare(strict_types=1);
+
 namespace Neos\ContentRepository\LegacyNodeMigration\Helpers;
 
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
@@ -15,7 +17,6 @@ use Neos\Flow\Annotations as Flow;
  */
 final class VisitedNodeAggregate
 {
-
     /**
      * @var array<VisitedNodeVariant>
      */
@@ -24,8 +25,8 @@ final class VisitedNodeAggregate
     public function __construct(
         public readonly NodeAggregateId $nodeAggregateId,
         public readonly NodeTypeName $nodeTypeName,
-
-    ) {}
+    ) {
+    }
 
     public function addVariant(OriginDimensionSpacePoint $originDimensionSpacePoint, NodeAggregateId $parentNodeAggregateId, PropertyNames $propertyNames): void
     {

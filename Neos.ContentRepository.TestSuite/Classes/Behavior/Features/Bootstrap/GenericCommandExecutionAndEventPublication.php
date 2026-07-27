@@ -17,7 +17,6 @@ namespace Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap;
 use Behat\Gherkin\Node\PyStringNode;
 use Behat\Gherkin\Node\TableNode;
 use Neos\ContentRepository\Core\CommandHandler\CommandInterface;
-use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceFactoryDependencies;
@@ -516,15 +515,14 @@ trait GenericCommandExecutionAndEventPublication
         );
 
         // HACK can be replaced, once https://github.com/neos/neos-development-collection/pull/5341 is merged
-        $eventStoreAndSubscriptionEngine = new class implements ContentRepositoryServiceFactoryInterface {
+        $eventStoreAndSubscriptionEngine = new class () implements ContentRepositoryServiceFactoryInterface {
             public EventStoreInterface|null $eventStore;
             public SubscriptionEngine|null $subscriptionEngine;
             public function build(ContentRepositoryServiceFactoryDependencies $serviceFactoryDependencies): ContentRepositoryServiceInterface
             {
                 $this->eventStore = $serviceFactoryDependencies->eventStore;
                 $this->subscriptionEngine = $serviceFactoryDependencies->subscriptionEngine;
-                return new class implements ContentRepositoryServiceInterface
-                {
+                return new class () implements ContentRepositoryServiceInterface {
                 };
             }
         };

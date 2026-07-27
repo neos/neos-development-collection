@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Neos\Tests\Unit\ResourceManagement;
 
 /*
@@ -12,11 +13,11 @@ namespace Neos\Neos\Tests\Unit\ResourceManagement;
  */
 
 use Neos\Flow\Package\FlowPackageInterface;
-use Neos\Flow\ResourceManagement\Exception;
-use org\bovigo\vfs\vfsStream;
 use Neos\Flow\Package\PackageManager;
+use Neos\Flow\ResourceManagement\Exception;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\Neos\ResourceManagement\NodeTypesStreamWrapper;
+use org\bovigo\vfs\vfsStream;
 
 /**
  * Tests for the NodeTypesStreamWrapper class

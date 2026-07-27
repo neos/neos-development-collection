@@ -1,5 +1,7 @@
 <?php
+
 declare(strict_types=1);
+
 namespace Neos\ContentRepository\Export\Event\ValueObject;
 
 /**
@@ -7,7 +9,6 @@ namespace Neos\ContentRepository\Export\Event\ValueObject;
  */
 final class ExportedEvents implements \IteratorAggregate
 {
-
     private function __construct(
         private readonly \Closure $generator,
     ) {
@@ -26,7 +27,7 @@ final class ExportedEvents implements \IteratorAggregate
     public static function fromJsonl(string $jsonl): self
     {
         return new self(
-            function() use ($jsonl) {
+            function () use ($jsonl) {
                 foreach (explode("\n", $jsonl) as $json) {
                     if ($json === '') {
                         continue;

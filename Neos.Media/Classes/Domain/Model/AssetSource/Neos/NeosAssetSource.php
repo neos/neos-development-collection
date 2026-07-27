@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Neos\Media\Domain\Model\AssetSource\Neos;
@@ -13,9 +14,10 @@ namespace Neos\Media\Domain\Model\AssetSource\Neos;
  * source code.
  */
 
+use GuzzleHttp\Psr7\Uri;
+use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Core\Bootstrap;
 use Neos\Flow\Http\HttpRequestHandlerInterface;
-use GuzzleHttp\Psr7\Uri;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\ResourceManagement\ResourceManager;
 use Neos\Media\Domain\Model\AssetInterface;
@@ -23,7 +25,6 @@ use Neos\Media\Domain\Model\AssetSource\AssetProxyRepositoryInterface;
 use Neos\Media\Domain\Model\AssetSource\AssetSourceInterface;
 use Neos\Media\Domain\Service\AssetService;
 use Neos\Media\Domain\Service\ThumbnailService;
-use Neos\Flow\Annotations as Flow;
 use Neos\Media\Exception\AssetServiceException;
 use Neos\Media\Exception\ThumbnailServiceException;
 use Psr\Http\Message\UriInterface;

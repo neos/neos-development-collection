@@ -28,7 +28,7 @@
 
 **Checklist**
 
-- [ ] Code follows the PSR-2 coding style
+- [ ] Code follows the PSR-12 coding style
 - [ ] Tests have been created, run and adjusted as needed
 - [ ] The PR is created against the correct branch:
   - If it's a bugfix, use the [lowest maintained branch which has the bug](https://www.neos.io/features/release-roadmap.html)

@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Media\Security\Authorization\Privilege\Doctrine;
 
 /*
@@ -11,9 +12,9 @@ namespace Neos\Media\Security\Authorization\Privilege\Doctrine;
  * source code.
  */
 
-use Doctrine\Persistence\Mapping\ClassMetadata;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Query\Filter\SQLFilter as DoctrineSqlFilter;
+use Doctrine\Persistence\Mapping\ClassMetadata;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Security\Authorization\Privilege\Entity\Doctrine\PropertyConditionGenerator;
 use Neos\Flow\Security\Authorization\Privilege\Entity\Doctrine\SqlGeneratorInterface;

@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Fusion\Tests\Unit\FusionObjects\Http;
 
 /*
@@ -11,12 +12,12 @@ namespace Neos\Fusion\Tests\Unit\FusionObjects\Http;
  * source code.
  */
 
+use GuzzleHttp\Psr7\Message;
 use GuzzleHttp\Psr7\Response;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\Fusion\Core\Runtime;
 use Neos\Fusion\FusionObjects\Http\ResponseHeadImplementation;
 use Psr\Http\Message\ResponseFactoryInterface;
-use GuzzleHttp\Psr7\Message;
 
 /**
  * Testcase for the Fusion ResponseHead object

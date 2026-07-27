@@ -15,8 +15,8 @@ namespace Neos\SiteKickstarter\Tests\Unit\Service;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\SiteKickstarter\Service\SitePackageGeneratorNameService;
-use Neos\SiteKickstarter\Tests\Unit\Service\Fixtures\NamedSitePackageGenerator;
 use Neos\SiteKickstarter\Tests\Unit\Service\Fixtures\BlankSitePackageGenerator;
+use Neos\SiteKickstarter\Tests\Unit\Service\Fixtures\NamedSitePackageGenerator;
 
 require_once __DIR__ . '/Fixtures/NamedSitePackageGenerator.php';
 require_once __DIR__ . '/Fixtures/BlankSitePackageGenerator.php';
@@ -37,7 +37,7 @@ class SitePackageGeneratorNameServiceTest extends UnitTestCase
     {
         $this->mockObjectManager = $this->getMockBuilder(ObjectManagerInterface::class)->disableOriginalConstructor()->getMock();
 
-        $this->sitePackageGeneratorNameService = new  SitePackageGeneratorNameService();
+        $this->sitePackageGeneratorNameService = new SitePackageGeneratorNameService();
         $this->inject($this->sitePackageGeneratorNameService, 'objectManager', $this->mockObjectManager);
     }
 

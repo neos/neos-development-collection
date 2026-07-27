@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Neos\ContentRepository\LegacyNodeMigration\Helpers;
@@ -18,7 +19,8 @@ final class AssetExtractor
 
     public function __construct(
         private readonly \Closure $findAssetByIdentifier,
-    ) {}
+    ) {
+    }
 
     /**
      * @param iterable<int, array<string, mixed>> $nodeDataRows

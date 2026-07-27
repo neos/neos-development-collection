@@ -14,14 +14,14 @@ declare(strict_types=1);
 
 namespace Neos\Neos\Controller\Module\Administration;
 
+use Neos\Error\Messages\Message;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Configuration\ConfigurationManager;
 use Neos\Flow\Configuration\ConfigurationSchemaValidator;
 use Neos\Flow\Configuration\Exception\SchemaValidationException;
+use Neos\Neos\Controller\Module\AbstractModuleController;
 use Neos\Neos\Controller\Module\ModuleTranslationTrait;
 use Neos\Utility\SchemaGenerator;
-use Neos\Neos\Controller\Module\AbstractModuleController;
-use Neos\Error\Messages\Message;
 
 /**
  * The Neos Configuration module controller

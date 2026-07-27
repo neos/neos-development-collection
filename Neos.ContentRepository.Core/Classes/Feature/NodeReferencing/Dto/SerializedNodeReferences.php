@@ -80,7 +80,7 @@ final readonly class SerializedNodeReferences implements \JsonSerializable, \Ite
      */
     public function getReferenceNames(): array
     {
-        return array_map(static fn(SerializedNodeReferencesForName $referencesForProperty) => $referencesForProperty->referenceName, $this->references);
+        return array_map(static fn (SerializedNodeReferencesForName $referencesForProperty) => $referencesForProperty->referenceName, $this->references);
     }
 
     public function jsonSerialize(): mixed

@@ -43,7 +43,6 @@ use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use PHPUnit\Framework\Assert;
 
 class WorkspaceWritingDuringRebaseTest extends AbstractParallelTestCase
-
 {
     private const SETUP_LOCK_PATH = __DIR__ . '/setup-lock';
     private const REBASE_IS_RUNNING_FLAG_PATH = __DIR__ . '/rebase-is-running-flag';
@@ -155,7 +154,8 @@ class WorkspaceWritingDuringRebaseTest extends AbstractParallelTestCase
             $this->contentRepository->handle(
                 RebaseWorkspace::create($workspaceName)
                     ->withRebasedContentStreamId(ContentStreamId::fromString('user-cs-rebased'))
-                    ->withErrorHandlingStrategy(RebaseErrorHandlingStrategy::STRATEGY_FORCE));
+                    ->withErrorHandlingStrategy(RebaseErrorHandlingStrategy::STRATEGY_FORCE)
+            );
         } finally {
             unlink(self::REBASE_IS_RUNNING_FLAG_PATH);
         }
@@ -184,7 +184,9 @@ class WorkspaceWritingDuringRebaseTest extends AbstractParallelTestCase
         $this->log('write started');
 
         $workspaceDuringRebase = $this->contentRepository->getContentGraph(WorkspaceName::fromString('user-test'));
-        Assert::assertSame('user-cs-id', $workspaceDuringRebase->getContentStreamId()->value,
+        Assert::assertSame(
+            'user-cs-id',
+            $workspaceDuringRebase->getContentStreamId()->value,
             'The parallel tests expects the workspace to still point to the original cs.'
         );
 

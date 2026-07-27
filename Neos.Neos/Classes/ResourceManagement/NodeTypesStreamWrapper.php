@@ -16,12 +16,12 @@ namespace Neos\Neos\ResourceManagement;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Package\Exception\UnknownPackageException;
-use Neos\Flow\ResourceManagement\Streams\StreamWrapperInterface;
-use Psr\Http\Message\UriInterface;
 use Neos\Flow\Package\FlowPackageInterface;
 use Neos\Flow\Package\PackageManager;
 use Neos\Flow\ResourceManagement\Exception as ResourceException;
+use Neos\Flow\ResourceManagement\Streams\StreamWrapperInterface;
 use Neos\Utility\Files;
+use Psr\Http\Message\UriInterface;
 
 /**
  * A stream wrapper for nodetypes.

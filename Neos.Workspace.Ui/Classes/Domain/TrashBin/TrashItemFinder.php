@@ -66,14 +66,14 @@ class TrashItemFinder implements ProjectionStateInterface
         ?NodeAggregateIds $filterToNodeAggregateIds,
     ): TrashItems {
         $query = 'SELECT * FROM ' . $this->itemTableName . ' WHERE workspace_name = :workspaceName ' . (
-                $filterToNodeAggregateIds ? ' AND node_aggregate_id IN (:nodeAggregateIds) ' : ''
-            ) . '
+            $filterToNodeAggregateIds ? ' AND node_aggregate_id IN (:nodeAggregateIds) ' : ''
+        ) . '
                 ORDER BY ' . match ($sorting->propertyName) {
-                TrashBinSortingPropertyName::SORTING_PROPERTY_DELETE_TIME => 'delete_time',
-            } . ' ' . match ($sorting->direction) {
-                TrashBinSortingDirection::SORTING_DESCENDING => 'DESC',
-                TrashBinSortingDirection::SORTING_ASCENDING => 'ASC',
-            };
+            TrashBinSortingPropertyName::SORTING_PROPERTY_DELETE_TIME => 'delete_time',
+        } . ' ' . match ($sorting->direction) {
+            TrashBinSortingDirection::SORTING_DESCENDING => 'DESC',
+            TrashBinSortingDirection::SORTING_ASCENDING => 'ASC',
+        };
         if ($pagination->limit) {
             $query .= ' LIMIT ' . $pagination->limit;
         }
@@ -101,8 +101,8 @@ class TrashItemFinder implements ProjectionStateInterface
     ): int {
         $query = 'SELECT count(*) count  FROM ' . $this->itemTableName .
                  ' WHERE workspace_name = :workspaceName ' . (
-                    $filterToNodeAggregateIds ? ' AND node_aggregate_id IN (:nodeAggregateIds) ' : ''
-                );
+                     $filterToNodeAggregateIds ? ' AND node_aggregate_id IN (:nodeAggregateIds) ' : ''
+                 );
 
         $records = $this->connection->executeQuery(
             $query,

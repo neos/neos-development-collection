@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Neos\Tests\Functional\Domain\Service\Fixtures;
 
 /*
@@ -11,9 +12,9 @@ namespace Neos\Neos\Tests\Functional\Domain\Service\Fixtures;
  * source code.
  */
 
+use Neos\ContentRepository\Core\NodeType\NodeType;
 use Neos\Flow\Annotations as Flow;
 use Neos\Neos\Domain\Service\DefaultPrototypeGeneratorInterface;
-use Neos\ContentRepository\Core\NodeType\NodeType;
 
 /**
  * A testable prototype generator

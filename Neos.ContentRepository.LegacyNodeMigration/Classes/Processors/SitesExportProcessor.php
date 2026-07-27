@@ -44,7 +44,7 @@ final class SitesExportProcessor implements ProcessorInterface
                 "domains" => array_values(
                     array_filter(
                         array_map(
-                            function(array $domainRow) use ($siteRow) {
+                            function (array $domainRow) use ($siteRow) {
                                 if ($siteRow['persistence_object_identifier'] !== $domainRow['site']) {
                                     return null;
                                 }

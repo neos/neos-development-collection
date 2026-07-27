@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\ContentRepository\Core\Tests\Unit\Projection\ContentGraph;
 
 /*
@@ -18,7 +19,6 @@ use PHPUnit\Framework\TestCase;
 
 class NodeTagsTest extends TestCase
 {
-
     /**
      * @test
      */

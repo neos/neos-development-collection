@@ -9,8 +9,8 @@ use Neos\ContentRepository\Core\EventStore\EventInterface;
 use Neos\ContentRepository\Core\EventStore\EventNormalizer;
 use Neos\ContentRepository\Core\EventStore\EventsToPublish;
 use Neos\ContentRepository\Core\Feature\RebaseableCommand;
-use Neos\ContentRepository\Core\Feature\WorkspaceRebase\ConflictingEvents;
 use Neos\ContentRepository\Core\Feature\WorkspaceRebase\ConflictingEvent;
+use Neos\ContentRepository\Core\Feature\WorkspaceRebase\ConflictingEvents;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphProjectionInterface;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\EventStore\Adapter\InMemoryEventStore;
@@ -169,8 +169,7 @@ final class CommandSimulator
      */
     private static function getFakeZeroClock(): ClockInterface
     {
-        return new class implements ClockInterface
-        {
+        return new class () implements ClockInterface {
             public function now(): \DateTimeImmutable
             {
                 return new \DateTimeImmutable('@0');

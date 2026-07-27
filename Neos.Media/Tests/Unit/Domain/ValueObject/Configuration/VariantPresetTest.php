@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Media\Tests\Unit\Domain\ValueObject\Configuration;
 
 /*
@@ -14,10 +15,10 @@ namespace Neos\Media\Tests\Unit\Domain\ValueObject\Configuration;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\Media\Domain\Model\Adjustment\CropImageAdjustment;
 use Neos\Media\Domain\ValueObject\Configuration\Adjustment;
-use Neos\Media\Domain\ValueObject\Configuration\MediaTypePattern;
-use Neos\Media\Domain\ValueObject\Configuration\VariantPreset;
 use Neos\Media\Domain\ValueObject\Configuration\Label;
+use Neos\Media\Domain\ValueObject\Configuration\MediaTypePattern;
 use Neos\Media\Domain\ValueObject\Configuration\Variant;
+use Neos\Media\Domain\ValueObject\Configuration\VariantPreset;
 
 class VariantPresetTest extends UnitTestCase
 {

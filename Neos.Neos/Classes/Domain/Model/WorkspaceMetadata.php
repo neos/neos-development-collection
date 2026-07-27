@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Neos\Neos\Domain\Model;
 
-use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\Flow\Annotations as Flow;
 
 /**

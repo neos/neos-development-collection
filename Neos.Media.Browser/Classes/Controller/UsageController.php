@@ -27,7 +27,6 @@ use Neos\Flow\Security\Context;
 use Neos\Media\Domain\Model\AssetInterface;
 use Neos\Media\Domain\Service\AssetService;
 use Neos\Neos\AssetUsage\Dto\AssetUsageReference;
-use Neos\Neos\Domain\Model\User;
 use Neos\Neos\Domain\Model\UserId;
 use Neos\Neos\Domain\Model\WorkspaceClassification;
 use Neos\Neos\Domain\Model\WorkspaceRole;

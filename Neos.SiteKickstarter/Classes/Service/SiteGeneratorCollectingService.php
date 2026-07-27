@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Neos\SiteKickstarter\Service;
@@ -13,8 +14,8 @@ namespace Neos\SiteKickstarter\Service;
  * source code.
  */
 
-use Neos\Flow\Reflection\ReflectionService;
 use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Reflection\ReflectionService;
 use Neos\SiteKickstarter\Generator\SitePackageGeneratorInterface;
 
 /**
