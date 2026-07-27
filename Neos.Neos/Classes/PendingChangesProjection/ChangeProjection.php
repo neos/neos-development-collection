@@ -108,8 +108,6 @@ class ChangeProjection implements ProjectionInterface
             DbalSchemaFactory::columnForDimensionSpacePoint($connection->quoteIdentifier('originDimensionSpacePoint'), $platform)->setNotnull(false),
             DbalSchemaFactory::columnForDimensionSpacePointHash($connection->quoteIdentifier('originDimensionSpacePointHash'), $platform)->setNotnull(true),
             (new Column('deleted', Type::getType(Types::BOOLEAN)))->setNotnull(true),
-            // Despite the name suggesting this might be an anchor point of sorts, this is a nodeAggregateId type
-            DbalSchemaFactory::columnForNodeAggregateId($connection->quoteIdentifier('removalAttachmentPoint'), $platform)->setNotnull(false)
         ]);
 
         $changeTable->setPrimaryKey([
@@ -293,7 +291,6 @@ class ChangeProjection implements ProjectionInterface
                 changed: false,
                 moved: false,
                 deleted: true,
-                removalAttachmentPoint: $event->removalAttachmentPoint
             );
             $removalChange->addToDatabase($this->dbal, $this->tableNamePrefix);
         }

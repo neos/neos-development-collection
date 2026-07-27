@@ -401,7 +401,7 @@ final class WorkspacePublishingService
             // A Change is publishable if the respective node has a closest ancestor that matches our
             // current ancestor scope (Document/Site)
             $actualAncestorNode = $subgraph->findClosestNode(
-                $change->getLegacyRemovalAttachmentPoint() ?? $change->nodeAggregateId,
+                $change->nodeAggregateId,
                 FindClosestNodeFilter::create(nodeTypes: $ancestorNodeTypeName->value)
             );
 
