@@ -78,19 +78,13 @@ final class NodeAggregateCommandHandler implements CommandHandlerInterface
      */
     private bool $ancestorNodeTypeConstraintChecksEnabled = true;
 
-    private readonly NodeTypeDefaultPropertySerializer $nodeTypeDefaultPropertySerializer;
-
     public function __construct(
         private readonly NodeTypeManager $nodeTypeManager,
         private readonly DimensionSpace\ContentDimensionZookeeper $contentDimensionZookeeper,
         private readonly DimensionSpace\InterDimensionalVariationGraph $interDimensionalVariationGraph,
         private readonly PropertyConverter $propertyConverter,
-        ClockInterface $clock,
+        private readonly NodeTypeDefaultPropertySerializer $nodeTypeDefaultPropertySerializer,
     ) {
-        $this->nodeTypeDefaultPropertySerializer = new NodeTypeDefaultPropertySerializer(
-            $this->propertyConverter,
-            $clock
-        );
     }
 
     public function canHandle(CommandInterface|RebasableToOtherWorkspaceInterface $command): bool
