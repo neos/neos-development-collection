@@ -11,7 +11,7 @@ use Neos\ContentRepository\Core\EventStore\EventInterface;
 use Neos\ContentRepository\Core\EventStore\EventNormalizer;
 use Neos\ContentRepository\Core\EventStore\EventsToPublish;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceInterface;
-use Neos\ContentRepository\Core\Infrastructure\Property\PropertyConverter;
+use Neos\ContentRepository\Core\Infrastructure\Property\NodeTypeDefaultPropertySerializer;
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphInterface;
@@ -26,7 +26,6 @@ use Neos\ContentRepository\StructureAdjustment\Adjustment\UnknownNodeTypeAdjustm
 use Neos\EventStore\EventStoreInterface;
 use Neos\EventStore\Model\Event\CorrelationId;
 use Neos\EventStore\Model\Events;
-use Psr\Clock\ClockInterface;
 
 class StructureAdjustmentService implements ContentRepositoryServiceInterface
 {
@@ -51,8 +50,7 @@ class StructureAdjustmentService implements ContentRepositoryServiceInterface
         private readonly SubscriptionEngine $subscriptionEngine,
         NodeTypeManager $nodeTypeManager,
         InterDimensionalVariationGraph $interDimensionalVariationGraph,
-        PropertyConverter $propertyConverter,
-        ClockInterface $clock,
+        NodeTypeDefaultPropertySerializer $nodeTypeDefaultPropertySerializer,
     ) {
 
         $this->liveContentGraph = $contentRepository->getContentGraph(WorkspaceName::forLive());
@@ -61,8 +59,7 @@ class StructureAdjustmentService implements ContentRepositoryServiceInterface
             $this->liveContentGraph,
             $nodeTypeManager,
             $interDimensionalVariationGraph,
-            $propertyConverter,
-            $clock,
+            $nodeTypeDefaultPropertySerializer,
         );
 
         $this->unknownNodeTypeAdjustment = new UnknownNodeTypeAdjustment(
