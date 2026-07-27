@@ -34,7 +34,8 @@ $fa-sizes: (
 ) !default;
 
 $fa-li-width            : 2em !default;
-$fa-li-margin           : $fa-li-width * fa-divide(5, 4) !default;
+// manually hot-fixed to be valid SCSS for sass@npm:1.101
+$fa-li-margin           : calc($fa-li-width * fa-divide(5, 4)) !default;
 
 $fa-pull-margin         : .3em !default;
 
@@ -42,7 +43,8 @@ $fa-primary-opacity     : 1 !default;
 $fa-secondary-opacity   : .4 !default;
 
 $fa-stack-vertical-align: middle !default;
-$fa-stack-width         : ($fa-fw-width * 2) !default;
+// manually hot-fixed to be valid SCSS for sass@npm:1.101
+$fa-stack-width         : calc($fa-fw-width * 2) !default;
 $fa-stack-z-index       : auto !default;
 
 $fa-font-display        : block !default;
