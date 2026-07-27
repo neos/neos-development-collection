@@ -199,7 +199,7 @@ trait NodeCreation
             );
         }
 
-        $defaultPropertyValues = SerializedPropertyValues::defaultFromNodeType($nodeType, $this->getPropertyConverter(), $this->clock);
+        $defaultPropertyValues = $this->nodeTypeDefaultPropertySerializer->serializeFromNodeType($nodeType);
         $initialPropertyValues = $defaultPropertyValues->merge($command->initialPropertyValues);
 
         $events = [
@@ -279,11 +279,7 @@ trait NodeCreation
                 : NodePath::fromString($tetheredNodeTypeDefinition->name->value);
             $childNodeAggregateId = $nodeAggregateIds->getNodeAggregateId($childNodePath)
                 ?? NodeAggregateId::create();
-            $initialPropertyValues = SerializedPropertyValues::defaultFromNodeType(
-                $childNodeType,
-                $this->getPropertyConverter(),
-                $this->clock
-            );
+            $initialPropertyValues = $this->nodeTypeDefaultPropertySerializer->serializeFromNodeType($childNodeType);
 
             $events[] = new NodeAggregateWithNodeWasCreated(
                 $contentGraph->getWorkspaceName(),

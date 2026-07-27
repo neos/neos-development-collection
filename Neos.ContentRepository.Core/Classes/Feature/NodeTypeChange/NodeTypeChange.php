@@ -218,11 +218,8 @@ trait NodeTypeChange
             $node = $nodeAggregate->getNodeByOccupiedDimensionSpacePoint($originDimensionSpacePoint);
 
             $presentPropertyKeys = array_keys(iterator_to_array($node->properties->serialized()));
-            $complementaryPropertyValues = SerializedPropertyValues::defaultFromNodeType(
-                $newNodeType,
-                $this->propertyConverter,
-                $this->clock
-            )
+            $complementaryPropertyValues = $this->nodeTypeDefaultPropertySerializer
+                ->serializeFromNodeType($newNodeType)
                 ->unsetProperties(PropertyNames::fromArray($presentPropertyKeys));
             $obsoletePropertyNames = PropertyNames::fromArray(
                 array_diff(

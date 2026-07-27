@@ -49,6 +49,7 @@ use Neos\ContentRepository\Core\Feature\RootNodeCreation\RootNodeHandling;
 use Neos\ContentRepository\Core\Feature\SubtreeTagging\Command\TagSubtree;
 use Neos\ContentRepository\Core\Feature\SubtreeTagging\Command\UntagSubtree;
 use Neos\ContentRepository\Core\Feature\SubtreeTagging\SubtreeTagging;
+use Neos\ContentRepository\Core\Infrastructure\Property\NodeTypeDefaultPropertySerializer;
 use Neos\ContentRepository\Core\Infrastructure\Property\PropertyConverter;
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 use Psr\Clock\ClockInterface;
@@ -77,13 +78,19 @@ final class NodeAggregateCommandHandler implements CommandHandlerInterface
      */
     private bool $ancestorNodeTypeConstraintChecksEnabled = true;
 
+    private readonly NodeTypeDefaultPropertySerializer $nodeTypeDefaultPropertySerializer;
+
     public function __construct(
         private readonly NodeTypeManager $nodeTypeManager,
         private readonly DimensionSpace\ContentDimensionZookeeper $contentDimensionZookeeper,
         private readonly DimensionSpace\InterDimensionalVariationGraph $interDimensionalVariationGraph,
         private readonly PropertyConverter $propertyConverter,
-        private readonly ClockInterface $clock,
+        ClockInterface $clock,
     ) {
+        $this->nodeTypeDefaultPropertySerializer = new NodeTypeDefaultPropertySerializer(
+            $this->propertyConverter,
+            $clock
+        );
     }
 
     public function canHandle(CommandInterface|RebasableToOtherWorkspaceInterface $command): bool

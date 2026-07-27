@@ -15,6 +15,7 @@ use Neos\ContentRepository\Core\Feature\Common\NodeVariationInternals;
 use Neos\ContentRepository\Core\Feature\Common\TetheredNodeInternals;
 use Neos\ContentRepository\Core\Feature\ContentStreamEventStreamName;
 use Neos\ContentRepository\Core\Feature\NodeMove\Event\NodeAggregateWasMoved;
+use Neos\ContentRepository\Core\Infrastructure\Property\NodeTypeDefaultPropertySerializer;
 use Neos\ContentRepository\Core\Infrastructure\Property\PropertyConverter;
 use Neos\ContentRepository\Core\NodeType\NodeType;
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
@@ -37,13 +38,19 @@ class TetheredNodeAdjustments
     use TetheredNodeInternals;
     use NodeTypeChangeInternals;
 
+    private readonly NodeTypeDefaultPropertySerializer $nodeTypeDefaultPropertySerializer;
+
     public function __construct(
         private readonly ContentGraphInterface $contentGraph,
         private readonly NodeTypeManager $nodeTypeManager,
         private readonly DimensionSpace\InterDimensionalVariationGraph $interDimensionalVariationGraph,
         private readonly PropertyConverter $propertyConverter,
-        private readonly ClockInterface $clock,
+        ClockInterface $clock,
     ) {
+        $this->nodeTypeDefaultPropertySerializer = new NodeTypeDefaultPropertySerializer(
+            $this->propertyConverter,
+            $clock
+        );
     }
 
     /**
