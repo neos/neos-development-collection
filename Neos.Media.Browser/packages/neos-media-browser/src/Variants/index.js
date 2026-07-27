@@ -23,9 +23,6 @@ export default class VariantsApp extends Component {
 		// technically we don't need the props afterwards, this would be solved by using a state container in the future.
 		super(props);
 
-		originalInformation.aspect =
-			originalInformation.width / originalInformation.height;
-
 		this.state = {
 			originalInformation,
 			variantsInformation,
