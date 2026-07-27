@@ -52,7 +52,6 @@ use Neos\ContentRepository\Core\Feature\SubtreeTagging\SubtreeTagging;
 use Neos\ContentRepository\Core\Infrastructure\Property\NodeTypeDefaultPropertySerializer;
 use Neos\ContentRepository\Core\Infrastructure\Property\PropertyConverter;
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
-use Psr\Clock\ClockInterface;
 
 /**
  * @internal from userland, you'll use ContentRepository::handle to dispatch commands
