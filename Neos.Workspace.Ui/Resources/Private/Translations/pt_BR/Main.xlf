@@ -301,6 +301,14 @@
         <source>Search</source>
         <target state="needs-translation" state-qualifier="leveraged-mt">Procura</target>
       </trans-unit>
+      <trans-unit id="workspaces.publishChanges" xml:space="preserve">
+        <source>Publish</source>
+        <target state="needs-translation" state-qualifier="leveraged-mt">Publicar</target>
+      </trans-unit>
+      <trans-unit id="workspaces.discardChanges" xml:space="preserve">
+        <source>Discard</source>
+        <target state="needs-translation" state-qualifier="leveraged-mt">Descartar</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

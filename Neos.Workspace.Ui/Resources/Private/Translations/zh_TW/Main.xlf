@@ -281,6 +281,14 @@
         <source>Search</source>
         <target state="needs-translation" state-qualifier="leveraged-mt">搜尋</target>
       </trans-unit>
+      <trans-unit id="workspaces.publishChanges" xml:space="preserve">
+        <source>Publish</source>
+        <target state="needs-translation" state-qualifier="leveraged-mt">發布</target>
+      </trans-unit>
+      <trans-unit id="workspaces.discardChanges" xml:space="preserve">
+        <source>Discard</source>
+        <target state="needs-translation" state-qualifier="leveraged-mt">捨棄</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

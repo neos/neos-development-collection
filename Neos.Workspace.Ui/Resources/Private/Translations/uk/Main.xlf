@@ -285,6 +285,14 @@
         <source>Search</source>
         <target state="needs-translation" state-qualifier="leveraged-mt">Пошук</target>
       </trans-unit>
+      <trans-unit id="workspaces.publishChanges" xml:space="preserve">
+        <source>Publish</source>
+        <target state="needs-translation" state-qualifier="leveraged-mt">Опублікувати</target>
+      </trans-unit>
+      <trans-unit id="workspaces.discardChanges" xml:space="preserve">
+        <source>Discard</source>
+        <target state="needs-translation" state-qualifier="leveraged-mt">Відмінити</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>
