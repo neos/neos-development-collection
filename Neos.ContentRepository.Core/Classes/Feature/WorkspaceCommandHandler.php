@@ -23,6 +23,7 @@ use Neos\ContentRepository\Core\EventStore\DecoratedEvent;
 use Neos\ContentRepository\Core\EventStore\EventNormalizer;
 use Neos\ContentRepository\Core\EventStore\Events;
 use Neos\ContentRepository\Core\EventStore\EventsToPublish;
+use Neos\ContentRepository\Core\EventStore\InitiatingEventMetadata;
 use Neos\ContentRepository\Core\Feature\Common\PublishableToWorkspaceInterface;
 use Neos\ContentRepository\Core\Feature\Common\RebasableToOtherWorkspaceInterface;
 use Neos\ContentRepository\Core\Feature\Common\WorkspaceConstraintChecks;
@@ -616,17 +617,17 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
         $workspaceContentStreamVersion = $this->requireOpenContentStreamAndVersion($workspace, $commandHandlingDependencies);
         $baseWorkspaceContentStreamVersion = $this->requireOpenContentStreamAndVersion($baseWorkspace, $commandHandlingDependencies);
 
-        $rebaseableCommands = RebaseableCommands::extractFromEventStream(
+        $rebaseableEvents = $this->extractRebaseableEventsFromEventStream(
             $this->eventStore->load(
                 ContentStreamEventStreamName::fromContentStreamId($workspace->currentContentStreamId)
                     ->getEventStreamName()
             )
         );
 
-        // filter commands, only keeping the ones NOT MATCHING the nodes from the command (i.e. the modifications we want to keep)
-        [$commandsToDiscard, $commandsToKeep] = $rebaseableCommands->separateMatchingAndRemainingCommands($command->nodesToDiscard);
+        // filter events, only keeping the ones NOT MATCHING the nodes from the event (i.e. the modifications we want to keep)
+        [$eventsToDiscard, $eventsToKeep] = $rebaseableEvents->separateMatchingAndRemainingEvents($command->nodesToDiscard);
 
-        if ($commandsToDiscard->isEmpty()) {
+        if ($eventsToDiscard->isEmpty()) {
             throw WorkspaceCommandSkipped::becauseFilterDidNotMatch($command->workspaceName, $command->nodesToDiscard);
         }
 
@@ -635,7 +636,7 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
             $workspaceContentStreamVersion
         );
 
-        if ($commandsToKeep->isEmpty()) {
+        if ($eventsToKeep->isEmpty()) {
             // quick path everything was discarded
             yield from $this->discardWorkspace(
                 $workspace,
@@ -646,39 +647,22 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
             return;
         }
 
-        $commandSimulator = $this->commandSimulatorFactory->createSimulatorForWorkspace($baseWorkspace->workspaceName);
-
-        try {
-            $commandSimulator->run(
-                static function ($handle) use ($commandsToKeep): void {
-                    foreach ($commandsToKeep as $matchingCommand) {
-                        $handle($matchingCommand);
-                    }
-                }
-            );
-        } catch (\Throwable $unexpectedException) {
-            yield $this->reopenContentStreamWithoutConstraintChecks(
-                $workspace->currentContentStreamId,
-                sprintf('unexpected error %d: %s', $unexpectedException->getCode(), $unexpectedException->getMessage())
-            );
-            throw $unexpectedException;
-        }
-
-        if ($commandSimulator->hasConflicts()) {
-            $workspaceRebaseFailed = match ($workspace->status) {
-                // If the workspace is up-to-date it must be a problem regarding that the order of events cannot be changed
-                WorkspaceStatus::UP_TO_DATE =>
-                    PartialWorkspaceRebaseFailed::duringPartialDiscard($commandSimulator->getConflictingEvents()),
-                // If the workspace is outdated we cannot know for sure but suspect that the conflict arose due to changes in the base workspace.
-                WorkspaceStatus::OUTDATED =>
-                    WorkspaceRebaseFailed::duringDiscard($commandSimulator->getConflictingEvents())
-            };
-            yield $this->reopenContentStreamWithoutConstraintChecks(
-                $workspace->currentContentStreamId,
-                sprintf('conflicts %d: %s', $workspaceRebaseFailed->getCode(), $workspaceRebaseFailed->getMessage())
-            );
-            throw $workspaceRebaseFailed;
-        }
+        // TODO reimplement
+        // if ($commandSimulator->hasConflicts()) {
+        //     $workspaceRebaseFailed = match ($workspace->status) {
+        //         // If the workspace is up-to-date it must be a problem regarding that the order of events cannot be changed
+        //         WorkspaceStatus::UP_TO_DATE =>
+        //             PartialWorkspaceRebaseFailed::duringPartialDiscard($commandSimulator->getConflictingEvents()),
+        //         // If the workspace is outdated we cannot know for sure but suspect that the conflict arose due to changes in the base workspace.
+        //         WorkspaceStatus::OUTDATED =>
+        //             WorkspaceRebaseFailed::duringDiscard($commandSimulator->getConflictingEvents())
+        //     };
+        //     yield $this->reopenContentStreamWithoutConstraintChecks(
+        //         $workspace->currentContentStreamId,
+        //         sprintf('conflicts %d: %s', $workspaceRebaseFailed->getCode(), $workspaceRebaseFailed->getMessage())
+        //     );
+        //     throw $workspaceRebaseFailed;
+        // }
 
         yield from $this->forkNewContentStreamAndApplyEvents(
             $command->newContentStreamId,
@@ -696,10 +680,10 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
                 ),
                 ExpectedVersion::fromVersion($workspace->version),
             ),
-            $this->getCopiedEventsOfEventStream(
+            $this->getCopyOfRebaseableEventsForTargetWorkspace(
                 $command->workspaceName,
                 $command->newContentStreamId,
-                $commandSimulator->eventStream(),
+                $eventsToKeep
             ),
             sprintf('Partial discard workspace %s and fork base %s', $command->workspaceName->value, $baseWorkspace->workspaceName->value)
         );
@@ -938,5 +922,69 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
             return ExpectedVersion::fromVersion($eventEnvelope->version);
         }
         return ExpectedVersion::NO_STREAM();
+    }
+
+    private function extractRebaseableEventsFromEventStream(EventStreamInterface $eventStream): RebaseableEvents
+    {
+        $events = [];
+        $causationEvent = null;
+
+        foreach ($eventStream as $eventEnvelope) {
+            $event = $this->eventNormalizer->denormalize($eventEnvelope->event);
+            if ($event instanceof PublishableToWorkspaceInterface) {
+                if ($eventEnvelope->event->metadata === null) {
+                    throw new \RuntimeException('Event metadata is missing.', 1729847804);
+                }
+
+                $rebaseableEvent = new RebaseableEvent(
+                    $event,
+                    $eventEnvelope->event,
+                    InitiatingEventMetadata::extractInitiatingMetadata($eventEnvelope->event->metadata),
+                    $eventEnvelope->sequenceNumber,
+                    new RebaseableEvents()
+                );
+
+                if ($causationEvent !== null) {
+                    if ($eventEnvelope->event->causationId !== null) {
+                        $causationEvent = $causationEvent->withCausedEvent($rebaseableEvent);
+                        continue;
+                    } else {
+                        $events[] = $causationEvent;
+                    }
+                }
+
+                if ($eventEnvelope->event->causationId !== null) {
+                    $causationEvent = $rebaseableEvent;
+                } else {
+                    $events[] = $rebaseableEvent;
+                }
+            }
+        }
+
+        if ($causationEvent !== null) {
+            $events[] = $causationEvent;
+        }
+
+        return new RebaseableEvents(...$events);
+    }
+
+    private function getCopyOfRebaseableEventsForTargetWorkspace(
+        WorkspaceName $targetWorkspaceName,
+        ContentStreamId $targetContentStreamId,
+        RebaseableEvents $rebaseableEvents
+    ): Events|null {
+        $events = [];
+        foreach ($rebaseableEvents as $rebaseableEvent) {
+            $copiedEvent = $rebaseableEvent->event->withWorkspaceNameAndContentStreamId($targetWorkspaceName, $targetContentStreamId);
+            // TODO is this correct? We need to add the event metadata here for rebasing in nested workspace situations
+            // (and for exporting)
+            // todo create new metadata, causation ids, and correlation ids!!!!
+
+            // todo handle and test $rebaseableEvent->causedEvents with tethered nodes!!!
+            $events[] = DecoratedEvent::create($copiedEvent, metadata: $rebaseableEvent->originalEvent->metadata, causationId: $rebaseableEvent->originalEvent->causationId, correlationId: $rebaseableEvent->originalEvent->correlationId);
+        }
+
+        // this could technically empty, but we handle it as a no-op
+        return $events !== [] ? Events::fromArray($events) : null;
     }
 }
