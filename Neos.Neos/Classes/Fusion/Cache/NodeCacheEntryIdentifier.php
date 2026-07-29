@@ -16,6 +16,7 @@ namespace Neos\Neos\Fusion\Cache;
 
 use Neos\Cache\CacheAwareInterface;
 use Neos\ContentRepository\Domain\Model\NodeInterface;
+use Neos\ContentRepository\Domain\Utility\NodePaths;
 use Neos\Flow\Annotations as Flow;
 
 /**
@@ -35,9 +36,11 @@ final readonly class NodeCacheEntryIdentifier implements CacheAwareInterface
 
     public static function fromNode(NodeInterface $node): self
     {
-        return new self('Node_' . $node->getWorkspace()->getName()
-            . '_' . $node->getNodeData()->getDimensionsHash()
-            . '_' .  $node->getIdentifier());
+        return new self(NodePaths::generateContextPath(
+            $node->getPath(),
+            $node->getContext()->getWorkspaceName(),
+            $node->getContext()->getDimensions()
+        ));
     }
 
     public function getCacheEntryIdentifier(): string
