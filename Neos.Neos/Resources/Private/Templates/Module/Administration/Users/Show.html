@@ -54,11 +54,19 @@
 				<tr>
 					<th>{neos:backend.translate(id: 'users.show.username', value: 'Username', source: 'Modules', package: 'Neos.Neos')}</th>
 					<th>{neos:backend.translate(id: 'users.show.roles', value: 'Roles', source: 'Modules', package: 'Neos.Neos')}</th>
+					<th>{neos:backend.translate(id: 'users.show.expirationDate', value: 'Expiration Date', source: 'Modules', package: 'Neos.Neos')}</th>
 				</tr>
 				<f:for each="{user.accounts}" as="account">
 				<tr>
 					<td><i class="fas fa-user icon-white"></i>{account.accountIdentifier}</td>
 					<td><f:render partial="Module/Shared/Roles" arguments="{roles: account.roles}" /></td>
+					<td>
+							<f:if condition="{account.expirationDate}"><f:then>
+								<f:format.date date="{account.expirationDate}" format="Y-m-d H:i:s" />
+							</f:then><f:else>
+								-
+							</f:else></f:if>
+					</td>
 				</tr>
 				</f:for>
 				</tbody>
