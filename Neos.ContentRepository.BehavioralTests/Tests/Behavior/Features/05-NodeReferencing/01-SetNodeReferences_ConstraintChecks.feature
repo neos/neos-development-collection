@@ -112,6 +112,16 @@ Feature: Constraint checks on SetNodeReferences
       | references            | [{"referenceName": "referenceProperty", "references": [{"target":"i-do-not-exist"}]}] |
     Then the last command should have thrown an exception of type "NodeAggregateCurrentlyDoesNotExist" with code 1541678486
 
+  Scenario: Try to reference a non-existent node aggregate (creation)
+    Given the command CreateNodeAggregateWithNode is executed with payload:
+      | Key                       | Value                                                                                 |
+      | nodeAggregateId           | "sir-david-nodenborough"                                                              |
+      | nodeTypeName              | "Neos.ContentRepository.Testing:NodeWithReferences"                                   |
+      | originDimensionSpacePoint | {"language":"en"}                                                                     |
+      | parentNodeAggregateId     | "lady-eleonode-rootford"                                                              |
+      | references                | [{"referenceName": "referenceProperty", "references": [{"target":"i-do-not-exist"}]}] |
+    Then the last command should have thrown an exception of type "NodeAggregateCurrentlyDoesNotExist" with code 1541678486
+
   Scenario: Try to reference a root node aggregate
     When the command SetNodeReferences is executed with payload and exceptions are caught:
       | Key                   | Value                                 |
