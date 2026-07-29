@@ -152,6 +152,7 @@ class UsersController extends AbstractModuleController
         $this->view->assignMultiple([
             'currentUser' => $this->currentUser,
             'users' => $users,
+            'now' => new \DateTime(),
             'searchTerm' => $searchTerm,
             'sortBy' => $sortBy,
             'sortDirection' => $sortDirection,
@@ -181,11 +182,12 @@ class UsersController extends AbstractModuleController
      * @param User $user
      * @return void
      */
-    public function newAction(?User $user = null): void
+    public function newAction(?User $user = null, ?string $expirationDate = null): void
     {
         $this->view->assignMultiple([
             'currentUser' => $this->currentUser,
             'user' => $user,
+            'expirationDate' => $expirationDate,
             'roles' => $this->getAllowedRoles(),
             'providers' => $this->getAuthenticationProviders()
         ]);
@@ -207,14 +209,28 @@ class UsersController extends AbstractModuleController
      * @Flow\Validate(argumentName="username", type="\Neos\Flow\Validation\Validator\NotEmptyValidator")
      * @Flow\Validate(argumentName="username", type="\Neos\Neos\Validation\Validator\UserDoesNotExistValidator")
      * @Flow\Validate(argumentName="password", type="\Neos\Neos\Validation\Validator\PasswordValidator", options={ "allowEmpty"=0, "minimum"=1, "maximum"=255 })
+     * @Flow\Validate(argumentName="expirationDate", type="\Neos\Flow\Validation\Validator\RegularExpressionValidator", options={ "regularExpression"="/^\d{4}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d(:[0-5]\d)?(.\d+)?([+-][0-2]\d:[0-5]\d|Z)?$/" })
      */
-    public function createAction(string $username, array $password, User $user, array $roleIdentifiers, ?string $authenticationProviderName = null): void
-    {
+    public function createAction(
+        string $username,
+        array $password,
+        User $user,
+        array $roleIdentifiers,
+        ?string $authenticationProviderName = null,
+        ?string $expirationDate = null,
+    ): void {
         $currentUserRoles = $this->userService->getAllRoles($this->currentUser);
         $isCreationAllowed = $this->userService->currentUserIsAdministrator() || count(array_diff($roleIdentifiers, $currentUserRoles)) === 0;
         if ($isCreationAllowed) {
             try {
-                $this->userService->addUser($username, $password[0], $user, $roleIdentifiers, $authenticationProviderName);
+                $this->userService->addUser(
+                    $username,
+                    $password[0],
+                    $user,
+                    $roleIdentifiers,
+                    $authenticationProviderName,
+                    $expirationDate ? new \DateTime($expirationDate) : null,
+                );
                 $this->addFlashMessage(
                     $this->translator->translateById('users.userCreated.body', [htmlspecialchars($username)], null, null, 'Modules', 'Neos.Neos'),
                     $this->translator->translateById('users.userCreated.title', [], null, null, 'Modules', 'Neos.Neos'),
@@ -231,7 +247,7 @@ class UsersController extends AbstractModuleController
                     [],
                     1665491339
                 );
-                $this->forward('new', null, null, ['user' => $user]);
+                $this->forward('new', null, null, ['user' => $user, 'expirationDate' => $expirationDate]);
             }
         } else {
             $this->addFlashMessage(
@@ -384,8 +400,9 @@ class UsersController extends AbstractModuleController
      * @throws NoSuchRoleException
      * @throws Exception
      * @Flow\Validate(argumentName="password", type="\Neos\Neos\Validation\Validator\PasswordValidator", options={ "allowEmpty"=1, "minimum"=1, "maximum"=255 })
+     * @Flow\Validate(argumentName="expirationDate", type="\Neos\Flow\Validation\Validator\RegularExpressionValidator", options={ "regularExpression"="/^\d{4}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d(:[0-5]\d)?(.\d+)?([+-][0-2]\d:[0-5]\d|Z)?$/" })
      */
-    public function updateAccountAction(Account $account, array $roleIdentifiers, array $password = []): void
+    public function updateAccountAction(Account $account, array $roleIdentifiers, array $password = [], ?string $expirationDate = null): void
     {
         $user = $this->userService->getUser($account->getAccountIdentifier(), $account->getAuthenticationProviderName());
         if (!$this->isEditingAllowed($user)) {
@@ -432,6 +449,7 @@ class UsersController extends AbstractModuleController
         }
 
         $this->userService->setRolesForAccount($account, $roleIdentifiers);
+        $this->userService->setExpirationDateForAccount($account, $expirationDate ? new \DateTime($expirationDate) : null);
         $this->addFlashMessage(
             $this->translator->translateById('users.accountUpdated.body', [], null, null, 'Modules', 'Neos.Neos'),
             $this->translator->translateById('users.accountUpdated.title', [], null, null, 'Modules', 'Neos.Neos'),
