@@ -40,10 +40,12 @@ final class AssetRepositoryImportProcessorTest extends TestCase
         foreach ($this->importedAssetIds as $assetId) {
             $asset = $this->assetRepository->findByIdentifier($assetId);
             if ($asset !== null) {
-                // remove() would validate that the asset is not in use, which builds the
-                // content repository for the usage check — unavailable/unwanted for this test,
-                // which never wires the asset into any node in the first place.
-                $this->assetRepository->removeWithoutUsageChecks($asset);
+                // Not using AssetRepository::remove()/removeWithoutUsageChecks(): both emit the
+                // "asset removed" signal, which Neos.Neos uses to update asset usage records —
+                // that requires a content repository to be built, which this test neither
+                // configures nor needs, and which is unavailable for non-mariadb/mysql
+                // connections (see Neos.ContentGraph.DoctrineDbalAdapter).
+                $this->persistenceManager->remove($asset);
             }
         }
         $this->persistenceManager->persistAll();
