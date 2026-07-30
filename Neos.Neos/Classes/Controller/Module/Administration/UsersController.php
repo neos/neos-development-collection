@@ -25,6 +25,7 @@ use Neos\Flow\Persistence\QueryInterface;
 use Neos\Flow\Property\PropertyMappingConfiguration;
 use Neos\Flow\Property\TypeConverter\PersistentObjectConverter;
 use Neos\Flow\Security\Account;
+use Neos\Flow\Security\AccountRepository;
 use Neos\Flow\Security\Authentication\TokenAndProviderFactoryInterface;
 use Neos\Flow\Security\Authorization\PrivilegeManagerInterface;
 use Neos\Flow\Security\Exception\NoSuchRoleException;
@@ -52,6 +53,12 @@ class UsersController extends AbstractModuleController
      * @var PolicyService
      */
     protected $policyService;
+
+    /**
+     * @Flow\Inject
+     * @var AccountRepository
+     */
+    protected $accountRepository;
 
     /**
      * @Flow\Inject
@@ -223,14 +230,21 @@ class UsersController extends AbstractModuleController
         $isCreationAllowed = $this->userService->currentUserIsAdministrator() || count(array_diff($roleIdentifiers, $currentUserRoles)) === 0;
         if ($isCreationAllowed) {
             try {
-                $this->userService->addUser(
+                $user = $this->userService->addUser(
                     $username,
                     $password[0],
                     $user,
                     $roleIdentifiers,
                     $authenticationProviderName,
-                    $expirationDate ? new \DateTime($expirationDate) : null,
                 );
+
+                if ($expirationDate !== null) {
+                    foreach ($user->getAccounts() as $account) {
+                        $account->setExpirationDate(new \DateTime($expirationDate));
+                        $this->accountRepository->update($account);
+                    }
+                }
+
                 $this->addFlashMessage(
                     $this->translator->translateById('users.userCreated.body', [htmlspecialchars($username)], null, null, 'Modules', 'Neos.Neos'),
                     $this->translator->translateById('users.userCreated.title', [], null, null, 'Modules', 'Neos.Neos'),
@@ -449,7 +463,15 @@ class UsersController extends AbstractModuleController
         }
 
         $this->userService->setRolesForAccount($account, $roleIdentifiers);
-        $this->userService->setExpirationDateForAccount($account, $expirationDate ? new \DateTime($expirationDate) : null);
+
+        // Use optional chaining to compare timestamps.
+        // Will be null, if expirationDate is null or not set, otherwise an integer.
+        // Using the datetime object directly would not work, as different instance are used.
+        if ($account->getExpirationDate()?->getTimestamp() !== $expirationDate?->getTimestamp()) {
+            $account->setExpirationDate($expirationDate ? new \DateTime($expirationDate) : null);
+            $this->accountRepository->update($account);
+        }
+
         $this->addFlashMessage(
             $this->translator->translateById('users.accountUpdated.body', [], null, null, 'Modules', 'Neos.Neos'),
             $this->translator->translateById('users.accountUpdated.title', [], null, null, 'Modules', 'Neos.Neos'),

@@ -315,27 +315,13 @@ class UserService
      * @return User The same user object
      * @api
      */
-    public function addUser(
-        $username,
-        $password,
-        User $user,
-        ?array $roleIdentifiers = null,
-        ?string $authenticationProviderName = null,
-        ?\DateTimeInterface $expirationDate = null,
-    ) {
+    public function addUser($username, $password, User $user, ?array $roleIdentifiers = null, $authenticationProviderName = null)
+    {
         if ($roleIdentifiers === null) {
             $roleIdentifiers = ['Neos.Neos:Editor'];
         }
         $roleIdentifiers = $this->normalizeRoleIdentifiers($roleIdentifiers);
-        $account = $this->accountFactory->createAccountWithPassword(
-            $username,
-            $password,
-            $roleIdentifiers,
-            $authenticationProviderName ?: $this->defaultAuthenticationProviderName,
-        );
-        if ($expirationDate !== null) {
-            $account->setExpirationDate($expirationDate);
-        }
+        $account = $this->accountFactory->createAccountWithPassword($username, $password, $roleIdentifiers, $authenticationProviderName ?: $this->defaultAuthenticationProviderName);
         $this->partyService->assignAccountToParty($account, $user);
 
         $this->partyRepository->add($user);
@@ -551,30 +537,6 @@ class UserService
         }
 
         return 0;
-    }
-
-    /**
-     * Sets the expiration date for the given account.
-     *
-     * @param Account $account The account to set the expiration date for
-     * @param \DateTimeInterface|null $expirationDate The expiration date to set, or null to remove the expiration date
-     * @return void
-     */
-    public function setExpirationDateForAccount(Account $account, ?\DateTimeInterface $expirationDate): void
-    {
-        // Check, if expiration date has changed. If not, we don't need to update the account.
-        if ($account->getExpirationDate() === null && $expirationDate === null) {
-            return;
-        }
-
-        if ($account->getExpirationDate() === null || $expirationDate === null) {
-            // One of the dates is null, the other is not, so we need to update the account.
-        } elseif ($account->getExpirationDate()->getTimestamp() === $expirationDate->getTimestamp()) {
-            return;
-        }
-
-        $account->setExpirationDate($expirationDate);
-        $this->accountRepository->update($account);
     }
 
     /**
