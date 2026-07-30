@@ -49,7 +49,10 @@ final class AssetRepositoryImportProcessorTest extends TestCase
     /** @test */
     public function twoAssetsSharingTheSameResourceContentAreBothImported(): void
     {
-        $fileContent = 'fake-jpeg-content-' . 'shared';
+        // Needs to be a valid image: importing an Image asset calculates its dimensions from
+        // the actual file content, which would fail (unrelated to the resource deduplication
+        // this test is about) if the content weren't a decodable image.
+        $fileContent = $this->createJpegContent();
         $sha1 = sha1($fileContent);
 
         $files = new Filesystem(new InMemoryFilesystemAdapter());
@@ -112,5 +115,16 @@ final class AssetRepositoryImportProcessorTest extends TestCase
     private function getObject(string $className): object
     {
         return Bootstrap::$staticObjectManager->get($className);
+    }
+
+    private function createJpegContent(): string
+    {
+        $image = imagecreatetruecolor(1, 1);
+        ob_start();
+        imagejpeg($image);
+        $content = ob_get_clean();
+        imagedestroy($image);
+        assert(is_string($content));
+        return $content;
     }
 }
