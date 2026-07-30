@@ -62,7 +62,7 @@
 					<td><f:render partial="Module/Shared/Roles" arguments="{roles: account.roles}" /></td>
 					<td>
 							<f:if condition="{account.expirationDate}"><f:then>
-								<f:format.date date="{account.expirationDate}" format="Y-m-d H:i:s" />
+								<f:format.date date="{account.expirationDate}" localeFormatType="dateTime" localeFormatLength="medium" forceLocale="{neos:backend.interfaceLanguage()}"/>
 							</f:then><f:else>
 								-
 							</f:else></f:if>
