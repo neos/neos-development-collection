@@ -48,7 +48,7 @@
 				<div class="neos-control-group{f:validation.ifHasErrors(for: 'expirationDate', then: ' neos-error')}">
 					<label class="neos-control-label" for="expirationDate">{neos:backend.translate(id: 'users.show.personalData.expirationDate', value: 'Expiration Date', source: 'Modules', package: 'Neos.Neos')}</label>
 					<div class="neos-controls">
-						<f:form.textfield name="expirationDate" id="expirationDate" type="datetime-local" value="{expirationDate}" class="neos-span12"/>
+						<f:form.textfield name="expirationDate" id="expirationDate" type="datetime-local" value="{expirationDate}" class="neos-span12" additionalAttributes="{step: 1}"/>
 						<f:render partial="Module/Shared/FieldValidationResults" arguments="{fieldname: 'expirationDate'}"/>
 					</div>
 				</div>
