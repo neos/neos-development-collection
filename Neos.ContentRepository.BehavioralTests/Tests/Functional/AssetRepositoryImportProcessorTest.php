@@ -40,7 +40,10 @@ final class AssetRepositoryImportProcessorTest extends TestCase
         foreach ($this->importedAssetIds as $assetId) {
             $asset = $this->assetRepository->findByIdentifier($assetId);
             if ($asset !== null) {
-                $this->assetRepository->remove($asset);
+                // remove() would validate that the asset is not in use, which builds the
+                // content repository for the usage check — unavailable/unwanted for this test,
+                // which never wires the asset into any node in the first place.
+                $this->assetRepository->removeWithoutUsageChecks($asset);
             }
         }
         $this->persistenceManager->persistAll();
