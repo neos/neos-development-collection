@@ -62,7 +62,6 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\Workspace;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceStatus;
 use Neos\EventStore\EventStoreInterface;
-use Neos\EventStore\Exception\ConcurrencyException;
 use Neos\EventStore\Model\Event\EventType;
 use Neos\EventStore\Model\Event\EventTypes;
 use Neos\EventStore\Model\Event\SequenceNumber;
@@ -142,21 +141,17 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
 
         $workspaceStreamName = WorkspaceEventStreamName::fromWorkspaceName($command->workspaceName);
         $expectedWorkspaceStreamVersion = $this->requireWorkspaceStreamVersionForCreation($workspaceStreamName);
-        try {
-            yield new EventsToPublish(
-                $workspaceStreamName->getEventStreamName(),
-                Events::with(
-                    new WorkspaceWasCreated(
-                        $command->workspaceName,
-                        $command->baseWorkspaceName,
-                        $command->newContentStreamId,
-                    )
-                ),
-                $expectedWorkspaceStreamVersion,
-            );
-        } catch (ConcurrencyException) {
-            yield $this->removeContentStreamWithoutConstraintChecks($command->newContentStreamId);
-        }
+        yield new EventsToPublish(
+            $workspaceStreamName->getEventStreamName(),
+            Events::with(
+                new WorkspaceWasCreated(
+                    $command->workspaceName,
+                    $command->baseWorkspaceName,
+                    $command->newContentStreamId,
+                )
+            ),
+            $expectedWorkspaceStreamVersion,
+        );
     }
 
     /**
@@ -182,20 +177,16 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
 
         $workspaceStreamName = WorkspaceEventStreamName::fromWorkspaceName($command->workspaceName);
         $expectedWorkspaceStreamVersion = $this->requireWorkspaceStreamVersionForCreation($workspaceStreamName);
-        try {
-            yield new EventsToPublish(
-                $workspaceStreamName->getEventStreamName(),
-                Events::with(
-                    new RootWorkspaceWasCreated(
-                        $command->workspaceName,
-                        $command->newContentStreamId
-                    )
-                ),
-                $expectedWorkspaceStreamVersion,
-            );
-        } catch (ConcurrencyException) {
-            yield $this->removeContentStreamWithoutConstraintChecks($command->newContentStreamId);
-        }
+        yield new EventsToPublish(
+            $workspaceStreamName->getEventStreamName(),
+            Events::with(
+                new RootWorkspaceWasCreated(
+                    $command->workspaceName,
+                    $command->newContentStreamId
+                )
+            ),
+            $expectedWorkspaceStreamVersion,
+        );
     }
 
     private function handlePublishWorkspace(
