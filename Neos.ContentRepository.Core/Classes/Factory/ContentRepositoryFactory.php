@@ -21,6 +21,7 @@ use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\Dimension\ContentDimensionSourceInterface;
 use Neos\ContentRepository\Core\DimensionSpace\ContentDimensionZookeeper;
 use Neos\ContentRepository\Core\DimensionSpace\InterDimensionalVariationGraph;
+use Neos\ContentRepository\Core\EventStore\EventAugmenter;
 use Neos\ContentRepository\Core\EventStore\EventNormalizer;
 use Neos\ContentRepository\Core\Feature\DimensionSpaceAdjustment\DimensionSpaceCommandHandler;
 use Neos\ContentRepository\Core\Feature\NodeAggregateCommandHandler;
@@ -146,7 +147,13 @@ final class ContentRepositoryFactory
         $this->isBuilding = true;
 
         $contentGraphReadModel = $this->contentGraphProjection->getState();
+        $authProvider = $this->authProviderFactory->build($this->contentRepositoryId, $contentGraphReadModel);
         $commandHandlingDependencies = new CommandHandlingDependencies($contentGraphReadModel);
+        $eventAugmenter = new EventAugmenter(
+            $this->eventNormalizer,
+            $this->clock,
+            $authProvider
+        );
 
         // we dont need full recursion in rebase - e.g apply workspace commands - and thus we can use this set for simulation
         $commandBusForRebaseableCommands = new CommandBus(
@@ -179,7 +186,6 @@ final class ContentRepositoryFactory
                 $this->eventNormalizer,
             )
         );
-        $authProvider = $this->authProviderFactory->build($this->contentRepositoryId, $contentGraphReadModel);
         $commandHooks = $this->commandHooksFactory->build(CommandHooksFactoryDependencies::create(
             $this->contentRepositoryId,
             $this->contentGraphProjection->getState(),
@@ -187,17 +193,17 @@ final class ContentRepositoryFactory
             $this->contentDimensionSource,
             $this->interDimensionalVariationGraph,
         ));
+
         $this->contentRepositoryRuntimeCache = new ContentRepository(
             $this->contentRepositoryId,
             $publicCommandBus,
             $this->eventStore,
-            $this->eventNormalizer,
+            $eventAugmenter,
             $this->subscriptionEngine,
             $this->nodeTypeManager,
             $this->interDimensionalVariationGraph,
             $this->contentDimensionSource,
             $authProvider,
-            $this->clock,
             $contentGraphReadModel,
             $commandHooks,
             $this->additionalProjectionStates,

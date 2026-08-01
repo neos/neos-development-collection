@@ -20,15 +20,10 @@ use Neos\ContentRepository\Core\CommandHandler\CommandInterface;
 use Neos\ContentRepository\Core\Dimension\ContentDimensionSourceInterface;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\DimensionSpace\InterDimensionalVariationGraph;
-use Neos\ContentRepository\Core\EventStore\DecoratedEvent;
-use Neos\ContentRepository\Core\EventStore\EventInterface;
-use Neos\ContentRepository\Core\EventStore\EventNormalizer;
-use Neos\ContentRepository\Core\EventStore\Events as DomainEvents;
+use Neos\ContentRepository\Core\EventStore\EventAugmenter;
 use Neos\ContentRepository\Core\EventStore\EventsToPublish;
-use Neos\ContentRepository\Core\EventStore\InitiatingEventMetadata;
 use Neos\ContentRepository\Core\EventStore\PublishedEvents;
 use Neos\ContentRepository\Core\Feature\Security\AuthProviderInterface;
-use Neos\ContentRepository\Core\Feature\Security\Dto\UserId;
 use Neos\ContentRepository\Core\Feature\Security\Exception\AccessDenied;
 use Neos\ContentRepository\Core\Infrastructure\PerformanceTracing\PerformanceTracerInterface;
 use Neos\ContentRepository\Core\Infrastructure\PerformanceTracing\TracePoint;
@@ -47,9 +42,7 @@ use Neos\ContentRepository\Core\Subscription\Engine\SubscriptionEngine;
 use Neos\ContentRepository\Core\Subscription\Exception\CatchUpHadErrors;
 use Neos\EventStore\EventStoreInterface;
 use Neos\EventStore\Model\Event\CorrelationId;
-use Neos\EventStore\Model\Events;
 use Neos\EventStore\Model\EventsForCommit;
-use Psr\Clock\ClockInterface;
 
 /**
  * Main Entry Point to the system. Encapsulates the full event-sourced Content Repository.
@@ -70,13 +63,12 @@ final class ContentRepository
         public readonly ContentRepositoryId $id,
         private readonly CommandBus $commandBus,
         private readonly EventStoreInterface $eventStore,
-        private readonly EventNormalizer $eventNormalizer,
+        private readonly EventAugmenter $eventAugmenter,
         private readonly SubscriptionEngine $subscriptionEngine,
         private readonly NodeTypeManager $nodeTypeManager,
         private readonly InterDimensionalVariationGraph $variationGraph,
         private readonly ContentDimensionSourceInterface $contentDimensionSource,
         private readonly AuthProviderInterface $authProvider,
-        private readonly ClockInterface $clock,
         private readonly ContentGraphReadModelInterface $contentGraphReadModel,
         private readonly CommandHookInterface $commandHook,
         private readonly ProjectionStates $projectionStates,
@@ -109,7 +101,7 @@ final class ContentRepository
 
             // simple case
             if ($toPublish instanceof EventsToPublish) {
-                $this->eventStore->commit($toPublish->streamName, $this->enrichAndNormalizeEvents($toPublish->events, $correlationId), $toPublish->expectedVersion);
+                $this->eventStore->commit($toPublish->streamName, $this->eventAugmenter->enrichAndNormalizeEvents($toPublish->events, $correlationId), $toPublish->expectedVersion);
                 $this->performanceTracer?->mark(TracePoint::EventStoreCommit);
                 $fullCatchUpResult = $this->subscriptionEngine->catchUpActive(); // NOTE: we don't batch here, to ensure the catchup is run completely and any errors don't stop it.
                 // SubscriptionEngine is tracing automatically; so we do not need to add this here
@@ -139,7 +131,7 @@ final class ContentRepository
                         assert($commit !== null);
                         return $commit->withEventsForStream(
                             streamName: $eventsToPublish->streamName,
-                            events: $this->enrichAndNormalizeEvents($eventsToPublish->events, $correlationId),
+                            events: $this->eventAugmenter->enrichAndNormalizeEvents($eventsToPublish->events, $correlationId),
                         );
                     }
 
@@ -147,7 +139,7 @@ final class ContentRepository
 
                     return ($commit ? $commit->withEventsForStreamAndExpectedVersion(...) : EventsForCommit::createEventsForStreamAndExpectedVersion(...))(
                         streamName: $eventsToPublish->streamName,
-                        events: $this->enrichAndNormalizeEvents($eventsToPublish->events, $correlationId),
+                        events: $this->eventAugmenter->enrichAndNormalizeEvents($eventsToPublish->events, $correlationId),
                         expectedVersion: $eventsToPublish->expectedVersion
                     );
                 },
@@ -249,22 +241,5 @@ final class ContentRepository
     public function getContentDimensionSource(): ContentDimensionSourceInterface
     {
         return $this->contentDimensionSource;
-    }
-
-    private function enrichAndNormalizeEvents(DomainEvents $events, CorrelationId $correlationId): Events
-    {
-        $initiatingUserId = $this->authProvider->getAuthenticatedUserId() ?? UserId::forSystemUser();
-        $initiatingTimestamp = $this->clock->now();
-
-        $eventsWithMetaData = InitiatingEventMetadata::enrichEventsWithInitiatingMetadata(
-            $events,
-            $initiatingUserId,
-            $initiatingTimestamp
-        );
-
-        return Events::fromArray($eventsWithMetaData->map(function (EventInterface|DecoratedEvent $event) use ($correlationId) {
-            $decoratedEvent = DecoratedEvent::create($event, correlationId: $correlationId);
-            return $this->eventNormalizer->normalize($decoratedEvent);
-        }));
     }
 }
