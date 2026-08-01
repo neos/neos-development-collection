@@ -150,14 +150,15 @@ final class ContentRepositoryFactory
 
         // we dont need full recursion in rebase - e.g apply workspace commands - and thus we can use this set for simulation
         $commandBusForRebaseableCommands = new CommandBus(
-            $commandHandlingDependencies,
             new NodeAggregateCommandHandler(
+                $commandHandlingDependencies,
                 $this->nodeTypeManager,
                 $this->contentDimensionZookeeper,
                 $this->interDimensionalVariationGraph,
                 $this->propertyConverter,
             ),
             new DimensionSpaceCommandHandler(
+                $commandHandlingDependencies,
                 $this->interDimensionalVariationGraph,
                 $this->nodeTypeManager,
             )
@@ -171,6 +172,7 @@ final class ContentRepositoryFactory
 
         $publicCommandBus = $commandBusForRebaseableCommands->withAdditionalHandlers(
             new WorkspaceCommandHandler(
+                $commandHandlingDependencies,
                 $commandSimulatorFactory,
                 $this->eventStore,
                 $this->eventNormalizer,

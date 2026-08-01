@@ -49,6 +49,7 @@ final readonly class DimensionSpaceCommandHandler implements CommandHandlerInter
     use WorkspaceConstraintChecks;
 
     public function __construct(
+        private CommandHandlingDependencies $commandHandlingDependencies,
         private InterDimensionalVariationGraph $interDimensionalVariationGraph,
         private NodeTypeManager $nodeTypeManager,
     ) {
@@ -59,33 +60,32 @@ final readonly class DimensionSpaceCommandHandler implements CommandHandlerInter
         return method_exists($this, 'handle' . (new \ReflectionClass($command))->getShortName());
     }
 
-    public function handle(CommandInterface|RebasableToOtherWorkspaceInterface $command, CommandHandlingDependencies $commandHandlingDependencies): EventsToPublish
+    public function handle(CommandInterface|RebasableToOtherWorkspaceInterface $command): EventsToPublish
     {
         /** @phpstan-ignore-next-line */
         return match ($command::class) {
-            MoveDimensionSpacePoint::class => $this->handleMoveDimensionSpacePoint($command, $commandHandlingDependencies),
-            AddDimensionShineThrough::class => $this->handleAddDimensionShineThrough($command, $commandHandlingDependencies),
+            MoveDimensionSpacePoint::class => $this->handleMoveDimensionSpacePoint($command),
+            AddDimensionShineThrough::class => $this->handleAddDimensionShineThrough($command),
         };
     }
 
     private function handleMoveDimensionSpacePoint(
         MoveDimensionSpacePoint $command,
-        CommandHandlingDependencies $commandHandlingDependencies
     ): EventsToPublish {
-        $contentGraph = $commandHandlingDependencies->getContentGraph($command->workspaceName);
-        $expectedVersion = ExpectedVersion::fromVersion($commandHandlingDependencies->getContentStreamVersion($contentGraph->getContentStreamId()));
+        $contentGraph = $this->commandHandlingDependencies->getContentGraph($command->workspaceName);
+        $expectedVersion = ExpectedVersion::fromVersion($this->commandHandlingDependencies->getContentStreamVersion($contentGraph->getContentStreamId()));
         $streamName = ContentStreamEventStreamName::fromContentStreamId($contentGraph->getContentStreamId())
             ->getEventStreamName();
 
         $this->requireDimensionSpacePointToExist($command->target);
-        $this->requireWorkspaceToBeRootOrRootBasedForDimensionAdjustment($command->workspaceName, $commandHandlingDependencies);
-        $relevantWorkspaces = $commandHandlingDependencies->findAllWorkspaces()->filter(
+        $this->requireWorkspaceToBeRootOrRootBasedForDimensionAdjustment($command->workspaceName);
+        $relevantWorkspaces = $this->commandHandlingDependencies->findAllWorkspaces()->filter(
             fn (Workspace $workspace): bool => $workspace->isRootWorkspace()
                 || !$workspace->workspaceName->equals($command->initialWorkspaceName)
         );
         foreach ($relevantWorkspaces as $workspace) {
             self::requireDimensionSpacePointToBeEmptyInContentStream(
-                $commandHandlingDependencies->getContentGraph($workspace->workspaceName),
+                $this->commandHandlingDependencies->getContentGraph($workspace->workspaceName),
                 $command->target,
             );
         }
@@ -123,23 +123,22 @@ final readonly class DimensionSpaceCommandHandler implements CommandHandlerInter
 
     private function handleAddDimensionShineThrough(
         AddDimensionShineThrough $command,
-        CommandHandlingDependencies $commandHandlingDependencies
     ): EventsToPublish {
-        $contentGraph = $commandHandlingDependencies->getContentGraph($command->workspaceName);
-        $expectedVersion = ExpectedVersion::fromVersion($commandHandlingDependencies->getContentStreamVersion($contentGraph->getContentStreamId()));
+        $contentGraph = $this->commandHandlingDependencies->getContentGraph($command->workspaceName);
+        $expectedVersion = ExpectedVersion::fromVersion($this->commandHandlingDependencies->getContentStreamVersion($contentGraph->getContentStreamId()));
         $streamName = ContentStreamEventStreamName::fromContentStreamId($contentGraph->getContentStreamId())
             ->getEventStreamName();
 
         $this->requireDimensionSpacePointToExist($command->target);
         $this->requireDimensionSpacePointToBeSpecialization($command->target, $command->source);
-        $this->requireWorkspaceToBeRootOrRootBasedForDimensionAdjustment($command->workspaceName, $commandHandlingDependencies);
-        $relevantWorkspaces = $commandHandlingDependencies->findAllWorkspaces()->filter(
+        $this->requireWorkspaceToBeRootOrRootBasedForDimensionAdjustment($command->workspaceName);
+        $relevantWorkspaces = $this->commandHandlingDependencies->findAllWorkspaces()->filter(
             fn (Workspace $workspace): bool => $workspace->isRootWorkspace()
                 || !$workspace->workspaceName->equals($command->initialWorkspaceName)
         );
         foreach ($relevantWorkspaces as $workspace) {
             self::requireDimensionSpacePointToBeEmptyInContentStream(
-                $commandHandlingDependencies->getContentGraph($workspace->workspaceName),
+                $this->commandHandlingDependencies->getContentGraph($workspace->workspaceName),
                 $command->target,
             );
         }

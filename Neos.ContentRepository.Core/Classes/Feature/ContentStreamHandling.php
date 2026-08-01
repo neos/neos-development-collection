@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Core\Feature;
 
-use Neos\ContentRepository\Core\CommandHandler\CommandHandlingDependencies;
 use Neos\ContentRepository\Core\EventStore\DecoratedEvent;
 use Neos\ContentRepository\Core\EventStore\Events;
 use Neos\ContentRepository\Core\EventStore\EventsToPublish;
@@ -121,14 +120,12 @@ trait ContentStreamHandling
 
     /**
      * @param ContentStreamId $contentStreamId
-     * @param CommandHandlingDependencies $commandHandlingDependencies
      * @throws ContentStreamAlreadyExists
      */
     private function requireContentStreamToNotExistYet(
         ContentStreamId $contentStreamId,
-        CommandHandlingDependencies $commandHandlingDependencies
     ): void {
-        if ($commandHandlingDependencies->contentStreamExists($contentStreamId)) {
+        if ($this->commandHandlingDependencies->contentStreamExists($contentStreamId)) {
             throw new ContentStreamAlreadyExists(
                 'Content stream "' . $contentStreamId->value . '" already exists.',
                 1521386345
@@ -138,9 +135,8 @@ trait ContentStreamHandling
 
     private function requireContentStreamToNotBeClosed(
         ContentStreamId $contentStreamId,
-        CommandHandlingDependencies $commandHandlingDependencies
     ): void {
-        if ($commandHandlingDependencies->isContentStreamClosed($contentStreamId)) {
+        if ($this->commandHandlingDependencies->isContentStreamClosed($contentStreamId)) {
             throw new ContentStreamIsClosed(
                 'Content stream "' . $contentStreamId->value . '" is closed.',
                 1710260081

@@ -77,6 +77,7 @@ final class NodeAggregateCommandHandler implements CommandHandlerInterface
     private bool $ancestorNodeTypeConstraintChecksEnabled = true;
 
     public function __construct(
+        private readonly CommandHandlingDependencies $commandHandlingDependencies,
         private readonly NodeTypeManager $nodeTypeManager,
         private readonly DimensionSpace\ContentDimensionZookeeper $contentDimensionZookeeper,
         private readonly DimensionSpace\InterDimensionalVariationGraph $interDimensionalVariationGraph,
@@ -89,31 +90,31 @@ final class NodeAggregateCommandHandler implements CommandHandlerInterface
         return method_exists($this, 'handle' . (new \ReflectionClass($command))->getShortName());
     }
 
-    public function handle(CommandInterface|RebasableToOtherWorkspaceInterface $command, CommandHandlingDependencies $commandHandlingDependencies): EventsToPublish
+    public function handle(CommandInterface|RebasableToOtherWorkspaceInterface $command): EventsToPublish
     {
         /** @phpstan-ignore-next-line */
         return match ($command::class) {
-            SetNodeProperties::class => $this->handleSetNodeProperties($command, $commandHandlingDependencies),
+            SetNodeProperties::class => $this->handleSetNodeProperties($command),
             SetSerializedNodeProperties::class
-            => $this->handleSetSerializedNodeProperties($command, $commandHandlingDependencies),
-            SetNodeReferences::class => $this->handleSetNodeReferences($command, $commandHandlingDependencies),
+            => $this->handleSetSerializedNodeProperties($command),
+            SetNodeReferences::class => $this->handleSetNodeReferences($command),
             SetSerializedNodeReferences::class
-            => $this->handleSetSerializedNodeReferences($command, $commandHandlingDependencies),
-            ChangeNodeAggregateType::class => $this->handleChangeNodeAggregateType($command, $commandHandlingDependencies),
-            RemoveNodeAggregate::class => $this->handleRemoveNodeAggregate($command, $commandHandlingDependencies),
+            => $this->handleSetSerializedNodeReferences($command),
+            ChangeNodeAggregateType::class => $this->handleChangeNodeAggregateType($command),
+            RemoveNodeAggregate::class => $this->handleRemoveNodeAggregate($command),
             CreateNodeAggregateWithNode::class
-            => $this->handleCreateNodeAggregateWithNode($command, $commandHandlingDependencies),
+            => $this->handleCreateNodeAggregateWithNode($command),
             CreateNodeAggregateWithNodeAndSerializedProperties::class
-            => $this->handleCreateNodeAggregateWithNodeAndSerializedProperties($command, $commandHandlingDependencies),
-            MoveNodeAggregate::class => $this->handleMoveNodeAggregate($command, $commandHandlingDependencies),
-            CreateNodeVariant::class => $this->handleCreateNodeVariant($command, $commandHandlingDependencies),
+            => $this->handleCreateNodeAggregateWithNodeAndSerializedProperties($command),
+            MoveNodeAggregate::class => $this->handleMoveNodeAggregate($command),
+            CreateNodeVariant::class => $this->handleCreateNodeVariant($command),
             CreateRootNodeAggregateWithNode::class
-            => $this->handleCreateRootNodeAggregateWithNode($command, $commandHandlingDependencies),
+            => $this->handleCreateRootNodeAggregateWithNode($command),
             UpdateRootNodeAggregateDimensions::class
-            => $this->handleUpdateRootNodeAggregateDimensions($command, $commandHandlingDependencies),
-            TagSubtree::class => $this->handleTagSubtree($command, $commandHandlingDependencies),
-            UntagSubtree::class => $this->handleUntagSubtree($command, $commandHandlingDependencies),
-            ChangeNodeAggregateName::class => $this->handleChangeNodeAggregateName($command, $commandHandlingDependencies),
+            => $this->handleUpdateRootNodeAggregateDimensions($command),
+            TagSubtree::class => $this->handleTagSubtree($command),
+            UntagSubtree::class => $this->handleUntagSubtree($command),
+            ChangeNodeAggregateName::class => $this->handleChangeNodeAggregateName($command),
         };
     }
 

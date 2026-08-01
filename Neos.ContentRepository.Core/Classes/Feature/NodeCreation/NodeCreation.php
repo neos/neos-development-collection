@@ -14,7 +14,6 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Core\Feature\NodeCreation;
 
-use Neos\ContentRepository\Core\CommandHandler\CommandHandlingDependencies;
 use Neos\ContentRepository\Core\DimensionSpace;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Core\EventStore\EventInterface;
@@ -75,7 +74,6 @@ trait NodeCreation
 
     private function handleCreateNodeAggregateWithNode(
         CreateNodeAggregateWithNode $command,
-        CommandHandlingDependencies $commandHandlingDependencies
     ): EventsToPublish {
         $this->requireNodeType($command->nodeTypeName);
         $this->validateProperties($command->initialPropertyValues, $command->nodeTypeName);
@@ -100,7 +98,7 @@ trait NodeCreation
             $lowLevelCommand = $lowLevelCommand->withNodeName($command->nodeName);
         }
 
-        return $this->handleCreateNodeAggregateWithNodeAndSerializedProperties($lowLevelCommand, $commandHandlingDependencies);
+        return $this->handleCreateNodeAggregateWithNodeAndSerializedProperties($lowLevelCommand);
     }
 
     private function validateProperties(?PropertyValuesToWrite $propertyValues, NodeTypeName $nodeTypeName): void
@@ -133,11 +131,10 @@ trait NodeCreation
      */
     private function handleCreateNodeAggregateWithNodeAndSerializedProperties(
         CreateNodeAggregateWithNodeAndSerializedProperties $command,
-        CommandHandlingDependencies $commandHandlingDependencies
     ): EventsToPublish {
-        $this->requireContentStream($command->workspaceName, $commandHandlingDependencies);
-        $contentGraph = $commandHandlingDependencies->getContentGraph($command->workspaceName);
-        $expectedVersion = $this->getExpectedVersionOfContentStream($contentGraph->getContentStreamId(), $commandHandlingDependencies);
+        $this->requireContentStream($command->workspaceName);
+        $contentGraph = $this->commandHandlingDependencies->getContentGraph($command->workspaceName);
+        $expectedVersion = $this->getExpectedVersionOfContentStream($contentGraph->getContentStreamId());
         $this->requireDimensionSpacePointToExist($command->originDimensionSpacePoint->toDimensionSpacePoint());
         $nodeType = $this->requireNodeType($command->nodeTypeName);
         $this->requireNodeTypeToNotBeAbstract($nodeType);

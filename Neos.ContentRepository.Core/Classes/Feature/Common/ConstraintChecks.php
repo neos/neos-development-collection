@@ -14,7 +14,6 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Core\Feature\Common;
 
-use Neos\ContentRepository\Core\CommandHandler\CommandHandlingDependencies;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Core\DimensionSpace\Exception\DimensionSpacePointNotFound;
@@ -78,10 +77,9 @@ trait ConstraintChecks
      */
     protected function requireContentStream(
         WorkspaceName $workspaceName,
-        CommandHandlingDependencies $commandHandlingDependencies
     ): ContentStreamId {
-        $contentStreamId = $commandHandlingDependencies->getContentGraph($workspaceName)->getContentStreamId();
-        $isContentStreamClosed = $commandHandlingDependencies->isContentStreamClosed($contentStreamId);
+        $contentStreamId = $this->commandHandlingDependencies->getContentGraph($workspaceName)->getContentStreamId();
+        $isContentStreamClosed = $this->commandHandlingDependencies->isContentStreamClosed($contentStreamId);
 
         if ($isContentStreamClosed) {
             throw new ContentStreamIsClosed(
@@ -697,11 +695,10 @@ trait ConstraintChecks
 
     protected function getExpectedVersionOfContentStream(
         ContentStreamId $contentStreamId,
-        CommandHandlingDependencies $commandHandlingDependencies
     ): ExpectedVersion {
 
         return ExpectedVersion::fromVersion(
-            $commandHandlingDependencies->getContentStreamVersion($contentStreamId)
+            $this->commandHandlingDependencies->getContentStreamVersion($contentStreamId)
         );
     }
 

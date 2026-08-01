@@ -10,8 +10,6 @@ use Neos\ContentRepository\Core\Feature\Common\RebasableToOtherWorkspaceInterfac
 /**
  * Common interface for all Content Repository command handlers
  *
- * The {@see CommandHandlingDependencies} are available during handling to do soft-constraint checks
- *
  * @internal no public API, because commands are no extension points of the CR
  */
 interface CommandHandlerInterface
@@ -26,5 +24,5 @@ interface CommandHandlerInterface
      *
      * @return EventsToPublish|\Generator<int, EventsToPublish>
      */
-    public function handle(CommandInterface|RebasableToOtherWorkspaceInterface $command, CommandHandlingDependencies $commandHandlingDependencies): EventsToPublish|\Generator;
+    public function handle(CommandInterface|RebasableToOtherWorkspaceInterface $command): EventsToPublish|\Generator;
 }

@@ -14,7 +14,6 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Core\Feature\NodeModification;
 
-use Neos\ContentRepository\Core\CommandHandler\CommandHandlingDependencies;
 use Neos\ContentRepository\Core\EventStore\Events;
 use Neos\ContentRepository\Core\EventStore\EventsToPublish;
 use Neos\ContentRepository\Core\Feature\ContentStreamEventStreamName;
@@ -45,10 +44,9 @@ trait NodeModification
 
     private function handleSetNodeProperties(
         SetNodeProperties $command,
-        CommandHandlingDependencies $commandHandlingDependencies
     ): EventsToPublish {
-        $this->requireContentStream($command->workspaceName, $commandHandlingDependencies);
-        $contentGraph = $commandHandlingDependencies->getContentGraph($command->workspaceName);
+        $this->requireContentStream($command->workspaceName);
+        $contentGraph = $this->commandHandlingDependencies->getContentGraph($command->workspaceName);
         $this->requireDimensionSpacePointToExist($command->originDimensionSpacePoint->toDimensionSpacePoint());
         $nodeAggregate = $this->requireProjectedNodeAggregate(
             $contentGraph,
@@ -70,15 +68,14 @@ trait NodeModification
             $command->propertyValues->getPropertiesToUnset()
         );
 
-        return $this->handleSetSerializedNodeProperties($lowLevelCommand, $commandHandlingDependencies);
+        return $this->handleSetSerializedNodeProperties($lowLevelCommand);
     }
 
     private function handleSetSerializedNodeProperties(
         SetSerializedNodeProperties $command,
-        CommandHandlingDependencies $commandHandlingDependencies,
     ): EventsToPublish {
-        $contentGraph = $commandHandlingDependencies->getContentGraph($command->workspaceName);
-        $expectedVersion = $this->getExpectedVersionOfContentStream($contentGraph->getContentStreamId(), $commandHandlingDependencies);
+        $contentGraph = $this->commandHandlingDependencies->getContentGraph($command->workspaceName);
+        $expectedVersion = $this->getExpectedVersionOfContentStream($contentGraph->getContentStreamId());
         // Check if node exists
         $nodeAggregate = $this->requireProjectedNodeAggregate(
             $contentGraph,
