@@ -321,6 +321,14 @@
         <source>Search</source>
         <target state="needs-translation" state-qualifier="leveraged-mt">Suche</target>
       </trans-unit>
+      <trans-unit id="workspaces.publishChanges" xml:space="preserve">
+        <source>Publish</source>
+        <target state="needs-translation" state-qualifier="leveraged-mt">Veröffentlichen</target>
+      </trans-unit>
+      <trans-unit id="workspaces.discardChanges" xml:space="preserve">
+        <source>Discard</source>
+        <target state="needs-translation" state-qualifier="leveraged-mt">Verwerfen</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

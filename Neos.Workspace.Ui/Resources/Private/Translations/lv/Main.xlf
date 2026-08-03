@@ -289,6 +289,14 @@
         <source>Search</source>
         <target state="needs-translation" state-qualifier="leveraged-mt">Meklēšana</target>
       </trans-unit>
+      <trans-unit id="workspaces.publishChanges" xml:space="preserve">
+        <source>Publish</source>
+        <target state="needs-translation" state-qualifier="leveraged-mt">Publicēt</target>
+      </trans-unit>
+      <trans-unit id="workspaces.discardChanges" xml:space="preserve">
+        <source>Discard</source>
+        <target state="needs-translation" state-qualifier="leveraged-mt">Atcelt</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

@@ -289,6 +289,14 @@
         <source>Search</source>
         <target state="needs-translation" state-qualifier="leveraged-mt">Sök</target>
       </trans-unit>
+      <trans-unit id="workspaces.publishChanges" xml:space="preserve">
+        <source>Publish</source>
+        <target state="needs-translation" state-qualifier="leveraged-mt">Publicera</target>
+      </trans-unit>
+      <trans-unit id="workspaces.discardChanges" xml:space="preserve">
+        <source>Discard</source>
+        <target state="needs-translation" state-qualifier="leveraged-mt">Ignorera</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>
