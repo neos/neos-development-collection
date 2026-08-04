@@ -238,7 +238,7 @@ class UsersController extends AbstractModuleController
                     $authenticationProviderName,
                 );
 
-                if ($expirationDate !== null) {
+                if ($expirationDate !== null && $expirationDate !== '') {
                     foreach ($user->getAccounts() as $account) {
                         $account->setExpirationDate(new \DateTime($expirationDate));
                         $this->accountRepository->update($account);
@@ -418,6 +418,9 @@ class UsersController extends AbstractModuleController
      */
     public function updateAccountAction(Account $account, array $roleIdentifiers, array $password = [], ?string $expirationDate = null): void
     {
+        if ($expirationDate === '') {
+            $expirationDate = null;
+        }
         $user = $this->userService->getUser($account->getAccountIdentifier(), $account->getAuthenticationProviderName());
         if (!$this->isEditingAllowed($user)) {
             $this->addFlashMessage(
