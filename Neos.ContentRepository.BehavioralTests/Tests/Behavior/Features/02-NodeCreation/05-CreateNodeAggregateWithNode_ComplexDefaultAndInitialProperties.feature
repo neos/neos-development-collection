@@ -19,6 +19,12 @@ Feature: Create a node aggregate with complex default values
         now:
           type: DateTime
           defaultValue: 'now'
+        tomorrow:
+          type: DateTimeImmutable
+          defaultValue: 'tomorrow'
+        lastMonth:
+          type: DateTimeImmutable
+          defaultValue: '-1 month'
         date:
           type: DateTimeImmutable
           defaultValue: '2020-08-20T18:56:15+00:00'
@@ -38,15 +44,29 @@ Feature: Create a node aggregate with complex default values
             price: 13.37
             priceCurrency: 'EUR'
 
-    'Neos.ContentRepository.Testing:FaultyDateNode':
+    'Neos.ContentRepository.Testing:UnsetDefaultsNode':
       properties:
+        array:
+          type: array
+          # usually unset in inheritance
+          defaultValue: null
+        dayOfWeek:
+          type: Neos\ContentRepository\Core\Tests\Behavior\Fixtures\DayOfWeek
+          defaultValue: null
         date:
           type: DateTimeImmutable
-          defaultValue: 'not a date'
+          defaultValue: null
+        uri:
+          type: GuzzleHttp\Psr7\Uri
+          defaultValue: null
+        postalAddress:
+          type: Neos\ContentRepository\Core\Tests\Behavior\Fixtures\PostalAddress
+          defaultValue: null
     """
     And using identifier "default", I define a content repository
     And I am in content repository "default"
     And I am user identified by "initiating-user-identifier"
+    And the current date and time is "2024-09-22T12:00:00+00:00"
     And the command CreateRootWorkspace is executed with payload:
       | Key                  | Value                |
       | workspaceName        | "live"               |
@@ -73,7 +93,9 @@ Feature: Create a node aggregate with complex default values
       | postalAddress | Neos\ContentRepository\Core\Tests\Behavior\Fixtures\PostalAddress      | {"streetAddress":"28 31st of February Street","postalCode":12345,"addressLocality":"City","addressCountry":"Country"} |
       # DateTime must always be treated as immutable see DateTimeImmutable.
       # And the default value "now" must not be serialized as string "now" but as its actual value of the time of the command:
-      | now           | DateTimeImmutable                                                      | NOT:"now"                                                                                                             |
+      | now           | DateTimeImmutable                                                      | "2024-09-22T12:00:00+00:00"                                                                                           |
+      | tomorrow      | DateTimeImmutable                                                      | "2024-09-23T00:00:00+00:00"                                                                                           |
+      | lastMonth     | DateTimeImmutable                                                      | "2024-08-22T12:00:00+00:00"                                                                                           |
       | date          | DateTimeImmutable                                                      | "2020-08-20T18:56:15+00:00"                                                                                           |
       | uri           | GuzzleHttp\Psr7\Uri                                                    | "https://neos.io"                                                                                                     |
       # Defaults while deserializing value objects will be manifested at the time of the command: (valueAddedTaxIncluded was not explicitly declared above)
@@ -84,10 +106,29 @@ Feature: Create a node aggregate with complex default values
       | array         | {"givenName":"Nody", "familyName":"McNodeface"} |
       | dayOfWeek     | DayOfWeek:https://schema.org/Wednesday          |
       | postalAddress | PostalAddress:dummy                             |
-      | now           | Date:now                                        |
+      | now           | Date:2024-09-22T12:00:00+00:00                  |
+      | tomorrow      | Date:2024-09-23T00:00:00+00:00                  |
+      | lastMonth     | Date:2024-08-22T12:00:00+00:00                  |
       | date          | Date:2020-08-20T18:56:15+00:00                  |
       | uri           | URI:https://neos.io                             |
       | price         | PriceSpecification:dummy                        |
+
+  Scenario: Create a node aggregate with complex default values respecting time zone
+    And the current date and time is "2024-09-22T12:00:00+02:00"
+    When the command CreateNodeAggregateWithNode is executed with payload:
+      | Key                   | Value                                 |
+      | nodeAggregateId       | "nody-mc-nodeface"                    |
+      | nodeTypeName          | "Neos.ContentRepository.Testing:Node" |
+      | parentNodeAggregateId | "lady-eleonode-rootford"              |
+    Then I expect a node identified by cs-identifier;nody-mc-nodeface;{} to exist in the content graph
+
+    And I expect this node to have the following serialized properties:
+      | Key       | Type              | Value                       |
+      | now       | DateTimeImmutable | "2024-09-22T12:00:00+02:00" |
+      | tomorrow  | DateTimeImmutable | "2024-09-23T00:00:00+02:00" |
+      | lastMonth | DateTimeImmutable | "2024-08-22T12:00:00+02:00" |
+      # Even though we specified the timestamp as ATOM with timezone in the defaults, PHPs date->modify() keeps the original time zone.
+      | date      | DateTimeImmutable | "2020-08-20T18:56:15+02:00" |
 
   Scenario: Create a node aggregate with complex initial and default values
     When the command CreateNodeAggregateWithNode is executed with payload:
@@ -102,15 +143,108 @@ Feature: Create a node aggregate with complex default values
       | dayOfWeek     | DayOfWeek:https://schema.org/Friday             |
       | array         | {"givenName":"Nody", "familyName":"McNodeface"} |
       | postalAddress | PostalAddress:anotherDummy                      |
-      | now           | Date:now                                        |
+      | now           | Date:2024-09-22T12:00:00+00:00                  |
       | date          | Date:2021-03-13T17:33:17+00:00                  |
       | uri           | URI:https://www.neos.io                         |
       | price         | PriceSpecification:anotherDummy                 |
 
+  Scenario: Create a node aggregate with unset default values
+    When the command CreateNodeAggregateWithNode is executed with payload:
+      | Key                   | Value                                              |
+      | nodeAggregateId       | "nody-mc-nodeface"                                 |
+      | nodeTypeName          | "Neos.ContentRepository.Testing:UnsetDefaultsNode" |
+      | parentNodeAggregateId | "lady-eleonode-rootford"                           |
+      | initialPropertyValues | {}                                                 |
+    Then I expect a node identified by cs-identifier;nody-mc-nodeface;{} to exist in the content graph
+    And I expect this node to have no properties
+
+  Scenario: Create a node aggregate with unset default values but defined creation values
+    When the command CreateNodeAggregateWithNode is executed with payload:
+      | Key                   | Value                                                                                                                                                                      |
+      | nodeAggregateId       | "nody-mc-nodeface"                                                                                                                                                         |
+      | nodeTypeName          | "Neos.ContentRepository.Testing:UnsetDefaultsNode"                                                                                                                         |
+      | parentNodeAggregateId | "lady-eleonode-rootford"                                                                                                                                                   |
+      | initialPropertyValues | {"dayOfWeek":"DayOfWeek:https://schema.org/Friday","postalAddress":"PostalAddress:anotherDummy", "date":"Date:2021-03-13T17:33:17+00:00", "uri":"URI:https://www.neos.io"} |
+    Then I expect a node identified by cs-identifier;nody-mc-nodeface;{} to exist in the content graph
+    And I expect this node to have the following properties:
+      | Key           | Value                                           |
+      | dayOfWeek     | DayOfWeek:https://schema.org/Friday             |
+      | postalAddress | PostalAddress:anotherDummy                      |
+      | date          | Date:2021-03-13T17:33:17+00:00                  |
+      | uri           | URI:https://www.neos.io                         |
+
   Scenario: Create a node aggregate with faulty date time defaultValue fails
+    And I change the node types in content repository "default" to:
+      """yaml
+      'Neos.ContentRepository.Testing:FaultyDateNode':
+        properties:
+          date:
+            type: DateTimeImmutable
+            defaultValue: { object: true }
+      """
     When the command CreateNodeAggregateWithNode is executed with payload and exceptions are caught:
       | Key                   | Value                                           |
       | nodeAggregateId       | "nody-mc-nodeface"                              |
       | nodeTypeName          | "Neos.ContentRepository.Testing:FaultyDateNode" |
       | parentNodeAggregateId | "lady-eleonode-rootford"                        |
-    And the last command should have thrown an exception of type "RuntimeException" with code 1708416598
+    And the last command should have thrown an exception of type "RuntimeException" with code 1783085240
+
+    And I change the node types in content repository "default" to:
+      """yaml
+      'Neos.ContentRepository.Testing:FaultyDateNode':
+        properties:
+          date:
+            type: DateTimeImmutable
+            defaultValue: false
+      """
+    When the command CreateNodeAggregateWithNode is executed with payload and exceptions are caught:
+      | Key                   | Value                                           |
+      | nodeAggregateId       | "nody-mc-nodeface"                              |
+      | nodeTypeName          | "Neos.ContentRepository.Testing:FaultyDateNode" |
+      | parentNodeAggregateId | "lady-eleonode-rootford"                        |
+    And the last command should have thrown an exception of type "RuntimeException" with code 1783085240
+
+    And I change the node types in content repository "default" to:
+      """yaml
+      'Neos.ContentRepository.Testing:FaultyDateNode':
+        properties:
+          date:
+            type: DateTimeImmutable
+            defaultValue: 1783086342
+      """
+    When the command CreateNodeAggregateWithNode is executed with payload and exceptions are caught:
+      | Key                   | Value                                           |
+      | nodeAggregateId       | "nody-mc-nodeface"                              |
+      | nodeTypeName          | "Neos.ContentRepository.Testing:FaultyDateNode" |
+      | parentNodeAggregateId | "lady-eleonode-rootford"                        |
+    And the last command should have thrown an exception of type "RuntimeException" with code 1783085240
+
+    And I change the node types in content repository "default" to:
+      """yaml
+      'Neos.ContentRepository.Testing:FaultyDateNode':
+        properties:
+          date:
+            type: DateTimeImmutable
+            defaultValue: ''
+      """
+    When the command CreateNodeAggregateWithNode is executed with payload and exceptions are caught:
+      | Key                   | Value                                           |
+      | nodeAggregateId       | "nody-mc-nodeface"                              |
+      | nodeTypeName          | "Neos.ContentRepository.Testing:FaultyDateNode" |
+      | parentNodeAggregateId | "lady-eleonode-rootford"                        |
+    And the last command should have thrown an exception of type "RuntimeException" with code 1783085627
+
+    And I change the node types in content repository "default" to:
+      """yaml
+      'Neos.ContentRepository.Testing:FaultyDateNode':
+        properties:
+          date:
+            type: DateTimeImmutable
+            defaultValue: 'not a date'
+      """
+    When the command CreateNodeAggregateWithNode is executed with payload and exceptions are caught:
+      | Key                   | Value                                           |
+      | nodeAggregateId       | "nody-mc-nodeface"                              |
+      | nodeTypeName          | "Neos.ContentRepository.Testing:FaultyDateNode" |
+      | parentNodeAggregateId | "lady-eleonode-rootford"                        |
+    And the last command should have thrown an exception of type "RuntimeException" with code 1783085627
