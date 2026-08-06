@@ -31,7 +31,6 @@ use Neos\ContentRepository\Core\Feature\NodeModification\Dto\PropertyValuesToWri
 use Neos\ContentRepository\Core\Feature\NodeModification\Dto\SerializedPropertyValues;
 use Neos\ContentRepository\Core\Feature\NodeReferencing\Dto\SerializedNodeReferences;
 use Neos\ContentRepository\Core\Feature\RebaseableCommand;
-use Neos\ContentRepository\Core\Infrastructure\Property\PropertyConverter;
 use Neos\ContentRepository\Core\Infrastructure\Property\PropertyType;
 use Neos\ContentRepository\Core\NodeType\NodeType;
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
@@ -68,8 +67,6 @@ trait NodeCreation
 
     abstract protected function requireNodeTypeNotToDeclareTetheredChildNodeName(NodeTypeName $nodeTypeName, NodeName $nodeName): void;
 
-    abstract protected function getPropertyConverter(): PropertyConverter;
-
     abstract protected function getNodeTypeManager(): NodeTypeManager;
 
     private function handleCreateNodeAggregateWithNode(
@@ -85,7 +82,7 @@ trait NodeCreation
             $command->originDimensionSpacePoint,
             $command->parentNodeAggregateId,
             $command->succeedingSiblingNodeAggregateId,
-            $this->getPropertyConverter()->serializePropertyValues(
+            $this->propertyConverter->serializePropertyValues(
                 $command->initialPropertyValues->withoutUnsets(),
                 $this->requireNodeType($command->nodeTypeName)
             ),
@@ -196,7 +193,7 @@ trait NodeCreation
             );
         }
 
-        $defaultPropertyValues = SerializedPropertyValues::defaultFromNodeType($nodeType, $this->getPropertyConverter(), $this->clock);
+        $defaultPropertyValues = $this->nodeTypeDefaultPropertySerializer->serializeFromNodeType($nodeType);
         $initialPropertyValues = $defaultPropertyValues->merge($command->initialPropertyValues);
 
         $events = [
@@ -276,11 +273,7 @@ trait NodeCreation
                 : NodePath::fromString($tetheredNodeTypeDefinition->name->value);
             $childNodeAggregateId = $nodeAggregateIds->getNodeAggregateId($childNodePath)
                 ?? NodeAggregateId::create();
-            $initialPropertyValues = SerializedPropertyValues::defaultFromNodeType(
-                $childNodeType,
-                $this->getPropertyConverter(),
-                $this->clock
-            );
+            $initialPropertyValues = $this->nodeTypeDefaultPropertySerializer->serializeFromNodeType($childNodeType);
 
             $events[] = new NodeAggregateWithNodeWasCreated(
                 $contentGraph->getWorkspaceName(),

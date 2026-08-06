@@ -6,6 +6,7 @@ namespace Neos\ContentRepository\StructureAdjustment;
 
 use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceFactoryDependencies;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceFactoryInterface;
+use Neos\ContentRepository\Core\Infrastructure\Property\NodeTypeDefaultPropertySerializer;
 
 /**
  * @implements ContentRepositoryServiceFactoryInterface<StructureAdjustmentService>
@@ -21,8 +22,10 @@ class StructureAdjustmentServiceFactory implements ContentRepositoryServiceFacto
             $serviceFactoryDependencies->subscriptionEngine,
             $serviceFactoryDependencies->nodeTypeManager,
             $serviceFactoryDependencies->interDimensionalVariationGraph,
-            $serviceFactoryDependencies->propertyConverter,
-            $serviceFactoryDependencies->clock,
+            new NodeTypeDefaultPropertySerializer(
+                $serviceFactoryDependencies->propertyConverter,
+                $serviceFactoryDependencies->clock,
+            ),
         );
     }
 }

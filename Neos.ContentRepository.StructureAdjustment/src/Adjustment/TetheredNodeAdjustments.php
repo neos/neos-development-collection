@@ -15,7 +15,7 @@ use Neos\ContentRepository\Core\Feature\Common\NodeVariationInternals;
 use Neos\ContentRepository\Core\Feature\Common\TetheredNodeInternals;
 use Neos\ContentRepository\Core\Feature\ContentStreamEventStreamName;
 use Neos\ContentRepository\Core\Feature\NodeMove\Event\NodeAggregateWasMoved;
-use Neos\ContentRepository\Core\Infrastructure\Property\PropertyConverter;
+use Neos\ContentRepository\Core\Infrastructure\Property\NodeTypeDefaultPropertySerializer;
 use Neos\ContentRepository\Core\NodeType\NodeType;
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
@@ -28,7 +28,6 @@ use Neos\ContentRepository\Core\SharedModel\Exception\NodeTypeNotFound;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\EventStore\Model\EventStream\ExpectedVersion;
-use Psr\Clock\ClockInterface;
 
 class TetheredNodeAdjustments
 {
@@ -41,8 +40,7 @@ class TetheredNodeAdjustments
         private readonly ContentGraphInterface $contentGraph,
         private readonly NodeTypeManager $nodeTypeManager,
         private readonly DimensionSpace\InterDimensionalVariationGraph $interDimensionalVariationGraph,
-        private readonly PropertyConverter $propertyConverter,
-        private readonly ClockInterface $clock,
+        private readonly NodeTypeDefaultPropertySerializer $nodeTypeDefaultPropertySerializer,
     ) {
     }
 
@@ -214,11 +212,6 @@ class TetheredNodeAdjustments
     protected function getInterDimensionalVariationGraph(): DimensionSpace\InterDimensionalVariationGraph
     {
         return $this->interDimensionalVariationGraph;
-    }
-
-    protected function getPropertyConverter(): PropertyConverter
-    {
-        return $this->propertyConverter;
     }
 
     /**

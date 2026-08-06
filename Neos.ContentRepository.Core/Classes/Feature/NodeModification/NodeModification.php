@@ -61,7 +61,7 @@ trait NodeModification
             $command->workspaceName,
             $command->nodeAggregateId,
             $command->originDimensionSpacePoint,
-            $this->getPropertyConverter()->serializePropertyValues(
+            $this->propertyConverter->serializePropertyValues(
                 $command->propertyValues->withoutUnsets(),
                 $this->requireNodeType($nodeTypeName)
             ),

@@ -33,7 +33,6 @@ use Neos\ContentRepository\Core\Feature\NodeVariation\Event\NodeGeneralizationVa
 use Neos\ContentRepository\Core\Feature\NodeVariation\Event\NodePeerVariantWasCreated;
 use Neos\ContentRepository\Core\Feature\NodeVariation\Event\NodeSpecializationVariantWasCreated;
 use Neos\ContentRepository\Core\Feature\SubtreeTagging\Event\SubtreeWasTagged;
-use Neos\ContentRepository\Core\Infrastructure\Property\PropertyConverter;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\NodeType\TetheredNodeTypeDefinition;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphInterface;
@@ -51,8 +50,6 @@ use Neos\ContentRepository\Core\SharedModel\Node\PropertyNames;
 trait TetheredNodeInternals
 {
     use NodeVariationInternals;
-
-    abstract protected function getPropertyConverter(): PropertyConverter;
 
     abstract protected function createEventsForVariations(
         ContentGraphInterface $contentGraph,
@@ -88,7 +85,7 @@ trait TetheredNodeInternals
 
         $expectedTetheredNodeType = $this->nodeTypeManager->getNodeType($tetheredNodeTypeDefinition->nodeTypeName);
         $defaultProperties = $expectedTetheredNodeType
-            ? SerializedPropertyValues::defaultFromNodeType($expectedTetheredNodeType, $this->getPropertyConverter(), $this->clock)
+            ? $this->nodeTypeDefaultPropertySerializer->serializeFromNodeType($expectedTetheredNodeType)
             : SerializedPropertyValues::createEmpty();
 
         if ($childNodeAggregate === null) {
@@ -203,11 +200,7 @@ trait TetheredNodeInternals
         $events = [];
         $tetheredNodeType = $this->requireNodeType($tetheredNodeTypeDefinition->nodeTypeName);
         $nodeAggregateId = $nodeAggregateIdsByNodePaths->getNodeAggregateId($currentNodePath) ?? NodeAggregateId::create();
-        $defaultValues = SerializedPropertyValues::defaultFromNodeType(
-            $tetheredNodeType,
-            $this->getPropertyConverter(),
-            $this->clock
-        );
+        $defaultValues = $this->nodeTypeDefaultPropertySerializer->serializeFromNodeType($tetheredNodeType);
 
         // NodeTypeChange is not allowed on root, thus we don't handle the empty dimension case
         $orderedAffectedOriginDimensionSpacePoints = $this->requireOrderedOriginDimensionSpacePoints($affectedOriginDimensionSpacePoints);
@@ -315,11 +308,8 @@ trait TetheredNodeInternals
             $node = $nodeAggregate->getNodeByOccupiedDimensionSpacePoint($originDimensionSpacePoint);
 
             $presentPropertyKeys = array_keys(iterator_to_array($node->properties->serialized()));
-            $complementaryPropertyValues = SerializedPropertyValues::defaultFromNodeType(
-                $tetheredNodeType,
-                $this->propertyConverter,
-                $this->clock
-            )
+            $complementaryPropertyValues = $this->nodeTypeDefaultPropertySerializer
+                ->serializeFromNodeType($tetheredNodeType)
                 ->unsetProperties(PropertyNames::fromArray($presentPropertyKeys));
             $obsoletePropertyNames = PropertyNames::fromArray(
                 array_diff(

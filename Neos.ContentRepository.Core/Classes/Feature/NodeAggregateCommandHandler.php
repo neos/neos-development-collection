@@ -49,9 +49,9 @@ use Neos\ContentRepository\Core\Feature\RootNodeCreation\RootNodeHandling;
 use Neos\ContentRepository\Core\Feature\SubtreeTagging\Command\TagSubtree;
 use Neos\ContentRepository\Core\Feature\SubtreeTagging\Command\UntagSubtree;
 use Neos\ContentRepository\Core\Feature\SubtreeTagging\SubtreeTagging;
+use Neos\ContentRepository\Core\Infrastructure\Property\NodeTypeDefaultPropertySerializer;
 use Neos\ContentRepository\Core\Infrastructure\Property\PropertyConverter;
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
-use Psr\Clock\ClockInterface;
 
 /**
  * @internal from userland, you'll use ContentRepository::handle to dispatch commands
@@ -83,7 +83,7 @@ final class NodeAggregateCommandHandler implements CommandHandlerInterface
         private readonly DimensionSpace\ContentDimensionZookeeper $contentDimensionZookeeper,
         private readonly DimensionSpace\InterDimensionalVariationGraph $interDimensionalVariationGraph,
         private readonly PropertyConverter $propertyConverter,
-        private readonly ClockInterface $clock,
+        private readonly NodeTypeDefaultPropertySerializer $nodeTypeDefaultPropertySerializer,
     ) {
     }
 
@@ -138,11 +138,6 @@ final class NodeAggregateCommandHandler implements CommandHandlerInterface
     protected function areAncestorNodeTypeConstraintChecksEnabled(): bool
     {
         return $this->ancestorNodeTypeConstraintChecksEnabled;
-    }
-
-    public function getPropertyConverter(): PropertyConverter
-    {
-        return $this->propertyConverter;
     }
 
     /**
