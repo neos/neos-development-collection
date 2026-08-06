@@ -14,18 +14,14 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Core\Feature\Common;
 
-use Neos\ContentRepository\Core\CommandHandler\CommandHandlingDependencies;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Core\DimensionSpace\Exception\DimensionSpacePointNotFound;
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
 use Neos\ContentRepository\Core\Feature\NodeModification\Dto\PropertyValuesToWrite;
-use Neos\ContentRepository\Core\Feature\NodeReferencing\Dto\SerializedNodeReferences;
 use Neos\ContentRepository\Core\Feature\NodeVariation\Exception\DimensionSpacePointIsAlreadyOccupied;
 use Neos\ContentRepository\Core\Infrastructure\Property\PropertyType;
-use Neos\ContentRepository\Core\NodeType\ConstraintCheck;
 use Neos\ContentRepository\Core\NodeType\NodeType;
-use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphInterface;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindChildNodesFilter;
@@ -53,7 +49,6 @@ use Neos\ContentRepository\Core\SharedModel\Exception\NodeTypeIsAbstract;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeTypeIsNotOfTypeRoot;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeTypeIsOfTypeRoot;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeTypeNotFound;
-use Neos\ContentRepository\Core\SharedModel\Exception\PropertyCannotBeSet;
 use Neos\ContentRepository\Core\SharedModel\Exception\ReferenceCannotBeSet;
 use Neos\ContentRepository\Core\SharedModel\Exception\RootNodeAggregateTypeIsAlreadyOccupied;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
@@ -69,7 +64,7 @@ use Neos\EventStore\Model\EventStream\ExpectedVersion;
  */
 trait ConstraintChecks
 {
-    abstract protected function getNodeTypeManager(): NodeTypeManager;
+    use NodeTypeConstraintChecks;
 
     abstract protected function getAllowedDimensionSubspace(): DimensionSpacePointSet;
 
@@ -78,10 +73,9 @@ trait ConstraintChecks
      */
     protected function requireContentStream(
         WorkspaceName $workspaceName,
-        CommandHandlingDependencies $commandHandlingDependencies
     ): ContentStreamId {
-        $contentStreamId = $commandHandlingDependencies->getContentGraph($workspaceName)->getContentStreamId();
-        $isContentStreamClosed = $commandHandlingDependencies->isContentStreamClosed($contentStreamId);
+        $contentStreamId = $this->commandHandlingDependencies->getContentGraph($workspaceName)->getContentStreamId();
+        $isContentStreamClosed = $this->commandHandlingDependencies->isContentStreamClosed($contentStreamId);
 
         if ($isContentStreamClosed) {
             throw new ContentStreamIsClosed(
@@ -102,19 +96,6 @@ trait ConstraintChecks
         if (!$this->getAllowedDimensionSubspace()->contains($dimensionSpacePoint)) {
             throw DimensionSpacePointNotFound::becauseItIsNotWithinTheAllowedDimensionSubspace($dimensionSpacePoint);
         }
-    }
-
-    /**
-     * @param NodeTypeName $nodeTypeName
-     * @return NodeType
-     * @throws NodeTypeNotFound
-     */
-    protected function requireNodeType(NodeTypeName $nodeTypeName): NodeType
-    {
-        return $this->getNodeTypeManager()->getNodeType($nodeTypeName) ?? throw new NodeTypeNotFound(
-            'Node type "' . $nodeTypeName->value . '" is unknown to the node type manager.',
-            1541671070
-        );
     }
 
     protected function requireNodeTypeToNotBeAbstract(NodeType $nodeType): void
@@ -213,74 +194,6 @@ trait ConstraintChecks
         }
     }
 
-    protected function requireNodeTypeToDeclareProperty(NodeTypeName $nodeTypeName, PropertyName $propertyName): void
-    {
-        $nodeType = $this->requireNodeType($nodeTypeName);
-        if (!$nodeType->hasProperty($propertyName->value)) {
-            throw PropertyCannotBeSet::becauseTheNodeTypeDoesNotDeclareIt(
-                $propertyName,
-                $nodeTypeName
-            );
-        }
-    }
-
-    protected function requireNodeTypeToDeclareReference(NodeTypeName $nodeTypeName, ReferenceName $referenceName): void
-    {
-        $nodeType = $this->requireNodeType($nodeTypeName);
-        if ($nodeType->hasReference($referenceName->value)) {
-            return;
-        }
-        throw ReferenceCannotBeSet::becauseTheNodeTypeDoesNotDeclareIt($referenceName, $nodeTypeName);
-    }
-
-    protected function requireNodeTypeNotToDeclareTetheredChildNodeName(NodeTypeName $nodeTypeName, NodeName $nodeName): void
-    {
-        $nodeType = $this->requireNodeType($nodeTypeName);
-        if ($nodeType->tetheredNodeTypeDefinitions->contain($nodeName)) {
-            throw new NodeNameIsAlreadyCovered(
-                'Node name "' . $nodeName->value . '" is reserved for a tethered child of parent node aggregate of type "'
-                . $nodeTypeName->value . '".'
-            );
-        }
-    }
-
-    protected function requireNodeTypeToAllowNodesOfTypeInReference(
-        NodeTypeName $nodeTypeName,
-        ReferenceName $referenceName,
-        NodeTypeName $nodeTypeNameInQuestion
-    ): void {
-        $nodeType = $this->requireNodeType($nodeTypeName);
-        $constraints = $nodeType->getReferences()[$referenceName->value]['constraints']['nodeTypes'] ?? [];
-
-        if (!ConstraintCheck::create($constraints)->isNodeTypeAllowed($this->requireNodeType($nodeTypeNameInQuestion))) {
-            throw ReferenceCannotBeSet::becauseTheNodeTypeConstraintsAreNotMatched(
-                $referenceName,
-                $nodeTypeName,
-                $nodeTypeNameInQuestion
-            );
-        }
-    }
-
-    protected function requireNodeTypeToAllowNumberOfReferencesInReference(SerializedNodeReferences $nodeReferences, NodeTypeName $nodeTypeName): void
-    {
-        $nodeType = $this->requireNodeType($nodeTypeName);
-
-        foreach ($nodeReferences->references as $referencesByName) {
-            $maxItems = $nodeType->getReferences()[$referencesByName->referenceName->value]['constraints']['maxItems'] ?? null;
-            if ($maxItems === null) {
-                continue;
-            }
-
-            if ($maxItems < $referencesByName->count()) {
-                throw ReferenceCannotBeSet::becauseTheItemsCountConstraintsAreNotMatched(
-                    $referencesByName->referenceName,
-                    $nodeTypeName,
-                    $referencesByName->count()
-                );
-            }
-        }
-    }
-
     /**
      * @param array|NodeAggregateId[] $parentNodeAggregateIds
      * @throws NodeConstraintException
@@ -324,68 +237,6 @@ trait ConstraintChecks
                 }
             }
         }
-    }
-
-    /**
-     * @throws NodeTypeNotFound
-     * @throws NodeConstraintException
-     */
-    protected function requireNodeTypeConstraintsImposedByParentToBeMet(
-        NodeType $parentsNodeType,
-        NodeType $nodeType
-    ): void {
-        // !!! IF YOU ADJUST THIS METHOD, also adjust the method below.
-        if (!$parentsNodeType->allowsChildNodeType($nodeType)) {
-            throw new NodeConstraintException(
-                'Node type "' . $nodeType->name->value . '" is not allowed for child nodes of type '
-                    . $parentsNodeType->name->value,
-                1707561400
-            );
-        }
-    }
-
-    protected function areNodeTypeConstraintsImposedByParentValid(
-        NodeType $parentsNodeType,
-        NodeType $nodeType
-    ): bool {
-        // !!! IF YOU ADJUST THIS METHOD, also adjust the method above.
-        if (!$parentsNodeType->allowsChildNodeType($nodeType)) {
-            return false;
-        }
-        return true;
-    }
-
-    /**
-     * @throws NodeConstraintException
-     */
-    protected function requireNodeTypeConstraintsImposedByGrandparentToBeMet(
-        NodeType $grandParentsNodeType,
-        ?NodeName $parentNodeName,
-        NodeType $nodeType
-    ): void {
-        if (
-            !$this->areNodeTypeConstraintsImposedByGrandparentValid(
-                $grandParentsNodeType,
-                $parentNodeName,
-                $nodeType
-            )
-        ) {
-            throw new NodeConstraintException(
-                'Node type "' . $nodeType->name->value . '" is not allowed below tethered child nodes "' . $parentNodeName?->value
-                    . '" of nodes of type "' . $grandParentsNodeType->name->value . '"',
-                1520011791
-            );
-        }
-    }
-
-    protected function areNodeTypeConstraintsImposedByGrandparentValid(
-        NodeType $grandParentsNodeType,
-        ?NodeName $parentNodeName,
-        NodeType $nodeType
-    ): bool {
-        return !($parentNodeName
-            && $grandParentsNodeType->tetheredNodeTypeDefinitions->contain($parentNodeName)
-            && !$this->getNodeTypeManager()->isNodeTypeAllowedAsChildToTetheredNode($grandParentsNodeType->name, $parentNodeName, $nodeType->name));
     }
 
     /**
@@ -697,11 +548,10 @@ trait ConstraintChecks
 
     protected function getExpectedVersionOfContentStream(
         ContentStreamId $contentStreamId,
-        CommandHandlingDependencies $commandHandlingDependencies
     ): ExpectedVersion {
 
         return ExpectedVersion::fromVersion(
-            $commandHandlingDependencies->getContentStreamVersion($contentStreamId)
+            $this->commandHandlingDependencies->getContentStreamVersion($contentStreamId)
         );
     }
 
