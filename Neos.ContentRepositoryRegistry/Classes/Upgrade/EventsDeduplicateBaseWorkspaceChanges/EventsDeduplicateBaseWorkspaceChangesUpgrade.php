@@ -5,16 +5,11 @@ declare(strict_types=1);
 namespace Neos\ContentRepositoryRegistry\Upgrade\EventsDeduplicateBaseWorkspaceChanges;
 
 use Doctrine\DBAL\ArrayParameterType;
-use Neos\ContentRepository\Core\Feature\ContentStreamEventStreamName;
 use Neos\ContentRepositoryRegistry\Upgrade\Shared\CRUpgradeContext;
 use Neos\ContentRepositoryRegistry\Upgrade\Shared\EventEnvelopeFactory;
 use Neos\ContentRepositoryRegistry\Upgrade\Shared\EventStoreBackupTrait;
 use Neos\ContentRepositoryRegistry\Upgrade\Shared\OutputMessageTrait;
-use Neos\EventStore\Model\Event\CorrelationId;
-use Neos\EventStore\Model\Event\SequenceNumber;
-use Neos\EventStore\Model\Event\StreamName;
 use Neos\EventStore\Model\EventEnvelope;
-use Symfony\Component\Yaml\Yaml;
 
 /**
  * Upgrade to deduplicate parallel base workspace changes
@@ -53,19 +48,28 @@ class EventsDeduplicateBaseWorkspaceChangesUpgrade
     ) {
     }
 
+    public static function getShortDescription(): string
+    {
+        return 'Deduplicate parallel base workspace changes';
+    }
+
+    public function isAvailable(): bool
+    {
+        $duplicateContentStreamRemovalWithStreams = $this->findDuplicateContentStreamRemovalWithStreams();
+
+        if ($duplicateContentStreamRemovalWithStreams === []) {
+            return false;
+        }
+
+        return true;
+    }
+
     public function execute(bool $dryRun): void
     {
         //
         // 1.)
         //
-        $duplicateContentStreamRemovalWithStreams = $this->context->dbal->fetchAllAssociative(<<<SQL
-        SELECT stream, GROUP_CONCAT(sequencenumber ORDER BY sequencenumber) sequenceNumbers, GROUP_CONCAT(correlationid ORDER BY sequencenumber) correlationIds, COUNT(*) removals
-        FROM {$this->context->eventStoreTableName}
-          WHERE type = 'ContentStreamWasRemoved'
-        GROUP BY stream
-        HAVING removals > 1
-        ORDER BY MIN(sequencenumber);
-        SQL);
+        $duplicateContentStreamRemovalWithStreams = $this->findDuplicateContentStreamRemovalWithStreams();
 
         if ($duplicateContentStreamRemovalWithStreams === []) {
             $this->log('Migration was not necessary. No duplicate content stream removals.');
@@ -74,34 +78,23 @@ class EventsDeduplicateBaseWorkspaceChangesUpgrade
 
         $this->log(sprintf('%d content streams were removed more than once:', count($duplicateContentStreamRemovalWithStreams)));
         $this->log('');
-        $this->log(Yaml::dump($duplicateContentStreamRemovalWithStreams, 2));
+        $this->log(join("\n", array_map(fn (IllegalContentStreamRemovalsByStream $i) => $i->toDebugString(), $duplicateContentStreamRemovalWithStreams)));
         $this->log('');
 
         $sequenceNumbersToRemove = [];
 
         foreach ($duplicateContentStreamRemovalWithStreams as $duplicateContentStreamRemovals) {
-            $stream = StreamName::fromString($duplicateContentStreamRemovals['stream']);
+            $stream = $duplicateContentStreamRemovals->stream;
 
-            if (!ContentStreamEventStreamName::isContentStreamStreamName($stream)) {
-                $this->log(sprintf('Error found illegal content stream removal event on non content stream %s', $stream->value));
-            }
-
-            // We dont write "," into correlation ids
-            /** @var list<CorrelationId> $correlationIds */
-            $correlationIds = array_map(CorrelationId::fromString(...), explode(',', $duplicateContentStreamRemovals['correlationIds']));
             //
             // 2.)
             //
-            foreach ($correlationIds as $correlationId) {
+            foreach ($duplicateContentStreamRemovals->correlationIds as $correlationId) {
                 if (!str_starts_with($correlationId->value, 'ChangeBaseWorkspace_')) {
-                    $this->log(sprintf('Error resolve duplicate content stream removal of %s as it was not caused due to a ChangeBaseWorkspace', $duplicateContentStreamRemovals['stream']));
+                    $this->log(sprintf('Error resolve duplicate content stream removal of %s as it was not caused due to a ChangeBaseWorkspace', $stream->value));
                     return;
                 }
             }
-
-            $sequenceNumbers = array_map(intval(...), explode(',', $duplicateContentStreamRemovals['sequenceNumbers']));
-            $lowestSequenceNumber = SequenceNumber::fromInteger(min($sequenceNumbers));
-            $highestSequenceNumber = SequenceNumber::fromInteger(max($sequenceNumbers));
 
             //
             // 3.)
@@ -115,9 +108,9 @@ class EventsDeduplicateBaseWorkspaceChangesUpgrade
                 OR (sequenceNumber >= :lowestSequenceNumber AND sequenceNumber <= :highestSequenceNumber)
             ORDER BY sequencenumber;
             SQL, [
-                'lowestSequenceNumber' => $lowestSequenceNumber->value,
-                'highestSequenceNumber' => $highestSequenceNumber->value,
-                'correlationIds' => array_column($correlationIds, 'value'),
+                'lowestSequenceNumber' => $duplicateContentStreamRemovals->lowestSequenceNumber->value,
+                'highestSequenceNumber' => $duplicateContentStreamRemovals->highestSequenceNumber->value,
+                'correlationIds' => array_column($duplicateContentStreamRemovals->correlationIds, 'value'),
             ], [
                 'correlationIds' => ArrayParameterType::STRING,
             ]));
@@ -129,7 +122,7 @@ class EventsDeduplicateBaseWorkspaceChangesUpgrade
             $changeBaseWorkspaceSequenceNumbersByCorrelationMap = [];
 
             $newForkedContentStreamMap = [];
-            $baseWorkspaceChangeCorrelationIdMap = array_fill_keys(array_column($correlationIds, 'value'), true);
+            $baseWorkspaceChangeCorrelationIdMap = array_fill_keys(array_column($duplicateContentStreamRemovals->correlationIds, 'value'), true);
             $winningChangeBaseWorkspaceCorrelationId = null;
 
             foreach ($conflictingEvents as $conflictingEvent) {
@@ -226,5 +219,22 @@ class EventsDeduplicateBaseWorkspaceChangesUpgrade
         $this->log('');
         $this->log(sprintf('Migration applied to %s events. Please replay the content graph via `./flow crupgrade:resetupandreplaycontentgraph`', $affectedRows));
         $this->log('Done.');
+    }
+
+    /**
+     * @return list<IllegalContentStreamRemovalsByStream>
+     */
+    private function findDuplicateContentStreamRemovalWithStreams(): array
+    {
+        $duplicateContentStreamRemovalWithStreams = $this->context->dbal->fetchAllAssociative(<<<SQL
+        SELECT stream, GROUP_CONCAT(sequencenumber ORDER BY sequencenumber) sequenceNumbers, GROUP_CONCAT(correlationid ORDER BY sequencenumber) correlationIds, COUNT(*) removals
+        FROM {$this->context->eventStoreTableName}
+          WHERE type = 'ContentStreamWasRemoved'
+        GROUP BY stream
+        HAVING removals > 1
+        ORDER BY MIN(sequencenumber);
+        SQL);
+
+        return array_map(IllegalContentStreamRemovalsByStream::fromRow(...), $duplicateContentStreamRemovalWithStreams);
     }
 }

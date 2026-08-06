@@ -40,6 +40,24 @@ trait CrUpgradeTrait
     }
 
     /**
+     * @When I attempt to upgrade events recordedAt to utc which I expect not to be available
+     */
+    public function iExecuteEventsRecordedAtToUtcUpgradeNotAvailable(): void
+    {
+        $upgrade = new EventsRecordedAtToUtcUpgrade(
+            $this->getCrUpgradeContext(),
+            $this->outputFn(...)
+        );
+
+        Assert::assertFalse($upgrade->isAvailable(), 'Upgrade is available but was not expected to.');
+
+        $upgrade->execute(
+            force: false,
+            dryRun: false
+        );
+    }
+
+    /**
      * @When I upgrade events recordedAt to utc
      * @When /^I upgrade events recordedAt to utc (with force)$/
      */
@@ -50,8 +68,28 @@ trait CrUpgradeTrait
             $this->outputFn(...)
         );
 
+        Assert::assertTrue($upgrade->isAvailable(), 'Upgrade is not available but was expected to.');
+
         $upgrade->execute(
-            force: $force
+            force: $force,
+            dryRun: false
+        );
+    }
+
+    /**
+     * @When I attempt to upgrade the events to deduplicate base-workspace-changes which I expect not to be available
+     */
+    public function iExecuteEventsDeduplicateBaseWorkspaceChangesUpgradeNotAvailable(): void
+    {
+        $upgrade = new EventsDeduplicateBaseWorkspaceChangesUpgrade(
+            $this->getCrUpgradeContext(),
+            $this->outputFn(...)
+        );
+
+        Assert::assertFalse($upgrade->isAvailable(), 'Upgrade is available but was not expected to.');
+
+        $upgrade->execute(
+            dryRun: false
         );
     }
 
@@ -64,6 +102,8 @@ trait CrUpgradeTrait
             $this->getCrUpgradeContext(),
             $this->outputFn(...)
         );
+
+        Assert::assertTrue($upgrade->isAvailable(), 'Upgrade is not available but was expected to.');
 
         $upgrade->execute(
             dryRun: false

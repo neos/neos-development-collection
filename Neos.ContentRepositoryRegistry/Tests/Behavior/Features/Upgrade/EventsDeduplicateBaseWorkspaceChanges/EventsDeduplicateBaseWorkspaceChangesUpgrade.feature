@@ -48,7 +48,7 @@ Feature: As a user of the CR I want to upgrade my events
       | baseWorkspaceName  | "review"         |
       | newContentStreamId | "cs-user-second" |
 
-    When I upgrade the events to deduplicate base-workspace-changes
+    When I attempt to upgrade the events to deduplicate base-workspace-changes which I expect not to be available
     Then I expect the following upgrade output:
       """
       Migration was not necessary. No duplicate content stream removals.
@@ -117,11 +117,10 @@ Feature: As a user of the CR I want to upgrade my events
       1 content streams were removed more than once:
 
       -
-          stream: 'ContentStream:cs-user-first'
-          sequenceNumbers: '11,14'
-          correlationIds: 'ChangeBaseWorkspace_f9819ad4fd7ff5defd,ChangeBaseWorkspace_2871e0770793478646'
+          stream: ContentStream:cs-user-first
+          sequenceNumbers: 11, 14
+          correlationIds: ChangeBaseWorkspace_f9819ad4fd7ff5defd, ChangeBaseWorkspace_2871e0770793478646
           removals: 2
-
 
       Found 3 events to be removed
           Debug: 9,10,11
@@ -218,11 +217,10 @@ Feature: As a user of the CR I want to upgrade my events
       1 content streams were removed more than once:
 
       -
-          stream: 'ContentStream:cs-user-first'
-          sequenceNumbers: '102,105,108'
-          correlationIds: 'ChangeBaseWorkspace_f9819ad4fd7ff5defd,ChangeBaseWorkspace_2871e0770793478646,ChangeBaseWorkspace_a0e998384894634a74'
+          stream: ContentStream:cs-user-first
+          sequenceNumbers: 102, 105, 108
+          correlationIds: ChangeBaseWorkspace_f9819ad4fd7ff5defd, ChangeBaseWorkspace_2871e0770793478646, ChangeBaseWorkspace_a0e998384894634a74
           removals: 3
-
 
       Found 6 events to be removed
           Debug: 100,101,102,103,104,105
@@ -309,11 +307,10 @@ Feature: As a user of the CR I want to upgrade my events
       1 content streams were removed more than once:
 
       -
-          stream: 'ContentStream:cs-user-first'
-          sequenceNumbers: '11,15'
-          correlationIds: 'ChangeBaseWorkspace_f9819ad4fd7ff5defd,ChangeBaseWorkspace_2871e0770793478646'
+          stream: ContentStream:cs-user-first
+          sequenceNumbers: 11, 15
+          correlationIds: ChangeBaseWorkspace_f9819ad4fd7ff5defd, ChangeBaseWorkspace_2871e0770793478646
           removals: 2
-
 
       Stream ContentStream:cs-user-first: Concurrent change during change base workspace sequence affected stream ContentStream:cs-user-first at 12
           Debug: {"event":{"id":{"value":"2c8b9d29-c3fd-44e0-b275-15d336dc38ab"},"type":{"value":"RootNodeAggregateWithNodeWasCreated"},"data":{"value":"{\"workspaceName\":\"user\",\"contentStreamId\":\"cs-user-first\",\"nodeAggregateId\":\"illegal-node\",\"nodeTypeName\":\"Neos.Neos:Sites\",\"coveredDimensionSpacePoints\":[{\"language\":\"en\"},{\"language\":\"de\"}],\"nodeAggregateClassification\":\"root\"}"},"metadata":{"value":[]},"causationId":null,"correlationId":{"value":"CreateNodeAggregateW_e00b8ac2a08c7fbb9b"}},"streamName":{"value":"ContentStream:cs-user-first"},"version":{"value":2},"sequenceNumber":{"value":12},"recordedAt":{"date":"2025-06-11 20:36:33.000000","timezone_type":3,"timezone":"UTC"}}
@@ -366,11 +363,10 @@ Feature: As a user of the CR I want to upgrade my events
       1 content streams were removed more than once:
 
       -
-          stream: 'ContentStream:cs-user-first'
-          sequenceNumbers: '11,15'
-          correlationIds: 'ChangeBaseWorkspace_f9819ad4fd7ff5defd,ChangeBaseWorkspace_2871e0770793478646'
+          stream: ContentStream:cs-user-first
+          sequenceNumbers: 11, 15
+          correlationIds: ChangeBaseWorkspace_f9819ad4fd7ff5defd, ChangeBaseWorkspace_2871e0770793478646
           removals: 2
-
 
       Stream ContentStream:cs-user-first: Concurrent change during change base workspace sequence affected stream ContentStream:cs-user-second at 12
           Debug: {"event":{"id":{"value":"2c8b9d29-c3fd-44e0-b275-15d336dc38ab"},"type":{"value":"RootNodeAggregateWithNodeWasCreated"},"data":{"value":"{\"workspaceName\":\"user\",\"contentStreamId\":\"cs-user-second\",\"nodeAggregateId\":\"illegal-node\",\"nodeTypeName\":\"Neos.Neos:Sites\",\"coveredDimensionSpacePoints\":[{\"language\":\"en\"},{\"language\":\"de\"}],\"nodeAggregateClassification\":\"root\"}"},"metadata":{"value":[]},"causationId":null,"correlationId":{"value":"CreateNodeAggregateW_e00b8ac2a08c7fbb9b"}},"streamName":{"value":"ContentStream:cs-user-second"},"version":{"value":1},"sequenceNumber":{"value":12},"recordedAt":{"date":"2025-06-11 20:36:33.000000","timezone_type":3,"timezone":"UTC"}}
@@ -423,11 +419,10 @@ Feature: As a user of the CR I want to upgrade my events
       1 content streams were removed more than once:
 
       -
-          stream: 'ContentStream:cs-user-first'
-          sequenceNumbers: '11,15'
-          correlationIds: 'ChangeBaseWorkspace_f9819ad4fd7ff5defd,ChangeBaseWorkspace_2871e0770793478646'
+          stream: ContentStream:cs-user-first
+          sequenceNumbers: 11, 15
+          correlationIds: ChangeBaseWorkspace_f9819ad4fd7ff5defd, ChangeBaseWorkspace_2871e0770793478646
           removals: 2
-
 
       Found 3 events to be removed
           Debug: 9,10,11
@@ -513,11 +508,10 @@ Feature: As a user of the CR I want to upgrade my events
       1 content streams were removed more than once:
 
       -
-          stream: 'ContentStream:cs-user-first'
-          sequenceNumbers: '12,14'
-          correlationIds: 'ChangeBaseWorkspace_f9819ad4fd7ff5defd,ChangeBaseWorkspace_2871e0770793478646'
+          stream: ContentStream:cs-user-first
+          sequenceNumbers: 12, 14
+          correlationIds: ChangeBaseWorkspace_f9819ad4fd7ff5defd, ChangeBaseWorkspace_2871e0770793478646
           removals: 2
-
 
       Found 3 events to be removed
           Debug: 9,11,12

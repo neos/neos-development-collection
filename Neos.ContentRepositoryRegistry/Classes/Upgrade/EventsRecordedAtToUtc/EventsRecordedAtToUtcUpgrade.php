@@ -38,35 +38,41 @@ final readonly class EventsRecordedAtToUtcUpgrade
     ) {
     }
 
-    public function execute(bool $force): void
+    public static function getShortDescription(): string
     {
-        $offsetStartsWithSequenceNumber = $this->context->dbal->fetchAllAssociative(<<<SQL
-        SELECT sequenceNumber, tzoffset
-        FROM (
-          SELECT
-            sequenceNumber,
-            SUBSTR(JSON_UNQUOTE(JSON_EXTRACT(e.metadata, '$.initiatingTimestamp')), 20) as tzoffset,
-            LAG(SUBSTR(JSON_UNQUOTE(JSON_EXTRACT(e.metadata, '$.initiatingTimestamp')), 20)) OVER (ORDER BY sequenceNumber) AS prevTzoffset
-          FROM {$this->context->eventStoreTableName} as e
-          WHERE JSON_EXTRACT(e.metadata, '$.initiatingTimestamp') IS NOT NULL
-        ) t
-        WHERE tzoffset != prevTzoffset
-           -- select first row where there is no previous
-           OR prevTzoffset IS NULL
-        ORDER BY sequenceNumber;
-        SQL);
+        return 'Adjust event time stamps and node dates to UTC';
+    }
+
+    public function isAvailable(): bool
+    {
+        $offsetStartsWithSequenceNumber = $this->findOffsetStartsWithSequenceNumber();
+
+        if ($offsetStartsWithSequenceNumber === []) {
+            return false;
+        }
+
+        if (TimezoneOffsetSequenceStarts::isOnlyUtc($offsetStartsWithSequenceNumber)) {
+            return false;
+        }
+
+        return true;
+    }
+
+    public function execute(bool $force, bool $dryRun): void
+    {
+        $offsetStartsWithSequenceNumber = $this->findOffsetStartsWithSequenceNumber();
 
         if ($offsetStartsWithSequenceNumber === []) {
             $this->log('Migration was not necessary. No events.');
             return;
         }
 
-        if (count($offsetStartsWithSequenceNumber) === 1 && $offsetStartsWithSequenceNumber[0]['tzoffset'] === '+00:00') {
+        if (TimezoneOffsetSequenceStarts::isOnlyUtc($offsetStartsWithSequenceNumber)) {
             $this->log('Migration was not necessary. All dates are UTC. Nothing was changed.');
             return;
         }
 
-        $uniqueOffsets = array_unique(array_column($offsetStartsWithSequenceNumber, 'tzoffset'));
+        $uniqueOffsets = TimezoneOffsetSequenceStarts::uniqueOffsets($offsetStartsWithSequenceNumber);
 
         $this->log(sprintf('Migration necessary. Found following non UTC offsets [%s]', join(', ', array_filter($uniqueOffsets, fn ($value) => $value !== '+00:00'))));
         $this->log(sprintf('    Debug: %s', json_encode($offsetStartsWithSequenceNumber)));
@@ -78,6 +84,11 @@ final readonly class EventsRecordedAtToUtcUpgrade
             }
         }
 
+        if ($dryRun) {
+            $this->log('Didnt migrate anything because its a dry run.');
+            return;
+        }
+
         // Actual migration
         $this->backupEventTable();
 
@@ -85,7 +96,7 @@ final readonly class EventsRecordedAtToUtcUpgrade
 
         $affectedRows = 0;
         foreach ($offsetStartsWithSequenceNumber as $index => $offsetStart) {
-            if ($offsetStart['tzoffset'] === '+00:00') {
+            if ($offsetStart->tzOffset === '+00:00') {
                 // nothing to do ;)
                 continue;
             }
@@ -99,9 +110,9 @@ final readonly class EventsRecordedAtToUtcUpgrade
             WHERE sequencenumber >= :start AND (:end IS NULL || sequencenumber < :end);
             SQL,
                 [
-                    'fromOffset' => $offsetStart['tzoffset'],
-                    'start' => $offsetStart['sequenceNumber'],
-                    'end' => $offsetEnd['sequenceNumber'] ?? null,
+                    'fromOffset' => $offsetStart->tzOffset,
+                    'start' => $offsetStart->sequenceNumber->value,
+                    'end' => $offsetEnd?->sequenceNumber->value,
                 ]
             );
 
@@ -155,5 +166,29 @@ final readonly class EventsRecordedAtToUtcUpgrade
         }
 
         return true;
+    }
+
+    /**
+     * @return list<TimezoneOffsetSequenceStarts>
+     */
+    private function findOffsetStartsWithSequenceNumber(): array
+    {
+        $offsetStartsWithSequenceNumber = $this->context->dbal->fetchAllAssociative(<<<SQL
+        SELECT sequenceNumber, tzoffset
+        FROM (
+          SELECT
+            sequenceNumber,
+            SUBSTR(JSON_UNQUOTE(JSON_EXTRACT(e.metadata, '$.initiatingTimestamp')), 20) as tzoffset,
+            LAG(SUBSTR(JSON_UNQUOTE(JSON_EXTRACT(e.metadata, '$.initiatingTimestamp')), 20)) OVER (ORDER BY sequenceNumber) AS prevTzoffset
+          FROM {$this->context->eventStoreTableName} as e
+          WHERE JSON_EXTRACT(e.metadata, '$.initiatingTimestamp') IS NOT NULL
+        ) t
+        WHERE tzoffset != prevTzoffset
+           -- select first row where there is no previous
+           OR prevTzoffset IS NULL
+        ORDER BY sequenceNumber;
+        SQL);
+
+        return array_map(TimezoneOffsetSequenceStarts::fromArray(...), $offsetStartsWithSequenceNumber);
     }
 }

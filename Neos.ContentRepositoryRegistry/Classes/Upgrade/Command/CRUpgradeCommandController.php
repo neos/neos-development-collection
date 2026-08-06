@@ -47,6 +47,79 @@ final class CRUpgradeCommandController extends CommandController
     protected CRUpgradeContextFactory $upgradeContextFactory;
 
     /**
+     * Analyses which event upgrades are available and which required
+     *
+     * @param string $contentRepository Identifier of the Content Repository to test for event upgrades
+     */
+    public function eventsStatusCommand(string $contentRepository = 'default'): void
+    {
+        $context = $this->contentRepositoryRegistry->buildService(
+            ContentRepositoryId::fromString($contentRepository),
+            $this->upgradeContextFactory
+        );
+
+        $noop = function () {
+        };
+
+        $optionalUpgrades = [
+            [
+                strtolower('crupgrade:eventsRecordedAtToUtc'),
+                new EventsRecordedAtToUtcUpgrade($context, $noop)
+            ]
+        ];
+
+        $requiredUpgrades = [
+            [
+                strtolower('crupgrade:eventsDeduplicateBaseWorkspaceChanges'),
+                new EventsDeduplicateBaseWorkspaceChangesUpgrade($context, $noop)
+            ]
+        ];
+
+        $optionalAvailable = 0;
+        foreach ($optionalUpgrades as [$cliCommandName, $upgrade]) {
+            if ($upgrade->isAvailable()) {
+                if ($optionalAvailable === 0) {
+                    $this->outputLine('Optional migrations:');
+                }
+                $this->outputLine(' - %s', [$upgrade::getShortDescription()]);
+                $this->outputLine('   Run <i>./flow %s</i>', [$cliCommandName]);
+                $this->outputLine();
+                $optionalAvailable++;
+            }
+        }
+
+        $requiredAvailable = 0;
+        foreach ($requiredUpgrades as [$cliCommandName, $upgrade]) {
+            if ($upgrade->isAvailable()) {
+                if ($requiredAvailable === 0) {
+                    $this->outputLine('Required migrations (in order):');
+                }
+                $this->outputLine(' - %s', [$upgrade::getShortDescription()]);
+                $this->outputLine('   Run <i>./flow %s</i>', [$cliCommandName]);
+                $this->outputLine();
+                $requiredAvailable++;
+            }
+        }
+
+        if ($optionalAvailable === 0 && $requiredAvailable === 0) {
+            $this->outputLine('<success>No event upgrades available.</success>');
+            return;
+        }
+
+        $this->outputLine('Note use <i>--dry-run</i> with the upgrades for further details');
+
+        if ($requiredAvailable === 0) {
+            $this->outputLine('<comment>Found %d optional event upgrades available</comment>', [$optionalAvailable]);
+        } else {
+            $this->outputLine('<error>Found %d required%s event upgrades available</error>', [$requiredAvailable, $optionalAvailable ? " and $optionalAvailable optional" : '']);
+        }
+
+        if ($requiredAvailable) {
+            $this->quit(1);
+        }
+    }
+
+    /**
      * Upgrade to allow to empty, set up and replay the graph projection in one step
      *
      * The CR provides a simple setup tooling via "./flow cr:setup" it allows to create the database schemas in the beginning
@@ -134,14 +207,19 @@ final class CRUpgradeCommandController extends CommandController
      *
      * @param string $contentRepository Identifier of the Content Repository to upgrade
      */
-    public function eventsRecordedAtToUtcCommand(string $contentRepository = 'default', bool $force = false): void
+    public function eventsRecordedAtToUtcCommand(string $contentRepository = 'default', bool $dryRun = false, bool $force = false): void
     {
+        if ($dryRun && $force) {
+            $this->outputLine('<comment>Abort. Cannot force a dry run;)</comment>');
+            return;
+        }
+
         $context = $this->contentRepositoryRegistry->buildService(
             ContentRepositoryId::fromString($contentRepository),
             $this->upgradeContextFactory
         );
 
-        if (!$force && !$this->output->askConfirmation(sprintf('> This will rewrite events of content repository "%s" to use UTC dates consistently and backup the original events. This will take even on big sites less than 5 minutes. To have the UTC changes applied to the graph a replay needs to be done which will take quite some time. Are you sure to proceed? (y/n) ', $context->contentRepositoryId->value), false)) {
+        if ((!$dryRun && !$force) && !$this->output->askConfirmation(sprintf('> This will rewrite events of content repository "%s" to use UTC dates consistently and backup the original events. This will take even on big sites less than 5 minutes. To have the UTC changes applied to the graph a replay needs to be done which will take quite some time. Are you sure to proceed? (y/n) ', $context->contentRepositoryId->value), false)) {
             $this->outputLine('<comment>Abort.</comment>');
             return;
         }
@@ -152,7 +230,8 @@ final class CRUpgradeCommandController extends CommandController
         );
 
         $upgrade->execute(
-            force: $force
+            force: $force,
+            dryRun: $dryRun,
         );
     }
 
