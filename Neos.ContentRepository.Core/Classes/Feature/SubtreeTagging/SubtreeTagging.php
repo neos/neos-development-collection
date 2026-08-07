@@ -26,7 +26,6 @@ use Neos\ContentRepository\Core\Feature\SubtreeTagging\Event\SubtreeWasTagged;
 use Neos\ContentRepository\Core\Feature\SubtreeTagging\Event\SubtreeWasUntagged;
 use Neos\ContentRepository\Core\Feature\SubtreeTagging\Exception\SubtreeIsAlreadyTagged;
 use Neos\ContentRepository\Core\Feature\SubtreeTagging\Exception\SubtreeIsNotTagged;
-use Neos\EventStore\Model\EventStream\ExpectedVersion;
 
 /**
  * @internal implementation detail of Command Handlers
@@ -41,7 +40,7 @@ trait SubtreeTagging
     {
         $this->requireContentStream($command->workspaceName);
         $contentGraph = $this->commandHandlingDependencies->getContentGraph($command->workspaceName);
-        $expectedVersion = ExpectedVersion::fromVersion($this->commandHandlingDependencies->getContentStreamVersion($contentGraph->getContentStreamId()));
+        $expectedVersion = $this->getExpectedVersionOfContentStream($contentGraph->getContentStreamId());
         $this->requireDimensionSpacePointToExist($command->coveredDimensionSpacePoint);
         $nodeAggregate = $this->requireProjectedNodeAggregate($contentGraph, $command->nodeAggregateId);
         $this->requireNodeAggregateToCoverDimensionSpacePoint(
@@ -86,7 +85,7 @@ trait SubtreeTagging
     {
         $this->requireContentStream($command->workspaceName);
         $contentGraph = $this->commandHandlingDependencies->getContentGraph($command->workspaceName);
-        $expectedVersion = ExpectedVersion::fromVersion($this->commandHandlingDependencies->getContentStreamVersion($contentGraph->getContentStreamId()));
+        $expectedVersion = $this->getExpectedVersionOfContentStream($contentGraph->getContentStreamId());
         $this->requireDimensionSpacePointToExist($command->coveredDimensionSpacePoint);
         $nodeAggregate = $this->requireProjectedNodeAggregate(
             $contentGraph,

@@ -38,7 +38,6 @@ use Neos\ContentRepository\Core\Feature\RebaseableCommand;
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindRootNodeAggregatesFilter;
 use Neos\ContentRepository\Core\SharedModel\Workspace\Workspace;
-use Neos\EventStore\Model\EventStream\ExpectedVersion;
 
 /**
  * @internal from userland, you'll use ContentRepository::handle to dispatch commands
@@ -73,7 +72,7 @@ final readonly class DimensionSpaceCommandHandler implements CommandHandlerInter
         MoveDimensionSpacePoint $command,
     ): EventsToPublish {
         $contentGraph = $this->commandHandlingDependencies->getContentGraph($command->workspaceName);
-        $expectedVersion = ExpectedVersion::fromVersion($this->commandHandlingDependencies->getContentStreamVersion($contentGraph->getContentStreamId()));
+        $expectedVersion = $this->getExpectedVersionOfContentStream($contentGraph->getContentStreamId());
         $streamName = ContentStreamEventStreamName::fromContentStreamId($contentGraph->getContentStreamId())
             ->getEventStreamName();
 
@@ -125,7 +124,7 @@ final readonly class DimensionSpaceCommandHandler implements CommandHandlerInter
         AddDimensionShineThrough $command,
     ): EventsToPublish {
         $contentGraph = $this->commandHandlingDependencies->getContentGraph($command->workspaceName);
-        $expectedVersion = ExpectedVersion::fromVersion($this->commandHandlingDependencies->getContentStreamVersion($contentGraph->getContentStreamId()));
+        $expectedVersion = $this->getExpectedVersionOfContentStream($contentGraph->getContentStreamId());
         $streamName = ContentStreamEventStreamName::fromContentStreamId($contentGraph->getContentStreamId())
             ->getEventStreamName();
 

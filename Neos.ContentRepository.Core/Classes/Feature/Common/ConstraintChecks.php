@@ -538,7 +538,6 @@ trait ConstraintChecks
     protected function getExpectedVersionOfContentStream(
         ContentStreamId $contentStreamId,
     ): ExpectedVersion {
-
         return ExpectedVersion::fromVersion(
             $this->commandHandlingDependencies->getContentStreamVersion($contentStreamId)
         );
