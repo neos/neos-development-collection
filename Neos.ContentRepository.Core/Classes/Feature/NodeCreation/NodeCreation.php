@@ -38,7 +38,6 @@ use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphInterface;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodePath;
-use Neos\ContentRepository\Core\SharedModel\Exception\ContentStreamDoesNotExistYet;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeTypeNotFound;
 use Neos\ContentRepository\Core\SharedModel\Exception\PropertyCannotBeSet;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateClassification;
@@ -126,7 +125,6 @@ trait NodeCreation
     }
 
     /**
-     * @throws ContentStreamDoesNotExistYet
      * @throws NodeTypeNotFound
      */
     private function handleCreateNodeAggregateWithNodeAndSerializedProperties(
@@ -255,7 +253,6 @@ trait NodeCreation
     }
 
     /**
-     * @throws ContentStreamDoesNotExistYet
      * @throws NodeTypeNotFound
      * @return array<EventInterface>
      */

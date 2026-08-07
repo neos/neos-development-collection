@@ -28,7 +28,6 @@ use Neos\ContentRepository\Core\Feature\RebaseableCommand;
 use Neos\ContentRepository\Core\NodeType\NodeType;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphInterface;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate;
-use Neos\ContentRepository\Core\SharedModel\Exception\ContentStreamDoesNotExistYet;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 
 /**
@@ -80,9 +79,6 @@ trait NodeReferencing
         return $this->handleSetSerializedNodeReferences($lowLevelCommand);
     }
 
-    /**
-     * @throws ContentStreamDoesNotExistYet
-     */
     private function handleSetSerializedNodeReferences(
         SetSerializedNodeReferences $command,
     ): EventsToPublish {

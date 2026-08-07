@@ -29,7 +29,6 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindPrecedingSibl
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindSucceedingSiblingNodesFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate;
 use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
-use Neos\ContentRepository\Core\SharedModel\Exception\ContentStreamDoesNotExistYet;
 use Neos\ContentRepository\Core\SharedModel\Exception\DimensionSpacePointIsNotYetOccupied;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeAggregateCurrentlyDoesNotExist;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeAggregateCurrentlyExists;
@@ -50,6 +49,7 @@ use Neos\ContentRepository\Core\SharedModel\Exception\NodeTypeIsOfTypeRoot;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeTypeNotFound;
 use Neos\ContentRepository\Core\SharedModel\Exception\ReferenceCannotBeSet;
 use Neos\ContentRepository\Core\SharedModel\Exception\RootNodeAggregateTypeIsAlreadyOccupied;
+use Neos\ContentRepository\Core\SharedModel\Exception\WorkspaceDoesNotExist;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
 use Neos\ContentRepository\Core\SharedModel\Node\PropertyName;
@@ -68,7 +68,7 @@ trait ConstraintChecks
     abstract protected function getAllowedDimensionSubspace(): DimensionSpacePointSet;
 
     /**
-     * @throws ContentStreamDoesNotExistYet
+     * @throws WorkspaceDoesNotExist
      */
     protected function requireContentStream(
         WorkspaceName $workspaceName,

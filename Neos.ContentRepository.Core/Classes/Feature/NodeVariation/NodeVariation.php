@@ -22,7 +22,6 @@ use Neos\ContentRepository\Core\Feature\ContentStreamEventStreamName;
 use Neos\ContentRepository\Core\Feature\NodeVariation\Command\CreateNodeVariant;
 use Neos\ContentRepository\Core\Feature\NodeVariation\Exception\DimensionSpacePointIsAlreadyOccupied;
 use Neos\ContentRepository\Core\Feature\RebaseableCommand;
-use Neos\ContentRepository\Core\SharedModel\Exception\ContentStreamDoesNotExistYet;
 use Neos\ContentRepository\Core\SharedModel\Exception\DimensionSpacePointIsNotYetOccupied;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeAggregateCurrentlyExists;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeAggregateDoesCurrentlyNotCoverDimensionSpacePoint;
@@ -37,7 +36,6 @@ trait NodeVariation
     use ConstraintChecks;
 
     /**
-     * @throws ContentStreamDoesNotExistYet
      * @throws NodeAggregateCurrentlyExists
      * @throws DimensionSpacePointNotFound
      * @throws DimensionSpacePointIsNotYetOccupied

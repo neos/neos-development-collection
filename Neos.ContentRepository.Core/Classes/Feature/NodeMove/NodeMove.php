@@ -34,7 +34,6 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindSucceedingSib
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\Pagination\Pagination;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate;
 use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
-use Neos\ContentRepository\Core\SharedModel\Exception\ContentStreamDoesNotExistYet;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeAggregateCurrentlyDoesNotExist;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeAggregateIsDescendant;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeAggregateIsNoChild;
@@ -73,7 +72,6 @@ trait NodeMove
     ): void;
 
     /**
-     * @throws ContentStreamDoesNotExistYet
      * @throws NodeAggregateCurrentlyDoesNotExist
      * @throws DimensionSpacePointNotFound
      * @throws NodeAggregateIsDescendant

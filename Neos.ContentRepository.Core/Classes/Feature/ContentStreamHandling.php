@@ -10,7 +10,6 @@ use Neos\ContentRepository\Core\EventStore\EventsToPublish;
 use Neos\ContentRepository\Core\Feature\ContentStreamForking\Event\ContentStreamWasForked;
 use Neos\ContentRepository\Core\Feature\ContentStreamRemoval\Event\ContentStreamWasRemoved;
 use Neos\ContentRepository\Core\SharedModel\Exception\ContentStreamAlreadyExists;
-use Neos\ContentRepository\Core\SharedModel\Exception\ContentStreamDoesNotExistYet;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\EventStore\Model\Event\Version;
 use Neos\EventStore\Model\EventStream\ExpectedVersion;
@@ -23,8 +22,6 @@ trait ContentStreamHandling
     /**
      * @param ContentStreamId $newContentStreamId The id of the new content stream
      * @param ContentStreamId $sourceContentStreamId The id of the content stream to fork
-     * @throws ContentStreamAlreadyExists
-     * @throws ContentStreamDoesNotExistYet
      * @phpstan-pure this method is pure, to persist the events they must be handled outside
      */
     private function forkContentStream(

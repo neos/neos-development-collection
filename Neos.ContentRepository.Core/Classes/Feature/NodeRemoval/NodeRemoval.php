@@ -23,7 +23,6 @@ use Neos\ContentRepository\Core\Feature\NodeRemoval\Command\RemoveNodeAggregate;
 use Neos\ContentRepository\Core\Feature\NodeRemoval\Event\NodeAggregateWasRemoved;
 use Neos\ContentRepository\Core\Feature\RebaseableCommand;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate;
-use Neos\ContentRepository\Core\SharedModel\Exception\ContentStreamDoesNotExistYet;
 use Neos\ContentRepository\Core\SharedModel\Exception\TetheredNodeAggregateCannotBeRemoved;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeVariantSelectionStrategy;
 
@@ -39,7 +38,6 @@ trait NodeRemoval
     /**
      * @param RemoveNodeAggregate $command
      * @return EventsToPublish
-     * @throws ContentStreamDoesNotExistYet
      * @throws DimensionSpacePointNotFound
      */
     private function handleRemoveNodeAggregate(

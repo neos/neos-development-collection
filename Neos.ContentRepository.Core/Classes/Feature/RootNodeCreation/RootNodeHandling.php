@@ -38,7 +38,6 @@ use Neos\ContentRepository\Core\NodeType\NodeType;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphInterface;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodePath;
-use Neos\ContentRepository\Core\SharedModel\Exception\ContentStreamDoesNotExistYet;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeAggregateCurrentlyExists;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeAggregateIsNotRoot;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeTypeIsNotOfTypeRoot;
@@ -66,7 +65,6 @@ trait RootNodeHandling
     /**
      * @param CreateRootNodeAggregateWithNode $command
      * @return EventsToPublish
-     * @throws ContentStreamDoesNotExistYet
      * @throws NodeAggregateCurrentlyExists
      * @throws NodeTypeNotFound
      * @throws NodeTypeIsNotOfTypeRoot
@@ -243,7 +241,6 @@ trait RootNodeHandling
     }
 
     /**
-     * @throws ContentStreamDoesNotExistYet
      * @throws NodeTypeNotFound
      * @return array<EventInterface>
      */

@@ -54,7 +54,6 @@ use Neos\ContentRepository\Core\Feature\WorkspaceRebase\Event\WorkspaceWasRebase
 use Neos\ContentRepository\Core\Feature\WorkspaceRebase\Exception\PartialWorkspaceRebaseFailed;
 use Neos\ContentRepository\Core\Feature\WorkspaceRebase\Exception\WorkspaceRebaseFailed;
 use Neos\ContentRepository\Core\SharedModel\Exception\ContentStreamAlreadyExists;
-use Neos\ContentRepository\Core\SharedModel\Exception\ContentStreamDoesNotExistYet;
 use Neos\ContentRepository\Core\SharedModel\Exception\WorkspaceContainsPublishableChanges;
 use Neos\ContentRepository\Core\SharedModel\Exception\WorkspaceDoesNotExist;
 use Neos\ContentRepository\Core\SharedModel\Exception\WorkspaceHasNoBaseWorkspaceName;
@@ -111,7 +110,6 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
     /**
      * @throws BaseWorkspaceDoesNotExist
      * @throws ContentStreamAlreadyExists
-     * @throws ContentStreamDoesNotExistYet
      * @throws WorkspaceAlreadyExists
      */
     private function handleCreateWorkspace(
