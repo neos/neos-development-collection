@@ -775,11 +775,10 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
         $eventsToPublish = $eventsToPublish->merge($pointWorkspaceToNewContentStream);
 
         if ($eventsToApplyOnNewContentStream !== null) {
-            $eventsToPublish = $eventsToPublish->withEventsForStreamAndExpectedVersion(
+            $eventsToPublish = $eventsToPublish->withEventsForStream(
                 ContentStreamEventStreamName::fromContentStreamId($newContentStreamId)
                     ->getEventStreamName(),
-                $eventsToApplyOnNewContentStream,
-                ExpectedVersion::fromVersion(Version::first())
+                $eventsToApplyOnNewContentStream
             );
         }
 
