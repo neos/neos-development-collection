@@ -175,7 +175,7 @@ class ParallelBaseWorkspaceChangeTest extends AbstractParallelTestCase
 
         $successFullChanged = 0;
         try {
-            for ($i = 0; $i <= 20; $i++) {
+            for ($i = 0; $i <= 30; $i++) {
                 $randomTarget = WorkspaceName::fromString('review-' . random_int(0, self::VARIETY_SIZE));
                 try {
                     $this->contentRepository->handle(ChangeBaseWorkspace::create(
@@ -219,7 +219,7 @@ class ParallelBaseWorkspaceChangeTest extends AbstractParallelTestCase
         $this->log('2. base workspace change started');
 
         $successFullChanged = 0;
-        for ($i = 0; $i <= 20; $i++) {
+        for ($i = 0; $i <= 30; $i++) {
             $randomTarget = WorkspaceName::fromString('review-' . random_int(0, self::VARIETY_SIZE));
             try {
                 $this->contentRepository->handle(ChangeBaseWorkspace::create(
