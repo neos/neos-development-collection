@@ -28,6 +28,7 @@ use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Command\CreateWorkspac
 use Neos\ContentRepository\Core\Feature\WorkspaceModification\Command\ChangeBaseWorkspace;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
+use Neos\ContentRepository\Core\SharedModel\Exception\ContentStreamDoesNotExistYet;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
@@ -184,7 +185,7 @@ class ParallelBaseWorkspaceChangeTest extends AbstractParallelTestCase
                         ContentStreamId::fromString(sprintf('%d-%d', getmypid(), $i))
                     ));
                     $successFullChanged++;
-                } catch (ConcurrencyException|WorkspaceCommandSkipped $concurrencyException) {
+                } catch (ConcurrencyException|WorkspaceCommandSkipped|ContentStreamDoesNotExistYet $concurrencyException) {
                     $this->log(sprintf('Got likely expected exception %s: %s', self::shortClassName($concurrencyException::class), $concurrencyException->getMessage()));
                 }
             }
@@ -228,7 +229,7 @@ class ParallelBaseWorkspaceChangeTest extends AbstractParallelTestCase
                     ContentStreamId::fromString(sprintf('%d-%d', getmypid(), $i))
                 ));
                 $successFullChanged++;
-            } catch (ConcurrencyException|WorkspaceCommandSkipped $concurrencyException) {
+            } catch (ConcurrencyException|WorkspaceCommandSkipped|ContentStreamDoesNotExistYet $concurrencyException) {
                 $this->log(sprintf('Got likely expected exception %s: %s', self::shortClassName($concurrencyException::class), $concurrencyException->getMessage()));
             }
         }
