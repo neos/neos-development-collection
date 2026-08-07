@@ -82,8 +82,8 @@ trait NodeMove
         MoveNodeAggregate $command,
     ): EventsToPublish {
         $contentGraph = $this->commandHandlingDependencies->getContentGraph($command->workspaceName);
-        $contentStreamId = $this->requireContentStream($command->workspaceName);
-        $expectedVersion = $this->getExpectedVersionOfContentStream($contentStreamId);
+        $this->requireContentStream($command->workspaceName);
+        $expectedVersion = $this->getExpectedVersionOfContentStream($contentGraph->getContentStreamId());
         $this->requireDimensionSpacePointToExist($command->dimensionSpacePoint);
         $nodeAggregate = $this->requireProjectedNodeAggregate(
             $contentGraph,
@@ -179,7 +179,7 @@ trait NodeMove
         $events = Events::with(
             new NodeAggregateWasMoved(
                 $command->workspaceName,
-                $contentStreamId,
+                $contentGraph->getContentStreamId(),
                 $command->nodeAggregateId,
                 $command->newParentNodeAggregateId,
                 $this->resolveInterdimensionalSiblingsForMove(
@@ -197,7 +197,7 @@ trait NodeMove
         );
 
         $contentStreamEventStreamName = ContentStreamEventStreamName::fromContentStreamId(
-            $contentStreamId
+            $contentGraph->getContentStreamId()
         );
 
         return EventsToPublish::createEventsForStreamAndExpectedVersion(
