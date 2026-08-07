@@ -87,7 +87,7 @@ class ConvertUrisImplementation extends AbstractFusionObject
         $node = $this->fusionValue('node');
 
         if (!$node instanceof NodeInterface) {
-            throw new Exception(sprintf('The current node must be an instance of NodeInterface, given: "%s".', gettype($text)), 1382624087);
+            throw new Exception(sprintf('The current node must be an instance of NodeInterface, given: "%s".', gettype($node)), 1382624087);
         }
 
         if (!($this->fusionValue('forceConversion')) && $node->getContext()->getWorkspace()->getName() !== 'live') {
