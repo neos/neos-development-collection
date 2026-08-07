@@ -23,6 +23,7 @@ use Neos\ContentRepository\Core\EventStore\DecoratedEvent;
 use Neos\ContentRepository\Core\EventStore\EventNormalizer;
 use Neos\ContentRepository\Core\EventStore\Events;
 use Neos\ContentRepository\Core\EventStore\EventsToPublish;
+use Neos\ContentRepository\Core\EventStore\EventsToPublishTemplate;
 use Neos\ContentRepository\Core\Feature\Common\PublishableToWorkspaceInterface;
 use Neos\ContentRepository\Core\Feature\Common\RebasableToOtherWorkspaceInterface;
 use Neos\ContentRepository\Core\Feature\Common\WorkspaceConstraintChecks;
@@ -225,7 +226,7 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
             $commandSimulator->eventStream(),
         );
 
-        $eventsToPublish = null;
+        $eventsToPublish = EventsToPublishTemplate::create();
         if ($eventsOfWorkspaceToPublish !== null) {
             $eventsToPublish = EventsToPublish::createEventsForStreamAndExpectedVersion(
                 ContentStreamEventStreamName::fromContentStreamId($baseWorkspace->currentContentStreamId)
@@ -235,7 +236,7 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
             );
         }
 
-        $eventsToPublish = ($eventsToPublish === null ? fn (EventsToPublish $v) => $v : $eventsToPublish->merge(...))(
+        $eventsToPublish = $eventsToPublish->merge(
             $this->forkContentStream(
                 $command->newContentStreamId,
                 $baseWorkspace->currentContentStreamId,
@@ -471,7 +472,7 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
             $commandSimulator->eventStream()->withMaximumSequenceNumber($highestSequenceNumberForMatching),
         );
 
-        $eventsToPublish = null;
+        $eventsToPublish = EventsToPublishTemplate::create();
         if ($selectedEventsOfWorkspaceToPublish !== null) {
             $eventsToPublish = EventsToPublish::createEventsForStreamAndExpectedVersion(
                 ContentStreamEventStreamName::fromContentStreamId($baseWorkspace->currentContentStreamId)
@@ -481,7 +482,7 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
             );
         }
 
-        $eventsToPublish = ($eventsToPublish === null ? fn (EventsToPublish $v) => $v : $eventsToPublish->merge(...))(
+        $eventsToPublish = $eventsToPublish->merge(
             $this->forkNewContentStreamAndApplyEvents(
                 $command->contentStreamIdForRemainingPart,
                 $baseWorkspace->currentContentStreamId,
