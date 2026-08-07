@@ -152,7 +152,7 @@ trait NodeReferencing
 
         $events = Events::fromArray($events);
 
-        return new EventsToPublish(
+        return EventsToPublish::createEventsForStreamAndExpectedVersion(
             ContentStreamEventStreamName::fromContentStreamId($contentGraph->getContentStreamId())
                 ->getEventStreamName(),
             RebaseableCommand::enrichWithCommand(

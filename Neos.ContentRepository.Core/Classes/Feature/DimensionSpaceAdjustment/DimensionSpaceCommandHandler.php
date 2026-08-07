@@ -104,7 +104,7 @@ final readonly class DimensionSpaceCommandHandler implements CommandHandlerInter
             );
         }
 
-        return new EventsToPublish(
+        return EventsToPublish::createEventsForStreamAndExpectedVersion(
             $streamName,
             RebaseableCommand::enrichWithCommand(
                 $command,
@@ -143,7 +143,7 @@ final readonly class DimensionSpaceCommandHandler implements CommandHandlerInter
             );
         }
 
-        return new EventsToPublish(
+        return EventsToPublish::createEventsForStreamAndExpectedVersion(
             $streamName,
             RebaseableCommand::enrichWithCommand(
                 $command,

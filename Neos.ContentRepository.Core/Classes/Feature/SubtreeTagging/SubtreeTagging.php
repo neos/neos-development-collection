@@ -71,7 +71,7 @@ trait SubtreeTagging
             ),
         );
 
-        return new EventsToPublish(
+        return EventsToPublish::createEventsForStreamAndExpectedVersion(
             ContentStreamEventStreamName::fromContentStreamId($contentGraph->getContentStreamId())
                 ->getEventStreamName(),
             RebaseableCommand::enrichWithCommand(
@@ -119,7 +119,7 @@ trait SubtreeTagging
             )
         );
 
-        return new EventsToPublish(
+        return EventsToPublish::createEventsForStreamAndExpectedVersion(
             ContentStreamEventStreamName::fromContentStreamId($contentGraph->getContentStreamId())->getEventStreamName(),
             RebaseableCommand::enrichWithCommand($command, $events),
             $expectedVersion

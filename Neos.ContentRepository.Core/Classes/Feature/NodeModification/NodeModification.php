@@ -131,7 +131,7 @@ trait NodeModification
             throw new \RuntimeException('Cannot handle "SetSerializedNodeProperties" with no properties to modify', 1736798016);
         }
 
-        return new EventsToPublish(
+        return EventsToPublish::createEventsForStreamAndExpectedVersion(
             ContentStreamEventStreamName::fromContentStreamId($contentGraph->getContentStreamId())
                 ->getEventStreamName(),
             RebaseableCommand::enrichWithCommand(

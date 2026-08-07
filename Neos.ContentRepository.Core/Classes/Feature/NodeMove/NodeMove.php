@@ -202,7 +202,7 @@ trait NodeMove
             $contentStreamId
         );
 
-        return new EventsToPublish(
+        return EventsToPublish::createEventsForStreamAndExpectedVersion(
             $contentStreamEventStreamName->getEventStreamName(),
             RebaseableCommand::enrichWithCommand(
                 $command,

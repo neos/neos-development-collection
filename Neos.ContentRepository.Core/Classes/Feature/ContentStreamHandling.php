@@ -33,7 +33,7 @@ trait ContentStreamHandling
         Version $sourceContentStreamVersion,
         string $debugReason
     ): EventsToPublish {
-        return new EventsToPublish(
+        return EventsToPublish::createEventsForStreamAndExpectedVersion(
             ContentStreamEventStreamName::fromContentStreamId($newContentStreamId)->getEventStreamName(),
             Events::with(
                 DecoratedEvent::create(
@@ -58,7 +58,7 @@ trait ContentStreamHandling
         ContentStreamId $contentStreamId,
         Version $contentStreamVersion,
     ): EventsToPublish {
-        return new EventsToPublish(
+        return EventsToPublish::createEventsForStreamAndExpectedVersion(
             ContentStreamEventStreamName::fromContentStreamId($contentStreamId)->getEventStreamName(),
             Events::with(
                 new ContentStreamWasRemoved(

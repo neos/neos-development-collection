@@ -58,7 +58,7 @@ trait NodeRenaming
             ),
         );
 
-        return new EventsToPublish(
+        return EventsToPublish::createEventsForStreamAndExpectedVersion(
             ContentStreamEventStreamName::fromContentStreamId($contentGraph->getContentStreamId())->getEventStreamName(),
             RebaseableCommand::enrichWithCommand(
                 $command,

@@ -126,7 +126,7 @@ trait RootNodeHandling
         }
 
         $contentStreamEventStream = ContentStreamEventStreamName::fromContentStreamId($contentGraph->getContentStreamId());
-        return new EventsToPublish(
+        return EventsToPublish::createEventsForStreamAndExpectedVersion(
             $contentStreamEventStream->getEventStreamName(),
             RebaseableCommand::enrichWithCommand(
                 $command,
@@ -232,7 +232,7 @@ trait RootNodeHandling
         $contentStreamEventStream = ContentStreamEventStreamName::fromContentStreamId(
             $contentGraph->getContentStreamId()
         );
-        return new EventsToPublish(
+        return EventsToPublish::createEventsForStreamAndExpectedVersion(
             $contentStreamEventStream->getEventStreamName(),
             RebaseableCommand::enrichWithCommand(
                 $command,

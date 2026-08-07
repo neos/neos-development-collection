@@ -7,7 +7,7 @@ namespace Neos\ContentRepository\Core\CommandHandler;
 use Neos\ContentRepository\Core\EventStore\DecoratedEvent;
 use Neos\ContentRepository\Core\EventStore\EventInterface;
 use Neos\ContentRepository\Core\EventStore\EventNormalizer;
-use Neos\ContentRepository\Core\EventStore\EventsToPublish;
+use Neos\ContentRepository\Core\EventStore\EventsForStream;
 use Neos\ContentRepository\Core\Feature\RebaseableCommand;
 use Neos\ContentRepository\Core\Feature\WorkspaceRebase\ConflictingEvent;
 use Neos\ContentRepository\Core\Feature\WorkspaceRebase\ConflictingEvents;
@@ -99,13 +99,22 @@ final class CommandSimulator
             return;
         }
 
-        if (!$eventsToPublish instanceof EventsToPublish) {
-            throw new \RuntimeException(sprintf('%s expects an instance of %s to be returned. Got %s when handling %s', self::class, EventsToPublish::class, get_debug_type($eventsToPublish), $rebaseableCommand->originalCommand::class));
+
+        if ($eventsToPublish->eventsForStreams->count() !== 1) {
+            // limitation: the command handlers are only supposed to return events on a single stream during publishing
+            throw new \RuntimeException(sprintf(
+                '%s expect a single stream to be written to in simulation via EventsToPublish::createEventsForStream(). Got %d commits on streams %s when handling %s',
+                self::class,
+                $eventsToPublish->eventsForStreams->count(),
+                join(',', $eventsToPublish->eventsForStreams->map(fn (EventsForStream $eventsForStream) => $eventsForStream->streamName->value)),
+                $rebaseableCommand->originalCommand::class
+            ));
         }
+        $eventsForSingleStream = $eventsToPublish->eventsForStreams->first();
 
         $isFirstEvent = true;
         $normalizedEvents = Events::fromArray(
-            $eventsToPublish->events->map(function (EventInterface|DecoratedEvent $event) use ($rebaseableCommand, &$isFirstEvent) {
+            $eventsForSingleStream->events->map(function (EventInterface|DecoratedEvent $event) use ($rebaseableCommand, &$isFirstEvent) {
                 $metadata = $event instanceof DecoratedEvent ? $event->eventMetadata?->value ?? [] : [];
                 if ($isFirstEvent) {
                     $metadata['debug_reason'] = sprintf('Rebased from %s', $rebaseableCommand->originalSequenceNumber->value);
@@ -123,7 +132,7 @@ final class CommandSimulator
         // concurrently.
         // HINT: We cannot use $eventsToPublish->expectedVersion, because this is based on the PERSISTENT event stream (having different numbers)
         $this->inMemoryEventStore->commit(
-            $eventsToPublish->streamName,
+            $eventsForSingleStream->streamName,
             $normalizedEvents,
             ExpectedVersion::ANY()
         );

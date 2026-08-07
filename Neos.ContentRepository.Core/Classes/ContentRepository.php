@@ -21,8 +21,6 @@ use Neos\ContentRepository\Core\Dimension\ContentDimensionSourceInterface;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\DimensionSpace\InterDimensionalVariationGraph;
 use Neos\ContentRepository\Core\EventStore\EventAugmenter;
-use Neos\ContentRepository\Core\EventStore\EventsToPublish;
-use Neos\ContentRepository\Core\EventStore\PublishedEvents;
 use Neos\ContentRepository\Core\Feature\Security\AuthProviderInterface;
 use Neos\ContentRepository\Core\Feature\Security\Exception\AccessDenied;
 use Neos\ContentRepository\Core\Infrastructure\PerformanceTracing\PerformanceTracerInterface;
@@ -41,8 +39,6 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\Workspaces;
 use Neos\ContentRepository\Core\Subscription\Engine\SubscriptionEngine;
 use Neos\ContentRepository\Core\Subscription\Exception\CatchUpHadErrors;
 use Neos\EventStore\EventStoreInterface;
-use Neos\EventStore\Model\Event\CorrelationId;
-use Neos\EventStore\Model\EventsForCommit;
 
 /**
  * Main Entry Point to the system. Encapsulates the full event-sourced Content Repository.
@@ -94,72 +90,16 @@ final class ContentRepository
             if (!$privilege->granted) {
                 throw AccessDenied::becauseCommandIsNotGranted($command, $privilege->getReason());
             }
-            $toPublish = $this->commandBus->handle($command);
+            $eventsToPublish = $this->commandBus->handle($command);
             $this->performanceTracer?->mark(TracePoint::CommandBusHandle);
 
-            $correlationId = CorrelationId::fromString(sprintf('%s_%s', substr($command::class, strrpos($command::class, '\\') + 1, 20), bin2hex(random_bytes(9))));
+            $correlationId = $this->eventAugmenter->correlationIdForCommandClass($command::class);
 
-            // simple case
-            if ($toPublish instanceof EventsToPublish) {
-                $this->eventStore->commit($toPublish->streamName, $this->eventAugmenter->enrichAndNormalizeEvents($toPublish->events, $correlationId), $toPublish->expectedVersion);
-                $this->performanceTracer?->mark(TracePoint::EventStoreCommit);
-                $fullCatchUpResult = $this->subscriptionEngine->catchUpActive(); // NOTE: we don't batch here, to ensure the catchup is run completely and any errors don't stop it.
-                // SubscriptionEngine is tracing automatically; so we do not need to add this here
-                if ($fullCatchUpResult->hadErrors()) {
-                    throw CatchUpHadErrors::createFromErrors($fullCatchUpResult->errors);
-                }
-                $additionalCommands = $this->commandHook->onAfterHandle($command, $toPublish->events->toInnerEvents());
-                foreach ($additionalCommands as $additionalCommand) {
-                    $this->handle($additionalCommand);
-                }
-                $this->performanceTracer?->mark(TracePoint::CommandHookOnAfterHandle);
-                return;
-            }
+            $this->eventStore->commitAll($this->eventAugmenter->augmentAndNormalizeEventsToPublish($eventsToPublish, $correlationId));
 
-            // control-flow aware command handling via generator
-            $eventsToPublishToStreams = []; // TODO introduce eventBus?
-            foreach ($toPublish as $eventsToPublish) {
-                $eventsToPublishToStreams[] = $eventsToPublish;
-            }
-
-            $expectedVersionForStreamsMap = [];
-
-            $commit = array_reduce(
-                $eventsToPublishToStreams,
-                function (?EventsForCommit $commit, EventsToPublish $eventsToPublish) use ($correlationId, &$expectedVersionForStreamsMap): EventsForCommit {
-                    if (array_key_exists($eventsToPublish->streamName->value, $expectedVersionForStreamsMap)) {
-                        assert($commit !== null);
-                        return $commit->withEventsForStream(
-                            streamName: $eventsToPublish->streamName,
-                            events: $this->eventAugmenter->enrichAndNormalizeEvents($eventsToPublish->events, $correlationId),
-                        );
-                    }
-
-                    $expectedVersionForStreamsMap[$eventsToPublish->streamName->value] = true;
-
-                    return ($commit ? $commit->withEventsForStreamAndExpectedVersion(...) : EventsForCommit::createEventsForStreamAndExpectedVersion(...))(
-                        streamName: $eventsToPublish->streamName,
-                        events: $this->eventAugmenter->enrichAndNormalizeEvents($eventsToPublish->events, $correlationId),
-                        expectedVersion: $eventsToPublish->expectedVersion
-                    );
-                },
-            );
-
-            if ($eventsToPublishToStreams === [] || $commit === null) {
-                throw new \RuntimeException(sprintf('TODO Cannot publish nothing'), 1778939145);
-            }
-
-            $this->eventStore->commitAll($commit);
-            $publishedEvents = PublishedEvents::merge(...array_map(
-                fn (EventsToPublish $eventsToPublish) => $eventsToPublish->events->toInnerEvents(),
-                $eventsToPublishToStreams
-            ));
+            $publishedEvents = $eventsToPublish->eventsForStreams->toPublishedEvents();
             $this->performanceTracer?->mark(TracePoint::EventStoreCommit, ['cnt' => $publishedEvents->count()]);
-
-            // We always NEED to catchup even if there was an unexpected ConcurrencyException to make sure previous commits are handled.
-            // Technically it would be acceptable for the catchup to fail here (due to hook errors) because all the events are already persisted.
             $fullCatchUpResult = $this->subscriptionEngine->catchUpActive(); // NOTE: we don't batch here, to ensure the catchup is run completely and any errors don't stop it.
-            $this->performanceTracer?->mark(TracePoint::SubscriptionEngineCatchUpActive);
             if ($fullCatchUpResult->hadErrors()) {
                 throw CatchUpHadErrors::createFromErrors($fullCatchUpResult->errors);
             }
