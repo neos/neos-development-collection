@@ -6,7 +6,6 @@ namespace Neos\ContentRepository\StructureAdjustment\Adjustment;
 
 use Neos\ContentRepository\Core\DimensionSpace\InterDimensionalVariationGraph;
 use Neos\ContentRepository\Core\EventStore\Events;
-use Neos\ContentRepository\Core\EventStore\EventsToPublish;
 use Neos\ContentRepository\Core\Feature\Common\DimensionSpaceInternals;
 use Neos\ContentRepository\Core\Feature\ContentStreamEventStreamName;
 use Neos\ContentRepository\Core\Feature\NodeModification\Dto\SerializedPropertyValue;
@@ -18,6 +17,7 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphInterface;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate;
 use Neos\ContentRepository\Core\SharedModel\Node\PropertyNames;
+use Neos\ContentRepository\StructureAdjustment\EventsForFix;
 use Neos\EventStore\Model\EventStream\ExpectedVersion;
 
 class PropertyAdjustment
@@ -99,12 +99,12 @@ class PropertyAdjustment
         }
     }
 
-    private function removeProperty(NodeAggregate $nodeAggregate, Node $node, string $propertyKey): EventsToPublish
+    private function removeProperty(NodeAggregate $nodeAggregate, Node $node, string $propertyKey): EventsForFix
     {
         return $this->publishNodePropertiesWereSet($nodeAggregate, $node, SerializedPropertyValues::createEmpty(), PropertyNames::fromArray([$propertyKey]));
     }
 
-    private function addProperty(NodeAggregate $nodeAggregate, Node $node, string $propertyKey, mixed $defaultValue): EventsToPublish
+    private function addProperty(NodeAggregate $nodeAggregate, Node $node, string $propertyKey, mixed $defaultValue): EventsForFix
     {
         $propertyType = $this->nodeTypeManager->getNodeType($node->nodeTypeName)?->getPropertyType($propertyKey) ?? 'string';
         $serializedPropertyValues = SerializedPropertyValues::fromArray([
@@ -119,7 +119,7 @@ class PropertyAdjustment
         Node $node,
         SerializedPropertyValues $serializedPropertyValues,
         PropertyNames $propertyNames
-    ): EventsToPublish {
+    ): EventsForFix {
         $events = Events::with(
             new NodePropertiesWereSet(
                 $this->contentGraph->getWorkspaceName(),
@@ -133,7 +133,7 @@ class PropertyAdjustment
         );
 
         $streamName = ContentStreamEventStreamName::fromContentStreamId($this->contentGraph->getContentStreamId());
-        return new EventsToPublish(
+        return new EventsForFix(
             $streamName->getEventStreamName(),
             $events,
             ExpectedVersion::ANY()

@@ -9,7 +9,6 @@ use Neos\ContentRepository\Core\DimensionSpace\InterDimensionalVariationGraph;
 use Neos\ContentRepository\Core\EventStore\DecoratedEvent;
 use Neos\ContentRepository\Core\EventStore\EventInterface;
 use Neos\ContentRepository\Core\EventStore\EventNormalizer;
-use Neos\ContentRepository\Core\EventStore\EventsToPublish;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceInterface;
 use Neos\ContentRepository\Core\Infrastructure\Property\PropertyConverter;
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
@@ -113,14 +112,13 @@ class StructureAdjustmentService implements ContentRepositoryServiceInterface
         if (!$adjustment->remediation) {
             return;
         }
-        $remediation = $adjustment->remediation;
-        $eventsToPublish = $remediation();
-        assert($eventsToPublish instanceof EventsToPublish);
+        $eventsForFix = ($adjustment->remediation)();
+        assert($eventsForFix instanceof EventsForFix);
 
         // set correlation id and add debug metadata
         $correlationId = CorrelationId::fromString(sprintf('StructureAdjustment_%s', bin2hex(random_bytes(9))));
         $isFirstEvent = true;
-        $normalizedEvents = Events::fromArray($eventsToPublish->events->map(function (EventInterface|DecoratedEvent $event) use (
+        $normalizedEvents = Events::fromArray($eventsForFix->events->map(function (EventInterface|DecoratedEvent $event) use (
             &$isFirstEvent,
             $correlationId,
             $adjustment
@@ -139,7 +137,7 @@ class StructureAdjustmentService implements ContentRepositoryServiceInterface
             return $this->eventNormalizer->normalize($decoratedEvent);
         }));
 
-        $this->eventStore->commit($eventsToPublish->streamName, $normalizedEvents, $eventsToPublish->expectedVersion);
+        $this->eventStore->commit($eventsForFix->streamName, $normalizedEvents, $eventsForFix->expectedVersion);
         $this->subscriptionEngine->catchUpActive();
     }
 }

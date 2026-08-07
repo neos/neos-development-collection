@@ -9,6 +9,7 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
+use Neos\ContentRepository\StructureAdjustment\EventsForFix;
 use Neos\Error\Messages\Message;
 
 final class StructureAdjustment extends Message
@@ -31,6 +32,7 @@ final class StructureAdjustment extends Message
      * @param string $message An english error message which is used if no other error message can be resolved
      * @param int|null $code A unique error code
      * @param array<string,mixed> $arguments Array of arguments to be replaced in message
+     * @param \Closure():EventsForFix|null $remediation
      * @api
      */
     private function __construct(

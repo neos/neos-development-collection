@@ -7,7 +7,6 @@ namespace Neos\ContentRepository\StructureAdjustment\Adjustment;
 use Neos\ContentRepository\Core\DimensionSpace;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Core\EventStore\Events;
-use Neos\ContentRepository\Core\EventStore\EventsToPublish;
 use Neos\ContentRepository\Core\Feature\Common\InterdimensionalSibling;
 use Neos\ContentRepository\Core\Feature\Common\InterdimensionalSiblings;
 use Neos\ContentRepository\Core\Feature\Common\NodeTypeChangeInternals;
@@ -27,6 +26,7 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeTypeNotFound;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
+use Neos\ContentRepository\StructureAdjustment\EventsForFix;
 use Neos\EventStore\Model\EventStream\ExpectedVersion;
 use Psr\Clock\ClockInterface;
 
@@ -100,7 +100,7 @@ class TetheredNodeAdjustments
                                 $streamName = ContentStreamEventStreamName::fromContentStreamId(
                                     $this->contentGraph->getContentStreamId()
                                 );
-                                return new EventsToPublish(
+                                return new EventsForFix(
                                     $streamName->getEventStreamName(),
                                     $events,
                                     ExpectedVersion::ANY()
@@ -233,7 +233,7 @@ class TetheredNodeAdjustments
         DimensionSpace\DimensionSpacePointSet $coverageByOrigin,
         array $actualTetheredChildNodes,
         array $expectedNodeOrdering
-    ): EventsToPublish {
+    ): EventsForFix {
         $events = [];
 
         // we move from back to front through the expected ordering; as we always specify the **succeeding** sibling.
@@ -265,7 +265,7 @@ class TetheredNodeAdjustments
 
         /** @var non-empty-array<NodeAggregateWasMoved> $events */
         $streamName = ContentStreamEventStreamName::fromContentStreamId($contentStreamId);
-        return new EventsToPublish(
+        return new EventsForFix(
             $streamName->getEventStreamName(),
             Events::fromArray($events),
             ExpectedVersion::ANY()
