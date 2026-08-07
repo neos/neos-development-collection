@@ -36,19 +36,6 @@ final readonly class EventsToPublish
         );
     }
 
-    public static function createEventsForStream(StreamName $streamName, EventInterface|DecoratedEvent|Events $events): self
-    {
-        return new self(
-            EventsForStreams::create(
-                EventsForStream::create(
-                    streamName: $streamName,
-                    events: $events instanceof Events ? $events : Events::with($events),
-                ),
-            ),
-            ExpectedStreamConstraints::none()
-        );
-    }
-
     public static function createEventsForStreamAndExpectedVersion(StreamName $streamName, EventInterface|DecoratedEvent|Events $events, ExpectedVersion $expectedVersion): self
     {
         $expectedStreamConstraint = $expectedVersion->toExpectedStreamConstraint($streamName);

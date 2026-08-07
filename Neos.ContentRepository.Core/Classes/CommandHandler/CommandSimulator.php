@@ -99,12 +99,10 @@ final class CommandSimulator
             return;
         }
 
-
         if ($eventsToPublish->eventsForStreams->count() !== 1) {
             // limitation: the command handlers are only supposed to return events on a single stream during publishing
             throw new \RuntimeException(sprintf(
-                '%s expect a single stream to be written to in simulation via EventsToPublish::createEventsForStream(). Got %d commits on streams %s when handling %s',
-                self::class,
+                'command simulations expect a single stream to be written to via EventsToPublish::createEventsForStream(). Got %d commits on streams %s when handling %s',
                 $eventsToPublish->eventsForStreams->count(),
                 join(',', $eventsToPublish->eventsForStreams->map(fn (EventsForStream $eventsForStream) => $eventsForStream->streamName->value)),
                 $rebaseableCommand->originalCommand::class
