@@ -124,7 +124,7 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
                 $command->workspaceName->value
             ), 1513890708);
         }
-        $sourceContentStreamVersion = $this->commandHandlingDependencies->getContentStreamVersion($baseWorkspace->currentContentStreamId);
+        $sourceContentStreamVersion = $this->requireContentStreamVersion($baseWorkspace);
         $this->requireContentStreamToNotExistYet($command->newContentStreamId);
 
         // When the workspace is created, we first have to fork the content stream
@@ -732,7 +732,7 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
         DeleteWorkspace $command,
     ): EventsToPublish {
         $workspace = $this->requireWorkspace($command->workspaceName);
-        $contentStreamVersion = $this->commandHandlingDependencies->getContentStreamVersion($workspace->currentContentStreamId);
+        $contentStreamVersion = $this->requireContentStreamVersion($workspace);
 
         $eventsToPublish = EventsToPublish::createEventsForStreamAndExpectedVersion(
             ContentStreamEventStreamName::fromContentStreamId($workspace->currentContentStreamId)->getEventStreamName(),
