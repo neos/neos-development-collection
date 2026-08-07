@@ -43,7 +43,6 @@ trait NodeRemoval
     private function handleRemoveNodeAggregate(
         RemoveNodeAggregate $command,
     ): EventsToPublish {
-        $this->requireContentStream($command->workspaceName);
         $contentGraph = $this->commandHandlingDependencies->getContentGraph($command->workspaceName);
         $expectedVersion = $this->getExpectedVersionOfContentStream($contentGraph->getContentStreamId());
         $nodeAggregate = $this->requireProjectedNodeAggregate(

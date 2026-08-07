@@ -49,13 +49,11 @@ use Neos\ContentRepository\Core\SharedModel\Exception\NodeTypeIsOfTypeRoot;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeTypeNotFound;
 use Neos\ContentRepository\Core\SharedModel\Exception\ReferenceCannotBeSet;
 use Neos\ContentRepository\Core\SharedModel\Exception\RootNodeAggregateTypeIsAlreadyOccupied;
-use Neos\ContentRepository\Core\SharedModel\Exception\WorkspaceDoesNotExist;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
 use Neos\ContentRepository\Core\SharedModel\Node\PropertyName;
 use Neos\ContentRepository\Core\SharedModel\Node\ReferenceName;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
-use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\EventStore\Model\EventStream\ExpectedVersion;
 
 /**
@@ -66,15 +64,6 @@ trait ConstraintChecks
     use NodeTypeConstraintChecks;
 
     abstract protected function getAllowedDimensionSubspace(): DimensionSpacePointSet;
-
-    /**
-     * @throws WorkspaceDoesNotExist
-     */
-    protected function requireContentStream(
-        WorkspaceName $workspaceName,
-    ): ContentStreamId {
-        return $this->commandHandlingDependencies->getContentGraph($workspaceName)->getContentStreamId();
-    }
 
     /**
      * @param DimensionSpacePoint $dimensionSpacePoint

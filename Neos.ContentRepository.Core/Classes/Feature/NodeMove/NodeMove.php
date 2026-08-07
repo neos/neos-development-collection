@@ -82,7 +82,6 @@ trait NodeMove
         MoveNodeAggregate $command,
     ): EventsToPublish {
         $contentGraph = $this->commandHandlingDependencies->getContentGraph($command->workspaceName);
-        $this->requireContentStream($command->workspaceName);
         $expectedVersion = $this->getExpectedVersionOfContentStream($contentGraph->getContentStreamId());
         $this->requireDimensionSpacePointToExist($command->dimensionSpacePoint);
         $nodeAggregate = $this->requireProjectedNodeAggregate(

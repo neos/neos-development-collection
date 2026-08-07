@@ -128,8 +128,7 @@ trait NodeTypeChange
         /**************
          * Constraint checks
          **************/
-        // existence of content stream, node type and node aggregate
-        $this->requireContentStream($command->workspaceName);
+        // existence of workspace, node type and node aggregate
         $contentGraph = $this->commandHandlingDependencies->getContentGraph($command->workspaceName);
         $expectedVersion = $this->getExpectedVersionOfContentStream($contentGraph->getContentStreamId());
         $newNodeType = $this->requireNodeType($command->newNodeTypeName);
