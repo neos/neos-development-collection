@@ -15,7 +15,7 @@ class StructureAdjustmentServiceFactory implements ContentRepositoryServiceFacto
     public function build(ContentRepositoryServiceFactoryDependencies $serviceFactoryDependencies): StructureAdjustmentService
     {
         return new StructureAdjustmentService(
-            $serviceFactoryDependencies->contentRepository,
+            $serviceFactoryDependencies->contentGraphReadModel,
             $serviceFactoryDependencies->eventStore,
             $serviceFactoryDependencies->eventNormalizer,
             $serviceFactoryDependencies->subscriptionEngine,

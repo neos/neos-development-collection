@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\StructureAdjustment;
 
-use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\DimensionSpace\InterDimensionalVariationGraph;
 use Neos\ContentRepository\Core\EventStore\DecoratedEvent;
 use Neos\ContentRepository\Core\EventStore\EventInterface;
@@ -17,6 +16,7 @@ use Neos\ContentRepository\Core\Infrastructure\Property\PropertyConverter;
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphInterface;
+use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphReadModelInterface;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepository\Core\Subscription\Engine\SubscriptionEngine;
 use Neos\ContentRepository\StructureAdjustment\Adjustment\DimensionAdjustment;
@@ -27,6 +27,7 @@ use Neos\ContentRepository\StructureAdjustment\Adjustment\TetheredNodeAdjustment
 use Neos\ContentRepository\StructureAdjustment\Adjustment\UnknownNodeTypeAdjustment;
 use Neos\EventStore\EventStoreInterface;
 use Neos\EventStore\Model\Event\CorrelationId;
+use Neos\EventStore\Model\Event\Version;
 use Neos\EventStore\Model\Events as NormalisedEvents;
 use Neos\EventStore\Model\EventStream\ExpectedVersion;
 use Psr\Clock\ClockInterface;
@@ -42,13 +43,22 @@ class StructureAdjustmentService implements ContentRepositoryServiceInterface
     /**
      * Content graph bound to the live workspace to iterate over the "real" Nodes; that is, the nodes,
      * which have an entry in the Graph Projection's "node" table.
-     *
-     * @var ContentGraphInterface
      */
     private readonly ContentGraphInterface $liveContentGraph;
 
+    /**
+     * FIXME Currently mutable as we allow fixing of one error after another from the outside.
+     * Instead we need to rethink the API and consistency guarantees:
+     *  - what if there are parallel users working on live?
+     *  - what if a structure adjustment has a side effect on another structure adjustment,
+     *    making that obsolete or being invalid.
+     *
+     * A fixAllErrors should allow to commit all fixes at once and catchup the graph once afterwards.
+     */
+    private Version $liveContentStreamVersion;
+
     public function __construct(
-        ContentRepository $contentRepository,
+        ContentGraphReadModelInterface $contentGraphReadModel,
         private readonly EventStoreInterface $eventStore,
         private readonly EventNormalizer $eventNormalizer,
         private readonly SubscriptionEngine $subscriptionEngine,
@@ -57,8 +67,12 @@ class StructureAdjustmentService implements ContentRepositoryServiceInterface
         PropertyConverter $propertyConverter,
         ClockInterface $clock,
     ) {
-
-        $this->liveContentGraph = $contentRepository->getContentGraph(WorkspaceName::forLive());
+        $this->liveContentGraph = $contentGraphReadModel->getContentGraph(WorkspaceName::forLive());
+        $liveContentStream = $contentGraphReadModel->findContentStreamById($this->liveContentGraph->getContentStreamId());
+        if ($liveContentStream === null) {
+            throw new \RuntimeException(sprintf('Content stream "%s" for live workspace does not exist', $this->liveContentGraph->getContentStreamId()), 1786181008);
+        }
+        $this->liveContentStreamVersion = $liveContentStream->version;
 
         $this->tetheredNodeAdjustments = new TetheredNodeAdjustments(
             $this->liveContentGraph,
@@ -146,7 +160,8 @@ class StructureAdjustmentService implements ContentRepositoryServiceInterface
         }));
 
         $liveContentStreamEventStreamName = ContentStreamEventStreamName::fromContentStreamId($this->liveContentGraph->getContentStreamId());
-        $this->eventStore->commit($liveContentStreamEventStreamName->getEventStreamName(), $normalizedEvents, ExpectedVersion::ANY());
+        $this->eventStore->commit($liveContentStreamEventStreamName->getEventStreamName(), $normalizedEvents, ExpectedVersion::fromVersion($this->liveContentStreamVersion));
+        $this->liveContentStreamVersion = $this->liveContentStreamVersion->add(Version::fromInteger($normalizedEvents->count()));
         $this->subscriptionEngine->catchUpActive();
     }
 }
