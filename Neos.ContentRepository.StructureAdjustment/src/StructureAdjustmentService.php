@@ -34,11 +34,11 @@ use Psr\Clock\ClockInterface;
 
 class StructureAdjustmentService implements ContentRepositoryServiceInterface
 {
-    protected TetheredNodeAdjustments $tetheredNodeAdjustments;
-    protected UnknownNodeTypeAdjustment $unknownNodeTypeAdjustment;
-    protected DisallowedChildNodeAdjustment $disallowedChildNodeAdjustment;
-    protected PropertyAdjustment $propertyAdjustment;
-    protected DimensionAdjustment $dimensionAdjustment;
+    private readonly TetheredNodeAdjustments $tetheredNodeAdjustments;
+    private readonly UnknownNodeTypeAdjustment $unknownNodeTypeAdjustment;
+    private readonly DisallowedChildNodeAdjustment $disallowedChildNodeAdjustment;
+    private readonly PropertyAdjustment $propertyAdjustment;
+    private readonly DimensionAdjustment $dimensionAdjustment;
 
     /**
      * Content graph bound to the live workspace to iterate over the "real" Nodes; that is, the nodes,
@@ -103,7 +103,7 @@ class StructureAdjustmentService implements ContentRepositoryServiceInterface
     }
 
     /**
-     * @return \Generator|StructureAdjustment[]
+     * @return \Generator<int,StructureAdjustment>
      */
     public function findAllAdjustments(): \Generator
     {
@@ -114,7 +114,7 @@ class StructureAdjustmentService implements ContentRepositoryServiceInterface
 
     /**
      * @param NodeTypeName $nodeTypeName
-     * @return \Generator|StructureAdjustment[]
+     * @return \Generator<int,StructureAdjustment>
      */
     public function findAdjustmentsForNodeType(NodeTypeName $nodeTypeName): \Generator
     {
