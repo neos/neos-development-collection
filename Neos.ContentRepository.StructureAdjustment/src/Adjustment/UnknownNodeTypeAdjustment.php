@@ -8,7 +8,10 @@ use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphInterface;
 
-class UnknownNodeTypeAdjustment
+/**
+ * @internal the publication of events is not API, use commands instead.
+ */
+final class UnknownNodeTypeAdjustment
 {
     use RemoveNodeAggregateTrait;
 

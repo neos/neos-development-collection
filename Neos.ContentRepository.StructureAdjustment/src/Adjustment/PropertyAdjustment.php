@@ -17,7 +17,10 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate;
 use Neos\ContentRepository\Core\SharedModel\Node\PropertyNames;
 
-class PropertyAdjustment
+/**
+ * @internal the publication of events is not API, use commands instead.
+ */
+final class PropertyAdjustment
 {
     use DimensionSpaceInternals;
 

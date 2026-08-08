@@ -32,7 +32,7 @@ use Neos\EventStore\Model\Events as NormalisedEvents;
 use Neos\EventStore\Model\EventStream\ExpectedVersion;
 use Psr\Clock\ClockInterface;
 
-class StructureAdjustmentService implements ContentRepositoryServiceInterface
+final class StructureAdjustmentService implements ContentRepositoryServiceInterface
 {
     private readonly TetheredNodeAdjustments $tetheredNodeAdjustments;
     private readonly UnknownNodeTypeAdjustment $unknownNodeTypeAdjustment;
@@ -57,6 +57,9 @@ class StructureAdjustmentService implements ContentRepositoryServiceInterface
      */
     private Version $liveContentStreamVersion;
 
+    /**
+     * @internal please use the {@see StructureAdjustmentServiceFactory} instead!
+     */
     public function __construct(
         ContentGraphReadModelInterface $contentGraphReadModel,
         private readonly EventStoreInterface $eventStore,

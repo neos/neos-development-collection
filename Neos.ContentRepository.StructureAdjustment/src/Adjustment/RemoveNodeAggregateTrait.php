@@ -9,6 +9,9 @@ use Neos\ContentRepository\Core\Feature\NodeRemoval\Event\NodeAggregateWasRemove
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphInterface;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate;
 
+/**
+ * @internal the publication of events is not API, use commands instead.
+ */
 trait RemoveNodeAggregateTrait
 {
     private function removeNodeAggregate(ContentGraphInterface $contentGraph, NodeAggregate $tetheredNodeAggregate): Events

@@ -27,7 +27,10 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Psr\Clock\ClockInterface;
 
-class TetheredNodeAdjustments
+/**
+ * @internal the publication of events is not API, use commands instead.
+ */
+final class TetheredNodeAdjustments
 {
     use NodeVariationInternals;
     use RemoveNodeAggregateTrait;

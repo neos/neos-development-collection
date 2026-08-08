@@ -10,7 +10,7 @@ use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceFactoryInterface
 /**
  * @implements ContentRepositoryServiceFactoryInterface<StructureAdjustmentService>
  */
-class StructureAdjustmentServiceFactory implements ContentRepositoryServiceFactoryInterface
+final class StructureAdjustmentServiceFactory implements ContentRepositoryServiceFactoryInterface
 {
     public function build(ContentRepositoryServiceFactoryDependencies $serviceFactoryDependencies): StructureAdjustmentService
     {

@@ -14,7 +14,10 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphInterface;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate;
 use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
 
-class DisallowedChildNodeAdjustment
+/**
+ * @internal the publication of events is not API, use commands instead.
+ */
+final class DisallowedChildNodeAdjustment
 {
     use RemoveNodeAggregateTrait;
 
