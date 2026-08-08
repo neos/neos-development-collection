@@ -5,16 +5,13 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\StructureAdjustment\Adjustment;
 
 use Neos\ContentRepository\Core\EventStore\Events;
-use Neos\ContentRepository\Core\Feature\ContentStreamEventStreamName;
 use Neos\ContentRepository\Core\Feature\NodeRemoval\Event\NodeAggregateWasRemoved;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphInterface;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate;
-use Neos\ContentRepository\StructureAdjustment\EventsForFix;
-use Neos\EventStore\Model\EventStream\ExpectedVersion;
 
 trait RemoveNodeAggregateTrait
 {
-    private function removeNodeAggregate(ContentGraphInterface $contentGraph, NodeAggregate $tetheredNodeAggregate): EventsForFix
+    private function removeNodeAggregate(ContentGraphInterface $contentGraph, NodeAggregate $tetheredNodeAggregate): Events
     {
         $events = Events::with(
             new NodeAggregateWasRemoved(
@@ -25,13 +22,6 @@ trait RemoveNodeAggregateTrait
             )
         );
 
-        $streamName = ContentStreamEventStreamName::fromContentStreamId(
-            $contentGraph->getContentStreamId()
-        );
-        return new EventsForFix(
-            $streamName->getEventStreamName(),
-            $events,
-            ExpectedVersion::ANY()
-        );
+        return $events;
     }
 }

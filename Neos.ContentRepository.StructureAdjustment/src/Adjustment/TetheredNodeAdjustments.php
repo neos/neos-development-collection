@@ -12,7 +12,6 @@ use Neos\ContentRepository\Core\Feature\Common\InterdimensionalSiblings;
 use Neos\ContentRepository\Core\Feature\Common\NodeTypeChangeInternals;
 use Neos\ContentRepository\Core\Feature\Common\NodeVariationInternals;
 use Neos\ContentRepository\Core\Feature\Common\TetheredNodeInternals;
-use Neos\ContentRepository\Core\Feature\ContentStreamEventStreamName;
 use Neos\ContentRepository\Core\Feature\NodeMove\Event\NodeAggregateWasMoved;
 use Neos\ContentRepository\Core\Infrastructure\Property\PropertyConverter;
 use Neos\ContentRepository\Core\NodeType\NodeType;
@@ -26,8 +25,6 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeTypeNotFound;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
-use Neos\ContentRepository\StructureAdjustment\EventsForFix;
-use Neos\EventStore\Model\EventStream\ExpectedVersion;
 use Psr\Clock\ClockInterface;
 
 class TetheredNodeAdjustments
@@ -97,14 +94,7 @@ class TetheredNodeAdjustments
                                     tetheredNodeAggregateId: null
                                 );
 
-                                $streamName = ContentStreamEventStreamName::fromContentStreamId(
-                                    $this->contentGraph->getContentStreamId()
-                                );
-                                return new EventsForFix(
-                                    $streamName->getEventStreamName(),
-                                    $events,
-                                    ExpectedVersion::ANY()
-                                );
+                                return $events;
                             }
                         );
                     } else {
@@ -233,7 +223,7 @@ class TetheredNodeAdjustments
         DimensionSpace\DimensionSpacePointSet $coverageByOrigin,
         array $actualTetheredChildNodes,
         array $expectedNodeOrdering
-    ): EventsForFix {
+    ): Events {
         $events = [];
 
         // we move from back to front through the expected ordering; as we always specify the **succeeding** sibling.
@@ -264,12 +254,7 @@ class TetheredNodeAdjustments
         }
 
         /** @var non-empty-array<NodeAggregateWasMoved> $events */
-        $streamName = ContentStreamEventStreamName::fromContentStreamId($contentStreamId);
-        return new EventsForFix(
-            $streamName->getEventStreamName(),
-            Events::fromArray($events),
-            ExpectedVersion::ANY()
-        );
+        return Events::fromArray($events);
     }
 
     protected function getNodeTypeManager(): NodeTypeManager

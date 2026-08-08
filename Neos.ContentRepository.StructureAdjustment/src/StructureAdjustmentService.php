@@ -9,7 +9,10 @@ use Neos\ContentRepository\Core\DimensionSpace\InterDimensionalVariationGraph;
 use Neos\ContentRepository\Core\EventStore\DecoratedEvent;
 use Neos\ContentRepository\Core\EventStore\EventInterface;
 use Neos\ContentRepository\Core\EventStore\EventNormalizer;
+use Neos\ContentRepository\Core\EventStore\Events;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceInterface;
+use Neos\ContentRepository\Core\Feature\Common\EmbedsContentStreamId;
+use Neos\ContentRepository\Core\Feature\ContentStreamEventStreamName;
 use Neos\ContentRepository\Core\Infrastructure\Property\PropertyConverter;
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
@@ -24,7 +27,8 @@ use Neos\ContentRepository\StructureAdjustment\Adjustment\TetheredNodeAdjustment
 use Neos\ContentRepository\StructureAdjustment\Adjustment\UnknownNodeTypeAdjustment;
 use Neos\EventStore\EventStoreInterface;
 use Neos\EventStore\Model\Event\CorrelationId;
-use Neos\EventStore\Model\Events;
+use Neos\EventStore\Model\Events as NormalisedEvents;
+use Neos\EventStore\Model\EventStream\ExpectedVersion;
 use Psr\Clock\ClockInterface;
 
 class StructureAdjustmentService implements ContentRepositoryServiceInterface
@@ -112,13 +116,13 @@ class StructureAdjustmentService implements ContentRepositoryServiceInterface
         if (!$adjustment->remediation) {
             return;
         }
-        $eventsForFix = ($adjustment->remediation)();
-        assert($eventsForFix instanceof EventsForFix);
+        $events = ($adjustment->remediation)();
+        assert($events instanceof Events);
 
         // set correlation id and add debug metadata
         $correlationId = CorrelationId::fromString(sprintf('StructureAdjustment_%s', bin2hex(random_bytes(9))));
         $isFirstEvent = true;
-        $normalizedEvents = Events::fromArray($eventsForFix->events->map(function (EventInterface|DecoratedEvent $event) use (
+        $normalizedEvents = NormalisedEvents::fromArray($events->map(function (EventInterface|DecoratedEvent $event) use (
             &$isFirstEvent,
             $correlationId,
             $adjustment
@@ -134,10 +138,15 @@ class StructureAdjustmentService implements ContentRepositoryServiceInterface
                 correlationId: $correlationId,
             );
 
+            if (!$decoratedEvent->innerEvent instanceof EmbedsContentStreamId || !$decoratedEvent->innerEvent->getContentStreamId()->equals($this->liveContentGraph->getContentStreamId())) {
+                throw new \RuntimeException(sprintf('StructureAdjustments must only emit events to be published on the live content stream. Got %s with %s', $decoratedEvent::class, json_encode($decoratedEvent)), 1786179987);
+            }
+
             return $this->eventNormalizer->normalize($decoratedEvent);
         }));
 
-        $this->eventStore->commit($eventsForFix->streamName, $normalizedEvents, $eventsForFix->expectedVersion);
+        $liveContentStreamEventStreamName = ContentStreamEventStreamName::fromContentStreamId($this->liveContentGraph->getContentStreamId());
+        $this->eventStore->commit($liveContentStreamEventStreamName->getEventStreamName(), $normalizedEvents, ExpectedVersion::ANY());
         $this->subscriptionEngine->catchUpActive();
     }
 }
