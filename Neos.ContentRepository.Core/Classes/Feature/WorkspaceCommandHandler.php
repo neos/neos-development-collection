@@ -239,7 +239,8 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
                 $command->newContentStreamId,
                 $baseWorkspace->currentContentStreamId,
                 Version::fromInteger($baseWorkspaceContentStreamVersion->value + ($eventsOfWorkspaceToPublish?->count() ?? 0)),
-                sprintf('Publish workspace %s and fork base %s', $workspace->workspaceName->value, $baseWorkspace->workspaceName->value)
+                sprintf('Publish workspace %s and fork base %s', $workspace->workspaceName->value, $baseWorkspace->workspaceName->value),
+                requireSourceContentStreamVersion: $eventsOfWorkspaceToPublish === null
             )
         );
 
@@ -503,7 +504,8 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
                     $command->contentStreamIdForRemainingPart,
                     $commandSimulator->eventStream()->withMinimumSequenceNumber($highestSequenceNumberForMatching->next())
                 ),
-                sprintf('Partial publish workspace %s and fork base %s', $command->workspaceName->value, $baseWorkspace->workspaceName->value)
+                sprintf('Partial publish workspace %s and fork base %s', $command->workspaceName->value, $baseWorkspace->workspaceName->value),
+                requireSourceContentStreamVersion: $selectedEventsOfWorkspaceToPublish === null
             )
         );
 
@@ -761,13 +763,15 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
         Version $sourceContentStreamVersion,
         EventsToPublish $pointWorkspaceToNewContentStream,
         Events|null $eventsToApplyOnNewContentStream,
-        string $debugReasonForFork
+        string $debugReasonForFork,
+        bool $requireSourceContentStreamVersion = true
     ): EventsToPublish {
         $eventsToPublish = $this->forkContentStream(
             $newContentStreamId,
             $sourceContentStreamId,
             $sourceContentStreamVersion,
-            $debugReasonForFork . sprintf('; Apply %d events on new content stream', $eventsToApplyOnNewContentStream?->count() ?? 0)
+            $debugReasonForFork . sprintf('; Apply %d events on new content stream', $eventsToApplyOnNewContentStream?->count() ?? 0),
+            requireSourceContentStreamVersion: $requireSourceContentStreamVersion
         );
 
         $eventsToPublish = $eventsToPublish->merge($pointWorkspaceToNewContentStream);

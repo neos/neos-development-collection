@@ -28,9 +28,10 @@ trait ContentStreamHandling
         ContentStreamId $newContentStreamId,
         ContentStreamId $sourceContentStreamId,
         Version $sourceContentStreamVersion,
-        string $debugReason
+        string $debugReason,
+        bool $requireSourceContentStreamVersion = true,
     ): EventsToPublish {
-        return EventsToPublish::createEventsForStreamAndExpectedVersion(
+        $eventsToPublish = EventsToPublish::createEventsForStreamAndExpectedVersion(
             ContentStreamEventStreamName::fromContentStreamId($newContentStreamId)->getEventStreamName(),
             Events::with(
                 DecoratedEvent::create(
@@ -45,6 +46,13 @@ trait ContentStreamHandling
             // NO_STREAM to ensure the "fork" happens as the first event of the new content stream
             ExpectedVersion::NO_STREAM()
         );
+        if ($requireSourceContentStreamVersion) {
+            $eventsToPublish = $eventsToPublish->withExpectedVersionForStream(
+                ContentStreamEventStreamName::fromContentStreamId($sourceContentStreamId)->getEventStreamName(),
+                ExpectedVersion::fromVersion($sourceContentStreamVersion)
+            );
+        }
+        return $eventsToPublish;
     }
 
     /**
