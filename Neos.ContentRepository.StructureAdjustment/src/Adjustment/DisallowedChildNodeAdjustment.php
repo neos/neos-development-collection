@@ -7,17 +7,17 @@ namespace Neos\ContentRepository\StructureAdjustment\Adjustment;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Core\EventStore\Events;
-use Neos\ContentRepository\Core\EventStore\EventsToPublish;
-use Neos\ContentRepository\Core\Feature\ContentStreamEventStreamName;
 use Neos\ContentRepository\Core\Feature\NodeRemoval\Event\NodeAggregateWasRemoved;
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphInterface;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate;
 use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
-use Neos\EventStore\Model\EventStream\ExpectedVersion;
 
-class DisallowedChildNodeAdjustment
+/**
+ * @internal the publication of events is not API, use commands instead.
+ */
+final class DisallowedChildNodeAdjustment
 {
     use RemoveNodeAggregateTrait;
 
@@ -120,7 +120,7 @@ class DisallowedChildNodeAdjustment
     private function removeNodeInSingleDimensionSpacePoint(
         NodeAggregate $nodeAggregate,
         DimensionSpacePoint $dimensionSpacePoint
-    ): EventsToPublish {
+    ): Events {
         $events = Events::with(
             new NodeAggregateWasRemoved(
                 $this->contentGraph->getWorkspaceName(),
@@ -129,15 +129,6 @@ class DisallowedChildNodeAdjustment
                 new DimensionSpacePointSet([$dimensionSpacePoint]),
             )
         );
-
-        $streamName = ContentStreamEventStreamName::fromContentStreamId(
-            $this->contentGraph->getContentStreamId()
-        );
-
-        return new EventsToPublish(
-            $streamName->getEventStreamName(),
-            $events,
-            ExpectedVersion::ANY()
-        );
+        return $events;
     }
 }
