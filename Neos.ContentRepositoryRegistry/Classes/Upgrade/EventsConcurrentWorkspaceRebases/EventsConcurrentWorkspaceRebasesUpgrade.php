@@ -239,12 +239,10 @@ class EventsConcurrentWorkspaceRebasesUpgrade
         FROM
           {$this->context->eventStoreTableName}
         WHERE type = 'ContentStreamWasForked' OR type = 'ContentStreamWasRemoved'
-        GROUP BY IF(
-          type = 'ContentStreamWasForked',
-          JSON_UNQUOTE(JSON_EXTRACT(payload, '$.sourceContentStreamId')),
-          -- else, ContentStreamWasRemoved
-          SUBSTR(stream, LENGTH('ContentStream:') + 1)
-        )
+        GROUP BY CASE type
+          WHEN 'ContentStreamWasForked' THEN CAST(JSON_VALUE(payload, '$.sourceContentStreamId') AS VARCHAR(100) COLLATE ascii_general_ci)
+          WHEN 'ContentStreamWasRemoved' THEN SUBSTR(stream, LENGTH('ContentStream:') + 1)
+        END
         HAVING removalSequenceNumber < maxForkSequenceNumber
         ORDER BY sequencenumber;        
         SQL);
