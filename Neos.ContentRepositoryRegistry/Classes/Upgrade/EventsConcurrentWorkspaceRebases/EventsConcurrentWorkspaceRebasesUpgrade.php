@@ -27,6 +27,18 @@ class EventsConcurrentWorkspaceRebasesUpgrade
     ) {
     }
 
+    public static function getShortDescription(): string
+    {
+        return 'Deduplicate illegal concurrent rebase workspaces';
+    }
+
+    public function isAvailable(): bool
+    {
+        $forkedContentStreamsWithAlreadyRemovedSourceContentStream = $this->findForkedContentStreamsWithAlreadyRemovedSourceContentStream();
+
+        return $forkedContentStreamsWithAlreadyRemovedSourceContentStream !== [];
+    }
+
     public function execute(bool $dryRun): void
     {
         $forkedContentStreamsWithAlreadyRemovedSourceContentStream = $this->findForkedContentStreamsWithAlreadyRemovedSourceContentStream();
@@ -144,7 +156,8 @@ class EventsConcurrentWorkspaceRebasesUpgrade
 
         if ($rebaseSequencesToPatchContentStream !== []) {
             $this->log(sprintf('Found %d remaining workspace rebases to be adjusted after the deletion', count($rebaseSequencesToPatchContentStream)));
-            $this->log(sprintf('    Debug: %s', join("\n           ", array_map(fn (RebaseSequenceContentStreamPatch $patch) => sprintf('Previous stream "%s" instead "%s" (%s)', $patch->initialPreviousContentStreamId->value, $patch->rebaseSequence->previousContentStreamId->value, $patch->rebaseSequence->correlationId->value, ), $rebaseSequencesToPatchContentStream))));
+            $this->log(sprintf('    Debug: %s', join("\n           ", array_map(fn (RebaseSequenceContentStreamPatch $patch) => sprintf('Previous stream "%s" instead "%s" (%s)', $patch->initialPreviousContentStreamId->value, $patch->rebaseSequence->previousContentStreamId->value, $patch->rebaseSequence->correlationId->value
+            ), $rebaseSequencesToPatchContentStream))));
         }
 
         if ($dryRun) {

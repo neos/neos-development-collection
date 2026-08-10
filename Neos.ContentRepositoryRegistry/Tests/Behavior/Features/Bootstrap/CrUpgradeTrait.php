@@ -112,6 +112,23 @@ trait CrUpgradeTrait
     }
 
     /**
+     * @When I attempt to upgrade the events to concurrent workspace-rebases which I expect not to be available
+     */
+    public function iExecuteEventsConcurrentWorkspaceRebasesUpgradeNotAvailable(): void
+    {
+        $upgrade = new EventsConcurrentWorkspaceRebasesUpgrade(
+            $this->getCrUpgradeContext(),
+            $this->outputFn(...)
+        );
+
+        Assert::assertFalse($upgrade->isAvailable(), 'Upgrade is available but was not expected to.');
+
+        $upgrade->execute(
+            dryRun: false
+        );
+    }
+
+    /**
      * @When I upgrade the events to concurrent workspace-rebases
      */
     public function iExecuteEventsConcurrentWorkspaceRebasesUpgrade(): void
@@ -120,6 +137,8 @@ trait CrUpgradeTrait
             $this->getCrUpgradeContext(),
             $this->outputFn(...)
         );
+
+        Assert::assertTrue($upgrade->isAvailable(), 'Upgrade is not available but was expected to.');
 
         $upgrade->execute(
             dryRun: false

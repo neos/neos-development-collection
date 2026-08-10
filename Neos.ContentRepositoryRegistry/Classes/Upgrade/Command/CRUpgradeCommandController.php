@@ -73,7 +73,11 @@ final class CRUpgradeCommandController extends CommandController
             [
                 strtolower('crupgrade:eventsDeduplicateBaseWorkspaceChanges'),
                 new EventsDeduplicateBaseWorkspaceChangesUpgrade($context, $noop)
-            ]
+            ],
+            [
+                strtolower('crupgrade:eventsConcurrentWorkspaceRebases'),
+                new EventsConcurrentWorkspaceRebasesUpgrade($context, $noop)
+            ],
         ];
 
         $optionalAvailable = 0;

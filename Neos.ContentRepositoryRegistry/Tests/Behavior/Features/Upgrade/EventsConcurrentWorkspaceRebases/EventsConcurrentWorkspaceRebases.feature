@@ -61,7 +61,7 @@ Feature: As a user of the CR I want to upgrade my events
       | workspaceName          | "user"           |
       | rebasedContentStreamId | "cs-user-second" |
 
-    When I upgrade the events to concurrent workspace-rebases
+    When I attempt to upgrade the events to concurrent workspace-rebases which I expect not to be available
     Then I expect the following upgrade output:
       """
       Migration was not necessary. No forks on already removed content streams.
