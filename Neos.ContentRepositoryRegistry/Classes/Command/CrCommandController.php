@@ -5,12 +5,14 @@ declare(strict_types=1);
 namespace Neos\ContentRepositoryRegistry\Command;
 
 use Neos\ContentRepository\Core\Projection\ProjectionStatusType;
+use Neos\ContentRepository\Core\Service\ContentRepositoryMaintainer\SetupWarning;
 use Neos\ContentRepository\Core\Service\ContentRepositoryMaintainerFactory;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
 use Neos\ContentRepository\Core\Subscription\DetachedSubscriptionStatus;
 use Neos\ContentRepository\Core\Subscription\ProjectionSubscriptionStatus;
 use Neos\ContentRepository\Core\Subscription\SubscriptionStatus;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
+use Neos\Error\Messages\Error;
 use Neos\EventStore\Model\Event\SequenceNumber;
 use Neos\EventStore\Model\EventStore\StatusType;
 use Neos\Flow\Annotations as Flow;
@@ -61,11 +63,30 @@ final class CrCommandController extends CommandController
         $contentRepositoryMaintainer = $this->contentRepositoryRegistry->buildService($contentRepositoryId, new ContentRepositoryMaintainerFactory());
 
         $result = $contentRepositoryMaintainer->setUp();
-        if ($result !== null) {
+        if ($result instanceof Error) {
             $this->outputLine('<comment>Failed to fully setup content repository "%s"</comment>', [$contentRepositoryId->value]);
             $this->outputLine('<error>%s</error>', [$result->getMessage()]);
             $this->quit(1);
         }
+        if ($result instanceof SetupWarning) {
+            $hasErrors = false;
+            foreach ($result->skippedSubscriptions as $status) {
+                if ($status instanceof DetachedSubscriptionStatus) {
+                    $this->outputDetachedSubscriptionStatus($status);
+                }
+                if ($status instanceof ProjectionSubscriptionStatus) {
+                    $this->outputProjectionSubscriptionStatus($status, eventStorePosition: null, verbose: true);
+                    $hasErrors |= $status->setupStatus->type === ProjectionStatusType::ERROR;
+                    $hasErrors |= $status->subscriptionStatus === SubscriptionStatus::ERROR;
+                }
+            }
+
+            if ($hasErrors) {
+                $this->outputLine('<error>Content repository not fully setup. Skipped above projections in error state</error>');
+                $this->quit(1);
+            }
+        }
+
         $this->outputLine('<success>Content repository "%s" was set up</success>', [$contentRepositoryId->value]);
     }
 
