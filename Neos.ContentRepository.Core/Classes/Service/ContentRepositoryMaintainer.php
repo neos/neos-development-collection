@@ -97,9 +97,12 @@ final readonly class ContentRepositoryMaintainer implements ContentRepositorySer
             foreach ($statusOfSkippedSubscriptions as $status) {
                 $message[] = sprintf('  %s:', $status->subscriptionId->value);
                 if ($status instanceof DetachedSubscriptionStatus) {
-                    $message[] = sprintf('    Subscription: %s DETACHED at position %d', $status->subscriptionStatus === SubscriptionStatus::DETACHED ? 'is' : 'will be', $status->subscriptionPosition->value);
+                    continue;
                 }
                 if ($status instanceof ProjectionSubscriptionStatus) {
+                    if ($status->subscriptionStatus !== SubscriptionStatus::ERROR) {
+                        continue;
+                    }
                     $message[] = sprintf('    Projection: in %s', $status->subscriptionStatus->value);
                     if ($status->subscriptionError !== null) {
                         $lines = explode(chr(10), $status->subscriptionError->errorMessage ?: 'No details available.');
