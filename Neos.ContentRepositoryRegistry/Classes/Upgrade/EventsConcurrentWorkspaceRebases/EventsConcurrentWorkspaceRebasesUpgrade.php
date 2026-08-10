@@ -206,7 +206,7 @@ class EventsConcurrentWorkspaceRebasesUpgrade
             $affectedRows += $this->context->dbal->executeStatement(
                 <<<SQL
                 UPDATE {$this->context->eventStoreTableName}
-                SET payload = JSON_SET(payload, '$.contentStreamId', :contentStreamId)
+                SET payload = JSON_SET(payload, '$.previousContentStreamId', :contentStreamId)
                 WHERE sequencenumber = :sequenceNumber
                 SQL,
                 [

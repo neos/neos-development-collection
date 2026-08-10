@@ -477,9 +477,10 @@ Feature: As a user of the CR I want to upgrade my events
       | baseWorkspaceName  | "review"        |
       | newContentStreamId | "cs-user-first" |
     And event at index 1 is of type "WorkspaceWasRebased" with payload:
-      | Key                | Expected        |
-      | workspaceName      | "user"          |
-      | newContentStreamId | "cs-user-third" |
+      | Key                     | Expected        |
+      | workspaceName           | "user"          |
+      | newContentStreamId      | "cs-user-third" |
+      | previousContentStreamId | "cs-user-first" |
 
     # replay works
     When I replay the contentGraph projection
@@ -601,9 +602,10 @@ Feature: As a user of the CR I want to upgrade my events
       | baseWorkspaceName  | "review"        |
       | newContentStreamId | "cs-user-first" |
     And event at index 1 is of type "WorkspaceWasRebased" with payload:
-      | Key                | Expected        |
-      | workspaceName      | "user"          |
-      | newContentStreamId | "cs-user-third" |
+      | Key                     | Expected        |
+      | workspaceName           | "user"          |
+      | newContentStreamId      | "cs-user-third" |
+      | previousContentStreamId | "cs-user-first" |
 
     Then I expect exactly 1 events to be published on stream with prefix "ContentStream:cs-user2-first"
     And event at index 0 is of type "ContentStreamWasForked" with payload:
@@ -732,9 +734,10 @@ Feature: As a user of the CR I want to upgrade my events
       | baseWorkspaceName  | "review"        |
       | newContentStreamId | "cs-user-first" |
     And event at index 1 is of type "WorkspaceWasRebased" with payload:
-      | Key                | Expected        |
-      | workspaceName      | "user"          |
-      | newContentStreamId | "cs-user-forth" |
+      | Key                     | Expected        |
+      | workspaceName           | "user"          |
+      | newContentStreamId      | "cs-user-forth" |
+      | previousContentStreamId | "cs-user-first" |
 
     # replay works
     When I replay the contentGraph projection
@@ -879,9 +882,10 @@ Feature: As a user of the CR I want to upgrade my events
       | sourceWorkspaceName      | "user"          |
       | newSourceContentStreamId | "cs-user-first" |
     And event at index 2 is of type "WorkspaceWasRebased" with payload:
-      | Key                | Expected        |
-      | workspaceName      | "user"          |
-      | newContentStreamId | "cs-user-third" |
+      | Key                     | Expected        |
+      | workspaceName           | "user"          |
+      | newContentStreamId      | "cs-user-third" |
+      | previousContentStreamId | "cs-user-first" |
 
     # replay works
     When I replay the contentGraph projection
