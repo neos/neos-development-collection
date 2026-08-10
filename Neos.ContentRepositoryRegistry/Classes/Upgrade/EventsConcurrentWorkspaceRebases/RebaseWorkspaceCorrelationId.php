@@ -25,7 +25,7 @@ final readonly class RebaseWorkspaceCorrelationId
         foreach ($events as $eventEnvelope) {
             if ($correlationId === null) {
                 if ($eventEnvelope->event->correlationId === null || !str_starts_with($eventEnvelope->event->correlationId->value, 'RebaseWorkspace_')) {
-                    throw new \RuntimeException(sprintf('Expected no events or another RebaseWorkspace sequence. Got at %d type %s with %s',  $eventEnvelope->sequenceNumber->value, $eventEnvelope->event->type->value, $eventEnvelope->event->correlationId?->value));
+                    throw new \RuntimeException(sprintf('Expected no events or another RebaseWorkspace sequence. Got at %d type %s with %s', $eventEnvelope->sequenceNumber->value, $eventEnvelope->event->type->value, $eventEnvelope->event->correlationId?->value));
                 }
                 $correlationId = $eventEnvelope->event->correlationId;
                 continue;
