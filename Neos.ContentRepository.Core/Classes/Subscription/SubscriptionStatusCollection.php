@@ -17,7 +17,7 @@ namespace Neos\ContentRepository\Core\Subscription;
  * @api
  * @implements \IteratorAggregate<ProjectionSubscriptionStatus|DetachedSubscriptionStatus>
  */
-final readonly class SubscriptionStatusCollection implements \IteratorAggregate
+final readonly class SubscriptionStatusCollection implements \IteratorAggregate, \Countable
 {
     /**
      * @var array<ProjectionSubscriptionStatus|DetachedSubscriptionStatus> $items
@@ -59,5 +59,10 @@ final readonly class SubscriptionStatusCollection implements \IteratorAggregate
     public function isEmpty(): bool
     {
         return $this->items === [];
+    }
+
+    public function count(): int
+    {
+        return count($this->items);
     }
 }
