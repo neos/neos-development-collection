@@ -13,7 +13,31 @@ use Neos\ContentRepositoryRegistry\Upgrade\Shared\OutputMessageTrait;
 use Neos\EventStore\Model\EventEnvelope;
 
 /**
- * TODO
+ * Upgrade to deduplicate illegal concurrent workspace rebases
+ *
+ * https://github.com/neos/neos-development-collection/issues/5849
+ *
+ * Content stream forking was not thread safe before not expressing the assertion to the source content stream
+ * e.g. that the sourceContentStreamVersion should match the reality in the event store.
+ * This resulted in the possibility that a source content stream was not constraint from being forked when it was already removed.
+ * The resulting illegal ContentStreamWasForked event and its RebaseWorkspace sequence must be removed.
+ *
+ * The upgrade first determines any ContentStreamWasForked events where the source content stream was already removed via ContentStreamWasRemoved.
+ * We assume all illegally found forks are restricted to being caused by a RebaseWorkspace command (via correlation id).
+ * Further we expect a simple RebaseWorkspace without any changes on the "user" workspace but just an empty fork.
+ * On this empty fork we expect only a new second RebaseWorkspace, starting with a ContentStreamWasClosed or nothing if the event stream ended.
+ * This second RebaseWorkspace is either also illegal and to be removed or a valid rebase if the source content stream existed at that point.
+ * If valid we want to keep this rebase, but a rebase sequence refers to its previous content stream to remove it and indicate projections which was the last.
+ * The original information is no longer valid as we have removed the existence of the original previous content stream.
+ * Instead, we need to patch the events to use the previous content stream of the first illegal fork - the previous-previous content stream.
+ * Thus, we patch the field $previousContentStreamId of the WorkspaceWasRebased event and rewrite the ContentStreamWasClosed
+ * and ContentStreamWasRemoved events to affect the now new last content stream.
+ *
+ * After the migration is applied the workspace will have its last successfully rebased content stream as without the migration,
+ * but we deduplicated any temporary illegal rebases that happened in a race condition. No content on the workspaces is affected.
+ *
+ * Included in July 2026 - part of the minor 9.2.0 release
+ *
  * @internal
  */
 class EventsConcurrentWorkspaceRebasesUpgrade
@@ -29,7 +53,7 @@ class EventsConcurrentWorkspaceRebasesUpgrade
 
     public static function getShortDescription(): string
     {
-        return 'Deduplicate illegal concurrent rebase workspaces';
+        return 'Deduplicate illegal concurrent workspace rebases';
     }
 
     public function isAvailable(): bool
