@@ -271,18 +271,18 @@ class EventsConcurrentWorkspaceRebasesUpgrade
         SELECT
           -- invariant: single entry as content stream can only be removed once 
           MIN(IF(type = 'ContentStreamWasRemoved', sequencenumber, null)) as removalSequenceNumber,
-          GROUP_CONCAT(IF(type = 'ContentStreamWasRemoved', SUBSTR(stream, LENGTH('ContentStream:') + 1), null)) as sourceContentStreamId,
+          GROUP_CONCAT(IF(type = 'ContentStreamWasRemoved', JSON_VALUE(payload, '$.contentStreamId'), null)) as sourceContentStreamId,
           -- multiple forks of source content stream
           MAX(IF(type = 'ContentStreamWasForked', sequencenumber, null)) as maxForkSequenceNumber,
           GROUP_CONCAT(IF(type = 'ContentStreamWasForked', sequencenumber, null)) as forkSequenceNumbers,
           GROUP_CONCAT(IF(type = 'ContentStreamWasForked', correlationid, null)) as forkCorrelationIds,
-          GROUP_CONCAT(IF(type = 'ContentStreamWasForked', SUBSTR(stream, LENGTH('ContentStream:') + 1), null)) as newContentStreamIds
+          GROUP_CONCAT(IF(type = 'ContentStreamWasForked', JSON_VALUE(payload, '$.newContentStreamId'), null)) as newContentStreamIds
         FROM
           {$this->context->eventStoreTableName}
         WHERE type = 'ContentStreamWasForked' OR type = 'ContentStreamWasRemoved'
         GROUP BY CASE type
-          WHEN 'ContentStreamWasForked' THEN CAST(JSON_VALUE(payload, '$.sourceContentStreamId') AS VARCHAR(100) COLLATE ascii_general_ci)
-          WHEN 'ContentStreamWasRemoved' THEN SUBSTR(stream, LENGTH('ContentStream:') + 1)
+          WHEN 'ContentStreamWasForked' THEN JSON_VALUE(payload, '$.sourceContentStreamId')
+          WHEN 'ContentStreamWasRemoved' THEN JSON_VALUE(payload, '$.contentStreamId')
         END
         HAVING removalSequenceNumber < maxForkSequenceNumber
         ORDER BY sequencenumber;        
