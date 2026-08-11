@@ -10,7 +10,8 @@ namespace Neos\ContentRepository\Tests\Unit\Transformations;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\ContentRepository\Domain\Model\ContentDimension;
 use Neos\ContentRepository\Domain\Model\NodeData;
@@ -75,12 +76,12 @@ class SetDimensionsTest extends UnitTestCase
     }
 
     /**
-     * @dataProvider setDimensionsInput
-     * @test
      * @param array $setValues The values passed to the transformation
      * @param array $expectedValues The values that are expected to be set on the node
      * @param array $configuredDimensions Optional set of dimensions "configured in the system"
      */
+    #[DataProvider('setDimensionsInput')]
+    #[Test]
     public function setDimensionsWorksAsExpected(array $setValues, array $expectedValues, ?array $configuredDimensions = null)
     {
         $transformation = new SetDimensions();
@@ -125,9 +126,7 @@ class SetDimensionsTest extends UnitTestCase
         $transformation->execute($mockNode);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function setDimensionsFillsInDefaultDimensionsAndValues()
     {
         $dimensionsToBeSet = [

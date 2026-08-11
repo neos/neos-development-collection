@@ -10,7 +10,8 @@ namespace Neos\Neos\Tests\Functional\Fusion;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
+use PHPUnit\Framework\Attributes\Large;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\Exception;
 use Neos\Fusion\Core\Runtime;
 use GuzzleHttp\Psr7\ServerRequest;
@@ -28,14 +29,11 @@ use Symfony\Component\DomCrawler\Crawler;
 
 /**
  * Functional test case which tests the rendering
- *
- * @group large
  */
+#[Large]
 class RenderingTest extends AbstractNodeTestCase
 {
-    /**
-     * @test
-     */
+    #[Test]
     public function basicRenderingWorks(): void
     {
         $output = $this->simulateRendering();
@@ -45,9 +43,7 @@ class RenderingTest extends AbstractNodeTestCase
         $this->assertSidebarConformsToBasicRendering($output);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function debugModeSettingWorks(): void
     {
         $output = $this->simulateRendering(null, true);
@@ -57,9 +53,7 @@ class RenderingTest extends AbstractNodeTestCase
         $this->assertStringNotContainsString('<!-- Beginning to render Fusion path', $output);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function overriddenValueInPrototype(): void
     {
         $output = $this->simulateRendering('Test_OverriddenValueInPrototype.fusion');
@@ -72,9 +66,7 @@ class RenderingTest extends AbstractNodeTestCase
         self::assertSelectEquals('.sidebar', '[COMMIT WIDGET]', true, $output);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function additionalProcessorInPrototype(): void
     {
         $output = $this->simulateRendering('Test_AdditionalProcessorInPrototype.fusion');
@@ -85,9 +77,7 @@ class RenderingTest extends AbstractNodeTestCase
         self::assertSelectEquals('.sidebar > .neos-contentcollection > .acme-demo-headline > div > .processor-wrap', 'BEFOREStatic HeadlineAFTER', true, $output);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function additionalProcessorInPrototype2(): void
     {
         $output = $this->simulateRendering('Test_AdditionalProcessorInPrototype2.fusion');
@@ -99,9 +89,7 @@ class RenderingTest extends AbstractNodeTestCase
         self::assertSelectEquals('.sidebar > .neos-contentcollection > .acme-demo-headline > div > header > .processor-wrap', 'BEFOREStatic HeadlineAFTER', true, $output);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function replaceElementRenderingCompletelyInSidebar(): void
     {
         $output = $this->simulateRendering('Test_ReplaceElementRenderingCompletelyInSidebar.fusion');
@@ -113,9 +101,7 @@ class RenderingTest extends AbstractNodeTestCase
         self::assertSelectEquals('.sidebar > .neos-contentcollection > .acme-demo-text > div', 'Below, you\'ll see the most recent activity', true, $output);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function prototypeInheritance(): void
     {
         $output = $this->simulateRendering('Test_PrototypeInheritance.fusion');
@@ -127,9 +113,7 @@ class RenderingTest extends AbstractNodeTestCase
         self::assertSelectEquals('.sidebar > .neos-contentcollection > .acme-demo-text > div', 'Below, you\'ll see the most recent activity', true, $output);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function replaceElementRenderingCompletelyBasedOnAdvancedCondition(): void
     {
         $output = $this->simulateRendering('Test_ReplaceElementRenderingCompletelyBasedOnAdvancedCondition.fusion');
@@ -139,9 +123,7 @@ class RenderingTest extends AbstractNodeTestCase
         self::assertSelectEquals('.main > .neos-contentcollection > .acme-demo-threecolumn > .left > .neos-contentcollection > .acme-demo-headline > div > header', 'DOCS: Documentation', true, $output);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function overriddenValueInNestedPrototype(): void
     {
         $output = $this->simulateRendering('Test_OverriddenValueInNestedPrototype.fusion');
@@ -153,9 +135,7 @@ class RenderingTest extends AbstractNodeTestCase
         $this->assertSidebarConformsToBasicRendering($output);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function overriddenValueInNestedPrototype2(): void
     {
         $output = $this->simulateRendering('Test_OverriddenValueInNestedPrototype2.fusion');
@@ -167,9 +147,7 @@ class RenderingTest extends AbstractNodeTestCase
         $this->assertSidebarConformsToBasicRendering($output);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function contentCollectionsAndWrappedContentElementsCanBeRenderedWithCustomTagsAndAttributes(): void
     {
         $output = $this->simulateRendering();
@@ -177,18 +155,14 @@ class RenderingTest extends AbstractNodeTestCase
         self::assertSelectEquals('.main > .neos-contentcollection > .acme-demo-list > ul.my-list > li.my-list-item > p', 'First', true, $output);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function menuIsRenderedAsExpected(): void
     {
         $output = $this->simulateRendering();
         self::assertSelectEquals('.navigation > ul > li.normal > a', 'Frameworks', true, $output);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function classesAreAppendedAsExpected(): void
     {
         $output = $this->simulateRendering('Test_AppendingClassesToContent.fusion');
@@ -196,9 +170,7 @@ class RenderingTest extends AbstractNodeTestCase
         self::assertSelectEquals('.sidebar > .neos-contentcollection > .acme-demo-headline.test h1', 'Last Commits', true, $output);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function menuWithNegativeEntryLevelIsRenderedAsExpected(): void
     {
         $output = $this->simulateRendering('Test_MenuNegativeEntryLevel.fusion');

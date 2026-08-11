@@ -1,6 +1,8 @@
 <?php
 namespace Neos\Fusion\Tests\Functional\FusionObjects;
 
+use PHPUnit\Framework\Attributes\Test;
+
 /*
  * This file is part of the Neos.Fusion package.
  *
@@ -16,9 +18,7 @@ namespace Neos\Fusion\Tests\Functional\FusionObjects;
  */
 class QuotedKeysTest extends AbstractFusionObjectTestCase
 {
-    /**
-     * @test
-     */
+    #[Test]
     public function mulitpleKeysWorks()
     {
         $view = $this->buildView();
@@ -31,9 +31,7 @@ class QuotedKeysTest extends AbstractFusionObjectTestCase
         }
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function singleQuotedWorks()
     {
         $view = $this->buildView();
@@ -41,9 +39,7 @@ class QuotedKeysTest extends AbstractFusionObjectTestCase
         self::assertSame($view->render(), 1);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function doubleQuotedWorks()
     {
         $view = $this->buildView();
@@ -51,9 +47,7 @@ class QuotedKeysTest extends AbstractFusionObjectTestCase
         self::assertSame($view->render(), 1);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function nestedQuotedWorks()
     {
         $view = $this->buildView();
@@ -61,9 +55,7 @@ class QuotedKeysTest extends AbstractFusionObjectTestCase
         self::assertSame($view->render(), 1);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function specialCharactersWorks()
     {
         $view = $this->buildView();
@@ -71,9 +63,7 @@ class QuotedKeysTest extends AbstractFusionObjectTestCase
         self::assertSame($view->render(), 1);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function prototypeAndQuotedKeysWorks()
     {
         $view = $this->buildView();

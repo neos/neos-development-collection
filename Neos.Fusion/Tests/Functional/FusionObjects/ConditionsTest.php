@@ -1,6 +1,9 @@
 <?php
 namespace Neos\Fusion\Tests\Functional\FusionObjects;
 
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
+
 /*
  * This file is part of the Neos.Fusion package.
  *
@@ -40,10 +43,8 @@ class ConditionsTest extends AbstractFusionObjectTestCase
         ];
     }
 
-    /**
-     * @test
-     * @dataProvider conditionExamples
-     */
+    #[DataProvider('conditionExamples')]
+    #[Test]
     public function conditionsWork($path, $expected)
     {
         $view = $this->buildView();
@@ -69,10 +70,8 @@ class ConditionsTest extends AbstractFusionObjectTestCase
         ];
     }
 
-    /**
-     * @test
-     * @dataProvider valuesForCondition
-     */
+    #[DataProvider('valuesForCondition')]
+    #[Test]
     public function everythingButFalseIsEvaluated($conditionValue, $expected)
     {
         $view = $this->buildView();
@@ -81,9 +80,7 @@ class ConditionsTest extends AbstractFusionObjectTestCase
         self::assertSame($expected, $view->render());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function conditionsInFusionObjectsWithSubEvaluationUsedInProcessorRenderCorrectly()
     {
         $view = $this->buildView();

@@ -10,8 +10,8 @@ namespace Neos\ContentRepository\Tests\Unit\Domain\Utility;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
 use Neos\Flow\Tests\UnitTestCase;
+use PHPUnit\Framework\Attributes\Test;
 use Neos\ContentRepository\Domain\Model\NodeInterface;
 use Neos\ContentRepository\Domain\Utility\NodePaths;
 
@@ -21,9 +21,7 @@ use Neos\ContentRepository\Domain\Utility\NodePaths;
  */
 class NodePathsTest extends UnitTestCase
 {
-    /**
-     * @test
-     */
+    #[Test]
     public function generateRandomNodeNameReturnsValidNodeName()
     {
         for ($i=0; $i<25; $i++) {

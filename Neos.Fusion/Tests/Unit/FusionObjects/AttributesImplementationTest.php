@@ -10,7 +10,8 @@ namespace Neos\Fusion\Tests\Unit\FusionObjects;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use Neos\Utility\ObjectAccess;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\Fusion\Core\Runtime;
@@ -47,10 +48,8 @@ class AttributesImplementationTest extends UnitTestCase
         ];
     }
 
-    /**
-     * @test
-     * @dataProvider attributeExamples
-     */
+    #[DataProvider('attributeExamples')]
+    #[Test]
     public function evaluateTests($properties, $expectedOutput)
     {
         $path = 'attributes/test';

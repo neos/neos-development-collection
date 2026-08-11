@@ -10,6 +10,8 @@ namespace Neos\Media\Tests\Unit\TypeConverter;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+use PHPUnit\Framework\Attributes\Test;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
@@ -63,9 +65,7 @@ class ImageInterfaceConverterTest extends UnitTestCase
         $this->inject($this->converter, 'objectManager', $this->mockObjectManager);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function checkMetadata()
     {
         self::assertEquals(['string', 'array'], $this->converter->getSupportedSourceTypes());
@@ -87,21 +87,19 @@ class ImageInterfaceConverterTest extends UnitTestCase
     }
 
     /**
-     * @test
-     * @dataProvider canConvertFromDataProvider
      *
      * @param mixed $source
      * @param string $targetType
      * @param boolean $expected
      */
+    #[DataProvider('canConvertFromDataProvider')]
+    #[Test]
     public function canConvertFromTests($source, $targetType, $expected)
     {
         self::assertEquals($expected, $this->converter->canConvertFrom($source, $targetType));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function convertFromReturnsNullIfResourcePropertyIsNotConverted()
     {
         $this->mockObjectManager->expects(self::any())->method('getClassNameByObjectName')->will(self::returnCallback(function ($objectType) {

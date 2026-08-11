@@ -10,7 +10,7 @@ namespace Neos\Media\Tests\Unit\Domain\Service;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use Neos\Flow\ResourceManagement\PersistentResource;
 use Neos\Flow\Tests\UnitTestCase;
@@ -29,9 +29,7 @@ use Neos\Media\Exception\AssetVariantGeneratorException;
  */
 class AssetVariantGeneratorTest extends UnitTestCase
 {
-    /**
-     * @test
-     */
+    #[Test]
     public function getVariantPresetsReturnsConfiguration(): void
     {
         $configuration = [
@@ -58,9 +56,9 @@ class AssetVariantGeneratorTest extends UnitTestCase
     }
 
     /**
-     * @test
      * @throws
      */
+    #[Test]
     public function variantsAreCreatedAccordingToPreset(): void
     {
         $asset = $this->mockImage();
@@ -70,9 +68,9 @@ class AssetVariantGeneratorTest extends UnitTestCase
     }
 
     /**
-     * @test
      * @throws
      */
+    #[Test]
     public function noVariantsAreCreatedForUnsupportedAssetTypes(): void
     {
         $assetVariantGenerator = $this->mockAssetVariantGenerator(['createVariant']);
@@ -93,9 +91,9 @@ class AssetVariantGeneratorTest extends UnitTestCase
     }
 
     /**
-     * @test
      * @throws
      */
+    #[Test]
     public function createVariantCreatesVariantAccordingToPreset(): void
     {
         $variantPresetsConfiguration = [
@@ -130,12 +128,12 @@ class AssetVariantGeneratorTest extends UnitTestCase
     }
 
     /**
-     * @test
      * @throws \Neos\Flow\Configuration\Exception\InvalidConfigurationException
      * @throws \Neos\Flow\ResourceManagement\Exception
      * @throws \Neos\Media\Exception\AssetVariantGeneratorException
      * @throws \Neos\Media\Exception\ImageFileException
      */
+    #[Test]
     public function createVariantThrowsExceptionOnUnknownAdjustmentType(): void
     {
         $this->expectException(AssetVariantGeneratorException::class);

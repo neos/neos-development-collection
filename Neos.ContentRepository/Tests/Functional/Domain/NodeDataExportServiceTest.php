@@ -10,7 +10,7 @@ namespace Neos\ContentRepository\Tests\Functional\Domain;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
+use PHPUnit\Framework\Attributes\Test;
 use Neos\Flow\Tests\FunctionalTestCase;
 use Neos\ContentRepository\Domain\Factory\NodeFactory;
 use Neos\ContentRepository\Domain\Model\Node;
@@ -73,9 +73,7 @@ class NodeDataExportServiceTest extends FunctionalTestCase
         $this->setUpRootNodeAndRepository();
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function aSingleNodeExportedWithNodeDataExportCanBeImportedWithNodeDataImport()
     {
         $originalNode = $this->rootNode->createNode('foo', $this->nodeTypeManager->getNodeType('Neos.ContentRepository.Testing:ImportExport'));

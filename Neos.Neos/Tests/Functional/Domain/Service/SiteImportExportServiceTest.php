@@ -10,7 +10,7 @@ namespace Neos\Neos\Tests\Functional\Domain\Service;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
+use PHPUnit\Framework\Attributes\Test;
 use Neos\Flow\Tests\FunctionalTestCase;
 use Neos\Neos\Domain\Model\Site;
 use Neos\Neos\Domain\Service\SiteExportService;
@@ -78,9 +78,7 @@ class SiteImportExportServiceTest extends FunctionalTestCase
         $this->inject($this->contextFactory, 'contextInstances', []);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function exportingAPreviouslyImportedSiteLeadsToTheSameStructure()
     {
         $expectedResult = file_get_contents(__DIR__ . '/Fixtures/Sites.xml');

@@ -10,7 +10,7 @@ namespace Neos\ContentRepository\Tests\Unit\Domain\Model\IntraDimension;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
+use PHPUnit\Framework\Attributes\Test;
 use Neos\ContentRepository\Domain\Model\IntraDimension\ContentDimensionValue;
 use Neos\ContentRepository\Domain\Model\IntraDimension\Exception\InvalidFallbackException;
 use Neos\ContentRepository\Domain\Model\IntraDimension;
@@ -22,9 +22,7 @@ use Neos\Utility\ObjectAccess;
  */
 class ContentDimensionValueTest extends UnitTestCase
 {
-    /**
-     * @test
-     */
+    #[Test]
     public function valueWithoutFallbackHasDepthZero()
     {
         $value = new ContentDimensionValue('test');
@@ -32,9 +30,7 @@ class ContentDimensionValueTest extends UnitTestCase
         self::assertSame(0, $value->getDepth());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function valueWithFallbackHasDepthOneGreaterThanFallback()
     {
         $testDepth = random_int(0, 100);
@@ -45,9 +41,7 @@ class ContentDimensionValueTest extends UnitTestCase
         self::assertSame($testDepth + 1, $value->getDepth());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function calculateFallbackDepthReturnsZeroRelativeToSelf()
     {
         $value = new ContentDimensionValue('fallback');
@@ -55,9 +49,7 @@ class ContentDimensionValueTest extends UnitTestCase
         self::assertSame(0, $value->calculateFallbackDepth($value));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function calculateFallbackDepthReturnsLevelOfAncestryForValidFallback()
     {
         $testLevel = random_int(1, 10);
@@ -75,9 +67,7 @@ class ContentDimensionValueTest extends UnitTestCase
         self::assertSame($testLevel, $currentFallback->calculateFallbackDepth($rootFallback));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function calculateFallbackDepthThrowsExceptionForDisconnectedValue()
     {
         $this->expectException(InvalidFallbackException::class);
@@ -87,9 +77,7 @@ class ContentDimensionValueTest extends UnitTestCase
         $testValue->calculateFallbackDepth($disconnectedValue);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function calculateFallbackDepthThrowsExceptionForVariant()
     {
         $this->expectException(InvalidFallbackException::class);
@@ -99,9 +87,7 @@ class ContentDimensionValueTest extends UnitTestCase
         $fallback->calculateFallbackDepth($variant);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function calculateFallbackDepthThrowsExceptionForConnectedButUnreachableValue()
     {
         $this->expectException(InvalidFallbackException::class);

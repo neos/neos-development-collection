@@ -10,7 +10,7 @@ namespace Neos\ContentRepository\Tests\Unit\Domain\Model\InterDimension;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
+use PHPUnit\Framework\Attributes\Test;
 use Neos\ContentRepository\Domain\Model\InterDimension\ContentSubgraph;
 use Neos\ContentRepository\Domain\Model\IntraDimension\ContentDimensionValue;
 use Neos\ContentRepository\Domain\Model\InterDimension\VariationEdge;
@@ -23,9 +23,7 @@ use Neos\Flow\Tests\UnitTestCase;
  */
 class VariationEdgeTest extends UnitTestCase
 {
-    /**
-     * @test
-     */
+    #[Test]
     public function variationEdgesAreRegisteredInFallbackAndVariantUponCreation()
     {
         $variant = new ContentSubgraph(['test' => new ContentDimensionValue('a')]);

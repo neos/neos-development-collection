@@ -10,7 +10,8 @@ namespace Neos\Neos\Tests\Unit\Fusion\Helper;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use Neos\ContentRepository\Domain\Model\NodeInterface;
 use Neos\ContentRepository\Domain\Model\NodeType;
 use Neos\ContentRepository\Domain\Model\Workspace;
@@ -72,12 +73,11 @@ class CachingHelperTest extends UnitTestCase
     }
 
     /**
-     * @test
-     * @dataProvider nodeTypeTagDataProvider
-     *
      * @param mixed $input
      * @param array $expectedResult
      */
+    #[DataProvider('nodeTypeTagDataProvider')]
+    #[Test]
     public function nodeTypeTagProvidesExpectedResult($input, $expectedResult)
     {
         $helper = new CachingHelper();
@@ -148,13 +148,13 @@ class CachingHelperTest extends UnitTestCase
     }
 
     /**
-     * @test
-     * @dataProvider nodeTypeTagWithContextNodeDataProvider
      *
      * @param $input
      * @param $contextNode
      * @param $expectedResult
      */
+    #[DataProvider('nodeTypeTagWithContextNodeDataProvider')]
+    #[Test]
     public function nodeTypeTagRespectsContextNodesWorkspace($input, $contextNode, $expectedResult)
     {
         $helper = new CachingHelper();
@@ -199,12 +199,11 @@ class CachingHelperTest extends UnitTestCase
     }
 
     /**
-     * @test
-     * @dataProvider nodeDataProvider
-     *
      * @param $nodes
      * @param $expectedResult
      */
+    #[DataProvider('nodeDataProvider')]
+    #[Test]
     public function nodeTagsAreSetupWithWorkspaceAndIdentifier($nodes, $expectedResult)
     {
         $helper = new CachingHelper();
@@ -212,9 +211,7 @@ class CachingHelperTest extends UnitTestCase
         self::assertEquals($expectedResult, $actualResult);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function nodeTagsCanBeInitializedWithAnIdentifierString()
     {
         $helper = new CachingHelper();
@@ -238,9 +235,7 @@ class CachingHelperTest extends UnitTestCase
         self::assertEquals('Node_'.$hashedWorkspaceName.'_'.$nodeIdentifier, $actual);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function nodeTagForIdentifierStringWillFallbackToLegacyTagIfNoContextNodeIsGiven()
     {
         $helper = new CachingHelper();
@@ -287,12 +282,11 @@ class CachingHelperTest extends UnitTestCase
     }
 
     /**
-     * @test
-     * @dataProvider descendantOfDataProvider
-     *
      * @param $nodes
      * @param $expectedResult
      */
+    #[DataProvider('descendantOfDataProvider')]
+    #[Test]
     public function descendantOfTagsAreSetupWithWorkspaceAndIdentifier($nodes, $expectedResult)
     {
         $helper = new CachingHelper();

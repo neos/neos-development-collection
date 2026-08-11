@@ -10,7 +10,8 @@ namespace Neos\Fusion\Tests\Unit\Core\Cache;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use Neos\Cache\Backend\TransientMemoryBackend;
 use Neos\Cache\CacheAwareInterface;
 use Neos\Cache\EnvironmentConfiguration;
@@ -43,10 +44,8 @@ class ContentCacheTest extends UnitTestCase
         ];
     }
 
-    /**
-     * @dataProvider tags()
-     * @test
-     */
+    #[DataProvider('tags')]
+    #[Test]
     public function flushByTagSanitizesTagsForCacheFrontend($tag, $sanitizedTag)
     {
         $mockCache = $this->getMockBuilder(StringFrontend::class)->disableOriginalConstructor()->getMock();
@@ -66,10 +65,8 @@ class ContentCacheTest extends UnitTestCase
         ];
     }
 
-    /**
-     * @test
-     * @dataProvider invalidEntryIdentifierValues
-     */
+    #[DataProvider('invalidEntryIdentifierValues')]
+    #[Test]
     public function createCacheSegmentWithInvalidEntryIdentifierValueThrowsException($entryIdentifierValues)
     {
         $this->expectException(CacheException::class);
@@ -95,10 +92,8 @@ class ContentCacheTest extends UnitTestCase
         ];
     }
 
-    /**
-     * @test
-     * @dataProvider validEntryIdentifierValues
-     */
+    #[DataProvider('validEntryIdentifierValues')]
+    #[Test]
     public function createCacheSegmentWithValidEntryIdentifierValueCreatesIdentifier($entryIdentifierValues)
     {
         $contentCache = new ContentCache();
@@ -108,9 +103,7 @@ class ContentCacheTest extends UnitTestCase
         self::assertNotEmpty($segement);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function createCacheSegmentWithLifetimeStoresLifetimeAfterTagsInMetadata()
     {
         $contentCache = new ContentCache();
@@ -120,9 +113,7 @@ class ContentCacheTest extends UnitTestCase
         self::assertStringContainsString('Foo,Bar;60' . ContentCache::CACHE_SEGMENT_SEPARATOR_TOKEN, $segment);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function processCacheSegmentsSetsLifetimeFromMetadata()
     {
         $contentCache = new ContentCache();
@@ -144,9 +135,7 @@ class ContentCacheTest extends UnitTestCase
         $contentCache->processCacheSegments($segement);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function createCacheSegmentAndProcessCacheSegmentsDoesWorkWithCacheSegmentTokensInContent()
     {
         $contentCache = new ContentCache();
@@ -186,9 +175,7 @@ class ContentCacheTest extends UnitTestCase
         self::assertSame($invalidContent . $validContent, $output);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function createUncachedSegmentAndProcessCacheSegmentsDoesWorkWithCacheSegmentTokensInContent()
     {
         $contentCache = new ContentCache();
@@ -213,9 +200,7 @@ class ContentCacheTest extends UnitTestCase
         self::assertSame($invalidContent, $output);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function getCachedSegmentWithExistingCacheEntryReplacesNestedCachedSegments()
     {
         $contentCache = new ContentCache();

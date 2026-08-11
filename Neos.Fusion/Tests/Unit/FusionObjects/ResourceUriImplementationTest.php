@@ -10,7 +10,7 @@ namespace Neos\Fusion\Tests\Unit\FusionObjects;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
+use PHPUnit\Framework\Attributes\Test;
 use Neos\Flow\I18n\Service;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\Controller\ControllerContext;
@@ -76,9 +76,7 @@ class ResourceUriImplementationTest extends UnitTestCase
         $this->inject($this->resourceUriImplementation, 'i18nService', $this->mockI18nService);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function evaluateThrowsExceptionIfSpecifiedResourceIsInvalid()
     {
         $this->expectException(Exception::class);
@@ -86,9 +84,7 @@ class ResourceUriImplementationTest extends UnitTestCase
         $this->resourceUriImplementation->evaluate();
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function evaluateReturnsResourceUriForAGivenResource()
     {
         $validResource = $this->getMockBuilder(PersistentResource::class)->disableOriginalConstructor()->getMock();
@@ -100,9 +96,7 @@ class ResourceUriImplementationTest extends UnitTestCase
         self::assertSame('the/resolved/resource/uri', $this->resourceUriImplementation->evaluate());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function evaluateThrowsExceptionIfNeitherResourceNorPathAreSpecified()
     {
         $this->expectException(Exception::class);
@@ -113,9 +107,7 @@ class ResourceUriImplementationTest extends UnitTestCase
         $this->resourceUriImplementation->evaluate();
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function evaluateThrowsExceptionIfSpecifiedPathPointsToAPrivateResource()
     {
         $this->expectException(Exception::class);
@@ -131,9 +123,7 @@ class ResourceUriImplementationTest extends UnitTestCase
         $this->resourceUriImplementation->evaluate();
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function evaluateDeterminesCurrentPackageIfARelativePathIsSpecified()
     {
         $this->mockRuntime->expects(self::any())->method('evaluate')->will(self::returnCallback(function ($evaluatePath, $that) {
@@ -150,9 +140,7 @@ class ResourceUriImplementationTest extends UnitTestCase
         self::assertSame('Static/Resources/Packages/Current.Package/Relative/Resource/Path', $this->resourceUriImplementation->evaluate());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function evaluateUsesSpecifiedPackageIfARelativePathIsGiven()
     {
         $this->mockRuntime->expects(self::any())->method('evaluate')->will(self::returnCallback(function ($evaluatePath, $that) {
@@ -172,9 +160,7 @@ class ResourceUriImplementationTest extends UnitTestCase
     }
 
 
-    /**
-     * @test
-     */
+    #[Test]
     public function evaluateReturnsResourceUriForAGivenResourcePath()
     {
         $this->mockRuntime->expects(self::any())->method('evaluate')->will(self::returnCallback(function ($evaluatePath, $that) {
@@ -190,9 +176,7 @@ class ResourceUriImplementationTest extends UnitTestCase
         self::assertSame('Static/Resources/Packages/Some.Package/SomeResource', $this->resourceUriImplementation->evaluate());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function evaluateIgnoresPackagePropertyIfAResourcePathIsGiven()
     {
         $this->mockRuntime->expects(self::any())->method('evaluate')->will(self::returnCallback(function ($evaluatePath, $that) {
@@ -211,9 +195,7 @@ class ResourceUriImplementationTest extends UnitTestCase
         self::assertSame('Static/Resources/Packages/Some.Package/SomeResource', $this->resourceUriImplementation->evaluate());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function evaluateLocalizesFilenameIfLocalize()
     {
         $this->mockRuntime->expects(self::any())->method('evaluate')->will(self::returnCallback(function ($evaluatePath, $that) {

@@ -10,7 +10,8 @@ namespace Neos\Fusion\Tests\Unit\Core\Parser;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use Neos\Fusion\Core\FusionSourceCodeCollection;
 use Neos\Fusion\Core\ObjectTreeParser\ExceptionMessage\MessageLinePart;
 use Neos\Fusion\Core\Parser;
@@ -303,10 +304,8 @@ class ParserExceptionTest extends UnitTestCase
         ];
     }
 
-    /**
-     * @test
-     * @dataProvider fullParserExceptionMessage
-     */
+    #[DataProvider('fullParserExceptionMessage')]
+    #[Test]
     public function itMatchesTheFullExceptionMessage($fusion, $expectedMessage): void
     {
         self::expectException(ParserException::class);
@@ -314,16 +313,14 @@ class ParserExceptionTest extends UnitTestCase
         $this->parser->parseFromSource(FusionSourceCodeCollection::fromString($fusion))->toArray();
     }
 
-    /**
-     * @test
-     * @dataProvider advancedGuessingWhatWentWrong
-     * @dataProvider removedLanguageFeaturedAreExplained
-     * @dataProvider generalInvalidFusion
-     * @dataProvider parsingWorksButOtherLogicThrows
-     * @dataProvider privateMetaPathCanOnlyBeDeclaredInsideRootPrototypeDeclaration
-     * @dataProvider unclosedStatements
-     * @dataProvider endOfLineExpected
-     */
+    #[DataProvider('advancedGuessingWhatWentWrong')]
+    #[DataProvider('removedLanguageFeaturedAreExplained')]
+    #[DataProvider('generalInvalidFusion')]
+    #[DataProvider('parsingWorksButOtherLogicThrows')]
+    #[DataProvider('privateMetaPathCanOnlyBeDeclaredInsideRootPrototypeDeclaration')]
+    #[DataProvider('unclosedStatements')]
+    #[DataProvider('endOfLineExpected')]
+    #[Test]
     public function itMatchesThePartialExceptionMessage($fusion, $expectedMessage): void
     {
         try {
@@ -334,9 +331,7 @@ class ParserExceptionTest extends UnitTestCase
         }
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function messageLinePartWorks()
     {
         $part = new MessageLinePart('abcd');

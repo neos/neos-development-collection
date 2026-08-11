@@ -10,6 +10,8 @@ namespace Neos\Media\Tests\Unit\Validator;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+use PHPUnit\Framework\Attributes\Test;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\Flow\Validation\Exception\InvalidValidationOptionsException;
 use Neos\Media\Domain\Model\ImageInterface;
@@ -21,9 +23,7 @@ use Neos\Media\Validator\ImageSizeValidator;
  */
 class ImageSizeValidatorTest extends UnitTestCase
 {
-    /**
-     * @test
-     */
+    #[Test]
     public function validatorReturnsErrorsIfGivenValueIsNoImage()
     {
         $validator = new ImageSizeValidator(['minimumWidth' => 123]);
@@ -47,10 +47,10 @@ class ImageSizeValidatorTest extends UnitTestCase
     }
 
     /**
-     * @test
-     * @dataProvider invalidOptionsTestsDataProvider
      * @param array $options
      */
+    #[DataProvider('invalidOptionsTestsDataProvider')]
+    #[Test]
     public function invalidOptionsTests(array $options)
     {
         $this->expectException(InvalidValidationOptionsException::class);
@@ -93,13 +93,13 @@ class ImageSizeValidatorTest extends UnitTestCase
     }
 
     /**
-     * @test
-     * @dataProvider validatorTestsDataProvider
      * @param array $options
      * @param integer $imageWidth
      * @param integer $imageHeight
      * @param boolean $isValid
      */
+    #[DataProvider('validatorTestsDataProvider')]
+    #[Test]
     public function validatorTests(array $options, $imageWidth, $imageHeight, $isValid)
     {
         $validator = new ImageSizeValidator($options);

@@ -10,6 +10,8 @@ namespace Neos\Neos\Tests\Functional;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+use PHPUnit\Framework\Attributes\Large;
+use PHPUnit\Framework\Attributes\Test;
 use Neos\Flow\Security\Authorization\TestingPrivilegeManager;
 use Neos\ContentRepository\Domain\Model\Workspace;
 use Neos\ContentRepository\Domain\Repository\WorkspaceRepository;
@@ -19,9 +21,8 @@ use Neos\ContentRepository\Domain\Repository\WorkspaceRepository;
  *
  * Is placed here instead of the ContentRepository package because that's where we have the correct
  * test fixtures in place.
- *
- * @group large
  */
+#[Large]
 class NodeRenamingTest extends AbstractNodeTestCase
 {
     /**
@@ -46,9 +47,7 @@ class NodeRenamingTest extends AbstractNodeTestCase
         $this->nodeInTestWorkspace = $this->getNodeWithContextPath('/sites/example/home@user-test');
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function renamedNodeInPersonalWorkspaceDoesNotRenameInLiveWorkspace()
     {
         $teaserTestWorkspace = $this->nodeInTestWorkspace->getNode('teaser');
@@ -62,9 +61,7 @@ class NodeRenamingTest extends AbstractNodeTestCase
         self::assertNull($this->node->getNode('teaser-new/dummy46a'));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function movedIntoInPersonalWorkspaceDoesNotAffectLiveWorkspace()
     {
         // move headline of "teaser" into "main"
@@ -79,9 +76,7 @@ class NodeRenamingTest extends AbstractNodeTestCase
         self::assertNull($this->node->getNode('main/dummy46a'), 'moving shined through into live workspace (3)');
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function moveBeforeInPersonalWorkspaceDoesNotAffectLiveWorkspace()
     {
         // move headline of "teaser" before "main/dummy42"
@@ -96,9 +91,7 @@ class NodeRenamingTest extends AbstractNodeTestCase
         self::assertNull($this->node->getNode('main/dummy46a'), 'moving shined through into live workspace (3)');
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function moveAfterInPersonalWorkspaceDoesNotAffectLiveWorkspace()
     {
         // move headline of "teaser" after "main/dummy42"

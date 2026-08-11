@@ -1,6 +1,8 @@
 <?php
 namespace Neos\Fusion\Tests\Functional\FusionObjects;
 
+use PHPUnit\Framework\Attributes\Test;
+
 /*
  * This file is part of the Neos.Fusion package.
  *
@@ -16,9 +18,7 @@ namespace Neos\Fusion\Tests\Functional\FusionObjects;
  */
 class ReduceTest extends AbstractFusionObjectTestCase
 {
-    /**
-     * @test
-     */
+    #[Test]
     public function basicReductionWorks()
     {
         $view = $this->buildView();
@@ -28,9 +28,7 @@ class ReduceTest extends AbstractFusionObjectTestCase
         self::assertEquals('XXInitialValue::element1element2', $view->render());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function basicReductionWorksWithIterator()
     {
         $view = $this->buildView();
@@ -40,9 +38,7 @@ class ReduceTest extends AbstractFusionObjectTestCase
         self::assertEquals('XXInitialValue::element1element2', $view->render());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function basicReductionWorksWithIteratorThatDoesNotImplementCount()
     {
         $view = $this->buildView();
@@ -52,9 +48,7 @@ class ReduceTest extends AbstractFusionObjectTestCase
         self::assertEquals('XXInitialValue::element1element2', $view->render());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function basicReductionAddsNumbers()
     {
         $view = $this->buildView();
@@ -64,9 +58,7 @@ class ReduceTest extends AbstractFusionObjectTestCase
         self::assertEquals(15, $view->render());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function basicReductionWorksAndStillContainsOtherContextVariables()
     {
         $view = $this->buildView();
@@ -76,9 +68,7 @@ class ReduceTest extends AbstractFusionObjectTestCase
         self::assertEquals('XXelement1varelement2var', $view->render());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function emptyReductionReturnsInitialValue()
     {
         $initialValue = '::InitialValue::';
@@ -89,9 +79,7 @@ class ReduceTest extends AbstractFusionObjectTestCase
         self::assertEquals($initialValue, $view->render());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function iterationInformationIsAddedToReduction()
     {
         $view = $this->buildView();

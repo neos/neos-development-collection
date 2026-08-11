@@ -10,7 +10,8 @@ namespace Neos\Fusion\Tests\Functional\FusionObjects;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use Neos\Flow\Mvc\Controller\ControllerContext;
 use Neos\Fusion\Core\FusionSourceCodeCollection;
 use Neos\Fusion\Core\Parser;
@@ -33,10 +34,8 @@ class ExpressionsTest extends AbstractFusionObjectTestCase
         ];
     }
 
-    /**
-     * @test
-     * @dataProvider expressionExamples
-     */
+    #[DataProvider('expressionExamples')]
+    #[Test]
     public function expressionsWork($path, $expected)
     {
         $view = $this->buildView();
@@ -48,9 +47,8 @@ class ExpressionsTest extends AbstractFusionObjectTestCase
     /**
      * The view and runtime of the AbstractFusionObjectTestCase
      * is not used to make sure the runtime context is empty.
-     *
-     * @test
      */
+    #[Test]
     public function usingEelWorksWithoutSetCurrentContextInRuntime()
     {
         $fusionAst = (new Parser())->parseFromSource(FusionSourceCodeCollection::fromString('root = ${"foo"}'))->toArray();

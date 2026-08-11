@@ -10,7 +10,8 @@ namespace Neos\ContentRepository\Tests\Functional\Eel\FlowQueryOperations;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use Neos\Eel\FlowQuery\FlowQuery;
 use Neos\ContentRepository\Domain\Service\NodeTypeManager;
 use Neos\ContentRepository\Tests\Functional\AbstractNodeTestCase;
@@ -86,10 +87,9 @@ class ParentsUntilOperationTest extends AbstractNodeTestCase
      *       b4ba (Testing:NodeType)
      *       b4bb
      *         b4bba
-     *
-     * @test
-     * @dataProvider parentsUntilOperationDataProvider()
      */
+    #[DataProvider('parentsUntilOperationDataProvider')]
+    #[Test]
     public function parentsUntilOperationTests(array $currentNodePaths, $subject, array $expectedNodePaths, array $unexpectedNodePaths)
     {
         $nodeTypeManager = $this->objectManager->get(NodeTypeManager::class);

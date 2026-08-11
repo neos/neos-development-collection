@@ -10,7 +10,8 @@ namespace Neos\ContentRepository\Tests\Unit\FlowQueryOperations;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
+use PHPUnit\Framework\Attributes\Test;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Neos\ContentRepository\Domain\Model\NodeInterface;
 use Neos\ContentRepository\Eel\FlowQueryOperations\CacheLifetimeOperation;
 use Neos\Eel\FlowQuery\FlowQuery;
@@ -56,9 +57,7 @@ class CacheLifetimeOperationTest extends AbstractQueryOperationsTestCase
         ];
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function canEvaluateReturnsTrueIfNodeIsInContext()
     {
         $mockNode = $this->mockNode('node');
@@ -124,10 +123,8 @@ class CacheLifetimeOperationTest extends AbstractQueryOperationsTestCase
         ];
     }
 
-    /**
-     * @test
-     * @dataProvider nodePropertiesAndLifetime
-     */
+    #[DataProvider('nodePropertiesAndLifetime')]
+    #[Test]
     public function evaluateReturnsMinimumOfFutureHiddenDates($nodes, $expectedLifetime)
     {
         $mockFlowQuery = $this->buildFlowQueryWithNodesInContext($nodes);

@@ -10,7 +10,7 @@ namespace Neos\Neos\Tests\Unit\ViewHelpers;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
+use PHPUnit\Framework\Attributes\Test;
 use Neos\FluidAdaptor\Core\ViewHelper\Exception;
 use Neos\FluidAdaptor\Tests\Unit\ViewHelpers\ViewHelperBaseTestcase;
 use Neos\Flow\Security\Authorization\PrivilegeManagerInterface;
@@ -140,9 +140,7 @@ class EditableViewHelperTest extends ViewHelperBaseTestcase
         $this->viewHelperVariableContainer->expects(self::any())->method('getView')->willReturn($this->mockView);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function renderThrowsExceptionIfTheGivenPropertyIsNotAccessible(): void
     {
         $this->expectException(Exception::class);
@@ -152,9 +150,7 @@ class EditableViewHelperTest extends ViewHelperBaseTestcase
         $this->editableViewHelper->render();
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function renderThrowsExceptionIfTheTsTemplateObjectIsNotSet(): void
     {
         $this->expectException(Exception::class);
@@ -166,9 +162,7 @@ class EditableViewHelperTest extends ViewHelperBaseTestcase
         $this->editableViewHelper->render();
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function renderSetsThePropertyValueAsTagContentIfItExists(): void
     {
         $this->mockContentElementEditableService->expects(self::once())->method('wrapContentProperty')->willReturn('someWrappedContent');
@@ -182,9 +176,7 @@ class EditableViewHelperTest extends ViewHelperBaseTestcase
         $this->editableViewHelper->render();
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function renderSetsTheChildNodesAsTagContentIfTheyAreSet(): void
     {
         $this->mockContentElementEditableService->expects(self::once())->method('wrapContentProperty')->willReturn('someWrappedContent');
@@ -200,9 +192,7 @@ class EditableViewHelperTest extends ViewHelperBaseTestcase
         $this->editableViewHelper->render();
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function renderCallsContentElementEditableServiceForAugmentation(): void
     {
         $this->templateVariables = [
@@ -216,9 +206,7 @@ class EditableViewHelperTest extends ViewHelperBaseTestcase
         $this->editableViewHelper->render();
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function renderUsesTheNodeArgumentIfSet(): void
     {
         $this->mockContentElementEditableService->expects(self::once())->method('wrapContentProperty')->willReturn('someWrappedContent');

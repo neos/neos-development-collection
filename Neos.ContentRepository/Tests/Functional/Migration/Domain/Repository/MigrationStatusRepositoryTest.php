@@ -10,7 +10,7 @@ namespace Neos\ContentRepository\Tests\Functional\Migration\Domain\Repository;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
+use PHPUnit\Framework\Attributes\Test;
 use Neos\Flow\Tests\FunctionalTestCase;
 use Neos\ContentRepository\Migration\Domain\Model\MigrationStatus;
 use Neos\ContentRepository\Migration\Domain\Repository\MigrationStatusRepository;
@@ -38,9 +38,7 @@ class MigrationStatusRepositoryTest extends FunctionalTestCase
         $this->repository = $this->objectManager->get(MigrationStatusRepository::class);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function findAllReturnsResultsInAscendingVersionOrder()
     {
         $this->repository->add(new MigrationStatus('zyx', MigrationStatus::DIRECTION_DOWN, new \DateTime()));

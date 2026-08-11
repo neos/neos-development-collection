@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Neos\Fusion\Tests\Unit\Migrations;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 use Neos\Fusion\Migrations\EelExpression\EelExpressionTransformer;
 use PHPUnit\Framework\TestCase;
 
@@ -241,9 +242,7 @@ class EelExpressionTransformerTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider examples
-     */
+    #[DataProvider('examples')]
     public function testReplacements(\Closure $eelModifier, string $input, string $expectedOutput): void
     {
         self::assertEquals(

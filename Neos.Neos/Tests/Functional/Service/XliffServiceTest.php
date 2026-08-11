@@ -11,7 +11,7 @@ namespace Neos\Neos\Tests\Functional\Service;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
+use PHPUnit\Framework\Attributes\Test;
 use Neos\Flow\Cache\CacheManager;
 use Neos\Flow\Composer\ComposerUtility;
 use Neos\Flow\I18n\Locale;
@@ -131,9 +131,7 @@ class XliffServiceTest extends FunctionalTestCase
         return new Package($packageKey, $composerName, $packagePath);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function getCachedJsonRespectsIncludedFiles()
     {
         $translationResult = json_decode($this->xliffService->getCachedJson(new Locale('de')), true);
@@ -144,9 +142,7 @@ class XliffServiceTest extends FunctionalTestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function getCachedJsonDoesNotRespectNotIncludedFiles()
     {
         $translationResult = json_decode($this->xliffService->getCachedJson(new Locale('de')), true);
@@ -157,9 +153,7 @@ class XliffServiceTest extends FunctionalTestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function getCachedJsonRespectsOverride()
     {
         $translationResult = json_decode($this->xliffService->getCachedJson(new Locale('de')), true);

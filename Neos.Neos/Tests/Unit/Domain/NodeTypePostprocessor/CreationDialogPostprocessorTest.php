@@ -1,6 +1,7 @@
 <?php
 namespace Neos\Neos\Tests\Unit\NodeTypePostprocessor;
 
+use PHPUnit\Framework\Attributes\Test;
 use Neos\ContentRepository\Domain\Model\NodeType;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\Neos\NodeTypePostprocessor\CreationDialogPostprocessor;
@@ -24,9 +25,7 @@ class CreationDialogPostprocessorTest extends UnitTestCase
         $this->mockNodeType = $this->getMockBuilder(NodeType::class)->disableOriginalConstructor()->getMock();
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function processCopiesInspectorConfigurationToCreationDialogElements(): void
     {
         $configuration = [
@@ -77,9 +76,7 @@ class CreationDialogPostprocessorTest extends UnitTestCase
         self::assertSame($expectedElements, $configuration['ui']['creationDialog']['elements']);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function processDoesNotCreateEmptyCreationDialogs(): void
     {
         $configuration = [
@@ -101,9 +98,7 @@ class CreationDialogPostprocessorTest extends UnitTestCase
         self::assertSame($originalConfiguration, $configuration);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function processRespectsDataTypeDefaultConfiguration(): void
     {
         $configuration = [
@@ -146,9 +141,7 @@ class CreationDialogPostprocessorTest extends UnitTestCase
         self::assertSame($expectedElements, $configuration['ui']['creationDialog']['elements']);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function processRespectsEditorDefaultConfiguration(): void
     {
         $configuration = [

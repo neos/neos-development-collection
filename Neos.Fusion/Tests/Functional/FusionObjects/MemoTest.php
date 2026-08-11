@@ -1,6 +1,8 @@
 <?php
 namespace Neos\Fusion\Tests\Functional\FusionObjects;
 
+use PHPUnit\Framework\Attributes\Test;
+
 /*
  * This file is part of the Neos.Fusion package.
  *
@@ -16,9 +18,7 @@ namespace Neos\Fusion\Tests\Functional\FusionObjects;
  */
 class MemoTest extends AbstractFusionObjectTestCase
 {
-    /**
-     * @test
-     */
+    #[Test]
     public function returnsSameResult()
     {
         $view = $this->buildView();

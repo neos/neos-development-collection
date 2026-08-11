@@ -10,7 +10,8 @@ namespace Neos\Media\Tests\Unit\Domain\Model\Dto;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
+use PHPUnit\Framework\Attributes\Test;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\Media\Domain\Model\AssetSource\AssetSourceInterface;
 use Neos\Media\Domain\Model\Dto\AssetConstraints;
@@ -20,9 +21,7 @@ use Neos\Media\Domain\Model\Dto\AssetConstraints;
  */
 class AssetConstraintsTest extends UnitTestCase
 {
-    /**
-     * @test
-     */
+    #[Test]
     public function createCreatesInstanceWithoutConstraints(): void
     {
         $constraints = AssetConstraints::create();
@@ -46,9 +45,9 @@ class AssetConstraintsTest extends UnitTestCase
      * @param array $input
      * @param array $expectedAllowedAssetSourceIdentifiers
      * @param array $expectedAllowedMediaTypes
-     * @test
-     * @dataProvider fromArrayDataProvider
      */
+    #[DataProvider('fromArrayDataProvider')]
+    #[Test]
     public function fromArrayTests(array $input, array $expectedAllowedAssetSourceIdentifiers, array $expectedAllowedMediaTypes): void
     {
         $constraints = AssetConstraints::fromArray($input);
@@ -74,18 +73,16 @@ class AssetConstraintsTest extends UnitTestCase
 
     /**
      * @param array $input
-     * @test
-     * @dataProvider invalidFromArrayDataProvider
      */
+    #[DataProvider('invalidFromArrayDataProvider')]
+    #[Test]
     public function invalidFromArrayTests(array $input): void
     {
         $this->expectException(\InvalidArgumentException::class);
         AssetConstraints::fromArray($input);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function withAssetSourceConstraintAllowsToChangeAssetSourceIdentifiers(): void
     {
         $constraints = AssetConstraints::fromArray(['assetSources' => ['id1'], 'mediaTypes' => ['image/*']]);
@@ -94,9 +91,7 @@ class AssetConstraintsTest extends UnitTestCase
         self::assertSame(['image/*'], $constraints->getAllowedMediaTypes());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function withoutAssetSourceConstraintClearsAssetSourceIdentifiers(): void
     {
         $constraints = AssetConstraints::fromArray(['assetSources' => ['id1', 'id2'], 'mediaTypes' => ['image/*']]);
@@ -105,9 +100,7 @@ class AssetConstraintsTest extends UnitTestCase
         self::assertSame(['image/*'], $constraints->getAllowedMediaTypes());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function withMediaTypeConstraintAllowsToChangeAllowedMediaTypes(): void
     {
         $constraints = AssetConstraints::fromArray(['assetSources' => ['id1']]);
@@ -116,9 +109,7 @@ class AssetConstraintsTest extends UnitTestCase
         self::assertSame(['image/*'], $constraints->getAllowedMediaTypes());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function withoutAssetTypeConstraintClearsAllowedMediaTypes(): void
     {
         $constraints = AssetConstraints::fromArray(['assetSources' => ['id1'], 'mediaTypes' => ['image/*']]);
@@ -127,27 +118,21 @@ class AssetConstraintsTest extends UnitTestCase
         self::assertFalse($constraints->hasMediaTypeConstraint());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function getMediaTypeAcceptAttributeReturnsAnEmptyStringIfNoAssetConstraintsAreSet(): void
     {
         $constraints = AssetConstraints::create();
         self::assertSame('', $constraints->getMediaTypeAcceptAttribute());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function getMediaTypeAcceptAttributeReturnsACommaSeparatedListOfAllActiveMediaTypeConstraints(): void
     {
         $constraints = AssetConstraints::create()->withMediaTypeConstraint(['image/*', 'audio/wav']);
         self::assertSame('image/*,audio/wav', $constraints->getMediaTypeAcceptAttribute());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function applyToAssetSourcesDoesNotHaveAnyEffectWhenNoAssetSourceConstraintsAreActive(): void
     {
         $constraints = AssetConstraints::create();
@@ -159,9 +144,7 @@ class AssetConstraintsTest extends UnitTestCase
         self::assertSame($mockAssetSources, $resultingAssetSources);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function applyToAssetSourcesFiltersDisallowedAssetSources(): void
     {
         $constraints = AssetConstraints::fromArray(['assetSources' => ['id1']]);
@@ -181,9 +164,7 @@ class AssetConstraintsTest extends UnitTestCase
     }
 
 
-    /**
-     * @test
-     */
+    #[Test]
     public function applyToAssetSourcesFiltersAllAssetSourcesIfThereIsNoMatch(): void
     {
         $constraints = AssetConstraints::fromArray(['assetSources' => ['id3']]);
@@ -219,9 +200,9 @@ class AssetConstraintsTest extends UnitTestCase
      * @param array $allowedAssetSourceIdentifiers
      * @param string|null $assetSourceIdentifier
      * @param string|null $expectedResult
-     * @test
-     * @dataProvider applyToAssetSourceIdentifiersDataProvider
      */
+    #[DataProvider('applyToAssetSourceIdentifiersDataProvider')]
+    #[Test]
     public function applyToAssetSourceIdentifiersTests(array $allowedAssetSourceIdentifiers, ?string $assetSourceIdentifier = null, ?string $expectedResult = null): void
     {
         $constraints = AssetConstraints::create()->withAssetSourceConstraint($allowedAssetSourceIdentifiers);
@@ -246,9 +227,9 @@ class AssetConstraintsTest extends UnitTestCase
      * @param array $allowedMediaTypes
      * @param string|null $assetType
      * @param string $expectedResult
-     * @test
-     * @dataProvider applyToAssetTypeFilterDataProvider
      */
+    #[DataProvider('applyToAssetTypeFilterDataProvider')]
+    #[Test]
     public function applyToAssetTypeFilterTests(array $allowedMediaTypes, ?string $assetType, string $expectedResult): void
     {
         $constraints = AssetConstraints::create()->withMediaTypeConstraint($allowedMediaTypes);
@@ -270,9 +251,9 @@ class AssetConstraintsTest extends UnitTestCase
     /**
      * @param array $allowedMediaTypes
      * @param array $expectedResult
-     * @test
-     * @dataProvider getAllowedAssetTypeFilterOptionsDataProvider
      */
+    #[DataProvider('getAllowedAssetTypeFilterOptionsDataProvider')]
+    #[Test]
     public function getAllowedAssetTypeFilterOptionsTests(array $allowedMediaTypes, array $expectedResult): void
     {
         $constraints = AssetConstraints::create()->withMediaTypeConstraint($allowedMediaTypes);

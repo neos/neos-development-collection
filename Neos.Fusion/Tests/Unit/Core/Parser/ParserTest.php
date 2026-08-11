@@ -10,7 +10,8 @@ namespace Neos\Fusion\Tests\Unit\Core\Parser;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
+use PHPUnit\Framework\Attributes\Test;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Neos\Fusion\Core\FusionSourceCodeCollection;
 use Neos\Fusion\Exception;
 use Neos\Fusion\Core\Parser;
@@ -488,9 +489,7 @@ class ParserTest extends UnitTestCase
         ];
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function typeConversionOnPhpArrayKeys()
     {
         // as a reminder how php arrays work ^^
@@ -1010,59 +1009,51 @@ class ParserTest extends UnitTestCase
         ];
     }
 
-    /**
-     * @test
-     * @dataProvider overridePaths
-     * @dataProvider simplePathToArray
-     * @dataProvider commentsTest
-     * @dataProvider unsetPathOrSetToNull
-     * @dataProvider problematicPathIdNames
-     * @dataProvider metaObjectPaths
-     * @dataProvider eelValueAssign
-     * @dataProvider simpleValueAssign
-     * @dataProvider unexpectedCopyAssigment
-     * @dataProvider unexpectedObjectPaths
-     * @dataProvider nestedObjectPaths
-     * @dataProvider pathBlockTest
-     * @dataProvider stringAndCharValueAssign
-     * @dataProvider prototypeDeclarationAndInheritance
-     * @dataProvider fusionObjectNameEdgeCases
-     */
+    #[DataProvider('overridePaths')]
+    #[DataProvider('simplePathToArray')]
+    #[DataProvider('commentsTest')]
+    #[DataProvider('unsetPathOrSetToNull')]
+    #[DataProvider('problematicPathIdNames')]
+    #[DataProvider('metaObjectPaths')]
+    #[DataProvider('eelValueAssign')]
+    #[DataProvider('simpleValueAssign')]
+    #[DataProvider('unexpectedCopyAssigment')]
+    #[DataProvider('unexpectedObjectPaths')]
+    #[DataProvider('nestedObjectPaths')]
+    #[DataProvider('pathBlockTest')]
+    #[DataProvider('stringAndCharValueAssign')]
+    #[DataProvider('prototypeDeclarationAndInheritance')]
+    #[DataProvider('fusionObjectNameEdgeCases')]
+    #[Test]
     public function itParsesToExpectedAst($fusion, $expectedAst): void
     {
         $parsedFusionAst = $this->parser->parseFromSource(FusionSourceCodeCollection::fromString($fusion))->toArray();
         self::assertSame($expectedAst, $parsedFusionAst);
     }
 
-    /**
-     * @test
-     * @dataProvider throwsOldNamespaceDeclaration
-     * @dataProvider throwsWrongComments
-     * @dataProvider throwsGeneralWrongSyntax
-     * @dataProvider throwsFusionObjectNamesWithoutNamespace
-     */
+    #[DataProvider('throwsOldNamespaceDeclaration')]
+    #[DataProvider('throwsWrongComments')]
+    #[DataProvider('throwsGeneralWrongSyntax')]
+    #[DataProvider('throwsFusionObjectNamesWithoutNamespace')]
+    #[Test]
     public function itThrowsWhileParsing($fusion): void
     {
         self::expectException(Exception::class);
         $this->parser->parseFromSource(FusionSourceCodeCollection::fromString($fusion))->toArray();
     }
 
-    /**
-     * @test
-     * @dataProvider weirdFusionObjectNamesParsesBecauseTheOldParserDidntComplain
-     * @dataProvider unexpectedBlocksWork
-     */
+    #[DataProvider('weirdFusionObjectNamesParsesBecauseTheOldParserDidntComplain')]
+    #[DataProvider('unexpectedBlocksWork')]
+    #[Test]
     public function itParsesWithoutError($fusion): void
     {
         $this->parser->parseFromSource(FusionSourceCodeCollection::fromString($fusion))->toArray();
         self::assertTrue(true);
     }
 
-    /**
-     * @dataProvider weirdDslNames
-     * @dataProvider dslWithBraceOnFirstLine
-     * @test
-     */
+    #[DataProvider('weirdDslNames')]
+    #[DataProvider('dslWithBraceOnFirstLine')]
+    #[Test]
     public function dslIsRecognizedAndPassed($sourceCode, $expectedDslName, $expectedDslContent)
     {
         $parser = $this->getMockBuilder(Parser::class)->disableOriginalConstructor()->onlyMethods(['handleDslTranspile'])->getMock();

@@ -10,7 +10,7 @@ namespace Neos\ContentRepository\Tests\Functional\Domain;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
+use PHPUnit\Framework\Attributes\Test;
 use Neos\Flow\Configuration\ConfigurationManager;
 use Neos\Flow\Tests\FunctionalTestCase;
 use Neos\ContentRepository\Domain\Model\Workspace;
@@ -93,9 +93,7 @@ class NodeServiceTest extends FunctionalTestCase
         $this->contentDimensionRepository->setDimensionsConfiguration($configuredDimensions);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function nodePathAvailableForNodeWillReturnFalseIfNodeWithGivenPathExistsAlready()
     {
         $this->workspaceRepository->add(new Workspace('live'));

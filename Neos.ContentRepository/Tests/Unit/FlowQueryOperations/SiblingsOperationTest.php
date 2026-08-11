@@ -10,7 +10,7 @@ namespace Neos\ContentRepository\Tests\Unit\FlowQueryOperations;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
+use PHPUnit\Framework\Attributes\Test;
 use Neos\ContentRepository\Domain\Model\NodeInterface;
 use Neos\ContentRepository\Domain\Projection\Content\TraversableNodes;
 use Neos\ContentRepository\Domain\Service\Context;
@@ -72,9 +72,7 @@ class SiblingsOperationTest extends AbstractQueryOperationsTestCase
         $this->thirdNodeInLevel->expects(self::any())->method('findParentNode')->will(self::returnValue($this->siteNode));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function siblingsWillReturnEmptyResultForAllNodesInLevel()
     {
         $context = [$this->firstNodeInLevel, $this->secondNodeInLevel, $this->thirdNodeInLevel];
@@ -87,9 +85,7 @@ class SiblingsOperationTest extends AbstractQueryOperationsTestCase
         self::assertEquals([], $output);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function siblingsWillReturnFirstAndThirdNodeInLevelForSecondNodeInLevel()
     {
         $context = [$this->secondNodeInLevel];
@@ -102,9 +98,7 @@ class SiblingsOperationTest extends AbstractQueryOperationsTestCase
         self::assertEquals([$this->firstNodeInLevel, $this->thirdNodeInLevel], $output);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function siblingsWillReturnFirstNodeForSecondAndThirdNodeInLevel()
     {
         $context = [$this->secondNodeInLevel, $this->thirdNodeInLevel];
@@ -117,9 +111,7 @@ class SiblingsOperationTest extends AbstractQueryOperationsTestCase
         self::assertEquals([$this->firstNodeInLevel], $output);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function siblingsWillReturnEmptyArrayForSiteNode()
     {
         $context = [$this->siteNode];

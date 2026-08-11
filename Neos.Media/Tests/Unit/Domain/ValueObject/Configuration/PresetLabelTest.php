@@ -10,7 +10,8 @@ namespace Neos\Media\Tests\Unit\Domain\ValueObject\Configuration;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\Media\Domain\ValueObject\Configuration\Label;
 
@@ -39,9 +40,9 @@ class PresetLabelTest extends UnitTestCase
 
     /**
      * @param $label
-     * @dataProvider validLabels()
-     * @test
      */
+    #[DataProvider('validLabels')]
+    #[Test]
     public function validLabelsAreAccepted($label): void
     {
         $presetLabel = new Label($label);
@@ -62,9 +63,9 @@ class PresetLabelTest extends UnitTestCase
 
     /**
      * @param $label
-     * @test
-     * @dataProvider invalidLabels()
      */
+    #[DataProvider('invalidLabels')]
+    #[Test]
     public function invalidLabelsAreRejected($label): void
     {
         $this->expectException(\InvalidArgumentException::class);

@@ -10,7 +10,7 @@ namespace Neos\ContentRepository\Tests\Functional\Eel\FlowQueryOperations;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
+use PHPUnit\Framework\Attributes\Test;
 use Neos\Eel\FlowQuery\FlowQuery;
 use Neos\ContentRepository\Tests\Functional\AbstractNodeTestCase;
 
@@ -19,9 +19,7 @@ use Neos\ContentRepository\Tests\Functional\AbstractNodeTestCase;
  */
 class FilterOperationTest extends AbstractNodeTestCase
 {
-    /**
-     * @test
-     */
+    #[Test]
     public function noFilterReturnsAllNodesInContext()
     {
         $q = new FlowQuery([$this->node, $this->node->getNode('products')]);
@@ -29,9 +27,7 @@ class FilterOperationTest extends AbstractNodeTestCase
         self::assertEquals(2, count($foundNodes));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function filterByNodeObjectIsSupported()
     {
         $q = new FlowQuery([$this->node, $this->node->getNode('products')]);
@@ -40,9 +36,7 @@ class FilterOperationTest extends AbstractNodeTestCase
         self::assertEquals(1, count($foundNodes));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function propertyNameFilterIsSupported()
     {
         $q = new FlowQuery([$this->node, $this->node->getNode('products')]);
@@ -53,9 +47,7 @@ class FilterOperationTest extends AbstractNodeTestCase
         self::assertEquals(0, count($foundNodes));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function multiplePropertyNameFiltersIsSupported()
     {
         $productsNode = $this->node->getNode('products');
@@ -74,9 +66,7 @@ class FilterOperationTest extends AbstractNodeTestCase
         self::assertEquals(0, count($foundNodes));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function identityFilterIsSupported()
     {
         $q = new FlowQuery([$this->node, $this->node->getNode('products')]);
@@ -87,9 +77,7 @@ class FilterOperationTest extends AbstractNodeTestCase
         self::assertEquals(0, count($foundNodes));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function multipleIdentityFiltersIsSupported()
     {
         $productsNode = $this->node->getNode('products');
@@ -108,9 +96,7 @@ class FilterOperationTest extends AbstractNodeTestCase
         self::assertEquals(0, count($foundNodes));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function attributeFilterUsingPropertyIsSupported()
     {
         $q = new FlowQuery([$this->node]);
@@ -120,9 +106,7 @@ class FilterOperationTest extends AbstractNodeTestCase
         self::assertEquals(0, count($foundNodes));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function attributeFilterUsingInternalPropertyIsSupported()
     {
         $productsNode = $this->node->getNode('products');
@@ -137,9 +121,7 @@ class FilterOperationTest extends AbstractNodeTestCase
         self::assertEquals(0, count($foundNodes));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function instanceofFilterUsingNodeTypeIsSupported()
     {
         $productsNode = $this->node->getNode('products');
@@ -158,9 +140,7 @@ class FilterOperationTest extends AbstractNodeTestCase
         self::assertEquals(0, count($foundNodes));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function notInstanceofFilterUsingNodeTypeIsSupported()
     {
         $productsNode = $this->node->getNode('products');
@@ -183,9 +163,7 @@ class FilterOperationTest extends AbstractNodeTestCase
         self::assertEquals(5, count($foundNodes));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function twoInstanceofFiltersUsingNodeTypeIsSupported()
     {
         $productsNode = $this->node->getNode('products');
@@ -200,9 +178,7 @@ class FilterOperationTest extends AbstractNodeTestCase
         self::assertEquals(0, count($foundNodes));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function multipleInstanceofFiltersUsingNodeTypeIsSupported()
     {
         $productsNode = $this->node->getNode('products');
@@ -217,9 +193,7 @@ class FilterOperationTest extends AbstractNodeTestCase
         self::assertEquals(4, count($foundNodes));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function negatedInstanceofFilterUsingNodeTypeIsSupported()
     {
         $productsNode = $this->node->getNode('products');
@@ -238,9 +212,7 @@ class FilterOperationTest extends AbstractNodeTestCase
         self::assertEquals(4, count($foundNodes));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function doubleNegatedInstanceofFilterUsingNodeTypeIsSupported()
     {
         $productsNode = $this->node->getNode('products');

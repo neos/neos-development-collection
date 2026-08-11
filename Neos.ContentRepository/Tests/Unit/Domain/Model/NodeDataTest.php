@@ -10,7 +10,8 @@ namespace Neos\ContentRepository\Tests\Unit\Domain\Model;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
+use PHPUnit\Framework\Attributes\Test;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use Neos\ContentRepository\Exception\NodeException;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
@@ -71,9 +72,7 @@ class NodeDataTest extends UnitTestCase
         $this->inject($this->nodeData, 'nodeDataRepository', $this->mockNodeDataRepository);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function constructorSetsPathWorkspaceAndIdentifier()
     {
         $node = new NodeData('/foo/bar', $this->mockWorkspace, '12345abcde');
@@ -83,10 +82,8 @@ class NodeDataTest extends UnitTestCase
         self::assertSame('12345abcde', $node->getIdentifier());
     }
 
-    /**
-     * @test
-     * @dataProvider invalidPaths()
-     */
+    #[DataProvider('invalidPaths')]
+    #[Test]
     public function setPathThrowsAnExceptionIfAnInvalidPathIsPassed($path)
     {
         $this->expectException(\InvalidArgumentException::class);
@@ -108,10 +105,8 @@ class NodeDataTest extends UnitTestCase
         ];
     }
 
-    /**
-     * @test
-     * @dataProvider validPaths()
-     */
+    #[DataProvider('validPaths')]
+    #[Test]
     public function setPathAcceptsAValidPath($path)
     {
         $this->nodeData->_call('setPath', $path, false);
@@ -135,9 +130,7 @@ class NodeDataTest extends UnitTestCase
         ];
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function getDepthReturnsThePathDepthOfTheNode()
     {
         $node = new NodeData('/', $this->mockWorkspace);
@@ -153,9 +146,7 @@ class NodeDataTest extends UnitTestCase
         self::assertEquals(4, $node->getDepth());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function setWorkspacesAllowsForSettingTheWorkspaceForInternalPurposes()
     {
         /** @var Workspace|MockObject $newWorkspace */
@@ -167,27 +158,21 @@ class NodeDataTest extends UnitTestCase
         self::assertSame($newWorkspace, $this->nodeData->getWorkspace());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function theIndexCanBeSetAndRetrieved()
     {
         $this->nodeData->setIndex(2);
         self::assertEquals(2, $this->nodeData->getIndex());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function getParentReturnsNullForARootNode()
     {
         $node = new NodeData('/', $this->mockWorkspace);
         self::assertNull($node->getParent());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function aContentObjectCanBeSetRetrievedAndUnset()
     {
         $contentObject = new \stdClass();
@@ -199,18 +184,14 @@ class NodeDataTest extends UnitTestCase
         self::assertNull($this->nodeData->getContentObject());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function aContentObjectMustBeAnObject()
     {
         $this->expectException(\InvalidArgumentException::class);
         $this->nodeData->setContentObject('not an object');
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function propertiesCanBeSetAndRetrieved()
     {
         $this->nodeData->setProperty('title', 'My Title');
@@ -229,9 +210,7 @@ class NodeDataTest extends UnitTestCase
         self::assertEquals(['body', 'title'], $actualPropertyNames);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function propertiesCanBeRemoved()
     {
         $this->nodeData->setProperty('title', 'My Title');
@@ -246,9 +225,7 @@ class NodeDataTest extends UnitTestCase
         self::assertArrayNotHasKey('title', $this->nodeData->getProperties());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function propertiesHandlesNullValuesCorrectly()
     {
         $this->nodeData->setProperty('value', null);
@@ -270,18 +247,14 @@ class NodeDataTest extends UnitTestCase
         self::assertArrayNotHasKey('value', $this->nodeData->getProperties());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function removePropertyThrowsExceptionIfPropertyDoesNotExist()
     {
         $this->expectException(NodeException::class);
         $this->nodeData->removeProperty('nada');
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function removePropertyDoesNotTouchAContentObject()
     {
         $this->inject($this->nodeData, 'persistenceManager', $this->createMock(PersistenceManagerInterface::class));
@@ -299,9 +272,7 @@ class NodeDataTest extends UnitTestCase
         self::assertEquals('My Title', $this->nodeData->getProperty('title'));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function propertyFunctionsUseAContentObjectIfOneHasBeenDefined()
     {
         $this->inject($this->nodeData, 'persistenceManager', $this->createMock(PersistenceManagerInterface::class));
@@ -336,9 +307,7 @@ class NodeDataTest extends UnitTestCase
         self::assertEquals('My Other Title', $this->nodeData->getProperty('title'));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function getPropertyThrowsAnExceptionIfTheSpecifiedPropertyDoesNotExistInTheContentObject()
     {
         $this->expectException(NodeException::class);
@@ -354,9 +323,7 @@ class NodeDataTest extends UnitTestCase
         $this->nodeData->getProperty('foo');
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function theNodeTypeCanBeSetAndRetrieved()
     {
         /** @var NodeTypeManager|MockObject $mockNodeTypeManager */
@@ -377,9 +344,7 @@ class NodeDataTest extends UnitTestCase
         self::assertEquals($myNodeType, $this->nodeData->getNodeType());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function getNodeTypeReturnsFallbackNodeTypeForUnknownNodeType()
     {
         $mockFallbackNodeType = $this->getMockBuilder(NodeType::class)->disableOriginalConstructor()->getMock();
@@ -396,9 +361,7 @@ class NodeDataTest extends UnitTestCase
         self::assertSame($mockFallbackNodeType, $this->nodeData->getNodeType());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function createNodeCreatesAChildNodeOfTheCurrentNodeInTheContextWorkspace()
     {
         $this->marktestIncomplete('Should be refactored to a contextualized node test.');
@@ -424,9 +387,7 @@ class NodeDataTest extends UnitTestCase
         self::assertEquals('mynodetype', $newNode->getNodeType()->getName());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function createNodeThrowsNodeExceptionIfPathAlreadyExists()
     {
         $this->expectException(NodeException::class);
@@ -461,9 +422,7 @@ class NodeDataTest extends UnitTestCase
         self::assertNull($currentNode->getNode('/foo/quux'));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function getChildNodeDataFindsUnreducedNodeDataChildren()
     {
         $childNodeData = $this->getMockBuilder(NodeData::class)->setConstructorArgs(['/foo/bar', $this->mockWorkspace])->getMock();
@@ -484,9 +443,7 @@ class NodeDataTest extends UnitTestCase
     }
 
 
-    /**
-     * @test
-     */
+    #[Test]
     public function removeFlagsTheNodeAsRemoved()
     {
         $mockPersistenceManager = $this->createMock(PersistenceManagerInterface::class);
@@ -507,9 +464,7 @@ class NodeDataTest extends UnitTestCase
         self::assertTrue($currentNode->isRemoved());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function removeRemovesTheNodeFromRepositoryIfItsWorkspaceHasNoOtherBaseWorkspace()
     {
         $mockPersistenceManager = $this->createMock(PersistenceManagerInterface::class);
@@ -549,9 +504,9 @@ class NodeDataTest extends UnitTestCase
     /**
      * @param array $accessRoles
      * @param boolean $expectedResult
-     * @test
-     * @dataProvider hasAccessRestrictionsDataProvider
      */
+    #[DataProvider('hasAccessRestrictionsDataProvider')]
+    #[Test]
     public function hasAccessRestrictionsTests($accessRoles, $expectedResult)
     {
         $this->nodeData->_set('accessRoles', $accessRoles);
@@ -562,17 +517,13 @@ class NodeDataTest extends UnitTestCase
         }
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function isAccessibleReturnsTrueIfAccessRolesIsNotSet()
     {
         self::assertTrue($this->nodeData->isAccessible());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function isAccessibleReturnsTrueIfSecurityContextCannotBeInitialized()
     {
         /** @var SecurityContext|MockObject $mockSecurityContext */
@@ -585,9 +536,7 @@ class NodeDataTest extends UnitTestCase
         self::assertTrue($this->nodeData->isAccessible());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function isAccessibleReturnsFalseIfAccessRolesIsSetAndSecurityContextHasNoRoles()
     {
         /** @var SecurityContext|MockObject $mockSecurityContext */
@@ -600,9 +549,7 @@ class NodeDataTest extends UnitTestCase
         self::assertFalse($this->nodeData->isAccessible());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function isAccessibleReturnsTrueIfAccessRolesIsSetAndSecurityContextHasOneOfTheRequiredRoles()
     {
         /** @var SecurityContext|MockObject $mockSecurityContext */
@@ -615,9 +562,7 @@ class NodeDataTest extends UnitTestCase
         self::assertTrue($this->nodeData->isAccessible());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function isAccessibleReturnsTrueIfRoleIsEveryone()
     {
         /** @var SecurityContext|MockObject $mockSecurityContext */
@@ -630,9 +575,7 @@ class NodeDataTest extends UnitTestCase
         self::assertTrue($this->nodeData->isAccessible());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function createNodeCreatesNodeDataWithExplicitWorkspaceIfGiven()
     {
         /** @var NodeDataRepository|MockObject $nodeDataRepository */
@@ -644,9 +587,7 @@ class NodeDataTest extends UnitTestCase
         $this->nodeData->createNodeData('foo', null, null, $this->mockWorkspace);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function similarizeClearsPropertiesBeforeAddingNewOnes()
     {
         /** @var $sourceNode NodeData */
@@ -668,9 +609,7 @@ class NodeDataTest extends UnitTestCase
         self::assertEquals($expectedProperties, $this->nodeData->getProperties());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function similarizeCopiesCreationAndLastModificationDateTimes()
     {
         $creationDateTime = \DateTime::createFromFormat('Y-m-d', '2000-01-01 12:00:00');
@@ -686,9 +625,7 @@ class NodeDataTest extends UnitTestCase
         self::assertSame($creationDateTime, $this->nodeData->getCreationDateTime());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function matchesWorkspaceAndDimensionsWithDifferentWorkspaceReturnsFalse()
     {
         $this->mockWorkspace->expects(self::any())->method('getName')->will(self::returnValue('live'));
@@ -701,9 +638,7 @@ class NodeDataTest extends UnitTestCase
         self::assertFalse($result);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function matchesWorkspaceAndDimensionsWithDifferentDimensionReturnsFalse()
     {
         $this->nodeData = new NodeData('/foo/bar', $this->mockWorkspace, null, ['language' => ['en_US']]);
@@ -714,9 +649,7 @@ class NodeDataTest extends UnitTestCase
         self::assertFalse($result);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function matchesWorkspaceAndDimensionsWithMatchingWorkspaceAndDimensionsReturnsTrue()
     {
         $this->nodeData = new NodeData('/foo/bar', $this->mockWorkspace, null, ['language' => ['mul_ZZ']]);
@@ -727,9 +660,7 @@ class NodeDataTest extends UnitTestCase
         self::assertTrue($result);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function getDimensionValuesReturnsDimensionsSortedByKey()
     {
         $nodeData = new NodeData('/foo/bar', $this->mockWorkspace, null, ['c' => ['c1', 'c2'], 'a' => ['a1']]);
@@ -738,9 +669,7 @@ class NodeDataTest extends UnitTestCase
         self::assertSame(['a' => ['a1'], 'c' => ['c1', 'c2']], $dimensionValues);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function dimensionsHashIsOrderIndependent()
     {
         $nodeData = new NodeData('/foo/bar', $this->mockWorkspace, null, ['c' => ['c1', 'c2'], 'a' => ['a1']]);
@@ -754,9 +683,7 @@ class NodeDataTest extends UnitTestCase
         self::assertSame('955c716a191a0957f205ea9376600e72', $dimensionsHash);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function setDimensionsAddsDimensionValues()
     {
         $nodeData = new NodeData('/foo/bar', $this->mockWorkspace);
@@ -779,9 +706,7 @@ class NodeDataTest extends UnitTestCase
         self::assertSame($expectedDimensionValues, $setDimensionValues);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function setDimensionsAddsNewDimensionValues()
     {
         $nodeData = new NodeData('/foo/bar', $this->mockWorkspace, null, ['c' => ['c1', 'c2'], 'a' => ['a1']]);
@@ -804,9 +729,7 @@ class NodeDataTest extends UnitTestCase
         self::assertSame($expectedDimensionValues, $setDimensionValues);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function setDimensionsRemovesDimensionValuesNotGiven()
     {
         $nodeData = new NodeData('/foo/bar', $this->mockWorkspace, null, ['c' => ['c1', 'c2'], 'a' => ['a1']]);

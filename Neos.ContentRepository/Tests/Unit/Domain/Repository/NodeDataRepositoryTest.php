@@ -10,7 +10,7 @@ namespace Neos\ContentRepository\Tests\Unit\Domain\Repository;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use Doctrine\ORM\QueryBuilder;
 use Neos\Flow\Persistence\Doctrine\Query;
@@ -60,9 +60,7 @@ class NodeDataRepositoryTest extends UnitTestCase
         $this->inject($this->nodeDataRepository, 'persistenceManager', $mockPersistenceManager);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function findOneByPathFindsAddedNodeInRepositoryAndRespectsWorkspaceAndDimensions()
     {
         $liveWorkspace = new Workspace('live');
@@ -83,9 +81,7 @@ class NodeDataRepositoryTest extends UnitTestCase
         self::assertSame($nodeData, $result);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function findOneByIdentifierFindsAddedNodeInRepositoryAndRespectsWorkspaceAndDimensions()
     {
         $liveWorkspace = new Workspace('live');
@@ -104,9 +100,7 @@ class NodeDataRepositoryTest extends UnitTestCase
         self::assertSame($nodeData, $result);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function findOneByIdentifierFindsRemovedNodeInRepositoryAndRespectsWorkspaceAndDimensions()
     {
         $liveWorkspace = new Workspace('live');
@@ -125,9 +119,7 @@ class NodeDataRepositoryTest extends UnitTestCase
         self::assertNull($result);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function findByParentAndNodeTypeRecursivelyCallsGetNodeDataForParentAndNodeTypeWithRecursiveFlag()
     {
         $parentPath = 'some/parent/path';
@@ -143,9 +135,7 @@ class NodeDataRepositoryTest extends UnitTestCase
         $this->nodeDataRepository->findByParentAndNodeTypeRecursively($parentPath, $nodeTypeFilter, $mockWorkspace, $dimensions, true);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function findByParentAndNodeTypeIncludesAddedNodeInRepositoryAndRespectsWorkspaceAndDimensions()
     {
         $liveWorkspace = new Workspace('live');
@@ -173,9 +163,7 @@ class NodeDataRepositoryTest extends UnitTestCase
         self::assertSame($nodeData, $fetchedNodeData);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function findByParentAndNodeTypeRemovesRemovedNodeInRepositoryAndRespectsWorkspaceAndDimensions()
     {
         $liveWorkspace = new Workspace('live');

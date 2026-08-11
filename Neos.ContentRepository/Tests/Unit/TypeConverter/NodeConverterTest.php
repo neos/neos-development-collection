@@ -10,7 +10,7 @@ namespace Neos\ContentRepository\Tests\Unit\TypeConverter;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
+use PHPUnit\Framework\Attributes\Test;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Property\PropertyMapper;
 use Neos\Flow\Property\PropertyMappingConfigurationInterface;
@@ -88,9 +88,7 @@ class NodeConverterTest extends UnitTestCase
         $this->mockConverterConfiguration = $this->getMockBuilder(PropertyMappingConfigurationInterface::class)->disableOriginalConstructor()->getMock();
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function convertFromSetsRemovedContentShownContextPropertyFromConfigurationForContextPathSource()
     {
         $contextPath = '/foo/bar@user-demo';
@@ -111,9 +109,7 @@ class NodeConverterTest extends UnitTestCase
         self::assertTrue($contextProperties['removedContentShown'], 'removedContentShown context property should be true');
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function convertFromUsesPropertyMapperToConvertNodePropertyOfReferenceType()
     {
         $contextPath = '/foo/bar@user-demo';
@@ -140,9 +136,7 @@ class NodeConverterTest extends UnitTestCase
         $this->nodeConverter->convertFrom($source, null, [], $this->mockConverterConfiguration);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function convertFromUsesPropertyMapperToConvertNodePropertyOfReferencesType()
     {
         $contextPath = '/foo/bar@user-demo';
@@ -174,9 +168,7 @@ class NodeConverterTest extends UnitTestCase
         $this->nodeConverter->convertFrom($source, null, [], $this->mockConverterConfiguration);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function convertFromUsesPropertyMapperToConvertNodePropertyOfArrayType()
     {
         $contextPath = '/foo/bar@user-demo';
@@ -204,9 +196,7 @@ class NodeConverterTest extends UnitTestCase
         $this->nodeConverter->convertFrom($source, null, [], $this->mockConverterConfiguration);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function convertFromDecodesJsonEncodedArraysAsAssociative()
     {
         $contextPath = '/foo/bar@user-demo';

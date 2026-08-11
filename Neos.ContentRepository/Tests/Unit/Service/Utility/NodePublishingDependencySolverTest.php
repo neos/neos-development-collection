@@ -10,7 +10,7 @@ namespace Neos\ContentRepository\Tests\Unit\Service\Utility;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
+use PHPUnit\Framework\Attributes\Test;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\ContentRepository\Domain\Model\Node;
 use Neos\ContentRepository\Domain\Model\NodeData;
@@ -36,9 +36,7 @@ class NodePublishingDependencySolverTest extends UnitTestCase
         $this->mockContext = $this->getMockBuilder(Context::class)->disableOriginalConstructor()->getMock();
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function sortNodesWithParentRelations()
     {
         $nodeService = $this->buildNodeMock('/sites/typo3cr/service');
@@ -53,9 +51,7 @@ class NodePublishingDependencySolverTest extends UnitTestCase
         $this->assertBeforeInArray($nodeCompany, $nodeAboutUs, $sortedNodes);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function sortNodesWithMovedToRelations()
     {
         $nodeEnterprise = $this->buildNodeMock('/sites/typo3cr/enterprise');

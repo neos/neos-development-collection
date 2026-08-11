@@ -10,7 +10,8 @@ namespace Neos\Fusion\Tests\Unit\FusionObjects\Http;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use GuzzleHttp\Psr7\Response;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\Fusion\Core\Runtime;
@@ -43,10 +44,8 @@ class ResponseHeadImplementationTest extends UnitTestCase
         ];
     }
 
-    /**
-     * @test
-     * @dataProvider responseHeadExamples
-     */
+    #[DataProvider('responseHeadExamples')]
+    #[Test]
     public function evaluateTests($httpVersion, $statusCode, $headers, $expectedOutput)
     {
         $path = 'responseHead/test';

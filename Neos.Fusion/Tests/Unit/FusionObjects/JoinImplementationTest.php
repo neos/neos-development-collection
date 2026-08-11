@@ -10,7 +10,8 @@ namespace Neos\Fusion\Tests\Unit\FusionObjects;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
+use PHPUnit\Framework\Attributes\Test;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\Fusion\Core\Runtime;
 use Neos\Fusion\FusionObjects\JoinImplementation;
@@ -20,9 +21,7 @@ use Neos\Fusion\FusionObjects\JoinImplementation;
  */
 class JoinImplementationTest extends UnitTestCase
 {
-    /**
-     * @test
-     */
+    #[Test]
     public function evaluateWithEmptyJoinRendersNull()
     {
         $mockRuntime = $this->getMockBuilder(Runtime::class)->disableOriginalConstructor()->getMock();
@@ -117,13 +116,13 @@ class JoinImplementationTest extends UnitTestCase
     }
 
     /**
-     * @test
-     * @dataProvider positionalSubElements
      *
      * @param string $message
      * @param array $subElements
      * @param array $expectedKeyOrder
      */
+    #[DataProvider('positionalSubElements')]
+    #[Test]
     public function evaluateRendersKeysSortedByPositionMetaProperty($message, $subElements, $expectedKeyOrder)
     {
         $mockRuntime = $this->getMockBuilder(Runtime::class)->disableOriginalConstructor()->getMock();
@@ -144,13 +143,13 @@ class JoinImplementationTest extends UnitTestCase
     }
 
     /**
-     * @test
-     * @dataProvider positionalSubElementsThatShouldFailByInvalidPositions
      *
      * @param string $message
      * @param array $subElements
      * @param array $expectedKeyOrder
      */
+    #[DataProvider('positionalSubElementsThatShouldFailByInvalidPositions')]
+    #[Test]
     public function evaluateRendersKeysSortedByPositionMetaPropertyThatShouldFail($message, $subElements, $expectedKeyOrder)
     {
         try {

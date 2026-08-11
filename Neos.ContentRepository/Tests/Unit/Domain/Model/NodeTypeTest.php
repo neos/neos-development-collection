@@ -10,7 +10,8 @@ namespace Neos\ContentRepository\Tests\Unit\Domain\Model;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
+use PHPUnit\Framework\Attributes\Test;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\ContentRepository\Domain\Model\NodeType;
@@ -123,36 +124,28 @@ class NodeTypeTest extends UnitTestCase
         ]
     ];
 
-    /**
-     * @test
-     */
+    #[Test]
     public function aNodeTypeHasAName()
     {
         $nodeType = new NodeType('Neos.ContentRepository.Testing:Text', [], []);
         self::assertSame('Neos.ContentRepository.Testing:Text', $nodeType->getName());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function setDeclaredSuperTypesExpectsAnArrayOfNodeTypesAsKeys()
     {
         $this->expectException(\InvalidArgumentException::class);
         new NodeType('ContentRepository:Folder', ['foo' => true], []);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function setDeclaredSuperTypesAcceptsAnArrayOfNodeTypes()
     {
         $this->expectException(\InvalidArgumentException::class);
         new NodeType('ContentRepository:Folder', ['foo'], []);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function nodeTypesCanHaveAnyNumberOfSuperTypes()
     {
         $baseType = new NodeType('Neos.ContentRepository:Base', [], []);
@@ -195,27 +188,21 @@ class NodeTypeTest extends UnitTestCase
         self::assertFalse($pageType->isOfType('Neos.ContentRepository.Testing:TimeableContent'));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function labelIsEmptyStringByDefault()
     {
         $baseType = new NodeType('Neos.ContentRepository:Base', [], []);
         self::assertSame('', $baseType->getLabel());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function propertiesAreEmptyArrayByDefault()
     {
         $baseType = new NodeType('Neos.ContentRepository:Base', [], []);
         self::assertSame([], $baseType->getProperties());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function hasConfigurationInitializesTheNodeType()
     {
         $nodeType = $this->getMockBuilder(NodeType::class)->disableOriginalConstructor()->setMethods(['initialize'])->getMock();
@@ -223,9 +210,7 @@ class NodeTypeTest extends UnitTestCase
         $nodeType->hasConfiguration('foo');
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function hasConfigurationReturnsTrueIfSpecifiedConfigurationPathExists()
     {
         $nodeType = new NodeType('Neos.ContentRepository:Base', [], [
@@ -236,18 +221,14 @@ class NodeTypeTest extends UnitTestCase
         self::assertTrue($nodeType->hasConfiguration('someKey.someSubKey'));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function hasConfigurationReturnsFalseIfSpecifiedConfigurationPathDoesNotExist()
     {
         $nodeType = new NodeType('Neos.ContentRepository:Base', [], []);
         self::assertFalse($nodeType->hasConfiguration('some.nonExisting.path'));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function getConfigurationInitializesTheNodeType()
     {
         $nodeType = $this->getMockBuilder(NodeType::class)->disableOriginalConstructor()->setMethods(['initialize'])->getMock();
@@ -255,9 +236,7 @@ class NodeTypeTest extends UnitTestCase
         $nodeType->getConfiguration('foo');
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function getConfigurationReturnsTheConfigurationWithTheSpecifiedPath()
     {
         $nodeType = new NodeType('Neos.ContentRepository:Base', [], [
@@ -268,9 +247,7 @@ class NodeTypeTest extends UnitTestCase
         self::assertSame('someValue', $nodeType->getConfiguration('someKey.someSubKey'));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function getConfigurationReturnsNullIfTheSpecifiedPathDoesNotExist()
     {
         $nodeType = new NodeType('Neos.ContentRepository:Base', [], []);
@@ -294,9 +271,9 @@ class NodeTypeTest extends UnitTestCase
 
     /**
      * @param string  $getter
-     * @test
-     * @dataProvider gettersThatRequiresInitialization
      */
+    #[DataProvider('gettersThatRequiresInitialization')]
+    #[Test]
     public function accessingConfigurationOptionsInitializesTheNodeType($getter)
     {
         $mockObjectManager = $this->createMock(ObjectManagerInterface::class);
@@ -306,9 +283,7 @@ class NodeTypeTest extends UnitTestCase
         $nodeType->$getter();
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function defaultValuesForPropertiesHandlesDateTypes()
     {
         $nodeType = new NodeType('Neos.ContentRepository:Base', [], [
@@ -323,9 +298,7 @@ class NodeTypeTest extends UnitTestCase
         self::assertEquals($nodeType->getDefaultValuesForProperties(), ['date' => new \DateTime('2014-09-23')]);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function nodeTypeConfigurationIsMergedTogether()
     {
         $nodeType = $this->getNodeType('Neos.ContentRepository.Testing:Text');
@@ -352,8 +325,8 @@ class NodeTypeTest extends UnitTestCase
 
     /**
      * This test asserts that a supertype that has been inherited can be removed on a specific type again.
-     * @test
      */
+    #[Test]
     public function inheritedSuperTypesCanBeRemoved()
     {
         $nodeType = $this->getNodeType('Neos.ContentRepository.Testing:Shortcut');
@@ -367,18 +340,14 @@ class NodeTypeTest extends UnitTestCase
         self::assertSame($expectedProperties, $nodeType->getProperties());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function isOfTypeReturnsFalseForDirectlyDisabledSuperTypes()
     {
         $nodeType = $this->getNodeType('Neos.ContentRepository.Testing:Shortcut');
         self::assertFalse($nodeType->isOfType('Neos.ContentRepository.Testing:SomeMixin'));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function isOfTypeReturnsFalseForIndirectlyDisabledSuperTypes()
     {
         $nodeType = $this->getNodeType('Neos.ContentRepository.Testing:SubShortcut');
@@ -387,8 +356,8 @@ class NodeTypeTest extends UnitTestCase
 
     /**
      * This test asserts that a supertype that has been inherited can be removed by a supertype again.
-     * @test
      */
+    #[Test]
     public function inheritedSuperSuperTypesCanBeRemoved()
     {
         $nodeType = $this->getNodeType('Neos.ContentRepository.Testing:SubShortcut');
@@ -404,8 +373,8 @@ class NodeTypeTest extends UnitTestCase
 
     /**
      * This test asserts that a supertype that has been inherited can be removed by a supertype again.
-     * @test
      */
+    #[Test]
     public function superTypesRemovedByInheritanceCanBeAddedAgain()
     {
         $nodeType = $this->getNodeType('Neos.ContentRepository.Testing:SubSubSubShortcut');
@@ -446,9 +415,7 @@ class NodeTypeTest extends UnitTestCase
         return new NodeType($nodeTypeName, $declaredSuperTypes, $configuration);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function getAutoCreatedChildNodesReturnsLowercasePaths()
     {
         $childNodeConfiguration = ['type' => 'Neos.ContentRepository:Base'];

@@ -10,7 +10,7 @@ namespace Neos\Neos\Tests\Functional\Fusion;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
+use PHPUnit\Framework\Attributes\Test;
 use Neos\ContentRepository\Domain\Model\Node;
 use Neos\ContentRepository\Domain\Model\NodeType;
 use Neos\Fusion\Tests\Functional\FusionObjects\AbstractFusionObjectTestCase;
@@ -27,9 +27,7 @@ class NodeHelperTest extends AbstractFusionObjectTestCase
      */
     protected $textNode;
 
-    /**
-     * @test
-     */
+    #[Test]
     public function defaultNodeLabel()
     {
         $view = $this->buildView();
@@ -40,9 +38,7 @@ class NodeHelperTest extends AbstractFusionObjectTestCase
         self::assertEquals('Some title', (string)$view->render());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function withPropertyFallback()
     {
         $view = $this->buildView();
@@ -53,9 +49,7 @@ class NodeHelperTest extends AbstractFusionObjectTestCase
         self::assertEquals('Some text', (string)$view->render());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function withPrefixOverrideAndPostfix()
     {
         $view = $this->buildView();
@@ -66,9 +60,7 @@ class NodeHelperTest extends AbstractFusionObjectTestCase
         self::assertEquals('Hello world how are you', (string)$view->render());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function nodeTypeFallback()
     {
         $view = $this->buildView();
@@ -79,9 +71,7 @@ class NodeHelperTest extends AbstractFusionObjectTestCase
         self::assertEquals($this->textNode->getNodeType()->getLabel(), (string)$view->render());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function crop()
     {
         $view = $this->buildView();

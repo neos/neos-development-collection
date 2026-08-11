@@ -12,7 +12,7 @@ namespace Neos\Media\Tests\Functional\Domain\Model;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
+use PHPUnit\Framework\Attributes\Test;
 use Neos\Flow\Persistence\Doctrine\PersistenceManager;
 use Neos\Media\Domain\Model\Tag;
 use Neos\Media\Domain\Repository\TagRepository;
@@ -43,9 +43,7 @@ class TagTest extends AbstractTestCase
         $this->tagRepository = $this->objectManager->get(TagRepository::class);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function parentChildrenRelation(): void
     {
         $child1 = new Tag('child1');

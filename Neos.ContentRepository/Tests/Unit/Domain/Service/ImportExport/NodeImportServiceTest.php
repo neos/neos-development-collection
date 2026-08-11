@@ -10,7 +10,7 @@ namespace Neos\ContentRepository\Tests\Unit\Domain\Service\ImportExport;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
+use PHPUnit\Framework\Attributes\Test;
 use Neos\Error\Messages\Result;
 use Neos\Media\Domain\Model\ImageVariant;
 use Neos\Media\Domain\Model\Image;
@@ -43,9 +43,7 @@ class NodeImportServiceTest extends UnitTestCase
         }));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function importSingleNode()
     {
         $xmlReader = new \XMLReader();
@@ -111,9 +109,7 @@ class NodeImportServiceTest extends UnitTestCase
         self::assertEquals($expectedNodeData, $actualNodeData);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function importSingleNodeWithoutIdentifier()
     {
         $xmlReader = new \XMLReader();
@@ -164,9 +160,7 @@ class NodeImportServiceTest extends UnitTestCase
         self::assertEquals($expectedNodeData, $actualNodeData);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function importWithEmptyPropertyImportsAllProperties()
     {
         $xmlReader = new \XMLReader();
@@ -333,9 +327,7 @@ class NodeImportServiceTest extends UnitTestCase
         self::assertEquals($expectedNodeDatas, $actualNodeDatas);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function importWithArrayPropertiesImportsCorrectly()
     {
         $xmlReader = new \XMLReader();
@@ -399,9 +391,7 @@ class NodeImportServiceTest extends UnitTestCase
         self::assertEquals($expectedNodeDatas, $actualNodeDatas);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function importWithLinebreakInDateTimeImportsCorrectly()
     {
         $xmlReader = new \XMLReader();

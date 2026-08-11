@@ -10,7 +10,8 @@ namespace Neos\Media\Tests\Unit\Domain\Model\Adjustment;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
+use PHPUnit\Framework\Attributes\Test;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Neos\Media\Imagine\Box;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\Media\Domain\Model\Adjustment\ResizeImageAdjustment;
@@ -21,9 +22,7 @@ use Neos\Media\Domain\Model\ImageInterface;
  */
 class ResizeImageAdjustmentTest extends UnitTestCase
 {
-    /**
-     * @test
-     */
+    #[Test]
     public function widthAndHeightDeterminedByExplicitlySetWidthAndHeightWithInsetMode()
     {
         /** @var ResizeImageAdjustment $adjustment */
@@ -40,9 +39,7 @@ class ResizeImageAdjustmentTest extends UnitTestCase
     }
 
 
-    /**
-     * @test
-     */
+    #[Test]
     public function widthAndHeightDeterminedByExplicitlySetWidthAndHeightWithOutboundMode()
     {
         /** @var ResizeImageAdjustment $adjustment */
@@ -58,9 +55,7 @@ class ResizeImageAdjustmentTest extends UnitTestCase
         self::assertEquals($expectedDimensions, $adjustment->_call('calculateDimensions', $originalDimensions));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function ifWidthIsSetHeightIsDeterminedByTheOriginalAspectRatio()
     {
         /** @var ResizeImageAdjustment $adjustment */
@@ -74,9 +69,7 @@ class ResizeImageAdjustmentTest extends UnitTestCase
         self::assertEquals($expectedDimensions, $adjustment->_call('calculateDimensions', $originalDimensions));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function ifHeightIsSetWidthIsDeterminedByTheOriginalAspectRatio()
     {
         /** @var ResizeImageAdjustment $adjustment */
@@ -90,9 +83,7 @@ class ResizeImageAdjustmentTest extends UnitTestCase
         self::assertEquals($expectedDimensions, $adjustment->_call('calculateDimensions', $originalDimensions));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function minimumHeightIsGreaterZero()
     {
         /** @var ResizeImageAdjustment $adjustment */
@@ -110,9 +101,7 @@ class ResizeImageAdjustmentTest extends UnitTestCase
         self::assertEquals($expectedDimensions, $adjustment->_call('calculateDimensions', $originalDimensions));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function minimumWidthIsGreaterZero()
     {
         /** @var ResizeImageAdjustment $adjustment */
@@ -152,10 +141,8 @@ class ResizeImageAdjustmentTest extends UnitTestCase
         ];
     }
 
-    /**
-     * @dataProvider minimumAndMaximumDimensions()
-     * @test
-     */
+    #[DataProvider('minimumAndMaximumDimensions')]
+    #[Test]
     public function combinationsOfMaximumAndMinimumWidthAndHeightAreCalculatedCorrectly($width, $maximumWidth, $height, $maximumHeight, $expectedWidth, $expectedHeight, $ratioMode, $allowUpScaling)
     {
         $options = [

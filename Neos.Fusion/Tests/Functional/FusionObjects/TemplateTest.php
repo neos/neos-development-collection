@@ -1,6 +1,8 @@
 <?php
 namespace Neos\Fusion\Tests\Functional\FusionObjects;
 
+use PHPUnit\Framework\Attributes\Test;
+
 /*
  * This file is part of the Neos.Fusion package.
  *
@@ -16,9 +18,7 @@ namespace Neos\Fusion\Tests\Functional\FusionObjects;
  */
 class TemplateTest extends AbstractFusionObjectTestCase
 {
-    /**
-     * @test
-     */
+    #[Test]
     public function basicFluidTemplateCanBeUsedForRendering()
     {
         $view = $this->buildView();
@@ -26,9 +26,7 @@ class TemplateTest extends AbstractFusionObjectTestCase
         self::assertEquals('Test Templatefoo', $view->render());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function basicFluidTemplateContainsEelVariables()
     {
         $view = $this->buildView();
@@ -36,9 +34,7 @@ class TemplateTest extends AbstractFusionObjectTestCase
         self::assertEquals('Test Templatefoobar', $view->render());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function customPartialPathCanBeSetOnRendering()
     {
         $view = $this->buildView();
@@ -46,9 +42,7 @@ class TemplateTest extends AbstractFusionObjectTestCase
         self::assertEquals('Test Template--partial contents', $view->render());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function customLayoutPathCanBeSetOnRendering()
     {
         $view = $this->buildView();
@@ -56,9 +50,7 @@ class TemplateTest extends AbstractFusionObjectTestCase
         self::assertEquals('layout start -- Test Template -- layout end', $view->render());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function fusionExceptionInObjectAccessIsHandledCorrectly()
     {
         $view = $this->buildView();
@@ -66,9 +58,7 @@ class TemplateTest extends AbstractFusionObjectTestCase
         self::assertStringStartsWith('Test TemplateException while rendering template', $view->render());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function expressionCanBeOverridenWithSimpleValueForTemplate()
     {
         $view = $this->buildView();

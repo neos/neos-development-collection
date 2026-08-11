@@ -10,6 +10,7 @@ namespace Neos\ContentRepository\Tests\Unit\Domain\Service;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+use PHPUnit\Framework\Attributes\Test;
 use Neos\Flow\Security\Context;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\Flow\Utility\Now;
@@ -22,9 +23,7 @@ use Neos\ContentRepository\Domain\Service\ContextFactory;
  */
 class ContextFactoryTest extends UnitTestCase
 {
-    /**
-     * @test
-     */
+    #[Test]
     public function createMergesDefaultPropertiesBeforeSettingAnInstanceByIdentifier()
     {
         $contextFactory = new ContextFactory();

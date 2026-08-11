@@ -10,8 +10,8 @@ namespace Neos\Fusion\Tests\Unit\FusionObjects;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
 use Neos\Flow\Tests\UnitTestCase;
+use PHPUnit\Framework\Attributes\Test;
 use Neos\Utility\ObjectAccess;
 use Neos\Fusion\Core\Runtime;
 use Neos\Fusion\FusionObjects\CaseImplementation;
@@ -21,9 +21,7 @@ use Neos\Fusion\FusionObjects\CaseImplementation;
  */
 class CaseImplementationTest extends UnitTestCase
 {
-    /**
-     * @test
-     */
+    #[Test]
     public function ignoredPropertiesShouldNotBeUsedAsMatcher()
     {
         $path = 'page/body/content/main';

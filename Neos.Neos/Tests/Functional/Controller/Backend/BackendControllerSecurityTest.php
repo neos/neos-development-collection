@@ -10,16 +10,16 @@ namespace Neos\Neos\Tests\Functional\Controller\Backend;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
+use PHPUnit\Framework\Attributes\Large;
+use PHPUnit\Framework\Attributes\Test;
 use Neos\Flow\Tests\FunctionalTestCase;
 use Neos\Neos\Controller\Backend\BackendController;
 use Neos\Neos\Service\BackendRedirectionService;
 
 /**
  * Testcase for method security of the backend controller
- *
- * @group large
  */
+#[Large]
 class BackendControllerSecurityTest extends FunctionalTestCase
 {
     /**
@@ -27,9 +27,7 @@ class BackendControllerSecurityTest extends FunctionalTestCase
      */
     protected $testableSecurityEnabled = true;
 
-    /**
-     * @test
-     */
+    #[Test]
     public function indexActionIsGrantedForAdministrator()
     {
         $backendRedirectionServiceMock = $this->getMockBuilder(BackendRedirectionService::class)->getMock();
@@ -46,9 +44,7 @@ class BackendControllerSecurityTest extends FunctionalTestCase
         $this->browser->request('http://localhost/neos/login');
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function indexActionIsDeniedForEverybody()
     {
         $this->browser->request('http://localhost/neos/');

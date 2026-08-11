@@ -10,6 +10,7 @@ namespace Neos\ContentRepository\Tests\Unit\Domain\Model;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+use PHPUnit\Framework\Attributes\Test;
 use Neos\Flow\Property\PropertyMapper;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\ContentRepository\Domain\Model\Node;
@@ -37,9 +38,7 @@ class ContextualizedNodeTest extends UnitTestCase
      */
     protected $newNode;
 
-    /**
-     * @test
-     */
+    #[Test]
     public function aContextualizedNodeIsRelatedToNodeData()
     {
         $context = $this->getMockBuilder(Context::class)->disableOriginalConstructor()->getMock();
@@ -119,33 +118,25 @@ class ContextualizedNodeTest extends UnitTestCase
         }
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function getPathRetrievesThePathFromTheOriginalOrNewNode()
     {
         $this->assertThatOriginalOrNewNodeIsCalled('getPath');
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function getDepthRetrievesTheDepthFromTheOriginalOrNewNode()
     {
         $this->assertThatOriginalOrNewNodeIsCalled('getDepth');
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function getNameRetrievesTheNameFromTheOriginalOrNewNode()
     {
         $this->assertThatOriginalOrNewNodeIsCalled('getName');
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function getIdentifierReturnsTheIdentifier()
     {
         $nodeData = $this->getMockBuilder(NodeData::class)->disableOriginalConstructor()->getMock();
@@ -158,26 +149,20 @@ class ContextualizedNodeTest extends UnitTestCase
         self::assertEquals('theidentifier', $contextualizedNode->getIdentifier());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function getIndexRetrievesTheIndexFromTheOriginalOrNewNode()
     {
         $this->assertThatOriginalOrNewNodeIsCalled('getIndex');
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function getParentRetrievesTheParentNodeFromTheOriginalOrNewNode()
     {
         $this->markTestSkipped();
         $this->assertThatOriginalOrNewNodeIsCalled('getParent');
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function setIndexOnNodeWithNonMatchingContextMaterializesNodeData()
     {
         $node = $this->setUpNodeWithNonMatchingContext();
@@ -188,9 +173,7 @@ class ContextualizedNodeTest extends UnitTestCase
         $node->setIndex(5);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function setPropertyOnNodeWithNonMatchingContextMaterializesNodeData()
     {
         $node = $this->setUpNodeWithNonMatchingContext();
@@ -201,33 +184,25 @@ class ContextualizedNodeTest extends UnitTestCase
         $node->setProperty('propertyName', 'value');
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function hasPropertyCallsHasPropertyOnTheParentNodeFromTheOriginalOrNewNode()
     {
         $this->assertThatOriginalOrNewNodeIsCalled('hasProperty', 'myProperty');
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function getPropertyCallsGetPropertyOnTheParentNodeFromTheOriginalOrNewNode()
     {
         $this->assertThatOriginalOrNewNodeIsCalled('getProperty', 'myProperty');
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function getPropertyNamesCallsGetPropertyNamesOnTheParentNodeFromTheOriginalOrNewNode()
     {
         $this->assertThatOriginalOrNewNodeIsCalled('getPropertyNames');
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function setContentObjectOnNodeWithNonMatchingContextMaterializesNodeData()
     {
         $contentObject = new \stdClass();
@@ -240,17 +215,13 @@ class ContextualizedNodeTest extends UnitTestCase
         $node->setContentObject($contentObject);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function getContentObjectCallsGetContentObjectOnTheParentNodeFromTheOriginalOrNewNode()
     {
         $this->assertThatOriginalOrNewNodeIsCalled('getContentObject');
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function unsetContentObjectOnNodeWithNonMatchingContextMaterializesNodeData()
     {
         $node = $this->setUpNodeWithNonMatchingContext();
@@ -262,9 +233,7 @@ class ContextualizedNodeTest extends UnitTestCase
         $node->unsetContentObject();
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function setNodeTypeOnNodeWithNonMatchingContextMaterializesNodeData()
     {
         $nodeType = $this->getMockBuilder(NodeType::class)->disableOriginalConstructor()->getMock();
@@ -277,9 +246,7 @@ class ContextualizedNodeTest extends UnitTestCase
         $node->setNodeType($nodeType);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function removeCallsOnNodeWithNonMatchingContextMaterializesNodeData()
     {
         $node = $this->setUpNodeWithNonMatchingContext(['getChildNodes']);
@@ -290,9 +257,7 @@ class ContextualizedNodeTest extends UnitTestCase
         $node->remove();
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function removeRemovesAllChildNodesAndTheNodeItself()
     {
         $node = $this->setUpNodeWithNonMatchingContext(['getChildNodes']);
@@ -310,9 +275,7 @@ class ContextualizedNodeTest extends UnitTestCase
         $node->remove();
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function getParentReturnsParentNodeInCurrentNodesContext()
     {
         $currentNodeWorkspace = $this->getMockBuilder(Workspace::class)->disableOriginalConstructor()->getMock();
@@ -338,9 +301,7 @@ class ContextualizedNodeTest extends UnitTestCase
         self::assertSame($expectedContextualizedParentNode, $actualParentNode);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function getNodeReturnsTheSpecifiedNodeInTheCurrentNodesContext()
     {
         $currentNodeWorkspace = $this->getMockBuilder(Workspace::class)->disableOriginalConstructor()->getMock();
@@ -397,7 +358,7 @@ class ContextualizedNodeTest extends UnitTestCase
     }
 
     /**
-     * @return \PHPUnit\Framework\MockObject\MockObject
+     * @return MockObject
      */
     protected function getFirstLevelNodeCache()
     {

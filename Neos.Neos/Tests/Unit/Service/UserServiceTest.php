@@ -10,7 +10,7 @@ namespace Neos\Neos\Tests\Unit\Service;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use Neos\Flow\Security\Context;
 use Neos\Flow\Tests\UnitTestCase;
@@ -107,9 +107,7 @@ class UserServiceTest extends UnitTestCase
         $this->inject($this->userDomainService, 'partyRepository', $this->mockPartyRepository);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function getBackendUserReturnsTheCurrentlyLoggedInUser()
     {
         $mockUser = $this->getMockBuilder(User::class)->disableOriginalConstructor()->getMock();
@@ -118,18 +116,14 @@ class UserServiceTest extends UnitTestCase
         self::assertSame($mockUser, $this->userService->getBackendUser());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function getPersonalWorkspaceReturnsNullIfNoUserIsLoggedIn()
     {
         $this->mockUserDomainService->expects(self::atLeastOnce())->method('getCurrentUser')->will(self::returnValue(null));
         self::assertNull($this->userService->getPersonalWorkspace());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function getPersonalWorkspaceReturnsTheUsersWorkspaceIfAUserIsLoggedIn()
     {
         $mockUser = $this->getMockBuilder(User::class)->disableOriginalConstructor()->getMock();
@@ -143,18 +137,14 @@ class UserServiceTest extends UnitTestCase
         self::assertSame($mockUserWorkspace, $this->userService->getPersonalWorkspace());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function getPersonalWorkspaceNameReturnsNullIfNoUserIsLoggedIn()
     {
         $this->mockUserDomainService->expects(self::atLeastOnce())->method('getCurrentUser')->will(self::returnValue(null));
         self::assertNull($this->userService->getPersonalWorkspaceName());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function getPersonalWorkspaceNameReturnsTheUsersWorkspaceNameIfAUserIsLoggedIn()
     {
         $mockUser = $this->getMockBuilder(User::class)->disableOriginalConstructor()->getMock();
@@ -166,17 +156,13 @@ class UserServiceTest extends UnitTestCase
         self::assertSame('user-TheUserName', $this->userService->getPersonalWorkspaceName());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function getUserReturnsNullForInvalidUser()
     {
         self::assertNull($this->mockUserDomainService->getUser('NonExistantUser'));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function getUsersWillReturnUserOnSecondCall()
     {
         $mockUser = $this->getMockBuilder(User::class)->disableOriginalConstructor()->getMock();
@@ -193,9 +179,7 @@ class UserServiceTest extends UnitTestCase
         self::assertSame($mockUser, $this->userDomainService->getUser('test-user'));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function getUserReturnsUserForValidUser()
     {
         $mockUser = $this->getMockBuilder(User::class)->disableOriginalConstructor()->getMock();

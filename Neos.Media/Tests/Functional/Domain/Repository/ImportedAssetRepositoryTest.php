@@ -10,7 +10,7 @@ namespace Neos\Media\Tests\Functional\Domain\Repository;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
+use PHPUnit\Framework\Attributes\Test;
 use Neos\Flow\Persistence\Doctrine\PersistenceManager;
 use Neos\Media\Domain\Model\ImportedAsset;
 use Neos\Media\Domain\Repository\ImportedAssetRepository;
@@ -41,9 +41,7 @@ class ImportedAssetRepositoryTest extends AbstractTestCase
         $this->importedAssetRepository = $this->objectManager->get(ImportedAssetRepository::class);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function findOneByAssetSourceIdentifierAndRemoteAssetIdentifier_selects_original_asset()
     {
         // To validate original is not found accidentally by implicit identifier sorting, this is fixated in the test (there's no foreign key constraint)

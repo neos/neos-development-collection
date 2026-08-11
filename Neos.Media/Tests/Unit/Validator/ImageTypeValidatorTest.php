@@ -10,7 +10,8 @@ namespace Neos\Media\Tests\Unit\Validator;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
+use PHPUnit\Framework\Attributes\Test;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\Media\Domain\Model\Image;
 use Neos\Media\Validator\ImageTypeValidator;
@@ -20,9 +21,7 @@ use Neos\Media\Validator\ImageTypeValidator;
  */
 class ImageTypeValidatorTest extends UnitTestCase
 {
-    /**
-     * @test
-     */
+    #[Test]
     public function validatorReturnsErrorsIfGivenValueIsNoImage()
     {
         $validator = new ImageTypeValidator(['allowedTypes' => ['png']]);
@@ -45,12 +44,12 @@ class ImageTypeValidatorTest extends UnitTestCase
     }
 
     /**
-     * @test
-     * @dataProvider validatorTestsDataProvider
      * @param array $options
      * @param string $actualMediaType
      * @param boolean $supposedToBeValid
      */
+    #[DataProvider('validatorTestsDataProvider')]
+    #[Test]
     public function validatorTests(array $options, $actualMediaType, $supposedToBeValid)
     {
         $image = $this->getMockBuilder(Image::class)->disableOriginalConstructor()->getMock();

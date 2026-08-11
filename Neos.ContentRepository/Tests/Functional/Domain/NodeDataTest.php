@@ -10,7 +10,7 @@ namespace Neos\ContentRepository\Tests\Functional\Domain;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
+use PHPUnit\Framework\Attributes\Test;
 use Neos\ContentRepository\Tests\Functional\Domain\Fixtures\RelatedEntity;
 use Neos\Flow\Tests\FunctionalTestCase;
 use Neos\Flow\Utility\Algorithms;
@@ -66,9 +66,7 @@ class NodeDataTest extends FunctionalTestCase
         $this->inject($this->contextFactory, 'contextInstances', []);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function createNodeFromTemplateUsesIdentifierFromTemplate()
     {
         $identifier = Algorithms::generateUUID();
@@ -82,9 +80,7 @@ class NodeDataTest extends FunctionalTestCase
         self::assertSame($identifier, $newNode->getIdentifier());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function nodeWithRelatedEntityWillTakeCareOfAddingToPersistence()
     {
         $identifier = Algorithms::generateUUID();
@@ -110,9 +106,7 @@ class NodeDataTest extends FunctionalTestCase
         self::assertEquals('Reykjavik', $newNodeAgain->getProperty('entity')->getFavoritePlace());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function nodeWithRelatedEntityWillTakeCareOfUpdatingInPersistence()
     {
         $identifier = Algorithms::generateUUID();
@@ -150,9 +144,7 @@ class NodeDataTest extends FunctionalTestCase
     }
 
 
-    /**
-     * @test
-     */
+    #[Test]
     public function nodeWithRelatedEntitiesWillTakeCareOfAddingToPersistence()
     {
         $identifier = Algorithms::generateUUID();
@@ -182,9 +174,7 @@ class NodeDataTest extends FunctionalTestCase
         self::assertEquals('Japan', $entityArray[1]->getFavoritePlace());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function inContextWithEmptyDimensionsNodeVariantsWithoutDimensionsArePrioritized()
     {
         $siteImportService = $this->objectManager->get(SiteImportService::class);
@@ -202,9 +192,7 @@ class NodeDataTest extends FunctionalTestCase
         self::assertEmpty($resultingNodeData->getDimensions());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function setDimensionsSetsDimensions()
     {
         $siteImportService = $this->objectManager->get(SiteImportService::class);
@@ -241,9 +229,7 @@ class NodeDataTest extends FunctionalTestCase
         self::assertEquals('lv', $values['language'][0]);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function setDimensionsKeepsExistingDimensions()
     {
         $siteImportService = $this->objectManager->get(SiteImportService::class);
@@ -279,9 +265,7 @@ class NodeDataTest extends FunctionalTestCase
         self::assertEquals('lv', $values['language'][1]);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function setDimensionsToEMptyArrayRemovesDimensions()
     {
         $siteImportService = $this->objectManager->get(SiteImportService::class);

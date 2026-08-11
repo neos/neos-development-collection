@@ -10,7 +10,7 @@ namespace Neos\ContentRepository\Tests\Unit\FlowQueryOperations;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
+use PHPUnit\Framework\Attributes\Test;
 use Neos\ContentRepository\Domain\ContentSubgraph\NodePath;
 use Neos\ContentRepository\Domain\Model\NodeInterface;
 use Neos\ContentRepository\Domain\Projection\Content\TraversableNodes;
@@ -71,9 +71,7 @@ class NextAllOperationTest extends AbstractQueryOperationsTestCase
         $this->thirdNodeInLevel->expects(self::any())->method('findNodePath')->will(self::returnValue(NodePath::fromString('/site/third')));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function nextAllWillReturnEmptyResultForLastNodeInLevel()
     {
         $context = [$this->thirdNodeInLevel];
@@ -86,9 +84,7 @@ class NextAllOperationTest extends AbstractQueryOperationsTestCase
         self::assertEquals([], $output);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function nextAllWillReturnSecondNodeAndThirdNodeInLevelForFirstNodeInLevel()
     {
         $context = [$this->firstNodeInLevel];
@@ -101,9 +97,7 @@ class NextAllOperationTest extends AbstractQueryOperationsTestCase
         self::assertEquals([$this->secondNodeInLevel, $this->thirdNodeInLevel], $output);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function nextAllWillReturnThirdNodeInLevelForSecondNodeInLevel()
     {
         $context = [$this->secondNodeInLevel];
@@ -116,9 +110,7 @@ class NextAllOperationTest extends AbstractQueryOperationsTestCase
         self::assertEquals([$this->thirdNodeInLevel], $output);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function nextAllWillReturnSecondNodeAndThirdNodeInLevelForFirstAndSecondNodeInLevel()
     {
         $context = [$this->firstNodeInLevel, $this->secondNodeInLevel];

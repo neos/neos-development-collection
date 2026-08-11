@@ -10,7 +10,7 @@ namespace Neos\ContentRepository\Tests\Functional\Domain\Repository;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
+use PHPUnit\Framework\Attributes\Test;
 use Doctrine\DBAL\Platforms\MySqlPlatform;
 use Neos\Flow\Tests\Functional\Persistence\Fixtures;
 use Neos\Flow\Tests\Functional\Persistence\Fixtures\Image;
@@ -88,9 +88,7 @@ class NodeDataRepositoryTest extends FunctionalTestCase
         $this->inject($this->contextFactory, 'contextInstances', []);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function findNodesByRelatedEntitiesFindsExistingNodeWithMatchingEntityProperty()
     {
         $rootNode = $this->context->getRootNode();
@@ -112,9 +110,7 @@ class NodeDataRepositoryTest extends FunctionalTestCase
         self::assertCount(1, $result);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function findNodesByRelatedEntitiesFindsExistingNodeWithMatchingAssetLink()
     {
         $databasePlatform = $this->objectManager->get(Connection::class)->getDatabasePlatform();
@@ -157,9 +153,8 @@ class NodeDataRepositoryTest extends FunctionalTestCase
 
     /**
      * Tests findByProperties, see https://jira.neos.io/browse/NEOS-1849
-     *
-     * @test
      */
+    #[Test]
     public function findByPropertiesLimitsToStartingPointCorrectly()
     {
         $this->setUpNodes();
@@ -172,9 +167,8 @@ class NodeDataRepositoryTest extends FunctionalTestCase
 
     /**
      * Tests findByProperties, see https://jira.neos.io/browse/NEOS-1849
-     *
-     * @test
      */
+    #[Test]
     public function findByPropertiesLimitsToRootNodeCorrectly()
     {
         $this->setUpNodes();
@@ -187,9 +181,8 @@ class NodeDataRepositoryTest extends FunctionalTestCase
 
     /**
      * Tests addParentPathConstraintToQueryBuilder, see https://jira.neos.io/browse/NEOS-1849
-     *
-     * @test
      */
+    #[Test]
     public function findByParentAndNodeTypeLimitsToStartingPointCorrectly()
     {
         $this->setUpNodes();
@@ -202,9 +195,8 @@ class NodeDataRepositoryTest extends FunctionalTestCase
 
     /**
      * Tests addParentPathConstraintToQueryBuilder, see https://jira.neos.io/browse/NEOS-1849
-     *
-     * @test
      */
+    #[Test]
     public function findByParentAndNodeTypeLimitsToRootNodeCorrectly()
     {
         $this->setUpNodes();
@@ -217,9 +209,8 @@ class NodeDataRepositoryTest extends FunctionalTestCase
 
     /**
      * Tests addPathConstraintToQueryBuilder, see https://jira.neos.io/browse/NEOS-1849
-     *
-     * @test
      */
+    #[Test]
     public function findByPathWithoutReduceLimitsToStartingPointCorrectly()
     {
         $this->setUpNodes();
@@ -232,9 +223,8 @@ class NodeDataRepositoryTest extends FunctionalTestCase
 
     /**
      * Tests addPathConstraintToQueryBuilder, see https://jira.neos.io/browse/NEOS-1849
-     *
-     * @test
      */
+    #[Test]
     public function findByPathWithoutReduceLimitsToRootNodeCorrectly()
     {
         $this->setUpNodes();
@@ -245,9 +235,7 @@ class NodeDataRepositoryTest extends FunctionalTestCase
         self::assertCount(7, $foundNodes);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function findNodeByPropertySearch()
     {
         $this->createNodesForNodeSearchTest();
@@ -257,9 +245,7 @@ class NodeDataRepositoryTest extends FunctionalTestCase
         $this->assertResultConsistsOfNodes($result, ['test-node-1', 'test-node-2']);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function findNodesByPropertyKeyAndValue()
     {
         $this->createNodesForNodeSearchTest();

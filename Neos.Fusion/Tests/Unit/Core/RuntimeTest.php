@@ -10,7 +10,7 @@ namespace Neos\Fusion\Tests\Unit\Core;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
+use PHPUnit\Framework\Attributes\Test;
 use Neos\Eel\EelEvaluatorInterface;
 use Neos\Eel\ProtectedContext;
 use Neos\Flow\Exception;
@@ -26,9 +26,8 @@ class RuntimeTest extends UnitTestCase
     /**
      * if the rendering leads to an exception
      * the exception is transformed into 'content' by calling 'handleRenderingException'
-     *
-     * @test
      */
+    #[Test]
     public function renderHandlesExceptionDuringRendering()
     {
         $controllerContext = $this->getMockBuilder(ControllerContext::class)->disableOriginalConstructor()->getMock();
@@ -47,9 +46,8 @@ class RuntimeTest extends UnitTestCase
      * exceptions are rendered using the renderer from configuration
      *
      * if this handler throws exceptions, they are not handled
-     *
-     * @test
      */
+    #[Test]
     public function handleRenderingExceptionThrowsException()
     {
         $this->expectException(Exception::class);
@@ -67,9 +65,7 @@ class RuntimeTest extends UnitTestCase
         $runtime->handleRenderingException('/foo/bar', $runtimeException);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function evaluateProcessorForEelExpressionUsesProtectedContext()
     {
         $controllerContext = $this->getMockBuilder(ControllerContext::class)->disableOriginalConstructor()->getMock();
@@ -89,9 +85,7 @@ class RuntimeTest extends UnitTestCase
         $runtime->_call('evaluateEelExpression', 'q(node).property("title")');
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function evaluateWithCacheModeUncachedAndUnspecifiedContextThrowsException()
     {
         $this->expectException(\Neos\Fusion\Exception::class);
@@ -112,9 +106,7 @@ class RuntimeTest extends UnitTestCase
         $runtime->evaluate('foo/bar');
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function renderRethrowsSecurityExceptions()
     {
         $this->expectException(\Neos\Flow\Security\Exception::class);
@@ -126,9 +118,7 @@ class RuntimeTest extends UnitTestCase
         $runtime->render('/foo/bar');
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function runtimeCurrentContextStackWorksSimplePushPop()
     {
         $controllerContext = $this->getMockBuilder(ControllerContext::class)->disableOriginalConstructor()->getMock();
@@ -145,9 +135,7 @@ class RuntimeTest extends UnitTestCase
         self::assertSame([], $runtime->getCurrentContext(), 'Runtime context should be empty again at end.');
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function runtimeCurrentContextStack3PushesAndPops()
     {
         $controllerContext = $this->getMockBuilder(ControllerContext::class)->disableOriginalConstructor()->getMock();

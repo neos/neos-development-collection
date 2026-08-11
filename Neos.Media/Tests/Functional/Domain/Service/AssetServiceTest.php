@@ -12,7 +12,8 @@ namespace Neos\Media\Tests\Functional\Domain\Service;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use Neos\Flow\Persistence\Exception\IllegalObjectTypeException;
 use Neos\Flow\ResourceManagement\Exception;
 use Neos\Flow\ResourceManagement\ResourceManager;
@@ -78,14 +79,14 @@ class AssetServiceTest extends AbstractTestCase
     }
 
     /**
-     * @test
-     * @dataProvider replaceAssetResourceDataProvider
      *
      * @param string $replacementFilePath
      * @param array $options
      * @throws IllegalObjectTypeException
      * @throws Exception
      */
+    #[DataProvider('replaceAssetResourceDataProvider')]
+    #[Test]
     public function replaceAssetResource(string $replacementFilePath, array $options): void
     {
         $asset = $this->prepareImportedAsset(__DIR__ . '/../../Fixtures/Resources/417px-Mihaly_Csikszentmihalyi.jpg');

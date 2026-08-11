@@ -10,8 +10,8 @@ namespace Neos\Neos\Tests\Unit\Domain\Service;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
 use Neos\Flow\Tests\UnitTestCase;
+use PHPUnit\Framework\Attributes\Test;
 use Neos\Neos\Domain\Model\Domain;
 use Neos\Neos\Domain\Model\Site;
 use Neos\Neos\Domain\Repository\DomainRepository;
@@ -25,9 +25,7 @@ use Neos\Neos\Domain\Service\ContentContextFactory;
  */
 class ContentContextFactoryTest extends UnitTestCase
 {
-    /**
-     * @test
-     */
+    #[Test]
     public function createWillSetDomainAndSiteFromCurrentRequestIfNotGiven()
     {
         $mockDomainRepository = $this->getMockBuilder(DomainRepository::class)->disableOriginalConstructor()->getMock();

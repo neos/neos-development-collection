@@ -10,7 +10,8 @@ namespace Neos\ContentRepository\Tests\Unit\Domain\Projection\Content;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
+use PHPUnit\Framework\Attributes\Test;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
 use Neos\ContentRepository\Domain\Projection\Content\TraversableNodes;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
@@ -52,18 +53,14 @@ class TraversableNodesTest extends UnitTestCase
         return $mockNode;
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function fromArrayThrowsAnExceptionIfGetsPassedAString()
     {
         $this->expectException(\InvalidArgumentException::class);
         TraversableNodes::fromArray(['foo']);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function fromArrayThrowsAnExceptionIfGetsPassedAnInvalidObject()
     {
         $this->expectException(\InvalidArgumentException::class);
@@ -87,12 +84,12 @@ class TraversableNodesTest extends UnitTestCase
     }
 
     /**
-     * @param array $nodes1
-     * @param array $nodes2
-     * @param array $expectedResult
-     * @test
-     * @dataProvider mergeDataProvider
+     * @param int[] $nodes1
+     * @param int[] $nodes2
+     * @param int[] $expectedResult
      */
+    #[DataProvider('mergeDataProvider')]
+    #[Test]
     public function mergeTests(array $nodes1, array $nodes2, array $expectedResult)
     {
         $nodes1 = TraversableNodes::fromArray($nodes1);
@@ -101,45 +98,35 @@ class TraversableNodesTest extends UnitTestCase
         self::assertSame($expectedResult, $mergeResult->toArray());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function isEmptyIsTrueIfTraversableNodesDoesNotContainAnyNodes()
     {
         $nodes = TraversableNodes::fromArray([]);
         self::assertTrue($nodes->isEmpty());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function isEmptyIsFalseIfTraversableNodesContainNodes()
     {
         $nodes = TraversableNodes::fromArray([$this->mockNode1]);
         self::assertFalse($nodes->isEmpty());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function countReturnsZeroIfTraversableNodesIsEmpty()
     {
         $nodes = TraversableNodes::fromArray([]);
         self::assertSame(0, $nodes->count());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function countReturnsNumberOfNodes()
     {
         $nodes = TraversableNodes::fromArray([$this->mockNode1, $this->mockNode2]);
         self::assertSame(2, $nodes->count());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function previousThrowsExceptionIfReferenceNodeIsNotFoundInTheSet()
     {
         $this->expectException(\InvalidArgumentException::class);
@@ -148,9 +135,7 @@ class TraversableNodesTest extends UnitTestCase
         $nodes->previous($this->mockNode3);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function previousThrowsExceptionIfReferenceNodeIsTheFirstNodeInTheSet()
     {
         $this->expectException(\InvalidArgumentException::class);
@@ -159,9 +144,7 @@ class TraversableNodesTest extends UnitTestCase
         $nodes->previous($this->mockNode1);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function previousReturnsThePreviousNode()
     {
         $nodes = TraversableNodes::fromArray([$this->mockNode1, $this->mockNode2, $this->mockNode3]);
@@ -170,9 +153,7 @@ class TraversableNodesTest extends UnitTestCase
         self::assertSame($this->mockNode1, $result);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function previousAllThrowsExceptionIfReferenceNodeIsNotFoundInTheSet()
     {
         $this->expectException(\InvalidArgumentException::class);
@@ -198,9 +179,9 @@ class TraversableNodesTest extends UnitTestCase
      * @param array $nodes
      * @param TraversableNodeInterface $reference
      * @param array $expectedResult
-     * @test
-     * @dataProvider previousAllDataProvider
      */
+    #[DataProvider('previousAllDataProvider')]
+    #[Test]
     public function previousAllTests(array $nodes, TraversableNodeInterface $reference, array $expectedResult)
     {
         $traversableNodes = TraversableNodes::fromArray($nodes);
@@ -209,9 +190,7 @@ class TraversableNodesTest extends UnitTestCase
         self::assertSame($expectedResult, $result->toArray());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function nextThrowsExceptionIfReferenceNodeIsNotFoundInTheSet()
     {
         $this->expectException(\InvalidArgumentException::class);
@@ -220,9 +199,7 @@ class TraversableNodesTest extends UnitTestCase
         $nodes->next($this->mockNode3);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function nextThrowsExceptionIfReferenceNodeIsTheLastNodeInTheSet()
     {
         $this->expectException(\InvalidArgumentException::class);
@@ -231,9 +208,7 @@ class TraversableNodesTest extends UnitTestCase
         $nodes->next($this->mockNode3);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function nextReturnsTheNextNode()
     {
         $nodes = TraversableNodes::fromArray([$this->mockNode1, $this->mockNode2, $this->mockNode3]);
@@ -242,9 +217,7 @@ class TraversableNodesTest extends UnitTestCase
         self::assertSame($this->mockNode3, $result);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function nextAllThrowsExceptionIfReferenceNodeIsNotFoundInTheSet()
     {
         $this->expectException(\InvalidArgumentException::class);
@@ -270,9 +243,9 @@ class TraversableNodesTest extends UnitTestCase
      * @param array $nodes
      * @param TraversableNodeInterface $reference
      * @param array $expectedResult
-     * @test
-     * @dataProvider nextAllDataProvider
      */
+    #[DataProvider('nextAllDataProvider')]
+    #[Test]
     public function nextAllTests(array $nodes, TraversableNodeInterface $reference, array $expectedResult)
     {
         $traversableNodes = TraversableNodes::fromArray($nodes);

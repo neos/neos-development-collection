@@ -10,7 +10,7 @@ namespace Neos\Media\Tests\Functional\Domain\Repository;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
+use PHPUnit\Framework\Attributes\Test;
 use Doctrine\Common\Collections\ArrayCollection;
 use Neos\Flow\Persistence\Doctrine\PersistenceManager;
 use Neos\Media\Domain\Model\AssetCollection;
@@ -77,9 +77,7 @@ class AssetRepositoryTest extends AbstractTestCase
         Files::removeDirectoryRecursively($this->temporaryDirectory);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function assetsCanBePersisted()
     {
         $resource = $this->resourceManager->importResource(__DIR__ . '/../../Fixtures/Resources/license.txt');
@@ -98,9 +96,7 @@ class AssetRepositoryTest extends AbstractTestCase
         }
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function findBySearchTermReturnsFilteredResult()
     {
         $resource1 = $this->resourceManager->importResource(__DIR__ . '/../../Fixtures/Resources/license.txt');
@@ -128,9 +124,7 @@ class AssetRepositoryTest extends AbstractTestCase
         }
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function findBySearchTermAndTagsReturnsFilteredResult()
     {
         $tag = new Tag('home');
@@ -160,9 +154,7 @@ class AssetRepositoryTest extends AbstractTestCase
         }
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function testAddAssetVariantFilterClauseWithoutAssetCollection()
     {
         $resource1 = $this->resourceManager->importResource(__DIR__ . '/../../Fixtures/Resources/417px-Mihaly_Csikszentmihalyi.jpg');
@@ -199,9 +191,7 @@ class AssetRepositoryTest extends AbstractTestCase
         }
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function testAddAssetVariantFilterClauseWithAssetCollection()
     {
         $resource1 = $this->resourceManager->importResource(__DIR__ . '/../../Fixtures/Resources/417px-Mihaly_Csikszentmihalyi.jpg');

@@ -10,7 +10,7 @@ namespace Neos\Neos\Tests\Unit\Service;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
+use PHPUnit\Framework\Attributes\Test;
 use Neos\Flow\Persistence\QueryResultInterface;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\Neos\Domain\Model\Site;
@@ -110,9 +110,7 @@ class PublishingServiceTest extends UnitTestCase
         $this->mockWorkspace->expects(self::any())->method('getBaseWorkspace')->will(self::returnValue($this->mockBaseWorkspace));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function getUnpublishedNodesReturnsAnEmptyArrayIfThereAreNoNodesInTheGivenWorkspace()
     {
         $this->mockNodeDataRepository->expects(self::atLeastOnce())->method('findByWorkspace')->with($this->mockWorkspace)->will(self::returnValue([]));
@@ -121,9 +119,7 @@ class PublishingServiceTest extends UnitTestCase
         self::assertSame($actualResult, []);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function getUnpublishedNodesReturnsANodeInstanceForEveryNodeInTheGivenWorkspace()
     {
         $mockContext = $this->getMockBuilder(Context::class)->disableOriginalConstructor()->getMock();
@@ -162,9 +158,7 @@ class PublishingServiceTest extends UnitTestCase
         self::assertSame($actualResult, [$mockNode2, $mockNode1]);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function getUnpublishedNodesDoesNotReturnInvalidNodes()
     {
         $mockContext = $this->getMockBuilder(Context::class)->disableOriginalConstructor()->getMock();
@@ -200,9 +194,7 @@ class PublishingServiceTest extends UnitTestCase
         self::assertSame($actualResult, [$mockNode1]);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function getUnpublishedNodesCountReturnsTheNumberOfNodesInTheGivenWorkspaceMinusItsRootNode()
     {
         $this->mockWorkspace->expects(self::atLeastOnce())->method('getNodeCount')->will(self::returnValue(123));
@@ -211,9 +203,7 @@ class PublishingServiceTest extends UnitTestCase
         self::assertSame($expectedResult, $actualResult);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function publishNodePublishesTheGivenNodeFromItsWorkspaceToTheSpecifiedTargetWorkspace()
     {
         $mockNode = $this->getMockBuilder(NodeInterface::class)->getMock();
@@ -229,9 +219,7 @@ class PublishingServiceTest extends UnitTestCase
         $this->publishingService->publishNode($mockNode, $mockTargetWorkspace);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function publishNodePublishesTheGivenNodeToItsBaseWorkspaceIfNoTargetWorkspaceIsSpecified()
     {
         $mockNode = $this->getMockBuilder(NodeInterface::class)->getMock();
@@ -245,9 +233,7 @@ class PublishingServiceTest extends UnitTestCase
         $this->publishingService->publishNode($mockNode);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function publishNodePublishesTheNodeAndItsChildNodeCollectionsIfTheNodeIsADocument()
     {
         $mockNode = $this->getMockBuilder(NodeInterface::class)->getMock();
@@ -268,9 +254,7 @@ class PublishingServiceTest extends UnitTestCase
     }
 
 
-    /**
-     * @test
-     */
+    #[Test]
     public function publishNodePublishesTheNodeAndItsChildNodeCollectionsIfTheNodeTypeHasChildNodes()
     {
         $mockNode = $this->getMockBuilder(NodeInterface::class)->getMock();

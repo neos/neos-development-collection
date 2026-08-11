@@ -10,11 +10,11 @@ namespace Neos\Neos\Tests\Functional\FlowQueryOperations;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
 use Neos\ContentRepository\Domain\Repository\WorkspaceRepository;
 use Neos\ContentRepository\Domain\Service\ContextFactoryInterface;
 use Neos\Neos\Domain\Service\SiteImportService;
 use Neos\ContentRepository\Domain\Repository\NodeDataRepository;
+use PHPUnit\Framework\Attributes\Test;
 use Neos\Eel\FlowQuery\FlowQuery;
 use Neos\Eel\FlowQuery\FlowQueryException;
 use Neos\Flow\Tests\FunctionalTestCase;
@@ -79,9 +79,7 @@ class SortOperationTest extends FunctionalTestCase
         $this->inject($this->contextFactory, 'contextInstances', []);
     }
 
-    /**
-     * @test+
-     */
+    #[Test]
     public function callWithoutArgumentsCausesException()
     {
         $this->expectException(FlowQueryException::class);
@@ -90,9 +88,7 @@ class SortOperationTest extends FunctionalTestCase
         $operation->evaluate($flowQuery, []);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function invalidSortDirectionCausesException()
     {
         $this->expectException(FlowQueryException::class);
@@ -101,9 +97,7 @@ class SortOperationTest extends FunctionalTestCase
         $operation->evaluate($flowQuery, ['title', 'FOO']);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function sortByStringAscending()
     {
         $nodesToSort = [
@@ -123,9 +117,7 @@ class SortOperationTest extends FunctionalTestCase
         self::assertEquals($correctOrder, $flowQuery->getContext());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function sortByStringDescending()
     {
         $nodesToSort = [
@@ -145,9 +137,7 @@ class SortOperationTest extends FunctionalTestCase
         self::assertEquals($correctOrder, $flowQuery->getContext());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function sortByDateTimeAscending()
     {
         $nodesToSort = [
@@ -167,9 +157,7 @@ class SortOperationTest extends FunctionalTestCase
         self::assertEquals($correctOrder, $flowQuery->getContext());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function sortByDateTimeDescending()
     {
         $nodesToSort = [
@@ -189,9 +177,7 @@ class SortOperationTest extends FunctionalTestCase
         self::assertEquals($correctOrder, $flowQuery->getContext());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function invalidSortOptionCausesException()
     {
         $this->expectException(FlowQueryException::class);
@@ -200,9 +186,7 @@ class SortOperationTest extends FunctionalTestCase
         $operation->evaluate($flowQuery, ['title', 'ASC', 'SORT_BAR']);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function sortByStringNaturalCaseAscending()
     {
         $nodesToSort = [
@@ -226,9 +210,7 @@ class SortOperationTest extends FunctionalTestCase
         self::assertEquals($correctOrder, $flowQuery->getContext());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function sortByNumericDescending()
     {
         $nodesToSort = [

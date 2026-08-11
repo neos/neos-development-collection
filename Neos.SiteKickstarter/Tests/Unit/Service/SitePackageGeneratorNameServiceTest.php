@@ -12,6 +12,7 @@ namespace Neos\SiteKickstarter\Tests\Unit\Service;
  * source code.
  */
 
+use PHPUnit\Framework\Attributes\Test;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\SiteKickstarter\Service\SitePackageGeneratorNameService;
@@ -41,9 +42,7 @@ class SitePackageGeneratorNameServiceTest extends UnitTestCase
         $this->inject($this->sitePackageGeneratorNameService, 'objectManager', $this->mockObjectManager);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function getNameOfSitePackageGeneratorWithName()
     {
         $this->mockObjectManager->expects(self::any())->method('get')->will(self::returnCallback(function ($className) {
@@ -56,9 +55,7 @@ class SitePackageGeneratorNameServiceTest extends UnitTestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function getClassNameOfSitePackageGenerator()
     {
         $this->mockObjectManager->expects(self::any())->method('get')->will(self::returnCallback(function ($className) {

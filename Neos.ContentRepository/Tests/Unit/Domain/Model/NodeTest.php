@@ -10,7 +10,8 @@ namespace Neos\ContentRepository\Tests\Unit\Domain\Model;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
+use PHPUnit\Framework\Attributes\Test;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Neos\ContentRepository\Exception\NodeException;
 use Neos\Flow\Property\Exception as PropertyException;
 use Neos\Flow\Property\PropertyMapper;
@@ -31,9 +32,7 @@ use Neos\ContentRepository\Domain\Service\Context;
  */
 class NodeTest extends UnitTestCase
 {
-    /**
-     * @test
-     */
+    #[Test]
     public function createNodeFromTemplateUsesWorkspaceFromContextForNodeData()
     {
         $workspace = $this->getMockBuilder(Workspace::class)->disableOriginalConstructor()->getMock();
@@ -61,9 +60,7 @@ class NodeTest extends UnitTestCase
     }
 
 
-    /**
-     * @test
-     */
+    #[Test]
     public function getPrimaryChildNodeReturnsTheFirstChildNode()
     {
         $mockNodeData = $this->getMockBuilder(NodeData::class)->disableOriginalConstructor()->getMock();
@@ -150,10 +147,8 @@ class NodeTest extends UnitTestCase
         ];
     }
 
-    /**
-     * @test
-     * @dataProvider dataSourceForContextPathPattern
-     */
+    #[DataProvider('dataSourceForContextPathPattern')]
+    #[Test]
     public function contextPathPatternShouldWorkWithContexts($path, $expected)
     {
         $matches = [];
@@ -177,19 +172,15 @@ class NodeTest extends UnitTestCase
         ];
     }
 
-    /**
-     * @test
-     * @dataProvider dataSourceForInvalidContextPaths
-     */
+    #[DataProvider('dataSourceForInvalidContextPaths')]
+    #[Test]
     public function contextPathPatternShouldNotMatchOnInvalidPaths($path)
     {
         $result = preg_match(NodeInterface::MATCH_PATTERN_CONTEXTPATH, $path, $matches);
         self::assertEquals(0, $result, 'The invalid context path yielded matches: ' . print_r($matches, true));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function createNodeWithAutoCreatedChildNodesAndNoIdentifierUsesGeneratedIdentifierOfNodeForChildNodes()
     {
         $mockContext = $this->getMockBuilder(Context::class)->disableOriginalConstructor()->getMock();
@@ -227,9 +218,7 @@ class NodeTest extends UnitTestCase
         self::assertNotSame($generatedIdentifiers[1], $generatedIdentifiers[2], 'Child nodes should have distinct identifiers');
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function getPropertyThrowsMeaningfulExceptionWhenPropertyCantBeConverted()
     {
         $mockNodeData = $this->getMockBuilder(NodeData::class)->disableOriginalConstructor()->getMock();

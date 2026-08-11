@@ -2,6 +2,8 @@
 
 namespace Neos\Fusion\Tests\Functional\FusionObjects;
 
+use PHPUnit\Framework\Attributes\Test;
+
 /*
  * This file is part of the Neos.Fusion package.
  *
@@ -17,9 +19,7 @@ namespace Neos\Fusion\Tests\Functional\FusionObjects;
  */
 class MatchTest extends AbstractFusionObjectTestCase
 {
-    /**
-     * @test
-     */
+    #[Test]
     public function matchEmptyValue()
     {
         $view = $this->buildView();
@@ -28,9 +28,7 @@ class MatchTest extends AbstractFusionObjectTestCase
         self::assertEquals('empty', $result);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function matchSimple()
     {
         $view = $this->buildView();
@@ -39,9 +37,7 @@ class MatchTest extends AbstractFusionObjectTestCase
         self::assertEquals('module--left', $result);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function matchDefault()
     {
         $view = $this->buildView();
@@ -50,9 +46,7 @@ class MatchTest extends AbstractFusionObjectTestCase
         self::assertEquals('module--centered', $result);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function errorWithoutMatch()
     {
         $this->expectExceptionMessage('Unhandled match');
@@ -61,9 +55,7 @@ class MatchTest extends AbstractFusionObjectTestCase
         $view->render();
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function matchDefaultDataStructure()
     {
         $view = $this->buildView();

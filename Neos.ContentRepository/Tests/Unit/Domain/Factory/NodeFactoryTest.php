@@ -10,6 +10,7 @@ namespace Neos\ContentRepository\Tests\Unit\Domain\Factory;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+use PHPUnit\Framework\Attributes\Test;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Reflection\ReflectionService;
 use Neos\Flow\Tests\UnitTestCase;
@@ -63,9 +64,7 @@ class NodeFactoryTest extends UnitTestCase
         $this->inject($this->nodeFactory, 'objectManager', $this->objectManagerMock);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function createFromNodeDataCreatesANodeWithTheGivenContextAndNodeData()
     {
         $mockNodeType = $this->getMockBuilder(NodeType::class)->disableOriginalConstructor()->getMock();
@@ -83,9 +82,7 @@ class NodeFactoryTest extends UnitTestCase
         self::assertEquals('0068371a-c108-99cb-3aa5-81b8852a2d12', $node->getIdentifier());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function createContextMatchingNodeDataCreatesMatchingContext()
     {
         $dimensionValues = ['language' => ['is']];

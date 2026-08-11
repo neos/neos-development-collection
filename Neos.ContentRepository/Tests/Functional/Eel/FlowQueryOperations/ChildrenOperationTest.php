@@ -10,7 +10,7 @@ namespace Neos\ContentRepository\Tests\Functional\Eel\FlowQueryOperations;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
+use PHPUnit\Framework\Attributes\Test;
 use Neos\Eel\FlowQuery\FlowQuery;
 use Neos\ContentRepository\Tests\Functional\AbstractNodeTestCase;
 
@@ -19,9 +19,7 @@ use Neos\ContentRepository\Tests\Functional\AbstractNodeTestCase;
  */
 class ChildrenOperationTest extends AbstractNodeTestCase
 {
-    /**
-     * @test
-     */
+    #[Test]
     public function noFilterReturnsAllChildNodes()
     {
         $q = new FlowQuery([$this->node]);
@@ -29,9 +27,7 @@ class ChildrenOperationTest extends AbstractNodeTestCase
         self::assertEquals(5, count($foundNodes));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function propertyNameFilterIsSupported()
     {
         $q = new FlowQuery([$this->node]);
@@ -41,9 +37,7 @@ class ChildrenOperationTest extends AbstractNodeTestCase
         self::assertEquals(0, count($foundNodes));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function multiplePropertyNameFiltersIsSupported()
     {
         $q = new FlowQuery([$this->node]);
@@ -57,9 +51,7 @@ class ChildrenOperationTest extends AbstractNodeTestCase
         self::assertEquals(0, count($foundNodes));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function pathFiltersIsSupported()
     {
         $q = new FlowQuery([$this->node]);
@@ -67,9 +59,7 @@ class ChildrenOperationTest extends AbstractNodeTestCase
         self::assertEquals(2, count($foundNodes));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function attributeFilterIsSupported()
     {
         $q = new FlowQuery([$this->node]);
@@ -79,9 +69,7 @@ class ChildrenOperationTest extends AbstractNodeTestCase
         self::assertEquals(0, count($foundNodes));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function multipleAttributeFiltersIsSupported()
     {
         $q = new FlowQuery([$this->node]);
@@ -91,9 +79,7 @@ class ChildrenOperationTest extends AbstractNodeTestCase
         self::assertEquals(1, count($foundNodes));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function instanceofFilterIsSupported()
     {
         $q = new FlowQuery([$this->node]);
@@ -103,9 +89,7 @@ class ChildrenOperationTest extends AbstractNodeTestCase
         self::assertEquals(3, count($foundNodes));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function twoInstanceofFiltersIsSupported()
     {
         $q = new FlowQuery([$this->node]);
@@ -113,9 +97,7 @@ class ChildrenOperationTest extends AbstractNodeTestCase
         self::assertEquals(2, count($foundNodes));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function multipleInstanceofFiltersIsSupported()
     {
         $q = new FlowQuery([$this->node]);
@@ -123,9 +105,7 @@ class ChildrenOperationTest extends AbstractNodeTestCase
         self::assertEquals(5, count($foundNodes));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function negatedInstanceofFilterIsSupported()
     {
         $q = new FlowQuery([$this->node]);
@@ -135,9 +115,7 @@ class ChildrenOperationTest extends AbstractNodeTestCase
         self::assertEquals(3, count($foundNodes));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function twoNegatedInstanceofFiltersIsSupported()
     {
         $q = new FlowQuery([$this->node]);
@@ -145,9 +123,7 @@ class ChildrenOperationTest extends AbstractNodeTestCase
         self::assertEquals(0, count($foundNodes));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function combinedFilterIsSupported()
     {
         $q = new FlowQuery([$this->node]);
@@ -161,9 +137,7 @@ class ChildrenOperationTest extends AbstractNodeTestCase
         self::assertEquals(0, count($foundNodes));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function multipleCombinedFiltersIsSupported()
     {
         $q = new FlowQuery([$this->node]);

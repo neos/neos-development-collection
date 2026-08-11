@@ -10,7 +10,7 @@ namespace Neos\ContentRepository\Tests\Unit\FlowQueryOperations;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
+use PHPUnit\Framework\Attributes\Test;
 use Neos\ContentRepository\Domain\Model\NodeInterface;
 use Neos\ContentRepository\Domain\Service\Context;
 use Neos\ContentRepository\Domain\Service\ContextFactoryInterface;
@@ -39,9 +39,7 @@ class ContextOperationTest extends AbstractQueryOperationsTestCase
         $this->inject($this->operation, 'contextFactory', $this->mockContextFactory);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function canEvaluateReturnsTrueIfNodeIsInContext()
     {
         $mockNode = $this->createMock(NodeInterface::class);
@@ -50,9 +48,7 @@ class ContextOperationTest extends AbstractQueryOperationsTestCase
         self::assertTrue($result);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function evaluateCreatesModifiedContextFromFactoryUsingMergedProperties()
     {
         $suppliedContextProperties = ['infiniteImprobabilityDrive' => true];
@@ -69,9 +65,7 @@ class ContextOperationTest extends AbstractQueryOperationsTestCase
         $this->operation->evaluate($mockFlowQuery, [$suppliedContextProperties]);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function evaluateGetsAndSetsNodesInContextFromModifiedContextByIdentifier()
     {
         $suppliedContextProperties = ['infiniteImprobabilityDrive' => true];
@@ -93,9 +87,7 @@ class ContextOperationTest extends AbstractQueryOperationsTestCase
         $this->operation->evaluate($mockFlowQuery, [$suppliedContextProperties]);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function evaluateSkipsNodesNotAvailableInModifiedContext()
     {
         $suppliedContextProperties = ['infiniteImprobabilityDrive' => true];

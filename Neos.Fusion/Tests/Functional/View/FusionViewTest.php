@@ -10,7 +10,7 @@ namespace Neos\Fusion\Tests\Functional\View;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
+use PHPUnit\Framework\Attributes\Test;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\Controller\ControllerContext;
 use Neos\Flow\Tests\FunctionalTestCase;
@@ -35,18 +35,14 @@ class FusionViewTest extends FunctionalTestCase
         $this->mockControllerContext = $this->getMockBuilder(ControllerContext::class)->disableOriginalConstructor()->getMock();
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function fusionViewIsUsedForRendering()
     {
         $view = $this->buildView('Foo\Bar\Controller\TestController', 'index');
         self::assertEquals('X', $view->render());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function fusionViewUsesGivenPathIfSet()
     {
         $view = $this->buildView('Foo\Bar\Controller\TestController', 'index');
@@ -54,9 +50,7 @@ class FusionViewTest extends FunctionalTestCase
         self::assertEquals('Xfoobar', $view->render());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function fusionViewOutputsVariable()
     {
         $view = $this->buildView('Foo\Bar\Controller\TestController', 'index');

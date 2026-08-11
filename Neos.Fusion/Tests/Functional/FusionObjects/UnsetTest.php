@@ -1,6 +1,9 @@
 <?php
 namespace Neos\Fusion\Tests\Functional\FusionObjects;
 
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
+
 /*
  * This file is part of the Neos.Fusion package.
  *
@@ -26,10 +29,8 @@ class UnsetTest extends AbstractFusionObjectTestCase
         ];
     }
 
-    /**
-     * @test
-     * @dataProvider unsetExamples
-     */
+    #[DataProvider('unsetExamples')]
+    #[Test]
     public function unsetWorks($path, $expected)
     {
         $view = $this->buildView();

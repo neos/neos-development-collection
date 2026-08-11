@@ -1,6 +1,7 @@
 <?php
 namespace Neos\Fusion\Afx\Tests\Functional;
 
+use PHPUnit\Framework\Attributes\Test;
 use Neos\Fusion\Afx\Exception\AfxException;
 use Neos\Fusion\Afx\Parser\AfxParserException;
 use Neos\Fusion\Afx\Service\AfxService;
@@ -8,9 +9,7 @@ use PHPUnit\Framework\TestCase;
 
 class AfxServiceTest extends TestCase
 {
-    /**
-     * @test
-     */
+    #[Test]
     public function emptyCodeConvertedToEmptyFusion(): void
     {
         $afxCode = '';
@@ -20,9 +19,7 @@ class AfxServiceTest extends TestCase
         $this->assertEquals($expectedFusion, AfxService::convertAfxToFusion($afxCode));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function whitepaceCodeIsConvertedToEmptyFusion(): void
     {
         $afxCode = '   ';
@@ -32,9 +29,7 @@ class AfxServiceTest extends TestCase
         $this->assertEquals($expectedFusion, AfxService::convertAfxToFusion($afxCode));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function htmlTagsAreConvertedToFusionTags(): void
     {
         $afxCode = '<h1></h1>';
@@ -46,9 +41,7 @@ class AfxServiceTest extends TestCase
         $this->assertEquals($expectedFusion, AfxService::convertAfxToFusion($afxCode));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function htmlTagsWithSpaceContentAreConvertedToFusionTags(): void
     {
         $afxCode = '<h1>   </h1>';
@@ -61,9 +54,7 @@ class AfxServiceTest extends TestCase
         $this->assertEquals($expectedFusion, AfxService::convertAfxToFusion($afxCode));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function htmlTagsWithIgnoredContentAreConvertedToFusionTags(): void
     {
         $afxCode = <<<'EOF'
@@ -81,9 +72,7 @@ class AfxServiceTest extends TestCase
         $this->assertEquals($expectedFusion, AfxService::convertAfxToFusion($afxCode));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function multipleHtmlTagsAreConvertedToFusionArray(): void
     {
         $afxCode = '<h1></h1><p></p><p></p>';
@@ -103,9 +92,7 @@ class AfxServiceTest extends TestCase
         $this->assertEquals($expectedFusion, AfxService::convertAfxToFusion($afxCode));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function multipleHtmlTagsAndTextsAreConvertedToFusionArray(): void
     {
         $afxCode = 'Foo<h1></h1>Bar<p></p>Baz';
@@ -125,9 +112,7 @@ class AfxServiceTest extends TestCase
         $this->assertEquals($expectedFusion, AfxService::convertAfxToFusion($afxCode));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function whitepaceAroundAfxIsIgnored(): void
     {
         $afxCode = '  <h1></h1><p></p>  ';
@@ -144,9 +129,7 @@ class AfxServiceTest extends TestCase
         $this->assertEquals($expectedFusion, AfxService::convertAfxToFusion($afxCode));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function multipleHtmlTagsAreConvertedToFusionTags(): void
     {
         $afxCode = '<h1></h1><p></p><p></p>';
@@ -166,9 +149,7 @@ class AfxServiceTest extends TestCase
         $this->assertEquals($expectedFusion, AfxService::convertAfxToFusion($afxCode));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function whitespacesAndNewlinesAroundAfxCodeAreIgnored(): void
     {
         $afxCode = '
@@ -182,9 +163,7 @@ class AfxServiceTest extends TestCase
         $this->assertEquals($expectedFusion, AfxService::convertAfxToFusion($afxCode));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function newlinesInsideStringsAreCollapsedToSpaces(): void
     {
         $afxCode = '
@@ -204,9 +183,7 @@ EOF;
         $this->assertEquals($expectedFusion, AfxService::convertAfxToFusion($afxCode));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function htmlTagsAreConvertedToSelfClosingFusionTags(): void
     {
         $afxCode = '<h1/>';
@@ -219,9 +196,7 @@ EOF;
         $this->assertEquals($expectedFusion, AfxService::convertAfxToFusion($afxCode));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function attributesInHtmlTagsAreConvertedToTagAttributes(): void
     {
         $afxCode = '<h1 content="bar" class="fooo" />';
@@ -236,9 +211,7 @@ EOF;
         $this->assertEquals($expectedFusion, AfxService::convertAfxToFusion($afxCode));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function zeroAndSpaceInAttributesInHtmlTagsAreConvertedToTagAttributes(): void
     {
         $afxCode = '<h1 content="0" class=" " />';
@@ -254,9 +227,7 @@ EOF;
     }
 
 
-    /**
-     * @test
-     */
+    #[Test]
     public function sindgleQuotesAreEscapedInAttributesAndChildren(): void
     {
         $afxCode = '<h1 class="foo\'bar" >foo\'bar</h1>';
@@ -270,9 +241,7 @@ EOF;
         $this->assertEquals($expectedFusion, AfxService::convertAfxToFusion($afxCode));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function fusionTagsAreConvertedToFusionObjects(): void
     {
         $afxCode = '<Vendor.Site:Prototype/>';
@@ -283,9 +252,7 @@ EOF;
         $this->assertEquals($expectedFusion, AfxService::convertAfxToFusion($afxCode));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function attributesInFusionTagsAreConvertedToFusionPropertiesOrEelExpressions(): void
     {
         $afxCode = '<Vendor.Site:Prototype foo="bar" baz="bam" />';
@@ -298,9 +265,7 @@ EOF;
         $this->assertEquals($expectedFusion, AfxService::convertAfxToFusion($afxCode));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function metaAttributesOfFusionObjectTagsAreConvertedToFusionProperties(): void
     {
         $afxCode = '<Vendor.Site:Prototype @position="start" @if.hasTitle={title} />';
@@ -313,9 +278,7 @@ EOF;
         $this->assertEquals($expectedFusion, AfxService::convertAfxToFusion($afxCode));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function metaAttributesOfHtmlTagsAreConvertedToFusionProperties(): void
     {
         $afxCode = '<div @position="start" @if.hasTitle={title} ></div>';
@@ -329,9 +292,7 @@ EOF;
         $this->assertEquals($expectedFusion, AfxService::convertAfxToFusion($afxCode));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shorthandDirectMetaAttributesHaveAutoGeneratedPaths(): void
     {
         $afxCode = '<Vendor.Site:Prototype @if={eel1} @if={eel2} @process={eel3} @process={eel4} />';
@@ -346,9 +307,7 @@ EOF;
         $this->assertEquals($expectedFusion, AfxService::convertAfxToFusion($afxCode));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shorthandNestedMetaAttributesOfFusionObjectHaveAutoGeneratedPaths(): void
     {
         $afxCode = '<Vendor.Site:Prototype image.@if={eel1} image.@if={eel2} text.@if={eel3} data.@process={eel4} />';
@@ -363,9 +322,7 @@ EOF;
         $this->assertEquals($expectedFusion, AfxService::convertAfxToFusion($afxCode));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shorthandNestedMetaAttributesOfTagHaveAutoGeneratedPaths(): void
     {
         $afxCode = '<h1 class.@if={eel1} style.@if={eel2} class.@if={eel3} data.@process={eel4} ></h1>';
@@ -381,9 +338,7 @@ EOF;
         $this->assertEquals($expectedFusion, AfxService::convertAfxToFusion($afxCode));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function contentOfHtmlTagsIsRenderedAsFusionContent(): void
     {
         $afxCode = '<h1>Fooo</h1>';
@@ -396,9 +351,7 @@ EOF;
         $this->assertEquals($expectedFusion, AfxService::convertAfxToFusion($afxCode));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function zeroInContentOfHtmlTagsIsRenderedAsFusionContent(): void
     {
         $afxCode = '<h1>0</h1>';
@@ -411,9 +364,7 @@ EOF;
         $this->assertEquals($expectedFusion, AfxService::convertAfxToFusion($afxCode));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function spaceInContentOfHtmlTagsIsRenderedAsFusionContent(): void
     {
         $afxCode = '<h1> </h1>';
@@ -426,9 +377,7 @@ EOF;
         $this->assertEquals($expectedFusion, AfxService::convertAfxToFusion($afxCode));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function contentOfFusionTagsIsRenderedAsFusionRenderer(): void
     {
         $afxCode = '<Vendor.Site:Prototype>Fooo</Vendor.Site:Prototype>';
@@ -440,9 +389,7 @@ EOF;
         $this->assertEquals($expectedFusion, AfxService::convertAfxToFusion($afxCode));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function textContentOfHtmlTagsIsRenderedAsConfiguredChildrenProperty(): void
     {
         $afxCode = '<Vendor.Site:Prototype @children="children">Fooo</Vendor.Site:Prototype>';
@@ -454,9 +401,7 @@ EOF;
         $this->assertEquals($expectedFusion, AfxService::convertAfxToFusion($afxCode));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function eelContentOfHtmlTagsIsRenderedAsConfiguredChildrenProperty(): void
     {
         $afxCode = '<Vendor.Site:Prototype @children="children">{eelExpression()}</Vendor.Site:Prototype>';
@@ -468,9 +413,7 @@ EOF;
         $this->assertEquals($expectedFusion, AfxService::convertAfxToFusion($afxCode));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function complexChildrenAreRenderedAsArray(): void
     {
         $afxCode = '<h1><strong>foo</strong><i>bar</i></h1>';
@@ -492,9 +435,7 @@ EOF;
         $this->assertEquals($expectedFusion, AfxService::convertAfxToFusion($afxCode));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function complexChildrenAreRenderedAsArrayIgnoringWhitespaceInBetween(): void
     {
         $afxCode = <<<'EOF'
@@ -525,9 +466,7 @@ EOF;
         $this->assertEquals($expectedFusion, AfxService::convertAfxToFusion($afxCode));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function complexChildrenAreRenderedAsArrayWithOptionalKeys(): void
     {
         $afxCode = '<h1><strong @key="key_one">foo</strong><i @key="key_two">bar</i></h1>';
@@ -549,9 +488,7 @@ EOF;
         $this->assertEquals($expectedFusion, AfxService::convertAfxToFusion($afxCode));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function complexChildrenAreCanContainTagsAnsValues(): void
     {
         $afxCode = '<h1>a string<strong>a tag</strong>{eelExpression()}</h1>';
@@ -571,9 +508,7 @@ EOF;
         $this->assertEquals($expectedFusion, AfxService::convertAfxToFusion($afxCode));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function childrenWithPathesAreRendered(): void
     {
         $afxCode = '<Vendor.Site:Prototype><strong @path="namedProp">foo</strong></Vendor.Site:Prototype>';
@@ -588,9 +523,7 @@ EOF;
         $this->assertEquals($expectedFusion, AfxService::convertAfxToFusion($afxCode));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function multipleChildrenWithPathesAreRendered(): void
     {
         $afxCode = '<Vendor.Site:Prototype><strong @path="propOne">foo</strong><Vendor.Site:Prototype @path="propTwo">bar</Vendor.Site:Prototype></Vendor.Site:Prototype>';
@@ -608,9 +541,7 @@ EOF;
         $this->assertEquals($expectedFusion, AfxService::convertAfxToFusion($afxCode));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function childrenWithPathesAreCompatibleWithContentChildren(): void
     {
         $afxCode = '<Vendor.Site:Prototype><strong @path="propOne">foo</strong><Vendor.Site:Prototype @path="propTwo">bar</Vendor.Site:Prototype><div>a tag</div><div>another tag</div></Vendor.Site:Prototype>';
@@ -638,9 +569,7 @@ EOF;
         $this->assertEquals($expectedFusion, AfxService::convertAfxToFusion($afxCode));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function childrenWithDeepPathsAreSupported(): void
     {
         $afxCode = '<Vendor.Site:Prototype><strong @path="a.fusion.path">foo</strong><Vendor.Site:Prototype @path="another.fusion.path">bar</Vendor.Site:Prototype></Vendor.Site:Prototype>';
@@ -658,9 +587,7 @@ EOF;
         $this->assertEquals($expectedFusion, AfxService::convertAfxToFusion($afxCode));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function spacesNewLinesAndSpacesAroundAreIgnored(): void
     {
         $afxCode = '<h1>
@@ -682,9 +609,7 @@ EOF;
         $this->assertEquals($expectedFusion, AfxService::convertAfxToFusion($afxCode));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function spacesInsideALineArePreserved(): void
     {
         $afxCode = '<h1>
@@ -704,9 +629,7 @@ EOF;
         $this->assertEquals($expectedFusion, AfxService::convertAfxToFusion($afxCode));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function spacesInsideALineArePreservedAlsoForStrings(): void
     {
         $afxCode = '<h1>
@@ -726,9 +649,7 @@ EOF;
         $this->assertEquals($expectedFusion, AfxService::convertAfxToFusion($afxCode));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function spreadsAreEvaluatedForFusionObjectTags(): void
     {
         $afxCode = '<Vendor.Site:Prototype {...spreadExpression} />';
@@ -741,9 +662,7 @@ EOF;
         $this->assertEquals($expectedFusion, AfxService::convertAfxToFusion($afxCode));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function spreadsCanMixWithPropsForFusionObjectTags(): void
     {
         $afxCode = '<Vendor.Site:Prototype stringBefore="string" expressionBefore={expression} {...spreadExpression} stringAfter="string" expressionAfter={expression} />';
@@ -763,9 +682,7 @@ EOF;
         $this->assertEquals($expectedFusion, AfxService::convertAfxToFusion($afxCode));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function spreadsAreEvaluetedForHtmlTags(): void
     {
         $afxCode = '<h1 {...spreadExpression} />';
@@ -780,9 +697,7 @@ EOF;
         $this->assertEquals($expectedFusion, AfxService::convertAfxToFusion($afxCode));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function spreadsCanMixWithPropsForHtmlTags(): void
     {
         $afxCode = '<h1 stringBefore="string" expressionBefore={expression} {...spreadExpression} stringAfter="string" expressionAfter={expression} />';
@@ -803,9 +718,7 @@ EOF;
         $this->assertEquals($expectedFusion, AfxService::convertAfxToFusion($afxCode));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function slashesInTextNodesArePreserved(): void
     {
         $afxCode = '<h1>\o/</h1>';
@@ -819,9 +732,7 @@ EOF;
         $this->assertEquals($expectedFusion, AfxService::convertAfxToFusion($afxCode));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function textsAreEscaped(): void
     {
         $afxCode = <<<'EOF'
@@ -837,9 +748,7 @@ EOF;
         $this->assertEquals($expectedFusion, AfxService::convertAfxToFusion($afxCode));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function commentsAreIgnored(): void
     {
         $afxCode = <<<'EOF'
@@ -860,9 +769,7 @@ EOF;
         $this->assertEquals($expectedFusion, AfxService::convertAfxToFusion($afxCode));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function standaloneCommentsAreIgnored(): void
     {
         $afxCode = <<<'EOF'
@@ -875,9 +782,7 @@ EOF;
         $this->assertEquals($expectedFusion, AfxService::convertAfxToFusion($afxCode));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function standaloneCommentsChildrenAreIgnored(): void
     {
         $afxCode = <<<'EOF'
@@ -893,9 +798,7 @@ EOF;
         $this->assertEquals($expectedFusion, AfxService::convertAfxToFusion($afxCode));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function multilineCommentsAreIgnored(): void
     {
         $afxCode = <<<'EOF'
@@ -918,9 +821,7 @@ EOF;
         $this->assertEquals($expectedFusion, AfxService::convertAfxToFusion($afxCode));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function slashesInStringNodesArePreserved()
     {
         $afxCode = <<<'EOF'
@@ -937,9 +838,7 @@ EOF;
         $this->assertEquals($expectedFusion, AfxService::convertAfxToFusion($afxCode));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function stringsAreEscaped()
     {
         $afxCode = <<<'EOF'
@@ -956,9 +855,7 @@ EOF;
         $this->assertEquals($expectedFusion, AfxService::convertAfxToFusion($afxCode));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function unclosedTagsRaisesException(): void
     {
         $this->expectException(AfxParserException::class);
@@ -966,9 +863,7 @@ EOF;
         AfxService::convertAfxToFusion($afxCode);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function unclosedAttributeRaisesException(): void
     {
         $this->expectException(AfxParserException::class);
@@ -976,9 +871,7 @@ EOF;
         AfxService::convertAfxToFusion($afxCode);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function unclosedExpressionRaisesException(): void
     {
         $this->expectException(AfxParserException::class);
@@ -986,9 +879,7 @@ EOF;
         AfxService::convertAfxToFusion($afxCode);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function unclosedSpreadRaisesException(): void
     {
         $this->expectException(AfxParserException::class);
@@ -996,9 +887,7 @@ EOF;
         AfxService::convertAfxToFusion($afxCode);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function childPathAnnotationWithExpressionRaisesException(): void
     {
         $this->expectException(AfxException::class);
@@ -1006,9 +895,7 @@ EOF;
         AfxService::convertAfxToFusion($afxCode);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function keyAnnotationWithExpressionRaisesException(): void
     {
         $this->expectException(AfxException::class);
@@ -1016,9 +903,7 @@ EOF;
         AfxService::convertAfxToFusion($afxCode);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function childrenAnnotationWithExpressionRaisesException(): void
     {
         $this->expectException(AfxException::class);

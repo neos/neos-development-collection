@@ -10,7 +10,7 @@ namespace Neos\ContentRepository\Tests\Unit\FlowQueryOperations;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
+use PHPUnit\Framework\Attributes\Test;
 use Neos\ContentRepository\Domain\ContentSubgraph\NodePath;
 use Neos\ContentRepository\Domain\Model\NodeInterface;
 use Neos\ContentRepository\Domain\Projection\Content\TraversableNodes;
@@ -72,9 +72,7 @@ class PrevOperationTest extends AbstractQueryOperationsTestCase
         $this->thirdNodeInLevel->expects(self::any())->method('findParentNode')->will(self::returnValue($this->siteNode));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function prevWillReturnEmptyResultForFirstNodeInLevel()
     {
         $context = [$this->firstNodeInLevel];
@@ -87,9 +85,7 @@ class PrevOperationTest extends AbstractQueryOperationsTestCase
         self::assertEquals([], $output);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function prevWillReturnFirstNodeInLevelForSecondNodeInLevel()
     {
         $context = [$this->secondNodeInLevel];
@@ -102,9 +98,7 @@ class PrevOperationTest extends AbstractQueryOperationsTestCase
         self::assertEquals([$this->firstNodeInLevel], $output);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function prevWillReturnFirstNodeAndSecondNodeInLevelForSecondAndThirdNodeInLevel()
     {
         $context = [$this->secondNodeInLevel, $this->thirdNodeInLevel];

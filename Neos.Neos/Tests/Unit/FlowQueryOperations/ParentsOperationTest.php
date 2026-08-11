@@ -10,7 +10,7 @@ namespace Neos\Neos\Tests\Unit\FlowQueryOperations;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
+use PHPUnit\Framework\Attributes\Test;
 use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
 use Neos\ContentRepository\Domain\ContentSubgraph\NodePath;
 use Neos\ContentRepository\Exception\NodeException;
@@ -24,10 +24,10 @@ use Neos\Neos\Eel\FlowQueryOperations\ParentsOperation;
 class ParentsOperationTest extends UnitTestCase
 {
     /**
-     * @test
      * @throws \ReflectionException
      * @throws \Neos\Eel\Exception
      */
+    #[Test]
     public function parentsWillReturnTheSiteNodeAsRootLevelParent()
     {
         $rootNode = $this->createMock(TraversableNodeInterface::class);

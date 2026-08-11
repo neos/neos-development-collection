@@ -10,11 +10,12 @@ namespace Neos\ContentRepository\Tests\Unit\Domain\Model\InterDimension;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
+use PHPUnit\Framework\Attributes\Test;
 use Neos\ContentRepository\Domain\Model\InterDimension\InterDimensionalFallbackGraph;
 use Neos\ContentRepository\Domain\Model\IntraDimension\ContentDimensionValue;
 use Neos\ContentRepository\Domain\Model\IntraDimension\ContentDimension;
 use Neos\ContentRepository\Domain\Model\InterDimension\ContentSubgraph;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Neos\ContentRepository\Domain\Model\IntraDimension\IntraDimensionalFallbackGraph;
 use Neos\ContentRepository\Domain\Model\InterDimension\VariationEdge;
 use Neos\ContentRepository\Domain\Model\InterDimension;
@@ -27,9 +28,7 @@ use Neos\Utility\ObjectAccess;
  */
 class InterDimensionalFallbackGraphTest extends UnitTestCase
 {
-    /**
-     * @test
-     */
+    #[Test]
     public function createContentSubgraphRegistersSubgraph()
     {
         $graph = new InterDimensionalFallbackGraph([]);
@@ -39,9 +38,7 @@ class InterDimensionalFallbackGraphTest extends UnitTestCase
         self::assertSame($contentSubgraph, $graph->getSubgraph($contentSubgraph->getIdentityHash()));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function connectSubgraphsAddsFallbackToVariant()
     {
         $contentDimension = new ContentDimension('test');
@@ -57,9 +54,7 @@ class InterDimensionalFallbackGraphTest extends UnitTestCase
         self::assertContains($fallback, $variant->getFallback());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function connectSubgraphsAddsVariantToFallback()
     {
         $contentDimension = new ContentDimension('test');
@@ -76,12 +71,12 @@ class InterDimensionalFallbackGraphTest extends UnitTestCase
     }
 
     /**
-     * @test
-     * @dataProvider dimensionValueCombinationProvider
      * @param array $variantDimensionCombination
      * @param array $fallbackDimensionCombination
      * @param array $expectedWeight
      */
+    #[DataProvider('dimensionValueCombinationProvider')]
+    #[Test]
     public function calculateFallbackWeightAggregatesCorrectWeightPerDimension(array $variantDimensionCombination, array $fallbackDimensionCombination, array $expectedWeight)
     {
         $intraGraph = new IntraDimensionalFallbackGraph();
@@ -138,9 +133,7 @@ class InterDimensionalFallbackGraphTest extends UnitTestCase
         ];
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function determineWeightNormalizationBaseEvaluatesToMaximumDimensionDepthPlusOne()
     {
         $firstDimension = new ContentDimension('first');
@@ -157,12 +150,12 @@ class InterDimensionalFallbackGraphTest extends UnitTestCase
 
 
     /**
-     * @test
-     * @dataProvider variationEdgeWeightNormalizationProvider
      * @param int $dimensionDepth
      * @param array $weight
      * @param int $expectedNormalizedWeight
      */
+    #[DataProvider('variationEdgeWeightNormalizationProvider')]
+    #[Test]
     public function normalizeWeightCorrectlyCalculatesNormalizedWeight(int $dimensionDepth, array $weight, int $expectedNormalizedWeight)
     {
         $primaryDimension = new ContentDimension('primary');
@@ -191,11 +184,11 @@ class InterDimensionalFallbackGraphTest extends UnitTestCase
     }
 
     /**
-     * @test
-     * @dataProvider fallbackPrioritizationProvider
      * @param array $primaryFallbackWeight
      * @param array $secondaryFallbackWeight
      */
+    #[DataProvider('fallbackPrioritizationProvider')]
+    #[Test]
     public function getPrimaryFallbackReturnsFallbackWithLowestNormalizedWeight($primaryFallbackWeight, $secondaryFallbackWeight)
     {
         $primaryDimension = new ContentDimension('primary');

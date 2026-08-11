@@ -10,7 +10,7 @@ namespace Neos\Fusion\Tests\Functional\FusionObjects;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
+use PHPUnit\Framework\Attributes\Test;
 use Neos\Flow\Cache\CacheManager;
 use Neos\Cache\Frontend\FrontendInterface;
 use Neos\Flow\Mvc\ActionRequest;
@@ -42,9 +42,7 @@ class ContentCacheTest extends AbstractFusionObjectTestCase
         $this->inject($this->contentCache, 'cache', $cacheFrontend);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function renderCachedSegmentTwiceYieldsSameResult()
     {
         $object = new TestModel(42, 'Object value 1');
@@ -66,9 +64,7 @@ class ContentCacheTest extends AbstractFusionObjectTestCase
         self::assertSame($firstRenderResult, $secondRenderResult);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function nestedCacheSegmentsAreFetchedFromCache()
     {
         $object = new TestModel(42, 'Object value 1');
@@ -92,9 +88,7 @@ class ContentCacheTest extends AbstractFusionObjectTestCase
         self::assertSame('Outer segment|site=site2|Inner segment|object=Object value 1|End inner|End outer', $secondRenderResult);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function uncachedSegmentOnTopLevelIsProcessedWithoutChanges()
     {
         $object = new TestModel(42, 'Object value 1');
@@ -112,9 +106,7 @@ class ContentCacheTest extends AbstractFusionObjectTestCase
         self::assertSame('Uncached segment|counter=2|End uncached', $secondRenderResult);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function uncachedSegmentWithWrongContextConfigurationWillTriggerErrorOnFirstHit()
     {
         $object = new TestModel(42, 'Object value 1');
@@ -134,9 +126,7 @@ class ContentCacheTest extends AbstractFusionObjectTestCase
         self::assertSame('Uncached segment|counter=|End uncached', $secondRenderResult);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function uncachedSegmentInCachedSegmentIsEvaluatedFromSerializedContext()
     {
         $object = new TestModel(42, 'Object value 1');
@@ -157,9 +147,7 @@ class ContentCacheTest extends AbstractFusionObjectTestCase
         self::assertSame('Outer segment|object=Object value 1|Uncached segment|counter=2|End uncached|End outer', $secondRenderResult);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function uncachedSegmentInUpdatedCachedSegmentIsEvaluatedFromContextValue()
     {
         $object = new TestModel(42, 'Object value 1');
@@ -184,9 +172,7 @@ class ContentCacheTest extends AbstractFusionObjectTestCase
         self::assertSame('Outer segment|object=New object value|Uncached segment|counter=2|End uncached|End outer', $secondRenderResult);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function flushByTagFlushesCacheEntriesWithSpecificEntryTagsAndRerenderCreatesOuterSegment()
     {
         $object = new TestModel(42, 'Object value 1');
@@ -214,9 +200,7 @@ class ContentCacheTest extends AbstractFusionObjectTestCase
         self::assertSame('Outer segment|counter=2|Inner segment 1|object=Object value 2|End innerInner segment 2|object=Object value 1|End inner|End outer', $secondRenderResult);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function entryTagsUseSanitizedTagValue()
     {
         $object = new TestModel(42, 'Object value 1');
@@ -248,9 +232,7 @@ class ContentCacheTest extends AbstractFusionObjectTestCase
         self::assertSame('Outer segment|counter=3|Inner segment 1|object=Object value 2|End innerInner segment 2|object=Object value 2|End inner|End outer', $secondRenderResult);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function processorsAreAppliedBeforeCachingASegment()
     {
         $object = new TestModel(42, 'Object value 1');
@@ -268,9 +250,7 @@ class ContentCacheTest extends AbstractFusionObjectTestCase
         self::assertSame($firstRenderResult, $secondRenderResult);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function processorsAreAppliedAfterUncachedSegments()
     {
         $object = new TestModel(42, 'Object value 1');
@@ -288,9 +268,7 @@ class ContentCacheTest extends AbstractFusionObjectTestCase
         self::assertSame('Cached segment|Processor start|counter=2|Uncached segment|object=Object value 1|End cached|Processor end|End segment', $secondRenderResult);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function conditionsAreAppliedAfterGettingCachedSegment()
     {
         $object = new TestModel(42, 'Object value 1');
@@ -316,9 +294,7 @@ class ContentCacheTest extends AbstractFusionObjectTestCase
         self::assertSame('', $updatedRenderResult);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function conditionsAreAppliedForUncachedSegment()
     {
         $object = new TestModel(42, 'Object value 1');
@@ -349,9 +325,7 @@ class ContentCacheTest extends AbstractFusionObjectTestCase
         self::assertSame('Cached segment||End segment', $updatedRenderResult);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function handlingInnerRenderingExceptionsDisablesTheContentCache()
     {
         $object = new TestModel(42, 'Object value 1');
@@ -369,9 +343,7 @@ class ContentCacheTest extends AbstractFusionObjectTestCase
         self::assertStringStartsWith('Cached segment|counter=2|Exception', $secondRenderResult);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function exceptionInAlreadyCachedSegmentShouldNotLeaveSegmentMarkersInOutput()
     {
         $object = new TestModel(42, 'Object value 1');
@@ -393,9 +365,7 @@ class ContentCacheTest extends AbstractFusionObjectTestCase
         self::assertStringStartsWith('Cached segment|counter=1|Exception', $secondRenderResult);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function maximumLifetimeForCachedSegmentWillBeMinimumOfNestedEmbedSegmentsAndSelf()
     {
         $view = $this->buildView();
@@ -440,9 +410,7 @@ class ContentCacheTest extends AbstractFusionObjectTestCase
         ], $entriesWritten);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function cacheUsesGlobalCacheIdentifiersAsDefaultPrototypeForEntryIdentifier()
     {
         $entriesWritten = [];
@@ -484,9 +452,7 @@ class ContentCacheTest extends AbstractFusionObjectTestCase
         ], $entriesWritten);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function globalIdentifiersAreUsedWithBlankEntryIdentifiers()
     {
         $entriesWritten = [];
@@ -522,9 +488,7 @@ class ContentCacheTest extends AbstractFusionObjectTestCase
         ], $entriesWritten);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function cacheIdentifierPrototypeCanBeOverwritten()
     {
         $entriesWritten = [];
@@ -580,9 +544,7 @@ class ContentCacheTest extends AbstractFusionObjectTestCase
     }
 
 
-    /**
-     * @test
-     */
+    #[Test]
     public function uncachedSegmentInCachedSegmentCanOverrideContextVariables()
     {
         $object = new TestModel(42, 'Object value 1');
@@ -603,9 +565,7 @@ class ContentCacheTest extends AbstractFusionObjectTestCase
         self::assertSame('Outer segment|object=Object value 1|Uncached segment|counter=2|End uncached|End outer', $secondRenderResult);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function dynamicSegmentIsCachedIfDiscriminatorIsNotChanged()
     {
         $renderObject = new TestModel(42, 'Render object');
@@ -627,9 +587,7 @@ class ContentCacheTest extends AbstractFusionObjectTestCase
         self::assertSame($firstRenderResult, $secondRenderResult);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function dynamicSegmentCacheIsFlushedIfDiscriminatorIsChanged()
     {
         $renderObject = new TestModel(42, 'Render object');
@@ -651,9 +609,7 @@ class ContentCacheTest extends AbstractFusionObjectTestCase
         self::assertNotSame($firstRenderResult, $secondRenderResult);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function dynamicSegmentCacheBehavesLikeUncachedIfDiscriminatorIsDisabled()
     {
         $renderObject = new TestModel(42, 'Render object');
@@ -679,9 +635,7 @@ class ContentCacheTest extends AbstractFusionObjectTestCase
         self::assertSame('Dynamic segment|counter=3', $fourthRenderResult);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function cachedSegmentsCanBeNestedWithinDynamicSegments()
     {
         $renderObject = new TestModel(42, 'Render object');
@@ -698,9 +652,7 @@ class ContentCacheTest extends AbstractFusionObjectTestCase
         self::assertSame($firstRenderResult, $secondRenderResult);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function cachedSegmentWithNestedDynamicSegmentCanReRenderWithCacheEntryFlushTest()
     {
         $view = $this->buildView();
@@ -719,9 +671,7 @@ class ContentCacheTest extends AbstractFusionObjectTestCase
         self::assertSame('prettyUnused', $secondRenderResult);
         self::assertSame('prettyUnused', $thirdRenderResult);
     }
-    /**
-     * @test
-     */
+    #[Test]
     public function contextIsCorrectlyEvaluated()
     {
         $view = $this->buildView();

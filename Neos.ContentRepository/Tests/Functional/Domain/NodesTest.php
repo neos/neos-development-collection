@@ -10,7 +10,7 @@ namespace Neos\ContentRepository\Tests\Functional\Domain;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
+use PHPUnit\Framework\Attributes\Test;
 use Neos\ContentRepository\Exception\NodeExistsException;
 use Neos\Flow\Configuration\ConfigurationManager;
 use Neos\Flow\Tests\FunctionalTestCase;
@@ -109,18 +109,14 @@ class NodesTest extends FunctionalTestCase
         $this->contentDimensionRepository->setDimensionsConfiguration($configuredDimensions);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function nodeCreationThrowsExceptionIfNodeNameContainsUppercaseCharacters()
     {
         $this->expectException(\InvalidArgumentException::class);
         $this->context->getRootNode()->createNode('fooBar');
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function setNameWorksRecursively()
     {
         $rootNode = $this->context->getRootNode();
@@ -133,9 +129,7 @@ class NodesTest extends FunctionalTestCase
         self::assertEquals('/quux/bar/baz', $bazNode->getPath());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function nodesCanBeRenamed()
     {
         $rootNode = $this->context->getRootNode();
@@ -151,9 +145,7 @@ class NodesTest extends FunctionalTestCase
         self::assertEquals('/quux/lax/baz', $bazNode->getPath());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function nodesCreatedInTheLiveWorkspacesCanBeRetrievedAgainInTheLiveContext()
     {
         $rootNode = $this->context->getRootNode();
@@ -166,9 +158,7 @@ class NodesTest extends FunctionalTestCase
         self::assertSame($fooNode, $rootNode->getNode('foo'));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function createdNodesHaveDefaultValuesSet()
     {
         $rootNode = $this->context->getRootNode();
@@ -180,9 +170,7 @@ class NodesTest extends FunctionalTestCase
         self::assertSame('default value 1', $fooNode->getProperty('test1'));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function postprocessorUpdatesNodeTypesProperty()
     {
         $rootNode = $this->context->getRootNode();
@@ -194,9 +182,7 @@ class NodesTest extends FunctionalTestCase
         self::assertSame('The value of "someOption" is "someOverriddenValue", the value of "someOtherOption" is "someOtherValue"', $fooNode->getProperty('test1'));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function createdNodesHaveSubNodesCreatedIfDefinedInNodeType()
     {
         $rootNode = $this->context->getRootNode();
@@ -209,9 +195,7 @@ class NodesTest extends FunctionalTestCase
         self::assertSame('default value 1', $firstSubnode->getProperty('test1'));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function removedNodesCannotBeRetrievedAnymore()
     {
         $rootNode = $this->context->getRootNode();
@@ -234,9 +218,7 @@ class NodesTest extends FunctionalTestCase
         self::assertNull($bazNodeResult);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function removedNodesAreNotCountedAsChildNodes()
     {
         $rootNode = $this->context->getRootNode();
@@ -259,9 +241,7 @@ class NodesTest extends FunctionalTestCase
         self::assertFalse($rootNode->hasChildNodes(), 'Third check.');
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function removedChildNodesAreNotCopied()
     {
         $rootNode = $this->context->getRootNode();
@@ -287,9 +267,7 @@ class NodesTest extends FunctionalTestCase
         self::assertFalse($parentClone->hasChildNodes(), 'Copied parent node should not have any child nodes');
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function creatingAChildNodeAndRetrievingItAfterPersistAllWorks()
     {
         $rootNode = $this->context->getRootNode();
@@ -309,9 +287,7 @@ class NodesTest extends FunctionalTestCase
         self::assertEquals(3, $retrievedNode->getDepth());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function threeCreatedNodesCanBeRetrievedInSameOrder()
     {
         $rootNode = $this->context->getRootNode();
@@ -332,9 +308,7 @@ class NodesTest extends FunctionalTestCase
         self::assertSameOrder([$node1, $node2, $node3], $childNodes);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function threeChildNodesOfTheRootNodeCanBeRetrievedInSameOrder()
     {
         $rootNode = $this->context->getRootNode();
@@ -354,9 +328,7 @@ class NodesTest extends FunctionalTestCase
         self::assertSameOrder([$node1, $node2, $node3], $childNodes);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function getChildNodesSupportsSettingALimitAndOffset()
     {
         $rootNode = $this->context->getRootNode();
@@ -377,9 +349,7 @@ class NodesTest extends FunctionalTestCase
         self::assertSameOrder([$node3, $node4, $node5], $childNodes);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function getChildNodesWorksCaseInsensitive()
     {
         $rootNode = $this->context->getRootNode();
@@ -389,9 +359,7 @@ class NodesTest extends FunctionalTestCase
         self::assertSame($node, $rootNode->getNode('nOdE'));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function moveBeforeMovesNodesBeforeOthersWithoutPersistAll()
     {
         $rootNode = $this->context->getRootNode();
@@ -421,9 +389,7 @@ class NodesTest extends FunctionalTestCase
         self::assertSameOrder($expectedChildNodes, array_values($actualChildNodes));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function moveIntoMovesNodesIntoOthersOnDifferentLevelWithoutPersistAll()
     {
         $rootNode = $this->context->getRootNode();
@@ -440,9 +406,7 @@ class NodesTest extends FunctionalTestCase
         self::assertSame($childNodeB1, $childNodeA->getNode('child-node-b')->getNode('child-node-b1'));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function moveBeforeMovesNodesBeforeOthersOnDifferentLevelWithoutPersistAll()
     {
         $rootNode = $this->context->getRootNode();
@@ -465,9 +429,7 @@ class NodesTest extends FunctionalTestCase
         self::assertSameOrder($expectedChildNodes, array_values($actualChildNodes));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function moveAfterMovesNodesAfterOthersOnDifferentLevelWithoutPersistAll()
     {
         $rootNode = $this->context->getRootNode();
@@ -490,9 +452,7 @@ class NodesTest extends FunctionalTestCase
         self::assertSameOrder($expectedChildNodes, array_values($actualChildNodes));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function moveBeforeNodesWithLowerIndexMovesNodesBeforeOthersWithPersistAll()
     {
         $rootNode = $this->context->getRootNode();
@@ -527,9 +487,7 @@ class NodesTest extends FunctionalTestCase
         self::assertSameOrder($expectedChildNodes, $actualChildNodes);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function moveBeforeNodesWithHigherIndexMovesNodesBeforeOthersWithPersistAll()
     {
         $rootNode = $this->context->getRootNode();
@@ -564,9 +522,7 @@ class NodesTest extends FunctionalTestCase
         self::assertSameOrder($expectedChildNodes, $actualChildNodes);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function moveBeforeNodesWithHigherIndexMovesNodesBeforeOthersWithoutPersistAll()
     {
         $rootNode = $this->context->getRootNode();
@@ -597,9 +553,7 @@ class NodesTest extends FunctionalTestCase
         self::assertSameOrder($expectedChildNodes, $actualChildNodes);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function moveAfterNodesWithLowerIndexMovesNodesAfterOthersWithoutPersistAll()
     {
         $rootNode = $this->context->getRootNode();
@@ -630,9 +584,7 @@ class NodesTest extends FunctionalTestCase
         self::assertSameOrder($expectedChildNodes, $actualChildNodes);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function moveIntoMovesNodesIntoOthersOnDifferentLevelWithPersistAll()
     {
         $rootNode = $this->context->getRootNode();
@@ -653,9 +605,7 @@ class NodesTest extends FunctionalTestCase
         self::assertSame($childNodeB1, $childNodeA->getNode('child-node-b')->getNode('child-node-b1'));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function moveBeforeMovesNodesBeforeOthersOnDifferentLevelWithPersistAll()
     {
         $rootNode = $this->context->getRootNode();
@@ -682,9 +632,7 @@ class NodesTest extends FunctionalTestCase
         self::assertSameOrder($expectedChildNodes, array_values($actualChildNodes));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function moveAfterMovesNodesAfterOthersOnDifferentLevelWithPersistAll()
     {
         $rootNode = $this->context->getRootNode();
@@ -711,9 +659,7 @@ class NodesTest extends FunctionalTestCase
         self::assertSameOrder($expectedChildNodes, array_values($actualChildNodes));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function moveAfterNodesWithLowerIndexMovesNodesAfterOthersWithPersistAll()
     {
         $rootNode = $this->context->getRootNode();
@@ -748,9 +694,7 @@ class NodesTest extends FunctionalTestCase
         self::assertSameOrder($expectedChildNodes, $actualChildNodes);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function moveAfterNodesWithHigherIndexMovesNodesAfterOthersWithPersistAll()
     {
         $rootNode = $this->context->getRootNode();
@@ -785,9 +729,7 @@ class NodesTest extends FunctionalTestCase
         self::assertSameOrder($expectedChildNodes, $actualChildNodes);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function moveAfterNodesWithHigherIndexMovesNodesAfterOthersWithoutPersistAll()
     {
         $rootNode = $this->context->getNode('/');
@@ -817,9 +759,7 @@ class NodesTest extends FunctionalTestCase
         self::assertSameOrder($expectedChildNodes, $actualChildNodes);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function moveBeforeInASeparateWorkspaceLeadsToCorrectSortingAcrossWorkspaces()
     {
         $rootNode = $this->context->getNode('/');
@@ -858,9 +798,7 @@ class NodesTest extends FunctionalTestCase
         self::assertSameOrder($expectedChildNodes, $actualChildNodes);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function moveBeforeThrowsExceptionIfTargetExists()
     {
         $this->expectException(NodeExistsException::class);
@@ -872,9 +810,7 @@ class NodesTest extends FunctionalTestCase
         $alfaChildNode->moveBefore($alfaNode);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function moveAfterThrowsExceptionIfTargetExists()
     {
         $this->expectException(NodeExistsException::class);
@@ -886,9 +822,7 @@ class NodesTest extends FunctionalTestCase
         $alfaChildNode->moveAfter($alfaNode);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function moveIntoThrowsExceptionIfTargetExists()
     {
         $this->expectException(NodeExistsException::class);
@@ -900,9 +834,7 @@ class NodesTest extends FunctionalTestCase
         $alfaChildNode->moveInto($rootNode);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function moveAndRenameAtTheSameTime()
     {
         $rootNode = $this->context->getRootNode();
@@ -935,9 +867,8 @@ class NodesTest extends FunctionalTestCase
      *
      * The bug tested by this testcase led to wrong orderings on the floworg website in
      * the documentation part under some circumstances.
-     *
-     * @test
      */
+    #[Test]
     public function renumberingTakesUnpersistedNodeOrderChangesIntoAccount()
     {
         $rootNode = $this->context->getRootNode();
@@ -971,9 +902,7 @@ class NodesTest extends FunctionalTestCase
         self::assertSameOrder($newNodeOrder, $actualChildNodes);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function nodeDataRepositoryRenumbersNodesIfNoFreeSortingIndexesAreAvailable()
     {
         $rootNode = $this->context->getRootNode();
@@ -996,9 +925,7 @@ class NodesTest extends FunctionalTestCase
         self::assertSameOrder($nodes, $actualChildNodes);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function nodeDataRepositoryRenumbersNodesIfNoFreeSortingIndexesAreAvailableAcrossDimensions()
     {
         $this->contentDimensionRepository->setDimensionsConfiguration([
@@ -1078,9 +1005,7 @@ class NodesTest extends FunctionalTestCase
         self::assertTrue(true);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function getLabelUsesFallbackExpression()
     {
         $node = $this->context->getNode('/');
@@ -1088,9 +1013,7 @@ class NodesTest extends FunctionalTestCase
         self::assertEquals('unstructured ()', $node->getLabel());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function getLabelReturnsParsedEelExpressionOrFallback()
     {
         $nodeTypeManager = $this->objectManager->get(NodeTypeManager::class);
@@ -1105,9 +1028,7 @@ class NodesTest extends FunctionalTestCase
         self::assertEquals('Test nodetype', $nodeWithEelExpressionLabel->getLabel());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function getChildNodeLabelReturnsParsedEelExpressionOrFallback()
     {
         $nodeTypeManager = $this->objectManager->get(NodeTypeManager::class);
@@ -1122,9 +1043,7 @@ class NodesTest extends FunctionalTestCase
         self::assertEquals('Test child node', $nodeWithEelExpressionLabelInChildNode->getNode('child')->getLabel());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function nodesCanBeCopiedAfterAndBeforeAndKeepProperties()
     {
         $rootNode = $this->context->getNode('/');
@@ -1145,9 +1064,7 @@ class NodesTest extends FunctionalTestCase
         self::assertSame($flussNode, $rootNode->getNode('fluss'));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function nodesCanBeCopiedBefore()
     {
         $rootNode = $this->context->getNode('/');
@@ -1166,9 +1083,7 @@ class NodesTest extends FunctionalTestCase
         self::assertSame(['fluss', 'baz', 'flux'], $names->names);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function nodesCanBeCopiedAfter()
     {
         $rootNode = $this->context->getNode('/');
@@ -1187,9 +1102,7 @@ class NodesTest extends FunctionalTestCase
         self::assertSame(['baz', 'fluss', 'flux'], $names->names);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function nodesCanBeCopiedInto()
     {
         $rootNode = $this->context->getNode('/');
@@ -1203,9 +1116,7 @@ class NodesTest extends FunctionalTestCase
         self::assertSame(true, $alfaNode->getNode('charlie')->getProperty('test'));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function nodesCanBeCopiedIntoThemselves()
     {
         $rootNode = $this->context->getNode('/');
@@ -1219,9 +1130,7 @@ class NodesTest extends FunctionalTestCase
         self::assertSame($bravoNode, $alfaNode->getNode('bravo'));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function nodesAreCopiedBeforeRecursively()
     {
         $rootNode = $this->context->getNode('/');
@@ -1242,9 +1151,7 @@ class NodesTest extends FunctionalTestCase
         self::assertSame(['capacitor', 'second', 'third'], $names->names);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function nodesAreCopiedAfterRecursively()
     {
         $rootNode = $this->context->getNode('/');
@@ -1265,9 +1172,7 @@ class NodesTest extends FunctionalTestCase
         self::assertSame(['capacitor', 'second', 'third'], $names->names);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function nodesAreCopiedIntoRecursively()
     {
         $rootNode = $this->context->getNode('/');
@@ -1285,9 +1190,7 @@ class NodesTest extends FunctionalTestCase
         self::assertSame($alfaNode->getNode('delta')->getNode('charlie')->getProperty('test2'), true);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function nodesAreCopiedIntoThemselvesRecursively()
     {
         $rootNode = $this->context->getNode('/');
@@ -1302,9 +1205,7 @@ class NodesTest extends FunctionalTestCase
         self::assertSame($alfaNode->getNode('charlie')->getNode('bravo')->getProperty('test'), true);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function copyBeforeThrowsExceptionIfTargetExists()
     {
         $this->expectException(NodeExistsException::class);
@@ -1317,9 +1218,7 @@ class NodesTest extends FunctionalTestCase
         $fluxNode->copyBefore($bazNode, 'exists');
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function copyAfterThrowsExceptionIfTargetExists()
     {
         $this->expectException(NodeExistsException::class);
@@ -1332,9 +1231,7 @@ class NodesTest extends FunctionalTestCase
         $fluxNode->copyAfter($bazNode, 'exists');
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function copyIntoThrowsExceptionIfTargetExists()
     {
         $this->expectException(NodeExistsException::class);
@@ -1346,9 +1243,7 @@ class NodesTest extends FunctionalTestCase
         $alfaNode->copyInto($rootNode, 'exists');
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function setPropertyAcceptsAndConvertsIdentifierIfTargetTypeIsReference()
     {
         $nodeTypeManager = $this->objectManager->get(NodeTypeManager::class);
@@ -1365,9 +1260,7 @@ class NodesTest extends FunctionalTestCase
         self::assertSame($nodeB, $nodeA->getProperty('property2'));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function setPropertyAcceptsAndConvertsIdentifiersIfTargetTypeIsReferences()
     {
         $nodeTypeManager = $this->objectManager->get(NodeTypeManager::class);
@@ -1390,9 +1283,7 @@ class NodesTest extends FunctionalTestCase
         self::assertSame($expectedNodes, $nodeA->getProperty('property3'));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function getPropertiesReturnsReferencePropertiesAsNodeObjects()
     {
         $nodeTypeManager = $this->objectManager->get(NodeTypeManager::class);
@@ -1416,9 +1307,7 @@ class NodesTest extends FunctionalTestCase
         self::assertSame($expectedNodes, $actualProperties['property3']);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function getPropertyDoesNotReturnNodeReferencesIfTheyAreNotVisibleAccordingToTheContentContext()
     {
         $nodeTypeManager = $this->objectManager->get(NodeTypeManager::class);
@@ -1445,9 +1334,7 @@ class NodesTest extends FunctionalTestCase
         self::assertSame($nodeC, reset($property3));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function getPropertyReturnsReferencedNodesInCorrectWorkspace()
     {
         $nodeTypeManager = $this->objectManager->get(NodeTypeManager::class);
@@ -1476,8 +1363,8 @@ class NodesTest extends FunctionalTestCase
 
     /**
      * @see https://github.com/neos/neos-development-collection/issues/3624
-     * @test
      */
+    #[Test]
     public function getPropertyReturnsReferencedNodesWithoutHolesInArrayKeys(): void
     {
         $nodeTypeManager = $this->objectManager->get(NodeTypeManager::class);
@@ -1502,9 +1389,7 @@ class NodesTest extends FunctionalTestCase
         self::assertSame($expectedNodes, $actualProperties['property3']);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function nodeFactoryCachesCreatedNodesBasedOnIdentifierAndDimensions()
     {
         /** @var NodeFactory $nodeFactory */
@@ -1521,9 +1406,7 @@ class NodesTest extends FunctionalTestCase
         self::assertSame($variantNodeA1, $variantNodeB);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function createVariantForContextMatchesTargetContextDimensions()
     {
         $this->contentDimensionRepository->setDimensionsConfiguration([
@@ -1549,9 +1432,7 @@ class NodesTest extends FunctionalTestCase
         }, $variantContextB->getTargetDimensions()));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function createVariantForContextAlsoWorksIfTheTargetWorkspaceDiffersFromTheSourceWorkspace()
     {
         $this->contentDimensionRepository->setDimensionsConfiguration([
@@ -1579,9 +1460,7 @@ class NodesTest extends FunctionalTestCase
         }, $variantContextB->getTargetDimensions()));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function adoptNodeReturnsExistingNodeWithMatchingDimensionsIfPossible()
     {
         $this->contentDimensionRepository->setDimensionsConfiguration([
@@ -1609,9 +1488,7 @@ class NodesTest extends FunctionalTestCase
         self::assertNotSame($variantContextB->adoptNode($variantNodeA)->getDimensions(), $variantNodeA->getDimensions(), 'Dimensions of $variantNodeA should change when adopted in $variantContextB');
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function adoptNodeMatchesTargetContextDimensions()
     {
         $this->contentDimensionRepository->setDimensionsConfiguration([
@@ -1635,9 +1512,7 @@ class NodesTest extends FunctionalTestCase
         self::assertSame($variantNodeB->getDimensions(), $variantContextB->getTargetDimensionValues());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function adoptNodeWithExistingNodeMatchingTargetDimensionValuesWillReuseNode()
     {
         $this->contentDimensionRepository->setDimensionsConfiguration([
@@ -1669,9 +1544,7 @@ class NodesTest extends FunctionalTestCase
         self::assertSame($variantNodeA->getDimensions(), $variantNodeB->getDimensions());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function nodesCanHaveCustomImplementationClass()
     {
         $rootNode = $this->context->getRootNode();
@@ -1691,9 +1564,7 @@ class NodesTest extends FunctionalTestCase
     }
 
 
-    /**
-     * @test
-     */
+    #[Test]
     public function getChildNodesWithNodeTypeFilterWorks()
     {
         $documentNodeType = $this->nodeTypeManager->getNodeType('Neos.ContentRepository.Testing:Document');
@@ -1706,9 +1577,7 @@ class NodesTest extends FunctionalTestCase
         self::assertCount(1, $node->getChildNodes('Neos.ContentRepository.Testing:Headline'));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function nodesInPathAreHiddenIfBetterVariantInOtherPathExists()
     {
         $this->contentDimensionRepository->setDimensionsConfiguration([

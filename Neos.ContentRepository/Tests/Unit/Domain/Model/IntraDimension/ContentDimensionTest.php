@@ -10,7 +10,7 @@ namespace Neos\ContentRepository\Tests\Unit\Domain\Model\IntraDimension;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
+use PHPUnit\Framework\Attributes\Test;
 use Neos\ContentRepository\Domain\Model\IntraDimension\ContentDimension;
 use Neos\ContentRepository\Domain\Model\IntraDimension;
 use Neos\Flow\Tests\UnitTestCase;
@@ -21,9 +21,7 @@ use Neos\Utility\ObjectAccess;
  */
 class ContentDimensionTest extends UnitTestCase
 {
-    /**
-     * @test
-     */
+    #[Test]
     public function createValueRegistersCreatedValue()
     {
         $dimension = new ContentDimension('test');
@@ -32,9 +30,7 @@ class ContentDimensionTest extends UnitTestCase
         self::assertSame($testValue, $dimension->getValue('test'));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function createValueWithoutFallbackDoesNotIncreaseDepth()
     {
         $dimension = new ContentDimension('test');
@@ -43,9 +39,7 @@ class ContentDimensionTest extends UnitTestCase
         self::assertSame(0, $dimension->getDepth());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function createValueWithFallbackDoesNotDecreaseDepth()
     {
         $testDepth = random_int(1, 100);
@@ -57,9 +51,7 @@ class ContentDimensionTest extends UnitTestCase
         self::assertSame($testDepth, $dimension->getDepth());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function createValueWithFallbackIncreasesDepthIfFallbackHasCurrentMaximumDepth()
     {
         $testDepth = random_int(0, 100);
@@ -72,9 +64,7 @@ class ContentDimensionTest extends UnitTestCase
         self::assertSame($testDepth + 1, $dimension->getDepth());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function getRootValuesOnlyReturnsValuesOfDepthZero()
     {
         $testDepth = random_int(1, 100);

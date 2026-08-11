@@ -10,7 +10,8 @@ namespace Neos\Neos\Tests\Unit\Routing;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
+use PHPUnit\Framework\Attributes\Test;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Neos\ContentRepository\Domain\Utility\NodePaths;
 use Neos\Flow\Mvc\Routing\Dto\MatchResult;
 use Neos\Flow\Mvc\Routing\Dto\ResolveResult;
@@ -167,9 +168,7 @@ class FrontendNodeRoutePartHandlerTest extends UnitTestCase
         ];
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function matchWithParametersReturnsMatchResultIfTheNodeExists()
     {
         $mockContext = $this->buildMockContext(['workspaceName' => 'live']);
@@ -190,9 +189,8 @@ class FrontendNodeRoutePartHandlerTest extends UnitTestCase
 
     /**
      * If convertRequestPathToNode() throws any exception and the request path is '' a "missing homepage" message should appear.
-     *
-     * @test
      */
+    #[Test]
     public function matchWithParametersThrowsAnExceptionIfNoHomepageExists()
     {
         $this->expectException(NoHomepageException::class);
@@ -201,9 +199,7 @@ class FrontendNodeRoutePartHandlerTest extends UnitTestCase
         $this->matchForHost($routePath, 'localhost');
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function matchWithParametersReturnsFalseIfASiteExistsButNoSiteNodeExists()
     {
         $mockContext = $this->buildMockContext(['workspaceName' => 'live']);
@@ -213,9 +209,7 @@ class FrontendNodeRoutePartHandlerTest extends UnitTestCase
         self::assertFalse($this->matchForHost($routePath, 'localhost'));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function matchWithParametersReturnsFalseIfTheNodeCouldNotBeFound()
     {
         $mockContext = $this->buildMockContext(['workspaceName' => 'live']);
@@ -231,9 +225,8 @@ class FrontendNodeRoutePartHandlerTest extends UnitTestCase
 
     /**
      * If a node matches the given request path but the context contains now Workspace, match() must return false
-     *
-     * @test
      */
+    #[Test]
     public function matchWithParametersReturnsFalseIfTheWorkspaceCouldNotBeFound()
     {
         $mockContext = $this->buildMockContext(['workspaceName' => 'live']);
@@ -252,9 +245,8 @@ class FrontendNodeRoutePartHandlerTest extends UnitTestCase
 
     /**
      * If a node matches the given request path, the node's context path is stored in $this->value and true is returned.
-     *
-     * @test
      */
+    #[Test]
     public function valueContainsContextPathOfFoundNode()
     {
         $mockContext = $this->buildMockContext(['workspaceName' => 'user-robert']);
@@ -277,9 +269,8 @@ class FrontendNodeRoutePartHandlerTest extends UnitTestCase
      *
      * This case is needed in order allow routes matching "/" without a suffix for a website's homepage even if "defaultUriSuffix"
      * is empty.
-     *
-     * @test
      */
+    #[Test]
     public function matchWithParametersReturnsFalseOnNotMatchingSiteNodes()
     {
         $mockContext = $this->buildMockContext(['workspaceName' => 'live']);
@@ -303,9 +294,7 @@ class FrontendNodeRoutePartHandlerTest extends UnitTestCase
     }
 
 
-    /**
-     * @test
-     */
+    #[Test]
     public function matchWithParametersRespectsTheSpecifiedNodeTypeOption()
     {
         $mockContext = $this->buildMockContext(['workspaceName' => 'live']);
@@ -328,9 +317,7 @@ class FrontendNodeRoutePartHandlerTest extends UnitTestCase
         self::assertFalse($this->matchForHost($routePath, 'localhost'));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function matchWithParametersCreatesContextForLiveWorkspaceByDefault()
     {
         $mockContext = $this->buildMockContext(['workspaceName' => 'live']);
@@ -350,9 +337,7 @@ class FrontendNodeRoutePartHandlerTest extends UnitTestCase
         $this->matchForHost($routePath, 'localhost');
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function matchWithParametersCreatesContextForCustomWorkspaceIfSpecifiedInNodeContextPath()
     {
         $mockContext = $this->buildMockContext(['workspaceName' => 'live']);
@@ -372,10 +357,8 @@ class FrontendNodeRoutePartHandlerTest extends UnitTestCase
         $this->matchForHost($routePath, 'localhost');
     }
 
-    /**
-     * @test
-     * @dataProvider contextPathsAndRequestPathsDataProvider
-     */
+    #[DataProvider('contextPathsAndRequestPathsDataProvider')]
+    #[Test]
     public function matchWithParametersConsidersDimensionValuePresetsSpecifiedInTheRequestUriWhileBuildingTheContext($expectedContextPath, $requestPath, $supportEmptySegmentForDimensions)
     {
         $this->contentDimensionPresetSource->setConfiguration([
@@ -432,9 +415,8 @@ class FrontendNodeRoutePartHandlerTest extends UnitTestCase
 
     /**
      * Note: In this case the ".html" suffix is not stripped of the context path because no split string is set
-     *
-     * @test
      */
+    #[Test]
     public function matchWithParametersReturnsFalseIfContextPathIsInvalid()
     {
         $mockContext = $this->buildMockContext(['workspaceName' => 'live']);
@@ -448,9 +430,7 @@ class FrontendNodeRoutePartHandlerTest extends UnitTestCase
         self::assertFalse($this->matchForHost($routePath, 'localhost'));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function matchWithParametersStripsOffSuffixIfSplitStringIsSpecified()
     {
         $mockContext = $this->buildMockContext(['workspaceName' => 'live']);
@@ -466,9 +446,7 @@ class FrontendNodeRoutePartHandlerTest extends UnitTestCase
         self::assertFalse($this->matchForHost($routePath, 'localhost'));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function resolveSetsValueToContextPathIfPassedNodeCouldBeResolved()
     {
         $mockContext = $this->buildMockContext(['workspaceName' => 'user-robert']);
@@ -490,9 +468,7 @@ class FrontendNodeRoutePartHandlerTest extends UnitTestCase
         self::assertSame('home/coffee-brands@user-robert', $resolveResult->getResolvedValue());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function resolveSetsValueToContextPathIfPassedNodeCouldBeResolvedButIsInAnotherSite()
     {
         $mockContext = $this->buildMockContext(['workspaceName' => 'user-robert']);
@@ -516,9 +492,7 @@ class FrontendNodeRoutePartHandlerTest extends UnitTestCase
         self::assertSame('home/coffee-brands@user-robert', (string)$resolveResult->getResolvedValue());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function resolveReturnsFalseIfGivenRouteValueIsNeitherStringNorNode()
     {
         $mockContext = $this->buildMockContext(['workspaceName' => 'live']);
@@ -535,9 +509,7 @@ class FrontendNodeRoutePartHandlerTest extends UnitTestCase
         self::assertFalse($this->resolveForHost($routeValues, 'localhost'));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function resolveCreatesContextForLiveWorkspaceByDefault()
     {
         $mockContext = $this->buildMockContext(['workspaceName' => 'live']);
@@ -564,9 +536,7 @@ class FrontendNodeRoutePartHandlerTest extends UnitTestCase
         self::assertInstanceOf(ResolveResult::class, $resolveResult);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function resolveCreatesContextForTheWorkspaceMentionedInTheContextString()
     {
         $mockContext = $this->buildMockContext(['workspaceName' => 'user-johndoe']);
@@ -594,9 +564,7 @@ class FrontendNodeRoutePartHandlerTest extends UnitTestCase
         self::assertInstanceOf(ResolveResult::class, $resolveResult);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function resolveReturnsFalseIfWorkspaceMentionedInTheContextDoesNotExist()
     {
         $mockContext = $this->buildMockContext(['workspaceName' => 'user-johndoe']);
@@ -615,9 +583,7 @@ class FrontendNodeRoutePartHandlerTest extends UnitTestCase
         self::assertFalse($this->resolveForHost($routeValues, 'localhost'));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function resolveReturnsFalseIfNodeMentionedInTheContextPathDoesNotExist()
     {
         $mockContext = $this->buildMockContext(['workspaceName' => 'live']);
@@ -629,9 +595,7 @@ class FrontendNodeRoutePartHandlerTest extends UnitTestCase
         self::assertFalse($this->resolveForHost($routeValues, 'localhost'));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function resolveReturnsFalseIfNodeIsNoDocument()
     {
         $mockContext = $this->buildMockContext(['workspaceName' => 'live']);
@@ -650,9 +614,7 @@ class FrontendNodeRoutePartHandlerTest extends UnitTestCase
         self::assertFalse($this->resolveForHost($routeValues, 'localhost'));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function resolveReturnsFalseIfOnlyMatchSiteNodesOptionIsSetAndResolvedNodeIsNoSiteNode()
     {
         $this->routePartHandler->setOptions(['onlyMatchSiteNodes' => true]);
@@ -672,9 +634,7 @@ class FrontendNodeRoutePartHandlerTest extends UnitTestCase
         self::assertFalse($this->resolveForHost($routeValues, 'localhost'));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function resolveRespectsTheSpecifiedNodeTypeOption()
     {
         $mockContext = $this->buildMockContext(['workspaceName' => 'live']);
@@ -699,10 +659,8 @@ class FrontendNodeRoutePartHandlerTest extends UnitTestCase
         self::assertFalse($this->resolveForHost($routeValues, 'localhost'));
     }
 
-    /**
-     * @dataProvider contextPathsAndRequestPathsDataProvider
-     * @test
-     */
+    #[DataProvider('contextPathsAndRequestPathsDataProvider')]
+    #[Test]
     public function resolveConsidersDimensionValuesPassedViaTheContextPathForRenderingTheUrl($contextPath, $expectedUriPath, $supportEmptySegmentForDimensions)
     {
         $this->contentDimensionPresetSource->setConfiguration([
@@ -831,10 +789,8 @@ class FrontendNodeRoutePartHandlerTest extends UnitTestCase
         ];
     }
 
-    /**
-     * @dataProvider dimensionRequestPathMatcherDataProvider
-     * @test
-     */
+    #[DataProvider('dimensionRequestPathMatcherDataProvider')]
+    #[Test]
     public function dimensionRequestPathRegex($requestPath, $doesMatch, $expected)
     {
         $matches = [];

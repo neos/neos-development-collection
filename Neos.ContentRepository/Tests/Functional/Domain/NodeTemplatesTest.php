@@ -10,7 +10,7 @@ namespace Neos\ContentRepository\Tests\Functional\Domain;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
+use PHPUnit\Framework\Attributes\Test;
 use Neos\Flow\Tests\FunctionalTestCase;
 use Neos\ContentRepository\Domain\Model\NodeInterface;
 use Neos\ContentRepository\Domain\Model\NodeTemplate;
@@ -76,9 +76,7 @@ class NodeTemplatesTest extends FunctionalTestCase
         $this->inject($this->contextFactory, 'contextInstances', []);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function nodeTemplateConverterCanConvertArray()
     {
         $nodeTemplate = $this->generateBasicNodeTemplate();
@@ -86,9 +84,7 @@ class NodeTemplatesTest extends FunctionalTestCase
         self::assertEquals('Neos rules!', $nodeTemplate->getProperty('test1'));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function newNodeCanBeCreatedFromNodeTemplate()
     {
         $nodeTemplate = $this->generateBasicNodeTemplate();
@@ -98,9 +94,7 @@ class NodeTemplatesTest extends FunctionalTestCase
         self::assertInstanceOf(NodeInterface::class, $node);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function createNodeFromTemplateUsesWorkspacesOfContext()
     {
         $nodeTemplate = $this->generateBasicNodeTemplate();

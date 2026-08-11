@@ -10,7 +10,7 @@ namespace Neos\Neos\Tests\Functional\ViewHelpers\Uri;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
+use PHPUnit\Framework\Attributes\Test;
 use GuzzleHttp\Psr7\Uri;
 use Neos\ContentRepository\Domain\Model\Node;
 use Neos\ContentRepository\Domain\Repository\NodeDataRepository;
@@ -146,9 +146,7 @@ class NodeViewHelperTest extends FunctionalTestCase
         return $this->viewHelperInvoker->invoke($this->viewHelper, $arguments, $this->renderingContext);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function viewHelperRendersUriViaGivenNodeObject(): void
     {
         $propertyMapper = $this->objectManager->get(PropertyMapper::class);
@@ -158,9 +156,7 @@ class NodeViewHelperTest extends FunctionalTestCase
         $this->assertOutputLinkValid('home', $result);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function viewHelperRendersUriViaAbsoluteNodePathString(): void
     {
         $result = $this->invoke(['node' => '/sites/example/home']);
@@ -171,9 +167,7 @@ class NodeViewHelperTest extends FunctionalTestCase
         $this->assertOutputLinkValid('en/home/about-us/our-mission', $result);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function viewHelperRendersUriViaStringStartingWithTilde(): void
     {
         $result = $this->invoke(['node' => '~']);
@@ -186,9 +180,7 @@ class NodeViewHelperTest extends FunctionalTestCase
         $this->assertOutputLinkValid('en/home/about-us/our-mission', $result);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function viewHelperRendersUriViaStringPointingToSubNodes(): void
     {
         $this->runtime->pushContext('documentNode', $this->contentContext->getCurrentSiteNode()->getNode('home/about-us/mission'));
@@ -204,9 +196,8 @@ class NodeViewHelperTest extends FunctionalTestCase
     /**
      * We empty the TemplateVariableContainer for this test, as it shouldn't be needed for rendering a link to a node
      * identified by ContextNodePath
-     *
-     * @test
      */
+    #[Test]
     public function viewHelperRendersUriViaContextNodePathString(): void
     {
         $result = $this->invoke(['node' => '/sites/example/home@live']);
@@ -229,9 +220,7 @@ class NodeViewHelperTest extends FunctionalTestCase
         $this->assertOutputLinkValid('en/home/about-us/our-mission', $result);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function viewHelperRendersUriViaNodeUriPathString(): void
     {
         $result = $this->invoke(['node' => 'node://3239baee-3e7f-785c-0853-f4302ef32570']);
@@ -242,27 +231,21 @@ class NodeViewHelperTest extends FunctionalTestCase
         $this->assertOutputLinkValid('en/home/about-us/our-mission', $result);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function viewHelperRespectsAbsoluteParameter(): void
     {
         $result = $this->invoke(['absolute' => true]);
         $this->assertOutputLinkValid('http://neos.test/en/home', $result);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function viewHelperRespectsBaseNodeNameParameter(): void
     {
         $result = $this->invoke(['baseNodeName' => 'alternativeDocumentNode']);
         $this->assertOutputLinkValid('en/home/about-us/our-mission', $result);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function viewHelperRespectsArgumentsParameter(): void
     {
         $result = $this->invoke([
@@ -272,9 +255,7 @@ class NodeViewHelperTest extends FunctionalTestCase
         $this->assertOutputLinkValid('en/home?foo=bar', $result);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function viewHelperCatchesExceptionAndReturnsEmptyStringIfTargetNodeDoesNotExist(): void
     {
         $result = $this->invoke(['node' => '/sites/example/non-existing-node']);

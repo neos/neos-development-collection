@@ -10,7 +10,7 @@ namespace Neos\ContentRepository\Tests\Unit\FlowQueryOperations;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
+use PHPUnit\Framework\Attributes\Test;
 use Neos\ContentRepository\Domain\ContentSubgraph\NodePath;
 use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
 use Neos\ContentRepository\Domain\Service\Context;
@@ -60,9 +60,7 @@ class ParentOperationTest extends AbstractQueryOperationsTestCase
         $this->secondLevelNode->expects(self::any())->method('findNodePath')->will(self::returnValue(NodePath::fromString('/site/first/second')));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function parentWillReturnEmptyResultForTheSiteNode()
     {
         $context = [$this->siteNode];
@@ -75,9 +73,7 @@ class ParentOperationTest extends AbstractQueryOperationsTestCase
         self::assertEquals([], $output);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function parentWillReturnFirstLevelNodeForSecondLevelNode()
     {
         $context = [$this->secondLevelNode];

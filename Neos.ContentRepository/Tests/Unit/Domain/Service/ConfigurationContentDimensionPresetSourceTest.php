@@ -10,7 +10,7 @@ namespace Neos\ContentRepository\Tests\Unit\Domain\Service;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
+use PHPUnit\Framework\Attributes\Test;
 use Neos\ContentRepository\Exception;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\ContentRepository\Domain\Service\ConfigurationContentDimensionPresetSource;
@@ -126,9 +126,7 @@ class ConfigurationContentDimensionPresetSourceTest extends UnitTestCase
         }
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function findPresetByDimensionValuesWithExistingValuesReturnsPreset()
     {
         $source = new ConfigurationContentDimensionPresetSource();
@@ -139,9 +137,7 @@ class ConfigurationContentDimensionPresetSourceTest extends UnitTestCase
     }
 
 
-    /**
-     * @test
-     */
+    #[Test]
     public function getAllPresetsReturnsDimensionsOrderedByPosition()
     {
         $source = new ConfigurationContentDimensionPresetSource();
@@ -150,9 +146,7 @@ class ConfigurationContentDimensionPresetSourceTest extends UnitTestCase
         self::assertEquals(['targetGroups', 'language'], array_keys($presets));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function getAllPresetsReturnsDimensionPresetsOrderedByPosition()
     {
         $source = new ConfigurationContentDimensionPresetSource();
@@ -162,9 +156,7 @@ class ConfigurationContentDimensionPresetSourceTest extends UnitTestCase
         self::assertEquals(['de_DE', 'all'], array_keys($presets['language']['presets']));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function getDefaultPresetWithExistingDimensionReturnsDefaultPresetWithIdentifier()
     {
         $source = new ConfigurationContentDimensionPresetSource();
@@ -174,9 +166,7 @@ class ConfigurationContentDimensionPresetSourceTest extends UnitTestCase
         self::assertEquals('all', $preset['identifier']);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function setConfigurationThrowsExceptionIfSpecifiedDefaultPresetDoesNotExist()
     {
         $this->expectException(Exception::class);
@@ -187,9 +177,7 @@ class ConfigurationContentDimensionPresetSourceTest extends UnitTestCase
         $source->setConfiguration($configuration);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function isPresetCombinationAllowedByConstraintsReturnsTrueIfNoConstraintsHaveBeenDefined()
     {
         $source = new ConfigurationContentDimensionPresetSource();
@@ -198,9 +186,7 @@ class ConfigurationContentDimensionPresetSourceTest extends UnitTestCase
         self::assertTrue($source->isPresetCombinationAllowedByConstraints(['language' => 'de', 'country' => 'DE']));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function isPresetCombinationAllowedByConstraintsReturnsFalseIfAnyOfThePresetsDoesNotExist()
     {
         $source = new ConfigurationContentDimensionPresetSource();
@@ -211,9 +197,7 @@ class ConfigurationContentDimensionPresetSourceTest extends UnitTestCase
         self::assertFalse($source->isPresetCombinationAllowedByConstraints(['language' => 'de', 'country' => 'DEXX']));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function isPresetCombinationAllowedByConstraintsReturnsFalseIfConstraintExplicitlyDoesNotAllowTheCombination()
     {
         $source = new ConfigurationContentDimensionPresetSource();
@@ -225,9 +209,7 @@ class ConfigurationContentDimensionPresetSourceTest extends UnitTestCase
         self::assertFalse($source->isPresetCombinationAllowedByConstraints(['language' => 'de', 'country' => 'US']));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function isPresetCombinationAllowedByConstraintsReturnsFalseIfWildCardConstraintIsSetToFalse()
     {
         $source = new ConfigurationContentDimensionPresetSource();
@@ -239,9 +221,7 @@ class ConfigurationContentDimensionPresetSourceTest extends UnitTestCase
         self::assertFalse($source->isPresetCombinationAllowedByConstraints(['language' => 'de', 'country' => 'US']));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function isPresetCombinationAllowedByConstraintsCorrectlyEvaluatesCombinationsOfWildcardAndExplicitConstraints()
     {
         $source = new ConfigurationContentDimensionPresetSource();
@@ -263,9 +243,7 @@ class ConfigurationContentDimensionPresetSourceTest extends UnitTestCase
         self::assertFalse($source->isPresetCombinationAllowedByConstraints(['language' => 'fr', 'country' => 'US']));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function getAllowedDimensionPresetsAccordingToPreselectionReturnsAllowedPresetsOfSecondDimensionIfPresetOfFirstDimensionIsGiven()
     {
         $source = new ConfigurationContentDimensionPresetSource();

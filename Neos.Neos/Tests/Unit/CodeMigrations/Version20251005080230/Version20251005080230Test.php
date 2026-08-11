@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Neos\Neos\Tests\Unit\CodeMigrations\Version20251005080230;
 
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use Neos\Flow\Core\Migrations\Manager;
 use Neos\Flow\Core\Migrations\Version20251005080230;
 use org\bovigo\vfs\vfsStream;
@@ -34,10 +36,8 @@ class Version20251005080230Test extends TestCase
         }
     }
 
-    /**
-     * @dataProvider fixtures
-     * @test
-     */
+    #[DataProvider('fixtures')]
+    #[Test]
     public function executeMigration(string $fusionInputFile, string $expectedFusionOutputFile): void
     {
         vfsStream::setup('fusion', null, [
@@ -74,10 +74,8 @@ class Version20251005080230Test extends TestCase
         );
     }
 
-    /**
-     * @dataProvider fixtures
-     * @test
-     */
+    #[DataProvider('fixtures')]
+    #[Test]
     public function reExecuteMigrationEmitsNoChanges(string $_, string $migratedFusionFile): void
     {
         vfsStream::setup('fusion', null, [

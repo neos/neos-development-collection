@@ -10,7 +10,7 @@ namespace Neos\Fusion\Tests\Unit\Core;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
+use PHPUnit\Framework\Attributes\Test;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\Fusion\Core\FusionSourceCode;
 use Neos\Fusion\Core\FusionSourceCodeCollection;
@@ -41,9 +41,8 @@ class ParserTest extends UnitTestCase
 
     /**
      * checks if the object tree returned by the Fusion parser reflects source code fixture 01
-     *
-     * @test
      */
+    #[Test]
     public function parserCorrectlyParsesFixture01()
     {
         $sourceCode = $this->readFusionFixture('ParserTestFusionFixture01');
@@ -65,28 +64,26 @@ class ParserTest extends UnitTestCase
             ]
         ];
 
-        $actualParseTree = $this->parser->parseFromSource(\Neos\Fusion\Core\FusionSourceCodeCollection::fromString($sourceCode))->toArray();
+        $actualParseTree = $this->parser->parseFromSource(FusionSourceCodeCollection::fromString($sourceCode))->toArray();
 
         self::assertSame($expectedParseTree, $actualParseTree, 'The parse tree was not as expected after parsing fixture 01.');
     }
 
     /**
      * Checks if a leading slash in the namespace declaration throws an exception
-     *
-     * @test
      */
+    #[Test]
     public function parserThrowsFusionExceptionIfNamespaceDeclarationIsInvalid()
     {
         $this->expectException(Exception::class);
         $sourceCode = 'namespace: cms=\-notvalid-\Fusion\Fixtures';
-        $this->parser->parseFromSource(\Neos\Fusion\Core\FusionSourceCodeCollection::fromString($sourceCode))->toArray();
+        $this->parser->parseFromSource(FusionSourceCodeCollection::fromString($sourceCode))->toArray();
     }
 
     /**
      * checks if the object tree returned by the Fusion parser reflects source code fixture 02
-     *
-     * @test
      */
+    #[Test]
     public function parserCorrectlyParsesFixture02()
     {
         $sourceCode = $this->readFusionFixture('ParserTestFusionFixture02');
@@ -113,15 +110,14 @@ class ParserTest extends UnitTestCase
             ]
         ];
 
-        $actualParseTree = $this->parser->parseFromSource(\Neos\Fusion\Core\FusionSourceCodeCollection::fromString($sourceCode))->toArray();
+        $actualParseTree = $this->parser->parseFromSource(FusionSourceCodeCollection::fromString($sourceCode))->toArray();
         self::assertSame($expectedParseTree, $actualParseTree, 'The parse tree was not as expected after parsing fixture 02.');
     }
 
     /**
      * checks if the object tree returned by the Fusion parser reflects source code fixture 03
-     *
-     * @test
      */
+    #[Test]
     public function parserCorrectlyParsesFixture03()
     {
         $sourceCode = $this->readFusionFixture('ParserTestFusionFixture03');
@@ -160,15 +156,14 @@ class ParserTest extends UnitTestCase
             ]
         ];
 
-        $actualParseTree = $this->parser->parseFromSource(\Neos\Fusion\Core\FusionSourceCodeCollection::fromString($sourceCode))->toArray();
+        $actualParseTree = $this->parser->parseFromSource(FusionSourceCodeCollection::fromString($sourceCode))->toArray();
         self::assertSame($expectedParseTree, $actualParseTree, 'The parse tree was not as expected after parsing fixture 03.');
     }
 
     /**
      * checks if the object tree returned by the Fusion parser reflects source code fixture 04
-     *
-     * @test
      */
+    #[Test]
     public function parserCorrectlyParsesFixture04()
     {
         $sourceCode = $this->readFusionFixture('ParserTestFusionFixture04');
@@ -229,15 +224,14 @@ class ParserTest extends UnitTestCase
             ]
         ];
 
-        $actualParseTree = $this->parser->parseFromSource(\Neos\Fusion\Core\FusionSourceCodeCollection::fromString($sourceCode))->toArray();
+        $actualParseTree = $this->parser->parseFromSource(FusionSourceCodeCollection::fromString($sourceCode))->toArray();
         self::assertSame($expectedParseTree, $actualParseTree, 'The parse tree was not as expected after parsing fixture 04.');
     }
 
     /**
      * checks if the object tree returned by the Fusion parser reflects source code fixture 05
-     *
-     * @test
      */
+    #[Test]
     public function parserCorrectlyParsesFixture05()
     {
         $sourceCode = $this->readFusionFixture('ParserTestFusionFixture05');
@@ -298,15 +292,14 @@ class ParserTest extends UnitTestCase
             ],
         ];
 
-        $actualParseTree = $this->parser->parseFromSource(\Neos\Fusion\Core\FusionSourceCodeCollection::fromString($sourceCode))->toArray();
+        $actualParseTree = $this->parser->parseFromSource(FusionSourceCodeCollection::fromString($sourceCode))->toArray();
         self::assertSame($expectedParseTree, $actualParseTree, 'The parse tree was not as expected after parsing fixture 05.');
     }
 
     /**
      * checks if the object tree returned by the Fusion parser reflects source code fixture 07
-     *
-     * @test
      */
+    #[Test]
     public function parserCorrectlyParsesFixture07()
     {
         $sourceCode = $this->readFusionFixture('ParserTestFusionFixture07');
@@ -325,7 +318,7 @@ class ParserTest extends UnitTestCase
             ]
         ];
 
-        $actualParseTree = $this->parser->parseFromSource(\Neos\Fusion\Core\FusionSourceCodeCollection::fromString($sourceCode))->toArray();
+        $actualParseTree = $this->parser->parseFromSource(FusionSourceCodeCollection::fromString($sourceCode))->toArray();
         self::assertSame($expectedParseTree, $actualParseTree, 'The parse tree was not as expected after parsing fixture 07.');
     }
 
@@ -333,8 +326,8 @@ class ParserTest extends UnitTestCase
      * checks if the object tree returned by the Fusion parser reflects source code fixture 08
      *
      * @todo Implement lazy rendering support for variable substitutions
-     * @test
      */
+    #[Test]
     public function parserCorrectlyParsesFixture08()
     {
         $sourceCode = $this->readFusionFixture('ParserTestFusionFixture08');
@@ -395,9 +388,8 @@ class ParserTest extends UnitTestCase
 
     /**
      * checks if the object tree returned by the Fusion parser reflects source code fixture 10
-     *
-     * @test
      */
+    #[Test]
     public function parserCorrectlyParsesFixture10()
     {
         $sourceCode = $this->readFusionFixture('ParserTestFusionFixture10');
@@ -468,15 +460,14 @@ class ParserTest extends UnitTestCase
             ]
         ];
 
-        $actualParseTree = $this->parser->parseFromSource(\Neos\Fusion\Core\FusionSourceCodeCollection::fromString($sourceCode))->toArray();
+        $actualParseTree = $this->parser->parseFromSource(FusionSourceCodeCollection::fromString($sourceCode))->toArray();
         self::assertEquals($expectedParseTree, $actualParseTree, 'The parse tree was not as expected after parsing fixture 10.');
     }
 
     /**
      * checks if the object tree returned by the Fusion parser reflects source code fixture 13
-     *
-     * @test
      */
+    #[Test]
     public function parserCorrectlyParsesFixture13()
     {
         $sourceCode = $this->readFusionFixture('ParserTestFusionFixture13');
@@ -520,15 +511,14 @@ class ParserTest extends UnitTestCase
             ],
         ];
 
-        $actualParseTree = $this->parser->parseFromSource(\Neos\Fusion\Core\FusionSourceCodeCollection::fromString($sourceCode))->toArray();
+        $actualParseTree = $this->parser->parseFromSource(FusionSourceCodeCollection::fromString($sourceCode))->toArray();
         self::assertSame($expectedParseTree, $actualParseTree, 'The parse tree was not as expected after parsing fixture 13.');
     }
 
     /**
      * checks if the object tree returned by the Fusion parser reflects source code fixture 14
-     *
-     * @test
      */
+    #[Test]
     public function parserCorrectlyParsesFixture14()
     {
         $sourceCode = $this->readFusionFixture('ParserTestFusionFixture14');
@@ -560,13 +550,11 @@ class ParserTest extends UnitTestCase
             ],
         ];
 
-        $actualParseTree = $this->parser->parseFromSource(\Neos\Fusion\Core\FusionSourceCodeCollection::fromString($sourceCode))->toArray();
+        $actualParseTree = $this->parser->parseFromSource(FusionSourceCodeCollection::fromString($sourceCode))->toArray();
         self::assertSame($expectedParseTree, $actualParseTree, 'The parse tree was not as expected after parsing fixture 14.');
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function parserCorrectlyParsesFixture15()
     {
         $sourceCode = $this->readFusionFixture('ParserTestFusionFixture15');
@@ -580,7 +568,7 @@ class ParserTest extends UnitTestCase
             ]
         ];
 
-        $actualParseTree = $this->parser->parseFromSource(\Neos\Fusion\Core\FusionSourceCodeCollection::fromString($sourceCode))->toArray();
+        $actualParseTree = $this->parser->parseFromSource(FusionSourceCodeCollection::fromString($sourceCode))->toArray();
         self::assertSame($expectedParseTree, $actualParseTree, 'The parse tree was not as expected after parsing fixture 15.');
     }
 
@@ -666,9 +654,7 @@ class ParserTest extends UnitTestCase
         return $expectedParseTree;
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function parserCorrectlyParsesFixture16()
     {
         $fixture = __DIR__ . '/Fixtures/ParserTestFusionFixture16.fusion';
@@ -680,9 +666,7 @@ class ParserTest extends UnitTestCase
         self::assertEquals($expectedParseTree, $actualParseTree, 'The parse tree was not as expected after parsing fixture 16');
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function parserThrowsExceptionOnFixture16b()
     {
         $this->expectException(Exception::class);
@@ -692,9 +676,7 @@ class ParserTest extends UnitTestCase
         $this->parser->parseFromSource(new FusionSourceCodeCollection(FusionSourceCode::fromDangerousPotentiallyDifferingSourceCodeAndFilePath($sourceCode, $fixture)))->toArray();
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function parserCorrectlyParsesFixture17()
     {
         $fixture = __DIR__ . '/Fixtures/ParserTestFusionFixture17.fusion';
@@ -729,9 +711,8 @@ class ParserTest extends UnitTestCase
 
     /**
      * Checks if simple values (string, boolean, integer) are parsed correctly
-     *
-     * @test
      */
+    #[Test]
     public function parserCorrectlyParsesFixture19()
     {
         $sourceCode = $this->readFusionFixture('ParserTestFusionFixture19');
@@ -746,15 +727,14 @@ class ParserTest extends UnitTestCase
             ],
         ];
 
-        $actualParseTree = $this->parser->parseFromSource(\Neos\Fusion\Core\FusionSourceCodeCollection::fromString($sourceCode))->toArray();
+        $actualParseTree = $this->parser->parseFromSource(FusionSourceCodeCollection::fromString($sourceCode))->toArray();
         self::assertSame($expectedParseTree, $actualParseTree, 'The parse tree was not as expected after parsing fixture 19.');
     }
 
     /**
      * Checks if path with an underscore is parsed correctly
-     *
-     * @test
      */
+    #[Test]
     public function parserCorrectlyParsesFixture20()
     {
         $sourceCode = $this->readFusionFixture('ParserTestFusionFixture20');
@@ -772,35 +752,30 @@ class ParserTest extends UnitTestCase
             ],
         ];
 
-        $actualParseTree = $this->parser->parseFromSource(\Neos\Fusion\Core\FusionSourceCodeCollection::fromString($sourceCode))->toArray();
+        $actualParseTree = $this->parser->parseFromSource(FusionSourceCodeCollection::fromString($sourceCode))->toArray();
         self::assertSame($expectedParseTree, $actualParseTree, 'The parse tree was not as expected after parsing fixture 20.');
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function parserDetectsDirectRecursions()
     {
         $this->expectException(Exception::class);
         $sourceCode = $this->readFusionFixture('ParserTestFusionFixture21');
-        $this->parser->parseFromSource(\Neos\Fusion\Core\FusionSourceCodeCollection::fromString($sourceCode))->toArray();
+        $this->parser->parseFromSource(FusionSourceCodeCollection::fromString($sourceCode))->toArray();
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function parserDetectsIndirectRecursions()
     {
         $this->expectException(Exception::class);
         $sourceCode = $this->readFusionFixture('ParserTestFusionFixture22');
-        $this->parser->parseFromSource(\Neos\Fusion\Core\FusionSourceCodeCollection::fromString($sourceCode))->toArray();
+        $this->parser->parseFromSource(FusionSourceCodeCollection::fromString($sourceCode))->toArray();
     }
 
     /**
      * Checks if identifiers starting with digits are parsed correctly
-     *
-     * @test
      */
+    #[Test]
     public function parserCorrectlyParsesFixture21()
     {
         $sourceCode = $this->readFusionFixture('ParserTestFusionFixture23');
@@ -816,15 +791,14 @@ class ParserTest extends UnitTestCase
             ],
         ];
 
-        $actualParseTree = $this->parser->parseFromSource(\Neos\Fusion\Core\FusionSourceCodeCollection::fromString($sourceCode))->toArray();
+        $actualParseTree = $this->parser->parseFromSource(FusionSourceCodeCollection::fromString($sourceCode))->toArray();
         self::assertSame($expectedParseTree, $actualParseTree, 'The parse tree was not as expected after parsing fixture 23.');
     }
 
     /**
      * Checks if identifiers starting with digits are parsed correctly
-     *
-     * @test
      */
+    #[Test]
     public function parserCorrectlyParsesFixture25()
     {
         $sourceCode = $this->readFusionFixture('ParserTestFusionFixture25');
@@ -836,40 +810,37 @@ class ParserTest extends UnitTestCase
             ]
         ];
 
-        $actualParseTree = $this->parser->parseFromSource(\Neos\Fusion\Core\FusionSourceCodeCollection::fromString($sourceCode))->toArray();
+        $actualParseTree = $this->parser->parseFromSource(FusionSourceCodeCollection::fromString($sourceCode))->toArray();
         self::assertSame($expectedParseTree, $actualParseTree, 'The parse tree was not as expected after parsing fixture 23.');
     }
 
     /**
      * Checks if really long strings are parsed correctly
-     *
-     * @test
      */
+    #[Test]
     public function parserCorrectlyLongStrings()
     {
         $sourceCode = $this->readFusionFixture('ParserTestFusionFixtureLongString');
-        $actualParseTree = $this->parser->parseFromSource(\Neos\Fusion\Core\FusionSourceCodeCollection::fromString($sourceCode))->toArray();
+        $actualParseTree = $this->parser->parseFromSource(FusionSourceCodeCollection::fromString($sourceCode))->toArray();
         self::assertArrayHasKey('longString', $actualParseTree);
     }
 
     /**
      * Checks if comments in comments are parsed correctly
-     *
-     * @test
      */
+    #[Test]
     public function parserCorrectlyParsesComments01()
     {
         $sourceCode = $this->readFusionFixture('ParserTestFusionComments01');
         $expected = []; // Fixture contains only comments, so expect empty parse tree
-        $actualParseTree = $this->parser->parseFromSource(\Neos\Fusion\Core\FusionSourceCodeCollection::fromString($sourceCode))->toArray();
+        $actualParseTree = $this->parser->parseFromSource(FusionSourceCodeCollection::fromString($sourceCode))->toArray();
         self::assertEquals($expected, $actualParseTree, 'The parse tree was not as expected after parsing fixture `ParserTestFusionComments01.fusion`');
     }
 
     /**
      * Checks if dsl value is handed over to the handleDslTranspile method
-     *
-     * @test
      */
+    #[Test]
     public function parserInvokesFusionDslParsingIfADslPatternIsDetected()
     {
         $parser = $this->getMockBuilder(Parser::class)->disableOriginalConstructor()->onlyMethods(['handleDslTranspile'])->getMock();
@@ -890,14 +861,13 @@ class ParserTest extends UnitTestCase
 
     /**
      * Checks unclosed dsl-expressions are
-     *
-     * @test
      */
+    #[Test]
     public function parserThrowsFusionExceptionIfUnfinishedDslIsDetected()
     {
         $this->expectException(Exception::class);
         $this->expectExceptionCode(1490714685);
-        $this->parser->parseFromSource(\Neos\Fusion\Core\FusionSourceCodeCollection::fromString('dslValue1 = dsl1`unclosed dsl expression'))->toArray();
+        $this->parser->parseFromSource(FusionSourceCodeCollection::fromString('dslValue1 = dsl1`unclosed dsl expression'))->toArray();
     }
 
     /**

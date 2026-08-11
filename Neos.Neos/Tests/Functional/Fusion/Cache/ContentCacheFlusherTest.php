@@ -10,8 +10,8 @@ namespace Neos\Neos\Tests\Functional\Fusion\Cache;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
 use Neos\Neos\Domain\Service\SiteImportService;
+use PHPUnit\Framework\Attributes\Test;
 use Neos\ContentRepository\Domain\Model\Workspace;
 use Neos\ContentRepository\Domain\Repository\NodeDataRepository;
 use Neos\ContentRepository\Domain\Repository\WorkspaceRepository;
@@ -76,9 +76,7 @@ class ContentCacheFlusherTest extends FunctionalTestCase
         $this->persistenceManager->clearState();
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function flushingANodeWillResolveAllWorkspacesToFlush()
     {
         // Add more workspaces
@@ -122,9 +120,7 @@ class ContentCacheFlusherTest extends FunctionalTestCase
         self::assertArrayHasKey('third-level', $workspaceChain);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function flushingANodeWithAnAdditionalTargetWorkspaceWillAlsoResolveThatWorkspace()
     {
         // Add more workspaces
@@ -167,9 +163,7 @@ class ContentCacheFlusherTest extends FunctionalTestCase
         self::assertArrayHasKey('first-level', $workspacesToFlush);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function aNodeChangeWillRegisterNodeIdentifierTagsForAllWorkspaces()
     {
         $workspaceFirstLevel = new Workspace('first-level');
@@ -200,9 +194,7 @@ class ContentCacheFlusherTest extends FunctionalTestCase
         }
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function aNodeChangeWillRegisterNodeTypeTagsForAllWorkspaces()
     {
         $workspaceFirstLevel = new Workspace('first-level');
@@ -235,9 +227,7 @@ class ContentCacheFlusherTest extends FunctionalTestCase
         }
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function aNodeChangeWillRegisterAllDescendantOfTagsForAllWorkspaces()
     {
         $workspaceFirstLevel = new Workspace('first-level');

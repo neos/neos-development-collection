@@ -11,7 +11,7 @@ namespace Neos\Neos\Tests\Unit\Fusion;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
+use PHPUnit\Framework\Attributes\Test;
 use GuzzleHttp\Psr7\Uri;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\Controller\ControllerContext;
@@ -138,9 +138,7 @@ class ConvertUrisImplementationTest extends UnitTestCase
             ]));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function evaluateThrowsExceptionIfValueIsNoString()
     {
         $this->expectException(Exception::class);
@@ -150,9 +148,7 @@ class ConvertUrisImplementationTest extends UnitTestCase
         $this->convertUrisImplementation->evaluate();
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function evaluateThrowsExceptionIfTheCurrentContextArrayDoesNotContainANode()
     {
         $this->expectException(Exception::class);
@@ -161,9 +157,7 @@ class ConvertUrisImplementationTest extends UnitTestCase
         $this->convertUrisImplementation->evaluate();
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function evaluateDoesNotModifyTheValueIfItDoesNotContainNodeUris()
     {
         $value = ' this Is some string with line' . chr(10) . ' breaks, special chärß and leading/trailing space  ';
@@ -175,9 +169,7 @@ class ConvertUrisImplementationTest extends UnitTestCase
         self::assertSame($value, $actualResult);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function evaluateDoesNotModifyTheValueIfNotExecutedInLiveWorkspace()
     {
         $this->mockWorkspace->expects(self::any())->method('getName')->will(self::returnValue('not-live'));
@@ -189,9 +181,7 @@ class ConvertUrisImplementationTest extends UnitTestCase
         self::assertSame($value, $actualResult);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function evaluateDoesModifyTheValueIfExecutedInLiveWorkspaceWithTheForceConvertionOptionSet()
     {
         $nodeIdentifier1 = 'aeabe76a-551a-495f-a324-ad9a86b2aff7';
@@ -217,9 +207,7 @@ class ConvertUrisImplementationTest extends UnitTestCase
         self::assertSame($expectedResult, $actualResult);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function evaluateReplacesAllNodeUrisInTheGivenValue()
     {
         $nodeIdentifier1 = 'aeabe76a-551a-495f-a324-ad9a86b2aff7';
@@ -248,9 +236,8 @@ class ConvertUrisImplementationTest extends UnitTestCase
 
     /**
      * This only verifies the current behavior that might be changed in the future (e.g. we could remove unresolved links instead of creating empty href attributes)
-     *
-     * @test
      */
+    #[Test]
     public function evaluateReplacesUnresolvableNodeUrisWithAnEmptyString()
     {
         $unknownNodeIdentifier = 'aeabe76a-551a-495f-a324-ad9a86b2aff7';
@@ -266,9 +253,8 @@ class ConvertUrisImplementationTest extends UnitTestCase
 
     /**
      * This test checks that targets for external links are correctly replaced
-     *
-     * @test
      */
+    #[Test]
     public function evaluateReplaceExternalLinkTargets()
     {
         $nodeIdentifier = 'aeabe76a-551a-495f-a324-ad9a86b2aff7';
@@ -295,9 +281,8 @@ class ConvertUrisImplementationTest extends UnitTestCase
 
     /**
      * This test checks that targets for resource links are correctly replaced
-     *
-     * @test
      */
+    #[Test]
     public function evaluateReplaceResourceLinkTargets()
     {
         $assetIdentifier = 'aeabe76a-551a-495f-a324-ad9a86b2aff8';
@@ -321,9 +306,7 @@ class ConvertUrisImplementationTest extends UnitTestCase
         self::assertSame($expectedResult, $actualResult);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function disablingSetNoOpenerWorks()
     {
         $nodeIdentifier = 'aeabe76a-551a-495f-a324-ad9a86b2aff7';
@@ -348,9 +331,7 @@ class ConvertUrisImplementationTest extends UnitTestCase
         self::assertSame($expectedResult, $actualResult);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function disablingSetExternalWorks()
     {
         $nodeIdentifier = 'aeabe76a-551a-495f-a324-ad9a86b2aff7';
@@ -377,9 +358,8 @@ class ConvertUrisImplementationTest extends UnitTestCase
 
     /**
      * This test checks that targets for resource links are correctly replaced if the a Tag is inside a tag with the name beginning wit a
-     *
-     * @test
      */
+    #[Test]
     public function evaluateReplaceResourceLinkTargetsInsideTag()
     {
         $assetIdentifier = 'aeabe76a-551a-495f-a324-ad9a86b2aff8';
@@ -403,9 +383,7 @@ class ConvertUrisImplementationTest extends UnitTestCase
         $this->assertSame($expectedResult, $actualResult);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function evaluateDoesAddCacheTags()
     {
         $workspaceName = 'live';

@@ -10,7 +10,8 @@ namespace Neos\Neos\Tests\Unit\ResourceManagement;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
+use PHPUnit\Framework\Attributes\Test;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Neos\Flow\Package\Exception\UnknownPackageException;
 use PHPUnit\Framework\MockObject\MockObject;
 use Neos\Flow\Package\FlowPackageInterface;
@@ -45,9 +46,7 @@ class NodetypesStreamWrapperTest extends UnitTestCase
         $this->inject($this->nodeTypesStreamWrapper, 'packageManager', $this->mockPackageManager);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function openThrowsExceptionForInvalidScheme()
     {
         $this->expectException(\InvalidArgumentException::class);
@@ -72,10 +71,8 @@ class NodetypesStreamWrapperTest extends UnitTestCase
         ];
     }
 
-    /**
-     * @test
-     * @dataProvider providePathesToCheckForForbiddenTraversalOutOfPath
-     */
+    #[DataProvider('providePathesToCheckForForbiddenTraversalOutOfPath')]
+    #[Test]
     public function openThrowsExceptionForPathesThatTryToTraverseUpwards(string $forbiddenPath, bool $expectException)
     {
         if ($expectException) {
@@ -90,9 +87,7 @@ class NodetypesStreamWrapperTest extends UnitTestCase
         $this->assertFalse($result);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function openThrowsExceptionForNonExistingPackages()
     {
         $this->expectException(Exception::class);
@@ -103,9 +98,7 @@ class NodetypesStreamWrapperTest extends UnitTestCase
         $this->nodeTypesStreamWrapper->open('nodetypes://' . $packageKey . '/Some/Path', 'r', 0, $openedPathAndFilename);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function openResolvesPackageKeysUsingThePackageManager()
     {
         $packageKey = 'Some.Package';
@@ -123,8 +116,8 @@ class NodetypesStreamWrapperTest extends UnitTestCase
 
     /**
      * This makes sure the code does not see a 40-charatcer package key as a resource hash.
-     * @test
      */
+    #[Test]
     public function openResolves40CharacterLongPackageKeysUsingThePackageManager()
     {
         $packageKey = 'Some.PackageKey.Containing.40.Characters';

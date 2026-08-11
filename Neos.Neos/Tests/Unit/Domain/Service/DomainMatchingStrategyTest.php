@@ -10,7 +10,7 @@ namespace Neos\Neos\Tests\Unit\Domain\Service;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
+use PHPUnit\Framework\Attributes\Test;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\Neos\Domain\Model\Domain;
 use Neos\Neos\Domain\Service\DomainMatchingStrategy;
@@ -21,9 +21,7 @@ use Neos\Neos\Domain\Service\DomainMatchingStrategy;
  */
 class DomainMatchingStrategyTest extends UnitTestCase
 {
-    /**
-     * @test
-     */
+    #[Test]
     public function getSortedMatchesReturnsOneGivenDomainIfItMatchesExactly()
     {
         $mockDomains = [$this->getMockBuilder(Domain::class)->disableOriginalConstructor()->getMock()];
@@ -35,9 +33,7 @@ class DomainMatchingStrategyTest extends UnitTestCase
         self::assertSame($expectedDomains, $actualDomains);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function getSortedMatchesFiltersTheGivenDomainsByTheSpecifiedHostAndReturnsThemSortedWithBestMatchesFirst()
     {
         $mockDomains = [
@@ -62,9 +58,7 @@ class DomainMatchingStrategyTest extends UnitTestCase
         self::assertSame($expectedDomains, $actualDomains);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function getSortedMatchesReturnsNoMatchIfDomainIsLongerThanHostname()
     {
         $mockDomains = [

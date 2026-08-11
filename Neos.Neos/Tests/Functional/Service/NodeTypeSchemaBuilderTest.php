@@ -10,7 +10,7 @@ namespace Neos\Neos\Tests\Functional\Service;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
+use PHPUnit\Framework\Attributes\Test;
 use Neos\Flow\Tests\FunctionalTestCase;
 use Neos\Neos\Service\NodeTypeSchemaBuilder;
 
@@ -38,9 +38,7 @@ class NodeTypeSchemaBuilderTest extends FunctionalTestCase
         $this->schema = $this->nodeTypeSchemaBuilder->generateNodeTypeSchema();
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function inheritanceMapContainsTransitiveSubTypes()
     {
         self::assertTrue(array_key_exists('Neos.Neos.BackendSchemaControllerTest:Document', $this->schema['inheritanceMap']['subTypes']), 'Document must be found in InheritanceMap');
@@ -53,9 +51,7 @@ class NodeTypeSchemaBuilderTest extends FunctionalTestCase
         self::assertEquals($expectedSubTypesOfDocument, $this->schema['inheritanceMap']['subTypes']['Neos.Neos.BackendSchemaControllerTest:Document']);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function nodeTypesContainCorrectSuperTypes()
     {
         self::assertTrue(array_key_exists('Neos.Neos.BackendSchemaControllerTest:SimpleNodeType', $this->schema['nodeTypes']), 'SimpleNodeType');
@@ -73,9 +69,7 @@ class NodeTypeSchemaBuilderTest extends FunctionalTestCase
         self::assertEquals($expectedPropertyConfiguration, $this->schema['nodeTypes']['Neos.Neos.BackendSchemaControllerTest:SimpleNodeType']['properties']['text']);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function theNodeTypeSchemaIncludesSubTypesInheritanceMap()
     {
         $subTypesDefinition = $this->schema['inheritanceMap']['subTypes'];
@@ -87,9 +81,7 @@ class NodeTypeSchemaBuilderTest extends FunctionalTestCase
         self::assertContains('Neos.Neos.BackendSchemaControllerTest:TwoColumn', $subTypesDefinition['Neos.Neos.BackendSchemaControllerTest:Content']);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function constraintsAreEvaluatedForANodeType()
     {
         $expectedConstraints = [
@@ -101,9 +93,7 @@ class NodeTypeSchemaBuilderTest extends FunctionalTestCase
         self::assertEquals($expectedConstraints, $this->schema['constraints']['Neos.Neos.BackendSchemaControllerTest:Page']);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function constraintsForNamedChildNodeTypesAreEvaluatedForANodeType()
     {
         self::assertFalse(array_key_exists('Neos.Neos.BackendSchemaControllerTest:SubPage', $this->schema['constraints']['Neos.Neos.BackendSchemaControllerTest:TwoColumn']['childNodes']['column1']['nodeTypes']));

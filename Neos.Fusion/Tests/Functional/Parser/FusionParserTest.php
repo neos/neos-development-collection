@@ -10,7 +10,7 @@ namespace Neos\Fusion\Tests\Functional\Parser;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
+use PHPUnit\Framework\Attributes\Test;
 use Neos\Fusion\Core\FusionSourceCodeCollection;
 use Neos\Fusion\Exception;
 use Neos\Flow\Tests\FunctionalTestCase;
@@ -22,9 +22,7 @@ use Neos\Fusion;
  */
 class FusionParserTest extends FunctionalTestCase
 {
-    /**
-     * @test
-     */
+    #[Test]
     public function parserHandlesExpressionsThatReturnStrings()
     {
         $parser = new Parser();
@@ -35,9 +33,7 @@ class FusionParserTest extends FunctionalTestCase
         self::assertEquals($expectedAst, $actualAst);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function parserHandlesExpressionsThatReturnMultilineStrings()
     {
         $parser = new Parser();
@@ -48,9 +44,7 @@ class FusionParserTest extends FunctionalTestCase
         self::assertEquals($expectedAst, $actualAst);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function parserHandlesDslExpressionThatReturnsBooleans()
     {
         $parser = new Parser();
@@ -68,9 +62,7 @@ class FusionParserTest extends FunctionalTestCase
         self::assertEquals($expectedAst, $actualAst);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function parserHandlesDslExpressionThatReturnsNumbers()
     {
         $parser = new Parser();
@@ -94,9 +86,7 @@ class FusionParserTest extends FunctionalTestCase
         self::assertEquals($expectedAst, $actualAst);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function parserHandlesDslExpressionThatReturnsEelExpressions()
     {
         $parser = new Parser();
@@ -107,9 +97,7 @@ class FusionParserTest extends FunctionalTestCase
         self::assertEquals($expectedAst, $actualAst);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function parserHandlesDslExpressionThatReturnsFusionObjects()
     {
         $parser = new Parser();
@@ -120,9 +108,7 @@ class FusionParserTest extends FunctionalTestCase
         self::assertEquals($expectedAst, $actualAst);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function parserThrowsExceptionIfAnUnknownDslIsExecuted()
     {
         $parser = new Parser();
@@ -131,9 +117,7 @@ class FusionParserTest extends FunctionalTestCase
         $parser->parseFromSource(FusionSourceCodeCollection::fromString('value = TestUnknownDsl`foobar`'))->toArray();
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function parserThrowsExceptionIfAnDslExprssionIsNotClosed()
     {
         $parser = new Parser();

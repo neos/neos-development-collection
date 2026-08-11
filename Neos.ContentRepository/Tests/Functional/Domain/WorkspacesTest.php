@@ -10,7 +10,7 @@ namespace Neos\ContentRepository\Tests\Functional\Domain;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
+use PHPUnit\Framework\Attributes\Test;
 use Neos\Flow\Tests\FunctionalTestCase;
 use Neos\ContentRepository\Domain\Factory\NodeFactory;
 use Neos\ContentRepository\Domain\Model\Node;
@@ -118,9 +118,7 @@ class WorkspacesTest extends FunctionalTestCase
         $this->rootNode = null;
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function nodesCreatedInAPersonalWorkspacesCanBeRetrievedAgainInThePersonalContext()
     {
         $fooNode = $this->rootNode->createNode('foo');
@@ -131,9 +129,7 @@ class WorkspacesTest extends FunctionalTestCase
         self::assertSame($fooNode, $this->rootNode->getNode('foo'));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function nodesCreatedInAPersonalWorkspaceAreNotVisibleInTheLiveWorkspace()
     {
         $this->rootNode->createNode('homepage')->createNode('about');
@@ -147,9 +143,7 @@ class WorkspacesTest extends FunctionalTestCase
         self::assertNull($liveRootNode->getNode('/homepage/about'));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function evenWithoutPersistAllNodesCreatedInAPersonalWorkspaceAreNotVisibleInTheLiveWorkspace()
     {
         $this->rootNode->createNode('homepage')->createNode('imprint');
@@ -173,9 +167,8 @@ class WorkspacesTest extends FunctionalTestCase
      *
      * We then move child-node-b UNDERNEATH child-node-a and check that it does not shine through
      * when directly asking parentNode for child-node-b.
-     *
-     * @test
      */
+    #[Test]
     public function nodesWhichAreMovedAcrossLevelsAndWorkspacesShouldBeRemovedFromOriginalLocation()
     {
         $parentNode = $this->rootNode->createNode('parent-node');
@@ -208,9 +201,8 @@ class WorkspacesTest extends FunctionalTestCase
 
     /**
      * For test setup / node structure, see nodesWhichAreMovedAcrossLevelsAndWorkspacesShouldBeRemovedFromOriginalLocation
-     *
-     * @test
      */
+    #[Test]
     public function nodesWhichAreMovedAcrossLevelsAndWorkspacesShouldBeRemovedFromOriginalLocationWhileIteratingOverIt()
     {
         $rootNode = $this->rootNode;
@@ -251,9 +243,8 @@ class WorkspacesTest extends FunctionalTestCase
      * For test setup / node structure, see nodesWhichAreMovedAcrossLevelsAndWorkspacesShouldBeRemovedFromOriginalLocation
      *
      * Here, we move child-node-c underneath child-node-a.
-     *
-     * @test
      */
+    #[Test]
     public function nodesWhichAreMovedAcrossLevelsAndWorkspacesShouldWorkWhenUsingPrimaryChildNode()
     {
         $parentNode = $this->rootNode->createNode('parent-node');
@@ -279,9 +270,7 @@ class WorkspacesTest extends FunctionalTestCase
         self::assertNotNull($childNodeC3);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function changedNodeCanBePublishedFromPersonalToLiveWorkspace()
     {
         $liveContext = $this->contextFactory->create(['workspaceName' => 'live']);
@@ -306,9 +295,7 @@ class WorkspacesTest extends FunctionalTestCase
         self::assertInstanceOf(NodeInterface::class, $teaserNode);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function removedNodeWithoutExistingTargetNodeDataWillBeRemovedWhenPublished()
     {
         $homepageNode = $this->rootNode->createNode('homepage');

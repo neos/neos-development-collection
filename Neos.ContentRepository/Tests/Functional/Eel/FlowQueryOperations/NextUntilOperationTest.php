@@ -10,7 +10,8 @@ namespace Neos\ContentRepository\Tests\Functional\Eel\FlowQueryOperations;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use Neos\Eel\FlowQuery\FlowQuery;
 use Neos\ContentRepository\Domain\Service\NodeTypeManager;
 use Neos\ContentRepository\Tests\Functional\AbstractNodeTestCase;
@@ -73,10 +74,9 @@ class NextUntilOperationTest extends AbstractNodeTestCase
      *   b2
      *   b3 (testNodeType3)
      *   b4
-     *
-     * @test
-     * @dataProvider nextUntilOperationDataProvider()
      */
+    #[DataProvider('nextUntilOperationDataProvider')]
+    #[Test]
     public function nextUntilOperationTests(array $currentNodePaths, $subject, array $expectedNodePaths, array $unexpectedNodePaths)
     {
         $nodeTypeManager = $this->objectManager->get(NodeTypeManager::class);

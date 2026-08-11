@@ -10,7 +10,7 @@ namespace Neos\Fusion\Tests\Functional\FusionObjects;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
+use PHPUnit\Framework\Attributes\Test;
 use Neos\FluidAdaptor\View\Exception\InvalidTemplateResourceException;
 
 /**
@@ -19,9 +19,7 @@ use Neos\FluidAdaptor\View\Exception\InvalidTemplateResourceException;
  */
 class BasicRenderingTest extends AbstractFusionObjectTestCase
 {
-    /**
-     * @test
-     */
+    #[Test]
     public function basicRendering()
     {
         $view = $this->buildView();
@@ -29,9 +27,7 @@ class BasicRenderingTest extends AbstractFusionObjectTestCase
         self::assertEquals('XHello World', $view->render());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function basicRenderingReusingFusionVariables()
     {
         $view = $this->buildView();
@@ -46,9 +42,8 @@ class BasicRenderingTest extends AbstractFusionObjectTestCase
      *
      * The default handler for the tests rethrows the exception
      * TODO: test different exception handlers
-     *
-     * @test
      */
+    #[Test]
     public function basicRenderingCrashing()
     {
         $this->expectException(InvalidTemplateResourceException::class);
@@ -57,9 +52,7 @@ class BasicRenderingTest extends AbstractFusionObjectTestCase
         self::assertEquals('XHello World', $view->render());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function basicRenderingReusingFusionVariablesWithEel()
     {
         $view = $this->buildView();
@@ -67,9 +60,7 @@ class BasicRenderingTest extends AbstractFusionObjectTestCase
         self::assertEquals('XHello World', $view->render());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function complexExample()
     {
         $view = $this->buildView();
@@ -77,9 +68,7 @@ class BasicRenderingTest extends AbstractFusionObjectTestCase
         self::assertEquals('Static string post', $view->render());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function complexExample2()
     {
         $view = $this->buildView();
@@ -87,33 +76,25 @@ class BasicRenderingTest extends AbstractFusionObjectTestCase
         self::assertEquals('Static string post', $view->render());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function plainValueCanBeOverridden()
     {
         $this->assertMultipleFusionPaths('overridden', 'basicRendering/overridePlainValueWith');
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function eelExpressionCanBeOverridden()
     {
         $this->assertMultipleFusionPaths('overridden', 'basicRendering/overrideEelWith');
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function fusionCanBeOverridden()
     {
         $this->assertMultipleFusionPaths('overridden', 'basicRendering/overrideFusionWith');
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function contentIsNotTrimmed()
     {
         $view = $this->buildView();

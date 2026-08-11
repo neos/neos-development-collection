@@ -10,7 +10,8 @@ namespace Neos\Media\Tests\Unit\Domain\ValueObject\Configuration;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\Media\Domain\Model\Adjustment\CropImageAdjustment;
 use Neos\Media\Domain\ValueObject\Configuration\Adjustment;
@@ -33,18 +34,16 @@ class VariantTest extends UnitTestCase
 
     /**
      * @param $identifier
-     * @dataProvider invalidIdentifiers()
-     * @test
      */
+    #[DataProvider('invalidIdentifiers')]
+    #[Test]
     public function invalidIdentifiersAreRejected($identifier): void
     {
         $this->expectException(\InvalidArgumentException::class);
         new Variant($identifier, new Label('Test'));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function variantIdentifierCanBeRetrieved(): void
     {
         $variant = new Variant('someVariant', new Label('Test'));
@@ -52,9 +51,7 @@ class VariantTest extends UnitTestCase
         self::assertSame('someVariant', $variant->identifier());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function variantLabelCanBeRetrieved(): void
     {
         $label = new Label('This is a variant');
@@ -63,9 +60,7 @@ class VariantTest extends UnitTestCase
         self::assertSame($label, $variant->label());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function variantFromArray(): void
     {
         $configuration = [

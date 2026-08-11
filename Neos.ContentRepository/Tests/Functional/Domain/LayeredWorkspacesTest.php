@@ -10,7 +10,7 @@ namespace Neos\ContentRepository\Tests\Functional\Domain;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
+use PHPUnit\Framework\Attributes\Test;
 use Neos\Flow\Tests\FunctionalTestCase;
 use Neos\ContentRepository\Domain\Factory\NodeFactory;
 use Neos\ContentRepository\Domain\Model\Node;
@@ -140,9 +140,7 @@ class LayeredWorkspacesTest extends FunctionalTestCase
         $this->rootNode = null;
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function nodeFromLiveWorkspaceRemovedInPersonalWorkspaceExistsRemovedInGroupWorkspace()
     {
         $liveContext = $this->contextFactory->create([]);
@@ -164,9 +162,7 @@ class LayeredWorkspacesTest extends FunctionalTestCase
         self::assertTrue($fooNodeInGroupWorkspace->isRemoved());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function nodeFromLiveWorkspaceChangedInGroupWorkspaceAndRemovedInPersonalWorkspaceExistsRemovedInGroupWorkspace()
     {
         $liveContext = $this->contextFactory->create([]);
@@ -195,9 +191,7 @@ class LayeredWorkspacesTest extends FunctionalTestCase
         self::assertTrue($fooNodeInGroupWorkspace->isRemoved());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function nodeFromLiveWorkspaceMovedInUserWorkspaceIsInCorrectPlaceAfterPublish()
     {
         $liveContext = $this->contextFactory->create([]);
@@ -219,9 +213,7 @@ class LayeredWorkspacesTest extends FunctionalTestCase
         self::assertNull($oldBazNode);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function nodeFromLiveWorkspaceMovedInUserWorkspaceRetainsShadowNodeInGroupWorkspace()
     {
         $liveContext = $this->contextFactory->create([]);

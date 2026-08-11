@@ -10,7 +10,7 @@ namespace Neos\Neos\Tests\Unit\View;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
+use PHPUnit\Framework\Attributes\Test;
 use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
 use Neos\Flow\Mvc\ActionResponse;
 use Neos\Flow\Mvc\Controller\ControllerContext;
@@ -93,9 +93,7 @@ class FusionViewTest extends UnitTestCase
         $this->mockView->_set('variables', ['value' => $this->mockContextualizedNode]);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function attemptToRenderWithoutNodeInformationAtAllThrowsException()
     {
         $this->expectException(Exception::class);
@@ -103,9 +101,7 @@ class FusionViewTest extends UnitTestCase
         $view->render();
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function attemptToRenderWithInvalidNodeInformationThrowsException()
     {
         $this->expectException(Exception::class);
@@ -114,9 +110,7 @@ class FusionViewTest extends UnitTestCase
         $view->render();
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function renderPutsSiteNodeInFusionContext()
     {
         $this->setUpMockView();
@@ -124,9 +118,7 @@ class FusionViewTest extends UnitTestCase
         $this->mockView->render();
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function renderMergesHttpResponseIfOutputIsHttpMessage()
     {
         $mockContext = $this->getMockBuilder(ContentContext::class)->disableOriginalConstructor()->getMock();

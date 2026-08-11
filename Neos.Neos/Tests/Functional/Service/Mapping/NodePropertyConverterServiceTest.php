@@ -10,7 +10,7 @@ namespace Neos\Neos\Tests\Functional\Service\Mapping;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
+use PHPUnit\Framework\Attributes\Test;
 use GuzzleHttp\Psr7\Uri;
 use Neos\ContentRepository\Domain\Model\Node;
 use Neos\ContentRepository\Domain\Model\NodeType;
@@ -24,9 +24,7 @@ use Neos\Neos\Service\Mapping\NodePropertyConverterService;
  */
 class NodePropertyConverterServiceTest extends FunctionalTestCase
 {
-    /**
-     * @test
-     */
+    #[Test]
     public function anArrayOfArrayIsReturnedAsIs()
     {
         $expected = $propertyValue = [[]];
@@ -62,9 +60,7 @@ class NodePropertyConverterServiceTest extends FunctionalTestCase
         self::assertEquals($expected, $actual);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function arrayOfObjectsWithToStringMethodIsReturnedAsIsUnlessTypeConverterIsProvided()
     {
         $objectWithToStringMethod = new Domain();
@@ -105,9 +101,7 @@ class NodePropertyConverterServiceTest extends FunctionalTestCase
         self::assertEquals($expected, $actual);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function arrayOfStringsHasToProvideTypeConverterToBeConvertedToArrayOfStrings()
     {
         $expected = $propertyValue = ['Hello'];
@@ -143,9 +137,7 @@ class NodePropertyConverterServiceTest extends FunctionalTestCase
         self::assertEquals($expected, $actual);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function complexTypesWithGivenTypeConverterAreConvertedByTypeConverter()
     {
         $propertyValue = $this->getMockForAbstractClass(ImageInterface::class);
@@ -185,9 +177,7 @@ class NodePropertyConverterServiceTest extends FunctionalTestCase
         self::assertEquals($expected, $actual);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function jsonSerializedAbleTypesAreDirectlySerialized()
     {
         $voClassName = 'Value' . md5(uniqid(mt_rand(), true));

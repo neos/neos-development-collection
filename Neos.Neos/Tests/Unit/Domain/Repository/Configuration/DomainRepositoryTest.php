@@ -10,6 +10,7 @@ namespace Neos\Neos\Tests\Unit\Domain\Repository\Configuration;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+use PHPUnit\Framework\Attributes\Test;
 use Neos\Flow\Persistence\QueryResultInterface;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\Neos\Domain\Model\Domain;
@@ -22,9 +23,7 @@ use Neos\Neos\Domain\Service\DomainMatchingStrategy;
  */
 class DomainRepositoryTest extends UnitTestCase
 {
-    /**
-     * @test
-     */
+    #[Test]
     public function findByHostInvokesTheDomainMatchingStrategyToFindDomainsMatchingTheGivenHost()
     {
         $mockDomains = [];

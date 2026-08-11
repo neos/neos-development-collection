@@ -11,7 +11,7 @@ namespace Neos\Media\Tests\Functional\Eel;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
+use PHPUnit\Framework\Attributes\Test;
 use Neos\Flow\Persistence\Doctrine\PersistenceManager;
 use Neos\Media\Domain\Model\AssetCollection;
 use Neos\Media\Domain\Repository\AssetCollectionRepository;
@@ -70,9 +70,7 @@ class AssetsHelperTest extends AbstractTestCase
         Files::removeDirectoryRecursively($this->temporaryDirectory);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function findByTagFindAssetsByTagLabel(): void
     {
         $tagA = new Tag('tagA');
@@ -98,9 +96,7 @@ class AssetsHelperTest extends AbstractTestCase
         }
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function findByTagFindAssetsByTagInstance(): void
     {
         $tagA = new Tag('tagA');
@@ -129,18 +125,14 @@ class AssetsHelperTest extends AbstractTestCase
         }
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function findByTagReturnsNullIfTagIsNull(): void
     {
         $helper = new AssetsHelper();
         self::assertNull($helper->findByTag(null));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function findByCollectionReturnsAssetsForCollectionLabel(): void
     {
         $resource = $this->resourceManager->importResource(__DIR__ . '/../Fixtures/Resources/license.txt');
@@ -163,9 +155,7 @@ class AssetsHelperTest extends AbstractTestCase
         self::assertNull($helper->findByCollection(''));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function findByCollectionReturnsAssetsForCollectionInstace(): void
     {
         $resource = $this->resourceManager->importResource(__DIR__ . '/../Fixtures/Resources/license.txt');
@@ -188,9 +178,7 @@ class AssetsHelperTest extends AbstractTestCase
         self::assertNull($helper->findByCollection(null));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function findByCollectionReturnsNullIfCollectionIsNull(): void
     {
         $helper = new AssetsHelper();
@@ -198,9 +186,7 @@ class AssetsHelperTest extends AbstractTestCase
         self::assertNull($helper->findByCollection(''));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function searchWithoutSearchTermReturnsNull(): void
     {
         $helper = new AssetsHelper();
@@ -208,9 +194,7 @@ class AssetsHelperTest extends AbstractTestCase
         self::assertNull($helper->search(''));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function searchWithSearchTermAndTagFindsAsset(): void
     {
         $tagA = new Tag('tagA');
@@ -251,9 +235,7 @@ class AssetsHelperTest extends AbstractTestCase
         }
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function searchWithSearchTermAndCollectionFindsAsset(): void
     {
         $resource = $this->resourceManager->importResource(__DIR__ . '/../Fixtures/Resources/license.txt');

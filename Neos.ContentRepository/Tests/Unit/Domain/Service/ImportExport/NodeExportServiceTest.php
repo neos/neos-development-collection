@@ -10,7 +10,7 @@ namespace Neos\ContentRepository\Tests\Unit\Domain\Service\ImportExport;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
+use PHPUnit\Framework\Attributes\Test;
 use Neos\Flow\Property\PropertyMapper;
 use PHPUnit\Framework\MockObject\MockObject;
 use Neos\Flow\Security\Context;
@@ -36,9 +36,7 @@ class NodeExportServiceTest extends UnitTestCase
         }));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function exportEmptyListOfNodesCreatesEmptyXml()
     {
         /** @var NodeExportService|MockObject $nodeExportService */
@@ -56,9 +54,7 @@ class NodeExportServiceTest extends UnitTestCase
 		', $output);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function exportRootNodeCreatesSingleNode()
     {
         /** @var NodeExportService|MockObject $nodeExportService */
@@ -95,9 +91,7 @@ class NodeExportServiceTest extends UnitTestCase
 		', $output);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function exportNodeWithoutParentSkipsBrokenNode()
     {
         /** @var NodeExportService|MockObject $nodeExportService */

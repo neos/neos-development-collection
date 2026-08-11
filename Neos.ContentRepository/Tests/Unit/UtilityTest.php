@@ -10,7 +10,8 @@ namespace Neos\ContentRepository\Tests\Unit;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\ContentRepository\Utility;
 
@@ -23,7 +24,7 @@ class UtilityTest extends UnitTestCase
      *
      * @return array
      */
-    public function sourcesAndNodeNames()
+    public static function sourcesAndNodeNames()
     {
         return [
             ['Überlandstraßen; adé', 'uberlandstrassen-ade'],
@@ -45,10 +46,8 @@ class UtilityTest extends UnitTestCase
         ];
     }
 
-    /**
-     * @test
-     * @dataProvider sourcesAndNodeNames
-     */
+    #[DataProvider('sourcesAndNodeNames')]
+    #[Test]
     public function renderValidNodeNameWorks($source, $expectedNodeName)
     {
         self::assertEquals($expectedNodeName, Utility::renderValidNodeName($source));

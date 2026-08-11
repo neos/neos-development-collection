@@ -1,6 +1,8 @@
 <?php
 namespace Neos\Fusion\Tests\Functional\FusionObjects;
 
+use PHPUnit\Framework\Attributes\Test;
+
 /*
  * This file is part of the Neos.Fusion package.
  *
@@ -16,9 +18,7 @@ namespace Neos\Fusion\Tests\Functional\FusionObjects;
  */
 class ExceptionHandlerTest extends AbstractFusionObjectTestCase
 {
-    /**
-     * @test
-     */
+    #[Test]
     public function exceptionalEelExpressionInPropertyIsHandledCorrectly()
     {
         $view = $this->buildView();
@@ -27,9 +27,7 @@ class ExceptionHandlerTest extends AbstractFusionObjectTestCase
     }
 
 
-    /**
-     * @test
-     */
+    #[Test]
     public function exceptionalEelExpressionInOverrideIsHandledCorrectly()
     {
         $view = $this->buildView();
@@ -43,9 +41,8 @@ class ExceptionHandlerTest extends AbstractFusionObjectTestCase
      * We trigger rendering of a Fusion object with a nested Fusion object being "evaluated". If an exception happens there,
      * the configured exceptionHandler needs to be triggered as well, even though the object has been rendered with "evaluate()"
      * and not with "render()"
-     *
-     * @test
      */
+    #[Test]
     public function exceptionHandlerIsEvaluatedForNestedFusionObjects()
     {
         $view = $this->buildView();

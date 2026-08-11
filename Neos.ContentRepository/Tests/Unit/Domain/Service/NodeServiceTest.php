@@ -10,8 +10,9 @@ namespace Neos\ContentRepository\Tests\Unit\Domain\Service;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
+use PHPUnit\Framework\Attributes\Test;
 use Neos\ContentRepository\Domain\Model\NodeData;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Neos\ContentRepository\Domain\Model\ArrayPropertyCollection;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\ContentRepository\Domain\Model\Node;
@@ -94,9 +95,7 @@ class NodeServiceTest extends UnitTestCase
         return $mockNodeType;
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function setDefaultValueOnlyIfTheCurrentPropertyIsNull()
     {
         $nodeService = $this->createNodeService();
@@ -127,9 +126,7 @@ class NodeServiceTest extends UnitTestCase
         $nodeService->setDefaultValues($mockNode);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function setDefaultDateValueOnlyIfTheCurrentPropertyIsNull()
     {
         $nodeService = $this->createNodeService();
@@ -160,9 +157,7 @@ class NodeServiceTest extends UnitTestCase
         $nodeService->setDefaultValues($mockNode);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function setDefaultValueNeverReplaceExistingValue()
     {
         $nodeService = $this->createNodeService();
@@ -192,9 +187,7 @@ class NodeServiceTest extends UnitTestCase
         $nodeService->setDefaultValues($mockNode);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function createChildNodesTryToCreateAllConfiguredChildNodes()
     {
         $nodeService = $this->createNodeService();
@@ -225,9 +218,7 @@ class NodeServiceTest extends UnitTestCase
         $nodeService->createChildNodes($mockNode);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function cleanUpPropertiesRemoveAllUndeclaredProperties()
     {
         $nodeService = $this->createNodeService();
@@ -271,10 +262,9 @@ class NodeServiceTest extends UnitTestCase
     }
 
     /**
-     * @test
-     *
      * TODO: Adjust after the removal of child nodes is implemented again.
      */
+    #[Test]
     public function cleanUpChildNodesRemoveAllUndeclaredChildNodes()
     {
         $this->markTestSkipped('Currently this functionality is disabled. We will introduce it again at a later point and then reenable this test.');
@@ -342,10 +332,9 @@ class NodeServiceTest extends UnitTestCase
     }
 
     /**
-     * @test
-     *
      * TODO: Adjust after the removal of child nodes is implemented again.
      */
+    #[Test]
     public function cleanUpChildNodesNeverRemoveDocumentNode()
     {
         $this->markTestSkipped('Currently this functionality is disabled. We will introduce it again at a later point and then reenable this test.');
@@ -388,9 +377,7 @@ class NodeServiceTest extends UnitTestCase
         $nodeService->cleanUpChildNodes($mockNode);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function isNodeOfTypeReturnTrueIsTheGivenNodeIsSubNodeOfTheGivenType()
     {
         $nodeService = $this->createNodeService();
@@ -407,9 +394,7 @@ class NodeServiceTest extends UnitTestCase
         self::assertTrue($nodeService->isNodeOfType($mockNode, $mockNodeType));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function isNodeOfTypeReturnTrueIsTheGivenNodeHasTheSameTypeOfTheGivenType()
     {
         $nodeService = $this->createNodeService();
@@ -453,18 +438,16 @@ class NodeServiceTest extends UnitTestCase
      * @param string $currentPath
      * @param string $relativePath
      * @param string $normalizedPath
-     * @test
-     * @dataProvider abnormalPaths
      */
+    #[DataProvider('abnormalPaths')]
+    #[Test]
     public function normalizePathReturnsANormalizedAbsolutePath($currentPath, $relativePath, $normalizedPath)
     {
         $nodeService = $this->createNodeService();
         self::assertSame($normalizedPath, $nodeService->normalizePath($relativePath, $currentPath));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function normalizePathThrowsInvalidArgumentExceptionOnPathContainingDoubleSlash()
     {
         $this->expectException(\InvalidArgumentException::class);

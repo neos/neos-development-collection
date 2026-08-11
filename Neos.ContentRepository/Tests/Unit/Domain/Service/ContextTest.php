@@ -11,6 +11,7 @@ namespace Neos\ContentRepository\Tests\Unit\Domain\Service;
  * source code.
  */
 use Neos\Flow\Utility\Now;
+use PHPUnit\Framework\Attributes\Test;
 use Neos\Flow\Security\Context;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\ContentRepository\Domain\Repository\ContentDimensionRepository;
@@ -38,9 +39,7 @@ class ContextTest extends UnitTestCase
         $this->inject($this->contextFactory, 'contentDimensionRepository', $mockContentDimensionRepository);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function getCurrentDateTimeReturnsACurrentDateAndTime()
     {
         $now = new \DateTime();
@@ -52,9 +51,7 @@ class ContextTest extends UnitTestCase
         self::assertEquals($now->getTimestamp(), $currentTime->getTimestamp(), 1);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function setDateTimeAllowsForMockingTheCurrentTime()
     {
         $simulatedCurrentTime = new \DateTime();

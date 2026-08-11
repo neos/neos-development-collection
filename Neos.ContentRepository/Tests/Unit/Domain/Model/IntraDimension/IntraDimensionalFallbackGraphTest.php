@@ -10,7 +10,7 @@ namespace Neos\ContentRepository\Tests\Unit\Domain\Model\IntraDimension;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
+use PHPUnit\Framework\Attributes\Test;
 use Neos\ContentRepository\Domain\Model\IntraDimension\IntraDimensionalFallbackGraph;
 use Neos\ContentRepository\Domain\Model\IntraDimension;
 use Neos\Flow\Tests\UnitTestCase;
@@ -20,9 +20,7 @@ use Neos\Flow\Tests\UnitTestCase;
  */
 class IntraDimensionalFallbackGraphTest extends UnitTestCase
 {
-    /**
-     * @test
-     */
+    #[Test]
     public function createDimensionRegistersDimension()
     {
         $graph = new IntraDimensionalFallbackGraph();

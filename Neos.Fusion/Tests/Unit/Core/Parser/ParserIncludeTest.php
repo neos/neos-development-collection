@@ -10,7 +10,8 @@ namespace Neos\Fusion\Tests\Unit\Core\Parser;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use Neos\Fusion\Core\FusionSourceCodeCollection;
 use Neos\Fusion\Core\FusionSourceCode;
 use Neos\Fusion\Exception;
@@ -194,12 +195,10 @@ class ParserIncludeTest extends UnitTestCase
         ];
     }
 
-    /**
-     * @dataProvider includeSingleFile
-     * @dataProvider includeNormalGlobbing
-     * @dataProvider includeRecursiveGlobbing
-     * @test
-     */
+    #[DataProvider('includeSingleFile')]
+    #[DataProvider('includeNormalGlobbing')]
+    #[DataProvider('includeRecursiveGlobbing')]
+    #[Test]
     public function fusionParseMethodIsCalledCorrectlyWithFilesOfPattern($contextPathAndFilename, $fusionCode, $expectedFusionAst): void
     {
         $actualFusionAst = $this->parser->parseFromSource(new FusionSourceCodeCollection(
@@ -209,9 +208,7 @@ class ParserIncludeTest extends UnitTestCase
         self::assertSame($expectedFusionAst, $actualFusionAst);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function absoluteIncludePathsRaiseError(): void
     {
         self::expectException(Exception::class);
@@ -240,10 +237,8 @@ class ParserIncludeTest extends UnitTestCase
         ];
     }
 
-    /**
-     * @dataProvider weirdFusionIncludeValuesAreHandedOver
-     * @test
-     */
+    #[DataProvider('weirdFusionIncludeValuesAreHandedOver')]
+    #[Test]
     public function testFusionIncludesArePassedCorrectlyToIncludeAndParseFilesByPattern($fusion, $includePattern): void
     {
         $parser = $this->getMockBuilder(Parser::class)->disableOriginalConstructor()->onlyMethods(['handleFileInclude'])->getMock();
@@ -275,10 +270,8 @@ class ParserIncludeTest extends UnitTestCase
         ];
     }
 
-    /**
-     * @dataProvider throwsFusionIncludesWithSpaces
-     * @test
-     */
+    #[DataProvider('throwsFusionIncludesWithSpaces')]
+    #[Test]
     public function testFusionIncludesThrowExpectedEndOfStatement($fusion): void
     {
         self::expectException(Exception::class);
@@ -315,10 +308,8 @@ class ParserIncludeTest extends UnitTestCase
         ];
     }
 
-    /**
-     * @test
-     * @dataProvider unsupportedGlobbingTechnics
-     */
+    #[DataProvider('unsupportedGlobbingTechnics')]
+    #[Test]
     public function testUnsupportedGlobbingTechnicsThrowException($pattern): void
     {
         self::expectException(Exception::class);
@@ -331,9 +322,7 @@ class ParserIncludeTest extends UnitTestCase
         $this->parser->parseFromSource(FusionSourceCodeCollection::fromString($fusionCode))->toArray();
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function testThatInTestEnvironmentStatCanDifferentiateBetweenFilesWhoHaveTheSameSize(): void
     {
         self::assertNotSame(stat('vfs://fusion/Globbing/level1-A.fusion'), stat('vfs://fusion/Globbing/level1-B.fusion'));

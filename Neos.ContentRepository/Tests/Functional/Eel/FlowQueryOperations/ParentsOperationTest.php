@@ -10,7 +10,7 @@ namespace Neos\ContentRepository\Tests\Functional\Eel\FlowQueryOperations;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
+use PHPUnit\Framework\Attributes\Test;
 use Neos\Eel\FlowQuery\FlowQuery;
 use Neos\ContentRepository\Tests\Functional\AbstractNodeTestCase;
 
@@ -19,9 +19,7 @@ use Neos\ContentRepository\Tests\Functional\AbstractNodeTestCase;
  */
 class ParentsOperationTest extends AbstractNodeTestCase
 {
-    /**
-     * @test
-     */
+    #[Test]
     public function parentsFollowedByFirstMatchesInnermostNodeOnRootline()
     {
         $teaserText = $this->node->getNode('teaser/dummy42');
